@@ -1,0 +1,224 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* RTL Support */
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir="ltr"] {
+  direction: ltr;
+  text-align: left;
+}
+
+/* Urdu Text */
+.urdu-text {
+  font-family: 'Noto Nastaliq Urdu', serif;
+  font-size: 1.1em;
+}
+
+/* Custom Components */
+.btn {
+  @apply px-4 py-2 rounded-lg font-medium transition-colors;
+}
+
+.btn-primary {
+  @apply bg-blue-600 text-white hover:bg-blue-700;
+}
+
+.btn-secondary {
+  @apply bg-gray-200 text-gray-800 hover:bg-gray-300;
+}
+
+.btn-danger {
+  @apply bg-red-600 text-white hover:bg-red-700;
+}
+
+.card {
+  @apply bg-white rounded-lg shadow-md p-6;
+}
+
+.input {
+  @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+
+.label {
+  @apply block text-sm font-medium text-gray-700 mb-2;
+}
+
+/* Tables */
+table {
+  @apply w-full border-collapse;
+}
+
+th {
+  @apply bg-gray-100 px-4 py-2 text-left font-semibold text-gray-700 border-b;
+}
+
+td {
+  @apply px-4 py-2 border-b border-gray-200;
+}
+
+tr:hover {
+  @apply bg-gray-50;
+}
+
+/* Loading Animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+/* ============================================================================
+   BILINGUAL COMPONENTS STYLING
+   ============================================================================ */
+
+/* Bilingual Label */
+.bilingual-label {
+  font-family: 'Inter', sans-serif;
+}
+
+.bilingual-label .en-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85em;
+  color: inherit;
+  opacity: 0.85;
+}
+
+.bilingual-label .ur-text {
+  font-family: 'Noto Nastaliq Urdu', serif;
+  font-size: 1.2em;
+  color: inherit;
+  font-weight: inherit;
+}
+
+/* Bilingual Button */
+.bilingual-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-weight: 500;
+}
+
+.bilingual-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Bilingual Alert */
+.bilingual-alert {
+  animation: slideIn 0.3s ease-in-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bilingual-alert .en-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.bilingual-alert .ur-text {
+  font-family: 'Noto Nastaliq Urdu', serif;
+  font-size: 1rem;
+}
+
+/* Bilingual Input */
+.bilingual-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.bilingual-input-group input {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.bilingual-input-group input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.bilingual-input-group input:disabled {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* RTL Support for Bilingual Components */
+[dir="rtl"] .bilingual-label .en-text {
+  margin-bottom: 0.25rem;
+}
+
+[dir="rtl"] .bilingual-label .ur-text {
+  margin-top: 0.25rem;
+}
+
+[dir="rtl"] .bilingual-button {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .bilingual-alert {
+  flex-direction: row-reverse;
+}
+
+/* Success, Error, Warning, Info colors for RTL */
+[dir="rtl"] .bilingual-alert.success {
+  border-left: none;
+  border-right: 4px solid #10b981;
+}
+
+[dir="rtl"] .bilingual-alert.error {
+  border-left: none;
+  border-right: 4px solid #ef4444;
+}
+
+[dir="rtl"] .bilingual-alert.warning {
+  border-left: none;
+  border-right: 4px solid #f59e0b;
+}
+
+[dir="rtl"] .bilingual-alert.info {
+  border-left: none;
+  border-right: 4px solid #3b82f6;
+}
