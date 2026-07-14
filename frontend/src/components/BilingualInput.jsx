@@ -17,7 +17,6 @@ const BilingualInput = ({
   disabled = false,
   error = null,
   required = false,
-  icon = null,
   className = '',
   ...props
 }) => {
@@ -34,12 +33,6 @@ const BilingualInput = ({
       )}
 
       <div className="relative">
-        {icon && (
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-            {icon}
-          </div>
-        )}
-
         <input
           type={type}
           value={value}
@@ -47,7 +40,7 @@ const BilingualInput = ({
           placeholder={placeholder}
           disabled={disabled}
           required={required}
-          className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 ${icon ? 'pl-10' : ''} ${className}`}
+          className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 ${className}`}
           {...props}
         />
       </div>

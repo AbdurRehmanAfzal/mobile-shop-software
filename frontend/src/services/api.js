@@ -167,7 +167,11 @@ export const transactionsAPI = {
 // Storage & Color API
 export const storageAPI = {
   getAll: () => fetchAPI('/api/mobile/storages'),
-  create: (name, nameUrdu) => fetchAPI('/api/mobile/storages?name=' + name + (nameUrdu ? '&name_urdu=' + nameUrdu : ''), { method: 'POST' }),
+  create: (name, nameUrdu) => {
+    let params = 'name=' + encodeURIComponent(name);
+    if (nameUrdu) params += '&name_urdu=' + encodeURIComponent(nameUrdu);
+    return fetchAPI('/api/mobile/storages?' + params, { method: 'POST' });
+  },
 };
 
 export const colorAPI = {

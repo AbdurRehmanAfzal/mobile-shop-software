@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import BilingualLabel from '../components/BilingualLabel';
 import BilingualButton from '../components/BilingualButton';
 import BilingualAlert from '../components/BilingualAlert';
+import BackButton from '../components/BackButton';
 import { mobileAPI, brandsAPI, modelsAPI, colorAPI } from '../services/api';
 
 const ViewStock = () => {
@@ -13,11 +14,9 @@ const ViewStock = () => {
 
   // Filter States
   const [filters, setFilters] = useState({
-    brand_id: '',
     model_id: '',
-    pta_status: '', // PTA, NON_PTA, or empty for both
-    color_id: '',
-    condition: '', // new, patched, used, or empty for all
+    color: '',
+    condition: '', // BOX_PACK, PATCHED, USED, or empty for all
   });
 
   // Column visibility state
@@ -48,15 +47,10 @@ const ViewStock = () => {
     loadInitialData();
   }, []);
 
-  // Load models when brand changes
+  // Load models on component mount
   useEffect(() => {
-    if (filters.brand_id) {
-      loadModelsByBrand();
-    } else {
-      setModels([]);
-      setFilters((prev) => ({ ...prev, model_id: '' }));
-    }
-  }, [filters.brand_id]);
+    loadAllModels();
+  }, []);
 
   // Load stock whenever filters change
   useEffect(() => {
@@ -80,12 +74,10 @@ const ViewStock = () => {
     }
   };
 
-  const loadModelsByBrand = async () => {
+  const loadAllModels = async () => {
     try {
-      const res = await modelsAPI.getByBrand(filters.brand_id);
-      if (res.success) {
-        setModels(res.data || []);
-      }
+      // This would need a getAll endpoint if it exists
+      // For now, models are loaded in loadInitialData
     } catch (err) {
       setError(err.message);
     }
@@ -99,28 +91,16 @@ const ViewStock = () => {
       if (res.success) {
         let filtered = res.data || [];
 
-        // Apply filters
-        if (filters.brand_id) {
-          filtered = filtered.filter(
-            (mobile) => mobile.model?.brand_id === parseInt(filters.brand_id)
-          );
-        }
-
+        // Filter by model_id only (brand filter requires additional API call)
         if (filters.model_id) {
           filtered = filtered.filter(
             (mobile) => mobile.model_id === parseInt(filters.model_id)
           );
         }
 
-        if (filters.pta_status) {
+        if (filters.color) {
           filtered = filtered.filter(
-            (mobile) => mobile.pta_status === filters.pta_status
-          );
-        }
-
-        if (filters.color_id) {
-          filtered = filtered.filter(
-            (mobile) => mobile.color_id === parseInt(filters.color_id)
+            (mobile) => mobile.color && mobile.color.toLowerCase().includes(filters.color.toLowerCase())
           );
         }
 
@@ -143,10 +123,8 @@ const ViewStock = () => {
 
   const resetFilters = () => {
     setFilters({
-      brand_id: '',
       model_id: '',
-      pta_status: '',
-      color_id: '',
+      color: '',
       condition: '',
     });
   };
@@ -179,11 +157,11 @@ const ViewStock = () => {
 
   const getConditionColor = (condition) => {
     switch (condition) {
-      case 'new':
+      case 'BOX_PACK':
         return 'bg-green-100 text-green-800';
-      case 'patched':
+      case 'PATCHED':
         return 'bg-yellow-100 text-yellow-800';
-      case 'used':
+      case 'USED':
         return 'bg-orange-100 text-orange-800';
       default:
         return 'bg-gray-100 text-gray-800';
@@ -192,11 +170,11 @@ const ViewStock = () => {
 
   const getConditionLabel = (condition) => {
     switch (condition) {
-      case 'new':
+      case 'BOX_PACK':
         return 'Box Pack';
-      case 'patched':
+      case 'PATCHED':
         return 'Patched';
-      case 'used':
+      case 'USED':
         return 'Used';
       default:
         return condition;
@@ -209,6 +187,11 @@ const ViewStock = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+      {/* Back Button */}
+      <div className="mb-6">
+        <BackButton fallbackPath="/" />
+      </div>
+
       {/* Header */}
       <div className="mb-8">
         <BilingualLabel
@@ -285,71 +268,34 @@ const ViewStock = () => {
           className="mb-6"
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          {/* Brand Filter */}
-          <div>
-            <BilingualLabel en="Brand" ur="برانڈ" size="sm" bold={true} className="mb-2" />
-            <select
-              value={filters.brand_id}
-              onChange={(e) => handleFilterChange('brand_id', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">All Brands</option>
-              {brands.map((brand) => (
-                <option key={brand.id} value={brand.id}>
-                  {brand.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Model Filter */}
           <div>
             <BilingualLabel en="Model" ur="ماڈل" size="sm" bold={true} className="mb-2" />
             <select
               value={filters.model_id}
               onChange={(e) => handleFilterChange('model_id', e.target.value)}
-              disabled={!filters.brand_id}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Models</option>
               {models.map((model) => (
                 <option key={model.id} value={model.id}>
-                  {model.model_name}
+                  {model.name} (ID: {model.id})
                 </option>
               ))}
-            </select>
-          </div>
-
-          {/* PTA Status Filter */}
-          <div>
-            <BilingualLabel en="PTA Status" ur="PTA کی حالت" size="sm" bold={true} className="mb-2" />
-            <select
-              value={filters.pta_status}
-              onChange={(e) => handleFilterChange('pta_status', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">All</option>
-              <option value="PTA">✓ PTA Approved</option>
-              <option value="NON_PTA">✗ Non-PTA</option>
             </select>
           </div>
 
           {/* Color Filter */}
           <div>
             <BilingualLabel en="Color" ur="رنگ" size="sm" bold={true} className="mb-2" />
-            <select
-              value={filters.color_id}
-              onChange={(e) => handleFilterChange('color_id', e.target.value)}
+            <input
+              type="text"
+              placeholder="Search color..."
+              value={filters.color}
+              onChange={(e) => handleFilterChange('color', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">All Colors</option>
-              {colors.map((color) => (
-                <option key={color.id} value={color.id}>
-                  {color.name}
-                </option>
-              ))}
-            </select>
+            />
           </div>
 
           {/* Condition Filter */}
@@ -361,9 +307,9 @@ const ViewStock = () => {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">All Conditions</option>
-              <option value="new">Box Pack (نیا)</option>
-              <option value="patched">Patched (مرمت شدہ)</option>
-              <option value="used">Used (استعمال شدہ)</option>
+              <option value="BOX_PACK">Box Pack (نیا)</option>
+              <option value="PATCHED">Patched (مرمت شدہ)</option>
+              <option value="USED">Used (استعمال شدہ)</option>
             </select>
           </div>
         </div>

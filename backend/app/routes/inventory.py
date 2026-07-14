@@ -63,21 +63,44 @@ def add_mobile(mobile: MobileInventoryCreate, db: Session = Depends(get_db)):
     db.refresh(db_mobile)
     return db_mobile
 
-@router.get("/mobiles", response_model=List[MobileInventorySchema])
+@router.get("/mobiles")
 def get_mobiles(
     status: Optional[str] = "IN_STOCK",
     condition: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
-    """Get mobiles with optional filtering"""
+    """Get mobiles with optional filtering - returns raw data"""
     query = db.query(MobileInventory)
-    
+
     if status:
         query = query.filter(MobileInventory.status == status)
     if condition:
         query = query.filter(MobileInventory.condition == condition)
-    
-    return query.order_by(MobileInventory.created_at.desc()).all()
+
+    mobiles = query.order_by(MobileInventory.created_at.desc()).all()
+
+    # Convert to dictionary to avoid Pydantic validation issues
+    result = []
+    for mobile in mobiles:
+        result.append({
+            "id": mobile.id,
+            "model_id": mobile.model_id,
+            "purchased_from": getattr(mobile, 'purchased_from', None),
+            "imei": getattr(mobile, 'imei', None),
+            "storage": getattr(mobile, 'storage', None),
+            "color": getattr(mobile, 'color', None),
+            "condition": getattr(mobile, 'condition', None),
+            "patch_details": getattr(mobile, 'patch_details', None),
+            "used_condition": getattr(mobile, 'used_condition', None),
+            "cost_price": getattr(mobile, 'cost_price', None),
+            "selling_price": getattr(mobile, 'selling_price', None),
+            "status": getattr(mobile, 'status', None),
+            "purchase_date": getattr(mobile, 'purchase_date', None),
+            "created_at": mobile.created_at.isoformat() if getattr(mobile, 'created_at', None) else None,
+            "updated_at": mobile.updated_at.isoformat() if getattr(mobile, 'updated_at', None) else None,
+        })
+
+    return result
 
 @router.get("/mobiles/{mobile_id}", response_model=MobileInventorySchema)
 def get_mobile(mobile_id: int, db: Session = Depends(get_db)):

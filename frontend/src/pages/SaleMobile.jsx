@@ -4,6 +4,7 @@ import BilingualLabel from '../components/BilingualLabel';
 import BilingualButton from '../components/BilingualButton';
 import BilingualAlert from '../components/BilingualAlert';
 import BilingualInput from '../components/BilingualInput';
+import BackButton from '../components/BackButton';
 import Modal from '../components/Modal';
 import { partiesAPI, mobileAPI, transactionsAPI } from '../services/api';
 
@@ -201,6 +202,11 @@ const SaleMobile = () => {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
+      {/* Back Button */}
+      <div className="mb-6">
+        <BackButton fallbackPath="/" />
+      </div>
+
       {/* Header */}
       <div className="mb-8">
         <BilingualLabel
@@ -504,15 +510,25 @@ const Step2MobileSelection = ({ formData, mobiles, onInputChange }) => {
         )}
       </div>
 
-      <BilingualInput
-        en="Selling Price (Rs.)"
-        ur="فروخت کی قیمت (روپے)"
-        type="number"
-        value={formData.selling_price}
-        onChange={(e) => onInputChange('selling_price', e.target.value)}
-        required={true}
-        icon="💰"
-      />
+      <div>
+        <BilingualInput
+          en="Selling Price (Rs.)"
+          ur="فروخت کی قیمت (روپے)"
+          type="number"
+          value={formData.selling_price}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val === '' || parseFloat(val) >= 0) {
+              onInputChange('selling_price', val);
+            }
+          }}
+          required={true}
+          placeholder="0"
+        />
+        {formData.selling_price && parseFloat(formData.selling_price) < 0 && (
+          <p className="text-red-600 text-sm mt-1">⚠️ Selling price cannot be negative</p>
+        )}
+      </div>
     </div>
   );
 };
@@ -561,15 +577,25 @@ const Step3PaymentDetails = ({ formData, onInputChange }) => {
         </div>
       </div>
 
-      <BilingualInput
-        en="Amount Paid (Rs.)"
-        ur="ادا کی گئی رقم (روپے)"
-        type="number"
-        value={formData.amount_paid}
-        onChange={(e) => onInputChange('amount_paid', e.target.value)}
-        required={true}
-        icon="💳"
-      />
+      <div>
+        <BilingualInput
+          en="Amount Paid (Rs.)"
+          ur="ادا کی گئی رقم (روپے)"
+          type="number"
+          value={formData.amount_paid}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val === '' || parseFloat(val) >= 0) {
+              onInputChange('amount_paid', val);
+            }
+          }}
+          required={true}
+          placeholder="0"
+        />
+        {formData.amount_paid && parseFloat(formData.amount_paid) < 0 && (
+          <p className="text-red-600 text-sm mt-1">⚠️ Amount paid cannot be negative</p>
+        )}
+      </div>
 
       <BilingualInput
         en="Notes (Optional)"

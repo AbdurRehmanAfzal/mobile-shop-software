@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import BilingualLabel from '../components/BilingualLabel';
 import BilingualButton from '../components/BilingualButton';
 import BilingualAlert from '../components/BilingualAlert';
+import BackButton from '../components/BackButton';
 import Modal from '../components/Modal';
 import { partiesAPI } from '../services/api';
 
@@ -142,6 +143,11 @@ const ViewSupplier = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+      {/* Back Button */}
+      <div className="mb-6">
+        <BackButton fallbackPath="/" />
+      </div>
+
       {/* Header */}
       <div className="mb-8">
         <BilingualLabel

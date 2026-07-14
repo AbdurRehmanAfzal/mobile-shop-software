@@ -4,6 +4,7 @@ import BilingualLabel from '../components/BilingualLabel';
 import BilingualButton from '../components/BilingualButton';
 import BilingualAlert from '../components/BilingualAlert';
 import BilingualInput from '../components/BilingualInput';
+import BackButton from '../components/BackButton';
 import Modal from '../components/Modal';
 import { partiesAPI, mobileAPI, transactionsAPI, brandsAPI, modelsAPI } from '../services/api';
 
@@ -14,13 +15,22 @@ const TradeInPurchase = () => {
   const [success, setSuccess] = useState(false);
   const [showAddSupplierModal, setShowAddSupplierModal] = useState(false);
 
+  // Camera and file upload refs
+  const cnicFrontCameraRef = React.useRef(null);
+  const cnicFrontFileRef = React.useRef(null);
+  const cnicBackCameraRef = React.useRef(null);
+  const cnicBackFileRef = React.useRef(null);
+  const photosCameraRef = React.useRef(null);
+  const photosFileRef = React.useRef(null);
+
   // Form Data - All 6 steps
   const [formData, setFormData] = useState({
     // Step 1: Supplier
     supplier_id: '',
     // Step 2: CNIC
     cnic_number: '',
-    cnic_photo_url: '',
+    cnic_front_photo: '',
+    cnic_back_photo: '',
     // Step 3: Photos (optional)
     photos: [],
     // Step 4: Device Details
@@ -57,7 +67,8 @@ const TradeInPurchase = () => {
   const [models, setModels] = useState([]);
   const [selectedSupplier, setSelectedSupplier] = useState(null);
   const [photoPreviews, setPhotoPreviews] = useState([]);
-  const [cnicPhotoPreview, setCnicPhotoPreview] = useState(null);
+  const [cnicFrontPhotoPreview, setCnicFrontPhotoPreview] = useState(null);
+  const [cnicBackPhotoPreview, setCnicBackPhotoPreview] = useState(null);
 
   // Load initial data
   useEffect(() => {
@@ -196,17 +207,49 @@ const TradeInPurchase = () => {
     setPhotoPreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // CNIC photo handler
-  const handleCnicPhotoCapture = (e) => {
+  // CNIC photo handler for front
+  const handleCnicFrontPhotoCapture = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (event) => {
         const base64 = event.target.result;
-        setFormData((prev) => ({ ...prev, cnic_photo_url: base64 }));
-        setCnicPhotoPreview(base64);
+        setFormData((prev) => ({ ...prev, cnic_front_photo: base64 }));
+        setCnicFrontPhotoPreview(base64);
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  // CNIC photo handler for back
+  const handleCnicBackPhotoCapture = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64 = event.target.result;
+        setFormData((prev) => ({ ...prev, cnic_back_photo: base64 }));
+        setCnicBackPhotoPreview(base64);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // CNIC auto-format: converts "123451234567 1" to "12345-1234567-1"
+  const formatCnicNumber = (value) => {
+    // Remove all non-digit characters
+    const digitsOnly = value.replace(/\D/g, '');
+
+    // Limit to 13 digits (5 + 7 + 1)
+    const limited = digitsOnly.slice(0, 13);
+
+    // Format with dashes
+    if (limited.length <= 5) {
+      return limited;
+    } else if (limited.length <= 12) {
+      return `${limited.slice(0, 5)}-${limited.slice(5)}`;
+    } else {
+      return `${limited.slice(0, 5)}-${limited.slice(5, 12)}-${limited.slice(12)}`;
     }
   };
 
@@ -296,6 +339,11 @@ const TradeInPurchase = () => {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
+      {/* Back Button */}
+      <div className="mb-6">
+        <BackButton fallbackPath="/" />
+      </div>
+
       {/* Header */}
       <div className="mb-8">
         <BilingualLabel
@@ -345,16 +393,27 @@ const TradeInPurchase = () => {
           <Step2CnicCapture
             formData={formData}
             onInputChange={handleInputChange}
-            onPhotoCapture={handleCnicPhotoCapture}
-            cnicPhotoPreview={cnicPhotoPreview}
+            onCameraCaptureFront={handleCnicFrontPhotoCapture}
+            onCameraCapureBack={handleCnicBackPhotoCapture}
+            onClearPhotoFront={() => setCnicFrontPhotoPreview(null)}
+            onClearPhotoBack={() => setCnicBackPhotoPreview(null)}
+            cnicFrontCameraRef={cnicFrontCameraRef}
+            cnicFrontFileRef={cnicFrontFileRef}
+            cnicBackCameraRef={cnicBackCameraRef}
+            cnicBackFileRef={cnicBackFileRef}
+            cnicFrontPhotoPreview={cnicFrontPhotoPreview}
+            cnicBackPhotoPreview={cnicBackPhotoPreview}
             validateCnicFormat={validateCnicFormat}
+            formatCnicNumber={formatCnicNumber}
           />
         )}
         {currentStep === 3 && (
           <Step3PhotoUpload
             formData={formData}
             photoPreviews={photoPreviews}
-            onPhotoCapture={handlePhotoCapture}
+            onCameraCapture={handlePhotoCapture}
+            photosCameraRef={photosCameraRef}
+            photosFileRef={photosFileRef}
             onRemovePhoto={removePhoto}
           />
         )}
@@ -559,8 +618,53 @@ const Step1SupplierSelection = ({ formData, suppliers, onInputChange, onAddNew }
 };
 
 // Step 2: CNIC Capture
-const Step2CnicCapture = ({ formData, onInputChange, onPhotoCapture, cnicPhotoPreview, validateCnicFormat }) => {
+const Step2CnicCapture = ({
+  formData,
+  onInputChange,
+  onCameraCaptureFront,
+  onCameraCapureBack,
+  onClearPhotoFront,
+  onClearPhotoBack,
+  cnicFrontCameraRef,
+  cnicFrontFileRef,
+  cnicBackCameraRef,
+  cnicBackFileRef,
+  cnicFrontPhotoPreview,
+  cnicBackPhotoPreview,
+  validateCnicFormat,
+  formatCnicNumber
+}) => {
   const isCnicValid = formData.cnic_number ? validateCnicFormat(formData.cnic_number) : false;
+
+  const handleCameraClickFront = () => {
+    cnicFrontCameraRef.current?.click();
+  };
+
+  const handleFileClickFront = () => {
+    cnicFrontFileRef.current?.click();
+  };
+
+  const handleCameraClickBack = () => {
+    cnicBackCameraRef.current?.click();
+  };
+
+  const handleFileClickBack = () => {
+    cnicBackFileRef.current?.click();
+  };
+
+  const handleRemovePhotoFront = () => {
+    onInputChange('cnic_front_photo', '');
+    onClearPhotoFront();
+    if (cnicFrontCameraRef.current) cnicFrontCameraRef.current.value = '';
+    if (cnicFrontFileRef.current) cnicFrontFileRef.current.value = '';
+  };
+
+  const handleRemovePhotoBack = () => {
+    onInputChange('cnic_back_photo', '');
+    onClearPhotoBack();
+    if (cnicBackCameraRef.current) cnicBackCameraRef.current.value = '';
+    if (cnicBackFileRef.current) cnicBackFileRef.current.value = '';
+  };
 
   return (
     <div className="space-y-6">
@@ -582,12 +686,16 @@ const Step2CnicCapture = ({ formData, onInputChange, onPhotoCapture, cnicPhotoPr
         />
         <input
           type="text"
-          placeholder="Format: 12345-1234567-1"
+          placeholder="Enter CNIC: 12345 1234567 1"
           value={formData.cnic_number}
-          onChange={(e) => onInputChange('cnic_number', e.target.value)}
-          className={`w-full px-4 py-3 border rounded-lg focus:outline-none ${
+          onChange={(e) => {
+            const formatted = formatCnicNumber(e.target.value);
+            onInputChange('cnic_number', formatted);
+          }}
+          maxLength="15"
+          className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors font-mono tracking-wider ${
             formData.cnic_number && !isCnicValid
-              ? 'border-red-500 focus:border-red-500'
+              ? 'border-red-500 bg-red-50 focus:border-red-600'
               : 'border-gray-300 focus:border-blue-500'
           }`}
         />
@@ -599,59 +707,164 @@ const Step2CnicCapture = ({ formData, onInputChange, onPhotoCapture, cnicPhotoPr
         )}
       </div>
 
+      {/* CNIC Front Photo */}
       <div className="border-t pt-6">
         <BilingualLabel
-          en="CNIC Photo (Optional)"
-          ur="CNIC فوٹو (اختیاری)"
+          en="CNIC Front (Optional)"
+          ur="CNIC کا آگے والا حصہ (اختیاری)"
           size="md"
           bold={true}
           className="mb-4"
         />
 
-        {cnicPhotoPreview ? (
+        {cnicFrontPhotoPreview ? (
           <div className="flex flex-col items-center gap-4">
-            <img
-              src={cnicPhotoPreview}
-              alt="CNIC Preview"
-              className="max-w-xs max-h-60 border rounded-lg"
-            />
+            <div className="relative">
+              <img
+                src={cnicFrontPhotoPreview}
+                alt="CNIC Front"
+                className="max-w-xs max-h-60 border-2 border-green-500 rounded-lg shadow-sm"
+              />
+              <div className="absolute top-2 right-2 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                ✓ Uploaded
+              </div>
+            </div>
+            <p className="text-gray-500 text-sm">Only one CNIC front image allowed</p>
             <button
-              onClick={() => {
-                onInputChange('cnic_photo_url', '');
-              }}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              type="button"
+              onClick={handleRemovePhotoFront}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
             >
-              Remove Photo
+              ✕ Remove & Re-upload
             </button>
           </div>
         ) : (
           <div className="flex gap-4">
-            <label className="flex-1 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-colors text-center">
+            <button
+              type="button"
+              onClick={handleCameraClickFront}
+              className="flex-1 px-4 py-3 border-2 border-dashed border-blue-300 rounded-lg cursor-pointer hover:border-blue-600 hover:bg-blue-50 transition-colors text-center active:bg-blue-100"
+            >
               <div className="flex flex-col items-center gap-2">
                 <span className="text-2xl">📷</span>
-                <span className="text-gray-600">Take Photo</span>
+                <span className="text-gray-600 font-medium">Take Photo</span>
+                <span className="text-gray-400 text-xs">(Camera)</span>
               </div>
-              <input
-                type="file"
-                accept="image/*"
-                capture="environment"
-                onChange={onPhotoCapture}
-                className="hidden"
-              />
-            </label>
+            </button>
 
-            <label className="flex-1 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-colors text-center">
+            <button
+              type="button"
+              onClick={handleFileClickFront}
+              className="flex-1 px-4 py-3 border-2 border-dashed border-blue-300 rounded-lg cursor-pointer hover:border-blue-600 hover:bg-blue-50 transition-colors text-center active:bg-blue-100"
+            >
               <div className="flex flex-col items-center gap-2">
                 <span className="text-2xl">🖼️</span>
-                <span className="text-gray-600">Upload Photo</span>
+                <span className="text-gray-600 font-medium">Upload Photo</span>
+                <span className="text-gray-400 text-xs">(One Only)</span>
               </div>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={onPhotoCapture}
-                className="hidden"
+            </button>
+
+            {/* Hidden camera input - Front */}
+            <input
+              ref={cnicFrontCameraRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={onCameraCaptureFront}
+              className="hidden"
+              aria-label="Capture CNIC front with camera"
+            />
+
+            {/* Hidden file input - Front */}
+            <input
+              ref={cnicFrontFileRef}
+              type="file"
+              accept="image/*"
+              onChange={onCameraCaptureFront}
+              className="hidden"
+              aria-label="Upload CNIC front from gallery"
+            />
+          </div>
+        )}
+      </div>
+
+      {/* CNIC Back Photo */}
+      <div className="border-t pt-6">
+        <BilingualLabel
+          en="CNIC Back (Optional)"
+          ur="CNIC کا پچھلا حصہ (اختیاری)"
+          size="md"
+          bold={true}
+          className="mb-4"
+        />
+
+        {cnicBackPhotoPreview ? (
+          <div className="flex flex-col items-center gap-4">
+            <div className="relative">
+              <img
+                src={cnicBackPhotoPreview}
+                alt="CNIC Back"
+                className="max-w-xs max-h-60 border-2 border-green-500 rounded-lg shadow-sm"
               />
-            </label>
+              <div className="absolute top-2 right-2 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                ✓ Uploaded
+              </div>
+            </div>
+            <p className="text-gray-500 text-sm">Only one CNIC back image allowed</p>
+            <button
+              type="button"
+              onClick={handleRemovePhotoBack}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+            >
+              ✕ Remove & Re-upload
+            </button>
+          </div>
+        ) : (
+          <div className="flex gap-4">
+            <button
+              type="button"
+              onClick={handleCameraClickBack}
+              className="flex-1 px-4 py-3 border-2 border-dashed border-purple-300 rounded-lg cursor-pointer hover:border-purple-600 hover:bg-purple-50 transition-colors text-center active:bg-purple-100"
+            >
+              <div className="flex flex-col items-center gap-2">
+                <span className="text-2xl">📷</span>
+                <span className="text-gray-600 font-medium">Take Photo</span>
+                <span className="text-gray-400 text-xs">(Camera)</span>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleFileClickBack}
+              className="flex-1 px-4 py-3 border-2 border-dashed border-purple-300 rounded-lg cursor-pointer hover:border-purple-600 hover:bg-purple-50 transition-colors text-center active:bg-purple-100"
+            >
+              <div className="flex flex-col items-center gap-2">
+                <span className="text-2xl">🖼️</span>
+                <span className="text-gray-600 font-medium">Upload Photo</span>
+                <span className="text-gray-400 text-xs">(One Only)</span>
+              </div>
+            </button>
+
+            {/* Hidden camera input - Back */}
+            <input
+              ref={cnicBackCameraRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={onCameraCapureBack}
+              className="hidden"
+              aria-label="Capture CNIC back with camera"
+            />
+
+            {/* Hidden file input - Back */}
+            <input
+              ref={cnicBackFileRef}
+              type="file"
+              accept="image/*"
+              onChange={onCameraCapureBack}
+              className="hidden"
+              aria-label="Upload CNIC back from gallery"
+            />
           </div>
         )}
       </div>
@@ -660,7 +873,15 @@ const Step2CnicCapture = ({ formData, onInputChange, onPhotoCapture, cnicPhotoPr
 };
 
 // Step 3: Photo Upload
-const Step3PhotoUpload = ({ formData, photoPreviews, onPhotoCapture, onRemovePhoto }) => {
+const Step3PhotoUpload = ({ formData, photoPreviews, onCameraCapture, photosCameraRef, photosFileRef, onRemovePhoto }) => {
+  const handleCameraClick = () => {
+    photosCameraRef.current?.click();
+  };
+
+  const handleFileClick = () => {
+    photosFileRef.current?.click();
+  };
+
   return (
     <div className="space-y-6">
       <BilingualLabel
@@ -671,9 +892,16 @@ const Step3PhotoUpload = ({ formData, photoPreviews, onPhotoCapture, onRemovePho
         className="mb-4"
       />
 
-      <p className="text-gray-600 text-sm">
-        📸 Take photos from different angles (front, back, sides). Maximum 4 photos allowed. This step is optional but recommended.
-      </p>
+      <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+        <p className="text-gray-700 text-sm font-medium">
+          📸 Take photos from different angles (front, back, sides)
+        </p>
+        <p className="text-gray-600 text-xs mt-1">
+          • Maximum 4 photos allowed
+          • Click "Upload Photo" to select multiple images at once
+          • This step is optional but recommended
+        </p>
+      </div>
 
       {photoPreviews.length > 0 && (
         <div>
@@ -706,34 +934,51 @@ const Step3PhotoUpload = ({ formData, photoPreviews, onPhotoCapture, onRemovePho
 
       {photoPreviews.length < 4 && (
         <div className="flex gap-4">
-          <label className="flex-1 px-4 py-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-colors text-center">
+          <button
+            type="button"
+            onClick={handleCameraClick}
+            className="flex-1 px-4 py-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-colors text-center active:bg-blue-100"
+          >
             <div className="flex flex-col items-center gap-2">
               <span className="text-3xl">📷</span>
-              <span className="text-gray-600">Take Photo</span>
-              <span className="text-gray-400 text-xs">({photoPreviews.length}/4)</span>
+              <span className="text-gray-600 font-medium">Take Photo</span>
+              <span className="text-gray-400 text-xs">({photoPreviews.length}/4) Camera</span>
             </div>
-            <input
-              type="file"
-              accept="image/*"
-              capture="environment"
-              onChange={onPhotoCapture}
-              className="hidden"
-            />
-          </label>
+          </button>
 
-          <label className="flex-1 px-4 py-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-colors text-center">
+          <button
+            type="button"
+            onClick={handleFileClick}
+            className="flex-1 px-4 py-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-colors text-center active:bg-blue-100"
+          >
             <div className="flex flex-col items-center gap-2">
               <span className="text-3xl">🖼️</span>
-              <span className="text-gray-600">Upload Photo</span>
-              <span className="text-gray-400 text-xs">({photoPreviews.length}/4)</span>
+              <span className="text-gray-600 font-medium">Select Photos</span>
+              <span className="text-gray-400 text-xs">({photoPreviews.length}/4) Multiple OK</span>
             </div>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={onPhotoCapture}
-              className="hidden"
-            />
-          </label>
+          </button>
+
+          {/* Hidden camera input */}
+          <input
+            ref={photosCameraRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={onCameraCapture}
+            className="hidden"
+            aria-label="Capture device photo with camera"
+          />
+
+          {/* Hidden file input */}
+          <input
+            ref={photosFileRef}
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={onCameraCapture}
+            className="hidden"
+            aria-label="Upload device photos from gallery"
+          />
         </div>
       )}
     </div>
@@ -926,10 +1171,22 @@ const Step5PricingPayment = ({ formData, onInputChange }) => {
         <input
           type="number"
           value={formData.purchase_price}
-          onChange={(e) => onInputChange('purchase_price', e.target.value)}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val === '' || parseFloat(val) >= 0) {
+              onInputChange('purchase_price', val);
+            }
+          }}
           placeholder="Enter purchase price"
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+          className={`w-full px-4 py-3 border rounded-lg focus:outline-none ${
+            formData.purchase_price && parseFloat(formData.purchase_price) < 0
+              ? 'border-red-300 bg-red-50'
+              : 'border-gray-300 focus:border-blue-500'
+          }`}
         />
+        {formData.purchase_price && parseFloat(formData.purchase_price) < 0 && (
+          <p className="text-red-600 text-sm mt-1">⚠️ Purchase price cannot be negative</p>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -963,10 +1220,22 @@ const Step5PricingPayment = ({ formData, onInputChange }) => {
           <input
             type="number"
             value={formData.amount_paid}
-            onChange={(e) => onInputChange('amount_paid', e.target.value)}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (val === '' || parseFloat(val) >= 0) {
+                onInputChange('amount_paid', val);
+              }
+            }}
             placeholder="Enter amount paid"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+            className={`w-full px-4 py-3 border rounded-lg focus:outline-none ${
+              formData.amount_paid && parseFloat(formData.amount_paid) < 0
+                ? 'border-red-300 bg-red-50'
+                : 'border-gray-300 focus:border-blue-500'
+            }`}
           />
+          {formData.amount_paid && parseFloat(formData.amount_paid) < 0 && (
+            <p className="text-red-600 text-sm mt-1">⚠️ Amount paid cannot be negative</p>
+          )}
         </div>
       </div>
 

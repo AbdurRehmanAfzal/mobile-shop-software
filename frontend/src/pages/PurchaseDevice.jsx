@@ -2,12 +2,18 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import BilingualLabel from '../components/BilingualLabel';
+import BackButton from '../components/BackButton';
 
 const PurchaseDevice = () => {
   const navigate = useNavigate();
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
+      {/* Back Button */}
+      <div className="mb-6">
+        <BackButton fallbackPath="/" />
+      </div>
+
       {/* Header */}
       <div className="mb-8">
         <BilingualLabel

@@ -5,6 +5,7 @@ import BilingualLabel from '../components/BilingualLabel';
 import BilingualButton from '../components/BilingualButton';
 import BilingualAlert from '../components/BilingualAlert';
 import BilingualInput from '../components/BilingualInput';
+import BackButton from '../components/BackButton';
 import { transactionsAPI } from '../services/api';
 
 const MobileHistory = () => {
@@ -108,6 +109,11 @@ const MobileHistory = () => {
 const SearchView = ({ onSearch, searchQuery, setSearchQuery, searchResults, loading, error, onSelect }) => {
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
+      {/* Back Button */}
+      <div className="mb-6">
+        <BackButton fallbackPath="/" />
+      </div>
+
       <div className="mb-8">
         <BilingualLabel
           en="Mobile History / Passport"

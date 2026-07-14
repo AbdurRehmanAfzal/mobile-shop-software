@@ -4,6 +4,7 @@ import BilingualLabel from '../components/BilingualLabel';
 import BilingualButton from '../components/BilingualButton';
 import BilingualAlert from '../components/BilingualAlert';
 import BilingualInput from '../components/BilingualInput';
+import BackButton from '../components/BackButton';
 import Modal from '../components/Modal';
 import { brandsAPI, modelsAPI, mobileAPI, partiesAPI, storageAPI, colorAPI } from '../services/api';
 
@@ -17,6 +18,8 @@ const AddMobile = () => {
   const [showAddBrandModal, setShowAddBrandModal] = useState(false);
   const [showAddModelModal, setShowAddModelModal] = useState(false);
   const [showAddSupplierModal, setShowAddSupplierModal] = useState(false);
+  const [showAddStorageModal, setShowAddStorageModal] = useState(false);
+  const [showAddColorModal, setShowAddColorModal] = useState(false);
 
   // Optional fields visibility
   const [showImei3, setShowImei3] = useState(false);
@@ -76,6 +79,19 @@ const AddMobile = () => {
     address: '',
     city: '',
     type: 'VENDOR', // VENDOR or TRADE_IN
+  });
+
+  // New Storage Form
+  const [newStorage, setNewStorage] = useState({
+    name: '',
+    name_urdu: '',
+  });
+
+  // New Color Form
+  const [newColor, setNewColor] = useState({
+    name: '',
+    name_urdu: '',
+    hex_code: '#000000',
   });
 
   // Dropdowns Data
@@ -278,6 +294,67 @@ const AddMobile = () => {
     }
   };
 
+  const handleAddStorage = async () => {
+    if (!newStorage.name) {
+      setError('Storage name is required');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await storageAPI.create(newStorage.name, newStorage.name_urdu || null);
+
+      if (res.success) {
+        setStorages([...storages, res.data]);
+        setFormData((prev) => ({ ...prev, storage_id: res.data.id.toString() }));
+        setShowAddStorageModal(false);
+        setNewStorage({
+          name: '',
+          name_urdu: '',
+        });
+        setSuccess('Storage option added successfully!');
+        setTimeout(() => setSuccess(false), 3000);
+      } else {
+        setError(res.error || 'Failed to add storage option');
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to add storage option');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddColor = async () => {
+    if (!newColor.name) {
+      setError('Color name is required');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await colorAPI.create(newColor.name, newColor.name_urdu || null, newColor.hex_code || null);
+
+      if (res.success) {
+        setColors([...colors, res.data]);
+        setFormData((prev) => ({ ...prev, color_id: res.data.id.toString() }));
+        setShowAddColorModal(false);
+        setNewColor({
+          name: '',
+          name_urdu: '',
+          hex_code: '#000000',
+        });
+        setSuccess('Color option added successfully!');
+        setTimeout(() => setSuccess(false), 3000);
+      } else {
+        setError(res.error || 'Failed to add color option');
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to add color option');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const validateStep = (step) => {
     switch (step) {
       case 1:
@@ -301,11 +378,16 @@ const AddMobile = () => {
         }
         return true;
       case 5:
+        const costPrice = parseFloat(formData.cost_price) || 0;
+        const sellingPrice = parseFloat(formData.selling_price) || 0;
         return (
           formData.cost_price &&
           formData.selling_price &&
           formData.supplier_id &&
-          formData.purchase_date
+          formData.purchase_date &&
+          costPrice > 0 &&
+          sellingPrice > 0 &&
+          sellingPrice >= costPrice
         );
       default:
         return false;
@@ -410,6 +492,11 @@ const AddMobile = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+      {/* Back Button */}
+      <div className="mb-6">
+        <BackButton fallbackPath="/" />
+      </div>
+
       {/* Header */}
       <div className="mb-8">
         <BilingualLabel
@@ -500,6 +587,8 @@ const AddMobile = () => {
               setShowImei3={setShowImei3}
               showSerialNumber={showSerialNumber}
               setShowSerialNumber={setShowSerialNumber}
+              onAddNewStorage={() => setShowAddStorageModal(true)}
+              onAddNewColor={() => setShowAddColorModal(true)}
             />
           </>
         )}
@@ -781,6 +870,108 @@ const AddMobile = () => {
           </div>
         </div>
       </Modal>
+
+      {/* Add Storage Modal */}
+      <Modal
+        isOpen={showAddStorageModal}
+        title="Add New Storage Option"
+        subtitle="Create a new storage capacity option"
+        onClose={() => setShowAddStorageModal(false)}
+        size="md"
+      >
+        <div className="space-y-4">
+          <BilingualInput
+            en="Storage Name"
+            ur="اسٹوریج کا نام"
+            type="text"
+            value={newStorage.name}
+            onChange={(e) => setNewStorage({ ...newStorage, name: e.target.value })}
+            required={true}
+            icon="💾"
+            placeholder="e.g., 16GB, 32GB, 128GB, 1TB, etc."
+          />
+          <BilingualInput
+            en="Storage Name (Urdu)"
+            ur="اسٹوریج کا نام (اردو)"
+            type="text"
+            value={newStorage.name_urdu}
+            onChange={(e) => setNewStorage({ ...newStorage, name_urdu: e.target.value })}
+            icon="📝"
+          />
+
+          <div className="flex gap-4 mt-6">
+            <button
+              onClick={() => setShowAddStorageModal(false)}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleAddStorage}
+              disabled={loading}
+              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400"
+            >
+              {loading ? 'Adding...' : 'Add Storage'}
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Add Color Modal */}
+      <Modal
+        isOpen={showAddColorModal}
+        title="Add New Color Option"
+        subtitle="Create a new color option"
+        onClose={() => setShowAddColorModal(false)}
+        size="md"
+      >
+        <div className="space-y-4">
+          <BilingualInput
+            en="Color Name"
+            ur="رنگ کا نام"
+            type="text"
+            value={newColor.name}
+            onChange={(e) => setNewColor({ ...newColor, name: e.target.value })}
+            required={true}
+            icon="🎨"
+            placeholder="e.g., Black, White, Gold, Midnight Black, etc."
+          />
+          <BilingualInput
+            en="Color Name (Urdu)"
+            ur="رنگ کا نام (اردو)"
+            type="text"
+            value={newColor.name_urdu}
+            onChange={(e) => setNewColor({ ...newColor, name_urdu: e.target.value })}
+            icon="📝"
+          />
+
+          <div>
+            <BilingualLabel en="Color Code (Optional)" ur="رنگ کا کوڈ (اختیاری)" size="sm" bold={true} className="mb-2" />
+            <input
+              type="color"
+              value={newColor.hex_code}
+              onChange={(e) => setNewColor({ ...newColor, hex_code: e.target.value })}
+              className="w-full h-12 border border-gray-300 rounded-lg cursor-pointer"
+            />
+          </div>
+
+          <div className="flex gap-4 mt-6">
+            <button
+              onClick={() => setShowAddColorModal(false)}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleAddColor}
+              disabled={loading}
+              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400"
+            >
+              {loading ? 'Adding...' : 'Add Color'}
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
@@ -852,7 +1043,7 @@ const Step1BrandModel = ({ formData, brands, models, onInputChange, onAddNewBran
 };
 
 // Step 2: Device Details
-const Step2DeviceDetails = ({ formData, onInputChange, storages, colors, showImei3, setShowImei3, showSerialNumber, setShowSerialNumber }) => {
+const Step2DeviceDetails = ({ formData, onInputChange, storages, colors, showImei3, setShowImei3, showSerialNumber, setShowSerialNumber, onAddNewStorage, onAddNewColor }) => {
   return (
     <div className="space-y-6">
       <BilingualLabel
@@ -1037,6 +1228,15 @@ const Step2DeviceDetails = ({ formData, onInputChange, storages, colors, showIme
         {!formData.storage_id && (
           <p className="text-red-600 text-sm mt-1">Storage selection is required</p>
         )}
+
+        {/* Add New Storage Option Button */}
+        <button
+          onClick={onAddNewStorage}
+          type="button"
+          className="mt-3 w-full px-4 py-2 border-2 border-dashed border-blue-300 rounded-lg text-blue-600 hover:bg-blue-50 transition-colors font-semibold text-sm"
+        >
+          + Add Custom Storage Option
+        </button>
       </div>
 
       {/* Color Selection */}
@@ -1062,6 +1262,15 @@ const Step2DeviceDetails = ({ formData, onInputChange, storages, colors, showIme
         {!formData.color_id && (
           <p className="text-red-600 text-sm mt-1">Color selection is required</p>
         )}
+
+        {/* Add New Color Option Button */}
+        <button
+          onClick={onAddNewColor}
+          type="button"
+          className="mt-3 w-full px-4 py-2 border-2 border-dashed border-purple-300 rounded-lg text-purple-600 hover:bg-purple-50 transition-colors font-semibold text-sm"
+        >
+          + Add Custom Color Option
+        </button>
       </div>
     </div>
   );
@@ -1219,6 +1428,19 @@ const Step4ConditionDetails = ({
 
 // Step 5: Prices & Supplier
 const Step5PricesSupplier = ({ formData, suppliers, onInputChange, onAddNewSupplier }) => {
+  // Validation states
+  const costPrice = parseFloat(formData.cost_price) || 0;
+  const sellingPrice = parseFloat(formData.selling_price) || 0;
+
+  const costPriceError = formData.cost_price && costPrice < 0 ? 'Cost price cannot be negative' : null;
+  const sellingPriceError = formData.selling_price && sellingPrice < 0 ? 'Selling price cannot be negative' : null;
+  const priceMismatchError = formData.cost_price && formData.selling_price && sellingPrice < costPrice
+    ? 'Selling price cannot be less than cost price'
+    : null;
+
+  const profit = costPrice > 0 && sellingPrice > 0 ? sellingPrice - costPrice : 0;
+  const profitPercentage = costPrice > 0 ? ((profit / costPrice) * 100).toFixed(1) : 0;
+
   return (
     <div className="space-y-6">
       <BilingualLabel
@@ -1229,30 +1451,54 @@ const Step5PricesSupplier = ({ formData, suppliers, onInputChange, onAddNewSuppl
         className="mb-4"
       />
 
-      <BilingualInput
-        en="Cost Price (Rs.)"
-        ur="لاگت کی قیمت (روپے)"
-        type="number"
-        value={formData.cost_price}
-        onChange={(e) => onInputChange('cost_price', e.target.value)}
-        required={true}
-        icon="💰"
-      />
+      <div>
+        <BilingualInput
+          en="Cost Price (Rs.)"
+          ur="لاگت کی قیمت (روپے)"
+          type="number"
+          value={formData.cost_price}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val === '' || parseFloat(val) >= 0) {
+              onInputChange('cost_price', val);
+            }
+          }}
+          required={true}
+          placeholder="0"
+        />
+        {costPriceError && (
+          <p className="text-red-600 text-sm mt-1">⚠️ {costPriceError}</p>
+        )}
+      </div>
 
-      <BilingualInput
-        en="Selling Price (Rs.)"
-        ur="فروخت کی قیمت (روپے)"
-        type="number"
-        value={formData.selling_price}
-        onChange={(e) => onInputChange('selling_price', e.target.value)}
-        required={true}
-        icon="💵"
-      />
+      <div>
+        <BilingualInput
+          en="Selling Price (Rs.)"
+          ur="فروخت کی قیمت (روپے)"
+          type="number"
+          value={formData.selling_price}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val === '' || parseFloat(val) >= 0) {
+              onInputChange('selling_price', val);
+            }
+          }}
+          required={true}
+          placeholder="0"
+        />
+        {sellingPriceError && (
+          <p className="text-red-600 text-sm mt-1">⚠️ {sellingPriceError}</p>
+        )}
+        {priceMismatchError && (
+          <p className="text-red-600 text-sm mt-1">⚠️ {priceMismatchError}</p>
+        )}
+      </div>
 
-      {formData.cost_price && formData.selling_price && (
-        <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <p className="text-sm text-gray-600">
-            Profit: Rs. {(parseFloat(formData.selling_price) - parseFloat(formData.cost_price)).toLocaleString()}
+      {formData.cost_price && formData.selling_price && !costPriceError && !sellingPriceError && !priceMismatchError && (
+        <div className={`p-4 rounded-lg border ${profit >= 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+          <p className={`text-sm ${profit >= 0 ? 'text-green-700' : 'text-red-700'}`}>
+            <span className="font-semibold">Profit: Rs. {profit.toLocaleString()}</span>
+            <span className="ml-2">({profitPercentage}%)</span>
           </p>
         </div>
       )}

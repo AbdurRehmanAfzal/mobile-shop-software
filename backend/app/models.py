@@ -40,22 +40,26 @@ class Model(Base):
 # ============================================================================
 class Party(Base):
     __tablename__ = "parties"
-    
+
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     phone = Column(String, unique=True, nullable=False, index=True)
+    email = Column(String, nullable=True)
+    whatsapp = Column(String, nullable=True)
     cnic = Column(String, nullable=True)
     address = Column(String, nullable=True)
-    type = Column(String, nullable=False)  # CUSTOMER or SUPPLIER
+    city = Column(String, nullable=True)
+    type = Column(String, nullable=False)  # CUSTOMER or VENDOR
     current_balance = Column(Float, default=0.0)
     # CUSTOMER: positive = they owe us
-    # SUPPLIER: positive = we owe them
+    # VENDOR: positive = we owe them
     is_active = Column(Boolean, default=True)
+    notes = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
+
     __table_args__ = (
-        CheckConstraint("type IN ('CUSTOMER', 'SUPPLIER')"),
+        CheckConstraint("type IN ('CUSTOMER', 'VENDOR', 'TRADE_IN')"),
     )
     
     def __repr__(self):
@@ -66,7 +70,7 @@ class Party(Base):
 # ============================================================================
 class MobileInventory(Base):
     __tablename__ = "mobile_inventory"
-    
+
     id = Column(Integer, primary_key=True, index=True)
     model_id = Column(Integer, ForeignKey("models.id"), nullable=False)
     purchased_from = Column(Integer, ForeignKey("parties.id"), nullable=True)  # supplier ID
@@ -82,13 +86,13 @@ class MobileInventory(Base):
     purchase_date = Column(Date, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
+
     __table_args__ = (
         CheckConstraint("condition IN ('BOX_PACK', 'PATCHED', 'USED')"),
         CheckConstraint("used_condition IS NULL OR used_condition IN ('GOOD', 'AVERAGE', 'POOR')"),
         CheckConstraint("status IN ('IN_STOCK', 'SOLD', 'RESERVED', 'TRADE_IN')"),
     )
-    
+
     def __repr__(self):
         return f"<MobileInventory {self.id} - {self.condition}>"
 
@@ -177,7 +181,7 @@ class DealAccessory(Base):
 # ============================================================================
 class Notification(Base):
     __tablename__ = "notifications"
-    
+
     id = Column(Integer, primary_key=True, index=True)
     party_id = Column(Integer, ForeignKey("parties.id"), nullable=False)
     transaction_id = Column(Integer, ForeignKey("transactions.id"), nullable=True)
@@ -188,11 +192,40 @@ class Notification(Base):
     scheduled_at = Column(DateTime, nullable=True)
     sent_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
-    
+
     __table_args__ = (
         CheckConstraint("type IN ('PAYMENT_REMINDER', 'ACCESSORY_PENDING', 'BALANCE_CLEAR', 'OVERDUE_ALERT', 'VENDOR_PAYMENT_DUE')"),
         CheckConstraint("status IN ('PENDING', 'SENT', 'FAILED')"),
     )
-    
+
     def __repr__(self):
         return f"<Notification {self.type} - {self.status}>"
+
+# ============================================================================
+# MOBILE STORAGE OPTIONS TABLE
+# ============================================================================
+class MobileStorage(Base):
+    __tablename__ = "mobile_storage"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, nullable=False)  # 16GB, 32GB, 64GB, 128GB, 256GB, 512GB, 1TB, 2TB, 4TB
+    name_urdu = Column(String, nullable=True)  # اردو میں نام
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<MobileStorage {self.name}>"
+
+# ============================================================================
+# MOBILE COLOR OPTIONS TABLE
+# ============================================================================
+class MobileColor(Base):
+    __tablename__ = "mobile_color"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, nullable=False)  # Black, White, Gold, Silver, etc.
+    name_urdu = Column(String, nullable=True)  # اردو میں نام
+    hex_code = Column(String, nullable=True)  # #000000 for color picker
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<MobileColor {self.name}>"
