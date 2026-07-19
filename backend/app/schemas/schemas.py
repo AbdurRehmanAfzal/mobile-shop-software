@@ -2,7 +2,7 @@
 
 from pydantic import BaseModel, Field
 from typing import Optional, List
-from datetime import datetime
+from datetime import datetime, date
 from enum import Enum
 
 
@@ -216,7 +216,7 @@ class MobileInventoryBase(BaseModel):
     color_id: Optional[int] = None
     condition: MobileConditionEnum
     cost_price: float
-    sale_price: float
+    sale_price: Optional[float] = None
     # Multiple IMEI support
     imei1: Optional[str] = None
     imei2: Optional[str] = None
@@ -470,3 +470,25 @@ class DashboardStats(BaseModel):
     total_supplier_credit: float
     monthly_sales: float
     pending_payments: float
+
+
+# ==================== QUICK TRADE-IN REQUEST SCHEMA ====================
+class QuickTradeInRequest(BaseModel):
+    """Request body for quick trade-in purchase endpoint"""
+    supplier_id: int
+    brand_id: int
+    model_id: int
+    imei1: str  # Required - every phone has at least one IMEI
+    imei2: Optional[str] = None  # Optional - not all phones have a second IMEI
+    imei3: Optional[str] = None  # Optional - rare, only some phones
+    condition: str = "used"  # 'new', 'used', or 'patched'
+    patch_details: Optional[str] = None
+    pta_status: str = "locked"  # 'locked', 'unlocked', or 'approved'
+    cnic_number: Optional[str] = None
+    cnic_photo_url: Optional[str] = None
+    photos: Optional[List[str]] = None
+    purchase_price: float
+    payment_method: str = "cash"
+    amount_paid: float = 0
+    transaction_date: Optional[date] = None
+    notes: Optional[str] = None

@@ -72,6 +72,9 @@ from app.schemas.schemas import (
 
     # Dashboard schemas
     DashboardStats,
+
+    # Quick Trade-In Request schema
+    QuickTradeInRequest,
 )
 
 # Create aliases for backward compatibility
@@ -168,4 +171,7 @@ __all__ = [
 
     # Dashboard schemas
     "DashboardStats",
+
+    # Quick Trade-In Request schema
+    "QuickTradeInRequest",
 ]

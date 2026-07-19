@@ -9,9 +9,11 @@ from datetime import date, datetime
 
 from app.database import get_db
 from app.models import Transaction, Party, MobileInventory
+from app.models.models import MobileBrand, MobileModel, MobileCondition, PTAStatus, MobileStatus
 from app.schemas import (
     TransactionResponse as TransactionSchema,
-    TransactionCreate
+    TransactionCreate,
+    QuickTradeInRequest
 )
 
 router = APIRouter(prefix="/api/transactions", tags=["transactions"])
@@ -359,100 +361,87 @@ def quick_payment_out(
 
 @router.post("/quick-trade-in")
 def quick_trade_in(
-    supplier_id: int,
-    brand_id: int,
-    model_id: int,
-    imei1: str,
-    imei2: str,
-    imei3: str = None,
-    condition: str = "used",
-    patch_details: str = None,
-    pta_status: str = "locked",
-    cnic_number: str = None,
-    cnic_photo_url: str = None,
-    photos: list = None,
-    purchase_price: float = 0,
-    payment_method: str = "cash",
-    amount_paid: float = 0,
-    transaction_date: date = None,
-    notes: str = None,
+    payload: QuickTradeInRequest,
     db: Session = Depends(get_db)
 ):
     """Quick trade-in purchase from customer/supplier with photo and CNIC capture
 
-    Args:
-        supplier_id: Supplier/customer selling the device ID
-        brand_id: Brand ID
-        model_id: Model ID
-        imei1: First IMEI number (required)
-        imei2: Second IMEI number (required)
-        imei3: Third IMEI number (optional)
-        condition: Device condition (new, used, patched)
-        patch_details: Details about patches if condition is patched
-        pta_status: PTA status (locked, unlocked, approved)
-        cnic_number: CNIC number of supplier
-        cnic_photo_url: URL/base64 of CNIC photo
-        photos: List of device photos (URLs/base64)
-        purchase_price: Amount we're paying for the device
-        payment_method: Payment method (cash, cheque, transfer)
-        amount_paid: Amount actually paid to supplier
-        transaction_date: Transaction date (defaults to today)
-        notes: Optional notes
+    Request body should contain:
+        - supplier_id: Supplier/customer selling the device ID
+        - brand_id: Brand ID
+        - model_id: Model ID
+        - imei1: First IMEI number (required)
+        - imei2: Second IMEI number (required)
+        - imei3: Third IMEI number (optional)
+        - condition: Device condition (new, used, patched)
+        - patch_details: Details about patches if condition is patched
+        - pta_status: PTA status (locked, unlocked, approved)
+        - cnic_number: CNIC number of supplier
+        - cnic_photo_url: URL/base64 of CNIC photo
+        - photos: List of device photos (URLs/base64)
+        - purchase_price: Amount we're paying for the device
+        - payment_method: Payment method (cash, cheque, transfer)
+        - amount_paid: Amount actually paid to supplier
+        - transaction_date: Transaction date (defaults to today)
+        - notes: Optional notes
     """
-    if transaction_date is None:
-        transaction_date = date.today()
+    transaction_date = payload.transaction_date or date.today()
 
-    # Verify supplier exists
-    supplier = db.query(Party).filter(Party.id == supplier_id).first()
-    if not supplier or supplier.type != "SUPPLIER":
+    # Verify supplier exists and is a VENDOR or TRADE_IN
+    supplier = db.query(Party).filter(Party.id == payload.supplier_id).first()
+    if not supplier or supplier.type.value not in ["VENDOR", "TRADE_IN"]:
         raise HTTPException(status_code=404, detail="Supplier not found")
 
-    # Verify brand and model exist
-    from app.models import Brand, Model
-    brand = db.query(Brand).filter(Brand.id == brand_id).first()
+    # Verify brand and model exist (use new models)
+    brand = db.query(MobileBrand).filter(MobileBrand.id == payload.brand_id).first()
     if not brand:
         raise HTTPException(status_code=404, detail="Brand not found")
 
-    model = db.query(Model).filter(Model.id == model_id).first()
+    model = db.query(MobileModel).filter(MobileModel.id == payload.model_id).first()
     if not model:
         raise HTTPException(status_code=404, detail="Model not found")
 
-    # Map condition values
+    # Map condition values to enum
     condition_map = {
-        "new": "BOX_PACK",
-        "used": "USED",
-        "patched": "PATCHED"
+        "new": MobileCondition.NEW,
+        "used": MobileCondition.USED,
+        "patched": MobileCondition.PATCHED
     }
-    db_condition = condition_map.get(condition, "USED")
+    db_condition = condition_map.get(payload.condition, MobileCondition.USED)
 
-    # Prepare IMEI info (store as comma-separated or JSON)
-    imei_info = f"{imei1}|{imei2}"
-    if imei3:
-        imei_info += f"|{imei3}"
-
-    # Prepare device metadata (IMEIs and other info)
-    device_metadata = {
-        "imei1": imei1,
-        "imei2": imei2,
-        "imei3": imei3,
-        "pta_status": pta_status,
-        "cnic_number": cnic_number,
-        "photos_count": len(photos) if photos else 0,
-        "cnic_photo_url": cnic_photo_url,
-        "photos_urls": photos if photos else []
+    # Map PTA status values to enum
+    pta_map = {
+        "locked": PTAStatus.PTA,
+        "unlocked": PTAStatus.NON_PTA,
+        "approved": PTAStatus.PTA
     }
+    db_pta_status = pta_map.get(payload.pta_status, PTAStatus.PTA)
+
+    # Prepare IMEI info (for notes/reference)
+    imei_info = f"{payload.imei1}|{payload.imei2}"
+    if payload.imei3:
+        imei_info += f"|{payload.imei3}"
+
+    # Prepare notes with metadata
+    notes_text = payload.notes or f"Trade-in: {brand.name} {model.model_name} | IMEI: {imei_info}"
+    if payload.patch_details:
+        notes_text += f" | Patch: {payload.patch_details}"
+    if payload.cnic_number:
+        notes_text += f" | CNIC: {payload.cnic_number}"
 
     # Create new mobile in inventory
     new_mobile = MobileInventory(
-        model_id=model_id,
-        purchased_from=supplier_id,
-        imei=imei1,  # Store primary IMEI
+        model_id=payload.model_id,
+        imei1=payload.imei1,
+        imei2=payload.imei2,
+        imei3=payload.imei3 if payload.imei3 else None,
+        pta_status=db_pta_status,
         condition=db_condition,
-        patch_details={"details": patch_details, **device_metadata} if patch_details else device_metadata,
-        cost_price=purchase_price,
-        selling_price=purchase_price * 1.2,  # Default 20% markup for selling
-        status="IN_STOCK",
-        purchase_date=transaction_date
+        cost_price=payload.purchase_price,
+        sale_price=payload.purchase_price * 1.2,  # Default 20% markup for selling
+        status=MobileStatus.IN_STOCK,
+        received_date=transaction_date,
+        notes=notes_text
     )
 
     db.add(new_mobile)
@@ -462,23 +451,22 @@ def quick_trade_in(
     # If amount_paid < purchase_price: we owe supplier (positive balance)
     # If amount_paid = purchase_price: no credit or debt (zero balance)
     # If amount_paid > purchase_price: we have prepaid (negative balance)
-    remaining_balance = purchase_price - amount_paid
+    remaining_balance = payload.purchase_price - payload.amount_paid
     balance_after = supplier.current_balance + remaining_balance
 
     # Create transaction record
     db_transaction = Transaction(
-        party_id=supplier_id,
+        party_id=payload.supplier_id,
         mobile_id=new_mobile.id,
-        party_type="SUPPLIER",
+        party_type="VENDOR",  # Supplier is a VENDOR
         transaction_type="PURCHASE",
         quantity=1,
-        unit_price=purchase_price,
-        total_amount=purchase_price,
-        amount_received=amount_paid,
-        payment_method=payment_method,
+        unit_price=payload.purchase_price,
+        total_amount=payload.purchase_price,
+        amount=payload.purchase_price,  # Required field
         balance_after=balance_after,
         transaction_date=transaction_date,
-        notes=notes or f"Trade-in: {brand.name} {model.model_name} | IMEI: {imei_info} | CNIC: {cnic_number}"
+        description=notes_text
     )
 
     db.add(db_transaction)
@@ -498,9 +486,9 @@ def quick_trade_in(
         "transaction": db_transaction,
         "mobile": new_mobile,
         "supplier_balance": balance_after,
-        "amount_paid": amount_paid,
+        "amount_paid": payload.amount_paid,
         "remaining_balance": remaining_balance,
-        "payment_method": payment_method
+        "payment_method": payload.payment_method
     }
 
 # ============================================================================

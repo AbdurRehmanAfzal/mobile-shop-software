@@ -13,7 +13,10 @@ const TradeInPurchase = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [showAddSupplierModal, setShowAddSupplierModal] = useState(false);
+  const [showAddBrandModal, setShowAddBrandModal] = useState(false);
+  const [showAddModelModal, setShowAddModelModal] = useState(false);
 
   // Camera and file upload refs
   const cnicFrontCameraRef = React.useRef(null);
@@ -59,6 +62,21 @@ const TradeInPurchase = () => {
     address: '',
     city: '',
     notes: '',
+  });
+
+  // New Brand Form
+  const [newBrand, setNewBrand] = useState({
+    name: '',
+    name_urdu: '',
+  });
+
+  // New Model Form
+  const [newModel, setNewModel] = useState({
+    brand_id: '',
+    model_name: '',
+    model_name_urdu: '',
+    original_price: '',
+    sale_price: '',
   });
 
   // Dropdowns & Data
@@ -147,7 +165,7 @@ const TradeInPurchase = () => {
         address: newSupplier.address || null,
         city: newSupplier.city || null,
         notes: newSupplier.notes || null,
-        type: 'SUPPLIER',
+        type: 'VENDOR',
         is_active: true,
       });
 
@@ -171,6 +189,87 @@ const TradeInPurchase = () => {
       }
     } catch (err) {
       setError(err.message || 'Failed to add supplier');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddBrand = async () => {
+    if (!newBrand.name) {
+      setError('Brand name is required');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await brandsAPI.create({
+        name: newBrand.name,
+        name_urdu: newBrand.name_urdu || null,
+      });
+
+      if (res.success) {
+        setBrands([...brands, res.data]);
+        setFormData((prev) => ({ ...prev, brand_id: res.data.id.toString() }));
+        setShowAddBrandModal(false);
+        setNewBrand({ name: '', name_urdu: '' });
+        setSuccess('Brand added successfully!');
+        setTimeout(() => setSuccess(false), 3000);
+      } else {
+        setError(res.error || 'Failed to add brand');
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to add brand');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddModel = async () => {
+    if (!newModel.model_name) {
+      setError('Model name is required');
+      return;
+    }
+
+    if (!newModel.brand_id) {
+      setError('Please select a brand for the model');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await modelsAPI.create({
+        brand_id: parseInt(newModel.brand_id),
+        model_name: newModel.model_name,
+        model_name_urdu: newModel.model_name_urdu || null,
+        original_price: newModel.original_price ? parseFloat(newModel.original_price) : null,
+        sale_price: newModel.sale_price ? parseFloat(newModel.sale_price) : 0,
+      });
+
+      if (res.success) {
+        // If the new model belongs to the currently selected brand, add it to models list
+        if (newModel.brand_id === formData.brand_id) {
+          setModels([...models, res.data]);
+        }
+        setFormData((prev) => ({
+          ...prev,
+          brand_id: newModel.brand_id,
+          model_id: res.data.id.toString()
+        }));
+        setShowAddModelModal(false);
+        setNewModel({
+          brand_id: '',
+          model_name: '',
+          model_name_urdu: '',
+          original_price: '',
+          sale_price: '',
+        });
+        setSuccess('Model added successfully!');
+        setTimeout(() => setSuccess(false), 3000);
+      } else {
+        setError(res.error || 'Failed to add model');
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to add model');
     } finally {
       setLoading(false);
     }
@@ -259,6 +358,27 @@ const TradeInPurchase = () => {
     return cnicRegex.test(cnic);
   };
 
+  // Helper function to check for duplicate IMEIs
+  const checkDuplicateImeis = () => {
+    const imeis = [formData.imei1, formData.imei2, formData.imei3].filter(imei => imei && imei.length === 15);
+    const uniqueImeis = new Set(imeis);
+    return imeis.length === uniqueImeis.size; // Returns true if all are unique
+  };
+
+  // Helper function to check IMEI validity (must be exactly 15 digits)
+  const checkImeiValidity = () => {
+    // IMEI1 must be exactly 15 digits
+    if (!formData.imei1 || formData.imei1.length !== 15) return false;
+
+    // If IMEI2 is entered, it must be exactly 15 digits
+    if (formData.imei2 && formData.imei2.length !== 15) return false;
+
+    // If IMEI3 is entered, it must be exactly 15 digits
+    if (formData.imei3 && formData.imei3.length !== 15) return false;
+
+    return true;
+  };
+
   const validateStep = (step) => {
     switch (step) {
       case 1:
@@ -269,7 +389,10 @@ const TradeInPurchase = () => {
         // Photos are optional
         return true;
       case 4:
-        return formData.brand_id && formData.model_id && formData.imei1 && formData.imei2 && formData.condition && formData.pta_status;
+        // Check for IMEI validity (15 digits) and no duplicates
+        const imeiLengthValid = checkImeiValidity();
+        const imeiNoDuplicates = checkDuplicateImeis();
+        return formData.brand_id && formData.model_id && formData.condition && formData.pta_status && imeiLengthValid && imeiNoDuplicates;
       case 5:
         return formData.purchase_price && formData.payment_method && formData.amount_paid;
       case 6:
@@ -279,12 +402,49 @@ const TradeInPurchase = () => {
     }
   };
 
+  const getStepErrors = (step) => {
+    const errors = [];
+    switch (step) {
+      case 1:
+        if (!formData.supplier_id) errors.push('Supplier/Customer is required');
+        break;
+      case 2:
+        if (!formData.cnic_number) errors.push('CNIC Number is required');
+        if (formData.cnic_number && !validateCnicFormat(formData.cnic_number))
+          errors.push('CNIC format is invalid (use: 12345-1234567-1)');
+        break;
+      case 3:
+        // Photos are optional
+        break;
+      case 4:
+        if (!formData.brand_id) errors.push('Brand is required');
+        if (!formData.model_id) errors.push('Model is required');
+        if (!formData.imei1) errors.push('IMEI 1 is required');
+        if (formData.imei1 && formData.imei1.length !== 15) errors.push('IMEI 1 must be exactly 15 digits');
+        if (formData.imei2 && formData.imei2.length !== 15) errors.push('IMEI 2 must be exactly 15 digits (or leave empty)');
+        if (formData.imei3 && formData.imei3.length !== 15) errors.push('IMEI 3 must be exactly 15 digits (or leave empty)');
+        if (!checkDuplicateImeis()) errors.push('Duplicate IMEI detected! Each IMEI must be unique.');
+        if (!formData.condition) errors.push('Condition is required');
+        if (!formData.pta_status) errors.push('PTA Status is required');
+        break;
+      case 5:
+        if (!formData.purchase_price) errors.push('Purchase Price is required');
+        if (!formData.payment_method) errors.push('Payment Method is required');
+        if (!formData.amount_paid) errors.push('Amount Paid is required');
+        break;
+      case 6:
+        break;
+    }
+    return errors;
+  };
+
   const handleNext = () => {
     if (validateStep(currentStep)) {
       setCurrentStep((prev) => Math.min(prev + 1, 6));
       setError(null);
     } else {
-      setError('Please complete all required fields');
+      const errors = getStepErrors(currentStep);
+      setError(errors.length > 0 ? errors.join(' • ') : 'Please complete all required fields');
     }
   };
 
@@ -324,9 +484,7 @@ const TradeInPurchase = () => {
 
       if (res.success) {
         setSuccess(true);
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 2000);
+        setShowCompletionModal(true);
       } else {
         setError(res.error || 'Failed to complete trade-in purchase');
       }
@@ -387,6 +545,7 @@ const TradeInPurchase = () => {
             suppliers={suppliers}
             onInputChange={handleInputChange}
             onAddNew={() => setShowAddSupplierModal(true)}
+            errors={getStepErrors(1)}
           />
         )}
         {currentStep === 2 && (
@@ -405,6 +564,7 @@ const TradeInPurchase = () => {
             cnicBackPhotoPreview={cnicBackPhotoPreview}
             validateCnicFormat={validateCnicFormat}
             formatCnicNumber={formatCnicNumber}
+            errors={getStepErrors(2)}
           />
         )}
         {currentStep === 3 && (
@@ -423,12 +583,18 @@ const TradeInPurchase = () => {
             brands={brands}
             models={models}
             onInputChange={handleInputChange}
+            onAddBrand={() => setShowAddBrandModal(true)}
+            onAddModel={() => setShowAddModelModal(true)}
+            errors={getStepErrors(4)}
+            checkDuplicateImeis={checkDuplicateImeis}
+            checkImeiValidity={checkImeiValidity}
           />
         )}
         {currentStep === 5 && (
           <Step5PricingPayment
             formData={formData}
             onInputChange={handleInputChange}
+            errors={getStepErrors(5)}
           />
         )}
         {currentStep === 6 && (
@@ -473,6 +639,83 @@ const TradeInPurchase = () => {
           )}
         </div>
       </div>
+
+      {/* Completion Modal */}
+      <Modal
+        isOpen={showCompletionModal}
+        title="Trade-in Completed Successfully!"
+        subtitle="Mobile has been added to the inventory"
+        onClose={() => {
+          setShowCompletionModal(false);
+          setSuccess(false);
+        }}
+        size="md"
+      >
+        <div className="space-y-6">
+          <div className="flex justify-center">
+            <div className="text-6xl">✅</div>
+          </div>
+
+          <div className="text-center">
+            <BilingualLabel
+              en="Mobile is added in stock"
+              ur="موبائل اسٹاک میں شامل ہو گیا"
+              size="lg"
+              bold={true}
+              className="mb-2"
+            />
+            <p className="text-gray-600 text-sm">
+              What would you like to do next?
+            </p>
+            <p className="text-gray-600 text-sm" style={{ fontFamily: 'Noto Nastaliq Urdu, serif' }}>
+              آپ اگلا کیا کرنا چاہیں گے؟
+            </p>
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              onClick={() => {
+                setShowCompletionModal(false);
+                setSuccess(false);
+                setCurrentStep(1);
+                setFormData({
+                  supplier_id: '',
+                  cnic_number: '',
+                  cnic_front_photo: '',
+                  cnic_back_photo: '',
+                  photos: [],
+                  brand_id: '',
+                  model_id: '',
+                  imei1: '',
+                  imei2: '',
+                  imei3: '',
+                  condition: 'used',
+                  patch_details: '',
+                  pta_status: 'locked',
+                  purchase_price: '',
+                  payment_method: 'cash',
+                  amount_paid: '',
+                  transaction_notes: '',
+                  transaction_date: new Date().toISOString().split('T')[0],
+                });
+              }}
+              className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+            >
+              ➕ Add New Trade-in
+            </button>
+            <button
+              onClick={() => {
+                setShowCompletionModal(false);
+                setSuccess(false);
+                window.location.href = '/view-stock';
+              }}
+              className="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
+            >
+              📊 View Stock
+            </button>
+          </div>
+        </div>
+      </Modal>
 
       {/* Add Supplier Modal */}
       <Modal
@@ -551,13 +794,124 @@ const TradeInPurchase = () => {
           </div>
         </div>
       </Modal>
+
+      {/* Add Brand Modal */}
+      <Modal
+        isOpen={showAddBrandModal}
+        title="Add New Brand"
+        subtitle="Create a new mobile brand"
+        onClose={() => setShowAddBrandModal(false)}
+        size="md"
+      >
+        <div className="space-y-4">
+          <BilingualInput
+            en="Brand Name (English)"
+            ur="برانڈ کا نام"
+            type="text"
+            value={newBrand.name}
+            onChange={(e) => setNewBrand({ ...newBrand, name: e.target.value })}
+            required={true}
+            icon="📱"
+          />
+          <BilingualInput
+            en="Brand Name (Urdu) (Optional)"
+            ur="برانڈ کا نام (اردو)"
+            type="text"
+            value={newBrand.name_urdu}
+            onChange={(e) => setNewBrand({ ...newBrand, name_urdu: e.target.value })}
+            icon="🔤"
+          />
+
+          <div className="flex gap-4 mt-6">
+            <button
+              onClick={() => setShowAddBrandModal(false)}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleAddBrand}
+              disabled={loading}
+              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400"
+            >
+              {loading ? 'Adding...' : 'Add Brand'}
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Add Model Modal */}
+      <Modal
+        isOpen={showAddModelModal}
+        title="Add New Model"
+        subtitle="Create a new mobile model"
+        onClose={() => setShowAddModelModal(false)}
+        size="lg"
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Brand <span className="text-red-500">*</span>
+            </label>
+            <select
+              value={newModel.brand_id}
+              onChange={(e) => setNewModel({ ...newModel, brand_id: e.target.value })}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+            >
+              <option value="">-- Select Brand --</option>
+              {brands.map((brand) => (
+                <option key={brand.id} value={brand.id}>
+                  {brand.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <BilingualInput
+            en="Model Name (English)"
+            ur="ماڈل کا نام"
+            type="text"
+            value={newModel.model_name}
+            onChange={(e) => setNewModel({ ...newModel, model_name: e.target.value })}
+            required={true}
+            icon="📱"
+          />
+
+          <BilingualInput
+            en="Model Name (Urdu) (Optional)"
+            ur="ماڈل کا نام (اردو)"
+            type="text"
+            value={newModel.model_name_urdu}
+            onChange={(e) => setNewModel({ ...newModel, model_name_urdu: e.target.value })}
+            icon="🔤"
+          />
+
+          <div className="flex gap-4 mt-6">
+            <button
+              onClick={() => setShowAddModelModal(false)}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleAddModel}
+              disabled={loading}
+              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400"
+            >
+              {loading ? 'Adding...' : 'Add Model'}
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
 
 // Step 1: Supplier Selection
-const Step1SupplierSelection = ({ formData, suppliers, onInputChange, onAddNew }) => {
+const Step1SupplierSelection = ({ formData, suppliers, onInputChange, onAddNew, errors = [] }) => {
   const [searchTerm, setSearchTerm] = React.useState('');
+  const hasError = (fieldName) => errors.some(err => err.toLowerCase().includes(fieldName.toLowerCase()));
+  const getFieldBorderClass = (fieldName) => hasError(fieldName) ? 'border-red-500 bg-red-50' : 'border-gray-300';
 
   const filteredSuppliers = suppliers.filter(
     (s) =>
@@ -593,7 +947,7 @@ const Step1SupplierSelection = ({ formData, suppliers, onInputChange, onAddNew }
         <select
           value={formData.supplier_id}
           onChange={(e) => onInputChange('supplier_id', e.target.value)}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+          className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 ${getFieldBorderClass('Supplier')}`}
         >
           <option value="">-- Select a supplier --</option>
           {filteredSuppliers.map((supplier) => (
@@ -632,8 +986,11 @@ const Step2CnicCapture = ({
   cnicFrontPhotoPreview,
   cnicBackPhotoPreview,
   validateCnicFormat,
-  formatCnicNumber
+  formatCnicNumber,
+  errors = []
 }) => {
+  const hasError = (fieldName) => errors.some(err => err.toLowerCase().includes(fieldName.toLowerCase()));
+  const getFieldBorderClass = (fieldName) => hasError(fieldName) ? 'border-red-500 bg-red-50' : 'border-gray-300 focus:border-blue-500';
   const isCnicValid = formData.cnic_number ? validateCnicFormat(formData.cnic_number) : false;
 
   const handleCameraClickFront = () => {
@@ -686,16 +1043,19 @@ const Step2CnicCapture = ({
         />
         <input
           type="text"
-          placeholder="Enter CNIC: 12345 1234567 1"
+          placeholder="e.g., 12345-1234567-1"
           value={formData.cnic_number}
           onChange={(e) => {
             const formatted = formatCnicNumber(e.target.value);
             onInputChange('cnic_number', formatted);
           }}
           maxLength="15"
+          inputMode="numeric"
           className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors font-mono tracking-wider ${
             formData.cnic_number && !isCnicValid
               ? 'border-red-500 bg-red-50 focus:border-red-600'
+              : formData.cnic_number && isCnicValid
+              ? 'border-green-500 bg-green-50 focus:border-green-600'
               : 'border-gray-300 focus:border-blue-500'
           }`}
         />
@@ -986,7 +1346,12 @@ const Step3PhotoUpload = ({ formData, photoPreviews, onCameraCapture, photosCame
 };
 
 // Step 4: Device Details
-const Step4DeviceDetails = ({ formData, brands, models, onInputChange }) => {
+const Step4DeviceDetails = ({ formData, brands, models, onInputChange, onAddBrand, onAddModel, errors = [], checkDuplicateImeis, checkImeiValidity }) => {
+  const hasError = (fieldName) => errors.some(err => err.toLowerCase().includes(fieldName.toLowerCase()));
+  const getFieldBorderClass = (fieldName) => hasError(fieldName) ? 'border-red-500 bg-red-50' : 'border-gray-300';
+  const hasDuplicateImeis = !checkDuplicateImeis();
+  const hasImeiLengthError = !checkImeiValidity();
+
   return (
     <div className="space-y-6">
       <BilingualLabel
@@ -1006,18 +1371,28 @@ const Step4DeviceDetails = ({ formData, brands, models, onInputChange }) => {
             bold={true}
             className="mb-2"
           />
-          <select
-            value={formData.brand_id}
-            onChange={(e) => onInputChange('brand_id', e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-          >
-            <option value="">-- Select Brand --</option>
-            {brands.map((brand) => (
-              <option key={brand.id} value={brand.id}>
-                {brand.name}
-              </option>
-            ))}
-          </select>
+          <div className="flex gap-2">
+            <select
+              value={formData.brand_id}
+              onChange={(e) => onInputChange('brand_id', e.target.value)}
+              className={`flex-1 px-4 py-3 border rounded-lg focus:outline-none focus:border-blue-500 ${getFieldBorderClass('Brand')}`}
+            >
+              <option value="">-- Select Brand --</option>
+              {brands.map((brand) => (
+                <option key={brand.id} value={brand.id}>
+                  {brand.name}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              onClick={onAddBrand}
+              className="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium whitespace-nowrap"
+              title="Add new brand"
+            >
+              + Brand
+            </button>
+          </div>
         </div>
 
         <div>
@@ -1028,23 +1403,34 @@ const Step4DeviceDetails = ({ formData, brands, models, onInputChange }) => {
             bold={true}
             className="mb-2"
           />
-          <select
-            value={formData.model_id}
-            onChange={(e) => onInputChange('model_id', e.target.value)}
-            disabled={!formData.brand_id}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 disabled:bg-gray-100"
-          >
-            <option value="">-- Select Model --</option>
-            {models.map((model) => (
-              <option key={model.id} value={model.id}>
-                {model.model_name}
-              </option>
-            ))}
-          </select>
+          <div className="flex gap-2">
+            <select
+              value={formData.model_id}
+              onChange={(e) => onInputChange('model_id', e.target.value)}
+              disabled={!formData.brand_id}
+              className={`flex-1 px-4 py-3 border rounded-lg focus:outline-none focus:border-blue-500 disabled:bg-gray-100 ${getFieldBorderClass('Model')}`}
+            >
+              <option value="">-- Select Model --</option>
+              {models.map((model) => (
+                <option key={model.id} value={model.id}>
+                  {model.model_name}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              onClick={onAddModel}
+              disabled={!formData.brand_id}
+              className="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium whitespace-nowrap disabled:bg-gray-400 disabled:cursor-not-allowed"
+              title="Add new model for selected brand"
+            >
+              + Model
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className={`space-y-4 p-4 rounded-lg border-l-4 ${(hasDuplicateImeis || hasImeiLengthError) ? 'bg-red-50 border-red-500' : 'bg-blue-50 border-blue-500'}`}>
         <BilingualLabel
           en="IMEI Numbers"
           ur="IMEI نمبرز"
@@ -1052,37 +1438,131 @@ const Step4DeviceDetails = ({ formData, brands, models, onInputChange }) => {
           bold={true}
         />
 
+        {hasImeiLengthError && (
+          <div className="mb-3 p-3 bg-red-100 border border-red-300 rounded-lg">
+            <p className="text-red-700 text-sm font-semibold">⚠️ Error: Invalid IMEI Format!</p>
+            <p className="text-red-600 text-xs mt-1">All entered IMEIs must be exactly 15 digits. IMEI 1 is required, IMEI 2 & 3 are optional but must be 15 digits if entered.</p>
+          </div>
+        )}
+
+        {hasDuplicateImeis && (
+          <div className="mb-3 p-3 bg-red-100 border border-red-300 rounded-lg">
+            <p className="text-red-700 text-sm font-semibold">⚠️ Error: Duplicate IMEI detected!</p>
+            <p className="text-red-600 text-xs mt-1">Each IMEI must be unique. You cannot use the same IMEI in multiple fields.</p>
+          </div>
+        )}
+
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">IMEI 1 (Required)</label>
+          <div className="flex justify-between items-center mb-1">
+            <label className="block text-sm font-medium text-gray-700">
+              IMEI 1 <span className="text-red-500">*</span> (Required)
+            </label>
+            <span className={`text-xs font-medium ${formData.imei1.length === 15 ? 'text-green-600' : formData.imei1.length > 0 ? 'text-orange-600' : 'text-gray-500'}`}>
+              {formData.imei1.length}/15
+            </span>
+          </div>
           <input
             type="text"
             value={formData.imei1}
-            onChange={(e) => onInputChange('imei1', e.target.value)}
-            placeholder="15 digits"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+            onChange={(e) => {
+              const val = e.target.value.replace(/\D/g, '').slice(0, 15);
+              onInputChange('imei1', val);
+            }}
+            maxLength="15"
+            inputMode="numeric"
+            placeholder="15 digits only"
+            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500 ${
+              (hasDuplicateImeis || hasImeiLengthError) && formData.imei1.length === 15
+                ? 'border-red-500 bg-red-50'
+                : formData.imei1.length > 0 && formData.imei1.length !== 15
+                ? 'border-orange-500 bg-orange-50'
+                : getFieldBorderClass('IMEI 1')
+            }`}
           />
+          {formData.imei1.length > 0 && formData.imei1.length !== 15 && (
+            <p className="text-orange-600 text-xs mt-1">⚠️ IMEI must be exactly 15 digits</p>
+          )}
+          {formData.imei1.length === 15 && hasDuplicateImeis && (
+            <p className="text-red-600 text-xs mt-1">❌ This IMEI matches another field</p>
+          )}
+          {formData.imei1.length === 15 && !hasDuplicateImeis && (
+            <p className="text-green-600 text-xs mt-1">✓ Valid IMEI length</p>
+          )}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">IMEI 2 (Required)</label>
+          <div className="flex justify-between items-center mb-1">
+            <label className="block text-sm font-medium text-gray-700">IMEI 2 (Optional)</label>
+            <span className={`text-xs font-medium ${formData.imei2.length === 0 ? 'text-gray-500' : formData.imei2.length === 15 ? 'text-green-600' : 'text-orange-600'}`}>
+              {formData.imei2.length}/15
+            </span>
+          </div>
           <input
             type="text"
             value={formData.imei2}
-            onChange={(e) => onInputChange('imei2', e.target.value)}
-            placeholder="15 digits"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+            onChange={(e) => {
+              const val = e.target.value.replace(/\D/g, '').slice(0, 15);
+              onInputChange('imei2', val);
+            }}
+            maxLength="15"
+            inputMode="numeric"
+            placeholder="15 digits (optional)"
+            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500 ${
+              hasDuplicateImeis && formData.imei2.length === 15
+                ? 'border-red-500 bg-red-50'
+                : formData.imei2.length > 0 && formData.imei2.length !== 15
+                ? 'border-orange-500 bg-orange-50'
+                : 'border-gray-300'
+            }`}
           />
+          {formData.imei2.length > 0 && formData.imei2.length !== 15 && (
+            <p className="text-orange-600 text-xs mt-1">⚠️ IMEI must be exactly 15 digits (or leave empty)</p>
+          )}
+          {formData.imei2.length === 15 && hasDuplicateImeis && (
+            <p className="text-red-600 text-xs mt-1">❌ This IMEI matches another field</p>
+          )}
+          {formData.imei2.length === 15 && !hasDuplicateImeis && (
+            <p className="text-green-600 text-xs mt-1">✓ Valid IMEI length</p>
+          )}
+          {formData.imei2.length === 0 && (
+            <p className="text-gray-500 text-xs mt-1">Not all phones have a second IMEI</p>
+          )}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">IMEI 3 (Optional)</label>
+          <div className="flex justify-between items-center mb-1">
+            <label className="block text-sm font-medium text-gray-700">IMEI 3 (Optional)</label>
+            <span className={`text-xs font-medium ${formData.imei3.length === 0 ? 'text-gray-500' : formData.imei3.length === 15 ? 'text-green-600' : 'text-orange-600'}`}>
+              {formData.imei3.length}/15
+            </span>
+          </div>
           <input
             type="text"
             value={formData.imei3}
-            onChange={(e) => onInputChange('imei3', e.target.value)}
+            onChange={(e) => {
+              const val = e.target.value.replace(/\D/g, '').slice(0, 15);
+              onInputChange('imei3', val);
+            }}
+            maxLength="15"
+            inputMode="numeric"
             placeholder="15 digits (optional)"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500 ${
+              hasDuplicateImeis && formData.imei3.length === 15
+                ? 'border-red-500 bg-red-50'
+                : formData.imei3.length > 0 && formData.imei3.length !== 15
+                ? 'border-orange-500 bg-orange-50'
+                : 'border-gray-300'
+            }`}
           />
+          {formData.imei3.length > 0 && formData.imei3.length !== 15 && (
+            <p className="text-orange-600 text-xs mt-1">⚠️ IMEI must be exactly 15 digits (or leave empty)</p>
+          )}
+          {formData.imei3.length === 15 && hasDuplicateImeis && (
+            <p className="text-red-600 text-xs mt-1">❌ This IMEI matches another field</p>
+          )}
+          {formData.imei3.length === 15 && !hasDuplicateImeis && (
+            <p className="text-green-600 text-xs mt-1">✓ Valid IMEI length</p>
+          )}
         </div>
       </div>
 
@@ -1098,8 +1578,9 @@ const Step4DeviceDetails = ({ formData, brands, models, onInputChange }) => {
           <select
             value={formData.condition}
             onChange={(e) => onInputChange('condition', e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+            className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-blue-500 ${getFieldBorderClass('Condition')}`}
           >
+            <option value="">-- Select --</option>
             <option value="new">New</option>
             <option value="used">Used</option>
             <option value="patched">Patched</option>
@@ -1117,8 +1598,9 @@ const Step4DeviceDetails = ({ formData, brands, models, onInputChange }) => {
           <select
             value={formData.pta_status}
             onChange={(e) => onInputChange('pta_status', e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+            className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-blue-500 ${getFieldBorderClass('PTA Status')}`}
           >
+            <option value="">-- Select --</option>
             <option value="locked">Locked</option>
             <option value="unlocked">Unlocked</option>
             <option value="approved">Approved</option>
@@ -1149,7 +1631,10 @@ const Step4DeviceDetails = ({ formData, brands, models, onInputChange }) => {
 };
 
 // Step 5: Pricing & Payment
-const Step5PricingPayment = ({ formData, onInputChange }) => {
+const Step5PricingPayment = ({ formData, onInputChange, errors = [] }) => {
+  const hasError = (fieldName) => errors.some(err => err.toLowerCase().includes(fieldName.toLowerCase()));
+  const getFieldBorderClass = (fieldName) => hasError(fieldName) ? 'border-red-500 bg-red-50' : 'border-gray-300 focus:border-blue-500';
+
   return (
     <div className="space-y-6">
       <BilingualLabel
@@ -1181,7 +1666,7 @@ const Step5PricingPayment = ({ formData, onInputChange }) => {
           className={`w-full px-4 py-3 border rounded-lg focus:outline-none ${
             formData.purchase_price && parseFloat(formData.purchase_price) < 0
               ? 'border-red-300 bg-red-50'
-              : 'border-gray-300 focus:border-blue-500'
+              : getFieldBorderClass('Purchase Price')
           }`}
         />
         {formData.purchase_price && parseFloat(formData.purchase_price) < 0 && (
@@ -1201,8 +1686,9 @@ const Step5PricingPayment = ({ formData, onInputChange }) => {
           <select
             value={formData.payment_method}
             onChange={(e) => onInputChange('payment_method', e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+            className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-blue-500 ${getFieldBorderClass('Payment Method')}`}
           >
+            <option value="">-- Select --</option>
             <option value="cash">Cash</option>
             <option value="cheque">Cheque</option>
             <option value="transfer">Bank Transfer</option>
@@ -1230,7 +1716,7 @@ const Step5PricingPayment = ({ formData, onInputChange }) => {
             className={`w-full px-4 py-3 border rounded-lg focus:outline-none ${
               formData.amount_paid && parseFloat(formData.amount_paid) < 0
                 ? 'border-red-300 bg-red-50'
-                : 'border-gray-300 focus:border-blue-500'
+                : getFieldBorderClass('Amount Paid')
             }`}
           />
           {formData.amount_paid && parseFloat(formData.amount_paid) < 0 && (

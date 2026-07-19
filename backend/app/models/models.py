@@ -211,7 +211,7 @@ class MobileInventory(Base):
     # Condition and Pricing
     condition = Column(Enum(MobileCondition), nullable=False)
     cost_price = Column(Float, nullable=False)
-    sale_price = Column(Float, nullable=False)
+    sale_price = Column(Float, nullable=True)  # Optional - can be set later
 
     # Status tracking
     status = Column(Enum(MobileStatus), nullable=False, default=MobileStatus.IN_STOCK)

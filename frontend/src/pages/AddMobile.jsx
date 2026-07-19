@@ -20,6 +20,7 @@ const AddMobile = () => {
   const [showAddSupplierModal, setShowAddSupplierModal] = useState(false);
   const [showAddStorageModal, setShowAddStorageModal] = useState(false);
   const [showAddColorModal, setShowAddColorModal] = useState(false);
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
 
   // Optional fields visibility
   const [showImei3, setShowImei3] = useState(false);
@@ -355,6 +356,13 @@ const AddMobile = () => {
     }
   };
 
+  // Helper function to check for duplicate IMEIs
+  const checkDuplicateImeis = () => {
+    const imeis = [formData.imei1, formData.imei2, formData.imei3].filter(imei => imei && imei.length === 15);
+    const uniqueImeis = new Set(imeis);
+    return imeis.length === uniqueImeis.size; // Returns true if all are unique
+  };
+
   const validateStep = (step) => {
     switch (step) {
       case 1:
@@ -366,7 +374,9 @@ const AddMobile = () => {
         const hasColor = formData.color_id;
         // If NON_PTA, must have SIM time selected
         const ptaValid = formData.pta_status === 'PTA' || (formData.pta_status === 'NON_PTA' && formData.sim_time);
-        return hasImei && hasStorage && hasColor && ptaValid;
+        // Check for duplicate IMEIs
+        const imeiValid = checkDuplicateImeis();
+        return hasImei && hasStorage && hasColor && ptaValid && imeiValid;
       case 3:
         return formData.condition;
       case 4:
@@ -382,12 +392,10 @@ const AddMobile = () => {
         const sellingPrice = parseFloat(formData.selling_price) || 0;
         return (
           formData.cost_price &&
-          formData.selling_price &&
           formData.supplier_id &&
           formData.purchase_date &&
           costPrice > 0 &&
-          sellingPrice > 0 &&
-          sellingPrice >= costPrice
+          (!formData.selling_price || sellingPrice === 0 || sellingPrice >= costPrice)
         );
       default:
         return false;
@@ -426,7 +434,7 @@ const AddMobile = () => {
         color_id: formData.color_id ? parseInt(formData.color_id) : null,
         condition: formData.condition,
         cost_price: parseFloat(formData.cost_price),
-        sale_price: parseFloat(formData.selling_price),
+        sale_price: formData.selling_price ? parseFloat(formData.selling_price) : null,
         // Multiple IMEI support
         imei1: formData.imei1 || null,
         imei2: formData.imei2 || null,
@@ -447,39 +455,7 @@ const AddMobile = () => {
       const res = await mobileAPI.add(mobileData);
       if (res.success) {
         setSuccess(true);
-        // Reset form after 2 seconds
-        setTimeout(() => {
-          setFormData({
-            brand_id: '',
-            model_id: '',
-            // Multiple IMEI support
-            imei1: '',
-            imei2: '',
-            imei3: '',
-            // Serial Number and PTA Status
-            serial_number: '',
-            pta_status: 'PTA',
-            sim_time: '',
-            // Storage and Color (IDs)
-            storage_id: '',
-            color_id: '',
-            condition: '',
-            patch_details: {
-              has_screen_issue: false,
-              has_battery_issue: false,
-              has_back_issue: false,
-              has_camera_issue: false,
-              has_face_id_issue: false,
-            },
-            condition_quality: '',
-            cost_price: '',
-            selling_price: '',
-            supplier_id: '',
-            purchase_date: new Date().toISOString().split('T')[0],
-          });
-          setCurrentStep(1);
-          setSuccess(false);
-        }, 2000);
+        setShowCompletionModal(true);
       } else {
         setError(res.error || 'Failed to add mobile');
       }
@@ -589,6 +565,7 @@ const AddMobile = () => {
               setShowSerialNumber={setShowSerialNumber}
               onAddNewStorage={() => setShowAddStorageModal(true)}
               onAddNewColor={() => setShowAddColorModal(true)}
+              checkDuplicateImeis={checkDuplicateImeis}
             />
           </>
         )}
@@ -649,6 +626,88 @@ const AddMobile = () => {
           )}
         </div>
       </div>
+
+      {/* Completion Modal */}
+      <Modal
+        isOpen={showCompletionModal}
+        title="Mobile Added Successfully!"
+        subtitle="Your mobile has been added to the inventory"
+        onClose={() => {
+          setShowCompletionModal(false);
+          setSuccess(false);
+        }}
+        size="md"
+      >
+        <div className="space-y-6">
+          <div className="flex justify-center">
+            <div className="text-6xl">✅</div>
+          </div>
+
+          <div className="text-center">
+            <BilingualLabel
+              en="Mobile is added in stock"
+              ur="موبائل اسٹاک میں شامل ہو گیا"
+              size="lg"
+              bold={true}
+              className="mb-2"
+            />
+            <p className="text-gray-600 text-sm">
+              What would you like to do next?
+            </p>
+            <p className="text-gray-600 text-sm" style={{ fontFamily: 'Noto Nastaliq Urdu, serif' }}>
+              آپ اگلا کیا کرنا چاہیں گے؟
+            </p>
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              onClick={() => {
+                setShowCompletionModal(false);
+                setSuccess(false);
+                setFormData({
+                  brand_id: '',
+                  model_id: '',
+                  imei1: '',
+                  imei2: '',
+                  imei3: '',
+                  serial_number: '',
+                  pta_status: 'PTA',
+                  sim_time: '',
+                  storage_id: '',
+                  color_id: '',
+                  condition: '',
+                  patch_details: {
+                    has_screen_issue: false,
+                    has_battery_issue: false,
+                    has_back_issue: false,
+                    has_camera_issue: false,
+                    has_face_id_issue: false,
+                  },
+                  condition_quality: '',
+                  cost_price: '',
+                  selling_price: '',
+                  supplier_id: '',
+                  purchase_date: new Date().toISOString().split('T')[0],
+                });
+                setCurrentStep(1);
+              }}
+              className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+            >
+              ➕ Add New Mobile
+            </button>
+            <button
+              onClick={() => {
+                setShowCompletionModal(false);
+                setSuccess(false);
+                window.location.href = '/view-stock';
+              }}
+              className="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
+            >
+              📊 View Stock
+            </button>
+          </div>
+        </div>
+      </Modal>
 
       {/* Add Brand Modal */}
       <Modal
@@ -1043,7 +1102,9 @@ const Step1BrandModel = ({ formData, brands, models, onInputChange, onAddNewBran
 };
 
 // Step 2: Device Details
-const Step2DeviceDetails = ({ formData, onInputChange, storages, colors, showImei3, setShowImei3, showSerialNumber, setShowSerialNumber, onAddNewStorage, onAddNewColor }) => {
+const Step2DeviceDetails = ({ formData, onInputChange, storages, colors, showImei3, setShowImei3, showSerialNumber, setShowSerialNumber, onAddNewStorage, onAddNewColor, checkDuplicateImeis }) => {
+  // Check if IMEIs are duplicated
+  const hasDuplicateImeis = !checkDuplicateImeis();
   return (
     <div className="space-y-6">
       <BilingualLabel
@@ -1055,29 +1116,112 @@ const Step2DeviceDetails = ({ formData, onInputChange, storages, colors, showIme
       />
 
       {/* IMEI Numbers Section */}
-      <div className="bg-blue-50 p-4 rounded-lg mb-4 border-l-4 border-blue-500">
+      <div className={`p-4 rounded-lg mb-4 border-l-4 ${hasDuplicateImeis ? 'bg-red-50 border-red-500' : 'bg-blue-50 border-blue-500'}`}>
         <BilingualLabel en="IMEI Numbers" ur="IMEI نمبرز" bold={true} />
-        <p className="text-xs text-gray-600 mb-3">Most phones have 2 IMEIs (Primary & Secondary)</p>
+        <p className="text-xs text-gray-600 mb-3">IMEI is a 15-digit unique identifier for your phone</p>
 
-        <BilingualInput
-          en="IMEI 1 (Primary)"
-          ur="IMEI 1 (بنیادی)"
-          type="text"
-          value={formData.imei1}
-          onChange={(e) => onInputChange('imei1', e.target.value)}
-          placeholder="e.g., 865123456789012"
-          icon="📱"
-        />
+        {hasDuplicateImeis && (
+          <div className="mb-3 p-3 bg-red-100 border border-red-300 rounded-lg">
+            <p className="text-red-700 text-sm font-semibold">⚠️ Error: Duplicate IMEI detected!</p>
+            <p className="text-red-600 text-xs mt-1">Each IMEI must be unique. You cannot use the same IMEI in multiple fields.</p>
+          </div>
+        )}
 
-        <BilingualInput
-          en="IMEI 2 (Secondary)"
-          ur="IMEI 2 (ثانوی)"
-          type="text"
-          value={formData.imei2}
-          onChange={(e) => onInputChange('imei2', e.target.value)}
-          placeholder="e.g., 865123456789013"
-          icon="📱"
-        />
+        {/* IMEI 1 (Primary) - Required */}
+        <div>
+          <div className="flex justify-between items-center mb-2">
+            <BilingualLabel en="IMEI 1 (Primary) *" ur="IMEI 1 (بنیادی) *" bold={true} />
+            <span
+              className={`text-xs font-semibold ${
+                formData.imei1.length === 0
+                  ? 'text-gray-400'
+                  : formData.imei1.length < 15
+                  ? 'text-orange-600'
+                  : 'text-green-600'
+              }`}
+            >
+              {formData.imei1.length}/15
+            </span>
+          </div>
+          <input
+            type="text"
+            value={formData.imei1}
+            onChange={(e) => {
+              const val = e.target.value.replace(/\D/g, '').slice(0, 15);
+              onInputChange('imei1', val);
+            }}
+            maxLength="15"
+            inputMode="numeric"
+            placeholder="e.g., 865123456789012"
+            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+              hasDuplicateImeis && formData.imei1.length === 15
+                ? 'border-red-500 bg-red-50 focus:ring-red-500'
+                : formData.imei1.length === 0
+                ? 'border-gray-300 focus:ring-blue-500'
+                : formData.imei1.length < 15
+                ? 'border-orange-300 bg-orange-50 focus:ring-orange-500'
+                : 'border-green-300 bg-green-50 focus:ring-green-500'
+            }`}
+          />
+          {formData.imei1.length > 0 && formData.imei1.length < 15 && (
+            <p className="text-orange-600 text-sm mt-1">⚠️ IMEI must be exactly 15 digits</p>
+          )}
+          {formData.imei1.length === 15 && hasDuplicateImeis && (
+            <p className="text-red-600 text-sm mt-1">❌ This IMEI matches another field</p>
+          )}
+          {formData.imei1.length === 15 && !hasDuplicateImeis && (
+            <p className="text-green-600 text-sm mt-1">✓ Valid IMEI length</p>
+          )}
+        </div>
+
+        {/* IMEI 2 (Secondary) - Optional */}
+        <div className="mt-4">
+          <div className="flex justify-between items-center mb-2">
+            <BilingualLabel en="IMEI 2 (Secondary)" ur="IMEI 2 (ثانوی)" bold={false} />
+            <span className="text-xs text-gray-500">(Optional)</span>
+            <span
+              className={`text-xs font-semibold ${
+                formData.imei2.length === 0
+                  ? 'text-gray-400'
+                  : formData.imei2.length < 15
+                  ? 'text-orange-600'
+                  : 'text-green-600'
+              }`}
+            >
+              {formData.imei2.length}/15
+            </span>
+          </div>
+          <input
+            type="text"
+            value={formData.imei2}
+            onChange={(e) => {
+              const val = e.target.value.replace(/\D/g, '').slice(0, 15);
+              onInputChange('imei2', val);
+            }}
+            maxLength="15"
+            inputMode="numeric"
+            placeholder="e.g., 865123456789013"
+            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+              hasDuplicateImeis && formData.imei2.length === 15
+                ? 'border-red-500 bg-red-50 focus:ring-red-500'
+                : formData.imei2.length === 0
+                ? 'border-gray-300 focus:ring-blue-500'
+                : formData.imei2.length < 15
+                ? 'border-orange-300 bg-orange-50 focus:ring-orange-500'
+                : 'border-green-300 bg-green-50 focus:ring-green-500'
+            }`}
+          />
+          <p className="text-xs text-gray-600 mt-2">Not all phones have a second IMEI</p>
+          {formData.imei2.length > 0 && formData.imei2.length < 15 && (
+            <p className="text-orange-600 text-sm mt-1">⚠️ IMEI must be exactly 15 digits</p>
+          )}
+          {formData.imei2.length === 15 && hasDuplicateImeis && (
+            <p className="text-red-600 text-sm mt-1">❌ This IMEI matches another field</p>
+          )}
+          {formData.imei2.length === 15 && !hasDuplicateImeis && (
+            <p className="text-green-600 text-sm mt-1">✓ Valid IMEI length</p>
+          )}
+        </div>
 
         {/* Checkbox to show/hide IMEI 3 */}
         <div className="flex items-center gap-2 mt-4 pt-4 border-t border-blue-200">
@@ -1094,21 +1238,57 @@ const Step2DeviceDetails = ({ formData, onInputChange, storages, colors, showIme
             className="w-4 h-4 cursor-pointer"
           />
           <label htmlFor="showImei3" className="text-sm text-gray-700 cursor-pointer">
-            ✓ Add 3rd IMEI? (Optional)
+            ✓ Add 3rd IMEI? (Optional - Rare)
           </label>
         </div>
 
         {/* Show IMEI 3 only if checkbox is checked */}
         {showImei3 && (
-          <BilingualInput
-            en="IMEI 3 (Optional)"
-            ur="IMEI 3 (اختیاری)"
-            type="text"
-            value={formData.imei3}
-            onChange={(e) => onInputChange('imei3', e.target.value)}
-            placeholder="For devices with 3 IMEIs"
-            icon="📱"
-          />
+          <div className="mt-4">
+            <div className="flex justify-between items-center mb-2">
+              <BilingualLabel en="IMEI 3 (Optional)" ur="IMEI 3 (اختیاری)" bold={false} />
+              <span
+                className={`text-xs font-semibold ${
+                  formData.imei3.length === 0
+                    ? 'text-gray-400'
+                    : formData.imei3.length < 15
+                    ? 'text-orange-600'
+                    : 'text-green-600'
+                }`}
+              >
+                {formData.imei3.length}/15
+              </span>
+            </div>
+            <input
+              type="text"
+              value={formData.imei3}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, '').slice(0, 15);
+                onInputChange('imei3', val);
+              }}
+              maxLength="15"
+              inputMode="numeric"
+              placeholder="For devices with 3 IMEIs"
+              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                hasDuplicateImeis && formData.imei3.length === 15
+                  ? 'border-red-500 bg-red-50 focus:ring-red-500'
+                  : formData.imei3.length === 0
+                  ? 'border-gray-300 focus:ring-blue-500'
+                  : formData.imei3.length < 15
+                  ? 'border-orange-300 bg-orange-50 focus:ring-orange-500'
+                  : 'border-green-300 bg-green-50 focus:ring-green-500'
+              }`}
+            />
+            {formData.imei3.length > 0 && formData.imei3.length < 15 && (
+              <p className="text-orange-600 text-sm mt-1">⚠️ IMEI must be exactly 15 digits</p>
+            )}
+            {formData.imei3.length === 15 && hasDuplicateImeis && (
+              <p className="text-red-600 text-sm mt-1">❌ This IMEI matches another field</p>
+            )}
+            {formData.imei3.length === 15 && !hasDuplicateImeis && (
+              <p className="text-green-600 text-sm mt-1">✓ Valid IMEI length</p>
+            )}
+          </div>
         )}
       </div>
 
@@ -1473,8 +1653,8 @@ const Step5PricesSupplier = ({ formData, suppliers, onInputChange, onAddNewSuppl
 
       <div>
         <BilingualInput
-          en="Selling Price (Rs.)"
-          ur="فروخت کی قیمت (روپے)"
+          en="Selling Price (Rs.) - Optional"
+          ur="فروخت کی قیمت (روپے) - اختیاری"
           type="number"
           value={formData.selling_price}
           onChange={(e) => {
@@ -1483,7 +1663,7 @@ const Step5PricesSupplier = ({ formData, suppliers, onInputChange, onAddNewSuppl
               onInputChange('selling_price', val);
             }
           }}
-          required={true}
+          required={false}
           placeholder="0"
         />
         {sellingPriceError && (
