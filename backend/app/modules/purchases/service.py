@@ -17,6 +17,7 @@ from app.modules.devices.state import DeviceCondition, DeviceStatus, EventType, 
 from app.modules.ledger import accounts as acc
 from app.modules.ledger.models import CashAccount
 from app.modules.ledger.service import Posting, default_cash_account, money, post, reverse
+from app.modules.notifications import service as notify
 from app.modules.parties.models import Party
 from app.modules.purchases.models import Purchase, PurchaseKind, PurchaseLine, PurchaseStatus
 from app.modules.purchases.schemas import PurchaseCreate
@@ -182,6 +183,12 @@ def create_purchase(
             data={"source": data.kind, "verification_status": vstatus, "purchase_no": purchase.no},
         )
 
+    labels = []
+    for device, _net in devices:
+        b, m = db.get(Brand, device.brand_id), db.get(Model, device.model_id)
+        labels.append(f"{b.name if b else ''} {m.name if m else ''}".strip())
+    labels += [f"{ml.description} x{ml.qty}" for ml in data.misc]
+    notify.on_purchase(db, shop, purchase, party, ", ".join(labels), len(labels), user_id)
     record_audit(
         db,
         shop_id=shop_id,

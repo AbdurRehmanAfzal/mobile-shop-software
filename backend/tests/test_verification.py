@@ -161,5 +161,11 @@ def test_declaration_is_bilingual_html_and_isolated(owner, other_owner, cat):
     r = owner.get(f"/api/v1/devices/{d['id']}/verification/declaration")
     assert r.status_code == 200 and r.headers["content-type"].startswith("text/html")
     body = r.text
-    assert "Ali Raza" in body and IMEI in body and "33100-1234567-1" in body and "اقرار" in body
+    assert (
+        "Ali Raza" in body
+        and IMEI in body
+        and "33100-1234567-1" in body
+        and "اقرار" in body
+        and "declare" not in body
+    )
     assert other_owner.get(f"/api/v1/devices/{d['id']}/verification/declaration").status_code == 404

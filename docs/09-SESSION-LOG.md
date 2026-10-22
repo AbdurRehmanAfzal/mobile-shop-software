@@ -195,3 +195,17 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Done**: `Bilingual.tsx` now renders only the active language via `useLang()` (BiLabel/BiButton/BiInput/BiAlert/BiSegmented); Shell shows `name_ur` in Urdu mode; dashboard/auth cleaned of eyebrow props; tests updated (Urdu-only vs English-only). CLAUDE.md, docs/02 FR-PLT-01 and docs/11 updated.
 **Verified**: `tsc` clean, `vitest` green, `vite build` ok.
 **Next**: unchanged — Phase 1 frontend screens.
+
+---
+
+## 2026-10-22 — Session 14: single-language print documents + notification foundation
+**Owner asks**: receipts/declarations in the shop's selected language (not bilingual); on stock-in and on sale send WhatsApp (and optionally email) to the owner and to the customer, all optional.
+**Done**
+- Receipt (`GET /sales/{id}/receipt`) and purchase declaration (`GET /devices/{id}/verification/declaration`) now render in ONE language: `shops.default_locale` by default, `?lang=en|ur` to override; Urdu versions are RTL with Nastaliq, numbers kept LTR.
+- `modules/notifications`: `shops.notification_settings` JSON (owner WhatsApp/email, per-trigger toggles for owner/customer/seller on sale/purchase/payment, optional language override) via `GET/PUT /api/v1/notifications/settings` (MANAGE_SETTINGS); `messages` outbox (channel, audience, recipient, template, lang, subject/body, `wa.me` link, event/document refs, status queued/sent/failed/skipped, provider); templates EN/UR for sale_customer, sale_owner, purchase_owner, purchase_seller, payment_customer with balance / pending-accessory lines; hooks inside `create_sale`, `create_purchase`, `create_payment` (same transaction as the document); `GET /api/v1/notifications`, `POST /{id}/mark-sent` for manual WhatsApp sharing.
+- Senders (Meta WhatsApp Cloud API, SMTP) are the next step in Phase 3; until then the UI opens the `wa.me` link.
+- Alembic `01c39f11d273`.
+
+**Verified**: `pytest -q` → 89 passed; `ruff` clean.
+
+**Next**: frontend Phase 1 screens (unchanged), with a notifications settings screen under More.

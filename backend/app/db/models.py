@@ -7,6 +7,7 @@ from app.modules.catalogue import models as _catalogue_models  # noqa: F401
 from app.modules.devices import models as _devices_models  # noqa: F401
 from app.modules.ledger import models as _ledger_models  # noqa: F401
 from app.modules.loans import models as _loans_models  # noqa: F401
+from app.modules.notifications import models as _notifications_models  # noqa: F401
 from app.modules.parties import models as _parties_models  # noqa: F401
 from app.modules.payments import models as _payments_models  # noqa: F401
 from app.modules.purchases import models as _purchases_models  # noqa: F401

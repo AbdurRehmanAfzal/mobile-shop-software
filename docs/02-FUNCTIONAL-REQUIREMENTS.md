@@ -92,13 +92,14 @@ Priority: **P0** = needed for first paying shop, **P1** = within 3 months after,
 | FR-RPT-01 | Dashboard: today's sales, purchases, cash in hand, receivables, payables, stock count/value, repairs pending, pending accessories, alerts. | P0 |
 | FR-RPT-02 | Reports: sales, purchases, profit (per device: sale − cost − repair cost), cash flow, expenses, party statements/ageing, stock, repairs, staff, tax. Date range, export PDF/Excel. | P0 |
 | FR-RPT-03 | Scheduled email reports (daily close, weekly summary) to owner. | P1 |
-| FR-RPT-04 | WhatsApp messages (Meta Cloud API; SMS fallback): payment receipt, balance reminder, repair ready, pending accessory reminder, invoice PDF. Bilingual templates. | P1 |
+| FR-RPT-04 | WhatsApp messages (Meta Cloud API; SMS fallback) and email: sale receipt to customer, payment receipt, balance reminder, repair ready, pending accessory reminder, invoice PDF. Templates in the shop's language (one language per message). Each trigger/channel is an optional shop setting, off by default. | P1 |
+| FR-RPT-06 | **Owner alerts**: on every sale and every stock-in (purchase) the owner optionally receives a WhatsApp and/or email summary (who sold/added what, amounts, paid/due). Also optional confirmation to the customer (sale) / seller (purchase). All toggles per shop. | P1 |
 | FR-RPT-05 | Party statement share via WhatsApp/PDF. | P1 |
 
 ## Module J — Printing (`FR-PRT`)
 | ID | Requirement | Pri |
 |---|---|---|
-| FR-PRT-01 | Thermal 58/80 mm receipt and A4 invoice templates, bilingual, IMEI, tax, QR, shop logo; print via browser print dialog (any OS printer). | P0 |
+| FR-PRT-01 | Thermal 58/80 mm receipt and A4 invoice templates in the shop's selected language (Urdu or English, never mixed), IMEI, tax, QR, shop logo; print via browser print dialog (any OS printer). | P0 |
 | FR-PRT-02 | Repair job sheet, purchase declaration, party statement, delivery note. | P0 |
 | FR-PRT-03 | Direct ESC/POS printing from the Android app via Bluetooth/USB. | P2 |
 

@@ -190,20 +190,50 @@ def assert_sellable(device: Device) -> None:
         raise NotSellable()
 
 
-def declaration_html(db: Session, shop_id: uuid.UUID, device_id: uuid.UUID) -> str:
+def declaration_html(
+    db: Session, shop_id: uuid.UUID, device_id: uuid.UUID, lang: str | None = None
+) -> str:
     device = get_device(db, shop_id, device_id)
     shop = db.get(Shop, shop_id)
+    lang = lang if lang in ("en", "ur") else (shop.default_locale or "ur")
+    ur = lang == "ur"
     v = latest(db, shop_id, device)
     seller = db.get(Party, v.seller_party_id) if v and v.seller_party_id else None
     brand = db.get(Brand, device.brand_id)
     model = db.get(Model, device.model_id)
     e = html.escape
-    cond = {
+    cond_en = {
         DeviceCondition.BOX_PACK: "Box pack",
         DeviceCondition.OPEN_BOX: "Open box",
         DeviceCondition.USED: "Used",
         DeviceCondition.PATCHED: "Patched",
-    }[DeviceCondition(device.condition)]
+    }
+    cond_ur = {
+        DeviceCondition.BOX_PACK: "باکس پیک",
+        DeviceCondition.OPEN_BOX: "کھلا باکس",
+        DeviceCondition.USED: "استعمال شدہ",
+        DeviceCondition.PATCHED: "پیچ شدہ",
+    }
+    cond = (cond_ur if ur else cond_en)[DeviceCondition(device.condition)]
+    T = {
+        "title": "خریداری کا اقرار نامہ" if ur else "Purchase declaration",
+        "date": "تاریخ" if ur else "Date",
+        "seller": "بیچنے والا" if ur else "Seller",
+        "phone": "فون" if ur else "Phone",
+        "cnic": "شناختی کارڈ" if ur else "CNIC",
+        "device": "موبائل" if ur else "Device",
+        "pta": "پی ٹی اے" if ur else "PTA",
+        "simtime": "سم ٹائم" if ur else "SIM time",
+        "months": "مہینے" if ur else "months",
+        "price": "قیمت" if ur else "Price",
+        "text": (
+            "میں، اوپر درج بیچنے والا، اقرار کرتا/کرتی ہوں کہ یہ موبائل فون میری جائز ملکیت ہے، یہ چوری شدہ، چھینا ہوا، گم شدہ یا رپورٹ شدہ نہیں ہے، اور میں اسے اپنی مرضی سے فروخت کر رہا/رہی ہوں۔ اگر یہ اقرار غلط ثابت ہو تو اس کی پوری ذمہ داری مجھ پر ہوگی۔"
+            if ur
+            else "I, the seller named above, declare that I am the lawful owner of this mobile phone, that it is not stolen, snatched, lost or reported, and that I am selling it of my own free will. I accept full responsibility if this declaration is found false."
+        ),
+        "sig": "بیچنے والے کے دستخط / انگوٹھا" if ur else "Seller signature / thumb",
+        "for": "دکان کی طرف سے" if ur else "For the shop",
+    }
     seller_name = e(seller.name) if seller else "______________________"
     seller_phone = e(seller.phone) if seller else "______________"
     cnic = e(
@@ -211,31 +241,41 @@ def declaration_html(db: Session, shop_id: uuid.UUID, device_id: uuid.UUID) -> s
         or "_____-_______-_"
     )
     date = utcnow().strftime("%d-%m-%Y")
+    shop_name = e(shop.name_ur) if ur and shop.name_ur else e(shop.name)
+    font_link = (
+        '<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">'
+        if ur
+        else ""
+    )
+    body_font = "'Noto Nastaliq Urdu', serif" if ur else "Arial, sans-serif"
+    sim = (
+        f" · {T['simtime']} {device.sim_time_months} {T['months']}"
+        if device.sim_time_months
+        else ""
+    )
     return f"""<!doctype html>
-<html lang="ur"><head><meta charset="utf-8"><title>Purchase Declaration</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+<html lang="{lang}" dir="{"rtl" if ur else "ltr"}"><head><meta charset="utf-8"><title>{T["title"]}</title>
+{font_link}
 <style>
 @page {{ size: A5; margin: 14mm; }}
-body {{ font-family: Arial, sans-serif; color: #111; font-size: 12px; line-height: 1.5; }}
-.ur {{ font-family: 'Noto Nastaliq Urdu', serif; direction: rtl; font-size: 14px; line-height: 2; }}
-h1 {{ font-size: 16px; margin: 0; }} h2 {{ font-size: 12px; margin: 14px 0 4px; letter-spacing: .08em; text-transform: uppercase; color: #555; }}
+body {{ font-family: {body_font}; color: #111; font-size: {"13px" if ur else "12px"}; line-height: {"2" if ur else "1.5"}; }}
+h1 {{ font-size: 16px; margin: 0; }} h2 {{ font-size: 12px; margin: 14px 0 4px; color: #555; }}
 table {{ width: 100%; border-collapse: collapse; }} td {{ padding: 4px 6px; border-bottom: 1px solid #ddd; vertical-align: top; }}
+.ltr {{ direction: ltr; unicode-bidi: isolate; }}
 .sig {{ display: flex; justify-content: space-between; margin-top: 36px; }} .sig div {{ width: 45%; border-top: 1px solid #333; padding-top: 4px; text-align: center; }}
-.shop {{ display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #111; padding-bottom: 8px; }}
+.shop {{ border-bottom: 2px solid #111; padding-bottom: 8px; }}
 </style></head><body>
-<div class="shop"><div><h1>{e(shop.name)}</h1><div>{e(shop.address or "")} {e(shop.city or "")} · {e(shop.phone or "")}</div></div>
-<div class="ur" style="text-align:right"><b>{e(shop.name_ur or shop.name)}</b><br>خریداری کا اقرار نامہ</div></div>
-<h2>Purchase declaration · Date {date}</h2>
+<div class="shop"><h1>{shop_name}</h1><div>{e(shop.address or "")} {e(shop.city or "")} · <span class="ltr">{e(shop.phone or "")}</span></div></div>
+<h2>{T["title"]} · {T["date"]} <span class="ltr">{date}</span></h2>
 <table>
-<tr><td>Seller / بیچنے والا</td><td>{seller_name}</td></tr>
-<tr><td>Phone / فون</td><td>{seller_phone}</td></tr>
-<tr><td>CNIC / شناختی کارڈ</td><td>{cnic}</td></tr>
-<tr><td>Device / موبائل</td><td>{e(brand.name)} {e(model.name)} · {cond}</td></tr>
-<tr><td>IMEI</td><td>{e(device.imei1)}{(" / " + e(device.imei2)) if device.imei2 else ""}</td></tr>
-<tr><td>PTA</td><td>{e(device.pta_status)}{(" · SIM time " + str(device.sim_time_months) + " months") if device.sim_time_months else ""}</td></tr>
-<tr><td>Price / قیمت</td><td>Rs. {device.cost_price if device.cost_price is not None else "________"}</td></tr>
+<tr><td>{T["seller"]}</td><td>{seller_name}</td></tr>
+<tr><td>{T["phone"]}</td><td class="ltr">{seller_phone}</td></tr>
+<tr><td>{T["cnic"]}</td><td class="ltr">{cnic}</td></tr>
+<tr><td>{T["device"]}</td><td><span class="ltr">{e(brand.name)} {e(model.name)}</span> · {cond}</td></tr>
+<tr><td>IMEI</td><td class="ltr">{e(device.imei1)}{(" / " + e(device.imei2)) if device.imei2 else ""}</td></tr>
+<tr><td>{T["pta"]}</td><td><span class="ltr">{e(device.pta_status)}</span>{sim}</td></tr>
+<tr><td>{T["price"]}</td><td class="ltr">Rs. {device.cost_price if device.cost_price is not None else "________"}</td></tr>
 </table>
-<p>I, the seller named above, declare that I am the lawful owner of this mobile phone, that it is not stolen, snatched, lost or reported, and that I am selling it of my own free will. I accept full responsibility if this declaration is found false.</p>
-<p class="ur">میں، اوپر درج بیچنے والا، اقرار کرتا/کرتی ہوں کہ یہ موبائل فون میری جائز ملکیت ہے، یہ چوری شدہ، چھینا ہوا، گم شدہ یا رپورٹ شدہ نہیں ہے، اور میں اسے اپنی مرضی سے فروخت کر رہا/رہی ہوں۔ اگر یہ اقرار غلط ثابت ہو تو اس کی پوری ذمہ داری مجھ پر ہوگی۔</p>
-<div class="sig"><div>Seller signature / thumb<br><span class="ur">بیچنے والے کے دستخط / انگوٹھا</span></div><div>For {e(shop.name)}<br><span class="ur">دکان کی طرف سے</span></div></div>
+<p>{T["text"]}</p>
+<div class="sig"><div>{T["sig"]}</div><div>{T["for"]} {shop_name}</div></div>
 </body></html>"""

@@ -2,7 +2,17 @@ import uuid
 from datetime import datetime
 from decimal import Decimal
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint, Uuid
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+    Uuid,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import ZERO, Base, Timestamped, UUIDPk
@@ -48,6 +58,7 @@ class Shop(UUIDPk, Timestamped, Base):
     next_repair_no: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     next_payment_no: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     next_return_no: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    notification_settings: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
     timezone: Mapped[str] = mapped_column(String(50), default="Asia/Karachi", nullable=False)
     default_locale: Mapped[str] = mapped_column(String(5), default="ur", nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)

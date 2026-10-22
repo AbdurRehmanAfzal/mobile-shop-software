@@ -13,6 +13,7 @@ from app.modules.auth.models import Shop
 from app.modules.ledger import accounts as acc
 from app.modules.ledger.models import CashAccount
 from app.modules.ledger.service import Posting, default_cash_account, money, post, reverse
+from app.modules.notifications import service as notify
 from app.modules.parties.models import Party
 from app.modules.payments.models import Payment, PaymentDirection
 from app.modules.payments.schemas import PaymentCreate
@@ -180,6 +181,8 @@ def create_payment(
         )
     group = post(db, shop_id, user_id, posting)
     payment.ledger_group_id = group.id
+    if data.direction == PaymentDirection.IN:
+        notify.on_payment_in(db, shop, payment, party)
     record_audit(
         db,
         shop_id=shop_id,

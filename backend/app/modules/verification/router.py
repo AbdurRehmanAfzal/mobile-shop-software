@@ -1,7 +1,7 @@
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from fastapi.responses import HTMLResponse
 
 from app.core.errors import NotFound
@@ -39,5 +39,10 @@ def override(device_id: uuid.UUID, data: OverrideIn, ctx: Ctx, db: DB):
 
 
 @router.get("/declaration", response_class=HTMLResponse)
-def declaration(device_id: uuid.UUID, ctx: Ctx, db: DB):
-    return service.declaration_html(db, ctx.shop_id, device_id)
+def declaration(
+    device_id: uuid.UUID,
+    ctx: Ctx,
+    db: DB,
+    lang: str | None = Query(default=None, pattern="^(en|ur)$"),
+):
+    return service.declaration_html(db, ctx.shop_id, device_id, lang)

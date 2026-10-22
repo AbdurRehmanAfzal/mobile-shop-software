@@ -18,6 +18,7 @@ from app.modules.devices.state import DeviceStatus, EventType
 from app.modules.ledger import accounts as acc
 from app.modules.ledger.models import CashAccount
 from app.modules.ledger.service import Posting, default_cash_account, money, post, reverse
+from app.modules.notifications import service as notify
 from app.modules.parties.models import Party
 from app.modules.purchases.service import _allocate_discount, next_number
 from app.modules.sales.models import Invoice, InvoiceLine, InvoiceStatus
@@ -274,6 +275,13 @@ def create_sale(db: Session, shop_id: uuid.UUID, ctx, data: SaleCreate, loan=Non
                 "warranty_days": dl.warranty_days,
             },
         )
+    labels = []
+    for device in devices:
+        b, m = db.get(Brand, device.brand_id), db.get(Model, device.model_id)
+        labels.append(f"{b.name if b else ''} {m.name if m else ''}".strip())
+    labels += [ml.description for ml in data.misc]
+    pending = ", ".join(p.kind for dl in data.devices for p in dl.accessories_pending)
+    notify.on_sale(db, shop, invoice, party, ", ".join(labels), pending, user_id)
     record_audit(
         db,
         shop_id=shop_id,
@@ -429,70 +437,102 @@ def void_invoice(
 # ---- receipt ----------------------------------------------------------------------------
 
 
-def receipt_html(db: Session, shop_id: uuid.UUID, invoice_id: uuid.UUID, fmt: str) -> str:
+def receipt_html(
+    db: Session, shop_id: uuid.UUID, invoice_id: uuid.UUID, fmt: str, lang: str | None = None
+) -> str:
     inv = get_invoice(db, shop_id, invoice_id)
     shop = db.get(Shop, shop_id)
+    lang = lang if lang in ("en", "ur") else (shop.default_locale or "ur")
+    ur = lang == "ur"
+    T = {
+        "item": "چیز" if ur else "Item",
+        "qty": "تعداد" if ur else "Qty",
+        "price": "قیمت" if ur else "Price",
+        "total": "کل" if ur else "Total",
+        "subtotal": "میزان" if ur else "Subtotal",
+        "discount": "رعایت" if ur else "Discount",
+        "tax": "ٹیکس" if ur else "Tax",
+        "incl": "(شامل)" if ur else "(incl.)",
+        "grand": "کل رقم" if ur else "Total",
+        "paid": "وصول" if ur else "Paid",
+        "due": "اس بل کا بقایا" if ur else "Due on this bill",
+        "balance": "کھاتے کا بقایا" if ur else "Account balance",
+        "pending": "باقی اشیاء" if ur else "Pending items",
+        "cash": "نقد گاہک" if ur else "Cash customer",
+        "thanks": shop.receipt_footer_ur or "خریداری کا شکریہ"
+        if ur
+        else shop.receipt_footer or "Thank you for your business",
+        "warranty": "وارنٹی" if ur else "Warranty",
+        "days": "دن" if ur else "days",
+        "tbd": "تاریخ بعد میں" if ur else "date TBD",
+    }
     out = to_out(db, inv, show_cost=False)
     e = html.escape
     thermal = fmt == "thermal"
     width = "72mm" if thermal else "190mm"
+    shop_name = e(shop.name_ur) if ur and shop.name_ur else e(shop.name)
     rows = "".join(
-        f"<tr><td>{e(ln['device_label'] or ln['description'] or '')}<br><small>{e(ln['imei1'] or '')}{' · ' + e(', '.join(ln['accessories_given'])) if ln['accessories_given'] else ''}</small></td>"
+        f"<tr><td>{e(ln['device_label'] or ln['description'] or '')}<br><small>{e(ln['imei1'] or '')}"
+        f"{' · ' + e(', '.join(ln['accessories_given'])) if ln['accessories_given'] else ''}"
+        f"{(' · ' + T['warranty'] + ' ' + str(ln['warranty_days']) + ' ' + T['days']) if ln['warranty_days'] else ''}</small></td>"
         f"<td class='n'>{ln['qty']}</td><td class='n'>{ln['unit_price']:,.0f}</td><td class='n'>{ln['line_total']:,.0f}</td></tr>"
         for ln in out["lines"]
     )
     pending = [p for ln in out["lines"] for p in ln["accessories_pending"]]
     pending_html = (
-        "<p class='ur'>باقی اشیاء: "
-        + e(", ".join(f"{p['kind']} ({p.get('promised_at') or 'date TBD'})" for p in pending))
+        f"<p><b>{T['pending']}:</b> "
+        + e(", ".join(f"{p['kind']} ({p.get('promised_at') or T['tbd']})" for p in pending))
         + "</p>"
         if pending
         else ""
     )
     party_html = (
-        f"<div>{e(out['party_name'])}</div>"
-        if out["party_name"]
-        else "<div>Cash customer / نقد گاہک</div>"
+        f"<div>{e(out['party_name'])}</div>" if out["party_name"] else f"<div>{T['cash']}</div>"
     )
     balance = out["party_balance_after"]
     balance_html = (
-        f"<tr class='tot'><td colspan='3'>Balance / بقایا</td><td class='n'>{balance:,.0f}</td></tr>"
+        f"<tr class='tot'><td colspan='3'>{T['balance']}</td><td class='n'>{balance:,.0f}</td></tr>"
         if balance is not None and balance != 0
         else ""
     )
     tax_html = (
-        f"<tr><td colspan='3'>Tax {inv.tax_rate:.0f}%{' (incl.)' if inv.tax_inclusive else ''}</td><td class='n'>{inv.tax_amount:,.0f}</td></tr>"
+        f"<tr><td colspan='3'>{T['tax']} {inv.tax_rate:.0f}% {T['incl'] if inv.tax_inclusive else ''}</td><td class='n'>{inv.tax_amount:,.0f}</td></tr>"
         if inv.tax_amount
         else ""
     )
     disc_html = (
-        f"<tr><td colspan='3'>Discount / رعایت</td><td class='n'>-{inv.discount:,.0f}</td></tr>"
+        f"<tr><td colspan='3'>{T['discount']}</td><td class='n'>-{inv.discount:,.0f}</td></tr>"
         if inv.discount
         else ""
     )
-    return f"""<!doctype html><html lang="ur"><head><meta charset="utf-8"><title>{e(inv.no)}</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+    font_link = (
+        '<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">'
+        if ur
+        else ""
+    )
+    body_font = "'Noto Nastaliq Urdu', serif" if ur else "Arial, sans-serif"
+    return f"""<!doctype html><html lang="{lang}" dir="{"rtl" if ur else "ltr"}"><head><meta charset="utf-8"><title>{e(inv.no)}</title>
+{font_link}
 <style>
 @page {{ size: {"80mm auto" if thermal else "A4"}; margin: {"4mm" if thermal else "14mm"}; }}
-body {{ width: {width}; margin: 0 auto; font-family: Arial, sans-serif; font-size: {"11px" if thermal else "13px"}; color: #111; }}
-.ur {{ font-family: 'Noto Nastaliq Urdu', serif; direction: rtl; line-height: 1.9; }}
+body {{ width: {width}; margin: 0 auto; font-family: {body_font}; font-size: {"11px" if thermal else "13px"}; color: #111; {"line-height: 1.9;" if ur else ""} }}
 h1 {{ font-size: {"15px" if thermal else "20px"}; margin: 0; text-align: center; }}
-.c {{ text-align: center; }} .n {{ text-align: right; white-space: nowrap; }}
+.c {{ text-align: center; }} .n {{ text-align: {"left" if ur else "right"}; white-space: nowrap; direction: ltr; }}
 table {{ width: 100%; border-collapse: collapse; margin-top: 6px; }} td, th {{ padding: 3px 2px; vertical-align: top; }}
-th {{ border-bottom: 1px solid #111; text-align: left; font-size: 10px; letter-spacing: .06em; }}
+th {{ border-bottom: 1px solid #111; text-align: {"right" if ur else "left"}; font-size: 10px; }}
 tr.tot td {{ border-top: 1px solid #111; font-weight: bold; }}
-small {{ color: #555; }} .foot {{ margin-top: 10px; border-top: 1px dashed #999; padding-top: 6px; }}
+small {{ color: #555; direction: ltr; unicode-bidi: isolate; }} .foot {{ margin-top: 10px; border-top: 1px dashed #999; padding-top: 6px; }}
 </style></head><body>
-<h1>{e(shop.name)}</h1><div class="c ur">{e(shop.name_ur or "")}</div>
+<h1>{shop_name}</h1>
 <div class="c"><small>{e(shop.address or "")} {e(shop.city or "")}<br>{e(shop.phone or "")}{(" · NTN " + e(shop.ntn)) if shop.ntn else ""}</small></div>
 <table><tr><td><b>{e(inv.no)}</b></td><td class="n">{inv.date.strftime("%d-%m-%Y")}</td></tr><tr><td colspan="2">{party_html}</td></tr></table>
-<table><thead><tr><th>Item / چیز</th><th class="n">Qty</th><th class="n">Price</th><th class="n">Total</th></tr></thead>
+<table><thead><tr><th>{T["item"]}</th><th class="n">{T["qty"]}</th><th class="n">{T["price"]}</th><th class="n">{T["total"]}</th></tr></thead>
 <tbody>{rows}
-<tr><td colspan="3">Subtotal</td><td class="n">{inv.subtotal:,.0f}</td></tr>{disc_html}{tax_html}
-<tr class="tot"><td colspan="3">Total / کل</td><td class="n">Rs. {inv.total:,.0f}</td></tr>
-<tr><td colspan="3">Paid / وصول</td><td class="n">{inv.paid:,.0f}</td></tr>
-<tr><td colspan="3">Due on this bill / اس بل کا بقایا</td><td class="n">{out["balance_due"]:,.0f}</td></tr>{balance_html}
+<tr><td colspan="3">{T["subtotal"]}</td><td class="n">{inv.subtotal:,.0f}</td></tr>{disc_html}{tax_html}
+<tr class="tot"><td colspan="3">{T["grand"]}</td><td class="n">Rs. {inv.total:,.0f}</td></tr>
+<tr><td colspan="3">{T["paid"]}</td><td class="n">{inv.paid:,.0f}</td></tr>
+<tr><td colspan="3">{T["due"]}</td><td class="n">{out["balance_due"]:,.0f}</td></tr>{balance_html}
 </tbody></table>
 {pending_html}
-<div class="foot c"><div>{e(shop.receipt_footer or "Thank you for your business")}</div><div class="ur">{e(shop.receipt_footer_ur or "خریداری کا شکریہ")}</div></div>
+<div class="foot c">{e(T["thanks"])}</div>
 </body></html>"""

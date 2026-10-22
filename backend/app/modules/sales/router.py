@@ -65,5 +65,6 @@ def receipt(
     ctx: Ctx,
     db: DB,
     format: str = Query(default="thermal", pattern="^(thermal|a4)$"),
+    lang: str | None = Query(default=None, pattern="^(en|ur)$"),
 ):
-    return service.receipt_html(db, ctx.shop_id, invoice_id, format)
+    return service.receipt_html(db, ctx.shop_id, invoice_id, format, lang)
