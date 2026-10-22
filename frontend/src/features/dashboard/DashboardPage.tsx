@@ -1,11 +1,17 @@
-import { ArrowDown, ArrowUp, Download, Receipt, RotateCcw, Search, ShieldAlert, Smartphone, HandCoins } from 'lucide-react'
+import { ArrowDown, ArrowLeftRight, ArrowUp, Download, HandCoins, Receipt, RotateCcw, ShieldAlert, Smartphone, Wrench } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/lib/auth'
 import { formatMoney } from '@/lib/format'
-import { useCashAccounts, useDevices, useLoans, useParties, useSales } from '@/lib/queries'
+import { useGet } from '@/lib/queries'
 import { BiLabel } from '@/components/Bilingual'
 import { Row } from '@/components/ui'
+
+interface Dash {
+  sales_count: number; sales_total: string; received_today: string; profit_today: string | null; cash_in_hand: string
+  receivable: string; payable: string; stock_count: number; stock_value_cost: string | null; stock_value_asking: string
+  pending_verification: number; loans_out: number; repairs_open: number
+}
 
 function Tile({ labelKey, value, tone = 'text-ink', icon, to }: { labelKey: string; value: string; tone?: string; icon: ReactNode; to?: string }) {
   const nav = useNavigate()
@@ -15,9 +21,7 @@ function Tile({ labelKey, value, tone = 'text-ink', icon, to }: { labelKey: stri
         <BiLabel text={labelKey} size="sm" tone="text-muted" />
         {icon}
       </div>
-      <div className={`num text-[22px] ${tone}`} dir="ltr">
-        {value}
-      </div>
+      <div className={`num text-[22px] ${tone}`} dir="ltr">{value}</div>
     </button>
   )
 }
@@ -32,61 +36,35 @@ function Action({ to, labelKey, icon, primary = false }: { to: string; labelKey:
   )
 }
 
-const today = () => new Date().toISOString().slice(0, 10)
-
 export default function DashboardPage() {
   const me = useAuth((s) => s.me)
   const nav = useNavigate()
-  const canSeeCost = me?.user.role === 'owner' || me?.user.role === 'manager'
-  const { data: sales } = useSales({ date_from: today() })
-  const { data: cash } = useCashAccounts()
-  const { data: withBalance } = useParties({ with_balance: true })
-  const { data: stock } = useDevices({ status: 'in_stock' })
-  const { data: loans } = useLoans({ status: 'out' })
-
-  const todayActive = (sales ?? []).filter((s) => s.status !== 'void')
-  const todayTotal = todayActive.reduce((a, s) => a + Number(s.total), 0)
-  const todayPaid = todayActive.reduce((a, s) => a + Number(s.paid), 0)
-  const todayProfit = todayActive.reduce((a, s) => a + Number(s.profit ?? 0), 0)
-  const cashTotal = (cash ?? []).reduce((a, c) => a + Number(c.balance), 0)
-  const receivable = (withBalance ?? []).filter((p) => Number(p.balance) > 0).reduce((a, p) => a + Number(p.balance), 0)
-  const payable = (withBalance ?? []).filter((p) => Number(p.balance) < 0).reduce((a, p) => a - Number(p.balance), 0)
-  const stockValue = (stock ?? []).reduce((a, d) => a + Number(d.asking_price ?? 0), 0)
-  const pendingVerification = (stock ?? []).filter((d) => d.verification_status === 'pending' || d.verification_status === 'flagged')
+  const { data: d } = useGet<Dash>(['dashboard'], '/api/v1/reports/dashboard')
+  const n = (v: string | null | undefined) => Number(v ?? 0).toLocaleString('en-US')
 
   return (
     <div className="flex flex-col gap-4">
       <section className="hero flex flex-col gap-3.5 p-5">
         <div className="flex items-start justify-between gap-3">
           <BiLabel text="dashboard.todaySales" size="lg" tone="text-gold-text" bold />
-          <span className="rounded-full border border-gold/40 bg-gold/15 px-2.5 py-1 text-xs font-bold text-gold-text" dir="auto">
-            {me?.user.name}
-          </span>
+          <span className="rounded-full border border-gold/40 bg-gold/15 px-2.5 py-1 text-xs font-bold text-gold-text" dir="auto">{me?.user.name}</span>
         </div>
-        <div className="num text-[38px] leading-none" dir="ltr">
-          {formatMoney(todayTotal)}
-        </div>
+        <div className="num text-[38px] leading-none" dir="ltr">{formatMoney(d?.sales_total ?? 0)}</div>
         <div className="grid grid-cols-3 gap-2.5">
-          {[
-            ['dashboard.sales', String(todayActive.length), ''],
-            ['dashboard.cashIn', Number(todayPaid).toLocaleString('en-US'), ''],
-            ['dashboard.profit', canSeeCost ? Number(todayProfit).toLocaleString('en-US') : '—', 'text-gold-text'],
-          ].map(([k, v, cls]) => (
+          {([['dashboard.sales', String(d?.sales_count ?? 0), ''], ['dashboard.cashIn', n(d?.received_today), ''], ['dashboard.profit', d?.profit_today != null ? n(d.profit_today) : '—', 'text-gold-text']] as const).map(([k, v, cls]) => (
             <div key={k} className="flex flex-col gap-0.5 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5">
               <BiLabel text={k} size="sm" tone="text-hero-text/75" />
-              <span className={`num text-lg ${cls}`} dir="ltr">
-                {v}
-              </span>
+              <span className={`num text-lg ${cls}`} dir="ltr">{v}</span>
             </div>
           ))}
         </div>
       </section>
 
       <section className="grid grid-cols-2 gap-3">
-        <Tile labelKey="dashboard.receivable" value={formatMoney(receivable)} tone="text-receivable" icon={<ArrowUp size={18} className="shrink-0 text-receivable" />} to="/parties" />
-        <Tile labelKey="dashboard.payable" value={formatMoney(payable)} tone="text-payable" icon={<ArrowDown size={18} className="shrink-0 text-payable" />} to="/parties" />
-        <Tile labelKey="dashboard.cashInHand" value={formatMoney(cashTotal)} icon={<HandCoins size={18} className="shrink-0 text-emerald" />} />
-        <Tile labelKey="dashboard.inStock" value={`${stock?.length ?? 0}${canSeeCost && stockValue ? ` · ${Number(stockValue).toLocaleString('en-US')}` : ''}`} icon={<Smartphone size={18} className="shrink-0 text-emerald" />} to="/stock" />
+        <Tile labelKey="dashboard.receivable" value={formatMoney(d?.receivable ?? 0)} tone="text-receivable" icon={<ArrowUp size={18} className="shrink-0 text-receivable" />} to="/parties" />
+        <Tile labelKey="dashboard.payable" value={formatMoney(d?.payable ?? 0)} tone="text-payable" icon={<ArrowDown size={18} className="shrink-0 text-payable" />} to="/parties" />
+        <Tile labelKey="dashboard.cashInHand" value={formatMoney(d?.cash_in_hand ?? 0)} icon={<HandCoins size={18} className="shrink-0 text-emerald" />} to="/expenses" />
+        <Tile labelKey="dashboard.inStock" value={String(d?.stock_count ?? 0)} icon={<Smartphone size={18} className="shrink-0 text-emerald" />} to="/stock" />
       </section>
 
       <section className="flex flex-col gap-2.5">
@@ -94,19 +72,16 @@ export default function DashboardPage() {
         <div className="grid grid-cols-4 gap-2.5">
           <Action to="/sale/new" labelKey="dashboard.newSale" icon={<Receipt size={24} strokeWidth={1.75} />} primary />
           <Action to="/purchase/new" labelKey="dashboard.newPurchase" icon={<Download size={24} strokeWidth={1.75} />} />
-          <Action to="/stock" labelKey="dashboard.imeiSearch" icon={<Search size={24} strokeWidth={1.75} />} />
-          <Action to="/parties" labelKey="dashboard.payment" icon={<HandCoins size={24} strokeWidth={1.75} />} />
+          <Action to="/repairs/new" labelKey="dashboard.repair" icon={<Wrench size={24} strokeWidth={1.75} />} />
+          <Action to="/exchange/new" labelKey="more.exchange" icon={<ArrowLeftRight size={24} strokeWidth={1.75} />} />
         </div>
       </section>
 
-      {pendingVerification.length || loans?.length ? (
+      {d && (d.pending_verification || d.loans_out || d.repairs_open) ? (
         <section className="card p-0">
-          {pendingVerification.length ? (
-            <Row icon={<ShieldAlert size={18} />} title={<BiLabel text="stock.verification.pending" size="md" bold />} sub={<span dir="ltr">{pendingVerification.length}</span>} onClick={() => nav('/stock')} />
-          ) : null}
-          {loans?.length ? (
-            <Row icon={<RotateCcw size={18} />} title={<BiLabel text="loan.out" size="md" bold />} sub={<span dir="ltr">{loans.length}{loans.some((l) => l.overdue) ? ' · ' + loans.filter((l) => l.overdue).length + ' overdue' : ''}</span>} onClick={() => nav('/loans')} />
-          ) : null}
+          {d.pending_verification ? <Row icon={<ShieldAlert size={18} />} title={<BiLabel text="stock.verification.pending" size="md" bold />} sub={<span dir="ltr">{d.pending_verification}</span>} onClick={() => nav('/stock')} /> : null}
+          {d.repairs_open ? <Row icon={<Wrench size={18} />} title={<BiLabel text="dashboard.repairs" size="md" bold />} sub={<span dir="ltr">{d.repairs_open}</span>} onClick={() => nav('/repairs')} /> : null}
+          {d.loans_out ? <Row icon={<RotateCcw size={18} />} title={<BiLabel text="loan.out" size="md" bold />} sub={<span dir="ltr">{d.loans_out}</span>} onClick={() => nav('/loans')} /> : null}
         </section>
       ) : null}
     </div>

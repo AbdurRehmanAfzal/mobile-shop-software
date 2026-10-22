@@ -17,6 +17,11 @@ import PurchaseWizard from '@/features/purchase/PurchaseWizard'
 import SaleWizard from '@/features/sale/SaleWizard'
 import { SaleDetailPage, SalesPage } from '@/features/sale/SalesPage'
 import LoansPage from '@/features/loans/LoansPage'
+import ExpensesPage from '@/features/expenses/ExpensesPage'
+import { NewRepairPage, RepairDetailPage, RepairsPage } from '@/features/repairs/RepairsPages'
+import AccessoriesPage from '@/features/accessories/AccessoriesPage'
+import ExchangeWizard from '@/features/exchange/ExchangeWizard'
+import ReportsPage from '@/features/reports/ReportsPage'
 
 function RequireAuth() {
   const token = useAuth((s) => s.accessToken)
@@ -58,6 +63,13 @@ export const router = createBrowserRouter([
           { path: '/returns', element: <ReturnsPage /> },
           { path: '/parties', element: <PartiesPage /> },
           { path: '/parties/:id', element: <PartyDetailPage /> },
+          { path: '/expenses', element: <ExpensesPage /> },
+          { path: '/repairs', element: <RepairsPage /> },
+          { path: '/repairs/new', element: <NewRepairPage /> },
+          { path: '/repairs/:id', element: <RepairDetailPage /> },
+          { path: '/accessories', element: <AccessoriesPage /> },
+          { path: '/exchange/new', element: <ExchangeWizard /> },
+          { path: '/reports', element: <ReportsPage /> },
           { path: '/more', element: <MorePage /> },
           { path: '/more/settings', element: <SettingsPage /> },
           { path: '/more/notifications', element: <NotificationsPage /> },

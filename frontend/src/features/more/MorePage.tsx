@@ -1,4 +1,4 @@
-import { BarChart3, Bell, ChevronLeft, ChevronRight, Download, HandCoins, Landmark, LogOut, Receipt, RotateCcw, Settings, Users } from 'lucide-react'
+import { ArrowLeftRight, BarChart3, Bell, ChevronLeft, ChevronRight, Download, HandCoins, Headphones, Landmark, LogOut, Receipt, RotateCcw, Settings, Users, Wallet, Wrench } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { setLocale, type Locale } from '@/i18n'
@@ -19,6 +19,10 @@ export default function MorePage() {
   const Chev = ur ? ChevronLeft : ChevronRight
 
   const items: { key: string; Icon: typeof Settings; to?: string; roles?: string[] }[] = [
+    { key: 'more.repairs', Icon: Wrench, to: '/repairs' },
+    { key: 'more.exchange', Icon: ArrowLeftRight, to: '/exchange/new' },
+    { key: 'more.accessories', Icon: Headphones, to: '/accessories' },
+    { key: 'more.expenses', Icon: Wallet, to: '/expenses', roles: ['owner', 'manager'] },
     { key: 'more.sales', Icon: Receipt, to: '/sales' },
     { key: 'more.purchases', Icon: Download, to: '/purchases' },
     { key: 'more.payments', Icon: HandCoins, to: '/payments' },
@@ -28,7 +32,7 @@ export default function MorePage() {
     { key: 'more.settings', Icon: Settings, to: '/more/settings', roles: ['owner'] },
     { key: 'more.cashAccounts', Icon: Landmark },
     { key: 'more.staff', Icon: Users, roles: ['owner'] },
-    { key: 'more.reports', Icon: BarChart3 },
+    { key: 'more.reports', Icon: BarChart3, to: '/reports', roles: ['owner', 'manager'] },
   ]
 
   return (

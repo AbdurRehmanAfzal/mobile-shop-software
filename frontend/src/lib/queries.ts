@@ -160,3 +160,9 @@ export function useDocMutation<TIn, TOut>(method: 'POST' | 'PUT' | 'PATCH', path
     onSuccess: () => inv(),
   })
 }
+
+/** Generic shop-scoped GET for screens that don't need a dedicated hook. */
+export function useGet<T>(key: unknown[], path: string | null) {
+  const k = useShopKey()
+  return useQuery({ queryKey: [k, ...key], queryFn: () => get<T>(path!), enabled: !!path })
+}

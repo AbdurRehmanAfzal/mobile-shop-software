@@ -250,3 +250,11 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Verified**: `pytest -q` → 107 passed; `ruff` clean.
 
 **Next**: frontend Phase 2 screens (expenses + day close, repairs, accessories, exchange, reports; dashboard switches to `/reports/dashboard`), then PDF/Excel export, then Phase 3 (staff UI, WhatsApp/SMTP senders, PWA/Capacitor, deploy).
+
+---
+
+## 2026-10-22 — Session 18: Phase 2 frontend
+**Done**: Expenses page (category chips, add, live today in/out/expected, day-close sheet with counted vs expected); Repairs (list open/all, new job with fault and received-accessory chips, estimate/advance/promised date, auto job-sheet print; detail with status sheet, parts editor incl. quick-add from accessory stock, labour, deliver sheet, status log); Accessories (stock/low/pending tabs, add with opening stock, adjust for managers, mark pending delivered); Exchange wizard (customer → old device via the purchase device sheet → new device from stock → live new-balance preview → receipt); Reports (date range P&L with expense categories, cash flow per account, tax, stock ageing); dashboard now reads `/reports/dashboard` with repair/exchange quick actions; More menu gained repairs, exchange, accessories, expenses, reports. All strings EN/UR.
+**Verified**: `tsc` clean, `vitest` 10 passed, `vite build` ok; backend 107 passed.
+**Not yet verified**: real-phone walkthrough; thermal printer output.
+**Next**: Phase 3 — staff management UI, cash/bank accounts UI, WhatsApp Cloud API + SMTP senders, PDF/Excel export, PWA service worker + Capacitor, Docker deploy; plus E2E tests.
