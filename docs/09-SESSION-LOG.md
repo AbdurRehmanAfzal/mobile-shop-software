@@ -126,3 +126,19 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Verified**: `pytest -q` → 57 passed; `ruff` clean after fixture move.
 
 **Next**: Purchase documents (FR-TXN-03): from supplier / walk-in / shop; device lines create devices + PURCHASED event + verification stub; accessory lines (needs accessories stock → minimal `accessories` table) ; ledger: Dr inventory / Cr party, Dr party / Cr cash for paid-now. Then sales.
+
+---
+
+## 2026-10-22 — Session 9: purchases
+**Done**
+- `modules/purchases`: `Purchase` (no `PUR-000001` from `shops.next_purchase_no`; kind supplier/walk_in/shop/trade_in; subtotal/discount/total/paid; cash account; status posted/voided; ledger group; reference; void reason) + `PurchaseLine` (device|misc, unit_cost, discount_share, net_cost).
+- `create_purchase()`: validates party (supplier kind auto-added; shop kind required for kind=shop), discount ≤ subtotal, paid ≤ total; allocates discount proportionally (remainder on last line); devices created via `new_device()` or re-used when the IMEI exists with status sold/returned_to_supplier (identity refreshed, cycle continues) else `imei_in_stock` 409; accessories bundle stored; ledger: Dr inventory (per device, device_id) / Dr purchases (misc) / Cr party total / Dr party & Cr cash for paid; PURCHASED event per device with `verification_status` (supplier box-pack → not_required, else pending).
+- `void_purchase()` (VOID): refuses if any device has non-verification events after the purchase or is not in stock; reverses the ledger group; RETURNED_TO_SUPPLIER event with `void: true`.
+- Shop counters `next_purchase_no`, `next_repair_no` added (server_default 1). Alembic `c2b50b843a18`.
+- Reads: list requires VIEW_COST; get allowed for the creator.
+
+**Verified**: `pytest -q` → 63 passed; `ruff` clean.
+
+**Gotchas**: a Pydantic field named `date` must not share its name with the `date` type in the same module (use `import datetime as dt`); SQLite batch `add_column` with NOT NULL needs `server_default`.
+
+**Next**: Sales/invoices (FR-TXN-04, FR-TXN-12): INV numbering, device lines (assert_sellable, SOLD event, Dr cogs/Cr inventory at device cost), discount, tax (shop settings), paid-now, accessories given/pending, receipt HTML; then payments (FR-TXN-05), loans (FR-TXN-06), returns (FR-TXN-08).
