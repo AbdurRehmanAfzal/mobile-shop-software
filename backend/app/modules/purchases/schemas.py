@@ -26,6 +26,8 @@ class PurchaseCreate(BaseModel):
     kind: PurchaseKind
     party_id: uuid.UUID
     date: dt.date | None = None
+    # when it was actually bought; default now. Lets a busy shopkeeper enter it later.
+    purchased_at: dt.datetime | None = None
     devices: list[DeviceLineIn] = Field(default_factory=list)
     misc: list[MiscLineIn] = Field(default_factory=list)
     discount: Decimal = Field(default=Decimal(0), ge=0)
@@ -71,6 +73,7 @@ class PurchaseOut(BaseModel):
     party_id: uuid.UUID
     party_name: str | None = None
     date: dt.date
+    purchased_at: dt.datetime | None = None
     subtotal: Decimal
     discount: Decimal
     total: Decimal

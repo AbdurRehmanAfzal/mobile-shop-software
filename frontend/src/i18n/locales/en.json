@@ -295,7 +295,10 @@
     "verifyHint": "Take CNIC and photos and check eGadget. If you know this person well, you can skip.",
     "skipKnown": "Skip, I know this person",
     "skipReason": "Known person, verification skipped by shopkeeper",
-    "skipped": "Skipped, known person"
+    "skipped": "Skipped, known person",
+    "when": "When was it bought?",
+    "whenNow": "Just now",
+    "whenEarlier": "Earlier"
   },
   "verify": {
     "title": "Verification",

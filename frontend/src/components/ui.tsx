@@ -196,3 +196,11 @@ export function fmtDate(iso: string | null | undefined): string {
   const d = new Date(iso)
   return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`
 }
+
+/** "22-10-2026 3:05 PM" in the viewer's local time. Server times without a zone are UTC. */
+export function fmtDateTime(iso: string | null | undefined): string {
+  if (!iso) return ''
+  const d = new Date(/[zZ]|[+-]\d\d:?\d\d$/.test(iso) ? iso : `${iso}Z`)
+  const h = d.getHours() % 12 || 12
+  return `${fmtDate(d.toISOString())} ${h}:${String(d.getMinutes()).padStart(2, '0')} ${d.getHours() < 12 ? 'AM' : 'PM'}`
+}

@@ -1,5 +1,6 @@
 import uuid
-from datetime import date
+from datetime import UTC, date, datetime, timedelta
+from zoneinfo import ZoneInfo
 from decimal import Decimal
 
 from sqlalchemy import select
@@ -13,6 +14,7 @@ from app.modules.audit.service import record_audit
 from app.modules.auth.models import Shop
 from app.modules.catalogue.models import Brand, Model
 from app.modules.devices.models import Device
+from app.modules.expenses.models import DayClose
 from app.modules.devices.service import apply_event, by_imei, new_device, replace_accessories
 from app.modules.devices.state import DeviceCondition, DeviceStatus, EventType, VerificationStatus
 from app.modules.ledger import accounts as acc
@@ -88,12 +90,26 @@ def create_purchase(
         if cash is None or cash.shop_id != shop_id:
             raise NotFound(code="cash_account_not_found")
 
+    at = _purchase_time(data.purchased_at)
+    day = data.date or at.astimezone(ZoneInfo(shop.timezone or "Asia/Karachi")).date()
+    if paid > ZERO and db.scalar(
+        select(DayClose.id).where(
+            DayClose.shop_id == shop_id, DayClose.cash_account_id == cash.id, DayClose.date == day
+        )
+    ):
+        raise Conflict(
+            code="day_closed",
+            message_en="Cash for that day is already closed. Choose a later time or pay nothing now.",
+            message_ur="اس دن کا کیش بند ہو چکا ہے۔ بعد کا وقت چنیں یا ابھی ادائیگی نہ کریں۔",
+        )
+
     purchase = Purchase(
         shop_id=shop_id,
         no=next_number(db, shop, "PUR", "next_purchase_no"),
         kind=data.kind,
         party_id=party.id,
-        date=data.date or date.today(),
+        date=day,
+        purchased_at=at,
         subtotal=subtotal,
         discount=discount,
         total=total,
@@ -108,13 +124,22 @@ def create_purchase(
 
     shares = _allocate_discount(discount, line_amounts)
     posting = Posting(
-        document_type="purchase", document_id=purchase.id, memo=f"{purchase.no} {party.name}"
+        document_type="purchase",
+        document_id=purchase.id,
+        memo=f"{purchase.no} {party.name}",
+        at=at,
     )
     line_no = 0
     devices: list[tuple[Device, Decimal]] = []
 
     for dl, share in zip(data.devices, shares[: len(data.devices)], strict=True):
         device = _device_for_purchase(db, shop_id, dl)
+        if device.event_count and _aware(device.last_event_at) > at:
+            raise Conflict(
+                code="purchase_before_history",
+                message_en=f"{device.imei1}: this time is before the phone's last record. Choose a later time.",
+                message_ur=f"{device.imei1}: یہ وقت اس موبائل کے پچھلے ریکارڈ سے پہلے کا ہے۔ بعد کا وقت چنیں۔",
+            )
         net = money(dl.cost - share)
         db.add(
             PurchaseLine(
@@ -195,6 +220,7 @@ def create_purchase(
             user_id,
             device,
             EventType.PURCHASED,
+            at=at,
             party_id=party.id,
             amount=net,
             ledger_group_id=purchase.ledger_group_id,
@@ -366,3 +392,24 @@ def void_purchase(
     )
     db.commit()
     return p
+
+
+def _aware(value: datetime) -> datetime:
+    return value if value.tzinfo else value.replace(tzinfo=UTC)
+
+
+def _purchase_time(value: datetime | None) -> datetime:
+    """Default now; a naive time is Pakistan time; never in the future (5 min clock slack)."""
+    now = utcnow()
+    if value is None:
+        return now
+    if value.tzinfo is None:
+        value = value.replace(tzinfo=ZoneInfo("Asia/Karachi"))
+    value = value.astimezone(UTC)
+    if value > now + timedelta(minutes=5):
+        raise ValidationFailed(
+            code="purchase_in_future",
+            message_en="Purchase time cannot be in the future",
+            message_ur="خریداری کا وقت آنے والا نہیں ہو سکتا",
+        )
+    return value

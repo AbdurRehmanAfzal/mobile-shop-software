@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
-import { Chip, Empty, ErrorText, KV, List, Loading, MoneyText, PageHeader, Row, Sheet, fmtDate } from '@/components/ui'
+import { Chip, Empty, ErrorText, KV, List, Loading, MoneyText, PageHeader, Row, Sheet, fmtDate, fmtDateTime } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useDocMutation, usePayments, usePurchase, usePurchases, useReturns } from '@/lib/queries'
 import type { Purchase, ReturnDoc } from '@/lib/types'
@@ -42,7 +42,7 @@ export function PurchaseDetailPage() {
       <PageHeader title={{ en: p.no, ur: p.no }} right={p.status === 'voided' ? <Chip text="sale.status.void" tone="muted" /> : null} />
       <div className="card">
         <KV k="purchase.steps.from" v={<button type="button" className="text-emerald" onClick={() => nav(`/parties/${p.party_id}`)}>{p.party_name}</button>} />
-        <KV k="common.date" v={<span dir="ltr">{fmtDate(p.date)}</span>} />
+        <KV k="common.date" v={<span dir="ltr">{p.purchased_at ? fmtDateTime(p.purchased_at) : fmtDate(p.date)}</span>} />
       </div>
       <List>
         {p.lines.map((l) => (

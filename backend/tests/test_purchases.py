@@ -298,3 +298,81 @@ def test_validation_and_roles(client, owner, other_owner, cat):
     )
     assert other_owner.get(f"/api/v1/purchases/{mine['id']}").status_code == 404
     assert len(owner.get("/api/v1/purchases").json()) == 1
+
+
+# ---- purchase time: busy shopkeeper enters the purchase later -------------------
+
+
+def test_purchase_can_be_entered_later_with_the_real_time(db, owner, cat):
+    import datetime as dt
+
+    from app.modules.devices.models import DeviceEvent
+    from app.modules.ledger.models import LedgerGroup
+
+    sup = _party(owner)
+    when = (dt.datetime.now(dt.UTC) - dt.timedelta(hours=5)).replace(microsecond=0)
+    r = owner.post(
+        "/api/v1/purchases",
+        json={
+            "kind": "supplier",
+            "party_id": sup["id"],
+            "purchased_at": when.isoformat(),
+            "devices": [{"device": _dev(cat, IMEI_A), "cost": 4000}],
+            "paid": 1000,
+        },
+    )
+    assert r.status_code == 201, r.text
+    p = r.json()
+    got = dt.datetime.fromisoformat(p["purchased_at"])
+    got = got if got.tzinfo else got.replace(tzinfo=dt.UTC)
+    assert got == when
+    group = db.get(LedgerGroup, uuid.UUID(p["ledger_group_id"]))
+    assert group.at.replace(tzinfo=dt.UTC) == when
+    ev = db.query(DeviceEvent).filter_by(document_id=uuid.UUID(p["id"])).one()
+    assert ev.at.replace(tzinfo=dt.UTC) == when
+
+
+def test_purchase_time_cannot_be_in_the_future(owner, cat):
+    import datetime as dt
+
+    sup = _party(owner)
+    later = dt.datetime.now(dt.UTC) + dt.timedelta(hours=2)
+    r = owner.post(
+        "/api/v1/purchases",
+        json={
+            "kind": "supplier",
+            "party_id": sup["id"],
+            "purchased_at": later.isoformat(),
+            "devices": [{"device": _dev(cat, IMEI_A), "cost": 4000}],
+        },
+    )
+    assert r.status_code in (400, 422) and r.json()["error"]["code"] == "purchase_in_future"
+
+
+def test_backdated_cash_purchase_into_a_closed_day_is_blocked(owner, cat):
+    import datetime as dt
+
+    sup = _party(owner)
+    assert owner.post("/api/v1/expenses/day-close", json={"counted": 0}).status_code in (200, 201)
+    r = owner.post(
+        "/api/v1/purchases",
+        json={
+            "kind": "supplier",
+            "party_id": sup["id"],
+            "purchased_at": (dt.datetime.now(dt.UTC) - dt.timedelta(minutes=1)).isoformat(),
+            "devices": [{"device": _dev(cat, IMEI_A), "cost": 4000}],
+            "paid": 500,
+        },
+    )
+    assert r.status_code == 409 and r.json()["error"]["code"] == "day_closed"
+    # on credit (nothing paid) it is fine
+    r = owner.post(
+        "/api/v1/purchases",
+        json={
+            "kind": "supplier",
+            "party_id": sup["id"],
+            "purchased_at": (dt.datetime.now(dt.UTC) - dt.timedelta(minutes=1)).isoformat(),
+            "devices": [{"device": _dev(cat, IMEI_A), "cost": 4000}],
+        },
+    )
+    assert r.status_code == 201, r.text

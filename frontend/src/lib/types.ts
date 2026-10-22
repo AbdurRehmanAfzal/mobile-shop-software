@@ -203,6 +203,7 @@ export interface Purchase {
   party_id: UUID
   party_name: string | null
   date: string
+  purchased_at: string | null
   subtotal: Money
   discount: Money
   total: Money

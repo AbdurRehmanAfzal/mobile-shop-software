@@ -1,7 +1,7 @@
 import { Check, ShieldCheck, Store, Trash2, UserRound } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import PartyPicker from '@/components/PartyPicker'
 import { Chip, ErrorText, KV, MoneyText, PageHeader, Sheet, Stepper } from '@/components/ui'
 import { uid } from '@/lib/id'
@@ -38,6 +38,8 @@ export default function PurchaseWizard() {
   const [paid, setPaid] = useState('')
   const [accountId, setAccountId] = useState('')
   const [reference, setReference] = useState('')
+  const [earlier, setEarlier] = useState(false)
+  const [when, setWhen] = useState(localNow())
   const [result, setResult] = useState<Purchase | null>(null)
   const { data: accounts } = useCashAccounts()
   const m = useDocMutation<Record<string, unknown>, Purchase>('POST', () => '/api/v1/purchases')
@@ -56,6 +58,7 @@ export default function PurchaseWizard() {
       paid: Number(paid || 0),
       cash_account_id: accountId || undefined,
       reference: reference || undefined,
+      purchased_at: earlier && when ? new Date(when).toISOString() : undefined,
     })
     setResult(res)
     setStep(3)
@@ -174,8 +177,27 @@ export default function PurchaseWizard() {
               </span>
             </div>
           </div>
+          <div className="card flex flex-col gap-2">
+            <BiLabel text="purchase.when" size="md" tone="text-muted" />
+            <BiSegmented<'now' | 'earlier'>
+              value={earlier ? 'earlier' : 'now'}
+              onChange={(v) => { setEarlier(v === 'earlier'); if (v === 'earlier') setWhen(localNow()) }}
+              options={[{ value: 'now', text: 'purchase.whenNow' }, { value: 'earlier', text: 'purchase.whenEarlier' }]}
+            />
+            {earlier ? (
+              <input
+                type="datetime-local"
+                aria-label={pick('purchase.when')}
+                value={when}
+                max={localNow()}
+                onChange={(e) => setWhen(e.target.value)}
+                dir="ltr"
+                className="min-h-12 w-full rounded-2xl border border-line bg-surface px-3 font-semibold"
+              />
+            ) : null}
+          </div>
           <ErrorText error={m.error} />
-          <BiButton text="common.confirm" full loading={m.isPending} onClick={submit} />
+          <BiButton text="common.confirm" full loading={m.isPending} disabled={earlier && !when} onClick={submit} />
         </div>
       ) : null}
 
@@ -260,4 +282,11 @@ function SourceCard({ active, icon, title, hint, onClick }: { active: boolean; i
       {active ? <Check size={22} className="shrink-0 text-emerald-deep" /> : null}
     </button>
   )
+}
+
+/** Current local time as a datetime-local value: "2026-10-22T18:05". */
+function localNow() {
+  const d = new Date()
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset())
+  return d.toISOString().slice(0, 16)
 }
