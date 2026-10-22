@@ -8,4 +8,5 @@ from app.modules.devices import models as _devices_models  # noqa: F401
 from app.modules.ledger import models as _ledger_models  # noqa: F401
 from app.modules.parties import models as _parties_models  # noqa: F401
 from app.modules.purchases import models as _purchases_models  # noqa: F401
+from app.modules.sales import models as _sales_models  # noqa: F401
 from app.modules.verification import models as _verification_models  # noqa: F401

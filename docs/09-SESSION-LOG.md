@@ -142,3 +142,17 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Gotchas**: a Pydantic field named `date` must not share its name with the `date` type in the same module (use `import datetime as dt`); SQLite batch `add_column` with NOT NULL needs `server_default`.
 
 **Next**: Sales/invoices (FR-TXN-04, FR-TXN-12): INV numbering, device lines (assert_sellable, SOLD event, Dr cogs/Cr inventory at device cost), discount, tax (shop settings), paid-now, accessories given/pending, receipt HTML; then payments (FR-TXN-05), loans (FR-TXN-06), returns (FR-TXN-08).
+
+---
+
+## 2026-10-22 — Session 10: sales / invoices
+**Done**
+- `modules/sales`: `Invoice` (INV-000001 via `shops.invoice_prefix` + `next_invoice_no`; optional party — cash sale must be fully paid; subtotal/discount/tax_rate/tax_inclusive/tax_amount/total/paid/cost_total; status open/partially_paid/paid/returned/void; ledger group; loan_id placeholder; fbr_invoice_no placeholder) + `InvoiceLine` (device|misc; unit_price, discount_share, tax_share, line_total, cost, warranty_days, accessories_given, accessories_pending).
+- `create_sale()`: device must be in_stock (or with this customer for approval; on_loan → settle loan instead); `assert_sellable()` enforced with inline owner override (`override_reason` + VERIFY_OVERRIDE) that records the verification override; `compute_tax()` inclusive/exclusive; discount and tax allocated across lines; ledger: Dr cogs / Cr inventory per device at cost, Dr party (or cash for cash sale) total / Cr sales net / Cr tax_payable, Dr cash / Cr party for paid-now; SOLD event per device (amount = price, data invoice_no/paid_now/warranty); accessories given → `given_at_sale`, pending → `pending_from=shop` + promised date; warranty start set.
+- `void_invoice()` (VOID): refuses if device moved after the sale; reverses ledger; SALE_RETURNED event with `void: true`; resets accessory flags.
+- `receipt_html()` thermal 80 mm / A4: shop header (EN + UR), lines with IMEI and given accessories, discount, tax, total, paid, due on this bill, party running balance, pending accessories line, bilingual footer.
+- Cost/profit hidden without VIEW_COST. Alembic `7efefcded18f`.
+
+**Verified**: `pytest -q` → 72 passed; `ruff` clean.
+
+**Next**: Payments in/out with allocation (FR-TXN-05) → invoice `paid`/status updates; loans (FR-TXN-06) out/settle (return or sale to the shop); returns (FR-TXN-08) partial sale/purchase returns with refund / keep-as-credit / keep-as-income choice.

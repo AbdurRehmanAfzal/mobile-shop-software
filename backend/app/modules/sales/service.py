@@ -1,0 +1,486 @@
+import datetime as dt
+import html
+import uuid
+from decimal import Decimal
+
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from app.core.errors import Conflict, Forbidden, NotFound, ValidationFailed
+from app.core.permissions import Cap
+from app.db.base import ZERO, utcnow
+from app.modules.audit.service import record_audit
+from app.modules.auth.models import Shop
+from app.modules.catalogue.models import Brand, Model
+from app.modules.devices.models import Device, DeviceAccessoryItem
+from app.modules.devices.service import apply_event, get_device
+from app.modules.devices.state import DeviceStatus, EventType
+from app.modules.ledger import accounts as acc
+from app.modules.ledger.models import CashAccount
+from app.modules.ledger.service import Posting, default_cash_account, money, post, reverse
+from app.modules.parties.models import Party
+from app.modules.purchases.service import _allocate_discount, next_number
+from app.modules.sales.models import Invoice, InvoiceLine, InvoiceStatus
+from app.modules.sales.schemas import SaleCreate
+from app.modules.verification.service import NotSellable, assert_sellable
+from app.modules.verification.service import override as verification_override
+
+
+def compute_tax(base: Decimal, rate: Decimal, inclusive: bool) -> tuple[Decimal, Decimal]:
+    """Return (tax_amount, total) for a base amount (after discount)."""
+    base = money(base)
+    rate = Decimal(rate or 0)
+    if rate <= 0:
+        return ZERO, base
+    if inclusive:
+        tax = money(base * rate / (Decimal(100) + rate))
+        return tax, base
+    tax = money(base * rate / Decimal(100))
+    return tax, money(base + tax)
+
+
+def status_for(total: Decimal, paid: Decimal) -> str:
+    if paid >= total:
+        return InvoiceStatus.PAID
+    if paid > ZERO:
+        return InvoiceStatus.PARTIALLY_PAID
+    return InvoiceStatus.OPEN
+
+
+def create_sale(db: Session, shop_id: uuid.UUID, ctx, data: SaleCreate) -> Invoice:
+    user_id = ctx.id
+    shop = db.get(Shop, shop_id)
+    party: Party | None = None
+    if data.party_id is not None:
+        party = db.get(Party, data.party_id)
+        if party is None or party.shop_id != shop_id:
+            raise NotFound(code="party_not_found")
+        if "customer" not in party.kinds and "shop" not in party.kinds:
+            party.kinds = [*party.kinds, "customer"]
+
+    # ---- devices: sellability -------------------------------------------------
+    devices: list[Device] = []
+    for dl in data.devices:
+        device = get_device(db, shop_id, dl.device_id)
+        if device.status == DeviceStatus.ON_LOAN:
+            raise Conflict(
+                code="device_on_loan",
+                message_en="This device is out on loan; settle the loan instead",
+                message_ur="یہ موبائل امانت پر ہے؛ پہلے امانت کا حساب کریں",
+            )
+        if device.status == DeviceStatus.WITH_CUSTOMER_FOR_APPROVAL and (
+            party is None or device.current_party_id != party.id
+        ):
+            raise Conflict(
+                code="device_with_other_customer",
+                message_en="Device is with another customer for approval",
+                message_ur="موبائل کسی اور گاہک کے پاس پسند کے لیے ہے",
+            )
+        if device.status not in (DeviceStatus.IN_STOCK, DeviceStatus.WITH_CUSTOMER_FOR_APPROVAL):
+            raise Conflict(
+                code="device_not_in_stock",
+                message_en=f"Device is {device.status}",
+                message_ur="موبائل اسٹاک میں نہیں",
+            )
+        try:
+            assert_sellable(device)
+        except NotSellable:
+            if data.override_reason and ctx.can(Cap.VERIFY_OVERRIDE):
+                verification_override(db, shop_id, ctx, device.id, data.override_reason)
+                db.refresh(device)
+            else:
+                raise
+        devices.append(device)
+
+    # ---- money ------------------------------------------------------------------
+    line_amounts = [money(d.price) for d in data.devices] + [
+        money(m.unit_price * m.qty) for m in data.misc
+    ]
+    subtotal = sum(line_amounts, ZERO)
+    discount = money(data.discount)
+    if discount > subtotal:
+        raise ValidationFailed(
+            code="discount_too_big",
+            message_en="Discount exceeds total",
+            message_ur="رعایت کل رقم سے زیادہ ہے",
+        )
+    base = money(subtotal - discount)
+    rate = shop.tax_rate if shop.tax_enabled else ZERO
+    tax, total = compute_tax(base, rate, shop.tax_inclusive)
+    paid = money(data.paid)
+    if paid > total:
+        raise ValidationFailed(
+            code="paid_exceeds_total",
+            message_en="Paid amount exceeds total",
+            message_ur="ادا شدہ رقم کل سے زیادہ ہے",
+        )
+    if party is None and paid != total:
+        raise ValidationFailed(
+            code="credit_needs_customer",
+            message_en="Select a customer to sell on credit",
+            message_ur="ادھار پر فروخت کے لیے گاہک منتخب کریں",
+        )
+    cash: CashAccount | None = None
+    if paid > ZERO:
+        cash = (
+            db.get(CashAccount, data.cash_account_id)
+            if data.cash_account_id
+            else default_cash_account(db, shop_id)
+        )
+        if cash is None or cash.shop_id != shop_id:
+            raise NotFound(code="cash_account_not_found")
+
+    invoice = Invoice(
+        shop_id=shop_id,
+        no=next_number(db, shop, shop.invoice_prefix or "INV", "next_invoice_no"),
+        party_id=party.id if party else None,
+        date=data.date or dt.date.today(),
+        subtotal=subtotal,
+        discount=discount,
+        tax_rate=money(rate),
+        tax_inclusive=shop.tax_inclusive,
+        tax_amount=tax,
+        total=total,
+        paid=paid,
+        cash_account_id=cash.id if cash else None,
+        status=status_for(total, paid),
+        notes=data.notes,
+        created_by=user_id,
+    )
+    db.add(invoice)
+    db.flush()
+
+    shares = _allocate_discount(discount, line_amounts)
+    tax_shares = (
+        _allocate_discount(tax, [money(a - s) for a, s in zip(line_amounts, shares, strict=True)])
+        if tax > ZERO
+        else [ZERO] * len(line_amounts)
+    )
+    posting = Posting(
+        document_type="invoice",
+        document_id=invoice.id,
+        memo=f"{invoice.no} {party.name if party else 'Cash sale'}",
+    )
+    cost_total = ZERO
+    line_no = 0
+
+    for dl, device, share, tshare in zip(
+        data.devices, devices, shares[: len(devices)], tax_shares[: len(devices)], strict=True
+    ):
+        net = money(dl.price - share)
+        line_total = net if shop.tax_inclusive or tax == ZERO else money(net + tshare)
+        cost = money(device.cost_price or ZERO)
+        cost_total += cost
+        db.add(
+            InvoiceLine(
+                invoice_id=invoice.id,
+                line_no=line_no,
+                kind="device",
+                device_id=device.id,
+                qty=1,
+                unit_price=money(dl.price),
+                discount_share=share,
+                tax_share=tshare,
+                line_total=line_total,
+                cost=cost,
+                warranty_days=dl.warranty_days,
+                accessories_given=dl.accessories_given,
+                accessories_pending=[p.model_dump(mode="json") for p in dl.accessories_pending],
+            )
+        )
+        line_no += 1
+        _apply_accessories(
+            db, device, dl.accessories_given, [p.model_dump() for p in dl.accessories_pending]
+        )
+        if cost > ZERO:
+            posting.debit(acc.SysAccount.COGS, cost, device_id=device.id, memo=device.imei1).credit(
+                acc.SysAccount.INVENTORY, cost, device_id=device.id
+            )
+        if dl.warranty_days:
+            device.warranty_months = 0
+            device.warranty_start = invoice.date
+
+    for ml, share, tshare in zip(
+        data.misc, shares[len(devices) :], tax_shares[len(devices) :], strict=True
+    ):
+        net = money(ml.unit_price * ml.qty - share)
+        line_total = net if shop.tax_inclusive or tax == ZERO else money(net + tshare)
+        cost = money(ml.cost)
+        cost_total += cost
+        db.add(
+            InvoiceLine(
+                invoice_id=invoice.id,
+                line_no=line_no,
+                kind="misc",
+                description=ml.description,
+                qty=ml.qty,
+                unit_price=money(ml.unit_price),
+                discount_share=share,
+                tax_share=tshare,
+                line_total=line_total,
+                cost=cost,
+            )
+        )
+        line_no += 1
+        if cost > ZERO:
+            posting.debit(acc.SysAccount.COGS, cost, memo=ml.description).credit(
+                acc.SysAccount.INVENTORY, cost
+            )
+    invoice.cost_total = cost_total
+
+    receivable_account = acc.party_account(party.id) if party else None
+    net_sales = money(total - tax)
+    if total > ZERO:
+        if party:
+            posting.debit(receivable_account, total)
+        else:
+            posting.debit(acc.cash_account(cash.id), total, memo=f"Cash sale {invoice.no}")
+        if net_sales > ZERO:
+            posting.credit(acc.SysAccount.SALES, net_sales)
+        if tax > ZERO:
+            posting.credit(acc.SysAccount.TAX_PAYABLE, tax)
+    if party and paid > ZERO:
+        posting.debit(acc.cash_account(cash.id), paid, memo=f"Received {invoice.no}").credit(
+            receivable_account, paid
+        )
+    group = post(db, shop_id, user_id, posting) if posting.lines else None
+    invoice.ledger_group_id = group.id if group else None
+
+    for dl, device in zip(data.devices, devices, strict=True):
+        apply_event(
+            db,
+            shop_id,
+            user_id,
+            device,
+            EventType.SOLD,
+            party_id=party.id if party else None,
+            amount=money(dl.price),
+            ledger_group_id=invoice.ledger_group_id,
+            document_type="invoice",
+            document_id=invoice.id,
+            data={
+                "invoice_no": invoice.no,
+                "paid_now": str(paid),
+                "warranty_days": dl.warranty_days,
+            },
+        )
+    record_audit(
+        db,
+        shop_id=shop_id,
+        user_id=user_id,
+        entity="invoice",
+        entity_id=invoice.id,
+        action="create",
+        after={"no": invoice.no, "total": str(total), "paid": str(paid), "devices": len(devices)},
+    )
+    db.commit()
+    return invoice
+
+
+def _apply_accessories(db: Session, device: Device, given: list[str], pending: list[dict]) -> None:
+    existing = {a.kind: a for a in device.accessories if a.kind != "other"}
+    for kind in given:
+        item = existing.get(kind)
+        if item is None:
+            item = DeviceAccessoryItem(device_id=device.id, kind=kind, came_with=False)
+            db.add(item)
+        item.given_at_sale = True
+    for p in pending:
+        item = existing.get(p["kind"]) if p["kind"] != "other" else None
+        if item is None:
+            item = DeviceAccessoryItem(
+                device_id=device.id, kind=p["kind"], label=p.get("label"), came_with=False
+            )
+            db.add(item)
+        item.given_at_sale = False
+        item.pending_from = "shop"
+        item.promised_to_customer_at = p.get("promised_at")
+    db.flush()
+
+
+def get_invoice(db: Session, shop_id: uuid.UUID, invoice_id: uuid.UUID) -> Invoice:
+    inv = db.get(Invoice, invoice_id)
+    if inv is None or inv.shop_id != shop_id:
+        raise NotFound(code="invoice_not_found")
+    return inv
+
+
+def list_invoices(
+    db: Session, shop_id: uuid.UUID, *, party_id, date_from, date_to, status, limit
+) -> list[Invoice]:
+    stmt = select(Invoice).where(Invoice.shop_id == shop_id)
+    if party_id:
+        stmt = stmt.where(Invoice.party_id == party_id)
+    if date_from:
+        stmt = stmt.where(Invoice.date >= date_from)
+    if date_to:
+        stmt = stmt.where(Invoice.date <= date_to)
+    if status:
+        stmt = stmt.where(Invoice.status == status)
+    return list(db.scalars(stmt.order_by(Invoice.created_at.desc()).limit(limit)).all())
+
+
+def to_out(db: Session, inv: Invoice, show_cost: bool) -> dict:
+    party = db.get(Party, inv.party_id) if inv.party_id else None
+    lines = []
+    for ln in inv.lines:
+        label = imei = None
+        if ln.device_id:
+            d = db.get(Device, ln.device_id)
+            if d:
+                imei = d.imei1
+                b, m = db.get(Brand, d.brand_id), db.get(Model, d.model_id)
+                label = f"{b.name if b else ''} {m.name if m else ''}".strip()
+        row = {
+            **{c.name: getattr(ln, c.name) for c in InvoiceLine.__table__.columns},
+            "imei1": imei,
+            "device_label": label,
+        }
+        row["profit"] = money(ln.line_total - ln.tax_share - ln.cost) if show_cost else None
+        if not show_cost:
+            row["cost"] = None
+        lines.append(row)
+    active = inv.status not in (InvoiceStatus.VOID, InvoiceStatus.RETURNED)
+    return {
+        **{c.name: getattr(inv, c.name) for c in Invoice.__table__.columns},
+        "party_name": party.name if party else None,
+        "party_balance_after": party.balance if party else None,
+        "balance_due": money(inv.total - inv.paid) if active else ZERO,
+        "cost_total": inv.cost_total if show_cost else None,
+        "profit": money(inv.total - inv.tax_amount - inv.cost_total) if show_cost else None,
+        "lines": lines,
+    }
+
+
+def void_invoice(
+    db: Session, shop_id: uuid.UUID, ctx, invoice_id: uuid.UUID, reason: str
+) -> Invoice:
+    if not ctx.can(Cap.VOID):
+        raise Forbidden()
+    inv = get_invoice(db, shop_id, invoice_id)
+    if inv.status in (InvoiceStatus.VOID, InvoiceStatus.RETURNED):
+        raise Conflict(code="already_voided")
+    for ln in inv.lines:
+        if ln.device_id:
+            d = db.get(Device, ln.device_id)
+            sold = [e for e in d.events if e.document_id == inv.id and e.type == EventType.SOLD]
+            if (
+                not sold
+                or d.status != DeviceStatus.SOLD
+                or any(e.seq > sold[0].seq for e in d.events)
+            ):
+                raise Conflict(
+                    code="device_changed",
+                    message_en=f"Device {d.imei1} has moved since this sale; use a return instead",
+                    message_ur=f"موبائل {d.imei1} اس فروخت کے بعد تبدیل ہو چکا ہے؛ واپسی استعمال کریں",
+                )
+    if inv.ledger_group_id:
+        reverse(db, shop_id, ctx.id, inv.ledger_group_id, f"Void {inv.no}: {reason}")
+    for ln in inv.lines:
+        if ln.device_id:
+            d = db.get(Device, ln.device_id)
+            apply_event(
+                db,
+                shop_id,
+                ctx.id,
+                d,
+                EventType.SALE_RETURNED,
+                party_id=inv.party_id,
+                amount=ln.line_total,
+                document_type="invoice_void",
+                document_id=inv.id,
+                data={"void": True, "reason": reason},
+            )
+            for a in d.accessories:
+                if a.given_at_sale:
+                    a.given_at_sale = None
+                if a.pending_from == "shop":
+                    a.pending_from = "none"
+                    a.promised_to_customer_at = None
+    inv.status = InvoiceStatus.VOID
+    inv.voided_by = ctx.id
+    inv.void_reason = reason
+    inv.updated_at = utcnow()
+    record_audit(
+        db,
+        shop_id=shop_id,
+        user_id=ctx.id,
+        entity="invoice",
+        entity_id=inv.id,
+        action="void",
+        after={"reason": reason},
+    )
+    db.commit()
+    return inv
+
+
+# ---- receipt ----------------------------------------------------------------------------
+
+
+def receipt_html(db: Session, shop_id: uuid.UUID, invoice_id: uuid.UUID, fmt: str) -> str:
+    inv = get_invoice(db, shop_id, invoice_id)
+    shop = db.get(Shop, shop_id)
+    out = to_out(db, inv, show_cost=False)
+    e = html.escape
+    thermal = fmt == "thermal"
+    width = "72mm" if thermal else "190mm"
+    rows = "".join(
+        f"<tr><td>{e(ln['device_label'] or ln['description'] or '')}<br><small>{e(ln['imei1'] or '')}{' · ' + e(', '.join(ln['accessories_given'])) if ln['accessories_given'] else ''}</small></td>"
+        f"<td class='n'>{ln['qty']}</td><td class='n'>{ln['unit_price']:,.0f}</td><td class='n'>{ln['line_total']:,.0f}</td></tr>"
+        for ln in out["lines"]
+    )
+    pending = [p for ln in out["lines"] for p in ln["accessories_pending"]]
+    pending_html = (
+        "<p class='ur'>باقی اشیاء: "
+        + e(", ".join(f"{p['kind']} ({p.get('promised_at') or 'date TBD'})" for p in pending))
+        + "</p>"
+        if pending
+        else ""
+    )
+    party_html = (
+        f"<div>{e(out['party_name'])}</div>"
+        if out["party_name"]
+        else "<div>Cash customer / نقد گاہک</div>"
+    )
+    balance = out["party_balance_after"]
+    balance_html = (
+        f"<tr class='tot'><td colspan='3'>Balance / بقایا</td><td class='n'>{balance:,.0f}</td></tr>"
+        if balance is not None and balance != 0
+        else ""
+    )
+    tax_html = (
+        f"<tr><td colspan='3'>Tax {inv.tax_rate:.0f}%{' (incl.)' if inv.tax_inclusive else ''}</td><td class='n'>{inv.tax_amount:,.0f}</td></tr>"
+        if inv.tax_amount
+        else ""
+    )
+    disc_html = (
+        f"<tr><td colspan='3'>Discount / رعایت</td><td class='n'>-{inv.discount:,.0f}</td></tr>"
+        if inv.discount
+        else ""
+    )
+    return f"""<!doctype html><html lang="ur"><head><meta charset="utf-8"><title>{e(inv.no)}</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+<style>
+@page {{ size: {"80mm auto" if thermal else "A4"}; margin: {"4mm" if thermal else "14mm"}; }}
+body {{ width: {width}; margin: 0 auto; font-family: Arial, sans-serif; font-size: {"11px" if thermal else "13px"}; color: #111; }}
+.ur {{ font-family: 'Noto Nastaliq Urdu', serif; direction: rtl; line-height: 1.9; }}
+h1 {{ font-size: {"15px" if thermal else "20px"}; margin: 0; text-align: center; }}
+.c {{ text-align: center; }} .n {{ text-align: right; white-space: nowrap; }}
+table {{ width: 100%; border-collapse: collapse; margin-top: 6px; }} td, th {{ padding: 3px 2px; vertical-align: top; }}
+th {{ border-bottom: 1px solid #111; text-align: left; font-size: 10px; letter-spacing: .06em; }}
+tr.tot td {{ border-top: 1px solid #111; font-weight: bold; }}
+small {{ color: #555; }} .foot {{ margin-top: 10px; border-top: 1px dashed #999; padding-top: 6px; }}
+</style></head><body>
+<h1>{e(shop.name)}</h1><div class="c ur">{e(shop.name_ur or "")}</div>
+<div class="c"><small>{e(shop.address or "")} {e(shop.city or "")}<br>{e(shop.phone or "")}{(" · NTN " + e(shop.ntn)) if shop.ntn else ""}</small></div>
+<table><tr><td><b>{e(inv.no)}</b></td><td class="n">{inv.date.strftime("%d-%m-%Y")}</td></tr><tr><td colspan="2">{party_html}</td></tr></table>
+<table><thead><tr><th>Item / چیز</th><th class="n">Qty</th><th class="n">Price</th><th class="n">Total</th></tr></thead>
+<tbody>{rows}
+<tr><td colspan="3">Subtotal</td><td class="n">{inv.subtotal:,.0f}</td></tr>{disc_html}{tax_html}
+<tr class="tot"><td colspan="3">Total / کل</td><td class="n">Rs. {inv.total:,.0f}</td></tr>
+<tr><td colspan="3">Paid / وصول</td><td class="n">{inv.paid:,.0f}</td></tr>
+<tr><td colspan="3">Due on this bill / اس بل کا بقایا</td><td class="n">{out["balance_due"]:,.0f}</td></tr>{balance_html}
+</tbody></table>
+{pending_html}
+<div class="foot c"><div>{e(shop.receipt_footer or "Thank you for your business")}</div><div class="ur">{e(shop.receipt_footer_ur or "خریداری کا شکریہ")}</div></div>
+</body></html>"""
