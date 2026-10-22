@@ -279,3 +279,10 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - Found and fixed: the dev backend had stopped reloading, so Phase 2 endpoints returned 404 in the browser; restarted with `--reload-dir app`.
 **Verified**: backend 110 tests; frontend tsc/vitest/build clean; live smoke: set PIN 204, PIN login 200, dashboard/repairs/accessories/expense categories 200.
 **Next**: stock cards with stat columns + brand row (guide), PDF/Excel export, PWA service worker, Capacitor Android, E2E.
+
+---
+
+## 2026-10-22 — Session 21: owner phone test
+- Added `npm run dev:lan`; owner opened `http://<PC-IP>:5173` on an Android phone over Wi-Fi. Verdict: **"UI ok hai"**.
+- Owner hit the PIN screen after logout because a test PIN (12345) had been set on the demo account during the PIN smoke test; explained PIN / password fallback. Lesson: don't leave test credentials on the owner's demo account.
+- Phase 3 next (no owner input needed): stock cards in the guide's offer-card style + brand row, PDF/Excel export, PWA service worker, Capacitor Android build, Playwright E2E. Waiting on owner: app domain + VPS access (deploy), Meta Business account (WhatsApp auto-send), plan prices.

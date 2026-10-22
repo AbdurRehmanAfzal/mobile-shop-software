@@ -16,7 +16,7 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 | Audit log | FR-AUTH-06 | ✅ | `modules/audit`, `/api/v1/audit` |
 | Catalogue module + seeds (brands/models/storages/colours, global + per-shop, Urdu names) | FR-MST-01,02 | ✅ | `modules/catalogue`, `seeds/catalogue.py` (17 brands, 108 models incl. feature phones), migration `7f4c986a8f9f`, 7 tests; seeds run at startup |
 | Frontend skeleton (Vite TS, Tailwind, i18n, auth, shell) | FR-PLT-01 | ✅ | `frontend/`, BiLabel/BiButton/BiInput/BiAlert, login/signup, bottom-nav shell, 7 tests |
-| Phase 0 exit demo on phone | – | 🔄 | Desktop browser verified; real-phone test still pending |
+| Phase 0 exit demo on phone | – | ✅ | Owner tested on phone 2026-10-22 |
 | Design system + reference mockup approved by owner | FR-PLT-08 | ✅ | Approved 2026-10-22: light default + dark/system toggle, emerald accent. docs/11 v1.0 |
 | Design system implemented in frontend (tokens, theme toggle, primitives, shell, dashboard, auth, more) | FR-PLT-08 | ✅ | 9 frontend tests, build clean |
 
@@ -50,7 +50,8 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 | Dashboard with live numbers (today's sales/cash/profit, receivable/payable, cash in hand, stock, pending verification, loans out) | ✅ | computed client-side from lists; reports module will replace |
 | Phase 2 screens: expenses + day close, repairs (list/new/detail with status, parts from stock, deliver, job sheet), accessories (stock, low, pending tracker, adjust), exchange wizard, reports (P&L, cash flow, tax, stock age); dashboard on `/reports/dashboard` | ✅ | |
 | Home redesign on owner's UI guide (Easypaisa patterns), action chooser, PIN login, opening-stock page | ✅ | Session 20 |
-| Phone test on real device, Playwright E2E | ⬜ | |
+| Phone test on real device | ✅ | 2026-10-22 owner tested on Android over Wi-Fi (`npm run dev:lan`): UI OK |
+| Playwright E2E | ⬜ | |
 
 ## Phase 2 — Operations
 | Item | FR | Status |
