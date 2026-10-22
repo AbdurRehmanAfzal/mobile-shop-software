@@ -44,7 +44,19 @@ async def lifespan(_: FastAPI):
     yield
 
 
+def check_production_settings() -> None:
+    """Refuse to run in production with development secrets."""
+    if settings.app_env == "prod" and (
+        settings.secret_key in ("dev-secret-change-me", "change-me-to-a-long-random-string")
+        or len(settings.secret_key) < 32
+    ):
+        raise RuntimeError(
+            "SECRET_KEY must be set to a random value of at least 32 characters in production"
+        )
+
+
 def create_app() -> FastAPI:
+    check_production_settings()
     app = FastAPI(
         title=settings.app_name,
         version="2.0.0",

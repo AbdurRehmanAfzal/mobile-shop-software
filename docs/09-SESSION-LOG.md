@@ -260,3 +260,10 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Next**: Phase 3 — staff management UI, cash/bank accounts UI, WhatsApp Cloud API + SMTP senders, PDF/Excel export, PWA service worker + Capacitor, Docker deploy; plus E2E tests.
 
 **Addendum (Session 18)**: Staff page (owner) and Cash & bank page (owner/manager, add Easypaisa/JazzCash/bank with opening balance, cash book) added. Phase 3 items still needing owner input: Meta WhatsApp Business account (for auto-send), hosting choice (for deploy), plan prices.
+
+---
+
+## 2026-10-22 — Session 19: deployment setup for Hostinger VPS
+**Done**: `backend/Dockerfile` (python 3.12 slim, non-root, migrations on start, healthcheck), `deploy/web.Dockerfile` (Vite build → Caddy), `deploy/Caddyfile` (HTTPS, /api proxy, SPA fallback, security headers), `deploy/docker-compose.yml` (db/backend/web, volumes), `deploy/.env.example`, `deploy/backup.sh`, `docs/12-DEPLOYMENT.md`, ADR-008. Production guard: refuses default/short SECRET_KEY when APP_ENV=prod.
+**Verified**: 108 backend tests pass; `alembic upgrade head --sql` against the PostgreSQL dialect renders all 35 tables without error. Not verified: Docker build and a live Postgres run (no Docker on the dev PC).
+**Needs from owner**: domain/subdomain for the app, VPS SSH access (or run the commands in docs/12 yourself).
