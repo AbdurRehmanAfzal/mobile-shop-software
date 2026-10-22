@@ -2,9 +2,9 @@
 
 import {
   ArrowLeftRight, Archive, BarChart3, Bell, Download, FileText, HandCoins, Headphones, KeyRound, Landmark, Lock,
-  LogOut, Receipt, RotateCcw, ScanLine, Settings, Smartphone, Undo2, Users, Wallet, Wrench,
+  LogOut, Receipt, RotateCcw, ScanLine, Settings, Smartphone, Undo2, Users, Wallet, Wrench, type LucideIcon,
 } from 'lucide-react'
-import { useState, type ComponentType } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { setLocale, type Locale } from '@/i18n'
@@ -15,7 +15,7 @@ import { BiButton, BiInput, BiLabel, BiSegmented } from '@/components/Bilingual'
 import { ErrorText, Sheet } from '@/components/ui'
 import { rememberLogin } from '@/features/auth/LoginPage'
 
-type Icon = ComponentType<{ size?: number; strokeWidth?: number; className?: string }>
+type Icon = LucideIcon
 interface Item { key: string; Icon: Icon; to?: string; action?: 'pin'; roles?: Role[] }
 interface Group { title: string; items: Item[] }
 
