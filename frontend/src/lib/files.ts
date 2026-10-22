@@ -47,3 +47,23 @@ export async function openPrintable(path: string): Promise<void> {
   w.focus()
   setTimeout(() => w.print(), 600)
 }
+
+/** Download an authenticated file (CSV export) and save it with the server's filename. */
+export async function downloadFile(path: string, fallbackName = 'export.csv'): Promise<void> {
+  const { accessToken, activeShopId } = useAuth.getState()
+  const headers: Record<string, string> = {}
+  if (accessToken) headers.Authorization = `Bearer ${accessToken}`
+  if (activeShopId) headers['X-Shop-Id'] = activeShopId
+  const res = await fetch(`${BASE}${path}`, { headers })
+  if (!res.ok) throw new Error(`Download failed (${res.status})`)
+  const cd = res.headers.get('content-disposition') ?? ''
+  const name = /filename="([^"]+)"/.exec(cd)?.[1] ?? fallbackName
+  const url = URL.createObjectURL(await res.blob())
+  const a = document.createElement('a')
+  a.href = url
+  a.download = name
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  setTimeout(() => URL.revokeObjectURL(url), 2000)
+}

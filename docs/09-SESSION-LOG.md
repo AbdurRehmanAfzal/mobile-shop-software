@@ -286,3 +286,10 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - Added `npm run dev:lan`; owner opened `http://<PC-IP>:5173` on an Android phone over Wi-Fi. Verdict: **"UI ok hai"**.
 - Owner hit the PIN screen after logout because a test PIN (12345) had been set on the demo account during the PIN smoke test; explained PIN / password fallback. Lesson: don't leave test credentials on the owner's demo account.
 - Phase 3 next (no owner input needed): stock cards in the guide's offer-card style + brand row, PDF/Excel export, PWA service worker, Capacitor Android build, Playwright E2E. Waiting on owner: app domain + VPS access (deploy), Meta Business account (WhatsApp auto-send), plan prices.
+
+---
+
+## 2026-10-22 — Session 22: stock cards + exports
+**Done**: stock list rebuilt as offer-style cards (UI guide): brand row with counts, status + sort dropdowns, 4 stat columns (memory, PTA, condition, days in stock), IMEI + verification chip, green "Sell" pill. Backend `modules/exports` CSV downloads (UTF-8 BOM so Excel shows Urdu): `/exports/stock.csv`, `/parties.csv`, `/parties/{id}/statement.csv`, `/sales.csv`, `/purchases.csv`, `/expenses.csv` (cost hidden from salesmen; sales/purchases/expenses need REPORTS_ALL). Frontend: Excel button on stock, party statement and reports; reports Print/PDF with header/nav hidden in print.
+**Verified**: backend 113 tests; frontend tsc/vitest/build clean; live smoke on a throwaway shop (03990000001): all five CSVs 200 text/csv.
+**Next**: PWA service worker + install prompt, Capacitor Android, Playwright E2E.

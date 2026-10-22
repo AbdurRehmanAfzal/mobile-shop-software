@@ -1,4 +1,6 @@
+import { FileSpreadsheet, Printer } from 'lucide-react'
 import { useState } from 'react'
+import { downloadFile } from '@/lib/files'
 import { BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import { KV, Loading, MoneyText, PageHeader, Section } from '@/components/ui'
 import { useGet } from '@/lib/queries'
@@ -30,6 +32,18 @@ export default function ReportsPage() {
       <div className="grid grid-cols-2 gap-2">
         <BiInput label="report.from" type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
         <BiInput label="report.to" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
+      </div>
+      <div className="print:hidden grid grid-cols-4 gap-2">
+        {(['sales', 'purchases', 'expenses'] as const).map((k) => (
+          <button key={k} type="button" onClick={() => downloadFile(`/api/v1/exports/${k}.csv${qs}`)} className="card tap flex flex-col items-center gap-1 p-2">
+            <FileSpreadsheet size={20} className="text-emerald" />
+            <span className="text-xs font-bold">{pick(`export.${k}`)}</span>
+          </button>
+        ))}
+        <button type="button" onClick={() => window.print()} className="card tap flex flex-col items-center gap-1 p-2">
+          <Printer size={20} className="text-emerald" />
+          <span className="text-xs font-bold">{pick('export.print')}</span>
+        </button>
       </div>
       <Section title="report.pnl">
         {!pnl ? <Loading /> : (

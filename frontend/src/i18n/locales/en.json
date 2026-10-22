@@ -607,5 +607,15 @@
   "opening": {
     "kind": "Old stock (already in shop)",
     "hint": "Phones already in your shop before using this app. No supplier, no cash."
+  },
+  "export": {
+    "excel": "Excel",
+    "stock": "Download stock (Excel)",
+    "statement": "Download statement (Excel)",
+    "sales": "Sales",
+    "purchases": "Purchases",
+    "expenses": "Expenses",
+    "print": "Print / PDF",
+    "title": "Download"
   }
 }

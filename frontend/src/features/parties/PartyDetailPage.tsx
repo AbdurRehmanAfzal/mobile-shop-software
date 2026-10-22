@@ -1,4 +1,5 @@
-import { Pencil } from 'lucide-react'
+import { FileSpreadsheet, Pencil } from 'lucide-react'
+import { downloadFile } from '@/lib/files'
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { BiButton, BiLabel, useLang } from '@/components/Bilingual'
@@ -53,7 +54,14 @@ export default function PartyDetailPage() {
         {party.address ? <KV k="party.address" v={party.address} /> : null}
       </section>
 
-      <Section title="party.statement">
+      <Section
+        title="party.statement"
+        right={
+          <button type="button" onClick={() => downloadFile(`/api/v1/exports/parties/${party.id}/statement.csv`)} className="flex items-center gap-1 text-xs font-bold text-emerald">
+            <FileSpreadsheet size={14} /> {pick('export.excel')}
+          </button>
+        }
+      >
         {!st?.rows.length ? (
           <Empty text="common.nothingFound" />
         ) : (

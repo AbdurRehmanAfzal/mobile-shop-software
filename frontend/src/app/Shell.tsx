@@ -38,7 +38,7 @@ export default function Shell() {
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-ground">
-      <header className={`sticky top-0 z-10 flex items-center justify-between px-5 pb-3 pt-[max(14px,env(safe-area-inset-top))] ${home ? 'bg-emerald text-white' : 'bg-ground/90 backdrop-blur'}`}>
+      <header className={`print:hidden sticky top-0 z-10 flex items-center justify-between px-5 pb-3 pt-[max(14px,env(safe-area-inset-top))] ${home ? 'bg-emerald text-white' : 'bg-ground/90 backdrop-blur'}`}>
         <button type="button" onClick={() => nav('/more')} className={`well h-11 w-11 rounded-full text-[15px] font-extrabold tracking-wider ${home ? 'bg-white/20 text-white' : 'bg-ink text-gold'}`}>
           {initials(shop?.name)}
         </button>
@@ -53,7 +53,7 @@ export default function Shell() {
         <Outlet />
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-10 mx-auto max-w-md border-t border-line bg-nav/95 pb-[max(10px,env(safe-area-inset-bottom))] pt-2 backdrop-blur">
+      <nav className="print:hidden fixed inset-x-0 bottom-0 z-10 mx-auto max-w-md border-t border-line bg-nav/95 pb-[max(10px,env(safe-area-inset-bottom))] pt-2 backdrop-blur">
         <ul className="grid grid-cols-5 gap-1 px-3" dir={dir}>
           {tabs.map(({ to, key, Icon, fab }) => (
             <li key={to}>
