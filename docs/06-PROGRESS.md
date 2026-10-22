@@ -72,6 +72,12 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 | PWA + Capacitor Android/iOS | FR-PLT-02,03 | 🔄 | PWA done (manifest, icons, app-shell service worker). Capacitor Android project scaffolded with camera/share; APK build needs Android Studio PC + live API domain (docs/13). iOS needs a Mac |
 | Docker cloud deploy + local installer + backups | FR-PLT-04,06 | 🔄 | Hostinger VPS compose stack + backups + guide ready (docs/12); first live deploy pending domain + VPS access; local installer pending |
 
+## Owner decisions pending (noted 2026-10-22)
+| Item | Status | Notes |
+|---|---|---|
+| Laptop/desktop responsive layout (sidebar, wide tables, side-by-side sale screen) | ⬜ | App works in a laptop browser and installs as a PWA desktop app, but layout is phone-width. Owner: test first, decide later |
+| Offline Windows installer (local server + SQLite, optional cloud sync) | ⬜ | FR-PLT-04/05; only needed if target shops lack internet. Owner to decide |
+
 ## Phase 4 — Differentiators
 | Item | FR | Status |
 |---|---|---|
