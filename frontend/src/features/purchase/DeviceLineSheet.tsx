@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import { Chip } from '@/components/ui'
+import { uid } from '@/lib/id'
 import { toLatinDigits } from '@/lib/format'
 import { useBrands, useColours, useImeiLookup, useModels, useStorages } from '@/lib/queries'
 import type { AccessoryItem, DeviceCondition, PtaStatus } from '@/lib/types'
@@ -32,7 +33,7 @@ const ACC_KINDS: AccessoryItem['kind'][] = ['box', 'charger', 'cable', 'earphone
 
 export function emptyDraft(imei = '', kind: 'supplier' | 'walk_in' | 'shop' | 'trade_in' = 'supplier'): DeviceLineDraft {
   return {
-    key: crypto.randomUUID(),
+    key: uid(),
     imei1: imei,
     imei2: '',
     brand_id: '',

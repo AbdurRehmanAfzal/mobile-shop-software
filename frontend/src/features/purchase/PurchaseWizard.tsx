@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import PartyPicker from '@/components/PartyPicker'
 import { Chip, ErrorText, KV, MoneyText, PageHeader, Sheet, Stepper } from '@/components/ui'
+import { uid } from '@/lib/id'
 import { openPrintable } from '@/lib/files'
 import { useCashAccounts, useDocMutation } from '@/lib/queries'
 import type { Party, Purchase } from '@/lib/types'
@@ -108,7 +109,7 @@ export default function PurchaseWizard() {
               </button>
             </div>
           ))}
-          <BiButton text="common.add" variant="ghost" size="md" onClick={() => setMisc([...misc, { key: crypto.randomUUID(), description: '', qty: '1', unit_cost: '' }])} />
+          <BiButton text="common.add" variant="ghost" size="md" onClick={() => setMisc([...misc, { key: uid(), description: '', qty: '1', unit_cost: '' }])} />
 
           <div className="card flex items-center justify-between">
             <BiLabel text="common.total" size="md" tone="text-muted" />

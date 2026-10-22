@@ -7,6 +7,8 @@ const phone = () => `039${Math.floor(10_000_000 + Math.random() * 89_999_999)}`
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     if (!localStorage.getItem('locale')) localStorage.setItem('locale', 'en')
+    // A phone on http://<PC-IP>:5173 is not a secure context: randomUUID is missing there.
+    Object.defineProperty(crypto, 'randomUUID', { value: undefined, configurable: true })
   })
 })
 
