@@ -12,9 +12,7 @@ export default function PartyForm({ party, defaultKinds = ['customer'], onDone }
   const update = useUpdateParty()
   const [f, setF] = useState({
     name: party?.name ?? '',
-    name_ur: party?.name_ur ?? '',
     phone: party?.phone ?? '',
-    whatsapp: party?.whatsapp ?? '',
     cnic: party?.cnic ?? '',
     city: party?.city ?? '',
     address: party?.address ?? '',
@@ -30,8 +28,9 @@ export default function PartyForm({ party, defaultKinds = ['customer'], onDone }
     e.preventDefault()
     const body = {
       ...f,
-      name_ur: f.name_ur || null,
-      whatsapp: f.whatsapp || null,
+      // one name and one phone: WhatsApp messages go to the phone number
+      name_ur: null,
+      whatsapp: null,
       cnic: f.cnic || null,
       city: f.city || null,
       address: f.address || null,
@@ -44,9 +43,7 @@ export default function PartyForm({ party, defaultKinds = ['customer'], onDone }
   return (
     <form onSubmit={submit} className="flex flex-col gap-3">
       <BiInput label="party.name" value={f.name} onChange={set('name')} required minLength={2} />
-      <BiInput label="party.nameUr" value={f.name_ur} onChange={set('name_ur')} dir="rtl" className="ur" />
       <BiInput label="party.phone" type="tel" inputMode="numeric" placeholder="03001234567" value={f.phone} onChange={set('phone')} required />
-      <BiInput label="party.whatsapp" type="tel" inputMode="numeric" value={f.whatsapp} onChange={set('whatsapp')} />
       <BiInput label="party.cnic" inputMode="numeric" placeholder="33100-1234567-1" value={f.cnic} onChange={set('cnic')} />
       <BiInput label="party.city" value={f.city} onChange={set('city')} />
       <BiInput label="party.address" value={f.address} onChange={set('address')} />

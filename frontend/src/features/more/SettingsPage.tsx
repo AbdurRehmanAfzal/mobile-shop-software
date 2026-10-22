@@ -32,7 +32,7 @@ export default function SettingsPage() {
   const text = (k: string) => (typeof f[k] === 'string' ? (f[k] as string) : '')
 
   function submit() {
-    const body: Record<string, unknown> = { name: f.name, name_ur: f.name_ur || null, city: f.city || null, phone: f.phone || null, default_locale: f.default_locale, tax_enabled: !!f.tax_enabled, tax_inclusive: !!f.tax_inclusive }
+    const body: Record<string, unknown> = { name: f.name, name_ur: null, city: f.city || null, phone: f.phone || null, default_locale: f.default_locale, tax_enabled: !!f.tax_enabled, tax_inclusive: !!f.tax_inclusive }
     for (const k of ['tax_rate', 'ntn', 'strn', 'receipt_footer', 'receipt_footer_ur', 'invoice_prefix']) if (text(k)) body[k] = k === 'tax_rate' ? Number(text(k)) : text(k)
     m.mutate(body)
   }
@@ -42,7 +42,6 @@ export default function SettingsPage() {
       <PageHeader title="settings.title" />
       <Section title="settings.name">
         <BiInput label="settings.name" value={text('name')} onChange={set('name')} />
-        <BiInput label="settings.nameUr" value={text('name_ur')} onChange={set('name_ur')} dir="rtl" className="ur" />
         <BiInput label="settings.city" value={text('city')} onChange={set('city')} />
         <BiInput label="settings.phone" value={text('phone')} onChange={set('phone')} />
         <BiLabel text="settings.defaultLocale" size="md" tone="text-muted" />

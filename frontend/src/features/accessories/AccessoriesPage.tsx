@@ -18,7 +18,7 @@ export default function AccessoriesPage() {
   const { data: pending } = useGet<Pending[]>(['acc-pending'], tab === 'pending' ? '/api/v1/accessories/pending' : null)
   const [adding, setAdding] = useState(false)
   const [adjusting, setAdjusting] = useState<Accessory | null>(null)
-  const [f, setF] = useState({ name: '', name_ur: '', category: 'charger', price: '', reorder_level: '3', opening_qty: '', opening_cost: '' })
+  const [f, setF] = useState({ name: '', category: 'charger', price: '', reorder_level: '3', opening_qty: '', opening_cost: '' })
   const [delta, setDelta] = useState('')
   const [note, setNote] = useState('')
   const create = useDocMutation<Record<string, unknown>, Accessory>('POST', () => '/api/v1/accessories')
@@ -67,7 +67,6 @@ export default function AccessoriesPage() {
       <Sheet open={adding} onClose={() => setAdding(false)} title="acc.new">
         <div className="flex flex-col gap-3">
           <BiInput label="acc.name" value={f.name} onChange={set('name')} />
-          <BiInput label="acc.nameUr" value={f.name_ur} onChange={set('name_ur')} dir="rtl" className="ur" />
           <BiLabel text="acc.category" size="md" tone="text-muted" />
           <div className="flex flex-wrap gap-1.5">
             {CATS.map((c) => <button key={c} type="button" onClick={() => setF({ ...f, category: c })} className={`tap rounded-full border px-3 py-1.5 text-sm font-bold ${f.category === c ? 'border-emerald bg-emerald-tint text-emerald-deep' : 'border-line bg-surface text-muted'}`}>{pick(`acc.cat.${c}`)}</button>)}
@@ -79,7 +78,7 @@ export default function AccessoriesPage() {
             <BiInput label="acc.openingCost" type="number" inputMode="decimal" min={0} value={f.opening_cost} onChange={set('opening_cost')} />
           </div>
           <ErrorText error={create.error} />
-          <BiButton text="common.save" full loading={create.isPending} disabled={!f.name} onClick={async () => { await create.mutateAsync({ name: f.name, name_ur: f.name_ur || null, category: f.category, price: Number(f.price || 0), reorder_level: Number(f.reorder_level || 0), opening_qty: Number(f.opening_qty || 0), opening_cost: Number(f.opening_cost || 0) }); setAdding(false) }} />
+          <BiButton text="common.save" full loading={create.isPending} disabled={!f.name} onClick={async () => { await create.mutateAsync({ name: f.name, name_ur: null, category: f.category, price: Number(f.price || 0), reorder_level: Number(f.reorder_level || 0), opening_qty: Number(f.opening_qty || 0), opening_cost: Number(f.opening_cost || 0) }); setAdding(false) }} />
         </div>
       </Sheet>
 

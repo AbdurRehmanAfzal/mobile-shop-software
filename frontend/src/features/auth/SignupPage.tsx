@@ -14,7 +14,7 @@ interface AuthResponse {
 
 export default function SignupPage() {
   const setSession = useAuth((s) => s.setSession)
-  const [form, setForm] = useState({ shop_name: '', shop_name_ur: '', owner_name: '', city: '', phone: '', password: '' })
+  const [form, setForm] = useState({ shop_name: '', owner_name: '', city: '', phone: '', password: '' })
   const [error, setError] = useState<{ en: string; ur: string } | null>(null)
   const [busy, setBusy] = useState(false)
 
@@ -37,7 +37,6 @@ export default function SignupPage() {
         '/api/v1/auth/signup',
         {
           shop_name: form.shop_name,
-          shop_name_ur: form.shop_name_ur || null,
           owner_name: form.owner_name,
           city: form.city || null,
           phone: normalisePhone(form.phone),
@@ -60,7 +59,6 @@ export default function SignupPage() {
     <AuthLayout title="auth.signup">
       <form onSubmit={submit} className="flex flex-col gap-4">
         <BiInput label="auth.shopName" value={form.shop_name} onChange={set('shop_name')} required minLength={2} />
-        <BiInput label="auth.shopNameUr" value={form.shop_name_ur} onChange={set('shop_name_ur')} dir="rtl" className="ur" />
         <BiInput label="auth.ownerName" value={form.owner_name} onChange={set('owner_name')} required minLength={2} />
         <BiInput label="auth.city" value={form.city} onChange={set('city')} />
         <BiInput
