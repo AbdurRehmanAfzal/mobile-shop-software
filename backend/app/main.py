@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.core.errors import install_error_handlers
+from app.modules.accessories.router import router as accessories_router
 from app.modules.audit.router import router as audit_router
 from app.modules.auth.router import router as auth_router
 from app.modules.auth.router import shops as shops_router
@@ -80,6 +81,7 @@ def create_app() -> FastAPI:
     app.include_router(notifications_router)
     app.include_router(expenses_router)
     app.include_router(repairs_router)
+    app.include_router(accessories_router)
     return app
 
 

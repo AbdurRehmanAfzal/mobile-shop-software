@@ -225,3 +225,16 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Verified**: `tsc -b --noEmit` clean, `vitest` 10 passed, `vite build` ok. Not yet verified: real-phone layout, camera capture on Android, print dialogs on a thermal printer.
 
 **Next**: owner walkthrough on a phone → fix list; then Phase 2 (exchange, accessories stock, repairs, expenses/cash book, reports + dashboard endpoint, tax report).
+
+---
+
+## 2026-10-22 — Session 16: Phase 2 backend part 1 (expenses, repairs, accessories)
+**Done**
+- Expenses: categories (11 seeded with Urdu + per-shop custom), `EXP-` numbering, Dr `expense:<key>` / Cr cash, staff salary and technician links, void; day-close preview and close (opening/in/out/expected/counted/difference) per cash account and date.
+- Repairs: `REP-` numbering; customer device (desc + IMEI) or stock device (SENT_TO_REPAIR/REPAIR_RETURNED events); fault codes EN/UR; received accessories; condition photos; estimate + advance (Dr cash / Cr party); status transitions with log; parts + labour + discount; deliver posts `repair_income` and takes payment; stock devices: outside technician cost → Dr inventory / Cr technician party and device cost raised; returned-unrepaired marks stock device faulty; job sheet (80 mm, shop language); repair-ready WhatsApp template + setting.
+- Accessories: `accessories` + `accessory_movements` (weighted average cost), opening stock (Dr inventory / Cr equity), adjust (+ other_income / stock_loss expense), purchase misc lines with `accessory_id` → stock in at net cost (Dr inventory), sale misc lines → stock out at avg cost (COGS), void/return reverse movements, repair parts consume stock at delivery (COGS inside the bill group), low-stock list, pending device-accessory tracker (`GET /accessories/pending`, `POST /pending/{id}/deliver`).
+- Migrations `e1b1a31dbe63`, `e95a0709d555`, `ab0e2601f475` (named batch FKs for SQLite).
+
+**Verified**: `pytest -q` → 103 passed; `ruff` clean.
+
+**Next**: Exchange (FR-TXN-07) as one transaction (purchase trade-in + sale), reports/dashboard endpoints (FR-RPT-01/02, FR-TAX-03), then frontend screens for expenses, repairs, accessories, reports.

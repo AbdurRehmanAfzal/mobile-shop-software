@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.core.errors import Conflict, NotFound, ValidationFailed
 from app.db.base import ZERO, utcnow
+from app.modules.accessories import service as acc_stock
 from app.modules.audit.service import record_audit
 from app.modules.auth.models import Shop
 from app.modules.devices.models import Device
@@ -152,6 +153,20 @@ def sale_return(
     doc.ledger_group_id = group.id
 
     for ln in lines:
+        if ln.accessory_id:
+            a = acc_stock.get_accessory(db, shop_id, ln.accessory_id)
+            acc_stock.move(
+                db,
+                shop_id,
+                user_id,
+                a,
+                ln.qty,
+                "return",
+                money(ln.cost / ln.qty) if ln.qty else None,
+                document_type="sale_return",
+                document_id=doc.id,
+                note=doc.no,
+            )
         if ln.device_id:
             device = db.get(Device, ln.device_id)
             if device.status != DeviceStatus.SOLD or device.current_party_id != party.id:
@@ -288,6 +303,19 @@ def purchase_return(
     doc.ledger_group_id = group.id
 
     for ln in lines:
+        if ln.accessory_id:
+            a = acc_stock.get_accessory(db, shop_id, ln.accessory_id)
+            acc_stock.move(
+                db,
+                shop_id,
+                user_id,
+                a,
+                -ln.qty,
+                "return",
+                document_type="purchase_return",
+                document_id=doc.id,
+                note=doc.no,
+            )
         if ln.device_id:
             device = db.get(Device, ln.device_id)
             apply_event(

@@ -17,6 +17,7 @@ class DeviceLineIn(BaseModel):
 
 class MiscLineIn(BaseModel):
     description: str = Field(min_length=1, max_length=200)
+    accessory_id: uuid.UUID | None = None
     qty: int = Field(default=1, ge=1, le=10000)
     unit_cost: Decimal = Field(ge=0)
 
@@ -50,6 +51,7 @@ class LineOut(BaseModel):
     line_no: int
     kind: str
     device_id: uuid.UUID | None
+    accessory_id: uuid.UUID | None = None
     imei1: str | None = None
     device_label: str | None = None
     description: str | None

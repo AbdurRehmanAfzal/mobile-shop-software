@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from app.core.errors import Conflict, Forbidden, NotFound, ValidationFailed
 from app.core.permissions import Cap
 from app.db.base import ZERO, utcnow
+from app.modules.accessories import service as acc_stock
 from app.modules.audit.service import record_audit
 from app.modules.auth.models import Shop
 from app.modules.catalogue.models import Brand, Model
@@ -216,14 +217,32 @@ def create_sale(db: Session, shop_id: uuid.UUID, ctx, data: SaleCreate, loan=Non
     ):
         net = money(ml.unit_price * ml.qty - share)
         line_total = net if shop.tax_inclusive or tax == ZERO else money(net + tshare)
-        cost = money(ml.cost)
+        accessory = (
+            acc_stock.get_accessory(db, shop_id, ml.accessory_id) if ml.accessory_id else None
+        )
+        if accessory is not None:
+            acc_stock.move(
+                db,
+                shop_id,
+                user_id,
+                accessory,
+                -ml.qty,
+                "sale",
+                document_type="invoice",
+                document_id=invoice.id,
+                note=invoice.no,
+            )
+            cost = money(accessory.avg_cost * ml.qty)
+        else:
+            cost = money(ml.cost)
         cost_total += cost
         db.add(
             InvoiceLine(
                 invoice_id=invoice.id,
                 line_no=line_no,
                 kind="misc",
-                description=ml.description,
+                accessory_id=accessory.id if accessory else None,
+                description=ml.description or (accessory.name if accessory else None),
                 qty=ml.qty,
                 unit_price=money(ml.unit_price),
                 discount_share=share,
@@ -417,6 +436,21 @@ def void_invoice(
                 if a.pending_from == "shop":
                     a.pending_from = "none"
                     a.promised_to_customer_at = None
+    for ln in inv.lines:
+        if ln.accessory_id:
+            a = acc_stock.get_accessory(db, shop_id, ln.accessory_id)
+            acc_stock.move(
+                db,
+                shop_id,
+                ctx.id,
+                a,
+                ln.qty,
+                "void",
+                money(ln.cost / ln.qty) if ln.qty else None,
+                document_type="invoice_void",
+                document_id=inv.id,
+                note=inv.no,
+            )
     inv.status = InvoiceStatus.VOID
     inv.voided_by = ctx.id
     inv.void_reason = reason

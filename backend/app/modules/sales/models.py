@@ -83,6 +83,9 @@ class InvoiceLine(UUIDPk, Base):
     device_id: Mapped[uuid.UUID | None] = mapped_column(
         Uuid, ForeignKey("devices.id", ondelete="RESTRICT"), index=True
     )
+    accessory_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid, ForeignKey("accessories.id", ondelete="RESTRICT")
+    )
     description: Mapped[str | None] = mapped_column(String(200))
     qty: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     unit_price: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)

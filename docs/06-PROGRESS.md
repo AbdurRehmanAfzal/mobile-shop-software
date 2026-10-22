@@ -54,9 +54,9 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 | Item | FR | Status |
 |---|---|---|
 | Exchange | FR-TXN-07 | ⬜ |
-| Accessories stock + pending tracker | FR-ACC-01,03,04 | ⬜ |
-| Repairs | FR-REP-01..04 | ⬜ |
-| Expenses, cash book, day close | FR-TXN-09,10 | ⬜ |
+| Accessories stock + pending tracker | FR-ACC-01,03,04 | ✅ | `modules/accessories`: items with SKU/avg cost/price/reorder, movements log, opening stock, adjust (+ ledger), purchase/sale/return/void/repair integration, low-stock, pending device-accessory tracker with deliver; migration `ab0e2601f475`; 5 tests |
+| Repairs | FR-REP-01..05 | ✅ | `modules/repairs`: customer + stock-device jobs, fault codes EN/UR, received accessories, photos, estimate/advance (ledger), status flow + log, parts (stock) + labour + discount, deliver with bill + payment, outside technician cost → device cost, returned-unrepaired → faulty, job sheet print, repair-ready WhatsApp; migration `e95a0709d555`; 5 tests |
+| Expenses, cash book, day close | FR-TXN-09,10 | ✅ | `modules/expenses`: seeded bilingual categories + custom, EXP numbering, ledger `expense:<key>`, salary/technician links, void; day-close preview/close per cash account; migration `e1b1a31dbe63`; 4 tests |
 | Dashboard + reports + export | FR-RPT-01,02 | ⬜ |
 | Tax | FR-TAX-01..03 | 🔄 | settings + per-invoice tax done (01, 02); tax report pending (03) |
 

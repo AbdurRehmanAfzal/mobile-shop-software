@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from app.core.errors import Conflict, Forbidden, NotFound, ValidationFailed
 from app.core.permissions import Cap
 from app.db.base import ZERO, utcnow
+from app.modules.accessories import service as acc_stock
 from app.modules.audit.service import record_audit
 from app.modules.auth.models import Shop
 from app.modules.catalogue.models import Brand, Model
@@ -137,12 +138,16 @@ def create_purchase(
 
     for ml, share in zip(data.misc, shares[len(data.devices) :], strict=True):
         net = money(ml.unit_cost * ml.qty - share)
+        accessory = (
+            acc_stock.get_accessory(db, shop_id, ml.accessory_id) if ml.accessory_id else None
+        )
         db.add(
             PurchaseLine(
                 purchase_id=purchase.id,
                 line_no=line_no,
                 kind="misc",
-                description=ml.description,
+                accessory_id=accessory.id if accessory else None,
+                description=ml.description or (accessory.name if accessory else None),
                 qty=ml.qty,
                 unit_cost=money(ml.unit_cost),
                 discount_share=share,
@@ -150,7 +155,22 @@ def create_purchase(
             )
         )
         line_no += 1
-        if net > ZERO:
+        if accessory is not None:
+            acc_stock.move(
+                db,
+                shop_id,
+                user_id,
+                accessory,
+                ml.qty,
+                "purchase",
+                money(net / ml.qty),
+                document_type="purchase",
+                document_id=purchase.id,
+                note=purchase.no,
+            )
+            if net > ZERO:
+                posting.debit(acc.SysAccount.INVENTORY, net, memo=accessory.name)
+        elif net > ZERO:
             posting.debit(acc.SysAccount.PURCHASES, net, memo=ml.description)
 
     if total > ZERO:
@@ -313,6 +333,20 @@ def void_purchase(
                 document_type="purchase_void",
                 document_id=p.id,
                 data={"void": True, "reason": reason},
+            )
+    for ln in p.lines:
+        if ln.accessory_id:
+            a = acc_stock.get_accessory(db, shop_id, ln.accessory_id)
+            acc_stock.move(
+                db,
+                shop_id,
+                ctx.id,
+                a,
+                -ln.qty,
+                "void",
+                document_type="purchase_void",
+                document_id=p.id,
+                note=p.no,
             )
     p.status = PurchaseStatus.VOIDED
     p.voided_by = ctx.id

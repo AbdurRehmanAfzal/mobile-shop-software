@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.core.errors import Conflict, NotFound, ValidationFailed
 from app.db.base import ZERO, utcnow
+from app.modules.accessories import service as acc_stock
 from app.modules.audit.service import record_audit
 from app.modules.auth.models import Shop, User
 from app.modules.catalogue.models import Brand, Model
@@ -352,6 +353,26 @@ def deliver(
         posting = Posting(
             document_type="repair_bill", document_id=job.id, memo=f"{job.no} {job.device_desc}"
         )
+        for part in job.parts:
+            if part.accessory_id:
+                a = acc_stock.get_accessory(db, shop_id, part.accessory_id)
+                acc_stock.move(
+                    db,
+                    shop_id,
+                    user_id,
+                    a,
+                    -part.qty,
+                    "repair",
+                    document_type="repair",
+                    document_id=job.id,
+                    note=job.no,
+                )
+                part.unit_cost = a.avg_cost
+                pc = money(a.avg_cost * part.qty)
+                if pc > ZERO:
+                    posting.debit(acc.SysAccount.COGS, pc, memo=part.description).credit(
+                        acc.SysAccount.INVENTORY, pc
+                    )
         if job.total > ZERO:
             posting.debit(acc.party_account(party.id), job.total).credit(
                 acc.SysAccount.REPAIR_INCOME, job.total, memo=job.no
