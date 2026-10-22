@@ -537,5 +537,36 @@
     "taxReport": "Sales tax",
     "taxable": "Taxable sales",
     "taxedInvoices": "Taxed invoices"
+  },
+  "staff": {
+    "title": "Staff",
+    "new": "Add staff",
+    "name": "Name",
+    "phone": "Mobile number",
+    "password": "Password",
+    "pin": "Quick PIN (4-6 digits)",
+    "role": "Role",
+    "active": "Active",
+    "disabled": "Disabled",
+    "disable": "Disable",
+    "enable": "Enable",
+    "resetPassword": "New password",
+    "roles": {
+      "owner": "Owner",
+      "manager": "Manager",
+      "salesman": "Salesman",
+      "technician": "Technician"
+    }
+  },
+  "cash": {
+    "title": "Cash & bank",
+    "new": "Add account",
+    "name": "Account name",
+    "kind": "Type",
+    "accountNo": "Account / wallet no.",
+    "opening": "Opening balance",
+    "book": "Cash book",
+    "in": "In",
+    "out": "Out"
   }
 }

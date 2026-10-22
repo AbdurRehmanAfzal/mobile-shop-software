@@ -22,6 +22,8 @@ import { NewRepairPage, RepairDetailPage, RepairsPage } from '@/features/repairs
 import AccessoriesPage from '@/features/accessories/AccessoriesPage'
 import ExchangeWizard from '@/features/exchange/ExchangeWizard'
 import ReportsPage from '@/features/reports/ReportsPage'
+import StaffPage from '@/features/more/StaffPage'
+import CashAccountsPage from '@/features/more/CashAccountsPage'
 
 function RequireAuth() {
   const token = useAuth((s) => s.accessToken)
@@ -70,6 +72,8 @@ export const router = createBrowserRouter([
           { path: '/accessories', element: <AccessoriesPage /> },
           { path: '/exchange/new', element: <ExchangeWizard /> },
           { path: '/reports', element: <ReportsPage /> },
+          { path: '/more/staff', element: <StaffPage /> },
+          { path: '/more/cash', element: <CashAccountsPage /> },
           { path: '/more', element: <MorePage /> },
           { path: '/more/settings', element: <SettingsPage /> },
           { path: '/more/notifications', element: <NotificationsPage /> },

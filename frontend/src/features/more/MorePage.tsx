@@ -30,8 +30,8 @@ export default function MorePage() {
     { key: 'more.returns', Icon: RotateCcw, to: '/returns' },
     { key: 'more.notifications', Icon: Bell, to: '/more/notifications', roles: ['owner'] },
     { key: 'more.settings', Icon: Settings, to: '/more/settings', roles: ['owner'] },
-    { key: 'more.cashAccounts', Icon: Landmark },
-    { key: 'more.staff', Icon: Users, roles: ['owner'] },
+    { key: 'more.cashAccounts', Icon: Landmark, to: '/more/cash', roles: ['owner', 'manager'] },
+    { key: 'more.staff', Icon: Users, to: '/more/staff', roles: ['owner'] },
     { key: 'more.reports', Icon: BarChart3, to: '/reports', roles: ['owner', 'manager'] },
   ]
 
