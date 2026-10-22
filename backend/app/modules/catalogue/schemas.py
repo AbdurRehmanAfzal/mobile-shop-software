@@ -46,6 +46,7 @@ class StorageOut(BaseModel):
     name: str
     name_ur: str | None
     gigabytes: int
+    is_global: bool = False
 
 
 class ColourOut(BaseModel):
@@ -55,6 +56,7 @@ class ColourOut(BaseModel):
     name: str
     name_ur: str | None
     hex: str | None
+    is_global: bool = False
 
 
 class SimpleCreate(BaseModel):
@@ -68,3 +70,10 @@ class StorageCreate(SimpleCreate):
 
 class ColourCreate(SimpleCreate):
     hex: str | None = Field(default=None, pattern=r"^#[0-9A-Fa-f]{6}$")
+
+
+class CatalogueUpdate(BaseModel):
+    """Rename a shop-own catalogue row (one name, any language). Storage may also change size."""
+
+    name: str = Field(min_length=1, max_length=100)
+    gigabytes: int | None = Field(default=None, ge=1, le=4096)

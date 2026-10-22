@@ -42,6 +42,38 @@ export const useColours = () => {
   return useQuery({ queryKey: [k, 'colours'], queryFn: () => get<Colour[]>('/api/v1/catalogue/colours'), staleTime: 5 * 60_000 })
 }
 
+export type CatalogueKind = 'brands' | 'models' | 'storages' | 'colours'
+/** Add / rename / delete catalogue rows; refreshes every catalogue list afterwards. */
+export function useCatalogueEdit() {
+  const inv = useInvalidate()
+  const refresh = () => inv('brands', 'models', 'storages', 'colours')
+  return {
+    add: async <T,>(kind: CatalogueKind, body: Record<string, unknown>) => {
+      const row = await post<T>(`/api/v1/catalogue/${kind}`, body)
+      await refresh()
+      return row
+    },
+    rename: async (kind: CatalogueKind, id: string, body: { name: string; gigabytes?: number }) => {
+      await patch(`/api/v1/catalogue/${kind}/${id}`, body)
+      await refresh()
+    },
+    remove: async (kind: CatalogueKind, id: string) => {
+      await api('DELETE', `/api/v1/catalogue/${kind}/${id}`)
+      await refresh()
+    },
+  }
+}
+
+/** "128 gb" -> { name: "128GB", gigabytes: 128 }; "1tb" -> 1024 GB; "4mb" -> counts as 1. */
+export function parseStorage(text: string): { name: string; gigabytes: number } | null {
+  const m = text.trim().match(/^(\d+(?:\.\d+)?)\s*(tb|gb|mb)?$/i)
+  if (!m) return null
+  const n = Number(m[1])
+  const unit = (m[2] ?? 'gb').toUpperCase()
+  const gigabytes = unit === 'TB' ? Math.round(n * 1024) : unit === 'MB' ? 1 : Math.max(1, Math.round(n))
+  return { name: `${m[1]}${unit}`, gigabytes }
+}
+
 // ---- parties ---------------------------------------------------------------------------------
 export const useParties = (params: { q?: string; kind?: string; with_balance?: boolean } = {}) => {
   const k = useShopKey()

@@ -6,8 +6,9 @@ import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/B
 import { Chip } from '@/components/ui'
 import { uid } from '@/lib/id'
 import { toLatinDigits } from '@/lib/format'
-import { useBrands, useColours, useImeiLookup, useModels, useStorages } from '@/lib/queries'
-import type { AccessoryItem, DeviceCondition, PtaStatus } from '@/lib/types'
+import { parseStorage, useBrands, useCatalogueEdit, useColours, useImeiLookup, useModels, useStorages } from '@/lib/queries'
+import type { AccessoryItem, Brand, Colour, DeviceCondition, Model, PtaStatus, Storage } from '@/lib/types'
+import QuickAdd from '@/features/catalogue/QuickAdd'
 
 export interface DeviceLineDraft {
   key: string
@@ -86,6 +87,7 @@ export default function DeviceLineSheet({ initial, onSave }: { initial: DeviceLi
   const { data: models } = useModels(d.brand_id || undefined, modelQ || undefined)
   const { data: storages } = useStorages()
   const { data: colours } = useColours()
+  const cat = useCatalogueEdit()
   useEffect(() => {
     if (imeiDigits !== d.imei1) set('imei1', imeiDigits)
   }, [imeiDigits]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -127,6 +129,14 @@ export default function DeviceLineSheet({ initial, onSave }: { initial: DeviceLi
               {ur && b.name_ur ? b.name_ur : b.name}
             </button>
           ))}
+          <QuickAdd
+            label="catalogue.newBrand"
+            placeholder="catalogue.namePh"
+            onAdd={async (name) => {
+              const b = await cat.add<Brand>('brands', { name })
+              setD((x) => ({ ...x, brand_id: b.id, brand_name: b.name, model_id: '', model_name: '' }))
+            }}
+          />
         </div>
       </div>
       {d.brand_id ? (
@@ -145,6 +155,17 @@ export default function DeviceLineSheet({ initial, onSave }: { initial: DeviceLi
                     {m.name}
                   </button>
                 ))}
+                <QuickAdd
+                  key={modelQ}
+                  label="catalogue.newModel"
+                  placeholder="catalogue.namePh"
+                  initial={modelQ}
+                  onAdd={async (name) => {
+                    const m = await cat.add<Model>('models', { brand_id: d.brand_id, name })
+                    setD((x) => ({ ...x, model_id: m.id, model_name: m.name }))
+                    setModelQ('')
+                  }}
+                />
               </div>
             </>
           )}
@@ -161,6 +182,17 @@ export default function DeviceLineSheet({ initial, onSave }: { initial: DeviceLi
               </option>
             ))}
           </select>
+          <div className="mt-1.5">
+            <QuickAdd
+              label="catalogue.newStorage"
+              placeholder="catalogue.storagePh"
+              valid={(v) => parseStorage(v) !== null}
+              onAdd={async (v) => {
+                const s = await cat.add<Storage>('storages', parseStorage(v)!)
+                set('storage_id', s.id)
+              }}
+            />
+          </div>
         </div>
         <div>
           <BiLabel text="stock.colour" size="md" tone="text-muted" className="mb-1.5" />
@@ -172,6 +204,16 @@ export default function DeviceLineSheet({ initial, onSave }: { initial: DeviceLi
               </option>
             ))}
           </select>
+          <div className="mt-1.5">
+            <QuickAdd
+              label="catalogue.newColour"
+              placeholder="catalogue.namePh"
+              onAdd={async (name) => {
+                const c = await cat.add<Colour>('colours', { name })
+                set('colour_id', c.id)
+              }}
+            />
+          </div>
         </div>
       </div>
 

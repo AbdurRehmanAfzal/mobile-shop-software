@@ -75,7 +75,8 @@
     "admin": "دکان اور عملہ",
     "app": "ایپ",
     "stock": "اسٹاک لسٹ",
-    "openingStock": "پرانا اسٹاک"
+    "openingStock": "پرانا اسٹاک",
+    "catalogue": "برانڈ اور ماڈل"
   },
   "common": {
     "save": "محفوظ کریں",
@@ -640,5 +641,23 @@
     "expenses": "خرچے",
     "print": "پرنٹ / PDF",
     "title": "ڈاؤن لوڈ"
+  },
+  "catalogue": {
+    "title": "برانڈ اور ماڈل",
+    "brands": "برانڈ",
+    "models": "ماڈل",
+    "storages": "میموری",
+    "colours": "رنگ",
+    "new": "نیا",
+    "newBrand": "نیا برانڈ",
+    "newModel": "نیا ماڈل",
+    "namePh": "نام لکھیں",
+    "storagePh": "مثلاً 128GB",
+    "builtin": "پہلے سے",
+    "rename": "نام بدلیں",
+    "delete": "ختم کریں",
+    "pickBrand": "برانڈ چنیں",
+    "newStorage": "نئی میموری",
+    "newColour": "نیا رنگ"
   }
 }

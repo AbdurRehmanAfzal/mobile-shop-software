@@ -59,6 +59,10 @@ class Storage(UUIDPk, Base):
     name: Mapped[str] = mapped_column(String(20), nullable=False)  # "128GB"
     name_ur: Mapped[str | None] = mapped_column(String(40))
     gigabytes: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    @property
+    def is_global(self) -> bool:
+        return self.shop_id is None
     sort_order: Mapped[int] = mapped_column(Integer, default=100, nullable=False)
 
 
@@ -71,4 +75,8 @@ class Colour(UUIDPk, Base):
     name: Mapped[str] = mapped_column(String(50), nullable=False)
     name_ur: Mapped[str | None] = mapped_column(String(50))
     hex: Mapped[str | None] = mapped_column(String(7))
+
+    @property
+    def is_global(self) -> bool:
+        return self.shop_id is None
     sort_order: Mapped[int] = mapped_column(Integer, default=100, nullable=False)

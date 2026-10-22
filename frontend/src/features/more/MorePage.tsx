@@ -2,7 +2,7 @@
 
 import {
   ArrowLeftRight, Archive, BarChart3, Bell, Download, FileText, HandCoins, Headphones, KeyRound, Landmark, Lock,
-  LogOut, Receipt, RotateCcw, ScanLine, Settings, Smartphone, Undo2, Users, Wallet, Wrench, type LucideIcon,
+  LogOut, Receipt, RotateCcw, ScanLine, Settings, Smartphone, Tags, Undo2, Users, Wallet, Wrench, type LucideIcon,
 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -41,6 +41,7 @@ const GROUPS: Group[] = [
       { key: 'more.stock', Icon: Smartphone, to: '/stock' },
       { key: 'more.accessories', Icon: Headphones, to: '/accessories' },
       { key: 'more.openingStock', Icon: Archive, to: '/stock/opening', roles: MANAGERS },
+      { key: 'more.catalogue', Icon: Tags, to: '/more/catalogue', roles: MANAGERS },
     ],
   },
   {

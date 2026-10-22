@@ -92,3 +92,90 @@ def test_technician_cannot_add_catalogue_rows(client, db, owner):
     tech = login(client, "03451112233")
     assert tech.get("/api/v1/catalogue/brands").status_code == 200
     assert tech.post("/api/v1/catalogue/brands", json={"name": "Zed"}).status_code == 403
+
+
+# ---- rename / delete (owner asked: brand, model, storage, colour all editable) ----
+
+
+def test_rename_and_delete_own_rows(db, owner, other_owner):
+    seed_catalogue(db)
+    b = owner.post("/api/v1/catalogue/brands", json={"name": "Dcod"}).json()
+    r = owner.patch(f"/api/v1/catalogue/brands/{b['id']}", json={"name": "Dcode"})
+    assert r.status_code == 200 and r.json()["name"] == "Dcode"
+    # other shop cannot see it
+    assert (
+        other_owner.patch(f"/api/v1/catalogue/brands/{b['id']}", json={"name": "X"}).status_code
+        == 404
+    )
+    # name clash with a built-in brand
+    r = owner.patch(f"/api/v1/catalogue/brands/{b['id']}", json={"name": "nokia"})
+    assert r.status_code == 409 and r.json()["error"]["code"] == "brand_exists"
+
+    st = owner.post("/api/v1/catalogue/storages", json={"name": "48GB", "gigabytes": 48}).json()
+    r = owner.patch(
+        f"/api/v1/catalogue/storages/{st['id']}", json={"name": "96GB", "gigabytes": 96}
+    )
+    assert r.json()["gigabytes"] == 96
+    co = owner.post("/api/v1/catalogue/colours", json={"name": "Mint"}).json()
+    assert owner.delete(f"/api/v1/catalogue/colours/{co['id']}").status_code == 204
+    assert all(c["id"] != co["id"] for c in owner.get("/api/v1/catalogue/colours").json())
+
+    m = owner.post("/api/v1/catalogue/models", json={"brand_id": b["id"], "name": "Bold"}).json()
+    # brand with a model cannot be deleted
+    r = owner.delete(f"/api/v1/catalogue/brands/{b['id']}")
+    assert r.status_code == 409 and r.json()["error"]["code"] == "catalogue_in_use"
+    assert (
+        owner.patch(f"/api/v1/catalogue/models/{m['id']}", json={"name": "Bold 2"}).json()["name"]
+        == "Bold 2"
+    )
+    assert owner.delete(f"/api/v1/catalogue/models/{m['id']}").status_code == 204
+    assert owner.delete(f"/api/v1/catalogue/brands/{b['id']}").status_code == 204
+
+
+def test_builtin_rows_are_locked(db, owner):
+    seed_catalogue(db)
+    nokia = next(b for b in owner.get("/api/v1/catalogue/brands").json() if b["name"] == "Nokia")
+    r = owner.patch(f"/api/v1/catalogue/brands/{nokia['id']}", json={"name": "Nokiaa"})
+    assert r.status_code == 403 and r.json()["error"]["code"] == "catalogue_builtin"
+    assert owner.delete(f"/api/v1/catalogue/brands/{nokia['id']}").status_code == 403
+
+
+def test_used_storage_cannot_be_deleted(db, owner):
+    seed_catalogue(db)
+    nokia = next(b for b in owner.get("/api/v1/catalogue/brands").json() if b["name"] == "Nokia")
+    model = owner.get("/api/v1/catalogue/models", params={"brand_id": nokia["id"]}).json()[0]
+    st = owner.post("/api/v1/catalogue/storages", json={"name": "48GB", "gigabytes": 48}).json()
+    r = owner.post(
+        "/api/v1/devices/opening-stock",
+        json={
+            "imei1": "490154203237518",
+            "brand_id": nokia["id"],
+            "model_id": model["id"],
+            "storage_id": st["id"],
+            "condition": "used",
+            "pta_status": "pta_approved",
+            "warranty_months": 0,
+            "cost_price": 800,
+        },
+    )
+    assert r.status_code == 201, r.text
+    r = owner.delete(f"/api/v1/catalogue/storages/{st['id']}")
+    assert r.status_code == 409 and r.json()["error"]["code"] == "catalogue_in_use"
+
+
+def test_salesman_can_add_but_not_edit(client, db, owner):
+    from tests.conftest import login
+
+    seed_catalogue(db)
+    owner.post(
+        "/api/v1/staff",
+        json={"name": "Sales", "phone": "03451112244", "password": "secret123", "role": "salesman"},
+    )
+    sales = login(client, "03451112244")
+    b = sales.post("/api/v1/catalogue/brands", json={"name": "Zed"})
+    assert b.status_code == 201
+    assert (
+        sales.patch(f"/api/v1/catalogue/brands/{b.json()['id']}", json={"name": "Zedd"}).status_code
+        == 403
+    )
+    assert sales.delete(f"/api/v1/catalogue/brands/{b.json()['id']}").status_code == 403

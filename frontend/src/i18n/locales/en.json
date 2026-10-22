@@ -75,7 +75,8 @@
     "admin": "Shop & staff",
     "app": "App",
     "stock": "Stock list",
-    "openingStock": "Old stock"
+    "openingStock": "Old stock",
+    "catalogue": "Brands & models"
   },
   "common": {
     "save": "Save",
@@ -640,5 +641,23 @@
     "expenses": "Expenses",
     "print": "Print / PDF",
     "title": "Download"
+  },
+  "catalogue": {
+    "title": "Brands & models",
+    "brands": "Brands",
+    "models": "Models",
+    "storages": "Storage",
+    "colours": "Colours",
+    "new": "New",
+    "newBrand": "New brand",
+    "newModel": "New model",
+    "namePh": "Type the name",
+    "storagePh": "e.g. 128GB",
+    "builtin": "Built-in",
+    "rename": "Rename",
+    "delete": "Delete",
+    "pickBrand": "Choose a brand",
+    "newStorage": "New size",
+    "newColour": "New colour"
   }
 }

@@ -3,10 +3,16 @@ import uuid
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
-from app.core.errors import Conflict, NotFound
+from app.core.errors import Conflict, Forbidden, NotFound
 from app.modules.audit.service import record_audit
 from app.modules.catalogue.models import Brand, Colour, Model, Storage
-from app.modules.catalogue.schemas import BrandCreate, ColourCreate, ModelCreate, StorageCreate
+from app.modules.catalogue.schemas import (
+    BrandCreate,
+    CatalogueUpdate,
+    ColourCreate,
+    ModelCreate,
+    StorageCreate,
+)
 
 
 def _visible(col, shop_id: uuid.UUID):
@@ -14,10 +20,14 @@ def _visible(col, shop_id: uuid.UUID):
     return or_(col.is_(None), col == shop_id)
 
 
-def _taken(db: Session, table, shop_id: uuid.UUID, name: str, **extra) -> bool:
+def _taken(
+    db: Session, table, shop_id: uuid.UUID, name: str, exclude_id: uuid.UUID | None = None, **extra
+) -> bool:
     stmt = select(table.id).where(
         _visible(table.shop_id, shop_id), func.lower(table.name) == name.strip().lower()
     )
+    if exclude_id is not None:
+        stmt = stmt.where(table.id != exclude_id)
     for k, v in extra.items():
         stmt = stmt.where(getattr(table, k) == v)
     return db.scalar(stmt) is not None
@@ -205,3 +215,100 @@ def create_colour(
     )
     db.commit()
     return row
+
+
+# ---- edit & delete (shop-own rows only) ------------------------------------------
+
+_TABLES = {"brand": Brand, "model": Model, "storage": Storage, "colour": Colour}
+
+
+def _own_row(db: Session, entity: str, shop_id: uuid.UUID, row_id: uuid.UUID):
+    row = db.get(_TABLES[entity], row_id)
+    if row is None or (row.shop_id is not None and row.shop_id != shop_id):
+        raise NotFound(code=f"{entity}_not_found")
+    if row.shop_id is None:
+        raise Forbidden(
+            code="catalogue_builtin",
+            message_en="Built-in items cannot be changed. Add your own instead.",
+            message_ur="پہلے سے موجود چیز تبدیل نہیں ہو سکتی۔ اپنی نئی شامل کریں۔",
+        )
+    return row
+
+
+def _out(entity: str, row):
+    if entity == "brand":
+        return {
+            "id": row.id,
+            "name": row.name,
+            "name_ur": row.name_ur,
+            "is_global": False,
+            "model_count": 0,
+        }
+    if entity == "model":
+        return _model_out(row)
+    return row
+
+
+def update_item(
+    db: Session,
+    entity: str,
+    shop_id: uuid.UUID,
+    user_id: uuid.UUID,
+    row_id: uuid.UUID,
+    data: CatalogueUpdate,
+):
+    row = _own_row(db, entity, shop_id, row_id)
+    table = _TABLES[entity]
+    extra = {"brand_id": row.brand_id} if entity == "model" else {}
+    if _taken(db, table, shop_id, data.name, exclude_id=row.id, **extra):
+        raise Conflict(
+            code=f"{entity}_exists",
+            message_en="This name already exists",
+            message_ur="یہ نام پہلے سے موجود ہے",
+        )
+    before = {"name": row.name}
+    row.name = data.name.strip()
+    row.name_ur = None  # one name for both languages
+    if entity == "storage" and data.gigabytes:
+        row.gigabytes = data.gigabytes
+    db.flush()
+    record_audit(
+        db,
+        shop_id=shop_id,
+        user_id=user_id,
+        entity=entity,
+        entity_id=row.id,
+        action="update",
+        before=before,
+        after={"name": row.name},
+    )
+    db.commit()
+    return _out(entity, row)
+
+
+def delete_item(
+    db: Session, entity: str, shop_id: uuid.UUID, user_id: uuid.UUID, row_id: uuid.UUID
+) -> None:
+    from app.modules.devices.models import Device  # local import: devices depends on catalogue
+
+    row = _own_row(db, entity, shop_id, row_id)
+    used = db.scalar(select(func.count(Device.id)).where(getattr(Device, f"{entity}_id") == row.id))
+    if entity == "brand":
+        used += db.scalar(select(func.count(Model.id)).where(Model.brand_id == row.id))
+    if used:
+        raise Conflict(
+            code="catalogue_in_use",
+            message_en="It is used by phones or models, so it cannot be deleted. You can rename it.",
+            message_ur="یہ موبائلوں یا ماڈلز میں استعمال ہو رہا ہے، اس لیے ختم نہیں ہو سکتا۔ نام بدل سکتے ہیں۔",
+        )
+    record_audit(
+        db,
+        shop_id=shop_id,
+        user_id=user_id,
+        entity=entity,
+        entity_id=row.id,
+        action="delete",
+        before={"name": row.name},
+    )
+    db.delete(row)
+    db.commit()

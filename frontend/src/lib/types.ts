@@ -43,12 +43,14 @@ export interface Storage {
   name: string
   name_ur: string | null
   gigabytes: number
+  is_global: boolean
 }
 export interface Colour {
   id: UUID
   name: string
   name_ur: string | null
   hex: string | null
+  is_global: boolean
 }
 
 export type DeviceCondition = 'box_pack' | 'open_box' | 'used' | 'patched'

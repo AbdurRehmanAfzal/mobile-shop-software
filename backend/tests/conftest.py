@@ -88,6 +88,11 @@ class Actor:
             url, headers={**self.headers(kw.pop("shop_id", None)), **kw.pop("headers", {})}, **kw
         )
 
+    def delete(self, url, **kw):
+        return self.client.delete(
+            url, headers={**self.headers(kw.pop("shop_id", None)), **kw.pop("headers", {})}, **kw
+        )
+
     def patch(self, url, **kw):
         return self.client.patch(
             url, headers={**self.headers(kw.pop("shop_id", None)), **kw.pop("headers", {})}, **kw
