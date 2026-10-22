@@ -264,8 +264,8 @@
       "done": "Done"
     },
     "kind": "Purchase type",
-    "supplier": "Supplier (new stock)",
-    "walkIn": "Walk-in customer (used)",
+    "supplier": "From dealer",
+    "walkIn": "Customer's phone",
     "shop": "Other shop",
     "tradeIn": "Trade-in",
     "selectParty": "Select party",
@@ -282,7 +282,19 @@
     "verifyNow": "Verify now",
     "printDeclaration": "Print declaration",
     "viewPurchase": "View purchase",
-    "remove": "Remove"
+    "remove": "Remove",
+    "chooseTitle": "Where is the phone coming from?",
+    "fromDealer": "From a dealer",
+    "fromDealerHint": "Wholesaler or distributor. New or box-pack phones.",
+    "fromCustomer": "Buy a customer's phone",
+    "fromCustomerHint": "Someone came to sell their own phone. Check it is not stolen.",
+    "selectDealer": "Select dealer",
+    "selectSeller": "Who is selling the phone?",
+    "verifyTitle": "Check the phone is not stolen",
+    "verifyHint": "Take CNIC and photos and check eGadget. If you know this person well, you can skip.",
+    "skipKnown": "Skip, I know this person",
+    "skipReason": "Known person, verification skipped by shopkeeper",
+    "skipped": "Skipped, known person"
   },
   "verify": {
     "title": "Verification",

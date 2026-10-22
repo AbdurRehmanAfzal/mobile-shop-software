@@ -1,10 +1,12 @@
-import { Trash2 } from 'lucide-react'
-import { useState } from 'react'
+import { Check, ShieldCheck, Store, Trash2, UserRound } from 'lucide-react'
+import { useState, type ReactNode } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import PartyPicker from '@/components/PartyPicker'
 import { Chip, ErrorText, KV, MoneyText, PageHeader, Sheet, Stepper } from '@/components/ui'
 import { uid } from '@/lib/id'
+import { api } from '@/lib/api'
+import { useAuth } from '@/lib/auth'
 import { openPrintable } from '@/lib/files'
 import { useCashAccounts, useDocMutation } from '@/lib/queries'
 import type { Party, Purchase } from '@/lib/types'
@@ -24,6 +26,10 @@ export default function PurchaseWizard() {
   const { pick } = useLang()
   const [step, setStep] = useState(0)
   const [kind, setKind] = useState<Kind>(params.get('imei') ? 'walk_in' : 'supplier')
+  const [chosen, setChosen] = useState(!!params.get('imei'))
+  const [skipped, setSkipped] = useState<Record<string, boolean>>({})
+  const role = useAuth((s) => s.me?.user.role)
+  const canSkip = role === 'owner' || role === 'manager'
   const [party, setParty] = useState<Party | null>(null)
   const [devices, setDevices] = useState<DeviceLineDraft[]>([])
   const [misc, setMisc] = useState<Misc[]>([])
@@ -64,14 +70,27 @@ export default function PurchaseWizard() {
 
       {step === 0 ? (
         <div className="flex flex-col gap-3">
-          <BiLabel text="purchase.kind" size="md" tone="text-muted" />
-          <BiSegmented<Kind> value={kind} onChange={(k) => { setKind(k); setParty(null) }} options={[{ value: 'supplier', text: 'party.supplier' }, { value: 'walk_in', text: 'party.customer' }, { value: 'shop', text: 'party.shop' }, { value: 'trade_in', text: 'purchase.tradeIn' }]} />
-          <PartyPicker value={party} onChange={setParty} kind={partyKind} label="purchase.selectParty" />
-          <button type="button" onClick={() => nav('/stock/opening')} className="tap rounded-2xl border border-dashed border-line px-4 py-3 text-start">
-            <BiLabel text="opening.kind" size="md" bold />
-            <BiLabel text="opening.hint" size="sm" tone="text-muted" />
-          </button>
-          <BiButton text="common.next" full disabled={!party} onClick={() => { setStep(1); if (!devices.length && params.get('imei')) setEditing(emptyDraft(params.get('imei')!, kind)) }} />
+          <BiLabel text="purchase.chooseTitle" size="lg" bold />
+          <SourceCard
+            active={chosen && kind === 'supplier'}
+            icon={<Store size={26} />}
+            title="purchase.fromDealer"
+            hint="purchase.fromDealerHint"
+            onClick={() => { if (kind !== 'supplier') setParty(null); setKind('supplier'); setChosen(true) }}
+          />
+          <SourceCard
+            active={chosen && kind === 'walk_in'}
+            icon={<UserRound size={26} />}
+            title="purchase.fromCustomer"
+            hint="purchase.fromCustomerHint"
+            onClick={() => { if (kind !== 'walk_in') setParty(null); setKind('walk_in'); setChosen(true) }}
+          />
+          {chosen ? (
+            <>
+              <PartyPicker value={party} onChange={setParty} kind={partyKind} label={kind === 'supplier' ? 'purchase.selectDealer' : 'purchase.selectSeller'} />
+              <BiButton text="common.next" full disabled={!party} onClick={() => { setStep(1); if (!devices.length && params.get('imei')) setEditing(emptyDraft(params.get('imei')!, kind)) }} />
+            </>
+          ) : null}
         </div>
       ) : null}
 
@@ -98,6 +117,8 @@ export default function PurchaseWizard() {
           ))}
           <BiButton text="purchase.addDevice" variant="secondary" full onClick={() => setEditing(emptyDraft('', kind))} />
 
+          {kind === 'supplier' ? (
+            <>
           <BiLabel text="purchase.misc" size="md" tone="text-muted" className="mt-2" />
           {misc.map((x) => (
             <div key={x.key} className="grid grid-cols-[1fr_64px_96px_36px] items-end gap-2">
@@ -110,6 +131,9 @@ export default function PurchaseWizard() {
             </div>
           ))}
           <BiButton text="common.add" variant="ghost" size="md" onClick={() => setMisc([...misc, { key: uid(), description: '', qty: '1', unit_cost: '' }])} />
+
+            </>
+          ) : null}
 
           <div className="card flex items-center justify-between">
             <BiLabel text="common.total" size="md" tone="text-muted" />
@@ -164,22 +188,42 @@ export default function PurchaseWizard() {
             </div>
             <MoneyText value={result.total} tone="ink" size="lg" />
           </div>
-          {result.lines.filter((l) => l.device_id).map((l) => (
-            <div key={l.id} className="card flex items-center gap-2">
-              <div className="min-w-0 flex-1">
-                <div className="truncate font-semibold">{l.device_label}</div>
-                <div className="text-xs text-muted" dir="ltr">
-                  {l.imei1}
-                </div>
-              </div>
-              {kind !== 'supplier' || devices.find((d) => d.imei1 === l.imei1)?.condition !== 'box_pack' ? (
-                <>
-                  <BiButton text="purchase.verifyNow" size="sm" variant="gold" onClick={() => nav(`/stock/${l.device_id}/verify`)} />
-                  <BiButton text="common.print" size="sm" variant="secondary" onClick={() => openPrintable(`/api/v1/devices/${l.device_id}/verification/declaration`)} />
-                </>
-              ) : null}
+          {kind !== 'supplier' && result.lines.some((l) => l.device_id) ? (
+            <div className="rounded-2xl border border-gold/40 bg-gold-tint/40 px-4 py-3">
+              <div className="flex items-center gap-2"><ShieldCheck size={20} className="text-gold-text" /><BiLabel text="purchase.verifyTitle" size="md" bold /></div>
+              <BiLabel text="purchase.verifyHint" size="sm" tone="text-muted" className="mt-1" />
             </div>
-          ))}
+          ) : null}
+          {result.lines.filter((l) => l.device_id).map((l) => {
+            const needsCheck = kind !== 'supplier' || devices.find((d) => d.imei1 === l.imei1)?.condition !== 'box_pack'
+            return (
+              <div key={l.id} className="card flex flex-col gap-2">
+                <div className="min-w-0">
+                  <div className="truncate font-semibold">{l.device_label}</div>
+                  <div className="text-xs text-muted" dir="ltr">{l.imei1}</div>
+                </div>
+                {needsCheck && skipped[l.device_id!] ? (
+                  <div className="flex items-center gap-1.5 text-emerald-deep"><Check size={16} /><BiLabel text="purchase.skipped" size="sm" tone="text-emerald-deep" bold /></div>
+                ) : needsCheck ? (
+                  <div className="flex flex-wrap gap-2">
+                    <BiButton text="purchase.verifyNow" size="sm" variant="gold" onClick={() => nav(`/stock/${l.device_id}/verify`)} />
+                    {canSkip ? (
+                      <BiButton
+                        text="purchase.skipKnown"
+                        size="sm"
+                        variant="secondary"
+                        onClick={async () => {
+                          await api('POST', `/api/v1/devices/${l.device_id}/verification/override`, { reason: pick('purchase.skipReason') })
+                          setSkipped((x) => ({ ...x, [l.device_id!]: true }))
+                        }}
+                      />
+                    ) : null}
+                    <BiButton text="common.print" size="sm" variant="ghost" onClick={() => openPrintable(`/api/v1/devices/${l.device_id}/verification/declaration`)} />
+                  </div>
+                ) : null}
+              </div>
+            )
+          })}
           <BiButton text="nav.stock" full variant="secondary" onClick={() => nav('/stock')} />
         </div>
       ) : null}
@@ -197,5 +241,23 @@ export default function PurchaseWizard() {
         ) : null}
       </Sheet>
     </div>
+  )
+}
+
+function SourceCard({ active, icon, title, hint, onClick }: { active: boolean; icon: ReactNode; title: string; hint: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={`tap flex items-center gap-4 rounded-3xl border-2 px-4 py-4 text-start transition ${active ? 'border-emerald bg-emerald-tint/60' : 'border-line bg-surface'}`}
+    >
+      <span className={`well h-14 w-14 shrink-0 ${active ? 'bg-emerald text-white' : 'bg-emerald-tint text-emerald-deep'}`}>{icon}</span>
+      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <BiLabel text={title} size="lg" bold />
+        <BiLabel text={hint} size="sm" tone="text-muted" className="mt-1 leading-loose" />
+      </span>
+      {active ? <Check size={22} className="shrink-0 text-emerald-deep" /> : null}
+    </button>
   )
 }
