@@ -83,3 +83,17 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Verified**: `pytest -q` → 32 passed; `ruff` clean; migration applied to dev DB; backend running with `--reload`.
 
 **Next**: Ledger + PostingService (FR-TXN-01, 02): `ledger_groups`, `ledger_entries`, cash accounts, balanced posting, party balance recompute, property tests (Σdebit = Σcredit).
+
+---
+
+## 2026-10-22 — Session 6: ledger + PostingService
+**Done**
+- `modules/ledger`: `CashAccount` (cash/bank/easypaisa/jazzcash, default "Cash / نقد" created at signup and shop creation), `LedgerGroup`, `LedgerEntry` (append-only; `reversed_by_group_id` is the only mutable field).
+- `service.py`: `Posting` builder (`.debit()/.credit()`), `post()` validates Σdebit = Σcredit and one-sided non-negative lines, checks party/cash accounts belong to the shop, refreshes `Party.balance`; `reverse()` mirrors a group once; `party_balance`, `cash_balance`, `account_total`, `party_statement` (running balance, opening before date_from), `cash_book`, `post_party_opening_balance` (diary migration: Dr party / Cr equity or the reverse).
+- Account keys in `accounts.py` (`party:<id>`, `cash:<id>`, sales, inventory, cogs, discounts, tax_payable, repair_income, other_income, expense:<cat>, equity, suspense).
+- Endpoints `/api/v1/ledger`: accounts (list/create), `accounts/{id}/book` (VIEW_COST), `parties/{id}/statement`, `parties/{id}/opening-balance` (VOID), `groups/{id}` (VIEW_COST), `groups/{id}/reverse` (VOID).
+- Alembic `6d403b33df28`.
+
+**Verified**: `pytest -q` → 43 passed (11 new: unbalanced/negative rejected, S4 credit-sale-then-payments derives 0 balance, reversal mirrors + blocks double reversal, hypothesis property over random sale/payment sequences, API: default cash account, opening balance → statement → reverse, cash book with opening balance, isolation + roles, balance read-only but ledger-driven, unknown party rejected). `ruff` clean.
+
+**Next**: Devices + device_events + state machine (FR-DEV-01..04), then verification (FR-VER), then purchase documents posting to the ledger.

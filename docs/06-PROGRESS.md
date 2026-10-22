@@ -27,7 +27,7 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 | Devices + events + state machine | FR-DEV-01..04 | ⬜ | |
 | Device history + IMEI search | FR-DEV-05,06 | ⬜ | |
 | Verification flow + declaration print | FR-VER-01..04 | ⬜ | |
-| Ledger + PostingService + balances | FR-TXN-01,02 | ⬜ | |
+| Ledger + PostingService + balances | FR-TXN-01,02 | ✅ | `modules/ledger`: cash_accounts (default Cash/نقد per shop), ledger_groups, ledger_entries; `Posting`/`post()`/`reverse()`; party balance cache refreshed from ledger; statements, cash book, opening balances; migration `6d403b33df28`; 11 tests incl. hypothesis property |
 | Purchase (walk-in/supplier/shop) + device accessories | FR-TXN-03, FR-ACC-02 | ⬜ | |
 | Sale + invoice numbering + receipt print | FR-TXN-04,12, FR-PRT-01 | ⬜ | |
 | Payments + allocation + statement | FR-TXN-05 | ⬜ | |

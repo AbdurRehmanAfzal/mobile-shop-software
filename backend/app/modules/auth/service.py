@@ -18,6 +18,7 @@ from app.modules.auth.schemas import (
     StaffUpdate,
     TokenPair,
 )
+from app.modules.ledger.service import ensure_default_cash_account
 
 
 def _tokens(user: User) -> TokenPair:
@@ -60,6 +61,7 @@ def signup(db: Session, data: SignupRequest) -> tuple[User, TokenPair]:
     db.add_all([org, shop, user])
     db.flush()
     db.add(UserShop(user_id=user.id, shop_id=shop.id))
+    ensure_default_cash_account(db, shop.id)
     record_audit(
         db, shop_id=shop.id, user_id=user.id, entity="shop", entity_id=shop.id, action="create"
     )
@@ -111,6 +113,7 @@ def create_shop(db: Session, owner: User, data: ShopCreate) -> Shop:
     db.add(shop)
     db.flush()
     db.add(UserShop(user_id=owner.id, shop_id=shop.id))
+    ensure_default_cash_account(db, shop.id)
     record_audit(
         db, shop_id=shop.id, user_id=owner.id, entity="shop", entity_id=shop.id, action="create"
     )
