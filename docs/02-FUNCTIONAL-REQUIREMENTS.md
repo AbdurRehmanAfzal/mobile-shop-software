@@ -112,6 +112,7 @@ Priority: **P0** = needed for first paying shop, **P1** = within 3 months after,
 | FR-PLT-05 | Cloud sync for local installs (event-log based, conflict-free for append-only data). | P2 |
 | FR-PLT-06 | Backups: nightly DB backup, one-click restore (local), point-in-time (cloud). | P1 |
 | FR-PLT-07 | Data export (Excel/CSV) of everything that belongs to the shop. | P1 |
+| FR-PLT-08 | **Premium, modern visual design**: a documented design system (colour tokens, Urdu+Latin type scale, spacing, elevation, motion, icon set, light/dark) approved by the owner before Phase 1 screens; every screen built from it. Acceptance: shopkeeper test group rates it "modern" (v1 failed this with ~50 users). | P0 |
 
 ## Module L — AI (`FR-AI`)
 | ID | Requirement | Pri |

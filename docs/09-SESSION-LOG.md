@@ -30,3 +30,4 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 2. WhatsApp: is a Meta Business account available, or should we start with "share via WhatsApp" links (no API cost)?
 3. Should Urdu be the default language on first launch? (Assumed yes.)
 4. Trial length and plan prices (assumed 14 days; prices TBD).
+5. Design direction: owner reported ~50 shopkeepers found the v1 UI "not modern, not luxury". Proposal: build `docs/11-DESIGN-SYSTEM.md` + an interactive mockup of 3 key screens (dashboard, device purchase with verification, sale) and get sign-off before Phase 1 UI.

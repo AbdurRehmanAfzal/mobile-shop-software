@@ -25,7 +25,7 @@ Pakistani mobile shopkeepers (often with little formal or computer education) cu
 | Repair technician | Repair queue, status updates, parts used, charges |
 | Chain owner | One account, several shops, consolidated reports |
 
-Non-functional expectations: Urdu-first UI, large buttons, step-by-step flows, auto-calculation, works on a phone, works without internet when installed locally.
+Non-functional expectations: Urdu-first UI, large buttons, step-by-step flows, auto-calculation, works on a phone, works without internet when installed locally. **Look and feel must be premium and modern**: the v1 prototype was shown to ~50 shopkeepers and judged "not modern, not luxury"; visual quality is a selling point of the SaaS, not optional polish.
 
 ## 4. Core business scenarios (must be modelled exactly)
 
