@@ -76,7 +76,7 @@ export const useUpdateParty = () => {
 }
 
 // ---- devices ---------------------------------------------------------------------------------
-export const useDevices = (params: { status?: string; q?: string; brand_id?: string; condition?: string; pta_status?: string } = {}) => {
+export const useDevices = (params: { status?: string; q?: string; brand_id?: string; condition?: string; pta_status?: string; limit?: number } = {}) => {
   const k = useShopKey()
   return useQuery({ queryKey: [k, 'devices', params], queryFn: () => get<Device[]>(`/api/v1/devices${qs(params)}`) })
 }

@@ -162,12 +162,7 @@
       "faulty": "Faulty",
       "returned_to_supplier": "Returned to supplier"
     },
-    "condition": {
-      "box_pack": "Box pack",
-      "open_box": "Open box",
-      "used": "Used",
-      "patched": "Patched"
-    },
+    "condition": "Condition",
     "pta": {
       "pta_approved": "PTA approved",
       "non_pta": "Non-PTA",
@@ -239,7 +234,17 @@
     "accCameWith": "Came with device",
     "accPendingVendor": "Pending from vendor",
     "accPendingShop": "Pending to customer",
-    "accGiven": "Given to customer"
+    "accGiven": "Given to customer",
+    "sort": "Sort",
+    "newest": "Newest",
+    "oldest": "Oldest first",
+    "priceLow": "Price: low",
+    "priceHigh": "Price: high",
+    "allBrands": "All",
+    "daysIn": "Days",
+    "ptaShort": "PTA",
+    "storageShort": "Memory",
+    "count": "{{n}} phones"
   },
   "purchase": {
     "title": "New purchase",

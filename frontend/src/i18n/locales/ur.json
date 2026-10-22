@@ -162,12 +162,7 @@
       "faulty": "خراب",
       "returned_to_supplier": "سپلائر کو واپس"
     },
-    "condition": {
-      "box_pack": "باکس پیک",
-      "open_box": "کھلا باکس",
-      "used": "استعمال شدہ",
-      "patched": "پیچ شدہ"
-    },
+    "condition": "حالت",
     "pta": {
       "pta_approved": "پی ٹی اے منظور",
       "non_pta": "نان پی ٹی اے",
@@ -208,7 +203,7 @@
     "approvalOut": "پسند کے لیے دیں",
     "approvalReturned": "پسند سے واپس",
     "verify": "تصدیق",
-    "sell": "فروخت کریں",
+    "sell": "فروخت",
     "patchDetails": "پیچ کی تفصیل",
     "photos": "تصاویر",
     "events": {
@@ -239,7 +234,17 @@
     "accCameWith": "موبائل کے ساتھ آیا",
     "accPendingVendor": "سپلائر سے باقی",
     "accPendingShop": "گاہک کو دینا باقی",
-    "accGiven": "گاہک کو دیا"
+    "accGiven": "گاہک کو دیا",
+    "sort": "ترتیب",
+    "newest": "نئے پہلے",
+    "oldest": "پرانے پہلے",
+    "priceLow": "قیمت: کم",
+    "priceHigh": "قیمت: زیادہ",
+    "allBrands": "سب",
+    "daysIn": "دن",
+    "ptaShort": "پی ٹی اے",
+    "storageShort": "میموری",
+    "count": "{{n}} موبائل"
   },
   "purchase": {
     "title": "نئی خریداری",
