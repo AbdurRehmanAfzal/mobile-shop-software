@@ -258,3 +258,5 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Verified**: `tsc` clean, `vitest` 10 passed, `vite build` ok; backend 107 passed.
 **Not yet verified**: real-phone walkthrough; thermal printer output.
 **Next**: Phase 3 — staff management UI, cash/bank accounts UI, WhatsApp Cloud API + SMTP senders, PDF/Excel export, PWA service worker + Capacitor, Docker deploy; plus E2E tests.
+
+**Addendum (Session 18)**: Staff page (owner) and Cash & bank page (owner/manager, add Easypaisa/JazzCash/bank with opening balance, cash book) added. Phase 3 items still needing owner input: Meta WhatsApp Business account (for auto-send), hosting choice (for deploy), plan prices.

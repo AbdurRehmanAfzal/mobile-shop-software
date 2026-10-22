@@ -65,7 +65,7 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 | Item | FR | Status |
 |---|---|---|
 | Plans, multi-shop | FR-AUTH-05,07 | ⬜ |
-| Staff polish, audit viewer | FR-AUTH-04,06 | ⬜ |
+| Staff polish, audit viewer | FR-AUTH-04,06 | 🔄 | Staff UI (add, role, password, disable) + cash/bank accounts UI with cash book done; audit viewer, attendance pending |
 | WhatsApp / SMS / email + scheduled reports | FR-RPT-03,04,05,06 | 🔄 | Outbox + settings + templates + sale/purchase/payment hooks + wa.me share links done (`modules/notifications`); Meta Cloud API / SMTP senders pending |
 | PWA + Capacitor Android/iOS | FR-PLT-02,03 | ⬜ |
 | Docker cloud deploy + local installer + backups | FR-PLT-04,06 | ⬜ |
