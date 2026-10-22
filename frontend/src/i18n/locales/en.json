@@ -568,5 +568,31 @@
     "book": "Cash book",
     "in": "In",
     "out": "Out"
+  },
+  "home": {
+    "hello": "Assalam-o-Alaikum",
+    "todaySales": "Today's sales",
+    "tapToShow": "Tap to show amounts",
+    "received": "Received",
+    "profit": "Profit",
+    "more": "More services",
+    "seeAll": "See all",
+    "whatToDo": "What do you want to do?",
+    "attention": "Needs attention"
+  },
+  "pin": {
+    "title": "Enter your PIN",
+    "usePassword": "Use password",
+    "usePin": "Use PIN",
+    "set": "Set quick PIN",
+    "setHint": "4–6 digits, for fast login on this phone",
+    "current": "Your password",
+    "saved": "PIN saved",
+    "forgot": "Forgot PIN? Use password",
+    "notMe": "Not you?"
+  },
+  "opening": {
+    "kind": "Old stock (already in shop)",
+    "hint": "Phones already in your shop before using this app. No supplier, no cash."
   }
 }

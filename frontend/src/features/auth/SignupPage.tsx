@@ -5,6 +5,7 @@ import { useAuth, type MeOut } from '@/lib/auth'
 import { isValidPkMobile, normalisePhone } from '@/lib/format'
 import { BiAlert, BiButton, BiInput, BiLabel } from '@/components/Bilingual'
 import AuthLayout from './AuthLayout'
+import { rememberLogin } from './LoginPage'
 
 interface AuthResponse {
   tokens: { access_token: string; refresh_token: string }
@@ -45,6 +46,7 @@ export default function SignupPage() {
         },
         { auth: false },
       )
+      rememberLogin(res.me)
       setSession(res.tokens, res.me)
     } catch (err) {
       if (err instanceof ApiError) setError({ en: err.messageEn, ur: err.messageUr })

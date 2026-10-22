@@ -10,7 +10,9 @@ from app.modules.auth.schemas import (
     AuthResponse,
     LoginRequest,
     MeOut,
+    PinLoginRequest,
     RefreshRequest,
+    SetPinRequest,
     ShopCreate,
     ShopOut,
     ShopUpdate,
@@ -36,7 +38,7 @@ def _me(db, user, x_shop_id: str | None) -> MeOut:
     if active is None and len(shops) == 1:
         active = shops[0].id
     return MeOut(
-        user=UserOut.model_validate(user),
+        user=UserOut.model_validate(user).model_copy(update={"has_pin": bool(user.pin_hash)}),
         shops=[ShopOut.model_validate(s) for s in shops],
         active_shop_id=active,
     )
@@ -52,6 +54,19 @@ def signup(data: SignupRequest, db: DB):
 def login(data: LoginRequest, db: DB):
     user, tokens = service.login(db, data.phone, data.password)
     return AuthResponse(tokens=tokens, me=_me(db, user, None))
+
+
+@router.post("/auth/pin-login", response_model=AuthResponse)
+def pin_login(data: PinLoginRequest, db: DB):
+    user, tokens = service.login_with_pin(db, data.phone, data.pin)
+    return AuthResponse(tokens=tokens, me=_me(db, user, None))
+
+
+@router.put("/me/pin", status_code=204)
+def set_pin(
+    data: SetPinRequest, current: Annotated[CurrentUser, Depends(get_current_user)], db: DB
+):
+    service.set_own_pin(db, current.user, data.password, data.pin)
 
 
 @router.post("/auth/refresh", response_model=TokenPair)

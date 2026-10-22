@@ -14,6 +14,7 @@ import StockPage from '@/features/stock/StockPage'
 import DeviceDetailPage from '@/features/stock/DeviceDetailPage'
 import VerifyPage from '@/features/stock/VerifyPage'
 import PurchaseWizard from '@/features/purchase/PurchaseWizard'
+import OpeningStockPage from '@/features/purchase/OpeningStockPage'
 import SaleWizard from '@/features/sale/SaleWizard'
 import { SaleDetailPage, SalesPage } from '@/features/sale/SalesPage'
 import LoansPage from '@/features/loans/LoansPage'
@@ -51,6 +52,7 @@ export const router = createBrowserRouter([
         children: [
           { path: '/', element: <DashboardPage /> },
           { path: '/stock', element: <StockPage /> },
+          { path: '/stock/opening', element: <OpeningStockPage /> },
           { path: '/stock/:id', element: <DeviceDetailPage /> },
           { path: '/stock/:id/verify', element: <VerifyPage /> },
           { path: '/purchase/new', element: <PurchaseWizard /> },

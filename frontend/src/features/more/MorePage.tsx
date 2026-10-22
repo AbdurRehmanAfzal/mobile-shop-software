@@ -1,10 +1,15 @@
-import { ArrowLeftRight, BarChart3, Bell, ChevronLeft, ChevronRight, Download, HandCoins, Headphones, Landmark, LogOut, Receipt, RotateCcw, Settings, Users, Wallet, Wrench } from 'lucide-react'
+import { ArrowLeftRight, KeyRound, BarChart3, Bell, ChevronLeft, ChevronRight, Download, HandCoins, Headphones, Landmark, LogOut, Receipt, RotateCcw, Settings, Users, Wallet, Wrench } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { setLocale, type Locale } from '@/i18n'
 import { useAuth } from '@/lib/auth'
 import { useTheme, type Theme } from '@/lib/theme'
-import { BiButton, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import { useState } from 'react'
+import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import { ErrorText, Sheet } from '@/components/ui'
+import { api } from '@/lib/api'
+import { rememberLogin } from '@/features/auth/LoginPage'
+
 
 export default function MorePage() {
   const { i18n } = useTranslation()
@@ -17,6 +22,11 @@ export default function MorePage() {
   const locale = i18n.language as Locale
   const role = me?.user.role
   const Chev = ur ? ChevronLeft : ChevronRight
+  const [pinOpen, setPinOpen] = useState(false)
+  const [pw, setPw] = useState('')
+  const [pin, setPin] = useState('')
+  const [pinErr, setPinErr] = useState<unknown>(null)
+  const [pinBusy, setPinBusy] = useState(false)
 
   const items: { key: string; Icon: typeof Settings; to?: string; roles?: string[] }[] = [
     { key: 'more.repairs', Icon: Wrench, to: '/repairs' },
@@ -58,12 +68,31 @@ export default function MorePage() {
         ))}
       </div>
 
+      <button type="button" onClick={() => setPinOpen(true)} className="card tap flex items-center gap-3 text-start">
+        <span className="well h-9 w-9 bg-emerald-tint text-emerald-deep"><KeyRound size={18} /></span>
+        <BiLabel text="pin.set" size="md" className="flex-1" />
+        <Chev size={18} className="text-muted/60" />
+      </button>
+
       <div className="card flex flex-col gap-3">
         <div className="text-sm font-semibold text-muted" dir="ltr">
           {me?.user.name} · {me?.user.phone} · {me?.user.role}
         </div>
         <BiButton text="auth.logout" variant="danger" full onClick={logout} icon={<LogOut size={20} />} />
       </div>
+
+      <Sheet open={pinOpen} onClose={() => setPinOpen(false)} title="pin.set">
+        <div className="flex flex-col gap-3">
+          <BiLabel text="pin.setHint" size="sm" tone="text-muted" />
+          <BiInput label="pin.current" type="password" value={pw} onChange={(e) => setPw(e.target.value)} />
+          <BiInput label="pin.title" inputMode="numeric" maxLength={6} value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))} />
+          <ErrorText error={pinErr} />
+          <BiButton text="common.save" full loading={pinBusy} disabled={pin.length < 4 || !pw} onClick={async () => {
+            setPinBusy(true); setPinErr(null)
+            try { await api('PUT', '/api/v1/me/pin', { password: pw, pin }); if (me) rememberLogin({ ...me, user: { ...me.user, has_pin: true } }); setPinOpen(false); setPw(''); setPin('') } catch (e) { setPinErr(e) } finally { setPinBusy(false) }
+          }} />
+        </div>
+      </Sheet>
 
       <div className="text-center text-xs font-semibold text-muted/70" dir="ltr">
         v2.0.0

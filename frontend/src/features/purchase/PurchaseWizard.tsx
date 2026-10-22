@@ -66,6 +66,10 @@ export default function PurchaseWizard() {
           <BiLabel text="purchase.kind" size="md" tone="text-muted" />
           <BiSegmented<Kind> value={kind} onChange={(k) => { setKind(k); setParty(null) }} options={[{ value: 'supplier', text: 'party.supplier' }, { value: 'walk_in', text: 'party.customer' }, { value: 'shop', text: 'party.shop' }, { value: 'trade_in', text: 'purchase.tradeIn' }]} />
           <PartyPicker value={party} onChange={setParty} kind={partyKind} label="purchase.selectParty" />
+          <button type="button" onClick={() => nav('/stock/opening')} className="tap rounded-2xl border border-dashed border-line px-4 py-3 text-start">
+            <BiLabel text="opening.kind" size="md" bold />
+            <BiLabel text="opening.hint" size="sm" tone="text-muted" />
+          </button>
           <BiButton text="common.next" full disabled={!party} onClick={() => { setStep(1); if (!devices.length && params.get('imei')) setEditing(emptyDraft(params.get('imei')!, kind)) }} />
         </div>
       ) : null}

@@ -33,6 +33,21 @@ class LoginRequest(BaseModel):
         return normalise_phone(v)
 
 
+class PinLoginRequest(BaseModel):
+    phone: str
+    pin: str = Field(pattern=r"^\d{4,6}$")
+
+    @field_validator("phone")
+    @classmethod
+    def _phone(cls, v: str) -> str:
+        return normalise_phone(v)
+
+
+class SetPinRequest(BaseModel):
+    password: str
+    pin: str | None = Field(default=None, pattern=r"^\d{4,6}$")
+
+
 class RefreshRequest(BaseModel):
     refresh_token: str
 
@@ -68,6 +83,7 @@ class UserOut(BaseModel):
     locale: str
     is_active: bool
     last_login_at: datetime | None
+    has_pin: bool = False
 
 
 class MeOut(BaseModel):

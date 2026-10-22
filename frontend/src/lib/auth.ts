@@ -12,6 +12,7 @@ export interface UserOut {
   role: Role
   locale: 'en' | 'ur'
   is_active: boolean
+  has_pin?: boolean
 }
 
 export interface ShopOut {

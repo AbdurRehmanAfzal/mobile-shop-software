@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.core.errors import Conflict, NotFound, Unauthorized, ValidationFailed
 from app.core.permissions import Role
+from app.core.ratelimit import login_limiter
 from app.core.security import create_token, decode_token, hash_password, hash_pin, verify_password
 from app.db.base import utcnow
 from app.modules.audit.service import record_audit
@@ -70,20 +71,42 @@ def signup(db: Session, data: SignupRequest) -> tuple[User, TokenPair]:
 
 
 def login(db: Session, phone: str, password: str) -> tuple[User, TokenPair]:
+    return _login(db, phone, password, use_pin=False)
+
+
+def login_with_pin(db: Session, phone: str, pin: str) -> tuple[User, TokenPair]:
+    return _login(db, phone, pin, use_pin=True)
+
+
+def _login(db: Session, phone: str, secret: str, *, use_pin: bool) -> tuple[User, TokenPair]:
+    key = f"{'pin' if use_pin else 'pw'}:{phone}"
+    login_limiter.check(key)
     user = db.scalar(select(User).where(User.phone == phone))
-    if user is None or not verify_password(password, user.password_hash):
+    hashed = (user.pin_hash if use_pin else user.password_hash) if user else None
+    if user is None or not verify_password(secret, hashed):
+        login_limiter.fail(key)
         raise Unauthorized(
-            code="bad_credentials",
-            message_en="Wrong phone number or password",
-            message_ur="فون نمبر یا پاس ورڈ غلط ہے",
+            code="bad_pin" if use_pin else "bad_credentials",
+            message_en="Wrong PIN" if use_pin else "Wrong phone number or password",
+            message_ur="غلط پن" if use_pin else "فون نمبر یا پاس ورڈ غلط ہے",
         )
     if not user.is_active:
         raise Unauthorized(
             code="user_inactive", message_en="Account disabled", message_ur="اکاؤنٹ بند ہے"
         )
+    login_limiter.reset(key)
     user.last_login_at = utcnow()
     db.commit()
     return user, _tokens(user)
+
+
+def set_own_pin(db: Session, user: User, password: str, pin: str | None) -> None:
+    if not verify_password(password, user.password_hash):
+        raise Unauthorized(
+            code="bad_credentials", message_en="Wrong password", message_ur="غلط پاس ورڈ"
+        )
+    user.pin_hash = hash_pin(pin) if pin else None
+    db.commit()
 
 
 def refresh(db: Session, refresh_token: str) -> tuple[User, TokenPair]:
