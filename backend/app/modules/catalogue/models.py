@@ -63,6 +63,7 @@ class Storage(UUIDPk, Base):
     @property
     def is_global(self) -> bool:
         return self.shop_id is None
+
     sort_order: Mapped[int] = mapped_column(Integer, default=100, nullable=False)
 
 
@@ -79,4 +80,5 @@ class Colour(UUIDPk, Base):
     @property
     def is_global(self) -> bool:
         return self.shop_id is None
+
     sort_order: Mapped[int] = mapped_column(Integer, default=100, nullable=False)
