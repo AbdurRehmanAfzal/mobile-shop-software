@@ -1,67 +1,108 @@
 {
   "app": { "name": "موبائل شاپ", "tagline": "اپنی موبائل شاپ آسانی سے چلائیں" },
-  "nav": {
-    "home": "ہوم",
-    "stock": "اسٹاک",
-    "new": "نیا",
-    "sale": "فروخت",
-    "parties": "کھاتے",
-    "more": "مزید"
-  },
+  "nav": { "home": "ہوم", "stock": "اسٹاک", "new": "نیا", "sale": "فروخت", "parties": "کھاتے", "more": "مزید" },
   "auth": {
-    "login": "لاگ اِن",
-    "signup": "دکان کا اکاؤنٹ بنائیں",
-    "phone": "موبائل نمبر",
-    "password": "پاس ورڈ",
-    "shopName": "دکان کا نام",
-    "shopNameUr": "دکان کا نام (اردو)",
-    "ownerName": "آپ کا نام",
-    "city": "شہر",
-    "haveAccount": "پہلے سے اکاؤنٹ ہے؟ لاگ اِن کریں",
-    "noAccount": "نئی دکان؟ اکاؤنٹ بنائیں",
-    "logout": "لاگ آؤٹ",
-    "loggingIn": "لاگ اِن ہو رہا ہے...",
-    "welcome": "خوش آمدید"
+    "login": "لاگ اِن", "signup": "دکان کا اکاؤنٹ بنائیں", "phone": "موبائل نمبر", "password": "پاس ورڈ",
+    "shopName": "دکان کا نام", "shopNameUr": "دکان کا نام (اردو)", "ownerName": "آپ کا نام", "city": "شہر",
+    "haveAccount": "پہلے سے اکاؤنٹ ہے؟ لاگ اِن کریں", "noAccount": "نئی دکان؟ اکاؤنٹ بنائیں", "logout": "لاگ آؤٹ",
+    "loggingIn": "لاگ اِن ہو رہا ہے...", "welcome": "خوش آمدید"
   },
   "dashboard": {
-    "title": "ڈیش بورڈ",
-    "todaySales": "آج کی فروخت",
-    "sales": "فروخت",
-    "cashIn": "نقد",
-    "profit": "منافع",
-    "cashInHand": "نقد رقم",
-    "receivable": "لینا ہے",
-    "payable": "دینا ہے",
-    "inStock": "اسٹاک میں موبائل",
-    "repairs": "مرمت باقی",
-    "comingSoon": "جلد آ رہا ہے",
-    "quickActions": "فوری کام",
-    "newSale": "فروخت",
-    "newPurchase": "خریداری",
-    "imeiSearch": "IMEI تلاش",
-    "payment": "ادائیگی",
-    "repair": "مرمت"
+    "title": "ڈیش بورڈ", "todaySales": "آج کی فروخت", "sales": "فروخت", "cashIn": "نقد", "profit": "منافع",
+    "cashInHand": "نقد رقم", "receivable": "لینا ہے", "payable": "دینا ہے", "inStock": "اسٹاک میں موبائل",
+    "repairs": "مرمت باقی", "comingSoon": "جلد آ رہا ہے", "quickActions": "فوری کام", "newSale": "فروخت",
+    "newPurchase": "خریداری", "imeiSearch": "IMEI تلاش", "payment": "ادائیگی", "repair": "مرمت"
   },
   "more": {
-    "title": "مزید",
-    "language": "زبان",
-    "theme": "رنگ روپ",
-    "themeLight": "روشن",
-    "themeDark": "گہرا",
-    "themeSystem": "فون کے مطابق",
-    "settings": "دکان کی سیٹنگز",
-    "staff": "عملہ",
-    "reports": "رپورٹس",
-    "version": "ورژن"
+    "title": "مزید", "language": "زبان", "theme": "رنگ روپ", "themeLight": "روشن", "themeDark": "گہرا",
+    "themeSystem": "فون کے مطابق", "settings": "دکان کی سیٹنگز", "staff": "عملہ", "reports": "رپورٹس", "version": "ورژن",
+    "notifications": "پیغامات کی سیٹنگ", "loans": "امانت", "sales": "فروخت کی فہرست", "purchases": "خریداری کی فہرست",
+    "payments": "ادائیگیوں کی فہرست", "returns": "واپسی کی فہرست", "cashAccounts": "نقد اور بینک"
   },
   "common": {
-    "save": "محفوظ کریں",
-    "cancel": "منسوخ",
-    "back": "واپس",
-    "next": "اگلا",
-    "loading": "لوڈ ہو رہا ہے...",
-    "error": "کچھ غلط ہو گیا",
-    "required": "ضروری ہے",
-    "rs": "روپے"
+    "save": "محفوظ کریں", "cancel": "منسوخ", "back": "واپس", "next": "اگلا", "done": "مکمل", "add": "شامل کریں", "edit": "ترمیم",
+    "loading": "لوڈ ہو رہا ہے...", "error": "کچھ غلط ہو گیا", "required": "ضروری ہے", "rs": "روپے", "search": "تلاش",
+    "all": "سب", "none": "کوئی نہیں", "yes": "ہاں", "no": "نہیں", "notes": "نوٹس", "date": "تاریخ", "print": "پرنٹ",
+    "share": "واٹس ایپ پر بھیجیں", "confirm": "تصدیق", "optional": "اختیاری", "nothingFound": "کچھ نہیں ملا",
+    "total": "کل", "paid": "ابھی ادا", "due": "باقی", "discount": "رعایت", "price": "قیمت", "amount": "رقم",
+    "reason": "وجہ", "void": "دستاویز منسوخ کریں", "today": "آج"
+  },
+  "party": {
+    "title": "کھاتے", "new": "نیا کھاتہ", "edit": "کھاتے میں ترمیم", "name": "نام", "nameUr": "نام (اردو)",
+    "phone": "موبائل نمبر", "whatsapp": "واٹس ایپ (اگر الگ ہو)", "cnic": "شناختی کارڈ", "city": "شہر", "address": "پتہ",
+    "kinds": "قسم", "customer": "گاہک", "supplier": "سپلائر", "shop": "دوسری دکان", "technician": "ٹیکنیشن",
+    "receivable": "لینا ہے", "payable": "دینا ہے", "clear": "صاف", "balance": "بقایا", "statement": "کھاتہ",
+    "receive": "رقم وصول کریں", "pay": "رقم ادا کریں", "withBalance": "جن کا بقایا ہے", "searchPlaceholder": "نام، فون یا شناختی کارڈ",
+    "opening": "پرانا بقایا", "openingHint": "پرانی ڈائری کا بقایا", "partyOwes": "یہ مجھے دے گا", "iOwe": "میں اسے دوں گا",
+    "noParties": "ابھی کوئی کھاتہ نہیں۔ پہلا گاہک یا سپلائر شامل کریں۔", "history": "لین دین"
+  },
+  "stock": {
+    "title": "اسٹاک", "searchPlaceholder": "IMEI، ماڈل یا برانڈ", "imeiLookup": "IMEI چیک کریں", "imeiPlaceholder": "15 ہندسوں کا IMEI لکھیں یا اسکین کریں",
+    "seenBefore": "یہ IMEI پہلے آپ کی دکان میں آ چکا ہے", "notSeen": "نیا IMEI، پہلے نہیں آیا", "timesBought": "{{n}} بار خریدا",
+    "luhnBad": "IMEI کا چیک ہندسہ غلط ہے، دوبارہ دیکھیں", "noDevices": "کوئی موبائل نہیں۔ شروع کرنے کے لیے اسٹاک خریدیں۔",
+    "status": { "in_stock": "اسٹاک میں", "on_loan": "امانت پر", "with_customer_for_approval": "گاہک کے پاس", "sold": "فروخت شدہ", "in_repair": "مرمت میں", "faulty": "خراب", "returned_to_supplier": "سپلائر کو واپس" },
+    "condition": { "box_pack": "باکس پیک", "open_box": "کھلا باکس", "used": "استعمال شدہ", "patched": "پیچ شدہ" },
+    "pta": { "pta_approved": "پی ٹی اے منظور", "non_pta": "نان پی ٹی اے", "jv": "جے وی", "unknown": "معلوم نہیں" },
+    "verification": { "not_required": "تصدیق کی ضرورت نہیں", "pending": "تصدیق باقی", "clear": "تصدیق شدہ", "flagged": "رپورٹ شدہ!" },
+    "cost": "لاگت", "asking": "فروخت کی قیمت", "simTime": "سم ٹائم (مہینے)", "warranty": "وارنٹی", "months": "مہینے",
+    "cycle": "بار", "history": "تاریخ", "accessories": "لوازمات", "withParty": "کس کے پاس", "device": "موبائل",
+    "imei": "IMEI", "imei2": "IMEI 2", "serial": "سیریل", "brand": "برانڈ", "model": "ماڈل", "storage": "میموری", "colour": "رنگ",
+    "actions": "کام", "loanOut": "امانت پر دیں", "markFaulty": "خراب نشان لگائیں", "faultyCleared": "خرابی ٹھیک",
+    "sendRepair": "مرمت کے لیے بھیجیں", "repairReturned": "مرمت سے واپس", "addNote": "نوٹ لکھیں", "changePrice": "قیمت بدلیں",
+    "approvalOut": "پسند کے لیے دیں", "approvalReturned": "پسند سے واپس", "verify": "تصدیق", "sell": "فروخت کریں",
+    "patchDetails": "پیچ کی تفصیل", "photos": "تصاویر",
+    "events": { "purchased": "خریدا", "verified": "تصدیق ہوئی", "loaned_out": "امانت پر دیا", "loan_returned": "امانت واپس", "approval_out": "پسند کے لیے دیا", "approval_returned": "پسند سے واپس", "sold": "فروخت ہوا", "sale_returned": "فروخت واپس", "sent_to_repair": "مرمت کو بھیجا", "repair_returned": "مرمت سے واپس", "marked_faulty": "خراب", "faulty_cleared": "خرابی ٹھیک", "returned_to_supplier": "سپلائر کو واپس", "price_changed": "قیمت بدلی", "note": "نوٹ" },
+    "acc": { "box": "ڈبہ", "charger": "چارجر", "cable": "تار", "earphones": "ہینڈ فری", "airpods": "ایئر پوڈز", "other": "دیگر" },
+    "accCameWith": "موبائل کے ساتھ آیا", "accPendingVendor": "سپلائر سے باقی", "accPendingShop": "گاہک کو دینا باقی", "accGiven": "گاہک کو دیا"
+  },
+  "purchase": {
+    "title": "نئی خریداری", "steps": { "from": "کس سے", "devices": "موبائل", "payment": "ادائیگی", "done": "مکمل" },
+    "kind": "خریداری کی قسم", "supplier": "سپلائر (نیا اسٹاک)", "walkIn": "واک اِن گاہک (استعمال شدہ)", "shop": "دوسری دکان", "tradeIn": "ایکسچینج",
+    "selectParty": "کھاتہ منتخب کریں", "addDevice": "موبائل شامل کریں", "noDevices": "ابھی کوئی موبائل شامل نہیں", "cost": "خرید قیمت",
+    "misc": "دیگر اشیاء", "miscDesc": "چیز", "qty": "تعداد", "unitCost": "فی چیز قیمت", "reference": "سپلائر بل نمبر",
+    "cashAccount": "ادائیگی کہاں سے", "created": "خریداری محفوظ ہو گئی", "verifyNow": "ابھی تصدیق کریں", "printDeclaration": "اقرار نامہ پرنٹ کریں",
+    "viewPurchase": "خریداری دیکھیں", "remove": "ہٹائیں"
+  },
+  "verify": {
+    "title": "تصدیق", "seller": "بیچنے والا", "cnic": "شناختی کارڈ نمبر", "cnicFront": "شناختی کارڈ سامنے", "cnicBack": "شناختی کارڈ پیچھے",
+    "sellerPhoto": "بیچنے والے کی تصویر", "devicePhotos": "موبائل کی تصاویر", "egadget": "ای گیجٹ (پنجاب پولیس)", "egadgetOpen": "ای گیجٹ پورٹل کھولیں",
+    "egadgetResult": "نتیجہ", "clear": "صاف", "flagged": "رپورٹ شدہ", "notChecked": "چیک نہیں کیا", "egadgetRef": "حوالہ نمبر",
+    "ptaChecked": "پی ٹی اے چیک کیا (8484)", "ptaResult": "پی ٹی اے نتیجہ", "declaration": "بیچنے والے نے اقرار نامہ پر دستخط کیے",
+    "notes": "موبائل کی حالت کے نوٹس", "missing": "ابھی باقی", "saved": "تصدیق محفوظ ہو گئی", "takePhoto": "تصویر لیں",
+    "override": "مالک کی اجازت", "overrideReason": "اجازت کی وجہ", "result": "نتیجہ"
+  },
+  "sale": {
+    "title": "نئی فروخت", "steps": { "customer": "گاہک", "items": "اشیاء", "payment": "ادائیگی", "done": "مکمل" },
+    "cashCustomer": "نقد گاہک (بغیر کھاتے)", "selectCustomer": "گاہک منتخب کریں", "pickDevice": "اسٹاک سے چنیں",
+    "noItems": "ابھی کوئی چیز نہیں", "price": "فروخت قیمت", "warrantyDays": "وارنٹی (دن)", "accGiven": "دی گئی لوازمات",
+    "accPending": "باقی لوازمات", "promisedAt": "وعدے کی تاریخ", "misc": "دیگر اشیاء", "unitPrice": "فی چیز قیمت",
+    "paidNow": "ابھی وصول", "receivedIn": "کہاں وصول ہوا", "newBalance": "نیا بقایا", "complete": "فروخت مکمل کریں",
+    "created": "فروخت مکمل", "receipt": "رسید", "printThermal": "رسید پرنٹ (80mm)", "printA4": "بل پرنٹ (A4)",
+    "viewSale": "فروخت دیکھیں", "override": "مالک کی اجازت کی وجہ (اگر موبائل تصدیق شدہ نہیں)", "notSellable": "فروخت نہیں ہو سکتا",
+    "status": { "open": "ادا نہیں", "partially_paid": "کچھ ادا", "paid": "ادا شدہ", "returned": "واپس", "void": "منسوخ" },
+    "return": "اشیاء واپس", "settlement": "حساب", "refund": "رقم واپس کریں", "credit": "کھاتے میں رکھیں", "income": "آمدنی رکھیں",
+    "refundAmount": "واپسی رقم", "keptAmount": "رکھی گئی رقم", "returnDone": "واپسی محفوظ", "selectLines": "واپس ہونے والی اشیاء چنیں"
+  },
+  "pay": {
+    "title": "ادائیگی", "in": "وصول", "out": "ادا", "method": "طریقہ", "cash": "نقد", "bank": "بینک", "easypaisa": "ایزی پیسہ",
+    "jazzcash": "جاز کیش", "card": "کارڈ", "other": "دیگر", "reference": "حوالہ / TID", "saved": "ادائیگی محفوظ",
+    "allocated": "لگایا گیا", "unallocated": "ایڈوانس رکھا"
+  },
+  "loan": {
+    "title": "امانت", "new": "امانت پر دیں", "toShop": "کس دکان کو", "expectedBack": "واپسی کی تاریخ", "overdue": "تاخیر",
+    "returned": "واپس آ گیا", "sold": "انہوں نے رکھ لیا", "out": "باہر", "markReturned": "موبائل واپس آ گیا", "sellToShop": "انہوں نے رکھ لیا (فروخت)",
+    "price": "طے شدہ قیمت", "none": "کوئی امانت نہیں"
+  },
+  "notif": {
+    "title": "پیغامات کی سیٹنگ", "ownerWhatsapp": "مالک کا واٹس ایپ نمبر", "ownerEmail": "مالک کا ای میل", "onSale": "ہر فروخت پر",
+    "onPurchase": "اسٹاک شامل ہونے پر", "onPayment": "ادائیگی وصول ہونے پر", "toOwner": "مالک کو", "toCustomer": "گاہک کو",
+    "toSeller": "بیچنے والے کو", "whatsapp": "واٹس ایپ", "email": "ای میل", "language": "پیغام کی زبان", "shopDefault": "دکان کی زبان",
+    "saved": "سیٹنگ محفوظ", "queue": "پیغامات", "none": "ابھی کوئی پیغام نہیں", "markSent": "بھیج دیا", "queued": "قطار میں", "sent": "بھیجا گیا"
+  },
+  "settings": {
+    "title": "دکان کی سیٹنگز", "name": "دکان کا نام", "nameUr": "دکان کا نام (اردو)", "city": "شہر", "address": "پتہ", "phone": "فون",
+    "tax": "سیلز ٹیکس", "taxEnabled": "سیلز ٹیکس لگائیں", "taxRate": "ٹیکس شرح %", "taxInclusive": "قیمتوں میں ٹیکس شامل ہے",
+    "ntn": "NTN", "strn": "STRN", "footer": "رسید کا آخری پیغام", "footerUr": "رسید کا آخری پیغام (اردو)", "invoicePrefix": "بل نمبر کا سابقہ",
+    "defaultLocale": "دکان کی زبان (پرنٹ اور پیغامات)", "saved": "محفوظ ہو گیا"
   }
 }
