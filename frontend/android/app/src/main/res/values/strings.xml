@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Mobile Shop</string>
+    <string name="title_activity_main">Mobile Shop</string>
+    <string name="package_name">pk.mobileshop.app</string>
+    <string name="custom_url_scheme">pk.mobileshop.app</string>
+</resources>

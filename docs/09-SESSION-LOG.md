@@ -293,3 +293,11 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Done**: stock list rebuilt as offer-style cards (UI guide): brand row with counts, status + sort dropdowns, 4 stat columns (memory, PTA, condition, days in stock), IMEI + verification chip, green "Sell" pill. Backend `modules/exports` CSV downloads (UTF-8 BOM so Excel shows Urdu): `/exports/stock.csv`, `/parties.csv`, `/parties/{id}/statement.csv`, `/sales.csv`, `/purchases.csv`, `/expenses.csv` (cost hidden from salesmen; sales/purchases/expenses need REPORTS_ALL). Frontend: Excel button on stock, party statement and reports; reports Print/PDF with header/nav hidden in print.
 **Verified**: backend 113 tests; frontend tsc/vitest/build clean; live smoke on a throwaway shop (03990000001): all five CSVs 200 text/csv.
 **Next**: PWA service worker + install prompt, Capacitor Android, Playwright E2E.
+
+---
+
+## 2026-10-22 — Session 23: PWA + Android scaffold
+**Done**: `vite-plugin-pwa` (autoUpdate, generated manifest with Urdu/RTL, PNG + maskable icons generated with Pillow, service worker precaches the app shell only; `/api` and `/health` excluded; Google Fonts cache-first). Capacitor 6 Android project in `frontend/android` (appId `pk.mobileshop.app`, camera + share plugins, CAMERA/READ_MEDIA_IMAGES permissions). Production CORS now allows `https://localhost` and `capacitor://localhost`. Guide `docs/13-MOBILE-APP.md`.
+**Verified**: build emits `sw.js` + manifest (display standalone); tsc/vitest clean.
+**Blocked**: APK build (no Java/Android SDK on this PC; needs live API domain).
+**Next**: Playwright E2E for the core flow.
