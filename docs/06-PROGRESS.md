@@ -23,7 +23,7 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 ## Phase 1 — Used-mobile core
 | Item | FR | Status | Notes |
 |---|---|---|---|
-| Parties module | FR-MST-03 | ⬜ | |
+| Parties module | FR-MST-03 | ✅ | `modules/parties`: one table, kinds[], per-shop phone uniqueness, CNIC/phone normalisation (Urdu digits ok), search by name/Urdu/phone/CNIC, `by-phone`, cached `balance` read-only; migration `975f04ac8e85`; 8 tests |
 | Devices + events + state machine | FR-DEV-01..04 | ⬜ | |
 | Device history + IMEI search | FR-DEV-05,06 | ⬜ | |
 | Verification flow + declaration print | FR-VER-01..04 | ⬜ | |

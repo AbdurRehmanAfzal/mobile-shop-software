@@ -10,6 +10,7 @@ from app.modules.auth.router import router as auth_router
 from app.modules.auth.router import shops as shops_router
 from app.modules.auth.router import staff as staff_router
 from app.modules.catalogue.router import router as catalogue_router
+from app.modules.parties.router import router as parties_router
 
 
 @asynccontextmanager
@@ -52,6 +53,7 @@ def create_app() -> FastAPI:
     app.include_router(staff_router)
     app.include_router(audit_router)
     app.include_router(catalogue_router)
+    app.include_router(parties_router)
     return app
 
 

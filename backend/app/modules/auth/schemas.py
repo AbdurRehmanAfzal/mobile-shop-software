@@ -1,24 +1,10 @@
-import re
 import uuid
 from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 from app.core.permissions import Role
-
-_PHONE_RE = re.compile(r"^(?:\+92|0)?3\d{9}$")
-
-
-def normalise_phone(value: str) -> str:
-    """Store Pakistani mobile numbers as 03XXXXXXXXX."""
-    digits = re.sub(r"[\s\-()]", "", value)
-    if not _PHONE_RE.match(digits):
-        raise ValueError("Enter a valid Pakistani mobile number, e.g. 03001234567")
-    if digits.startswith("+92"):
-        digits = "0" + digits[3:]
-    elif digits.startswith("3"):
-        digits = "0" + digits
-    return digits
+from app.core.pk import normalise_phone
 
 
 class SignupRequest(BaseModel):

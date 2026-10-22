@@ -71,3 +71,15 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Verified**: `pytest -q` → 24 passed (7 new: idempotent seed, Urdu names/model counts, filter+search, per-shop privacy, case-insensitive conflicts, storages/colours validation, role check). `ruff` clean. Live: restart seeded `{'brands': 17, 'models': 108, 'storages': 7, 'colours': 16}`; `/catalogue/brands` and `?q=105` answer correctly.
 
 **Next**: Phase 1 — Parties module (FR-MST-03), then ledger + PostingService (FR-TXN-01,02).
+
+---
+
+## 2026-10-22 — Session 5: parties module (Phase 1 starts)
+**Done**
+- `core/pk.py`: shared Pakistani validators — `normalise_phone` (accepts +92/92/0, spaces, Urdu digits), `normalise_cnic` (#####-#######-#), `is_valid_imei` (Luhn). Auth schemas now import from it.
+- `modules/parties`: Party (customer/supplier/shop/technician via `kinds` JSON list), phone unique per shop, cached `balance` (ledger-owned, not writable via API), list with `kind`/`q`/`with_balance`/`include_inactive`, `GET /by-phone/{phone}`, create/update with audit. Write access: TRANSACT or REPAIR_CREATE (technicians read-only).
+- Alembic migration `975f04ac8e85`.
+
+**Verified**: `pytest -q` → 32 passed; `ruff` clean; migration applied to dev DB; backend running with `--reload`.
+
+**Next**: Ledger + PostingService (FR-TXN-01, 02): `ledger_groups`, `ledger_entries`, cash accounts, balanced posting, party balance recompute, property tests (Σdebit = Σcredit).
