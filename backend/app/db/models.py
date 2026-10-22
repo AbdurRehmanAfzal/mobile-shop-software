@@ -7,3 +7,4 @@ from app.modules.catalogue import models as _catalogue_models  # noqa: F401
 from app.modules.devices import models as _devices_models  # noqa: F401
 from app.modules.ledger import models as _ledger_models  # noqa: F401
 from app.modules.parties import models as _parties_models  # noqa: F401
+from app.modules.verification import models as _verification_models  # noqa: F401

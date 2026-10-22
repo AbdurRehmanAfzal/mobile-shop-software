@@ -125,7 +125,13 @@ def upgrade() -> None:
         batch_op.create_index(
             batch_op.f("ix_ledger_entries_device_id"), ["device_id"], unique=False
         )
-        batch_op.create_foreign_key("fk_ledger_entries_device_id_devices", "devices", ["device_id"], ["id"], ondelete="SET NULL")
+        batch_op.create_foreign_key(
+            "fk_ledger_entries_device_id_devices",
+            "devices",
+            ["device_id"],
+            ["id"],
+            ondelete="SET NULL",
+        )
 
     # ### end Alembic commands ###
 

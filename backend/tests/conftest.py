@@ -132,3 +132,19 @@ def owner(client) -> Actor:
 @pytest.fixture()
 def other_owner(client) -> Actor:
     return signup(client, phone="03119876543", shop_name="Other Shop")
+
+
+@pytest.fixture()
+def cat(db, owner):
+    """Seeded catalogue + handy Nokia 105 refs for device tests."""
+    from app.seeds.catalogue import seed_catalogue
+
+    seed_catalogue(db)
+    brands = owner.get("/api/v1/catalogue/brands").json()
+    nokia = next(b for b in brands if b["name"] == "Nokia")
+    model = owner.get(
+        "/api/v1/catalogue/models", params={"brand_id": nokia["id"], "q": "105"}
+    ).json()[0]
+    storages = owner.get("/api/v1/catalogue/storages").json()
+    colours = owner.get("/api/v1/catalogue/colours").json()
+    return {"brand": nokia, "model": model, "storage": storages[0], "colour": colours[0]}

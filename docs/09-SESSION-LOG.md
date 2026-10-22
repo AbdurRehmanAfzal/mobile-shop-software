@@ -114,3 +114,15 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Gotchas**: IMEI test fixtures must be Luhn-valid (`490154203237518`, `356938035643809`, `356789104552375`); SQLite batch migrations need named FKs.
 
 **Next**: Verification module (FR-VER-01..04): verification record with CNIC/seller photos, eGadget result, PTA check, declaration; `VERIFIED` event; sale hard-block on `flagged`; file upload service for photos.
+
+---
+
+## 2026-10-22 — Session 8: verification + file uploads
+**Done**
+- `modules/files`: `POST /api/v1/files` (multipart; jpg/png/webp/pdf ≤ 8 MB; stored under `UPLOAD_DIR/<shop_id>/<purpose>-<uuid>.<ext>`), `GET /api/v1/files/{path}` only for the caller's shop prefix. `belongs()` used by other modules to validate paths.
+- `modules/verification`: `verifications` (one per device cycle): seller party, CNIC no + front/back photos, seller photo, device photos, eGadget result/ref/screenshot, PTA check (updates device PTA status), declaration signed/path, physical notes. `compute()` → `flagged` if eGadget flagged, `clear` when CNIC + both CNIC photos + seller photo + eGadget clear + declaration, else `pending` with `missing[]`. `upsert()` raises a VERIFIED event (party = seller) and copies CNIC to the party. `override()` (VERIFY_OVERRIDE) records reason, marks clear with an event carrying `override: true`. `assert_sellable()` blocks `flagged` (device_flagged) and `pending` (not_sellable). `GET …/verification/declaration` returns a bilingual A5 HTML purchase declaration for printing.
+- Alembic `04c1bc608d58`. `cat` fixture moved to conftest.
+
+**Verified**: `pytest -q` → 57 passed; `ruff` clean after fixture move.
+
+**Next**: Purchase documents (FR-TXN-03): from supplier / walk-in / shop; device lines create devices + PURCHASED event + verification stub; accessory lines (needs accessories stock → minimal `accessories` table) ; ledger: Dr inventory / Cr party, Dr party / Cr cash for paid-now. Then sales.

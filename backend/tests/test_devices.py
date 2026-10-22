@@ -1,25 +1,9 @@
 """FR-DEV-01..06: one device per IMEI, event log, state machine, history, IMEI search, accessories."""
 
-import pytest
-
 from app.modules.devices.state import DeviceStatus, EventType, next_status
-from app.seeds.catalogue import seed_catalogue
 from tests.conftest import login
 
 IMEI = "356789104552375"  # Luhn-valid
-
-
-@pytest.fixture()
-def cat(db, owner):
-    seed_catalogue(db)
-    brands = owner.get("/api/v1/catalogue/brands").json()
-    nokia = next(b for b in brands if b["name"] == "Nokia")
-    model = owner.get(
-        "/api/v1/catalogue/models", params={"brand_id": nokia["id"], "q": "105"}
-    ).json()[0]
-    storages = owner.get("/api/v1/catalogue/storages").json()
-    colours = owner.get("/api/v1/catalogue/colours").json()
-    return {"brand": nokia, "model": model, "storage": storages[0], "colour": colours[0]}
 
 
 def _stock(actor, cat, imei=IMEI, **extra):
