@@ -93,6 +93,13 @@ class Actor:
             url, headers={**self.headers(kw.pop("shop_id", None)), **kw.pop("headers", {})}, **kw
         )
 
+    def put(self, url, **kw):
+        return self.client.put(
+            url,
+            headers={**self.headers(kw.pop("shop_id", None)), **kw.pop("headers", {})},
+            **kw,
+        )
+
 
 def signup(
     client: TestClient, phone: str = "03001234567", shop_name: str = "Test Mobile", **extra

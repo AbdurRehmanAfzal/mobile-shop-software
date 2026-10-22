@@ -97,3 +97,20 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Verified**: `pytest -q` → 43 passed (11 new: unbalanced/negative rejected, S4 credit-sale-then-payments derives 0 balance, reversal mirrors + blocks double reversal, hypothesis property over random sale/payment sequences, API: default cash account, opening balance → statement → reverse, cash book with opening balance, isolation + roles, balance read-only but ledger-driven, unknown party rejected). `ruff` clean.
 
 **Next**: Devices + device_events + state machine (FR-DEV-01..04), then verification (FR-VER), then purchase documents posting to the ledger.
+
+---
+
+## 2026-10-22 — Session 7: devices, events, state machine, IMEI passport
+**Done**
+- `modules/devices/state.py`: enums (condition, PTA status, verification status, device status, event type), `MONEY_EVENTS`, `NEUTRAL_EVENTS`, `TRANSITIONS` table, `next_status()`.
+- `models.py`: `devices` (unique IMEI1 per shop; projection: status, current_party_id, verification_status, cost/asking price, cycle_no, event_count, last_event_at), `device_events` (seq per device, status_after, party, amount, ledger_group, document ref, data JSON), `device_accessory_items` (bundle: came_with / pending_from vendor|shop / expected / given_at_sale / promised_to_customer_at).
+- `service.py`: `apply_event()` (validates transition, appends event, updates projection; purchase after sold bumps cycle_no); `new_device()` + `add_opening_stock()` (device + PURCHASED event + ledger Dr inventory / Cr equity); `update_device()` (asking price change → PRICE_CHANGED event); `set_accessories()`; `raise_event()` for non-money events (loans only to parties of kind shop; money events rejected with a bilingual hint); `imei_lookup()`, `history()`, `list_devices()` with joins to catalogue names.
+- Router hides `cost_price` and purchase amounts from roles without VIEW_COST; opening stock requires VIEW_COST.
+- `ledger_entries.device_id` now a real FK (named batch constraint for SQLite).
+- Alembic `07033ee5abb9`; test client gained `put()`.
+
+**Verified**: `pytest -q` → 52 passed (9 new: transition table, opening stock → event + ledger + accessories, box-pack not_required / non-PTA needs SIM time, IMEI unique per shop + lookup + isolation, loan out/return with party-kind rule + history seq/names, invalid transition 409 + money events 422 + faulty/repair flow, price change event + search/filters, accessories replace/validation, salesman cost hiding). `ruff` clean. Migration applied to dev DB.
+
+**Gotchas**: IMEI test fixtures must be Luhn-valid (`490154203237518`, `356938035643809`, `356789104552375`); SQLite batch migrations need named FKs.
+
+**Next**: Verification module (FR-VER-01..04): verification record with CNIC/seller photos, eGadget result, PTA check, declaration; `VERIFIED` event; sale hard-block on `flagged`; file upload service for photos.

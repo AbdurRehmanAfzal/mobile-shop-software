@@ -84,7 +84,9 @@ class LedgerEntry(UUIDPk, ShopScoped, Base):
     cash_account_id: Mapped[uuid.UUID | None] = mapped_column(
         Uuid, ForeignKey("cash_accounts.id", ondelete="RESTRICT")
     )
-    device_id: Mapped[uuid.UUID | None] = mapped_column(Uuid)  # FK added when devices table lands
+    device_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid, ForeignKey("devices.id", ondelete="SET NULL"), index=True
+    )
     debit: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
     credit: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
     memo: Mapped[str | None] = mapped_column(String(200))

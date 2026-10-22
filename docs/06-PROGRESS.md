@@ -24,8 +24,8 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 | Item | FR | Status | Notes |
 |---|---|---|---|
 | Parties module | FR-MST-03 | ✅ | `modules/parties`: one table, kinds[], per-shop phone uniqueness, CNIC/phone normalisation (Urdu digits ok), search by name/Urdu/phone/CNIC, `by-phone`, cached `balance` read-only; migration `975f04ac8e85`; 8 tests |
-| Devices + events + state machine | FR-DEV-01..04 | ⬜ | |
-| Device history + IMEI search | FR-DEV-05,06 | ⬜ | |
+| Devices + events + state machine | FR-DEV-01..04 | ✅ | `modules/devices`: Device (one row per IMEI, projection fields), DeviceEvent (append-only, seq), DeviceAccessoryItem; `state.py` transition table; `apply_event()` sole writer of status; opening-stock entry posts Dr inventory / Cr equity; generic non-money events endpoint; migration `07033ee5abb9`; 9 tests |
+| Device history + IMEI search | FR-DEV-05,06 | ✅ | `GET /devices/{id}/history` (party + user names), `GET /devices/imei/{imei}` (found / seen_before / times_bought / luhn_ok), list filters + q over IMEI/model/brand/serial |
 | Verification flow + declaration print | FR-VER-01..04 | ⬜ | |
 | Ledger + PostingService + balances | FR-TXN-01,02 | ✅ | `modules/ledger`: cash_accounts (default Cash/نقد per shop), ledger_groups, ledger_entries; `Posting`/`post()`/`reverse()`; party balance cache refreshed from ledger; statements, cash book, opening balances; migration `6d403b33df28`; 11 tests incl. hypothesis property |
 | Purchase (walk-in/supplier/shop) + device accessories | FR-TXN-03, FR-ACC-02 | ⬜ | |
