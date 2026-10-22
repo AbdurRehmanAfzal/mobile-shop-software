@@ -17,7 +17,7 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 | Seeds (brands/models/colours/storages) | FR-MST-01,02 | ⬜ | port from legacy/backend/app/utils/seed_data.py (needs catalogue module first) |
 | Frontend skeleton (Vite TS, Tailwind, i18n, auth, shell) | FR-PLT-01 | ✅ | `frontend/`, BiLabel/BiButton/BiInput/BiAlert, login/signup, bottom-nav shell, 7 tests |
 | Phase 0 exit demo on phone | – | 🔄 | Works in desktop browser (signup → Urdu dashboard). Not yet opened on a real phone; PWA service worker not added yet |
-| Design system + reference mockup approved by owner | FR-PLT-08 | ⬜ | v1 look rejected by ~50 shopkeepers; do this BEFORE Phase 1 screens |
+| Design system + reference mockup approved by owner | FR-PLT-08 | 🔄 | Mockup published (5 screens, Direction A "Emerald & Gold"); tokens drafted in docs/11. Awaiting owner + shopkeeper feedback |
 
 ## Phase 1 — Used-mobile core
 | Item | FR | Status | Notes |

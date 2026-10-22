@@ -1,6 +1,6 @@
 ---
-name: resume
-description: Start-of-session protocol for this project. Use at the beginning of every session, or when the user says "continue", "resume", "kahan thay", "wapis shuru karo", or before any coding task, to restore context from the progress tracker and session log without re-auditing the repo.
+name: kickoff
+description: Start-of-session protocol for this project (named kickoff because /resume is a built-in Claude Code command). Use at the beginning of every session, or when the user says "continue", "kahan thay", "wapis shuru karo", "kickoff", or before any coding task, to restore context from the progress tracker and session log without re-auditing the repo.
 ---
 
 # Resume the project

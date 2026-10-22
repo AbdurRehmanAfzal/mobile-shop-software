@@ -10,7 +10,7 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 2. Read the last entry of `docs/09-SESSION-LOG.md` (where the previous session stopped, open questions).
 3. Only then read the code you need. Do not re-audit the whole repo each session.
 4. If the task touches business rules, read the relevant section of `docs/02-FUNCTIONAL-REQUIREMENTS.md`.
-5. The `/resume` project skill does steps 1-2 for you.
+5. The `/kickoff` project skill does steps 1-2 for you (not `/resume`, which is a built-in Claude Code command).
 
 ## End-of-session protocol (ALWAYS do this before finishing)
 1. Update `docs/06-PROGRESS.md` (tick items, move items between columns).
@@ -38,7 +38,7 @@ docs/                     living documentation (01..10) + archive/ of the old v1
 backend/                  FastAPI v2 (Python 3.12, SQLAlchemy 2, Alembic, pytest)
 frontend/                 React + Vite + TypeScript + Tailwind PWA (web; Android/iOS via Capacitor later)
 legacy/                   v1 prototype (reference only; do not extend). See docs/08-LEGACY-AUDIT.md
-.claude/skills/           project skills: resume, handoff, pk-mobile-domain
+.claude/skills/           project skills: kickoff, handoff, pk-mobile-domain
 ```
 
 ## Running (v2)

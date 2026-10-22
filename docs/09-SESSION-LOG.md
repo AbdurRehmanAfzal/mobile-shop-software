@@ -8,7 +8,7 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Done**
 - Cloned repo, ran v1 backend (Python 3.12 venv) and frontend (Vite); fixed Windows cp1252 crash with `PYTHONUTF8=1`; reseeded DB after partial seed.
 - Audited v1 (docs/08). Decided to rebuild as v2 (ADR-001) reusing domain knowledge, seeds and bilingual components.
-- Restructured repo: `legacy/` (v1 code), `docs/archive/` (v1 docs), new `docs/01–10`, `CLAUDE.md`, `.claude/skills/{resume,handoff,pk-mobile-domain}`.
+- Restructured repo: `legacy/` (v1 code), `docs/archive/` (v1 docs), new `docs/01–10`, `CLAUDE.md`, `.claude/skills/{kickoff,handoff,pk-mobile-domain}`.
 - Wrote business requirements, functional requirements with FR ids, architecture, data model, roadmap, progress tracker, testing strategy.
 - Set repo git author to Abdur Rehman Afzal; created branch `develop`.
 
@@ -31,3 +31,17 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 3. Should Urdu be the default language on first launch? (Assumed yes.)
 4. Trial length and plan prices (assumed 14 days; prices TBD).
 5. Design direction: owner reported ~50 shopkeepers found the v1 UI "not modern, not luxury". Proposal: build `docs/11-DESIGN-SYSTEM.md` + an interactive mockup of 3 key screens (dashboard, device purchase with verification, sale) and get sign-off before Phase 1 UI.
+
+---
+
+## 2026-10-22 — Session 2: design mockup
+**Done**
+- Published design mockup canvas (Direction A "Emerald & Gold"): https://claude.ai/artifact/AEWv7XqFN62dXjuNWmGnad — 5 phone screens: dashboard (light), used-mobile purchase/verification step, sale confirm, device history timeline, dashboard (dark). Interactive links between screens; accent colour tweakable in the canvas.
+- Drafted `docs/11-DESIGN-SYSTEM.md` v0.1 (tokens, type, shape, components) marked pending approval.
+- Renamed project skill `resume` → `kickoff` (`/resume` is a built-in Claude Code command).
+
+**Verified**: canvas published and opens; no code changes this session, so no tests run.
+
+**Next**
+1. Owner reviews the mockup, ideally with a few shopkeepers; answers the 3 questions at the end of docs/11 (light vs dark default, accent, English eyebrow everywhere or headings only).
+2. On approval: translate tokens into `frontend/tailwind.config.js` + rebuild `components/Bilingual.tsx` and the shell to the design system; then catalogue module and Phase 1.
