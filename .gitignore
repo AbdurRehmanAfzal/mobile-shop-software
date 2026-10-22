@@ -17,8 +17,8 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+/legacy/backend/lib/
+/legacy/backend/lib64/
 parts/
 sdist/
 var/
@@ -137,3 +137,9 @@ docker-compose.override.yml
 # 💾 Local Development
 .local/
 .cache/
+
+# v2
+/backend/.venv/
+/backend/uploads/
+/frontend/dist/
+/frontend/dev-dist/
