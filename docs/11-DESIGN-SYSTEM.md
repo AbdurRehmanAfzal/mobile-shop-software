@@ -56,3 +56,11 @@ Tap targets ≥44px; text contrast ≥4.5:1 (muted #5C655F on white = 5.9:1; #A9
 1. Default: light; dark and system available to every user.
 2. Accent: emerald (#136F56); gold reserved for money/highlights.
 3. Superseded 2026-10-22: no stacked EN+UR labels; the UI renders only the active language. `useLang()` in `Bilingual.tsx` picks the string and the type style.
+
+## UI reference from the owner (2026-10-22): Easypaisa app screenshots
+Stored outside the repo in `C:\Users\HP\Documents\projects\mobile shop\*.png` (First Screen, Login Screen, After Login Screen, Bank Transfer, Mobile Packages). Patterns adopted:
+- **Home**: solid brand-green header band (avatar left, title centre, search + bell right) with a white hero card overlapping it; **amounts hidden by default** behind an eye toggle (customers stand at the counter); three large primary action tiles; one card holding a 4-column "more services" icon grid; bottom nav with a raised centre button.
+- **Centre button opens a chooser** ("What do you want to do?") grid sheet, like "Send Money To".
+- **PIN login**: lock icon, PIN boxes, on-screen keypad, "forgot PIN → password".
+- **Lists**: search pill, underline tabs, rows with logo/initials + chevron (Bank Transfer); offer cards with stat columns + pill CTA (Mobile Packages) — to apply to stock cards next.
+Colours stay on our tokens (emerald + gold); the green band uses `emerald`. Switching to Easypaisa's brighter green is a single token change if the owner wants it.

@@ -267,3 +267,15 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Done**: `backend/Dockerfile` (python 3.12 slim, non-root, migrations on start, healthcheck), `deploy/web.Dockerfile` (Vite build → Caddy), `deploy/Caddyfile` (HTTPS, /api proxy, SPA fallback, security headers), `deploy/docker-compose.yml` (db/backend/web, volumes), `deploy/.env.example`, `deploy/backup.sh`, `docs/12-DEPLOYMENT.md`, ADR-008. Production guard: refuses default/short SECRET_KEY when APP_ENV=prod.
 **Verified**: 108 backend tests pass; `alembic upgrade head --sql` against the PostgreSQL dialect renders all 35 tables without error. Not verified: Docker build and a live Postgres run (no Docker on the dev PC).
 **Needs from owner**: domain/subdomain for the app, VPS SSH access (or run the commands in docs/12 yourself).
+
+---
+
+## 2026-10-22 — Session 20: UI guide (Easypaisa) + PIN login + opening stock
+**Owner**: complete local development first; continue Phase 3; shared Easypaisa screenshots as UI guide; asked whether customers and inventory can be added.
+**Done**
+- Home rebuilt on the guide: green header band, hidden-amount hero card with eye toggle (remembered per device), 3 big actions, 4-column services grid, masked receivable/payable cards, attention list. Centre nav button opens a chooser sheet (sale, purchase, payment, repair, exchange, IMEI).
+- PIN login: `POST /auth/pin-login`, `PUT /me/pin` (requires password), `has_pin` on `/me`, in-process failure limiter (5 fails / 10 min → 429) for password and PIN logins; PIN keypad screen remembering the last user; set-PIN sheet in More.
+- Opening stock page `/stock/opening` for phones already in the shop (no supplier, no cash; Dr inventory / Cr equity), linked from the purchase wizard.
+- Found and fixed: the dev backend had stopped reloading, so Phase 2 endpoints returned 404 in the browser; restarted with `--reload-dir app`.
+**Verified**: backend 110 tests; frontend tsc/vitest/build clean; live smoke: set PIN 204, PIN login 200, dashboard/repairs/accessories/expense categories 200.
+**Next**: stock cards with stat columns + brand row (guide), PDF/Excel export, PWA service worker, Capacitor Android, E2E.
