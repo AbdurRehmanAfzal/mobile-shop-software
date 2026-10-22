@@ -11,6 +11,7 @@ from app.modules.auth.router import shops as shops_router
 from app.modules.auth.router import staff as staff_router
 from app.modules.catalogue.router import router as catalogue_router
 from app.modules.devices.router import router as devices_router
+from app.modules.expenses.router import router as expenses_router
 from app.modules.files.router import router as files_router
 from app.modules.ledger.router import router as ledger_router
 from app.modules.loans.router import router as loans_router
@@ -28,10 +29,12 @@ async def lifespan(_: FastAPI):
     # Seed the shared catalogue on first run (idempotent). Tests override get_db and skip this.
     if settings.app_env != "test":
         from app.db.session import SessionLocal
+        from app.modules.expenses.service import seed_categories
         from app.seeds.catalogue import seed_catalogue
 
         with SessionLocal() as db:
             added = seed_catalogue(db)
+            added["expense_categories"] = seed_categories(db)
             if any(added.values()):
                 print(f"Catalogue seeded: {added}")
     yield
@@ -74,6 +77,7 @@ def create_app() -> FastAPI:
     app.include_router(loans_router)
     app.include_router(returns_router)
     app.include_router(notifications_router)
+    app.include_router(expenses_router)
     return app
 
 

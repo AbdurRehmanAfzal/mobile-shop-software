@@ -5,6 +5,7 @@ from app.modules.audit import models as _audit_models  # noqa: F401
 from app.modules.auth import models as _auth_models  # noqa: F401
 from app.modules.catalogue import models as _catalogue_models  # noqa: F401
 from app.modules.devices import models as _devices_models  # noqa: F401
+from app.modules.expenses import models as _expenses_models  # noqa: F401
 from app.modules.ledger import models as _ledger_models  # noqa: F401
 from app.modules.loans import models as _loans_models  # noqa: F401
 from app.modules.notifications import models as _notifications_models  # noqa: F401

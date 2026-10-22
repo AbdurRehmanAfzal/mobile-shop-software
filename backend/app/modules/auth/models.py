@@ -58,6 +58,7 @@ class Shop(UUIDPk, Timestamped, Base):
     next_repair_no: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     next_payment_no: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     next_return_no: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    next_expense_no: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     notification_settings: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
     timezone: Mapped[str] = mapped_column(String(50), default="Asia/Karachi", nullable=False)
     default_locale: Mapped[str] = mapped_column(String(5), default="ur", nullable=False)
