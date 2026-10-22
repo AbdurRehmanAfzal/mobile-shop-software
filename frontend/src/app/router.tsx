@@ -10,6 +10,8 @@ import PartiesPage from '@/features/parties/PartiesPage'
 import PartyDetailPage from '@/features/parties/PartyDetailPage'
 import StockPage from '@/features/stock/StockPage'
 import DeviceDetailPage from '@/features/stock/DeviceDetailPage'
+import VerifyPage from '@/features/stock/VerifyPage'
+import PurchaseWizard from '@/features/purchase/PurchaseWizard'
 
 function RequireAuth() {
   const token = useAuth((s) => s.accessToken)
@@ -38,8 +40,8 @@ export const router = createBrowserRouter([
           { path: '/', element: <DashboardPage /> },
           { path: '/stock', element: <StockPage /> },
           { path: '/stock/:id', element: <DeviceDetailPage /> },
-          { path: '/stock/:id/verify', element: <ComingSoon titleKey="verify.title" /> },
-          { path: '/purchase/new', element: <ComingSoon titleKey="purchase.title" /> },
+          { path: '/stock/:id/verify', element: <VerifyPage /> },
+          { path: '/purchase/new', element: <PurchaseWizard /> },
           { path: '/sale', element: <ComingSoon titleKey="nav.sale" /> },
           { path: '/sale/new', element: <ComingSoon titleKey="sale.title" /> },
           { path: '/parties', element: <PartiesPage /> },
