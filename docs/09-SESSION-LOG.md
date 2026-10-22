@@ -238,3 +238,15 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Verified**: `pytest -q` → 103 passed; `ruff` clean.
 
 **Next**: Exchange (FR-TXN-07) as one transaction (purchase trade-in + sale), reports/dashboard endpoints (FR-RPT-01/02, FR-TAX-03), then frontend screens for expenses, repairs, accessories, reports.
+
+---
+
+## 2026-10-22 — Session 17: exchange + reports (Phase 2 backend part 2)
+**Done**
+- Exchange (S5): `POST /api/v1/exchanges` = trade-in purchase (kind trade_in, credit to customer) + sale + optional cash refund, all in one DB transaction (rollback on any failure, test proves no orphan purchase/device). Stores previous balance, trade-in value, new total, paid, new balance. `create_sale` / `create_purchase` accept `commit=False`.
+- Reports: `/reports/dashboard` (any role; cost/profit hidden without VIEW_COST), `/reports/profit-loss`, `/reports/cash-flow`, `/reports/tax`, `/reports/stock-ageing` (REPORTS_ALL). Default range = current month. Decimals serialised as strings.
+- Alembic `218e639dde2c`.
+
+**Verified**: `pytest -q` → 107 passed; `ruff` clean.
+
+**Next**: frontend Phase 2 screens (expenses + day close, repairs, accessories, exchange, reports; dashboard switches to `/reports/dashboard`), then PDF/Excel export, then Phase 3 (staff UI, WhatsApp/SMTP senders, PWA/Capacitor, deploy).

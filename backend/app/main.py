@@ -12,6 +12,7 @@ from app.modules.auth.router import shops as shops_router
 from app.modules.auth.router import staff as staff_router
 from app.modules.catalogue.router import router as catalogue_router
 from app.modules.devices.router import router as devices_router
+from app.modules.exchanges.router import router as exchanges_router
 from app.modules.expenses.router import router as expenses_router
 from app.modules.files.router import router as files_router
 from app.modules.ledger.router import router as ledger_router
@@ -21,6 +22,7 @@ from app.modules.parties.router import router as parties_router
 from app.modules.payments.router import router as payments_router
 from app.modules.purchases.router import router as purchases_router
 from app.modules.repairs.router import router as repairs_router
+from app.modules.reports.router import router as reports_router
 from app.modules.returns.router import router as returns_router
 from app.modules.sales.router import router as sales_router
 from app.modules.verification.router import router as verification_router
@@ -82,6 +84,8 @@ def create_app() -> FastAPI:
     app.include_router(expenses_router)
     app.include_router(repairs_router)
     app.include_router(accessories_router)
+    app.include_router(exchanges_router)
+    app.include_router(reports_router)
     return app
 
 

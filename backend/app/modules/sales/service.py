@@ -49,7 +49,9 @@ def status_for(total: Decimal, paid: Decimal) -> str:
     return InvoiceStatus.OPEN
 
 
-def create_sale(db: Session, shop_id: uuid.UUID, ctx, data: SaleCreate, loan=None) -> Invoice:
+def create_sale(
+    db: Session, shop_id: uuid.UUID, ctx, data: SaleCreate, loan=None, commit: bool = True
+) -> Invoice:
     user_id = ctx.id
     shop = db.get(Shop, shop_id)
     party: Party | None = None
@@ -310,7 +312,10 @@ def create_sale(db: Session, shop_id: uuid.UUID, ctx, data: SaleCreate, loan=Non
         action="create",
         after={"no": invoice.no, "total": str(total), "paid": str(paid), "devices": len(devices)},
     )
-    db.commit()
+    if commit:
+        db.commit()
+    else:
+        db.flush()
     return invoice
 
 

@@ -44,7 +44,7 @@ def _allocate_discount(discount: Decimal, amounts: list[Decimal]) -> list[Decima
 
 
 def create_purchase(
-    db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, data: PurchaseCreate
+    db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, data: PurchaseCreate, commit: bool = True
 ) -> Purchase:
     shop = db.get(Shop, shop_id)
     party = db.get(Party, data.party_id)
@@ -218,7 +218,10 @@ def create_purchase(
         action="create",
         after={"no": purchase.no, "total": str(total), "paid": str(paid), "devices": len(devices)},
     )
-    db.commit()
+    if commit:
+        db.commit()
+    else:
+        db.flush()
     return purchase
 
 

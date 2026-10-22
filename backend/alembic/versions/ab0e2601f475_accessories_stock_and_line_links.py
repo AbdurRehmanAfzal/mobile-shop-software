@@ -73,13 +73,21 @@ def upgrade() -> None:
     with op.batch_alter_table("invoice_lines", schema=None) as batch_op:
         batch_op.add_column(sa.Column("accessory_id", sa.Uuid(), nullable=True))
         batch_op.create_foreign_key(
-            "fk_accessories_accessory_id", "accessories", ["accessory_id"], ["id"], ondelete="RESTRICT"
+            "fk_accessories_accessory_id",
+            "accessories",
+            ["accessory_id"],
+            ["id"],
+            ondelete="RESTRICT",
         )
 
     with op.batch_alter_table("purchase_lines", schema=None) as batch_op:
         batch_op.add_column(sa.Column("accessory_id", sa.Uuid(), nullable=True))
         batch_op.create_foreign_key(
-            "fk_purchase_lines_accessory_id", "accessories", ["accessory_id"], ["id"], ondelete="RESTRICT"
+            "fk_purchase_lines_accessory_id",
+            "accessories",
+            ["accessory_id"],
+            ["id"],
+            ondelete="RESTRICT",
         )
 
     # ### end Alembic commands ###
