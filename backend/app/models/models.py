@@ -24,10 +24,10 @@ class MobileStatus(str, enum.Enum):
     TRADE_IN = "TRADE_IN"
 
 
-class PTAStatus(str, enum.Enum):
-    """PTA (Pakistan Telecom Authority) approval status."""
-    PTA = "PTA"
-    NON_PTA = "NON_PTA"
+class PTAApprovalStatus(str, enum.Enum):
+    """PTA Approval status for trade-in purchases."""
+    APPROVE = "approve"
+    NOT_APPROVE = "not_approve"
 
 
 class PartyType(str, enum.Enum):
@@ -203,10 +203,10 @@ class MobileInventory(Base):
     imei2 = Column(String(20), nullable=True)  # Secondary IMEI (most phones)
     imei3 = Column(String(20), nullable=True)  # Tertiary IMEI (some phones)
 
-    # Serial Number and PTA Status
+    # Serial Number and PTA Approval Status
     serial_number = Column(String(100), nullable=True)  # Optional serial number
-    pta_status = Column(Enum(PTAStatus), nullable=False, default=PTAStatus.PTA)  # PTA or NON_PTA
-    sim_time = Column(String(50), nullable=True)  # For non-PTA: "1 month", "3 months", etc.
+    pta_approval_status = Column(Enum(PTAApprovalStatus), nullable=False, default=PTAApprovalStatus.APPROVE)  # Approve or Not Approve
+    sim_time = Column(String(50), nullable=True)  # For not_approve: "1 month", "3 months", etc.
 
     # Condition and Pricing
     condition = Column(Enum(MobileCondition), nullable=False)
@@ -225,10 +225,18 @@ class MobileInventory(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     notes = Column(Text, nullable=True)
 
+    # Trade-in Customer Information
+    customer_id = Column(Integer, ForeignKey("parties.id"), nullable=True)  # For trade-in purchases
+    cnic_number = Column(String(20), nullable=True)  # Customer CNIC number
+    cnic_front_image = Column(String(500), nullable=True)  # Path to CNIC front image
+    cnic_back_image = Column(String(500), nullable=True)  # Path to CNIC back image
+    mobile_images = Column(Text, nullable=True)  # JSON array of mobile image paths
+
     # Relationships
     model = relationship("MobileModel", back_populates="inventory")
     storage = relationship("MobileStorage", back_populates="inventory")
     color = relationship("MobileColor", back_populates="inventory")
+    customer = relationship("Party")
 
 
 class Accessory(Base):

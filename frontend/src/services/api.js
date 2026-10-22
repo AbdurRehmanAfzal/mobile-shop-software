@@ -72,6 +72,7 @@ export const mobileAPI = {
   getById: (id) => fetchAPI('/api/inventory/mobiles/' + id),
   searchByIMEI: (imei) => fetchAPI('/api/inventory/mobiles/search/imei/' + imei),
   update: (id, mobile) => fetchAPI('/api/inventory/mobiles/' + id, { method: 'PUT', body: mobile }),
+  delete: (id) => fetchAPI('/api/inventory/mobiles/' + id, { method: 'DELETE' }),
 };
 
 // Accessories API
@@ -128,7 +129,7 @@ export const transactionsAPI = {
         notes
       },
     }),
-  quickTradeIn: (supplierId, brandId, modelId, imei1, imei2, imei3, condition, patchDetails, ptaStatus, cnicNumber, cnicPhotoUrl, photos, purchasePrice, paymentMethod, amountPaid, transactionDate, notes) =>
+  quickTradeIn: (supplierId, brandId, modelId, imei1, imei2, imei3, condition, patchDetails, cnicNumber, cnicPhotoUrl, photos, purchasePrice, paymentMethod, amountPaid, transactionDate, notes, ptaApprovalStatus, simTime) =>
     fetchAPI('/api/transactions/quick-trade-in', {
       method: 'POST',
       body: {
@@ -140,7 +141,6 @@ export const transactionsAPI = {
         imei3,
         condition,
         patch_details: patchDetails,
-        pta_status: ptaStatus,
         cnic_number: cnicNumber,
         cnic_photo_url: cnicPhotoUrl,
         photos,
@@ -148,7 +148,9 @@ export const transactionsAPI = {
         payment_method: paymentMethod,
         amount_paid: amountPaid,
         transaction_date: transactionDate,
-        notes
+        notes,
+        pta_approval_status: ptaApprovalStatus,
+        sim_time: simTime
       },
     }),
   quickPaymentIn: (customerId, amount, transactionDate, notes) =>

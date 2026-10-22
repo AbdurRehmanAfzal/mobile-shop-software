@@ -34,10 +34,10 @@ const AddMobile = () => {
     imei1: '',
     imei2: '',
     imei3: '',
-    // Serial Number and PTA Status
+    // Serial Number and PTA Approval Status
     serial_number: '',
-    pta_status: 'PTA',  // PTA or NON_PTA
-    sim_time: '',  // For non-PTA phones
+    pta_approval_status: 'approve',  // approve or not_approve
+    sim_time: '',  // For not_approve phones
     // Storage and Color (IDs)
     storage_id: '',
     color_id: '',
@@ -372,8 +372,8 @@ const AddMobile = () => {
         const hasImei = formData.imei1; // IMEI 1 is primary
         const hasStorage = formData.storage_id;
         const hasColor = formData.color_id;
-        // If NON_PTA, must have SIM time selected
-        const ptaValid = formData.pta_status === 'PTA' || (formData.pta_status === 'NON_PTA' && formData.sim_time);
+        // If not_approve, must have SIM time selected
+        const ptaValid = formData.pta_approval_status === 'approve' || (formData.pta_approval_status === 'not_approve' && formData.sim_time);
         // Check for duplicate IMEIs
         const imeiValid = checkDuplicateImeis();
         return hasImei && hasStorage && hasColor && ptaValid && imeiValid;
@@ -439,9 +439,9 @@ const AddMobile = () => {
         imei1: formData.imei1 || null,
         imei2: formData.imei2 || null,
         imei3: formData.imei3 || null,
-        // Serial Number and PTA Status
+        // Serial Number and PTA Approval Status
         serial_number: formData.serial_number || null,
-        pta_status: formData.pta_status,
+        pta_approval_status: formData.pta_approval_status,
         sim_time: formData.sim_time || null,
         batch_number: null,
         notes: `Storage: ${storageObj?.name || 'N/A'}, Color: ${colorObj?.name || 'N/A'}, Supplier: ${formData.supplier_id}, Date: ${formData.purchase_date}` +
@@ -671,7 +671,7 @@ const AddMobile = () => {
                   imei2: '',
                   imei3: '',
                   serial_number: '',
-                  pta_status: 'PTA',
+                  pta_approval_status: 'approve',
                   sim_time: '',
                   storage_id: '',
                   color_id: '',
@@ -1329,46 +1329,46 @@ const Step2DeviceDetails = ({ formData, onInputChange, storages, colors, showIme
         )}
       </div>
 
-      {/* PTA Status Section */}
+      {/* PTA Approval Status Section */}
       <div className="bg-green-50 p-4 rounded-lg mb-4 border-l-4 border-green-500">
-        <BilingualLabel en="PTA Status" ur="PTA کی حالت" bold={true} />
+        <BilingualLabel en="PTA Approval Status" ur="PTA کی منظوری" bold={true} />
         <p className="text-xs text-gray-600 mb-3">Is this phone PTA (Pakistan Telecom Authority) approved?</p>
 
         <div className="flex items-center gap-6">
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="radio"
-              name="pta_status"
-              value="PTA"
-              checked={formData.pta_status === 'PTA'}
+              name="pta_approval_status"
+              value="approve"
+              checked={formData.pta_approval_status === 'approve'}
               onChange={(e) => {
-                onInputChange('pta_status', e.target.value);
-                onInputChange('sim_time', ''); // Clear SIM time when switching to PTA
+                onInputChange('pta_approval_status', e.target.value);
+                onInputChange('sim_time', ''); // Clear SIM time when switching to approve
               }}
               className="w-4 h-4"
             />
-            <span className="text-green-700 font-semibold">✓ PTA Approved</span>
+            <span className="text-green-700 font-semibold">✓ Approved</span>
           </label>
 
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="radio"
-              name="pta_status"
-              value="NON_PTA"
-              checked={formData.pta_status === 'NON_PTA'}
-              onChange={(e) => onInputChange('pta_status', e.target.value)}
+              name="pta_approval_status"
+              value="not_approve"
+              checked={formData.pta_approval_status === 'not_approve'}
+              onChange={(e) => onInputChange('pta_approval_status', e.target.value)}
               className="w-4 h-4"
             />
-            <span className="text-orange-700 font-semibold">✗ Non-PTA</span>
+            <span className="text-orange-700 font-semibold">✗ Not Approved</span>
           </label>
         </div>
       </div>
 
-      {/* SIM Time for Non-PTA (Conditional) */}
-      {formData.pta_status === 'NON_PTA' && (
+      {/* SIM Time for Not Approved (Conditional) */}
+      {formData.pta_approval_status === 'not_approve' && (
         <div className="bg-orange-50 p-4 rounded-lg mb-4 border-l-4 border-orange-500">
           <BilingualLabel en="SIM Time Duration" ur="SIM کی مدت" bold={true} />
-          <p className="text-xs text-gray-600 mb-3">Allowed SIM usage period for non-PTA phones</p>
+          <p className="text-xs text-gray-600 mb-3">Allowed SIM usage period for not approved phones</p>
 
           <select
             value={formData.sim_time}

@@ -18,6 +18,11 @@ class PTAStatusEnum(str, Enum):
     NON_PTA = "NON_PTA"
 
 
+class PTAApprovalStatusEnum(str, Enum):
+    APPROVE = "approve"
+    NOT_APPROVE = "not_approve"
+
+
 class PartyTypeEnum(str, Enum):
     CUSTOMER = "CUSTOMER"
     VENDOR = "VENDOR"  # Wholesaler/supplier who sells mobiles
@@ -223,11 +228,17 @@ class MobileInventoryBase(BaseModel):
     imei3: Optional[str] = None
     # Serial Number
     serial_number: Optional[str] = None
-    # PTA Status and SIM Time
-    pta_status: PTAStatusEnum = PTAStatusEnum.PTA
-    sim_time: Optional[str] = None  # For non-PTA: "1 month", "3 months", etc.
+    # PTA Approval Status and SIM Time
+    pta_approval_status: PTAApprovalStatusEnum = PTAApprovalStatusEnum.APPROVE
+    sim_time: Optional[str] = None  # For not_approve: "1 month", "3 months", etc.
     batch_number: Optional[str] = None
     notes: Optional[str] = None
+    # Trade-in Customer Information
+    customer_id: Optional[int] = None
+    cnic_number: Optional[str] = None
+    cnic_front_image: Optional[str] = None
+    cnic_back_image: Optional[str] = None
+    mobile_images: Optional[str] = None  # JSON array of image paths
 
 
 class MobileInventoryCreate(MobileInventoryBase):
@@ -238,9 +249,15 @@ class MobileInventoryUpdate(BaseModel):
     sale_price: Optional[float] = None
     is_damaged: Optional[bool] = None
     serial_number: Optional[str] = None
-    pta_status: Optional[PTAStatusEnum] = None
+    pta_approval_status: Optional[PTAApprovalStatusEnum] = None
     sim_time: Optional[str] = None
     notes: Optional[str] = None
+    # Trade-in Customer Information
+    customer_id: Optional[int] = None
+    cnic_number: Optional[str] = None
+    cnic_front_image: Optional[str] = None
+    cnic_back_image: Optional[str] = None
+    mobile_images: Optional[str] = None
 
 
 # Nested schemas for relationships
@@ -483,7 +500,6 @@ class QuickTradeInRequest(BaseModel):
     imei3: Optional[str] = None  # Optional - rare, only some phones
     condition: str = "used"  # 'new', 'used', or 'patched'
     patch_details: Optional[str] = None
-    pta_status: str = "locked"  # 'locked', 'unlocked', or 'approved'
     cnic_number: Optional[str] = None
     cnic_photo_url: Optional[str] = None
     photos: Optional[List[str]] = None
@@ -492,3 +508,5 @@ class QuickTradeInRequest(BaseModel):
     amount_paid: float = 0
     transaction_date: Optional[date] = None
     notes: Optional[str] = None
+    pta_approval_status: PTAApprovalStatusEnum = PTAApprovalStatusEnum.APPROVE  # Approve or Not Approve
+    sim_time: Optional[str] = None  # SIM time duration when status is 'not_approve'

@@ -9,7 +9,7 @@ from datetime import date, datetime
 
 from app.database import get_db
 from app.models import Transaction, Party, MobileInventory
-from app.models.models import MobileBrand, MobileModel, MobileCondition, PTAStatus, MobileStatus
+from app.models.models import MobileBrand, MobileModel, MobileCondition, PTAApprovalStatus, MobileStatus
 from app.schemas import (
     TransactionResponse as TransactionSchema,
     TransactionCreate,
@@ -371,11 +371,10 @@ def quick_trade_in(
         - brand_id: Brand ID
         - model_id: Model ID
         - imei1: First IMEI number (required)
-        - imei2: Second IMEI number (required)
+        - imei2: Second IMEI number (optional)
         - imei3: Third IMEI number (optional)
         - condition: Device condition (new, used, patched)
         - patch_details: Details about patches if condition is patched
-        - pta_status: PTA status (locked, unlocked, approved)
         - cnic_number: CNIC number of supplier
         - cnic_photo_url: URL/base64 of CNIC photo
         - photos: List of device photos (URLs/base64)
@@ -384,6 +383,8 @@ def quick_trade_in(
         - amount_paid: Amount actually paid to supplier
         - transaction_date: Transaction date (defaults to today)
         - notes: Optional notes
+        - pta_approval_status: PTA Approval status (approve or not_approve)
+        - sim_time: SIM time duration when status is 'not_approve' (optional)
     """
     transaction_date = payload.transaction_date or date.today()
 
@@ -409,14 +410,6 @@ def quick_trade_in(
     }
     db_condition = condition_map.get(payload.condition, MobileCondition.USED)
 
-    # Map PTA status values to enum
-    pta_map = {
-        "locked": PTAStatus.PTA,
-        "unlocked": PTAStatus.NON_PTA,
-        "approved": PTAStatus.PTA
-    }
-    db_pta_status = pta_map.get(payload.pta_status, PTAStatus.PTA)
-
     # Prepare IMEI info (for notes/reference)
     imei_info = f"{payload.imei1}|{payload.imei2}"
     if payload.imei3:
@@ -429,13 +422,21 @@ def quick_trade_in(
     if payload.cnic_number:
         notes_text += f" | CNIC: {payload.cnic_number}"
 
+    # Map PTA approval status
+    pta_approval_map = {
+        "approve": PTAApprovalStatus.APPROVE,
+        "not_approve": PTAApprovalStatus.NOT_APPROVE
+    }
+    db_pta_approval_status = pta_approval_map.get(payload.pta_approval_status.value, PTAApprovalStatus.APPROVE)
+
     # Create new mobile in inventory
     new_mobile = MobileInventory(
         model_id=payload.model_id,
         imei1=payload.imei1,
         imei2=payload.imei2,
         imei3=payload.imei3 if payload.imei3 else None,
-        pta_status=db_pta_status,
+        pta_approval_status=db_pta_approval_status,
+        sim_time=payload.sim_time,
         condition=db_condition,
         cost_price=payload.purchase_price,
         sale_price=payload.purchase_price * 1.2,  # Default 20% markup for selling
@@ -597,7 +598,7 @@ def get_mobile_history(
             "brand": brand.name if brand else "Unknown",
             "model": model.model_name if model else "Unknown",
             "condition": mobile.condition,
-            "pta_status": mobile.pta_status.value if mobile.pta_status else "N/A"
+            "pta_approval_status": mobile.pta_approval_status.value if mobile.pta_approval_status else "N/A"
         },
         "current_status": current_status,
         "current_owner": {

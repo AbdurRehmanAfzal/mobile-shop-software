@@ -44,7 +44,9 @@ const TradeInPurchase = () => {
     imei3: '',
     condition: 'used',
     patch_details: '',
-    pta_status: 'locked',
+    // Step 4b: PTA Approval Status & SIM Time
+    pta_approval_status: 'approve', // approve or not_approve
+    sim_time: '', // SIM time duration when not approved
     // Step 5: Pricing & Payment
     purchase_price: '',
     payment_method: 'cash',
@@ -392,7 +394,9 @@ const TradeInPurchase = () => {
         // Check for IMEI validity (15 digits) and no duplicates
         const imeiLengthValid = checkImeiValidity();
         const imeiNoDuplicates = checkDuplicateImeis();
-        return formData.brand_id && formData.model_id && formData.condition && formData.pta_status && imeiLengthValid && imeiNoDuplicates;
+        // If PTA approval is "not_approve", SIM time is required
+        const simTimeValid = formData.pta_approval_status === 'approve' || (formData.pta_approval_status === 'not_approve' && formData.sim_time);
+        return formData.brand_id && formData.model_id && formData.condition && imeiLengthValid && imeiNoDuplicates && simTimeValid;
       case 5:
         return formData.purchase_price && formData.payment_method && formData.amount_paid;
       case 6:
@@ -425,7 +429,7 @@ const TradeInPurchase = () => {
         if (formData.imei3 && formData.imei3.length !== 15) errors.push('IMEI 3 must be exactly 15 digits (or leave empty)');
         if (!checkDuplicateImeis()) errors.push('Duplicate IMEI detected! Each IMEI must be unique.');
         if (!formData.condition) errors.push('Condition is required');
-        if (!formData.pta_status) errors.push('PTA Status is required');
+        if (formData.pta_approval_status === 'not_approve' && !formData.sim_time) errors.push('SIM time is required when status is "Not Approve"');
         break;
       case 5:
         if (!formData.purchase_price) errors.push('Purchase Price is required');
@@ -471,7 +475,6 @@ const TradeInPurchase = () => {
         formData.imei3 || null,
         formData.condition,
         formData.patch_details || null,
-        formData.pta_status,
         formData.cnic_number,
         formData.cnic_photo_url || null,
         formData.photos.map(p => p.url),
@@ -479,7 +482,9 @@ const TradeInPurchase = () => {
         formData.payment_method,
         parseFloat(formData.amount_paid),
         formData.transaction_date,
-        formData.transaction_notes || null
+        formData.transaction_notes || null,
+        formData.pta_approval_status,
+        formData.sim_time || null
       );
 
       if (res.success) {
@@ -691,7 +696,8 @@ const TradeInPurchase = () => {
                   imei3: '',
                   condition: 'used',
                   patch_details: '',
-                  pta_status: 'locked',
+                  pta_approval_status: 'approve',
+                  sim_time: '',
                   purchase_price: '',
                   payment_method: 'cash',
                   amount_paid: '',
@@ -1566,47 +1572,103 @@ const Step4DeviceDetails = ({ formData, brands, models, onInputChange, onAddBran
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <BilingualLabel
-            en="Condition"
-            ur="حالت"
-            size="md"
-            bold={true}
-            className="mb-2"
-          />
-          <select
-            value={formData.condition}
-            onChange={(e) => onInputChange('condition', e.target.value)}
-            className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-blue-500 ${getFieldBorderClass('Condition')}`}
-          >
-            <option value="">-- Select --</option>
-            <option value="new">New</option>
-            <option value="used">Used</option>
-            <option value="patched">Patched</option>
-          </select>
-        </div>
+      <div>
+        <BilingualLabel
+          en="Condition"
+          ur="حالت"
+          size="md"
+          bold={true}
+          className="mb-2"
+        />
+        <select
+          value={formData.condition}
+          onChange={(e) => onInputChange('condition', e.target.value)}
+          className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-blue-500 ${getFieldBorderClass('Condition')}`}
+        >
+          <option value="">-- Select --</option>
+          <option value="new">New</option>
+          <option value="used">Used</option>
+          <option value="patched">Patched</option>
+        </select>
+      </div>
 
-        <div>
-          <BilingualLabel
-            en="PTA Status"
-            ur="PTA سٹیٹس"
-            size="md"
-            bold={true}
-            className="mb-2"
-          />
-          <select
-            value={formData.pta_status}
-            onChange={(e) => onInputChange('pta_status', e.target.value)}
-            className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-blue-500 ${getFieldBorderClass('PTA Status')}`}
-          >
-            <option value="">-- Select --</option>
-            <option value="locked">Locked</option>
-            <option value="unlocked">Unlocked</option>
-            <option value="approved">Approved</option>
-          </select>
+      {/* PTA Approval Status - Approve or Not Approve */}
+      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+        <BilingualLabel
+          en="PTA Approval Status"
+          ur="PTA کی منظوری کی حالت"
+          size="md"
+          bold={true}
+          className="mb-4"
+        />
+        <div className="space-y-3">
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="radio"
+              name="pta_approval_status"
+              value="approve"
+              checked={formData.pta_approval_status === 'approve'}
+              onChange={(e) => {
+                onInputChange('pta_approval_status', e.target.value);
+                onInputChange('sim_time', ''); // Clear SIM time when switching to approve
+              }}
+              className="w-4 h-4"
+            />
+            <span className="text-green-700 font-semibold">✓ Approve</span>
+          </label>
+
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="radio"
+              name="pta_approval_status"
+              value="not_approve"
+              checked={formData.pta_approval_status === 'not_approve'}
+              onChange={(e) => onInputChange('pta_approval_status', e.target.value)}
+              className="w-4 h-4"
+            />
+            <span className="text-orange-700 font-semibold">✗ Not Approve</span>
+          </label>
         </div>
       </div>
+
+      {/* SIM Time for Not Approved (Conditional) */}
+      {formData.pta_approval_status === 'not_approve' && (
+        <div className="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-500">
+          <BilingualLabel
+            en="SIM Time Duration"
+            ur="SIM کی مدت"
+            size="md"
+            bold={true}
+            className="mb-3"
+          />
+          <p className="text-sm text-gray-600 mb-4">
+            Select how long the SIM can be used on this device
+          </p>
+
+          <select
+            value={formData.sim_time}
+            onChange={(e) => onInputChange('sim_time', e.target.value)}
+            className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 ${
+              !formData.sim_time ? 'border-orange-300 bg-orange-50' : 'border-gray-300'
+            }`}
+            required
+          >
+            <option value="">-- Select SIM Duration --</option>
+            <option value="1 month">1 Month</option>
+            <option value="3 months">3 Months</option>
+            <option value="6 months">6 Months</option>
+            <option value="12 months">12 Months</option>
+            <option value="Limited (Check Details)">Limited (Check Details)</option>
+          </select>
+
+          {!formData.sim_time && (
+            <p className="text-orange-600 text-sm mt-2">⚠️ SIM time duration is required when status is "Not Approve"</p>
+          )}
+          {formData.sim_time && (
+            <p className="text-green-600 text-sm mt-2">✓ SIM time selected: {formData.sim_time}</p>
+          )}
+        </div>
+      )}
 
       {formData.condition === 'patched' && (
         <div>
@@ -1842,9 +1904,15 @@ const Step6Summary = ({ formData, suppliers, brands, models, photoPreviews }) =>
               <span className="font-medium capitalize">{formData.condition}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">PTA Status:</span>
-              <span className="font-medium capitalize">{formData.pta_status}</span>
+              <span className="text-gray-600">PTA Approval:</span>
+              <span className="font-medium capitalize">{formData.pta_approval_status === 'approve' ? '✓ Approve' : '✗ Not Approve'}</span>
             </div>
+            {formData.pta_approval_status === 'not_approve' && formData.sim_time && (
+              <div className="flex justify-between">
+                <span className="text-gray-600">SIM Time Duration:</span>
+                <span className="font-medium">{formData.sim_time}</span>
+              </div>
+            )}
             <div className="flex justify-between">
               <span className="text-gray-600">IMEI 1:</span>
               <span className="font-medium">{formData.imei1}</span>

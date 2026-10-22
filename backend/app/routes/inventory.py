@@ -8,7 +8,7 @@ from typing import List, Optional
 from datetime import date
 
 from app.database import get_db
-from app.models import MobileInventory, Accessory, MobileModel, Party
+from app.models import MobileInventory, Accessory, MobileModel, MobileBrand, Party
 from app.schemas import (
     MobileInventoryResponse as MobileInventorySchema,
     MobileInventoryCreate,
@@ -69,7 +69,7 @@ def get_mobiles(
     condition: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
-    """Get mobiles with optional filtering - returns raw data"""
+    """Get mobiles with optional filtering"""
     query = db.query(MobileInventory)
 
     if status:
@@ -79,25 +79,43 @@ def get_mobiles(
 
     mobiles = query.order_by(MobileInventory.created_at.desc()).all()
 
-    # Convert to dictionary to avoid Pydantic validation issues
+    # Convert to dictionary with proper field mappings
     result = []
     for mobile in mobiles:
+        # Get model and brand info
+        model = db.query(MobileModel).filter(MobileModel.id == mobile.model_id).first()
+        brand = db.query(MobileBrand).filter(MobileBrand.id == model.brand_id).first() if model else None
+        storage = mobile.storage.name if mobile.storage else None
+        color = mobile.color.name if mobile.color else None
+
         result.append({
             "id": mobile.id,
             "model_id": mobile.model_id,
-            "purchased_from": getattr(mobile, 'purchased_from', None),
-            "imei": getattr(mobile, 'imei', None),
-            "storage": getattr(mobile, 'storage', None),
-            "color": getattr(mobile, 'color', None),
-            "condition": getattr(mobile, 'condition', None),
-            "patch_details": getattr(mobile, 'patch_details', None),
-            "used_condition": getattr(mobile, 'used_condition', None),
-            "cost_price": getattr(mobile, 'cost_price', None),
-            "selling_price": getattr(mobile, 'selling_price', None),
-            "status": getattr(mobile, 'status', None),
-            "purchase_date": getattr(mobile, 'purchase_date', None),
-            "created_at": mobile.created_at.isoformat() if getattr(mobile, 'created_at', None) else None,
-            "updated_at": mobile.updated_at.isoformat() if getattr(mobile, 'updated_at', None) else None,
+            "brand": brand.name if brand else "N/A",
+            "model": model.model_name if model else "N/A",
+            "imei1": mobile.imei1 or "N/A",
+            "imei2": mobile.imei2 or "N/A",
+            "imei3": mobile.imei3 or "N/A",
+            "storage": storage or "N/A",
+            "color": color or "N/A",
+            "condition": mobile.condition.value if mobile.condition else "N/A",
+            "cost_price": mobile.cost_price,
+            "sale_price": mobile.sale_price or "N/A",
+            "status": mobile.status.value if mobile.status else "N/A",
+            "pta_approval_status": mobile.pta_approval_status.value if mobile.pta_approval_status else "N/A",
+            "sim_time": mobile.sim_time or "N/A",
+            "serial_number": mobile.serial_number or "N/A",
+            "is_sold": mobile.is_sold,
+            "is_damaged": mobile.is_damaged,
+            "received_date": mobile.received_date.isoformat() if mobile.received_date else None,
+            "created_at": mobile.created_at.isoformat() if mobile.created_at else None,
+            "updated_at": mobile.updated_at.isoformat() if mobile.updated_at else None,
+            # Trade-in Customer Information
+            "customer_id": mobile.customer_id,
+            "cnic_number": mobile.cnic_number or "N/A",
+            "cnic_front_image": mobile.cnic_front_image,
+            "cnic_back_image": mobile.cnic_back_image,
+            "mobile_images": mobile.mobile_images,
         })
 
     return result
@@ -120,15 +138,30 @@ def update_mobile(
     db_mobile = db.query(MobileInventory).filter(MobileInventory.id == mobile_id).first()
     if not db_mobile:
         raise HTTPException(status_code=404, detail="Mobile not found")
-    
+
     update_data = mobile_update.dict(exclude_unset=True)
     for field, value in update_data.items():
         setattr(db_mobile, field, value)
-    
+
     db.add(db_mobile)
     db.commit()
     db.refresh(db_mobile)
     return db_mobile
+
+@router.delete("/mobiles/{mobile_id}")
+def delete_mobile(
+    mobile_id: int,
+    db: Session = Depends(get_db)
+):
+    """Delete a mobile from inventory"""
+    db_mobile = db.query(MobileInventory).filter(MobileInventory.id == mobile_id).first()
+    if not db_mobile:
+        raise HTTPException(status_code=404, detail="Mobile not found")
+
+    db.delete(db_mobile)
+    db.commit()
+
+    return {"status": "success", "message": "Mobile deleted successfully", "mobile_id": mobile_id}
 
 @router.get("/mobiles/search/imei/{imei}", response_model=MobileInventorySchema)
 def search_by_imei(imei: str, db: Session = Depends(get_db)):

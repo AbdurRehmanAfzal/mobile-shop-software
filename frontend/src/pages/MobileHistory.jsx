@@ -241,7 +241,7 @@ const HistoryView = ({ history, onBack }) => {
             <div className="space-y-2 text-sm">
               <p><span className="text-gray-600">IMEI:</span> <span className="font-mono font-semibold">{mobile.imei}</span></p>
               <p><span className="text-gray-600">Condition:</span> <span className="font-semibold capitalize">{mobile.condition}</span></p>
-              <p><span className="text-gray-600">PTA Status:</span> <span className="font-semibold capitalize">{mobile.pta_status}</span></p>
+              <p><span className="text-gray-600">PTA Status:</span> <span className="font-semibold capitalize">{mobile.pta_approval_status}</span></p>
             </div>
           </div>
 
