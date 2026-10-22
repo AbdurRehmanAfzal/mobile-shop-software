@@ -59,3 +59,15 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 1. Catalogue module (brands/models/storages/colours + seeds from legacy) → closes Phase 0.
 2. Phase 1: parties → ledger → devices + events → verification → purchase → sale → payments → loans → returns, each with tests and screens built on the design system.
 3. Owner: open http://localhost:5173 on a phone over LAN (`npm run dev -- --host`), check Urdu rendering in both themes.
+
+---
+
+## 2026-10-22 — Session 4: catalogue module (Phase 0 backend complete)
+**Done**
+- `modules/catalogue`: Brand, Model, Storage, Colour with global (`shop_id NULL`) + shop-private rows; list/create endpoints under `/api/v1/catalogue/*`; search models by model name, Urdu name or brand; create requires `TRANSACT` (technicians read-only).
+- `seeds/catalogue.py`: idempotent seed ported from legacy and extended (17 brands with Urdu names incl. Itel/Sparx/QMobile/Honor; 108 models incl. Nokia/Itel/QMobile feature phones with reference prices; 7 storages incl. 4MB for feature phones; 16 colours with hex). Runs at app startup (lifespan) outside tests.
+- Alembic migration `7f4c986a8f9f`.
+
+**Verified**: `pytest -q` → 24 passed (7 new: idempotent seed, Urdu names/model counts, filter+search, per-shop privacy, case-insensitive conflicts, storages/colours validation, role check). `ruff` clean. Live: restart seeded `{'brands': 17, 'models': 108, 'storages': 7, 'colours': 16}`; `/catalogue/brands` and `?q=105` answer correctly.
+
+**Next**: Phase 1 — Parties module (FR-MST-03), then ledger + PostingService (FR-TXN-01,02).

@@ -21,8 +21,9 @@ Permission matrix (enforced in `core/permissions.py`):
 | Reports | ✓ | ✓ | own sales | own repairs |
 
 ## Master data
-- **brands** (global, `shop_id` nullable): name, name_ur. **models**: brand_id, name, name_ur, shop_id nullable.
-- **storages**, **colours**: name, name_ur, hex.
+- **brands** (`shop_id` NULL = global, set = shop-private): name, name_ur, sort_order, is_active. **models**: shop_id nullable, brand_id, name, name_ur, reference_price (indicative new price), is_feature_phone, is_active.
+- **storages**: shop_id nullable, name, name_ur, gigabytes, sort_order. **colours**: shop_id nullable, name, name_ur, hex, sort_order.
+- Name uniqueness within the visible scope (global + own shop) is case-insensitive and enforced in the service layer (NULL shop_id cannot be covered by a unique index).
 - **parties**: id, shop_id, name, name_ur, phone (unique per shop), alt_phone, whatsapp, cnic, address, city, photo_path, kinds json (`["customer","supplier","shop","technician"]`), notes, is_active. Balance is **computed** from ledger (materialised in `party_balances` view / cached column refreshed by the posting service).
 
 ## Devices
