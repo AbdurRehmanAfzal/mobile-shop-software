@@ -142,3 +142,7 @@ docker-compose.override.yml
 /backend/uploads/
 /frontend/dist/
 /frontend/dev-dist/
+
+# Playwright
+/frontend/test-results/
+/frontend/playwright-report/

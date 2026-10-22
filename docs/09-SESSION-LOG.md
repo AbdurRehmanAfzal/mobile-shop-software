@@ -301,3 +301,5 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Verified**: build emits `sw.js` + manifest (display standalone); tsc/vitest clean.
 **Blocked**: APK build (no Java/Android SDK on this PC; needs live API domain).
 **Next**: Playwright E2E for the core flow.
+
+**Session 23 addendum — E2E**: Playwright 1.48 + Chromium; `npm run e2e` runs `e2e/core-flow.spec.ts` (Pixel 7): fresh throwaway shop signup, stock via API, customer + credit sale through the UI, dashboard reveal shows Rs. 1,000, customer balance 600. Passed (22 s). Vitest restricted to `src/**/*.test.*`.

@@ -23,6 +23,7 @@
 cd backend && .venv\Scripts\pytest -q            # all backend tests
 cd backend && .venv\Scripts\pytest -q -k scenario
 cd frontend && npm test
+cd frontend && npm run e2e                       # Playwright, phone viewport; needs backend on :8000
 ```
 
 ## Definition of done (per item in 06-PROGRESS.md)

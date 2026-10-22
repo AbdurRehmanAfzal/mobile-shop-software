@@ -51,7 +51,7 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 | Phase 2 screens: expenses + day close, repairs (list/new/detail with status, parts from stock, deliver, job sheet), accessories (stock, low, pending tracker, adjust), exchange wizard, reports (P&L, cash flow, tax, stock age); dashboard on `/reports/dashboard` | ✅ | |
 | Home redesign on owner's UI guide (Easypaisa patterns), action chooser, PIN login, opening-stock page | ✅ | Session 20 |
 | Phone test on real device | ✅ | 2026-10-22 owner tested on Android over Wi-Fi (`npm run dev:lan`): UI OK |
-| Playwright E2E | ⬜ | |
+| Playwright E2E | ✅ | `frontend/e2e/core-flow.spec.ts` at Pixel 7 size: signup → customer → credit sale → dashboard → balance; `npm run e2e` (backend must run) |
 
 ## Phase 2 — Operations
 | Item | FR | Status |
