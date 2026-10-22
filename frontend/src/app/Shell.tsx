@@ -15,7 +15,7 @@ function initials(name: string | undefined): string {
 const tabs = [
   { to: '/', key: 'nav.home', Icon: Home },
   { to: '/stock', key: 'nav.stock', Icon: Smartphone },
-  { to: '/sale', key: 'nav.new', Icon: Plus, fab: true },
+  { to: '/sale/new', key: 'nav.new', Icon: Plus, fab: true },
   { to: '/parties', key: 'nav.parties', Icon: Users },
   { to: '/more', key: 'nav.more', Icon: Menu },
 ]

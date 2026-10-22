@@ -115,7 +115,7 @@ export const useCashAccounts = () => {
   const k = useShopKey()
   return useQuery({ queryKey: [k, 'cash'], queryFn: () => get<CashAccount[]>('/api/v1/ledger/accounts') })
 }
-export const useSales = (params: { party_id?: string; status?: string } = {}) => {
+export const useSales = (params: { party_id?: string; status?: string; date_from?: string } = {}) => {
   const k = useShopKey()
   return useQuery({ queryKey: [k, 'sales', params], queryFn: () => get<Invoice[]>(`/api/v1/sales${qs(params)}`) })
 }

@@ -5,13 +5,18 @@ import LoginPage from '@/features/auth/LoginPage'
 import SignupPage from '@/features/auth/SignupPage'
 import DashboardPage from '@/features/dashboard/DashboardPage'
 import MorePage from '@/features/more/MorePage'
-import ComingSoon from '@/features/ComingSoon'
+import SettingsPage from '@/features/more/SettingsPage'
+import NotificationsPage from '@/features/more/NotificationsPage'
+import { PaymentsPage, PurchaseDetailPage, PurchasesPage, ReturnsPage } from '@/features/more/ListsPages'
 import PartiesPage from '@/features/parties/PartiesPage'
 import PartyDetailPage from '@/features/parties/PartyDetailPage'
 import StockPage from '@/features/stock/StockPage'
 import DeviceDetailPage from '@/features/stock/DeviceDetailPage'
 import VerifyPage from '@/features/stock/VerifyPage'
 import PurchaseWizard from '@/features/purchase/PurchaseWizard'
+import SaleWizard from '@/features/sale/SaleWizard'
+import { SaleDetailPage, SalesPage } from '@/features/sale/SalesPage'
+import LoansPage from '@/features/loans/LoansPage'
 
 function RequireAuth() {
   const token = useAuth((s) => s.accessToken)
@@ -42,11 +47,20 @@ export const router = createBrowserRouter([
           { path: '/stock/:id', element: <DeviceDetailPage /> },
           { path: '/stock/:id/verify', element: <VerifyPage /> },
           { path: '/purchase/new', element: <PurchaseWizard /> },
-          { path: '/sale', element: <ComingSoon titleKey="nav.sale" /> },
-          { path: '/sale/new', element: <ComingSoon titleKey="sale.title" /> },
+          { path: '/purchases', element: <PurchasesPage /> },
+          { path: '/purchases/:id', element: <PurchaseDetailPage /> },
+          { path: '/sale', element: <SalesPage /> },
+          { path: '/sales', element: <SalesPage /> },
+          { path: '/sale/new', element: <SaleWizard /> },
+          { path: '/sales/:id', element: <SaleDetailPage /> },
+          { path: '/payments', element: <PaymentsPage /> },
+          { path: '/loans', element: <LoansPage /> },
+          { path: '/returns', element: <ReturnsPage /> },
           { path: '/parties', element: <PartiesPage /> },
           { path: '/parties/:id', element: <PartyDetailPage /> },
           { path: '/more', element: <MorePage /> },
+          { path: '/more/settings', element: <SettingsPage /> },
+          { path: '/more/notifications', element: <NotificationsPage /> },
         ],
       },
     ],

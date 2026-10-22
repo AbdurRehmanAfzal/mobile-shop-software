@@ -209,3 +209,19 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Verified**: `pytest -q` → 89 passed; `ruff` clean.
 
 **Next**: frontend Phase 1 screens (unchanged), with a notifications settings screen under More.
+
+---
+
+## 2026-10-22 — Session 15: Phase 1 frontend screens
+**Done** (three commits)
+- Shared UI kit (`PageHeader`, `Sheet`, `Row/List`, `Chip`, `MoneyText`, `BalanceLabel` with lena/dena wording, `SearchBox`, `Stepper`, `KV`, `Section`, `Empty/Loading/ErrorText`), `PartyPicker` with inline create, typed API hooks (`lib/queries.ts`, shop-scoped keys, `useDocMutation` invalidates everything), `lib/files.ts` (upload, object URLs, `openPrintable` for receipts/declarations), full EN/UR string sets.
+- Parties (list/search/kind filter/with-balance, add/edit sheet, detail with hero balance, kinds, statement with running balance, receive/pay payment sheet with method + allocation result).
+- Stock (list with status filters and search, IMEI lookup sheet with seen-before/times-bought/Luhn, device detail with chips, cost hidden for salesmen, actions: sell, verify, loan out, faulty/repair/approval events, price change, note; accessories chips; history timeline).
+- Purchase wizard (4 steps; device sheet with IMEI lookup warnings, brand chips, model search, storage/colour, condition, PTA + SIM time, cost/asking/warranty, accessories came-with/pending-from-vendor; misc lines; discount/paid/account/reference; done screen with verify + declaration print per device).
+- Verification page (seller picker, CNIC, three photo tiles with camera capture + upload, eGadget segmented + portal link + ref, PTA checked + 8484 SMS link + result, declaration checkbox + print, physical notes, result/missing, owner override sheet).
+- Sale wizard (customer or cash, pick from in-stock devices, per-line price/warranty/accessories given/pending with promised date, misc, discount/paid/account, inline override reason for owner/manager, done screen with thermal/A4 print).
+- Sales list (status filter) + detail (lines with profit for managers, totals, print, return sheet with line selection + settlement, void sheet); purchases list + detail (return with refund, void); payments and returns lists; loans page (return / sell-to-shop); shop settings; notifications settings + message queue with wa.me share and mark-sent; More menu; dashboard wired to live data; bottom-nav FAB → new sale.
+
+**Verified**: `tsc -b --noEmit` clean, `vitest` 10 passed, `vite build` ok. Not yet verified: real-phone layout, camera capture on Android, print dialogs on a thermal printer.
+
+**Next**: owner walkthrough on a phone → fix list; then Phase 2 (exchange, accessories stock, repairs, expenses/cash book, reports + dashboard endpoint, tax report).
