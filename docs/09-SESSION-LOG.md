@@ -303,3 +303,11 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Next**: Playwright E2E for the core flow.
 
 **Session 23 addendum — E2E**: Playwright 1.48 + Chromium; `npm run e2e` runs `e2e/core-flow.spec.ts` (Pixel 7): fresh throwaway shop signup, stock via API, customer + credit sale through the UI, dashboard reveal shows Rs. 1,000, customer balance 600. Passed (22 s). Vitest restricted to `src/**/*.test.*`.
+
+---
+
+## 2026-10-22 — Session 24: owner testing fixes
+- Login: PIN screen now offers "use another account" and "create a new shop"; signup is a prominent button on the login screen (owner could not find how to make a new test shop).
+- "Add device not working": reproduced with Playwright. Root causes: (1) adding `stock.condition` as a plain label for the stock cards overwrote the `stock.condition.*` label set, so the condition selector showed raw keys and overlapping text; (2) on the old-stock page the device sheet reopened blank after Add, so it looked like nothing happened. Fixed: label set restored (`stock.conditionShort`, `stock.ptaLabel` for section labels), sheet closes with an "Added — add another or save" note.
+- Regression tests: `e2e/add-device.spec.ts` (old stock add + save, purchase wizard add from supplier). 3 e2e tests pass.
+- Lesson: never reuse an i18n key that is already an object namespace; run the e2e suite after UI changes.

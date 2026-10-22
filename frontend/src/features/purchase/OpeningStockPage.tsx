@@ -19,6 +19,7 @@ export default function OpeningStockPage() {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<unknown>(null)
   const [saved, setSaved] = useState(0)
+  const [justAdded, setJustAdded] = useState(false)
   const total = devices.reduce((s, d) => s + Number(d.cost || 0), 0)
 
   async function save() {
@@ -66,7 +67,8 @@ export default function OpeningStockPage() {
           <button type="button" aria-label={pick('purchase.remove')} onClick={() => setDevices(devices.filter((x) => x.key !== d.key))} className="well tap h-9 w-9 text-payable"><Trash2 size={16} /></button>
         </div>
       ))}
-      <BiButton text="purchase.addDevice" variant="secondary" full onClick={() => setEditing(emptyDraft('', 'walk_in'))} />
+      {justAdded && devices.length ? <div className="rounded-2xl border border-emerald/30 bg-emerald-tint/50 px-4 py-3"><BiLabel text="stock.addedOk" size="sm" tone="text-emerald-deep" bold /></div> : null}
+      <BiButton text={devices.length ? 'stock.addAnother' : 'purchase.addDevice'} variant="secondary" full onClick={() => { setJustAdded(false); setEditing(emptyDraft('', 'walk_in')) }} />
       {devices.length ? (
         <>
           <div className="card flex items-center justify-between">
@@ -84,7 +86,8 @@ export default function OpeningStockPage() {
             initial={editing}
             onSave={(d) => {
               setDevices((xs) => (xs.some((x) => x.key === d.key) ? xs.map((x) => (x.key === d.key ? d : x)) : [...xs, d]))
-              setEditing(emptyDraft('', 'walk_in'))
+              setEditing(null)
+              setJustAdded(true)
             }}
           />
         ) : null}

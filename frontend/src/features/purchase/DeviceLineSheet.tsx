@@ -174,11 +174,11 @@ export default function DeviceLineSheet({ initial, onSave }: { initial: DeviceLi
         </div>
       </div>
 
-      <BiLabel text="stock.condition.used" size="md" tone="text-muted" />
+      <BiLabel text="stock.conditionShort" size="md" tone="text-muted" />
       <BiSegmented<DeviceCondition> value={d.condition} onChange={(v) => set('condition', v)} options={[{ value: 'box_pack', text: 'stock.condition.box_pack' }, { value: 'open_box', text: 'stock.condition.open_box' }, { value: 'used', text: 'stock.condition.used' }, { value: 'patched', text: 'stock.condition.patched' }]} />
       {d.condition === 'patched' ? <BiInput label="stock.patchDetails" value={d.patch_details} onChange={(e) => set('patch_details', e.target.value)} required /> : null}
 
-      <BiLabel text="stock.pta.pta_approved" size="md" tone="text-muted" />
+      <BiLabel text="stock.ptaLabel" size="md" tone="text-muted" />
       <BiSegmented<PtaStatus> value={d.pta_status} onChange={(v) => set('pta_status', v)} options={[{ value: 'pta_approved', text: 'stock.pta.pta_approved' }, { value: 'non_pta', text: 'stock.pta.non_pta' }, { value: 'jv', text: 'stock.pta.jv' }]} />
       {needsSim ? <BiInput label="stock.simTime" type="number" inputMode="numeric" min={0} max={60} value={d.sim_time_months} onChange={(e) => set('sim_time_months', e.target.value)} required /> : null}
 

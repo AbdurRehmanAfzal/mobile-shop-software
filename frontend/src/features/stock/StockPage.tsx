@@ -45,7 +45,7 @@ export function DeviceCard({ d, onOpen, onSell }: { d: Device; onOpen: () => voi
   const stats: [string, string][] = [
     ['stock.storageShort', d.storage_name ?? '—'],
     ['stock.ptaShort', pick(`stock.pta.${d.pta_status}`)],
-    ['stock.condition', pick(`stock.condition.${d.condition}`)],
+    ['stock.conditionShort', pick(`stock.condition.${d.condition}`)],
     ['stock.daysIn', String(daysSince(d.last_event_at))],
   ]
   return (

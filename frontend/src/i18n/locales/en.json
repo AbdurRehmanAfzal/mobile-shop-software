@@ -162,7 +162,12 @@
       "faulty": "Faulty",
       "returned_to_supplier": "Returned to supplier"
     },
-    "condition": "Condition",
+    "condition": {
+      "box_pack": "Box pack",
+      "open_box": "Open box",
+      "used": "Used",
+      "patched": "Patched"
+    },
     "pta": {
       "pta_approved": "PTA approved",
       "non_pta": "Non-PTA",
@@ -244,7 +249,11 @@
     "daysIn": "Days",
     "ptaShort": "PTA",
     "storageShort": "Memory",
-    "count": "{{n}} phones"
+    "count": "{{n}} phones",
+    "conditionShort": "Condition",
+    "ptaLabel": "PTA status",
+    "addedOk": "Added. Add another or save.",
+    "addAnother": "Add another"
   },
   "purchase": {
     "title": "New purchase",

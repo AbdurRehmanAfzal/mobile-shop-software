@@ -162,7 +162,12 @@
       "faulty": "خراب",
       "returned_to_supplier": "سپلائر کو واپس"
     },
-    "condition": "حالت",
+    "condition": {
+      "box_pack": "باکس پیک",
+      "open_box": "کھلا باکس",
+      "used": "استعمال شدہ",
+      "patched": "پیچ شدہ"
+    },
     "pta": {
       "pta_approved": "پی ٹی اے منظور",
       "non_pta": "نان پی ٹی اے",
@@ -244,7 +249,11 @@
     "daysIn": "دن",
     "ptaShort": "پی ٹی اے",
     "storageShort": "میموری",
-    "count": "{{n}} موبائل"
+    "count": "{{n}} موبائل",
+    "conditionShort": "حالت",
+    "ptaLabel": "پی ٹی اے",
+    "addedOk": "شامل ہو گیا۔ اور شامل کریں یا محفوظ کریں۔",
+    "addAnother": "اور شامل کریں"
   },
   "purchase": {
     "title": "نئی خریداری",
