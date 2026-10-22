@@ -1,8 +1,8 @@
-# 11 — Design System (DRAFT, pending owner approval)
+# 11 — Design System v1.0 (approved 2026-10-22)
 
-Status: **Draft v0.1 · 2026-10-22 · not yet approved.** Direction A "Emerald & Gold" as shown in the mockup
+Status: **Approved v1.0 · 2026-10-22.** Owner decision: "do what is best for now; give both light and dark." Direction A "Emerald & Gold" as shown in the mockup
 https://claude.ai/artifact/AEWv7XqFN62dXjuNWmGnad (5 phone screens: dashboard light, used-mobile purchase/verification, sale confirm, device history, dashboard dark).
-Once the owner (and a shopkeeper test group) approve, this becomes the source of truth for `frontend/src/components` and Tailwind tokens. Until then, do not build Phase 1 screens.
+This is the source of truth for `frontend/src/index.css` (CSS variables), `frontend/tailwind.config.js` and `frontend/src/components/Bilingual.tsx`. Decisions: **light is the default**, dark and "system" are user-selectable under More → Appearance; **emerald** accent; the **English eyebrow stays on every label** until a shopkeeper test says otherwise. Shopkeeper-group feedback is still welcome and may produce v1.1.
 
 ## Why this direction
 - Shopkeepers judged v1 "not modern, not luxury" (FR-PLT-08). The cues of "expensive" on a phone are: deep dark surfaces with one warm metallic accent, generous radius, soft real shadows, confident large numbers, and Urdu set in Nastaliq at display size rather than as an afterthought.
@@ -45,7 +45,14 @@ Stroke icons, 1.75px, round caps (Lucide-compatible). No emoji anywhere in produ
 ## Accessibility
 Tap targets ≥44px; text contrast ≥4.5:1 (muted #5C655F on white = 5.9:1; #A9B0AB on #141C18 = 7.1:1); never colour alone for meaning (amount sign is also written as "Lena hai / Dena hai").
 
-## Open questions for the owner
-1. Light-first (screens 1–4) or dark-first (screen 5) as the default?
-2. Emerald accent vs. alternatives (the mockup's Tweaks panel offers deep green, navy, rust).
-3. Should the English eyebrow stay on every label, or only on headings once users are familiar?
+## Implementation map
+- Tokens: `:root` (light), `:root[data-theme='dark']`, and `:root[data-theme='system']` under `prefers-color-scheme: dark` in `frontend/src/index.css`; Tailwind colours read them as `rgb(var(--x) / <alpha-value>)`.
+- Theme store: `frontend/src/lib/theme.ts` (zustand, persisted, sets `data-theme` and the `theme-color` meta).
+- Primitives: `BiLabel`, `BiButton` (primary/secondary/danger/ghost/gold), `BiInput`, `BiAlert`, `BiSegmented` in `frontend/src/components/Bilingual.tsx`.
+- Icons: `lucide-react`, 1.75 stroke.
+- Shell: `frontend/src/app/Shell.tsx` (monogram top bar, bottom nav with raised FAB).
+
+## Resolved questions (2026-10-22)
+1. Default: light; dark and system available to every user.
+2. Accent: emerald (#136F56); gold reserved for money/highlights.
+3. English eyebrow on every label for now.

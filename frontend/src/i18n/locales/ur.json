@@ -3,6 +3,7 @@
   "nav": {
     "home": "ہوم",
     "stock": "اسٹاک",
+    "new": "نیا",
     "sale": "فروخت",
     "parties": "کھاتے",
     "more": "مزید"
@@ -25,6 +26,9 @@
   "dashboard": {
     "title": "ڈیش بورڈ",
     "todaySales": "آج کی فروخت",
+    "sales": "فروخت",
+    "cashIn": "نقد",
+    "profit": "منافع",
     "cashInHand": "نقد رقم",
     "receivable": "لینا ہے",
     "payable": "دینا ہے",
@@ -32,14 +36,19 @@
     "repairs": "مرمت باقی",
     "comingSoon": "جلد آ رہا ہے",
     "quickActions": "فوری کام",
-    "newSale": "نئی فروخت",
-    "newPurchase": "نئی خریداری",
+    "newSale": "فروخت",
+    "newPurchase": "خریداری",
+    "imeiSearch": "IMEI تلاش",
     "payment": "ادائیگی",
     "repair": "مرمت"
   },
   "more": {
     "title": "مزید",
     "language": "زبان",
+    "theme": "رنگ روپ",
+    "themeLight": "روشن",
+    "themeDark": "گہرا",
+    "themeSystem": "فون کے مطابق",
     "settings": "دکان کی سیٹنگز",
     "staff": "عملہ",
     "reports": "رپورٹس",

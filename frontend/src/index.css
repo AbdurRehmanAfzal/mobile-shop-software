@@ -2,19 +2,88 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Design tokens (docs/11-DESIGN-SYSTEM.md). RGB triplets so Tailwind can apply alpha. */
 @layer base {
+  :root {
+    --ink: 14 22 19;
+    --ground: 244 243 238;
+    --surface: 255 255 255;
+    --line: 228 226 218;
+    --muted: 92 101 95;
+    --emerald: 19 111 86;
+    --emerald-deep: 11 74 58;
+    --emerald-tint: 220 239 230;
+    --gold: 200 161 79;
+    --gold-text: 200 161 79;
+    --receivable: 154 91 0;
+    --receivable-tint: 255 244 219;
+    --payable: 179 38 30;
+    --payable-tint: 253 232 230;
+    --hero: 14 22 19;
+    --hero-text: 255 255 255;
+    --nav: 255 255 255;
+    color-scheme: light;
+  }
+  :root[data-theme='dark'] {
+    --ink: 242 241 236;
+    --ground: 11 16 14;
+    --surface: 20 28 24;
+    --line: 36 48 41;
+    --muted: 169 176 171;
+    --emerald: 19 111 86;
+    --emerald-deep: 220 239 230;
+    --emerald-tint: 19 111 86;
+    --gold: 200 161 79;
+    --gold-text: 243 201 107;
+    --receivable: 243 201 107;
+    --receivable-tint: 243 201 107;
+    --payable: 242 139 130;
+    --payable-tint: 242 139 130;
+    --hero: 19 111 86;
+    --hero-text: 255 255 255;
+    --nav: 20 28 24;
+    color-scheme: dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root[data-theme='system'] {
+      --ink: 242 241 236;
+      --ground: 11 16 14;
+      --surface: 20 28 24;
+      --line: 36 48 41;
+      --muted: 169 176 171;
+      --emerald-deep: 220 239 230;
+      --emerald-tint: 19 111 86;
+      --gold-text: 243 201 107;
+      --receivable: 243 201 107;
+      --receivable-tint: 243 201 107;
+      --payable: 242 139 130;
+      --payable-tint: 242 139 130;
+      --hero: 19 111 86;
+      --nav: 20 28 24;
+      color-scheme: dark;
+    }
+  }
+
   html {
     -webkit-text-size-adjust: 100%;
   }
   body {
-    @apply font-sans text-slate-800 antialiased;
+    @apply bg-ground font-sans text-ink antialiased;
   }
-  /* Urdu text is always rendered RTL in the Nastaliq font. Numbers stay Latin via font-variant. */
   .ur {
     font-family: 'Noto Nastaliq Urdu', serif;
     direction: rtl;
     unicode-bidi: isolate;
-    line-height: 2;
+    line-height: 1.9;
+  }
+  .eyebrow {
+    @apply text-[10px] font-bold uppercase tracking-[0.12em];
+    direction: ltr;
+  }
+  .num {
+    @apply font-extrabold tabular-nums tracking-[-0.02em];
+    direction: ltr;
+    unicode-bidi: isolate;
   }
   input,
   select,
@@ -25,9 +94,15 @@
 
 @layer components {
   .card {
-    @apply rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200;
+    @apply rounded-[20px] border border-line bg-surface p-4;
+  }
+  .hero {
+    @apply rounded-3xl bg-hero text-hero-text shadow-hero;
   }
   .tap {
-    @apply active:scale-[0.98] transition-transform select-none;
+    @apply select-none transition-transform duration-150 ease-out active:scale-[0.98];
+  }
+  .well {
+    @apply flex items-center justify-center rounded-xl;
   }
 }

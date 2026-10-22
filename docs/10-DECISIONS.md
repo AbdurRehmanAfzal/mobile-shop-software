@@ -29,3 +29,8 @@ Consequences: Needs Meta Business verification before Phase 3 messaging goes liv
 
 ## ADR-006 · 2026-10-22 · Accepted · Git authorship
 Decision: All commits authored by Abdur Rehman Afzal only; no AI co-author trailers. Enforced via repo-local git config and CLAUDE.md.
+
+## ADR-007 · 2026-10-22 · Accepted · Design direction "Emerald & Gold", light default with dark/system option
+Context: v1 UI judged "not modern, not luxury" by ~50 shopkeepers (FR-PLT-08). Mockup of 5 screens reviewed by the owner.
+Decision: Adopt Direction A (warm off-white ground, charcoal-green hero surfaces, emerald primary, gold for money). Light is the default; dark and system themes are user-selectable. Tokens live as CSS variables consumed by Tailwind; all UI is built from the bilingual primitives. No emoji icons; Lucide stroke icons.
+Consequences: Every new screen must use the tokens and primitives; both themes must be checked for contrast when adding colours.

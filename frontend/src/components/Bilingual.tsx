@@ -1,6 +1,7 @@
 /**
- * Bilingual primitives. Rule: English small on top, Urdu large below, Urdu always RTL,
- * numbers always Latin digits. Big tap targets for shopkeepers on phones.
+ * Bilingual primitives built on the design tokens (docs/11-DESIGN-SYSTEM.md).
+ * Rule: English eyebrow small on top, Urdu Nastaliq large below, Urdu always RTL,
+ * numbers always Latin digits. Tap targets ≥ 44px.
  */
 
 import { forwardRef, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode } from 'react'
@@ -8,8 +9,8 @@ import { both } from '@/i18n'
 
 type Size = 'sm' | 'md' | 'lg' | 'xl'
 
-const enSize: Record<Size, string> = { sm: 'text-[11px]', md: 'text-xs', lg: 'text-sm', xl: 'text-base' }
-const urSize: Record<Size, string> = { sm: 'text-sm', md: 'text-base', lg: 'text-lg', xl: 'text-2xl' }
+const enSize: Record<Size, string> = { sm: 'text-[9px]', md: 'text-[10px]', lg: 'text-[11px]', xl: 'text-xs' }
+const urSize: Record<Size, string> = { sm: 'text-sm', md: 'text-[15px]', lg: 'text-lg', xl: 'text-2xl' }
 
 export interface BiText {
   en: string
@@ -27,7 +28,8 @@ export function BiLabel({
   align = 'start',
   bold = false,
   className = '',
-  tone = 'text-slate-700',
+  tone = 'text-ink',
+  eyebrowTone = 'text-muted',
 }: {
   text: string | BiText
   size?: Size
@@ -35,27 +37,29 @@ export function BiLabel({
   bold?: boolean
   className?: string
   tone?: string
+  eyebrowTone?: string
 }) {
   const { en, ur } = resolve(text)
   const alignCls = align === 'center' ? 'text-center' : align === 'end' ? 'text-end' : 'text-start'
   return (
-    <div className={`leading-tight ${alignCls} ${tone} ${className}`}>
-      <div className={`${enSize[size]} uppercase tracking-wide opacity-70`} dir="ltr">
+    <div className={`leading-tight ${alignCls} ${className}`}>
+      <div className={`eyebrow ${enSize[size]} ${eyebrowTone}`} dir="ltr">
         {en}
       </div>
-      <div className={`ur ${urSize[size]} ${bold ? 'font-bold' : ''}`} dir="rtl" lang="ur">
+      <div className={`ur -mt-0.5 ${urSize[size]} ${tone} ${bold ? 'font-bold' : ''}`} dir="rtl" lang="ur">
         {ur}
       </div>
     </div>
   )
 }
 
-type Variant = 'primary' | 'secondary' | 'danger' | 'ghost'
+type Variant = 'primary' | 'secondary' | 'danger' | 'ghost' | 'gold'
 const variantCls: Record<Variant, string> = {
-  primary: 'bg-brand-700 text-white hover:bg-brand-800 ring-brand-700',
-  secondary: 'bg-white text-slate-800 ring-1 ring-slate-300 hover:bg-slate-50',
-  danger: 'bg-red-600 text-white hover:bg-red-700',
-  ghost: 'bg-transparent text-brand-700 hover:bg-brand-50',
+  primary: 'bg-emerald text-white shadow-cta',
+  secondary: 'bg-surface text-ink border border-line',
+  danger: 'bg-payable text-white',
+  ghost: 'bg-transparent text-emerald',
+  gold: 'bg-gold text-[#0E1613]',
 }
 
 export interface BiButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
@@ -79,18 +83,19 @@ export function BiButton({
   ...rest
 }: BiButtonProps) {
   const { en, ur } = resolve(text)
+  const dim = variant === 'primary' || variant === 'danger' ? 'text-white/75' : 'text-muted'
   return (
     <button
       {...rest}
       disabled={disabled || loading}
-      className={`tap inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl px-5 py-2 font-medium shadow-sm disabled:opacity-50 ${variantCls[variant]} ${full ? 'w-full' : ''} ${className}`}
+      className={`tap inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl px-5 py-2 font-semibold disabled:opacity-40 disabled:shadow-none ${variantCls[variant]} ${full ? 'w-full' : ''} ${className}`}
     >
-      {icon ? <span className="text-xl">{icon}</span> : null}
+      {icon ? <span className="shrink-0">{icon}</span> : null}
       <span className="flex flex-col items-center leading-tight">
-        <span className={`${enSize[size]} opacity-80`} dir="ltr">
+        <span className={`eyebrow ${enSize[size]} ${dim}`} dir="ltr">
           {loading ? '…' : en}
         </span>
-        <span className={`ur ${urSize[size]}`} dir="rtl" lang="ur">
+        <span className={`ur -mt-0.5 ${urSize[size]}`} dir="rtl" lang="ur">
           {ur}
         </span>
       </span>
@@ -117,14 +122,14 @@ export const BiInput = forwardRef<HTMLInputElement, BiInputProps>(function BiInp
         ref={ref}
         id={inputId}
         {...rest}
-        dir="ltr"
-        className={`mt-1 block w-full rounded-xl border px-4 py-3 text-lg shadow-sm focus:outline-none focus:ring-2 ${
-          err ? 'border-red-400 focus:ring-red-300' : 'border-slate-300 focus:ring-brand-500'
+        dir={rest.dir ?? 'ltr'}
+        className={`mt-1.5 block min-h-14 w-full rounded-2xl border bg-surface px-4 text-lg font-semibold text-ink placeholder:font-medium placeholder:text-muted/60 focus:outline-none focus:ring-2 ${
+          err ? 'border-payable focus:ring-payable/40' : 'border-line focus:border-emerald focus:ring-emerald/30'
         } ${className}`}
       />
       {err ? (
-        <div className="mt-1 text-red-600">
-          <span className="text-xs" dir="ltr">
+        <div className="mt-1 text-payable">
+          <span className="text-xs font-semibold" dir="ltr">
             {err.en}
           </span>
           <span className="ur ms-2 text-sm" dir="rtl">
@@ -132,7 +137,7 @@ export const BiInput = forwardRef<HTMLInputElement, BiInputProps>(function BiInp
           </span>
         </div>
       ) : hint ? (
-        <BiLabel text={hint} size="sm" tone="text-slate-500" className="mt-1" />
+        <BiLabel text={hint} size="sm" tone="text-muted" className="mt-1" />
       ) : null}
     </label>
   )
@@ -141,18 +146,58 @@ export const BiInput = forwardRef<HTMLInputElement, BiInputProps>(function BiInp
 export function BiAlert({ text, kind = 'error' }: { text: BiText; kind?: 'error' | 'success' | 'info' }) {
   const cls =
     kind === 'error'
-      ? 'bg-red-50 text-red-800 ring-red-200'
+      ? 'bg-payable-tint/40 text-payable border-payable/30'
       : kind === 'success'
-        ? 'bg-brand-50 text-brand-800 ring-brand-100'
-        : 'bg-sky-50 text-sky-800 ring-sky-200'
+        ? 'bg-emerald-tint/50 text-emerald-deep border-emerald/30'
+        : 'bg-surface text-ink border-line'
   return (
-    <div role="alert" className={`rounded-xl px-4 py-3 ring-1 ${cls}`}>
-      <div className="text-sm" dir="ltr">
+    <div role="alert" className={`rounded-2xl border px-4 py-3 ${cls}`}>
+      <div className="text-sm font-semibold" dir="ltr">
         {text.en}
       </div>
-      <div className="ur text-base" dir="rtl" lang="ur">
+      <div className="ur text-[15px]" dir="rtl" lang="ur">
         {text.ur}
       </div>
+    </div>
+  )
+}
+
+/** Segmented control, e.g. PTA / Non-PTA / JV or Cash / Easypaisa / Bank. */
+export function BiSegmented<T extends string>({
+  options,
+  value,
+  onChange,
+}: {
+  options: { value: T; text: string | BiText }[]
+  value: T
+  onChange: (v: T) => void
+}) {
+  return (
+    <div
+      role="group"
+      className="grid gap-1.5 rounded-2xl border border-line bg-surface p-1"
+      style={{ gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }}
+    >
+      {options.map((o) => {
+        const { en, ur } = resolve(o.text)
+        const on = o.value === value
+        return (
+          <button
+            key={o.value}
+            type="button"
+            aria-pressed={on}
+            onClick={() => onChange(o.value)}
+            className={`tap flex min-h-11 flex-col items-center justify-center rounded-xl text-[13px] font-bold ${
+              on ? 'bg-ink text-ground' : 'text-muted'
+            }`}
+          >
+            <span dir="ltr">{en}</span>
+            <span className={`ur -mt-1 text-xs ${on ? 'text-gold-text' : ''}`} dir="rtl" lang="ur">
+              {ur}
+            </span>
+          </button>
+        )
+      })}
     </div>
   )
 }

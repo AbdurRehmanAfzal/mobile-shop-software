@@ -3,6 +3,7 @@
   "nav": {
     "home": "Home",
     "stock": "Stock",
+    "new": "New",
     "sale": "Sale",
     "parties": "Parties",
     "more": "More"
@@ -25,6 +26,9 @@
   "dashboard": {
     "title": "Dashboard",
     "todaySales": "Today's sales",
+    "sales": "Sales",
+    "cashIn": "Cash in",
+    "profit": "Profit",
     "cashInHand": "Cash in hand",
     "receivable": "To receive",
     "payable": "To pay",
@@ -32,14 +36,19 @@
     "repairs": "Repairs pending",
     "comingSoon": "Coming soon",
     "quickActions": "Quick actions",
-    "newSale": "New sale",
-    "newPurchase": "New purchase",
+    "newSale": "Sale",
+    "newPurchase": "Purchase",
+    "imeiSearch": "IMEI search",
     "payment": "Payment",
     "repair": "Repair"
   },
   "more": {
     "title": "More",
     "language": "Language",
+    "theme": "Appearance",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
     "settings": "Shop settings",
     "staff": "Staff",
     "reports": "Reports",

@@ -45,3 +45,17 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Next**
 1. Owner reviews the mockup, ideally with a few shopkeepers; answers the 3 questions at the end of docs/11 (light vs dark default, accent, English eyebrow everywhere or headings only).
 2. On approval: translate tokens into `frontend/tailwind.config.js` + rebuild `components/Bilingual.tsx` and the shell to the design system; then catalogue module and Phase 1.
+
+---
+
+## 2026-10-22 — Session 3: design system approved and implemented
+**Done**
+- Owner approved Direction A with "both light and dark". Decisions recorded in docs/11 (v1.0) and ADR-007.
+- Implemented tokens as CSS variables (light / dark / system) + Tailwind mapping; theme store with persisted Light/Dark/System toggle (More → Appearance); rebuilt BiLabel/BiButton/BiInput/BiAlert and added BiSegmented; new Shell (monogram, bell, bottom nav with raised FAB), Dashboard (hero card, tiles, quick actions), AuthLayout, MorePage, ComingSoon; Lucide icons replace emoji; Manrope font; icon/manifest recoloured.
+
+**Verified**: `npx tsc -b --noEmit` clean; `npx vitest run` → 9 passed; `vite build` ok. Dev server reflects changes via HMR.
+
+**Next**
+1. Catalogue module (brands/models/storages/colours + seeds from legacy) → closes Phase 0.
+2. Phase 1: parties → ledger → devices + events → verification → purchase → sale → payments → loans → returns, each with tests and screens built on the design system.
+3. Owner: open http://localhost:5173 on a phone over LAN (`npm run dev -- --host`), check Urdu rendering in both themes.
