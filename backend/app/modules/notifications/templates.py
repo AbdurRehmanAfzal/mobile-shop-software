@@ -41,6 +41,16 @@ TEMPLATES: dict[str, dict[str, dict[str, str]]] = {
             "body": "{shop} نے آپ سے {items} Rs. {total} میں خریدا۔ ادا Rs. {paid}۔ حوالہ {purchase_no}۔",
         },
     },
+    "repair_ready": {
+        "en": {
+            "subject": "Your {device} is ready",
+            "body": "{customer}, your {device} ({repair_no}) is repaired and ready at {shop}. Bill: Rs. {total}{due_line}",
+        },
+        "ur": {
+            "subject": "آپ کا {device} تیار ہے",
+            "body": "{customer}، آپ کا {device} ({repair_no}) {shop} پر ٹھیک ہو کر تیار ہے۔ بل: Rs. {total}{due_line}",
+        },
+    },
     "payment_customer": {
         "en": {
             "subject": "Payment received {payment_no}",

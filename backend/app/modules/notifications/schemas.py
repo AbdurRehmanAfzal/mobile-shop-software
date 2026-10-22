@@ -20,6 +20,7 @@ class NotificationSettings(BaseModel):
     seller_on_purchase_whatsapp: bool = False
     seller_on_purchase_email: bool = False
     customer_on_payment_whatsapp: bool = False
+    customer_on_repair_ready_whatsapp: bool = False
     language: str | None = Field(
         default=None, pattern="^(en|ur)$", description="None = shop default language"
     )

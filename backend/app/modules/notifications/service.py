@@ -272,6 +272,41 @@ def on_payment_in(db: Session, shop: Shop, payment, party: Party) -> list[Messag
     ]
 
 
+def on_repair_ready(db: Session, shop: Shop, job, party: Party) -> list[Message]:
+    s = settings_for(shop)
+    lang = lang_for(shop, s)
+    if not (s.customer_on_repair_ready_whatsapp and (party.whatsapp or party.phone)):
+        return []
+    due = job.total - job.paid
+    due_line = (
+        (f"، باقی Rs. {fmt(due)}" if lang == "ur" else f", due Rs. {fmt(due)}") if due > 0 else ""
+    )
+    ctx = {
+        "shop": shop.name_ur if lang == "ur" and shop.name_ur else shop.name,
+        "customer": party.name,
+        "device": job.device_desc,
+        "repair_no": job.no,
+        "total": fmt(job.total),
+        "due_line": due_line,
+    }
+    return [
+        queue(
+            db,
+            shop,
+            channel=Channel.WHATSAPP,
+            audience="customer",
+            recipient=party.whatsapp or party.phone,
+            party_id=party.id,
+            template_key="repair_ready",
+            lang=lang,
+            ctx=ctx,
+            event_type="repair",
+            document_type="repair",
+            document_id=job.id,
+        )
+    ]
+
+
 def list_messages(
     db: Session, shop_id: uuid.UUID, *, status: str | None, audience: str | None, limit: int
 ) -> list[Message]:
