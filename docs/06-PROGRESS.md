@@ -8,14 +8,15 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 | Repo restructure: legacy/, docs/, CLAUDE.md, skills | – | ✅ | 2026-10-22 |
 | Legacy audit + continue/rebuild decision | – | ✅ | docs/08, ADR-001 |
 | Business + functional requirements, data model, roadmap | – | ✅ | docs/01–05 |
-| Backend skeleton (pyproject, settings, db base, alembic, pytest) | – | ⬜ | |
-| Organisations / shops / users models + migration | FR-AUTH-01..03 | ⬜ | |
-| Signup / login / refresh / me endpoints | FR-AUTH-01,02 | ⬜ | |
-| Permissions + shop scoping + leakage tests | FR-AUTH-03, tenancy | ⬜ | |
-| Audit log | FR-AUTH-06 | ⬜ | |
-| Seeds (brands/models/colours/storages) | FR-MST-01,02 | ⬜ | port from legacy/backend/app/utils/seed_data.py |
-| Frontend skeleton (Vite TS, Tailwind, i18n, auth, shell) | FR-PLT-01 | ⬜ | port BilingualLabel/Button/Input from legacy |
-| Phase 0 exit demo on phone | – | ⬜ | |
+| Backend skeleton (pyproject, settings, db base, alembic, pytest) | – | ✅ | `backend/`, 17 tests green |
+| Organisations / shops / users models + migration | FR-AUTH-01..03 | ✅ | migration `30a7d2dc3b64` |
+| Signup / login / refresh / me endpoints | FR-AUTH-01,02 | ✅ | `/api/v1/auth/*`, `/api/v1/me` |
+| Permissions + shop scoping + leakage tests | FR-AUTH-03, tenancy | ✅ | `core/permissions.py`, `core/tenancy.py`, `tests/test_tenancy.py` |
+| Staff create/update/disable, shops create/update | FR-AUTH-04 | ✅ | `/api/v1/staff`, `/api/v1/shops` |
+| Audit log | FR-AUTH-06 | ✅ | `modules/audit`, `/api/v1/audit` |
+| Seeds (brands/models/colours/storages) | FR-MST-01,02 | ⬜ | port from legacy/backend/app/utils/seed_data.py (needs catalogue module first) |
+| Frontend skeleton (Vite TS, Tailwind, i18n, auth, shell) | FR-PLT-01 | ✅ | `frontend/`, BiLabel/BiButton/BiInput/BiAlert, login/signup, bottom-nav shell, 7 tests |
+| Phase 0 exit demo on phone | – | 🔄 | Works in desktop browser (signup → Urdu dashboard). Not yet opened on a real phone; PWA service worker not added yet |
 
 ## Phase 1 — Used-mobile core
 | Item | FR | Status | Notes |
@@ -59,4 +60,8 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 | Cloud sync | FR-PLT-05 | ⬜ |
 
 ## Known issues / tech debt
-- None yet in v2. Legacy issues are listed in docs/08 and are not being fixed.
+- Frontend has no service worker yet (installable manifest only). Add `vite-plugin-pwa` in Phase 3.
+- Signup has no phone OTP verification; add before public launch (Phase 3).
+- No rate limiting on `/auth/login` yet; add middleware before cloud deploy.
+- Dashboard tiles show zeros until the ledger/devices modules exist (Phase 1).
+- Legacy issues are listed in docs/08 and are not being fixed.

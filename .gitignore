@@ -64,7 +64,6 @@ build/
 
 # 🔌 Vite Build
 .vite/
-vite-env.d.ts
 
 # 📊 Database Files
 *.db

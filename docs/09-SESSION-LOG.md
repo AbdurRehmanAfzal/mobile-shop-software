@@ -12,9 +12,18 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - Wrote business requirements, functional requirements with FR ids, architecture, data model, roadmap, progress tracker, testing strategy.
 - Set repo git author to Abdur Rehman Afzal; created branch `develop`.
 
-**Verified**: v1 ran end-to-end (health, brands API, Vite 200). No v2 code yet, so no tests.
+- Built v2 backend foundation: FastAPI app factory, bilingual error envelope, SQLAlchemy 2 base (UUID, Timestamped, ShopScoped, Numeric money), organisations/shops/users/user_shops/audit_log, Alembic initial migration, JWT access+refresh, bcrypt, PK phone normalisation, X-Shop-Id tenancy context, role→capability matrix, endpoints for auth/me/shops/staff/audit.
+- Built v2 frontend foundation: Vite + React 18 + TypeScript + Tailwind, i18n (en/ur, Urdu default, RTL), bilingual primitives (BiLabel, BiButton, BiInput, BiAlert), API client with auto-refresh, zustand auth store, login/signup pages, mobile shell with bottom nav, dashboard placeholder, More page (language switch, logout), PWA manifest.
 
-**Next**: Phase 0 backend skeleton → tenancy/auth → frontend skeleton (see docs/06).
+**Verified**
+- `backend: .venv\Scripts\pytest -q` → 17 passed (auth, tenancy isolation, roles, audit, migration/model parity). `ruff check` clean.
+- Live smoke: `uvicorn app.main:app` → `/health` ok, signup created org+shop+owner, `/me` returned shop, duplicate phone → 409 bilingual error, `/docs` 200.
+- `frontend: npx vitest run` → 7 passed; `tsc -b --noEmit` clean; `vite build` ok (309 kB JS). Dev server proxies `/api` to backend; login through proxy works; page root is `lang="ur" dir="rtl"`.
+
+**Next** (first step of next session)
+1. Catalogue module (`backend/app/modules/catalogue`): brands/models/storages/colours tables + seeds ported from `legacy/backend/app/utils/seed_data.py` + list endpoints. This closes Phase 0.
+2. Then Phase 1 in this order: parties → ledger/PostingService → devices + events → verification → purchase → sale → payments → loans → returns, each with tests, then the matching frontend screens.
+3. Open the app on a real Android phone over LAN (`vite --host`) and note Urdu rendering issues.
 
 **Open questions for the owner**
 1. Cloud hosting preference (any VPS vs managed, e.g. Hetzner/DigitalOcean vs Railway/Render)? Affects Docker setup in Phase 3.

@@ -1,0 +1,11 @@
+{
+  "name": "Mobile Shop · موبائل شاپ",
+  "short_name": "MobileShop",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#047857",
+  "lang": "ur",
+  "dir": "rtl",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

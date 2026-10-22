@@ -1,0 +1,58 @@
+{
+  "app": { "name": "موبائل شاپ", "tagline": "اپنی موبائل شاپ آسانی سے چلائیں" },
+  "nav": {
+    "home": "ہوم",
+    "stock": "اسٹاک",
+    "sale": "فروخت",
+    "parties": "کھاتے",
+    "more": "مزید"
+  },
+  "auth": {
+    "login": "لاگ اِن",
+    "signup": "دکان کا اکاؤنٹ بنائیں",
+    "phone": "موبائل نمبر",
+    "password": "پاس ورڈ",
+    "shopName": "دکان کا نام",
+    "shopNameUr": "دکان کا نام (اردو)",
+    "ownerName": "آپ کا نام",
+    "city": "شہر",
+    "haveAccount": "پہلے سے اکاؤنٹ ہے؟ لاگ اِن کریں",
+    "noAccount": "نئی دکان؟ اکاؤنٹ بنائیں",
+    "logout": "لاگ آؤٹ",
+    "loggingIn": "لاگ اِن ہو رہا ہے...",
+    "welcome": "خوش آمدید"
+  },
+  "dashboard": {
+    "title": "ڈیش بورڈ",
+    "todaySales": "آج کی فروخت",
+    "cashInHand": "نقد رقم",
+    "receivable": "لینا ہے",
+    "payable": "دینا ہے",
+    "inStock": "اسٹاک میں موبائل",
+    "repairs": "مرمت باقی",
+    "comingSoon": "جلد آ رہا ہے",
+    "quickActions": "فوری کام",
+    "newSale": "نئی فروخت",
+    "newPurchase": "نئی خریداری",
+    "payment": "ادائیگی",
+    "repair": "مرمت"
+  },
+  "more": {
+    "title": "مزید",
+    "language": "زبان",
+    "settings": "دکان کی سیٹنگز",
+    "staff": "عملہ",
+    "reports": "رپورٹس",
+    "version": "ورژن"
+  },
+  "common": {
+    "save": "محفوظ کریں",
+    "cancel": "منسوخ",
+    "back": "واپس",
+    "next": "اگلا",
+    "loading": "لوڈ ہو رہا ہے...",
+    "error": "کچھ غلط ہو گیا",
+    "required": "ضروری ہے",
+    "rs": "روپے"
+  }
+}

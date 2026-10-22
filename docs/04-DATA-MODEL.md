@@ -5,7 +5,7 @@ Conventions: UUID primary keys · `shop_id` on every tenant table (via `ShopScop
 ## Tenancy and users
 - **organisations**: id, name, plan (`trial|basic|pro|chain`), plan_expires_at, settings json.
 - **shops**: id, organisation_id, name, name_ur, address, city, phone, whatsapp, logo_path, ntn, strn, tax_enabled, tax_rate, tax_inclusive, receipt_footer, receipt_footer_ur, invoice_prefix, next_invoice_no, timezone (`Asia/Karachi`), locale default (`ur`).
-- **users**: id, organisation_id, name, phone (unique in org), email, password_hash, pin_hash, role (`owner|manager|salesman|technician`), is_active, locale.
+- **users**: id, organisation_id, name, phone (**globally unique**: login is by phone alone, no org picker), email, password_hash, pin_hash, role (`owner|manager|salesman|technician`), is_active, locale, last_login_at.
 - **user_shops**: user_id, shop_id (assignment).
 - **audit_log**: id, shop_id, user_id, entity, entity_id, action, before json, after json, at.
 

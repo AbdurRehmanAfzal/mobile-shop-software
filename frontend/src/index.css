@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply font-sans text-slate-800 antialiased;
+  }
+  /* Urdu text is always rendered RTL in the Nastaliq font. Numbers stay Latin via font-variant. */
+  .ur {
+    font-family: 'Noto Nastaliq Urdu', serif;
+    direction: rtl;
+    unicode-bidi: isolate;
+    line-height: 2;
+  }
+  input,
+  select,
+  textarea {
+    font-size: 16px; /* prevents iOS zoom on focus */
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200;
+  }
+  .tap {
+    @apply active:scale-[0.98] transition-transform select-none;
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "app": { "name": "Mobile Shop", "tagline": "Manage your mobile shop with ease" },
+  "nav": {
+    "home": "Home",
+    "stock": "Stock",
+    "sale": "Sale",
+    "parties": "Parties",
+    "more": "More"
+  },
+  "auth": {
+    "login": "Login",
+    "signup": "Create shop account",
+    "phone": "Mobile number",
+    "password": "Password",
+    "shopName": "Shop name",
+    "shopNameUr": "Shop name (Urdu)",
+    "ownerName": "Your name",
+    "city": "City",
+    "haveAccount": "Already have an account? Login",
+    "noAccount": "New shop? Create account",
+    "logout": "Logout",
+    "loggingIn": "Logging in...",
+    "welcome": "Welcome"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "todaySales": "Today's sales",
+    "cashInHand": "Cash in hand",
+    "receivable": "To receive",
+    "payable": "To pay",
+    "inStock": "Mobiles in stock",
+    "repairs": "Repairs pending",
+    "comingSoon": "Coming soon",
+    "quickActions": "Quick actions",
+    "newSale": "New sale",
+    "newPurchase": "New purchase",
+    "payment": "Payment",
+    "repair": "Repair"
+  },
+  "more": {
+    "title": "More",
+    "language": "Language",
+    "settings": "Shop settings",
+    "staff": "Staff",
+    "reports": "Reports",
+    "version": "Version"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "back": "Back",
+    "next": "Next",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "required": "Required",
+    "rs": "Rs."
+  }
+}
