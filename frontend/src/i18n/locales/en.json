@@ -602,7 +602,9 @@
     "current": "Your password",
     "saved": "PIN saved",
     "forgot": "Forgot PIN? Use password",
-    "notMe": "Not you?"
+    "notMe": "Not you?",
+    "otherAccount": "Use another account",
+    "newShop": "Create a new shop"
   },
   "opening": {
     "kind": "Old stock (already in shop)",
