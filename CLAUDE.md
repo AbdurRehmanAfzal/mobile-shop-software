@@ -25,7 +25,7 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Every tenant-owned table has `shop_id`. Every query is scoped by the current shop. No cross-tenant leakage, ever.
 - The ledger is append-only. Balances are derived, never hand-edited. Corrections are new reversing entries.
 - Every device event (purchase, sale, loan-out, return, repair in/out, verification) is an immutable row in `device_events`. The device history screen is built from these.
-- UI is bilingual: English label small on top, Urdu label large below, Urdu always RTL, numbers always Latin digits. Big buttons, step-by-step flows, auto-calculated totals.
+- UI shows **one language at a time** (owner rule 2026-10-22): Urdu mode = only Urdu (Nastaliq, RTL), English mode = only English. Never stack EN + UR labels. Numbers always Latin digits. Big buttons, step-by-step flows, auto-calculated totals. Printed documents (receipt, declaration) may stay bilingual.
 - **UI must feel premium and modern.** The v1 look was rejected by ~50 shopkeepers ("not modern, not luxury"). Follow `docs/11-DESIGN-SYSTEM.md` (once approved); no emoji icons, no default-blue buttons, no bare white cards. New screens are built only from the design-system components.
 - All user-visible strings go through i18n (`en.json` / `ur.json`). No hard-coded UI text.
 - Write tests for business logic (ledger, balances, device state machine, tax). Run them before committing.

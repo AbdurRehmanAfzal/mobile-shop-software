@@ -1,19 +1,29 @@
 import { render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
+import { setLocale } from '@/i18n'
 import { BiButton, BiLabel } from './Bilingual'
 
-describe('BiLabel', () => {
-  it('renders both English and Urdu for an i18n key, Urdu in RTL', () => {
+afterEach(() => setLocale('ur'))
+
+describe('BiLabel (one language at a time)', () => {
+  it('shows only Urdu in Urdu mode, RTL', () => {
+    setLocale('ur')
     render(<BiLabel text="nav.sale" />)
-    expect(screen.getByText('Sale')).toBeInTheDocument()
     const ur = screen.getByText('فروخت')
     expect(ur).toHaveAttribute('dir', 'rtl')
     expect(ur).toHaveAttribute('lang', 'ur')
+    expect(screen.queryByText('Sale')).not.toBeInTheDocument()
   })
-  it('renders explicit pairs', () => {
+  it('shows only English in English mode, LTR', () => {
+    setLocale('en')
+    render(<BiLabel text="nav.sale" />)
+    expect(screen.getByText('Sale')).toHaveAttribute('dir', 'ltr')
+    expect(screen.queryByText('فروخت')).not.toBeInTheDocument()
+  })
+  it('accepts explicit pairs', () => {
+    setLocale('en')
     render(<BiLabel text={{ en: 'Hello', ur: 'سلام' }} />)
     expect(screen.getByText('Hello')).toBeInTheDocument()
-    expect(screen.getByText('سلام')).toBeInTheDocument()
   })
 })
 

@@ -187,3 +187,11 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **State of Phase 1 backend**: parties, ledger, devices/events, verification, purchases, sales, payments, loans, returns all done with tests. Remaining Phase 1 item is the **frontend screens** on the approved design system (parties, stock + device detail/history + IMEI search, purchase wizard with verification, sale wizard with receipt, payments, loans, returns). Phase 2 then adds exchange, accessories stock, repairs, expenses/cash book, dashboard/reports, tax report.
 
 **Next**: Frontend Phase 1 screens, starting with the API client types + parties list/create, then stock/device detail/history, then purchase and sale wizards.
+
+---
+
+## 2026-10-22 — Session 13: owner review of the frontend
+**Feedback**: (1) Vite dev server had a stale Tailwind config → restarted. (2) "Urdu mein poora Urdu, English mein sirf English, mix nahi" → stacked bilingual labels removed.
+**Done**: `Bilingual.tsx` now renders only the active language via `useLang()` (BiLabel/BiButton/BiInput/BiAlert/BiSegmented); Shell shows `name_ur` in Urdu mode; dashboard/auth cleaned of eyebrow props; tests updated (Urdu-only vs English-only). CLAUDE.md, docs/02 FR-PLT-01 and docs/11 updated.
+**Verified**: `tsc` clean, `vitest` green, `vite build` ok.
+**Next**: unchanged — Phase 1 frontend screens.

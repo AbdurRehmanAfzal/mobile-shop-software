@@ -2,7 +2,7 @@
 
 Status: **Approved v1.0 · 2026-10-22.** Owner decision: "do what is best for now; give both light and dark." Direction A "Emerald & Gold" as shown in the mockup
 https://claude.ai/artifact/AEWv7XqFN62dXjuNWmGnad (5 phone screens: dashboard light, used-mobile purchase/verification, sale confirm, device history, dashboard dark).
-This is the source of truth for `frontend/src/index.css` (CSS variables), `frontend/tailwind.config.js` and `frontend/src/components/Bilingual.tsx`. Decisions: **light is the default**, dark and "system" are user-selectable under More → Appearance; **emerald** accent; the **English eyebrow stays on every label** until a shopkeeper test says otherwise. Shopkeeper-group feedback is still welcome and may produce v1.1.
+This is the source of truth for `frontend/src/index.css` (CSS variables), `frontend/tailwind.config.js` and `frontend/src/components/Bilingual.tsx`. Decisions: **light is the default**, dark and "system" are user-selectable under More → Appearance; **emerald** accent; **one language at a time**: Urdu mode shows only Urdu, English mode only English (owner feedback 2026-10-22 after seeing the stacked labels). Shopkeeper-group feedback is still welcome and may produce v1.1.
 
 ## Why this direction
 - Shopkeepers judged v1 "not modern, not luxury" (FR-PLT-08). The cues of "expensive" on a phone are: deep dark surfaces with one warm metallic accent, generous radius, soft real shadows, confident large numbers, and Urdu set in Nastaliq at display size rather than as an afterthought.
@@ -27,7 +27,7 @@ Rules: one accent per screen region; gold only for money/highlights, never for l
 ## Typography
 - Latin UI: **Manrope** 500/600/700/800. Numbers: 800, `font-variant-numeric: tabular-nums`, letter-spacing −0.02em. Always Latin digits.
 - Urdu: **Noto Nastaliq Urdu** 400/700, `direction: rtl`, `unicode-bidi: isolate`, line-height 1.9. Urdu is the larger line in every bilingual pair.
-- Eyebrow (English label): 10px, uppercase, letter-spacing .12em, 700, muted colour.
+- English mode: Manrope 500–700 at the scale below; Urdu mode: Nastaliq one step larger. No English eyebrow above Urdu text.
 - Scale: eyebrow 10 · caption 11–12 · body 13–14 · Urdu body 14–15 · title 17–20 · Urdu title 18–20 · stat 22 · hero number 38.
 
 ## Shape, depth, motion
@@ -55,4 +55,4 @@ Tap targets ≥44px; text contrast ≥4.5:1 (muted #5C655F on white = 5.9:1; #A9
 ## Resolved questions (2026-10-22)
 1. Default: light; dark and system available to every user.
 2. Accent: emerald (#136F56); gold reserved for money/highlights.
-3. English eyebrow on every label for now.
+3. Superseded 2026-10-22: no stacked EN+UR labels; the UI renders only the active language. `useLang()` in `Bilingual.tsx` picks the string and the type style.

@@ -5,36 +5,16 @@ import { useAuth } from '@/lib/auth'
 import { formatMoney } from '@/lib/format'
 import { BiLabel } from '@/components/Bilingual'
 
-function Tile({
-  labelKey,
-  value,
-  sub,
-  tone = 'text-ink',
-  icon,
-}: {
-  labelKey: string
-  value: string
-  sub?: string
-  tone?: string
-  icon: ReactNode
-}) {
+function Tile({ labelKey, value, tone = 'text-ink', icon }: { labelKey: string; value: string; tone?: string; icon: ReactNode }) {
   return (
     <div className="card flex flex-col gap-1.5">
-      <div className="flex items-center justify-between">
-        <span className="eyebrow text-muted" dir="ltr">
-          {labelKey.split('.').pop()}
-        </span>
+      <div className="flex items-center justify-between gap-2">
+        <BiLabel text={labelKey} size="sm" tone="text-muted" />
         {icon}
       </div>
       <div className={`num text-[22px] ${tone}`} dir="ltr">
         {value}
       </div>
-      <BiLabel text={labelKey} size="sm" tone="text-muted" className="-mt-1" eyebrowTone="hidden" />
-      {sub ? (
-        <div className="ur -mt-1 text-sm text-muted" dir="rtl">
-          {sub}
-        </div>
-      ) : null}
     </div>
   )
 }
@@ -44,20 +24,20 @@ function Action({ to, labelKey, icon, primary = false }: { to: string; labelKey:
   return (
     <Link to={to} className={`tap flex min-h-[76px] flex-col items-center justify-center gap-1.5 rounded-2xl px-1 py-3 ${cls}`}>
       {icon}
-      <BiLabel text={labelKey} size="sm" align="center" tone={primary ? 'text-white' : 'text-ink'} eyebrowTone="hidden" />
+      <BiLabel text={labelKey} size="sm" align="center" tone={primary ? 'text-white' : 'text-ink'} />
     </Link>
   )
 }
 
 export default function DashboardPage() {
   const me = useAuth((s) => s.me)
-  // Real figures arrive with the ledger/devices modules (Phase 1). Zeros are honest placeholders.
+  // Real figures arrive with the reports module. Zeros are honest placeholders.
   return (
     <div className="flex flex-col gap-4">
       <section className="hero flex flex-col gap-3.5 p-5">
-        <div className="flex items-start justify-between">
-          <BiLabel text="dashboard.todaySales" size="lg" tone="text-hero-text" eyebrowTone="text-gold-text" />
-          <span className="eyebrow rounded-full border border-gold/40 bg-gold/15 px-2.5 py-1.5 text-gold-text" dir="ltr">
+        <div className="flex items-start justify-between gap-3">
+          <BiLabel text="dashboard.todaySales" size="lg" tone="text-gold-text" bold />
+          <span className="rounded-full border border-gold/40 bg-gold/15 px-2.5 py-1 text-xs font-bold text-gold-text" dir="auto">
             {me?.user.name}
           </span>
         </div>
@@ -67,7 +47,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-3 gap-2.5">
           {(['dashboard.sales', 'dashboard.cashIn', 'dashboard.profit'] as const).map((k, i) => (
             <div key={k} className="flex flex-col gap-0.5 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5">
-              <BiLabel text={k} size="sm" tone="text-hero-text/80" eyebrowTone="text-hero-text/60" />
+              <BiLabel text={k} size="sm" tone="text-hero-text/75" />
               <span className={`num text-lg ${i === 2 ? 'text-gold-text' : ''}`} dir="ltr">
                 0
               </span>
@@ -77,10 +57,10 @@ export default function DashboardPage() {
       </section>
 
       <section className="grid grid-cols-2 gap-3">
-        <Tile labelKey="dashboard.receivable" value={formatMoney(0)} tone="text-receivable" icon={<ArrowUp size={18} className="text-receivable" />} />
-        <Tile labelKey="dashboard.payable" value={formatMoney(0)} tone="text-payable" icon={<ArrowDown size={18} className="text-payable" />} />
-        <Tile labelKey="dashboard.inStock" value="0" icon={<Smartphone size={18} className="text-emerald" />} />
-        <Tile labelKey="dashboard.repairs" value="0" icon={<Wrench size={18} className="text-emerald" />} />
+        <Tile labelKey="dashboard.receivable" value={formatMoney(0)} tone="text-receivable" icon={<ArrowUp size={18} className="shrink-0 text-receivable" />} />
+        <Tile labelKey="dashboard.payable" value={formatMoney(0)} tone="text-payable" icon={<ArrowDown size={18} className="shrink-0 text-payable" />} />
+        <Tile labelKey="dashboard.inStock" value="0" icon={<Smartphone size={18} className="shrink-0 text-emerald" />} />
+        <Tile labelKey="dashboard.repairs" value="0" icon={<Wrench size={18} className="shrink-0 text-emerald" />} />
       </section>
 
       <section className="flex flex-col gap-2.5">
@@ -94,11 +74,11 @@ export default function DashboardPage() {
       </section>
 
       <section className="card flex items-center gap-3 p-3">
-        <span className="well h-9 w-9 bg-emerald-tint text-emerald-deep">
+        <span className="well h-9 w-9 shrink-0 bg-emerald-tint text-emerald-deep">
           <ShieldCheck size={18} />
         </span>
         <BiLabel text="dashboard.comingSoon" size="md" className="flex-1" />
-        <ChevronRight size={18} className="text-muted" />
+        <ChevronRight size={18} className="shrink-0 text-muted" />
       </section>
     </div>
   )

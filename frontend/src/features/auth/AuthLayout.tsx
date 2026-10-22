@@ -11,8 +11,8 @@ export default function AuthLayout({ title, children }: { title: string; childre
             <path d="M11 18h2" />
           </svg>
         </span>
-        <BiLabel text="app.name" size="xl" bold align="center" tone="text-hero-text" eyebrowTone="text-gold-text" />
-        <BiLabel text="app.tagline" size="sm" align="center" tone="text-hero-text/75" eyebrowTone="hidden" />
+        <BiLabel text="app.name" size="xl" bold align="center" tone="text-hero-text" />
+        <BiLabel text="app.tagline" size="sm" align="center" tone="text-hero-text/75" />
       </div>
       <div className="-mt-4 px-5 pb-10">
         <div className="card p-5 shadow-hero">

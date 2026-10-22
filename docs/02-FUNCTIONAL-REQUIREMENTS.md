@@ -105,7 +105,7 @@ Priority: **P0** = needed for first paying shop, **P1** = within 3 months after,
 ## Module K — Platform (`FR-PLT`)
 | ID | Requirement | Pri |
 |---|---|---|
-| FR-PLT-01 | Bilingual UI (EN/UR, RTL Urdu, Latin digits), switchable per user; Urdu is the default. | P0 |
+| FR-PLT-01 | Bilingual UI (EN/UR, RTL Urdu, Latin digits), switchable per user; Urdu is the default. **One language at a time** — never mixed on screen. | P0 |
 | FR-PLT-02 | PWA: installable on Android/iOS/desktop, cached shell, works on slow networks. | P0 |
 | FR-PLT-03 | Native Android/iOS builds from the same codebase via Capacitor (camera, share, print). | P1 |
 | FR-PLT-04 | Local/offline install: same backend + SQLite on a shop PC, single tenant, no internet required. | P1 |
