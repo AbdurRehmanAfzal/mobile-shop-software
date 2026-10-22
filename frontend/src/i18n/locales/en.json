@@ -67,7 +67,15 @@
     "repairs": "Repairs",
     "accessories": "Accessories",
     "exchange": "Exchange",
-    "dayClose": "Close the day"
+    "dayClose": "Close the day",
+    "daily": "Daily work",
+    "records": "Records",
+    "stockGroup": "Stock",
+    "accounts": "Money & reports",
+    "admin": "Shop & staff",
+    "app": "App",
+    "stock": "Stock list",
+    "openingStock": "Old stock"
   },
   "common": {
     "save": "Save",

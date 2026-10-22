@@ -67,7 +67,15 @@
     "repairs": "مرمت",
     "accessories": "لوازمات",
     "exchange": "ایکسچینج",
-    "dayClose": "دن بند کریں"
+    "dayClose": "دن بند کریں",
+    "daily": "روزمرہ کام",
+    "records": "ریکارڈ",
+    "stockGroup": "اسٹاک",
+    "accounts": "حساب اور رپورٹس",
+    "admin": "دکان اور عملہ",
+    "app": "ایپ",
+    "stock": "اسٹاک لسٹ",
+    "openingStock": "پرانا اسٹاک"
   },
   "common": {
     "save": "محفوظ کریں",
