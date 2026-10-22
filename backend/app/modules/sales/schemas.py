@@ -69,6 +69,7 @@ class SaleLineOut(BaseModel):
     warranty_days: int
     accessories_given: list[str]
     accessories_pending: list[dict]
+    returned_at: dt.datetime | None = None
 
 
 class SaleOut(BaseModel):
@@ -89,6 +90,7 @@ class SaleOut(BaseModel):
     paid: Decimal
     balance_due: Decimal
     cost_total: Decimal | None
+    returned_total: Decimal
     profit: Decimal | None
     cash_account_id: uuid.UUID | None
     status: InvoiceStatus

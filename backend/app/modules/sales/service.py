@@ -355,7 +355,9 @@ def to_out(db: Session, inv: Invoice, show_cost: bool) -> dict:
         **{c.name: getattr(inv, c.name) for c in Invoice.__table__.columns},
         "party_name": party.name if party else None,
         "party_balance_after": party.balance if party else None,
-        "balance_due": money(inv.total - inv.paid) if active else ZERO,
+        "balance_due": money(max(ZERO, inv.total - inv.returned_total - inv.paid))
+        if active
+        else ZERO,
         "cost_total": inv.cost_total if show_cost else None,
         "profit": money(inv.total - inv.tax_amount - inv.cost_total) if show_cost else None,
         "lines": lines,

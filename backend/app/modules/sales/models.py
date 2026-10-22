@@ -5,7 +5,17 @@ import uuid
 from decimal import Decimal
 from enum import StrEnum
 
-from sqlalchemy import JSON, Date, ForeignKey, Integer, String, Text, UniqueConstraint, Uuid
+from sqlalchemy import (
+    JSON,
+    Date,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+    Uuid,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import ZERO, Base, ShopScoped, Timestamped, UUIDPk
@@ -36,6 +46,7 @@ class Invoice(UUIDPk, ShopScoped, Timestamped, Base):
     total: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
     paid: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
     cost_total: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
+    returned_total: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
     cash_account_id: Mapped[uuid.UUID | None] = mapped_column(
         Uuid, ForeignKey("cash_accounts.id", ondelete="RESTRICT")
     )
@@ -86,5 +97,6 @@ class InvoiceLine(UUIDPk, Base):
     warranty_days: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     accessories_given: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
     accessories_pending: Mapped[list[dict]] = mapped_column(JSON, nullable=False, default=list)
+    returned_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
 
     invoice: Mapped[Invoice] = relationship(back_populates="lines")

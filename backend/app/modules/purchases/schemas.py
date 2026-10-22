@@ -57,6 +57,7 @@ class LineOut(BaseModel):
     unit_cost: Decimal
     discount_share: Decimal
     net_cost: Decimal
+    returned_at: dt.datetime | None = None
 
 
 class PurchaseOut(BaseModel):
@@ -72,6 +73,7 @@ class PurchaseOut(BaseModel):
     discount: Decimal
     total: Decimal
     paid: Decimal
+    returned_total: Decimal
     balance_due: Decimal
     cash_account_id: uuid.UUID | None
     status: PurchaseStatus

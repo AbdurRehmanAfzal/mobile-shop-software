@@ -1,11 +1,12 @@
 """Purchase documents (FR-TXN-03): devices and misc items bought from a supplier, walk-in, another shop or as trade-in."""
 
+import datetime as dt
 import uuid
 from datetime import date
 from decimal import Decimal
 from enum import StrEnum
 
-from sqlalchemy import Date, ForeignKey, Integer, String, Text, UniqueConstraint, Uuid
+from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import ZERO, Base, ShopScoped, Timestamped, UUIDPk
@@ -37,6 +38,7 @@ class Purchase(UUIDPk, ShopScoped, Timestamped, Base):
     discount: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
     total: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
     paid: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
+    returned_total: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
     cash_account_id: Mapped[uuid.UUID | None] = mapped_column(
         Uuid, ForeignKey("cash_accounts.id", ondelete="RESTRICT")
     )
@@ -77,5 +79,6 @@ class PurchaseLine(UUIDPk, Base):
     net_cost: Mapped[Decimal] = mapped_column(
         default=ZERO, nullable=False
     )  # qty*unit_cost - discount_share
+    returned_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
 
     purchase: Mapped[Purchase] = relationship(back_populates="lines")

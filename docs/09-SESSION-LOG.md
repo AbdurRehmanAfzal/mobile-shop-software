@@ -171,3 +171,19 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Design note**: a *void* is a full reversal (money refunded). The "device came back after partial payment, keep the 500 as credit/income" choice belongs to the returns module (FR-TXN-08), next.
 
 **Next**: Returns (sale return with refund / keep as credit / keep as income; purchase return to supplier), then exchange (FR-TXN-07), then the frontend Phase 1 screens on the design system.
+
+---
+
+## 2026-10-22 — Session 12: returns (Phase 1 backend core complete)
+**Done**
+- `modules/returns`: `ReturnDoc` (RET-000001 from `shops.next_return_no`; kind sale/purchase; document ref; party; amount; settlement refund/credit/income; refund_amount; kept_amount; cash account; reason; lines JSON; ledger group).
+- `sale_return()`: selected invoice lines (not already returned); computes the customer's excess paid for the returned value; settlement **refund** (Dr party / Cr cash), **credit** (balance stays on account), **income** (Dr party / Cr other_income — the "keep the 500" case); ledger reverses sales net, tax share and COGS/inventory per line; SALE_RETURNED event with settlement details; accessory flags reset; invoice `returned_total`, status → returned when all lines back; `balance_due = max(0, total − returned − paid)`.
+- `purchase_return()`: selected purchase lines whose devices are in stock/faulty; Dr party / Cr inventory (or purchases for misc); optional supplier cash refund; RETURNED_TO_SUPPLIER event; purchase `returned_total`.
+- Cash sales without a customer are returned by voiding the invoice (explicit error).
+- Alembic `6e125ad21486` (returns, returned_total/returned_at columns, `next_return_no`).
+
+**Verified**: `pytest -q` → 84 passed; `ruff` clean.
+
+**State of Phase 1 backend**: parties, ledger, devices/events, verification, purchases, sales, payments, loans, returns all done with tests. Remaining Phase 1 item is the **frontend screens** on the approved design system (parties, stock + device detail/history + IMEI search, purchase wizard with verification, sale wizard with receipt, payments, loans, returns). Phase 2 then adds exchange, accessories stock, repairs, expenses/cash book, dashboard/reports, tax report.
+
+**Next**: Frontend Phase 1 screens, starting with the API client types + parties list/create, then stock/device detail/history, then purchase and sale wizards.

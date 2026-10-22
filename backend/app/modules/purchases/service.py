@@ -260,7 +260,9 @@ def to_out(db: Session, p: Purchase) -> dict:
     return {
         **{c.name: getattr(p, c.name) for c in Purchase.__table__.columns},
         "party_name": party.name if party else None,
-        "balance_due": money(p.total - p.paid) if p.status == PurchaseStatus.POSTED else ZERO,
+        "balance_due": money(max(ZERO, p.total - p.returned_total - p.paid))
+        if p.status == PurchaseStatus.POSTED
+        else ZERO,
         "lines": lines,
     }
 
