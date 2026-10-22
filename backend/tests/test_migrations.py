@@ -26,12 +26,16 @@ def test_upgrade_head_matches_models(monkeypatch):
         command.upgrade(alembic_cfg, "head")
 
         eng = create_engine(url)
-        migrated = {t for t in inspect(eng).get_table_names() if t != "alembic_version"}
-        expected = set(Base.metadata.tables.keys())
-        assert migrated == expected, f"missing={expected - migrated} extra={migrated - expected}"
+        try:
+            migrated = {t for t in inspect(eng).get_table_names() if t != "alembic_version"}
+            expected = set(Base.metadata.tables.keys())
+            assert migrated == expected, (
+                f"missing={expected - migrated} extra={migrated - expected}"
+            )
 
-        for table in expected:
-            cols_db = {c["name"] for c in inspect(eng).get_columns(table)}
-            cols_model = {c.name for c in Base.metadata.tables[table].columns}
-            assert cols_db == cols_model, f"{table}: db={cols_db ^ cols_model}"
-        eng.dispose()
+            for table in expected:
+                cols_db = {c["name"] for c in inspect(eng).get_columns(table)}
+                cols_model = {c.name for c in Base.metadata.tables[table].columns}
+                assert cols_db == cols_model, f"{table}: db={cols_db ^ cols_model}"
+        finally:
+            eng.dispose()

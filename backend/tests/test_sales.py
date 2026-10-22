@@ -179,9 +179,7 @@ def test_unverified_used_device_blocked_then_override(client, owner, cat):
 def test_device_not_in_stock_cannot_be_sold(owner, cat):
     d = _boxpack(owner, cat)
     shop_b = _party(owner, name="Bilal Mobiles", phone="03001111111", kinds=("shop",))
-    owner.post(
-        f"/api/v1/devices/{d['id']}/events", json={"type": "loaned_out", "party_id": shop_b["id"]}
-    )
+    loan = owner.post("/api/v1/loans", json={"device_id": d["id"], "party_id": shop_b["id"]}).json()
     r = owner.post(
         "/api/v1/sales",
         json={
@@ -191,7 +189,7 @@ def test_device_not_in_stock_cannot_be_sold(owner, cat):
         },
     )
     assert r.status_code == 409 and r.json()["error"]["code"] == "device_on_loan"
-    owner.post(f"/api/v1/devices/{d['id']}/events", json={"type": "loan_returned"})
+    owner.post(f"/api/v1/loans/{loan['id']}/return", json={})
     owner.post(
         "/api/v1/sales", json={"devices": [{"device_id": d["id"], "price": 1000}], "paid": 1000}
     )

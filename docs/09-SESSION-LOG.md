@@ -156,3 +156,18 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Verified**: `pytest -q` → 72 passed; `ruff` clean.
 
 **Next**: Payments in/out with allocation (FR-TXN-05) → invoice `paid`/status updates; loans (FR-TXN-06) out/settle (return or sale to the shop); returns (FR-TXN-08) partial sale/purchase returns with refund / keep-as-credit / keep-as-income choice.
+
+---
+
+## 2026-10-22 — Session 11: payments and loans
+**Done**
+- `modules/payments`: `Payment` (PAY-000001 from `shops.next_payment_no`; party; direction in/out; amount; cash account; method cash/bank/easypaisa/jazzcash/card/other; reference; allocations JSON; status posted/voided; ledger group). `create_payment()`: explicit allocations (document must belong to the party, direction must match, cannot exceed amount or document due) or FIFO auto-allocation across open invoices (in) / unpaid purchases (out); leftover stays unallocated (advance → negative party balance). Ledger: in = Dr cash / Cr party; out = Dr party / Cr cash. `void_payment()` (VOID) undoes allocations and reverses the ledger.
+- `modules/loans`: `Loan` (device, shop party, out_at, expected_back_at, status out/returned/sold, invoice_id). `create_loan()` → LOANED_OUT (document loan), `return_loan()` → LOAN_RETURNED, `sell_loan()` → `create_sale(..., loan=loan)` (sale allowed for an on-loan device only to the holding shop; invoice carries `loan_id`). `GET /loans` with `overdue` flag.
+- Devices generic events endpoint now rejects loaned_out/loan_returned (`use_loans_endpoint`) so loan rows are the single source.
+- Alembic `68c40ffb1e1f` (payments, loans, `shops.next_payment_no` server_default 1). `test_migrations` disposes the engine in `finally` (Windows file lock).
+
+**Verified**: `pytest -q` → 79 passed; `ruff` clean. The Nokia chain (S1–S3) runs end-to-end through the API: walk-in purchase + verification → loan to Shop B → settle as sale (1,000, paid 500) → void when it comes back → sale to Sara 1,500 → history shows all six events with party names; cash ends at +500.
+
+**Design note**: a *void* is a full reversal (money refunded). The "device came back after partial payment, keep the 500 as credit/income" choice belongs to the returns module (FR-TXN-08), next.
+
+**Next**: Returns (sale return with refund / keep as credit / keep as income; purchase return to supplier), then exchange (FR-TXN-07), then the frontend Phase 1 screens on the design system.

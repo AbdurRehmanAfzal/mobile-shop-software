@@ -47,7 +47,7 @@ def status_for(total: Decimal, paid: Decimal) -> str:
     return InvoiceStatus.OPEN
 
 
-def create_sale(db: Session, shop_id: uuid.UUID, ctx, data: SaleCreate) -> Invoice:
+def create_sale(db: Session, shop_id: uuid.UUID, ctx, data: SaleCreate, loan=None) -> Invoice:
     user_id = ctx.id
     shop = db.get(Shop, shop_id)
     party: Party | None = None
@@ -62,7 +62,12 @@ def create_sale(db: Session, shop_id: uuid.UUID, ctx, data: SaleCreate) -> Invoi
     devices: list[Device] = []
     for dl in data.devices:
         device = get_device(db, shop_id, dl.device_id)
-        if device.status == DeviceStatus.ON_LOAN:
+        if device.status == DeviceStatus.ON_LOAN and not (
+            loan is not None
+            and loan.device_id == device.id
+            and party is not None
+            and device.current_party_id == party.id
+        ):
             raise Conflict(
                 code="device_on_loan",
                 message_en="This device is out on loan; settle the loan instead",
@@ -76,7 +81,11 @@ def create_sale(db: Session, shop_id: uuid.UUID, ctx, data: SaleCreate) -> Invoi
                 message_en="Device is with another customer for approval",
                 message_ur="موبائل کسی اور گاہک کے پاس پسند کے لیے ہے",
             )
-        if device.status not in (DeviceStatus.IN_STOCK, DeviceStatus.WITH_CUSTOMER_FOR_APPROVAL):
+        if device.status not in (
+            DeviceStatus.IN_STOCK,
+            DeviceStatus.WITH_CUSTOMER_FOR_APPROVAL,
+            DeviceStatus.ON_LOAN,
+        ):
             raise Conflict(
                 code="device_not_in_stock",
                 message_en=f"Device is {device.status}",
@@ -146,6 +155,7 @@ def create_sale(db: Session, shop_id: uuid.UUID, ctx, data: SaleCreate) -> Invoi
         status=status_for(total, paid),
         notes=data.notes,
         created_by=user_id,
+        loan_id=loan.id if loan is not None else None,
     )
     db.add(invoice)
     db.flush()

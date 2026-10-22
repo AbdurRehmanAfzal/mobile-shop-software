@@ -13,7 +13,9 @@ from app.modules.catalogue.router import router as catalogue_router
 from app.modules.devices.router import router as devices_router
 from app.modules.files.router import router as files_router
 from app.modules.ledger.router import router as ledger_router
+from app.modules.loans.router import router as loans_router
 from app.modules.parties.router import router as parties_router
+from app.modules.payments.router import router as payments_router
 from app.modules.purchases.router import router as purchases_router
 from app.modules.sales.router import router as sales_router
 from app.modules.verification.router import router as verification_router
@@ -66,6 +68,8 @@ def create_app() -> FastAPI:
     app.include_router(files_router)
     app.include_router(purchases_router)
     app.include_router(sales_router)
+    app.include_router(payments_router)
+    app.include_router(loans_router)
     return app
 
 

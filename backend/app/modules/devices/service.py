@@ -436,6 +436,12 @@ def raise_event(
             message_en="Use a purchase, sale or return to record this",
             message_ur="یہ کام خریداری، فروخت یا واپسی کے ذریعے کریں",
         )
+    if data.type in (EventType.LOANED_OUT, EventType.LOAN_RETURNED):
+        raise ValidationFailed(
+            code="use_loans_endpoint",
+            message_en="Use the loans screen for amanat",
+            message_ur="امانت کے لیے امانت والی اسکرین استعمال کریں",
+        )
     device = get_device(db, shop_id, device_id)
     if data.type in (EventType.LOANED_OUT, EventType.APPROVAL_OUT):
         if data.party_id is None:

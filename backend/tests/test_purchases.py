@@ -224,9 +224,7 @@ def test_void_blocked_once_device_moved(owner, cat):
         },
     ).json()
     dev_id = p["lines"][0]["device_id"]
-    owner.post(
-        f"/api/v1/devices/{dev_id}/events", json={"type": "loaned_out", "party_id": shop_b["id"]}
-    )
+    owner.post("/api/v1/loans", json={"device_id": dev_id, "party_id": shop_b["id"]})
     r = owner.post(f"/api/v1/purchases/{p['id']}/void", json={"reason": "oops"})
     assert r.status_code == 409 and r.json()["error"]["code"] == "device_changed"
 

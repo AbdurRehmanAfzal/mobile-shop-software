@@ -138,46 +138,45 @@ def test_loan_out_and_return_updates_status_party_and_history(owner, cat):
     d = _stock(owner, cat)
     shop_b = _shop_party(owner)
     customer = _shop_party(owner, phone="03002222222", kinds=("customer",))
-    r = owner.post(
-        f"/api/v1/devices/{d['id']}/events", json={"type": "loaned_out", "party_id": customer["id"]}
-    )
+    r = owner.post("/api/v1/loans", json={"device_id": d["id"], "party_id": customer["id"]})
     assert r.status_code == 422 and r.json()["error"]["code"] == "loan_party_must_be_shop"
     r = owner.post(
-        f"/api/v1/devices/{d['id']}/events",
+        "/api/v1/loans",
         json={
-            "type": "loaned_out",
+            "device_id": d["id"],
             "party_id": shop_b["id"],
             "expected_back_at": "2026-10-30",
-            "note": "gahak ko dikhana hai",
+            "notes": "gahak ko dikhana hai",
         },
     )
     assert r.status_code == 201, r.text
-    assert r.json()["status"] == "on_loan" and r.json()["current_party_name"] == "Bilal Mobiles"
+    loan = r.json()
+    dv = owner.get(f"/api/v1/devices/{d['id']}").json()
+    assert dv["status"] == "on_loan" and dv["current_party_name"] == "Bilal Mobiles"
     assert [x["id"] for x in owner.get("/api/v1/devices", params={"status": "on_loan"}).json()] == [
         d["id"]
     ]
-    r = owner.post(f"/api/v1/devices/{d['id']}/events", json={"type": "loan_returned"})
-    assert (
-        r.status_code == 201
-        and r.json()["status"] == "in_stock"
-        and r.json()["current_party_id"] is None
-    )
+    r = owner.post(f"/api/v1/loans/{loan['id']}/return", json={})
+    assert r.status_code == 200
+    dv = owner.get(f"/api/v1/devices/{d['id']}").json()
+    assert dv["status"] == "in_stock" and dv["current_party_id"] is None
     hist = owner.get(f"/api/v1/devices/{d['id']}/history").json()
     assert [h["type"] for h in hist] == ["purchased", "loaned_out", "loan_returned"]
     assert [h["seq"] for h in hist] == [0, 1, 2]
-    assert (
-        hist[1]["party_name"] == "Bilal Mobiles"
-        and hist[1]["data"]["note"] == "gahak ko dikhana hai"
-    )
+    assert hist[1]["party_name"] == "Bilal Mobiles"
+    assert hist[1]["data"]["note"] == "gahak ko dikhana hai" and hist[1]["document_type"] == "loan"
 
 
 def test_invalid_transition_and_money_events_blocked(owner, cat):
     d = _stock(owner, cat)
-    r = owner.post(f"/api/v1/devices/{d['id']}/events", json={"type": "loan_returned"})
+    r = owner.post(f"/api/v1/devices/{d['id']}/events", json={"type": "approval_returned"})
     assert r.status_code == 409 and r.json()["error"]["code"] == "invalid_transition"
     for t in ("sold", "purchased", "sale_returned", "returned_to_supplier"):
         r = owner.post(f"/api/v1/devices/{d['id']}/events", json={"type": t})
         assert r.status_code == 422 and r.json()["error"]["code"] == "money_event"
+    for t in ("loaned_out", "loan_returned"):
+        r = owner.post(f"/api/v1/devices/{d['id']}/events", json={"type": t})
+        assert r.status_code == 422 and r.json()["error"]["code"] == "use_loans_endpoint"
     r = owner.post(
         f"/api/v1/devices/{d['id']}/events", json={"type": "marked_faulty", "note": "screen dead"}
     )
