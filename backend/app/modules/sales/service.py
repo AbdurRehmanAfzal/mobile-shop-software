@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from app.core.errors import Conflict, Forbidden, NotFound, ValidationFailed
 from app.core.permissions import Cap
 from app.db.base import ZERO, utcnow
+from app.db.refs import user_name
 from app.modules.accessories import service as acc_stock
 from app.modules.audit.service import record_audit
 from app.modules.auth.models import Shop
@@ -387,6 +388,7 @@ def to_out(db: Session, inv: Invoice, show_cost: bool) -> dict:
         **{c.name: getattr(inv, c.name) for c in Invoice.__table__.columns},
         "party_name": party.name if party else None,
         "party_balance_after": party.balance if party else None,
+        "created_by_name": user_name(db, inv.created_by),
         "balance_due": money(max(ZERO, inv.total - inv.returned_total - inv.paid))
         if active
         else ZERO,

@@ -81,6 +81,7 @@ class SaleOut(BaseModel):
     no: str
     party_id: uuid.UUID | None
     party_name: str | None = None
+    created_by_name: str | None = None
     party_balance_after: Decimal | None = None
     date: dt.date
     subtotal: Decimal

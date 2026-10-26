@@ -139,10 +139,14 @@ def upsert(
 def override(
     db: Session, shop_id: uuid.UUID, ctx, device_id: uuid.UUID, reason: str
 ) -> Verification:
-    """Owner/manager accepts the risk and marks the device sellable despite flagged/pending checks."""
-    if not ctx.can(Cap.VERIFY_OVERRIDE):
-        raise Forbidden()
+    """Mark the device sellable without (finishing) the ID check. Anyone who can buy and sell may skip
+    a pending check (owner: "skip when you know the person"); a FLAGGED phone (stolen suspicion)
+    still needs the owner/manager. The skip and who did it go into the device history."""
     device = get_device(db, shop_id, device_id)
+    if not ctx.can(Cap.VERIFY_OVERRIDE) and (
+        not ctx.can(Cap.TRANSACT) or device.verification_status == VerificationStatus.FLAGGED
+    ):
+        raise Forbidden()
     v = latest(db, shop_id, device)
     if v is None:
         v = Verification(shop_id=shop_id, device_id=device.id, cycle_no=device.cycle_no)

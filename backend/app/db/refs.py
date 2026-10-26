@@ -23,3 +23,13 @@ def count_references(db: Session, table: str, row_id: uuid.UUID) -> int:
                     db.scalar(select(func.count()).select_from(t).where(fk.parent == row_id)) or 0
                 )
     return total
+
+
+def user_name(db: Session, user_id: uuid.UUID | None) -> str | None:
+    """Name of the staff member (owner, manager, salesman...) who made a document."""
+    if user_id is None:
+        return None
+    from app.modules.auth.models import User
+
+    u = db.get(User, user_id)
+    return u.name if u else None

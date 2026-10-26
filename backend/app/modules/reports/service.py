@@ -8,6 +8,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.db.base import ZERO
+from app.db.refs import user_name
 from app.modules.devices.models import Device
 from app.modules.devices.state import DeviceStatus, VerificationStatus
 from app.modules.ledger.models import CashAccount, LedgerEntry
@@ -15,7 +16,7 @@ from app.modules.ledger.service import cash_balance, money
 from app.modules.loans.models import Loan, LoanStatus
 from app.modules.parties.models import Party
 from app.modules.repairs.models import CLOSED_STATUSES, RepairJob
-from app.modules.sales.models import Invoice, InvoiceStatus
+from app.modules.sales.models import Invoice, InvoiceLine, InvoiceStatus
 
 
 def _sum(
@@ -285,6 +286,7 @@ def day_report(db: Session, shop_id: uuid.UUID, day: dt.date, show_cost: bool) -
             )
         ).all()
     )
+    sellers: dict = {}
     received = {"cash": ZERO, "bank": ZERO, "easypaisa": ZERO, "jazzcash": ZERO}
     udhaar_given = ZERO
     phones = 0
@@ -334,6 +336,7 @@ def day_report(db: Session, shop_id: uuid.UUID, day: dt.date, show_cost: bool) -
                     "amount": money(line.line_total),
                     "party_name": parties.get(inv.party_id),
                     "how": how,
+                    "sold_by": sellers.setdefault(inv.created_by, user_name(db, inv.created_by)),
                 }
             )
     udhaar_received = money(
@@ -380,4 +383,139 @@ def day_report(db: Session, shop_id: uuid.UUID, day: dt.date, show_cost: bool) -
         "expenses": expenses,
         "profit": profit_and_loss(db, shop_id, day, day)["net_profit"] if show_cost else None,
         "items": items,
+    }
+
+
+def _line_name(db: Session, ln: InvoiceLine, cache: dict) -> tuple[str, str]:
+    """(group key, shop-facing name): phones by brand + model, other items by their name."""
+    from app.modules.catalogue.models import Brand, Model
+
+    if ln.device_id:
+        dev = db.get(Device, ln.device_id)
+        if dev:
+            key = f"m:{dev.model_id}"
+            if key not in cache:
+                cache[key] = (
+                    f"{db.get(Brand, dev.brand_id).name} {db.get(Model, dev.model_id).name}"
+                )
+            return key, cache[key]
+    name = (ln.description or "").strip() or "-"
+    return f"x:{ln.accessory_id or name.lower()}", name
+
+
+def _sold_lines(db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date):
+    return db.execute(
+        select(InvoiceLine, Invoice.date)
+        .join(Invoice, Invoice.id == InvoiceLine.invoice_id)
+        .where(
+            Invoice.shop_id == shop_id,
+            Invoice.date >= d_from,
+            Invoice.date <= d_to,
+            Invoice.status != InvoiceStatus.VOID,
+            InvoiceLine.returned_at.is_(None),
+        )
+    ).all()
+
+
+def top_sellers(
+    db: Session,
+    shop_id: uuid.UUID,
+    d_from: dt.date,
+    d_to: dt.date,
+    show_cost: bool,
+    limit: int = 20,
+) -> list[dict]:
+    """What sold the most in the range: phones grouped by model, other items by name."""
+    cache: dict = {}
+    rows: dict[str, dict] = {}
+    for ln, _ in _sold_lines(db, shop_id, d_from, d_to):
+        key, name = _line_name(db, ln, cache)
+        r = rows.setdefault(
+            key,
+            {"name": name, "kind": ln.kind, "qty": 0, "amount": ZERO, "profit": ZERO},
+        )
+        r["qty"] += ln.qty
+        r["amount"] = money(r["amount"] + ln.line_total)
+        r["profit"] = money(r["profit"] + ln.line_total - ln.tax_share - ln.cost)
+    out = sorted(rows.values(), key=lambda r: (-r["qty"], -r["amount"], r["name"]))[:limit]
+    if not show_cost:
+        for r in out:
+            r["profit"] = None
+    return out
+
+
+def forecast(db: Session, shop_id: uuid.UUID, today: dt.date) -> dict:
+    """A plain estimate, not a promise: next 7 days from the same weekday over the last 4 weeks,
+    and for each phone model how many days the stock lasts at the last 30 days' selling speed."""
+    from app.modules.catalogue.models import Brand, Model
+
+    start = today - dt.timedelta(days=28)
+    daily: dict[dt.date, Decimal] = {}
+    for inv in db.scalars(
+        select(Invoice).where(
+            Invoice.shop_id == shop_id,
+            Invoice.date >= start,
+            Invoice.date < today,
+            Invoice.status != InvoiceStatus.VOID,
+        )
+    ).all():
+        daily[inv.date] = money(daily.get(inv.date, ZERO) + inv.total - inv.returned_total)
+    days = []
+    for i in range(1, 8):
+        d = today + dt.timedelta(days=i)
+        same = [daily.get(d - dt.timedelta(weeks=w), ZERO) for w in range(1, 5)]
+        days.append({"date": d, "expected": money(sum(same, ZERO) / 4)})
+    last7 = sum((v for k, v in daily.items() if k >= today - dt.timedelta(days=7)), ZERO)
+    prev7 = sum(
+        (
+            v
+            for k, v in daily.items()
+            if today - dt.timedelta(days=14) <= k < today - dt.timedelta(days=7)
+        ),
+        ZERO,
+    )
+
+    sold: dict = {}
+    for ln, _ in _sold_lines(db, shop_id, today - dt.timedelta(days=30), today):
+        if ln.device_id:
+            dev = db.get(Device, ln.device_id)
+            if dev:
+                sold[dev.model_id] = sold.get(dev.model_id, 0) + 1
+    stock: dict = {}
+    for dev in db.scalars(
+        select(Device).where(Device.shop_id == shop_id, Device.status == DeviceStatus.IN_STOCK)
+    ).all():
+        stock[dev.model_id] = stock.get(dev.model_id, 0) + 1
+    models = []
+    for model_id in set(sold) | set(stock):
+        m = db.get(Model, model_id)
+        name = f"{db.get(Brand, m.brand_id).name} {m.name}" if m else "-"
+        s30, have = sold.get(model_id, 0), stock.get(model_id, 0)
+        per_day = s30 / 30
+        days_left = round(have / per_day) if per_day else None
+        advice = (
+            "buy_more"
+            if s30 and (days_left is not None and days_left <= 7)
+            else "slow"
+            if have and not s30
+            else "ok"
+        )
+        models.append(
+            {
+                "model_id": model_id,
+                "name": name,
+                "sold_30_days": s30,
+                "in_stock": have,
+                "days_left": days_left,
+                "advice": advice,
+            }
+        )
+    order = {"buy_more": 0, "slow": 2, "ok": 1}
+    models.sort(key=lambda r: (order[r["advice"]], -r["sold_30_days"], r["name"]))
+    return {
+        "next_7_days": days,
+        "next_7_total": money(sum((d["expected"] for d in days), ZERO)),
+        "last_7_days": money(last7),
+        "previous_7_days": money(prev7),
+        "models": models,
     }

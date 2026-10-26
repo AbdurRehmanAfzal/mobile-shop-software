@@ -69,3 +69,19 @@ def day(ctx: Ctx, db: DB, date: dt.date | None = None):
     return _money(
         service.day_report(db, ctx.shop_id, date or dt.date.today(), ctx.can(Cap.VIEW_COST))
     )
+
+
+@router.get("/top-sellers")
+def top_sellers(
+    ctx: Reports, db: DB, date_from: dt.date | None = None, date_to: dt.date | None = None
+):
+    """What sold the most (phones by model, other items by name); profit with VIEW_COST."""
+    return _money(
+        service.top_sellers(db, ctx.shop_id, *_range(date_from, date_to), ctx.can(Cap.VIEW_COST))
+    )
+
+
+@router.get("/forecast")
+def forecast(ctx: Reports, db: DB):
+    """Next 7 days' expected sales and how long each model's stock lasts (an estimate)."""
+    return _money(service.forecast(db, ctx.shop_id, dt.date.today()))

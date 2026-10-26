@@ -69,6 +69,7 @@ class PurchaseOut(BaseModel):
 
     id: uuid.UUID
     no: str
+    created_by_name: str | None = None
     kind: PurchaseKind
     party_id: uuid.UUID
     party_name: str | None = None
