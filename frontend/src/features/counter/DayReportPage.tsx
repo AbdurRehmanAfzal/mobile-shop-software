@@ -42,7 +42,7 @@ export default function DayReportPage() {
             <span className="num text-[30px]" dir="ltr">Rs. {n(data.sales_total)}</span>
           </section>
 
-          <section className="flex flex-col gap-1 rounded-3xl bg-ink px-5 py-4 text-ground">
+          <section className="flex flex-col gap-1 rounded-3xl bg-hero px-5 py-4 text-hero-text">
             <BiLabel text="counter.netCash" size="md" bold tone="text-current" />
             <span className={`num text-[30px] leading-tight ${Number(data.cash_net) < 0 ? 'text-[#F28B82]' : 'text-[#8FE3B4]'}`} dir="ltr">{Number(data.cash_net) < 0 ? '− ' : ''}Rs. {n(data.cash_net)}</span>
             <Why label="counter.cameIn" total={data.money_in} parts={data.came_in} keyPrefix="counter.inWhy" tone="text-[#8FE3B4]" />

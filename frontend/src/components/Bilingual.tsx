@@ -17,6 +17,8 @@ const urSize: Record<Size, string> = { sm: 'text-sm', md: 'text-[15px]', lg: 'te
 export interface BiText {
   en: string
   ur: string
+  /** Roman Urdu; when missing, Roman mode shows the English text */
+  roman?: string
 }
 
 /** Accept either an i18n key or an explicit {en, ur} pair. */
@@ -28,11 +30,13 @@ export function resolve(t: string | BiText): BiText {
 export function useLang() {
   const { i18n } = useTranslation()
   const ur = i18n.language === 'ur'
+  const roman = i18n.language === 'roman'
   return {
     ur,
+    roman,
     pick: (t: string | BiText) => {
       const r = resolve(t)
-      return ur ? r.ur || r.en : r.en || r.ur
+      return ur ? r.ur || r.en : roman ? r.roman || r.en : r.en || r.ur
     },
     cls: (size: Size) => (ur ? `ur ${urSize[size]}` : `${enSize[size]}`),
     dir: ur ? ('rtl' as const) : ('ltr' as const),

@@ -190,3 +190,20 @@ test('reports download as PDF, Excel and CSV', async ({ page }) => {
   const [k] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: /Excel/ }).click()])
   expect(k.suggestedFilename()).toMatch(/^udhaar-khata-.*\.xlsx$/)
 })
+
+test('language and theme buttons in the header, Roman Urdu', async ({ page }) => {
+  await signup(page)
+  await page.getByRole('button', { name: 'Language' }).click()
+  await page.getByRole('button', { name: 'Roman Urdu' }).click()
+  await expect(page.locator('main').getByText('Bechein')).toBeVisible()
+  await expect(page.locator('main').getByText('Stock daalein')).toBeVisible()
+  await page.getByRole('button', { name: 'Dark' }).click()
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+  await page.screenshot({ path: 'test-results/home-roman-dark.png', fullPage: true })
+  await page.getByRole('button', { name: 'Light' }).click()
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
+  // back to Urdu: right to left
+  await page.getByRole('button', { name: 'Zubaan' }).click()
+  await page.getByRole('button', { name: 'اردو' }).click()
+  await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
+})

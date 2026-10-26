@@ -77,7 +77,7 @@ export default function HomePage() {
           <BiLabel text="counter.hisaab" size="lg" bold />
           <DayPicker value={day} onChange={setDay} size="sm" />
         </div>
-        <Link to={`/hisaab?date=${day}`} className="tap flex flex-col gap-3 rounded-3xl bg-ink p-5 text-ground shadow-hero">
+        <Link to={`/hisaab?date=${day}`} className="tap flex flex-col gap-3 rounded-3xl bg-hero p-5 text-hero-text shadow-hero">
           <div className="flex items-end justify-between gap-3">
             <span className="flex flex-col">
               <span className={`opacity-75 ${small_}`}>{pick('counter.sold')} · <span className="num">{rep?.phones_sold ?? 0}</span> {pick('counter.phones')}</span>

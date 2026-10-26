@@ -1,13 +1,22 @@
 /** App frame, "Dukaan counter" (docs/11 v2). Phone: slim header + 5-tab bottom bar.
  *  Laptop (lg+): the same job tiles as a side menu with F-key shortcuts, content beside it. */
 
-import { BtnText } from '@/components/ui'
-import { Bell, BookOpen, CalendarDays, Home, Menu, MoreHorizontal, Smartphone } from 'lucide-react'
-import { useEffect } from 'react'
+import { BtnText, Sheet } from '@/components/ui'
+import { Bell, BookOpen, CalendarDays, Check, Home, Languages, Menu, Moon, MoreHorizontal, Smartphone, Sun } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { useAuth, activeShop } from '@/lib/auth'
-import { useLang } from '@/components/Bilingual'
+import { BiLabel, useLang, type BiText } from '@/components/Bilingual'
+import { LOCALES, setLocale, type Locale } from '@/i18n'
+import { useTheme } from '@/lib/theme'
 import { JOBS } from '@/features/counter/jobs'
+
+/** each language's name written in itself, so anyone can find their own */
+const LANG_NAMES: Record<Locale, BiText> = {
+  ur: { en: 'اردو', ur: 'اردو', roman: 'اردو' },
+  roman: { en: 'Roman Urdu', ur: 'Roman Urdu', roman: 'Roman Urdu' },
+  en: { en: 'English', ur: 'English', roman: 'English' },
+}
 
 const tabs = [
   { to: '/', key: 'nav.home', Icon: Home },
@@ -20,7 +29,12 @@ const tabs = [
 export default function Shell() {
   const shop = useAuth(activeShop)
   const nav = useNavigate()
-  const { ur, pick, cls, dir } = useLang()
+  const { ur, roman, pick, cls, dir } = useLang()
+  const locale: Locale = ur ? 'ur' : roman ? 'roman' : 'en'
+  const [langOpen, setLangOpen] = useState(false)
+  const theme = useTheme((s) => s.theme)
+  const setTheme = useTheme((s) => s.setTheme)
+  const dark = theme === 'dark' || (theme === 'system' && window.matchMedia?.('(prefers-color-scheme: dark)').matches)
   const shopName = ur ? shop?.name_ur || shop?.name || 'موبائل شاپ' : shop?.name || 'Mobile Shop'
 
   // counter shortcuts on a laptop keyboard (F5 is left alone: it reloads the page)
@@ -38,9 +52,18 @@ export default function Shell() {
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-ground lg:max-w-6xl">
       <header className="print:hidden sticky top-0 z-10 flex items-center gap-3 bg-ground/90 px-5 pb-2 pt-[max(14px,env(safe-area-inset-top))] backdrop-blur">
-        <NavLink to="/" className={`min-w-0 flex-1 truncate ${ur ? 'ur text-xl font-bold' : 'text-xl font-extrabold tracking-[-0.01em]'}`} dir={dir}>
+        <NavLink to="/" className={`min-w-0 flex-1 line-clamp-2 ${ur ? 'ur text-lg font-bold leading-snug' : 'text-lg font-extrabold leading-tight tracking-[-0.01em]'}`} dir={dir}>
           {shopName}
         </NavLink>
+        <button type="button" aria-label={pick('more.language')} onClick={() => setLangOpen(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border border-line bg-surface px-1.5 py-1 text-ink">
+          <Languages size={20} strokeWidth={1.75} />
+          <BtnText k={locale === 'roman' ? { en: 'Roman', ur: 'Roman', roman: 'Roman' } : LANG_NAMES[locale]} />
+        </button>
+        {/* shows the mode it switches to: a moon to go dark, a sun to go light */}
+        <button type="button" aria-label={pick(dark ? 'more.themeLight' : 'more.themeDark')} onClick={() => setTheme(dark ? 'light' : 'dark')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border border-line bg-surface px-1.5 py-1 text-ink">
+          {dark ? <Sun size={20} strokeWidth={1.75} /> : <Moon size={20} strokeWidth={1.75} />}
+          <BtnText k={dark ? 'more.themeLight' : 'more.themeDark'} />
+        </button>
         <button type="button" aria-label={pick('counter.messages')} onClick={() => nav('/more/notifications')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface text-ink">
           <Bell size={20} strokeWidth={1.75} />
         <BtnText k={'counter.messages'} /></button>
@@ -90,6 +113,17 @@ export default function Shell() {
           ))}
         </ul>
       </nav>
+
+      <Sheet open={langOpen} onClose={() => setLangOpen(false)} title="more.language">
+        <div className="flex flex-col gap-2.5">
+          {LOCALES.map((l) => (
+            <button key={l} type="button" aria-pressed={l === locale} onClick={() => { setLocale(l); setLangOpen(false) }} className={`tap flex min-h-16 items-center justify-between rounded-3xl border-2 px-5 ${l === locale ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'}`}>
+              <BiLabel text={LANG_NAMES[l]} size="xl" bold tone="text-current" className={l === 'ur' ? 'ur' : ''} />
+              {l === locale ? <Check size={22} /> : null}
+            </button>
+          ))}
+        </div>
+      </Sheet>
     </div>
   )
 }

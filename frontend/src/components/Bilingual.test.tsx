@@ -33,3 +33,17 @@ describe('BiButton', () => {
     expect(screen.getByRole('button')).toBeDisabled()
   })
 })
+
+describe('Roman Urdu', () => {
+  it('shows Urdu in Latin letters, left to right', () => {
+    setLocale('roman')
+    render(<BiLabel text="counter.sell" />)
+    expect(screen.getByText('Bechein')).toHaveAttribute('dir', 'ltr')
+    expect(screen.queryByText('Sell')).not.toBeInTheDocument()
+  })
+  it('falls back to English for a pair without roman', () => {
+    setLocale('roman')
+    render(<BiLabel text={{ en: 'Hello', ur: 'سلام' }} />)
+    expect(screen.getByText('Hello')).toBeInTheDocument()
+  })
+})
