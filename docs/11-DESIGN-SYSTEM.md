@@ -1,4 +1,41 @@
-# 11 — Design System v1.0 (approved 2026-10-22)
+# 11 — Design System v2.0 "Dukaan counter" (approved 2026-10-26)
+
+Status: **Approved v2.0 · 2026-10-26** (ADR-009). Mockup: https://claude.ai/artifact/AyT6sqrTu2u1BTHqowjNqH (home UR/EN, 3-step sale, udhaar khata, stock worth, day hisaab, laptop counter).
+Why: owner + 10 testers rejected v1.x as "not easy, looks like Easypaisa (a payment app)". Users are not technical: every screen answers one plain question in shop words.
+
+## Principles
+1. **One job = one colour = one word.** Sell (green), Add stock (blue), Udhaar (amber), Stock (violet), Repair (teal), Expense (rose). The same colour is used for that job's tile, side-menu item, headers and summary cards.
+2. **Answers on the home screen.** Any day's sale / udhaar given / cash in (Today · Yesterday · Date), I will get / I have to give, stock worth in rupees and lakh. No hidden amounts, no eye toggle.
+3. **Three steps max** for everyday work (sale: which phone → how much & how paid → done). Rare options (discount, warranty, box/charger, customer on a cash sale) sit behind one "more options" link.
+4. **Shop words, not accounting words**: udhaar, lena/dena, "paise mile / paise diye", "stock daalein", "ID card check" (not ledger, party, verification, receivable).
+5. **One language at a time**; digits always Latin in Manrope (`.num` sets the font so Nastaliq never draws 0 as a dot).
+6. **Phone and laptop equal.** Phone: 5-tab bottom bar (Home, Stock, Udhaar, Hisaab, More), no FAB. Laptop (≥1024px): the job tiles become a side menu with F-keys (F2 sell, F3 add stock, F4 udhaar, F6 stock, F7 repair, F8 expense; F5 left alone).
+
+## Colour tokens (CSS variables in `frontend/src/index.css`, Tailwind names in brackets)
+| Token | Light | Use |
+|---|---|---|
+| ink | #1B1F24 | text, primary dark buttons, selected chips |
+| ground | #F6F4EF | app background |
+| surface / line / muted | #FFFFFF / #E6E2DA / #5E646B | cards, hairlines, secondary text |
+| emerald | #1E6B45 | "complete sale", money in, success |
+| receivable / payable | #8A5300 / #A1352B | lene hain / dene hain amounts |
+| tiles (`sell`, `buy`, `khata`, `stockt`, `repair`, `expense` + `-fg`) | #DDEFE3/#14482F, #DFE8F5/#173C6B, #F8EBD3/#6B4000, #E9E4F4/#432C78, #DCEEEE/#144A4A, #F6E2DF/#7E2219 | job colour: background / text+icon |
+Dark theme redefines every token (deep tinted tiles with light text). Light is default; dark/system under More → Appearance.
+
+## Components
+- `features/counter/jobs.ts`: the single list of jobs (route, label, icon, colour, F-key) used by Home and the side menu.
+- `DayPicker`: Today / Yesterday / Date chips (local YYYY-MM-DD).
+- Home tiles (2 big + 4 small), Hisaab card, lena/dena cards, stock-worth card, attention rows.
+- Pages: `/stock/summary` (brand → model worth), `/hisaab` (any day), `/khata` (totals are filters; paise mile / diye), `/sale/new` (3 steps).
+- Existing primitives (`BiLabel`, `BiButton`, `BiInput`, `Sheet`, `RemoveSheet`…) stay; build new screens from them on these tokens.
+
+## Typography, shape, icons, accessibility
+Manrope (UI, numbers) + Noto Nastaliq Urdu (Urdu mode). Radius: tiles/cards 20–24px, buttons 16–18px, chips full. Lucide stroke icons, no emoji. Tap targets ≥44px (main actions 56–64px). Never colour alone: amounts also say "lene hain / dene hain".
+
+---
+
+# Archive: v1.0 "Emerald & Gold" (2026-10-22, superseded)
+
 
 Status: **Approved v1.0 · 2026-10-22.** Owner decision: "do what is best for now; give both light and dark." Direction A "Emerald & Gold" as shown in the mockup
 https://claude.ai/artifact/AEWv7XqFN62dXjuNWmGnad (5 phone screens: dashboard light, used-mobile purchase/verification, sale confirm, device history, dashboard dark).
