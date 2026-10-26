@@ -32,7 +32,8 @@ export default function ReturnWizard() {
   const [q, setQ] = useState('')
   const [invoiceId, setInvoiceId] = useState<string | undefined>(params.get('invoice') ?? undefined)
   const [selected, setSelected] = useState<string[]>([])
-  const [refund, setRefund] = useState('')
+  // null = not typed yet (show the full amount); '' = the user cleared the box to type their own
+  const [refund, setRefund] = useState<string | null>(null)
   const [from, setFrom] = useState<GiveFrom | null>(null)
   const [who, setWho] = useState<Party | null>(null)
   const [reason, setReason] = useState('')
@@ -78,12 +79,12 @@ export default function ReturnWizard() {
   const paidFor = Math.max(0, value - outstanding) // what the customer actually paid for what came back
   const walkIn = !!inv && !inv.party_id
   const toKhata = from?.kind === 'khata'
-  const give = toKhata ? 0 : Math.min(refund === '' ? paidFor : Number(refund), paidFor)
+  const give = toKhata ? 0 : Math.min(refund === null ? paidFor : Number(refund || 0), paidFor)
   const cut = toKhata ? 0 : paidFor - give
   const ok = !!inv && selected.length > 0 && (!walkIn || !!who) && !!from
 
   // refund editing resets when the picked lines change
-  useEffect(() => setRefund(''), [value])
+  useEffect(() => setRefund(null), [value])
 
   async function submit() {
     if (!inv) return
@@ -179,7 +180,7 @@ export default function ReturnWizard() {
               </div>
               {!toKhata ? (
                 <>
-                  <BiInput label="counter.giveBack" type="number" inputMode="numeric" min={0} max={paidFor} value={refund === '' ? String(paidFor) : refund} onChange={(e) => setRefund(e.target.value)} className="num text-2xl" />
+                  <BiInput label="counter.giveBack" type="number" inputMode="numeric" min={0} max={paidFor} value={refund ?? String(paidFor)} onChange={(e) => setRefund(e.target.value)} className="num text-2xl" />
                   <div className="flex items-center justify-between rounded-2xl bg-ret px-4 py-3 text-ret-fg">
                     <span className={small}>{pick('counter.cut')}</span>
                     <span className="num text-2xl" dir="ltr">{n(cut)}</span>
@@ -205,7 +206,7 @@ export default function ReturnWizard() {
             <span className="num text-sm opacity-80" dir="ltr">{done.no}</span>
           </div>
           {inv?.lines.some((l) => selected.includes(l.id) && l.device_id) ? <BiLabel text="counter.backInStock" size="md" align="center" tone="text-muted" /> : null}
-          <BiButton text="counter.newReturn" icon={<Undo2 size={22} />} full variant="secondary" onClick={() => { setInvoiceId(undefined); setSelected([]); setWho(null); setReason(''); setRefund(''); setDone(null); setStep(0); m.reset() }} />
+          <BiButton text="counter.newReturn" icon={<Undo2 size={22} />} full variant="secondary" onClick={() => { setInvoiceId(undefined); setSelected([]); setWho(null); setReason(''); setRefund(null); setDone(null); setStep(0); m.reset() }} />
           <BiButton text="nav.home" icon={<Home size={22} />} full variant="ghost" onClick={() => nav('/')} />
         </div>
       ) : null}
