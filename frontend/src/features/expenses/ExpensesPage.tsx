@@ -1,9 +1,9 @@
 import DownloadButton from '@/components/DownloadButton'
-import { Lock, Pencil, Plus, Trash2 } from 'lucide-react'
+import { Lock, Pencil, Plus, Trash2, Wallet } from 'lucide-react'
 import { useState } from 'react'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import RemoveSheet from '@/components/RemoveSheet'
-import { BtnText, Chip, Empty, ErrorText, fmtDate, KV, List, Loading, MoneyText, PageHeader, Row, Sheet } from '@/components/ui'
+import { BtnText, Chip, ErrorText, fmtDate, KV, List, Loading, MoneyText, PageHeader, Row, Sheet } from '@/components/ui'
 import { api, post } from '@/lib/api'
 import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
 
@@ -41,18 +41,19 @@ export default function ExpensesPage() {
     <div className="flex flex-col gap-3">
       <PageHeader
         title="expense.title"
-        right={
-          <div className="flex gap-2">
-            <DownloadButton path="/api/v1/exports/expenses" name="expenses" />
-            <button type="button" aria-label={pick('expense.dayClose')} onClick={() => setClosing(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface">
-              <Lock size={18} />
-            <BtnText k={'expense.dayClose'} /></button>
-            <button type="button" aria-label={pick('expense.new')} onClick={() => setAdding(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 bg-ink text-ground">
-              <Plus size={22} />
-            <BtnText k={'expense.new'} /></button>
-          </div>
-        }
+        right={<DownloadButton path="/api/v1/exports/expenses" name="expenses" />}
       />
+      {/* the two things done here, as big buttons in the page (not crowded into the header) */}
+      <div className="grid grid-cols-2 gap-2.5">
+        <button type="button" onClick={() => setAdding(true)} className="tap flex min-h-[72px] items-center gap-3 rounded-3xl bg-expense px-3 text-start text-expense-fg">
+          <span className="well h-11 w-11 shrink-0 bg-surface text-expense-icon"><Plus size={22} /></span>
+          <BiLabel text="expense.new" size="md" bold tone="text-current" />
+        </button>
+        <button type="button" onClick={() => setClosing(true)} className="tap flex min-h-[72px] items-center gap-3 rounded-3xl border border-line bg-surface px-3 text-start text-ink">
+          <span className="well h-11 w-11 shrink-0 bg-ground text-ink"><Lock size={20} /></span>
+          <BiLabel text="expense.dayClose" size="md" bold tone="text-current" />
+        </button>
+      </div>
       {preview ? (
         <div className="hero grid grid-cols-3 gap-2 p-4">
           {([['expense.in', preview.cash_in], ['expense.out', preview.cash_out], ['expense.expected', preview.expected]] as const).map(([k, v]) => (
@@ -63,7 +64,12 @@ export default function ExpensesPage() {
           ))}
         </div>
       ) : null}
-      {isLoading ? <Loading /> : !data?.length ? <Empty text="expense.none" /> : (
+      {isLoading ? <Loading /> : !data?.length ? (
+        <div className="flex flex-col items-center gap-2 py-10 text-muted">
+          <span className="well h-14 w-14 rounded-2xl bg-expense text-expense-icon"><Wallet size={26} /></span>
+          <BiLabel text="expense.none" size="md" align="center" tone="text-muted" />
+        </div>
+      ) : (
         <List>
           {data.map((e) => (
             <Row
