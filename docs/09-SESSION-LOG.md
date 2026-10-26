@@ -384,3 +384,5 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Verified**: backend all pass incl. `test_every_report_downloads_as_csv_excel_and_pdf`; Playwright 17 passed (Excel/CSV download events, PDF popup with table).
 **Setup note**: run `pip install -e .[dev]` again (openpyxl) on other machines / the VPS image.
 - Bug (owner): Return "give back" box refilled the full amount when cleared with backspace (`value={refund === '' ? paidFor : refund}`). Now `null` = untouched, `''` = cleared; only input with that pattern (grep). E2E regression added; return.spec passes.
+- Phone test now works on the owner's phone (owner fixed the firewall for port 5173 themselves).
+- Bug (owner): after a return the phone "still shows sold". Device status was already in_stock; the day report / home card counted the sale in full. `sales_total` (day + dashboard) is now net of `returned_total`, `phones_sold` skips returned lines, items carry `returned` (crossed out + "Returned" tag; "returned" in the export's Paid-by column). History keeps sold + returned. Backend 135 passed; Playwright 17 passed; screenshot checked.
