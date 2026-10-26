@@ -383,3 +383,4 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - Frontend `components/DownloadButton.tsx`: labelled "Download" → sheet with PDF / Excel / CSV (icon + hint). Placed on reports (follows the tab) + lists section, day hisaab, stock worth, khata, stock list, person page, expenses, sales, purchases.
 **Verified**: backend all pass incl. `test_every_report_downloads_as_csv_excel_and_pdf`; Playwright 17 passed (Excel/CSV download events, PDF popup with table).
 **Setup note**: run `pip install -e .[dev]` again (openpyxl) on other machines / the VPS image.
+- Bug (owner): Return "give back" box refilled the full amount when cleared with backspace (`value={refund === '' ? paidFor : refund}`). Now `null` = untouched, `''` = cleared; only input with that pattern (grep). E2E regression added; return.spec passes.
