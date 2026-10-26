@@ -1,10 +1,10 @@
 /** The shop's jobs, one colour each (docs/11 v2 "Dukaan counter"). Home tiles, the laptop side menu
  *  and the F-key shortcuts all read this list, so a job looks and lands the same everywhere. */
 
-import { BookOpen, PackagePlus, Smartphone, Tag, Wallet, Wrench, type LucideIcon } from 'lucide-react'
+import { BookOpen, PackagePlus, Smartphone, Tag, Undo2, Wallet, Wrench, type LucideIcon } from 'lucide-react'
 
 export interface Job {
-  id: 'sell' | 'addStock' | 'khata' | 'stock' | 'repair' | 'expense'
+  id: 'sell' | 'addStock' | 'khata' | 'stock' | 'repair' | 'expense' | 'return'
   to: string
   label: string
   hint?: string
@@ -22,5 +22,6 @@ export const JOBS: Job[] = [
   { id: 'khata', to: '/khata', label: 'counter.khata', Icon: BookOpen, tone: 'bg-khata text-khata-fg', ink: 'text-khata-fg', fkey: 'F4' },
   { id: 'stock', to: '/stock/summary', label: 'counter.stock', Icon: Smartphone, tone: 'bg-stockt text-stockt-fg', ink: 'text-stockt-fg', fkey: 'F6' },
   { id: 'repair', to: '/repairs', label: 'counter.repair', Icon: Wrench, tone: 'bg-repair text-repair-fg', ink: 'text-repair-fg', fkey: 'F7' },
+  { id: 'return', to: '/return/new', label: 'counter.returnJob', Icon: Undo2, tone: 'bg-ret text-ret-fg', ink: 'text-ret-fg', fkey: 'F9' },
   { id: 'expense', to: '/expenses', label: 'counter.expense', Icon: Wallet, tone: 'bg-expense text-expense-fg', ink: 'text-expense-fg', fkey: 'F8' },
 ]

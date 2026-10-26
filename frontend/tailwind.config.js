@@ -27,6 +27,7 @@ export default {
         stockt: { DEFAULT: rgb('--t-stock'), fg: rgb('--t-stock-fg') },
         repair: { DEFAULT: rgb('--t-repair'), fg: rgb('--t-repair-fg') },
         expense: { DEFAULT: rgb('--t-expense'), fg: rgb('--t-expense-fg') },
+        ret: { DEFAULT: rgb('--t-return'), fg: rgb('--t-return-fg') },
       },
       borderRadius: { '2xl': '18px', '3xl': '24px' },
       boxShadow: {

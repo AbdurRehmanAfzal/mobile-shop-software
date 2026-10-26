@@ -756,6 +756,26 @@
     "saleDone": "Sale done",
     "newSale": "Another sale",
     "remaining": "Remaining udhaar",
-    "change": "Change"
+    "change": "Change",
+    "returnJob": "Return",
+    "whatBack": "What came back?",
+    "backHow": "How much to give back?",
+    "searchSold": "Find the sold phone by IMEI or name",
+    "orPickSale": "Or pick from recent sales",
+    "paidForIt": "Customer had paid",
+    "giveBack": "Give back to customer (Rs)",
+    "cut": "Shop cuts",
+    "giveFrom": "Give back from",
+    "toKhata": "Keep in khata",
+    "whoReturned": "Who brought it back?",
+    "onUdhaarOnly": "Nothing was paid for it; it comes off the udhaar",
+    "returnDone": "Return done",
+    "backInStock": "The phone is back in stock",
+    "returnBtn": "Take it back",
+    "returnsRefunded": "Given back on returns",
+    "returnsKept": "Cut on returns",
+    "reasonOpt": "Why? (optional)",
+    "returned": "Returned",
+    "newReturn": "Another return"
   }
 }

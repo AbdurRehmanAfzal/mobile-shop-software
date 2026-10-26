@@ -9,13 +9,21 @@ from app.modules.returns.models import ReturnKind, Settlement
 
 class SaleReturnIn(BaseModel):
     invoice_id: uuid.UUID
+    party_id: uuid.UUID | None = Field(
+        default=None,
+        description="walk-in sale only: who brought it back (the return must then be settled in full)",
+    )
     line_ids: list[uuid.UUID] = Field(min_length=1)
     settlement: Settlement = Settlement.CREDIT
     refund_amount: Decimal | None = Field(
-        default=None, ge=0, description="refund: cash handed back (default = excess paid)"
+        default=None,
+        ge=0,
+        description="cash handed back (default = excess paid; may go with kept_amount)",
     )
     kept_amount: Decimal | None = Field(
-        default=None, ge=0, description="income: amount the shop keeps (default = excess paid)"
+        default=None,
+        ge=0,
+        description="amount the shop cuts and keeps as income (default = excess paid for income)",
     )
     cash_account_id: uuid.UUID | None = None
     reason: str | None = Field(default=None, max_length=300)

@@ -756,6 +756,26 @@
     "saleDone": "فروخت ہو گئی",
     "newSale": "ایک اور فروخت",
     "remaining": "باقی اُدھار",
-    "change": "بدلیں"
+    "change": "بدلیں",
+    "returnJob": "واپسی",
+    "whatBack": "کیا واپس آیا؟",
+    "backHow": "کتنے واپس دینے ہیں؟",
+    "searchSold": "بکا ہوا فون IMEI یا نام سے ڈھونڈیں",
+    "orPickSale": "یا حالیہ فروخت میں سے چنیں",
+    "paidForIt": "گاہک نے دیے تھے",
+    "giveBack": "گاہک کو واپس دیے (روپے)",
+    "cut": "دکان نے کاٹے",
+    "giveFrom": "پیسے کہاں سے دیے؟",
+    "toKhata": "کھاتے میں جمع",
+    "whoReturned": "کس نے واپس کیا؟",
+    "onUdhaarOnly": "اس کے پیسے نہیں دیے تھے، اُدھار سے کم ہو جائے گا",
+    "returnDone": "واپسی ہو گئی",
+    "backInStock": "فون واپس اسٹاک میں آ گیا",
+    "returnBtn": "واپس لیں",
+    "returnsRefunded": "واپسی پر دیے",
+    "returnsKept": "واپسی پر کاٹے",
+    "reasonOpt": "کیوں؟ (اگر بتانا ہو)",
+    "returned": "واپس",
+    "newReturn": "ایک اور واپسی"
   }
 }

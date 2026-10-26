@@ -355,8 +355,22 @@ def day_report(db: Session, shop_id: uuid.UUID, day: dt.date, show_cost: bool) -
         )
         or 0
     )
+    from app.modules.returns.models import ReturnDoc, ReturnKind
+
+    refunded, kept = db.execute(
+        select(
+            func.coalesce(func.sum(ReturnDoc.refund_amount), 0),
+            func.coalesce(func.sum(ReturnDoc.kept_amount), 0),
+        ).where(
+            ReturnDoc.shop_id == shop_id,
+            ReturnDoc.date == day,
+            ReturnDoc.kind == ReturnKind.SALE,
+        )
+    ).one()
     return {
         "date": day,
+        "returns_refunded": money(refunded or 0),
+        "returns_kept": money(kept or 0),
         "sales_count": len(invoices),
         "phones_sold": phones,
         "sales_total": money(sum((i.total for i in invoices), ZERO)),

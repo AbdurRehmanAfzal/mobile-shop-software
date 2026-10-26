@@ -54,11 +54,11 @@ export default function HomePage() {
           </Link>
         ))}
       </div>
-      <div className="grid grid-cols-4 gap-2 lg:hidden">
+      <div className="grid grid-cols-5 gap-1.5 lg:hidden">
         {small.map((j) => (
-          <Link key={j.id} to={j.to} className={`tap flex min-h-[78px] flex-col items-center justify-center gap-1 rounded-2xl px-1 py-2 ${j.tone}`}>
+          <Link key={j.id} to={j.to} className={`tap flex min-h-[76px] flex-col items-center justify-center gap-1 rounded-2xl px-0.5 py-2 ${j.tone}`}>
             <j.Icon size={24} strokeWidth={1.9} />
-            <span className={`font-bold leading-tight ${ur ? cls('sm') : 'text-[13px]'}`}>{pick(j.label)}</span>
+            <span className={`font-bold leading-tight ${ur ? cls('sm') : 'text-[12px]'}`}>{pick(j.label)}</span>
           </Link>
         ))}
       </div>

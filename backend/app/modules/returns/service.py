@@ -49,13 +49,16 @@ def sale_return(
             message_en="Invoice is void or fully returned",
             message_ur="یہ بل منسوخ یا مکمل واپس ہو چکا ہے",
         )
-    if inv.party_id is None:
+    walk_in = inv.party_id is None
+    if walk_in and data.party_id is None:
         raise ValidationFailed(
-            code="cash_sale_return",
-            message_en="Cash sales without a customer are returned by voiding the invoice",
-            message_ur="بغیر گاہک والی نقد فروخت کو بل منسوخ کر کے واپس کریں",
+            code="return_needs_customer",
+            message_en="Write the name and phone of the person returning it",
+            message_ur="واپس کرنے والے کا نام اور نمبر لکھیں",
         )
-    party = db.get(Party, inv.party_id)
+    party = db.get(Party, inv.party_id or data.party_id)
+    if party is None or party.shop_id != shop_id:
+        raise NotFound(code="party_not_found")
     lines = [ln for ln in inv.lines if ln.id in set(data.line_ids)]
     if len(lines) != len(set(data.line_ids)):
         raise NotFound(code="invoice_line_not_found")
@@ -84,8 +87,7 @@ def sale_return(
         if data.kept_amount is not None
         else (excess_paid if settlement == Settlement.INCOME else ZERO)
     )
-    if settlement == Settlement.REFUND and kept > ZERO:
-        raise ValidationFailed(code="settlement_mismatch")
+    # refund may go together with a cut the shop keeps (e.g. 100,000 back: 90,000 handed, 10,000 kept)
     if settlement == Settlement.CREDIT and (refund > ZERO or kept > ZERO):
         raise ValidationFailed(code="settlement_mismatch")
     if refund + kept > excess_paid:
@@ -93,6 +95,13 @@ def sale_return(
             code="exceeds_excess",
             message_en=f"Customer only has {excess_paid} to refund or keep",
             message_ur=f"گاہک کی صرف {excess_paid} رقم واپسی/رکھنے کے لیے ہے",
+        )
+    if walk_in and refund + kept != excess_paid:
+        # a walk-in has no khata to hold the rest, so the whole amount is settled now
+        raise ValidationFailed(
+            code="walk_in_settle_all",
+            message_en=f"Hand back and cut must add up to {excess_paid}",
+            message_ur=f"واپس دی گئی اور کاٹی گئی رقم مل کر {excess_paid} ہونی چاہیے",
         )
     cash = _cash(db, shop_id, data.cash_account_id) if refund > ZERO else None
 
@@ -169,7 +178,7 @@ def sale_return(
             )
         if ln.device_id:
             device = db.get(Device, ln.device_id)
-            if device.status != DeviceStatus.SOLD or device.current_party_id != party.id:
+            if device.status != DeviceStatus.SOLD or device.current_party_id != inv.party_id:
                 raise Conflict(
                     code="device_changed",
                     message_en=f"Device {device.imei1} is no longer with this customer",

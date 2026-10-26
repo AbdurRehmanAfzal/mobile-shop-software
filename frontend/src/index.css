@@ -35,6 +35,8 @@
     --t-repair-fg: 20 74 74;
     --t-expense: 246 226 223;
     --t-expense-fg: 126 34 25;
+    --t-return: 228 231 236;
+    --t-return-fg: 45 55 72;
     color-scheme: light;
   }
   :root[data-theme='dark'] {
@@ -65,6 +67,8 @@
     --t-repair-fg: 160 220 220;
     --t-expense: 60 28 25;
     --t-expense-fg: 242 160 150;
+    --t-return: 40 45 54;
+    --t-return-fg: 200 208 222;
     color-scheme: dark;
   }
   @media (prefers-color-scheme: dark) {
@@ -96,6 +100,10 @@
       --t-repair-fg: 160 220 220;
       --t-expense: 60 28 25;
       --t-expense-fg: 242 160 150;
+      --t-return: 40 45 54;
+      --t-return-fg: 200 208 222;
+    --t-return: 40 45 54;
+    --t-return-fg: 200 208 222;
       color-scheme: dark;
     }
   }

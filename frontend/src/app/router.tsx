@@ -20,6 +20,7 @@ import VerifyPage from '@/features/stock/VerifyPage'
 import PurchaseWizard from '@/features/purchase/PurchaseWizard'
 import OpeningStockPage from '@/features/purchase/OpeningStockPage'
 import SaleWizard from '@/features/sale/SaleWizard'
+import ReturnWizard from '@/features/sale/ReturnWizard'
 import { SaleDetailPage, SalesPage } from '@/features/sale/SalesPage'
 import LoansPage from '@/features/loans/LoansPage'
 import ExpensesPage from '@/features/expenses/ExpensesPage'
@@ -59,6 +60,7 @@ export const router = createBrowserRouter([
           { path: '/stock/summary', element: <StockSummaryPage /> },
           { path: '/hisaab', element: <DayReportPage /> },
           { path: '/khata', element: <KhataPage /> },
+          { path: '/return/new', element: <ReturnWizard /> },
           { path: '/stock/opening', element: <OpeningStockPage /> },
           { path: '/stock/:id', element: <DeviceDetailPage /> },
           { path: '/stock/:id/verify', element: <VerifyPage /> },

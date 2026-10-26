@@ -47,6 +47,12 @@ export default function DayReportPage() {
             <Box label="counter.udhaarGiven" value={n(data.udhaar_given)} cls="bg-khata text-khata-fg border-transparent" />
             <Box label="counter.udhaarBack" value={n(data.udhaar_received)} tone="text-emerald" />
             <Box label="counter.expenses" value={n(data.expenses)} tone="text-payable" />
+            {Number(data.returns_refunded) > 0 || Number(data.returns_kept) > 0 ? (
+              <>
+                <Box label="counter.returnsRefunded" value={n(data.returns_refunded)} cls="bg-ret text-ret-fg border-transparent" />
+                <Box label="counter.returnsKept" value={n(data.returns_kept)} cls="bg-ret text-ret-fg border-transparent" />
+              </>
+            ) : null}
             {data.profit !== null ? <Box label="counter.profit" value={n(data.profit)} cls="bg-hero text-hero-text border-transparent" /> : null}
           </div>
 

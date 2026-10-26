@@ -139,6 +139,8 @@ export default function DeviceDetailPage() {
         </div>
       ) : null}
 
+      {d.status === 'sold' ? <BiButton text="counter.returnJob" variant="secondary" full onClick={() => nav(`/return/new?device=${d.id}`)} /> : null}
+
       <Section title="stock.actions">
         <div className="grid grid-cols-2 gap-2">
           {inStock ? <BiButton text="stock.loanOut" variant="secondary" size="md" onClick={() => setSheet('loan')} /> : null}
