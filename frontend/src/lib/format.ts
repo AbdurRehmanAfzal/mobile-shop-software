@@ -32,3 +32,15 @@ export function normalisePhone(raw: string): string {
 export function isValidPkMobile(raw: string): boolean {
   return /^03\d{9}$/.test(normalisePhone(raw))
 }
+
+/** 2,510,000 -> "25.1" (lakh), the way shopkeepers say big amounts. */
+export function toLakh(value: number | string): string {
+  const n = Number(value) / 100_000
+  return latin.format(Math.round(n * 10) / 10)
+}
+
+/** Local calendar day as YYYY-MM-DD, `offset` days from today (-1 = yesterday). */
+export function isoDay(offset = 0, from = new Date()): string {
+  const d = new Date(from.getFullYear(), from.getMonth(), from.getDate() + offset)
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}

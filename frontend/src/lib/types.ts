@@ -333,3 +333,39 @@ export interface Message {
   status: string
   created_at: string
 }
+
+// ---- counter reports (GET /reports/day, /reports/stock-summary) --------------------------------
+export type PaidHow = 'cash' | 'bank' | 'easypaisa' | 'jazzcash' | 'udhaar' | 'part'
+export interface DayItem {
+  invoice_id: UUID
+  invoice_no: string
+  name: string
+  kind: 'device' | 'misc'
+  qty: number
+  amount: Money
+  party_name: string | null
+  how: PaidHow
+}
+export interface DayReport {
+  date: string
+  sales_count: number
+  phones_sold: number
+  sales_total: Money
+  received: Record<'cash' | 'bank' | 'easypaisa' | 'jazzcash', Money>
+  udhaar_given: Money
+  udhaar_received: Money
+  expenses: Money
+  profit: Money | null
+  items: DayItem[]
+}
+export interface StockGroup {
+  name: string
+  count: number
+  value: Money
+}
+export interface StockSummary {
+  basis: 'cost' | 'asking'
+  count: number
+  value: Money
+  brands: (StockGroup & { brand_id: UUID; models: (StockGroup & { model_id: UUID })[] })[]
+}

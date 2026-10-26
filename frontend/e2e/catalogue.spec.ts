@@ -15,7 +15,7 @@ test('add missing brand/model/storage/colour while adding a phone, then rename a
   await page.getByLabel('Mobile number').fill(`039${Math.floor(10_000_000 + Math.random() * 89_999_999)}`)
   await page.getByLabel('Password').fill('e2e-secret-1')
   await page.getByRole('button', { name: /Create shop account/ }).click()
-  await expect(page.getByText("Today's sales")).toBeVisible()
+  await expect(page.getByPlaceholder("IMEI, phone or person's name")).toBeVisible()
 
   await page.goto('/stock/opening')
   await page.getByRole('button', { name: 'Add device' }).click()

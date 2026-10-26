@@ -3,7 +3,10 @@ import { useAuth } from '@/lib/auth'
 import Shell from './Shell'
 import LoginPage from '@/features/auth/LoginPage'
 import SignupPage from '@/features/auth/SignupPage'
-import DashboardPage from '@/features/dashboard/DashboardPage'
+import HomePage from '@/features/counter/HomePage'
+import StockSummaryPage from '@/features/counter/StockSummaryPage'
+import DayReportPage from '@/features/counter/DayReportPage'
+import KhataPage from '@/features/counter/KhataPage'
 import CataloguePage from '@/features/catalogue/CataloguePage'
 import MorePage from '@/features/more/MorePage'
 import SettingsPage from '@/features/more/SettingsPage'
@@ -51,8 +54,11 @@ export const router = createBrowserRouter([
       {
         element: <Shell />,
         children: [
-          { path: '/', element: <DashboardPage /> },
+          { path: '/', element: <HomePage /> },
           { path: '/stock', element: <StockPage /> },
+          { path: '/stock/summary', element: <StockSummaryPage /> },
+          { path: '/hisaab', element: <DayReportPage /> },
+          { path: '/khata', element: <KhataPage /> },
           { path: '/stock/opening', element: <OpeningStockPage /> },
           { path: '/stock/:id', element: <DeviceDetailPage /> },
           { path: '/stock/:id/verify', element: <VerifyPage /> },

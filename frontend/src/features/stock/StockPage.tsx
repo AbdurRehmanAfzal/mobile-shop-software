@@ -87,7 +87,7 @@ export default function StockPage() {
   const nav = useNavigate()
   const { pick, ur } = useLang()
   const { t } = useTranslation()
-  const [q, setQ] = useState('')
+  const [q, setQ] = useState(() => new URLSearchParams(window.location.search).get('q') ?? '')
   const [filter, setFilter] = useState<Filter>('in_stock')
   const [brand, setBrand] = useState<string>('')
   const [sort, setSort] = useState<Sort>('newest')

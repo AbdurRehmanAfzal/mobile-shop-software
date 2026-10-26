@@ -19,7 +19,7 @@ async function signup(page: Page) {
   await page.getByLabel('Mobile number').fill(phone())
   await page.getByLabel('Password').fill('e2e-secret-1')
   await page.getByRole('button', { name: /Create shop account/ }).click()
-  await expect(page.getByText("Today's sales")).toBeVisible()
+  await expect(page.getByPlaceholder("IMEI, phone or person's name")).toBeVisible()
 }
 
 async function fillDevice(page: Page, imei: string) {

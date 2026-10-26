@@ -23,7 +23,7 @@ test('signup → customer → credit sale → dashboard and balance', async ({ p
   await page.getByLabel('Mobile number').fill(ownerPhone)
   await page.getByLabel('Password').fill('e2e-secret-1')
   await page.getByRole('button', { name: /Create shop account/ }).click()
-  await expect(page.getByText("Today's sales")).toBeVisible()
+  await expect(page.getByPlaceholder("IMEI, phone or person's name")).toBeVisible()
 
   // Stock via API (the purchase wizard has its own test later)
   const auth = { Authorization: `Bearer ${await token(page)}` }
@@ -57,10 +57,11 @@ test('signup → customer → credit sale → dashboard and balance', async ({ p
   await expect(page.getByText('Sale complete')).toBeVisible()
   await expect(page.getByRole('button', { name: /Print receipt/ })).toBeVisible()
 
-  // Dashboard: amounts hidden until tapped
+  // Home answers "how much sold today, how much on udhaar" without any tapping
   await page.goto('/')
-  await page.getByRole('button', { name: /Today's sales/ }).click()
   await expect(page.getByText('Rs. 1,000').first()).toBeVisible()
+  await expect(page.locator('section').getByText('600', { exact: true })).toBeVisible()
+  await page.screenshot({ path: 'test-results/home-after-sale.png', fullPage: true })
 
   // Customer owes 600
   const parties = await (await request.get('/api/v1/parties?q=Ahmed', { headers: auth })).json()

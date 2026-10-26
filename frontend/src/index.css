@@ -5,61 +5,97 @@
 /* Design tokens (docs/11-DESIGN-SYSTEM.md). RGB triplets so Tailwind can apply alpha. */
 @layer base {
   :root {
-    --ink: 14 22 19;
-    --ground: 244 243 238;
+    --ink: 27 31 36;
+    --ground: 246 244 239;
     --surface: 255 255 255;
-    --line: 228 226 218;
-    --muted: 92 101 95;
-    --emerald: 19 111 86;
-    --emerald-deep: 11 74 58;
-    --emerald-tint: 220 239 230;
+    --line: 230 226 218;
+    --muted: 94 100 107;
+    --emerald: 30 107 69;
+    --emerald-deep: 20 72 47;
+    --emerald-tint: 221 239 227;
     --gold: 200 161 79;
-    --gold-text: 200 161 79;
-    --receivable: 154 91 0;
-    --receivable-tint: 255 244 219;
-    --payable: 179 38 30;
-    --payable-tint: 253 232 230;
-    --hero: 14 22 19;
+    --gold-text: 138 83 0;
+    --receivable: 138 83 0;
+    --receivable-tint: 248 235 211;
+    --payable: 161 53 43;
+    --payable-tint: 246 226 223;
+    --hero: 27 31 36;
     --hero-text: 255 255 255;
     --nav: 255 255 255;
+    /* one colour per job: tile background / text+icon */
+    --t-sell: 221 239 227;
+    --t-sell-fg: 20 72 47;
+    --t-buy: 223 232 245;
+    --t-buy-fg: 23 60 107;
+    --t-khata: 248 235 211;
+    --t-khata-fg: 107 64 0;
+    --t-stock: 233 228 244;
+    --t-stock-fg: 67 44 120;
+    --t-repair: 220 238 238;
+    --t-repair-fg: 20 74 74;
+    --t-expense: 246 226 223;
+    --t-expense-fg: 126 34 25;
     color-scheme: light;
   }
   :root[data-theme='dark'] {
-    --ink: 242 241 236;
-    --ground: 11 16 14;
-    --surface: 20 28 24;
-    --line: 36 48 41;
-    --muted: 169 176 171;
-    --emerald: 19 111 86;
-    --emerald-deep: 220 239 230;
-    --emerald-tint: 19 111 86;
-    --gold: 200 161 79;
+    --ink: 240 238 233;
+    --ground: 15 17 20;
+    --surface: 25 28 32;
+    --line: 45 49 55;
+    --muted: 165 170 176;
+    --emerald: 38 128 84;
+    --emerald-deep: 170 225 192;
+    --emerald-tint: 22 48 35;
     --gold-text: 243 201 107;
     --receivable: 243 201 107;
-    --receivable-tint: 243 201 107;
+    --receivable-tint: 56 42 18;
     --payable: 242 139 130;
-    --payable-tint: 242 139 130;
-    --hero: 19 111 86;
-    --hero-text: 255 255 255;
-    --nav: 20 28 24;
+    --payable-tint: 60 28 25;
+    --hero: 36 40 46;
+    --nav: 25 28 32;
+    --t-sell: 22 48 35;
+    --t-sell-fg: 170 225 192;
+    --t-buy: 24 38 60;
+    --t-buy-fg: 176 202 240;
+    --t-khata: 56 42 18;
+    --t-khata-fg: 243 201 107;
+    --t-stock: 42 34 64;
+    --t-stock-fg: 205 190 245;
+    --t-repair: 18 50 50;
+    --t-repair-fg: 160 220 220;
+    --t-expense: 60 28 25;
+    --t-expense-fg: 242 160 150;
     color-scheme: dark;
   }
   @media (prefers-color-scheme: dark) {
     :root[data-theme='system'] {
-      --ink: 242 241 236;
-      --ground: 11 16 14;
-      --surface: 20 28 24;
-      --line: 36 48 41;
-      --muted: 169 176 171;
-      --emerald-deep: 220 239 230;
-      --emerald-tint: 19 111 86;
+      --ink: 240 238 233;
+      --ground: 15 17 20;
+      --surface: 25 28 32;
+      --line: 45 49 55;
+      --muted: 165 170 176;
+      --emerald: 38 128 84;
+      --emerald-deep: 170 225 192;
+      --emerald-tint: 22 48 35;
       --gold-text: 243 201 107;
       --receivable: 243 201 107;
-      --receivable-tint: 243 201 107;
+      --receivable-tint: 56 42 18;
       --payable: 242 139 130;
-      --payable-tint: 242 139 130;
-      --hero: 19 111 86;
-      --nav: 20 28 24;
+      --payable-tint: 60 28 25;
+      --hero: 36 40 46;
+      --nav: 25 28 32;
+      --t-sell: 22 48 35;
+      --t-sell-fg: 170 225 192;
+      --t-buy: 24 38 60;
+      --t-buy-fg: 176 202 240;
+      --t-khata: 56 42 18;
+      --t-khata-fg: 243 201 107;
+      --t-stock: 42 34 64;
+      --t-stock-fg: 205 190 245;
+      --t-repair: 18 50 50;
+      --t-repair-fg: 160 220 220;
+      --t-expense: 60 28 25;
+      --t-expense-fg: 242 160 150;
       color-scheme: dark;
     }
   }
@@ -81,6 +117,8 @@
     direction: ltr;
   }
   .num {
+    /* digits stay Latin and in Manrope even inside Nastaliq text (Nastaliq draws 0 as a dot) */
+    font-family: Manrope, system-ui, sans-serif;
     @apply font-extrabold tabular-nums tracking-[-0.02em];
     direction: ltr;
     unicode-bidi: isolate;
