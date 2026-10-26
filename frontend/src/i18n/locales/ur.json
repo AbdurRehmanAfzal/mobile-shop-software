@@ -776,6 +776,13 @@
     "returnsKept": "واپسی پر کاٹے",
     "reasonOpt": "کیوں؟ (اگر بتانا ہو)",
     "returned": "واپس",
-    "newReturn": "ایک اور واپسی"
+    "newReturn": "ایک اور واپسی",
+    "fromWhom": "کس سے لیا؟",
+    "phoneAndCost": "کون سا فون، کتنے میں؟",
+    "paidHowBuy": "پیسے کیسے دیے؟",
+    "putInStock": "اسٹاک میں ڈالیں",
+    "stillToGive": "ابھی دینے ہیں",
+    "paidNowBuy": "ابھی کتنے دیے؟ (اگر دیے)",
+    "moreBuyOptions": "رعایت، بل نمبر"
   }
 }

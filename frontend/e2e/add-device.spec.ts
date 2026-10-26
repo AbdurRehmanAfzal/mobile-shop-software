@@ -83,14 +83,12 @@ test("customer's phone: buy, then skip verification for a known person", async (
   await fillDevice(page, '356789104552375')
   await page.getByRole('button', { name: 'Add', exact: true }).last().click()
   await expect(page.getByText('Other items')).toHaveCount(0)
-  await page.getByRole('button', { name: 'Next' }).click()
-  await page.getByLabel('Paid').fill('800')
   // bought yesterday at 3 PM, entered now
   await page.getByRole('button', { name: 'Earlier' }).click()
   const y = new Date(Date.now() - 86_400_000)
   const day = `${y.getFullYear()}-${String(y.getMonth() + 1).padStart(2, '0')}-${String(y.getDate()).padStart(2, '0')}`
   await page.getByLabel('When was it bought?').fill(`${day}T15:00`)
-  await page.getByRole('button', { name: 'Confirm' }).click()
+  await page.getByRole('button', { name: 'Put in stock' }).click()
   await expect(page.getByText('Check the phone is not stolen')).toBeVisible()
   await page.screenshot({ path: 'test-results/customer-phone-done.png', fullPage: true })
   await page.getByRole('button', { name: 'Skip, I know this person' }).click()

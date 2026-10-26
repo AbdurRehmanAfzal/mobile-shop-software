@@ -776,6 +776,13 @@
     "returnsKept": "Cut on returns",
     "reasonOpt": "Why? (optional)",
     "returned": "Returned",
-    "newReturn": "Another return"
+    "newReturn": "Another return",
+    "fromWhom": "Bought from whom?",
+    "phoneAndCost": "Which phone, how much?",
+    "paidHowBuy": "How did you pay?",
+    "putInStock": "Put in stock",
+    "stillToGive": "Still to give",
+    "paidNowBuy": "Paid now (if any)",
+    "moreBuyOptions": "Discount, bill no."
   }
 }

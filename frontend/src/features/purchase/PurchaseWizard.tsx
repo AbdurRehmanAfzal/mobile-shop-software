@@ -3,7 +3,7 @@ import { useState, type ReactNode } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import PartyPicker from '@/components/PartyPicker'
-import { Chip, ErrorText, KV, MoneyText, PageHeader, Sheet, Stepper } from '@/components/ui'
+import { Chip, ErrorText, MoneyText, PageHeader, Sheet, Stepper } from '@/components/ui'
 import { uid } from '@/lib/id'
 import { api } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
@@ -23,7 +23,7 @@ interface Misc {
 export default function PurchaseWizard() {
   const nav = useNavigate()
   const [params] = useSearchParams()
-  const { pick } = useLang()
+  const { pick, ur, cls } = useLang()
   const [step, setStep] = useState(0)
   const [kind, setKind] = useState<Kind>(params.get('imei') ? 'walk_in' : 'supplier')
   const [chosen, setChosen] = useState(!!params.get('imei'))
@@ -35,8 +35,9 @@ export default function PurchaseWizard() {
   const [misc, setMisc] = useState<Misc[]>([])
   const [editing, setEditing] = useState<DeviceLineDraft | null>(null)
   const [discount, setDiscount] = useState('')
-  const [paid, setPaid] = useState('')
-  const [accountId, setAccountId] = useState('')
+  const [paidNow, setPaidNow] = useState('')
+  const [pay, setPay] = useState<string>('') // cash account id, or 'udhaar'
+  const [more, setMore] = useState(false)
   const [reference, setReference] = useState('')
   const [earlier, setEarlier] = useState(false)
   const [when, setWhen] = useState(localNow())
@@ -46,6 +47,11 @@ export default function PurchaseWizard() {
 
   const subtotal = devices.reduce((s, d) => s + Number(d.cost || 0), 0) + misc.reduce((s, x) => s + Number(x.qty || 0) * Number(x.unit_cost || 0), 0)
   const total = Math.max(0, subtotal - Number(discount || 0))
+  const cashId = accounts?.find((a) => a.is_default)?.id ?? accounts?.[0]?.id ?? ''
+  const payWith = pay || cashId
+  const udhaar = payWith === 'udhaar'
+  const paid = udhaar ? Math.min(Number(paidNow || 0), total) : total
+  const chip = (on: boolean) => `tap min-h-14 rounded-2xl border-2 px-2 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('md') : 'text-[15px]'}`
   const partyKind = kind === 'supplier' ? 'supplier' : kind === 'shop' ? 'shop' : 'customer'
 
   async function submit() {
@@ -55,20 +61,20 @@ export default function PurchaseWizard() {
       devices: devices.map(draftToApi),
       misc: misc.filter((x) => x.description).map((x) => ({ description: x.description, qty: Number(x.qty || 1), unit_cost: Number(x.unit_cost || 0) })),
       discount: Number(discount || 0),
-      paid: Number(paid || 0),
-      cash_account_id: accountId || undefined,
+      paid,
+      cash_account_id: (udhaar ? cashId : payWith) || undefined,
       reference: reference || undefined,
       purchased_at: earlier && when ? new Date(when).toISOString() : undefined,
     })
     setResult(res)
-    setStep(3)
+    setStep(2)
   }
 
-  const steps = ['purchase.steps.from', 'purchase.steps.devices', 'purchase.steps.payment', 'purchase.steps.done']
+  const steps = ['counter.fromWhom', 'counter.phoneAndCost', 'counter.doneTitle']
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="purchase.title" />
+      <PageHeader title="counter.addStock" />
       <Stepper steps={steps} current={step} />
 
       {step === 0 ? (
@@ -122,93 +128,80 @@ export default function PurchaseWizard() {
 
           {kind === 'supplier' ? (
             <>
-          <BiLabel text="purchase.misc" size="md" tone="text-muted" className="mt-2" />
-          {misc.map((x) => (
-            <div key={x.key} className="grid grid-cols-[1fr_64px_96px_36px] items-end gap-2">
-              <BiInput label="purchase.miscDesc" value={x.description} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, description: e.target.value } : y)))} />
-              <BiInput label="purchase.qty" type="number" inputMode="numeric" min={1} value={x.qty} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, qty: e.target.value } : y)))} />
-              <BiInput label="purchase.unitCost" type="number" inputMode="decimal" min={0} value={x.unit_cost} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, unit_cost: e.target.value } : y)))} />
-              <button type="button" aria-label={pick('purchase.remove')} onClick={() => setMisc(misc.filter((y) => y.key !== x.key))} className="well tap mb-1 h-9 w-9 text-payable">
-                <Trash2 size={16} />
-              </button>
-            </div>
-          ))}
-          <BiButton text="common.add" variant="ghost" size="md" onClick={() => setMisc([...misc, { key: uid(), description: '', qty: '1', unit_cost: '' }])} />
-
+              {misc.map((x) => (
+                <div key={x.key} className="card grid grid-cols-[1fr_64px_96px_36px] items-end gap-2">
+                  <BiInput label="purchase.miscDesc" value={x.description} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, description: e.target.value } : y)))} />
+                  <BiInput label="purchase.qty" type="number" inputMode="numeric" min={1} value={x.qty} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, qty: e.target.value } : y)))} />
+                  <BiInput label="purchase.unitCost" type="number" inputMode="numeric" min={0} value={x.unit_cost} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, unit_cost: e.target.value } : y)))} />
+                  <button type="button" aria-label={pick('purchase.remove')} onClick={() => setMisc(misc.filter((y) => y.key !== x.key))} className="well tap mb-2 h-9 w-9 text-payable">
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              ))}
+              <button type="button" className={`tap py-1 text-start font-bold text-buy-fg ${ur ? cls('sm') : 'text-sm'}`} onClick={() => setMisc([...misc, { key: uid(), description: '', qty: '1', unit_cost: '' }])}>{pick('counter.otherItem')}</button>
             </>
           ) : null}
 
-          <div className="card flex items-center justify-between">
-            <BiLabel text="common.total" size="md" tone="text-muted" />
-            <MoneyText value={subtotal} tone="ink" size="lg" />
-          </div>
-          <BiButton text="common.next" full disabled={!devices.length && !misc.some((x) => x.description)} onClick={() => setStep(2)} />
-        </div>
-      ) : null}
-
-      {step === 2 ? (
-        <div className="flex flex-col gap-3">
-          <div className="card">
-            <KV k="common.total" v={<MoneyText value={subtotal} tone="ink" />} />
-            {party ? <KV k="party.balance" v={<MoneyText value={party.balance} />} /> : null}
-          </div>
-          <BiInput label="common.discount" type="number" inputMode="decimal" min={0} value={discount} onChange={(e) => setDiscount(e.target.value)} />
-          <BiInput label="common.paid" type="number" inputMode="decimal" min={0} max={total} value={paid} onChange={(e) => setPaid(e.target.value)} />
-          {accounts && accounts.length > 1 ? (
-            <div>
-              <BiLabel text="purchase.cashAccount" size="md" tone="text-muted" className="mb-1.5" />
-              <select value={accountId} onChange={(e) => setAccountId(e.target.value)} className="min-h-12 w-full rounded-2xl border border-line bg-surface px-4 font-semibold">
-                {accounts.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {a.name}
-                  </option>
+          {devices.length || misc.some((x) => x.description) ? (
+            <>
+              <BiLabel text="counter.paidHowBuy" size="md" bold />
+              <div className="grid grid-cols-3 gap-2">
+                {accounts?.map((a) => (
+                  <button key={a.id} type="button" aria-pressed={payWith === a.id} onClick={() => setPay(a.id)} className={chip(payWith === a.id)}>
+                    <span className="block truncate">{a.id === cashId ? pick('counter.cash') : ur && a.name_ur ? a.name_ur : a.name}</span>
+                  </button>
                 ))}
-              </select>
-            </div>
+                <button type="button" aria-pressed={udhaar} onClick={() => setPay('udhaar')} className={chip(udhaar)}>{pick('counter.udhaar')}</button>
+              </div>
+              {udhaar ? <BiInput label="counter.paidNowBuy" type="number" inputMode="numeric" min={0} max={total} value={paidNow} onChange={(e) => setPaidNow(e.target.value)} /> : null}
+
+              <div className="card flex flex-col gap-2">
+                <BiLabel text="purchase.when" size="md" tone="text-muted" />
+                <BiSegmented<'now' | 'earlier'>
+                  value={earlier ? 'earlier' : 'now'}
+                  onChange={(v) => { setEarlier(v === 'earlier'); if (v === 'earlier') setWhen(localNow()) }}
+                  options={[{ value: 'now', text: 'purchase.whenNow' }, { value: 'earlier', text: 'purchase.whenEarlier' }]}
+                />
+                {earlier ? (
+                  <input type="datetime-local" aria-label={pick('purchase.when')} value={when} max={localNow()} onChange={(e) => setWhen(e.target.value)} dir="ltr" className="min-h-12 w-full rounded-2xl border border-line bg-surface px-3 font-semibold" />
+                ) : null}
+              </div>
+
+              {more ? (
+                <>
+                  <BiInput label="common.discount" type="number" inputMode="numeric" min={0} value={discount} onChange={(e) => setDiscount(e.target.value)} />
+                  {kind === 'supplier' ? <BiInput label="purchase.reference" value={reference} onChange={(e) => setReference(e.target.value)} /> : null}
+                </>
+              ) : (
+                <button type="button" className={`tap py-1 text-start font-bold text-muted ${ur ? cls('sm') : 'text-sm'}`} onClick={() => setMore(true)}>{pick('counter.moreBuyOptions')}</button>
+              )}
+
+              <div className="hero flex flex-col gap-1 px-5 py-4">
+                <div className="flex items-center justify-between">
+                  <BiLabel text="common.total" size="md" tone="text-hero-text" bold />
+                  <span className="num text-3xl" dir="ltr">Rs. {total.toLocaleString('en-US')}</span>
+                </div>
+                {udhaar ? (
+                  <div className="flex items-center justify-between border-t border-white/15 pt-1.5">
+                    <BiLabel text="counter.stillToGive" size="sm" tone="text-gold-text" bold />
+                    <span className="num text-xl text-gold-text" dir="ltr">{(total - paid).toLocaleString('en-US')}</span>
+                  </div>
+                ) : null}
+              </div>
+              <ErrorText error={m.error} />
+              <BiButton text="counter.putInStock" full loading={m.isPending} disabled={(earlier && !when) || total <= 0} onClick={submit} />
+            </>
           ) : null}
-          {kind === 'supplier' ? <BiInput label="purchase.reference" value={reference} onChange={(e) => setReference(e.target.value)} /> : null}
-          <div className="hero flex flex-col gap-1 p-4">
-            <KV k="common.total" v={<MoneyText value={total} tone="ink" />} />
-            <KV k="common.paid" v={<MoneyText value={Number(paid || 0)} tone="ink" />} />
-            <div className="mt-1 flex items-center justify-between border-t border-white/15 pt-2">
-              <BiLabel text="common.due" size="md" tone="text-gold-text" bold />
-              <span className="num text-2xl text-gold-text" dir="ltr">
-                {(total - Number(paid || 0)).toLocaleString('en-US')}
-              </span>
-            </div>
-          </div>
-          <div className="card flex flex-col gap-2">
-            <BiLabel text="purchase.when" size="md" tone="text-muted" />
-            <BiSegmented<'now' | 'earlier'>
-              value={earlier ? 'earlier' : 'now'}
-              onChange={(v) => { setEarlier(v === 'earlier'); if (v === 'earlier') setWhen(localNow()) }}
-              options={[{ value: 'now', text: 'purchase.whenNow' }, { value: 'earlier', text: 'purchase.whenEarlier' }]}
-            />
-            {earlier ? (
-              <input
-                type="datetime-local"
-                aria-label={pick('purchase.when')}
-                value={when}
-                max={localNow()}
-                onChange={(e) => setWhen(e.target.value)}
-                dir="ltr"
-                className="min-h-12 w-full rounded-2xl border border-line bg-surface px-3 font-semibold"
-              />
-            ) : null}
-          </div>
-          <ErrorText error={m.error} />
-          <BiButton text="common.confirm" full loading={m.isPending} disabled={earlier && !when} onClick={submit} />
         </div>
       ) : null}
 
-      {step === 3 && result ? (
+      {step === 2 && result ? (
         <div className="flex flex-col gap-3">
-          <div className="hero flex flex-col items-center gap-1 p-5">
-            <BiLabel text="purchase.created" size="lg" bold tone="text-gold-text" />
-            <div className="num text-xl" dir="ltr">
-              {result.no}
-            </div>
-            <MoneyText value={result.total} tone="ink" size="lg" />
+          <div className="flex flex-col items-center gap-1 rounded-3xl bg-buy px-5 py-7 text-buy-fg">
+            <span className="well mb-1 h-16 w-16 rounded-full bg-ink text-ground"><Check size={34} strokeWidth={2.6} /></span>
+            <BiLabel text="purchase.created" size="lg" bold tone="text-current" align="center" />
+            <span className="num text-[34px]" dir="ltr">Rs. {Number(result.total).toLocaleString('en-US')}</span>
+            <span className="num text-sm opacity-80" dir="ltr">{result.no}</span>
           </div>
           {kind !== 'supplier' && result.lines.some((l) => l.device_id) ? (
             <div className="rounded-2xl border border-gold/40 bg-gold-tint/40 px-4 py-3">
@@ -272,14 +265,14 @@ function SourceCard({ active, icon, title, hint, onClick }: { active: boolean; i
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`tap flex items-center gap-4 rounded-3xl border-2 px-4 py-4 text-start transition ${active ? 'border-emerald bg-emerald-tint/60' : 'border-line bg-surface'}`}
+      className={`tap flex items-center gap-4 rounded-3xl border-2 px-4 py-4 text-start transition ${active ? 'border-buy-fg bg-buy text-buy-fg' : 'border-line bg-surface'}`}
     >
-      <span className={`well h-14 w-14 shrink-0 ${active ? 'bg-emerald text-white' : 'bg-emerald-tint text-emerald-deep'}`}>{icon}</span>
+      <span className={`well h-14 w-14 shrink-0 ${active ? 'bg-buy-fg text-white' : 'bg-buy text-buy-fg'}`}>{icon}</span>
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
         <BiLabel text={title} size="lg" bold />
         <BiLabel text={hint} size="sm" tone="text-muted" className="mt-1 leading-loose" />
       </span>
-      {active ? <Check size={22} className="shrink-0 text-emerald-deep" /> : null}
+      {active ? <Check size={22} className="shrink-0" /> : null}
     </button>
   )
 }
