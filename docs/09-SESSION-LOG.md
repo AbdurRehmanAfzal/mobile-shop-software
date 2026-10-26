@@ -365,3 +365,8 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Verified**: backend 133 passed (+ forecast fix), frontend typecheck, vitest 14, Playwright 14 passed (new reports + skip test; screenshots checked).
 **Dev note**: the uvicorn reloader keeps missing new routes on this PC; restart the backend after adding endpoints.
 **Next**: owner phone test; repairs as a 3-step flow; expenses layout; settings.
+
+**Session 25 — repairs in three steps** (owner: "ok" to the next step)
+- `features/repairs/RepairsPages.tsx` rewritten on v2 (teal): new job form with problem chips, likely cost, advance, ready-by chips, extra details behind a link, save + print slip; job page with customer card + Call, four-stage bar, one primary action per stage ("It is fixed" opens parts + work charge and marks repaired; "Give back to customer" shows left to take, partial payment leaves the rest on khata), waiting for parts / could not fix. No backend change.
+**Verified**: vitest 14, Playwright 15 passed (new `repair.spec.ts`: advance 200, work 1,000, paid 500, khata shows 300).
+**Next**: owner phone test; expenses page layout; settings.
