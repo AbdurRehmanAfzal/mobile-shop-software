@@ -25,18 +25,25 @@
     /* one colour per job: tile background / text+icon */
     --t-sell: 221 239 227;
     --t-sell-fg: 20 72 47;
+    --t-sell-icon: 20 72 47;
     --t-buy: 223 232 245;
     --t-buy-fg: 23 60 107;
+    --t-buy-icon: 23 60 107;
     --t-khata: 248 235 211;
     --t-khata-fg: 107 64 0;
+    --t-khata-icon: 107 64 0;
     --t-stock: 233 228 244;
     --t-stock-fg: 67 44 120;
+    --t-stock-icon: 67 44 120;
     --t-repair: 220 238 238;
     --t-repair-fg: 20 74 74;
+    --t-repair-icon: 20 74 74;
     --t-expense: 246 226 223;
     --t-expense-fg: 126 34 25;
+    --t-expense-icon: 126 34 25;
     --t-return: 228 231 236;
     --t-return-fg: 45 55 72;
+    --t-return-icon: 45 55 72;
     color-scheme: light;
   }
   :root[data-theme='dark'] {
@@ -57,18 +64,25 @@
     --nav: 25 28 32;
     --t-sell: 22 48 35;
     --t-sell-fg: 170 225 192;
+    --t-sell-icon: 170 225 192;
     --t-buy: 24 38 60;
     --t-buy-fg: 176 202 240;
+    --t-buy-icon: 176 202 240;
     --t-khata: 56 42 18;
     --t-khata-fg: 243 201 107;
+    --t-khata-icon: 243 201 107;
     --t-stock: 42 34 64;
     --t-stock-fg: 205 190 245;
+    --t-stock-icon: 205 190 245;
     --t-repair: 18 50 50;
     --t-repair-fg: 160 220 220;
+    --t-repair-icon: 160 220 220;
     --t-expense: 60 28 25;
     --t-expense-fg: 242 160 150;
+    --t-expense-icon: 242 160 150;
     --t-return: 40 45 54;
     --t-return-fg: 200 208 222;
+    --t-return-icon: 200 208 222;
     color-scheme: dark;
   }
   @media (prefers-color-scheme: dark) {
@@ -90,21 +104,222 @@
       --nav: 25 28 32;
       --t-sell: 22 48 35;
       --t-sell-fg: 170 225 192;
+      --t-sell-icon: 170 225 192;
       --t-buy: 24 38 60;
       --t-buy-fg: 176 202 240;
+      --t-buy-icon: 176 202 240;
       --t-khata: 56 42 18;
       --t-khata-fg: 243 201 107;
+      --t-khata-icon: 243 201 107;
       --t-stock: 42 34 64;
       --t-stock-fg: 205 190 245;
+      --t-stock-icon: 205 190 245;
       --t-repair: 18 50 50;
       --t-repair-fg: 160 220 220;
+      --t-repair-icon: 160 220 220;
       --t-expense: 60 28 25;
       --t-expense-fg: 242 160 150;
+      --t-expense-icon: 242 160 150;
       --t-return: 40 45 54;
       --t-return-fg: 200 208 222;
+      --t-return-icon: 200 208 222;
     --t-return: 40 45 54;
     --t-return-fg: 200 208 222;
+    --t-return-icon: 200 208 222;
       color-scheme: dark;
+    }
+  }
+
+  /* Looks (owner, 2026-10-26: the colourful tiles felt like a kids' app). Professional is the
+     default; Navy and Colorful stay selectable under More > App > Look. */
+  :root[data-palette='pro']:not([data-theme='dark']) {
+    --ground: 245 246 248;
+    --surface: 255 255 255;
+    --line: 229 231 235;
+    --ink: 17 24 39;
+    --muted: 100 108 120;
+    --emerald: 15 118 110;
+    --emerald-deep: 17 94 89;
+    --emerald-tint: 230 245 243;
+    --hero: 17 24 39;
+    --receivable: 180 83 9;
+    --receivable-tint: 254 243 199;
+    --payable: 185 28 28;
+    --payable-tint: 254 226 226;
+    --gold: 15 118 110;
+    --gold-text: 180 83 9;
+    --t-sell: 15 118 110;
+    --t-sell-fg: 255 255 255;
+    --t-sell-icon: 15 118 110;
+    --t-buy: 17 24 39;
+    --t-buy-fg: 255 255 255;
+    --t-buy-icon: 17 24 39;
+    --t-khata: 241 243 246;
+    --t-khata-fg: 17 24 39;
+    --t-khata-icon: 17 24 39;
+    --t-stock: 241 243 246;
+    --t-stock-fg: 17 24 39;
+    --t-stock-icon: 17 24 39;
+    --t-repair: 241 243 246;
+    --t-repair-fg: 17 24 39;
+    --t-repair-icon: 17 24 39;
+    --t-expense: 241 243 246;
+    --t-expense-fg: 17 24 39;
+    --t-expense-icon: 17 24 39;
+    --t-return: 241 243 246;
+    --t-return-fg: 17 24 39;
+    --t-return-icon: 17 24 39;
+  }
+  :root[data-palette='pro'][data-theme='dark'] {
+    --emerald: 20 128 118;
+    --emerald-deep: 153 246 228;
+    --emerald-tint: 19 52 49;
+    --gold: 45 212 191;
+    --gold-text: 251 191 36;
+    --t-sell: 17 110 102;
+    --t-sell-fg: 255 255 255;
+    --t-sell-icon: 94 234 212;
+    --t-buy: 55 65 81;
+    --t-buy-fg: 255 255 255;
+    --t-buy-icon: 229 231 235;
+    --t-khata: 36 40 47;
+    --t-khata-fg: 236 238 241;
+    --t-khata-icon: 236 238 241;
+    --t-stock: 36 40 47;
+    --t-stock-fg: 236 238 241;
+    --t-stock-icon: 236 238 241;
+    --t-repair: 36 40 47;
+    --t-repair-fg: 236 238 241;
+    --t-repair-icon: 236 238 241;
+    --t-expense: 36 40 47;
+    --t-expense-fg: 236 238 241;
+    --t-expense-icon: 236 238 241;
+    --t-return: 36 40 47;
+    --t-return-fg: 236 238 241;
+    --t-return-icon: 236 238 241;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root[data-palette='pro'][data-theme='system'] {
+      --emerald: 20 128 118;
+      --emerald-deep: 153 246 228;
+      --emerald-tint: 19 52 49;
+      --gold: 45 212 191;
+      --gold-text: 251 191 36;
+      --t-sell: 17 110 102;
+      --t-sell-fg: 255 255 255;
+      --t-sell-icon: 94 234 212;
+      --t-buy: 55 65 81;
+      --t-buy-fg: 255 255 255;
+      --t-buy-icon: 229 231 235;
+      --t-khata: 36 40 47;
+      --t-khata-fg: 236 238 241;
+      --t-khata-icon: 236 238 241;
+      --t-stock: 36 40 47;
+      --t-stock-fg: 236 238 241;
+      --t-stock-icon: 236 238 241;
+      --t-repair: 36 40 47;
+      --t-repair-fg: 236 238 241;
+      --t-repair-icon: 236 238 241;
+      --t-expense: 36 40 47;
+      --t-expense-fg: 236 238 241;
+      --t-expense-icon: 236 238 241;
+      --t-return: 36 40 47;
+      --t-return-fg: 236 238 241;
+      --t-return-icon: 236 238 241;
+    }
+  }
+  :root[data-palette='navy']:not([data-theme='dark']) {
+    --ground: 243 245 248;
+    --surface: 255 255 255;
+    --line: 226 232 240;
+    --ink: 15 23 42;
+    --muted: 100 116 139;
+    --emerald: 21 128 61;
+    --emerald-deep: 20 83 45;
+    --emerald-tint: 220 252 231;
+    --hero: 16 32 64;
+    --receivable: 161 98 7;
+    --receivable-tint: 254 249 195;
+    --payable: 185 28 28;
+    --payable-tint: 254 226 226;
+    --gold: 176 137 66;
+    --gold-text: 176 137 66;
+    --t-sell: 16 32 64;
+    --t-sell-fg: 255 255 255;
+    --t-sell-icon: 16 32 64;
+    --t-buy: 176 137 66;
+    --t-buy-fg: 255 255 255;
+    --t-buy-icon: 146 108 40;
+    --t-khata: 238 241 246;
+    --t-khata-fg: 16 32 64;
+    --t-khata-icon: 16 32 64;
+    --t-stock: 238 241 246;
+    --t-stock-fg: 16 32 64;
+    --t-stock-icon: 16 32 64;
+    --t-repair: 238 241 246;
+    --t-repair-fg: 16 32 64;
+    --t-repair-icon: 16 32 64;
+    --t-expense: 238 241 246;
+    --t-expense-fg: 16 32 64;
+    --t-expense-icon: 16 32 64;
+    --t-return: 238 241 246;
+    --t-return-fg: 16 32 64;
+    --t-return-icon: 16 32 64;
+  }
+  :root[data-palette='navy'][data-theme='dark'] {
+    --emerald: 22 140 70;
+    --hero: 22 36 64;
+    --gold: 212 175 105;
+    --gold-text: 234 197 125;
+    --t-sell: 30 58 110;
+    --t-sell-fg: 255 255 255;
+    --t-sell-icon: 147 197 253;
+    --t-buy: 150 112 45;
+    --t-buy-fg: 255 255 255;
+    --t-buy-icon: 234 197 125;
+    --t-khata: 36 40 47;
+    --t-khata-fg: 236 238 241;
+    --t-khata-icon: 236 238 241;
+    --t-stock: 36 40 47;
+    --t-stock-fg: 236 238 241;
+    --t-stock-icon: 236 238 241;
+    --t-repair: 36 40 47;
+    --t-repair-fg: 236 238 241;
+    --t-repair-icon: 236 238 241;
+    --t-expense: 36 40 47;
+    --t-expense-fg: 236 238 241;
+    --t-expense-icon: 236 238 241;
+    --t-return: 36 40 47;
+    --t-return-fg: 236 238 241;
+    --t-return-icon: 236 238 241;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root[data-palette='navy'][data-theme='system'] {
+      --emerald: 22 140 70;
+      --hero: 22 36 64;
+      --gold: 212 175 105;
+      --gold-text: 234 197 125;
+      --t-sell: 30 58 110;
+      --t-sell-fg: 255 255 255;
+      --t-sell-icon: 147 197 253;
+      --t-buy: 150 112 45;
+      --t-buy-fg: 255 255 255;
+      --t-buy-icon: 234 197 125;
+      --t-khata: 36 40 47;
+      --t-khata-fg: 236 238 241;
+      --t-khata-icon: 236 238 241;
+      --t-stock: 36 40 47;
+      --t-stock-fg: 236 238 241;
+      --t-stock-icon: 236 238 241;
+      --t-repair: 36 40 47;
+      --t-repair-fg: 236 238 241;
+      --t-repair-icon: 236 238 241;
+      --t-expense: 36 40 47;
+      --t-expense-fg: 236 238 241;
+      --t-expense-icon: 236 238 241;
+      --t-return: 36 40 47;
+      --t-return-fg: 236 238 241;
+      --t-return-icon: 236 238 241;
     }
   }
 

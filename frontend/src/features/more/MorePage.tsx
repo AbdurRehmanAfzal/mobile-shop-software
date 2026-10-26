@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { setLocale, type Locale } from '@/i18n'
 import { useAuth, type Role } from '@/lib/auth'
-import { useTheme, type Theme } from '@/lib/theme'
+import { useTheme, type Palette, type Theme } from '@/lib/theme'
 import { api } from '@/lib/api'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import { ErrorText, Sheet } from '@/components/ui'
@@ -96,6 +96,8 @@ export default function MorePage() {
   const me = useAuth((s) => s.me)
   const theme = useTheme((s) => s.theme)
   const setTheme = useTheme((s) => s.setTheme)
+  const palette = useTheme((s) => s.palette)
+  const setPalette = useTheme((s) => s.setPalette)
   const locale = i18n.language as Locale
   const role = me?.user.role
   const [pinOpen, setPinOpen] = useState(false)
@@ -136,6 +138,8 @@ export default function MorePage() {
         <div className="card flex flex-col gap-3">
           <BiLabel text="more.language" size="sm" tone="text-muted" />
           <BiSegmented<Locale> value={locale} onChange={setLocale} options={[{ value: 'ur', text: { en: 'Urdu', ur: 'اردو', roman: 'Urdu' } }, { value: 'roman', text: { en: 'Roman Urdu', ur: 'رومن اردو', roman: 'Roman Urdu' } }, { value: 'en', text: { en: 'English', ur: 'انگریزی', roman: 'English' } }]} />
+          <BiLabel text="more.look" size="sm" tone="text-muted" />
+          <BiSegmented<Palette> value={palette} onChange={setPalette} options={[{ value: 'pro', text: 'more.lookPro' }, { value: 'navy', text: 'more.lookNavy' }, { value: 'colorful', text: 'more.lookColorful' }]} />
           <BiLabel text="more.theme" size="sm" tone="text-muted" />
           <BiSegmented<Theme> value={theme} onChange={setTheme} options={[{ value: 'light', text: 'more.themeLight' }, { value: 'dark', text: 'more.themeDark' }, { value: 'system', text: 'more.themeSystem' }]} />
         </div>

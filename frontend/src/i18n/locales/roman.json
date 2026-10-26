@@ -78,7 +78,11 @@
     "app": "App",
     "stock": "Stock list",
     "openingStock": "Purana stock",
-    "catalogue": "Brand aur model"
+    "catalogue": "Brand aur model",
+    "look": "Andaaz",
+    "lookPro": "Professional",
+    "lookNavy": "Navy",
+    "lookColorful": "Rangeen"
   },
   "common": {
     "save": "Mehfooz karein",

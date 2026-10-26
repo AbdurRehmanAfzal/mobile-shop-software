@@ -78,7 +78,11 @@
     "app": "ایپ",
     "stock": "اسٹاک لسٹ",
     "openingStock": "پرانا اسٹاک",
-    "catalogue": "برانڈ اور ماڈل"
+    "catalogue": "برانڈ اور ماڈل",
+    "look": "انداز",
+    "lookPro": "پروفیشنل",
+    "lookNavy": "نیوی",
+    "lookColorful": "رنگین"
   },
   "common": {
     "save": "محفوظ کریں",

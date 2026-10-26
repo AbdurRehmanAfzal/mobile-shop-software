@@ -78,7 +78,11 @@
     "app": "App",
     "stock": "Stock list",
     "openingStock": "Old stock",
-    "catalogue": "Brands & models"
+    "catalogue": "Brands & models",
+    "look": "Look",
+    "lookPro": "Professional",
+    "lookNavy": "Navy",
+    "lookColorful": "Colorful"
   },
   "common": {
     "save": "Save",

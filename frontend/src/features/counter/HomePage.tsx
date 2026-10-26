@@ -9,6 +9,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
 import { BtnText } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
+import { useTheme } from '@/lib/theme'
 import { toLakh } from '@/lib/format'
 import { useGet } from '@/lib/queries'
 import type { DayReport } from '@/lib/types'
@@ -23,6 +24,7 @@ interface Dash {
 export default function HomePage() {
   const { pick, ur, cls } = useLang()
   const nav = useNavigate()
+  const palette = useTheme((s) => s.palette)
   const manager = useAuth((s) => s.me?.user.role === 'owner' || s.me?.user.role === 'manager')
   const [q, setQ] = useState('')
   const [period, setPeriod] = useState<Period>(periodOf('today'))
@@ -103,13 +105,13 @@ export default function HomePage() {
           <Link to="/khata?f=get" className="tap flex flex-col gap-2 rounded-3xl bg-khata p-4 text-khata-fg">
             <span className="well h-10 w-10 bg-surface"><ArrowDownLeft size={20} strokeWidth={2} /></span>
             <BiLabel text="counter.toGet" size="sm" bold tone="text-current" />
-            <span className="num text-2xl leading-none" dir="ltr">{fmt(dash?.receivable)}</span>
+            <span className="num text-2xl leading-none text-receivable" dir="ltr">{fmt(dash?.receivable)}</span>
             <SeeMore />
           </Link>
           <Link to="/khata?f=give" className="tap flex flex-col gap-2 rounded-3xl bg-expense p-4 text-expense-fg">
             <span className="well h-10 w-10 bg-surface"><ArrowUpRight size={20} strokeWidth={2} /></span>
             <BiLabel text="counter.toGive" size="sm" bold tone="text-current" />
-            <span className="num text-2xl leading-none" dir="ltr">{fmt(dash?.payable)}</span>
+            <span className="num text-2xl leading-none text-payable" dir="ltr">{fmt(dash?.payable)}</span>
             <SeeMore />
           </Link>
         </div>
@@ -119,6 +121,7 @@ export default function HomePage() {
       <InfoCard
         to="/stock/summary"
         tone="bg-stockt text-stockt-fg"
+        iconCls="text-stockt-icon"
         icon={<Smartphone size={22} strokeWidth={1.9} />}
         title={<>{pick('counter.stockWorth')} · <span className="num">{dash?.stock_count ?? 0}</span> {pick('counter.phones')}</>}
         sub={worth && Number(worth) >= 100_000 ? <><span className="num">{toLakh(worth)}</span> {pick('counter.lakh')}</> : pick('counter.stockHint')}
@@ -128,6 +131,8 @@ export default function HomePage() {
         <InfoCard
           to="/reports"
           tone="bg-sell text-sell-fg"
+          iconCls="text-sell-icon"
+          solid={palette !== 'colorful'}
           icon={<TrendingUp size={22} strokeWidth={1.9} />}
           title={pick('counter.reportTitle')}
           sub={pick('counter.reportHint')}
@@ -161,19 +166,21 @@ function SeeMore({ light = false }: { light?: boolean }) {
   )
 }
 
-function InfoCard({ to, tone, icon, title, sub, value }: { to: string; tone: string; icon: ReactNode; title: ReactNode; sub: ReactNode; value?: ReactNode }) {
+/** `iconCls` colours the icon in its white well; `solid` cards (strong colour behind white text) get
+ *  the light "See details" pill, so nothing turns white-on-white in any look. */
+function InfoCard({ to, tone, icon, title, sub, value, iconCls = 'text-current', solid = false }: { to: string; tone: string; icon: ReactNode; title: ReactNode; sub: ReactNode; value?: ReactNode; iconCls?: string; solid?: boolean }) {
   const { ur, cls } = useLang()
   return (
     <Link to={to} className={`tap flex flex-col gap-3 rounded-3xl p-4 ${tone}`}>
       <div className="flex items-center gap-3">
-        <span className="well h-11 w-11 shrink-0 bg-surface">{icon}</span>
+        <span className={`well h-11 w-11 shrink-0 bg-surface ${iconCls}`}>{icon}</span>
         <span className="flex min-w-0 flex-1 flex-col">
           <span className={`font-bold ${ur ? cls('md') : 'text-[15px]'}`}>{title}</span>
           <span className={`opacity-80 ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{sub}</span>
         </span>
         {value}
       </div>
-      <SeeMore />
+      <SeeMore light={solid} />
     </Link>
   )
 }
