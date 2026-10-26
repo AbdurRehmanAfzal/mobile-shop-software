@@ -2,7 +2,7 @@ import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
-import { Chip, Empty, ErrorText, KV, List, Loading, MoneyText, PageHeader, Row, Sheet, fmtDate } from '@/components/ui'
+import { BtnText, Chip, Empty, ErrorText, fmtDate, KV, List, Loading, MoneyText, PageHeader, Row, Sheet } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { openPrintable } from '@/lib/files'
 import { useDocMutation, useSale, useSales } from '@/lib/queries'
@@ -21,9 +21,9 @@ export function SalesPage() {
         title="more.sales"
         back={false}
         right={
-          <button type="button" aria-label={pick('sale.title')} onClick={() => nav('/sale/new')} className="well tap h-11 w-11 bg-ink text-ground">
+          <button type="button" aria-label={pick('sale.title')} onClick={() => nav('/sale/new')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 bg-ink text-ground">
             <Plus size={22} />
-          </button>
+          <BtnText k={'sale.title'} /></button>
         }
       />
       <BiSegmented value={status} onChange={setStatus} options={[{ value: 'all', text: 'common.all' }, { value: 'open', text: 'sale.status.open' }, { value: 'partially_paid', text: 'sale.status.partially_paid' }, { value: 'paid', text: 'sale.status.paid' }]} />

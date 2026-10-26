@@ -14,9 +14,9 @@ export function PageHeader({ title, back = true, right }: { title: string | BiTe
   return (
     <div className="mb-3 flex items-center gap-2">
       {back ? (
-        <button type="button" aria-label="Back" onClick={() => nav(-1)} className="well tap h-11 w-11 border border-line bg-surface">
+        <button type="button" aria-label="Back" onClick={() => nav(-1)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface">
           <Back size={22} />
-        </button>
+        <BtnText k={'common.back'} /></button>
       ) : null}
       <BiLabel text={title} size="lg" bold className="flex-1" />
       {right}
@@ -37,9 +37,9 @@ export function Sheet({ open, onClose, title, children }: { open: boolean; onClo
       <div className="max-h-[92dvh] w-full max-w-md overflow-y-auto rounded-t-3xl bg-ground p-5 pb-[max(20px,env(safe-area-inset-bottom))]" onClick={(e) => e.stopPropagation()}>
         <div className="mb-4 flex items-center justify-between">
           <BiLabel text={title} size="lg" bold />
-          <button type="button" aria-label="Close" onClick={onClose} className="well tap h-10 w-10 border border-line bg-surface">
+          <button type="button" aria-label="Close" onClick={onClose} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface">
             <X size={18} />
-          </button>
+          <BtnText k={'common.close'} /></button>
         </div>
         {children}
       </div>
@@ -214,4 +214,10 @@ export function IconChip({ icon, text, onClick, tone = 'border-line bg-surface t
       <span className="leading-tight">{pick(text)}</span>
     </button>
   )
+}
+
+/** The words under (or beside) an icon button: users are not technical, so no icon goes unlabelled. */
+export function BtnText({ k }: { k: string | BiText }) {
+  const { pick, ur } = useLang()
+  return <span className={`max-w-[84px] text-center leading-tight ${ur ? 'ur text-[12px] leading-snug' : 'text-[11px] font-bold'}`}>{pick(k)}</span>
 }

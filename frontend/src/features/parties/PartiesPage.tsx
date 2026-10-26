@@ -2,7 +2,7 @@ import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BiSegmented, useLang } from '@/components/Bilingual'
-import { BalanceLabel, Empty, List, Loading, PageHeader, Row, SearchBox, Sheet } from '@/components/ui'
+import { BalanceLabel, BtnText, Empty, List, Loading, PageHeader, Row, SearchBox, Sheet } from '@/components/ui'
 import { useParties } from '@/lib/queries'
 import PartyForm from './PartyForm'
 
@@ -23,9 +23,9 @@ export default function PartiesPage() {
         title="party.title"
         back={false}
         right={
-          <button type="button" aria-label={pick('party.new')} onClick={() => setAdding(true)} className="well tap h-11 w-11 bg-ink text-ground">
+          <button type="button" aria-label={pick('party.new')} onClick={() => setAdding(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 bg-ink text-ground">
             <Plus size={22} />
-          </button>
+          <BtnText k={'party.new'} /></button>
         }
       />
       <SearchBox value={q} onChange={setQ} placeholder="party.searchPlaceholder" />

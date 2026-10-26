@@ -1,3 +1,4 @@
+import { BtnText } from '@/components/ui'
 import { Plus, X } from 'lucide-react'
 import { useState } from 'react'
 import { BiLabel, useLang } from './Bilingual'
@@ -22,9 +23,9 @@ export default function PartyPicker({ value, onChange, kind, label, allowNone }:
           </div>
         </div>
         <BalanceLabel value={value.balance} />
-        <button type="button" aria-label="clear" onClick={() => onChange(null)} className="well tap h-9 w-9 border border-line bg-surface">
+        <button type="button" aria-label="clear" onClick={() => onChange(null)} className="tap inline-flex h-9 shrink-0 items-center gap-1 rounded-xl px-2 border border-line bg-surface">
           <X size={16} />
-        </button>
+        <BtnText k={'counter.change'} /></button>
       </div>
     )
   }

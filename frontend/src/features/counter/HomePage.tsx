@@ -5,7 +5,7 @@ import { CalendarDays, ScanLine, Search, ShieldAlert, TrendingUp, Wrench } from 
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
-import { MoneyText } from '@/components/ui'
+import { BtnText, MoneyText } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { isoDay, toLakh } from '@/lib/format'
 import { useGet } from '@/lib/queries'
@@ -40,9 +40,9 @@ export default function HomePage() {
       <form onSubmit={search} className="flex min-h-14 items-center gap-2 rounded-2xl border border-line bg-surface pe-1.5 ps-4">
         <Search size={20} strokeWidth={1.75} className="shrink-0 text-muted" />
         <input value={q} onChange={(e) => setQ(e.target.value)} aria-label={pick('common.search')} placeholder={pick('counter.search')} className={`min-w-0 flex-1 bg-transparent font-medium text-ink placeholder:text-muted/70 focus:outline-none ${ur ? 'ur text-[15px]' : ''}`} />
-        <button type="submit" aria-label={pick('common.search')} className="well tap h-11 w-11 bg-ink text-ground">
+        <button type="submit" aria-label={pick('common.search')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 bg-ink text-ground">
           <ScanLine size={20} strokeWidth={1.75} />
-        </button>
+        <BtnText k={'common.search'} /></button>
       </form>
 
       <div className="grid grid-cols-2 gap-2.5 lg:hidden">

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
 import RemoveSheet from '@/components/RemoveSheet'
-import { Chip, Empty, KV, Loading, MoneyText, PageHeader, Section, Sheet, fmtDate } from '@/components/ui'
+import { BtnText, Chip, Empty, fmtDate, KV, Loading, MoneyText, PageHeader, Section, Sheet } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 import { useInvalidate, useParty, useStatement } from '@/lib/queries'
@@ -33,13 +33,13 @@ export default function PartyDetailPage() {
         right={
           <div className="flex gap-2">
             {canDelete ? (
-              <button type="button" aria-label={pick('crud.delete')} onClick={() => setRemoving(true)} className="well tap h-11 w-11 border border-line bg-surface text-payable">
+              <button type="button" aria-label={pick('crud.delete')} onClick={() => setRemoving(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface text-payable">
                 <Trash2 size={18} />
-              </button>
+              <BtnText k={'crud.delete'} /></button>
             ) : null}
-            <button type="button" aria-label={pick('common.edit')} onClick={() => setEditing(true)} className="well tap h-11 w-11 border border-line bg-surface">
+            <button type="button" aria-label={pick('common.edit')} onClick={() => setEditing(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface">
               <Pencil size={18} />
-            </button>
+            <BtnText k={'common.edit'} /></button>
           </div>
         }
       />

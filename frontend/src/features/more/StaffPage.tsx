@@ -1,7 +1,7 @@
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
-import { Chip, ErrorText, List, PageHeader, Row, Sheet } from '@/components/ui'
+import { BtnText, Chip, ErrorText, List, PageHeader, Row, Sheet } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useDocMutation, useGet } from '@/lib/queries'
 import { normalisePhone } from '@/lib/format'
@@ -22,7 +22,7 @@ export default function StaffPage() {
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="staff.title" right={<button type="button" aria-label={pick('staff.new')} onClick={() => setAdding(true)} className="well tap h-11 w-11 bg-ink text-ground"><Plus size={22} /></button>} />
+      <PageHeader title="staff.title" right={<button type="button" aria-label={pick('staff.new')} onClick={() => setAdding(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 bg-ink text-ground"><Plus size={22} /><BtnText k={'staff.new'} /></button>} />
       <List>
         {data?.map((u) => (
           <Row key={u.id} title={u.name} sub={<span dir="ltr">{u.phone}</span>} right={<div className="flex flex-col items-end gap-1"><Chip text={`staff.roles.${u.role}`} tone="ink" />{!u.is_active ? <Chip text="staff.disabled" tone="bad" /> : null}</div>} onClick={u.id !== myId && u.role !== 'owner' ? () => { setEditing(u); setPw('') } : undefined} />

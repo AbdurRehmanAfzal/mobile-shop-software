@@ -112,7 +112,8 @@
     "amount": "رقم",
     "reason": "وجہ",
     "void": "یہ بل منسوخ کریں",
-    "today": "آج"
+    "today": "آج",
+    "close": "بند کریں"
   },
   "party": {
     "title": "کھاتے",
@@ -855,6 +856,7 @@
     "fromStock": "اسٹاک سے",
     "addPart": "+ پرزہ",
     "partName": "پرزہ",
-    "outsideCostOpt": "باہر کے کاریگر کو دیے"
+    "outsideCostOpt": "باہر کے کاریگر کو دیے",
+    "messages": "پیغامات"
   }
 }

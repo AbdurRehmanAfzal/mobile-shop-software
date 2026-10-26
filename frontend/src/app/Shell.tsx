@@ -1,6 +1,7 @@
 /** App frame, "Dukaan counter" (docs/11 v2). Phone: slim header + 5-tab bottom bar.
  *  Laptop (lg+): the same job tiles as a side menu with F-key shortcuts, content beside it. */
 
+import { BtnText } from '@/components/ui'
 import { Bell, BookOpen, CalendarDays, Home, Menu, MoreHorizontal, Smartphone } from 'lucide-react'
 import { useEffect } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
@@ -40,12 +41,12 @@ export default function Shell() {
         <NavLink to="/" className={`min-w-0 flex-1 truncate ${ur ? 'ur text-xl font-bold' : 'text-xl font-extrabold tracking-[-0.01em]'}`} dir={dir}>
           {shopName}
         </NavLink>
-        <button type="button" aria-label={pick('more.notifications')} onClick={() => nav('/more/notifications')} className="well tap h-11 w-11 border border-line bg-surface text-ink">
+        <button type="button" aria-label={pick('counter.messages')} onClick={() => nav('/more/notifications')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface text-ink">
           <Bell size={20} strokeWidth={1.75} />
-        </button>
-        <button type="button" aria-label={pick('nav.more')} onClick={() => nav('/more')} className="well tap h-11 w-11 border border-line bg-surface text-ink lg:hidden">
+        <BtnText k={'counter.messages'} /></button>
+        <button type="button" aria-label={pick('nav.more')} onClick={() => nav('/more')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface text-ink lg:hidden">
           <Menu size={20} strokeWidth={1.75} />
-        </button>
+        <BtnText k={'nav.more'} /></button>
       </header>
 
       <div className="flex flex-1 gap-6 lg:px-5">

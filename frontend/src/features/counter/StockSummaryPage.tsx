@@ -4,7 +4,7 @@ import { ChevronDown, List as ListIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
-import { Empty, Loading, PageHeader } from '@/components/ui'
+import { BtnText, Empty, Loading, PageHeader } from '@/components/ui'
 import { toLakh } from '@/lib/format'
 import { useGet } from '@/lib/queries'
 import type { StockSummary } from '@/lib/types'
@@ -21,9 +21,9 @@ export default function StockSummaryPage() {
       <PageHeader
         title="counter.stockTitle"
         right={
-          <Link to="/stock" aria-label={pick('counter.seeList')} className="well tap h-11 w-11 border border-line bg-surface">
+          <Link to="/stock" aria-label={pick('counter.seeList')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface">
             <ListIcon size={20} strokeWidth={1.75} />
-          </Link>
+          <BtnText k={'counter.seeList'} /></Link>
         }
       />
       {isLoading || !data ? <Loading /> : (

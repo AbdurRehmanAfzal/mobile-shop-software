@@ -112,7 +112,8 @@
     "amount": "Amount",
     "reason": "Reason",
     "void": "Cancel this bill",
-    "today": "Today"
+    "today": "Today",
+    "close": "Close"
   },
   "party": {
     "title": "People & khata",
@@ -855,6 +856,7 @@
     "fromStock": "From stock",
     "addPart": "+ Part",
     "partName": "Part",
-    "outsideCostOpt": "Paid to outside technician"
+    "outsideCostOpt": "Paid to outside technician",
+    "messages": "Messages"
   }
 }

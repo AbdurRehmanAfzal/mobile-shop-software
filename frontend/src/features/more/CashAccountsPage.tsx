@@ -2,7 +2,7 @@ import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import RemoveSheet from '@/components/RemoveSheet'
-import { ErrorText, List, MoneyText, PageHeader, Row, Sheet, fmtDate } from '@/components/ui'
+import { BtnText, ErrorText, fmtDate, List, MoneyText, PageHeader, Row, Sheet } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 import { useCashAccounts, useDocMutation, useGet, useInvalidate } from '@/lib/queries'
@@ -29,7 +29,7 @@ export default function CashAccountsPage() {
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="cash.title" right={role === 'owner' ? <button type="button" aria-label="add" onClick={() => setAdding(true)} className="well tap h-11 w-11 bg-ink text-ground"><Plus size={22} /></button> : undefined} />
+      <PageHeader title="cash.title" right={role === 'owner' ? <button type="button" aria-label="add" onClick={() => setAdding(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 bg-ink text-ground"><Plus size={22} /><BtnText k={'cash.new'} /></button> : undefined} />
       <List>
         {data?.map((a) => <Row key={a.id} title={label(a)} sub={a.kind} right={<MoneyText value={a.balance} tone="ink" />} onClick={() => setBook(a)} />)}
       </List>

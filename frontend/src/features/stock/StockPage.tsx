@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useLang } from '@/components/Bilingual'
-import { Chip, Empty, Loading, MoneyText, PageHeader, Row, SearchBox, Sheet } from '@/components/ui'
+import { BtnText, Chip, Empty, Loading, MoneyText, PageHeader, Row, SearchBox, Sheet } from '@/components/ui'
 import { useBrands, useDevices } from '@/lib/queries'
 import type { Device } from '@/lib/types'
 import ImeiLookupSheet from './ImeiLookupSheet'
@@ -117,15 +117,15 @@ export default function StockPage() {
         back={false}
         right={
           <div className="flex gap-2">
-            <button type="button" aria-label={pick('export.stock')} onClick={() => downloadFile(`/api/v1/exports/stock.csv?status=${filter}`, 'stock.csv')} className="well tap h-11 w-11 border border-line bg-surface">
+            <button type="button" aria-label={pick('export.stock')} onClick={() => downloadFile(`/api/v1/exports/stock.csv?status=${filter}`, 'stock.csv')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface">
               <FileSpreadsheet size={20} />
-            </button>
-            <button type="button" aria-label={pick('stock.imeiLookup')} onClick={() => setLookup(true)} className="well tap h-11 w-11 border border-line bg-surface">
+            <BtnText k={'export.stock'} /></button>
+            <button type="button" aria-label={pick('stock.imeiLookup')} onClick={() => setLookup(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface">
               <ScanLine size={20} />
-            </button>
-            <button type="button" aria-label={pick('purchase.title')} onClick={() => nav('/purchase/new')} className="well tap h-11 w-11 bg-ink text-ground">
+            <BtnText k={'stock.imeiLookup'} /></button>
+            <button type="button" aria-label={pick('purchase.title')} onClick={() => nav('/purchase/new')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 bg-ink text-ground">
               <Download size={20} />
-            </button>
+            <BtnText k={'purchase.title'} /></button>
           </div>
         }
       />

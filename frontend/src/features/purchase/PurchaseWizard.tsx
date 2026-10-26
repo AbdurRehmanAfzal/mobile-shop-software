@@ -3,7 +3,7 @@ import { useState, type ReactNode } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import PartyPicker from '@/components/PartyPicker'
-import { Chip, ErrorText, IconChip, MoneyText, PageHeader, Sheet, Stepper } from '@/components/ui'
+import { BtnText, Chip, ErrorText, IconChip, MoneyText, PageHeader, Sheet, Stepper } from '@/components/ui'
 import { uid } from '@/lib/id'
 import { api } from '@/lib/api'
 import { openPrintable } from '@/lib/files'
@@ -126,9 +126,9 @@ export default function PurchaseWizard() {
                 </div>
               </button>
               <MoneyText value={d.cost} tone="ink" />
-              <button type="button" aria-label={pick('purchase.remove')} onClick={() => setDevices(devices.filter((x) => x.key !== d.key))} className="well tap h-9 w-9 text-payable">
+              <button type="button" aria-label={pick('purchase.remove')} onClick={() => setDevices(devices.filter((x) => x.key !== d.key))} className="tap inline-flex h-9 shrink-0 items-center gap-1 rounded-xl px-2 text-payable">
                 <Trash2 size={16} />
-              </button>
+              <BtnText k={'purchase.remove'} /></button>
             </div>
           ))}
           <BiButton text="purchase.addDevice" icon={<Plus size={22} />} variant="secondary" full onClick={() => setEditing(emptyDraft('', kind))} />
@@ -136,13 +136,13 @@ export default function PurchaseWizard() {
           {kind === 'supplier' ? (
             <>
               {misc.map((x) => (
-                <div key={x.key} className="card grid grid-cols-[1fr_64px_96px_36px] items-end gap-2">
+                <div key={x.key} className="card grid grid-cols-[1fr_64px_96px_auto] items-end gap-2">
                   <BiInput label="purchase.miscDesc" value={x.description} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, description: e.target.value } : y)))} />
                   <BiInput label="purchase.qty" type="number" inputMode="numeric" min={1} value={x.qty} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, qty: e.target.value } : y)))} />
                   <BiInput label="purchase.unitCost" type="number" inputMode="numeric" min={0} value={x.unit_cost} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, unit_cost: e.target.value } : y)))} />
-                  <button type="button" aria-label={pick('purchase.remove')} onClick={() => setMisc(misc.filter((y) => y.key !== x.key))} className="well tap mb-2 h-9 w-9 text-payable">
+                  <button type="button" aria-label={pick('purchase.remove')} onClick={() => setMisc(misc.filter((y) => y.key !== x.key))} className="tap mb-2 inline-flex h-9 shrink-0 items-center gap-1 rounded-xl px-2 text-payable">
                     <Trash2 size={16} />
-                  </button>
+                  <BtnText k={'purchase.remove'} /></button>
                 </div>
               ))}
               <div><IconChip icon={<Headphones size={18} />} text="counter.otherItem" onClick={() => setMisc([...misc, { key: uid(), description: '', qty: '1', unit_cost: '' }])} /></div>

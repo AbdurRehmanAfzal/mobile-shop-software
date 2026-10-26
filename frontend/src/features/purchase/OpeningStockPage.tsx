@@ -5,7 +5,7 @@ import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BiButton, BiLabel, useLang } from '@/components/Bilingual'
-import { Chip, ErrorText, MoneyText, PageHeader, Sheet } from '@/components/ui'
+import { BtnText, Chip, ErrorText, MoneyText, PageHeader, Sheet } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useInvalidate } from '@/lib/queries'
 import DeviceLineSheet, { draftToApi, emptyDraft, type DeviceLineDraft } from './DeviceLineSheet'
@@ -64,7 +64,7 @@ export default function OpeningStockPage() {
             </div>
           </button>
           <MoneyText value={d.cost} tone="ink" />
-          <button type="button" aria-label={pick('purchase.remove')} onClick={() => setDevices(devices.filter((x) => x.key !== d.key))} className="well tap h-9 w-9 text-payable"><Trash2 size={16} /></button>
+          <button type="button" aria-label={pick('purchase.remove')} onClick={() => setDevices(devices.filter((x) => x.key !== d.key))} className="tap inline-flex h-9 shrink-0 items-center gap-1 rounded-xl px-2 text-payable"><Trash2 size={16} /><BtnText k={'purchase.remove'} /></button>
         </div>
       ))}
       {justAdded && devices.length ? <div className="rounded-2xl border border-emerald/30 bg-emerald-tint/50 px-4 py-3"><BiLabel text="stock.addedOk" size="sm" tone="text-emerald-deep" bold /></div> : null}

@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import PartyPicker from '@/components/PartyPicker'
-import { Empty, ErrorText, IconChip, Loading, PageHeader, Section, Sheet, fmtDate } from '@/components/ui'
+import { BtnText, Empty, ErrorText, fmtDate, IconChip, Loading, PageHeader, Section, Sheet } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { openPrintable } from '@/lib/files'
 import { isoDay } from '@/lib/format'
@@ -47,7 +47,7 @@ export function RepairsPage() {
   const ready = (data ?? []).filter((j) => stageOf(j.status) === 2)
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="repair.title" right={<button type="button" aria-label={pick('counter.rTitleNew')} onClick={() => nav('/repairs/new')} className="well tap h-11 w-11 bg-ink text-ground"><Plus size={22} /></button>} />
+      <PageHeader title="repair.title" right={<button type="button" aria-label={pick('counter.rTitleNew')} onClick={() => nav('/repairs/new')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 bg-ink text-ground"><Plus size={22} /><BtnText k={'counter.rTitleNew'} /></button>} />
       <button type="button" onClick={() => nav('/repairs/new')} className="tap flex min-h-16 items-center gap-3 rounded-3xl bg-repair px-4 text-repair-fg">
         <span className="well h-11 w-11 bg-surface"><Plus size={22} /></span>
         <span className={ur ? cls('lg') : 'text-lg font-extrabold'}>{pick('counter.rTitleNew')}</span>
@@ -255,11 +255,11 @@ export function RepairDetailPage() {
       <Sheet open={sheet === 'fix'} onClose={() => setSheet(null)} title="counter.billTitle">
         <div className="flex flex-col gap-3">
           {parts.map((p, i) => (
-            <div key={i} className="grid grid-cols-[1fr_56px_96px_36px] items-end gap-2">
+            <div key={i} className="grid grid-cols-[1fr_56px_96px_auto] items-end gap-2">
               <BiInput label="counter.partName" value={p.description} onChange={(e) => setParts(parts.map((x, k) => (k === i ? { ...x, description: e.target.value } : x)))} />
               <BiInput label="purchase.qty" type="number" min={1} value={p.qty} onChange={(e) => setParts(parts.map((x, k) => (k === i ? { ...x, qty: Number(e.target.value) || 1 } : x)))} />
               <BiInput label="repair.partPrice" type="number" inputMode="numeric" min={0} value={p.unit_price} onChange={(e) => setParts(parts.map((x, k) => (k === i ? { ...x, unit_price: e.target.value } : x)))} />
-              <button type="button" aria-label={pick('crud.delete')} onClick={() => setParts(parts.filter((_, k) => k !== i))} className="well tap mb-2 h-9 w-9 text-payable"><Trash2 size={16} /></button>
+              <button type="button" aria-label={pick('crud.delete')} onClick={() => setParts(parts.filter((_, k) => k !== i))} className="tap mb-2 inline-flex h-9 shrink-0 items-center gap-1 rounded-xl px-2 text-payable"><Trash2 size={16} /><BtnText k={'crud.delete'} /></button>
             </div>
           ))}
           <div className="flex flex-wrap gap-1.5">

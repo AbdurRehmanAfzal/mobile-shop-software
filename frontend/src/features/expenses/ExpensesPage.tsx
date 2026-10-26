@@ -2,7 +2,7 @@ import { Lock, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import RemoveSheet from '@/components/RemoveSheet'
-import { Chip, Empty, ErrorText, KV, List, Loading, MoneyText, PageHeader, Row, Sheet, fmtDate } from '@/components/ui'
+import { BtnText, Chip, Empty, ErrorText, fmtDate, KV, List, Loading, MoneyText, PageHeader, Row, Sheet } from '@/components/ui'
 import { api, post } from '@/lib/api'
 import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
 
@@ -42,12 +42,12 @@ export default function ExpensesPage() {
         title="expense.title"
         right={
           <div className="flex gap-2">
-            <button type="button" aria-label={pick('expense.dayClose')} onClick={() => setClosing(true)} className="well tap h-11 w-11 border border-line bg-surface">
+            <button type="button" aria-label={pick('expense.dayClose')} onClick={() => setClosing(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface">
               <Lock size={18} />
-            </button>
-            <button type="button" aria-label={pick('expense.new')} onClick={() => setAdding(true)} className="well tap h-11 w-11 bg-ink text-ground">
+            <BtnText k={'expense.dayClose'} /></button>
+            <button type="button" aria-label={pick('expense.new')} onClick={() => setAdding(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 bg-ink text-ground">
               <Plus size={22} />
-            </button>
+            <BtnText k={'expense.new'} /></button>
           </div>
         }
       />
@@ -151,8 +151,8 @@ export default function ExpensesPage() {
               <span className="min-w-0 flex-1 truncate font-semibold" dir="auto">{catName(c)}</span>
               {c.is_global ? <Chip text="catalogue.builtin" /> : (
                 <>
-                  <button type="button" aria-label={pick('catalogue.rename')} onClick={() => { setNewCatName(c.name); setCatEdit(c) }} className="well tap h-9 w-9 border border-line bg-surface"><Pencil size={15} /></button>
-                  <button type="button" aria-label={pick('crud.delete')} onClick={() => setCatRemove(c)} className="well tap h-9 w-9 text-payable"><Trash2 size={15} /></button>
+                  <button type="button" aria-label={pick('catalogue.rename')} onClick={() => { setNewCatName(c.name); setCatEdit(c) }} className="tap inline-flex h-9 shrink-0 items-center gap-1 rounded-xl px-2 border border-line bg-surface"><Pencil size={15} /><BtnText k={'catalogue.rename'} /></button>
+                  <button type="button" aria-label={pick('crud.delete')} onClick={() => setCatRemove(c)} className="tap inline-flex h-9 shrink-0 items-center gap-1 rounded-xl px-2 text-payable"><Trash2 size={15} /><BtnText k={'crud.delete'} /></button>
                 </>
               )}
             </div>

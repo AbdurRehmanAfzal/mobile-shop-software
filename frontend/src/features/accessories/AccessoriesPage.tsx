@@ -2,7 +2,7 @@ import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import RemoveSheet from '@/components/RemoveSheet'
-import { Chip, Empty, ErrorText, KV, List, Loading, MoneyText, PageHeader, Row, SearchBox, Sheet, fmtDate } from '@/components/ui'
+import { BtnText, Chip, Empty, ErrorText, fmtDate, KV, List, Loading, MoneyText, PageHeader, Row, SearchBox, Sheet } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { api } from '@/lib/api'
 import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
@@ -35,7 +35,7 @@ export default function AccessoriesPage() {
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="acc.title" right={<button type="button" aria-label={pick('acc.new')} onClick={() => setAdding(true)} className="well tap h-11 w-11 bg-ink text-ground"><Plus size={22} /></button>} />
+      <PageHeader title="acc.title" right={<button type="button" aria-label={pick('acc.new')} onClick={() => setAdding(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 bg-ink text-ground"><Plus size={22} /><BtnText k={'acc.new'} /></button>} />
       <BiSegmented value={tab} onChange={setTab} options={[{ value: 'stock', text: 'acc.qty' }, { value: 'low', text: 'acc.low' }, { value: 'pending', text: 'acc.pending' }]} />
       {tab !== 'pending' ? <SearchBox value={q} onChange={setQ} placeholder="common.search" /> : null}
       {tab === 'pending' ? (

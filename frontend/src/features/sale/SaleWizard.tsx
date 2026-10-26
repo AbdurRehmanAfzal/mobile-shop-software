@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import PartyPicker from '@/components/PartyPicker'
-import { Chip, ErrorText, IconChip, List, PageHeader, SearchBox, Sheet, Stepper } from '@/components/ui'
+import { BtnText, Chip, ErrorText, IconChip, List, PageHeader, SearchBox, Sheet, Stepper } from '@/components/ui'
 import { uid } from '@/lib/id'
 import { ApiError, get } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
@@ -133,22 +133,22 @@ export default function SaleWizard() {
                     {l.given.length ? <Chip text={{ en: l.given.join(', '), ur: l.given.map((g) => pick(`stock.acc.${g}`)).join('، ') }} tone="ok" /> : null}
                   </div>
                 </div>
-                <button type="button" aria-label={pick('crud.delete')} onClick={() => setLines(lines.filter((x) => x.device.id !== l.device.id))} className="well tap h-10 w-10 text-payable">
+                <button type="button" aria-label={pick('crud.delete')} onClick={() => setLines(lines.filter((x) => x.device.id !== l.device.id))} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 text-payable">
                   <Trash2 size={16} />
-                </button>
+                <BtnText k={'crud.delete'} /></button>
               </div>
               <BiInput label="counter.soldFor" type="number" inputMode="numeric" min={0} value={l.price} onChange={(e) => setLines(lines.map((x) => (x.device.id === l.device.id ? { ...x, price: e.target.value } : x)))} className="num text-2xl" />
               {more ? <div><IconChip icon={<SlidersHorizontal size={18} />} text="counter.moreOptions" onClick={() => setEditing(l)} /></div> : null}
             </div>
           ))}
           {misc.map((x) => (
-            <div key={x.key} className="card grid grid-cols-[1fr_64px_104px_36px] items-end gap-2">
+            <div key={x.key} className="card grid grid-cols-[1fr_64px_104px_auto] items-end gap-2">
               <BiInput label="counter.itemName" value={x.description} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, description: e.target.value } : y)))} />
               <BiInput label="purchase.qty" type="number" inputMode="numeric" min={1} value={x.qty} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, qty: e.target.value } : y)))} />
               <BiInput label="sale.unitPrice" type="number" inputMode="numeric" min={0} value={x.unit_price} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, unit_price: e.target.value } : y)))} />
-              <button type="button" aria-label={pick('crud.delete')} onClick={() => setMisc(misc.filter((y) => y.key !== x.key))} className="well tap mb-2 h-9 w-9 text-payable">
+              <button type="button" aria-label={pick('crud.delete')} onClick={() => setMisc(misc.filter((y) => y.key !== x.key))} className="tap mb-2 inline-flex h-9 shrink-0 items-center gap-1 rounded-xl px-2 text-payable">
                 <Trash2 size={16} />
-              </button>
+              <BtnText k={'crud.delete'} /></button>
             </div>
           ))}
           <div className="flex flex-wrap gap-2">

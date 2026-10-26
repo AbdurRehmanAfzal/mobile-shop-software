@@ -3,7 +3,7 @@
 import { Plus, X } from 'lucide-react'
 import { useState } from 'react'
 import { BiButton, useLang } from '@/components/Bilingual'
-import { ErrorText } from '@/components/ui'
+import { BtnText, ErrorText } from '@/components/ui'
 
 export default function QuickAdd({
   label,
@@ -62,9 +62,9 @@ export default function QuickAdd({
           className="min-h-11 min-w-0 flex-1 rounded-xl border border-line bg-surface px-3 font-semibold"
         />
         <BiButton text="common.save" size="sm" loading={busy} disabled={!valid(value)} onClick={save} />
-        <button type="button" aria-label={pick('common.cancel')} onClick={() => setOpen(false)} className="well tap h-10 w-10 shrink-0 border border-line bg-surface">
+        <button type="button" aria-label={pick('common.cancel')} onClick={() => setOpen(false)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 shrink-0 border border-line bg-surface">
           <X size={16} />
-        </button>
+        <BtnText k={'common.cancel'} /></button>
       </div>
       <ErrorText error={error} />
     </div>

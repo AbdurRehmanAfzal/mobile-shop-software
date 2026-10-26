@@ -4,7 +4,7 @@
 import { Pencil, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { BiButton, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
-import { Chip, ErrorText, List, PageHeader, Sheet } from '@/components/ui'
+import { BtnText, Chip, ErrorText, List, PageHeader, Sheet } from '@/components/ui'
 import { parseStorage, useBrands, useCatalogueEdit, useColours, useModels, useStorages, type CatalogueKind } from '@/lib/queries'
 import QuickAdd from './QuickAdd'
 
@@ -87,8 +87,8 @@ export default function CataloguePage() {
                 <Chip text="catalogue.builtin" />
               ) : (
                 <>
-                  <button type="button" aria-label={pick('catalogue.rename')} onClick={() => setEditing(r)} className="well tap h-9 w-9 border border-line bg-surface"><Pencil size={15} /></button>
-                  <button type="button" aria-label={pick('catalogue.delete')} onClick={() => remove(r)} className="well tap h-9 w-9 text-payable"><Trash2 size={15} /></button>
+                  <button type="button" aria-label={pick('catalogue.rename')} onClick={() => setEditing(r)} className="tap inline-flex h-9 shrink-0 items-center gap-1 rounded-xl px-2 border border-line bg-surface"><Pencil size={15} /><BtnText k={'catalogue.rename'} /></button>
+                  <button type="button" aria-label={pick('catalogue.delete')} onClick={() => remove(r)} className="tap inline-flex h-9 shrink-0 items-center gap-1 rounded-xl px-2 text-payable"><Trash2 size={15} /><BtnText k={'catalogue.delete'} /></button>
                 </>
               )}
             </div>
