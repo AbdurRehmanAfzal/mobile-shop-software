@@ -737,6 +737,25 @@
     "attention": "Needs attention",
     "pendingCheck": "phones: ID card check pending",
     "openRepairs": "repair jobs open",
-    "menu": "Reports, staff, settings"
+    "menu": "Reports, staff, settings",
+    "whichPhone": "Which phone?",
+    "howMuch": "How much?",
+    "doneTitle": "Done",
+    "tapPhone": "Tap the phone you are selling",
+    "soldFor": "Sold for (Rs)",
+    "howPaid": "How was it paid?",
+    "cash": "Cash",
+    "udhaar": "Udhaar",
+    "whoTakes": "Who is taking it on udhaar?",
+    "paidNowOpt": "Paid now (if any)",
+    "customerOpt": "Customer (optional)",
+    "addAnother": "+ Another phone",
+    "otherItem": "+ Charger, cover or other item",
+    "itemName": "Item",
+    "moreOptions": "Discount, warranty, box & charger",
+    "saleDone": "Sale done",
+    "newSale": "Another sale",
+    "remaining": "Remaining udhaar",
+    "change": "Change"
   }
 }

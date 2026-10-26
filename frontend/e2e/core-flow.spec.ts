@@ -44,15 +44,16 @@ test('signup → customer → credit sale → dashboard and balance', async ({ p
   await page.getByRole('button', { name: 'Save' }).click()
   await expect(page.getByText('Ahmed Khan').first()).toBeVisible()
 
-  // Sale via UI: 1,000 with 400 paid now
+  // Sale in three steps: tap the phone -> price is filled -> udhaar to Ahmed, 400 paid now
   await page.goto('/sale/new')
+  await page.getByRole('button', { name: /Nokia/ }).first().click()
+  await expect(page.getByLabel('Sold for (Rs)')).toHaveValue('1000')
+  await page.getByRole('button', { name: 'Udhaar', exact: true }).click()
+  await expect(page.getByRole('button', { name: 'Complete sale' })).toBeDisabled()
   await page.getByPlaceholder('Name, phone or CNIC').fill('Ahmed')
   await page.getByRole('button', { name: /Ahmed Khan/ }).first().click()
-  await page.getByRole('button', { name: 'Next' }).click()
-  await page.getByRole('button', { name: 'Pick from stock' }).click()
-  await page.getByRole('button', { name: /Nokia/ }).first().click()
-  await page.getByRole('button', { name: 'Next' }).click()
-  await page.getByLabel('Paid now').fill('400')
+  await page.getByLabel('Paid now (if any)').fill('400')
+  await page.screenshot({ path: 'test-results/sale-step2.png', fullPage: true })
   await page.getByRole('button', { name: 'Complete sale' }).click()
   await expect(page.getByText('Sale complete')).toBeVisible()
   await expect(page.getByRole('button', { name: /Print receipt/ })).toBeVisible()
