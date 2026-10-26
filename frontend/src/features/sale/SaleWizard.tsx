@@ -2,12 +2,12 @@
  *  → done. Customer is asked only for udhaar; discount, warranty and box/charger sit behind
  *  "more options" so the everyday sale stays three taps. */
 
-import { Check, Trash2 } from 'lucide-react'
+import { Banknote, BookOpen, Check, FileText, Headphones, Plus, Printer, Receipt, SlidersHorizontal, Smartphone, Trash2, Wallet } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import PartyPicker from '@/components/PartyPicker'
-import { Chip, ErrorText, List, PageHeader, SearchBox, Sheet, Stepper } from '@/components/ui'
+import { Chip, ErrorText, IconChip, List, PageHeader, SearchBox, Sheet, Stepper } from '@/components/ui'
 import { uid } from '@/lib/id'
 import { ApiError, get } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
@@ -96,7 +96,7 @@ export default function SaleWizard() {
     setStep(2)
   }
 
-  const chip = (on: boolean) => `tap min-h-14 rounded-2xl border-2 px-2 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('md') : 'text-[15px]'}`
+  const chip = (on: boolean) => `tap flex min-h-[68px] flex-col items-center justify-center gap-1 rounded-2xl border-2 px-2 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('md') : 'text-[15px]'}`
 
   return (
     <div className="flex flex-col gap-3">
@@ -114,9 +114,9 @@ export default function SaleWizard() {
           ) : (
             <BiLabel text="counter.noStock" size="md" tone="text-muted" align="center" className="py-6" />
           )}
-          <button type="button" onClick={() => { setMisc([{ key: uid(), description: '', qty: '1', unit_price: '' }]); setStep(1) }} className={`tap py-2 text-start font-bold text-emerald ${ur ? cls('md') : 'text-[15px]'}`}>
-            {pick('counter.otherItem')}
-          </button>
+          <div>
+            <IconChip icon={<Headphones size={18} />} text="counter.otherItem" onClick={() => { setMisc([{ key: uid(), description: '', qty: '1', unit_price: '' }]); setStep(1) }} />
+          </div>
         </div>
       ) : null}
 
@@ -138,7 +138,7 @@ export default function SaleWizard() {
                 </button>
               </div>
               <BiInput label="counter.soldFor" type="number" inputMode="numeric" min={0} value={l.price} onChange={(e) => setLines(lines.map((x) => (x.device.id === l.device.id ? { ...x, price: e.target.value } : x)))} className="num text-2xl" />
-              {more ? <BiButton text="counter.moreOptions" size="sm" variant="ghost" onClick={() => setEditing(l)} /> : null}
+              {more ? <div><IconChip icon={<SlidersHorizontal size={18} />} text="counter.moreOptions" onClick={() => setEditing(l)} /></div> : null}
             </div>
           ))}
           {misc.map((x) => (
@@ -151,22 +151,23 @@ export default function SaleWizard() {
               </button>
             </div>
           ))}
-          <div className={`flex flex-wrap gap-x-4 gap-y-1 font-bold text-emerald ${ur ? cls('sm') : 'text-sm'}`}>
-            <button type="button" className="tap py-1" onClick={() => setPicking(true)}>{pick('counter.addAnother')}</button>
-            <button type="button" className="tap py-1" onClick={() => setMisc([...misc, { key: uid(), description: '', qty: '1', unit_price: '' }])}>{pick('counter.otherItem')}</button>
-            {!more ? <button type="button" className="tap py-1 text-muted" onClick={() => setMore(true)}>{pick('counter.moreOptions')}</button> : null}
+          <div className="flex flex-wrap gap-2">
+            <IconChip icon={<Smartphone size={18} />} text="counter.addAnother" onClick={() => setPicking(true)} />
+            <IconChip icon={<Headphones size={18} />} text="counter.otherItem" onClick={() => setMisc([...misc, { key: uid(), description: '', qty: '1', unit_price: '' }])} />
+            {!more ? <IconChip icon={<SlidersHorizontal size={18} />} text="counter.moreOptions" onClick={() => setMore(true)} /> : null}
           </div>
           {more ? <BiInput label="common.discount" type="number" inputMode="numeric" min={0} value={discount} onChange={(e) => setDiscount(e.target.value)} /> : null}
 
           <BiLabel text="counter.howPaid" size="md" bold />
           <div className="grid grid-cols-3 gap-2">
-            <button type="button" aria-pressed={pay?.kind === 'account' && pay.id === cashId} onClick={() => cashId && setPay({ kind: 'account', id: cashId })} className={chip(pay?.kind === 'account' && pay.id === cashId)}>{pick('counter.cash')}</button>
+            <button type="button" aria-pressed={pay?.kind === 'account' && pay.id === cashId} onClick={() => cashId && setPay({ kind: 'account', id: cashId })} className={chip(pay?.kind === 'account' && pay.id === cashId)}><Banknote size={22} />{pick('counter.cash')}</button>
             {accounts?.filter((a) => a.id !== cashId).map((a) => (
               <button key={a.id} type="button" aria-pressed={pay?.kind === 'account' && pay.id === a.id} onClick={() => setPay({ kind: 'account', id: a.id })} className={chip(pay?.kind === 'account' && pay.id === a.id)}>
-                <span className="block truncate">{ur && a.name_ur ? a.name_ur : a.name}</span>
+                <Wallet size={22} />
+                <span className="block max-w-full truncate">{ur && a.name_ur ? a.name_ur : a.name}</span>
               </button>
             ))}
-            <button type="button" aria-pressed={udhaar} onClick={() => setPay({ kind: 'udhaar' })} className={chip(udhaar)}>{pick('counter.udhaar')}</button>
+            <button type="button" aria-pressed={udhaar} onClick={() => setPay({ kind: 'udhaar' })} className={chip(udhaar)}><BookOpen size={22} />{pick('counter.udhaar')}</button>
           </div>
 
           {udhaar ? (
@@ -194,7 +195,7 @@ export default function SaleWizard() {
           </div>
           {notSellableErr ? <Chip text="sale.notSellable" tone="bad" /> : null}
           <ErrorText error={m.error} />
-          <BiButton text="sale.complete" full loading={m.isPending} disabled={!canSave} onClick={submit} />
+          <BiButton text="sale.complete" icon={<Check size={22} />} full loading={m.isPending} disabled={!canSave} onClick={submit} />
           {!lines.length && !misc.length ? <BiButton text="counter.whichPhone" variant="secondary" full onClick={() => setStep(0)} /> : null}
         </div>
       ) : null}
@@ -210,10 +211,10 @@ export default function SaleWizard() {
               <span className={ur ? cls('sm') : 'text-sm font-semibold'}>{pick('party.balance')}: <span className="num" dir="ltr">{Number(result.party_balance_after).toLocaleString('en-US')}</span></span>
             ) : null}
           </div>
-          <BiButton text="sale.printThermal" full onClick={() => openPrintable(`/api/v1/sales/${result.id}/receipt?format=thermal`)} />
-          <BiButton text="sale.printA4" full variant="secondary" onClick={() => openPrintable(`/api/v1/sales/${result.id}/receipt?format=a4`)} />
-          <BiButton text="counter.newSale" full variant="ghost" onClick={() => { setLines([]); setMisc([]); setParty(null); setPaidNow(''); setDiscount(''); setResult(null); setPay(null); setStep(0); m.reset() }} />
-          <BiButton text="sale.viewSale" full variant="ghost" onClick={() => nav(`/sales/${result.id}`)} />
+          <BiButton text="sale.printThermal" icon={<Printer size={22} />} full onClick={() => openPrintable(`/api/v1/sales/${result.id}/receipt?format=thermal`)} />
+          <BiButton text="sale.printA4" icon={<FileText size={22} />} full variant="secondary" onClick={() => openPrintable(`/api/v1/sales/${result.id}/receipt?format=a4`)} />
+          <BiButton text="counter.newSale" icon={<Plus size={22} />} full variant="ghost" onClick={() => { setLines([]); setMisc([]); setParty(null); setPaidNow(''); setDiscount(''); setResult(null); setPay(null); setStep(0); m.reset() }} />
+          <BiButton text="sale.viewSale" icon={<Receipt size={22} />} full variant="ghost" onClick={() => nav(`/sales/${result.id}`)} />
         </div>
       ) : null}
 

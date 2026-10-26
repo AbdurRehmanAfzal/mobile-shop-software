@@ -2,12 +2,12 @@
  *  charge, "it is fixed") → give it back (bill, advance, left to take; the rest goes to khata).
  *  A four-stage bar shows where every job is. */
 
-import { Phone, Plus, Trash2 } from 'lucide-react'
+import { CheckCircle2, Clock, HandCoins, Phone, Plus, Printer, Receipt, SlidersHorizontal, Trash2, Wrench, XCircle } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import PartyPicker from '@/components/PartyPicker'
-import { Empty, ErrorText, Loading, PageHeader, Section, Sheet, fmtDate } from '@/components/ui'
+import { Empty, ErrorText, IconChip, Loading, PageHeader, Section, Sheet, fmtDate } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { openPrintable } from '@/lib/files'
 import { isoDay } from '@/lib/format'
@@ -120,11 +120,12 @@ export function NewRepairPage() {
           </div>
         </>
       ) : (
-        <button type="button" onClick={() => setMore(true)} className={`tap py-1 text-start font-bold text-muted ${ur ? cls('sm') : 'text-sm'}`}>{pick('counter.moreDetails')}</button>
+        <div><IconChip icon={<SlidersHorizontal size={18} />} text="counter.moreDetails" onClick={() => setMore(true)} /></div>
       )}
       <ErrorText error={m.error} />
       <BiButton
         text="counter.saveAndPrint"
+        icon={<Printer size={22} />}
         full
         loading={m.isPending}
         disabled={!party || !f.device_desc || (!codes.length && !f.fault_text)}
@@ -210,18 +211,18 @@ export function RepairDetailPage() {
 
       {stage < 2 ? (
         <>
-          <BiButton text="counter.markReady" full onClick={openFix} />
+          <BiButton text="counter.markReady" icon={<CheckCircle2 size={22} />} full onClick={openFix} />
           <div className="grid grid-cols-2 gap-2">
-            {j.status !== 'in_progress' ? <BiButton text="counter.startFix" size="md" variant="secondary" loading={statusM.isPending} onClick={() => statusM.mutate({ status: 'in_progress' })} /> : null}
-            {j.status !== 'waiting_parts' ? <BiButton text="counter.waitParts" size="md" variant="secondary" loading={statusM.isPending} onClick={() => statusM.mutate({ status: 'waiting_parts' })} /> : null}
-            <BiButton text="counter.cantFix" size="md" variant="secondary" loading={statusM.isPending} onClick={() => statusM.mutate({ status: 'returned_unrepaired' })} />
+            {j.status !== 'in_progress' ? <BiButton text="counter.startFix" icon={<Wrench size={18} />} size="md" variant="secondary" loading={statusM.isPending} onClick={() => statusM.mutate({ status: 'in_progress' })} /> : null}
+            {j.status !== 'waiting_parts' ? <BiButton text="counter.waitParts" icon={<Clock size={18} />} size="md" variant="secondary" loading={statusM.isPending} onClick={() => statusM.mutate({ status: 'waiting_parts' })} /> : null}
+            <BiButton text="counter.cantFix" icon={<XCircle size={18} />} size="md" variant="secondary" loading={statusM.isPending} onClick={() => statusM.mutate({ status: 'returned_unrepaired' })} />
           </div>
         </>
       ) : null}
       {stage === 2 && canGive ? (
         <>
-          <BiButton text="counter.giveBackCustomer" full onClick={() => { setPaid(String(left)); setSheet('give') }} />
-          <BiButton text="counter.billTitle" size="md" variant="secondary" full onClick={openFix} />
+          <BiButton text="counter.giveBackCustomer" icon={<HandCoins size={22} />} full onClick={() => { setPaid(String(left)); setSheet('give') }} />
+          <BiButton text="counter.billTitle" icon={<Receipt size={20} />} size="md" variant="secondary" full onClick={openFix} />
         </>
       ) : null}
       <ErrorText error={statusM.error} />
@@ -235,7 +236,7 @@ export function RepairDetailPage() {
           {closed ? <Row label={pick('common.paid')} value={n(j.paid)} /> : <Row label={pick('counter.leftToTake')} value={n(Number(j.total) > 0 ? left : Math.max(0, Number(j.estimate) - Number(j.advance)))} strong />}
         </div>
       </Section>
-      <BiButton text="counter.printSlip" size="md" variant="ghost" onClick={() => openPrintable(`/api/v1/repairs/${j.id}/job-sheet`)} />
+      <BiButton text="counter.printSlip" icon={<Printer size={20} />} size="md" variant="ghost" onClick={() => openPrintable(`/api/v1/repairs/${j.id}/job-sheet`)} />
 
       <Section title="stock.history">
         <div className="card p-0">
@@ -262,7 +263,7 @@ export function RepairDetailPage() {
             </div>
           ))}
           <div className="flex flex-wrap gap-1.5">
-            <button type="button" onClick={() => setParts([...parts, { description: '', qty: 1, unit_price: '' }])} className={`tap rounded-full border border-ink px-3 py-1.5 font-bold ${ur ? cls('sm') : 'text-sm'}`}>{pick('counter.addPart')}</button>
+            <IconChip icon={<Plus size={18} />} text="counter.addPart" onClick={() => setParts([...parts, { description: '', qty: 1, unit_price: '' }])} />
             {stock?.filter((a) => a.qty > 0).slice(0, 8).map((a) => (
               <button key={a.id} type="button" onClick={() => setParts([...parts, { description: a.name, accessory_id: a.id, qty: 1, unit_price: a.price }])} className="tap rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-bold text-muted">+ {a.name} ({a.qty})</button>
             ))}

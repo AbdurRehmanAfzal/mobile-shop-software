@@ -1,7 +1,7 @@
 /** Home, "Dukaan counter" (docs/11 v2): search, one coloured tile per job, and the owner's everyday
  *  questions answered in place — any day's sale / udhaar / cash, who owes whom, and stock worth. */
 
-import { ScanLine, Search, ShieldAlert, Wrench } from 'lucide-react'
+import { CalendarDays, ScanLine, Search, ShieldAlert, TrendingUp, Wrench } from 'lucide-react'
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
@@ -73,11 +73,20 @@ export default function HomePage() {
         <Line label={<span>{pick('counter.sold')} <span className="text-muted">(<span className="num">{rep?.phones_sold ?? 0}</span> {pick('counter.phones')})</span></span>} value={<MoneyText value={rep?.sales_total} tone="ink" size="lg" />} />
         <Line label={pick('counter.udhaarGiven')} value={<span className="num text-xl text-receivable" dir="ltr">{fmt(rep?.udhaar_given)}</span>} />
         <Line label={pick('counter.cashIn')} value={<span className="num text-xl text-emerald" dir="ltr">{fmt(cash)}</span>} />
-        <div className={`flex flex-wrap justify-between gap-2 pt-1 font-bold text-emerald ${ur ? cls('sm') : 'text-sm'}`}>
-          <Link to={`/hisaab?date=${day}`}>{pick('counter.seeFull')}</Link>
-          {manager ? <Link to="/reports">{pick('counter.reportTitle')}</Link> : null}
-        </div>
       </section>
+
+      <div className={`grid gap-2.5 ${manager ? 'grid-cols-2' : 'grid-cols-1'}`}>
+        <Link to={`/hisaab?date=${day}`} className="tap flex min-h-[72px] items-center gap-3 rounded-3xl bg-ink px-3 text-ground">
+          <span className="well h-11 w-11 shrink-0 bg-ground text-ink"><CalendarDays size={22} strokeWidth={1.9} /></span>
+          <span className={`font-bold leading-tight ${ur ? cls('md') : 'text-[15px]'}`}>{pick('counter.seeFull')}</span>
+        </Link>
+        {manager ? (
+          <Link to="/reports" className="tap flex min-h-[72px] items-center gap-3 rounded-3xl bg-emerald px-3 text-white">
+            <span className="well h-11 w-11 shrink-0 bg-white text-emerald"><TrendingUp size={22} strokeWidth={1.9} /></span>
+            <span className={`font-bold leading-tight ${ur ? cls('md') : 'text-[15px]'}`}>{pick('counter.reportTitle')}</span>
+          </Link>
+        ) : null}
+      </div>
 
       <div className="grid grid-cols-2 gap-2.5">
         <Link to="/khata?f=get" className="tap flex flex-col rounded-3xl bg-khata px-4 py-3 text-khata-fg">

@@ -72,7 +72,8 @@ const variantCls: Record<Variant, string> = {
   primary: 'bg-emerald text-white shadow-cta',
   secondary: 'bg-surface text-ink border border-line',
   danger: 'bg-payable text-white',
-  ghost: 'bg-transparent text-emerald',
+  // was a bare green text link; shopkeepers did not see it as a button (owner, 2026-10-26)
+  ghost: 'border border-line bg-surface text-emerald-deep',
   gold: 'bg-gold text-[#0E1613]',
 }
 

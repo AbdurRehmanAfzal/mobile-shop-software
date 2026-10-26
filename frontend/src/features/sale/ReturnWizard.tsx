@@ -2,7 +2,7 @@
  *  A walk-in sale asks who brought it back, so the device history knows. `?device=` or `?invoice=`
  *  starts on step two. Backed by POST /returns/sale (refund + kept may go together). */
 
-import { Check } from 'lucide-react'
+import { Banknote, BookOpen, Check, Home, Undo2, Wallet } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
@@ -101,7 +101,7 @@ export default function ReturnWizard() {
     setStep(2)
   }
 
-  const chip = (on: boolean) => `tap min-h-14 rounded-2xl border-2 px-2 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('md') : 'text-[15px]'}`
+  const chip = (on: boolean) => `tap flex min-h-[68px] flex-col items-center justify-center gap-1 rounded-2xl border-2 px-2 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('md') : 'text-[15px]'}`
   const small = ur ? cls('sm') : 'text-sm font-semibold'
 
   return (
@@ -171,10 +171,11 @@ export default function ReturnWizard() {
               <div className="grid grid-cols-3 gap-2">
                 {accounts?.map((a) => (
                   <button key={a.id} type="button" aria-pressed={from?.kind === 'account' && from.id === a.id} onClick={() => setFrom({ kind: 'account', id: a.id })} className={chip(from?.kind === 'account' && from.id === a.id)}>
-                    <span className="block truncate">{a.id === cashId ? pick('counter.cash') : ur && a.name_ur ? a.name_ur : a.name}</span>
+                    {a.id === cashId ? <Banknote size={22} /> : <Wallet size={22} />}
+                    <span className="block max-w-full truncate">{a.id === cashId ? pick('counter.cash') : ur && a.name_ur ? a.name_ur : a.name}</span>
                   </button>
                 ))}
-                {!walkIn ? <button type="button" aria-pressed={toKhata} onClick={() => setFrom({ kind: 'khata' })} className={chip(toKhata)}>{pick('counter.toKhata')}</button> : null}
+                {!walkIn ? <button type="button" aria-pressed={toKhata} onClick={() => setFrom({ kind: 'khata' })} className={chip(toKhata)}><BookOpen size={22} />{pick('counter.toKhata')}</button> : null}
               </div>
               {!toKhata ? (
                 <>
@@ -190,7 +191,7 @@ export default function ReturnWizard() {
 
           <BiInput label="counter.reasonOpt" value={reason} onChange={(e) => setReason(e.target.value)} />
           <ErrorText error={m.error} />
-          <BiButton text="counter.returnBtn" full loading={m.isPending} disabled={!ok} onClick={submit} />
+          <BiButton text="counter.returnBtn" icon={<Undo2 size={22} />} full loading={m.isPending} disabled={!ok} onClick={submit} />
         </div>
       ) : null}
 
@@ -204,8 +205,8 @@ export default function ReturnWizard() {
             <span className="num text-sm opacity-80" dir="ltr">{done.no}</span>
           </div>
           {inv?.lines.some((l) => selected.includes(l.id) && l.device_id) ? <BiLabel text="counter.backInStock" size="md" align="center" tone="text-muted" /> : null}
-          <BiButton text="counter.newReturn" full variant="secondary" onClick={() => { setInvoiceId(undefined); setSelected([]); setWho(null); setReason(''); setRefund(''); setDone(null); setStep(0); m.reset() }} />
-          <BiButton text="nav.home" full variant="ghost" onClick={() => nav('/')} />
+          <BiButton text="counter.newReturn" icon={<Undo2 size={22} />} full variant="secondary" onClick={() => { setInvoiceId(undefined); setSelected([]); setWho(null); setReason(''); setRefund(''); setDone(null); setStep(0); m.reset() }} />
+          <BiButton text="nav.home" icon={<Home size={22} />} full variant="ghost" onClick={() => nav('/')} />
         </div>
       ) : null}
     </div>

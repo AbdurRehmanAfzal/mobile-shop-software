@@ -204,3 +204,14 @@ export function fmtDateTime(iso: string | null | undefined): string {
   const h = d.getHours() % 12 || 12
   return `${fmtDate(d.toISOString())} ${h}:${String(d.getMinutes()).padStart(2, '0')} ${d.getHours() < 12 ? 'AM' : 'PM'}`
 }
+
+/** A small action that must look like a button, never a bare text link: icon + words in a pill. */
+export function IconChip({ icon, text, onClick, tone = 'border-line bg-surface text-ink' }: { icon: ReactNode; text: string | BiText; onClick: () => void; tone?: string }) {
+  const { pick, ur, cls } = useLang()
+  return (
+    <button type="button" onClick={onClick} className={`tap inline-flex min-h-11 items-center gap-2 rounded-2xl border px-3 font-bold ${tone} ${ur ? cls('sm') : 'text-sm'}`}>
+      <span className="shrink-0">{icon}</span>
+      <span className="leading-tight">{pick(text)}</span>
+    </button>
+  )
+}

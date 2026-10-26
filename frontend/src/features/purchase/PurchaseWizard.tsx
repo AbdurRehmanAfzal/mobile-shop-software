@@ -1,9 +1,9 @@
-import { Check, ShieldCheck, Store, Trash2, UserRound } from 'lucide-react'
+import { Banknote, BookOpen, Check, Headphones, PackagePlus, Plus, Printer, ShieldCheck, SlidersHorizontal, Smartphone, Store, Trash2, UserCheck, UserRound, Wallet } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import PartyPicker from '@/components/PartyPicker'
-import { Chip, ErrorText, MoneyText, PageHeader, Sheet, Stepper } from '@/components/ui'
+import { Chip, ErrorText, IconChip, MoneyText, PageHeader, Sheet, Stepper } from '@/components/ui'
 import { uid } from '@/lib/id'
 import { api } from '@/lib/api'
 import { openPrintable } from '@/lib/files'
@@ -49,7 +49,7 @@ export default function PurchaseWizard() {
   const payWith = pay || cashId
   const udhaar = payWith === 'udhaar'
   const paid = udhaar ? Math.min(Number(paidNow || 0), total) : total
-  const chip = (on: boolean) => `tap min-h-14 rounded-2xl border-2 px-2 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('md') : 'text-[15px]'}`
+  const chip = (on: boolean) => `tap flex min-h-[68px] flex-col items-center justify-center gap-1 rounded-2xl border-2 px-2 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('md') : 'text-[15px]'}`
   const partyKind = kind === 'supplier' ? 'supplier' : kind === 'shop' ? 'shop' : 'customer'
 
   async function submit() {
@@ -131,7 +131,7 @@ export default function PurchaseWizard() {
               </button>
             </div>
           ))}
-          <BiButton text="purchase.addDevice" variant="secondary" full onClick={() => setEditing(emptyDraft('', kind))} />
+          <BiButton text="purchase.addDevice" icon={<Plus size={22} />} variant="secondary" full onClick={() => setEditing(emptyDraft('', kind))} />
 
           {kind === 'supplier' ? (
             <>
@@ -145,7 +145,7 @@ export default function PurchaseWizard() {
                   </button>
                 </div>
               ))}
-              <button type="button" className={`tap py-1 text-start font-bold text-buy-fg ${ur ? cls('sm') : 'text-sm'}`} onClick={() => setMisc([...misc, { key: uid(), description: '', qty: '1', unit_cost: '' }])}>{pick('counter.otherItem')}</button>
+              <div><IconChip icon={<Headphones size={18} />} text="counter.otherItem" onClick={() => setMisc([...misc, { key: uid(), description: '', qty: '1', unit_cost: '' }])} /></div>
             </>
           ) : null}
 
@@ -155,17 +155,18 @@ export default function PurchaseWizard() {
               <div className="grid grid-cols-3 gap-2">
                 {accounts?.map((a) => (
                   <button key={a.id} type="button" aria-pressed={payWith === a.id} onClick={() => setPay(a.id)} className={chip(payWith === a.id)}>
-                    <span className="block truncate">{a.id === cashId ? pick('counter.cash') : ur && a.name_ur ? a.name_ur : a.name}</span>
+                    {a.id === cashId ? <Banknote size={22} /> : <Wallet size={22} />}
+                    <span className="block max-w-full truncate">{a.id === cashId ? pick('counter.cash') : ur && a.name_ur ? a.name_ur : a.name}</span>
                   </button>
                 ))}
-                <button type="button" aria-pressed={udhaar} onClick={() => setPay('udhaar')} className={chip(udhaar)}>{pick('counter.udhaar')}</button>
+                <button type="button" aria-pressed={udhaar} onClick={() => setPay('udhaar')} className={chip(udhaar)}><BookOpen size={22} />{pick('counter.udhaar')}</button>
               </div>
               {kind !== 'supplier' ? (
                 <>
                   <BiLabel text="counter.idCheck" size="md" bold />
                   <div className="grid grid-cols-2 gap-2">
-                    <button type="button" aria-pressed={!skipCheck} onClick={() => setSkipCheck(false)} className={chip(!skipCheck)}>{pick('counter.checkLater')}</button>
-                    <button type="button" aria-pressed={skipCheck} onClick={() => setSkipCheck(true)} className={chip(skipCheck)}>{pick('counter.skipCheck')}</button>
+                    <button type="button" aria-pressed={!skipCheck} onClick={() => setSkipCheck(false)} className={chip(!skipCheck)}><ShieldCheck size={22} />{pick('counter.checkLater')}</button>
+                    <button type="button" aria-pressed={skipCheck} onClick={() => setSkipCheck(true)} className={chip(skipCheck)}><UserCheck size={22} />{pick('counter.skipCheck')}</button>
                   </div>
                 </>
               ) : null}
@@ -189,7 +190,7 @@ export default function PurchaseWizard() {
                   {kind === 'supplier' ? <BiInput label="purchase.reference" value={reference} onChange={(e) => setReference(e.target.value)} /> : null}
                 </>
               ) : (
-                <button type="button" className={`tap py-1 text-start font-bold text-muted ${ur ? cls('sm') : 'text-sm'}`} onClick={() => setMore(true)}>{pick('counter.moreBuyOptions')}</button>
+                <div><IconChip icon={<SlidersHorizontal size={18} />} text="counter.moreBuyOptions" onClick={() => setMore(true)} /></div>
               )}
 
               <div className="hero flex flex-col gap-1 px-5 py-4">
@@ -205,7 +206,7 @@ export default function PurchaseWizard() {
                 ) : null}
               </div>
               <ErrorText error={m.error} />
-              <BiButton text="counter.putInStock" full loading={m.isPending} disabled={(earlier && !when) || total <= 0} onClick={submit} />
+              <BiButton text="counter.putInStock" icon={<PackagePlus size={22} />} full loading={m.isPending} disabled={(earlier && !when) || total <= 0} onClick={submit} />
             </>
           ) : null}
         </div>
@@ -237,9 +238,10 @@ export default function PurchaseWizard() {
                   <div className="flex items-center gap-1.5 text-emerald-deep"><Check size={16} /><BiLabel text="purchase.skipped" size="sm" tone="text-emerald-deep" bold /></div>
                 ) : needsCheck ? (
                   <div className="flex flex-wrap gap-2">
-                    <BiButton text="purchase.verifyNow" size="sm" variant="gold" onClick={() => nav(`/stock/${l.device_id}/verify`)} />
+                    <BiButton text="purchase.verifyNow" icon={<ShieldCheck size={18} />} size="sm" variant="gold" onClick={() => nav(`/stock/${l.device_id}/verify`)} />
                     <BiButton
                       text="purchase.skipKnown"
+                      icon={<UserCheck size={18} />}
                       size="sm"
                       variant="secondary"
                       onClick={async () => {
@@ -247,13 +249,13 @@ export default function PurchaseWizard() {
                         setSkipped((x) => ({ ...x, [l.device_id!]: true }))
                       }}
                     />
-                    <BiButton text="common.print" size="sm" variant="ghost" onClick={() => openPrintable(`/api/v1/devices/${l.device_id}/verification/declaration`)} />
+                    <BiButton text="common.print" icon={<Printer size={18} />} size="sm" variant="ghost" onClick={() => openPrintable(`/api/v1/devices/${l.device_id}/verification/declaration`)} />
                   </div>
                 ) : null}
               </div>
             )
           })}
-          <BiButton text="nav.stock" full variant="secondary" onClick={() => nav('/stock')} />
+          <BiButton text="nav.stock" icon={<Smartphone size={22} />} full variant="secondary" onClick={() => nav('/stock')} />
         </div>
       ) : null}
 

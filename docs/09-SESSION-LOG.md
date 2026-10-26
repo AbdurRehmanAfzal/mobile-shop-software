@@ -370,3 +370,7 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - `features/repairs/RepairsPages.tsx` rewritten on v2 (teal): new job form with problem chips, likely cost, advance, ready-by chips, extra details behind a link, save + print slip; job page with customer card + Call, four-stage bar, one primary action per stage ("It is fixed" opens parts + work charge and marks repaired; "Give back to customer" shows left to take, partial payment leaves the rest on khata), waiting for parts / could not fix. No backend change.
 **Verified**: vitest 14, Playwright 15 passed (new `repair.spec.ts`: advance 200, work 1,000, paid 500, khata shows 300).
 **Next**: owner phone test; expenses page layout; settings.
+
+**Session 25 — icons on every action** (owner: "see full hisaab / profit loss tiles mein hon, button form mein; icon use karo, simple text samajh nahi aa raha")
+- Home: "See full hisaab" (ink) and "Profit & reports" (green) are icon tiles under the hisaab card. New `IconChip` in `components/ui.tsx`; "ghost" BiButton now bordered. Text links in sale, add stock, repair, return replaced by icon chips; main buttons got icons (complete sale, print, put in stock, it is fixed, give back, take it back...); payment choices (cash / account / udhaar), "give back from" and ID check / skip show an icon above the word. Rule added to docs/11 (principle 6).
+**Verified**: typecheck, Playwright 15 passed, screenshots of home and sale checked.
