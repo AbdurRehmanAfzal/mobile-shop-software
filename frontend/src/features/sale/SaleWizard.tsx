@@ -2,7 +2,7 @@
  *  → done. Customer is asked only for udhaar; discount, warranty and box/charger sit behind
  *  "more options" so the everyday sale stays three taps. */
 
-import { Banknote, BookOpen, Check, FileText, Headphones, Plus, Printer, Receipt, SlidersHorizontal, Smartphone, Trash2, Wallet } from 'lucide-react'
+import { Banknote, BookOpen, Check, FileText, Headphones, Plus, Printer, Receipt, ShieldAlert, ShieldCheck, SlidersHorizontal, Smartphone, Trash2, UserCheck, Wallet } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
@@ -71,10 +71,14 @@ export default function SaleWizard() {
   const total = Math.max(0, subtotal - Number(discount || 0))
   const udhaar = pay?.kind === 'udhaar'
   const paid = udhaar ? Math.min(Number(paidNow || 0), total) : total
-  const needsOverride = lines.some((l) => l.device.verification_status === 'pending' || l.device.verification_status === 'flagged')
+  const pendingLine = lines.find((l) => l.device.verification_status === 'pending')
+  const flaggedLine = lines.find((l) => l.device.verification_status === 'flagged')
+  const manager = role === 'owner' || role === 'manager'
+  // a pending check may be skipped by whoever sells; a stolen flag needs the owner/manager and a reason
+  const checkOk = (!pendingLine || !!overrideReason) && (!flaggedLine || (manager && overrideReason.trim().length >= 3))
   const notSellableErr = m.error instanceof ApiError && (m.error.code === 'not_sellable' || m.error.code === 'device_flagged')
   const cashId = accounts?.find((a) => a.is_default)?.id ?? accounts?.[0]?.id
-  const canSave = total > 0 && !!pay && (!udhaar || !!party) && lines.every((l) => Number(l.price) > 0) && misc.every((x) => x.description.trim() && Number(x.unit_price) > 0)
+  const canSave = checkOk && total > 0 && !!pay && (!udhaar || !!party) && lines.every((l) => Number(l.price) > 0) && misc.every((x) => x.description.trim() && Number(x.unit_price) > 0)
 
   function pickDevice(d: Device) {
     setLines((ls) => (ls.some((l) => l.device.id === d.id) ? ls : [...ls, newLine(d)]))
@@ -179,7 +183,20 @@ export default function SaleWizard() {
             <PartyPicker value={party} onChange={setParty} kind="customer" label="counter.customerOpt" allowNone />
           ) : null}
 
-          {needsOverride && (role === 'owner' || role === 'manager') ? <BiInput label="sale.override" value={overrideReason} onChange={(e) => setOverrideReason(e.target.value)} /> : null}
+          {flaggedLine ? (
+            <div className="flex flex-col gap-2 rounded-3xl bg-expense p-3 text-expense-fg">
+              <div className="flex items-center gap-2"><ShieldAlert size={22} /><BiLabel text="counter.flaggedSale" size="md" bold tone="text-current" /></div>
+              {manager ? <BiInput label="sale.override" value={overrideReason} onChange={(e) => setOverrideReason(e.target.value)} /> : null}
+            </div>
+          ) : pendingLine ? (
+            <div className="flex flex-col gap-2 rounded-3xl bg-khata p-3 text-khata-fg">
+              <div className="flex items-center gap-2"><ShieldAlert size={22} /><BiLabel text="counter.pendingSale" size="md" bold tone="text-current" /></div>
+              <div className="grid grid-cols-2 gap-2">
+                <button type="button" onClick={() => nav(`/stock/${pendingLine.device.id}/verify`)} className={chip(false)}><ShieldCheck size={22} />{pick('counter.checkNow')}</button>
+                <button type="button" aria-pressed={!!overrideReason} onClick={() => setOverrideReason(overrideReason ? '' : pick('purchase.skipReason'))} className={chip(!!overrideReason)}><UserCheck size={22} />{pick('counter.skipAndSell')}</button>
+              </div>
+            </div>
+          ) : null}
 
           <div className="hero flex flex-col gap-1 px-5 py-4">
             <div className="flex items-center justify-between">

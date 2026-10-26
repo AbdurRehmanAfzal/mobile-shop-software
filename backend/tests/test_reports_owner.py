@@ -97,3 +97,28 @@ def test_top_sellers_and_forecast(owner, cat):
     assert sold_model["advice"] == "buy_more"
     slow = next(m for n, m in by_name.items() if other["name"] in n)
     assert slow["in_stock"] == 1 and slow["sold_30_days"] == 0 and slow["advice"] == "slow"
+
+
+def test_seller_can_skip_a_pending_check_at_sale_but_not_a_flag(client, owner, cat):
+    s = _salesman(client, owner, phone="03451112288")
+    d = _stock(owner, cat, imei=A)  # used phone -> ID check pending
+    body = {"devices": [{"device_id": d["id"], "price": 1500}], "paid": 1500}
+    r = s.post("/api/v1/sales", json=body)
+    assert r.status_code == 409 and r.json()["error"]["code"] == "not_sellable"
+    r = s.post("/api/v1/sales", json={**body, "override_reason": "known customer"})
+    assert r.status_code == 201, r.text
+    hist = owner.get(f"/api/v1/devices/{d['id']}/history").json()
+    skip = next(e for e in hist if e["type"] == "verified")
+    assert skip["data"]["override"] is True and skip["user_name"] == "Kashif Sales"
+
+    f = _stock(owner, cat, imei=B)
+    owner.put(f"/api/v1/devices/{f['id']}/verification", json={"egadget_result": "flagged"})
+    r = s.post(
+        "/api/v1/sales",
+        json={
+            "devices": [{"device_id": f["id"], "price": 1500}],
+            "paid": 1500,
+            "override_reason": "x",
+        },
+    )
+    assert r.status_code == 409 and r.json()["error"]["code"] == "device_flagged"

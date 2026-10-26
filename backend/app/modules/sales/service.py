@@ -16,7 +16,7 @@ from app.modules.auth.models import Shop
 from app.modules.catalogue.models import Brand, Model
 from app.modules.devices.models import Device, DeviceAccessoryItem
 from app.modules.devices.service import apply_event, get_device
-from app.modules.devices.state import DeviceStatus, EventType
+from app.modules.devices.state import DeviceStatus, EventType, VerificationStatus
 from app.modules.ledger import accounts as acc
 from app.modules.ledger.models import CashAccount
 from app.modules.ledger.service import Posting, default_cash_account, money, post, reverse
@@ -99,7 +99,10 @@ def create_sale(
         try:
             assert_sellable(device)
         except NotSellable:
-            if data.override_reason and ctx.can(Cap.VERIFY_OVERRIDE):
+            # owner: the seller may skip a pending ID check and sell (recorded with their name);
+            # a phone flagged as stolen still needs the owner/manager
+            flagged = device.verification_status == VerificationStatus.FLAGGED
+            if data.override_reason and (ctx.can(Cap.VERIFY_OVERRIDE) or not flagged):
                 verification_override(db, shop_id, ctx, device.id, data.override_reason)
                 db.refresh(device)
             else:

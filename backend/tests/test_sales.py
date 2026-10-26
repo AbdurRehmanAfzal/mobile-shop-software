@@ -133,7 +133,7 @@ def test_cash_sale_without_customer_must_be_fully_paid(owner, cat):
     assert r.status_code == 422 and r.json()["error"]["code"] == "credit_needs_customer"
 
 
-def test_unverified_used_device_blocked_then_override(client, owner, cat):
+def test_unverified_used_device_blocked_then_override(owner, cat):
     used = _stock(owner, cat, imei=IMEI_B, condition="used", cost_price=1000, asking_price=1500)
     c = _customer(owner)
     r = owner.post(
@@ -145,21 +145,7 @@ def test_unverified_used_device_blocked_then_override(client, owner, cat):
         },
     )
     assert r.status_code == 409 and r.json()["error"]["code"] == "not_sellable"
-    owner.post(
-        "/api/v1/staff",
-        json={"name": "Sales", "phone": "03451112233", "password": "secret123", "role": "salesman"},
-    )
-    s = login(client, "03451112233")
-    r = s.post(
-        "/api/v1/sales",
-        json={
-            "party_id": c["id"],
-            "devices": [{"device_id": used["id"], "price": 1500}],
-            "paid": 1500,
-            "override_reason": "boss said ok",
-        },
-    )
-    assert r.status_code == 409  # salesman cannot override
+    # owner 2026-10-26: whoever sells may skip a pending ID check; the skip is in the history
     r = owner.post(
         "/api/v1/sales",
         json={
