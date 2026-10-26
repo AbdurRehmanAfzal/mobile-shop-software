@@ -1,3 +1,4 @@
+import DownloadButton from '@/components/DownloadButton'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
@@ -11,7 +12,7 @@ export function PurchasesPage() {
   const { data, isLoading } = usePurchases()
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="more.purchases" />
+      <PageHeader title="more.purchases" right={<DownloadButton path="/api/v1/exports/purchases" name="purchases" />} />
       {isLoading ? <Loading /> : !data?.length ? <Empty text="common.nothingFound" /> : (
         <List>
           {data.map((p) => (

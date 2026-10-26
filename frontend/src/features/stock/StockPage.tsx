@@ -1,5 +1,5 @@
-import { ArrowUpDown, ChevronDown, FileSpreadsheet, PackagePlus, ScanLine } from 'lucide-react'
-import { downloadFile } from '@/lib/files'
+import DownloadButton from '@/components/DownloadButton'
+import { ArrowUpDown, ChevronDown, PackagePlus, ScanLine } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -117,9 +117,7 @@ export default function StockPage() {
         back={false}
         right={
           <div className="flex gap-2">
-            <button type="button" aria-label={pick('export.stock')} onClick={() => downloadFile(`/api/v1/exports/stock.csv?status=${filter}`, 'stock.csv')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface">
-              <FileSpreadsheet size={20} />
-            <BtnText k={'export.stock'} /></button>
+            <DownloadButton path={`/api/v1/exports/stock?status=${filter}`} name="stock" />
             <button type="button" aria-label={pick('stock.imeiLookup')} onClick={() => setLookup(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface">
               <ScanLine size={20} />
             <BtnText k={'stock.imeiLookup'} /></button>

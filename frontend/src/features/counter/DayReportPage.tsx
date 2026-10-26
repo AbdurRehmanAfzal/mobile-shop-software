@@ -1,6 +1,7 @@
 /** Any day's hisaab: sale, how the money came, udhaar given and received back, expense, profit,
  *  and the list of what was sold. `?date=YYYY-MM-DD` opens a given day (default today). */
 
+import DownloadButton from '@/components/DownloadButton'
 import { Link, useSearchParams } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
 import { Empty, Loading, PageHeader } from '@/components/ui'
@@ -29,7 +30,7 @@ export default function DayReportPage() {
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="counter.dayTitle" />
+      <PageHeader title="counter.dayTitle" right={<DownloadButton path={`/api/v1/exports/day?date=${day}`} name={`hisaab-${day}`} />} />
       <DayPicker value={day} onChange={(d) => setParams({ date: d }, { replace: true })} />
       {isLoading || !data ? <Loading /> : (
         <>

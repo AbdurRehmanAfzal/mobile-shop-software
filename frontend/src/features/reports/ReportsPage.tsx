@@ -2,11 +2,10 @@
  *  Profit (sale − buying price − expenses = real profit, tax), Best sellers, Estimate (next 7 days,
  *  which phone runs out), Old stock. One date-range row drives Profit and Best sellers. */
 
-import { FileSpreadsheet, Printer } from 'lucide-react'
+import DownloadButton from '@/components/DownloadButton'
 import { useState, type ReactNode } from 'react'
 import { BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
-import { BtnText, Empty, Loading, PageHeader } from '@/components/ui'
-import { downloadFile } from '@/lib/files'
+import { Empty, Loading, PageHeader } from '@/components/ui'
 import { isoDay } from '@/lib/format'
 import { useGet } from '@/lib/queries'
 
@@ -51,9 +50,10 @@ export default function ReportsPage() {
       <PageHeader
         title="counter.reportTitle"
         right={
-          <button type="button" aria-label={pick('export.print')} onClick={() => window.print()} className="tap print:hidden flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface">
-            <Printer size={20} strokeWidth={1.75} />
-          <BtnText k={'export.print'} /></button>
+          <DownloadButton
+            path={tab === 'profit' ? `/api/v1/exports/profit-loss${qs}` : tab === 'top' ? `/api/v1/exports/top-sellers${qs}` : tab === 'estimate' ? '/api/v1/exports/forecast' : '/api/v1/exports/stock-ageing'}
+            name={{ profit: 'profit-loss', top: 'best-sellers', estimate: 'estimate', old: 'old-stock' }[tab]}
+          />
         }
       />
       <div className="print:hidden">
@@ -97,12 +97,13 @@ export default function ReportsPage() {
               <Line label="counter.taxCollected" value={n(pnl.tax_collected)} />
               {Number(pnl.owner_drawing) ? <Line label="counter.ownerTook" value={n(pnl.owner_drawing)} muted /> : null}
             </div>
-            <div className="print:hidden grid grid-cols-3 gap-2">
+            <BiLabel text="counter.lists" size="md" bold className="mt-2" />
+            <div className="card divide-y divide-line p-0">
               {(['sales', 'purchases', 'expenses'] as const).map((k) => (
-                <button key={k} type="button" onClick={() => downloadFile(`/api/v1/exports/${k}.csv${qs}`)} className="card tap flex flex-col items-center gap-1 p-2">
-                  <FileSpreadsheet size={20} className="text-emerald" />
-                  <span className={ur ? cls('sm') : 'text-xs font-bold'}>{pick(`export.${k}`)}</span>
-                </button>
+                <div key={k} className="flex items-center justify-between gap-3 px-4 py-2">
+                  <span className={ur ? cls('md') : 'text-[15px] font-semibold'}>{pick(`export.${k}`)}</span>
+                  <DownloadButton path={`/api/v1/exports/${k}${qs}`} name={k} />
+                </div>
               ))}
             </div>
           </>

@@ -1,5 +1,5 @@
-import { ArrowDown, ArrowUp, FileSpreadsheet, Pencil, Trash2 } from 'lucide-react'
-import { downloadFile } from '@/lib/files'
+import DownloadButton from '@/components/DownloadButton'
+import { ArrowDown, ArrowUp, Pencil, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
@@ -77,9 +77,7 @@ export default function PartyDetailPage() {
       <Section
         title="party.statement"
         right={
-          <button type="button" onClick={() => downloadFile(`/api/v1/exports/parties/${party.id}/statement.csv`)} className="flex items-center gap-1 text-xs font-bold text-emerald">
-            <FileSpreadsheet size={14} /> {pick('export.excel')}
-          </button>
+          <DownloadButton path={`/api/v1/exports/parties/${party.id}/statement`} name={`khata-${party.name}`} />
         }
       >
         {!st?.rows.length ? (

@@ -51,3 +51,49 @@ def test_sales_statement_expenses_csv(owner, cat):
     assert "Opening balance" in st and "600.00" in st
     assert owner.get("/api/v1/exports/expenses.csv").status_code == 200
     assert owner.get("/api/v1/exports/purchases.csv").status_code == 200
+
+
+def test_every_report_downloads_as_csv_excel_and_pdf(owner, cat):
+    """Owner: every report needs PDF, Excel and CSV."""
+    import io
+
+    from openpyxl import load_workbook
+
+    from tests.test_devices import _stock
+
+    d = _stock(
+        owner, cat, imei="490154203237518", condition="box_pack", cost_price=800, asking_price=1000
+    )
+    owner.post(
+        "/api/v1/sales", json={"devices": [{"device_id": d["id"], "price": 1000}], "paid": 1000}
+    )
+    reports = [
+        "stock",
+        "parties",
+        "sales",
+        "purchases",
+        "expenses",
+        "profit-loss",
+        "top-sellers",
+        "day",
+        "stock-summary",
+        "khata",
+        "forecast",
+        "stock-ageing",
+    ]
+    for name in reports:
+        r = owner.get(f"/api/v1/exports/{name}", params={"format": "csv"})
+        assert r.status_code == 200 and r.headers["content-type"].startswith("text/csv"), name
+        x = owner.get(f"/api/v1/exports/{name}", params={"format": "xlsx"})
+        assert x.status_code == 200 and x.headers["content-disposition"].endswith('.xlsx"'), name
+        wb = load_workbook(io.BytesIO(x.content))
+        assert wb.active.max_row >= 1, name
+        h = owner.get(f"/api/v1/exports/{name}", params={"format": "pdf"})
+        assert h.status_code == 200 and h.headers["content-type"].startswith("text/html"), name
+        assert "<table>" in h.text and "Test Mobile" in h.text, name
+    # numbers stay numbers in Excel
+    x = owner.get("/api/v1/exports/profit-loss", params={"format": "xlsx"})
+    ws = load_workbook(io.BytesIO(x.content)).active
+    assert ws["A2"].value == "Sold" and ws["B2"].value == 1000
+    # old .csv paths keep working
+    assert owner.get("/api/v1/exports/stock.csv").status_code == 200

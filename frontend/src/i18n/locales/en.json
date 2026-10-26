@@ -865,6 +865,15 @@
     "seeMore": "See details",
     "jobsTitle": "What do you want to do?",
     "reportHint": "Real profit, tax, best sellers",
-    "stockHint": "By brand and model"
+    "stockHint": "By brand and model",
+    "download": "Download",
+    "downloadTitle": "Download this report",
+    "pdf": "PDF",
+    "pdfHint": "Opens print — choose \"Save as PDF\"",
+    "excel": "Excel",
+    "excelHint": "For Excel / Google Sheets",
+    "csv": "CSV",
+    "csvHint": "Simple file for any software",
+    "lists": "Download lists"
   }
 }

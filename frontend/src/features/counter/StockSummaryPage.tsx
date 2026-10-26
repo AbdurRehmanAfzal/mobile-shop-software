@@ -1,5 +1,6 @@
 /** "What is my stock worth?" — total, then brand rows that open into their models. */
 
+import DownloadButton from '@/components/DownloadButton'
 import { ChevronDown, List as ListIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -21,9 +22,12 @@ export default function StockSummaryPage() {
       <PageHeader
         title="counter.stockTitle"
         right={
+          <div className="flex gap-2">
+          <DownloadButton path="/api/v1/exports/stock-summary" name="stock-worth" />
           <Link to="/stock" aria-label={pick('counter.seeList')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface">
             <ListIcon size={20} strokeWidth={1.75} />
           <BtnText k={'counter.seeList'} /></Link>
+          </div>
         }
       />
       {isLoading || !data ? <Loading /> : (

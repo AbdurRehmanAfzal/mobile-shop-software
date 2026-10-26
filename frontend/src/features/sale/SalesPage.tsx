@@ -1,3 +1,4 @@
+import DownloadButton from '@/components/DownloadButton'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -21,9 +22,12 @@ export function SalesPage() {
         title="more.sales"
         back={false}
         right={
+          <div className="flex gap-2">
+          <DownloadButton path="/api/v1/exports/sales" name="sales" />
           <button type="button" aria-label={pick('sale.title')} onClick={() => nav('/sale/new')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 bg-ink text-ground">
             <Plus size={22} />
           <BtnText k={'sale.title'} /></button>
+          </div>
         }
       />
       <BiSegmented value={status} onChange={setStatus} options={[{ value: 'all', text: 'common.all' }, { value: 'open', text: 'sale.status.open' }, { value: 'partially_paid', text: 'sale.status.partially_paid' }, { value: 'paid', text: 'sale.status.paid' }]} />

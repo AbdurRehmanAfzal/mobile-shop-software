@@ -1,3 +1,4 @@
+import DownloadButton from '@/components/DownloadButton'
 import { Lock, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
@@ -42,6 +43,7 @@ export default function ExpensesPage() {
         title="expense.title"
         right={
           <div className="flex gap-2">
+            <DownloadButton path="/api/v1/exports/expenses" name="expenses" />
             <button type="button" aria-label={pick('expense.dayClose')} onClick={() => setClosing(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface">
               <Lock size={18} />
             <BtnText k={'expense.dayClose'} /></button>

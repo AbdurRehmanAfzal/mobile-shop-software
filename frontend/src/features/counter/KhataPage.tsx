@@ -1,12 +1,13 @@
 /** Udhaar khata: the two totals ("I will get" / "I have to give") are also the filters, then the
  *  people with a balance, and two big buttons for money received / paid. `?f=get|give` preselects. */
 
+import DownloadButton from '@/components/DownloadButton'
 import { ArrowDown, ArrowUp, Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
 import PartyPicker from '@/components/PartyPicker'
-import { Empty, Loading, PageHeader, SearchBox, Sheet } from '@/components/ui'
+import { BtnText, Empty, Loading, PageHeader, SearchBox, Sheet } from '@/components/ui'
 import PartyForm from '@/features/parties/PartyForm'
 import PaymentForm from '@/features/payments/PaymentForm'
 import { useGet, useParties } from '@/lib/queries'
@@ -40,10 +41,13 @@ export default function KhataPage() {
       <PageHeader
         title="counter.khataTitle"
         right={
-          <button type="button" onClick={() => setAdding(true)} className="tap flex h-11 items-center gap-1.5 rounded-2xl bg-ink px-3 text-ground">
-            <Plus size={18} strokeWidth={2.2} />
-            <span className={ur ? cls('sm') : 'text-sm font-bold'}>{pick('counter.newPerson')}</span>
-          </button>
+          <div className="flex gap-2">
+            <DownloadButton path="/api/v1/exports/khata" name="udhaar-khata" />
+            <button type="button" onClick={() => setAdding(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl bg-ink px-2 py-1 text-ground">
+              <Plus size={20} strokeWidth={2.2} />
+              <BtnText k="counter.newPerson" />
+            </button>
+          </div>
         }
       />
 

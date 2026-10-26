@@ -865,6 +865,15 @@
     "seeMore": "تفصیل دیکھیں",
     "jobsTitle": "کیا کرنا ہے؟",
     "reportHint": "اصل منافع، ٹیکس، سب سے زیادہ بکا",
-    "stockHint": "برانڈ اور ماڈل کے حساب سے"
+    "stockHint": "برانڈ اور ماڈل کے حساب سے",
+    "download": "ڈاؤن لوڈ",
+    "downloadTitle": "یہ رپورٹ ڈاؤن لوڈ کریں",
+    "pdf": "PDF",
+    "pdfHint": "پرنٹ کھلے گا — \"Save as PDF\" چنیں",
+    "excel": "Excel",
+    "excelHint": "Excel یا Google Sheets کے لیے",
+    "csv": "CSV",
+    "csvHint": "کسی بھی سافٹ ویئر کے لیے سادہ فائل",
+    "lists": "فہرستیں ڈاؤن لوڈ کریں"
   }
 }
