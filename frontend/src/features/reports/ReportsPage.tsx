@@ -21,6 +21,8 @@ type Tab = 'profit' | 'top' | 'estimate' | 'old'
 type Range = 'today' | 'yesterday' | 'last7' | 'month' | 'custom'
 
 const n = (v: string | number | null | undefined) => Math.abs(Number(v ?? 0)).toLocaleString('en-US', { maximumFractionDigits: 0 })
+/** "− 800" for money taken off; plain "0" when nothing was */
+const minus = (v: string | number) => (Number(v) ? `− ${n(v)}` : '0')
 const monthStart = () => { const d = new Date(); return isoDay(1 - d.getDate()) }
 
 export default function ReportsPage() {
@@ -87,10 +89,10 @@ export default function ReportsPage() {
             </section>
             <div className="card flex flex-col p-0">
               <Line label="counter.sold" value={n(pnl.sales)} />
-              <Line label="counter.cogs" value={`− ${n(pnl.cogs)}`} muted />
+              <Line label="counter.cogs" value={minus(pnl.cogs)} muted />
               <Line label="counter.grossProfit" value={n(pnl.gross_profit)} strong />
               {Number(pnl.repair_income) + Number(pnl.other_income) ? <Line label="counter.otherIncome" value={`+ ${n(Number(pnl.repair_income) + Number(pnl.other_income))}`} /> : null}
-              {Object.entries(pnl.expenses).map(([k, v]) => <Line key={k} label={{ en: catName(k), ur: catName(k) }} value={`− ${n(v)}`} muted />)}
+              {Object.entries(pnl.expenses).map(([k, v]) => <Line key={k} label={{ en: catName(k), ur: catName(k) }} value={minus(v)} muted />)}
               <Line label={net >= 0 ? 'counter.netProfit' : 'counter.netLoss'} value={n(net)} strong />
             </div>
             <div className="card flex flex-col p-0">

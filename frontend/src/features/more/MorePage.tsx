@@ -12,7 +12,7 @@ import { setLocale, type Locale } from '@/i18n'
 import { useAuth, type Role } from '@/lib/auth'
 import { useTheme, type Theme } from '@/lib/theme'
 import { api } from '@/lib/api'
-import { BiButton, BiInput, BiLabel, BiSegmented } from '@/components/Bilingual'
+import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import { ErrorText, Sheet } from '@/components/ui'
 import { rememberLogin } from '@/features/auth/LoginPage'
 
@@ -90,6 +90,7 @@ const GROUPS: Group[] = [
 
 export default function MorePage() {
   const { i18n } = useTranslation()
+  const { pick } = useLang()
   const nav = useNavigate()
   const logout = useAuth((s) => s.logout)
   const me = useAuth((s) => s.me)
@@ -143,7 +144,7 @@ export default function MorePage() {
       <div className="card flex flex-col gap-3">
         <div className="flex items-center gap-3">
           <FileText size={18} className="text-muted" />
-          <div className="text-sm font-semibold text-muted" dir="ltr">{me?.user.name} · {me?.user.phone} · {me?.user.role}</div>
+          <div className="text-sm font-semibold text-muted" dir="ltr">{me?.user.name} · {me?.user.phone} · {me?.user.role ? pick(`staff.roles.${me.user.role}`) : ''}</div>
         </div>
         <BiButton text="auth.logout" variant="danger" full onClick={logout} icon={<LogOut size={20} />} />
       </div>

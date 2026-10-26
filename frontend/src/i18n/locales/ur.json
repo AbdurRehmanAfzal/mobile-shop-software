@@ -50,9 +50,9 @@
   "more": {
     "title": "مزید",
     "language": "زبان",
-    "theme": "رنگ روپ",
-    "themeLight": "روشن",
-    "themeDark": "گہرا",
+    "theme": "تھیم",
+    "themeLight": "لائٹ",
+    "themeDark": "ڈارک",
     "themeSystem": "فون کے مطابق",
     "settings": "دکان کی سیٹنگز",
     "staff": "عملہ",
