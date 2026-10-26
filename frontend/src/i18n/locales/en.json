@@ -26,7 +26,9 @@
     "noAccount": "New shop? Create account",
     "logout": "Logout",
     "loggingIn": "Logging in...",
-    "welcome": "Welcome"
+    "welcome": "Welcome",
+    "madeBy": "Made by",
+    "wantApp": "Want this app for your shop? Contact us"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -899,5 +901,22 @@
       "other": "Other"
     },
     "week": "Week"
+  },
+  "admin": {
+    "title": "Super admin",
+    "newShop": "Open a new shop",
+    "shops": "Customer shops",
+    "ownerName": "Owner's name",
+    "ownerPhone": "Owner's mobile (login)",
+    "password": "Password for the owner",
+    "language": "Shop language",
+    "created": "Shop opened",
+    "giveDetails": "Give these login details to the shop owner",
+    "sendWhatsapp": "Send on WhatsApp",
+    "users": "users",
+    "opened": "Opened",
+    "none": "No shops yet",
+    "another": "Open another shop",
+    "only": "Only you (the product owner) see this page"
   }
 }

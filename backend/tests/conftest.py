@@ -10,6 +10,11 @@ os.environ.setdefault("APP_ENV", "test")
 os.environ.setdefault("SECRET_KEY", "test-secret-key-that-is-long-enough-for-hs256")
 
 import pytest
+
+from app.core.config import settings
+
+# tests open throwaway shops through public signup (off by default, as in production)
+settings.public_signup = True
 from fastapi.testclient import TestClient
 from sqlalchemy import StaticPool, create_engine, event
 from sqlalchemy.orm import sessionmaker

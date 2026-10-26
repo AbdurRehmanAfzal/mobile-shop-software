@@ -84,6 +84,7 @@ class UserOut(BaseModel):
     is_active: bool
     last_login_at: datetime | None
     has_pin: bool = False
+    is_superuser: bool = False
 
 
 class MeOut(BaseModel):

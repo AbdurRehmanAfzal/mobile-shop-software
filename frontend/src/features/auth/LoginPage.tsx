@@ -1,6 +1,5 @@
 import { Lock } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
 import { ApiError, post } from '@/lib/api'
 import { useAuth, type MeOut } from '@/lib/auth'
 import { isValidPkMobile, normalisePhone, toLatinDigits } from '@/lib/format'
@@ -26,7 +25,6 @@ export function forgetLogin() {
 }
 
 export default function LoginPage() {
-  const nav = useNavigate()
   const setSession = useAuth((s) => s.setSession)
   const last = readLast()
   const [mode, setMode] = useState<'pin' | 'password'>(last?.hasPin ? 'pin' : 'password')
@@ -103,9 +101,8 @@ export default function LoginPage() {
           <button type="button" onClick={() => setMode('password')} className="tap py-2">
             <BiLabel text="pin.forgot" size="sm" tone="text-emerald" align="center" />
           </button>
-          <div className="grid w-full grid-cols-2 gap-2 border-t border-line pt-4">
-            <BiButton type="button" text="pin.otherAccount" variant="secondary" size="sm" onClick={() => { forgetLogin(); setPhone(''); setMode('password') }} />
-            <BiButton type="button" text="pin.newShop" variant="secondary" size="sm" onClick={() => nav('/signup')} />
+          <div className="w-full border-t border-line pt-4">
+            <BiButton type="button" text="pin.otherAccount" variant="secondary" size="sm" full onClick={() => { forgetLogin(); setPhone(''); setMode('password') }} />
           </div>
         </form>
       </AuthLayout>
@@ -124,11 +121,6 @@ export default function LoginPage() {
             <BiLabel text="pin.usePin" size="sm" tone="text-emerald" align="center" />
           </button>
         ) : null}
-        <div className="border-t border-line pt-4">
-          <Link to="/signup" className="tap flex min-h-14 items-center justify-center rounded-2xl border-2 border-emerald bg-emerald-tint/40">
-            <BiLabel text="pin.newShop" size="md" align="center" tone="text-emerald-deep" bold />
-          </Link>
-        </div>
       </form>
     </AuthLayout>
   )

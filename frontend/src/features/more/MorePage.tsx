@@ -2,7 +2,7 @@
 
 import {
   ArrowLeftRight, Archive, BarChart3, Bell, BookOpen, CalendarDays, FileText, HandCoins, Headphones, KeyRound,
-  Landmark, Lock, LogOut, Package, PackagePlus, Receipt, RotateCcw, ScanLine, Settings, Smartphone, Tag, Tags, Undo2, Users,
+  Landmark, Lock, LogOut, Package, PackagePlus, ShieldCheck, Receipt, RotateCcw, ScanLine, Settings, Smartphone, Tag, Tags, Undo2, Users,
   Wallet, Wrench, type LucideIcon,
 } from 'lucide-react'
 import { useState } from 'react'
@@ -110,6 +110,15 @@ export default function MorePage() {
 
   return (
     <div className="flex flex-col gap-5">
+      {me?.user.is_superuser ? (
+        <button type="button" onClick={() => nav('/admin')} className="tap flex min-h-[72px] items-center gap-3 rounded-3xl bg-hero px-4 text-start text-hero-text">
+          <span className="well h-12 w-12 shrink-0 bg-white/15"><ShieldCheck size={24} /></span>
+          <span className="flex min-w-0 flex-1 flex-col">
+            <BiLabel text="admin.title" size="lg" bold tone="text-current" />
+            <BiLabel text="admin.newShop" size="sm" tone="text-current opacity-80" />
+          </span>
+        </button>
+      ) : null}
       {GROUPS.map((g) => {
         const items = g.items.filter(visible)
         if (!items.length) return null

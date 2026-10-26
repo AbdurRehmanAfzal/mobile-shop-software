@@ -16,6 +16,17 @@ class Settings(BaseSettings):
     upload_dir: str = "./uploads"
     default_locale: str = "ur"
     timezone: str = "Asia/Karachi"
+    # Owner (2026-10-26): only the product owner creates shops. Public signup stays off in
+    # production; the local dev/test setup turns it on so automated tests can make throwaway shops.
+    public_signup: bool = False
+    # comma-separated mobile numbers of super users (the product owner), e.g. "03001234567"
+    superuser_phones: str = ""
+
+    @property
+    def superusers(self) -> set[str]:
+        from app.core.pk import normalise_phone
+
+        return {normalise_phone(p) for p in self.superuser_phones.split(",") if p.strip()}
 
     @property
     def is_sqlite(self) -> bool:

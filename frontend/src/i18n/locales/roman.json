@@ -26,7 +26,9 @@
     "noAccount": "Nayi dukaan? Account banayein",
     "logout": "Logout",
     "loggingIn": "Login ho raha hai...",
-    "welcome": "Khush aamdeed"
+    "welcome": "Khush aamdeed",
+    "madeBy": "Tayyar karda:",
+    "wantApp": "Apni dukaan ke liye yeh app chahiye? Hum se raabta karein"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -899,5 +901,22 @@
       "other": "Kuch aur"
     },
     "week": "Hafta"
+  },
+  "admin": {
+    "title": "Super admin",
+    "newShop": "Nayi dukaan kholein",
+    "shops": "Customers ki dukaanein",
+    "ownerName": "Maalik ka naam",
+    "ownerPhone": "Maalik ka mobile (login)",
+    "password": "Maalik ka password",
+    "language": "Dukaan ki zubaan",
+    "created": "Dukaan khul gayi",
+    "giveDetails": "Yeh login tafseel dukaan ke maalik ko dein",
+    "sendWhatsapp": "WhatsApp par bhejein",
+    "users": "user",
+    "opened": "Khuli",
+    "none": "Abhi koi dukaan nahi",
+    "another": "Ek aur dukaan kholein",
+    "only": "Yeh page sirf aap (product ke maalik) ko nazar aata hai"
   }
 }

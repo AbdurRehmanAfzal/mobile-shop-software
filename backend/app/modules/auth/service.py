@@ -4,7 +4,7 @@ from decimal import Decimal
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.core.errors import Conflict, NotFound, Unauthorized, ValidationFailed
+from app.core.errors import Conflict, Forbidden, NotFound, Unauthorized, ValidationFailed
 from app.core.permissions import Role
 from app.core.ratelimit import login_limiter
 from app.core.security import create_token, decode_token, hash_password, hash_pin, verify_password
@@ -33,7 +33,32 @@ def phone_taken(db: Session, phone: str) -> bool:
     return db.scalar(select(User.id).where(User.phone == phone)) is not None
 
 
+def is_superuser(user: User) -> bool:
+    """The product owner: may create shops for customers (super admin module)."""
+    from app.core.config import settings
+
+    return user.phone in settings.superusers
+
+
 def signup(db: Session, data: SignupRequest) -> tuple[User, TokenPair]:
+    """Self-service signup, only when PUBLIC_SIGNUP is on (dev/test). Shops are otherwise
+    created by the product owner through the super admin module."""
+    from app.core.config import settings
+
+    if not settings.public_signup:
+        raise Forbidden(
+            code="signup_closed",
+            message_en="New shops are opened by OOP Solutions. Please contact us.",
+            message_ur="نئی دکان OOP Solutions کھولتا ہے۔ براہ کرم ہم سے رابطہ کریں۔",
+        )
+    user = create_shop_with_owner(db, data)
+    return user, _tokens(user)
+
+
+def create_shop_with_owner(
+    db: Session, data: SignupRequest, created_by: uuid.UUID | None = None
+) -> User:
+    """A new customer: organisation, shop, its owner login and default cash account."""
     if phone_taken(db, data.phone):
         raise Conflict(
             code="phone_taken",
@@ -57,17 +82,22 @@ def signup(db: Session, data: SignupRequest) -> tuple[User, TokenPair]:
         password_hash=hash_password(data.password),
         role=Role.OWNER,
         locale=data.locale,
-        last_login_at=utcnow(),
+        last_login_at=None if created_by else utcnow(),
     )
     db.add_all([org, shop, user])
     db.flush()
     db.add(UserShop(user_id=user.id, shop_id=shop.id))
     ensure_default_cash_account(db, shop.id)
     record_audit(
-        db, shop_id=shop.id, user_id=user.id, entity="shop", entity_id=shop.id, action="create"
+        db,
+        shop_id=shop.id,
+        user_id=created_by or user.id,
+        entity="shop",
+        entity_id=shop.id,
+        action="create",
     )
     db.commit()
-    return user, _tokens(user)
+    return user
 
 
 def login(db: Session, phone: str, password: str) -> tuple[User, TokenPair]:

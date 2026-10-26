@@ -7,6 +7,7 @@ import HomePage from '@/features/counter/HomePage'
 import StockSummaryPage from '@/features/counter/StockSummaryPage'
 import DayReportPage from '@/features/counter/DayReportPage'
 import KhataPage from '@/features/counter/KhataPage'
+import AdminPage from '@/features/admin/AdminPage'
 import CataloguePage from '@/features/catalogue/CataloguePage'
 import MorePage from '@/features/more/MorePage'
 import SettingsPage from '@/features/more/SettingsPage'
@@ -60,6 +61,7 @@ export const router = createBrowserRouter([
           { path: '/stock/summary', element: <StockSummaryPage /> },
           { path: '/hisaab', element: <DayReportPage /> },
           { path: '/khata', element: <KhataPage /> },
+          { path: '/admin', element: <AdminPage /> },
           { path: '/return/new', element: <ReturnWizard /> },
           { path: '/stock/opening', element: <OpeningStockPage /> },
           { path: '/stock/:id', element: <DeviceDetailPage /> },

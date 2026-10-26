@@ -32,6 +32,8 @@ services:
       CORS_ORIGINS: '["https://${APP_DOMAIN}", "https://localhost", "capacitor://localhost"]'
       UPLOAD_DIR: /data/uploads
       WEB_WORKERS: ${WEB_WORKERS:-2}
+      PUBLIC_SIGNUP: ${PUBLIC_SIGNUP:-false}
+      SUPERUSER_PHONES: ${SUPERUSER_PHONES:-}
     volumes:
       - uploads:/data/uploads
 

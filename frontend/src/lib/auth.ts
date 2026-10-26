@@ -13,6 +13,8 @@ export interface UserOut {
   locale: 'en' | 'ur'
   is_active: boolean
   has_pin?: boolean
+  /** the product owner: may open shops (super admin) */
+  is_superuser?: boolean
 }
 
 export interface ShopOut {
