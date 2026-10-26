@@ -316,3 +316,6 @@ def test_return_with_cut_and_walk_in(owner, cat):
     assert day["sales_total"] == "0.00" and day["phones_sold"] == 0
     assert [i["returned"] for i in day["items"]] == [True, True]
     assert all(i["name"] for i in day["items"])  # the name stays
+    # owner: 150,000 came in, 135,000 went back -> 15,000 left in hand
+    assert day["money_in"] == "150000.00" and day["money_out"] == "135000.00"
+    assert day["cash_net"] == "15000.00"

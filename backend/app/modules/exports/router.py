@@ -473,6 +473,10 @@ def day(ctx: Ctx, db: DB, format: Fmt = "csv", date: dt.date | None = None):
         ["", "Given on udhaar", "", "", "", "", d["udhaar_given"]],
         ["", "Udhaar received", "", "", "", "", d["udhaar_received"]],
         ["", "Given back on returns", "", "", "", "", d["returns_refunded"]],
+        ["", "Cut on returns", "", "", "", "", d["returns_kept"]],
+        ["", "Money came in", "", "", "", "", d["money_in"]],
+        ["", "Money went out", "", "", "", "", d["money_out"]],
+        ["", "Left in hand today", "", "", "", "", d["cash_net"]],
         ["", "Expense", "", "", "", "", d["expenses"]],
     ]
     if d["profit"] is not None:

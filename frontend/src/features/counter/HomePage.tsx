@@ -29,7 +29,6 @@ export default function HomePage() {
   const { data: dash } = useGet<Dash>(['dashboard'], '/api/v1/reports/dashboard')
   const { data: rep } = useGet<DayReport>(['day', day], `/api/v1/reports/day?date=${day}`)
   const worth = dash ? dash.stock_value_cost ?? dash.stock_value_asking : null
-  const cash = rep ? Object.values(rep.received).reduce((s, v) => s + Number(v), 0) : 0
   const [big, small] = [JOBS.slice(0, 2), JOBS.slice(2)]
   const small_ = ur ? cls('sm') : 'text-sm font-semibold'
 
@@ -91,8 +90,8 @@ export default function HomePage() {
               <span className="num text-xl text-[#F3C96B]" dir="ltr">{fmt(rep?.udhaar_given)}</span>
             </div>
             <div className="flex flex-col rounded-2xl bg-white/10 px-3 py-2">
-              <span className={`opacity-75 ${small_}`}>{pick('counter.cashIn')}</span>
-              <span className="num text-xl text-[#8FE3B4]" dir="ltr">{fmt(cash)}</span>
+              <span className={`opacity-75 ${small_}`}>{pick('counter.inHand')}</span>
+              <span className={`num text-xl ${Number(rep?.cash_net ?? 0) < 0 ? 'text-[#F28B82]' : 'text-[#8FE3B4]'}`} dir="ltr">{Number(rep?.cash_net ?? 0) < 0 ? '−' : ''}{fmt(rep?.cash_net)}</span>
             </div>
           </div>
           <SeeMore light />

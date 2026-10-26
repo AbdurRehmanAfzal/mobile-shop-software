@@ -65,6 +65,8 @@ def test_day_report(db, owner, cat):
     assert d["received"]["cash"] == "2200.00"
     assert d["udhaar_given"] == "500.00" and d["udhaar_received"] == "200.00"
     assert d["expenses"] == "100.00"
+    # 2,200 at the counter + 200 udhaar back in, 100 tea out
+    assert d["money_in"] == "2400.00" and d["money_out"] == "100.00" and d["cash_net"] == "2300.00"
     # profit = (1500-1000) + (1200-800) - 100 tea
     assert d["profit"] == "800.00"
     assert [(i["how"], i["amount"], i["party_name"]) for i in d["items"]] == [

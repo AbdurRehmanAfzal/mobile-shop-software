@@ -358,6 +358,9 @@ export interface DayReport {
   received: Record<'cash' | 'bank' | 'easypaisa' | 'jazzcash', Money>
   udhaar_given: Money
   udhaar_received: Money
+  money_in: Money
+  money_out: Money
+  cash_net: Money
   returns_refunded: Money
   returns_kept: Money
   expenses: Money

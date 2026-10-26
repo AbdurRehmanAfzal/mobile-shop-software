@@ -42,6 +42,15 @@ export default function DayReportPage() {
             <span className="num text-[30px]" dir="ltr">Rs. {n(data.sales_total)}</span>
           </section>
 
+          <section className="flex flex-col gap-1 rounded-3xl bg-ink px-5 py-4 text-ground">
+            <BiLabel text="counter.netCash" size="md" bold tone="text-current" />
+            <span className={`num text-[30px] leading-tight ${Number(data.cash_net) < 0 ? 'text-[#F28B82]' : 'text-[#8FE3B4]'}`} dir="ltr">{Number(data.cash_net) < 0 ? '− ' : ''}Rs. {n(data.cash_net)}</span>
+            <span className={`opacity-80 ${ur ? cls('sm') : 'text-sm font-semibold'}`}>
+              {pick('counter.cameIn')} <span className="num" dir="ltr">{n(data.money_in)}</span> · {pick('counter.wentOut')} <span className="num" dir="ltr">{n(data.money_out)}</span>
+            </span>
+            <BiLabel text="counter.netCashHint" size="sm" tone="text-current opacity-70" />
+          </section>
+
           <div className="grid grid-cols-3 gap-2">
             <Box label="counter.cashIn" value={n(data.received.cash)} tone="text-emerald" />
             <Box label={Number(data.received.bank) > 0 ? 'counter.bank' : 'counter.easypaisa'} value={n(digital)} />

@@ -373,8 +373,16 @@ def day_report(db: Session, shop_id: uuid.UUID, day: dt.date, show_cost: bool) -
             ReturnDoc.kind == ReturnKind.SALE,
         )
     ).one()
+    # money that actually moved through cash / bank / Easypaisa today (sales, udhaar back, returns,
+    # expenses, payments to dealers...): what is left in hand is in - out
+    flows = cash_flow(db, shop_id, day, day)
+    money_in = money(sum((f["cash_in"] for f in flows), ZERO))
+    money_out = money(sum((f["cash_out"] for f in flows), ZERO))
     return {
         "date": day,
+        "money_in": money_in,
+        "money_out": money_out,
+        "cash_net": money(money_in - money_out),
         "returns_refunded": money(refunded or 0),
         "returns_kept": money(kept or 0),
         "sales_count": len(invoices),
