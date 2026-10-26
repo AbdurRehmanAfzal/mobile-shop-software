@@ -10,6 +10,7 @@ from app.modules.ledger import service
 from app.modules.ledger.schemas import (
     CashAccountCreate,
     CashAccountOut,
+    CashAccountUpdate,
     CashBookOut,
     CashBookRow,
     EntryOut,
@@ -107,3 +108,13 @@ def reverse(group_id: uuid.UUID, data: ReverseRequest, ctx: Void, db: DB):
     g = service.reverse(db, ctx.shop_id, ctx.id, group_id, data.reason)
     db.commit()
     return _group_out(g)
+
+
+@router.patch("/accounts/{account_id}", response_model=CashAccountOut)
+def update_account(account_id: uuid.UUID, data: CashAccountUpdate, ctx: Settings, db: DB):
+    return service.update_cash_account(db, ctx.shop_id, ctx.id, account_id, data)
+
+
+@router.delete("/accounts/{account_id}")
+def delete_account(account_id: uuid.UUID, ctx: Settings, db: DB):
+    return {"result": service.delete_cash_account(db, ctx.shop_id, ctx.id, account_id)}

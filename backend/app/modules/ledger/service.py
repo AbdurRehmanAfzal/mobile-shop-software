@@ -461,3 +461,68 @@ def post_party_opening_balance(
     )
     db.commit()
     return group
+
+
+def update_cash_account(
+    db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, account_id: uuid.UUID, data
+) -> dict:
+    a = db.get(CashAccount, account_id)
+    if a is None or a.shop_id != shop_id or not a.is_active:
+        raise NotFound(code="cash_account_not_found")
+    changes = data.model_dump(exclude_unset=True)
+    before = {k: getattr(a, k) for k in changes}
+    for k, v in changes.items():
+        setattr(a, k, v)
+    if "name" in changes:
+        a.name_ur = None
+    record_audit(
+        db,
+        shop_id=shop_id,
+        user_id=user_id,
+        entity="cash_account",
+        entity_id=a.id,
+        action="update",
+        before=before,
+        after=changes,
+    )
+    db.commit()
+    return {**_acc_dict(a), "balance": cash_balance(db, shop_id, a.id)}
+
+
+def delete_cash_account(
+    db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, account_id: uuid.UUID
+) -> str:
+    from app.db.refs import count_references
+
+    a = db.get(CashAccount, account_id)
+    if a is None or a.shop_id != shop_id or not a.is_active:
+        raise NotFound(code="cash_account_not_found")
+    if a.is_default:
+        raise Conflict(
+            code="cash_account_default",
+            message_en="The main cash drawer cannot be deleted",
+            message_ur="مین کیش دراز ختم نہیں ہو سکتا",
+        )
+    if cash_balance(db, shop_id, a.id) != 0:
+        raise Conflict(
+            code="cash_account_has_balance",
+            message_en="This account still has money. Move it to another account first.",
+            message_ur="اس اکاؤنٹ میں ابھی رقم ہے۔ پہلے دوسرے اکاؤنٹ میں منتقل کریں۔",
+        )
+    used = count_references(db, "cash_accounts", a.id)
+    action = "archive" if used else "delete"
+    record_audit(
+        db,
+        shop_id=shop_id,
+        user_id=user_id,
+        entity="cash_account",
+        entity_id=a.id,
+        action=action,
+        before={"name": a.name},
+    )
+    if used:
+        a.is_active = False
+    else:
+        db.delete(a)
+    db.commit()
+    return action

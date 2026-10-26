@@ -2,6 +2,7 @@ import uuid
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
+from pydantic import BaseModel
 
 from app.core.errors import Forbidden, NotFound
 from app.core.permissions import Cap
@@ -71,3 +72,12 @@ def get_party(party_id: uuid.UUID, ctx: Ctx, db: DB):
 @router.patch("/{party_id}", response_model=PartyOut)
 def update_party(party_id: uuid.UUID, data: PartyUpdate, ctx: Writer, db: DB):
     return service.update_party(db, ctx.shop_id, ctx.id, party_id, data)
+
+
+class DeletedOut(BaseModel):
+    result: str  # "delete" (gone) or "archive" (hidden, history kept)
+
+
+@router.delete("/{party_id}", response_model=DeletedOut)
+def delete_party(party_id: uuid.UUID, ctx: Writer, db: DB):
+    return {"result": service.delete_party(db, ctx.shop_id, ctx, party_id)}

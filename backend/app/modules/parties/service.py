@@ -53,7 +53,24 @@ def list_parties(
 
 
 def create_party(db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, data: PartyCreate) -> Party:
-    if by_phone(db, shop_id, data.phone):
+    existing = by_phone(db, shop_id, data.phone)
+    if existing is not None and not existing.is_active:
+        # same number as an archived party: bring it back with the new details
+        for k, v in data.model_dump().items():
+            setattr(existing, k, v)
+        existing.is_active = True
+        record_audit(
+            db,
+            shop_id=shop_id,
+            user_id=user_id,
+            entity="party",
+            entity_id=existing.id,
+            action="restore",
+            after={"name": existing.name, "phone": existing.phone},
+        )
+        db.commit()
+        return existing
+    if existing is not None:
         raise Conflict(
             code="party_phone_exists",
             message_en="A party with this phone number already exists",
@@ -107,3 +124,38 @@ def _plain(v):
     if isinstance(v, list):
         return [str(x) for x in v]
     return v
+
+
+def delete_party(db: Session, shop_id: uuid.UUID, ctx, party_id: uuid.UUID) -> str:
+    """Delete when nothing refers to the party, otherwise archive. Balance must be clear."""
+    from app.core.errors import Forbidden
+    from app.core.permissions import Cap
+    from app.db.refs import count_references
+    from app.modules.ledger.service import refresh_party_balance
+
+    if not ctx.can(Cap.VOID):
+        raise Forbidden()
+    party = get_party(db, shop_id, party_id)
+    if refresh_party_balance(db, shop_id, party.id) != 0:
+        raise Conflict(
+            code="party_has_balance",
+            message_en="This account still has a balance. Clear it first.",
+            message_ur="اس کھاتے میں ابھی رقم باقی ہے۔ پہلے حساب صاف کریں۔",
+        )
+    used = count_references(db, "parties", party.id)
+    action = "archive" if used else "delete"
+    record_audit(
+        db,
+        shop_id=shop_id,
+        user_id=ctx.id,
+        entity="party",
+        entity_id=party.id,
+        action=action,
+        before={"name": party.name, "phone": party.phone},
+    )
+    if used:
+        party.is_active = False
+    else:
+        db.delete(party)
+    db.commit()
+    return action

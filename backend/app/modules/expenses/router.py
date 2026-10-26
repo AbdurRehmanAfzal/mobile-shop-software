@@ -10,6 +10,7 @@ from app.modules.expenses import service
 from app.modules.expenses.schemas import (
     CategoryCreate,
     CategoryOut,
+    CategoryUpdate,
     DayCloseIn,
     DayCloseOut,
     DayPreviewOut,
@@ -84,3 +85,18 @@ def get_expense(expense_id: uuid.UUID, ctx: Exp, db: DB):
 @router.post("/{expense_id}/void", response_model=ExpenseOut)
 def void(expense_id: uuid.UUID, data: VoidIn, ctx: Exp, db: DB):
     return service.to_out(db, service.void_expense(db, ctx.shop_id, ctx, expense_id, data.reason))
+
+
+@router.patch("/categories/{category_id}", response_model=CategoryOut)
+def update_category(category_id: uuid.UUID, data: CategoryUpdate, ctx: Exp, db: DB):
+    return service.update_category(db, ctx.shop_id, ctx.id, category_id, data.name)
+
+
+@router.delete("/categories/{category_id}")
+def delete_category(category_id: uuid.UUID, ctx: Exp, db: DB):
+    return {"result": service.delete_category(db, ctx.shop_id, ctx.id, category_id)}
+
+
+@router.put("/{expense_id}", response_model=ExpenseOut)
+def edit_expense(expense_id: uuid.UUID, data: ExpenseCreate, ctx: Exp, db: DB):
+    return service.to_out(db, service.edit_expense(db, ctx.shop_id, ctx, expense_id, data))

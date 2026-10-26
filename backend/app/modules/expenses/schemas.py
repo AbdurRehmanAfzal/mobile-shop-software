@@ -93,3 +93,7 @@ class DayPreviewOut(BaseModel):
     cash_out: Decimal
     expected: Decimal
     closed: bool
+
+
+class CategoryUpdate(BaseModel):
+    name: str = Field(min_length=1, max_length=100)

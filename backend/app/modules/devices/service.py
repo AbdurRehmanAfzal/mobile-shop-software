@@ -374,6 +374,19 @@ def update_device(
         other = by_imei(db, shop_id, changes["imei2"])
         if other and other.id != device.id:
             raise Conflict(code="imei_exists")
+    if "brand_id" in changes or "model_id" in changes:
+        from types import SimpleNamespace
+
+        _validate_catalogue(
+            db,
+            shop_id,
+            SimpleNamespace(
+                brand_id=changes.get("brand_id") or device.brand_id,
+                model_id=changes.get("model_id") or device.model_id,
+                storage_id=changes.get("storage_id", device.storage_id),
+                colour_id=changes.get("colour_id", device.colour_id),
+            ),
+        )
     before = {k: _plain(getattr(device, k)) for k in changes}
     for k, v in changes.items():
         setattr(device, k, v)
@@ -479,3 +492,56 @@ def _plain(v):
     if hasattr(v, "isoformat"):
         return v.isoformat()
     return v
+
+
+def cancel_opening_stock(
+    db: Session, shop_id: uuid.UUID, ctx, device_id: uuid.UUID, reason: str
+) -> dict:
+    """Undo a wrong old-stock entry: reverse its posting and take the phone out of stock.
+    Only while nothing else happened to the phone (verification is fine)."""
+    from app.core.errors import Forbidden
+    from app.core.permissions import Cap
+    from app.modules.ledger.service import reverse
+
+    if not ctx.can(Cap.VOID):
+        raise Forbidden()
+    device = get_device(db, shop_id, device_id)
+    events = sorted(device.events, key=lambda e: e.seq)
+    entry = next((e for e in events if e.document_type == "opening_stock"), None)
+    later = [e for e in events if entry and e.seq > entry.seq and e.type != EventType.VERIFIED]
+    if entry is None or later or device.status != DeviceStatus.IN_STOCK:
+        raise Conflict(
+            code="device_changed",
+            message_en="Only an old-stock phone that is still in stock and unchanged can be removed",
+            message_ur="صرف وہ پرانا اسٹاک موبائل ہٹایا جا سکتا ہے جو ابھی اسٹاک میں ہو اور تبدیل نہ ہوا ہو",
+        )
+    if entry.ledger_group_id:
+        reverse(
+            db,
+            shop_id,
+            ctx.id,
+            entry.ledger_group_id,
+            f"Remove opening stock {device.imei1}: {reason}",
+        )
+    apply_event(
+        db,
+        shop_id,
+        ctx.id,
+        device,
+        EventType.RETURNED_TO_SUPPLIER,
+        amount=entry.amount,
+        document_type="opening_stock_void",
+        document_id=device.id,
+        data={"void": True, "reason": reason},
+    )
+    record_audit(
+        db,
+        shop_id=shop_id,
+        user_id=ctx.id,
+        entity="device",
+        entity_id=device.id,
+        action="void",
+        after={"reason": reason, "via": "opening_stock"},
+    )
+    db.commit()
+    return get_device_out(db, shop_id, device.id)

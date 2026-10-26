@@ -107,3 +107,8 @@ class OpeningBalanceRequest(BaseModel):
         description="True: party owes the shop (lena hai). False: shop owes the party (dena hai)."
     )
     memo: str | None = Field(default=None, max_length=200)
+
+
+class CashAccountUpdate(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=100)
+    account_no: str | None = Field(default=None, max_length=60)

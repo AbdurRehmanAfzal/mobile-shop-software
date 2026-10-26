@@ -83,3 +83,8 @@ def adjust(accessory_id: uuid.UUID, data: AdjustIn, ctx: Cost, db: DB):
 @router.get("/{accessory_id}/movements", response_model=list[MovementOut])
 def movements(accessory_id: uuid.UUID, ctx: Cost, db: DB, limit: int = Query(default=100, le=500)):
     return service.movements(db, ctx.shop_id, accessory_id, limit)
+
+
+@router.delete("/{accessory_id}")
+def delete(accessory_id: uuid.UUID, ctx: Transact, db: DB):
+    return {"result": service.delete(db, ctx.shop_id, ctx, accessory_id)}

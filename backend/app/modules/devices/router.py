@@ -2,6 +2,7 @@ import uuid
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
+from pydantic import BaseModel, Field
 
 from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx, require_cap
@@ -97,3 +98,14 @@ def set_accessories(device_id: uuid.UUID, items: list[AccessoryItemIn], ctx: Tra
 @router.post("/{device_id}/events", response_model=DeviceOut, status_code=201)
 def raise_event(device_id: uuid.UUID, data: EventIn, ctx: Transact, db: DB):
     return _hide_cost(ctx, service.raise_event(db, ctx.shop_id, ctx.id, device_id, data))
+
+
+class CancelIn(BaseModel):
+    reason: str = Field(min_length=2, max_length=300)
+
+
+@router.post("/{device_id}/cancel-opening", response_model=DeviceOut)
+def cancel_opening(device_id: uuid.UUID, data: CancelIn, ctx: Transact, db: DB):
+    return _hide_cost(
+        ctx, service.cancel_opening_stock(db, ctx.shop_id, ctx, device_id, data.reason)
+    )

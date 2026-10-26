@@ -317,3 +317,36 @@ def deliver_pending(
     )
     db.commit()
     return {"ok": True}
+
+
+def delete(db: Session, shop_id: uuid.UUID, ctx, accessory_id: uuid.UUID) -> str:
+    from app.core.errors import Conflict, Forbidden
+    from app.core.permissions import Cap
+    from app.db.refs import count_references
+
+    if not ctx.can(Cap.VOID):
+        raise Forbidden()
+    a = get_accessory(db, shop_id, accessory_id)
+    if a.qty != 0:
+        raise Conflict(
+            code="accessory_has_stock",
+            message_en="Stock is not zero. Adjust the stock to 0 first.",
+            message_ur="اسٹاک صفر نہیں ہے۔ پہلے اسٹاک 0 کریں۔",
+        )
+    used = count_references(db, "accessories", a.id)
+    action = "archive" if used else "delete"
+    record_audit(
+        db,
+        shop_id=shop_id,
+        user_id=ctx.id,
+        entity="accessory",
+        entity_id=a.id,
+        action=action,
+        before={"name": a.name},
+    )
+    if used:
+        a.is_active = False
+    else:
+        db.delete(a)
+    db.commit()
+    return action

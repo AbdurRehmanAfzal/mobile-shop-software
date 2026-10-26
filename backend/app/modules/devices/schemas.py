@@ -91,6 +91,8 @@ class OpeningStockIn(DeviceIdentity):
 
 
 class DeviceUpdate(BaseModel):
+    brand_id: uuid.UUID | None = None
+    model_id: uuid.UUID | None = None
     imei2: str | None = None
     serial: str | None = None
     storage_id: uuid.UUID | None = None

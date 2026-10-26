@@ -362,3 +362,87 @@ def list_day_closes(db: Session, shop_id: uuid.UUID, limit: int) -> list[DayClos
 
 
 __all__ = ["ZERO"]
+
+
+# ---- edit / delete ------------------------------------------------------------------------
+
+
+def _own_category(db: Session, shop_id: uuid.UUID, category_id: uuid.UUID) -> ExpenseCategory:
+    c = db.get(ExpenseCategory, category_id)
+    if c is None or (c.shop_id is not None and c.shop_id != shop_id) or not c.is_active:
+        raise NotFound(code="category_not_found")
+    if c.shop_id is None:
+        raise Forbidden(
+            code="category_builtin",
+            message_en="Built-in categories cannot be changed",
+            message_ur="پہلے سے موجود قسم تبدیل نہیں ہو سکتی",
+        )
+    return c
+
+
+def update_category(
+    db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, category_id: uuid.UUID, name: str
+) -> dict:
+    c = _own_category(db, shop_id, category_id)
+    clash = db.scalar(
+        select(ExpenseCategory.id).where(
+            or_(ExpenseCategory.shop_id.is_(None), ExpenseCategory.shop_id == shop_id),
+            func.lower(ExpenseCategory.name) == name.strip().lower(),
+            ExpenseCategory.id != c.id,
+        )
+    )
+    if clash:
+        raise Conflict(code="category_exists")
+    before = c.name
+    c.name, c.name_ur = name.strip(), None
+    record_audit(
+        db,
+        shop_id=shop_id,
+        user_id=user_id,
+        entity="expense_category",
+        entity_id=c.id,
+        action="update",
+        before={"name": before},
+        after={"name": c.name},
+    )
+    db.commit()
+    return {"id": c.id, "key": c.key, "name": c.name, "name_ur": c.name_ur, "is_global": False}
+
+
+def delete_category(
+    db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, category_id: uuid.UUID
+) -> str:
+    from app.db.refs import count_references
+
+    c = _own_category(db, shop_id, category_id)
+    used = count_references(db, "expense_categories", c.id)
+    action = "archive" if used else "delete"
+    record_audit(
+        db,
+        shop_id=shop_id,
+        user_id=user_id,
+        entity="expense_category",
+        entity_id=c.id,
+        action=action,
+        before={"name": c.name},
+    )
+    if used:
+        c.is_active = False
+    else:
+        db.delete(c)
+    db.commit()
+    return action
+
+
+def edit_expense(
+    db: Session, shop_id: uuid.UUID, ctx, expense_id: uuid.UUID, data: ExpenseCreate
+) -> Expense:
+    """Correct an expense: a new expense replaces the old one, the old one is voided (ledger reversed)."""
+    if not ctx.can(Cap.VOID):
+        raise Forbidden()
+    old = get_expense(db, shop_id, expense_id)
+    if old.status == "voided":
+        raise Conflict(code="already_voided")
+    new = create_expense(db, shop_id, ctx.id, data)
+    void_expense(db, shop_id, ctx, old.id, f"Edited, replaced by {new.no}")
+    return new
