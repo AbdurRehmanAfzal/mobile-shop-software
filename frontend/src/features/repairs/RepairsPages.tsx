@@ -1,11 +1,16 @@
-import { Plus, Trash2 } from 'lucide-react'
+/** Repairs in three steps (docs/11 v2, teal job colour): take the phone in → fix it (parts + work
+ *  charge, "it is fixed") → give it back (bill, advance, left to take; the rest goes to khata).
+ *  A four-stage bar shows where every job is. */
+
+import { Phone, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import PartyPicker from '@/components/PartyPicker'
-import { Chip, Empty, ErrorText, KV, List, Loading, MoneyText, PageHeader, Row, Section, Sheet, fmtDate } from '@/components/ui'
+import { Empty, ErrorText, Loading, PageHeader, Section, Sheet, fmtDate } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { openPrintable } from '@/lib/files'
+import { isoDay } from '@/lib/format'
 import { useDocMutation, useGet } from '@/lib/queries'
 import type { Party } from '@/lib/types'
 
@@ -20,38 +25,50 @@ interface Job {
 }
 interface Accessory { id: string; name: string; qty: number; price: string }
 
-const NEXT: Record<string, string[]> = {
-  received: ['diagnosed', 'in_progress', 'waiting_parts', 'repaired', 'returned_unrepaired'],
-  diagnosed: ['waiting_parts', 'in_progress', 'repaired', 'returned_unrepaired'],
-  waiting_parts: ['in_progress', 'repaired', 'returned_unrepaired'],
-  in_progress: ['waiting_parts', 'repaired', 'returned_unrepaired'],
-  repaired: ['in_progress', 'unclaimed'],
-  unclaimed: [],
-}
 const RECEIVED = ['sim', 'memory_card', 'cover', 'charger', 'box', 'earphones']
-const tone = (s: string) => (s === 'repaired' ? 'ok' : s === 'delivered' ? 'ink' : s === 'returned_unrepaired' || s === 'unclaimed' ? 'bad' : 'warn')
+const STAGES = ['take', 'fix', 'ready', 'given'] as const
+/** which of the four stages a backend status belongs to */
+const stageOf = (s: string) =>
+  s === 'received' || s === 'diagnosed' ? 0 : s === 'in_progress' || s === 'waiting_parts' ? 1 : s === 'repaired' || s === 'unclaimed' ? 2 : 3
+const n = (v: string | number | null | undefined) => Math.abs(Number(v ?? 0)).toLocaleString('en-US', { maximumFractionDigits: 0 })
+
+function StageChip({ status, overdue }: { status: string; overdue?: boolean }) {
+  const { pick, ur, cls } = useLang()
+  const st = stageOf(status)
+  const tone = st === 2 ? 'bg-sell text-sell-fg' : st === 3 ? 'bg-ground text-muted border border-line' : overdue ? 'bg-expense text-expense-fg' : 'bg-repair text-repair-fg'
+  return <span className={`rounded-full px-2.5 py-0.5 font-bold ${tone} ${ur ? cls('sm') : 'text-xs'}`}>{status === 'returned_unrepaired' ? pick('counter.cantFix') : pick(`counter.rStage.${STAGES[st]}`)}</span>
+}
 
 export function RepairsPage() {
   const nav = useNavigate()
-  const { pick } = useLang()
+  const { pick, ur, cls } = useLang()
   const [open, setOpen] = useState(true)
   const { data, isLoading } = useGet<Job[]>(['repairs', open], `/api/v1/repairs?open_only=${open}`)
+  const ready = (data ?? []).filter((j) => stageOf(j.status) === 2)
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="repair.title" right={<button type="button" aria-label={pick('repair.new')} onClick={() => nav('/repairs/new')} className="well tap h-11 w-11 bg-ink text-ground"><Plus size={22} /></button>} />
+      <PageHeader title="repair.title" right={<button type="button" aria-label={pick('counter.rTitleNew')} onClick={() => nav('/repairs/new')} className="well tap h-11 w-11 bg-ink text-ground"><Plus size={22} /></button>} />
+      <button type="button" onClick={() => nav('/repairs/new')} className="tap flex min-h-16 items-center gap-3 rounded-3xl bg-repair px-4 text-repair-fg">
+        <span className="well h-11 w-11 bg-surface"><Plus size={22} /></span>
+        <span className={ur ? cls('lg') : 'text-lg font-extrabold'}>{pick('counter.rTitleNew')}</span>
+      </button>
+      {ready.length ? <BiLabel text="counter.readyCall" size="sm" bold tone="text-sell-fg" /> : null}
       <BiSegmented value={open ? 'open' : 'all'} onChange={(v) => setOpen(v === 'open')} options={[{ value: 'open', text: 'repair.open' }, { value: 'all', text: 'repair.all' }]} />
       {isLoading ? <Loading /> : !data?.length ? <Empty text="repair.none" /> : (
-        <List>
-          {data.map((j) => (
-            <Row
-              key={j.id}
-              title={j.device_desc}
-              sub={<span className="flex flex-wrap items-center gap-1.5"><span dir="ltr">{j.no}</span> · {j.party_name ?? pick('repair.ownStock')} <Chip text={`repair.status.${j.status}`} tone={tone(j.status)} />{j.overdue ? <Chip text="repair.overdue" tone="bad" /> : null}</span>}
-              right={Number(j.total) > 0 ? <MoneyText value={j.total} tone="ink" /> : <MoneyText value={j.estimate} tone="muted" />}
-              onClick={() => nav(`/repairs/${j.id}`)}
-            />
+        <div className="card divide-y divide-line p-0">
+          {[...ready, ...data.filter((j) => stageOf(j.status) !== 2)].map((j) => (
+            <button key={j.id} type="button" onClick={() => nav(`/repairs/${j.id}`)} className="tap flex w-full items-center gap-3 px-4 py-3 text-start">
+              <span className="flex min-w-0 flex-1 flex-col">
+                <span className="truncate text-[15px] font-extrabold">{j.device_desc}</span>
+                <span className="truncate text-xs text-muted">{j.party_name ?? pick('repair.ownStock')} · <span dir="ltr">{j.no}</span>{j.promised_at ? <> · <span dir="ltr">{fmtDate(j.promised_at)}</span></> : null}</span>
+              </span>
+              <span className="flex flex-col items-end gap-1">
+                <StageChip status={j.status} overdue={j.overdue} />
+                <span className="num text-sm" dir="ltr">{n(Number(j.total) > 0 ? j.total : j.estimate)}</span>
+              </span>
+            </button>
           ))}
-        </List>
+        </div>
       )}
     </div>
   )
@@ -59,46 +76,55 @@ export function RepairsPage() {
 
 export function NewRepairPage() {
   const nav = useNavigate()
-  const { pick, ur } = useLang()
+  const { pick, ur, cls } = useLang()
   const { data: faults } = useGet<Fault[]>(['faults'], '/api/v1/repairs/fault-codes')
   const [party, setParty] = useState<Party | null>(null)
-  const [f, setF] = useState({ device_desc: '', imei: '', fault_text: '', estimate: '', advance: '', promised_at: '' })
+  const [f, setF] = useState({ device_desc: '', imei: '', fault_text: '', estimate: '', advance: '', promised_at: isoDay(1) })
   const [codes, setCodes] = useState<string[]>([])
   const [received, setReceived] = useState<string[]>([])
+  const [more, setMore] = useState(false)
   const m = useDocMutation<Record<string, unknown>, Job>('POST', () => '/api/v1/repairs')
   const set = (k: keyof typeof f) => (e: { target: { value: string } }) => setF({ ...f, [k]: e.target.value })
   const toggle = (xs: string[], x: string, fn: (v: string[]) => void) => fn(xs.includes(x) ? xs.filter((y) => y !== x) : [...xs, x])
+  const chip = (on: boolean) => `tap rounded-full border px-3 py-2 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-sm'}`
+  const days = [{ d: isoDay(0), t: 'counter.today' }, { d: isoDay(1), t: 'counter.tomorrow' }, { d: isoDay(3), t: 'counter.in3days' }]
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="repair.new" />
+      <PageHeader title="counter.rTitleNew" />
       <PartyPicker value={party} onChange={setParty} kind="customer" label="repair.customer" />
-      <BiInput label="repair.device" value={f.device_desc} onChange={set('device_desc')} />
-      <BiInput label="repair.imei" inputMode="numeric" value={f.imei} onChange={set('imei')} maxLength={20} />
-      <BiLabel text="repair.faults" size="md" tone="text-muted" />
+      <BiInput label="counter.phoneName" value={f.device_desc} onChange={set('device_desc')} />
+      <BiLabel text="counter.whatProblem" size="md" bold />
       <div className="flex flex-wrap gap-1.5">
         {faults?.map((x) => (
-          <button key={x.code} type="button" onClick={() => toggle(codes, x.code, setCodes)} className={`tap rounded-full border px-3 py-1.5 text-sm font-bold ${codes.includes(x.code) ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-muted'}`}>
+          <button key={x.code} type="button" aria-pressed={codes.includes(x.code)} onClick={() => toggle(codes, x.code, setCodes)} className={chip(codes.includes(x.code))}>
             {ur ? x.ur : x.en}
           </button>
         ))}
       </div>
-      <BiInput label="repair.faultText" value={f.fault_text} onChange={set('fault_text')} />
-      <BiLabel text="repair.received" size="md" tone="text-muted" />
-      <div className="flex flex-wrap gap-1.5">
-        {RECEIVED.map((x) => (
-          <button key={x} type="button" onClick={() => toggle(received, x, setReceived)} className={`tap rounded-full border px-3 py-1.5 text-sm font-bold ${received.includes(x) ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-muted'}`}>
-            {pick(`repair.acc.${x}`)}
-          </button>
-        ))}
-      </div>
+      <BiInput label="counter.otherProblem" value={f.fault_text} onChange={set('fault_text')} />
       <div className="grid grid-cols-2 gap-2">
-        <BiInput label="repair.estimate" type="number" inputMode="decimal" min={0} value={f.estimate} onChange={set('estimate')} />
-        <BiInput label="repair.advance" type="number" inputMode="decimal" min={0} value={f.advance} onChange={set('advance')} />
+        <BiInput label="counter.estimateCost" type="number" inputMode="numeric" min={0} value={f.estimate} onChange={set('estimate')} />
+        <BiInput label="counter.advanceTaken" type="number" inputMode="numeric" min={0} value={f.advance} onChange={set('advance')} />
       </div>
-      <BiInput label="repair.promised" type="date" value={f.promised_at} onChange={set('promised_at')} />
+      <BiLabel text="counter.whenReady" size="md" bold />
+      <div className="flex flex-wrap gap-1.5">
+        {days.map((x) => <button key={x.d} type="button" aria-pressed={f.promised_at === x.d} onClick={() => setF({ ...f, promised_at: x.d })} className={chip(f.promised_at === x.d)}>{pick(x.t)}</button>)}
+        <input type="date" aria-label={pick('counter.whenReady')} value={f.promised_at} min={isoDay(0)} onChange={set('promised_at')} className="h-10 rounded-full border border-line bg-surface px-3 text-sm font-bold" dir="ltr" />
+      </div>
+      {more ? (
+        <>
+          <BiInput label="repair.imei" inputMode="numeric" value={f.imei} onChange={set('imei')} maxLength={20} />
+          <BiLabel text="repair.received" size="md" tone="text-muted" />
+          <div className="flex flex-wrap gap-1.5">
+            {RECEIVED.map((x) => <button key={x} type="button" aria-pressed={received.includes(x)} onClick={() => toggle(received, x, setReceived)} className={chip(received.includes(x))}>{pick(`repair.acc.${x}`)}</button>)}
+          </div>
+        </>
+      ) : (
+        <button type="button" onClick={() => setMore(true)} className={`tap py-1 text-start font-bold text-muted ${ur ? cls('sm') : 'text-sm'}`}>{pick('counter.moreDetails')}</button>
+      )}
       <ErrorText error={m.error} />
       <BiButton
-        text="common.save"
+        text="counter.saveAndPrint"
         full
         loading={m.isPending}
         disabled={!party || !f.device_desc || (!codes.length && !f.fault_text)}
@@ -114,60 +140,107 @@ export function NewRepairPage() {
 
 export function RepairDetailPage() {
   const { id } = useParams()
-  const { pick } = useLang()
+  const { pick, ur, cls } = useLang()
   const role = useAuth((s) => s.me?.user.role)
   const { data: j, isLoading } = useGet<Job>(['repair', id], id ? `/api/v1/repairs/${id}` : null)
+  const { data: faults } = useGet<Fault[]>(['faults'], '/api/v1/repairs/fault-codes')
   const { data: stock } = useGet<Accessory[]>(['accessories', 'all'], '/api/v1/accessories')
-  const [sheet, setSheet] = useState<null | 'parts' | 'status' | 'deliver'>(null)
+  const [sheet, setSheet] = useState<null | 'fix' | 'give'>(null)
   const [parts, setParts] = useState<Part[]>([])
   const [labour, setLabour] = useState('')
   const [paid, setPaid] = useState('')
   const [warranty, setWarranty] = useState('')
   const [outsideCost, setOutsideCost] = useState('')
-  const [note, setNote] = useState('')
   const partsM = useDocMutation<Part[], Job>('PUT', () => `/api/v1/repairs/${id}/parts`, (x) => x)
   const labourM = useDocMutation<Record<string, unknown>, Job>('PATCH', () => `/api/v1/repairs/${id}`)
   const statusM = useDocMutation<{ status: string; note?: string }, Job>('POST', () => `/api/v1/repairs/${id}/status`)
   const deliverM = useDocMutation<Record<string, unknown>, Job>('POST', () => `/api/v1/repairs/${id}/deliver`)
   if (isLoading || !j) return <Loading />
-  const closed = ['delivered', 'returned_unrepaired'].includes(j.status)
-  const canDeliver = role !== 'technician'
+  const stage = stageOf(j.status)
+  const closed = stage === 3
+  const canGive = role !== 'technician'
+  const faultName = (c: string) => { const x = faults?.find((y) => y.code === c); return x ? (ur ? x.ur : x.en) : c }
   const draftTotal = parts.reduce((s, p) => s + Number(p.unit_price || 0) * p.qty, 0) + Number(labour || 0)
+  const left = Math.max(0, Number(j.total) - Number(j.advance))
+  const small = ur ? cls('sm') : 'text-sm font-semibold'
+
+  function openFix() {
+    setParts(j!.parts.map((p) => ({ ...p })))
+    setLabour(Number(j!.labour) ? String(Number(j!.labour)) : '')
+    setSheet('fix')
+  }
+  async function saveBill(markReady: boolean) {
+    await partsM.mutateAsync(parts.filter((p) => p.description).map((p) => ({ description: p.description, accessory_id: p.accessory_id ?? null, qty: p.qty, unit_price: Number(p.unit_price || 0) })))
+    await labourM.mutateAsync({ labour: Number(labour || 0) })
+    if (markReady) await statusM.mutateAsync({ status: 'repaired' })
+    setSheet(null)
+  }
 
   return (
-    <div className="flex flex-col gap-4">
-      <PageHeader title={{ en: j.no, ur: j.no }} right={<Chip text={`repair.status.${j.status}`} tone={tone(j.status)} />} />
-      <div className="card">
-        <KV k="repair.device" v={j.device_desc} />
-        {j.imei ? <KV k="repair.imei" v={<span dir="ltr">{j.imei}</span>} /> : null}
-        <KV k="repair.customer" v={j.party_name ? `${j.party_name} · ${j.party_phone ?? ''}` : pick('repair.ownStock')} />
-        {j.outside_party_name ? <KV k="repair.outsideTech" v={j.outside_party_name} /> : null}
-        {j.promised_at ? <KV k="repair.promised" v={<span dir="ltr">{fmtDate(j.promised_at)}</span>} /> : null}
-        {j.fault_text ? <KV k="repair.faultText" v={j.fault_text} /> : null}
+    <div className="flex flex-col gap-3">
+      <PageHeader title={{ en: j.device_desc, ur: j.device_desc }} right={<StageChip status={j.status} overdue={j.overdue} />} />
+
+      <section className="flex flex-col gap-2 rounded-3xl bg-repair p-4 text-repair-fg">
+        <div className="flex items-center gap-3">
+          <span className="flex min-w-0 flex-1 flex-col">
+            <span className="truncate text-base font-extrabold">{j.party_name ?? pick('repair.ownStock')}</span>
+            <span className="text-xs opacity-80" dir="ltr">{j.no}{j.imei ? ` · ${j.imei}` : ''}</span>
+          </span>
+          {j.party_phone ? (
+            <a href={`tel:${j.party_phone}`} className="tap flex h-11 items-center gap-1.5 rounded-2xl bg-surface px-3 text-ink">
+              <Phone size={18} /> <span className={small}>{pick('counter.call')}</span>
+            </a>
+          ) : null}
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {j.fault_codes.map((c) => <span key={c} className={`rounded-full bg-surface px-2.5 py-0.5 font-bold text-ink ${ur ? cls('sm') : 'text-xs'}`}>{faultName(c)}</span>)}
+          {j.fault_text ? <span className={`rounded-full bg-surface px-2.5 py-0.5 font-bold text-ink ${ur ? cls('sm') : 'text-xs'}`}>{j.fault_text}</span> : null}
+        </div>
+        {j.promised_at && !closed ? <span className={small}>{pick('counter.whenReady')}: <span dir="ltr">{fmtDate(j.promised_at)}</span></span> : null}
+      </section>
+
+      <div className="grid grid-cols-4 gap-1.5">
+        {STAGES.map((s, i) => (
+          <div key={s} className="flex flex-col gap-1">
+            <span className={`h-1.5 rounded-full ${i <= stage ? 'bg-repair-fg' : 'bg-line'}`} />
+            <span className={`${i === stage ? 'font-bold text-ink' : 'text-muted'} ${ur ? cls('sm') : 'text-[11px] font-semibold'}`}>{pick(`counter.rStage.${s}`)}</span>
+          </div>
+        ))}
       </div>
-      <div className="flex flex-wrap gap-1.5">
-        {j.fault_codes.map((c) => <Chip key={c} text={{ en: c, ur: c }} tone="warn" />)}
-        {j.received_accessories.map((c) => <Chip key={c} text={`repair.acc.${c}`} />)}
-      </div>
+
+      {stage < 2 ? (
+        <>
+          <BiButton text="counter.markReady" full onClick={openFix} />
+          <div className="grid grid-cols-2 gap-2">
+            {j.status !== 'in_progress' ? <BiButton text="counter.startFix" size="md" variant="secondary" loading={statusM.isPending} onClick={() => statusM.mutate({ status: 'in_progress' })} /> : null}
+            {j.status !== 'waiting_parts' ? <BiButton text="counter.waitParts" size="md" variant="secondary" loading={statusM.isPending} onClick={() => statusM.mutate({ status: 'waiting_parts' })} /> : null}
+            <BiButton text="counter.cantFix" size="md" variant="secondary" loading={statusM.isPending} onClick={() => statusM.mutate({ status: 'returned_unrepaired' })} />
+          </div>
+        </>
+      ) : null}
+      {stage === 2 && canGive ? (
+        <>
+          <BiButton text="counter.giveBackCustomer" full onClick={() => { setPaid(String(left)); setSheet('give') }} />
+          <BiButton text="counter.billTitle" size="md" variant="secondary" full onClick={openFix} />
+        </>
+      ) : null}
+      <ErrorText error={statusM.error} />
+
       <Section title="repair.bill">
-        <div className="card">
-          {j.parts.map((p, i) => <KV key={i} k={{ en: `${p.description} × ${p.qty}`, ur: `${p.description} × ${p.qty}` }} v={<MoneyText value={Number(p.unit_price) * p.qty} tone="ink" />} />)}
-          <KV k="repair.labour" v={<MoneyText value={j.labour} tone="ink" />} />
-          <KV k="common.total" v={<MoneyText value={j.total} tone="ink" size="lg" />} />
-          <KV k="repair.advance" v={<MoneyText value={j.advance} tone="ink" />} />
-          {j.status === 'delivered' ? <KV k="common.paid" v={<MoneyText value={j.paid} tone="ink" />} /> : <KV k="repair.estimate" v={<MoneyText value={j.estimate} tone="muted" />} />}
+        <div className="card flex flex-col p-0">
+          {j.parts.map((p, i) => <Row key={i} label={`${p.description}${p.qty > 1 ? ` × ${p.qty}` : ''}`} value={n(Number(p.unit_price) * p.qty)} />)}
+          <Row label={pick('counter.labourCharge')} value={n(j.labour)} />
+          <Row label={pick('common.total')} value={n(Number(j.total) > 0 ? j.total : j.estimate)} strong />
+          {Number(j.advance) ? <Row label={pick('counter.advanceTaken')} value={`− ${n(j.advance)}`} /> : null}
+          {closed ? <Row label={pick('common.paid')} value={n(j.paid)} /> : <Row label={pick('counter.leftToTake')} value={n(Number(j.total) > 0 ? left : Math.max(0, Number(j.estimate) - Number(j.advance)))} strong />}
         </div>
       </Section>
-      <div className="grid grid-cols-2 gap-2">
-        <BiButton text="repair.jobSheet" size="md" variant="secondary" onClick={() => openPrintable(`/api/v1/repairs/${j.id}/job-sheet`)} />
-        {!closed ? <BiButton text="repair.setStatus" size="md" variant="secondary" onClick={() => setSheet('status')} /> : null}
-        {!closed ? <BiButton text="repair.parts" size="md" variant="secondary" onClick={() => { setParts(j.parts.map((p) => ({ ...p }))); setLabour(j.labour); setSheet('parts') }} /> : null}
-        {!closed && canDeliver ? <BiButton text="repair.deliver" size="md" onClick={() => { setPaid(String(Math.max(0, Number(j.total) - Number(j.advance)))); setSheet('deliver') }} /> : null}
-      </div>
+      <BiButton text="counter.printSlip" size="md" variant="ghost" onClick={() => openPrintable(`/api/v1/repairs/${j.id}/job-sheet`)} />
+
       <Section title="stock.history">
         <div className="card p-0">
           {[...j.status_log].reverse().map((l, i) => (
-            <div key={i} className={`flex items-center justify-between gap-2 px-3 py-2.5 ${i ? 'border-t border-line' : ''}`}>
+            <div key={i} className={`flex items-center justify-between gap-2 px-4 py-2.5 ${i ? 'border-t border-line' : ''}`}>
               <div>
                 <div className="text-sm font-bold">{pick(`repair.status.${l.to_status}`)}</div>
                 {l.note ? <div className="text-xs text-muted">{l.note}</div> : null}
@@ -178,49 +251,63 @@ export function RepairDetailPage() {
         </div>
       </Section>
 
-      <Sheet open={sheet === 'status'} onClose={() => setSheet(null)} title="repair.setStatus">
-        <div className="flex flex-col gap-2">
-          <BiInput label="common.notes" value={note} onChange={(e) => setNote(e.target.value)} />
-          {(NEXT[j.status] ?? []).map((s) => <BiButton key={s} text={`repair.status.${s}`} variant={s === 'repaired' ? 'primary' : 'secondary'} full size="md" loading={statusM.isPending} onClick={async () => { await statusM.mutateAsync({ status: s, note: note || undefined }); setSheet(null); setNote('') }} />)}
-          <ErrorText error={statusM.error} />
-        </div>
-      </Sheet>
-
-      <Sheet open={sheet === 'parts'} onClose={() => setSheet(null)} title="repair.parts">
+      <Sheet open={sheet === 'fix'} onClose={() => setSheet(null)} title="counter.billTitle">
         <div className="flex flex-col gap-3">
           {parts.map((p, i) => (
-            <div key={i} className="grid grid-cols-[1fr_56px_88px_36px] items-end gap-2">
-              <BiInput label="repair.partDesc" value={p.description} onChange={(e) => setParts(parts.map((x, k) => (k === i ? { ...x, description: e.target.value } : x)))} />
+            <div key={i} className="grid grid-cols-[1fr_56px_96px_36px] items-end gap-2">
+              <BiInput label="counter.partName" value={p.description} onChange={(e) => setParts(parts.map((x, k) => (k === i ? { ...x, description: e.target.value } : x)))} />
               <BiInput label="purchase.qty" type="number" min={1} value={p.qty} onChange={(e) => setParts(parts.map((x, k) => (k === i ? { ...x, qty: Number(e.target.value) || 1 } : x)))} />
-              <BiInput label="repair.partPrice" type="number" min={0} value={p.unit_price} onChange={(e) => setParts(parts.map((x, k) => (k === i ? { ...x, unit_price: e.target.value } : x)))} />
-              <button type="button" aria-label="remove" onClick={() => setParts(parts.filter((_, k) => k !== i))} className="well tap mb-1 h-9 w-9 text-payable"><Trash2 size={16} /></button>
+              <BiInput label="repair.partPrice" type="number" inputMode="numeric" min={0} value={p.unit_price} onChange={(e) => setParts(parts.map((x, k) => (k === i ? { ...x, unit_price: e.target.value } : x)))} />
+              <button type="button" aria-label={pick('crud.delete')} onClick={() => setParts(parts.filter((_, k) => k !== i))} className="well tap mb-2 h-9 w-9 text-payable"><Trash2 size={16} /></button>
             </div>
           ))}
           <div className="flex flex-wrap gap-1.5">
-            <BiButton text="common.add" size="sm" variant="ghost" onClick={() => setParts([...parts, { description: '', qty: 1, unit_price: '' }])} />
+            <button type="button" onClick={() => setParts([...parts, { description: '', qty: 1, unit_price: '' }])} className={`tap rounded-full border border-ink px-3 py-1.5 font-bold ${ur ? cls('sm') : 'text-sm'}`}>{pick('counter.addPart')}</button>
             {stock?.filter((a) => a.qty > 0).slice(0, 8).map((a) => (
-              <button key={a.id} type="button" onClick={() => setParts([...parts, { description: a.name, accessory_id: a.id, qty: 1, unit_price: a.price }])} className="tap rounded-full border border-line bg-surface px-3 py-1 text-xs font-bold text-muted">+ {a.name} ({a.qty})</button>
+              <button key={a.id} type="button" onClick={() => setParts([...parts, { description: a.name, accessory_id: a.id, qty: 1, unit_price: a.price }])} className="tap rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-bold text-muted">+ {a.name} ({a.qty})</button>
             ))}
           </div>
-          <BiInput label="repair.labour" type="number" inputMode="decimal" min={0} value={labour} onChange={(e) => setLabour(e.target.value)} />
-          <KV k="common.total" v={<MoneyText value={draftTotal} tone="ink" size="lg" />} />
-          <ErrorText error={partsM.error ?? labourM.error} />
-          <BiButton text="common.save" full loading={partsM.isPending || labourM.isPending} onClick={async () => { await partsM.mutateAsync(parts.filter((p) => p.description).map((p) => ({ description: p.description, accessory_id: p.accessory_id ?? null, qty: p.qty, unit_price: Number(p.unit_price || 0) }))); await labourM.mutateAsync({ labour: Number(labour || 0) }); setSheet(null) }} />
+          <BiInput label="counter.labourCharge" type="number" inputMode="numeric" min={0} value={labour} onChange={(e) => setLabour(e.target.value)} />
+          <div className="hero flex items-center justify-between px-5 py-3">
+            <BiLabel text="common.total" size="md" tone="text-hero-text" bold />
+            <span className="num text-2xl" dir="ltr">Rs. {draftTotal.toLocaleString('en-US')}</span>
+          </div>
+          <ErrorText error={partsM.error ?? labourM.error ?? statusM.error} />
+          {stage < 2 ? <BiButton text="counter.markReady" full loading={partsM.isPending || labourM.isPending || statusM.isPending} onClick={() => saveBill(true)} /> : null}
+          <BiButton text="common.save" full variant={stage < 2 ? 'secondary' : 'primary'} loading={partsM.isPending || labourM.isPending} onClick={() => saveBill(false)} />
         </div>
       </Sheet>
 
-      <Sheet open={sheet === 'deliver'} onClose={() => setSheet(null)} title="repair.deliver">
+      <Sheet open={sheet === 'give'} onClose={() => setSheet(null)} title="counter.giveBackCustomer">
         <div className="flex flex-col gap-3">
-          <div className="card">
-            <KV k="common.total" v={<MoneyText value={j.total} tone="ink" size="lg" />} />
-            <KV k="repair.advance" v={<MoneyText value={j.advance} tone="ink" />} />
+          <div className="card flex flex-col p-0">
+            <Row label={pick('common.total')} value={n(j.total)} />
+            {Number(j.advance) ? <Row label={pick('counter.advanceTaken')} value={`− ${n(j.advance)}`} /> : null}
+            <Row label={pick('counter.leftToTake')} value={n(left)} strong />
           </div>
-          {j.party_id ? <BiInput label="sale.paidNow" type="number" inputMode="decimal" min={0} value={paid} onChange={(e) => setPaid(e.target.value)} /> : <BiInput label="repair.outsideCost" type="number" inputMode="decimal" min={0} value={outsideCost} onChange={(e) => setOutsideCost(e.target.value)} />}
-          <BiInput label="repair.warrantyDays" type="number" inputMode="numeric" min={0} value={warranty} onChange={(e) => setWarranty(e.target.value)} />
+          {j.party_id ? (
+            <>
+              <BiInput label="counter.takeNow" type="number" inputMode="numeric" min={0} value={paid} onChange={(e) => setPaid(e.target.value)} className="num text-2xl" />
+              {Number(paid || 0) < left ? <BiLabel text="counter.restToKhata" size="sm" tone="text-receivable" /> : null}
+            </>
+          ) : (
+            <BiInput label="counter.outsideCostOpt" type="number" inputMode="numeric" min={0} value={outsideCost} onChange={(e) => setOutsideCost(e.target.value)} />
+          )}
+          <BiInput label="counter.warrantyOpt" type="number" inputMode="numeric" min={0} value={warranty} onChange={(e) => setWarranty(e.target.value)} />
           <ErrorText error={deliverM.error} />
-          <BiButton text="repair.deliver" full loading={deliverM.isPending} onClick={async () => { await deliverM.mutateAsync({ paid: Number(paid || 0), warranty_days: warranty ? Number(warranty) : undefined, outside_cost: outsideCost ? Number(outsideCost) : undefined }); setSheet(null) }} />
+          <BiButton text="counter.giveBackCustomer" full loading={deliverM.isPending} onClick={async () => { await deliverM.mutateAsync({ paid: Number(paid || 0), warranty_days: warranty ? Number(warranty) : undefined, outside_cost: outsideCost ? Number(outsideCost) : undefined }); setSheet(null) }} />
         </div>
       </Sheet>
+    </div>
+  )
+}
+
+function Row({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
+  const { ur, cls } = useLang()
+  return (
+    <div className={`flex items-center justify-between gap-3 border-b border-line px-4 py-2.5 last:border-0 ${strong ? 'bg-ground/60' : ''}`}>
+      <span className={`${ur ? cls('md') : 'text-[15px]'} ${strong ? 'font-bold' : ''}`}>{label}</span>
+      <span className={`num ${strong ? 'text-lg' : 'text-base'}`} dir="ltr">{value}</span>
     </div>
   )
 }
