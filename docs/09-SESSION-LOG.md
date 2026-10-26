@@ -357,3 +357,11 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - Plain words EN/UR: New person (نیا بندہ), Dealer (ڈیلر), ID card check (شناختی کارڈ چیک) and its states, Check ID card now, Cancel this bill, Money received / paid, Exchange (old for new), Chargers & covers, Khata history; e2e updated for New person / Dealer.
 **Verified**: frontend typecheck, vitest 14, Playwright 13 passed (new screenshot test for More + person page, checked by eye).
 **Next**: owner phone test; repairs as a 3-step flow (take phone in → fix/parts → hand back), expenses page layout, settings; Urdu review of the new strings with testers.
+
+**Session 25 — owner reports, names, ID skip** (owner list: profit/loss, tax, profit after expenses, best sellers, sales prediction, name of who added stock / who sold, skip ID check at purchase)
+- Backend: `created_by_name` on sales and purchases (`db/refs.user_name`), `sold_by` on day items; `/reports/top-sellers` (phones by model, items by name; profit with VIEW_COST); `/reports/forecast` (next 7 days = average of the same weekday over the last 4 weeks; last vs previous 7 days incl. today; per model sold in 30 days, in stock, days left, advice buy_more/ok/slow). Verification override: any TRANSACT user may skip a PENDING check (name in history); FLAGGED still owner/manager. Tests `test_reports_owner.py`.
+- Frontend: Reports page rebuilt (Profit / Best sellers / Estimate / Old stock; range chips); "Profit & reports" link on home for owner/manager; sold-by / stock-added-by on details and the day list; add-stock screen has "Check now / later" vs "Skip, I know this person".
+- Decision (ADR-worthy, noted here): staff skipping a pending ID check is allowed because the owner asked for it; the stolen-flag path is unchanged.
+**Verified**: backend 133 passed (+ forecast fix), frontend typecheck, vitest 14, Playwright 14 passed (new reports + skip test; screenshots checked).
+**Dev note**: the uvicorn reloader keeps missing new routes on this PC; restart the backend after adding endpoints.
+**Next**: owner phone test; repairs as a 3-step flow; expenses layout; settings.
