@@ -475,7 +475,17 @@ def day(ctx: Ctx, db: DB, format: Fmt = "csv", date: dt.date | None = None):
         ["", "Given back on returns", "", "", "", "", d["returns_refunded"]],
         ["", "Cut on returns", "", "", "", "", d["returns_kept"]],
         ["", "Money came in", "", "", "", "", d["money_in"]],
+        *[
+            ["", f"  in: {k.replace('_', ' ')}", "", "", "", "", v]
+            for k, v in d["came_in"].items()
+            if v
+        ],
         ["", "Money went out", "", "", "", "", d["money_out"]],
+        *[
+            ["", f"  out: {k.replace('_', ' ')}", "", "", "", "", v]
+            for k, v in d["went_out"].items()
+            if v
+        ],
         ["", "Left in hand today", "", "", "", "", d["cash_net"]],
         ["", "Expense", "", "", "", "", d["expenses"]],
     ]

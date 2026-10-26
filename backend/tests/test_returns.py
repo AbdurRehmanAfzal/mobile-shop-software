@@ -319,3 +319,55 @@ def test_return_with_cut_and_walk_in(owner, cat):
     # owner: 150,000 came in, 135,000 went back -> 15,000 left in hand
     assert day["money_in"] == "150000.00" and day["money_out"] == "135000.00"
     assert day["cash_net"] == "15000.00"
+    assert day["came_in"]["sales"] == "150000.00" and day["went_out"]["returns"] == "135000.00"
+    assert day["went_out"]["stock"] == "0.00"
+
+
+def test_owner_day_buy_sell_return_explains_money_out(owner, cat):
+    """Owner's real day: bought a phone for 750,000 cash, sold it for 800,000, it came back and
+    750,000 was handed back. In hand -700,000 is right, and the page must say why."""
+    from tests.test_purchases import _party
+
+    dealer = _party(owner, name="Dealer Owner", phone="03215550000", kinds=("supplier",))
+    walker = _party(owner, name="Buyer Back", phone="03215550001", kinds=("customer",))
+    p = owner.post(
+        "/api/v1/purchases",
+        json={
+            "kind": "supplier",
+            "party_id": dealer["id"],
+            "devices": [
+                {
+                    "device": {
+                        "imei1": "490154203237518",
+                        "brand_id": cat["brand"]["id"],
+                        "model_id": cat["model"]["id"],
+                        "condition": "box_pack",
+                        "pta_status": "pta_approved",
+                    },
+                    "cost": 750000,
+                }
+            ],
+            "paid": 750000,
+        },
+    ).json()
+    dev = p["lines"][0]["device_id"]
+    inv = owner.post(
+        "/api/v1/sales", json={"devices": [{"device_id": dev, "price": 800000}], "paid": 800000}
+    ).json()
+    r = owner.post(
+        "/api/v1/returns/sale",
+        json={
+            "invoice_id": inv["id"],
+            "line_ids": [inv["lines"][0]["id"]],
+            "party_id": walker["id"],
+            "settlement": "refund",
+            "refund_amount": 750000,
+            "kept_amount": 50000,
+        },
+    )
+    assert r.status_code == 201, r.text
+    day = owner.get("/api/v1/reports/day").json()
+    assert day["came_in"]["sales"] == "800000.00"
+    assert day["went_out"]["stock"] == "750000.00" and day["went_out"]["returns"] == "750000.00"
+    assert day["cash_net"] == "-700000.00" and day["profit"] == "50000.00"
+    assert day["sales_total"] == "0.00"

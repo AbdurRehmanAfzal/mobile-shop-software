@@ -876,9 +876,22 @@
     "csvHint": "Simple file for any software",
     "lists": "Download lists",
     "netCash": "Left in hand today",
-    "netCashHint": "Everything that came in, minus returns, expenses and money paid out",
+    "netCashHint": "Came in minus went out. Money spent on stock is now phones in your shop.",
     "cameIn": "Came in",
     "wentOut": "Went out",
-    "inHand": "In hand (net)"
+    "inHand": "In hand (net)",
+    "inWhy": {
+      "sales": "Sales",
+      "udhaar_back": "Udhaar received",
+      "repairs": "Repairs",
+      "other": "Other"
+    },
+    "outWhy": {
+      "stock": "Stock bought",
+      "returns": "Returns",
+      "expenses": "Expenses",
+      "paid_out": "Paid to people",
+      "other": "Other"
+    }
   }
 }

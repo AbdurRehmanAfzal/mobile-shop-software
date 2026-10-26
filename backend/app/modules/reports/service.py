@@ -260,6 +260,48 @@ def stock_summary(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
     }
 
 
+_IN = {
+    "invoice": "sales",
+    "payment": "udhaar_back",
+    "repair": "repairs",
+    "repair_advance": "repairs",
+    "repair_bill": "repairs",
+}
+_OUT = {
+    "purchase": "stock",
+    "sale_return": "returns",
+    "exchange_refund": "returns",
+    "expense": "expenses",
+    "payment": "paid_out",
+}
+
+
+def _cash_by_reason(db: Session, shop_id: uuid.UUID, day: dt.date) -> tuple[dict, dict]:
+    """Money in / out of cash, bank and Easypaisa on `day`, grouped into shop words."""
+    from app.modules.ledger.models import LedgerGroup
+
+    came_in = {k: ZERO for k in ("sales", "udhaar_back", "repairs", "other")}
+    went_out = {k: ZERO for k in ("stock", "returns", "expenses", "paid_out", "other")}
+    for doc_type, dr, cr in db.execute(
+        select(
+            LedgerGroup.document_type,
+            func.coalesce(func.sum(LedgerEntry.debit), 0),
+            func.coalesce(func.sum(LedgerEntry.credit), 0),
+        )
+        .join(LedgerGroup, LedgerGroup.id == LedgerEntry.group_id)
+        .where(
+            LedgerEntry.shop_id == shop_id,
+            LedgerEntry.cash_account_id.is_not(None),
+            func.date(LedgerEntry.at) == day,
+        )
+        .group_by(LedgerGroup.document_type)
+    ).all():
+        k_in, k_out = _IN.get(doc_type, "other"), _OUT.get(doc_type, "other")
+        came_in[k_in] = money(came_in[k_in] + money(dr))
+        went_out[k_out] = money(went_out[k_out] + money(cr))
+    return came_in, went_out
+
+
 def day_report(db: Session, shop_id: uuid.UUID, day: dt.date, show_cost: bool) -> dict:
     """One day's hisaab in shopkeeper terms: what was sold, how it was paid, udhaar given and
     received back, expenses, profit (owner/manager only) and the list of items sold."""
@@ -378,11 +420,15 @@ def day_report(db: Session, shop_id: uuid.UUID, day: dt.date, show_cost: bool) -
     flows = cash_flow(db, shop_id, day, day)
     money_in = money(sum((f["cash_in"] for f in flows), ZERO))
     money_out = money(sum((f["cash_out"] for f in flows), ZERO))
+    came_in, went_out = _cash_by_reason(db, shop_id, day)
     return {
         "date": day,
         "money_in": money_in,
         "money_out": money_out,
         "cash_net": money(money_in - money_out),
+        # where it came from / went, so "went out" is never a mystery (e.g. stock bought the same day)
+        "came_in": came_in,
+        "went_out": went_out,
         "returns_refunded": money(refunded or 0),
         "returns_kept": money(kept or 0),
         "sales_count": len(invoices),

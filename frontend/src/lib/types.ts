@@ -361,6 +361,8 @@ export interface DayReport {
   money_in: Money
   money_out: Money
   cash_net: Money
+  came_in: Record<'sales' | 'udhaar_back' | 'repairs' | 'other', Money>
+  went_out: Record<'stock' | 'returns' | 'expenses' | 'paid_out' | 'other', Money>
   returns_refunded: Money
   returns_kept: Money
   expenses: Money

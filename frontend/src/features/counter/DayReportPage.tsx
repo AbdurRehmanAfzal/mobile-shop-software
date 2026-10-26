@@ -45,9 +45,8 @@ export default function DayReportPage() {
           <section className="flex flex-col gap-1 rounded-3xl bg-ink px-5 py-4 text-ground">
             <BiLabel text="counter.netCash" size="md" bold tone="text-current" />
             <span className={`num text-[30px] leading-tight ${Number(data.cash_net) < 0 ? 'text-[#F28B82]' : 'text-[#8FE3B4]'}`} dir="ltr">{Number(data.cash_net) < 0 ? '− ' : ''}Rs. {n(data.cash_net)}</span>
-            <span className={`opacity-80 ${ur ? cls('sm') : 'text-sm font-semibold'}`}>
-              {pick('counter.cameIn')} <span className="num" dir="ltr">{n(data.money_in)}</span> · {pick('counter.wentOut')} <span className="num" dir="ltr">{n(data.money_out)}</span>
-            </span>
+            <Why label="counter.cameIn" total={data.money_in} parts={data.came_in} keyPrefix="counter.inWhy" tone="text-[#8FE3B4]" />
+            <Why label="counter.wentOut" total={data.money_out} parts={data.went_out} keyPrefix="counter.outWhy" tone="text-[#F28B82]" />
             <BiLabel text="counter.netCashHint" size="sm" tone="text-current opacity-70" />
           </section>
 
@@ -93,6 +92,29 @@ function Box({ label, value, tone = 'text-ink', cls: extra = 'bg-surface border-
     <div className={`flex flex-col rounded-2xl border px-3 py-2 ${extra}`}>
       <span className={`opacity-80 ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick(label)}</span>
       <span className={`num text-lg ${extra.includes('text-') ? '' : tone}`} dir="ltr">{value}</span>
+    </div>
+  )
+}
+
+/** "Came in 800,000: Sales 800,000" / "Went out 1,500,000: Stock bought 750,000 · Returns 750,000". */
+function Why({ label, total, parts, keyPrefix, tone }: { label: string; total: string; parts: Record<string, string>; keyPrefix: string; tone: string }) {
+  const { pick, ur, cls } = useLang()
+  const shown = Object.entries(parts).filter(([, v]) => Number(v) !== 0)
+  return (
+    <div className="flex flex-col gap-1 rounded-2xl bg-white/10 px-3 py-2">
+      <div className="flex items-center justify-between gap-2">
+        <span className={ur ? cls('sm') : 'text-sm font-bold'}>{pick(label)}</span>
+        <span className={`num text-lg ${tone}`} dir="ltr">{n(total)}</span>
+      </div>
+      {shown.length ? (
+        <div className="flex flex-wrap gap-1.5">
+          {shown.map(([k, v]) => (
+            <span key={k} className={`rounded-full bg-white/10 px-2.5 py-0.5 ${ur ? cls('sm') : 'text-xs font-semibold'}`}>
+              {pick(`${keyPrefix}.${k}`)} <span className="num" dir="ltr">{n(v)}</span>
+            </span>
+          ))}
+        </div>
+      ) : null}
     </div>
   )
 }
