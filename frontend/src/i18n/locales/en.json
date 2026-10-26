@@ -662,5 +662,19 @@
     "pickBrand": "Choose a brand",
     "newStorage": "New size",
     "newColour": "New colour"
+  },
+  "crud": {
+    "delete": "Delete",
+    "deleteHint": "If it has old records, it is hidden instead and the records stay safe.",
+    "reason": "Why?",
+    "editDetails": "Edit details",
+    "removeOldStock": "Remove old-stock entry",
+    "removeOldStockHint": "Use this only if the phone was entered by mistake. Its cost is taken out of stock.",
+    "editExpense": "Edit expense",
+    "cancelExpense": "Cancel this expense",
+    "cancelExpenseHint": "The money comes back into the cash book. The record stays, crossed out.",
+    "categories": "Categories",
+    "editAccount": "Edit account",
+    "editItem": "Edit item"
   }
 }

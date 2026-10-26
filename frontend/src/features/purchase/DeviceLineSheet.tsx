@@ -1,4 +1,5 @@
-/** "Add device" form inside the purchase wizard: identity + cost + accessories. */
+/** "Add device" form inside the purchase wizard: identity + cost + accessories.
+ *  With `edit`, it edits an existing phone's details: IMEI 1 is fixed, no cost or accessories. */
 
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -75,14 +76,14 @@ export function draftToApi(d: DeviceLineDraft) {
   }
 }
 
-export default function DeviceLineSheet({ initial, onSave }: { initial: DeviceLineDraft; onSave: (d: DeviceLineDraft) => void }) {
+export default function DeviceLineSheet({ initial, onSave, edit = false }: { initial: DeviceLineDraft; onSave: (d: DeviceLineDraft) => void; edit?: boolean }) {
   const { t } = useTranslation()
   const { pick, ur } = useLang()
   const [d, setD] = useState<DeviceLineDraft>(initial)
   const [modelQ, setModelQ] = useState('')
   const set = <K extends keyof DeviceLineDraft>(k: K, v: DeviceLineDraft[K]) => setD((x) => ({ ...x, [k]: v }))
   const imeiDigits = toLatinDigits(d.imei1).replace(/\D/g, '')
-  const { data: lookup } = useImeiLookup(imeiDigits)
+  const { data: lookup } = useImeiLookup(edit ? '' : imeiDigits)
   const { data: brands } = useBrands()
   const { data: models } = useModels(d.brand_id || undefined, modelQ || undefined)
   const { data: storages } = useStorages()
@@ -94,7 +95,7 @@ export default function DeviceLineSheet({ initial, onSave }: { initial: DeviceLi
 
   const inStockBlock = lookup?.found && lookup.device && !['sold', 'returned_to_supplier'].includes(lookup.device.status)
   const needsSim = d.pta_status === 'non_pta' || d.pta_status === 'jv'
-  const valid = imeiDigits.length === 15 && d.brand_id && d.model_id && d.cost !== '' && (!needsSim || d.sim_time_months !== '') && (d.condition !== 'patched' || d.patch_details) && !inStockBlock
+  const valid = imeiDigits.length === 15 && d.brand_id && d.model_id && (edit || d.cost !== '') && (!needsSim || d.sim_time_months !== '') && (d.condition !== 'patched' || d.patch_details) && !inStockBlock
 
   const toggleAcc = (kind: AccessoryItem['kind'], field: 'came_with' | 'pending_vendor') => {
     const existing = d.accessories.find((a) => a.kind === kind)
@@ -111,7 +112,7 @@ export default function DeviceLineSheet({ initial, onSave }: { initial: DeviceLi
 
   return (
     <div className="flex flex-col gap-3">
-      <BiInput label="stock.imei" inputMode="numeric" placeholder={t('stock.imeiPlaceholder')} value={d.imei1} onChange={(e) => set('imei1', e.target.value)} maxLength={20} autoFocus={!initial.imei1} />
+      <BiInput label="stock.imei" disabled={edit} inputMode="numeric" placeholder={t('stock.imeiPlaceholder')} value={d.imei1} onChange={(e) => set('imei1', e.target.value)} maxLength={20} autoFocus={!initial.imei1} />
       {imeiDigits.length === 15 && lookup ? (
         <div className="flex flex-wrap gap-1.5">
           {!lookup.luhn_ok ? <Chip text="stock.luhnBad" tone="warn" /> : null}
@@ -225,12 +226,15 @@ export default function DeviceLineSheet({ initial, onSave }: { initial: DeviceLi
       <BiSegmented<PtaStatus> value={d.pta_status} onChange={(v) => set('pta_status', v)} options={[{ value: 'pta_approved', text: 'stock.pta.pta_approved' }, { value: 'non_pta', text: 'stock.pta.non_pta' }, { value: 'jv', text: 'stock.pta.jv' }]} />
       {needsSim ? <BiInput label="stock.simTime" type="number" inputMode="numeric" min={0} max={60} value={d.sim_time_months} onChange={(e) => set('sim_time_months', e.target.value)} required /> : null}
 
+      {edit ? null : (
       <div className="grid grid-cols-2 gap-2">
         <BiInput label="purchase.cost" type="number" inputMode="decimal" min={0} value={d.cost} onChange={(e) => set('cost', e.target.value)} required />
         <BiInput label="stock.asking" type="number" inputMode="decimal" min={0} value={d.asking_price} onChange={(e) => set('asking_price', e.target.value)} />
       </div>
+      )}
       <BiInput label={{ en: 'Warranty (months)', ur: 'وارنٹی (مہینے)' }} type="number" inputMode="numeric" min={0} max={60} value={d.warranty_months} onChange={(e) => set('warranty_months', e.target.value)} />
 
+      {edit ? null : (
       <div>
         <BiLabel text="stock.accessories" size="md" tone="text-muted" className="mb-1.5" />
         <div className="card flex flex-col divide-y divide-line p-0">
@@ -251,7 +255,9 @@ export default function DeviceLineSheet({ initial, onSave }: { initial: DeviceLi
         </div>
       </div>
 
-      <BiButton text="common.add" full disabled={!valid} onClick={() => onSave({ ...d, imei1: imeiDigits })} />
+      )}
+
+      <BiButton text={edit ? 'common.save' : 'common.add'} full disabled={!valid} onClick={() => onSave({ ...d, imei1: imeiDigits })} />
     </div>
   )
 }

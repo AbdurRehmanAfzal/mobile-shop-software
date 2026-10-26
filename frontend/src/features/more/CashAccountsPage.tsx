@@ -1,16 +1,18 @@
-import { Plus } from 'lucide-react'
+import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import RemoveSheet from '@/components/RemoveSheet'
 import { ErrorText, List, MoneyText, PageHeader, Row, Sheet, fmtDate } from '@/components/ui'
+import { api } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
-import { useCashAccounts, useDocMutation, useGet } from '@/lib/queries'
+import { useCashAccounts, useDocMutation, useGet, useInvalidate } from '@/lib/queries'
 import type { CashAccount } from '@/lib/types'
 
 type Kind = CashAccount['kind']
 interface Book { opening_balance: string; closing_balance: string; rows: { entry_id: string; at: string; memo: string | null; in: string; out: string; balance: string; reversed: boolean }[] }
 
 export default function CashAccountsPage() {
-  const { ur } = useLang()
+  const { ur, pick } = useLang()
   const role = useAuth((s) => s.me?.user.role)
   const { data } = useCashAccounts()
   const [adding, setAdding] = useState(false)
@@ -18,6 +20,11 @@ export default function CashAccountsPage() {
   const [f, setF] = useState({ kind: 'easypaisa' as Kind, name: '', account_no: '', opening_balance: '' })
   const { data: rows } = useGet<Book>(['book', book?.id], book && role !== 'salesman' ? `/api/v1/ledger/accounts/${book.id}/book` : null)
   const create = useDocMutation<Record<string, unknown>, CashAccount>('POST', () => '/api/v1/ledger/accounts')
+  const [editing, setEditing] = useState<CashAccount | null>(null)
+  const [removing, setRemoving] = useState<CashAccount | null>(null)
+  const [newName, setNewName] = useState('')
+  const rename = useDocMutation<{ id: string; name: string }, CashAccount>('PATCH', (i) => `/api/v1/ledger/accounts/${i.id}`, (i) => ({ name: i.name }))
+  const inv = useInvalidate()
   const label = (a: CashAccount) => (ur && a.name_ur ? a.name_ur : a.name)
 
   return (
@@ -40,6 +47,18 @@ export default function CashAccountsPage() {
       </Sheet>
 
       <Sheet open={book !== null} onClose={() => setBook(null)} title="cash.book">
+        {book && role === 'owner' ? (
+          <div className="mb-3 grid grid-cols-2 gap-2">
+            <button type="button" onClick={() => { setNewName(book.name); setEditing(book); setBook(null) }} className="tap flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-line bg-surface text-sm font-bold">
+              <Pencil size={16} /> {pick('crud.editAccount')}
+            </button>
+            {!book.is_default ? (
+              <button type="button" onClick={() => { setRemoving(book); setBook(null) }} className="tap flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-line bg-surface text-sm font-bold text-payable">
+                <Trash2 size={16} /> {pick('crud.delete')}
+              </button>
+            ) : null}
+          </div>
+        ) : null}
         {rows ? (
           <div className="card divide-y divide-line p-0">
             {[...rows.rows].reverse().map((r) => (
@@ -57,6 +76,26 @@ export default function CashAccountsPage() {
           </div>
         ) : null}
       </Sheet>
+
+      <Sheet open={editing !== null} onClose={() => setEditing(null)} title="crud.editAccount">
+        {editing ? (
+          <div className="flex flex-col gap-3">
+            <BiInput label="cash.name" value={newName} onChange={(e) => setNewName(e.target.value)} autoFocus />
+            <ErrorText error={rename.error} />
+            <BiButton text="common.save" full loading={rename.isPending} disabled={!newName.trim()} onClick={async () => { await rename.mutateAsync({ id: editing.id, name: newName.trim() }); setEditing(null) }} />
+          </div>
+        ) : null}
+      </Sheet>
+
+      <RemoveSheet
+        open={removing !== null}
+        onClose={() => setRemoving(null)}
+        name={removing ? label(removing) : ''}
+        onConfirm={async () => {
+          await api('DELETE', `/api/v1/ledger/accounts/${removing!.id}`)
+          await inv()
+        }}
+      />
     </div>
   )
 }

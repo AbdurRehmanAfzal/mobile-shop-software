@@ -317,3 +317,19 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - Owner: brand, model, storage and colour need full add/edit/delete, and must be addable from the device form when missing. Backend: `PATCH`/`DELETE /api/v1/catalogue/{brands|models|storages|colours}/{id}` for shop-own rows only (built-in rows → 403 `catalogue_builtin`; in use by a device or, for a brand, by a model → 409 `catalogue_in_use`; rename clash → 409), new capability `catalogue_edit` (owner, manager); salesman can still add. Storage/colour responses now include `is_global`. Frontend: "+ New brand / New model / New size / New colour" inline in the device form (new item is selected straight away; storage typed as "128" or "1tb" is normalised), and More → Brands & models page with tabs, Built-in chips, rename and delete. Tests: backend catalogue tests (rename/delete/locked/in-use/salesman), vitest 12, e2e 5 passed.
 - Dev note: the uvicorn reloader again missed new routes (PATCH returned 404 in the browser); restarted it. Restart the backend after adding routes.
 - Owner: purchase needs a date-time because a busy shopkeeper enters it later. `purchases.purchased_at` (migration 3f1c2a7b9d10). Purchase accepts `purchased_at` (default now; naive = Pakistan time; not in the future; not before the phone's last history record; a cash payment into a day whose cash is already closed is refused with `day_closed`). The ledger group and the PURCHASED device event use that time; `date` is derived from it in the shop's timezone. UI: payment step "When was it bought? Just now / Earlier" with a date-time picker; purchase detail shows date and time. Tests: 3 new backend tests, e2e enters "yesterday 3 PM" and checks the detail page.
+
+---
+
+## 2026-10-26 — Session 25: edit and delete everywhere
+**Found**: the previous session had finished the backend for "every record can be changed and deleted" but had not committed or logged it. Tests were green (127); moved mid-file imports to the top, dropped a leftover `assert dt` in `test_crud.py`, committed.
+**Done (frontend)**
+- `components/RemoveSheet.tsx`: shared confirm sheet (danger button, optional reason of 3+ chars, says "if it has old records it is hidden and the records stay safe").
+- Party detail: delete (owner/manager) → back to the list.
+- Accessories: item sheet has Edit item (name, category, price, reorder level) and Delete (refused while stock is left).
+- Cash & bank: owner can rename and delete (default cash account cannot be deleted; non-zero balance refused by the server).
+- Expenses: tap an expense → Edit (voids the old one and posts the corrected one, keeping account/date/links) or Cancel with a reason; "Categories" link in the add sheet manages the shop's own categories (built-in ones locked).
+- Device detail: "Edit details" reuses `DeviceLineSheet` in a new `edit` mode (IMEI 1 fixed, no cost/accessories); "Remove old-stock entry" for owner/manager while the phone is in stock and nothing but verification happened.
+- Fix: in light mode the hero card is ink-coloured, so `MoneyText tone="ink"` inside it was invisible (expenses totals, party balance, device price). CSS rule `.hero .num.text-ink` now uses the hero text colour.
+**Verified**: backend `pytest` 127 passed, ruff clean; frontend typecheck clean, vitest 12 passed, build ok; Playwright 8 passed (new `e2e/crud.spec.ts`: party delete, old-stock edit + remove, expense edit + cancel).
+**Open questions**: after an expense edit/cancel, the day's "Cash in" also counts the reversal (Rs. 500 out, then 500 back in). The total in the drawer is right; ask the owner whether the in/out tiles should net voids out.
+**Next**: owner walkthrough of the new edit/delete buttons on the phone; then sale/purchase edit (currently only void + re-enter), audit viewer, Phase 3 items waiting on owner (domain + VPS, Meta account, plan prices).

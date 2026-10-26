@@ -1,10 +1,13 @@
-import { FileSpreadsheet, Pencil } from 'lucide-react'
+import { FileSpreadsheet, Pencil, Trash2 } from 'lucide-react'
 import { downloadFile } from '@/lib/files'
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { BiButton, BiLabel, useLang } from '@/components/Bilingual'
+import RemoveSheet from '@/components/RemoveSheet'
 import { Chip, Empty, KV, Loading, MoneyText, PageHeader, Section, Sheet, fmtDate } from '@/components/ui'
-import { useParty, useStatement } from '@/lib/queries'
+import { api } from '@/lib/api'
+import { useAuth } from '@/lib/auth'
+import { useInvalidate, useParty, useStatement } from '@/lib/queries'
 import PartyForm from './PartyForm'
 import PaymentForm from '@/features/payments/PaymentForm'
 
@@ -15,6 +18,10 @@ export default function PartyDetailPage() {
   const { data: st } = useStatement(id)
   const [editing, setEditing] = useState(false)
   const [paying, setPaying] = useState<'in' | 'out' | null>(null)
+  const [removing, setRemoving] = useState(false)
+  const nav = useNavigate()
+  const inv = useInvalidate()
+  const canDelete = useAuth((s) => s.me?.user.role === 'owner' || s.me?.user.role === 'manager')
 
   if (isLoading || !party) return <Loading />
   const bal = Number(party.balance)
@@ -24,9 +31,16 @@ export default function PartyDetailPage() {
       <PageHeader
         title={{ en: party.name, ur: party.name_ur || party.name }}
         right={
-          <button type="button" aria-label={pick('common.edit')} onClick={() => setEditing(true)} className="well tap h-11 w-11 border border-line bg-surface">
-            <Pencil size={18} />
-          </button>
+          <div className="flex gap-2">
+            {canDelete ? (
+              <button type="button" aria-label={pick('crud.delete')} onClick={() => setRemoving(true)} className="well tap h-11 w-11 border border-line bg-surface text-payable">
+                <Trash2 size={18} />
+              </button>
+            ) : null}
+            <button type="button" aria-label={pick('common.edit')} onClick={() => setEditing(true)} className="well tap h-11 w-11 border border-line bg-surface">
+              <Pencil size={18} />
+            </button>
+          </div>
         }
       />
 
@@ -89,6 +103,16 @@ export default function PartyDetailPage() {
       <Sheet open={editing} onClose={() => setEditing(false)} title="party.edit">
         <PartyForm party={party} onDone={() => setEditing(false)} />
       </Sheet>
+      <RemoveSheet
+        open={removing}
+        onClose={() => setRemoving(false)}
+        name={party.name}
+        onConfirm={async () => {
+          await api('DELETE', `/api/v1/parties/${party.id}`)
+          await inv('parties')
+          nav('/parties', { replace: true })
+        }}
+      />
       <Sheet open={paying !== null} onClose={() => setPaying(null)} title={paying === 'out' ? 'party.pay' : 'party.receive'}>
         {paying ? <PaymentForm party={party} direction={paying} onDone={() => setPaying(null)} /> : null}
       </Sheet>

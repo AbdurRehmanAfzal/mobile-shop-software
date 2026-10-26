@@ -99,6 +99,10 @@
   .hero {
     @apply rounded-3xl bg-hero text-hero-text shadow-hero;
   }
+  /* in light mode the hero is ink-coloured, so "ink" amounts on it would vanish */
+  .hero .num.text-ink {
+    @apply text-hero-text;
+  }
   .tap {
     @apply select-none transition-transform duration-150 ease-out active:scale-[0.98];
   }

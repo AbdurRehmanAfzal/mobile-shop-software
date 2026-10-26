@@ -1,9 +1,11 @@
-import { Plus } from 'lucide-react'
+import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import RemoveSheet from '@/components/RemoveSheet'
 import { Chip, Empty, ErrorText, KV, List, Loading, MoneyText, PageHeader, Row, SearchBox, Sheet, fmtDate } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
-import { useDocMutation, useGet } from '@/lib/queries'
+import { api } from '@/lib/api'
+import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
 
 interface Accessory { id: string; sku: string; name: string; name_ur: string | null; category: string; qty: number; avg_cost: string | null; price: string; reorder_level: number; low_stock: boolean }
 interface Pending { item_id: string; device_label: string; imei1: string; kind: string; pending_from: 'vendor' | 'shop'; expected_at: string | null; promised_to_customer_at: string | null; party_name: string | null; party_phone: string | null; overdue: boolean }
@@ -24,6 +26,11 @@ export default function AccessoriesPage() {
   const create = useDocMutation<Record<string, unknown>, Accessory>('POST', () => '/api/v1/accessories')
   const adjust = useDocMutation<{ id: string; qty_delta: number; note?: string }, Accessory>('POST', (i) => `/api/v1/accessories/${i.id}/adjust`, (i) => ({ qty_delta: i.qty_delta, note: i.note }))
   const deliver = useDocMutation<{ id: string }, unknown>('POST', (i) => `/api/v1/accessories/pending/${i.id}/deliver`, () => ({}))
+  const [editing, setEditing] = useState<Accessory | null>(null)
+  const [removing, setRemoving] = useState<Accessory | null>(null)
+  const [e, setE] = useState({ name: '', category: 'charger', price: '', reorder_level: '' })
+  const update = useDocMutation<{ id: string; body: Record<string, unknown> }, Accessory>('PATCH', (i) => `/api/v1/accessories/${i.id}`, (i) => i.body)
+  const inv = useInvalidate()
   const set = (k: keyof typeof f) => (e: { target: { value: string } }) => setF({ ...f, [k]: e.target.value })
 
   return (
@@ -85,6 +92,14 @@ export default function AccessoriesPage() {
       <Sheet open={adjusting !== null} onClose={() => setAdjusting(null)} title="acc.adjust">
         {adjusting ? (
           <div className="flex flex-col gap-3">
+            <div className="grid grid-cols-2 gap-2">
+              <button type="button" onClick={() => { setE({ name: adjusting.name, category: adjusting.category, price: String(Number(adjusting.price)), reorder_level: String(adjusting.reorder_level) }); setEditing(adjusting); setAdjusting(null) }} className="tap flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-line bg-surface text-sm font-bold">
+                <Pencil size={16} /> {pick('crud.editItem')}
+              </button>
+              <button type="button" onClick={() => { setRemoving(adjusting); setAdjusting(null) }} className="tap flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-line bg-surface text-sm font-bold text-payable">
+                <Trash2 size={16} /> {pick('crud.delete')}
+              </button>
+            </div>
             <div className="card">
               <KV k="acc.name" v={adjusting.name} />
               <KV k="acc.qty" v={<span dir="ltr">{adjusting.qty}</span>} />
@@ -97,6 +112,34 @@ export default function AccessoriesPage() {
           </div>
         ) : null}
       </Sheet>
+
+      <Sheet open={editing !== null} onClose={() => setEditing(null)} title="crud.editItem">
+        {editing ? (
+          <div className="flex flex-col gap-3">
+            <BiInput label="acc.name" value={e.name} onChange={(ev) => setE({ ...e, name: ev.target.value })} />
+            <BiLabel text="acc.category" size="md" tone="text-muted" />
+            <div className="flex flex-wrap gap-1.5">
+              {CATS.map((c) => <button key={c} type="button" onClick={() => setE({ ...e, category: c })} className={`tap rounded-full border px-3 py-1.5 text-sm font-bold ${e.category === c ? 'border-emerald bg-emerald-tint text-emerald-deep' : 'border-line bg-surface text-muted'}`}>{pick(`acc.cat.${c}`)}</button>)}
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <BiInput label="acc.price" type="number" inputMode="decimal" min={0} value={e.price} onChange={(ev) => setE({ ...e, price: ev.target.value })} />
+              <BiInput label="acc.reorder" type="number" inputMode="numeric" min={0} value={e.reorder_level} onChange={(ev) => setE({ ...e, reorder_level: ev.target.value })} />
+            </div>
+            <ErrorText error={update.error} />
+            <BiButton text="common.save" full loading={update.isPending} disabled={!e.name.trim()} onClick={async () => { await update.mutateAsync({ id: editing.id, body: { name: e.name.trim(), category: e.category, price: Number(e.price || 0), reorder_level: Number(e.reorder_level || 0) } }); setEditing(null) }} />
+          </div>
+        ) : null}
+      </Sheet>
+
+      <RemoveSheet
+        open={removing !== null}
+        onClose={() => setRemoving(null)}
+        name={removing?.name}
+        onConfirm={async () => {
+          await api('DELETE', `/api/v1/accessories/${removing!.id}`)
+          await inv('accessories')
+        }}
+      />
     </div>
   )
 }

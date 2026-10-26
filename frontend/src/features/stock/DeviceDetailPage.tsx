@@ -1,14 +1,35 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import RemoveSheet from '@/components/RemoveSheet'
 import { Chip, ErrorText, KV, Loading, MoneyText, PageHeader, Section, Sheet, fmtDate } from '@/components/ui'
+import { patch, post } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
-import { useDevice, useDeviceEvent, useDeviceHistory, useDocMutation, useParties } from '@/lib/queries'
-import type { DeviceEvent, Loan } from '@/lib/types'
+import { useDevice, useDeviceEvent, useDeviceHistory, useDocMutation, useInvalidate, useParties } from '@/lib/queries'
+import type { DeviceDetail, DeviceEvent, Loan } from '@/lib/types'
+import DeviceLineSheet, { emptyDraft, type DeviceLineDraft } from '@/features/purchase/DeviceLineSheet'
 
 const EVENT_TONE: Record<string, 'ok' | 'warn' | 'bad' | 'muted' | 'ink'> = {
   purchased: 'ok', verified: 'ok', sold: 'ink', sale_returned: 'warn', loaned_out: 'warn', loan_returned: 'ok',
   marked_faulty: 'bad', faulty_cleared: 'ok', sent_to_repair: 'warn', repair_returned: 'ok', returned_to_supplier: 'bad',
+}
+
+function toDraft(d: DeviceDetail): DeviceLineDraft {
+  return {
+    ...emptyDraft(d.imei1),
+    imei2: d.imei2 ?? '',
+    brand_id: d.brand_id,
+    brand_name: d.brand_name,
+    model_id: d.model_id,
+    model_name: d.model_name,
+    storage_id: d.storage_id ?? '',
+    colour_id: d.colour_id ?? '',
+    condition: d.condition,
+    pta_status: d.pta_status,
+    sim_time_months: d.sim_time_months === null ? '' : String(d.sim_time_months),
+    warranty_months: String(d.warranty_months),
+    patch_details: d.patch_details ?? '',
+  }
 }
 
 function Timeline({ events }: { events: DeviceEvent[] }) {
@@ -47,7 +68,8 @@ export default function DeviceDetailPage() {
   const { data: history } = useDeviceHistory(id)
   const ev = useDeviceEvent()
   const loanM = useDocMutation<{ device_id: string; party_id: string; expected_back_at?: string; notes?: string }, Loan>('POST', () => '/api/v1/loans')
-  const [sheet, setSheet] = useState<null | 'loan' | 'note' | 'price'>(null)
+  const [sheet, setSheet] = useState<null | 'loan' | 'note' | 'price' | 'edit' | 'remove'>(null)
+  const inv = useInvalidate()
   const [text, setText] = useState('')
   const [partyId, setPartyId] = useState('')
   const [expected, setExpected] = useState('')
@@ -57,6 +79,9 @@ export default function DeviceDetailPage() {
   if (isLoading || !d) return <Loading />
   const vTone = d.verification_status === 'flagged' ? 'bad' : d.verification_status === 'pending' ? 'warn' : 'ok'
   const inStock = d.status === 'in_stock'
+  // an old-stock entry typed by mistake can be removed while nothing but verification happened to it
+  const opening = history?.find((e) => e.document_type === 'opening_stock')
+  const canRemoveOpening = canSeeCost && inStock && !!opening && history!.every((e) => e.seq <= opening.seq || e.type === 'verified')
 
   async function simple(type: string) {
     await ev.mutateAsync({ id: d!.id, type })
@@ -124,6 +149,8 @@ export default function DeviceDetailPage() {
           {d.status === 'with_customer_for_approval' ? <BiButton text="stock.approvalReturned" variant="secondary" size="md" onClick={() => simple('approval_returned')} /> : null}
           <BiButton text="stock.changePrice" variant="secondary" size="md" onClick={() => { setText(d.asking_price ?? ''); setSheet('price') }} />
           <BiButton text="stock.addNote" variant="secondary" size="md" onClick={() => { setText(''); setSheet('note') }} />
+          <BiButton text="crud.editDetails" variant="secondary" size="md" onClick={() => setSheet('edit')} />
+          {canRemoveOpening ? <BiButton text="crud.removeOldStock" variant="secondary" size="md" onClick={() => setSheet('remove')} /> : null}
         </div>
         <ErrorText error={ev.error ?? loanM.error} />
       </Section>
@@ -181,6 +208,44 @@ export default function DeviceDetailPage() {
         </div>
       </Sheet>
 
+      <Sheet open={sheet === 'edit'} onClose={() => setSheet(null)} title="crud.editDetails">
+        {sheet === 'edit' ? (
+          <DeviceLineSheet
+            edit
+            initial={toDraft(d)}
+            onSave={async (x) => {
+              await patch(`/api/v1/devices/${d.id}`, {
+                brand_id: x.brand_id,
+                model_id: x.model_id,
+                imei2: x.imei2 || null,
+                storage_id: x.storage_id || null,
+                colour_id: x.colour_id || null,
+                condition: x.condition,
+                pta_status: x.pta_status,
+                sim_time_months: x.sim_time_months ? Number(x.sim_time_months) : null,
+                warranty_months: Number(x.warranty_months || 0),
+                patch_details: x.patch_details || null,
+              })
+              await inv('devices', 'device', 'history')
+              setSheet(null)
+            }}
+          />
+        ) : null}
+      </Sheet>
+
+      <RemoveSheet
+        open={sheet === 'remove'}
+        onClose={() => setSheet(null)}
+        title="crud.removeOldStock"
+        hint="crud.removeOldStockHint"
+        reason
+        name={<span dir="ltr">{d.imei1}</span>}
+        onConfirm={async (reason) => {
+          await post(`/api/v1/devices/${d.id}/cancel-opening`, { reason })
+          await inv()
+        }}
+      />
+
       <Sheet open={sheet === 'note' || sheet === 'price'} onClose={() => setSheet(null)} title={sheet === 'price' ? 'stock.changePrice' : 'stock.addNote'}>
         <div className="flex flex-col gap-3">
           <BiInput label={sheet === 'price' ? 'stock.asking' : 'common.notes'} type={sheet === 'price' ? 'number' : 'text'} inputMode={sheet === 'price' ? 'decimal' : 'text'} value={text} onChange={(e) => setText(e.target.value)} autoFocus />
@@ -189,7 +254,7 @@ export default function DeviceDetailPage() {
             full
             loading={ev.isPending}
             onClick={async () => {
-              if (sheet === 'price') await (await import('@/lib/api')).patch(`/api/v1/devices/${d.id}`, { asking_price: Number(text) })
+              if (sheet === 'price') await patch(`/api/v1/devices/${d.id}`, { asking_price: Number(text) })
               else await ev.mutateAsync({ id: d.id, type: 'note', note: text })
               setSheet(null)
             }}
