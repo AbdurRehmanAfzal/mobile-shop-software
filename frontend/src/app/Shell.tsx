@@ -104,7 +104,9 @@ export default function Shell() {
               <NavLink to={to} end={to === '/'} className={({ isActive }) => `tap flex min-h-14 flex-col items-center justify-center gap-0.5 ${isActive ? 'font-bold text-ink' : 'text-muted'}`}>
                 {({ isActive }) => (
                   <>
-                    <Icon size={24} strokeWidth={isActive ? 2.1 : 1.75} />
+                    <span className={`flex h-8 w-14 items-center justify-center rounded-full transition-colors ${isActive ? 'bg-emerald-tint text-emerald-deep' : ''}`}>
+                      <Icon size={22} strokeWidth={isActive ? 2.1 : 1.75} />
+                    </span>
                     <span className={`leading-none ${ur ? cls('sm') : 'text-[11px] font-semibold'}`} dir={dir}>{pick(key)}</span>
                   </>
                 )}

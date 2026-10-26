@@ -6,7 +6,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Manrope', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
         urdu: ['"Noto Nastaliq Urdu"', 'serif'],
       },
       colors: {
@@ -29,7 +29,8 @@ export default {
         expense: { DEFAULT: rgb('--t-expense'), fg: rgb('--t-expense-fg'), icon: rgb('--t-expense-icon') },
         ret: { DEFAULT: rgb('--t-return'), fg: rgb('--t-return-fg'), icon: rgb('--t-return-icon') },
       },
-      borderRadius: { '2xl': '18px', '3xl': '24px' },
+      // buttons / cards follow the look (Modern uses tighter, Stripe-like corners)
+      borderRadius: { '2xl': 'var(--r-btn)', '3xl': 'var(--r-card)' },
       boxShadow: {
         hero: '0 18px 40px -24px rgba(27,31,36,.45)',
         cta: '0 12px 24px -14px rgba(30,107,69,.7)',

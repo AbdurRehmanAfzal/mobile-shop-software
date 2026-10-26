@@ -5,6 +5,9 @@
 /* Design tokens (docs/11-DESIGN-SYSTEM.md). RGB triplets so Tailwind can apply alpha. */
 @layer base {
   :root {
+    --font-sans: Manrope;
+    --r-btn: 18px;
+    --r-card: 24px;
     --ink: 27 31 36;
     --ground: 246 244 239;
     --surface: 255 255 255;
@@ -323,6 +326,134 @@
     }
   }
 
+  /* Modern (owner, 2026-10-26: "Stripe and Google inspired"): Stripe navy text, one blurple
+     accent, white cards with a hairline and soft shadow, tighter corners, Inter. Default look. */
+  :root[data-palette='modern']:not([data-theme='dark']) {
+    --ground: 246 249 252;
+    --surface: 255 255 255;
+    --line: 227 232 238;
+    --ink: 10 37 64;
+    --muted: 66 84 102;
+    --emerald: 99 91 255;
+    --emerald-deep: 67 56 202;
+    --emerald-tint: 238 236 255;
+    --hero: 10 37 64;
+    --hero-text: 255 255 255;
+    --receivable: 180 83 9;
+    --receivable-tint: 254 243 199;
+    --payable: 205 50 50;
+    --payable-tint: 254 228 228;
+    --gold: 99 91 255;
+    --gold-text: 180 83 9;
+    --nav: 255 255 255;
+    --t-sell: 99 91 255;
+    --t-sell-fg: 255 255 255;
+    --t-sell-icon: 99 91 255;
+    --t-buy: 10 37 64;
+    --t-buy-fg: 255 255 255;
+    --t-buy-icon: 10 37 64;
+    --t-khata: 240 243 255;
+    --t-khata-fg: 10 37 64;
+    --t-khata-icon: 99 91 255;
+    --t-stock: 240 243 255;
+    --t-stock-fg: 10 37 64;
+    --t-stock-icon: 99 91 255;
+    --t-repair: 240 243 255;
+    --t-repair-fg: 10 37 64;
+    --t-repair-icon: 99 91 255;
+    --t-expense: 240 243 255;
+    --t-expense-fg: 10 37 64;
+    --t-expense-icon: 99 91 255;
+    --t-return: 240 243 255;
+    --t-return-fg: 10 37 64;
+    --t-return-icon: 99 91 255;
+  }
+  :root[data-palette='modern'][data-theme='dark'] {
+    --ground: 10 18 32;
+    --surface: 18 29 47;
+    --line: 38 52 74;
+    --ink: 232 237 243;
+    --muted: 150 164 184;
+    --emerald: 122 115 255;
+    --emerald-deep: 199 196 255;
+    --emerald-tint: 36 34 82;
+    --hero: 22 36 60;
+    --receivable: 251 191 36;
+    --receivable-tint: 66 48 14;
+    --payable: 248 113 113;
+    --payable-tint: 72 26 26;
+    --gold: 165 160 255;
+    --gold-text: 251 191 36;
+    --nav: 18 29 47;
+    --t-sell: 99 91 255;
+    --t-sell-fg: 255 255 255;
+    --t-sell-icon: 199 196 255;
+    --t-buy: 46 62 92;
+    --t-buy-fg: 255 255 255;
+    --t-buy-icon: 226 232 240;
+    --t-khata: 28 41 64;
+    --t-khata-fg: 232 237 243;
+    --t-khata-icon: 165 160 255;
+    --t-stock: 28 41 64;
+    --t-stock-fg: 232 237 243;
+    --t-stock-icon: 165 160 255;
+    --t-repair: 28 41 64;
+    --t-repair-fg: 232 237 243;
+    --t-repair-icon: 165 160 255;
+    --t-expense: 28 41 64;
+    --t-expense-fg: 232 237 243;
+    --t-expense-icon: 165 160 255;
+    --t-return: 28 41 64;
+    --t-return-fg: 232 237 243;
+    --t-return-icon: 165 160 255;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root[data-palette='modern'][data-theme='system'] {
+      --ground: 10 18 32;
+      --surface: 18 29 47;
+      --line: 38 52 74;
+      --ink: 232 237 243;
+      --muted: 150 164 184;
+      --emerald: 122 115 255;
+      --emerald-deep: 199 196 255;
+      --emerald-tint: 36 34 82;
+      --hero: 22 36 60;
+      --receivable: 251 191 36;
+      --receivable-tint: 66 48 14;
+      --payable: 248 113 113;
+      --payable-tint: 72 26 26;
+      --gold: 165 160 255;
+      --gold-text: 251 191 36;
+      --nav: 18 29 47;
+      --t-sell: 99 91 255;
+      --t-sell-fg: 255 255 255;
+      --t-sell-icon: 199 196 255;
+      --t-buy: 46 62 92;
+      --t-buy-fg: 255 255 255;
+      --t-buy-icon: 226 232 240;
+      --t-khata: 28 41 64;
+      --t-khata-fg: 232 237 243;
+      --t-khata-icon: 165 160 255;
+      --t-stock: 28 41 64;
+      --t-stock-fg: 232 237 243;
+      --t-stock-icon: 165 160 255;
+      --t-repair: 28 41 64;
+      --t-repair-fg: 232 237 243;
+      --t-repair-icon: 165 160 255;
+      --t-expense: 28 41 64;
+      --t-expense-fg: 232 237 243;
+      --t-expense-icon: 165 160 255;
+      --t-return: 28 41 64;
+      --t-return-fg: 232 237 243;
+      --t-return-icon: 165 160 255;
+    }
+  }
+  :root[data-palette='modern'] {
+    --font-sans: Inter;
+    --r-btn: 12px;
+    --r-card: 16px;
+  }
+
   html {
     -webkit-text-size-adjust: 100%;
   }
@@ -332,13 +463,13 @@
   /* Urdu mode: any text outside a .ur block (inputs, placeholders, steps, chips) still gets
      Nastaliq for Urdu letters and Manrope for Latin letters and digits */
   html[lang='ur'] body {
-    font-family: Manrope, 'Noto Nastaliq Urdu', system-ui, sans-serif;
+    font-family: var(--font-sans), 'Noto Nastaliq Urdu', system-ui, sans-serif;
   }
   html[lang='ur'] input::placeholder {
     line-height: 2;
   }
   .ur {
-    font-family: Manrope, 'Noto Nastaliq Urdu', serif;
+    font-family: var(--font-sans), 'Noto Nastaliq Urdu', serif;
     direction: rtl;
     unicode-bidi: isolate;
     line-height: 1.9;
@@ -349,7 +480,7 @@
   }
   .num {
     /* digits stay Latin and in Manrope even inside Nastaliq text (Nastaliq draws 0 as a dot) */
-    font-family: Manrope, system-ui, sans-serif;
+    font-family: var(--font-sans), system-ui, sans-serif;
     @apply font-extrabold tabular-nums tracking-[-0.02em];
     direction: ltr;
     unicode-bidi: isolate;
@@ -363,7 +494,11 @@
 
 @layer components {
   .card {
-    @apply rounded-[20px] border border-line bg-surface p-4;
+    @apply rounded-3xl border border-line bg-surface p-4;
+  }
+  /* Stripe-like lift: a hairline plus a very soft shadow */
+  :root[data-palette='modern'] .card {
+    box-shadow: 0 1px 2px rgba(10, 37, 64, 0.06), 0 4px 12px -6px rgba(10, 37, 64, 0.08);
   }
   .hero {
     @apply rounded-3xl bg-hero text-hero-text shadow-hero;

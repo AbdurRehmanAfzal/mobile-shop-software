@@ -13,9 +13,10 @@ Why: owner + 10 testers rejected v1.x as "not easy, looks like Easypaisa (a paym
 7. **A card that opens something says so**: a "See details ›" pill (`SeeMore`) at the bottom of every tappable card on home (hisaab, khata, stock, profit) and on attention rows (owner, 2026-10-26: users did not know cards could be tapped).
 8. **Phone and laptop equal.** Phone: 5-tab bottom bar (Home, Stock, Udhaar, Hisaab, More), no FAB. Laptop (≥1024px): the job tiles become a side menu with F-keys (F2 sell, F3 add stock, F4 udhaar, F6 stock, F7 repair, F8 expense; F5 left alone).
 
-## Looks (v2.1, 2026-10-26)
+## Looks (v2.1 → v2.2, 2026-10-26)
 Testers said the pastel job tiles looked "like a school kids' software, not professional". Three looks share the same tokens, switchable under More → App → Look (`useTheme().palette`, `html[data-palette]`):
-- **Professional (default):** cool grey ground, white cards, one teal accent. Sell = solid teal, Add stock = solid ink; every other job is a neutral grey well with an ink icon. Money keeps its meaning colours (green in, amber to get, red to give).
+- **Modern (default since v2.2, owner: "Stripe and Google inspired"):** Stripe navy text (#0A2540) on #F6F9FC, white cards with a hairline + very soft shadow, one blurple accent (#635BFF) for Sell, primary buttons and Profit, navy Add stock and hisaab card, light lavender icon wells, Inter font, tighter corners (buttons 12px, cards 16px), Material-style pill behind the active bottom tab.
+- **Professional:** cool grey ground, white cards, one teal accent. Sell = solid teal, Add stock = solid ink; every other job is a neutral grey well with an ink icon. Money keeps its meaning colours (green in, amber to get, red to give).
 - **Navy:** navy + gold. Sell = solid navy, Add stock = solid gold, other jobs neutral.
 - **Colorful:** the v2.0 pastel tiles, kept for comparison.
 Each job has three tokens: `--t-<job>` (tile), `--t-<job>-fg` (text on the tile) and `--t-<job>-icon` (icon inside a white well). A solid card must use the light "See details" pill and the `-icon` colour, never white on white.

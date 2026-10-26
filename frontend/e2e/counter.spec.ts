@@ -213,9 +213,16 @@ test('language and theme buttons in the header, Roman Urdu', async ({ page }) =>
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
 })
 
-test('three looks: professional (default), navy, colorful', async ({ page, request }) => {
+test('looks: modern (default), professional, navy, colorful', async ({ page, request }) => {
   await signup(page)
+  await expect(page.locator('html')).toHaveAttribute('data-palette', 'modern')
+  await page.screenshot({ path: 'test-results/look-modern.png', fullPage: true })
+  await page.goto('/sale/new')
+  await page.screenshot({ path: 'test-results/look-modern-sale.png', fullPage: true })
+  await page.goto('/more')
+  await page.getByRole('button', { name: 'Professional' }).click()
   await expect(page.locator('html')).toHaveAttribute('data-palette', 'pro')
+  await page.goto('/')
   await page.screenshot({ path: 'test-results/look-pro.png', fullPage: true })
   await page.goto('/more')
   await page.getByRole('button', { name: 'Navy' }).click()
@@ -227,9 +234,9 @@ test('three looks: professional (default), navy, colorful', async ({ page, reque
   await page.goto('/')
   await page.screenshot({ path: 'test-results/look-colorful.png', fullPage: true })
   await page.goto('/more')
-  await page.getByRole('button', { name: 'Professional' }).click()
+  await page.getByRole('button', { name: 'Modern' }).click()
   await page.goto('/')
   await page.getByRole('button', { name: 'Dark' }).click()
-  await page.screenshot({ path: 'test-results/look-pro-dark.png', fullPage: true })
+  await page.screenshot({ path: 'test-results/look-modern-dark.png', fullPage: true })
   void request
 })

@@ -2,10 +2,10 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 export type Theme = 'light' | 'dark' | 'system'
-/** the look: Professional (default), Navy, or the earlier Colorful tiles */
-export type Palette = 'pro' | 'navy' | 'colorful'
+/** the look: Modern (Stripe x Google, default), Professional, Navy, or the earlier Colorful tiles */
+export type Palette = 'modern' | 'pro' | 'navy' | 'colorful'
 
-function apply(theme: Theme, palette: Palette = 'pro') {
+function apply(theme: Theme, palette: Palette = 'modern') {
   if (typeof document === 'undefined') return
   document.documentElement.dataset.theme = theme
   document.documentElement.dataset.palette = palette
@@ -25,7 +25,7 @@ export const useTheme = create<ThemeState>()(
   persist(
     (set, get) => ({
       theme: 'light',
-      palette: 'pro',
+      palette: 'modern',
       setTheme: (theme) => {
         apply(theme, get().palette)
         set({ theme })
@@ -36,8 +36,8 @@ export const useTheme = create<ThemeState>()(
       },
     }),
     {
-      name: 'mobileshop.theme',
-      onRehydrateStorage: () => (state) => apply(state?.theme ?? 'light', state?.palette ?? 'pro'),
+      name: 'mobileshop.look',
+      onRehydrateStorage: () => (state) => apply(state?.theme ?? 'light', state?.palette ?? 'modern'),
     },
   ),
 )

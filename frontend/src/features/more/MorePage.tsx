@@ -139,7 +139,7 @@ export default function MorePage() {
           <BiLabel text="more.language" size="sm" tone="text-muted" />
           <BiSegmented<Locale> value={locale} onChange={setLocale} options={[{ value: 'ur', text: { en: 'Urdu', ur: 'اردو', roman: 'Urdu' } }, { value: 'roman', text: { en: 'Roman Urdu', ur: 'رومن اردو', roman: 'Roman Urdu' } }, { value: 'en', text: { en: 'English', ur: 'انگریزی', roman: 'English' } }]} />
           <BiLabel text="more.look" size="sm" tone="text-muted" />
-          <BiSegmented<Palette> value={palette} onChange={setPalette} options={[{ value: 'pro', text: 'more.lookPro' }, { value: 'navy', text: 'more.lookNavy' }, { value: 'colorful', text: 'more.lookColorful' }]} />
+          <BiSegmented<Palette> value={palette} onChange={setPalette} options={[{ value: 'modern', text: 'more.lookModern' }, { value: 'pro', text: 'more.lookPro' }, { value: 'navy', text: 'more.lookNavy' }, { value: 'colorful', text: 'more.lookColorful' }]} />
           <BiLabel text="more.theme" size="sm" tone="text-muted" />
           <BiSegmented<Theme> value={theme} onChange={setTheme} options={[{ value: 'light', text: 'more.themeLight' }, { value: 'dark', text: 'more.themeDark' }, { value: 'system', text: 'more.themeSystem' }]} />
         </div>
