@@ -76,3 +76,35 @@ def test_day_report(db, owner, cat):
     # another day is empty
     empty = owner.get("/api/v1/reports/day", params={"date": "2020-01-01"}).json()
     assert empty["sales_count"] == 0 and empty["items"] == [] and empty["sales_total"] == "0.00"
+
+
+def test_hisaab_for_a_period(owner, cat):
+    """Owner: hisaab for a week, a month or from-to, not just one day."""
+    import datetime as dt
+
+    today = dt.date.today()
+    yesterday = today - dt.timedelta(days=1)
+    d1 = _stock(owner, cat, imei=A, condition="box_pack", cost_price=800, asking_price=1000)
+    d2 = _stock(owner, cat, imei=B, condition="box_pack", cost_price=800, asking_price=1200)
+    for d, price, day in ((d1, 1000, yesterday), (d2, 1200, today)):
+        r = owner.post(
+            "/api/v1/sales",
+            json={
+                "date": str(day),
+                "devices": [{"device_id": d["id"], "price": price}],
+                "paid": price,
+            },
+        )
+        assert r.status_code == 201, r.text
+    one = owner.get("/api/v1/reports/day").json()
+    assert one["sales_total"] == "1200.00" and one["phones_sold"] == 1
+    both = owner.get(
+        "/api/v1/reports/day", params={"date_from": str(yesterday), "date_to": str(today)}
+    ).json()
+    assert both["sales_total"] == "2200.00" and both["phones_sold"] == 2 and len(both["items"]) == 2
+    assert both["date_from"] == str(yesterday) and both["date_to"] == str(today)
+    x = owner.get(
+        "/api/v1/exports/day",
+        params={"format": "csv", "date_from": str(yesterday), "date_to": str(today)},
+    )
+    assert x.status_code == 200 and "-to-" in x.headers["content-disposition"]

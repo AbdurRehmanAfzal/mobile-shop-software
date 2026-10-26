@@ -1,5 +1,5 @@
-/** Any day's hisaab: sale, how the money came, udhaar given and received back, expense, profit,
- *  and the list of what was sold. `?date=YYYY-MM-DD` opens a given day (default today). */
+/** Hisaab for a day or a period: sale, how the money came, udhaar given and received back, expense,
+ *  profit, and the list of what was sold. `?from=&to=` (or `?date=`) picks the period; default today. */
 
 import DownloadButton from '@/components/DownloadButton'
 import { Link, useSearchParams } from 'react-router-dom'
@@ -8,7 +8,7 @@ import { Empty, Loading, PageHeader } from '@/components/ui'
 import { isoDay } from '@/lib/format'
 import { useGet } from '@/lib/queries'
 import type { DayReport, PaidHow } from '@/lib/types'
-import DayPicker from './DayPicker'
+import PeriodPicker, { periodQuery, type Period } from './PeriodPicker'
 
 const n = (v: string | number | null | undefined) => Math.abs(Number(v ?? 0)).toLocaleString('en-US', { maximumFractionDigits: 0 })
 
@@ -24,14 +24,16 @@ const HOW_TONE: Record<PaidHow, string> = {
 export default function DayReportPage() {
   const { pick, ur, cls } = useLang()
   const [params, setParams] = useSearchParams()
-  const day = params.get('date') || isoDay(0)
-  const { data, isLoading } = useGet<DayReport>(['day', day], `/api/v1/reports/day?date=${day}`)
+  const one = params.get('date')
+  const period: Period = { from: params.get('from') || one || isoDay(0), to: params.get('to') || one || isoDay(0) }
+  const span = period.from === period.to ? period.from : `${period.from}-to-${period.to}`
+  const { data, isLoading } = useGet<DayReport>(['day', period.from, period.to], `/api/v1/reports/day?${periodQuery(period)}`)
   const digital = data ? Number(data.received.easypaisa) + Number(data.received.jazzcash) + Number(data.received.bank) : 0
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="counter.dayTitle" right={<DownloadButton path={`/api/v1/exports/day?date=${day}`} name={`hisaab-${day}`} />} />
-      <DayPicker value={day} onChange={(d) => setParams({ date: d }, { replace: true })} />
+      <PageHeader title={period.from === period.to ? 'counter.dayTitle' : 'counter.hisaab'} right={<DownloadButton path={`/api/v1/exports/day?${periodQuery(period)}`} name={`hisaab-${span}`} />} />
+      <PeriodPicker value={period} onChange={(p) => setParams({ from: p.from, to: p.to }, { replace: true })} />
       {isLoading || !data ? <Loading /> : (
         <>
           <section className="flex items-center gap-3 rounded-3xl bg-sell px-5 py-4 text-sell-fg">

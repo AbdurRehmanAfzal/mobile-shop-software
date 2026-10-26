@@ -49,7 +49,12 @@ test('stock worth, day hisaab and khata', async ({ page }) => {
   await page.goto('/hisaab')
   await expect(page.getByText('Nothing sold on this day')).toBeVisible()
   await page.getByRole('button', { name: 'Yesterday' }).click()
-  await expect(page).toHaveURL(/date=/)
+  await expect(page).toHaveURL(/from=/)
+  await page.getByRole('button', { name: 'Week' }).click()
+  await page.getByRole('button', { name: 'This month' }).click()
+  await page.getByRole('button', { name: 'From – to' }).click()
+  await expect(page.getByLabel('from')).toBeVisible()
+  await expect(page.getByLabel('to', { exact: true })).toBeVisible()
   await page.screenshot({ path: 'test-results/counter-hisaab.png', fullPage: true })
 
   await page.goto('/khata')

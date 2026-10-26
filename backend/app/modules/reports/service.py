@@ -276,8 +276,10 @@ _OUT = {
 }
 
 
-def _cash_by_reason(db: Session, shop_id: uuid.UUID, day: dt.date) -> tuple[dict, dict]:
-    """Money in / out of cash, bank and Easypaisa on `day`, grouped into shop words."""
+def _cash_by_reason(
+    db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date
+) -> tuple[dict, dict]:
+    """Money in / out of cash, bank and Easypaisa in the period, grouped into shop words."""
     from app.modules.ledger.models import LedgerGroup
 
     came_in = {k: ZERO for k in ("sales", "udhaar_back", "repairs", "other")}
@@ -292,7 +294,8 @@ def _cash_by_reason(db: Session, shop_id: uuid.UUID, day: dt.date) -> tuple[dict
         .where(
             LedgerEntry.shop_id == shop_id,
             LedgerEntry.cash_account_id.is_not(None),
-            func.date(LedgerEntry.at) == day,
+            func.date(LedgerEntry.at) >= d_from,
+            func.date(LedgerEntry.at) <= d_to,
         )
         .group_by(LedgerGroup.document_type)
     ).all():
@@ -302,9 +305,13 @@ def _cash_by_reason(db: Session, shop_id: uuid.UUID, day: dt.date) -> tuple[dict
     return came_in, went_out
 
 
-def day_report(db: Session, shop_id: uuid.UUID, day: dt.date, show_cost: bool) -> dict:
-    """One day's hisaab in shopkeeper terms: what was sold, how it was paid, udhaar given and
-    received back, expenses, profit (owner/manager only) and the list of items sold."""
+def day_report(
+    db: Session, shop_id: uuid.UUID, day: dt.date, show_cost: bool, day_to: dt.date | None = None
+) -> dict:
+    """The hisaab of one day, or of `day`..`day_to` (week, month, from-to), in shopkeeper terms:
+    what was sold, how it was paid, udhaar given and received back, expenses, profit
+    (owner/manager only) and the list of items sold."""
+    day_to = day_to or day
     from app.modules.catalogue.models import Brand, Model
     from app.modules.expenses.models import Expense
     from app.modules.payments.models import Payment
@@ -312,7 +319,10 @@ def day_report(db: Session, shop_id: uuid.UUID, day: dt.date, show_cost: bool) -
     invoices = db.scalars(
         select(Invoice)
         .where(
-            Invoice.shop_id == shop_id, Invoice.date == day, Invoice.status != InvoiceStatus.VOID
+            Invoice.shop_id == shop_id,
+            Invoice.date >= day,
+            Invoice.date <= day_to,
+            Invoice.status != InvoiceStatus.VOID,
         )
         .order_by(Invoice.created_at)
     ).all()
@@ -388,7 +398,8 @@ def day_report(db: Session, shop_id: uuid.UUID, day: dt.date, show_cost: bool) -
         db.scalar(
             select(func.coalesce(func.sum(Payment.amount), 0)).where(
                 Payment.shop_id == shop_id,
-                Payment.date == day,
+                Payment.date >= day,
+                Payment.date <= day_to,
                 Payment.direction == "in",
                 Payment.status != "voided",
             )
@@ -398,7 +409,10 @@ def day_report(db: Session, shop_id: uuid.UUID, day: dt.date, show_cost: bool) -
     expenses = money(
         db.scalar(
             select(func.coalesce(func.sum(Expense.amount), 0)).where(
-                Expense.shop_id == shop_id, Expense.date == day, Expense.status != "voided"
+                Expense.shop_id == shop_id,
+                Expense.date >= day,
+                Expense.date <= day_to,
+                Expense.status != "voided",
             )
         )
         or 0
@@ -411,18 +425,21 @@ def day_report(db: Session, shop_id: uuid.UUID, day: dt.date, show_cost: bool) -
             func.coalesce(func.sum(ReturnDoc.kept_amount), 0),
         ).where(
             ReturnDoc.shop_id == shop_id,
-            ReturnDoc.date == day,
+            ReturnDoc.date >= day,
+            ReturnDoc.date <= day_to,
             ReturnDoc.kind == ReturnKind.SALE,
         )
     ).one()
     # money that actually moved through cash / bank / Easypaisa today (sales, udhaar back, returns,
     # expenses, payments to dealers...): what is left in hand is in - out
-    flows = cash_flow(db, shop_id, day, day)
+    flows = cash_flow(db, shop_id, day, day_to)
     money_in = money(sum((f["cash_in"] for f in flows), ZERO))
     money_out = money(sum((f["cash_out"] for f in flows), ZERO))
-    came_in, went_out = _cash_by_reason(db, shop_id, day)
+    came_in, went_out = _cash_by_reason(db, shop_id, day, day_to)
     return {
         "date": day,
+        "date_from": day,
+        "date_to": day_to,
         "money_in": money_in,
         "money_out": money_out,
         "cash_net": money(money_in - money_out),
@@ -439,7 +456,7 @@ def day_report(db: Session, shop_id: uuid.UUID, day: dt.date, show_cost: bool) -
         "udhaar_given": udhaar_given,
         "udhaar_received": udhaar_received,
         "expenses": expenses,
-        "profit": profit_and_loss(db, shop_id, day, day)["net_profit"] if show_cost else None,
+        "profit": profit_and_loss(db, shop_id, day, day_to)["net_profit"] if show_cost else None,
         "items": items,
     }
 

@@ -64,10 +64,18 @@ def stock_summary(ctx: Ctx, db: DB):
 
 
 @router.get("/day")
-def day(ctx: Ctx, db: DB, date: dt.date | None = None):
-    """One day's hisaab (default today); profit only with VIEW_COST."""
+def day(
+    ctx: Ctx,
+    db: DB,
+    date: dt.date | None = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+):
+    """Hisaab of a day (`date`, default today) or a period (`date_from`..`date_to`: week, month,
+    from-to); profit only with VIEW_COST."""
+    d_from = date_from or date or dt.date.today()
     return _money(
-        service.day_report(db, ctx.shop_id, date or dt.date.today(), ctx.can(Cap.VIEW_COST))
+        service.day_report(db, ctx.shop_id, d_from, ctx.can(Cap.VIEW_COST), date_to or d_from)
     )
 
 

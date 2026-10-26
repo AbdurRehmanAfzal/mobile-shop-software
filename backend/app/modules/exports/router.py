@@ -444,8 +444,16 @@ def top_sellers(
 
 
 @router.get("/day")
-def day(ctx: Ctx, db: DB, format: Fmt = "csv", date: dt.date | None = None):
-    d = rep.day_report(db, ctx.shop_id, date or dt.date.today(), ctx.can(Cap.VIEW_COST))
+def day(
+    ctx: Ctx,
+    db: DB,
+    format: Fmt = "csv",
+    date: dt.date | None = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+):
+    d_from = date_from or date or dt.date.today()
+    d = rep.day_report(db, ctx.shop_id, d_from, ctx.can(Cap.VIEW_COST), date_to or d_from)
     rows = [
         [
             it["invoice_no"],
@@ -492,7 +500,14 @@ def day(ctx: Ctx, db: DB, format: Fmt = "csv", date: dt.date | None = None):
     if d["profit"] is not None:
         rows.append(["", "Profit", "", "", "", "", d["profit"]])
     header = ["Bill", "Item", "Qty", "Customer", "Paid by", "Sold by", "Amount"]
-    return _file(format, ctx, db, f"hisaab-{d['date']}", header, rows, f"Day's hisaab {d['date']}")
+    span = (
+        str(d["date_from"])
+        if d["date_from"] == d["date_to"]
+        else f"{d['date_from']}-to-{d['date_to']}"
+    )
+    return _file(
+        format, ctx, db, f"hisaab-{span}", header, rows, f"Hisaab {span.replace('-to-', ' to ')}"
+    )
 
 
 @router.get("/stock-summary")

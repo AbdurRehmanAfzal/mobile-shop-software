@@ -9,10 +9,10 @@ import { Link, useNavigate } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
 import { BtnText } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
-import { isoDay, toLakh } from '@/lib/format'
+import { toLakh } from '@/lib/format'
 import { useGet } from '@/lib/queries'
 import type { DayReport } from '@/lib/types'
-import DayPicker from './DayPicker'
+import PeriodPicker, { periodOf, periodQuery, type Period } from './PeriodPicker'
 import { JOBS } from './jobs'
 
 interface Dash {
@@ -25,9 +25,9 @@ export default function HomePage() {
   const nav = useNavigate()
   const manager = useAuth((s) => s.me?.user.role === 'owner' || s.me?.user.role === 'manager')
   const [q, setQ] = useState('')
-  const [day, setDay] = useState(isoDay(0))
+  const [period, setPeriod] = useState<Period>(periodOf('today'))
   const { data: dash } = useGet<Dash>(['dashboard'], '/api/v1/reports/dashboard')
-  const { data: rep } = useGet<DayReport>(['day', day], `/api/v1/reports/day?date=${day}`)
+  const { data: rep } = useGet<DayReport>(['day', period.from, period.to], `/api/v1/reports/day?${periodQuery(period)}`)
   const worth = dash ? dash.stock_value_cost ?? dash.stock_value_asking : null
   const [big, small] = [JOBS.slice(0, 2), JOBS.slice(2)]
   const small_ = ur ? cls('sm') : 'text-sm font-semibold'
@@ -71,13 +71,11 @@ export default function HomePage() {
         ))}
       </div>
 
-      {/* any day's hisaab */}
+      {/* hisaab for today, yesterday, a week, this month or from-to */}
       <section className="flex flex-col gap-2">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <BiLabel text="counter.hisaab" size="lg" bold />
-          <DayPicker value={day} onChange={setDay} size="sm" />
-        </div>
-        <Link to={`/hisaab?date=${day}`} className="tap flex flex-col gap-3 rounded-3xl bg-hero p-5 text-hero-text shadow-hero">
+        <BiLabel text="counter.hisaab" size="lg" bold />
+        <PeriodPicker value={period} onChange={setPeriod} size="sm" />
+        <Link to={`/hisaab?from=${period.from}&to=${period.to}`} className="tap flex flex-col gap-3 rounded-3xl bg-hero p-5 text-hero-text shadow-hero">
           <div className="flex items-end justify-between gap-3">
             <span className="flex flex-col">
               <span className={`opacity-75 ${small_}`}>{pick('counter.sold')} · <span className="num">{rep?.phones_sold ?? 0}</span> {pick('counter.phones')}</span>
