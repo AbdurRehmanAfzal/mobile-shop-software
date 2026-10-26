@@ -351,3 +351,9 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - Dev note again: after backend/tailwind changes the running dev servers served old code/classes; restarted both (kill every uvicorn/vite/multiprocessing-spawn process first).
 **Verified**: backend 130 passed; frontend typecheck, vitest 14; Playwright 12 passed (new `return.spec.ts`: walk-in return 900 back / 100 cut, phone back in stock, hisaab shows it).
 **Next**: owner phone test of sale / return / add stock; restyle repairs, party detail, expenses, more/settings on v2; plain words for "Verify now" (→ "ID card check").
+
+**Session 25 — v2 on the remaining screens (owner: "next kaam start")**
+- More page regrouped with job-coloured icon wells (daily: sell, add stock, return, udhaar, repair, exchange, loans, day's hisaab). Person page: coloured balance card + big money received / paid buttons. Old green selected-chips and header "+" buttons switched to ink across repairs, expenses, accessories, staff, cash, stock, sales, catalogue.
+- Plain words EN/UR: New person (نیا بندہ), Dealer (ڈیلر), ID card check (شناختی کارڈ چیک) and its states, Check ID card now, Cancel this bill, Money received / paid, Exchange (old for new), Chargers & covers, Khata history; e2e updated for New person / Dealer.
+**Verified**: frontend typecheck, vitest 14, Playwright 13 passed (new screenshot test for More + person page, checked by eye).
+**Next**: owner phone test; repairs as a 3-step flow (take phone in → fix/parts → hand back), expenses page layout, settings; Urdu review of the new strings with testers.
