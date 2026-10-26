@@ -55,3 +55,17 @@ def tax(ctx: Reports, db: DB, date_from: dt.date | None = None, date_to: dt.date
 @router.get("/stock-ageing")
 def stock_ageing(ctx: Reports, db: DB):
     return _money(service.stock_ageing(db, ctx.shop_id, ctx.can(Cap.VIEW_COST)))
+
+
+@router.get("/stock-summary")
+def stock_summary(ctx: Ctx, db: DB):
+    """Stock worth by brand and model (cost for owner/manager, asking price for others)."""
+    return _money(service.stock_summary(db, ctx.shop_id, ctx.can(Cap.VIEW_COST)))
+
+
+@router.get("/day")
+def day(ctx: Ctx, db: DB, date: dt.date | None = None):
+    """One day's hisaab (default today); profit only with VIEW_COST."""
+    return _money(
+        service.day_report(db, ctx.shop_id, date or dt.date.today(), ctx.can(Cap.VIEW_COST))
+    )

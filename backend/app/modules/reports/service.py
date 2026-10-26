@@ -219,3 +219,151 @@ def stock_ageing(db: Session, shop_id: uuid.UUID, show_cost: bool) -> list[dict]
         }
         for k, v in buckets.items()
     ]
+
+
+def stock_summary(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
+    """In-stock phones grouped by brand, then model: count and value.
+
+    Value is at cost for owner/manager and at asking price for everyone else (`basis` says which).
+    """
+    from app.modules.catalogue.models import Brand, Model
+
+    rows = db.execute(
+        select(Device, Brand.name, Model.name)
+        .join(Brand, Brand.id == Device.brand_id)
+        .join(Model, Model.id == Device.model_id)
+        .where(Device.shop_id == shop_id, Device.status == DeviceStatus.IN_STOCK)
+    ).all()
+    brands: dict[uuid.UUID, dict] = {}
+    for d, brand_name, model_name in rows:
+        value = (d.cost_price if show_cost else d.asking_price) or ZERO
+        b = brands.setdefault(
+            d.brand_id,
+            {"brand_id": d.brand_id, "name": brand_name, "count": 0, "value": ZERO, "models": {}},
+        )
+        m = b["models"].setdefault(
+            d.model_id, {"model_id": d.model_id, "name": model_name, "count": 0, "value": ZERO}
+        )
+        for x in (b, m):
+            x["count"] += 1
+            x["value"] = money(x["value"] + value)
+    by_value = lambda x: (-x["value"], -x["count"], x["name"])
+    out = []
+    for b in sorted(brands.values(), key=by_value):
+        out.append({**b, "models": sorted(b["models"].values(), key=by_value)})
+    return {
+        "basis": "cost" if show_cost else "asking",
+        "count": len(rows),
+        "value": money(sum((b["value"] for b in out), ZERO)),
+        "brands": out,
+    }
+
+
+def day_report(db: Session, shop_id: uuid.UUID, day: dt.date, show_cost: bool) -> dict:
+    """One day's hisaab in shopkeeper terms: what was sold, how it was paid, udhaar given and
+    received back, expenses, profit (owner/manager only) and the list of items sold."""
+    from app.modules.catalogue.models import Brand, Model
+    from app.modules.expenses.models import Expense
+    from app.modules.payments.models import Payment
+
+    invoices = db.scalars(
+        select(Invoice)
+        .where(
+            Invoice.shop_id == shop_id, Invoice.date == day, Invoice.status != InvoiceStatus.VOID
+        )
+        .order_by(Invoice.created_at)
+    ).all()
+    kinds = dict(
+        db.execute(
+            select(CashAccount.id, CashAccount.kind).where(CashAccount.shop_id == shop_id)
+        ).all()
+    )
+    parties = dict(
+        db.execute(
+            select(Party.id, Party.name).where(
+                Party.id.in_({i.party_id for i in invoices if i.party_id})
+            )
+        ).all()
+    )
+    received = {"cash": ZERO, "bank": ZERO, "easypaisa": ZERO, "jazzcash": ZERO}
+    udhaar_given = ZERO
+    phones = 0
+    items = []
+    for inv in invoices:
+        # paid at the counter = money into a cash account inside the sale's own posting;
+        # later payments against this invoice are counted as "udhaar received" on their day
+        paid_now = (
+            money(
+                db.scalar(
+                    select(
+                        func.coalesce(func.sum(LedgerEntry.debit - LedgerEntry.credit), 0)
+                    ).where(
+                        LedgerEntry.group_id == inv.ledger_group_id,
+                        LedgerEntry.cash_account_id.is_not(None),
+                    )
+                )
+                or 0
+            )
+            if inv.ledger_group_id
+            else ZERO
+        )
+        kind = kinds.get(inv.cash_account_id, "cash")
+        received[kind] = money(received.get(kind, ZERO) + paid_now)
+        owed = max(money(inv.total - paid_now), ZERO)
+        udhaar_given = money(udhaar_given + owed)
+        how = kind if owed == 0 else "udhaar" if paid_now == 0 else "part"
+        for line in sorted(inv.lines, key=lambda x: x.line_no):
+            name = line.description
+            if line.device_id:
+                phones += 1
+                dev = db.get(Device, line.device_id)
+                if dev:
+                    name = " ".join(
+                        filter(
+                            None,
+                            [db.get(Brand, dev.brand_id).name, db.get(Model, dev.model_id).name],
+                        )
+                    )
+            items.append(
+                {
+                    "invoice_id": inv.id,
+                    "invoice_no": inv.no,
+                    "name": name or "",
+                    "kind": line.kind,
+                    "qty": line.qty,
+                    "amount": money(line.line_total),
+                    "party_name": parties.get(inv.party_id),
+                    "how": how,
+                }
+            )
+    udhaar_received = money(
+        db.scalar(
+            select(func.coalesce(func.sum(Payment.amount), 0)).where(
+                Payment.shop_id == shop_id,
+                Payment.date == day,
+                Payment.direction == "in",
+                Payment.status != "voided",
+            )
+        )
+        or 0
+    )
+    expenses = money(
+        db.scalar(
+            select(func.coalesce(func.sum(Expense.amount), 0)).where(
+                Expense.shop_id == shop_id, Expense.date == day, Expense.status != "voided"
+            )
+        )
+        or 0
+    )
+    return {
+        "date": day,
+        "sales_count": len(invoices),
+        "phones_sold": phones,
+        "sales_total": money(sum((i.total for i in invoices), ZERO)),
+        "received": received,
+        "udhaar_given": udhaar_given,
+        "udhaar_received": udhaar_received,
+        "expenses": expenses,
+        "profit": profit_and_loss(db, shop_id, day, day)["net_profit"] if show_cost else None,
+        "items": items,
+    }
