@@ -348,6 +348,7 @@ export interface DayItem {
   party_name: string | null
   how: PaidHow
   sold_by: string | null
+  returned: boolean
 }
 export interface DayReport {
   date: string

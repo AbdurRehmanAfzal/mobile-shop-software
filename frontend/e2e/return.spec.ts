@@ -71,4 +71,8 @@ test('walk-in return: hand back 900, shop cuts 100', async ({ page, request }) =
   await page.goto('/hisaab')
   await expect(page.getByText('Given back on returns')).toBeVisible()
   await expect(page.getByText('Cut on returns')).toBeVisible()
+  // the returned phone stays in the list, crossed out, and is not counted as sold
+  await expect(page.getByText('Returned').first()).toBeVisible()
+  await expect(page.locator('.line-through').first()).toBeVisible()
+  await page.screenshot({ path: 'test-results/return-hisaab.png', fullPage: true })
 })

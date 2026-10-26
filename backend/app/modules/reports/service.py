@@ -170,7 +170,7 @@ def dashboard(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
     return {
         "date": today,
         "sales_count": len(todays),
-        "sales_total": money(sum((i.total for i in todays), ZERO)),
+        "sales_total": money(sum((i.total - i.returned_total for i in todays), ZERO)),
         "received_today": money(sum((i.paid for i in todays), ZERO)),
         "profit_today": pnl["net_profit"] if pnl else None,
         "cash_in_hand": cash_total,
@@ -316,8 +316,9 @@ def day_report(db: Session, shop_id: uuid.UUID, day: dt.date, show_cost: bool) -
         how = kind if owed == 0 else "udhaar" if paid_now == 0 else "part"
         for line in sorted(inv.lines, key=lambda x: x.line_no):
             name = line.description
+            returned = line.returned_at is not None
             if line.device_id:
-                phones += 1
+                phones += 0 if returned else 1
                 dev = db.get(Device, line.device_id)
                 if dev:
                     name = " ".join(
@@ -337,6 +338,8 @@ def day_report(db: Session, shop_id: uuid.UUID, day: dt.date, show_cost: bool) -
                     "party_name": parties.get(inv.party_id),
                     "how": how,
                     "sold_by": sellers.setdefault(inv.created_by, user_name(db, inv.created_by)),
+                    # came back later: stays in the list (crossed out), not counted as sold
+                    "returned": returned,
                 }
             )
     udhaar_received = money(
@@ -376,7 +379,8 @@ def day_report(db: Session, shop_id: uuid.UUID, day: dt.date, show_cost: bool) -
         "returns_kept": money(kept or 0),
         "sales_count": len(invoices),
         "phones_sold": phones,
-        "sales_total": money(sum((i.total for i in invoices), ZERO)),
+        # net of anything that came back, so a returned phone is not counted as sold
+        "sales_total": money(sum((i.total - i.returned_total for i in invoices), ZERO)),
         "received": received,
         "udhaar_given": udhaar_given,
         "udhaar_received": udhaar_received,

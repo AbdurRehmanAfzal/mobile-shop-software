@@ -452,7 +452,7 @@ def day(ctx: Ctx, db: DB, format: Fmt = "csv", date: dt.date | None = None):
             it["name"],
             it["qty"],
             it["party_name"] or "Customer",
-            it["how"],
+            "returned" if it["returned"] else it["how"],
             it["sold_by"],
             it["amount"],
         ]

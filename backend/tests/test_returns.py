@@ -312,3 +312,7 @@ def test_return_with_cut_and_walk_in(owner, cat):
 
     day = owner.get("/api/v1/reports/day").json()
     assert day["returns_refunded"] == "135000.00" and day["returns_kept"] == "15000.00"
+    # both phones came back: still listed (crossed out) but not counted as sold
+    assert day["sales_total"] == "0.00" and day["phones_sold"] == 0
+    assert [i["returned"] for i in day["items"]] == [True, True]
+    assert all(i["name"] for i in day["items"])  # the name stays

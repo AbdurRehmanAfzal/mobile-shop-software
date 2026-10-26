@@ -61,12 +61,12 @@ export default function DayReportPage() {
           {!data.items.length ? <Empty text="counter.nothingSold" /> : (
             <div className="card divide-y divide-line p-0">
               {data.items.map((it, i) => (
-                <Link key={`${it.invoice_id}-${i}`} to={`/sales/${it.invoice_id}`} className="tap flex items-center gap-3 px-4 py-2.5">
+                <Link key={`${it.invoice_id}-${i}`} to={`/sales/${it.invoice_id}`} className={`tap flex items-center gap-3 px-4 py-2.5 ${it.returned ? 'opacity-60' : ''}`}>
                   <span className="flex min-w-0 flex-1 flex-col">
-                    <span className="truncate text-[15px] font-extrabold">{it.qty > 1 ? `${it.qty} × ` : ''}{it.name}</span>
+                    <span className={`truncate text-[15px] font-extrabold ${it.returned ? 'line-through' : ''}`}>{it.qty > 1 ? `${it.qty} × ` : ''}{it.name}</span>
                     <span className={`truncate text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{it.party_name ?? pick('counter.walkIn')}{it.sold_by ? ` · ${it.sold_by}` : ''}</span>
                   </span>
-                  <span className={`rounded-full px-2.5 py-0.5 font-bold ${HOW_TONE[it.how]} ${ur ? cls('sm') : 'text-xs'}`}>{pick(`counter.how.${it.how}`)}</span>
+                  <span className={`rounded-full px-2.5 py-0.5 font-bold ${it.returned ? 'bg-ret text-ret-fg' : HOW_TONE[it.how]} ${ur ? cls('sm') : 'text-xs'}`}>{pick(it.returned ? 'counter.returned' : `counter.how.${it.how}`)}</span>
                   <span className="num min-w-[72px] text-end text-base" dir="ltr">{n(it.amount)}</span>
                 </Link>
               ))}
