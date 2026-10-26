@@ -1,8 +1,8 @@
 /** "More": everything else, grouped, each icon in its job colour (docs/11 v2). */
 
 import {
-  ArrowLeftRight, Archive, BarChart3, Bell, BookOpen, CalendarDays, Download, FileText, HandCoins, Headphones, KeyRound,
-  Landmark, Lock, LogOut, PackagePlus, Receipt, RotateCcw, ScanLine, Settings, Smartphone, Tag, Tags, Undo2, Users,
+  ArrowLeftRight, Archive, BarChart3, Bell, BookOpen, CalendarDays, FileText, HandCoins, Headphones, KeyRound,
+  Landmark, Lock, LogOut, Package, PackagePlus, Receipt, RotateCcw, ScanLine, Settings, Smartphone, Tag, Tags, Undo2, Users,
   Wallet, Wrench, type LucideIcon,
 } from 'lucide-react'
 import { useState } from 'react'
@@ -62,7 +62,7 @@ const GROUPS: Group[] = [
     title: 'more.records',
     items: [
       { key: 'more.sales', Icon: Receipt, to: '/sales', tone: T.sell },
-      { key: 'more.purchases', Icon: Download, to: '/purchases', tone: T.buy },
+      { key: 'more.purchases', Icon: Package, to: '/purchases', tone: T.buy },
       { key: 'more.payments', Icon: HandCoins, to: '/payments', tone: T.khata },
       { key: 'more.returns', Icon: Undo2, to: '/returns', tone: T.ret },
       { key: 'party.title', Icon: Users, to: '/parties', tone: T.khata },

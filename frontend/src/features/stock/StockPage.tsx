@@ -1,4 +1,4 @@
-import { ArrowUpDown, ChevronDown, Download, FileSpreadsheet, ScanLine } from 'lucide-react'
+import { ArrowUpDown, ChevronDown, FileSpreadsheet, PackagePlus, ScanLine } from 'lucide-react'
 import { downloadFile } from '@/lib/files'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -123,9 +123,9 @@ export default function StockPage() {
             <button type="button" aria-label={pick('stock.imeiLookup')} onClick={() => setLookup(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface">
               <ScanLine size={20} />
             <BtnText k={'stock.imeiLookup'} /></button>
-            <button type="button" aria-label={pick('purchase.title')} onClick={() => nav('/purchase/new')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 bg-ink text-ground">
-              <Download size={20} />
-            <BtnText k={'purchase.title'} /></button>
+            <button type="button" aria-label={pick('counter.addStock')} onClick={() => nav('/purchase/new')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 bg-ink text-ground">
+              <PackagePlus size={20} />
+            <BtnText k={'counter.addStock'} /></button>
           </div>
         }
       />
