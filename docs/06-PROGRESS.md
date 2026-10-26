@@ -78,7 +78,7 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 ## Owner decisions pending (noted 2026-10-22)
 | Item | Status | Notes |
 |---|---|---|
-| Laptop/desktop responsive layout (sidebar, wide tables, side-by-side sale screen) | ⬜ | App works in a laptop browser and installs as a PWA desktop app, but layout is phone-width. Owner: test first, decide later |
+| Laptop/desktop responsive layout (sidebar, wide tables, side-by-side sale screen) | 🔄 | v2: job side menu with F-keys on lg screens; content still phone-width (no side-by-side sale yet). Owner: test first, decide later |
 | Offline Windows installer (local server + SQLite, optional cloud sync) | ⬜ | FR-PLT-04/05; only needed if target shops lack internet. Owner to decide |
 
 ## Phase 4 — Differentiators
@@ -89,8 +89,9 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 | Cloud sync | FR-PLT-05 | ⬜ |
 
 ## Known issues / tech debt
-- Frontend has no service worker yet (installable manifest only). Add `vite-plugin-pwa` in Phase 3.
 - Signup has no phone OTP verification; add before public launch (Phase 3).
-- No rate limiting on `/auth/login` yet; add middleware before cloud deploy.
-- Dashboard tiles show zeros until the ledger/devices modules exist (Phase 1).
+- Login limiter is in-process memory (5 fails / 10 min); move to Redis or the DB if the API runs more than one worker.
+- Expense edit/cancel shows the reversal in the day's "cash in" (total in the drawer is right); owner to decide whether the in/out tiles should net voids out.
+- Screens still on the older styling: expenses page layout, settings, exchange, loans (amanat).
+- The dev uvicorn reloader on the owner's PC often misses new routes: restart the backend after adding endpoints.
 - Legacy issues are listed in docs/08 and are not being fixed.
