@@ -861,6 +861,10 @@
     "pendingSale": "This phone's ID card check is pending",
     "skipAndSell": "Skip and sell (I know this person)",
     "checkNow": "Check now",
-    "flaggedSale": "Suspected stolen. Only the owner can sell it, with a reason."
+    "flaggedSale": "Suspected stolen. Only the owner can sell it, with a reason.",
+    "seeMore": "See details",
+    "jobsTitle": "What do you want to do?",
+    "reportHint": "Real profit, tax, best sellers",
+    "stockHint": "By brand and model"
   }
 }

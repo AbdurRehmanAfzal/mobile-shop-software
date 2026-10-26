@@ -10,7 +10,8 @@ Why: owner + 10 testers rejected v1.x as "not easy, looks like Easypaisa (a paym
 4. **Shop words, not accounting words**: udhaar, lena/dena, "paise mile / paise diye", "stock daalein", "ID card check" (not ledger, party, verification, receivable).
 5. **One language at a time**; digits always Latin in Manrope (`.num` sets the font so Nastaliq never draws 0 as a dot).
 6. **Every action looks like a button and has an icon** (owner, 2026-10-26: "simple text samajh nahi aa raha"). No bare text links: secondary actions use `IconChip` (icon + words in a bordered pill), main actions `BiButton` with `icon`, choices (cash / account / udhaar, ID check / skip) are chips with an icon above the word; "ghost" buttons have a border. Home's "See full hisaab" and "Profit & reports" are tiles. **No icon without words either**: every icon button shows its name (`BtnText`, icon above the word in headers, beside it in rows), e.g. Back, Delete, Edit, More, Messages.
-7. **Phone and laptop equal.** Phone: 5-tab bottom bar (Home, Stock, Udhaar, Hisaab, More), no FAB. Laptop (≥1024px): the job tiles become a side menu with F-keys (F2 sell, F3 add stock, F4 udhaar, F6 stock, F7 repair, F8 expense; F5 left alone).
+7. **A card that opens something says so**: a "See details ›" pill (`SeeMore`) at the bottom of every tappable card on home (hisaab, khata, stock, profit) and on attention rows (owner, 2026-10-26: users did not know cards could be tapped).
+8. **Phone and laptop equal.** Phone: 5-tab bottom bar (Home, Stock, Udhaar, Hisaab, More), no FAB. Laptop (≥1024px): the job tiles become a side menu with F-keys (F2 sell, F3 add stock, F4 udhaar, F6 stock, F7 repair, F8 expense; F5 left alone).
 
 ## Colour tokens (CSS variables in `frontend/src/index.css`, Tailwind names in brackets)
 | Token | Light | Use |
