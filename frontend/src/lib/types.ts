@@ -199,6 +199,7 @@ export interface PurchaseLine {
 export interface Purchase {
   id: UUID
   no: string
+  created_by_name: string | null
   kind: 'supplier' | 'walk_in' | 'shop' | 'trade_in'
   party_id: UUID
   party_name: string | null
@@ -238,6 +239,7 @@ export interface InvoiceLine {
 export interface Invoice {
   id: UUID
   no: string
+  created_by_name: string | null
   party_id: UUID | null
   party_name: string | null
   party_balance_after: Money | null
@@ -345,6 +347,7 @@ export interface DayItem {
   amount: Money
   party_name: string | null
   how: PaidHow
+  sold_by: string | null
 }
 export interface DayReport {
   date: string

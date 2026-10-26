@@ -89,7 +89,7 @@ def test_top_sellers_and_forecast(owner, cat):
     assert {(t["name"], t["qty"]) for t in top} >= {("Cover", 2)}
 
     f = owner.get("/api/v1/reports/forecast").json()
-    assert len(f["next_7_days"]) == 7
+    assert len(f["next_7_days"]) == 7 and f["last_7_days"] == "2400.00"
     assert f["next_7_days"][0]["date"] == str(dt.date.today() + dt.timedelta(days=1))
     by_name = {m["name"]: m for m in f["models"]}
     sold_model = next(m for m in f["models"] if m["sold_30_days"] == 2)

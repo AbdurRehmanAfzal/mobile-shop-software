@@ -80,6 +80,7 @@ export function SaleDetailPage() {
       <div className="card">
         <KV k="sale.steps.customer" v={inv.party_name ? <button type="button" className="text-emerald" onClick={() => nav(`/parties/${inv.party_id}`)}>{inv.party_name}</button> : pick('sale.cashCustomer')} />
         <KV k="common.date" v={<span dir="ltr">{fmtDate(inv.date)}</span>} />
+        {inv.created_by_name ? <KV k="counter.soldBy" v={inv.created_by_name} /> : null}
       </div>
       <List>
         {inv.lines.map((l) => (

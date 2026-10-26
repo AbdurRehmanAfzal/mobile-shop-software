@@ -455,7 +455,7 @@ def forecast(db: Session, shop_id: uuid.UUID, today: dt.date) -> dict:
         select(Invoice).where(
             Invoice.shop_id == shop_id,
             Invoice.date >= start,
-            Invoice.date < today,
+            Invoice.date <= today,
             Invoice.status != InvoiceStatus.VOID,
         )
     ).all():
@@ -465,12 +465,13 @@ def forecast(db: Session, shop_id: uuid.UUID, today: dt.date) -> dict:
         d = today + dt.timedelta(days=i)
         same = [daily.get(d - dt.timedelta(weeks=w), ZERO) for w in range(1, 5)]
         days.append({"date": d, "expected": money(sum(same, ZERO) / 4)})
-    last7 = sum((v for k, v in daily.items() if k >= today - dt.timedelta(days=7)), ZERO)
+    # "last 7 days" includes today; the estimate itself only looks at past weeks' same weekday
+    last7 = sum((v for k, v in daily.items() if k >= today - dt.timedelta(days=6)), ZERO)
     prev7 = sum(
         (
             v
             for k, v in daily.items()
-            if today - dt.timedelta(days=14) <= k < today - dt.timedelta(days=7)
+            if today - dt.timedelta(days=13) <= k < today - dt.timedelta(days=6)
         ),
         ZERO,
     )

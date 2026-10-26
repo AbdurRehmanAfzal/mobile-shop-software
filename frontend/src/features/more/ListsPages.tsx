@@ -43,6 +43,7 @@ export function PurchaseDetailPage() {
       <div className="card">
         <KV k="purchase.steps.from" v={<button type="button" className="text-emerald" onClick={() => nav(`/parties/${p.party_id}`)}>{p.party_name}</button>} />
         <KV k="common.date" v={<span dir="ltr">{p.purchased_at ? fmtDateTime(p.purchased_at) : fmtDate(p.date)}</span>} />
+        {p.created_by_name ? <KV k="counter.addedBy" v={p.created_by_name} /> : null}
       </div>
       <List>
         {p.lines.map((l) => (

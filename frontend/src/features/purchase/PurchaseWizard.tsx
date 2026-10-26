@@ -6,7 +6,6 @@ import PartyPicker from '@/components/PartyPicker'
 import { Chip, ErrorText, MoneyText, PageHeader, Sheet, Stepper } from '@/components/ui'
 import { uid } from '@/lib/id'
 import { api } from '@/lib/api'
-import { useAuth } from '@/lib/auth'
 import { openPrintable } from '@/lib/files'
 import { useCashAccounts, useDocMutation } from '@/lib/queries'
 import type { Party, Purchase } from '@/lib/types'
@@ -28,8 +27,6 @@ export default function PurchaseWizard() {
   const [kind, setKind] = useState<Kind>(params.get('imei') ? 'walk_in' : 'supplier')
   const [chosen, setChosen] = useState(!!params.get('imei'))
   const [skipped, setSkipped] = useState<Record<string, boolean>>({})
-  const role = useAuth((s) => s.me?.user.role)
-  const canSkip = role === 'owner' || role === 'manager'
   const [party, setParty] = useState<Party | null>(null)
   const [devices, setDevices] = useState<DeviceLineDraft[]>([])
   const [misc, setMisc] = useState<Misc[]>([])
@@ -38,6 +35,7 @@ export default function PurchaseWizard() {
   const [paidNow, setPaidNow] = useState('')
   const [pay, setPay] = useState<string>('') // cash account id, or 'udhaar'
   const [more, setMore] = useState(false)
+  const [skipCheck, setSkipCheck] = useState(false)
   const [reference, setReference] = useState('')
   const [earlier, setEarlier] = useState(false)
   const [when, setWhen] = useState(localNow())
@@ -66,6 +64,15 @@ export default function PurchaseWizard() {
       reference: reference || undefined,
       purchased_at: earlier && when ? new Date(when).toISOString() : undefined,
     })
+    if (skipCheck && kind !== 'supplier') {
+      // "I know this person": mark each phone checked now; the skip and who did it go into its history
+      const done: Record<string, boolean> = {}
+      for (const l of res.lines.filter((x) => x.device_id)) {
+        await api('POST', `/api/v1/devices/${l.device_id}/verification/override`, { reason: pick('purchase.skipReason') })
+        done[l.device_id!] = true
+      }
+      setSkipped(done)
+    }
     setResult(res)
     setStep(2)
   }
@@ -153,6 +160,15 @@ export default function PurchaseWizard() {
                 ))}
                 <button type="button" aria-pressed={udhaar} onClick={() => setPay('udhaar')} className={chip(udhaar)}>{pick('counter.udhaar')}</button>
               </div>
+              {kind !== 'supplier' ? (
+                <>
+                  <BiLabel text="counter.idCheck" size="md" bold />
+                  <div className="grid grid-cols-2 gap-2">
+                    <button type="button" aria-pressed={!skipCheck} onClick={() => setSkipCheck(false)} className={chip(!skipCheck)}>{pick('counter.checkLater')}</button>
+                    <button type="button" aria-pressed={skipCheck} onClick={() => setSkipCheck(true)} className={chip(skipCheck)}>{pick('counter.skipCheck')}</button>
+                  </div>
+                </>
+              ) : null}
               {udhaar ? <BiInput label="counter.paidNowBuy" type="number" inputMode="numeric" min={0} max={total} value={paidNow} onChange={(e) => setPaidNow(e.target.value)} /> : null}
 
               <div className="card flex flex-col gap-2">
@@ -222,17 +238,15 @@ export default function PurchaseWizard() {
                 ) : needsCheck ? (
                   <div className="flex flex-wrap gap-2">
                     <BiButton text="purchase.verifyNow" size="sm" variant="gold" onClick={() => nav(`/stock/${l.device_id}/verify`)} />
-                    {canSkip ? (
-                      <BiButton
-                        text="purchase.skipKnown"
-                        size="sm"
-                        variant="secondary"
-                        onClick={async () => {
-                          await api('POST', `/api/v1/devices/${l.device_id}/verification/override`, { reason: pick('purchase.skipReason') })
-                          setSkipped((x) => ({ ...x, [l.device_id!]: true }))
-                        }}
-                      />
-                    ) : null}
+                    <BiButton
+                      text="purchase.skipKnown"
+                      size="sm"
+                      variant="secondary"
+                      onClick={async () => {
+                        await api('POST', `/api/v1/devices/${l.device_id}/verification/override`, { reason: pick('purchase.skipReason') })
+                        setSkipped((x) => ({ ...x, [l.device_id!]: true }))
+                      }}
+                    />
                     <BiButton text="common.print" size="sm" variant="ghost" onClick={() => openPrintable(`/api/v1/devices/${l.device_id}/verification/declaration`)} />
                   </div>
                 ) : null}

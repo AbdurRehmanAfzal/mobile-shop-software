@@ -6,6 +6,7 @@ import { useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
 import { MoneyText } from '@/components/ui'
+import { useAuth } from '@/lib/auth'
 import { isoDay, toLakh } from '@/lib/format'
 import { useGet } from '@/lib/queries'
 import type { DayReport } from '@/lib/types'
@@ -20,6 +21,7 @@ interface Dash {
 export default function HomePage() {
   const { pick, ur, cls } = useLang()
   const nav = useNavigate()
+  const manager = useAuth((s) => s.me?.user.role === 'owner' || s.me?.user.role === 'manager')
   const [q, setQ] = useState('')
   const [day, setDay] = useState(isoDay(0))
   const { data: dash } = useGet<Dash>(['dashboard'], '/api/v1/reports/dashboard')
@@ -71,7 +73,10 @@ export default function HomePage() {
         <Line label={<span>{pick('counter.sold')} <span className="text-muted">(<span className="num">{rep?.phones_sold ?? 0}</span> {pick('counter.phones')})</span></span>} value={<MoneyText value={rep?.sales_total} tone="ink" size="lg" />} />
         <Line label={pick('counter.udhaarGiven')} value={<span className="num text-xl text-receivable" dir="ltr">{fmt(rep?.udhaar_given)}</span>} />
         <Line label={pick('counter.cashIn')} value={<span className="num text-xl text-emerald" dir="ltr">{fmt(cash)}</span>} />
-        <Link to={`/hisaab?date=${day}`} className={`pt-1 font-bold text-emerald ${ur ? cls('sm') : 'text-sm'}`}>{pick('counter.seeFull')}</Link>
+        <div className={`flex flex-wrap justify-between gap-2 pt-1 font-bold text-emerald ${ur ? cls('sm') : 'text-sm'}`}>
+          <Link to={`/hisaab?date=${day}`}>{pick('counter.seeFull')}</Link>
+          {manager ? <Link to="/reports">{pick('counter.reportTitle')}</Link> : null}
+        </div>
       </section>
 
       <div className="grid grid-cols-2 gap-2.5">
