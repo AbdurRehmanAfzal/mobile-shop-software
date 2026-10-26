@@ -1,8 +1,9 @@
-/** "More" as category-wise icon grids (owner's UI guide: Easypaisa "More with easypaisa"). */
+/** "More": everything else, grouped, each icon in its job colour (docs/11 v2). */
 
 import {
-  ArrowLeftRight, Archive, BarChart3, Bell, Download, FileText, HandCoins, Headphones, KeyRound, Landmark, Lock,
-  LogOut, Receipt, RotateCcw, ScanLine, Settings, Smartphone, Tags, Undo2, Users, Wallet, Wrench, type LucideIcon,
+  ArrowLeftRight, Archive, BarChart3, Bell, BookOpen, CalendarDays, Download, FileText, HandCoins, Headphones, KeyRound,
+  Landmark, Lock, LogOut, PackagePlus, Receipt, RotateCcw, ScanLine, Settings, Smartphone, Tag, Tags, Undo2, Users,
+  Wallet, Wrench, type LucideIcon,
 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -16,59 +17,73 @@ import { ErrorText, Sheet } from '@/components/ui'
 import { rememberLogin } from '@/features/auth/LoginPage'
 
 type Icon = LucideIcon
-interface Item { key: string; Icon: Icon; to?: string; action?: 'pin'; roles?: Role[] }
+/** `tone` = the job colour (docs/11 v2) of the icon well */
+interface Item { key: string; Icon: Icon; to?: string; action?: 'pin'; roles?: Role[]; tone?: string }
 interface Group { title: string; items: Item[] }
 
 const MANAGERS: Role[] = ['owner', 'manager']
+const T = {
+  sell: 'bg-sell text-sell-fg',
+  buy: 'bg-buy text-buy-fg',
+  khata: 'bg-khata text-khata-fg',
+  stock: 'bg-stockt text-stockt-fg',
+  repair: 'bg-repair text-repair-fg',
+  expense: 'bg-expense text-expense-fg',
+  ret: 'bg-ret text-ret-fg',
+  plain: 'bg-ground text-ink border border-line',
+}
 
 const GROUPS: Group[] = [
   {
     title: 'more.daily',
     items: [
-      { key: 'dashboard.newSale', Icon: Receipt, to: '/sale/new' },
-      { key: 'dashboard.newPurchase', Icon: Download, to: '/purchase/new' },
-      { key: 'dashboard.payment', Icon: HandCoins, to: '/parties' },
-      { key: 'dashboard.repair', Icon: Wrench, to: '/repairs' },
-      { key: 'more.exchange', Icon: ArrowLeftRight, to: '/exchange/new' },
-      { key: 'dashboard.imeiSearch', Icon: ScanLine, to: '/stock' },
-      { key: 'more.loans', Icon: RotateCcw, to: '/loans' },
-      { key: 'party.title', Icon: Users, to: '/parties' },
+      { key: 'counter.sell', Icon: Tag, to: '/sale/new', tone: T.sell },
+      { key: 'counter.addStock', Icon: PackagePlus, to: '/purchase/new', tone: T.buy },
+      { key: 'counter.returnJob', Icon: Undo2, to: '/return/new', tone: T.ret },
+      { key: 'counter.khata', Icon: BookOpen, to: '/khata', tone: T.khata },
+      { key: 'counter.repair', Icon: Wrench, to: '/repairs', tone: T.repair },
+      { key: 'more.exchange', Icon: ArrowLeftRight, to: '/exchange/new', tone: T.sell },
+      { key: 'more.loans', Icon: RotateCcw, to: '/loans', tone: T.stock },
+      { key: 'counter.dayTitle', Icon: CalendarDays, to: '/hisaab', tone: T.plain },
     ],
   },
   {
     title: 'more.stockGroup',
     items: [
-      { key: 'more.stock', Icon: Smartphone, to: '/stock' },
-      { key: 'more.accessories', Icon: Headphones, to: '/accessories' },
-      { key: 'more.openingStock', Icon: Archive, to: '/stock/opening', roles: MANAGERS },
-      { key: 'more.catalogue', Icon: Tags, to: '/more/catalogue', roles: MANAGERS },
+      { key: 'more.stock', Icon: Smartphone, to: '/stock', tone: T.stock },
+      { key: 'counter.stockWorth', Icon: BarChart3, to: '/stock/summary', tone: T.stock },
+      { key: 'more.accessories', Icon: Headphones, to: '/accessories', tone: T.stock },
+      { key: 'dashboard.imeiSearch', Icon: ScanLine, to: '/stock', tone: T.stock },
+      { key: 'more.openingStock', Icon: Archive, to: '/stock/opening', roles: MANAGERS, tone: T.buy },
+      { key: 'more.catalogue', Icon: Tags, to: '/more/catalogue', roles: MANAGERS, tone: T.plain },
     ],
   },
   {
     title: 'more.records',
     items: [
-      { key: 'more.sales', Icon: Receipt, to: '/sales' },
-      { key: 'more.purchases', Icon: Download, to: '/purchases' },
-      { key: 'more.payments', Icon: HandCoins, to: '/payments' },
-      { key: 'more.returns', Icon: Undo2, to: '/returns' },
+      { key: 'more.sales', Icon: Receipt, to: '/sales', tone: T.sell },
+      { key: 'more.purchases', Icon: Download, to: '/purchases', tone: T.buy },
+      { key: 'more.payments', Icon: HandCoins, to: '/payments', tone: T.khata },
+      { key: 'more.returns', Icon: Undo2, to: '/returns', tone: T.ret },
+      { key: 'party.title', Icon: Users, to: '/parties', tone: T.khata },
     ],
   },
   {
     title: 'more.accounts',
     items: [
-      { key: 'more.expenses', Icon: Wallet, to: '/expenses', roles: MANAGERS },
-      { key: 'more.dayClose', Icon: Lock, to: '/expenses', roles: MANAGERS },
-      { key: 'more.cashAccounts', Icon: Landmark, to: '/more/cash', roles: MANAGERS },
-      { key: 'more.reports', Icon: BarChart3, to: '/reports', roles: MANAGERS },
+      { key: 'more.expenses', Icon: Wallet, to: '/expenses', roles: MANAGERS, tone: T.expense },
+      { key: 'more.dayClose', Icon: Lock, to: '/expenses', roles: MANAGERS, tone: T.expense },
+      { key: 'more.cashAccounts', Icon: Landmark, to: '/more/cash', roles: MANAGERS, tone: T.sell },
+      { key: 'more.reports', Icon: FileText, to: '/reports', roles: MANAGERS, tone: T.plain },
     ],
   },
   {
     title: 'more.admin',
     items: [
-      { key: 'more.settings', Icon: Settings, to: '/more/settings', roles: ['owner'] },
-      { key: 'more.staff', Icon: Users, to: '/more/staff', roles: ['owner'] },
-      { key: 'more.notifications', Icon: Bell, to: '/more/notifications', roles: ['owner'] },
-      { key: 'pin.set', Icon: KeyRound, action: 'pin' },
+      { key: 'more.settings', Icon: Settings, to: '/more/settings', roles: ['owner'], tone: T.plain },
+      { key: 'more.staff', Icon: Users, to: '/more/staff', roles: ['owner'], tone: T.plain },
+      { key: 'more.notifications', Icon: Bell, to: '/more/notifications', roles: ['owner'], tone: T.plain },
+      { key: 'pin.set', Icon: KeyRound, action: 'pin', tone: T.plain },
     ],
   },
 ]
@@ -99,14 +114,14 @@ export default function MorePage() {
           <section key={g.title} className="flex flex-col gap-2">
             <BiLabel text={g.title} size="md" bold />
             <div className="card grid grid-cols-4 gap-1 p-2">
-              {items.map(({ key, Icon, to, action }) => (
+              {items.map(({ key, Icon, to, action, tone }) => (
                 <button
                   key={key + (to ?? '')}
                   type="button"
                   onClick={() => (action === 'pin' ? setPinOpen(true) : to && nav(to))}
-                  className="tap flex min-h-[92px] flex-col items-center justify-start gap-2 rounded-2xl px-1 py-3"
+                  className="tap flex min-h-[96px] flex-col items-center justify-start gap-1.5 rounded-2xl px-1 py-2.5"
                 >
-                  <Icon size={26} strokeWidth={1.6} className="text-emerald" />
+                  <span className={`well h-12 w-12 ${tone ?? T.plain}`}><Icon size={24} strokeWidth={1.9} /></span>
                   <BiLabel text={key} size="sm" align="center" />
                 </button>
               ))}

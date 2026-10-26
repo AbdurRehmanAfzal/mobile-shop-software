@@ -126,7 +126,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false }: { ini
         <BiLabel text="stock.brand" size="md" tone="text-muted" className="mb-1.5" />
         <div className="flex flex-wrap gap-1.5">
           {brands?.map((b) => (
-            <button key={b.id} type="button" onClick={() => { set('brand_id', b.id); set('brand_name', b.name); set('model_id', ''); set('model_name', '') }} className={`tap rounded-full border px-3 py-1.5 text-sm font-bold ${d.brand_id === b.id ? 'border-emerald bg-emerald-tint text-emerald-deep' : 'border-line bg-surface text-muted'}`}>
+            <button key={b.id} type="button" onClick={() => { set('brand_id', b.id); set('brand_name', b.name); set('model_id', ''); set('model_name', '') }} className={`tap rounded-full border px-3 py-1.5 text-sm font-bold ${d.brand_id === b.id ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-muted'}`}>
               {ur && b.name_ur ? b.name_ur : b.name}
             </button>
           ))}

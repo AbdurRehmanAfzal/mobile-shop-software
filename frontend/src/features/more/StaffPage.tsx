@@ -22,7 +22,7 @@ export default function StaffPage() {
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="staff.title" right={<button type="button" aria-label={pick('staff.new')} onClick={() => setAdding(true)} className="well tap h-11 w-11 bg-emerald text-white shadow-cta"><Plus size={22} /></button>} />
+      <PageHeader title="staff.title" right={<button type="button" aria-label={pick('staff.new')} onClick={() => setAdding(true)} className="well tap h-11 w-11 bg-ink text-ground"><Plus size={22} /></button>} />
       <List>
         {data?.map((u) => (
           <Row key={u.id} title={u.name} sub={<span dir="ltr">{u.phone}</span>} right={<div className="flex flex-col items-end gap-1"><Chip text={`staff.roles.${u.role}`} tone="ink" />{!u.is_active ? <Chip text="staff.disabled" tone="bad" /> : null}</div>} onClick={u.id !== myId && u.role !== 'owner' ? () => { setEditing(u); setPw('') } : undefined} />

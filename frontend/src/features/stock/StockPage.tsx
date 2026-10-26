@@ -123,7 +123,7 @@ export default function StockPage() {
             <button type="button" aria-label={pick('stock.imeiLookup')} onClick={() => setLookup(true)} className="well tap h-11 w-11 border border-line bg-surface">
               <ScanLine size={20} />
             </button>
-            <button type="button" aria-label={pick('purchase.title')} onClick={() => nav('/purchase/new')} className="well tap h-11 w-11 bg-emerald text-white shadow-cta">
+            <button type="button" aria-label={pick('purchase.title')} onClick={() => nav('/purchase/new')} className="well tap h-11 w-11 bg-ink text-ground">
               <Download size={20} />
             </button>
           </div>

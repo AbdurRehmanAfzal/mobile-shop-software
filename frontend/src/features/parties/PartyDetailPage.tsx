@@ -1,8 +1,8 @@
-import { FileSpreadsheet, Pencil, Trash2 } from 'lucide-react'
+import { ArrowDown, ArrowUp, FileSpreadsheet, Pencil, Trash2 } from 'lucide-react'
 import { downloadFile } from '@/lib/files'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { BiButton, BiLabel, useLang } from '@/components/Bilingual'
+import { BiLabel, useLang } from '@/components/Bilingual'
 import RemoveSheet from '@/components/RemoveSheet'
 import { Chip, Empty, KV, Loading, MoneyText, PageHeader, Section, Sheet, fmtDate } from '@/components/ui'
 import { api } from '@/lib/api'
@@ -44,21 +44,27 @@ export default function PartyDetailPage() {
         }
       />
 
-      <section className="hero flex flex-col gap-2 p-5">
-        <BiLabel text={bal > 0 ? 'party.receivable' : bal < 0 ? 'party.payable' : 'party.clear'} size="sm" tone="text-gold-text" bold />
+      <section className={`flex flex-col gap-2 rounded-3xl p-5 ${bal > 0 ? 'bg-khata text-khata-fg' : bal < 0 ? 'bg-expense text-expense-fg' : 'border border-line bg-surface text-ink'}`}>
+        <BiLabel text={bal > 0 ? 'counter.toGet' : bal < 0 ? 'counter.toGive' : 'party.clear'} size="md" bold tone="text-current" />
         <div className="num text-[34px] leading-none" dir="ltr">
-          {bal === 0 ? '—' : <MoneyText value={bal} tone="ink" size="lg" />}
+          {bal === 0 ? '0' : `Rs. ${Math.abs(bal).toLocaleString('en-US')}`}
         </div>
         <div className="mt-1 flex flex-wrap gap-1.5">
           {party.kinds.map((k) => (
-            <Chip key={k} text={`party.${k}`} tone="ink" />
+            <Chip key={k} text={`party.${k}`} tone="muted" />
           ))}
         </div>
-        <div className="mt-2 grid grid-cols-2 gap-2">
-          <BiButton text="party.receive" variant="gold" size="md" onClick={() => setPaying('in')} />
-          <BiButton text="party.pay" variant="secondary" size="md" onClick={() => setPaying('out')} />
-        </div>
       </section>
+      <div className="grid grid-cols-2 gap-2.5">
+        <button type="button" onClick={() => setPaying('in')} className="tap flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-emerald text-white shadow-cta">
+          <ArrowDown size={20} strokeWidth={2.2} />
+          <BiLabel text="counter.gotMoney" size="md" bold tone="text-current" />
+        </button>
+        <button type="button" onClick={() => setPaying('out')} className="tap flex min-h-14 items-center justify-center gap-2 rounded-2xl border border-line bg-surface text-ink">
+          <ArrowUp size={20} strokeWidth={2.2} className="text-payable" />
+          <BiLabel text="counter.gaveMoney" size="md" bold tone="text-current" />
+        </button>
+      </div>
 
       <section className="card">
         <KV k="party.phone" v={<span dir="ltr">{party.phone}</span>} />
@@ -113,7 +119,7 @@ export default function PartyDetailPage() {
           nav('/parties', { replace: true })
         }}
       />
-      <Sheet open={paying !== null} onClose={() => setPaying(null)} title={paying === 'out' ? 'party.pay' : 'party.receive'}>
+      <Sheet open={paying !== null} onClose={() => setPaying(null)} title={paying === 'out' ? 'counter.gaveMoney' : 'counter.gotMoney'}>
         {paying ? <PaymentForm party={party} direction={paying} onDone={() => setPaying(null)} /> : null}
       </Sheet>
     </div>

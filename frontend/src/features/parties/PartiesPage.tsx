@@ -23,7 +23,7 @@ export default function PartiesPage() {
         title="party.title"
         back={false}
         right={
-          <button type="button" aria-label={pick('party.new')} onClick={() => setAdding(true)} className="well tap h-11 w-11 bg-emerald text-white shadow-cta">
+          <button type="button" aria-label={pick('party.new')} onClick={() => setAdding(true)} className="well tap h-11 w-11 bg-ink text-ground">
             <Plus size={22} />
           </button>
         }

@@ -57,7 +57,7 @@ export default function CataloguePage() {
           <BiLabel text="catalogue.pickBrand" size="md" tone="text-muted" className="mb-1.5" />
           <div className="flex flex-wrap gap-1.5">
             {brands?.map((b) => (
-              <button key={b.id} type="button" onClick={() => setBrandId(b.id)} className={`tap rounded-full border px-3 py-1.5 text-sm font-bold ${brandId === b.id ? 'border-emerald bg-emerald-tint text-emerald-deep' : 'border-line bg-surface text-muted'}`}>
+              <button key={b.id} type="button" onClick={() => setBrandId(b.id)} className={`tap rounded-full border px-3 py-1.5 text-sm font-bold ${brandId === b.id ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-muted'}`}>
                 {b.name}
               </button>
             ))}

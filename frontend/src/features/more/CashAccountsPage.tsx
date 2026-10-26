@@ -29,7 +29,7 @@ export default function CashAccountsPage() {
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="cash.title" right={role === 'owner' ? <button type="button" aria-label="add" onClick={() => setAdding(true)} className="well tap h-11 w-11 bg-emerald text-white shadow-cta"><Plus size={22} /></button> : undefined} />
+      <PageHeader title="cash.title" right={role === 'owner' ? <button type="button" aria-label="add" onClick={() => setAdding(true)} className="well tap h-11 w-11 bg-ink text-ground"><Plus size={22} /></button> : undefined} />
       <List>
         {data?.map((a) => <Row key={a.id} title={label(a)} sub={a.kind} right={<MoneyText value={a.balance} tone="ink" />} onClick={() => setBook(a)} />)}
       </List>

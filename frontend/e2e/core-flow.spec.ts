@@ -38,7 +38,7 @@ test('signup → customer → credit sale → dashboard and balance', async ({ p
 
   // Customer via UI
   await page.goto('/parties')
-  await page.getByRole('button', { name: 'New party' }).click()
+  await page.getByRole('button', { name: 'New person' }).click()
   await page.getByLabel('Name', { exact: true }).fill('Ahmed Khan')
   await page.getByLabel('Mobile number').fill('03219876543')
   await page.getByRole('button', { name: 'Save' }).click()

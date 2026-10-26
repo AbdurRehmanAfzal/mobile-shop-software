@@ -35,7 +35,7 @@ export default function AccessoriesPage() {
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="acc.title" right={<button type="button" aria-label={pick('acc.new')} onClick={() => setAdding(true)} className="well tap h-11 w-11 bg-emerald text-white shadow-cta"><Plus size={22} /></button>} />
+      <PageHeader title="acc.title" right={<button type="button" aria-label={pick('acc.new')} onClick={() => setAdding(true)} className="well tap h-11 w-11 bg-ink text-ground"><Plus size={22} /></button>} />
       <BiSegmented value={tab} onChange={setTab} options={[{ value: 'stock', text: 'acc.qty' }, { value: 'low', text: 'acc.low' }, { value: 'pending', text: 'acc.pending' }]} />
       {tab !== 'pending' ? <SearchBox value={q} onChange={setQ} placeholder="common.search" /> : null}
       {tab === 'pending' ? (
@@ -76,7 +76,7 @@ export default function AccessoriesPage() {
           <BiInput label="acc.name" value={f.name} onChange={set('name')} />
           <BiLabel text="acc.category" size="md" tone="text-muted" />
           <div className="flex flex-wrap gap-1.5">
-            {CATS.map((c) => <button key={c} type="button" onClick={() => setF({ ...f, category: c })} className={`tap rounded-full border px-3 py-1.5 text-sm font-bold ${f.category === c ? 'border-emerald bg-emerald-tint text-emerald-deep' : 'border-line bg-surface text-muted'}`}>{pick(`acc.cat.${c}`)}</button>)}
+            {CATS.map((c) => <button key={c} type="button" onClick={() => setF({ ...f, category: c })} className={`tap rounded-full border px-3 py-1.5 text-sm font-bold ${f.category === c ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-muted'}`}>{pick(`acc.cat.${c}`)}</button>)}
           </div>
           <div className="grid grid-cols-2 gap-2">
             <BiInput label="acc.price" type="number" inputMode="decimal" min={0} value={f.price} onChange={set('price')} />
@@ -119,7 +119,7 @@ export default function AccessoriesPage() {
             <BiInput label="acc.name" value={e.name} onChange={(ev) => setE({ ...e, name: ev.target.value })} />
             <BiLabel text="acc.category" size="md" tone="text-muted" />
             <div className="flex flex-wrap gap-1.5">
-              {CATS.map((c) => <button key={c} type="button" onClick={() => setE({ ...e, category: c })} className={`tap rounded-full border px-3 py-1.5 text-sm font-bold ${e.category === c ? 'border-emerald bg-emerald-tint text-emerald-deep' : 'border-line bg-surface text-muted'}`}>{pick(`acc.cat.${c}`)}</button>)}
+              {CATS.map((c) => <button key={c} type="button" onClick={() => setE({ ...e, category: c })} className={`tap rounded-full border px-3 py-1.5 text-sm font-bold ${e.category === c ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-muted'}`}>{pick(`acc.cat.${c}`)}</button>)}
             </div>
             <div className="grid grid-cols-2 gap-2">
               <BiInput label="acc.price" type="number" inputMode="decimal" min={0} value={e.price} onChange={(ev) => setE({ ...e, price: ev.target.value })} />

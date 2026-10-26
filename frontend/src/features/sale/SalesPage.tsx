@@ -21,7 +21,7 @@ export function SalesPage() {
         title="more.sales"
         back={false}
         right={
-          <button type="button" aria-label={pick('sale.title')} onClick={() => nav('/sale/new')} className="well tap h-11 w-11 bg-emerald text-white shadow-cta">
+          <button type="button" aria-label={pick('sale.title')} onClick={() => nav('/sale/new')} className="well tap h-11 w-11 bg-ink text-ground">
             <Plus size={22} />
           </button>
         }

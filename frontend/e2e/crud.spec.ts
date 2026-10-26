@@ -23,7 +23,7 @@ async function signup(page: Page) {
 test('party: delete from the detail page', async ({ page }) => {
   await signup(page)
   await page.goto('/parties')
-  await page.getByRole('button', { name: 'New party' }).click()
+  await page.getByRole('button', { name: 'New person' }).click()
   await page.getByLabel('Name', { exact: true }).fill('Wrong Entry')
   await page.getByLabel('Mobile number').fill('03001231234')
   await page.getByRole('button', { name: 'Save' }).click()

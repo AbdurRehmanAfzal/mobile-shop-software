@@ -45,7 +45,7 @@ export default function ExpensesPage() {
             <button type="button" aria-label={pick('expense.dayClose')} onClick={() => setClosing(true)} className="well tap h-11 w-11 border border-line bg-surface">
               <Lock size={18} />
             </button>
-            <button type="button" aria-label={pick('expense.new')} onClick={() => setAdding(true)} className="well tap h-11 w-11 bg-emerald text-white shadow-cta">
+            <button type="button" aria-label={pick('expense.new')} onClick={() => setAdding(true)} className="well tap h-11 w-11 bg-ink text-ground">
               <Plus size={22} />
             </button>
           </div>
@@ -83,7 +83,7 @@ export default function ExpensesPage() {
           </div>
           <div className="flex flex-wrap gap-1.5">
             {cats?.map((c) => (
-              <button key={c.id} type="button" onClick={() => setCatId(c.id)} className={`tap rounded-full border px-3 py-1.5 text-sm font-bold ${catId === c.id ? 'border-emerald bg-emerald-tint text-emerald-deep' : 'border-line bg-surface text-muted'}`}>
+              <button key={c.id} type="button" onClick={() => setCatId(c.id)} className={`tap rounded-full border px-3 py-1.5 text-sm font-bold ${catId === c.id ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-muted'}`}>
                 {catName(c)}
               </button>
             ))}

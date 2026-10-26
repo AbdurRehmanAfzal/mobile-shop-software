@@ -53,7 +53,7 @@ export default function PartyForm({ party, defaultKinds = ['customer'], onDone }
           {KINDS.map((k) => {
             const on = f.kinds.includes(k)
             return (
-              <button key={k} type="button" aria-pressed={on} onClick={() => toggle(k)} className={`tap min-h-12 rounded-2xl border text-sm font-bold ${on ? 'border-emerald bg-emerald-tint text-emerald-deep' : 'border-line bg-surface text-muted'}`}>
+              <button key={k} type="button" aria-pressed={on} onClick={() => toggle(k)} className={`tap min-h-12 rounded-2xl border text-sm font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-muted'}`}>
                 {pick(`party.${k}`)}
               </button>
             )

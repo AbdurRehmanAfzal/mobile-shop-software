@@ -38,7 +38,7 @@ export function RepairsPage() {
   const { data, isLoading } = useGet<Job[]>(['repairs', open], `/api/v1/repairs?open_only=${open}`)
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="repair.title" right={<button type="button" aria-label={pick('repair.new')} onClick={() => nav('/repairs/new')} className="well tap h-11 w-11 bg-emerald text-white shadow-cta"><Plus size={22} /></button>} />
+      <PageHeader title="repair.title" right={<button type="button" aria-label={pick('repair.new')} onClick={() => nav('/repairs/new')} className="well tap h-11 w-11 bg-ink text-ground"><Plus size={22} /></button>} />
       <BiSegmented value={open ? 'open' : 'all'} onChange={(v) => setOpen(v === 'open')} options={[{ value: 'open', text: 'repair.open' }, { value: 'all', text: 'repair.all' }]} />
       {isLoading ? <Loading /> : !data?.length ? <Empty text="repair.none" /> : (
         <List>
@@ -77,7 +77,7 @@ export function NewRepairPage() {
       <BiLabel text="repair.faults" size="md" tone="text-muted" />
       <div className="flex flex-wrap gap-1.5">
         {faults?.map((x) => (
-          <button key={x.code} type="button" onClick={() => toggle(codes, x.code, setCodes)} className={`tap rounded-full border px-3 py-1.5 text-sm font-bold ${codes.includes(x.code) ? 'border-emerald bg-emerald-tint text-emerald-deep' : 'border-line bg-surface text-muted'}`}>
+          <button key={x.code} type="button" onClick={() => toggle(codes, x.code, setCodes)} className={`tap rounded-full border px-3 py-1.5 text-sm font-bold ${codes.includes(x.code) ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-muted'}`}>
             {ur ? x.ur : x.en}
           </button>
         ))}
@@ -86,7 +86,7 @@ export function NewRepairPage() {
       <BiLabel text="repair.received" size="md" tone="text-muted" />
       <div className="flex flex-wrap gap-1.5">
         {RECEIVED.map((x) => (
-          <button key={x} type="button" onClick={() => toggle(received, x, setReceived)} className={`tap rounded-full border px-3 py-1.5 text-sm font-bold ${received.includes(x) ? 'border-emerald bg-emerald-tint text-emerald-deep' : 'border-line bg-surface text-muted'}`}>
+          <button key={x} type="button" onClick={() => toggle(received, x, setReceived)} className={`tap rounded-full border px-3 py-1.5 text-sm font-bold ${received.includes(x) ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-muted'}`}>
             {pick(`repair.acc.${x}`)}
           </button>
         ))}
