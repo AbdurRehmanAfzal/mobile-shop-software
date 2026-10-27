@@ -43,6 +43,9 @@ const SCREENS: [string, string][] = [
   ['reports', '/reports'],
   ['expenses', '/expenses'],
   ['more', '/more'],
+  ['exchange', '/exchange/new'],
+  ['loans', '/loans'],
+  ['settings', '/more/settings'],
 ]
 
 test('Urdu screens: no English leaking, screenshots', async ({ page }) => {

@@ -15,6 +15,7 @@ from app.modules.auth.schemas import (
     SetPinRequest,
     ShopCreate,
     ShopOut,
+    ShopSettingsOut,
     ShopUpdate,
     SignupRequest,
     StaffCreate,
@@ -96,7 +97,7 @@ def list_shops(current: Annotated[CurrentUser, Depends(get_current_user)], db: D
     return service.shops_for_user(db, current.id)
 
 
-@shops.get("/current", response_model=ShopOut)
+@shops.get("/current", response_model=ShopSettingsOut)
 def current_shop(ctx: Ctx):
     return ctx.shop
 

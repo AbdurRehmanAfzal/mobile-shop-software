@@ -451,7 +451,8 @@
     "footerUr": "Receipt footer (Urdu)",
     "invoicePrefix": "Invoice prefix",
     "defaultLocale": "Shop language (prints & messages)",
-    "saved": "Saved"
+    "saved": "Saved",
+    "shop": "Shop"
   },
   "expense": {
     "title": "Expenses",
@@ -900,7 +901,9 @@
       "paid_out": "Paid to people",
       "other": "Other"
     },
-    "week": "Week"
+    "week": "Week",
+    "exchangeHint": "Take the customer's old phone and give a new one; the difference is worked out for you",
+    "loanHint": "A phone given to another shop to show or sell; it stays yours until it is sold or comes back"
   },
   "admin": {
     "title": "Super admin",

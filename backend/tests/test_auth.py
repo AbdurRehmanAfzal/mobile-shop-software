@@ -74,3 +74,25 @@ def test_access_token_cannot_be_used_as_refresh(client, owner):
 def test_protected_route_requires_token(client):
     assert client.get("/api/v1/me").status_code == 401
     assert client.get("/api/v1/shops/current").status_code == 401
+
+
+def test_settings_show_saved_values(owner):
+    """The settings screen must open with what was saved (tax rate, prefix, footer...)."""
+    r = owner.patch(
+        "/api/v1/shops/current",
+        json={
+            "tax_enabled": True,
+            "tax_rate": 18,
+            "invoice_prefix": "ALI",
+            "receipt_footer": "Thank you",
+            "ntn": "1234567-8",
+        },
+    )
+    assert r.status_code == 200, r.text
+    s = owner.get("/api/v1/shops/current").json()
+    assert s["tax_rate"] == "18.00" and s["invoice_prefix"] == "ALI"
+    assert (
+        s["receipt_footer"] == "Thank you"
+        and s["ntn"] == "1234567-8"
+        and s["tax_inclusive"] is True
+    )

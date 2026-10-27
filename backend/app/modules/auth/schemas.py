@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime
+from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
@@ -69,6 +70,18 @@ class ShopOut(BaseModel):
     default_locale: str
     tax_enabled: bool
     is_active: bool
+
+
+class ShopSettingsOut(ShopOut):
+    """Everything the settings screen shows, so saved values are visible when it opens."""
+
+    ntn: str | None = None
+    strn: str | None = None
+    tax_rate: Decimal = Decimal(0)
+    tax_inclusive: bool = True
+    receipt_footer: str | None = None
+    receipt_footer_ur: str | None = None
+    invoice_prefix: str = "INV"
 
 
 class UserOut(BaseModel):

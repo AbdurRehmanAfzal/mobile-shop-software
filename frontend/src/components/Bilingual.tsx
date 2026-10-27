@@ -62,7 +62,7 @@ export function BiLabel({
   const alignCls = align === 'center' ? 'text-center' : align === 'end' ? 'text-end' : 'text-start'
   return (
     <div
-      className={`leading-tight ${alignCls} ${tone} ${cls(size)} ${bold ? (ur ? 'font-bold' : 'font-semibold') : ''} ${className}`}
+      className={`${ur ? 'leading-[1.7]' : 'leading-tight'} ${alignCls} ${tone} ${cls(size)} ${bold ? (ur ? 'font-bold' : 'font-semibold') : ''} ${className}`}
       dir={dir}
       lang={ur ? 'ur' : 'en'}
     >

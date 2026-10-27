@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { BiButton, BiInput, BiSegmented } from '@/components/Bilingual'
-import { Chip, Empty, ErrorText, List, Loading, MoneyText, PageHeader, Row, Sheet, fmtDate } from '@/components/ui'
+import { RotateCcw } from 'lucide-react'
+import { BiButton, BiInput, BiLabel, BiSegmented } from '@/components/Bilingual'
+import { Chip, ErrorText, List, Loading, MoneyText, PageHeader, Row, Sheet, fmtDate } from '@/components/ui'
 import { useDocMutation, useLoans } from '@/lib/queries'
 import type { Loan } from '@/lib/types'
 
@@ -18,11 +19,15 @@ export default function LoansPage() {
   return (
     <div className="flex flex-col gap-3">
       <PageHeader title="loan.title" />
+      <BiLabel text="counter.loanHint" size="sm" tone="text-muted" />
       <BiSegmented value={status} onChange={setStatus} options={[{ value: 'out', text: 'loan.out' }, { value: 'returned', text: 'loan.returned' }, { value: 'sold', text: 'loan.sold' }]} />
       {isLoading ? (
         <Loading />
       ) : !data?.length ? (
-        <Empty text="loan.none" />
+        <div className="flex flex-col items-center gap-2 py-10">
+          <span className="well h-14 w-14 rounded-2xl bg-stockt text-stockt-icon"><RotateCcw size={26} /></span>
+          <BiLabel text="loan.none" size="md" align="center" tone="text-muted" />
+        </div>
       ) : (
         <List>
           {data.map((l) => (

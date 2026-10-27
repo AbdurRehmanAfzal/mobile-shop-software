@@ -451,7 +451,8 @@
     "footerUr": "Raseed ke neeche (Urdu)",
     "invoicePrefix": "Bill number ka shuru",
     "defaultLocale": "Dukaan ki zubaan (print aur paighaam)",
-    "saved": "Mehfooz ho gaya"
+    "saved": "Mehfooz ho gaya",
+    "shop": "Dukaan"
   },
   "expense": {
     "title": "Kharche",
@@ -900,7 +901,9 @@
       "paid_out": "Logon ko diye",
       "other": "Kuch aur"
     },
-    "week": "Hafta"
+    "week": "Hafta",
+    "exchangeHint": "Gahak ka purana phone lein aur naya dein; farq khud hisaab ho jata hai",
+    "loanHint": "Doosri dukaan ko dikhane ya bechne ke liye diya gaya phone; bikne ya wapas aane tak aap ka rehta hai"
   },
   "admin": {
     "title": "Super admin",

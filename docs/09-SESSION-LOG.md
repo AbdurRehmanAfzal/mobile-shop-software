@@ -398,3 +398,11 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - Assumption to confirm with the owner: footer number "+316 4001668" written as +92 316 4001668 (Pakistani 0316); super user locally = 03001234567 (Abdur Rehman's demo account).
 - Expenses page: header keeps only Download; "New expense" and "Close the day" are big buttons in the page; empty state with icon. Playwright crud + urdu passed; Urdu screenshot checked.
 **Next (remaining v2 screens)**: settings, exchange, loans (amanat); then going live (domain + VPS from the owner).
+
+**2026-10-27 — Session 26: remaining screens (owner: "ok start next kaam")**
+- Urdu audit now also walks exchange, loans and settings (16 screens, no English leaks).
+- Settings: rebuilt as three cards with icons (Shop, Sales tax, Receipt) and big on/off switches; the duplicate "shop name" label is gone. Bug fixed: tax rate, NTN/STRN, receipt footers and bill prefix were saved but showed empty when the screen opened — `/shops/current` now returns `ShopSettingsOut` with them (test `test_settings_show_saved_values`).
+- Urdu text was clipped in places (e.g. the exchange title): BiLabel used `leading-tight` for Nastaliq; Urdu labels now use line-height 1.7 app-wide. Exchange title in Urdu is the plain "پرانا دے کر نیا".
+- Exchange and loans pages got a one-line explanation of what they are; loans' empty state has an icon.
+**Verified**: backend all passed; vitest 16; Playwright 22 passed; Urdu screenshots (settings, exchange, home) checked.
+**Next**: going live on the owner's VPS (needs domain + access); laptop side-by-side sale screen if the owner wants it; remove unused looks once the owner confirms Modern.

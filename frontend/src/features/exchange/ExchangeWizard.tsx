@@ -33,6 +33,7 @@ export default function ExchangeWizard() {
   return (
     <div className="flex flex-col gap-3">
       <PageHeader title="exchange.title" />
+      <BiLabel text="counter.exchangeHint" size="sm" tone="text-muted" />
       <Stepper steps={['sale.steps.customer', 'exchange.oldDevice', 'exchange.newDevice', 'sale.steps.payment']} current={Math.min(step, 3)} />
 
       {step === 0 ? (
