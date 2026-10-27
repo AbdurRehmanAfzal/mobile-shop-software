@@ -3,6 +3,7 @@
 
 import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
+import { useDraft } from '@/lib/draft'
 import { useNavigate } from 'react-router-dom'
 import { BiButton, BiLabel, useLang } from '@/components/Bilingual'
 import { BtnText, Chip, ErrorText, MoneyText, PageHeader, Sheet } from '@/components/ui'
@@ -14,8 +15,8 @@ export default function OpeningStockPage() {
   const nav = useNavigate()
   const { pick } = useLang()
   const inv = useInvalidate()
-  const [devices, setDevices] = useState<DeviceLineDraft[]>([])
-  const [editing, setEditing] = useState<DeviceLineDraft | null>(null)
+  const [devices, setDevices] = useDraft<DeviceLineDraft[]>('opening.devices', [])
+  const [editing, setEditing] = useDraft<DeviceLineDraft | null>('opening.editing', null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<unknown>(null)
   const [saved, setSaved] = useState(0)
@@ -84,6 +85,7 @@ export default function OpeningStockPage() {
           <DeviceLineSheet
             key={editing.key}
             initial={editing}
+            draftKey="opening-line"
             onSave={(d) => {
               setDevices((xs) => (xs.some((x) => x.key === d.key) ? xs.map((x) => (x.key === d.key ? d : x)) : [...xs, d]))
               setEditing(null)

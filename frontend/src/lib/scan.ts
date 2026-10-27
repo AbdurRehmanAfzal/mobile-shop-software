@@ -18,18 +18,17 @@ export function luhnOk(digits: string): boolean {
   return sum % 10 === 0
 }
 
-/** "IMEI1:490154203237518" / "490154203237518" -> the IMEI, else null */
+/** "IMEI1:490154203237518" / "490154203237518" -> the IMEI, else null. Exactly 15 digits in a row,
+ *  so the 32-digit EID or a 13-digit shop code on the same screen/label never passes. */
 export function imeiFrom(text: string): string | null {
-  for (const m of toLatinDigits(text).match(/\d{15,17}/g) ?? []) {
-    const d = m.slice(0, 15)
-    if (luhnOk(d)) return d
-  }
+  for (const m of toLatinDigits(text).match(/(?<!\d)\d{15}(?!\d)/g) ?? []) if (luhnOk(m)) return m
   return null
 }
 
 async function reader() {
-  const { BrowserMultiFormatReader } = await import('@zxing/browser')
-  return new BrowserMultiFormatReader()
+  const [{ BrowserMultiFormatReader }, { DecodeHintType }] = await Promise.all([import('@zxing/browser'), import('@zxing/library')])
+  // look harder: phone screens and box labels have thin bars
+  return new BrowserMultiFormatReader(new Map([[DecodeHintType.TRY_HARDER, true]]))
 }
 
 /** Live camera (needs https or localhost). Calls onImei once and stops. */
@@ -68,17 +67,23 @@ export async function scanPhoto(file: File): Promise<string[]> {
   }
   if (!found.size) {
     const r = await reader()
-    const scale = Math.min(1, 1600 / Math.max(img.width, img.height))
+    // small pictures (screenshots) are blown up 2x so each bar is wide enough to read
+    const scale = Math.min(Math.max(1, 1000 / img.width), 2, 1600 / Math.max(img.width, img.height))
     const w = Math.round(img.width * scale)
     const h = Math.round(img.height * scale)
     const tries: [number, number][] = [[0, h]]
-    const band = Math.round(h / 4)
-    for (let y = 0; y + band <= h; y += Math.round(band / 2)) tries.push([y, band])
+    for (const parts of [4, 8]) {
+      const band = Math.round(h / parts)
+      for (let y = 0; y + band <= h; y += Math.round(band / 2)) tries.push([y, band])
+    }
     for (const [y, bh] of tries) {
+      if (found.size >= 2) break // IMEI 1 and 2: nothing more to look for
       const c = document.createElement('canvas')
       c.width = w
       c.height = bh
-      c.getContext('2d')!.drawImage(img, 0, (y / scale), img.width, bh / scale, 0, 0, w, bh)
+      const g = c.getContext('2d')!
+      g.imageSmoothingEnabled = false
+      g.drawImage(img, 0, y / scale, img.width, bh / scale, 0, 0, w, bh)
       try {
         const imei = imeiFrom(r.decodeFromCanvas(c).getText())
         if (imei) found.add(imei)

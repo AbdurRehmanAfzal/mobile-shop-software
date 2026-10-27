@@ -4,6 +4,7 @@
 
 import { Banknote, BookOpen, Check, FileText, Headphones, Plus, Printer, Receipt, ShieldAlert, ShieldCheck, SlidersHorizontal, Smartphone, Trash2, TriangleAlert, UserCheck, Wallet } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { clearDrafts, useDraft } from '@/lib/draft'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import PartyPicker from '@/components/PartyPicker'
@@ -45,18 +46,18 @@ export default function SaleWizard() {
   const [params] = useSearchParams()
   const { pick, ur, cls } = useLang()
   const role = useAuth((s) => s.me?.user.role)
-  const [step, setStep] = useState(0)
-  const [lines, setLines] = useState<Line[]>([])
-  const [misc, setMisc] = useState<Misc[]>([])
+  const [step, setStep] = useDraft('sale.step', 0)
+  const [lines, setLines] = useDraft<Line[]>('sale.lines', [])
+  const [misc, setMisc] = useDraft<Misc[]>('sale.misc', [])
   const [picking, setPicking] = useState(false)
-  const [more, setMore] = useState(false)
+  const [more, setMore] = useDraft('sale.more', false)
   const [q, setQ] = useState('')
-  const [discount, setDiscount] = useState('')
-  const [pay, setPay] = useState<Pay | null>(null)
-  const [party, setParty] = useState<Party | null>(null)
-  const [paidNow, setPaidNow] = useState('')
-  const [overrideReason, setOverrideReason] = useState('')
-  const [lossOk, setLossOk] = useState(false)
+  const [discount, setDiscount] = useDraft('sale.discount', '')
+  const [pay, setPay] = useDraft<Pay | null>('sale.pay', null)
+  const [party, setParty] = useDraft<Party | null>('sale.party', null)
+  const [paidNow, setPaidNow] = useDraft('sale.paidNow', '')
+  const [overrideReason, setOverrideReason] = useDraft('sale.overrideReason', '')
+  const [lossOk, setLossOk] = useDraft('sale.lossOk', false)
   const [result, setResult] = useState<Invoice | null>(null)
   const { data: stock } = useDevices({ status: 'in_stock', q: q || undefined })
   const { data: accounts } = useCashAccounts()
@@ -113,6 +114,7 @@ export default function SaleWizard() {
       override_reason: overrideReason || undefined,
       below_cost_ok: lossLine && lossOk,
     })
+    clearDrafts('sale.')
     setResult(res)
     setStep(2)
   }

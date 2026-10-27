@@ -1,5 +1,6 @@
 import { Banknote, BookOpen, Check, Headphones, PackagePlus, Plus, Printer, ShieldCheck, SlidersHorizontal, Smartphone, Store, Trash2, UserCheck, UserRound, Wallet } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
+import { clearDrafts, useDraft } from '@/lib/draft'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import PartyPicker from '@/components/PartyPicker'
@@ -23,22 +24,22 @@ export default function PurchaseWizard() {
   const nav = useNavigate()
   const [params] = useSearchParams()
   const { pick, ur, cls } = useLang()
-  const [step, setStep] = useState(0)
-  const [kind, setKind] = useState<Kind>(params.get('imei') ? 'walk_in' : 'supplier')
-  const [chosen, setChosen] = useState(!!params.get('imei'))
-  const [skipped, setSkipped] = useState<Record<string, boolean>>({})
-  const [party, setParty] = useState<Party | null>(null)
-  const [devices, setDevices] = useState<DeviceLineDraft[]>([])
-  const [misc, setMisc] = useState<Misc[]>([])
-  const [editing, setEditing] = useState<DeviceLineDraft | null>(null)
-  const [discount, setDiscount] = useState('')
-  const [paidNow, setPaidNow] = useState('')
-  const [pay, setPay] = useState<string>('') // cash account id, or 'udhaar'
-  const [more, setMore] = useState(false)
-  const [skipCheck, setSkipCheck] = useState(false)
-  const [reference, setReference] = useState('')
-  const [earlier, setEarlier] = useState(false)
-  const [when, setWhen] = useState(localNow())
+  const [step, setStep] = useDraft('purchase.step', 0)
+  const [kind, setKind] = useDraft<Kind>('purchase.kind', params.get('imei') ? 'walk_in' : 'supplier')
+  const [chosen, setChosen] = useDraft('purchase.chosen', !!params.get('imei'))
+  const [skipped, setSkipped] = useDraft<Record<string, boolean>>('purchase.skipped', {})
+  const [party, setParty] = useDraft<Party | null>('purchase.party', null)
+  const [devices, setDevices] = useDraft<DeviceLineDraft[]>('purchase.devices', [])
+  const [misc, setMisc] = useDraft<Misc[]>('purchase.misc', [])
+  const [editing, setEditing] = useDraft<DeviceLineDraft | null>('purchase.editing', null)
+  const [discount, setDiscount] = useDraft('purchase.discount', '')
+  const [paidNow, setPaidNow] = useDraft('purchase.paidNow', '')
+  const [pay, setPay] = useDraft<string>('purchase.pay', '') // cash account id, or 'udhaar'
+  const [more, setMore] = useDraft('purchase.more', false)
+  const [skipCheck, setSkipCheck] = useDraft('purchase.skipCheck', false)
+  const [reference, setReference] = useDraft('purchase.reference', '')
+  const [earlier, setEarlier] = useDraft('purchase.earlier', false)
+  const [when, setWhen] = useDraft('purchase.when', localNow())
   const [result, setResult] = useState<Purchase | null>(null)
   const { data: accounts } = useCashAccounts()
   const m = useDocMutation<Record<string, unknown>, Purchase>('POST', () => '/api/v1/purchases')
@@ -73,6 +74,7 @@ export default function PurchaseWizard() {
       }
       setSkipped(done)
     }
+    clearDrafts('purchase.')
     setResult(res)
     setStep(2)
   }
@@ -264,6 +266,7 @@ export default function PurchaseWizard() {
           <DeviceLineSheet
             key={editing.key}
             initial={editing}
+            draftKey="purchase-line"
             onSave={(d) => {
               setDevices((xs) => (xs.some((x) => x.key === d.key) ? xs.map((x) => (x.key === d.key ? d : x)) : [...xs, d]))
               setEditing(null)

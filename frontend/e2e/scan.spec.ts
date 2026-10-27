@@ -27,10 +27,10 @@ test('scan an IMEI barcode from a photo into the add-device form', async ({ page
   await page.screenshot({ path: 'test-results/scan-field.png' })
   // a code that is not an IMEI (shop barcode) is refused
   await page.getByTestId('scan-photo').first().setInputFiles(fixture('label-ean.png'))
-  await expect(page.getByText('No IMEI barcode found in the photo')).toBeVisible()
+  await expect(page.getByText('No IMEI barcode found in the photo')).toBeVisible({ timeout: 20_000 })
   await page.getByRole('button', { name: 'Close' }).last().click()
   await page.getByTestId('scan-photo').first().setInputFiles(fixture('imei-one.png'))
-  await expect(page.getByLabel('IMEI', { exact: true })).toHaveValue('490154203237518')
+  await expect(page.getByLabel('IMEI', { exact: true })).toHaveValue('490154203237518', { timeout: 20_000 })
 
   // a box label: shop barcode + IMEI 1 + IMEI 2 in one photo -> both IMEIs offered
   const parts = ['label-ean.png', 'imei-one.png', 'label-imei2.png'].map((f) => `data:image/png;base64,${fs.readFileSync(fixture(f)).toString('base64')}`)
@@ -47,8 +47,24 @@ test('scan an IMEI barcode from a photo into the add-device form', async ({ page
     return c.toDataURL('image/png').split(',')[1]
   }, parts)
   await page.getByTestId('scan-photo').nth(1).setInputFiles({ name: 'label.png', mimeType: 'image/png', buffer: Buffer.from(label, 'base64') })
-  await expect(page.getByText('Which IMEI?')).toBeVisible()
+  await expect(page.getByText('Which IMEI?')).toBeVisible({ timeout: 20_000 })
   await page.screenshot({ path: 'test-results/scan-pick.png' })
   await page.getByRole('button', { name: '356938035643809' }).click()
   await expect(page.getByLabel('IMEI 2')).toHaveValue('356938035643809')
+
+  // Android may reload the page when the camera app opens: what was typed is still there
+  await page.getByRole('button', { name: 'Nokia', exact: true }).click()
+  await page.getByLabel('Cost price').fill('800')
+  await page.reload()
+  await expect(page.getByLabel('IMEI', { exact: true })).toHaveValue('490154203237518')
+  await expect(page.getByLabel('Cost price')).toHaveValue('800')
+  await page.getByRole('button', { name: /^105/ }).first().click()
+  await page.getByRole('button', { name: 'Add', exact: true }).click()
+  await page.reload()
+  await expect(page.getByText('490154203237518')).toBeVisible()
+  await page.getByRole('button', { name: 'Save' }).click()
+  await expect(page.getByText('Purchase saved')).toBeVisible()
+  // after saving, the list starts empty again
+  await page.reload()
+  await expect(page.getByText('490154203237518')).toHaveCount(0)
 })

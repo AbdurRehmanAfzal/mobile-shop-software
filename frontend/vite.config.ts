@@ -2,11 +2,15 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import basicSsl from '@vitejs/plugin-basic-ssl'
 import { fileURLToPath, URL } from 'node:url'
 
-export default defineConfig({
+// `npm run dev:phone` (port 5174): https on the Wi-Fi link (self-signed), because a phone browser opens the camera
+// inside the page only on https. Without it Android leaves the page for the camera app and may reload it.
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
+    mode === 'phone' ? basicSsl() : null,
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['icon.svg', 'apple-touch-icon.png'],
@@ -58,4 +62,4 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.ts'],
     include: ['src/**/*.test.{ts,tsx}'],
   },
-})
+}))

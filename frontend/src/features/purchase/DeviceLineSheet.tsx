@@ -2,6 +2,7 @@
  *  With `edit`, it edits an existing phone's details: IMEI 1 is fixed, no cost or accessories. */
 
 import { useEffect, useState } from 'react'
+import { clearDrafts, useDraft } from '@/lib/draft'
 import { useTranslation } from 'react-i18next'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import { AccessoryPicker, type AccKind } from '@/components/AccessoryPicker'
@@ -77,10 +78,11 @@ export function draftToApi(d: DeviceLineDraft) {
   }
 }
 
-export default function DeviceLineSheet({ initial, onSave, edit = false }: { initial: DeviceLineDraft; onSave: (d: DeviceLineDraft) => void; edit?: boolean }) {
+/** `draftKey`: keep what is typed if the page reloads (camera on Android), see lib/draft */
+export default function DeviceLineSheet({ initial, onSave, edit = false, draftKey }: { initial: DeviceLineDraft; onSave: (d: DeviceLineDraft) => void; edit?: boolean; draftKey?: string }) {
   const { t } = useTranslation()
   const { pick, ur } = useLang()
-  const [d, setD] = useState<DeviceLineDraft>(initial)
+  const [d, setD] = useDraft<DeviceLineDraft>(draftKey ? `${draftKey}.${initial.key}` : null, initial)
   const [modelQ, setModelQ] = useState('')
   const set = <K extends keyof DeviceLineDraft>(k: K, v: DeviceLineDraft[K]) => setD((x) => ({ ...x, [k]: v }))
   const imeiDigits = toLatinDigits(d.imei1).replace(/\D/g, '')
@@ -247,7 +249,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false }: { ini
 
       )}
 
-      <BiButton text={edit ? 'common.save' : 'common.add'} full disabled={!valid} onClick={() => onSave({ ...d, imei1: imeiDigits })} />
+      <BiButton text={edit ? 'common.save' : 'common.add'} full disabled={!valid} onClick={() => { if (draftKey) clearDrafts(draftKey); onSave({ ...d, imei1: imeiDigits }) }} />
     </div>
   )
 }
