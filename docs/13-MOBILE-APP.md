@@ -9,12 +9,31 @@ Two ways shopkeepers get the app on a phone:
 ## 2. Android app via Capacitor (Play Store)
 Scaffold is in `frontend/android` (Capacitor 6, appId `pk.mobileshop.app`, plugins: camera, share). The app bundles the same React build and talks to the cloud API.
 
+### Build in GitHub Actions (no Android Studio needed)
+`.github/workflows/android.yml` runs on every release (push to `main`, when `frontend/` changed) or by hand (**Actions → Android → Run workflow**):
+`npm run build:native` (= `vite build --mode native` with `VITE_API_URL=vars.APP_URL`, no service worker, then `cap sync android`) → `gradlew assembleRelease` signed with the release key → the APK is a **build artifact** of the run (`mobile-shop-android-1.<run>`), downloadable from the run page while logged in to GitHub. Version code = run number, so every build installs over the previous one.
+
+**Release key (one time, keep it forever).** Every update must be signed with the same key, or phones refuse it. Make it on the VPS (Docker has Java):
+```
+mkdir -p /root/android-key
+docker run --rm -it -v /root/android-key:/k eclipse-temurin:17-jdk   keytool -genkeypair -v -keystore /k/mobileshop-release.jks -alias mobileshop   -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=OOP Solutions, O=OOP Solutions, C=PK"
+base64 -w0 /root/android-key/mobileshop-release.jks; echo
+```
+GitHub secrets: `ANDROID_KEYSTORE_BASE64` (the base64 line), `ANDROID_KEYSTORE_PASSWORD` (the password typed above), `ANDROID_KEY_ALIAS` = `mobileshop`. Keep a copy of `mobileshop-release.jks` and the password off the server (e.g. in a password manager). Without these secrets the workflow makes a debug-signed **test** APK.
+
+**Install on a phone:** download the artifact zip on the phone (or on the PC and send the .apk by WhatsApp/USB), open the .apk, allow "Install unknown apps" for that app once.
+
+Icons and splash: sources in `frontend/assets/` (dark ground, gold phone, same as the PWA icon), generated with `npx @capacitor/assets generate --android`.
+
+### Known gaps in the app (v1)
+- **Print and download** (receipts, declaration, PDF/Excel/CSV) use the browser's print dialog and file downloads, which an Android WebView does not provide. In the app they do nothing yet; use the website for printing until this is solved (plan: open those links in Chrome with a short-lived link).
+
 ### Build on a PC with Android Studio
 1. Install Android Studio (bundles JDK 17 and the Android SDK).
 2. Build the web app against the live API, then sync:
    ```
    cd frontend
-   set VITE_API_URL=https://app.yourdomain.pk
+   set VITE_API_URL=https://mobileshop.oopsolutions.com
    npm run build
    npx cap sync android
    npx cap open android
@@ -26,5 +45,5 @@ Scaffold is in `frontend/android` (Capacitor 6, appId `pk.mobileshop.app`, plugi
 - `CORS_ORIGINS` must include `https://localhost` and `capacitor://localhost` (already in `deploy/docker-compose.yml`).
 
 ### Status
-- Not yet built: this dev PC has no Java/Android SDK, and the app needs the live HTTPS API domain. Both are listed as owner inputs in docs/06.
+- 2026-10-27: CI build added (this PC still has no Java/Android SDK; GitHub builds it). API: https://mobileshop.oopsolutions.com.
 - iOS: same Capacitor project (`npx cap add ios`) but needs a Mac with Xcode and an Apple developer account.

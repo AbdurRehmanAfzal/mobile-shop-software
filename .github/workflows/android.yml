@@ -1,0 +1,82 @@
+# Android app (Capacitor): builds the APK on every release (push to main) or by hand (Actions → Android
+# → Run workflow). The APK is kept as a build artifact of the run (download it from the run page while
+# logged in to GitHub); nothing is published publicly from here.
+# The app carries the React build and talks to the live API (vars.APP_URL).
+# Secrets (see docs/13): ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS.
+# Without them a debug-signed APK is built for testing only (a later release-signed one cannot update it).
+name: Android
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/android.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: android
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    env:
+      APP_VERSION_CODE: ${{ github.run_number }}
+      APP_VERSION_NAME: 1.${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+      - run: npm ci --no-audit --no-fund
+      - name: Web build for the app + copy into the Android project
+        env:
+          VITE_API_URL: ${{ vars.APP_URL }}
+        run: |
+          test -n "$VITE_API_URL" || { echo "::error::set the repository variable APP_URL"; exit 1; }
+          npm run build:native
+      - name: Signing key
+        id: key
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            printf '%s' "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
+            echo "file=$RUNNER_TEMP/release.jks" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::No ANDROID_KEYSTORE_BASE64 secret: building a debug-signed APK for testing only"
+          fi
+      - name: Build APK
+        working-directory: frontend/android
+        env:
+          ANDROID_KEYSTORE_FILE: ${{ steps.key.outputs.file }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          chmod +x gradlew
+          if [ -n "$ANDROID_KEYSTORE_FILE" ]; then
+            ./gradlew --no-daemon assembleRelease
+            cp app/build/outputs/apk/release/app-release.apk "$RUNNER_TEMP/mobile-shop-${APP_VERSION_NAME}.apk"
+          else
+            ./gradlew --no-daemon assembleDebug
+            cp app/build/outputs/apk/debug/app-debug.apk "$RUNNER_TEMP/mobile-shop-${APP_VERSION_NAME}-test.apk"
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mobile-shop-android-${{ env.APP_VERSION_NAME }}
+          path: ${{ runner.temp }}/mobile-shop-*.apk
+          retention-days: 90
