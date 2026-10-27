@@ -103,10 +103,8 @@ def downgrade() -> None:
         batch_op.drop_column("accessory_id")
 
     with op.batch_alter_table("invoice_lines", schema=None) as batch_op:
-        # WARNING: constraint name is None; this directive will fail as
-        # rendered.  Add a name, or use a naming convention; see
-        # https://alembic.sqlalchemy.org/en/latest/naming.html
-        batch_op.drop_constraint("fk_invoice_lines_accessory_id", type_="foreignkey")
+        # upgrade() named this FK "fk_accessories_accessory_id" (typo kept: databases already have it)
+        batch_op.drop_constraint("fk_accessories_accessory_id", type_="foreignkey")
         batch_op.drop_column("accessory_id")
 
     with op.batch_alter_table("accessory_movements", schema=None) as batch_op:
