@@ -11,7 +11,9 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     mode === 'phone' ? basicSsl() : null,
-    VitePWA({
+    // the Android app (`vite build --mode native`) ships its files inside the APK: no service worker,
+    // which could otherwise keep showing an older version after the app is updated
+    mode === 'native' ? null : VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['icon.svg', 'apple-touch-icon.png'],
       manifest: {
