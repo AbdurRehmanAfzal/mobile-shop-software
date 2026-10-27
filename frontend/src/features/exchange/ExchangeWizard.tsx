@@ -106,7 +106,7 @@ export default function ExchangeWizard() {
       </Sheet>
       <Sheet open={picking} onClose={() => setPicking(false)} title="sale.pickDevice">
         <div className="flex flex-col gap-3">
-          <SearchBox value={q} onChange={setQ} placeholder="stock.searchPlaceholder" />
+          <SearchBox value={q} onChange={setQ} placeholder="stock.searchPlaceholder" scan />
           <List>{stock?.map((d) => <DeviceRow key={d.id} d={d} onClick={() => { setNewDev(d); setPrice(d.asking_price ?? ''); setPicking(false) }} />)}</List>
         </div>
       </Sheet>

@@ -112,7 +112,7 @@ export default function ReturnWizard() {
 
       {step === 0 ? (
         <div className="flex flex-col gap-3">
-          <SearchBox value={q} onChange={setQ} placeholder="counter.searchSold" />
+          <SearchBox value={q} onChange={setQ} placeholder="counter.searchSold" scan />
           {sold?.length ? (
             <List>
               {sold.map((d) => <DeviceRow key={d.id} d={d} onClick={() => void openDevice(d.id)} />)}

@@ -334,7 +334,8 @@
     "takePhoto": "Take photo",
     "override": "Owner override",
     "overrideReason": "Reason for override",
-    "result": "Result"
+    "result": "Result",
+    "devicePhoto": "Phone photo"
   },
   "sale": {
     "title": "New sale",
@@ -952,5 +953,16 @@
     "w90": "3 months",
     "w180": "6 months",
     "w365": "1 year"
+  },
+  "scan": {
+    "button": "Scan",
+    "reading": "Reading…",
+    "title": "Scan the IMEI barcode",
+    "pick": "Which IMEI?",
+    "notFound": "No IMEI barcode found in the photo",
+    "hint": "Point at the IMEI barcode on the box, or dial *#06# on the phone and scan the screen. Hold steady, in good light.",
+    "again": "Take the photo again",
+    "usePhoto": "Take a photo instead",
+    "noCamera": "The camera did not open. Take a photo instead."
   }
 }

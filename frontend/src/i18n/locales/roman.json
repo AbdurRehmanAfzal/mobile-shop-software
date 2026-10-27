@@ -334,7 +334,8 @@
     "takePhoto": "Tasweer lein",
     "override": "Maalik ki ijazat",
     "overrideReason": "Ijazat ki wajah",
-    "result": "Nateeja"
+    "result": "Nateeja",
+    "devicePhoto": "Mobile ki tasweer"
   },
   "sale": {
     "title": "Nayi bikri",
@@ -952,5 +953,16 @@
     "w90": "3 mahine",
     "w180": "6 mahine",
     "w365": "1 saal"
+  },
+  "scan": {
+    "button": "Scan",
+    "reading": "Parh raha hai…",
+    "title": "IMEI barcode scan karein",
+    "pick": "Kaunsa IMEI?",
+    "notFound": "Tasweer mein IMEI barcode nahi mila",
+    "hint": "Dabbe par IMEI wale barcode ki taraf karein, ya mobile par *#06# mila kar screen scan karein. Roshni mein, haath rok kar.",
+    "again": "Dobara tasweer lein",
+    "usePhoto": "Tasweer le kar parhein",
+    "noCamera": "Camera nahi khula. Tasweer le kar parhein."
   }
 }

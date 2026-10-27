@@ -127,7 +127,7 @@ export default function StockPage() {
           </div>
         }
       />
-      <SearchBox value={q} onChange={setQ} placeholder="stock.searchPlaceholder" />
+      <SearchBox value={q} onChange={setQ} placeholder="stock.searchPlaceholder" scan />
 
       {brandRow.length ? (
         <div className="card -mx-1 flex gap-1 overflow-x-auto p-1.5">

@@ -95,10 +95,12 @@ export default function VerifyPage() {
       <Section title="verify.seller">
         <PartyPicker value={party} onChange={setParty} kind="customer" label="verify.seller" />
         <CnicInput label="verify.cnic" value={f.cnic_no ?? party?.cnic ?? ''} onChange={(v) => set('cnic_no', v)} />
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           <PhotoTile label={pick('verify.cnicFront')} path={f.cnic_front_path ?? null} purpose="cnic" onPick={(p) => set('cnic_front_path', p)} />
           <PhotoTile label={pick('verify.cnicBack')} path={f.cnic_back_path ?? null} purpose="cnic" onPick={(p) => set('cnic_back_path', p)} />
           <PhotoTile label={pick('verify.sellerPhoto')} path={f.seller_photo_path ?? null} purpose="seller" onPick={(p) => set('seller_photo_path', p)} />
+          {/* owner 2026-10-27: a photo of the phone itself, next to the ID card and the seller */}
+          <PhotoTile label={pick('verify.devicePhoto')} path={f.device_photos?.[0] ?? null} purpose="device" onPick={(p) => set('device_photos', [p, ...(f.device_photos ?? []).slice(1)])} />
         </div>
       </Section>
 

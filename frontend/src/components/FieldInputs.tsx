@@ -2,6 +2,7 @@
  *  front, a CNIC that stops at 13 digits and adds its own dashes, and an IMEI that stops at 15. */
 
 import { useId, useState } from 'react'
+import { ScanButton } from './ScanButton'
 import { BiInput, BiLabel, useLang, type BiInputProps } from './Bilingual'
 import { toLatinDigits } from '@/lib/format'
 
@@ -105,8 +106,8 @@ export function CnicInput({ value, onChange, error, ...rest }: Base) {
 export const IMEI_LEN = 15
 export const isImeiOk = (v: string) => digits(v).length === IMEI_LEN
 
-/** IMEI: digits only, never more than 15 */
-export function ImeiInput({ value, onChange, error, ...rest }: Base) {
+/** IMEI: digits only, never more than 15, with a Scan button (camera / photo of the barcode) */
+export function ImeiInput({ value, onChange, error, scan = true, ...rest }: Base & { scan?: boolean }) {
   const [touched, setTouched] = useState(false)
   const n = digits(value).length
   const bad = touched && n > 0 && n !== IMEI_LEN
@@ -120,6 +121,7 @@ export function ImeiInput({ value, onChange, error, ...rest }: Base) {
       onBlur={(e) => { setTouched(true); rest.onBlur?.(e) }}
       error={error ?? (bad ? 'field.badImei' : null)}
       className="num"
+      right={scan && !rest.disabled ? <ScanButton onImei={onChange} /> : undefined}
     />
   )
 }

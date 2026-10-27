@@ -7,6 +7,7 @@ import { ArrowDownLeft, ArrowUpRight, ChevronLeft, ChevronRight, ScanLine, Searc
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
+import { ScanButton } from '@/components/ScanButton'
 import { BtnText } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useTheme } from '@/lib/theme'
@@ -44,6 +45,7 @@ export default function HomePage() {
       <form onSubmit={search} className="flex min-h-14 items-center gap-2 rounded-2xl border border-line bg-surface pe-1.5 ps-4 shadow-[0_8px_24px_-18px_rgba(27,31,36,.35)]">
         <Search size={20} strokeWidth={1.75} className="shrink-0 text-muted" />
         <input value={q} onChange={(e) => setQ(e.target.value)} aria-label={pick('common.search')} placeholder={pick('counter.search')} className={`min-w-0 flex-1 bg-transparent font-medium text-ink placeholder:text-muted/70 focus:outline-none ${ur ? 'ur text-[15px]' : ''}`} />
+        <ScanButton size="sm" onImei={(imei) => nav(`/stock?q=${imei}`)} />
         <button type="submit" aria-label={pick('common.search')} className="tap flex min-h-12 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl bg-ink px-1.5 py-1 text-ground">
           <ScanLine size={20} strokeWidth={1.75} />
           <BtnText k="common.search" />

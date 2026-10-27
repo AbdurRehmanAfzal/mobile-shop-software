@@ -120,26 +120,34 @@ export interface BiInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>
   label: string | BiText
   error?: string | BiText | null
   hint?: string | BiText
+  /** a button beside the box, e.g. Scan */
+  right?: ReactNode
 }
 
 export const BiInput = forwardRef<HTMLInputElement, BiInputProps>(function BiInput(
-  { label, error, hint, className = '', id, ...rest },
+  { label, error, hint, right, className = '', id, ...rest },
   ref,
 ) {
   const inputId = id ?? `in-${resolve(label).en.replace(/\W+/g, '-').toLowerCase()}`
   const { pick, cls, dir } = useLang()
   return (
-    <label htmlFor={inputId} className="block">
-      <BiLabel text={label} size="md" tone="text-muted" />
-      <input
-        ref={ref}
-        id={inputId}
-        {...rest}
-        dir={rest.dir ?? 'ltr'}
-        className={`mt-1.5 block min-h-14 w-full rounded-2xl border bg-surface px-4 text-lg font-semibold text-ink placeholder:font-medium placeholder:text-muted/60 focus:outline-none focus:ring-2 ${
-          error ? 'border-payable focus:ring-payable/40' : 'border-line focus:border-emerald focus:ring-emerald/30'
-        } ${className}`}
-      />
+    // only the words are the <label>, so a button beside the box (Scan) is not part of its name
+    <div>
+      <label htmlFor={inputId} className="block">
+        <BiLabel text={label} size="md" tone="text-muted" />
+      </label>
+      <div className="mt-1.5 flex gap-2">
+        <input
+          ref={ref}
+          id={inputId}
+          {...rest}
+          dir={rest.dir ?? 'ltr'}
+          className={`block min-h-14 w-full min-w-0 flex-1 rounded-2xl border bg-surface px-4 text-lg font-semibold text-ink placeholder:font-medium placeholder:text-muted/60 focus:outline-none focus:ring-2 ${
+            error ? 'border-payable focus:ring-payable/40' : 'border-line focus:border-emerald focus:ring-emerald/30'
+          } ${className}`}
+        />
+        {right}
+      </div>
       {error ? (
         <div className={`mt-1 font-semibold text-payable ${cls('sm')}`} dir={dir}>
           {pick(error)}
@@ -147,7 +155,7 @@ export const BiInput = forwardRef<HTMLInputElement, BiInputProps>(function BiInp
       ) : hint ? (
         <BiLabel text={hint} size="sm" tone="text-muted" className="mt-1" />
       ) : null}
-    </label>
+    </div>
   )
 })
 

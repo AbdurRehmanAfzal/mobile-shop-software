@@ -126,7 +126,7 @@ export default function SaleWizard() {
 
       {step === 0 ? (
         <div className="flex flex-col gap-3">
-          <SearchBox value={q} onChange={setQ} placeholder="stock.searchPlaceholder" />
+          <SearchBox value={q} onChange={setQ} placeholder="stock.searchPlaceholder" scan />
           <BiLabel text="counter.tapPhone" size="sm" tone="text-muted" />
           {stock?.length ? (
             <List>
@@ -276,7 +276,7 @@ export default function SaleWizard() {
 
       <Sheet open={picking} onClose={() => setPicking(false)} title="counter.whichPhone">
         <div className="flex flex-col gap-3">
-          <SearchBox value={q} onChange={setQ} placeholder="stock.searchPlaceholder" />
+          <SearchBox value={q} onChange={setQ} placeholder="stock.searchPlaceholder" scan />
           <List>
             {stock?.filter((d) => !lines.some((l) => l.device.id === d.id)).map((d) => <DeviceRow key={d.id} d={d} onClick={() => pickDevice(d)} />)}
           </List>

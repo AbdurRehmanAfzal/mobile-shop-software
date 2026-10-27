@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { BiLabel, useLang, type BiText } from './Bilingual'
 import { formatMoney } from '@/lib/format'
 import { ApiError } from '@/lib/api'
+import { ScanButton } from './ScanButton'
 
 export function PageHeader({ title, back = true, right }: { title: string | BiText; back?: boolean; right?: ReactNode }) {
   const nav = useNavigate()
@@ -111,10 +112,11 @@ export function Chip({ text, tone = 'muted' }: { text: string | BiText; tone?: '
   return <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-bold ${cls}`}>{pick(text)}</span>
 }
 
-export function SearchBox({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder: string | BiText }) {
+/** with `scan`, a Scan button beside it fills the box with the IMEI read from the barcode */
+export function SearchBox({ value, onChange, placeholder, scan }: { value: string; onChange: (v: string) => void; placeholder: string | BiText; scan?: boolean }) {
   const { pick } = useLang()
-  return (
-    <label className="relative block">
+  const box = (
+    <label className="relative block flex-1">
       <Search size={18} className="pointer-events-none absolute start-4 top-1/2 -translate-y-1/2 text-muted" />
       <input
         value={value}
@@ -123,6 +125,13 @@ export function SearchBox({ value, onChange, placeholder }: { value: string; onC
         className="min-h-12 w-full rounded-2xl border border-line bg-surface ps-11 pe-4 text-base font-medium text-ink placeholder:text-muted/60 focus:border-emerald focus:outline-none focus:ring-2 focus:ring-emerald/30"
       />
     </label>
+  )
+  if (!scan) return box
+  return (
+    <div className="flex gap-2">
+      {box}
+      <ScanButton size="sm" onImei={onChange} />
+    </div>
   )
 }
 
