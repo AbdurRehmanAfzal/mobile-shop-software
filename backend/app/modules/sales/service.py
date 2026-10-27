@@ -1,4 +1,3 @@
-import datetime as dt
 import html
 import uuid
 from decimal import Decimal
@@ -6,6 +5,7 @@ from decimal import Decimal
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.clock import today as shop_today
 from app.core.errors import Conflict, Forbidden, NotFound, ValidationFailed
 from app.core.permissions import Cap
 from app.db.base import ZERO, utcnow
@@ -159,7 +159,7 @@ def create_sale(
         shop_id=shop_id,
         no=next_number(db, shop, shop.invoice_prefix or "INV", "next_invoice_no"),
         party_id=party.id if party else None,
-        date=data.date or dt.date.today(),
+        date=data.date or shop_today(),
         subtotal=subtotal,
         discount=discount,
         tax_rate=money(rate),

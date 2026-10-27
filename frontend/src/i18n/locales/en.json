@@ -964,5 +964,41 @@
     "again": "Take the photo again",
     "usePhoto": "Take a photo instead",
     "noCamera": "The camera did not open. Take a photo instead."
+  },
+  "inv": {
+    "title": "Invoices",
+    "short": "Invoices",
+    "hint": "Every bill of the shop: sales, purchases, returns and repairs. Tap one to see it or print it.",
+    "search": "Bill no, name, phone or IMEI",
+    "allDates": "Searching all dates",
+    "type": "Type of bill",
+    "stateLabel": "Money",
+    "toGet": "Still to get",
+    "toGive": "Still to pay",
+    "none": "No bills here",
+    "count": "bills",
+    "noName": "Walk-in",
+    "ofBill": "of",
+    "kind": {
+      "sale": "Sale",
+      "purchase": "Purchase",
+      "sale_return": "Return",
+      "purchase_return": "Return to dealer",
+      "repair": "Repair"
+    },
+    "kinds": {
+      "sale": "Sales",
+      "purchase": "Purchases",
+      "return": "Returns",
+      "repair": "Repairs"
+    },
+    "state": {
+      "paid": "Paid",
+      "due": "Udhaar left",
+      "toPay": "To pay",
+      "open": "In repair",
+      "returned": "Returned",
+      "void": "Cancelled"
+    }
   }
 }

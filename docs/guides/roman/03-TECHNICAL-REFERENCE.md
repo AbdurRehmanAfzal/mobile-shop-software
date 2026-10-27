@@ -740,6 +740,9 @@ Range na di jaye to default mojooda mahina hai. `from > to` ho to `422 bad_date_
   - **pdf**: asal mein **print ke liye HTML page** hai (A4; 6 se zyada columns hon to landscape; Manrope + Noto Nastaliq). Browser ka "Save as PDF" Nastaliq ko sahi jorta hai; server ki PDF libraries nahi jortin.
 - Cost aur munafe ke columns sirf `VIEW_COST` walon ko.
 
+### 7.17a invoices (`modules/invoices`)
+Sirf parhne wala module: sales, purchases, returns aur repair jobs ko ek hi row type (`DocumentRow`: kind, no, date, party, items, total, paid, due, state, returns ke liye ref) mein dikhata hai. `GET /api/v1/invoices?kind=&q=&date_from=&date_to=&state=&limit=` jawab mein `{rows, to_get, to_give}` deta hai. `q` bill no (purchase ka supplier reference aur return ka asal bill no bhi), party ka naam/phone, aur IMEI (kam az kam 4 hindse; invoice/purchase lines aur repair ke IMEI se) se milta hai. States: `paid`, `due` (sale/repair: lene hain; purchase: dene hain), `open` (repair deliver nahi hui), `returned`, `void`. Kaun kya dekhe, wohi asal screens wala qaida: purchases aur purchase returns ke liye `VIEW_COST`, sales ke liye `TRANSACT`, repairs ke liye `REPAIR_CREATE` ya `REPAIR_WORK`. Repair ki tareekh phone aane ka din hai. from > to ho to `bad_date_range` 422. Tests: `tests/test_invoices.py`; screen `features/invoices/InvoicesPage.tsx`, e2e `e2e/invoices.spec.ts`.
+
 ### 7.18 notifications (`modules/notifications`)
 - `GET|PUT /notifications/settings` (`MANAGE_SETTINGS`), `GET /notifications?status=&audience=owner|customer&limit=`, `POST /notifications/{message_id}/mark-sent`.
 - Yeh ek **outbox** hai. Hooks `on_sale`, `on_purchase`, `on_payment_in`, `on_repair_ready` `messages` rows likhte hain. Har row mein:

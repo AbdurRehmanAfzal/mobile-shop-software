@@ -5,6 +5,8 @@ from decimal import Decimal
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
+from app.core.clock import local_day
+from app.core.clock import today as shop_today
 from app.core.errors import Conflict, Forbidden, NotFound, ValidationFailed
 from app.core.permissions import Cap
 from app.db.base import ZERO, utcnow
@@ -134,7 +136,7 @@ def create_expense(
         category_key=cat.key,
         amount=amount,
         cash_account_id=cash.id,
-        date=data.date or dt.date.today(),
+        date=data.date or shop_today(),
         party_id=data.party_id,
         staff_user_id=data.staff_user_id,
         description=data.description,
@@ -238,7 +240,7 @@ def _day_figures(
             select(func.coalesce(func.sum(LedgerEntry.debit - LedgerEntry.credit), 0)).where(
                 LedgerEntry.shop_id == shop_id,
                 LedgerEntry.cash_account_id == account.id,
-                func.date(LedgerEntry.at) < day,
+                local_day(LedgerEntry.at) < day,
             )
         )
         or 0
@@ -249,7 +251,7 @@ def _day_figures(
             select(func.coalesce(func.sum(LedgerEntry.debit), 0)).where(
                 LedgerEntry.shop_id == shop_id,
                 LedgerEntry.cash_account_id == account.id,
-                func.date(LedgerEntry.at) == day,
+                local_day(LedgerEntry.at) == day,
             )
         )
         or 0
@@ -259,7 +261,7 @@ def _day_figures(
             select(func.coalesce(func.sum(LedgerEntry.credit), 0)).where(
                 LedgerEntry.shop_id == shop_id,
                 LedgerEntry.cash_account_id == account.id,
-                func.date(LedgerEntry.at) == day,
+                local_day(LedgerEntry.at) == day,
             )
         )
         or 0
@@ -282,7 +284,7 @@ def day_preview(
     db: Session, shop_id: uuid.UUID, cash_account_id: uuid.UUID | None, day: dt.date | None
 ) -> dict:
     account = _account(db, shop_id, cash_account_id)
-    day = day or dt.date.today()
+    day = day or shop_today()
     opening, cash_in, cash_out, expected = _day_figures(db, shop_id, account, day)
     closed = (
         db.scalar(
@@ -307,7 +309,7 @@ def day_preview(
 
 def close_day(db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, data: DayCloseIn) -> DayClose:
     account = _account(db, shop_id, data.cash_account_id)
-    day = data.date or dt.date.today()
+    day = data.date or shop_today()
     if db.scalar(
         select(DayClose.id).where(
             DayClose.shop_id == shop_id,

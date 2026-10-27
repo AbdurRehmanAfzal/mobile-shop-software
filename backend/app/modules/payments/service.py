@@ -1,10 +1,10 @@
-import datetime as dt
 import uuid
 from decimal import Decimal
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.clock import today as shop_today
 from app.core.errors import Conflict, Forbidden, NotFound, ValidationFailed
 from app.core.permissions import Cap
 from app.db.base import ZERO, utcnow
@@ -161,7 +161,7 @@ def create_payment(
         cash_account_id=cash.id,
         method=data.method,
         reference=data.reference,
-        date=data.date or dt.date.today(),
+        date=data.date or shop_today(),
         notes=data.notes,
         allocations=allocations,
         created_by=user_id,

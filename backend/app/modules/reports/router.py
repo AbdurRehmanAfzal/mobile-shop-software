@@ -4,6 +4,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
+from app.core.clock import today as shop_today
 from app.core.errors import ValidationFailed
 from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx, require_cap
@@ -25,7 +26,7 @@ def _money(v):
 
 
 def _range(date_from: dt.date | None, date_to: dt.date | None) -> tuple[dt.date, dt.date]:
-    today = dt.date.today()
+    today = shop_today()
     d_from, d_to = date_from or today.replace(day=1), date_to or today
     _check_range(d_from, d_to)
     return d_from, d_to
@@ -85,7 +86,7 @@ def day(
 ):
     """Hisaab of a day (`date`, default today) or a period (`date_from`..`date_to`: week, month,
     from-to); profit only with VIEW_COST."""
-    d_from = date_from or date or dt.date.today()
+    d_from = date_from or date or shop_today()
     _check_range(d_from, date_to or d_from)
     return _money(
         service.day_report(db, ctx.shop_id, d_from, ctx.can(Cap.VIEW_COST), date_to or d_from)
@@ -105,4 +106,4 @@ def top_sellers(
 @router.get("/forecast")
 def forecast(ctx: Reports, db: DB):
     """Next 7 days' expected sales and how long each model's stock lasts (an estimate)."""
-    return _money(service.forecast(db, ctx.shop_id, dt.date.today()))
+    return _money(service.forecast(db, ctx.shop_id, shop_today()))

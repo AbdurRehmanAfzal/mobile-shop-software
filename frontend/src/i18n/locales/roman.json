@@ -964,5 +964,41 @@
     "again": "Dobara tasweer lein",
     "usePhoto": "Tasweer le kar parhein",
     "noCamera": "Camera nahi khula. Tasweer le kar parhein."
+  },
+  "inv": {
+    "title": "Invoices / Bill",
+    "short": "Bill",
+    "hint": "Dukaan ka har bill: sale, khareed, wapsi aur repair. Dekhne ya print karne ke liye bill par tap karein.",
+    "search": "Bill no, naam, phone ya IMEI",
+    "allDates": "Saari tareekhon mein dhoond rahe hain",
+    "type": "Bill ki qism",
+    "stateLabel": "Paise",
+    "toGet": "Abhi lene hain",
+    "toGive": "Abhi dene hain",
+    "none": "Yahan koi bill nahi",
+    "count": "bill",
+    "noName": "Aam gahak",
+    "ofBill": "bill",
+    "kind": {
+      "sale": "Sale",
+      "purchase": "Khareed",
+      "sale_return": "Wapsi",
+      "purchase_return": "Dealer ko wapsi",
+      "repair": "Repair"
+    },
+    "kinds": {
+      "sale": "Sale",
+      "purchase": "Khareed",
+      "return": "Wapsi",
+      "repair": "Repair"
+    },
+    "state": {
+      "paid": "Ada ho gaya",
+      "due": "Udhaar baqi",
+      "toPay": "Dene hain",
+      "open": "Repair mein",
+      "returned": "Wapis",
+      "void": "Cancel"
+    }
   }
 }

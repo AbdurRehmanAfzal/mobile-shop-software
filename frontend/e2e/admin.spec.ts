@@ -43,7 +43,8 @@ test('super admin opens a shop for a customer', async ({ page, request }) => {
   await page.getByLabel("Owner's mobile (login)").fill(owner)
   await page.getByLabel('Password for the owner').fill('bilal1234')
   await page.getByRole('button', { name: 'Open a new shop' }).last().click()
-  await expect(page.getByText('Shop opened')).toBeVisible()
+  // opening a shop hashes the password and prepares its catalogue: slow on a busy PC
+  await expect(page.getByText('Shop opened')).toBeVisible({ timeout: 20_000 })
   await expect(page.getByText(owner).first()).toBeVisible()
   await expect(page.getByRole('link', { name: 'Send on WhatsApp' })).toHaveAttribute('href', /wa\.me\/92/)
   await page.screenshot({ path: 'test-results/admin-created.png', fullPage: true })

@@ -1,10 +1,10 @@
-import datetime as dt
 import uuid
 from decimal import Decimal
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.clock import today as shop_today
 from app.core.errors import Conflict, NotFound, ValidationFailed
 from app.db.base import ZERO, utcnow
 from app.modules.accessories import service as acc_stock
@@ -112,7 +112,7 @@ def sale_return(
         document_id=inv.id,
         document_no=inv.no,
         party_id=party.id,
-        date=data.date or dt.date.today(),
+        date=data.date or shop_today(),
         amount=amount,
         settlement=settlement,
         refund_amount=refund,
@@ -271,7 +271,7 @@ def purchase_return(
         document_id=pur.id,
         document_no=pur.no,
         party_id=party.id,
-        date=data.date or dt.date.today(),
+        date=data.date or shop_today(),
         amount=amount,
         settlement=Settlement.REFUND if refund > ZERO else Settlement.CREDIT,
         refund_amount=refund,

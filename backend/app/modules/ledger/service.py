@@ -13,6 +13,7 @@ from decimal import ROUND_HALF_UP, Decimal
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from app.core.clock import local_day
 from app.core.errors import AppError, Conflict, NotFound, ValidationFailed
 from app.db.base import ZERO, utcnow
 from app.modules.audit.service import record_audit
@@ -232,9 +233,9 @@ def account_total(
         LedgerEntry.shop_id == shop_id, LedgerEntry.account == account
     )
     if date_from:
-        stmt = stmt.where(func.date(LedgerEntry.at) >= date_from)
+        stmt = stmt.where(local_day(LedgerEntry.at) >= date_from)
     if date_to:
-        stmt = stmt.where(func.date(LedgerEntry.at) <= date_to)
+        stmt = stmt.where(local_day(LedgerEntry.at) <= date_to)
     return money(db.scalar(stmt) or 0)
 
 
@@ -258,9 +259,9 @@ def party_statement(
         .order_by(LedgerEntry.at, LedgerEntry.seq)
     )
     if date_from:
-        stmt = stmt.where(func.date(LedgerEntry.at) >= date_from)
+        stmt = stmt.where(local_day(LedgerEntry.at) >= date_from)
     if date_to:
-        stmt = stmt.where(func.date(LedgerEntry.at) <= date_to)
+        stmt = stmt.where(local_day(LedgerEntry.at) <= date_to)
     opening = ZERO
     if date_from:
         opening = money(
@@ -268,7 +269,7 @@ def party_statement(
                 select(func.coalesce(func.sum(LedgerEntry.debit - LedgerEntry.credit), 0)).where(
                     LedgerEntry.shop_id == shop_id,
                     LedgerEntry.party_id == party_id,
-                    func.date(LedgerEntry.at) < date_from,
+                    local_day(LedgerEntry.at) < date_from,
                 )
             )
             or 0
@@ -317,7 +318,7 @@ def cash_book(
     )
     opening = account.opening_balance
     if date_from:
-        stmt = stmt.where(func.date(LedgerEntry.at) >= date_from)
+        stmt = stmt.where(local_day(LedgerEntry.at) >= date_from)
         opening = money(
             opening
             + (
@@ -327,14 +328,14 @@ def cash_book(
                     ).where(
                         LedgerEntry.shop_id == shop_id,
                         LedgerEntry.cash_account_id == cash_account_id,
-                        func.date(LedgerEntry.at) < date_from,
+                        local_day(LedgerEntry.at) < date_from,
                     )
                 )
                 or 0
             )
         )
     if date_to:
-        stmt = stmt.where(func.date(LedgerEntry.at) <= date_to)
+        stmt = stmt.where(local_day(LedgerEntry.at) <= date_to)
     running = money(opening)
     rows = []
     for entry, group in db.execute(stmt).all():

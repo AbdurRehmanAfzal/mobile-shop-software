@@ -1,9 +1,9 @@
-import datetime as dt
 import uuid
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.clock import today as shop_today
 from app.core.errors import Conflict, NotFound, ValidationFailed
 from app.db.base import utcnow
 from app.modules.audit.service import record_audit
@@ -174,5 +174,5 @@ def to_out(db: Session, loan: Loan) -> dict:
         "party_name": party.name if party else None,
         "overdue": loan.status == LoanStatus.OUT
         and loan.expected_back_at is not None
-        and loan.expected_back_at < dt.date.today(),
+        and loan.expected_back_at < shop_today(),
     }

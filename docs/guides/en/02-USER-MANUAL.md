@@ -733,6 +733,20 @@ The list **Customer shops** shows every shop with users and opening date; use th
 
 ---
 
+## 20a. Invoices: find any bill
+
+**Home → Invoices** (or **More → Invoices**) shows every bill of the shop in one list: sales, purchases (owner and manager only), returns and repairs, newest first.
+
+![Invoices](../images/invoices.png)
+
+1. Pick the period (**Today**, **Week**, **This month**, **From – to**) or type in the search box. A search looks through **all dates**.
+2. Search by **bill number** (e.g. `INV-000012`), the **person's name or phone**, or part of a phone's **IMEI**. Tap **Scan** to read the IMEI barcode.
+3. Narrow it down: **Sales / Purchases / Returns / Repairs**, and **Udhaar left / Paid / In repair / Returned / Cancelled**.
+4. The two boxes at the top add up what is still **to get** from customers and still **to pay** dealers for the bills in the list.
+5. Tap a bill to open it. Print the receipt from there. A return opens the sale or purchase it belongs to.
+
+**Example:** a customer comes back a month later with a Galaxy A54 and says "I bought it here". Type the last 6 digits of its IMEI: the sale bill (and any repair of that phone) appears with the date, the price and whether udhaar is left.
+
 ## 21. Common problems
 
 **The Scan button does not read the IMEI.**

@@ -734,6 +734,20 @@ Sirf product ke maalik (OOP Solutions) ke liye. **Mazeed → Super admin** (doos
 
 ---
 
+## 20a. Invoices / Bill: koi bhi bill dhoondein
+
+**Home → Bill** (ya **Mazeed → Invoices / Bill**) par dukaan ka har bill ek list mein hai: sale, khareed (sirf malik aur manager ko), wapsi aur repair. Naya bill sab se upar.
+
+![Invoices](../images/invoices.png)
+
+1. Muddat chunein (**Aaj**, **Hafta**, **Is mahine**, **From – to**) ya search box mein likhein. Search **saari tareekhon** mein dhoondta hai.
+2. **Bill number** (maslan `INV-000012`), **gahak ka naam ya phone**, ya mobile ke **IMEI** ka hissa likhein. IMEI ka barcode parhne ke liye **Scan** dabayein.
+3. Mazeed chhantein: **Sale / Khareed / Wapsi / Repair**, aur **Udhaar baqi / Ada ho gaya / Repair mein / Wapis / Cancel**.
+4. Upar ke do dabbe batate hain ke list ke billon par gahakon se **abhi kitne lene hain** aur dealers ko **abhi kitne dene hain**.
+5. Bill par tap karein to woh khul jata hai; raseed wahan se print karein. Wapsi ka bill us sale ya khareed par le jata hai jis ki wapsi hai.
+
+**Misaal:** ek gahak mahine baad Galaxy A54 le kar aata hai aur kehta hai "yahin se liya tha". IMEI ke aakhri 6 hindse likhein: sale ka bill (aur us phone ki koi repair) tareekh, qeemat aur baqi udhaar ke saath saamne aa jata hai.
+
 ## 21. Aam masle
 
 **Scan se IMEI nahi parha ja raha.**

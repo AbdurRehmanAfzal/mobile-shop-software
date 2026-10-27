@@ -1,10 +1,10 @@
-import datetime as dt
 import uuid
 from decimal import Decimal
 
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
+from app.core.clock import today as shop_today
 from app.core.errors import Conflict, NotFound, ValidationFailed
 from app.db.base import ZERO
 from app.modules.accessories.models import Accessory, AccessoryMovement
@@ -258,7 +258,7 @@ def pending_items(db: Session, shop_id: uuid.UUID) -> list[dict]:
         .order_by(DeviceAccessoryItem.expected_at, DeviceAccessoryItem.promised_to_customer_at)
     ).all()
     out = []
-    today = dt.date.today()
+    today = shop_today()
     for item, device in rows:
         b, m = db.get(Brand, device.brand_id), db.get(Model, device.model_id)
         party = (
@@ -305,7 +305,7 @@ def deliver_pending(
     elif item.pending_from == "shop":
         item.given_at_sale = True
     item.pending_from = "none"
-    item.delivered_at = dt.date.today()
+    item.delivered_at = shop_today()
     record_audit(
         db,
         shop_id=shop_id,
