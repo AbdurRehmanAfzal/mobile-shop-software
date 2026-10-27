@@ -5,6 +5,7 @@ import { CheckCircle2, MessageCircle, Plus, Store } from 'lucide-react'
 import { useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import { PhoneInput, isMobileOk } from '@/components/FieldInputs'
 import { BtnText, Empty, ErrorText, Loading, PageHeader, SearchBox, Sheet, fmtDate } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { normalisePhone } from '@/lib/format'
@@ -89,7 +90,7 @@ export default function AdminPage() {
             <BiInput label="auth.shopName" value={f.shop_name} onChange={set('shop_name')} />
             <BiInput label="auth.city" value={f.city} onChange={set('city')} />
             <BiInput label="admin.ownerName" value={f.owner_name} onChange={set('owner_name')} />
-            <BiInput label="admin.ownerPhone" type="tel" inputMode="numeric" placeholder="03001234567" value={f.phone} onChange={set('phone')} />
+            <PhoneInput label="admin.ownerPhone" value={f.phone} onChange={(phone) => setF({ ...f, phone })} />
             <BiInput label="admin.password" value={f.password} onChange={set('password')} minLength={6} />
             <BiLabel text="admin.language" size="md" tone="text-muted" />
             <BiSegmented<'ur' | 'en'> value={f.locale} onChange={(locale) => setF({ ...f, locale })} options={[{ value: 'ur', text: { en: 'Urdu', ur: 'اردو', roman: 'Urdu' } }, { value: 'en', text: { en: 'English', ur: 'انگریزی', roman: 'English' } }]} />
@@ -99,7 +100,7 @@ export default function AdminPage() {
               icon={<Store size={20} />}
               full
               loading={create.isPending}
-              disabled={f.shop_name.trim().length < 2 || f.owner_name.trim().length < 2 || !f.phone || f.password.length < 6}
+              disabled={f.shop_name.trim().length < 2 || f.owner_name.trim().length < 2 || !isMobileOk(f.phone) || f.password.length < 6}
               onClick={async () => {
                 const shop = await create.mutateAsync(f)
                 setMade({ shop, password: f.password })

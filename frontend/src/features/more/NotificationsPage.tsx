@@ -1,6 +1,7 @@
 import { MessageCircle, Mail } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import { PhoneInput } from '@/components/FieldInputs'
 import { Chip, Empty, ErrorText, List, PageHeader, Section, fmtDate } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useDocMutation, useMessages, useNotificationSettings } from '@/lib/queries'
@@ -44,7 +45,7 @@ export default function NotificationsPage() {
     <div className="flex flex-col gap-4">
       <PageHeader title="notif.title" />
       <Section title="notif.toOwner">
-        <BiInput label="notif.ownerWhatsapp" type="tel" inputMode="numeric" value={s.owner_whatsapp ?? ''} onChange={(e) => setS({ ...s, owner_whatsapp: e.target.value || null })} />
+        <PhoneInput label="notif.ownerWhatsapp" value={s.owner_whatsapp ?? ''} onChange={(v) => setS({ ...s, owner_whatsapp: v || null })} />
         <BiInput label="notif.ownerEmail" type="email" value={s.owner_email ?? ''} onChange={(e) => setS({ ...s, owner_email: e.target.value || null })} />
         <div className="card divide-y divide-line p-0">
           <Toggle k="owner_on_sale_whatsapp" label={`${pick('notif.onSale')} · ${W}`} s={s} set={set} />

@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import { ImeiInput } from '@/components/FieldInputs'
 import { Chip } from '@/components/ui'
 import { uid } from '@/lib/id'
 import { toLatinDigits } from '@/lib/format'
@@ -95,7 +96,9 @@ export default function DeviceLineSheet({ initial, onSave, edit = false }: { ini
 
   const inStockBlock = lookup?.found && lookup.device && !['sold', 'returned_to_supplier'].includes(lookup.device.status)
   const needsSim = d.pta_status === 'non_pta' || d.pta_status === 'jv'
-  const valid = imeiDigits.length === 15 && d.brand_id && d.model_id && (edit || d.cost !== '') && (!needsSim || d.sim_time_months !== '') && (d.condition !== 'patched' || d.patch_details) && !inStockBlock
+  // owner: the price you will sell at may not be lower than what you paid
+  const askingLow = !edit && d.asking_price !== '' && d.cost !== '' && Number(d.asking_price) < Number(d.cost)
+  const valid = !askingLow && imeiDigits.length === 15 && d.brand_id && d.model_id && (edit || d.cost !== '') && (!needsSim || d.sim_time_months !== '') && (d.condition !== 'patched' || d.patch_details) && !inStockBlock
 
   const toggleAcc = (kind: AccessoryItem['kind'], field: 'came_with' | 'pending_vendor') => {
     const existing = d.accessories.find((a) => a.kind === kind)
@@ -112,7 +115,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false }: { ini
 
   return (
     <div className="flex flex-col gap-3">
-      <BiInput label="stock.imei" disabled={edit} inputMode="numeric" placeholder={t('stock.imeiPlaceholder')} value={d.imei1} onChange={(e) => set('imei1', e.target.value)} maxLength={20} autoFocus={!initial.imei1} />
+      <ImeiInput label="stock.imei" disabled={edit} placeholder={t('stock.imeiPlaceholder')} value={d.imei1} onChange={(v) => set('imei1', v)} autoFocus={!initial.imei1} />
       {imeiDigits.length === 15 && lookup ? (
         <div className="flex flex-wrap gap-1.5">
           {!lookup.luhn_ok ? <Chip text="stock.luhnBad" tone="warn" /> : null}
@@ -120,7 +123,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false }: { ini
           {inStockBlock ? <Chip text={`stock.status.${lookup.device!.status}`} tone="bad" /> : null}
         </div>
       ) : null}
-      <BiInput label="stock.imei2" inputMode="numeric" value={d.imei2} onChange={(e) => set('imei2', e.target.value)} maxLength={20} />
+      <ImeiInput label="stock.imei2" value={d.imei2} onChange={(v) => set('imei2', v)} />
 
       <div>
         <BiLabel text="stock.brand" size="md" tone="text-muted" className="mb-1.5" />
@@ -210,7 +213,9 @@ export default function DeviceLineSheet({ initial, onSave, edit = false }: { ini
               label="catalogue.newColour"
               placeholder="catalogue.namePh"
               onAdd={async (name) => {
-                const c = await cat.add<Colour>('colours', { name })
+                // now that the list is long, a colour typed again is simply picked
+                const have = colours?.find((c) => c.name.toLowerCase() === name.trim().toLowerCase())
+                const c = have ?? (await cat.add<Colour>('colours', { name }))
                 set('colour_id', c.id)
               }}
             />
@@ -227,9 +232,9 @@ export default function DeviceLineSheet({ initial, onSave, edit = false }: { ini
       {needsSim ? <BiInput label="stock.simTime" type="number" inputMode="numeric" min={0} max={60} value={d.sim_time_months} onChange={(e) => set('sim_time_months', e.target.value)} required /> : null}
 
       {edit ? null : (
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 items-start gap-2">
         <BiInput label="purchase.cost" type="number" inputMode="decimal" min={0} value={d.cost} onChange={(e) => set('cost', e.target.value)} required />
-        <BiInput label="stock.asking" type="number" inputMode="decimal" min={0} value={d.asking_price} onChange={(e) => set('asking_price', e.target.value)} />
+        <BiInput label="stock.asking" type="number" inputMode="decimal" min={0} value={d.asking_price} onChange={(e) => set('asking_price', e.target.value)} error={askingLow ? 'field.askingBelowCost' : null} />
       </div>
       )}
       <BiInput label={{ en: 'Warranty (months)', ur: 'وارنٹی (مہینے)' }} type="number" inputMode="numeric" min={0} max={60} value={d.warranty_months} onChange={(e) => set('warranty_months', e.target.value)} />

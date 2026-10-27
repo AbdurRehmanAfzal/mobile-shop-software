@@ -67,10 +67,10 @@ def test_duplicate_names_are_conflicts_case_insensitive(db, owner):
 def test_storages_and_colours(db, owner):
     seed_catalogue(db)
     st = owner.get("/api/v1/catalogue/storages").json()
-    assert [s["name"] for s in st][:3] == ["4MB", "32GB", "64GB"]
+    assert [s["name"] for s in st][:3] == ["4MB", "16GB", "32GB"]
     co = owner.get("/api/v1/catalogue/colours").json()
     assert any(c["name"] == "Black" and c["name_ur"] == "سیاہ" for c in co)
-    r = owner.post("/api/v1/catalogue/colours", json={"name": "Lavender", "hex": "#B57EDC"})
+    r = owner.post("/api/v1/catalogue/colours", json={"name": "Peach", "hex": "#FFCBA4"})
     assert r.status_code == 201
     r = owner.post("/api/v1/catalogue/colours", json={"name": "Bad", "hex": "purple"})
     assert r.status_code == 422
@@ -116,7 +116,7 @@ def test_rename_and_delete_own_rows(db, owner, other_owner):
         f"/api/v1/catalogue/storages/{st['id']}", json={"name": "96GB", "gigabytes": 96}
     )
     assert r.json()["gigabytes"] == 96
-    co = owner.post("/api/v1/catalogue/colours", json={"name": "Mint"}).json()
+    co = owner.post("/api/v1/catalogue/colours", json={"name": "Sand"}).json()
     assert owner.delete(f"/api/v1/catalogue/colours/{co['id']}").status_code == 204
     assert all(c["id"] != co["id"] for c in owner.get("/api/v1/catalogue/colours").json())
 

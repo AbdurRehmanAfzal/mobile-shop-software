@@ -14,6 +14,13 @@ class DeviceLineIn(BaseModel):
     asking_price: Decimal | None = Field(default=None, ge=0)
     accessories: list[AccessoryItemIn] = Field(default_factory=list)
 
+    @model_validator(mode="after")
+    def _asking_not_below_cost(self):
+        # owner: the price you will sell at may not be lower than what you paid
+        if self.asking_price is not None and self.asking_price < self.cost:
+            raise ValueError("Selling price cannot be less than the buying price")
+        return self
+
 
 class MiscLineIn(BaseModel):
     description: str = Field(min_length=1, max_length=200)

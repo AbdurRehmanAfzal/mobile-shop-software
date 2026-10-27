@@ -44,3 +44,13 @@ export function isoDay(offset = 0, from = new Date()): string {
   const d = new Date(from.getFullYear(), from.getMonth(), from.getDate() + offset)
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
+
+/** Owner (2026-10-27): "from" may never be after "to", and neither may be after today.
+ *  The date that was just moved gives way: a "from" past "to" becomes "to", and the other way round. */
+export function clampRange(from: string, to: string, moved: 'from' | 'to' = 'from'): { from: string; to: string } {
+  const today = isoDay(0)
+  const f = from > today ? today : from
+  const t = to > today ? today : to
+  if (f <= t) return { from: f, to: t }
+  return moved === 'from' ? { from: t, to: t } : { from: f, to: f }
+}

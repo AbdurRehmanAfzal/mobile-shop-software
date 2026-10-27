@@ -2,10 +2,11 @@
  *  → done. Customer is asked only for udhaar; discount, warranty and box/charger sit behind
  *  "more options" so the everyday sale stays three taps. */
 
-import { Banknote, BookOpen, Check, FileText, Headphones, Plus, Printer, Receipt, ShieldAlert, ShieldCheck, SlidersHorizontal, Smartphone, Trash2, UserCheck, Wallet } from 'lucide-react'
+import { Banknote, BookOpen, Check, FileText, Headphones, Plus, Printer, Receipt, ShieldAlert, ShieldCheck, SlidersHorizontal, Smartphone, Trash2, TriangleAlert, UserCheck, Wallet } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import { isoDay } from '@/lib/format'
 import PartyPicker from '@/components/PartyPicker'
 import { BtnText, Chip, ErrorText, IconChip, List, PageHeader, SearchBox, Sheet, Stepper } from '@/components/ui'
 import { uid } from '@/lib/id'
@@ -51,6 +52,7 @@ export default function SaleWizard() {
   const [party, setParty] = useState<Party | null>(null)
   const [paidNow, setPaidNow] = useState('')
   const [overrideReason, setOverrideReason] = useState('')
+  const [lossOk, setLossOk] = useState(false)
   const [result, setResult] = useState<Invoice | null>(null)
   const { data: stock } = useDevices({ status: 'in_stock', q: q || undefined })
   const { data: accounts } = useCashAccounts()
@@ -78,7 +80,11 @@ export default function SaleWizard() {
   const checkOk = (!pendingLine || !!overrideReason) && (!flaggedLine || (manager && overrideReason.trim().length >= 3))
   const notSellableErr = m.error instanceof ApiError && (m.error.code === 'not_sellable' || m.error.code === 'device_flagged')
   const cashId = accounts?.find((a) => a.is_default)?.id ?? accounts?.[0]?.id
-  const canSave = checkOk && total > 0 && !!pay && (!udhaar || !!party) && lines.every((l) => Number(l.price) > 0) && misc.every((x) => x.description.trim() && Number(x.unit_price) > 0)
+  // owner: no selling below the buying price; only the owner/manager may, after saying so
+  // (the buying price is only sent to them; for others the server refuses with below_cost)
+  const belowCost = (l: Line) => l.device.cost_price != null && l.price !== '' && Number(l.price) < Number(l.device.cost_price)
+  const lossLine = lines.some(belowCost)
+  const canSave = (!lossLine || (manager && lossOk)) && checkOk && total > 0 && !!pay && (!udhaar || !!party) && lines.every((l) => Number(l.price) > 0) && misc.every((x) => x.description.trim() && Number(x.unit_price) > 0)
 
   function pickDevice(d: Device) {
     setLines((ls) => (ls.some((l) => l.device.id === d.id) ? ls : [...ls, newLine(d)]))
@@ -95,6 +101,7 @@ export default function SaleWizard() {
       paid,
       cash_account_id: pay?.kind === 'account' ? pay.id : cashId,
       override_reason: overrideReason || undefined,
+      below_cost_ok: lossLine && lossOk,
     })
     setResult(res)
     setStep(2)
@@ -142,6 +149,19 @@ export default function SaleWizard() {
                 <BtnText k={'crud.delete'} /></button>
               </div>
               <BiInput label="counter.soldFor" type="number" inputMode="numeric" min={0} value={l.price} onChange={(e) => setLines(lines.map((x) => (x.device.id === l.device.id ? { ...x, price: e.target.value } : x)))} className="num text-2xl" />
+              {belowCost(l) ? (
+                <div className="flex flex-col gap-2 rounded-2xl bg-expense p-3 text-expense-fg">
+                  <div className="flex items-start gap-2">
+                    <TriangleAlert size={20} className="mt-0.5 shrink-0" />
+                    <span className={`font-semibold ${cls('sm')}`}>{pick('field.belowCost').replace('{{cost}}', `Rs. ${Number(l.device.cost_price).toLocaleString('en-US')}`)}</span>
+                  </div>
+                  {manager ? (
+                    <button type="button" aria-pressed={lossOk} onClick={() => setLossOk(!lossOk)} className={chip(lossOk)}><Check size={20} />{pick('field.belowCostOk')}</button>
+                  ) : (
+                    <BiLabel text="field.belowCostBlocked" size="sm" bold tone="text-current" />
+                  )}
+                </div>
+              ) : null}
               {more ? <div><IconChip icon={<SlidersHorizontal size={18} />} text="counter.moreOptions" onClick={() => setEditing(l)} /></div> : null}
             </div>
           ))}
@@ -283,7 +303,7 @@ function LineEditor({ line, onSave }: { line: Line; onSave: (l: Line) => void })
                   {pick('stock.accPendingShop')}
                 </button>
               </div>
-              {pend ? <input type="date" value={pend.promised_at} onChange={(e) => setL({ ...l, pending: l.pending.map((p) => (p.kind === k ? { ...p, promised_at: e.target.value } : p)) })} className="min-h-10 rounded-xl border border-line bg-surface px-3 text-sm" /> : null}
+              {pend ? <input type="date" min={isoDay(0)} value={pend.promised_at} onChange={(e) => setL({ ...l, pending: l.pending.map((p) => (p.kind === k ? { ...p, promised_at: e.target.value } : p)) })} className="min-h-10 rounded-xl border border-line bg-surface px-3 text-sm" /> : null}
             </div>
           )
         })}

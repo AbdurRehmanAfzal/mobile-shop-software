@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BiButton, BiInput, BiLabel } from '@/components/Bilingual'
+import { BiButton, BiLabel } from '@/components/Bilingual'
+import { ImeiInput } from '@/components/FieldInputs'
 import { Chip } from '@/components/ui'
 import { toLatinDigits } from '@/lib/format'
 import { useImeiLookup } from '@/lib/queries'
@@ -13,7 +14,7 @@ export default function ImeiLookupSheet({ onOpenDevice, onBuy }: { onOpenDevice:
   const { data, isFetching } = useImeiLookup(digits)
   return (
     <div className="flex flex-col gap-3">
-      <BiInput label="stock.imei" inputMode="numeric" placeholder={t('stock.imeiPlaceholder')} value={imei} onChange={(e) => setImei(e.target.value)} autoFocus maxLength={20} />
+      <ImeiInput label="stock.imei" placeholder={t('stock.imeiPlaceholder')} value={imei} onChange={setImei} autoFocus />
       <div className="text-xs text-muted" dir="ltr">
         {digits.length}/15
       </div>

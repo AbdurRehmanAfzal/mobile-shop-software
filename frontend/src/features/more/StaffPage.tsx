@@ -1,6 +1,7 @@
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import { PhoneInput } from '@/components/FieldInputs'
 import { BtnText, Chip, ErrorText, List, PageHeader, Row, Sheet } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useDocMutation, useGet } from '@/lib/queries'
@@ -32,7 +33,7 @@ export default function StaffPage() {
       <Sheet open={adding} onClose={() => setAdding(false)} title="staff.new">
         <div className="flex flex-col gap-3">
           <BiInput label="staff.name" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} />
-          <BiInput label="staff.phone" type="tel" inputMode="numeric" value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} />
+          <PhoneInput label="staff.phone" value={f.phone} onChange={(phone) => setF({ ...f, phone })} />
           <BiInput label="staff.password" type="password" value={f.password} onChange={(e) => setF({ ...f, password: e.target.value })} minLength={6} />
           <BiInput label="staff.pin" inputMode="numeric" maxLength={6} value={f.pin} onChange={(e) => setF({ ...f, pin: e.target.value })} />
           <BiLabel text="staff.role" size="md" tone="text-muted" />

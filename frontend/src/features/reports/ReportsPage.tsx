@@ -6,7 +6,7 @@ import DownloadButton from '@/components/DownloadButton'
 import { useState, type ReactNode } from 'react'
 import { BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import { Empty, Loading, PageHeader } from '@/components/ui'
-import { isoDay } from '@/lib/format'
+import { clampRange, isoDay } from '@/lib/format'
 import { useGet } from '@/lib/queries'
 
 interface Pnl { sales: string; cogs: string; gross_profit: string; repair_income: string; other_income: string; expenses: Record<string, string>; total_expenses: string; net_profit: string; owner_drawing: string; tax_collected: string }
@@ -73,8 +73,8 @@ export default function ReportsPage() {
           </div>
           {range === 'custom' ? (
             <div className="grid grid-cols-2 gap-2">
-              <input type="date" aria-label="from" value={custom.from} max={custom.to} onChange={(e) => e.target.value && setCustom({ ...custom, from: e.target.value })} className="h-12 rounded-2xl border border-line bg-surface px-3 font-bold" dir="ltr" />
-              <input type="date" aria-label="to" value={custom.to} min={custom.from} max={isoDay(0)} onChange={(e) => e.target.value && setCustom({ ...custom, to: e.target.value })} className="h-12 rounded-2xl border border-line bg-surface px-3 font-bold" dir="ltr" />
+              <input type="date" aria-label="from" value={custom.from} max={custom.to} onChange={(e) => e.target.value && setCustom(clampRange(e.target.value, custom.to, 'from'))} className="h-12 rounded-2xl border border-line bg-surface px-3 font-bold" dir="ltr" />
+              <input type="date" aria-label="to" value={custom.to} min={custom.from} max={isoDay(0)} onChange={(e) => e.target.value && setCustom(clampRange(custom.from, e.target.value, 'to'))} className="h-12 rounded-2xl border border-line bg-surface px-3 font-bold" dir="ltr" />
             </div>
           ) : null}
         </div>

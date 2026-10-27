@@ -39,6 +39,8 @@ class SaleCreate(BaseModel):
     cash_account_id: uuid.UUID | None = None
     notes: str | None = None
     override_reason: str | None = Field(default=None, max_length=500)
+    # owner/manager confirms a sale below the phone's buying price (a loss)
+    below_cost_ok: bool = False
 
     @model_validator(mode="after")
     def _lines(self):

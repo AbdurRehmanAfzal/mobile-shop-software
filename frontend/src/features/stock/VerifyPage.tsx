@@ -2,6 +2,7 @@ import { Camera, Check, ExternalLink } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { BiButton, BiInput, BiSegmented, useLang } from '@/components/Bilingual'
+import { CnicInput } from '@/components/FieldInputs'
 import PartyPicker from '@/components/PartyPicker'
 import { Chip, ErrorText, KV, Loading, PageHeader, Section, Sheet } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
@@ -93,7 +94,7 @@ export default function VerifyPage() {
 
       <Section title="verify.seller">
         <PartyPicker value={party} onChange={setParty} kind="customer" label="verify.seller" />
-        <BiInput label="verify.cnic" inputMode="numeric" placeholder="33100-1234567-1" value={f.cnic_no ?? party?.cnic ?? ''} onChange={(e) => set('cnic_no', e.target.value)} />
+        <CnicInput label="verify.cnic" value={f.cnic_no ?? party?.cnic ?? ''} onChange={(v) => set('cnic_no', v)} />
         <div className="grid grid-cols-3 gap-2">
           <PhotoTile label={pick('verify.cnicFront')} path={f.cnic_front_path ?? null} purpose="cnic" onPick={(p) => set('cnic_front_path', p)} />
           <PhotoTile label={pick('verify.cnicBack')} path={f.cnic_back_path ?? null} purpose="cnic" onPick={(p) => set('cnic_back_path', p)} />

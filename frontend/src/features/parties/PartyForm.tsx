@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import { CnicInput, PhoneInput } from '@/components/FieldInputs'
 import { ErrorText } from '@/components/ui'
 import { useCreateParty, useUpdateParty } from '@/lib/queries'
 import type { Party, PartyKind } from '@/lib/types'
@@ -43,8 +44,8 @@ export default function PartyForm({ party, defaultKinds = ['customer'], onDone }
   return (
     <form onSubmit={submit} className="flex flex-col gap-3">
       <BiInput label="party.name" value={f.name} onChange={set('name')} required minLength={2} />
-      <BiInput label="party.phone" type="tel" inputMode="numeric" placeholder="03001234567" value={f.phone} onChange={set('phone')} required />
-      <BiInput label="party.cnic" inputMode="numeric" placeholder="33100-1234567-1" value={f.cnic} onChange={set('cnic')} />
+      <PhoneInput label="party.phone" value={f.phone} onChange={(phone) => setF({ ...f, phone })} required />
+      <CnicInput label="party.cnic" value={f.cnic} onChange={(cnic) => setF({ ...f, cnic })} />
       <BiInput label="party.city" value={f.city} onChange={set('city')} />
       <BiInput label="party.address" value={f.address} onChange={set('address')} />
       <div>

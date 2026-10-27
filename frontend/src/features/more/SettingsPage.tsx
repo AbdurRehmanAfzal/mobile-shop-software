@@ -3,6 +3,7 @@
 import { Percent, Receipt, Store } from 'lucide-react'
 import { useEffect, useState, type ReactNode } from 'react'
 import { BiButton, BiInput, BiLabel, BiSegmented } from '@/components/Bilingual'
+import { PhoneInput } from '@/components/FieldInputs'
 import { ErrorText, PageHeader } from '@/components/ui'
 import { get, patch } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
@@ -93,7 +94,7 @@ export default function SettingsPage() {
       <Card icon={<Store size={20} />} title="settings.shop">
         <BiInput label="settings.name" value={f.name} onChange={set('name')} />
         <BiInput label="settings.city" value={f.city} onChange={set('city')} />
-        <BiInput label="settings.phone" type="tel" inputMode="numeric" value={f.phone} onChange={set('phone')} />
+        <PhoneInput label="settings.phone" value={f.phone} onChange={(phone) => { setSaved(false); setF({ ...f, phone }) }} />
         <BiLabel text="settings.defaultLocale" size="md" tone="text-muted" />
         <BiSegmented value={f.default_locale} onChange={(v) => { setSaved(false); setF({ ...f, default_locale: v }) }} options={[{ value: 'ur', text: { en: 'Urdu', ur: 'اردو', roman: 'Urdu' } }, { value: 'en', text: { en: 'English', ur: 'انگریزی', roman: 'English' } }]} />
       </Card>

@@ -921,5 +921,16 @@
     "none": "No shops yet",
     "another": "Open another shop",
     "only": "Only you (the product owner) see this page"
+  },
+  "field": {
+    "badMobile": "Enter a 10-digit mobile number starting with 3, e.g. 300 1234567",
+    "badCnic": "CNIC must have exactly 13 digits",
+    "badImei": "IMEI must have exactly 15 digits",
+    "askingBelowCost": "Selling price cannot be less than the buying price",
+    "badRange": "The 'from' date must be on or before the 'to' date",
+    "futureDate": "This date has not come yet",
+    "belowCost": "This price is below the buying price ({{cost}}). This is a loss.",
+    "belowCostOk": "I know - sell at a loss",
+    "belowCostBlocked": "Only the owner can sell below the buying price. Raise the price."
   }
 }

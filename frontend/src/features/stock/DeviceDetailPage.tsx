@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import { isoDay } from '@/lib/format'
 import RemoveSheet from '@/components/RemoveSheet'
 import { Chip, ErrorText, KV, Loading, MoneyText, PageHeader, Section, Sheet, fmtDate } from '@/components/ui'
 import { patch, post } from '@/lib/api'
@@ -82,6 +83,7 @@ export default function DeviceDetailPage() {
   // an old-stock entry typed by mistake can be removed while nothing but verification happened to it
   const opening = history?.find((e) => e.document_type === 'opening_stock')
   const canRemoveOpening = canSeeCost && inStock && !!opening && history!.every((e) => e.seq <= opening.seq || e.type === 'verified')
+  const priceLow = sheet === 'price' && d.cost_price != null && text !== '' && Number(text) < Number(d.cost_price)
 
   async function simple(type: string) {
     await ev.mutateAsync({ id: d!.id, type })
@@ -194,7 +196,7 @@ export default function DeviceDetailPage() {
               </option>
             ))}
           </select>
-          <BiInput label="loan.expectedBack" type="date" value={expected} onChange={(e) => setExpected(e.target.value)} />
+          <BiInput label="loan.expectedBack" type="date" min={isoDay(0)} value={expected} onChange={(e) => setExpected(e.target.value)} />
           <BiInput label="common.notes" value={text} onChange={(e) => setText(e.target.value)} />
           <ErrorText error={loanM.error} />
           <BiButton
@@ -248,12 +250,14 @@ export default function DeviceDetailPage() {
         }}
       />
 
+      {/* the buying price is only sent to the owner/manager; the server checks it for everyone */}
       <Sheet open={sheet === 'note' || sheet === 'price'} onClose={() => setSheet(null)} title={sheet === 'price' ? 'stock.changePrice' : 'stock.addNote'}>
         <div className="flex flex-col gap-3">
-          <BiInput label={sheet === 'price' ? 'stock.asking' : 'common.notes'} type={sheet === 'price' ? 'number' : 'text'} inputMode={sheet === 'price' ? 'decimal' : 'text'} value={text} onChange={(e) => setText(e.target.value)} autoFocus />
+          <BiInput label={sheet === 'price' ? 'stock.asking' : 'common.notes'} type={sheet === 'price' ? 'number' : 'text'} inputMode={sheet === 'price' ? 'decimal' : 'text'} value={text} onChange={(e) => setText(e.target.value)} autoFocus error={priceLow ? 'field.askingBelowCost' : null} />
           <BiButton
             text="common.save"
             full
+            disabled={priceLow}
             loading={ev.isPending}
             onClick={async () => {
               if (sheet === 'price') await patch(`/api/v1/devices/${d.id}`, { asking_price: Number(text) })

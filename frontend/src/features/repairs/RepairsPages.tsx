@@ -6,6 +6,7 @@ import { CheckCircle2, Clock, HandCoins, Phone, Plus, Printer, Receipt, SlidersH
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import { ImeiInput } from '@/components/FieldInputs'
 import PartyPicker from '@/components/PartyPicker'
 import { BtnText, Empty, ErrorText, fmtDate, IconChip, Loading, PageHeader, Section, Sheet } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
@@ -113,7 +114,7 @@ export function NewRepairPage() {
       </div>
       {more ? (
         <>
-          <BiInput label="repair.imei" inputMode="numeric" value={f.imei} onChange={set('imei')} maxLength={20} />
+          <ImeiInput label="repair.imei" value={f.imei} onChange={(imei) => setF({ ...f, imei })} />
           <BiLabel text="repair.received" size="md" tone="text-muted" />
           <div className="flex flex-wrap gap-1.5">
             {RECEIVED.map((x) => <button key={x} type="button" aria-pressed={received.includes(x)} onClick={() => toggle(received, x, setReceived)} className={chip(received.includes(x))}>{pick(`repair.acc.${x}`)}</button>)}

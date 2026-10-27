@@ -122,3 +122,45 @@ def test_seller_can_skip_a_pending_check_at_sale_but_not_a_flag(client, owner, c
         },
     )
     assert r.status_code == 409 and r.json()["error"]["code"] == "device_flagged"
+
+
+def test_selling_price_not_below_buying_price(client, owner, cat):
+    """Owner (2026-10-27): the sell price may not be below the buying price."""
+    # asking price below cost is refused when the phone is entered
+    r = owner.post(
+        "/api/v1/devices/opening-stock",
+        json={
+            "imei1": A,
+            "brand_id": cat["brand"]["id"],
+            "model_id": cat["model"]["id"],
+            "condition": "box_pack",
+            "pta_status": "pta_approved",
+            "cost_price": 1000,
+            "asking_price": 900,
+        },
+    )
+    assert r.status_code == 422
+    d = _stock(owner, cat, imei=A, condition="box_pack", cost_price=1000, asking_price=1200)
+    # changing the price later is checked too
+    assert owner.patch(f"/api/v1/devices/{d['id']}", json={"asking_price": 800}).status_code == 422
+    body = {"devices": [{"device_id": d["id"], "price": 900}], "paid": 900}
+    # a salesman cannot sell at a loss, even when asking for it
+    s = _salesman(client, owner, phone="03451112299")
+    r = s.post("/api/v1/sales", json={**body, "below_cost_ok": True})
+    assert r.status_code == 409 and r.json()["error"]["code"] == "below_cost"
+    # the owner must confirm the loss
+    r = owner.post("/api/v1/sales", json=body)
+    assert r.status_code == 409 and r.json()["error"]["code"] == "below_cost"
+    r = owner.post("/api/v1/sales", json={**body, "below_cost_ok": True})
+    assert r.status_code == 201, r.text
+
+
+def test_from_date_after_to_date_is_refused(owner):
+    r = owner.get(
+        "/api/v1/reports/day", params={"date_from": "2026-10-10", "date_to": "2026-10-01"}
+    )
+    assert r.status_code == 422 and r.json()["error"]["code"] == "bad_date_range"
+    r = owner.get(
+        "/api/v1/reports/profit-loss", params={"date_from": "2026-10-10", "date_to": "2026-10-01"}
+    )
+    assert r.status_code == 422

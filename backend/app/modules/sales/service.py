@@ -107,6 +107,14 @@ def create_sale(
                 db.refresh(device)
             else:
                 raise
+        # owner: no selling below the buying price, unless the owner/manager confirms the loss
+        below_cost = device.cost_price is not None and money(dl.price) < device.cost_price
+        if below_cost and not (data.below_cost_ok and ctx.can(Cap.VIEW_COST)):
+            raise Conflict(
+                code="below_cost",
+                message_en="This price is below the buying price. Only the owner can sell at a loss.",
+                message_ur="یہ قیمت خرید قیمت سے کم ہے۔ نقصان پر صرف مالک بیچ سکتا ہے۔",
+            )
         devices.append(device)
 
     # ---- money ------------------------------------------------------------------

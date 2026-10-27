@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useLang } from '@/components/Bilingual'
-import { isoDay } from '@/lib/format'
+import { clampRange, isoDay } from '@/lib/format'
 
 export interface Period { from: string; to: string }
 type Kind = 'today' | 'yesterday' | 'week' | 'month' | 'custom'
@@ -58,9 +58,9 @@ export default function PeriodPicker({ value, onChange, size = 'md' }: { value: 
       </div>
       {custom ? (
         <div className="flex items-center gap-2" dir="ltr">
-          <input type="date" aria-label="from" value={value.from} max={value.to} onChange={(e) => e.target.value && onChange({ ...value, from: e.target.value })} className={date} />
+          <input type="date" aria-label="from" value={value.from} max={value.to} onChange={(e) => e.target.value && onChange(clampRange(e.target.value, value.to))} className={date} />
           <span className="text-muted">→</span>
-          <input type="date" aria-label="to" value={value.to} min={value.from} max={isoDay(0)} onChange={(e) => e.target.value && onChange({ ...value, to: e.target.value })} className={date} />
+          <input type="date" aria-label="to" value={value.to} min={value.from} max={isoDay(0)} onChange={(e) => e.target.value && onChange(clampRange(value.from, e.target.value, 'to'))} className={date} />
         </div>
       ) : null}
     </div>

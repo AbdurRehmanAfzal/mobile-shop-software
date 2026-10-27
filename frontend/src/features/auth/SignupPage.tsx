@@ -4,6 +4,7 @@ import { ApiError, post } from '@/lib/api'
 import { useAuth, type MeOut } from '@/lib/auth'
 import { isValidPkMobile, normalisePhone } from '@/lib/format'
 import { BiAlert, BiButton, BiInput, BiLabel } from '@/components/Bilingual'
+import { PhoneInput } from '@/components/FieldInputs'
 import AuthLayout from './AuthLayout'
 import { rememberLogin } from './LoginPage'
 
@@ -61,15 +62,7 @@ export default function SignupPage() {
         <BiInput label="auth.shopName" value={form.shop_name} onChange={set('shop_name')} required minLength={2} />
         <BiInput label="auth.ownerName" value={form.owner_name} onChange={set('owner_name')} required minLength={2} />
         <BiInput label="auth.city" value={form.city} onChange={set('city')} />
-        <BiInput
-          label="auth.phone"
-          type="tel"
-          inputMode="numeric"
-          placeholder="03001234567"
-          value={form.phone}
-          onChange={set('phone')}
-          required
-        />
+        <PhoneInput label="auth.phone" value={form.phone} onChange={(phone) => setForm({ ...form, phone })} required />
         <BiInput
           label="auth.password"
           type="password"

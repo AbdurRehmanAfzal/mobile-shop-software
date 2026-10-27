@@ -4,6 +4,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
+from app.core.errors import ValidationFailed
 from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx, require_cap
 from app.modules.reports import service
@@ -25,7 +26,18 @@ def _money(v):
 
 def _range(date_from: dt.date | None, date_to: dt.date | None) -> tuple[dt.date, dt.date]:
     today = dt.date.today()
-    return date_from or today.replace(day=1), date_to or today
+    d_from, d_to = date_from or today.replace(day=1), date_to or today
+    _check_range(d_from, d_to)
+    return d_from, d_to
+
+
+def _check_range(d_from: dt.date, d_to: dt.date) -> None:
+    if d_from > d_to:
+        raise ValidationFailed(
+            code="bad_date_range",
+            message_en="The 'from' date must be on or before the 'to' date",
+            message_ur="شروع کی تاریخ آخری تاریخ سے پہلے ہونی چاہیے",
+        )
 
 
 @router.get("/dashboard")
@@ -74,6 +86,7 @@ def day(
     """Hisaab of a day (`date`, default today) or a period (`date_from`..`date_to`: week, month,
     from-to); profit only with VIEW_COST."""
     d_from = date_from or date or dt.date.today()
+    _check_range(d_from, date_to or d_from)
     return _money(
         service.day_report(db, ctx.shop_id, d_from, ctx.can(Cap.VIEW_COST), date_to or d_from)
     )

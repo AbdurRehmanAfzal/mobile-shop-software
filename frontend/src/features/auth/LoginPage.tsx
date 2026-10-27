@@ -4,6 +4,7 @@ import { ApiError, post } from '@/lib/api'
 import { useAuth, type MeOut } from '@/lib/auth'
 import { isValidPkMobile, normalisePhone, toLatinDigits } from '@/lib/format'
 import { BiAlert, BiButton, BiInput, BiLabel, type BiText } from '@/components/Bilingual'
+import { PhoneInput } from '@/components/FieldInputs'
 import AuthLayout from './AuthLayout'
 
 interface AuthResponse {
@@ -112,7 +113,7 @@ export default function LoginPage() {
   return (
     <AuthLayout title="auth.login">
       <form onSubmit={submitPassword} className="flex flex-col gap-4">
-        <BiInput label="auth.phone" type="tel" inputMode="numeric" autoComplete="tel" placeholder="03001234567" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+        <PhoneInput label="auth.phone" value={phone} onChange={setPhone} required />
         <BiInput label="auth.password" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         {error ? <BiAlert text={error} /> : null}
         <BiButton type="submit" text="auth.login" full loading={busy} />

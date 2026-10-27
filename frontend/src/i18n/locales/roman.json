@@ -921,5 +921,16 @@
     "none": "Abhi koi dukaan nahi",
     "another": "Ek aur dukaan kholein",
     "only": "Yeh page sirf aap (product ke maalik) ko nazar aata hai"
+  },
+  "field": {
+    "badMobile": "3 se shuru hone wala 10 hindson ka mobile number likhein, maslan 300 1234567",
+    "badCnic": "Shanakhti card mein poore 13 hindse hone chahiyein",
+    "badImei": "IMEI mein poore 15 hindse hone chahiyein",
+    "askingBelowCost": "Bechne ki qeemat khareed qeemat se kam nahi ho sakti",
+    "badRange": "Shuru ki tareekh aakhri tareekh se pehle honi chahiye",
+    "futureDate": "Yeh tareekh abhi aayi nahi",
+    "belowCost": "Yeh qeemat khareed qeemat ({{cost}}) se kam hai. Is mein nuqsan hai.",
+    "belowCostOk": "Mujhe pata hai, nuqsan par bechein",
+    "belowCostBlocked": "Khareed qeemat se kam par sirf malik bech sakta hai. Qeemat barhaein."
   }
 }

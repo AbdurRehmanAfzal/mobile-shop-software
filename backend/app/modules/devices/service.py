@@ -392,6 +392,12 @@ def update_device(
         setattr(device, k, v)
     if device.pta_status in (PtaStatus.NON_PTA, PtaStatus.JV) and device.sim_time_months is None:
         raise ValidationFailed(code="sim_time_required")
+    if asking is not None and device.cost_price is not None and money(asking) < device.cost_price:
+        raise ValidationFailed(
+            code="asking_below_cost",
+            message_en="Selling price cannot be less than the buying price",
+            message_ur="بیچنے کی قیمت خرید قیمت سے کم نہیں ہو سکتی",
+        )
     if asking is not None and money(asking) != (device.asking_price or Decimal(-1)):
         apply_event(
             db,
