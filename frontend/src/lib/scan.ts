@@ -1,7 +1,6 @@
 /** Reading IMEI barcodes (box label, *#06# screen). A box has several barcodes (IMEI 1, IMEI 2, EAN,
  *  serial), so every code found is kept and only 15-digit numbers that pass the IMEI check count. */
 
-import type { Result } from '@zxing/library'
 import { toLatinDigits } from './format'
 
 /** Luhn check, the same one the backend uses for IMEIs */
@@ -25,25 +24,58 @@ export function imeiFrom(text: string): string | null {
   return null
 }
 
-async function reader() {
-  const [{ BrowserMultiFormatReader }, { DecodeHintType }] = await Promise.all([import('@zxing/browser'), import('@zxing/library')])
-  // look harder: phone screens and box labels have thin bars
-  return new BrowserMultiFormatReader(new Map([[DecodeHintType.TRY_HARDER, true]]))
+type Reader = InstanceType<typeof import('@zxing/browser').BrowserMultiFormatReader>
+
+/** `hard`: zxing's slow, thorough mode, for a last try on the whole picture */
+async function reader(hard = false): Promise<Reader> {
+  const [{ BrowserMultiFormatReader }, { BarcodeFormat, DecodeHintType }] = await Promise.all([import('@zxing/browser'), import('@zxing/library')])
+  // IMEI barcodes are Code 128 (a few older boxes Code 39); looking only for those is much faster
+  const hints = new Map<number, unknown>([[DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.CODE_128, BarcodeFormat.CODE_39]]])
+  if (hard) hints.set(DecodeHintType.TRY_HARDER, true)
+  return new BrowserMultiFormatReader(hints as never)
 }
 
-/** Live camera (needs https or localhost). Calls onImei once and stops. */
+function decodeStrip(r: Reader, img: ImageBitmap, y: number, h: number, scale: number): string | null {
+  const c = document.createElement('canvas')
+  c.width = Math.round(img.width * scale)
+  c.height = Math.round(Math.min(h, img.height - y) * scale)
+  c.getContext('2d')!.drawImage(img, 0, y, img.width, c.height / scale, 0, 0, c.width, c.height)
+  try {
+    return r.decodeFromCanvas(c).getText()
+  } catch {
+    return null // no code in this strip
+  }
+}
+
+/** Live camera (needs https or localhost): a frame every 1/3 s goes through the same strip reading as
+ *  a photo, so a label full of barcodes still gives the IMEI. Calls onImei once and stops. */
 export async function scanLive(video: HTMLVideoElement, onImei: (imei: string) => void): Promise<() => void> {
-  const r = await reader()
-  let done = false
-  const controls = await r.decodeFromConstraints({ video: { facingMode: 'environment' } }, video, (res?: Result) => {
-    const imei = res ? imeiFrom(res.getText()) : null
-    if (imei && !done) {
-      done = true
-      controls.stop()
-      onImei(imei)
+  const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false })
+  video.srcObject = stream
+  await video.play()
+  let stopped = false
+  let timer: number | undefined
+  const stop = () => {
+    stopped = true
+    window.clearTimeout(timer)
+    stream.getTracks().forEach((t) => t.stop())
+  }
+  const tick = async () => {
+    if (stopped) return
+    if (video.videoWidth) {
+      const frame = await createImageBitmap(video)
+      const found = await scanBitmap(frame, false)
+      frame.close()
+      if (found.length && !stopped) {
+        stop()
+        onImei(found[0])
+        return
+      }
     }
-  })
-  return () => controls.stop()
+    timer = window.setTimeout(tick, 330)
+  }
+  void tick()
+  return stop
 }
 
 export const canScanLive = () => typeof window !== 'undefined' && window.isSecureContext && !!navigator.mediaDevices?.getUserMedia
@@ -52,6 +84,15 @@ export const canScanLive = () => typeof window !== 'undefined' && window.isSecur
  *  each one a turn. Returns the IMEIs found (first = best guess). */
 export async function scanPhoto(file: File): Promise<string[]> {
   const img = await createImageBitmap(file)
+  try {
+    return await scanBitmap(img)
+  } finally {
+    img.close()
+  }
+}
+
+/** `thorough`: one last slow pass over the whole picture (photos; too slow for every video frame) */
+async function scanBitmap(img: ImageBitmap, thorough = true): Promise<string[]> {
   const found = new Set<string>()
   // the browser's own detector (Chrome on Android) finds every code at once
   const BD = (window as unknown as { BarcodeDetector?: new () => { detect: (s: ImageBitmap) => Promise<{ rawValue: string }[]> } }).BarcodeDetector
@@ -66,32 +107,23 @@ export async function scanPhoto(file: File): Promise<string[]> {
     }
   }
   if (!found.size) {
-    const r = await reader()
-    // small pictures (screenshots) are blown up 2x so each bar is wide enough to read
-    const scale = Math.min(Math.max(1, 1000 / img.width), 2, 1600 / Math.max(img.width, img.height))
-    const w = Math.round(img.width * scale)
-    const h = Math.round(img.height * scale)
-    const tries: [number, number][] = [[0, h]]
-    for (const parts of [4, 8]) {
-      const band = Math.round(h / parts)
-      for (let y = 0; y + band <= h; y += Math.round(band / 2)) tries.push([y, band])
+    const [fast, hard] = await Promise.all([reader(false), reader(true)])
+    // the picture is cut into thin strips, one barcode each (a label stacks EID, serial, IMEI 1, IMEI 2);
+    // narrow pictures are widened so each bar is wide enough to read
+    const scale = Math.min(2, Math.max(1, 1200 / img.width))
+    const band = Math.max(24, Math.round(img.height / 16))
+    for (let y = 0; y + band / 2 < img.height && found.size < 2; ) {
+      const text = decodeStrip(fast, img, y, band, scale)
+      const imei = text ? imeiFrom(text) : null
+      if (imei) found.add(imei)
+      // after a code is read, jump past it; otherwise slide half a strip
+      y += text ? band : Math.round(band / 2)
     }
-    for (const [y, bh] of tries) {
-      if (found.size >= 2) break // IMEI 1 and 2: nothing more to look for
-      const c = document.createElement('canvas')
-      c.width = w
-      c.height = bh
-      const g = c.getContext('2d')!
-      g.imageSmoothingEnabled = false
-      g.drawImage(img, 0, y / scale, img.width, bh / scale, 0, 0, w, bh)
-      try {
-        const imei = imeiFrom(r.decodeFromCanvas(c).getText())
-        if (imei) found.add(imei)
-      } catch {
-        /* no code in this strip */
-      }
+    if (!found.size && thorough) {
+      const text = decodeStrip(hard, img, 0, img.height, scale)
+      const imei = text ? imeiFrom(text) : null
+      if (imei) found.add(imei)
     }
   }
-  img.close()
   return [...found]
 }

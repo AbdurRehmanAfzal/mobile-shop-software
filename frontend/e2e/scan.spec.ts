@@ -1,12 +1,33 @@
 /** Owner (2026-10-27): scan the IMEI barcode into IMEI boxes; a phone photo on the ID check.
  *  On http (the shop's Wi-Fi link) the scan reads a photo, which the test hands over directly. */
 
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const fixture = (f: string) => path.join(path.dirname(fileURLToPath(import.meta.url)), 'fixtures', f)
+/** several barcode pictures one under another on white, like a box label */
+async function stack(page: Page, files: string[], gap: number): Promise<Buffer> {
+  const parts = files.map((f) => `data:image/png;base64,${fs.readFileSync(fixture(f)).toString('base64')}`)
+  const b64 = await page.evaluate(
+    async ([srcs, gap]) => {
+      const imgs = await Promise.all((srcs as string[]).map((src) => new Promise<HTMLImageElement>((ok) => { const i = new Image(); i.onload = () => ok(i); i.src = src })))
+      const c = document.createElement('canvas')
+      c.width = Math.max(...imgs.map((i) => i.width)) + 80
+      c.height = imgs.reduce((h, i) => h + i.height + (gap as number), gap as number)
+      const g = c.getContext('2d')!
+      g.fillStyle = '#fff'
+      g.fillRect(0, 0, c.width, c.height)
+      let y = gap as number
+      for (const i of imgs) { g.drawImage(i, 40, y); y += i.height + (gap as number) }
+      return c.toDataURL('image/png').split(',')[1]
+    },
+    [parts, gap] as const,
+  )
+  return Buffer.from(b64, 'base64')
+}
+
 const phone = () => `039${Math.floor(10_000_000 + Math.random() * 89_999_999)}`
 
 test('scan an IMEI barcode from a photo into the add-device form', async ({ page }) => {
@@ -33,24 +54,18 @@ test('scan an IMEI barcode from a photo into the add-device form', async ({ page
   await expect(page.getByLabel('IMEI', { exact: true })).toHaveValue('490154203237518', { timeout: 20_000 })
 
   // a box label: shop barcode + IMEI 1 + IMEI 2 in one photo -> both IMEIs offered
-  const parts = ['label-ean.png', 'imei-one.png', 'label-imei2.png'].map((f) => `data:image/png;base64,${fs.readFileSync(fixture(f)).toString('base64')}`)
-  const label = await page.evaluate(async (srcs) => {
-    const imgs = await Promise.all(srcs.map((src) => new Promise<HTMLImageElement>((ok) => { const i = new Image(); i.onload = () => ok(i); i.src = src })))
-    const c = document.createElement('canvas')
-    c.width = Math.max(...imgs.map((i) => i.width)) + 80
-    c.height = imgs.reduce((h, i) => h + i.height + 60, 60)
-    const g = c.getContext('2d')!
-    g.fillStyle = '#fff'
-    g.fillRect(0, 0, c.width, c.height)
-    let y = 60
-    for (const i of imgs) { g.drawImage(i, 40, y); y += i.height + 60 }
-    return c.toDataURL('image/png').split(',')[1]
-  }, parts)
+  const label = (await stack(page, ['label-ean.png', 'imei-one.png', 'label-imei2.png'], 60)).toString('base64')
   await page.getByTestId('scan-photo').nth(1).setInputFiles({ name: 'label.png', mimeType: 'image/png', buffer: Buffer.from(label, 'base64') })
   await expect(page.getByText('Which IMEI?')).toBeVisible({ timeout: 20_000 })
   await page.screenshot({ path: 'test-results/scan-pick.png' })
   await page.getByRole('button', { name: '356938035643809' }).click()
   await expect(page.getByLabel('IMEI 2')).toHaveValue('356938035643809')
+
+  // an Apple-style label: EID, serial and IMEI barcodes packed close together -> only the IMEI
+  await page.getByLabel('IMEI', { exact: true }).fill('')
+  const apple = await stack(page, ['label-eid.png', 'label-serial.png', 'label-imei-tight.png'], 14)
+  await page.getByTestId('scan-photo').first().setInputFiles({ name: 'apple.png', mimeType: 'image/png', buffer: apple })
+  await expect(page.getByLabel('IMEI', { exact: true })).toHaveValue('490154203237518', { timeout: 20_000 })
 
   // Android may reload the page when the camera app opens: what was typed is still there
   await page.getByRole('button', { name: 'Nokia', exact: true }).click()
