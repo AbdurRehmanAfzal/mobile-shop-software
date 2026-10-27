@@ -6,6 +6,15 @@ import { useEffect, useState } from 'react'
 
 const PREFIX = 'draft:'
 const MAX_AGE = 30 * 60 * 1000
+/** A draft comes back only on the page the browser itself (re)loaded, and only until the user moves
+ *  to another screen. Opening "Add stock" from the app always starts at step 1 (owner, 2026-10-27:
+ *  an old unfinished entry made it jump straight to step 2). */
+const bootPath = typeof location !== 'undefined' ? location.pathname : ''
+let leftBootPage = false
+export function noteRoute(pathname: string) {
+  if (pathname !== bootPath) leftBootPage = true
+}
+
 /** prefixes cleared after a save: the finished form must not write itself back */
 const frozen = new Set<string>()
 const isFrozen = (key: string) => [...frozen].some((p) => key.startsWith(p))
@@ -26,7 +35,7 @@ export function useDraft<T>(key: string | null, initial: T | (() => T)) {
   const [v, setV] = useState<T>(() => {
     if (key === null) return typeof initial === 'function' ? (initial as () => T)() : initial
     for (const p of frozen) if (key.startsWith(p)) frozen.delete(p) // a fresh form starts recording again
-    const saved = read<T>(key)
+    const saved = leftBootPage ? undefined : read<T>(key)
     if (saved !== undefined) return saved
     return typeof initial === 'function' ? (initial as () => T)() : initial
   })

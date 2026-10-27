@@ -82,4 +82,12 @@ test('scan an IMEI barcode from a photo into the add-device form', async ({ page
   // after saving, the list starts empty again
   await page.reload()
   await expect(page.getByText('490154203237518')).toHaveCount(0)
+
+  // an unfinished Add stock does not come back when it is opened again from the app
+  await page.goto('/purchase/new')
+  await page.getByRole('button', { name: /Buy a customer's phone/ }).click()
+  await page.getByRole('link', { name: 'Home' }).first().click()
+  await page.getByRole('link', { name: /Add stock/ }).first().click()
+  await expect(page.getByText('1/3')).toBeVisible()
+  await expect(page.getByRole('button', { name: /Buy a customer's phone/ })).toHaveAttribute('aria-pressed', 'false')
 })

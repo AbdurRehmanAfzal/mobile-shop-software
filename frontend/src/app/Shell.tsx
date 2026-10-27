@@ -4,7 +4,8 @@
 import { BtnText, Sheet } from '@/components/ui'
 import { Bell, BookOpen, CalendarDays, Check, Home, Languages, Menu, Moon, MoreHorizontal, Smartphone, Sun } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { noteRoute } from '@/lib/draft'
 import { useAuth, activeShop } from '@/lib/auth'
 import { BiLabel, useLang, type BiText } from '@/components/Bilingual'
 import { LOCALES, setLocale, type Locale } from '@/i18n'
@@ -27,6 +28,8 @@ const tabs = [
 ]
 
 export default function Shell() {
+  const { pathname } = useLocation()
+  noteRoute(pathname) // during render, so a page opened by a tap never restores an old draft
   const shop = useAuth(activeShop)
   const nav = useNavigate()
   const { ur, roman, pick, cls, dir } = useLang()
