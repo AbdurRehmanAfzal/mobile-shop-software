@@ -39,7 +39,11 @@ Releases: merge `develop` into `main` and push `main` (the owner decides when).
    ```
 4. **GitHub** (repo → Settings → Secrets and variables → Actions): secrets `VPS_HOST=72.62.240.10`, `VPS_USER=deploy`, `VPS_SSH_KEY`; variable `APP_URL=https://<domain>`.
 5. **First release**: merge develop → main and push, or run the Deploy workflow by hand. Watch: `docker compose -f /opt/mobileshop/docker-compose.yml logs -f backend`.
-6. Open `https://<domain>`, log in with the super user number, open the first shop from More → Super admin.
+6. **First login** (signup is closed, so make it on the server; it asks for the password without echoing it):
+   ```
+   cd /opt/mobileshop && docker compose exec backend python -m app.cli create-owner
+   ```
+   Use the number that is in `SUPERUSER_PHONES`. Then open `https://<domain>`, log in, and open customer shops from More → Super admin.
 
 ## Day to day
 - Status: `cd /opt/mobileshop && docker compose ps`
@@ -62,6 +66,6 @@ docker compose exec -T db pg_restore -U mobileshop -d mobileshop --clean < /opt/
 - `PUBLIC_SIGNUP=false`: only the super user opens shops.
 - Caddy: HSTS, nosniff, frame and referrer policy, camera allowed only for this site (IMEI scan, ID photos); 10 MB upload limit.
 
-## Not yet verified
-- The CI `stack` job is the first run against PostgreSQL; it runs on the first push.
-- Live camera scanning needs HTTPS, so it is first usable on the real domain.
+## Status
+- Live since 2026-10-27 at https://mobileshop.oopsolutions.com (first deploy 6cec924). CI stack job and deploy green.
+- Live camera scanning needs HTTPS: test it on the live domain.
