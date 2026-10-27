@@ -932,7 +932,7 @@
     "futureDate": "Yeh tareekh abhi aayi nahi",
     "belowCost": "Yeh qeemat khareed qeemat ({{cost}}) se kam hai. Is mein nuqsan hai.",
     "belowCostOk": "Mujhe pata hai, nuqsan par bechein",
-    "belowCostBlocked": "Khareed qeemat se kam par sirf malik bech sakta hai. Qeemat barhaein."
+    "belowCostBlocked": "Khareed qeemat se kam par sirf malik ya manager bech sakta hai. Qeemat barhaein."
   },
   "accx": {
     "titleBuy": "Phone ke saath kya kya aaya?",

@@ -32,5 +32,5 @@ description: Pakistani mobile-shop domain rules for this product (used mobiles, 
 - Sales tax rate is shop-configurable (FBR standard rate changes; never hard-code). Support tax-inclusive pricing (common in retail) and show tax separately on the invoice. Rounding 2 dp per line. FBR POS integration is a later phase.
 
 ## UI conventions
-- Every label: English (small, top) + Urdu (large, bottom, RTL, Noto Nastaliq Urdu). Numbers always Latin digits. Big tap targets, one task per screen, confirm screens show totals large.
+- One language at a time (owner rule 2026-10-22, CLAUDE.md): Urdu mode shows only Urdu (Nastaliq, RTL), English mode only English, Roman mode only Roman Urdu; never stack two languages. Numbers always Latin digits. Big tap targets, one task per screen, confirm screens show totals large.
 - Common Urdu terms: Sale = فروخت, Purchase = خریداری, Customer = گاہک, Supplier = سپلائر, Balance = بقایا, Payment = ادائیگی, Received = وصول, Stock = اسٹاک, Repair = مرمت, Loan/Amanat = امانت, Return = واپسی, Expense = خرچ, Cash = نقد, Invoice = بل / رسید, Warranty = وارنٹی, Verified = تصدیق شدہ.

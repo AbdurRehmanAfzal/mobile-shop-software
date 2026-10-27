@@ -932,7 +932,7 @@
     "futureDate": "This date has not come yet",
     "belowCost": "This price is below the buying price ({{cost}}). This is a loss.",
     "belowCostOk": "I know - sell at a loss",
-    "belowCostBlocked": "Only the owner can sell below the buying price. Raise the price."
+    "belowCostBlocked": "Only the owner or manager can sell below the buying price. Raise the price."
   },
   "accx": {
     "titleBuy": "What came with the phone?",

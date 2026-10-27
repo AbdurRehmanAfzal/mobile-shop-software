@@ -23,7 +23,7 @@ from app.db.models import Base
 from app.db.session import get_db
 from app.main import create_app
 
-# TEST_DATABASE_URL=postgresql+psycopg://... runs the same tests on PostgreSQL (CI does both)
+# TEST_DATABASE_URL=postgresql+psycopg://... runs the same tests on PostgreSQL (CI runs them on SQLite and checks migrations on PostgreSQL)
 TEST_DATABASE_URL = os.environ.get("TEST_DATABASE_URL")
 
 

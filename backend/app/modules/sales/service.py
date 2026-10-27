@@ -112,8 +112,8 @@ def create_sale(
         if below_cost and not (data.below_cost_ok and ctx.can(Cap.VIEW_COST)):
             raise Conflict(
                 code="below_cost",
-                message_en="This price is below the buying price. Only the owner can sell at a loss.",
-                message_ur="یہ قیمت خرید قیمت سے کم ہے۔ نقصان پر صرف مالک بیچ سکتا ہے۔",
+                message_en="This price is below the buying price. Only the owner or manager can sell at a loss.",
+                message_ur="یہ قیمت خرید قیمت سے کم ہے۔ نقصان پر صرف مالک یا منیجر بیچ سکتا ہے۔",
             )
         devices.append(device)
 
