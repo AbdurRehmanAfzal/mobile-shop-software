@@ -1,5 +1,5 @@
 import DownloadButton from '@/components/DownloadButton'
-import { ArrowUpDown, ChevronDown, PackagePlus, ScanLine } from 'lucide-react'
+import { ArrowUpDown, PackagePlus, ScanLine } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -85,7 +85,7 @@ type Sort = 'newest' | 'oldest' | 'priceLow' | 'priceHigh'
 
 export default function StockPage() {
   const nav = useNavigate()
-  const { pick, ur } = useLang()
+  const { pick, ur, cls } = useLang()
   const { t } = useTranslation()
   const [q, setQ] = useState(() => new URLSearchParams(window.location.search).get('q') ?? '')
   const [filter, setFilter] = useState<Filter>('in_stock')
@@ -147,17 +147,16 @@ export default function StockPage() {
         </div>
       ) : null}
 
+      {/* owner 2026-10-27: the phone's own dropdown list mixed the chosen line's text with its colour;
+          plain buttons show which one is on */}
+      <div className="flex flex-wrap gap-1.5">
+        {(['in_stock', 'on_loan', 'sold', 'faulty', 'all'] as Filter[]).map((f) => (
+          <button key={f} type="button" aria-pressed={filter === f} onClick={() => setFilter(f)} className={`tap h-11 shrink-0 rounded-full border-2 px-4 font-bold ${filter === f ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-sm'}`}>
+            {f === 'all' ? pick('common.all') : pick(`stock.status.${f}`)}
+          </button>
+        ))}
+      </div>
       <div className="flex gap-2">
-        <label className="relative flex-1">
-          <select value={filter} onChange={(e) => setFilter(e.target.value as Filter)} className="min-h-11 w-full appearance-none rounded-xl border border-line bg-surface pe-8 ps-3 text-sm font-bold">
-            {(['in_stock', 'on_loan', 'sold', 'faulty', 'all'] as Filter[]).map((f) => (
-              <option key={f} value={f}>
-                {f === 'all' ? pick('common.all') : pick(`stock.status.${f}`)}
-              </option>
-            ))}
-          </select>
-          <ChevronDown size={16} className="pointer-events-none absolute end-2.5 top-1/2 -translate-y-1/2 text-emerald" />
-        </label>
         <label className="relative flex-1">
           <select value={sort} onChange={(e) => setSort(e.target.value as Sort)} className="min-h-11 w-full appearance-none rounded-xl border border-line bg-surface pe-8 ps-3 text-sm font-bold">
             {(['newest', 'oldest', 'priceLow', 'priceHigh'] as Sort[]).map((o) => (

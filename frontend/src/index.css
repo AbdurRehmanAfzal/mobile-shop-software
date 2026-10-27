@@ -514,3 +514,13 @@
     @apply flex items-center justify-center rounded-xl;
   }
 }
+
+/* the phone's own dropdown list follows the app colours, so the chosen line stays readable */
+select option {
+  background-color: rgb(var(--surface));
+  color: rgb(var(--ink));
+}
+select option:checked {
+  background-color: rgb(var(--ink));
+  color: rgb(var(--ground));
+}
