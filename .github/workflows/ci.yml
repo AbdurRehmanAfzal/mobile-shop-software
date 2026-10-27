@@ -1,0 +1,94 @@
+# Checks every push to develop and every pull request. Also used by deploy.yml before a release.
+#   backend:  ruff + pytest (SQLite), then Alembic migrations on a real PostgreSQL
+#   frontend: typecheck + vitest + production build
+#   stack:    the production Docker images run together (PostgreSQL, backend, Caddy) + a smoke test
+name: CI
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+  workflow_call:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: mobileshop
+          POSTGRES_USER: mobileshop
+          POSTGRES_PASSWORD: ci
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U mobileshop" --health-interval 5s --health-retries 20
+    env:
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/pyproject.toml
+      - name: Install
+        run: pip install -e ".[dev,postgres]"
+      - name: Lint
+        run: ruff check app tests
+      - name: Tests
+        run: pytest -q -p no:warnings
+      - name: Migrations on PostgreSQL
+        env:
+          DATABASE_URL: postgresql+psycopg://mobileshop:ci@localhost:5432/mobileshop
+        run: |
+          alembic upgrade head
+          alembic downgrade base
+          alembic upgrade head
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  stack:
+    needs: [backend, frontend]
+    runs-on: ubuntu-latest
+    env:
+      APP_DOMAIN: ci.localhost
+      POSTGRES_PASSWORD: ci-db-password
+      SECRET_KEY: ci-secret-key-0123456789abcdef0123456789abcdef
+      PUBLIC_SIGNUP: "true"
+      IMAGE_PREFIX: mobileshop-ci
+      IMAGE_TAG: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Traefik's network (exists on the VPS)
+        run: docker network create n8n_default
+      - name: Build and start
+        working-directory: deploy
+        run: docker compose -f docker-compose.yml -f ci/compose.ci.yml up -d --build --wait --wait-timeout 180 db backend web || (docker compose -f docker-compose.yml logs backend; exit 1)
+      - name: Smoke test
+        run: bash deploy/ci/smoke.sh
+      - name: Logs on failure
+        if: failure()
+        working-directory: deploy
+        run: docker compose -f docker-compose.yml logs --tail 200

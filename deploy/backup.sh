@@ -1,14 +1,14 @@
 #!/usr/bin/env sh
-# Nightly backup: database dump + uploaded photos, keeps 14 days.
-# Install on the VPS:  crontab -e  →  30 2 * * * /opt/mobileshop/deploy/backup.sh >> /var/log/mobileshop-backup.log 2>&1
+# Nightly backup: database dump + uploaded photos, keeps 14 days. setup-vps.sh installs the cron line:
+#   30 2 * * * /opt/mobileshop/backup.sh >> /var/log/mobileshop-backup.log 2>&1
 set -eu
-cd "$(dirname "$0")/.."
+cd /opt/mobileshop
 STAMP=$(date +%Y%m%d-%H%M)
 DEST=${BACKUP_DIR:-/opt/mobileshop-backups}
 mkdir -p "$DEST"
-. deploy/.env
+. ./.env
 
-docker compose -f deploy/docker-compose.yml --env-file deploy/.env exec -T db \
+docker compose --env-file .env exec -T db \
   pg_dump -U "${POSTGRES_USER:-mobileshop}" -d "${POSTGRES_DB:-mobileshop}" --format=custom > "$DEST/db-$STAMP.dump"
 
 docker run --rm -v mobileshop_uploads:/u:ro -v "$DEST":/b alpine \

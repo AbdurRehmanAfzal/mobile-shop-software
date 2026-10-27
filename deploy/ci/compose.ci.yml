@@ -1,0 +1,4 @@
+# CI only: run the production stack on the GitHub runner without Traefik, web on localhost:8080.
+services:
+  web:
+    ports: ["8080:80"]
