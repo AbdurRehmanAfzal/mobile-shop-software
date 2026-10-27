@@ -74,7 +74,7 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 | Staff polish, audit viewer | FR-AUTH-04,06 | 🔄 | Staff UI (add, role, password, disable) + cash/bank accounts UI with cash book done; audit viewer, attendance pending |
 | WhatsApp / SMS / email + scheduled reports | FR-RPT-03,04,05,06 | 🔄 | Outbox + settings + templates + sale/purchase/payment hooks + wa.me share links done (`modules/notifications`); Meta Cloud API / SMTP senders pending |
 | PWA + Capacitor Android/iOS | FR-PLT-02,03 | 🔄 | PWA done (manifest, icons, app-shell service worker). Capacitor Android project scaffolded with camera/share; APK build needs Android Studio PC + live API domain (docs/13). iOS needs a Mac |
-| Docker cloud deploy + local installer + backups | FR-PLT-04,06 | 🔄 | Hostinger VPS compose stack + backups + guide ready (docs/12); first live deploy pending domain + VPS access; local installer pending |
+| Docker cloud deploy + local installer + backups | FR-PLT-04,06 | 🔄 | **Live 2026-10-27** at https://mobileshop.oopsolutions.com on the OOP Solutions VPS behind Traefik (ADR-013, docs/12). CI (`ci.yml`: lint, tests, PostgreSQL migrations, frontend, Docker stack + smoke) and CD (`deploy.yml`: push main → ghcr.io images → `deploy.sh` with health check + rollback). Nightly backups via cron. First owner login via `python -m app.cli create-owner` (done). Local installer pending; off-server backup copy pending |
 
 ## Owner decisions pending (noted 2026-10-22)
 | Item | Status | Notes |
