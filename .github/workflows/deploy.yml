@@ -75,7 +75,12 @@ jobs:
             "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" "sudo -n /opt/mobileshop/deploy.sh ${{ github.sha }}"
       - name: Check the live site
         if: vars.APP_URL != ''
+        # the first deploy on a new domain waits for Traefik to fetch the certificate: retry for 2 minutes
         run: |
-          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 "${{ vars.APP_URL }}/health")
-          echo "${{ vars.APP_URL }}/health -> HTTP $code"
-          test "$code" = "200"
+          for i in $(seq 1 12); do
+            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 "${{ vars.APP_URL }}/health" || true)
+            echo "try $i: ${{ vars.APP_URL }}/health -> HTTP $code"
+            [ "$code" = "200" ] && exit 0
+            sleep 10
+          done
+          exit 1
