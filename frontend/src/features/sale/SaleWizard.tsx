@@ -1,0 +1,299 @@
+/** Sale in three steps (docs/11 v2): which phone → how much and how paid (cash / an account / udhaar)
+ *  → done. Customer is asked only for udhaar. Warranty and box/charger are shown under each phone
+ *  (owner, 2026-10-27: hidden behind "more options" nobody found them); discount stays behind it. */
+
+import { Banknote, BookOpen, Check, FileText, Headphones, Plus, Printer, Receipt, ShieldAlert, ShieldCheck, SlidersHorizontal, Smartphone, Trash2, TriangleAlert, UserCheck, Wallet } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { clearDrafts, useDraft } from '@/lib/draft'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import PartyPicker from '@/components/PartyPicker'
+import { AccessoryPicker, type AccValue } from '@/components/AccessoryPicker'
+import { BtnText, Chip, ErrorText, IconChip, List, PageHeader, SearchBox, Sheet, Stepper } from '@/components/ui'
+import { uid } from '@/lib/id'
+import { ApiError, get } from '@/lib/api'
+import { useAuth } from '@/lib/auth'
+import { openPrintable } from '@/lib/files'
+import { useCashAccounts, useDevices, useDocMutation } from '@/lib/queries'
+import type { Device, DeviceDetail, Invoice, Party } from '@/lib/types'
+import { DeviceRow } from '@/features/stock/StockPage'
+
+interface Line {
+  device: Device
+  price: string
+  warranty_days: string
+  acc: AccValue
+}
+interface Misc {
+  key: string
+  description: string
+  qty: string
+  unit_price: string
+}
+/** an account id, or udhaar */
+type Pay = { kind: 'account'; id: string } | { kind: 'udhaar' }
+// what came with the phone goes with it unless the seller changes it
+const newLine = (d: Device): Line => ({
+  device: d,
+  price: d.asking_price ? String(Number(d.asking_price)) : '',
+  warranty_days: '0',
+  acc: Object.fromEntries(((d as Partial<DeviceDetail>).accessories ?? []).filter((a) => a.came_with && a.kind !== 'other').map((a) => [a.kind, { state: 'now', date: '' }])),
+})
+const WARRANTY = [0, 7, 30, 90, 180, 365] as const
+
+export default function SaleWizard() {
+  const nav = useNavigate()
+  const [params] = useSearchParams()
+  const { pick, ur, cls } = useLang()
+  const role = useAuth((s) => s.me?.user.role)
+  const [step, setStep] = useDraft('sale.step', 0)
+  const [lines, setLines] = useDraft<Line[]>('sale.lines', [])
+  const [misc, setMisc] = useDraft<Misc[]>('sale.misc', [])
+  const [picking, setPicking] = useState(false)
+  const [more, setMore] = useDraft('sale.more', false)
+  const [q, setQ] = useState('')
+  const [discount, setDiscount] = useDraft('sale.discount', '')
+  const [pay, setPay] = useDraft<Pay | null>('sale.pay', null)
+  const [party, setParty] = useDraft<Party | null>('sale.party', null)
+  const [paidNow, setPaidNow] = useDraft('sale.paidNow', '')
+  const [overrideReason, setOverrideReason] = useDraft('sale.overrideReason', '')
+  const [lossOk, setLossOk] = useDraft('sale.lossOk', false)
+  const [result, setResult] = useState<Invoice | null>(null)
+  const { data: stock } = useDevices({ status: 'in_stock', q: q || undefined })
+  const { data: accounts } = useCashAccounts()
+  const m = useDocMutation<Record<string, unknown>, Invoice>('POST', () => '/api/v1/sales')
+
+  useEffect(() => {
+    const id = params.get('device')
+    if (id && !lines.length)
+      get<Device>(`/api/v1/devices/${id}`).then((d) => { setLines([newLine(d)]); setStep(1) }).catch(() => undefined)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // default: money into the shop's main cash account
+  useEffect(() => {
+    if (!pay && accounts?.length) setPay({ kind: 'account', id: (accounts.find((a) => a.is_default) ?? accounts[0]).id })
+  }, [accounts, pay])
+
+  const subtotal = lines.reduce((s, l) => s + Number(l.price || 0), 0) + misc.reduce((s, x) => s + Number(x.qty || 0) * Number(x.unit_price || 0), 0)
+  const total = Math.max(0, subtotal - Number(discount || 0))
+  const udhaar = pay?.kind === 'udhaar'
+  const paid = udhaar ? Math.min(Number(paidNow || 0), total) : total
+  const pendingLine = lines.find((l) => l.device.verification_status === 'pending')
+  const flaggedLine = lines.find((l) => l.device.verification_status === 'flagged')
+  const manager = role === 'owner' || role === 'manager'
+  // a pending check may be skipped by whoever sells; a stolen flag needs the owner/manager and a reason
+  const checkOk = (!pendingLine || !!overrideReason) && (!flaggedLine || (manager && overrideReason.trim().length >= 3))
+  const notSellableErr = m.error instanceof ApiError && (m.error.code === 'not_sellable' || m.error.code === 'device_flagged')
+  const cashId = accounts?.find((a) => a.is_default)?.id ?? accounts?.[0]?.id
+  // owner: no selling below the buying price; only the owner/manager may, after saying so
+  // (the buying price is only sent to them; for others the server refuses with below_cost)
+  const belowCost = (l: Line) => l.device.cost_price != null && l.price !== '' && Number(l.price) < Number(l.device.cost_price)
+  const lossLine = lines.some(belowCost)
+  const canSave = (!lossLine || (manager && lossOk)) && checkOk && total > 0 && !!pay && (!udhaar || !!party) && lines.every((l) => Number(l.price) > 0) && misc.every((x) => x.description.trim() && Number(x.unit_price) > 0)
+
+  const setLine = (l: Line, patch: Partial<Line>) => setLines((ls) => ls.map((x) => (x.device.id === l.device.id ? { ...x, ...patch } : x)))
+
+  function pickDevice(d: Device) {
+    setLines((ls) => (ls.some((l) => l.device.id === d.id) ? ls : [...ls, newLine(d)]))
+    setPicking(false)
+    setStep(1)
+    // the stock list has no box/charger details; fetch them so they start as "given"
+    get<DeviceDetail>(`/api/v1/devices/${d.id}`)
+      .then((full) => setLines((ls) => ls.map((x) => (x.device.id === d.id && !Object.keys(x.acc).length ? { ...x, acc: newLine(full).acc } : x))))
+      .catch(() => undefined)
+  }
+
+  async function submit() {
+    const res = await m.mutateAsync({
+      party_id: party?.id ?? null,
+      devices: lines.map((l) => ({ device_id: l.device.id, price: Number(l.price || 0), warranty_days: Number(l.warranty_days || 0), ...accOut(l.acc) })),
+      misc: misc.map((x) => ({ description: x.description.trim(), qty: Number(x.qty || 1), unit_price: Number(x.unit_price || 0) })),
+      discount: Number(discount || 0),
+      paid,
+      cash_account_id: pay?.kind === 'account' ? pay.id : cashId,
+      override_reason: overrideReason || undefined,
+      below_cost_ok: lossLine && lossOk,
+    })
+    clearDrafts('sale.')
+    setResult(res)
+    setStep(2)
+  }
+
+  const chip = (on: boolean) => `tap flex min-h-[68px] flex-col items-center justify-center gap-1 rounded-2xl border-2 px-2 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('md') : 'text-[15px]'}`
+
+  return (
+    <div className="flex flex-col gap-3">
+      <PageHeader title="counter.sell" />
+      <Stepper steps={['counter.whichPhone', 'counter.howMuch', 'counter.doneTitle']} current={step} />
+
+      {step === 0 ? (
+        <div className="flex flex-col gap-3">
+          <SearchBox value={q} onChange={setQ} placeholder="stock.searchPlaceholder" scan />
+          <BiLabel text="counter.tapPhone" size="sm" tone="text-muted" />
+          {stock?.length ? (
+            <List>
+              {stock.map((d) => <DeviceRow key={d.id} d={d} onClick={() => pickDevice(d)} />)}
+            </List>
+          ) : (
+            <BiLabel text="counter.noStock" size="md" tone="text-muted" align="center" className="py-6" />
+          )}
+          <div>
+            <IconChip icon={<Headphones size={18} />} text="counter.otherItem" onClick={() => { setMisc([{ key: uid(), description: '', qty: '1', unit_price: '' }]); setStep(1) }} />
+          </div>
+        </div>
+      ) : null}
+
+      {step === 1 ? (
+        <div className="flex flex-col gap-3">
+          {lines.map((l) => (
+            <div key={l.device.id} className="card flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <div className="min-w-0 flex-1">
+                  <div className="truncate text-base font-extrabold">{l.device.brand_name} {l.device.model_name}</div>
+                  <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted">
+                    <span dir="ltr">{l.device.imei1}</span>
+                    {l.device.verification_status === 'pending' || l.device.verification_status === 'flagged' ? <Chip text={`stock.verification.${l.device.verification_status}`} tone={l.device.verification_status === 'flagged' ? 'bad' : 'warn'} /> : null}
+                  </div>
+                </div>
+                <button type="button" aria-label={pick('crud.delete')} onClick={() => setLines(lines.filter((x) => x.device.id !== l.device.id))} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 text-payable">
+                  <Trash2 size={16} />
+                <BtnText k={'crud.delete'} /></button>
+              </div>
+              <BiInput label="counter.soldFor" type="number" inputMode="numeric" min={0} value={l.price} onChange={(e) => setLines(lines.map((x) => (x.device.id === l.device.id ? { ...x, price: e.target.value } : x)))} className="num text-2xl" />
+              {belowCost(l) ? (
+                <div className="flex flex-col gap-2 rounded-2xl bg-expense p-3 text-expense-fg">
+                  <div className="flex items-start gap-2">
+                    <TriangleAlert size={20} className="mt-0.5 shrink-0" />
+                    <span className={`font-semibold ${cls('sm')}`}>{pick('field.belowCost').replace('{{cost}}', `Rs. ${Number(l.device.cost_price).toLocaleString('en-US')}`)}</span>
+                  </div>
+                  {manager ? (
+                    <button type="button" aria-pressed={lossOk} onClick={() => setLossOk(!lossOk)} className={chip(lossOk)}><Check size={20} />{pick('field.belowCostOk')}</button>
+                  ) : (
+                    <BiLabel text="field.belowCostBlocked" size="sm" bold tone="text-current" />
+                  )}
+                </div>
+              ) : null}
+              <div>
+                <BiLabel text="accx.warranty" size="md" bold className="mb-1.5" />
+                <div className="flex flex-wrap gap-1.5">
+                  {WARRANTY.map((w) => (
+                    <button key={w} type="button" aria-pressed={Number(l.warranty_days) === w} onClick={() => setLine(l, { warranty_days: String(w) })} className={`tap h-11 rounded-full border-2 px-3.5 font-bold ${Number(l.warranty_days) === w ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-[13px]'}`}>
+                      {pick(`accx.w${w}`)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <AccessoryPicker mode="sell" value={l.acc} onChange={(acc) => setLine(l, { acc })} />
+            </div>
+          ))}
+          {misc.map((x) => (
+            <div key={x.key} className="card grid grid-cols-[1fr_64px_104px_auto] items-end gap-2">
+              <BiInput label="counter.itemName" value={x.description} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, description: e.target.value } : y)))} />
+              <BiInput label="purchase.qty" type="number" inputMode="numeric" min={1} value={x.qty} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, qty: e.target.value } : y)))} />
+              <BiInput label="sale.unitPrice" type="number" inputMode="numeric" min={0} value={x.unit_price} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, unit_price: e.target.value } : y)))} />
+              <button type="button" aria-label={pick('crud.delete')} onClick={() => setMisc(misc.filter((y) => y.key !== x.key))} className="tap mb-2 inline-flex h-9 shrink-0 items-center gap-1 rounded-xl px-2 text-payable">
+                <Trash2 size={16} />
+              <BtnText k={'crud.delete'} /></button>
+            </div>
+          ))}
+          <div className="flex flex-wrap gap-2">
+            <IconChip icon={<Smartphone size={18} />} text="counter.addAnother" onClick={() => setPicking(true)} />
+            <IconChip icon={<Headphones size={18} />} text="counter.otherItem" onClick={() => setMisc([...misc, { key: uid(), description: '', qty: '1', unit_price: '' }])} />
+            {!more ? <IconChip icon={<SlidersHorizontal size={18} />} text="counter.moreOptions" onClick={() => setMore(true)} /> : null}
+          </div>
+          {more ? <BiInput label="common.discount" type="number" inputMode="numeric" min={0} value={discount} onChange={(e) => setDiscount(e.target.value)} /> : null}
+
+          <BiLabel text="counter.howPaid" size="md" bold />
+          <div className="grid grid-cols-3 gap-2">
+            <button type="button" aria-pressed={pay?.kind === 'account' && pay.id === cashId} onClick={() => cashId && setPay({ kind: 'account', id: cashId })} className={chip(pay?.kind === 'account' && pay.id === cashId)}><Banknote size={22} />{pick('counter.cash')}</button>
+            {accounts?.filter((a) => a.id !== cashId).map((a) => (
+              <button key={a.id} type="button" aria-pressed={pay?.kind === 'account' && pay.id === a.id} onClick={() => setPay({ kind: 'account', id: a.id })} className={chip(pay?.kind === 'account' && pay.id === a.id)}>
+                <Wallet size={22} />
+                <span className="block max-w-full truncate">{ur && a.name_ur ? a.name_ur : a.name}</span>
+              </button>
+            ))}
+            <button type="button" aria-pressed={udhaar} onClick={() => setPay({ kind: 'udhaar' })} className={chip(udhaar)}><BookOpen size={22} />{pick('counter.udhaar')}</button>
+          </div>
+
+          {udhaar ? (
+            <div className="flex flex-col gap-2 rounded-3xl bg-khata p-3 text-khata-fg">
+              <PartyPicker value={party} onChange={setParty} kind="customer" label="counter.whoTakes" />
+              <BiInput label="counter.paidNowOpt" type="number" inputMode="numeric" min={0} max={total} value={paidNow} onChange={(e) => setPaidNow(e.target.value)} />
+            </div>
+          ) : more ? (
+            <PartyPicker value={party} onChange={setParty} kind="customer" label="counter.customerOpt" allowNone />
+          ) : null}
+
+          {flaggedLine ? (
+            <div className="flex flex-col gap-2 rounded-3xl bg-expense p-3 text-expense-fg">
+              <div className="flex items-center gap-2"><ShieldAlert size={22} /><BiLabel text="counter.flaggedSale" size="md" bold tone="text-current" /></div>
+              {manager ? <BiInput label="sale.override" value={overrideReason} onChange={(e) => setOverrideReason(e.target.value)} /> : null}
+            </div>
+          ) : pendingLine ? (
+            <div className="flex flex-col gap-2 rounded-3xl bg-khata p-3 text-khata-fg">
+              <div className="flex items-center gap-2"><ShieldAlert size={22} /><BiLabel text="counter.pendingSale" size="md" bold tone="text-current" /></div>
+              <div className="grid grid-cols-2 gap-2">
+                <button type="button" onClick={() => nav(`/stock/${pendingLine.device.id}/verify`)} className={chip(false)}><ShieldCheck size={22} />{pick('counter.checkNow')}</button>
+                <button type="button" aria-pressed={!!overrideReason} onClick={() => setOverrideReason(overrideReason ? '' : pick('purchase.skipReason'))} className={chip(!!overrideReason)}><UserCheck size={22} />{pick('counter.skipAndSell')}</button>
+              </div>
+            </div>
+          ) : null}
+
+          <div className="hero flex flex-col gap-1 px-5 py-4">
+            <div className="flex items-center justify-between">
+              <BiLabel text="common.total" size="md" tone="text-hero-text" bold />
+              <span className="num text-3xl" dir="ltr">Rs. {total.toLocaleString('en-US')}</span>
+            </div>
+            {udhaar ? (
+              <div className="flex items-center justify-between border-t border-white/15 pt-1.5">
+                <BiLabel text="counter.remaining" size="sm" tone="text-gold-text" bold />
+                <span className="num text-xl text-gold-text" dir="ltr">{(total - paid).toLocaleString('en-US')}</span>
+              </div>
+            ) : null}
+          </div>
+          {notSellableErr ? <Chip text="sale.notSellable" tone="bad" /> : null}
+          <ErrorText error={m.error} />
+          <BiButton text="sale.complete" icon={<Check size={22} />} full loading={m.isPending} disabled={!canSave} onClick={submit} />
+          {!lines.length && !misc.length ? <BiButton text="counter.whichPhone" variant="secondary" full onClick={() => setStep(0)} /> : null}
+        </div>
+      ) : null}
+
+      {step === 2 && result ? (
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col items-center gap-1 rounded-3xl bg-sell px-5 py-7 text-sell-fg">
+            <span className="well mb-1 h-16 w-16 rounded-full bg-emerald text-white"><Check size={34} strokeWidth={2.6} /></span>
+            <BiLabel text="sale.created" size="lg" bold tone="text-current" align="center" />
+            <span className="num text-[34px]" dir="ltr">Rs. {Number(result.total).toLocaleString('en-US')}</span>
+            <span className="num text-sm opacity-80" dir="ltr">{result.no}</span>
+            {result.party_balance_after && Number(result.party_balance_after) !== 0 ? (
+              <span className={ur ? cls('sm') : 'text-sm font-semibold'}>{pick('party.balance')}: <span className="num" dir="ltr">{Number(result.party_balance_after).toLocaleString('en-US')}</span></span>
+            ) : null}
+          </div>
+          <BiButton text="sale.printThermal" icon={<Printer size={22} />} full onClick={() => openPrintable(`/api/v1/sales/${result.id}/receipt?format=thermal`)} />
+          <BiButton text="sale.printA4" icon={<FileText size={22} />} full variant="secondary" onClick={() => openPrintable(`/api/v1/sales/${result.id}/receipt?format=a4`)} />
+          <BiButton text="counter.newSale" icon={<Plus size={22} />} full variant="ghost" onClick={() => { setLines([]); setMisc([]); setParty(null); setPaidNow(''); setDiscount(''); setResult(null); setPay(null); setStep(0); m.reset() }} />
+          <BiButton text="sale.viewSale" icon={<Receipt size={22} />} full variant="ghost" onClick={() => nav(`/sales/${result.id}`)} />
+        </div>
+      ) : null}
+
+      <Sheet open={picking} onClose={() => setPicking(false)} title="counter.whichPhone">
+        <div className="flex flex-col gap-3">
+          <SearchBox value={q} onChange={setQ} placeholder="stock.searchPlaceholder" scan />
+          <List>
+            {stock?.filter((d) => !lines.some((l) => l.device.id === d.id)).map((d) => <DeviceRow key={d.id} d={d} onClick={() => pickDevice(d)} />)}
+          </List>
+        </div>
+      </Sheet>
+
+    </div>
+  )
+}
+
+/** given now / promised for later, as the sales API takes them */
+function accOut(acc: AccValue) {
+  const rows = Object.entries(acc)
+  return {
+    accessories_given: rows.filter(([, v]) => v.state === 'now').map(([k]) => k),
+    accessories_pending: rows.filter(([, v]) => v.state === 'later').map(([k, v]) => ({ kind: k, promised_at: v.date || null })),
+  }
+}

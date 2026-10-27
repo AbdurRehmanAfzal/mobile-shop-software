@@ -1,1 +1,1 @@
-"""Mobile Shop Management System - FastAPI Backend"""
+"""Mobile Shop SaaS backend (v2)."""

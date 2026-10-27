@@ -1,0 +1,161 @@
+{
+  "app": {
+    "name": "Mobile Shop Management System",
+    "tagline": "Manage your mobile shop with ease"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "customers": "Customers",
+    "suppliers": "Suppliers",
+    "inventory": "Inventory",
+    "accessories": "Accessories",
+    "sales": "Sales",
+    "payments": "Payments",
+    "exchanges": "Exchanges",
+    "reports": "Reports",
+    "settings": "Settings"
+  },
+  "actions": {
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "print": "Print",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous"
+  },
+  "common": {
+    "name": "Name",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "city": "City",
+    "notes": "Notes",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At",
+    "status": "Status",
+    "action": "Action",
+    "price": "Price",
+    "quantity": "Quantity",
+    "total": "Total",
+    "balance": "Balance",
+    "amount": "Amount",
+    "paid": "Paid",
+    "pending": "Pending",
+    "completed": "Completed"
+  },
+  "customer": {
+    "title": "Customers",
+    "addNew": "Add New Customer",
+    "editTitle": "Edit Customer",
+    "cnic": "CNIC",
+    "whatsapp": "WhatsApp",
+    "creditBalance": "Credit Balance",
+    "totalPurchased": "Total Purchased",
+    "totalPaid": "Total Paid",
+    "ledger": "Ledger",
+    "noCustomers": "No customers found"
+  },
+  "supplier": {
+    "title": "Suppliers",
+    "addNew": "Add New Supplier",
+    "editTitle": "Edit Supplier",
+    "contactPerson": "Contact Person",
+    "creditBalance": "Credit Balance",
+    "totalPurchased": "Total Purchased",
+    "totalPaid": "Total Paid",
+    "ledger": "Ledger",
+    "noSuppliers": "No suppliers found"
+  },
+  "inventory": {
+    "title": "Inventory",
+    "addNew": "Add New Mobile",
+    "brand": "Brand",
+    "model": "Model",
+    "condition": "Condition",
+    "new": "New",
+    "patched": "Patched",
+    "used": "Used",
+    "imei": "IMEI",
+    "costPrice": "Cost Price",
+    "salePrice": "Sale Price",
+    "profit": "Profit",
+    "sold": "Sold",
+    "damaged": "Damaged",
+    "batchNumber": "Batch Number",
+    "noInventory": "No inventory items found"
+  },
+  "accessory": {
+    "title": "Accessories",
+    "addNew": "Add New Accessory",
+    "category": "Category",
+    "sku": "SKU",
+    "reorderLevel": "Reorder Level",
+    "lowStock": "Low Stock",
+    "noAccessories": "No accessories found"
+  },
+  "sales": {
+    "title": "Sales",
+    "newSale": "New Sale",
+    "customer": "Customer",
+    "items": "Items",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "tax": "Tax",
+    "total": "Total",
+    "paymentMethod": "Payment Method",
+    "amountPaid": "Amount Paid",
+    "creditAmount": "Credit Amount",
+    "noSales": "No sales found"
+  },
+  "payment": {
+    "title": "Payments",
+    "recordPayment": "Record Payment",
+    "paymentMethod": "Payment Method",
+    "cash": "Cash",
+    "card": "Card",
+    "bankTransfer": "Bank Transfer",
+    "noPayments": "No payments found"
+  },
+  "exchange": {
+    "title": "Exchanges",
+    "newExchange": "New Exchange",
+    "oldPhone": "Old Phone",
+    "newPhone": "New Phone",
+    "oldValue": "Old Value",
+    "newPrice": "New Price",
+    "difference": "Difference",
+    "noExchanges": "No exchanges found"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "totalCustomers": "Total Customers",
+    "totalSuppliers": "Total Suppliers",
+    "inventoryValue": "Inventory Value",
+    "customerCredit": "Customer Credit",
+    "supplierCredit": "Supplier Credit",
+    "monthlySales": "Monthly Sales",
+    "pendingPayments": "Pending Payments",
+    "recentTransactions": "Recent Transactions",
+    "lowStockItems": "Low Stock Items"
+  },
+  "errors": {
+    "required": "This field is required",
+    "invalidEmail": "Invalid email address",
+    "invalidPhone": "Invalid phone number",
+    "serverError": "Server error occurred",
+    "notFound": "Item not found"
+  },
+  "success": {
+    "added": "Item added successfully",
+    "updated": "Item updated successfully",
+    "deleted": "Item deleted successfully",
+    "saved": "Changes saved successfully"
+  }
+}

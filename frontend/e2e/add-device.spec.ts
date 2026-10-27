@@ -1,0 +1,100 @@
+/** Regression: adding a device in the purchase wizard and on the old-stock page. */
+
+import { expect, test, type Page } from '@playwright/test'
+
+const phone = () => `039${Math.floor(10_000_000 + Math.random() * 89_999_999)}`
+
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    if (!localStorage.getItem('locale')) localStorage.setItem('locale', 'en')
+    // A phone on http://<PC-IP>:5173 is not a secure context: randomUUID is missing there.
+    Object.defineProperty(crypto, 'randomUUID', { value: undefined, configurable: true })
+  })
+})
+
+async function signup(page: Page) {
+  await page.goto('/signup')
+  await page.getByLabel('Shop name', { exact: true }).fill('Add Device Shop')
+  await page.getByLabel('Your name').fill('Owner')
+  await page.getByLabel('Mobile number').fill(phone())
+  await page.getByLabel('Password').fill('e2e-secret-1')
+  await page.getByRole('button', { name: /Create shop account/ }).click()
+  await expect(page.getByPlaceholder("IMEI, phone or person's name")).toBeVisible()
+}
+
+async function fillDevice(page: Page, imei: string) {
+  await page.getByLabel('IMEI', { exact: true }).fill(imei)
+  await page.getByRole('button', { name: 'Nokia', exact: true }).click()
+  await page.getByRole('button', { name: /^105/ }).first().click()
+  await page.getByLabel('Cost price').fill('800')
+  await page.getByLabel('Asking price').fill('1000')
+}
+
+test('old stock: add device then save', async ({ page }) => {
+  await signup(page)
+  await page.goto('/stock/opening')
+  await page.getByRole('button', { name: 'Add device' }).click()
+  await fillDevice(page, '490154203237518')
+  await page.screenshot({ path: 'test-results/add-device-filled.png', fullPage: true })
+  const add = page.getByRole('button', { name: 'Add', exact: true })
+  await expect(add).toBeEnabled()
+  await add.click()
+  await expect(page.getByText('490154203237518')).toBeVisible()
+  await expect(page.getByText('Added. Add another or save.')).toBeVisible()
+  await expect(page.getByText('Used').first()).toBeVisible()
+  await page.getByRole('button', { name: 'Save' }).click()
+  await expect(page.getByText('Purchase saved')).toBeVisible()
+  await page.screenshot({ path: 'test-results/add-device-after.png', fullPage: true })
+})
+
+test('purchase wizard: add device from supplier', async ({ page }) => {
+  await signup(page)
+  await page.goto('/parties')
+  await page.getByRole('button', { name: 'New person' }).click()
+  await page.getByLabel('Name', { exact: true }).fill('Rehman Traders')
+  await page.getByLabel('Mobile number').fill('03005555555')
+  await page.locator('form').getByRole('button', { name: 'Dealer' }).click()
+  await page.getByRole('button', { name: 'Save' }).click()
+  await page.goto('/purchase/new')
+  await page.getByRole('button', { name: /From a dealer/ }).click()
+  await page.getByPlaceholder('Name, phone or CNIC').fill('Rehman')
+  await page.getByRole('button', { name: /Rehman Traders/ }).first().click()
+  await page.getByRole('button', { name: 'Next' }).click()
+  await page.getByRole('button', { name: 'Add device' }).click()
+  await fillDevice(page, '356938035643809')
+  await page.getByRole('button', { name: 'Add', exact: true }).last().click()
+  await expect(page.getByText('356938035643809')).toBeVisible()
+})
+
+test("customer's phone: buy, then skip verification for a known person", async ({ page }) => {
+  await signup(page)
+  await page.goto('/purchase/new')
+  // only two simple choices on the first screen
+  await expect(page.getByRole('button', { name: /From a dealer/ })).toBeVisible()
+  await expect(page.getByRole('button', { name: /Trade-in|Other shop/ })).toHaveCount(0)
+  await page.getByRole('button', { name: /Buy a customer's phone/ }).click()
+  await expect(page.getByText('Who is selling the phone?')).toBeVisible()
+  await page.getByRole('button', { name: 'New person' }).click()
+  await page.getByLabel('Name', { exact: true }).fill('Ali Raza')
+  await page.getByLabel('Mobile number').fill('03007777777')
+  await page.getByRole('button', { name: 'Save' }).click()
+  await page.getByRole('button', { name: 'Next' }).click()
+  await page.getByRole('button', { name: 'Add device' }).click()
+  await fillDevice(page, '356789104552375')
+  await page.getByRole('button', { name: 'Add', exact: true }).last().click()
+  await expect(page.getByText('Other items')).toHaveCount(0)
+  // bought yesterday at 3 PM, entered now
+  await page.getByRole('button', { name: 'Earlier' }).click()
+  const y = new Date(Date.now() - 86_400_000)
+  const day = `${y.getFullYear()}-${String(y.getMonth() + 1).padStart(2, '0')}-${String(y.getDate()).padStart(2, '0')}`
+  await page.getByLabel('When was it bought?').fill(`${day}T15:00`)
+  await page.getByRole('button', { name: 'Put in stock' }).click()
+  await expect(page.getByText('Check the phone is not stolen')).toBeVisible()
+  await page.screenshot({ path: 'test-results/customer-phone-done.png', fullPage: true })
+  await page.getByRole('button', { name: 'Skip, I know this person' }).click()
+  await expect(page.getByText('Skipped, known person')).toBeVisible()
+  await page.goto('/purchases')
+  await page.getByText('Ali Raza').first().click()
+  const dd = `${String(y.getDate()).padStart(2, '0')}-${String(y.getMonth() + 1).padStart(2, '0')}-${y.getFullYear()}`
+  await expect(page.getByText(`${dd} 3:00 PM`)).toBeVisible()
+})

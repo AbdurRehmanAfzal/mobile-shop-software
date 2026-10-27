@@ -1,0 +1,48 @@
+# Runs behind the VPS's Traefik (n8n-traefik-1), which ends HTTPS and gets the certificate.
+# This Caddy only serves the React app and passes /api and /health to the backend, on plain port 80.
+{
+	auto_https off
+	admin off
+	servers {
+		# client IPs come from Traefik's X-Forwarded-For
+		trusted_proxies static private_ranges
+	}
+}
+
+:80 {
+	encode gzip zstd
+
+	# API and health go to the FastAPI container
+	handle /api/* {
+		reverse_proxy mobileshop-backend:8000
+	}
+	handle /health {
+		reverse_proxy mobileshop-backend:8000
+	}
+
+	# Everything else is the single-page app
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+		# hashed build files never change; index.html and the service worker must always be fresh
+		@assets path /assets/*
+		header @assets Cache-Control "public, max-age=31536000, immutable"
+		@fresh path / /index.html /sw.js /registerSW.js /manifest.webmanifest
+		header @fresh Cache-Control "no-cache"
+	}
+
+	request_body {
+		max_size 10MB
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		X-Frame-Options SAMEORIGIN
+		# the camera is used for IMEI barcodes and ID card photos, on this site only
+		Permissions-Policy "camera=(self), microphone=(), geolocation=()"
+		-Server
+	}
+}

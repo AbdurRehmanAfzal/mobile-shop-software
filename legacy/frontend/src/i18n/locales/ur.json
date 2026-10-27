@@ -1,0 +1,161 @@
+{
+  "app": {
+    "name": "موبائل شاپ مینجمنٹ سسٹم",
+    "tagline": "اپنی موبائل شاپ کو آسانی سے منیج کریں"
+  },
+  "nav": {
+    "dashboard": "ڈیش بورڈ",
+    "customers": "کسٹمر",
+    "suppliers": "سپلائیرز",
+    "inventory": "انوینٹری",
+    "accessories": "ایکسیسریز",
+    "sales": "فروخت",
+    "payments": "ادائیگی",
+    "exchanges": "تبدیلیاں",
+    "reports": "رپورٹس",
+    "settings": "سیٹنگز"
+  },
+  "actions": {
+    "add": "شامل کریں",
+    "edit": "ترمیم کریں",
+    "delete": "حذف کریں",
+    "save": "محفوظ کریں",
+    "cancel": "منسوخ کریں",
+    "submit": "جمع کریں",
+    "search": "تلاش کریں",
+    "filter": "فلٹر کریں",
+    "export": "برآمد کریں",
+    "print": "پرنٹ کریں",
+    "back": "واپس",
+    "next": "اگلا",
+    "previous": "پچھلا"
+  },
+  "common": {
+    "name": "نام",
+    "phone": "فون",
+    "email": "ای میل",
+    "address": "پتہ",
+    "city": "شہر",
+    "notes": "نوٹس",
+    "createdAt": "بنایا گیا",
+    "updatedAt": "اپ ڈیٹ کیا گیا",
+    "status": "حالت",
+    "action": "کارروائی",
+    "price": "قیمت",
+    "quantity": "مقدار",
+    "total": "کل",
+    "balance": "بقایا",
+    "amount": "رقم",
+    "paid": "ادا کیا",
+    "pending": "زیر التوا",
+    "completed": "مکمل"
+  },
+  "customer": {
+    "title": "کسٹمرز",
+    "addNew": "نیا کسٹمر شامل کریں",
+    "editTitle": "کسٹمر میں ترمیم کریں",
+    "cnic": "سی این آئی سی",
+    "whatsapp": "واٹس ایپ",
+    "creditBalance": "کریڈٹ بقایا",
+    "totalPurchased": "کل خریداری",
+    "totalPaid": "کل ادا شدہ",
+    "ledger": "لیجر",
+    "noCustomers": "کوئی کسٹمر نہیں ملا"
+  },
+  "supplier": {
+    "title": "سپلائیرز",
+    "addNew": "نیا سپلائیر شامل کریں",
+    "editTitle": "سپلائیر میں ترمیم کریں",
+    "contactPerson": "رابطہ فرد",
+    "creditBalance": "کریڈٹ بقایا",
+    "totalPurchased": "کل خریداری",
+    "totalPaid": "کل ادا شدہ",
+    "ledger": "لیجر",
+    "noSuppliers": "کوئی سپلائیر نہیں ملا"
+  },
+  "inventory": {
+    "title": "انوینٹری",
+    "addNew": "نیا موبائل شامل کریں",
+    "brand": "برانڈ",
+    "model": "ماڈل",
+    "condition": "حالت",
+    "new": "نیا",
+    "patched": "مرمت شدہ",
+    "used": "استعمال شدہ",
+    "imei": "IMEI",
+    "costPrice": "لاگت کی قیمت",
+    "salePrice": "فروخت کی قیمت",
+    "profit": "منافع",
+    "sold": "فروخت",
+    "damaged": "خراب",
+    "batchNumber": "بیچ نمبر",
+    "noInventory": "کوئی انوینٹری نہیں ملی"
+  },
+  "accessory": {
+    "title": "ایکسیسریز",
+    "addNew": "نیا ایکسیسری شامل کریں",
+    "category": "زمرہ",
+    "sku": "SKU",
+    "reorderLevel": "دوبارہ آرڈر کی سطح",
+    "lowStock": "کم اسٹاک",
+    "noAccessories": "کوئی ایکسیسری نہیں ملا"
+  },
+  "sales": {
+    "title": "فروخت",
+    "newSale": "نیا فروخت",
+    "customer": "کسٹمر",
+    "items": "اشیاء",
+    "subtotal": "ذیلی کل",
+    "discount": "رعایت",
+    "tax": "ٹیکس",
+    "total": "کل",
+    "paymentMethod": "ادائیگی کا طریقہ",
+    "amountPaid": "ادا شدہ رقم",
+    "creditAmount": "کریڈٹ رقم",
+    "noSales": "کوئی فروخت نہیں ملی"
+  },
+  "payment": {
+    "title": "ادائیگیاں",
+    "recordPayment": "ادائیگی ریکارڈ کریں",
+    "paymentMethod": "ادائیگی کا طریقہ",
+    "cash": "نقد",
+    "card": "کارڈ",
+    "bankTransfer": "بینک ٹرانسفر",
+    "noPayments": "کوئی ادائیگی نہیں ملی"
+  },
+  "exchange": {
+    "title": "تبدیلیاں",
+    "newExchange": "نئی تبدیلی",
+    "oldPhone": "پرانا موبائل",
+    "newPhone": "نیا موبائل",
+    "oldValue": "پرانی قیمت",
+    "newPrice": "نئی قیمت",
+    "difference": "فرق",
+    "noExchanges": "کوئی تبدیلی نہیں ملی"
+  },
+  "dashboard": {
+    "title": "ڈیش بورڈ",
+    "totalCustomers": "کل کسٹمرز",
+    "totalSuppliers": "کل سپلائیرز",
+    "inventoryValue": "انوینٹری کی قیمت",
+    "customerCredit": "کسٹمر کریڈٹ",
+    "supplierCredit": "سپلائیر کریڈٹ",
+    "monthlySales": "ماہانہ فروخت",
+    "pendingPayments": "زیر التوا ادائیگیاں",
+    "recentTransactions": "حالیہ لین دین",
+    "lowStockItems": "کم اسٹاک کی اشیاء"
+  },
+  "errors": {
+    "required": "یہ فیلڈ ضروری ہے",
+    "invalidEmail": "غلط ای میل ایڈریس",
+    "invalidPhone": "غلط فون نمبر",
+    "serverError": "سرور میں خرابی",
+    "notFound": "چیز نہیں ملی"
+  },
+  "success": {
+    "added": "چیز کامیابی سے شامل ہو گئی",
+    "updated": "چیز کامیابی سے اپ ڈیٹ ہو گئی",
+    "deleted": "چیز کامیابی سے حذف ہو گئی",
+    "saved": "تبدیلیاں کامیابی سے محفوظ ہو گئیں"
+  }
+}

@@ -1,0 +1,84 @@
+# Production stack on the OOP Solutions VPS (Hostinger, 72.62.240.10), next to the website, n8n and
+# the voice agent. HTTPS and routing come from the existing Traefik (n8n-traefik-1) on the Docker
+# network n8n_default, the same way oopsolutions.com is served. No ports are opened by this stack.
+#
+# On the VPS (/opt/mobileshop) the images come from GitHub's registry, built by CI:
+#   IMAGE_TAG=<git sha> docker compose --env-file .env pull && docker compose --env-file .env up -d
+# Locally / without CI you can build them instead: docker compose --env-file .env up -d --build
+name: mobileshop
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-mobileshop}
+      POSTGRES_USER: ${POSTGRES_USER:-mobileshop}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks: [internal]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mobileshop} -d ${POSTGRES_DB:-mobileshop}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    image: ${IMAGE_PREFIX:-ghcr.io/abdurrehmanafzal/mobile-shop}-backend:${IMAGE_TAG:-latest}
+    build:
+      context: ../backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      APP_ENV: prod
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-mobileshop}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-mobileshop}
+      SECRET_KEY: ${SECRET_KEY:?set SECRET_KEY in .env}
+      CORS_ORIGINS: '["https://${APP_DOMAIN}", "https://localhost", "capacitor://localhost"]'
+      UPLOAD_DIR: /data/uploads
+      WEB_WORKERS: ${WEB_WORKERS:-2}
+      PUBLIC_SIGNUP: ${PUBLIC_SIGNUP:-false}
+      SUPERUSER_PHONES: ${SUPERUSER_PHONES:-}
+    volumes:
+      - uploads:/data/uploads
+    networks:
+      internal:
+        # a unique name: web also sits on the shared Traefik network, where "backend" may be another app
+        aliases: [mobileshop-backend]
+
+  web:
+    image: ${IMAGE_PREFIX:-ghcr.io/abdurrehmanafzal/mobile-shop}-web:${IMAGE_TAG:-latest}
+    build:
+      context: ..
+      dockerfile: deploy/web.Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks: [internal, traefik]
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=n8n_default
+      - traefik.http.routers.mobileshop.rule=Host(`${APP_DOMAIN:?set APP_DOMAIN in .env}`)
+      - traefik.http.routers.mobileshop.entrypoints=websecure
+      - traefik.http.routers.mobileshop.tls=true
+      - traefik.http.routers.mobileshop.tls.certresolver=mytlschallenge
+      - traefik.http.services.mobileshop.loadbalancer.server.port=80
+      # plain HTTP -> HTTPS
+      - traefik.http.routers.mobileshop-http.rule=Host(`${APP_DOMAIN}`)
+      - traefik.http.routers.mobileshop-http.entrypoints=web
+      - traefik.http.routers.mobileshop-http.middlewares=mobileshop-https
+      - traefik.http.middlewares.mobileshop-https.redirectscheme.scheme=https
+      - traefik.http.middlewares.mobileshop-https.redirectscheme.permanent=true
+
+volumes:
+  pgdata:
+  uploads:
+
+networks:
+  # db and backend are reachable only from inside this stack
+  internal:
+  traefik:
+    external: true
+    name: n8n_default

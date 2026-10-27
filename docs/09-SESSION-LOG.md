@@ -1,0 +1,428 @@
+# 09 — Session Log
+
+Newest entry at the bottom. Each entry: date · done · verified · next · open questions. Keep entries short; details belong in the other docs.
+
+---
+
+## 2026-10-22 — Session 1: clone, run v1, audit, plan v2
+**Done**
+- Cloned repo, ran v1 backend (Python 3.12 venv) and frontend (Vite); fixed Windows cp1252 crash with `PYTHONUTF8=1`; reseeded DB after partial seed.
+- Audited v1 (docs/08). Decided to rebuild as v2 (ADR-001) reusing domain knowledge, seeds and bilingual components.
+- Restructured repo: `legacy/` (v1 code), `docs/archive/` (v1 docs), new `docs/01–10`, `CLAUDE.md`, `.claude/skills/{kickoff,handoff,pk-mobile-domain}`.
+- Wrote business requirements, functional requirements with FR ids, architecture, data model, roadmap, progress tracker, testing strategy.
+- Set repo git author to Abdur Rehman Afzal; created branch `develop`.
+
+- Built v2 backend foundation: FastAPI app factory, bilingual error envelope, SQLAlchemy 2 base (UUID, Timestamped, ShopScoped, Numeric money), organisations/shops/users/user_shops/audit_log, Alembic initial migration, JWT access+refresh, bcrypt, PK phone normalisation, X-Shop-Id tenancy context, role→capability matrix, endpoints for auth/me/shops/staff/audit.
+- Built v2 frontend foundation: Vite + React 18 + TypeScript + Tailwind, i18n (en/ur, Urdu default, RTL), bilingual primitives (BiLabel, BiButton, BiInput, BiAlert), API client with auto-refresh, zustand auth store, login/signup pages, mobile shell with bottom nav, dashboard placeholder, More page (language switch, logout), PWA manifest.
+
+**Verified**
+- `backend: .venv\Scripts\pytest -q` → 17 passed (auth, tenancy isolation, roles, audit, migration/model parity). `ruff check` clean.
+- Live smoke: `uvicorn app.main:app` → `/health` ok, signup created org+shop+owner, `/me` returned shop, duplicate phone → 409 bilingual error, `/docs` 200.
+- `frontend: npx vitest run` → 7 passed; `tsc -b --noEmit` clean; `vite build` ok (309 kB JS). Dev server proxies `/api` to backend; login through proxy works; page root is `lang="ur" dir="rtl"`.
+
+**Next** (first step of next session)
+1. Catalogue module (`backend/app/modules/catalogue`): brands/models/storages/colours tables + seeds ported from `legacy/backend/app/utils/seed_data.py` + list endpoints. This closes Phase 0.
+2. Then Phase 1 in this order: parties → ledger/PostingService → devices + events → verification → purchase → sale → payments → loans → returns, each with tests, then the matching frontend screens.
+3. Open the app on a real Android phone over LAN (`vite --host`) and note Urdu rendering issues.
+
+**Open questions for the owner**
+1. Cloud hosting preference (any VPS vs managed, e.g. Hetzner/DigitalOcean vs Railway/Render)? Affects Docker setup in Phase 3.
+2. WhatsApp: is a Meta Business account available, or should we start with "share via WhatsApp" links (no API cost)?
+3. Should Urdu be the default language on first launch? (Assumed yes.)
+4. Trial length and plan prices (assumed 14 days; prices TBD).
+5. Design direction: owner reported ~50 shopkeepers found the v1 UI "not modern, not luxury". Proposal: build `docs/11-DESIGN-SYSTEM.md` + an interactive mockup of 3 key screens (dashboard, device purchase with verification, sale) and get sign-off before Phase 1 UI.
+
+---
+
+## 2026-10-22 — Session 2: design mockup
+**Done**
+- Published design mockup canvas (Direction A "Emerald & Gold"): https://claude.ai/artifact/AEWv7XqFN62dXjuNWmGnad — 5 phone screens: dashboard (light), used-mobile purchase/verification step, sale confirm, device history timeline, dashboard (dark). Interactive links between screens; accent colour tweakable in the canvas.
+- Drafted `docs/11-DESIGN-SYSTEM.md` v0.1 (tokens, type, shape, components) marked pending approval.
+- Renamed project skill `resume` → `kickoff` (`/resume` is a built-in Claude Code command).
+
+**Verified**: canvas published and opens; no code changes this session, so no tests run.
+
+**Next**
+1. Owner reviews the mockup, ideally with a few shopkeepers; answers the 3 questions at the end of docs/11 (light vs dark default, accent, English eyebrow everywhere or headings only).
+2. On approval: translate tokens into `frontend/tailwind.config.js` + rebuild `components/Bilingual.tsx` and the shell to the design system; then catalogue module and Phase 1.
+
+---
+
+## 2026-10-22 — Session 3: design system approved and implemented
+**Done**
+- Owner approved Direction A with "both light and dark". Decisions recorded in docs/11 (v1.0) and ADR-007.
+- Implemented tokens as CSS variables (light / dark / system) + Tailwind mapping; theme store with persisted Light/Dark/System toggle (More → Appearance); rebuilt BiLabel/BiButton/BiInput/BiAlert and added BiSegmented; new Shell (monogram, bell, bottom nav with raised FAB), Dashboard (hero card, tiles, quick actions), AuthLayout, MorePage, ComingSoon; Lucide icons replace emoji; Manrope font; icon/manifest recoloured.
+
+**Verified**: `npx tsc -b --noEmit` clean; `npx vitest run` → 9 passed; `vite build` ok. Dev server reflects changes via HMR.
+
+**Next**
+1. Catalogue module (brands/models/storages/colours + seeds from legacy) → closes Phase 0.
+2. Phase 1: parties → ledger → devices + events → verification → purchase → sale → payments → loans → returns, each with tests and screens built on the design system.
+3. Owner: open http://localhost:5173 on a phone over LAN (`npm run dev -- --host`), check Urdu rendering in both themes.
+
+---
+
+## 2026-10-22 — Session 4: catalogue module (Phase 0 backend complete)
+**Done**
+- `modules/catalogue`: Brand, Model, Storage, Colour with global (`shop_id NULL`) + shop-private rows; list/create endpoints under `/api/v1/catalogue/*`; search models by model name, Urdu name or brand; create requires `TRANSACT` (technicians read-only).
+- `seeds/catalogue.py`: idempotent seed ported from legacy and extended (17 brands with Urdu names incl. Itel/Sparx/QMobile/Honor; 108 models incl. Nokia/Itel/QMobile feature phones with reference prices; 7 storages incl. 4MB for feature phones; 16 colours with hex). Runs at app startup (lifespan) outside tests.
+- Alembic migration `7f4c986a8f9f`.
+
+**Verified**: `pytest -q` → 24 passed (7 new: idempotent seed, Urdu names/model counts, filter+search, per-shop privacy, case-insensitive conflicts, storages/colours validation, role check). `ruff` clean. Live: restart seeded `{'brands': 17, 'models': 108, 'storages': 7, 'colours': 16}`; `/catalogue/brands` and `?q=105` answer correctly.
+
+**Next**: Phase 1 — Parties module (FR-MST-03), then ledger + PostingService (FR-TXN-01,02).
+
+---
+
+## 2026-10-22 — Session 5: parties module (Phase 1 starts)
+**Done**
+- `core/pk.py`: shared Pakistani validators — `normalise_phone` (accepts +92/92/0, spaces, Urdu digits), `normalise_cnic` (#####-#######-#), `is_valid_imei` (Luhn). Auth schemas now import from it.
+- `modules/parties`: Party (customer/supplier/shop/technician via `kinds` JSON list), phone unique per shop, cached `balance` (ledger-owned, not writable via API), list with `kind`/`q`/`with_balance`/`include_inactive`, `GET /by-phone/{phone}`, create/update with audit. Write access: TRANSACT or REPAIR_CREATE (technicians read-only).
+- Alembic migration `975f04ac8e85`.
+
+**Verified**: `pytest -q` → 32 passed; `ruff` clean; migration applied to dev DB; backend running with `--reload`.
+
+**Next**: Ledger + PostingService (FR-TXN-01, 02): `ledger_groups`, `ledger_entries`, cash accounts, balanced posting, party balance recompute, property tests (Σdebit = Σcredit).
+
+---
+
+## 2026-10-22 — Session 6: ledger + PostingService
+**Done**
+- `modules/ledger`: `CashAccount` (cash/bank/easypaisa/jazzcash, default "Cash / نقد" created at signup and shop creation), `LedgerGroup`, `LedgerEntry` (append-only; `reversed_by_group_id` is the only mutable field).
+- `service.py`: `Posting` builder (`.debit()/.credit()`), `post()` validates Σdebit = Σcredit and one-sided non-negative lines, checks party/cash accounts belong to the shop, refreshes `Party.balance`; `reverse()` mirrors a group once; `party_balance`, `cash_balance`, `account_total`, `party_statement` (running balance, opening before date_from), `cash_book`, `post_party_opening_balance` (diary migration: Dr party / Cr equity or the reverse).
+- Account keys in `accounts.py` (`party:<id>`, `cash:<id>`, sales, inventory, cogs, discounts, tax_payable, repair_income, other_income, expense:<cat>, equity, suspense).
+- Endpoints `/api/v1/ledger`: accounts (list/create), `accounts/{id}/book` (VIEW_COST), `parties/{id}/statement`, `parties/{id}/opening-balance` (VOID), `groups/{id}` (VIEW_COST), `groups/{id}/reverse` (VOID).
+- Alembic `6d403b33df28`.
+
+**Verified**: `pytest -q` → 43 passed (11 new: unbalanced/negative rejected, S4 credit-sale-then-payments derives 0 balance, reversal mirrors + blocks double reversal, hypothesis property over random sale/payment sequences, API: default cash account, opening balance → statement → reverse, cash book with opening balance, isolation + roles, balance read-only but ledger-driven, unknown party rejected). `ruff` clean.
+
+**Next**: Devices + device_events + state machine (FR-DEV-01..04), then verification (FR-VER), then purchase documents posting to the ledger.
+
+---
+
+## 2026-10-22 — Session 7: devices, events, state machine, IMEI passport
+**Done**
+- `modules/devices/state.py`: enums (condition, PTA status, verification status, device status, event type), `MONEY_EVENTS`, `NEUTRAL_EVENTS`, `TRANSITIONS` table, `next_status()`.
+- `models.py`: `devices` (unique IMEI1 per shop; projection: status, current_party_id, verification_status, cost/asking price, cycle_no, event_count, last_event_at), `device_events` (seq per device, status_after, party, amount, ledger_group, document ref, data JSON), `device_accessory_items` (bundle: came_with / pending_from vendor|shop / expected / given_at_sale / promised_to_customer_at).
+- `service.py`: `apply_event()` (validates transition, appends event, updates projection; purchase after sold bumps cycle_no); `new_device()` + `add_opening_stock()` (device + PURCHASED event + ledger Dr inventory / Cr equity); `update_device()` (asking price change → PRICE_CHANGED event); `set_accessories()`; `raise_event()` for non-money events (loans only to parties of kind shop; money events rejected with a bilingual hint); `imei_lookup()`, `history()`, `list_devices()` with joins to catalogue names.
+- Router hides `cost_price` and purchase amounts from roles without VIEW_COST; opening stock requires VIEW_COST.
+- `ledger_entries.device_id` now a real FK (named batch constraint for SQLite).
+- Alembic `07033ee5abb9`; test client gained `put()`.
+
+**Verified**: `pytest -q` → 52 passed (9 new: transition table, opening stock → event + ledger + accessories, box-pack not_required / non-PTA needs SIM time, IMEI unique per shop + lookup + isolation, loan out/return with party-kind rule + history seq/names, invalid transition 409 + money events 422 + faulty/repair flow, price change event + search/filters, accessories replace/validation, salesman cost hiding). `ruff` clean. Migration applied to dev DB.
+
+**Gotchas**: IMEI test fixtures must be Luhn-valid (`490154203237518`, `356938035643809`, `356789104552375`); SQLite batch migrations need named FKs.
+
+**Next**: Verification module (FR-VER-01..04): verification record with CNIC/seller photos, eGadget result, PTA check, declaration; `VERIFIED` event; sale hard-block on `flagged`; file upload service for photos.
+
+---
+
+## 2026-10-22 — Session 8: verification + file uploads
+**Done**
+- `modules/files`: `POST /api/v1/files` (multipart; jpg/png/webp/pdf ≤ 8 MB; stored under `UPLOAD_DIR/<shop_id>/<purpose>-<uuid>.<ext>`), `GET /api/v1/files/{path}` only for the caller's shop prefix. `belongs()` used by other modules to validate paths.
+- `modules/verification`: `verifications` (one per device cycle): seller party, CNIC no + front/back photos, seller photo, device photos, eGadget result/ref/screenshot, PTA check (updates device PTA status), declaration signed/path, physical notes. `compute()` → `flagged` if eGadget flagged, `clear` when CNIC + both CNIC photos + seller photo + eGadget clear + declaration, else `pending` with `missing[]`. `upsert()` raises a VERIFIED event (party = seller) and copies CNIC to the party. `override()` (VERIFY_OVERRIDE) records reason, marks clear with an event carrying `override: true`. `assert_sellable()` blocks `flagged` (device_flagged) and `pending` (not_sellable). `GET …/verification/declaration` returns a bilingual A5 HTML purchase declaration for printing.
+- Alembic `04c1bc608d58`. `cat` fixture moved to conftest.
+
+**Verified**: `pytest -q` → 57 passed; `ruff` clean after fixture move.
+
+**Next**: Purchase documents (FR-TXN-03): from supplier / walk-in / shop; device lines create devices + PURCHASED event + verification stub; accessory lines (needs accessories stock → minimal `accessories` table) ; ledger: Dr inventory / Cr party, Dr party / Cr cash for paid-now. Then sales.
+
+---
+
+## 2026-10-22 — Session 9: purchases
+**Done**
+- `modules/purchases`: `Purchase` (no `PUR-000001` from `shops.next_purchase_no`; kind supplier/walk_in/shop/trade_in; subtotal/discount/total/paid; cash account; status posted/voided; ledger group; reference; void reason) + `PurchaseLine` (device|misc, unit_cost, discount_share, net_cost).
+- `create_purchase()`: validates party (supplier kind auto-added; shop kind required for kind=shop), discount ≤ subtotal, paid ≤ total; allocates discount proportionally (remainder on last line); devices created via `new_device()` or re-used when the IMEI exists with status sold/returned_to_supplier (identity refreshed, cycle continues) else `imei_in_stock` 409; accessories bundle stored; ledger: Dr inventory (per device, device_id) / Dr purchases (misc) / Cr party total / Dr party & Cr cash for paid; PURCHASED event per device with `verification_status` (supplier box-pack → not_required, else pending).
+- `void_purchase()` (VOID): refuses if any device has non-verification events after the purchase or is not in stock; reverses the ledger group; RETURNED_TO_SUPPLIER event with `void: true`.
+- Shop counters `next_purchase_no`, `next_repair_no` added (server_default 1). Alembic `c2b50b843a18`.
+- Reads: list requires VIEW_COST; get allowed for the creator.
+
+**Verified**: `pytest -q` → 63 passed; `ruff` clean.
+
+**Gotchas**: a Pydantic field named `date` must not share its name with the `date` type in the same module (use `import datetime as dt`); SQLite batch `add_column` with NOT NULL needs `server_default`.
+
+**Next**: Sales/invoices (FR-TXN-04, FR-TXN-12): INV numbering, device lines (assert_sellable, SOLD event, Dr cogs/Cr inventory at device cost), discount, tax (shop settings), paid-now, accessories given/pending, receipt HTML; then payments (FR-TXN-05), loans (FR-TXN-06), returns (FR-TXN-08).
+
+---
+
+## 2026-10-22 — Session 10: sales / invoices
+**Done**
+- `modules/sales`: `Invoice` (INV-000001 via `shops.invoice_prefix` + `next_invoice_no`; optional party — cash sale must be fully paid; subtotal/discount/tax_rate/tax_inclusive/tax_amount/total/paid/cost_total; status open/partially_paid/paid/returned/void; ledger group; loan_id placeholder; fbr_invoice_no placeholder) + `InvoiceLine` (device|misc; unit_price, discount_share, tax_share, line_total, cost, warranty_days, accessories_given, accessories_pending).
+- `create_sale()`: device must be in_stock (or with this customer for approval; on_loan → settle loan instead); `assert_sellable()` enforced with inline owner override (`override_reason` + VERIFY_OVERRIDE) that records the verification override; `compute_tax()` inclusive/exclusive; discount and tax allocated across lines; ledger: Dr cogs / Cr inventory per device at cost, Dr party (or cash for cash sale) total / Cr sales net / Cr tax_payable, Dr cash / Cr party for paid-now; SOLD event per device (amount = price, data invoice_no/paid_now/warranty); accessories given → `given_at_sale`, pending → `pending_from=shop` + promised date; warranty start set.
+- `void_invoice()` (VOID): refuses if device moved after the sale; reverses ledger; SALE_RETURNED event with `void: true`; resets accessory flags.
+- `receipt_html()` thermal 80 mm / A4: shop header (EN + UR), lines with IMEI and given accessories, discount, tax, total, paid, due on this bill, party running balance, pending accessories line, bilingual footer.
+- Cost/profit hidden without VIEW_COST. Alembic `7efefcded18f`.
+
+**Verified**: `pytest -q` → 72 passed; `ruff` clean.
+
+**Next**: Payments in/out with allocation (FR-TXN-05) → invoice `paid`/status updates; loans (FR-TXN-06) out/settle (return or sale to the shop); returns (FR-TXN-08) partial sale/purchase returns with refund / keep-as-credit / keep-as-income choice.
+
+---
+
+## 2026-10-22 — Session 11: payments and loans
+**Done**
+- `modules/payments`: `Payment` (PAY-000001 from `shops.next_payment_no`; party; direction in/out; amount; cash account; method cash/bank/easypaisa/jazzcash/card/other; reference; allocations JSON; status posted/voided; ledger group). `create_payment()`: explicit allocations (document must belong to the party, direction must match, cannot exceed amount or document due) or FIFO auto-allocation across open invoices (in) / unpaid purchases (out); leftover stays unallocated (advance → negative party balance). Ledger: in = Dr cash / Cr party; out = Dr party / Cr cash. `void_payment()` (VOID) undoes allocations and reverses the ledger.
+- `modules/loans`: `Loan` (device, shop party, out_at, expected_back_at, status out/returned/sold, invoice_id). `create_loan()` → LOANED_OUT (document loan), `return_loan()` → LOAN_RETURNED, `sell_loan()` → `create_sale(..., loan=loan)` (sale allowed for an on-loan device only to the holding shop; invoice carries `loan_id`). `GET /loans` with `overdue` flag.
+- Devices generic events endpoint now rejects loaned_out/loan_returned (`use_loans_endpoint`) so loan rows are the single source.
+- Alembic `68c40ffb1e1f` (payments, loans, `shops.next_payment_no` server_default 1). `test_migrations` disposes the engine in `finally` (Windows file lock).
+
+**Verified**: `pytest -q` → 79 passed; `ruff` clean. The Nokia chain (S1–S3) runs end-to-end through the API: walk-in purchase + verification → loan to Shop B → settle as sale (1,000, paid 500) → void when it comes back → sale to Sara 1,500 → history shows all six events with party names; cash ends at +500.
+
+**Design note**: a *void* is a full reversal (money refunded). The "device came back after partial payment, keep the 500 as credit/income" choice belongs to the returns module (FR-TXN-08), next.
+
+**Next**: Returns (sale return with refund / keep as credit / keep as income; purchase return to supplier), then exchange (FR-TXN-07), then the frontend Phase 1 screens on the design system.
+
+---
+
+## 2026-10-22 — Session 12: returns (Phase 1 backend core complete)
+**Done**
+- `modules/returns`: `ReturnDoc` (RET-000001 from `shops.next_return_no`; kind sale/purchase; document ref; party; amount; settlement refund/credit/income; refund_amount; kept_amount; cash account; reason; lines JSON; ledger group).
+- `sale_return()`: selected invoice lines (not already returned); computes the customer's excess paid for the returned value; settlement **refund** (Dr party / Cr cash), **credit** (balance stays on account), **income** (Dr party / Cr other_income — the "keep the 500" case); ledger reverses sales net, tax share and COGS/inventory per line; SALE_RETURNED event with settlement details; accessory flags reset; invoice `returned_total`, status → returned when all lines back; `balance_due = max(0, total − returned − paid)`.
+- `purchase_return()`: selected purchase lines whose devices are in stock/faulty; Dr party / Cr inventory (or purchases for misc); optional supplier cash refund; RETURNED_TO_SUPPLIER event; purchase `returned_total`.
+- Cash sales without a customer are returned by voiding the invoice (explicit error).
+- Alembic `6e125ad21486` (returns, returned_total/returned_at columns, `next_return_no`).
+
+**Verified**: `pytest -q` → 84 passed; `ruff` clean.
+
+**State of Phase 1 backend**: parties, ledger, devices/events, verification, purchases, sales, payments, loans, returns all done with tests. Remaining Phase 1 item is the **frontend screens** on the approved design system (parties, stock + device detail/history + IMEI search, purchase wizard with verification, sale wizard with receipt, payments, loans, returns). Phase 2 then adds exchange, accessories stock, repairs, expenses/cash book, dashboard/reports, tax report.
+
+**Next**: Frontend Phase 1 screens, starting with the API client types + parties list/create, then stock/device detail/history, then purchase and sale wizards.
+
+---
+
+## 2026-10-22 — Session 13: owner review of the frontend
+**Feedback**: (1) Vite dev server had a stale Tailwind config → restarted. (2) "Urdu mein poora Urdu, English mein sirf English, mix nahi" → stacked bilingual labels removed.
+**Done**: `Bilingual.tsx` now renders only the active language via `useLang()` (BiLabel/BiButton/BiInput/BiAlert/BiSegmented); Shell shows `name_ur` in Urdu mode; dashboard/auth cleaned of eyebrow props; tests updated (Urdu-only vs English-only). CLAUDE.md, docs/02 FR-PLT-01 and docs/11 updated.
+**Verified**: `tsc` clean, `vitest` green, `vite build` ok.
+**Next**: unchanged — Phase 1 frontend screens.
+
+---
+
+## 2026-10-22 — Session 14: single-language print documents + notification foundation
+**Owner asks**: receipts/declarations in the shop's selected language (not bilingual); on stock-in and on sale send WhatsApp (and optionally email) to the owner and to the customer, all optional.
+**Done**
+- Receipt (`GET /sales/{id}/receipt`) and purchase declaration (`GET /devices/{id}/verification/declaration`) now render in ONE language: `shops.default_locale` by default, `?lang=en|ur` to override; Urdu versions are RTL with Nastaliq, numbers kept LTR.
+- `modules/notifications`: `shops.notification_settings` JSON (owner WhatsApp/email, per-trigger toggles for owner/customer/seller on sale/purchase/payment, optional language override) via `GET/PUT /api/v1/notifications/settings` (MANAGE_SETTINGS); `messages` outbox (channel, audience, recipient, template, lang, subject/body, `wa.me` link, event/document refs, status queued/sent/failed/skipped, provider); templates EN/UR for sale_customer, sale_owner, purchase_owner, purchase_seller, payment_customer with balance / pending-accessory lines; hooks inside `create_sale`, `create_purchase`, `create_payment` (same transaction as the document); `GET /api/v1/notifications`, `POST /{id}/mark-sent` for manual WhatsApp sharing.
+- Senders (Meta WhatsApp Cloud API, SMTP) are the next step in Phase 3; until then the UI opens the `wa.me` link.
+- Alembic `01c39f11d273`.
+
+**Verified**: `pytest -q` → 89 passed; `ruff` clean.
+
+**Next**: frontend Phase 1 screens (unchanged), with a notifications settings screen under More.
+
+---
+
+## 2026-10-22 — Session 15: Phase 1 frontend screens
+**Done** (three commits)
+- Shared UI kit (`PageHeader`, `Sheet`, `Row/List`, `Chip`, `MoneyText`, `BalanceLabel` with lena/dena wording, `SearchBox`, `Stepper`, `KV`, `Section`, `Empty/Loading/ErrorText`), `PartyPicker` with inline create, typed API hooks (`lib/queries.ts`, shop-scoped keys, `useDocMutation` invalidates everything), `lib/files.ts` (upload, object URLs, `openPrintable` for receipts/declarations), full EN/UR string sets.
+- Parties (list/search/kind filter/with-balance, add/edit sheet, detail with hero balance, kinds, statement with running balance, receive/pay payment sheet with method + allocation result).
+- Stock (list with status filters and search, IMEI lookup sheet with seen-before/times-bought/Luhn, device detail with chips, cost hidden for salesmen, actions: sell, verify, loan out, faulty/repair/approval events, price change, note; accessories chips; history timeline).
+- Purchase wizard (4 steps; device sheet with IMEI lookup warnings, brand chips, model search, storage/colour, condition, PTA + SIM time, cost/asking/warranty, accessories came-with/pending-from-vendor; misc lines; discount/paid/account/reference; done screen with verify + declaration print per device).
+- Verification page (seller picker, CNIC, three photo tiles with camera capture + upload, eGadget segmented + portal link + ref, PTA checked + 8484 SMS link + result, declaration checkbox + print, physical notes, result/missing, owner override sheet).
+- Sale wizard (customer or cash, pick from in-stock devices, per-line price/warranty/accessories given/pending with promised date, misc, discount/paid/account, inline override reason for owner/manager, done screen with thermal/A4 print).
+- Sales list (status filter) + detail (lines with profit for managers, totals, print, return sheet with line selection + settlement, void sheet); purchases list + detail (return with refund, void); payments and returns lists; loans page (return / sell-to-shop); shop settings; notifications settings + message queue with wa.me share and mark-sent; More menu; dashboard wired to live data; bottom-nav FAB → new sale.
+
+**Verified**: `tsc -b --noEmit` clean, `vitest` 10 passed, `vite build` ok. Not yet verified: real-phone layout, camera capture on Android, print dialogs on a thermal printer.
+
+**Next**: owner walkthrough on a phone → fix list; then Phase 2 (exchange, accessories stock, repairs, expenses/cash book, reports + dashboard endpoint, tax report).
+
+---
+
+## 2026-10-22 — Session 16: Phase 2 backend part 1 (expenses, repairs, accessories)
+**Done**
+- Expenses: categories (11 seeded with Urdu + per-shop custom), `EXP-` numbering, Dr `expense:<key>` / Cr cash, staff salary and technician links, void; day-close preview and close (opening/in/out/expected/counted/difference) per cash account and date.
+- Repairs: `REP-` numbering; customer device (desc + IMEI) or stock device (SENT_TO_REPAIR/REPAIR_RETURNED events); fault codes EN/UR; received accessories; condition photos; estimate + advance (Dr cash / Cr party); status transitions with log; parts + labour + discount; deliver posts `repair_income` and takes payment; stock devices: outside technician cost → Dr inventory / Cr technician party and device cost raised; returned-unrepaired marks stock device faulty; job sheet (80 mm, shop language); repair-ready WhatsApp template + setting.
+- Accessories: `accessories` + `accessory_movements` (weighted average cost), opening stock (Dr inventory / Cr equity), adjust (+ other_income / stock_loss expense), purchase misc lines with `accessory_id` → stock in at net cost (Dr inventory), sale misc lines → stock out at avg cost (COGS), void/return reverse movements, repair parts consume stock at delivery (COGS inside the bill group), low-stock list, pending device-accessory tracker (`GET /accessories/pending`, `POST /pending/{id}/deliver`).
+- Migrations `e1b1a31dbe63`, `e95a0709d555`, `ab0e2601f475` (named batch FKs for SQLite).
+
+**Verified**: `pytest -q` → 103 passed; `ruff` clean.
+
+**Next**: Exchange (FR-TXN-07) as one transaction (purchase trade-in + sale), reports/dashboard endpoints (FR-RPT-01/02, FR-TAX-03), then frontend screens for expenses, repairs, accessories, reports.
+
+---
+
+## 2026-10-22 — Session 17: exchange + reports (Phase 2 backend part 2)
+**Done**
+- Exchange (S5): `POST /api/v1/exchanges` = trade-in purchase (kind trade_in, credit to customer) + sale + optional cash refund, all in one DB transaction (rollback on any failure, test proves no orphan purchase/device). Stores previous balance, trade-in value, new total, paid, new balance. `create_sale` / `create_purchase` accept `commit=False`.
+- Reports: `/reports/dashboard` (any role; cost/profit hidden without VIEW_COST), `/reports/profit-loss`, `/reports/cash-flow`, `/reports/tax`, `/reports/stock-ageing` (REPORTS_ALL). Default range = current month. Decimals serialised as strings.
+- Alembic `218e639dde2c`.
+
+**Verified**: `pytest -q` → 107 passed; `ruff` clean.
+
+**Next**: frontend Phase 2 screens (expenses + day close, repairs, accessories, exchange, reports; dashboard switches to `/reports/dashboard`), then PDF/Excel export, then Phase 3 (staff UI, WhatsApp/SMTP senders, PWA/Capacitor, deploy).
+
+---
+
+## 2026-10-22 — Session 18: Phase 2 frontend
+**Done**: Expenses page (category chips, add, live today in/out/expected, day-close sheet with counted vs expected); Repairs (list open/all, new job with fault and received-accessory chips, estimate/advance/promised date, auto job-sheet print; detail with status sheet, parts editor incl. quick-add from accessory stock, labour, deliver sheet, status log); Accessories (stock/low/pending tabs, add with opening stock, adjust for managers, mark pending delivered); Exchange wizard (customer → old device via the purchase device sheet → new device from stock → live new-balance preview → receipt); Reports (date range P&L with expense categories, cash flow per account, tax, stock ageing); dashboard now reads `/reports/dashboard` with repair/exchange quick actions; More menu gained repairs, exchange, accessories, expenses, reports. All strings EN/UR.
+**Verified**: `tsc` clean, `vitest` 10 passed, `vite build` ok; backend 107 passed.
+**Not yet verified**: real-phone walkthrough; thermal printer output.
+**Next**: Phase 3 — staff management UI, cash/bank accounts UI, WhatsApp Cloud API + SMTP senders, PDF/Excel export, PWA service worker + Capacitor, Docker deploy; plus E2E tests.
+
+**Addendum (Session 18)**: Staff page (owner) and Cash & bank page (owner/manager, add Easypaisa/JazzCash/bank with opening balance, cash book) added. Phase 3 items still needing owner input: Meta WhatsApp Business account (for auto-send), hosting choice (for deploy), plan prices.
+
+---
+
+## 2026-10-22 — Session 19: deployment setup for Hostinger VPS
+**Done**: `backend/Dockerfile` (python 3.12 slim, non-root, migrations on start, healthcheck), `deploy/web.Dockerfile` (Vite build → Caddy), `deploy/Caddyfile` (HTTPS, /api proxy, SPA fallback, security headers), `deploy/docker-compose.yml` (db/backend/web, volumes), `deploy/.env.example`, `deploy/backup.sh`, `docs/12-DEPLOYMENT.md`, ADR-008. Production guard: refuses default/short SECRET_KEY when APP_ENV=prod.
+**Verified**: 108 backend tests pass; `alembic upgrade head --sql` against the PostgreSQL dialect renders all 35 tables without error. Not verified: Docker build and a live Postgres run (no Docker on the dev PC).
+**Needs from owner**: domain/subdomain for the app, VPS SSH access (or run the commands in docs/12 yourself).
+
+---
+
+## 2026-10-22 — Session 20: UI guide (Easypaisa) + PIN login + opening stock
+**Owner**: complete local development first; continue Phase 3; shared Easypaisa screenshots as UI guide; asked whether customers and inventory can be added.
+**Done**
+- Home rebuilt on the guide: green header band, hidden-amount hero card with eye toggle (remembered per device), 3 big actions, 4-column services grid, masked receivable/payable cards, attention list. Centre nav button opens a chooser sheet (sale, purchase, payment, repair, exchange, IMEI).
+- PIN login: `POST /auth/pin-login`, `PUT /me/pin` (requires password), `has_pin` on `/me`, in-process failure limiter (5 fails / 10 min → 429) for password and PIN logins; PIN keypad screen remembering the last user; set-PIN sheet in More.
+- Opening stock page `/stock/opening` for phones already in the shop (no supplier, no cash; Dr inventory / Cr equity), linked from the purchase wizard.
+- Found and fixed: the dev backend had stopped reloading, so Phase 2 endpoints returned 404 in the browser; restarted with `--reload-dir app`.
+**Verified**: backend 110 tests; frontend tsc/vitest/build clean; live smoke: set PIN 204, PIN login 200, dashboard/repairs/accessories/expense categories 200.
+**Next**: stock cards with stat columns + brand row (guide), PDF/Excel export, PWA service worker, Capacitor Android, E2E.
+
+---
+
+## 2026-10-22 — Session 21: owner phone test
+- Added `npm run dev:lan`; owner opened `http://<PC-IP>:5173` on an Android phone over Wi-Fi. Verdict: **"UI ok hai"**.
+- Owner hit the PIN screen after logout because a test PIN (12345) had been set on the demo account during the PIN smoke test; explained PIN / password fallback. Lesson: don't leave test credentials on the owner's demo account.
+- Phase 3 next (no owner input needed): stock cards in the guide's offer-card style + brand row, PDF/Excel export, PWA service worker, Capacitor Android build, Playwright E2E. Waiting on owner: app domain + VPS access (deploy), Meta Business account (WhatsApp auto-send), plan prices.
+
+---
+
+## 2026-10-22 — Session 22: stock cards + exports
+**Done**: stock list rebuilt as offer-style cards (UI guide): brand row with counts, status + sort dropdowns, 4 stat columns (memory, PTA, condition, days in stock), IMEI + verification chip, green "Sell" pill. Backend `modules/exports` CSV downloads (UTF-8 BOM so Excel shows Urdu): `/exports/stock.csv`, `/parties.csv`, `/parties/{id}/statement.csv`, `/sales.csv`, `/purchases.csv`, `/expenses.csv` (cost hidden from salesmen; sales/purchases/expenses need REPORTS_ALL). Frontend: Excel button on stock, party statement and reports; reports Print/PDF with header/nav hidden in print.
+**Verified**: backend 113 tests; frontend tsc/vitest/build clean; live smoke on a throwaway shop (03990000001): all five CSVs 200 text/csv.
+**Next**: PWA service worker + install prompt, Capacitor Android, Playwright E2E.
+
+---
+
+## 2026-10-22 — Session 23: PWA + Android scaffold
+**Done**: `vite-plugin-pwa` (autoUpdate, generated manifest with Urdu/RTL, PNG + maskable icons generated with Pillow, service worker precaches the app shell only; `/api` and `/health` excluded; Google Fonts cache-first). Capacitor 6 Android project in `frontend/android` (appId `pk.mobileshop.app`, camera + share plugins, CAMERA/READ_MEDIA_IMAGES permissions). Production CORS now allows `https://localhost` and `capacitor://localhost`. Guide `docs/13-MOBILE-APP.md`.
+**Verified**: build emits `sw.js` + manifest (display standalone); tsc/vitest clean.
+**Blocked**: APK build (no Java/Android SDK on this PC; needs live API domain).
+**Next**: Playwright E2E for the core flow.
+
+**Session 23 addendum — E2E**: Playwright 1.48 + Chromium; `npm run e2e` runs `e2e/core-flow.spec.ts` (Pixel 7): fresh throwaway shop signup, stock via API, customer + credit sale through the UI, dashboard reveal shows Rs. 1,000, customer balance 600. Passed (22 s). Vitest restricted to `src/**/*.test.*`.
+
+---
+
+## 2026-10-22 — Session 24: owner testing fixes
+- Login: PIN screen now offers "use another account" and "create a new shop"; signup is a prominent button on the login screen (owner could not find how to make a new test shop).
+- "Add device not working": reproduced with Playwright. Root causes: (1) adding `stock.condition` as a plain label for the stock cards overwrote the `stock.condition.*` label set, so the condition selector showed raw keys and overlapping text; (2) on the old-stock page the device sheet reopened blank after Add, so it looked like nothing happened. Fixed: label set restored (`stock.conditionShort`, `stock.ptaLabel` for section labels), sheet closes with an "Added — add another or save" note.
+- Regression tests: `e2e/add-device.spec.ts` (old stock add + save, purchase wizard add from supplier). 3 e2e tests pass.
+- Lesson: never reuse an i18n key that is already an object namespace; run the e2e suite after UI changes.
+- "Add device does nothing on the phone" (purchase wizard): the phone opens `http://<PC-IP>:5173`, which is not a secure context, so `crypto.randomUUID` is undefined and the button threw before opening the sheet. Localhost (and Playwright) were fine, which hid it. Fixed with `lib/id.ts` `uid()` (falls back to `getRandomValues`), used in device lines and misc lines of purchase and sale. The add-device e2e now removes `randomUUID` to behave like the phone (fails on the old code, passes now). Rule: do not use secure-context-only browser APIs (randomUUID, clipboard, camera via getUserMedia) without a fallback until the app runs on HTTPS.
+- Owner feedback: purchase is too complex for shopkeepers. Purchase start now has only two big choices: "From a dealer" (wholesaler/distributor, party kind supplier) and "Buy a customer's phone" (someone selling their own phone). Other shop, trade-in and the old-stock link were removed from this screen (old stock stays in More; exchange keeps trade-in). "Other items" lines show only for dealer purchases. After saving a customer's phone, the done screen asks to check it is not stolen: "Verify now" or, for owner/manager, "Skip, I know this person" (uses the verification override with a "known person" reason, so the phone becomes sellable and the skip is in the device history and audit). E2E: 4 passed, including the new customer's-phone + skip test. Owner will give the next simplification step.
+- Owner: "one name, one phone". Removed the separate Urdu-name field from the party form, signup, shop settings, accessories and cash accounts (forms now save `name_ur = null`, so the one typed name shows in both languages), and the separate WhatsApp field from the party form (messages already fall back to `phone`). DB columns stay for now. Unit 11 passed, e2e 4 passed.
+- Owner: brand, model, storage and colour need full add/edit/delete, and must be addable from the device form when missing. Backend: `PATCH`/`DELETE /api/v1/catalogue/{brands|models|storages|colours}/{id}` for shop-own rows only (built-in rows → 403 `catalogue_builtin`; in use by a device or, for a brand, by a model → 409 `catalogue_in_use`; rename clash → 409), new capability `catalogue_edit` (owner, manager); salesman can still add. Storage/colour responses now include `is_global`. Frontend: "+ New brand / New model / New size / New colour" inline in the device form (new item is selected straight away; storage typed as "128" or "1tb" is normalised), and More → Brands & models page with tabs, Built-in chips, rename and delete. Tests: backend catalogue tests (rename/delete/locked/in-use/salesman), vitest 12, e2e 5 passed.
+- Dev note: the uvicorn reloader again missed new routes (PATCH returned 404 in the browser); restarted it. Restart the backend after adding routes.
+- Owner: purchase needs a date-time because a busy shopkeeper enters it later. `purchases.purchased_at` (migration 3f1c2a7b9d10). Purchase accepts `purchased_at` (default now; naive = Pakistan time; not in the future; not before the phone's last history record; a cash payment into a day whose cash is already closed is refused with `day_closed`). The ledger group and the PURCHASED device event use that time; `date` is derived from it in the shop's timezone. UI: payment step "When was it bought? Just now / Earlier" with a date-time picker; purchase detail shows date and time. Tests: 3 new backend tests, e2e enters "yesterday 3 PM" and checks the detail page.
+
+---
+
+## 2026-10-26 — Session 25: edit and delete everywhere
+**Found**: the previous session had finished the backend for "every record can be changed and deleted" but had not committed or logged it. Tests were green (127); moved mid-file imports to the top, dropped a leftover `assert dt` in `test_crud.py`, committed.
+**Done (frontend)**
+- `components/RemoveSheet.tsx`: shared confirm sheet (danger button, optional reason of 3+ chars, says "if it has old records it is hidden and the records stay safe").
+- Party detail: delete (owner/manager) → back to the list.
+- Accessories: item sheet has Edit item (name, category, price, reorder level) and Delete (refused while stock is left).
+- Cash & bank: owner can rename and delete (default cash account cannot be deleted; non-zero balance refused by the server).
+- Expenses: tap an expense → Edit (voids the old one and posts the corrected one, keeping account/date/links) or Cancel with a reason; "Categories" link in the add sheet manages the shop's own categories (built-in ones locked).
+- Device detail: "Edit details" reuses `DeviceLineSheet` in a new `edit` mode (IMEI 1 fixed, no cost/accessories); "Remove old-stock entry" for owner/manager while the phone is in stock and nothing but verification happened.
+- Fix: in light mode the hero card is ink-coloured, so `MoneyText tone="ink"` inside it was invisible (expenses totals, party balance, device price). CSS rule `.hero .num.text-ink` now uses the hero text colour.
+**Verified**: backend `pytest` 127 passed, ruff clean; frontend typecheck clean, vitest 12 passed, build ok; Playwright 8 passed (new `e2e/crud.spec.ts`: party delete, old-stock edit + remove, expense edit + cancel).
+**Open questions**: after an expense edit/cancel, the day's "Cash in" also counts the reversal (Rs. 500 out, then 500 back in). The total in the drawer is right; ask the owner whether the in/out tiles should net voids out.
+**Next**: owner walkthrough of the new edit/delete buttons on the phone; then sale/purchase edit (currently only void + re-enter), audit viewer, Phase 3 items waiting on owner (domain + VPS, Meta account, plan prices).
+
+**Session 25 addendum — UI/UX rejected again**: owner + 10 testers: "not easy, feels like an Easypaisa clone (payment app)". Problems named: too many steps, words not understood, hard to find things, crowded home. Used on phone and laptop equally. Owner chose the "Dukaan counter (POS)" direction. Mockup for approval (5 artboards: home UR/EN, 3-step sale, udhaar khata, laptop counter): https://claude.ai/artifact/AyT6sqrTu2u1BTHqowjNqH . Direction: no green header band or hidden-amount card; one colour-coded tile per job (Sell green, Buy blue, Udhaar amber, Stock violet, Repair teal, Expense rose) with one plain word; search/IMEI scan at the top; dark-ink primary buttons; sale = pick phone → price + how paid (cash / Easypaisa / udhaar) → done (print / WhatsApp); laptop = tiles as a side menu with F-keys, stock list and bill on one screen. **No code changes until the owner approves**; then docs/11 v2 + ADR, and rebuild screens on it.
+- Owner's must-answer list for non-technical users (2026-10-26): how much I owe / am owed and to/from whom; stock worth in rupees, by brand and by model; add stock; sell (also on udhaar); today's / yesterday's / any day's sales and udhaar. Mockup updated: home answers these directly (day chips Aaj/Kal/Tareekh with sale, udhaar given, cash in; lena/dena totals; stock worth incl. lakh), new "Stock kitne ka hai?" (brand → model, count + value) and "Din ka hisaab" (any date: sale, cash, Easypaisa, udhaar given/received, expense, profit, items sold), khata totals filter the list, "Buy" tile renamed "Stock daalein". Backend gaps to check on approval: stock value grouped by brand/model, per-day udhaar given/received.
+
+**Session 25 — design v2 built (owner: "ok start karo")**
+- Backend: `GET /reports/stock-summary` (in-stock phones by brand → model, count + value; cost for owner/manager, asking price for others) and `GET /reports/day?date=` (sales, phones sold, money in per account kind, udhaar given = unpaid part of that day's sales, udhaar received = that day's payments in, expenses, profit for owner/manager, items with how paid). Tests `test_reports_simple.py`.
+- Frontend: new tokens + six job colours; shell without the green band (5 tabs; laptop ≥1024px side menu with F2–F8); Home answering the owner's list; `/stock/summary`, `/hisaab`, `/khata`; sale in 3 steps (tap phone → price + Cash / account / Udhaar, customer only for udhaar → done/print). Old Easypaisa home deleted. `.num` forces Manrope (Nastaliq drew 0 as a dot).
+- Dev note: a stale orphan uvicorn worker kept 127.0.0.1:8000 with old code (new routes 404) even after restart; killed it. If routes 404 after a restart, check `netstat -ano | grep :8000` for a second listener.
+**Verified**: backend 129 passed, ruff clean; frontend typecheck clean, vitest 14, build ok; Playwright 11 passed (new `counter.spec.ts`; core-flow uses the 3-step sale). Screenshots checked: home EN/UR, laptop, sale step 2.
+**Next**: owner phone test of v2; restyle the remaining screens on v2 (purchase wizard → "Stock daalein" in 3 steps, repairs, party detail, more/settings); English home strings review with testers; open question on expense voids in day-close in/out.
+
+**Session 25 — returns + add stock (owner: "baqi kaam start, return module bhi")**
+- Owner's case: customer bought a phone for 100,000, brings it back; shop cuts 10,000 and hands back 90,000. Backend `returns/sale`: refund and kept (other income) may now go together; walk-in cash sales can be returned when `party_id` (who brought it back) is given, and must then be settled in full (`walk_in_settle_all`), without a person → `return_needs_customer`. Device history shows who returned it. `/reports/day` gained `returns_refunded` / `returns_kept`. Test `test_return_with_cut_and_walk_in`.
+- Frontend: Return job (slate, F9) → `/return/new`: find the sold phone (IMEI/name) or a recent sale → tick what came back, "customer had paid", give back from cash/account (or keep in khata for a known customer), give-back amount with the shop's cut worked out → done (phone back in stock). Also "Return" button on a sold phone's page; day hisaab shows given back / cut on returns.
+- Add stock (purchase) now 3 steps: from whom → phones + how paid (cash / account / udhaar with paid-now) + when + "Put in stock" → done (ID check / skip for known person).
+- Dev note again: after backend/tailwind changes the running dev servers served old code/classes; restarted both (kill every uvicorn/vite/multiprocessing-spawn process first).
+**Verified**: backend 130 passed; frontend typecheck, vitest 14; Playwright 12 passed (new `return.spec.ts`: walk-in return 900 back / 100 cut, phone back in stock, hisaab shows it).
+**Next**: owner phone test of sale / return / add stock; restyle repairs, party detail, expenses, more/settings on v2; plain words for "Verify now" (→ "ID card check").
+
+**Session 25 — v2 on the remaining screens (owner: "next kaam start")**
+- More page regrouped with job-coloured icon wells (daily: sell, add stock, return, udhaar, repair, exchange, loans, day's hisaab). Person page: coloured balance card + big money received / paid buttons. Old green selected-chips and header "+" buttons switched to ink across repairs, expenses, accessories, staff, cash, stock, sales, catalogue.
+- Plain words EN/UR: New person (نیا بندہ), Dealer (ڈیلر), ID card check (شناختی کارڈ چیک) and its states, Check ID card now, Cancel this bill, Money received / paid, Exchange (old for new), Chargers & covers, Khata history; e2e updated for New person / Dealer.
+**Verified**: frontend typecheck, vitest 14, Playwright 13 passed (new screenshot test for More + person page, checked by eye).
+**Next**: owner phone test; repairs as a 3-step flow (take phone in → fix/parts → hand back), expenses page layout, settings; Urdu review of the new strings with testers.
+
+**Session 25 — owner reports, names, ID skip** (owner list: profit/loss, tax, profit after expenses, best sellers, sales prediction, name of who added stock / who sold, skip ID check at purchase)
+- Backend: `created_by_name` on sales and purchases (`db/refs.user_name`), `sold_by` on day items; `/reports/top-sellers` (phones by model, items by name; profit with VIEW_COST); `/reports/forecast` (next 7 days = average of the same weekday over the last 4 weeks; last vs previous 7 days incl. today; per model sold in 30 days, in stock, days left, advice buy_more/ok/slow). Verification override: any TRANSACT user may skip a PENDING check (name in history); FLAGGED still owner/manager. Tests `test_reports_owner.py`.
+- Frontend: Reports page rebuilt (Profit / Best sellers / Estimate / Old stock; range chips); "Profit & reports" link on home for owner/manager; sold-by / stock-added-by on details and the day list; add-stock screen has "Check now / later" vs "Skip, I know this person".
+- Decision (ADR-worthy, noted here): staff skipping a pending ID check is allowed because the owner asked for it; the stolen-flag path is unchanged.
+**Verified**: backend 133 passed (+ forecast fix), frontend typecheck, vitest 14, Playwright 14 passed (new reports + skip test; screenshots checked).
+**Dev note**: the uvicorn reloader keeps missing new routes on this PC; restart the backend after adding endpoints.
+**Next**: owner phone test; repairs as a 3-step flow; expenses layout; settings.
+
+**Session 25 — repairs in three steps** (owner: "ok" to the next step)
+- `features/repairs/RepairsPages.tsx` rewritten on v2 (teal): new job form with problem chips, likely cost, advance, ready-by chips, extra details behind a link, save + print slip; job page with customer card + Call, four-stage bar, one primary action per stage ("It is fixed" opens parts + work charge and marks repaired; "Give back to customer" shows left to take, partial payment leaves the rest on khata), waiting for parts / could not fix. No backend change.
+**Verified**: vitest 14, Playwright 15 passed (new `repair.spec.ts`: advance 200, work 1,000, paid 500, khata shows 300).
+**Next**: owner phone test; expenses page layout; settings.
+
+**Session 25 — icons on every action** (owner: "see full hisaab / profit loss tiles mein hon, button form mein; icon use karo, simple text samajh nahi aa raha")
+- Home: "See full hisaab" (ink) and "Profit & reports" (green) are icon tiles under the hisaab card. New `IconChip` in `components/ui.tsx`; "ghost" BiButton now bordered. Text links in sale, add stock, repair, return replaced by icon chips; main buttons got icons (complete sale, print, put in stock, it is fixed, give back, take it back...); payment choices (cash / account / udhaar), "give back from" and ID check / skip show an icon above the word. Rule added to docs/11 (principle 6).
+**Verified**: typecheck, Playwright 15 passed, screenshots of home and sale checked.
+- Follow-up (owner: "jahan sirf icon hai wahan naam bhi likhein"): every icon-only button (~30: header back/close, bell, menu, +, edit, delete, print, Excel, IMEI, rename, remove...) now shows its words via `BtnText` (icon above word in headers; icon + word in rows); bell labelled "Messages / پیغامات". Rule added to docs/11. Playwright 15 passed; screenshots EN person page and UR home checked.
+- Owner hit "sale blocked: verification pending" while selling. Sale now lets whoever sells skip a PENDING check (name in history) via a clear box with "Check now" / "Skip and sell (I know this person)"; FLAGGED still owner/manager + reason. `test_sales.py::test_unverified_used_device_blocked_then_override` changed to the owner's new rule; new `test_seller_can_skip_a_pending_check_at_sale_but_not_a_flag`; e2e "pending ID check can be skipped and sold". Backend 134 passed, Playwright 16 passed.
+- Home redesign (owner: "modern aur simple, har card par see details"): search with shadow; Sell / Add stock tiles; the other five jobs as an app grid on one white card (colour only in the icon well); "Hisaab" title + day chips over a dark card (big sale amount, udhaar given / cash received boxes, "See details ›"); "Udhaar khata" section with I will get / I have to give cards (arrow icons, "See details ›"); stock-worth and profit cards with icon, hint line and "See details ›"; attention rows end with "See details ›". The separate "See full hisaab" tile went into the dark card. Rule 7 in docs/11. Playwright 16 passed; EN + UR home screenshots checked.
+
+**Session 25 — downloads** (owner: "pdf, excel, csv sab mein report download ka option")
+- Backend `modules/exports/router.py`: shared `_file(format, ...)` → CSV (BOM), `.xlsx` (openpyxl, added to pyproject), or "pdf" = print-ready HTML that opens the print dialog (Save as PDF). Decision: no server-side PDF library — Nastaliq shaping is unreliable there and the browser already prints Urdu correctly (same as receipts). New: `/exports/profit-loss`, `/top-sellers`, `/day`, `/stock-summary`, `/khata`, `/forecast`, `/stock-ageing`; existing stock/parties/statement/sales/purchases/expenses gained `?format=` and a path without `.csv`.
+- Frontend `components/DownloadButton.tsx`: labelled "Download" → sheet with PDF / Excel / CSV (icon + hint). Placed on reports (follows the tab) + lists section, day hisaab, stock worth, khata, stock list, person page, expenses, sales, purchases.
+**Verified**: backend all pass incl. `test_every_report_downloads_as_csv_excel_and_pdf`; Playwright 17 passed (Excel/CSV download events, PDF popup with table).
+**Setup note**: run `pip install -e .[dev]` again (openpyxl) on other machines / the VPS image.
+- Bug (owner): Return "give back" box refilled the full amount when cleared with backspace (`value={refund === '' ? paidFor : refund}`). Now `null` = untouched, `''` = cleared; only input with that pattern (grep). E2E regression added; return.spec passes.
+- Phone test now works on the owner's phone (owner fixed the firewall for port 5173 themselves).
+- Bug (owner): after a return the phone "still shows sold". Device status was already in_stock; the day report / home card counted the sale in full. `sales_total` (day + dashboard) is now net of `returned_total`, `phones_sold` skips returned lines, items carry `returned` (crossed out + "Returned" tag; "returned" in the export's Paid-by column). History keeps sold + returned. Backend 135 passed; Playwright 17 passed; screenshot checked.
+- Owner question: 800,000 sale, return with 750,000 back, 50,000 kept — what is "cash received"? Answer: 800,000 came in, 750,000 went out, 50,000 left in hand, profit 50,000. Added `money_in` / `money_out` / `cash_net` to `/reports/day` (sum of that day's cash-account ledger in/out, so expenses and payments to dealers count too); day page leads with "Left in hand today", home card shows "In hand (net)"; export rows added. Tests extended (returns 150,000 in / 135,000 out / 15,000 net; simple day 2,400 / 100 / 2,300). Backend tests pass, Playwright 17 passed, screenshot checked.
+- Owner: "in hand −700,000 — should it not be 50,000?" Checked their dev DB (read-only): PUR-000002 paid 750,000 at 12:07, INV-000001 800,000 at 12:54, RET-000001 refund 750,000 at 14:17 → −700,000 is correct; sale+return alone leave 50,000 = the profit. The page now explains: `came_in` / `went_out` by reason (`_cash_by_reason`, ledger document types), shown as chips in the "Left in hand" card with a note that money spent on stock is now phones in the shop. Test `test_owner_day_buy_sell_return_explains_money_out` reproduces the day. Playwright 17 passed (one screenshot timeout on the first run, passed on re-run).
+- Owner: language + theme toggles on the home header, and Roman Urdu. Added locale `roman` (801 keys written by a helper agent, reviewed; owner-friendly tweaks: Home, Mazeed, Bika, Dark/Light, Haath mein (net)); `useLang().roman`, `BiText.roman`, LOCALES; header gained Language (sheet with each language written in itself) and Light/Dark buttons; More page language picker has 3 options. Fixed dark mode: home hisaab card and day "Left in hand" card used `bg-ink` (turns light in dark mode) → `bg-hero`. Shop name wraps to two lines instead of "Cou…". ADR-010. Vitest 16 (2 Roman), Playwright 18 passed; Roman + dark screenshot checked. Known gap: API errors / prints stay English/Urdu in Roman mode.
+- Owner: "Urdu ko theek karo, Urdu ke format ko bhi". New `e2e/urdu.spec.ts` walks 13 screens in Urdu, saves screenshots and fails on English words leaking into the UI (shop words and data allowed). Found: More showed the raw role "owner" (now `staff.roles.*`). Format: search boxes, the steps line and other text outside `.ur` used a plain Naskh font, and Latin letters inside Nastaliq looked wrong; now `.ur` and `html[lang=ur] body` use `Manrope, 'Noto Nastaliq Urdu'` so Urdu letters are Nastaliq and Latin letters/digits Manrope everywhere. Theme words گہرا/روشن/رنگ روپ → ڈارک/لائٹ/تھیم (Roman: Dark/Light/Theme). Reports show "0" instead of "−0". Vitest 16, Playwright 19 passed; screenshots checked.
+- Owner: home hisaab needs week, month and from-to, not just today / yesterday / date. `/reports/day` (and `/exports/day`) take `date_from` / `date_to` (old `date` still works); every part of the report (sales, payments, expenses, returns, cash in/out by reason, profit) covers the period. New `features/counter/PeriodPicker.tsx` (Today · Yesterday · Week = last 7 days · This month · From–to with two date boxes; chips wrap so none hide) replaces DayPicker on home and the hisaab page (`?from=&to=`). Strings: counter.week (Week / ہفتہ / Hafta). Test `test_hisaab_for_a_period`. Backend + vitest pass; Playwright 19 passed; home screenshot checked.
+- Testers: the colours looked "like school kids' software, not professional". Added three looks on the same tokens (docs/11 v2.1): Professional (default: grey/white, teal Sell, ink Add stock, neutral job wells), Navy (navy + gold), Colorful (old). Per-job `-icon` token so icons in white wells never vanish; theme store `palette` + `html[data-palette]`; More → App → Look. Fixed a white-on-white profit card. E2E "three looks" with screenshots (pro, navy, colorful, pro dark) checked. Vitest 16, Playwright 20 passed. Owner and testers to pick one; then the others can be removed.
+- Owner decided: Stripe- and Google-inspired UI. Added look "Modern" as the default (ADR-011, docs/11 v2.2): Inter, Stripe navy + blurple, hairline cards with soft shadow, 12/16px corners via new radius tokens, Material pill on the active bottom tab (all looks). Theme storage key renamed to `mobileshop.look`. Screenshots (modern light/dark, sale) checked; vitest 16, Playwright 20 passed.
+- Owner: modern login page, maker footer, and no create-shop for users; only the product owner opens shops (super admin). Backend: `PUBLIC_SIGNUP` (default false), `SUPERUSER_PHONES`, `is_superuser` on /me, `create_shop_with_owner`, `/api/v1/admin/shops` GET/POST (`modules/admin`), compose passes the two settings, `deploy/.env.example` documents them; local `.env` sets PUBLIC_SIGNUP=true and SUPERUSER_PHONES=03001234567,03990000099 (the second is the e2e super user). Frontend: AuthLayout redesigned (accent gradient, brand mark, language chips, contact line, footer), create-shop buttons removed from login and PIN screens, More → Super admin tile, `/admin` page (list + open a shop + WhatsApp login share). ADR-012. Backend 139 passed (new `test_admin.py`); vitest 16; Playwright 22 passed (new `admin.spec.ts`).
+- Noticed: another project's Playwright run (C:\wty) was using the PC at the same time; left it alone.
+- Assumption to confirm with the owner: footer number "+316 4001668" written as +92 316 4001668 (Pakistani 0316); super user locally = 03001234567 (Abdur Rehman's demo account).
+- Expenses page: header keeps only Download; "New expense" and "Close the day" are big buttons in the page; empty state with icon. Playwright crud + urdu passed; Urdu screenshot checked.
+**Next (remaining v2 screens)**: settings, exchange, loans (amanat); then going live (domain + VPS from the owner).
+
+**2026-10-27 — Session 26: remaining screens (owner: "ok start next kaam")**
+- Urdu audit now also walks exchange, loans and settings (16 screens, no English leaks).
+- Settings: rebuilt as three cards with icons (Shop, Sales tax, Receipt) and big on/off switches; the duplicate "shop name" label is gone. Bug fixed: tax rate, NTN/STRN, receipt footers and bill prefix were saved but showed empty when the screen opened — `/shops/current` now returns `ShopSettingsOut` with them (test `test_settings_show_saved_values`).
+- Urdu text was clipped in places (e.g. the exchange title): BiLabel used `leading-tight` for Nastaliq; Urdu labels now use line-height 1.7 app-wide. Exchange title in Urdu is the plain "پرانا دے کر نیا".
+- Exchange and loans pages got a one-line explanation of what they are; loans' empty state has an icon.
+**Verified**: backend all passed; vitest 16; Playwright 22 passed; Urdu screenshots (settings, exchange, home) checked.
+**Next**: going live on the owner's VPS (needs domain + access); laptop side-by-side sale screen if the owner wants it; remove unused looks once the owner confirms Modern.
+
+**2026-10-27 — Session 27: full phone catalogue + field checks** (owner: "saare latest models, storage, colour pehle se add karo; purchase price sell price se kam na ho; phone number mein country code; CNIC 13 digit; IMEI length; from date to date se aage na ho")
+- Catalogue seed (`app/seeds/catalogue.py`): models 108 → 465 (Samsung, Apple, Infinix, Tecno, Vivo, Oppo, Xiaomi/Redmi/Poco, Realme, OnePlus, Google, Honor, Nokia, Itel, Motorola, Huawei…), colours 16 → 37, storage 16GB added. New models have no reference price. Less certain (newest) names included: Galaxy S26 family, Redmi Note 15, OnePlus 15, Find X9, Vivo V60, Nokia 3210 (2024). Sparx / QMobile not expanded.
+- Price rule, read as "the selling (asking) price may not be below the buying price": opening stock and purchase lines refuse asking < cost (422); changing a phone's price below cost → `asking_below_cost`; a sale line below cost → `below_cost` (409) unless `below_cost_ok` is sent by a user with VIEW_COST (owner/manager). Sale screen shows a red warning under the price; owner/manager get "I know - sell at a loss", salesmen are told to raise the price.
+- `components/FieldInputs.tsx`: PhoneInput (+92 fixed in front, 10 digits from 3, accepts pasted 03…/+92…/Urdu digits, sends 03XXXXXXXXX), CnicInput (digits only, max 13, shows 12345-1234567-1), ImeiInput (digits only, max 15). Used on login, signup, super admin, settings, notifications, staff, person form, ID check, add device (IMEI 1/2), repairs, IMEI lookup.
+- Dates: `clampRange` in PeriodPicker and Reports custom range (from never after to, neither after today); backend `bad_date_range` on report ranges; promised/expected-back dates can't be in the past.
+- Adding a colour that already exists now just picks it (the longer list made duplicates likely).
+**Verified**: backend all passed (new `test_selling_price_not_below_buying_price`, `test_from_date_after_to_date_is_refused`); vitest 20 (new FieldInputs tests); Playwright 22 passed (catalogue spec uses a non-seeded colour now); login EN/UR screenshots checked.
+**Next**: going live on the VPS (domain + access); laptop side-by-side sale screen; remove unused looks once Modern is confirmed.
+**Open**: owner to confirm the reading of the price rule (selling ≥ buying) and the uncertain new model names.
+- Owner: "came with device" / "pending from vendor" confused shopkeepers, and warranty/box at sale were hidden behind a filter-like "more options". New `components/AccessoryPicker.tsx`: one row per item (box, charger, cable, earphones, AirPods) with three big choices — No · Got it / Given · Later — and "When will they give it? / When will we give it?" date for Later. Used in add stock (`DeviceLineSheet`, Later = seller still owes it → pending_from vendor + expected_at) and in sale (Later = shop gives it later → accessories_pending + promised_at). Sale shows warranty chips (None, 7 days, 1/3/6 months, 1 year) and the accessories directly under each phone; what came with the phone starts as "Given". The old line-options sheet is gone; "more options" now only holds discount & customer. Strings `accx.*` in en/ur/roman. New `e2e/accessories.spec.ts`; Playwright 23 (admin spec timed out once under load, passed on re-run); typecheck clean.
+- Owner: on the phone the stock filter's chosen line mixed with its colour (Android's own dropdown list). The status dropdown on Stock is now a row of buttons (chosen = dark), and `select option` follows the app colours for the dropdowns that remain. crud/counter/urdu e2e passed; Urdu stock screenshot checked.
+- Owner: IMEI barcode scan in IMEI boxes, and a phone photo where the CNIC / person photos are. `lib/scan.ts` + `components/ScanButton.tsx` (zxing `@zxing/browser` 0.1.5 / `@zxing/library` 0.21.3, loaded only when scanning): live camera where the browser allows it (https/localhost); on the http Wi-Fi link the camera takes a photo and the barcode is read from it (browser BarcodeDetector if present, else zxing on the whole photo and overlapping strips). Only 15-digit codes passing the IMEI (Luhn) check count, so EAN/serial barcodes on the box are ignored; a label with IMEI 1 + IMEI 2 offers both to pick. Scan sits beside every IMEI box (`ImeiInput`, via new `BiInput right` slot — the `<label>` now wraps only the words) and the IMEI search boxes (home, stock, sale, exchange, return). ID check (`VerifyPage`) has a 4th photo tile "Phone photo" → `device_photos[0]` (backend field existed). Tests: vitest 22 (`scan.test.ts`), new `e2e/scan.spec.ts` (photo of an IMEI barcode fills the box; an EAN is refused; a 3-barcode label offers both IMEIs); Playwright 24 (admin spec timed out once in the full run again, passes alone — known flake under load).
+- Note: live camera scanning needs https; it will work once the app is on the domain (VPS). On the LAN link the photo method is used automatically.
+- Owner on the phone: photo of the Samsung *#06# screen did nothing and the add-stock wizard went back to "select customer". Cause: on the http Wi-Fi link the browser cannot open the camera inside the page, so Android opens the camera app and Chrome reloads the page (state lost). Fixes: (1) `npm run dev:phone` = https on port 5174 (`@vitejs/plugin-basic-ssl` 1.2.0, self-signed; accept the warning once) so the camera opens inside the page (live scan); `dev:lan` stays http on 5173 for Playwright. (2) `lib/draft.ts` `useDraft`: purchase wizard, add-device sheet, old-stock page and sale wizard keep their state in sessionStorage (30 min) and clear it after saving, so a reload no longer loses anything (e2e reloads mid-form). (3) Scanner: exactly 15 digits in a row + Luhn (the 32-digit EID never matches), zxing TRY_HARDER, small screenshots blown up 2x, finer strips, stop at two IMEIs. The owner's sample image (320 px, compressed) still decodes only the SN barcode; a real camera photo / live scan has far more detail — to be confirmed on the phone.
+- Known flake: `admin.spec.ts` "super admin opens a shop" times out in the full run under load, passes alone.
+- Owner: photo of an iPhone 14 Pro box label (EID, serial, IMEI stacked tightly) gave no IMEI. Cause: photo strips were 1/4 and 1/8 of the picture, so one strip held EID + serial + IMEI and zxing returned the first (EID). Now thin strips (1/16 of the height, min 24 px), half-strip steps, jump past a read code, Code 128/39 only, stop at two IMEIs; one slow TRY_HARDER pass on the whole photo only if nothing was found. Owner's photo: IMEI read in ~0.09 s (checked locally; the photo is not committed — it has a real IMEI). Live scan now grabs a video frame every 1/3 s and uses the same strip reading (before, zxing's video reader could lock on the EID). Tests: `scan.spec.ts` adds an Apple-style tight label; new `scan-live.spec.ts` uses Chrome's fake camera showing that label. Playwright 25 passed (full run, admin flake did not appear).
+- Owner: on Add stock the chosen source card (dealer / customer) hid its icon and title (job colours: card took the dark buy colour while words stayed ink). Chosen card now = accent border + light accent wash, words in ink, icon well accent with white icon, check mark in accent; unchosen well ink. Light and dark screenshots checked.
+- Owner: Add stock opened straight at step 2. Cause: the reload-safe draft (useDraft) restored an old unfinished entry on a normal visit. Now a draft is restored only on the page the browser itself (re)loaded and only until the user moves to another screen (`noteRoute` from Shell); opening a form from the app always starts fresh. e2e: leave Add stock half-done, go Home, open Add stock → step 1.
+- Deploy prepared (not yet run): studied oop-solutions (website deploy, plan/07-infrastructure.md): VPS 72.62.240.10, Traefik on n8n_default, GitHub Actions → SSH as `deploy`. Reworked `deploy/` for that: compose without ports + Traefik labels, internal network, backend alias, images from ghcr.io; `deploy.sh` (pull/up/health/rollback), `setup-vps.sh` (one-time), backup paths for /opt/mobileshop; `.github/workflows/ci.yml` (lint, tests, Postgres migrations, frontend checks, real stack + `deploy/ci/smoke.sh`) and `deploy.yml` (CI → images → deploy). docs/12 rewritten, ADR-013. Checked locally: bash -n on scripts, YAML parses; Docker is not installed on this PC, so the stack runs first in CI. Waiting for the owner: domain name, OK to push, GitHub secrets, running setup-vps.sh on the VPS.
