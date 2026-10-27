@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import { AccessoryPicker, type AccKind } from '@/components/AccessoryPicker'
 import { ImeiInput } from '@/components/FieldInputs'
 import { Chip } from '@/components/ui'
 import { uid } from '@/lib/id'
@@ -32,7 +33,6 @@ export interface DeviceLineDraft {
   accessories: AccessoryItem[]
 }
 
-const ACC_KINDS: AccessoryItem['kind'][] = ['box', 'charger', 'cable', 'earphones', 'airpods']
 
 export function emptyDraft(imei = '', kind: 'supplier' | 'walk_in' | 'shop' | 'trade_in' = 'supplier'): DeviceLineDraft {
   return {
@@ -100,18 +100,6 @@ export default function DeviceLineSheet({ initial, onSave, edit = false }: { ini
   const askingLow = !edit && d.asking_price !== '' && d.cost !== '' && Number(d.asking_price) < Number(d.cost)
   const valid = !askingLow && imeiDigits.length === 15 && d.brand_id && d.model_id && (edit || d.cost !== '') && (!needsSim || d.sim_time_months !== '') && (d.condition !== 'patched' || d.patch_details) && !inStockBlock
 
-  const toggleAcc = (kind: AccessoryItem['kind'], field: 'came_with' | 'pending_vendor') => {
-    const existing = d.accessories.find((a) => a.kind === kind)
-    let next: AccessoryItem[]
-    if (field === 'came_with') {
-      next = existing ? d.accessories.filter((a) => a.kind !== kind) : [...d.accessories, { kind, came_with: true, pending_from: 'none' }]
-    } else {
-      next = existing
-        ? d.accessories.map((a) => (a.kind === kind ? { ...a, came_with: false, pending_from: a.pending_from === 'vendor' ? 'none' : 'vendor' } : a))
-        : [...d.accessories, { kind, came_with: false, pending_from: 'vendor' }]
-    }
-    set('accessories', next)
-  }
 
   return (
     <div className="flex flex-col gap-3">
@@ -241,23 +229,20 @@ export default function DeviceLineSheet({ initial, onSave, edit = false }: { ini
 
       {edit ? null : (
       <div>
-        <BiLabel text="stock.accessories" size="md" tone="text-muted" className="mb-1.5" />
-        <div className="card flex flex-col divide-y divide-line p-0">
-          {ACC_KINDS.map((k) => {
-            const a = d.accessories.find((x) => x.kind === k)
-            return (
-              <div key={k} className="flex items-center gap-2 px-3 py-2">
-                <span className="flex-1 text-sm font-semibold">{pick(`stock.acc.${k}`)}</span>
-                <button type="button" aria-pressed={!!a?.came_with} onClick={() => toggleAcc(k, 'came_with')} className={`tap rounded-full px-3 py-1 text-xs font-bold ${a?.came_with ? 'bg-emerald-tint text-emerald-deep' : 'border border-line text-muted'}`}>
-                  {pick('stock.accCameWith')}
-                </button>
-                <button type="button" aria-pressed={a?.pending_from === 'vendor'} onClick={() => toggleAcc(k, 'pending_vendor')} className={`tap rounded-full px-3 py-1 text-xs font-bold ${a?.pending_from === 'vendor' ? 'bg-receivable-tint text-receivable' : 'border border-line text-muted'}`}>
-                  {pick('stock.accPendingVendor')}
-                </button>
-              </div>
+        <AccessoryPicker
+          mode="buy"
+          value={Object.fromEntries(d.accessories.map((a) => [a.kind, { state: a.came_with ? 'now' : 'later', date: a.expected_at ?? '' }]))}
+          onChange={(v) =>
+            set(
+              'accessories',
+              Object.entries(v).flatMap(([kind, x]): AccessoryItem[] =>
+                x.state === 'now' ? [{ kind: kind as AccKind, came_with: true, pending_from: 'none' }]
+                : x.state === 'later' ? [{ kind: kind as AccKind, came_with: false, pending_from: 'vendor', expected_at: x.date || null }]
+                : [],
+              ),
             )
-          })}
-        </div>
+          }
+        />
       </div>
 
       )}

@@ -1,28 +1,27 @@
 /** Sale in three steps (docs/11 v2): which phone → how much and how paid (cash / an account / udhaar)
- *  → done. Customer is asked only for udhaar; discount, warranty and box/charger sit behind
- *  "more options" so the everyday sale stays three taps. */
+ *  → done. Customer is asked only for udhaar. Warranty and box/charger are shown under each phone
+ *  (owner, 2026-10-27: hidden behind "more options" nobody found them); discount stays behind it. */
 
 import { Banknote, BookOpen, Check, FileText, Headphones, Plus, Printer, Receipt, ShieldAlert, ShieldCheck, SlidersHorizontal, Smartphone, Trash2, TriangleAlert, UserCheck, Wallet } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
-import { isoDay } from '@/lib/format'
 import PartyPicker from '@/components/PartyPicker'
+import { AccessoryPicker, type AccValue } from '@/components/AccessoryPicker'
 import { BtnText, Chip, ErrorText, IconChip, List, PageHeader, SearchBox, Sheet, Stepper } from '@/components/ui'
 import { uid } from '@/lib/id'
 import { ApiError, get } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 import { openPrintable } from '@/lib/files'
 import { useCashAccounts, useDevices, useDocMutation } from '@/lib/queries'
-import type { Device, Invoice, Party } from '@/lib/types'
+import type { Device, DeviceDetail, Invoice, Party } from '@/lib/types'
 import { DeviceRow } from '@/features/stock/StockPage'
 
 interface Line {
   device: Device
   price: string
   warranty_days: string
-  given: string[]
-  pending: { kind: string; promised_at: string }[]
+  acc: AccValue
 }
 interface Misc {
   key: string
@@ -32,8 +31,14 @@ interface Misc {
 }
 /** an account id, or udhaar */
 type Pay = { kind: 'account'; id: string } | { kind: 'udhaar' }
-const ACC = ['box', 'charger', 'cable', 'earphones', 'airpods'] as const
-const newLine = (d: Device): Line => ({ device: d, price: d.asking_price ? String(Number(d.asking_price)) : '', warranty_days: '0', given: [], pending: [] })
+// what came with the phone goes with it unless the seller changes it
+const newLine = (d: Device): Line => ({
+  device: d,
+  price: d.asking_price ? String(Number(d.asking_price)) : '',
+  warranty_days: '0',
+  acc: Object.fromEntries(((d as Partial<DeviceDetail>).accessories ?? []).filter((a) => a.came_with && a.kind !== 'other').map((a) => [a.kind, { state: 'now', date: '' }])),
+})
+const WARRANTY = [0, 7, 30, 90, 180, 365] as const
 
 export default function SaleWizard() {
   const nav = useNavigate()
@@ -44,7 +49,6 @@ export default function SaleWizard() {
   const [lines, setLines] = useState<Line[]>([])
   const [misc, setMisc] = useState<Misc[]>([])
   const [picking, setPicking] = useState(false)
-  const [editing, setEditing] = useState<Line | null>(null)
   const [more, setMore] = useState(false)
   const [q, setQ] = useState('')
   const [discount, setDiscount] = useState('')
@@ -86,16 +90,22 @@ export default function SaleWizard() {
   const lossLine = lines.some(belowCost)
   const canSave = (!lossLine || (manager && lossOk)) && checkOk && total > 0 && !!pay && (!udhaar || !!party) && lines.every((l) => Number(l.price) > 0) && misc.every((x) => x.description.trim() && Number(x.unit_price) > 0)
 
+  const setLine = (l: Line, patch: Partial<Line>) => setLines((ls) => ls.map((x) => (x.device.id === l.device.id ? { ...x, ...patch } : x)))
+
   function pickDevice(d: Device) {
     setLines((ls) => (ls.some((l) => l.device.id === d.id) ? ls : [...ls, newLine(d)]))
     setPicking(false)
     setStep(1)
+    // the stock list has no box/charger details; fetch them so they start as "given"
+    get<DeviceDetail>(`/api/v1/devices/${d.id}`)
+      .then((full) => setLines((ls) => ls.map((x) => (x.device.id === d.id && !Object.keys(x.acc).length ? { ...x, acc: newLine(full).acc } : x))))
+      .catch(() => undefined)
   }
 
   async function submit() {
     const res = await m.mutateAsync({
       party_id: party?.id ?? null,
-      devices: lines.map((l) => ({ device_id: l.device.id, price: Number(l.price || 0), warranty_days: Number(l.warranty_days || 0), accessories_given: l.given, accessories_pending: l.pending.map((p) => ({ kind: p.kind, promised_at: p.promised_at || null })) })),
+      devices: lines.map((l) => ({ device_id: l.device.id, price: Number(l.price || 0), warranty_days: Number(l.warranty_days || 0), ...accOut(l.acc) })),
       misc: misc.map((x) => ({ description: x.description.trim(), qty: Number(x.qty || 1), unit_price: Number(x.unit_price || 0) })),
       discount: Number(discount || 0),
       paid,
@@ -141,7 +151,6 @@ export default function SaleWizard() {
                   <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted">
                     <span dir="ltr">{l.device.imei1}</span>
                     {l.device.verification_status === 'pending' || l.device.verification_status === 'flagged' ? <Chip text={`stock.verification.${l.device.verification_status}`} tone={l.device.verification_status === 'flagged' ? 'bad' : 'warn'} /> : null}
-                    {l.given.length ? <Chip text={{ en: l.given.join(', '), ur: l.given.map((g) => pick(`stock.acc.${g}`)).join('، ') }} tone="ok" /> : null}
                   </div>
                 </div>
                 <button type="button" aria-label={pick('crud.delete')} onClick={() => setLines(lines.filter((x) => x.device.id !== l.device.id))} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 text-payable">
@@ -162,7 +171,17 @@ export default function SaleWizard() {
                   )}
                 </div>
               ) : null}
-              {more ? <div><IconChip icon={<SlidersHorizontal size={18} />} text="counter.moreOptions" onClick={() => setEditing(l)} /></div> : null}
+              <div>
+                <BiLabel text="accx.warranty" size="md" bold className="mb-1.5" />
+                <div className="flex flex-wrap gap-1.5">
+                  {WARRANTY.map((w) => (
+                    <button key={w} type="button" aria-pressed={Number(l.warranty_days) === w} onClick={() => setLine(l, { warranty_days: String(w) })} className={`tap h-11 rounded-full border-2 px-3.5 font-bold ${Number(l.warranty_days) === w ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-[13px]'}`}>
+                      {pick(`accx.w${w}`)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <AccessoryPicker mode="sell" value={l.acc} onChange={(acc) => setLine(l, { acc })} />
             </div>
           ))}
           {misc.map((x) => (
@@ -264,51 +283,15 @@ export default function SaleWizard() {
         </div>
       </Sheet>
 
-      <Sheet open={editing !== null} onClose={() => setEditing(null)} title={editing ? { en: `${editing.device.brand_name} ${editing.device.model_name}`, ur: `${editing.device.brand_name} ${editing.device.model_name}` } : ''}>
-        {editing ? (
-          <LineEditor
-            line={editing}
-            onSave={(l) => {
-              setLines(lines.map((x) => (x.device.id === l.device.id ? l : x)))
-              setEditing(null)
-            }}
-          />
-        ) : null}
-      </Sheet>
     </div>
   )
 }
 
-function LineEditor({ line, onSave }: { line: Line; onSave: (l: Line) => void }) {
-  const { pick } = useLang()
-  const [l, setL] = useState<Line>(line)
-  const toggleGiven = (k: string) => setL({ ...l, given: l.given.includes(k) ? l.given.filter((x) => x !== k) : [...l.given, k], pending: l.pending.filter((p) => p.kind !== k) })
-  const togglePending = (k: string) => setL({ ...l, pending: l.pending.some((p) => p.kind === k) ? l.pending.filter((p) => p.kind !== k) : [...l.pending, { kind: k, promised_at: '' }], given: l.given.filter((x) => x !== k) })
-  return (
-    <div className="flex flex-col gap-3">
-      <BiInput label="sale.warrantyDays" type="number" inputMode="numeric" min={0} value={l.warranty_days} onChange={(e) => setL({ ...l, warranty_days: e.target.value })} />
-      <BiLabel text="stock.accessories" size="md" tone="text-muted" />
-      <div className="card flex flex-col divide-y divide-line p-0">
-        {ACC.map((k) => {
-          const given = l.given.includes(k)
-          const pend = l.pending.find((p) => p.kind === k)
-          return (
-            <div key={k} className="flex flex-col gap-1 px-3 py-2">
-              <div className="flex items-center gap-2">
-                <span className="flex-1 text-sm font-semibold">{pick(`stock.acc.${k}`)}</span>
-                <button type="button" onClick={() => toggleGiven(k)} className={`tap rounded-full px-3 py-1 text-xs font-bold ${given ? 'bg-emerald-tint text-emerald-deep' : 'border border-line text-muted'}`}>
-                  {pick('stock.accGiven')}
-                </button>
-                <button type="button" onClick={() => togglePending(k)} className={`tap rounded-full px-3 py-1 text-xs font-bold ${pend ? 'bg-receivable-tint text-receivable' : 'border border-line text-muted'}`}>
-                  {pick('stock.accPendingShop')}
-                </button>
-              </div>
-              {pend ? <input type="date" min={isoDay(0)} value={pend.promised_at} onChange={(e) => setL({ ...l, pending: l.pending.map((p) => (p.kind === k ? { ...p, promised_at: e.target.value } : p)) })} className="min-h-10 rounded-xl border border-line bg-surface px-3 text-sm" /> : null}
-            </div>
-          )
-        })}
-      </div>
-      <BiButton text="common.save" full onClick={() => onSave(l)} />
-    </div>
-  )
+/** given now / promised for later, as the sales API takes them */
+function accOut(acc: AccValue) {
+  const rows = Object.entries(acc)
+  return {
+    accessories_given: rows.filter(([, v]) => v.state === 'now').map(([k]) => k),
+    accessories_pending: rows.filter(([, v]) => v.state === 'later').map(([k, v]) => ({ kind: k, promised_at: v.date || null })),
+  }
 }

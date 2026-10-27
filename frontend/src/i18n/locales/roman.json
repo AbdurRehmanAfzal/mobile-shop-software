@@ -761,7 +761,7 @@
     "addAnother": "+ Ek aur phone",
     "otherItem": "+ Charger, cover ya aur saamaan",
     "itemName": "Saamaan",
-    "moreOptions": "Riayat, warranty, dabba aur charger",
+    "moreOptions": "Discount aur customer",
     "saleDone": "Bikri ho gayi",
     "newSale": "Ek aur bikri",
     "remaining": "Baqi udhaar",
@@ -932,5 +932,25 @@
     "belowCost": "Yeh qeemat khareed qeemat ({{cost}}) se kam hai. Is mein nuqsan hai.",
     "belowCostOk": "Mujhe pata hai, nuqsan par bechein",
     "belowCostBlocked": "Khareed qeemat se kam par sirf malik bech sakta hai. Qeemat barhaein."
+  },
+  "accx": {
+    "titleBuy": "Phone ke saath kya kya aaya?",
+    "titleSell": "Phone ke saath kya kya de rahe hain?",
+    "hintBuy": "Har cheez ke liye: nahi, abhi mil gaya, ya bechne wala baad mein dega",
+    "hintSell": "Har cheez ke liye: nahi, abhi de diya, ya hum baad mein denge",
+    "no": "Nahi",
+    "nowBuy": "Mil gaya",
+    "nowSell": "De diya",
+    "laterBuy": "Baad mein",
+    "laterSell": "Baad mein",
+    "whenBuy": "Kab dega?",
+    "whenSell": "Kab denge?",
+    "warranty": "Warranty",
+    "w0": "Koi nahi",
+    "w7": "7 din",
+    "w30": "1 mahina",
+    "w90": "3 mahine",
+    "w180": "6 mahine",
+    "w365": "1 saal"
   }
 }

@@ -761,7 +761,7 @@
     "addAnother": "+ Another phone",
     "otherItem": "+ Charger, cover or other item",
     "itemName": "Item",
-    "moreOptions": "Discount, warranty, box & charger",
+    "moreOptions": "Discount & customer",
     "saleDone": "Sale done",
     "newSale": "Another sale",
     "remaining": "Remaining udhaar",
@@ -932,5 +932,25 @@
     "belowCost": "This price is below the buying price ({{cost}}). This is a loss.",
     "belowCostOk": "I know - sell at a loss",
     "belowCostBlocked": "Only the owner can sell below the buying price. Raise the price."
+  },
+  "accx": {
+    "titleBuy": "What came with the phone?",
+    "titleSell": "What goes with the phone?",
+    "hintBuy": "For each item: no, got it now, or the seller gives it later",
+    "hintSell": "For each item: no, given now, or we give it later",
+    "no": "No",
+    "nowBuy": "Got it",
+    "nowSell": "Given",
+    "laterBuy": "Later",
+    "laterSell": "Later",
+    "whenBuy": "When will they give it?",
+    "whenSell": "When will we give it?",
+    "warranty": "Warranty",
+    "w0": "None",
+    "w7": "7 days",
+    "w30": "1 month",
+    "w90": "3 months",
+    "w180": "6 months",
+    "w365": "1 year"
   }
 }
