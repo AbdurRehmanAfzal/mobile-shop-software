@@ -284,14 +284,16 @@ function SourceCard({ active, icon, title, hint, onClick }: { active: boolean; i
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`tap flex items-center gap-4 rounded-3xl border-2 px-4 py-4 text-start transition ${active ? 'border-buy-fg bg-buy text-buy-fg' : 'border-line bg-surface'}`}
+      // chosen = accent border + light accent wash; words keep the normal ink colour so they never vanish
+      // into the card (owner 2026-10-27: on some looks the chosen card hid its icon and title)
+      className={`tap flex items-center gap-4 rounded-3xl border-2 px-4 py-4 text-start text-ink transition-colors ${active ? 'border-emerald bg-emerald-tint' : 'border-line bg-surface hover:border-muted/40'}`}
     >
-      <span className={`well h-14 w-14 shrink-0 ${active ? 'bg-buy-fg text-white' : 'bg-buy text-buy-fg'}`}>{icon}</span>
+      <span className={`well h-14 w-14 shrink-0 ${active ? 'bg-emerald text-white' : 'bg-ink text-ground'}`}>{icon}</span>
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
         <BiLabel text={title} size="lg" bold />
         <BiLabel text={hint} size="sm" tone="text-muted" className="mt-1 leading-loose" />
       </span>
-      {active ? <Check size={22} className="shrink-0" /> : null}
+      {active ? <Check size={22} className="shrink-0 text-emerald" /> : null}
     </button>
   )
 }
