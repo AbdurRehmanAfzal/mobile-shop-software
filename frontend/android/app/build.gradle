@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+// CI sets these per build (.github/workflows/android.yml); local builds stay 1 / 1.0
+def appVersionCode = Integer.parseInt(System.getenv("APP_VERSION_CODE") ?: "1")
+def appVersionName = System.getenv("APP_VERSION_NAME") ?: "1.0"
+
 android {
     namespace "pk.mobileshop.app"
     compileSdk rootProject.ext.compileSdkVersion
@@ -7,9 +11,8 @@ android {
         applicationId "pk.mobileshop.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        // CI sets these per build (.github/workflows/android.yml); local builds stay 1 / 1.0
-        versionCode (System.getenv("APP_VERSION_CODE") ?: "1").toInteger()
-        versionName System.getenv("APP_VERSION_NAME") ?: "1.0"
+        versionCode appVersionCode
+        versionName appVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -25,7 +28,7 @@ android {
                 storeFile file(System.getenv("ANDROID_KEYSTORE_FILE"))
                 storePassword System.getenv("ANDROID_KEYSTORE_PASSWORD")
                 keyAlias System.getenv("ANDROID_KEY_ALIAS")
-                keyPassword System.getenv("ANDROID_KEY_PASSWORD") ?: System.getenv("ANDROID_KEYSTORE_PASSWORD")
+                keyPassword(System.getenv("ANDROID_KEY_PASSWORD") ?: System.getenv("ANDROID_KEYSTORE_PASSWORD"))
             }
         }
     }
