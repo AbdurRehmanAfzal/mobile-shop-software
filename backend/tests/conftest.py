@@ -23,9 +23,19 @@ from app.db.models import Base
 from app.db.session import get_db
 from app.main import create_app
 
+# TEST_DATABASE_URL=postgresql+psycopg://... runs the same tests on PostgreSQL (CI does both)
+TEST_DATABASE_URL = os.environ.get("TEST_DATABASE_URL")
+
 
 @pytest.fixture()
 def engine():
+    if TEST_DATABASE_URL:
+        eng = create_engine(TEST_DATABASE_URL)
+        Base.metadata.drop_all(eng)
+        Base.metadata.create_all(eng)
+        yield eng
+        eng.dispose()
+        return
     eng = create_engine(
         "sqlite://",
         connect_args={"check_same_thread": False},
