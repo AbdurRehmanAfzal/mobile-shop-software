@@ -18,6 +18,8 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import Response
 from sqlalchemy import select
 
+from app.core.clock import local_date
+from app.core.clock import today as shop_today
 from app.core.errors import NotFound
 from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx, require_cap
@@ -41,7 +43,7 @@ def _file(
     fmt: str, ctx, db, name: str, header: list[str], rows: Iterable[list], title: str | None = None
 ) -> Response:
     rows = [["" if v is None else v for v in r] for r in rows]
-    stamp = dt.date.today().isoformat()
+    stamp = shop_today().isoformat()
     if fmt == "xlsx":
         return _xlsx(name, stamp, header, rows)
     if fmt == "pdf":
@@ -223,7 +225,7 @@ def statement(
     rows = [["", "Opening balance", "", "", "", st["opening_balance"]]]
     rows += [
         [
-            r["at"].date().isoformat(),
+            local_date(r["at"]).isoformat(),
             r["memo"] or r["document_type"],
             r["document_type"],
             r["debit"],
@@ -388,7 +390,7 @@ def expenses(
 
 # ---- the counter reports (same numbers as the screens) -------------------------------------------
 def _range(date_from: dt.date | None, date_to: dt.date | None) -> tuple[dt.date, dt.date]:
-    today = dt.date.today()
+    today = shop_today()
     return date_from or today.replace(day=1), date_to or today
 
 
@@ -452,7 +454,7 @@ def day(
     date_from: dt.date | None = None,
     date_to: dt.date | None = None,
 ):
-    d_from = date_from or date or dt.date.today()
+    d_from = date_from or date or shop_today()
     d = rep.day_report(db, ctx.shop_id, d_from, ctx.can(Cap.VIEW_COST), date_to or d_from)
     rows = [
         [
@@ -548,7 +550,7 @@ def khata(ctx: Ctx, db: DB, format: Fmt = "csv"):
 
 @router.get("/forecast")
 def forecast(ctx: Reports, db: DB, format: Fmt = "csv"):
-    f = rep.forecast(db, ctx.shop_id, dt.date.today())
+    f = rep.forecast(db, ctx.shop_id, shop_today())
     advice = {"buy_more": "Buy more", "slow": "Not selling", "ok": "OK"}
     rows = [
         [

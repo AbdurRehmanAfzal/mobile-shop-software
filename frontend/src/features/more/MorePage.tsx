@@ -61,6 +61,7 @@ const GROUPS: Group[] = [
   {
     title: 'more.records',
     items: [
+      { key: 'inv.title', Icon: FileText, to: '/invoices', tone: T.khata },
       { key: 'more.sales', Icon: Receipt, to: '/sales', tone: T.sell },
       { key: 'more.purchases', Icon: Package, to: '/purchases', tone: T.buy },
       { key: 'more.payments', Icon: HandCoins, to: '/payments', tone: T.khata },

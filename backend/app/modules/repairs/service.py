@@ -1,4 +1,3 @@
-import datetime as dt
 import html
 import uuid
 from decimal import Decimal
@@ -6,6 +5,7 @@ from decimal import Decimal
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.clock import today as shop_today
 from app.core.errors import Conflict, NotFound, ValidationFailed
 from app.db.base import ZERO, utcnow
 from app.modules.accessories import service as acc_stock
@@ -444,7 +444,7 @@ def to_out(db: Session, job: RepairJob) -> dict:
         "balance_due": money(max(ZERO, job.total - job.paid))
         if job.party_id and job.status == RepairStatus.DELIVERED
         else (money(max(ZERO, job.estimate - job.advance)) if job.party_id and open_ else ZERO),
-        "overdue": open_ and job.promised_at is not None and job.promised_at < dt.date.today(),
+        "overdue": open_ and job.promised_at is not None and job.promised_at < shop_today(),
         "parts": list(job.parts),
         "status_log": [
             {

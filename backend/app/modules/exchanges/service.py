@@ -3,12 +3,12 @@
 Balance arithmetic (docs/01 S5): new balance = previous balance + new price − trade-in value − paid now (+ refund paid out).
 """
 
-import datetime as dt
 import uuid
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.clock import today as shop_today
 from app.core.errors import NotFound, ValidationFailed
 from app.db.base import ZERO
 from app.modules.audit.service import record_audit
@@ -92,7 +92,7 @@ def create_exchange(db: Session, shop_id: uuid.UUID, ctx, data: ExchangeCreate) 
             shop_id=shop_id,
             no=next_number(db, shop, "EXC", "next_exchange_no"),
             party_id=party.id,
-            date=dt.date.today(),
+            date=shop_today(),
             purchase_id=purchase.id,
             invoice_id=invoice.id,
             trade_in_value=purchase.total,

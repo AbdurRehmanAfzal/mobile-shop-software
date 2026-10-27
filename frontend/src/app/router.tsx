@@ -23,6 +23,7 @@ import OpeningStockPage from '@/features/purchase/OpeningStockPage'
 import SaleWizard from '@/features/sale/SaleWizard'
 import ReturnWizard from '@/features/sale/ReturnWizard'
 import { SaleDetailPage, SalesPage } from '@/features/sale/SalesPage'
+import InvoicesPage from '@/features/invoices/InvoicesPage'
 import LoansPage from '@/features/loans/LoansPage'
 import ExpensesPage from '@/features/expenses/ExpensesPage'
 import { NewRepairPage, RepairDetailPage, RepairsPage } from '@/features/repairs/RepairsPages'
@@ -73,6 +74,7 @@ export const router = createBrowserRouter([
           { path: '/sales', element: <SalesPage /> },
           { path: '/sale/new', element: <SaleWizard /> },
           { path: '/sales/:id', element: <SaleDetailPage /> },
+          { path: '/invoices', element: <InvoicesPage /> },
           { path: '/payments', element: <PaymentsPage /> },
           { path: '/loans', element: <LoansPage /> },
           { path: '/returns', element: <ReturnsPage /> },

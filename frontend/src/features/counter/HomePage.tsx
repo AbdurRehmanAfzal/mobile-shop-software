@@ -66,7 +66,7 @@ export default function HomePage() {
       </div>
 
       {/* other jobs, app-grid style: colour only in the icon well */}
-      <div className="card grid grid-cols-5 gap-1 p-2 lg:hidden">
+      <div className="card grid grid-cols-3 gap-1 p-2 lg:hidden">
         {small.map((j) => (
           <Link key={j.id} to={j.to} className="tap flex flex-col items-center gap-1.5 rounded-2xl px-0.5 py-2">
             <span className={`well h-12 w-12 ${j.tone}`}><j.Icon size={24} strokeWidth={1.9} /></span>

@@ -16,13 +16,15 @@ The v1 prototype in `legacy/` proved the domain understanding and the bilingual 
 | Files | Local disk (offline) / S3-compatible object storage (cloud) behind one `StorageService` | CNIC and device photos |
 | AI | Claude API (claude-sonnet-5-5 default; claude-haiku-5-5 for OCR-style extraction) via tool-calling over shop data | Urdu understanding, vision for CNIC/IMEI |
 | Jobs | APScheduler in-process (local) / Celery+Redis (cloud) behind one `TaskRunner` | Reports, reminders, backups |
+
+> **As built (2026-10-27):** files are on a local disk volume (no S3/`StorageService` yet); "PDF" is print-ready HTML opened in the browser (no WeasyPrint); there is no job runner yet (backups are a cron on the VPS). The live setup is in docs/12 and the guides in docs/guides/.
 | Deploy | Docker Compose (api, db, worker, web); local installer = one `docker compose up` or a packaged Windows service later | |
 | Tests | pytest + httpx (API), hypothesis for ledger invariants, Playwright for critical flows | |
 
 ## Multi-tenancy model
 - `organisations` → `shops` → everything else carries `shop_id` (and `organisation_id` on shops/users/plans).
 - Request context resolves `current_user`, `current_shop` from the JWT + `X-Shop-Id` header (must be one the user is assigned to).
-- A SQLAlchemy `with_loader_criteria` + repository base class injects `shop_id = :current_shop` into every query and insert. Tests assert leakage is impossible.
+- **As built (2026-10-27):** every service filters by `ctx.shop_id` explicitly and loads rows by id + shop (not found otherwise); the shop comes from the token and the `X-Shop-Id` header (`core/tenancy.py`). The originally planned `with_loader_criteria` / PostgreSQL row-level security are not used. Tests check cross-shop access.
 - On Postgres, Row Level Security is additionally enabled as a second wall.
 - Local/offline install runs with a single organisation/shop seeded; identical code paths.
 
@@ -64,7 +66,7 @@ frontend/
 ```
 
 ## Security and privacy
-CNIC images are sensitive: stored encrypted at rest (cloud), access logged, never in WhatsApp messages, retention policy configurable. Passwords bcrypt, PINs hashed, rate limiting on auth, HTTPS only in cloud.
+CNIC images are sensitive: never in WhatsApp messages; served only to logged-in users of that shop. **As built:** stored on the server's uploads volume without extra encryption; encryption at rest, access logging and a retention policy are still to do. Passwords bcrypt, PINs hashed, rate limiting on auth, HTTPS only in cloud.
 
 ## Non-functional targets
 API p95 < 300 ms for list screens on 100k devices/shop; first load < 3 s on 3G for the PWA shell; nightly backups; 99.5% uptime for cloud.

@@ -82,7 +82,9 @@ export default function SaleWizard() {
   const flaggedLine = lines.find((l) => l.device.verification_status === 'flagged')
   const manager = role === 'owner' || role === 'manager'
   // a pending check may be skipped by whoever sells; a stolen flag needs the owner/manager and a reason
-  const checkOk = (!pendingLine || !!overrideReason) && (!flaggedLine || (manager && overrideReason.trim().length >= 3))
+  // FR-VER-04: only the owner may sell a phone flagged as possibly stolen (backend Cap.VERIFY_OVERRIDE)
+  const isOwner = role === 'owner'
+  const checkOk = (!pendingLine || !!overrideReason) && (!flaggedLine || (isOwner && overrideReason.trim().length >= 3))
   const notSellableErr = m.error instanceof ApiError && (m.error.code === 'not_sellable' || m.error.code === 'device_flagged')
   const cashId = accounts?.find((a) => a.is_default)?.id ?? accounts?.[0]?.id
   // owner: no selling below the buying price; only the owner/manager may, after saying so
@@ -227,7 +229,7 @@ export default function SaleWizard() {
           {flaggedLine ? (
             <div className="flex flex-col gap-2 rounded-3xl bg-expense p-3 text-expense-fg">
               <div className="flex items-center gap-2"><ShieldAlert size={22} /><BiLabel text="counter.flaggedSale" size="md" bold tone="text-current" /></div>
-              {manager ? <BiInput label="sale.override" value={overrideReason} onChange={(e) => setOverrideReason(e.target.value)} /> : null}
+              {isOwner ? <BiInput label="sale.override" value={overrideReason} onChange={(e) => setOverrideReason(e.target.value)} /> : null}
             </div>
           ) : pendingLine ? (
             <div className="flex flex-col gap-2 rounded-3xl bg-khata p-3 text-khata-fg">

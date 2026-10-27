@@ -48,12 +48,12 @@ export function Sheet({ open, onClose, title, children }: { open: boolean; onClo
   )
 }
 
-export function Row({ title, sub, right, onClick, icon }: { title: ReactNode; sub?: ReactNode; right?: ReactNode; onClick?: () => void; icon?: ReactNode }) {
+export function Row({ title, sub, right, onClick, icon, iconTone = 'bg-emerald-tint text-emerald-deep' }: { title: ReactNode; sub?: ReactNode; right?: ReactNode; onClick?: () => void; icon?: ReactNode; iconTone?: string }) {
   const { ur } = useLang()
   const Chev = ur ? ChevronLeft : ChevronRight
   const inner = (
     <>
-      {icon ? <span className="well h-10 w-10 shrink-0 bg-emerald-tint text-emerald-deep">{icon}</span> : null}
+      {icon ? <span className={`well h-10 w-10 shrink-0 ${iconTone}`}>{icon}</span> : null}
       <div className="min-w-0 flex-1">
         <div className="truncate text-[15px] font-semibold text-ink">{title}</div>
         {sub ? <div className="truncate text-sm text-muted">{sub}</div> : null}

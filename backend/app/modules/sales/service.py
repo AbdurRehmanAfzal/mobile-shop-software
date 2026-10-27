@@ -1,4 +1,3 @@
-import datetime as dt
 import html
 import uuid
 from decimal import Decimal
@@ -6,6 +5,7 @@ from decimal import Decimal
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.clock import today as shop_today
 from app.core.errors import Conflict, Forbidden, NotFound, ValidationFailed
 from app.core.permissions import Cap
 from app.db.base import ZERO, utcnow
@@ -112,8 +112,8 @@ def create_sale(
         if below_cost and not (data.below_cost_ok and ctx.can(Cap.VIEW_COST)):
             raise Conflict(
                 code="below_cost",
-                message_en="This price is below the buying price. Only the owner can sell at a loss.",
-                message_ur="یہ قیمت خرید قیمت سے کم ہے۔ نقصان پر صرف مالک بیچ سکتا ہے۔",
+                message_en="This price is below the buying price. Only the owner or manager can sell at a loss.",
+                message_ur="یہ قیمت خرید قیمت سے کم ہے۔ نقصان پر صرف مالک یا منیجر بیچ سکتا ہے۔",
             )
         devices.append(device)
 
@@ -159,7 +159,7 @@ def create_sale(
         shop_id=shop_id,
         no=next_number(db, shop, shop.invoice_prefix or "INV", "next_invoice_no"),
         party_id=party.id if party else None,
-        date=data.date or dt.date.today(),
+        date=data.date or shop_today(),
         subtotal=subtotal,
         discount=discount,
         tax_rate=money(rate),

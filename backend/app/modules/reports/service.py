@@ -7,6 +7,8 @@ from decimal import Decimal
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from app.core.clock import local_day
+from app.core.clock import today as shop_today
 from app.db.base import ZERO
 from app.db.refs import user_name
 from app.modules.devices.models import Device
@@ -33,8 +35,8 @@ def _sum(
         select(func.coalesce(func.sum(LedgerEntry.credit - LedgerEntry.debit), 0)).where(
             LedgerEntry.shop_id == shop_id,
             cond,
-            func.date(LedgerEntry.at) >= d_from,
-            func.date(LedgerEntry.at) <= d_to,
+            local_day(LedgerEntry.at) >= d_from,
+            local_day(LedgerEntry.at) <= d_to,
         )
     )
     return money(v or 0)
@@ -53,8 +55,8 @@ def profit_and_loss(db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.d
         .where(
             LedgerEntry.shop_id == shop_id,
             LedgerEntry.account.like("expense:%"),
-            func.date(LedgerEntry.at) >= d_from,
-            func.date(LedgerEntry.at) <= d_to,
+            local_day(LedgerEntry.at) >= d_from,
+            local_day(LedgerEntry.at) <= d_to,
         )
         .group_by(LedgerEntry.account)
     ).all()
@@ -91,8 +93,8 @@ def cash_flow(db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date) -
             ).where(
                 LedgerEntry.shop_id == shop_id,
                 LedgerEntry.cash_account_id == a.id,
-                func.date(LedgerEntry.at) >= d_from,
-                func.date(LedgerEntry.at) <= d_to,
+                local_day(LedgerEntry.at) >= d_from,
+                local_day(LedgerEntry.at) <= d_to,
             )
         ).one()
         opening = cash_balance(
@@ -135,7 +137,7 @@ def tax_report(db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date) 
 
 
 def dashboard(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
-    today = dt.date.today()
+    today = shop_today()
     todays = db.scalars(
         select(Invoice).where(
             Invoice.shop_id == shop_id, Invoice.date == today, Invoice.status != InvoiceStatus.VOID
@@ -294,8 +296,8 @@ def _cash_by_reason(
         .where(
             LedgerEntry.shop_id == shop_id,
             LedgerEntry.cash_account_id.is_not(None),
-            func.date(LedgerEntry.at) >= d_from,
-            func.date(LedgerEntry.at) <= d_to,
+            local_day(LedgerEntry.at) >= d_from,
+            local_day(LedgerEntry.at) <= d_to,
         )
         .group_by(LedgerGroup.document_type)
     ).all():

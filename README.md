@@ -8,6 +8,7 @@ Author: **Abdur Rehman Afzal**
 | Doc | Purpose |
 |---|---|
 | [CLAUDE.md](CLAUDE.md) | Project context and rules for AI-assisted development |
+| [docs/guides/](docs/guides/README.md) | **Start here:** product overview, user manual, technical reference, developer manual, build journey (English + Roman Urdu) |
 | [docs/01-BUSINESS-REQUIREMENTS.md](docs/01-BUSINESS-REQUIREMENTS.md) | Vision, problem, personas, business scenarios |
 | [docs/02-FUNCTIONAL-REQUIREMENTS.md](docs/02-FUNCTIONAL-REQUIREMENTS.md) | Requirements by module with FR ids and priorities |
 | [docs/03-ARCHITECTURE.md](docs/03-ARCHITECTURE.md) | Stack, tenancy, domain design, layouts |
