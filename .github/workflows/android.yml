@@ -1,22 +1,14 @@
-# Android app (Capacitor): builds the APK on every release (push to main) or by hand (Actions → Android
-# → Run workflow). The APK is kept as a build artifact of the run (download it from the run page while
-# logged in to GitHub); nothing is published publicly from here.
+# Android app (Capacitor): built by every release (deploy.yml calls this workflow; the APK is then
+# served by the site at /app.apk, owner 2026-10-28) or by hand (Actions → Android → Run workflow).
+# The APK is also kept as a build artifact of the run.
 # The app carries the React build and talks to the live API (vars.APP_URL).
 # Secrets (see docs/13): ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS.
 # Without them a debug-signed APK is built for testing only (a later release-signed one cannot update it).
 name: Android
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'frontend/**'
-      - '.github/workflows/android.yml'
+  workflow_call:
   workflow_dispatch:
-
-concurrency:
-  group: android
-  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -27,11 +19,13 @@ jobs:
     defaults:
       run:
         working-directory: frontend
-    env:
-      APP_VERSION_CODE: ${{ github.run_number }}
-      APP_VERSION_NAME: 1.${{ github.run_number }}
     steps:
       - uses: actions/checkout@v4
+      # minutes since 1970: always higher than the last build, whichever workflow made it
+      - name: Version
+        run: |
+          echo "APP_VERSION_CODE=$(( $(date -u +%s) / 60 ))" >> "$GITHUB_ENV"
+          echo "APP_VERSION_NAME=$(date -u +%Y.%m.%d)-${GITHUB_SHA::7}" >> "$GITHUB_ENV"
       - uses: actions/setup-node@v4
         with:
           node-version: 22

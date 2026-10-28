@@ -28,7 +28,8 @@
     "loggingIn": "Login ho raha hai...",
     "welcome": "Khush aamdeed",
     "madeBy": "Tayyar karda:",
-    "wantApp": "Apni dukaan ke liye yeh app chahiye? Hum se raabta karein"
+    "wantApp": "Apni dukaan ke liye yeh app chahiye? Hum se raabta karein",
+    "getApp": "Android app download karein"
   },
   "dashboard": {
     "title": "Dashboard",

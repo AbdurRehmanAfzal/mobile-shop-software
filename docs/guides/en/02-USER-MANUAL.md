@@ -57,6 +57,7 @@ OOP Solutions sends you the app file (for example `mobile-shop.apk`) on WhatsApp
    allowed to install apps. Tap **Settings**, switch on **Allow from this source**
    (**Install unknown apps**), then go back.
 3. Tap **Install**, then **Open**.
+3a. Easiest: on the Android phone open **https://mobileshop.oopsolutions.com/app.apk** (or tap **Download the Android app** on the login page in Chrome), then open the downloaded file and install.
 4. A newer APK later installs over the old one; your data stays (it lives on the server).
 
 > In the Android app, **Print** and **Download** (PDF / Excel / CSV) open in **Chrome**: the print

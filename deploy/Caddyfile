@@ -20,6 +20,15 @@
 		reverse_proxy mobileshop-backend:8000
 	}
 
+	# the Android app, built and signed by each release (owner 2026-10-28)
+	handle /app.apk {
+		root * /srv
+		header Content-Type application/vnd.android.package-archive
+		header Content-Disposition "attachment; filename=\"mobile-shop.apk\""
+		header Cache-Control "no-cache"
+		file_server
+	}
+
 	# Everything else is the single-page app
 	handle {
 		root * /srv
