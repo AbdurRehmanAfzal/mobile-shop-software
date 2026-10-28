@@ -280,6 +280,14 @@ Do this for every used phone you buy from a person, so you never buy a stolen ph
 
 ---
 
+### 5a. Scan a CNIC instead of typing
+
+In **New person** (and on the ID check) tap **Scan CNIC (photo of the front)** and take a clear photo of the card's front in good light. After a few seconds the **name** and **CNIC number** are filled in, and the father's name, date of birth and how long the card is valid go into **Notes**. If the card has expired you see a warning. Always check the filled fields before saving; the Urdu address is not read, type it yourself.
+
+The photo is read on your phone: it is not sent anywhere for reading (the reading program is downloaded once, the first time).
+
+![CNIC scanned](../images/cnic-scan.png)
+
 ## 6. Selling a phone
 
 Three steps: **1 Which phone? → 2 How much? → 3 Done**.

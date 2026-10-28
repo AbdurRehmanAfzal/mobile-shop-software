@@ -279,6 +279,14 @@ Har used phone jo kisi bande se khareedein, us ka check karein taake chori ka ph
 
 ---
 
+### 5a. CNIC likhne ki jagah scan karein
+
+**Naya shakhs** mein (aur ID check par) **CNIC scan (aage ki tasweer)** dabayein aur roshni mein card ke aage ki saaf tasweer lein. Chand second mein **naam** aur **CNIC number** khud bhar jate hain, aur walid ka naam, paidaish ki tareekh aur card ki muddat **Notes** mein aa jati hai. Card expire ho chuka ho to warning aati hai. Save karne se pehle bhare hue khane zaroor dekh lein; Urdu pata parha nahi jata, woh khud likhein.
+
+Tasweer aap ke phone par hi parhi jati hai: parhne ke liye kahin nahi bheji jati (parhne wala program pehli dafa ek baar download hota hai).
+
+![CNIC scan](../images/cnic-scan.png)
+
 ## 6. Phone bechna
 
 Teen qadam: **1 Kaun sa phone? → 2 Kitne ka? → 3 Ho gaya**.

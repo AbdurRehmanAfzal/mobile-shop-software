@@ -1,5 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import CnicScanButton from '@/components/CnicScanButton'
+import { cnicNote } from '@/lib/cnicOcr'
 import { CnicInput, PhoneInput } from '@/components/FieldInputs'
 import { ErrorText } from '@/components/ui'
 import { useCreateParty, useUpdateParty } from '@/lib/queries'
@@ -43,11 +45,14 @@ export default function PartyForm({ party, defaultKinds = ['customer'], onDone }
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-3">
+      {/* owner 2026-10-28: a photo of the CNIC fills the name and number; the rest goes to notes */}
+      <CnicScanButton onRead={(d) => setF((x) => ({ ...x, name: x.name || d.name || '', cnic: d.cnic ?? x.cnic, notes: [x.notes, cnicNote(d, pick)].filter(Boolean).join(' · ') }))} />
       <BiInput label="party.name" value={f.name} onChange={set('name')} required minLength={2} />
       <PhoneInput label="party.phone" value={f.phone} onChange={(phone) => setF({ ...f, phone })} required />
       <CnicInput label="party.cnic" value={f.cnic} onChange={(cnic) => setF({ ...f, cnic })} />
       <BiInput label="party.city" value={f.city} onChange={set('city')} />
       <BiInput label="party.address" value={f.address} onChange={set('address')} />
+      <BiInput label="common.notes" value={f.notes} onChange={set('notes')} />
       <div>
         <BiLabel text="party.kinds" size="md" tone="text-muted" />
         <div className="mt-1.5 grid grid-cols-2 gap-2">

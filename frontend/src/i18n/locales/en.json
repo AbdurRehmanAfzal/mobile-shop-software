@@ -1154,5 +1154,16 @@
     "website": "Website",
     "remove": "Remove",
     "staffAllowed": "Staff may log in with their fingerprint"
+  },
+  "cnicScan": {
+    "button": "Scan CNIC (photo of the front)",
+    "reading": "Reading the card…",
+    "hint": "Fills the name and CNIC number by itself. Check them before saving.",
+    "none": "Could not read the card. Take a clearer photo in good light, or type it in.",
+    "expired": "This CNIC has expired. Ask for a valid card.",
+    "father": "S/O",
+    "born": "Born",
+    "validTill": "CNIC valid till",
+    "expiredShort": "expired"
   }
 }
