@@ -344,10 +344,23 @@ aata hai aur **Bikri mukammal karein** nahi chalta. Chunein:
 
 ![Check baqi wala phone](../images/sale-pending-check.png)
 
-### 6e. Raseed print karna
-Raseed dukaan ki zubaan mein print hoti hai (**Dukaan ki settings → Dukaan ki zubaan**). Chrome mein print
-window khulti hai: thermal (80 mm) printer ya **Save as PDF** chunein. Android app mein print abhi nahi
-chalta — website par bikri kholein (**Mazeed → Bikri ki list** → bikri) aur wahan se print karein.
+### 6e. Raseed print, download aur share karna
+Raseed dukaan ki zubaan mein print hoti hai (**Dukaan ki settings → Dukaan ki zubaan**). Print ka button
+print window kholta hai: thermal (80 mm) printer chunein. Neeche **PDF download** bill ko PDF file bana kar
+save karta hai aur **PDF share karein** phone ki share list (WhatsApp, Gmail…) file ke saath kholta hai.
+Yehi do button har bikri ke page, exchange ke baad aur repair job par bhi hain.
+
+### 6f. Bill par tax (marzi se)
+Har sale par tax **band** hota hai. Lagana ho to **Is bill par tax lagayein** par tick karein: **Tax %** ka
+khana aata hai (dukaan ka rate, aam tor par 18) aur tax qeemat ke ooper jud jata hai. Total ke neeche
+"tax shamil Rs. …" likha aata hai. Tick na karein to koi tax nahi lagta.
+
+### 6g. Sale hold karna (pehle agle customer ko farigh karein)
+Customer paise lene gaya? **Bikri mukammal karein** ke neeche **Sale hold karein** dabayein, dhoondne ke liye
+naam likhein (marzi se) aur **Hold karein** dabayein. Screen agle customer ke liye khaali ho jati hai; abhi
+kuch nahi bika aur phone stock mein hi rehta hai. Baad mein sale screen ke ooper **Hold sales (n)** →
+**Dobara kholein**: bill bilkul waisa wapas aata hai (qeemat, tax, payment). Dukaan ke kisi bhi phone se
+khol sakte hain. Agar is dauran bill ka koi phone bik gaya ho to woh bill se nikal diya jata hai aur screen batati hai.
 
 ---
 
@@ -513,17 +526,20 @@ Maalik aur manager: Home → **Munafa aur report** (ya **Mazeed → Report**).
   ke saath mashwara **Aur mangwayein**, **Theek** ya **Nahi bik raha**. Yeh andaza hai, pakki baat nahi.
 - **Purana stock** — phone kitne din se stock mein hain.
 
-### Download (PDF, Excel, CSV)
-1. **Download** dabayein (report ke ooper daayein, ya **List download karein** mein list ke saath).
+### Download aur share (PDF, Excel, CSV)
+1. **Download** ya **Share** dabayein (report ke ooper daayein, ya **List download karein** mein list ke saath).
 2. Chunein:
-   - **PDF** — print khulega, **Save as PDF** chunein.
+   - **PDF** — PDF file, bhejne ya rakhne ke liye (Urdu report Nastaliq mein hi rehti hai).
    - **Excel** — Excel ya Google Sheets ke liye.
    - **CSV** — kisi bhi software ke liye saada file.
+   - **Print** (sirf Download mein) — kaghaz par print.
+3. Download file save karta hai (website: Downloads; Android app: Documents › MobileShop). Share phone ki
+   share list kholta hai. Jo computer file share nahi kar sakta woh file download kar deta hai aur bata deta hai.
 
 ![Download](../images/download.png)
 
 **Download** ka button Din ka hisaab, Dukaan mein stock, Udhaar khata, bande ke page, Stock list,
-Kharche, Bikri ki list aur Khareedari ki list par bhi hai. Download website par chalta hai, Android app mein abhi nahi.
+Kharche, Bikri ki list aur Khareedari ki list par bhi hai, har ek ke saath **Share** bhi.
 
 ---
 

@@ -346,10 +346,23 @@ If you bought the phone from a person and the ID check is not done, the sale sho
 
 ![Pending ID check at sale](../images/sale-pending-check.png)
 
-### 6e. Printing the receipt
-Receipts print in the shop's language (**Shop settings → Shop language**). In Chrome the print
-window opens: pick your thermal (80 mm) printer or **Save as PDF**. In the Android app printing does
-not work yet — open the sale on the website (**More → Sales list** → the sale) and print from there.
+### 6e. Printing, downloading and sharing the receipt
+Receipts print in the shop's language (**Shop settings → Shop language**). **Print receipt** opens the
+print window: pick your thermal (80 mm) printer. Under it, **Download PDF** saves the bill as a PDF file
+and **Share PDF** opens the phone's share list (WhatsApp, Gmail…) with the file attached. The same two
+buttons are on every sale's page, after an exchange and on a repair job.
+
+### 6f. Tax on a bill (optional)
+Tax is **off** on every sale. To add it, tick **Add tax to this bill**: a **Tax %** box appears (it starts
+at the shop's rate, usually 18) and the tax is added on top of the price. The total shows
+"includes tax Rs. …". Leave the box unticked and no tax is charged.
+
+### 6g. Hold a sale (serve the next customer first)
+A customer goes to fetch money? Tap **Hold sale** under **Complete sale**, write a name to find it
+(optional) and tap **Hold**. The screen is empty for the next customer; nothing is sold yet and the
+phone stays in stock. Later tap **Held sales (n)** at the top of the sale screen → **Resume**: the bill
+comes back exactly as it was (prices, tax, payment). A held bill can be resumed from any phone of the
+shop. If one of its phones was sold in the meantime, it is taken off the bill and the screen says so.
 
 ---
 
@@ -515,17 +528,20 @@ Owner and manager: Home → **Profit & reports** (or **More → Reports**).
   with advice **Buy more**, **OK** or **Not selling**. It is a guess, not a promise.
 - **Old stock** — phones by days in stock.
 
-### Downloading (PDF, Excel, CSV)
-1. Tap **Download** (top right of the report, or next to a list under **Download lists**).
+### Downloading and sharing (PDF, Excel, CSV)
+1. Tap **Download** or **Share** (top right of the report, or next to a list under **Download lists**).
 2. Choose:
-   - **PDF** — opens print; choose **Save as PDF**.
+   - **PDF** — a PDF file, ready to send or keep (Urdu reports stay in Nastaliq).
    - **Excel** — for Excel / Google Sheets.
    - **CSV** — simple file for any software.
+   - **Print** (Download only) — print on paper.
+3. Download saves the file (website: Downloads; Android app: Documents › MobileShop). Share opens
+   the phone's share list. A computer that cannot share files downloads it instead and says so.
 
 ![Download choices](../images/download.png)
 
 **Download** buttons are also on Day's hisaab, Stock in shop, Udhaar khata, a person's page, Stock list,
-Expenses, Sales list and Purchases list. Downloads work on the website, not yet in the Android app.
+Expenses, Sales list and Purchases list, each with **Share** beside it.
 
 ---
 

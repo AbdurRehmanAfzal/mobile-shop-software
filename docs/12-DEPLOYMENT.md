@@ -1,6 +1,6 @@
 # 12 — Deployment (OOP Solutions VPS, Docker, GitHub Actions)
 
-Decision (ADR-008, ADR-013): the SaaS runs on the owner's existing **Hostinger VPS `72.62.240.10`**, next to oopsolutions.com, n8n and the voice agent. It follows the same pattern as the website (`oop-solutions/website/deploy`, `oop-solutions/plan/07-infrastructure.md`):
+Decision (ADR-008, ADR-013): the SaaS runs on the owner's existing **Hostinger VPS**, next to oopsolutions.com, n8n and the voice agent. It follows the same pattern as the website (`oop-solutions/website/deploy`, `oop-solutions/plan/07-infrastructure.md`):
 - **Traefik** (`n8n-traefik-1`, Docker network `n8n_default`) already owns ports 80/443 and gets the HTTPS certificates. Our stack opens **no ports**; the `web` container joins `n8n_default` with Traefik labels.
 - **GitHub Actions** deploys over SSH as the restricted `deploy` user, which may run exactly one command: `/opt/mobileshop/deploy.sh`.
 
@@ -28,7 +28,7 @@ push main (release) ──> Deploy (deploy.yml)
 Releases: merge `develop` into `main` and push `main` (the owner decides when).
 
 ## One-time setup
-1. **Domain**: choose the address (e.g. `mobileshop.oopsolutions.com`). Hostinger DNS: A record → `72.62.240.10`.
+1. **Domain**: choose the address (e.g. `mobileshop.oopsolutions.com`). Hostinger DNS: A record → the VPS IP (Hostinger panel).
 2. **SSH key for CI** (if the website's key is reused, skip): `ssh-keygen -t ed25519 -f ~/.ssh/mobileshop_deploy -C deploy@github`; add the public key to `/home/deploy/.ssh/authorized_keys` on the VPS.
 3. **On the VPS, as root** (the `deploy` user and Traefik already exist):
    ```
@@ -37,7 +37,7 @@ Releases: merge `develop` into `main` and push `main` (the owner decides when).
    nano /opt/mobileshop/.env               # APP_DOMAIN, SUPERUSER_PHONES
    docker login ghcr.io -u AbdurRehmanAfzal  # only if the images are private (token with read:packages)
    ```
-4. **GitHub** (repo → Settings → Secrets and variables → Actions): secrets `VPS_HOST=72.62.240.10`, `VPS_USER=deploy`, `VPS_SSH_KEY`; variable `APP_URL=https://<domain>`.
+4. **GitHub** (repo → Settings → Secrets and variables → Actions): secrets `VPS_HOST=<VPS IP>`, `VPS_USER=deploy`, `VPS_SSH_KEY`; variable `APP_URL=https://<domain>`.
 5. **First release**: merge develop → main and push, or run the Deploy workflow by hand. Watch: `docker compose -f /opt/mobileshop/docker-compose.yml logs -f backend`.
 6. **First login** (signup is closed, so make it on the server; it asks for the password without echoing it):
    ```
