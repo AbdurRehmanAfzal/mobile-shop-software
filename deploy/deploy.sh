@@ -19,6 +19,21 @@ healthy() {
   return 1
 }
 
+# The stack files of this exact version (compose, backup and this script) come from GitHub, so a
+# change to them reaches the server with the deploy (2026-10-28: a new setting in docker-compose.yml
+# never arrived because only the images were updated). If GitHub cannot be reached, the old files stay.
+RAW="https://raw.githubusercontent.com/AbdurRehmanAfzal/mobile-shop-software/$TAG/deploy"
+if [ "$TAG" != "latest" ]; then
+  for f in docker-compose.yml backup.sh deploy.sh; do
+    if curl -fsSL --max-time 20 "$RAW/$f" -o "$f.new"; then
+      [ "$f" = docker-compose.yml ] && chmod 644 "$f.new" || chmod 755 "$f.new"
+      mv "$f.new" "$f"   # a new file: this running script keeps reading its old copy
+    else
+      rm -f "$f.new"; echo "could not fetch $f; keeping the old one"
+    fi
+  done
+fi
+
 echo "deploying $TAG (was $PREV)"
 run "$TAG" pull backend web
 run "$TAG" up -d --remove-orphans
