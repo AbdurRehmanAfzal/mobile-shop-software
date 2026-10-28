@@ -484,3 +484,4 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
   - Frontend: Add device asks per kind (SIM question, IMEI only with SIM, serial otherwise, no IMEI 2 off phones, case-size chips + other for watches instead of storage, condition without Patched, PTA without JV off phones, battery health for open box / used tablets and watches); AccessoryPicker shows each kind's accessories (`ACC_FOR`) in buy and sell; stock row/card/detail show `specLine` (e.g. "45mm · GPS · Battery 91%") and PTA only for SIM devices; device edit now keeps the category (before, editing a tablet opened the phone form). devcat e2e extended.
 - Owner: release without asking (busy).
 
+- Release 7bc632a live: tablet/watch details; live bundle checked, app.apk rebuilt.
