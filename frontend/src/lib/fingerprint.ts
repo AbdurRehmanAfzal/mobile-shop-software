@@ -50,12 +50,40 @@ export async function canUseHere(): Promise<boolean> {
 
 const prompt = { reason: 'Mobile Shop', title: 'Mobile Shop', subtitle: 'Fingerprint', description: '' }
 
+/** which step of switching it on failed, and the phone's own words (shown small, for support) */
+export class FingerprintStepError extends Error {
+  constructor(public step: 'prompt' | 'server' | 'save', detail: string) {
+    super(`${step}: ${detail}`)
+    this.name = 'FingerprintStepError'
+  }
+}
+const why = (e: unknown) => (e instanceof Error ? e.message : String(e)).slice(0, 160)
+
 export async function turnOnHere(): Promise<void> {
   if (isNative()) {
     const { NativeBiometric } = await import('@capgo/capacitor-native-biometric')
-    await NativeBiometric.verifyIdentity(prompt)
-    const key = await post<{ key_id: string; secret: string }>('/api/v1/auth/fingerprint/device', { name: 'Android phone' })
-    await NativeBiometric.setCredentials({ username: key.key_id, password: key.secret, server: SERVER })
+    try {
+      await NativeBiometric.verifyIdentity(prompt)
+    } catch (e) {
+      throw new FingerprintStepError('prompt', why(e))
+    }
+    let key: { key_id: string; secret: string }
+    try {
+      key = await post<{ key_id: string; secret: string }>('/api/v1/auth/fingerprint/device', { name: 'Android phone' })
+    } catch (e) {
+      throw new FingerprintStepError('server', why(e))
+    }
+    // an older entry under the same name can block saving; clear it and try twice
+    await NativeBiometric.deleteCredentials({ server: SERVER }).catch(() => undefined)
+    try {
+      await NativeBiometric.setCredentials({ username: key.key_id, password: key.secret, server: SERVER })
+    } catch {
+      try {
+        await NativeBiometric.setCredentials({ username: key.key_id, password: key.secret, server: SERVER })
+      } catch (e) {
+        throw new FingerprintStepError('save', why(e))
+      }
+    }
   } else {
     const { startRegistration } = await import('@simplewebauthn/browser')
     const { options, token } = await post<{ options: never; token: string }>('/api/v1/auth/passkey/register-options')
