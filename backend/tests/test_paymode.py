@@ -121,3 +121,38 @@ def test_purchase_paid_online(owner, cat):
     assert r.status_code == 201, r.text
     assert r.json()["payment"]["bank"] == "Bank Alfalah"
     assert _balances(owner)["Bank / Online"] == "-1000.00"
+
+
+def test_khata_payment_received_online_and_by_cheque(owner, cat):
+    c = _customer(owner)
+    d = _stock(owner, cat, imei=A, condition="box_pack", cost_price=900, asking_price=1000)
+    owner.post(
+        "/api/v1/sales",
+        json={"party_id": c["id"], "devices": [{"device_id": d["id"], "price": 1000}], "paid": 0},
+    )
+    r = owner.post(
+        "/api/v1/payments",
+        json={
+            "party_id": c["id"],
+            "direction": "in",
+            "amount": 600,
+            "payment": {"method": "online", "bank": "JazzCash", "reference": "TID55"},
+        },
+    )
+    assert r.status_code == 201, r.text
+    p = r.json()
+    assert (
+        p["method"] == "online" and p["payment"]["bank"] == "JazzCash" and p["reference"] == "TID55"
+    )
+    r = owner.post(
+        "/api/v1/payments",
+        json={
+            "party_id": c["id"],
+            "direction": "in",
+            "amount": 400,
+            "payment": {"method": "cheque", "bank": "UBL", "reference": "778899"},
+        },
+    )
+    assert r.status_code == 201, r.text
+    bal = _balances(owner)
+    assert bal["Bank / Online"] == "600.00" and bal["Cheques"] == "400.00"
