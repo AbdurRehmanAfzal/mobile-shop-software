@@ -1154,5 +1154,16 @@
     "website": "Website",
     "remove": "Hatayein",
     "staffAllowed": "Staff bhi fingerprint se login kar sake"
+  },
+  "cnicScan": {
+    "button": "CNIC scan (aage ki tasweer)",
+    "reading": "Card parh raha hai…",
+    "hint": "Naam aur CNIC number khud bhar jate hain. Save se pehle dekh lein.",
+    "none": "Card parha nahi ja saka. Roshni mein saaf tasweer lein ya khud likhein.",
+    "expired": "Yeh CNIC expire ho chuka hai. Sahi card maangein.",
+    "father": "Walad",
+    "born": "Paidaish",
+    "validTill": "CNIC ki muddat",
+    "expiredShort": "khatam"
   }
 }

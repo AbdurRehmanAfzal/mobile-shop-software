@@ -2,6 +2,7 @@ import { Camera, Check, ExternalLink } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { BiButton, BiInput, BiSegmented, useLang } from '@/components/Bilingual'
+import CnicScanButton from '@/components/CnicScanButton'
 import Help from '@/components/Help'
 import { CnicInput } from '@/components/FieldInputs'
 import PartyPicker from '@/components/PartyPicker'
@@ -95,6 +96,8 @@ export default function VerifyPage() {
 
       <Section title="verify.seller">
         <PartyPicker value={party} onChange={setParty} kind="customer" label="verify.seller" />
+        {/* the CNIC photo fills the number and is kept as the front photo (owner 2026-10-28) */}
+        <CnicScanButton onRead={async (d, photo) => { if (d.cnic) set('cnic_no', d.cnic); set('cnic_front_path', await uploadFile(photo, 'cnic')) }} />
         <CnicInput label="verify.cnic" value={f.cnic_no ?? party?.cnic ?? ''} onChange={(v) => set('cnic_no', v)} />
         <div className="grid grid-cols-2 gap-2">
           <PhotoTile label={pick('verify.cnicFront')} path={f.cnic_front_path ?? null} purpose="cnic" onPick={(p) => set('cnic_front_path', p)} />
