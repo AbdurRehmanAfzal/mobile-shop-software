@@ -137,6 +137,10 @@ def test_reports_pnl_cash_tax_dashboard(db, owner, cat):
         and dash["profit_today"] == "400.00"
         and dash["cash_in_hand"] == "880.00"
     )
+    # the home chart: 7 days, today last with today's sales
+    week = dash["sales_7d"]
+    assert len(week) == 7 and week[-1]["date"] == dash["date"] and week[-1]["total"] == "1180.00"
+    assert all(d["total"] == "0.00" for d in week[:-1])
     ageing = owner.get("/api/v1/reports/stock-ageing").json()
     assert [b["bucket"] for b in ageing] == ["0-15", "16-30", "31-60", "60+"]
 

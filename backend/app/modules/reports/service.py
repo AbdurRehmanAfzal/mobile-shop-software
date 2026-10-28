@@ -169,8 +169,26 @@ def dashboard(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
             ZERO,
         )
     )
+    # the last 7 shop days for the home screen's small chart (oldest first, days without sales = 0)
+    week_from = today - dt.timedelta(days=6)
+    per_day = dict(
+        db.execute(
+            select(Invoice.date, func.sum(Invoice.total - Invoice.returned_total))
+            .where(
+                Invoice.shop_id == shop_id,
+                Invoice.date >= week_from,
+                Invoice.date <= today,
+                Invoice.status != InvoiceStatus.VOID,
+            )
+            .group_by(Invoice.date)
+        ).all()
+    )
     return {
         "date": today,
+        "sales_7d": [
+            {"date": d, "total": money(per_day.get(d) or ZERO)}
+            for d in (week_from + dt.timedelta(days=i) for i in range(7))
+        ],
         "sales_count": len(todays),
         "sales_total": money(sum((i.total - i.returned_total for i in todays), ZERO)),
         "received_today": money(sum((i.paid for i in todays), ZERO)),

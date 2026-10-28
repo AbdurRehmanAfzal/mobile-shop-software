@@ -54,25 +54,30 @@ export default function Shell() {
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-ground lg:max-w-6xl">
-      <header className="print:hidden sticky top-0 z-10 flex items-center gap-3 bg-ground/90 px-5 pb-2 pt-[max(14px,env(safe-area-inset-top))] backdrop-blur">
-        <NavLink to="/" className={`min-w-0 flex-1 line-clamp-2 ${ur ? 'ur text-lg font-bold leading-snug' : 'text-lg font-extrabold leading-tight tracking-[-0.01em]'}`} dir={dir}>
+      {/* narrow phones (iPhone SE): the shop's name on its own line, the buttons spread under it */}
+      <header className="print:hidden sticky top-0 z-10 flex flex-wrap items-center gap-x-2 gap-y-2 bg-ground/90 px-5 pb-2 pt-[max(14px,env(safe-area-inset-top))] backdrop-blur max-[379px]:px-4">
+        <NavLink to="/" className={`min-w-0 flex-1 line-clamp-2 max-[379px]:basis-full ${ur ? 'ur text-lg font-bold leading-snug' : 'text-lg font-extrabold leading-tight tracking-[-0.01em]'}`} dir={dir}>
           {shopName}
         </NavLink>
-        <button type="button" aria-label={pick('more.language')} onClick={() => setLangOpen(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border border-line bg-surface px-1.5 py-1 text-ink">
-          <Languages size={20} strokeWidth={1.75} />
-          <BtnText k={locale === 'roman' ? { en: 'Roman', ur: 'Roman', roman: 'Roman' } : LANG_NAMES[locale]} />
-        </button>
-        {/* shows the mode it switches to: a moon to go dark, a sun to go light */}
-        <button type="button" aria-label={pick(dark ? 'more.themeLight' : 'more.themeDark')} onClick={() => setTheme(dark ? 'light' : 'dark')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border border-line bg-surface px-1.5 py-1 text-ink">
-          {dark ? <Sun size={20} strokeWidth={1.75} /> : <Moon size={20} strokeWidth={1.75} />}
-          <BtnText k={dark ? 'more.themeLight' : 'more.themeDark'} />
-        </button>
-        <button type="button" aria-label={pick('counter.messages')} onClick={() => nav('/more/notifications')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface text-ink">
-          <Bell size={20} strokeWidth={1.75} />
-        <BtnText k={'counter.messages'} /></button>
-        <button type="button" aria-label={pick('nav.more')} onClick={() => nav('/more')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface text-ink lg:hidden">
-          <Menu size={20} strokeWidth={1.75} />
-        <BtnText k={'nav.more'} /></button>
+        <div className="flex shrink-0 gap-1.5 max-[379px]:grid max-[379px]:w-full max-[379px]:grid-cols-4">
+          <button type="button" aria-label={pick('more.language')} onClick={() => setLangOpen(true)} className="tap flex min-h-14 min-w-[52px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border border-line bg-surface px-1.5 py-1 text-ink">
+            <Languages size={20} strokeWidth={1.75} />
+            <BtnText k={locale === 'roman' ? { en: 'Roman', ur: 'Roman', roman: 'Roman' } : LANG_NAMES[locale]} />
+          </button>
+          {/* shows the mode it switches to: a moon to go dark, a sun to go light */}
+          <button type="button" aria-label={pick(dark ? 'more.themeLight' : 'more.themeDark')} onClick={() => setTheme(dark ? 'light' : 'dark')} className="tap flex min-h-14 min-w-[52px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border border-line bg-surface px-1.5 py-1 text-ink">
+            {dark ? <Sun size={20} strokeWidth={1.75} /> : <Moon size={20} strokeWidth={1.75} />}
+            <BtnText k={dark ? 'more.themeLight' : 'more.themeDark'} />
+          </button>
+          <button type="button" aria-label={pick('counter.messages')} onClick={() => nav('/more/notifications')} className="tap flex min-h-14 min-w-[52px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border border-line bg-surface px-1.5 py-1 text-ink">
+            <Bell size={20} strokeWidth={1.75} />
+            <BtnText k={'counter.messages'} />
+          </button>
+          <button type="button" aria-label={pick('nav.more')} onClick={() => nav('/more')} className="tap flex min-h-14 min-w-[52px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border border-line bg-surface px-1.5 py-1 text-ink lg:hidden">
+            <Menu size={20} strokeWidth={1.75} />
+            <BtnText k={'nav.more'} />
+          </button>
+        </div>
       </header>
 
       <div className="flex flex-1 gap-6 lg:px-5">
@@ -95,7 +100,7 @@ export default function Shell() {
           </NavLink>
         </aside>
 
-        <main className="min-w-0 flex-1 px-5 pb-28 pt-1 lg:max-w-3xl lg:px-0 lg:pb-10">
+        <main className="min-w-0 flex-1 px-5 pb-28 pt-1 max-[379px]:px-4 lg:max-w-3xl lg:px-0 lg:pb-10">
           <Outlet />
         </main>
       </div>

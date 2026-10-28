@@ -635,7 +635,20 @@
     "more": "Aur sahuliyat",
     "seeAll": "Sab dekhein",
     "whatToDo": "Aap kya karna chahte hain?",
-    "attention": "Dhyan dein"
+    "attention": "Dhyan dein",
+    "greet": {
+      "morning": "Subah bakhair",
+      "afternoon": "Assalam-o-Alaikum",
+      "evening": "Shaam bakhair"
+    },
+    "sub": "Aaj aap ki dukaan ka haal",
+    "otherJobs": "Baqi kaam",
+    "sales": "Bikri",
+    "week": "Pichle 7 din",
+    "expenses": "Kharche",
+    "inStock": "Stock mein phone",
+    "worth": "Maliyat (Rs)",
+    "phonesSold": "Bike phone: {{n}}"
   },
   "pin": {
     "title": "Apna PIN likhein",

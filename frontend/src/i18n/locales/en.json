@@ -635,7 +635,20 @@
     "more": "More services",
     "seeAll": "See all",
     "whatToDo": "What do you want to do?",
-    "attention": "Needs attention"
+    "attention": "Needs attention",
+    "greet": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "sub": "Here is your shop today",
+    "otherJobs": "Other jobs",
+    "sales": "Sales",
+    "week": "Last 7 days",
+    "expenses": "Expenses",
+    "inStock": "Phones in stock",
+    "worth": "Worth (Rs)",
+    "phonesSold": "Phones sold: {{n}}"
   },
   "pin": {
     "title": "Enter your PIN",

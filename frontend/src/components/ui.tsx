@@ -13,17 +13,18 @@ export function PageHeader({ title, back = true, right, help }: { title: string 
   const { ur } = useLang()
   const Back = ur ? ChevronRight : ChevronLeft
   return (
-    <div className="mb-3 flex items-center gap-2">
+    // narrow phones: when the buttons on the right do not fit beside the title, they move under it
+    <div className="mb-3 flex flex-wrap items-center gap-2">
       {back ? (
         <button type="button" aria-label="Back" onClick={() => nav(-1)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface">
           <Back size={22} />
         <BtnText k={'common.back'} /></button>
       ) : null}
-      <div className="flex min-w-0 flex-1 items-center gap-1">
+      <div className="flex min-w-[110px] flex-1 items-center gap-1">
         <BiLabel text={title} size="lg" bold />
         {help}
       </div>
-      {right}
+      {right ? <div className="ms-auto flex shrink-0">{right}</div> : null}
     </div>
   )
 }
