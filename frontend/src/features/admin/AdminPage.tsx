@@ -8,6 +8,7 @@ import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/B
 import { PhoneInput, isMobileOk } from '@/components/FieldInputs'
 import { BtnText, Empty, ErrorText, Loading, PageHeader, SearchBox, Sheet, fmtDate } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
+import AppLinkCard, { APP_LINK, SITE } from './AppLinkCard'
 import { normalisePhone } from '@/lib/format'
 import { useDocMutation, useGet } from '@/lib/queries'
 
@@ -30,7 +31,7 @@ export default function AdminPage() {
 
   const share = made
     ? `https://wa.me/92${(made.shop.owner_phone ?? '').replace(/^0/, '')}?text=${encodeURIComponent(
-        `${made.shop.name}\nMobile Shop app\nLogin: ${made.shop.owner_phone}\nPassword: ${made.password}\n${window.location.origin}`,
+        `${made.shop.name}\nMobile Shop app\nLogin: ${made.shop.owner_phone}\nPassword: ${made.password}\n${SITE}\nAndroid app: ${APP_LINK}`,
       )}`
     : ''
 
@@ -46,6 +47,7 @@ export default function AdminPage() {
         }
       />
       <BiLabel text="admin.only" size="sm" tone="text-muted" />
+      <AppLinkCard />
       <SearchBox value={q} onChange={setQ} placeholder="common.search" />
       <BiLabel text="admin.shops" size="md" bold />
       {isLoading ? <Loading /> : !data?.length ? <Empty text="admin.none" /> : (
