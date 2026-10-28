@@ -554,7 +554,9 @@
       "memory": "Memory card",
       "sim_tray": "SIM tray",
       "part": "Marammat ka purza",
-      "other": "Kuch aur"
+      "other": "Kuch aur",
+      "power_bank": "Power bank",
+      "watch": "Ghari"
     }
   },
   "exchange": {
@@ -1101,5 +1103,23 @@
       "body": "Ghalti se bana bill khatam karta hai. Kuch mitaya nahi jata: app ulti entry daal deti hai, is liye kahani aur hisaab dono theek rehte hain.",
       "example": "Ek bikri do dafa chadh gayi: ek cancel kar dein."
     }
+  },
+  "items": {
+    "sellButton": "Accessory / ghari",
+    "sellTitle": "Accessory ya ghari chunein",
+    "buyButton": "Accessory / ghari daalein",
+    "buyTitle": "Khareedi gayi accessory ya ghari",
+    "name": "Naam",
+    "namePh": "maslan Casio MTP-1302 ya Samsung 25W charger",
+    "kind": "Yeh kya hai?",
+    "sellPrice": "Bechne ki qeemat (ek ki)",
+    "saveNew": "Save kar ke daalein",
+    "search": "Naam ya code",
+    "new": "Nayi cheez (list mein nahi)",
+    "noneBuy": "Kuch nahi mila. \"Nayi cheez\" dabayein.",
+    "noneSell": "Stock mein kuch nahi. Pehle Stock daalein se daalein.",
+    "out": "Stock khatam",
+    "inStock": "Stock mein:",
+    "tooMany": "Stock se zyada"
   }
 }

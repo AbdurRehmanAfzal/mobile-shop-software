@@ -19,6 +19,8 @@ CATEGORIES = (
     "memory",
     "sim_tray",
     "part",
+    "power_bank",
+    "watch",  # ordinary watches, counted (smart watches are tracked one by one like phones)
     "other",
 )
 

@@ -350,6 +350,20 @@ Har tareeqe ka apna khata hai (Cash, Bank / Online, Cheques, Remittance), is liy
 
 **Misaal (bahar se):** Usman ka bhai Riyadh se Rs. 37,100 ke phone ke liye Western Union se 500 SAR bhejta hai. **Bahar se → SAR** dabayein, 500 aur 74.20 likhein, bhejne wala "Ahmed Raza", **Western Union** dabayein, **Complete sale**. Agar bahar se aaye paise bill se kam hon to baqi gahak ke udhaar mein chale jate hain (gahak chunein).
 
+### 6b. Ghariyan aur accessories (ginti se)
+
+Aam ghariyan (Casio, Naviforce…) aur accessories (charger, cable, cover, glass, handsfree, power bank) **ginti se** rakhi jati hain: IMEI nahi, sirf kitne pieces hain.
+
+**Khareedna:** Stock daalein → dealer chunein → **Accessory / ghari daalein** → list se chunein, ya **Nayi cheez (list mein nahi)**: naam, yeh kya hai (**Ghari**, **Charger**, …), ek ki bechne ki qeemat → **Save kar ke daalein**. Kitne (**Qty**) aur ek ki khareed (**Unit cost**) likhein. Save karne par ginti barh jati hai.
+
+![Ghariyan khareedna](../images/items-buy.png)
+
+**Bechna:** Sell → **Accessory / ghari** (phone ke saath charger bechna ho to phone ke neeche bhi yahi button) → item par tap karein. Line par likha hota hai stock mein kitne hain; is se zyada nahi bik sakte. Ginti kam ho jati hai aur munafa khareed qeemat se khud nikalta hai.
+
+![Ghari bechna](../images/items-sell.png)
+
+**Misaal:** 3 Casio MTP-1302 Rs. 4,500 mein khareedin, ek Rs. 6,500 mein bechi: stock 2 dikhata hai, munafa Rs. 2,000. Smart watch aur tablet (ek ek piece, serial / IMEI ke saath) agla kaam hai.
+
 ## 7. Wapsi (gahak phone wapas laya)
 
 **Misaal:** **Bilal Ahmed** ne **Samsung Galaxy A55** **Rs. 1,00,000** cash mein liya. Woh wapas le aaya.

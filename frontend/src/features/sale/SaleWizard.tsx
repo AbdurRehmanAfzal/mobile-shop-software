@@ -2,7 +2,7 @@
  *  → done. Customer is asked only for udhaar. Warranty and box/charger are shown under each phone
  *  (owner, 2026-10-27: hidden behind "more options" nobody found them); discount stays behind it. */
 
-import { Check, FileText, Headphones, Plus, Printer, Receipt, ShieldAlert, ShieldCheck, SlidersHorizontal, Smartphone, Trash2, TriangleAlert, UserCheck } from 'lucide-react'
+import { Check, FileText, Headphones, Plus, Printer, Receipt, ShieldAlert, ShieldCheck, SlidersHorizontal, Smartphone, Trash2, TriangleAlert, UserCheck, Watch } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { clearDrafts, useDraft } from '@/lib/draft'
 import { useNavigate, useSearchParams } from 'react-router-dom'
@@ -10,6 +10,7 @@ import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import PartyPicker from '@/components/PartyPicker'
 import PayPicker, { newPay, payInfo, payReady, remitPkr, type PayState } from '@/components/PayPicker'
+import StockItemPicker from '@/components/StockItemPicker'
 import { AccessoryPicker, type AccValue } from '@/components/AccessoryPicker'
 import { BtnText, Chip, ErrorText, IconChip, List, PageHeader, SearchBox, Sheet, Stepper } from '@/components/ui'
 import { uid } from '@/lib/id'
@@ -31,6 +32,9 @@ interface Misc {
   description: string
   qty: string
   unit_price: string
+  /** from the shop's counted stock (accessory / watch): its count goes down when sold */
+  accessory_id?: string
+  stock?: number
 }
 // what came with the phone goes with it unless the seller changes it
 const newLine = (d: Device): Line => ({
@@ -50,6 +54,7 @@ export default function SaleWizard() {
   const [lines, setLines] = useDraft<Line[]>('sale.lines', [])
   const [misc, setMisc] = useDraft<Misc[]>('sale.misc', [])
   const [picking, setPicking] = useState(false)
+  const [pickingItem, setPickingItem] = useState(false)
   const [more, setMore] = useDraft('sale.more', false)
   const [q, setQ] = useState('')
   const [discount, setDiscount] = useDraft('sale.discount', '')
@@ -87,7 +92,7 @@ export default function SaleWizard() {
   // (the buying price is only sent to them; for others the server refuses with below_cost)
   const belowCost = (l: Line) => l.device.cost_price != null && l.price !== '' && Number(l.price) < Number(l.device.cost_price)
   const lossLine = lines.some(belowCost)
-  const canSave = (!lossLine || (manager && lossOk)) && checkOk && total > 0 && payReady(pay) && (!owes || !!party) && lines.every((l) => Number(l.price) > 0) && misc.every((x) => x.description.trim() && Number(x.unit_price) > 0)
+  const canSave = (!lossLine || (manager && lossOk)) && checkOk && total > 0 && payReady(pay) && (!owes || !!party) && lines.every((l) => Number(l.price) > 0) && misc.every((x) => x.description.trim() && Number(x.unit_price) > 0 && (x.stock === undefined || Number(x.qty) <= x.stock))
 
   const setLine = (l: Line, patch: Partial<Line>) => setLines((ls) => ls.map((x) => (x.device.id === l.device.id ? { ...x, ...patch } : x)))
 
@@ -105,7 +110,7 @@ export default function SaleWizard() {
     const res = await m.mutateAsync({
       party_id: party?.id ?? null,
       devices: lines.map((l) => ({ device_id: l.device.id, price: Number(l.price || 0), warranty_days: Number(l.warranty_days || 0), ...accOut(l.acc) })),
-      misc: misc.map((x) => ({ description: x.description.trim(), qty: Number(x.qty || 1), unit_price: Number(x.unit_price || 0) })),
+      misc: misc.map((x) => ({ description: x.description.trim(), qty: Number(x.qty || 1), unit_price: Number(x.unit_price || 0), accessory_id: x.accessory_id })),
       discount: Number(discount || 0),
       paid,
       payment: payInfo(pay),
@@ -135,6 +140,7 @@ export default function SaleWizard() {
           ) : (
             <BiLabel text="counter.noStock" size="md" tone="text-muted" align="center" className="py-6" />
           )}
+          <BiButton text="items.sellButton" icon={<Watch size={22} />} variant="secondary" full onClick={() => setPickingItem(true)} />
           <div>
             <IconChip icon={<Headphones size={18} />} text="counter.otherItem" onClick={() => { setMisc([{ key: uid(), description: '', qty: '1', unit_price: '' }]); setStep(1) }} />
           </div>
@@ -185,9 +191,17 @@ export default function SaleWizard() {
             </div>
           ))}
           {misc.map((x) => (
-            <div key={x.key} className="card grid grid-cols-[1fr_64px_104px_auto] items-end gap-2">
-              <BiInput label="counter.itemName" value={x.description} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, description: e.target.value } : y)))} />
-              <BiInput label="purchase.qty" type="number" inputMode="numeric" min={1} value={x.qty} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, qty: e.target.value } : y)))} />
+            <div key={x.key} className={`card grid items-end gap-2 ${x.accessory_id ? 'grid-cols-[1fr_1fr_auto]' : 'grid-cols-[1fr_64px_104px_auto]'}`}>
+              {x.accessory_id ? (
+                // an item from stock: its whole name on its own line, then how many and the price
+                <div className="col-span-3 flex min-w-0 flex-col">
+                  <span className="text-base font-extrabold">{x.description}</span>
+                  <span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick('items.inStock')} <span className="num">{x.stock}</span></span>
+                </div>
+              ) : (
+                <BiInput label="counter.itemName" value={x.description} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, description: e.target.value } : y)))} />
+              )}
+              <BiInput label="purchase.qty" type="number" inputMode="numeric" min={1} max={x.stock} error={x.stock !== undefined && Number(x.qty) > x.stock ? 'items.tooMany' : null} value={x.qty} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, qty: e.target.value } : y)))} />
               <BiInput label="sale.unitPrice" type="number" inputMode="numeric" min={0} value={x.unit_price} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, unit_price: e.target.value } : y)))} />
               <button type="button" aria-label={pick('crud.delete')} onClick={() => setMisc(misc.filter((y) => y.key !== x.key))} className="tap mb-2 inline-flex h-9 shrink-0 items-center gap-1 rounded-xl px-2 text-payable">
                 <Trash2 size={16} />
@@ -196,6 +210,7 @@ export default function SaleWizard() {
           ))}
           <div className="flex flex-wrap gap-2">
             <IconChip icon={<Smartphone size={18} />} text="counter.addAnother" onClick={() => setPicking(true)} />
+            <IconChip icon={<Watch size={18} />} text="items.sellButton" onClick={() => setPickingItem(true)} />
             <IconChip icon={<Headphones size={18} />} text="counter.otherItem" onClick={() => setMisc([...misc, { key: uid(), description: '', qty: '1', unit_price: '' }])} />
             {!more ? <IconChip icon={<SlidersHorizontal size={18} />} text="counter.moreOptions" onClick={() => setMore(true)} /> : null}
           </div>
@@ -277,6 +292,23 @@ export default function SaleWizard() {
             {stock?.filter((d) => !lines.some((l) => l.device.id === d.id)).map((d) => <DeviceRow key={d.id} d={d} onClick={() => pickDevice(d)} />)}
           </List>
         </div>
+      </Sheet>
+
+      <Sheet open={pickingItem} onClose={() => setPickingItem(false)} title="items.sellTitle">
+        {pickingItem ? (
+          <StockItemPicker
+            mode="sell"
+            onPick={(it) => {
+              setMisc((ms) => {
+                const same = ms.find((m) => m.accessory_id === it.id)
+                if (same) return ms.map((m) => (m === same ? { ...m, qty: String(Math.min(Number(m.qty || 0) + 1, it.qty)) } : m))
+                return [...ms, { key: uid(), description: ur && it.name_ur ? it.name_ur : it.name, qty: '1', unit_price: String(Number(it.price) || ''), accessory_id: it.id, stock: it.qty }]
+              })
+              setPickingItem(false)
+              setStep(1)
+            }}
+          />
+        ) : null}
       </Sheet>
 
     </div>

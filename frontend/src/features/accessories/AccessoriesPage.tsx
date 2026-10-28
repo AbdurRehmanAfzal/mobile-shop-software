@@ -9,7 +9,7 @@ import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
 
 interface Accessory { id: string; sku: string; name: string; name_ur: string | null; category: string; qty: number; avg_cost: string | null; price: string; reorder_level: number; low_stock: boolean }
 interface Pending { item_id: string; device_label: string; imei1: string; kind: string; pending_from: 'vendor' | 'shop'; expected_at: string | null; promised_to_customer_at: string | null; party_name: string | null; party_phone: string | null; overdue: boolean }
-const CATS = ['charger', 'cable', 'cover', 'glass', 'earphones', 'battery', 'memory', 'sim_tray', 'part', 'other']
+const CATS = ['charger', 'cable', 'cover', 'glass', 'earphones', 'battery', 'memory', 'sim_tray', 'part', 'power_bank', 'watch', 'other']
 
 export default function AccessoriesPage() {
   const { pick, ur } = useLang()

@@ -1,10 +1,11 @@
-import { Check, Headphones, PackagePlus, Plus, Printer, ShieldCheck, SlidersHorizontal, Smartphone, Store, Trash2, UserCheck, UserRound } from 'lucide-react'
+import { Check, Headphones, PackagePlus, Plus, Printer, ShieldCheck, SlidersHorizontal, Smartphone, Store, Trash2, UserCheck, UserRound, Watch } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { clearDrafts, useDraft } from '@/lib/draft'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import PayPicker, { newPay, payInfo, payReady, type PayState } from '@/components/PayPicker'
+import StockItemPicker from '@/components/StockItemPicker'
 import PartyPicker from '@/components/PartyPicker'
 import { BtnText, Chip, ErrorText, IconChip, MoneyText, PageHeader, Sheet, Stepper } from '@/components/ui'
 import { uid } from '@/lib/id'
@@ -20,6 +21,8 @@ interface Misc {
   description: string
   qty: string
   unit_cost: string
+  /** an accessory / watch from the shop's counted stock: its count goes up */
+  accessory_id?: string
 }
 
 export default function PurchaseWizard() {
@@ -33,6 +36,7 @@ export default function PurchaseWizard() {
   const [party, setParty] = useDraft<Party | null>('purchase.party', null)
   const [devices, setDevices] = useDraft<DeviceLineDraft[]>('purchase.devices', [])
   const [misc, setMisc] = useDraft<Misc[]>('purchase.misc', [])
+  const [pickingItem, setPickingItem] = useState(false)
   const [editing, setEditing] = useDraft<DeviceLineDraft | null>('purchase.editing', null)
   const [discount, setDiscount] = useDraft('purchase.discount', '')
   const [paidNow, setPaidNow] = useDraft('purchase.paidNow', '')
@@ -57,7 +61,7 @@ export default function PurchaseWizard() {
       kind,
       party_id: party!.id,
       devices: devices.map(draftToApi),
-      misc: misc.filter((x) => x.description).map((x) => ({ description: x.description, qty: Number(x.qty || 1), unit_cost: Number(x.unit_cost || 0) })),
+      misc: misc.filter((x) => x.description).map((x) => ({ description: x.description, qty: Number(x.qty || 1), unit_cost: Number(x.unit_cost || 0), accessory_id: x.accessory_id })),
       discount: Number(discount || 0),
       paid,
       payment: payInfo(pay),
@@ -134,11 +138,16 @@ export default function PurchaseWizard() {
           ))}
           <BiButton text="purchase.addDevice" icon={<Plus size={22} />} variant="secondary" full onClick={() => setEditing(emptyDraft('', kind))} />
 
-          {kind === 'supplier' ? (
+          <BiButton text="items.buyButton" icon={<Watch size={22} />} variant="secondary" full onClick={() => setPickingItem(true)} />
+          {misc.length || kind === 'supplier' ? (
             <>
               {misc.map((x) => (
-                <div key={x.key} className="card grid grid-cols-[1fr_64px_96px_auto] items-end gap-2">
-                  <BiInput label="purchase.miscDesc" value={x.description} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, description: e.target.value } : y)))} />
+                <div key={x.key} className={`card grid items-end gap-2 ${x.accessory_id ? 'grid-cols-[1fr_1fr_auto]' : 'grid-cols-[1fr_64px_96px_auto]'}`}>
+                  {x.accessory_id ? (
+                    <span className="col-span-3 text-base font-extrabold">{x.description}</span>
+                  ) : (
+                    <BiInput label="purchase.miscDesc" value={x.description} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, description: e.target.value } : y)))} />
+                  )}
                   <BiInput label="purchase.qty" type="number" inputMode="numeric" min={1} value={x.qty} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, qty: e.target.value } : y)))} />
                   <BiInput label="purchase.unitCost" type="number" inputMode="numeric" min={0} value={x.unit_cost} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, unit_cost: e.target.value } : y)))} />
                   <button type="button" aria-label={pick('purchase.remove')} onClick={() => setMisc(misc.filter((y) => y.key !== x.key))} className="tap mb-2 inline-flex h-9 shrink-0 items-center gap-1 rounded-xl px-2 text-payable">
@@ -146,7 +155,7 @@ export default function PurchaseWizard() {
                   <BtnText k={'purchase.remove'} /></button>
                 </div>
               ))}
-              <div><IconChip icon={<Headphones size={18} />} text="counter.otherItem" onClick={() => setMisc([...misc, { key: uid(), description: '', qty: '1', unit_cost: '' }])} /></div>
+              {kind === 'supplier' ? <div><IconChip icon={<Headphones size={18} />} text="counter.otherItem" onClick={() => setMisc([...misc, { key: uid(), description: '', qty: '1', unit_cost: '' }])} /></div> : null}
             </>
           ) : null}
 
@@ -251,6 +260,18 @@ export default function PurchaseWizard() {
           <BiButton text="nav.stock" icon={<Smartphone size={22} />} full variant="secondary" onClick={() => nav('/stock')} />
         </div>
       ) : null}
+
+      <Sheet open={pickingItem} onClose={() => setPickingItem(false)} title="items.buyTitle">
+        {pickingItem ? (
+          <StockItemPicker
+            mode="buy"
+            onPick={(it) => {
+              setMisc((ms) => [...ms, { key: uid(), description: it.name, qty: '1', unit_cost: it.avg_cost && Number(it.avg_cost) ? String(Number(it.avg_cost)) : '', accessory_id: it.id }])
+              setPickingItem(false)
+            }}
+          />
+        ) : null}
+      </Sheet>
 
       <Sheet open={editing !== null} onClose={() => setEditing(null)} title="purchase.addDevice">
         {editing ? (

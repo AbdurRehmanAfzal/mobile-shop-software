@@ -554,7 +554,9 @@
       "memory": "Memory card",
       "sim_tray": "SIM tray",
       "part": "Repair part",
-      "other": "Other"
+      "other": "Other",
+      "power_bank": "Power bank",
+      "watch": "Watch"
     }
   },
   "exchange": {
@@ -1101,5 +1103,23 @@
       "body": "Cancels a bill made by mistake. Nothing is deleted: the app adds an opposite entry, so the history and the hisaab stay correct.",
       "example": "A sale entered twice: cancel one of them."
     }
+  },
+  "items": {
+    "sellButton": "Accessory / watch",
+    "sellTitle": "Pick an accessory or watch",
+    "buyButton": "Add accessory / watch",
+    "buyTitle": "Accessory or watch bought",
+    "name": "Name",
+    "namePh": "e.g. Casio MTP-1302 or Samsung 25W charger",
+    "kind": "What is it?",
+    "sellPrice": "Selling price (each)",
+    "saveNew": "Save and add",
+    "search": "Name or code",
+    "new": "New item (not in the list)",
+    "noneBuy": "Nothing found. Tap \"New item\".",
+    "noneSell": "Nothing in stock. Add it from Add stock first.",
+    "out": "Out of stock",
+    "inStock": "In stock:",
+    "tooMany": "More than in stock"
   }
 }

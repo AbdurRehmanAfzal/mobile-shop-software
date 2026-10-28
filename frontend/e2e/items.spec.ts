@@ -1,0 +1,54 @@
+/** Owner (2026-10-28): watches and accessories, bought and sold by count, easy for a layman. */
+
+import { expect, test } from '@playwright/test'
+
+test('buy 3 watches from a dealer, sell one, stock shows 2', async ({ page }) => {
+  await page.addInitScript(() => {
+    if (!localStorage.getItem('locale')) localStorage.setItem('locale', 'en')
+  })
+  await page.goto('/signup')
+  await page.getByLabel('Shop name', { exact: true }).fill('Watch Shop')
+  await page.getByLabel('Your name').fill('Owner')
+  await page.getByLabel('Mobile number').fill(`039${Math.floor(10_000_000 + Math.random() * 89_999_999)}`)
+  await page.getByLabel('Password').fill('e2e-secret-1')
+  await page.getByRole('button', { name: /Create shop account/ }).click()
+  await expect(page.getByPlaceholder("IMEI, phone or person's name")).toBeVisible()
+
+  // buy: a new item made right in the purchase
+  await page.goto('/purchase/new')
+  await page.getByRole('button', { name: /From a dealer/ }).click()
+  await page.getByRole('button', { name: 'New person' }).click()
+  await page.getByLabel('Name', { exact: true }).fill('Watch Dealer')
+  await page.getByLabel('Mobile number').fill('03016667799')
+  await page.getByRole('button', { name: 'Save', exact: true }).click()
+  await page.getByRole('button', { name: 'Next' }).click()
+  await page.getByRole('button', { name: 'Add accessory / watch' }).click()
+  await page.getByRole('button', { name: 'New item (not in the list)' }).click()
+  await page.getByLabel('Name', { exact: true }).fill('Casio MTP-1302')
+  await page.getByRole('button', { name: 'Watch', exact: true }).click()
+  await page.getByLabel('Selling price (each)').fill('6500')
+  await page.getByRole('button', { name: 'Save and add' }).click()
+  await expect(page.getByText('Casio MTP-1302')).toBeVisible()
+  await page.getByLabel('Qty').fill('3')
+  await page.getByLabel('Unit cost').fill('4500')
+  await page.screenshot({ path: 'test-results/items-buy.png', fullPage: true })
+  await page.getByRole('button', { name: 'Put in stock' }).click()
+  await expect(page.getByText('Purchase saved')).toBeVisible()
+
+  // sell one
+  await page.goto('/sale/new')
+  await page.getByRole('button', { name: 'Accessory / watch' }).click()
+  await page.getByRole('button', { name: 'Watch', exact: true }).click()
+  await page.getByText('Casio MTP-1302').click()
+  await expect(page.getByText('In stock: 3')).toBeVisible()
+  await page.screenshot({ path: 'test-results/items-sell.png', fullPage: true })
+  await page.getByRole('button', { name: 'Complete sale' }).click()
+  await expect(page.getByText('Sale complete')).toBeVisible()
+
+  await page.goto('/accessories')
+  await expect(page.getByText('Casio MTP-1302')).toBeVisible()
+  await page.getByRole('button', { name: 'Accessory / watch' }).count() // page loaded
+  await page.goto('/sale/new')
+  await page.getByRole('button', { name: 'Accessory / watch' }).click()
+  await expect(page.getByText('In stock: 2')).toBeVisible()
+})

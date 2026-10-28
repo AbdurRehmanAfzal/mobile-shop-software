@@ -352,6 +352,20 @@ Each way keeps its own account (Cash, Bank / Online, Cheques, Remittance), so th
 
 **Example (from abroad):** Usman's brother in Riyadh sends 500 SAR through Western Union for a Rs. 37,100 phone. Tap **From abroad → SAR**, type 500 and 74.20, the sender "Ahmed Raza", tap **Western Union**, **Complete sale**. If the remittance comes to less than the bill, the rest goes on the customer's udhaar (choose the customer).
 
+### 6b. Watches and accessories (counted)
+
+Ordinary watches (Casio, Naviforce…) and accessories (chargers, cables, covers, glass, earphones, power banks) are kept **by count**: no IMEI, just how many you have.
+
+**Buying them:** Add stock → choose the dealer → **Add accessory / watch** → pick it from the list, or **New item (not in the list)**: name, what it is (**Watch**, **Charger**, …), selling price each → **Save and add**. Type how many (**Qty**) and the price you paid for one (**Unit cost**). The count goes up when you save.
+
+![Buying watches](../images/items-buy.png)
+
+**Selling them:** Sell → **Accessory / watch** (also under a phone, to sell a charger with it) → tap the item. The line shows how many are in stock; you cannot sell more than that. The count goes down and the profit is worked out from what you paid.
+
+![Selling a watch](../images/items-sell.png)
+
+**Example:** you buy 3 Casio MTP-1302 at Rs. 4,500 and sell one for Rs. 6,500: stock shows 2, profit Rs. 2,000. Smart watches and tablets (one by one, with serial / IMEI) come next.
+
 ## 7. Returns (customer brings a phone back)
 
 **Example:** **Bilal Ahmed** bought a **Samsung Galaxy A55** for **Rs. 100,000** cash. He brings it
