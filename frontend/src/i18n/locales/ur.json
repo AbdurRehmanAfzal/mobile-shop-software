@@ -1129,5 +1129,14 @@
     "newKind": "نئی قسم",
     "newKindName": "یہ کس قسم کی چیز ہے؟",
     "newKindPh": "مثلاً رنگ لائٹ"
+  },
+  "devcat": {
+    "what": "یہ کیا ہے؟",
+    "phone": "موبائل",
+    "tablet": "ٹیبلٹ",
+    "watch": "سمارٹ واچ",
+    "imeiIfSim": "IMEI (اگر سم لگتی ہو)",
+    "serial": "سیریل نمبر",
+    "serialHint": "IMEI نہیں؟ ڈبے یا پچھلی طرف سے سیریل نمبر لکھیں (Settings → About)۔"
   }
 }

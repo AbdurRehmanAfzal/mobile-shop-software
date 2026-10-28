@@ -5,6 +5,7 @@ from decimal import Decimal
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.modules.payments.models import PaymentDirection, PaymentMethod
+from app.modules.paymode.schemas import PaymentDetailOut, PaymentInfo
 
 
 class AllocationIn(BaseModel):
@@ -20,6 +21,8 @@ class PaymentCreate(BaseModel):
     cash_account_id: uuid.UUID | None = None
     method: PaymentMethod = PaymentMethod.CASH
     reference: str | None = Field(default=None, max_length=80)
+    # online / cheque / from abroad, the same picker as on sales (owner 2026-10-28); sets `method`
+    payment: PaymentInfo | None = None
     date: dt.date | None = None
     notes: str | None = None
     allocations: list[AllocationIn] | None = Field(
@@ -47,6 +50,7 @@ class PaymentOut(BaseModel):
     cash_account_id: uuid.UUID
     method: PaymentMethod
     reference: str | None
+    payment: PaymentDetailOut | None = None
     date: dt.date
     notes: str | None
     allocations: list[AllocationOut]

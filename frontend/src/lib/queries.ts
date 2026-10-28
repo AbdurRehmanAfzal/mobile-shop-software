@@ -20,15 +20,16 @@ export function useShopKey() {
 }
 
 // ---- catalogue ------------------------------------------------------------------------------
-export const useBrands = () => {
+/** `category` tablet / watch: only brands that make those (phone = all brands) */
+export const useBrands = (category?: string) => {
   const k = useShopKey()
-  return useQuery({ queryKey: [k, 'brands'], queryFn: () => get<Brand[]>('/api/v1/catalogue/brands'), staleTime: 5 * 60_000 })
+  return useQuery({ queryKey: [k, 'brands', category ?? ''], queryFn: () => get<Brand[]>(`/api/v1/catalogue/brands${qs({ category })}`), staleTime: 5 * 60_000 })
 }
-export const useModels = (brandId?: string, q?: string) => {
+export const useModels = (brandId?: string, q?: string, category?: string) => {
   const k = useShopKey()
   return useQuery({
-    queryKey: [k, 'models', brandId ?? '', q ?? ''],
-    queryFn: () => get<Model[]>(`/api/v1/catalogue/models${qs({ brand_id: brandId, q })}`),
+    queryKey: [k, 'models', brandId ?? '', q ?? '', category ?? ''],
+    queryFn: () => get<Model[]>(`/api/v1/catalogue/models${qs({ brand_id: brandId, q, category })}`),
     enabled: !!brandId || !!q,
     staleTime: 5 * 60_000,
   })
@@ -108,7 +109,7 @@ export const useUpdateParty = () => {
 }
 
 // ---- devices ---------------------------------------------------------------------------------
-export const useDevices = (params: { status?: string; q?: string; brand_id?: string; condition?: string; pta_status?: string; limit?: number } = {}) => {
+export const useDevices = (params: { status?: string; q?: string; brand_id?: string; condition?: string; pta_status?: string; category?: string; limit?: number } = {}) => {
   const k = useShopKey()
   return useQuery({ queryKey: [k, 'devices', params], queryFn: () => get<Device[]>(`/api/v1/devices${qs(params)}`) })
 }

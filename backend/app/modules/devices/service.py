@@ -180,8 +180,11 @@ def list_devices(
     brand_id: uuid.UUID | None,
     q: str | None,
     limit: int,
+    category: str | None = None,
 ) -> list[dict]:
     stmt = _base_query(shop_id)
+    if category:
+        stmt = stmt.where(Device.category == category)
     if status:
         stmt = stmt.where(Device.status == status)
     if condition:

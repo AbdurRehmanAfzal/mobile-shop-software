@@ -29,6 +29,7 @@ export interface Brand {
   is_global: boolean
   model_count: number
 }
+export type DeviceCategory = 'phone' | 'tablet' | 'watch'
 export interface Model {
   id: UUID
   brand_id: UUID
@@ -77,6 +78,7 @@ export interface Device {
   imei1: string
   imei2: string | null
   serial: string | null
+  category?: DeviceCategory
   brand_id: UUID
   brand_name: string
   model_id: UUID

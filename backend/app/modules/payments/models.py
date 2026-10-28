@@ -23,6 +23,9 @@ class PaymentMethod(StrEnum):
     JAZZCASH = "jazzcash"
     CARD = "card"
     OTHER = "other"
+    ONLINE = "online"  # bank app / wallet, details in payment_details
+    CHEQUE = "cheque"
+    REMITTANCE = "remittance"
 
 
 class Payment(UUIDPk, ShopScoped, Timestamped, Base):

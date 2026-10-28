@@ -36,17 +36,30 @@ def _taken(
 # ---- brands & models -----------------------------------------------------------
 
 
-def list_brands(db: Session, shop_id: uuid.UUID) -> list[dict]:
+def list_brands(db: Session, shop_id: uuid.UUID, category: str | None = None) -> list[dict]:
+    """With `category` (tablet / watch) only brands that make such models, plus the shop's own."""
     count_sq = (
         select(Model.brand_id, func.count(Model.id).label("n"))
-        .where(_visible(Model.shop_id, shop_id), Model.is_active.is_(True))
+        .where(
+            _visible(Model.shop_id, shop_id),
+            Model.is_active.is_(True),
+            *([Model.category == category] if category else []),
+        )
         .group_by(Model.brand_id)
         .subquery()
     )
     rows = db.execute(
         select(Brand, func.coalesce(count_sq.c.n, 0))
         .outerjoin(count_sq, count_sq.c.brand_id == Brand.id)
-        .where(_visible(Brand.shop_id, shop_id), Brand.is_active.is_(True))
+        .where(
+            _visible(Brand.shop_id, shop_id),
+            Brand.is_active.is_(True),
+            *(
+                [or_(count_sq.c.n > 0, Brand.shop_id == shop_id)]
+                if category and category != "phone"
+                else []
+            ),
+        )
         .order_by(Brand.sort_order, Brand.name)
     ).all()
     return [
@@ -91,9 +104,16 @@ def create_brand(db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, data: Bran
 
 
 def list_models(
-    db: Session, shop_id: uuid.UUID, brand_id: uuid.UUID | None, q: str | None, limit: int
+    db: Session,
+    shop_id: uuid.UUID,
+    brand_id: uuid.UUID | None,
+    q: str | None,
+    limit: int,
+    category: str | None = None,
 ) -> list[dict]:
     stmt = select(Model).where(_visible(Model.shop_id, shop_id), Model.is_active.is_(True))
+    if category:
+        stmt = stmt.where(Model.category == category)
     if brand_id:
         stmt = stmt.where(Model.brand_id == brand_id)
     if q:
@@ -122,6 +142,7 @@ def create_model(db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, data: Mode
         name_ur=data.name_ur,
         reference_price=data.reference_price,
         is_feature_phone=data.is_feature_phone,
+        category=data.category,
     )
     db.add(model)
     db.flush()
@@ -146,6 +167,7 @@ def _model_out(m: Model) -> dict:
         "name_ur": m.name_ur,
         "reference_price": m.reference_price,
         "is_feature_phone": m.is_feature_phone,
+        "category": m.category,
         "is_global": m.shop_id is None,
     }
 

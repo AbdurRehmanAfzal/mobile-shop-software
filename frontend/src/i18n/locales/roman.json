@@ -1129,5 +1129,14 @@
     "newKind": "Nayi qism",
     "newKindName": "Yeh kis qism ki cheez hai?",
     "newKindPh": "maslan Ring light"
+  },
+  "devcat": {
+    "what": "Yeh kya hai?",
+    "phone": "Mobile",
+    "tablet": "Tablet",
+    "watch": "Smart watch",
+    "imeiIfSim": "IMEI (agar SIM lagti ho)",
+    "serial": "Serial number",
+    "serialHint": "IMEI nahi? Dabbe ya peechhe se serial number likhein (Settings → About)."
   }
 }

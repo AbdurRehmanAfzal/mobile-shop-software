@@ -1,5 +1,5 @@
 import uuid
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, Query, Response
 
@@ -18,6 +18,8 @@ from app.modules.catalogue.schemas import (
     StorageOut,
 )
 
+Category = Literal["phone", "tablet", "watch"]
+
 router = APIRouter(prefix="/api/v1/catalogue", tags=["catalogue"])
 
 Transact = Annotated[Ctx, Depends(require_cap(Cap.TRANSACT))]
@@ -25,8 +27,8 @@ Editor = Annotated[Ctx, Depends(require_cap(Cap.CATALOGUE_EDIT))]
 
 
 @router.get("/brands", response_model=list[BrandOut])
-def brands(ctx: Ctx, db: DB):
-    return service.list_brands(db, ctx.shop_id)
+def brands(ctx: Ctx, db: DB, category: Category | None = None):
+    return service.list_brands(db, ctx.shop_id, category)
 
 
 @router.post("/brands", response_model=BrandOut, status_code=201)
@@ -41,8 +43,9 @@ def models(
     brand_id: uuid.UUID | None = None,
     q: str | None = Query(default=None, min_length=1, max_length=60),
     limit: int = Query(default=200, le=500),
+    category: Category | None = None,
 ):
-    return service.list_models(db, ctx.shop_id, brand_id, q, limit)
+    return service.list_models(db, ctx.shop_id, brand_id, q, limit, category)
 
 
 @router.post("/models", response_model=ModelOut, status_code=201)

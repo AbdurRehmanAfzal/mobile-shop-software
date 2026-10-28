@@ -33,6 +33,10 @@ class Device(UUIDPk, ShopScoped, Timestamped, Base):
     imei1: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
     imei2: Mapped[str | None] = mapped_column(String(20), index=True)
     serial: Mapped[str | None] = mapped_column(String(60))
+    # phone | tablet | watch (owner 2026-10-28: tablets and smart watches are sold one by one too)
+    category: Mapped[str] = mapped_column(
+        String(10), nullable=False, default="phone", server_default="phone"
+    )
     brand_id: Mapped[uuid.UUID] = mapped_column(
         Uuid, ForeignKey("brands.id", ondelete="RESTRICT"), nullable=False
     )

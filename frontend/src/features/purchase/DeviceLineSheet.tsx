@@ -12,12 +12,17 @@ import { Chip } from '@/components/ui'
 import { uid } from '@/lib/id'
 import { toLatinDigits } from '@/lib/format'
 import { parseStorage, useBrands, useCatalogueEdit, useColours, useImeiLookup, useModels, useStorages } from '@/lib/queries'
-import type { AccessoryItem, Brand, Colour, DeviceCondition, Model, PtaStatus, Storage } from '@/lib/types'
+import type { AccessoryItem, Brand, Colour, DeviceCategory, DeviceCondition, Model, PtaStatus, Storage } from '@/lib/types'
+import { Smartphone, Tablet, Watch } from 'lucide-react'
 import QuickAdd from '@/features/catalogue/QuickAdd'
 
 export interface DeviceLineDraft {
   key: string
+  /** phone | tablet | watch (owner 2026-10-28) */
+  category: DeviceCategory
   imei1: string
+  /** tablets and smart watches without a SIM have only a serial number */
+  serial: string
   imei2: string
   brand_id: string
   brand_name: string
@@ -39,7 +44,9 @@ export interface DeviceLineDraft {
 export function emptyDraft(imei = '', kind: 'supplier' | 'walk_in' | 'shop' | 'trade_in' = 'supplier'): DeviceLineDraft {
   return {
     key: uid(),
+    category: 'phone',
     imei1: imei,
+    serial: '',
     imei2: '',
     brand_id: '',
     brand_name: '',
@@ -61,14 +68,17 @@ export function emptyDraft(imei = '', kind: 'supplier' | 'walk_in' | 'shop' | 't
 export function draftToApi(d: DeviceLineDraft) {
   return {
     device: {
-      imei1: d.imei1,
-      imei2: d.imei2 || null,
+      category: d.category ?? 'phone',
+      imei1: d.imei1 || null,
+      imei2: d.category === 'watch' ? null : d.imei2 || null,
+      serial: d.serial || null,
       brand_id: d.brand_id,
       model_id: d.model_id,
       storage_id: d.storage_id || null,
       colour_id: d.colour_id || null,
       condition: d.condition,
-      pta_status: d.pta_status,
+      // PTA only for a phone, or a tablet that takes a SIM (it has an IMEI)
+      pta_status: d.category === 'watch' || (d.category === 'tablet' && !d.imei1) ? 'unknown' : d.pta_status,
       sim_time_months: d.sim_time_months ? Number(d.sim_time_months) : null,
       warranty_months: Number(d.warranty_months || 0),
       patch_details: d.patch_details || null,
@@ -88,8 +98,9 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
   const set = <K extends keyof DeviceLineDraft>(k: K, v: DeviceLineDraft[K]) => setD((x) => ({ ...x, [k]: v }))
   const imeiDigits = toLatinDigits(d.imei1).replace(/\D/g, '')
   const { data: lookup } = useImeiLookup(edit ? '' : imeiDigits)
-  const { data: brands } = useBrands()
-  const { data: models } = useModels(d.brand_id || undefined, modelQ || undefined)
+  const category: DeviceCategory = d.category ?? 'phone'
+  const { data: brands } = useBrands(category)
+  const { data: models } = useModels(d.brand_id || undefined, modelQ || undefined, category)
   const { data: storages } = useStorages()
   const { data: colours } = useColours()
   const cat = useCatalogueEdit()
@@ -98,15 +109,33 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
   }, [imeiDigits]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const inStockBlock = lookup?.found && lookup.device && !['sold', 'returned_to_supplier'].includes(lookup.device.status)
-  const needsSim = d.pta_status === 'non_pta' || d.pta_status === 'jv'
+  const serialOk = /^[A-Za-z0-9-]{4,24}$/.test(d.serial.trim())
+  // a phone needs its IMEI; a tablet or a watch needs the IMEI or the serial number
+  const identityOk = imeiDigits.length === 15 || (category !== 'phone' && imeiDigits.length === 0 && serialOk)
+  const showPta = category === 'phone' || (category === 'tablet' && imeiDigits.length > 0)
+  const needsSim = showPta && (d.pta_status === 'non_pta' || d.pta_status === 'jv')
   // owner: the price you will sell at may not be lower than what you paid
   const askingLow = !edit && d.asking_price !== '' && d.cost !== '' && Number(d.asking_price) < Number(d.cost)
-  const valid = !askingLow && imeiDigits.length === 15 && d.brand_id && d.model_id && (edit || d.cost !== '') && (!needsSim || d.sim_time_months !== '') && (d.condition !== 'patched' || d.patch_details) && !inStockBlock
+  const valid = !askingLow && identityOk && d.brand_id && d.model_id && (edit || d.cost !== '') && (!needsSim || d.sim_time_months !== '') && (d.condition !== 'patched' || d.patch_details) && !inStockBlock
 
 
   return (
     <div className="flex flex-col gap-3">
-      <ImeiInput label="stock.imei" help={<Help term="imei" />} disabled={edit} placeholder={t('stock.imeiPlaceholder')} value={d.imei1} onChange={(v) => set('imei1', v)} exclude={d.imei2} autoFocus={!initial.imei1} />
+      {edit ? null : (
+        <div className="grid grid-cols-3 gap-2" role="group" aria-label={pick('devcat.what')}>
+          {(['phone', 'tablet', 'watch'] as const).map((c) => {
+            const Icon = c === 'phone' ? Smartphone : c === 'tablet' ? Tablet : Watch
+            const on = category === c
+            return (
+              <button key={c} type="button" aria-pressed={on} onClick={() => setD((x) => ({ ...x, category: c, brand_id: '', brand_name: '', model_id: '', model_name: '' }))} className={`tap flex min-h-[64px] flex-col items-center justify-center gap-1 rounded-2xl border-2 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'}`}>
+                <Icon size={22} />
+                <span className="text-[13px] leading-tight">{pick(`devcat.${c}`)}</span>
+              </button>
+            )
+          })}
+        </div>
+      )}
+      <ImeiInput label={category === 'phone' ? 'stock.imei' : 'devcat.imeiIfSim'} help={<Help term="imei" />} disabled={edit} placeholder={t('stock.imeiPlaceholder')} value={d.imei1} onChange={(v) => set('imei1', v)} exclude={d.imei2} autoFocus={!initial.imei1} />
       {imeiDigits.length === 15 && lookup ? (
         <div className="flex flex-wrap gap-1.5">
           {!lookup.luhn_ok ? <Chip text="stock.luhnBad" tone="warn" /> : null}
@@ -114,7 +143,10 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
           {inStockBlock ? <Chip text={`stock.status.${lookup.device!.status}`} tone="bad" /> : null}
         </div>
       ) : null}
-      <ImeiInput label="stock.imei2" value={d.imei2} onChange={(v) => set('imei2', v)} exclude={toLatinDigits(d.imei1).replace(/\D/g, '')} />
+      {category !== 'phone' ? (
+        <BiInput label="devcat.serial" value={d.serial} onChange={(e) => set('serial', e.target.value.toUpperCase())} disabled={edit} maxLength={24} dir="ltr" className="num" hint={imeiDigits.length === 0 ? 'devcat.serialHint' : undefined} />
+      ) : null}
+      {category === 'watch' ? null : <ImeiInput label="stock.imei2" value={d.imei2} onChange={(v) => set('imei2', v)} exclude={toLatinDigits(d.imei1).replace(/\D/g, '')} />}
 
       <div>
         <BiLabel text="stock.brand" size="md" tone="text-muted" className="mb-1.5" />
@@ -156,7 +188,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
                   placeholder="catalogue.namePh"
                   initial={modelQ}
                   onAdd={async (name) => {
-                    const m = await cat.add<Model>('models', { brand_id: d.brand_id, name })
+                    const m = await cat.add<Model>('models', { brand_id: d.brand_id, name, category })
                     setD((x) => ({ ...x, model_id: m.id, model_name: m.name }))
                     setModelQ('')
                   }}
@@ -218,8 +250,8 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
       <BiSegmented<DeviceCondition> value={d.condition} onChange={(v) => set('condition', v)} options={[{ value: 'box_pack', text: 'stock.condition.box_pack' }, { value: 'open_box', text: 'stock.condition.open_box' }, { value: 'used', text: 'stock.condition.used' }, { value: 'patched', text: 'stock.condition.patched' }]} />
       {d.condition === 'patched' ? <BiInput label="stock.patchDetails" value={d.patch_details} onChange={(e) => set('patch_details', e.target.value)} required /> : null}
 
-      <div className="flex items-center gap-1"><BiLabel text="stock.ptaLabel" size="md" tone="text-muted" /><Help term="pta" /></div>
-      <BiSegmented<PtaStatus> value={d.pta_status} onChange={(v) => set('pta_status', v)} options={[{ value: 'pta_approved', text: 'stock.pta.pta_approved' }, { value: 'non_pta', text: 'stock.pta.non_pta' }, { value: 'jv', text: 'stock.pta.jv' }]} />
+      {showPta ? <div className="flex items-center gap-1"><BiLabel text="stock.ptaLabel" size="md" tone="text-muted" /><Help term="pta" /></div> : null}
+      {showPta ? <BiSegmented<PtaStatus> value={d.pta_status} onChange={(v) => set('pta_status', v)} options={[{ value: 'pta_approved', text: 'stock.pta.pta_approved' }, { value: 'non_pta', text: 'stock.pta.non_pta' }, { value: 'jv', text: 'stock.pta.jv' }]} /> : null}
       {needsSim ? <BiInput label="stock.simTime" type="number" inputMode="numeric" min={0} max={60} value={d.sim_time_months} onChange={(e) => set('sim_time_months', e.target.value)} required /> : null}
 
       {edit ? null : (

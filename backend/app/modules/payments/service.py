@@ -11,12 +11,12 @@ from app.db.base import ZERO, utcnow
 from app.modules.audit.service import record_audit
 from app.modules.auth.models import Shop
 from app.modules.ledger import accounts as acc
-from app.modules.ledger.models import CashAccount
-from app.modules.ledger.service import Posting, default_cash_account, money, post, reverse
+from app.modules.ledger.service import Posting, money, post, reverse
 from app.modules.notifications import service as notify
 from app.modules.parties.models import Party
 from app.modules.payments.models import Payment, PaymentDirection
 from app.modules.payments.schemas import PaymentCreate
+from app.modules.paymode import service as paymode
 from app.modules.purchases.models import Purchase, PurchaseStatus
 from app.modules.purchases.service import next_number
 from app.modules.sales.models import Invoice, InvoiceStatus
@@ -94,13 +94,8 @@ def create_payment(
     if party is None or party.shop_id != shop_id:
         raise NotFound(code="party_not_found")
     amount = money(data.amount)
-    cash = (
-        db.get(CashAccount, data.cash_account_id)
-        if data.cash_account_id
-        else default_cash_account(db, shop_id)
-    )
-    if cash is None or cash.shop_id != shop_id:
-        raise NotFound(code="cash_account_not_found")
+    cash = paymode.account_for(db, shop_id, data.payment, data.cash_account_id)
+    method = data.payment.method if data.payment and data.payment.method != "cash" else data.method
 
     # allocations
     allocations: list[dict] = []
@@ -159,8 +154,8 @@ def create_payment(
         direction=data.direction,
         amount=amount,
         cash_account_id=cash.id,
-        method=data.method,
-        reference=data.reference,
+        method=method,
+        reference=data.reference or (data.payment.reference if data.payment else None),
         date=data.date or shop_today(),
         notes=data.notes,
         allocations=allocations,
@@ -168,6 +163,7 @@ def create_payment(
     )
     db.add(payment)
     db.flush()
+    paymode.save(db, shop_id, "payment", payment.id, data.payment, amount)
     posting = Posting(
         document_type="payment", document_id=payment.id, memo=f"{payment.no} {party.name}"
     )
@@ -222,6 +218,7 @@ def to_out(db: Session, p: Payment) -> dict:
     party = db.get(Party, p.party_id)
     allocated = sum((money(a["amount"]) for a in p.allocations), ZERO)
     return {
+        "payment": paymode.detail_for(db, p.shop_id, "payment", p.id),
         **{c.name: getattr(p, c.name) for c in Payment.__table__.columns},
         "party_name": party.name if party else None,
         "party_balance_after": party.balance if party else None,

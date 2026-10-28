@@ -52,13 +52,13 @@ const METHODS: { m: PayMethod; Icon: LucideIcon; t: string }[] = [
   { m: 'udhaar', Icon: BookOpen, t: 'counter.udhaar' },
 ]
 
-export default function PayPicker({ value, onChange, remittance = false }: { value: PayState; onChange: (p: PayState) => void; remittance?: boolean }) {
+export default function PayPicker({ value, onChange, remittance = false, udhaar = true }: { value: PayState; onChange: (p: PayState) => void; remittance?: boolean; udhaar?: boolean }) {
   const { pick, ur, cls } = useLang()
   const set = (patch: Partial<PayState>) => onChange({ ...value, ...patch })
   const big = (on: boolean) => `tap flex min-h-[68px] flex-col items-center justify-center gap-1 rounded-2xl border-2 px-2 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('md') : 'text-[15px]'}`
   const small = (on: boolean) => `tap h-10 shrink-0 rounded-full border-2 px-3 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} text-[13px]`
   const select = 'mt-1.5 block min-h-14 w-full rounded-2xl border border-line bg-surface px-4 text-base font-semibold text-ink'
-  const methods = METHODS.filter((x) => remittance || x.m !== 'remittance')
+  const methods = METHODS.filter((x) => (remittance || x.m !== 'remittance') && (udhaar || x.m !== 'udhaar'))
   const otherBank = value.bank && !POPULAR_BANKS.includes(value.bank)
 
   const bankChooser = (label: string) => (

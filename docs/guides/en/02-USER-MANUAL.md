@@ -366,6 +366,18 @@ Ordinary watches (Casio, Naviforce…) and accessories (chargers, cables, covers
 
 **Example:** you buy 3 Casio MTP-1302 at Rs. 4,500 and sell one for Rs. 6,500: stock shows 2, profit Rs. 2,000. Smart watches and tablets (one by one, with serial / IMEI) come next.
 
+### 6c. Tablets and smart watches (one by one)
+
+In **Add device** tap **Mobile**, **Tablet** or **Smart watch** first. Only brands that make that kind are shown (e.g. Apple, Samsung, Lenovo for tablets; Apple, Samsung, Huawei, Amazfit for watches) with their models (iPad, Galaxy Tab, Apple Watch, Galaxy Watch…).
+
+- **Tablet with a SIM:** write or scan its IMEI; PTA is asked like a phone.
+- **Wi-Fi tablet or smart watch:** no IMEI, so write the **Serial number** (on the box, or Settings → About). It is then searched and shown like an IMEI.
+- A used tablet or watch bought from a customer gets the **ID check**, like a phone.
+
+When selling, the chips **All · Mobile · Tablet · Smart watch** above the stock list narrow it down.
+
+![Smart watch with a serial number](../images/devcat-watch.png)
+
 ## 7. Returns (customer brings a phone back)
 
 **Example:** **Bilal Ahmed** bought a **Samsung Galaxy A55** for **Rs. 100,000** cash. He brings it

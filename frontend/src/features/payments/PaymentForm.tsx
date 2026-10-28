@@ -1,25 +1,22 @@
 import { useState, type FormEvent } from 'react'
-import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import PayPicker, { newPay, payInfo, payReady, remitPkr, type PayState } from '@/components/PayPicker'
 import { ErrorText, MoneyText } from '@/components/ui'
-import { useCashAccounts, useDocMutation } from '@/lib/queries'
+import { useDocMutation } from '@/lib/queries'
 import type { Party, Payment } from '@/lib/types'
-
-type Method = 'cash' | 'bank' | 'easypaisa' | 'jazzcash' | 'card'
 
 export default function PaymentForm({ party, direction, onDone }: { party: Party; direction: 'in' | 'out'; onDone: (p: Payment) => void }) {
   const { pick } = useLang()
-  const { data: accounts } = useCashAccounts()
   const [amount, setAmount] = useState('')
-  const [method, setMethod] = useState<Method>('cash')
-  const [accountId, setAccountId] = useState<string>('')
-  const [reference, setReference] = useState('')
+  // cash / online / cheque / from abroad, the same as on a sale (owner 2026-10-28)
+  const [pay, setPay] = useState<PayState>(() => newPay())
   const [notes, setNotes] = useState('')
   const [result, setResult] = useState<Payment | null>(null)
   const m = useDocMutation<Record<string, unknown>, Payment>('POST', () => '/api/v1/payments')
 
   async function submit(e: FormEvent) {
     e.preventDefault()
-    const res = await m.mutateAsync({ party_id: party.id, direction, amount: Number(amount), method, cash_account_id: accountId || undefined, reference: reference || undefined, notes: notes || undefined })
+    const res = await m.mutateAsync({ party_id: party.id, direction, amount: Number(amount), payment: payInfo(pay), notes: notes || undefined })
     setResult(res)
   }
 
@@ -68,35 +65,11 @@ export default function PaymentForm({ party, direction, onDone }: { party: Party
         <MoneyText value={party.balance} />
       </div>
       <BiInput label="common.amount" type="number" inputMode="decimal" min={1} step="1" value={amount} onChange={(e) => setAmount(e.target.value)} required autoFocus />
-      <div>
-        <BiLabel text="pay.method" size="md" tone="text-muted" className="mb-1.5" />
-        <BiSegmented<Method>
-          value={method}
-          onChange={setMethod}
-          options={[
-            { value: 'cash', text: 'pay.cash' },
-            { value: 'easypaisa', text: 'pay.easypaisa' },
-            { value: 'jazzcash', text: 'pay.jazzcash' },
-            { value: 'bank', text: 'pay.bank' },
-          ]}
-        />
-      </div>
-      {accounts && accounts.length > 1 ? (
-        <div>
-          <BiLabel text={direction === 'in' ? 'sale.receivedIn' : 'purchase.cashAccount'} size="md" tone="text-muted" className="mb-1.5" />
-          <select value={accountId} onChange={(e) => setAccountId(e.target.value)} className="min-h-12 w-full rounded-2xl border border-line bg-surface px-4 font-semibold">
-            {accounts.map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      ) : null}
-      <BiInput label="pay.reference" value={reference} onChange={(e) => setReference(e.target.value)} />
+      <BiLabel text="pay.method" size="md" tone="text-muted" />
+      <PayPicker value={pay} onChange={(p) => { setPay(p); if (p.method === 'remittance' && remitPkr(p) > 0) setAmount(String(remitPkr(p))) }} udhaar={false} remittance={direction === 'in'} />
       <BiInput label="common.notes" value={notes} onChange={(e) => setNotes(e.target.value)} />
       <ErrorText error={m.error} />
-      <BiButton type="submit" text={direction === 'in' ? 'party.receive' : 'party.pay'} full loading={m.isPending} variant={direction === 'in' ? 'primary' : 'secondary'} />
+      <BiButton type="submit" text={direction === 'in' ? 'party.receive' : 'party.pay'} full loading={m.isPending} disabled={!payReady(pay)} variant={direction === 'in' ? 'primary' : 'secondary'} />
     </form>
   )
 }
