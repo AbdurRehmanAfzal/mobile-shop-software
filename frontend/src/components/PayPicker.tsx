@@ -3,6 +3,7 @@
 
 import { BookOpen, Banknote, Globe, Landmark, ScrollText, type LucideIcon } from 'lucide-react'
 import { BiInput, BiLabel, useLang } from './Bilingual'
+import Help from './Help'
 import { formatMoney, isoDay } from '@/lib/format'
 import { ALL_BANKS, CURRENCIES, POPULAR_BANKS, REMIT_SERVICES } from '@/lib/pkPayments'
 
@@ -92,7 +93,7 @@ export default function PayPicker({ value, onChange, remittance = false }: { val
       {value.method === 'online' ? (
         <div className="card flex flex-col gap-3">
           {bankChooser('paym.whichBank')}
-          <BiInput label="paym.tid" value={value.reference} onChange={(e) => set({ reference: e.target.value })} placeholder="TID / Ref" maxLength={80} />
+          <BiInput label="paym.tid" help={<Help term="tid" />} value={value.reference} onChange={(e) => set({ reference: e.target.value })} placeholder="TID / Ref" maxLength={80} />
         </div>
       ) : null}
 
@@ -100,7 +101,7 @@ export default function PayPicker({ value, onChange, remittance = false }: { val
         <div className="card flex flex-col gap-3">
           {bankChooser('paym.chequeBank')}
           <div className="grid grid-cols-2 items-start gap-2">
-            <BiInput label="paym.chequeNo" inputMode="numeric" value={value.reference} onChange={(e) => set({ reference: e.target.value })} maxLength={30} />
+            <BiInput label="paym.chequeNo" help={<Help term="cheque" />} inputMode="numeric" value={value.reference} onChange={(e) => set({ reference: e.target.value })} maxLength={30} />
             <BiInput label="paym.chequeDate" type="date" value={value.chequeDate} onChange={(e) => set({ chequeDate: e.target.value })} />
           </div>
         </div>
@@ -108,7 +109,7 @@ export default function PayPicker({ value, onChange, remittance = false }: { val
 
       {value.method === 'remittance' ? (
         <div className="card flex flex-col gap-3">
-          <BiLabel text="paym.fromWhere" size="md" bold />
+          <div className="flex items-center gap-1"><BiLabel text="paym.fromWhere" size="md" bold /><Help term="remittance" /></div>
           <div className="flex flex-wrap gap-1.5">
             {CURRENCIES.map((c) => (
               <button key={c.code} type="button" aria-pressed={value.currency === c.code} onClick={() => set({ currency: c.code })} className={small(value.currency === c.code)}>

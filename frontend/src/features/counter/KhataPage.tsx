@@ -6,6 +6,7 @@ import { ArrowDown, ArrowUp, Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import PartyPicker from '@/components/PartyPicker'
 import { BtnText, Empty, Loading, PageHeader, SearchBox, Sheet } from '@/components/ui'
 import PartyForm from '@/features/parties/PartyForm'
@@ -40,6 +41,7 @@ export default function KhataPage() {
     <div className="flex flex-col gap-3">
       <PageHeader
         title="counter.khataTitle"
+        help={<Help term="khata" />}
         right={
           <div className="flex gap-2">
             <DownloadButton path="/api/v1/exports/khata" name="udhaar-khata" />

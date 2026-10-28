@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import { clearDrafts, useDraft } from '@/lib/draft'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import PartyPicker from '@/components/PartyPicker'
 import PayPicker, { newPay, payInfo, payReady, remitPkr, type PayState } from '@/components/PayPicker'
 import { AccessoryPicker, type AccValue } from '@/components/AccessoryPicker'
@@ -171,7 +172,7 @@ export default function SaleWizard() {
                 </div>
               ) : null}
               <div>
-                <BiLabel text="accx.warranty" size="md" bold className="mb-1.5" />
+                <div className="mb-1.5 flex items-center gap-1"><BiLabel text="accx.warranty" size="md" bold /><Help term="warranty" /></div>
                 <div className="flex flex-wrap gap-1.5">
                   {WARRANTY.map((w) => (
                     <button key={w} type="button" aria-pressed={Number(l.warranty_days) === w} onClick={() => setLine(l, { warranty_days: String(w) })} className={`tap h-11 rounded-full border-2 px-3.5 font-bold ${Number(l.warranty_days) === w ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-[13px]'}`}>
@@ -200,7 +201,7 @@ export default function SaleWizard() {
           </div>
           {more ? <BiInput label="common.discount" type="number" inputMode="numeric" min={0} value={discount} onChange={(e) => setDiscount(e.target.value)} /> : null}
 
-          <BiLabel text="counter.howPaid" size="md" bold />
+          <div className="flex items-center gap-1"><BiLabel text="counter.howPaid" size="md" bold /><Help term="udhaar" /></div>
           <PayPicker value={pay} onChange={setPay} remittance />
 
           {udhaar ? (

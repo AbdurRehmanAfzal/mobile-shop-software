@@ -8,7 +8,7 @@ import { formatMoney } from '@/lib/format'
 import { ApiError } from '@/lib/api'
 import { ScanButton } from './ScanButton'
 
-export function PageHeader({ title, back = true, right }: { title: string | BiText; back?: boolean; right?: ReactNode }) {
+export function PageHeader({ title, back = true, right, help }: { title: string | BiText; back?: boolean; right?: ReactNode; help?: ReactNode }) {
   const nav = useNavigate()
   const { ur } = useLang()
   const Back = ur ? ChevronRight : ChevronLeft
@@ -19,7 +19,10 @@ export function PageHeader({ title, back = true, right }: { title: string | BiTe
           <Back size={22} />
         <BtnText k={'common.back'} /></button>
       ) : null}
-      <BiLabel text={title} size="lg" bold className="flex-1" />
+      <div className="flex min-w-0 flex-1 items-center gap-1">
+        <BiLabel text={title} size="lg" bold />
+        {help}
+      </div>
       {right}
     </div>
   )

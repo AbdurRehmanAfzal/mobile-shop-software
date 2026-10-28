@@ -4,6 +4,7 @@
 import DownloadButton from '@/components/DownloadButton'
 import { Link, useSearchParams } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { Empty, Loading, PageHeader } from '@/components/ui'
 import { isoDay } from '@/lib/format'
 import { useGet } from '@/lib/queries'
@@ -45,7 +46,7 @@ export default function DayReportPage() {
           </section>
 
           <section className="flex flex-col gap-1 rounded-3xl bg-hero px-5 py-4 text-hero-text">
-            <BiLabel text="counter.netCash" size="md" bold tone="text-current" />
+            <div className="flex items-center gap-1"><BiLabel text="counter.netCash" size="md" bold tone="text-current" /><span className="text-hero-text [&_button]:text-current"><Help term="inHand" /></span></div>
             <span className={`num text-[30px] leading-tight ${Number(data.cash_net) < 0 ? 'text-[#F28B82]' : 'text-[#8FE3B4]'}`} dir="ltr">{Number(data.cash_net) < 0 ? '− ' : ''}Rs. {n(data.cash_net)}</span>
             <Why label="counter.cameIn" total={data.money_in} parts={data.came_in} keyPrefix="counter.inWhy" tone="text-[#8FE3B4]" />
             <Why label="counter.wentOut" total={data.money_out} parts={data.went_out} keyPrefix="counter.outWhy" tone="text-[#F28B82]" />

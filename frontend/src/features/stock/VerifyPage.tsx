@@ -2,6 +2,7 @@ import { Camera, Check, ExternalLink } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { BiButton, BiInput, BiSegmented, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { CnicInput } from '@/components/FieldInputs'
 import PartyPicker from '@/components/PartyPicker'
 import { Chip, ErrorText, KV, Loading, PageHeader, Section, Sheet } from '@/components/ui'
@@ -79,7 +80,7 @@ export default function VerifyPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <PageHeader title="verify.title" />
+      <PageHeader title="verify.title" help={<Help term="idcheck" />} />
       <div className="card flex items-center justify-between">
         <div>
           <div className="font-semibold">

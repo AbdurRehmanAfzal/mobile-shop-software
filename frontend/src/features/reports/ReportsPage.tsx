@@ -5,6 +5,7 @@
 import DownloadButton from '@/components/DownloadButton'
 import { useState, type ReactNode } from 'react'
 import { BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { Empty, Loading, PageHeader } from '@/components/ui'
 import { clampRange, isoDay } from '@/lib/format'
 import { useGet } from '@/lib/queries'
@@ -84,7 +85,7 @@ export default function ReportsPage() {
         !pnl ? <Loading /> : (
           <>
             <section className={`flex flex-col gap-1 rounded-3xl px-5 py-4 ${net >= 0 ? 'bg-sell text-sell-fg' : 'bg-expense text-expense-fg'}`}>
-              <BiLabel text={net >= 0 ? 'counter.netProfit' : 'counter.netLoss'} size="md" bold tone="text-current" />
+              <div className="flex items-center gap-1"><BiLabel text={net >= 0 ? 'counter.netProfit' : 'counter.netLoss'} size="md" bold tone="text-current" /><span className="[&_button]:text-current"><Help term="profit" /></span></div>
               <span className="num text-[34px] leading-tight" dir="ltr">Rs. {n(net)}</span>
             </section>
             <div className="card flex flex-col p-0">

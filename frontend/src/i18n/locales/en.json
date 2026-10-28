@@ -1017,5 +1017,89 @@
     "service": "Sent through (optional)",
     "refOpt": "Reference / MTCN (optional)",
     "restUdhaar": "Remittance is less than the bill: Rs. {{n}} goes on this customer's udhaar."
+  },
+  "help": {
+    "what": "What is this?",
+    "example": "Example",
+    "udhaar": {
+      "title": "Udhaar (credit)",
+      "body": "The customer takes the item now and pays later, all or part of it. The app keeps what is left on his khata until he pays. In English software this is called \"credit\".",
+      "example": "Phone Rs. 50,000. He pays Rs. 20,000 now → Rs. 30,000 udhaar on his khata."
+    },
+    "khata": {
+      "title": "Khata (account)",
+      "body": "One page per person (customer, dealer, other shop) with every bill and payment between you. It shows how much you will get from him or have to give him.",
+      "example": "Bilal's khata: bought on udhaar Rs. 30,000, paid Rs. 10,000 → you will get Rs. 20,000."
+    },
+    "cost": {
+      "title": "Buying price",
+      "body": "What the shop paid for the item. Only the owner and the manager see it. Profit is worked out from it.",
+      "example": "You bought a phone for Rs. 45,000: the buying price is Rs. 45,000."
+    },
+    "asking": {
+      "title": "Selling price",
+      "body": "The price you plan to sell at. It may not be lower than the buying price. At the counter you can still change it, and only the owner or manager can sell at a loss.",
+      "example": "Bought for Rs. 45,000, selling price Rs. 52,000."
+    },
+    "profit": {
+      "title": "Profit",
+      "body": "Selling price minus buying price. \"Profit after expenses\" also takes away rent, bills, salaries and other expenses of that time.",
+      "example": "Sold for Rs. 52,000, bought for Rs. 45,000 → profit Rs. 7,000."
+    },
+    "pta": {
+      "title": "PTA status",
+      "body": "PTA approved: the phone is registered in Pakistan and any SIM works. Non-PTA: not registered, a SIM works only for a short time. JV / patched: the phone has been changed to get around PTA; risky to buy and sell.",
+      "example": "An iPhone from abroad without PTA tax is Non-PTA."
+    },
+    "imei": {
+      "title": "IMEI",
+      "body": "A 15-digit number that only that one phone has. Dial *#06# on the phone or look on the box. The app uses it to find the phone's history and to warn about stolen phones.",
+      "example": "490154203237518"
+    },
+    "idcheck": {
+      "title": "ID card check",
+      "body": "When you buy a used phone from a customer, keep a photo of his CNIC and his face. If the phone turns out to be stolen, you can show who sold it to you. You may skip it for a person you know.",
+      "example": "Front and back of the CNIC, the seller's photo and a photo of the phone."
+    },
+    "opening": {
+      "title": "Old stock",
+      "body": "Phones that were already in the shop before you started the app. Add them once so the stock is complete. No money is paid now, so the day's hisaab does not change.",
+      "example": "On the first day you add the 25 phones already on the shelf."
+    },
+    "cut": {
+      "title": "Shop's cut on a return",
+      "body": "When a customer brings a phone back, the shop may keep part of the money and hand back the rest. What the shop keeps counts as income.",
+      "example": "Sold for Rs. 100,000, gives back Rs. 90,000 → the shop's cut is Rs. 10,000."
+    },
+    "inHand": {
+      "title": "Left in hand",
+      "body": "All money that came in minus all money that went out in that time (sales, payments, expenses, stock bought, refunds). Money spent on stock is now phones in the shop, so it is not a loss.",
+      "example": "Came in Rs. 800,000, went out Rs. 750,000 → Rs. 50,000 left in hand."
+    },
+    "warranty": {
+      "title": "Warranty",
+      "body": "How long the shop will repair or replace the item if it has a fault. It is printed on the receipt.",
+      "example": "1 month warranty: any fault within a month is the shop's responsibility."
+    },
+    "tid": {
+      "title": "TID",
+      "body": "Transaction ID: the number in the bank app or SMS after an online payment. Writing it helps you find the payment if there is a question later.",
+      "example": "TID 778812 in the Easypaisa SMS."
+    },
+    "cheque": {
+      "title": "Cheque",
+      "body": "Payment by a bank cheque. The money reaches the account only when the cheque clears, so the app keeps cheques in their own \"Cheques\" account.",
+      "example": "HBL cheque no. 00123456 dated 5 November."
+    },
+    "remittance": {
+      "title": "Money from abroad",
+      "body": "The buyer's family sends the money from another country (Western Union, bank and so on). Write how much came in their currency and the rate; the app works out the rupees.",
+      "example": "500 SAR × 74.20 = Rs. 37,100."
+    },
+    "void": {
+      "title": "Cancel a bill",
+      "body": "Cancels a bill made by mistake. Nothing is deleted: the app adds an opposite entry, so the history and the hisaab stay correct.",
+      "example": "A sale entered twice: cancel one of them."
+    }
   }
 }

@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { clearDrafts, useDraft } from '@/lib/draft'
 import { useTranslation } from 'react-i18next'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { AccessoryPicker, type AccKind } from '@/components/AccessoryPicker'
 import { ImeiInput } from '@/components/FieldInputs'
 import { Chip } from '@/components/ui'
@@ -105,7 +106,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
 
   return (
     <div className="flex flex-col gap-3">
-      <ImeiInput label="stock.imei" disabled={edit} placeholder={t('stock.imeiPlaceholder')} value={d.imei1} onChange={(v) => set('imei1', v)} autoFocus={!initial.imei1} />
+      <ImeiInput label="stock.imei" help={<Help term="imei" />} disabled={edit} placeholder={t('stock.imeiPlaceholder')} value={d.imei1} onChange={(v) => set('imei1', v)} autoFocus={!initial.imei1} />
       {imeiDigits.length === 15 && lookup ? (
         <div className="flex flex-wrap gap-1.5">
           {!lookup.luhn_ok ? <Chip text="stock.luhnBad" tone="warn" /> : null}
@@ -217,14 +218,14 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
       <BiSegmented<DeviceCondition> value={d.condition} onChange={(v) => set('condition', v)} options={[{ value: 'box_pack', text: 'stock.condition.box_pack' }, { value: 'open_box', text: 'stock.condition.open_box' }, { value: 'used', text: 'stock.condition.used' }, { value: 'patched', text: 'stock.condition.patched' }]} />
       {d.condition === 'patched' ? <BiInput label="stock.patchDetails" value={d.patch_details} onChange={(e) => set('patch_details', e.target.value)} required /> : null}
 
-      <BiLabel text="stock.ptaLabel" size="md" tone="text-muted" />
+      <div className="flex items-center gap-1"><BiLabel text="stock.ptaLabel" size="md" tone="text-muted" /><Help term="pta" /></div>
       <BiSegmented<PtaStatus> value={d.pta_status} onChange={(v) => set('pta_status', v)} options={[{ value: 'pta_approved', text: 'stock.pta.pta_approved' }, { value: 'non_pta', text: 'stock.pta.non_pta' }, { value: 'jv', text: 'stock.pta.jv' }]} />
       {needsSim ? <BiInput label="stock.simTime" type="number" inputMode="numeric" min={0} max={60} value={d.sim_time_months} onChange={(e) => set('sim_time_months', e.target.value)} required /> : null}
 
       {edit ? null : (
       <div className="grid grid-cols-2 items-start gap-2">
-        <BiInput label="purchase.cost" type="number" inputMode="decimal" min={0} value={d.cost} onChange={(e) => set('cost', e.target.value)} required />
-        <BiInput label="stock.asking" type="number" inputMode="decimal" min={0} value={d.asking_price} onChange={(e) => set('asking_price', e.target.value)} error={askingLow ? 'field.askingBelowCost' : null} />
+        <BiInput label="purchase.cost" help={<Help term="cost" />} type="number" inputMode="decimal" min={0} value={d.cost} onChange={(e) => set('cost', e.target.value)} required />
+        <BiInput label="stock.asking" help={<Help term="asking" />} type="number" inputMode="decimal" min={0} value={d.asking_price} onChange={(e) => set('asking_price', e.target.value)} error={askingLow ? 'field.askingBelowCost' : null} />
       </div>
       )}
       <BiInput label={{ en: 'Warranty (months)', ur: 'وارنٹی (مہینے)' }} type="number" inputMode="numeric" min={0} max={60} value={d.warranty_months} onChange={(e) => set('warranty_months', e.target.value)} />

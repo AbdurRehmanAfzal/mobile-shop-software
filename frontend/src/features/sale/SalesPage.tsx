@@ -3,6 +3,7 @@ import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { BtnText, Chip, Empty, ErrorText, fmtDate, KV, List, Loading, MoneyText, PageHeader, Row, Sheet } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { openPrintable } from '@/lib/files'
@@ -128,7 +129,7 @@ export function SaleDetailPage() {
         <BiButton text="sale.printThermal" size="md" onClick={() => openPrintable(`/api/v1/sales/${inv.id}/receipt?format=thermal`)} />
         <BiButton text="sale.printA4" size="md" variant="secondary" onClick={() => openPrintable(`/api/v1/sales/${inv.id}/receipt?format=a4`)} />
         {active && inv.party_id ? <BiButton text="sale.return" size="md" variant="secondary" onClick={() => { setSelected(inv.lines.filter((l) => !l.returned_at).map((l) => l.id)); setReturning(true) }} /> : null}
-        {active && canManage ? <BiButton text="common.void" size="md" variant="danger" onClick={() => setVoiding(true)} /> : null}
+        {active && canManage ? <span className="flex items-center gap-1"><BiButton text="common.void" size="md" variant="danger" onClick={() => setVoiding(true)} /><Help term="void" /></span> : null}
       </div>
 
       <Sheet open={returning} onClose={() => setReturning(false)} title="sale.return">

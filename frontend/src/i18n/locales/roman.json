@@ -1017,5 +1017,89 @@
     "service": "Kis ke zariye aaye (agar pata ho)",
     "refOpt": "Reference / MTCN (agar ho)",
     "restUdhaar": "Bahar se aaye paise bill se kam hain: Rs. {{n}} is gahak ke udhaar mein jayenge."
+  },
+  "help": {
+    "what": "Yeh kya hai?",
+    "example": "Misaal",
+    "udhaar": {
+      "title": "Udhaar (credit)",
+      "body": "Gahak cheez abhi le leta hai aur paise baad mein deta hai, saare ya kuch. Jo baqi rahein woh us ke khate mein likhe rehte hain jab tak woh de na de. English software mein isay \"credit\" kehte hain.",
+      "example": "Phone Rs. 50,000. Abhi 20,000 diye → 30,000 us ke khate mein udhaar."
+    },
+    "khata": {
+      "title": "Khata",
+      "body": "Har shakhs (gahak, dealer, doosri dukaan) ka ek safha jis mein us ke saath har bill aur har len den hai. Is se pata chalta hai ke us se kitne lene hain ya usay kitne dene hain.",
+      "example": "Bilal ka khata: 30,000 ka udhaar, 10,000 diye → us se 20,000 lene hain."
+    },
+    "cost": {
+      "title": "Khareed qeemat",
+      "body": "Dukaan ne cheez jitne mein khareedi. Yeh sirf malik aur manager ko nazar aati hai. Munafa isi se nikalta hai.",
+      "example": "Phone 45,000 mein khareeda: khareed qeemat 45,000."
+    },
+    "asking": {
+      "title": "Bechne ki qeemat",
+      "body": "Jis qeemat par bechne ka irada hai. Yeh khareed qeemat se kam nahi ho sakti. Counter par badal sakte hain, aur nuqsan par sirf malik ya manager bech sakta hai.",
+      "example": "45,000 mein khareeda, bechne ki qeemat 52,000."
+    },
+    "profit": {
+      "title": "Munafa",
+      "body": "Bechne ki qeemat mein se khareed qeemat nikaal kar jo bache. \"Kharche ke baad munafa\" mein us waqt ka kiraya, bill, tankhwahein aur baqi kharche bhi nikale jate hain.",
+      "example": "52,000 mein becha, 45,000 mein khareeda tha → munafa 7,000."
+    },
+    "pta": {
+      "title": "PTA status",
+      "body": "PTA approved: phone Pakistan mein register hai, har SIM chalti hai. Non-PTA: register nahi, SIM thore din hi chalti hai. JV / patch: PTA se bachne ke liye phone mein tabdeeli ki gayi hai; khareed-farokht mein khatra hai.",
+      "example": "Bahar se aaya iPhone jis par PTA tax nahi diya: Non-PTA."
+    },
+    "imei": {
+      "title": "IMEI",
+      "body": "15 hindson ka number jo sirf usi ek phone ka hota hai. Phone par *#06# milayein ya dabbe par dekhein. App isi se phone ki kahani nikalti hai aur chori ke phone se khabardar karti hai.",
+      "example": "490154203237518"
+    },
+    "idcheck": {
+      "title": "ID card check",
+      "body": "Jab gahak se purana phone khareedein to us ke CNIC aur chehre ki tasweer rakh lein. Agar phone chori ka nikla to aap dikha sakte hain ke kis ne becha. Jaanne wale ke liye chhor bhi sakte hain.",
+      "example": "CNIC ka aaga aur peechha, bechne wale ki tasweer aur phone ki tasweer."
+    },
+    "opening": {
+      "title": "Purana stock",
+      "body": "Woh phone jo app shuru karne se pehle dukaan mein maujood the. Inhein ek dafa daal dein taake stock poora ho. Abhi koi paise nahi diye jate, is liye din ka hisaab nahi badalta.",
+      "example": "Pehle din shelf par rakhe 25 phone daal dein."
+    },
+    "cut": {
+      "title": "Wapsi par dukaan ki katoti",
+      "body": "Jab gahak phone wapas laye to dukaan kuch paise rakh kar baqi wapas kar sakti hai. Jo dukaan rakhe woh aamdani mein gina jata hai.",
+      "example": "1,00,000 mein becha, 90,000 wapas diye → dukaan ki katoti 10,000."
+    },
+    "inHand": {
+      "title": "Haath mein bache",
+      "body": "Us waqt mein jitne paise aaye un mein se jitne gaye (bikri, adaigiyan, kharche, stock ki khareed, wapsiyan). Stock par lage paise ab dukaan mein phone ki shakal mein hain, yeh nuqsan nahi.",
+      "example": "Aaye 8,00,000, gaye 7,50,000 → haath mein 50,000."
+    },
+    "warranty": {
+      "title": "Warranty",
+      "body": "Kharabi ki soorat mein dukaan kitne arse tak theek karegi ya badlegi. Yeh raseed par chhapti hai.",
+      "example": "1 mahine ki warranty: mahine ke andar koi kharabi dukaan ki zimmedari."
+    },
+    "tid": {
+      "title": "TID",
+      "body": "Transaction ID: online payment ke baad bank app ya SMS mein aane wala number. Likh lein to baad mein koi sawal ho to payment dhoondna aasaan hai.",
+      "example": "Easypaisa ke SMS mein TID 778812."
+    },
+    "cheque": {
+      "title": "Cheque",
+      "body": "Bank ke cheque se payment. Paise account mein tab aate hain jab cheque clear ho, is liye app cheque alag \"Cheques\" khate mein rakhti hai.",
+      "example": "HBL ka cheque number 00123456, tareekh 5 November."
+    },
+    "remittance": {
+      "title": "Bahar se paise",
+      "body": "Khareedne wale ke ghar wale doosre mulk se paise bhejte hain (Western Union, bank waghera). Un ki currency mein raqam aur rate likhein, rupay app khud nikaal deti hai.",
+      "example": "500 SAR × 74.20 = Rs. 37,100."
+    },
+    "void": {
+      "title": "Bill cancel karna",
+      "body": "Ghalti se bana bill khatam karta hai. Kuch mitaya nahi jata: app ulti entry daal deti hai, is liye kahani aur hisaab dono theek rehte hain.",
+      "example": "Ek bikri do dafa chadh gayi: ek cancel kar dein."
+    }
   }
 }

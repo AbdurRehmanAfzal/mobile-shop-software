@@ -3,6 +3,7 @@ import { useState, type ReactNode } from 'react'
 import { clearDrafts, useDraft } from '@/lib/draft'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import PayPicker, { newPay, payInfo, payReady, type PayState } from '@/components/PayPicker'
 import PartyPicker from '@/components/PartyPicker'
 import { BtnText, Chip, ErrorText, IconChip, MoneyText, PageHeader, Sheet, Stepper } from '@/components/ui'
@@ -151,7 +152,7 @@ export default function PurchaseWizard() {
 
           {devices.length || misc.some((x) => x.description) ? (
             <>
-              <BiLabel text="counter.paidHowBuy" size="md" bold />
+              <div className="flex items-center gap-1"><BiLabel text="counter.paidHowBuy" size="md" bold /><Help term="udhaar" /></div>
               <PayPicker value={pay} onChange={setPay} />
               {kind !== 'supplier' ? (
                 <>

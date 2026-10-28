@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { useDraft } from '@/lib/draft'
 import { useNavigate } from 'react-router-dom'
 import { BiButton, BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { BtnText, Chip, ErrorText, MoneyText, PageHeader, Sheet } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useInvalidate } from '@/lib/queries'
@@ -47,7 +48,7 @@ export default function OpeningStockPage() {
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="opening.kind" />
+      <PageHeader title="opening.kind" help={<Help term="opening" />} />
       <BiLabel text="opening.hint" size="sm" tone="text-muted" />
       {saved ? (
         <div className="card flex items-center justify-between">
