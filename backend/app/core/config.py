@@ -13,6 +13,9 @@ class Settings(BaseSettings):
     access_token_minutes: int = 30
     refresh_token_days: int = 30
     cors_origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
+    # passkeys (fingerprint login on the website): the site's domain and its full origins
+    webauthn_rp_id: str = "localhost"
+    webauthn_origins: str = "http://localhost:5173,https://localhost:5174"
     upload_dir: str = "./uploads"
     default_locale: str = "ur"
     timezone: str = "Asia/Karachi"

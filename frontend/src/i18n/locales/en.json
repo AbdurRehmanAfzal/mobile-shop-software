@@ -1138,5 +1138,21 @@
     "imeiIfSim": "IMEI (if it takes a SIM)",
     "serial": "Serial number",
     "serialHint": "No IMEI? Write the serial number from the box or the back (Settings → About)."
+  },
+  "fp": {
+    "loginWith": "Log in with fingerprint",
+    "orPassword": "or with your mobile number and password",
+    "title": "Fingerprint login",
+    "notAllowed": "Fingerprint login is off for you. The shop owner can switch it on in Settings.",
+    "noSensor": "This phone or computer has no fingerprint or screen lock that can be used.",
+    "onHere": "On for this phone. Next time tap \"Log in with fingerprint\".",
+    "turnOff": "Turn off on this phone",
+    "explain": "Log in with one touch instead of the password. Your fingerprint stays on the phone; it is never sent anywhere.",
+    "turnOn": "Turn on for this phone",
+    "cancelled": "Fingerprint was not confirmed. Try again.",
+    "app": "App",
+    "website": "Website",
+    "remove": "Remove",
+    "staffAllowed": "Staff may log in with their fingerprint"
   }
 }

@@ -1,9 +1,10 @@
 import uuid
+from datetime import datetime
 from typing import Annotated
 from urllib.parse import parse_qsl, urlsplit
 
 from fastapi import APIRouter, Depends, Header
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.core.errors import ValidationFailed
 from app.core.permissions import Cap
@@ -27,6 +28,7 @@ from app.modules.auth.schemas import (
     TokenPair,
     UserOut,
 )
+from app.modules.fingerprint import service as fp
 
 router = APIRouter(prefix="/api/v1", tags=["auth"])
 
@@ -113,7 +115,7 @@ def create_shop(
     return service.create_shop(db, ctx.user, data)
 
 
-@shops.patch("/current", response_model=ShopOut)
+@shops.patch("/current", response_model=ShopSettingsOut)
 def update_current_shop(
     data: ShopUpdate, ctx: Annotated[Ctx, Depends(require_cap(Cap.MANAGE_SETTINGS))], db: DB
 ):
@@ -171,3 +173,95 @@ def make_link(data: LinkIn, ctx: Ctx):
     token = create_link_token(ctx.id, ctx.shop_id, target)
     sep = "&" if "?" in target else "?"
     return {"url": f"{target}{sep}dl={token}", "expires_in": LINK_SECONDS}
+
+
+# ---- fingerprint login (owner 2026-10-28): the owner, and staff when the owner allows it ---------
+
+
+class DeviceKeyIn(BaseModel):
+    name: str = Field(default="Android phone", min_length=1, max_length=80)
+
+
+class DeviceKeyOut(BaseModel):
+    key_id: uuid.UUID
+    secret: str
+
+
+class DeviceLoginIn(BaseModel):
+    key_id: uuid.UUID
+    secret: str = Field(min_length=20, max_length=200)
+
+
+class PasskeyIn(BaseModel):
+    credential: dict
+    token: str
+    name: str = Field(default="This browser", min_length=1, max_length=80)
+
+
+class PasskeyLoginIn(BaseModel):
+    credential: dict
+    token: str
+
+
+class LoginKeyOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    user_id: uuid.UUID
+    kind: str
+    name: str
+    created_at: datetime
+    last_used_at: datetime | None
+
+
+class FingerprintStatus(BaseModel):
+    allowed: bool
+    keys: list[LoginKeyOut]
+
+
+@router.get("/auth/fingerprint", response_model=FingerprintStatus)
+def fingerprint_status(current: Annotated[CurrentUser, Depends(get_current_user)], db: DB):
+    return {"allowed": fp.allowed(db, current.user), "keys": fp.list_keys(db, current.user)}
+
+
+@router.post("/auth/fingerprint/device", response_model=DeviceKeyOut, status_code=201)
+def fingerprint_device(
+    data: DeviceKeyIn, current: Annotated[CurrentUser, Depends(get_current_user)], db: DB
+):
+    return fp.add_device(db, current.user, data.name)
+
+
+@router.post("/auth/fingerprint/device-login", response_model=AuthResponse)
+def fingerprint_device_login(data: DeviceLoginIn, db: DB):
+    user = fp.device_login(db, data.key_id, data.secret)
+    return AuthResponse(tokens=service._tokens(user), me=_me(db, user, None))
+
+
+@router.post("/auth/passkey/register-options")
+def passkey_register_options(current: Annotated[CurrentUser, Depends(get_current_user)], db: DB):
+    return fp.passkey_register_options(db, current.user)
+
+
+@router.post("/auth/passkey/register", status_code=204)
+def passkey_register(
+    data: PasskeyIn, current: Annotated[CurrentUser, Depends(get_current_user)], db: DB
+):
+    fp.passkey_register(db, current.user, data.credential, data.token, data.name)
+
+
+@router.post("/auth/passkey/login-options")
+def passkey_login_options():
+    return fp.passkey_login_options()
+
+
+@router.post("/auth/passkey/login", response_model=AuthResponse)
+def passkey_login(data: PasskeyLoginIn, db: DB):
+    user = fp.passkey_login(db, data.credential, data.token)
+    return AuthResponse(tokens=service._tokens(user), me=_me(db, user, None))
+
+
+@router.delete("/auth/fingerprint/keys/{key_id}", status_code=204)
+def fingerprint_remove(
+    key_id: uuid.UUID, current: Annotated[CurrentUser, Depends(get_current_user)], db: DB
+):
+    fp.remove_key(db, current.user, key_id)

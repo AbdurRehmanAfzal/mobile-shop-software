@@ -7,6 +7,7 @@ Revises: a1c5e0d2b7f4
 from collections.abc import Sequence
 
 import sqlalchemy as sa
+
 from alembic import op
 
 revision: str = "b7d2f4a9c1e3"

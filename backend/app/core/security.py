@@ -8,7 +8,7 @@ import jwt
 from app.core.config import settings
 from app.core.errors import Unauthorized
 
-TokenType = Literal["access", "refresh", "link"]
+TokenType = Literal["access", "refresh", "link", "challenge"]
 
 
 def hash_password(raw: str) -> str:
@@ -62,6 +62,20 @@ def create_link_token(user_id: uuid.UUID, shop_id: uuid.UUID, target: str) -> st
         "iat": int(now.timestamp()),
         "exp": int((now + timedelta(seconds=LINK_SECONDS)).timestamp()),
     }
+    return jwt.encode(payload, settings.secret_key, algorithm="HS256")
+
+
+def create_challenge_token(challenge: str, user_id: uuid.UUID | None = None) -> str:
+    """Carries a WebAuthn challenge to the next request for 5 minutes (no server-side session)."""
+    now = datetime.now(UTC)
+    payload = {
+        "typ": "challenge",
+        "ch": challenge,
+        "iat": int(now.timestamp()),
+        "exp": int((now + timedelta(minutes=5)).timestamp()),
+    }
+    if user_id:  # PyJWT accepts "sub" only as a string, so it is left out for a login challenge
+        payload["sub"] = str(user_id)
     return jwt.encode(payload, settings.secret_key, algorithm="HS256")
 
 

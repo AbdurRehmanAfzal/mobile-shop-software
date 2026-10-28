@@ -1138,5 +1138,21 @@
     "imeiIfSim": "IMEI (agar SIM lagti ho)",
     "serial": "Serial number",
     "serialHint": "IMEI nahi? Dabbe ya peechhe se serial number likhein (Settings → About)."
+  },
+  "fp": {
+    "loginWith": "Fingerprint se login",
+    "orPassword": "ya mobile number aur password se",
+    "title": "Fingerprint login",
+    "notAllowed": "Aap ke liye fingerprint login band hai. Dukaan ka malik Settings mein on kar sakta hai.",
+    "noSensor": "Is phone ya computer mein fingerprint ya screen lock nahi jo istemal ho sake.",
+    "onHere": "Is phone par on hai. Agli dafa \"Fingerprint se login\" dabayein.",
+    "turnOff": "Is phone par band karein",
+    "explain": "Password ki jagah ek touch se login. Aap ka fingerprint phone mein hi rehta hai, kahin nahi jata.",
+    "turnOn": "Is phone ke liye on karein",
+    "cancelled": "Fingerprint ki tasdeeq nahi hui. Dobara koshish karein.",
+    "app": "App",
+    "website": "Website",
+    "remove": "Hatayein",
+    "staffAllowed": "Staff bhi fingerprint se login kar sake"
   }
 }

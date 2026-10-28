@@ -1,10 +1,11 @@
-import { Lock } from 'lucide-react'
+import { Fingerprint, Lock } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { ApiError, post } from '@/lib/api'
 import { useAuth, type MeOut } from '@/lib/auth'
 import { isValidPkMobile, normalisePhone, toLatinDigits } from '@/lib/format'
 import { BiAlert, BiButton, BiInput, BiLabel, type BiText } from '@/components/Bilingual'
 import { PhoneInput } from '@/components/FieldInputs'
+import { fingerprintLogin, isOnHere } from '@/lib/fingerprint'
 import AuthLayout from './AuthLayout'
 
 interface AuthResponse {
@@ -50,6 +51,25 @@ export default function LoginPage() {
       setBusy(false)
     }
   }
+
+  // owner 2026-10-28: on a phone / browser set up for it, one touch instead of the password
+  async function fingerprint() {
+    setError(null)
+    setBusy(true)
+    try {
+      const res = await fingerprintLogin()
+      rememberLogin(res.me)
+      setSession(res.tokens, res.me)
+    } catch (err) {
+      if (err instanceof ApiError) setError({ en: err.messageEn, ur: err.messageUr })
+      else setError({ en: 'Fingerprint was not accepted. Log in with your password.', ur: 'فنگر پرنٹ قبول نہیں ہوا۔ پاس ورڈ سے لاگ اِن کریں۔' })
+    } finally {
+      setBusy(false)
+    }
+  }
+  const fpButton = isOnHere() ? (
+    <BiButton type="button" text="fp.loginWith" icon={<Fingerprint size={24} />} full loading={busy} onClick={fingerprint} />
+  ) : null
 
   function submitPassword(e: FormEvent) {
     e.preventDefault()
@@ -99,6 +119,7 @@ export default function LoginPage() {
           </div>
           {error ? <BiAlert text={error} /> : null}
           <BiButton type="submit" text="common.next" full loading={busy} disabled={pin.length < 4} />
+          {fpButton}
           <button type="button" onClick={() => setMode('password')} className="tap py-2">
             <BiLabel text="pin.forgot" size="sm" tone="text-emerald" align="center" />
           </button>
@@ -113,6 +134,12 @@ export default function LoginPage() {
   return (
     <AuthLayout title="auth.login">
       <form onSubmit={submitPassword} className="flex flex-col gap-4">
+        {fpButton ? (
+          <>
+            {fpButton}
+            <BiLabel text="fp.orPassword" size="sm" tone="text-muted" align="center" />
+          </>
+        ) : null}
         <PhoneInput label="auth.phone" value={phone} onChange={setPhone} required />
         <BiInput label="auth.password" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         {error ? <BiAlert text={error} /> : null}

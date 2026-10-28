@@ -50,6 +50,10 @@ class Shop(UUIDPk, Timestamped, Base):
     tax_enabled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     tax_rate: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)  # percent, e.g. 18.00
     tax_inclusive: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    # owner allows staff to log in with their fingerprint too (owner 2026-10-28)
+    fingerprint_staff: Mapped[bool] = mapped_column(
+        Boolean, default=False, nullable=False, server_default="0"
+    )
     receipt_footer: Mapped[str | None] = mapped_column(Text)
     receipt_footer_ur: Mapped[str | None] = mapped_column(Text)
     invoice_prefix: Mapped[str] = mapped_column(String(10), default="INV", nullable=False)

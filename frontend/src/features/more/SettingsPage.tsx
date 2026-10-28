@@ -26,9 +26,10 @@ interface ShopFull {
   receipt_footer: string | null
   receipt_footer_ur: string | null
   invoice_prefix: string
+  fingerprint_staff: boolean
 }
 
-type Form = { name: string; city: string; phone: string; default_locale: 'en' | 'ur'; tax_enabled: boolean; tax_rate: string; tax_inclusive: boolean; ntn: string; strn: string; receipt_footer: string; receipt_footer_ur: string; invoice_prefix: string }
+type Form = { name: string; city: string; phone: string; default_locale: 'en' | 'ur'; tax_enabled: boolean; tax_rate: string; tax_inclusive: boolean; ntn: string; strn: string; receipt_footer: string; receipt_footer_ur: string; invoice_prefix: string; fingerprint_staff: boolean }
 
 function Card({ icon, title, children }: { icon: ReactNode; title: string; children: ReactNode }) {
   return (
@@ -65,7 +66,7 @@ export default function SettingsPage() {
       setF({
         name: data.name, city: data.city ?? '', phone: data.phone ?? '', default_locale: data.default_locale,
         tax_enabled: data.tax_enabled, tax_rate: Number(data.tax_rate) ? String(Number(data.tax_rate)) : '', tax_inclusive: data.tax_inclusive,
-        ntn: data.ntn ?? '', strn: data.strn ?? '', receipt_footer: data.receipt_footer ?? '', receipt_footer_ur: data.receipt_footer_ur ?? '', invoice_prefix: data.invoice_prefix ?? 'INV',
+        ntn: data.ntn ?? '', strn: data.strn ?? '', receipt_footer: data.receipt_footer ?? '', receipt_footer_ur: data.receipt_footer_ur ?? '', invoice_prefix: data.invoice_prefix ?? 'INV', fingerprint_staff: !!data.fingerprint_staff,
       })
   }, [data])
   const m = useMutation({
@@ -77,7 +78,7 @@ export default function SettingsPage() {
   })
   if (!f) return <PageHeader title="settings.title" />
   const set = (k: keyof Form) => (e: { target: { value: string } }) => { setSaved(false); setF({ ...f, [k]: e.target.value }) }
-  const flag = (k: 'tax_enabled' | 'tax_inclusive') => (v: boolean) => { setSaved(false); setF({ ...f, [k]: v }) }
+  const flag = (k: 'tax_enabled' | 'tax_inclusive' | 'fingerprint_staff') => (v: boolean) => { setSaved(false); setF({ ...f, [k]: v }) }
 
   function submit() {
     m.mutate({
@@ -85,6 +86,7 @@ export default function SettingsPage() {
       tax_enabled: f!.tax_enabled, tax_inclusive: f!.tax_inclusive, tax_rate: Number(f!.tax_rate || 0),
       ntn: f!.ntn || null, strn: f!.strn || null, receipt_footer: f!.receipt_footer || null, receipt_footer_ur: f!.receipt_footer_ur || null,
       invoice_prefix: f!.invoice_prefix || 'INV',
+      fingerprint_staff: f!.fingerprint_staff,
     })
   }
 
@@ -96,6 +98,7 @@ export default function SettingsPage() {
         <BiInput label="settings.city" value={f.city} onChange={set('city')} />
         <PhoneInput label="settings.phone" value={f.phone} onChange={(phone) => { setSaved(false); setF({ ...f, phone }) }} />
         <BiLabel text="settings.defaultLocale" size="md" tone="text-muted" />
+        <Toggle on={f.fingerprint_staff} onChange={flag('fingerprint_staff')} text="fp.staffAllowed" />
         <BiSegmented value={f.default_locale} onChange={(v) => { setSaved(false); setF({ ...f, default_locale: v }) }} options={[{ value: 'ur', text: { en: 'Urdu', ur: 'اردو', roman: 'Urdu' } }, { value: 'en', text: { en: 'English', ur: 'انگریزی', roman: 'English' } }]} />
       </Card>
       <Card icon={<Percent size={20} />} title="settings.tax">
