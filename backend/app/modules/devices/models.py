@@ -37,6 +37,11 @@ class Device(UUIDPk, ShopScoped, Timestamped, Base):
     category: Mapped[str] = mapped_column(
         String(10), nullable=False, default="phone", server_default="phone"
     )
+    # tablets and watches (owner 2026-10-28): does it take a SIM (then it has an IMEI and a PTA
+    # status), a watch's case size, and the battery health a used one is bought and sold by
+    cellular: Mapped[bool | None] = mapped_column()
+    size_mm: Mapped[int | None] = mapped_column(Integer)
+    battery_health: Mapped[int | None] = mapped_column(Integer)
     brand_id: Mapped[uuid.UUID] = mapped_column(
         Uuid, ForeignKey("brands.id", ondelete="RESTRICT"), nullable=False
     )

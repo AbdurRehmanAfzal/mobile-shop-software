@@ -246,7 +246,10 @@
       "cable": "Cable",
       "earphones": "Earphones",
       "airpods": "AirPods",
-      "other": "Other"
+      "other": "Other",
+      "stylus": "Pen / stylus",
+      "keyboard": "Keyboard cover",
+      "strap": "Extra strap"
     },
     "accCameWith": "Came with device",
     "accPendingVendor": "Pending from vendor",
@@ -1220,5 +1223,24 @@
     "documents": "Saved on the phone: Documents › MobileShop",
     "savedInstead": "This device cannot share files, so it was downloaded instead.",
     "printHint": "Print on paper"
+  },
+  "devx": {
+    "connection": "Does it take a SIM?",
+    "wifi": "Wi-Fi only",
+    "wifiSim": "Wi-Fi + SIM",
+    "gps": "No SIM (GPS)",
+    "cellular": "With SIM (Cellular)",
+    "serialOpt": "Serial number (optional)",
+    "size": "Case size",
+    "sizeOther": "Other mm",
+    "sizeShort": "Size",
+    "battery": "Battery health %",
+    "batteryHint": "Settings → Battery. Leave empty if you do not know.",
+    "batteryBad": "Write a number from 1 to 100",
+    "bh": "Battery {{n}}%",
+    "simShort": "SIM",
+    "wifiShort": "Wi-Fi",
+    "gpsShort": "GPS",
+    "simLabel": "SIM"
   }
 }

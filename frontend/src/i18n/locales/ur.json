@@ -246,7 +246,10 @@
       "cable": "تار",
       "earphones": "ہینڈ فری",
       "airpods": "ایئر پوڈز",
-      "other": "دیگر"
+      "other": "دیگر",
+      "stylus": "پین / اسٹائلس",
+      "keyboard": "کی بورڈ کور",
+      "strap": "اضافی پٹا"
     },
     "accCameWith": "موبائل کے ساتھ آیا",
     "accPendingVendor": "سپلائر سے باقی",
@@ -1220,5 +1223,24 @@
     "documents": "فون میں محفوظ ہو گئی: Documents › MobileShop",
     "savedInstead": "یہ ڈیوائس فائل شیئر نہیں کر سکتی، اس لیے ڈاؤن لوڈ کر دی گئی۔",
     "printHint": "کاغذ پر پرنٹ کریں"
+  },
+  "devx": {
+    "connection": "کیا اس میں سم لگتی ہے؟",
+    "wifi": "صرف وائی فائی",
+    "wifiSim": "وائی فائی + سم",
+    "gps": "سم نہیں (GPS)",
+    "cellular": "سم والی (Cellular)",
+    "serialOpt": "سیریل نمبر (اختیاری)",
+    "size": "ڈائل کا سائز",
+    "sizeOther": "دوسرا mm",
+    "sizeShort": "سائز",
+    "battery": "بیٹری ہیلتھ %",
+    "batteryHint": "سیٹنگز ← بیٹری۔ معلوم نہ ہو تو خالی چھوڑ دیں۔",
+    "batteryBad": "1 سے 100 تک نمبر لکھیں",
+    "bh": "بیٹری {{n}}%",
+    "simShort": "سم",
+    "wifiShort": "وائی فائی",
+    "gpsShort": "GPS",
+    "simLabel": "سم"
   }
 }

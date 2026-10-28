@@ -7,12 +7,18 @@ import type { ReactNode } from 'react'
 import { BiLabel, useLang } from './Bilingual'
 import { isoDay } from '@/lib/format'
 
-export const ACC_KINDS = ['box', 'charger', 'cable', 'earphones', 'airpods'] as const
+export const ACC_KINDS = ['box', 'charger', 'cable', 'earphones', 'airpods', 'stylus', 'keyboard', 'strap'] as const
 export type AccKind = (typeof ACC_KINDS)[number]
+/** what comes with each kind of device (owner 2026-10-28: a watch has a strap, not earphones) */
+export const ACC_FOR: Record<'phone' | 'tablet' | 'watch', readonly AccKind[]> = {
+  phone: ['box', 'charger', 'cable', 'earphones', 'airpods'],
+  tablet: ['box', 'charger', 'cable', 'stylus', 'keyboard'],
+  watch: ['box', 'charger', 'strap'],
+}
 export type AccState = { state: 'no' | 'now' | 'later'; date: string }
 export type AccValue = Partial<Record<AccKind, AccState>>
 
-export function AccessoryPicker({ mode, value, onChange }: { mode: 'buy' | 'sell'; value: AccValue; onChange: (v: AccValue) => void }) {
+export function AccessoryPicker({ mode, value, onChange, category = 'phone' }: { mode: 'buy' | 'sell'; value: AccValue; onChange: (v: AccValue) => void; category?: 'phone' | 'tablet' | 'watch' }) {
   const { pick, ur, cls } = useLang()
   const set = (k: AccKind, s: AccState) => onChange({ ...value, [k]: s })
   const opt = (on: boolean, tone: string) =>
@@ -31,7 +37,7 @@ export function AccessoryPicker({ mode, value, onChange }: { mode: 'buy' | 'sell
       <BiLabel text={mode === 'buy' ? 'accx.titleBuy' : 'accx.titleSell'} size="md" bold />
       <BiLabel text={mode === 'buy' ? 'accx.hintBuy' : 'accx.hintSell'} size="sm" tone="text-muted" className="mb-2" />
       <div className="card flex flex-col divide-y divide-line p-0">
-        {ACC_KINDS.map((k) => {
+        {ACC_FOR[category].map((k) => {
           const v = value[k]
           return (
             <div key={k} className="flex flex-col gap-2 px-3 py-3">

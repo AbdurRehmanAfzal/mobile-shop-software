@@ -401,8 +401,21 @@ Aam ghariyan (Casio, Naviforce…) aur accessories (charger, cable, cover, glass
 
 **Add device** mein pehle **Mobile**, **Tablet** ya **Smart watch** dabayein. Sirf woh brands aate hain jo yeh cheez banate hain (maslan tablet ke liye Apple, Samsung, Lenovo; watch ke liye Apple, Samsung, Huawei, Amazfit), un ke models ke saath (iPad, Galaxy Tab, Apple Watch, Galaxy Watch…).
 
-- **SIM wala tablet:** IMEI likhein ya scan karein; PTA mobile ki tarah poochha jata hai.
-- **Wi-Fi tablet ya smart watch:** IMEI nahi hota, is liye **Serial number** likhein (dabbe par, ya Settings → About). Phir yeh IMEI ki tarah dhoonda aur dikhaya jata hai.
+Har cheez sirf apni baatein poochti hai:
+
+| | Mobile | Tablet | Smart watch |
+|---|---|---|---|
+| SIM? | hamesha | **Sirf Wi-Fi** ya **Wi-Fi + SIM** | **SIM nahi (GPS)** ya **SIM wali (Cellular)** |
+| IMEI | IMEI 1 aur IMEI 2 | sirf SIM ke saath (ek IMEI) | sirf SIM ke saath |
+| Serial number | — | SIM na ho to zaroori | SIM na ho to zaroori |
+| PTA | PTA approved · Non-PTA · JV | sirf SIM ke saath, JV nahi | sirf SIM ke saath, JV nahi |
+| Storage | haan | haan | nahi — is ki jagah **Dial ka size** (38–49 mm, ya doosra) |
+| Condition | Box pack · Open box · Used · Patched | Box pack · Open box · Used | Box pack · Open box · Used |
+| Battery health % | — | open box / used ke liye (marzi se) | open box / used ke liye (marzi se) |
+| Accessories | box, charger, cable, earphones, AirPods | box, charger, cable, **Pen / stylus**, **Keyboard cover** | box, charger, **Extra strap** |
+
+- SIM na ho to IMEI nahi hota, is liye **Serial number** (dabbe par, ya Settings → About) IMEI ki tarah dhoonda aur dikhaya jata hai.
+- Stock list mein kaam ki baat dikhti hai, maslan *Watch Series 9 · 45mm · GPS · Battery 91%*.
 - Gahak se khareeda purana tablet ya watch bhi **ID check** se guzarta hai, mobile ki tarah.
 
 Bechte waqt stock list ke upar **Sab · Mobile · Tablet · Smart watch** ke buttons se chhantein.

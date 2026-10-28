@@ -61,7 +61,7 @@ export type VerificationStatus = 'not_required' | 'pending' | 'clear' | 'flagged
 
 export interface AccessoryItem {
   id?: UUID
-  kind: 'box' | 'charger' | 'cable' | 'earphones' | 'airpods' | 'other'
+  kind: 'box' | 'charger' | 'cable' | 'earphones' | 'airpods' | 'stylus' | 'keyboard' | 'strap' | 'other'
   label?: string | null
   came_with: boolean
   condition?: string | null
@@ -79,6 +79,11 @@ export interface Device {
   imei2: string | null
   serial: string | null
   category?: DeviceCategory
+  /** tablet / watch: takes a SIM */
+  cellular?: boolean | null
+  /** watch case size */
+  size_mm?: number | null
+  battery_health?: number | null
   brand_id: UUID
   brand_name: string
   model_id: UUID
