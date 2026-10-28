@@ -1,5 +1,6 @@
 import uuid
 from decimal import Decimal
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -28,6 +29,7 @@ class ModelOut(BaseModel):
     name_ur: str | None
     reference_price: Decimal | None
     is_feature_phone: bool
+    category: str = "phone"
     is_global: bool
 
 
@@ -37,6 +39,7 @@ class ModelCreate(BaseModel):
     name_ur: str | None = Field(default=None, max_length=150)
     reference_price: Decimal | None = Field(default=None, ge=0)
     is_feature_phone: bool = False
+    category: Literal["phone", "tablet", "watch"] = "phone"
 
 
 class StorageOut(BaseModel):

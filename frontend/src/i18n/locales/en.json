@@ -1129,5 +1129,14 @@
     "newKind": "New kind",
     "newKindName": "What kind of item?",
     "newKindPh": "e.g. Ring light"
+  },
+  "devcat": {
+    "what": "What is it?",
+    "phone": "Mobile",
+    "tablet": "Tablet",
+    "watch": "Smart watch",
+    "imeiIfSim": "IMEI (if it takes a SIM)",
+    "serial": "Serial number",
+    "serialHint": "No IMEI? Write the serial number from the box or the back (Settings → About)."
   }
 }

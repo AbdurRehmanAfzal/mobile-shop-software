@@ -364,6 +364,18 @@ Aam ghariyan (Casio, Naviforce…) aur accessories (charger, cable, cover, glass
 
 **Misaal:** 3 Casio MTP-1302 Rs. 4,500 mein khareedin, ek Rs. 6,500 mein bechi: stock 2 dikhata hai, munafa Rs. 2,000. Smart watch aur tablet (ek ek piece, serial / IMEI ke saath) agla kaam hai.
 
+### 6c. Tablet aur smart watch (ek ek piece)
+
+**Add device** mein pehle **Mobile**, **Tablet** ya **Smart watch** dabayein. Sirf woh brands aate hain jo yeh cheez banate hain (maslan tablet ke liye Apple, Samsung, Lenovo; watch ke liye Apple, Samsung, Huawei, Amazfit), un ke models ke saath (iPad, Galaxy Tab, Apple Watch, Galaxy Watch…).
+
+- **SIM wala tablet:** IMEI likhein ya scan karein; PTA mobile ki tarah poochha jata hai.
+- **Wi-Fi tablet ya smart watch:** IMEI nahi hota, is liye **Serial number** likhein (dabbe par, ya Settings → About). Phir yeh IMEI ki tarah dhoonda aur dikhaya jata hai.
+- Gahak se khareeda purana tablet ya watch bhi **ID check** se guzarta hai, mobile ki tarah.
+
+Bechte waqt stock list ke upar **Sab · Mobile · Tablet · Smart watch** ke buttons se chhantein.
+
+![Serial number wali smart watch](../images/devcat-watch.png)
+
 ## 7. Wapsi (gahak phone wapas laya)
 
 **Misaal:** **Bilal Ahmed** ne **Samsung Galaxy A55** **Rs. 1,00,000** cash mein liya. Woh wapas le aaya.

@@ -2,6 +2,7 @@ import re
 import uuid
 from datetime import date, datetime
 from decimal import Decimal
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -51,8 +52,18 @@ class AccessoryItemOut(AccessoryItemIn):
     id: uuid.UUID
 
 
+def clean_serial(value: str) -> str:
+    v = re.sub(r"[\s\-]", "", latin_digits(value)).upper()
+    if not re.fullmatch(r"[A-Z0-9]{4,20}", v):
+        raise ValueError("Serial number: 4 to 20 letters or digits")
+    return v
+
+
 class DeviceIdentity(BaseModel):
-    imei1: str
+    # phone | tablet | watch. A phone needs its IMEI; a Wi-Fi tablet or a smart watch may have only a
+    # serial number, which then also identifies it (stored in imei1, unique per shop).
+    category: Literal["phone", "tablet", "watch"] = "phone"
+    imei1: str | None = None
     imei2: str | None = None
     serial: str | None = Field(default=None, max_length=60)
     brand_id: uuid.UUID
@@ -72,6 +83,21 @@ class DeviceIdentity(BaseModel):
     @classmethod
     def _imei(cls, v: str | None) -> str | None:
         return clean_imei(v) if v else None
+
+    @field_validator("serial")
+    @classmethod
+    def _serial(cls, v: str | None) -> str | None:
+        return clean_serial(v) if v else None
+
+    @model_validator(mode="after")
+    def _identity(self):
+        if self.imei1 is None:
+            if self.category == "phone":
+                raise ValueError("IMEI is required for a phone")
+            if not self.serial:
+                raise ValueError("Write the IMEI or the serial number")
+            self.imei1 = self.serial
+        return self
 
     @model_validator(mode="after")
     def _sim_time(self):
@@ -154,6 +180,7 @@ class DeviceOut(BaseModel):
     imei1: str
     imei2: str | None
     serial: str | None
+    category: str = "phone"
     brand_id: uuid.UUID
     brand_name: str
     model_id: uuid.UUID

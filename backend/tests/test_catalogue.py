@@ -1,12 +1,12 @@
 """FR-MST-01, FR-MST-02: global catalogue + shop-specific additions, scoped per shop."""
 
-from app.seeds.catalogue import BRANDS, MODELS, seed_catalogue
+from app.seeds.catalogue import BRANDS, MODELS, OTHER_DEVICES, seed_catalogue
 
 
 def test_seed_is_idempotent(db):
     first = seed_catalogue(db)
     assert first["brands"] == len(BRANDS)
-    assert first["models"] == len(MODELS)
+    assert first["models"] == len(MODELS) + len(OTHER_DEVICES)
     assert first["storages"] > 0 and first["colours"] > 0
     second = seed_catalogue(db)
     assert second == {"brands": 0, "models": 0, "storages": 0, "colours": 0}

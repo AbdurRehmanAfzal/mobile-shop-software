@@ -30,6 +30,8 @@ BRANDS: list[tuple[str, str, int]] = [
     ("Sparx", "اسپارکس", 150),
     ("QMobile", "کیو موبائل", 160),
     ("Honor", "آنر", 170),
+    ("Lenovo", "لینووو", 180),
+    ("Amazfit", "ایمیزفٹ", 190),
 ]
 
 # (brand, model, reference_price or None, is_feature_phone)
@@ -517,6 +519,92 @@ MODELS: list[tuple[str, str, int | None, bool]] = [
 ]
 
 # (name, name_ur, gigabytes, sort)
+# Tablets and smart watches, sold one by one like phones (owner, 2026-10-28). (brand, model, category)
+OTHER_DEVICES: list[tuple[str, str, str]] = [
+    # tablets
+    ("Apple", "iPad (9th gen)", "tablet"),
+    ("Apple", "iPad (10th gen)", "tablet"),
+    ("Apple", "iPad (A16)", "tablet"),
+    ("Apple", "iPad mini (6th gen)", "tablet"),
+    ("Apple", "iPad mini (A17 Pro)", "tablet"),
+    ("Apple", "iPad Air (M1)", "tablet"),
+    ("Apple", "iPad Air 11 (M2)", "tablet"),
+    ("Apple", "iPad Air 13 (M2)", "tablet"),
+    ("Apple", "iPad Air 11 (M3)", "tablet"),
+    ("Apple", "iPad Pro 11 (M2)", "tablet"),
+    ("Apple", "iPad Pro 12.9 (M2)", "tablet"),
+    ("Apple", "iPad Pro 11 (M4)", "tablet"),
+    ("Apple", "iPad Pro 13 (M4)", "tablet"),
+    ("Samsung", "Galaxy Tab A7 Lite", "tablet"),
+    ("Samsung", "Galaxy Tab A8", "tablet"),
+    ("Samsung", "Galaxy Tab A9", "tablet"),
+    ("Samsung", "Galaxy Tab A9+", "tablet"),
+    ("Samsung", "Galaxy Tab S6 Lite", "tablet"),
+    ("Samsung", "Galaxy Tab S8", "tablet"),
+    ("Samsung", "Galaxy Tab S9", "tablet"),
+    ("Samsung", "Galaxy Tab S9 FE", "tablet"),
+    ("Samsung", "Galaxy Tab S9 FE+", "tablet"),
+    ("Samsung", "Galaxy Tab S9 Ultra", "tablet"),
+    ("Samsung", "Galaxy Tab S10+", "tablet"),
+    ("Samsung", "Galaxy Tab S10 Ultra", "tablet"),
+    ("Xiaomi", "Redmi Pad SE", "tablet"),
+    ("Xiaomi", "Redmi Pad Pro", "tablet"),
+    ("Xiaomi", "Xiaomi Pad 6", "tablet"),
+    ("Xiaomi", "Xiaomi Pad 7", "tablet"),
+    ("Huawei", "MatePad 11.5", "tablet"),
+    ("Huawei", "MatePad SE", "tablet"),
+    ("Huawei", "MatePad Pro", "tablet"),
+    ("Lenovo", "Tab M8", "tablet"),
+    ("Lenovo", "Tab M9", "tablet"),
+    ("Lenovo", "Tab M10", "tablet"),
+    ("Lenovo", "Tab M11", "tablet"),
+    ("Lenovo", "Tab P11", "tablet"),
+    ("Lenovo", "Tab P12", "tablet"),
+    ("Honor", "Pad 9", "tablet"),
+    ("Honor", "Pad X9", "tablet"),
+    ("Realme", "Pad 2", "tablet"),
+    ("Oppo", "Pad Air", "tablet"),
+    ("Oppo", "Pad 2", "tablet"),
+    ("OnePlus", "Pad", "tablet"),
+    ("OnePlus", "Pad Go", "tablet"),
+    ("Infinix", "XPad", "tablet"),
+    ("Tecno", "MegaPad 11", "tablet"),
+    # smart watches
+    ("Apple", "Watch SE (2nd gen)", "watch"),
+    ("Apple", "Watch Series 8", "watch"),
+    ("Apple", "Watch Series 9", "watch"),
+    ("Apple", "Watch Series 10", "watch"),
+    ("Apple", "Watch Ultra", "watch"),
+    ("Apple", "Watch Ultra 2", "watch"),
+    ("Samsung", "Galaxy Watch4", "watch"),
+    ("Samsung", "Galaxy Watch5", "watch"),
+    ("Samsung", "Galaxy Watch6", "watch"),
+    ("Samsung", "Galaxy Watch6 Classic", "watch"),
+    ("Samsung", "Galaxy Watch7", "watch"),
+    ("Samsung", "Galaxy Watch Ultra", "watch"),
+    ("Samsung", "Galaxy Watch FE", "watch"),
+    ("Huawei", "Watch GT 4", "watch"),
+    ("Huawei", "Watch GT 5", "watch"),
+    ("Huawei", "Watch Fit 3", "watch"),
+    ("Huawei", "Watch 4", "watch"),
+    ("Xiaomi", "Redmi Watch 4", "watch"),
+    ("Xiaomi", "Redmi Watch 5 Active", "watch"),
+    ("Xiaomi", "Xiaomi Watch 2", "watch"),
+    ("Xiaomi", "Watch S3", "watch"),
+    ("Google Pixel", "Pixel Watch 2", "watch"),
+    ("Google Pixel", "Pixel Watch 3", "watch"),
+    ("Amazfit", "GTR 4", "watch"),
+    ("Amazfit", "GTS 4", "watch"),
+    ("Amazfit", "Balance", "watch"),
+    ("Amazfit", "Active", "watch"),
+    ("Amazfit", "Bip 5", "watch"),
+    ("Honor", "Watch 4", "watch"),
+    ("Honor", "Choice Watch", "watch"),
+    ("Realme", "Watch 3 Pro", "watch"),
+    ("OnePlus", "Watch 2", "watch"),
+    ("Infinix", "XWatch", "watch"),
+]
+
 STORAGES: list[tuple[str, str, int, int]] = [
     ("4MB", "4 ایم بی", 0, 1),
     ("16GB", "16 جی بی", 16, 5),
@@ -602,6 +690,12 @@ def seed_catalogue(db: Session) -> dict[str, int]:
                 is_feature_phone=feature,
             )
         )
+        added["models"] += 1
+    for brand_name, model_name, category in OTHER_DEVICES:
+        brand = existing_brands[brand_name.lower()]
+        if (brand.id, model_name.lower()) in existing_models:
+            continue
+        db.add(Model(shop_id=None, brand_id=brand.id, name=model_name, category=category))
         added["models"] += 1
 
     have = {

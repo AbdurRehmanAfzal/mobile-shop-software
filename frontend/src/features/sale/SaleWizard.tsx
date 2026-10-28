@@ -64,7 +64,8 @@ export default function SaleWizard() {
   const [overrideReason, setOverrideReason] = useDraft('sale.overrideReason', '')
   const [lossOk, setLossOk] = useDraft('sale.lossOk', false)
   const [result, setResult] = useState<Invoice | null>(null)
-  const { data: stock } = useDevices({ status: 'in_stock', q: q || undefined })
+  const [devCat, setDevCat] = useState<'' | 'phone' | 'tablet' | 'watch'>('')
+  const { data: stock } = useDevices({ status: 'in_stock', q: q || undefined, category: devCat || undefined })
   const m = useDocMutation<Record<string, unknown>, Invoice>('POST', () => '/api/v1/sales')
 
   useEffect(() => {
@@ -132,6 +133,13 @@ export default function SaleWizard() {
       {step === 0 ? (
         <div className="flex flex-col gap-3">
           <SearchBox value={q} onChange={setQ} placeholder="stock.searchPlaceholder" scan />
+          <div className="flex flex-wrap gap-1.5">
+            {(['', 'phone', 'tablet', 'watch'] as const).map((c) => (
+              <button key={c || 'all'} type="button" aria-pressed={devCat === c} onClick={() => setDevCat(c)} className={`tap h-10 rounded-full border-2 px-3.5 font-bold ${devCat === c ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-[13px]'}`}>
+                {pick(c ? `devcat.${c}` : 'common.all')}
+              </button>
+            ))}
+          </div>
           <BiLabel text="counter.tapPhone" size="sm" tone="text-muted" />
           {stock?.length ? (
             <List>

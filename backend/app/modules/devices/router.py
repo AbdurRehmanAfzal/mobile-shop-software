@@ -1,5 +1,5 @@
 import uuid
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel, Field
@@ -40,10 +40,12 @@ def list_devices(
     brand_id: uuid.UUID | None = None,
     q: str | None = Query(default=None, min_length=1, max_length=60),
     limit: int = Query(default=100, le=500),
+    category: Literal["phone", "tablet", "watch"] | None = None,
 ):
     rows = service.list_devices(
         db,
         ctx.shop_id,
+        category=category,
         status=status,
         condition=condition,
         pta_status=pta_status,

@@ -45,6 +45,10 @@ class Model(UUIDPk, Timestamped, Base):
         mapped_column()
     )  # indicative new price in PKR, optional
     is_feature_phone: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    # phone | tablet | watch (owner 2026-10-28: tablets and smart watches are sold one by one too)
+    category: Mapped[str] = mapped_column(
+        String(10), nullable=False, default="phone", server_default="phone"
+    )
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
     brand: Mapped[Brand] = relationship(back_populates="models")
