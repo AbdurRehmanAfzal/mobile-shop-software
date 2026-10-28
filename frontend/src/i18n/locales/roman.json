@@ -1179,5 +1179,21 @@
     "add": "Is bill par tax lagayein",
     "rate": "Tax %",
     "incl": "tax shamil"
+  },
+  "hold": {
+    "button": "Sale hold karein",
+    "title": "Ye sale hold karein",
+    "explain": "Bill jaisa hai waisa rakh liya jaye ga. Agle customer ko farigh karein, phir Hold sales se dobara kholein. Mukammal karne tak kuch nahi bikay ga.",
+    "name": "Dhoondne ke liye naam (optional)",
+    "save": "Hold karein",
+    "done": "Sale hold ho gayi. Hold sales mein milegi.",
+    "list": "Hold sales",
+    "none": "Koi sale hold nahi",
+    "noName": "Sale",
+    "items": "Cheezein: {{n}}",
+    "resume": "Dobara kholein",
+    "removeAsk": "Ye hold sale khatam kar dein?",
+    "sold": "Is bill ke {{n}} phone is dauran bik gaye, bill se nikal diye gaye.",
+    "hint": "Dobara kholne par bill is list se hat jata hai."
   }
 }

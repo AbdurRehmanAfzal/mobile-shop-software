@@ -24,8 +24,8 @@ from app.modules.notifications import service as notify
 from app.modules.parties.models import Party
 from app.modules.paymode import service as paymode
 from app.modules.purchases.service import _allocate_discount, next_number
-from app.modules.sales.models import Invoice, InvoiceLine, InvoiceStatus
-from app.modules.sales.schemas import SaleCreate
+from app.modules.sales.models import HeldSale, Invoice, InvoiceLine, InvoiceStatus
+from app.modules.sales.schemas import HeldSaleIn, SaleCreate
 from app.modules.verification.service import NotSellable, assert_sellable
 from app.modules.verification.service import override as verification_override
 
@@ -612,3 +612,51 @@ small {{ color: #555; direction: ltr; unicode-bidi: isolate; }} .foot {{ margin-
 {pending_html}
 <div class="foot c">{e(T["thanks"])}</div>
 </body></html>"""
+
+
+# --- held sales (POS hold): a cart parked to finish later; nothing is sold until it is completed
+
+
+def hold_sale(db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, data: HeldSaleIn) -> HeldSale:
+    if not data.cart:
+        raise ValidationFailed("empty_cart", "Nothing to hold", "رکھنے کے لیے کچھ نہیں")
+    row = HeldSale(
+        shop_id=shop_id,
+        label=(data.label or "").strip() or None,
+        total=money(data.total),
+        items=data.items,
+        cart=data.cart,
+        created_by=user_id,
+    )
+    db.add(row)
+    db.commit()
+    db.refresh(row)
+    return row
+
+
+def list_held(db: Session, shop_id: uuid.UUID) -> list[HeldSale]:
+    return list(
+        db.scalars(
+            select(HeldSale).where(HeldSale.shop_id == shop_id).order_by(HeldSale.created_at.desc())
+        )
+    )
+
+
+def drop_held(db: Session, shop_id: uuid.UUID, held_id: uuid.UUID) -> None:
+    row = db.scalar(select(HeldSale).where(HeldSale.id == held_id, HeldSale.shop_id == shop_id))
+    if row is None:
+        raise NotFound()
+    db.delete(row)
+    db.commit()
+
+
+def held_out(db: Session, row: HeldSale) -> dict:
+    return {
+        "id": row.id,
+        "label": row.label,
+        "total": row.total,
+        "items": row.items,
+        "cart": row.cart,
+        "created_at": row.created_at,
+        "created_by_name": user_name(db, row.created_by),
+    }

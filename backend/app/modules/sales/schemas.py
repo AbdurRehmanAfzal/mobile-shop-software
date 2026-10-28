@@ -116,3 +116,24 @@ class SaleOut(BaseModel):
 
 class VoidIn(BaseModel):
     reason: str = Field(min_length=3, max_length=300)
+
+
+class HeldSaleIn(BaseModel):
+    """the sale screen's cart as it is; the server only keeps it for the shop"""
+
+    label: str | None = Field(default=None, max_length=80)
+    total: Decimal = Field(default=Decimal(0), ge=0)
+    items: int = Field(default=0, ge=0)
+    cart: dict
+
+
+class HeldSaleOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    label: str | None
+    total: Decimal
+    items: int
+    cart: dict
+    created_at: dt.datetime
+    created_by_name: str | None = None
