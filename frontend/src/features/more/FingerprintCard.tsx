@@ -20,11 +20,14 @@ export default function FingerprintCard() {
   const [can, setCan] = useState<boolean | null>(null)
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState<unknown>(null)
+  // the step and the phone's own words, small under the message, so a screenshot tells what went wrong
+  const [detail, setDetail] = useState('')
   useEffect(() => { void canUseHere().then(setCan) }, [])
 
   async function run(fn: () => Promise<void>) {
     setBusy(true)
     setErr(null)
+    setDetail('')
     try {
       await fn()
       setHere(isOnHere())
@@ -32,6 +35,7 @@ export default function FingerprintCard() {
     } catch (e) {
       // the fingerprint prompt was cancelled or failed: a plain message instead of "something went wrong"
       setErr(e instanceof ApiError ? e : 'cancelled')
+      setDetail(e instanceof Error ? e.message : String(e))
     } finally {
       setBusy(false)
     }
@@ -59,6 +63,7 @@ export default function FingerprintCard() {
         </>
       )}
       {err === 'cancelled' ? <BiAlert text="fp.cancelled" /> : <ErrorText error={err} />}
+      {err && detail ? <span className="text-xs text-muted" dir="ltr">{detail}</span> : null}
       {data?.keys.length ? (
         <div className="flex flex-col divide-y divide-line rounded-2xl border border-line">
           {data.keys.map((k) => (
