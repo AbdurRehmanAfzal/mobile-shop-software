@@ -2,6 +2,7 @@
 
 import datetime as dt
 
+from app.core.clock import today as shop_today
 from app.modules.expenses.service import seed_categories
 from tests.conftest import login
 from tests.test_devices import _stock
@@ -106,6 +107,6 @@ def test_day_close_expected_vs_counted(db, owner, cat):
     assert owner.post("/api/v1/expenses/day-close", json={"counted": 800}).status_code == 409
     assert owner.get("/api/v1/expenses/day-close/preview").json()["closed"] is True
     assert len(owner.get("/api/v1/expenses/day-close").json()) == 1
-    tomorrow = (dt.date.today() + dt.timedelta(days=1)).isoformat()
+    tomorrow = (shop_today() + dt.timedelta(days=1)).isoformat()
     pv2 = owner.get("/api/v1/expenses/day-close/preview", params={"date": tomorrow}).json()
     assert pv2["opening"] == "850.00" and pv2["expected"] == "850.00"

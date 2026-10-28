@@ -3,6 +3,7 @@ what sold the most, and a plain sales estimate."""
 
 import datetime as dt
 
+from app.core.clock import today as shop_today
 from tests.conftest import login
 from tests.test_devices import _stock
 from tests.test_purchases import _party
@@ -90,7 +91,7 @@ def test_top_sellers_and_forecast(owner, cat):
 
     f = owner.get("/api/v1/reports/forecast").json()
     assert len(f["next_7_days"]) == 7 and f["last_7_days"] == "2400.00"
-    assert f["next_7_days"][0]["date"] == str(dt.date.today() + dt.timedelta(days=1))
+    assert f["next_7_days"][0]["date"] == str(shop_today() + dt.timedelta(days=1))
     by_name = {m["name"]: m for m in f["models"]}
     sold_model = next(m for m in f["models"] if m["sold_30_days"] == 2)
     assert sold_model["in_stock"] == 0 and sold_model["days_left"] == 0
