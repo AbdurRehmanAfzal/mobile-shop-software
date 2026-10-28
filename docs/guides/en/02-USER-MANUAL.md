@@ -123,14 +123,15 @@ From top to bottom:
 
 | Part | What it does |
 |---|---|
-| Header | Shop name, **English** (language), **Dark** / **Light**, **Messages**, **More** |
+| Header | Shop name, **English** (language), **Dark** / **Light**, **Messages**, **More**. On a small phone (e.g. iPhone SE) the name is on its own line above the buttons. |
+| Greeting | "Good morning / afternoon / evening" with your name |
 | Search box | Type an IMEI, phone model or person's name and tap **Search**. **Scan** reads the IMEI barcode with the camera. |
 | **Sell** | Sell a phone (cash or udhaar) — [section 6](#6-selling-a-phone) |
 | **Add stock** | You bought a new or used phone — [section 4](#4-add-stock-buying-phones) |
-| Jobs grid | **Udhaar**, **Stock**, **Repair**, **Return**, **Expense** |
-| **Hisaab** | Pick **Today**, **Yesterday**, **Week**, **This month** or **From – to**. The dark card shows what was sold, **Given on udhaar** and **In hand (net)**. Tap **See details** for the full day's hisaab. |
+| **Other jobs** | **Udhaar**, **Stock**, **Repair**, **Return**, **Invoices**, **Expense**, each with its own colour |
+| **Hisaab** | Pick **Today**, **Yesterday**, **Week**, **This month** or **From – to**. The dark card shows **Sales** and phones sold, a **Last 7 days** bar chart (tap a bar to see that day's sales), **In hand (net)**, **Given on udhaar**, **Profit** (owner and manager) and **Expenses**. Tap the card or **See all** for the full hisaab. |
 | **Udhaar khata** | **I will get** (people owe you) and **I have to give** (you owe them), each with **See details** |
-| **Stock in shop** | How many phones you have and what they are worth (also in lakh). **See details** shows brand → model. |
+| **Stock in shop** | **Phones in stock** and their **Worth** (also in lakh). **See details** shows brand → model. |
 | **Profit & reports** | Owner and manager only — [section 10](#10-profit-reports-and-downloads) |
 | **Needs attention** | e.g. "2 phones: ID card check pending", "1 repair jobs open" |
 

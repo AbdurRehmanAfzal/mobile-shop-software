@@ -125,14 +125,15 @@ Ooper se neeche:
 
 | Hissa | Kya karta hai |
 |---|---|
-| Ooper wali patti | Dukaan ka naam, **Roman** (zubaan), **Dark** / **Light**, **Paighaam**, **Mazeed** |
+| Ooper wali patti | Dukaan ka naam, **Roman** (zubaan), **Dark** / **Light**, **Paighaam**, **Mazeed**. Chhote phone (jaise iPhone SE) par naam alag line mein buttons ke ooper. |
+| Salaam | "Subah bakhair / Assalam-o-Alaikum / Shaam bakhair" aap ke naam ke saath |
 | Search box | IMEI, phone ka model ya bande ka naam likhein aur **Dhoondein** dabayein. **Scan** camera se IMEI barcode parhta hai. |
 | **Bechein** | Phone bechein (cash ya udhaar) — [hissa 6](#6-phone-bechna) |
 | **Stock daalein** | Naya ya used phone khareeda — [hissa 4](#4-stock-daalein-phone-khareedna) |
-| Kaam ke buttons | **Udhaar**, **Stock**, **Marammat**, **Wapsi**, **Kharcha** |
-| **Hisaab** | **Aaj**, **Kal**, **Hafta**, **Is mahine** ya **Tareekh se tak** chunein. Dark card mein kya bika, **Udhaar par diya** aur **Haath mein (net)**. Poore hisaab ke liye **Tafseel dekhein**. |
+| **Baqi kaam** | **Udhaar**, **Stock**, **Marammat**, **Wapsi**, **Bill**, **Kharcha**, har ek apne rang mein |
+| **Hisaab** | **Aaj**, **Kal**, **Hafta**, **Is mahine** ya **Tareekh se tak** chunein. Dark card mein **Bikri** aur bike phone, **Pichle 7 din** ka chart (kisi bar ko dabayein to us din ki bikri), **Haath mein (net)**, **Udhaar par diya**, **Munafa** (maalik aur manager) aur **Kharche**. Poore hisaab ke liye card ya **Sab dekhein** dabayein. |
 | **Udhaar khata** | **Mujhe lene hain** (log aap ke dene wale) aur **Mujhe dene hain** (aap ne dene hain) |
-| **Dukaan mein stock** | Kitne phone hain aur kitne ke hain (lakh mein bhi). **Tafseel dekhein** brand → model dikhata hai. |
+| **Dukaan mein stock** | **Stock mein phone** aur un ki **Maliyat** (lakh mein bhi). **Tafseel dekhein** brand → model dikhata hai. |
 | **Munafa aur report** | Sirf maalik aur manager — [hissa 10](#10-munafa-report-aur-download) |
 | **Dhyan dein** | maslan "2 phone: shanakhti card check baqi", "1 marammat ke kaam baqi" |
 
