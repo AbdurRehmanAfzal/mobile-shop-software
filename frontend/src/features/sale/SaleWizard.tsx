@@ -247,7 +247,7 @@ export default function SaleWizard() {
                   ))}
                 </div>
               </div>
-              <AccessoryPicker mode="sell" value={l.acc} onChange={(acc) => setLine(l, { acc })} />
+              <AccessoryPicker mode="sell" category={l.device.category ?? 'phone'} value={l.acc} onChange={(acc) => setLine(l, { acc })} />
             </div>
           ))}
           {misc.map((x) => (

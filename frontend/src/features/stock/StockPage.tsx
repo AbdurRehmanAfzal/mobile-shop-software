@@ -11,17 +11,31 @@ import ImeiLookupSheet from './ImeiLookupSheet'
 
 type Filter = 'in_stock' | 'on_loan' | 'sold' | 'faulty' | 'all'
 
+/** what matters for this kind of device, e.g. "128GB · Black", "45mm · GPS · Battery 91%" */
+export function specLine(d: Device, pick: (k: string) => string, withColour = true): string {
+  const cat = d.category ?? 'phone'
+  return [
+    cat === 'watch' ? (d.size_mm ? `${d.size_mm}mm` : null) : d.storage_name,
+    cat === 'phone' ? null : pick(d.cellular ? 'devx.simShort' : cat === 'tablet' ? 'devx.wifiShort' : 'devx.gpsShort'),
+    withColour ? d.colour_name : null,
+    d.battery_health ? pick('devx.bh').replace('{{n}}', String(d.battery_health)) : null,
+  ].filter(Boolean).join(' · ')
+}
+
+/** PTA means something only for a phone or a tablet / watch that takes a SIM */
+export const hasPta = (d: Device) => (d.category ?? 'phone') === 'phone' || !!d.cellular
+
 export function DeviceRow({ d, onClick }: { d: Device; onClick?: () => void }) {
   const { pick } = useLang()
   const vTone = d.verification_status === 'flagged' ? 'bad' : d.verification_status === 'pending' ? 'warn' : 'ok'
   return (
     <Row
-      title={`${d.brand_name} ${d.model_name}${d.storage_name ? ` · ${d.storage_name}` : ''}${d.colour_name ? ` · ${d.colour_name}` : ''}`}
+      title={[`${d.brand_name} ${d.model_name}`, specLine(d, pick)].filter(Boolean).join(' · ')}
       sub={
         <span className="flex flex-wrap items-center gap-1.5">
           <span dir="ltr">{d.imei1}</span>
           <Chip text={`stock.condition.${d.condition}`} />
-          {d.pta_status !== 'pta_approved' ? <Chip text={`stock.pta.${d.pta_status}`} tone="warn" /> : null}
+          {hasPta(d) && d.pta_status !== 'pta_approved' ? <Chip text={`stock.pta.${d.pta_status}`} tone="warn" /> : null}
           {d.verification_status !== 'not_required' ? <Chip text={`stock.verification.${d.verification_status}`} tone={vTone} /> : null}
         </span>
       }
@@ -43,8 +57,8 @@ export function DeviceCard({ d, onOpen, onSell }: { d: Device; onOpen: () => voi
   const { pick } = useLang()
   const vTone = d.verification_status === 'flagged' ? 'bad' : d.verification_status === 'pending' ? 'warn' : 'ok'
   const stats: [string, string][] = [
-    ['stock.storageShort', d.storage_name ?? '—'],
-    ['stock.ptaShort', pick(`stock.pta.${d.pta_status}`)],
+    d.category === 'watch' ? ['devx.sizeShort', d.size_mm ? `${d.size_mm}mm` : '—'] : ['stock.storageShort', d.storage_name ?? '—'],
+    hasPta(d) ? ['stock.ptaShort', pick(`stock.pta.${d.pta_status}`)] : ['devx.simLabel', pick(d.category === 'tablet' ? 'devx.wifiShort' : 'devx.gpsShort')],
     ['stock.conditionShort', pick(`stock.condition.${d.condition}`)],
     ['stock.daysIn', String(daysSince(d.last_event_at))],
   ]
@@ -53,7 +67,7 @@ export function DeviceCard({ d, onOpen, onSell }: { d: Device; onOpen: () => voi
       <button type="button" onClick={onOpen} className="tap flex items-start justify-between gap-3 text-start">
         <div className="min-w-0">
           <div className="truncate text-[17px] font-extrabold text-ink">{d.brand_name} {d.model_name}</div>
-          <div className="truncate text-sm font-semibold text-emerald">{[d.colour_name, d.storage_name].filter(Boolean).join(' · ') || '—'}</div>
+          <div className="truncate text-sm font-semibold text-emerald">{[d.colour_name, specLine(d, pick, false)].filter(Boolean).join(' · ') || '—'}</div>
         </div>
         {d.asking_price ? <MoneyText value={d.asking_price} tone="ink" size="lg" /> : null}
       </button>

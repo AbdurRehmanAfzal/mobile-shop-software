@@ -23,7 +23,18 @@ def clean_imei(value: str) -> str:
     return digits
 
 
-ACCESSORY_KINDS = {"box", "charger", "cable", "earphones", "airpods", "other"}
+# stylus and keyboard come with tablets, strap with watches (owner 2026-10-28)
+ACCESSORY_KINDS = {
+    "box",
+    "charger",
+    "cable",
+    "earphones",
+    "airpods",
+    "stylus",
+    "keyboard",
+    "strap",
+    "other",
+}
 
 
 class AccessoryItemIn(BaseModel):
@@ -63,6 +74,10 @@ class DeviceIdentity(BaseModel):
     # phone | tablet | watch. A phone needs its IMEI; a Wi-Fi tablet or a smart watch may have only a
     # serial number, which then also identifies it (stored in imei1, unique per shop).
     category: Literal["phone", "tablet", "watch"] = "phone"
+    # tablet / watch only: True = takes a SIM (Wi-Fi + SIM tablet, cellular watch)
+    cellular: bool | None = None
+    size_mm: int | None = Field(default=None, ge=20, le=60)  # a watch's case
+    battery_health: int | None = Field(default=None, ge=1, le=100)
     imei1: str | None = None
     imei2: str | None = None
     serial: str | None = Field(default=None, max_length=60)
@@ -88,6 +103,30 @@ class DeviceIdentity(BaseModel):
     @classmethod
     def _serial(cls, v: str | None) -> str | None:
         return clean_serial(v) if v else None
+
+    @model_validator(mode="after")
+    def _by_category(self):
+        # what each kind of device has (owner 2026-10-28: a watch has no storage, IMEI 2 or JV)
+        if self.category == "phone":
+            self.cellular = None
+            self.size_mm = None
+        else:
+            if self.cellular is None and self.imei1:
+                self.cellular = True  # an IMEI means it takes a SIM (older apps did not say)
+            if self.condition == DeviceCondition.PATCHED:
+                raise ValueError("Patched is only for phones")
+            if self.cellular and not self.imei1:
+                raise ValueError("A device that takes a SIM needs its IMEI")
+            if not self.cellular:
+                # no SIM: no PTA, no SIM time
+                self.pta_status = PtaStatus.UNKNOWN
+                self.sim_time_months = None
+            if self.category == "watch":
+                self.storage_id = None
+                self.imei2 = None
+            else:
+                self.size_mm = None
+        return self
 
     @model_validator(mode="after")
     def _identity(self):
@@ -124,6 +163,9 @@ class OpeningStockIn(DeviceIdentity):
 
 
 class DeviceUpdate(BaseModel):
+    cellular: bool | None = None
+    size_mm: int | None = Field(default=None, ge=20, le=60)
+    battery_health: int | None = Field(default=None, ge=1, le=100)
     brand_id: uuid.UUID | None = None
     model_id: uuid.UUID | None = None
     imei2: str | None = None
@@ -181,6 +223,9 @@ class DeviceOut(BaseModel):
     imei2: str | None
     serial: str | None
     category: str = "phone"
+    cellular: bool | None = None
+    size_mm: int | None = None
+    battery_health: int | None = None
     brand_id: uuid.UUID
     brand_name: str
     model_id: uuid.UUID

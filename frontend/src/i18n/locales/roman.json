@@ -246,7 +246,10 @@
       "cable": "Taar",
       "earphones": "Handsfree",
       "airpods": "AirPods",
-      "other": "Kuch aur"
+      "other": "Kuch aur",
+      "stylus": "Pen / stylus",
+      "keyboard": "Keyboard cover",
+      "strap": "Extra strap"
     },
     "accCameWith": "Phone ke saath aaya",
     "accPendingVendor": "Dealer se lena baqi",
@@ -1220,5 +1223,24 @@
     "documents": "Phone mein save ho gayi: Documents › MobileShop",
     "savedInstead": "Yeh device file share nahi kar sakti, is liye download kar di gayi.",
     "printHint": "Kaghaz par print karein"
+  },
+  "devx": {
+    "connection": "Kya is mein SIM lagti hai?",
+    "wifi": "Sirf Wi-Fi",
+    "wifiSim": "Wi-Fi + SIM",
+    "gps": "SIM nahi (GPS)",
+    "cellular": "SIM wali (Cellular)",
+    "serialOpt": "Serial number (optional)",
+    "size": "Dial ka size",
+    "sizeOther": "Doosra mm",
+    "sizeShort": "Size",
+    "battery": "Battery health %",
+    "batteryHint": "Settings → Battery. Maloom na ho to khaali chhor dein.",
+    "batteryBad": "1 se 100 tak number likhein",
+    "bh": "Battery {{n}}%",
+    "simShort": "SIM",
+    "wifiShort": "Wi-Fi",
+    "gpsShort": "GPS",
+    "simLabel": "SIM"
   }
 }

@@ -9,6 +9,7 @@ import { useAuth } from '@/lib/auth'
 import { useDevice, useDeviceEvent, useDeviceHistory, useDocMutation, useInvalidate, useParties } from '@/lib/queries'
 import type { DeviceDetail, DeviceEvent, Loan } from '@/lib/types'
 import DeviceLineSheet, { emptyDraft, type DeviceLineDraft } from '@/features/purchase/DeviceLineSheet'
+import { hasPta, specLine } from './StockPage'
 
 const EVENT_TONE: Record<string, 'ok' | 'warn' | 'bad' | 'muted' | 'ink'> = {
   purchased: 'ok', verified: 'ok', sold: 'ink', sale_returned: 'warn', loaned_out: 'warn', loan_returned: 'ok',
@@ -18,6 +19,11 @@ const EVENT_TONE: Record<string, 'ok' | 'warn' | 'bad' | 'muted' | 'ink'> = {
 function toDraft(d: DeviceDetail): DeviceLineDraft {
   return {
     ...emptyDraft(d.imei1),
+    category: d.category ?? 'phone',
+    cellular: !!d.cellular,
+    serial: d.serial ?? '',
+    size_mm: d.size_mm ? String(d.size_mm) : '',
+    battery_health: d.battery_health ? String(d.battery_health) : '',
     imei2: d.imei2 ?? '',
     brand_id: d.brand_id,
     brand_name: d.brand_name,
@@ -100,14 +106,14 @@ export default function DeviceDetailPage() {
               {d.imei1}
             </div>
             <div className="text-sm text-hero-text/75">
-              {[d.storage_name, d.colour_name].filter(Boolean).join(' · ')}
+              {specLine(d, pick)}
             </div>
           </div>
           <Chip text={`stock.status.${d.status}`} tone="ink" />
         </div>
         <div className="flex flex-wrap gap-1.5">
           <Chip text={`stock.condition.${d.condition}`} />
-          <Chip text={`stock.pta.${d.pta_status}`} tone={d.pta_status === 'pta_approved' ? 'ok' : 'warn'} />
+          {hasPta(d) ? <Chip text={`stock.pta.${d.pta_status}`} tone={d.pta_status === 'pta_approved' ? 'ok' : 'warn'} /> : null}
           {d.verification_status !== 'not_required' ? <Chip text={`stock.verification.${d.verification_status}`} tone={vTone} /> : null}
           {d.cycle_no > 1 ? <Chip text={{ en: `Cycle ${d.cycle_no}`, ur: `${d.cycle_no} بار` }} /> : null}
         </div>
@@ -229,6 +235,8 @@ export default function DeviceDetailPage() {
                 sim_time_months: x.sim_time_months ? Number(x.sim_time_months) : null,
                 warranty_months: Number(x.warranty_months || 0),
                 patch_details: x.patch_details || null,
+                ...(x.category === 'watch' ? { size_mm: x.size_mm ? Number(x.size_mm) : null } : {}),
+                ...(x.category !== 'phone' ? { battery_health: x.battery_health ? Number(x.battery_health) : null } : {}),
               })
               await inv('devices', 'device', 'history')
               setSheet(null)

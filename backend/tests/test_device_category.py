@@ -71,3 +71,70 @@ def test_watch_with_serial_and_tablet_with_imei(owner, db, cat):
         owner.post("/api/v1/devices/opening-stock", json={**bad, "category": "watch"}).status_code
         == 422
     )
+
+
+def test_each_kind_has_its_own_details(owner, db, cat):
+    """Owner (2026-10-28): a watch has no storage, IMEI 2, PTA or JV unless it takes a SIM; a Wi-Fi
+    tablet has no PTA; tablets and watches carry battery health, a watch its case size."""
+    storage = cat["storage"]["id"]
+    b, m = _model(db, "Apple", "Watch Series 9")
+    w = owner.post(
+        "/api/v1/devices/opening-stock",
+        json={
+            "category": "watch",
+            "cellular": False,
+            "serial": "WATCH0001",
+            "imei2": "490154203237518",
+            "brand_id": str(b.id),
+            "model_id": str(m.id),
+            "storage_id": storage,
+            "size_mm": 45,
+            "battery_health": 91,
+            "condition": "used",
+            "pta_status": "jv",
+            "sim_time_months": 2,
+            "cost_price": 60000,
+        },
+    ).json()
+    assert w["cellular"] is False and w["size_mm"] == 45 and w["battery_health"] == 91
+    assert w["storage_id"] is None and w["imei2"] is None
+    assert w["pta_status"] == "unknown" and w["sim_time_months"] is None
+
+    # a cellular watch has an IMEI and a PTA status
+    base = {"category": "watch", "cellular": True, "brand_id": str(b.id), "model_id": str(m.id)}
+    no_imei = {**base, "serial": "WATCH0002", "condition": "used", "cost_price": 1}
+    assert owner.post("/api/v1/devices/opening-stock", json=no_imei).status_code == 422
+    cw = owner.post(
+        "/api/v1/devices/opening-stock",
+        json={**base, "imei1": "356938035643809", "pta_status": "pta_approved", "cost_price": 1},
+    ).json()
+    assert cw["cellular"] is True and cw["pta_status"] == "pta_approved"
+
+    # patched is a phone thing
+    patched = {**no_imei, "cellular": False, "condition": "patched", "patch_details": "x"}
+    assert owner.post("/api/v1/devices/opening-stock", json=patched).status_code == 422
+
+    # a Wi-Fi tablet: storage kept, no PTA, no case size
+    b, m = _model(db, "Samsung", "Galaxy Tab A9+")
+    t = owner.post(
+        "/api/v1/devices/opening-stock",
+        json={
+            "category": "tablet",
+            "cellular": False,
+            "serial": "TAB12345",
+            "brand_id": str(b.id),
+            "model_id": str(m.id),
+            "storage_id": storage,
+            "size_mm": 44,
+            "battery_health": 88,
+            "condition": "open_box",
+            "pta_status": "non_pta",
+            "sim_time_months": 2,
+            "cost_price": 40000,
+            "accessories": [{"kind": "stylus"}, {"kind": "keyboard"}],
+        },
+    ).json()
+    assert t["storage_id"] == storage and t["size_mm"] is None and t["battery_health"] == 88
+    assert t["pta_status"] == "unknown" and t["cellular"] is False
+    kinds = {a["kind"] for a in owner.get(f"/api/v1/devices/{t['id']}").json()["accessories"]}
+    assert kinds == {"stylus", "keyboard"}

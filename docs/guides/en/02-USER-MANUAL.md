@@ -403,8 +403,21 @@ Ordinary watches (Casio, Naviforce…) and accessories (chargers, cables, covers
 
 In **Add device** tap **Mobile**, **Tablet** or **Smart watch** first. Only brands that make that kind are shown (e.g. Apple, Samsung, Lenovo for tablets; Apple, Samsung, Huawei, Amazfit for watches) with their models (iPad, Galaxy Tab, Apple Watch, Galaxy Watch…).
 
-- **Tablet with a SIM:** write or scan its IMEI; PTA is asked like a phone.
-- **Wi-Fi tablet or smart watch:** no IMEI, so write the **Serial number** (on the box, or Settings → About). It is then searched and shown like an IMEI.
+Each kind asks only its own things:
+
+| | Mobile | Tablet | Smart watch |
+|---|---|---|---|
+| SIM? | always | **Wi-Fi only** or **Wi-Fi + SIM** | **No SIM (GPS)** or **With SIM (Cellular)** |
+| IMEI | IMEI 1 and IMEI 2 | only with a SIM (one IMEI) | only with a SIM |
+| Serial number | — | needed without a SIM | needed without a SIM |
+| PTA | PTA approved · Non-PTA · JV | only with a SIM, no JV | only with a SIM, no JV |
+| Storage | yes | yes | no — **Case size** instead (38–49 mm, or other) |
+| Condition | Box pack · Open box · Used · Patched | Box pack · Open box · Used | Box pack · Open box · Used |
+| Battery health % | — | for open box / used (optional) | for open box / used (optional) |
+| Accessories | box, charger, cable, earphones, AirPods | box, charger, cable, **pen / stylus**, **keyboard cover** | box, charger, **extra strap** |
+
+- Without a SIM there is no IMEI, so the **Serial number** (on the box, or Settings → About) is searched and shown like an IMEI.
+- The stock list shows what matters, e.g. *Watch Series 9 · 45mm · GPS · Battery 91%*.
 - A used tablet or watch bought from a customer gets the **ID check**, like a phone.
 
 When selling, the chips **All · Mobile · Tablet · Smart watch** above the stock list narrow it down.
