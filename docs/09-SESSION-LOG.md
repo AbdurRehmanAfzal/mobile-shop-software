@@ -478,3 +478,4 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - Verified: backend all pass + ruff; tsc; vitest 27; Playwright full 44/44 (incl. 10 responsive runs).
 - Next: owner OK to release the new Home; testers' feedback on it. Real-device check on an iPhone still recommended (WebKit on Windows draws fonts thinner than a real iPhone).
 
+- Release 9fec279 live (owner OK): new Home + narrow-phone fixes; live bundle checked, app.apk rebuilt.
