@@ -17,7 +17,7 @@ import { uid } from '@/lib/id'
 import { ApiError, get } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 import { openPrintable } from '@/lib/files'
-import { useDevices, useDocMutation } from '@/lib/queries'
+import { useDevices, useDocMutation, useGet } from '@/lib/queries'
 import type { Device, DeviceDetail, Invoice, Party } from '@/lib/types'
 import { DeviceRow } from '@/features/stock/StockPage'
 
@@ -63,6 +63,11 @@ export default function SaleWizard() {
   const [paidNow, setPaidNow] = useDraft('sale.paidNow', '')
   const [overrideReason, setOverrideReason] = useDraft('sale.overrideReason', '')
   const [lossOk, setLossOk] = useDraft('sale.lossOk', false)
+  // owner 2026-10-28: tax only when the shopkeeper ticks it; the rate starts at the shop's setting
+  const [taxOn, setTaxOn] = useDraft('sale.taxOn', false)
+  const [taxRate, setTaxRate] = useDraft('sale.taxRate', '')
+  const { data: shopSet } = useGet<{ tax_rate: string }>(['shop-full'], '/api/v1/shops/current')
+  const rateShown = taxRate !== '' ? taxRate : String(Number(shopSet?.tax_rate) || 18)
   const [result, setResult] = useState<Invoice | null>(null)
   const [devCat, setDevCat] = useState<'' | 'phone' | 'tablet' | 'watch'>('')
   const { data: stock } = useDevices({ status: 'in_stock', q: q || undefined, category: devCat || undefined })
@@ -76,7 +81,9 @@ export default function SaleWizard() {
 
 
   const subtotal = lines.reduce((s, l) => s + Number(l.price || 0), 0) + misc.reduce((s, x) => s + Number(x.qty || 0) * Number(x.unit_price || 0), 0)
-  const total = Math.max(0, subtotal - Number(discount || 0))
+  const base = Math.max(0, subtotal - Number(discount || 0))
+  const taxAmount = taxOn ? Math.round(base * Number(rateShown || 0)) / 100 : 0
+  const total = Math.round((base + taxAmount) * 100) / 100
   const udhaar = pay.method === 'udhaar'
   // a remittance may cover only part of the bill: the rest goes on the customer's khata
   const paid = udhaar ? Math.min(Number(paidNow || 0), total) : pay.method === 'remittance' ? Math.min(remitPkr(pay), total) : total
@@ -113,6 +120,7 @@ export default function SaleWizard() {
       devices: lines.map((l) => ({ device_id: l.device.id, price: Number(l.price || 0), warranty_days: Number(l.warranty_days || 0), ...accOut(l.acc) })),
       misc: misc.map((x) => ({ description: x.description.trim(), qty: Number(x.qty || 1), unit_price: Number(x.unit_price || 0), accessory_id: x.accessory_id })),
       discount: Number(discount || 0),
+      tax_rate: taxOn ? Number(rateShown || 0) : 0,
       paid,
       payment: payInfo(pay),
       override_reason: overrideReason || undefined,
@@ -224,6 +232,13 @@ export default function SaleWizard() {
           </div>
           {more ? <BiInput label="common.discount" type="number" inputMode="numeric" min={0} value={discount} onChange={(e) => setDiscount(e.target.value)} /> : null}
 
+          <label className="tap flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl border border-line bg-surface px-4">
+            <input type="checkbox" checked={taxOn} onChange={(e) => setTaxOn(e.target.checked)} className="h-6 w-6 accent-[rgb(var(--emerald))]" />
+            <BiLabel text="saleTax.add" size="md" bold className="flex-1" />
+            {taxOn ? <span className="num text-sm text-muted" dir="ltr">+ Rs. {taxAmount.toLocaleString('en-US')}</span> : null}
+          </label>
+          {taxOn ? <BiInput label="saleTax.rate" type="number" inputMode="decimal" min={0} max={100} value={rateShown} onChange={(e) => setTaxRate(e.target.value)} className="num" /> : null}
+
           <div className="flex items-center gap-1"><BiLabel text="counter.howPaid" size="md" bold /><Help term="udhaar" /></div>
           <PayPicker value={pay} onChange={setPay} remittance />
 
@@ -261,6 +276,11 @@ export default function SaleWizard() {
               <BiLabel text="common.total" size="md" tone="text-hero-text" bold />
               <span className="num text-3xl" dir="ltr">Rs. {total.toLocaleString('en-US')}</span>
             </div>
+            {taxOn && taxAmount > 0 ? (
+              <span className={`text-hero-text/75 ${ur ? cls('sm') : 'text-xs font-semibold'}`} dir="ltr">
+                {pick('saleTax.incl')} Rs. {taxAmount.toLocaleString('en-US')} ({rateShown}%)
+              </span>
+            ) : null}
             {owes ? (
               <div className="flex items-center justify-between border-t border-white/15 pt-1.5">
                 <BiLabel text="counter.remaining" size="sm" tone="text-gold-text" bold />
@@ -288,7 +308,7 @@ export default function SaleWizard() {
           </div>
           <BiButton text="sale.printThermal" icon={<Printer size={22} />} full onClick={() => openPrintable(`/api/v1/sales/${result.id}/receipt?format=thermal`)} />
           <BiButton text="sale.printA4" icon={<FileText size={22} />} full variant="secondary" onClick={() => openPrintable(`/api/v1/sales/${result.id}/receipt?format=a4`)} />
-          <BiButton text="counter.newSale" icon={<Plus size={22} />} full variant="ghost" onClick={() => { setLines([]); setMisc([]); setParty(null); setPaidNow(''); setDiscount(''); setResult(null); setPay(newPay()); setStep(0); m.reset() }} />
+          <BiButton text="counter.newSale" icon={<Plus size={22} />} full variant="ghost" onClick={() => { setLines([]); setMisc([]); setParty(null); setPaidNow(''); setDiscount(''); setResult(null); setPay(newPay()); setTaxOn(false); setTaxRate(''); setStep(0); m.reset() }} />
           <BiButton text="sale.viewSale" icon={<Receipt size={22} />} full variant="ghost" onClick={() => nav(`/sales/${result.id}`)} />
         </div>
       ) : null}

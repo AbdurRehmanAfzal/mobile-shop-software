@@ -39,6 +39,9 @@ class SaleCreate(BaseModel):
     paid: Decimal = Field(default=Decimal(0), ge=0)
     cash_account_id: uuid.UUID | None = None
     payment: PaymentInfo | None = None  # how the money paid now was paid
+    # owner 2026-10-28: tax is chosen per sale (a checkbox, off by default). A rate here is added on top
+    # of the bill (0 = no tax); left out, the shop's settings apply as before.
+    tax_rate: Decimal | None = Field(default=None, ge=0, le=100)
     notes: str | None = None
     override_reason: str | None = Field(default=None, max_length=500)
     # owner/manager confirms a sale below the phone's buying price (a loss)

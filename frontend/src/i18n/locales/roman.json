@@ -1174,5 +1174,10 @@
     "share": "Share",
     "copied": "Link copy ho gaya",
     "message": "Mobile Shop ki Android app. Phone par yeh link khol kar install karein:"
+  },
+  "saleTax": {
+    "add": "Is bill par tax lagayein",
+    "rate": "Tax %",
+    "incl": "tax shamil"
   }
 }

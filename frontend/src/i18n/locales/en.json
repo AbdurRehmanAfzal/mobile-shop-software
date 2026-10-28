@@ -1174,5 +1174,10 @@
     "share": "Share",
     "copied": "Link copied",
     "message": "Mobile Shop app for Android. Open this link on the phone and install:"
+  },
+  "saleTax": {
+    "add": "Add tax to this bill",
+    "rate": "Tax %",
+    "incl": "includes tax"
   }
 }

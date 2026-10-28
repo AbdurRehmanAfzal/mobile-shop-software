@@ -131,8 +131,11 @@ def create_sale(
             message_ur="رعایت کل رقم سے زیادہ ہے",
         )
     base = money(subtotal - discount)
-    rate = shop.tax_rate if shop.tax_enabled else ZERO
-    tax, total = compute_tax(base, rate, shop.tax_inclusive)
+    if data.tax_rate is not None:
+        rate, inclusive = money(data.tax_rate), False
+    else:
+        rate, inclusive = (shop.tax_rate if shop.tax_enabled else ZERO), shop.tax_inclusive
+    tax, total = compute_tax(base, rate, inclusive)
     paid = money(data.paid)
     if paid > total:
         raise ValidationFailed(
@@ -159,7 +162,7 @@ def create_sale(
         subtotal=subtotal,
         discount=discount,
         tax_rate=money(rate),
-        tax_inclusive=shop.tax_inclusive,
+        tax_inclusive=inclusive,
         tax_amount=tax,
         total=total,
         paid=paid,
@@ -191,7 +194,7 @@ def create_sale(
         data.devices, devices, shares[: len(devices)], tax_shares[: len(devices)], strict=True
     ):
         net = money(dl.price - share)
-        line_total = net if shop.tax_inclusive or tax == ZERO else money(net + tshare)
+        line_total = net if inclusive or tax == ZERO else money(net + tshare)
         cost = money(device.cost_price or ZERO)
         cost_total += cost
         db.add(
@@ -227,7 +230,7 @@ def create_sale(
         data.misc, shares[len(devices) :], tax_shares[len(devices) :], strict=True
     ):
         net = money(ml.unit_price * ml.qty - share)
-        line_total = net if shop.tax_inclusive or tax == ZERO else money(net + tshare)
+        line_total = net if inclusive or tax == ZERO else money(net + tshare)
         accessory = (
             acc_stock.get_accessory(db, shop_id, ml.accessory_id) if ml.accessory_id else None
         )
