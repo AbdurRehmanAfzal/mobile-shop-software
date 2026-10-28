@@ -48,7 +48,10 @@ export async function canUseHere(): Promise<boolean> {
   }
 }
 
-const prompt = { reason: 'Mobile Shop', title: 'Mobile Shop', subtitle: 'Fingerprint', description: '' }
+// the plugin gives up after ONE unrecognised touch by default (maxAttempts 1): the owner's first
+// touch was often not read and the prompt ended with "Authentication failed" (2026-10-28).
+// 5 tries, and the phone's own PIN / pattern as a fallback, like the phone's lock screen.
+const prompt = { reason: 'Mobile Shop', title: 'Mobile Shop', subtitle: 'Fingerprint', description: '', maxAttempts: 5, useFallback: true }
 
 /** which step of switching it on failed, and the phone's own words (shown small, for support) */
 export class FingerprintStepError extends Error {
