@@ -1,5 +1,5 @@
 # Release: every push to main (develop is merged into main when a version is ready), or by hand.
-#   1. all CI checks (ci.yml)
+#   1. all CI checks (ci.yml), then the signed Android APK (android.yml), served by the site at /app.apk
 #   2. build the backend and web images, push them to GitHub's registry (ghcr.io), tagged with the commit
 #   3. SSH to the VPS as 'deploy' and run /opt/mobileshop/deploy.sh <tag> (pull, restart, health check, rollback)
 # Secrets (repo → Settings → Secrets and variables → Actions), the same as the oop-solutions website:
@@ -26,13 +26,30 @@ jobs:
   checks:
     uses: ./.github/workflows/ci.yml
 
-  images:
+  android:
     needs: checks
+    uses: ./.github/workflows/android.yml
+    secrets: inherit
+
+  images:
+    # the site is deployed even if the APK build fails (then /app.apk keeps 404ing until the next one)
+    needs: [checks, android]
+    if: always() && needs.checks.result == 'success'
     runs-on: ubuntu-latest
     env:
       PREFIX: ghcr.io/abdurrehmanafzal/mobile-shop
     steps:
       - uses: actions/checkout@v4
+      - name: Android app for /app.apk
+        if: needs.android.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          pattern: mobile-shop-android-*
+          path: apk
+          merge-multiple: true
+      - name: Put the APK into the web build
+        if: needs.android.result == 'success'
+        run: cp "$(ls apk/*.apk | head -1)" frontend/public/app.apk && ls -l frontend/public/app.apk
       - uses: docker/setup-buildx-action@v3
       - uses: docker/login-action@v3
         with:
@@ -59,6 +76,7 @@ jobs:
 
   deploy:
     needs: images
+    if: always() && needs.images.result == 'success'
     runs-on: ubuntu-latest
     environment: production
     steps:

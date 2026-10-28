@@ -28,7 +28,8 @@
     "loggingIn": "Logging in...",
     "welcome": "Welcome",
     "madeBy": "Made by",
-    "wantApp": "Want this app for your shop? Contact us"
+    "wantApp": "Want this app for your shop? Contact us",
+    "getApp": "Download the Android app"
   },
   "dashboard": {
     "title": "Dashboard",

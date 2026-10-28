@@ -146,3 +146,4 @@ docker-compose.override.yml
 # Playwright
 /frontend/test-results/
 /frontend/playwright-report/
+frontend/public/app.apk

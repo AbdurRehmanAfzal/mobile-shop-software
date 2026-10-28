@@ -9,6 +9,9 @@ Two ways shopkeepers get the app on a phone:
 ## 2. Android app via Capacitor (Play Store)
 Scaffold is in `frontend/android` (Capacitor 6, appId `pk.mobileshop.app`, plugins: camera, share). The app bundles the same React build and talks to the cloud API.
 
+### Download link (2026-10-28)
+Every release builds the signed APK (deploy.yml calls android.yml) and puts it into the web image, so the latest app is always at **https://mobileshop.oopsolutions.com/app.apk** (Caddy serves it as an Android package download). On an Android phone's browser the login page shows **Download the Android app**. Version code = minutes since 1970 (always higher than the last build, so it installs over the old app); version name = date + commit.
+
 ### Build in GitHub Actions (no Android Studio needed)
 `.github/workflows/android.yml` runs on every release (push to `main`, when `frontend/` changed) or by hand (**Actions → Android → Run workflow**):
 `npm run build:native` (= `vite build --mode native` with `VITE_API_URL=vars.APP_URL`, no service worker, then `cap sync android`) → `gradlew assembleRelease` signed with the release key → the APK is a **build artifact** of the run (`mobile-shop-android-1.<run>`), downloadable from the run page while logged in to GitHub. Version code = run number, so every build installs over the previous one.
