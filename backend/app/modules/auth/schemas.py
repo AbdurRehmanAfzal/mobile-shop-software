@@ -82,6 +82,7 @@ class ShopSettingsOut(ShopOut):
     receipt_footer: str | None = None
     receipt_footer_ur: str | None = None
     invoice_prefix: str = "INV"
+    fingerprint_staff: bool = False
 
 
 class UserOut(BaseModel):
@@ -166,4 +167,5 @@ class ShopUpdate(BaseModel):
     receipt_footer: str | None = None
     receipt_footer_ur: str | None = None
     invoice_prefix: str | None = Field(default=None, min_length=1, max_length=10)
+    fingerprint_staff: bool | None = None
     default_locale: str | None = Field(default=None, pattern="^(en|ur)$")

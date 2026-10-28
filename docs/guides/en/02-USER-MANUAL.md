@@ -104,6 +104,16 @@ keypad and tap **Next**.
 
 ---
 
+## 2a. Fingerprint login
+
+After logging in once with your password: **More → Fingerprint login → Turn on for this phone** and touch the sensor. Next time the login page shows **Log in with fingerprint**: one touch and you are in. It works in the Android app (the phone's fingerprint) and on the website (fingerprint, face or Windows Hello on that device). Your fingerprint never leaves the phone.
+
+- The **owner** can always use it. Staff can use it only after the owner switches on **Settings → Staff may log in with their fingerprint**.
+- The same card lists every phone or browser that can log in this way; **Remove** stops that one at once (the owner also sees the staff's). Switching the staff setting off stops all staff fingerprint logins.
+- On a shared shop phone, any finger saved in that phone's settings can open the account: turn it on only on your own phone.
+
+![Fingerprint login switched on](../images/fingerprint-on.png)
+
 ## 3. The home screen
 
 ![Home screen](../images/home.png)

@@ -41,6 +41,9 @@ services:
       WEB_WORKERS: ${WEB_WORKERS:-2}
       PUBLIC_SIGNUP: ${PUBLIC_SIGNUP:-false}
       SUPERUSER_PHONES: ${SUPERUSER_PHONES:-}
+      # passkeys (fingerprint login on the website) belong to this domain
+      WEBAUTHN_RP_ID: ${APP_DOMAIN}
+      WEBAUTHN_ORIGINS: https://${APP_DOMAIN}
     volumes:
       - uploads:/data/uploads
     networks:

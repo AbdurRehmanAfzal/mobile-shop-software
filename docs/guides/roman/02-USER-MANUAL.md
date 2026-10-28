@@ -106,6 +106,16 @@ aur **Aage** dabayein.
 
 ---
 
+## 2a. Fingerprint se login
+
+Ek dafa password se login karne ke baad: **Mazeed → Fingerprint login → Is phone ke liye on karein** aur sensor par ungli rakhein. Agli dafa login page par **Fingerprint se login** aata hai: ek touch aur aap andar. Yeh Android app (phone ka fingerprint) aur website (us device ka fingerprint, face ya Windows Hello) dono par chalta hai. Aap ka fingerprint phone se bahar nahi jata.
+
+- **Malik** hamesha use kar sakta hai. Staff tab hi kar sakta hai jab malik **Settings → Staff bhi fingerprint se login kar sake** on kare.
+- Isi card mein har woh phone ya browser dikhta hai jo is tarah login kar sakta hai; **Hatayein** dabane se woh foran band (malik ko staff ke bhi dikhte hain). Staff wali setting band karne se staff ke saare fingerprint login band ho jate hain.
+- Dukaan ke shared phone par phone ki settings mein darj har ungli account khol sakti hai: sirf apne phone par on karein.
+
+![Fingerprint login on](../images/fingerprint-on.png)
+
 ## 3. Home screen
 
 ![Home screen (Roman)](../images/home-roman.png)

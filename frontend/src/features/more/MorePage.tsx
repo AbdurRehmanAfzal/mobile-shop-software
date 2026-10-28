@@ -13,6 +13,7 @@ import { useAuth, type Role } from '@/lib/auth'
 import { useTheme, type Palette, type Theme } from '@/lib/theme'
 import { api } from '@/lib/api'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import FingerprintCard from './FingerprintCard'
 import { ErrorText, Sheet } from '@/components/ui'
 import { rememberLogin } from '@/features/auth/LoginPage'
 
@@ -194,6 +195,7 @@ export default function MorePage() {
           />
         </div>
       </Sheet>
+      <FingerprintCard />
     </div>
   )
 }
