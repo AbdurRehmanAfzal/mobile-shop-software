@@ -20,6 +20,10 @@ CATEGORIES = (
     "sim_tray",
     "part",
     "power_bank",
+    "speaker",
+    "smart_band",
+    "car_charger",
+    "holder",
     "watch",  # ordinary watches, counted (smart watches are tracked one by one like phones)
     "other",
 )

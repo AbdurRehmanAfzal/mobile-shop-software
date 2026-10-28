@@ -556,7 +556,11 @@
       "part": "Repair part",
       "other": "Other",
       "power_bank": "Power bank",
-      "watch": "Watch"
+      "watch": "Watch",
+      "speaker": "Speaker",
+      "smart_band": "Smart band",
+      "car_charger": "Car charger",
+      "holder": "Mobile holder"
     }
   },
   "exchange": {
@@ -965,7 +969,8 @@
     "hint": "Point at the IMEI barcode on the box, or dial *#06# on the phone and scan the screen. Hold steady, in good light.",
     "again": "Take the photo again",
     "usePhoto": "Take a photo instead",
-    "noCamera": "The camera did not open. Take a photo instead."
+    "noCamera": "The camera did not open. Take a photo instead.",
+    "otherImei": "IMEI 1 is already filled: point at the IMEI 2 barcode."
   },
   "inv": {
     "title": "Invoices",
@@ -1120,6 +1125,9 @@
     "noneSell": "Nothing in stock. Add it from Add stock first.",
     "out": "Out of stock",
     "inStock": "In stock:",
-    "tooMany": "More than in stock"
+    "tooMany": "More than in stock",
+    "newKind": "New kind",
+    "newKindName": "What kind of item?",
+    "newKindPh": "e.g. Ring light"
   }
 }

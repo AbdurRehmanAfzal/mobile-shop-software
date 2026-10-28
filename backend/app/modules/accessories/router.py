@@ -2,11 +2,12 @@ import uuid
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
+from sqlalchemy import func, select
 
 from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx, require_cap
 from app.modules.accessories import service
-from app.modules.accessories.models import CATEGORIES
+from app.modules.accessories.models import CATEGORIES, Accessory
 from app.modules.accessories.schemas import (
     AccessoryCreate,
     AccessoryOut,
@@ -22,8 +23,15 @@ Cost = Annotated[Ctx, Depends(require_cap(Cap.VIEW_COST))]
 
 
 @router.get("/categories")
-def categories():
-    return list(CATEGORIES)
+def categories(ctx: Ctx, db: DB):
+    """The known kinds, then the shop's own kinds (e.g. "Ring light") in the order first used."""
+    own = db.scalars(
+        select(Accessory.category)
+        .where(Accessory.shop_id == ctx.shop_id, Accessory.category.not_in(CATEGORIES))
+        .group_by(Accessory.category)
+        .order_by(func.min(Accessory.created_at))
+    ).all()
+    return [*CATEGORIES, *own]
 
 
 @router.get("/pending", response_model=list[PendingItemOut])

@@ -354,7 +354,7 @@ Har tareeqe ka apna khata hai (Cash, Bank / Online, Cheques, Remittance), is liy
 
 Aam ghariyan (Casio, Naviforce…) aur accessories (charger, cable, cover, glass, handsfree, power bank) **ginti se** rakhi jati hain: IMEI nahi, sirf kitne pieces hain.
 
-**Khareedna:** Stock daalein → dealer chunein → **Accessory / ghari daalein** → list se chunein, ya **Nayi cheez (list mein nahi)**: naam, yeh kya hai (**Ghari**, **Charger**, …), ek ki bechne ki qeemat → **Save kar ke daalein**. Kitne (**Qty**) aur ek ki khareed (**Unit cost**) likhein. Save karne par ginti barh jati hai.
+**Khareedna:** Stock daalein → dealer chunein → **Accessory / ghari daalein** → list se chunein, ya **Nayi cheez (list mein nahi)**: naam, yeh kya hai (**Ghari**, **Charger**, **Speaker**, … ya **+ Nayi qism** se apna naam, maslan *Ring light*), ek ki bechne ki qeemat → **Save kar ke daalein**. Kitne (**Qty**) aur ek ki khareed (**Unit cost**) likhein. Save karne par ginti barh jati hai.
 
 ![Ghariyan khareedna](../images/items-buy.png)
 

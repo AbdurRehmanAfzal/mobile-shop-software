@@ -356,7 +356,7 @@ Each way keeps its own account (Cash, Bank / Online, Cheques, Remittance), so th
 
 Ordinary watches (Casio, Naviforce…) and accessories (chargers, cables, covers, glass, earphones, power banks) are kept **by count**: no IMEI, just how many you have.
 
-**Buying them:** Add stock → choose the dealer → **Add accessory / watch** → pick it from the list, or **New item (not in the list)**: name, what it is (**Watch**, **Charger**, …), selling price each → **Save and add**. Type how many (**Qty**) and the price you paid for one (**Unit cost**). The count goes up when you save.
+**Buying them:** Add stock → choose the dealer → **Add accessory / watch** → pick it from the list, or **New item (not in the list)**: name, what it is (**Watch**, **Charger**, **Speaker**, … or **+ New kind** to write your own, e.g. *Ring light*), selling price each → **Save and add**. Type how many (**Qty**) and the price you paid for one (**Unit cost**). The count goes up when you save.
 
 ![Buying watches](../images/items-buy.png)
 

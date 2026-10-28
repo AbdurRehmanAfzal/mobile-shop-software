@@ -8,7 +8,8 @@ import { BiLabel, useLang } from './Bilingual'
 import { BtnText, Sheet } from './ui'
 import { canScanLive, scanLive, scanPhoto } from '@/lib/scan'
 
-export function ScanButton({ onImei, size = 'lg' }: { onImei: (imei: string) => void; size?: 'lg' | 'sm' }) {
+/** `exclude`: the IMEI already in the other box; a scan skips it (IMEI 2 must not repeat IMEI 1) */
+export function ScanButton({ onImei, size = 'lg', exclude }: { onImei: (imei: string) => void; size?: 'lg' | 'sm'; exclude?: string }) {
   const { pick } = useLang()
   const file = useRef<HTMLInputElement>(null)
   const [live, setLive] = useState(false)
@@ -20,7 +21,7 @@ export function ScanButton({ onImei, size = 'lg' }: { onImei: (imei: string) => 
     setBusy(true)
     setFailed(false)
     try {
-      const found = await scanPhoto(f)
+      const found = (await scanPhoto(f)).filter((x) => x !== exclude)
       if (found.length === 1) onImei(found[0])
       else if (found.length > 1) setChoices(found)
       else setFailed(true)
@@ -44,7 +45,7 @@ export function ScanButton({ onImei, size = 'lg' }: { onImei: (imei: string) => 
       <input ref={file} type="file" accept="image/*" capture="environment" className="hidden" data-testid="scan-photo" onChange={(e) => { const f = e.target.files?.[0]; if (f) void fromPhoto(f) }} />
 
       <Sheet open={live} onClose={() => setLive(false)} title="scan.title">
-        {live ? <LiveScan onImei={(i) => { setLive(false); onImei(i) }} onPhoto={() => { setLive(false); file.current?.click() }} /> : null}
+        {live ? <LiveScan onImei={(i) => { setLive(false); onImei(i) }} onPhoto={() => { setLive(false); file.current?.click() }} exclude={exclude} /> : null}
       </Sheet>
 
       <Sheet open={choices.length > 0} onClose={() => setChoices([])} title="scan.pick">
@@ -70,14 +71,14 @@ export function ScanButton({ onImei, size = 'lg' }: { onImei: (imei: string) => 
   )
 }
 
-function LiveScan({ onImei, onPhoto }: { onImei: (imei: string) => void; onPhoto: () => void }) {
+function LiveScan({ onImei, onPhoto, exclude }: { onImei: (imei: string) => void; onPhoto: () => void; exclude?: string }) {
   const { pick } = useLang()
   const video = useRef<HTMLVideoElement>(null)
   const [err, setErr] = useState(false)
   useEffect(() => {
     let stop: (() => void) | undefined
     let alive = true
-    scanLive(video.current!, onImei)
+    scanLive(video.current!, onImei, exclude)
       .then((s) => (alive ? (stop = s) : s()))
       .catch(() => setErr(true))
     return () => {
@@ -92,7 +93,7 @@ function LiveScan({ onImei, onPhoto }: { onImei: (imei: string) => void; onPhoto
         {/* aiming line */}
         <span aria-hidden="true" className="absolute inset-x-6 top-1/2 h-0.5 -translate-y-1/2 bg-red-500/80" />
       </div>
-      <BiLabel text={err ? 'scan.noCamera' : 'scan.hint'} size="sm" tone={err ? 'text-payable' : 'text-muted'} />
+      <BiLabel text={err ? 'scan.noCamera' : exclude ? 'scan.otherImei' : 'scan.hint'} size="sm" tone={err ? 'text-payable' : 'text-muted'} />
       <button type="button" onClick={onPhoto} className="tap flex min-h-14 items-center justify-center gap-2 rounded-2xl border border-line bg-surface font-bold">
         <Camera size={20} /> {pick('scan.usePhoto')}
       </button>

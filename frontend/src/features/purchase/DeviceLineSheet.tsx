@@ -106,7 +106,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
 
   return (
     <div className="flex flex-col gap-3">
-      <ImeiInput label="stock.imei" help={<Help term="imei" />} disabled={edit} placeholder={t('stock.imeiPlaceholder')} value={d.imei1} onChange={(v) => set('imei1', v)} autoFocus={!initial.imei1} />
+      <ImeiInput label="stock.imei" help={<Help term="imei" />} disabled={edit} placeholder={t('stock.imeiPlaceholder')} value={d.imei1} onChange={(v) => set('imei1', v)} exclude={d.imei2} autoFocus={!initial.imei1} />
       {imeiDigits.length === 15 && lookup ? (
         <div className="flex flex-wrap gap-1.5">
           {!lookup.luhn_ok ? <Chip text="stock.luhnBad" tone="warn" /> : null}
@@ -114,7 +114,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
           {inStockBlock ? <Chip text={`stock.status.${lookup.device!.status}`} tone="bad" /> : null}
         </div>
       ) : null}
-      <ImeiInput label="stock.imei2" value={d.imei2} onChange={(v) => set('imei2', v)} />
+      <ImeiInput label="stock.imei2" value={d.imei2} onChange={(v) => set('imei2', v)} exclude={toLatinDigits(d.imei1).replace(/\D/g, '')} />
 
       <div>
         <BiLabel text="stock.brand" size="md" tone="text-muted" className="mb-1.5" />

@@ -556,7 +556,11 @@
       "part": "Marammat ka purza",
       "other": "Kuch aur",
       "power_bank": "Power bank",
-      "watch": "Ghari"
+      "watch": "Ghari",
+      "speaker": "Speaker",
+      "smart_band": "Smart band",
+      "car_charger": "Car charger",
+      "holder": "Mobile holder"
     }
   },
   "exchange": {
@@ -965,7 +969,8 @@
     "hint": "Dabbe par IMEI wale barcode ki taraf karein, ya mobile par *#06# mila kar screen scan karein. Roshni mein, haath rok kar.",
     "again": "Dobara tasweer lein",
     "usePhoto": "Tasweer le kar parhein",
-    "noCamera": "Camera nahi khula. Tasweer le kar parhein."
+    "noCamera": "Camera nahi khula. Tasweer le kar parhein.",
+    "otherImei": "IMEI 1 pehle se bhara hai: IMEI 2 wale barcode ki taraf karein."
   },
   "inv": {
     "title": "Invoices / Bill",
@@ -1120,6 +1125,9 @@
     "noneSell": "Stock mein kuch nahi. Pehle Stock daalein se daalein.",
     "out": "Stock khatam",
     "inStock": "Stock mein:",
-    "tooMany": "Stock se zyada"
+    "tooMany": "Stock se zyada",
+    "newKind": "Nayi qism",
+    "newKindName": "Yeh kis qism ki cheez hai?",
+    "newKindPh": "maslan Ring light"
   }
 }

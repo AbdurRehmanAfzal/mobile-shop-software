@@ -107,7 +107,7 @@ export const IMEI_LEN = 15
 export const isImeiOk = (v: string) => digits(v).length === IMEI_LEN
 
 /** IMEI: digits only, never more than 15, with a Scan button (camera / photo of the barcode) */
-export function ImeiInput({ value, onChange, error, scan = true, ...rest }: Base & { scan?: boolean }) {
+export function ImeiInput({ value, onChange, error, scan = true, exclude, ...rest }: Base & { scan?: boolean; exclude?: string }) {
   const [touched, setTouched] = useState(false)
   const n = digits(value).length
   const bad = touched && n > 0 && n !== IMEI_LEN
@@ -121,7 +121,7 @@ export function ImeiInput({ value, onChange, error, scan = true, ...rest }: Base
       onBlur={(e) => { setTouched(true); rest.onBlur?.(e) }}
       error={error ?? (bad ? 'field.badImei' : null)}
       className="num"
-      right={scan && !rest.disabled ? <ScanButton onImei={onChange} /> : undefined}
+      right={scan && !rest.disabled ? <ScanButton onImei={onChange} exclude={exclude || undefined} /> : undefined}
     />
   )
 }

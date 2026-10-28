@@ -49,7 +49,9 @@ function decodeStrip(r: Reader, img: ImageBitmap, y: number, h: number, scale: n
 
 /** Live camera (needs https or localhost): a frame every 1/3 s goes through the same strip reading as
  *  a photo, so a label full of barcodes still gives the IMEI. Calls onImei once and stops. */
-export async function scanLive(video: HTMLVideoElement, onImei: (imei: string) => void): Promise<() => void> {
+/** `exclude`: an IMEI already filled in (IMEI 1 when scanning IMEI 2): it is skipped, so the box label's
+ *  second barcode is taken instead of the first one again (owner, 2026-10-28). */
+export async function scanLive(video: HTMLVideoElement, onImei: (imei: string) => void, exclude?: string): Promise<() => void> {
   const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false })
   video.srcObject = stream
   await video.play()
@@ -64,7 +66,7 @@ export async function scanLive(video: HTMLVideoElement, onImei: (imei: string) =
     if (stopped) return
     if (video.videoWidth) {
       const frame = await createImageBitmap(video)
-      const found = await scanBitmap(frame, false)
+      const found = (await scanBitmap(frame, false)).filter((x) => x !== exclude)
       frame.close()
       if (found.length && !stopped) {
         stop()

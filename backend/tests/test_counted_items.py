@@ -69,3 +69,17 @@ def test_buy_and_sell_watches_by_count(owner):
     )
     assert too_many.status_code in (409, 422)
     assert owner.get(f"/api/v1/accessories/{watch['id']}").json()["qty"] == 2
+
+
+def test_a_new_kind_of_item_can_be_added(owner):
+    assert _item(owner, "JBL Go 3", "Speaker", 9000)["category"] == "speaker"  # known kind
+    ring = _item(owner, "Ring light 10 inch", "Ring light", 2500)
+    assert ring["category"] == "Ring light"  # the shop's own kind, kept as written
+    kinds = owner.get("/api/v1/accessories/categories").json()
+    assert "watch" in kinds and "speaker" in kinds and kinds[-1] == "Ring light"
+    assert (
+        owner.get("/api/v1/accessories", params={"category": "Ring light"}).json()[0]["name"]
+        == "Ring light 10 inch"
+    )
+    bad = owner.post("/api/v1/accessories", json={"name": "X", "category": "   ", "price": 1})
+    assert bad.status_code == 422

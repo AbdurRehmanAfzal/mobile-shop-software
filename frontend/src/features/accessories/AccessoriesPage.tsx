@@ -1,6 +1,7 @@
 import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import { KindChooser, kindLabel } from '@/components/ItemKinds'
 import RemoveSheet from '@/components/RemoveSheet'
 import { BtnText, Chip, Empty, ErrorText, fmtDate, KV, List, Loading, MoneyText, PageHeader, Row, SearchBox, Sheet } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
@@ -9,7 +10,6 @@ import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
 
 interface Accessory { id: string; sku: string; name: string; name_ur: string | null; category: string; qty: number; avg_cost: string | null; price: string; reorder_level: number; low_stock: boolean }
 interface Pending { item_id: string; device_label: string; imei1: string; kind: string; pending_from: 'vendor' | 'shop'; expected_at: string | null; promised_to_customer_at: string | null; party_name: string | null; party_phone: string | null; overdue: boolean }
-const CATS = ['charger', 'cable', 'cover', 'glass', 'earphones', 'battery', 'memory', 'sim_tray', 'part', 'power_bank', 'watch', 'other']
 
 export default function AccessoriesPage() {
   const { pick, ur } = useLang()
@@ -63,7 +63,7 @@ export default function AccessoriesPage() {
             <Row
               key={a.id}
               title={ur && a.name_ur ? a.name_ur : a.name}
-              sub={<span className="flex items-center gap-1.5"><span dir="ltr">{a.sku}</span> · {pick(`acc.cat.${a.category}`)} {a.low_stock ? <Chip text="acc.low" tone="bad" /> : null}</span>}
+              sub={<span className="flex items-center gap-1.5"><span dir="ltr">{a.sku}</span> · {kindLabel(pick, a.category)} {a.low_stock ? <Chip text="acc.low" tone="bad" /> : null}</span>}
               right={<div className="flex flex-col items-end"><span className="num text-lg" dir="ltr">{a.qty}</span><MoneyText value={a.price} tone="muted" size="sm" /></div>}
               onClick={canCost ? () => { setAdjusting(a); setDelta(''); setNote('') } : undefined}
             />
@@ -76,7 +76,7 @@ export default function AccessoriesPage() {
           <BiInput label="acc.name" value={f.name} onChange={set('name')} />
           <BiLabel text="acc.category" size="md" tone="text-muted" />
           <div className="flex flex-wrap gap-1.5">
-            {CATS.map((c) => <button key={c} type="button" onClick={() => setF({ ...f, category: c })} className={`tap rounded-full border px-3 py-1.5 text-sm font-bold ${f.category === c ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-muted'}`}>{pick(`acc.cat.${c}`)}</button>)}
+            <KindChooser value={f.category} onChange={(category) => setF({ ...f, category })} />
           </div>
           <div className="grid grid-cols-2 gap-2">
             <BiInput label="acc.price" type="number" inputMode="decimal" min={0} value={f.price} onChange={set('price')} />
@@ -85,7 +85,7 @@ export default function AccessoriesPage() {
             <BiInput label="acc.openingCost" type="number" inputMode="decimal" min={0} value={f.opening_cost} onChange={set('opening_cost')} />
           </div>
           <ErrorText error={create.error} />
-          <BiButton text="common.save" full loading={create.isPending} disabled={!f.name} onClick={async () => { await create.mutateAsync({ name: f.name, name_ur: null, category: f.category, price: Number(f.price || 0), reorder_level: Number(f.reorder_level || 0), opening_qty: Number(f.opening_qty || 0), opening_cost: Number(f.opening_cost || 0) }); setAdding(false) }} />
+          <BiButton text="common.save" full loading={create.isPending} disabled={!f.name || !f.category.trim()} onClick={async () => { await create.mutateAsync({ name: f.name, name_ur: null, category: f.category, price: Number(f.price || 0), reorder_level: Number(f.reorder_level || 0), opening_qty: Number(f.opening_qty || 0), opening_cost: Number(f.opening_cost || 0) }); setAdding(false) }} />
         </div>
       </Sheet>
 
@@ -119,7 +119,7 @@ export default function AccessoriesPage() {
             <BiInput label="acc.name" value={e.name} onChange={(ev) => setE({ ...e, name: ev.target.value })} />
             <BiLabel text="acc.category" size="md" tone="text-muted" />
             <div className="flex flex-wrap gap-1.5">
-              {CATS.map((c) => <button key={c} type="button" onClick={() => setE({ ...e, category: c })} className={`tap rounded-full border px-3 py-1.5 text-sm font-bold ${e.category === c ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-muted'}`}>{pick(`acc.cat.${c}`)}</button>)}
+              <KindChooser value={e.category} onChange={(category) => setE({ ...e, category })} />
             </div>
             <div className="grid grid-cols-2 gap-2">
               <BiInput label="acc.price" type="number" inputMode="decimal" min={0} value={e.price} onChange={(ev) => setE({ ...e, price: ev.target.value })} />
