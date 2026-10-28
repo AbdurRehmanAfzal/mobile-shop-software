@@ -2,8 +2,7 @@
  *  language switch, and the maker's footer. Shops are opened by the product owner, so instead of a
  *  "create shop" button there is a "contact us" line (owner, 2026-10-26). */
 
-import { Capacitor } from '@capacitor/core'
-import { Download, Globe, Phone } from 'lucide-react'
+import { Globe, Phone } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { BiLabel, useLang, type BiText } from '@/components/Bilingual'
 import { LOCALES, setLocale, type Locale } from '@/i18n'
@@ -44,12 +43,6 @@ export default function AuthLayout({ title, children }: { title: string | BiText
           {children}
         </div>
 
-        {/* on an Android phone's browser: the app itself, built by each release (owner 2026-10-28) */}
-        {!Capacitor.isNativePlatform() && /Android/i.test(navigator.userAgent) ? (
-          <a href="/app.apk" download className="tap mt-4 flex min-h-14 items-center justify-center gap-2 rounded-2xl border-2 border-emerald bg-surface px-4 font-bold text-emerald-deep">
-            <Download size={20} /> <BiLabel text="auth.getApp" size="md" bold tone="text-current" />
-          </a>
-        ) : null}
 
         <a href={`tel:${MAKER.tel}`} className="tap mt-4 flex items-center justify-center gap-2 rounded-2xl px-3 py-3 text-center">
           <Phone size={16} className="shrink-0 text-emerald" />
