@@ -6,6 +6,7 @@ import { CheckCircle2, Clock, HandCoins, Phone, Plus, Printer, Receipt, SlidersH
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import DocActions from '@/components/DocShare'
 import { ImeiInput } from '@/components/FieldInputs'
 import PartyPicker from '@/components/PartyPicker'
 import { BtnText, Empty, ErrorText, fmtDate, IconChip, Loading, PageHeader, Section, Sheet } from '@/components/ui'
@@ -238,6 +239,7 @@ export function RepairDetailPage() {
         </div>
       </Section>
       <BiButton text="counter.printSlip" icon={<Printer size={20} />} size="md" variant="ghost" onClick={() => openPrintable(`/api/v1/repairs/${j.id}/job-sheet`)} />
+      <DocActions path={`/api/v1/repairs/${j.id}/job-sheet`} name={`repair-${j.no}`} title={j.no} />
 
       <Section title="stock.history">
         <div className="card p-0">

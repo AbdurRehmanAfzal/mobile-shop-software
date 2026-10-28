@@ -885,7 +885,7 @@
     "download": "Download",
     "downloadTitle": "Yeh report download karein",
     "pdf": "PDF",
-    "pdfHint": "Print khulega — \"Save as PDF\" chunein",
+    "pdfHint": "PDF file, bhejne ya rakhne ke liye",
     "excel": "Excel",
     "excelHint": "Excel ya Google Sheets ke liye",
     "csv": "CSV",
@@ -1195,5 +1195,17 @@
     "removeAsk": "Ye hold sale khatam kar dein?",
     "sold": "Is bill ke {{n}} phone is dauran bik gaye, bill se nikal diye gaye.",
     "hint": "Dobara kholne par bill is list se hat jata hai."
+  },
+  "docShare": {
+    "share": "Share",
+    "shareTitle": "Yeh report share karein",
+    "downloadPdf": "PDF download",
+    "sharePdf": "PDF share karein",
+    "making": "File ban rahi hai…",
+    "shareNow": "File tayyar hai — share ke liye dabayein",
+    "downloads": "Downloads mein save ho gayi",
+    "documents": "Phone mein save ho gayi: Documents › MobileShop",
+    "savedInstead": "Yeh device file share nahi kar sakti, is liye download kar di gayi.",
+    "printHint": "Kaghaz par print karein"
   }
 }

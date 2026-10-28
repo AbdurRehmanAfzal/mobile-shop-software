@@ -885,7 +885,7 @@
     "download": "ڈاؤن لوڈ",
     "downloadTitle": "یہ رپورٹ ڈاؤن لوڈ کریں",
     "pdf": "PDF",
-    "pdfHint": "پرنٹ کھلے گا — \"Save as PDF\" چنیں",
+    "pdfHint": "PDF فائل، بھیجنے یا رکھنے کے لیے",
     "excel": "Excel",
     "excelHint": "Excel یا Google Sheets کے لیے",
     "csv": "CSV",
@@ -1195,5 +1195,17 @@
     "removeAsk": "یہ ہولڈ سیل ختم کر دیں؟",
     "sold": "اس بل کے {{n}} فون اس دوران بک گئے، بل سے نکال دیے گئے۔",
     "hint": "دوبارہ کھولنے پر بل اس فہرست سے ہٹ جاتا ہے۔"
+  },
+  "docShare": {
+    "share": "شیئر",
+    "shareTitle": "یہ رپورٹ شیئر کریں",
+    "downloadPdf": "PDF ڈاؤن لوڈ",
+    "sharePdf": "PDF شیئر کریں",
+    "making": "فائل بن رہی ہے…",
+    "shareNow": "فائل تیار ہے — شیئر کے لیے دبائیں",
+    "downloads": "ڈاؤن لوڈز میں محفوظ ہو گئی",
+    "documents": "فون میں محفوظ ہو گئی: Documents › MobileShop",
+    "savedInstead": "یہ ڈیوائس فائل شیئر نہیں کر سکتی، اس لیے ڈاؤن لوڈ کر دی گئی۔",
+    "printHint": "کاغذ پر پرنٹ کریں"
   }
 }

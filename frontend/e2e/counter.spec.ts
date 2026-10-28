@@ -1,6 +1,7 @@
 /** "Dukaan counter" screens: stock worth by brand/model, any day's hisaab, khata filters, Urdu home
  *  and the laptop side menu with F-keys. Screenshots go to test-results/ for a visual check. */
 
+import { readFileSync } from 'node:fs'
 import { expect, test, type Page } from '@playwright/test'
 
 const phone = () => `039${Math.floor(10_000_000 + Math.random() * 89_999_999)}`
@@ -175,23 +176,39 @@ test('a phone with a pending ID check can be skipped and sold', async ({ page })
   await expect(page.getByText('Sale complete')).toBeVisible()
 })
 
-test('reports download as PDF, Excel and CSV', async ({ page }) => {
+test('reports download as PDF, Excel and CSV, print, and share', async ({ page }) => {
   await signup(page)
   await page.goto('/reports')
-  await page.getByRole('button', { name: 'Download' }).first().click()
+  await page.getByRole('button', { name: 'Download', exact: true }).first().click()
   await expect(page.getByText('Download this report')).toBeVisible()
   const [xlsx] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: /Excel/ }).click()])
   expect(xlsx.suggestedFilename()).toMatch(/^profit-loss-.*\.xlsx$/)
-  await page.getByRole('button', { name: 'Download' }).first().click()
+  await expect(page.getByText('Saved in Downloads')).toBeVisible()
   const [csv] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: /CSV/ }).click()])
   expect(csv.suggestedFilename()).toMatch(/\.csv$/)
-  await page.getByRole('button', { name: 'Download' }).first().click()
-  const [pdf] = await Promise.all([page.waitForEvent('popup'), page.getByRole('button', { name: /PDF/ }).click()])
-  await expect(pdf.locator('table')).toBeVisible()
-  await expect(pdf.getByText('Counter Shop')).toBeVisible()
+  // PDF is a real file now (owner 2026-10-28), made from the print page
+  const [pdf] = await Promise.all([page.waitForEvent('download', { timeout: 30_000 }), page.getByRole('button', { name: /PDF/ }).click()])
+  expect(pdf.suggestedFilename()).toBe('profit-loss.pdf')
+  const head = readFileSync(await pdf.path()).subarray(0, 5).toString()
+  expect(head).toBe('%PDF-')
+  const [printed] = await Promise.all([page.waitForEvent('popup'), page.getByRole('button', { name: /Print/ }).click()])
+  await expect(printed.locator('table')).toBeVisible()
+  await expect(printed.getByText('Counter Shop')).toBeVisible()
+  await printed.close()
+
+  // Share: on a computer the browser cannot share files, so it is downloaded and said so
+  await page.getByRole('button', { name: 'Share', exact: true }).first().click()
+  await expect(page.getByText('Share this report')).toBeVisible()
+  await expect(page.getByRole('button', { name: /Print/ })).toHaveCount(0)
+  const [shared] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: /Excel/ }).click()])
+  expect(shared.suggestedFilename()).toMatch(/\.xlsx$/)
+  await expect(page.getByText('This device cannot share files, so it was downloaded instead.')).toBeVisible()
+
+  await page.keyboard.press('Escape')
+  await page.screenshot({ path: 'test-results/reports-share.png', fullPage: true })
 
   await page.goto('/khata')
-  await page.getByRole('button', { name: 'Download' }).click()
+  await page.getByRole('button', { name: 'Download', exact: true }).click()
   const [k] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: /Excel/ }).click()])
   expect(k.suggestedFilename()).toMatch(/^udhaar-khata-.*\.xlsx$/)
 })

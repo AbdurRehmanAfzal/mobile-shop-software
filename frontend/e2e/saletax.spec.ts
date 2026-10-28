@@ -37,4 +37,10 @@ test('tax checkbox: off by default, 18% added when ticked', async ({ page }) => 
   await page.getByRole('button', { name: 'Skip and sell (I know this person)' }).click()
   await page.getByRole('button', { name: 'Complete sale' }).click()
   await expect(page.getByText('Sale complete')).toBeVisible()
+
+  // the invoice as a PDF file, to download or share (owner 2026-10-28)
+  const [pdf] = await Promise.all([page.waitForEvent('download', { timeout: 30_000 }), page.getByRole('button', { name: 'Download PDF' }).click()])
+  expect(pdf.suggestedFilename()).toMatch(/^invoice-.*\.pdf$/)
+  await pdf.saveAs('test-results/invoice.pdf')
+  await expect(page.getByRole('button', { name: 'Share PDF' })).toBeVisible()
 })
