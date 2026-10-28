@@ -1,10 +1,14 @@
 import uuid
 from typing import Annotated
+from urllib.parse import parse_qsl, urlsplit
 
 from fastapi import APIRouter, Depends, Header
+from pydantic import BaseModel, Field
 
+from app.core.errors import ValidationFailed
 from app.core.permissions import Cap
-from app.core.tenancy import DB, Ctx, CurrentUser, get_current_user, require_cap
+from app.core.security import LINK_SECONDS, create_link_token
+from app.core.tenancy import DB, Ctx, CurrentUser, get_current_user, link_target, require_cap
 from app.modules.auth import service
 from app.modules.auth.schemas import (
     AuthResponse,
@@ -141,3 +145,29 @@ def update_staff(
     db: DB,
 ):
     return service.update_staff(db, ctx.user, ctx.shop_id, staff_id, data)
+
+
+# ---- links for the Android app's print pages and downloads -------------------------------------
+
+LINKABLE = ("/api/v1/exports/", "/api/v1/sales/", "/api/v1/repairs/", "/api/v1/devices/")
+
+
+class LinkIn(BaseModel):
+    path: str = Field(max_length=600)
+
+
+class LinkOut(BaseModel):
+    url: str
+    expires_in: int
+
+
+@router.post("/auth/link", response_model=LinkOut)
+def make_link(data: LinkIn, ctx: Ctx):
+    """A 2-minute address for one print page or download, to open in Chrome (Android app)."""
+    parts = urlsplit(data.path)
+    if parts.scheme or parts.netloc or not parts.path.startswith(LINKABLE):
+        raise ValidationFailed(code="link_not_allowed")
+    target = link_target(parts.path, parse_qsl(parts.query, keep_blank_values=True))
+    token = create_link_token(ctx.id, ctx.shop_id, target)
+    sep = "&" if "?" in target else "?"
+    return {"url": f"{target}{sep}dl={token}", "expires_in": LINK_SECONDS}

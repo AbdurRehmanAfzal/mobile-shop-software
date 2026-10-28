@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
@@ -67,6 +67,26 @@ def create_app() -> FastAPI:
         docs_url="/docs" if settings.app_env != "prod" else None,
         lifespan=lifespan,
     )
+
+    @app.middleware("http")
+    async def autoprint(request: Request, call_next):
+        """`?autoprint=1` on a print page (receipt, declaration, job sheet, report "PDF") opens the
+        print dialog as soon as it loads; used when the Android app opens it in Chrome."""
+        response = await call_next(request)
+        if request.query_params.get("autoprint") != "1" or not response.headers.get(
+            "content-type", ""
+        ).startswith("text/html"):
+            return response
+        body = b"".join([chunk async for chunk in response.body_iterator])
+        script = b"<script>addEventListener('load',()=>setTimeout(()=>print(),500))</script>"
+        body = (
+            body.replace(b"</body>", script + b"</body>", 1)
+            if b"</body>" in body
+            else body + script
+        )
+        headers = {k: v for k, v in response.headers.items() if k.lower() != "content-length"}
+        return Response(body, status_code=response.status_code, headers=headers)
+
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,

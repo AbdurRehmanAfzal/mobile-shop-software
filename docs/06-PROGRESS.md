@@ -55,6 +55,10 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 | Edit / delete everywhere (owner 2026-10-22: "every record can be added, changed and deleted") | ✅ | Backend: delete-or-archive rule (`db/refs.py` counts FK references; history → archived, owed money / stock left → refused), parties, accessories, cash accounts, expense categories, expense edit (void + repost), device details edit, cancel old-stock entry. Frontend: `RemoveSheet`, party delete, accessory edit/delete, cash account rename/delete, expense edit/cancel + category manager, device "Edit details" (DeviceLineSheet `edit` mode) + "Remove old-stock entry". `e2e/crud.spec.ts` |
 | Design v2 "Dukaan counter" (owner + 10 testers rejected the Easypaisa look) | ✅ | ADR-009, docs/11 v2. New tokens + job colours, shell (5 tabs; laptop side menu with F-keys), Home with any-day hisaab / lena-dena / stock worth, `/stock/summary`, `/hisaab`, `/khata`, sale in 3 steps; backend `/reports/stock-summary`, `/reports/day`. Return (wapsi) in 3 steps with the shop's cut and walk-in returns; add stock (purchase) in 3 steps. More, person page and the older screens moved to v2 colours; plain words (ID card check, dealer, new person). Repairs reworked as take in → fix → give back. Still to rework: expenses page layout, settings |
 | Owner reports: profit after expenses, tax, best sellers, 7-day estimate + which phone runs out; seller / stock-adder names; staff may skip a pending ID check | ✅ | `/reports/top-sellers`, `/reports/forecast`, `created_by_name`, `sold_by`; v2 Reports page with 4 tabs; skip chosen on the add-stock screen. Flagged (stolen?) phones still need owner/manager |
+| Watches and accessories by count in sale and purchase (owner 2026-10-28) | ✅ | StockItemPicker; stock count moves, profit from avg cost; watch / power bank categories |
+| Word help "?" (owner 2026-10-28) | ✅ | 16 terms, en/ur/roman |
+| Payment methods on sale and purchase (owner 2026-10-28) | ✅ | Cash · Online (all PK banks/wallets) · Cheque · From abroad (remittance: currency × rate, sender, service, MTCN) · Udhaar; own money account per way; details on bill and receipt. Khata payment form still to align |
+| Android print/download via Chrome link (2026-10-28) | ✅ | 2-minute link for one address; autoprint |
 | Invoices: every bill in one place (owner 2026-10-27) | ✅ | `modules/invoices` + `/invoices` screen: sales, purchases, returns, repairs; search by bill no / name / phone / IMEI (Scan), period, state; to get / to pay totals |
 | Shop time zone for days and reports (2026-10-28) | ✅ | `core/clock.py`: today and ledger days in Asia/Karachi (+05:00); before, sales after midnight PKT counted on the previous day |
 | Full catalogue + field checks (owner 2026-10-27) | ✅ | Seeds: 465 models, 37 colours, 16GB storage. Selling price never below buying price (purchase/opening stock/price change refused; sale below cost only by owner/manager with `below_cost_ok`). Inputs: `components/FieldInputs.tsx` — mobile with fixed +92 (10 digits), CNIC 13 digits with auto dashes, IMEI 15 digits. Dates: from ≤ to ≤ today (`clampRange`), backend `bad_date_range` |
@@ -90,6 +94,12 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 | AI assistant + OCR + pricing | FR-AI-01..04 | ⬜ |
 | FBR POS | FR-TAX-04 | ⬜ |
 | Cloud sync | FR-PLT-05 | ⬜ |
+
+## Backlog (owner requests, not started)
+| Item | Notes |
+|---|---|
+| Tablets and smart watches, one by one (owner 2026-10-28) | Devices get a category (phone / tablet / watch); serial number where there is no IMEI; PTA only for SIM devices; ID check for used ones like phones; Add stock and Sell show Mobile · Tablet · Watch · Accessory. Counted watches and accessories are done |
+| Fingerprint (thumb) login (owner 2026-10-28) | After a normal login, unlock with the phone's fingerprint. Plan: Android app first (native biometric + session kept in the Android Keystore), website later (passkeys / WebAuthn). Android cannot tell whose finger it is, so on a shared shop phone any enrolled finger opens that account: offer it per person on their own phone, let the owner switch it off for staff, and keep void / settings behind the password. Owner to decide: app only or app + website; owners only or staff too |
 
 ## Known issues / tech debt
 - Signup has no phone OTP verification; add before public launch (Phase 3).

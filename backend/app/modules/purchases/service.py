@@ -20,9 +20,10 @@ from app.modules.devices.state import DeviceCondition, DeviceStatus, EventType, 
 from app.modules.expenses.models import DayClose
 from app.modules.ledger import accounts as acc
 from app.modules.ledger.models import CashAccount
-from app.modules.ledger.service import Posting, default_cash_account, money, post, reverse
+from app.modules.ledger.service import Posting, money, post, reverse
 from app.modules.notifications import service as notify
 from app.modules.parties.models import Party
+from app.modules.paymode import service as paymode
 from app.modules.purchases.models import Purchase, PurchaseKind, PurchaseLine, PurchaseStatus
 from app.modules.purchases.schemas import PurchaseCreate
 
@@ -83,13 +84,8 @@ def create_purchase(
         )
     cash: CashAccount | None = None
     if paid > ZERO:
-        cash = (
-            db.get(CashAccount, data.cash_account_id)
-            if data.cash_account_id
-            else default_cash_account(db, shop_id)
-        )
-        if cash is None or cash.shop_id != shop_id:
-            raise NotFound(code="cash_account_not_found")
+        # cash, online or cheque each go out of their own money account
+        cash = paymode.account_for(db, shop_id, data.payment, data.cash_account_id)
 
     at = _purchase_time(data.purchased_at)
     day = data.date or at.astimezone(ZoneInfo(shop.timezone or "Asia/Karachi")).date()
@@ -122,6 +118,7 @@ def create_purchase(
     )
     db.add(purchase)
     db.flush()
+    paymode.save(db, shop_id, "purchase", purchase.id, data.payment, paid)
 
     shares = _allocate_discount(discount, line_amounts)
     posting = Posting(
@@ -322,6 +319,7 @@ def to_out(db: Session, p: Purchase) -> dict:
         if p.status == PurchaseStatus.POSTED
         else ZERO,
         "lines": lines,
+        "payment": paymode.detail_for(db, p.shop_id, "purchase", p.id),
     }
 
 

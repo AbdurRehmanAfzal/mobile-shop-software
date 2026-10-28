@@ -19,9 +19,10 @@ from app.modules.devices.service import apply_event, get_device
 from app.modules.devices.state import DeviceStatus, EventType, VerificationStatus
 from app.modules.ledger import accounts as acc
 from app.modules.ledger.models import CashAccount
-from app.modules.ledger.service import Posting, default_cash_account, money, post, reverse
+from app.modules.ledger.service import Posting, money, post, reverse
 from app.modules.notifications import service as notify
 from app.modules.parties.models import Party
+from app.modules.paymode import service as paymode
 from app.modules.purchases.service import _allocate_discount, next_number
 from app.modules.sales.models import Invoice, InvoiceLine, InvoiceStatus
 from app.modules.sales.schemas import SaleCreate
@@ -147,13 +148,8 @@ def create_sale(
         )
     cash: CashAccount | None = None
     if paid > ZERO:
-        cash = (
-            db.get(CashAccount, data.cash_account_id)
-            if data.cash_account_id
-            else default_cash_account(db, shop_id)
-        )
-        if cash is None or cash.shop_id != shop_id:
-            raise NotFound(code="cash_account_not_found")
+        # cash, online, cheque or remittance each land in their own money account
+        cash = paymode.account_for(db, shop_id, data.payment, data.cash_account_id)
 
     invoice = Invoice(
         shop_id=shop_id,
@@ -175,6 +171,7 @@ def create_sale(
     )
     db.add(invoice)
     db.flush()
+    paymode.save(db, shop_id, "sale", invoice.id, data.payment, paid)
 
     shares = _allocate_discount(discount, line_amounts)
     tax_shares = (
@@ -406,6 +403,7 @@ def to_out(db: Session, inv: Invoice, show_cost: bool) -> dict:
         "cost_total": inv.cost_total if show_cost else None,
         "profit": money(inv.total - inv.tax_amount - inv.cost_total) if show_cost else None,
         "lines": lines,
+        "payment": paymode.detail_for(db, inv.shop_id, "sale", inv.id),
     }
 
 
@@ -552,6 +550,29 @@ def receipt_html(
         if inv.tax_amount
         else ""
     )
+    # how it was paid: "Online · Meezan Bank · TID 123", "Remittance · 500 SAR × 74.20 · Ahmed"
+    pay = out.get("payment")
+    paid_by_html = ""
+    if pay is not None:
+        how = {
+            "online": ("آن لائن", "Online"),
+            "cheque": ("چیک", "Cheque"),
+            "remittance": ("بیرونِ ملک سے رقم", "Remittance"),
+        }.get(pay.method, (pay.method, pay.method))[0 if ur else 1]
+        bits = [how, pay.bank]
+        if pay.method == "remittance":
+            bits = [
+                how,
+                f"{pay.foreign_amount:,.2f} {pay.currency} × {pay.rate:,.2f}",
+                pay.service,
+                pay.sender_name,
+            ]
+        if pay.reference:
+            bits.append(("نمبر " if ur else "Ref ") + pay.reference)
+        if pay.cheque_date:
+            bits.append(str(pay.cheque_date))
+        text = " · ".join(e(str(x)) for x in bits if x)
+        paid_by_html = f'<tr><td colspan="4">{text}</td></tr>'
     disc_html = (
         f"<tr><td colspan='3'>{T['discount']}</td><td class='n'>-{inv.discount:,.0f}</td></tr>"
         if inv.discount
@@ -582,7 +603,7 @@ small {{ color: #555; direction: ltr; unicode-bidi: isolate; }} .foot {{ margin-
 <tbody>{rows}
 <tr><td colspan="3">{T["subtotal"]}</td><td class="n">{inv.subtotal:,.0f}</td></tr>{disc_html}{tax_html}
 <tr class="tot"><td colspan="3">{T["grand"]}</td><td class="n">Rs. {inv.total:,.0f}</td></tr>
-<tr><td colspan="3">{T["paid"]}</td><td class="n">{inv.paid:,.0f}</td></tr>
+<tr><td colspan="3">{T["paid"]}</td><td class="n">{inv.paid:,.0f}</td></tr>{paid_by_html}
 <tr><td colspan="3">{T["due"]}</td><td class="n">{out["balance_due"]:,.0f}</td></tr>{balance_html}
 </tbody></table>
 {pending_html}

@@ -8,8 +8,9 @@ A user can never act in a shop they are not assigned to.
 import uuid
 from dataclasses import dataclass
 from typing import Annotated
+from urllib.parse import urlencode
 
-from fastapi import Depends, Header
+from fastapi import Depends, Header, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -56,13 +57,30 @@ class CurrentContext(CurrentUser):
             raise Forbidden()
 
 
+def link_target(path: str, query: list[tuple[str, str]]) -> str:
+    """The address a link token is bound to: the path and its query, in order, without `dl`."""
+    rest = [(k, v) for k, v in query if k != "dl"]
+    return path + ("?" + urlencode(rest) if rest else "")
+
+
 def get_current_user(
+    request: Request,
     creds: Annotated[HTTPAuthorizationCredentials | None, Depends(_bearer)],
     db: Annotated[Session, Depends(get_db)],
 ) -> CurrentUser:
     if creds is None:
-        raise Unauthorized()
-    payload = decode_token(creds.credentials, "access")
+        # a print page / download opened in Chrome from the Android app (see create_link_token)
+        dl = request.query_params.get("dl")
+        if request.method != "GET" or not dl:
+            raise Unauthorized()
+        payload = decode_token(dl, "link")
+        if payload.get("target") != link_target(
+            request.url.path, request.query_params.multi_items()
+        ):
+            raise Unauthorized(code="link_mismatch")
+        request.state.link_shop = payload.get("shop")
+    else:
+        payload = decode_token(creds.credentials, "access")
     user = db.get(User, uuid.UUID(payload["sub"]))
     if user is None or not user.is_active:
         raise Unauthorized(code="user_inactive")
@@ -70,10 +88,13 @@ def get_current_user(
 
 
 def get_current_context(
+    request: Request,
     current: Annotated[CurrentUser, Depends(get_current_user)],
     db: Annotated[Session, Depends(get_db)],
     x_shop_id: Annotated[str | None, Header(alias="X-Shop-Id")] = None,
 ) -> CurrentContext:
+    if x_shop_id is None:
+        x_shop_id = getattr(request.state, "link_shop", None)
     assigned = db.scalars(
         select(Shop)
         .join(UserShop, UserShop.shop_id == Shop.id)

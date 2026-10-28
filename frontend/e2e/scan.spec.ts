@@ -53,13 +53,12 @@ test('scan an IMEI barcode from a photo into the add-device form', async ({ page
   await page.getByTestId('scan-photo').first().setInputFiles(fixture('imei-one.png'))
   await expect(page.getByLabel('IMEI', { exact: true })).toHaveValue('490154203237518', { timeout: 20_000 })
 
-  // a box label: shop barcode + IMEI 1 + IMEI 2 in one photo -> both IMEIs offered
+  // a box label: shop barcode + IMEI 1 + IMEI 2 in one photo, scanned into the IMEI 2 box
   const label = (await stack(page, ['label-ean.png', 'imei-one.png', 'label-imei2.png'], 60)).toString('base64')
   await page.getByTestId('scan-photo').nth(1).setInputFiles({ name: 'label.png', mimeType: 'image/png', buffer: Buffer.from(label, 'base64') })
-  await expect(page.getByText('Which IMEI?')).toBeVisible({ timeout: 20_000 })
-  await page.screenshot({ path: 'test-results/scan-pick.png' })
-  await page.getByRole('button', { name: '356938035643809' }).click()
-  await expect(page.getByLabel('IMEI 2')).toHaveValue('356938035643809')
+  // IMEI 1 is already filled, so the IMEI 2 box takes the label's other IMEI by itself (owner, 2026-10-28)
+  await expect(page.getByLabel('IMEI 2')).toHaveValue('356938035643809', { timeout: 20_000 })
+  await expect(page.getByText('Which IMEI?')).toHaveCount(0)
 
   // an Apple-style label: EID, serial and IMEI barcodes packed close together -> only the IMEI
   await page.getByLabel('IMEI', { exact: true }).fill('')

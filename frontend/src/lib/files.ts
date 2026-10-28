@@ -1,7 +1,19 @@
-import { ApiError } from './api'
+import { Capacitor } from '@capacitor/core'
+import { ApiError, post } from './api'
 import { useAuth } from './auth'
 
 const BASE = import.meta.env.VITE_API_URL?.replace(/\/$/, '') ?? ''
+
+/** In the Android app the WebView has no print dialog and does not save downloads. There the
+ *  page or file opens in Chrome through a 2-minute link made for this one address (backend
+ *  `POST /auth/link`); print pages get `autoprint=1` so Chrome shows the print dialog by itself,
+ *  where "Save as PDF" also works (owner, 2026-10-28). */
+async function openInChrome(path: string, print: boolean): Promise<void> {
+  const target = print ? `${path}${path.includes('?') ? '&' : '?'}autoprint=1` : path
+  const { url } = await post<{ url: string }>('/api/v1/auth/link', { path: target })
+  const { AppLauncher } = await import('@capacitor/app-launcher')
+  await AppLauncher.openUrl({ url: `${BASE}${url}` })
+}
 
 /** Upload a photo/PDF; returns the shop-scoped relative path to store on records. */
 export async function uploadFile(file: File, purpose = 'misc'): Promise<string> {
@@ -33,6 +45,7 @@ export async function fileObjectUrl(path: string): Promise<string> {
 
 /** Open an authenticated HTML document (receipt, declaration) in a new tab for printing. */
 export async function openPrintable(path: string): Promise<void> {
+  if (Capacitor.isNativePlatform()) return openInChrome(path, true)
   const { accessToken, activeShopId } = useAuth.getState()
   const headers: Record<string, string> = {}
   if (accessToken) headers.Authorization = `Bearer ${accessToken}`
@@ -50,6 +63,7 @@ export async function openPrintable(path: string): Promise<void> {
 
 /** Download an authenticated file (CSV export) and save it with the server's filename. */
 export async function downloadFile(path: string, fallbackName = 'export.csv'): Promise<void> {
+  if (Capacitor.isNativePlatform()) return openInChrome(path, false)
   const { accessToken, activeShopId } = useAuth.getState()
   const headers: Record<string, string> = {}
   if (accessToken) headers.Authorization = `Bearer ${accessToken}`

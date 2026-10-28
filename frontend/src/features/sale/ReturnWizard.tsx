@@ -6,6 +6,7 @@ import { Banknote, BookOpen, Check, Home, Undo2, Wallet } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import PartyPicker from '@/components/PartyPicker'
 import { ErrorText, List, PageHeader, Row, SearchBox, Stepper, fmtDate } from '@/components/ui'
 import { get } from '@/lib/api'
@@ -180,7 +181,7 @@ export default function ReturnWizard() {
               </div>
               {!toKhata ? (
                 <>
-                  <BiInput label="counter.giveBack" type="number" inputMode="numeric" min={0} max={paidFor} value={refund ?? String(paidFor)} onChange={(e) => setRefund(e.target.value)} className="num text-2xl" />
+                  <BiInput label="counter.giveBack" help={<Help term="cut" />} type="number" inputMode="numeric" min={0} max={paidFor} value={refund ?? String(paidFor)} onChange={(e) => setRefund(e.target.value)} className="num text-2xl" />
                   <div className="flex items-center justify-between rounded-2xl bg-ret px-4 py-3 text-ret-fg">
                     <span className={small}>{pick('counter.cut')}</span>
                     <span className="num text-2xl" dir="ltr">{n(cut)}</span>

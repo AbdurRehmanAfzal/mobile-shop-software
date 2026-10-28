@@ -8,7 +8,7 @@ import jwt
 from app.core.config import settings
 from app.core.errors import Unauthorized
 
-TokenType = Literal["access", "refresh"]
+TokenType = Literal["access", "refresh", "link"]
 
 
 def hash_password(raw: str) -> str:
@@ -42,6 +42,25 @@ def create_token(user_id: uuid.UUID, organisation_id: uuid.UUID, token_type: Tok
         "iat": int(now.timestamp()),
         "exp": int(exp.timestamp()),
         "jti": uuid.uuid4().hex,
+    }
+    return jwt.encode(payload, settings.secret_key, algorithm="HS256")
+
+
+LINK_SECONDS = 120
+
+
+def create_link_token(user_id: uuid.UUID, shop_id: uuid.UUID, target: str) -> str:
+    """A 2-minute token that opens exactly one GET address (path + query) as this user, in this
+    shop. The Android app uses it to show a print page or a download in Chrome, which cannot send
+    the app's Authorization header (owner, 2026-10-28)."""
+    now = datetime.now(UTC)
+    payload = {
+        "sub": str(user_id),
+        "shop": str(shop_id),
+        "typ": "link",
+        "target": target,
+        "iat": int(now.timestamp()),
+        "exp": int((now + timedelta(seconds=LINK_SECONDS)).timestamp()),
     }
     return jwt.encode(payload, settings.secret_key, algorithm="HS256")
 

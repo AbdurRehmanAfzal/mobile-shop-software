@@ -59,8 +59,9 @@ OOP Solutions sends you the app file (for example `mobile-shop.apk`) on WhatsApp
 3. Tap **Install**, then **Open**.
 4. A newer APK later installs over the old one; your data stays (it lives on the server).
 
-> In the Android app, **printing and downloads (PDF / Excel / CSV) do not work yet.**
-> For receipts, declarations and downloads, use the website in Chrome (1a). See [Common problems](#21-common-problems).
+> In the Android app, **Print** and **Download** (PDF / Excel / CSV) open in **Chrome**: the print
+> screen appears by itself (choose your printer or **Save as PDF**), and Excel / CSV files go to the
+> phone's **Downloads**. Go back to the app with the back button. The link works for 2 minutes only.
 
 ---
 
@@ -332,6 +333,38 @@ window opens: pick your thermal (80 mm) printer or **Save as PDF**. In the Andro
 not work yet — open the sale on the website (**More → Sales list** → the sale) and print from there.
 
 ---
+
+### 6a. How was it paid? (sale and add stock)
+
+Under **How was it paid?** tap one big button:
+
+| Button | When | What it asks |
+|---|---|---|
+| **Cash** | money in hand | nothing |
+| **Online** | bank app, IBFT, Raast, Easypaisa, JazzCash, SadaPay… | which bank or app (tap a name, or **Other bank / wallet** for the full list); TID if you want |
+| **Cheque** | a cheque | the cheque's bank, cheque no., cheque date |
+| **From abroad** (sales only) | the buyer's family sends the money from another country | the country / currency, how much (e.g. **500 SAR**), the rate (**1 SAR = Rs. 74.20**) → the app shows **Rs. 37,100**; the sender's name; Western Union, MoneyGram… (optional); MTCN (optional) |
+| **Udhaar** | pay later | the customer, and what is paid now |
+
+![Paid online](../images/pay-online.png)
+
+Each way keeps its own account (Cash, Bank / Online, Cheques, Remittance), so the day's hisaab shows how much came by each. Easypaisa / JazzCash go into the shop's own Easypaisa / JazzCash account if you made one in **More → Money accounts**. The receipt and the bill show how it was paid, e.g. *Online · Meezan Bank · Ref TID778812*.
+
+**Example (from abroad):** Usman's brother in Riyadh sends 500 SAR through Western Union for a Rs. 37,100 phone. Tap **From abroad → SAR**, type 500 and 74.20, the sender "Ahmed Raza", tap **Western Union**, **Complete sale**. If the remittance comes to less than the bill, the rest goes on the customer's udhaar (choose the customer).
+
+### 6b. Watches and accessories (counted)
+
+Ordinary watches (Casio, Naviforce…) and accessories (chargers, cables, covers, glass, earphones, power banks) are kept **by count**: no IMEI, just how many you have.
+
+**Buying them:** Add stock → choose the dealer → **Add accessory / watch** → pick it from the list, or **New item (not in the list)**: name, what it is (**Watch**, **Charger**, **Speaker**, … or **+ New kind** to write your own, e.g. *Ring light*), selling price each → **Save and add**. Type how many (**Qty**) and the price you paid for one (**Unit cost**). The count goes up when you save.
+
+![Buying watches](../images/items-buy.png)
+
+**Selling them:** Sell → **Accessory / watch** (also under a phone, to sell a charger with it) → tap the item. The line shows how many are in stock; you cannot sell more than that. The count goes down and the profit is worked out from what you paid.
+
+![Selling a watch](../images/items-sell.png)
+
+**Example:** you buy 3 Casio MTP-1302 at Rs. 4,500 and sell one for Rs. 6,500: stock shows 2, profit Rs. 2,000. Smart watches and tablets (one by one, with serial / IMEI) come next.
 
 ## 7. Returns (customer brings a phone back)
 
@@ -759,8 +792,9 @@ The list **Customer shops** shows every shop with users and opening date; use th
 
 ![Scan](../images/scan.png)
 
-**Print or download does nothing in the Android app.** Known gap. Open
-https://mobileshop.oopsolutions.com in Chrome, log in, and print / download from there.
+**Print or download in the Android app opens Chrome.** That is how it works: Chrome shows the
+print screen or saves the file. If Chrome says the link has expired, go back and tap Print /
+Download again (a link lasts 2 minutes).
 
 **I forgot my password or PIN.** PIN: tap **Forgot PIN? Use password**. Password: ask the shop owner
 (**More → Staff** → your name → **New password**). The owner contacts OOP Solutions.

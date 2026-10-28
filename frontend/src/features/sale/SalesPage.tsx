@@ -3,11 +3,12 @@ import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { BtnText, Chip, Empty, ErrorText, fmtDate, KV, List, Loading, MoneyText, PageHeader, Row, Sheet } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { openPrintable } from '@/lib/files'
 import { useDocMutation, useSale, useSales } from '@/lib/queries'
-import type { Invoice, ReturnDoc } from '@/lib/types'
+import type { Invoice, PaymentDetail, ReturnDoc } from '@/lib/types'
 
 const TONE: Record<Invoice['status'], 'ok' | 'warn' | 'bad' | 'muted' | 'ink'> = { paid: 'ok', partially_paid: 'warn', open: 'bad', returned: 'muted', void: 'muted' }
 
@@ -85,6 +86,7 @@ export function SaleDetailPage() {
         <KV k="sale.steps.customer" v={inv.party_name ? <button type="button" className="text-emerald" onClick={() => nav(`/parties/${inv.party_id}`)}>{inv.party_name}</button> : pick('sale.cashCustomer')} />
         <KV k="common.date" v={<span dir="ltr">{fmtDate(inv.date)}</span>} />
         {inv.created_by_name ? <KV k="counter.soldBy" v={inv.created_by_name} /> : null}
+        {inv.payment ? <KV k="counter.howPaid" v={<span dir="ltr">{paidBy(inv.payment, pick)}</span>} /> : null}
       </div>
       <List>
         {inv.lines.map((l) => (
@@ -127,7 +129,7 @@ export function SaleDetailPage() {
         <BiButton text="sale.printThermal" size="md" onClick={() => openPrintable(`/api/v1/sales/${inv.id}/receipt?format=thermal`)} />
         <BiButton text="sale.printA4" size="md" variant="secondary" onClick={() => openPrintable(`/api/v1/sales/${inv.id}/receipt?format=a4`)} />
         {active && inv.party_id ? <BiButton text="sale.return" size="md" variant="secondary" onClick={() => { setSelected(inv.lines.filter((l) => !l.returned_at).map((l) => l.id)); setReturning(true) }} /> : null}
-        {active && canManage ? <BiButton text="common.void" size="md" variant="danger" onClick={() => setVoiding(true)} /> : null}
+        {active && canManage ? <span className="flex items-center gap-1"><BiButton text="common.void" size="md" variant="danger" onClick={() => setVoiding(true)} /><Help term="void" /></span> : null}
       </div>
 
       <Sheet open={returning} onClose={() => setReturning(false)} title="sale.return">
@@ -156,4 +158,14 @@ export function SaleDetailPage() {
       </Sheet>
     </div>
   )
+}
+
+/** "Online · Meezan Bank · TID 123", "From abroad · 500 SAR × 74.20 · Ahmed Raza" */
+function paidBy(p: PaymentDetail, pick: (k: string) => string): string {
+  const bits: (string | null)[] =
+    p.method === 'remittance'
+      ? [pick('paym.remittance'), `${Number(p.foreign_amount).toLocaleString('en-US')} ${p.currency} × ${Number(p.rate)}`, p.service, p.sender_name]
+      : [pick(`paym.${p.method}`), p.bank, p.cheque_date]
+  if (p.reference) bits.push(p.reference)
+  return bits.filter(Boolean).join(' · ')
 }

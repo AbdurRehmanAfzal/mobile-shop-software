@@ -60,8 +60,9 @@ OOP Solutions aap ko app ki file (maslan `mobile-shop.apk`) WhatsApp ya USB se b
 3. **Install** dabayein, phir **Open**.
 4. Baad mein naya APK purane ke ooper install ho jata hai; data mehfooz rehta hai (data server par hai).
 
-> Android app mein **print aur download (PDF / Excel / CSV) abhi kaam nahi karte.**
-> Raseed, iqrar nama aur download ke liye Chrome mein website (1a) istemal karein. [Aam masle](#21-aam-masle) dekhein.
+> Android app mein **Print** aur **Download** (PDF / Excel / CSV) **Chrome** mein khulte hain: print
+> ki screen khud aa jati hai (printer chunein ya **Save as PDF**), aur Excel / CSV file phone ke
+> **Downloads** mein chali jati hai. Wapas app mein aane ke liye back button dabayein. Link sirf 2 minute chalta hai.
 
 ---
 
@@ -330,6 +331,38 @@ window khulti hai: thermal (80 mm) printer ya **Save as PDF** chunein. Android a
 chalta — website par bikri kholein (**Mazeed → Bikri ki list** → bikri) aur wahan se print karein.
 
 ---
+
+### 6a. Paise kaise diye? (sale aur stock daalna)
+
+**How was it paid?** ke neeche ek bara button dabayein:
+
+| Button | Kab | Kya poochta hai |
+|---|---|---|
+| **Cash** | haath mein paise | kuch nahi |
+| **Online** | bank app, IBFT, Raast, Easypaisa, JazzCash, SadaPay… | kaunsa bank ya app (naam dabayein, ya **Koi aur bank / wallet** se poori list); TID agar ho |
+| **Cheque** | cheque | cheque ka bank, cheque number, cheque ki tareekh |
+| **Bahar se** (sirf sale) | khareedne wale ke ghar wale doosre mulk se paise bhejte hain | mulk / currency, kitne aaye (maslan **500 SAR**), rate (**1 SAR = Rs. 74.20**) → app khud **Rs. 37,100** dikhati hai; bhejne wale ka naam; Western Union, MoneyGram… (agar pata ho); MTCN (agar ho) |
+| **Udhaar** | baad mein dena | gahak, aur abhi kitne diye |
+
+![Online payment](../images/pay-online.png)
+
+Har tareeqe ka apna khata hai (Cash, Bank / Online, Cheques, Remittance), is liye din ke hisaab mein nazar aata hai ke kis tareeqe se kitna aaya. Easypaisa / JazzCash dukaan ke apne Easypaisa / JazzCash account mein jate hain agar aap ne **Mazeed → Money accounts** mein banaya ho. Raseed aur bill par likha hota hai ke paise kaise aaye, maslan *Online · Meezan Bank · Ref TID778812*.
+
+**Misaal (bahar se):** Usman ka bhai Riyadh se Rs. 37,100 ke phone ke liye Western Union se 500 SAR bhejta hai. **Bahar se → SAR** dabayein, 500 aur 74.20 likhein, bhejne wala "Ahmed Raza", **Western Union** dabayein, **Complete sale**. Agar bahar se aaye paise bill se kam hon to baqi gahak ke udhaar mein chale jate hain (gahak chunein).
+
+### 6b. Ghariyan aur accessories (ginti se)
+
+Aam ghariyan (Casio, Naviforce…) aur accessories (charger, cable, cover, glass, handsfree, power bank) **ginti se** rakhi jati hain: IMEI nahi, sirf kitne pieces hain.
+
+**Khareedna:** Stock daalein → dealer chunein → **Accessory / ghari daalein** → list se chunein, ya **Nayi cheez (list mein nahi)**: naam, yeh kya hai (**Ghari**, **Charger**, **Speaker**, … ya **+ Nayi qism** se apna naam, maslan *Ring light*), ek ki bechne ki qeemat → **Save kar ke daalein**. Kitne (**Qty**) aur ek ki khareed (**Unit cost**) likhein. Save karne par ginti barh jati hai.
+
+![Ghariyan khareedna](../images/items-buy.png)
+
+**Bechna:** Sell → **Accessory / ghari** (phone ke saath charger bechna ho to phone ke neeche bhi yahi button) → item par tap karein. Line par likha hota hai stock mein kitne hain; is se zyada nahi bik sakte. Ginti kam ho jati hai aur munafa khareed qeemat se khud nikalta hai.
+
+![Ghari bechna](../images/items-sell.png)
+
+**Misaal:** 3 Casio MTP-1302 Rs. 4,500 mein khareedin, ek Rs. 6,500 mein bechi: stock 2 dikhata hai, munafa Rs. 2,000. Smart watch aur tablet (ek ek piece, serial / IMEI ke saath) agla kaam hai.
 
 ## 7. Wapsi (gahak phone wapas laya)
 
@@ -760,8 +793,9 @@ Sirf product ke maalik (OOP Solutions) ke liye. **Mazeed → Super admin** (doos
 
 ![Scan](../images/scan.png)
 
-**Android app mein print ya download kuch nahi karta.** Yeh abhi ki kami hai. Chrome mein
-https://mobileshop.oopsolutions.com kholein, login karein aur wahan se print / download karein.
+**Android app mein print ya download Chrome kholta hai.** Yahi tareeqa hai: Chrome print ki
+screen dikhata hai ya file save karta hai. Agar Chrome kahe ke link expire ho gaya, wapas aa kar
+Print / Download dobara dabayein (link 2 minute chalta hai).
 
 **Password ya PIN bhool gaye.** PIN: **PIN bhool gaye? Password lagayein**. Password: dukaan ke maalik se
 kahein (**Mazeed → Staff** → aap ka naam → **Naya password**). Maalik OOP Solutions se raabta kare.

@@ -7,6 +7,17 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from app.modules.accessories.models import CATEGORIES
 
 
+def clean_category(v: str) -> str:
+    """A known kind (charger, watch, ...) or the shop's own word for a new kind, e.g. "Ring light"
+    (owner, 2026-10-28: "speaker bhi purchase karte hain ... new item add ka option")."""
+    v = " ".join(v.split())
+    if not v:
+        raise ValueError("Write what kind of item it is")
+    if len(v) > 20:
+        raise ValueError("Kind of item: at most 20 letters")
+    return v.lower() if v.lower() in CATEGORIES else v
+
+
 class AccessoryCreate(BaseModel):
     sku: str | None = Field(default=None, max_length=40)
     name: str = Field(min_length=1, max_length=150)
@@ -22,9 +33,7 @@ class AccessoryCreate(BaseModel):
     @field_validator("category")
     @classmethod
     def _cat(cls, v: str) -> str:
-        if v not in CATEGORIES:
-            raise ValueError(f"category must be one of {CATEGORIES}")
-        return v
+        return clean_category(v)
 
 
 class AccessoryUpdate(BaseModel):
@@ -38,9 +47,7 @@ class AccessoryUpdate(BaseModel):
     @field_validator("category")
     @classmethod
     def _cat(cls, v: str | None) -> str | None:
-        if v is not None and v not in CATEGORIES:
-            raise ValueError(f"category must be one of {CATEGORIES}")
-        return v
+        return None if v is None else clean_category(v)
 
 
 class AdjustIn(BaseModel):

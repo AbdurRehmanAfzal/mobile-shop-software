@@ -122,10 +122,12 @@ export interface BiInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>
   hint?: string | BiText
   /** a button beside the box, e.g. Scan */
   right?: ReactNode
+  /** a "?" beside the label that explains the word (components/Help) */
+  help?: ReactNode
 }
 
 export const BiInput = forwardRef<HTMLInputElement, BiInputProps>(function BiInput(
-  { label, error, hint, right, className = '', id, ...rest },
+  { label, error, hint, right, help, className = '', id, ...rest },
   ref,
 ) {
   const inputId = id ?? `in-${resolve(label).en.replace(/\W+/g, '-').toLowerCase()}`
@@ -133,9 +135,12 @@ export const BiInput = forwardRef<HTMLInputElement, BiInputProps>(function BiInp
   return (
     // only the words are the <label>, so a button beside the box (Scan) is not part of its name
     <div>
-      <label htmlFor={inputId} className="block">
-        <BiLabel text={label} size="md" tone="text-muted" />
-      </label>
+      <div className="flex items-center gap-1">
+        <label htmlFor={inputId} className="block">
+          <BiLabel text={label} size="md" tone="text-muted" />
+        </label>
+        {help}
+      </div>
       <div className="mt-1.5 flex gap-2">
         <input
           ref={ref}
