@@ -52,7 +52,19 @@ Releases: merge `develop` into `main` and push `main` (the owner decides when).
 - Roll back by hand: `sudo /opt/mobileshop/deploy.sh <older sha>` (note: migrations are not undone; a rollback across a schema change needs a DB restore)
 
 ## Backups
-`setup-vps.sh` installs a cron job (02:30): `pg_dump` + uploads to `/opt/mobileshop-backups`, kept 14 days (`deploy/backup.sh`). Copy them off the server regularly (e.g. rclone to Google Drive).
+`setup-vps.sh` installs a cron job (02:30): `pg_dump` + uploads to `/opt/mobileshop-backups`, kept 14 days (`deploy/backup.sh`). With `RCLONE_REMOTE` set in `/opt/mobileshop/.env`, the same job copies each night's files to Google Drive (kept 30 days there).
+
+**One-time Google Drive setup (on the VPS, as root):**
+1. Install rclone: `curl https://rclone.org/install.sh | bash`
+2. `rclone config` → `n` (new remote) → name `gdrive` → storage `drive` → leave client id/secret empty → scope `1` (full) → "Use web browser to automatically authenticate?" **n** → it prints a command `rclone authorize "drive" "..."`: run that on your own PC (install rclone there too), log in to the Google account in the browser, copy the token it prints back into the VPS prompt → finish.
+3. Encrypt it (the backup has CNIC photos): `rclone config` → `n` → name `gdrive-safe` → storage `crypt` → remote `gdrive:mobileshop-backups` → filename encryption `standard` → choose two strong passwords. **Keep both passwords safe**: without them the backups cannot be opened.
+4. Get the newest backup script and switch it on:
+   ```
+   curl -fsSL https://raw.githubusercontent.com/AbdurRehmanAfzal/mobile-shop-software/main/deploy/backup.sh -o /opt/mobileshop/backup.sh && chmod +x /opt/mobileshop/backup.sh
+   echo 'RCLONE_REMOTE=gdrive-safe:' >> /opt/mobileshop/.env
+   /opt/mobileshop/backup.sh      # run once now; the last line says "offsite copy ok"
+   rclone ls gdrive-safe: | tail   # the files are in Drive (encrypted names there)
+   ```
 
 Restore:
 ```
