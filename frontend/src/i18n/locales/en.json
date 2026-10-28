@@ -1166,5 +1166,13 @@
     "born": "Born",
     "validTill": "CNIC valid till",
     "expiredShort": "expired"
+  },
+  "appLink": {
+    "title": "Android app",
+    "hint": "This link always gives the latest app. Send it to a shop, or download it here.",
+    "download": "Download",
+    "share": "Share",
+    "copied": "Link copied",
+    "message": "Mobile Shop app for Android. Open this link on the phone and install:"
   }
 }

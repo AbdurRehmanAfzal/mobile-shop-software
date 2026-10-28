@@ -1166,5 +1166,13 @@
     "born": "Paidaish",
     "validTill": "CNIC ki muddat",
     "expiredShort": "khatam"
+  },
+  "appLink": {
+    "title": "Android app",
+    "hint": "Yeh link hamesha taza tareen app deta hai. Kisi dukaan ko bhejein ya yahin download karein.",
+    "download": "Download",
+    "share": "Share",
+    "copied": "Link copy ho gaya",
+    "message": "Mobile Shop ki Android app. Phone par yeh link khol kar install karein:"
   }
 }
