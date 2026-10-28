@@ -4,6 +4,7 @@ from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from app.modules.paymode.schemas import PaymentDetailOut, PaymentInfo
 from app.modules.sales.models import InvoiceStatus
 
 
@@ -37,6 +38,7 @@ class SaleCreate(BaseModel):
     discount: Decimal = Field(default=Decimal(0), ge=0)
     paid: Decimal = Field(default=Decimal(0), ge=0)
     cash_account_id: uuid.UUID | None = None
+    payment: PaymentInfo | None = None  # how the money paid now was paid
     notes: str | None = None
     override_reason: str | None = Field(default=None, max_length=500)
     # owner/manager confirms a sale below the phone's buying price (a loss)
@@ -83,6 +85,7 @@ class SaleOut(BaseModel):
     no: str
     party_id: uuid.UUID | None
     party_name: str | None = None
+    payment: PaymentDetailOut | None = None
     created_by_name: str | None = None
     party_balance_after: Decimal | None = None
     date: dt.date

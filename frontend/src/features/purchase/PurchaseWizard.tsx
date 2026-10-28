@@ -1,14 +1,15 @@
-import { Banknote, BookOpen, Check, Headphones, PackagePlus, Plus, Printer, ShieldCheck, SlidersHorizontal, Smartphone, Store, Trash2, UserCheck, UserRound, Wallet } from 'lucide-react'
+import { Check, Headphones, PackagePlus, Plus, Printer, ShieldCheck, SlidersHorizontal, Smartphone, Store, Trash2, UserCheck, UserRound } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { clearDrafts, useDraft } from '@/lib/draft'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import PayPicker, { newPay, payInfo, payReady, type PayState } from '@/components/PayPicker'
 import PartyPicker from '@/components/PartyPicker'
 import { BtnText, Chip, ErrorText, IconChip, MoneyText, PageHeader, Sheet, Stepper } from '@/components/ui'
 import { uid } from '@/lib/id'
 import { api } from '@/lib/api'
 import { openPrintable } from '@/lib/files'
-import { useCashAccounts, useDocMutation } from '@/lib/queries'
+import { useDocMutation } from '@/lib/queries'
 import type { Party, Purchase } from '@/lib/types'
 import DeviceLineSheet, { draftToApi, emptyDraft, type DeviceLineDraft } from './DeviceLineSheet'
 
@@ -34,21 +35,18 @@ export default function PurchaseWizard() {
   const [editing, setEditing] = useDraft<DeviceLineDraft | null>('purchase.editing', null)
   const [discount, setDiscount] = useDraft('purchase.discount', '')
   const [paidNow, setPaidNow] = useDraft('purchase.paidNow', '')
-  const [pay, setPay] = useDraft<string>('purchase.pay', '') // cash account id, or 'udhaar'
+  const [pay, setPay] = useDraft<PayState>('purchase.payment', () => newPay())
   const [more, setMore] = useDraft('purchase.more', false)
   const [skipCheck, setSkipCheck] = useDraft('purchase.skipCheck', false)
   const [reference, setReference] = useDraft('purchase.reference', '')
   const [earlier, setEarlier] = useDraft('purchase.earlier', false)
   const [when, setWhen] = useDraft('purchase.when', localNow())
   const [result, setResult] = useState<Purchase | null>(null)
-  const { data: accounts } = useCashAccounts()
   const m = useDocMutation<Record<string, unknown>, Purchase>('POST', () => '/api/v1/purchases')
 
   const subtotal = devices.reduce((s, d) => s + Number(d.cost || 0), 0) + misc.reduce((s, x) => s + Number(x.qty || 0) * Number(x.unit_cost || 0), 0)
   const total = Math.max(0, subtotal - Number(discount || 0))
-  const cashId = accounts?.find((a) => a.is_default)?.id ?? accounts?.[0]?.id ?? ''
-  const payWith = pay || cashId
-  const udhaar = payWith === 'udhaar'
+  const udhaar = pay.method === 'udhaar'
   const paid = udhaar ? Math.min(Number(paidNow || 0), total) : total
   const chip = (on: boolean) => `tap flex min-h-[68px] flex-col items-center justify-center gap-1 rounded-2xl border-2 px-2 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('md') : 'text-[15px]'}`
   const partyKind = kind === 'supplier' ? 'supplier' : kind === 'shop' ? 'shop' : 'customer'
@@ -61,7 +59,7 @@ export default function PurchaseWizard() {
       misc: misc.filter((x) => x.description).map((x) => ({ description: x.description, qty: Number(x.qty || 1), unit_cost: Number(x.unit_cost || 0) })),
       discount: Number(discount || 0),
       paid,
-      cash_account_id: (udhaar ? cashId : payWith) || undefined,
+      payment: payInfo(pay),
       reference: reference || undefined,
       purchased_at: earlier && when ? new Date(when).toISOString() : undefined,
     })
@@ -154,15 +152,7 @@ export default function PurchaseWizard() {
           {devices.length || misc.some((x) => x.description) ? (
             <>
               <BiLabel text="counter.paidHowBuy" size="md" bold />
-              <div className="grid grid-cols-3 gap-2">
-                {accounts?.map((a) => (
-                  <button key={a.id} type="button" aria-pressed={payWith === a.id} onClick={() => setPay(a.id)} className={chip(payWith === a.id)}>
-                    {a.id === cashId ? <Banknote size={22} /> : <Wallet size={22} />}
-                    <span className="block max-w-full truncate">{a.id === cashId ? pick('counter.cash') : ur && a.name_ur ? a.name_ur : a.name}</span>
-                  </button>
-                ))}
-                <button type="button" aria-pressed={udhaar} onClick={() => setPay('udhaar')} className={chip(udhaar)}><BookOpen size={22} />{pick('counter.udhaar')}</button>
-              </div>
+              <PayPicker value={pay} onChange={setPay} />
               {kind !== 'supplier' ? (
                 <>
                   <BiLabel text="counter.idCheck" size="md" bold />
@@ -208,7 +198,7 @@ export default function PurchaseWizard() {
                 ) : null}
               </div>
               <ErrorText error={m.error} />
-              <BiButton text="counter.putInStock" icon={<PackagePlus size={22} />} full loading={m.isPending} disabled={(earlier && !when) || total <= 0} onClick={submit} />
+              <BiButton text="counter.putInStock" icon={<PackagePlus size={22} />} full loading={m.isPending} disabled={(earlier && !when) || total <= 0 || !payReady(pay)} onClick={submit} />
             </>
           ) : null}
         </div>

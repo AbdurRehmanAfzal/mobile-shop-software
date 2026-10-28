@@ -1000,5 +1000,22 @@
       "returned": "Wapis",
       "void": "Cancel"
     }
+  },
+  "paym": {
+    "online": "Online",
+    "cheque": "Cheque",
+    "remittance": "Bahar se",
+    "otherBank": "Koi aur bank / wallet",
+    "whichBank": "Kaunsa bank ya app?",
+    "tid": "TID / reference (agar ho)",
+    "chequeBank": "Cheque ka bank",
+    "chequeNo": "Cheque number",
+    "chequeDate": "Cheque ki tareekh",
+    "fromWhere": "Paise kis mulk se aaye?",
+    "inRupees": "Rupay mein",
+    "sender": "Bhejne wale ka naam",
+    "service": "Kis ke zariye aaye (agar pata ho)",
+    "refOpt": "Reference / MTCN (agar ho)",
+    "restUdhaar": "Bahar se aaye paise bill se kam hain: Rs. {{n}} is gahak ke udhaar mein jayenge."
   }
 }

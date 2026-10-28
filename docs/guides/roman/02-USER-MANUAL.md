@@ -332,6 +332,24 @@ chalta — website par bikri kholein (**Mazeed → Bikri ki list** → bikri) au
 
 ---
 
+### 6a. Paise kaise diye? (sale aur stock daalna)
+
+**How was it paid?** ke neeche ek bara button dabayein:
+
+| Button | Kab | Kya poochta hai |
+|---|---|---|
+| **Cash** | haath mein paise | kuch nahi |
+| **Online** | bank app, IBFT, Raast, Easypaisa, JazzCash, SadaPay… | kaunsa bank ya app (naam dabayein, ya **Koi aur bank / wallet** se poori list); TID agar ho |
+| **Cheque** | cheque | cheque ka bank, cheque number, cheque ki tareekh |
+| **Bahar se** (sirf sale) | khareedne wale ke ghar wale doosre mulk se paise bhejte hain | mulk / currency, kitne aaye (maslan **500 SAR**), rate (**1 SAR = Rs. 74.20**) → app khud **Rs. 37,100** dikhati hai; bhejne wale ka naam; Western Union, MoneyGram… (agar pata ho); MTCN (agar ho) |
+| **Udhaar** | baad mein dena | gahak, aur abhi kitne diye |
+
+![Online payment](../images/pay-online.png)
+
+Har tareeqe ka apna khata hai (Cash, Bank / Online, Cheques, Remittance), is liye din ke hisaab mein nazar aata hai ke kis tareeqe se kitna aaya. Easypaisa / JazzCash dukaan ke apne Easypaisa / JazzCash account mein jate hain agar aap ne **Mazeed → Money accounts** mein banaya ho. Raseed aur bill par likha hota hai ke paise kaise aaye, maslan *Online · Meezan Bank · Ref TID778812*.
+
+**Misaal (bahar se):** Usman ka bhai Riyadh se Rs. 37,100 ke phone ke liye Western Union se 500 SAR bhejta hai. **Bahar se → SAR** dabayein, 500 aur 74.20 likhein, bhejne wala "Ahmed Raza", **Western Union** dabayein, **Complete sale**. Agar bahar se aaye paise bill se kam hon to baqi gahak ke udhaar mein chale jate hain (gahak chunein).
+
 ## 7. Wapsi (gahak phone wapas laya)
 
 **Misaal:** **Bilal Ahmed** ne **Samsung Galaxy A55** **Rs. 1,00,000** cash mein liya. Woh wapas le aaya.

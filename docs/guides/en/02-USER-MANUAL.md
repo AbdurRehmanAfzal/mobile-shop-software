@@ -334,6 +334,24 @@ not work yet — open the sale on the website (**More → Sales list** → the s
 
 ---
 
+### 6a. How was it paid? (sale and add stock)
+
+Under **How was it paid?** tap one big button:
+
+| Button | When | What it asks |
+|---|---|---|
+| **Cash** | money in hand | nothing |
+| **Online** | bank app, IBFT, Raast, Easypaisa, JazzCash, SadaPay… | which bank or app (tap a name, or **Other bank / wallet** for the full list); TID if you want |
+| **Cheque** | a cheque | the cheque's bank, cheque no., cheque date |
+| **From abroad** (sales only) | the buyer's family sends the money from another country | the country / currency, how much (e.g. **500 SAR**), the rate (**1 SAR = Rs. 74.20**) → the app shows **Rs. 37,100**; the sender's name; Western Union, MoneyGram… (optional); MTCN (optional) |
+| **Udhaar** | pay later | the customer, and what is paid now |
+
+![Paid online](../images/pay-online.png)
+
+Each way keeps its own account (Cash, Bank / Online, Cheques, Remittance), so the day's hisaab shows how much came by each. Easypaisa / JazzCash go into the shop's own Easypaisa / JazzCash account if you made one in **More → Money accounts**. The receipt and the bill show how it was paid, e.g. *Online · Meezan Bank · Ref TID778812*.
+
+**Example (from abroad):** Usman's brother in Riyadh sends 500 SAR through Western Union for a Rs. 37,100 phone. Tap **From abroad → SAR**, type 500 and 74.20, the sender "Ahmed Raza", tap **Western Union**, **Complete sale**. If the remittance comes to less than the bill, the rest goes on the customer's udhaar (choose the customer).
+
 ## 7. Returns (customer brings a phone back)
 
 **Example:** **Bilal Ahmed** bought a **Samsung Galaxy A55** for **Rs. 100,000** cash. He brings it

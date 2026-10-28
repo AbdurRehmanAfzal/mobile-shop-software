@@ -5,6 +5,7 @@ from decimal import Decimal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from app.modules.devices.schemas import AccessoryItemIn, DeviceIdentity
+from app.modules.paymode.schemas import PaymentDetailOut, PaymentInfo
 from app.modules.purchases.models import PurchaseKind, PurchaseStatus
 
 
@@ -40,6 +41,7 @@ class PurchaseCreate(BaseModel):
     discount: Decimal = Field(default=Decimal(0), ge=0)
     paid: Decimal = Field(default=Decimal(0), ge=0)
     cash_account_id: uuid.UUID | None = None
+    payment: PaymentInfo | None = None  # how the money paid now was paid
     reference: str | None = Field(default=None, max_length=80)
     notes: str | None = None
 
@@ -76,6 +78,7 @@ class PurchaseOut(BaseModel):
 
     id: uuid.UUID
     no: str
+    payment: PaymentDetailOut | None = None
     created_by_name: str | None = None
     kind: PurchaseKind
     party_id: uuid.UUID

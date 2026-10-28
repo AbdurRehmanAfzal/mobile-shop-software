@@ -22,6 +22,8 @@ class CashAccountKind(StrEnum):
     BANK = "bank"
     EASYPAISA = "easypaisa"
     JAZZCASH = "jazzcash"
+    CHEQUE = "cheque"  # cheques received / given, until they are banked
+    REMITTANCE = "remittance"  # money sent from abroad for a sale
 
 
 class CashAccount(UUIDPk, ShopScoped, Timestamped, Base):

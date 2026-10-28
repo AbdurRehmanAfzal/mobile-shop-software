@@ -1000,5 +1000,22 @@
       "returned": "Returned",
       "void": "Cancelled"
     }
+  },
+  "paym": {
+    "online": "Online",
+    "cheque": "Cheque",
+    "remittance": "From abroad",
+    "otherBank": "Other bank / wallet",
+    "whichBank": "Which bank or app?",
+    "tid": "TID / reference (optional)",
+    "chequeBank": "Bank of the cheque",
+    "chequeNo": "Cheque no.",
+    "chequeDate": "Cheque date",
+    "fromWhere": "Money from which country?",
+    "inRupees": "In rupees",
+    "sender": "Sender's name",
+    "service": "Sent through (optional)",
+    "refOpt": "Reference / MTCN (optional)",
+    "restUdhaar": "Remittance is less than the bill: Rs. {{n}} goes on this customer's udhaar."
   }
 }

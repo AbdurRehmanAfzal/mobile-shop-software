@@ -156,7 +156,7 @@ export interface Verification {
 
 export interface CashAccount {
   id: UUID
-  kind: 'cash' | 'bank' | 'easypaisa' | 'jazzcash'
+  kind: 'cash' | 'bank' | 'easypaisa' | 'jazzcash' | 'cheque' | 'remittance'
   name: string
   name_ur: string | null
   is_default: boolean
@@ -236,9 +236,23 @@ export interface InvoiceLine {
   accessories_pending: { kind: string; label?: string | null; promised_at?: string | null }[]
   returned_at: string | null
 }
+export interface PaymentDetail {
+  method: 'online' | 'cheque' | 'remittance'
+  amount: Money
+  bank: string | null
+  reference: string | null
+  cheque_date: string | null
+  sender_name: string | null
+  country: string | null
+  currency: string | null
+  foreign_amount: Money | null
+  rate: Money | null
+  service: string | null
+}
 export interface Invoice {
   id: UUID
   no: string
+  payment?: PaymentDetail | null
   created_by_name: string | null
   party_id: UUID | null
   party_name: string | null
