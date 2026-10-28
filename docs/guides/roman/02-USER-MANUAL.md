@@ -58,7 +58,7 @@ OOP Solutions aap ko app ki file (maslan `mobile-shop.apk`) WhatsApp ya USB se b
    karne ki ijazat nahi. **Settings** dabayein, **Allow from this source** (**Install unknown apps**)
    on karein, phir wapas aayein.
 3. **Install** dabayein, phir **Open**.
-3a. Sab se aasaan: Android phone par **https://mobileshop.oopsolutions.com/app.apk** kholein (ya Chrome mein login page par **Android app download karein** dabayein), phir download hui file khol kar install karein.
+3a. Sab se aasaan: Android phone par **https://mobileshop.oopsolutions.com/app.apk** kholein (super admin yeh link **Mazeed → Super admin → Android app** se bhejta hai), phir download hui file khol kar install karein.
 4. Baad mein naya APK purane ke ooper install ho jata hai; data mehfooz rehta hai (data server par hai).
 
 > Android app mein **Print** aur **Download** (PDF / Excel / CSV) **Chrome** mein khulte hain: print

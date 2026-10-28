@@ -10,7 +10,7 @@ Two ways shopkeepers get the app on a phone:
 Scaffold is in `frontend/android` (Capacitor 6, appId `pk.mobileshop.app`, plugins: camera, share). The app bundles the same React build and talks to the cloud API.
 
 ### Download link (2026-10-28)
-Every release builds the signed APK (deploy.yml calls android.yml) and puts it into the web image, so the latest app is always at **https://mobileshop.oopsolutions.com/app.apk** (Caddy serves it as an Android package download). On an Android phone's browser the login page shows **Download the Android app**. Version code = minutes since 1970 (always higher than the last build, so it installs over the old app); version name = date + commit.
+Every release builds the signed APK (deploy.yml calls android.yml) and puts it into the web image, so the latest app is always at **https://mobileshop.oopsolutions.com/app.apk** (Caddy serves it as an Android package download). The super admin page has the link with Download, WhatsApp and Share buttons (the login page does not show it, owner 2026-10-28). Version code = minutes since 1970 (always higher than the last build, so it installs over the old app); version name = date + commit.
 
 ### Build in GitHub Actions (no Android Studio needed)
 `.github/workflows/android.yml` runs on every release (push to `main`, when `frontend/` changed) or by hand (**Actions → Android → Run workflow**):
