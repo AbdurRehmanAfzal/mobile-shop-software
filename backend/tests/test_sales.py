@@ -252,3 +252,53 @@ def test_salesman_sees_no_cost_or_profit(client, owner, cat):
     assert (
         s.post(f"/api/v1/sales/{inv['id']}/void", json={"reason": "nope nope"}).status_code == 403
     )
+
+
+def test_tax_chosen_per_sale(owner, cat):
+    """Owner (2026-10-28): tax is a checkbox on the sale, off by default; when on, the rate is added."""
+    from tests.test_devices import _stock
+
+    d1 = _stock(
+        owner, cat, imei="490154203237518", condition="box_pack", cost_price=900, asking_price=1000
+    )
+    plain = owner.post(
+        "/api/v1/sales",
+        json={"devices": [{"device_id": d1["id"], "price": 1000}], "paid": 1000, "tax_rate": 0},
+    )
+    assert plain.status_code == 201, plain.text
+    assert plain.json()["tax_amount"] == "0.00" and plain.json()["total"] == "1000.00"
+
+    d2 = _stock(
+        owner, cat, imei="356938035643809", condition="box_pack", cost_price=900, asking_price=1000
+    )
+    taxed = owner.post(
+        "/api/v1/sales",
+        json={"devices": [{"device_id": d2["id"], "price": 1000}], "paid": 1180, "tax_rate": 18},
+    )
+    assert taxed.status_code == 201, taxed.text
+    t = taxed.json()
+    assert t["tax_amount"] == "180.00" and t["total"] == "1180.00" and t["tax_rate"] == "18.00"
+    assert t["profit"] == "100.00"  # tax is not profit
+
+
+def test_hold_and_resume_a_sale(owner, other_owner, cat):
+    """POS hold: the cart is kept for the shop; nothing is sold until the sale is completed."""
+    d = _boxpack(owner, cat)
+    cart = {"lines": [{"device_id": d["id"], "price": "50000"}], "discount": ""}
+    r = owner.post(
+        "/api/v1/sales/held", json={"label": "Ali", "total": 50000, "items": 1, "cart": cart}
+    )
+    assert r.status_code == 201, r.text
+    held = r.json()
+    assert held["label"] == "Ali" and Decimal(held["total"]) == Decimal(50000)
+    assert held["cart"] == cart and held["created_by_name"]
+    # still in stock: holding sells nothing
+    assert owner.get(f"/api/v1/devices/{d['id']}").json()["status"] == "in_stock"
+    assert [h["id"] for h in owner.get("/api/v1/sales/held").json()] == [held["id"]]
+    # another shop neither sees nor removes it
+    assert other_owner.get("/api/v1/sales/held").json() == []
+    assert other_owner.delete(f"/api/v1/sales/held/{held['id']}").status_code == 404
+    assert owner.post("/api/v1/sales/held", json={"cart": {}}).status_code == 422
+    # resumed: taken off the held list
+    assert owner.delete(f"/api/v1/sales/held/{held['id']}").status_code == 204
+    assert owner.get("/api/v1/sales/held").json() == []

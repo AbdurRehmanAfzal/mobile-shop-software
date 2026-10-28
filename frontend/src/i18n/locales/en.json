@@ -885,7 +885,7 @@
     "download": "Download",
     "downloadTitle": "Download this report",
     "pdf": "PDF",
-    "pdfHint": "Opens print — choose \"Save as PDF\"",
+    "pdfHint": "A PDF file, ready to send or keep",
     "excel": "Excel",
     "excelHint": "For Excel / Google Sheets",
     "csv": "CSV",
@@ -1174,5 +1174,38 @@
     "share": "Share",
     "copied": "Link copied",
     "message": "Mobile Shop app for Android. Open this link on the phone and install:"
+  },
+  "saleTax": {
+    "add": "Add tax to this bill",
+    "rate": "Tax %",
+    "incl": "includes tax"
+  },
+  "hold": {
+    "button": "Hold sale",
+    "title": "Hold this sale",
+    "explain": "The bill is kept as it is. Serve the next customer, then resume it from Held sales. Nothing is sold until you complete it.",
+    "name": "Name to find it (optional)",
+    "save": "Hold",
+    "done": "Sale held. Find it under Held sales.",
+    "list": "Held sales",
+    "none": "No held sales",
+    "noName": "Sale",
+    "items": "Items: {{n}}",
+    "resume": "Resume",
+    "removeAsk": "Delete this held sale?",
+    "sold": "{{n}} phone(s) on this bill were sold meanwhile and were taken off.",
+    "hint": "Resuming takes the bill off this list."
+  },
+  "docShare": {
+    "share": "Share",
+    "shareTitle": "Share this report",
+    "downloadPdf": "Download PDF",
+    "sharePdf": "Share PDF",
+    "making": "Making the file…",
+    "shareNow": "File ready — tap to share",
+    "downloads": "Saved in Downloads",
+    "documents": "Saved on the phone: Documents › MobileShop",
+    "savedInstead": "This device cannot share files, so it was downloaded instead.",
+    "printHint": "Print on paper"
   }
 }

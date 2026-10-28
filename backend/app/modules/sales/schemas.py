@@ -39,6 +39,9 @@ class SaleCreate(BaseModel):
     paid: Decimal = Field(default=Decimal(0), ge=0)
     cash_account_id: uuid.UUID | None = None
     payment: PaymentInfo | None = None  # how the money paid now was paid
+    # owner 2026-10-28: tax is chosen per sale (a checkbox, off by default). A rate here is added on top
+    # of the bill (0 = no tax); left out, the shop's settings apply as before.
+    tax_rate: Decimal | None = Field(default=None, ge=0, le=100)
     notes: str | None = None
     override_reason: str | None = Field(default=None, max_length=500)
     # owner/manager confirms a sale below the phone's buying price (a loss)
@@ -113,3 +116,24 @@ class SaleOut(BaseModel):
 
 class VoidIn(BaseModel):
     reason: str = Field(min_length=3, max_length=300)
+
+
+class HeldSaleIn(BaseModel):
+    """the sale screen's cart as it is; the server only keeps it for the shop"""
+
+    label: str | None = Field(default=None, max_length=80)
+    total: Decimal = Field(default=Decimal(0), ge=0)
+    items: int = Field(default=0, ge=0)
+    cart: dict
+
+
+class HeldSaleOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    label: str | None
+    total: Decimal
+    items: int
+    cart: dict
+    created_at: dt.datetime
+    created_by_name: str | None = None

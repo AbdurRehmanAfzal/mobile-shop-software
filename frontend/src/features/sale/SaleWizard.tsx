@@ -2,11 +2,11 @@
  *  → done. Customer is asked only for udhaar. Warranty and box/charger are shown under each phone
  *  (owner, 2026-10-27: hidden behind "more options" nobody found them); discount stays behind it. */
 
-import { Check, FileText, Headphones, Plus, Printer, Receipt, ShieldAlert, ShieldCheck, SlidersHorizontal, Smartphone, Trash2, TriangleAlert, UserCheck, Watch } from 'lucide-react'
+import { Check, CirclePause, FileText, Headphones, Plus, Printer, Receipt, ShieldAlert, ShieldCheck, SlidersHorizontal, Smartphone, Trash2, TriangleAlert, UserCheck, Watch } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { clearDrafts, useDraft } from '@/lib/draft'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import { BiAlert, BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import PartyPicker from '@/components/PartyPicker'
 import PayPicker, { newPay, payInfo, payReady, remitPkr, type PayState } from '@/components/PayPicker'
@@ -14,12 +14,14 @@ import StockItemPicker from '@/components/StockItemPicker'
 import { AccessoryPicker, type AccValue } from '@/components/AccessoryPicker'
 import { BtnText, Chip, ErrorText, IconChip, List, PageHeader, SearchBox, Sheet, Stepper } from '@/components/ui'
 import { uid } from '@/lib/id'
-import { ApiError, get } from '@/lib/api'
+import { ApiError, api, get } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 import { openPrintable } from '@/lib/files'
-import { useDevices, useDocMutation } from '@/lib/queries'
+import { useDevices, useDocMutation, useGet } from '@/lib/queries'
 import type { Device, DeviceDetail, Invoice, Party } from '@/lib/types'
 import { DeviceRow } from '@/features/stock/StockPage'
+import DocActions from '@/components/DocShare'
+import { HeldButton, HeldSalesSheet, useHeldSales, type HeldSale } from './HeldSales'
 
 interface Line {
   device: Device
@@ -44,6 +46,8 @@ const newLine = (d: Device): Line => ({
   acc: Object.fromEntries(((d as Partial<DeviceDetail>).accessories ?? []).filter((a) => a.came_with && a.kind !== 'other').map((a) => [a.kind, { state: 'now', date: '' }])),
 })
 const WARRANTY = [0, 7, 30, 90, 180, 365] as const
+/** what a held sale keeps: the screen's cart as it was */
+interface Cart { lines: Line[]; misc: Misc[]; discount: string; pay: PayState; party: Party | null; paidNow: string; taxOn: boolean; taxRate: string; more: boolean }
 
 export default function SaleWizard() {
   const nav = useNavigate()
@@ -63,10 +67,22 @@ export default function SaleWizard() {
   const [paidNow, setPaidNow] = useDraft('sale.paidNow', '')
   const [overrideReason, setOverrideReason] = useDraft('sale.overrideReason', '')
   const [lossOk, setLossOk] = useDraft('sale.lossOk', false)
+  // owner 2026-10-28: tax only when the shopkeeper ticks it; the rate starts at the shop's setting
+  const [taxOn, setTaxOn] = useDraft('sale.taxOn', false)
+  const [taxRate, setTaxRate] = useDraft('sale.taxRate', '')
+  const { data: shopSet } = useGet<{ tax_rate: string }>(['shop-full'], '/api/v1/shops/current')
+  const rateShown = taxRate !== '' ? taxRate : String(Number(shopSet?.tax_rate) || 18)
   const [result, setResult] = useState<Invoice | null>(null)
   const [devCat, setDevCat] = useState<'' | 'phone' | 'tablet' | 'watch'>('')
   const { data: stock } = useDevices({ status: 'in_stock', q: q || undefined, category: devCat || undefined })
   const m = useDocMutation<Record<string, unknown>, Invoice>('POST', () => '/api/v1/sales')
+  // POS hold (owner 2026-10-28): park this bill, serve the next customer, resume it later
+  const { data: held } = useHeldSales<Cart>()
+  const [holding, setHolding] = useState(false)
+  const [holdName, setHoldName] = useState('')
+  const [heldOpen, setHeldOpen] = useState(false)
+  const [holdMsg, setHoldMsg] = useState<{ k: 'held' } | { k: 'sold'; n: number } | null>(null)
+  const hold = useDocMutation<Record<string, unknown>, HeldSale>('POST', () => '/api/v1/sales/held')
 
   useEffect(() => {
     const id = params.get('device')
@@ -76,7 +92,9 @@ export default function SaleWizard() {
 
 
   const subtotal = lines.reduce((s, l) => s + Number(l.price || 0), 0) + misc.reduce((s, x) => s + Number(x.qty || 0) * Number(x.unit_price || 0), 0)
-  const total = Math.max(0, subtotal - Number(discount || 0))
+  const base = Math.max(0, subtotal - Number(discount || 0))
+  const taxAmount = taxOn ? Math.round(base * Number(rateShown || 0)) / 100 : 0
+  const total = Math.round((base + taxAmount) * 100) / 100
   const udhaar = pay.method === 'udhaar'
   // a remittance may cover only part of the bill: the rest goes on the customer's khata
   const paid = udhaar ? Math.min(Number(paidNow || 0), total) : pay.method === 'remittance' ? Math.min(remitPkr(pay), total) : total
@@ -107,12 +125,42 @@ export default function SaleWizard() {
       .catch(() => undefined)
   }
 
+  function resetCart() {
+    setLines([]); setMisc([]); setParty(null); setPaidNow(''); setDiscount(''); setPay(newPay()); setTaxOn(false); setTaxRate(''); setMore(false); setOverrideReason(''); setLossOk(false)
+  }
+
+  async function holdSale() {
+    const cart: Cart = { lines, misc, discount, pay, party, paidNow, taxOn, taxRate, more }
+    await hold.mutateAsync({ label: holdName.trim() || party?.name || null, total, items: lines.length + misc.length, cart })
+    clearDrafts('sale.')
+    resetCart()
+    setHolding(false)
+    setHoldName('')
+    setHoldMsg({ k: 'held' })
+    setStep(0)
+  }
+
+  async function resume(h: HeldSale<Cart>) {
+    const c = h.cart
+    // a phone may have been sold while the bill was held: it comes off this bill
+    const now = await Promise.all(c.lines.map((l) => get<Device>(`/api/v1/devices/${l.device.id}`).catch(() => null)))
+    const still = c.lines.filter((_, i) => now[i]?.status === 'in_stock')
+    await api('DELETE', `/api/v1/sales/held/${h.id}`).catch(() => undefined)
+    setLines(still); setMisc(c.misc ?? []); setDiscount(c.discount ?? ''); setPay(c.pay ?? newPay()); setParty(c.party ?? null)
+    setPaidNow(c.paidNow ?? ''); setTaxOn(!!c.taxOn); setTaxRate(c.taxRate ?? ''); setMore(!!c.more)
+    setHoldMsg(still.length < c.lines.length ? { k: 'sold', n: c.lines.length - still.length } : null)
+    setHeldOpen(false)
+    m.reset()
+    setStep(1)
+  }
+
   async function submit() {
     const res = await m.mutateAsync({
       party_id: party?.id ?? null,
       devices: lines.map((l) => ({ device_id: l.device.id, price: Number(l.price || 0), warranty_days: Number(l.warranty_days || 0), ...accOut(l.acc) })),
       misc: misc.map((x) => ({ description: x.description.trim(), qty: Number(x.qty || 1), unit_price: Number(x.unit_price || 0), accessory_id: x.accessory_id })),
       discount: Number(discount || 0),
+      tax_rate: taxOn ? Number(rateShown || 0) : 0,
       paid,
       payment: payInfo(pay),
       override_reason: overrideReason || undefined,
@@ -130,8 +178,12 @@ export default function SaleWizard() {
       <PageHeader title="counter.sell" />
       <Stepper steps={['counter.whichPhone', 'counter.howMuch', 'counter.doneTitle']} current={step} />
 
+      {holdMsg?.k === 'held' ? <BiAlert text="hold.done" kind="success" /> : null}
+      {holdMsg?.k === 'sold' ? <BiAlert text={soldText(pick, holdMsg.n)} kind="info" /> : null}
+
       {step === 0 ? (
         <div className="flex flex-col gap-3">
+          <HeldButton count={held?.length ?? 0} onClick={() => setHeldOpen(true)} />
           <SearchBox value={q} onChange={setQ} placeholder="stock.searchPlaceholder" scan />
           <div className="flex flex-wrap gap-1.5">
             {(['', 'phone', 'tablet', 'watch'] as const).map((c) => (
@@ -224,6 +276,13 @@ export default function SaleWizard() {
           </div>
           {more ? <BiInput label="common.discount" type="number" inputMode="numeric" min={0} value={discount} onChange={(e) => setDiscount(e.target.value)} /> : null}
 
+          <label className="tap flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl border border-line bg-surface px-4">
+            <input type="checkbox" checked={taxOn} onChange={(e) => setTaxOn(e.target.checked)} className="h-6 w-6 accent-[rgb(var(--emerald))]" />
+            <BiLabel text="saleTax.add" size="md" bold className="flex-1" />
+            {taxOn ? <span className="num text-sm text-muted" dir="ltr">+ Rs. {taxAmount.toLocaleString('en-US')}</span> : null}
+          </label>
+          {taxOn ? <BiInput label="saleTax.rate" type="number" inputMode="decimal" min={0} max={100} value={rateShown} onChange={(e) => setTaxRate(e.target.value)} className="num" /> : null}
+
           <div className="flex items-center gap-1"><BiLabel text="counter.howPaid" size="md" bold /><Help term="udhaar" /></div>
           <PayPicker value={pay} onChange={setPay} remittance />
 
@@ -261,6 +320,11 @@ export default function SaleWizard() {
               <BiLabel text="common.total" size="md" tone="text-hero-text" bold />
               <span className="num text-3xl" dir="ltr">Rs. {total.toLocaleString('en-US')}</span>
             </div>
+            {taxOn && taxAmount > 0 ? (
+              <span className={`text-hero-text/75 ${ur ? cls('sm') : 'text-xs font-semibold'}`} dir="ltr">
+                {pick('saleTax.incl')} Rs. {taxAmount.toLocaleString('en-US')} ({rateShown}%)
+              </span>
+            ) : null}
             {owes ? (
               <div className="flex items-center justify-between border-t border-white/15 pt-1.5">
                 <BiLabel text="counter.remaining" size="sm" tone="text-gold-text" bold />
@@ -271,6 +335,7 @@ export default function SaleWizard() {
           {notSellableErr ? <Chip text="sale.notSellable" tone="bad" /> : null}
           <ErrorText error={m.error} />
           <BiButton text="sale.complete" icon={<Check size={22} />} full loading={m.isPending} disabled={!canSave} onClick={submit} />
+          {lines.length || misc.length ? <BiButton text="hold.button" icon={<CirclePause size={22} />} full variant="secondary" onClick={() => { setHoldName(party?.name ?? ''); hold.reset(); setHolding(true) }} /> : null}
           {!lines.length && !misc.length ? <BiButton text="counter.whichPhone" variant="secondary" full onClick={() => setStep(0)} /> : null}
         </div>
       ) : null}
@@ -288,7 +353,8 @@ export default function SaleWizard() {
           </div>
           <BiButton text="sale.printThermal" icon={<Printer size={22} />} full onClick={() => openPrintable(`/api/v1/sales/${result.id}/receipt?format=thermal`)} />
           <BiButton text="sale.printA4" icon={<FileText size={22} />} full variant="secondary" onClick={() => openPrintable(`/api/v1/sales/${result.id}/receipt?format=a4`)} />
-          <BiButton text="counter.newSale" icon={<Plus size={22} />} full variant="ghost" onClick={() => { setLines([]); setMisc([]); setParty(null); setPaidNow(''); setDiscount(''); setResult(null); setPay(newPay()); setStep(0); m.reset() }} />
+          <DocActions path={`/api/v1/sales/${result.id}/receipt?format=a4`} name={`invoice-${result.no}`} title={result.no} />
+          <BiButton text="counter.newSale" icon={<Plus size={22} />} full variant="ghost" onClick={() => { resetCart(); setResult(null); setHoldMsg(null); setStep(0); m.reset() }} />
           <BiButton text="sale.viewSale" icon={<Receipt size={22} />} full variant="ghost" onClick={() => nav(`/sales/${result.id}`)} />
         </div>
       ) : null}
@@ -301,6 +367,17 @@ export default function SaleWizard() {
           </List>
         </div>
       </Sheet>
+
+      <Sheet open={holding} onClose={() => setHolding(false)} title="hold.title">
+        <div className="flex flex-col gap-3">
+          <BiLabel text="hold.explain" size="sm" tone="text-muted" />
+          <BiInput label="hold.name" value={holdName} onChange={(e) => setHoldName(e.target.value)} maxLength={80} />
+          <ErrorText error={hold.error} />
+          <BiButton text="hold.save" icon={<CirclePause size={22} />} full loading={hold.isPending} onClick={holdSale} />
+        </div>
+      </Sheet>
+
+      <HeldSalesSheet<Cart> open={heldOpen} onClose={() => setHeldOpen(false)} onResume={resume} />
 
       <Sheet open={pickingItem} onClose={() => setPickingItem(false)} title="items.sellTitle">
         {pickingItem ? (
@@ -321,6 +398,12 @@ export default function SaleWizard() {
 
     </div>
   )
+}
+
+/** "n phones were sold meanwhile", already in the shown language */
+function soldText(pick: (k: string) => string, n: number) {
+  const t = pick('hold.sold').replace('{{n}}', String(n))
+  return { en: t, ur: t, roman: t }
 }
 
 /** given now / promised for later, as the sales API takes them */

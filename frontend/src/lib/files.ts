@@ -2,7 +2,7 @@ import { Capacitor } from '@capacitor/core'
 import { ApiError, post } from './api'
 import { useAuth } from './auth'
 
-const BASE = import.meta.env.VITE_API_URL?.replace(/\/$/, '') ?? ''
+export const BASE = import.meta.env.VITE_API_URL?.replace(/\/$/, '') ?? ''
 
 /** In the Android app the WebView has no print dialog and does not save downloads. There the
  *  page or file opens in Chrome through a 2-minute link made for this one address (backend
@@ -15,14 +15,20 @@ async function openInChrome(path: string, print: boolean): Promise<void> {
   await AppLauncher.openUrl({ url: `${BASE}${url}` })
 }
 
-/** Upload a photo/PDF; returns the shop-scoped relative path to store on records. */
-export async function uploadFile(file: File, purpose = 'misc'): Promise<string> {
+/** the signed-in user's token and shop, for fetches outside the api client */
+export function authHeaders(): Record<string, string> {
   const { accessToken, activeShopId } = useAuth.getState()
-  const fd = new FormData()
-  fd.append('file', file, file.name)
   const headers: Record<string, string> = {}
   if (accessToken) headers.Authorization = `Bearer ${accessToken}`
   if (activeShopId) headers['X-Shop-Id'] = activeShopId
+  return headers
+}
+
+/** Upload a photo/PDF; returns the shop-scoped relative path to store on records. */
+export async function uploadFile(file: File, purpose = 'misc'): Promise<string> {
+  const fd = new FormData()
+  fd.append('file', file, file.name)
+  const headers = authHeaders()
   const res = await fetch(`${BASE}/api/v1/files?purpose=${encodeURIComponent(purpose)}`, { method: 'POST', headers, body: fd })
   const json = await res.json().catch(() => null)
   if (!res.ok) throw new ApiError(res.status, json?.error ?? { code: 'upload_failed', message_en: 'Upload failed', message_ur: 'اپ لوڈ ناکام' })
@@ -35,10 +41,7 @@ export function fileUrl(path: string | null | undefined): string | undefined {
 
 /** Fetch a protected file as an object URL for <img src>. */
 export async function fileObjectUrl(path: string): Promise<string> {
-  const { accessToken, activeShopId } = useAuth.getState()
-  const headers: Record<string, string> = {}
-  if (accessToken) headers.Authorization = `Bearer ${accessToken}`
-  if (activeShopId) headers['X-Shop-Id'] = activeShopId
+  const headers = authHeaders()
   const res = await fetch(`${BASE}/api/v1/files/${path}`, { headers })
   return URL.createObjectURL(await res.blob())
 }
@@ -46,10 +49,7 @@ export async function fileObjectUrl(path: string): Promise<string> {
 /** Open an authenticated HTML document (receipt, declaration) in a new tab for printing. */
 export async function openPrintable(path: string): Promise<void> {
   if (Capacitor.isNativePlatform()) return openInChrome(path, true)
-  const { accessToken, activeShopId } = useAuth.getState()
-  const headers: Record<string, string> = {}
-  if (accessToken) headers.Authorization = `Bearer ${accessToken}`
-  if (activeShopId) headers['X-Shop-Id'] = activeShopId
+  const headers = authHeaders()
   const res = await fetch(`${BASE}${path}`, { headers })
   const html = await res.text()
   const w = window.open('', '_blank')
@@ -64,10 +64,7 @@ export async function openPrintable(path: string): Promise<void> {
 /** Download an authenticated file (CSV export) and save it with the server's filename. */
 export async function downloadFile(path: string, fallbackName = 'export.csv'): Promise<void> {
   if (Capacitor.isNativePlatform()) return openInChrome(path, false)
-  const { accessToken, activeShopId } = useAuth.getState()
-  const headers: Record<string, string> = {}
-  if (accessToken) headers.Authorization = `Bearer ${accessToken}`
-  if (activeShopId) headers['X-Shop-Id'] = activeShopId
+  const headers = authHeaders()
   const res = await fetch(`${BASE}${path}`, { headers })
   if (!res.ok) throw new Error(`Download failed (${res.status})`)
   const cd = res.headers.get('content-disposition') ?? ''

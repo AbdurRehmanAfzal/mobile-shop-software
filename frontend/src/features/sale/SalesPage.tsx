@@ -3,6 +3,7 @@ import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import DocActions from '@/components/DocShare'
 import Help from '@/components/Help'
 import { BtnText, Chip, Empty, ErrorText, fmtDate, KV, List, Loading, MoneyText, PageHeader, Row, Sheet } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
@@ -131,6 +132,7 @@ export function SaleDetailPage() {
         {active && inv.party_id ? <BiButton text="sale.return" size="md" variant="secondary" onClick={() => { setSelected(inv.lines.filter((l) => !l.returned_at).map((l) => l.id)); setReturning(true) }} /> : null}
         {active && canManage ? <span className="flex items-center gap-1"><BiButton text="common.void" size="md" variant="danger" onClick={() => setVoiding(true)} /><Help term="void" /></span> : null}
       </div>
+      <DocActions path={`/api/v1/sales/${inv.id}/receipt?format=a4`} name={`invoice-${inv.no}`} title={inv.no} />
 
       <Sheet open={returning} onClose={() => setReturning(false)} title="sale.return">
         <div className="flex flex-col gap-3">

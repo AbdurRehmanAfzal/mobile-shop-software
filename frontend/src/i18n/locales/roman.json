@@ -885,7 +885,7 @@
     "download": "Download",
     "downloadTitle": "Yeh report download karein",
     "pdf": "PDF",
-    "pdfHint": "Print khulega — \"Save as PDF\" chunein",
+    "pdfHint": "PDF file, bhejne ya rakhne ke liye",
     "excel": "Excel",
     "excelHint": "Excel ya Google Sheets ke liye",
     "csv": "CSV",
@@ -1174,5 +1174,38 @@
     "share": "Share",
     "copied": "Link copy ho gaya",
     "message": "Mobile Shop ki Android app. Phone par yeh link khol kar install karein:"
+  },
+  "saleTax": {
+    "add": "Is bill par tax lagayein",
+    "rate": "Tax %",
+    "incl": "tax shamil"
+  },
+  "hold": {
+    "button": "Sale hold karein",
+    "title": "Ye sale hold karein",
+    "explain": "Bill jaisa hai waisa rakh liya jaye ga. Agle customer ko farigh karein, phir Hold sales se dobara kholein. Mukammal karne tak kuch nahi bikay ga.",
+    "name": "Dhoondne ke liye naam (optional)",
+    "save": "Hold karein",
+    "done": "Sale hold ho gayi. Hold sales mein milegi.",
+    "list": "Hold sales",
+    "none": "Koi sale hold nahi",
+    "noName": "Sale",
+    "items": "Cheezein: {{n}}",
+    "resume": "Dobara kholein",
+    "removeAsk": "Ye hold sale khatam kar dein?",
+    "sold": "Is bill ke {{n}} phone is dauran bik gaye, bill se nikal diye gaye.",
+    "hint": "Dobara kholne par bill is list se hat jata hai."
+  },
+  "docShare": {
+    "share": "Share",
+    "shareTitle": "Yeh report share karein",
+    "downloadPdf": "PDF download",
+    "sharePdf": "PDF share karein",
+    "making": "File ban rahi hai…",
+    "shareNow": "File tayyar hai — share ke liye dabayein",
+    "downloads": "Downloads mein save ho gayi",
+    "documents": "Phone mein save ho gayi: Documents › MobileShop",
+    "savedInstead": "Yeh device file share nahi kar sakti, is liye download kar di gayi.",
+    "printHint": "Kaghaz par print karein"
   }
 }

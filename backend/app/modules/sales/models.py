@@ -103,3 +103,18 @@ class InvoiceLine(UUIDPk, Base):
     returned_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
 
     invoice: Mapped[Invoice] = relationship(back_populates="lines")
+
+
+class HeldSale(UUIDPk, ShopScoped, Timestamped, Base):
+    """A sale parked at the counter to finish later (POS "hold"). Only the cart as the screen had it:
+    nothing is sold, no stock moves and no ledger entry is made until it is resumed and completed."""
+
+    __tablename__ = "held_sales"
+
+    label: Mapped[str | None] = mapped_column(String(80))
+    total: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
+    items: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    cart: Mapped[dict] = mapped_column(JSON, nullable=False)
+    created_by: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid, ForeignKey("users.id", ondelete="SET NULL")
+    )
