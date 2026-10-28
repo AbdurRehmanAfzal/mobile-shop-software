@@ -59,8 +59,9 @@ OOP Solutions sends you the app file (for example `mobile-shop.apk`) on WhatsApp
 3. Tap **Install**, then **Open**.
 4. A newer APK later installs over the old one; your data stays (it lives on the server).
 
-> In the Android app, **printing and downloads (PDF / Excel / CSV) do not work yet.**
-> For receipts, declarations and downloads, use the website in Chrome (1a). See [Common problems](#21-common-problems).
+> In the Android app, **Print** and **Download** (PDF / Excel / CSV) open in **Chrome**: the print
+> screen appears by itself (choose your printer or **Save as PDF**), and Excel / CSV files go to the
+> phone's **Downloads**. Go back to the app with the back button. The link works for 2 minutes only.
 
 ---
 
@@ -759,8 +760,9 @@ The list **Customer shops** shows every shop with users and opening date; use th
 
 ![Scan](../images/scan.png)
 
-**Print or download does nothing in the Android app.** Known gap. Open
-https://mobileshop.oopsolutions.com in Chrome, log in, and print / download from there.
+**Print or download in the Android app opens Chrome.** That is how it works: Chrome shows the
+print screen or saves the file. If Chrome says the link has expired, go back and tap Print /
+Download again (a link lasts 2 minutes).
 
 **I forgot my password or PIN.** PIN: tap **Forgot PIN? Use password**. Password: ask the shop owner
 (**More → Staff** → your name → **New password**). The owner contacts OOP Solutions.

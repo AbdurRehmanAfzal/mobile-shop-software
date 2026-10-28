@@ -91,6 +91,11 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 | FBR POS | FR-TAX-04 | ⬜ |
 | Cloud sync | FR-PLT-05 | ⬜ |
 
+## Backlog (owner requests, not started)
+| Item | Notes |
+|---|---|
+| Fingerprint (thumb) login (owner 2026-10-28) | After a normal login, unlock with the phone's fingerprint. Plan: Android app first (native biometric + session kept in the Android Keystore), website later (passkeys / WebAuthn). Android cannot tell whose finger it is, so on a shared shop phone any enrolled finger opens that account: offer it per person on their own phone, let the owner switch it off for staff, and keep void / settings behind the password. Owner to decide: app only or app + website; owners only or staff too |
+
 ## Known issues / tech debt
 - Signup has no phone OTP verification; add before public launch (Phase 3).
 - Login limiter is in-process memory (5 fails / 10 min); move to Redis or the DB if the API runs more than one worker.

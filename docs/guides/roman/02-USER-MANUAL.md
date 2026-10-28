@@ -60,8 +60,9 @@ OOP Solutions aap ko app ki file (maslan `mobile-shop.apk`) WhatsApp ya USB se b
 3. **Install** dabayein, phir **Open**.
 4. Baad mein naya APK purane ke ooper install ho jata hai; data mehfooz rehta hai (data server par hai).
 
-> Android app mein **print aur download (PDF / Excel / CSV) abhi kaam nahi karte.**
-> Raseed, iqrar nama aur download ke liye Chrome mein website (1a) istemal karein. [Aam masle](#21-aam-masle) dekhein.
+> Android app mein **Print** aur **Download** (PDF / Excel / CSV) **Chrome** mein khulte hain: print
+> ki screen khud aa jati hai (printer chunein ya **Save as PDF**), aur Excel / CSV file phone ke
+> **Downloads** mein chali jati hai. Wapas app mein aane ke liye back button dabayein. Link sirf 2 minute chalta hai.
 
 ---
 
@@ -760,8 +761,9 @@ Sirf product ke maalik (OOP Solutions) ke liye. **Mazeed → Super admin** (doos
 
 ![Scan](../images/scan.png)
 
-**Android app mein print ya download kuch nahi karta.** Yeh abhi ki kami hai. Chrome mein
-https://mobileshop.oopsolutions.com kholein, login karein aur wahan se print / download karein.
+**Android app mein print ya download Chrome kholta hai.** Yahi tareeqa hai: Chrome print ki
+screen dikhata hai ya file save karta hai. Agar Chrome kahe ke link expire ho gaya, wapas aa kar
+Print / Download dobara dabayein (link 2 minute chalta hai).
 
 **Password ya PIN bhool gaye.** PIN: **PIN bhool gaye? Password lagayein**. Password: dukaan ke maalik se
 kahein (**Mazeed → Staff** → aap ka naam → **Naya password**). Maalik OOP Solutions se raabta kare.

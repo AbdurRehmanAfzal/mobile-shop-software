@@ -190,7 +190,7 @@ Only the product owner sees this page. It lists every customer shop and has **"O
 ### 3.17 Phone app, website and laptop
 
 - **Website:** open https://mobileshop.oopsolutions.com in any browser on a phone, tablet or laptop. On Android Chrome you can also "Add to Home screen" so it opens like an app.
-- **Android app (APK):** an APK is an Android app file you install directly, without the Play Store. It has been installed and tested on a real phone against the live system. *Current limit:* printing and downloading do not work inside the Android app yet; use the website for those.
+- **Android app (APK):** an APK is an Android app file you install directly, without the Play Store. It has been installed and tested on a real phone against the live system. Printing and downloads from the app open in Chrome, where the print screen and Save as PDF work.
 - **Laptop:** on a big screen the jobs appear as a side menu, with keyboard shortcuts (F-keys) for fast counter work.
 
 ### 3.18 Backups and safety
@@ -232,7 +232,6 @@ See section 5.
 These are **planned** and are **not available yet**:
 
 - **Automatic WhatsApp and SMS messages** (receipts, payment reminders, "your phone is ready") sent without the shopkeeper tapping, plus **daily and weekly reports by email** to the owner.
-- **Printing and downloads inside the Android app** (today, use the website for these).
 - **Play Store release** of the Android app, and an **iPhone (iOS) app** later.
 - **Several shops under one owner**, with one login and combined reports.
 - **Subscription plans** (no prices have been set yet).

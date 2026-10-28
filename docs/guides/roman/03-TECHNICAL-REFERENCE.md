@@ -1132,7 +1132,7 @@ Poore steps: `docs/12-DEPLOYMENT.md` (server) aur `docs/13-MOBILE-APP.md` (APK).
 
 Yeh `docs/06` ke "Known issues", session log aur code parhne se nikli hain:
 
-1. **Android APK mein print aur download kuch nahi karte.** WebView mein `window.open` + `print()` aur blob downloads nahi chalte. Receipts, declaration aur exports ke liye website use karein. Plan: yeh links Chrome mein short-lived link ke saath kholna.
+1. ~~Android APK mein print aur download~~ — 2026-10-28 ko hal: native app mein `openPrintable` / `downloadFile` pehle `POST /api/v1/auth/link {path}` bulate hain (sirf exports, sales, repairs, devices ke raste), jo wohi address `dl=<2 minute ka JWT, typ "link", user, shop aur poore path+query se bandha>` ke saath wapas deta hai; app use `@capacitor/app-launcher` se Chrome mein kholti hai. `get_current_user` `dl` sirf GET par aur sirf usi address ke liye maanta hai; `get_current_context` dukaan usi se leta hai. Print pages par `autoprint=1` lagta hai aur `main.py` ka middleware load par `print()` daal deta hai. Tests `tests/test_links.py`.
 2. **Login limiter process ki memory mein hai** (har worker par 5 ghalat / 10 min). Production mein 2 uvicorn workers hain, is liye had har worker ki alag hai. Scale se pehle DB ya Redis mein le jayen.
 3. **Signup ya shop banane par phone OTP nahi.** Production mein signup band rakh kar kaam chalaya ja raha hai.
 4. **Refresh tokens revoke nahi ho sakte** (token store nahi). Rokne ka wahid tareeqa user ko disable karna hai.

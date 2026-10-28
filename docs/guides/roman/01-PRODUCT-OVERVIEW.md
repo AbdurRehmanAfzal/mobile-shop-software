@@ -232,7 +232,6 @@ Section 5 dekhein.
 Yeh sab **planned** hai, **abhi app mein nahi**:
 
 - **Khud-ba-khud WhatsApp aur SMS** (raseed, udhaar ki yaad dihani, "aap ka mobile tayyar hai") bina dukaandar ke tap kiye, aur maalik ko **roz aur hafte ki report email** par.
-- **Android app ke andar print aur download** (abhi un ke liye website use karein).
 - Android app **Play Store** par, aur baad mein **iPhone (iOS) app**.
 - **Ek maalik, kai dukaanein**: ek login aur sab dukaanon ki mili hui report.
 - **Subscription plans** (qeematein abhi tay nahi hui).

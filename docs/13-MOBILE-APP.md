@@ -26,7 +26,7 @@ GitHub secrets: `ANDROID_KEYSTORE_BASE64` (the base64 line), `ANDROID_KEYSTORE_P
 Icons and splash: sources in `frontend/assets/` (dark ground, gold phone, same as the PWA icon), generated with `npx @capacitor/assets generate --android`.
 
 ### Known gaps in the app (v1)
-- **Print and download** (receipts, declaration, PDF/Excel/CSV) use the browser's print dialog and file downloads, which an Android WebView does not provide. In the app they do nothing yet; use the website for printing until this is solved (plan: open those links in Chrome with a short-lived link).
+- Solved 2026-10-28: **print and download** open in Chrome through a 2-minute link for that one address (`POST /api/v1/auth/link`, `dl=` token, `autoprint=1` for print pages; `@capacitor/app-launcher`). The WebView itself still has no print dialog or download manager.
 
 ### Build on a PC with Android Studio
 1. Install Android Studio (bundles JDK 17 and the Android SDK).

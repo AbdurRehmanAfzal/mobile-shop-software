@@ -740,7 +740,7 @@ Rules: business logic gets tests before UI. Run backend tests, vitest and the re
 
 From `docs/06` "Known issues", the session log, and reading the code:
 
-1. **Print and download do nothing in the Android APK.** `window.open` + `print()` and blob downloads are not supported in a WebView. Use the website for receipts, the declaration and exports. Plan: open those links in Chrome with a short-lived link.
+1. ~~Print and download in the Android APK~~ — solved 2026-10-28: in the native app `openPrintable` / `downloadFile` call `POST /api/v1/auth/link {path}` (allowed prefixes: exports, sales, repairs, devices), which returns the same address plus `dl=<2-minute JWT, typ "link", bound to user, shop and the exact path+query>`; the app opens it in Chrome with `@capacitor/app-launcher`. `get_current_user` accepts `dl` only on GET and only for that address; `get_current_context` takes the shop from it. Print pages get `autoprint=1`, and a middleware in `main.py` injects `print()` on load. Tests `tests/test_links.py`.
 2. **Login limiter is in process memory** (5 fails / 10 min per worker). Production runs 2 uvicorn workers, so the effective limit is per worker. Move it to the DB or Redis before scaling.
 3. **No phone OTP on signup or shop creation**; signup is closed in production instead.
 4. **Refresh tokens cannot be revoked** (no token store). Disabling the user is the only kill switch.
