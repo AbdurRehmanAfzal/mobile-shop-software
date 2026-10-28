@@ -341,6 +341,11 @@ export interface NotificationSettings {
   seller_on_purchase_whatsapp: boolean
   seller_on_purchase_email: boolean
   customer_on_payment_whatsapp: boolean
+  owner_daily_report_whatsapp: boolean
+  daily_report_time: string
+  customer_reminder_whatsapp: boolean
+  reminder_after_days: number
+  reminder_time: string
   language: 'en' | 'ur' | null
 }
 export interface Message {
@@ -354,6 +359,7 @@ export interface Message {
   link: string | null
   event_type: string
   status: string
+  error?: string | null
   created_at: string
 }
 

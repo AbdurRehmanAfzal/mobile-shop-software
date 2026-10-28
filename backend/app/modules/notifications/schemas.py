@@ -1,5 +1,6 @@
 import datetime as dt
 import uuid
+from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
@@ -21,6 +22,12 @@ class NotificationSettings(BaseModel):
     seller_on_purchase_email: bool = False
     customer_on_payment_whatsapp: bool = False
     customer_on_repair_ready_whatsapp: bool = False
+    # owner 2026-10-29: the day's hisaab to the owner every night, udhaar reminders by themselves
+    owner_daily_report_whatsapp: bool = False
+    daily_report_time: str = Field(default="21:30", pattern=r"^([01]\d|2[0-3]):[0-5]\d$")
+    customer_reminder_whatsapp: bool = False
+    reminder_after_days: int = Field(default=7, ge=1, le=90)
+    reminder_time: str = Field(default="11:00", pattern=r"^([01]\d|2[0-3]):[0-5]\d$")
     language: str | None = Field(
         default=None, pattern="^(en|ur)$", description="None = shop default language"
     )
@@ -29,6 +36,21 @@ class NotificationSettings(BaseModel):
     @classmethod
     def _phone(cls, v: str | None) -> str | None:
         return normalise_phone(v) if v else None
+
+
+class ReminderRow(BaseModel):
+    party_id: uuid.UUID
+    name: str
+    phone: str | None
+    balance: Decimal
+    days_since: int | None
+    last_reminded_at: dt.datetime | None
+    body: str
+
+
+class RemindIn(BaseModel):
+    party_ids: list[uuid.UUID] | None = None
+    min_days: int = Field(default=0, ge=0, le=365)
 
 
 class MessageOut(BaseModel):
