@@ -1,5 +1,6 @@
 """Owner's plain questions: how much is my stock worth (by brand and model) and any day's hisaab."""
 
+from app.core.clock import today as shop_today
 from app.modules.expenses.service import seed_categories
 from tests.conftest import login
 from tests.test_devices import _stock
@@ -82,7 +83,7 @@ def test_hisaab_for_a_period(owner, cat):
     """Owner: hisaab for a week, a month or from-to, not just one day."""
     import datetime as dt
 
-    today = dt.date.today()
+    today = shop_today()
     yesterday = today - dt.timedelta(days=1)
     d1 = _stock(owner, cat, imei=A, condition="box_pack", cost_price=800, asking_price=1000)
     d2 = _stock(owner, cat, imei=B, condition="box_pack", cost_price=800, asking_price=1200)
