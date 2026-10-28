@@ -437,7 +437,20 @@
     "none": "No messages yet",
     "markSent": "Mark sent",
     "queued": "Queued",
-    "sent": "Sent"
+    "sent": "Sent",
+    "apiOn": "WhatsApp messages are sent automatically from the server.",
+    "apiOff": "Messages open in WhatsApp for you to send with one tap. Automatic sending needs the WhatsApp Business API on the server.",
+    "dailyReport": "Night report to the owner",
+    "dailyReportOn": "Send the day's hisaab every night",
+    "atTime": "At",
+    "sendReportNow": "Send today's hisaab now",
+    "reportSent": "Sent to the owner's WhatsApp.",
+    "reportQueued": "Opened in WhatsApp; tap send there.",
+    "reminders": "Udhaar reminders",
+    "remindAuto": "Remind customers automatically",
+    "remindAfter": "When the account has sat for",
+    "days": "days",
+    "failed": "Failed"
   },
   "settings": {
     "title": "Shop settings",
@@ -1242,5 +1255,20 @@
     "wifiShort": "Wi-Fi",
     "gpsShort": "GPS",
     "simLabel": "SIM"
+  },
+  "remind": {
+    "title": "Udhaar reminders",
+    "short": "Remind",
+    "autoHint": "Reminders go out on WhatsApp by themselves. Tap a person for one, or send to everyone.",
+    "handHint": "Tap a person: WhatsApp opens with the reminder ready, you just press send. \"Send to all\" lists them one by one.",
+    "everyone": "Everyone who owes",
+    "olderThan": "Older than {{n}} days",
+    "sendAll": "Send to all ({{n}})",
+    "send": "Remind",
+    "daysSince": "{{n}} days since the last entry",
+    "lastSent": "last reminder",
+    "none": "Nobody owes you right now",
+    "sentN": "{{n}} reminders sent.",
+    "openEach": "Tap each name below to send its reminder on WhatsApp."
   }
 }

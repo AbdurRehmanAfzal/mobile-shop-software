@@ -24,6 +24,13 @@ class Settings(BaseSettings):
     public_signup: bool = False
     # comma-separated mobile numbers of super users (the product owner), e.g. "03001234567"
     superuser_phones: str = ""
+    # WhatsApp Cloud API (Meta); empty = messages are sent by hand from the Messages screen
+    whatsapp_token: str = ""
+    whatsapp_phone_id: str = ""
+    whatsapp_api_version: str = "v21.0"
+    whatsapp_templates: str = ""  # JSON: our template key -> approved Meta template
+    # the in-process clock for the night report, reminders and sending queued messages
+    scheduler_enabled: bool = True
 
     @property
     def superusers(self) -> set[str]:

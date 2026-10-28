@@ -44,7 +44,12 @@ async def lifespan(_: FastAPI):
             added["expense_categories"] = seed_categories(db)
             if any(added.values()):
                 print(f"Catalogue seeded: {added}")
+    from app.modules.notifications import scheduler
+
+    task = scheduler.start()
     yield
+    if task:
+        task.cancel()
 
 
 def check_production_settings() -> None:

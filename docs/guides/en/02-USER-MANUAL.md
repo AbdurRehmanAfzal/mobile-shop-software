@@ -486,6 +486,25 @@ Tap a name to see their balance card (**I will get** / **I have to give** / **Cl
 Balances are always worked out from the records; you never type a balance by hand. A mistake is
 fixed with a new entry (for example, cancel the bill), never by editing the old one.
 
+### Udhaar reminders on WhatsApp
+Tap **Remind** at the top of Udhaar khata. Everyone who owes you is listed, biggest balance first,
+with how many days their account has sat and when they were last reminded. Narrow it with
+**Older than 7 / 15 / 30 days**.
+
+- Tap the green button beside a name: WhatsApp opens with the reminder written ("Bilal, a reminder
+  from Al-Madina Mobile: Rs. 12,000 is outstanding on your account…"); you press send.
+- **Send to all** lists them one by one to open.
+- **Automatic**: More → Messages → *Udhaar reminders* → tick **Remind customers automatically**,
+  choose after how many quiet days and at what time. Then the reminders go out by themselves —
+  for that the WhatsApp Business API has to be set on the server (ask the product owner); without
+  it they wait in **Messages** for you to tap.
+
+### The night report
+More → Messages → *Night report to the owner*: write the **Owner WhatsApp number**, tick **Send the
+day's hisaab every night** and choose the time (e.g. 21:30). Every night the owner gets one message:
+phones sold and the amount, in hand, udhaar given and received, expenses, profit, to get / to give,
+phones in stock. **Send today's hisaab now** sends it at once.
+
 ---
 
 ## 9. Day's hisaab and "Left in hand"

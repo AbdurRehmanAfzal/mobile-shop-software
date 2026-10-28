@@ -484,6 +484,25 @@ Naam dabayein: baqaya card (**Mujhe lene hain** / **Mujhe dene hain** / **Saaf**
 Baqaya hamesha record se hisaab hota hai; haath se kabhi nahi likha jata. Ghalti nayi entry se theek
 hoti hai (maslan bill khatam karein), purani entry badal kar nahi.
 
+### WhatsApp par udhaar ki yaad dahani
+Udhaar khata ke ooper **Yaad dahani** dabayein. Jin par udhaar hai sab aate hain, bara baqaya pehle,
+saath mein kitne din se khata ruka hai aur aakhri yaad dahani kab gayi. **7 / 15 / 30 din se purana**
+se chhantein.
+
+- Naam ke saath hara button dabayein: WhatsApp likhe hue paighaam ke saath khulta hai ("Bilal, Al-Madina
+  Mobile ki taraf se yaad dahani: aap ke khate mein Rs. 12,000 baqi hain…"); aap send dabayein.
+- **Sab ko bhejein** ek ek kar ke kholne ki list deta hai.
+- **Khud-ba-khud**: Mazeed → Paighaam → *Udhaar ki yaad dahani* → **Customers ko khud-ba-khud yaad
+  dahani** tick karein, kitne din baad aur kis waqt chunein. Phir yaad dahani khud jaati hai — is ke
+  liye server par WhatsApp Business API lagi honi chahiye (product owner se kahein); warna woh
+  **Paighaam** mein aap ke tap ka intezar karti hai.
+
+### Raat ki report
+Mazeed → Paighaam → *Malik ko raat ki report*: **Malik ka WhatsApp number** likhein, **Har raat din ka
+hisaab bhejein** tick karein aur waqt chunein (maslan 21:30). Har raat malik ko ek paighaam milta hai:
+kitne phone bike aur kitne ke, haath mein, udhaar diya aur wasool, kharche, munafa, lene / dene hain,
+stock mein phone. **Aaj ka hisaab abhi bhejein** foran bhejta hai.
+
 ---
 
 ## 9. Din ka hisaab aur "Aaj haath mein bacha"

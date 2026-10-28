@@ -437,7 +437,20 @@
     "none": "Abhi koi paighaam nahi",
     "markSent": "Bhej diya",
     "queued": "Line mein",
-    "sent": "Bhej diya gaya"
+    "sent": "Bhej diya gaya",
+    "apiOn": "WhatsApp message server se khud-ba-khud jaate hain.",
+    "apiOff": "Message WhatsApp mein khulta hai, aap ek tap se bhej dein. Khud-ba-khud bhejne ke liye server par WhatsApp Business API chahiye.",
+    "dailyReport": "Malik ko raat ki report",
+    "dailyReportOn": "Har raat din ka hisaab bhejein",
+    "atTime": "Waqt",
+    "sendReportNow": "Aaj ka hisaab abhi bhejein",
+    "reportSent": "Malik ke WhatsApp par bhej diya.",
+    "reportQueued": "WhatsApp mein khul gaya, wahan send dabayein.",
+    "reminders": "Udhaar ki yaad dahani",
+    "remindAuto": "Customers ko khud-ba-khud yaad dahani",
+    "remindAfter": "Jab khata ruka rahe",
+    "days": "din",
+    "failed": "Nakaam"
   },
   "settings": {
     "title": "Dukaan ki settings",
@@ -1242,5 +1255,20 @@
     "wifiShort": "Wi-Fi",
     "gpsShort": "GPS",
     "simLabel": "SIM"
+  },
+  "remind": {
+    "title": "Udhaar ki yaad dahani",
+    "short": "Yaad dahani",
+    "autoHint": "Yaad dahani WhatsApp par khud-ba-khud jaati hai. Ek bande ke liye us par dabayein, ya sab ko bhejein.",
+    "handHint": "Bande par dabayein: WhatsApp message ke saath khulta hai, aap bas send dabayein. \"Sab ko bhejein\" ek ek kar ke dikhata hai.",
+    "everyone": "Sab jin par udhaar hai",
+    "olderThan": "{{n}} din se purana",
+    "sendAll": "Sab ko bhejein ({{n}})",
+    "send": "Yaad dahani",
+    "daysSince": "Aakhri entry ko {{n}} din",
+    "lastSent": "aakhri yaad dahani",
+    "none": "Abhi kisi par udhaar nahi",
+    "sentN": "{{n}} yaad dahaniyan bhej dein.",
+    "openEach": "Neeche har naam par daba kar us ki yaad dahani WhatsApp par bhejein."
   }
 }

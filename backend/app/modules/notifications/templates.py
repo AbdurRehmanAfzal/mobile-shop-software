@@ -51,6 +51,44 @@ TEMPLATES: dict[str, dict[str, dict[str, str]]] = {
             "body": "{customer}، آپ کا {device} ({repair_no}) {shop} پر ٹھیک ہو کر تیار ہے۔ بل: Rs. {total}{due_line}",
         },
     },
+    "udhaar_reminder": {
+        "en": {
+            "subject": "Reminder from {shop}",
+            "body": "{customer}, a reminder from {shop}: Rs. {balance} is outstanding on your account. Please pay at your convenience. Thank you.",
+        },
+        "ur": {
+            "subject": "{shop} کی طرف سے یاد دہانی",
+            "body": "{customer}، {shop} کی طرف سے یاد دہانی: آپ کے کھاتے میں Rs. {balance} باقی ہیں۔ براہ کرم سہولت سے ادائیگی کر دیں۔ شکریہ۔",
+        },
+    },
+    "daily_report": {
+        "en": {
+            "subject": "{shop}: hisaab of {date}",
+            "body": (
+                "{shop} – {date}\n"
+                "Sold: {phones} phones, Rs. {sales}\n"
+                "In hand (net): Rs. {cash}\n"
+                "Given on udhaar: Rs. {udhaar_given} · Udhaar received: Rs. {udhaar_received}\n"
+                "Expenses: Rs. {expenses}\n"
+                "Profit: Rs. {profit}\n"
+                "To get: Rs. {receivable} · To give: Rs. {payable}\n"
+                "Phones in stock: {stock}"
+            ),
+        },
+        "ur": {
+            "subject": "{shop}: {date} کا حساب",
+            "body": (
+                "{shop} – {date}\n"
+                "فروخت: {phones} فون، Rs. {sales}\n"
+                "ہاتھ میں (صافی): Rs. {cash}\n"
+                "ادھار پر دیا: Rs. {udhaar_given} · ادھار وصول: Rs. {udhaar_received}\n"
+                "خرچے: Rs. {expenses}\n"
+                "منافع: Rs. {profit}\n"
+                "لینے ہیں: Rs. {receivable} · دینے ہیں: Rs. {payable}\n"
+                "اسٹاک میں فون: {stock}"
+            ),
+        },
+    },
     "payment_customer": {
         "en": {
             "subject": "Payment received {payment_no}",

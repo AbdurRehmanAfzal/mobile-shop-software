@@ -51,6 +51,22 @@ Releases: merge `develop` into `main` and push `main` (the owner decides when).
 - Current version: `cat /opt/mobileshop/.current-tag`
 - Roll back by hand: `sudo /opt/mobileshop/deploy.sh <older sha>` (note: migrations are not undone; a rollback across a schema change needs a DB restore)
 
+## WhatsApp Business API (automatic sending)
+Without it every message (receipt, reminder, night report) waits in More → Messages with a wa.me
+link the shopkeeper taps. To send by itself:
+1. Meta Business → WhatsApp → add a business phone number; note the **Phone number ID** and make a
+   **permanent system-user token** with `whatsapp_business_messaging`.
+2. In `/opt/mobileshop/.env`: `WHATSAPP_TOKEN=...`, `WHATSAPP_PHONE_ID=...`, then
+   `docker compose up -d backend`.
+3. Meta allows free text only within 24 h of the customer's last message. Messages the shop starts
+   (reminders, receipts, the night report) need **approved templates**: create one per key with a
+   single `{{1}}` body parameter and map them in `WHATSAPP_TEMPLATES`, e.g.
+   `{"udhaar_reminder":{"name":"udhaar_reminder_ur","lang":"ur"},"daily_report":{"name":"daily_report_ur","lang":"ur"}}`.
+   Keys without a mapping are sent as plain text (works for test numbers and inside the window).
+4. The backend's in-process clock (`modules/notifications/scheduler.py`) ticks every minute: night
+   reports and reminders at each shop's time, queued messages sent in order; failures stay on the
+   row with the reason (More → Messages shows "Failed"). `SCHEDULER_ENABLED=false` turns it off.
+
 ## Backups
 `setup-vps.sh` installs a cron job (02:30): `pg_dump` + uploads to `/opt/mobileshop-backups`, kept 14 days (`deploy/backup.sh`). With `RCLONE_REMOTE` set in `/opt/mobileshop/.env`, the same job copies each night's files to Google Drive (kept 30 days there).
 

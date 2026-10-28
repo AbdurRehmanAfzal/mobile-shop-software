@@ -6,7 +6,7 @@ import datetime as dt
 import uuid
 from enum import StrEnum
 
-from sqlalchemy import DateTime, ForeignKey, Index, String, Text, Uuid
+from sqlalchemy import Date, DateTime, ForeignKey, Index, String, Text, UniqueConstraint, Uuid
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base, ShopScoped, UUIDPk, utcnow
@@ -22,6 +22,24 @@ class MessageStatus(StrEnum):
     SENT = "sent"
     FAILED = "failed"
     SKIPPED = "skipped"
+
+
+class JobRun(UUIDPk, Base):
+    """One row per shop, job and day: the night report and the reminders go out once even with
+    two API workers (the unique key decides who runs it)."""
+
+    __tablename__ = "job_runs"
+    __table_args__ = (UniqueConstraint("shop_id", "job", "day", name="uq_job_runs"),)
+
+    shop_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("shops.id", ondelete="CASCADE"), nullable=False
+    )
+    job: Mapped[str] = mapped_column(String(30), nullable=False)
+    day: Mapped[dt.date] = mapped_column(Date, nullable=False)
+    ran_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, nullable=False
+    )
+    result: Mapped[str | None] = mapped_column(String(200))
 
 
 class Message(UUIDPk, ShopScoped, Base):
