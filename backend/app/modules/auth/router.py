@@ -11,6 +11,7 @@ from app.core.permissions import Cap
 from app.core.security import LINK_SECONDS, create_link_token
 from app.core.tenancy import DB, Ctx, CurrentUser, get_current_user, link_target, require_cap
 from app.modules.auth import service
+from app.modules.auth.models import Shop
 from app.modules.auth.schemas import (
     AuthResponse,
     LoginRequest,
@@ -42,6 +43,15 @@ def _me(db, user, x_shop_id: str | None) -> MeOut:
             active = next((s.id for s in shops if s.id == wanted), None)
         except ValueError:
             active = None
+    if active is None and x_shop_id and service.is_superuser(user):
+        # the product owner looking into a customer shop: it is listed and active for them
+        try:
+            other = db.get(Shop, uuid.UUID(x_shop_id))
+        except ValueError:
+            other = None
+        if other is not None and other.is_active:
+            shops = [*shops, other]
+            active = other.id
     if active is None and len(shops) == 1:
         active = shops[0].id
     from app.modules.admin.plans import plan_info
@@ -60,6 +70,28 @@ def _me(db, user, x_shop_id: str | None) -> MeOut:
 def signup(data: SignupRequest, db: DB):
     user, tokens = service.signup(db, data)
     return AuthResponse(tokens=tokens, me=_me(db, user, None))
+
+
+class ForgotIn(BaseModel):
+    phone: str
+
+
+@router.post("/auth/forgot")
+def forgot_password(data: ForgotIn, db: DB):
+    """From the login page: an owner's request reaches the product owner (dashboard + WhatsApp),
+    a staff member's reaches their shop owner. Five tries per number per 10 minutes."""
+    from app.core.pk import normalise_phone
+    from app.core.ratelimit import login_limiter
+    from app.modules.admin import access
+
+    try:
+        phone = normalise_phone(data.phone)
+    except ValueError:
+        return {"to": "none"}
+    key = f"forgot:{phone}"
+    login_limiter.check(key)
+    login_limiter.fail(key)
+    return {"to": access.forgot(db, phone)}
 
 
 @router.post("/auth/login", response_model=AuthResponse)

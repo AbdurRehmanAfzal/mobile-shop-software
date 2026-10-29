@@ -29,7 +29,14 @@
     "welcome": "Khush aamdeed",
     "madeBy": "Tayyar karda:",
     "wantApp": "Apni dukaan ke liye yeh app chahiye? Hum se raabta karein",
-    "getApp": "Android app download karein"
+    "getApp": "Android app download karein",
+    "forgot": "Password bhool gaye?",
+    "forgotTitle": "Password bhool gaye",
+    "forgotHint": "Apna mobile number likhein. Dukaan ke malik ki request software provider ko jaati hai; staff ki dukaan ke malik ko. Woh naya password rakh kar aap ko batayenge.",
+    "forgotSend": "Request bhejein",
+    "forgotSent_admin": "Request software provider ko bhej di. Woh isi number par rabta karenge.",
+    "forgotSent_owner": "Request aap ki dukaan ke malik ko bhej di. Un se naya password lein.",
+    "forgotSent_none": "Ye number registered nahi."
   },
   "dashboard": {
     "title": "Dashboard",
@@ -983,7 +990,14 @@
     "daysLeft": "{{n}} din baqi",
     "expiredDays": "{{n}} din pehle khatam",
     "addBranch": "Branch shamil karein",
-    "branchHint": "Isi malik ki doosri dukaan. Woh isi login se Mazeed → Meri dukaanein mein dukaan badalta hai; har dukaan ka apna stock, khata aur bill."
+    "branchHint": "Isi malik ki doosri dukaan. Woh isi login se Mazeed → Meri dukaanein mein dukaan badalta hai; har dukaan ka apna stock, khata aur bill.",
+    "pwRequests": "Password ki requests",
+    "setPassword": "Password rakhein",
+    "markDone": "Ho gaya",
+    "openShop": "Ye dukaan kholein",
+    "ownerPassword": "Malik ka password (bhool jane par)",
+    "pwSet": "Password badal gaya. Malik ko bhejein:",
+    "savePlan": "Plan save karein"
   },
   "field": {
     "badMobile": "3 se shuru hone wala 10 hindson ka mobile number likhein, maslan 300 1234567",

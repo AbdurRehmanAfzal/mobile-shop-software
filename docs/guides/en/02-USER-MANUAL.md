@@ -82,6 +82,13 @@ shop, tap **Want this app for your shop? Contact us** on the login page.
 3. Type your **Password**.
 4. Tap **Login**.
 
+### Forgot password
+Under the login form tap **Forgot password?**, check your mobile number and **Send request**.
+- A **shop owner's** request goes to the software provider (their Super admin dashboard and
+  WhatsApp); they set a new password and send it to you.
+- A **staff member's** request goes to the shop owner (Messages and WhatsApp); the owner sets a new
+  one in **More → Staff → the person → Reset password**.
+
 ### Quick PIN (faster login on your own phone)
 Set it once:
 1. Tap **More** (top right) → **Set quick PIN**.
@@ -865,6 +872,14 @@ Only for the product owner (OOP Solutions). **More → Super admin** (others do 
 ![Shop opened](../images/admin-created.png)
 
 The list **Customer shops** shows every shop with its owner, plan and fee; use the search box to find one.
+
+### Password requests, the owner's password, opening a shop
+- **Password requests** at the top of the page list every owner who tapped *Forgot password?*
+  (name, shop, number, time). **Set password** opens that shop's sheet; the tick marks a request done.
+- In a shop's sheet, **Owner's password (when forgotten)**: write a new one and **Save**; then
+  **Send on WhatsApp** sends the login and the new password to the owner. The request closes by itself.
+- **Open this shop** puts you inside that shop with full rights (its data, screens and settings),
+  recorded in the shop's audit log; switch back in **More → My shops**.
 
 ### Plan, monthly fee and paid-until
 Tap a shop in the list. Choose the **plan** (trial / basic / pro / chain), write the **Monthly fee (Rs)**

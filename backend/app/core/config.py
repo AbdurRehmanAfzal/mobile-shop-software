@@ -25,6 +25,8 @@ class Settings(BaseSettings):
     # comma-separated mobile numbers of super users (the product owner), e.g. "03001234567"
     superuser_phones: str = ""
     # WhatsApp Cloud API (Meta); empty = messages are sent by hand from the Messages screen
+    # where an owner's "forgot password" request goes (else the first super user number)
+    admin_whatsapp: str = ""
     whatsapp_token: str = ""
     whatsapp_phone_id: str = ""
     whatsapp_api_version: str = "v21.0"

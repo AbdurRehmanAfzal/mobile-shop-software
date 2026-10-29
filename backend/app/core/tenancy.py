@@ -123,6 +123,13 @@ def get_current_context(
         if shop.id == wanted:
             _plan_gate(current, shop, request)
             return CurrentContext(user=current.user, shop=shop)
+    # the product owner may open any customer shop (owner 2026-10-29); never gated by a plan
+    from app.modules.auth.service import is_superuser
+
+    if is_superuser(current.user):
+        shop = db.get(Shop, wanted)
+        if shop is not None and shop.is_active:
+            return CurrentContext(user=current.user, shop=shop)
     # Deliberately the same error whether the shop exists or not: no enumeration.
     raise Forbidden(
         code="shop_forbidden",

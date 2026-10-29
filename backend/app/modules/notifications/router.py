@@ -90,7 +90,7 @@ def list_messages(
     ctx: Ctx,
     db: DB,
     status: MessageStatus | None = None,
-    audience: str | None = Query(default=None, pattern="^(owner|customer)$"),
+    audience: str | None = Query(default=None, pattern="^(owner|customer|admin)$"),
     limit: int = Query(default=100, le=500),
 ):
     return service.list_messages(db, ctx.shop_id, status=status, audience=audience, limit=limit)

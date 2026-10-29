@@ -51,6 +51,7 @@ interface AuthState {
   activeShopId: string | null
   setSession: (tokens: { access_token: string; refresh_token: string }, me: MeOut) => void
   setTokens: (tokens: { access_token: string; refresh_token: string }) => void
+  setMe: (me: MeOut) => void
   setActiveShop: (shopId: string) => void
   logout: () => void
 }
@@ -70,6 +71,7 @@ export const useAuth = create<AuthState>()(
           activeShopId: me.active_shop_id ?? me.shops[0]?.id ?? null,
         }),
       setTokens: (tokens) => set({ accessToken: tokens.access_token, refreshToken: tokens.refresh_token }),
+      setMe: (me) => set({ me }),
       setActiveShop: (shopId) => set({ activeShopId: shopId }),
       logout: () => {
         try { localStorage.removeItem('mobileshop.cache') } catch { /* private mode */ }
