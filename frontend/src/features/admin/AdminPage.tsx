@@ -18,9 +18,11 @@ interface AdminShop { id: string; organisation_id: string; name: string; city: s
 type DueFilter = 'all' | 'due' | 'locked'
 interface Account { label: string; account_name: string; number: string; note: string | null }
 interface FeeRow { id: string; shop_id: string; shop_name: string; plan: string; amount: string; method: string; reference: string | null; proof_path: string | null; months: number; note: string | null; status: string; decision_note: string | null; created_at: string }
+interface ShopReq { id: string; name: string; shop_name: string; city: string | null; phone: string; plan: string; note: string | null; created_at: string }
 interface PwReq { id: string; shop_id: string; shop_name: string; user_id: string; name: string; phone: string; role: string; sent_to: string; created_at: string }
 const PLANS = ['trial', 'basic', 'pro', 'chain'] as const
 const EMPTY = { shop_name: '', city: '', owner_name: '', phone: '', password: '', locale: 'ur' as 'ur' | 'en', plan: 'trial' as (typeof PLANS)[number], modules: null as string[] | null }
+const PASSWORD = () => `ms${Math.floor(1000 + Math.random() * 9000)}${Math.floor(100 + Math.random() * 900)}`
 interface ModuleCatalogue { modules: Record<string, { en: string; ur: string }>; plans: Record<string, string[]> }
 
 /** "Follow the plan" (its defaults shown greyed) or a hand-picked list of modules */
@@ -73,6 +75,8 @@ export default function AdminPage() {
   const setActiveShop = useAuth((s) => s.setActiveShop)
   const setMe = useAuth((s) => s.setMe)
   const { data: reqs } = useGet<PwReq[]>(['pw-requests'], isSuper ? '/api/v1/admin/password-requests?open_only=true' : null)
+  const { data: shopReqs } = useGet<ShopReq[]>(['shop-requests'], isSuper ? '/api/v1/admin/shop-requests?open_only=true' : null)
+  const [fromReq, setFromReq] = useState<string | null>(null)
   const { data: fees } = useGet<FeeRow[]>(['fee-pending'], isSuper ? '/api/v1/admin/fee-payments?status=pending' : null)
   const { data: feeStats } = useGet<{ pending: number; month_total: string; month: string }>(['fee-stats'], isSuper ? '/api/v1/admin/fee-stats' : null)
   const { data: savedAccounts } = useGet<Account[]>(['pay-accounts'], isSuper ? '/api/v1/admin/payment-accounts' : null)
@@ -99,7 +103,7 @@ export default function AdminPage() {
   const addBranch = useDocMutation<typeof branch, AdminShop>('POST', () => `/api/v1/admin/shops/${sel?.id}/branches`, (b) => ({ name: b.name, city: b.city || null }))
   const openShop = (s: AdminShop) => { setMods(s.modules_custom ? s.modules : null); saveModules.reset(); setPw(''); setPwDone(null); setPassword.reset(); setSel(s); setPlan({ plan: s.plan, monthly_fee: Number(s.monthly_fee) ? String(Number(s.monthly_fee)) : '', expires_on: s.plan_expires_at ? s.plan_expires_at.slice(0, 10) : '', note: s.fee_note ?? '' }); setBranch({ name: '', city: '' }); savePlan.reset(); addBranch.reset() }
   const { data, isLoading } = useGet<AdminShop[]>(['admin-shops', q], isSuper ? `/api/v1/admin/shops${q ? `?q=${encodeURIComponent(q)}` : ''}` : null)
-  const create = useDocMutation<typeof EMPTY, AdminShop>('POST', () => '/api/v1/admin/shops', (x) => ({ ...x, city: x.city || null, phone: normalisePhone(x.phone) }))
+  const create = useDocMutation<typeof EMPTY & { request_id?: string | null }, AdminShop>('POST', () => '/api/v1/admin/shops', (x) => ({ ...x, city: x.city || null, phone: normalisePhone(x.phone) }))
   const { data: catalogue } = useGet<ModuleCatalogue>(['module-catalogue'], isSuper ? '/api/v1/admin/modules' : null)
   const [mods, setMods] = useState<string[] | null>(null)
   const saveModules = useDocMutation<{ modules: string[] | null }, AdminShop>('PATCH', () => `/api/v1/admin/shops/${sel?.id}/modules`)
@@ -186,6 +190,26 @@ export default function AdminPage() {
           </div>
         ) : null}
       </Sheet>
+      {shopReqs?.length ? (
+        <section className="flex flex-col gap-2">
+          <BiLabel text="admin.shopRequests" size="md" bold />
+          <div className="card divide-y divide-line p-0">
+            {shopReqs.map((r) => (
+              <div key={r.id} className="flex items-center gap-3 px-4 py-3">
+                <span className="well h-10 w-10 shrink-0 bg-sell text-sell-icon"><Store size={18} /></span>
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <span className="truncate text-[15px] font-bold">{r.shop_name}{r.city ? <span className="font-medium text-muted"> · {r.city}</span> : null}</span>
+                  <span className="truncate text-xs text-muted" dir="ltr">{r.name} · {r.phone} · {r.plan} · {fmtDate(r.created_at)}</span>
+                  {r.note ? <span className="text-xs text-muted">{r.note}</span> : null}
+                </span>
+                <button type="button" onClick={() => { setMade(null); setF({ ...EMPTY, shop_name: r.shop_name, city: r.city ?? '', owner_name: r.name, phone: r.phone.replace(/^0/, ''), plan: (r.plan as (typeof PLANS)[number]) || 'trial', password: PASSWORD() }); setFromReq(r.id); create.reset(); setOpen(true) }} className="tap rounded-full bg-ink px-3 py-1.5 text-xs font-bold text-ground">{pick('admin.newShop')}</button>
+                <a href={`https://wa.me/92${r.phone.replace(/^0/, '')}`} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="tap flex h-9 w-9 items-center justify-center rounded-full bg-emerald text-white"><MessageCircle size={16} /></a>
+                <button type="button" aria-label={pick('admin.markDone')} onClick={async () => { await api('POST', `/api/v1/admin/shop-requests/${r.id}/done`); create.reset() }} className="tap flex h-9 w-9 items-center justify-center rounded-full border border-line text-emerald"><Check size={16} /></button>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
       {reqs?.length ? (
         <section className="flex flex-col gap-2">
           <BiLabel text="admin.pwRequests" size="md" bold />
@@ -330,7 +354,8 @@ export default function AdminPage() {
               loading={create.isPending}
               disabled={f.shop_name.trim().length < 2 || f.owner_name.trim().length < 2 || !isMobileOk(f.phone) || f.password.length < 6}
               onClick={async () => {
-                const shop = await create.mutateAsync(f)
+                const shop = await create.mutateAsync({ ...f, request_id: fromReq })
+                setFromReq(null)
                 setMade({ shop, password: f.password })
               }}
             />

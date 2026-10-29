@@ -91,6 +91,16 @@ TEMPLATES: dict[str, dict[str, dict[str, str]]] = {
             ),
         },
     },
+    "shop_request_admin": {
+        "en": {
+            "subject": "New shop request: {shop}",
+            "body": "New shop request from the website: {name}, {shop} ({city}), {phone}, plan {plan}. Open it in More → Super admin → Shop requests.",
+        },
+        "ur": {
+            "subject": "نئی دکان کی درخواست: {shop}",
+            "body": "ویب سائٹ سے نئی دکان کی درخواست: {name}، {shop} ({city})، {phone}، پلان {plan}۔ سپر ایڈمن ← دکان کی درخواستیں میں کھولیں۔",
+        },
+    },
     "fee_received": {
         "en": {
             "subject": "Fee received: {shop}",

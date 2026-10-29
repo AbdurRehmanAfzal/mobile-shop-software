@@ -886,6 +886,13 @@ Only for the product owner (OOP Solutions). **More → Super admin** (others do 
 
 The list **Customer shops** shows every shop with its owner, plan and fee; use the search box to find one.
 
+### Shop requests from the website
+The public page at **/welcome** (what a visitor sees on the site's root without a login) explains the
+software module by module with screenshots, a sample video, the prices and the payment accounts, and
+has an **Open my shop** form. Each request shows at the top of Super admin as **Shop requests from the
+website** with a WhatsApp button; **Open a new shop** there prefills the owner's name, number, city and
+plan with a generated password — the request closes when the shop is opened.
+
 ### Software fees: accounts and payments received
 - **Payment accounts** (in the *Software fees* card): write the accounts shops pay into — name (e.g.
   Easypaisa), account holder, number or IBAN, a note. They live only in the database and show on every

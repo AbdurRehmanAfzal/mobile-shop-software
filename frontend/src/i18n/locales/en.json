@@ -1015,7 +1015,8 @@
     "approveMonths": "Received · +{{n}} month(s)",
     "reject": "Reject",
     "rejectWhy": "Why not? (the shop owner will read this)",
-    "noFees": "No payments to check"
+    "noFees": "No payments to check",
+    "shopRequests": "Shop requests from the website"
   },
   "field": {
     "badMobile": "Enter a 10-digit mobile number starting with 3, e.g. 300 1234567",
@@ -1395,5 +1396,176 @@
       "approved": "Received",
       "rejected": "Not accepted"
     }
+  },
+  "landing": {
+    "badge": "For mobile shops in Pakistan",
+    "h1": "Run your mobile shop from your phone",
+    "sub": "New and used phones, ID check of the seller, udhaar khata, repairs, accessories, WhatsApp receipts and the day's hisaab — in Urdu or English, big buttons, no training needed.",
+    "ctaTrial": "Start free for {{n}} days",
+    "waHello": "Assalam-o-Alaikum, I want to know about the Mobile Shop software.",
+    "point1": "Works on any phone",
+    "point2": "Urdu · Roman · English",
+    "point3": "Keeps working without internet",
+    "for": {
+      "used": {
+        "t": "Used-phone dealers",
+        "d": "Buy from a walk-in with CNIC photos and the eGadget check, print the declaration, keep the phone's whole history by IMEI."
+      },
+      "new": {
+        "t": "New-phone shops",
+        "d": "Stock by brand and model, box-pack and open-box, PTA / Non-PTA / JV with SIM time, tax on bills, invoices with your logo."
+      },
+      "repair": {
+        "t": "Repair counters",
+        "d": "Job sheets, parts and labour, status by WhatsApp, delivery with a bill — and accessories by count."
+      }
+    },
+    "videoTitle": "See it work in 2 minutes",
+    "videoSub": "A sale, the stock list, the udhaar khata and the day's hisaab — recorded on the app itself.",
+    "videoHint": "Tap to play. No sound.",
+    "modulesTitle": "Everything a counter needs",
+    "modulesSub": "The basics come with every plan. The rest you add when you need it.",
+    "basicsTitle": "In every plan",
+    "optionalTitle": "Add-on modules",
+    "extrasTitle": "Also built in",
+    "basics": {
+      "sale": {
+        "t": "Sale in 3 taps",
+        "d": "Pick the phone, take the money (cash, online, cheque, from abroad or udhaar), print or WhatsApp the receipt."
+      },
+      "purchase": {
+        "t": "Add stock",
+        "d": "From a dealer, a customer or another shop; IMEI by camera; box, charger and accessories recorded."
+      },
+      "stock": {
+        "t": "Stock by IMEI",
+        "d": "Every phone, tablet and smart watch with its cost, asking price, condition and days in stock."
+      },
+      "verify": {
+        "t": "ID check for used phones",
+        "d": "CNIC scan fills the form; seller photo, eGadget result, signed declaration; stolen phones blocked."
+      },
+      "khata": {
+        "t": "Udhaar khata",
+        "d": "Who owes you and whom you owe, every bill and payment with the running balance."
+      },
+      "payments": {
+        "t": "Money in and out",
+        "d": "Cash, bank, Easypaisa, JazzCash — each in its own account, day close with the drawer count."
+      },
+      "invoices": {
+        "t": "Invoices",
+        "d": "Thermal receipt or A4 invoice in English or Urdu, PDF download and share."
+      },
+      "returns": {
+        "t": "Returns & exchange",
+        "d": "Take a phone back, cut a fee, give cash or credit; old phone in, new phone out."
+      },
+      "hisaab": {
+        "t": "Day's hisaab",
+        "d": "Sold, in hand, udhaar given, expenses and profit for today, this week or any dates."
+      },
+      "staff": {
+        "t": "Staff with roles",
+        "d": "Owner, manager, salesman, technician — each sees only what they should; PIN and fingerprint login."
+      },
+      "imei": {
+        "t": "IMEI history",
+        "d": "Scan any IMEI: has this phone been here before, who sold it, who bought it."
+      },
+      "languages": {
+        "t": "Urdu · Roman · English",
+        "d": "One language at a time, Nastaliq Urdu, right-to-left; printed papers follow the shop's language."
+      }
+    },
+    "optional": {
+      "accessories": "Chargers, covers, cables, watches by count, with low-stock alerts.",
+      "repairs": "Job sheets, parts, labour, status on WhatsApp, delivery with a bill.",
+      "expenses": "Daily expenses by category, salaries, and closing the day.",
+      "held_sales": "Park a bill, serve the next customer, resume it later.",
+      "tax": "FBR sales tax on bills when the customer asks.",
+      "exchange": "Old phone in, new phone out, the difference settled in one go.",
+      "reports": "Profit and loss, best sellers, old stock, estimates — download or share.",
+      "exports": "Every report and invoice as PDF, Excel or CSV, shared on WhatsApp.",
+      "notifications": "Receipts to customers, udhaar reminders, the night report to the owner.",
+      "loans": "Phones given to another shop on amanat, tracked until they come back or are sold."
+    },
+    "extras": {
+      "offline": {
+        "t": "Works without internet",
+        "d": "Sales, stock and payments are saved on the phone and sent when the connection returns — posted once."
+      },
+      "fingerprint": {
+        "t": "Fingerprint login",
+        "d": "On the website and the Android app; staff too, when the owner allows."
+      },
+      "cnic": {
+        "t": "CNIC scan",
+        "d": "A photo of the card fills the number, name, father's name and dates — read on the phone, nothing uploaded."
+      },
+      "whatsapp": {
+        "t": "WhatsApp built in",
+        "d": "Receipts, reminders and reports go out on WhatsApp — automatically with the Business API."
+      }
+    },
+    "shotsTitle": "Screens",
+    "shotsSub": "Taken from the app in English and Urdu.",
+    "shots": {
+      "home": "Home",
+      "sale": "Sale",
+      "stock": "Stock",
+      "khata": "Udhaar khata",
+      "reports": "Profit & reports",
+      "invoice": "Invoices"
+    },
+    "priceTitle": "Simple monthly price",
+    "priceSub": "Start with {{n}} days free. Pay monthly, no contract. Prices in PKR per shop.",
+    "popular": "Most chosen",
+    "choose": "Choose",
+    "allBasics": "All the basics above",
+    "plan": {
+      "basic": "For a counter that sells and buys phones.",
+      "pro": "For a shop with repairs, reports and WhatsApp.",
+      "chain": "For an owner with more than one shop."
+    },
+    "priceNote": "A second branch of the same owner is set up on the Chain plan. Android app included. Setup and training on WhatsApp are free.",
+    "startTitle": "Open my shop",
+    "startSub": "Fill this in; we open your shop and send your login on WhatsApp the same day.",
+    "yourName": "Your name",
+    "planPick": "Plan",
+    "trialName": "Free trial",
+    "note": "Anything else (optional)",
+    "send": "Send request",
+    "sent": "Thank you! We will contact you on WhatsApp shortly with your login.",
+    "payTitle": "How to pay",
+    "paySub": "After the free trial, send the month's fee to any of these accounts and WhatsApp us the screenshot (or report it inside the app under More → Software fees).",
+    "payAsk": "Accounts are shared on WhatsApp.",
+    "waPaid": "Assalam-o-Alaikum, I have sent the Mobile Shop fee. Screenshot attached.",
+    "waPaidBtn": "I have paid — send screenshot",
+    "faqTitle": "Questions people ask",
+    "faq": {
+      "data": {
+        "q": "Is my data safe? Can other shops see it?",
+        "a": "No. Every shop's data is separate and backed up every night. Only your staff, with the roles you give them, can see your shop."
+      },
+      "phone": {
+        "q": "Do I need a computer?",
+        "a": "No. It runs on any Android phone (app or browser) and on iPhone / laptop in the browser. A thermal printer is optional."
+      },
+      "offline": {
+        "q": "What if the internet goes?",
+        "a": "Keep selling. Sales, stock and payments wait on the phone and are sent when the connection returns."
+      },
+      "staff": {
+        "q": "Can my salesman see the buying price?",
+        "a": "Only if you want. Owner, manager, salesman and technician each see what you allow."
+      },
+      "cancel": {
+        "q": "Can I stop any time?",
+        "a": "Yes. Pay month by month; your data stays yours and can be downloaded as Excel at any time."
+      }
+    },
+    "footer": "Made in Pakistan for Pakistani mobile shops.",
+    "about": "About the software ›"
   }
 }

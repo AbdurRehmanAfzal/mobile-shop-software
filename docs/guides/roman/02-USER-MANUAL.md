@@ -889,6 +889,13 @@ Sirf product ke maalik (OOP Solutions) ke liye. **Mazeed → Super admin** (doos
 
 **Customers ki dukaanein** mein har dukaan apne maalik, plan aur fees ke saath; search se dhoondein.
 
+### Website se dukaan ki requests
+Public page **/welcome** (jo bina login site ke root par dikhta hai) software ko module-wise screenshots,
+sample video, qeemat aur adaigi ke accounts ke saath samjhata hai, aur **Meri dukaan kholein** ka form
+rakhta hai. Har request Super admin ke ooper **Website se dukaan ki requests** mein WhatsApp button ke
+saath aati hai; wahan **Nayi dukaan kholein** malik ka naam, number, shehar aur plan pehle se bhar deta hai
+(password khud banta hai) — dukaan khulte hi request band.
+
 ### Software fees: accounts aur wasool shuda adaigiyan
 - **Adaigi ke accounts** (*Software fees* card mein): jin accounts mein dukaanein fees bhejti hain — naam
   (maslan Easypaisa), account holder, number ya IBAN, note. Sirf database mein rehte hain aur har dukaan ki

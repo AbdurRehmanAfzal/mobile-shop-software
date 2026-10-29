@@ -1,4 +1,5 @@
-import { Navigate, Outlet, createBrowserRouter } from 'react-router-dom'
+import { Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router-dom'
+import LandingPage from '@/features/landing/LandingPage'
 import { useAuth } from '@/lib/auth'
 import Shell from './Shell'
 import LoginPage from '@/features/auth/LoginPage'
@@ -38,7 +39,9 @@ import CashAccountsPage from '@/features/more/CashAccountsPage'
 
 function RequireAuth() {
   const token = useAuth((s) => s.accessToken)
-  return token ? <Outlet /> : <Navigate to="/login" replace />
+  const { pathname } = useLocation()
+  // a visitor on the root without a login sees the landing page; deep links still go to login
+  return token ? <Outlet /> : <Navigate to={pathname === '/' ? '/welcome' : '/login'} replace />
 }
 
 function RedirectIfAuthed() {
@@ -47,6 +50,7 @@ function RedirectIfAuthed() {
 }
 
 export const router = createBrowserRouter([
+  { path: '/welcome', element: <LandingPage /> },
   {
     element: <RedirectIfAuthed />,
     children: [
