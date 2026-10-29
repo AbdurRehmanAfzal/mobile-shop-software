@@ -29,6 +29,8 @@ class Organisation(UUIDPk, Timestamped, Base):
     # owner 2026-10-29: the fee the product owner charges per month (PKR) and a private note
     monthly_fee: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
     fee_note: Mapped[str | None] = mapped_column(String(200))
+    # owner 2026-10-29: modules switched on for this shop; None = the plan's defaults
+    modules: Mapped[list | None] = mapped_column(JSON)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
     shops: Mapped[list["Shop"]] = relationship(back_populates="organisation")

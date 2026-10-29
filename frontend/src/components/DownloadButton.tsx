@@ -12,6 +12,7 @@ import { BtnText, Sheet } from './ui'
 import { downloadFile, openPrintable } from '@/lib/files'
 import { withDocLang } from '@/lib/docLang'
 import { fetchFile, printPagePdf } from '@/lib/share'
+import { useModule } from '@/lib/modules'
 
 type Fmt = 'pdf' | 'xlsx' | 'csv'
 
@@ -19,6 +20,7 @@ export default function DownloadButton({ path, name }: { path: string; name: str
   const [mode, setMode] = useState<DocMode | null>(null)
   const { pick } = useLang()
   const s = useDocFile(name)
+  const on = useModule('exports')
   const url = (fmt: string) => withDocLang(`${path}${path.includes('?') ? '&' : '?'}format=${fmt}`)
 
   function run(fmt: Fmt) {
@@ -33,6 +35,7 @@ export default function DownloadButton({ path, name }: { path: string; name: str
     setMode(m)
   }
 
+  if (!on) return null
   const head = 'tap print:hidden flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border border-line bg-surface px-1.5 py-1'
   return (
     <div className="flex shrink-0 gap-1.5">

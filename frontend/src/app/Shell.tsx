@@ -11,6 +11,7 @@ import { BiLabel, useLang, type BiText } from '@/components/Bilingual'
 import { LOCALES, setLocale, type Locale } from '@/i18n'
 import { useTheme } from '@/lib/theme'
 import { JOBS } from '@/features/counter/jobs'
+import { useModules } from '@/lib/modules'
 import PlanBanner from '@/components/PlanBanner'
 import OfflineBar from '@/components/OfflineBar'
 
@@ -37,6 +38,8 @@ export default function Shell() {
   const { ur, roman, pick, cls, dir } = useLang()
   const locale: Locale = ur ? 'ur' : roman ? 'roman' : 'en'
   const [langOpen, setLangOpen] = useState(false)
+  const has = useModules()
+  const jobs = JOBS.filter((j) => !j.module || has(j.module))
   const theme = useTheme((s) => s.theme)
   const setTheme = useTheme((s) => s.setTheme)
   const dark = theme === 'dark' || (theme === 'system' && window.matchMedia?.('(prefers-color-scheme: dark)').matches)
@@ -45,14 +48,14 @@ export default function Shell() {
   // counter shortcuts on a laptop keyboard (F5 is left alone: it reloads the page)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      const job = JOBS.find((j) => j.fkey === e.key)
+      const job = jobs.find((j) => j.fkey === e.key)
       if (!job) return
       e.preventDefault()
       nav(job.to)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [nav])
+  }, [nav, jobs])
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-ground lg:max-w-6xl">
@@ -89,7 +92,7 @@ export default function Shell() {
           <NavLink to="/" end className={({ isActive }) => `tap flex min-h-12 items-center gap-3 rounded-2xl px-3 text-[15px] font-bold ${isActive ? 'bg-ink text-ground' : 'text-ink'}`}>
             <Home size={20} strokeWidth={1.9} /> <span className={ur ? cls('md') : ''}>{pick('nav.home')}</span>
           </NavLink>
-          {JOBS.map((j) => (
+          {jobs.map((j) => (
             <NavLink key={j.id} to={j.to} className={({ isActive }) => `tap flex min-h-14 items-center gap-3 rounded-2xl px-3 font-bold ${j.tone} ${isActive ? 'ring-2 ring-current' : ''}`}>
               <span className={`well h-10 w-10 bg-surface ${j.ink}`}><j.Icon size={20} strokeWidth={1.9} /></span>
               <span className={`flex-1 ${ur ? cls('md') : 'text-[15px]'}`}>{pick(j.label)}</span>

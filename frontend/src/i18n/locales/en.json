@@ -997,7 +997,10 @@
     "openShop": "Open this shop",
     "ownerPassword": "Owner's password (when forgotten)",
     "pwSet": "Password changed. Send it to the owner:",
-    "savePlan": "Save plan"
+    "savePlan": "Save plan",
+    "modulesTitle": "Modules for this shop",
+    "followPlan": "Follow the plan ({{plan}})",
+    "saveModules": "Save modules"
   },
   "field": {
     "badMobile": "Enter a 10-digit mobile number starting with 3, e.g. 300 1234567",
@@ -1335,5 +1338,20 @@
   },
   "docLang": {
     "title": "Document language"
+  },
+  "modules": {
+    "accessories": "Accessories & watches",
+    "repairs": "Repairs",
+    "expenses": "Expenses & day close",
+    "held_sales": "Hold a sale",
+    "tax": "Tax on bills",
+    "exchange": "Exchange",
+    "reports": "Profit & reports",
+    "exports": "Download & share",
+    "notifications": "WhatsApp messages & reminders",
+    "loans": "Loans (amanat)",
+    "off": "This feature is not in your plan.",
+    "offHint": "Ask the software provider to switch it on for your shop.",
+    "waText": "Assalam-o-Alaikum, I want to add \"{{module}}\" to my Mobile Shop plan."
   }
 }

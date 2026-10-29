@@ -16,7 +16,8 @@ from sqlalchemy import func, select
 from app.core.errors import Forbidden, NotFound
 from app.core.permissions import Role
 from app.core.tenancy import DB, CurrentUser, get_current_user
-from app.modules.admin import access, plans
+from app.modules.admin import access, modules, plans
+from app.modules.audit.service import record_audit
 from app.modules.auth import service
 from app.modules.auth.models import Shop, User
 from app.modules.auth.schemas import SignupRequest
@@ -53,6 +54,17 @@ class AdminShopOut(BaseModel):
     monthly_fee: Decimal
     fee_note: str | None
     plan_status: str
+    modules: list[str]
+    modules_custom: bool
+
+
+class ModulesIn(BaseModel):
+    modules: list[str] | None  # None = follow the plan
+
+
+class AdminShopCreate(SignupRequest):
+    plan: Literal["trial", "basic", "pro", "chain"] = "trial"
+    modules: list[str] | None = None
 
 
 class PlanIn(BaseModel):
@@ -132,6 +144,8 @@ def _rows(db, shops: list[Shop]) -> list[AdminShopOut]:
                 monthly_fee=org.monthly_fee,
                 fee_note=org.fee_note,
                 plan_status=info["status"],
+                modules=info["modules"],
+                modules_custom=info["modules_custom"],
             )
         )
     return out
@@ -206,8 +220,41 @@ def list_shops(_: Super, db: DB, q: str | None = None):
 
 
 @router.post("/shops", response_model=AdminShopOut, status_code=201)
-def create_shop(data: SignupRequest, current: Super, db: DB):
-    """Open a shop for a customer: their shop name and their own owner login (phone + password)."""
+def create_shop(data: AdminShopCreate, current: Super, db: DB):
+    """Open a shop for a customer: their shop name and their own owner login (phone + password),
+    the plan and, when not the plan's defaults, the modules switched on (owner 2026-10-29)."""
     user = service.create_shop_with_owner(db, data, created_by=current.id)
     shop = db.scalar(select(Shop).where(Shop.organisation_id == user.organisation_id))
+    org = shop.organisation
+    org.plan = data.plan
+    org.modules = modules.clean(data.modules)
+    db.commit()
+    db.refresh(shop)
+    return _rows(db, [shop])[0]
+
+
+@router.get("/modules")
+def module_catalogue(_: Super):
+    """every switchable module with its names, and each plan's defaults"""
+    return {"modules": modules.MODULES, "plans": modules.PLAN_DEFAULTS}
+
+
+@router.patch("/shops/{shop_id}/modules", response_model=AdminShopOut)
+def set_modules(shop_id: uuid.UUID, data: ModulesIn, current: Super, db: DB):
+    shop = _shop(db, shop_id)
+    org = shop.organisation
+    before = modules.effective(org)
+    org.modules = modules.clean(data.modules)
+    record_audit(
+        db,
+        shop_id=shop.id,
+        user_id=current.id,
+        entity="organisation",
+        entity_id=org.id,
+        action="modules",
+        before={"modules": before},
+        after={"modules": modules.effective(org)},
+    )
+    db.commit()
+    db.refresh(shop)
     return _rows(db, [shop])[0]

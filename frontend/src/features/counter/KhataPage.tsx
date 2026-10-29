@@ -11,6 +11,7 @@ import PartyPicker from '@/components/PartyPicker'
 import { BtnText, Empty, Loading, PageHeader, SearchBox, Sheet } from '@/components/ui'
 import PartyForm from '@/features/parties/PartyForm'
 import PaymentForm from '@/features/payments/PaymentForm'
+import { useModules } from '@/lib/modules'
 import { useGet, useParties } from '@/lib/queries'
 import type { Party } from '@/lib/types'
 
@@ -20,6 +21,7 @@ const n = (v: string | number | null | undefined) => Math.abs(Number(v ?? 0)).to
 export default function KhataPage() {
   const { pick, ur, cls } = useLang()
   const nav = useNavigate()
+  const has = useModules()
   const [params, setParams] = useSearchParams()
   const f = (params.get('f') as Filter) || 'all'
   const [q, setQ] = useState('')
@@ -45,10 +47,10 @@ export default function KhataPage() {
         right={
           <div className="flex gap-2">
             <DownloadButton path="/api/v1/exports/khata" name="udhaar-khata" />
-            <button type="button" aria-label={pick('remind.title')} onClick={() => nav('/khata/reminders')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border border-line bg-surface px-1.5 py-1 text-ink">
+            {has('notifications') ? <button type="button" aria-label={pick('remind.title')} onClick={() => nav('/khata/reminders')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border border-line bg-surface px-1.5 py-1 text-ink">
               <BellRing size={20} strokeWidth={1.75} />
               <BtnText k="remind.short" />
-            </button>
+            </button> : null}
             <button type="button" onClick={() => setAdding(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl bg-ink px-2 py-1 text-ground">
               <Plus size={20} strokeWidth={2.2} />
               <BtnText k="counter.newPerson" />

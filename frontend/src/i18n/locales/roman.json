@@ -997,7 +997,10 @@
     "openShop": "Ye dukaan kholein",
     "ownerPassword": "Malik ka password (bhool jane par)",
     "pwSet": "Password badal gaya. Malik ko bhejein:",
-    "savePlan": "Plan save karein"
+    "savePlan": "Plan save karein",
+    "modulesTitle": "Is dukaan ke modules",
+    "followPlan": "Plan ke mutabiq ({{plan}})",
+    "saveModules": "Modules save karein"
   },
   "field": {
     "badMobile": "3 se shuru hone wala 10 hindson ka mobile number likhein, maslan 300 1234567",
@@ -1335,5 +1338,20 @@
   },
   "docLang": {
     "title": "Document ki zubaan"
+  },
+  "modules": {
+    "accessories": "Accessories aur watches",
+    "repairs": "Marammat",
+    "expenses": "Kharche aur din band",
+    "held_sales": "Sale hold",
+    "tax": "Bill par tax",
+    "exchange": "Exchange",
+    "reports": "Munafa aur reports",
+    "exports": "Download aur share",
+    "notifications": "WhatsApp paighaam aur yaad dahani",
+    "loans": "Amanat",
+    "off": "Ye sahulat aap ke plan mein shamil nahi.",
+    "offHint": "Software provider se kahein ke aap ki dukaan ke liye chalu kar dein.",
+    "waText": "Assalam-o-Alaikum, main apne Mobile Shop plan mein \"{{module}}\" shamil karwana chahta hoon."
   }
 }
