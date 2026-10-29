@@ -25,6 +25,7 @@ const BASICS: { key: string; Icon: LucideIcon }[] = [
 const OPTIONAL: Record<string, LucideIcon> = { accessories: Headphones, repairs: Wrench, expenses: Wallet, held_sales: PauseCircle, tax: Receipt, exchange: ArrowLeftRight, reports: BarChart3, exports: Download, notifications: BellRing, loans: RotateCcw }
 const EXTRAS: { key: string; Icon: LucideIcon }[] = [{ key: 'offline', Icon: CloudOff }, { key: 'fingerprint', Icon: Fingerprint }, { key: 'cnic', Icon: ShieldCheck }, { key: 'whatsapp', Icon: MessageCircle }]
 const SHOTS = ['home', 'sale', 'stock', 'khata', 'reports', 'invoice'] as const
+const WEB_SHOTS = ['home', 'stock', 'reports', 'invoice'] as const
 
 export default function LandingPage() {
   const { pick, ur, roman, cls } = useLang()
@@ -133,6 +134,20 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* the web application on a laptop */}
+        <section id="web" className="flex flex-col gap-4">
+          <h2 className={h2}>{pick('landing.webTitle')}</h2>
+          <p className={`text-muted ${body}`}>{pick('landing.webSub')}</p>
+          <div className="-mx-5 flex snap-x gap-4 overflow-x-auto px-5 pb-2">
+            {WEB_SHOTS.map((s) => (
+              <figure key={s} className="w-[min(92vw,620px)] shrink-0 snap-center">
+                <Browser src={`/landing/web-${s}-${ur ? 'ur' : 'en'}.png`} />
+                <figcaption className={`mt-2 text-center text-muted ${ur ? cls('sm') : 'text-sm font-semibold'}`}>{pick(`landing.shots.${s}`)}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+
         {/* pricing */}
         <section id="pricing" className="flex flex-col gap-4">
           <h2 className={h2}>{pick('landing.priceTitle')}</h2>
@@ -201,6 +216,19 @@ function Phone({ src, small = false }: { src: string; small?: boolean }) {
   return (
     <div className={`overflow-hidden rounded-[30px] border-ink bg-ink shadow-hero ${small ? 'border-4' : 'border-[6px]'}`}>
       <img src={src} alt="" loading="lazy" className="aspect-[9/19.5] w-full object-cover object-top" />
+    </div>
+  )
+}
+
+/** a laptop browser frame around a wide screenshot */
+function Browser({ src }: { src: string }) {
+  return (
+    <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-hero">
+      <div className="flex items-center gap-1.5 border-b border-line bg-ground px-3 py-2" dir="ltr">
+        <span className="h-2.5 w-2.5 rounded-full bg-[#F87171]" /><span className="h-2.5 w-2.5 rounded-full bg-[#FBBF24]" /><span className="h-2.5 w-2.5 rounded-full bg-[#34D399]" />
+        <span className="ms-3 h-5 flex-1 rounded-md bg-surface px-2 text-[10px] leading-5 text-muted">mobileshop.oopsolutions.com</span>
+      </div>
+      <img src={src} alt="" loading="lazy" className="aspect-[16/10] w-full object-cover object-top" />
     </div>
   )
 }
