@@ -86,7 +86,8 @@
     "lookPro": "Professional",
     "lookNavy": "Navy",
     "lookColorful": "Rangeen",
-    "lookModern": "Modern"
+    "lookModern": "Modern",
+    "shops": "Meri dukaanein"
   },
   "common": {
     "save": "Mehfooz karein",
@@ -957,7 +958,23 @@
     "opened": "Khuli",
     "none": "Abhi koi dukaan nahi",
     "another": "Ek aur dukaan kholein",
-    "only": "Yeh page sirf aap (product ke maalik) ko nazar aata hai"
+    "only": "Yeh page sirf aap (product ke maalik) ko nazar aata hai",
+    "feesDue": "Fees baqi",
+    "locked": "Band",
+    "branches": "branches",
+    "month": "mahina",
+    "months": "mahine",
+    "noFee": "fees tay nahi",
+    "expires": "Khatam",
+    "planTitle": "Plan aur fees",
+    "monthlyFee": "Mahana fees (Rs)",
+    "expiresOn": "Adaigi is tareekh tak",
+    "feeNote": "Note (sirf aap dekhte hain)",
+    "unlimited": "Unlimited",
+    "daysLeft": "{{n}} din baqi",
+    "expiredDays": "{{n}} din pehle khatam",
+    "addBranch": "Branch shamil karein",
+    "branchHint": "Isi malik ki doosri dukaan. Woh isi login se Mazeed → Meri dukaanein mein dukaan badalta hai; har dukaan ka apna stock, khata aur bill."
   },
   "field": {
     "badMobile": "3 se shuru hone wala 10 hindson ka mobile number likhein, maslan 300 1234567",
@@ -1270,5 +1287,13 @@
     "none": "Abhi kisi par udhaar nahi",
     "sentN": "{{n}} yaad dahaniyan bhej dein.",
     "openEach": "Neeche har naam par daba kar us ki yaad dahani WhatsApp par bhejein."
+  },
+  "plan": {
+    "dueSoon": "Aap ki subscription {{n}} din mein khatam ho rahi hai. Bina ruke kaam jari rakhne ke liye renew karein.",
+    "dueToday": "Aap ki subscription aaj khatam ho rahi hai. Renew karein.",
+    "expired": "Aap ki subscription khatam ho gayi hai. App ke save karna band karne mein {{n}} din baqi hain.",
+    "locked": "Aap ki subscription khatam ho gayi hai. App ab sirf data dikhati hai; jari rakhne ke liye renew karein.",
+    "contact": "WhatsApp par rabta",
+    "waText": "Assalam-o-Alaikum, main apni Mobile Shop subscription renew karwana chahta hoon."
   }
 }
