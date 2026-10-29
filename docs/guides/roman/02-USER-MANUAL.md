@@ -740,12 +740,17 @@ Kharche par daba kar **Badlein** ya **Yeh kharcha khatam karein** (wajah likhein
 
 1. **Mazeed → Purana de kar naya**.
 2. **Gahak chunein**: `Bilal Ahmed` → **Aage**.
-3. **Purana phone** dabayein aur **Phone daalein** ki tarah bharein: IMEI `358812091717195`, **Oppo**, **A17**,
-   **Khareed qeemat** `18000` (= purane ki qeemat), **Bechne ki qeemat** `22000` → **Daalein** → **Aage**.
-4. **Stock se chunein** → **Infinix Note 40** dabayein. **Bechne ki qeemat** `54000` → **Aage**.
-5. Khulasa: **Naya phone** 54,000, **Purane ki qeemat** 18,000, **Pichla baqaya**.
-   **Abhi mile**: `30000`. **Naya baqaya** **6,000**.
-6. **Pakka karein** dabayein. **Exchange ho gaya** → **Raseed print (80mm)**.
+3. **Purana phone darj karein** dabayein aur **Phone daalein** ki tarah bharein: IMEI `358812091717195`,
+   **Oppo**, **A17**, **Khareed qeemat** `18000` (= purane ki qeemat), **Bechne ki qeemat** `22000` →
+   **Daalein** → **Aage**. Purana phone apni qeemat ke saath card mein dikhta hai; **Purana phone badlein**
+   se dobara khulta hai.
+4. **Stock se naya phone chunein** → **Infinix Note 40** dabayein. **Bechne ki qeemat** `54000` → **Aage**.
+5. **Hisaab**: dono phone, phir **Naya phone** 54,000, **Purane ki qeemat** − 18,000, aur ek rangeen card
+   jo lafzon mein batata hai **Farq gahak de ga Rs. 36,000** (ya **Farq aap wapas dein ge** jab purana
+   phone mehanga ho, ya **Kisi ko kuch nahi dena**). **Abhi mile**: `30000`; farq se kam ho to baqi khate
+   par. **Naya baqaya** **6,000**.
+6. **Exchange mukammal karein** dabayein. **Exchange ho gaya** → **Raseed print (80mm)**, **A4**,
+   download / share, **Ek aur exchange**, **Bill kholein**.
 
 ![Exchange](../images/exchange.png)
 
@@ -759,17 +764,23 @@ Purana phone Bilal se khareeda hua ban kar stock mein jata hai; aam gahak ke pho
 Doosri dukaan ko dikhane ya bechne ke liye diya gaya phone. Bikne ya wapas aane tak **aap ka** rehta hai.
 
 **Misaal:** **Tecno Spark 20** **Madina Mobiles** ko dena.
-1. Doosri dukaan ka banda **Doosri dukaan** qism ka hona chahiye (Udhaar → **Naya banda** → **Doosri dukaan**).
-2. Phone kholein (Stock → phone dabayein) → **Amanat par dein**.
-3. **Kis dukaan ko**: **Madina Mobiles**. **Wapsi kab** (tareekh, agar ho), **Note**.
-4. **Amanat par dein** dabayein. Phone **Amanat par** ho jata hai.
+1. **Mazeed → Amanat**. Ooper ka card batata hai is waqt kitne phone doosri dukaanon par hain.
+2. **Phone amanat par dein** → **Kaun sa phone?** list mein Tecno dabayein (ya search / scan) →
+   **Kis dukaan ko?** `Madina` likhein (nai dukaan wahin **+** se ban jati hai) → **Wapsi** 3 / 7 / 15 / 30
+   din ya **Tareekh nahi** → **Note** → **Amanat par dein**.
+   Yehi button phone ke apne page par bhi hai (Stock → phone dabayein → **Amanat par dein**).
+3. Phone stock mein **Amanat par** dikhta hai aur yahan ek card mein: phone, kitne din se bahar hai
+   (ya **Der ho gayi**), dukaan apni tareekhon ke saath aur **Dukaan** button jis se us ka page khulta hai.
 
 ![Amanat par dein](../images/loan-give.png)
 
-Baad mein **Mazeed → Amanat**, tab **Bahar**:
-- **Phone wapas aa gaya** — phone wapas **Stock mein**.
+Card ke neeche, tab **Bahar**:
+- **Phone wapas aa gaya** — chhoti si tasdeeq, phir phone wapas **Stock mein**.
 - **Unhon ne rakh liya (bikri)** — **Tay shuda qeemat** (maslan 34,500) aur **Abhi mile** (maslan 20,000)
-  likhein; baqi us dukaan ke khate mein. **Pakka karein** dabayein.
+  likhein; card **Un ke khate par** 14,500 dikhata hai. **Pakka karein**: Sales mein bill ban jata hai aur
+  baqi us dukaan ke khate par. Tab **Unhon ne rakh liya** mein **Bill kholein** rehta hai.
+
+Der wali amanat **Der ho gayi** dikhati hai aur ooper ke card mein ginti hai.
 
 Der wali amanat par **Der ho gayi** likha aata hai.
 
@@ -844,14 +855,17 @@ Staff ke naam par daba kar **Ohda** badlein, **Naya password** (**Mehfooz karein
 
 ## 18. Dukaan ki settings (dukaan, tax, raseed)
 
-Sirf maalik: **Mazeed → Dukaan ki settings**. Teen card:
-- **Dukaan** — **Dukaan ka naam**, **Dukaan ka naam (Urdu)**, **Shehar**, **Pata**, **Phone**, aur
-  **Dukaan ki zubaan (print aur paighaam)** (raseed aur iqrar nama isi zubaan mein print hote hain).
-- **Sales tax** — **Sales tax lagayein** ka switch, **Tax rate %**, **Qeemat mein tax shamil hai**, **NTN**, **STRN**.
-- **Raseed** — **Raseed ke neeche** (maslan "7 din ke baad wapsi nahi"), **Raseed ke neeche (Urdu)**,
-  **Bill number ka shuru** (maslan `INV`).
+Sirf maalik: **Mazeed → Dukaan ki settings**. Har baat ka apna card, apne icon ke saath:
+- **Dukaan** — **Dukaan ka naam**, **Shehar**, **Phone** (raseed par chhapta hai, paighaamon mein aata hai).
+- **Print aur paighaam ki zubaan** — **Urdu** / **English**: raseedein, iqrar name aur WhatsApp paighaam
+  isi zubaan mein jate hain; screen ki zubaan har koi apni chunta hai.
+- **Staff ka login** — **Staff fingerprint se login kar sakta hai**.
+- **Sales tax** — **Sales tax lagayein** ka switch, phir **Tax rate %**, **Qeemat mein tax shamil hai**, **NTN**, **STRN**.
+- **Raseed** — **Bill number ka shuru** (misaal number dikhta hai, maslan `INV-000123`), **Raseed ke neeche**
+  (maslan "7 din ke baad wapsi nahi"), **Raseed ke neeche (Urdu)**; ek preview box dikhata hai line kaise chhape gi.
 
-**Mehfooz karein** dabayein.
+Jaise hi kuch badle, neeche ke tabs ke ooper **Mehfooz karein** ki patti aati hai "Abhi mehfooz nahi hua"
+ke saath; dabayein to **Mehfooz ho gaya** aata hai.
 
 ![Dukaan ki settings](../images/settings.png)
 
