@@ -91,6 +91,16 @@ TEMPLATES: dict[str, dict[str, dict[str, str]]] = {
             ),
         },
     },
+    "fee_received": {
+        "en": {
+            "subject": "Fee received: {shop}",
+            "body": "Thank you! Rs. {amount} received for {shop} ({months} month(s)). Your Mobile Shop subscription is paid until {until}.",
+        },
+        "ur": {
+            "subject": "فیس وصول: {shop}",
+            "body": "شکریہ! {shop} کے لیے Rs. {amount} وصول ہو گئے ({months} مہینے)۔ آپ کی Mobile Shop سبسکرپشن {until} تک ادا شدہ ہے۔",
+        },
+    },
     "password_request_admin": {
         "en": {
             "subject": "Password request: {shop}",

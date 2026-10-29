@@ -838,6 +838,19 @@ choices), **Notifications** (optional WhatsApp/email alerts on sales and stock),
 
 ---
 
+## 18a. Software fees
+
+**More → Software fees** (owner only; the renewal notice at the top of the app also leads here).
+- Your plan, monthly fee and **paid until**.
+- **Pay into one of these**: the software provider's accounts (Easypaisa, JazzCash, SadaPay, bank)
+  with a **Copy** button for the number.
+- Send the money from your own app or bank, then **I have paid**: amount (filled with the fee), months,
+  which account, the **transaction ID** and a **screenshot**, and **Send**.
+- The provider checks it; once approved your paid-until date moves and you get a WhatsApp message.
+  **Your payments** below shows each one as *Being checked*, *Received* or *Not accepted* (with the reason).
+
+![Software fees](../images/fees-owner.png)
+
 ## 19. Language, theme and look
 
 - **Language**: tap the language button in the header (shows **English**), then **اردو**,
@@ -872,6 +885,17 @@ Only for the product owner (OOP Solutions). **More → Super admin** (others do 
 ![Shop opened](../images/admin-created.png)
 
 The list **Customer shops** shows every shop with its owner, plan and fee; use the search box to find one.
+
+### Software fees: accounts and payments received
+- **Payment accounts** (in the *Software fees* card): write the accounts shops pay into — name (e.g.
+  Easypaisa), account holder, number or IBAN, a note. They live only in the database and show on every
+  shop's *Software fees* screen.
+- Payments the shops report appear in the same card with the shop, amount, method, reference, months
+  and the **screenshot**. **Received · +N month(s)** extends that shop's paid-until by the months
+  reported and sends the owner a WhatsApp confirmation; **Reject** asks for a reason the owner sees.
+- The card's header shows this month's received total and how many payments wait.
+
+![Fees received](../images/fees-admin.png)
 
 ### Modules: what each shop may use
 When opening a shop (and later in its sheet under **Modules for this shop**) you decide what the

@@ -840,6 +840,20 @@ paise ke tareeqe mein aayein), **Paighaam settings** (bikri aur stock par WhatsA
 
 ---
 
+## 18a. Software fees
+
+**Mazeed → Software fees** (sirf malik; app ke ooper ka renewal notice bhi yahin laata hai).
+- Aap ka plan, mahana fees aur **adaigi is tareekh tak**.
+- **In mein se kisi account mein bhejein**: software provider ke accounts (Easypaisa, JazzCash, SadaPay,
+  bank) number ke **Copy** button ke saath.
+- Apni app ya bank se paise bhejein, phir **Main ne ada kar di**: raqam (fees se bhari hui), mahine, kaun sa
+  account, **transaction ID** aur **screenshot**, aur **Bhejein**.
+- Provider check karta hai; manzoor hote hi aap ki tareekh aage barh jati hai aur WhatsApp par paighaam
+  aata hai. Neeche **Aap ki adaigiyan** mein har ek *Check ho rahi hai*, *Wasool ho gayi* ya *Qabool nahi
+  hui* (wajah ke saath).
+
+![Software fees](../images/fees-owner.png)
+
 ## 19. Zubaan, Dark/Light aur andaaz
 
 - **Zubaan**: ooper zubaan ka button dabayein (Roman mein **Roman** likha hota hai), phir **اردو**,
@@ -874,6 +888,17 @@ Sirf product ke maalik (OOP Solutions) ke liye. **Mazeed → Super admin** (doos
 ![Dukaan khul gayi](../images/admin-created.png)
 
 **Customers ki dukaanein** mein har dukaan apne maalik, plan aur fees ke saath; search se dhoondein.
+
+### Software fees: accounts aur wasool shuda adaigiyan
+- **Adaigi ke accounts** (*Software fees* card mein): jin accounts mein dukaanein fees bhejti hain — naam
+  (maslan Easypaisa), account holder, number ya IBAN, note. Sirf database mein rehte hain aur har dukaan ki
+  *Software fees* screen par dikhte hain.
+- Dukaanon ki bheji hui adaigiyan isi card mein: dukaan, raqam, tareeqa, hawala, mahine aur **screenshot**.
+  **Wasool · +N mahine** us dukaan ki tareekh utne mahine barhata hai aur malik ko WhatsApp par tasdeeq
+  bhejta hai; **Mustarad** wajah poochta hai jo malik dekhta hai.
+- Card ke ooper is mahine ki wasooli aur kitni adaigiyan check honi hain.
+
+![Wasool shuda fees](../images/fees-admin.png)
 
 ### Modules: har dukaan kya istemal kar sakti hai
 Dukaan kholte waqt (aur baad mein us ki sheet mein **Is dukaan ke modules**) aap tay karte hain dukaan
