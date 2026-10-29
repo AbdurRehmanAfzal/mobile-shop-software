@@ -5,6 +5,7 @@
  *  through Capacitor's Share (WhatsApp, Gmail...). */
 
 import { Capacitor } from '@capacitor/core'
+import { withDocLang } from './docLang'
 import { BASE, authHeaders } from './files'
 
 export interface DocFile {
@@ -62,6 +63,7 @@ async function inlineFonts(doc: Document): Promise<void> {
  *  itself so Urdu reads exactly as on screen. Thermal receipts become one long 80 mm page;
  *  everything else A4 pages, cut between lines of text. */
 export async function printPagePdf(path: string, name: string): Promise<DocFile> {
+  path = withDocLang(path)
   const html = await (await fetchOk(path)).text()
   const thermal = /format=thermal/.test(path)
   const widthPx = Math.round((thermal ? 80 : 210) * MM)

@@ -22,6 +22,7 @@ import { useDevices, useDocMutation, useGet } from '@/lib/queries'
 import type { Device, DeviceDetail, Invoice, Party } from '@/lib/types'
 import { DeviceRow } from '@/features/stock/StockPage'
 import DocActions from '@/components/DocShare'
+import DocLangPicker from '@/components/DocLangPicker'
 import { HeldButton, HeldSalesSheet, useHeldSales, type HeldSale } from './HeldSales'
 
 interface Line {
@@ -359,9 +360,10 @@ export default function SaleWizard() {
               <span className={ur ? cls('sm') : 'text-sm font-semibold'}>{pick('party.balance')}: <span className="num" dir="ltr">{Number(result.party_balance_after).toLocaleString('en-US')}</span></span>
             ) : null}
           </div>
+          <DocLangPicker />
           <BiButton text="sale.printThermal" icon={<Printer size={22} />} full onClick={() => openPrintable(`/api/v1/sales/${result.id}/receipt?format=thermal`)} />
           <BiButton text="sale.printA4" icon={<FileText size={22} />} full variant="secondary" onClick={() => openPrintable(`/api/v1/sales/${result.id}/receipt?format=a4`)} />
-          <DocActions path={`/api/v1/sales/${result.id}/receipt?format=a4`} name={`invoice-${result.no}`} title={result.no} />
+          <DocActions path={`/api/v1/sales/${result.id}/receipt?format=a4`} name={`invoice-${result.no}`} title={result.no} picker={false} />
           <BiButton text="counter.newSale" icon={<Plus size={22} />} full variant="ghost" onClick={() => { resetCart(); setResult(null); setHoldMsg(null); setStep(0); m.reset() }} />
           <BiButton text="sale.viewSale" icon={<Receipt size={22} />} full variant="ghost" onClick={() => nav(`/sales/${result.id}`)} />
         </div>

@@ -1,6 +1,7 @@
 import { Capacitor } from '@capacitor/core'
 import { ApiError, post } from './api'
 import { useAuth } from './auth'
+import { withDocLang } from './docLang'
 
 export const BASE = import.meta.env.VITE_API_URL?.replace(/\/$/, '') ?? ''
 
@@ -48,6 +49,7 @@ export async function fileObjectUrl(path: string): Promise<string> {
 
 /** Open an authenticated HTML document (receipt, declaration) in a new tab for printing. */
 export async function openPrintable(path: string): Promise<void> {
+  path = withDocLang(path)
   if (Capacitor.isNativePlatform()) return openInChrome(path, true)
   const headers = authHeaders()
   const res = await fetch(`${BASE}${path}`, { headers })

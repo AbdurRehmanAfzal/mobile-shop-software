@@ -1316,5 +1316,8 @@
     "retry": "Dobara koshish",
     "deleteAsk": "Ye khatam kar dein? Ye server par kabhi nahi gaya.",
     "empty": "Kuch baqi nahi"
+  },
+  "docLang": {
+    "title": "Document ki zubaan"
   }
 }

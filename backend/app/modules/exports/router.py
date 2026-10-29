@@ -14,7 +14,7 @@ from collections.abc import Iterable
 from decimal import Decimal
 from typing import Annotated, Literal
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from fastapi.responses import Response
 from sqlalchemy import select
 
@@ -37,17 +37,104 @@ Reports = Annotated[Ctx, Depends(require_cap(Cap.REPORTS_ALL))]
 
 
 Fmt = Literal["csv", "xlsx", "pdf"]
+Lang = Annotated[str | None, Query(pattern="^(en|ur)$")]
+
+# column headers and report names in Urdu (owner 2026-10-29: a report comes out in the language
+# chosen just before it is made; English unless Urdu is picked)
+UR_HEADERS = {
+    "#": "#",
+    "Active": "فعال",
+    "Advice / expected sale": "مشورہ / متوقع فروخت",
+    "Amount": "رقم",
+    "Asking price": "مانگی قیمت",
+    "Balance (+ they owe / − we owe)": "بقایا (+ وہ دیں / − ہم دیں)",
+    "Bill": "بل",
+    "Brand": "برانڈ",
+    "CNIC": "شناختی کارڈ",
+    "Category": "قسم",
+    "City": "شہر",
+    "Colour": "رنگ",
+    "Condition": "حالت",
+    "Cost": "خرید قیمت",
+    "Customer": "گاہک",
+    "Date": "تاریخ",
+    "Days in stock": "اسٹاک میں دن",
+    "Days left": "باقی دن",
+    "Details": "تفصیل",
+    "Discount": "رعایت",
+    "I have to give": "مجھے دینے ہیں",
+    "I will get": "مجھے لینے ہیں",
+    "IMEI": "IMEI",
+    "IMEI 2": "IMEI 2",
+    "In stock": "اسٹاک میں",
+    "Invoice": "بل نمبر",
+    "Item": "چیز",
+    "Model": "ماڈل",
+    "Name": "نام",
+    "Name (Urdu)": "نام (اردو)",
+    "No": "نمبر",
+    "PTA": "PTA",
+    "Paid": "ادا",
+    "Paid by": "ادائیگی کا طریقہ",
+    "Party": "فریق",
+    "Phone": "فون",
+    "Phones": "فون",
+    "Profit": "منافع",
+    "Purchase": "خریداری",
+    "Qty": "تعداد",
+    "Reference": "حوالہ",
+    "Returned": "واپس",
+    "SIM time (months)": "سم ٹائم (مہینے)",
+    "Sold": "بِکا",
+    "Sold by": "بیچنے والا",
+    "Sold in 30 days": "30 دن میں بِکے",
+    "Status": "حیثیت",
+    "Storage": "اسٹوریج",
+    "Subtotal": "میزان",
+    "Tax": "ٹیکس",
+    "Total": "کل",
+    "Type": "قسم",
+    "Verification": "تصدیق",
+    "WhatsApp": "واٹس ایپ",
+}
+UR_TITLES = {
+    "stock": "اسٹاک",
+    "parties": "لوگ",
+    "sales": "فروخت",
+    "purchases": "خریداری",
+    "expenses": "خرچے",
+    "day": "دن کا حساب",
+    "khata": "ادھار کھاتہ",
+    "stock-summary": "اسٹاک کی مالیت",
+    "profit-loss": "منافع و نقصان",
+    "top-sellers": "سب سے زیادہ بِکنے والے",
+    "forecast": "اندازہ",
+    "stock-ageing": "پرانا اسٹاک",
+    "statement": "کھاتہ",
+}
 
 
 def _file(
-    fmt: str, ctx, db, name: str, header: list[str], rows: Iterable[list], title: str | None = None
+    fmt: str,
+    ctx,
+    db,
+    lang: str | None,
+    name: str,
+    header: list[str],
+    rows: Iterable[list],
+    title: str | None = None,
 ) -> Response:
     rows = [["" if v is None else v for v in r] for r in rows]
     stamp = shop_today().isoformat()
+    ur = lang == "ur"
+    if ur:
+        header = [UR_HEADERS.get(h, h) for h in header]
+        base = name.split("-")[0] if name.startswith("statement") else name
+        title = UR_TITLES.get(base, title or name)
     if fmt == "xlsx":
         return _xlsx(name, stamp, header, rows)
     if fmt == "pdf":
-        return _printable(ctx, db, title or name.replace("-", " ").title(), header, rows)
+        return _printable(ctx, db, title or name.replace("-", " ").title(), header, rows, ur)
     buf = io.StringIO()
     buf.write("\ufeff")
     w = csv.writer(buf)
@@ -86,7 +173,9 @@ def _xlsx(name: str, stamp: str, header: list[str], rows: list[list]) -> Respons
     )
 
 
-def _printable(ctx, db, title: str, header: list[str], rows: list[list]) -> Response:
+def _printable(
+    ctx, db, title: str, header: list[str], rows: list[list], ur: bool = False
+) -> Response:
     from app.modules.auth.models import Shop
 
     shop = db.get(Shop, ctx.shop_id)
@@ -100,11 +189,11 @@ def _printable(ctx, db, title: str, header: list[str], rows: list[list]) -> Resp
         for r in rows
     )
     now = dt.datetime.now().strftime("%d-%m-%Y %I:%M %p")
-    page = f"""<!doctype html><html><head><meta charset="utf-8"><title>{e(title)}</title>
+    page = f"""<!doctype html><html lang="{"ur" if ur else "en"}" dir="{"rtl" if ur else "ltr"}"><head><meta charset="utf-8"><title>{e(title)}</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Noto+Nastaliq+Urdu&display=swap">
 <style>
 @page {{ size: A4 {"landscape" if len(header) > 6 else "portrait"}; margin: 12mm; }}
-body {{ font-family: Manrope, 'Noto Nastaliq Urdu', sans-serif; color: #1B1F24; margin: 0; }}
+body {{ font-family: {"'Noto Nastaliq Urdu', Manrope" if ur else "Manrope, 'Noto Nastaliq Urdu'"}, sans-serif; color: #1B1F24; margin: 0; {"line-height: 1.9;" if ur else ""} }}\n.n, h1 .n {{ font-family: Manrope, sans-serif; }}
 h1 {{ font-size: 20px; margin: 0; }} .meta {{ color: #5E646B; font-size: 12px; margin: 4px 0 12px; }}
 table {{ width: 100%; border-collapse: collapse; font-size: 12px; }}
 th {{ background: #F6F4EF; text-align: start; }} th, td {{ border: 1px solid #E6E2DA; padding: 6px 8px; }}
@@ -120,7 +209,9 @@ tr:nth-child(even) td {{ background: #FBFAF7; }}
 
 @router.get("/stock.csv")
 @router.get("/stock")
-def stock(ctx: Ctx, db: DB, format: Fmt = "csv", status: str | None = "in_stock"):
+def stock(
+    ctx: Ctx, db: DB, format: Fmt = "csv", lang: Lang = None, status: str | None = "in_stock"
+):
     cost = ctx.can(Cap.VIEW_COST)
     stmt = (
         select(Device, Brand.name, Model.name, Storage.name, Colour.name)
@@ -168,17 +259,18 @@ def stock(ctx: Ctx, db: DB, format: Fmt = "csv", status: str | None = "in_stock"
         if cost:
             r.append(d.cost_price)
         rows.append(r)
-    return _file(format, ctx, db, "stock", header, rows)
+    return _file(format, ctx, db, lang, "stock", header, rows)
 
 
 @router.get("/parties.csv")
 @router.get("/parties")
-def parties(ctx: Ctx, db: DB, format: Fmt = "csv"):
+def parties(ctx: Ctx, db: DB, format: Fmt = "csv", lang: Lang = None):
     rows = db.scalars(select(Party).where(Party.shop_id == ctx.shop_id).order_by(Party.name)).all()
     return _file(
         format,
         ctx,
         db,
+        lang,
         "parties",
         [
             "Name",
@@ -215,6 +307,7 @@ def statement(
     ctx: Ctx,
     db: DB,
     format: Fmt = "csv",
+    lang: Lang = None,
     date_from: dt.date | None = None,
     date_to: dt.date | None = None,
 ):
@@ -239,6 +332,7 @@ def statement(
         format,
         ctx,
         db,
+        lang,
         f"statement-{party.phone}",
         ["Date", "Details", "Type", "Debit (they owe)", "Credit (paid)", "Balance"],
         rows,
@@ -251,6 +345,7 @@ def sales(
     ctx: Reports,
     db: DB,
     format: Fmt = "csv",
+    lang: Lang = None,
     date_from: dt.date | None = None,
     date_to: dt.date | None = None,
 ):
@@ -268,6 +363,7 @@ def sales(
         format,
         ctx,
         db,
+        lang,
         "sales",
         [
             "Invoice",
@@ -309,6 +405,7 @@ def purchases(
     ctx: Reports,
     db: DB,
     format: Fmt = "csv",
+    lang: Lang = None,
     date_from: dt.date | None = None,
     date_to: dt.date | None = None,
 ):
@@ -326,6 +423,7 @@ def purchases(
         format,
         ctx,
         db,
+        lang,
         "purchases",
         [
             "Purchase",
@@ -365,6 +463,7 @@ def expenses(
     ctx: Reports,
     db: DB,
     format: Fmt = "csv",
+    lang: Lang = None,
     date_from: dt.date | None = None,
     date_to: dt.date | None = None,
 ):
@@ -382,6 +481,7 @@ def expenses(
         format,
         ctx,
         db,
+        lang,
         "expenses",
         ["No", "Date", "Category", "Amount", "Details", "Status"],
         ([e.no, e.date, n, e.amount, e.description, e.status] for e, n in rows),
@@ -399,6 +499,7 @@ def profit_loss(
     ctx: Reports,
     db: DB,
     format: Fmt = "csv",
+    lang: Lang = None,
     date_from: dt.date | None = None,
     date_to: dt.date | None = None,
 ):
@@ -419,6 +520,7 @@ def profit_loss(
         format,
         ctx,
         db,
+        lang,
         "profit-loss",
         ["Item", "Amount"],
         rows,
@@ -431,6 +533,7 @@ def top_sellers(
     ctx: Reports,
     db: DB,
     format: Fmt = "csv",
+    lang: Lang = None,
     date_from: dt.date | None = None,
     date_to: dt.date | None = None,
 ):
@@ -442,7 +545,9 @@ def top_sellers(
         [i, t["name"], t["qty"], t["amount"]] + ([t["profit"]] if cost else [])
         for i, t in enumerate(items, start=1)
     ]
-    return _file(format, ctx, db, "best-sellers", header, rows, f"Best sellers {d_from} to {d_to}")
+    return _file(
+        format, ctx, db, lang, "best-sellers", header, rows, f"Best sellers {d_from} to {d_to}"
+    )
 
 
 @router.get("/day")
@@ -450,6 +555,7 @@ def day(
     ctx: Ctx,
     db: DB,
     format: Fmt = "csv",
+    lang: Lang = None,
     date: dt.date | None = None,
     date_from: dt.date | None = None,
     date_to: dt.date | None = None,
@@ -508,12 +614,19 @@ def day(
         else f"{d['date_from']}-to-{d['date_to']}"
     )
     return _file(
-        format, ctx, db, f"hisaab-{span}", header, rows, f"Hisaab {span.replace('-to-', ' to ')}"
+        format,
+        ctx,
+        db,
+        lang,
+        f"hisaab-{span}",
+        header,
+        rows,
+        f"Hisaab {span.replace('-to-', ' to ')}",
     )
 
 
 @router.get("/stock-summary")
-def stock_summary(ctx: Ctx, db: DB, format: Fmt = "csv"):
+def stock_summary(ctx: Ctx, db: DB, format: Fmt = "csv", lang: Lang = None):
     s = rep.stock_summary(db, ctx.shop_id, ctx.can(Cap.VIEW_COST))
     rows = [
         [b["name"], m["name"], m["count"], m["value"]] for b in s["brands"] for m in b["models"]
@@ -521,12 +634,19 @@ def stock_summary(ctx: Ctx, db: DB, format: Fmt = "csv"):
     rows.append(["Total", "", s["count"], s["value"]])
     value = "Value (buying price)" if s["basis"] == "cost" else "Value (selling price)"
     return _file(
-        format, ctx, db, "stock-worth", ["Brand", "Model", "Phones", value], rows, "Stock worth"
+        format,
+        ctx,
+        db,
+        lang,
+        "stock-worth",
+        ["Brand", "Model", "Phones", value],
+        rows,
+        "Stock worth",
     )
 
 
 @router.get("/khata")
-def khata(ctx: Ctx, db: DB, format: Fmt = "csv"):
+def khata(ctx: Ctx, db: DB, format: Fmt = "csv", lang: Lang = None):
     parties = db.scalars(
         select(Party)
         .where(Party.shop_id == ctx.shop_id, Party.is_active.is_(True), Party.balance != 0)
@@ -545,11 +665,11 @@ def khata(ctx: Ctx, db: DB, format: Fmt = "csv"):
         ]
     )
     header = ["Name", "Phone", "I will get", "I have to give"]
-    return _file(format, ctx, db, "udhaar-khata", header, rows, "Udhaar khata")
+    return _file(format, ctx, db, lang, "udhaar-khata", header, rows, "Udhaar khata")
 
 
 @router.get("/forecast")
-def forecast(ctx: Reports, db: DB, format: Fmt = "csv"):
+def forecast(ctx: Reports, db: DB, format: Fmt = "csv", lang: Lang = None):
     f = rep.forecast(db, ctx.shop_id, shop_today())
     advice = {"buy_more": "Buy more", "slow": "Not selling", "ok": "OK"}
     rows = [
@@ -565,16 +685,16 @@ def forecast(ctx: Reports, db: DB, format: Fmt = "csv"):
     rows += [[f"Expected {d['date']}", "", "", "", d["expected"]] for d in f["next_7_days"]]
     header = ["Phone", "Sold in 30 days", "In stock", "Days left", "Advice / expected sale"]
     return _file(
-        format, ctx, db, "estimate", header, rows, "Sales estimate (a guess, not a promise)"
+        format, ctx, db, lang, "estimate", header, rows, "Sales estimate (a guess, not a promise)"
     )
 
 
 @router.get("/stock-ageing")
-def stock_ageing(ctx: Reports, db: DB, format: Fmt = "csv"):
+def stock_ageing(ctx: Reports, db: DB, format: Fmt = "csv", lang: Lang = None):
     cost = ctx.can(Cap.VIEW_COST)
     rows = [
         [f"{b['bucket']} days", b["count"]] + ([b["value"]] if cost else [])
         for b in rep.stock_ageing(db, ctx.shop_id, cost)
     ]
     header = ["Days in stock", "Phones"] + (["Value"] if cost else [])
-    return _file(format, ctx, db, "old-stock", header, rows, "Old stock")
+    return _file(format, ctx, db, lang, "old-stock", header, rows, "Old stock")

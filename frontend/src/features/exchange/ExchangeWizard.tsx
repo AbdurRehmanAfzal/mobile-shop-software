@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { BiButton, BiInput, BiLabel } from '@/components/Bilingual'
 import DocActions from '@/components/DocShare'
+import DocLangPicker from '@/components/DocLangPicker'
 import PartyPicker from '@/components/PartyPicker'
 import { ErrorText, KV, List, MoneyText, PageHeader, SearchBox, Sheet, Stepper } from '@/components/ui'
 import { openPrintable } from '@/lib/files'
@@ -98,8 +99,9 @@ export default function ExchangeWizard() {
             <div className="num text-xl" dir="ltr">{result.no}</div>
             <KV k="exchange.newBalance" v={<MoneyText value={result.new_balance} tone="ink" size="lg" />} />
           </div>
+          <DocLangPicker />
           <BiButton text="sale.printThermal" full onClick={() => openPrintable(`/api/v1/sales/${result.invoice_id}/receipt?format=thermal`)} />
-          <DocActions path={`/api/v1/sales/${result.invoice_id}/receipt?format=a4`} name={`invoice-${result.no}`} title={result.no} />
+          <DocActions path={`/api/v1/sales/${result.invoice_id}/receipt?format=a4`} name={`invoice-${result.no}`} title={result.no} picker={false} />
         </div>
       ) : null}
 

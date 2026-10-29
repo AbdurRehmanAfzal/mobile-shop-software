@@ -360,6 +360,11 @@ print window: pick your thermal (80 mm) printer. Under it, **Download PDF** save
 and **Share PDF** opens the phone's share list (WhatsApp, Gmail…) with the file attached. The same two
 buttons are on every sale's page, after an exchange and on a repair job.
 
+**Document language.** Right above the print / download / share buttons (sale done, a sale's page,
+repair job, ID check, and in every report's Download or Share sheet) there is **Document language:
+English | اردو**. English is chosen by default; tap **اردو** for an Urdu receipt, bill, job sheet,
+declaration or report. The choice holds until you close the app.
+
 ### 6f. Tax on a bill (optional)
 Tax is **off** on every sale. To add it, tick **Add tax to this bill**: a **Tax %** box appears (it starts
 at the shop's rate, usually 18) and the tax is added on top of the price. The total shows
