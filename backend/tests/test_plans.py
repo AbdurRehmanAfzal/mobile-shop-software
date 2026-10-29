@@ -71,7 +71,8 @@ def test_plan_expiry_warns_then_locks_writes(client, owner, db, monkeypatch):
     assert r.status_code == 200 and 27 <= r.json()["days_left"] <= 31
     assert (
         owner.post(
-            "/api/v1/parties", json={"name": "Chaudhry", "phone": "03001112235", "kinds": ["customer"]}
+            "/api/v1/parties",
+            json={"name": "Chaudhry", "phone": "03001112235", "kinds": ["customer"]},
         ).status_code
         == 201
     )

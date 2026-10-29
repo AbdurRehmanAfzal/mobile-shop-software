@@ -1295,5 +1295,19 @@
     "locked": "Your subscription has ended. The app only shows your data now; renew to continue.",
     "contact": "Contact on WhatsApp",
     "waText": "Assalam-o-Alaikum, I want to renew my Mobile Shop subscription."
+  },
+  "offline": {
+    "noNet": "No internet. Sales, stock, payments and expenses are saved on this phone and sent when the connection returns.",
+    "queued": "Saved on this phone. It will be sent when the internet is back.",
+    "sending": "Sending what was saved on this phone…",
+    "pendingN": "{{n}} waiting to be sent",
+    "failedN": "{{n}} could not be sent — tap to see why",
+    "listTitle": "Waiting to be sent",
+    "listHint": "Made without internet. They go in this order as soon as the connection is back.",
+    "waiting": "Will be sent shortly",
+    "waitingNet": "Waiting for the internet",
+    "retry": "Try again",
+    "deleteAsk": "Delete this? It was never sent to the server.",
+    "empty": "Nothing waiting"
   }
 }

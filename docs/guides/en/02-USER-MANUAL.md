@@ -878,6 +878,24 @@ the plan covers all branches together.
 
 **Example:** a customer comes back a month later with a Galaxy A54 and says "I bought it here". Type the last 6 digits of its IMEI: the sale bill (and any repair of that phone) appears with the date, the price and whether udhaar is left.
 
+## 20b. Working without internet
+
+The market's internet drops? Keep selling.
+
+- What you opened while online (stock, khata, the sale screen's list, a person's page) stays on the
+  phone for a day and opens without internet.
+- A **sale, add stock, payment or expense** made without internet is **saved on the phone**. The
+  strip under the header says *"Saved on this phone. It will be sent when the internet is back."*
+  and then *"1 waiting to be sent"*. Tap it to see the list.
+- When the connection returns they are sent by themselves, in order, each **only once** (even if
+  the connection drops again halfway). Bill numbers are given when they reach the server.
+- If the server refuses one (for example the same phone was sold from another phone meanwhile) it
+  stays in the list in red with the reason: **Try again** after fixing, or delete it.
+- Not possible offline: things that need the server to answer (ID card check lookup, reports,
+  downloads, WhatsApp sending).
+
+![Saved on this phone](../images/offline-queued.png)
+
 ## 21. Common problems
 
 **The Scan button does not read the IMEI.**

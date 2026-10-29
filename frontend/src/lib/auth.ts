@@ -71,7 +71,10 @@ export const useAuth = create<AuthState>()(
         }),
       setTokens: (tokens) => set({ accessToken: tokens.access_token, refreshToken: tokens.refresh_token }),
       setActiveShop: (shopId) => set({ activeShopId: shopId }),
-      logout: () => set({ accessToken: null, refreshToken: null, me: null, activeShopId: null }),
+      logout: () => {
+        try { localStorage.removeItem('mobileshop.cache') } catch { /* private mode */ }
+        set({ accessToken: null, refreshToken: null, me: null, activeShopId: null })
+      },
     }),
     { name: 'mobileshop.auth' },
   ),

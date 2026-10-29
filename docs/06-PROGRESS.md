@@ -101,7 +101,7 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 |---|---|---|
 | AI assistant + OCR + pricing | FR-AI-01..04 | ⬜ |
 | FBR POS | FR-TAX-04 | ⬜ |
-| Cloud sync | FR-PLT-05 | ⬜ |
+| Cloud sync / offline | FR-PLT-05 | 🔄 | **2026-10-29 offline mode**: queries persisted 24 h (localStorage, cleared on logout), sale / purchase / payment / expense queued on the phone when the network is down (`lib/offline.ts`, `lib/outbox.ts`, OfflineBar), sent in order with `Idempotency-Key` (server `core/idempotency.py`, table `idempotency_keys`). Two-way sync of edits made offline is not planned |
 
 ## Backlog (owner requests, not started)
 | Item | Notes |

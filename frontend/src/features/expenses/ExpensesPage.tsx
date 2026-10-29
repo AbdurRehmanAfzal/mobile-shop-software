@@ -22,7 +22,7 @@ export default function ExpensesPage() {
   const [amount, setAmount] = useState('')
   const [desc, setDesc] = useState('')
   const [counted, setCounted] = useState('')
-  const create = useDocMutation<Record<string, unknown>, Expense>('POST', () => '/api/v1/expenses')
+  const create = useDocMutation<Record<string, unknown>, Expense>('POST', () => '/api/v1/expenses', undefined, { kind: 'expense', label: (b) => `${pick('more.expenses')} · Rs. ${Number((b as { amount?: number }).amount ?? 0).toLocaleString('en-US')}` })
   const edit = useDocMutation<Record<string, unknown> & { id: string }, Expense>('PUT', (i) => `/api/v1/expenses/${i.id}`, ({ id: _id, ...body }) => body)
   const [current, setCurrent] = useState<Expense | null>(null)
   const [editingId, setEditingId] = useState<string | null>(null)

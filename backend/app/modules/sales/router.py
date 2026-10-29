@@ -5,6 +5,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import HTMLResponse
 
+from app.core.idempotency import IdemKey
+from app.core.idempotency import run as idempotent
 from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx, require_cap
 from app.modules.sales import service
@@ -16,9 +18,13 @@ Transact = Annotated[Ctx, Depends(require_cap(Cap.TRANSACT))]
 
 
 @router.post("", response_model=SaleOut, status_code=201)
-def create(data: SaleCreate, ctx: Transact, db: DB):
-    inv = service.create_sale(db, ctx.shop_id, ctx, data)
-    return service.to_out(db, inv, ctx.can(Cap.VIEW_COST))
+def create(data: SaleCreate, ctx: Transact, db: DB, idem: IdemKey = None):
+    # the same Idempotency-Key (a phone's offline queue sending again) returns the first bill
+    def make():
+        inv = service.create_sale(db, ctx.shop_id, ctx, data)
+        return service.to_out(db, inv, ctx.can(Cap.VIEW_COST))
+
+    return idempotent(db, ctx.shop_id, idem, "sales", make)
 
 
 # held sales come before /{invoice_id}, which would otherwise take "held" for an id

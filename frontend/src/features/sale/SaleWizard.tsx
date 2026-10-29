@@ -17,6 +17,7 @@ import { uid } from '@/lib/id'
 import { ApiError, api, get } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 import { openPrintable } from '@/lib/files'
+import { isQueued } from '@/lib/offline'
 import { useDevices, useDocMutation, useGet } from '@/lib/queries'
 import type { Device, DeviceDetail, Invoice, Party } from '@/lib/types'
 import { DeviceRow } from '@/features/stock/StockPage'
@@ -75,7 +76,7 @@ export default function SaleWizard() {
   const [result, setResult] = useState<Invoice | null>(null)
   const [devCat, setDevCat] = useState<'' | 'phone' | 'tablet' | 'watch'>('')
   const { data: stock } = useDevices({ status: 'in_stock', q: q || undefined, category: devCat || undefined })
-  const m = useDocMutation<Record<string, unknown>, Invoice>('POST', () => '/api/v1/sales')
+  const m = useDocMutation<Record<string, unknown>, Invoice>('POST', () => '/api/v1/sales', undefined, { kind: 'sale', label: (b) => `${pick('counter.sell')} · Rs. ${Number((b as { paid?: number }).paid ?? 0).toLocaleString('en-US')}` })
   // POS hold (owner 2026-10-28): park this bill, serve the next customer, resume it later
   const { data: held } = useHeldSales<Cart>()
   const [holding, setHolding] = useState(false)
@@ -167,6 +168,13 @@ export default function SaleWizard() {
       below_cost_ok: lossLine && lossOk,
     })
     clearDrafts('sale.')
+    if (isQueued(res)) {
+      // no internet: the sale waits on the phone (the strip under the header says so)
+      resetCart()
+      m.reset()
+      setStep(0)
+      return
+    }
     setResult(res)
     setStep(2)
   }
