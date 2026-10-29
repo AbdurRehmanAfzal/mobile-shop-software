@@ -20,6 +20,7 @@ import { useAuth } from '@/lib/auth'
 import { openPrintable } from '@/lib/files'
 import { isQueued } from '@/lib/offline'
 import { useModules } from '@/lib/modules'
+import { useLaptop } from '@/lib/useMedia'
 import { useDevices, useDocMutation, useGet } from '@/lib/queries'
 import type { Device, DeviceDetail, Invoice, Party } from '@/lib/types'
 import { DeviceRow } from '@/features/stock/StockPage'
@@ -59,6 +60,7 @@ export default function SaleWizard() {
   const { pick, ur, cls } = useLang()
   const role = useAuth((s) => s.me?.user.role)
   const has = useModules()
+  const laptop = useLaptop()
   const [step, setStep] = useDraft('sale.step', 0)
   const [lines, setLines] = useDraft<Line[]>('sale.lines', [])
   const [misc, setMisc] = useDraft<Misc[]>('sale.misc', [])
@@ -195,12 +197,13 @@ export default function SaleWizard() {
   return (
     <div className="flex flex-col gap-3">
       <PageHeader title="counter.sell" />
-      <Stepper steps={['counter.whichPhone', 'counter.howMuch', 'counter.doneTitle']} current={step} />
+      <div className="lg:hidden"><Stepper steps={['counter.whichPhone', 'counter.howMuch', 'counter.doneTitle']} current={step} /></div>
 
       {holdMsg?.k === 'held' ? <BiAlert text="hold.done" kind="success" /> : null}
       {holdMsg?.k === 'sold' ? <BiAlert text={soldText(pick, holdMsg.n)} kind="info" /> : null}
 
-      {step === 0 ? (
+      <div className={laptop && step !== 2 ? 'grid grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] items-start gap-6' : 'contents'}>
+      {step === 0 || (laptop && step !== 2) ? (
         <div className="flex flex-col gap-3">
           {has('held_sales') ? <HeldButton count={held?.length ?? 0} onClick={() => setHeldOpen(true)} /> : null}
           <SearchBox value={q} onChange={setQ} placeholder="stock.searchPlaceholder" scan />
@@ -226,8 +229,9 @@ export default function SaleWizard() {
         </div>
       ) : null}
 
-      {step === 1 ? (
+      {step === 1 || (laptop && step !== 2) ? (
         <div className="flex flex-col gap-3">
+          {laptop && !lines.length && !misc.length ? <div className="card flex items-center gap-3 border-dashed"><Smartphone size={22} className="shrink-0 text-muted" /><BiLabel text="counter.tapPhone" size="md" tone="text-muted" /></div> : null}
           {lines.map((l) => (
             <div key={l.device.id} className="card flex flex-col gap-2">
               <div className="flex items-center gap-2">
@@ -389,12 +393,13 @@ export default function SaleWizard() {
           <ErrorText error={m.error} />
           <BiButton text="sale.complete" icon={<Check size={22} />} full loading={m.isPending} disabled={!canSave} onClick={submit} />
           {(lines.length || misc.length) && has('held_sales') ? <BiButton text="hold.button" icon={<CirclePause size={22} />} full variant="secondary" onClick={() => { setHoldName(party?.name ?? ''); hold.reset(); setHolding(true) }} /> : null}
-          {!lines.length && !misc.length ? <BiButton text="counter.whichPhone" variant="secondary" full onClick={() => setStep(0)} /> : null}
+          {!lines.length && !misc.length && !laptop ? <BiButton text="counter.whichPhone" variant="secondary" full onClick={() => setStep(0)} /> : null}
         </div>
       ) : null}
+      </div>
 
       {step === 2 && result ? (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 lg:mx-auto lg:w-full lg:max-w-xl">
           <div className="flex flex-col items-center gap-1 rounded-3xl bg-sell px-5 py-7 text-sell-fg">
             <span className="well mb-1 h-16 w-16 rounded-full bg-emerald text-white"><Check size={34} strokeWidth={2.6} /></span>
             <BiLabel text="sale.created" size="lg" bold tone="text-current" align="center" />

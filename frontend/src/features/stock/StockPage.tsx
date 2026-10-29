@@ -189,7 +189,7 @@ export default function StockPage() {
       ) : !rows.length ? (
         <Empty text={q || brand ? 'common.nothingFound' : 'stock.noDevices'} />
       ) : (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:items-start">
           {rows.map((d) => (
             <DeviceCard key={d.id} d={d} onOpen={() => nav(`/stock/${d.id}`)} onSell={() => nav(`/sale/new?device=${d.id}`)} />
           ))}
