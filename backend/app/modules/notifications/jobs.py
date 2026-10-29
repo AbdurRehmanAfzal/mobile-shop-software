@@ -31,6 +31,7 @@ log = logging.getLogger("notifications")
 
 DAILY = "daily_report"
 REMIND = "udhaar_reminder"
+INSTALL = "installment_reminders"
 
 
 # ---- udhaar reminders ----------------------------------------------------------------------
@@ -274,6 +275,13 @@ def tick(db: Session, now: dt.datetime | None = None) -> dict:
             db.commit()
             ran["daily_report"] += 1
         remind_due = s.customer_reminder_whatsapp and is_due(s.reminder_time, local)
+        if remind_due and _claim(db, shop.id, INSTALL, day):
+            from app.modules.admin.modules import effective
+            from app.modules.installments.service import auto_reminders
+
+            if "installments" in effective(shop.organisation):
+                ran["reminders"] += auto_reminders(db, shop)
+                db.commit()
         if remind_due and _claim(db, shop.id, REMIND, day):
             n = len(
                 queue_reminders(

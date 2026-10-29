@@ -12,6 +12,7 @@ from app.modules.devices import models as _devices_models  # noqa: F401
 from app.modules.exchanges import models as _exchanges_models  # noqa: F401
 from app.modules.expenses import models as _expenses_models  # noqa: F401
 from app.modules.fingerprint import models as _fingerprint_models  # noqa: F401
+from app.modules.installments import models as _installments_models  # noqa: F401
 from app.modules.ledger import models as _ledger_models  # noqa: F401
 from app.modules.loans import models as _loans_models  # noqa: F401
 from app.modules.notifications import models as _notifications_models  # noqa: F401

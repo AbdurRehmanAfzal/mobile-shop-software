@@ -523,6 +523,29 @@ hisaab bhejein** tick karein aur waqt chunein (maslan 21:30). Har raat malik ko 
 kitne phone bike aur kitne ke, haath mein, udhaar diya aur wasool, kharche, munafa, lene / dene hain,
 stock mein phone. **Aaj ka hisaab abhi bhejein** foran bhejta hai.
 
+### Qiston par bechna (installments)
+**Bechein** kholein, phone chunein aur **Qiston par bechein** par tick karein (tab dikhta hai jab
+aap ki dukaan mein *Qistein* module on ho). Customer chunein, **abhi advance** likhein (ooper chune
+tareeqe se wasool hota hai: cash, online, cheque), **kitne mahine** dabayein (3 · 6 · 9 · 12 · 18 · 24);
+**mahana** raqam khud bhar jati hai = (qeemat − advance) ÷ mahine; agar aur raqam tay hui hai to badal
+dein, aakhri qist mein jo bacha wo aa jata hai. **Mahine ki tareekh** aur zaroorat ho to **pehli qist**
+ki tareekh rakhein (khaali = agle mahine isi tareekh ko). **Zamin** likhein: naam, mobile, CNIC. Sale
+mukammal karein: raseed par plan chhapta hai (advance, N × mahana, pehli tareekh, zamin) aur baqi
+raqam hamesha ki tarah customer ke khate par rehti hai.
+
+Mazeed → **Qistein** mein saare plan: **Aaj ki**, **Late**, **Jari**, **Mukammal**; naam, phone,
+bill number ya zamin se dhoondein. Plan kholein to har qist *Ada*, *Juzwi*, *Aaj*, *Late* ya *Baqi*
+nazar aati hai, customer Call / WhatsApp ke saath, aur zamin.
+
+- **Qist lein**: agli qist ki raqam bhari hoti hai; juzwi ya ek saath kai qiston ke liye badal dein;
+  cash / online / cheque chunein. Ye usi bill par aam adaigi hai, is liye khata, din ka hisaab aur
+  bande ka statement sab ek jaise rehte hain.
+- **WhatsApp yaad dahani**: WhatsApp khulta hai "aap ki Rs. … ki qist … ko bani hai" (ya "… N din
+  late hai"); server par WhatsApp Business API ho to khud chali jati hai. Jin plans ki qist kal bani
+  hai ya late hai unhein raat ka job bhi khud yaad dilata hai (3 din mein zyada se zyada ek baar),
+  jab *Customers ko khud yaad dilao* on ho.
+- Home ke **Tawajjo chahiye** mein *qistein aaj banti hain* aur *qist ke plan late* dikhte hain.
+
 ---
 
 ## 9. Din ka hisaab aur "Aaj haath mein bacha"

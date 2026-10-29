@@ -91,6 +91,26 @@ TEMPLATES: dict[str, dict[str, dict[str, str]]] = {
             ),
         },
     },
+    "installment_due": {
+        "en": {
+            "subject": "Installment due: {shop}",
+            "body": "{customer}, a reminder from {shop}: your installment of Rs. {amount} for {item} is due on {due}. Remaining after it: Rs. {remaining}. Thank you.",
+        },
+        "ur": {
+            "subject": "قسط کی یاد دہانی: {shop}",
+            "body": "{customer}، {shop} کی طرف سے یاد دہانی: {item} کی آپ کی Rs. {amount} کی قسط {due} کو بنتی ہے۔ اس کے بعد باقی: Rs. {remaining}۔ شکریہ۔",
+        },
+    },
+    "installment_late": {
+        "en": {
+            "subject": "Installment overdue: {shop}",
+            "body": "{customer}, your installment of Rs. {amount} for {item} was due on {due} ({late} days ago). Please pay at {shop} today. Remaining: Rs. {remaining}.",
+        },
+        "ur": {
+            "subject": "قسط تاخیر سے: {shop}",
+            "body": "{customer}، {item} کی آپ کی Rs. {amount} کی قسط {due} کو بنتی تھی ({late} دن ہو گئے)۔ براہ کرم آج {shop} پر ادا کر دیں۔ باقی: Rs. {remaining}۔",
+        },
+    },
     "shop_request_admin": {
         "en": {
             "subject": "New shop request: {shop}",

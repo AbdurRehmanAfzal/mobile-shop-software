@@ -21,6 +21,7 @@ MODULES: dict[str, dict[str, str]] = {
         "ur": "واٹس ایپ پیغامات اور یاد دہانی",
     },
     "loans": {"en": "Loans to other shops (amanat)", "ur": "امانت (دوسری دکان کو)"},
+    "installments": {"en": "Installments (qist)", "ur": "قسطیں"},
 }
 
 PLAN_DEFAULTS: dict[str, list[str]] = {
@@ -36,6 +37,7 @@ PLAN_DEFAULTS: dict[str, list[str]] = {
         "reports",
         "exports",
         "notifications",
+        "installments",
     ],
     "chain": list(MODULES),
 }
@@ -50,6 +52,7 @@ ROUTE_MODULES: list[tuple[str, str]] = [
     ("/api/v1/exports", "exports"),
     ("/api/v1/notifications", "notifications"),
     ("/api/v1/loans", "loans"),
+    ("/api/v1/installments", "installments"),
     # profit & co.; the dashboard, the day's hisaab and stock summary stay basic
     ("/api/v1/reports/profit-loss", "reports"),
     ("/api/v1/reports/cash-flow", "reports"),

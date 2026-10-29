@@ -315,6 +315,10 @@ def create_sale(
     labels += [ml.description for ml in data.misc]
     pending = ", ".join(p.kind for dl in data.devices for p in dl.accessories_pending)
     notify.on_sale(db, shop, invoice, party, ", ".join(labels), pending, user_id)
+    if data.installments is not None:
+        from app.modules.installments.service import create_plan
+
+        create_plan(db, shop_id, user_id, invoice, data.installments)
     record_audit(
         db,
         shop_id=shop_id,
@@ -518,6 +522,11 @@ def receipt_html(
         "warranty": "وارنٹی" if ur else "Warranty",
         "days": "دن" if ur else "days",
         "tbd": "تاریخ بعد میں" if ur else "date TBD",
+        "inst": "قسطیں" if ur else "Installments",
+        "advance": "ایڈوانس" if ur else "Advance",
+        "monthly": "ماہانہ" if ur else "monthly",
+        "firstDue": "پہلی قسط" if ur else "First installment",
+        "guarantor": "ضامن" if ur else "Guarantor",
     }
     out = to_out(db, inv, show_cost=False)
     e = html.escape
@@ -542,6 +551,21 @@ def receipt_html(
     party_html = (
         f"<div>{e(out['party_name'])}</div>" if out["party_name"] else f"<div>{T['cash']}</div>"
     )
+    from app.modules.installments.service import plan_for_invoice
+
+    plan = plan_for_invoice(db, inv.id)
+    plan_html = ""
+    if plan is not None:
+        g = (
+            f" · {T['guarantor']}: {e(plan.guarantor_name)}{' ' + e(plan.guarantor_phone) if plan.guarantor_phone else ''}"
+            if plan.guarantor_name
+            else ""
+        )
+        plan_html = (
+            f"<tr><td colspan='4'><b>{T['inst']}:</b> {T['advance']} {plan.advance:,.0f} · "
+            f"{plan.months} × {plan.monthly:,.0f} {T['monthly']} · {T['firstDue']} "
+            f"{plan.first_due.strftime('%d-%m-%Y')}{g}</td></tr>"
+        )
     balance = out["party_balance_after"]
     balance_html = (
         f"<tr class='tot'><td colspan='3'>{T['balance']}</td><td class='n'>{balance:,.0f}</td></tr>"
@@ -607,7 +631,7 @@ small {{ color: #555; direction: ltr; unicode-bidi: isolate; }} .foot {{ margin-
 <tr><td colspan="3">{T["subtotal"]}</td><td class="n">{inv.subtotal:,.0f}</td></tr>{disc_html}{tax_html}
 <tr class="tot"><td colspan="3">{T["grand"]}</td><td class="n">Rs. {inv.total:,.0f}</td></tr>
 <tr><td colspan="3">{T["paid"]}</td><td class="n">{inv.paid:,.0f}</td></tr>{paid_by_html}
-<tr><td colspan="3">{T["due"]}</td><td class="n">{out["balance_due"]:,.0f}</td></tr>{balance_html}
+<tr><td colspan="3">{T["due"]}</td><td class="n">{out["balance_due"]:,.0f}</td></tr>{plan_html}{balance_html}
 </tbody></table>
 {pending_html}
 <div class="foot c">{e(T["thanks"])}</div>

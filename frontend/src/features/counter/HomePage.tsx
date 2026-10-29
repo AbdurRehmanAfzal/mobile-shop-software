@@ -20,7 +20,7 @@ import { useModules } from '@/lib/modules'
 
 interface Dash {
   receivable: string; payable: string; stock_count: number; stock_value_cost: string | null; stock_value_asking: string
-  pending_verification: number; repairs_open: number; low_stock_items?: number
+  pending_verification: number; repairs_open: number; low_stock_items?: number; installments_due_today?: number; installments_overdue?: number
   sales_7d?: { date: string; total: string }[]
 }
 
@@ -179,11 +179,13 @@ export default function HomePage() {
         </Link>
       ) : null}
 
-      {dash && (dash.pending_verification > 0 || dash.repairs_open > 0 || (dash.low_stock_items ?? 0) > 0) ? (
+      {dash && (dash.pending_verification > 0 || dash.repairs_open > 0 || (dash.low_stock_items ?? 0) > 0 || (dash.installments_due_today ?? 0) > 0 || (dash.installments_overdue ?? 0) > 0) ? (
         <section className="flex flex-col gap-2">
           <SectionTitle text="counter.attention" />
           {dash.pending_verification > 0 ? <Attention to="/stock" icon={<ShieldAlert size={18} />} n={dash.pending_verification} text="counter.pendingCheck" /> : null}
           {dash.repairs_open > 0 && has('repairs') ? <Attention to="/repairs" icon={<Wrench size={18} />} n={dash.repairs_open} text="counter.openRepairs" /> : null}
+          {(dash.installments_overdue ?? 0) > 0 && has('installments') ? <Attention to="/installments?view=overdue" icon={<HandCoins size={18} />} n={dash.installments_overdue!} text="counter.instOverdue" /> : null}
+          {(dash.installments_due_today ?? 0) > 0 && has('installments') ? <Attention to="/installments?view=today" icon={<HandCoins size={18} />} n={dash.installments_due_today!} text="counter.instToday" /> : null}
           {(dash.low_stock_items ?? 0) > 0 && has('accessories') ? <Attention to="/accessories?tab=low" icon={<Boxes size={18} />} n={dash.low_stock_items!} text="counter.lowStock" /> : null}
         </section>
       ) : null}

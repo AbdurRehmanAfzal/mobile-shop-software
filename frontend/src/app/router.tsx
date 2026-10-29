@@ -11,6 +11,7 @@ import KhataPage from '@/features/counter/KhataPage'
 import RemindersPage from '@/features/counter/RemindersPage'
 import ModuleGate from '@/components/ModuleGate'
 import FeesPage from '@/features/more/FeesPage'
+import { InstallmentDetailPage, InstallmentsPage } from '@/features/installments/InstallmentsPage'
 import AdminPage from '@/features/admin/AdminPage'
 import CataloguePage from '@/features/catalogue/CataloguePage'
 import MorePage from '@/features/more/MorePage'
@@ -70,6 +71,8 @@ export const router = createBrowserRouter([
           { path: '/hisaab', element: <DayReportPage /> },
           { path: '/khata', element: <KhataPage /> },
           { path: '/khata/reminders', element: <ModuleGate module="notifications"><RemindersPage /></ModuleGate> },
+          { path: '/installments', element: <ModuleGate module="installments"><InstallmentsPage /></ModuleGate> },
+          { path: '/installments/:id', element: <ModuleGate module="installments"><InstallmentDetailPage /></ModuleGate> },
           { path: '/admin', element: <AdminPage /> },
           { path: '/return/new', element: <ReturnWizard /> },
           { path: '/stock/opening', element: <OpeningStockPage /> },
