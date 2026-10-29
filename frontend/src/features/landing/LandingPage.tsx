@@ -25,6 +25,7 @@ const BASICS: { key: string; Icon: LucideIcon }[] = [
 const OPTIONAL: Record<string, LucideIcon> = { accessories: Headphones, repairs: Wrench, expenses: Wallet, held_sales: PauseCircle, tax: Receipt, exchange: ArrowLeftRight, reports: BarChart3, exports: Download, notifications: BellRing, loans: RotateCcw }
 const EXTRAS: { key: string; Icon: LucideIcon }[] = [{ key: 'offline', Icon: CloudOff }, { key: 'fingerprint', Icon: Fingerprint }, { key: 'cnic', Icon: ShieldCheck }, { key: 'whatsapp', Icon: MessageCircle }]
 const SHOTS = ['home', 'sale', 'stock', 'khata', 'reports', 'invoice'] as const
+const WEB_SHOTS = ['home', 'stock', 'reports', 'invoice'] as const
 
 export default function LandingPage() {
   const { pick, ur, roman, cls } = useLang()
@@ -32,7 +33,7 @@ export default function LandingPage() {
   const { data: info } = useGet<Info>(['public-info'], '/api/v1/public/info')
   const wa = (text: string) => `https://wa.me/${(info?.whatsapp ? `92${info.whatsapp.replace(/^0/, '')}` : MAKER.tel.replace('+', ''))}?text=${encodeURIComponent(text)}`
   const fmt = (n: number) => n.toLocaleString('en-US')
-  const h2 = ur ? `${cls('xl')} font-bold` : 'text-[26px] font-extrabold tracking-[-0.02em]'
+  const h2 = ur ? `${cls('xl')} font-bold` : 'text-[24px] font-extrabold tracking-[-0.02em] sm:text-[28px]'
   const body = ur ? cls('md') : 'text-[15px] font-medium'
 
   return (
@@ -40,11 +41,11 @@ export default function LandingPage() {
       {/* top bar */}
       <header className="sticky top-0 z-20 border-b border-line bg-ground/90 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center gap-3 px-5 py-3">
-          <img src="/icon.svg" alt="" className="h-9 w-9 rounded-xl" />
+          <span className="well h-9 w-9 shrink-0 rounded-xl bg-emerald text-white"><Smartphone size={20} strokeWidth={2.2} /></span>
           <span className="flex-1 text-lg font-extrabold tracking-tight">Mobile Shop</span>
-          <div className="flex gap-1" dir="ltr">
+          <div className="flex gap-0.5 rounded-full bg-surface p-0.5" dir="ltr">
             {LOCALES.map((l) => (
-              <button key={l} type="button" aria-pressed={l === locale} onClick={() => setLocale(l)} className={`tap h-9 rounded-full px-3 text-[13px] font-bold ${l === locale ? 'bg-ink text-ground' : 'text-ink'} ${l === 'ur' ? 'ur' : ''}`}>{LANG[l]}</button>
+              <button key={l} type="button" aria-pressed={l === locale} onClick={() => setLocale(l)} className={`tap h-8 rounded-full px-2.5 text-[12px] font-bold ${l === locale ? 'bg-ink text-ground' : 'text-ink'} ${l === 'ur' ? 'ur' : ''}`}>{LANG[l]}</button>
             ))}
           </div>
           <Link to="/login" className="tap hidden h-10 items-center rounded-xl border border-line bg-surface px-4 text-sm font-bold sm:flex">{pick('auth.login')}</Link>
@@ -52,23 +53,24 @@ export default function LandingPage() {
       </header>
 
       {/* hero */}
-      <section className="relative overflow-hidden">
-        <div aria-hidden className="absolute inset-x-0 top-0 -z-10 h-[520px] bg-[linear-gradient(135deg,rgb(var(--emerald))_0%,rgb(var(--hero))_100%)] [clip-path:polygon(0_0,100%_0,100%_82%,0_100%)]" />
-        <div className="mx-auto grid max-w-5xl gap-8 px-5 pb-10 pt-10 text-white md:grid-cols-2 md:items-center md:pt-16">
-          <div className="flex flex-col gap-4">
+      <section className="relative isolate overflow-hidden bg-[linear-gradient(135deg,rgb(var(--emerald))_0%,rgb(var(--hero))_100%)] text-white">
+        <div aria-hidden className="pointer-events-none absolute -end-24 -top-24 h-80 w-80 rounded-full bg-white/10 blur-3xl" />
+        <div aria-hidden className="pointer-events-none absolute -bottom-32 -start-16 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
+        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 px-5 pb-12 pt-10 md:grid-cols-2 md:items-center md:py-16">
+          <div className="flex min-w-0 flex-col gap-4">
             <span className={`w-fit rounded-full bg-white/15 px-3 py-1 text-xs font-bold ${ur ? 'ur text-sm' : ''}`}>{pick('landing.badge')}</span>
-            <h1 className={ur ? `${cls('xl')} text-[34px] font-bold leading-[1.9]` : 'text-[38px] font-extrabold leading-[1.1] tracking-[-0.03em] md:text-[46px]'}>{pick('landing.h1')}</h1>
+            <h1 className={ur ? 'ur text-[30px] font-bold leading-[1.8] sm:text-[36px]' : 'text-[34px] font-extrabold leading-[1.08] tracking-[-0.03em] sm:text-[40px] md:text-[46px]'}>{pick('landing.h1')}</h1>
             <p className={`max-w-lg text-white/85 ${ur ? cls('md') : 'text-[17px] font-medium'}`}>{pick('landing.sub')}</p>
             <div className="flex flex-wrap gap-2 pt-1">
               <a href="#start" className={`tap flex min-h-14 items-center gap-2 rounded-2xl bg-white px-5 font-extrabold text-ink ${ur ? cls('md') : 'text-[15px]'}`}><Check size={20} /> {pick('landing.ctaTrial').replace('{{n}}', String(info?.trial_days ?? 14))}</a>
-              <a href={wa(pick('landing.waHello'))} target="_blank" rel="noopener noreferrer" className={`tap flex min-h-14 items-center gap-2 rounded-2xl bg-emerald px-5 font-bold text-white ${ur ? cls('md') : 'text-[15px]'}`}><MessageCircle size={20} /> WhatsApp</a>
-              <Link to="/login" className={`tap flex min-h-14 items-center rounded-2xl border border-white/40 px-5 font-bold text-white sm:hidden ${ur ? cls('md') : 'text-[15px]'}`}>{pick('auth.login')}</Link>
+              <a href={wa(pick('landing.waHello'))} target="_blank" rel="noopener noreferrer" className={`tap flex min-h-14 items-center gap-2 rounded-2xl bg-white/15 px-5 font-bold text-white ring-1 ring-inset ring-white/40 ${ur ? cls('md') : 'text-[15px]'}`}><MessageCircle size={20} /> WhatsApp</a>
             </div>
+            <Link to="/login" className={`w-fit text-white/90 underline-offset-4 hover:underline sm:hidden ${ur ? cls('sm') : 'text-sm font-bold'}`}>{pick('landing.haveShop')}</Link>
             <div className={`flex flex-wrap gap-x-5 gap-y-1 pt-2 text-white/80 ${ur ? cls('sm') : 'text-sm font-semibold'}`}>
               <span>✓ {pick('landing.point1')}</span><span>✓ {pick('landing.point2')}</span><span>✓ {pick('landing.point3')}</span>
             </div>
           </div>
-          <div className="mx-auto w-full max-w-[300px]">
+          <div className="mx-auto w-full max-w-[260px] md:max-w-[300px]">
             <Phone src={`/landing/home-${ur ? 'ur' : 'en'}.png`} />
           </div>
         </div>
@@ -76,7 +78,7 @@ export default function LandingPage() {
 
       <main className="mx-auto flex max-w-5xl flex-col gap-14 px-5 pb-20 pt-6">
         {/* who it is for */}
-        <section className="grid gap-3 sm:grid-cols-3">
+        <section className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {(['used', 'new', 'repair'] as const).map((k) => (
             <div key={k} className="card flex flex-col gap-1.5">
               <BiLabel text={`landing.for.${k}.t`} size="md" bold />
@@ -105,16 +107,16 @@ export default function LandingPage() {
             <p className={`text-muted ${body}`}>{pick('landing.modulesSub')}</p>
           </div>
           <BiLabel text="landing.basicsTitle" size="md" bold />
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {BASICS.map(({ key, Icon }) => <Feature key={key} Icon={Icon} title={pick(`landing.basics.${key}.t`)} text={pick(`landing.basics.${key}.d`)} tone="bg-emerald-tint text-emerald-deep" />)}
           </div>
           <BiLabel text="landing.optionalTitle" size="md" bold className="mt-2" />
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {Object.entries(OPTIONAL).map(([key, Icon]) => <Feature key={key} Icon={Icon} title={pick(`modules.${key}`)} text={pick(`landing.optional.${key}`)} tone="bg-khata text-khata-icon" />)}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {Object.entries(OPTIONAL).map(([key, Icon]) => <Feature key={key} Icon={Icon} title={pick(`modules.${key}`)} text={pick(`landing.optional.${key}`)} tone="bg-[#3B82F6]/15 text-[#2563EB]" />)}
           </div>
           <BiLabel text="landing.extrasTitle" size="md" bold className="mt-2" />
-          <div className="grid gap-3 sm:grid-cols-2">
-            {EXTRAS.map(({ key, Icon }) => <Feature key={key} Icon={Icon} title={pick(`landing.extras.${key}.t`)} text={pick(`landing.extras.${key}.d`)} tone="bg-sell text-sell-icon" />)}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {EXTRAS.map(({ key, Icon }) => <Feature key={key} Icon={Icon} title={pick(`landing.extras.${key}.t`)} text={pick(`landing.extras.${key}.d`)} tone="bg-[#F59E0B]/15 text-[#B45309]" />)}
           </div>
         </section>
 
@@ -132,11 +134,25 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* the web application on a laptop */}
+        <section id="web" className="flex flex-col gap-4">
+          <h2 className={h2}>{pick('landing.webTitle')}</h2>
+          <p className={`text-muted ${body}`}>{pick('landing.webSub')}</p>
+          <div className="-mx-5 flex snap-x gap-4 overflow-x-auto px-5 pb-2">
+            {WEB_SHOTS.map((s) => (
+              <figure key={s} className="w-[min(92vw,620px)] shrink-0 snap-center">
+                <Browser src={`/landing/web-${s}-${ur ? 'ur' : 'en'}.png`} />
+                <figcaption className={`mt-2 text-center text-muted ${ur ? cls('sm') : 'text-sm font-semibold'}`}>{pick(`landing.shots.${s}`)}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+
         {/* pricing */}
         <section id="pricing" className="flex flex-col gap-4">
           <h2 className={h2}>{pick('landing.priceTitle')}</h2>
           <p className={`text-muted ${body}`}>{pick('landing.priceSub').replace('{{n}}', String(info?.trial_days ?? 14))}</p>
-          <div className="grid gap-3 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
             {(info?.plans ?? []).filter((p) => p.key !== 'trial').map((p) => (
               <div key={p.key} className={`flex flex-col gap-3 rounded-3xl border p-5 ${p.key === 'pro' ? 'border-emerald bg-emerald-tint/40 shadow-hero' : 'border-line bg-surface'}`}>
                 <div className="flex items-center justify-between">
@@ -157,9 +173,9 @@ export default function LandingPage() {
         </section>
 
         {/* start: request + payment */}
-        <section id="start" className="grid gap-6 md:grid-cols-2">
+        <section id="start" className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <RequestForm info={info} />
-          <div className="flex flex-col gap-3">
+          <div className="flex min-w-0 flex-col gap-3">
             <h2 className={h2}>{pick('landing.payTitle')}</h2>
             <p className={`text-muted ${body}`}>{pick('landing.paySub')}</p>
             {info?.accounts.length ? (
@@ -198,8 +214,21 @@ export default function LandingPage() {
 
 function Phone({ src, small = false }: { src: string; small?: boolean }) {
   return (
-    <div className={`overflow-hidden rounded-[32px] border-[6px] border-ink bg-ink shadow-hero ${small ? '' : ''}`}>
+    <div className={`overflow-hidden rounded-[30px] border-ink bg-ink shadow-hero ${small ? 'border-4' : 'border-[6px]'}`}>
       <img src={src} alt="" loading="lazy" className="aspect-[9/19.5] w-full object-cover object-top" />
+    </div>
+  )
+}
+
+/** a laptop browser frame around a wide screenshot */
+function Browser({ src }: { src: string }) {
+  return (
+    <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-hero">
+      <div className="flex items-center gap-1.5 border-b border-line bg-ground px-3 py-2" dir="ltr">
+        <span className="h-2.5 w-2.5 rounded-full bg-[#F87171]" /><span className="h-2.5 w-2.5 rounded-full bg-[#FBBF24]" /><span className="h-2.5 w-2.5 rounded-full bg-[#34D399]" />
+        <span className="ms-3 h-5 flex-1 rounded-md bg-surface px-2 text-[10px] leading-5 text-muted">mobileshop.oopsolutions.com</span>
+      </div>
+      <img src={src} alt="" loading="lazy" className="aspect-[16/10] w-full object-cover object-top" />
     </div>
   )
 }
@@ -260,7 +289,7 @@ function RequestForm({ info }: { info: Info | undefined }) {
 
   const h2 = ur ? `${cls('xl')} font-bold` : 'text-[26px] font-extrabold tracking-[-0.02em]'
   return (
-    <form onSubmit={submit} className="flex flex-col gap-3 rounded-3xl border border-line bg-surface p-5 shadow-hero">
+    <form onSubmit={submit} className="flex min-w-0 flex-col gap-3 rounded-3xl border border-line bg-surface p-5 shadow-hero">
       <h2 className={h2}>{pick('landing.startTitle')}</h2>
       <p className={`text-muted ${ur ? cls('sm') : 'text-sm font-medium'}`}>{pick('landing.startSub')}</p>
       {done ? <BiAlert text="landing.sent" kind="success" /> : (

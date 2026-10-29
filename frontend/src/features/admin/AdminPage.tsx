@@ -135,7 +135,7 @@ export default function AdminPage() {
       <AppLinkCard />
       <section className="card flex flex-col gap-2">
         <div className="flex items-center gap-3">
-          <span className="well h-10 w-10 shrink-0 bg-sell text-sell-icon"><CreditCard size={20} /></span>
+          <span className="well h-10 w-10 shrink-0 bg-emerald-tint text-emerald-deep"><CreditCard size={20} /></span>
           <span className="flex min-w-0 flex-1 flex-col">
             <BiLabel text="admin.feesTitle" size="md" bold />
             <span className="text-xs text-muted">{pick('admin.thisMonth')} <span className="num" dir="ltr">Rs. {Number(feeStats?.month_total ?? 0).toLocaleString('en-US')}</span> · {pick('admin.pendingN').replace('{{n}}', String(feeStats?.pending ?? 0))}</span>
@@ -196,7 +196,7 @@ export default function AdminPage() {
           <div className="card divide-y divide-line p-0">
             {shopReqs.map((r) => (
               <div key={r.id} className="flex items-center gap-3 px-4 py-3">
-                <span className="well h-10 w-10 shrink-0 bg-sell text-sell-icon"><Store size={18} /></span>
+                <span className="well h-10 w-10 shrink-0 bg-emerald-tint text-emerald-deep"><Store size={18} /></span>
                 <span className="flex min-w-0 flex-1 flex-col">
                   <span className="truncate text-[15px] font-bold">{r.shop_name}{r.city ? <span className="font-medium text-muted"> · {r.city}</span> : null}</span>
                   <span className="truncate text-xs text-muted" dir="ltr">{r.name} · {r.phone} · {r.plan} · {fmtDate(r.created_at)}</span>

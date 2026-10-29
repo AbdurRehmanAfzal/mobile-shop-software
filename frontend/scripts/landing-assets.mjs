@@ -91,6 +91,27 @@ async function shots(browser, locale) {
   await ctx.close()
 }
 
+// the web application on a laptop (the side menu with F-keys shows from 1024px)
+async function webShots(browser, locale) {
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: 1.5 })
+  const page = await ctx.newPage()
+  await login(page, locale)
+  const take = async (name, path, prep) => {
+    await page.goto(`${WEB}${path}`)
+    await page.waitForLoadState('networkidle')
+    if (prep) await prep()
+    await page.waitForTimeout(600)
+    await page.screenshot({ path: join(OUT, `web-${name}-${locale}.png`) })
+  }
+  await take('home', '/')
+  await take('sale', '/sale/new', async () => { await page.getByRole('button', { name: /Galaxy A55|iPhone 13/ }).first().click(); await page.waitForTimeout(500) })
+  await take('stock', '/stock')
+  await take('khata', '/khata')
+  await take('reports', '/reports')
+  await take('invoice', '/invoices')
+  await ctx.close()
+}
+
 async function video(browser) {
   const dir = join(OUT, '_video')
   mkdirSync(dir, { recursive: true })
@@ -140,6 +161,8 @@ try {
   await seed()
   await shots(browser, 'en')
   await shots(browser, 'ur')
+  await webShots(browser, 'en')
+  await webShots(browser, 'ur')
   await video(browser)
   console.log('done', readdirSync(OUT))
 } finally {

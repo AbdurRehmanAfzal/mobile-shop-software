@@ -1566,6 +1566,9 @@
       }
     },
     "footer": "Made in Pakistan for Pakistani mobile shops.",
-    "about": "About the software ›"
+    "about": "About the software ›",
+    "haveShop": "Already a customer? Log in ›",
+    "webTitle": "On a laptop too",
+    "webSub": "The same shop in the browser on a laptop or desktop: a side menu with keyboard shortcuts (F2 sale, F3 add stock…), wide lists and reports. One login, every device."
   }
 }
