@@ -11,6 +11,7 @@ import { BtnText, Chip, ErrorText, IconChip, MoneyText, PageHeader, Sheet, Stepp
 import { uid } from '@/lib/id'
 import { api } from '@/lib/api'
 import { openPrintable } from '@/lib/files'
+import { isQueued } from '@/lib/offline'
 import { useDocMutation } from '@/lib/queries'
 import type { Party, Purchase } from '@/lib/types'
 import DeviceLineSheet, { draftToApi, emptyDraft, type DeviceLineDraft } from './DeviceLineSheet'
@@ -47,7 +48,7 @@ export default function PurchaseWizard() {
   const [earlier, setEarlier] = useDraft('purchase.earlier', false)
   const [when, setWhen] = useDraft('purchase.when', localNow())
   const [result, setResult] = useState<Purchase | null>(null)
-  const m = useDocMutation<Record<string, unknown>, Purchase>('POST', () => '/api/v1/purchases')
+  const m = useDocMutation<Record<string, unknown>, Purchase>('POST', () => '/api/v1/purchases', undefined, { kind: 'purchase', label: (b) => `${pick('counter.addStock')} · Rs. ${Number((b as { paid?: number }).paid ?? 0).toLocaleString('en-US')}` })
 
   const subtotal = devices.reduce((s, d) => s + Number(d.cost || 0), 0) + misc.reduce((s, x) => s + Number(x.qty || 0) * Number(x.unit_cost || 0), 0)
   const total = Math.max(0, subtotal - Number(discount || 0))
@@ -68,6 +69,13 @@ export default function PurchaseWizard() {
       reference: reference || undefined,
       purchased_at: earlier && when ? new Date(when).toISOString() : undefined,
     })
+    if (isQueued(res)) {
+      // no internet: the purchase waits on the phone (the strip under the header says so)
+      clearDrafts('purchase.')
+      m.reset()
+      nav('/')
+      return
+    }
     if (skipCheck && kind !== 'supplier') {
       // "I know this person": mark each phone checked now; the skip and who did it go into its history
       const done: Record<string, boolean> = {}

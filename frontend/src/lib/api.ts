@@ -1,6 +1,7 @@
 /** Minimal typed API client: bearer token, X-Shop-Id, one automatic refresh on 401, bilingual errors. */
 
 import { useAuth } from './auth'
+import { useOffline } from './offline'
 
 const BASE = import.meta.env.VITE_API_URL?.replace(/\/$/, '') ?? ''
 
@@ -22,19 +23,31 @@ export class ApiError extends Error {
 }
 
 type Method = 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE'
+export interface ApiOpts { auth?: boolean; idempotencyKey?: string; shopId?: string | null }
+const OFFLINE = { code: 'offline', message_en: 'No internet connection. Check the network and try again.', message_ur: 'انٹرنیٹ نہیں ہے۔ نیٹ ورک چیک کر کے دوبارہ کوشش کریں۔' }
 
-async function rawRequest<T>(method: Method, path: string, body?: unknown, auth = true): Promise<T> {
+async function rawRequest<T>(method: Method, path: string, body?: unknown, auth = true, opts: ApiOpts = {}): Promise<T> {
   const state = useAuth.getState()
   const headers: Record<string, string> = { Accept: 'application/json' }
   if (body !== undefined) headers['Content-Type'] = 'application/json'
   if (auth && state.accessToken) headers.Authorization = `Bearer ${state.accessToken}`
-  if (auth && state.activeShopId) headers['X-Shop-Id'] = state.activeShopId
+  const shopId = opts.shopId ?? state.activeShopId
+  if (auth && shopId) headers['X-Shop-Id'] = shopId
+  if (opts.idempotencyKey) headers['Idempotency-Key'] = opts.idempotencyKey
 
-  const res = await fetch(`${BASE}${path}`, {
-    method,
-    headers,
-    body: body === undefined ? undefined : JSON.stringify(body),
-  })
+  let res: Response
+  try {
+    res = await fetch(`${BASE}${path}`, {
+      method,
+      headers,
+      body: body === undefined ? undefined : JSON.stringify(body),
+    })
+  } catch {
+    // the network, not the server: offline mode (lib/offline.ts) takes over
+    useOffline.getState().setOnline(false)
+    throw new ApiError(0, OFFLINE)
+  }
+  if (!useOffline.getState().online) useOffline.getState().setOnline(true)
   if (res.status === 204) return undefined as T
   const text = await res.text()
   const json = text ? JSON.parse(text) : null
@@ -76,13 +89,13 @@ async function tryRefresh(): Promise<boolean> {
   return refreshing
 }
 
-export async function api<T>(method: Method, path: string, body?: unknown, opts: { auth?: boolean } = {}): Promise<T> {
+export async function api<T>(method: Method, path: string, body?: unknown, opts: ApiOpts = {}): Promise<T> {
   const auth = opts.auth ?? true
   try {
-    return await rawRequest<T>(method, path, body, auth)
+    return await rawRequest<T>(method, path, body, auth, opts)
   } catch (e) {
     if (e instanceof ApiError && e.status === 401 && auth && e.code !== 'bad_credentials') {
-      if (await tryRefresh()) return rawRequest<T>(method, path, body, auth)
+      if (await tryRefresh()) return rawRequest<T>(method, path, body, auth, opts)
     }
     throw e
   }

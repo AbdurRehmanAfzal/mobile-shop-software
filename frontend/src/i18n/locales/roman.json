@@ -1295,5 +1295,19 @@
     "locked": "Aap ki subscription khatam ho gayi hai. App ab sirf data dikhati hai; jari rakhne ke liye renew karein.",
     "contact": "WhatsApp par rabta",
     "waText": "Assalam-o-Alaikum, main apni Mobile Shop subscription renew karwana chahta hoon."
+  },
+  "offline": {
+    "noNet": "Internet nahi hai. Bikri, stock, adaigi aur kharche is phone mein save ho rahe hain aur internet aate hi bhej diye jayenge.",
+    "queued": "Is phone mein save ho gaya. Internet aate hi bhej diya jaye ga.",
+    "sending": "Phone mein save kaam bheja ja raha hai…",
+    "pendingN": "{{n}} bhejne ke intezar mein",
+    "failedN": "{{n}} nahi bheje ja sake — wajah dekhne ke liye dabayein",
+    "listTitle": "Bhejne ke intezar mein",
+    "listHint": "Internet ke baghair banaye gaye. Internet aate hi isi tarteeb se jayenge.",
+    "waiting": "Thori dair mein bheja jaye ga",
+    "waitingNet": "Internet ka intezar",
+    "retry": "Dobara koshish",
+    "deleteAsk": "Ye khatam kar dein? Ye server par kabhi nahi gaya.",
+    "empty": "Kuch baqi nahi"
   }
 }

@@ -5,6 +5,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query
 
 from app.core.errors import Forbidden
+from app.core.idempotency import IdemKey
+from app.core.idempotency import run as idempotent
 from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx, require_cap
 from app.modules.purchases import service
@@ -15,8 +17,14 @@ Transact = Annotated[Ctx, Depends(require_cap(Cap.TRANSACT))]
 
 
 @router.post("", response_model=PurchaseOut, status_code=201)
-def create(data: PurchaseCreate, ctx: Transact, db: DB):
-    return service.to_out(db, service.create_purchase(db, ctx.shop_id, ctx.id, data))
+def create(data: PurchaseCreate, ctx: Transact, db: DB, idem: IdemKey = None):
+    return idempotent(
+        db,
+        ctx.shop_id,
+        idem,
+        "purchases",
+        lambda: service.to_out(db, service.create_purchase(db, ctx.shop_id, ctx.id, data)),
+    )
 
 
 @router.get("", response_model=list[PurchaseOut])

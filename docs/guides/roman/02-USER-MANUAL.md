@@ -879,6 +879,24 @@ hote hain, aur plan sab branches ko mila kar hota hai.
 
 **Misaal:** ek gahak mahine baad Galaxy A54 le kar aata hai aur kehta hai "yahin se liya tha". IMEI ke aakhri 6 hindse likhein: sale ka bill (aur us phone ki koi repair) tareekh, qeemat aur baqi udhaar ke saath saamne aa jata hai.
 
+## 20b. Internet ke baghair kaam
+
+Market ka internet chala gaya? Bechte rahein.
+
+- Jo aap ne internet ke saath khola tha (stock, khata, bikri ki list, bande ka page) ek din tak phone
+  mein rehta hai aur internet ke baghair khulta hai.
+- Internet ke baghair ki gayi **bikri, stock daalna, adaigi ya kharcha phone mein save** ho jata hai.
+  Header ke neeche patti kehti hai *"Is phone mein save ho gaya. Internet aate hi bhej diya jaye ga."*
+  aur phir *"1 bhejne ke intezar mein"*. Us par dabayein to list.
+- Internet aate hi woh khud, tarteeb se, har ek **sirf ek baar** jaate hain (chahe beech mein internet
+  phir toot jaye). Bill number server par pahunch kar milta hai.
+- Agar server kisi ko mana kar de (maslan wohi phone is dauran doosre phone se bik gaya) to woh list
+  mein laal rang mein wajah ke saath rehta hai: theek kar ke **Dobara koshish**, ya mita dein.
+- Internet ke baghair nahi ho sakta: jis mein server ka jawab chahiye (ID card check, reports,
+  download, WhatsApp bhejna).
+
+![Phone mein save](../images/offline-queued.png)
+
 ## 21. Aam masle
 
 **Scan se IMEI nahi parha ja raha.**

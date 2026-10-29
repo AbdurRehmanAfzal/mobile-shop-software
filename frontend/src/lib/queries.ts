@@ -1,5 +1,7 @@
 /** TanStack Query hooks over the API. Keys are per shop so switching shops never shows stale data. */
 
+import { ApiError } from './api'
+import { useOffline, type PendingKind } from './offline'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { get, patch, post, api } from './api'
 import { useAuth } from './auth'
@@ -186,11 +188,33 @@ export const useMessages = () => {
 }
 
 /** Generic mutation that invalidates everything for the shop (documents touch many lists). */
-export function useDocMutation<TIn, TOut>(method: 'POST' | 'PUT' | 'PATCH', path: (input: TIn) => string, body?: (input: TIn) => unknown) {
+/** `offline`: when the network is down the document waits on the phone (lib/offline.ts) and the
+ *  mutation resolves to `{ queued: true }` (check with `isQueued`); every such POST carries an
+ *  Idempotency-Key so a retry can never post it twice. */
+export function useDocMutation<TIn, TOut>(
+  method: 'POST' | 'PUT' | 'PATCH',
+  path: (input: TIn) => string,
+  body?: (input: TIn) => unknown,
+  offline?: { kind: PendingKind; label: (input: TIn) => string },
+) {
   const inv = useInvalidate()
+  const shopId = useAuth((s) => s.activeShopId)
   return useMutation({
-    mutationFn: (input: TIn) => api<TOut>(method, path(input), body ? body(input) : input),
-    onSuccess: () => inv(),
+    mutationFn: async (input: TIn) => {
+      const payload = body ? body(input) : input
+      const key = offline && method === 'POST' ? crypto.randomUUID() : undefined
+      try {
+        return await api<TOut>(method, path(input), payload, { idempotencyKey: key })
+      } catch (e) {
+        if (key && offline && e instanceof ApiError && e.code === 'offline') {
+          useOffline.getState().enqueue({ id: key, kind: offline.kind, method: 'POST', path: path(input), body: payload, shopId, label: offline.label(input) })
+          return { queued: true, id: key } as unknown as TOut
+        }
+        throw e
+      }
+    },
+    // offline, a refetch waits for the connection and would hold the screen: then not awaited
+    onSuccess: () => (useOffline.getState().online ? inv() : void inv()),
   })
 }
 

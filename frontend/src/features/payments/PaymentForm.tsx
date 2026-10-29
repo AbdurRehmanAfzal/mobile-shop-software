@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
-import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import { BiAlert, BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import { isQueued } from '@/lib/offline'
 import PayPicker, { newPay, payInfo, payReady, remitPkr, type PayState } from '@/components/PayPicker'
 import { ErrorText, MoneyText } from '@/components/ui'
 import { useDocMutation } from '@/lib/queries'
@@ -12,13 +13,20 @@ export default function PaymentForm({ party, direction, onDone }: { party: Party
   const [pay, setPay] = useState<PayState>(() => newPay())
   const [notes, setNotes] = useState('')
   const [result, setResult] = useState<Payment | null>(null)
-  const m = useDocMutation<Record<string, unknown>, Payment>('POST', () => '/api/v1/payments')
+  const [queued, setQueued] = useState(false)
+  const m = useDocMutation<Record<string, unknown>, Payment>('POST', () => '/api/v1/payments', undefined, { kind: 'payment', label: (b) => `${pick(direction === 'in' ? 'pay.in' : 'pay.out')} · ${party.name} · Rs. ${Number((b as { amount?: number }).amount ?? 0).toLocaleString('en-US')}` })
 
   async function submit(e: FormEvent) {
     e.preventDefault()
     const res = await m.mutateAsync({ party_id: party.id, direction, amount: Number(amount), payment: payInfo(pay), notes: notes || undefined })
+    if (isQueued(res)) {
+      setQueued(true)
+      return
+    }
     setResult(res)
   }
+
+  if (queued) return <BiAlert text="offline.queued" kind="info" />
 
   if (result) {
     return (

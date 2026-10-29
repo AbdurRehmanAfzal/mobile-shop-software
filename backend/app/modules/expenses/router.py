@@ -4,6 +4,8 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 
+from app.core.idempotency import IdemKey
+from app.core.idempotency import run as idempotent
 from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx, require_cap
 from app.modules.expenses import service
@@ -56,8 +58,14 @@ def list_expenses(
 
 
 @router.post("", response_model=ExpenseOut, status_code=201)
-def create_expense(data: ExpenseCreate, ctx: Exp, db: DB):
-    return service.to_out(db, service.create_expense(db, ctx.shop_id, ctx.id, data))
+def create_expense(data: ExpenseCreate, ctx: Exp, db: DB, idem: IdemKey = None):
+    return idempotent(
+        db,
+        ctx.shop_id,
+        idem,
+        "expenses",
+        lambda: service.to_out(db, service.create_expense(db, ctx.shop_id, ctx.id, data)),
+    )
 
 
 @router.get("/day-close/preview", response_model=DayPreviewOut)

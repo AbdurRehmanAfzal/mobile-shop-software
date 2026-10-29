@@ -1,5 +1,6 @@
 """Import every model module here so Alembic and `Base.metadata` see all tables."""
 
+from app.core import idempotency as _idempotency  # noqa: F401
 from app.db.base import Base  # noqa: F401
 from app.modules.accessories import models as _accessories_models  # noqa: F401
 from app.modules.audit import models as _audit_models  # noqa: F401
