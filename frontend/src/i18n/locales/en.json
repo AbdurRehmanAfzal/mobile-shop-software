@@ -1316,5 +1316,8 @@
     "retry": "Try again",
     "deleteAsk": "Delete this? It was never sent to the server.",
     "empty": "Nothing waiting"
+  },
+  "docLang": {
+    "title": "Document language"
   }
 }

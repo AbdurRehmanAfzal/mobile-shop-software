@@ -358,6 +358,11 @@ print window kholta hai: thermal (80 mm) printer chunein. Neeche **PDF download*
 save karta hai aur **PDF share karein** phone ki share list (WhatsApp, Gmail…) file ke saath kholta hai.
 Yehi do button har bikri ke page, exchange ke baad aur repair job par bhi hain.
 
+**Document ki zubaan.** Print / download / share ke buttons ke theek ooper (bikri mukammal, bikri ka
+page, repair job, ID check, aur har report ki Download ya Share sheet mein) **Document ki zubaan:
+English | اردو** hai. By default English hoti hai; Urdu raseed, bill, job sheet, iqrar nama ya report ke
+liye **اردو** dabayein. Jab tak app band na karein, ye intikhab rehta hai.
+
 ### 6f. Bill par tax (marzi se)
 Har sale par tax **band** hota hai. Lagana ho to **Is bill par tax lagayein** par tick karein: **Tax %** ka
 khana aata hai (dukaan ka rate, aam tor par 18) aur tax qeemat ke ooper jud jata hai. Total ke neeche

@@ -5,6 +5,7 @@ import { Capacitor } from '@capacitor/core'
 import { Download, Share2 } from 'lucide-react'
 import { useState } from 'react'
 import { BiAlert, useLang } from './Bilingual'
+import DocLangPicker from './DocLangPicker'
 import { ErrorText } from './ui'
 import { openPrintable } from '@/lib/files'
 import { printPagePdf, saveFile, shareFile, type DocFile } from '@/lib/share'
@@ -76,13 +77,14 @@ export function DocStatus({ s }: { s: ReturnType<typeof useDocFile> }) {
 }
 
 /** "Download PDF" and "Share PDF" for one print page (e.g. `/api/v1/sales/{id}/receipt?format=a4`) */
-export default function DocActions({ path, name, title }: { path: string; name: string; title: string }) {
+export default function DocActions({ path, name, title, picker = true }: { path: string; name: string; title: string; picker?: boolean }) {
   const { pick, ur, cls } = useLang()
   const s = useDocFile(title)
   const make = () => printPagePdf(path, name)
   const btn = `tap flex min-h-14 items-center justify-center gap-2 rounded-2xl border border-line bg-surface px-3 font-bold text-ink disabled:opacity-60 ${ur ? cls('md') : 'text-[15px]'}`
   return (
     <div className="flex flex-col gap-2">
+      {picker ? <DocLangPicker /> : null}
       <div className="grid grid-cols-2 gap-2">
         <button type="button" disabled={!!s.busy} onClick={() => s.run('dl', 'download', make, () => openPrintable(path))} className={btn}>
           <Download size={20} /> {pick(s.busy === 'dl' ? 'docShare.making' : 'docShare.downloadPdf')}

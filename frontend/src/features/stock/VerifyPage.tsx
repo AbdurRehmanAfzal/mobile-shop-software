@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import CnicScanButton from '@/components/CnicScanButton'
+import DocLangPicker from '@/components/DocLangPicker'
 import Help from '@/components/Help'
 import { CnicInput } from '@/components/FieldInputs'
 import PartyPicker from '@/components/PartyPicker'
@@ -104,6 +105,7 @@ export default function VerifyPage() {
         </div>
         {r === 'clear' && device.status === 'in_stock' ? <BiButton text="verify.sellNow" icon={<Tag size={22} />} full onClick={() => nav(`/sale/new?device=${id}`)} /> : null}
         <BiButton text="verify.backToPhone" icon={<Smartphone size={22} />} full variant={r === 'clear' ? 'secondary' : 'primary'} onClick={() => nav(`/stock/${id}`)} />
+        <DocLangPicker />
         <BiButton text="verify.printDeclaration" icon={<Printer size={22} />} full variant="secondary" onClick={() => openPrintable(`/api/v1/devices/${id}/verification/declaration`)} />
         <BiButton text="verify.editAgain" icon={<Pencil size={22} />} full variant="ghost" onClick={() => setDone(null)} />
       </div>
