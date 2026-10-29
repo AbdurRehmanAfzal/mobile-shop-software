@@ -9,6 +9,7 @@ import DayReportPage from '@/features/counter/DayReportPage'
 import KhataPage from '@/features/counter/KhataPage'
 import RemindersPage from '@/features/counter/RemindersPage'
 import ModuleGate from '@/components/ModuleGate'
+import FeesPage from '@/features/more/FeesPage'
 import AdminPage from '@/features/admin/AdminPage'
 import CataloguePage from '@/features/catalogue/CataloguePage'
 import MorePage from '@/features/more/MorePage'
@@ -95,6 +96,7 @@ export const router = createBrowserRouter([
           { path: '/more/catalogue', element: <CataloguePage /> },
           { path: '/more', element: <MorePage /> },
           { path: '/more/settings', element: <SettingsPage /> },
+          { path: '/more/fees', element: <FeesPage /> },
           { path: '/more/notifications', element: <ModuleGate module="notifications"><NotificationsPage /></ModuleGate> },
         ],
       },

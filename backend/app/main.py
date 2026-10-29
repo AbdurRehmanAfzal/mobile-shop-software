@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.errors import install_error_handlers
 from app.modules.accessories.router import router as accessories_router
+from app.modules.admin.fees_router import router as fees_router
 from app.modules.admin.router import router as admin_router
 from app.modules.audit.router import router as audit_router
 from app.modules.auth.router import router as auth_router
@@ -107,6 +108,7 @@ def create_app() -> FastAPI:
 
     app.include_router(auth_router)
     app.include_router(admin_router)
+    app.include_router(fees_router)
     app.include_router(shops_router)
     app.include_router(staff_router)
     app.include_router(audit_router)

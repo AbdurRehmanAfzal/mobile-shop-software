@@ -1000,7 +1000,22 @@
     "savePlan": "Save plan",
     "modulesTitle": "Modules for this shop",
     "followPlan": "Follow the plan ({{plan}})",
-    "saveModules": "Save modules"
+    "saveModules": "Save modules",
+    "feesTitle": "Software fees",
+    "thisMonth": "This month",
+    "pendingN": "{{n}} to check",
+    "accounts": "Payment accounts",
+    "accountsHint": "The accounts shop owners pay into. Shown to every shop on its Software fees screen. Kept only in the database.",
+    "acctLabel": "Name (e.g. Easypaisa)",
+    "acctName": "Account holder",
+    "acctNumber": "Number / IBAN",
+    "acctNote": "Note (optional)",
+    "addAccount": "Add an account",
+    "proof": "Screenshot",
+    "approveMonths": "Received · +{{n}} month(s)",
+    "reject": "Reject",
+    "rejectWhy": "Why not? (the shop owner will read this)",
+    "noFees": "No payments to check"
   },
   "field": {
     "badMobile": "Enter a 10-digit mobile number starting with 3, e.g. 300 1234567",
@@ -1353,5 +1368,32 @@
     "off": "This feature is not in your plan.",
     "offHint": "Ask the software provider to switch it on for your shop.",
     "waText": "Assalam-o-Alaikum, I want to add \"{{module}}\" to my Mobile Shop plan."
+  },
+  "fees": {
+    "title": "Software fees",
+    "yourPlan": "Your plan",
+    "monthly": "Monthly fee",
+    "paidUntil": "Paid until",
+    "payInto": "Pay into one of these",
+    "noAccounts": "The software provider has not listed accounts yet. Contact them on WhatsApp.",
+    "copy": "Copy",
+    "copied": "Copied",
+    "howTo": "Send the fee from Easypaisa, JazzCash, SadaPay or your bank, then tell us below with the transaction ID or a screenshot.",
+    "reportTitle": "I have paid",
+    "amount": "Amount (Rs)",
+    "months": "Months",
+    "method": "Paid through",
+    "reference": "Transaction ID / reference",
+    "proof": "Add a screenshot",
+    "proofDone": "Screenshot added",
+    "send": "Send",
+    "sent": "Thank you. The software provider will check it and extend your plan.",
+    "history": "Your payments",
+    "payNow": "Pay fees ›",
+    "status": {
+      "pending": "Being checked",
+      "approved": "Received",
+      "rejected": "Not accepted"
+    }
   }
 }

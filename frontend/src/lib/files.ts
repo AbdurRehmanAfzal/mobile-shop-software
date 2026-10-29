@@ -41,8 +41,9 @@ export function fileUrl(path: string | null | undefined): string | undefined {
 }
 
 /** Fetch a protected file as an object URL for <img src>. */
-export async function fileObjectUrl(path: string): Promise<string> {
+export async function fileObjectUrl(path: string, shopId?: string): Promise<string> {
   const headers = authHeaders()
+  if (shopId) headers['X-Shop-Id'] = shopId // the super admin looking at a shop's file
   const res = await fetch(`${BASE}/api/v1/files/${path}`, { headers })
   return URL.createObjectURL(await res.blob())
 }

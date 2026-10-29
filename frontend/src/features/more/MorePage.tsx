@@ -1,7 +1,7 @@
 /** "More": everything else, grouped, each icon in its job colour (docs/11 v2). */
 
 import {
-  ArrowLeftRight, Archive, BarChart3, Bell, BookOpen, CalendarDays, Check, FileText, HandCoins, Headphones, KeyRound,
+  ArrowLeftRight, Archive, BarChart3, Bell, BookOpen, CalendarDays, Check, CreditCard, FileText, HandCoins, Headphones, KeyRound,
   Landmark, Lock, LogOut, Package, PackagePlus, ShieldCheck, Receipt, RotateCcw, ScanLine, Settings, Smartphone, Store, Tag, Tags, Undo2, Users,
   Wallet, Wrench, type LucideIcon,
 } from 'lucide-react'
@@ -86,6 +86,7 @@ const GROUPS: Group[] = [
       { key: 'more.settings', Icon: Settings, to: '/more/settings', roles: ['owner'], tone: T.plain },
       { key: 'more.staff', Icon: Users, to: '/more/staff', roles: ['owner'], tone: T.plain },
       { key: 'more.notifications', Icon: Bell, to: '/more/notifications', roles: ['owner'], tone: T.plain },
+      { key: 'fees.title', Icon: CreditCard, to: '/more/fees', roles: ['owner'], tone: T.plain },
       { key: 'pin.set', Icon: KeyRound, action: 'pin', tone: T.plain },
     ],
   },

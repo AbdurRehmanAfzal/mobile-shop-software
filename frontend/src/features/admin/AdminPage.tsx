@@ -1,7 +1,7 @@
 /** Super admin (product owner only): every customer shop, and "Open a new shop" with the owner's
  *  login, which can be sent on WhatsApp. Owner (2026-10-26): shops are not self-service. */
 
-import { CalendarClock, Check, CheckCircle2, GitBranch, KeyRound, LogIn, MessageCircle, Plus, Store } from 'lucide-react'
+import { CalendarClock, Check, CheckCircle2, CreditCard, GitBranch, Image as ImageIcon, KeyRound, LogIn, MessageCircle, Plus, Store, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
@@ -9,12 +9,15 @@ import { PhoneInput, isMobileOk } from '@/components/FieldInputs'
 import { BtnText, Empty, ErrorText, Loading, PageHeader, SearchBox, Sheet, fmtDate } from '@/components/ui'
 import { useAuth, type MeOut } from '@/lib/auth'
 import { api, get } from '@/lib/api'
+import { fileObjectUrl } from '@/lib/files'
 import AppLinkCard, { APP_LINK, SITE } from './AppLinkCard'
 import { normalisePhone } from '@/lib/format'
-import { useDocMutation, useGet } from '@/lib/queries'
+import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
 
 interface AdminShop { id: string; organisation_id: string; name: string; city: string | null; owner_name: string | null; owner_phone: string | null; users: number; branches: number; created_at: string; plan: string; plan_expires_at: string | null; days_left: number | null; monthly_fee: string; fee_note: string | null; plan_status: 'unlimited' | 'ok' | 'due_soon' | 'expired' | 'locked'; modules: string[]; modules_custom: boolean }
 type DueFilter = 'all' | 'due' | 'locked'
+interface Account { label: string; account_name: string; number: string; note: string | null }
+interface FeeRow { id: string; shop_id: string; shop_name: string; plan: string; amount: string; method: string; reference: string | null; proof_path: string | null; months: number; note: string | null; status: string; decision_note: string | null; created_at: string }
 interface PwReq { id: string; shop_id: string; shop_name: string; user_id: string; name: string; phone: string; role: string; sent_to: string; created_at: string }
 const PLANS = ['trial', 'basic', 'pro', 'chain'] as const
 const EMPTY = { shop_name: '', city: '', owner_name: '', phone: '', password: '', locale: 'ur' as 'ur' | 'en', plan: 'trial' as (typeof PLANS)[number], modules: null as string[] | null }
@@ -70,6 +73,20 @@ export default function AdminPage() {
   const setActiveShop = useAuth((s) => s.setActiveShop)
   const setMe = useAuth((s) => s.setMe)
   const { data: reqs } = useGet<PwReq[]>(['pw-requests'], isSuper ? '/api/v1/admin/password-requests?open_only=true' : null)
+  const { data: fees } = useGet<FeeRow[]>(['fee-pending'], isSuper ? '/api/v1/admin/fee-payments?status=pending' : null)
+  const { data: feeStats } = useGet<{ pending: number; month_total: string; month: string }>(['fee-stats'], isSuper ? '/api/v1/admin/fee-stats' : null)
+  const { data: savedAccounts } = useGet<Account[]>(['pay-accounts'], isSuper ? '/api/v1/admin/payment-accounts' : null)
+  const [accts, setAccts] = useState<Account[] | null>(null)
+  const [acctsOpen, setAcctsOpen] = useState(false)
+  const saveAccts = useDocMutation<Account[], Account[]>('PUT', () => '/api/v1/admin/payment-accounts')
+  const [proofUrl, setProofUrl] = useState<string | null>(null)
+  const inv = useInvalidate()
+  const decide = async (f: FeeRow, action: 'approve' | 'reject') => {
+    const note = action === 'reject' ? window.prompt(pick('admin.rejectWhy')) ?? '' : null
+    if (action === 'reject' && !note) return
+    await api('POST', `/api/v1/admin/fee-payments/${f.id}/${action}`, action === 'approve' ? {} : { note })
+    inv('fee-pending', 'fee-stats', 'admin-shops')
+  }
   const setPassword = useDocMutation<{ password: string; user_id?: string }, { user_id: string; name: string; phone: string }>('POST', () => `/api/v1/admin/shops/${sel?.id}/owner-password`)
   const openAsAdmin = async (shop: AdminShop) => {
     await api('POST', `/api/v1/admin/shops/${shop.id}/enter`)
@@ -112,6 +129,63 @@ export default function AdminPage() {
       />
       <BiLabel text="admin.only" size="sm" tone="text-muted" />
       <AppLinkCard />
+      <section className="card flex flex-col gap-2">
+        <div className="flex items-center gap-3">
+          <span className="well h-10 w-10 shrink-0 bg-sell text-sell-icon"><CreditCard size={20} /></span>
+          <span className="flex min-w-0 flex-1 flex-col">
+            <BiLabel text="admin.feesTitle" size="md" bold />
+            <span className="text-xs text-muted">{pick('admin.thisMonth')} <span className="num" dir="ltr">Rs. {Number(feeStats?.month_total ?? 0).toLocaleString('en-US')}</span> · {pick('admin.pendingN').replace('{{n}}', String(feeStats?.pending ?? 0))}</span>
+          </span>
+          <button type="button" onClick={() => { setAccts(savedAccounts ? savedAccounts.map((a) => ({ ...a })) : []); setAcctsOpen(true) }} className={`tap rounded-full border border-line px-3 py-1.5 text-xs font-bold ${ur ? cls('sm') : ''}`}>{pick('admin.accounts')}</button>
+        </div>
+        {fees?.length ? (
+          <div className="divide-y divide-line">
+            {fees.map((f) => (
+              <div key={f.id} className="flex flex-col gap-1.5 py-3">
+                <div className="flex items-center gap-2">
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <span className="truncate text-[15px] font-bold">{f.shop_name}</span>
+                    <span className="text-xs text-muted" dir="ltr">{f.method}{f.reference ? ` · ${f.reference}` : ''} · {f.months} {pick(f.months === 1 ? 'admin.month' : 'admin.months')} · {fmtDate(f.created_at)}</span>
+                  </span>
+                  <span className="num text-lg" dir="ltr">Rs. {Number(f.amount).toLocaleString('en-US')}</span>
+                </div>
+                {f.note ? <span className="text-sm text-muted">{f.note}</span> : null}
+                <div className="flex gap-2">
+                  {f.proof_path ? <button type="button" onClick={async () => setProofUrl(await fileObjectUrl(f.proof_path!, f.shop_id))} className="tap flex h-10 items-center gap-1 rounded-xl border border-line px-3 text-xs font-bold"><ImageIcon size={16} /> {pick('admin.proof')}</button> : null}
+                  <button type="button" onClick={() => decide(f, 'approve')} className="tap flex h-10 flex-1 items-center justify-center gap-1 rounded-xl bg-emerald text-sm font-bold text-white"><Check size={16} /> {pick('admin.approveMonths').replace('{{n}}', String(f.months))}</button>
+                  <button type="button" onClick={() => decide(f, 'reject')} className="tap flex h-10 items-center gap-1 rounded-xl border border-line px-3 text-sm font-bold text-payable"><X size={16} /> {pick('admin.reject')}</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : <BiLabel text="admin.noFees" size="sm" tone="text-muted" />}
+      </section>
+      <Sheet open={!!proofUrl} onClose={() => setProofUrl(null)} title="admin.proof">
+        {proofUrl ? <img src={proofUrl} alt="" className="max-h-[70vh] w-full rounded-2xl object-contain" /> : null}
+      </Sheet>
+      <Sheet open={acctsOpen} onClose={() => setAcctsOpen(false)} title="admin.accounts">
+        {accts ? (
+          <div className="flex flex-col gap-3">
+            <BiLabel text="admin.accountsHint" size="sm" tone="text-muted" />
+            {accts.map((a, i) => (
+              <div key={i} className="card flex flex-col gap-2">
+                <div className="grid grid-cols-2 gap-2">
+                  <BiInput label="admin.acctLabel" value={a.label} onChange={(e) => setAccts(accts.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))} maxLength={40} />
+                  <BiInput label="admin.acctName" value={a.account_name} onChange={(e) => setAccts(accts.map((x, j) => (j === i ? { ...x, account_name: e.target.value } : x)))} maxLength={80} />
+                </div>
+                <BiInput label="admin.acctNumber" value={a.number} onChange={(e) => setAccts(accts.map((x, j) => (j === i ? { ...x, number: e.target.value } : x)))} maxLength={60} dir="ltr" className="num" />
+                <div className="flex items-end gap-2">
+                  <div className="flex-1"><BiInput label="admin.acctNote" value={a.note ?? ''} onChange={(e) => setAccts(accts.map((x, j) => (j === i ? { ...x, note: e.target.value || null } : x)))} maxLength={120} /></div>
+                  <button type="button" aria-label={pick('crud.delete')} onClick={() => setAccts(accts.filter((_, j) => j !== i))} className="tap mb-1 flex h-12 w-12 items-center justify-center rounded-2xl border border-line text-payable"><Trash2 size={18} /></button>
+                </div>
+              </div>
+            ))}
+            <BiButton text="admin.addAccount" icon={<Plus size={20} />} variant="secondary" full onClick={() => setAccts([...accts, { label: '', account_name: '', number: '', note: null }])} />
+            <ErrorText error={saveAccts.error} />
+            <BiButton text="common.save" full loading={saveAccts.isPending} disabled={accts.some((a) => !a.label.trim() || a.number.trim().length < 3)} onClick={async () => { await saveAccts.mutateAsync(accts); inv('pay-accounts'); setAcctsOpen(false) }} />
+          </div>
+        ) : null}
+      </Sheet>
       {reqs?.length ? (
         <section className="flex flex-col gap-2">
           <BiLabel text="admin.pwRequests" size="md" bold />

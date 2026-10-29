@@ -9,14 +9,14 @@ from datetime import date, datetime
 from decimal import Decimal
 from typing import Annotated, Literal
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 
 from app.core.errors import Forbidden, NotFound
 from app.core.permissions import Role
 from app.core.tenancy import DB, CurrentUser, get_current_user
-from app.modules.admin import access, modules, plans
+from app.modules.admin import access, fees, modules, plans
 from app.modules.audit.service import record_audit
 from app.modules.auth import service
 from app.modules.auth.models import Shop, User
@@ -98,6 +98,42 @@ class PasswordRequestOut(BaseModel):
     sent_to: str
     created_at: datetime
     handled_at: datetime | None
+
+
+class AccountIn(BaseModel):
+    label: str = Field(min_length=1, max_length=40)  # e.g. Easypaisa, SadaPay, Meezan Bank
+    account_name: str = Field(default="", max_length=80)
+    number: str = Field(min_length=3, max_length=60)  # number or IBAN
+    note: str | None = Field(default=None, max_length=120)
+
+
+class FeeRowOut(BaseModel):
+    id: uuid.UUID
+    shop_id: uuid.UUID
+    shop_name: str
+    plan: str
+    plan_expires_at: datetime | None
+    amount: Decimal
+    method: str
+    reference: str | None
+    proof_path: str | None
+    months: int
+    note: str | None
+    status: str
+    decision_note: str | None
+    created_at: datetime
+    handled_at: datetime | None
+
+
+class FeeStatsOut(BaseModel):
+    pending: int
+    month_total: Decimal
+    month: str
+
+
+class DecideIn(BaseModel):
+    months: int | None = Field(default=None, ge=1, le=36)
+    note: str | None = Field(default=None, max_length=200)
 
 
 class EnterOut(BaseModel):
@@ -231,6 +267,42 @@ def create_shop(data: AdminShopCreate, current: Super, db: DB):
     db.commit()
     db.refresh(shop)
     return _rows(db, [shop])[0]
+
+
+@router.get("/payment-accounts")
+def payment_accounts(_: Super, db: DB):
+    return fees.accounts(db)
+
+
+@router.put("/payment-accounts")
+def set_payment_accounts(data: list[AccountIn], current: Super, db: DB):
+    return fees.set_accounts(db, current.user, [a.model_dump() for a in data])
+
+
+@router.get("/fee-payments", response_model=list[FeeRowOut])
+def fee_payments(
+    _: Super,
+    db: DB,
+    status: str | None = Query(default=None, pattern="^(pending|approved|rejected)$"),
+):
+    return fees.listing(db, status)
+
+
+@router.get("/fee-stats", response_model=FeeStatsOut)
+def fee_stats(_: Super, db: DB):
+    return fees.stats(db)
+
+
+@router.post("/fee-payments/{payment_id}/approve", response_model=FeeRowOut)
+def approve_fee(payment_id: uuid.UUID, data: DecideIn, current: Super, db: DB):
+    p = fees.approve(db, current.user, payment_id, data.months)
+    return next(r for r in fees.listing(db, None) if r["id"] == p.id)
+
+
+@router.post("/fee-payments/{payment_id}/reject", response_model=FeeRowOut)
+def reject_fee(payment_id: uuid.UUID, data: DecideIn, current: Super, db: DB):
+    p = fees.reject(db, current.user, payment_id, data.note)
+    return next(r for r in fees.listing(db, None) if r["id"] == p.id)
 
 
 @router.get("/modules")

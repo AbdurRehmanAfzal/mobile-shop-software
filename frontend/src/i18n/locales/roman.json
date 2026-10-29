@@ -1000,7 +1000,22 @@
     "savePlan": "Plan save karein",
     "modulesTitle": "Is dukaan ke modules",
     "followPlan": "Plan ke mutabiq ({{plan}})",
-    "saveModules": "Modules save karein"
+    "saveModules": "Modules save karein",
+    "feesTitle": "Software fees",
+    "thisMonth": "Is mahine",
+    "pendingN": "{{n}} check karni hain",
+    "accounts": "Adaigi ke accounts",
+    "accountsHint": "Jin accounts mein dukaandar fees bhejte hain. Har dukaan ko us ki Software fees screen par dikhte hain. Sirf database mein rehte hain.",
+    "acctLabel": "Naam (maslan Easypaisa)",
+    "acctName": "Account holder",
+    "acctNumber": "Number / IBAN",
+    "acctNote": "Note (optional)",
+    "addAccount": "Account shamil karein",
+    "proof": "Screenshot",
+    "approveMonths": "Wasool · +{{n}} mahine",
+    "reject": "Mustarad",
+    "rejectWhy": "Kyun nahi? (dukaandar ye parhe ga)",
+    "noFees": "Check karne ko koi adaigi nahi"
   },
   "field": {
     "badMobile": "3 se shuru hone wala 10 hindson ka mobile number likhein, maslan 300 1234567",
@@ -1353,5 +1368,32 @@
     "off": "Ye sahulat aap ke plan mein shamil nahi.",
     "offHint": "Software provider se kahein ke aap ki dukaan ke liye chalu kar dein.",
     "waText": "Assalam-o-Alaikum, main apne Mobile Shop plan mein \"{{module}}\" shamil karwana chahta hoon."
+  },
+  "fees": {
+    "title": "Software fees",
+    "yourPlan": "Aap ka plan",
+    "monthly": "Mahana fees",
+    "paidUntil": "Adaigi is tareekh tak",
+    "payInto": "In mein se kisi account mein bhejein",
+    "noAccounts": "Software provider ne abhi accounts nahi likhe. WhatsApp par rabta karein.",
+    "copy": "Copy",
+    "copied": "Copy ho gaya",
+    "howTo": "Easypaisa, JazzCash, SadaPay ya bank se fees bhejein, phir neeche transaction ID ya screenshot ke saath batayein.",
+    "reportTitle": "Main ne ada kar di",
+    "amount": "Raqam (Rs)",
+    "months": "Mahine",
+    "method": "Kis se bheji",
+    "reference": "Transaction ID / hawala",
+    "proof": "Screenshot lagayein",
+    "proofDone": "Screenshot lag gaya",
+    "send": "Bhejein",
+    "sent": "Shukriya. Software provider check kar ke aap ka plan barha denge.",
+    "history": "Aap ki adaigiyan",
+    "payNow": "Fees dein ›",
+    "status": {
+      "pending": "Check ho rahi hai",
+      "approved": "Wasool ho gayi",
+      "rejected": "Qabool nahi hui"
+    }
   }
 }
