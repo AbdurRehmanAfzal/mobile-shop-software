@@ -2,13 +2,14 @@
  *  → done. Customer is asked only for udhaar. Warranty and box/charger are shown under each phone
  *  (owner, 2026-10-27: hidden behind "more options" nobody found them); discount stays behind it. */
 
-import { Check, CirclePause, FileText, Headphones, Plus, Printer, Receipt, ShieldAlert, ShieldCheck, SlidersHorizontal, Smartphone, Trash2, TriangleAlert, UserCheck, Watch } from 'lucide-react'
+import { Check, CirclePause, FileText, HandCoins, Headphones, Plus, Printer, Receipt, ShieldAlert, ShieldCheck, SlidersHorizontal, Smartphone, Trash2, TriangleAlert, UserCheck, Watch } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { clearDrafts, useDraft } from '@/lib/draft'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiAlert, BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import PartyPicker from '@/components/PartyPicker'
+import { CnicInput, PhoneInput } from '@/components/FieldInputs'
 import PayPicker, { newPay, payInfo, payReady, remitPkr, type PayState } from '@/components/PayPicker'
 import StockItemPicker from '@/components/StockItemPicker'
 import { AccessoryPicker, type AccValue } from '@/components/AccessoryPicker'
@@ -71,6 +72,9 @@ export default function SaleWizard() {
   const [paidNow, setPaidNow] = useDraft('sale.paidNow', '')
   const [overrideReason, setOverrideReason] = useDraft('sale.overrideReason', '')
   const [lossOk, setLossOk] = useDraft('sale.lossOk', false)
+  // owner 2026-10-29: sold on installments (qist): advance now, the rest monthly, a guarantor
+  const [inst, setInst] = useDraft('sale.inst', { on: false, months: '6', monthly: '', dueDay: '10', firstDue: '', gName: '', gPhone: '', gCnic: '' })
+  const setI = (patch: Partial<typeof inst>) => setInst({ ...inst, ...patch })
   // owner 2026-10-28: tax only when the shopkeeper ticks it; the rate starts at the shop's setting
   const [taxOn, setTaxOn] = useDraft('sale.taxOn', false)
   const [taxRate, setTaxRate] = useDraft('sale.taxRate', '')
@@ -99,7 +103,7 @@ export default function SaleWizard() {
   const base = Math.max(0, subtotal - Number(discount || 0))
   const taxAmount = taxOn ? Math.round(base * Number(rateShown || 0)) / 100 : 0
   const total = Math.round((base + taxAmount) * 100) / 100
-  const udhaar = pay.method === 'udhaar'
+  const udhaar = pay.method === 'udhaar' || inst.on
   // a remittance may cover only part of the bill: the rest goes on the customer's khata
   const paid = udhaar ? Math.min(Number(paidNow || 0), total) : pay.method === 'remittance' ? Math.min(remitPkr(pay), total) : total
   const owes = paid < total
@@ -115,7 +119,10 @@ export default function SaleWizard() {
   // (the buying price is only sent to them; for others the server refuses with below_cost)
   const belowCost = (l: Line) => l.device.cost_price != null && l.price !== '' && Number(l.price) < Number(l.device.cost_price)
   const lossLine = lines.some(belowCost)
-  const canSave = (!lossLine || (manager && lossOk)) && checkOk && total > 0 && payReady(pay) && (!owes || !!party) && lines.every((l) => Number(l.price) > 0) && misc.every((x) => x.description.trim() && Number(x.unit_price) > 0 && (x.stock === undefined || Number(x.qty) <= x.stock))
+  const instRest = Math.max(0, total - paid)
+  const instMonthly = inst.monthly !== '' ? Number(inst.monthly) : Math.ceil(instRest / Math.max(1, Number(inst.months) || 1))
+  const instOk = !inst.on || (!!party && instRest > 0 && Number(inst.months) >= 1 && instMonthly > 0 && instMonthly * (Number(inst.months) - 1) < instRest)
+  const canSave = instOk && (!lossLine || (manager && lossOk)) && checkOk && total > 0 && payReady(pay) && (!owes || !!party) && lines.every((l) => Number(l.price) > 0) && misc.every((x) => x.description.trim() && Number(x.unit_price) > 0 && (x.stock === undefined || Number(x.qty) <= x.stock))
 
   const setLine = (l: Line, patch: Partial<Line>) => setLines((ls) => ls.map((x) => (x.device.id === l.device.id ? { ...x, ...patch } : x)))
 
@@ -130,7 +137,7 @@ export default function SaleWizard() {
   }
 
   function resetCart() {
-    setLines([]); setMisc([]); setParty(null); setPaidNow(''); setDiscount(''); setPay(newPay()); setTaxOn(false); setTaxRate(''); setMore(false); setOverrideReason(''); setLossOk(false)
+    setLines([]); setMisc([]); setParty(null); setPaidNow(''); setDiscount(''); setPay(newPay()); setTaxOn(false); setTaxRate(''); setMore(false); setOverrideReason(''); setLossOk(false); setInst({ on: false, months: '6', monthly: '', dueDay: '10', firstDue: '', gName: '', gPhone: '', gCnic: '' })
   }
 
   async function holdSale() {
@@ -166,9 +173,10 @@ export default function SaleWizard() {
       discount: Number(discount || 0),
       tax_rate: taxOn ? Number(rateShown || 0) : 0,
       paid,
-      payment: payInfo(pay),
+      payment: inst.on && pay.method === 'udhaar' ? undefined : payInfo(pay),
       override_reason: overrideReason || undefined,
       below_cost_ok: lossLine && lossOk,
+      installments: inst.on ? { months: Number(inst.months), monthly: inst.monthly !== '' ? Number(inst.monthly) : null, due_day: Number(inst.dueDay) || 10, first_due: inst.firstDue || null, guarantor_name: inst.gName || null, guarantor_phone: inst.gPhone || null, guarantor_cnic: inst.gCnic || null } : undefined,
     })
     clearDrafts('sale.')
     if (isQueued(res)) {
@@ -296,8 +304,42 @@ export default function SaleWizard() {
 
           <div className="flex items-center gap-1"><BiLabel text="counter.howPaid" size="md" bold /><Help term="udhaar" /></div>
           <PayPicker value={pay} onChange={setPay} remittance />
+          {has('installments') && lines.length ? (
+            <label className="tap flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl border border-line bg-surface px-4">
+              <input type="checkbox" checked={inst.on} onChange={(e) => { setI({ on: e.target.checked }); if (e.target.checked && pay.method === 'udhaar') setPay(newPay()) }} className="h-6 w-6 accent-[rgb(var(--emerald))]" />
+              <HandCoins size={20} className="text-khata-icon" />
+              <BiLabel text="inst.sellOn" size="md" bold className="flex-1" />
+            </label>
+          ) : null}
+          {inst.on ? (
+            <div className="flex flex-col gap-3 rounded-3xl bg-khata p-3 text-khata-fg">
+              <PartyPicker value={party} onChange={setParty} kind="customer" label="counter.whoTakes" />
+              <BiInput label="inst.advance" type="number" inputMode="numeric" min={0} max={total} value={paidNow} onChange={(e) => setPaidNow(e.target.value)} className="num" hint="inst.advanceHint" />
+              <div>
+                <BiLabel text="inst.months" size="md" bold tone="text-current" className="mb-1.5" />
+                <div className="flex flex-wrap gap-1.5">
+                  {['3', '6', '9', '12', '18', '24'].map((m) => (
+                    <button key={m} type="button" aria-pressed={inst.months === m} onClick={() => setI({ months: m, monthly: '' })} className={`tap num h-11 rounded-full border-2 px-4 text-sm ${inst.months === m ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'}`}>{m}</button>
+                  ))}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <BiInput label="inst.monthly" type="number" inputMode="numeric" min={1} value={inst.monthly !== '' ? inst.monthly : String(instMonthly || '')} onChange={(e) => setI({ monthly: e.target.value })} className="num" />
+                <BiInput label="inst.dueDay" type="number" inputMode="numeric" min={1} max={28} value={inst.dueDay} onChange={(e) => setI({ dueDay: e.target.value })} className="num" />
+              </div>
+              <BiInput label="inst.firstDue" type="date" value={inst.firstDue} onChange={(e) => setI({ firstDue: e.target.value })} dir="ltr" hint="inst.firstDueHint" />
+              <span className={`font-semibold ${ur ? cls('sm') : 'text-sm'}`}>{pick('inst.summary').replace('{{rest}}', instRest.toLocaleString('en-US')).replace('{{m}}', inst.months).replace('{{x}}', instMonthly.toLocaleString('en-US'))}</span>
+              <BiLabel text="inst.guarantor" size="md" bold tone="text-current" />
+              <BiInput label="inst.gName" value={inst.gName} onChange={(e) => setI({ gName: e.target.value })} />
+              <div className="grid grid-cols-2 gap-2">
+                <PhoneInput label="inst.gPhone" value={inst.gPhone} onChange={(gPhone) => setI({ gPhone })} />
+                <CnicInput label="inst.gCnic" value={inst.gCnic} onChange={(gCnic) => setI({ gCnic })} />
+              </div>
+              {!instOk && party ? <BiAlert text="inst.badPlan" /> : null}
+            </div>
+          ) : null}
 
-          {udhaar ? (
+          {udhaar && !inst.on ? (
             <div className="flex flex-col gap-2 rounded-3xl bg-khata p-3 text-khata-fg">
               <PartyPicker value={party} onChange={setParty} kind="customer" label="counter.whoTakes" />
               <BiInput label="counter.paidNowOpt" type="number" inputMode="numeric" min={0} max={total} value={paidNow} onChange={(e) => setPaidNow(e.target.value)} />

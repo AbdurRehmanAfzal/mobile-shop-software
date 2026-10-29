@@ -957,7 +957,9 @@
     "week": "Hafta",
     "exchangeHint": "Gahak ka purana phone lein aur naya dein; farq khud hisaab ho jata hai",
     "loanHint": "Doosri dukaan ko dikhane ya bechne ke liye diya gaya phone; bikne ya wapas aane tak aap ka rehta hai",
-    "lowStock": "cheezein kam stock mein"
+    "lowStock": "cheezein kam stock mein",
+    "instToday": "qistein aaj banti hain",
+    "instOverdue": "qist ke plan late"
   },
   "admin": {
     "title": "Super admin",
@@ -1368,7 +1370,8 @@
     "loans": "Amanat",
     "off": "Ye sahulat aap ke plan mein shamil nahi.",
     "offHint": "Software provider se kahein ke aap ki dukaan ke liye chalu kar dein.",
-    "waText": "Assalam-o-Alaikum, main apne Mobile Shop plan mein \"{{module}}\" shamil karwana chahta hoon."
+    "waText": "Assalam-o-Alaikum, main apne Mobile Shop plan mein \"{{module}}\" shamil karwana chahta hoon.",
+    "installments": "Qistein"
   },
   "fees": {
     "title": "Software fees",
@@ -1570,5 +1573,60 @@
     "haveShop": "Pehle se customer hain? Login ›",
     "webTitle": "Laptop par bhi",
     "webSub": "Wohi dukaan laptop ya desktop ke browser mein: keyboard shortcut wala side menu (F2 sale, F3 stock…), chaurri lists aur reports. Ek login, har device."
+  },
+  "inst": {
+    "title": "Qistein",
+    "sellOn": "Qiston par bechein",
+    "advance": "Abhi advance (Rs)",
+    "advanceHint": "Ooper chune tareeqe se ada; baqi mahana aaye ga.",
+    "months": "Kitne mahine",
+    "monthly": "Mahana (Rs)",
+    "dueDay": "Mahine ki tareekh",
+    "firstDue": "Pehli qist",
+    "firstDueHint": "Khaali = agle mahine isi tareekh ko",
+    "summary": "Rs. {{rest}}, {{m}} mahinon mein ≈ Rs. {{x}} mahana",
+    "guarantor": "Zamin",
+    "gName": "Zamin ka naam",
+    "gPhone": "Zamin ka mobile",
+    "gCnic": "Zamin ka CNIC",
+    "badPlan": "Mahine aur mahana raqam check karein: mil kar baqi raqam poori karein.",
+    "view": {
+      "today": "Aaj ki",
+      "overdue": "Late",
+      "active": "Jari",
+      "closed": "Mukammal"
+    },
+    "search": "Naam, phone, bill no ya zamin",
+    "none": "Yahan kuch nahi",
+    "remaining": "Baqi",
+    "nextDue": "Agli",
+    "lateBy": "{{n}} din late",
+    "overdueN": "{{n}} late",
+    "status": {
+      "active": "Jari",
+      "closed": "Mukammal",
+      "void": "Mansookh"
+    },
+    "st": {
+      "paid": "Ada",
+      "partial": "Juzwi",
+      "today": "Aaj",
+      "late": "Late",
+      "due": "Baqi"
+    },
+    "total": "Kul",
+    "paidSoFar": "Ada shuda",
+    "planLine": "Advance Rs. {{adv}} · {{m}} × Rs. {{x}} · har mahine {{d}} tareekh",
+    "collect": "Qist lein",
+    "collectNow": "Wasool karein",
+    "amount": "Raqam (Rs)",
+    "collected": "Wasool ho gayi. Adaigi",
+    "remind": "WhatsApp yaad dahani",
+    "reminded": "Yaad dahani bhej di.",
+    "remindOpened": "WhatsApp mein khul gaya, wahan send dabayein.",
+    "schedule": "Qiston ki tarteeb",
+    "partial": "Rs. {{n}} wasool",
+    "people": "Customer aur zamin",
+    "viewBill": "Bill kholein"
   }
 }

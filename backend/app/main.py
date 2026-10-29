@@ -18,6 +18,7 @@ from app.modules.exchanges.router import router as exchanges_router
 from app.modules.expenses.router import router as expenses_router
 from app.modules.exports.router import router as exports_router
 from app.modules.files.router import router as files_router
+from app.modules.installments.router import router as installments_router
 from app.modules.invoices.router import router as invoices_router
 from app.modules.ledger.router import router as ledger_router
 from app.modules.loans.router import router as loans_router
@@ -133,6 +134,7 @@ def create_app() -> FastAPI:
     app.include_router(reports_router)
     app.include_router(exports_router)
     app.include_router(invoices_router)
+    app.include_router(installments_router)
     return app
 
 

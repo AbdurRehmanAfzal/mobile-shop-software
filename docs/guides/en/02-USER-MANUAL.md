@@ -524,6 +524,30 @@ day's hisaab every night** and choose the time (e.g. 21:30). Every night the own
 phones sold and the amount, in hand, udhaar given and received, expenses, profit, to get / to give,
 phones in stock. **Send today's hisaab now** sends it at once.
 
+### Selling on installments (qist)
+Open **Sell**, pick the phone, and tick **Sell on installments (qist)** (it shows when the
+*Installments* module is on for your shop). Choose the customer, write the **advance paid now**
+(it is taken by the payment method chosen above: cash, online, cheque), tap **how many months**
+(3 · 6 · 9 · 12 · 18 · 24) and the **monthly** amount fills itself as (price − advance) ÷ months;
+change it if you agreed a different figure, the last installment takes whatever is left. Set the
+**day of month** and, if needed, the **first installment** date (empty = next month on that day).
+Write the **guarantor** (zamin): name, mobile and CNIC. Complete the sale: the receipt prints the
+plan (advance, N × monthly, first date, guarantor), and the rest sits on the customer's khata as
+usual.
+
+More → **Installments (qist)** lists the plans: **Due today**, **Late**, **Running**, **Finished**;
+search by name, phone, bill number or guarantor. A plan shows the schedule with each installment
+*Paid*, *Part*, *Today*, *Late* or *Due*, the customer with Call / WhatsApp, and the guarantor.
+
+- **Take installment**: the next installment's amount is filled in; change it for a part payment
+  or for several at once; choose cash / online / cheque. It is a normal payment on that bill, so
+  the khata, the day's hisaab and the person's statement all agree.
+- **Remind on WhatsApp**: opens WhatsApp with "your installment of Rs. … is due on …" (or "… is
+  late by N days"); with the WhatsApp Business API on the server it is sent by itself. Plans whose
+  installment is due tomorrow or late are also reminded automatically by the night job (at most
+  once in 3 days) when *Remind customers automatically* is on.
+- Home's **Needs attention** shows *installments due today* and *plans running late*.
+
 ---
 
 ## 9. Day's hisaab and "Left in hand"

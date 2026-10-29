@@ -4,6 +4,7 @@ from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from app.modules.installments.schemas import InstallmentPlanIn
 from app.modules.paymode.schemas import PaymentDetailOut, PaymentInfo
 from app.modules.sales.models import InvoiceStatus
 
@@ -42,6 +43,8 @@ class SaleCreate(BaseModel):
     # owner 2026-10-28: tax is chosen per sale (a checkbox, off by default). A rate here is added on top
     # of the bill (0 = no tax); left out, the shop's settings apply as before.
     tax_rate: Decimal | None = Field(default=None, ge=0, le=100)
+    # owner 2026-10-29: sold on installments; `paid` is the advance, the rest comes monthly
+    installments: InstallmentPlanIn | None = None
     notes: str | None = None
     override_reason: str | None = Field(default=None, max_length=500)
     # owner/manager confirms a sale below the phone's buying price (a loss)

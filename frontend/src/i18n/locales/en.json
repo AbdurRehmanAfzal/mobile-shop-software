@@ -957,7 +957,9 @@
     "week": "Week",
     "exchangeHint": "Take the customer's old phone and give a new one; the difference is worked out for you",
     "loanHint": "A phone given to another shop to show or sell; it stays yours until it is sold or comes back",
-    "lowStock": "items low on stock"
+    "lowStock": "items low on stock",
+    "instToday": "installments due today",
+    "instOverdue": "installment plans running late"
   },
   "admin": {
     "title": "Super admin",
@@ -1368,7 +1370,8 @@
     "loans": "Loans (amanat)",
     "off": "This feature is not in your plan.",
     "offHint": "Ask the software provider to switch it on for your shop.",
-    "waText": "Assalam-o-Alaikum, I want to add \"{{module}}\" to my Mobile Shop plan."
+    "waText": "Assalam-o-Alaikum, I want to add \"{{module}}\" to my Mobile Shop plan.",
+    "installments": "Installments (qist)"
   },
   "fees": {
     "title": "Software fees",
@@ -1570,5 +1573,60 @@
     "haveShop": "Already a customer? Log in ›",
     "webTitle": "On a laptop too",
     "webSub": "The same shop in the browser on a laptop or desktop: a side menu with keyboard shortcuts (F2 sale, F3 add stock…), wide lists and reports. One login, every device."
+  },
+  "inst": {
+    "title": "Installments (qist)",
+    "sellOn": "Sell on installments (qist)",
+    "advance": "Advance paid now (Rs)",
+    "advanceHint": "Paid by the method chosen above; the rest comes monthly.",
+    "months": "How many months",
+    "monthly": "Monthly (Rs)",
+    "dueDay": "Day of month",
+    "firstDue": "First installment on",
+    "firstDueHint": "Empty = next month on that day",
+    "summary": "Rs. {{rest}} over {{m}} months ≈ Rs. {{x}} a month",
+    "guarantor": "Guarantor (zamin)",
+    "gName": "Guarantor's name",
+    "gPhone": "Guarantor's mobile",
+    "gCnic": "Guarantor's CNIC",
+    "badPlan": "Check the months and the monthly amount: together they must cover what is left.",
+    "view": {
+      "today": "Due today",
+      "overdue": "Late",
+      "active": "Running",
+      "closed": "Finished"
+    },
+    "search": "Name, phone, bill no or guarantor",
+    "none": "Nothing here",
+    "remaining": "Left",
+    "nextDue": "Next",
+    "lateBy": "Late by {{n}} days",
+    "overdueN": "{{n}} late",
+    "status": {
+      "active": "Running",
+      "closed": "Finished",
+      "void": "Cancelled"
+    },
+    "st": {
+      "paid": "Paid",
+      "partial": "Part",
+      "today": "Today",
+      "late": "Late",
+      "due": "Due"
+    },
+    "total": "Total",
+    "paidSoFar": "Paid",
+    "planLine": "Advance Rs. {{adv}} · {{m}} × Rs. {{x}} · day {{d}} of each month",
+    "collect": "Take installment",
+    "collectNow": "Receive",
+    "amount": "Amount (Rs)",
+    "collected": "Received. Payment",
+    "remind": "Remind on WhatsApp",
+    "reminded": "Reminder sent.",
+    "remindOpened": "Opened in WhatsApp; tap send there.",
+    "schedule": "Schedule",
+    "partial": "Rs. {{n}} received",
+    "people": "Customer and guarantor",
+    "viewBill": "Open the bill"
   }
 }

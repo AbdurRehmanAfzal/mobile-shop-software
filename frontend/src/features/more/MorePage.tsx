@@ -43,6 +43,7 @@ const GROUPS: Group[] = [
       { key: 'counter.addStock', Icon: PackagePlus, to: '/purchase/new', tone: T.buy },
       { key: 'counter.returnJob', Icon: Undo2, to: '/return/new', tone: T.ret },
       { key: 'counter.khata', Icon: BookOpen, to: '/khata', tone: T.khata },
+      { key: 'inst.title', Icon: HandCoins, to: '/installments', tone: T.khata },
       { key: 'counter.repair', Icon: Wrench, to: '/repairs', tone: T.repair },
       { key: 'more.exchange', Icon: ArrowLeftRight, to: '/exchange/new', tone: T.sell },
       { key: 'more.loans', Icon: RotateCcw, to: '/loans', tone: T.stock },
