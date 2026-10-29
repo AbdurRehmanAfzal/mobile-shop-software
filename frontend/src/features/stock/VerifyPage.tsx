@@ -1,7 +1,7 @@
-import { Camera, Check, ExternalLink } from 'lucide-react'
+import { Camera, Check, CheckCircle2, ExternalLink, Pencil, Printer, ShieldAlert, ShieldCheck, Smartphone, Tag } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { BiButton, BiInput, BiSegmented, useLang } from '@/components/Bilingual'
+import { useNavigate, useParams } from 'react-router-dom'
+import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import CnicScanButton from '@/components/CnicScanButton'
 import Help from '@/components/Help'
 import { CnicInput } from '@/components/FieldInputs'
@@ -38,7 +38,10 @@ function PhotoTile({ label, path, onPick, purpose }: { label: string; path: stri
 
 export default function VerifyPage() {
   const { id } = useParams()
-  const { pick } = useLang()
+  const nav = useNavigate()
+  const { pick, ur, cls } = useLang()
+  // owner 2026-10-29: after Save nothing told the shopkeeper it worked -> a result screen
+  const [done, setDone] = useState<Verification | null>(null)
   const role = useAuth((s) => s.me?.user.role)
   const { data: device } = useDevice(id)
   const { data: existing, isLoading } = useVerification(id)
@@ -76,7 +79,35 @@ export default function VerifyPage() {
       declaration_signed: !!f.declaration_signed,
       physical_notes: f.physical_notes || null,
     }
-    await save.mutateAsync(body)
+    const saved = await save.mutateAsync(body)
+    setDone(saved)
+    window.scrollTo({ top: 0 })
+  }
+
+  const missingText = (v: Verification) => v.missing.map((m) => pick(`verify.${{ cnic_no: 'cnic', cnic_front_path: 'cnicFront', cnic_back_path: 'cnicBack', seller_photo_path: 'sellerPhoto', egadget: 'egadget', declaration: 'declaration' }[m] ?? m}`)).join(', ')
+
+  if (done) {
+    // an owner's override clears the phone even while papers are missing
+    const r = done.result === 'flagged' ? 'flagged' : done.result === 'clear' || done.override_reason ? 'clear' : 'pending'
+    const tone = r === 'clear' ? 'bg-sell text-sell-fg' : r === 'flagged' ? 'bg-payable-tint text-payable' : 'bg-khata text-khata-fg'
+    const Icon = r === 'clear' ? ShieldCheck : r === 'flagged' ? ShieldAlert : CheckCircle2
+    return (
+      <div className="flex flex-col gap-3">
+        <PageHeader title="verify.title" />
+        <div className={`flex flex-col items-center gap-2 rounded-3xl px-5 py-7 text-center ${tone}`}>
+          <span className="well mb-1 h-16 w-16 rounded-full bg-surface text-current"><Icon size={34} strokeWidth={2.4} /></span>
+          <BiLabel text="verify.saved" size="lg" bold tone="text-current" align="center" />
+          <span className={`font-semibold ${ur ? cls('md') : 'text-[15px]'}`}>
+            {r === 'clear' ? pick('verify.doneClear') : r === 'flagged' ? pick('verify.doneFlagged') : pick('verify.donePending').replace('{{missing}}', missingText(done))}
+          </span>
+          <span className="text-sm opacity-80">{device.brand_name} {device.model_name} · <span dir="ltr">{device.imei1}</span></span>
+        </div>
+        {r === 'clear' && device.status === 'in_stock' ? <BiButton text="verify.sellNow" icon={<Tag size={22} />} full onClick={() => nav(`/sale/new?device=${id}`)} /> : null}
+        <BiButton text="verify.backToPhone" icon={<Smartphone size={22} />} full variant={r === 'clear' ? 'secondary' : 'primary'} onClick={() => nav(`/stock/${id}`)} />
+        <BiButton text="verify.printDeclaration" icon={<Printer size={22} />} full variant="secondary" onClick={() => openPrintable(`/api/v1/devices/${id}/verification/declaration`)} />
+        <BiButton text="verify.editAgain" icon={<Pencil size={22} />} full variant="ghost" onClick={() => setDone(null)} />
+      </div>
+    )
   }
 
   return (
@@ -133,7 +164,7 @@ export default function VerifyPage() {
       {existing ? (
         <div className="card">
           <KV k="verify.result" v={<Chip text={`verify.${result === 'pending' ? 'notChecked' : result}`} tone={result === 'flagged' ? 'bad' : result === 'clear' ? 'ok' : 'warn'} />} />
-          {existing.missing.length ? <KV k="verify.missing" v={existing.missing.map((m) => pick(`verify.${{ cnic_no: 'cnic', cnic_front_path: 'cnicFront', cnic_back_path: 'cnicBack', seller_photo_path: 'sellerPhoto', egadget: 'egadget', declaration: 'declaration' }[m] ?? m}`)).join(', ')} /> : null}
+          {existing.missing.length ? <KV k="verify.missing" v={missingText(existing)} /> : null}
           {existing.override_reason ? <KV k="verify.override" v={existing.override_reason} /> : null}
         </div>
       ) : null}
@@ -144,7 +175,7 @@ export default function VerifyPage() {
       <Sheet open={overrideOpen} onClose={() => setOverrideOpen(false)} title="verify.override">
         <div className="flex flex-col gap-3">
           <BiInput label="verify.overrideReason" value={reason} onChange={(e) => setReason(e.target.value)} minLength={5} autoFocus />
-          <BiButton text="common.confirm" full variant="danger" loading={override.isPending} disabled={reason.trim().length < 5} onClick={async () => { await override.mutateAsync({ reason }); setOverrideOpen(false) }} />
+          <BiButton text="common.confirm" full variant="danger" loading={override.isPending} disabled={reason.trim().length < 5} onClick={async () => { const v = await override.mutateAsync({ reason }); setOverrideOpen(false); setDone(v); window.scrollTo({ top: 0 }) }} />
         </div>
       </Sheet>
     </div>

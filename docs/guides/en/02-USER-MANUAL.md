@@ -282,6 +282,13 @@ Do this for every used phone you buy from a person, so you never buy a stolen ph
 
 ---
 
+After **Save** a result screen tells you where you stand: **"ID check complete. This phone can be
+sold."** with a **Sell this phone now** button, or **"Saved, but the check is not complete yet. Still
+missing: …"** (the owner's override also counts as complete), or **Flagged**. From there: back to the
+phone, print the declaration, or change something.
+
+![ID check saved](../images/verify-done.png)
+
 ### 5a. Scan a CNIC instead of typing
 
 In **New person** (and on the ID check) tap **Scan CNIC (photo of the front)** and take a clear photo of the card's front in good light. After a few seconds the **name** and **CNIC number** are filled in, and the father's name, date of birth and how long the card is valid go into **Notes**. If the card has expired you see a warning. Always check the filled fields before saving; the Urdu address is not read, type it yourself.

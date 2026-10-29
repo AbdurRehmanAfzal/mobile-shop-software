@@ -340,7 +340,14 @@
     "override": "Owner override",
     "overrideReason": "Reason for override",
     "result": "Result",
-    "devicePhoto": "Phone photo"
+    "devicePhoto": "Phone photo",
+    "doneClear": "ID check complete. This phone can be sold.",
+    "doneFlagged": "Flagged as possibly stolen. Do not sell it; only the owner can override.",
+    "donePending": "Saved, but the check is not complete yet. Still missing: {{missing}}.",
+    "sellNow": "Sell this phone now",
+    "backToPhone": "Back to the phone",
+    "printDeclaration": "Print the declaration",
+    "editAgain": "Change something"
   },
   "sale": {
     "title": "New sale",
