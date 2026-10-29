@@ -310,6 +310,7 @@ export interface Loan {
   expected_back_at: string | null
   overdue: boolean
   status: 'out' | 'returned' | 'sold'
+  settled_at: string | null
   invoice_id: UUID | null
   notes: string | null
 }

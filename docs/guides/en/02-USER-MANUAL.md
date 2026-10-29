@@ -741,12 +741,16 @@ Tap an expense to **Edit** it or **Cancel this expense** (write why). The old on
 
 1. **More → Exchange (old for new)**.
 2. **Select customer**: `Bilal Ahmed` → **Next**.
-3. Tap **Old device (trade-in)** and fill it like **Add device**: IMEI `358812091717195`, **Oppo**, **A17**,
+3. Tap **Add the old phone** and fill it like **Add device**: IMEI `358812091717195`, **Oppo**, **A17**,
    **Cost price** `18000` (= the trade-in value), **Asking price** `22000` → **Add** → **Next**.
-4. **Pick from stock** → tap **Infinix Note 40**. **Sale price** `54000` → **Next**.
-5. The summary shows **New device** 54,000, **Trade-in value** 18,000, **Previous balance**.
-   **Paid now**: `30000`. **New balance** shows **6,000**.
-6. Tap **Confirm**. **Exchange complete** → **Print receipt (80mm)**.
+   The old phone shows as a card with its trade-in value; **Change the old phone** reopens it.
+4. **Pick the new phone from stock** → tap **Infinix Note 40**. **Sale price** `54000` → **Next**.
+5. **Settle**: both phones, then **New device** 54,000, **Trade-in value** − 18,000, and a coloured
+   card that says in words **Customer pays the difference Rs. 36,000** (or **You give back the
+   difference** when the old phone is worth more, or **Nothing to pay either way**).
+   **Paid now**: `30000`; less than the difference goes on his khata. **New balance** shows **6,000**.
+6. Tap **Complete exchange**. **Exchange complete** → **Print receipt (80mm)**, **A4**, download /
+   share, **Another exchange**, **Open the bill**.
 
 ![Exchange](../images/exchange.png)
 
@@ -760,19 +764,23 @@ If the old phone is worth more than the new one, the summary shows **Refund to c
 A phone given to another shop to show or sell. It stays **yours** until it is sold or comes back.
 
 **Example:** give the **Tecno Spark 20** to **Madina Mobiles**.
-1. The other shop must be a person of type **Other shop** (Udhaar → **New person** → **Other shop**).
-2. Open the phone (Stock → tap it) → **Give on loan (amanat)**.
-3. **To shop**: **Madina Mobiles**. **Expected back** (optional date), **Notes**.
-4. Tap **Give on loan**. The phone shows **On loan**.
+1. **More → Loans (amanat)**. The top card counts the phones out at other shops right now.
+2. **Give a phone on amanat** → **Which phone?** tap the Tecno in the list (or search / scan) →
+   **Which shop?** search `Madina` (a new shop can be added right there with **+**) → **Back in**
+   3 / 7 / 15 / 30 days or **No date** → **Notes** → **Give on loan**.
+   The same button is also on the phone's own page (Stock → tap it → **Give on loan (amanat)**).
+3. The phone shows **On loan** in stock and as a card here: the phone, how many days it has been
+   out (or **Overdue**), the shop with its dates and a **Shop** button to open its page and call.
 
 ![Give on loan](../images/loan-give.png)
 
-Later, **More → Loans (amanat)**, tab **Out**:
-- **Device came back** — the phone is back **In stock**.
+Under the card, tab **Out**:
+- **Device came back** — a short confirmation, then the phone is back **In stock**.
 - **They kept it (sell)** — type the **Agreed price** (e.g. 34,500) and **Paid now** (e.g. 20,000);
-  the rest goes on that shop's khata. Tap **Confirm**.
+  the card shows **On their khata** 14,500. Tap **Confirm**: a bill is made in Sales and the rest sits
+  on that shop's khata. Tab **Sold to them** keeps **Open the bill**.
 
-Late loans show **Overdue**.
+Late loans show **Overdue** and are counted on the top card.
 
 ![Loans](../images/loans.png)
 
@@ -845,13 +853,18 @@ Tap a staff member to change the **Role**, set a **New password** (**Save**), or
 
 ## 18. Shop settings (shop, tax, receipt)
 
-Owner only: **More → Shop settings**. Three cards:
-- **Shop** — **Shop name**, **Shop name (Urdu)**, **City**, **Address**, **Phone**, and
-  **Shop language (prints & messages)** (receipts and declarations print in this language).
-- **Sales tax** — switch **Charge sales tax**, **Tax rate %**, **Prices include tax**, **NTN**, **STRN**.
-- **Receipt** — **Receipt footer** (e.g. "No return after 7 days"), **Receipt footer (Urdu)**, **Invoice prefix** (e.g. `INV`).
+Owner only: **More → Shop settings**. One card per topic, each with its icon:
+- **Shop** — **Shop name**, **City**, **Phone** (printed on receipts, used in messages).
+- **Language for prints and messages** — **Urdu** / **English**: receipts, declarations and
+  WhatsApp messages go out in this language; each person still picks their own screen language.
+- **Staff login** — **Staff may log in with their fingerprint**.
+- **Sales tax** — switch **Charge sales tax**, then **Tax rate %**, **Prices include tax**, **NTN**, **STRN**.
+- **Receipt** — **Invoice prefix** (an example number is shown, e.g. `INV-000123`), **Receipt footer**
+  (e.g. "No return after 7 days"), **Receipt footer (Urdu)**; a preview box shows the line as it
+  will print.
 
-Tap **Save**.
+As soon as something changes, a **Save** bar appears above the bottom tabs with "Not saved yet";
+tap it and **Saved** is confirmed.
 
 ![Shop settings](../images/settings.png)
 

@@ -112,6 +112,5 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 - Signup has no phone OTP verification; add before public launch (Phase 3).
 - Login limiter is in-process memory (5 fails / 10 min); move to Redis or the DB if the API runs more than one worker.
 - Expense edit/cancel shows the reversal in the day's "cash in" (total in the drawer is right); owner to decide whether the in/out tiles should net voids out.
-- Screens still on the older styling: expenses page layout, settings, exchange, loans (amanat).
 - The dev uvicorn reloader on the owner's PC often misses new routes: restart the backend after adding endpoints.
 - Legacy issues are listed in docs/08 and are not being fixed.
