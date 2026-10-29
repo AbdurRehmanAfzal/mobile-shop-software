@@ -15,6 +15,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.db.base import ZERO, utcnow
+from app.modules.accessories.models import Accessory
 from app.modules.auth.models import Shop
 from app.modules.devices.models import Device
 from app.modules.devices.state import DeviceStatus
@@ -150,8 +151,16 @@ def daily_report_ctx(db: Session, shop: Shop, day: dt.date) -> dict:
             Device.shop_id == shop.id, Device.status == DeviceStatus.IN_STOCK
         )
     )
+    low = db.scalar(
+        select(func.count(Accessory.id)).where(
+            Accessory.shop_id == shop.id,
+            Accessory.is_active.is_(True),
+            Accessory.qty <= Accessory.reorder_level,
+        )
+    )
     return {
         "shop": shop.name,
+        "low": low or 0,
         "date": day.strftime("%d-%m-%Y"),
         "phones": rep["phones_sold"],
         "sales": fmt(rep["sales_total"]),

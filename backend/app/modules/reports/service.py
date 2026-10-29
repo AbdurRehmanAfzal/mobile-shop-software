@@ -11,6 +11,7 @@ from app.core.clock import local_day
 from app.core.clock import today as shop_today
 from app.db.base import ZERO
 from app.db.refs import user_name
+from app.modules.accessories.models import Accessory
 from app.modules.devices.models import Device
 from app.modules.devices.state import DeviceStatus, VerificationStatus
 from app.modules.ledger.models import CashAccount, LedgerEntry
@@ -201,6 +202,15 @@ def dashboard(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
         if show_cost
         else None,
         "stock_value_asking": money(sum((d.asking_price or ZERO for d in stock), ZERO)),
+        # stock alert (owner 2026-10-29): counted items at or under their reorder level
+        "low_stock_items": db.scalar(
+            select(func.count(Accessory.id)).where(
+                Accessory.shop_id == shop_id,
+                Accessory.is_active.is_(True),
+                Accessory.qty <= Accessory.reorder_level,
+            )
+        )
+        or 0,
         "pending_verification": sum(
             1
             for d in stock

@@ -197,9 +197,22 @@ def list_devices(
         q = q.strip()
         like = f"%{q}%"
         digits = "".join(ch for ch in q if ch.isdigit())
-        conds = [Model.name.ilike(like), Brand.name.ilike(like), Device.serial.ilike(like)]
+        # owner 2026-10-29: also the person who has it now (the buyer of a sold phone, the seller
+        # of one on loan), by name or phone
+        who = aliased(Party)
+        stmt = stmt.outerjoin(who, who.id == Device.current_party_id)
+        conds = [
+            Model.name.ilike(like),
+            Brand.name.ilike(like),
+            Device.serial.ilike(like),
+            who.name.ilike(like),
+        ]
         if len(digits) >= 4:
-            conds += [Device.imei1.like(f"%{digits}%"), Device.imei2.like(f"%{digits}%")]
+            conds += [
+                Device.imei1.like(f"%{digits}%"),
+                Device.imei2.like(f"%{digits}%"),
+                who.phone.like(f"%{digits}%"),
+            ]
         stmt = stmt.where(or_(*conds))
     stmt = stmt.order_by(Device.last_event_at.desc()).limit(limit)
     return [to_out(r) for r in db.execute(stmt).all()]

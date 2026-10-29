@@ -83,6 +83,14 @@ page par **Apni dukaan ke liye yeh app chahiye? Hum se raabta karein** dabayein.
 3. **Password** likhein.
 4. **Login** dabayein.
 
+### Password bhool gaye
+Login form ke neeche **Password bhool gaye?** dabayein, apna mobile number check karein aur **Request
+bhejein**.
+- **Dukaan ke malik** ki request software provider ko jaati hai (un ka Super admin dashboard aur
+  WhatsApp); woh naya password rakh kar aap ko bhejte hain.
+- **Staff** ki request dukaan ke malik ko jaati hai (Paighaam aur WhatsApp); malik **Mazeed → Staff →
+  banda → Password reset** mein naya rakhta hai.
+
 ### Jaldi PIN (apne phone par tez login)
 Ek dafa set karein:
 1. Ooper **Mazeed** → **Jaldi PIN banayein** dabayein.
@@ -663,6 +671,16 @@ Jab de/le lein to **De diya** dabayein.
 
 ---
 
+### Stock alert
+Har cheez ka **Reorder level** hota hai (cheez add ya edit karte waqt). Jab ginti us level par ya neeche
+aa jaye to Home par *Dhyan dein* mein **"N cheezein kam stock mein"** aata hai; us par dabane se yahan
+**Kam stock** ka tab khulta hai. Malik ki raat ki report mein bhi "Items low on stock" hota hai.
+
+### Phone number se search
+Jahan banda shamil ho wahan phone se dhoondein: stock list aur bikri / wapsi ki screens (khareedar ya
+bechne wale ka naam ya phone, IMEI / model / brand ke ilawa), marammat (job no, IMEI, naam ya phone),
+udhaar khata aur log, aur Bill.
+
 ## 13. Kharche aur din band karna
 
 Maalik aur manager. Home → **Kharcha** (ya **Mazeed → Kharche**).
@@ -856,6 +874,15 @@ Sirf product ke maalik (OOP Solutions) ke liye. **Mazeed → Super admin** (doos
 ![Dukaan khul gayi](../images/admin-created.png)
 
 **Customers ki dukaanein** mein har dukaan apne maalik, plan aur fees ke saath; search se dhoondein.
+
+### Password ki requests, malik ka password, dukaan kholna
+- Page ke ooper **Password ki requests** mein har woh malik jis ne *Password bhool gaye?* dabaya (naam,
+  dukaan, number, waqt). **Password rakhein** us dukaan ki sheet kholta hai; tick request ko "ho gaya"
+  karta hai.
+- Dukaan ki sheet mein **Malik ka password (bhool jane par)**: naya likh kar **Save**; phir **WhatsApp
+  par bhejein** login aur naya password malik ko bhejta hai. Request khud band ho jati hai.
+- **Ye dukaan kholein** aap ko us dukaan ke andar poore haqooq ke saath le jata hai (us ka data,
+  screens, settings), dukaan ke audit log mein darj hota hai; wapas **Mazeed → Meri dukaanein** se.
 
 ### Plan, mahana fees aur "adaigi is tareekh tak"
 List mein dukaan dabayein. **Plan** chunein (trial / basic / pro / chain), **Mahana fees (Rs)** aur

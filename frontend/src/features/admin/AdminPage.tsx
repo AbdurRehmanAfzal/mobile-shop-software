@@ -1,13 +1,14 @@
 /** Super admin (product owner only): every customer shop, and "Open a new shop" with the owner's
  *  login, which can be sent on WhatsApp. Owner (2026-10-26): shops are not self-service. */
 
-import { CalendarClock, CheckCircle2, GitBranch, MessageCircle, Plus, Store } from 'lucide-react'
+import { CalendarClock, Check, CheckCircle2, GitBranch, KeyRound, LogIn, MessageCircle, Plus, Store } from 'lucide-react'
 import { useState } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import { PhoneInput, isMobileOk } from '@/components/FieldInputs'
 import { BtnText, Empty, ErrorText, Loading, PageHeader, SearchBox, Sheet, fmtDate } from '@/components/ui'
-import { useAuth } from '@/lib/auth'
+import { useAuth, type MeOut } from '@/lib/auth'
+import { api, get } from '@/lib/api'
 import AppLinkCard, { APP_LINK, SITE } from './AppLinkCard'
 import { normalisePhone } from '@/lib/format'
 import { useDocMutation, useGet } from '@/lib/queries'
@@ -15,6 +16,7 @@ import { useDocMutation, useGet } from '@/lib/queries'
 interface AdminShop { id: string; organisation_id: string; name: string; city: string | null; owner_name: string | null; owner_phone: string | null; users: number; branches: number; created_at: string; plan: string; plan_expires_at: string | null; days_left: number | null; monthly_fee: string; fee_note: string | null; plan_status: 'unlimited' | 'ok' | 'due_soon' | 'expired' | 'locked' }
 const PLANS = ['trial', 'basic', 'pro', 'chain'] as const
 type DueFilter = 'all' | 'due' | 'locked'
+interface PwReq { id: string; shop_id: string; shop_name: string; user_id: string; name: string; phone: string; role: string; sent_to: string; created_at: string }
 const EMPTY = { shop_name: '', city: '', owner_name: '', phone: '', password: '', locale: 'ur' as 'ur' | 'en' }
 
 function PlanChip({ s }: { s: AdminShop }) {
@@ -26,6 +28,7 @@ function PlanChip({ s }: { s: AdminShop }) {
 
 export default function AdminPage() {
   const { pick, ur, cls } = useLang()
+  const nav = useNavigate()
   const isSuper = useAuth((s) => !!s.me?.user.is_superuser)
   const [q, setQ] = useState('')
   const [open, setOpen] = useState(false)
@@ -35,9 +38,22 @@ export default function AdminPage() {
   const [sel, setSel] = useState<AdminShop | null>(null)
   const [plan, setPlan] = useState({ plan: 'basic', monthly_fee: '', expires_on: '', note: '' })
   const [branch, setBranch] = useState({ name: '', city: '' })
+  const [pw, setPw] = useState('')
+  const [pwDone, setPwDone] = useState<{ name: string; phone: string; password: string } | null>(null)
+  const setActiveShop = useAuth((s) => s.setActiveShop)
+  const setMe = useAuth((s) => s.setMe)
+  const { data: reqs } = useGet<PwReq[]>(['pw-requests'], isSuper ? '/api/v1/admin/password-requests?open_only=true' : null)
+  const setPassword = useDocMutation<{ password: string; user_id?: string }, { user_id: string; name: string; phone: string }>('POST', () => `/api/v1/admin/shops/${sel?.id}/owner-password`)
+  const openAsAdmin = async (shop: AdminShop) => {
+    await api('POST', `/api/v1/admin/shops/${shop.id}/enter`)
+    setActiveShop(shop.id)
+    const me = await get<MeOut>('/api/v1/me')
+    setMe(me)
+    nav('/')
+  }
   const savePlan = useDocMutation<Record<string, unknown>, AdminShop>('PATCH', () => `/api/v1/admin/shops/${sel?.id}/plan`)
   const addBranch = useDocMutation<typeof branch, AdminShop>('POST', () => `/api/v1/admin/shops/${sel?.id}/branches`, (b) => ({ name: b.name, city: b.city || null }))
-  const openShop = (s: AdminShop) => { setSel(s); setPlan({ plan: s.plan, monthly_fee: Number(s.monthly_fee) ? String(Number(s.monthly_fee)) : '', expires_on: s.plan_expires_at ? s.plan_expires_at.slice(0, 10) : '', note: s.fee_note ?? '' }); setBranch({ name: '', city: '' }); savePlan.reset(); addBranch.reset() }
+  const openShop = (s: AdminShop) => { setPw(''); setPwDone(null); setPassword.reset(); setSel(s); setPlan({ plan: s.plan, monthly_fee: Number(s.monthly_fee) ? String(Number(s.monthly_fee)) : '', expires_on: s.plan_expires_at ? s.plan_expires_at.slice(0, 10) : '', note: s.fee_note ?? '' }); setBranch({ name: '', city: '' }); savePlan.reset(); addBranch.reset() }
   const { data, isLoading } = useGet<AdminShop[]>(['admin-shops', q], isSuper ? `/api/v1/admin/shops${q ? `?q=${encodeURIComponent(q)}` : ''}` : null)
   const create = useDocMutation<typeof EMPTY, AdminShop>('POST', () => '/api/v1/admin/shops', (x) => ({ ...x, city: x.city || null, phone: normalisePhone(x.phone) }))
   const shown = (data ?? []).filter((s) => due === 'all' || (due === 'due' ? s.plan_status === 'due_soon' || s.plan_status === 'expired' : s.plan_status === 'locked'))
@@ -66,6 +82,24 @@ export default function AdminPage() {
       />
       <BiLabel text="admin.only" size="sm" tone="text-muted" />
       <AppLinkCard />
+      {reqs?.length ? (
+        <section className="flex flex-col gap-2">
+          <BiLabel text="admin.pwRequests" size="md" bold />
+          <div className="card divide-y divide-line p-0">
+            {reqs.map((r) => (
+              <div key={r.id} className="flex items-center gap-3 px-4 py-3">
+                <span className="well h-10 w-10 shrink-0 bg-payable-tint text-payable"><KeyRound size={18} /></span>
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <span className="truncate text-[15px] font-bold">{r.name} · {r.shop_name}</span>
+                  <span className="text-xs text-muted" dir="ltr">{r.phone} · {fmtDate(r.created_at)}</span>
+                </span>
+                <button type="button" onClick={() => { const s = data?.find((x) => x.id === r.shop_id); if (s) openShop(s) }} className={`tap rounded-full bg-ink px-3 py-1.5 text-xs font-bold text-ground`}>{pick('admin.setPassword')}</button>
+                <button type="button" aria-label={pick('admin.markDone')} onClick={async () => { await api('POST', `/api/v1/admin/password-requests/${r.id}/done`); create.reset() }} className="tap flex h-9 w-9 items-center justify-center rounded-full border border-line text-emerald"><Check size={16} /></button>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
       <SearchBox value={q} onChange={setQ} placeholder="common.search" />
       <div className="flex flex-wrap gap-1.5">
         {([['all', pick('common.all'), data?.length ?? 0], ['due', pick('admin.feesDue'), dueCount], ['locked', pick('admin.locked'), lockedCount]] as const).map(([k, label, n]) => (
@@ -100,7 +134,25 @@ export default function AdminPage() {
               <span className="text-sm text-muted">{sel.owner_name} · {sel.owner_phone} · {sel.users} {pick('admin.users')}</span>
               <span className="flex items-center gap-2"><PlanChip s={sel} />{sel.plan_expires_at ? <span className="text-sm text-muted">{pick('admin.expires')} {fmtDate(sel.plan_expires_at)}</span> : null}</span>
             </div>
-            <BiLabel text="admin.planTitle" size="md" bold />
+            <BiButton text="admin.openShop" icon={<LogIn size={20} />} full onClick={() => openAsAdmin(sel)} />
+
+            <BiLabel text="admin.ownerPassword" size="md" bold className="mt-1" />
+            <div className="grid grid-cols-[1fr_auto] gap-2">
+              <BiInput label="admin.password" value={pw} onChange={(e) => setPw(e.target.value)} minLength={6} />
+              <BiButton text="common.save" variant="secondary" disabled={pw.length < 6} loading={setPassword.isPending} onClick={async () => { const r = await setPassword.mutateAsync({ password: pw }); setPwDone({ ...r, password: pw }); setPw('') }} />
+            </div>
+            <ErrorText error={setPassword.error} />
+            {pwDone ? (
+              <div className="flex flex-col gap-2 rounded-2xl bg-sell p-3 text-sell-fg">
+                <span className="text-sm font-bold">{pick('admin.pwSet')}</span>
+                <span className="num" dir="ltr">{pwDone.phone} · {pwDone.password}</span>
+                <a href={`https://wa.me/92${pwDone.phone.replace(/^0/, '')}?text=${encodeURIComponent(`${sel.name}\nMobile Shop\nLogin: ${pwDone.phone}\nNew password: ${pwDone.password}\n${SITE}`)}`} target="_blank" rel="noopener noreferrer" className="tap flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald font-bold text-white">
+                  <MessageCircle size={18} /> {pick('admin.sendWhatsapp')}
+                </a>
+              </div>
+            ) : null}
+
+            <BiLabel text="admin.planTitle" size="md" bold className="mt-1" />
             <BiSegmented<(typeof PLANS)[number]> value={plan.plan as (typeof PLANS)[number]} onChange={(p) => setPlan({ ...plan, plan: p })} options={PLANS.map((p) => ({ value: p, text: { en: p, ur: p, roman: p } }))} />
             <div className="grid grid-cols-2 gap-2">
               <BiInput label="admin.monthlyFee" type="number" inputMode="numeric" min={0} value={plan.monthly_fee} onChange={(e) => setPlan({ ...plan, monthly_fee: e.target.value })} className="num" />
@@ -116,7 +168,7 @@ export default function AdminPage() {
             </div>
             <ErrorText error={savePlan.error} />
             <div className="grid grid-cols-2 gap-2">
-              <BiButton text="common.save" full loading={savePlan.isPending} onClick={async () => { const r = await savePlan.mutateAsync({ plan: plan.plan, monthly_fee: plan.monthly_fee === '' ? null : Number(plan.monthly_fee), note: plan.note, expires_on: plan.expires_on || null, clear_expiry: !plan.expires_on }); setSel(r) }} />
+              <BiButton text="admin.savePlan" full loading={savePlan.isPending} onClick={async () => { const r = await savePlan.mutateAsync({ plan: plan.plan, monthly_fee: plan.monthly_fee === '' ? null : Number(plan.monthly_fee), note: plan.note, expires_on: plan.expires_on || null, clear_expiry: !plan.expires_on }); setSel(r) }} />
               <BiButton text="admin.unlimited" variant="secondary" full loading={savePlan.isPending} onClick={async () => { const r = await savePlan.mutateAsync({ clear_expiry: true }); setSel(r); setPlan({ ...plan, expires_on: '' }) }} />
             </div>
 

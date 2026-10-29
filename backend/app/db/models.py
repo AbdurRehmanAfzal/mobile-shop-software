@@ -3,6 +3,7 @@
 from app.core import idempotency as _idempotency  # noqa: F401
 from app.db.base import Base  # noqa: F401
 from app.modules.accessories import models as _accessories_models  # noqa: F401
+from app.modules.admin import access as _admin_access  # noqa: F401
 from app.modules.audit import models as _audit_models  # noqa: F401
 from app.modules.auth import models as _auth_models  # noqa: F401
 from app.modules.catalogue import models as _catalogue_models  # noqa: F401

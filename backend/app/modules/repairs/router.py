@@ -51,6 +51,7 @@ def list_jobs(
     open_only: bool = True,
     party_id: uuid.UUID | None = None,
     technician_id: uuid.UUID | None = None,
+    q: str | None = Query(default=None, max_length=60),
     limit: int = Query(default=100, le=500),
 ):
     rows = service.list_jobs(
@@ -60,6 +61,7 @@ def list_jobs(
         open_only=open_only,
         party_id=party_id,
         technician_id=technician_id,
+        q=q,
         limit=limit,
     )
     return [service.to_out(db, j) for j in rows]

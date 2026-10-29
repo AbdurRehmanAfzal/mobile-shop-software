@@ -168,3 +168,12 @@ def cat(db, owner):
     storages = owner.get("/api/v1/catalogue/storages").json()
     colours = owner.get("/api/v1/catalogue/colours").json()
     return {"brand": nokia, "model": model, "storage": storages[0], "colour": colours[0]}
+
+
+@pytest.fixture(autouse=True)
+def _no_superusers(monkeypatch):
+    """The developer's .env may list the default test number as a super user (who may open any
+    shop); tests that need one set it themselves."""
+    from app.core.config import settings
+
+    monkeypatch.setattr(settings, "superuser_phones", "", raising=False)

@@ -72,7 +72,8 @@ TEMPLATES: dict[str, dict[str, dict[str, str]]] = {
                 "Expenses: Rs. {expenses}\n"
                 "Profit: Rs. {profit}\n"
                 "To get: Rs. {receivable} · To give: Rs. {payable}\n"
-                "Phones in stock: {stock}"
+                "Phones in stock: {stock}\n"
+                "Items low on stock: {low}"
             ),
         },
         "ur": {
@@ -85,8 +86,29 @@ TEMPLATES: dict[str, dict[str, dict[str, str]]] = {
                 "خرچے: Rs. {expenses}\n"
                 "منافع: Rs. {profit}\n"
                 "لینے ہیں: Rs. {receivable} · دینے ہیں: Rs. {payable}\n"
-                "اسٹاک میں فون: {stock}"
+                "اسٹاک میں فون: {stock}\n"
+                "کم اسٹاک چیزیں: {low}"
             ),
+        },
+    },
+    "password_request_admin": {
+        "en": {
+            "subject": "Password request: {shop}",
+            "body": "Password reset request: {name} ({phone}), owner of {shop}, forgot the password. Set a new one in More → Super admin → the shop → Owner's password.",
+        },
+        "ur": {
+            "subject": "پاس ورڈ کی درخواست: {shop}",
+            "body": "پاس ورڈ کی درخواست: {shop} کے مالک {name} ({phone}) پاس ورڈ بھول گئے۔ سپر ایڈمن میں نیا پاس ورڈ رکھیں۔",
+        },
+    },
+    "password_request_owner": {
+        "en": {
+            "subject": "{name} forgot the password",
+            "body": "{name} ({phone}) of {shop} forgot their password. Set a new one in More → Staff → {name} → Reset password.",
+        },
+        "ur": {
+            "subject": "{name} پاس ورڈ بھول گئے",
+            "body": "{shop} کے {name} ({phone}) پاس ورڈ بھول گئے۔ مزید ← عملہ ← {name} ← پاس ورڈ ری سیٹ میں نیا پاس ورڈ رکھیں۔",
         },
     },
     "payment_customer": {

@@ -45,7 +45,7 @@ test('plan, fee and paid-until by the super admin; renewal notice and branches f
   await page.getByRole('button', { name: 'basic' }).click()
   await page.getByLabel('Monthly fee (Rs)').fill('2500')
   await page.getByLabel('Paid until').fill(isoIn(3))
-  await page.getByRole('button', { name: 'Save', exact: true }).click()
+  await page.getByRole('button', { name: 'Save plan' }).click()
   await expect(page.getByText(/basic · 3 days left/).first()).toBeVisible()
   // +1 month from the current date
   await page.getByRole('button', { name: '+1 month' }).click()
@@ -57,7 +57,7 @@ test('plan, fee and paid-until by the super admin; renewal notice and branches f
   await page.screenshot({ path: 'test-results/admin-plan.png', fullPage: true })
   // back to 3 days so the owner sees the notice
   await page.getByLabel('Paid until').fill(isoIn(3))
-  await page.getByRole('button', { name: 'Save', exact: true }).click()
+  await page.getByRole('button', { name: 'Save plan' }).click()
   await expect(page.getByText(/basic · 3 days left/).first()).toBeVisible()
   await page.keyboard.press('Escape')
   await page.getByRole('button', { name: /Fees due/ }).click()

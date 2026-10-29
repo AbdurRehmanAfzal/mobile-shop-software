@@ -16,7 +16,7 @@ from sqlalchemy import func, select
 from app.core.errors import Forbidden, NotFound
 from app.core.permissions import Role
 from app.core.tenancy import DB, CurrentUser, get_current_user
-from app.modules.admin import plans
+from app.modules.admin import access, plans
 from app.modules.auth import service
 from app.modules.auth.models import Shop, User
 from app.modules.auth.schemas import SignupRequest
@@ -62,6 +62,35 @@ class PlanIn(BaseModel):
     extend_months: int | None = Field(default=None, ge=1, le=36)
     monthly_fee: Decimal | None = Field(default=None, ge=0)
     note: str | None = Field(default=None, max_length=200)
+
+
+class PasswordIn(BaseModel):
+    password: str = Field(min_length=6, max_length=128)
+    user_id: uuid.UUID | None = None
+
+
+class PasswordSetOut(BaseModel):
+    user_id: str
+    name: str
+    phone: str
+
+
+class PasswordRequestOut(BaseModel):
+    id: uuid.UUID
+    shop_id: uuid.UUID
+    shop_name: str
+    user_id: uuid.UUID
+    name: str
+    phone: str
+    role: str
+    sent_to: str
+    created_at: datetime
+    handled_at: datetime | None
+
+
+class EnterOut(BaseModel):
+    id: str
+    name: str
 
 
 class BranchIn(BaseModel):
@@ -132,6 +161,30 @@ def set_plan(shop_id: uuid.UUID, data: PlanIn, current: Super, db: DB):
     )
     db.refresh(shop)
     return _rows(db, [shop])[0]
+
+
+@router.post("/shops/{shop_id}/enter", response_model=EnterOut)
+def enter_shop(shop_id: uuid.UUID, current: Super, db: DB):
+    """Open a customer shop as the product owner (recorded in that shop's audit log)."""
+    shop = access.enter_shop(db, current.user, shop_id)
+    return EnterOut(id=str(shop.id), name=shop.name)
+
+
+@router.post("/shops/{shop_id}/owner-password", response_model=PasswordSetOut)
+def set_owner_password(shop_id: uuid.UUID, data: PasswordIn, current: Super, db: DB):
+    """A new password for the shop owner (or one user of the shop) who forgot theirs."""
+    u = access.set_password(db, current.user, shop_id, data.password, data.user_id)
+    return PasswordSetOut(user_id=str(u.id), name=u.name, phone=u.phone)
+
+
+@router.get("/password-requests", response_model=list[PasswordRequestOut])
+def password_requests(_: Super, db: DB, open_only: bool = True):
+    return access.list_requests(db, open_only)
+
+
+@router.post("/password-requests/{req_id}/done", status_code=204)
+def password_request_done(req_id: uuid.UUID, current: Super, db: DB):
+    access.mark_done(db, current.user, req_id)
 
 
 @router.post("/shops/{shop_id}/branches", response_model=AdminShopOut, status_code=201)
