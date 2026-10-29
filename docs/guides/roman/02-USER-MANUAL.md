@@ -843,7 +843,25 @@ Sirf product ke maalik (OOP Solutions) ke liye. **Mazeed → Super admin** (doos
 
 ![Dukaan khul gayi](../images/admin-created.png)
 
-**Customers ki dukaanein** mein har dukaan, users aur khulne ki tareekh; search se dhoondein.
+**Customers ki dukaanein** mein har dukaan apne maalik, plan aur fees ke saath; search se dhoondein.
+
+### Plan, mahana fees aur "adaigi is tareekh tak"
+List mein dukaan dabayein. **Plan** chunein (trial / basic / pro / chain), **Mahana fees (Rs)** aur
+**Adaigi is tareekh tak** likhein, ya jab maalik fees de to **+1 / +3 / +12 mahine** dabayein (maujooda
+tareekh mein jurta hai, is liye pehle dene se baqi din zaya nahi hote). **Unlimited** tareekh hata deta hai.
+
+Dukaan ka maalik kya dekhta hai: tareekh se **7 din** pehle ooper peela notice ("Aap ki subscription 3
+din mein khatam ho rahi hai") aap ke WhatsApp ke button ke saath; tareekh ke baad **15 din ki mohlat**;
+mohlat ke baad app sirf data dikhati hai aur jab tak aap barhayein save nahi karti. Pehle se khuli
+dukaanein **Unlimited** hain jab tak aap tareekh na rakhein. List ke ooper **Fees baqi** aur **Band** ke
+filter batate hain kis ko call karni hai.
+
+### Branches: ek maalik, kai dukaanein
+Isi sheet mein **Branch shamil karein**, branch ka naam aur shehar. Maalik pehle ki tarah login karta hai
+aur **Mazeed → Meri dukaanein** mein dukaan badalta hai; har dukaan ka apna stock, khata, bill aur number
+hote hain, aur plan sab branches ko mila kar hota hai.
+
+![Plan aur branch](../images/admin-plan.png)
 
 ---
 

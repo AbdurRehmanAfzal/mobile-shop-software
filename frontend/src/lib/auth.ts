@@ -28,10 +28,20 @@ export interface ShopOut {
   is_active: boolean
 }
 
+export interface PlanOut {
+  plan: string
+  expires_at: string | null
+  days_left: number | null
+  monthly_fee: string
+  status: 'unlimited' | 'ok' | 'due_soon' | 'expired' | 'locked'
+  grace_days: number
+}
+
 export interface MeOut {
   user: UserOut
   shops: ShopOut[]
   active_shop_id: string | null
+  plan?: PlanOut | null
 }
 
 interface AuthState {

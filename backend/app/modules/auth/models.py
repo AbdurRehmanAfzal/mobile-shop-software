@@ -26,6 +26,9 @@ class Organisation(UUIDPk, Timestamped, Base):
         String(20), default="trial", nullable=False
     )  # trial|basic|pro|chain
     plan_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # owner 2026-10-29: the fee the product owner charges per month (PKR) and a private note
+    monthly_fee: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
+    fee_note: Mapped[str | None] = mapped_column(String(200))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
     shops: Mapped[list["Shop"]] = relationship(back_populates="organisation")

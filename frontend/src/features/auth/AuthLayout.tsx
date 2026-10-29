@@ -7,7 +7,7 @@ import type { ReactNode } from 'react'
 import { BiLabel, useLang, type BiText } from '@/components/Bilingual'
 import { LOCALES, setLocale, type Locale } from '@/i18n'
 
-const MAKER = { company: 'OOP Solutions', site: 'oopsolutions.com', person: 'Abdur Rehman Afzal', phone: '+92 316 4001668', tel: '+923164001668' }
+export const MAKER = { company: 'OOP Solutions', site: 'oopsolutions.com', person: 'Abdur Rehman Afzal', phone: '+92 316 4001668', tel: '+923164001668' }
 const LANG: Record<Locale, string> = { ur: 'اردو', roman: 'Roman', en: 'English' }
 
 export default function AuthLayout({ title, children }: { title: string | BiText; children: ReactNode }) {

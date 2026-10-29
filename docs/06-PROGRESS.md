@@ -84,7 +84,7 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 ## Phase 3 — SaaS and reach
 | Item | FR | Status |
 |---|---|---|
-| Plans, multi-shop | FR-AUTH-05,07 | ⬜ |
+| Plans, multi-shop | FR-AUTH-05,07 | ✅ | **2026-10-29**: organisation plan + monthly fee + paid-until (super admin sheet, +1/3/12 months, Unlimited); owner notice from 7 days before, 15 grace days, then writes refused (`plan_expired`, super admin exempt); branches of one owner (`POST /admin/shops/{id}/branches`), More → My shops switcher. Phone OTP not needed while shops are opened by the super admin |
 | Staff polish, audit viewer | FR-AUTH-04,06 | 🔄 | Staff UI (add, role, password, disable) + cash/bank accounts UI with cash book done; audit viewer, attendance pending |
 | WhatsApp / SMS / email + scheduled reports | FR-RPT-03,04,05,06 | 🔄 | Outbox + settings + templates + hooks + wa.me links; **2026-10-29**: udhaar reminders (screen + automatic), night report to the owner, in-process scheduler, Meta Cloud API sender (`provider.py`, env WHATSAPP_*; templates map). SMTP sender pending |
 | PWA + Capacitor Android/iOS | FR-PLT-02,03 | 🔄 | PWA done (manifest, icons, app-shell service worker). Capacitor Android project scaffolded with camera/share; APK build needs Android Studio PC + live API domain (docs/13). iOS needs a Mac |

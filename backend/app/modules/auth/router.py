@@ -44,12 +44,15 @@ def _me(db, user, x_shop_id: str | None) -> MeOut:
             active = None
     if active is None and len(shops) == 1:
         active = shops[0].id
+    from app.modules.admin.plans import plan_info
+
     return MeOut(
         user=UserOut.model_validate(user).model_copy(
             update={"has_pin": bool(user.pin_hash), "is_superuser": service.is_superuser(user)}
         ),
         shops=[ShopOut.model_validate(s) for s in shops],
         active_shop_id=active,
+        plan=plan_info(user.organisation) if user.organisation else None,
     )
 
 

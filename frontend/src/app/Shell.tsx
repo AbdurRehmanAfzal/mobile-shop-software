@@ -11,6 +11,7 @@ import { BiLabel, useLang, type BiText } from '@/components/Bilingual'
 import { LOCALES, setLocale, type Locale } from '@/i18n'
 import { useTheme } from '@/lib/theme'
 import { JOBS } from '@/features/counter/jobs'
+import PlanBanner from '@/components/PlanBanner'
 
 /** each language's name written in itself, so anyone can find their own */
 const LANG_NAMES: Record<Locale, BiText> = {
@@ -80,6 +81,7 @@ export default function Shell() {
         </div>
       </header>
 
+      <PlanBanner />
       <div className="flex flex-1 gap-6 lg:px-5">
         <aside className="print:hidden sticky top-20 hidden h-fit w-64 shrink-0 flex-col gap-2 lg:flex" aria-label={pick('nav.home')}>
           <NavLink to="/" end className={({ isActive }) => `tap flex min-h-12 items-center gap-3 rounded-2xl px-3 text-[15px] font-bold ${isActive ? 'bg-ink text-ground' : 'text-ink'}`}>

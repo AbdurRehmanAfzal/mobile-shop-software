@@ -108,6 +108,7 @@ def get_current_context(
 
     if x_shop_id is None:
         if len(assigned) == 1:
+            _plan_gate(current, assigned[0], request)
             return CurrentContext(user=current.user, shop=assigned[0])
         raise Forbidden(
             code="shop_required",
@@ -120,6 +121,7 @@ def get_current_context(
         raise Forbidden(code="shop_invalid") from exc
     for shop in assigned:
         if shop.id == wanted:
+            _plan_gate(current, shop, request)
             return CurrentContext(user=current.user, shop=shop)
     # Deliberately the same error whether the shop exists or not: no enumeration.
     raise Forbidden(
@@ -127,6 +129,16 @@ def get_current_context(
         message_en="Shop not accessible",
         message_ur="یہ دکان قابلِ رسائی نہیں",
     )
+
+
+def _plan_gate(current: CurrentUser, shop: Shop, request: Request) -> None:
+    """An expired subscription (past its grace) may only read; the product owner is never gated."""
+    from app.modules.admin.plans import assert_writable
+    from app.modules.auth.service import is_superuser
+
+    if is_superuser(current.user):
+        return
+    assert_writable(shop.organisation, request.method)
 
 
 def require_cap(cap: Cap):

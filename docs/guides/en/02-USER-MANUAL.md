@@ -842,7 +842,25 @@ Only for the product owner (OOP Solutions). **More → Super admin** (others do 
 
 ![Shop opened](../images/admin-created.png)
 
-The list **Customer shops** shows every shop with users and opening date; use the search box to find one.
+The list **Customer shops** shows every shop with its owner, plan and fee; use the search box to find one.
+
+### Plan, monthly fee and paid-until
+Tap a shop in the list. Choose the **plan** (trial / basic / pro / chain), write the **Monthly fee (Rs)**
+and the **Paid until** date, or tap **+1 / +3 / +12 months** when the owner pays (it adds to the
+current date, so paying early keeps the remaining days). **Unlimited** removes the date.
+
+What the shop owner sees: from **7 days** before the date a yellow notice at the top ("Your
+subscription ends in 3 days") with a WhatsApp button to you; after the date, **15 grace days**; after
+the grace the app only shows their data and refuses to save until you extend. Shops opened before
+this existed are **Unlimited** until you set a date. The filters **Fees due** and **Locked** above the
+list show whom to call.
+
+### Branches: one owner, several shops
+In the same sheet, **Add a branch** with the branch's name and city. The owner logs in as before and
+switches shops in **More → My shops**; every shop keeps its own stock, khata, bills and numbers, and
+the plan covers all branches together.
+
+![Plan and branch](../images/admin-plan.png)
 
 ---
 

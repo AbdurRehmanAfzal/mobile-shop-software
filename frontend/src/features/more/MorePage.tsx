@@ -1,8 +1,8 @@
 /** "More": everything else, grouped, each icon in its job colour (docs/11 v2). */
 
 import {
-  ArrowLeftRight, Archive, BarChart3, Bell, BookOpen, CalendarDays, FileText, HandCoins, Headphones, KeyRound,
-  Landmark, Lock, LogOut, Package, PackagePlus, ShieldCheck, Receipt, RotateCcw, ScanLine, Settings, Smartphone, Tag, Tags, Undo2, Users,
+  ArrowLeftRight, Archive, BarChart3, Bell, BookOpen, CalendarDays, Check, FileText, HandCoins, Headphones, KeyRound,
+  Landmark, Lock, LogOut, Package, PackagePlus, ShieldCheck, Receipt, RotateCcw, ScanLine, Settings, Smartphone, Store, Tag, Tags, Undo2, Users,
   Wallet, Wrench, type LucideIcon,
 } from 'lucide-react'
 import { useState } from 'react'
@@ -109,6 +109,8 @@ export default function MorePage() {
   const [pinBusy, setPinBusy] = useState(false)
 
   const visible = (it: Item) => !it.roles || (role !== undefined && it.roles.includes(role))
+  const activeShopId = useAuth((s) => s.activeShopId)
+  const setActiveShop = useAuth((s) => s.setActiveShop)
 
   return (
     <div className="flex flex-col gap-5">
@@ -120,6 +122,26 @@ export default function MorePage() {
             <BiLabel text="admin.newShop" size="sm" tone="text-current opacity-80" />
           </span>
         </button>
+      ) : null}
+      {me && me.shops.length > 1 ? (
+        <section className="flex flex-col gap-2">
+          <BiLabel text="more.shops" size="md" bold />
+          <div className="card divide-y divide-line p-0">
+            {me.shops.map((s) => {
+              const on = s.id === activeShopId
+              return (
+                <button key={s.id} type="button" aria-pressed={on} onClick={() => { setActiveShop(s.id); nav('/') }} className="tap flex w-full items-center gap-3 px-4 py-3 text-start">
+                  <span className={`well h-10 w-10 shrink-0 ${on ? 'bg-ink text-ground' : 'bg-ground text-ink'}`}><Store size={20} /></span>
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <span className="truncate text-[15px] font-bold">{s.name}</span>
+                    {s.city ? <span className="text-xs text-muted">{s.city}</span> : null}
+                  </span>
+                  {on ? <Check size={20} className="text-emerald" /> : null}
+                </button>
+              )
+            })}
+          </div>
+        </section>
       ) : null}
       {GROUPS.map((g) => {
         const items = g.items.filter(visible)

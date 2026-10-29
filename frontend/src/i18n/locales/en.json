@@ -86,7 +86,8 @@
     "lookPro": "Professional",
     "lookNavy": "Navy",
     "lookColorful": "Colorful",
-    "lookModern": "Modern"
+    "lookModern": "Modern",
+    "shops": "My shops"
   },
   "common": {
     "save": "Save",
@@ -957,7 +958,23 @@
     "opened": "Opened",
     "none": "No shops yet",
     "another": "Open another shop",
-    "only": "Only you (the product owner) see this page"
+    "only": "Only you (the product owner) see this page",
+    "feesDue": "Fees due",
+    "locked": "Locked",
+    "branches": "branches",
+    "month": "month",
+    "months": "months",
+    "noFee": "no fee set",
+    "expires": "Expires",
+    "planTitle": "Plan and fee",
+    "monthlyFee": "Monthly fee (Rs)",
+    "expiresOn": "Paid until",
+    "feeNote": "Note (only you see it)",
+    "unlimited": "Unlimited",
+    "daysLeft": "{{n}} days left",
+    "expiredDays": "expired {{n}} days ago",
+    "addBranch": "Add a branch",
+    "branchHint": "Another shop of the same owner. They switch between shops in More → My shops with the same login; each shop keeps its own stock, khata and bills."
   },
   "field": {
     "badMobile": "Enter a 10-digit mobile number starting with 3, e.g. 300 1234567",
@@ -1270,5 +1287,13 @@
     "none": "Nobody owes you right now",
     "sentN": "{{n}} reminders sent.",
     "openEach": "Tap each name below to send its reminder on WhatsApp."
+  },
+  "plan": {
+    "dueSoon": "Your subscription ends in {{n}} days. Please renew to keep working without a break.",
+    "dueToday": "Your subscription ends today. Please renew.",
+    "expired": "Your subscription has ended. {{n}} grace days are left before the app stops saving.",
+    "locked": "Your subscription has ended. The app only shows your data now; renew to continue.",
+    "contact": "Contact on WhatsApp",
+    "waText": "Assalam-o-Alaikum, I want to renew my Mobile Shop subscription."
   }
 }

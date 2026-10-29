@@ -101,10 +101,20 @@ class UserOut(BaseModel):
     is_superuser: bool = False
 
 
+class PlanOut(BaseModel):
+    plan: str
+    expires_at: datetime | None
+    days_left: int | None
+    monthly_fee: Decimal
+    status: str  # unlimited | ok | due_soon | expired | locked
+    grace_days: int
+
+
 class MeOut(BaseModel):
     user: UserOut
     shops: list[ShopOut]
     active_shop_id: uuid.UUID | None
+    plan: PlanOut | None = None
 
 
 class AuthResponse(BaseModel):
