@@ -281,6 +281,13 @@ Har used phone jo kisi bande se khareedein, us ka check karein taake chori ka ph
 
 ---
 
+**Save** ke baad nateeje ki screen batati hai aap kahan hain: **"ID check mukammal. Ye phone becha ja
+sakta hai."** **Ye phone abhi bechein** ke button ke saath, ya **"Save ho gaya, lekin check abhi mukammal
+nahi. Baqi: …"** (maalik ka override bhi mukammal shumar hota hai), ya **Flagged**. Wahan se: phone par
+wapas, iqrar nama print, ya kuch badalein.
+
+![ID check save](../images/verify-done.png)
+
 ### 5a. CNIC likhne ki jagah scan karein
 
 **Naya shakhs** mein (aur ID check par) **CNIC scan (aage ki tasweer)** dabayein aur roshni mein card ke aage ki saaf tasweer lein. Chand second mein **naam** aur **CNIC number** khud bhar jate hain, aur walid ka naam, paidaish ki tareekh aur card ki muddat **Notes** mein aa jati hai. Card expire ho chuka ho to warning aati hai. Save karne se pehle bhare hue khane zaroor dekh lein; Urdu pata parha nahi jata, woh khud likhein.

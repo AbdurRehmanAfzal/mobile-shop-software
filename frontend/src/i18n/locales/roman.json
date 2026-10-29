@@ -340,7 +340,14 @@
     "override": "Maalik ki ijazat",
     "overrideReason": "Ijazat ki wajah",
     "result": "Nateeja",
-    "devicePhoto": "Mobile ki tasweer"
+    "devicePhoto": "Mobile ki tasweer",
+    "doneClear": "ID check mukammal. Ye phone becha ja sakta hai.",
+    "doneFlagged": "Chori ka shuba. Isay na bechein; sirf malik ijazat de sakta hai.",
+    "donePending": "Save ho gaya, lekin check abhi mukammal nahi. Baqi: {{missing}}.",
+    "sellNow": "Ye phone abhi bechein",
+    "backToPhone": "Phone par wapas",
+    "printDeclaration": "Iqrar nama print karein",
+    "editAgain": "Kuch badalna hai"
   },
   "sale": {
     "title": "Nayi bikri",
