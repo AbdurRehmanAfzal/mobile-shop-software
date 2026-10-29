@@ -14,6 +14,8 @@ export interface Job {
   /** icon colour on the white well */
   ink: string
   fkey: string
+  /** the module this job needs (none = basic) */
+  module?: 'repairs' | 'expenses'
 }
 
 export const JOBS: Job[] = [
@@ -21,8 +23,8 @@ export const JOBS: Job[] = [
   { id: 'addStock', to: '/purchase/new', label: 'counter.addStock', hint: 'counter.addStockHint', Icon: PackagePlus, tone: 'bg-buy text-buy-fg', ink: 'text-buy-icon', fkey: 'F3' },
   { id: 'khata', to: '/khata', label: 'counter.khata', Icon: BookOpen, tone: 'bg-khata text-khata-fg', ink: 'text-khata-icon', fkey: 'F4' },
   { id: 'stock', to: '/stock/summary', label: 'counter.stock', Icon: Smartphone, tone: 'bg-stockt text-stockt-fg', ink: 'text-stockt-icon', fkey: 'F6' },
-  { id: 'repair', to: '/repairs', label: 'counter.repair', Icon: Wrench, tone: 'bg-repair text-repair-fg', ink: 'text-repair-icon', fkey: 'F7' },
+  { id: 'repair', to: '/repairs', label: 'counter.repair', Icon: Wrench, tone: 'bg-repair text-repair-fg', ink: 'text-repair-icon', fkey: 'F7', module: 'repairs' },
   { id: 'return', to: '/return/new', label: 'counter.returnJob', Icon: Undo2, tone: 'bg-ret text-ret-fg', ink: 'text-ret-icon', fkey: 'F9' },
   { id: 'invoices', to: '/invoices', label: 'inv.short', Icon: FileText, tone: 'bg-khata text-khata-fg', ink: 'text-khata-icon', fkey: 'F10' },
-  { id: 'expense', to: '/expenses', label: 'counter.expense', Icon: Wallet, tone: 'bg-expense text-expense-fg', ink: 'text-expense-icon', fkey: 'F8' },
+  { id: 'expense', to: '/expenses', label: 'counter.expense', Icon: Wallet, tone: 'bg-expense text-expense-fg', ink: 'text-expense-icon', fkey: 'F8', module: 'expenses' },
 ]

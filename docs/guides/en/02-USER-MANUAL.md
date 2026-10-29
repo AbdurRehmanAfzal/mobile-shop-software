@@ -873,6 +873,20 @@ Only for the product owner (OOP Solutions). **More → Super admin** (others do 
 
 The list **Customer shops** shows every shop with its owner, plan and fee; use the search box to find one.
 
+### Modules: what each shop may use
+When opening a shop (and later in its sheet under **Modules for this shop**) you decide what the
+shop gets. The basics are always on: stock, sale, purchase, return, udhaar khata, payments, invoices,
+ID check, hisaab, settings, staff. The rest is switchable: accessories & watches, repairs, expenses &
+day close, hold a sale, tax on bills, exchange, profit & reports, download & share, WhatsApp messages
+& reminders, loans (amanat).
+
+**Follow the plan** uses the plan's defaults (trial and chain: everything; basic: accessories,
+expenses, hold, tax; pro: everything but loans). Untick it to pick by hand. A switched-off module
+disappears from the shop's Home, More and buttons; its address shows *"This feature is not in your
+plan"* with a WhatsApp button to you.
+
+![Modules](../images/admin-modules.png)
+
 ### Password requests, the owner's password, opening a shop
 - **Password requests** at the top of the page list every owner who tapped *Forgot password?*
   (name, shop, number, time). **Set password** opens that shop's sheet; the tick marks a request done.

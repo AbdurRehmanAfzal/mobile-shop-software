@@ -875,6 +875,19 @@ Sirf product ke maalik (OOP Solutions) ke liye. **Mazeed → Super admin** (doos
 
 **Customers ki dukaanein** mein har dukaan apne maalik, plan aur fees ke saath; search se dhoondein.
 
+### Modules: har dukaan kya istemal kar sakti hai
+Dukaan kholte waqt (aur baad mein us ki sheet mein **Is dukaan ke modules**) aap tay karte hain dukaan
+ko kya milega. Basic hamesha on: stock, bikri, khareedari, wapsi, udhaar khata, adaigi, bill, ID check,
+hisaab, settings, staff. Baqi on/off: accessories aur watches, marammat, kharche aur din band, sale hold,
+bill par tax, exchange, munafa aur reports, download aur share, WhatsApp paighaam aur yaad dahani, amanat.
+
+**Plan ke mutabiq** plan ke defaults leta hai (trial aur chain: sab; basic: accessories, kharche, hold,
+tax; pro: amanat ke ilawa sab). Tick hata kar haath se chunein. Band module dukaan ke Home, More aur
+buttons se ghaib ho jata hai; us ka address *"Ye sahulat aap ke plan mein shamil nahi"* dikhata hai,
+aap ke WhatsApp ke button ke saath.
+
+![Modules](../images/admin-modules.png)
+
 ### Password ki requests, malik ka password, dukaan kholna
 - Page ke ooper **Password ki requests** mein har woh malik jis ne *Password bhool gaye?* dabaya (naam,
   dukaan, number, waqt). **Password rakhein** us dukaan ki sheet kholta hai; tick request ko "ho gaya"

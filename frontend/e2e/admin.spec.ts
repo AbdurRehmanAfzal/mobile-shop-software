@@ -4,6 +4,7 @@
 import { expect, test } from '@playwright/test'
 
 const SUPER = { phone: '03990000099', password: 'super-secret-1' }
+test.setTimeout(120_000) // opening a shop (hashing + catalogue) takes long on a busy PC
 const phone = () => `039${Math.floor(10_000_000 + Math.random() * 89_999_999)}`
 
 test.beforeEach(async ({ page }) => {

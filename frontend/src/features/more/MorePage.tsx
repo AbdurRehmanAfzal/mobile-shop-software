@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { setLocale, type Locale } from '@/i18n'
 import { useAuth, type Role } from '@/lib/auth'
+import { moduleFor, useModules } from '@/lib/modules'
 import { useTheme, type Palette, type Theme } from '@/lib/theme'
 import { api } from '@/lib/api'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
@@ -108,7 +109,8 @@ export default function MorePage() {
   const [pinErr, setPinErr] = useState<unknown>(null)
   const [pinBusy, setPinBusy] = useState(false)
 
-  const visible = (it: Item) => !it.roles || (role !== undefined && it.roles.includes(role))
+  const has = useModules()
+  const visible = (it: Item) => (!it.roles || (role !== undefined && it.roles.includes(role))) && (!it.to || !moduleFor(it.to) || has(moduleFor(it.to)!))
   const activeShopId = useAuth((s) => s.activeShopId)
   const setActiveShop = useAuth((s) => s.setActiveShop)
 

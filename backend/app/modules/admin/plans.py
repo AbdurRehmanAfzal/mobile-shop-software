@@ -47,7 +47,11 @@ def status_of(org: Organisation, now: dt.datetime | None = None) -> str:
 
 
 def plan_info(org: Organisation, now: dt.datetime | None = None) -> dict:
+    from app.modules.admin.modules import effective
+
     return {
+        "modules": effective(org),
+        "modules_custom": org.modules is not None,
         "plan": org.plan,
         "expires_at": org.plan_expires_at,
         "days_left": days_left(org, now),

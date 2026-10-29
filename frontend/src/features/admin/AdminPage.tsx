@@ -13,11 +13,38 @@ import AppLinkCard, { APP_LINK, SITE } from './AppLinkCard'
 import { normalisePhone } from '@/lib/format'
 import { useDocMutation, useGet } from '@/lib/queries'
 
-interface AdminShop { id: string; organisation_id: string; name: string; city: string | null; owner_name: string | null; owner_phone: string | null; users: number; branches: number; created_at: string; plan: string; plan_expires_at: string | null; days_left: number | null; monthly_fee: string; fee_note: string | null; plan_status: 'unlimited' | 'ok' | 'due_soon' | 'expired' | 'locked' }
-const PLANS = ['trial', 'basic', 'pro', 'chain'] as const
+interface AdminShop { id: string; organisation_id: string; name: string; city: string | null; owner_name: string | null; owner_phone: string | null; users: number; branches: number; created_at: string; plan: string; plan_expires_at: string | null; days_left: number | null; monthly_fee: string; fee_note: string | null; plan_status: 'unlimited' | 'ok' | 'due_soon' | 'expired' | 'locked'; modules: string[]; modules_custom: boolean }
 type DueFilter = 'all' | 'due' | 'locked'
 interface PwReq { id: string; shop_id: string; shop_name: string; user_id: string; name: string; phone: string; role: string; sent_to: string; created_at: string }
-const EMPTY = { shop_name: '', city: '', owner_name: '', phone: '', password: '', locale: 'ur' as 'ur' | 'en' }
+const PLANS = ['trial', 'basic', 'pro', 'chain'] as const
+const EMPTY = { shop_name: '', city: '', owner_name: '', phone: '', password: '', locale: 'ur' as 'ur' | 'en', plan: 'trial' as (typeof PLANS)[number], modules: null as string[] | null }
+interface ModuleCatalogue { modules: Record<string, { en: string; ur: string }>; plans: Record<string, string[]> }
+
+/** "Follow the plan" (its defaults shown greyed) or a hand-picked list of modules */
+function ModulePicker({ catalogue, plan, value, onChange }: { catalogue: ModuleCatalogue | undefined; plan: string; value: string[] | null; onChange: (v: string[] | null) => void }) {
+  const { pick, ur, cls } = useLang()
+  if (!catalogue) return null
+  const defaults = catalogue.plans[plan] ?? []
+  const custom = value !== null
+  const shown = value ?? defaults
+  const toggle = (k: string) => onChange(shown.includes(k) ? shown.filter((x) => x !== k) : [...shown, k])
+  return (
+    <div className="flex flex-col gap-2">
+      <label className="flex items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-2.5">
+        <input type="checkbox" checked={!custom} onChange={(e) => onChange(e.target.checked ? null : [...defaults])} className="h-6 w-6 accent-[rgb(var(--emerald))]" />
+        <span className={`flex-1 font-semibold ${ur ? cls('sm') : 'text-sm'}`}>{pick('admin.followPlan').replace('{{plan}}', plan)}</span>
+      </label>
+      <div className="card grid grid-cols-1 divide-y divide-line p-0">
+        {Object.entries(catalogue.modules).map(([k, names]) => (
+          <label key={k} className={`flex items-center gap-3 px-4 py-2.5 ${custom ? '' : 'opacity-60'}`}>
+            <input type="checkbox" disabled={!custom} checked={shown.includes(k)} onChange={() => toggle(k)} className="h-5 w-5 accent-[rgb(var(--emerald))]" />
+            <span className={`flex-1 ${ur ? cls('sm') : 'text-sm font-semibold'}`}>{ur ? names.ur : names.en}</span>
+          </label>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 function PlanChip({ s }: { s: AdminShop }) {
   const { pick } = useLang()
@@ -53,9 +80,12 @@ export default function AdminPage() {
   }
   const savePlan = useDocMutation<Record<string, unknown>, AdminShop>('PATCH', () => `/api/v1/admin/shops/${sel?.id}/plan`)
   const addBranch = useDocMutation<typeof branch, AdminShop>('POST', () => `/api/v1/admin/shops/${sel?.id}/branches`, (b) => ({ name: b.name, city: b.city || null }))
-  const openShop = (s: AdminShop) => { setPw(''); setPwDone(null); setPassword.reset(); setSel(s); setPlan({ plan: s.plan, monthly_fee: Number(s.monthly_fee) ? String(Number(s.monthly_fee)) : '', expires_on: s.plan_expires_at ? s.plan_expires_at.slice(0, 10) : '', note: s.fee_note ?? '' }); setBranch({ name: '', city: '' }); savePlan.reset(); addBranch.reset() }
+  const openShop = (s: AdminShop) => { setMods(s.modules_custom ? s.modules : null); saveModules.reset(); setPw(''); setPwDone(null); setPassword.reset(); setSel(s); setPlan({ plan: s.plan, monthly_fee: Number(s.monthly_fee) ? String(Number(s.monthly_fee)) : '', expires_on: s.plan_expires_at ? s.plan_expires_at.slice(0, 10) : '', note: s.fee_note ?? '' }); setBranch({ name: '', city: '' }); savePlan.reset(); addBranch.reset() }
   const { data, isLoading } = useGet<AdminShop[]>(['admin-shops', q], isSuper ? `/api/v1/admin/shops${q ? `?q=${encodeURIComponent(q)}` : ''}` : null)
   const create = useDocMutation<typeof EMPTY, AdminShop>('POST', () => '/api/v1/admin/shops', (x) => ({ ...x, city: x.city || null, phone: normalisePhone(x.phone) }))
+  const { data: catalogue } = useGet<ModuleCatalogue>(['module-catalogue'], isSuper ? '/api/v1/admin/modules' : null)
+  const [mods, setMods] = useState<string[] | null>(null)
+  const saveModules = useDocMutation<{ modules: string[] | null }, AdminShop>('PATCH', () => `/api/v1/admin/shops/${sel?.id}/modules`)
   const shown = (data ?? []).filter((s) => due === 'all' || (due === 'due' ? s.plan_status === 'due_soon' || s.plan_status === 'expired' : s.plan_status === 'locked'))
   const dueCount = (data ?? []).filter((s) => s.plan_status === 'due_soon' || s.plan_status === 'expired').length
   const lockedCount = (data ?? []).filter((s) => s.plan_status === 'locked').length
@@ -152,6 +182,11 @@ export default function AdminPage() {
               </div>
             ) : null}
 
+            <BiLabel text="admin.modulesTitle" size="md" bold className="mt-1" />
+            <ModulePicker catalogue={catalogue} plan={plan.plan} value={mods} onChange={setMods} />
+            <ErrorText error={saveModules.error} />
+            <BiButton text="admin.saveModules" variant="secondary" full loading={saveModules.isPending} onClick={async () => { const r = await saveModules.mutateAsync({ modules: mods }); setSel(r) }} />
+
             <BiLabel text="admin.planTitle" size="md" bold className="mt-1" />
             <BiSegmented<(typeof PLANS)[number]> value={plan.plan as (typeof PLANS)[number]} onChange={(p) => setPlan({ ...plan, plan: p })} options={PLANS.map((p) => ({ value: p, text: { en: p, ur: p, roman: p } }))} />
             <div className="grid grid-cols-2 gap-2">
@@ -210,6 +245,9 @@ export default function AdminPage() {
             <BiInput label="admin.password" value={f.password} onChange={set('password')} minLength={6} />
             <BiLabel text="admin.language" size="md" tone="text-muted" />
             <BiSegmented<'ur' | 'en'> value={f.locale} onChange={(locale) => setF({ ...f, locale })} options={[{ value: 'ur', text: { en: 'Urdu', ur: 'اردو', roman: 'Urdu' } }, { value: 'en', text: { en: 'English', ur: 'انگریزی', roman: 'English' } }]} />
+            <BiLabel text="admin.planTitle" size="md" tone="text-muted" />
+            <BiSegmented<(typeof PLANS)[number]> value={f.plan} onChange={(plan) => setF({ ...f, plan, modules: null })} options={PLANS.map((p) => ({ value: p, text: { en: p, ur: p, roman: p } }))} />
+            <ModulePicker catalogue={catalogue} plan={f.plan} value={f.modules} onChange={(modules) => setF({ ...f, modules })} />
             <ErrorText error={create.error} />
             <BiButton
               text="admin.newShop"

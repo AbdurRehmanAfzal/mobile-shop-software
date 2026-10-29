@@ -18,6 +18,7 @@ import { ApiError, api, get } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 import { openPrintable } from '@/lib/files'
 import { isQueued } from '@/lib/offline'
+import { useModules } from '@/lib/modules'
 import { useDevices, useDocMutation, useGet } from '@/lib/queries'
 import type { Device, DeviceDetail, Invoice, Party } from '@/lib/types'
 import { DeviceRow } from '@/features/stock/StockPage'
@@ -56,6 +57,7 @@ export default function SaleWizard() {
   const [params] = useSearchParams()
   const { pick, ur, cls } = useLang()
   const role = useAuth((s) => s.me?.user.role)
+  const has = useModules()
   const [step, setStep] = useDraft('sale.step', 0)
   const [lines, setLines] = useDraft<Line[]>('sale.lines', [])
   const [misc, setMisc] = useDraft<Misc[]>('sale.misc', [])
@@ -192,7 +194,7 @@ export default function SaleWizard() {
 
       {step === 0 ? (
         <div className="flex flex-col gap-3">
-          <HeldButton count={held?.length ?? 0} onClick={() => setHeldOpen(true)} />
+          {has('held_sales') ? <HeldButton count={held?.length ?? 0} onClick={() => setHeldOpen(true)} /> : null}
           <SearchBox value={q} onChange={setQ} placeholder="stock.searchPlaceholder" scan />
           <div className="flex flex-wrap gap-1.5">
             {(['', 'phone', 'tablet', 'watch'] as const).map((c) => (
@@ -209,7 +211,7 @@ export default function SaleWizard() {
           ) : (
             <BiLabel text="counter.noStock" size="md" tone="text-muted" align="center" className="py-6" />
           )}
-          <BiButton text="items.sellButton" icon={<Watch size={22} />} variant="secondary" full onClick={() => setPickingItem(true)} />
+          {has('accessories') ? <BiButton text="items.sellButton" icon={<Watch size={22} />} variant="secondary" full onClick={() => setPickingItem(true)} /> : null}
           <div>
             <IconChip icon={<Headphones size={18} />} text="counter.otherItem" onClick={() => { setMisc([{ key: uid(), description: '', qty: '1', unit_price: '' }]); setStep(1) }} />
           </div>
@@ -279,17 +281,17 @@ export default function SaleWizard() {
           ))}
           <div className="flex flex-wrap gap-2">
             <IconChip icon={<Smartphone size={18} />} text="counter.addAnother" onClick={() => setPicking(true)} />
-            <IconChip icon={<Watch size={18} />} text="items.sellButton" onClick={() => setPickingItem(true)} />
+            {has('accessories') ? <IconChip icon={<Watch size={18} />} text="items.sellButton" onClick={() => setPickingItem(true)} /> : null}
             <IconChip icon={<Headphones size={18} />} text="counter.otherItem" onClick={() => setMisc([...misc, { key: uid(), description: '', qty: '1', unit_price: '' }])} />
             {!more ? <IconChip icon={<SlidersHorizontal size={18} />} text="counter.moreOptions" onClick={() => setMore(true)} /> : null}
           </div>
           {more ? <BiInput label="common.discount" type="number" inputMode="numeric" min={0} value={discount} onChange={(e) => setDiscount(e.target.value)} /> : null}
 
-          <label className="tap flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl border border-line bg-surface px-4">
+          {has('tax') ? <label className="tap flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl border border-line bg-surface px-4">
             <input type="checkbox" checked={taxOn} onChange={(e) => setTaxOn(e.target.checked)} className="h-6 w-6 accent-[rgb(var(--emerald))]" />
             <BiLabel text="saleTax.add" size="md" bold className="flex-1" />
             {taxOn ? <span className="num text-sm text-muted" dir="ltr">+ Rs. {taxAmount.toLocaleString('en-US')}</span> : null}
-          </label>
+          </label> : null}
           {taxOn ? <BiInput label="saleTax.rate" type="number" inputMode="decimal" min={0} max={100} value={rateShown} onChange={(e) => setTaxRate(e.target.value)} className="num" /> : null}
 
           <div className="flex items-center gap-1"><BiLabel text="counter.howPaid" size="md" bold /><Help term="udhaar" /></div>
@@ -344,7 +346,7 @@ export default function SaleWizard() {
           {notSellableErr ? <Chip text="sale.notSellable" tone="bad" /> : null}
           <ErrorText error={m.error} />
           <BiButton text="sale.complete" icon={<Check size={22} />} full loading={m.isPending} disabled={!canSave} onClick={submit} />
-          {lines.length || misc.length ? <BiButton text="hold.button" icon={<CirclePause size={22} />} full variant="secondary" onClick={() => { setHoldName(party?.name ?? ''); hold.reset(); setHolding(true) }} /> : null}
+          {(lines.length || misc.length) && has('held_sales') ? <BiButton text="hold.button" icon={<CirclePause size={22} />} full variant="secondary" onClick={() => { setHoldName(party?.name ?? ''); hold.reset(); setHolding(true) }} /> : null}
           {!lines.length && !misc.length ? <BiButton text="counter.whichPhone" variant="secondary" full onClick={() => setStep(0)} /> : null}
         </div>
       ) : null}

@@ -29,6 +29,8 @@ export interface ShopOut {
 }
 
 export interface PlanOut {
+  modules?: string[]
+  modules_custom?: boolean
   plan: string
   expires_at: string | null
   days_left: number | null

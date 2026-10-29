@@ -102,6 +102,8 @@ class UserOut(BaseModel):
 
 
 class PlanOut(BaseModel):
+    modules: list[str] = []
+    modules_custom: bool = False
     plan: str
     expires_at: datetime | None
     days_left: int | None

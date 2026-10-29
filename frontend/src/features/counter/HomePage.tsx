@@ -16,6 +16,7 @@ import { useGet } from '@/lib/queries'
 import type { DayReport } from '@/lib/types'
 import PeriodPicker, { periodOf, periodQuery, type Period } from './PeriodPicker'
 import { JOBS, type Job } from './jobs'
+import { useModules } from '@/lib/modules'
 
 interface Dash {
   receivable: string; payable: string; stock_count: number; stock_value_cost: string | null; stock_value_asking: string
@@ -43,7 +44,8 @@ export default function HomePage() {
   const { data: dash } = useGet<Dash>(['dashboard'], '/api/v1/reports/dashboard')
   const { data: rep } = useGet<DayReport>(['day', period.from, period.to], `/api/v1/reports/day?${periodQuery(period)}`)
   const worth = dash ? dash.stock_value_cost ?? dash.stock_value_asking : null
-  const [big, small] = [JOBS.slice(0, 2), JOBS.slice(2)]
+  const has = useModules()
+  const [big, small] = [JOBS.slice(0, 2), JOBS.slice(2).filter((j) => !j.module || has(j.module))]
   const firstName = (me?.user.name ?? '').trim().split(/\s+/)[0]
   const hisaab = `/hisaab?from=${period.from}&to=${period.to}`
   const cashNeg = Number(rep?.cash_net ?? 0) < 0
@@ -165,7 +167,7 @@ export default function HomePage() {
         <SeeMore />
       </Link>
 
-      {manager ? (
+      {manager && has('reports') ? (
         <Link to="/reports" className="tap relative isolate flex items-center gap-3 overflow-hidden rounded-3xl bg-sell p-4 text-sell-fg">
           <span aria-hidden className="pointer-events-none absolute -end-10 -top-12 -z-10 h-36 w-36 rounded-full bg-white/15 blur-2xl" />
           <span className="well h-11 w-11 shrink-0 rounded-2xl bg-surface text-sell-icon"><TrendingUp size={22} strokeWidth={2} /></span>
@@ -181,8 +183,8 @@ export default function HomePage() {
         <section className="flex flex-col gap-2">
           <SectionTitle text="counter.attention" />
           {dash.pending_verification > 0 ? <Attention to="/stock" icon={<ShieldAlert size={18} />} n={dash.pending_verification} text="counter.pendingCheck" /> : null}
-          {dash.repairs_open > 0 ? <Attention to="/repairs" icon={<Wrench size={18} />} n={dash.repairs_open} text="counter.openRepairs" /> : null}
-          {(dash.low_stock_items ?? 0) > 0 ? <Attention to="/accessories?tab=low" icon={<Boxes size={18} />} n={dash.low_stock_items!} text="counter.lowStock" /> : null}
+          {dash.repairs_open > 0 && has('repairs') ? <Attention to="/repairs" icon={<Wrench size={18} />} n={dash.repairs_open} text="counter.openRepairs" /> : null}
+          {(dash.low_stock_items ?? 0) > 0 && has('accessories') ? <Attention to="/accessories?tab=low" icon={<Boxes size={18} />} n={dash.low_stock_items!} text="counter.lowStock" /> : null}
         </section>
       ) : null}
     </div>

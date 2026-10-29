@@ -8,6 +8,7 @@ import StockSummaryPage from '@/features/counter/StockSummaryPage'
 import DayReportPage from '@/features/counter/DayReportPage'
 import KhataPage from '@/features/counter/KhataPage'
 import RemindersPage from '@/features/counter/RemindersPage'
+import ModuleGate from '@/components/ModuleGate'
 import AdminPage from '@/features/admin/AdminPage'
 import CataloguePage from '@/features/catalogue/CataloguePage'
 import MorePage from '@/features/more/MorePage'
@@ -63,7 +64,7 @@ export const router = createBrowserRouter([
           { path: '/stock/summary', element: <StockSummaryPage /> },
           { path: '/hisaab', element: <DayReportPage /> },
           { path: '/khata', element: <KhataPage /> },
-          { path: '/khata/reminders', element: <RemindersPage /> },
+          { path: '/khata/reminders', element: <ModuleGate module="notifications"><RemindersPage /></ModuleGate> },
           { path: '/admin', element: <AdminPage /> },
           { path: '/return/new', element: <ReturnWizard /> },
           { path: '/stock/opening', element: <OpeningStockPage /> },
@@ -78,23 +79,23 @@ export const router = createBrowserRouter([
           { path: '/sales/:id', element: <SaleDetailPage /> },
           { path: '/invoices', element: <InvoicesPage /> },
           { path: '/payments', element: <PaymentsPage /> },
-          { path: '/loans', element: <LoansPage /> },
+          { path: '/loans', element: <ModuleGate module="loans"><LoansPage /></ModuleGate> },
           { path: '/returns', element: <ReturnsPage /> },
           { path: '/parties', element: <PartiesPage /> },
           { path: '/parties/:id', element: <PartyDetailPage /> },
-          { path: '/expenses', element: <ExpensesPage /> },
-          { path: '/repairs', element: <RepairsPage /> },
-          { path: '/repairs/new', element: <NewRepairPage /> },
-          { path: '/repairs/:id', element: <RepairDetailPage /> },
-          { path: '/accessories', element: <AccessoriesPage /> },
-          { path: '/exchange/new', element: <ExchangeWizard /> },
-          { path: '/reports', element: <ReportsPage /> },
+          { path: '/expenses', element: <ModuleGate module="expenses"><ExpensesPage /></ModuleGate> },
+          { path: '/repairs', element: <ModuleGate module="repairs"><RepairsPage /></ModuleGate> },
+          { path: '/repairs/new', element: <ModuleGate module="repairs"><NewRepairPage /></ModuleGate> },
+          { path: '/repairs/:id', element: <ModuleGate module="repairs"><RepairDetailPage /></ModuleGate> },
+          { path: '/accessories', element: <ModuleGate module="accessories"><AccessoriesPage /></ModuleGate> },
+          { path: '/exchange/new', element: <ModuleGate module="exchange"><ExchangeWizard /></ModuleGate> },
+          { path: '/reports', element: <ModuleGate module="reports"><ReportsPage /></ModuleGate> },
           { path: '/more/staff', element: <StaffPage /> },
           { path: '/more/cash', element: <CashAccountsPage /> },
           { path: '/more/catalogue', element: <CataloguePage /> },
           { path: '/more', element: <MorePage /> },
           { path: '/more/settings', element: <SettingsPage /> },
-          { path: '/more/notifications', element: <NotificationsPage /> },
+          { path: '/more/notifications', element: <ModuleGate module="notifications"><NotificationsPage /></ModuleGate> },
         ],
       },
     ],

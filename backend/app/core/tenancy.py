@@ -146,6 +146,9 @@ def _plan_gate(current: CurrentUser, shop: Shop, request: Request) -> None:
     if is_superuser(current.user):
         return
     assert_writable(shop.organisation, request.method)
+    from app.modules.admin.modules import assert_module
+
+    assert_module(shop.organisation, request.url.path)
 
 
 def require_cap(cap: Cap):

@@ -9,6 +9,7 @@ import DocLangPicker from './DocLangPicker'
 import { ErrorText } from './ui'
 import { openPrintable } from '@/lib/files'
 import { printPagePdf, saveFile, shareFile, type DocFile } from '@/lib/share'
+import { useModule } from '@/lib/modules'
 
 export type DocMode = 'download' | 'share'
 type Done = 'downloads' | 'documents' | 'savedInstead' | null
@@ -80,7 +81,9 @@ export function DocStatus({ s }: { s: ReturnType<typeof useDocFile> }) {
 export default function DocActions({ path, name, title, picker = true }: { path: string; name: string; title: string; picker?: boolean }) {
   const { pick, ur, cls } = useLang()
   const s = useDocFile(title)
+  const on = useModule('exports')
   const make = () => printPagePdf(path, name)
+  if (!on) return null
   const btn = `tap flex min-h-14 items-center justify-center gap-2 rounded-2xl border border-line bg-surface px-3 font-bold text-ink disabled:opacity-60 ${ur ? cls('md') : 'text-[15px]'}`
   return (
     <div className="flex flex-col gap-2">
