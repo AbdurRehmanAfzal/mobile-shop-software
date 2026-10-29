@@ -106,6 +106,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      <div className="flex flex-col gap-5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-6">
       {/* the business of today, yesterday, a week, this month or from-to */}
       <section className="flex flex-col gap-2.5">
         <SectionTitle text="counter.hisaab" to={hisaab} />
@@ -134,6 +135,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      <div className="flex flex-col gap-5">
       {/* udhaar khata */}
       <section className="flex flex-col gap-2.5">
         <SectionTitle text="counter.khataTitle" to="/khata" />
@@ -189,6 +191,8 @@ export default function HomePage() {
           {(dash.low_stock_items ?? 0) > 0 && has('accessories') ? <Attention to="/accessories?tab=low" icon={<Boxes size={18} />} n={dash.low_stock_items!} text="counter.lowStock" /> : null}
         </section>
       ) : null}
+      </div>
+      </div>
     </div>
   )
 }

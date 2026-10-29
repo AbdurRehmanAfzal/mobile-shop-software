@@ -94,7 +94,7 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 ## Owner decisions pending (noted 2026-10-22)
 | Item | Status | Notes |
 |---|---|---|
-| Laptop/desktop responsive layout (sidebar, wide tables, side-by-side sale screen) | 🔄 | v2: job side menu with F-keys on lg screens; content still phone-width (no side-by-side sale yet). Owner: test first, decide later |
+| Laptop/desktop responsive layout (sidebar, wide tables, side-by-side sale screen) | ✅ | **2026-10-29**: side menu with F-keys (was there); content now uses the width on list/overview screens (`Shell` WIDE routes → 5xl, forms stay 3xl); Home in two columns (hisaab left; khata, stock, reports, attention right); Sale side by side on lg (stock list left, bill right, no step switching; `useLaptop()` in `lib/useMedia.ts`); stock cards two per row. `e2e/laptop.spec.ts` at 1280×800 |
 | Offline Windows installer (local server + SQLite, optional cloud sync) | ⬜ | FR-PLT-04/05; only needed if target shops lack internet. Owner to decide |
 
 ## Phase 4 — Differentiators

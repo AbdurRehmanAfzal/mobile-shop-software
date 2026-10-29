@@ -11,6 +11,9 @@ import { BiLabel, useLang, type BiText } from '@/components/Bilingual'
 import { LOCALES, setLocale, type Locale } from '@/i18n'
 import { useTheme } from '@/lib/theme'
 import { JOBS } from '@/features/counter/jobs'
+
+/** screens that use the whole laptop width (lists, overviews, the side-by-side sale); forms stay at 3xl */
+const WIDE = ['/sale/new', '/stock', '/khata', '/hisaab', '/reports', '/sales', '/purchases', '/invoices', '/parties', '/expenses', '/installments', '/repairs', '/accessories', '/payments', '/returns', '/admin', '/loans']
 import { useModules } from '@/lib/modules'
 import PlanBanner from '@/components/PlanBanner'
 import OfflineBar from '@/components/OfflineBar'
@@ -33,6 +36,7 @@ const tabs = [
 export default function Shell() {
   const { pathname } = useLocation()
   noteRoute(pathname) // during render, so a page opened by a tap never restores an old draft
+  const wide = pathname === '/' || WIDE.some((w) => pathname === w || pathname.startsWith(`${w}/`) || pathname.startsWith(`${w}?`))
   const shop = useAuth(activeShop)
   const nav = useNavigate()
   const { ur, roman, pick, cls, dir } = useLang()
@@ -58,7 +62,7 @@ export default function Shell() {
   }, [nav, jobs])
 
   return (
-    <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-ground lg:max-w-6xl">
+    <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-ground lg:max-w-[1360px]">
       {/* narrow phones (iPhone SE): the shop's name on its own line, the buttons spread under it */}
       <header className="print:hidden sticky top-0 z-10 flex flex-wrap items-center gap-x-2 gap-y-2 bg-ground/90 px-5 pb-2 pt-[max(14px,env(safe-area-inset-top))] backdrop-blur max-[379px]:px-4">
         <NavLink to="/" className={`min-w-0 flex-1 line-clamp-2 max-[379px]:basis-full ${ur ? 'ur text-lg font-bold leading-snug' : 'text-lg font-extrabold leading-tight tracking-[-0.01em]'}`} dir={dir}>
@@ -107,7 +111,7 @@ export default function Shell() {
           </NavLink>
         </aside>
 
-        <main className="min-w-0 flex-1 px-5 pb-28 pt-1 max-[379px]:px-4 lg:max-w-3xl lg:px-0 lg:pb-10">
+        <main className={`min-w-0 flex-1 px-5 pb-28 pt-1 max-[379px]:px-4 lg:px-0 lg:pb-10 ${wide ? 'lg:max-w-5xl' : 'lg:max-w-3xl'}`}>
           <Outlet />
         </main>
       </div>
