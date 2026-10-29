@@ -1015,7 +1015,8 @@
     "approveMonths": "Wasool · +{{n}} mahine",
     "reject": "Mustarad",
     "rejectWhy": "Kyun nahi? (dukaandar ye parhe ga)",
-    "noFees": "Check karne ko koi adaigi nahi"
+    "noFees": "Check karne ko koi adaigi nahi",
+    "shopRequests": "Website se dukaan ki requests"
   },
   "field": {
     "badMobile": "3 se shuru hone wala 10 hindson ka mobile number likhein, maslan 300 1234567",
@@ -1395,5 +1396,176 @@
       "approved": "Wasool ho gayi",
       "rejected": "Qabool nahi hui"
     }
+  },
+  "landing": {
+    "badge": "Pakistan ki mobile shops ke liye",
+    "h1": "Apni mobile shop apne phone se chalayein",
+    "sub": "Naye aur purane phone, bechne wale ka CNIC check, udhaar khata, marammat, accessories, WhatsApp raseed aur din ka hisaab — Urdu ya English mein, baray buttons, kisi training ki zaroorat nahi.",
+    "ctaTrial": "{{n}} din muft shuru karein",
+    "waHello": "Assalam-o-Alaikum, mujhe Mobile Shop software ke baare mein jaanna hai.",
+    "point1": "Har phone par chalta hai",
+    "point2": "Urdu · Roman · English",
+    "point3": "Internet ke baghair bhi chalta hai",
+    "for": {
+      "used": {
+        "t": "Purane phone ke dealer",
+        "d": "Aane wale se CNIC photo aur eGadget check ke saath khareedein, iqrar nama print karein, har phone ki poori kahani IMEI se."
+      },
+      "new": {
+        "t": "Naye phone ki dukaanein",
+        "d": "Brand aur model se stock, box pack aur open box, PTA / Non-PTA / JV SIM time ke saath, bill par tax, aap ke logo wala bill."
+      },
+      "repair": {
+        "t": "Marammat ke counter",
+        "d": "Job sheet, parts aur labour, WhatsApp par status, bill ke saath hawalgi — aur ginti se accessories."
+      }
+    },
+    "videoTitle": "2 minute mein chalta dekhein",
+    "videoSub": "Ek sale, stock list, udhaar khata aur din ka hisaab — khud app par record kiya gaya.",
+    "videoHint": "Chalane ke liye dabayein. Awaz nahi.",
+    "modulesTitle": "Counter ki har zaroorat",
+    "modulesSub": "Basic cheezein har plan mein. Baqi jab zaroorat ho shamil karein.",
+    "basicsTitle": "Har plan mein",
+    "optionalTitle": "Add-on modules",
+    "extrasTitle": "Ye bhi shamil",
+    "basics": {
+      "sale": {
+        "t": "3 tap mein sale",
+        "d": "Phone chunein, paise lein (cash, online, cheque, bahar se ya udhaar), raseed print ya WhatsApp karein."
+      },
+      "purchase": {
+        "t": "Stock daalein",
+        "d": "Dealer, customer ya doosri dukaan se; camera se IMEI; dabba, charger aur accessories darj."
+      },
+      "stock": {
+        "t": "IMEI se stock",
+        "d": "Har phone, tablet aur smart watch apni khareed, maangi qeemat, haalat aur stock ke dinon ke saath."
+      },
+      "verify": {
+        "t": "Purane phone ka ID check",
+        "d": "CNIC scan se form bhare; bechne wale ki photo, eGadget nateeja, dastkhat shuda iqrar; chori ke phone ruke."
+      },
+      "khata": {
+        "t": "Udhaar khata",
+        "d": "Kis ne aap ko dene hain aur aap ne kisay, har bill aur adaigi chalte baqaye ke saath."
+      },
+      "payments": {
+        "t": "Paise ki aamad o raft",
+        "d": "Cash, bank, Easypaisa, JazzCash — har ek apne khate mein, galle ki ginti ke saath din band."
+      },
+      "invoices": {
+        "t": "Bill",
+        "d": "Thermal raseed ya A4 bill English ya Urdu mein, PDF download aur share."
+      },
+      "returns": {
+        "t": "Wapsi aur exchange",
+        "d": "Phone wapas lein, katauti karein, cash ya credit dein; purana phone andar, naya bahar."
+      },
+      "hisaab": {
+        "t": "Din ka hisaab",
+        "d": "Aaj, is hafte ya kisi bhi tareekhon ki bikri, haath mein, udhaar, kharche aur munafa."
+      },
+      "staff": {
+        "t": "Staff aur roles",
+        "d": "Malik, manager, salesman, technician — har ek wohi dekhe jo usay dekhna chahiye; PIN aur fingerprint login."
+      },
+      "imei": {
+        "t": "IMEI ki kahani",
+        "d": "Koi bhi IMEI scan karein: ye phone pehle yahan aaya? Kis ne becha, kis ne khareeda."
+      },
+      "languages": {
+        "t": "Urdu · Roman · English",
+        "d": "Ek waqt mein ek zubaan, Nastaliq Urdu, right-to-left; print shuda kaghaz dukaan ki zubaan mein."
+      }
+    },
+    "optional": {
+      "accessories": "Charger, cover, cable, watches ginti se, kam stock ke alert ke saath.",
+      "repairs": "Job sheet, parts, labour, WhatsApp par status, bill ke saath hawalgi.",
+      "expenses": "Qisam ke lihaz se roz ke kharche, tankhwahein, aur din band karna.",
+      "held_sales": "Bill rok kar agle customer ko nimtayein, baad mein dobara kholein.",
+      "tax": "Customer ke kehne par bill par FBR sales tax.",
+      "exchange": "Purana phone andar, naya bahar, farq ek hi baar mein tay.",
+      "reports": "Munafa o nuqsan, sab se zyada bikne wale, purana stock, andaze — download ya share.",
+      "exports": "Har report aur bill PDF, Excel ya CSV mein, WhatsApp par share.",
+      "notifications": "Customers ko raseed, udhaar ki yaad dahani, malik ko raat ki report.",
+      "loans": "Doosri dukaan ko amanat diye gaye phone, wapsi ya bikri tak nazar mein."
+    },
+    "extras": {
+      "offline": {
+        "t": "Internet ke baghair chalta hai",
+        "d": "Sale, stock aur adaigi phone mein save hoti hai aur internet aate hi chali jaati hai — sirf ek baar."
+      },
+      "fingerprint": {
+        "t": "Fingerprint login",
+        "d": "Website aur Android app par; staff bhi, jab malik ijazat de."
+      },
+      "cnic": {
+        "t": "CNIC scan",
+        "d": "Card ki photo se number, naam, walid ka naam aur tareekhein bhar jaati hain — phone par parhi jaati hain, kuch upload nahi hota."
+      },
+      "whatsapp": {
+        "t": "WhatsApp andar hi",
+        "d": "Raseedein, yaad dahaniyan aur reports WhatsApp par jaati hain — Business API ke saath khud-ba-khud."
+      }
+    },
+    "shotsTitle": "Screens",
+    "shotsSub": "App se English aur Urdu mein li gayin.",
+    "shots": {
+      "home": "Home",
+      "sale": "Sale",
+      "stock": "Stock",
+      "khata": "Udhaar khata",
+      "reports": "Munafa aur reports",
+      "invoice": "Bill"
+    },
+    "priceTitle": "Saada mahana qeemat",
+    "priceSub": "{{n}} din muft se shuru karein. Mahina-war adaigi, koi contract nahi. Qeemat PKR mein fi dukaan.",
+    "popular": "Sab se zyada pasand",
+    "choose": "Chunein",
+    "allBasics": "Ooper ki sab basic cheezein",
+    "plan": {
+      "basic": "Aise counter ke liye jo phone bechta aur khareedta hai.",
+      "pro": "Aisi dukaan ke liye jis mein marammat, reports aur WhatsApp ho.",
+      "chain": "Aise malik ke liye jis ki ek se zyada dukaanein hon."
+    },
+    "priceNote": "Isi malik ki doosri branch Chain plan par banti hai. Android app shamil. Setup aur WhatsApp par training muft.",
+    "startTitle": "Meri dukaan kholein",
+    "startSub": "Ye bharein; hum isi din aap ki dukaan khol kar login WhatsApp par bhej dete hain.",
+    "yourName": "Aap ka naam",
+    "planPick": "Plan",
+    "trialName": "Muft trial",
+    "note": "Kuch aur (optional)",
+    "send": "Request bhejein",
+    "sent": "Shukriya! Hum jald WhatsApp par aap ka login bhejenge.",
+    "payTitle": "Adaigi kaise karein",
+    "paySub": "Muft trial ke baad mahine ki fees in mein se kisi account mein bhejein aur screenshot WhatsApp karein (ya app mein Mazeed → Software fees mein batayein).",
+    "payAsk": "Accounts WhatsApp par bataye jaate hain.",
+    "waPaid": "Assalam-o-Alaikum, main ne Mobile Shop ki fees bhej di hai. Screenshot saath hai.",
+    "waPaidBtn": "Main ne ada kar di — screenshot bhejein",
+    "faqTitle": "Aksar poochhe jane wale sawal",
+    "faq": {
+      "data": {
+        "q": "Kya mera data mehfooz hai? Kya doosri dukaanein dekh sakti hain?",
+        "a": "Nahi. Har dukaan ka data alag hai aur har raat backup hota hai. Sirf aap ka staff, aap ke diye roles ke saath, aap ki dukaan dekh sakta hai."
+      },
+      "phone": {
+        "q": "Kya computer chahiye?",
+        "a": "Nahi. Kisi bhi Android phone (app ya browser) aur iPhone / laptop ke browser par chalta hai. Thermal printer optional hai."
+      },
+      "offline": {
+        "q": "Internet chala jaye to?",
+        "a": "Bechte rahein. Sale, stock aur adaigi phone mein rukti hai aur internet aate hi chali jaati hai."
+      },
+      "staff": {
+        "q": "Kya mera salesman khareed qeemat dekh sakta hai?",
+        "a": "Sirf agar aap chahein. Malik, manager, salesman aur technician wohi dekhte hain jo aap ijazat dein."
+      },
+      "cancel": {
+        "q": "Kya main kisi bhi waqt chhor sakta hoon?",
+        "a": "Ji haan. Mahina-war adaigi; aap ka data aap ka hai aur kisi bhi waqt Excel mein download ho sakta hai."
+      }
+    },
+    "footer": "Pakistan mein, Pakistani mobile shops ke liye banaya gaya.",
+    "about": "Software ke baare mein ›"
   }
 }

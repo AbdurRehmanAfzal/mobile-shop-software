@@ -1,5 +1,6 @@
 import { Fingerprint, Lock } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
+import { Link } from 'react-router-dom'
 import { ApiError, post } from '@/lib/api'
 import { useAuth, type MeOut } from '@/lib/auth'
 import { isValidPkMobile, normalisePhone, toLatinDigits } from '@/lib/format'
@@ -149,6 +150,9 @@ export default function LoginPage() {
         <BiInput label="auth.password" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         {error ? <BiAlert text={error} /> : null}
         <BiButton type="submit" text="auth.login" full loading={busy} />
+        <Link to="/welcome" className="tap block py-1 text-center">
+          <BiLabel text="landing.about" size="sm" tone="text-muted" align="center" />
+        </Link>
         <button type="button" onClick={() => { setForgotSent(null); setForgotOpen(true) }} className="tap py-2">
           <BiLabel text="auth.forgot" size="sm" tone="text-emerald" align="center" />
         </button>

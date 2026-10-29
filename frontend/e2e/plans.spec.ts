@@ -48,7 +48,7 @@ test('plan, fee and paid-until by the super admin; renewal notice and branches f
   await page.getByRole('button', { name: 'Save plan' }).click()
   await expect(page.getByText(/basic · 3 days left/).first()).toBeVisible()
   // +1 month from the current date
-  await page.getByRole('button', { name: '+1 month' }).click()
+  await page.getByRole('button', { name: '+1 month', exact: true }).click()
   await expect(page.getByText(/basic · 3[0-4] days left/).first()).toBeVisible()
   // a branch of the same owner
   await page.getByLabel('Shop name', { exact: true }).fill(`${shopName} Branch`)

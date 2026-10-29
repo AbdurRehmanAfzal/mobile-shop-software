@@ -5,7 +5,7 @@ the mobile numbers in SUPERUSER_PHONES.
 """
 
 import uuid
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from decimal import Decimal
 from typing import Annotated, Literal
 
@@ -65,6 +65,7 @@ class ModulesIn(BaseModel):
 class AdminShopCreate(SignupRequest):
     plan: Literal["trial", "basic", "pro", "chain"] = "trial"
     modules: list[str] | None = None
+    request_id: uuid.UUID | None = None  # the landing-page request this shop answers
 
 
 class PlanIn(BaseModel):
@@ -134,6 +135,18 @@ class FeeStatsOut(BaseModel):
 class DecideIn(BaseModel):
     months: int | None = Field(default=None, ge=1, le=36)
     note: str | None = Field(default=None, max_length=200)
+
+
+class ShopRequestOut(BaseModel):
+    id: uuid.UUID
+    name: str
+    shop_name: str
+    city: str | None
+    phone: str
+    plan: str
+    note: str | None
+    created_at: datetime
+    handled_at: datetime | None
 
 
 class EnterOut(BaseModel):
@@ -264,9 +277,38 @@ def create_shop(data: AdminShopCreate, current: Super, db: DB):
     org = shop.organisation
     org.plan = data.plan
     org.modules = modules.clean(data.modules)
+    if data.request_id is not None:
+        from app.modules.public.router import ShopRequest
+
+        req = db.get(ShopRequest, data.request_id)
+        if req is not None and req.handled_at is None:
+            req.handled_at = datetime.now(tz=UTC)
+            req.handled_by = current.id
     db.commit()
     db.refresh(shop)
     return _rows(db, [shop])[0]
+
+
+@router.get("/shop-requests", response_model=list[ShopRequestOut])
+def shop_requests(_: Super, db: DB, open_only: bool = True):
+    from app.modules.public.router import ShopRequest
+
+    stmt = select(ShopRequest).order_by(ShopRequest.created_at.desc())
+    if open_only:
+        stmt = stmt.where(ShopRequest.handled_at.is_(None))
+    return list(db.scalars(stmt.limit(200)).all())
+
+
+@router.post("/shop-requests/{req_id}/done", status_code=204)
+def shop_request_done(req_id: uuid.UUID, current: Super, db: DB):
+    from app.modules.public.router import ShopRequest
+
+    req = db.get(ShopRequest, req_id)
+    if req is None:
+        raise NotFound()
+    req.handled_at = datetime.now(tz=UTC)
+    req.handled_by = current.id
+    db.commit()
 
 
 @router.get("/payment-accounts")
