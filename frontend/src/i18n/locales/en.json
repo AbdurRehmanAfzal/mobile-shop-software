@@ -158,7 +158,7 @@
   },
   "stock": {
     "title": "Stock",
-    "searchPlaceholder": "IMEI, model or brand",
+    "searchPlaceholder": "IMEI, model, brand, name or phone",
     "imeiLookup": "Check IMEI",
     "imeiPlaceholder": "Type or scan 15-digit IMEI",
     "seenBefore": "This IMEI has been in your shop before",
@@ -547,7 +547,8 @@
       "charger": "Charger",
       "box": "Box",
       "earphones": "Earphones"
-    }
+    },
+    "searchPlaceholder": "Job no, IMEI, name or phone"
   },
   "acc": {
     "title": "Chargers, covers etc.",
@@ -814,7 +815,7 @@
     "returnJob": "Return",
     "whatBack": "What came back?",
     "backHow": "How much to give back?",
-    "searchSold": "Find the sold phone by IMEI or name",
+    "searchSold": "Find the sold phone by IMEI, buyer's name or phone",
     "orPickSale": "Or pick from recent sales",
     "paidForIt": "Customer had paid",
     "giveBack": "Give back to customer (Rs)",
@@ -948,7 +949,8 @@
     },
     "week": "Week",
     "exchangeHint": "Take the customer's old phone and give a new one; the difference is worked out for you",
-    "loanHint": "A phone given to another shop to show or sell; it stays yours until it is sold or comes back"
+    "loanHint": "A phone given to another shop to show or sell; it stays yours until it is sold or comes back",
+    "lowStock": "items low on stock"
   },
   "admin": {
     "title": "Super admin",

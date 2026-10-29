@@ -1,5 +1,6 @@
 import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import { KindChooser, kindLabel } from '@/components/ItemKinds'
 import RemoveSheet from '@/components/RemoveSheet'
@@ -14,7 +15,9 @@ interface Pending { item_id: string; device_label: string; imei1: string; kind: 
 export default function AccessoriesPage() {
   const { pick, ur } = useLang()
   const canCost = useAuth((s) => s.me?.user.role === 'owner' || s.me?.user.role === 'manager')
-  const [tab, setTab] = useState<'stock' | 'low' | 'pending'>('stock')
+  const [params] = useSearchParams()
+  // the home screen's stock alert opens the low-stock tab straight away
+  const [tab, setTab] = useState<'stock' | 'low' | 'pending'>(params.get('tab') === 'low' ? 'low' : 'stock')
   const [q, setQ] = useState('')
   const { data, isLoading } = useGet<Accessory[]>(['accessories', tab, q], tab === 'pending' ? null : `/api/v1/accessories?low_only=${tab === 'low'}${q ? `&q=${encodeURIComponent(q)}` : ''}`)
   const { data: pending } = useGet<Pending[]>(['acc-pending'], tab === 'pending' ? '/api/v1/accessories/pending' : null)

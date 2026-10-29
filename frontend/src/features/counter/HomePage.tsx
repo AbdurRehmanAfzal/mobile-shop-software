@@ -4,7 +4,7 @@
  *  reports. Every card that opens something still says "See details ›" (owner: users did not know
  *  the cards could be tapped). */
 
-import { AlertTriangle, ArrowDownLeft, ArrowUpRight, ChevronLeft, ChevronRight, HandCoins, PiggyBank, Receipt, ScanLine, Search, ShieldAlert, Smartphone, TrendingUp, Wallet, Wrench } from 'lucide-react'
+import { AlertTriangle, ArrowDownLeft, ArrowUpRight, Boxes, ChevronLeft, ChevronRight, HandCoins, PiggyBank, Receipt, ScanLine, Search, ShieldAlert, Smartphone, TrendingUp, Wallet, Wrench } from 'lucide-react'
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
@@ -19,7 +19,7 @@ import { JOBS, type Job } from './jobs'
 
 interface Dash {
   receivable: string; payable: string; stock_count: number; stock_value_cost: string | null; stock_value_asking: string
-  pending_verification: number; repairs_open: number
+  pending_verification: number; repairs_open: number; low_stock_items?: number
   sales_7d?: { date: string; total: string }[]
 }
 
@@ -177,11 +177,12 @@ export default function HomePage() {
         </Link>
       ) : null}
 
-      {dash && (dash.pending_verification > 0 || dash.repairs_open > 0) ? (
+      {dash && (dash.pending_verification > 0 || dash.repairs_open > 0 || (dash.low_stock_items ?? 0) > 0) ? (
         <section className="flex flex-col gap-2">
           <SectionTitle text="counter.attention" />
           {dash.pending_verification > 0 ? <Attention to="/stock" icon={<ShieldAlert size={18} />} n={dash.pending_verification} text="counter.pendingCheck" /> : null}
           {dash.repairs_open > 0 ? <Attention to="/repairs" icon={<Wrench size={18} />} n={dash.repairs_open} text="counter.openRepairs" /> : null}
+          {(dash.low_stock_items ?? 0) > 0 ? <Attention to="/accessories?tab=low" icon={<Boxes size={18} />} n={dash.low_stock_items!} text="counter.lowStock" /> : null}
         </section>
       ) : null}
     </div>

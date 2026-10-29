@@ -2,7 +2,7 @@ import html
 import uuid
 from decimal import Decimal
 
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
 from app.core.clock import today as shop_today
@@ -177,9 +177,27 @@ def get_job(db: Session, shop_id: uuid.UUID, job_id: uuid.UUID) -> RepairJob:
 
 
 def list_jobs(
-    db: Session, shop_id: uuid.UUID, *, status, open_only, party_id, technician_id, limit
+    db: Session,
+    shop_id: uuid.UUID,
+    *,
+    status,
+    open_only,
+    party_id,
+    technician_id,
+    limit,
+    q: str | None = None,
 ) -> list[RepairJob]:
     stmt = select(RepairJob).where(RepairJob.shop_id == shop_id)
+    if q:
+        # job no, IMEI, the customer's name or phone (owner 2026-10-29)
+        q = q.strip()
+        like = f"%{q}%"
+        digits = "".join(ch for ch in q if ch.isdigit())
+        stmt = stmt.outerjoin(Party, Party.id == RepairJob.party_id)
+        conds = [RepairJob.no.ilike(like), Party.name.ilike(like)]
+        if len(digits) >= 4:
+            conds += [RepairJob.imei.like(f"%{digits}%"), Party.phone.like(f"%{digits}%")]
+        stmt = stmt.where(or_(*conds))
     if status:
         stmt = stmt.where(RepairJob.status == status)
     elif open_only:

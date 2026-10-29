@@ -158,7 +158,7 @@
   },
   "stock": {
     "title": "Stock",
-    "searchPlaceholder": "IMEI, model ya brand",
+    "searchPlaceholder": "IMEI, model, brand, naam ya phone",
     "imeiLookup": "IMEI check karein",
     "imeiPlaceholder": "15 hindson ka IMEI likhein ya scan karein",
     "seenBefore": "Yeh IMEI pehle aap ki dukaan mein aa chuka hai",
@@ -547,7 +547,8 @@
       "charger": "Charger",
       "box": "Dabba",
       "earphones": "Handsfree"
-    }
+    },
+    "searchPlaceholder": "Job no, IMEI, naam ya phone"
   },
   "acc": {
     "title": "Charger, Cover waghera",
@@ -814,7 +815,7 @@
     "returnJob": "Wapsi",
     "whatBack": "Kya wapas aaya?",
     "backHow": "Kitne wapas dene hain?",
-    "searchSold": "Bika hua phone IMEI ya naam se dhoondein",
+    "searchSold": "Bika hua phone IMEI, khareedar ke naam ya phone se dhoondein",
     "orPickSale": "Ya haal ki bikri mein se chunein",
     "paidForIt": "Gahak ne diye the",
     "giveBack": "Gahak ko wapas (Rs)",
@@ -948,7 +949,8 @@
     },
     "week": "Hafta",
     "exchangeHint": "Gahak ka purana phone lein aur naya dein; farq khud hisaab ho jata hai",
-    "loanHint": "Doosri dukaan ko dikhane ya bechne ke liye diya gaya phone; bikne ya wapas aane tak aap ka rehta hai"
+    "loanHint": "Doosri dukaan ko dikhane ya bechne ke liye diya gaya phone; bikne ya wapas aane tak aap ka rehta hai",
+    "lowStock": "cheezein kam stock mein"
   },
   "admin": {
     "title": "Super admin",

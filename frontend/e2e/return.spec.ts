@@ -45,7 +45,7 @@ test('walk-in return: hand back 900, shop cuts 100', async ({ page, request }) =
   // return from the home tile
   await page.goto('/')
   await page.locator('main').getByRole('link', { name: 'Return' }).click()
-  await page.getByPlaceholder('Find the sold phone by IMEI or name').fill('7518')
+  await page.getByPlaceholder('Find the sold phone by IMEI, buyer's name or phone').fill('7518')
   await page.getByRole('button', { name: /Nokia/ }).first().click()
   await expect(page.getByText('Customer had paid')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Take it back' })).toBeDisabled()

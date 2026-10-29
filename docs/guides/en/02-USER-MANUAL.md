@@ -665,6 +665,16 @@ When it is handed over, tap **Delivered**.
 
 ---
 
+### Stock alert
+Every item has a **Reorder level** (set when you add or edit it). When the count falls to that level
+or below, Home shows **"N items low on stock"** under *Needs attention*; tapping it opens the
+**Low stock** tab here. The owner's night report also carries "Items low on stock".
+
+### Searching by phone number
+Where a person is involved you can search by their phone: the stock list and the sale / return
+screens (the buyer's or seller's name or phone, besides IMEI, model, brand), repairs (job no, IMEI,
+name or phone), udhaar khata and people, and Invoices.
+
 ## 13. Expenses and closing the day
 
 Owner and manager. Home → **Expense** (or **More → Expenses**).

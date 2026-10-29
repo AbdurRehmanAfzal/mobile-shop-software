@@ -72,7 +72,8 @@ TEMPLATES: dict[str, dict[str, dict[str, str]]] = {
                 "Expenses: Rs. {expenses}\n"
                 "Profit: Rs. {profit}\n"
                 "To get: Rs. {receivable} · To give: Rs. {payable}\n"
-                "Phones in stock: {stock}"
+                "Phones in stock: {stock}\n"
+                "Items low on stock: {low}"
             ),
         },
         "ur": {
@@ -85,7 +86,8 @@ TEMPLATES: dict[str, dict[str, dict[str, str]]] = {
                 "خرچے: Rs. {expenses}\n"
                 "منافع: Rs. {profit}\n"
                 "لینے ہیں: Rs. {receivable} · دینے ہیں: Rs. {payable}\n"
-                "اسٹاک میں فون: {stock}"
+                "اسٹاک میں فون: {stock}\n"
+                "کم اسٹاک چیزیں: {low}"
             ),
         },
     },

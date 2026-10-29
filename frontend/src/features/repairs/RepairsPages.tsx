@@ -10,7 +10,7 @@ import DocActions from '@/components/DocShare'
 import DocLangPicker from '@/components/DocLangPicker'
 import { ImeiInput } from '@/components/FieldInputs'
 import PartyPicker from '@/components/PartyPicker'
-import { BtnText, Empty, ErrorText, fmtDate, IconChip, Loading, PageHeader, Section, Sheet } from '@/components/ui'
+import { BtnText, Empty, ErrorText, fmtDate, IconChip, Loading, PageHeader, SearchBox, Section, Sheet } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { openPrintable } from '@/lib/files'
 import { isoDay } from '@/lib/format'
@@ -46,7 +46,8 @@ export function RepairsPage() {
   const nav = useNavigate()
   const { pick, ur, cls } = useLang()
   const [open, setOpen] = useState(true)
-  const { data, isLoading } = useGet<Job[]>(['repairs', open], `/api/v1/repairs?open_only=${open}`)
+  const [q, setQ] = useState('')
+  const { data, isLoading } = useGet<Job[]>(['repairs', open, q], `/api/v1/repairs?open_only=${open}${q ? `&q=${encodeURIComponent(q)}` : ''}`)
   const ready = (data ?? []).filter((j) => stageOf(j.status) === 2)
   return (
     <div className="flex flex-col gap-3">
@@ -57,6 +58,7 @@ export function RepairsPage() {
       </button>
       {ready.length ? <BiLabel text="counter.readyCall" size="sm" bold tone="text-sell-fg" /> : null}
       <BiSegmented value={open ? 'open' : 'all'} onChange={(v) => setOpen(v === 'open')} options={[{ value: 'open', text: 'repair.open' }, { value: 'all', text: 'repair.all' }]} />
+      <SearchBox value={q} onChange={setQ} placeholder="repair.searchPlaceholder" />
       {isLoading ? <Loading /> : !data?.length ? <Empty text="repair.none" /> : (
         <div className="card divide-y divide-line p-0">
           {[...ready, ...data.filter((j) => stageOf(j.status) !== 2)].map((j) => (

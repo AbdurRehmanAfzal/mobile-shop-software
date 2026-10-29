@@ -663,6 +663,16 @@ Jab de/le lein to **De diya** dabayein.
 
 ---
 
+### Stock alert
+Har cheez ka **Reorder level** hota hai (cheez add ya edit karte waqt). Jab ginti us level par ya neeche
+aa jaye to Home par *Dhyan dein* mein **"N cheezein kam stock mein"** aata hai; us par dabane se yahan
+**Kam stock** ka tab khulta hai. Malik ki raat ki report mein bhi "Items low on stock" hota hai.
+
+### Phone number se search
+Jahan banda shamil ho wahan phone se dhoondein: stock list aur bikri / wapsi ki screens (khareedar ya
+bechne wale ka naam ya phone, IMEI / model / brand ke ilawa), marammat (job no, IMEI, naam ya phone),
+udhaar khata aur log, aur Bill.
+
 ## 13. Kharche aur din band karna
 
 Maalik aur manager. Home → **Kharcha** (ya **Mazeed → Kharche**).
