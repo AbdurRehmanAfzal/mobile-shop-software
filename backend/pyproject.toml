@@ -22,7 +22,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-local = ["pyinstaller>=6.10", "pystray>=0.19", "pillow>=10"]
+local = ["pyinstaller>=6.10", "pystray>=0.19", "pillow>=10", "tzdata>=2024.1"]
 dev = [
     "pytest>=8.2",
     "pytest-cov>=5",

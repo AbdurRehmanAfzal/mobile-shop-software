@@ -21,7 +21,7 @@ hidden = (
     + ["uvicorn.logging", "uvicorn.loops", "uvicorn.loops.auto", "uvicorn.protocols",
        "uvicorn.protocols.http", "uvicorn.protocols.http.auto", "uvicorn.protocols.websockets",
        "uvicorn.protocols.websockets.auto", "uvicorn.lifespan", "uvicorn.lifespan.on",
-       "passlib.handlers.bcrypt", "barcode", "barcode.codex", "barcode.writer"]
+       "passlib.handlers.bcrypt", "barcode", "barcode.codex", "barcode.writer", "tzdata"]
 )
 
 datas = [
@@ -30,6 +30,8 @@ datas = [
     (str(WEB), "web"),
 ]
 datas += collect_data_files("barcode")
+# Windows has no system time-zone database: ship Python's tzdata (Asia/Karachi and friends)
+datas += collect_data_files("tzdata")
 datas += collect_data_files("alembic")
 
 a = Analysis(
