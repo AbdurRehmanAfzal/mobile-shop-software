@@ -1419,7 +1419,8 @@
     "offHint": "Software provider se kahein ke aap ki dukaan ke liye chalu kar dein.",
     "waText": "Assalam-o-Alaikum, main apne Mobile Shop plan mein \"{{module}}\" shamil karwana chahta hoon.",
     "installments": "Qistein",
-    "attendance": "Staff ki hazri"
+    "attendance": "Staff ki hazri",
+    "ai": "Assistant aur tasveer parhna (AI)"
   },
   "fees": {
     "title": "Software fees",
@@ -1825,5 +1826,32 @@
     "cost": "Aam tor par Rs. {{p}} mein khareeda",
     "inStock": "Abhi {{n}} stock mein Rs. {{a}} – {{b}} par",
     "use": "{{p}} rakhein"
+  },
+  "ai": {
+    "title": "Assistant",
+    "homeTitle": "Assistant se poochein",
+    "homeHint": "\"Aaj kitna bika?\" · \"Sab se zyada udhaar kis par hai?\"",
+    "hint": "Apni dukaan ke baare mein poochein: bikri, udhaar, IMEI se phone, stock, zyada bikne wale, rate. Ye sirf aap ka record parhta hai.",
+    "usedToday": "Aaj {{m}} mein se {{n}} istemal",
+    "off": "Is server par assistant abhi on nahi hai. Software provider AI ki key lagata hai; tab tak baqi sab waise hi chalta hai.",
+    "placeholder": "Apni dukaan ke baare mein poochein…",
+    "ask": "Poochein",
+    "thinking": "Dekh raha hoon…",
+    "noAnswer": "Jawab nahi aaya. Dobara koshish karein.",
+    "lookedAt": "Dekha",
+    "q1": "Aaj kitna bika?",
+    "q2": "Sab se zyada udhaar kis par hai?",
+    "q3": "Is mahine kya sab se zyada bika?",
+    "q4": "Stock mein kitne phone hain?",
+    "q5": "Is hafte ka munafa kitna tha?",
+    "tool": {
+      "hisaab": "din ka hisaab",
+      "khata": "udhaar khata",
+      "phone_by_imei": "IMEI se phone",
+      "stock": "stock",
+      "best_sellers": "zyada bikne wale",
+      "today_overview": "aaj ka khulasa",
+      "rate": "rate"
+    }
   }
 }

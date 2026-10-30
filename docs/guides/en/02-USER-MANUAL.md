@@ -836,6 +836,20 @@ on …**, how many days it took, **n sold in 6 months: Rs. low – high**, **Usu
 It appears in **Sell** under *Sold for*, in **Add stock** under *Asking price* once the model is
 chosen, and in a phone's **Change price**. It reads only your shop's sales, never other shops'.
 
+## 15b. The assistant and photo reading (AI)
+
+When the software provider has switched the AI on, **More → Assistant** (and a card on Home) lets
+you ask about your own shop in Urdu, English or Roman Urdu: *"How much did we sell today?"*, *"Who
+owes the most?"*, *"What sold best this month?"*, *"Where is IMEI 3568…?"*, *"What is my rate for
+Samsung A15?"*. The answer comes from your records only (hisaab, khata, stock, best sellers, rates,
+the phone's history) and says which of them it looked at; staff who may not see cost prices get
+answers without them. Each shop has a daily allowance of questions and photos; the screen shows
+"n of m used today". Without the key the screen says the assistant is off and nothing else changes.
+
+Photos: with the AI on, **Scan CNIC** (new person, ID check) and **Scan** on a photo of a phone's
+box label are read on the server, which is better at bad light and angles; if that fails, the
+phone's own reader runs as before. Photos are used for the reading only and are not stored.
+
 ## 16a. Price stickers with a barcode
 
 Every phone and item can carry a sticker: shop name, model, storage · colour, **price**, a **Code 128

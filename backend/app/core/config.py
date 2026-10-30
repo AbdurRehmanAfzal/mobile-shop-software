@@ -45,6 +45,12 @@ class Settings(BaseSettings):
     smtp_password: str = ""
     smtp_from: str = ""
     smtp_starttls: bool = True
+    # AI (owner 2026-10-30): one platform key; the chat on the main model, photo reading on the
+    # cheap vision model; a per-shop daily call cap keeps the bill predictable.
+    anthropic_api_key: str = ""
+    ai_model: str = "claude-opus-5-5"
+    ai_vision_model: str = "claude-haiku-5-5"
+    ai_daily_limit: int = 200
 
     @property
     def superusers(self) -> set[str]:

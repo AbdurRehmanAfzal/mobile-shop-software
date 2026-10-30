@@ -1419,7 +1419,8 @@
     "offHint": "Ask the software provider to switch it on for your shop.",
     "waText": "Assalam-o-Alaikum, I want to add \"{{module}}\" to my Mobile Shop plan.",
     "installments": "Installments (qist)",
-    "attendance": "Staff attendance (hazri)"
+    "attendance": "Staff attendance (hazri)",
+    "ai": "Assistant & photo reading (AI)"
   },
   "fees": {
     "title": "Software fees",
@@ -1825,5 +1826,32 @@
     "cost": "Usually bought at Rs. {{p}}",
     "inStock": "{{n}} in stock now at Rs. {{a}} – {{b}}",
     "use": "Use {{p}}"
+  },
+  "ai": {
+    "title": "Assistant",
+    "homeTitle": "Ask the assistant",
+    "homeHint": "\"How much did we sell today?\" · \"Who owes the most?\"",
+    "hint": "Ask about your own shop: sales, udhaar, a phone by IMEI, stock, best sellers, rates. It only reads your records.",
+    "usedToday": "{{n}} of {{m}} used today",
+    "off": "The assistant is not switched on for this server yet. The software provider adds the AI key; until then everything else works as usual.",
+    "placeholder": "Ask about your shop…",
+    "ask": "Ask",
+    "thinking": "Looking it up…",
+    "noAnswer": "No answer came back. Try again.",
+    "lookedAt": "Looked at",
+    "q1": "How much did we sell today?",
+    "q2": "Who owes the most?",
+    "q3": "What sold best this month?",
+    "q4": "How many phones are in stock?",
+    "q5": "What was this week's profit?",
+    "tool": {
+      "hisaab": "the day's hisaab",
+      "khata": "udhaar khata",
+      "phone_by_imei": "phone by IMEI",
+      "stock": "stock",
+      "best_sellers": "best sellers",
+      "today_overview": "today overview",
+      "rate": "rates"
+    }
   }
 }

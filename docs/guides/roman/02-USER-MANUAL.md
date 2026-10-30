@@ -838,6 +838,20 @@ Ye **Bechein** mein *Kitne mein becha* ke neeche, **Stock daalein** mein model c
 qeemat* ke neeche, aur phone ke **Qeemat badlein** mein aata hai. Sirf aap ki dukaan ki bikri parhta
 hai, kisi aur dukaan ki nahi.
 
+## 15b. Assistant aur tasveer parhna (AI)
+
+Jab software provider AI on kar de to **Mazeed → Assistant** (aur Home par ek card) se aap apni dukaan
+ke baare mein Urdu, English ya Roman Urdu mein pooch sakte hain: *"Aaj kitna bika?"*, *"Sab se zyada
+udhaar kis par hai?"*, *"Is mahine kya sab se zyada bika?"*, *"IMEI 3568… kahan hai?"*, *"Samsung A15 ka
+mera rate kya hai?"*. Jawab sirf aap ke record se aata hai (hisaab, khata, stock, zyada bikne wale, rate,
+phone ki kahani) aur batata hai kya dekha; jo staff khareed qeemat nahi dekh sakta use jawab us ke
+baghair milta hai. Har dukaan ki rozana sawaal aur tasveer ki had hai; screen "aaj m mein se n istemal"
+dikhati hai. Key ke baghair screen kehti hai assistant off hai aur baqi kuch nahi badalta.
+
+Tasveerein: AI on ho to **CNIC scan** (naya banda, ID check) aur phone ke dabbe ke label ki tasveer par
+**Scan** server par parhe jate hain, jo kharab roshni aur tirche angle mein behtar hai; na ho sake to
+phone ka apna reader pehle ki tarah chalta hai. Tasveer sirf parhne ke liye jaati hai, mehfooz nahi hoti.
+
 ## 16a. Barcode wale qeemat ke sticker
 
 Har phone aur item par sticker lag sakta hai: dukaan ka naam, model, storage · rang, **qeemat**, **IMEI
