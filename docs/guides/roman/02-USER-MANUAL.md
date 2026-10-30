@@ -795,6 +795,35 @@ Der wali amanat par **Der ho gayi** likha aata hai.
 
 ---
 
+## 15d. Bikri par tay qeemat, qeemat ki tabdeeli record mein, kam par kaun bech sakta hai
+
+Har phone ki ek **tay qeemat** hoti hai (khareed par ya phone ke page se). Bikri par bill mein qeemat
+ke dabbe ke saath **Tay qeemat: 40,000** likha aata hai. **Bika** mein asal raqam likhein — tay qeemat
+sirf nishana hai. Agar market badal gayi ho to **Tay qeemat badlein** tick karein, nayi tay qeemat
+(maslan 45,000) aur wajah likhein; bikri phir nayi qeemat par hoti hai.
+
+**Bechne se pehle check karein**: **Bikri mukammal** dabane par aakhri screen khulti hai jis par har
+phone ki laagat (sirf maalik aur manager), tay qeemat, badli hui tay qeemat, bika aur munafa hota hai,
+aur agar phone tay qeemat se kam ja raha ho to surkh line. **Tasdeeq karein aur bill banayein** se bill
+banta hai. Us ke baad ek hi record hai: gahak ki raseed, phone ki kahani, maalik ki report aur khata
+sab wahi bikri ki qeemat parhte hain.
+
+**Kuch mitta nahi.** Phone ki kahani mein pehli tay qeemat (40,000) rehti hai, ek line **Qeemat badli
+40,000 → 45,000 · bikri ke waqt · market rate** bechne wale ke naam aur waqt ke saath, aur 45,000 ki
+bikri. Phone ke paisa card par **Ab tay qeemat** aur, agar alag ho, **Pehli tay qeemat** dikhti hai.
+
+**Qeemat ke usool** (Mazeed → Settings → Qeemat ke usool): do switch, **Tay qeemat se kam bechna** aur
+**Tay qeemat badalna**, har ek **Koi bhi / Maalik-manager / Maalik ke PIN se**. Maalik aur manager
+hamesha kar sakte hain. *Maalik-manager* par staff ko "maalik ya manager chahiye" dikhta hai aur wo aage
+nahi barh sakta. *Maalik ke PIN se* par check screen mein PIN ka dabba aata hai: maalik mauqe par apna
+quick PIN likhta hai (Mazeed → Staff mein rakha hua), bikri ho jaati hai aur manzoori record par likhi
+jaati hai. Paanch ghalat PIN par dabba das minute ke liye band. Bane hue bill ki raqam koi edit nahi
+kar sakta; ghalti ho to wapsi aur naya bill.
+
+**Qeematein report** (Reports → Qeematein, maalik aur manager): is arse mein tay qeemat ki har tabdeeli
+aur tay qeemat se kam har bikri — phone, IMEI, kis ne ki, purani → nayi ya tay vs bika, farq, munafa,
+wajah, bill number, aur PIN se kis ne manzoor ki — upar har bande ka shumaar.
+
 ## 16. Stock list, IMEI check aur phone ki puri kahani
 
 ### Dukaan mein stock (kitne ka hai)

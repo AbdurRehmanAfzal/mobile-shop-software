@@ -3,7 +3,7 @@
  *  stays in reach, and a plain "Saved" message. */
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Check, Fingerprint, Languages, Percent, Receipt, Store, Tag } from 'lucide-react'
+import { Check, Fingerprint, Languages, Percent, Receipt, ShieldCheck, Store, Tag } from 'lucide-react'
 import { useEffect, useState, type ReactNode } from 'react'
 import { BiAlert, BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import { PhoneInput } from '@/components/FieldInputs'
@@ -29,7 +29,9 @@ interface ShopFull {
   invoice_prefix: string
   fingerprint_staff: boolean
   label_code_word: string | null
+  sale_rules: { below_asking: Rule; asking_change: Rule } | null
 }
+type Rule = 'allow' | 'manager' | 'pin'
 
 type Form = { name: string; city: string; phone: string; default_locale: 'en' | 'ur'; tax_enabled: boolean; tax_rate: string; tax_inclusive: boolean; ntn: string; strn: string; receipt_footer: string; receipt_footer_ur: string; invoice_prefix: string; fingerprint_staff: boolean }
 
@@ -153,6 +155,7 @@ export default function SettingsPage() {
       </Card>
 
       <CodeWordCard current={data?.label_code_word ?? null} />
+      <SaleRulesCard current={data?.sale_rules ?? null} />
 
       <ErrorText error={m.error} />
       {saved ? <BiAlert text="settings.saved" kind="success" /> : null}
@@ -187,6 +190,30 @@ function CodeWordCard({ current }: { current: string | null }) {
     <Card icon={<Tag size={22} />} tone="bg-stockt text-stockt-fg" title="settings.codeWord" hint="settings.codeWordHint">
       <BiInput label="settings.codeWordLabel" value={w} onChange={(e) => { setOk(false); setW(e.target.value.toUpperCase()) }} maxLength={10} dir="ltr" className="num tracking-[.2em]" error={w && !valid ? 'settings.codeWordBad' : null} hint={{ en: `${pick('settings.codeWordExample')}: 45000 = ${demo}`, ur: `${pick('settings.codeWordExample')}: 45000 = ${demo}`, roman: `${pick('settings.codeWordExample')}: 45000 = ${demo}` }} />
       <BiButton text={ok ? 'settings.saved' : 'common.save'} icon={<Check size={20} />} variant="secondary" full disabled={(!!w && !valid) || (word === (current ?? '') && !ok)} loading={m.isPending} onClick={() => m.mutate()} />
+    </Card>
+  )
+}
+
+/** who may sell under the asking price and who may change it (owner 2026-10-30, anti-fraud) */
+function SaleRulesCard({ current }: { current: { below_asking: Rule; asking_change: Rule } | null }) {
+  const qc = useQueryClient()
+  const shopKey = useAuth((s) => s.activeShopId)
+  const [r, setR] = useState<{ below_asking: Rule; asking_change: Rule }>(current ?? { below_asking: 'manager', asking_change: 'manager' })
+  const [ok, setOk] = useState(false)
+  useEffect(() => { if (current) setR(current) }, [current])
+  const m = useMutation({
+    mutationFn: () => patch('/api/v1/shops/current', { sale_rules: r }),
+    onSuccess: () => { setOk(true); void qc.invalidateQueries({ queryKey: [shopKey, 'shop-full'] }) },
+  })
+  const opts = [{ value: 'allow' as Rule, text: 'rules.allow' }, { value: 'manager' as Rule, text: 'rules.manager' }, { value: 'pin' as Rule, text: 'rules.pin' }]
+  return (
+    <Card icon={<ShieldCheck size={22} />} tone="bg-expense text-expense-fg" title="rules.title" hint="rules.hint">
+      <BiLabel text="rules.belowAsking" size="md" bold />
+      <BiSegmented<Rule> value={r.below_asking} onChange={(v) => { setOk(false); setR({ ...r, below_asking: v }) }} options={opts} />
+      <BiLabel text="rules.askingChange" size="md" bold />
+      <BiSegmented<Rule> value={r.asking_change} onChange={(v) => { setOk(false); setR({ ...r, asking_change: v }) }} options={opts} />
+      <BiLabel text="rules.pinNote" size="sm" tone="text-muted" />
+      <BiButton text={ok ? 'settings.saved' : 'common.save'} icon={<Check size={20} />} variant="secondary" full loading={m.isPending} onClick={() => m.mutate()} />
     </Card>
   )
 }

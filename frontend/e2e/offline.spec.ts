@@ -40,6 +40,7 @@ test('sale without internet waits on the phone and is sent once when back online
   await page.getByRole('button', { name: /Nokia/ }).first().click()
   await page.getByRole('button', { name: 'Skip and sell (I know this person)' }).click()
   await page.getByRole('button', { name: 'Complete sale' }).click()
+  await page.getByRole('button', { name: 'Confirm and make the bill' }).click()
   await expect(page.getByRole('status')).toContainText('Saved on this phone')
   await page.screenshot({ path: 'test-results/offline-queued.png' })
   await expect(page.getByRole('button', { name: /Nokia/ }).first()).toBeVisible() // back at step 1

@@ -76,6 +76,8 @@ class Shop(UUIDPk, Timestamped, Base):
     # price stickers (owner 2026-10-30): 10 distinct letters that spell the cost; saved sticker choices
     label_code_word: Mapped[str | None] = mapped_column(String(10))
     label_prefs: Mapped[dict | None] = mapped_column(JSON)
+    # owner 2026-10-30: who may sell below asking / change the asking price (sales/approval.py)
+    sale_rules: Mapped[dict | None] = mapped_column(JSON)
 
     organisation: Mapped[Organisation] = relationship(back_populates="shops")
 

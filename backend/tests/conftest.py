@@ -173,7 +173,20 @@ def cat(db, owner):
 @pytest.fixture(autouse=True)
 def _no_superusers(monkeypatch):
     """The developer's .env may list the default test number as a super user (who may open any
-    shop); tests that need one set it themselves."""
+    shop) and carry SMTP / WhatsApp / Anthropic credentials; tests see none of that and set what
+    they need themselves (CI has no .env at all)."""
     from app.core.config import settings
 
     monkeypatch.setattr(settings, "superuser_phones", "", raising=False)
+    for name in (
+        "smtp_host",
+        "smtp_user",
+        "smtp_password",
+        "smtp_from",
+        "whatsapp_token",
+        "whatsapp_phone_id",
+        "whatsapp_templates",
+        "admin_whatsapp",
+        "anthropic_api_key",
+    ):
+        monkeypatch.setattr(settings, name, "", raising=False)

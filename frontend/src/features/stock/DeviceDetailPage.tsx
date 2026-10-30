@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import { BiAlert, BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import { isoDay } from '@/lib/format'
 import RemoveSheet from '@/components/RemoveSheet'
 import { Chip, ErrorText, KV, Loading, MoneyText, PageHeader, Section, Sheet } from '@/components/ui'
 import LabelSheet from '@/components/LabelSheet'
-import { patch, post } from '@/lib/api'
+import { ApiError, patch, post } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 import { useDevice, useDeviceEvent, useDeviceHistory, useDocMutation, useInvalidate, useParties } from '@/lib/queries'
 import type { DeviceDetail, Loan } from '@/lib/types'
@@ -48,6 +48,9 @@ export default function DeviceDetailPage() {
   const ev = useDeviceEvent()
   const loanM = useDocMutation<{ device_id: string; party_id: string; expected_back_at?: string; notes?: string }, Loan>('POST', () => '/api/v1/loans')
   const [sheet, setSheet] = useState<null | 'loan' | 'note' | 'price' | 'edit' | 'remove' | 'label'>(null)
+  const [reason, setReason] = useState('')
+  const [pin, setPin] = useState('')
+  const [priceErr, setPriceErr] = useState<ApiError | null>(null)
   const inv = useInvalidate()
   const [text, setText] = useState('')
   const [partyId, setPartyId] = useState('')
@@ -237,14 +240,19 @@ export default function DeviceDetailPage() {
         <div className="flex flex-col gap-3">
           <BiInput label={sheet === 'price' ? 'stock.asking' : 'common.notes'} type={sheet === 'price' ? 'number' : 'text'} inputMode={sheet === 'price' ? 'decimal' : 'text'} value={text} onChange={(e) => setText(e.target.value)} autoFocus error={priceLow ? 'field.askingBelowCost' : null} />
           {sheet === 'price' ? <PriceHint modelId={d.model_id} storageId={d.storage_id} condition={d.condition} excludeDeviceId={d.id} onUse={(p) => setText(String(p))} /> : null}
+          {sheet === 'price' ? <BiInput label="confirm.reason" value={reason} onChange={(e) => setReason(e.target.value)} /> : null}
+          {sheet === 'price' && priceErr && (priceErr.code === 'pin_required' || priceErr.code === 'pin_wrong') ? <BiInput label="confirm.ownerPin" type="password" inputMode="numeric" maxLength={6} value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))} error={priceErr.code === 'pin_wrong' ? 'confirm.pinWrong' : 'confirm.pinNeeded'} className="num tracking-[.3em]" dir="ltr" /> : null}
+          {sheet === 'price' && priceErr && priceErr.code === 'approval_required' ? <BiAlert text="confirm.blocked" /> : null}
           <BiButton
             text="common.save"
             full
             disabled={priceLow}
             loading={ev.isPending}
             onClick={async () => {
-              if (sheet === 'price') await patch(`/api/v1/devices/${d.id}`, { asking_price: Number(text) })
-              else await ev.mutateAsync({ id: d.id, type: 'note', note: text })
+              if (sheet === 'price') {
+                try { await patch(`/api/v1/devices/${d.id}`, { asking_price: Number(text), asking_reason: reason || undefined, approval_pin: pin || undefined }) } catch (e) { if (e instanceof ApiError) { setPriceErr(e); return } throw e }
+                setPriceErr(null); setReason(''); setPin(''); inv('devices', 'unit-money')
+              } else await ev.mutateAsync({ id: d.id, type: 'note', note: text })
               setSheet(null)
             }}
           />

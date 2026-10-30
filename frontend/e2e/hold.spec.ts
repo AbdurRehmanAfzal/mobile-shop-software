@@ -59,6 +59,7 @@ test('hold a sale, resume it as it was; a phone sold meanwhile comes off', async
   await page.getByRole('button', { name: /Nokia/ }).first().click()
   await page.getByRole('button', { name: 'Skip and sell (I know this person)' }).click()
   await page.getByRole('button', { name: 'Complete sale' }).click()
+  await page.getByRole('button', { name: 'Confirm and make the bill' }).click()
   await expect(page.getByText('Sale complete')).toBeVisible()
   await page.getByRole('button', { name: 'Another sale' }).click()
   await page.getByRole('button', { name: /Held sales/ }).click()

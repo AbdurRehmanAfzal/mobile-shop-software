@@ -193,10 +193,8 @@ def test_price_change_is_an_event_and_search_filters(owner, cat):
     r = owner.patch(f"/api/v1/devices/{d['id']}", json={"asking_price": 1800, "notes": "mint"})
     assert r.status_code == 200 and r.json()["asking_price"] == "1800.00"
     hist = owner.get(f"/api/v1/devices/{d['id']}/history").json()
-    assert hist[-1]["type"] == "price_changed" and hist[-1]["data"] == {
-        "from": "1500.00",
-        "to": "1800.00",
-    }
+    assert hist[-1]["type"] == "price_changed"
+    assert {k: hist[-1]["data"][k] for k in ("from", "to")} == {"from": "1500.00", "to": "1800.00"}
     assert len(owner.get("/api/v1/devices", params={"q": "nokia"}).json()) == 1
     assert len(owner.get("/api/v1/devices", params={"q": IMEI[-6:]}).json()) == 1
     assert owner.get("/api/v1/devices", params={"pta_status": "non_pta"}).json() == []

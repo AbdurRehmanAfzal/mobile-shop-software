@@ -794,6 +794,35 @@ Late loans show **Overdue** and are counted on the top card.
 
 ---
 
+## 15d. Asking price at the sale, price changes on record, who may go under
+
+Every phone carries an **asking price** (set when it is bought or on its page). At the sale the bill
+shows **Asking: 40,000** next to the price box. Type the actual **Sold for** amount — the asking is
+only a target. If the market moved, tick **Update asking price**, type the new asking (say 45,000)
+and a reason; the sale then goes through at the new figure.
+
+**Check before you sell**: tapping **Complete sale** opens a last screen with every phone's cost
+(owner and manager only), asking, new asking when changed, sold price and profit, plus a red line
+when the phone is going under the asking price. **Confirm and make the bill** writes the bill. From
+then on there is one record: the customer's receipt, the phone's history, the owner's reports and
+the khata all read the same sold price.
+
+**Nothing is overwritten.** The phone's history keeps the first asking (40,000), a **Price changed
+40,000 → 45,000 · at the sale · market rate** line with the seller's name and time, and the sale
+at 45,000. On the phone's money card you see **Asking now** and, when it differs, **First asking**.
+
+**Price rules** (More → Settings → Price rules): two switches, **Selling under the asking price**
+and **Changing the asking price**, each **Anyone / Owner-manager / With owner PIN**. The owner and
+manager always may. With *Owner-manager*, staff see "needs the owner or manager" and cannot go
+on. With *Owner PIN*, a PIN box appears on the check screen: the owner types their quick PIN on
+the spot (set under More → Staff), the sale goes through and the approval is written on the record.
+Five wrong PINs lock the box for ten minutes. A finished bill's amounts cannot be edited by anyone;
+a mistake is a return and a new bill.
+
+**Prices report** (Reports → Prices, owner and manager): every asking-price change and every sale
+under the asking price in the period — phone, IMEI, who did it, old → new or asking vs sold, the
+difference, profit, reason, bill number, and who approved by PIN — with a count per person on top.
+
 ## 16. Stock list, IMEI check and phone history
 
 ### Stock in shop (worth)

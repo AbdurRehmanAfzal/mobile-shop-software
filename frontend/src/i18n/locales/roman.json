@@ -1904,6 +1904,53 @@
       "payment_in": "Wasool hua",
       "return_sale": "Bikri wapas",
       "return_purchase": "Bechne wale ko wapas"
-    }
+    },
+    "askingNow": "Ab tay qeemat",
+    "askingFirst": "Pehli tay qeemat",
+    "atCheckout": "bikri ke waqt",
+    "approved": "maalik ki manzoori"
+  },
+  "confirm": {
+    "title": "Bechne se pehle check karein",
+    "hint": "Yehi bill bane ga: gahak ki raseed, maalik ki report aur phone ki kahani sab yehi hindse parhte hain.",
+    "cost": "Laagat",
+    "asking": "Tay qeemat",
+    "newAsking": "Ab tay qeemat",
+    "profit": "Munafa",
+    "askingChanged": "Tay qeemat badli {{a}} → {{b}}",
+    "underAsking": "Tay qeemat se Rs. {{n}} kam",
+    "underAskingShort": "tay se kam",
+    "items": "Deegar cheezein",
+    "paidNow": "Abhi wasool",
+    "soldBy": "Bechne wala",
+    "blocked": "Tay qeemat se kam ya tay qeemat badalne ke liye maalik ya manager chahiye. Un se login karwa kar mukammal karein.",
+    "pinNeeded": "Is qeemat ke liye maalik ka PIN chahiye.",
+    "pinWrong": "PIN ghalat hai. Dobara koshish karein.",
+    "ownerPin": "Maalik ka PIN",
+    "withPin": "PIN ke saath tasdeeq",
+    "go": "Tasdeeq karein aur bill banayein",
+    "flagsNote": "Badli ya kam ki gayi tay qeemat phone ki kahani mein aap ke naam ke saath likhi jaati hai.",
+    "reviseAsking": "Tay qeemat badlein",
+    "reason": "Wajah"
+  },
+  "rules": {
+    "title": "Qeemat ke usool",
+    "hint": "Tay qeemat se kam kaun bech sakta hai aur tay qeemat kaun badal sakta hai. Maalik aur manager hamesha kar sakte hain.",
+    "belowAsking": "Tay qeemat se kam bechna",
+    "askingChange": "Tay qeemat badalna",
+    "allow": "Koi bhi",
+    "manager": "Maalik / manager",
+    "pin": "Maalik ke PIN se",
+    "pinNote": "\"Maalik ke PIN se\": staff tab kar sakta hai jab maalik mauqe par apna PIN likhe; manzoori record hoti hai. PIN Mazeed → Staff mein rakhein."
+  },
+  "prices": {
+    "tab": "Qeematein",
+    "hint": "Tay qeemat ki har tabdeeli aur tay qeemat se kam har bikri, kis ne ki.",
+    "changes": "tabdeeliyan",
+    "under": "tay se kam",
+    "none": "Is arse mein qeemat ki koi tabdeeli nahi",
+    "underAsking": "Tay qeemat se kam bika",
+    "changed": "Tay qeemat badli",
+    "changedAtSale": "Bikri par tay qeemat badli"
   }
 }

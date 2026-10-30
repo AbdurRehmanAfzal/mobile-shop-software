@@ -18,6 +18,9 @@ class PendingAccessoryIn(BaseModel):
 class DeviceSaleLineIn(BaseModel):
     device_id: uuid.UUID
     price: Decimal = Field(ge=0)
+    # owner 2026-10-30: revise the asking price at checkout (recorded as a price event, rule-gated)
+    new_asking_price: Decimal | None = Field(default=None, ge=0)
+    asking_reason: str | None = Field(default=None, max_length=300)
     warranty_days: int = Field(default=0, ge=0, le=3660)
     accessories_given: list[str] = Field(default_factory=list)
     accessories_pending: list[PendingAccessoryIn] = Field(default_factory=list)
@@ -49,6 +52,8 @@ class SaleCreate(BaseModel):
     override_reason: str | None = Field(default=None, max_length=500)
     # owner/manager confirms a sale below the phone's buying price (a loss)
     below_cost_ok: bool = False
+    # the owner's PIN, when the shop's price rules ask for it (below asking / asking change)
+    approval_pin: str | None = Field(default=None, max_length=8)
 
     @model_validator(mode="after")
     def _lines(self):

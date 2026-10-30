@@ -627,3 +627,123 @@ def forecast(db: Session, shop_id: uuid.UUID, today: dt.date) -> dict:
         "previous_7_days": money(prev7),
         "models": models,
     }
+
+
+def price_changes(
+    db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date, show_cost: bool
+) -> dict:
+    """Owner 2026-10-30: every asking-price change and every sale under the asking price in the
+    period, who did it, and per-person counts — the fraud-watch report."""
+    from app.core.clock import local_day
+    from app.db.refs import user_name
+    from app.modules.devices.models import DeviceEvent
+    from app.modules.devices.service import get_device_out
+    from app.modules.devices.state import EventType
+
+    rows: list[dict] = []
+    names: dict = {}
+
+    def who(uid):
+        if uid is None:
+            return None
+        if uid not in names:
+            names[uid] = user_name(db, uid)
+        return names[uid]
+
+    events = db.scalars(
+        select(DeviceEvent)
+        .where(
+            DeviceEvent.shop_id == shop_id,
+            DeviceEvent.type == EventType.PRICE_CHANGED,
+            local_day(DeviceEvent.at) >= d_from,
+            local_day(DeviceEvent.at) <= d_to,
+        )
+        .order_by(DeviceEvent.at.desc())
+    ).all()
+    for e in events:
+        d = get_device_out(db, shop_id, e.device_id)
+        data = e.data or {}
+        old = Decimal(data["from"]) if data.get("from") else None
+        new = Decimal(data["to"]) if data.get("to") else (e.amount or None)
+        rows.append(
+            {
+                "kind": "asking_changed",
+                "at": e.at,
+                "device_id": e.device_id,
+                "label": f"{d['brand_name']} {d['model_name']}",
+                "imei1": d["imei1"],
+                "old_asking": old,
+                "new_asking": new,
+                "sold_price": None,
+                "diff": (new - old) if old is not None and new is not None else None,
+                "user_id": e.user_id,
+                "user_name": who(e.user_id),
+                "approved_by": who(uuid.UUID(data["approved_by"]))
+                if data.get("approved_by")
+                else None,
+                "reason": data.get("reason"),
+                "source": data.get("source") or "manual",
+                "invoice_no": data.get("invoice_no"),
+                "profit": None,
+            }
+        )
+    lines = db.execute(
+        select(InvoiceLine, Invoice)
+        .join(Invoice, Invoice.id == InvoiceLine.invoice_id)
+        .where(
+            Invoice.shop_id == shop_id,
+            Invoice.status != InvoiceStatus.VOID,
+            Invoice.date >= d_from,
+            Invoice.date <= d_to,
+            InvoiceLine.device_id.is_not(None),
+            InvoiceLine.asking_price.is_not(None),
+            InvoiceLine.unit_price < InvoiceLine.asking_price,
+        )
+        .order_by(Invoice.date.desc(), Invoice.created_at.desc())
+    ).all()
+    for ln, inv in lines:
+        d = get_device_out(db, shop_id, ln.device_id)
+        sold = db.scalar(
+            select(DeviceEvent).where(
+                DeviceEvent.device_id == ln.device_id,
+                DeviceEvent.type == EventType.SOLD,
+                DeviceEvent.document_id == inv.id,
+            )
+        )
+        approved = (sold.data or {}).get("approved_by") if sold else None
+        rows.append(
+            {
+                "kind": "below_asking",
+                "at": inv.created_at,
+                "device_id": ln.device_id,
+                "label": f"{d['brand_name']} {d['model_name']}",
+                "imei1": d["imei1"],
+                "old_asking": ln.asking_price,
+                "new_asking": None,
+                "sold_price": ln.unit_price,
+                "diff": ln.unit_price - ln.asking_price,
+                "user_id": inv.created_by,
+                "user_name": who(inv.created_by),
+                "approved_by": who(uuid.UUID(approved)) if approved else None,
+                "reason": None,
+                "source": "sale",
+                "invoice_no": inv.no,
+                "profit": (ln.unit_price - ln.cost) if show_cost else None,
+            }
+        )
+    rows.sort(key=lambda r: r["at"], reverse=True)
+    by_user: dict = {}
+    for r in rows:
+        k = r["user_name"] or "—"
+        g = by_user.setdefault(
+            k, {"user_name": k, "asking_changed": 0, "below_asking": 0, "under_by": ZERO}
+        )
+        g[r["kind"]] += 1
+        if r["kind"] == "below_asking":
+            g["under_by"] += -r["diff"]
+    return {
+        "rows": rows,
+        "by_user": sorted(
+            by_user.values(), key=lambda g: -(g["asking_changed"] + g["below_asking"])
+        ),
+    }

@@ -50,6 +50,7 @@ test('sale paid online and from abroad, purchase by cheque', async ({ page }) =>
   await page.getByLabel('TID / reference (optional)').fill('TID778812')
   await page.screenshot({ path: 'test-results/pay-online.png', fullPage: true })
   await page.getByRole('button', { name: 'Complete sale' }).click()
+  await page.getByRole('button', { name: 'Confirm and make the bill' }).click()
   await expect(page.getByText('Sale complete')).toBeVisible()
 
   // remittance: 500 SAR × 74.20 = Rs. 37,100
@@ -63,6 +64,7 @@ test('sale paid online and from abroad, purchase by cheque', async ({ page }) =>
   await page.getByRole('button', { name: 'Western Union', exact: true }).click()
   await page.screenshot({ path: 'test-results/pay-remittance.png', fullPage: true })
   await page.getByRole('button', { name: 'Complete sale' }).click()
+  await page.getByRole('button', { name: 'Confirm and make the bill' }).click()
   await expect(page.getByText('Sale complete')).toBeVisible()
 
   // both bills show how they were paid

@@ -84,7 +84,13 @@ def _pay_row(p: Payment, amount: Decimal, kind: str) -> dict:
 
 
 def _side(
-    db: Session, shop_id: uuid.UUID, doc, line_total: Decimal, doc_type: str, returned_at
+    db: Session,
+    shop_id: uuid.UUID,
+    doc,
+    line_total: Decimal,
+    doc_type: str,
+    returned_at,
+    asking=None,
 ) -> dict:
     """One side of a phone's money: the document, this phone's share, the payments on it."""
     party = _party(db, doc.party_id)
@@ -113,6 +119,7 @@ def _side(
         "paid": paid,
         "remaining": remaining,
         "returned_at": returned_at,
+        "asking_at_sale": money(asking) if asking is not None else None,
     }
 
 
@@ -152,6 +159,17 @@ def _returns_for(db: Session, shop_id: uuid.UUID, device_id: uuid.UUID, doc_ids:
     return out
 
 
+def _original_asking(events, d) -> Decimal | None:
+    """The first asking price ever set: on the intake event, else the first change's 'from'."""
+    for e, _pn, _un in events:
+        if e.type == "purchased" and (e.data or {}).get("asking"):
+            return Decimal(e.data["asking"])
+    for e, _pn, _un in events:
+        if e.type == "price_changed" and (e.data or {}).get("from"):
+            return Decimal(e.data["from"])
+    return money(d.asking_price) if d.asking_price is not None else None
+
+
 def device_money(db: Session, shop_id: uuid.UUID, device_id: uuid.UUID, *, can_cost: bool) -> dict:
     d = get_device(db, shop_id, device_id)
     # every purchase and sale this phone was ever on (a phone can come back and be sold again)
@@ -179,7 +197,8 @@ def device_money(db: Session, shop_id: uuid.UUID, device_id: uuid.UUID, *, can_c
         _side(db, shop_id, doc, money(ln.net_cost), "purchase", ln.returned_at) for ln, doc in pl
     ]
     sales = [
-        _side(db, shop_id, doc, money(ln.line_total), "invoice", ln.returned_at) for ln, doc in il
+        _side(db, shop_id, doc, money(ln.line_total), "invoice", ln.returned_at, ln.asking_price)
+        for ln, doc in il
     ]
     purchase = next(
         (p for p in reversed(purchases) if not p["returned_at"]),
@@ -190,6 +209,15 @@ def device_money(db: Session, shop_id: uuid.UUID, device_id: uuid.UUID, *, can_c
         db, shop_id, device_id, {p["doc_id"] for p in purchases} | {s["doc_id"] for s in sales}
     )
 
+    # the story in order: events, bills, payments, returns
+    timeline: list[dict] = []
+    ev = db.execute(
+        select(DeviceEvent, Party.name, User.name)
+        .outerjoin(Party, Party.id == DeviceEvent.party_id)
+        .outerjoin(User, User.id == DeviceEvent.user_id)
+        .where(DeviceEvent.device_id == device_id)
+        .order_by(DeviceEvent.seq)
+    ).all()
     cost = (
         purchase["line_total"]
         if purchase
@@ -205,6 +233,7 @@ def device_money(db: Session, shop_id: uuid.UUID, device_id: uuid.UUID, *, can_c
         "paid_out": purchase["paid"] if purchase else (cost if cost is not None else None),
         "payable": purchase["remaining"] if purchase else ZERO,
         "asking_price": d.asking_price,
+        "original_asking": _original_asking(ev, d),
         "sold_for": sold_for,
         "received": sale["paid"] if sale else ZERO,
         "receivable": sale["remaining"] if sale else ZERO,
@@ -212,15 +241,6 @@ def device_money(db: Session, shop_id: uuid.UUID, device_id: uuid.UUID, *, can_c
         "refunded": sum((r["refund"] for r in returns), ZERO),
     }
 
-    # the story in order: events, bills, payments, returns
-    timeline: list[dict] = []
-    ev = db.execute(
-        select(DeviceEvent, Party.name, User.name)
-        .outerjoin(Party, Party.id == DeviceEvent.party_id)
-        .outerjoin(User, User.id == DeviceEvent.user_id)
-        .where(DeviceEvent.device_id == device_id)
-        .order_by(DeviceEvent.seq)
-    ).all()
     for e, pn, un in ev:
         if e.type in ("purchased", "sold"):
             continue  # the bill rows below say it with the money

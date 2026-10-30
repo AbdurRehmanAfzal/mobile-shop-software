@@ -24,6 +24,7 @@ from app.modules.notifications import service as notify
 from app.modules.parties.models import Party
 from app.modules.paymode import service as paymode
 from app.modules.purchases.service import _allocate_discount, next_number
+from app.modules.sales import approval
 from app.modules.sales.models import HeldSale, Invoice, InvoiceLine, InvoiceStatus
 from app.modules.sales.schemas import HeldSaleIn, SaleCreate
 from app.modules.verification.service import NotSellable, assert_sellable
@@ -66,6 +67,9 @@ def create_sale(
 
     # ---- devices: sellability -------------------------------------------------
     devices: list[Device] = []
+    askings: dict = {}  # device id -> asking price at the time of this sale
+    revisions: list = []  # (device, old, new, reason, approver)
+    below_asking: dict = {}  # device id -> approver
     for dl in data.devices:
         device = get_device(db, shop_id, dl.device_id)
         if device.status == DeviceStatus.ON_LOAN and not (
@@ -116,6 +120,22 @@ def create_sale(
                 message_en="This price is below the buying price. Only the owner or manager can sell at a loss.",
                 message_ur="یہ قیمت خرید قیمت سے کم ہے۔ نقصان پر صرف مالک یا منیجر بیچ سکتا ہے۔",
             )
+        # owner 2026-10-30: the asking price may be revised here (rule-gated, recorded), and a sale
+        # under the asking price needs the owner/manager or the owner's PIN (shop rule)
+        asking = money(device.asking_price) if device.asking_price is not None else None
+        if dl.new_asking_price is not None and money(dl.new_asking_price) != (
+            asking if asking is not None else Decimal(-1)
+        ):
+            approver = approval.require(db, shop, ctx, "asking_change", data.approval_pin)
+            revisions.append(
+                (device, asking, money(dl.new_asking_price), dl.asking_reason, approver)
+            )
+            asking = money(dl.new_asking_price)
+        if asking is not None and money(dl.price) < asking:
+            below_asking[device.id] = approval.require(
+                db, shop, ctx, "below_asking", data.approval_pin
+            )
+        askings[device.id] = asking
         devices.append(device)
 
     # ---- money ------------------------------------------------------------------
@@ -210,6 +230,7 @@ def create_sale(
                 tax_share=tshare,
                 line_total=line_total,
                 cost=cost,
+                asking_price=askings.get(device.id),
                 warranty_days=dl.warranty_days,
                 accessories_given=dl.accessories_given,
                 accessories_pending=[p.model_dump(mode="json") for p in dl.accessories_pending],
@@ -291,6 +312,25 @@ def create_sale(
     group = post(db, shop_id, user_id, posting) if posting.lines else None
     invoice.ledger_group_id = group.id if group else None
 
+    for device, old, new, reason, approver in revisions:
+        apply_event(
+            db,
+            shop_id,
+            user_id,
+            device,
+            EventType.PRICE_CHANGED,
+            amount=new,
+            document_type="invoice",
+            document_id=invoice.id,
+            data={
+                "from": str(old) if old is not None else None,
+                "to": str(new),
+                "reason": reason,
+                "source": "checkout",
+                "invoice_no": invoice.no,
+                "approved_by": str(approver) if approver else None,
+            },
+        )
     for dl, device in zip(data.devices, devices, strict=True):
         apply_event(
             db,
@@ -307,6 +347,13 @@ def create_sale(
                 "invoice_no": invoice.no,
                 "paid_now": str(paid),
                 "warranty_days": dl.warranty_days,
+                "asking_price": str(askings[device.id])
+                if askings.get(device.id) is not None
+                else None,
+                "below_asking": device.id in below_asking,
+                "approved_by": str(below_asking[device.id])
+                if below_asking.get(device.id)
+                else None,
             },
         )
     labels = []
@@ -327,7 +374,14 @@ def create_sale(
         entity="invoice",
         entity_id=invoice.id,
         action="create",
-        after={"no": invoice.no, "total": str(total), "paid": str(paid), "devices": len(devices)},
+        after={
+            "no": invoice.no,
+            "total": str(total),
+            "paid": str(paid),
+            "devices": len(devices),
+            "below_asking": len(below_asking),
+            "asking_revised": len(revisions),
+        },
     )
     if commit:
         db.commit()

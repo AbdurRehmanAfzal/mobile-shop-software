@@ -163,6 +163,9 @@ class OpeningStockIn(DeviceIdentity):
 
 
 class DeviceUpdate(BaseModel):
+    # owner 2026-10-30: a reason for an asking-price change, and the owner's PIN when the rule asks
+    asking_reason: str | None = Field(default=None, max_length=300)
+    approval_pin: str | None = Field(default=None, max_length=8)
     cellular: bool | None = None
     size_mm: int | None = Field(default=None, ge=20, le=60)
     battery_health: int | None = Field(default=None, ge=1, le=100)
