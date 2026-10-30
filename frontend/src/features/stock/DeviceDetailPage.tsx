@@ -11,6 +11,7 @@ import { useDevice, useDeviceEvent, useDeviceHistory, useDocMutation, useInvalid
 import type { DeviceDetail, DeviceEvent, Loan } from '@/lib/types'
 import DeviceLineSheet, { emptyDraft, type DeviceLineDraft } from '@/features/purchase/DeviceLineSheet'
 import { hasPta, specLine } from './StockPage'
+import PriceHint from '@/components/PriceHint'
 
 const EVENT_TONE: Record<string, 'ok' | 'warn' | 'bad' | 'muted' | 'ink'> = {
   purchased: 'ok', verified: 'ok', sold: 'ink', sale_returned: 'warn', loaned_out: 'warn', loan_returned: 'ok',
@@ -265,6 +266,7 @@ export default function DeviceDetailPage() {
       <Sheet open={sheet === 'note' || sheet === 'price'} onClose={() => setSheet(null)} title={sheet === 'price' ? 'stock.changePrice' : 'stock.addNote'}>
         <div className="flex flex-col gap-3">
           <BiInput label={sheet === 'price' ? 'stock.asking' : 'common.notes'} type={sheet === 'price' ? 'number' : 'text'} inputMode={sheet === 'price' ? 'decimal' : 'text'} value={text} onChange={(e) => setText(e.target.value)} autoFocus error={priceLow ? 'field.askingBelowCost' : null} />
+          {sheet === 'price' ? <PriceHint modelId={d.model_id} storageId={d.storage_id} condition={d.condition} excludeDeviceId={d.id} onUse={(p) => setText(String(p))} /> : null}
           <BiButton
             text="common.save"
             full

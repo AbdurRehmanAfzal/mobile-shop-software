@@ -1813,5 +1813,17 @@
     "setPassword": "Password rakhein aur login",
     "signupHint": "Aap ke WhatsApp par code bheja gaya. Likhein, tasdeeq karein, phir dobara Create shop account dabayein.",
     "verified": "Number ki tasdeeq ho gayi"
+  },
+  "hint": {
+    "titleExact": "Is phone ka aap ka rate (yehi storage aur haalat)",
+    "titleCondition": "Is model ka aap ka rate (yehi haalat)",
+    "titleModel": "Is model ka aap ka rate",
+    "titleStock": "Yehi model aap ke stock mein",
+    "last": "Aakhri baar Rs. {{p}} mein bika, {{d}}",
+    "soldIn": "{{n}} din mein bika",
+    "range": "6 mahine mein {{n}} bike: Rs. {{a}} – {{b}}",
+    "cost": "Aam tor par Rs. {{p}} mein khareeda",
+    "inStock": "Abhi {{n}} stock mein Rs. {{a}} – {{b}} par",
+    "use": "{{p}} rakhein"
   }
 }

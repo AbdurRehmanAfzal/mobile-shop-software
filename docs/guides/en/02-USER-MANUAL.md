@@ -827,6 +827,15 @@ Buttons: **Sell**, **ID card check**, **Give on loan (amanat)**, **Mark faulty**
 
 ![Phone history](../images/device-history.png)
 
+## 15a. Rate suggestion (what you sold it for last time)
+
+Wherever you type a price, a green box shows your own history for that model: **Last sold Rs. …
+on …**, how many days it took, **n sold in 6 months: Rs. low – high**, **Usually bought at Rs. …**
+(owner/manager only) and how many of the same model are in stock now and at what price. Tap
+**Use …** to take the suggested price (the middle of your recent sales, rounded to the hundred).
+It appears in **Sell** under *Sold for*, in **Add stock** under *Asking price* once the model is
+chosen, and in a phone's **Change price**. It reads only your shop's sales, never other shops'.
+
 ## 16a. Price stickers with a barcode
 
 Every phone and item can carry a sticker: shop name, model, storage · colour, **price**, a **Code 128

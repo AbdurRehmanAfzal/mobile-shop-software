@@ -1,4 +1,5 @@
 import uuid
+from decimal import Decimal
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, Query
@@ -69,6 +70,44 @@ def opening_stock(
     data: OpeningStockIn, ctx: Annotated[Ctx, Depends(require_cap(Cap.VIEW_COST))], db: DB
 ):
     return service.add_opening_stock(db, ctx.shop_id, ctx.id, data)
+
+
+class PriceHintOut(BaseModel):
+    basis: str  # exact | condition | model | none
+    samples: int
+    in_stock_same: int
+    stock_asking_low: Decimal | None
+    stock_asking_high: Decimal | None
+    last: dict | None
+    median: Decimal | None
+    low: Decimal | None
+    high: Decimal | None
+    suggested: Decimal | None
+    avg_days_to_sell: float | None
+    cost_median: Decimal | None
+
+
+@router.get("/price-hint", response_model=PriceHintOut)
+def price_hint(
+    ctx: Ctx,
+    db: DB,
+    model_id: uuid.UUID,
+    storage_id: uuid.UUID | None = None,
+    condition: str | None = None,
+    exclude_device_id: uuid.UUID | None = None,
+):
+    """What this shop sold the same model for lately (owner 2026-10-30)."""
+    from app.modules.devices.pricing import price_hint as hint
+
+    return hint(
+        db,
+        ctx.shop_id,
+        model_id,
+        storage_id,
+        condition,
+        can_cost=ctx.can(Cap.VIEW_COST),
+        exclude_device_id=exclude_device_id,
+    )
 
 
 @router.get("/{device_id}", response_model=DeviceDetailOut)

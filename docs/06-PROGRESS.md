@@ -101,7 +101,7 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 ## Phase 4 — Differentiators
 | Item | FR | Status |
 |---|---|---|
-| AI assistant + OCR + pricing | FR-AI-01..04 | ⬜ |
+| AI assistant + OCR + pricing | FR-AI-01..04 | 🔄 | **2026-10-30** FR-AI-03 rate suggestion without an LLM: `devices/pricing.py` + `GET /devices/price-hint` (own sales, 180 days, exact → condition → model fallback, median rounded to 100, last sale + days to sell, cost median for VIEW_COST, same model in stock); `PriceHint` in sale, add-stock and change-price (ADR-027). FR-AI-01/02/04 need an LLM key: owner to decide (cost) |
 | FBR POS | FR-TAX-04 | ⬜ |
 | Cloud sync / offline | FR-PLT-05 | 🔄 | **2026-10-29 offline mode**: queries persisted 24 h (localStorage, cleared on logout), sale / purchase / payment / expense queued on the phone when the network is down (`lib/offline.ts`, `lib/outbox.ts`, OfflineBar), sent in order with `Idempotency-Key` (server `core/idempotency.py`, table `idempotency_keys`). Two-way sync of edits made offline is not planned |
 

@@ -1813,5 +1813,17 @@
     "setPassword": "Set password and log in",
     "signupHint": "A code was sent to your WhatsApp. Type it, confirm, then tap Create shop account again.",
     "verified": "Number confirmed"
+  },
+  "hint": {
+    "titleExact": "Your rate for this phone (same storage and condition)",
+    "titleCondition": "Your rate for this model (same condition)",
+    "titleModel": "Your rate for this model",
+    "titleStock": "Same model in your stock",
+    "last": "Last sold Rs. {{p}} on {{d}}",
+    "soldIn": "sold in {{n}} days",
+    "range": "{{n}} sold in 6 months: Rs. {{a}} – {{b}}",
+    "cost": "Usually bought at Rs. {{p}}",
+    "inStock": "{{n}} in stock now at Rs. {{a}} – {{b}}",
+    "use": "Use {{p}}"
   }
 }

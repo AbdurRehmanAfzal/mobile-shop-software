@@ -828,6 +828,16 @@ Buttons: **Bechein**, **Shanakhti card check**, **Amanat par dein**, **Kharab li
 
 ![Phone ki kahani](../images/device-history.png)
 
+## 15a. Rate ka mashwara (pichli baar kitne mein becha)
+
+Jahan bhi qeemat likhein, ek sabz box us model ki aap ki apni kahani dikhata hai: **Aakhri baar Rs. …
+mein bika, …**, kitne din mein bika, **6 mahine mein n bike: Rs. kam – zyada**, **Aam tor par Rs. …
+mein khareeda** (sirf maalik/manager) aur yehi model abhi stock mein kitne aur kis qeemat par. **…
+rakhein** dabayein to mashware wali qeemat lag jati hai (pichli bikri ka darmiyan, sau tak round).
+Ye **Bechein** mein *Kitne mein becha* ke neeche, **Stock daalein** mein model chunte hi *Bechne ki
+qeemat* ke neeche, aur phone ke **Qeemat badlein** mein aata hai. Sirf aap ki dukaan ki bikri parhta
+hai, kisi aur dukaan ki nahi.
+
 ## 16a. Barcode wale qeemat ke sticker
 
 Har phone aur item par sticker lag sakta hai: dukaan ka naam, model, storage · rang, **qeemat**, **IMEI

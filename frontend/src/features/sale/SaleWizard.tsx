@@ -26,6 +26,7 @@ import type { Device, DeviceDetail, Invoice, Party } from '@/lib/types'
 import { DeviceRow } from '@/features/stock/StockPage'
 import DocActions from '@/components/DocShare'
 import DocLangPicker from '@/components/DocLangPicker'
+import PriceHint from '@/components/PriceHint'
 import { HeldButton, HeldSalesSheet, useHeldSales, type HeldSale } from './HeldSales'
 
 interface Line {
@@ -247,6 +248,7 @@ export default function SaleWizard() {
                 <BtnText k={'crud.delete'} /></button>
               </div>
               <BiInput label="counter.soldFor" type="number" inputMode="numeric" min={0} value={l.price} onChange={(e) => setLines(lines.map((x) => (x.device.id === l.device.id ? { ...x, price: e.target.value } : x)))} className="num text-2xl" />
+              <PriceHint modelId={l.device.model_id} storageId={l.device.storage_id} condition={l.device.condition} excludeDeviceId={l.device.id} onUse={(p) => setLine(l, { price: String(p) })} />
               {belowCost(l) ? (
                 <div className="flex flex-col gap-2 rounded-2xl bg-expense p-3 text-expense-fg">
                   <div className="flex items-start gap-2">
