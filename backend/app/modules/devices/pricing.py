@@ -10,6 +10,7 @@ from decimal import Decimal
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.clock import local_date
 from app.core.clock import today as shop_today
 from app.modules.devices.models import Device
 from app.modules.devices.state import DeviceStatus
@@ -17,6 +18,12 @@ from app.modules.sales.models import Invoice, InvoiceLine, InvoiceStatus
 
 WINDOW_DAYS = 180
 ROUND_TO = Decimal(100)
+
+
+def _seen_day(seen) -> dt.date:
+    """the shop day a phone came in: the sale date is a shop day too, so the two must share a
+    calendar (after 19:00 UTC Pakistan is already on the next day; CI found the 1-day drift)"""
+    return local_date(seen) if isinstance(seen, dt.datetime) else seen
 
 
 def _round(v: Decimal) -> Decimal:
@@ -104,12 +111,7 @@ def price_hint(
     days = []
     for r in sample:
         if r.first_seen_at:
-            seen = (
-                r.first_seen_at.date()
-                if isinstance(r.first_seen_at, dt.datetime)
-                else r.first_seen_at
-            )
-            days.append(max(0, (r.date - seen).days))
+            days.append(max(0, (r.date - _seen_day(r.first_seen_at)).days))
     median = Decimal(statistics.median(prices))
     out.update(
         {
@@ -117,17 +119,7 @@ def price_hint(
                 "price": Decimal(last.unit_price),
                 "date": last.date,
                 "days_to_sell": (
-                    max(
-                        0,
-                        (
-                            last.date
-                            - (
-                                last.first_seen_at.date()
-                                if isinstance(last.first_seen_at, dt.datetime)
-                                else last.first_seen_at
-                            )
-                        ).days,
-                    )
+                    max(0, (last.date - _seen_day(last.first_seen_at)).days)
                     if last.first_seen_at
                     else None
                 ),

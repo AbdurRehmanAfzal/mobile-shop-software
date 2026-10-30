@@ -4,7 +4,17 @@ import datetime as dt
 import uuid
 from decimal import Decimal
 
-from sqlalchemy import Boolean, Date, ForeignKey, Integer, String, Text, UniqueConstraint, Uuid
+from sqlalchemy import (
+    Boolean,
+    Date,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+    Uuid,
+)
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import ZERO, Base, ShopScoped, Timestamped, UUIDPk
@@ -25,7 +35,10 @@ class ExpenseCategory(UUIDPk, Base):
 
 class Expense(UUIDPk, ShopScoped, Timestamped, Base):
     __tablename__ = "expenses"
-    __table_args__ = (UniqueConstraint("shop_id", "no", name="uq_expenses_shop_no"),)
+    __table_args__ = (
+        UniqueConstraint("shop_id", "no", name="uq_expenses_shop_no"),
+        Index("ix_expenses_shop_date", "shop_id", "date"),
+    )
 
     no: Mapped[str] = mapped_column(String(20), nullable=False)
     category_id: Mapped[uuid.UUID] = mapped_column(

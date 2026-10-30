@@ -18,6 +18,8 @@ from app.modules.ledger.schemas import (
     OpeningBalanceRequest,
     ReverseRequest,
     StatementOut,
+    TransferCreate,
+    TransferOut,
 )
 
 router = APIRouter(prefix="/api/v1/ledger", tags=["ledger"])
@@ -25,6 +27,8 @@ router = APIRouter(prefix="/api/v1/ledger", tags=["ledger"])
 Settings = Annotated[Ctx, Depends(require_cap(Cap.MANAGE_SETTINGS))]
 Void = Annotated[Ctx, Depends(require_cap(Cap.VOID))]
 Cost = Annotated[Ctx, Depends(require_cap(Cap.VIEW_COST))]
+# moving money between the shop's own accounts: owner and manager (who also keep expenses)
+Money = Annotated[Ctx, Depends(require_cap(Cap.EXPENSES))]
 
 
 def _group_out(g) -> GroupOut:
@@ -77,6 +81,33 @@ def cash_book(
     book = service.cash_book(db, ctx.shop_id, account_id, date_from, date_to)
     book["rows"] = [CashBookRow(**{**r, "in": r.pop("in_")}) for r in book["rows"]]
     return book
+
+
+@router.post("/transfers", response_model=TransferOut, status_code=201)
+def create_transfer(data: TransferCreate, ctx: Money, db: DB):
+    g = service.transfer(
+        db,
+        ctx.shop_id,
+        ctx.id,
+        from_account_id=data.from_account_id,
+        to_account_id=data.to_account_id,
+        amount=data.amount,
+        day=data.date,
+        note=data.note,
+    )
+    db.commit()
+    return service.transfer_out(db, service.get_group(db, ctx.shop_id, g.id))
+
+
+@router.get("/transfers", response_model=list[TransferOut])
+def transfers(
+    ctx: Money,
+    db: DB,
+    date_from: date | None = None,
+    date_to: date | None = None,
+    limit: int = 100,
+):
+    return service.list_transfers(db, ctx.shop_id, date_from, date_to, min(limit, 500))
 
 
 @router.get("/parties/{party_id}/statement", response_model=StatementOut)

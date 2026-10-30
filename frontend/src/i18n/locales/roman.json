@@ -424,7 +424,10 @@
       "cheque": "Cheque",
       "bank": "Bank",
       "remittance": "Bahar se"
-    }
+    },
+    "cheque": "Cheque",
+    "remittance": "Tarseel",
+    "online": "Online"
   },
   "loan": {
     "title": "Amanat",
@@ -710,7 +713,15 @@
     "opening": "Shuru ka baqaya",
     "book": "Roznamcha",
     "in": "Aaya",
-    "out": "Gaya"
+    "out": "Gaya",
+    "move": "Accounts ke darmiyan paise muntaqil karein",
+    "moveHint": "Counter ki naqdi bank mein, ya bank se counter par. Na bikri hai na kharch: sirf dono balance badalte hain.",
+    "from": "Kahan se",
+    "to": "Kahan",
+    "amount": "Raqam",
+    "note": "Note",
+    "moveNow": "Muntaqil karein",
+    "transfers": "Muntaqil ki gayi raqam"
   },
   "home": {
     "hello": "Assalam-o-Alaikum",
@@ -999,21 +1010,28 @@
       "sales": "Bikri",
       "udhaar_back": "Udhaar wapas mila",
       "repairs": "Marammat",
-      "other": "Kuch aur"
+      "other": "Kuch aur",
+      "transfer": "Apne account se aaya"
     },
     "outWhy": {
       "stock": "Stock khareeda",
       "returns": "Wapsi",
       "expenses": "Kharche",
       "paid_out": "Logon ko diye",
-      "other": "Kuch aur"
+      "other": "Kuch aur",
+      "transfer": "Apne account mein gaya"
     },
     "week": "Hafta",
     "exchangeHint": "Gahak ka purana phone lein aur naya dein; farq khud hisaab ho jata hai",
     "loanHint": "Doosri dukaan ko dikhane ya bechne ke liye diya gaya phone; bikne ya wapas aane tak aap ka rehta hai",
     "lowStock": "cheezein kam stock mein",
     "instToday": "qistein aaj banti hain",
-    "instOverdue": "qist ke plan late"
+    "instOverdue": "qist ke plan late",
+    "grossSales": "Riayat se pehle bikri",
+    "discounts": "Di gayi riayat",
+    "salesReturns": "Gahakon ne wapas kiya",
+    "netSales": "Khalis bikri",
+    "operatingProfit": "Kharchon ke baad munafa"
   },
   "admin": {
     "title": "Super admin",
@@ -1252,6 +1270,11 @@
       "title": "Bill cancel karna",
       "body": "Ghalti se bana bill khatam karta hai. Kuch mitaya nahi jata: app ulti entry daal deti hai, is liye kahani aur hisaab dono theek rehte hain.",
       "example": "Ek bikri do dafa chadh gayi: ek cancel kar dein."
+    },
+    "audit": {
+      "title": "Dukaan ka audit",
+      "body": "Kisi bhi arse ka poora karobar ek jagah: kya bika, kya khareeda, asal munafa, paisa kahan se aaya kahan gaya, kis par kya baqi hai, aur stock ke phone. Balance arse ke shuru aur aakhir (ya chune hue din) ke dikhte hain; har khana apne peechay ki list kholta hai.",
+      "example": "\"Pichla mahina\" chunein: bikri 1,250,000, munafa 180,000, naqad aur bank shuru mein 300,000 aur aakhir mein 410,000, logon par 95,000 baqi."
     }
   },
   "items": {
@@ -1773,6 +1796,109 @@
       "modules": "Modules",
       "password_set_by_admin": "Admin ne password rakha",
       "super_admin_access": "Super admin ne khola"
+    },
+    "title": "Dukaan ka audit",
+    "hint": "Kisi bhi arse ka har rupaya, har phone aur har banda: bikri, munafa, paisa, udhaar, stock",
+    "nav": {
+      "overview": "Khulasa",
+      "finance": "Maliyat"
+    },
+    "preset": {
+      "today": "Aaj",
+      "yesterday": "Kal",
+      "this_week": "Ye hafta",
+      "last_week": "Pichla hafta",
+      "this_month": "Ye mahina",
+      "last_month": "Pichla mahina",
+      "this_year": "Ye saal",
+      "all_time": "Shuru se",
+      "custom": "Tareekh se tareekh tak"
+    },
+    "days": "din",
+    "asOf": "Is din tak",
+    "asOfHint": "Is din ke balance",
+    "netSales": "Khalis bikri",
+    "bills": "bill",
+    "phones": "phone",
+    "inPeriod": "Is arse mein",
+    "purchases": "Khareeda gaya stock",
+    "expenses": "Kharche",
+    "moneyIn": "Paisa aaya",
+    "moneyOut": "Paisa gaya",
+    "vsPrevious": "Pehle",
+    "transfersNote": "Apne accounts ke darmiyan muntaqil (upar shamil nahi):",
+    "balances": "Balance: arse ke shuru → aakhir",
+    "balancesAsOf": "Chune hue din ke balance",
+    "cashBank": "Naqad aur bank",
+    "stock": "Stock mein phone",
+    "receivable": "Logon par baqi",
+    "payable": "Hum ne dene hain",
+    "opening": "Shuru",
+    "closing": "Aakhir",
+    "now": "Ab",
+    "atCost": "laagat par",
+    "atAsking": "tay qeemat par",
+    "receivedInPeriod": "Is arse mein wasool",
+    "paidInPeriod": "Is arse mein ada",
+    "people": "log",
+    "checksOk": "Hisaab durust hai",
+    "checksFail": "Ek check nakaam hai — support ko batayein",
+    "check": {
+      "cash": "Naqad: shuru + aaya − gaya = aakhir",
+      "groups_balanced": "Har indraj barabar",
+      "party_balances": "Khata = ledger",
+      "stock_units": "Stock: shuru + aaya − gaya = aakhir",
+      "allocations": "Adaigiyan ≤ bill",
+      "account_kinds": "Account ki iqsaam maloom"
+    },
+    "coverage": "Record shuru",
+    "noRecords": "Abhi koi record nahi",
+    "limitations": "Record nahi, is liye nahi dikhaya: billon ki aakhri tareekh (udhaar ki umar bill se gini jaati hai), khareed par tax, tarseel ki fees.",
+    "noData": "Is arse mein kuch nahi",
+    "gran": {
+      "day": "din war",
+      "week": "hafta war",
+      "month": "mahina war"
+    },
+    "fin": {
+      "pnl": "Nafa o nuqsan",
+      "cash": "Naqad aur bank",
+      "expenses": "Kharche",
+      "tax": "Tax",
+      "cameIn": "Paisa kahan se aaya",
+      "wentOut": "Paisa kahan gaya",
+      "perAccount": "Har account",
+      "ofWhichTransfers": "jis mein apne accounts ke darmiyan muntaqili",
+      "channels": "Zariye ke lihaz se (account ki qisam)",
+      "paymentsByMethod": "Khate ki adaigiyan tareeqe ke lihaz se",
+      "international": "Bairoon-e-mulk se (tarseelat)",
+      "entries": "indraj",
+      "largest": "Sab se bare kharche",
+      "taxedBills": "Tax wale bill",
+      "taxable": "Qabil-e-tax bikri",
+      "taxNet": "Wapsi ke baad tax",
+      "walkIn": "Walk-in",
+      "inclusive": "shamil",
+      "exclusive": "ilawa",
+      "noTax": "Is arse mein koi tax wala bill nahi"
+    },
+    "reason": {
+      "reversal": "Mansookhi",
+      "sales_now": "Counter par wasool bikri",
+      "udhaar_received": "Udhaar wasool",
+      "repairs": "Marammat",
+      "refund_from_supplier": "Supplier se wapsi",
+      "transfer_in": "Apne account se aaya",
+      "opening": "Ibtidai",
+      "other_in": "Deegar aamad",
+      "stock_now": "Khareed par ada stock",
+      "paid_to_people": "Logon ko ada (udhaar)",
+      "expenses": "Kharche",
+      "refunds": "Gahakon ko wapsi",
+      "repair_parts": "Marammat ke purze",
+      "fees": "Software fees",
+      "transfer_out": "Apne account mein gaya",
+      "other_out": "Deegar kharch"
     }
   },
   "label": {

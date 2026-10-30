@@ -73,6 +73,7 @@ class LedgerEntry(UUIDPk, ShopScoped, Base):
     __table_args__ = (
         Index("ix_ledger_entries_account_at", "shop_id", "account", "at"),
         Index("ix_ledger_entries_party_at", "shop_id", "party_id", "at"),
+        Index("ix_ledger_entries_cash_at", "shop_id", "cash_account_id", "at"),
     )
 
     group_id: Mapped[uuid.UUID] = mapped_column(

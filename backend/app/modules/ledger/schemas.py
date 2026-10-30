@@ -1,3 +1,4 @@
+import datetime as dt
 import uuid
 from datetime import date, datetime
 from decimal import Decimal
@@ -95,6 +96,28 @@ class CashBookOut(BaseModel):
     opening_balance: Decimal
     closing_balance: Decimal
     rows: list[CashBookRow]
+
+
+class TransferCreate(BaseModel):
+    from_account_id: uuid.UUID
+    to_account_id: uuid.UUID
+    amount: Decimal = Field(gt=0)
+    date: dt.date | None = None
+    note: str | None = Field(default=None, max_length=200)
+
+
+class TransferOut(BaseModel):
+    id: uuid.UUID
+    at: datetime
+    from_account_id: uuid.UUID | None
+    from_name: str | None
+    to_account_id: uuid.UUID | None
+    to_name: str | None
+    amount: Decimal
+    memo: str | None
+    posted_by: uuid.UUID | None
+    posted_by_name: str | None
+    reversed: bool
 
 
 class ReverseRequest(BaseModel):

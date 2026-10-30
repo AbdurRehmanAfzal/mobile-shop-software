@@ -376,6 +376,114 @@ def cash_book(
 # ---- cash accounts ---------------------------------------------------------------
 
 
+# ---- cash <-> bank transfers (Shop Audit P2-1, owner brief 2026-10-30) ----------------------
+# A deposit of counter cash into the bank (or the other way round) is one balanced group:
+# debit the receiving account, credit the giving one. It touches no income or expense account,
+# so profit, "came in" and "went out" reasons keep it apart as a transfer.
+
+TRANSFER = "transfer"
+TRANSFER_TYPES = (TRANSFER, f"reversal:{TRANSFER}")
+
+
+def transfer(
+    db: Session,
+    shop_id: uuid.UUID,
+    user_id: uuid.UUID,
+    *,
+    from_account_id: uuid.UUID,
+    to_account_id: uuid.UUID,
+    amount,
+    day: date | None = None,
+    note: str | None = None,
+) -> LedgerGroup:
+    if from_account_id == to_account_id:
+        raise ValidationFailed(
+            code="transfer_same_account",
+            message_en="Pick two different accounts",
+            message_ur="دو مختلف اکاؤنٹ چنیں",
+        )
+    amount = money(amount)
+    if amount <= ZERO:
+        raise ValidationFailed(code="transfer_amount")
+    src = db.get(CashAccount, from_account_id)
+    dst = db.get(CashAccount, to_account_id)
+    for a in (src, dst):
+        if a is None or a.shop_id != shop_id or not a.is_active:
+            raise NotFound(code="cash_account_not_found")
+    posting = Posting(
+        document_type=TRANSFER,
+        memo=note or f"{src.name} → {dst.name}",
+        at=at_for(day),
+    )
+    posting.debit(acc.cash_account(dst.id), amount, memo=f"From {src.name}").credit(
+        acc.cash_account(src.id), amount, memo=f"To {dst.name}"
+    )
+    group = post(db, shop_id, user_id, posting)
+    record_audit(
+        db,
+        shop_id=shop_id,
+        user_id=user_id,
+        entity="cash_transfer",
+        entity_id=group.id,
+        action="create",
+        after={
+            "from": str(src.id),
+            "to": str(dst.id),
+            "amount": str(amount),
+            "date": str(day) if day else None,
+            "note": note,
+        },
+    )
+    db.flush()
+    return group
+
+
+def transfer_out(db: Session, g: LedgerGroup) -> dict:
+    from app.db.refs import user_name
+
+    debit = next(e for e in g.entries if e.debit > ZERO)
+    credit = next(e for e in g.entries if e.credit > ZERO)
+    names = {
+        a.id: a.name
+        for a in db.scalars(
+            select(CashAccount).where(
+                CashAccount.id.in_([debit.cash_account_id, credit.cash_account_id])
+            )
+        ).all()
+    }
+    return {
+        "id": g.id,
+        "at": g.at,
+        "from_account_id": credit.cash_account_id,
+        "from_name": names.get(credit.cash_account_id),
+        "to_account_id": debit.cash_account_id,
+        "to_name": names.get(debit.cash_account_id),
+        "amount": debit.debit,
+        "memo": g.memo,
+        "posted_by": g.posted_by,
+        "posted_by_name": user_name(db, g.posted_by),
+        "reversed": g.reversed_by_group_id is not None,
+    }
+
+
+def list_transfers(
+    db: Session,
+    shop_id: uuid.UUID,
+    date_from: date | None = None,
+    date_to: date | None = None,
+    limit: int = 100,
+) -> list[dict]:
+    stmt = select(LedgerGroup).where(
+        LedgerGroup.shop_id == shop_id, LedgerGroup.document_type == TRANSFER
+    )
+    if date_from:
+        stmt = stmt.where(local_day(LedgerGroup.at) >= date_from)
+    if date_to:
+        stmt = stmt.where(local_day(LedgerGroup.at) <= date_to)
+    rows = db.scalars(stmt.order_by(LedgerGroup.at.desc()).limit(limit)).all()
+    return [transfer_out(db, g) for g in rows]
+
+
 def ensure_default_cash_account(db: Session, shop_id: uuid.UUID) -> CashAccount:
     existing = db.scalar(
         select(CashAccount).where(CashAccount.shop_id == shop_id, CashAccount.is_default.is_(True))

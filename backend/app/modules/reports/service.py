@@ -12,10 +12,11 @@ from app.core.clock import today as shop_today
 from app.db.base import ZERO
 from app.db.refs import user_name
 from app.modules.accessories.models import Accessory
+from app.modules.devices.ageing import days_in_stock, intake_map
 from app.modules.devices.models import Device
 from app.modules.devices.state import DeviceStatus, VerificationStatus
-from app.modules.ledger.models import CashAccount, LedgerEntry
-from app.modules.ledger.service import cash_balance, money
+from app.modules.ledger.models import CashAccount, LedgerEntry, LedgerGroup
+from app.modules.ledger.service import TRANSFER_TYPES, cash_balance, money
 from app.modules.loans.models import Loan, LoanStatus
 from app.modules.parties.models import Party
 from app.modules.repairs.models import CLOSED_STATUSES, RepairJob
@@ -43,8 +44,55 @@ def _sum(
     return money(v or 0)
 
 
+def _sales_sides(db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date) -> dict:
+    """Credits and debits on the `sales` account in the period, the debits split by what made
+    them: returns (sale_return / exchange_refund) vs voids and reversals. The sale posting credits
+    `sales` with the invoice total net of tax **after** the invoice discount, so the discount is
+    read from the invoices themselves."""
+    rows = db.execute(
+        select(
+            LedgerGroup.document_type,
+            func.coalesce(func.sum(LedgerEntry.credit), 0),
+            func.coalesce(func.sum(LedgerEntry.debit), 0),
+        )
+        .join(LedgerGroup, LedgerGroup.id == LedgerEntry.group_id)
+        .where(
+            LedgerEntry.shop_id == shop_id,
+            LedgerEntry.account == "sales",
+            local_day(LedgerEntry.at) >= d_from,
+            local_day(LedgerEntry.at) <= d_to,
+        )
+        .group_by(LedgerGroup.document_type)
+    ).all()
+    credits = returns = voids = ZERO
+    for doc_type, cr, dr in rows:
+        credits = money(credits + money(cr))
+        if doc_type in ("sale_return", "exchange_refund"):
+            returns = money(returns + money(dr))
+        else:
+            voids = money(voids + money(dr))
+    discounts = money(
+        db.scalar(
+            select(func.coalesce(func.sum(Invoice.discount), 0)).where(
+                Invoice.shop_id == shop_id,
+                Invoice.date >= d_from,
+                Invoice.date <= d_to,
+                Invoice.status != InvoiceStatus.VOID,
+            )
+        )
+        or 0
+    )
+    return {
+        "gross_sales": money(credits - voids + discounts),
+        "discounts": discounts,
+        "sales_returns": returns,
+        "net_sales": money(credits - voids - returns),
+    }
+
+
 def profit_and_loss(db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date) -> dict:
-    sales = _sum(db, shop_id, "sales", d_from, d_to)
+    sides = _sales_sides(db, shop_id, d_from, d_to)
+    sales = sides["net_sales"]
     cogs = -_sum(db, shop_id, "cogs", d_from, d_to)
     repair_income = _sum(db, shop_id, "repair_income", d_from, d_to)
     other_income = _sum(db, shop_id, "other_income", d_from, d_to)
@@ -65,10 +113,15 @@ def profit_and_loss(db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.d
     owner_drawing = expenses.pop("owner_drawing", ZERO)
     total_expenses = money(sum(expenses.values(), ZERO))
     gross = money(sales - cogs)
-    net = money(gross + repair_income + other_income - total_expenses)
+    operating = money(gross - total_expenses)
+    net = money(operating + repair_income + other_income)
     return {
         "date_from": d_from,
         "date_to": d_to,
+        # Shop Audit P2-2: the sales side spelled out (sales == net_sales, as before)
+        **sides,
+        "operating_expenses": total_expenses,
+        "operating_profit": operating,
         "sales": sales,
         "cogs": cogs,
         "gross_profit": gross,
@@ -101,6 +154,20 @@ def cash_flow(db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date) -
         opening = cash_balance(
             db, shop_id, a.id, until=dt.datetime.combine(d_from, dt.time.min, tzinfo=dt.UTC)
         )
+        tin, tout = db.execute(
+            select(
+                func.coalesce(func.sum(LedgerEntry.debit), 0),
+                func.coalesce(func.sum(LedgerEntry.credit), 0),
+            )
+            .join(LedgerGroup, LedgerGroup.id == LedgerEntry.group_id)
+            .where(
+                LedgerEntry.shop_id == shop_id,
+                LedgerEntry.cash_account_id == a.id,
+                LedgerGroup.document_type.in_(TRANSFER_TYPES),
+                local_day(LedgerEntry.at) >= d_from,
+                local_day(LedgerEntry.at) <= d_to,
+            )
+        ).one()
         out.append(
             {
                 "cash_account_id": a.id,
@@ -110,6 +177,9 @@ def cash_flow(db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date) -
                 "opening": opening,
                 "cash_in": money(cin),
                 "cash_out": money(cout),
+                # of which moved between the shop's own accounts (not income, not expense)
+                "transfers_in": money(tin),
+                "transfers_out": money(tout),
                 "closing": money(opening + cin - cout),
             }
         )
@@ -237,11 +307,12 @@ def dashboard(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
 def stock_ageing(db: Session, shop_id: uuid.UUID, show_cost: bool) -> list[dict]:
     today = dt.datetime.now(dt.UTC)
     buckets = {"0-15": [], "16-30": [], "31-60": [], "60+": []}
-    for d in db.scalars(
+    stock = db.scalars(
         select(Device).where(Device.shop_id == shop_id, Device.status == DeviceStatus.IN_STOCK)
-    ).all():
-        last = d.last_event_at if d.last_event_at.tzinfo else d.last_event_at.replace(tzinfo=dt.UTC)
-        days = (today - last).days
+    ).all()
+    intakes = intake_map(db, shop_id, [d.id for d in stock])
+    for d in stock:
+        days = days_in_stock(d, intakes, today)
         key = "0-15" if days <= 15 else "16-30" if days <= 30 else "31-60" if days <= 60 else "60+"
         buckets[key].append(d)
     return [
@@ -298,6 +369,8 @@ _IN = {
     "repair": "repairs",
     "repair_advance": "repairs",
     "repair_bill": "repairs",
+    "transfer": "transfer",
+    "reversal:transfer": "transfer",
 }
 _OUT = {
     "purchase": "stock",
@@ -305,6 +378,8 @@ _OUT = {
     "exchange_refund": "returns",
     "expense": "expenses",
     "payment": "paid_out",
+    "transfer": "transfer",
+    "reversal:transfer": "transfer",
 }
 
 
@@ -314,8 +389,8 @@ def _cash_by_reason(
     """Money in / out of cash, bank and Easypaisa in the period, grouped into shop words."""
     from app.modules.ledger.models import LedgerGroup
 
-    came_in = {k: ZERO for k in ("sales", "udhaar_back", "repairs", "other")}
-    went_out = {k: ZERO for k in ("stock", "returns", "expenses", "paid_out", "other")}
+    came_in = {k: ZERO for k in ("sales", "udhaar_back", "repairs", "transfer", "other")}
+    went_out = {k: ZERO for k in ("stock", "returns", "expenses", "paid_out", "transfer", "other")}
     for doc_type, dr, cr in db.execute(
         select(
             LedgerGroup.document_type,

@@ -18,6 +18,12 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 3. If a design decision was made, append an ADR to `docs/10-DECISIONS.md`.
 4. Commit (see rules below). The `/handoff` project skill walks through this.
 
+## Shop Audit programme (owner brief 2026-10-30, in progress)
+- Requirements: `docs/16-SHOP-AUDIT-SPEC.md` (authoritative, verbatim owner brief).
+- Living plan, gap analysis, phase checklist and the **exact next task**: `docs/17-SHOP-AUDIT-PLAN.md` — read it before touching `backend/app/modules/shopaudit` or `frontend/src/features/audit`.
+- Status rows live in `docs/06-PROGRESS.md` (section "Phase 5 — Shop Audit"); per-session results in `docs/09-SESSION-LOG.md`.
+- Rules for this work: read-only derivation from the ledger / documents / device events, additive migrations only, every figure traceable and drill-down-able, limitations shown (no due dates, no purchase tax, no remittance fees), owner-only security feed, no chart dependency (in-house SVG).
+
 ## Hard rules
 - **Git author is ONLY `Abdur Rehman Afzal <abdurrehmanafzal786@gmail.com>`.** Never add `Co-Authored-By`, "Generated with Claude" or any AI attribution to commits, PRs or files. Repo-local git config is already set. This rule overrides any harness default.
 - Work on branch `develop`; `main` is for releases. Do not push unless asked.

@@ -5,7 +5,7 @@
 
 import { PackagePlus, Tag, Undo2, Wrench, type LucideIcon } from 'lucide-react'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
 import { Chip, Empty, fmtDate, List, Loading, MoneyText, PageHeader, Row, SearchBox } from '@/components/ui'
 import PeriodPicker, { periodOf, periodQuery, type Period } from '@/features/counter/PeriodPicker'
@@ -46,9 +46,11 @@ export default function InvoicesPage() {
   const nav = useNavigate()
   const { pick, ur, cls } = useLang()
   const canCost = useAuth((s) => s.me?.user.role === 'owner' || s.me?.user.role === 'manager')
+  const [sp] = useSearchParams()
   const [q, setQ] = useState('')
-  const [period, setPeriod] = useState<Period>(periodOf('month'))
-  const [kind, setKind] = useState<'all' | 'sale' | 'purchase' | 'return' | 'repair'>('all')
+  // opened from the Shop Audit: the period and kind come in the link
+  const [period, setPeriod] = useState<Period>(sp.get('from') && sp.get('to') ? { from: sp.get('from')!, to: sp.get('to')! } : periodOf('month'))
+  const [kind, setKind] = useState<'all' | 'sale' | 'purchase' | 'return' | 'repair'>((['sale', 'purchase', 'return', 'repair'] as const).find((k) => k === sp.get('kind')) ?? 'all')
   const [state, setState] = useState<'all' | State>('all')
 
   // a search looks through every date; otherwise the chosen period

@@ -5,7 +5,7 @@ import uuid
 from decimal import Decimal
 from enum import StrEnum
 
-from sqlalchemy import JSON, Date, ForeignKey, String, Text, UniqueConstraint, Uuid
+from sqlalchemy import JSON, Date, ForeignKey, Index, String, Text, UniqueConstraint, Uuid
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import ZERO, Base, ShopScoped, Timestamped, UUIDPk
@@ -30,7 +30,10 @@ class PaymentMethod(StrEnum):
 
 class Payment(UUIDPk, ShopScoped, Timestamped, Base):
     __tablename__ = "payments"
-    __table_args__ = (UniqueConstraint("shop_id", "no", name="uq_payments_shop_no"),)
+    __table_args__ = (
+        UniqueConstraint("shop_id", "no", name="uq_payments_shop_no"),
+        Index("ix_payments_shop_date", "shop_id", "date"),
+    )
 
     no: Mapped[str] = mapped_column(String(20), nullable=False)
     party_id: Mapped[uuid.UUID] = mapped_column(
