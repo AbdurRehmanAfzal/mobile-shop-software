@@ -35,7 +35,14 @@ if [ "$TAG" != "latest" ]; then
 fi
 
 echo "deploying $TAG (was $PREV)"
-run "$TAG" pull backend web
+# the registry pull sometimes drops mid-blob (TLS/proxy hiccup, 2026-10-30): try up to 4 times
+pulled=0
+for attempt in 1 2 3 4; do
+  if run "$TAG" pull backend web; then pulled=1; break; fi
+  echo "pull failed (attempt $attempt), retrying in $((attempt * 15))s..."
+  sleep $((attempt * 15))
+done
+[ "$pulled" = 1 ] || { echo "could not pull images for $TAG; nothing changed"; exit 1; }
 run "$TAG" up -d --remove-orphans
 
 if healthy; then
