@@ -55,6 +55,7 @@ test('laptop: side menu, two-column home, side-by-side sale, F-keys', async ({ p
   await expect(page.getByRole('button', { name: 'Complete sale' })).toBeEnabled()
   await page.screenshot({ path: 'test-results/laptop-sale.png', fullPage: true })
   await page.getByRole('button', { name: 'Complete sale' }).click()
+  await page.getByRole('button', { name: 'Confirm and make the bill' }).click()
   await expect(page.getByText('Sale complete')).toBeVisible()
 
   // F3 opens add stock; the stock list is two cards wide

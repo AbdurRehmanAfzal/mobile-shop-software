@@ -227,7 +227,12 @@ def create_purchase(
             ledger_group_id=purchase.ledger_group_id,
             document_type="purchase",
             document_id=purchase.id,
-            data={"source": data.kind, "verification_status": vstatus, "purchase_no": purchase.no},
+            data={
+                "source": data.kind,
+                "verification_status": vstatus,
+                "purchase_no": purchase.no,
+                "asking": str(device.asking_price) if device.asking_price is not None else None,
+            },
         )
 
     labels = []

@@ -86,6 +86,7 @@ class ShopSettingsOut(ShopOut):
     fingerprint_staff: bool = False
     label_code_word: str | None = None
     label_prefs: dict | None = None
+    sale_rules: dict | None = None
 
 
 class UserOut(BaseModel):
@@ -186,6 +187,14 @@ class ShopUpdate(BaseModel):
     default_locale: str | None = Field(default=None, pattern="^(en|ur)$")
     label_code_word: str | None = Field(default=None, min_length=10, max_length=10)
     label_prefs: dict | None = None
+    sale_rules: dict | None = None
+
+    @field_validator("sale_rules")
+    @classmethod
+    def _rules(cls, v: dict | None) -> dict | None:
+        from app.modules.sales.approval import clean_rules
+
+        return clean_rules(v)
 
     @field_validator("label_code_word")
     @classmethod

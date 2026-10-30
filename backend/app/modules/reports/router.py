@@ -46,6 +46,18 @@ def dashboard(ctx: Ctx, db: DB):
     return _money(service.dashboard(db, ctx.shop_id, ctx.can(Cap.VIEW_COST)))
 
 
+@router.get("/price-changes")
+def price_changes(
+    ctx: Annotated[Ctx, Depends(require_cap(Cap.REPORTS_ALL))],
+    db: DB,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+):
+    """Owner 2026-10-30: asking-price changes and sales under the asking price, by person."""
+    d_from, d_to = _range(date_from, date_to)
+    return _money(service.price_changes(db, ctx.shop_id, d_from, d_to, ctx.can(Cap.VIEW_COST)))
+
+
 @router.get("/profit-loss")
 def profit_loss(
     ctx: Reports, db: DB, date_from: dt.date | None = None, date_to: dt.date | None = None

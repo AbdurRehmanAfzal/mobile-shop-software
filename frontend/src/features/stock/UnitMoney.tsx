@@ -14,11 +14,11 @@ import { useGet, useInvalidate } from '@/lib/queries'
 import type { Party } from '@/lib/types'
 
 export interface PayRow { kind: 'payment_in' | 'payment_out'; at: string; date: string; payment_id: string; no: string; amount: string | null; payment_amount?: string; method: string; reference: string | null; notes: string | null; doc_no?: string; party_name?: string | null; party_id?: string | null; payable_after?: string; receivable_after?: string }
-export interface Side { doc_type: 'purchase' | 'invoice'; doc_id: string; no: string; date: string; party_id: string | null; party_name: string | null; party_phone: string | null; line_total: string | null; doc_total: string | null; doc_paid: string | null; shared_bill: boolean; upfront: string | null; payments: PayRow[]; paid: string | null; remaining: string | null; returned_at: string | null }
+export interface Side { doc_type: 'purchase' | 'invoice'; doc_id: string; no: string; date: string; party_id: string | null; party_name: string | null; party_phone: string | null; line_total: string | null; doc_total: string | null; doc_paid: string | null; shared_bill: boolean; upfront: string | null; payments: PayRow[]; paid: string | null; remaining: string | null; returned_at: string | null; asking_at_sale?: string | null }
 export interface UnitMoneyData {
   purchase: Side | null; sale: Side | null; purchases: Side[]; sales: Side[]
   returns: { kind: string; date: string; no: string; doc_no: string; amount: string; refund: string; kept: string; party_name: string | null; reason: string | null }[]
-  summary: { status: string; source: 'purchase' | 'opening_stock' | null; cost: string | null; paid_out: string | null; payable: string | null; asking_price: string | null; sold_for: string | null; received: string; receivable: string; margin: string | null; refunded: string }
+  summary: { status: string; source: 'purchase' | 'opening_stock' | null; cost: string | null; paid_out: string | null; payable: string | null; asking_price: string | null; original_asking: string | null; sold_for: string | null; received: string; receivable: string; margin: string | null; refunded: string }
   timeline: Record<string, unknown>[]
 }
 const n = (v: string | number | null | undefined) => (v == null ? '—' : Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 }))
@@ -46,7 +46,7 @@ export default function UnitMoney({ deviceId }: { deviceId: string }) {
           <span className="flex min-w-0 flex-col">
             <BiLabel text={bought ? 'unit.boughtFrom' : 'unit.soldTo'} size="sm" tone="text-current" className="opacity-80" />
             <button type="button" onClick={() => side.party_id && nav(`/parties/${side.party_id}`)} className="truncate text-start text-lg font-extrabold underline-offset-2 hover:underline">{side.party_name ?? pick('sale.cashCustomer')}</button>
-            <span className={`opacity-80 ${small}`} dir="ltr">{side.no} · {fmtDate(side.date)}{side.shared_bill ? ` · ${pick('unit.sharedBill').replace('{{t}}', n(side.doc_total))}` : ''}</span>
+            <span className={`opacity-80 ${small}`} dir="ltr">{side.no} · {fmtDate(side.date)}{side.shared_bill ? ` · ${pick('unit.sharedBill').replace('{{t}}', n(side.doc_total))}` : ''}{!bought && side.asking_at_sale ? ` · ${pick('confirm.asking')} ${n(side.asking_at_sale)}` : ''}</span>
           </span>
           {side.returned_at ? <Chip text="unit.returned" tone="bad" /> : rem > 0 ? <Chip text={bought ? 'unit.weOwe' : 'unit.theyOwe'} tone="warn" /> : <Chip text="unit.settled" tone="ok" />}
         </div>
@@ -88,6 +88,8 @@ export default function UnitMoney({ deviceId }: { deviceId: string }) {
           {([
             canCost ? ['unit.cost', s.cost, 'text-ink'] : null,
             canCost ? ['unit.stillToPay', s.payable, Number(s.payable) > 0 ? 'text-payable' : 'text-ink'] : null,
+            ['unit.askingNow', s.asking_price, 'text-ink'],
+            s.original_asking != null && s.original_asking !== s.asking_price ? ['unit.askingFirst', s.original_asking, 'text-muted'] : null,
             ['unit.soldFor', s.sold_for, 'text-ink'],
             ['unit.stillToGet', s.sold_for != null ? s.receivable : null, Number(s.receivable) > 0 ? 'text-receivable' : 'text-ink'],
             canCost && s.margin != null ? ['unit.margin', s.margin, Number(s.margin) >= 0 ? 'text-emerald-deep' : 'text-payable'] : null,
@@ -142,6 +144,7 @@ function TimelineRow({ t, first, canCost }: { t: Record<string, unknown>; first:
             {kind === 'payment_in' || kind === 'payment_out' ? <button type="button" onClick={() => openPrintable(`/api/v1/payments/${String(t.payment_id)}/receipt?format=thermal`)} className="tap inline-flex items-center gap-1 rounded-full border border-line px-2 py-0.5 text-ink"><Printer size={12} />{pick('unit.printReceipt')}</button> : null}
           </div>
         ) : null}
+        {kind === 'event' && t.event === 'price_changed' && t.data ? <div className={`${small}`} dir="auto"><span className="num" dir="ltr">{Number((t.data as Record<string, unknown>).from ?? 0).toLocaleString('en-US')} → {Number((t.data as Record<string, unknown>).to ?? 0).toLocaleString('en-US')}</span>{(t.data as Record<string, unknown>).source === 'checkout' ? ` · ${pick('unit.atCheckout')}` : ''}{(t.data as Record<string, unknown>).reason ? ` · ${String((t.data as Record<string, unknown>).reason)}` : ''}{(t.data as Record<string, unknown>).approved_by ? ` · ${pick('unit.approved')}` : ''}</div> : null}
         {kind.startsWith('return') ? <div className={`text-muted ${small}`}>{pick('unit.refund')} <span className="num" dir="ltr">{Number(t.refund ?? 0).toLocaleString('en-US')}</span>{t.reason ? ` · ${String(t.reason)}` : ''}</div> : null}
         {t.data && typeof (t.data as Record<string, unknown>).note === 'string' ? <div className="text-sm text-muted">{String((t.data as Record<string, unknown>).note)}</div> : null}
         {t.data && typeof (t.data as Record<string, unknown>).reason === 'string' ? <div className="text-sm text-muted">{String((t.data as Record<string, unknown>).reason)}</div> : null}

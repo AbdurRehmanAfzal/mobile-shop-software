@@ -129,6 +129,7 @@ test('profit, best sellers, estimate; skip the ID check while adding stock', asy
   await page.goto('/sale/new')
   await page.getByRole('button', { name: /Nokia/ }).first().click()
   await page.getByRole('button', { name: 'Complete sale' }).click()
+  await page.getByRole('button', { name: 'Confirm and make the bill' }).click()
   await expect(page.getByText('Sale complete')).toBeVisible()
 
   await page.goto('/')
@@ -173,6 +174,7 @@ test('a phone with a pending ID check can be skipped and sold', async ({ page })
   await page.getByRole('button', { name: 'Skip and sell (I know this person)' }).click()
   await page.screenshot({ path: 'test-results/sale-skip.png', fullPage: true })
   await page.getByRole('button', { name: 'Complete sale' }).click()
+  await page.getByRole('button', { name: 'Confirm and make the bill' }).click()
   await expect(page.getByText('Sale complete')).toBeVisible()
 })
 

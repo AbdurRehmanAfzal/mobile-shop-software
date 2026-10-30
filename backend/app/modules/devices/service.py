@@ -362,6 +362,7 @@ def add_opening_stock(
         document_id=device.id,
         data={
             "source": "opening_stock",
+            "asking": str(device.asking_price) if device.asking_price is not None else None,
             "verification_status": VerificationStatus.NOT_REQUIRED
             if device.condition == DeviceCondition.BOX_PACK
             else VerificationStatus.PENDING,
@@ -381,11 +382,14 @@ def add_opening_stock(
 
 
 def update_device(
-    db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, device_id: uuid.UUID, data: DeviceUpdate
+    db: Session, shop_id: uuid.UUID, ctx, device_id: uuid.UUID, data: DeviceUpdate
 ) -> dict:
+    user_id = ctx.id
     device = get_device(db, shop_id, device_id)
     changes = data.model_dump(exclude_unset=True)
     asking = changes.pop("asking_price", None)
+    asking_reason = changes.pop("asking_reason", None)
+    approval_pin = changes.pop("approval_pin", None)
     if changes.get("imei2"):
         other = by_imei(db, shop_id, changes["imei2"])
         if other and other.id != device.id:
@@ -415,6 +419,10 @@ def update_device(
             message_ur="بیچنے کی قیمت خرید قیمت سے کم نہیں ہو سکتی",
         )
     if asking is not None and money(asking) != (device.asking_price or Decimal(-1)):
+        from app.modules.auth.models import Shop
+        from app.modules.sales import approval
+
+        approver = approval.require(db, db.get(Shop, shop_id), ctx, "asking_change", approval_pin)
         apply_event(
             db,
             shop_id,
@@ -422,7 +430,13 @@ def update_device(
             device,
             EventType.PRICE_CHANGED,
             amount=asking,
-            data={"from": _plain(device.asking_price), "to": str(money(asking))},
+            data={
+                "from": _plain(device.asking_price),
+                "to": str(money(asking)),
+                "reason": asking_reason,
+                "source": "manual",
+                "approved_by": str(approver) if approver else None,
+            },
         )
     if changes:
         record_audit(

@@ -97,6 +97,8 @@ class InvoiceLine(UUIDPk, Base):
     cost: Mapped[Decimal] = mapped_column(
         default=ZERO, nullable=False
     )  # device cost at the time of sale
+    # owner 2026-10-30: the asking price when it was sold (after any revision at checkout)
+    asking_price: Mapped[Decimal | None] = mapped_column()
     warranty_days: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     accessories_given: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
     accessories_pending: Mapped[list[dict]] = mapped_column(JSON, nullable=False, default=list)

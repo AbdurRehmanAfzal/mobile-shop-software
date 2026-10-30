@@ -40,6 +40,7 @@ test('walk-in return: hand back 900, shop cuts 100', async ({ page, request }) =
   await page.goto('/sale/new')
   await page.getByRole('button', { name: /Nokia/ }).first().click()
   await page.getByRole('button', { name: 'Complete sale' }).click()
+  await page.getByRole('button', { name: 'Confirm and make the bill' }).click()
   await expect(page.getByText('Sale complete')).toBeVisible()
 
   // return from the home tile

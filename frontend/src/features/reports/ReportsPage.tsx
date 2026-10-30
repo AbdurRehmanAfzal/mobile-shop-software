@@ -18,7 +18,9 @@ interface Forecast {
 }
 interface Age { bucket: string; count: number; value: string | null }
 interface Cat { key: string; name: string; name_ur: string | null }
-type Tab = 'profit' | 'top' | 'estimate' | 'old'
+type Tab = 'profit' | 'top' | 'estimate' | 'old' | 'prices'
+interface PriceRow { kind: 'asking_changed' | 'below_asking'; at: string; device_id: string; label: string; imei1: string; old_asking: string | null; new_asking: string | null; sold_price: string | null; diff: string | null; user_name: string | null; approved_by: string | null; reason: string | null; source: string; invoice_no: string | null; profit: string | null }
+interface PriceReport { rows: PriceRow[]; by_user: { user_name: string; asking_changed: number; below_asking: number; under_by: string }[] }
 type Range = 'today' | 'yesterday' | 'last7' | 'month' | 'custom'
 
 const n = (v: string | number | null | undefined) => Math.abs(Number(v ?? 0)).toLocaleString('en-US', { maximumFractionDigits: 0 })
@@ -42,6 +44,7 @@ export default function ReportsPage() {
   const { data: top } = useGet<Top[]>(['r-top', from, to], tab === 'top' ? `/api/v1/reports/top-sellers${qs}` : null)
   const { data: fc } = useGet<Forecast>(['r-forecast'], tab === 'estimate' ? '/api/v1/reports/forecast' : null)
   const { data: age } = useGet<Age[]>(['r-age'], tab === 'old' ? '/api/v1/reports/stock-ageing' : null)
+  const { data: prices } = useGet<PriceReport>(['r-prices', from, to], tab === 'prices' ? `/api/v1/reports/price-changes${qs}` : null)
   const { data: cats } = useGet<Cat[]>(['exp-cats'], '/api/v1/expenses/categories')
   const catName = (k: string) => { const c = cats?.find((x) => x.key === k); return c ? (ur && c.name_ur ? c.name_ur : c.name) : k }
   const small = ur ? cls('sm') : 'text-sm font-semibold'
@@ -52,18 +55,18 @@ export default function ReportsPage() {
     <div className="flex flex-col gap-3">
       <PageHeader
         title="counter.reportTitle"
-        right={
+        right={tab === 'prices' ? null : (
           <DownloadButton
             path={tab === 'profit' ? `/api/v1/exports/profit-loss${qs}` : tab === 'top' ? `/api/v1/exports/top-sellers${qs}` : tab === 'estimate' ? '/api/v1/exports/forecast' : '/api/v1/exports/stock-ageing'}
-            name={{ profit: 'profit-loss', top: 'best-sellers', estimate: 'estimate', old: 'old-stock' }[tab]}
+            name={{ profit: 'profit-loss', top: 'best-sellers', estimate: 'estimate', old: 'old-stock', prices: 'prices' }[tab]}
           />
-        }
+        )}
       />
       <div className="print:hidden">
-        <BiSegmented<Tab> value={tab} onChange={setTab} options={[{ value: 'profit', text: 'counter.tabProfit' }, { value: 'top', text: 'counter.tabTop' }, { value: 'estimate', text: 'counter.tabEstimate' }, { value: 'old', text: 'counter.tabOld' }]} />
+        <BiSegmented<Tab> value={tab} onChange={setTab} options={[{ value: 'profit', text: 'counter.tabProfit' }, { value: 'top', text: 'counter.tabTop' }, { value: 'estimate', text: 'counter.tabEstimate' }, { value: 'old', text: 'counter.tabOld' }, { value: 'prices', text: 'prices.tab' }]} />
       </div>
 
-      {tab === 'profit' || tab === 'top' ? (
+      {tab === 'profit' || tab === 'top' || tab === 'prices' ? (
         <div className="print:hidden flex flex-col gap-2">
           <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
             {(['today', 'yesterday', 'last7', 'month', 'custom'] as const).map((r) => (
@@ -181,6 +184,43 @@ export default function ReportsPage() {
               </div>
             ))}
           </div>
+        )
+      ) : null}
+
+      {tab === 'prices' ? (
+        !prices ? <Loading /> : (
+          <>
+            <BiLabel text="prices.hint" size="sm" tone="text-muted" />
+            {prices.by_user.length ? (
+              <div className="card divide-y divide-line p-0">
+                {prices.by_user.map((u) => (
+                  <div key={u.user_name} className="flex items-center gap-3 px-4 py-2.5">
+                    <span className="flex-1 font-bold">{u.user_name}</span>
+                    <span className={`text-muted ${small}`}><span className="num">{u.asking_changed}</span> {pick('prices.changes')} · <span className="num">{u.below_asking}</span> {pick('prices.under')}{Number(u.under_by) > 0 ? <> · <span className="num text-payable" dir="ltr">−{n(u.under_by)}</span></> : null}</span>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+            {!prices.rows.length ? <Empty text="prices.none" /> : (
+              <div className="card divide-y divide-line p-0" data-testid="price-rows">
+                {prices.rows.map((r, i) => (
+                  <div key={i} className="flex flex-col gap-1 px-4 py-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="flex min-w-0 flex-col"><span className="truncate font-bold">{r.label} <span className="font-medium text-muted" dir="ltr">· {r.imei1}</span></span><span className={`text-muted ${small}`}>{r.user_name ?? '—'} · <span dir="ltr">{new Date(r.at).toLocaleDateString('en-GB')}</span>{r.invoice_no ? <span dir="ltr"> · {r.invoice_no}</span> : null}</span></span>
+                      <span className={`rounded-full px-2.5 py-1 font-bold ${r.kind === 'below_asking' ? 'bg-payable-tint text-payable' : 'bg-receivable-tint text-receivable'} ${ur ? cls('sm') : 'text-xs'}`}>{pick(r.kind === 'below_asking' ? 'prices.underAsking' : r.source === 'checkout' ? 'prices.changedAtSale' : 'prices.changed')}</span>
+                    </div>
+                    <div className={`flex flex-wrap gap-x-3 ${small}`} dir="auto">
+                      {r.kind === 'asking_changed' ? <span className="num" dir="ltr">{n(r.old_asking)} → {n(r.new_asking)}</span> : <span className="num" dir="ltr">{pick('confirm.asking')} {n(r.old_asking)} · {pick('unit.soldFor')} {n(r.sold_price)}</span>}
+                      {r.diff ? <span className={`num ${Number(r.diff) < 0 ? 'text-payable' : 'text-emerald-deep'}`} dir="ltr">{Number(r.diff) < 0 ? '−' : '+'}{n(r.diff)}</span> : null}
+                      {r.profit != null ? <span className="text-muted">{pick('confirm.profit')} <span className="num" dir="ltr">{n(r.profit)}</span></span> : null}
+                      {r.reason ? <span className="text-muted">{r.reason}</span> : null}
+                      {r.approved_by ? <span className="text-muted">{pick('unit.approved')}: {r.approved_by}</span> : null}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
         )
       ) : null}
     </div>

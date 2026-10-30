@@ -26,6 +26,8 @@ import type { Device, DeviceDetail, Invoice, Party } from '@/lib/types'
 import { DeviceRow } from '@/features/stock/StockPage'
 import DocActions from '@/components/DocShare'
 import DocLangPicker from '@/components/DocLangPicker'
+import SaleConfirm from './SaleConfirm'
+import { Tag as TagIcon } from 'lucide-react'
 import PriceHint from '@/components/PriceHint'
 import { HeldButton, HeldSalesSheet, useHeldSales, type HeldSale } from './HeldSales'
 
@@ -34,6 +36,10 @@ interface Line {
   price: string
   warranty_days: string
   acc: AccValue
+  // owner 2026-10-30: the asking price may be revised at checkout (recorded, rule-gated)
+  revise?: boolean
+  new_asking?: string
+  asking_reason?: string
 }
 interface Misc {
   key: string
@@ -84,6 +90,7 @@ export default function SaleWizard() {
   const { data: shopSet } = useGet<{ tax_rate: string }>(['shop-full'], '/api/v1/shops/current')
   const rateShown = taxRate !== '' ? taxRate : String(Number(shopSet?.tax_rate) || 18)
   const [result, setResult] = useState<Invoice | null>(null)
+  const [confirming, setConfirming] = useState(false)
   const [devCat, setDevCat] = useState<'' | 'phone' | 'tablet' | 'watch'>('')
   const { data: stock } = useDevices({ status: 'in_stock', q: q || undefined, category: devCat || undefined })
   const m = useDocMutation<Record<string, unknown>, Invoice>('POST', () => '/api/v1/sales', undefined, { kind: 'sale', label: (b) => `${pick('counter.sell')} · Rs. ${Number((b as { paid?: number }).paid ?? 0).toLocaleString('en-US')}` })
@@ -168,10 +175,11 @@ export default function SaleWizard() {
     setStep(1)
   }
 
-  async function submit() {
+  async function submit(pin: string | null = null) {
     const res = await m.mutateAsync({
       party_id: party?.id ?? null,
-      devices: lines.map((l) => ({ device_id: l.device.id, price: Number(l.price || 0), warranty_days: Number(l.warranty_days || 0), ...accOut(l.acc) })),
+      approval_pin: pin || undefined,
+      devices: lines.map((l) => ({ device_id: l.device.id, price: Number(l.price || 0), warranty_days: Number(l.warranty_days || 0), new_asking_price: l.revise && l.new_asking !== '' && l.new_asking != null ? Number(l.new_asking) : undefined, asking_reason: l.revise && l.asking_reason ? l.asking_reason : undefined, ...accOut(l.acc) })),
       misc: misc.map((x) => ({ description: x.description.trim(), qty: Number(x.qty || 1), unit_price: Number(x.unit_price || 0), accessory_id: x.accessory_id })),
       discount: Number(discount || 0),
       tax_rate: taxOn ? Number(rateShown || 0) : 0,
@@ -186,9 +194,11 @@ export default function SaleWizard() {
       // no internet: the sale waits on the phone (the strip under the header says so)
       resetCart()
       m.reset()
+      setConfirming(false)
       setStep(0)
       return
     }
+    setConfirming(false)
     setResult(res)
     setStep(2)
   }
@@ -247,6 +257,19 @@ export default function SaleWizard() {
                   <Trash2 size={16} />
                 <BtnText k={'crud.delete'} /></button>
               </div>
+              {l.device.asking_price ? (
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className={`inline-flex items-center gap-1 rounded-full bg-ground px-3 py-1 font-bold ${ur ? cls('sm') : 'text-xs'}`}><TagIcon size={12} />{pick('confirm.asking')}: <span className="num" dir="ltr">{Number(l.new_asking && l.revise ? l.new_asking : l.device.asking_price).toLocaleString('en-US')}</span></span>
+                  <label className="tap inline-flex cursor-pointer items-center gap-2"><input type="checkbox" checked={!!l.revise} onChange={(e) => setLine(l, { revise: e.target.checked, new_asking: e.target.checked ? String(Number(l.device.asking_price)) : '' })} className="h-5 w-5 accent-[rgb(var(--emerald))]" /><span className={`font-bold ${ur ? cls('sm') : 'text-xs'}`}>{pick('confirm.reviseAsking')}</span></label>
+                  {Number(l.price) > 0 && Number(l.price) < Number(l.revise && l.new_asking ? l.new_asking : l.device.asking_price) ? <span className={`text-receivable ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick('confirm.underAskingShort')}</span> : null}
+                </div>
+              ) : null}
+              {l.revise ? (
+                <div className="grid grid-cols-2 gap-2 rounded-2xl bg-ground p-2">
+                  <BiInput label="confirm.newAsking" type="number" inputMode="numeric" min={0} value={l.new_asking ?? ''} onChange={(e) => setLine(l, { new_asking: e.target.value })} className="num" />
+                  <BiInput label="confirm.reason" value={l.asking_reason ?? ''} onChange={(e) => setLine(l, { asking_reason: e.target.value })} />
+                </div>
+              ) : null}
               <BiInput label="counter.soldFor" type="number" inputMode="numeric" min={0} value={l.price} onChange={(e) => setLines(lines.map((x) => (x.device.id === l.device.id ? { ...x, price: e.target.value } : x)))} className="num text-2xl" />
               <PriceHint modelId={l.device.model_id} storageId={l.device.storage_id} condition={l.device.condition} excludeDeviceId={l.device.id} onUse={(p) => setLine(l, { price: String(p) })} />
               {belowCost(l) ? (
@@ -393,7 +416,7 @@ export default function SaleWizard() {
           </div>
           {notSellableErr ? <Chip text="sale.notSellable" tone="bad" /> : null}
           <ErrorText error={m.error} />
-          <BiButton text="sale.complete" icon={<Check size={22} />} full loading={m.isPending} disabled={!canSave} onClick={submit} />
+          <BiButton text="sale.complete" icon={<Check size={22} />} full loading={m.isPending && !confirming} disabled={!canSave} onClick={() => { if (lines.length) { m.reset(); setConfirming(true) } else void submit() }} />
           {(lines.length || misc.length) && has('held_sales') ? <BiButton text="hold.button" icon={<CirclePause size={22} />} full variant="secondary" onClick={() => { setHoldName(party?.name ?? ''); hold.reset(); setHolding(true) }} /> : null}
           {!lines.length && !misc.length && !laptop ? <BiButton text="counter.whichPhone" variant="secondary" full onClick={() => setStep(0)} /> : null}
         </div>
@@ -420,6 +443,17 @@ export default function SaleWizard() {
         </div>
       ) : null}
 
+      <SaleConfirm
+        open={confirming}
+        onClose={() => setConfirming(false)}
+        lines={lines.map((l) => ({ label: `${l.device.brand_name} ${l.device.model_name}`, imei: l.device.imei1, asking: l.device.asking_price ? Number(l.device.asking_price) : null, newAsking: l.revise && l.new_asking ? Number(l.new_asking) : null, sold: Number(l.price || 0), cost: l.device.cost_price != null ? Number(l.device.cost_price) : null, reason: l.asking_reason }))}
+        misc={misc.reduce((s, x) => s + Number(x.qty || 0) * Number(x.unit_price || 0), 0)}
+        total={total}
+        paid={paid}
+        partyName={party?.name ?? null}
+        error={m.error}
+        onConfirm={async (pin) => { try { await submit(pin) } catch { /* shown in the sheet */ } }}
+      />
       <Sheet open={picking} onClose={() => setPicking(false)} title="counter.whichPhone">
         <div className="flex flex-col gap-3">
           <SearchBox value={q} onChange={setQ} placeholder="stock.searchPlaceholder" scan />

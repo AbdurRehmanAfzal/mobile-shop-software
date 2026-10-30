@@ -1904,6 +1904,53 @@
       "payment_in": "Received",
       "return_sale": "Sale returned",
       "return_purchase": "Returned to seller"
-    }
+    },
+    "askingNow": "Asking now",
+    "askingFirst": "First asking",
+    "atCheckout": "at the sale",
+    "approved": "approved by owner"
+  },
+  "confirm": {
+    "title": "Check before you sell",
+    "hint": "This becomes the bill: the customer’s receipt, the owner’s report and the phone’s history all read these numbers.",
+    "cost": "Cost",
+    "asking": "Asking",
+    "newAsking": "Asking now",
+    "profit": "Profit",
+    "askingChanged": "Asking changed {{a}} → {{b}}",
+    "underAsking": "Rs. {{n}} under the asking price",
+    "underAskingShort": "under asking",
+    "items": "Other items",
+    "paidNow": "Paid now",
+    "soldBy": "Sold by",
+    "blocked": "Under the asking price or a changed asking price needs the owner or manager. Ask them to log in and complete it.",
+    "pinNeeded": "The owner’s PIN is needed for this price.",
+    "pinWrong": "Wrong PIN. Try again.",
+    "ownerPin": "Owner PIN",
+    "withPin": "Confirm with PIN",
+    "go": "Confirm and make the bill",
+    "flagsNote": "A changed or undercut asking price is written to the phone’s history with your name.",
+    "reviseAsking": "Update asking price",
+    "reason": "Reason"
+  },
+  "rules": {
+    "title": "Price rules",
+    "hint": "Who may sell under the asking price and who may change it. Owner and manager always may.",
+    "belowAsking": "Selling under the asking price",
+    "askingChange": "Changing the asking price",
+    "allow": "Anyone",
+    "manager": "Owner / manager",
+    "pin": "With owner PIN",
+    "pinNote": "\"With owner PIN\": staff can do it when the owner types their PIN on the spot; the approval is recorded. Set your PIN under More → Staff."
+  },
+  "prices": {
+    "tab": "Prices",
+    "hint": "Every asking-price change and every sale under the asking price, with who did it.",
+    "changes": "changes",
+    "under": "under asking",
+    "none": "No price changes in this period",
+    "underAsking": "Sold under asking",
+    "changed": "Asking changed",
+    "changedAtSale": "Asking changed at sale"
   }
 }

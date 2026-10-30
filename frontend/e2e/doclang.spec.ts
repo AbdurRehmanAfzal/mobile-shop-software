@@ -30,6 +30,7 @@ test('document language: English by default, Urdu on request, for the receipt an
   await page.getByRole('button', { name: /Nokia/ }).first().click()
   await page.getByRole('button', { name: 'Skip and sell (I know this person)' }).click()
   await page.getByRole('button', { name: 'Complete sale' }).click()
+  await page.getByRole('button', { name: 'Confirm and make the bill' }).click()
   await expect(page.getByText('Sale complete')).toBeVisible()
 
   // the picker sits above the print buttons, English pressed; the English receipt first

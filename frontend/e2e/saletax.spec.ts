@@ -36,6 +36,7 @@ test('tax checkbox: off by default, 18% added when ticked', async ({ page }) => 
   await page.screenshot({ path: 'test-results/sale-tax.png', fullPage: true })
   await page.getByRole('button', { name: 'Skip and sell (I know this person)' }).click()
   await page.getByRole('button', { name: 'Complete sale' }).click()
+  await page.getByRole('button', { name: 'Confirm and make the bill' }).click()
   await expect(page.getByText('Sale complete')).toBeVisible()
 
   // the invoice as a PDF file, to download or share (owner 2026-10-28)

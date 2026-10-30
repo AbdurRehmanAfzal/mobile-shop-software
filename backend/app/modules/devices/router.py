@@ -128,7 +128,7 @@ def device_history(device_id: uuid.UUID, ctx: Ctx, db: DB):
 
 @router.patch("/{device_id}", response_model=DeviceOut)
 def update_device(device_id: uuid.UUID, data: DeviceUpdate, ctx: Transact, db: DB):
-    return _hide_cost(ctx, service.update_device(db, ctx.shop_id, ctx.id, device_id, data))
+    return _hide_cost(ctx, service.update_device(db, ctx.shop_id, ctx, device_id, data))
 
 
 @router.put("/{device_id}/accessories", response_model=list[AccessoryItemOut])

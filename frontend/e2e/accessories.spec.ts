@@ -45,5 +45,6 @@ test('accessories: got it / later when buying, given / later when selling, warra
   await page.screenshot({ path: 'test-results/acc-sell.png', fullPage: true })
   await page.getByRole('button', { name: 'Skip and sell (I know this person)' }).click()
   await page.getByRole('button', { name: 'Complete sale' }).click()
+  await page.getByRole('button', { name: 'Confirm and make the bill' }).click()
   await expect(page.getByText('Sale complete')).toBeVisible()
 })
