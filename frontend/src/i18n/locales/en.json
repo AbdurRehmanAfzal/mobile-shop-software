@@ -1797,5 +1797,19 @@
       "date": "Date",
       "code": "Cost code"
     }
+  },
+  "otp": {
+    "hint": "Write your mobile number. A code comes on WhatsApp; with it you set a new password yourself.",
+    "send": "Send code on WhatsApp",
+    "orRequest": "No WhatsApp? Ask the owner / provider to reset it",
+    "noSender": "Codes cannot be sent from this server yet. Send a request instead: the shop owner or the software provider will set a new password.",
+    "sentTo": "Code sent to",
+    "code": "Code (6 digits)",
+    "verify": "Confirm code",
+    "resend": "Send the code again",
+    "newPasswordHint": "Number confirmed. Choose a new password.",
+    "setPassword": "Set password and log in",
+    "signupHint": "A code was sent to your WhatsApp. Type it, confirm, then tap Create shop account again.",
+    "verified": "Number confirmed"
   }
 }

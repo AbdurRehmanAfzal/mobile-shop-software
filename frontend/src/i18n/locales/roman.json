@@ -1797,5 +1797,19 @@
       "date": "Tareekh",
       "code": "Laagat code"
     }
+  },
+  "otp": {
+    "hint": "Apna mobile number likhein. WhatsApp par code aaye ga; us se aap khud naya password rakh sakein ge.",
+    "send": "WhatsApp par code bhejein",
+    "orRequest": "WhatsApp nahi? Maalik / provider se reset ki darkhwast karein",
+    "noSender": "Is server se abhi code nahi bheje ja sakte. Darkhwast bhejein: dukaan ka maalik ya software provider naya password rakhe ga.",
+    "sentTo": "Code bheja gaya",
+    "code": "Code (6 hindse)",
+    "verify": "Code ki tasdeeq",
+    "resend": "Code dobara bhejein",
+    "newPasswordHint": "Number ki tasdeeq ho gayi. Naya password chunein.",
+    "setPassword": "Password rakhein aur login",
+    "signupHint": "Aap ke WhatsApp par code bheja gaya. Likhein, tasdeeq karein, phir dobara Create shop account dabayein.",
+    "verified": "Number ki tasdeeq ho gayi"
   }
 }

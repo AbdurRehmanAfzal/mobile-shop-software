@@ -1,6 +1,16 @@
 """Message templates, one language at a time (owner rule). `{amount}` style placeholders."""
 
 TEMPLATES: dict[str, dict[str, dict[str, str]]] = {
+    "otp": {
+        "en": {
+            "subject": "Your code",
+            "body": "{code} is your Mobile Shop code. It works for 10 minutes. Do not share it.",
+        },
+        "ur": {
+            "subject": "آپ کا کوڈ",
+            "body": "{code} آپ کا Mobile Shop کوڈ ہے۔ 10 منٹ تک کام کرے گا۔ کسی کو نہ بتائیں۔",
+        },
+    },
     "sale_customer": {
         "en": {
             "subject": "Receipt {invoice_no} from {shop}",

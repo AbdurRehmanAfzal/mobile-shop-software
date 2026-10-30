@@ -83,11 +83,17 @@ shop, tap **Want this app for your shop? Contact us** on the login page.
 4. Tap **Login**.
 
 ### Forgot password
-Under the login form tap **Forgot password?**, check your mobile number and **Send request**.
-- A **shop owner's** request goes to the software provider (their Super admin dashboard and
-  WhatsApp); they set a new password and send it to you.
-- A **staff member's** request goes to the shop owner (Messages and WhatsApp); the owner sets a new
-  one in **More → Staff → the person → Reset password**.
+Under the login form tap **Forgot password?** and check your mobile number.
+- **Send code on WhatsApp**: a 6-digit code arrives on that number (it works for 10 minutes, three
+  codes per 10 minutes, five tries). Type it, **Confirm code**, choose a **New password**, and you are
+  logged in. Nobody else is involved.
+- No WhatsApp, or the server cannot send codes yet: **Ask the owner / provider to reset it**. A **shop
+  owner's** request goes to the software provider (Super admin dashboard and WhatsApp); a **staff
+  member's** goes to the shop owner (Messages and WhatsApp), who sets a new one in **More → Staff →
+  the person → Reset password**.
+
+When the software provider switches on *SIGNUP_OTP*, the public **Create shop account** page also
+asks for a code on the number before the shop is opened.
 
 ### Quick PIN (faster login on your own phone)
 Set it once:

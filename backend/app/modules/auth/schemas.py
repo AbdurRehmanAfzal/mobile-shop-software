@@ -17,6 +17,7 @@ class SignupRequest(BaseModel):
     email: EmailStr | None = None
     password: str = Field(min_length=6, max_length=128)
     locale: str = Field(default="ur", pattern="^(en|ur)$")
+    otp_token: str | None = None  # required when SIGNUP_OTP is on
 
     @field_validator("phone")
     @classmethod

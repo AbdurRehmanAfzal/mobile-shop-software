@@ -17,6 +17,7 @@ from app.modules.installments import models as _installments_models  # noqa: F40
 from app.modules.ledger import models as _ledger_models  # noqa: F401
 from app.modules.loans import models as _loans_models  # noqa: F401
 from app.modules.notifications import models as _notifications_models  # noqa: F401
+from app.modules.otp import models as _otp_models  # noqa: F401
 from app.modules.parties import models as _parties_models  # noqa: F401
 from app.modules.payments import models as _payments_models  # noqa: F401
 from app.modules.paymode import models as _paymode_models  # noqa: F401

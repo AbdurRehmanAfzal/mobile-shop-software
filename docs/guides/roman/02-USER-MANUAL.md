@@ -84,12 +84,17 @@ page par **Apni dukaan ke liye yeh app chahiye? Hum se raabta karein** dabayein.
 4. **Login** dabayein.
 
 ### Password bhool gaye
-Login form ke neeche **Password bhool gaye?** dabayein, apna mobile number check karein aur **Request
-bhejein**.
-- **Dukaan ke malik** ki request software provider ko jaati hai (un ka Super admin dashboard aur
-  WhatsApp); woh naya password rakh kar aap ko bhejte hain.
-- **Staff** ki request dukaan ke malik ko jaati hai (Paighaam aur WhatsApp); malik **Mazeed → Staff →
-  banda → Password reset** mein naya rakhta hai.
+Login form ke neeche **Password bhool gaye?** dabayein aur apna mobile number check karein.
+- **WhatsApp par code bhejein**: us number par 6 hindson ka code aata hai (10 minute chalta hai, 10
+  minute mein 3 code, 5 koshishein). Likhein, **Code ki tasdeeq**, **Naya password** chunein, aur aap
+  login ho jate hain. Kisi aur ki zaroorat nahi.
+- WhatsApp nahi, ya server abhi code nahi bhej sakta: **Maalik / provider se reset ki darkhwast
+  karein**. **Dukaan ke malik** ki request software provider ko jaati hai (Super admin dashboard aur
+  WhatsApp); **staff** ki dukaan ke malik ko (Paighaam aur WhatsApp), jo **Mazeed → Staff → banda →
+  Password reset** mein naya rakhta hai.
+
+Jab software provider *SIGNUP_OTP* on kare to public **Dukaan ka account banayein** page bhi dukaan
+kholne se pehle number par code maangta hai.
 
 ### Jaldi PIN (apne phone par tez login)
 Ek dafa set karein:

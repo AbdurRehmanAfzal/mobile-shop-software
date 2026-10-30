@@ -28,7 +28,8 @@ test('forgot password → super admin sets a new one and opens the shop', async 
   await page.goto('/login')
   await page.getByRole('button', { name: 'Forgot password?' }).click()
   await page.getByLabel('Mobile number').last().fill(owner)
-  await page.getByRole('button', { name: 'Send request' }).click()
+  // no WhatsApp sender on this box: the request path, as before
+  await page.getByRole('button', { name: /Ask the owner \/ provider to reset it/ }).click()
   await expect(page.getByText('Request sent to the software provider')).toBeVisible()
   await page.screenshot({ path: 'test-results/forgot-password.png' })
   await page.keyboard.press('Escape')

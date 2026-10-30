@@ -294,3 +294,28 @@ def _plain(value):
     if isinstance(value, uuid.UUID):
         return str(value)
     return value
+
+
+def reset_password(db: Session, phone: str, new_password: str) -> tuple[User, TokenPair]:
+    """OTP-proven owner of the number sets a new password and is logged in (audit on the home shop)."""
+    from app.modules.admin.access import _home_shop
+
+    user = db.scalar(select(User).where(User.phone == phone, User.is_active.is_(True)))
+    if user is None:
+        raise NotFound()
+    user.password_hash = hash_password(new_password)
+    user.last_login_at = utcnow()
+    shop = _home_shop(db, user)
+    if shop is not None:
+        record_audit(
+            db,
+            shop_id=shop.id,
+            user_id=user.id,
+            entity="user",
+            entity_id=user.id,
+            action="password_reset_otp",
+            after={"phone": user.phone},
+        )
+    db.commit()
+    login_limiter.reset(f"login:{phone}")
+    return user, _tokens(user)

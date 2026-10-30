@@ -33,6 +33,10 @@ class Settings(BaseSettings):
     whatsapp_templates: str = ""  # JSON: our template key -> approved Meta template
     # the in-process clock for the night report, reminders and sending queued messages
     scheduler_enabled: bool = True
+    # OTP (owner 2026-10-30): codes go by WhatsApp when it is configured. OTP_DEV_ECHO returns the
+    # code in the API response (dev / e2e only). SIGNUP_OTP makes public signup prove the number.
+    otp_dev_echo: bool = False
+    signup_otp: bool = False
 
     @property
     def superusers(self) -> set[str]:
