@@ -88,6 +88,8 @@ def create_purchase(
         cash = paymode.account_for(db, shop_id, data.payment, data.cash_account_id)
 
     at = _purchase_time(data.purchased_at)
+    if data.purchased_at is None and data.date and (back := at_for(data.date)):
+        at = back  # a backdated bill without a time of day: that day, noon
     day = data.date or at.astimezone(ZoneInfo(shop.timezone or "Asia/Karachi")).date()
     if paid > ZERO and db.scalar(
         select(DayClose.id).where(
@@ -127,7 +129,7 @@ def create_purchase(
         memo=f"{purchase.no} {party.name}",
         at=at,
     )
-    posting.at = at_for(purchase.date)
+    posting.at = posting.at or at_for(purchase.date)
     line_no = 0
     devices: list[tuple[Device, Decimal]] = []
 

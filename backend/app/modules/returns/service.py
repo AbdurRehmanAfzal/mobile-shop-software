@@ -136,7 +136,7 @@ def sale_return(
     posting = Posting(
         document_type="sale_return", document_id=doc.id, memo=f"{doc.no} return of {inv.no}"
     )
-    posting.at = at_for(doc.date)
+    posting.at = posting.at or at_for(doc.date)
     P = acc.party_account(party.id)
     for ln in lines:
         net_sales = money(ln.line_total - ln.tax_share)
@@ -295,7 +295,7 @@ def purchase_return(
     posting = Posting(
         document_type="purchase_return", document_id=doc.id, memo=f"{doc.no} return of {pur.no}"
     )
-    posting.at = at_for(doc.date)
+    posting.at = posting.at or at_for(doc.date)
     P = acc.party_account(party.id)
     if amount > ZERO:
         posting.debit(P, amount)

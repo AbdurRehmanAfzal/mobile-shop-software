@@ -187,7 +187,7 @@ def create_sale(
         document_id=invoice.id,
         memo=f"{invoice.no} {party.name if party else 'Cash sale'}",
     )
-    posting.at = at_for(invoice.date)
+    posting.at = posting.at or at_for(invoice.date)
     cost_total = ZERO
     line_no = 0
 

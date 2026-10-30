@@ -151,7 +151,7 @@ def create_expense(
         document_id=exp.id,
         memo=f"{exp.no} {cat.name}{(' · ' + data.description) if data.description else ''}",
     )
-    posting.at = at_for(exp.date)
+    posting.at = posting.at or at_for(exp.date)
     posting.debit(acc.expense_account(cat.key), amount, memo=data.description or cat.name).credit(
         acc.cash_account(cash.id), amount, memo=cat.name
     )
