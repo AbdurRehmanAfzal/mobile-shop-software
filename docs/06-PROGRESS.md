@@ -107,10 +107,25 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 | FBR POS | FR-TAX-04 | ⬜ |
 | Cloud sync / offline | FR-PLT-05 | 🔄 | **2026-10-29 offline mode**: queries persisted 24 h (localStorage, cleared on logout), sale / purchase / payment / expense queued on the phone when the network is down (`lib/offline.ts`, `lib/outbox.ts`, OfflineBar), sent in order with `Idempotency-Key` (server `core/idempotency.py`, table `idempotency_keys`). Two-way sync of edits made offline is not planned |
 
+## Phase 5 — Shop Audit, Financial Intelligence & Advanced Reporting (owner brief 2026-10-30)
+Spec `docs/16-SHOP-AUDIT-SPEC.md` · plan + gap analysis + next task `docs/17-SHOP-AUDIT-PLAN.md`.
+| Phase | Status | Notes |
+|---|---|---|
+| P1 Codebase audit & gap analysis | ✅ | **2026-10-30** docs/17 §1: 22 requirement rows classified, 8 accounting risks, additive DB changes, API map (`/api/v1/shop-audit/*`), UI reuse list |
+| P2 Financial data integrity (cash↔bank transfer, P&L lines, ageing start, indexes, reconcile helper) | ⬜ | next |
+| P3 Periods & as-of balances, overview KPIs, audit shell | ⬜ | |
+| P4 Financial audit (P&L series, cash/bank by reason, methods, international, expenses, tax) | ⬜ | |
+| P5 Customers & suppliers (journey, rankings, udhaar ageing) | ⬜ | |
+| P6 Inventory intelligence (as-of stock, bands, verification, alerts) | ⬜ | |
+| P7 Products & invoice audit | ⬜ | |
+| P8 Owner security feed | ⬜ | |
+| P9 Charts & drill-down dashboard | ⬜ | |
+| P10 Report center & complete audit report | ⬜ | |
+| P11 Reconciliation, scenario tests, e2e, manuals, ADR-032 | ⬜ | |
+
 ## Backlog (owner requests, not started)
 | Item | Notes |
 |---|---|
-| Shop Audit, Financial Intelligence & Advanced Reporting (owner brief 2026-10-30) | Full spec saved verbatim in `docs/16-SHOP-AUDIT-SPEC.md`. Starts with a codebase audit + gap analysis (its section 1), then phases 2–11. Builds on `modules/reports`, `modules/units`, the ledger and `device_events`; price integrity (§14) is already covered by ADR-031 |
 
 ## Known issues / tech debt
 - Signup has no phone OTP verification; add before public launch (Phase 3).
