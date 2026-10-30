@@ -876,6 +876,16 @@ Sticker ka laagat code** mein 10 mukhtalif harfon ka lafz (maslan `BLACKHORSE`):
 
 ---
 
+## 16b. Mobile Shop apne PC par (bina internet)
+
+Jin dukaanon mein internet theek nahi, wahan yehi software Windows PC par chalta hai: **MobileShop-
+Setup.exe** install karein, Desktop se **Mobile Shop** kholein; tray mein icon aata hai aur app browser mein
+`127.0.0.1:8787` par khulti hai. Ek baar dukaan ka account banayein, phir aam tareeqe se kaam karein. Sab
+kuch usi PC par rehta hai (AppData mein `MobileShop` folder); tray menu mein **Backup now** (tareekh wali
+copy `backups` mein aur Desktop par), **Open data folder** aur **Quit**. `settings.env` mein
+`MOBILESHOP_HOST=0.0.0.0` rakh kar aur firewall mein port khol kar dukaan ke Wi-Fi par phones bhi khol
+sakte hain. Update: naya Setup chalayein; data wahin rehta hai. Tafseel docs/15 mein.
+
 ## 17. Staff aur un ke ohde
 
 Sirf maalik: **Mazeed → Staff**.

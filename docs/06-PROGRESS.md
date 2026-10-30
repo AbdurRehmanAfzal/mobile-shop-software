@@ -96,7 +96,7 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 | Item | Status | Notes |
 |---|---|---|
 | Laptop/desktop responsive layout (sidebar, wide tables, side-by-side sale screen) | ✅ | **2026-10-29**: side menu with F-keys (was there); content now uses the width on list/overview screens (`Shell` WIDE routes → 5xl, forms stay 3xl); Home in two columns (hisaab left; khata, stock, reports, attention right); Sale side by side on lg (stock list left, bill right, no step switching; `useLaptop()` in `lib/useMedia.ts`); stock cards two per row. `e2e/laptop.spec.ts` at 1280×800 |
-| Offline Windows installer (local server + SQLite, optional cloud sync) | ⬜ | FR-PLT-04/05; only needed if target shops lack internet. Owner to decide |
+| Offline Windows installer (local server + SQLite, optional cloud sync) | ✅ | **2026-10-30** FR-PLT-04 done (docs/15, ADR-029): `app/local.py` tray launcher (data in %LOCALAPPDATA%\MobileShop, settings.env, migrations, backup), backend serves the web app (`WEB_DIR`), PyInstaller spec + Inno Setup script + `local/build.ps1`, `windows.yml` builds and smoke-tests `MobileShop-Setup-<v>.exe`. Local installs run as `chain` with no expiry (`LOCAL_MODE`). FR-PLT-05 cloud sync not built |
 
 ## Phase 4 — Differentiators
 | Item | FR | Status |

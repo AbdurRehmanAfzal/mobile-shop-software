@@ -874,6 +874,16 @@ so 45,000 prints as `KHBBB`. Salesmen never get the code, even if they tick it.
 
 ---
 
+## 16b. Mobile Shop on your own PC (no internet)
+
+Shops without reliable internet can run the same software on a Windows PC: install
+**MobileShop-Setup.exe**, open **Mobile Shop** from the Desktop; a tray icon appears and the app opens
+in the browser at `127.0.0.1:8787`. Create the shop account once, then work as usual. Everything is
+on that PC (`MobileShop` folder under your user's AppData); the tray menu has **Backup now** (a dated
+copy in `backups` and on the Desktop), **Open data folder** and **Quit**. Phones on the shop's Wi-Fi
+can open it too once `MOBILESHOP_HOST=0.0.0.0` is set in `settings.env` and the port is allowed in
+the firewall. Updates: run the new Setup; your data stays. See docs/15 for the details.
+
 ## 17. Staff and roles
 
 Owner only: **More → Staff**.

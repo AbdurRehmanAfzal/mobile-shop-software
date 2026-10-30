@@ -4,6 +4,7 @@ from decimal import Decimal
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.core.errors import Conflict, Forbidden, NotFound, Unauthorized, ValidationFailed
 from app.core.permissions import Role
 from app.core.ratelimit import login_limiter
@@ -66,6 +67,8 @@ def create_shop_with_owner(
             message_ur="یہ فون نمبر پہلے سے رجسٹرڈ ہے",
         )
     org = Organisation(name=data.shop_name)
+    if settings.local_mode:  # the one-PC install: nothing to pay a server for, never locks
+        org.plan = "chain"
     shop = Shop(
         organisation=org,
         name=data.shop_name,

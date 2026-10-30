@@ -51,6 +51,10 @@ class Settings(BaseSettings):
     ai_model: str = "claude-opus-5-5"
     ai_vision_model: str = "claude-haiku-5-5"
     ai_daily_limit: int = 200
+    # one-PC install (owner 2026-10-30): the backend also serves the built web app from this folder
+    web_dir: str = ""
+    # the one-PC install: the shop made here is `chain` with no expiry (no server to pay for)
+    local_mode: bool = False
 
     @property
     def superusers(self) -> set[str]:

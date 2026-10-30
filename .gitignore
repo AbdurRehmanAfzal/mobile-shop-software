@@ -147,3 +147,4 @@ docker-compose.override.yml
 /frontend/test-results/
 /frontend/playwright-report/
 frontend/public/app.apk
+.venv-local/

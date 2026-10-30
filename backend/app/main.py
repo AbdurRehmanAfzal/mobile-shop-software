@@ -71,6 +71,30 @@ def check_production_settings() -> None:
         )
 
 
+def _mount_web(app: FastAPI, web_dir: str) -> None:
+    """The one-PC install: the built React app from `web_dir`, with every non-API path falling
+    back to index.html so the app's own routes work on reload."""
+    from pathlib import Path
+
+    from fastapi.responses import FileResponse
+    from fastapi.staticfiles import StaticFiles
+
+    root = Path(web_dir)
+    index = root / "index.html"
+    if not index.is_file():
+        return
+    assets = root / "assets"
+    if assets.is_dir():
+        app.mount("/assets", StaticFiles(directory=str(assets)), name="assets")
+
+    @app.get("/{path:path}", include_in_schema=False)
+    def web(path: str):
+        candidate = (root / path).resolve() if path else index
+        if path and candidate.is_file() and root.resolve() in candidate.parents:
+            return FileResponse(str(candidate))
+        return FileResponse(str(index))
+
+
 def create_app() -> FastAPI:
     check_production_settings()
     app = FastAPI(
@@ -145,6 +169,8 @@ def create_app() -> FastAPI:
     app.include_router(labels_router)
     app.include_router(attendance_router)
     app.include_router(staff_activity_router)
+    if settings.web_dir:
+        _mount_web(app, settings.web_dir)
     return app
 
 
