@@ -851,6 +851,24 @@ Staff ke naam par daba kar **Ohda** badlein, **Naya password** (**Mehfooz karein
 | Marammat | ✓ | ✓ | phone lena | kaam karna |
 | Staff aur dukaan ki settings | ✓ | – | – | – |
 
+### Hazri
+Jab *Staff ki hazri* module on ho to Home par sab ko **Hazri** ka card dikhta hai: aate hi **Hazri
+lagayein**, jaate waqt **Chhutti karein**; phir card kehta hai "Aamad 9:05 AM · Chhutti 7:10 PM · 10.1
+ghante". Din mein ek baar hazri.
+
+Maalik: **Mazeed → Staff → Hazri** tab. Arsa chunein (aaj, hafta, is mahine, se–tak). Har bande ka
+card: aaj ki haalat, kaam ke ghante, aur **Hazir**, **Aadha din**, **Chhutti**, **Ghair hazir** aur
+**Record nahi** (jab se aaya, jin dinon kuch darj nahi) ki ginti. Bande par dabayein to **din khud darj
+karein** (din, haalat, note; maslan kal = Chhutti, "Eid") aur us ke din aamad/chhutti ke waqt ke saath
+dekhein. Tankhwah aur advance **Kharche** mein hi rehte hain.
+
+### Kis ne kya kiya (kaam)
+**Mazeed → Staff → Kaam** tab: arse ke liye har staff ki **Bikri (tadaad · Rs)**, **Wasooli**,
+**Khareed**, **Kharche**, **Marammat** aur kul **Kaam**, aakhri login aur aaj ki hazri ke saath.
+Bande par dabayein to poori list: har bill, adaigi, khareed, kharcha, marammat, phone, banda,
+mansookhi aur settings ki tabdeeli jo us ne ki, waqt, number aur raqam ke saath. Ye us record se
+aata hai jo app har tabdeeli ka rakhta hai, is liye kuch chhoot nahi sakta.
+
 ---
 
 ## 18. Dukaan ki settings (dukaan, tax, raseed)

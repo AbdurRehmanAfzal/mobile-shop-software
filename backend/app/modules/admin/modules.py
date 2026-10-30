@@ -22,6 +22,7 @@ MODULES: dict[str, dict[str, str]] = {
     },
     "loans": {"en": "Loans to other shops (amanat)", "ur": "امانت (دوسری دکان کو)"},
     "installments": {"en": "Installments (qist)", "ur": "قسطیں"},
+    "attendance": {"en": "Staff attendance (hazri)", "ur": "عملے کی حاضری"},
 }
 
 PLAN_DEFAULTS: dict[str, list[str]] = {
@@ -38,6 +39,7 @@ PLAN_DEFAULTS: dict[str, list[str]] = {
         "exports",
         "notifications",
         "installments",
+        "attendance",
     ],
     "chain": list(MODULES),
 }
@@ -53,6 +55,7 @@ ROUTE_MODULES: list[tuple[str, str]] = [
     ("/api/v1/notifications", "notifications"),
     ("/api/v1/loans", "loans"),
     ("/api/v1/installments", "installments"),
+    ("/api/v1/attendance", "attendance"),
     # profit & co.; the dashboard, the day's hisaab and stock summary stay basic
     ("/api/v1/reports/profit-loss", "reports"),
     ("/api/v1/reports/cash-flow", "reports"),

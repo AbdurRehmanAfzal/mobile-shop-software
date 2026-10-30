@@ -849,6 +849,24 @@ Tap a staff member to change the **Role**, set a **New password** (**Save**), or
 | Repairs | ✓ | ✓ | take in | work |
 | Staff and shop settings | ✓ | – | – | – |
 
+### Hazri (attendance)
+When the *Staff attendance* module is on, Home shows a **Hazri** card for everyone: **Check in**
+when you arrive, **Check out** when you leave; the card then says "In 9:05 AM · Out 7:10 PM · 10.1 h".
+One check-in per day.
+
+Owner: **More → Staff → Hazri** tab. Pick the period (today, week, this month, from–to). Each
+person shows a card: today's status, hours worked, and counts of **Present**, **Half day**,
+**Leave**, **Absent** and **No record** (days since they joined with nothing marked). Tap a person
+to **mark a day by hand** (day, status, note; e.g. yesterday = Leave, "Eid") and to see their days
+with in/out times. Salary and advances stay in **Expenses**.
+
+### What each one did (activity)
+**More → Staff → Activity** tab: for the period, each staff member's **Sales (count · Rs)**,
+**Received**, **Purchases**, **Expenses**, **Repairs** and the number of **Actions**, with their
+last login and today's hazri. Tap a person for the log: every bill, payment, purchase, expense,
+repair, phone, person, cancellation and settings change they made, with time, number and amount.
+This comes from the audit record the app keeps of every change, so nothing can be left out.
+
 ---
 
 ## 18. Shop settings (shop, tax, receipt)

@@ -1411,7 +1411,8 @@
     "off": "یہ سہولت آپ کے پلان میں شامل نہیں۔",
     "offHint": "سافٹ ویئر فراہم کنندہ سے کہیں کہ آپ کی دکان کے لیے چالو کر دیں۔",
     "waText": "السلام علیکم، میں اپنے Mobile Shop پلان میں \"{{module}}\" شامل کروانا چاہتا ہوں۔",
-    "installments": "قسطیں"
+    "installments": "قسطیں",
+    "attendance": "عملے کی حاضری"
   },
   "fees": {
     "title": "سافٹ ویئر فیس",
@@ -1668,5 +1669,95 @@
     "partial": "Rs. {{n}} وصول",
     "people": "گاہک اور ضامن",
     "viewBill": "بل کھولیں"
+  },
+  "hazri": {
+    "title": "حاضری",
+    "checkIn": "حاضری لگائیں",
+    "checkOut": "چھٹی کریں",
+    "notIn": "آج ابھی حاضری نہیں لگی",
+    "inAt": "آمد {{t}}",
+    "inOut": "آمد {{a}} · چھٹی {{b}}",
+    "hours": "{{h}} گھنٹے",
+    "done": "دن مکمل",
+    "notToday": "آج نہیں آئے",
+    "tab": {
+      "staff": "عملہ",
+      "hazri": "حاضری",
+      "activity": "کام"
+    },
+    "st": {
+      "present": "حاضر",
+      "half": "آدھا دن",
+      "leave": "چھٹی",
+      "absent": "غیر حاضر"
+    },
+    "missing": "ریکارڈ نہیں",
+    "mark": "دن خود درج کریں",
+    "day": "دن",
+    "noRows": "اس عرصے میں کوئی حاضری نہیں"
+  },
+  "activity": {
+    "none": "اس عرصے میں کچھ نہیں",
+    "lastLogin": "آخری لاگ ان",
+    "never": "کبھی لاگ ان نہیں ہوا",
+    "sales": "فروخت (تعداد · روپے)",
+    "received": "وصولی (روپے)",
+    "purchases": "خریداری (تعداد · روپے)",
+    "expenses": "خرچے (روپے)",
+    "repairs": "مرمت",
+    "actions": "کام",
+    "log": "کیا کیا"
+  },
+  "audit": {
+    "e": {
+      "invoice": "فروخت کا بل",
+      "purchase": "خریداری",
+      "payment": "ادائیگی",
+      "expense": "خرچہ",
+      "expense_category": "خرچے کی قسم",
+      "repair": "مرمت",
+      "device": "موبائل",
+      "party": "بندہ",
+      "loan": "امانت",
+      "installment_plan": "قسط پلان",
+      "verification": "شناخت چیک",
+      "user": "عملہ",
+      "shop": "دکان کی سیٹنگز",
+      "organisation": "پلان",
+      "cash_account": "کیش / بینک اکاؤنٹ",
+      "accessory": "آئٹم",
+      "exchange": "ایکسچینج",
+      "attendance": "حاضری",
+      "day_close": "دن بند",
+      "brand": "برانڈ",
+      "model": "ماڈل",
+      "storage": "اسٹوریج",
+      "colour": "رنگ",
+      "ledger_group": "کھاتہ",
+      "fee_payment": "سافٹ ویئر فیس"
+    },
+    "a": {
+      "create": "بنایا",
+      "update": "بدلا",
+      "delete": "حذف کیا",
+      "void": "منسوخ کیا",
+      "return": "واپس کیا",
+      "reverse": "الٹایا",
+      "restore": "بحال کیا",
+      "sold": "بیچا",
+      "mark": "درج کیا",
+      "override": "چیک چھوڑا",
+      "status": "حالت بدلی",
+      "parts": "پرزے ڈالے",
+      "deliver": "حوالے کیا",
+      "report": "رپورٹ کیا",
+      "plan": "پلان بنایا",
+      "upsert": "محفوظ کیا",
+      "opening_balance": "ابتدائی بقایا",
+      "notification_settings": "پیغام سیٹنگز",
+      "modules": "ماڈیولز",
+      "password_set_by_admin": "ایڈمن نے پاس ورڈ رکھا",
+      "super_admin_access": "سپر ایڈمن نے کھولا"
+    }
   }
 }

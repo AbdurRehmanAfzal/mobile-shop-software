@@ -1411,7 +1411,8 @@
     "off": "Ye sahulat aap ke plan mein shamil nahi.",
     "offHint": "Software provider se kahein ke aap ki dukaan ke liye chalu kar dein.",
     "waText": "Assalam-o-Alaikum, main apne Mobile Shop plan mein \"{{module}}\" shamil karwana chahta hoon.",
-    "installments": "Qistein"
+    "installments": "Qistein",
+    "attendance": "Staff ki hazri"
   },
   "fees": {
     "title": "Software fees",
@@ -1668,5 +1669,95 @@
     "partial": "Rs. {{n}} wasool",
     "people": "Customer aur zamin",
     "viewBill": "Bill kholein"
+  },
+  "hazri": {
+    "title": "Hazri",
+    "checkIn": "Hazri lagayein",
+    "checkOut": "Chhutti karein",
+    "notIn": "Aaj abhi hazri nahi lagi",
+    "inAt": "Aamad {{t}}",
+    "inOut": "Aamad {{a}} · Chhutti {{b}}",
+    "hours": "{{h}} ghante",
+    "done": "Din mukammal",
+    "notToday": "Aaj nahi aaye",
+    "tab": {
+      "staff": "Staff",
+      "hazri": "Hazri",
+      "activity": "Kaam"
+    },
+    "st": {
+      "present": "Hazir",
+      "half": "Aadha din",
+      "leave": "Chhutti",
+      "absent": "Ghair hazir"
+    },
+    "missing": "Record nahi",
+    "mark": "Din khud darj karein",
+    "day": "Din",
+    "noRows": "Is arse mein koi hazri nahi"
+  },
+  "activity": {
+    "none": "Is arse mein kuch nahi",
+    "lastLogin": "Aakhri login",
+    "never": "Kabhi login nahi hua",
+    "sales": "Bikri (tadaad · Rs)",
+    "received": "Wasooli (Rs)",
+    "purchases": "Khareed (tadaad · Rs)",
+    "expenses": "Kharche (Rs)",
+    "repairs": "Marammat",
+    "actions": "Kaam",
+    "log": "kya kiya"
+  },
+  "audit": {
+    "e": {
+      "invoice": "bikri ka bill",
+      "purchase": "khareed",
+      "payment": "adaigi",
+      "expense": "kharcha",
+      "expense_category": "kharche ki qism",
+      "repair": "marammat",
+      "device": "phone",
+      "party": "banda",
+      "loan": "amanat",
+      "installment_plan": "qist plan",
+      "verification": "ID check",
+      "user": "staff",
+      "shop": "dukaan settings",
+      "organisation": "plan",
+      "cash_account": "cash / bank account",
+      "accessory": "item",
+      "exchange": "exchange",
+      "attendance": "hazri",
+      "day_close": "din band",
+      "brand": "brand",
+      "model": "model",
+      "storage": "storage",
+      "colour": "rang",
+      "ledger_group": "khata",
+      "fee_payment": "software fees"
+    },
+    "a": {
+      "create": "Banaya",
+      "update": "Badla",
+      "delete": "Hataya",
+      "void": "Mansookh kiya",
+      "return": "Wapas kiya",
+      "reverse": "Ulta kiya",
+      "restore": "Bahal kiya",
+      "sold": "Becha",
+      "mark": "Darj kiya",
+      "override": "Check chhora",
+      "status": "Haalat badli",
+      "parts": "Purze daale",
+      "deliver": "Hawale kiya",
+      "report": "Report kiya",
+      "plan": "Plan banaya",
+      "upsert": "Mehfooz kiya",
+      "opening_balance": "Ibtidai baqaya",
+      "notification_settings": "Paighaam settings",
+      "modules": "Modules",
+      "password_set_by_admin": "Admin ne password rakha",
+      "super_admin_access": "Super admin ne khola"
+    }
   }
 }

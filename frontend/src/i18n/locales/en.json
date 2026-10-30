@@ -1411,7 +1411,8 @@
     "off": "This feature is not in your plan.",
     "offHint": "Ask the software provider to switch it on for your shop.",
     "waText": "Assalam-o-Alaikum, I want to add \"{{module}}\" to my Mobile Shop plan.",
-    "installments": "Installments (qist)"
+    "installments": "Installments (qist)",
+    "attendance": "Staff attendance (hazri)"
   },
   "fees": {
     "title": "Software fees",
@@ -1668,5 +1669,95 @@
     "partial": "Rs. {{n}} received",
     "people": "Customer and guarantor",
     "viewBill": "Open the bill"
+  },
+  "hazri": {
+    "title": "Hazri (attendance)",
+    "checkIn": "Check in",
+    "checkOut": "Check out",
+    "notIn": "Not checked in yet today",
+    "inAt": "In at {{t}}",
+    "inOut": "In {{a}} · Out {{b}}",
+    "hours": "{{h}} h",
+    "done": "Day done",
+    "notToday": "Not in today",
+    "tab": {
+      "staff": "Staff",
+      "hazri": "Hazri",
+      "activity": "Activity"
+    },
+    "st": {
+      "present": "Present",
+      "half": "Half day",
+      "leave": "Leave",
+      "absent": "Absent"
+    },
+    "missing": "No record",
+    "mark": "Mark a day by hand",
+    "day": "Day",
+    "noRows": "No attendance in this period"
+  },
+  "activity": {
+    "none": "Nothing in this period",
+    "lastLogin": "Last login",
+    "never": "Never logged in",
+    "sales": "Sales (n · Rs)",
+    "received": "Received (Rs)",
+    "purchases": "Purchases (n · Rs)",
+    "expenses": "Expenses (Rs)",
+    "repairs": "Repairs",
+    "actions": "Actions",
+    "log": "what they did"
+  },
+  "audit": {
+    "e": {
+      "invoice": "sale bill",
+      "purchase": "purchase",
+      "payment": "payment",
+      "expense": "expense",
+      "expense_category": "expense category",
+      "repair": "repair job",
+      "device": "phone",
+      "party": "person",
+      "loan": "amanat",
+      "installment_plan": "installment plan",
+      "verification": "ID check",
+      "user": "staff",
+      "shop": "shop settings",
+      "organisation": "plan",
+      "cash_account": "cash / bank account",
+      "accessory": "item",
+      "exchange": "exchange",
+      "attendance": "hazri",
+      "day_close": "day close",
+      "brand": "brand",
+      "model": "model",
+      "storage": "storage",
+      "colour": "colour",
+      "ledger_group": "ledger",
+      "fee_payment": "software fee"
+    },
+    "a": {
+      "create": "Made",
+      "update": "Changed",
+      "delete": "Deleted",
+      "void": "Cancelled",
+      "return": "Returned",
+      "reverse": "Reversed",
+      "restore": "Restored",
+      "sold": "Sold",
+      "mark": "Marked",
+      "override": "Skipped check on",
+      "status": "Changed status of",
+      "parts": "Added parts to",
+      "deliver": "Delivered",
+      "report": "Reported",
+      "plan": "Planned",
+      "upsert": "Saved",
+      "opening_balance": "Opening balance of",
+      "notification_settings": "Message settings",
+      "modules": "Modules of",
+      "password_set_by_admin": "Password set by admin for",
+      "super_admin_access": "Super admin opened"
+    }
   }
 }

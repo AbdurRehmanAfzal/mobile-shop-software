@@ -8,6 +8,8 @@ from app.core.errors import install_error_handlers
 from app.modules.accessories.router import router as accessories_router
 from app.modules.admin.fees_router import router as fees_router
 from app.modules.admin.router import router as admin_router
+from app.modules.attendance.router import activity_router as staff_activity_router
+from app.modules.attendance.router import router as attendance_router
 from app.modules.audit.router import router as audit_router
 from app.modules.auth.router import router as auth_router
 from app.modules.auth.router import shops as shops_router
@@ -135,6 +137,8 @@ def create_app() -> FastAPI:
     app.include_router(exports_router)
     app.include_router(invoices_router)
     app.include_router(installments_router)
+    app.include_router(attendance_router)
+    app.include_router(staff_activity_router)
     return app
 
 

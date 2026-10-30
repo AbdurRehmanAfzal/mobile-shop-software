@@ -14,6 +14,7 @@ import { useAuth } from '@/lib/auth'
 import { toLakh } from '@/lib/format'
 import { useGet } from '@/lib/queries'
 import type { DayReport } from '@/lib/types'
+import HazriCard from './HazriCard'
 import PeriodPicker, { periodOf, periodQuery, type Period } from './PeriodPicker'
 import { JOBS, type Job } from './jobs'
 import { useModules } from '@/lib/modules'
@@ -79,6 +80,8 @@ export default function HomePage() {
           <BtnText k="common.search" />
         </button>
       </form>
+
+      <HazriCard />
 
       {/* main jobs */}
       <div className="grid grid-cols-2 gap-2.5 lg:hidden">

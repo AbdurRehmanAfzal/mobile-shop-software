@@ -3,7 +3,7 @@
 
 import { useAuth } from './auth'
 
-export const MODULE_KEYS = ['accessories', 'repairs', 'expenses', 'held_sales', 'tax', 'exchange', 'reports', 'exports', 'notifications', 'loans', 'installments'] as const
+export const MODULE_KEYS = ['accessories', 'repairs', 'expenses', 'held_sales', 'tax', 'exchange', 'reports', 'exports', 'notifications', 'loans', 'installments', 'attendance'] as const
 export type ModuleKey = (typeof MODULE_KEYS)[number]
 
 /** what a route or menu entry needs; anything not listed is basic */
