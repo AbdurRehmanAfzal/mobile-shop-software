@@ -10,12 +10,16 @@ import { useAuth } from '@/lib/auth'
 import { useInvalidate, useParty, useStatement } from '@/lib/queries'
 import PartyForm from './PartyForm'
 import PaymentForm from '@/features/payments/PaymentForm'
+import PartyUnits, { usePartyUnits } from './PartyUnits'
+import { Printer } from 'lucide-react'
+import { openPrintable } from '@/lib/files'
 
 export default function PartyDetailPage() {
   const { id } = useParams()
   const { pick } = useLang()
   const { data: party, isLoading } = useParty(id)
   const { data: st } = useStatement(id)
+  const { data: units } = usePartyUnits(id)
   const [editing, setEditing] = useState(false)
   const [paying, setPaying] = useState<'in' | 'out' | null>(null)
   const [removing, setRemoving] = useState(false)
@@ -49,6 +53,13 @@ export default function PartyDetailPage() {
         <div className="num text-[34px] leading-none" dir="ltr">
           {bal === 0 ? '0' : `Rs. ${Math.abs(bal).toLocaleString('en-US')}`}
         </div>
+        {units && (Number(units.receivable) > 0 || Number(units.payable ?? 0) > 0 || Number(units.other ?? 0) !== 0) ? (
+          <div className="mt-1 grid grid-cols-3 gap-2" data-testid="party-split">
+            <div className="flex flex-col rounded-2xl bg-white/15 px-3 py-2"><span className="text-xs font-semibold opacity-80">{pick('unit.theyOweTotal')}</span><span className="num text-lg" dir="ltr">{Number(units.receivable).toLocaleString('en-US')}</span></div>
+            {units.payable != null ? <div className="flex flex-col rounded-2xl bg-white/15 px-3 py-2"><span className="text-xs font-semibold opacity-80">{pick('unit.weOweTotal')}</span><span className="num text-lg" dir="ltr">{Number(units.payable).toLocaleString('en-US')}</span></div> : null}
+            {units.other != null && Number(units.other) !== 0 ? <div className="flex flex-col rounded-2xl bg-white/15 px-3 py-2"><span className="text-xs font-semibold opacity-80">{pick('unit.other')}</span><span className="num text-lg" dir="ltr">{Number(units.other).toLocaleString('en-US')}</span></div> : null}
+          </div>
+        ) : null}
         <div className="mt-1 flex flex-wrap gap-1.5">
           {party.kinds.map((k) => (
             <Chip key={k} text={`party.${k}`} tone="muted" />
@@ -74,6 +85,8 @@ export default function PartyDetailPage() {
         {party.address ? <KV k="party.address" v={party.address} /> : null}
       </section>
 
+      <PartyUnits party={party} />
+
       <Section
         title="party.statement"
         right={
@@ -92,6 +105,7 @@ export default function PartyDetailPage() {
                     {fmtDate(r.at)}
                   </div>
                 </div>
+                {r.document_type === 'payment' && r.document_id ? <button type="button" aria-label={pick('unit.printReceipt')} onClick={() => openPrintable(`/api/v1/payments/${r.document_id}/receipt?format=thermal`)} className="tap rounded-full border border-line p-2 text-ink"><Printer size={14} /></button> : null}
                 <div className="text-end">
                   {Number(r.debit) > 0 ? <MoneyText value={r.debit} tone="ink" size="sm" /> : <MoneyText value={-Number(r.credit)} size="sm" />}
                   <div className="text-xs text-muted" dir="ltr">

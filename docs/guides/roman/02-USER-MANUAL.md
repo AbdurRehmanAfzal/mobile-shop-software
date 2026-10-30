@@ -852,6 +852,35 @@ Tasveerein: AI on ho to **CNIC scan** (naya banda, ID check) aur phone ke dabbe 
 **Scan** server par parhe jate hain, jo kharab roshni aur tirche angle mein behtar hai; na ho sake to
 phone ka apna reader pehle ki tarah chalta hai. Tasveer sirf parhne ke liye jaati hai, mehfooz nahi hoti.
 
+## 15c. Har phone ka apna paisa, har bande ke phones
+
+Koi bhi phone kholein (Stock → dabayein): **Is phone ka paisa** mein **Laagat · Abhi dene hain · Bika ·
+Abhi lene hain · Munafa**, phir do card: **Khareeda** (kis se, khareed ka bill, tay qeemat, usi waqt ada,
+baad ki har adaigi apni raseed ke saath, abhi kitne dene hain) aur **Becha** (bikri ke liye yehi). **Is
+phone ki adaigi** / **Is phone ki wasooli** se jo raqam aati hai wo usi bill par lagti hai, is liye phone
+ka baqi aur bande ka khata saath saath chalte hain. Neeche ki kahani pehle din se ek hi timeline hai:
+khareeda, adaigiyan, becha, wasooliyan, wapsi, marammat, note — har paise wali line batati hai us ke
+baad is phone par kitna baqi raha.
+
+Koi bhi banda kholein: bara balance **Un par baqi (phones)**, **Hum ne dene (phones)** aur **Deegar /
+ibtidai** mein bata hota hai (dena aur lena kabhi chupke se minus nahi hote), phir **Phones**: us se
+khareeda ya use becha har phone **Tay shuda · Ada/Wasool · Abhi dene/lene** ke saath, *Bebaaq*, *Un par
+baqi* ya *Hum ne dene hain*, aur baqi wali line par ada/wasool ka button. Neeche statement wahi hai;
+adaigi wali lines apni raseed print karti hain.
+
+Misaal (Vivo): A se 35,000 mein khareeda, 30,000 diye (A: hum ne 5,000 dene); B ko 40,000 mein becha,
+35,000 liye (B: un par 5,000); A ko is phone ke 2,000 diye (A: 3,000); B ne is phone ke 3,000 diye (B:
+2,000). Phone dikhata hai laagat 35,000 / dene 3,000 / bika 40,000 / lene 2,000 / munafa 5,000 — wahi
+hindse A aur B ke page par.
+
+Khareed ke hindse (laagat, bechne wale ko dena, munafa) sirf maalik aur manager ko dikhte hain. Jis bill
+mein kai phone hon us ki har adaigi un par qeemat ke tanasub se batti hai; line par "… ka bill, aur
+cheezein bhi" likha hota hai taake wajah saaf rahe.
+
+**Adaigi ki raseed**: har di ya li gayi raqam thermal ya A5 raseed mein print hoti hai (number, banda,
+raqam, kaise di, kis bill aur phone ke liye, us bill par kitna baqi, baad ka khata balance) — adaigi ki
+screen, phone ke paisa card ya khate ki line se.
+
 ## 16a. Barcode wale qeemat ke sticker
 
 Har phone aur item par sticker lag sakta hai: dukaan ka naam, model, storage · rang, **qeemat**, **IMEI

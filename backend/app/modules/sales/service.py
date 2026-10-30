@@ -19,7 +19,7 @@ from app.modules.devices.service import apply_event, get_device
 from app.modules.devices.state import DeviceStatus, EventType, VerificationStatus
 from app.modules.ledger import accounts as acc
 from app.modules.ledger.models import CashAccount
-from app.modules.ledger.service import Posting, money, post, reverse
+from app.modules.ledger.service import Posting, at_for, money, post, reverse
 from app.modules.notifications import service as notify
 from app.modules.parties.models import Party
 from app.modules.paymode import service as paymode
@@ -187,6 +187,7 @@ def create_sale(
         document_id=invoice.id,
         memo=f"{invoice.no} {party.name if party else 'Cash sale'}",
     )
+    posting.at = at_for(invoice.date)
     cost_total = ZERO
     line_no = 0
 

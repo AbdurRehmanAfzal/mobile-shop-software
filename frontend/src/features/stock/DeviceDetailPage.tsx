@@ -3,20 +3,17 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import { isoDay } from '@/lib/format'
 import RemoveSheet from '@/components/RemoveSheet'
-import { Chip, ErrorText, KV, Loading, MoneyText, PageHeader, Section, Sheet, fmtDate } from '@/components/ui'
+import { Chip, ErrorText, KV, Loading, MoneyText, PageHeader, Section, Sheet } from '@/components/ui'
 import LabelSheet from '@/components/LabelSheet'
 import { patch, post } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 import { useDevice, useDeviceEvent, useDeviceHistory, useDocMutation, useInvalidate, useParties } from '@/lib/queries'
-import type { DeviceDetail, DeviceEvent, Loan } from '@/lib/types'
+import type { DeviceDetail, Loan } from '@/lib/types'
 import DeviceLineSheet, { emptyDraft, type DeviceLineDraft } from '@/features/purchase/DeviceLineSheet'
 import { hasPta, specLine } from './StockPage'
 import PriceHint from '@/components/PriceHint'
+import UnitMoney from './UnitMoney'
 
-const EVENT_TONE: Record<string, 'ok' | 'warn' | 'bad' | 'muted' | 'ink'> = {
-  purchased: 'ok', verified: 'ok', sold: 'ink', sale_returned: 'warn', loaned_out: 'warn', loan_returned: 'ok',
-  marked_faulty: 'bad', faulty_cleared: 'ok', sent_to_repair: 'warn', repair_returned: 'ok', returned_to_supplier: 'bad',
-}
 
 function toDraft(d: DeviceDetail): DeviceLineDraft {
   return {
@@ -41,33 +38,6 @@ function toDraft(d: DeviceDetail): DeviceLineDraft {
   }
 }
 
-function Timeline({ events }: { events: DeviceEvent[] }) {
-  const { pick } = useLang()
-  const canSeeCost = useAuth((s) => s.me?.user.role === 'owner' || s.me?.user.role === 'manager')
-  return (
-    <div className="card p-0">
-      {[...events].reverse().map((e, i) => (
-        <div key={e.id} className={`flex gap-3 px-4 py-3 ${i ? 'border-t border-line' : ''}`}>
-          <div className="flex flex-col items-center">
-            <span className={`mt-1 h-3 w-3 rounded-full ${EVENT_TONE[e.type] === 'bad' ? 'bg-payable' : EVENT_TONE[e.type] === 'warn' ? 'bg-receivable' : EVENT_TONE[e.type] === 'ink' ? 'bg-ink' : 'bg-emerald'}`} />
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-[15px] font-bold text-ink">{pick(`stock.events.${e.type}`)}</span>
-              <span className="text-xs text-muted" dir="ltr">
-                {fmtDate(e.at)}
-              </span>
-            </div>
-            {e.party_name ? <div className="text-sm text-muted">{e.party_name}</div> : null}
-            {e.amount && (e.type !== 'purchased' || canSeeCost) ? <MoneyText value={e.amount} tone="ink" size="sm" /> : null}
-            {e.data && typeof e.data.note === 'string' ? <div className="text-sm text-muted">{e.data.note}</div> : null}
-            {e.data && typeof e.data.reason === 'string' ? <div className="text-sm text-muted">{e.data.reason}</div> : null}
-          </div>
-        </div>
-      ))}
-    </div>
-  )
-}
 
 export default function DeviceDetailPage() {
   const { id } = useParams()
@@ -192,7 +162,7 @@ export default function DeviceDetailPage() {
         </Section>
       ) : null}
 
-      <Section title="stock.history">{history ? <Timeline events={history} /> : <Loading />}</Section>
+      <UnitMoney deviceId={d.id} />
 
       <LabelSheet kind="devices" ids={[d.id]} open={sheet === 'label'} onClose={() => setSheet(null)} />
       <Sheet open={sheet === 'loan'} onClose={() => setSheet(null)} title="stock.loanOut">

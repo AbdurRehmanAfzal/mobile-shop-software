@@ -417,7 +417,14 @@
     "reference": "حوالہ / TID",
     "saved": "ادائیگی محفوظ",
     "allocated": "لگایا گیا",
-    "unallocated": "ایڈوانس رکھا"
+    "unallocated": "ایڈوانس رکھا",
+    "m": {
+      "cash": "نقد",
+      "online": "آن لائن",
+      "cheque": "چیک",
+      "bank": "بینک",
+      "remittance": "بیرونِ ملک سے"
+    }
   },
   "loan": {
     "title": "امانت",
@@ -1852,6 +1859,51 @@
       "best_sellers": "زیادہ بکنے والے",
       "today_overview": "آج کا خلاصہ",
       "rate": "ریٹ"
+    }
+  },
+  "unit": {
+    "title": "اس موبائل کا پیسہ",
+    "phones": "موبائل",
+    "noPhones": "ابھی کوئی موبائل نہ خریدا نہ بیچا",
+    "boughtFrom": "خریدا",
+    "soldTo": "بیچا",
+    "boughtFromShort": "خریدا",
+    "soldToShort": "بیچا",
+    "agreed": "طے شدہ",
+    "paidOut": "ادا",
+    "receivedIn": "وصول",
+    "stillToPay": "ابھی دینے ہیں",
+    "stillToGet": "ابھی لینے ہیں",
+    "upfrontPaid": "اسی وقت ادا",
+    "upfrontReceived": "اسی وقت وصول",
+    "cost": "لاگت",
+    "soldFor": "بکا",
+    "margin": "منافع",
+    "weOwe": "ہم نے دینے ہیں",
+    "theyOwe": "ان پر باقی",
+    "settled": "بے باق",
+    "returned": "واپس",
+    "payForThis": "اس موبائل کی ادائیگی",
+    "receiveForThis": "اس موبائل کی وصولی",
+    "forBill": "بل",
+    "moreThanLeft": "اس بل کے باقی سے زیادہ: اضافی رقم کھاتے پر جائے گی",
+    "printReceipt": "رسید پرنٹ",
+    "sharedBill": "{{t}} کا بل، اور چیزیں بھی",
+    "openingStock": "پرانا اسٹاک: لاگت کے ساتھ درج، خریداری کا بل نہیں۔",
+    "costHidden": "خرید کے اعداد مالک اور منیجر کے لیے ہیں۔",
+    "leftToPay": "دینے باقی",
+    "leftToGet": "لینے باقی",
+    "refund": "واپسی",
+    "theyOweTotal": "ان پر باقی (موبائل)",
+    "weOweTotal": "ہم نے دینے (موبائل)",
+    "other": "دیگر / ابتدائی",
+    "k": {
+      "purchase": "خریدا",
+      "sale": "بیچا",
+      "payment_out": "ادا کیا",
+      "payment_in": "وصول ہوا",
+      "return_sale": "بکری واپس",
+      "return_purchase": "بیچنے والے کو واپس"
     }
   }
 }

@@ -417,7 +417,14 @@
     "reference": "Reference / TID",
     "saved": "Paise mehfooz",
     "allocated": "Kis bill mein lage",
-    "unallocated": "Advance rakha"
+    "unallocated": "Advance rakha",
+    "m": {
+      "cash": "Cash",
+      "online": "Online",
+      "cheque": "Cheque",
+      "bank": "Bank",
+      "remittance": "Bahar se"
+    }
   },
   "loan": {
     "title": "Amanat",
@@ -1852,6 +1859,51 @@
       "best_sellers": "zyada bikne wale",
       "today_overview": "aaj ka khulasa",
       "rate": "rate"
+    }
+  },
+  "unit": {
+    "title": "Is phone ka paisa",
+    "phones": "Phones",
+    "noPhones": "Abhi koi phone na khareeda na becha",
+    "boughtFrom": "Khareeda",
+    "soldTo": "Becha",
+    "boughtFromShort": "Khareeda",
+    "soldToShort": "Becha",
+    "agreed": "Tay shuda",
+    "paidOut": "Ada",
+    "receivedIn": "Wasool",
+    "stillToPay": "Abhi dene hain",
+    "stillToGet": "Abhi lene hain",
+    "upfrontPaid": "Usi waqt ada",
+    "upfrontReceived": "Usi waqt wasool",
+    "cost": "Laagat",
+    "soldFor": "Bika",
+    "margin": "Munafa",
+    "weOwe": "Hum ne dene hain",
+    "theyOwe": "Un par baqi",
+    "settled": "Bebaaq",
+    "returned": "Wapas",
+    "payForThis": "Is phone ki adaigi",
+    "receiveForThis": "Is phone ki wasooli",
+    "forBill": "Bill",
+    "moreThanLeft": "Is bill ke baqi se zyada: izafi raqam khate par jaye gi",
+    "printReceipt": "Raseed print",
+    "sharedBill": "{{t}} ka bill, aur cheezein bhi",
+    "openingStock": "Purana stock: laagat ke saath darj, khareed ka bill nahi.",
+    "costHidden": "Khareed ke hindse maalik aur manager ke liye hain.",
+    "leftToPay": "dene baqi",
+    "leftToGet": "lene baqi",
+    "refund": "Wapsi",
+    "theyOweTotal": "Un par baqi (phones)",
+    "weOweTotal": "Hum ne dene (phones)",
+    "other": "Deegar / ibtidai",
+    "k": {
+      "purchase": "Khareeda",
+      "sale": "Becha",
+      "payment_out": "Ada kiya",
+      "payment_in": "Wasool hua",
+      "return_sale": "Bikri wapas",
+      "return_purchase": "Bechne wale ko wapas"
     }
   }
 }

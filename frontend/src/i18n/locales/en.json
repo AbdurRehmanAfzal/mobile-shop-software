@@ -417,7 +417,14 @@
     "reference": "Reference / TID",
     "saved": "Payment saved",
     "allocated": "Applied to",
-    "unallocated": "Advance kept"
+    "unallocated": "Advance kept",
+    "m": {
+      "cash": "Cash",
+      "online": "Online",
+      "cheque": "Cheque",
+      "bank": "Bank",
+      "remittance": "From abroad"
+    }
   },
   "loan": {
     "title": "Loans (amanat)",
@@ -1852,6 +1859,51 @@
       "best_sellers": "best sellers",
       "today_overview": "today overview",
       "rate": "rates"
+    }
+  },
+  "unit": {
+    "title": "Money on this phone",
+    "phones": "Phones",
+    "noPhones": "No phones bought or sold yet",
+    "boughtFrom": "Bought from",
+    "soldTo": "Sold to",
+    "boughtFromShort": "Bought",
+    "soldToShort": "Sold",
+    "agreed": "Agreed",
+    "paidOut": "Paid",
+    "receivedIn": "Received",
+    "stillToPay": "Still to pay",
+    "stillToGet": "Still to get",
+    "upfrontPaid": "Paid at the time",
+    "upfrontReceived": "Received at the time",
+    "cost": "Cost",
+    "soldFor": "Sold for",
+    "margin": "Margin",
+    "weOwe": "We owe",
+    "theyOwe": "They owe",
+    "settled": "Settled",
+    "returned": "Returned",
+    "payForThis": "Pay for this phone",
+    "receiveForThis": "Receive for this phone",
+    "forBill": "For bill",
+    "moreThanLeft": "More than what is left on this bill: the extra goes on the account",
+    "printReceipt": "Print receipt",
+    "sharedBill": "bill of {{t}} with other items",
+    "openingStock": "Old stock: entered with its cost, no purchase bill.",
+    "costHidden": "Buying figures are for the owner and manager.",
+    "leftToPay": "left to pay",
+    "leftToGet": "left to get",
+    "refund": "Refund",
+    "theyOweTotal": "They owe (phones)",
+    "weOweTotal": "We owe (phones)",
+    "other": "Other / opening",
+    "k": {
+      "purchase": "Bought",
+      "sale": "Sold",
+      "payment_out": "Paid",
+      "payment_in": "Received",
+      "return_sale": "Sale returned",
+      "return_purchase": "Returned to seller"
     }
   }
 }

@@ -17,7 +17,7 @@ from app.modules.expenses.schemas import CategoryCreate, DayCloseIn, ExpenseCrea
 from app.modules.files.service import belongs
 from app.modules.ledger import accounts as acc
 from app.modules.ledger.models import CashAccount, LedgerEntry
-from app.modules.ledger.service import Posting, default_cash_account, money, post, reverse
+from app.modules.ledger.service import Posting, at_for, default_cash_account, money, post, reverse
 from app.modules.parties.models import Party
 from app.modules.purchases.service import next_number
 
@@ -151,6 +151,7 @@ def create_expense(
         document_id=exp.id,
         memo=f"{exp.no} {cat.name}{(' · ' + data.description) if data.description else ''}",
     )
+    posting.at = at_for(exp.date)
     posting.debit(acc.expense_account(cat.key), amount, memo=data.description or cat.name).credit(
         acc.cash_account(cash.id), amount, memo=cat.name
     )

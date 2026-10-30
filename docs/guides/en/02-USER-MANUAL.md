@@ -850,6 +850,35 @@ Photos: with the AI on, **Scan CNIC** (new person, ID check) and **Scan** on a p
 box label are read on the server, which is better at bad light and angles; if that fails, the
 phone's own reader runs as before. Photos are used for the reading only and are not stored.
 
+## 15c. Every phone's own money, every person's phones
+
+Open any phone (Stock → tap it): under **Money on this phone** you see **Cost · Still to pay · Sold
+for · Still to get · Margin**, then two cards: **Bought from** (who, the purchase bill, agreed price,
+paid at the time, every later payment with its receipt, what is still to pay) and **Sold to** (the
+same for the sale). **Pay for this phone** / **Receive for this phone** takes a payment that is
+booked against that very bill, so the phone's remaining amount and the person's khata move
+together. The history below is one timeline from day one: bought, payments, sold, receipts,
+returns, repairs, notes — each money row shows what was left on this phone after it.
+
+Open any person: the big balance is split into **They owe (phones)**, **We owe (phones)** and
+**Other / opening** (so a payable and a receivable are never silently netted), then **Phones**: each
+phone bought from or sold to them with **Agreed · Paid · Still to pay / get**, *Settled*, *They owe*
+or *We owe*, and a pay / receive button on pending rows. The statement under it is unchanged;
+payment rows print their receipt.
+
+Example (the Vivo): bought from A for 35,000 paying 30,000 (A: we owe 5,000); sold to B for
+40,000 taking 35,000 (B: they owe 5,000); paid A 2,000 for this phone (A: 3,000); B paid 3,000
+for this phone (B: 2,000). The phone shows cost 35,000 / still to pay 3,000 / sold 40,000 / still
+to get 2,000 / margin 5,000 — the same numbers A's and B's pages show.
+
+Buying figures (cost, what is owed to a seller, margin) are shown only to the owner and manager.
+A bill with several phones shares each payment across them in proportion to their prices; the row
+says "bill of … with other items" so it is clear why.
+
+**Payment receipts**: every payment given or received prints as a thermal or A5 receipt
+(number, person, amount, how it was paid, which bill and phone it was for, what is left on that
+bill, the account balance after) — from the payment screen, a phone's money card, or a khata row.
+
 ## 16a. Price stickers with a barcode
 
 Every phone and item can carry a sticker: shop name, model, storage · colour, **price**, a **Code 128
