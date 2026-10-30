@@ -112,8 +112,8 @@ Spec `docs/16-SHOP-AUDIT-SPEC.md` · plan + gap analysis + next task `docs/17-SH
 | Phase | Status | Notes |
 |---|---|---|
 | P1 Codebase audit & gap analysis | ✅ | **2026-10-30** docs/17 §1: 22 requirement rows classified, 8 accounting risks, additive DB changes, API map (`/api/v1/shop-audit/*`), UI reuse list |
-| P2 Financial data integrity (cash↔bank transfer, P&L lines, ageing start, indexes, reconcile helper) | ⬜ | next |
-| P3 Periods & as-of balances, overview KPIs, audit shell | ⬜ | |
+| P2 Financial data integrity (cash↔bank transfer, P&L lines, ageing start, indexes) | ✅ | **2026-10-30** `POST/GET /ledger/transfers` (transfer = ledger group, reversal to undo, reasons apart in cash-flow and hisaab), P&L `gross_sales / discounts / sales_returns / net_sales / operating_profit`, `devices/ageing.py` intake-based age, migration `a2b4c6d8e0f1` indexes; `test_shopaudit_integrity.py`, `transfer.spec.ts`; Cash & bank "Move money" |
+| P3 Periods & as-of balances, overview KPIs, audit shell | ⬜ | next |
 | P4 Financial audit (P&L series, cash/bank by reason, methods, international, expenses, tax) | ⬜ | |
 | P5 Customers & suppliers (journey, rankings, udhaar ageing) | ⬜ | |
 | P6 Inventory intelligence (as-of stock, bands, verification, alerts) | ⬜ | |

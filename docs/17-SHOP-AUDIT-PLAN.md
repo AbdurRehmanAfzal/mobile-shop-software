@@ -4,8 +4,8 @@ Authoritative requirements: `docs/16-SHOP-AUDIT-SPEC.md` (owner brief, 2026-10-3
 This file is the living plan: gap analysis, design, phases, tasks, acceptance criteria and the
 progress checklist. Update it at the end of every session (with `06-PROGRESS.md` and `09-SESSION-LOG.md`).
 
-**Current phase: 2 (Financial data integrity) — Phase 1 audit done 2026-10-30.**
-**Exact next task: P2-1 cash ↔ bank transfer posting, then P2-2 P&L discounts/returns lines.**
+**Current phase: 3 (Periods & as-of balances) — P1 audit and P2 integrity done 2026-10-30.**
+**Exact next task: P3-1 `core/periods.py` (presets + as-of + previous period), then P3-2 balances as-of, P3-3 `/shop-audit/overview`, P3-4 audit shell + overview screen.**
 
 ---
 
@@ -157,13 +157,12 @@ Prefix `/api/v1/audit` is taken by the audit log → new prefix **`/api/v1/shop-
 ### Phase 1 — Codebase audit ✅ 2026-10-30
 - [x] Architecture summary, functionality inventory, gap analysis, risks, DB/API/UI changes, complexity (this file §1).
 
-### Phase 2 — Financial data integrity
-- [ ] **P2-1 Cash ↔ bank transfer**: `cash_transfers` table + `POST /api/v1/ledger/transfers` (debit to-account, credit from-account, `document_type="transfer"`), void by reversal; `_cash_by_reason` and `day_report` classify transfers apart (`transfer_in/out`), never as income or expense. UI: "Move money" on `CashAccountsPage`. Tests: balances move, day report unchanged in sales/expenses, void reverses.
-  - Accept: cash 10,000 → bank 10,000: cash closing −10,000, bank +10,000, P&L unchanged, cash-flow "transfers" lines shown.
-- [ ] **P2-2 P&L lines**: `profit_and_loss` returns `gross_sales`, `discounts`, `sales_returns`, `net_sales`, `cogs`, `gross_profit`, `operating_expenses`, `operating_profit`, `other_income`, `repair_income`, `tax_collected`, `net_profit`, `owner_drawing`; existing keys kept. Tests extend `test_reports_owner`.
-- [ ] **P2-3 Ageing start = intake of the current cycle** (`stock_ageing` + units): helper `intake_at(device)` from the first event of `cycle_no`; test: a price change does not reset the age.
-- [ ] **P2-4 Indexes** migration (`invoices`, `purchases`, `payments`, `expenses`, `return_docs` on `(shop_id, date)`; `ledger_entries(shop_id, cash_account_id, at)`; `audit_log(shop_id, at)`).
-- [ ] **P2-5 Reconciliation helper** `shopaudit/reconcile.py` with the §19 equations, used by tests from P3 on.
+### Phase 2 — Financial data integrity ✅ 2026-10-30 (commit `p2`)
+- [x] **P2-1 Cash ↔ bank transfer** — no new table: a `LedgerGroup` with `document_type="transfer"` (debit receiving account, credit giving one), `POST/GET /api/v1/ledger/transfers` (cap `EXPENSES` = owner/manager), undone through the existing group reversal; `cash_flow` rows carry `transfers_in/out`; `_cash_by_reason` / hisaab show a `transfer` reason on both sides; audit row `cash_transfer/create`. UI: "Move money between accounts" + "Money moved" list on `CashAccountsPage`; hisaab chips. Tests `test_shopaudit_integrity.py::test_transfer_moves_money_without_touching_profit` (balances, P&L unchanged, cash-flow and hisaab reasons, reversal, audit, guards, salesman 403), e2e `transfer.spec.ts`.
+- [x] **P2-2 P&L lines** — `profit_and_loss` adds `gross_sales`, `discounts` (from invoices; the sale posting credits `sales` after the discount), `sales_returns` (debits on `sales` from `sale_return`/`exchange_refund` groups; voids and reversals are netted out of gross, not shown as returns), `net_sales` (== `sales`), `operating_expenses`, `operating_profit`; existing keys and figures unchanged. `ReportsPage` profit tab shows the lines when a discount or return exists. Test `test_pnl_spells_out_discounts_and_returns` (discount + full-refund return, then a void).
+- [x] **P2-3 Ageing start** — `devices/ageing.py` (`intake_map`, `intake_at`, `days_in_stock`: latest `purchased` / `sale_returned` event, fallback `first_seen_at`); `stock_ageing` uses it. Test `test_stock_age_counts_from_intake_not_last_event` (40-day-old purchase stays in 31–60 after a note and a price change).
+- [x] **P2-4 Indexes** — migration `a2b4c6d8e0f1` (+ model `Index`es): `invoices/purchases/payments/expenses/returns (shop_id, date)`, `ledger_entries (shop_id, cash_account_id, at)`, `audit_log (shop_id, at)`.
+- [~] **P2-5 Reconciliation helper** → moved into P3 (lands with `modules/shopaudit`).
 
 ### Phase 3 — Global date filters & historical balances
 - [ ] **P3-1 `core/periods.py`**: presets today/yesterday/this_week/last_week/this_month/last_month/this_year/custom/all_time + `as_of`; previous-period derivation; shop-time boundaries. Tests for every preset around month/year edges.
@@ -256,7 +255,7 @@ Prefix `/api/v1/audit` is taken by the audit log → new prefix **`/api/v1/shop-
 ## 6. Progress checklist (update every session)
 
 - [x] P1 audit — 2026-10-30
-- [ ] P2 integrity
+- [x] P2 integrity — 2026-10-30
 - [ ] P3 periods & overview
 - [ ] P4 financial
 - [ ] P5 parties

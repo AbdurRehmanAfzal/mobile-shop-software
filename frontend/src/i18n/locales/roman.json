@@ -710,7 +710,15 @@
     "opening": "Shuru ka baqaya",
     "book": "Roznamcha",
     "in": "Aaya",
-    "out": "Gaya"
+    "out": "Gaya",
+    "move": "Accounts ke darmiyan paise muntaqil karein",
+    "moveHint": "Counter ki naqdi bank mein, ya bank se counter par. Na bikri hai na kharch: sirf dono balance badalte hain.",
+    "from": "Kahan se",
+    "to": "Kahan",
+    "amount": "Raqam",
+    "note": "Note",
+    "moveNow": "Muntaqil karein",
+    "transfers": "Muntaqil ki gayi raqam"
   },
   "home": {
     "hello": "Assalam-o-Alaikum",
@@ -999,21 +1007,28 @@
       "sales": "Bikri",
       "udhaar_back": "Udhaar wapas mila",
       "repairs": "Marammat",
-      "other": "Kuch aur"
+      "other": "Kuch aur",
+      "transfer": "Apne account se aaya"
     },
     "outWhy": {
       "stock": "Stock khareeda",
       "returns": "Wapsi",
       "expenses": "Kharche",
       "paid_out": "Logon ko diye",
-      "other": "Kuch aur"
+      "other": "Kuch aur",
+      "transfer": "Apne account mein gaya"
     },
     "week": "Hafta",
     "exchangeHint": "Gahak ka purana phone lein aur naya dein; farq khud hisaab ho jata hai",
     "loanHint": "Doosri dukaan ko dikhane ya bechne ke liye diya gaya phone; bikne ya wapas aane tak aap ka rehta hai",
     "lowStock": "cheezein kam stock mein",
     "instToday": "qistein aaj banti hain",
-    "instOverdue": "qist ke plan late"
+    "instOverdue": "qist ke plan late",
+    "grossSales": "Riayat se pehle bikri",
+    "discounts": "Di gayi riayat",
+    "salesReturns": "Gahakon ne wapas kiya",
+    "netSales": "Khalis bikri",
+    "operatingProfit": "Kharchon ke baad munafa"
   },
   "admin": {
     "title": "Super admin",

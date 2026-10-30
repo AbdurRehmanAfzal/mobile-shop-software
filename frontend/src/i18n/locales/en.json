@@ -710,7 +710,15 @@
     "opening": "Opening balance",
     "book": "Cash book",
     "in": "In",
-    "out": "Out"
+    "out": "Out",
+    "move": "Move money between accounts",
+    "moveHint": "Counter cash to the bank, or bank to counter. It is neither a sale nor an expense: only the two balances change.",
+    "from": "From",
+    "to": "To",
+    "amount": "Amount",
+    "note": "Note",
+    "moveNow": "Move",
+    "transfers": "Money moved"
   },
   "home": {
     "hello": "Assalam-o-Alaikum",
@@ -999,21 +1007,28 @@
       "sales": "Sales",
       "udhaar_back": "Udhaar received",
       "repairs": "Repairs",
-      "other": "Other"
+      "other": "Other",
+      "transfer": "Moved in from own account"
     },
     "outWhy": {
       "stock": "Stock bought",
       "returns": "Returns",
       "expenses": "Expenses",
       "paid_out": "Paid to people",
-      "other": "Other"
+      "other": "Other",
+      "transfer": "Moved to own account"
     },
     "week": "Week",
     "exchangeHint": "Take the customer's old phone and give a new one; the difference is worked out for you",
     "loanHint": "A phone given to another shop to show or sell; it stays yours until it is sold or comes back",
     "lowStock": "items low on stock",
     "instToday": "installments due today",
-    "instOverdue": "installment plans running late"
+    "instOverdue": "installment plans running late",
+    "grossSales": "Sales before discounts",
+    "discounts": "Discounts given",
+    "salesReturns": "Returned by customers",
+    "netSales": "Net sales",
+    "operatingProfit": "Profit after expenses"
   },
   "admin": {
     "title": "Super admin",

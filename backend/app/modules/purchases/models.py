@@ -6,7 +6,17 @@ from datetime import date
 from decimal import Decimal
 from enum import StrEnum
 
-from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint, Uuid
+from sqlalchemy import (
+    Date,
+    DateTime,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+    Uuid,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import ZERO, Base, ShopScoped, Timestamped, UUIDPk
@@ -26,7 +36,10 @@ class PurchaseStatus(StrEnum):
 
 class Purchase(UUIDPk, ShopScoped, Timestamped, Base):
     __tablename__ = "purchases"
-    __table_args__ = (UniqueConstraint("shop_id", "no", name="uq_purchases_shop_no"),)
+    __table_args__ = (
+        UniqueConstraint("shop_id", "no", name="uq_purchases_shop_no"),
+        Index("ix_purchases_shop_date", "shop_id", "date"),
+    )
 
     no: Mapped[str] = mapped_column(String(20), nullable=False)
     kind: Mapped[str] = mapped_column(String(10), nullable=False)

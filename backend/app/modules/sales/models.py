@@ -10,6 +10,7 @@ from sqlalchemy import (
     Date,
     DateTime,
     ForeignKey,
+    Index,
     Integer,
     String,
     Text,
@@ -31,7 +32,10 @@ class InvoiceStatus(StrEnum):
 
 class Invoice(UUIDPk, ShopScoped, Timestamped, Base):
     __tablename__ = "invoices"
-    __table_args__ = (UniqueConstraint("shop_id", "no", name="uq_invoices_shop_no"),)
+    __table_args__ = (
+        UniqueConstraint("shop_id", "no", name="uq_invoices_shop_no"),
+        Index("ix_invoices_shop_date", "shop_id", "date"),
+    )
 
     no: Mapped[str] = mapped_column(String(20), nullable=False)
     party_id: Mapped[uuid.UUID | None] = mapped_column(

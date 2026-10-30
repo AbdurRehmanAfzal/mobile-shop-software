@@ -10,7 +10,7 @@ import { Empty, Loading, PageHeader } from '@/components/ui'
 import { clampRange, isoDay } from '@/lib/format'
 import { useGet } from '@/lib/queries'
 
-interface Pnl { sales: string; cogs: string; gross_profit: string; repair_income: string; other_income: string; expenses: Record<string, string>; total_expenses: string; net_profit: string; owner_drawing: string; tax_collected: string }
+interface Pnl { gross_sales: string; discounts: string; sales_returns: string; net_sales: string; operating_expenses: string; operating_profit: string; sales: string; cogs: string; gross_profit: string; repair_income: string; other_income: string; expenses: Record<string, string>; total_expenses: string; net_profit: string; owner_drawing: string; tax_collected: string }
 interface Top { name: string; kind: 'device' | 'misc'; qty: number; amount: string; profit: string | null }
 interface Forecast {
   next_7_days: { date: string; expected: string }[]; next_7_total: string; last_7_days: string; previous_7_days: string
@@ -92,11 +92,21 @@ export default function ReportsPage() {
               <span className="num text-[34px] leading-tight" dir="ltr">Rs. {n(net)}</span>
             </section>
             <div className="card flex flex-col p-0">
-              <Line label="counter.sold" value={n(pnl.sales)} />
+              {Number(pnl.discounts) || Number(pnl.sales_returns) ? (
+                <>
+                  <Line label="counter.grossSales" value={n(pnl.gross_sales)} />
+                  {Number(pnl.discounts) ? <Line label="counter.discounts" value={minus(pnl.discounts)} muted /> : null}
+                  {Number(pnl.sales_returns) ? <Line label="counter.salesReturns" value={minus(pnl.sales_returns)} muted /> : null}
+                  <Line label="counter.netSales" value={n(pnl.net_sales)} />
+                </>
+              ) : (
+                <Line label="counter.sold" value={n(pnl.sales)} />
+              )}
               <Line label="counter.cogs" value={minus(pnl.cogs)} muted />
               <Line label="counter.grossProfit" value={n(pnl.gross_profit)} strong />
-              {Number(pnl.repair_income) + Number(pnl.other_income) ? <Line label="counter.otherIncome" value={`+ ${n(Number(pnl.repair_income) + Number(pnl.other_income))}`} /> : null}
               {Object.entries(pnl.expenses).map(([k, v]) => <Line key={k} label={{ en: catName(k), ur: catName(k) }} value={minus(v)} muted />)}
+              {Number(pnl.total_expenses) ? <Line label="counter.operatingProfit" value={n(pnl.operating_profit)} /> : null}
+              {Number(pnl.repair_income) + Number(pnl.other_income) ? <Line label="counter.otherIncome" value={`+ ${n(Number(pnl.repair_income) + Number(pnl.other_income))}`} /> : null}
               <Line label={net >= 0 ? 'counter.netProfit' : 'counter.netLoss'} value={n(net)} strong />
             </div>
             <div className="card flex flex-col p-0">
