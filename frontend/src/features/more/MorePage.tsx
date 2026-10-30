@@ -1,6 +1,6 @@
 /** "More": everything else, grouped, each icon in its job colour (docs/11 v2). */
 
-import {
+import { Bot,
   ArrowLeftRight, Archive, BarChart3, Bell, BookOpen, CalendarDays, Check, CreditCard, FileText, HandCoins, Headphones, KeyRound,
   Landmark, Lock, LogOut, Package, PackagePlus, ShieldCheck, Receipt, RotateCcw, ScanLine, Settings, Smartphone, Store, Tag, Tags, Undo2, Users,
   Wallet, Wrench, type LucideIcon,
@@ -44,6 +44,7 @@ const GROUPS: Group[] = [
       { key: 'counter.returnJob', Icon: Undo2, to: '/return/new', tone: T.ret },
       { key: 'counter.khata', Icon: BookOpen, to: '/khata', tone: T.khata },
       { key: 'inst.title', Icon: HandCoins, to: '/installments', tone: T.khata },
+      { key: 'ai.title', Icon: Bot, to: '/assistant', tone: T.plain },
       { key: 'counter.repair', Icon: Wrench, to: '/repairs', tone: T.repair },
       { key: 'more.exchange', Icon: ArrowLeftRight, to: '/exchange/new', tone: T.sell },
       { key: 'more.loans', Icon: RotateCcw, to: '/loans', tone: T.stock },

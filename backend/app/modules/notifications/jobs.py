@@ -177,24 +177,34 @@ def daily_report_ctx(db: Session, shop: Shop, day: dt.date) -> dict:
 
 
 def queue_daily_report(db: Session, shop: Shop, day: dt.date) -> Message | None:
+    """WhatsApp and/or email, whichever the owner set; returns the WhatsApp one when both."""
     s = settings_for(shop)
-    if not s.owner_whatsapp:
+    targets: list[tuple[Channel, str]] = []
+    if s.owner_whatsapp and (s.owner_daily_report_whatsapp or not s.owner_daily_report_email):
+        targets.append((Channel.WHATSAPP, s.owner_whatsapp))
+    if s.owner_email and s.owner_daily_report_email:
+        targets.append((Channel.EMAIL, str(s.owner_email)))
+    if not targets:
         return None
-    msg = queue(
-        db,
-        shop,
-        channel=Channel.WHATSAPP,
-        audience="owner",
-        recipient=s.owner_whatsapp,
-        template_key=DAILY,
-        lang=lang_for(shop, s),
-        ctx=daily_report_ctx(db, shop, day),
-        event_type="daily_report",
-        document_type=None,
-        document_id=None,
-    )
+    ctx = daily_report_ctx(db, shop, day)
+    first: Message | None = None
+    for channel, recipient in targets:
+        msg = queue(
+            db,
+            shop,
+            channel=channel,
+            audience="owner",
+            recipient=recipient,
+            template_key=DAILY,
+            lang=lang_for(shop, s),
+            ctx=ctx,
+            event_type="daily_report",
+            document_type=None,
+            document_id=None,
+        )
+        first = first or msg
     db.flush()
-    return msg
+    return first
 
 
 # ---- sending through the Cloud API ----------------------------------------------------------
@@ -203,11 +213,16 @@ def queue_daily_report(db: Session, shop: Shop, day: dt.date) -> Message | None:
 def dispatch(db: Session, limit: int = 50) -> dict:
     """Sends queued WhatsApp messages when the Cloud API is configured. Each message is claimed
     first (queued -> sending), so a second worker never sends the same one."""
-    if not provider.configured():
+    channels = []
+    if provider.configured():
+        channels.append(Channel.WHATSAPP)
+    if provider.email_configured():
+        channels.append(Channel.EMAIL)
+    if not channels:
         return {"sent": 0, "failed": 0}
     ids = db.scalars(
         select(Message.id)
-        .where(Message.channel == Channel.WHATSAPP, Message.status == MessageStatus.QUEUED)
+        .where(Message.channel.in_(channels), Message.status == MessageStatus.QUEUED)
         .order_by(Message.created_at)
         .limit(limit)
     ).all()
@@ -222,19 +237,23 @@ def dispatch(db: Session, limit: int = 50) -> dict:
         if not claimed:
             continue
         m = db.get(Message, mid)
+        via = "smtp" if m.channel == Channel.EMAIL else "whatsapp_api"
         try:
-            m.provider_id = provider.send_whatsapp(m.recipient, m.body, m.template_key)
+            if m.channel == Channel.EMAIL:
+                m.provider_id = provider.send_email(m.recipient, m.subject or "", m.body)
+            else:
+                m.provider_id = provider.send_whatsapp(m.recipient, m.body, m.template_key)
             m.status = MessageStatus.SENT
             m.sent_at = utcnow()
-            m.provider = "whatsapp_api"
+            m.provider = via
             m.error = None
             sent += 1
         except Exception as e:  # noqa: BLE001 - the error is kept on the row
             m.status = MessageStatus.FAILED
-            m.provider = "whatsapp_api"
+            m.provider = via
             m.error = str(e)[:500]
             failed += 1
-            log.warning("WhatsApp send failed for %s: %s", mid, e)
+            log.warning("%s send failed for %s: %s", via, mid, e)
         db.commit()
     return {"sent": sent, "failed": failed}
 
@@ -266,10 +285,9 @@ def tick(db: Session, now: dt.datetime | None = None) -> dict:
         local = now.astimezone(ZoneInfo(shop.timezone or "Asia/Karachi"))
         day = local.date()
         report_due = (
-            s.owner_daily_report_whatsapp
-            and s.owner_whatsapp
-            and is_due(s.daily_report_time, local)
-        )
+            (s.owner_daily_report_whatsapp and s.owner_whatsapp)
+            or (s.owner_daily_report_email and s.owner_email)
+        ) and is_due(s.daily_report_time, local)
         if report_due and _claim(db, shop.id, DAILY, day):
             queue_daily_report(db, shop, day)
             db.commit()

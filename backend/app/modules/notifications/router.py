@@ -50,7 +50,7 @@ def put_settings(data: NotificationSettings, ctx: Settings, db: DB):
 @router.get("/provider")
 def provider_status(ctx: Ctx):
     """whether messages go out by themselves (Cloud API set on the server) or by hand"""
-    return {"whatsapp_api": provider.configured()}
+    return {"whatsapp_api": provider.configured(), "email": provider.email_configured()}
 
 
 @router.get("/reminders", response_model=list[ReminderRow])
@@ -76,8 +76,8 @@ def daily_report_now(ctx: Settings, db: DB):
     if msg is None:
         raise ValidationFailed(
             "no_owner_whatsapp",
-            "Set the owner's WhatsApp number first",
-            "پہلے مالک کا واٹس ایپ نمبر لکھیں",
+            "Set the owner's WhatsApp number or email first",
+            "پہلے مالک کا واٹس ایپ نمبر یا ای میل لکھیں",
         )
     db.commit()
     mid = msg.id

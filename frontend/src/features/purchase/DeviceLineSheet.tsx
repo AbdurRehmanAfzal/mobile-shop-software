@@ -12,6 +12,7 @@ import Help from '@/components/Help'
 import { AccessoryPicker, type AccKind } from '@/components/AccessoryPicker'
 import { ImeiInput } from '@/components/FieldInputs'
 import { Chip } from '@/components/ui'
+import PriceHint from '@/components/PriceHint'
 import { uid } from '@/lib/id'
 import { toLatinDigits } from '@/lib/format'
 import { parseStorage, useBrands, useCatalogueEdit, useColours, useImeiLookup, useModels, useStorages } from '@/lib/queries'
@@ -309,6 +310,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
         <BiInput label="stock.asking" help={<Help term="asking" />} type="number" inputMode="decimal" min={0} value={d.asking_price} onChange={(e) => set('asking_price', e.target.value)} error={askingLow ? 'field.askingBelowCost' : null} />
       </div>
       )}
+      {!edit && d.model_id ? <PriceHint modelId={d.model_id} storageId={d.storage_id || null} condition={d.condition} onUse={(p) => set('asking_price', String(p))} /> : null}
       <BiInput label={{ en: 'Warranty (months)', ur: 'وارنٹی (مہینے)' }} type="number" inputMode="numeric" min={0} max={60} value={d.warranty_months} onChange={(e) => set('warranty_months', e.target.value)} />
 
       {edit ? null : (

@@ -4,6 +4,7 @@ messages are sent through the Cloud API when it is configured."""
 import datetime as dt
 import uuid
 
+from app.core.clock import today
 from app.db.base import utcnow
 from app.modules.auth.models import Shop
 from app.modules.notifications import jobs, provider
@@ -83,9 +84,10 @@ def test_daily_report_once_a_day_at_the_set_time(owner, db, cat):
     db.refresh(shop)
     # 21:00 shop time: not yet; 21:31: queued once; the next tick does nothing more
     tz = dt.timezone(dt.timedelta(hours=5))
-    early = dt.datetime(2026, 10, 29, 21, 0, tzinfo=tz)
+    d = today()  # the sale above happened today (shop time); the report is for that day
+    early = dt.datetime(d.year, d.month, d.day, 21, 0, tzinfo=tz)
     assert jobs.tick(db, early) == {"daily_report": 0, "reminders": 0}
-    late = dt.datetime(2026, 10, 29, 21, 31, tzinfo=tz)
+    late = dt.datetime(d.year, d.month, d.day, 21, 31, tzinfo=tz)
     assert jobs.tick(db, late)["daily_report"] == 1
     assert jobs.tick(db, late)["daily_report"] == 0
     assert db.query(JobRun).count() == 1
@@ -103,7 +105,10 @@ def test_daily_report_once_a_day_at_the_set_time(owner, db, cat):
 def test_dispatch_sends_through_the_cloud_api(owner, db, cat, monkeypatch):
     c = _party(owner, name="Ahmed Khan", phone="03219876543", kinds=("customer",))
     _udhaar_sale(owner, cat, c, IMEI_A)
-    assert owner.get("/api/v1/notifications/provider").json() == {"whatsapp_api": False}
+    assert owner.get("/api/v1/notifications/provider").json() == {
+        "whatsapp_api": False,
+        "email": False,
+    }
     owner.post("/api/v1/notifications/reminders", json={})
     (m,) = db.query(Message).all()
     assert m.status == "queued"

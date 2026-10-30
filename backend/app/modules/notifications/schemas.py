@@ -24,6 +24,7 @@ class NotificationSettings(BaseModel):
     customer_on_repair_ready_whatsapp: bool = False
     # owner 2026-10-29: the day's hisaab to the owner every night, udhaar reminders by themselves
     owner_daily_report_whatsapp: bool = False
+    owner_daily_report_email: bool = False
     daily_report_time: str = Field(default="21:30", pattern=r"^([01]\d|2[0-3]):[0-5]\d$")
     customer_reminder_whatsapp: bool = False
     reminder_after_days: int = Field(default=7, ge=1, le=90)

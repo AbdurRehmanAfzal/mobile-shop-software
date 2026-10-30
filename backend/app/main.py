@@ -8,6 +8,9 @@ from app.core.errors import install_error_handlers
 from app.modules.accessories.router import router as accessories_router
 from app.modules.admin.fees_router import router as fees_router
 from app.modules.admin.router import router as admin_router
+from app.modules.ai.router import router as ai_router
+from app.modules.attendance.router import activity_router as staff_activity_router
+from app.modules.attendance.router import router as attendance_router
 from app.modules.audit.router import router as audit_router
 from app.modules.auth.router import router as auth_router
 from app.modules.auth.router import shops as shops_router
@@ -20,9 +23,11 @@ from app.modules.exports.router import router as exports_router
 from app.modules.files.router import router as files_router
 from app.modules.installments.router import router as installments_router
 from app.modules.invoices.router import router as invoices_router
+from app.modules.labels.router import router as labels_router
 from app.modules.ledger.router import router as ledger_router
 from app.modules.loans.router import router as loans_router
 from app.modules.notifications.router import router as notifications_router
+from app.modules.otp.router import router as otp_router
 from app.modules.parties.router import router as parties_router
 from app.modules.payments.router import router as payments_router
 from app.modules.public.router import router as public_router
@@ -31,6 +36,7 @@ from app.modules.repairs.router import router as repairs_router
 from app.modules.reports.router import router as reports_router
 from app.modules.returns.router import router as returns_router
 from app.modules.sales.router import router as sales_router
+from app.modules.units.router import router as units_router
 from app.modules.verification.router import router as verification_router
 
 
@@ -64,6 +70,30 @@ def check_production_settings() -> None:
         raise RuntimeError(
             "SECRET_KEY must be set to a random value of at least 32 characters in production"
         )
+
+
+def _mount_web(app: FastAPI, web_dir: str) -> None:
+    """The one-PC install: the built React app from `web_dir`, with every non-API path falling
+    back to index.html so the app's own routes work on reload."""
+    from pathlib import Path
+
+    from fastapi.responses import FileResponse
+    from fastapi.staticfiles import StaticFiles
+
+    root = Path(web_dir)
+    index = root / "index.html"
+    if not index.is_file():
+        return
+    assets = root / "assets"
+    if assets.is_dir():
+        app.mount("/assets", StaticFiles(directory=str(assets)), name="assets")
+
+    @app.get("/{path:path}", include_in_schema=False)
+    def web(path: str):
+        candidate = (root / path).resolve() if path else index
+        if path and candidate.is_file() and root.resolve() in candidate.parents:
+            return FileResponse(str(candidate))
+        return FileResponse(str(index))
 
 
 def create_app() -> FastAPI:
@@ -135,6 +165,14 @@ def create_app() -> FastAPI:
     app.include_router(exports_router)
     app.include_router(invoices_router)
     app.include_router(installments_router)
+    app.include_router(units_router)
+    app.include_router(ai_router)
+    app.include_router(otp_router)
+    app.include_router(labels_router)
+    app.include_router(attendance_router)
+    app.include_router(staff_activity_router)
+    if settings.web_dir:
+        _mount_web(app, settings.web_dir)
     return app
 
 

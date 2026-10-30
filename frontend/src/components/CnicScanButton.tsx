@@ -5,9 +5,12 @@ import { IdCard } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { BiAlert, BiLabel, useLang } from './Bilingual'
 import { readCnic, type CnicData } from '@/lib/cnicOcr'
+import { readPhotoAi } from '@/lib/files'
+import { useAiStatus, type CnicAi } from '@/lib/ai'
 
 export default function CnicScanButton({ onRead }: { onRead: (d: CnicData, photo: File) => void }) {
   const { pick, ur, cls } = useLang()
+  const { data: ai } = useAiStatus()
   const file = useRef<HTMLInputElement>(null)
   const [progress, setProgress] = useState<number | null>(null)
   const [msg, setMsg] = useState<'none' | 'expired' | null>(null)
@@ -16,7 +19,16 @@ export default function CnicScanButton({ onRead }: { onRead: (d: CnicData, photo
     setMsg(null)
     setProgress(0)
     try {
-      const d = await readCnic(f, setProgress)
+      let d: CnicData | null = null
+      if (ai?.configured) {
+        try {
+          const r = await readPhotoAi<CnicAi>(f, 'cnic')
+          const exp = r.expiry && /^\d{2}\.\d{2}\.\d{4}$/.test(r.expiry) ? r.expiry : undefined
+          const expired = exp ? new Date(Number(exp.slice(6)), Number(exp.slice(3, 5)) - 1, Number(exp.slice(0, 2))) < new Date() : false
+          d = { cnic: r.cnic ?? undefined, name: r.name ?? undefined, fatherName: r.father_name ?? undefined, gender: r.gender ?? undefined, dob: r.dob ?? undefined, issue: r.issue ?? undefined, expiry: r.expiry ?? undefined, expired }
+        } catch { d = null }
+      }
+      d = d ?? (await readCnic(f, setProgress))
       if (!d.cnic && !d.name) setMsg('none')
       else if (d.expired) setMsg('expired')
       onRead(d, f)

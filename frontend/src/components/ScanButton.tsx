@@ -3,6 +3,8 @@
  *  A box label can hold IMEI 1 and IMEI 2: then both are shown to pick from. */
 
 import { Camera, ScanBarcode } from 'lucide-react'
+import { readPhotoAi } from '@/lib/files'
+import { useAiStatus, type ImeiAi } from '@/lib/ai'
 import { useEffect, useRef, useState } from 'react'
 import { BiLabel, useLang } from './Bilingual'
 import { BtnText, Sheet } from './ui'
@@ -11,6 +13,7 @@ import { canScanLive, scanLive, scanPhoto } from '@/lib/scan'
 /** `exclude`: the IMEI already in the other box; a scan skips it (IMEI 2 must not repeat IMEI 1) */
 export function ScanButton({ onImei, size = 'lg', exclude }: { onImei: (imei: string) => void; size?: 'lg' | 'sm'; exclude?: string }) {
   const { pick } = useLang()
+  const aiOn = !!useAiStatus().data?.configured
   const file = useRef<HTMLInputElement>(null)
   const [live, setLive] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -21,7 +24,13 @@ export function ScanButton({ onImei, size = 'lg', exclude }: { onImei: (imei: st
     setBusy(true)
     setFailed(false)
     try {
-      const found = (await scanPhoto(f)).filter((x) => x !== exclude)
+      let found = (await scanPhoto(f)).filter((x) => x !== exclude)
+      if (!found.length && aiOn) {
+        try {
+          const r = await readPhotoAi<ImeiAi>(f, 'imei')
+          found = [r.imei1, r.imei2].filter((x): x is string => !!x && x !== exclude)
+        } catch { found = [] }
+      }
       if (found.length === 1) onImei(found[0])
       else if (found.length > 1) setChoices(found)
       else setFailed(true)

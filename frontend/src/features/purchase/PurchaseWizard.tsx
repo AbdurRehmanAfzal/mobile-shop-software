@@ -11,6 +11,8 @@ import { BtnText, Chip, ErrorText, IconChip, MoneyText, PageHeader, Sheet, Stepp
 import { uid } from '@/lib/id'
 import { api } from '@/lib/api'
 import { openPrintable } from '@/lib/files'
+import LabelSheet from '@/components/LabelSheet'
+import { Tag } from 'lucide-react'
 import { isQueued } from '@/lib/offline'
 import { useDocMutation } from '@/lib/queries'
 import type { Party, Purchase } from '@/lib/types'
@@ -34,6 +36,7 @@ export default function PurchaseWizard() {
   const [kind, setKind] = useDraft<Kind>('purchase.kind', params.get('imei') ? 'walk_in' : 'supplier')
   const [chosen, setChosen] = useDraft('purchase.chosen', !!params.get('imei'))
   const [skipped, setSkipped] = useDraft<Record<string, boolean>>('purchase.skipped', {})
+  const [labels, setLabels] = useState(false)
   const [party, setParty] = useDraft<Party | null>('purchase.party', null)
   const [devices, setDevices] = useDraft<DeviceLineDraft[]>('purchase.devices', [])
   const [misc, setMisc] = useDraft<Misc[]>('purchase.misc', [])
@@ -265,6 +268,8 @@ export default function PurchaseWizard() {
               </div>
             )
           })}
+          {result.lines.some((l) => l.device_id) ? <BiButton text="label.forThese" icon={<Tag size={22} />} full onClick={() => setLabels(true)} /> : null}
+          <LabelSheet kind="devices" ids={result.lines.filter((l) => l.device_id).map((l) => l.device_id!)} open={labels} onClose={() => setLabels(false)} />
           <BiButton text="nav.stock" icon={<Smartphone size={22} />} full variant="secondary" onClick={() => nav('/stock')} />
         </div>
       ) : null}

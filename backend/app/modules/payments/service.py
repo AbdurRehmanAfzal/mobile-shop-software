@@ -11,7 +11,7 @@ from app.db.base import ZERO, utcnow
 from app.modules.audit.service import record_audit
 from app.modules.auth.models import Shop
 from app.modules.ledger import accounts as acc
-from app.modules.ledger.service import Posting, money, post, reverse
+from app.modules.ledger.service import Posting, at_for, money, post, reverse
 from app.modules.notifications import service as notify
 from app.modules.parties.models import Party
 from app.modules.payments.models import Payment, PaymentDirection
@@ -167,6 +167,7 @@ def create_payment(
     posting = Posting(
         document_type="payment", document_id=payment.id, memo=f"{payment.no} {party.name}"
     )
+    posting.at = at_for(payment.date)
     if data.direction == PaymentDirection.IN:
         posting.debit(acc.cash_account(cash.id), amount, memo=f"Received from {party.name}").credit(
             acc.party_account(party.id), amount

@@ -14,6 +14,9 @@ import { useAuth } from '@/lib/auth'
 import { toLakh } from '@/lib/format'
 import { useGet } from '@/lib/queries'
 import type { DayReport } from '@/lib/types'
+import HazriCard from './HazriCard'
+import { useAiStatus } from '@/lib/ai'
+import { Bot } from 'lucide-react'
 import PeriodPicker, { periodOf, periodQuery, type Period } from './PeriodPicker'
 import { JOBS, type Job } from './jobs'
 import { useModules } from '@/lib/modules'
@@ -39,6 +42,7 @@ export default function HomePage() {
   const nav = useNavigate()
   const me = useAuth((s) => s.me)
   const manager = me?.user.role === 'owner' || me?.user.role === 'manager'
+  const { data: ai } = useAiStatus()
   const [q, setQ] = useState('')
   const [period, setPeriod] = useState<Period>(periodOf('today'))
   const { data: dash } = useGet<Dash>(['dashboard'], '/api/v1/reports/dashboard')
@@ -79,6 +83,18 @@ export default function HomePage() {
           <BtnText k="common.search" />
         </button>
       </form>
+
+      <HazriCard />
+      {ai?.configured ? (
+        <Link to="/assistant" className="card tap flex items-center gap-3">
+          <span className="well h-11 w-11 shrink-0 rounded-2xl bg-hero text-hero-text"><Bot size={22} /></span>
+          <span className="flex min-w-0 flex-1 flex-col">
+            <BiLabel text="ai.homeTitle" size="md" bold />
+            <span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick('ai.homeHint')}</span>
+          </span>
+          <Chevron className="shrink-0" />
+        </Link>
+      ) : null}
 
       {/* main jobs */}
       <div className="grid grid-cols-2 gap-2.5 lg:hidden">

@@ -6,7 +6,8 @@ from urllib.parse import parse_qsl, urlsplit
 from fastapi import APIRouter, Depends, Header
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.core.errors import ValidationFailed
+from app.core.config import settings
+from app.core.errors import AppError, ValidationFailed
 from app.core.permissions import Cap
 from app.core.security import LINK_SECONDS, create_link_token
 from app.core.tenancy import DB, Ctx, CurrentUser, get_current_user, link_target, require_cap
@@ -68,7 +69,42 @@ def _me(db, user, x_shop_id: str | None) -> MeOut:
 
 @router.post("/auth/signup", response_model=AuthResponse, status_code=201)
 def signup(data: SignupRequest, db: DB):
+    if settings.signup_otp:
+        from app.modules.otp import service as otp
+
+        if not otp.check_token(data.phone, "signup", data.otp_token):
+            raise OtpRequired()
     user, tokens = service.signup(db, data)
+    return AuthResponse(tokens=tokens, me=_me(db, user, None))
+
+
+class OtpRequired(AppError):
+    status_code = 400
+    code = "otp_required"
+    message_en = "Confirm your number with the code first"
+    message_ur = "پہلے کوڈ سے اپنا نمبر تصدیق کریں"
+
+
+class ResetIn(BaseModel):
+    phone: str
+    otp_token: str
+    password: str = Field(min_length=6, max_length=128)
+
+
+@router.post("/auth/reset-password", response_model=AuthResponse)
+def reset_password(data: ResetIn, db: DB):
+    """After the OTP: a new password, and straight in. The token works once."""
+    from app.core.pk import normalise_phone
+    from app.modules.otp import service as otp
+
+    try:
+        phone = normalise_phone(data.phone)
+    except ValueError:
+        raise otp.OtpInvalid() from None
+    if not otp.check_token(phone, "reset", data.otp_token) or otp.token_used(db, data.otp_token):
+        raise otp.OtpInvalid()
+    user, tokens = service.reset_password(db, phone, data.password)
+    otp.burn_token(db, data.otp_token)
     return AuthResponse(tokens=tokens, me=_me(db, user, None))
 
 

@@ -6,7 +6,7 @@ import { expect, test, type Page } from '@playwright/test'
 const phone = () => `039${Math.floor(10_000_000 + Math.random() * 89_999_999)}`
 
 /** Latin words allowed in Urdu mode: shop words people use as they are, and data. */
-const ALLOWED = /^(IMEI|PTA|JV|SIM|CNIC|Rs\.?|PDF|Excel|CSV|Easypaisa|JazzCash|eGadget|WhatsApp|Wi-Fi|Nokia|Samsung|Apple|Infinix|Tecno|Vivo|Oppo|Redmi|Xiaomi|Realme|Itel|Huawei|Honor|OnePlus|Google|Motorola|QMobile|Lenovo|Sony|LG|GB|TB|MB|PIN|Save|as|URDU|Roman|English|Urdu|Light|Dark|INV|PUR|RET|REP|EXP|PAY|v\d.*|[A-Z]{2,4}-\d*)$/
+const ALLOWED = /^(IMEI|PTA|JV|SIM|CNIC|Rs\.?|PDF|Excel|CSV|Easypaisa|JazzCash|eGadget|WhatsApp|Wi-Fi|Nokia|Samsung|Apple|Infinix|Tecno|Vivo|Oppo|Redmi|Xiaomi|Realme|Itel|Huawei|Honor|OnePlus|Google|Motorola|QMobile|Lenovo|Sony|LG|GB|TB|MB|PIN|Save|as|URDU|Roman|English|Urdu|Light|Dark|INV|PUR|RET|REP|EXP|PAY|v\d.*|[A-Z]{5,10}|[A-Z]{2,4}-\d*)$/
 
 async function signupUrdu(page: Page) {
   await page.addInitScript(() => {

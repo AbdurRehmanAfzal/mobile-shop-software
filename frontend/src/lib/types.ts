@@ -343,6 +343,7 @@ export interface NotificationSettings {
   seller_on_purchase_email: boolean
   customer_on_payment_whatsapp: boolean
   owner_daily_report_whatsapp: boolean
+  owner_daily_report_email: boolean
   daily_report_time: string
   customer_reminder_whatsapp: boolean
   reminder_after_days: number

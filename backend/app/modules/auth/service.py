@@ -4,6 +4,7 @@ from decimal import Decimal
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.core.errors import Conflict, Forbidden, NotFound, Unauthorized, ValidationFailed
 from app.core.permissions import Role
 from app.core.ratelimit import login_limiter
@@ -66,6 +67,8 @@ def create_shop_with_owner(
             message_ur="یہ فون نمبر پہلے سے رجسٹرڈ ہے",
         )
     org = Organisation(name=data.shop_name)
+    if settings.local_mode:  # the one-PC install: nothing to pay a server for, never locks
+        org.plan = "chain"
     shop = Shop(
         organisation=org,
         name=data.shop_name,
@@ -294,3 +297,28 @@ def _plain(value):
     if isinstance(value, uuid.UUID):
         return str(value)
     return value
+
+
+def reset_password(db: Session, phone: str, new_password: str) -> tuple[User, TokenPair]:
+    """OTP-proven owner of the number sets a new password and is logged in (audit on the home shop)."""
+    from app.modules.admin.access import _home_shop
+
+    user = db.scalar(select(User).where(User.phone == phone, User.is_active.is_(True)))
+    if user is None:
+        raise NotFound()
+    user.password_hash = hash_password(new_password)
+    user.last_login_at = utcnow()
+    shop = _home_shop(db, user)
+    if shop is not None:
+        record_audit(
+            db,
+            shop_id=shop.id,
+            user_id=user.id,
+            entity="user",
+            entity_id=user.id,
+            action="password_reset_otp",
+            after={"phone": user.phone},
+        )
+    db.commit()
+    login_limiter.reset(f"login:{phone}")
+    return user, _tokens(user)

@@ -83,11 +83,17 @@ shop, tap **Want this app for your shop? Contact us** on the login page.
 4. Tap **Login**.
 
 ### Forgot password
-Under the login form tap **Forgot password?**, check your mobile number and **Send request**.
-- A **shop owner's** request goes to the software provider (their Super admin dashboard and
-  WhatsApp); they set a new password and send it to you.
-- A **staff member's** request goes to the shop owner (Messages and WhatsApp); the owner sets a new
-  one in **More → Staff → the person → Reset password**.
+Under the login form tap **Forgot password?** and check your mobile number.
+- **Send code on WhatsApp**: a 6-digit code arrives on that number (it works for 10 minutes, three
+  codes per 10 minutes, five tries). Type it, **Confirm code**, choose a **New password**, and you are
+  logged in. Nobody else is involved.
+- No WhatsApp, or the server cannot send codes yet: **Ask the owner / provider to reset it**. A **shop
+  owner's** request goes to the software provider (Super admin dashboard and WhatsApp); a **staff
+  member's** goes to the shop owner (Messages and WhatsApp), who sets a new one in **More → Staff →
+  the person → Reset password**.
+
+When the software provider switches on *SIGNUP_OTP*, the public **Create shop account** page also
+asks for a code on the number before the shop is opened.
 
 ### Quick PIN (faster login on your own phone)
 Set it once:
@@ -519,8 +525,10 @@ with how many days their account has sat and when they were last reminded. Narro
   it they wait in **Messages** for you to tap.
 
 ### The night report
-More → Messages → *Night report to the owner*: write the **Owner WhatsApp number**, tick **Send the
-day's hisaab every night** and choose the time (e.g. 21:30). Every night the owner gets one message:
+More → Messages → *Night report to the owner*: write the **Owner WhatsApp number** and/or **Owner
+email**, tick **Send the day's hisaab every night · WhatsApp** and/or **· Email** and choose the time
+(e.g. 21:30). Email goes out by itself once the software provider has set an SMTP account on the
+server (the screen says whether it is set); WhatsApp needs the Business API. Every night the owner gets one message:
 phones sold and the amount, in hand, udhaar given and received, expenses, profit, to get / to give,
 phones in stock. **Send today's hisaab now** sends it at once.
 
@@ -819,7 +827,91 @@ Buttons: **Sell**, **ID card check**, **Give on loan (amanat)**, **Mark faulty**
 
 ![Phone history](../images/device-history.png)
 
+## 15a. Rate suggestion (what you sold it for last time)
+
+Wherever you type a price, a green box shows your own history for that model: **Last sold Rs. …
+on …**, how many days it took, **n sold in 6 months: Rs. low – high**, **Usually bought at Rs. …**
+(owner/manager only) and how many of the same model are in stock now and at what price. Tap
+**Use …** to take the suggested price (the middle of your recent sales, rounded to the hundred).
+It appears in **Sell** under *Sold for*, in **Add stock** under *Asking price* once the model is
+chosen, and in a phone's **Change price**. It reads only your shop's sales, never other shops'.
+
+## 15b. The assistant and photo reading (AI)
+
+When the software provider has switched the AI on, **More → Assistant** (and a card on Home) lets
+you ask about your own shop in Urdu, English or Roman Urdu: *"How much did we sell today?"*, *"Who
+owes the most?"*, *"What sold best this month?"*, *"Where is IMEI 3568…?"*, *"What is my rate for
+Samsung A15?"*. The answer comes from your records only (hisaab, khata, stock, best sellers, rates,
+the phone's history) and says which of them it looked at; staff who may not see cost prices get
+answers without them. Each shop has a daily allowance of questions and photos; the screen shows
+"n of m used today". Without the key the screen says the assistant is off and nothing else changes.
+
+Photos: with the AI on, **Scan CNIC** (new person, ID check) and **Scan** on a photo of a phone's
+box label are read on the server, which is better at bad light and angles; if that fails, the
+phone's own reader runs as before. Photos are used for the reading only and are not stored.
+
+## 15c. Every phone's own money, every person's phones
+
+Open any phone (Stock → tap it): under **Money on this phone** you see **Cost · Still to pay · Sold
+for · Still to get · Margin**, then two cards: **Bought from** (who, the purchase bill, agreed price,
+paid at the time, every later payment with its receipt, what is still to pay) and **Sold to** (the
+same for the sale). **Pay for this phone** / **Receive for this phone** takes a payment that is
+booked against that very bill, so the phone's remaining amount and the person's khata move
+together. The history below is one timeline from day one: bought, payments, sold, receipts,
+returns, repairs, notes — each money row shows what was left on this phone after it.
+
+Open any person: the big balance is split into **They owe (phones)**, **We owe (phones)** and
+**Other / opening** (so a payable and a receivable are never silently netted), then **Phones**: each
+phone bought from or sold to them with **Agreed · Paid · Still to pay / get**, *Settled*, *They owe*
+or *We owe*, and a pay / receive button on pending rows. The statement under it is unchanged;
+payment rows print their receipt.
+
+Example (the Vivo): bought from A for 35,000 paying 30,000 (A: we owe 5,000); sold to B for
+40,000 taking 35,000 (B: they owe 5,000); paid A 2,000 for this phone (A: 3,000); B paid 3,000
+for this phone (B: 2,000). The phone shows cost 35,000 / still to pay 3,000 / sold 40,000 / still
+to get 2,000 / margin 5,000 — the same numbers A's and B's pages show.
+
+Buying figures (cost, what is owed to a seller, margin) are shown only to the owner and manager.
+A bill with several phones shares each payment across them in proportion to their prices; the row
+says "bill of … with other items" so it is clear why.
+
+**Payment receipts**: every payment given or received prints as a thermal or A5 receipt
+(number, person, amount, how it was paid, which bill and phone it was for, what is left on that
+bill, the account balance after) — from the payment screen, a phone's money card, or a khata row.
+
+## 16a. Price stickers with a barcode
+
+Every phone and item can carry a sticker: shop name, model, storage · colour, **price**, a **Code 128
+barcode of the IMEI** (the item's SKU for accessories) with the number under it, condition, PTA and
+date. Scanning the barcode with the app's camera or a USB scanner finds the phone in search and in
+the sale.
+
+Where to print:
+- **Phone page → Print sticker** (one phone).
+- **Stock → Stickers**: tick the phones (or **Select all**), then **Stickers (n)**.
+- Right after **Add stock**: **Print stickers for these phones**.
+- **Items** (accessories) → tap an item → **Print sticker** (copies for a box of chargers).
+
+The sheet asks once: **Sticker size** (38×25, 50×25, 50×30, 60×40, 70×40 mm for roll label printers,
+**A4 sheet** of 65 labels, or **Custom mm**), **What goes on it** (switch any line off), **Copies of
+each**, then **Print** (the page is already the sticker's size, so a label printer prints one per
+sticker), or **Download / Share PDF**. **Remember these choices** keeps them for the shop.
+
+**Cost code**: owner and manager can add the buying price in letters. **Shop settings → Sticker cost
+code** takes a word of 10 different letters (e.g. `BLACKHORSE`): digit 0 = 1st letter, 1 = 2nd …,
+so 45,000 prints as `KHBBB`. Salesmen never get the code, even if they tick it.
+
 ---
+
+## 16b. Mobile Shop on your own PC (no internet)
+
+Shops without reliable internet can run the same software on a Windows PC: install
+**MobileShop-Setup.exe**, open **Mobile Shop** from the Desktop; a tray icon appears and the app opens
+in the browser at `127.0.0.1:8787`. Create the shop account once, then work as usual. Everything is
+on that PC (`MobileShop` folder under your user's AppData); the tray menu has **Backup now** (a dated
+copy in `backups` and on the Desktop), **Open data folder** and **Quit**. Phones on the shop's Wi-Fi
+can open it too once `MOBILESHOP_HOST=0.0.0.0` is set in `settings.env` and the port is allowed in
+the firewall. Updates: run the new Setup; your data stays. See docs/15 for the details.
 
 ## 17. Staff and roles
 
@@ -848,6 +940,24 @@ Tap a staff member to change the **Role**, set a **New password** (**Save**), or
 | Sell a phone flagged as stolen (with reason) | ✓ | – | – | – |
 | Repairs | ✓ | ✓ | take in | work |
 | Staff and shop settings | ✓ | – | – | – |
+
+### Hazri (attendance)
+When the *Staff attendance* module is on, Home shows a **Hazri** card for everyone: **Check in**
+when you arrive, **Check out** when you leave; the card then says "In 9:05 AM · Out 7:10 PM · 10.1 h".
+One check-in per day.
+
+Owner: **More → Staff → Hazri** tab. Pick the period (today, week, this month, from–to). Each
+person shows a card: today's status, hours worked, and counts of **Present**, **Half day**,
+**Leave**, **Absent** and **No record** (days since they joined with nothing marked). Tap a person
+to **mark a day by hand** (day, status, note; e.g. yesterday = Leave, "Eid") and to see their days
+with in/out times. Salary and advances stay in **Expenses**.
+
+### What each one did (activity)
+**More → Staff → Activity** tab: for the period, each staff member's **Sales (count · Rs)**,
+**Received**, **Purchases**, **Expenses**, **Repairs** and the number of **Actions**, with their
+last login and today's hazri. Tap a person for the log: every bill, payment, purchase, expense,
+repair, phone, person, cancellation and settings change they made, with time, number and amount.
+This comes from the audit record the app keeps of every change, so nothing can be left out.
 
 ---
 

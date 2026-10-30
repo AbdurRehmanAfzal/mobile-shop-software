@@ -15,7 +15,7 @@ from app.modules.devices.service import apply_event
 from app.modules.devices.state import DeviceStatus, EventType
 from app.modules.ledger import accounts as acc
 from app.modules.ledger.models import CashAccount
-from app.modules.ledger.service import Posting, default_cash_account, money, post
+from app.modules.ledger.service import Posting, at_for, default_cash_account, money, post
 from app.modules.parties.models import Party
 from app.modules.purchases.models import Purchase, PurchaseLine, PurchaseStatus
 from app.modules.purchases.service import next_number
@@ -136,6 +136,7 @@ def sale_return(
     posting = Posting(
         document_type="sale_return", document_id=doc.id, memo=f"{doc.no} return of {inv.no}"
     )
+    posting.at = at_for(doc.date)
     P = acc.party_account(party.id)
     for ln in lines:
         net_sales = money(ln.line_total - ln.tax_share)
@@ -294,6 +295,7 @@ def purchase_return(
     posting = Posting(
         document_type="purchase_return", document_id=doc.id, memo=f"{doc.no} return of {pur.no}"
     )
+    posting.at = at_for(doc.date)
     P = acc.party_account(party.id)
     if amount > ZERO:
         posting.debit(P, amount)

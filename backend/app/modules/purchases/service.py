@@ -20,7 +20,7 @@ from app.modules.devices.state import DeviceCondition, DeviceStatus, EventType, 
 from app.modules.expenses.models import DayClose
 from app.modules.ledger import accounts as acc
 from app.modules.ledger.models import CashAccount
-from app.modules.ledger.service import Posting, money, post, reverse
+from app.modules.ledger.service import Posting, at_for, money, post, reverse
 from app.modules.notifications import service as notify
 from app.modules.parties.models import Party
 from app.modules.paymode import service as paymode
@@ -127,6 +127,7 @@ def create_purchase(
         memo=f"{purchase.no} {party.name}",
         at=at,
     )
+    posting.at = at_for(purchase.date)
     line_no = 0
     devices: list[tuple[Device, Decimal]] = []
 

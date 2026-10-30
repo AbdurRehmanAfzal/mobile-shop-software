@@ -5,10 +5,10 @@ import { ApiError, post } from '@/lib/api'
 import { useAuth, type MeOut } from '@/lib/auth'
 import { isValidPkMobile, normalisePhone, toLatinDigits } from '@/lib/format'
 import { BiAlert, BiButton, BiInput, BiLabel, type BiText } from '@/components/Bilingual'
-import { Sheet } from '@/components/ui'
 import { PhoneInput } from '@/components/FieldInputs'
 import { fingerprintLogin, isOnHere } from '@/lib/fingerprint'
 import AuthLayout from './AuthLayout'
+import ForgotSheet from './ForgotSheet'
 
 interface AuthResponse {
   tokens: { access_token: string; refresh_token: string }
@@ -38,9 +38,6 @@ export default function LoginPage() {
   const [error, setError] = useState<BiText | null>(null)
   const [busy, setBusy] = useState(false)
   const [forgotOpen, setForgotOpen] = useState(false)
-  const [forgotBusy, setForgotBusy] = useState(false)
-  const [forgotSent, setForgotSent] = useState<'admin' | 'owner' | 'none' | null>(null)
-  const [forgotErr, setForgotErr] = useState<BiText | null>(null)
 
   async function go(path: string, body: unknown) {
     setError(null)
@@ -153,29 +150,10 @@ export default function LoginPage() {
         <Link to="/welcome" className="tap block py-1 text-center">
           <BiLabel text="landing.about" size="sm" tone="text-muted" align="center" />
         </Link>
-        <button type="button" onClick={() => { setForgotSent(null); setForgotOpen(true) }} className="tap py-2">
+        <button type="button" onClick={() => setForgotOpen(true)} className="tap py-2">
           <BiLabel text="auth.forgot" size="sm" tone="text-emerald" align="center" />
         </button>
-        <Sheet open={forgotOpen} onClose={() => setForgotOpen(false)} title="auth.forgotTitle">
-          <div className="flex flex-col gap-3">
-            <BiLabel text="auth.forgotHint" size="sm" tone="text-muted" />
-            <PhoneInput label="auth.phone" value={phone} onChange={setPhone} />
-            {forgotSent ? <BiAlert text={`auth.forgotSent_${forgotSent}`} kind={forgotSent === 'none' ? 'info' : 'success'} /> : null}
-            {forgotErr ? <BiAlert text={forgotErr} /> : null}
-            <BiButton type="button" text="auth.forgotSend" full loading={forgotBusy} disabled={!isValidPkMobile(phone)} onClick={async () => {
-              setForgotBusy(true)
-              setForgotErr(null)
-              try {
-                const r = await post<{ to: 'admin' | 'owner' | 'none' }>('/api/v1/auth/forgot', { phone: normalisePhone(phone) }, { auth: false })
-                setForgotSent(r.to)
-              } catch (e) {
-                setForgotErr(e instanceof ApiError ? { en: e.messageEn, ur: e.messageUr } : { en: 'Request failed', ur: 'درخواست ناکام' })
-              } finally {
-                setForgotBusy(false)
-              }
-            }} />
-          </div>
-        </Sheet>
+        <ForgotSheet open={forgotOpen} onClose={() => setForgotOpen(false)} phone={phone} setPhone={setPhone} />
         {last?.hasPin ? (
           <button type="button" onClick={() => setMode('pin')} className="tap py-1">
             <BiLabel text="pin.usePin" size="sm" tone="text-emerald" align="center" />

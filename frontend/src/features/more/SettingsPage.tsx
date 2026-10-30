@@ -3,7 +3,7 @@
  *  stays in reach, and a plain "Saved" message. */
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Check, Fingerprint, Languages, Percent, Receipt, Store } from 'lucide-react'
+import { Check, Fingerprint, Languages, Percent, Receipt, Store, Tag } from 'lucide-react'
 import { useEffect, useState, type ReactNode } from 'react'
 import { BiAlert, BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import { PhoneInput } from '@/components/FieldInputs'
@@ -28,6 +28,7 @@ interface ShopFull {
   receipt_footer_ur: string | null
   invoice_prefix: string
   fingerprint_staff: boolean
+  label_code_word: string | null
 }
 
 type Form = { name: string; city: string; phone: string; default_locale: 'en' | 'ur'; tax_enabled: boolean; tax_rate: string; tax_inclusive: boolean; ntn: string; strn: string; receipt_footer: string; receipt_footer_ur: string; invoice_prefix: string; fingerprint_staff: boolean }
@@ -151,6 +152,8 @@ export default function SettingsPage() {
         ) : null}
       </Card>
 
+      <CodeWordCard current={data?.label_code_word ?? null} />
+
       <ErrorText error={m.error} />
       {saved ? <BiAlert text="settings.saved" kind="success" /> : null}
 
@@ -161,5 +164,29 @@ export default function SettingsPage() {
         </div>
       ) : null}
     </div>
+  )
+}
+
+/** the 10 different letters that spell the buying price on a sticker (BLACKHORSE: 4 = K, 5 = H…) */
+function CodeWordCard({ current }: { current: string | null }) {
+  const { pick } = useLang()
+  const qc = useQueryClient()
+  const shopKey = useAuth((s) => s.activeShopId)
+  const [w, setW] = useState(current ?? '')
+  const [ok, setOk] = useState(false)
+  useEffect(() => setW(current ?? ''), [current])
+  const word = w.toUpperCase().replace(/[^A-Z]/g, '')
+  const valid = word.length === 10 && new Set(word).size === 10
+  const m = useMutation({
+    mutationFn: () => patch('/api/v1/shops/current', { label_code_word: valid ? word : null }),
+    onSuccess: () => { setOk(true); void qc.invalidateQueries({ queryKey: [shopKey, 'shop-full'] }) },
+  })
+  const sample = (word.length === 10 ? word : 'BLACKHORSE')
+  const demo = '45000'.split('').map((d) => sample[Number(d)]).join('')
+  return (
+    <Card icon={<Tag size={22} />} tone="bg-stockt text-stockt-fg" title="settings.codeWord" hint="settings.codeWordHint">
+      <BiInput label="settings.codeWordLabel" value={w} onChange={(e) => { setOk(false); setW(e.target.value.toUpperCase()) }} maxLength={10} dir="ltr" className="num tracking-[.2em]" error={w && !valid ? 'settings.codeWordBad' : null} hint={{ en: `${pick('settings.codeWordExample')}: 45000 = ${demo}`, ur: `${pick('settings.codeWordExample')}: 45000 = ${demo}`, roman: `${pick('settings.codeWordExample')}: 45000 = ${demo}` }} />
+      <BiButton text={ok ? 'settings.saved' : 'common.save'} icon={<Check size={20} />} variant="secondary" full disabled={(!!w && !valid) || (word === (current ?? '') && !ok)} loading={m.isPending} onClick={() => m.mutate()} />
+    </Card>
   )
 }

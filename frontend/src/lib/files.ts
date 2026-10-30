@@ -81,3 +81,13 @@ export async function downloadFile(path: string, fallbackName = 'export.csv'): P
   a.remove()
   setTimeout(() => URL.revokeObjectURL(url), 2000)
 }
+
+/** AI photo reading (owner 2026-10-30): the CNIC front or a phone box label → fields. */
+export async function readPhotoAi<T>(file: File, kind: 'cnic' | 'imei'): Promise<T> {
+  const fd = new FormData()
+  fd.append('file', file, file.name || 'photo.jpg')
+  const res = await fetch(`${BASE}/api/v1/ai/read-photo?kind=${kind}`, { method: 'POST', headers: authHeaders(), body: fd })
+  const json = await res.json().catch(() => null)
+  if (!res.ok) throw new ApiError(res.status, json?.error ?? { code: 'ai_failed', message_en: 'Could not read the photo', message_ur: 'تصویر پڑھی نہیں جا سکی' })
+  return json as T
+}

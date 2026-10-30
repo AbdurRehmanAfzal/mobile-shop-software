@@ -7,7 +7,7 @@ returns the group. Corrections go through `reverse()`; rows are never edited or 
 
 import uuid
 from dataclasses import dataclass, field
-from datetime import date, datetime
+from datetime import UTC, date, datetime, time
 from decimal import ROUND_HALF_UP, Decimal
 
 from sqlalchemy import func, select
@@ -62,6 +62,17 @@ class Posting:
     def credit(self, account: str, amount, **kw) -> "Posting":
         self.lines.append(Line(account=account, credit=money(amount), **kw))
         return self
+
+
+def at_for(day: date | None) -> datetime | None:
+    """Ledger time for a document dated `day`: now when it is today (or unset), else noon UTC of
+    that day (17:00 in Pakistan), so statements and day reports file it under its own date while
+    entries typed today keep their real order."""
+    from app.core.clock import today as shop_today
+
+    if day is None or day >= shop_today():
+        return None
+    return datetime.combine(day, time(12, 0), tzinfo=UTC)
 
 
 class Unbalanced(AppError):

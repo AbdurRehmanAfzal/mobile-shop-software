@@ -84,12 +84,17 @@ page par **Apni dukaan ke liye yeh app chahiye? Hum se raabta karein** dabayein.
 4. **Login** dabayein.
 
 ### Password bhool gaye
-Login form ke neeche **Password bhool gaye?** dabayein, apna mobile number check karein aur **Request
-bhejein**.
-- **Dukaan ke malik** ki request software provider ko jaati hai (un ka Super admin dashboard aur
-  WhatsApp); woh naya password rakh kar aap ko bhejte hain.
-- **Staff** ki request dukaan ke malik ko jaati hai (Paighaam aur WhatsApp); malik **Mazeed → Staff →
-  banda → Password reset** mein naya rakhta hai.
+Login form ke neeche **Password bhool gaye?** dabayein aur apna mobile number check karein.
+- **WhatsApp par code bhejein**: us number par 6 hindson ka code aata hai (10 minute chalta hai, 10
+  minute mein 3 code, 5 koshishein). Likhein, **Code ki tasdeeq**, **Naya password** chunein, aur aap
+  login ho jate hain. Kisi aur ki zaroorat nahi.
+- WhatsApp nahi, ya server abhi code nahi bhej sakta: **Maalik / provider se reset ki darkhwast
+  karein**. **Dukaan ke malik** ki request software provider ko jaati hai (Super admin dashboard aur
+  WhatsApp); **staff** ki dukaan ke malik ko (Paighaam aur WhatsApp), jo **Mazeed → Staff → banda →
+  Password reset** mein naya rakhta hai.
+
+Jab software provider *SIGNUP_OTP* on kare to public **Dukaan ka account banayein** page bhi dukaan
+kholne se pehle number par code maangta hai.
 
 ### Jaldi PIN (apne phone par tez login)
 Ek dafa set karein:
@@ -518,8 +523,10 @@ se chhantein.
   **Paighaam** mein aap ke tap ka intezar karti hai.
 
 ### Raat ki report
-Mazeed → Paighaam → *Malik ko raat ki report*: **Malik ka WhatsApp number** likhein, **Har raat din ka
-hisaab bhejein** tick karein aur waqt chunein (maslan 21:30). Har raat malik ko ek paighaam milta hai:
+Mazeed → Paighaam → *Malik ko raat ki report*: **Malik ka WhatsApp number** aur/ya **Malik ki email**
+likhein, **Har raat din ka hisaab bhejein · WhatsApp** aur/ya **· Email** tick karein aur waqt chunein
+(maslan 21:30). Email tab khud jaati hai jab software provider server par SMTP account set kar de
+(screen batati hai set hai ya nahi); WhatsApp ke liye Business API chahiye. Har raat malik ko ek paighaam milta hai:
 kitne phone bike aur kitne ke, haath mein, udhaar diya aur wasool, kharche, munafa, lene / dene hain,
 stock mein phone. **Aaj ka hisaab abhi bhejein** foran bhejta hai.
 
@@ -821,7 +828,92 @@ Buttons: **Bechein**, **Shanakhti card check**, **Amanat par dein**, **Kharab li
 
 ![Phone ki kahani](../images/device-history.png)
 
+## 15a. Rate ka mashwara (pichli baar kitne mein becha)
+
+Jahan bhi qeemat likhein, ek sabz box us model ki aap ki apni kahani dikhata hai: **Aakhri baar Rs. …
+mein bika, …**, kitne din mein bika, **6 mahine mein n bike: Rs. kam – zyada**, **Aam tor par Rs. …
+mein khareeda** (sirf maalik/manager) aur yehi model abhi stock mein kitne aur kis qeemat par. **…
+rakhein** dabayein to mashware wali qeemat lag jati hai (pichli bikri ka darmiyan, sau tak round).
+Ye **Bechein** mein *Kitne mein becha* ke neeche, **Stock daalein** mein model chunte hi *Bechne ki
+qeemat* ke neeche, aur phone ke **Qeemat badlein** mein aata hai. Sirf aap ki dukaan ki bikri parhta
+hai, kisi aur dukaan ki nahi.
+
+## 15b. Assistant aur tasveer parhna (AI)
+
+Jab software provider AI on kar de to **Mazeed → Assistant** (aur Home par ek card) se aap apni dukaan
+ke baare mein Urdu, English ya Roman Urdu mein pooch sakte hain: *"Aaj kitna bika?"*, *"Sab se zyada
+udhaar kis par hai?"*, *"Is mahine kya sab se zyada bika?"*, *"IMEI 3568… kahan hai?"*, *"Samsung A15 ka
+mera rate kya hai?"*. Jawab sirf aap ke record se aata hai (hisaab, khata, stock, zyada bikne wale, rate,
+phone ki kahani) aur batata hai kya dekha; jo staff khareed qeemat nahi dekh sakta use jawab us ke
+baghair milta hai. Har dukaan ki rozana sawaal aur tasveer ki had hai; screen "aaj m mein se n istemal"
+dikhati hai. Key ke baghair screen kehti hai assistant off hai aur baqi kuch nahi badalta.
+
+Tasveerein: AI on ho to **CNIC scan** (naya banda, ID check) aur phone ke dabbe ke label ki tasveer par
+**Scan** server par parhe jate hain, jo kharab roshni aur tirche angle mein behtar hai; na ho sake to
+phone ka apna reader pehle ki tarah chalta hai. Tasveer sirf parhne ke liye jaati hai, mehfooz nahi hoti.
+
+## 15c. Har phone ka apna paisa, har bande ke phones
+
+Koi bhi phone kholein (Stock → dabayein): **Is phone ka paisa** mein **Laagat · Abhi dene hain · Bika ·
+Abhi lene hain · Munafa**, phir do card: **Khareeda** (kis se, khareed ka bill, tay qeemat, usi waqt ada,
+baad ki har adaigi apni raseed ke saath, abhi kitne dene hain) aur **Becha** (bikri ke liye yehi). **Is
+phone ki adaigi** / **Is phone ki wasooli** se jo raqam aati hai wo usi bill par lagti hai, is liye phone
+ka baqi aur bande ka khata saath saath chalte hain. Neeche ki kahani pehle din se ek hi timeline hai:
+khareeda, adaigiyan, becha, wasooliyan, wapsi, marammat, note — har paise wali line batati hai us ke
+baad is phone par kitna baqi raha.
+
+Koi bhi banda kholein: bara balance **Un par baqi (phones)**, **Hum ne dene (phones)** aur **Deegar /
+ibtidai** mein bata hota hai (dena aur lena kabhi chupke se minus nahi hote), phir **Phones**: us se
+khareeda ya use becha har phone **Tay shuda · Ada/Wasool · Abhi dene/lene** ke saath, *Bebaaq*, *Un par
+baqi* ya *Hum ne dene hain*, aur baqi wali line par ada/wasool ka button. Neeche statement wahi hai;
+adaigi wali lines apni raseed print karti hain.
+
+Misaal (Vivo): A se 35,000 mein khareeda, 30,000 diye (A: hum ne 5,000 dene); B ko 40,000 mein becha,
+35,000 liye (B: un par 5,000); A ko is phone ke 2,000 diye (A: 3,000); B ne is phone ke 3,000 diye (B:
+2,000). Phone dikhata hai laagat 35,000 / dene 3,000 / bika 40,000 / lene 2,000 / munafa 5,000 — wahi
+hindse A aur B ke page par.
+
+Khareed ke hindse (laagat, bechne wale ko dena, munafa) sirf maalik aur manager ko dikhte hain. Jis bill
+mein kai phone hon us ki har adaigi un par qeemat ke tanasub se batti hai; line par "… ka bill, aur
+cheezein bhi" likha hota hai taake wajah saaf rahe.
+
+**Adaigi ki raseed**: har di ya li gayi raqam thermal ya A5 raseed mein print hoti hai (number, banda,
+raqam, kaise di, kis bill aur phone ke liye, us bill par kitna baqi, baad ka khata balance) — adaigi ki
+screen, phone ke paisa card ya khate ki line se.
+
+## 16a. Barcode wale qeemat ke sticker
+
+Har phone aur item par sticker lag sakta hai: dukaan ka naam, model, storage · rang, **qeemat**, **IMEI
+ka Code 128 barcode** (accessories ke liye SKU) neeche number ke saath, haalat, PTA aur tareekh.
+Barcode app ke camera ya USB scanner se scan karein to phone search aur sale mein mil jata hai.
+
+Kahan se print:
+- **Phone ka page → Sticker print** (ek phone).
+- **Stock → Stickers**: phones par tick karein (ya **Sab chunein**), phir **Stickers (n)**.
+- **Stock daalne** ke foran baad: **In phones ke sticker print karein**.
+- **Items** (accessories) → item dabayein → **Sticker print** (chargers ke dabbe ke liye copies).
+
+Sheet ek baar poochti hai: **Sticker ka size** (38×25, 50×25, 50×30, 60×40, 70×40 mm roll label
+printer ke liye, **A4 sheet** 65 stickers, ya **Apna size mm**), **Is par kya ho** (koi bhi line band
+karein), **Har aik ki copies**, phir **Print** (page sticker ke size ka hota hai, is liye label printer ek
+sticker fi page nikalta hai), ya **PDF download / share**. **Ye intikhab yaad rakhein** dukaan ke liye
+mehfooz kar deta hai.
+
+**Laagat code**: maalik aur manager khareed qeemat harfon mein laga sakte hain. **Dukaan ki settings →
+Sticker ka laagat code** mein 10 mukhtalif harfon ka lafz (maslan `BLACKHORSE`): hindsa 0 = pehla harf,
+1 = doosra …, to 45,000 `KHBBB` chhapta hai. Salesman ko code kabhi nahi milta, tick kare to bhi.
+
 ---
+
+## 16b. Mobile Shop apne PC par (bina internet)
+
+Jin dukaanon mein internet theek nahi, wahan yehi software Windows PC par chalta hai: **MobileShop-
+Setup.exe** install karein, Desktop se **Mobile Shop** kholein; tray mein icon aata hai aur app browser mein
+`127.0.0.1:8787` par khulti hai. Ek baar dukaan ka account banayein, phir aam tareeqe se kaam karein. Sab
+kuch usi PC par rehta hai (AppData mein `MobileShop` folder); tray menu mein **Backup now** (tareekh wali
+copy `backups` mein aur Desktop par), **Open data folder** aur **Quit**. `settings.env` mein
+`MOBILESHOP_HOST=0.0.0.0` rakh kar aur firewall mein port khol kar dukaan ke Wi-Fi par phones bhi khol
+sakte hain. Update: naya Setup chalayein; data wahin rehta hai. Tafseel docs/15 mein.
 
 ## 17. Staff aur un ke ohde
 
@@ -850,6 +942,24 @@ Staff ke naam par daba kar **Ohda** badlein, **Naya password** (**Mehfooz karein
 | Chori ke shak wala phone bechna (wajah ke saath) | ✓ | – | – | – |
 | Marammat | ✓ | ✓ | phone lena | kaam karna |
 | Staff aur dukaan ki settings | ✓ | – | – | – |
+
+### Hazri
+Jab *Staff ki hazri* module on ho to Home par sab ko **Hazri** ka card dikhta hai: aate hi **Hazri
+lagayein**, jaate waqt **Chhutti karein**; phir card kehta hai "Aamad 9:05 AM · Chhutti 7:10 PM · 10.1
+ghante". Din mein ek baar hazri.
+
+Maalik: **Mazeed → Staff → Hazri** tab. Arsa chunein (aaj, hafta, is mahine, se–tak). Har bande ka
+card: aaj ki haalat, kaam ke ghante, aur **Hazir**, **Aadha din**, **Chhutti**, **Ghair hazir** aur
+**Record nahi** (jab se aaya, jin dinon kuch darj nahi) ki ginti. Bande par dabayein to **din khud darj
+karein** (din, haalat, note; maslan kal = Chhutti, "Eid") aur us ke din aamad/chhutti ke waqt ke saath
+dekhein. Tankhwah aur advance **Kharche** mein hi rehte hain.
+
+### Kis ne kya kiya (kaam)
+**Mazeed → Staff → Kaam** tab: arse ke liye har staff ki **Bikri (tadaad · Rs)**, **Wasooli**,
+**Khareed**, **Kharche**, **Marammat** aur kul **Kaam**, aakhri login aur aaj ki hazri ke saath.
+Bande par dabayein to poori list: har bill, adaigi, khareed, kharcha, marammat, phone, banda,
+mansookhi aur settings ki tabdeeli jo us ne ki, waqt, number aur raqam ke saath. Ye us record se
+aata hai jo app har tabdeeli ka rakhta hai, is liye kuch chhoot nahi sakta.
 
 ---
 

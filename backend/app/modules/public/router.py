@@ -18,7 +18,7 @@ from app.db.base import Base, UUIDPk, utcnow
 from app.modules.admin import fees, modules
 from app.modules.admin.access import _home_shop
 from app.modules.auth.models import User
-from app.modules.notifications import jobs
+from app.modules.notifications import jobs, provider
 from app.modules.notifications.models import Channel
 from app.modules.notifications.service import queue
 
@@ -71,6 +71,8 @@ def info(db: DB):
         "accounts": fees.accounts(db),
         "whatsapp": settings.admin_whatsapp
         or (min(settings.superusers) if settings.superusers else None),
+        "signup_otp": settings.signup_otp,
+        "otp_available": settings.otp_dev_echo or provider.configured(),
     }
 
 

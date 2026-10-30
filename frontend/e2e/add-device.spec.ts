@@ -67,6 +67,8 @@ test('purchase wizard: add device from supplier', async ({ page }) => {
 })
 
 test("customer's phone: buy, then skip verification for a known person", async ({ page }) => {
+  page.on('pageerror', (e) => console.log('PAGEERROR', e.message))
+  page.on('console', (m) => { if (m.type() === 'error') console.log('CONSOLE', m.text().slice(0, 300)) })
   await signup(page)
   await page.goto('/purchase/new')
   // only two simple choices on the first screen
