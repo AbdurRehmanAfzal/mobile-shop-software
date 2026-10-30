@@ -38,32 +38,30 @@ jobs:
           npm ci --no-audit --no-fund
           npm run build
       - name: Python bundle
-        working-directory: backend
         run: |
-          pip install -e ".[local]"
-          pyinstaller --noconfirm --clean ../local/mobileshop.spec
+          pip install -e "backend[local]"
+          pyinstaller --noconfirm --clean local/mobileshop.spec
       - name: Smoke test the bundle
         shell: pwsh
         run: |
           $env:MOBILESHOP_DATA = "$env:RUNNER_TEMP\msdata"
           $env:MOBILESHOP_PORT = "8790"
-          $p = Start-Process -FilePath backend\dist\MobileShop\MobileShop.exe -PassThru
+          $p = Start-Process -FilePath dist\MobileShop\MobileShop.exe -PassThru
           $ok = $false
           for ($i = 0; $i -lt 60; $i++) {
             try { $r = Invoke-WebRequest -UseBasicParsing http://127.0.0.1:8790/health; if ($r.StatusCode -eq 200) { $ok = $true; break } } catch {}
             Start-Sleep -Seconds 1
           }
-          $home = Invoke-WebRequest -UseBasicParsing http://127.0.0.1:8790/
+          $page = Invoke-WebRequest -UseBasicParsing http://127.0.0.1:8790/
           Stop-Process -Id $p.Id -Force
           if (-not $ok) { throw "bundle did not answer /health" }
-          if ($home.Content -notmatch "<div id=""root""") { throw "bundle did not serve the web app" }
+          if ($page.Content -notmatch "<div id=""root""") { throw "bundle did not serve the web app" }
       - name: Inno Setup
         shell: pwsh
         run: |
           choco install innosetup --no-progress -y
           $v = "${{ github.event.inputs.version }}"; if (-not $v) { $v = "2.0.0" }
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "/DAppVersion=$v" local\installer.iss
-          Move-Item backend\dist\MobileShop-Setup-*.exe . -ErrorAction SilentlyContinue
           Move-Item dist\MobileShop-Setup-*.exe . -ErrorAction SilentlyContinue
       - uses: actions/upload-artifact@v4
         with:

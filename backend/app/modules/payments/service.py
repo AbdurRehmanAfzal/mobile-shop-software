@@ -167,7 +167,7 @@ def create_payment(
     posting = Posting(
         document_type="payment", document_id=payment.id, memo=f"{payment.no} {party.name}"
     )
-    posting.at = at_for(payment.date)
+    posting.at = posting.at or at_for(payment.date)
     if data.direction == PaymentDirection.IN:
         posting.debit(acc.cash_account(cash.id), amount, memo=f"Received from {party.name}").credit(
             acc.party_account(party.id), amount
