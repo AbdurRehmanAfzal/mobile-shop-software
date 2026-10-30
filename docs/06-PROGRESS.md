@@ -109,8 +109,8 @@ Legend: ✅ done · 🔄 in progress · ⬜ not started · ❌ blocked. Update t
 
 ## Backlog (owner requests, not started)
 | Item | Notes |
-| Shop Audit, Financial Intelligence & Advanced Reporting (owner brief 2026-10-30) | Full spec saved verbatim in `docs/16-SHOP-AUDIT-SPEC.md`. Starts with a codebase audit + gap analysis (its section 1), then phases 2–11. Builds on `modules/reports`, `modules/units`, the ledger and `device_events`; price integrity (§14) is already covered by ADR-031 |
 |---|---|
+| Shop Audit, Financial Intelligence & Advanced Reporting (owner brief 2026-10-30) | Full spec saved verbatim in `docs/16-SHOP-AUDIT-SPEC.md`. Starts with a codebase audit + gap analysis (its section 1), then phases 2–11. Builds on `modules/reports`, `modules/units`, the ledger and `device_events`; price integrity (§14) is already covered by ADR-031 |
 
 ## Known issues / tech debt
 - Signup has no phone OTP verification; add before public launch (Phase 3).
