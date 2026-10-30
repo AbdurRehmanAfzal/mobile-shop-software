@@ -483,7 +483,9 @@
     "remindAuto": "Customers ko khud-ba-khud yaad dahani",
     "remindAfter": "Jab khata ruka rahe",
     "days": "din",
-    "failed": "Nakaam"
+    "failed": "Nakaam",
+    "emailOn": "Email server se jaati hai (SMTP set hai).",
+    "emailOff": "Email ke liye server par SMTP account chahiye (maslan Gmail app password); software provider se kahein. Tab tak email paighaam neeche list mein ruke rehte hain."
   },
   "settings": {
     "title": "Dukaan ki settings",

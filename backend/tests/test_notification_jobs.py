@@ -105,7 +105,7 @@ def test_daily_report_once_a_day_at_the_set_time(owner, db, cat):
 def test_dispatch_sends_through_the_cloud_api(owner, db, cat, monkeypatch):
     c = _party(owner, name="Ahmed Khan", phone="03219876543", kinds=("customer",))
     _udhaar_sale(owner, cat, c, IMEI_A)
-    assert owner.get("/api/v1/notifications/provider").json() == {"whatsapp_api": False}
+    assert owner.get("/api/v1/notifications/provider").json() == {"whatsapp_api": False, "email": False}
     owner.post("/api/v1/notifications/reminders", json={})
     (m,) = db.query(Message).all()
     assert m.status == "queued"

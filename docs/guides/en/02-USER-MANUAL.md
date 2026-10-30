@@ -525,8 +525,10 @@ with how many days their account has sat and when they were last reminded. Narro
   it they wait in **Messages** for you to tap.
 
 ### The night report
-More → Messages → *Night report to the owner*: write the **Owner WhatsApp number**, tick **Send the
-day's hisaab every night** and choose the time (e.g. 21:30). Every night the owner gets one message:
+More → Messages → *Night report to the owner*: write the **Owner WhatsApp number** and/or **Owner
+email**, tick **Send the day's hisaab every night · WhatsApp** and/or **· Email** and choose the time
+(e.g. 21:30). Email goes out by itself once the software provider has set an SMTP account on the
+server (the screen says whether it is set); WhatsApp needs the Business API. Every night the owner gets one message:
 phones sold and the amount, in hand, udhaar given and received, expenses, profit, to get / to give,
 phones in stock. **Send today's hisaab now** sends it at once.
 

@@ -37,6 +37,14 @@ class Settings(BaseSettings):
     # code in the API response (dev / e2e only). SIGNUP_OTP makes public signup prove the number.
     otp_dev_echo: bool = False
     signup_otp: bool = False
+    # Email (owner 2026-10-30): any SMTP account (Gmail app password, the hosting's mail). Empty host =
+    # email messages stay queued and the app says so.
+    smtp_host: str = ""
+    smtp_port: int = 587
+    smtp_user: str = ""
+    smtp_password: str = ""
+    smtp_from: str = ""
+    smtp_starttls: bool = True
 
     @property
     def superusers(self) -> set[str]:

@@ -14,6 +14,9 @@ a mapping are sent as plain text (fine for test numbers and inside the 24-hour w
 
 import json
 import re
+import smtplib
+from email.message import EmailMessage
+from email.utils import make_msgid
 
 import httpx
 
@@ -73,3 +76,27 @@ def send_whatsapp(recipient: str, body: str, template_key: str | None = None) ->
         raise RuntimeError(f"WhatsApp API {r.status_code}: {detail[:300]}")
     data = r.json()
     return (data.get("messages") or [{}])[0].get("id") or ""
+
+
+# ---- email over SMTP -----------------------------------------------------------------------
+
+
+def email_configured() -> bool:
+    return bool(settings.smtp_host and (settings.smtp_from or settings.smtp_user))
+
+
+def send_email(recipient: str, subject: str, body: str) -> str:
+    """Plain-text mail through the configured SMTP account. Returns the Message-ID."""
+    msg = EmailMessage()
+    msg["From"] = settings.smtp_from or settings.smtp_user
+    msg["To"] = recipient
+    msg["Subject"] = subject or settings.app_name
+    msg["Message-ID"] = make_msgid()
+    msg.set_content(body)
+    with smtplib.SMTP(settings.smtp_host, settings.smtp_port, timeout=20) as smtp:
+        if settings.smtp_starttls:
+            smtp.starttls()
+        if settings.smtp_user:
+            smtp.login(settings.smtp_user, settings.smtp_password)
+        smtp.send_message(msg)
+    return msg["Message-ID"]

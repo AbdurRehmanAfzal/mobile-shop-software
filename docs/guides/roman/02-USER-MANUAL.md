@@ -523,8 +523,10 @@ se chhantein.
   **Paighaam** mein aap ke tap ka intezar karti hai.
 
 ### Raat ki report
-Mazeed → Paighaam → *Malik ko raat ki report*: **Malik ka WhatsApp number** likhein, **Har raat din ka
-hisaab bhejein** tick karein aur waqt chunein (maslan 21:30). Har raat malik ko ek paighaam milta hai:
+Mazeed → Paighaam → *Malik ko raat ki report*: **Malik ka WhatsApp number** aur/ya **Malik ki email**
+likhein, **Har raat din ka hisaab bhejein · WhatsApp** aur/ya **· Email** tick karein aur waqt chunein
+(maslan 21:30). Email tab khud jaati hai jab software provider server par SMTP account set kar de
+(screen batati hai set hai ya nahi); WhatsApp ke liye Business API chahiye. Har raat malik ko ek paighaam milta hai:
 kitne phone bike aur kitne ke, haath mein, udhaar diya aur wasool, kharche, munafa, lene / dene hain,
 stock mein phone. **Aaj ka hisaab abhi bhejein** foran bhejta hai.
 

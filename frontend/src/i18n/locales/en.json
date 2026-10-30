@@ -483,7 +483,9 @@
     "remindAuto": "Remind customers automatically",
     "remindAfter": "When the account has sat for",
     "days": "days",
-    "failed": "Failed"
+    "failed": "Failed",
+    "emailOn": "Email is sent from the server (SMTP is set).",
+    "emailOff": "Email needs an SMTP account on the server (e.g. a Gmail app password); ask the software provider. Until then email messages wait in the list below."
   },
   "settings": {
     "title": "Shop settings",

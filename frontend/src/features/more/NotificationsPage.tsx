@@ -12,7 +12,7 @@ const EMPTY: NotificationSettings = {
   owner_whatsapp: null, owner_email: null, owner_on_sale_whatsapp: false, owner_on_sale_email: false, owner_on_purchase_whatsapp: false,
   owner_on_purchase_email: false, customer_on_sale_whatsapp: false, customer_on_sale_email: false, seller_on_purchase_whatsapp: false,
   seller_on_purchase_email: false, customer_on_payment_whatsapp: false, language: null,
-  owner_daily_report_whatsapp: false, daily_report_time: '21:30', customer_reminder_whatsapp: false, reminder_after_days: 7, reminder_time: '11:00',
+  owner_daily_report_whatsapp: false, owner_daily_report_email: false, daily_report_time: '21:30', customer_reminder_whatsapp: false, reminder_after_days: 7, reminder_time: '11:00',
 }
 
 function Toggle({ k, label, s, set }: { k: keyof NotificationSettings; label: string; s: NotificationSettings; set: (k: keyof NotificationSettings, v: boolean) => void }) {
@@ -28,7 +28,7 @@ export default function NotificationsPage() {
   const { pick, ur, cls } = useLang()
   const nav = useNavigate()
   const { data } = useNotificationSettings()
-  const { data: prov } = useGet<{ whatsapp_api: boolean }>(['notif-provider'], '/api/v1/notifications/provider')
+  const { data: prov } = useGet<{ whatsapp_api: boolean; email: boolean }>(['notif-provider'], '/api/v1/notifications/provider')
   const [reportSent, setReportSent] = useState<string | null>(null)
   const sendReport = useDocMutation<Record<string, never>, Message>('POST', () => '/api/v1/notifications/daily-report')
   const { data: messages, refetch } = useMessages()
@@ -66,15 +66,17 @@ export default function NotificationsPage() {
         </div>
       </Section>
       <BiLabel text={prov?.whatsapp_api ? 'notif.apiOn' : 'notif.apiOff'} size="sm" tone="text-muted" />
+      <BiLabel text={prov?.email ? 'notif.emailOn' : 'notif.emailOff'} size="sm" tone="text-muted" />
       <Section title="notif.dailyReport">
         <div className="card divide-y divide-line p-0">
           <Toggle k="owner_daily_report_whatsapp" label={`${pick('notif.dailyReportOn')} · ${W}`} s={s} set={set} />
+          <Toggle k="owner_daily_report_email" label={`${pick('notif.dailyReportOn')} · ${E}`} s={s} set={set} />
           <label className="flex items-center gap-3 px-3 py-2.5">
             <span className={`flex-1 ${ur ? cls('sm') : 'text-sm font-semibold'}`}>{pick('notif.atTime')}</span>
             <input type="time" value={s.daily_report_time} onChange={(e) => setS({ ...s, daily_report_time: e.target.value || '21:30' })} className="min-h-11 rounded-xl border border-line bg-surface px-3 font-semibold" dir="ltr" />
           </label>
         </div>
-        <button type="button" disabled={sendReport.isPending || !s.owner_whatsapp} onClick={async () => { const m = await sendReport.mutateAsync({}); setReportSent(m.status === 'sent' ? 'notif.reportSent' : 'notif.reportQueued'); if (m.status !== 'sent' && m.link) window.open(m.link, '_blank', 'noopener') }} className={`tap flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-emerald font-bold text-emerald-deep disabled:opacity-50 ${ur ? cls('md') : ''}`}>
+        <button type="button" disabled={sendReport.isPending || (!s.owner_whatsapp && !(s.owner_email && s.owner_daily_report_email))} onClick={async () => { const m = await sendReport.mutateAsync({}); setReportSent(m.status === 'sent' ? 'notif.reportSent' : 'notif.reportQueued'); if (m.status !== 'sent' && m.link) window.open(m.link, '_blank', 'noopener') }} className={`tap flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-emerald font-bold text-emerald-deep disabled:opacity-50 ${ur ? cls('md') : ''}`}>
           <Send size={18} /> {pick('notif.sendReportNow')}
         </button>
         {reportSent ? <BiLabel text={reportSent} size="sm" tone="text-emerald-deep" bold /> : null}
