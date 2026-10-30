@@ -1267,6 +1267,11 @@
       "title": "Cancel a bill",
       "body": "Cancels a bill made by mistake. Nothing is deleted: the app adds an opposite entry, so the history and the hisaab stay correct.",
       "example": "A sale entered twice: cancel one of them."
+    },
+    "audit": {
+      "title": "Shop audit",
+      "body": "One place to read the whole business for any period: what was sold and bought, the real profit, where the money came from and went, who owes whom, and the phones in stock. Balances show the start and the end of the period (or a chosen day); every tile opens the list behind the number.",
+      "example": "Pick \"Last month\": sales 1,250,000, profit 180,000, cash & bank 300,000 at the start and 410,000 at the end, people owe 95,000."
     }
   },
   "items": {
@@ -1788,7 +1793,63 @@
       "modules": "Modules of",
       "password_set_by_admin": "Password set by admin for",
       "super_admin_access": "Super admin opened"
-    }
+    },
+    "title": "Shop audit",
+    "hint": "Every rupee, phone and person for any period: sales, profit, money, debt, stock",
+    "nav": {
+      "overview": "Overview"
+    },
+    "preset": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "this_week": "This week",
+      "last_week": "Last week",
+      "this_month": "This month",
+      "last_month": "Last month",
+      "this_year": "This year",
+      "all_time": "All time",
+      "custom": "From–to"
+    },
+    "days": "days",
+    "asOf": "As of",
+    "asOfHint": "Balances on this day",
+    "netSales": "Net sales",
+    "bills": "bills",
+    "phones": "phones",
+    "inPeriod": "In this period",
+    "purchases": "Stock bought",
+    "expenses": "Expenses",
+    "moneyIn": "Money in",
+    "moneyOut": "Money out",
+    "vsPrevious": "Before",
+    "transfersNote": "Moved between own accounts (not counted above):",
+    "balances": "Balances: start → end of the period",
+    "balancesAsOf": "Balances on the chosen day",
+    "cashBank": "Cash & bank",
+    "stock": "Phones in stock",
+    "receivable": "People owe us",
+    "payable": "We owe people",
+    "opening": "Start",
+    "closing": "End",
+    "now": "Now",
+    "atCost": "at cost",
+    "atAsking": "at asking",
+    "receivedInPeriod": "Received in period",
+    "paidInPeriod": "Paid in period",
+    "people": "people",
+    "checksOk": "The books check out",
+    "checksFail": "A check failed — tell support",
+    "check": {
+      "cash": "Cash: start + in − out = end",
+      "groups_balanced": "Every entry balances",
+      "party_balances": "Khata = ledger",
+      "stock_units": "Stock: start + in − out = end",
+      "allocations": "Payments ≤ bills",
+      "account_kinds": "Account types known"
+    },
+    "coverage": "Records start on",
+    "noRecords": "No records yet",
+    "limitations": "Not recorded, so not shown: due dates on bills (debt age counts from the bill), tax on purchases, remittance fees."
   },
   "label": {
     "title": "Price sticker",

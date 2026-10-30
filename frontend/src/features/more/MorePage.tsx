@@ -80,6 +80,7 @@ const GROUPS: Group[] = [
       { key: 'more.dayClose', Icon: Lock, to: '/expenses', roles: MANAGERS, tone: T.expense },
       { key: 'more.cashAccounts', Icon: Landmark, to: '/more/cash', roles: MANAGERS, tone: T.sell },
       { key: 'more.reports', Icon: FileText, to: '/reports', roles: MANAGERS, tone: T.plain },
+      { key: 'audit.title', Icon: BarChart3, to: '/audit', roles: MANAGERS, tone: T.plain },
     ],
   },
   {

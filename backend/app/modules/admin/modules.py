@@ -67,6 +67,7 @@ ROUTE_MODULES: list[tuple[str, str]] = [
     ("/api/v1/reports/top-sellers", "reports"),
     ("/api/v1/reports/forecast", "reports"),
     ("/api/v1/reports/price-changes", "reports"),
+    ("/api/v1/shop-audit", "reports"),
 ]
 
 

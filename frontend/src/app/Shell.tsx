@@ -13,7 +13,7 @@ import { useTheme } from '@/lib/theme'
 import { JOBS } from '@/features/counter/jobs'
 
 /** screens that use the whole laptop width (lists, overviews, the side-by-side sale); forms stay at 3xl */
-const WIDE = ['/sale/new', '/stock', '/khata', '/hisaab', '/reports', '/sales', '/purchases', '/invoices', '/parties', '/expenses', '/installments', '/repairs', '/accessories', '/payments', '/returns', '/admin', '/loans']
+const WIDE = ['/sale/new', '/stock', '/khata', '/hisaab', '/reports', '/audit', '/sales', '/purchases', '/invoices', '/parties', '/expenses', '/installments', '/repairs', '/accessories', '/payments', '/returns', '/admin', '/loans']
 import { useModules } from '@/lib/modules'
 import PlanBanner from '@/components/PlanBanner'
 import OfflineBar from '@/components/OfflineBar'

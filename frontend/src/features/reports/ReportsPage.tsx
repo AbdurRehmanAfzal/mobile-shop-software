@@ -3,6 +3,8 @@
  *  which phone runs out), Old stock. One date-range row drives Profit and Best sellers. */
 
 import DownloadButton from '@/components/DownloadButton'
+import { Link } from 'react-router-dom'
+import { BarChart3 } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
@@ -62,6 +64,10 @@ export default function ReportsPage() {
           />
         )}
       />
+      <Link to="/audit" className="card tap flex items-center gap-3 print:hidden" data-testid="to-audit">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ink text-ground"><BarChart3 size={20} /></span>
+        <span className="flex min-w-0 flex-col"><BiLabel text="audit.title" size="md" bold /><BiLabel text="audit.hint" size="sm" tone="text-muted" /></span>
+      </Link>
       <div className="print:hidden">
         <BiSegmented<Tab> value={tab} onChange={setTab} options={[{ value: 'profit', text: 'counter.tabProfit' }, { value: 'top', text: 'counter.tabTop' }, { value: 'estimate', text: 'counter.tabEstimate' }, { value: 'old', text: 'counter.tabOld' }, { value: 'prices', text: 'prices.tab' }]} />
       </div>

@@ -36,6 +36,7 @@ from app.modules.repairs.router import router as repairs_router
 from app.modules.reports.router import router as reports_router
 from app.modules.returns.router import router as returns_router
 from app.modules.sales.router import router as sales_router
+from app.modules.shopaudit.router import router as shopaudit_router
 from app.modules.units.router import router as units_router
 from app.modules.verification.router import router as verification_router
 
@@ -166,6 +167,7 @@ def create_app() -> FastAPI:
     app.include_router(invoices_router)
     app.include_router(installments_router)
     app.include_router(units_router)
+    app.include_router(shopaudit_router)
     app.include_router(ai_router)
     app.include_router(otp_router)
     app.include_router(labels_router)

@@ -4,8 +4,8 @@ Authoritative requirements: `docs/16-SHOP-AUDIT-SPEC.md` (owner brief, 2026-10-3
 This file is the living plan: gap analysis, design, phases, tasks, acceptance criteria and the
 progress checklist. Update it at the end of every session (with `06-PROGRESS.md` and `09-SESSION-LOG.md`).
 
-**Current phase: 3 (Periods & as-of balances) — P1 audit and P2 integrity done 2026-10-30.**
-**Exact next task: P3-1 `core/periods.py` (presets + as-of + previous period), then P3-2 balances as-of, P3-3 `/shop-audit/overview`, P3-4 audit shell + overview screen.**
+**Current phase: 4 (Financial audit) — P1, P2, P3 done 2026-10-30/31.**
+**Exact next task: P4-1 `/shop-audit/pnl` (P&L with previous-period comparison and a day/week/month series), then P4-2 `/cash` + `/international`, P4-3 `/expenses`, P4-4 `/tax`, P4-5 `FinancePage`.**
 
 ---
 
@@ -164,12 +164,12 @@ Prefix `/api/v1/audit` is taken by the audit log → new prefix **`/api/v1/shop-
 - [x] **P2-4 Indexes** — migration `a2b4c6d8e0f1` (+ model `Index`es): `invoices/purchases/payments/expenses/returns (shop_id, date)`, `ledger_entries (shop_id, cash_account_id, at)`, `audit_log (shop_id, at)`.
 - [~] **P2-5 Reconciliation helper** → moved into P3 (lands with `modules/shopaudit`).
 
-### Phase 3 — Global date filters & historical balances
-- [ ] **P3-1 `core/periods.py`**: presets today/yesterday/this_week/last_week/this_month/last_month/this_year/custom/all_time + `as_of`; previous-period derivation; shop-time boundaries. Tests for every preset around month/year edges.
-- [ ] **P3-2 Balances as-of** service: cash accounts, receivable/payable (ledger, split by sign per party), stock count/value (events), each `{opening, closing, current}`.
-- [ ] **P3-3 `GET /shop-audit/overview`** with the KPI set (§3) and drill-down hints (`links`).
-- [ ] **P3-4 Frontend** `features/audit/AuditShell` + period bar (presets, custom, as-of) + `OverviewPage` KPI grid (opening / period / closing / current where relevant), every tile linking to an existing list.
-- [ ] Tests: March sale paid in April → April cash in, March revenue; opening + in − out = closing for cash and debt.
+### Phase 3 — Global date filters & historical balances ✅ 2026-10-31
+- [x] **P3-1 `core/periods.py`** — `resolve(preset, date_from, date_to, as_of, first_day, today)` → `Period(preset, date_from, date_to, as_of, prev_from, prev_to)`; Monday weeks, calendar months/years, same-length previous period for custom/days; `day_start/day_end` give the UTC instants of shop days. Test `test_presets_resolve_on_calendar_units`.
+- [x] **P3-2 Balances as-of** — `modules/shopaudit/service.py`: `money_position` (per account opening / in / out / transfers / closing / as-of / current, totals, by kind), `debt_split` + `debt_position` (ledger per party split by sign → receivable / payable with opening / closing / as-of / current, payments in/out of the period), `stock_walk` + `stock_at` + `stock_position` (stock held on a day rebuilt from device events; cost and asking values), `documents` (bills, phones, purchases, returns in the period), `first_day`. **Fix found on the way**: backdated sales and returns stamped their device events "now" — `SOLD`, `PRICE_CHANGED`, `SALE_RETURNED`, `RETURNED_TO_SUPPLIER` now carry the document's posting time, so history and as-of stock agree with the ledger.
+- [x] **P3-3 `GET /shop-audit/overview`** (+ `/period`, `/reconcile`) — `modules/shopaudit/router.py`, `REPORTS_ALL`, cost gated by `VIEW_COST`, gated behind the `reports` module. `reconcile.py` (P2-5): cash equation per account, every group balanced, khata caches = ledger, stock units start + in − out = end (events), allocations ≤ payment, account kinds.
+- [x] **P3-4 Frontend** — `features/audit/period.ts` (period in the URL: `preset`, `from`, `to`, `as_of`), `AuditLayout` (title + help, section chips, preset bar, custom dates, resolved range, as-of toggle), `OverviewPage` (hero net sales + real profit with % vs previous, period tiles purchases / expenses / money in / money out, balance cards cash & bank / stock / receivable / payable with start → end / as-of / now, checks card, coverage + limitations); route `/audit` (WIDE), More tile, Reports link card, `InvoicesPage` reads `?from&to&kind` for drill-down; strings `audit.*` (merged into the existing namespace) + `help.audit`.
+- [x] Tests: `test_shopaudit_periods.py` (3: presets; 45-day-old credit sale paid 10 days ago → period revenue 1,200 / cash in 1,600 / receivable 1,000 → 600 / stock 1 → 0 / previous period 1,000 / as-of a day before the payment / all_time / reconcile ok / salesman 403; empty shop), e2e `audit.spec.ts`.
 
 ### Phase 4 — Financial audit
 - [ ] P4-1 `/pnl` with previous-period comparison and series (day/week/month by range length).
@@ -256,7 +256,7 @@ Prefix `/api/v1/audit` is taken by the audit log → new prefix **`/api/v1/shop-
 
 - [x] P1 audit — 2026-10-30
 - [x] P2 integrity — 2026-10-30
-- [ ] P3 periods & overview
+- [x] P3 periods & overview — 2026-10-31
 - [ ] P4 financial
 - [ ] P5 parties
 - [ ] P6 inventory

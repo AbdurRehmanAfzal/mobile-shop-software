@@ -1267,6 +1267,11 @@
       "title": "Bill cancel karna",
       "body": "Ghalti se bana bill khatam karta hai. Kuch mitaya nahi jata: app ulti entry daal deti hai, is liye kahani aur hisaab dono theek rehte hain.",
       "example": "Ek bikri do dafa chadh gayi: ek cancel kar dein."
+    },
+    "audit": {
+      "title": "Dukaan ka audit",
+      "body": "Kisi bhi arse ka poora karobar ek jagah: kya bika, kya khareeda, asal munafa, paisa kahan se aaya kahan gaya, kis par kya baqi hai, aur stock ke phone. Balance arse ke shuru aur aakhir (ya chune hue din) ke dikhte hain; har khana apne peechay ki list kholta hai.",
+      "example": "\"Pichla mahina\" chunein: bikri 1,250,000, munafa 180,000, naqad aur bank shuru mein 300,000 aur aakhir mein 410,000, logon par 95,000 baqi."
     }
   },
   "items": {
@@ -1788,7 +1793,63 @@
       "modules": "Modules",
       "password_set_by_admin": "Admin ne password rakha",
       "super_admin_access": "Super admin ne khola"
-    }
+    },
+    "title": "Dukaan ka audit",
+    "hint": "Kisi bhi arse ka har rupaya, har phone aur har banda: bikri, munafa, paisa, udhaar, stock",
+    "nav": {
+      "overview": "Khulasa"
+    },
+    "preset": {
+      "today": "Aaj",
+      "yesterday": "Kal",
+      "this_week": "Ye hafta",
+      "last_week": "Pichla hafta",
+      "this_month": "Ye mahina",
+      "last_month": "Pichla mahina",
+      "this_year": "Ye saal",
+      "all_time": "Shuru se",
+      "custom": "Tareekh se tareekh tak"
+    },
+    "days": "din",
+    "asOf": "Is din tak",
+    "asOfHint": "Is din ke balance",
+    "netSales": "Khalis bikri",
+    "bills": "bill",
+    "phones": "phone",
+    "inPeriod": "Is arse mein",
+    "purchases": "Khareeda gaya stock",
+    "expenses": "Kharche",
+    "moneyIn": "Paisa aaya",
+    "moneyOut": "Paisa gaya",
+    "vsPrevious": "Pehle",
+    "transfersNote": "Apne accounts ke darmiyan muntaqil (upar shamil nahi):",
+    "balances": "Balance: arse ke shuru → aakhir",
+    "balancesAsOf": "Chune hue din ke balance",
+    "cashBank": "Naqad aur bank",
+    "stock": "Stock mein phone",
+    "receivable": "Logon par baqi",
+    "payable": "Hum ne dene hain",
+    "opening": "Shuru",
+    "closing": "Aakhir",
+    "now": "Ab",
+    "atCost": "laagat par",
+    "atAsking": "tay qeemat par",
+    "receivedInPeriod": "Is arse mein wasool",
+    "paidInPeriod": "Is arse mein ada",
+    "people": "log",
+    "checksOk": "Hisaab durust hai",
+    "checksFail": "Ek check nakaam hai — support ko batayein",
+    "check": {
+      "cash": "Naqad: shuru + aaya − gaya = aakhir",
+      "groups_balanced": "Har indraj barabar",
+      "party_balances": "Khata = ledger",
+      "stock_units": "Stock: shuru + aaya − gaya = aakhir",
+      "allocations": "Adaigiyan ≤ bill",
+      "account_kinds": "Account ki iqsaam maloom"
+    },
+    "coverage": "Record shuru",
+    "noRecords": "Abhi koi record nahi",
+    "limitations": "Record nahi, is liye nahi dikhaya: billon ki aakhri tareekh (udhaar ki umar bill se gini jaati hai), khareed par tax, tarseel ki fees."
   },
   "label": {
     "title": "Qeemat ka sticker",
