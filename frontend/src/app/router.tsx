@@ -37,6 +37,7 @@ import AccessoriesPage from '@/features/accessories/AccessoriesPage'
 import ExchangeWizard from '@/features/exchange/ExchangeWizard'
 import ReportsPage from '@/features/reports/ReportsPage'
 import AuditOverviewPage from '@/features/audit/OverviewPage'
+import AuditFinancePage from '@/features/audit/FinancePage'
 import StaffPage from '@/features/more/StaffPage'
 import CashAccountsPage from '@/features/more/CashAccountsPage'
 
@@ -102,6 +103,7 @@ export const router = createBrowserRouter([
           { path: '/exchange/new', element: <ModuleGate module="exchange"><ExchangeWizard /></ModuleGate> },
           { path: '/reports', element: <ModuleGate module="reports"><ReportsPage /></ModuleGate> },
           { path: '/audit', element: <ModuleGate module="reports"><AuditOverviewPage /></ModuleGate> },
+          { path: '/audit/finance', element: <ModuleGate module="reports"><AuditFinancePage /></ModuleGate> },
           { path: '/more/staff', element: <StaffPage /> },
           { path: '/more/cash', element: <CashAccountsPage /> },
           { path: '/more/catalogue', element: <CataloguePage /> },

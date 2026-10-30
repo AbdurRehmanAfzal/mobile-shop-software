@@ -4,8 +4,8 @@ Authoritative requirements: `docs/16-SHOP-AUDIT-SPEC.md` (owner brief, 2026-10-3
 This file is the living plan: gap analysis, design, phases, tasks, acceptance criteria and the
 progress checklist. Update it at the end of every session (with `06-PROGRESS.md` and `09-SESSION-LOG.md`).
 
-**Current phase: 4 (Financial audit) — P1, P2, P3 done 2026-10-30/31.**
-**Exact next task: P4-1 `/shop-audit/pnl` (P&L with previous-period comparison and a day/week/month series), then P4-2 `/cash` + `/international`, P4-3 `/expenses`, P4-4 `/tax`, P4-5 `FinancePage`.**
+**Current phase: 5 (Customers & suppliers) — P1–P4 done 2026-10-30/31.**
+**Exact next task: P5-1 `/shop-audit/parties/{id}/journey?as_of` (lifetime card + merged timeline), then P5-2 `/rankings`, P5-3 `/udhaar`, P5-4 `PartiesAuditPage` + `UdhaarAuditPage`.**
 
 ---
 
@@ -171,13 +171,13 @@ Prefix `/api/v1/audit` is taken by the audit log → new prefix **`/api/v1/shop-
 - [x] **P3-4 Frontend** — `features/audit/period.ts` (period in the URL: `preset`, `from`, `to`, `as_of`), `AuditLayout` (title + help, section chips, preset bar, custom dates, resolved range, as-of toggle), `OverviewPage` (hero net sales + real profit with % vs previous, period tiles purchases / expenses / money in / money out, balance cards cash & bank / stock / receivable / payable with start → end / as-of / now, checks card, coverage + limitations); route `/audit` (WIDE), More tile, Reports link card, `InvoicesPage` reads `?from&to&kind` for drill-down; strings `audit.*` (merged into the existing namespace) + `help.audit`.
 - [x] Tests: `test_shopaudit_periods.py` (3: presets; 45-day-old credit sale paid 10 days ago → period revenue 1,200 / cash in 1,600 / receivable 1,000 → 600 / stock 1 → 0 / previous period 1,000 / as-of a day before the payment / all_time / reconcile ok / salesman 403; empty shop), e2e `audit.spec.ts`.
 
-### Phase 4 — Financial audit
-- [ ] P4-1 `/pnl` with previous-period comparison and series (day/week/month by range length).
-- [ ] P4-2 `/cash` per account by reason + by payment method (in/out) incl. transfers; `/international`.
-- [ ] P4-3 `/expenses` (by category / account / employee, series, largest, vs previous).
-- [ ] P4-4 `/tax` with per-invoice rows and the limitation notes.
-- [ ] P4-5 Frontend `FinancePage` (P&L, cash & bank, methods donut, international table, expenses, tax) with charts.
-- [ ] Tests: reasons sum to in/out; methods sum to in/out; expenses never double-counted (P&L vs cash); tax per-invoice sums to summary.
+### Phase 4 — Financial audit ✅ 2026-10-31
+- [x] P4-1 `/pnl` — `shopaudit/finance.py`: current + previous `profit_and_loss`, one grouped ledger pass bucketed by day (≤31 d) / week (≤140 d) / month into `series` (net sales, cogs, gross, expenses, other income, net profit); salesmen never reach it (REPORTS_ALL), VIEW_COST strips cost lines anyway.
+- [x] P4-2 `/cash` — per account: opening, **in by reason** (sales paid at the counter, udhaar received, repairs, refunds from suppliers, moved in, opening, other), **out by reason** (stock paid at purchase, paid to people, expenses, refunds, repair parts, fees, moved out, other), reversals under `reversal_of_<reason>`, transfers in/out, closing, as-of, current; totals; `by_kind` channels (account type, transfers excluded); `payments_by_method` (stand-alone payments). `/international` — remittance rows from `PaymentDetail` on sales / purchases + stand-alone `Payment(method=remittance)` with sender, country, service, currency, foreign amount, rate, PKR, reference; by currency; fee / status null with the note.
+- [x] P4-3 `/expenses` — total (owner drawings apart), count, previous total, by category (+ previous), by account, by user, series, 10 largest with who / account / receipt flag.
+- [x] P4-4 `/tax` — `tax_report` summary + every taxed bill (taxable, rate, incl/excl, tax, total, returned, FBR no) + notes (no purchase tax, filing not recorded, returns give tax back).
+- [x] P4-5 Frontend `features/audit/FinancePage.tsx` at `/audit/finance` (section chip in `AuditLayout`): sub-tabs P&L (hero with % vs previous, `Bars` series, every line with the previous period in brackets), Cash & bank (opening / in / out / closing KPIs, reason cards with share bars, per-account cards with reason chips and transfers apart, channels, khata payments by method, remittance list → bill), Expenses (hero, series, categories with share and previous, largest, by person / account), Tax (KPIs, rows → bill). First chart component `components/charts/Bars.tsx` (tokens, hover value, tap, RTL-safe, empty state). Strings `audit.fin.*`, `audit.reason.*`, `audit.gran.*`, `pay.cheque/remittance/card/other/online` fallbacks.
+- [x] Tests `test_shopaudit_finance.py` (3: series sums to the period and the year is bucketed; reasons add up to each account's movement, channels exclude the transfer, remittance row and by-currency, expense once in P&L and once in cash; expenses by category / largest / users, tax rows = summary, salesman 403 on all five), e2e `audit-finance.spec.ts`.
 
 ### Phase 5 — Customer & supplier intelligence
 - [ ] P5-1 `/parties/{id}/journey?as_of` (lifetime card + merged timeline).
@@ -257,7 +257,7 @@ Prefix `/api/v1/audit` is taken by the audit log → new prefix **`/api/v1/shop-
 - [x] P1 audit — 2026-10-30
 - [x] P2 integrity — 2026-10-30
 - [x] P3 periods & overview — 2026-10-31
-- [ ] P4 financial
+- [x] P4 financial — 2026-10-31
 - [ ] P5 parties
 - [ ] P6 inventory
 - [ ] P7 products & invoices

@@ -12,7 +12,7 @@ from app.core.errors import ValidationFailed
 from app.core.periods import PRESETS, Period, resolve
 from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx, require_cap
-from app.modules.shopaudit import reconcile, service
+from app.modules.shopaudit import finance, reconcile, service
 
 router = APIRouter(prefix="/api/v1/shop-audit", tags=["shop-audit"])
 Reports = Annotated[Ctx, Depends(require_cap(Cap.REPORTS_ALL))]
@@ -94,3 +94,94 @@ def reconcile_(
     p = period_of(db, ctx.shop_id, preset, date_from, date_to, None)
     rows = reconcile.checks(db, ctx.shop_id, p)
     return plain({"period": p.as_dict(), "ok": all(r["ok"] for r in rows), "checks": rows})
+
+
+# ---- P4: financial audit --------------------------------------------------------------------
+
+
+def _p(db, ctx, preset, date_from, date_to, as_of=None):
+    return period_of(db, ctx.shop_id, preset, date_from, date_to, as_of)
+
+
+@router.get("/pnl")
+def pnl(
+    ctx: Reports,
+    db: DB,
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+):
+    """Profit & loss for the period, the period before, and a day / week / month series."""
+    p = _p(db, ctx, preset, date_from, date_to)
+    out = finance.pnl(db, ctx.shop_id, p)
+    if not ctx.can(Cap.VIEW_COST):
+        for k in ("current", "previous"):
+            out[k] = {
+                x: v
+                for x, v in out[k].items()
+                if x
+                in (
+                    "date_from",
+                    "date_to",
+                    "sales",
+                    "net_sales",
+                    "gross_sales",
+                    "discounts",
+                    "sales_returns",
+                    "tax_collected",
+                )
+            }
+        out["series"] = [
+            {"bucket": r["bucket"], "net_sales": r["net_sales"]} for r in out["series"]
+        ]
+    return plain(out)
+
+
+@router.get("/cash")
+def cash(
+    ctx: Reports,
+    db: DB,
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+    as_of: dt.date | None = None,
+):
+    """Every cash / bank / wallet account: opening, what came in and went out by reason, closing;
+    channels and payment methods."""
+    return plain(finance.cash(db, ctx.shop_id, _p(db, ctx, preset, date_from, date_to, as_of)))
+
+
+@router.get("/international")
+def international(
+    ctx: Reports,
+    db: DB,
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+):
+    """Remittances from abroad on sales, purchases and stand-alone payments."""
+    return plain(finance.international(db, ctx.shop_id, _p(db, ctx, preset, date_from, date_to)))
+
+
+@router.get("/expenses")
+def expenses(
+    ctx: Reports,
+    db: DB,
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+):
+    """Expenses by category, account, person; series; largest; the period before."""
+    return plain(finance.expenses(db, ctx.shop_id, _p(db, ctx, preset, date_from, date_to)))
+
+
+@router.get("/tax")
+def tax(
+    ctx: Reports,
+    db: DB,
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+):
+    """Tax charged on bills: summary and every taxed bill."""
+    return plain(finance.tax(db, ctx.shop_id, _p(db, ctx, preset, date_from, date_to)))

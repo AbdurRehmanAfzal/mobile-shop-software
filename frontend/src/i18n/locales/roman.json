@@ -424,7 +424,10 @@
       "cheque": "Cheque",
       "bank": "Bank",
       "remittance": "Bahar se"
-    }
+    },
+    "cheque": "Cheque",
+    "remittance": "Tarseel",
+    "online": "Online"
   },
   "loan": {
     "title": "Amanat",
@@ -1797,7 +1800,8 @@
     "title": "Dukaan ka audit",
     "hint": "Kisi bhi arse ka har rupaya, har phone aur har banda: bikri, munafa, paisa, udhaar, stock",
     "nav": {
-      "overview": "Khulasa"
+      "overview": "Khulasa",
+      "finance": "Maliyat"
     },
     "preset": {
       "today": "Aaj",
@@ -1849,7 +1853,53 @@
     },
     "coverage": "Record shuru",
     "noRecords": "Abhi koi record nahi",
-    "limitations": "Record nahi, is liye nahi dikhaya: billon ki aakhri tareekh (udhaar ki umar bill se gini jaati hai), khareed par tax, tarseel ki fees."
+    "limitations": "Record nahi, is liye nahi dikhaya: billon ki aakhri tareekh (udhaar ki umar bill se gini jaati hai), khareed par tax, tarseel ki fees.",
+    "noData": "Is arse mein kuch nahi",
+    "gran": {
+      "day": "din war",
+      "week": "hafta war",
+      "month": "mahina war"
+    },
+    "fin": {
+      "pnl": "Nafa o nuqsan",
+      "cash": "Naqad aur bank",
+      "expenses": "Kharche",
+      "tax": "Tax",
+      "cameIn": "Paisa kahan se aaya",
+      "wentOut": "Paisa kahan gaya",
+      "perAccount": "Har account",
+      "ofWhichTransfers": "jis mein apne accounts ke darmiyan muntaqili",
+      "channels": "Zariye ke lihaz se (account ki qisam)",
+      "paymentsByMethod": "Khate ki adaigiyan tareeqe ke lihaz se",
+      "international": "Bairoon-e-mulk se (tarseelat)",
+      "entries": "indraj",
+      "largest": "Sab se bare kharche",
+      "taxedBills": "Tax wale bill",
+      "taxable": "Qabil-e-tax bikri",
+      "taxNet": "Wapsi ke baad tax",
+      "walkIn": "Walk-in",
+      "inclusive": "shamil",
+      "exclusive": "ilawa",
+      "noTax": "Is arse mein koi tax wala bill nahi"
+    },
+    "reason": {
+      "reversal": "Mansookhi",
+      "sales_now": "Counter par wasool bikri",
+      "udhaar_received": "Udhaar wasool",
+      "repairs": "Marammat",
+      "refund_from_supplier": "Supplier se wapsi",
+      "transfer_in": "Apne account se aaya",
+      "opening": "Ibtidai",
+      "other_in": "Deegar aamad",
+      "stock_now": "Khareed par ada stock",
+      "paid_to_people": "Logon ko ada (udhaar)",
+      "expenses": "Kharche",
+      "refunds": "Gahakon ko wapsi",
+      "repair_parts": "Marammat ke purze",
+      "fees": "Software fees",
+      "transfer_out": "Apne account mein gaya",
+      "other_out": "Deegar kharch"
+    }
   },
   "label": {
     "title": "Qeemat ka sticker",

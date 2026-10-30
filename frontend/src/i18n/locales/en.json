@@ -424,7 +424,10 @@
       "cheque": "Cheque",
       "bank": "Bank",
       "remittance": "From abroad"
-    }
+    },
+    "cheque": "Cheque",
+    "remittance": "Remittance",
+    "online": "Online"
   },
   "loan": {
     "title": "Loans (amanat)",
@@ -1797,7 +1800,8 @@
     "title": "Shop audit",
     "hint": "Every rupee, phone and person for any period: sales, profit, money, debt, stock",
     "nav": {
-      "overview": "Overview"
+      "overview": "Overview",
+      "finance": "Finance"
     },
     "preset": {
       "today": "Today",
@@ -1849,7 +1853,53 @@
     },
     "coverage": "Records start on",
     "noRecords": "No records yet",
-    "limitations": "Not recorded, so not shown: due dates on bills (debt age counts from the bill), tax on purchases, remittance fees."
+    "limitations": "Not recorded, so not shown: due dates on bills (debt age counts from the bill), tax on purchases, remittance fees.",
+    "noData": "Nothing in this period",
+    "gran": {
+      "day": "by day",
+      "week": "by week",
+      "month": "by month"
+    },
+    "fin": {
+      "pnl": "Profit & loss",
+      "cash": "Cash & bank",
+      "expenses": "Expenses",
+      "tax": "Tax",
+      "cameIn": "Where money came from",
+      "wentOut": "Where money went",
+      "perAccount": "Each account",
+      "ofWhichTransfers": "of which moved between own accounts",
+      "channels": "By channel (account type)",
+      "paymentsByMethod": "Khata payments by method",
+      "international": "From abroad (remittances)",
+      "entries": "entries",
+      "largest": "Largest expenses",
+      "taxedBills": "Taxed bills",
+      "taxable": "Taxable sales",
+      "taxNet": "Tax net of returns",
+      "walkIn": "Walk-in",
+      "inclusive": "incl.",
+      "exclusive": "excl.",
+      "noTax": "No taxed bill in this period"
+    },
+    "reason": {
+      "reversal": "Reversal",
+      "sales_now": "Sales paid at the counter",
+      "udhaar_received": "Udhaar received",
+      "repairs": "Repairs",
+      "refund_from_supplier": "Refunds from suppliers",
+      "transfer_in": "Moved in from own account",
+      "opening": "Opening",
+      "other_in": "Other in",
+      "stock_now": "Stock paid at purchase",
+      "paid_to_people": "Paid to people (udhaar)",
+      "expenses": "Expenses",
+      "refunds": "Refunds to customers",
+      "repair_parts": "Repair parts",
+      "fees": "Software fee",
+      "transfer_out": "Moved to own account",
+      "other_out": "Other out"
+    }
   },
   "label": {
     "title": "Price sticker",
