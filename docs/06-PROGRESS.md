@@ -115,8 +115,8 @@ Spec `docs/16-SHOP-AUDIT-SPEC.md` · plan + gap analysis + next task `docs/17-SH
 | P2 Financial data integrity (cash↔bank transfer, P&L lines, ageing start, indexes) | ✅ | **2026-10-30** `POST/GET /ledger/transfers` (transfer = ledger group, reversal to undo, reasons apart in cash-flow and hisaab), P&L `gross_sales / discounts / sales_returns / net_sales / operating_profit`, `devices/ageing.py` intake-based age, migration `a2b4c6d8e0f1` indexes; `test_shopaudit_integrity.py`, `transfer.spec.ts`; Cash & bank "Move money" |
 | P3 Periods & as-of balances, overview KPIs, audit shell | ✅ | **2026-10-31** `core/periods.py`, `modules/shopaudit` (`/api/v1/shop-audit/period`, `/overview`, `/reconcile`), as-of money / debt / stock from ledger + device events, backdated sale/return events now carry the document time; UI `/audit` overview (period bar with 8 presets + custom + as-of, KPI tiles with start → end → now, checks card, drill-down to invoices); `test_shopaudit_periods.py`, `audit.spec.ts` |
 | P4 Financial audit (P&L series, cash/bank by reason, methods, international, expenses, tax) | ✅ | **2026-10-31** `shopaudit/finance.py` + routes `/shop-audit/{pnl,cash,international,expenses,tax}`; UI `/audit/finance` (P&L · Cash & bank · Expenses · Tax) with the first in-house chart (`charts/Bars`); `test_shopaudit_finance.py`, `audit-finance.spec.ts` |
-| P5 Customers & suppliers (journey, rankings, udhaar ageing) | ⬜ | next |
-| P6 Inventory intelligence (as-of stock, bands, verification, alerts) | ⬜ | |
+| P5 Customers & suppliers (journey, rankings, udhaar ageing) | ✅ | **2026-10-31** `shopaudit/parties.py` + routes `/shop-audit/parties/{id}/journey`, `/rankings`, `/udhaar`; UI `/audit/people`, `/audit/udhaar`, journey card on the person's page; `test_shopaudit_parties.py`, `audit-parties.spec.ts` |
+| P6 Inventory intelligence (as-of stock, bands, verification, alerts) | ⬜ | next |
 | P7 Products & invoice audit | ⬜ | |
 | P8 Owner security feed | ⬜ | |
 | P9 Charts & drill-down dashboard | ⬜ | |

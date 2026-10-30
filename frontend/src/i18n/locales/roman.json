@@ -1801,7 +1801,9 @@
     "hint": "Kisi bhi arse ka har rupaya, har phone aur har banda: bikri, munafa, paisa, udhaar, stock",
     "nav": {
       "overview": "Khulasa",
-      "finance": "Maliyat"
+      "finance": "Maliyat",
+      "people": "Log",
+      "udhaar": "Udhaar"
     },
     "preset": {
       "today": "Aaj",
@@ -1899,6 +1901,73 @@
       "fees": "Software fees",
       "transfer_out": "Apne account mein gaya",
       "other_out": "Deegar kharch"
+    },
+    "rank": {
+      "hint": "Chune hue paimane par sab se bare gahak aur supplier; kisi bande ko dabayein to poora safar.",
+      "metricNote": "is paimane par tarteeb"
+    },
+    "metric": {
+      "customers_sales": "Gahak bikri ke lihaz se",
+      "customers_bills": "Gahak billon ke lihaz se",
+      "customers_profit": "Gahak munafe ke lihaz se",
+      "suppliers_purchases": "Supplier khareed ke lihaz se",
+      "suppliers_devices": "Supplier phones ke lihaz se",
+      "suppliers_profit": "Supplier, un ke phones par munafa",
+      "receivable": "Sab se bare lene wale",
+      "payable": "Sab se bare dene wale"
+    },
+    "udhaar": {
+      "movement": "Is arse mein",
+      "m": {
+        "udhaar_given": "Bikri par diya udhaar",
+        "received": "Logon se wasool",
+        "sale_returns": "Wapsi credit",
+        "udhaar_taken": "Khareed par liya udhaar",
+        "paid": "Logon ko ada",
+        "purchase_returns": "Supplier ko wapsi",
+        "repairs": "Marammat ke bill",
+        "other": "Deegar / ibtidai"
+      },
+      "age": "Udhaar ki umar",
+      "ageHint": "Billon ki aakhri tareekh nahi hoti, is liye umar sab se purane baqi bill se gini jaati hai; kisi ko late nahi kaha jaata.",
+      "noBill": "Bill ki tareekh nahi",
+      "owesUs": "Jin par hamara baqi hai",
+      "weOwe": "Jinhein hum ne dena hai",
+      "phones": "Baqi billon ke phone",
+      "theyOwe": "un par baqi",
+      "weOweShort": "hum ne dena",
+      "lastPaid": "aakhri adaigi",
+      "neverPaid": "abhi koi adaigi nahi",
+      "notes": "Jis bill mein kai phone hon us ka baqi har phone par dikhta hai."
+    },
+    "journey": {
+      "title": "Poora safar",
+      "first": "Pehla muamla",
+      "last": "Aakhri muamla",
+      "none": "Abhi koi muamla nahi",
+      "soldTo": "Unhein beche phone",
+      "boughtFrom": "Un se khareede phone",
+      "received": "Un se wasool",
+      "paid": "Unhein ada",
+      "atCounter": "counter par",
+      "later": "baad mein",
+      "profitOnSales": "Unhein bikri par munafa",
+      "profitOnSourced": "Un ke phones par munafa",
+      "sourcedSold": "ab tak bike",
+      "returns": "Wapsiyan",
+      "refunded": "wapas kiye",
+      "balance": "Ab balance",
+      "balanceAsOf": "Us din balance",
+      "settled": "bebaaq",
+      "timeline": "Har muamla",
+      "k": {
+        "sale": "Bikri",
+        "purchase": "Khareed",
+        "payment_in": "Wasooli",
+        "payment_out": "Adaigi",
+        "sale_return": "Un se wapsi",
+        "purchase_return": "Unhein wapsi"
+      }
     }
   },
   "label": {

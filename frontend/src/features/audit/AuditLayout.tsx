@@ -14,6 +14,8 @@ import { PRESETS, useAuditPeriod, type Preset } from './period'
 export const AUDIT_SECTIONS: { to: string; key: string }[] = [
   { to: '/audit', key: 'audit.nav.overview' },
   { to: '/audit/finance', key: 'audit.nav.finance' },
+  { to: '/audit/people', key: 'audit.nav.people' },
+  { to: '/audit/udhaar', key: 'audit.nav.udhaar' },
 ]
 
 interface ResolvedPeriod { preset: string; date_from: string; date_to: string; as_of: string; prev_from: string; prev_to: string; days: number }

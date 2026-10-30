@@ -11,6 +11,7 @@ import { useInvalidate, useParty, useStatement } from '@/lib/queries'
 import PartyForm from './PartyForm'
 import PaymentForm from '@/features/payments/PaymentForm'
 import PartyUnits, { usePartyUnits } from './PartyUnits'
+import PartyJourney from './PartyJourney'
 import { Printer } from 'lucide-react'
 import { openPrintable } from '@/lib/files'
 
@@ -85,6 +86,7 @@ export default function PartyDetailPage() {
         {party.address ? <KV k="party.address" v={party.address} /> : null}
       </section>
 
+      <PartyJourney partyId={party.id} />
       <PartyUnits party={party} />
 
       <Section

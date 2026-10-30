@@ -4,7 +4,7 @@
 import { expect, test } from '@playwright/test'
 
 const phone = () => `039${Math.floor(10_000_000 + Math.random() * 89_999_999)}`
-const iso = (daysAgo: number) => { const d = new Date(); d.setDate(d.getDate() - daysAgo); return d.toISOString().slice(0, 10) }
+const iso = (daysAgo: number) => { const d = new Date(); d.setDate(d.getDate() - daysAgo); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` }
 
 test('shop audit overview: period, balances, revenue vs cash, as-of, checks, drill-down', async ({ page }) => {
   await page.addInitScript(() => {

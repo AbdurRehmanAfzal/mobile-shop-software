@@ -1801,7 +1801,9 @@
     "hint": "Every rupee, phone and person for any period: sales, profit, money, debt, stock",
     "nav": {
       "overview": "Overview",
-      "finance": "Finance"
+      "finance": "Finance",
+      "people": "People",
+      "udhaar": "Udhaar"
     },
     "preset": {
       "today": "Today",
@@ -1899,6 +1901,73 @@
       "fees": "Software fee",
       "transfer_out": "Moved to own account",
       "other_out": "Other out"
+    },
+    "rank": {
+      "hint": "Top customers and suppliers by the metric you pick; tap a person for their whole journey.",
+      "metricNote": "ranked by this metric"
+    },
+    "metric": {
+      "customers_sales": "Customers by sales",
+      "customers_bills": "Customers by bills",
+      "customers_profit": "Customers by profit",
+      "suppliers_purchases": "Suppliers by purchases",
+      "suppliers_devices": "Suppliers by phones",
+      "suppliers_profit": "Suppliers by profit on their phones",
+      "receivable": "Largest amounts owed to us",
+      "payable": "Largest amounts we owe"
+    },
+    "udhaar": {
+      "movement": "In this period",
+      "m": {
+        "udhaar_given": "Udhaar given on sales",
+        "received": "Received from people",
+        "sale_returns": "Returns credited",
+        "udhaar_taken": "Udhaar taken on purchases",
+        "paid": "Paid to people",
+        "purchase_returns": "Returns to suppliers",
+        "repairs": "Repair bills",
+        "other": "Other / opening"
+      },
+      "age": "Age of the debt",
+      "ageHint": "Bills carry no due date, so the age counts from the oldest unpaid bill; nothing is called overdue.",
+      "noBill": "No bill date",
+      "owesUs": "People who owe us",
+      "weOwe": "People we owe",
+      "phones": "Phones on unpaid bills",
+      "theyOwe": "they owe",
+      "weOweShort": "we owe",
+      "lastPaid": "last paid",
+      "neverPaid": "no payment yet",
+      "notes": "A bill with several phones shows the bill's remaining amount on each phone."
+    },
+    "journey": {
+      "title": "Whole journey",
+      "first": "First dealing",
+      "last": "Last dealing",
+      "none": "No dealings yet",
+      "soldTo": "Phones sold to them",
+      "boughtFrom": "Phones bought from them",
+      "received": "Received from them",
+      "paid": "Paid to them",
+      "atCounter": "at the counter",
+      "later": "later",
+      "profitOnSales": "Profit on sales to them",
+      "profitOnSourced": "Profit on phones from them",
+      "sourcedSold": "sold so far",
+      "returns": "Returns",
+      "refunded": "refunded",
+      "balance": "Balance now",
+      "balanceAsOf": "Balance on that day",
+      "settled": "settled",
+      "timeline": "Every dealing",
+      "k": {
+        "sale": "Sale",
+        "purchase": "Purchase",
+        "payment_in": "Payment received",
+        "payment_out": "Payment given",
+        "sale_return": "Return from them",
+        "purchase_return": "Return to them"
+      }
     }
   },
   "label": {
