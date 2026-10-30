@@ -819,6 +819,28 @@ Buttons: **Sell**, **ID card check**, **Give on loan (amanat)**, **Mark faulty**
 
 ![Phone history](../images/device-history.png)
 
+## 16a. Price stickers with a barcode
+
+Every phone and item can carry a sticker: shop name, model, storage · colour, **price**, a **Code 128
+barcode of the IMEI** (the item's SKU for accessories) with the number under it, condition, PTA and
+date. Scanning the barcode with the app's camera or a USB scanner finds the phone in search and in
+the sale.
+
+Where to print:
+- **Phone page → Print sticker** (one phone).
+- **Stock → Stickers**: tick the phones (or **Select all**), then **Stickers (n)**.
+- Right after **Add stock**: **Print stickers for these phones**.
+- **Items** (accessories) → tap an item → **Print sticker** (copies for a box of chargers).
+
+The sheet asks once: **Sticker size** (38×25, 50×25, 50×30, 60×40, 70×40 mm for roll label printers,
+**A4 sheet** of 65 labels, or **Custom mm**), **What goes on it** (switch any line off), **Copies of
+each**, then **Print** (the page is already the sticker's size, so a label printer prints one per
+sticker), or **Download / Share PDF**. **Remember these choices** keeps them for the shop.
+
+**Cost code**: owner and manager can add the buying price in letters. **Shop settings → Sticker cost
+code** takes a word of 10 different letters (e.g. `BLACKHORSE`): digit 0 = 1st letter, 1 = 2nd …,
+so 45,000 prints as `KHBBB`. Salesmen never get the code, even if they tick it.
+
 ---
 
 ## 17. Staff and roles

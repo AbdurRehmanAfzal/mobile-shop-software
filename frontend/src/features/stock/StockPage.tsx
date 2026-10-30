@@ -8,6 +8,9 @@ import { BtnText, Chip, Empty, Loading, MoneyText, PageHeader, Row, SearchBox, S
 import { useBrands, useDevices } from '@/lib/queries'
 import type { Device } from '@/lib/types'
 import ImeiLookupSheet from './ImeiLookupSheet'
+import LabelSheet from '@/components/LabelSheet'
+import { Tag } from 'lucide-react'
+import { BiButton } from '@/components/Bilingual'
 
 type Filter = 'in_stock' | 'on_loan' | 'sold' | 'faulty' | 'all'
 
@@ -53,7 +56,7 @@ export function DeviceRow({ d, onClick }: { d: Device; onClick?: () => void }) {
 const daysSince = (iso: string) => Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000))
 
 /** Offer-style card (owner's UI guide: Easypaisa "Buy Package"): title + price, stat columns, pill CTA. */
-export function DeviceCard({ d, onOpen, onSell }: { d: Device; onOpen: () => void; onSell?: () => void }) {
+export function DeviceCard({ d, onOpen, onSell, selected, onSelect }: { d: Device; onOpen: () => void; onSell?: () => void; selected?: boolean; onSelect?: () => void }) {
   const { pick } = useLang()
   const vTone = d.verification_status === 'flagged' ? 'bad' : d.verification_status === 'pending' ? 'warn' : 'ok'
   const stats: [string, string][] = [
@@ -63,7 +66,8 @@ export function DeviceCard({ d, onOpen, onSell }: { d: Device; onOpen: () => voi
     ['stock.daysIn', String(daysSince(d.last_event_at))],
   ]
   return (
-    <div className="card flex flex-col gap-3 p-4">
+    <div className={`card flex flex-col gap-3 p-4 ${selected ? 'ring-2 ring-emerald' : ''}`}>
+      {onSelect ? <label className="tap flex min-h-11 cursor-pointer items-center gap-3"><input type="checkbox" checked={!!selected} onChange={onSelect} className="h-6 w-6 accent-[rgb(var(--emerald))]" /><span className="text-sm font-bold">{pick('label.pick')}</span></label> : null}
       <button type="button" onClick={onOpen} className="tap flex items-start justify-between gap-3 text-start">
         <div className="min-w-0">
           <div className="truncate text-[17px] font-extrabold text-ink">{d.brand_name} {d.model_name}</div>
@@ -106,6 +110,9 @@ export default function StockPage() {
   const [brand, setBrand] = useState<string>('')
   const [sort, setSort] = useState<Sort>('newest')
   const [lookup, setLookup] = useState(false)
+  const [picking, setPicking] = useState(false)
+  const [picked, setPicked] = useState<string[]>([])
+  const [labels, setLabels] = useState(false)
   const { data, isLoading } = useDevices({ q: q || undefined, status: filter === 'all' ? undefined : filter, limit: 500 })
   const { data: brands } = useBrands()
 
@@ -132,6 +139,9 @@ export default function StockPage() {
         right={
           <div className="flex gap-2">
             <DownloadButton path={`/api/v1/exports/stock?status=${filter}`} name="stock" />
+            <button type="button" aria-pressed={picking} aria-label={pick('label.many')} onClick={() => { setPicking(!picking); setPicked([]) }} className={`tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border ${picking ? 'border-ink bg-ink text-ground' : 'border-line bg-surface'}`}>
+              <Tag size={20} />
+            <BtnText k={'label.many'} /></button>
             <button type="button" aria-label={pick('stock.imeiLookup')} onClick={() => setLookup(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface">
               <ScanLine size={20} />
             <BtnText k={'stock.imeiLookup'} /></button>
@@ -191,10 +201,17 @@ export default function StockPage() {
       ) : (
         <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:items-start">
           {rows.map((d) => (
-            <DeviceCard key={d.id} d={d} onOpen={() => nav(`/stock/${d.id}`)} onSell={() => nav(`/sale/new?device=${d.id}`)} />
+            <DeviceCard key={d.id} d={d} onOpen={() => nav(`/stock/${d.id}`)} onSell={() => nav(`/sale/new?device=${d.id}`)} selected={picked.includes(d.id)} onSelect={picking ? () => setPicked((x) => (x.includes(d.id) ? x.filter((i) => i !== d.id) : [...x, d.id])) : undefined} />
           ))}
         </div>
       )}
+      {picking ? (
+        <div className="sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-10 flex gap-2 lg:bottom-4">
+          <BiButton text="label.selectAll" variant="secondary" onClick={() => setPicked(rows.map((d) => d.id))} />
+          <BiButton text={{ en: `${pick('label.printN').replace('{{n}}', String(picked.length))}`, ur: `${pick('label.printN').replace('{{n}}', String(picked.length))}`, roman: `${pick('label.printN').replace('{{n}}', String(picked.length))}` }} icon={<Tag size={20} />} className="flex-1" disabled={!picked.length} onClick={() => setLabels(true)} />
+        </div>
+      ) : null}
+      <LabelSheet kind="devices" ids={picked} open={labels} onClose={() => setLabels(false)} />
       <Sheet open={lookup} onClose={() => setLookup(false)} title="stock.imeiLookup">
         <ImeiLookupSheet
           onOpenDevice={(id) => {

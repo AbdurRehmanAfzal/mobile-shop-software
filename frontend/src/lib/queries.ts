@@ -1,5 +1,6 @@
 /** TanStack Query hooks over the API. Keys are per shop so switching shops never shows stale data. */
 
+import { uid } from '@/lib/id'
 import { ApiError } from './api'
 import { useOffline, type PendingKind } from './offline'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -202,7 +203,7 @@ export function useDocMutation<TIn, TOut>(
   return useMutation({
     mutationFn: async (input: TIn) => {
       const payload = body ? body(input) : input
-      const key = offline && method === 'POST' ? crypto.randomUUID() : undefined
+      const key = offline && method === 'POST' ? uid() : undefined
       try {
         return await api<TOut>(method, path(input), payload, { idempotencyKey: key })
       } catch (e) {

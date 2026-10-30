@@ -1,4 +1,5 @@
-import { Pencil, Plus, Trash2 } from 'lucide-react'
+import { Pencil, Plus, Tag, Trash2 } from 'lucide-react'
+import LabelSheet from '@/components/LabelSheet'
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
@@ -23,6 +24,7 @@ export default function AccessoriesPage() {
   const { data: pending } = useGet<Pending[]>(['acc-pending'], tab === 'pending' ? '/api/v1/accessories/pending' : null)
   const [adding, setAdding] = useState(false)
   const [adjusting, setAdjusting] = useState<Accessory | null>(null)
+  const [labelFor, setLabelFor] = useState<string | null>(null)
   const [f, setF] = useState({ name: '', category: 'charger', price: '', reorder_level: '3', opening_qty: '', opening_cost: '' })
   const [delta, setDelta] = useState('')
   const [note, setNote] = useState('')
@@ -92,6 +94,7 @@ export default function AccessoriesPage() {
         </div>
       </Sheet>
 
+      <LabelSheet kind="items" ids={labelFor ? [labelFor] : []} open={labelFor !== null} onClose={() => setLabelFor(null)} />
       <Sheet open={adjusting !== null} onClose={() => setAdjusting(null)} title="acc.adjust">
         {adjusting ? (
           <div className="flex flex-col gap-3">
@@ -108,6 +111,7 @@ export default function AccessoriesPage() {
               <KV k="acc.qty" v={<span dir="ltr">{adjusting.qty}</span>} />
               <KV k="acc.avgCost" v={<MoneyText value={adjusting.avg_cost} tone="ink" />} />
             </div>
+            <BiButton text="label.button" icon={<Tag size={18} />} variant="secondary" full onClick={() => { setLabelFor(adjusting.id); setAdjusting(null) }} />
             <BiInput label="acc.delta" type="number" inputMode="numeric" value={delta} onChange={(e) => setDelta(e.target.value)} placeholder="-2" />
             <BiInput label="common.notes" value={note} onChange={(e) => setNote(e.target.value)} />
             <ErrorText error={adjust.error} />

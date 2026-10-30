@@ -513,7 +513,12 @@
     "receiptHint": "Bill number aur neeche ki line",
     "example": "Misaal",
     "footerPreview": "Raseed par",
-    "unsaved": "Abhi mehfooz nahi hua"
+    "unsaved": "Abhi mehfooz nahi hua",
+    "codeWord": "Sticker ka laagat code",
+    "codeWordHint": "Das mukhtalif harf; hindsa n = n-wan harf, taake khareed qeemat sirf aap parh sakein",
+    "codeWordLabel": "Code lafz (10 harf)",
+    "codeWordBad": "Bilkul 10 mukhtalif harf",
+    "codeWordExample": "Misaal"
   },
   "expense": {
     "title": "Kharche",
@@ -1758,6 +1763,39 @@
       "modules": "Modules",
       "password_set_by_admin": "Admin ne password rakha",
       "super_admin_access": "Super admin ne khola"
+    }
+  },
+  "label": {
+    "title": "Qeemat ka sticker",
+    "button": "Sticker print",
+    "many": "Stickers",
+    "pick": "Is ka sticker",
+    "selectAll": "Sab chunein",
+    "printN": "Stickers ({{n}})",
+    "forThese": "In phones ke sticker print karein",
+    "count": "{{n}} print honge",
+    "size": "Sticker ka size",
+    "a4": "A4 sheet (65 fi safha)",
+    "custom": "Apna size (mm)",
+    "width": "Chaurai (mm)",
+    "height": "Unchai (mm)",
+    "fields": "Is par kya ho",
+    "copies": "Har aik ki copies",
+    "print": "Print",
+    "remember": "Ye intikhab yaad rakhein",
+    "saved": "Yaad rakh liya",
+    "codeHint": "Laagat harfon mein, lafz:",
+    "f": {
+      "shop": "Dukaan ka naam",
+      "name": "Model",
+      "specs": "Storage · rang",
+      "price": "Qeemat",
+      "barcode": "Barcode",
+      "imei": "IMEI number",
+      "condition": "Haalat",
+      "pta": "PTA",
+      "date": "Tareekh",
+      "code": "Laagat code"
     }
   }
 }

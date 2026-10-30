@@ -513,7 +513,12 @@
     "receiptHint": "Bill numbers and the line at the bottom",
     "example": "Example",
     "footerPreview": "On the receipt",
-    "unsaved": "Not saved yet"
+    "unsaved": "Not saved yet",
+    "codeWord": "Sticker cost code",
+    "codeWordHint": "Ten different letters; digit n is the n-th letter, so only you can read the buying price on a sticker",
+    "codeWordLabel": "Code word (10 letters)",
+    "codeWordBad": "Exactly 10 different letters",
+    "codeWordExample": "Example"
   },
   "expense": {
     "title": "Expenses",
@@ -1758,6 +1763,39 @@
       "modules": "Modules of",
       "password_set_by_admin": "Password set by admin for",
       "super_admin_access": "Super admin opened"
+    }
+  },
+  "label": {
+    "title": "Price sticker",
+    "button": "Print sticker",
+    "many": "Stickers",
+    "pick": "Sticker for this one",
+    "selectAll": "Select all",
+    "printN": "Stickers ({{n}})",
+    "forThese": "Print stickers for these phones",
+    "count": "{{n}} to print",
+    "size": "Sticker size",
+    "a4": "A4 sheet (65 per page)",
+    "custom": "Custom mm",
+    "width": "Width (mm)",
+    "height": "Height (mm)",
+    "fields": "What goes on it",
+    "copies": "Copies of each",
+    "print": "Print",
+    "remember": "Remember these choices",
+    "saved": "Remembered",
+    "codeHint": "Cost in letters, word:",
+    "f": {
+      "shop": "Shop name",
+      "name": "Model",
+      "specs": "Storage · colour",
+      "price": "Price",
+      "barcode": "Barcode",
+      "imei": "IMEI number",
+      "condition": "Condition",
+      "pta": "PTA",
+      "date": "Date",
+      "code": "Cost code"
     }
   }
 }

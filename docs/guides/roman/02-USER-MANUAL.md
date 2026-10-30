@@ -821,6 +821,28 @@ Buttons: **Bechein**, **Shanakhti card check**, **Amanat par dein**, **Kharab li
 
 ![Phone ki kahani](../images/device-history.png)
 
+## 16a. Barcode wale qeemat ke sticker
+
+Har phone aur item par sticker lag sakta hai: dukaan ka naam, model, storage · rang, **qeemat**, **IMEI
+ka Code 128 barcode** (accessories ke liye SKU) neeche number ke saath, haalat, PTA aur tareekh.
+Barcode app ke camera ya USB scanner se scan karein to phone search aur sale mein mil jata hai.
+
+Kahan se print:
+- **Phone ka page → Sticker print** (ek phone).
+- **Stock → Stickers**: phones par tick karein (ya **Sab chunein**), phir **Stickers (n)**.
+- **Stock daalne** ke foran baad: **In phones ke sticker print karein**.
+- **Items** (accessories) → item dabayein → **Sticker print** (chargers ke dabbe ke liye copies).
+
+Sheet ek baar poochti hai: **Sticker ka size** (38×25, 50×25, 50×30, 60×40, 70×40 mm roll label
+printer ke liye, **A4 sheet** 65 stickers, ya **Apna size mm**), **Is par kya ho** (koi bhi line band
+karein), **Har aik ki copies**, phir **Print** (page sticker ke size ka hota hai, is liye label printer ek
+sticker fi page nikalta hai), ya **PDF download / share**. **Ye intikhab yaad rakhein** dukaan ke liye
+mehfooz kar deta hai.
+
+**Laagat code**: maalik aur manager khareed qeemat harfon mein laga sakte hain. **Dukaan ki settings →
+Sticker ka laagat code** mein 10 mukhtalif harfon ka lafz (maslan `BLACKHORSE`): hindsa 0 = pehla harf,
+1 = doosra …, to 45,000 `KHBBB` chhapta hai. Salesman ko code kabhi nahi milta, tick kare to bhi.
+
 ---
 
 ## 17. Staff aur un ke ohde

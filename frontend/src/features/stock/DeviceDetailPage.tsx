@@ -4,6 +4,7 @@ import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import { isoDay } from '@/lib/format'
 import RemoveSheet from '@/components/RemoveSheet'
 import { Chip, ErrorText, KV, Loading, MoneyText, PageHeader, Section, Sheet, fmtDate } from '@/components/ui'
+import LabelSheet from '@/components/LabelSheet'
 import { patch, post } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 import { useDevice, useDeviceEvent, useDeviceHistory, useDocMutation, useInvalidate, useParties } from '@/lib/queries'
@@ -75,7 +76,7 @@ export default function DeviceDetailPage() {
   const { data: history } = useDeviceHistory(id)
   const ev = useDeviceEvent()
   const loanM = useDocMutation<{ device_id: string; party_id: string; expected_back_at?: string; notes?: string }, Loan>('POST', () => '/api/v1/loans')
-  const [sheet, setSheet] = useState<null | 'loan' | 'note' | 'price' | 'edit' | 'remove'>(null)
+  const [sheet, setSheet] = useState<null | 'loan' | 'note' | 'price' | 'edit' | 'remove' | 'label'>(null)
   const inv = useInvalidate()
   const [text, setText] = useState('')
   const [partyId, setPartyId] = useState('')
@@ -157,6 +158,7 @@ export default function DeviceDetailPage() {
           {inStock || d.status === 'faulty' ? <BiButton text="stock.sendRepair" variant="secondary" size="md" onClick={() => simple('sent_to_repair')} /> : null}
           {d.status === 'in_repair' ? <BiButton text="stock.repairReturned" variant="secondary" size="md" onClick={() => simple('repair_returned')} /> : null}
           {d.status === 'with_customer_for_approval' ? <BiButton text="stock.approvalReturned" variant="secondary" size="md" onClick={() => simple('approval_returned')} /> : null}
+          <BiButton text="label.button" variant="secondary" size="md" onClick={() => setSheet('label')} />
           <BiButton text="stock.changePrice" variant="secondary" size="md" onClick={() => { setText(d.asking_price ?? ''); setSheet('price') }} />
           <BiButton text="stock.addNote" variant="secondary" size="md" onClick={() => { setText(''); setSheet('note') }} />
           <BiButton text="crud.editDetails" variant="secondary" size="md" onClick={() => setSheet('edit')} />
@@ -191,6 +193,7 @@ export default function DeviceDetailPage() {
 
       <Section title="stock.history">{history ? <Timeline events={history} /> : <Loading />}</Section>
 
+      <LabelSheet kind="devices" ids={[d.id]} open={sheet === 'label'} onClose={() => setSheet(null)} />
       <Sheet open={sheet === 'loan'} onClose={() => setSheet(null)} title="stock.loanOut">
         <div className="flex flex-col gap-3">
           <BiLabel text="loan.toShop" size="md" tone="text-muted" />

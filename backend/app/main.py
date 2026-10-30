@@ -22,6 +22,7 @@ from app.modules.exports.router import router as exports_router
 from app.modules.files.router import router as files_router
 from app.modules.installments.router import router as installments_router
 from app.modules.invoices.router import router as invoices_router
+from app.modules.labels.router import router as labels_router
 from app.modules.ledger.router import router as ledger_router
 from app.modules.loans.router import router as loans_router
 from app.modules.notifications.router import router as notifications_router
@@ -137,6 +138,7 @@ def create_app() -> FastAPI:
     app.include_router(exports_router)
     app.include_router(invoices_router)
     app.include_router(installments_router)
+    app.include_router(labels_router)
     app.include_router(attendance_router)
     app.include_router(staff_activity_router)
     return app

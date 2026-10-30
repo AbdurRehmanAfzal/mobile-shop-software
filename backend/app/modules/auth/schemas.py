@@ -83,6 +83,8 @@ class ShopSettingsOut(ShopOut):
     receipt_footer_ur: str | None = None
     invoice_prefix: str = "INV"
     fingerprint_staff: bool = False
+    label_code_word: str | None = None
+    label_prefs: dict | None = None
 
 
 class UserOut(BaseModel):
@@ -181,3 +183,15 @@ class ShopUpdate(BaseModel):
     invoice_prefix: str | None = Field(default=None, min_length=1, max_length=10)
     fingerprint_staff: bool | None = None
     default_locale: str | None = Field(default=None, pattern="^(en|ur)$")
+    label_code_word: str | None = Field(default=None, min_length=10, max_length=10)
+    label_prefs: dict | None = None
+
+    @field_validator("label_code_word")
+    @classmethod
+    def _code_word(cls, v: str | None) -> str | None:
+        if v is None:
+            return None
+        v = v.upper()
+        if not v.isalpha() or len(set(v)) != 10:
+            raise ValueError("10 different letters")
+        return v

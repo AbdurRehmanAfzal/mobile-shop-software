@@ -37,7 +37,7 @@ async function apiOf(page: Page) {
 test('settings: cards, unsaved hint, footer preview, saved', async ({ page }) => {
   await signup(page)
   await page.goto('/more/settings')
-  const save = page.getByRole('button', { name: 'Save' })
+  const save = page.locator('.fixed').getByRole('button', { name: 'Save' })
   await expect(save).toHaveCount(0)
   await page.getByLabel('City').fill('Lahore')
   await expect(page.getByText('Not saved yet')).toBeVisible()
@@ -49,7 +49,7 @@ test('settings: cards, unsaved hint, footer preview, saved', async ({ page }) =>
   await page.getByRole('switch', { name: /Charge sales tax/ }).click()
   await page.screenshot({ path: 'test-results/v2-settings.png', fullPage: true })
   await save.click()
-  await expect(page.getByText('Saved')).toBeVisible()
+  await expect(page.getByText('Saved').first()).toBeVisible()
   await expect(save).toHaveCount(0)
   await page.reload()
   await expect(page.getByLabel('City')).toHaveValue('Lahore')
