@@ -2,6 +2,7 @@
  *  login, which can be sent on WhatsApp. Owner (2026-10-26): shops are not self-service. */
 
 import { CalendarClock, Check, CheckCircle2, CreditCard, GitBranch, Image as ImageIcon, KeyRound, LogIn, MessageCircle, Plus, Store, Trash2, X } from 'lucide-react'
+import { isoDay } from '@/lib/format'
 import { useEffect, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { BiAlert, BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
@@ -88,7 +89,7 @@ export default function AdminPage() {
   const [billOpen, setBillOpen] = useState(false)
   useEffect(() => { if (billOpen && !bill && billing) setBill(JSON.parse(JSON.stringify(billing))) }, [billOpen, bill, billing])
   const saveBilling = useDocMutation<BillingOut, BillingOut>('PUT', () => '/api/v1/admin/billing', (b) => ({ bank: b.bank, support: b.support, schedule: b.schedule, note: b.note }))
-  const [pay, setPay] = useState({ amount: '', method: 'cash', months: '1', reference: '', paid_on: new Date().toISOString().slice(0, 10) })
+  const [pay, setPay] = useState({ amount: '', method: 'cash', months: '1', reference: '', paid_on: isoDay(0) })
   const recordPay = useDocMutation<typeof pay, FeeRow>('POST', () => `/api/v1/admin/shops/${sel?.id}/payments`, (p) => ({ amount: Number(p.amount), method: p.method, months: Number(p.months) || 1, reference: p.reference || null, paid_on: p.paid_on || null }))
   const [codeMonths, setCodeMonths] = useState('1')
   const [codeOut, setCodeOut] = useState<string | null>(null)
@@ -114,7 +115,7 @@ export default function AdminPage() {
   }
   const savePlan = useDocMutation<Record<string, unknown>, AdminShop>('PATCH', () => `/api/v1/admin/shops/${sel?.id}/plan`)
   const addBranch = useDocMutation<typeof branch, AdminShop>('POST', () => `/api/v1/admin/shops/${sel?.id}/branches`, (b) => ({ name: b.name, city: b.city || null }))
-  const openShop = (s: AdminShop) => { setCodeOut(null); makeCode.reset(); recordPay.reset(); setPay({ amount: Number(s.monthly_fee) ? String(Number(s.monthly_fee)) : '', method: 'cash', months: '1', reference: '', paid_on: new Date().toISOString().slice(0, 10) }); setGrace(s.grace_days == null ? '' : String(s.grace_days)); setMods(s.modules_custom ? s.modules : null); saveModules.reset(); setPw(''); setPwDone(null); setPassword.reset(); setSel(s); setPlan({ plan: s.plan, monthly_fee: Number(s.monthly_fee) ? String(Number(s.monthly_fee)) : '', expires_on: s.plan_expires_at ? s.plan_expires_at.slice(0, 10) : '', note: s.fee_note ?? '' }); setBranch({ name: '', city: '' }); savePlan.reset(); addBranch.reset() }
+  const openShop = (s: AdminShop) => { setCodeOut(null); makeCode.reset(); recordPay.reset(); setPay({ amount: Number(s.monthly_fee) ? String(Number(s.monthly_fee)) : '', method: 'cash', months: '1', reference: '', paid_on: isoDay(0) }); setGrace(s.grace_days == null ? '' : String(s.grace_days)); setMods(s.modules_custom ? s.modules : null); saveModules.reset(); setPw(''); setPwDone(null); setPassword.reset(); setSel(s); setPlan({ plan: s.plan, monthly_fee: Number(s.monthly_fee) ? String(Number(s.monthly_fee)) : '', expires_on: s.plan_expires_at ? s.plan_expires_at.slice(0, 10) : '', note: s.fee_note ?? '' }); setBranch({ name: '', city: '' }); savePlan.reset(); addBranch.reset() }
   const { data, isLoading } = useGet<AdminShop[]>(['admin-shops', q], isSuper ? `/api/v1/admin/shops${q ? `?q=${encodeURIComponent(q)}` : ''}` : null)
   const create = useDocMutation<typeof EMPTY & { request_id?: string | null }, AdminShop>('POST', () => '/api/v1/admin/shops', (x) => ({ ...x, city: x.city || null, phone: normalisePhone(x.phone) }))
   const { data: catalogue } = useGet<ModuleCatalogue>(['module-catalogue'], isSuper ? '/api/v1/admin/modules' : null)
