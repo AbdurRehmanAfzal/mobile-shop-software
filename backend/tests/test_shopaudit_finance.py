@@ -162,6 +162,8 @@ def test_cash_by_reason_channel_and_remittance(owner, cat, db):
         "currency": "SAR",
         "foreign_amount": "500.00",
         "pkr_amount": "37100.00",
+        "fees": "0.00",
+        "net": "37100.00",
         "count": 1,
     }
 
