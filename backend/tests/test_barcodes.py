@@ -50,7 +50,7 @@ def test_purchase_makes_one_barcode_per_phone_in_the_same_transaction(owner, cat
     # number burnt in a way that leaks — the next good purchase continues the sequence cleanly
     r2, _ = _buy(owner, cat, C, A, sup=sup)
     assert r2.status_code == 409
-    assert set(d["imei1"] for d in owner.get("/api/v1/devices").json()) == {A, B}
+    assert {d["imei1"] for d in owner.get("/api/v1/devices").json()} == {A, B}
     r3, _ = _buy(owner, cat, C, sup=sup)
     assert r3.status_code == 201
     c = next(d for d in owner.get("/api/v1/devices").json() if d["imei1"] == C)
@@ -58,7 +58,7 @@ def test_purchase_makes_one_barcode_per_phone_in_the_same_transaction(owner, cat
 
 
 def test_resale_after_return_keeps_the_barcode_and_history(owner, cat):
-    r, _ = _buy(owner, cat, A)
+    _buy(owner, cat, A)
     dev = owner.get("/api/v1/devices").json()[0]
     code = dev["barcode"]
     cus = _party(owner, name="Ahmed", phone="03001111111", kinds=("customer",))
@@ -84,11 +84,11 @@ def test_resale_after_return_keeps_the_barcode_and_history(owner, cat):
     assert owner.get(f"/api/v1/devices/{dev['id']}").json()["barcode"] == code
     types = [h["type"] for h in owner.get(f"/api/v1/devices/{dev['id']}/history").json()]
     assert types.count("sold") == 2 and "sale_returned" in types
-    # bought back after a sale: still the same unit, still the same barcode
-    sup = _party(owner, name="D2", phone="03005557777", kinds=("supplier",))
-    owner.post(
-        "/api/v1/sales", json={"devices": [{"device_id": dev["id"], "price": 950}], "paid": 950}
-    ) if False else None
+    # bought back after a sale from a dealer: still the same unit, still the same barcode
+    sup2 = _party(owner, name="D2", phone="03005557777", kinds=("supplier",))
+    r, _ = _buy(owner, cat, A, sup=sup2)
+    assert r.status_code == 201, r.text
+    assert owner.get(f"/api/v1/devices/{dev['id']}").json()["barcode"] == code
 
 
 def test_custom_and_manufacturer_codes_and_uniqueness(owner, cat):
