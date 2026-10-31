@@ -17,6 +17,7 @@ dependencies = [
     "openpyxl>=3.1,<4",
     "python-barcode>=0.15",
     "segno>=1.6",
+    "pillow>=10",  # PNG barcodes / labels (python-barcode ImageWriter)
     "anthropic>=2.3,<3",
     "webauthn>=2.7,<3",  # passkeys: fingerprint login on the website
     "httpx>=0.27",  # WhatsApp Cloud API
