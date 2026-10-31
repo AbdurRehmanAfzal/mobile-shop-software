@@ -78,6 +78,15 @@ class SaleLineOut(BaseModel):
     accessory_id: uuid.UUID | None = None
     imei1: str | None = None
     device_label: str | None = None
+    # owner addendum 6: what the bill says about the unit
+    category: str | None = None
+    storage_name: str | None = None
+    ram_gb: int | None = None
+    colour_name: str | None = None
+    pta_status: str | None = None
+    condition: str | None = None
+    grade: str | None = None
+    serial: str | None = None
     description: str | None
     qty: int
     unit_price: Decimal

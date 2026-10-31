@@ -57,6 +57,9 @@ class EventType(StrEnum):
     # owner addendum 4: the barcode on the timeline (backfill) and every label print
     BARCODE_ASSIGNED = "barcode_assigned"
     LABEL_PRINTED = "label_printed"
+    # owner addendum 6: a used unit's lock check (who / when / what), and a type change
+    LOCK_CHECKED = "lock_checked"
+    RECLASSIFIED = "reclassified"
 
 
 # Events that move money and therefore may only be raised by document modules (purchase, sale,
@@ -73,6 +76,8 @@ NEUTRAL_EVENTS = frozenset(
         EventType.NOTE,
         EventType.BARCODE_ASSIGNED,
         EventType.LABEL_PRINTED,
+        EventType.LOCK_CHECKED,
+        EventType.RECLASSIFIED,
     }
 )
 

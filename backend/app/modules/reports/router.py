@@ -82,6 +82,14 @@ def stock_ageing(ctx: Reports, db: DB):
     return _money(service.stock_ageing(db, ctx.shop_id, ctx.can(Cap.VIEW_COST)))
 
 
+@router.get("/stock-by-type")
+def stock_by_type(ctx: Ctx, db: DB):
+    """owner addendum 6: in-stock units per type (count, cost, asking value, used with unchecked lock)"""
+    from app.modules.devices.types import stock_by_type as _sbt
+
+    return _money(_sbt(db, ctx.shop_id, ctx.can(Cap.VIEW_COST)))
+
+
 @router.get("/stock-summary")
 def stock_summary(ctx: Ctx, db: DB):
     """Stock worth by brand and model (cost for owner/manager, asking price for others)."""

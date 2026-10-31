@@ -36,6 +36,8 @@ test('a smart watch with a serial number, then found under Smart watch when sell
   await expect(page.getByText('PTA status')).toHaveCount(0)
   await page.getByRole('button', { name: '45mm' }).click()
   await page.getByRole('button', { name: 'Used', exact: true }).click()
+  // owner addendum 6: a used smart watch is bought only after its lock check
+  await page.getByTestId('lock-confirm').click()
   await page.getByLabel('Battery health %').fill('91')
   await page.getByLabel('Serial number').fill('h4kq9x2lm1')
   await page.getByLabel('Cost price').fill('60000')

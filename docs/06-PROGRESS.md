@@ -179,6 +179,23 @@ Spec `docs/24-ACCESSORIES-SPEC.md` · audit, gap table, migration plan, assumpti
 | Transfers between locations | ❌ | not a stock event (docs/25 §5) |
 | Per-line GST on the invoice | ⏳ | stored and shown; invoice keeps the shop rate until the owner decides (docs/25 §5) |
 
+## Phase 10 — Tablets and smart watches as full devices (owner addendum 6, 2026-10-31)
+Spec `docs/26-TABLETS-WATCHES-SPEC.md` · audit, gap table, decision, migration plan, assumptions `docs/27-TABLETS-WATCHES-PLAN.md` · ADR-038.
+| Item | Status | Notes |
+|---|---|---|
+| Audit (device model, accessories, what tablets / watches already used), gap table, decision §B | ✅ | **2026-10-31** docs/27 §1–3 — `category` reused as the device type, no duplicate column |
+| Grade, RAM, warranty by, spec sheet (per type), lock checks + `lock_checked` event, model number | ✅ | **2026-10-31** `devices` columns, `devices/types.py`, migration `b9c1d3e5f7a9` |
+| Model library (learned from every unit, editable, CSV import) that fills the add-device form | ✅ | **2026-10-31** `model_specs`, `/devices/model-specs/{id}` GET / PUT, `/devices/model-specs/import` |
+| Lock check required for used tablets / watches at purchase (phones by setting), lock still on blocks purchase and sale | ✅ | **2026-10-31** `new_device`, `create_sale`, Settings "Device settings" |
+| Duplicate check by serial with a link to the unit's history; PTA only with a SIM (unchanged) | ✅ | **2026-10-31** `imei_lookup` takes serials, `useSerialLookup` |
+| Bill shows type, storage / RAM, colour, condition / grade, PTA; label shows RAM | ✅ | **2026-10-31** `sales.to_out` + printable `_unit_bits`, `labels._device_parts` |
+| Filters model / storage / colour / RAM / grade / price range / age / lock unchecked | ✅ | **2026-10-31** `GET /devices` params; stock page "Filters" |
+| Report: stock by type (+ lock unchecked, non-PTA, older than 60 days); other reports by category reused | ✅ | **2026-10-31** `GET /reports/stock-by-type`, Reports → "By type" |
+| Reclassification (preview → apply) for one unit and for picked units; counted item → one unit | ✅ | **2026-10-31** `/devices/reclassify/*`, `/devices/from-item/{id}`; device page "Change type", stock list, item page "Track one by serial" |
+| Exchange / trade-in of a tablet or watch | ✅ | already any category (`DeviceLineIn`) — covered by the acceptance test path |
+| CSV import of the model library | ✅ | `POST /devices/model-specs/import` (API; no screen yet — docs/27 §6) |
+| Per-type GST / FBR invoice changes | ❌ | not in this brief |
+
 ## Backlog (owner requests, not started)
 | Item | Notes |
 |---|---|

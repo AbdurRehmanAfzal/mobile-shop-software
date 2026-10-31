@@ -18,6 +18,7 @@ from app.modules.devices.schemas import (
     EventIn,
     OpeningStockIn,
     clean_imei,
+    clean_serial,
 )
 from app.modules.devices.state import (
     MONEY_EVENTS,
@@ -167,6 +168,7 @@ def to_out(row) -> dict:
         "colour_name": colour,
         "current_party_name": party,
         "imei_luhn_ok": is_valid_imei(d.imei1),
+        "lock_ok": not any(v == "not_cleared" for v in (d.lock_checks or {}).values()),
     }
 
 
@@ -181,10 +183,40 @@ def list_devices(
     q: str | None,
     limit: int,
     category: str | None = None,
+    model_id: uuid.UUID | None = None,
+    storage_id: uuid.UUID | None = None,
+    colour_id: uuid.UUID | None = None,
+    ram_gb: int | None = None,
+    grade: str | None = None,
+    price_min: Decimal | None = None,
+    price_max: Decimal | None = None,
+    age_min: int | None = None,
+    lock_unchecked: bool = False,
 ) -> list[dict]:
     stmt = _base_query(shop_id)
     if category:
         stmt = stmt.where(Device.category == category)
+    # owner addendum 6: the fuller filter set
+    if model_id:
+        stmt = stmt.where(Device.model_id == model_id)
+    if storage_id:
+        stmt = stmt.where(Device.storage_id == storage_id)
+    if colour_id:
+        stmt = stmt.where(Device.colour_id == colour_id)
+    if ram_gb:
+        stmt = stmt.where(Device.ram_gb == ram_gb)
+    if grade:
+        stmt = stmt.where(Device.grade == grade)
+    if price_min is not None:
+        stmt = stmt.where(Device.asking_price >= price_min)
+    if price_max is not None:
+        stmt = stmt.where(Device.asking_price <= price_max)
+    if age_min:
+        import datetime as _dt
+
+        stmt = stmt.where(Device.first_seen_at <= _dt.datetime.now(_dt.UTC) - _dt.timedelta(days=age_min))
+    if lock_unchecked:
+        stmt = stmt.where(Device.condition != DeviceCondition.BOX_PACK, Device.lock_checks.is_(None))
     if status:
         stmt = stmt.where(Device.status == status)
     if condition:
@@ -231,13 +263,19 @@ def imei_lookup(db: Session, shop_id: uuid.UUID, raw: str) -> dict:
     try:
         imei = clean_imei(raw)
     except ValueError:
-        return {
-            "found": False,
-            "device": None,
-            "seen_before": False,
-            "times_bought": 0,
-            "luhn_ok": False,
-        }
+        # owner addendum 6: a serial number (Wi-Fi tablet, GPS watch) is looked up the same way
+        try:
+            imei = clean_serial(raw)
+        except ValueError:
+            imei = None
+        if imei is None or imei.isdigit():
+            return {
+                "found": False,
+                "device": None,
+                "seen_before": False,
+                "times_bought": 0,
+                "luhn_ok": False,
+            }
     device = by_imei(db, shop_id, imei)
     if device is None:
         return {
@@ -311,9 +349,29 @@ def _validate_catalogue(db: Session, shop_id: uuid.UUID, data) -> None:
         raise ValidationFailed(code="catalogue_mismatch")
 
 
-def new_device(db: Session, shop_id: uuid.UUID, data) -> Device:
-    """Create the device row (no event yet). Caller must apply a PURCHASED event in the same transaction."""
+def new_device(db: Session, shop_id: uuid.UUID, data, *, require_lock: bool = True, user_id: uuid.UUID | None = None) -> Device:
+    """Create the device row (no event yet). Caller must apply a PURCHASED event in the same transaction.
+    Owner addendum 6: a used tablet / watch (and a used phone when the shop says so) must come with
+    its locks checked; what the shop typed about the model is remembered in its library."""
+    from app.modules.auth.models import Shop
+    from app.modules.devices import types as dtypes
+
     _validate_catalogue(db, shop_id, data)
+    shop = db.get(Shop, shop_id)
+    if require_lock and dtypes.lock_required(shop, getattr(data, "category", "phone"), data.condition):
+        locks = getattr(data, "lock_checks", None) or {}
+        if not getattr(data, "lock_checked", False) and not locks:
+            raise ValidationFailed(
+                code="lock_check_required",
+                message_en="A used device must have its locks checked and removed before you buy it (iCloud / activation, Google / FRP, account, paired device). Tick 'Lock checked and removed'.",
+                message_ur="استعمال شدہ ڈیوائس خریدنے سے پہلے اس کے لاک چیک اور ختم ہونے چاہییں (iCloud / Activation، Google / FRP، اکاؤنٹ)۔ 'لاک چیک ہو گیا' پر نشان لگائیں۔",
+            )
+        if any(v == "not_cleared" for v in locks.values()):
+            raise ValidationFailed(
+                code="lock_not_cleared",
+                message_en="A lock is still on this device. Do not buy it until it is removed.",
+                message_ur="اس ڈیوائس پر ابھی لاک ہے۔ ہٹنے تک نہ خریدیں۔",
+            )
     if by_imei(db, shop_id, data.imei1) is not None:
         raise Conflict(
             code="imei_exists",
@@ -328,11 +386,18 @@ def new_device(db: Session, shop_id: uuid.UUID, data) -> Device:
             "barcode",
             "barcode_type",
             "manufacturer_code",
+            "lock_checked",
+            "model_number",
         }
     )
     device = Device(shop_id=shop_id, **fields)
+    if device.lock_checks or getattr(data, "lock_checked", False):
+        device.lock_checks = device.lock_checks or {"activation": "cleared", "frp": "cleared"}
+        device.lock_checked_at = utcnow()
+        device.lock_checked_by = user_id
     db.add(device)
     db.flush()
+    dtypes.learn_specs(db, shop_id, device.model_id, model_number=getattr(data, "model_number", None), ram_gb=device.ram_gb, specs=device.specs)
     # owner addendum 4: the barcode is born with the unit, in this same transaction
     from app.modules.auth.models import Shop
     from app.modules.barcodes.service import assign_device
@@ -357,7 +422,7 @@ def replace_accessories(db: Session, device: Device, items: list[AccessoryItemIn
 def add_opening_stock(
     db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, data: OpeningStockIn
 ) -> dict:
-    device = new_device(db, shop_id, data)
+    device = new_device(db, shop_id, data, require_lock=False, user_id=user_id)
     device.asking_price = money(data.asking_price) if data.asking_price is not None else None
     replace_accessories(db, device, data.accessories)
     cost = money(data.cost_price)
