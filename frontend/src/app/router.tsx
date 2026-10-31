@@ -34,6 +34,8 @@ import LoansPage from '@/features/loans/LoansPage'
 import ExpensesPage from '@/features/expenses/ExpensesPage'
 import { NewRepairPage, RepairDetailPage, RepairsPage } from '@/features/repairs/RepairsPages'
 import AccessoriesPage from '@/features/accessories/AccessoriesPage'
+import AccessoryDetailPage from '@/features/accessories/AccessoryDetailPage'
+import AccessoryReportsPage from '@/features/accessories/AccessoryReportsPage'
 import ExchangeWizard from '@/features/exchange/ExchangeWizard'
 import ReportsPage from '@/features/reports/ReportsPage'
 import AuditOverviewPage from '@/features/audit/OverviewPage'
@@ -110,6 +112,8 @@ export const router = createBrowserRouter([
           { path: '/repairs/new', element: <ModuleGate module="repairs"><NewRepairPage /></ModuleGate> },
           { path: '/repairs/:id', element: <ModuleGate module="repairs"><RepairDetailPage /></ModuleGate> },
           { path: '/accessories', element: <ModuleGate module="accessories"><AccessoriesPage /></ModuleGate> },
+          { path: '/accessories/reports', element: <ModuleGate module="accessories"><AccessoryReportsPage /></ModuleGate> },
+          { path: '/accessories/:id', element: <ModuleGate module="accessories"><AccessoryDetailPage /></ModuleGate> },
           { path: '/exchange/new', element: <ModuleGate module="exchange"><ExchangeWizard /></ModuleGate> },
           { path: '/reports', element: <ModuleGate module="reports"><ReportsPage /></ModuleGate> },
           { path: '/audit', element: <ModuleGate module="reports"><AuditOverviewPage /></ModuleGate> },

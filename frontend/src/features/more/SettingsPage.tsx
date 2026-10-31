@@ -3,7 +3,7 @@
  *  stays in reach, and a plain "Saved" message. */
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Check, Fingerprint, Gauge, Languages, Percent, Receipt, ShieldCheck, Store, Tag } from 'lucide-react'
+import { Boxes, Check, Fingerprint, Gauge, Languages, Percent, Receipt, ShieldCheck, Store, Tag } from 'lucide-react'
 import { useEffect, useState, type ReactNode } from 'react'
 import { BiAlert, BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import { PhoneInput } from '@/components/FieldInputs'
@@ -32,7 +32,9 @@ interface ShopFull {
   label_code_word: string | null
   sale_rules: { below_asking: Rule; asking_change: Rule } | null
   audit_prefs: AuditPrefs | null
+  item_prefs: ItemPrefs | null
 }
+interface ItemPrefs { valuation?: 'avg' | 'fifo'; allow_negative_stock?: boolean; units?: Record<string, number> }
 interface AuditPrefs { age_bands: number[]; high_value: number; low_margin_pct: number; top_share: number; low_units: number; bypass_share: number; bypass_min: number }
 const DEFAULT_AUDIT_PREFS: AuditPrefs = { age_bands: [15, 30, 60, 90], high_value: 50000, low_margin_pct: 5, top_share: 20, low_units: 1, bypass_share: 50, bypass_min: 3 }
 type Rule = 'allow' | 'manager' | 'pin'
@@ -162,6 +164,7 @@ export default function SettingsPage() {
       <CodeWordCard current={data?.label_code_word ?? null} />
       <SaleRulesCard current={data?.sale_rules ?? null} />
       <AuditPrefsCard current={data?.audit_prefs ?? null} />
+      <ItemPrefsCard current={data?.item_prefs ?? null} />
 
       <ErrorText error={m.error} />
       {saved ? <BiAlert text="settings.saved" kind="success" /> : null}
@@ -253,6 +256,37 @@ function AuditPrefsCard({ current }: { current: AuditPrefs | null }) {
       {!valid ? <BiAlert text="audit.prefs.bandsOrder" /> : null}
       <ErrorText error={m.error} />
       <BiButton text={ok ? 'settings.saved' : 'common.save'} icon={<Check size={20} />} variant="secondary" full loading={m.isPending} disabled={!valid} onClick={() => m.mutate()} />
+    </Card>
+  )
+}
+
+/** how counted items are valued, whether the count may go below zero, and the shop's units
+ *  (owner addendum 5, docs/24 §A) */
+function ItemPrefsCard({ current }: { current: ItemPrefs | null }) {
+  const qc = useQueryClient()
+  const shopKey = useAuth((s) => s.activeShopId)
+  const [p, setP] = useState<{ valuation: 'avg' | 'fifo'; allow_negative_stock: boolean; dozen: string; box: string; carton: string }>({ valuation: 'avg', allow_negative_stock: false, dozen: '12', box: '10', carton: '120' })
+  const [ok, setOk] = useState(false)
+  useEffect(() => {
+    if (current) setP({ valuation: current.valuation ?? 'avg', allow_negative_stock: !!current.allow_negative_stock, dozen: String(current.units?.dozen ?? 12), box: String(current.units?.box ?? 10), carton: String(current.units?.carton ?? 120) })
+  }, [current])
+  const m = useMutation({
+    mutationFn: () => patch('/api/v1/shops/current', { item_prefs: { valuation: p.valuation, allow_negative_stock: p.allow_negative_stock, units: { piece: 1, dozen: Number(p.dozen) || 12, box: Number(p.box) || 10, carton: Number(p.carton) || 120 } } }),
+    onSuccess: () => { setOk(true); void qc.invalidateQueries({ queryKey: [shopKey, 'shop-full'] }); void qc.invalidateQueries({ queryKey: [shopKey, 'item-options'] }) },
+  })
+  return (
+    <Card icon={<Boxes size={22} />} tone="bg-stockt text-stockt-fg" title="acc.prefs.title" hint="acc.prefs.hint">
+      <BiLabel text="acc.prefs.valuation" size="md" bold />
+      <BiSegmented<'avg' | 'fifo'> value={p.valuation} onChange={(v) => { setOk(false); setP({ ...p, valuation: v }) }} options={[{ value: 'avg', text: 'acc.prefs.avg' }, { value: 'fifo', text: 'acc.prefs.fifo' }]} />
+      <Toggle on={p.allow_negative_stock} onChange={(v) => { setOk(false); setP({ ...p, allow_negative_stock: v }) }} text="acc.prefs.negative" hint="acc.prefs.negativeHint" />
+      <BiLabel text="acc.prefs.units" size="md" bold />
+      <div className="grid grid-cols-3 gap-2">
+        <BiInput label="acc.units.dozen" type="number" inputMode="numeric" min={1} value={p.dozen} onChange={(e) => { setOk(false); setP({ ...p, dozen: e.target.value }) }} className="num" />
+        <BiInput label="acc.units.box" type="number" inputMode="numeric" min={1} value={p.box} onChange={(e) => { setOk(false); setP({ ...p, box: e.target.value }) }} className="num" />
+        <BiInput label="acc.units.carton" type="number" inputMode="numeric" min={1} value={p.carton} onChange={(e) => { setOk(false); setP({ ...p, carton: e.target.value }) }} className="num" />
+      </div>
+      <ErrorText error={m.error} />
+      <BiButton text={ok ? 'settings.saved' : 'common.save'} icon={<Check size={20} />} variant="secondary" full loading={m.isPending} onClick={() => m.mutate()} />
     </Card>
   )
 }

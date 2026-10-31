@@ -11,6 +11,7 @@ from app.core.permissions import Cap
 from app.db.base import ZERO, utcnow
 from app.db.refs import user_name
 from app.modules.accessories import service as acc_stock
+from app.modules.accessories import stock as inv
 from app.modules.audit.service import record_audit
 from app.modules.auth.models import Shop
 from app.modules.catalogue.models import Brand, Model
@@ -63,6 +64,13 @@ def create_purchase(
             message_ur="دکان کا کھاتہ منتخب کریں",
         )
 
+    # owner addendum 5: a line typed in dozens / boxes becomes pieces here; its unit cost is per
+    # piece from this point on (the typed per-unit cost is kept on the line as the audit trail)
+    pieces: list[tuple[int, int, Decimal]] = []  # (pieces, per unit, cost per piece)
+    for m in data.misc:
+        a0 = acc_stock.get_accessory(db, shop_id, m.accessory_id) if m.accessory_id else None
+        n, per = inv.to_pieces(shop, a0, m.unit, m.qty)
+        pieces.append((n, per, money(m.unit_cost / per)))
     line_amounts = [money(d.cost) for d in data.devices] + [
         money(m.unit_cost * m.qty) for m in data.misc
     ]
@@ -74,7 +82,8 @@ def create_purchase(
             message_en="Discount exceeds total",
             message_ur="رعایت کل رقم سے زیادہ ہے",
         )
-    total = money(subtotal - discount)
+    extra = money(data.extra_costs)
+    total = money(subtotal - discount + extra)
     paid = money(data.paid)
     if paid > total:
         raise ValidationFailed(
@@ -112,6 +121,9 @@ def create_purchase(
         purchased_at=at,
         subtotal=subtotal,
         discount=discount,
+        supplier_invoice_no=(data.supplier_invoice_no or None),
+        extra_costs=extra,
+        extra_costs_note=data.extra_costs_note,
         total=total,
         paid=paid,
         cash_account_id=cash.id if cash else None,
@@ -124,6 +136,8 @@ def create_purchase(
     paymode.save(db, shop_id, "purchase", purchase.id, data.payment, paid)
 
     shares = _allocate_discount(discount, line_amounts)
+    # freight / loading is spread over the lines the same way and lands in the item cost
+    extras = _allocate_discount(extra, line_amounts) if extra > ZERO else [ZERO] * len(line_amounts)
     posting = Posting(
         document_type="purchase",
         document_id=purchase.id,
@@ -134,7 +148,7 @@ def create_purchase(
     line_no = 0
     devices: list[tuple[Device, Decimal]] = []
 
-    for dl, share in zip(data.devices, shares[: len(data.devices)], strict=True):
+    for dl, share, xshare in zip(data.devices, shares[: len(data.devices)], extras[: len(data.devices)], strict=True):
         device = _device_for_purchase(db, shop_id, dl)
         if device.event_count and _aware(device.last_event_at) > at:
             raise Conflict(
@@ -142,7 +156,7 @@ def create_purchase(
                 message_en=f"{device.imei1}: this time is before the phone's last record. Choose a later time.",
                 message_ur=f"{device.imei1}: یہ وقت اس موبائل کے پچھلے ریکارڈ سے پہلے کا ہے۔ بعد کا وقت چنیں۔",
             )
-        net = money(dl.cost - share)
+        net = money(dl.cost - share + xshare)
         db.add(
             PurchaseLine(
                 purchase_id=purchase.id,
@@ -163,8 +177,10 @@ def create_purchase(
             posting.debit(acc.SysAccount.INVENTORY, net, device_id=device.id, memo=device.imei1)
         devices.append((device, net))
 
-    for ml, share in zip(data.misc, shares[len(data.devices) :], strict=True):
-        net = money(ml.unit_cost * ml.qty - share)
+    for ml, share, xshare, (n_pieces, per, _cpp) in zip(
+        data.misc, shares[len(data.devices) :], extras[len(data.devices) :], pieces, strict=True
+    ):
+        net = money(ml.unit_cost * ml.qty - share + xshare)
         accessory = (
             acc_stock.get_accessory(db, shop_id, ml.accessory_id) if ml.accessory_id else None
         )
@@ -175,26 +191,40 @@ def create_purchase(
                 kind="misc",
                 accessory_id=accessory.id if accessory else None,
                 description=ml.description or (accessory.name if accessory else None),
-                qty=ml.qty,
-                unit_cost=money(ml.unit_cost),
+                qty=n_pieces,
+                unit_cost=money(net / n_pieces),  # per piece, after discount and freight
                 discount_share=share,
                 net_cost=net,
+                pack_unit=ml.unit if per != 1 else None,
+                pack_qty=ml.qty if per != 1 else None,
+                extra_cost_share=xshare,
+                batch_ref=ml.batch_ref,
             )
         )
         line_no += 1
         if accessory is not None:
+            old_cost = accessory.avg_cost
             acc_stock.move(
                 db,
                 shop_id,
                 user_id,
                 accessory,
-                ml.qty,
+                n_pieces,
                 "purchase",
-                money(net / ml.qty),
+                money(net / n_pieces),
                 document_type="purchase",
                 document_id=purchase.id,
                 note=purchase.no,
+                party_id=party.id,
+                pack_unit=ml.unit if per != 1 else None,
+                pack_qty=ml.qty if per != 1 else None,
+                batch_ref=ml.batch_ref,
             )
+            inv.log_price_change(db, shop_id, user_id, accessory, "avg_cost", old_cost, accessory.avg_cost, source="purchase")
+            if accessory.pricing_mode == "markup" and accessory.markup_pct is not None:
+                new_price = inv.price_from_markup(accessory.avg_cost, accessory.markup_pct)
+                inv.log_price_change(db, shop_id, user_id, accessory, "price", accessory.price, new_price, source="markup")
+                accessory.price = new_price
             if net > ZERO:
                 posting.debit(acc.SysAccount.INVENTORY, net, memo=accessory.name)
         elif net > ZERO:
@@ -241,7 +271,7 @@ def create_purchase(
     for device, _net in devices:
         b, m = db.get(Brand, device.brand_id), db.get(Model, device.model_id)
         labels.append(f"{b.name if b else ''} {m.name if m else ''}".strip())
-    labels += [f"{ml.description} x{ml.qty}" for ml in data.misc]
+    labels += [f"{ml.description} x{n} " for ml, (n, _p, _c) in zip(data.misc, pieces, strict=True)]
     notify.on_purchase(db, shop, purchase, party, ", ".join(labels), len(labels), user_id)
     record_audit(
         db,

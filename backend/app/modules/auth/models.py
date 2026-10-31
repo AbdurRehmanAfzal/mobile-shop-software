@@ -83,6 +83,8 @@ class Shop(UUIDPk, Timestamped, Base):
     label_prefs: Mapped[dict | None] = mapped_column(JSON)
     # owner addendum 4: barcode type / prefix / mode for NEW barcodes, and the last number used
     barcode_prefs: Mapped[dict | None] = mapped_column(JSON)
+    # owner addendum 5: valuation (avg | fifo), negative stock, unit table, grades
+    item_prefs: Mapped[dict | None] = mapped_column(JSON)
     barcode_seq: Mapped[int] = mapped_column(Integer, default=0, nullable=False, server_default="0")
     # owner 2026-10-30: who may sell below asking / change the asking price (sales/approval.py)
     sale_rules: Mapped[dict | None] = mapped_column(JSON)

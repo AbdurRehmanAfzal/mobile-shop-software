@@ -12,6 +12,7 @@ import PartyPicker from '@/components/PartyPicker'
 import { CnicInput, PhoneInput } from '@/components/FieldInputs'
 import PayPicker, { newPay, payInfo, payReady, remitPkr, type PayState } from '@/components/PayPicker'
 import StockItemPicker from '@/components/StockItemPicker'
+import type { PriceFor } from '@/features/accessories/types'
 import { AccessoryPicker, type AccValue } from '@/components/AccessoryPicker'
 import { BtnText, Chip, ErrorText, IconChip, List, PageHeader, SearchBox, Sheet, Stepper } from '@/components/ui'
 import { uid } from '@/lib/id'
@@ -51,6 +52,12 @@ interface Misc {
   /** from the shop's counted stock (accessory / watch): its count goes down when sold */
   accessory_id?: string
   stock?: number
+  /** owner addendum 5: which price was pre-filled (retail / dealer / promo), the floor, the warranty */
+  tier?: 'retail' | 'wholesale' | 'promo'
+  min_price?: string | null
+  warranty_days?: number
+  /** the price is still the pre-filled one, so a change of customer may re-price it */
+  auto?: boolean
 }
 // what came with the phone goes with it unless the seller changes it
 const newLine = (d: Device): Line => ({
@@ -80,6 +87,9 @@ export default function SaleWizard() {
   const [discount, setDiscount] = useDraft('sale.discount', '')
   const [pay, setPay] = useDraft<PayState>('sale.payment', () => newPay())
   const [party, setParty] = useDraft<Party | null>('sale.party', null)
+  // the shop's item settings: may the count go below zero?
+  const { data: itemOpts } = useGet<{ allow_negative_stock: boolean }>(['item-options'], has('accessories') ? '/api/v1/accessories/options' : null)
+  const negativeOk = !!itemOpts?.allow_negative_stock
   const [paidNow, setPaidNow] = useDraft('sale.paidNow', '')
   const [dueDate, setDueDate] = useDraft('sale.dueDate', '')
   const [overrideReason, setOverrideReason] = useDraft('sale.overrideReason', '')
@@ -135,7 +145,28 @@ export default function SaleWizard() {
   const instRest = Math.max(0, total - paid)
   const instMonthly = inst.monthly !== '' ? Number(inst.monthly) : Math.ceil(instRest / Math.max(1, Number(inst.months) || 1))
   const instOk = !inst.on || (!!party && instRest > 0 && Number(inst.months) >= 1 && instMonthly > 0 && instMonthly * (Number(inst.months) - 1) < instRest)
-  const canSave = instOk && (!lossLine || (manager && lossOk)) && checkOk && total > 0 && payReady(pay) && (!owes || !!party) && lines.every((l) => Number(l.price) > 0) && misc.every((x) => x.description.trim() && Number(x.unit_price) > 0 && (x.stock === undefined || Number(x.qty) <= x.stock))
+  const canSave = instOk && (!lossLine || (manager && lossOk)) && checkOk && total > 0 && payReady(pay) && (!owes || !!party) && lines.every((l) => Number(l.price) > 0) && misc.every((x) => x.description.trim() && Number(x.unit_price) > 0 && (x.stock === undefined || negativeOk || Number(x.qty) <= x.stock))
+  // owner addendum 5: the price pre-filled for an item depends on the customer (dealer → wholesale,
+  // a running promo → promo, else retail); lines the seller has not touched follow a customer change
+  const priceItem = async (it: { id: string; qty: number; price: string; name: string; name_ur: string | null }, pid: string | null) => {
+    try { return await get<PriceFor>(`/api/v1/accessories/${it.id}/price${pid ? `?party_id=${pid}` : ''}`) } catch { return { price: it.price, tier: 'retail' as const, min_price: null, qty: it.qty, warranty_days: 0 } }
+  }
+  const addItem = async (it: { id: string; qty: number; price: string; name: string; name_ur: string | null }) => {
+    const pr = await priceItem(it, party?.id ?? null)
+    setMisc((ms) => {
+      const same = ms.find((m) => m.accessory_id === it.id)
+      if (same) return ms.map((m) => (m === same ? { ...m, qty: String(negativeOk ? Number(m.qty || 0) + 1 : Math.min(Number(m.qty || 0) + 1, it.qty)) } : m))
+      return [...ms, { key: uid(), description: ur && it.name_ur ? it.name_ur : it.name, qty: '1', unit_price: String(Number(pr.price) || ''), accessory_id: it.id, stock: pr.qty, tier: pr.tier, min_price: pr.min_price, warranty_days: pr.warranty_days, auto: true }]
+    })
+  }
+  useEffect(() => {
+    const auto = misc.filter((x) => x.accessory_id && x.auto)
+    if (!auto.length) return
+    void Promise.all(auto.map((x) => priceItem({ id: x.accessory_id!, qty: x.stock ?? 0, price: x.unit_price, name: x.description, name_ur: null }, party?.id ?? null).then((pr) => [x.key, pr] as const))).then((rows) => {
+      const by = new Map(rows)
+      setMisc((ms) => ms.map((x) => (by.has(x.key) && x.auto ? { ...x, unit_price: String(Number(by.get(x.key)!.price) || ''), tier: by.get(x.key)!.tier, min_price: by.get(x.key)!.min_price } : x)))
+    })
+  }, [party?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const setLine = (l: Line, patch: Partial<Line>) => setLines((ls) => ls.map((x) => (x.device.id === l.device.id ? { ...x, ...patch } : x)))
 
@@ -163,11 +194,7 @@ export default function SaleWizard() {
         const it = r.item
         if (!r.sellable) { beep('error'); setScanNote({ code, status: 'no_qty' }); return }
         beep('ok'); setScanNote(null)
-        setMisc((ms) => {
-          const same = ms.find((m) => m.accessory_id === it.id)
-          if (same) return ms.map((m) => (m === same ? { ...m, qty: String(Math.min(Number(m.qty || 0) + 1, it.qty)) } : m))
-          return [...ms, { key: uid(), description: ur && it.name_ur ? it.name_ur : it.name, qty: '1', unit_price: String(Number(it.price) || ''), accessory_id: it.id, stock: it.qty }]
-        })
+        await addItem(it)
         setStep(1)
         return
       }
@@ -345,13 +372,17 @@ export default function SaleWizard() {
                 // an item from stock: its whole name on its own line, then how many and the price
                 <div className="col-span-3 flex min-w-0 flex-col">
                   <span className="text-base font-extrabold">{x.description}</span>
-                  <span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick('items.inStock')} <span className="num">{x.stock}</span></span>
+                  <span className={`flex flex-wrap items-center gap-1.5 text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick('items.inStock')} <span className="num">{x.stock}</span>
+                    {x.tier && x.tier !== 'retail' ? <Chip text={`acc.tier.${x.tier}`} tone={x.tier === 'promo' ? 'warn' : 'ink'} /> : null}
+                    {x.warranty_days ? <span dir="ltr">· {pick('sale.warrantyDays')} {x.warranty_days}</span> : null}
+                    {x.min_price != null && Number(x.unit_price) > 0 && Number(x.unit_price) < Number(x.min_price) ? <Chip text="acc.belowMin" tone="bad" /> : null}
+                  </span>
                 </div>
               ) : (
                 <BiInput label="counter.itemName" value={x.description} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, description: e.target.value } : y)))} />
               )}
-              <BiInput label="purchase.qty" type="number" inputMode="numeric" min={1} max={x.stock} error={x.stock !== undefined && Number(x.qty) > x.stock ? 'items.tooMany' : null} value={x.qty} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, qty: e.target.value } : y)))} />
-              <BiInput label="sale.unitPrice" type="number" inputMode="numeric" min={0} value={x.unit_price} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, unit_price: e.target.value } : y)))} />
+              <BiInput label="purchase.qty" type="number" inputMode="numeric" min={1} max={negativeOk ? undefined : x.stock} error={x.stock !== undefined && !negativeOk && Number(x.qty) > x.stock ? 'items.tooMany' : null} value={x.qty} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, qty: e.target.value } : y)))} />
+              <BiInput label="sale.unitPrice" type="number" inputMode="numeric" min={0} value={x.unit_price} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, unit_price: e.target.value, auto: false } : y)))} />
               <button type="button" aria-label={pick('crud.delete')} onClick={() => setMisc(misc.filter((y) => y.key !== x.key))} className="tap mb-2 inline-flex h-9 shrink-0 items-center gap-1 rounded-xl px-2 text-payable">
                 <Trash2 size={16} />
               <BtnText k={'crud.delete'} /></button>
@@ -520,12 +551,8 @@ export default function SaleWizard() {
         {pickingItem ? (
           <StockItemPicker
             mode="sell"
-            onPick={(it) => {
-              setMisc((ms) => {
-                const same = ms.find((m) => m.accessory_id === it.id)
-                if (same) return ms.map((m) => (m === same ? { ...m, qty: String(Math.min(Number(m.qty || 0) + 1, it.qty)) } : m))
-                return [...ms, { key: uid(), description: ur && it.name_ur ? it.name_ur : it.name, qty: '1', unit_price: String(Number(it.price) || ''), accessory_id: it.id, stock: it.qty }]
-              })
+            onPick={async (it) => {
+              await addItem(it)
               setPickingItem(false)
               setStep(1)
             }}

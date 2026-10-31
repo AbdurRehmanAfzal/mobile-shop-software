@@ -17,6 +17,7 @@ from app.core.errors import AppError, ValidationFailed
 from app.core.permissions import Cap
 from app.core.pk import is_valid_imei, latin_digits, normalise_cnic, normalise_phone
 from app.modules.accessories.models import CATEGORIES, Accessory
+from app.modules.accessories.stock import GRADES
 from app.modules.audit.service import record_audit
 from app.modules.bulk.models import BulkImport
 from app.modules.bulk.parse import cell_date, cell_int, cell_money, cell_text
@@ -512,6 +513,10 @@ def _check_items(db, ctx, rows, lang, opts: Options) -> list[RowResult]:
         cost = f.money("cost", required=True)
         price = f.money("price", required=True)
         reorder = f.int("reorder")
+        grade = norm(f.text("grade")).replace(" ", "_").replace("-", "_") or None
+        if grade and grade not in GRADES:
+            res.warn(msg("unknown_category", lang, v=grade))
+            grade = None
         res.action = "create"
         res.plan = {
             "name": name,
@@ -521,6 +526,14 @@ def _check_items(db, ctx, rows, lang, opts: Options) -> list[RowResult]:
             "cost": cost or Decimal(0),
             "price": price or Decimal(0),
             "reorder": 5 if reorder is None else reorder,
+            "brand": f.text("brand") or None,
+            "grade": grade,
+            "color": f.text("color") or None,
+            "compatible": f.text("compatible") or None,
+            "wholesale_price": f.money("wholesale_price"),
+            "min_price": f.money("min_price"),
+            "warranty_days": f.int("warranty_days"),
+            "location": f.text("location") or None,
         }
     return out
 
@@ -962,6 +975,14 @@ def _write_items(db, ctx, todo, lang, opts, created) -> None:
                     reorder_level=r.plan["reorder"],
                     opening_qty=r.plan["qty"],
                     opening_cost=r.plan["cost"],
+                    brand=r.plan.get("brand"),
+                    grade=r.plan.get("grade"),
+                    color=r.plan.get("color"),
+                    compatible=r.plan.get("compatible"),
+                    wholesale_price=r.plan.get("wholesale_price"),
+                    min_price=r.plan.get("min_price"),
+                    warranty_days=r.plan.get("warranty_days"),
+                    location=r.plan.get("location"),
                 ),
             )
             created["items"] = created.get("items", 0) + 1
@@ -1118,7 +1139,13 @@ def export_rows(db: Session, ctx, kind: str, lang: str | None) -> list[list]:
             .order_by(Accessory.name)
         ).all()
         return [
-            [a.name, a.category, a.sku, a.qty, _num(a.avg_cost), _num(a.price), a.reorder_level]
+            [
+                a.name, a.category, a.sku, a.qty, _num(a.avg_cost), _num(a.price), a.reorder_level,
+                a.brand, None if a.grade == "unspecified" else a.grade, a.color, a.compatible,
+                _num(a.wholesale_price) if a.wholesale_price is not None else None,
+                _num(a.min_price) if a.min_price is not None else None,
+                a.warranty_days or None, a.location,
+            ]
             for a in rows
         ]
     if kind == "sales":

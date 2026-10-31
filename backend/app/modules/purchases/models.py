@@ -48,6 +48,10 @@ class Purchase(UUIDPk, ShopScoped, Timestamped, Base):
     )
     date: Mapped[date] = mapped_column(Date, nullable=False)
     due_date: Mapped[dt.date | None] = mapped_column(Date)  # when we promised to pay the supplier
+    # owner addendum 5: the supplier's own bill number, freight / loading spread over the lines
+    supplier_invoice_no: Mapped[str | None] = mapped_column(String(40))
+    extra_costs: Mapped[Decimal] = mapped_column(default=ZERO, server_default="0", nullable=False)
+    extra_costs_note: Mapped[str | None] = mapped_column(String(120))
     # when the phone was actually bought (shopkeeper may enter it later); null on old rows
     purchased_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
     subtotal: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
@@ -98,6 +102,11 @@ class PurchaseLine(UUIDPk, Base):
     net_cost: Mapped[Decimal] = mapped_column(
         default=ZERO, nullable=False
     )  # qty*unit_cost - discount_share
+    # owner addendum 5: bought in dozens / boxes (qty stays pieces), freight share, lot reference
+    pack_unit: Mapped[str | None] = mapped_column(String(12))
+    pack_qty: Mapped[int | None] = mapped_column(Integer)
+    extra_cost_share: Mapped[Decimal] = mapped_column(default=ZERO, server_default="0", nullable=False)
+    batch_ref: Mapped[str | None] = mapped_column(String(40))
     returned_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
 
     purchase: Mapped[Purchase] = relationship(back_populates="lines")

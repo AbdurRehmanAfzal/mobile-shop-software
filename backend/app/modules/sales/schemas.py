@@ -32,6 +32,8 @@ class MiscSaleLineIn(BaseModel):
     qty: int = Field(default=1, ge=1, le=10000)
     unit_price: Decimal = Field(ge=0)
     cost: Decimal = Field(default=Decimal(0), ge=0)
+    # owner addendum 5: the item's warranty (days) can be shortened / extended on the line
+    warranty_days: int | None = Field(default=None, ge=0, le=3660)
 
 
 class SaleCreate(BaseModel):

@@ -26,7 +26,12 @@ interface Misc {
   unit_cost: string
   /** an accessory / watch from the shop's counted stock: its count goes up */
   accessory_id?: string
+  /** owner addendum 5: bought by the dozen / box; `units` = pieces per unit for this item */
+  unit?: string
+  units?: Record<string, number>
 }
+const UNITS = ['piece', 'dozen', 'box', 'carton']
+const per = (x: Misc) => (x.units ?? { piece: 1 })[x.unit ?? 'piece'] ?? 1
 
 export default function PurchaseWizard() {
   const nav = useNavigate()
@@ -52,13 +57,17 @@ export default function PurchaseWizard() {
   const [more, setMore] = useDraft('purchase.more', false)
   const [skipCheck, setSkipCheck] = useDraft('purchase.skipCheck', false)
   const [reference, setReference] = useDraft('purchase.reference', '')
+  const [supplierBill, setSupplierBill] = useDraft('purchase.supplierBill', '')
+  const [extraCosts, setExtraCosts] = useDraft('purchase.extraCosts', '')
+  const [extraNote, setExtraNote] = useDraft('purchase.extraNote', '')
+  const [itemLabels, setItemLabels] = useState(false)
   const [earlier, setEarlier] = useDraft('purchase.earlier', false)
   const [when, setWhen] = useDraft('purchase.when', localNow())
   const [result, setResult] = useState<Purchase | null>(null)
   const m = useDocMutation<Record<string, unknown>, Purchase>('POST', () => '/api/v1/purchases', undefined, { kind: 'purchase', label: (b) => `${pick('counter.addStock')} · Rs. ${Number((b as { paid?: number }).paid ?? 0).toLocaleString('en-US')}` })
 
   const subtotal = devices.reduce((s, d) => s + Number(d.cost || 0), 0) + misc.reduce((s, x) => s + Number(x.qty || 0) * Number(x.unit_cost || 0), 0)
-  const total = Math.max(0, subtotal - Number(discount || 0))
+  const total = Math.max(0, subtotal - Number(discount || 0)) + Number(extraCosts || 0)
   const udhaar = pay.method === 'udhaar'
   const paid = udhaar ? Math.min(Number(paidNow || 0), total) : total
   const chip = (on: boolean) => `tap flex min-h-[68px] flex-col items-center justify-center gap-1 rounded-2xl border-2 px-2 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('md') : 'text-[15px]'}`
@@ -69,8 +78,11 @@ export default function PurchaseWizard() {
       kind,
       party_id: party!.id,
       devices: devices.map(draftToApi),
-      misc: misc.filter((x) => x.description).map((x) => ({ description: x.description, qty: Number(x.qty || 1), unit_cost: Number(x.unit_cost || 0), accessory_id: x.accessory_id })),
+      misc: misc.filter((x) => x.description).map((x) => ({ description: x.description, qty: Number(x.qty || 1), unit_cost: Number(x.unit_cost || 0), accessory_id: x.accessory_id, unit: x.unit ?? 'piece' })),
       discount: Number(discount || 0),
+      supplier_invoice_no: kind === 'supplier' && supplierBill ? supplierBill : undefined,
+      extra_costs: Number(extraCosts || 0),
+      extra_costs_note: extraNote || undefined,
       paid,
       payment: payInfo(pay),
       reference: reference || undefined,
@@ -160,7 +172,16 @@ export default function PurchaseWizard() {
               {misc.map((x) => (
                 <div key={x.key} className={`card grid items-end gap-2 ${x.accessory_id ? 'grid-cols-[1fr_1fr_auto]' : 'grid-cols-[1fr_64px_96px_auto]'}`}>
                   {x.accessory_id ? (
-                    <span className="col-span-3 text-base font-extrabold">{x.description}</span>
+                    <div className="col-span-3 flex min-w-0 flex-col gap-1.5">
+                      <span className="text-base font-extrabold">{x.description}</span>
+                      {/* dozen / box / carton: the count is kept in pieces, the cost typed is per unit */}
+                      <div className="flex flex-wrap gap-1" data-testid="unit-chips">
+                        {UNITS.filter((u) => u === 'piece' || (x.units ?? {})[u]).map((u) => (
+                          <button key={u} type="button" aria-pressed={(x.unit ?? 'piece') === u} onClick={() => setMisc(misc.map((y) => (y.key === x.key ? { ...y, unit: u } : y)))} className={`tap h-8 rounded-full border-2 px-2.5 text-[12px] font-bold ${(x.unit ?? 'piece') === u ? 'border-ink bg-ink text-ground' : 'border-line bg-surface'}`}>{pick(`acc.units.${u}`)}{u !== 'piece' ? <span className="num" dir="ltr"> ×{(x.units ?? {})[u]}</span> : null}</button>
+                        ))}
+                      </div>
+                      {per(x) > 1 ? <span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`} dir="ltr">= {Number(x.qty || 0) * per(x)} {pick('purchase.pieces')}{Number(x.unit_cost) > 0 ? ` · Rs. ${(Number(x.unit_cost) / per(x)).toLocaleString('en-US', { maximumFractionDigits: 2 })} ${pick('purchase.perPiece')}` : ''}</span> : null}
+                    </div>
                   ) : (
                     <BiInput label="purchase.miscDesc" value={x.description} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, description: e.target.value } : y)))} />
                   )}
@@ -207,6 +228,13 @@ export default function PurchaseWizard() {
                 <>
                   <BiInput label="common.discount" type="number" inputMode="numeric" min={0} value={discount} onChange={(e) => setDiscount(e.target.value)} />
                   {kind === 'supplier' ? <BiInput label="purchase.reference" value={reference} onChange={(e) => setReference(e.target.value)} /> : null}
+                  {kind === 'supplier' ? <BiInput label="purchase.supplierInvoice" value={supplierBill} onChange={(e) => setSupplierBill(e.target.value)} dir="ltr" maxLength={40} /> : null}
+                  {kind === 'supplier' ? (
+                    <div className="grid grid-cols-2 gap-2">
+                      <BiInput label="purchase.extraCosts" type="number" inputMode="numeric" min={0} value={extraCosts} onChange={(e) => setExtraCosts(e.target.value)} className="num" hint="purchase.extraHint" />
+                      <BiInput label="purchase.extraNote" value={extraNote} onChange={(e) => setExtraNote(e.target.value)} maxLength={120} />
+                    </div>
+                  ) : null}
                 </>
               ) : (
                 <div><IconChip icon={<SlidersHorizontal size={18} />} text="counter.moreBuyOptions" onClick={() => setMore(true)} /></div>
@@ -276,6 +304,8 @@ export default function PurchaseWizard() {
           })}
           {result.lines.some((l) => l.device_id) ? <BiButton text="label.forThese" icon={<Tag size={22} />} full onClick={() => setLabels(true)} /> : null}
           <LabelSheet kind="devices" ids={result.lines.filter((l) => l.device_id).map((l) => l.device_id!)} open={labels} onClose={() => setLabels(false)} />
+          {result.lines.some((l) => l.accessory_id) ? <BiButton text="purchase.itemLabels" icon={<Tag size={22} />} full variant="secondary" onClick={() => setItemLabels(true)} /> : null}
+          <LabelSheet kind="items" ids={[...new Set(result.lines.filter((l) => l.accessory_id).map((l) => l.accessory_id!))]} open={itemLabels} onClose={() => setItemLabels(false)} />
           <BiButton text="nav.stock" icon={<Smartphone size={22} />} full variant="secondary" onClick={() => nav('/stock')} />
         </div>
       ) : null}
@@ -285,7 +315,7 @@ export default function PurchaseWizard() {
           <StockItemPicker
             mode="buy"
             onPick={(it) => {
-              setMisc((ms) => [...ms, { key: uid(), description: it.name, qty: '1', unit_cost: it.avg_cost && Number(it.avg_cost) ? String(Number(it.avg_cost)) : '', accessory_id: it.id }])
+              setMisc((ms) => [...ms, { key: uid(), description: it.name, qty: '1', unit_cost: it.avg_cost && Number(it.avg_cost) ? String(Number(it.avg_cost)) : '', accessory_id: it.id, unit: 'piece', units: it.units && Object.keys(it.units).length ? it.units : { piece: 1, dozen: 12, box: 10, carton: 120, ...(it.pack_units ?? {}) } }])
               setPickingItem(false)
             }}
           />

@@ -27,7 +27,11 @@ class MiscLineIn(BaseModel):
     description: str = Field(min_length=1, max_length=200)
     accessory_id: uuid.UUID | None = None
     qty: int = Field(default=1, ge=1, le=10000)
-    unit_cost: Decimal = Field(ge=0)
+    unit_cost: Decimal = Field(ge=0, description="cost per `unit` as typed (per dozen when unit=dozen)")
+    # owner addendum 5: bought in dozens / boxes; stock is always kept in pieces
+    unit: str = Field(default="piece", max_length=12)
+    batch_ref: str | None = Field(default=None, max_length=40)
+    print_labels: int = Field(default=0, ge=0, le=500)
 
 
 class PurchaseCreate(BaseModel):
@@ -40,6 +44,10 @@ class PurchaseCreate(BaseModel):
     devices: list[DeviceLineIn] = Field(default_factory=list)
     misc: list[MiscLineIn] = Field(default_factory=list)
     discount: Decimal = Field(default=Decimal(0), ge=0)
+    # owner addendum 5: the supplier's bill number; freight / loading, spread over the lines
+    supplier_invoice_no: str | None = Field(default=None, max_length=40)
+    extra_costs: Decimal = Field(default=Decimal(0), ge=0)
+    extra_costs_note: str | None = Field(default=None, max_length=120)
     paid: Decimal = Field(default=Decimal(0), ge=0)
     cash_account_id: uuid.UUID | None = None
     payment: PaymentInfo | None = None  # how the money paid now was paid
@@ -72,6 +80,10 @@ class LineOut(BaseModel):
     discount_share: Decimal
     net_cost: Decimal
     returned_at: dt.datetime | None = None
+    pack_unit: str | None = None
+    pack_qty: int | None = None
+    extra_cost_share: Decimal = Decimal(0)
+    batch_ref: str | None = None
 
 
 class PurchaseOut(BaseModel):
@@ -89,6 +101,9 @@ class PurchaseOut(BaseModel):
     purchased_at: dt.datetime | None = None
     subtotal: Decimal
     discount: Decimal
+    supplier_invoice_no: str | None = None
+    extra_costs: Decimal = Decimal(0)
+    extra_costs_note: str | None = None
     total: Decimal
     paid: Decimal
     returned_total: Decimal
