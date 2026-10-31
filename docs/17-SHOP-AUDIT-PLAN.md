@@ -4,8 +4,8 @@ Authoritative requirements: `docs/16-SHOP-AUDIT-SPEC.md` (owner brief, 2026-10-3
 This file is the living plan: gap analysis, design, phases, tasks, acceptance criteria and the
 progress checklist. Update it at the end of every session (with `06-PROGRESS.md` and `09-SESSION-LOG.md`).
 
-**Current phase: 6 (Inventory intelligence) — P1–P5 done 2026-10-30/31.**
-**Exact next task: P6-1 `/shop-audit/inventory?as_of` (counts by condition × PTA × verification × category × brand, cost / expected / margin, most expensive), then P6-2 ageing bands + `shops.audit_prefs` + alerts, P6-3 `/verification`, P6-5 `InventoryAuditPage`.**
+**Current phase: 9 (Charts & drill-down) — P1–P8 done 2026-10-30/31.**
+**Exact next task: P9-1 finish `components/charts/` (Donut, Lines, StackedBars beside `Bars`), P9-2 wire donuts (payment channels, categories, verification) and lines (receivable / payable trend, revenue vs profit) on Overview / Finance / Stock / Udhaar, drill-down from every segment; P9-3 `StockPage` reads `?condition&pta_status&category&verification` for the audit links.**
 
 ---
 
@@ -186,24 +186,24 @@ Prefix `/api/v1/audit` is taken by the audit log → new prefix **`/api/v1/shop-
 - [x] P5-4 Frontend `PartiesAuditPage` (`/audit/people`: metric chips, total card, ranked rows with share bars → party page), `UdhaarAuditPage` (`/audit/udhaar`: both sides, movement, age bars, people lists, phones list), `PartyJourney` card on `PartyDetailPage` (owner / manager, as-of date, timeline). Strings `audit.rank/metric/udhaar/journey.*`.
 - [x] Tests `test_shopaudit_parties.py` (3: Ahmed / Bilal / Dealer journey incl. as-of 20 days ago and the refunded return; 8 rankings + this-month + bad metric 422; udhaar sides, movement, bands, phones, period inside, as-of), e2e `audit-parties.spec.ts`.
 
-### Phase 6 — Inventory intelligence
-- [ ] P6-1 `/inventory?as_of` (counts by condition × PTA × verification × category × brand, cost/expected/margin, status counts, most expensive lists).
-- [ ] P6-2 `/inventory/ageing` with `audit_prefs` bands + alerts (age, high-value slow, low margin, missing cost, missing verification, repeat returns); settings card for thresholds.
-- [ ] P6-3 `/verification` (status counts, bypass rows, unusual flag = employee bypass share > threshold).
-- [ ] P6-4 `/snapshot?as_of` stock part (from events) with coverage notes.
-- [ ] P6-5 Frontend `InventoryAuditPage` (summary tiles, filters, table → device, ageing stacked bars, verification donut + bypass list).
-- [ ] Tests: categories not mutually exclusive; as-of stock after sale/return; band edges; bypass counted per employee.
+### Phase 6 — Inventory intelligence ✅ 2026-10-31
+- [x] P6-1 `/inventory?as_of` — `shopaudit/inventory.py` `summary`: stock now or on a day (events walk), count, cost / asking / expected margin (+%), unpriced / no-cost counts, by condition · PTA · verification · category · brand (each phone once per dimension), status counts, most expensive by cost / asking, highest and thinnest margin, the thresholds in use.
+- [x] P6-2 `/inventory/ageing` — per-unit rows (supplier from the purchase, intake day, calendar days in stock, band, cost, asking, margin %), band totals, alerts (dead stock, high-value slow, thin margin, missing cost / asking, ID check pending / flagged, came back ≥ 2×) with counts; `shops.audit_prefs` (migration `b3c5d7e9f1a2`, `shopaudit/prefs.py` defaults + validator, `ShopUpdate.audit_prefs`); Settings card "Stock audit thresholds". `days_in_stock` now counts shop calendar days (was 24-hour spans).
+- [x] P6-3 `/verification` — in-stock and all-time status counts, checks saved in the period, every bypass (who, when, phone, supplier, reason, what it was), per-employee bypasses / flagged bypasses / intakes / share with the `unusual` flag from the thresholds.
+- [~] P6-4 `/snapshot?as_of` — covered by `/overview` (money, debt, stock as-of) + `/inventory?as_of`; no separate endpoint needed.
+- [x] P6-5 Frontend `InventoryAuditPage` at `/audit/stock` (Stock · Age of stock · ID checks): KPIs, dimension cards → stock list, brand bars, status counts, top lists → phone; band bars with tap filter, alerts, per-unit rows; verification KPIs, per-employee card with the unusual badge, bypass rows. Strings `audit.inv/band/alert/prefs.*`.
+- [x] Tests `test_shopaudit_inventory.py` (3: dimensions / values / as-of; bands follow the thresholds, alerts, invalid prefs 422; bypasses per employee incl. unusual after three skips, salesman 403), e2e `audit-stock.spec.ts`.
 
-### Phase 7 — Sales & product analytics + invoice audit
-- [ ] P7-1 `/products` (model/brand/category rows with the 8 metrics; performance class with thresholds; series; purchases vs sales).
-- [ ] P7-2 `/invoices` audit counts.
-- [ ] P7-3 Frontend `ProductsPage`, `InvoiceAuditPage` (chart tap → `InvoicesPage` filtered).
-- [ ] Tests: margin %, avg holding days, returns count; class thresholds applied.
+### Phase 7 — Sales & product analytics + invoice audit ✅ 2026-10-31
+- [x] P7-1 `/products?group=model|brand|category` — `shopaudit/products.py`: from the bill lines (phones by model, other items by name): units, share, revenue, cost, profit, margin %, average price, average days from intake to sale, returns (apart), stock left of the model; performance class `low` (units ≤ `low_units`) → `top` (share ≥ `top_share`) → `average`, thresholds returned; day / week / month series of sold units / revenue / profit next to bought units / cost.
+- [x] P7-2 `/invoices` — documents of the period by kind (sales, purchases, payments in / out, returns both ways, with voided counts), sale bills by status with what is due, per employee (sales, amount, purchases, payments, voids), the voided list with who and why.
+- [x] P7-3 Frontend `ProductsPage` (`/audit/products`: group chips, KPIs, sold vs bought bars, class filter with the thresholds spelled out, rows with share bars → stock / accessories) and `InvoiceAuditPage` (`/audit/bills`: kind tiles → invoices list with period, status, employees, voided list → document). Strings `audit.prod/doc.*`.
+- [x] Tests `test_shopaudit_products.py` (2: model / brand / type roll-ups, metrics, classes and their change with the thresholds, series incl. bought units, 422 on a bad group, salesman 403; invoice audit by kind / status / employee / voided), e2e `audit-products.spec.ts`.
 
-### Phase 8 — Owner security audit
-- [ ] P8-1 `/security` feed (sources: `price_changes`, invoices with discount / below cost / below asking, `audit_log` void/reverse/adjust/opening_balance/override/delete, payment voids, PIN approvals and failures) with per-employee flags.
-- [ ] P8-2 Frontend `SecurityPage` (owner-only, filters by employee/kind, each row opens the document).
-- [ ] Tests: salesman cannot call it; manager cannot; every event kind appears once.
+### Phase 8 — Owner security audit ✅ 2026-10-31
+- [x] P8-1 `/security` — `shopaudit/security.py`: one feed from the ADR-031 price-change report (asking changed, sold under asking with the PIN approver), the bills (discounts, sales under cost), the audit log (voids, reversals, stock adjustments, opening balances, skipped ID checks, deletes, admin actions, money moved) and the new `approval/pin_wrong` audit row written by `sales/approval.require` on a wrong owner PIN; each row: who, when, label, before → after, amount, reason, approver, link to the record; counts per kind; per-employee counts with flags at documented thresholds (void ≥ 3, under asking ≥ 3, under cost ≥ 2, discount ≥ 5, wrong PIN ≥ 3, asking changed ≥ 5, bypass ≥ `audit_prefs.bypass_min`); filters `kind`, `user_id`. **Owner only** (manager and salesman 403).
+- [x] P8-2 Frontend `SecurityPage` at `/audit/security` (section chip only for the owner): kind chips with counts, per-employee card with flags and the thresholds, rows → device / bill / person; strings `audit.sec.*`.
+- [x] Tests `test_shopaudit_security.py` (every kind once with its values; filters; three wrong PINs flag the person; manager / salesman 403), e2e `audit-security.spec.ts`.
 
 ### Phase 9 — Interactive dashboard
 - [ ] P9-1 `components/charts/` (Bars, StackedBars, Lines, Donut, Kpi) with tokens, RTL, empty state, tap callback; vitest for scales.
@@ -259,9 +259,9 @@ Prefix `/api/v1/audit` is taken by the audit log → new prefix **`/api/v1/shop-
 - [x] P3 periods & overview — 2026-10-31
 - [x] P4 financial — 2026-10-31
 - [x] P5 parties — 2026-10-31
-- [ ] P6 inventory
-- [ ] P7 products & invoices
-- [ ] P8 security
+- [x] P6 inventory — 2026-10-31
+- [x] P7 products & invoices — 2026-10-31
+- [x] P8 security — 2026-10-31
 - [ ] P9 dashboard
 - [ ] P10 report center
 - [ ] P11 validation

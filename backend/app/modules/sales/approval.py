@@ -17,6 +17,7 @@ from app.core.errors import AppError
 from app.core.permissions import Cap
 from app.core.ratelimit import FailureLimiter
 from app.core.security import verify_password
+from app.modules.audit.service import record_audit
 from app.modules.auth.models import Shop, User
 
 RULES = ("allow", "manager", "pin")
@@ -88,4 +89,14 @@ def require(db: Session, shop: Shop, ctx, key: str, pin: str | None) -> uuid.UUI
             pin_limiter.reset(key_)
             return owner.id
     pin_limiter.fail(key_)
+    record_audit(
+        db,
+        shop_id=shop.id,
+        user_id=ctx.id,
+        entity="approval",
+        entity_id=None,
+        action="pin_wrong",
+        after={"for": key},
+    )
+    db.commit()
     raise PinWrong()

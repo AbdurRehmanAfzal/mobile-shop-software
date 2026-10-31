@@ -8,11 +8,20 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
-from app.core.errors import ValidationFailed
+from app.core.errors import Forbidden, ValidationFailed
 from app.core.periods import PRESETS, Period, resolve
-from app.core.permissions import Cap
+from app.core.permissions import Cap, Role
 from app.core.tenancy import DB, Ctx, require_cap
-from app.modules.shopaudit import finance, parties, reconcile, service
+from app.modules.auth.models import Shop
+from app.modules.shopaudit import (
+    finance,
+    inventory,
+    parties,
+    products,
+    reconcile,
+    security,
+    service,
+)
 
 router = APIRouter(prefix="/api/v1/shop-audit", tags=["shop-audit"])
 Reports = Annotated[Ctx, Depends(require_cap(Cap.REPORTS_ALL))]
@@ -238,4 +247,103 @@ def udhaar(
     p = _p(db, ctx, preset, date_from, date_to, as_of)
     return plain(
         parties.udhaar(db, ctx.shop_id, p, can_cost=ctx.can(Cap.VIEW_COST), limit=min(limit, 100))
+    )
+
+
+# ---- P6: inventory intelligence -----------------------------------------------------------------
+
+
+def _shop(db, ctx) -> Shop:
+    return db.get(Shop, ctx.shop_id)
+
+
+@router.get("/inventory")
+def inventory_(ctx: Reports, db: DB, as_of: dt.date | None = None):
+    """What is in stock now (or on a day): every dimension, values, most expensive, status counts."""
+    return plain(
+        inventory.summary(db, ctx.shop_id, _shop(db, ctx), as_of, can_cost=ctx.can(Cap.VIEW_COST))
+    )
+
+
+@router.get("/inventory/ageing")
+def ageing(ctx: Reports, db: DB):
+    """Every phone in stock with its age in the shop's bands, supplier, cost, asking, margin; alerts."""
+    return plain(inventory.ageing(db, ctx.shop_id, _shop(db, ctx), can_cost=ctx.can(Cap.VIEW_COST)))
+
+
+@router.get("/verification")
+def verification_(
+    ctx: Reports,
+    db: DB,
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+):
+    """ID checks: status counts, checks done in the period, every bypass with who skipped it."""
+    p = _p(db, ctx, preset, date_from, date_to)
+    return plain(inventory.verification(db, ctx.shop_id, _shop(db, ctx), p))
+
+
+# ---- P7: products & invoice audit ---------------------------------------------------------------
+
+Group = Annotated[str, Query(pattern="^(model|brand|category)$")]
+
+
+@router.get("/products")
+def products_(
+    ctx: Reports,
+    db: DB,
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+    group: Group = "model",
+):
+    """What sold: per model / brand / type — units, revenue, cost, profit, margin, average price,
+    holding days, returns, stock left — with the performance class and its thresholds."""
+    p = _p(db, ctx, preset, date_from, date_to)
+    return plain(
+        products.products(
+            db, ctx.shop_id, _shop(db, ctx), p, can_cost=ctx.can(Cap.VIEW_COST), group=group
+        )
+    )
+
+
+@router.get("/invoices")
+def invoices_(
+    ctx: Reports,
+    db: DB,
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+):
+    """Documents in the period by kind, status and employee; everything that was voided."""
+    p = _p(db, ctx, preset, date_from, date_to)
+    return plain(products.invoices(db, ctx.shop_id, p, can_cost=ctx.can(Cap.VIEW_COST)))
+
+
+# ---- P8: owner security feed ---------------------------------------------------------------------
+
+Kind = Annotated[str | None, Query(pattern="^(" + "|".join(security.KINDS) + ")$")]
+
+
+@router.get("/security")
+def security_(
+    ctx: Reports,
+    db: DB,
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+    kind: Kind = None,
+    user_id: uuid.UUID | None = None,
+    limit: int = 200,
+):
+    """Owner only: price changes, sales under asking / cost, discounts, voids, reversals, stock
+    adjustments, opening balances, skipped ID checks, wrong PINs, admin actions — who, when, why."""
+    if ctx.role != Role.OWNER:
+        raise Forbidden()
+    p = _p(db, ctx, preset, date_from, date_to)
+    return plain(
+        security.feed(
+            db, ctx.shop_id, _shop(db, ctx), p, kind=kind, user_id=user_id, limit=min(limit, 500)
+        )
     )

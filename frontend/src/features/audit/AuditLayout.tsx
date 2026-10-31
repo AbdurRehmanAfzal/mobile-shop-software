@@ -5,17 +5,22 @@ import { CalendarRange } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
+import { useAuth } from '@/lib/auth'
 import Help from '@/components/Help'
 import { PageHeader, fmtDate } from '@/components/ui'
 import { isoDay } from '@/lib/format'
 import { useGet } from '@/lib/queries'
 import { PRESETS, useAuditPeriod, type Preset } from './period'
 
-export const AUDIT_SECTIONS: { to: string; key: string }[] = [
+export const AUDIT_SECTIONS: { to: string; key: string; owner?: boolean }[] = [
   { to: '/audit', key: 'audit.nav.overview' },
   { to: '/audit/finance', key: 'audit.nav.finance' },
   { to: '/audit/people', key: 'audit.nav.people' },
   { to: '/audit/udhaar', key: 'audit.nav.udhaar' },
+  { to: '/audit/stock', key: 'audit.nav.stock' },
+  { to: '/audit/products', key: 'audit.nav.products' },
+  { to: '/audit/bills', key: 'audit.nav.bills' },
+  { to: '/audit/security', key: 'audit.nav.security', owner: true },
 ]
 
 interface ResolvedPeriod { preset: string; date_from: string; date_to: string; as_of: string; prev_from: string; prev_to: string; days: number }
@@ -23,6 +28,8 @@ interface ResolvedPeriod { preset: string; date_from: string; date_to: string; a
 export default function AuditLayout({ children, right }: { children: ReactNode; right?: ReactNode }) {
   const { pick, ur, cls } = useLang()
   const { pathname } = useLocation()
+  const role = useAuth((s) => s.me?.user.role)
+  const sections = AUDIT_SECTIONS.filter((s) => !s.owner || role === 'owner')
   const { period, set, query } = useAuditPeriod()
   const { data: resolved } = useGet<ResolvedPeriod>(['audit-period', query], `/api/v1/shop-audit/period?${query}`)
   const [asOfOpen, setAsOfOpen] = useState(!!period.asOf)
@@ -31,9 +38,9 @@ export default function AuditLayout({ children, right }: { children: ReactNode; 
   return (
     <div className="flex flex-col gap-3">
       <PageHeader title="audit.title" right={right} help={<Help term="audit" />} />
-      {AUDIT_SECTIONS.length > 1 ? (
+      {sections.length > 1 ? (
         <div className="flex gap-1.5 overflow-x-auto pb-1">
-          {AUDIT_SECTIONS.map((s) => (
+          {sections.map((s) => (
             <Link key={s.to} to={`${s.to}?${new URLSearchParams(window.location.search).toString()}`} aria-current={pathname === s.to ? 'page' : undefined} className={chip(pathname === s.to)}>
               {pick(s.key)}
             </Link>
