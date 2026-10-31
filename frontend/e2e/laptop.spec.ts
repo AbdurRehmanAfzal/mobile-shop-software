@@ -24,11 +24,11 @@ test('laptop: side menu, two-column home, side-by-side sale, F-keys', async ({ p
   await expect(aside.getByRole('link', { name: /Sell/ })).toBeVisible()
   await expect(aside.getByText('F2')).toBeVisible()
   await expect(page.locator('nav.fixed')).toBeHidden()
-  // home: hisaab card and the khata cards sit side by side (same row)
-  const hisaab = page.getByText('Sales', { exact: true }).first()
-  const toGet = page.getByText('I will get', { exact: true }).first()
-  const [hb, kb] = [await hisaab.boundingBox(), await toGet.boundingBox()]
-  expect(hb && kb && Math.abs(hb.y - kb.y) < 200 && kb.x > hb.x + 200).toBeTruthy()
+  // home: the at-a-glance tiles run four to a row on a laptop (sales ... cash & bank on one line)
+  const sales = page.getByText('Sales', { exact: true }).first()
+  const cash = page.getByText('Cash & bank', { exact: true }).first()
+  const [hb, kb] = [await sales.boundingBox(), await cash.boundingBox()]
+  expect(hb && kb && Math.abs(hb.y - kb.y) < 40 && kb.x > hb.x + 200).toBeTruthy()
   await page.screenshot({ path: 'test-results/laptop-home.png', fullPage: true })
 
   // a phone in stock

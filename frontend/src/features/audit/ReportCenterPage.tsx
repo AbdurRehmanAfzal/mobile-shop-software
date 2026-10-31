@@ -60,7 +60,7 @@ export default function ReportCenterPage() {
         <div className="flex items-center gap-2"><FileText size={18} /><BiLabel text="audit.rep.full" size="md" bold /></div>
         <BiLabel text="audit.rep.fullHint" size="sm" tone="text-muted" />
         <div className="flex flex-wrap gap-1.5">
-          {shown.map((s) => <button key={s} type="button" aria-pressed={picked.includes(s)} onClick={() => toggle(s)} className={`tap h-9 rounded-full border px-3 font-bold ${picked.includes(s) ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-xs'}`}>{pick(`audit.rep.s.${s}`)}</button>)}
+          {shown.map((s) => <button key={s} type="button" aria-pressed={picked.includes(s)} onClick={() => toggle(s)} className={`tap min-h-9 whitespace-nowrap rounded-full border px-3 py-1.5 font-bold leading-tight ${picked.includes(s) ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-xs'}`}>{pick(`audit.rep.s.${s}`)}</button>)}
           <button type="button" onClick={() => setPicked(picked.length === shown.length ? ['summary'] : [...shown])} className={`tap h-9 rounded-full border border-line bg-surface px-3 font-bold text-muted ${ur ? cls('sm') : 'text-xs'}`}>{picked.length === shown.length ? pick('audit.rep.onlySummary') : pick('common.all')}</button>
         </div>
         <BiSegmented<Mode> value={mode} onChange={setMode} options={[{ value: 'summary', text: 'audit.rep.modeSummary' }, { value: 'detail', text: 'audit.rep.modeDetail' }]} />

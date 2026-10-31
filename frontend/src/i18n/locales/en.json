@@ -745,7 +745,9 @@
     "expenses": "Expenses",
     "inStock": "Phones in stock",
     "worth": "Worth (Rs)",
-    "phonesSold": "Phones sold: {{n}}"
+    "phonesSold": "Phones sold: {{n}}",
+    "glance": "At a glance",
+    "moneySplit": "Where the money sits"
   },
   "pin": {
     "title": "Enter your PIN",

@@ -34,8 +34,8 @@ export default function SecurityPage() {
       {isLoading || !data ? (error ? <Empty text="audit.sec.ownerOnly" /> : <Loading />) : (
         <>
           <div className="flex flex-wrap gap-1.5" data-testid="sec-kinds">
-            <button type="button" aria-pressed={!kind} onClick={() => setKind(null)} className={`tap h-9 rounded-full border px-3 font-bold ${!kind ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-xs'}`}>{pick('common.all')} · {data.total}</button>
-            {data.kinds.filter((k) => data.counts[k]).map((k) => <button key={k} type="button" aria-pressed={kind === k} onClick={() => setKind(kind === k ? null : k)} className={`tap h-9 rounded-full border px-3 font-bold ${kind === k ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-xs'}`}>{pick(`audit.sec.k.${k}`)} · {data.counts[k]}</button>)}
+            <button type="button" aria-pressed={!kind} onClick={() => setKind(null)} className={`tap min-h-9 whitespace-nowrap rounded-full border px-3 py-1.5 font-bold leading-tight ${!kind ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-xs'}`}>{pick('common.all')} · {data.total}</button>
+            {data.kinds.filter((k) => data.counts[k]).map((k) => <button key={k} type="button" aria-pressed={kind === k} onClick={() => setKind(kind === k ? null : k)} className={`tap min-h-9 whitespace-nowrap rounded-full border px-3 py-1.5 font-bold leading-tight ${kind === k ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-xs'}`}>{pick(`audit.sec.k.${k}`)} · {data.counts[k]}</button>)}
           </div>
           <section className="card flex flex-col gap-1.5" data-testid="sec-users">
             <div className="flex items-center gap-2"><ShieldAlert size={18} /><BiLabel text="audit.sec.byUser" size="md" bold /></div>

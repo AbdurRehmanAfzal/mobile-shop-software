@@ -61,7 +61,7 @@ test('signup → customer → credit sale → dashboard and balance', async ({ p
 
   // Home answers "how much sold today, how much on udhaar" without any tapping
   await page.goto('/')
-  await expect(page.getByText('Rs. 1,000').first()).toBeVisible()
+  await expect(page.getByTestId('glance')).toContainText('1,000') // at a glance: today's sales
   await expect(page.locator('section').getByText('600', { exact: true }).first()).toBeVisible()
   await page.screenshot({ path: 'test-results/home-after-sale.png', fullPage: true })
 

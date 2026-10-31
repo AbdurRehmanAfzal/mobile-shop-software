@@ -49,7 +49,7 @@ export default function ProductsPage() {
             <Bars data={data.series.map((s) => ({ label: label(s.bucket, data.granularity), value: s.bought_units, key: `b${s.bucket}` }))} tone="rgb(var(--receivable))" height={60} empty="audit.noData" />
           </section>
           <div className="flex flex-wrap items-center gap-1.5">
-            {(['all', 'top', 'average', 'low'] as const).map((c) => <button key={c} type="button" aria-pressed={cls_ === c} onClick={() => setParam('class', c)} className={`tap h-9 rounded-full border px-3 font-bold ${cls_ === c ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-xs'}`}>{pick(c === 'all' ? 'common.all' : `audit.prod.${c}`)}</button>)}
+            {(['all', 'top', 'average', 'low'] as const).map((c) => <button key={c} type="button" aria-pressed={cls_ === c} onClick={() => setParam('class', c)} className={`tap min-h-9 whitespace-nowrap rounded-full border px-3 py-1.5 font-bold leading-tight ${cls_ === c ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-xs'}`}>{pick(c === 'all' ? 'common.all' : `audit.prod.${c}`)}</button>)}
             <span className={`text-muted ${small}`}>{pick('audit.prod.thresholds').replace('{{top}}', String(data.thresholds.top_share)).replace('{{low}}', String(data.thresholds.low_units))} · <Link to="/more/settings" className="underline">{pick('audit.inv.thresholds')}</Link></span>
           </div>
           {!rows.length ? <Empty text="audit.noData" /> : (

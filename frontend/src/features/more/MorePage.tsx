@@ -1,6 +1,6 @@
 /** "More": everything else, grouped, each icon in its job colour (docs/11 v2). */
 
-import { Bot,
+import { ChevronLeft, ChevronRight, Bot,
   ArrowLeftRight, Archive, BarChart3, Bell, BookOpen, CalendarDays, Check, CreditCard, FileText, HandCoins, Headphones, KeyRound,
   Landmark, Lock, LogOut, Package, PackagePlus, ShieldCheck, Receipt, RotateCcw, ScanLine, Settings, Smartphone, Store, Tag, Tags, Undo2, Users,
   Wallet, Wrench, type LucideIcon,
@@ -97,7 +97,7 @@ const GROUPS: Group[] = [
 
 export default function MorePage() {
   const { i18n } = useTranslation()
-  const { pick } = useLang()
+  const { pick, ur } = useLang()
   const nav = useNavigate()
   const logout = useAuth((s) => s.logout)
   const me = useAuth((s) => s.me)
@@ -155,16 +155,17 @@ export default function MorePage() {
         return (
           <section key={g.title} className="flex flex-col gap-2">
             <BiLabel text={g.title} size="md" bold />
-            <div className="card grid grid-cols-4 gap-1 p-2">
+            <div className={`grid gap-2 ${ur ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-2'}`}>
               {items.map(({ key, Icon, to, action, tone }) => (
                 <button
                   key={key + (to ?? '')}
                   type="button"
                   onClick={() => (action === 'pin' ? setPinOpen(true) : to && nav(to))}
-                  className="tap flex min-h-[96px] flex-col items-center justify-start gap-1.5 rounded-2xl px-1 py-2.5"
+                  className="tap flex min-h-[64px] items-center gap-3 rounded-2xl border border-line bg-surface px-3 py-2.5 text-start shadow-[0_1px_0_rgb(var(--line))] active:translate-y-px active:shadow-none"
                 >
-                  <span className={`well h-12 w-12 ${tone ?? T.plain}`}><Icon size={24} strokeWidth={1.9} /></span>
-                  <BiLabel text={key} size="sm" align="center" />
+                  <span className={`well h-11 w-11 shrink-0 rounded-xl ${tone ?? T.plain}`}><Icon size={22} strokeWidth={1.9} /></span>
+                  <span className="min-w-0 flex-1"><BiLabel text={key} size="md" bold className="leading-tight" /></span>
+                  <span className="shrink-0 text-muted">{ur ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}</span>
                 </button>
               ))}
             </div>

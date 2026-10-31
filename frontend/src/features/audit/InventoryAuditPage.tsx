@@ -99,7 +99,7 @@ export default function InventoryAuditPage() {
           <section className="card" data-testid="age-bands">
             <Bars data={age.bands.map((b, i) => ({ label: bandLabel(b.band, i, age.band_edges), value: b.count, hint: canCost ? `Rs. ${n(b.cost)}` : `Rs. ${n(b.asking)}`, key: b.band }))} tone="rgb(var(--emerald))" onTap={(b) => setBand(band === b.key ? null : (b.key as string))} empty="audit.noData" />
             <div className="mt-2 flex flex-wrap gap-1.5">
-              {age.bands.map((b, i) => <button key={b.band} type="button" aria-pressed={band === b.band} onClick={() => setBand(band === b.band ? null : b.band)} className={`tap h-9 rounded-full border px-3 font-bold ${band === b.band ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-xs'}`}>{bandLabel(b.band, i, age.band_edges)} · {b.count}</button>)}
+              {age.bands.map((b, i) => <button key={b.band} type="button" aria-pressed={band === b.band} onClick={() => setBand(band === b.band ? null : b.band)} className={`tap min-h-9 whitespace-nowrap rounded-full border px-3 py-1.5 font-bold leading-tight ${band === b.band ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-xs'}`}>{bandLabel(b.band, i, age.band_edges)} · {b.count}</button>)}
               <Link to="/more/settings" className={`tap h-9 rounded-full border border-line bg-surface px-3 font-bold leading-9 text-muted ${ur ? cls('sm') : 'text-xs'}`}>{pick('audit.inv.thresholds')}</Link>
             </div>
           </section>
