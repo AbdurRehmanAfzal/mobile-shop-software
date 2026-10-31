@@ -1807,7 +1807,8 @@
       "stock": "Stock",
       "products": "Masnoo'at",
       "bills": "Bill",
-      "security": "Security"
+      "security": "Security",
+      "reports": "Reports"
     },
     "preset": {
       "today": "Aaj",
@@ -2097,6 +2098,57 @@
         "delete": "Hazf",
         "security": "Admin karrawai",
         "transfer": "Paisa muntaqil"
+      }
+    },
+    "chart": {
+      "revenueVsProfit": "Arse mein khalis bikri vs asal munafa",
+      "channelsIn": "Zariye ke lihaz se aamad",
+      "byCondition": "Haalat ke lihaz se stock",
+      "byVerification": "ID check ke lihaz se stock",
+      "moneyByKind": "Account ki qisam ke lihaz se paisa (arse ke aakhir mein)"
+    },
+    "rep": {
+      "full": "Dukaan ki mukammal audit report",
+      "fullHint": "Hisse chunein, khulasa ya tafseel chunein, aur chune hue arse ki ek report lein: print ke liye safha (PDF mehfooz karein) ya har hisse ki alag sheet wali Excel file. Hindse wahi hain jo screen dikhati hai.",
+      "onlySummary": "Sirf khulasa",
+      "modeSummary": "Khulasa",
+      "modeDetail": "Tafseeli",
+      "pdf": "Print / PDF",
+      "xlsx": "Excel",
+      "footer": "Har report apna arsa, balance ka din, currency (PKR) aur jo record nahi hota, batati hai.",
+      "individual": "Alag alag reports",
+      "individualHint": "Har ek PDF, Excel ya CSV mein; arse wali reports upar chune arse par chalti hain.",
+      "forPeriod": "chune hue arse ki",
+      "s": {
+        "summary": "Khulasa",
+        "pnl": "Nafa o nuqsan",
+        "cash": "Naqad aur bank",
+        "expenses": "Kharche",
+        "tax": "Tax",
+        "customers": "Bare gahak",
+        "suppliers": "Bare supplier",
+        "udhaar": "Udhaar",
+        "inventory": "Stock ki maliyat",
+        "ageing": "Stock ki umar",
+        "products": "Masnoo'at ki karkardagi",
+        "invoices": "Billon ke adaad",
+        "verification": "ID check",
+        "checks": "Hisaab ki partaal",
+        "security": "Security"
+      },
+      "i": {
+        "sales": "Bikri",
+        "purchases": "Khareed",
+        "profit": "Nafa o nuqsan",
+        "day": "Hisaab (din / arsa)",
+        "expenses": "Kharche",
+        "top": "Zyada bikne wale",
+        "khata": "Udhaar khata",
+        "parties": "Log",
+        "stock": "Stock ki list",
+        "stockSummary": "Stock ki maliyat",
+        "ageing": "Purana stock",
+        "forecast": "Bikri ka andaza"
       }
     }
   },

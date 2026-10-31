@@ -4,9 +4,10 @@
 
 import { AlertTriangle, ShieldAlert, Smartphone } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import Bars from '@/components/charts/Bars'
+import Donut from '@/components/charts/Donut'
 import { Empty, Loading, fmtDate, fmtDateTime } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
@@ -30,6 +31,7 @@ export default function InventoryAuditPage() {
   const canCost = role === 'owner' || role === 'manager'
   const { period, query } = useAuditPeriod()
   const [sp, setSp] = useSearchParams()
+  const nav = useNavigate()
   const tab = ((['summary', 'ageing', 'verification'] as const).find((t) => t === sp.get('tab')) ?? 'summary') as Tab
   const setTab = (t: Tab) => { const o = new URLSearchParams(sp); o.set('tab', t); setSp(o, { replace: true }) }
   const asOfQ = period.asOf ? `?as_of=${period.asOf}` : ''
@@ -55,6 +57,10 @@ export default function InventoryAuditPage() {
             {canCost ? <Kpi k="audit.atCost" v={`Rs. ${n(sum.cost_value)}`} tone="bg-buy text-buy-fg" /> : null}
             <Kpi k="audit.atAsking" v={`Rs. ${n(sum.asking_value)}`} tone="bg-sell text-sell-fg" />
             {canCost ? <Kpi k="audit.inv.expectedMargin" v={`Rs. ${n(sum.expected_margin)}`} sub={sum.expected_margin_pct != null ? `${sum.expected_margin_pct}%` : undefined} tone="bg-emerald-tint text-emerald-deep" /> : null}
+          </section>
+          <section className="grid gap-2 sm:grid-cols-2" data-testid="inv-donuts">
+            <div className="card"><BiLabel text="audit.chart.byCondition" size="sm" tone="text-muted" bold /><Donut data={sum.by_condition.map((d) => ({ label: dimLabel('condition', d.key), value: d.count, key: d.key }))} onTap={(s) => nav(stockLink('condition', String(s.key)))} empty="audit.noData" unit={pick('audit.phones')} /></div>
+            <div className="card"><BiLabel text="audit.chart.byVerification" size="sm" tone="text-muted" bold /><Donut data={sum.by_verification.map((d) => ({ label: dimLabel('verification', d.key), value: d.count, key: d.key }))} onTap={() => nav('/stock')} empty="audit.noData" unit={pick('audit.phones')} /></div>
           </section>
           <BiLabel text="audit.inv.dimsHint" size="sm" tone="text-muted" />
           <section className="grid gap-2 sm:grid-cols-2" data-testid="inv-dims">

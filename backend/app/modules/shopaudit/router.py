@@ -19,6 +19,7 @@ from app.modules.shopaudit import (
     parties,
     products,
     reconcile,
+    report,
     security,
     service,
 )
@@ -347,3 +348,55 @@ def security_(
             db, ctx.shop_id, _shop(db, ctx), p, kind=kind, user_id=user_id, limit=min(limit, 500)
         )
     )
+
+
+# ---- P10: the complete shop audit report ---------------------------------------------------------
+
+Fmt = Annotated[str, Query(pattern="^(pdf|xlsx|json)$")]
+Mode = Annotated[str, Query(pattern="^(summary|detail)$")]
+
+
+@router.get("/report")
+def report_(
+    ctx: Reports,
+    db: DB,
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+    as_of: dt.date | None = None,
+    sections: str | None = None,
+    mode: Mode = "summary",
+    format: Fmt = "pdf",
+    lang: Annotated[str | None, Query(pattern="^(en|ur)$")] = None,
+):
+    """One report of the chosen sections for the period: a printable page (Save as PDF) or an
+    Excel workbook with a sheet per section; `json` returns the same tables for the screen."""
+    p = _p(db, ctx, preset, date_from, date_to, as_of)
+    shop = _shop(db, ctx)
+    wanted = [
+        x
+        for x in (sections.split(",") if sections else list(report.SECTIONS))
+        if x in report.SECTIONS
+    ]
+    secs = report.build(
+        db,
+        ctx.shop_id,
+        shop,
+        p,
+        sections=wanted,
+        detail=mode == "detail",
+        can_cost=ctx.can(Cap.VIEW_COST),
+        is_owner=ctx.role == Role.OWNER,
+    )
+    if format == "xlsx":
+        return report.xlsx(shop.name, p, secs, mode)
+    if format == "json":
+        return plain(
+            {
+                "period": p.as_dict(),
+                "sections": secs,
+                "available": list(report.SECTIONS),
+                "titles": report.TITLES,
+            }
+        )
+    return report.printable(shop.name, p, secs, mode, lang)

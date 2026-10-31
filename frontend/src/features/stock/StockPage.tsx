@@ -106,6 +106,8 @@ export default function StockPage() {
   const { pick, ur, cls } = useLang()
   const { t } = useTranslation()
   const [q, setQ] = useState(() => new URLSearchParams(window.location.search).get('q') ?? '')
+  // opened from the Shop Audit: condition / PTA / type come in the link
+  const [preset] = useState(() => { const sp = new URLSearchParams(window.location.search); return { condition: sp.get('condition') ?? undefined, pta_status: sp.get('pta_status') ?? undefined, category: sp.get('category') ?? undefined } })
   const [filter, setFilter] = useState<Filter>('in_stock')
   const [brand, setBrand] = useState<string>('')
   const [sort, setSort] = useState<Sort>('newest')
@@ -113,7 +115,7 @@ export default function StockPage() {
   const [picking, setPicking] = useState(false)
   const [picked, setPicked] = useState<string[]>([])
   const [labels, setLabels] = useState(false)
-  const { data, isLoading } = useDevices({ q: q || undefined, status: filter === 'all' ? undefined : filter, limit: 500 })
+  const { data, isLoading } = useDevices({ q: q || undefined, status: filter === 'all' ? undefined : filter, ...preset, limit: 500 })
   const { data: brands } = useBrands()
 
   const counts = new Map<string, number>()

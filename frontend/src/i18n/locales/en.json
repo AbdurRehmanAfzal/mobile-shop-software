@@ -1807,7 +1807,8 @@
       "stock": "Stock",
       "products": "Products",
       "bills": "Bills",
-      "security": "Security"
+      "security": "Security",
+      "reports": "Reports"
     },
     "preset": {
       "today": "Today",
@@ -2097,6 +2098,57 @@
         "delete": "Deleted",
         "security": "Admin action",
         "transfer": "Money moved"
+      }
+    },
+    "chart": {
+      "revenueVsProfit": "Net sales vs real profit over the period",
+      "channelsIn": "Money in by channel",
+      "byCondition": "In stock by condition",
+      "byVerification": "In stock by ID check",
+      "moneyByKind": "Money by account type (end of period)"
+    },
+    "rep": {
+      "full": "Complete shop audit report",
+      "fullHint": "Pick the sections, choose summary or detail, and get one report for the chosen period: a printable page (Save as PDF) or an Excel workbook with a sheet per section. The numbers are the same the screens show.",
+      "onlySummary": "Only the summary",
+      "modeSummary": "Summary",
+      "modeDetail": "Detailed",
+      "pdf": "Print / PDF",
+      "xlsx": "Excel",
+      "footer": "Every report states its period, the as-of day for balances, the currency (PKR) and what is not recorded.",
+      "individual": "Individual reports",
+      "individualHint": "Each one downloads as PDF, Excel or CSV; period reports follow the period chosen above.",
+      "forPeriod": "for the chosen period",
+      "s": {
+        "summary": "Executive summary",
+        "pnl": "Profit & loss",
+        "cash": "Cash & bank",
+        "expenses": "Expenses",
+        "tax": "Tax",
+        "customers": "Top customers",
+        "suppliers": "Top suppliers",
+        "udhaar": "Udhaar",
+        "inventory": "Inventory valuation",
+        "ageing": "Stock ageing",
+        "products": "Product performance",
+        "invoices": "Invoice statistics",
+        "verification": "ID checks",
+        "checks": "Reconciliation checks",
+        "security": "Security & fraud"
+      },
+      "i": {
+        "sales": "Sales",
+        "purchases": "Purchases",
+        "profit": "Profit & loss",
+        "day": "Hisaab (day / period)",
+        "expenses": "Expenses",
+        "top": "Best sellers",
+        "khata": "Udhaar khata",
+        "parties": "People",
+        "stock": "Stock list",
+        "stockSummary": "Stock worth",
+        "ageing": "Old stock",
+        "forecast": "Sales estimate"
       }
     }
   },
