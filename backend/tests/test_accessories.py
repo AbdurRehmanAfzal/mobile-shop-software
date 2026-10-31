@@ -35,7 +35,7 @@ def test_create_with_opening_stock_and_adjust(owner):
         f"/api/v1/accessories/{a['id']}/adjust", json={"qty_delta": -2, "note": "damaged"}
     )
     assert r.json()["qty"] == 8
-    r = owner.post(f"/api/v1/accessories/{a['id']}/adjust", json={"qty_delta": -20})
+    r = owner.post(f"/api/v1/accessories/{a['id']}/adjust", json={"qty_delta": -20, "note": "lost"})
     assert r.status_code == 422 and r.json()["error"]["code"] == "insufficient_stock"
     mv = owner.get(f"/api/v1/accessories/{a['id']}/movements").json()
     assert [m["qty_delta"] for m in mv] == [-2, 10] and mv[0]["qty_after"] == 8
@@ -96,7 +96,7 @@ def test_purchase_and_sale_move_stock_with_average_cost(owner, cat):
     assert owner.get(f"/api/v1/accessories/{a['id']}").json()["qty"] == 10
     low = owner.get("/api/v1/accessories", params={"low_only": "true"}).json()
     assert low == []
-    owner.post(f"/api/v1/accessories/{a['id']}/adjust", json={"qty_delta": -8})
+    owner.post(f"/api/v1/accessories/{a['id']}/adjust", json={"qty_delta": -8, "note": "count"})
     assert [
         x["id"] for x in owner.get("/api/v1/accessories", params={"low_only": "true"}).json()
     ] == [a["id"]]
@@ -161,4 +161,4 @@ def test_roles(client, owner):
     )
     s = login(client, "03451112233")
     assert s.get("/api/v1/accessories").json()[0]["avg_cost"] is None
-    assert s.post(f"/api/v1/accessories/{a['id']}/adjust", json={"qty_delta": 1}).status_code == 403
+    assert s.post(f"/api/v1/accessories/{a['id']}/adjust", json={"qty_delta": 1, "note": "count"}).status_code == 403

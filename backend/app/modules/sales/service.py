@@ -1,3 +1,4 @@
+import datetime as dt
 import html
 import uuid
 from decimal import Decimal
@@ -138,6 +139,24 @@ def create_sale(
         askings[device.id] = asking
         devices.append(device)
 
+    # ---- items: price floor (owner addendum 5) -------------------------------------
+    # under the minimum sale price: the same gate as a phone under its asking price; under the
+    # buying price: only the owner / manager who confirms the loss (Addendum 2 rules)
+    for ml in data.misc:
+        if ml.accessory_id is None:
+            continue
+        a0 = acc_stock.get_accessory(db, shop_id, ml.accessory_id)
+        if a0.min_price is not None and money(ml.unit_price) < money(a0.min_price):
+            approval.require(db, shop, ctx, "below_asking", data.approval_pin)
+        if a0.avg_cost is not None and a0.qty > 0 and money(ml.unit_price) < money(a0.avg_cost) and not (
+            data.below_cost_ok and ctx.can(Cap.VIEW_COST)
+        ):
+            raise Conflict(
+                code="below_cost",
+                message_en="This price is below the buying price. Only the owner or manager can sell at a loss.",
+                message_ur="یہ قیمت خرید قیمت سے کم ہے۔ نقصان پر صرف مالک یا منیجر بیچ سکتا ہے۔",
+            )
+
     # ---- money ------------------------------------------------------------------
     line_amounts = [money(d.price) for d in data.devices] + [
         money(m.unit_price * m.qty) for m in data.misc
@@ -257,8 +276,9 @@ def create_sale(
         accessory = (
             acc_stock.get_accessory(db, shop_id, ml.accessory_id) if ml.accessory_id else None
         )
+        wdays = ml.warranty_days if ml.warranty_days is not None else (accessory.warranty_days if accessory else 0)
         if accessory is not None:
-            acc_stock.move(
+            mv = acc_stock.move(
                 db,
                 shop_id,
                 user_id,
@@ -268,8 +288,9 @@ def create_sale(
                 document_type="invoice",
                 document_id=invoice.id,
                 note=invoice.no,
+                party_id=party.id if party else None,
             )
-            cost = money(accessory.avg_cost * ml.qty)
+            cost = getattr(mv, "cost_total", None) or money(mv.unit_cost * ml.qty)  # avg, or FIFO
         else:
             cost = money(ml.cost)
         cost_total += cost
@@ -286,6 +307,8 @@ def create_sale(
                 tax_share=tshare,
                 line_total=line_total,
                 cost=cost,
+                warranty_days=wdays or 0,
+                warranty_until=(invoice.date + dt.timedelta(days=wdays)) if wdays else None,
             )
         )
         line_no += 1

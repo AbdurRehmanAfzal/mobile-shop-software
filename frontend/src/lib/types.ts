@@ -19,6 +19,8 @@ export interface Party {
   notes: string | null
   balance: Money
   is_active: boolean
+  /** owner addendum 5: a dealer gets the wholesale price of items */
+  wholesale?: boolean
   created_at: string
 }
 
@@ -197,6 +199,7 @@ export interface PurchaseLine {
   line_no: number
   kind: 'device' | 'misc'
   device_id: UUID | null
+  accessory_id?: UUID | null
   imei1: string | null
   device_label: string | null
   description: string | null
@@ -205,6 +208,10 @@ export interface PurchaseLine {
   discount_share: Money
   net_cost: Money
   returned_at: string | null
+  pack_unit?: string | null
+  pack_qty?: number | null
+  extra_cost_share?: Money
+  batch_ref?: string | null
 }
 export interface Purchase {
   id: UUID

@@ -88,6 +88,7 @@ class ShopSettingsOut(ShopOut):
     label_prefs: dict | None = None
     sale_rules: dict | None = None
     audit_prefs: dict | None = None
+    item_prefs: dict | None = None
 
 
 class UserOut(BaseModel):
@@ -192,6 +193,14 @@ class ShopUpdate(BaseModel):
     label_prefs: dict | None = None
     sale_rules: dict | None = None
     audit_prefs: dict | None = None
+    item_prefs: dict | None = None
+
+    @field_validator("item_prefs")
+    @classmethod
+    def _item_prefs(cls, v: dict | None) -> dict | None:
+        from app.modules.accessories.stock import clean_prefs
+
+        return clean_prefs(v)
 
     @field_validator("sale_rules")
     @classmethod

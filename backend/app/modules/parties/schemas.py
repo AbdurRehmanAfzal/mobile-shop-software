@@ -19,6 +19,7 @@ class PartyBase(BaseModel):
     city: str | None = Field(default=None, max_length=100)
     kinds: list[PartyKind] = Field(min_length=1)
     notes: str | None = None
+    wholesale: bool = False  # owner addendum 5: dealer price on items
 
     @field_validator("phone", "alt_phone", "whatsapp")
     @classmethod
@@ -52,6 +53,7 @@ class PartyUpdate(BaseModel):
     kinds: list[PartyKind] | None = Field(default=None, min_length=1)
     notes: str | None = None
     is_active: bool | None = None
+    wholesale: bool | None = None
 
     @field_validator("phone", "alt_phone", "whatsapp")
     @classmethod
@@ -81,5 +83,6 @@ class PartyOut(BaseModel):
     notes: str | None
     balance: Decimal
     is_active: bool
+    wholesale: bool = False
     created_at: datetime
     updated_at: datetime

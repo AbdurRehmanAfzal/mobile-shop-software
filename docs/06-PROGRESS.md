@@ -162,6 +162,23 @@ Spec `docs/22-BARCODES-SPEC.md` · what existed, what was built, assumptions, li
 | Camera scanning of any code (not only IMEIs) in search boxes | ✅ | **2026-10-31** `scanPhoto(file, true)`, `ScanButton onCode` |
 | Data Matrix | ❌ | not offered (docs/23 §3) |
 
+## Phase 9 — Accessories purchase parameters (owner addendum 5, 2026-10-31)
+Spec `docs/24-ACCESSORIES-SPEC.md` · audit, gap table, migration plan, assumptions `docs/25-ACCESSORIES-PLAN.md` · ADR-037.
+| Item | Status | Notes |
+|---|---|---|
+| Audit of the existing accessory fields, gap table, migration plan | ✅ | **2026-10-31** docs/25 §1–3 |
+| Product card: brand, fit (+ model links), grade, variant attributes, warranty, unit + packaging, wholesale / minimum / promo prices, markup pricing, tax, max stock, shelf, show-in-sale, image, notes, supplier SKUs | ✅ | **2026-10-31** `accessories` columns + `accessory_supplier_skus`, migration `a8b0c2d4e6f8`; `ItemForm` with "More details" |
+| Purchase batches (cost history, qty left), weighted average / FIFO setting, negative-stock setting, units table | ✅ | **2026-10-31** `accessory_batches`, `stock.py`, `shops.item_prefs`, Settings "Item settings" |
+| Purchase line in dozen / box / carton with per-piece cost; supplier bill no.; freight spread over lines; batch ref; item labels after save | ✅ | **2026-10-31** `MiscLineIn.unit`, `purchases.supplier_invoice_no / extra_costs`, `purchase_lines.pack_*`; unit chips in `PurchaseWizard` |
+| Counter: dealer / promo / retail pre-fill, minimum price → approval, below cost → owner, stock guard per setting, warranty end per sold item | ✅ | **2026-10-31** `/accessories/{id}/price`, `parties.wholesale`, `invoice_lines.warranty_until` |
+| Item page: card, prices + margin, stock value, batches, timeline (purchases with paid / remaining, sales, returns, adjustments with reason, price changes) | ✅ | **2026-10-31** `/accessories/:id`, `/{id}/timeline`, `/{id}/batches`, `accessory_price_changes` |
+| Search by brand / fit / barcode / supplier SKU; filters brand / grade / supplier / location / out of stock; duplicate warning | ✅ | **2026-10-31** list params, `/similar`, `/lookup` |
+| Reports: low stock by supplier with order list, valuation, fast / slow, profit by category / brand, dead stock, supplier summary; bulk price % | ✅ | **2026-10-31** `/accessories/reports/*`, `/bulk-price`, `AccessoryReportsPage` |
+| Bulk sheet: optional item columns (brand, grade, colour, fits, wholesale, minimum, warranty, shelf) | ✅ | **2026-10-31** `bulk/spec.py` + import / export |
+| Backfill of opening batches (migration + `POST /accessories/backfill-batches`), idempotent | ✅ | **2026-10-31** verified on the dev DB (57 items → 57 batches) |
+| Transfers between locations | ❌ | not a stock event (docs/25 §5) |
+| Per-line GST on the invoice | ⏳ | stored and shown; invoice keeps the shop rate until the owner decides (docs/25 §5) |
+
 ## Backlog (owner requests, not started)
 | Item | Notes |
 |---|---|

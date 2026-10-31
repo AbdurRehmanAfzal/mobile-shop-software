@@ -18,7 +18,46 @@ def clean_category(v: str) -> str:
     return v.lower() if v.lower() in CATEGORIES else v
 
 
-class AccessoryCreate(BaseModel):
+class SupplierSkuIn(BaseModel):
+    party_id: uuid.UUID | None = None
+    sku: str = Field(min_length=1, max_length=60)
+
+
+class AccessoryDetails(BaseModel):
+    """The optional product card (owner addendum 5): everything under "More details"."""
+
+    brand: str | None = Field(default=None, max_length=80)
+    compatible: str | None = Field(default=None, max_length=200)
+    compatible_model_ids: list[uuid.UUID] | None = None
+    grade: str | None = Field(default=None, max_length=20)
+    color: str | None = Field(default=None, max_length=40)
+    size: str | None = Field(default=None, max_length=40)
+    capacity: str | None = Field(default=None, max_length=40)
+    connector: str | None = Field(default=None, max_length=40)
+    wattage: str | None = Field(default=None, max_length=20)
+    warranty_days: int | None = Field(default=None, ge=0, le=3660)
+    warranty_terms: str | None = Field(default=None, max_length=300)
+    warranty_by: str | None = Field(default=None, pattern="^(shop|supplier)$")
+    unit: str | None = Field(default=None, max_length=12)
+    pack_units: dict[str, int] | None = None
+    wholesale_price: Decimal | None = Field(default=None, ge=0)
+    min_price: Decimal | None = Field(default=None, ge=0)
+    promo_price: Decimal | None = Field(default=None, ge=0)
+    promo_from: dt.date | None = None
+    promo_to: dt.date | None = None
+    pricing_mode: str | None = Field(default=None, pattern="^(fixed|markup)$")
+    markup_pct: Decimal | None = Field(default=None, ge=0, le=1000)
+    tax_rate: Decimal | None = Field(default=None, ge=0, le=100)
+    tax_inclusive: bool | None = None
+    max_stock: int | None = Field(default=None, ge=0)
+    location: str | None = Field(default=None, max_length=60)
+    show_in_sale: bool | None = None
+    image_path: str | None = Field(default=None, max_length=500)
+    description: str | None = Field(default=None, max_length=2000)
+    supplier_skus: list[SupplierSkuIn] | None = None
+
+
+class AccessoryCreate(AccessoryDetails):
     sku: str | None = Field(default=None, max_length=40)
     barcode: str | None = Field(default=None, max_length=64)
     barcode_type: str | None = Field(default=None, max_length=12)
@@ -39,7 +78,7 @@ class AccessoryCreate(BaseModel):
         return clean_category(v)
 
 
-class AccessoryUpdate(BaseModel):
+class AccessoryUpdate(AccessoryDetails):
     name: str | None = Field(default=None, min_length=1, max_length=150)
     name_ur: str | None = None
     category: str | None = None
@@ -56,7 +95,8 @@ class AccessoryUpdate(BaseModel):
 class AdjustIn(BaseModel):
     qty_delta: int = Field(description="positive = found/add, negative = lost/damaged")
     unit_cost: Decimal | None = Field(default=None, ge=0)
-    note: str | None = Field(default=None, max_length=200)
+    # owner addendum 5: a reason is required (damage / lost / count correction …)
+    note: str = Field(min_length=2, max_length=200)
 
     @field_validator("qty_delta")
     @classmethod
@@ -64,6 +104,15 @@ class AdjustIn(BaseModel):
         if v == 0:
             raise ValueError("qty_delta cannot be 0")
         return v
+
+
+class BulkPriceIn(BaseModel):
+    field: str = Field(default="price", pattern="^(price|wholesale_price|min_price)$")
+    pct: Decimal | None = Field(default=None, ge=-90, le=1000)
+    amount: Decimal | None = Field(default=None)
+    category: str | None = None
+    brand: str | None = None
+    ids: list[uuid.UUID] | None = None
 
 
 class AccessoryOut(BaseModel):
@@ -83,6 +132,39 @@ class AccessoryOut(BaseModel):
     barcode: str | None = None
     barcode_type: str | None = None
     manufacturer_code: str | None = None
+    brand: str | None = None
+    compatible: str | None = None
+    compatible_model_ids: list[uuid.UUID] | None = None
+    grade: str = "unspecified"
+    color: str | None = None
+    size: str | None = None
+    capacity: str | None = None
+    connector: str | None = None
+    wattage: str | None = None
+    warranty_days: int = 0
+    warranty_terms: str | None = None
+    warranty_by: str | None = None
+    unit: str = "piece"
+    pack_units: dict | None = None
+    wholesale_price: Decimal | None = None
+    min_price: Decimal | None = None
+    promo_price: Decimal | None = None
+    promo_from: dt.date | None = None
+    promo_to: dt.date | None = None
+    pricing_mode: str = "fixed"
+    markup_pct: Decimal | None = None
+    tax_rate: Decimal | None = None
+    tax_inclusive: bool | None = None
+    max_stock: int | None = None
+    location: str | None = None
+    show_in_sale: bool = True
+    image_path: str | None = None
+    description: str | None = None
+    profit: Decimal | None = None
+    margin_pct: Decimal | None = None
+    stock_value: Decimal | None = None
+    supplier_skus: list[dict] = []
+    units: dict[str, int] = {}
 
 
 class MovementOut(BaseModel):

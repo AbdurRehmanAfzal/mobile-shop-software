@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.core.clock import today as shop_today
 from app.core.errors import Conflict, NotFound, ValidationFailed
 from app.db.base import ZERO
+from app.modules.accessories import stock as inv
 from app.modules.accessories.models import Accessory, AccessoryMovement
 from app.modules.accessories.schemas import AccessoryCreate, AccessoryUpdate, AdjustIn
 from app.modules.audit.service import record_audit
@@ -50,8 +51,11 @@ def create(db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, data: AccessoryC
         price=money(data.price),
         reorder_level=data.reorder_level,
     )
+    _apply_details(a, data)
     db.add(a)
     db.flush()
+    if data.supplier_skus:
+        inv.set_supplier_skus(db, shop_id, a, [s.model_dump() for s in data.supplier_skus])
     # owner addendum 4: one barcode per SKU, made with the item
     from app.modules.auth.models import Shop
     from app.modules.barcodes.service import assign_item
@@ -75,7 +79,9 @@ def create(db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, data: AccessoryC
             "adjust",
             money(data.opening_cost),
             document_type="opening_stock",
+            document_id=a.id,
             note="Opening stock",
+            batch_ref="Opening stock",
         )
         cost = money(data.opening_cost * data.opening_qty)
         if cost > ZERO:
@@ -108,8 +114,19 @@ def update(
 ) -> Accessory:
     a = get_accessory(db, shop_id, accessory_id)
     changes = data.model_dump(exclude_unset=True)
+    skus = changes.pop("supplier_skus", None)
     for k, v in changes.items():
+        if k in inv.PRICE_FIELDS:
+            inv.log_price_change(db, shop_id, user_id, a, k, getattr(a, k), v)
+        if k == "compatible_model_ids" and v is not None:
+            v = [str(x) for x in v]
         setattr(a, k, money(v) if isinstance(v, Decimal) else v)
+    if a.pricing_mode == "markup" and a.markup_pct is not None and ("markup_pct" in changes or "pricing_mode" in changes):
+        new_price = inv.price_from_markup(a.avg_cost or ZERO, a.markup_pct)
+        inv.log_price_change(db, shop_id, user_id, a, "price", a.price, new_price, source="markup")
+        a.price = new_price
+    if skus is not None:
+        inv.set_supplier_skus(db, shop_id, a, skus)
     record_audit(
         db,
         shop_id=shop_id,
@@ -135,18 +152,57 @@ def move(
     document_type: str | None = None,
     document_id: uuid.UUID | None = None,
     note: str | None = None,
+    party_id: uuid.UUID | None = None,
+    pack_unit: str | None = None,
+    pack_qty: int | None = None,
+    batch_ref: str | None = None,
 ) -> AccessoryMovement:
-    """Apply a stock movement; incoming stock updates the weighted average cost."""
-    if qty_delta < 0 and a.qty + qty_delta < 0:
+    """Apply a stock movement; incoming stock updates the weighted average cost and opens a
+    batch; outgoing stock empties the oldest batches first (the FIFO cost is on the movement when
+    the shop values stock that way)."""
+    from app.modules.auth.models import Shop
+
+    shop = db.get(Shop, shop_id)
+    prefs = inv.prefs_for(shop) if shop else inv.DEFAULT_PREFS
+    if qty_delta < 0 and a.qty + qty_delta < 0 and not prefs["allow_negative_stock"]:
         raise ValidationFailed(
             code="insufficient_stock",
             message_en=f"Only {a.qty} × {a.name} in stock",
             message_ur=f"{a.name} کی صرف {a.qty} تعداد اسٹاک میں ہے",
         )
+    fifo_cost = None
     if qty_delta > 0 and unit_cost is not None:
-        total_before = money(a.avg_cost * a.qty)
-        a.avg_cost = money((total_before + unit_cost * qty_delta) / (a.qty + qty_delta))
+        if a.qty > 0:
+            total_before = money(a.avg_cost * a.qty)
+            a.avg_cost = money((total_before + unit_cost * qty_delta) / (a.qty + qty_delta))
+        else:  # nothing (or a negative count) on hand: the new lot sets the cost
+            a.avg_cost = money(unit_cost)
+        if reason in ("purchase", "return", "adjust", "void"):
+            inv.add_batch(
+                db,
+                shop_id,
+                a,
+                qty=qty_delta,
+                unit_cost=unit_cost,
+                source="opening" if document_type == "opening_stock" else reason,
+                document_type=document_type,
+                document_id=document_id,
+                party_id=party_id,
+                pack_unit=pack_unit,
+                pack_qty=pack_qty,
+                batch_ref=batch_ref,
+            )
+    elif qty_delta < 0:
+        fifo_cost = inv.consume_batches(db, a, -qty_delta)
     a.qty += qty_delta
+    cost_total = None  # what the pieces that left actually cost (FIFO: the exact batch total)
+    if qty_delta < 0 and unit_cost is None:
+        if prefs["valuation"] == "fifo" and fifo_cost is not None:
+            cost_total = fifo_cost
+            unit_cost = money(fifo_cost / -qty_delta)
+        else:
+            unit_cost = a.avg_cost
+            cost_total = money(a.avg_cost * -qty_delta)
     m = AccessoryMovement(
         shop_id=shop_id,
         accessory_id=a.id,
@@ -159,6 +215,7 @@ def move(
         note=note,
         user_id=user_id,
     )
+    m.cost_total = cost_total  # transient, not a column
     db.add(m)
     db.flush()
     return m
@@ -216,30 +273,81 @@ def list_accessories(
     category: str | None,
     low_only: bool,
     include_inactive: bool,
+    brand: str | None = None,
+    grade: str | None = None,
+    supplier_id: uuid.UUID | None = None,
+    location: str | None = None,
+    out_only: bool = False,
+    sale_only: bool = False,
 ) -> list[Accessory]:
+    from app.modules.accessories.models import AccessoryBatch, AccessorySupplierSku
+
     stmt = select(Accessory).where(Accessory.shop_id == shop_id)
     if not include_inactive:
         stmt = stmt.where(Accessory.is_active.is_(True))
     if q:
         like = f"%{q.strip()}%"
+        sup = select(AccessorySupplierSku.accessory_id).where(AccessorySupplierSku.sku.ilike(like))
         stmt = stmt.where(
             or_(
-                Accessory.name.ilike(like), Accessory.name_ur.ilike(like), Accessory.sku.ilike(like)
+                Accessory.name.ilike(like),
+                Accessory.name_ur.ilike(like),
+                Accessory.sku.ilike(like),
+                Accessory.barcode.ilike(like),
+                Accessory.manufacturer_code.ilike(like),
+                Accessory.brand.ilike(like),
+                Accessory.compatible.ilike(like),
+                Accessory.id.in_(sup),
             )
         )
     if category:
         stmt = stmt.where(Accessory.category == category)
+    if brand:
+        stmt = stmt.where(Accessory.brand.ilike(brand))
+    if grade:
+        stmt = stmt.where(Accessory.grade == grade)
+    if location:
+        stmt = stmt.where(Accessory.location.ilike(f"%{location}%"))
+    if supplier_id is not None:
+        bought = select(AccessoryBatch.accessory_id).where(AccessoryBatch.party_id == supplier_id)
+        skus = select(AccessorySupplierSku.accessory_id).where(AccessorySupplierSku.party_id == supplier_id)
+        stmt = stmt.where(or_(Accessory.id.in_(bought), Accessory.id.in_(skus)))
     if low_only:
         stmt = stmt.where(Accessory.qty <= Accessory.reorder_level)
+    if out_only:
+        stmt = stmt.where(Accessory.qty <= 0)
+    if sale_only:
+        stmt = stmt.where(Accessory.show_in_sale.is_(True))
     return list(db.scalars(stmt.order_by(Accessory.name)).all())
 
 
-def to_out(a: Accessory, show_cost: bool) -> dict:
+def to_out(a: Accessory, show_cost: bool, db: Session | None = None, shop=None) -> dict:
+    m = inv.margin(a)
     return {
         **{c.name: getattr(a, c.name) for c in Accessory.__table__.columns},
         "avg_cost": a.avg_cost if show_cost else None,
         "low_stock": a.qty <= a.reorder_level,
+        "profit": m["profit"] if show_cost else None,
+        "margin_pct": m["margin_pct"] if show_cost else None,
+        "stock_value": money((a.avg_cost or ZERO) * a.qty) if show_cost else None,
+        "supplier_skus": inv.supplier_skus_of(db, a.id) if db is not None else [],
+        "units": inv.units_for(shop, a) if shop is not None else {},
     }
+
+
+def _apply_details(a: Accessory, data) -> None:
+    """the optional product-card fields, only those that were sent"""
+    from app.modules.accessories.schemas import AccessoryDetails
+
+    for k in AccessoryDetails.model_fields:
+        if k == "supplier_skus":
+            continue
+        v = getattr(data, k, None)
+        if v is None:
+            continue
+        if k == "compatible_model_ids":
+            v = [str(x) for x in v]
+        setattr(a, k, money(v) if isinstance(v, Decimal) else v)
 
 
 def movements(

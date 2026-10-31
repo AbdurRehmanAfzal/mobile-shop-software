@@ -200,6 +200,15 @@ COLUMNS: dict[str, list[Col]] = {
             "alert when stock falls to this",
             "اتنے رہ جائیں تو یاد دہانی",
         ),
+        # owner addendum 5 (docs/24): the optional product card
+        Col("brand", "Brand", "برانڈ", False, "text"),
+        Col("grade", "Quality", "کوالٹی", False, "text", "original / oem / a_grade / copy / used", "original / oem / a_grade / copy / used"),
+        Col("color", "Colour", "رنگ", False, "text"),
+        Col("compatible", "Fits (phone / model)", "کس فون کے لیے", False, "text", "e.g. iPhone 14/15", "مثلاً iPhone 14/15"),
+        Col("wholesale_price", "Wholesale price (Rs.)", "ہول سیل قیمت (روپے)", False, "money"),
+        Col("min_price", "Minimum sale price (Rs.)", "کم سے کم فروخت قیمت (روپے)", False, "money"),
+        Col("warranty_days", "Warranty (days)", "وارنٹی (دن)", False, "int"),
+        Col("location", "Shelf / rack", "شیلف / ریک", False, "text"),
     ],
     "sales": [
         Col(

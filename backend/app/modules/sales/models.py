@@ -106,6 +106,8 @@ class InvoiceLine(UUIDPk, Base):
     # owner 2026-10-30: the asking price when it was sold (after any revision at checkout)
     asking_price: Mapped[Decimal | None] = mapped_column()
     warranty_days: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    # owner addendum 5: the warranty end, so a claim can be checked by invoice or by scanning
+    warranty_until: Mapped[dt.date | None] = mapped_column(Date)
     accessories_given: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
     accessories_pending: Mapped[list[dict]] = mapped_column(JSON, nullable=False, default=list)
     returned_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
