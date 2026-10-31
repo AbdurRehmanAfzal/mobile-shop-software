@@ -78,6 +78,8 @@ class Shop(UUIDPk, Timestamped, Base):
     label_prefs: Mapped[dict | None] = mapped_column(JSON)
     # owner 2026-10-30: who may sell below asking / change the asking price (sales/approval.py)
     sale_rules: Mapped[dict | None] = mapped_column(JSON)
+    # Shop Audit (owner brief 2026-10-30): age bands, high-value, low-margin, performance, bypass thresholds
+    audit_prefs: Mapped[dict | None] = mapped_column(JSON)
 
     organisation: Mapped[Organisation] = relationship(back_populates="shops")
 

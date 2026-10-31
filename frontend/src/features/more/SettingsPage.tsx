@@ -3,7 +3,7 @@
  *  stays in reach, and a plain "Saved" message. */
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Check, Fingerprint, Languages, Percent, Receipt, ShieldCheck, Store, Tag } from 'lucide-react'
+import { Check, Fingerprint, Gauge, Languages, Percent, Receipt, ShieldCheck, Store, Tag } from 'lucide-react'
 import { useEffect, useState, type ReactNode } from 'react'
 import { BiAlert, BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import { PhoneInput } from '@/components/FieldInputs'
@@ -30,7 +30,10 @@ interface ShopFull {
   fingerprint_staff: boolean
   label_code_word: string | null
   sale_rules: { below_asking: Rule; asking_change: Rule } | null
+  audit_prefs: AuditPrefs | null
 }
+interface AuditPrefs { age_bands: number[]; high_value: number; low_margin_pct: number; top_share: number; low_units: number; bypass_share: number; bypass_min: number }
+const DEFAULT_AUDIT_PREFS: AuditPrefs = { age_bands: [15, 30, 60, 90], high_value: 50000, low_margin_pct: 5, top_share: 20, low_units: 1, bypass_share: 50, bypass_min: 3 }
 type Rule = 'allow' | 'manager' | 'pin'
 
 type Form = { name: string; city: string; phone: string; default_locale: 'en' | 'ur'; tax_enabled: boolean; tax_rate: string; tax_inclusive: boolean; ntn: string; strn: string; receipt_footer: string; receipt_footer_ur: string; invoice_prefix: string; fingerprint_staff: boolean }
@@ -156,6 +159,7 @@ export default function SettingsPage() {
 
       <CodeWordCard current={data?.label_code_word ?? null} />
       <SaleRulesCard current={data?.sale_rules ?? null} />
+      <AuditPrefsCard current={data?.audit_prefs ?? null} />
 
       <ErrorText error={m.error} />
       {saved ? <BiAlert text="settings.saved" kind="success" /> : null}
@@ -214,6 +218,39 @@ function SaleRulesCard({ current }: { current: { below_asking: Rule; asking_chan
       <BiSegmented<Rule> value={r.asking_change} onChange={(v) => { setOk(false); setR({ ...r, asking_change: v }) }} options={opts} />
       <BiLabel text="rules.pinNote" size="sm" tone="text-muted" />
       <BiButton text={ok ? 'settings.saved' : 'common.save'} icon={<Check size={20} />} variant="secondary" full loading={m.isPending} onClick={() => m.mutate()} />
+    </Card>
+  )
+}
+
+/** the shop's own thresholds for the stock audit (docs/16 §9: never hard-coded) */
+function AuditPrefsCard({ current }: { current: AuditPrefs | null }) {
+  const qc = useQueryClient()
+  const shopKey = useAuth((s) => s.activeShopId)
+  const [p, setP] = useState<AuditPrefs>(current ?? DEFAULT_AUDIT_PREFS)
+  const [ok, setOk] = useState(false)
+  useEffect(() => { if (current) setP({ ...DEFAULT_AUDIT_PREFS, ...current }) }, [current])
+  const m = useMutation({
+    mutationFn: () => patch('/api/v1/shops/current', { audit_prefs: p }),
+    onSuccess: () => { setOk(true); void qc.invalidateQueries({ queryKey: [shopKey, 'shop-full'] }) },
+  })
+  const band = (i: number, v: string) => { setOk(false); const b = [...p.age_bands]; b[i] = Number(v); setP({ ...p, age_bands: b }) }
+  const num = (k: keyof AuditPrefs, v: string) => { setOk(false); setP({ ...p, [k]: Number(v) }) }
+  const valid = p.age_bands.every((b, i) => b > 0 && (i === 0 || b > p.age_bands[i - 1]))
+  return (
+    <Card icon={<Gauge size={22} />} tone="bg-stockt text-stockt-fg" title="audit.prefs.title" hint="audit.prefs.hint">
+      <div className="grid grid-cols-2 gap-2">
+        <BiInput label="audit.prefs.fresh" type="number" inputMode="numeric" min={1} value={String(p.age_bands[0])} onChange={(e) => band(0, e.target.value)} className="num" />
+        <BiInput label="audit.prefs.normal" type="number" inputMode="numeric" min={1} value={String(p.age_bands[1])} onChange={(e) => band(1, e.target.value)} className="num" />
+        <BiInput label="audit.prefs.slow" type="number" inputMode="numeric" min={1} value={String(p.age_bands[2])} onChange={(e) => band(2, e.target.value)} className="num" />
+        <BiInput label="audit.prefs.attention" type="number" inputMode="numeric" min={1} value={String(p.age_bands[3])} onChange={(e) => band(3, e.target.value)} className="num" />
+        <BiInput label="audit.prefs.highValue" type="number" inputMode="numeric" min={0} value={String(p.high_value)} onChange={(e) => num('high_value', e.target.value)} className="num" />
+        <BiInput label="audit.prefs.lowMargin" type="number" inputMode="decimal" min={0} value={String(p.low_margin_pct)} onChange={(e) => num('low_margin_pct', e.target.value)} className="num" />
+        <BiInput label="audit.prefs.bypassMin" type="number" inputMode="numeric" min={0} value={String(p.bypass_min)} onChange={(e) => num('bypass_min', e.target.value)} className="num" />
+        <BiInput label="audit.prefs.bypassShare" type="number" inputMode="numeric" min={0} max={100} value={String(p.bypass_share)} onChange={(e) => num('bypass_share', e.target.value)} className="num" />
+      </div>
+      {!valid ? <BiAlert text="audit.prefs.bandsOrder" /> : null}
+      <ErrorText error={m.error} />
+      <BiButton text={ok ? 'settings.saved' : 'common.save'} icon={<Check size={20} />} variant="secondary" full loading={m.isPending} disabled={!valid} onClick={() => m.mutate()} />
     </Card>
   )
 }

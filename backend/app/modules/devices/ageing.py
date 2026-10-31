@@ -11,6 +11,7 @@ import uuid
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from app.core.clock import local_date
 from app.modules.devices.models import Device, DeviceEvent
 from app.modules.devices.state import EventType
 
@@ -43,5 +44,7 @@ def intake_at(d: Device, intakes: dict[uuid.UUID, dt.datetime]) -> dt.datetime:
 
 
 def days_in_stock(d: Device, intakes: dict[uuid.UUID, dt.datetime], now=None) -> int:
+    """calendar days on the shop's clock (a phone bought yesterday evening is 1 day old this
+    morning, not 0)"""
     now = now or dt.datetime.now(dt.UTC)
-    return max((now - intake_at(d, intakes)).days, 0)
+    return max((local_date(now) - local_date(intake_at(d, intakes))).days, 0)

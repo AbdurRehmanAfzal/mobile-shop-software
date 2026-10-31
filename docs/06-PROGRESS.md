@@ -116,10 +116,10 @@ Spec `docs/16-SHOP-AUDIT-SPEC.md` · plan + gap analysis + next task `docs/17-SH
 | P3 Periods & as-of balances, overview KPIs, audit shell | ✅ | **2026-10-31** `core/periods.py`, `modules/shopaudit` (`/api/v1/shop-audit/period`, `/overview`, `/reconcile`), as-of money / debt / stock from ledger + device events, backdated sale/return events now carry the document time; UI `/audit` overview (period bar with 8 presets + custom + as-of, KPI tiles with start → end → now, checks card, drill-down to invoices); `test_shopaudit_periods.py`, `audit.spec.ts` |
 | P4 Financial audit (P&L series, cash/bank by reason, methods, international, expenses, tax) | ✅ | **2026-10-31** `shopaudit/finance.py` + routes `/shop-audit/{pnl,cash,international,expenses,tax}`; UI `/audit/finance` (P&L · Cash & bank · Expenses · Tax) with the first in-house chart (`charts/Bars`); `test_shopaudit_finance.py`, `audit-finance.spec.ts` |
 | P5 Customers & suppliers (journey, rankings, udhaar ageing) | ✅ | **2026-10-31** `shopaudit/parties.py` + routes `/shop-audit/parties/{id}/journey`, `/rankings`, `/udhaar`; UI `/audit/people`, `/audit/udhaar`, journey card on the person's page; `test_shopaudit_parties.py`, `audit-parties.spec.ts` |
-| P6 Inventory intelligence (as-of stock, bands, verification, alerts) | ⬜ | next |
-| P7 Products & invoice audit | ⬜ | |
-| P8 Owner security feed | ⬜ | |
-| P9 Charts & drill-down dashboard | ⬜ | |
+| P6 Inventory intelligence (as-of stock, bands, verification, alerts) | ✅ | **2026-10-31** `shopaudit/inventory.py` + `prefs.py`, routes `/shop-audit/inventory`, `/inventory/ageing`, `/verification`; `shops.audit_prefs` (migration `b3c5d7e9f1a2`) + Settings thresholds card; UI `/audit/stock`; `test_shopaudit_inventory.py`, `audit-stock.spec.ts` |
+| P7 Products & invoice audit | ✅ | **2026-10-31** `shopaudit/products.py`, routes `/shop-audit/products`, `/invoices`; UI `/audit/products`, `/audit/bills`; `test_shopaudit_products.py`, `audit-products.spec.ts` |
+| P8 Owner security feed | ✅ | **2026-10-31** `shopaudit/security.py` + `GET /shop-audit/security` (owner only; price changes, under asking / cost, discounts, voids, reversals, adjustments, opening balances, bypasses, wrong PINs, admin actions; per-employee flags), wrong owner PINs now audited; UI `/audit/security`; `test_shopaudit_security.py`, `audit-security.spec.ts` |
+| P9 Charts & drill-down dashboard | ⬜ | next |
 | P10 Report center & complete audit report | ⬜ | |
 | P11 Reconciliation, scenario tests, e2e, manuals, ADR-032 | ⬜ | |
 

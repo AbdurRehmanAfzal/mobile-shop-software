@@ -40,6 +40,10 @@ import AuditOverviewPage from '@/features/audit/OverviewPage'
 import AuditFinancePage from '@/features/audit/FinancePage'
 import AuditPartiesPage from '@/features/audit/PartiesAuditPage'
 import AuditUdhaarPage from '@/features/audit/UdhaarAuditPage'
+import AuditInventoryPage from '@/features/audit/InventoryAuditPage'
+import AuditProductsPage from '@/features/audit/ProductsPage'
+import AuditInvoicePage from '@/features/audit/InvoiceAuditPage'
+import AuditSecurityPage from '@/features/audit/SecurityPage'
 import StaffPage from '@/features/more/StaffPage'
 import CashAccountsPage from '@/features/more/CashAccountsPage'
 
@@ -108,6 +112,10 @@ export const router = createBrowserRouter([
           { path: '/audit/finance', element: <ModuleGate module="reports"><AuditFinancePage /></ModuleGate> },
           { path: '/audit/people', element: <ModuleGate module="reports"><AuditPartiesPage /></ModuleGate> },
           { path: '/audit/udhaar', element: <ModuleGate module="reports"><AuditUdhaarPage /></ModuleGate> },
+          { path: '/audit/stock', element: <ModuleGate module="reports"><AuditInventoryPage /></ModuleGate> },
+          { path: '/audit/products', element: <ModuleGate module="reports"><AuditProductsPage /></ModuleGate> },
+          { path: '/audit/bills', element: <ModuleGate module="reports"><AuditInvoicePage /></ModuleGate> },
+          { path: '/audit/security', element: <ModuleGate module="reports"><AuditSecurityPage /></ModuleGate> },
           { path: '/more/staff', element: <StaffPage /> },
           { path: '/more/cash', element: <CashAccountsPage /> },
           { path: '/more/catalogue', element: <CataloguePage /> },
