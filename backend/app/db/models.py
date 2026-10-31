@@ -23,6 +23,7 @@ from app.modules.otp import models as _otp_models  # noqa: F401
 from app.modules.parties import models as _parties_models  # noqa: F401
 from app.modules.payments import models as _payments_models  # noqa: F401
 from app.modules.paymode import models as _paymode_models  # noqa: F401
+from app.modules.plan import models as _plan_models  # noqa: F401
 from app.modules.public import router as _public_models  # noqa: F401
 from app.modules.purchases import models as _purchases_models  # noqa: F401
 from app.modules.repairs import models as _repairs_models  # noqa: F401

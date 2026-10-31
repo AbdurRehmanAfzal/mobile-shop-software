@@ -2,21 +2,30 @@
  *  pay into (copy with one tap), reports "I have paid" with the transaction reference and a
  *  screenshot, and sees what was approved. */
 
-import { Camera, Check, Copy, CreditCard, Send } from 'lucide-react'
+import { Camera, Check, Copy, CreditCard, Download, KeyRound, MessageCircle, Printer, Send } from 'lucide-react'
 import { useRef, useState, type FormEvent } from 'react'
 import { BiAlert, BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import { Chip, ErrorText, KV, Loading, MoneyText, PageHeader, Section, fmtDate } from '@/components/ui'
 import type { PlanOut } from '@/lib/auth'
-import { uploadFile } from '@/lib/files'
+import { openPrintable, uploadFile } from '@/lib/files'
+import { usePlanReminder, type Reminder } from '@/lib/planReminder'
+import { backupNow, waLink } from '@/components/PlanReminders'
 import { useDocMutation, useGet } from '@/lib/queries'
 
 interface Account { label: string; account_name: string; number: string; note: string | null }
-interface Fee { id: string; amount: string; method: string; reference: string | null; proof_path: string | null; months: number; note: string | null; status: 'pending' | 'approved' | 'rejected'; decision_note: string | null; created_at: string; handled_at: string | null }
+interface Fee { id: string; amount: string; method: string; reference: string | null; proof_path: string | null; months: number; note: string | null; status: 'pending' | 'approved' | 'rejected'; decision_note: string | null; created_at: string; handled_at: string | null; paid_on: string | null; receipt_no: string | null }
 interface MyFees { plan: PlanOut; accounts: Account[]; payments: Fee[] }
 
 export default function FeesPage() {
   const { pick, ur, cls } = useLang()
   const { data, isLoading, refetch } = useGet<MyFees>(['my-fees'], '/api/v1/fees')
+  const { data: rem, refetch: refetchRem } = useGet<Reminder>(['plan-reminder-fees'], '/api/v1/plan/reminder?event=open')
+  const refreshBar = usePlanReminder((s) => s.refresh)
+  const redeem = useDocMutation<{ code: string }, { until: string | null; receipt_no: string | null }>('POST', () => '/api/v1/plan/redeem')
+  const [code, setCode] = useState('')
+  const [redeemed, setRedeemed] = useState<string | null>(null)
+  const [paidOn, setPaidOn] = useState(new Date().toISOString().slice(0, 10))
+  const [backing, setBacking] = useState(false)
   const report = useDocMutation<Record<string, unknown>, Fee>('POST', () => '/api/v1/fees')
   const [amount, setAmount] = useState('')
   const [method, setMethod] = useState('')
@@ -47,12 +56,14 @@ export default function FeesPage() {
 
   async function submit(e: FormEvent) {
     e.preventDefault()
-    await report.mutateAsync({ amount: Number(amt), method: chosen, reference: reference || null, proof_path: proof, months: Number(months) || 1 })
+    await report.mutateAsync({ amount: Number(amt), method: chosen, reference: reference || null, proof_path: proof, months: Number(months) || 1, paid_on: paidOn || null })
     setSent(true)
     setAmount('')
     setReference('')
     setProof(null)
     refetch()
+    void refetchRem()
+    void refreshBar('open')
   }
 
   const tone = plan.status === 'locked' || plan.status === 'expired' ? 'bg-payable-tint text-payable' : plan.status === 'due_soon' ? 'bg-[#F59E0B]/15 text-[#92400E]' : 'bg-sell text-sell-fg'
@@ -70,7 +81,17 @@ export default function FeesPage() {
       </div>
 
       <Section title="fees.payInto">
-        {!data.accounts.length ? <BiLabel text="fees.noAccounts" size="sm" tone="text-muted" /> : (
+        {rem?.billing?.bank ? (
+          <div className="card divide-y divide-line p-0" data-testid="fees-bank">
+            {([['fees.bank', rem.billing.bank.bank_name], ['fees.accountTitle', rem.billing.bank.account_title], ['fees.reference', rem.billing.bank.account_number], ['fees.iban', rem.billing.bank.iban], ['fees.branch', rem.billing.bank.branch]] as const).filter(([, v]) => !!v).map(([k, v]) => (
+              <div key={k} className="flex items-center gap-3 px-4 py-2.5">
+                <span className="flex min-w-0 flex-1 flex-col"><span className={`text-muted ${small}`}>{pick(k === 'fees.reference' ? 'plan.pop.account' : k)}</span><span className="num truncate text-[15px] font-bold" dir="ltr">{v}</span></span>
+                <button type="button" aria-label={`${pick('fees.copy')} ${v}`} onClick={() => copy({ label: k, account_name: '', number: v, note: null })} className={`tap flex h-9 items-center gap-1 rounded-full px-3 text-xs font-bold ${copied === v ? 'bg-emerald text-white' : 'border border-line text-ink'}`}>{copied === v ? <Check size={14} /> : <Copy size={14} />} {copied === v ? pick('fees.copied') : pick('fees.copy')}</button>
+              </div>
+            ))}
+          </div>
+        ) : null}
+        {!data.accounts.length && !rem?.billing?.bank ? <BiLabel text="fees.noAccounts" size="sm" tone="text-muted" /> : !data.accounts.length ? null : (
           <div className="card divide-y divide-line p-0">
             {data.accounts.map((a) => (
               <div key={a.label + a.number} className="flex items-center gap-3 px-4 py-3">
@@ -88,6 +109,7 @@ export default function FeesPage() {
           </div>
         )}
         <BiLabel text="fees.howTo" size="sm" tone="text-muted" />
+        {rem ? <a href={waLink(rem)} target="_blank" rel="noopener noreferrer" className="tap flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-emerald/40 bg-emerald-tint font-bold text-emerald-deep"><MessageCircle size={18} /> {pick('fees.support')}</a> : null}
       </Section>
 
       <Section title="fees.reportTitle">
@@ -106,6 +128,7 @@ export default function FeesPage() {
             </div>
           </div>
           <BiInput label="fees.reference" value={reference} onChange={(e) => setReference(e.target.value)} maxLength={80} dir="ltr" />
+          <BiInput label="fees.paidOn" type="date" value={paidOn} onChange={(e) => setPaidOn(e.target.value)} dir="ltr" />
           <button type="button" onClick={() => file.current?.click()} disabled={uploading} className={`tap flex min-h-14 items-center justify-center gap-2 rounded-2xl border-2 border-dashed px-4 font-bold ${proof ? 'border-emerald bg-emerald-tint text-emerald-deep' : 'border-line bg-surface text-ink'} disabled:opacity-60`}>
             {proof ? <Check size={20} /> : <Camera size={20} />} {uploading ? '…' : pick(proof ? 'fees.proofDone' : 'fees.proof')}
           </button>
@@ -113,6 +136,21 @@ export default function FeesPage() {
           <ErrorText error={report.error} />
           <BiButton type="submit" text="fees.send" icon={<Send size={20} />} full loading={report.isPending} disabled={!Number(amt) || !chosen} />
         </form>
+      </Section>
+
+      <Section title="fees.code">
+        <BiLabel text="fees.codeHint" size="sm" tone="text-muted" />
+        {redeemed ? <BiAlert text={{ en: pick('fees.redeemed').replace('{{date}}', redeemed), ur: pick('fees.redeemed').replace('{{date}}', redeemed), roman: pick('fees.redeemed').replace('{{date}}', redeemed) }} kind="success" /> : null}
+        <div className="grid grid-cols-[1fr_auto] gap-2">
+          <BiInput label="fees.codePaste" value={code} onChange={(e) => setCode(e.target.value)} dir="ltr" className="num" data-testid="renewal-code" />
+          <BiButton text="fees.redeem" icon={<KeyRound size={18} />} variant="secondary" disabled={code.trim().length < 10} loading={redeem.isPending} onClick={async () => { const r = await redeem.mutateAsync({ code: code.trim() }); setRedeemed(r.until ? fmtDate(r.until) : '—'); setCode(''); refetch(); void refetchRem(); void refreshBar('open') }} />
+        </div>
+        <ErrorText error={redeem.error} />
+      </Section>
+
+      <Section title="fees.backup">
+        <BiLabel text="fees.backupHint" size="sm" tone="text-muted" />
+        <BiButton text="fees.backup" icon={<Download size={20} />} variant="secondary" full loading={backing} onClick={async () => { setBacking(true); try { await backupNow() } finally { setBacking(false) } }} data-testid="fees-backup" />
       </Section>
 
       {data.payments.length ? (
@@ -127,6 +165,7 @@ export default function FeesPage() {
                 <div className="flex items-center gap-2">
                   <span className={`text-muted ${small}`} dir="ltr">{fmtDate(p.created_at)} · {p.months} {pick(p.months === 1 ? 'admin.month' : 'admin.months')}</span>
                   <Chip text={`fees.status.${p.status}`} tone={p.status === 'approved' ? 'ok' : p.status === 'rejected' ? 'bad' : 'warn'} />
+                  {p.status === 'approved' ? <button type="button" onClick={() => void openPrintable(`/api/v1/plan/receipts/${p.id}?lang=${ur ? 'ur' : 'en'}`)} className="tap flex h-8 items-center gap-1 rounded-full border border-line px-2.5 text-xs font-bold"><Printer size={14} /> {p.receipt_no ?? pick('fees.receipt')}</button> : null}
                 </div>
                 {p.decision_note ? <span className="text-sm text-payable">{p.decision_note}</span> : null}
               </div>

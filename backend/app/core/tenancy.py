@@ -108,7 +108,7 @@ def get_current_context(
 
     if x_shop_id is None:
         if len(assigned) == 1:
-            _plan_gate(current, assigned[0], request)
+            _plan_gate(current, assigned[0], request, db)
             return CurrentContext(user=current.user, shop=assigned[0])
         raise Forbidden(
             code="shop_required",
@@ -121,7 +121,7 @@ def get_current_context(
         raise Forbidden(code="shop_invalid") from exc
     for shop in assigned:
         if shop.id == wanted:
-            _plan_gate(current, shop, request)
+            _plan_gate(current, shop, request, db)
             return CurrentContext(user=current.user, shop=shop)
     # the product owner may open any customer shop (owner 2026-10-29); never gated by a plan
     from app.modules.auth.service import is_superuser
@@ -138,14 +138,25 @@ def get_current_context(
     )
 
 
-def _plan_gate(current: CurrentUser, shop: Shop, request: Request) -> None:
+def _plan_gate(
+    current: CurrentUser, shop: Shop, request: Request, db: Session | None = None
+) -> None:
     """An expired subscription (past its grace) may only read; the product owner is never gated."""
     from app.modules.admin.plans import assert_writable
     from app.modules.auth.service import is_superuser
 
     if is_superuser(current.user):
         return
-    assert_writable(shop.organisation, request.method)
+    grace = None
+    if db is not None and shop.organisation.plan_expires_at is not None:
+        from app.modules.plan import billing
+
+        grace = (
+            billing.schedule(db)["grace_days"]
+            if shop.organisation.grace_days is None
+            else shop.organisation.grace_days
+        )
+    assert_writable(shop.organisation, request.method, path=request.url.path, grace=grace)
     from app.modules.admin.modules import assert_module
 
     assert_module(shop.organisation, request.url.path)

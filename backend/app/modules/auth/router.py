@@ -63,7 +63,7 @@ def _me(db, user, x_shop_id: str | None) -> MeOut:
         ),
         shops=[ShopOut.model_validate(s) for s in shops],
         active_shop_id=active,
-        plan=plan_info(user.organisation) if user.organisation else None,
+        plan=plan_info(user.organisation, db=db) if user.organisation else None,
     )
 
 

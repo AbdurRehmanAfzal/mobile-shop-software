@@ -281,6 +281,9 @@ def tick(db: Session, now: dt.datetime | None = None) -> dict:
     """What is due right now for every active shop. Safe to call as often as you like."""
     now = now or utcnow()
     ran = {"daily_report": 0, "reminders": 0, "snapshots": 0}
+    from app.modules.plan import clockguard
+
+    clockguard.observe(db)
     for shop in db.scalars(select(Shop).where(Shop.is_active.is_(True))).all():
         s: NotificationSettings = settings_for(shop)
         local = now.astimezone(ZoneInfo(shop.timezone or "Asia/Karachi"))

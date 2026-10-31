@@ -137,6 +137,19 @@ Plan `docs/18-BULK-EXCEL-PLAN.md` (module verdicts, sheet design, safety rules, 
 
 | Landing page refresh (owner 2026-10-31): new-features section with its own screenshots, new screens in the galleries, WhatsApp + call floating buttons, mobile fit | ✅ | **2026-10-31** `LandingPage` section "What came in the last round" (audit, Excel, phone's money, price rules, assistant, Home, installments, hazri, OTP, Windows), galleries gain audit / finance / bulk / history, floating WhatsApp + call (bottom end, safe-area), hero point 4, header fits 360px; `scripts/landing-assets.mjs` seeds a busier demo month and shoots the new screens; strings `landing.new.*`, `landing.float.*` en / ur / roman |
 
+## Phase 7 — Subscription reminders (owner addendum 3, 2026-10-31)
+Spec `docs/19-SUBSCRIPTION-REMINDERS-SPEC.md` · gap analysis, schedule, assumptions and placeholders `docs/20-SUBSCRIPTION-REMINDERS-PLAN.md` · ADR-035.
+| Item | Status | Notes |
+|---|---|---|
+| Data: grace per provider / shop, plan start, paid-on + receipt numbers, reminder state per user, redeemed codes, billing settings with placeholders | ✅ | **2026-10-31** migration `e6f8a0b2c3d5`; `platform_settings.billing`; README "Billing settings" |
+| Schedule + popup decided on the server (stages, once-a-day / every-few-hours, escalation, snooze that never passes the expiry, staff notice only) | ✅ | **2026-10-31** `modules/plan/reminders.py`, `/api/v1/plan/reminder*`; `test_plan_reminders.py` |
+| Bar (yellow / orange / red / locked / blue) + trilingual popup with copyable bank & wallet details, QR, WhatsApp, pay / later / close, backup | ✅ | **2026-10-31** `PlanReminders.tsx`, `lib/planReminder.ts`; never on form pages; `plan-reminders.spec.ts` |
+| Proof → pending (blue) → verified (receipt SUB-0001, thank-you once, reminders cleared, provider notified on WhatsApp) | ✅ | **2026-10-31** `fees.py` receipt numbers / `notify_admin` / `record_manual`; `/plan/receipts/{id}` |
+| Soft-lock: view, export, backup zip, pay; full-screen notice in 3 languages; nothing deleted; lock / unlock audited | ✅ | **2026-10-31** `LOCKED_ALLOW`, `/plan/backup` |
+| Provider: billing settings sheet, record manual payment, renewal code (signed, offline, once), per-shop grace | ✅ | **2026-10-31** `/admin/billing`, `/admin/shops/{id}/payments`, `/admin/shops/{id}/renewal-code`; `renewal.py keygen` |
+| Clock-tamper guard for the one-PC install | ✅ | **2026-10-31** `clockguard.py` (memory + hourly `platform_settings.last_seen`) |
+| Owner-side: real bank / support details, renewal key pair on the VPS, decide on grace 7 | ⏳ | docs/20 §4–5 |
+
 ## Backlog (owner requests, not started)
 | Item | Notes |
 |---|---|

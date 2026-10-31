@@ -55,6 +55,10 @@ class Settings(BaseSettings):
     web_dir: str = ""
     # the one-PC install: the shop made here is `chain` with no expiry (no server to pay for)
     local_mode: bool = False
+    # offline renewal codes (docs/19 §E): the private key lives only on the SaaS server; every
+    # install carries the public key. `python -m app.modules.plan.renewal keygen` makes a pair.
+    renewal_private_key: str = ""
+    renewal_public_key: str = "En5rRS7S_HhTvmEyAz1-5pS0AOsOJQIXiXmENyoa95o"
 
     @property
     def superusers(self) -> set[str]:

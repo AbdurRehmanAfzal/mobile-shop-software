@@ -19,7 +19,7 @@ from app.core.tenancy import DB, CurrentUser, get_current_user
 from app.modules.admin import access, fees, modules, plans
 from app.modules.audit.service import record_audit
 from app.modules.auth import service
-from app.modules.auth.models import Shop, User
+from app.modules.auth.models import Shop, User, UserShop
 from app.modules.auth.schemas import SignupRequest
 
 router = APIRouter(prefix="/api/v1/admin", tags=["admin"])
@@ -75,6 +75,30 @@ class PlanIn(BaseModel):
     extend_months: int | None = Field(default=None, ge=1, le=36)
     monthly_fee: Decimal | None = Field(default=None, ge=0)
     note: str | None = Field(default=None, max_length=200)
+    # owner addendum 3: this shop's own grace days (None keeps the provider's default)
+    grace_days: int | None = Field(default=None, ge=0, le=90)
+    set_grace: bool = False
+
+
+class ManualPaymentIn(BaseModel):
+    amount: Decimal = Field(gt=0)
+    method: str = Field(default="cash", min_length=1, max_length=60)
+    months: int = Field(default=1, ge=1, le=36)
+    reference: str | None = Field(default=None, max_length=80)
+    paid_on: date | None = None
+    note: str | None = Field(default=None, max_length=300)
+
+
+class RenewalCodeIn(BaseModel):
+    months: int = Field(default=1, ge=1, le=36)
+
+
+class BillingIn(BaseModel):
+    bank: dict | None = None
+    support: dict | None = None
+    schedule: dict | None = None
+    note: dict | None = None
+    qr_path: str | None = None
 
 
 class PasswordIn(BaseModel):
@@ -124,6 +148,8 @@ class FeeRowOut(BaseModel):
     decision_note: str | None
     created_at: datetime
     handled_at: datetime | None
+    paid_on: date | None = None
+    receipt_no: str | None = None
 
 
 class FeeStatsOut(BaseModel):
@@ -161,21 +187,41 @@ class BranchIn(BaseModel):
 
 
 def _rows(db, shops: list[Shop]) -> list[AdminShopOut]:
+    """One row per shop; owners, user counts and branch counts come from three grouped queries
+    (the dev database holds thousands of e2e shops: per-shop queries took most of a minute)."""
+    from app.modules.plan import billing
+
+    org_ids = list({s.organisation_id for s in shops})
+    owners: dict[uuid.UUID, User] = {}
+    if org_ids:
+        for u in db.scalars(
+            select(User)
+            .where(User.organisation_id.in_(org_ids), User.role == Role.OWNER)
+            .order_by(User.created_at)
+        ).all():
+            owners.setdefault(u.organisation_id, u)
+        users = dict(
+            db.execute(
+                select(User.organisation_id, func.count(User.id))
+                .where(User.organisation_id.in_(org_ids))
+                .group_by(User.organisation_id)
+            ).all()
+        )
+        branches = dict(
+            db.execute(
+                select(Shop.organisation_id, func.count(Shop.id))
+                .where(Shop.organisation_id.in_(org_ids))
+                .group_by(Shop.organisation_id)
+            ).all()
+        )
+    else:
+        users, branches = {}, {}
+    sched = billing.schedule(db)
     out = []
     for s in shops:
-        owner = db.scalar(
-            select(User)
-            .where(User.organisation_id == s.organisation_id, User.role == Role.OWNER)
-            .order_by(User.created_at)
-        )
-        users = db.scalar(
-            select(func.count(User.id)).where(User.organisation_id == s.organisation_id)
-        )
-        branches = db.scalar(
-            select(func.count(Shop.id)).where(Shop.organisation_id == s.organisation_id)
-        )
+        owner = owners.get(s.organisation_id)
         org = s.organisation
-        info = plans.plan_info(org)
+        info = plans.plan_info(org, with_pending=False, sched=sched)
         out.append(
             AdminShopOut(
                 id=str(s.id),
@@ -184,8 +230,8 @@ def _rows(db, shops: list[Shop]) -> list[AdminShopOut]:
                 city=s.city,
                 owner_name=owner.name if owner else None,
                 owner_phone=owner.phone if owner else None,
-                users=users or 0,
-                branches=branches or 0,
+                users=users.get(s.organisation_id, 0) or 0,
+                branches=branches.get(s.organisation_id, 0) or 0,
                 created_at=s.created_at,
                 plan=org.plan,
                 plan_expires_at=org.plan_expires_at,
@@ -211,6 +257,8 @@ def _shop(db, shop_id: uuid.UUID) -> Shop:
 def set_plan(shop_id: uuid.UUID, data: PlanIn, current: Super, db: DB):
     """Plan, monthly fee and expiry of the shop's organisation (all its branches)."""
     shop = _shop(db, shop_id)
+    if data.set_grace:
+        shop.organisation.grace_days = data.grace_days
     plans.set_plan(
         db,
         shop.organisation,
@@ -309,6 +357,80 @@ def shop_request_done(req_id: uuid.UUID, current: Super, db: DB):
     req.handled_at = datetime.now(tz=UTC)
     req.handled_by = current.id
     db.commit()
+
+
+@router.get("/billing")
+def get_billing(_: Super, db: DB):
+    """bank / support / schedule / note / QR — the provider's billing settings (docs/19 §A)"""
+    from app.modules.plan import billing
+
+    v = billing.get(db)
+    return {**v, "placeholders": billing.is_placeholder(v), "wallets": fees.accounts(db)}
+
+
+@router.put("/billing")
+def put_billing(data: BillingIn, current: Super, db: DB):
+    from app.modules.plan import billing
+
+    before = billing.get(db)
+    v = billing.set_(db, data.model_dump(exclude_none=True))
+    home = db.scalar(
+        select(Shop)
+        .join(UserShop, UserShop.shop_id == Shop.id)
+        .where(UserShop.user_id == current.id)
+        .order_by(Shop.created_at)
+    )
+    if home is not None:
+        record_audit(
+            db,
+            shop_id=home.id,
+            user_id=current.id,
+            entity="billing",
+            entity_id=None,
+            action="update",
+            before={"schedule": before["schedule"]},
+            after={"schedule": v["schedule"]},
+        )
+        db.commit()
+    return {**v, "placeholders": billing.is_placeholder(v), "wallets": fees.accounts(db)}
+
+
+@router.post("/shops/{shop_id}/payments", response_model=FeeRowOut, status_code=201)
+def record_payment(shop_id: uuid.UUID, data: ManualPaymentIn, current: Super, db: DB):
+    """A payment received by hand: logged as verified and the plan extended at once."""
+    shop = _shop(db, shop_id)
+    p = fees.record_manual(
+        db,
+        shop,
+        by=current.user,
+        amount=data.amount,
+        method=data.method,
+        months=data.months,
+        reference=data.reference,
+        paid_on=data.paid_on,
+        note=data.note,
+    )
+    return next(r for r in fees.listing(db, None) if r["id"] == p.id)
+
+
+@router.post("/shops/{shop_id}/renewal-code")
+def renewal_code(shop_id: uuid.UUID, data: RenewalCodeIn, current: Super, db: DB):
+    """A signed code the owner pastes in More → Software fees (works offline, once)."""
+    from app.modules.plan import renewal
+
+    shop = _shop(db, shop_id)
+    code = renewal.make_code(shop.organisation_id, data.months)
+    record_audit(
+        db,
+        shop_id=shop.id,
+        user_id=current.id,
+        entity="organisation",
+        entity_id=shop.organisation_id,
+        action="renewal_code_issued",
+        after={"months": data.months},
+    )
+    db.commit()
+    return {"code": code, "months": data.months, "shop": shop.name}
 
 
 @router.get("/payment-accounts")

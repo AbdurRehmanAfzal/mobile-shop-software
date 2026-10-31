@@ -7,7 +7,7 @@ import datetime as dt
 import uuid
 from decimal import Decimal
 
-from sqlalchemy import JSON, DateTime, ForeignKey, Integer, String, Text, Uuid, func, select
+from sqlalchemy import JSON, Date, DateTime, ForeignKey, Integer, String, Text, Uuid, func, select
 from sqlalchemy.orm import Mapped, Session, mapped_column
 
 from app.core.clock import today as shop_today
@@ -64,6 +64,62 @@ class FeePayment(UUIDPk, Base):
     handled_by: Mapped[uuid.UUID | None] = mapped_column(
         Uuid, ForeignKey("users.id", ondelete="SET NULL")
     )
+    # owner addendum 3: the day the money was sent, and the renewal receipt number (SUB-0001)
+    paid_on: Mapped[dt.date | None] = mapped_column(Date)
+    receipt_no: Mapped[str | None] = mapped_column(String(12), index=True)
+
+
+RECEIPT_SEQ_KEY = "receipt_seq"
+
+
+def next_receipt_no(db: Session) -> str:
+    """SUB-0001, SUB-0002 … across every shop (the provider's own numbering)."""
+    row = db.get(PlatformSetting, RECEIPT_SEQ_KEY)
+    n = int((row.value or {}).get("next", 1)) if row and isinstance(row.value, dict) else 1
+    if row is None:
+        db.add(PlatformSetting(key=RECEIPT_SEQ_KEY, value={"next": n + 1}))
+    else:
+        row.value = {"next": n + 1}
+    db.flush()
+    return f"SUB-{n:04d}"
+
+
+def notify_admin(db: Session, template_key: str, ctx: dict) -> None:
+    """A WhatsApp to the product owner through their own shop's outbox (like shop requests)."""
+    from app.core.config import settings
+    from app.modules.auth.models import UserShop
+
+    admin_phone = settings.admin_whatsapp or (
+        min(settings.superusers) if settings.superusers else None
+    )
+    admin = (
+        db.scalar(select(User).where(User.phone.in_(list(settings.superusers))))
+        if settings.superusers
+        else None
+    )
+    if not admin_phone or admin is None:
+        return
+    home = db.scalar(
+        select(Shop)
+        .join(UserShop, UserShop.shop_id == Shop.id)
+        .where(UserShop.user_id == admin.id)
+        .order_by(Shop.created_at)
+    )
+    if home is None:
+        return
+    queue(
+        db,
+        home,
+        channel=Channel.WHATSAPP,
+        audience="admin",
+        recipient=admin_phone,
+        template_key=template_key,
+        lang="en",
+        ctx=ctx,
+        event_type="fee",
+        document_type="fee_payment",
+        document_id=None,
+    )
 
 
 # ---- the product owner's accounts ------------------------------------------------------------
@@ -99,8 +155,10 @@ def report(
     proof_path: str | None,
     months: int,
     note: str | None,
+    paid_on: dt.date | None = None,
 ) -> FeePayment:
     row = FeePayment(
+        paid_on=paid_on,
         organisation_id=shop.organisation_id,
         shop_id=shop.id,
         amount=money(amount),
@@ -123,6 +181,18 @@ def report(
     )
     db.commit()
     db.refresh(row)
+    notify_admin(
+        db,
+        "fee_submitted_admin",
+        {
+            "shop": shop.name,
+            "amount": f"{row.amount:,.0f}",
+            "method": method,
+            "reference": reference or "-",
+            "months": months,
+        },
+    )
+    db.commit()
     return row
 
 
@@ -168,6 +238,8 @@ def listing(db: Session, status: str | None, limit: int = 200) -> list[dict]:
                 "decision_note": p.decision_note,
                 "created_at": p.created_at,
                 "handled_at": p.handled_at,
+                "paid_on": p.paid_on,
+                "receipt_no": p.receipt_no,
             }
         )
     return out
@@ -206,6 +278,26 @@ def approve(db: Session, admin: User, payment_id: uuid.UUID, months: int | None)
     p.months = n
     p.handled_at = utcnow()
     p.handled_by = admin.id
+    p.receipt_no = p.receipt_no or next_receipt_no(db)
+    if org.plan_started_at is None:
+        org.plan_started_at = utcnow()
+    from app.modules.plan.reminders import clear_for_org
+
+    clear_for_org(db, org.id)
+    record_audit(
+        db,
+        shop_id=p.shop_id,
+        user_id=admin.id,
+        entity="fee_payment",
+        entity_id=p.id,
+        action="verify",
+        after={
+            "amount": str(p.amount),
+            "months": n,
+            "receipt_no": p.receipt_no,
+            "until": str(org.plan_expires_at),
+        },
+    )
     db.commit()
     # tell the owner on WhatsApp (queued; sent by the Cloud API when set, else by hand)
     shop = db.get(Shop, p.shop_id)
@@ -226,7 +318,13 @@ def approve(db: Session, admin: User, payment_id: uuid.UUID, months: int | None)
             recipient=to,
             template_key="fee_received",
             lang=lang_for(shop, s),
-            ctx={"shop": shop.name, "amount": f"{p.amount:,.0f}", "months": n, "until": exp},
+            ctx={
+                "shop": shop.name,
+                "amount": f"{p.amount:,.0f}",
+                "months": n,
+                "until": exp,
+                "receipt": p.receipt_no or "",
+            },
             event_type="fee",
             document_type="fee_payment",
             document_id=p.id,
@@ -243,9 +341,48 @@ def reject(db: Session, admin: User, payment_id: uuid.UUID, note: str | None) ->
     p.decision_note = note
     p.handled_at = utcnow()
     p.handled_by = admin.id
+    record_audit(
+        db,
+        shop_id=p.shop_id,
+        user_id=admin.id,
+        entity="fee_payment",
+        entity_id=p.id,
+        action="reject",
+        after={"note": note},
+    )
     db.commit()
     db.refresh(p)
     return p
+
+
+def record_manual(
+    db: Session,
+    shop: Shop,
+    *,
+    by: User,
+    amount: Decimal,
+    method: str,
+    months: int,
+    reference: str | None,
+    paid_on: dt.date | None,
+    note: str | None,
+) -> FeePayment:
+    """A payment the provider received by hand (cash, a transfer seen in the bank app) or a
+    renewal code: logged as approved and the plan extended in one step."""
+    row = FeePayment(
+        organisation_id=shop.organisation_id,
+        shop_id=shop.id,
+        amount=money(amount),
+        method=method,
+        reference=reference or None,
+        months=months,
+        note=note or None,
+        paid_on=paid_on,
+        created_by=by.id,
+    )
+    db.add(row)
+    db.flush()
+    return approve(db, by, row.id, months)
 
 
 def stats(db: Session) -> dict:
@@ -278,4 +415,6 @@ def out(p: FeePayment) -> dict:
         "decision_note": p.decision_note,
         "created_at": p.created_at,
         "handled_at": p.handled_at,
+        "paid_on": p.paid_on,
+        "receipt_no": p.receipt_no,
     }

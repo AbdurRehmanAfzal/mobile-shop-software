@@ -30,3 +30,21 @@ docs/       documentation; docs/archive holds v1 docs
 
 ## Quick start
 See "Running (v2)" in [CLAUDE.md](CLAUDE.md).
+
+## Billing settings (placeholders you must replace)
+
+The subscription reminders (docs/19, docs/20) show the shopkeeper *your* payment details. They are
+seeded with placeholders and are **hidden from shopkeepers until you replace them**:
+
+1. Log in as the super admin → More → Super admin → **Fees** → **Billing settings**: bank name,
+   account title, account number, IBAN, branch; support phone and WhatsApp; the reminder schedule
+   (7 / 3 / 1 days before, grace 7 days, snooze 4 hours); an optional note per language.
+   Wallets (Easypaisa, JazzCash, SadaPay…) are entered under **Accounts** on the same card.
+2. Optional QR image: upload it with the files API (purpose `billing`) and put the path in
+   `billing.qr_path` (the sheet does not upload it yet).
+3. `backend/.env` on the server: `RENEWAL_PRIVATE_KEY` and `RENEWAL_PUBLIC_KEY` from
+   `python -m app.modules.plan.renewal keygen`. Keep the private key only on the SaaS server; the
+   public key goes into every install (also the Windows one-PC build). The pair in the developer's
+   `.env` is for the development PC only.
+4. `ADMIN_WHATSAPP` (or the first number in `SUPERUSER_PHONES`) receives the "fee proof submitted"
+   message.

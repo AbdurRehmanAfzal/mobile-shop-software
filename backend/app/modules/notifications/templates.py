@@ -131,6 +131,16 @@ TEMPLATES: dict[str, dict[str, dict[str, str]]] = {
             "body": "ویب سائٹ سے نئی دکان کی درخواست: {name}، {shop} ({city})، {phone}، پلان {plan}۔ سپر ایڈمن ← دکان کی درخواستیں میں کھولیں۔",
         },
     },
+    "fee_submitted_admin": {
+        "en": {
+            "subject": "Fee proof from {shop}",
+            "body": "{shop} reports a fee payment: Rs. {amount} by {method}, ref {reference}, {months} month(s). Verify it in More → Super admin → Fees.",
+        },
+        "ur": {
+            "subject": "{shop} کی فیس کا ثبوت",
+            "body": "{shop} نے فیس کی ادائیگی بتائی: Rs. {amount} بذریعہ {method}، حوالہ {reference}، {months} مہینے۔ سپر ایڈمن ← فیس میں تصدیق کریں۔",
+        },
+    },
     "fee_received": {
         "en": {
             "subject": "Fee received: {shop}",
