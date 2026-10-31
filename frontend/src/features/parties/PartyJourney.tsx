@@ -9,6 +9,8 @@ import { fmtDate } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { isoDay } from '@/lib/format'
 import { useGet } from '@/lib/queries'
+import { Link } from 'react-router-dom'
+import DownloadButton from '@/components/DownloadButton'
 
 type M = string
 interface Journey {
@@ -23,7 +25,7 @@ interface Journey {
   balance_as_of: M
   receivable_open: M
   payable_open: M | null
-  timeline: { date: string; kind: string; no: string; id: string; amount: M; paid?: M; status?: string; devices: { label: string; imei1: string }[] }[]
+  timeline: { date: string; kind: string; no: string; id: string; ref_id?: string; amount: M; paid?: M; status?: string; devices: { label: string; imei1: string }[] }[]
 }
 
 const n = (v: M | number | null | undefined) => (v == null ? '—' : Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 }))
@@ -44,7 +46,7 @@ export default function PartyJourney({ partyId }: { partyId: string }) {
     <section className="card flex flex-col gap-3" data-testid="party-journey">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2"><Route size={18} /><BiLabel text="audit.journey.title" size="md" bold /></div>
-        <label className={`inline-flex items-center gap-1.5 text-muted ${small}`}><CalendarRange size={14} />{pick('audit.asOf')}<input type="date" aria-label="journey as of" value={asOf ?? isoDay(0)} max={isoDay(0)} onChange={(e) => setAsOf(e.target.value || null)} className="h-8 rounded-xl border border-line bg-surface px-2 text-xs font-bold text-ink" dir="ltr" /></label>
+        <span className="flex items-center gap-2"><DownloadButton path={`/api/v1/exports/parties/${partyId}/journey${asOf ? `?as_of=${asOf}` : ''}`} name={`journey-${partyId.slice(0, 8)}`} /><label className={`inline-flex items-center gap-1.5 text-muted ${small}`}><CalendarRange size={14} />{pick('audit.asOf')}<input type="date" aria-label="journey as of" value={asOf ?? isoDay(0)} max={isoDay(0)} onChange={(e) => setAsOf(e.target.value || null)} className="h-8 rounded-xl border border-line bg-surface px-2 text-xs font-bold text-ink" dir="ltr" /></label></span>
       </div>
       <div className={`flex flex-wrap gap-x-3 text-muted ${small}`}>
         {data.first_transaction ? <span>{pick('audit.journey.first')} <span dir="ltr">{fmtDate(data.first_transaction)}</span></span> : <span>{pick('audit.journey.none')}</span>}
@@ -65,10 +67,10 @@ export default function PartyJourney({ partyId }: { partyId: string }) {
           <summary className={`cursor-pointer font-bold ${ur ? cls('sm') : 'text-sm'}`}>{pick('audit.journey.timeline')} ({data.timeline.length})</summary>
           <div className="mt-2 divide-y divide-line" data-testid="journey-timeline">
             {data.timeline.map((t, i) => (
-              <div key={i} className="flex items-center gap-3 py-1.5">
+              <Link key={i} to={t.kind === 'sale' ? `/sales/${t.id}` : t.kind === 'purchase' ? `/purchases/${t.id}` : t.kind === 'sale_return' ? `/sales/${t.ref_id ?? ''}` : t.kind === 'purchase_return' ? `/purchases/${t.ref_id ?? ''}` : '/payments'} className="tap flex items-center gap-3 py-1.5" data-testid="journey-link">
                 <span className="flex min-w-0 flex-1 flex-col"><span className="truncate font-semibold">{pick(`audit.journey.k.${t.kind}`)} <span className="font-medium text-muted" dir="ltr">· {t.no}</span></span><span className={`text-muted ${small}`}><span dir="ltr">{fmtDate(t.date)}</span>{t.devices.length ? ` · ${t.devices.map((d) => d.label).join(', ')}` : ''}</span></span>
                 <span className="num font-bold" dir="ltr">{n(t.amount)}</span>
-              </div>
+              </Link>
             ))}
           </div>
         </details>

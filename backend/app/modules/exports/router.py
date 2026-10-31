@@ -698,3 +698,114 @@ def stock_ageing(ctx: Reports, db: DB, format: Fmt = "csv", lang: Lang = None):
     ]
     header = ["Days in stock", "Phones"] + (["Value"] if cost else [])
     return _file(format, ctx, db, lang, "old-stock", header, rows, "Old stock")
+
+
+# ---- owner 2026-10-31: a phone's whole history and a person's whole journey, in every format ----
+
+
+def _event_words(r: dict) -> str:
+    data = r.get("data") or {}
+    if r.get("event") == "price_changed":
+        return f"asking {data.get('from')} → {data.get('to')}" + (
+            f" ({data.get('reason')})" if data.get("reason") else ""
+        )
+    if r.get("event") == "verified":
+        return (
+            "ID check skipped: " + str(data.get("reason") or "")
+            if data.get("override")
+            else "ID check " + str(data.get("result") or "")
+        )
+    return str(data.get("note") or data.get("reason") or "")
+
+
+@router.get("/devices/{device_id}/history")
+def device_history(device_id: uuid.UUID, ctx: Ctx, db: DB, format: Fmt = "csv", lang: Lang = None):
+    """Every row of the phone's story: events, bills, payments and returns, with the money after each."""
+    from app.modules.units.service import device_money
+
+    m = device_money(db, ctx.shop_id, device_id, can_cost=ctx.can(Cap.VIEW_COST))
+    rows = []
+    for r in m["timeline"]:
+        kind = r["kind"]
+        what = r.get("event") if kind == "event" else kind
+        detail = _event_words(r) if kind == "event" else (r.get("reason") or "")
+        after = (
+            r.get("payable_after")
+            if kind in ("purchase", "payment_out")
+            else r.get("receivable_after")
+            if kind in ("sale", "payment_in")
+            else None
+        )
+        rows.append(
+            [
+                r["date"].isoformat() if hasattr(r["date"], "isoformat") else str(r["date"]),
+                str(what).replace("_", " "),
+                r.get("party_name") or "",
+                r.get("no") or r.get("doc_no") or "",
+                r.get("amount"),
+                r.get("upfront")
+                if kind in ("purchase", "sale")
+                else (r.get("refund") if kind.startswith("return") else None),
+                after,
+                r.get("user_name") or "",
+                detail,
+            ]
+        )
+    d = m["device"]
+    return _file(
+        format,
+        ctx,
+        db,
+        lang,
+        f"history-{d['imei1']}",
+        [
+            "Date",
+            "What",
+            "Person",
+            "Bill",
+            "Amount",
+            "Paid now / refund",
+            "Left after",
+            "By",
+            "Details",
+        ],
+        rows,
+        title=f"Phone history · {d.get('brand_name', '')} {d.get('model_name', '')} · {d['imei1']}",
+    )
+
+
+@router.get("/parties/{party_id}/journey")
+def party_journey(
+    party_id: uuid.UUID,
+    ctx: Reports,
+    db: DB,
+    format: Fmt = "csv",
+    lang: Lang = None,
+    as_of: dt.date | None = None,
+):
+    """A person's every dealing up to a day (the Shop Audit journey), as a file."""
+    from app.modules.shopaudit.parties import journey
+
+    j = journey(db, ctx.shop_id, party_id, as_of or shop_today(), can_cost=ctx.can(Cap.VIEW_COST))
+    rows = [
+        [
+            t["date"].isoformat() if hasattr(t["date"], "isoformat") else str(t["date"]),
+            t["kind"].replace("_", " "),
+            t["no"],
+            ", ".join(f"{d['label']} {d['imei1']}" for d in t.get("devices") or []),
+            t.get("amount"),
+            t.get("paid") if t.get("paid") is not None else t.get("refund"),
+            t.get("status") or t.get("method") or "",
+        ]
+        for t in j["timeline"]
+    ]
+    return _file(
+        format,
+        ctx,
+        db,
+        lang,
+        f"journey-{j['party']['phone']}",
+        ["Date", "What", "No", "Phones", "Amount", "Paid / refund", "Status"],
+        rows,
+        title=f"Journey · {j['party']['name']}",
+    )
