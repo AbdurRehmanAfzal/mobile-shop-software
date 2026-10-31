@@ -33,6 +33,8 @@ See "Running (v2)" in [CLAUDE.md](CLAUDE.md).
 
 ## Billing settings (placeholders you must replace)
 
+The full checklist, with a stage-by-stage table for manual testing, is `docs/21-OWNER-SETUP-CHECKLIST.md`.
+
 The subscription reminders (docs/19, docs/20) show the shopkeeper *your* payment details. They are
 seeded with placeholders and are **hidden from shopkeepers until you replace them**:
 

@@ -29,7 +29,7 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Rules: the import only calls the existing services (never writes rows itself), preview before anything is written, all-or-nothing unless "skip rows with errors", samples recognised and skipped, owner + manager only.
 
 ## Subscription reminders (owner addendum 3, 2026-10-31, ADR-035)
-- Spec `docs/19-SUBSCRIPTION-REMINDERS-SPEC.md`; gap analysis, schedule, assumptions and the owner's placeholders `docs/20-SUBSCRIPTION-REMINDERS-PLAN.md` — read it before touching `backend/app/modules/plan`, `admin/plans.py`, `admin/fees.py` or `frontend/src/components/PlanReminders.tsx`.
+- Spec `docs/19-SUBSCRIPTION-REMINDERS-SPEC.md`; gap analysis, schedule, assumptions and the owner's placeholders `docs/20-SUBSCRIPTION-REMINDERS-PLAN.md`; the owner's setup checklist `docs/21-OWNER-SETUP-CHECKLIST.md` — read it before touching `backend/app/modules/plan`, `admin/plans.py`, `admin/fees.py` or `frontend/src/components/PlanReminders.tsx`.
 - Rules: the server decides the stage and whether the popup shows (server time + clock guard, snooze stored per user); the client only decides where (never on a form page); the popup is the one screen that shows en + ur + roman together; soft-lock never blocks paying, exporting or the backup; nothing is ever deleted.
 
 ## Hard rules
