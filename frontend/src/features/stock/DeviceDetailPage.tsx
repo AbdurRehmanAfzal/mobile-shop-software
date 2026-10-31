@@ -80,6 +80,7 @@ export default function DeviceDetailPage() {
             <div className="num text-lg" dir="ltr">
               {d.imei1}
             </div>
+            {d.barcode ? <div className="num text-xs text-hero-text/75" dir="ltr" data-testid="device-barcode">{pick('barcode.label')}: {d.barcode}{d.barcode_type && d.barcode_type !== 'code128' ? ` · ${d.barcode_type}` : ''}</div> : null}
             <div className="text-sm text-hero-text/75">
               {specLine(d, pick)}
             </div>

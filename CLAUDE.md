@@ -29,8 +29,12 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Rules: the import only calls the existing services (never writes rows itself), preview before anything is written, all-or-nothing unless "skip rows with errors", samples recognised and skipped, owner + manager only.
 
 ## Subscription reminders (owner addendum 3, 2026-10-31, ADR-035)
-- Spec `docs/19-SUBSCRIPTION-REMINDERS-SPEC.md`; gap analysis, schedule, assumptions and the owner's placeholders `docs/20-SUBSCRIPTION-REMINDERS-PLAN.md` — read it before touching `backend/app/modules/plan`, `admin/plans.py`, `admin/fees.py` or `frontend/src/components/PlanReminders.tsx`.
+- Spec `docs/19-SUBSCRIPTION-REMINDERS-SPEC.md`; gap analysis, schedule, assumptions and the owner's placeholders `docs/20-SUBSCRIPTION-REMINDERS-PLAN.md`; the owner's setup checklist `docs/21-OWNER-SETUP-CHECKLIST.md` — read it before touching `backend/app/modules/plan`, `admin/plans.py`, `admin/fees.py` or `frontend/src/components/PlanReminders.tsx`.
 - Rules: the server decides the stage and whether the popup shows (server time + clock guard, snooze stored per user); the client only decides where (never on a form page); the popup is the one screen that shows en + ur + roman together; soft-lock never blocks paying, exporting or the backup; nothing is ever deleted.
+
+## Barcodes, labels, scanning (owner addendum 4, 2026-10-31, ADR-036)
+- Spec `docs/22-BARCODES-SPEC.md`; what existed / what was built / assumptions / scanner test `docs/23-BARCODES-PLAN.md` — read it before touching `backend/app/modules/barcodes`, `modules/labels`, `frontend/src/lib/scanner.ts` or `ScanListener.tsx`.
+- Rules: a barcode is assigned inside the purchase / item-creation transaction and never changes; each barcode keeps its type; uniqueness spans phones, items, IMEIs and SKUs; screens take scans with `useScan`, the shell handles the rest; labels stay the ADR-024 print page.
 
 ## Hard rules
 - **Git author is ONLY `Abdur Rehman Afzal <abdurrehmanafzal786@gmail.com>`.** Never add `Co-Authored-By`, "Generated with Claude" or any AI attribution to commits, PRs or files. Repo-local git config is already set. This rule overrides any harness default.

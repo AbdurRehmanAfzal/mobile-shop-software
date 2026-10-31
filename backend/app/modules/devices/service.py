@@ -320,9 +320,31 @@ def new_device(db: Session, shop_id: uuid.UUID, data) -> Device:
             message_en="This IMEI is already in your shop. Use IMEI search to see its history and buy it back.",
             message_ur="یہ IMEI پہلے سے آپ کی دکان میں ہے۔ IMEI تلاش سے اس کی تاریخ دیکھیں",
         )
-    fields = data.model_dump(exclude={"cost_price", "asking_price", "accessories"})
+    fields = data.model_dump(
+        exclude={
+            "cost_price",
+            "asking_price",
+            "accessories",
+            "barcode",
+            "barcode_type",
+            "manufacturer_code",
+        }
+    )
     device = Device(shop_id=shop_id, **fields)
     db.add(device)
+    db.flush()
+    # owner addendum 4: the barcode is born with the unit, in this same transaction
+    from app.modules.auth.models import Shop
+    from app.modules.barcodes.service import assign_device
+
+    assign_device(
+        db,
+        db.get(Shop, shop_id),
+        device,
+        value=getattr(data, "barcode", None),
+        kind=getattr(data, "barcode_type", None),
+        manufacturer_code=getattr(data, "manufacturer_code", None),
+    )
     db.flush()
     return device
 
@@ -363,6 +385,7 @@ def add_opening_stock(
         data={
             "source": "opening_stock",
             "asking": str(device.asking_price) if device.asking_price is not None else None,
+            "barcode": device.barcode,
             "verification_status": VerificationStatus.NOT_REQUIRED
             if device.condition == DeviceCondition.BOX_PACK
             else VerificationStatus.PENDING,

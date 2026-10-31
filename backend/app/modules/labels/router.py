@@ -39,7 +39,7 @@ def device_labels(
     copies: int = Query(default=1, ge=1, le=50),
     lang: str | None = Query(default=None, pattern="^(en|ur)$"),
 ):
-    return service.devices_html(
+    page = service.devices_html(
         db,
         ctx.shop_id,
         _ids(ids),
@@ -51,6 +51,19 @@ def device_labels(
         lang=lang,
         can_cost=ctx.can(Cap.VIEW_COST),
     )
+    # owner addendum 4: every print / reprint is on record (who, when, how many)
+    from app.modules.barcodes.service import log_print
+
+    log_print(
+        db,
+        ctx.shop_id,
+        ctx.user.id,
+        kind="devices",
+        ids=_ids(ids),
+        copies=copies,
+        size=size if not (w and h) else f"{w}x{h}",
+    )
+    return page
 
 
 @router.get("/items", response_class=HTMLResponse)
@@ -65,7 +78,7 @@ def item_labels(
     copies: int = Query(default=1, ge=1, le=100),
     lang: str | None = Query(default=None, pattern="^(en|ur)$"),
 ):
-    return service.items_html(
+    page = service.items_html(
         db,
         ctx.shop_id,
         _ids(ids),
@@ -77,3 +90,15 @@ def item_labels(
         lang=lang,
         can_cost=ctx.can(Cap.VIEW_COST),
     )
+    from app.modules.barcodes.service import log_print
+
+    log_print(
+        db,
+        ctx.shop_id,
+        ctx.user.id,
+        kind="items",
+        ids=_ids(ids),
+        copies=copies,
+        size=size if not (w and h) else f"{w}x{h}",
+    )
+    return page

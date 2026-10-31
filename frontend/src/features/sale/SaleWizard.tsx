@@ -21,6 +21,8 @@ import { openPrintable } from '@/lib/files'
 import { isQueued } from '@/lib/offline'
 import { useModules } from '@/lib/modules'
 import { useLaptop } from '@/lib/useMedia'
+import { beep, useScan } from '@/lib/scanner'
+import { lookupCode } from '@/components/ScanListener'
 import { useDevices, useDocMutation, useGet } from '@/lib/queries'
 import type { Device, DeviceDetail, Invoice, Party } from '@/lib/types'
 import { DeviceRow } from '@/features/stock/StockPage'
@@ -147,6 +149,32 @@ export default function SaleWizard() {
       .catch(() => undefined)
   }
 
+  // owner addendum 4: a hardware scan puts the phone (asking price prefilled) or item on the bill;
+  // a second scan of an item adds one more; a sold phone says so instead of being added
+  const [scanNote, setScanNote] = useState<{ code: string; status?: string; deviceId?: string } | null>(null)
+  useScan(step === 2 ? null : async (code) => {
+    try {
+      const r = await lookupCode(code)
+      if (r.kind === 'device' && r.device) {
+        if (r.sellable) { beep('ok'); setScanNote(null); const full = await get<DeviceDetail>(`/api/v1/devices/${r.device.id}`); pickDevice(full as unknown as Device); return }
+        beep('error'); setScanNote({ code, status: r.status, deviceId: r.device.id }); return
+      }
+      if (r.kind === 'item' && r.item) {
+        const it = r.item
+        if (!r.sellable) { beep('error'); setScanNote({ code, status: 'no_qty' }); return }
+        beep('ok'); setScanNote(null)
+        setMisc((ms) => {
+          const same = ms.find((m) => m.accessory_id === it.id)
+          if (same) return ms.map((m) => (m === same ? { ...m, qty: String(Math.min(Number(m.qty || 0) + 1, it.qty)) } : m))
+          return [...ms, { key: uid(), description: ur && it.name_ur ? it.name_ur : it.name, qty: '1', unit_price: String(Number(it.price) || ''), accessory_id: it.id, stock: it.qty }]
+        })
+        setStep(1)
+        return
+      }
+      beep('error'); setScanNote({ code })
+    } catch { beep('error'); setScanNote({ code }) }
+  })
+
   function resetCart() {
     setLines([]); setMisc([]); setParty(null); setPaidNow(''); setDiscount(''); setPay(newPay()); setTaxOn(false); setTaxRate(''); setMore(false); setOverrideReason(''); setLossOk(false); setInst({ on: false, months: '6', monthly: '', dueDay: '10', firstDue: '', gName: '', gPhone: '', gCnic: '' })
   }
@@ -213,6 +241,17 @@ export default function SaleWizard() {
       <div className="lg:hidden"><Stepper steps={['counter.whichPhone', 'counter.howMuch', 'counter.doneTitle']} current={step} /></div>
 
       {holdMsg?.k === 'held' ? <BiAlert text="hold.done" kind="success" /> : null}
+      {scanNote ? (
+        <div className="flex items-center gap-3 rounded-2xl border border-payable/30 bg-payable-tint/40 px-4 py-3" role="alert" data-testid="scan-note">
+          <span className="flex min-w-0 flex-1 flex-col">
+            <BiLabel text={scanNote.status === 'no_qty' ? 'barcode.noQty' : scanNote.status ? 'barcode.notSellable' : 'barcode.notFound'} size="sm" bold tone="text-payable" />
+            <span className="num truncate text-xs text-muted" dir="ltr">{scanNote.code}{scanNote.status && scanNote.status !== 'no_qty' ? ` · ${pick(`stock.status.${scanNote.status}`)}` : ''}</span>
+          </span>
+          {scanNote.deviceId ? <button type="button" onClick={() => nav(`/stock/${scanNote.deviceId}`)} className="tap h-9 rounded-xl border border-line px-3 text-xs font-bold">{pick('barcode.openHistory')}</button> : null}
+          {scanNote.deviceId && scanNote.status === 'sold' ? <button type="button" onClick={() => nav(`/return/new?device=${scanNote.deviceId}`)} className="tap h-9 rounded-xl bg-ink px-3 text-xs font-bold text-ground">{pick('counter.returnJob')}</button> : null}
+          {!scanNote.deviceId ? <button type="button" onClick={() => nav(`/purchase/new?code=${encodeURIComponent(scanNote.code)}`)} className="tap h-9 rounded-xl bg-ink px-3 text-xs font-bold text-ground">{pick('barcode.addIt')}</button> : null}
+        </div>
+      ) : null}
       {holdMsg?.k === 'sold' ? <BiAlert text={soldText(pick, holdMsg.n)} kind="info" /> : null}
 
       <div className={laptop && step !== 2 ? 'grid grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] items-start gap-6' : 'contents'}>

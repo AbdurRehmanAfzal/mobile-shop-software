@@ -20,6 +20,9 @@ def clean_category(v: str) -> str:
 
 class AccessoryCreate(BaseModel):
     sku: str | None = Field(default=None, max_length=40)
+    barcode: str | None = Field(default=None, max_length=64)
+    barcode_type: str | None = Field(default=None, max_length=12)
+    manufacturer_code: str | None = Field(default=None, max_length=64)
     name: str = Field(min_length=1, max_length=150)
     name_ur: str | None = Field(default=None, max_length=150)
     category: str = "other"
@@ -77,6 +80,9 @@ class AccessoryOut(BaseModel):
     reorder_level: int
     is_active: bool
     low_stock: bool = False
+    barcode: str | None = None
+    barcode_type: str | None = None
+    manufacturer_code: str | None = None
 
 
 class MovementOut(BaseModel):

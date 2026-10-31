@@ -233,6 +233,7 @@ def create_purchase(
                 "verification_status": vstatus,
                 "purchase_no": purchase.no,
                 "asking": str(device.asking_price) if device.asking_price is not None else None,
+                "barcode": device.barcode,
             },
         )
 
@@ -268,9 +269,24 @@ def _device_for_purchase(db: Session, shop_id: uuid.UUID, dl) -> Device:
             message_en=f"IMEI {existing.imei1} is already in your shop (status: {existing.status})",
             message_ur=f"IMEI {existing.imei1} پہلے سے دکان میں موجود ہے",
         )
-    # buying it back: refresh identity fields, keep history
-    for k, v in dl.device.model_dump(exclude={"imei1"}).items():
+    # buying it back: refresh identity fields, keep history — and keep its barcode (owner addendum 4:
+    # the same physical unit keeps the same code; only a maker's code may be added now)
+    for k, v in dl.device.model_dump(
+        exclude={"imei1", "barcode", "barcode_type", "manufacturer_code"}
+    ).items():
         setattr(existing, k, v)
+    if dl.device.manufacturer_code or not existing.barcode:
+        from app.modules.auth.models import Shop
+        from app.modules.barcodes.service import assign_device
+
+        assign_device(
+            db,
+            db.get(Shop, shop_id),
+            existing,
+            value=dl.device.barcode if not existing.barcode else None,
+            kind=dl.device.barcode_type,
+            manufacturer_code=dl.device.manufacturer_code,
+        )
     db.flush()
     return existing
 

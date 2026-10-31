@@ -246,7 +246,9 @@
       "faulty_cleared": "Kharabi theek",
       "returned_to_supplier": "Dealer ko wapas",
       "price_changed": "Qeemat badli",
-      "note": "Note"
+      "note": "Note",
+      "barcode_assigned": "Barcode laga",
+      "label_printed": "Label print hua"
     },
     "acc": {
       "box": "Dabba",
@@ -2370,7 +2372,8 @@
       "condition": "Haalat",
       "pta": "PTA",
       "date": "Tareekh",
-      "code": "Laagat code"
+      "code": "Laagat code",
+      "last4": "IMEI aakhri 4"
     }
   },
   "otp": {
@@ -2580,5 +2583,52 @@
     "rows": "rows",
     "row": "Row",
     "downloadTemplate": "Sheet download karein"
+  },
+  "barcode": {
+    "title": "Barcode settings",
+    "hint": "Har mobile aur cheez ko khareedte hi apna barcode mil jata hai. Naye barcode ki qisam chunein; purane label chalte rehte hain.",
+    "type": "Naye labels ke liye barcode qisam",
+    "typeNote": "Code 128 har scanner par parha jata hai. EAN-13 sirf hindse (12 + check hindsa). QR 2-D scanner aur phone camera ke liye.",
+    "prefix": "Dukaan ka prefix",
+    "start": "Number yahan se shuru",
+    "mode": "Value",
+    "modeSeq": "Prefix + number (MS000123)",
+    "modeImei": "Mobile ka IMEI",
+    "eanImeiWarn": "EAN-13 mein 15 hindson ka IMEI nahi aata: mobile ko Code 128 milega.",
+    "eanPrefixWarn": "EAN-13 sirf hindse: EAN label par prefix ke huroof nikal jayenge.",
+    "next": "Agla barcode",
+    "testPrint": "Test print",
+    "backfill": "Purane stock ke barcode",
+    "backfilled": "Ho gaya",
+    "backfillResult": "{{d}} mobile aur {{i}} cheezon ko barcode mila.",
+    "testScan": "Test scan",
+    "testScanHint": "Print kiya label apne scanner se scan karein (ya code likh kar Enter dabayein). Mobile ya cheez nazar aani chahiye.",
+    "testScanBox": "Yahan scan karein",
+    "read": "Parha",
+    "notFound": "Cheez nahi mili",
+    "addIt": "Shamil karein",
+    "label": "Barcode",
+    "notSellable": "Yeh mobile stock mein nahi",
+    "noQty": "Is cheez ka stock khatam hai",
+    "openHistory": "Kahani",
+    "manufacturer": "Company ka barcode (ikhtiyari)",
+    "custom": "Apna barcode (ikhtiyari)"
+  },
+  "count": {
+    "title": "Stock ki ginti",
+    "hint": "Shelf ka har mobile aur cheez scan karein (ya code likhein). Phir Check dabayein: kya ghayab hai aur kya nahi hona chahiye.",
+    "scanned": "scan hue",
+    "clear": "Saaf karein",
+    "typeCode": "Code likh kar Enter dabayein",
+    "check": "Stock se milayein",
+    "found": "Milay",
+    "missing": "Ghayab",
+    "unexpected": "Yahan nahi hone chahiyein",
+    "inStock": "{{n}} mobile stock mein hone chahiyein.",
+    "items": "Cheezein",
+    "scannedN": "{{q}} mein se {{s}} scan",
+    "ok": "barabar",
+    "diff": "farq",
+    "again": "Nayi ginti shuru karein"
   }
 }

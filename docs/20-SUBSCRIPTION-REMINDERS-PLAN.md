@@ -1,6 +1,6 @@
 # 20 · Subscription reminders — gap analysis, decisions, status (addendum 3, 2026-10-31)
 
-Spec: `docs/19-SUBSCRIPTION-REMINDERS-SPEC.md` (verbatim owner brief). ADR-035.
+Spec: `docs/19-SUBSCRIPTION-REMINDERS-SPEC.md` (verbatim owner brief). ADR-035. Owner's setup checklist and manual-test table: `docs/21-OWNER-SETUP-CHECKLIST.md`.
 
 ## 1. What already existed (audit before building)
 

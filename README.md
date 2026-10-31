@@ -33,6 +33,8 @@ See "Running (v2)" in [CLAUDE.md](CLAUDE.md).
 
 ## Billing settings (placeholders you must replace)
 
+The full checklist, with a stage-by-stage table for manual testing, is `docs/21-OWNER-SETUP-CHECKLIST.md`.
+
 The subscription reminders (docs/19, docs/20) show the shopkeeper *your* payment details. They are
 seeded with placeholders and are **hidden from shopkeepers until you replace them**:
 
@@ -48,3 +50,11 @@ seeded with placeholders and are **hidden from shopkeepers until you replace the
    `.env` is for the development PC only.
 4. `ADMIN_WHATSAPP` (or the first number in `SUPERUSER_PHONES`) receives the "fee proof submitted"
    message.
+
+## Barcode scanners
+
+Any USB or Bluetooth scanner in its default keyboard mode (code + Enter) works on every main
+screen without a driver: Home (opens the phone), Sale (adds it with the asking price), Purchase
+(fills IMEI 1 then IMEI 2), Return, Stock list and Stock count. Settings → Barcode settings has a
+Test print and a Test scan box; `docs/23-BARCODES-PLAN.md` §6 walks through a real-scanner test.
+Old stock: press "Barcodes for old stock" there once, or run `python -m app.modules.barcodes.backfill`.

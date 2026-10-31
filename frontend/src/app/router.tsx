@@ -48,6 +48,7 @@ import AuditReportCenterPage from '@/features/audit/ReportCenterPage'
 import StaffPage from '@/features/more/StaffPage'
 import CashAccountsPage from '@/features/more/CashAccountsPage'
 import BulkPage from '@/features/more/BulkPage'
+import StockCountPage from '@/features/stock/StockCountPage'
 
 function RequireAuth() {
   const token = useAuth((s) => s.accessToken)
@@ -88,6 +89,7 @@ export const router = createBrowserRouter([
           { path: '/admin', element: <AdminPage /> },
           { path: '/return/new', element: <ReturnWizard /> },
           { path: '/stock/opening', element: <OpeningStockPage /> },
+          { path: '/stock/count', element: <StockCountPage /> },
           { path: '/stock/:id', element: <DeviceDetailPage /> },
           { path: '/stock/:id/verify', element: <VerifyPage /> },
           { path: '/purchase/new', element: <PurchaseWizard /> },

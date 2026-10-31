@@ -9,6 +9,7 @@ import { BiAlert, BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/com
 import { PhoneInput } from '@/components/FieldInputs'
 import { ErrorText, Loading, PageHeader } from '@/components/ui'
 import { get, patch } from '@/lib/api'
+import BarcodeCard from './BarcodeCard'
 import { useAuth } from '@/lib/auth'
 
 interface ShopFull {
@@ -157,6 +158,7 @@ export default function SettingsPage() {
         ) : null}
       </Card>
 
+      <BarcodeCard Card={Card} />
       <CodeWordCard current={data?.label_code_word ?? null} />
       <SaleRulesCard current={data?.sale_rules ?? null} />
       <AuditPrefsCard current={data?.audit_prefs ?? null} />

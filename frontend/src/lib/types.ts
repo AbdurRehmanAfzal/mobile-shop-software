@@ -74,6 +74,9 @@ export interface AccessoryItem {
 }
 
 export interface Device {
+  barcode?: string | null
+  barcode_type?: string | null
+  manufacturer_code?: string | null
   id: UUID
   imei1: string
   imei2: string | null

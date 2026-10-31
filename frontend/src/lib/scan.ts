@@ -84,24 +84,26 @@ export const canScanLive = () => typeof window !== 'undefined' && window.isSecur
 
 /** From a photo: the whole picture, then overlapping strips, so a label with many barcodes still gives
  *  each one a turn. Returns the IMEIs found (first = best guess). */
-export async function scanPhoto(file: File): Promise<string[]> {
+/** `any`: return every code read (shop labels, maker's barcodes), not only IMEIs */
+export async function scanPhoto(file: File, any = false): Promise<string[]> {
   const img = await createImageBitmap(file)
   try {
-    return await scanBitmap(img)
+    return await scanBitmap(img, true, any)
   } finally {
     img.close()
   }
 }
 
 /** `thorough`: one last slow pass over the whole picture (photos; too slow for every video frame) */
-async function scanBitmap(img: ImageBitmap, thorough = true): Promise<string[]> {
+async function scanBitmap(img: ImageBitmap, thorough = true, any = false): Promise<string[]> {
+  const keep = (text: string | null) => (any ? (text?.trim() || null) : text ? imeiFrom(text) : null)
   const found = new Set<string>()
   // the browser's own detector (Chrome on Android) finds every code at once
   const BD = (window as unknown as { BarcodeDetector?: new () => { detect: (s: ImageBitmap) => Promise<{ rawValue: string }[]> } }).BarcodeDetector
   if (BD) {
     try {
       for (const c of await new BD().detect(img)) {
-        const imei = imeiFrom(c.rawValue)
+        const imei = keep(c.rawValue)
         if (imei) found.add(imei)
       }
     } catch {
@@ -116,14 +118,14 @@ async function scanBitmap(img: ImageBitmap, thorough = true): Promise<string[]> 
     const band = Math.max(24, Math.round(img.height / 16))
     for (let y = 0; y + band / 2 < img.height && found.size < 2; ) {
       const text = decodeStrip(fast, img, y, band, scale)
-      const imei = text ? imeiFrom(text) : null
+      const imei = keep(text)
       if (imei) found.add(imei)
       // after a code is read, jump past it; otherwise slide half a strip
       y += text ? band : Math.round(band / 2)
     }
     if (!found.size && thorough) {
       const text = decodeStrip(hard, img, 0, img.height, scale)
-      const imei = text ? imeiFrom(text) : null
+      const imei = keep(text)
       if (imei) found.add(imei)
     }
   }

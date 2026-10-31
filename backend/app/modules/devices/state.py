@@ -54,6 +54,9 @@ class EventType(StrEnum):
     RETURNED_TO_SUPPLIER = "returned_to_supplier"
     PRICE_CHANGED = "price_changed"
     NOTE = "note"
+    # owner addendum 4: the barcode on the timeline (backfill) and every label print
+    BARCODE_ASSIGNED = "barcode_assigned"
+    LABEL_PRINTED = "label_printed"
 
 
 # Events that move money and therefore may only be raised by document modules (purchase, sale,
@@ -63,7 +66,15 @@ MONEY_EVENTS = frozenset(
 )
 
 # Events that never change status.
-NEUTRAL_EVENTS = frozenset({EventType.VERIFIED, EventType.PRICE_CHANGED, EventType.NOTE})
+NEUTRAL_EVENTS = frozenset(
+    {
+        EventType.VERIFIED,
+        EventType.PRICE_CHANGED,
+        EventType.NOTE,
+        EventType.BARCODE_ASSIGNED,
+        EventType.LABEL_PRINTED,
+    }
+)
 
 S = DeviceStatus
 E = EventType

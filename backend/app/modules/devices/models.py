@@ -27,12 +27,18 @@ class Device(UUIDPk, ShopScoped, Timestamped, Base):
     __tablename__ = "devices"
     __table_args__ = (
         UniqueConstraint("shop_id", "imei1", name="uq_devices_shop_imei1"),
+        UniqueConstraint("shop_id", "barcode", name="uq_devices_shop_barcode"),
         Index("ix_devices_shop_status", "shop_id", "status"),
     )
 
     imei1: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
     imei2: Mapped[str | None] = mapped_column(String(20), index=True)
     serial: Mapped[str | None] = mapped_column(String(60))
+    # owner addendum 4 (2026-10-31): the shop's own barcode for this unit (made with the purchase,
+    # never changed), the type it was printed in, and a maker's code scanned from the box
+    barcode: Mapped[str | None] = mapped_column(String(64), index=True)
+    barcode_type: Mapped[str | None] = mapped_column(String(12))
+    manufacturer_code: Mapped[str | None] = mapped_column(String(64), index=True)
     # phone | tablet | watch (owner 2026-10-28: tablets and smart watches are sold one by one too)
     category: Mapped[str] = mapped_column(
         String(10), nullable=False, default="phone", server_default="phone"

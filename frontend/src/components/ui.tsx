@@ -134,7 +134,7 @@ export function SearchBox({ value, onChange, placeholder, scan }: { value: strin
   return (
     <div className="flex gap-2">
       {box}
-      <ScanButton size="sm" onImei={onChange} />
+      <ScanButton size="sm" onImei={onChange} onCode={onChange} />
     </div>
   )
 }

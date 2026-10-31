@@ -11,6 +11,8 @@ import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/B
 import Help from '@/components/Help'
 import { AccessoryPicker, type AccKind } from '@/components/AccessoryPicker'
 import { ImeiInput } from '@/components/FieldInputs'
+import { beep, useScan } from '@/lib/scanner'
+import { imeiFrom } from '@/lib/scan'
 import { Chip } from '@/components/ui'
 import PriceHint from '@/components/PriceHint'
 import { uid } from '@/lib/id'
@@ -46,6 +48,9 @@ export interface DeviceLineDraft {
   cost: string
   asking_price: string
   accessories: AccessoryItem[]
+  /** owner addendum 4: the box's barcode, and an own barcode typed instead of a generated one */
+  manufacturer_code?: string
+  barcode?: string
 }
 
 
@@ -91,6 +96,8 @@ export function draftToApi(d: DeviceLineDraft) {
       imei1: sim ? d.imei1 || null : null,
       imei2: phone ? d.imei2 || null : null,
       serial: d.serial || null,
+      manufacturer_code: d.manufacturer_code || null,
+      barcode: d.barcode || null,
       brand_id: d.brand_id,
       model_id: d.model_id,
       storage_id: d.category === 'watch' ? null : d.storage_id || null,
@@ -127,6 +134,13 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
     if (imeiDigits !== d.imei1) set('imei1', imeiDigits)
   }, [imeiDigits]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // owner addendum 4: a hardware scan of the box fills IMEI 1, then IMEI 2; any other code is kept
+  // as the maker's barcode, so the label can be found by it later
+  useScan((code) => {
+    const imei = imeiFrom(code)
+    if (imei) { if (!d.imei1 || d.imei1 === imei) set('imei1', imei); else if (!d.imei2 && imei !== d.imei1) set('imei2', imei); beep('ok'); return }
+    set('manufacturer_code', code); beep('ok')
+  })
   const inStockBlock = lookup?.found && lookup.device && !['sold', 'returned_to_supplier'].includes(lookup.device.status)
   const serialOk = /^[A-Za-z0-9-]{4,24}$/.test(d.serial.trim())
   const phone = category === 'phone'
@@ -179,6 +193,10 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
         <BiInput label={sim ? 'devx.serialOpt' : 'devcat.serial'} value={d.serial} onChange={(e) => set('serial', e.target.value.toUpperCase())} disabled={edit} maxLength={24} dir="ltr" className="num" hint={sim ? undefined : 'devcat.serialHint'} />
       )}
       {phone ? <ImeiInput label="stock.imei2" value={d.imei2} onChange={(v) => set('imei2', v)} exclude={toLatinDigits(d.imei1).replace(/\D/g, '')} /> : null}
+      <div className="grid grid-cols-2 gap-2">
+        <BiInput label="barcode.manufacturer" value={d.manufacturer_code ?? ''} onChange={(e) => set('manufacturer_code', e.target.value)} dir="ltr" className="num" maxLength={64} />
+        <BiInput label="barcode.custom" value={d.barcode ?? ''} onChange={(e) => set('barcode', e.target.value)} dir="ltr" className="num" maxLength={64} disabled={edit} />
+      </div>
 
       <div>
         <BiLabel text="stock.brand" size="md" tone="text-muted" className="mb-1.5" />

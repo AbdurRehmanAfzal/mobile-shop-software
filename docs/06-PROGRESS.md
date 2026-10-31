@@ -150,6 +150,18 @@ Spec `docs/19-SUBSCRIPTION-REMINDERS-SPEC.md` · gap analysis, schedule, assumpt
 | Clock-tamper guard for the one-PC install | ✅ | **2026-10-31** `clockguard.py` (memory + hourly `platform_settings.last_seen`) |
 | Owner-side: real bank / support details, renewal key pair on the VPS, decide on grace 7 | ⏳ | docs/20 §4–5 |
 
+## Phase 8 — Barcodes, labels and scanning (owner addendum 4, 2026-10-31)
+Spec `docs/22-BARCODES-SPEC.md` · what existed, what was built, assumptions, libraries, sizes, scanner test `docs/23-BARCODES-PLAN.md` · ADR-036.
+| Item | Status | Notes |
+|---|---|---|
+| Barcode per phone / per item SKU made in the purchase transaction; prefix + sequence or IMEI; custom / maker's codes; uniqueness; never reused | ✅ | **2026-10-31** `modules/barcodes`, columns on devices / accessories / shops, migration `f7a9b1c3d4e6`; `test_barcodes.py` (14) |
+| Types Code 128 / EAN-13 / Code 39 / QR with validation and round-trip decode; settings (type, prefix, start, mode) | ✅ | **2026-10-31** `codes.py` (python-barcode + segno; zxing-cpp in tests); Settings → Barcode settings |
+| Labels: stored barcode in its type, 40×30 + 58×40 added, IMEI last 4, QR layout, test print, prints audited + on the timeline | ✅ | **2026-10-31** `labels/service.py`, `/barcodes/test-label` |
+| Hardware scanner listener (burst + Enter, layout independent, prefixes) + beeps; scan on sale / purchase / return / stock / Home; Item not found → Add it | ✅ | **2026-10-31** `lib/scanner.ts` (+6 unit tests), `ScanListener`, `barcodes.spec.ts` |
+| Stock count screen; lookup by barcode / IMEI 1 / IMEI 2 / SKU / maker's code; backfill (UI + CLI) | ✅ | **2026-10-31** `/stock/count`, `/barcodes/lookup`, `/barcodes/count`, `/barcodes/backfill`, `python -m app.modules.barcodes.backfill` |
+| Camera scanning of any code (not only IMEIs) in search boxes | ✅ | **2026-10-31** `scanPhoto(file, true)`, `ScanButton onCode` |
+| Data Matrix | ❌ | not offered (docs/23 §3) |
+
 ## Backlog (owner requests, not started)
 | Item | Notes |
 |---|---|

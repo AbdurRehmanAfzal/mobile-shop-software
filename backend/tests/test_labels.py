@@ -25,7 +25,8 @@ def test_device_and_item_labels(owner, client, cat):
     page = r.text
     assert page.count('class="label"') == 2
     assert "@page{size:50mm 30mm" in page and "Rs. 45,000" in page and "Rs. 9,500" in page
-    assert IMEI_A in page and "<svg" in page and "Box pack" in page and "Used" in page
+    # owner addendum 4: the sticker carries the phone's own barcode (MS000001), not the IMEI
+    assert "MS000001" in page and "<svg" in page and "Box pack" in page and "Used" in page
     assert "KBBBB" not in page  # the cost code only when asked
 
     # copies, chosen fields, the cost code for the owner; A4 sheet
@@ -86,5 +87,5 @@ def test_device_and_item_labels(owner, client, cat):
     assert (
         r.text.count('class="label"') == 4
         and "Charger 25W" in r.text
-        and it.json()["sku"] in r.text
+        and it.json()["barcode"] in r.text  # owner addendum 4: the item's own barcode, not the SKU
     )

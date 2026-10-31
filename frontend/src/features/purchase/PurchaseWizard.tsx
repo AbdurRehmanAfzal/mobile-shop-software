@@ -33,8 +33,11 @@ export default function PurchaseWizard() {
   const [params] = useSearchParams()
   const { pick, ur, cls } = useLang()
   const [step, setStep] = useDraft('purchase.step', 0)
-  const [kind, setKind] = useDraft<Kind>('purchase.kind', params.get('imei') ? 'walk_in' : 'supplier')
-  const [chosen, setChosen] = useDraft('purchase.chosen', !!params.get('imei'))
+  // a scanned code nobody knows ("Add it"): an IMEI starts a walk-in line; any other code is kept as the maker's barcode
+  const scanned = params.get('code') ?? ''
+  const startImei = params.get('imei') ?? (/^\d{15}$/.test(scanned) ? scanned : '')
+  const [kind, setKind] = useDraft<Kind>('purchase.kind', startImei ? 'walk_in' : 'supplier')
+  const [chosen, setChosen] = useDraft('purchase.chosen', !!startImei)
   const [skipped, setSkipped] = useDraft<Record<string, boolean>>('purchase.skipped', {})
   const [labels, setLabels] = useState(false)
   const [party, setParty] = useDraft<Party | null>('purchase.party', null)
@@ -122,7 +125,7 @@ export default function PurchaseWizard() {
           {chosen ? (
             <>
               <PartyPicker value={party} onChange={setParty} kind={partyKind} label={kind === 'supplier' ? 'purchase.selectDealer' : 'purchase.selectSeller'} />
-              <BiButton text="common.next" full disabled={!party} onClick={() => { setStep(1); if (!devices.length && params.get('imei')) setEditing(emptyDraft(params.get('imei')!, kind)) }} />
+              <BiButton text="common.next" full disabled={!party} onClick={() => { setStep(1); if (!devices.length && (startImei || scanned)) setEditing({ ...emptyDraft(startImei, kind), manufacturer_code: startImei ? '' : scanned }) }} />
             </>
           ) : null}
         </div>
