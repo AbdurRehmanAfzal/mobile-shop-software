@@ -73,6 +73,13 @@ def create_sale(
     below_asking: dict = {}  # device id -> approver
     for dl in data.devices:
         device = get_device(db, shop_id, dl.device_id)
+        # owner addendum 6: a unit with a lock still on it (iCloud / FRP / paired) is not sold
+        if any(v == "not_cleared" for v in (device.lock_checks or {}).values()):
+            raise Conflict(
+                code="lock_not_cleared",
+                message_en="This device still has a lock on it. Clear it and update the lock check first.",
+                message_ur="اس ڈیوائس پر ابھی لاک ہے۔ پہلے لاک ہٹائیں اور لاک چیک اپ ڈیٹ کریں۔",
+            )
         if device.status == DeviceStatus.ON_LOAN and not (
             loan is not None
             and loan.device_id == device.id
@@ -459,21 +466,52 @@ def list_invoices(
     return list(db.scalars(stmt.order_by(Invoice.created_at.desc()).limit(limit)).all())
 
 
+
+def _unit_bits(ln: dict, ur: bool) -> str:
+    """owner addendum 6: the bill names the unit's type, storage / RAM, colour, condition and PTA"""
+    if not ln.get("device_id"):
+        return ""
+    kind = {"phone": ("Mobile", "موبائل"), "tablet": ("Tablet", "ٹیبلٹ"), "watch": ("Smart watch", "سمارٹ واچ")}.get(ln.get("category") or "phone", ("", ""))[1 if ur else 0]
+    cond = {"box_pack": ("Box pack", "باکس پیک"), "open_box": ("Open box", "کھلا باکس"), "used": ("Used", "استعمال شدہ"), "patched": ("Patched", "پیچ شدہ")}.get(ln.get("condition") or "", ("", ""))[1 if ur else 0]
+    if ln.get("grade"):
+        cond = f"{cond} {str(ln['grade']).upper() if len(str(ln['grade'])) == 1 else ln['grade']}".strip()
+    pta = {"pta_approved": ("PTA approved", "PTA منظور"), "non_pta": ("Non-PTA", "نان PTA"), "jv": ("JV", "JV")}.get(ln.get("pta_status") or "", ("", ""))[1 if ur else 0]
+    mem = " + ".join(x for x in (ln.get("storage_name"), f"{ln['ram_gb']}GB RAM" if ln.get("ram_gb") else None) if x)
+    bits = [b for b in (kind, mem, ln.get("colour_name"), cond, pta) if b]
+    return f"<br><small>{html.escape(' · '.join(bits))}</small>" if bits else ""
+
 def to_out(db: Session, inv: Invoice, show_cost: bool) -> dict:
     party = db.get(Party, inv.party_id) if inv.party_id else None
     lines = []
     for ln in inv.lines:
         label = imei = None
+        dev_info: dict = {}
         if ln.device_id:
             d = db.get(Device, ln.device_id)
             if d:
                 imei = d.imei1
                 b, m = db.get(Brand, d.brand_id), db.get(Model, d.model_id)
                 label = f"{b.name if b else ''} {m.name if m else ''}".strip()
+                # owner addendum 6: the bill names the type, storage / RAM, colour, PTA, condition
+                from app.modules.catalogue.models import Colour, Storage
+
+                st = db.get(Storage, d.storage_id) if d.storage_id else None
+                co = db.get(Colour, d.colour_id) if d.colour_id else None
+                dev_info = {
+                    "category": d.category,
+                    "storage_name": st.name if st else None,
+                    "ram_gb": d.ram_gb,
+                    "colour_name": co.name if co else None,
+                    "pta_status": d.pta_status if (d.category == "phone" or d.cellular) else None,
+                    "condition": d.condition,
+                    "grade": d.grade,
+                    "serial": d.serial,
+                }
         row = {
             **{c.name: getattr(ln, c.name) for c in InvoiceLine.__table__.columns},
             "imei1": imei,
             "device_label": label,
+            **dev_info,
         }
         row["profit"] = money(ln.line_total - ln.tax_share - ln.cost) if show_cost else None
         if not show_cost:
@@ -615,7 +653,7 @@ def receipt_html(
     width = "72mm" if thermal else "190mm"
     shop_name = e(shop.name_ur) if ur and shop.name_ur else e(shop.name)
     rows = "".join(
-        f"<tr><td>{e(ln['device_label'] or ln['description'] or '')}<br><small>{e(ln['imei1'] or '')}"
+        f"<tr><td>{e(ln['device_label'] or ln['description'] or '')}{_unit_bits(ln, ur)}<br><small>{e(ln['imei1'] or '')}"
         f"{' · ' + e(', '.join(ln['accessories_given'])) if ln['accessories_given'] else ''}"
         f"{(' · ' + T['warranty'] + ' ' + str(ln['warranty_days']) + ' ' + T['days']) if ln['warranty_days'] else ''}</small></td>"
         f"<td class='n'>{ln['qty']}</td><td class='n'>{ln['unit_price']:,.0f}</td><td class='n'>{ln['line_total']:,.0f}</td></tr>"

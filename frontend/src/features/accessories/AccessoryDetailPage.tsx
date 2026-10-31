@@ -16,6 +16,8 @@ import { api } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
 import ItemForm from './ItemForm'
+import DeviceLineSheet, { draftToApi, emptyDraft } from '@/features/purchase/DeviceLineSheet'
+import { post } from '@/lib/api'
 import { gradeLabel, unitLabel, type Batch, type Item, type TimelineRow } from './types'
 
 export default function AccessoryDetailPage() {
@@ -31,6 +33,7 @@ export default function AccessoryDetailPage() {
   const [adjusting, setAdjusting] = useState(false)
   const [labels, setLabels] = useState(false)
   const [removing, setRemoving] = useState(false)
+  const [making, setMaking] = useState(false)
   const [delta, setDelta] = useState('')
   const [cost, setCost] = useState('')
   const [note, setNote] = useState('')
@@ -78,6 +81,8 @@ export default function AccessoryDetailPage() {
         {canCost ? <BiButton text="acc.adjust" icon={<RefreshCw size={18} />} variant="secondary" onClick={() => { setDelta(''); setCost(''); setNote(''); setAdjusting(true) }} /> : null}
         <BiButton text="label.button" icon={<Tag size={18} />} variant="secondary" onClick={() => setLabels(true)} />
       </div>
+      {/* owner addendum 6: a counted watch / tablet can be tracked one by one from here on */}
+      {canCost && it.qty > 0 && (it.category === 'watch' || it.category === 'tablet') ? <BiButton text="devx.makeUnit" variant="ghost" full onClick={() => setMaking(true)} /> : null}
 
       <div className="card">
         {it.compatible ? <KV k="acc.compatible" v={it.compatible} /> : null}
@@ -160,6 +165,23 @@ export default function AccessoryDetailPage() {
         </div>
       </Sheet>
       <LabelSheet kind="items" ids={[it.id]} open={labels} onClose={() => setLabels(false)} />
+      <Sheet open={making} onClose={() => setMaking(false)} title="devx.makeUnit">
+        {making ? (
+          <div className="flex flex-col gap-3">
+            <BiLabel text="devx.makeUnitHint" size="sm" tone="text-muted" />
+            <DeviceLineSheet
+              initial={{ ...emptyDraft(), category: it.category as 'watch' | 'tablet', condition: 'box_pack', cost: it.avg_cost ? String(Number(it.avg_cost)) : '', asking_price: String(Number(it.price) || '') }}
+              onSave={async (x) => {
+                const api = draftToApi(x)
+                const unit = await post<{ id: string }>(`/api/v1/devices/from-item/${it.id}`, { identity: { ...api.device, cost_price: api.cost, asking_price: api.asking_price, accessories: api.accessories }, cost: api.cost || null })
+                setMaking(false)
+                await inv('accessories', 'item', 'item-timeline', 'devices')
+                nav(`/stock/${unit.id}`)
+              }}
+            />
+          </div>
+        ) : null}
+      </Sheet>
       <RemoveSheet open={removing} onClose={() => setRemoving(false)} name={it.name} onConfirm={async () => { await api('DELETE', `/api/v1/accessories/${it.id}`); await inv('accessories'); nav('/accessories') }} />
     </div>
   )

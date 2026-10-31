@@ -112,7 +112,7 @@ export const useUpdateParty = () => {
 }
 
 // ---- devices ---------------------------------------------------------------------------------
-export const useDevices = (params: { status?: string; q?: string; brand_id?: string; condition?: string; pta_status?: string; category?: string; limit?: number } = {}) => {
+export const useDevices = (params: { status?: string; q?: string; brand_id?: string; condition?: string; pta_status?: string; category?: string; limit?: number; grade?: string; ram_gb?: number; price_min?: number; price_max?: number; lock_unchecked?: boolean; model_id?: string } = {}) => {
   const k = useShopKey()
   return useQuery({ queryKey: [k, 'devices', params], queryFn: () => get<Device[]>(`/api/v1/devices${qs(params)}`) })
 }
@@ -128,6 +128,12 @@ export const useImeiLookup = (imei: string) => {
   const k = useShopKey()
   const digits = imei.replace(/\D/g, '')
   return useQuery({ queryKey: [k, 'imei', digits], queryFn: () => get<ImeiLookup>(`/api/v1/devices/imei/${digits}`), enabled: digits.length === 15 })
+}
+/** owner addendum 6: a Wi-Fi tablet's / GPS watch's serial number is looked up like an IMEI */
+export const useSerialLookup = (serial: string) => {
+  const k = useShopKey()
+  const v = serial.replace(/[\s-]/g, '').toUpperCase()
+  return useQuery({ queryKey: [k, 'serial', v], queryFn: () => get<ImeiLookup>(`/api/v1/devices/imei/${encodeURIComponent(v)}`), enabled: v.length >= 4 && !/^\d+$/.test(v) })
 }
 export const useVerification = (deviceId?: string) => {
   const k = useShopKey()

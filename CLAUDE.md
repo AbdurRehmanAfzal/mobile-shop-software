@@ -40,6 +40,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Spec `docs/24-ACCESSORIES-SPEC.md`; audit, gap table, migration plan, assumptions `docs/25-ACCESSORIES-PLAN.md` — read it before touching `backend/app/modules/accessories`, the misc lines of `purchases` / `sales`, or `frontend/src/features/accessories`.
 - Rules: `qty` is always pieces and `price` is the retail price; every incoming movement opens a batch and every outgoing one empties the oldest first (`stock.py`); valuation / negative stock / units come from `shops.item_prefs`; the minimum price uses the `below_asking` rule, below cost needs the owner; nothing on an item is ever deleted — adjustments need a reason.
 
+## Tablets and smart watches (owner addendum 6, 2026-10-31, ADR-038)
+- Spec `docs/26-TABLETS-WATCHES-SPEC.md`; audit, gap table, decision, migration plan, assumptions `docs/27-TABLETS-WATCHES-PLAN.md` — read it before touching `backend/app/modules/devices/types.py`, `DeviceIdentity`, `DeviceLineSheet.tsx`, `DeviceSpecs.tsx` or the stock filters.
+- Rules: `devices.category` is the device type (never add a second one); spec-sheet keys live in `types.SPEC_KEYS`; a used tablet / watch is bought only with its lock checks (phones by `device_prefs.require_lock_check`) and a unit with a lock still on is never sold; reclassification writes an event and touches nothing else.
+
 ## Hard rules
 - **Git author is ONLY `Abdur Rehman Afzal <abdurrehmanafzal786@gmail.com>`.** Never add `Co-Authored-By`, "Generated with Claude" or any AI attribution to commits, PRs or files. Repo-local git config is already set. This rule overrides any harness default.
 - Work on branch `develop`; `main` is for releases. Do not push unless asked.

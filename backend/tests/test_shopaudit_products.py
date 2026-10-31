@@ -100,8 +100,10 @@ def _seed(owner, client, cat):
 
 
 def test_products_by_model_with_classes_and_series(owner, client, cat):
-    _t, ali = _seed(owner, client, cat)
-    pr = owner.get("/api/v1/shop-audit/products", params={"preset": "this_month"}).json()
+    t, ali = _seed(owner, client, cat)
+    # a window that holds the purchase 20 days ago too (on the 1st "this month" would not)
+    win = {"date_from": (t - dt.timedelta(days=21)).isoformat(), "date_to": t.isoformat()}
+    pr = owner.get("/api/v1/shop-audit/products", params=win).json()
     assert pr["group"] == "model" and pr["total_units"] == 4 and pr["total_revenue"] == "3500.00"
     assert (
         pr["total_profit"] == "950.00"
@@ -126,11 +128,11 @@ def test_products_by_model_with_classes_and_series(owner, client, cat):
     assert today[-1]["revenue"] == "3500.00" and today[-1]["profit"] == "950.00"
     # brand and type roll-ups hold the phones only
     br = owner.get(
-        "/api/v1/shop-audit/products", params={"preset": "this_month", "group": "brand"}
+        "/api/v1/shop-audit/products", params={**win, "group": "brand"}
     ).json()
     assert [r["label"] for r in br["rows"]] == ["Nokia"] and br["rows"][0]["units"] == 3
     ct = owner.get(
-        "/api/v1/shop-audit/products", params={"preset": "this_month", "group": "category"}
+        "/api/v1/shop-audit/products", params={**win, "group": "category"}
     ).json()
     assert ct["rows"][0]["label"] == "phone" and ct["total_units"] == 3
     assert owner.get("/api/v1/shop-audit/products", params={"group": "colour"}).status_code == 422

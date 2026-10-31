@@ -88,6 +88,14 @@ export interface Device {
   cellular?: boolean | null
   /** watch case size */
   size_mm?: number | null
+  /** owner addendum 6: grade, RAM, who gives the warranty, spec sheet, lock checks */
+  grade?: string | null
+  ram_gb?: number | null
+  warranty_by?: 'shop' | 'supplier' | 'brand' | null
+  specs?: Record<string, string | number | boolean | string[]> | null
+  lock_checks?: Record<string, 'cleared' | 'not_cleared' | 'na'> | null
+  lock_checked_at?: string | null
+  lock_ok?: boolean
   battery_health?: number | null
   brand_id: UUID
   brand_name: string

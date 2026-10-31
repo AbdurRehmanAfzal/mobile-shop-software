@@ -20,7 +20,8 @@ interface Forecast {
 }
 interface Age { bucket: string; count: number; value: string | null }
 interface Cat { key: string; name: string; name_ur: string | null }
-type Tab = 'profit' | 'top' | 'estimate' | 'old' | 'prices'
+type Tab = 'profit' | 'top' | 'estimate' | 'old' | 'prices' | 'types'
+interface TypeRow { category: string; count: number; cost: string | null; retail: string; used: number; lock_unchecked: number; lock_failed: number; non_pta: number; slow_60d: number }
 interface PriceRow { kind: 'asking_changed' | 'below_asking'; at: string; device_id: string; label: string; imei1: string; old_asking: string | null; new_asking: string | null; sold_price: string | null; diff: string | null; user_name: string | null; approved_by: string | null; reason: string | null; source: string; invoice_no: string | null; profit: string | null }
 interface PriceReport { rows: PriceRow[]; by_user: { user_name: string; asking_changed: number; below_asking: number; under_by: string }[] }
 type Range = 'today' | 'yesterday' | 'last7' | 'month' | 'custom'
@@ -46,6 +47,7 @@ export default function ReportsPage() {
   const { data: top } = useGet<Top[]>(['r-top', from, to], tab === 'top' ? `/api/v1/reports/top-sellers${qs}` : null)
   const { data: fc } = useGet<Forecast>(['r-forecast'], tab === 'estimate' ? '/api/v1/reports/forecast' : null)
   const { data: age } = useGet<Age[]>(['r-age'], tab === 'old' ? '/api/v1/reports/stock-ageing' : null)
+  const { data: types } = useGet<{ types: TypeRow[]; total: { count: number; cost: string | null; retail: string } }>(['r-types'], tab === 'types' ? '/api/v1/reports/stock-by-type' : null)
   const { data: prices } = useGet<PriceReport>(['r-prices', from, to], tab === 'prices' ? `/api/v1/reports/price-changes${qs}` : null)
   const { data: cats } = useGet<Cat[]>(['exp-cats'], '/api/v1/expenses/categories')
   const catName = (k: string) => { const c = cats?.find((x) => x.key === k); return c ? (ur && c.name_ur ? c.name_ur : c.name) : k }
@@ -57,10 +59,10 @@ export default function ReportsPage() {
     <div className="flex flex-col gap-3">
       <PageHeader
         title="counter.reportTitle"
-        right={tab === 'prices' ? null : (
+        right={tab === 'prices' || tab === 'types' ? null : (
           <DownloadButton
             path={tab === 'profit' ? `/api/v1/exports/profit-loss${qs}` : tab === 'top' ? `/api/v1/exports/top-sellers${qs}` : tab === 'estimate' ? '/api/v1/exports/forecast' : '/api/v1/exports/stock-ageing'}
-            name={{ profit: 'profit-loss', top: 'best-sellers', estimate: 'estimate', old: 'old-stock', prices: 'prices' }[tab]}
+            name={{ profit: 'profit-loss', top: 'best-sellers', estimate: 'estimate', old: 'old-stock', prices: 'prices', types: 'stock-by-type' }[tab]}
           />
         )}
       />
@@ -69,7 +71,7 @@ export default function ReportsPage() {
         <span className="flex min-w-0 flex-col"><BiLabel text="audit.title" size="md" bold /><BiLabel text="audit.hint" size="sm" tone="text-muted" /></span>
       </Link>
       <div className="print:hidden">
-        <BiSegmented<Tab> value={tab} onChange={setTab} options={[{ value: 'profit', text: 'counter.tabProfit' }, { value: 'top', text: 'counter.tabTop' }, { value: 'estimate', text: 'counter.tabEstimate' }, { value: 'old', text: 'counter.tabOld' }, { value: 'prices', text: 'prices.tab' }]} />
+        <BiSegmented<Tab> value={tab} onChange={setTab} options={[{ value: 'profit', text: 'counter.tabProfit' }, { value: 'top', text: 'counter.tabTop' }, { value: 'estimate', text: 'counter.tabEstimate' }, { value: 'old', text: 'counter.tabOld' }, { value: 'types', text: 'devx.typesTab' }, { value: 'prices', text: 'prices.tab' }]} />
       </div>
 
       {tab === 'profit' || tab === 'top' || tab === 'prices' ? (
@@ -186,6 +188,27 @@ export default function ReportsPage() {
               </div>
             )}
           </>
+        )
+      ) : null}
+
+      {tab === 'types' ? (
+        !types ? <Loading /> : (
+          <div className="flex flex-col gap-3" data-testid="r-types">
+            {types.types.map((r) => (
+              <section key={r.category} className="card flex flex-col gap-2">
+                <div className="flex items-center justify-between"><span className="text-base font-extrabold">{pick(`devcat.${r.category}`)}</span><span className="num text-lg" dir="ltr">{r.count}</span></div>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  {r.cost != null ? <div className="flex flex-col rounded-xl bg-ground px-3 py-2"><span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick('devx.types.cost')}</span><span className="num" dir="ltr">{n(r.cost)}</span></div> : null}
+                  <div className="flex flex-col rounded-xl bg-ground px-3 py-2"><span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick('devx.types.retail')}</span><span className="num" dir="ltr">{n(r.retail)}</span></div>
+                  <div className="flex flex-col rounded-xl bg-ground px-3 py-2"><span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick('devx.types.used')}</span><span className="num" dir="ltr">{r.used}</span></div>
+                  <div className="flex flex-col rounded-xl bg-ground px-3 py-2"><span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick('devx.types.nonPta')}</span><span className="num" dir="ltr">{r.non_pta}</span></div>
+                  <div className={`flex flex-col rounded-xl px-3 py-2 ${r.lock_unchecked + r.lock_failed ? 'bg-payable-tint' : 'bg-ground'}`}><span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick('devx.types.lockUnchecked')} / {pick('devx.types.lockFailed')}</span><span className="num" dir="ltr">{r.lock_unchecked} / {r.lock_failed}</span></div>
+                  <div className="flex flex-col rounded-xl bg-ground px-3 py-2"><span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick('devx.types.slow')}</span><span className="num" dir="ltr">{r.slow_60d}</span></div>
+                </div>
+              </section>
+            ))}
+            <div className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`} dir="ltr">{pick('devx.types.count')}: {types.total.count}{types.total.cost != null ? ` · ${pick('devx.types.cost')}: ${n(types.total.cost)}` : ''} · {pick('devx.types.retail')}: {n(types.total.retail)}</div>
+          </div>
         )
       ) : null}
 

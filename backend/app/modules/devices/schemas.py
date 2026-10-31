@@ -98,6 +98,34 @@ class DeviceIdentity(BaseModel):
     barcode: str | None = Field(default=None, max_length=64)
     barcode_type: str | None = Field(default=None, max_length=12)
     manufacturer_code: str | None = Field(default=None, max_length=64)
+    # owner addendum 6: grade, RAM, who gives the warranty, the spec sheet, the lock checks of a
+    # used unit and the tick "lock checked and removed"; the model number feeds the shop's library
+    grade: str | None = Field(default=None, max_length=20)
+    ram_gb: int | None = Field(default=None, ge=1, le=64)
+    warranty_by: Literal["shop", "supplier", "brand"] | None = None
+    specs: dict | None = None
+    lock_checks: dict[str, str] | None = None
+    lock_checked: bool = False
+    model_number: str | None = Field(default=None, max_length=40)
+
+    @field_validator("specs")
+    @classmethod
+    def _specs(cls, v: dict | None) -> dict | None:
+        from app.modules.devices.types import clean_specs
+
+        return clean_specs(v)
+
+    @field_validator("lock_checks")
+    @classmethod
+    def _locks(cls, v: dict | None) -> dict | None:
+        from app.modules.devices.types import clean_locks
+
+        return clean_locks(v)
+
+    @field_validator("grade")
+    @classmethod
+    def _grade(cls, v: str | None) -> str | None:
+        return v.strip().lower() or None if v else None
 
     @field_validator("imei1", "imei2")
     @classmethod
@@ -189,6 +217,17 @@ class DeviceUpdate(BaseModel):
     notes: str | None = None
     photos: list[str] | None = None
     asking_price: Decimal | None = Field(default=None, ge=0)
+    grade: str | None = Field(default=None, max_length=20)
+    ram_gb: int | None = Field(default=None, ge=1, le=64)
+    warranty_by: Literal["shop", "supplier", "brand"] | None = None
+    specs: dict | None = None
+
+    @field_validator("specs")
+    @classmethod
+    def _specs(cls, v: dict | None) -> dict | None:
+        from app.modules.devices.types import clean_specs
+
+        return clean_specs(v)
 
     @field_validator("imei2")
     @classmethod
@@ -237,6 +276,13 @@ class DeviceOut(BaseModel):
     cellular: bool | None = None
     size_mm: int | None = None
     battery_health: int | None = None
+    grade: str | None = None
+    ram_gb: int | None = None
+    warranty_by: str | None = None
+    specs: dict | None = None
+    lock_checks: dict | None = None
+    lock_checked_at: datetime | None = None
+    lock_ok: bool = True
     brand_id: uuid.UUID
     brand_name: str
     model_id: uuid.UUID

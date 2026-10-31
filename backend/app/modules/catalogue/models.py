@@ -6,12 +6,23 @@ service because NULL shop_id rows are not covered by a unique index.
 """
 
 import uuid
+from datetime import datetime
 from decimal import Decimal
 
-from sqlalchemy import Boolean, ForeignKey, Index, Integer, String, Uuid
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    DateTime,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+    UniqueConstraint,
+    Uuid,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.db.base import Base, Timestamped, UUIDPk
+from app.db.base import Base, Timestamped, UUIDPk, utcnow
 
 
 class Brand(UUIDPk, Timestamped, Base):
@@ -49,9 +60,26 @@ class Model(UUIDPk, Timestamped, Base):
     category: Mapped[str] = mapped_column(
         String(10), nullable=False, default="phone", server_default="phone"
     )
+    # owner addendum 6: the maker's model number and the global spec sheet (optional)
+    model_number: Mapped[str | None] = mapped_column(String(40))
+    specs: Mapped[dict | None] = mapped_column(JSON)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
     brand: Mapped[Brand] = relationship(back_populates="models")
+
+
+class ModelSpec(UUIDPk, Base):
+    """The shop's own spec sheet for a model (owner addendum 6): learned from every unit the
+    shop saves, editable, importable from CSV; overlays the global sheet."""
+
+    __tablename__ = "model_specs"
+    __table_args__ = (UniqueConstraint("shop_id", "model_id", name="uq_model_specs_shop_model"),)
+
+    shop_id: Mapped[uuid.UUID] = mapped_column(Uuid, ForeignKey("shops.id", ondelete="CASCADE"), nullable=False, index=True)
+    model_id: Mapped[uuid.UUID] = mapped_column(Uuid, ForeignKey("models.id", ondelete="CASCADE"), nullable=False, index=True)
+    model_number: Mapped[str | None] = mapped_column(String(40))
+    specs: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
 
 
 class Storage(UUIDPk, Base):

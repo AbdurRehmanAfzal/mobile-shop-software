@@ -3,14 +3,15 @@ import { ArrowUpDown, PackagePlus, ScanLine } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { useLang } from '@/components/Bilingual'
-import { BtnText, Chip, Empty, Loading, MoneyText, PageHeader, Row, SearchBox, Sheet } from '@/components/ui'
-import { useBrands, useDevices } from '@/lib/queries'
+import { useLang, BiInput, BiLabel } from '@/components/Bilingual'
+import { BtnText, Chip, Empty, ErrorText, Loading, MoneyText, PageHeader, Row, SearchBox, Sheet } from '@/components/ui'
+import { useBrands, useDevices, useInvalidate } from '@/lib/queries'
 import { beep, useScan } from '@/lib/scanner'
 import { lookupCode } from '@/components/ScanListener'
 import type { Device } from '@/lib/types'
 import ImeiLookupSheet from './ImeiLookupSheet'
 import LabelSheet from '@/components/LabelSheet'
+import { api } from '@/lib/api'
 import { Tag } from 'lucide-react'
 import { BiButton } from '@/components/Bilingual'
 
@@ -117,12 +118,20 @@ export default function StockPage() {
   const [picking, setPicking] = useState(false)
   const [picked, setPicked] = useState<string[]>([])
   const [labels, setLabels] = useState(false)
-  const { data, isLoading } = useDevices({ q: q || undefined, status: filter === 'all' ? undefined : filter, ...preset, limit: 500 })
+  // owner addendum 6: grade / RAM / price range / lock-unchecked filters, and a type change for the picked units
+  const [more, setMore] = useState(false)
+  const [fx, setFx] = useState({ grade: '', ram: '', min: '', max: '', lock: false })
+  const [retype, setRetype] = useState(false)
+  const [toCat, setToCat] = useState<'phone' | 'tablet' | 'watch'>('tablet')
+  const [retypeRows, setRetypeRows] = useState<{ id: string; imei1: string; problems: string[] }[] | null>(null)
+  const [retypeErr, setRetypeErr] = useState<unknown>(null)
+  const { data, isLoading } = useDevices({ q: q || undefined, status: filter === 'all' ? undefined : filter, ...preset, limit: 500, grade: fx.grade || undefined, ram_gb: fx.ram ? Number(fx.ram) : undefined, price_min: fx.min ? Number(fx.min) : undefined, price_max: fx.max ? Number(fx.max) : undefined, lock_unchecked: fx.lock || undefined })
   useScan(async (code) => {
     const r = await lookupCode(code).catch(() => null)
     if (r?.kind === 'device' && r.device) { beep('ok'); nav(`/stock/${r.device.id}`) } else if (r?.kind === 'item' && r.item) { beep('ok'); nav(`/accessories?q=${encodeURIComponent(r.item.sku)}`) } else { beep('error'); setQ(code) }
   })
   const { data: brands } = useBrands()
+  const inv = useInvalidate()
 
   const counts = new Map<string, number>()
   for (const d of data ?? []) counts.set(d.brand_id, (counts.get(d.brand_id) ?? 0) + 1)
@@ -200,6 +209,19 @@ export default function StockPage() {
           <ArrowUpDown size={16} className="pointer-events-none absolute end-2.5 top-1/2 -translate-y-1/2 text-emerald" />
         </label>
       </div>
+      <div className="flex flex-wrap gap-1.5">
+        <button type="button" aria-pressed={more} onClick={() => setMore(!more)} className={`tap h-9 rounded-full border-2 px-3 text-[12px] font-bold ${more || fx.grade || fx.ram || fx.min || fx.max || fx.lock ? 'border-ink bg-ink text-ground' : 'border-line bg-surface'}`} data-testid="stock-filters">{pick('devx.filters')}</button>
+        {fx.lock ? <span className="tap h-9 rounded-full border-2 border-ink bg-ink px-3 text-[12px] font-bold leading-8 text-ground">{pick('devx.lockUnchecked')}</span> : null}
+      </div>
+      {more ? (
+        <div className="card grid grid-cols-2 gap-2">
+          <label className="flex flex-col gap-1"><BiLabel text="devx.grade" size="sm" tone="text-muted" /><select value={fx.grade} onChange={(e) => setFx({ ...fx, grade: e.target.value })} className="min-h-11 rounded-xl border border-line bg-surface px-3 text-sm font-bold"><option value="">{pick('devx.anyGrade')}</option>{['a', 'b', 'refurbished', 'copy'].map((g) => <option key={g} value={g}>{pick(`devx.grades.${g}`)}</option>)}</select></label>
+          <label className="flex flex-col gap-1"><BiLabel text="devx.ram" size="sm" tone="text-muted" /><select value={fx.ram} onChange={(e) => setFx({ ...fx, ram: e.target.value })} className="min-h-11 rounded-xl border border-line bg-surface px-3 text-sm font-bold"><option value="">{pick('devx.anyRam')}</option>{[2, 3, 4, 6, 8, 12, 16].map((g) => <option key={g} value={g}>{g} GB</option>)}</select></label>
+          <BiInput label="devx.priceMin" type="number" inputMode="numeric" min={0} value={fx.min} onChange={(e) => setFx({ ...fx, min: e.target.value })} className="num" />
+          <BiInput label="devx.priceMax" type="number" inputMode="numeric" min={0} value={fx.max} onChange={(e) => setFx({ ...fx, max: e.target.value })} className="num" />
+          <button type="button" role="switch" aria-checked={fx.lock} onClick={() => setFx({ ...fx, lock: !fx.lock })} className="tap col-span-2 flex min-h-11 items-center gap-3 rounded-2xl border border-line bg-ground px-4 text-start"><span className="flex-1"><BiLabel text="devx.lockUnchecked" size="md" bold /></span><span className={`flex h-7 w-12 shrink-0 items-center rounded-full p-1 ${fx.lock ? 'bg-emerald' : 'bg-line'}`}><span className={`h-5 w-5 rounded-full bg-white shadow transition-transform ${fx.lock ? 'translate-x-5 rtl:-translate-x-5' : ''}`} /></span></button>
+        </div>
+      ) : null}
       {data ? <div className="text-xs font-semibold text-muted">{t('stock.count', { n: rows.length })}</div> : null}
 
       {isLoading ? (
@@ -217,8 +239,20 @@ export default function StockPage() {
         <div className="sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-10 flex gap-2 lg:bottom-4">
           <BiButton text="label.selectAll" variant="secondary" onClick={() => setPicked(rows.map((d) => d.id))} />
           <BiButton text={{ en: `${pick('label.printN').replace('{{n}}', String(picked.length))}`, ur: `${pick('label.printN').replace('{{n}}', String(picked.length))}`, roman: `${pick('label.printN').replace('{{n}}', String(picked.length))}` }} icon={<Tag size={20} />} className="flex-1" disabled={!picked.length} onClick={() => setLabels(true)} />
+          <BiButton text="devx.retype" variant="secondary" disabled={!picked.length} onClick={() => { setRetypeRows(null); setRetypeErr(null); setRetype(true) }} />
         </div>
       ) : null}
+      <Sheet open={retype} onClose={() => setRetype(false)} title="devx.retype">
+        <div className="flex flex-col gap-3">
+          <BiLabel text="devx.retypeHint" size="sm" tone="text-muted" />
+          <div className="grid grid-cols-3 gap-2">
+            {(['phone', 'tablet', 'watch'] as const).map((c) => <button key={c} type="button" aria-pressed={toCat === c} onClick={() => { setToCat(c); setRetypeRows(null) }} className={`tap min-h-12 rounded-2xl border-2 font-bold ${toCat === c ? 'border-ink bg-ink text-ground' : 'border-line bg-surface'}`}>{pick(`devcat.${c}`)}</button>)}
+          </div>
+          {retypeRows ? <div className="card flex flex-col gap-1 text-sm">{retypeRows.map((r) => <div key={r.id} className="flex justify-between gap-2"><span className="num" dir="ltr">{r.imei1}</span><span className={r.problems.length ? 'text-payable' : 'text-emerald-deep'}>{r.problems.length ? r.problems.map((p) => pick(`devx.problem.${p}`)).join(', ') : '✓'}</span></div>)}</div> : null}
+          <ErrorText error={retypeErr} />
+          {!retypeRows ? <BiButton text="devx.retypePreview" full onClick={async () => { try { setRetypeRows(await api('POST', '/api/v1/devices/reclassify/preview', { device_ids: picked, to_category: toCat })) } catch (e) { setRetypeErr(e) } }} /> : <BiButton text="devx.retypeApply" full disabled={retypeRows.some((r) => r.problems.length)} onClick={async () => { try { await api('POST', '/api/v1/devices/reclassify/apply', { device_ids: picked, to_category: toCat }); await inv('devices'); setRetype(false); setPicked([]) } catch (e) { setRetypeErr(e) } }} />}
+        </div>
+      </Sheet>
       <LabelSheet kind="devices" ids={picked} open={labels} onClose={() => setLabels(false)} />
       <Sheet open={lookup} onClose={() => setLookup(false)} title="stock.imeiLookup">
         <ImeiLookupSheet

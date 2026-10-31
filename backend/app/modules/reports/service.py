@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.core.clock import local_day
 from app.core.clock import today as shop_today
+from app.core.periods import day_start
 from app.db.base import ZERO
 from app.db.refs import user_name
 from app.modules.accessories.models import Accessory
@@ -152,7 +153,7 @@ def cash_flow(db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date) -
             )
         ).one()
         opening = cash_balance(
-            db, shop_id, a.id, until=dt.datetime.combine(d_from, dt.time.min, tzinfo=dt.UTC)
+            db, shop_id, a.id, until=day_start(d_from)  # the shop's midnight, not UTC's
         )
         tin, tout = db.execute(
             select(

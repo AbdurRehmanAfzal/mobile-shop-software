@@ -17,7 +17,11 @@ import { Chip } from '@/components/ui'
 import PriceHint from '@/components/PriceHint'
 import { uid } from '@/lib/id'
 import { toLatinDigits } from '@/lib/format'
-import { parseStorage, useBrands, useCatalogueEdit, useColours, useImeiLookup, useModels, useStorages } from '@/lib/queries'
+import { parseStorage, useBrands, useCatalogueEdit, useColours, useGet, useImeiLookup, useModels, useSerialLookup, useStorages } from '@/lib/queries'
+import { useNavigate } from 'react-router-dom'
+import { get } from '@/lib/api'
+import { ChevronDown, ChevronUp } from 'lucide-react'
+import { LockChecksEditor, SpecsEditor, type LockChecks, type Specs } from '@/features/stock/DeviceSpecs'
 import type { AccessoryItem, Brand, Colour, DeviceCategory, DeviceCondition, Model, PtaStatus, Storage } from '@/lib/types'
 import { Smartphone, Tablet, Watch } from 'lucide-react'
 import QuickAdd from '@/features/catalogue/QuickAdd'
@@ -51,6 +55,14 @@ export interface DeviceLineDraft {
   /** owner addendum 4: the box's barcode, and an own barcode typed instead of a generated one */
   manufacturer_code?: string
   barcode?: string
+  /** owner addendum 6: grade, RAM, warranty by, model number, spec sheet, lock checks */
+  grade?: string
+  ram_gb?: string
+  warranty_by?: '' | 'shop' | 'supplier' | 'brand'
+  model_number?: string
+  specs?: Specs
+  lock_checks?: LockChecks
+  lock_checked?: boolean
 }
 
 
@@ -64,6 +76,13 @@ export function emptyDraft(imei = '', kind: 'supplier' | 'walk_in' | 'shop' | 't
     cellular: false,
     size_mm: '',
     battery_health: '',
+    grade: '',
+    ram_gb: '',
+    warranty_by: '',
+    model_number: '',
+    specs: {},
+    lock_checks: {},
+    lock_checked: false,
     imei1: imei,
     serial: '',
     imei2: '',
@@ -108,6 +127,13 @@ export function draftToApi(d: DeviceLineDraft) {
       sim_time_months: d.sim_time_months ? Number(d.sim_time_months) : null,
       warranty_months: Number(d.warranty_months || 0),
       patch_details: d.patch_details || null,
+      grade: d.condition !== 'box_pack' && d.grade ? d.grade : null,
+      ram_gb: d.category !== 'watch' && d.ram_gb ? Number(d.ram_gb) : null,
+      warranty_by: d.warranty_by || null,
+      model_number: d.model_number || null,
+      specs: d.specs && Object.keys(d.specs).length ? d.specs : null,
+      lock_checks: d.condition !== 'box_pack' && d.lock_checks && Object.keys(d.lock_checks).length ? d.lock_checks : null,
+      lock_checked: d.condition !== 'box_pack' ? !!d.lock_checked : false,
     },
     cost: Number(d.cost || 0),
     asking_price: d.asking_price ? Number(d.asking_price) : null,
@@ -121,6 +147,10 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
   const { pick, ur } = useLang()
   const [d, setD] = useDraft<DeviceLineDraft>(draftKey ? `${draftKey}.${initial.key}` : null, initial)
   const [modelQ, setModelQ] = useState('')
+  const [more, setMore] = useState(false)
+  const [fromLibrary, setFromLibrary] = useState(false)
+  const nav = useNavigate()
+  const { data: dopts } = useGet<{ grades: string[]; require_lock_check: boolean }>(['device-options'], '/api/v1/devices/options')
   const set = <K extends keyof DeviceLineDraft>(k: K, v: DeviceLineDraft[K]) => setD((x) => ({ ...x, [k]: v }))
   const imeiDigits = toLatinDigits(d.imei1).replace(/\D/g, '')
   const { data: lookup } = useImeiLookup(edit ? '' : imeiDigits)
@@ -142,6 +172,23 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
     set('manufacturer_code', code); beep('ok')
   })
   const inStockBlock = lookup?.found && lookup.device && !['sold', 'returned_to_supplier'].includes(lookup.device.status)
+  // owner addendum 6: the serial of a Wi-Fi tablet / GPS watch is checked the same way
+  const { data: serialLookup } = useSerialLookup(edit || category === 'phone' || d.cellular ? '' : d.serial)
+  const serialBlock = serialLookup?.found && serialLookup.device && !['sold', 'returned_to_supplier'].includes(serialLookup.device.status)
+  // the model library fills the sheet once a model is chosen (only empty fields)
+  useEffect(() => {
+    if (edit || !d.model_id) return
+    get<{ model_number: string | null; ram_gb: number | null; specs: Specs; learned: boolean }>(`/api/v1/devices/model-specs/${d.model_id}`).then((lib) => {
+      const has = !!(lib.model_number || lib.ram_gb || Object.keys(lib.specs || {}).length)
+      setFromLibrary(has)
+      if (!has) return
+      setD((x) => ({ ...x, model_number: x.model_number || lib.model_number || '', ram_gb: x.ram_gb || (lib.ram_gb ? String(lib.ram_gb) : ''), specs: { ...(lib.specs || {}), ...(x.specs || {}) } }))
+    }).catch(() => setFromLibrary(false))
+  }, [d.model_id]) // eslint-disable-line react-hooks/exhaustive-deps
+  const used = d.condition !== 'box_pack'
+  const lockNeeded = !edit && used && (category !== 'phone' || !!dopts?.require_lock_check)
+  const lockStillOn = Object.values(d.lock_checks ?? {}).some((v) => v === 'not_cleared')
+  const lockOk = !lockNeeded || ((!!d.lock_checked || Object.keys(d.lock_checks ?? {}).length > 0) && !lockStillOn)
   const serialOk = /^[A-Za-z0-9-]{4,24}$/.test(d.serial.trim())
   const phone = category === 'phone'
   const sim = phone || !!d.cellular
@@ -152,7 +199,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
   const needsSim = showPta && (d.pta_status === 'non_pta' || d.pta_status === 'jv')
   // owner: the price you will sell at may not be lower than what you paid
   const askingLow = !edit && d.asking_price !== '' && d.cost !== '' && Number(d.asking_price) < Number(d.cost)
-  const valid = !askingLow && identityOk && d.brand_id && d.model_id && (edit || d.cost !== '') && (!needsSim || d.sim_time_months !== '') && (d.condition !== 'patched' || d.patch_details) && batteryOk && !inStockBlock
+  const valid = !askingLow && identityOk && d.brand_id && d.model_id && (edit || d.cost !== '') && (!needsSim || d.sim_time_months !== '') && (d.condition !== 'patched' || d.patch_details) && batteryOk && !inStockBlock && !serialBlock && lockOk
 
 
   return (
@@ -187,6 +234,14 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
           {!lookup.luhn_ok ? <Chip text="stock.luhnBad" tone="warn" /> : null}
           {lookup.found ? <Chip text={{ en: `${t('stock.seenBefore')} · ${t('stock.timesBought', { n: lookup.times_bought })}`, ur: `${t('stock.seenBefore')} · ${t('stock.timesBought', { n: lookup.times_bought })}` }} tone={inStockBlock ? 'bad' : 'warn'} /> : <Chip text="stock.notSeen" tone="ok" />}
           {inStockBlock ? <Chip text={`stock.status.${lookup.device!.status}`} tone="bad" /> : null}
+          {lookup.found && lookup.device ? <button type="button" onClick={() => nav(`/stock/${lookup.device!.id}`)} className="tap rounded-full border border-line px-3 text-xs font-bold underline">{pick('devx.openHistory')}</button> : null}
+        </div>
+      ) : null}
+      {!sim && serialLookup && d.serial.length >= 4 ? (
+        <div className="flex flex-wrap gap-1.5" data-testid="serial-lookup">
+          {serialLookup.found ? <Chip text={{ en: `${t('stock.seenBefore')} · ${t('stock.timesBought', { n: serialLookup.times_bought })}`, ur: `${t('stock.seenBefore')} · ${t('stock.timesBought', { n: serialLookup.times_bought })}` }} tone={serialBlock ? 'bad' : 'warn'} /> : <Chip text="stock.notSeen" tone="ok" />}
+          {serialBlock ? <Chip text={`stock.status.${serialLookup.device!.status}`} tone="bad" /> : null}
+          {serialLookup.found && serialLookup.device ? <button type="button" onClick={() => nav(`/stock/${serialLookup.device!.id}`)} className="tap rounded-full border border-line px-3 text-xs font-bold underline">{pick('devx.openHistory')}</button> : null}
         </div>
       ) : null}
       {phone ? null : (
@@ -330,6 +385,45 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
       )}
       {!edit && d.model_id ? <PriceHint modelId={d.model_id} storageId={d.storage_id || null} condition={d.condition} onUse={(p) => set('asking_price', String(p))} /> : null}
       <BiInput label={{ en: 'Warranty (months)', ur: 'وارنٹی (مہینے)' }} type="number" inputMode="numeric" min={0} max={60} value={d.warranty_months} onChange={(e) => set('warranty_months', e.target.value)} />
+
+      {/* owner addendum 6: the lock check a used unit must pass before it is bought */}
+      {lockNeeded ? (
+        <div className={`flex flex-col gap-2 rounded-2xl border-2 p-3 ${lockOk ? 'border-emerald bg-emerald-tint/40' : 'border-payable/50 bg-payable-tint/40'}`} data-testid="lock-block">
+          <BiLabel text="devx.lock.title" size="md" bold />
+          <BiLabel text="devx.lock.hint" size="sm" tone="text-muted" />
+          <LockChecksEditor category={category} value={d.lock_checks ?? {}} onChange={(v) => set('lock_checks', v)} />
+          <button type="button" role="switch" aria-checked={!!d.lock_checked} onClick={() => set('lock_checked', !d.lock_checked)} className="tap flex min-h-12 items-center gap-3 rounded-2xl border border-line bg-surface px-4 text-start" data-testid="lock-confirm">
+            <span className="flex-1"><BiLabel text="devx.lock.confirm" size="md" bold /></span>
+            <span className={`flex h-7 w-12 shrink-0 items-center rounded-full p-1 ${d.lock_checked ? 'bg-emerald' : 'bg-line'}`}><span className={`h-5 w-5 rounded-full bg-white shadow transition-transform ${d.lock_checked ? 'translate-x-5 rtl:-translate-x-5' : ''}`} /></span>
+          </button>
+          {lockStillOn ? <BiLabel text="devx.lock.blocked" size="sm" tone="text-payable" bold /> : !lockOk ? <BiLabel text="devx.lock.required" size="sm" tone="text-payable" /> : null}
+        </div>
+      ) : null}
+
+      <button type="button" aria-expanded={more} onClick={() => setMore(!more)} className="tap flex min-h-12 items-center justify-between rounded-2xl border border-dashed border-line px-4" data-testid="device-more">
+        <span className="flex flex-col text-start"><BiLabel text={more ? 'devx.less' : 'devx.more'} size="md" bold />{fromLibrary ? <BiLabel text="devx.libraryFilled" size="sm" tone="text-emerald-deep" /> : null}</span>
+        {more ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+      </button>
+      {more ? (
+        <div className="flex flex-col gap-3" data-testid="device-details">
+          <div className="grid grid-cols-2 gap-2">
+            <BiInput label="devx.modelNumber" value={d.model_number ?? ''} onChange={(e) => set('model_number', e.target.value)} dir="ltr" className="num" maxLength={40} />
+            {category !== 'watch' ? <BiInput label="devx.ram" type="number" inputMode="numeric" min={1} max={64} value={d.ram_gb ?? ''} onChange={(e) => set('ram_gb', e.target.value)} className="num" /> : null}
+          </div>
+          {used ? (
+            <div>
+              <BiLabel text="devx.grade" size="md" tone="text-muted" />
+              <div className="mt-1 flex flex-wrap gap-1.5">
+                {(dopts?.grades ?? ['a', 'b', 'refurbished', 'copy']).map((g) => <button key={g} type="button" aria-pressed={d.grade === g} onClick={() => set('grade', d.grade === g ? '' : g)} className={`tap h-10 rounded-full border-2 px-3.5 text-[13px] font-bold ${d.grade === g ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'}`}>{['a', 'b', 'refurbished', 'copy'].includes(g) ? pick(`devx.grades.${g}`) : g}</button>)}
+              </div>
+            </div>
+          ) : null}
+          <BiLabel text="devx.warrantyBy" size="md" tone="text-muted" />
+          <BiSegmented<'shop' | 'supplier' | 'brand'> value={d.warranty_by || 'shop'} onChange={(v) => set('warranty_by', v)} options={[{ value: 'shop', text: 'devx.by.shop' }, { value: 'supplier', text: 'devx.by.supplier' }, { value: 'brand', text: 'devx.by.brand' }]} />
+          <BiLabel text="devx.specs" size="md" tone="text-muted" />
+          <SpecsEditor category={category} value={d.specs ?? {}} onChange={(v) => set('specs', v)} />
+        </div>
+      ) : null}
 
       {edit ? null : (
       <div>

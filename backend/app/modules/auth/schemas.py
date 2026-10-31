@@ -89,6 +89,7 @@ class ShopSettingsOut(ShopOut):
     sale_rules: dict | None = None
     audit_prefs: dict | None = None
     item_prefs: dict | None = None
+    device_prefs: dict | None = None
 
 
 class UserOut(BaseModel):
@@ -194,6 +195,14 @@ class ShopUpdate(BaseModel):
     sale_rules: dict | None = None
     audit_prefs: dict | None = None
     item_prefs: dict | None = None
+    device_prefs: dict | None = None
+
+    @field_validator("device_prefs")
+    @classmethod
+    def _device_prefs(cls, v: dict | None) -> dict | None:
+        from app.modules.devices.types import clean_prefs
+
+        return clean_prefs(v)
 
     @field_validator("item_prefs")
     @classmethod

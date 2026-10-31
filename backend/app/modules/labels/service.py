@@ -205,7 +205,7 @@ def _label(parts: dict, want: set[str], ur: bool) -> str:
 def _device_parts(d: dict, shop: Shop, ur: bool, word: str | None) -> dict:
     cat = d.get("category") or "phone"
     specs = [
-        f"{d['size_mm']}mm" if cat == "watch" and d.get("size_mm") else d.get("storage_name"),
+        f"{d['size_mm']}mm" if cat == "watch" and d.get("size_mm") else " + ".join(x for x in (d.get("storage_name"), f"{d['ram_gb']}GB RAM" if d.get("ram_gb") else None) if x) or None,
         d.get("colour_name"),
         (
             None

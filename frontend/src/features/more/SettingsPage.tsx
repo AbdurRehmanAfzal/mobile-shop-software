@@ -3,7 +3,7 @@
  *  stays in reach, and a plain "Saved" message. */
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Boxes, Check, Fingerprint, Gauge, Languages, Percent, Receipt, ShieldCheck, Store, Tag } from 'lucide-react'
+import { Boxes, Check, Tablet, Fingerprint, Gauge, Languages, Percent, Receipt, ShieldCheck, Store, Tag } from 'lucide-react'
 import { useEffect, useState, type ReactNode } from 'react'
 import { BiAlert, BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import { PhoneInput } from '@/components/FieldInputs'
@@ -33,6 +33,7 @@ interface ShopFull {
   sale_rules: { below_asking: Rule; asking_change: Rule } | null
   audit_prefs: AuditPrefs | null
   item_prefs: ItemPrefs | null
+  device_prefs: { grades?: string[]; require_lock_check?: boolean } | null
 }
 interface ItemPrefs { valuation?: 'avg' | 'fifo'; allow_negative_stock?: boolean; units?: Record<string, number> }
 interface AuditPrefs { age_bands: number[]; high_value: number; low_margin_pct: number; top_share: number; low_units: number; bypass_share: number; bypass_min: number }
@@ -165,6 +166,7 @@ export default function SettingsPage() {
       <SaleRulesCard current={data?.sale_rules ?? null} />
       <AuditPrefsCard current={data?.audit_prefs ?? null} />
       <ItemPrefsCard current={data?.item_prefs ?? null} />
+      <DevicePrefsCard current={data?.device_prefs ?? null} />
 
       <ErrorText error={m.error} />
       {saved ? <BiAlert text="settings.saved" kind="success" /> : null}
@@ -285,6 +287,27 @@ function ItemPrefsCard({ current }: { current: ItemPrefs | null }) {
         <BiInput label="acc.units.box" type="number" inputMode="numeric" min={1} value={p.box} onChange={(e) => { setOk(false); setP({ ...p, box: e.target.value }) }} className="num" />
         <BiInput label="acc.units.carton" type="number" inputMode="numeric" min={1} value={p.carton} onChange={(e) => { setOk(false); setP({ ...p, carton: e.target.value }) }} className="num" />
       </div>
+      <ErrorText error={m.error} />
+      <BiButton text={ok ? 'settings.saved' : 'common.save'} icon={<Check size={20} />} variant="secondary" full loading={m.isPending} onClick={() => m.mutate()} />
+    </Card>
+  )
+}
+
+/** lock check for used mobiles, grades of used units (owner addendum 6, docs/26 §A) */
+function DevicePrefsCard({ current }: { current: { grades?: string[]; require_lock_check?: boolean } | null }) {
+  const qc = useQueryClient()
+  const shopKey = useAuth((s) => s.activeShopId)
+  const [p, setP] = useState({ require_lock_check: false, grades: 'a, b, refurbished, copy' })
+  const [ok, setOk] = useState(false)
+  useEffect(() => { if (current) setP({ require_lock_check: !!current.require_lock_check, grades: (current.grades ?? ['a', 'b', 'refurbished', 'copy']).join(', ') }) }, [current])
+  const m = useMutation({
+    mutationFn: () => patch('/api/v1/shops/current', { device_prefs: { require_lock_check: p.require_lock_check, grades: p.grades.split(',').map((g) => g.trim().toLowerCase()).filter(Boolean) } }),
+    onSuccess: () => { setOk(true); void qc.invalidateQueries({ queryKey: [shopKey, 'shop-full'] }); void qc.invalidateQueries({ queryKey: [shopKey, 'device-options'] }) },
+  })
+  return (
+    <Card icon={<Tablet size={22} />} tone="bg-stockt text-stockt-fg" title="devx.prefs.title" hint="devx.prefs.hint">
+      <Toggle on={p.require_lock_check} onChange={(v) => { setOk(false); setP({ ...p, require_lock_check: v }) }} text="devx.prefs.requireLock" hint="devx.prefs.requireLockHint" />
+      <BiInput label="devx.prefs.grades" value={p.grades} onChange={(e) => { setOk(false); setP({ ...p, grades: e.target.value }) }} dir="ltr" />
       <ErrorText error={m.error} />
       <BiButton text={ok ? 'settings.saved' : 'common.save'} icon={<Check size={20} />} variant="secondary" full loading={m.isPending} onClick={() => m.mutate()} />
     </Card>

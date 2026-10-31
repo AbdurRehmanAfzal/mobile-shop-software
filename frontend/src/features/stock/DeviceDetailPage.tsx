@@ -11,6 +11,8 @@ import { useDevice, useDeviceEvent, useDeviceHistory, useDocMutation, useInvalid
 import type { DeviceDetail, Loan } from '@/lib/types'
 import DeviceLineSheet, { emptyDraft, type DeviceLineDraft } from '@/features/purchase/DeviceLineSheet'
 import { hasPta, specLine } from './StockPage'
+import { LockChecksEditor, lockState, specRows, type LockChecks } from './DeviceSpecs'
+import type { DeviceCategory } from '@/lib/types'
 import PriceHint from '@/components/PriceHint'
 import UnitMoney from './UnitMoney'
 
@@ -35,6 +37,10 @@ function toDraft(d: DeviceDetail): DeviceLineDraft {
     sim_time_months: d.sim_time_months === null ? '' : String(d.sim_time_months),
     warranty_months: String(d.warranty_months),
     patch_details: d.patch_details ?? '',
+    grade: d.grade ?? '',
+    ram_gb: d.ram_gb ? String(d.ram_gb) : '',
+    warranty_by: d.warranty_by ?? '',
+    specs: d.specs ?? {},
   }
 }
 
@@ -47,7 +53,13 @@ export default function DeviceDetailPage() {
   const { data: history } = useDeviceHistory(id)
   const ev = useDeviceEvent()
   const loanM = useDocMutation<{ device_id: string; party_id: string; expected_back_at?: string; notes?: string }, Loan>('POST', () => '/api/v1/loans')
-  const [sheet, setSheet] = useState<null | 'loan' | 'note' | 'price' | 'edit' | 'remove' | 'label'>(null)
+  const [sheet, setSheet] = useState<null | 'loan' | 'note' | 'price' | 'edit' | 'remove' | 'label' | 'lock' | 'retype'>(null)
+  // owner addendum 6: lock check and type change
+  const [locks, setLocks] = useState<LockChecks>({})
+  const [lockNote, setLockNote] = useState('')
+  const [toCat, setToCat] = useState<DeviceCategory>('tablet')
+  const [preview, setPreview] = useState<{ problems: string[] }[] | null>(null)
+  const [retypeErr, setRetypeErr] = useState<unknown>(null)
   const [reason, setReason] = useState('')
   const [pin, setPin] = useState('')
   const [priceErr, setPriceErr] = useState<ApiError | null>(null)
@@ -89,7 +101,9 @@ export default function DeviceDetailPage() {
         </div>
         <div className="flex flex-wrap gap-1.5">
           <Chip text={`stock.condition.${d.condition}`} />
+          {d.grade ? <Chip text={['a', 'b', 'refurbished', 'copy'].includes(d.grade) ? `devx.grades.${d.grade}` : { en: d.grade, ur: d.grade }} /> : null}
           {hasPta(d) ? <Chip text={`stock.pta.${d.pta_status}`} tone={d.pta_status === 'pta_approved' ? 'ok' : 'warn'} /> : null}
+          {d.condition !== 'box_pack' ? <Chip text={lockState(d.lock_checks) === 'ok' ? 'devx.lock.ok' : lockState(d.lock_checks) === 'bad' ? 'devx.lock.bad' : 'devx.lock.none'} tone={lockState(d.lock_checks) === 'ok' ? 'ok' : lockState(d.lock_checks) === 'bad' ? 'bad' : 'warn'} /> : null}
           {d.verification_status !== 'not_required' ? <Chip text={`stock.verification.${d.verification_status}`} tone={vTone} /> : null}
           {d.cycle_no > 1 ? <Chip text={{ en: `Cycle ${d.cycle_no}`, ur: `${d.cycle_no} بار` }} /> : null}
         </div>
@@ -137,6 +151,8 @@ export default function DeviceDetailPage() {
           <BiButton text="stock.changePrice" variant="secondary" size="md" onClick={() => { setText(d.asking_price ?? ''); setSheet('price') }} />
           <BiButton text="stock.addNote" variant="secondary" size="md" onClick={() => { setText(''); setSheet('note') }} />
           <BiButton text="crud.editDetails" variant="secondary" size="md" onClick={() => setSheet('edit')} />
+          {d.condition !== 'box_pack' ? <BiButton text="devx.lock.button" variant="secondary" size="md" onClick={() => { setLocks(d.lock_checks ?? {}); setLockNote(''); setSheet('lock') }} /> : null}
+          {canSeeCost ? <BiButton text="devx.retype" variant="secondary" size="md" onClick={() => { setToCat((d.category ?? 'phone') === 'phone' ? 'tablet' : 'phone'); setPreview(null); setRetypeErr(null); setSheet('retype') }} /> : null}
           {canRemoveOpening ? <BiButton text="crud.removeOldStock" variant="secondary" size="md" onClick={() => setSheet('remove')} /> : null}
         </div>
         <ErrorText error={ev.error ?? loanM.error} />
@@ -147,7 +163,10 @@ export default function DeviceDetailPage() {
           {d.imei2 ? <KV k="stock.imei2" v={<span dir="ltr">{d.imei2}</span>} /> : null}
           {d.serial ? <KV k="stock.serial" v={<span dir="ltr">{d.serial}</span>} /> : null}
           {d.sim_time_months ? <KV k="stock.simTime" v={d.sim_time_months} /> : null}
-          {d.warranty_months ? <KV k="stock.warranty" v={`${d.warranty_months} ${pick('stock.months')}`} /> : null}
+          {d.warranty_months ? <KV k="stock.warranty" v={`${d.warranty_months} ${pick('stock.months')}${d.warranty_by ? ` · ${pick(`devx.by.${d.warranty_by}`)}` : ''}`} /> : null}
+          {d.ram_gb ? <KV k="devx.ram" v={<span dir="ltr">{d.ram_gb} GB</span>} /> : null}
+          {specRows(d.category ?? 'phone', d.specs, pick).map(([k, v]) => <KV key={k} k={k} v={<span dir="ltr">{v}</span>} />)}
+          {d.lock_checks ? <KV k="devx.lock.title" v={<span className="flex flex-col items-end">{Object.entries(d.lock_checks).map(([k, v]) => <span key={k} className={v === 'not_cleared' ? 'text-payable' : ''}>{pick(`devx.lock.${k}`)}: {pick(`devx.lock.${v}`)}</span>)}</span>} /> : null}
           {d.patch_details ? <KV k="stock.patchDetails" v={d.patch_details} /> : null}
           {d.notes ? <KV k="common.notes" v={d.notes} /> : null}
         </div>
@@ -215,12 +234,37 @@ export default function DeviceDetailPage() {
                 patch_details: x.patch_details || null,
                 ...(x.category === 'watch' ? { size_mm: x.size_mm ? Number(x.size_mm) : null } : {}),
                 ...(x.category !== 'phone' ? { battery_health: x.battery_health ? Number(x.battery_health) : null } : {}),
+                grade: x.condition !== 'box_pack' && x.grade ? x.grade : null,
+                ram_gb: x.category !== 'watch' && x.ram_gb ? Number(x.ram_gb) : null,
+                warranty_by: x.warranty_by || null,
+                specs: x.specs && Object.keys(x.specs).length ? x.specs : null,
               })
               await inv('devices', 'device', 'history')
               setSheet(null)
             }}
           />
         ) : null}
+      </Sheet>
+
+      <Sheet open={sheet === 'lock'} onClose={() => setSheet(null)} title="devx.lock.title">
+        <div className="flex flex-col gap-3">
+          <BiLabel text="devx.lock.hint" size="sm" tone="text-muted" />
+          <LockChecksEditor category={d.category ?? 'phone'} value={locks} onChange={setLocks} />
+          <BiInput label="devx.lock.note" value={lockNote} onChange={(e) => setLockNote(e.target.value)} maxLength={200} />
+          <BiButton text="common.save" full disabled={!Object.keys(locks).length} onClick={async () => { await post(`/api/v1/devices/${d.id}/lock-check`, { checks: locks, note: lockNote || null }); await inv('devices', 'device', 'history'); setSheet(null) }} />
+        </div>
+      </Sheet>
+      <Sheet open={sheet === 'retype'} onClose={() => setSheet(null)} title="devx.retype">
+        <div className="flex flex-col gap-3" data-testid="retype-sheet">
+          <BiLabel text="devx.retypeHint" size="sm" tone="text-muted" />
+          <BiLabel text="devx.retypeTo" size="md" tone="text-muted" />
+          <div className="grid grid-cols-3 gap-2">
+            {(['phone', 'tablet', 'watch'] as DeviceCategory[]).filter((c) => c !== (d.category ?? 'phone')).map((c) => <button key={c} type="button" aria-pressed={toCat === c} onClick={() => { setToCat(c); setPreview(null) }} className={`tap min-h-12 rounded-2xl border-2 font-bold ${toCat === c ? 'border-ink bg-ink text-ground' : 'border-line bg-surface'}`}>{pick(`devcat.${c}`)}</button>)}
+          </div>
+          {preview ? (preview[0].problems.length ? <BiAlert text={{ en: preview[0].problems.map((p) => pick(`devx.problem.${p}`)).join(', '), ur: preview[0].problems.map((p) => pick(`devx.problem.${p}`)).join('، ') }} /> : <BiAlert text="devx.retypeHint" kind="success" />) : null}
+          <ErrorText error={retypeErr} />
+          {!preview ? <BiButton text="devx.retypePreview" full onClick={async () => { try { setPreview(await post(`/api/v1/devices/reclassify/preview`, { device_ids: [d.id], to_category: toCat })) } catch (e) { setRetypeErr(e) } }} /> : <BiButton text="devx.retypeApply" full disabled={!!preview[0].problems.length} onClick={async () => { try { await post(`/api/v1/devices/reclassify/apply`, { device_ids: [d.id], to_category: toCat }); await inv('devices', 'device', 'history'); setSheet(null) } catch (e) { setRetypeErr(e) } }} />}
+        </div>
       </Sheet>
 
       <RemoveSheet
