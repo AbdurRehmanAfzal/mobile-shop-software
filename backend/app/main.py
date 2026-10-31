@@ -31,6 +31,7 @@ from app.modules.notifications.router import router as notifications_router
 from app.modules.otp.router import router as otp_router
 from app.modules.parties.router import router as parties_router
 from app.modules.payments.router import router as payments_router
+from app.modules.plan.router import router as plan_router
 from app.modules.public.router import router as public_router
 from app.modules.purchases.router import router as purchases_router
 from app.modules.repairs.router import router as repairs_router
@@ -170,6 +171,7 @@ def create_app() -> FastAPI:
     app.include_router(units_router)
     app.include_router(shopaudit_router)
     app.include_router(bulk_router)
+    app.include_router(plan_router)
     app.include_router(ai_router)
     app.include_router(otp_router)
     app.include_router(labels_router)

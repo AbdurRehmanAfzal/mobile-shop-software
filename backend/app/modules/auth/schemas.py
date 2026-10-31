@@ -115,6 +115,8 @@ class PlanOut(BaseModel):
     monthly_fee: Decimal
     status: str  # unlimited | ok | due_soon | expired | locked
     grace_days: int
+    started_at: datetime | None = None
+    pending_payment_id: str | None = None
 
 
 class MeOut(BaseModel):

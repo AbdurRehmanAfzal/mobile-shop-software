@@ -2,9 +2,9 @@
  *  login, which can be sent on WhatsApp. Owner (2026-10-26): shops are not self-service. */
 
 import { CalendarClock, Check, CheckCircle2, CreditCard, GitBranch, Image as ImageIcon, KeyRound, LogIn, MessageCircle, Plus, Store, Trash2, X } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
-import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import { BiAlert, BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import { PhoneInput, isMobileOk } from '@/components/FieldInputs'
 import { BtnText, Empty, ErrorText, Loading, PageHeader, SearchBox, Sheet, fmtDate } from '@/components/ui'
 import { useAuth, type MeOut } from '@/lib/auth'
@@ -14,10 +14,11 @@ import AppLinkCard, { APP_LINK, SITE } from './AppLinkCard'
 import { normalisePhone } from '@/lib/format'
 import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
 
-interface AdminShop { id: string; organisation_id: string; name: string; city: string | null; owner_name: string | null; owner_phone: string | null; users: number; branches: number; created_at: string; plan: string; plan_expires_at: string | null; days_left: number | null; monthly_fee: string; fee_note: string | null; plan_status: 'unlimited' | 'ok' | 'due_soon' | 'expired' | 'locked'; modules: string[]; modules_custom: boolean }
+interface AdminShop { id: string; organisation_id: string; name: string; city: string | null; owner_name: string | null; owner_phone: string | null; users: number; branches: number; created_at: string; plan: string; plan_expires_at: string | null; days_left: number | null; monthly_fee: string; fee_note: string | null; plan_status: 'unlimited' | 'ok' | 'due_soon' | 'expired' | 'locked'; modules: string[]; modules_custom: boolean; grace_days?: number | null }
+interface BillingOut { bank: { bank_name: string; account_title: string; account_number: string; iban: string; branch: string }; support: { phone: string; whatsapp: string }; schedule: { info_days: number; warn_days: number; urgent_days: number; grace_days: number; snooze_hours: number }; note: { en: string; ur: string; roman: string }; qr_path: string | null; placeholders: boolean }
 type DueFilter = 'all' | 'due' | 'locked'
 interface Account { label: string; account_name: string; number: string; note: string | null }
-interface FeeRow { id: string; shop_id: string; shop_name: string; plan: string; amount: string; method: string; reference: string | null; proof_path: string | null; months: number; note: string | null; status: string; decision_note: string | null; created_at: string }
+interface FeeRow { id: string; shop_id: string; shop_name: string; plan: string; amount: string; method: string; reference: string | null; proof_path: string | null; months: number; note: string | null; status: string; decision_note: string | null; created_at: string; paid_on?: string | null; receipt_no?: string | null }
 interface ShopReq { id: string; name: string; shop_name: string; city: string | null; phone: string; plan: string; note: string | null; created_at: string }
 interface PwReq { id: string; shop_id: string; shop_name: string; user_id: string; name: string; phone: string; role: string; sent_to: string; created_at: string }
 const PLANS = ['trial', 'basic', 'pro', 'chain'] as const
@@ -81,6 +82,18 @@ export default function AdminPage() {
   const { data: feeStats } = useGet<{ pending: number; month_total: string; month: string }>(['fee-stats'], isSuper ? '/api/v1/admin/fee-stats' : null)
   const { data: savedAccounts } = useGet<Account[]>(['pay-accounts'], isSuper ? '/api/v1/admin/payment-accounts' : null)
   const [accts, setAccts] = useState<Account[] | null>(null)
+  // owner addendum 3: billing settings, manual payments, renewal codes, per-shop grace
+  const { data: billing } = useGet<BillingOut>(['billing'], isSuper ? '/api/v1/admin/billing' : null)
+  const [bill, setBill] = useState<BillingOut | null>(null)
+  const [billOpen, setBillOpen] = useState(false)
+  useEffect(() => { if (billOpen && !bill && billing) setBill(JSON.parse(JSON.stringify(billing))) }, [billOpen, bill, billing])
+  const saveBilling = useDocMutation<BillingOut, BillingOut>('PUT', () => '/api/v1/admin/billing', (b) => ({ bank: b.bank, support: b.support, schedule: b.schedule, note: b.note }))
+  const [pay, setPay] = useState({ amount: '', method: 'cash', months: '1', reference: '', paid_on: new Date().toISOString().slice(0, 10) })
+  const recordPay = useDocMutation<typeof pay, FeeRow>('POST', () => `/api/v1/admin/shops/${sel?.id}/payments`, (p) => ({ amount: Number(p.amount), method: p.method, months: Number(p.months) || 1, reference: p.reference || null, paid_on: p.paid_on || null }))
+  const [codeMonths, setCodeMonths] = useState('1')
+  const [codeOut, setCodeOut] = useState<string | null>(null)
+  const makeCode = useDocMutation<{ months: number }, { code: string }>('POST', () => `/api/v1/admin/shops/${sel?.id}/renewal-code`)
+  const [grace, setGrace] = useState('')
   const [acctsOpen, setAcctsOpen] = useState(false)
   const saveAccts = useDocMutation<Account[], Account[]>('PUT', () => '/api/v1/admin/payment-accounts')
   const [proofUrl, setProofUrl] = useState<string | null>(null)
@@ -101,7 +114,7 @@ export default function AdminPage() {
   }
   const savePlan = useDocMutation<Record<string, unknown>, AdminShop>('PATCH', () => `/api/v1/admin/shops/${sel?.id}/plan`)
   const addBranch = useDocMutation<typeof branch, AdminShop>('POST', () => `/api/v1/admin/shops/${sel?.id}/branches`, (b) => ({ name: b.name, city: b.city || null }))
-  const openShop = (s: AdminShop) => { setMods(s.modules_custom ? s.modules : null); saveModules.reset(); setPw(''); setPwDone(null); setPassword.reset(); setSel(s); setPlan({ plan: s.plan, monthly_fee: Number(s.monthly_fee) ? String(Number(s.monthly_fee)) : '', expires_on: s.plan_expires_at ? s.plan_expires_at.slice(0, 10) : '', note: s.fee_note ?? '' }); setBranch({ name: '', city: '' }); savePlan.reset(); addBranch.reset() }
+  const openShop = (s: AdminShop) => { setCodeOut(null); makeCode.reset(); recordPay.reset(); setPay({ amount: Number(s.monthly_fee) ? String(Number(s.monthly_fee)) : '', method: 'cash', months: '1', reference: '', paid_on: new Date().toISOString().slice(0, 10) }); setGrace(s.grace_days == null ? '' : String(s.grace_days)); setMods(s.modules_custom ? s.modules : null); saveModules.reset(); setPw(''); setPwDone(null); setPassword.reset(); setSel(s); setPlan({ plan: s.plan, monthly_fee: Number(s.monthly_fee) ? String(Number(s.monthly_fee)) : '', expires_on: s.plan_expires_at ? s.plan_expires_at.slice(0, 10) : '', note: s.fee_note ?? '' }); setBranch({ name: '', city: '' }); savePlan.reset(); addBranch.reset() }
   const { data, isLoading } = useGet<AdminShop[]>(['admin-shops', q], isSuper ? `/api/v1/admin/shops${q ? `?q=${encodeURIComponent(q)}` : ''}` : null)
   const create = useDocMutation<typeof EMPTY & { request_id?: string | null }, AdminShop>('POST', () => '/api/v1/admin/shops', (x) => ({ ...x, city: x.city || null, phone: normalisePhone(x.phone) }))
   const { data: catalogue } = useGet<ModuleCatalogue>(['module-catalogue'], isSuper ? '/api/v1/admin/modules' : null)
@@ -141,6 +154,7 @@ export default function AdminPage() {
             <span className="text-xs text-muted">{pick('admin.thisMonth')} <span className="num" dir="ltr">Rs. {Number(feeStats?.month_total ?? 0).toLocaleString('en-US')}</span> · {pick('admin.pendingN').replace('{{n}}', String(feeStats?.pending ?? 0))}</span>
           </span>
           <button type="button" onClick={() => { setAccts(savedAccounts ? savedAccounts.map((a) => ({ ...a })) : []); setAcctsOpen(true) }} className={`tap rounded-full border border-line px-3 py-1.5 text-xs font-bold ${ur ? cls('sm') : ''}`}>{pick('admin.accounts')}</button>
+          <button type="button" onClick={() => { if (billing) setBill(JSON.parse(JSON.stringify(billing))); setBillOpen(true) }} className={`tap rounded-full px-3 py-1.5 text-xs font-bold ${billing?.placeholders ? 'bg-payable-tint text-payable' : 'border border-line'} ${ur ? cls('sm') : ''}`} data-testid="billing-open">{pick('admin.billing')}</button>
         </div>
         {fees?.length ? (
           <div className="divide-y divide-line">
@@ -164,6 +178,32 @@ export default function AdminPage() {
           </div>
         ) : <BiLabel text="admin.noFees" size="sm" tone="text-muted" />}
       </section>
+      <Sheet open={billOpen} onClose={() => setBillOpen(false)} title="admin.billing">
+        {bill ? (
+          <div className="flex flex-col gap-3" data-testid="billing-sheet">
+            <BiLabel text="admin.billingHint" size="sm" tone="text-muted" />
+            {bill.placeholders ? <BiAlert text="admin.placeholders" kind="info" /> : null}
+            {([['bank_name', 'admin.bankName'], ['account_title', 'admin.accountTitle'], ['account_number', 'admin.accountNumber'], ['iban', 'admin.iban'], ['branch', 'admin.branch']] as const).map(([k, label]) => (
+              <BiInput key={k} label={label} value={bill.bank[k] ?? ''} onChange={(e) => setBill({ ...bill, bank: { ...bill.bank, [k]: e.target.value } })} dir="ltr" />
+            ))}
+            <div className="grid grid-cols-2 gap-2">
+              <BiInput label="admin.supportPhone" value={bill.support.phone ?? ''} onChange={(e) => setBill({ ...bill, support: { ...bill.support, phone: e.target.value } })} dir="ltr" />
+              <BiInput label="admin.supportWa" value={bill.support.whatsapp ?? ''} onChange={(e) => setBill({ ...bill, support: { ...bill.support, whatsapp: e.target.value } })} dir="ltr" />
+            </div>
+            <BiLabel text="admin.schedule" size="md" bold />
+            <div className="grid grid-cols-2 gap-2">
+              {([['info_days', 'admin.infoDays'], ['warn_days', 'admin.warnDays'], ['urgent_days', 'admin.urgentDays'], ['grace_days', 'admin.graceDays'], ['snooze_hours', 'admin.snoozeHours']] as const).map(([k, label]) => (
+                <BiInput key={k} label={label} type="number" inputMode="numeric" min={0} value={String(bill.schedule[k])} onChange={(e) => setBill({ ...bill, schedule: { ...bill.schedule, [k]: Number(e.target.value) } })} className="num" />
+              ))}
+            </div>
+            <BiInput label={{ en: 'Note (English)', ur: 'نوٹ (انگریزی)', roman: 'Note (English)' }} value={bill.note.en ?? ''} onChange={(e) => setBill({ ...bill, note: { ...bill.note, en: e.target.value } })} />
+            <BiInput label={{ en: 'Note (Urdu)', ur: 'نوٹ (اردو)', roman: 'Note (Urdu)' }} value={bill.note.ur ?? ''} onChange={(e) => setBill({ ...bill, note: { ...bill.note, ur: e.target.value } })} dir="rtl" />
+            <BiInput label={{ en: 'Note (Roman)', ur: 'نوٹ (رومن)', roman: 'Note (Roman)' }} value={bill.note.roman ?? ''} onChange={(e) => setBill({ ...bill, note: { ...bill.note, roman: e.target.value } })} />
+            <ErrorText error={saveBilling.error} />
+            <BiButton text="common.save" full loading={saveBilling.isPending} onClick={async () => { await saveBilling.mutateAsync(bill); inv('billing'); setBillOpen(false) }} />
+          </div>
+        ) : null}
+      </Sheet>
       <Sheet open={!!proofUrl} onClose={() => setProofUrl(null)} title="admin.proof">
         {proofUrl ? <img src={proofUrl} alt="" className="max-h-[70vh] w-full rounded-2xl object-contain" /> : null}
       </Sheet>
@@ -304,6 +344,39 @@ export default function AdminPage() {
               <BiButton text="admin.savePlan" full loading={savePlan.isPending} onClick={async () => { const r = await savePlan.mutateAsync({ plan: plan.plan, monthly_fee: plan.monthly_fee === '' ? null : Number(plan.monthly_fee), note: plan.note, expires_on: plan.expires_on || null, clear_expiry: !plan.expires_on }); setSel(r) }} />
               <BiButton text="admin.unlimited" variant="secondary" full loading={savePlan.isPending} onClick={async () => { const r = await savePlan.mutateAsync({ clear_expiry: true }); setSel(r); setPlan({ ...plan, expires_on: '' }) }} />
             </div>
+
+            <div className="grid grid-cols-[1fr_auto] gap-2">
+              <BiInput label="admin.shopGrace" type="number" inputMode="numeric" min={0} max={90} value={grace} onChange={(e) => setGrace(e.target.value)} className="num" />
+              <BiButton text="common.save" variant="secondary" loading={savePlan.isPending} onClick={async () => { const r = await savePlan.mutateAsync({ set_grace: true, grace_days: grace === '' ? null : Number(grace) }); setSel({ ...r, grace_days: grace === '' ? null : Number(grace) }) }} />
+            </div>
+
+            <BiLabel text="admin.recordPayment" size="md" bold className="mt-2" />
+            <BiLabel text="admin.recordHint" size="sm" tone="text-muted" />
+            <div className="grid grid-cols-2 gap-2">
+              <BiInput label="fees.amount" type="number" inputMode="numeric" min={1} value={pay.amount} onChange={(e) => setPay({ ...pay, amount: e.target.value })} className="num" />
+              <BiInput label="fees.months" type="number" inputMode="numeric" min={1} max={36} value={pay.months} onChange={(e) => setPay({ ...pay, months: e.target.value })} className="num" />
+              <BiInput label="fees.method" value={pay.method} onChange={(e) => setPay({ ...pay, method: e.target.value })} />
+              <BiInput label="admin.paidOn" type="date" value={pay.paid_on} onChange={(e) => setPay({ ...pay, paid_on: e.target.value })} dir="ltr" />
+            </div>
+            <BiInput label="fees.reference" value={pay.reference} onChange={(e) => setPay({ ...pay, reference: e.target.value })} dir="ltr" />
+            <ErrorText error={recordPay.error} />
+            {recordPay.data ? <BiAlert text={{ en: `${pick('admin.receipt')} ${recordPay.data.receipt_no ?? ''}`, ur: `${pick('admin.receipt')} ${recordPay.data.receipt_no ?? ''}`, roman: `${pick('admin.receipt')} ${recordPay.data.receipt_no ?? ''}` }} kind="success" /> : null}
+            <BiButton text="admin.recordPayment" icon={<CreditCard size={20} />} variant="secondary" full disabled={!Number(pay.amount)} loading={recordPay.isPending} onClick={async () => { await recordPay.mutateAsync(pay); inv('admin-shops', 'fee-stats'); const rows = await get<AdminShop[]>('/api/v1/admin/shops'); const r = rows.find((x) => x.id === sel.id); if (r) setSel(r) }} data-testid="record-payment" />
+
+            <BiLabel text="admin.renewalCode" size="md" bold className="mt-2" />
+            <BiLabel text="admin.renewalHint" size="sm" tone="text-muted" />
+            <div className="grid grid-cols-[1fr_auto] gap-2">
+              <BiInput label="fees.months" type="number" inputMode="numeric" min={1} max={36} value={codeMonths} onChange={(e) => setCodeMonths(e.target.value)} className="num" />
+              <BiButton text="admin.renewalCode" variant="secondary" loading={makeCode.isPending} onClick={async () => { const r = await makeCode.mutateAsync({ months: Number(codeMonths) || 1 }); setCodeOut(r.code) }} data-testid="make-code" />
+            </div>
+            <ErrorText error={makeCode.error} />
+            {codeOut ? (
+              <div className="flex flex-col gap-2 rounded-2xl bg-sell p-3 text-sell-fg">
+                <span className="text-sm font-bold">{pick('admin.codeMade')}</span>
+                <span className="num break-all text-xs" dir="ltr" data-testid="renewal-code-out">{codeOut}</span>
+                <a href={`https://wa.me/92${(sel.owner_phone ?? '').replace(/^0/, '')}?text=${encodeURIComponent(`${sel.name}\nMobile Shop renewal code (${codeMonths} month):\n${codeOut}\nMore → Software fees → Renewal code`)}`} target="_blank" rel="noopener noreferrer" className="tap flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald font-bold text-white"><MessageCircle size={18} /> {pick('admin.sendCode')}</a>
+              </div>
+            ) : null}
 
             <BiLabel text="admin.addBranch" size="md" bold className="mt-2" />
             <BiLabel text="admin.branchHint" size="sm" tone="text-muted" />

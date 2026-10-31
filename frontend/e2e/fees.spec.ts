@@ -48,7 +48,9 @@ test('accounts entered by the super admin; the shop reports a payment; approved 
   // the owner: the notice leads to the fees screen; accounts, copy, report with a reference
   await page.evaluate(() => localStorage.clear())
   await login(page, owner, 'owner1234')
-  await page.getByRole('link', { name: /Pay fees/ }).click()
+  // 3 days left: the reminder popup opens on login; its Pay button leads to the fees screen
+  await expect(page.getByTestId('plan-popup')).toBeVisible()
+  await page.getByTestId('plan-pay').click()
   await expect(page).toHaveURL(/\/more\/fees$/)
   await expect(page.getByText('Easypaisa · Test Holder').first()).toBeVisible()
   await expect(page.getByText('03001234567').first()).toBeVisible()

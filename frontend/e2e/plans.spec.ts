@@ -66,8 +66,11 @@ test('plan, fee and paid-until by the super admin; renewal notice and branches f
   // the owner: renewal notice with a WhatsApp link, two shops under More, switching changes the header
   await page.evaluate(() => localStorage.clear())
   await login(page, owner, 'owner1234')
-  await expect(page.getByRole('status')).toContainText('Your subscription ends in 3 days')
-  await expect(page.getByRole('link', { name: 'Contact on WhatsApp' })).toHaveAttribute('href', /wa\.me\/923164001668/)
+  await expect(page.getByTestId('plan-bar')).toContainText('Your plan ends in 3 days')
+  await expect(page.getByTestId('plan-bar')).toHaveAttribute('data-tone', 'orange')
+  // the popup opened on login as well: close it (= snooze) before using the app
+  await page.getByTestId('plan-close').click()
+  await expect(page.getByTestId('plan-popup')).toHaveCount(0)
   await page.screenshot({ path: 'test-results/plan-banner.png' })
   await page.goto('/more')
   await expect(page.getByText('My shops')).toBeVisible()

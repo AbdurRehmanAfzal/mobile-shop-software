@@ -29,6 +29,8 @@ class FeeOut(BaseModel):
     decision_note: str | None
     created_at: dt.datetime
     handled_at: dt.datetime | None
+    paid_on: dt.date | None = None
+    receipt_no: str | None = None
 
 
 class MyFeesOut(BaseModel):
@@ -44,13 +46,14 @@ class ReportIn(BaseModel):
     proof_path: str | None = Field(default=None, max_length=500)
     months: int = Field(default=1, ge=1, le=36)
     note: str | None = Field(default=None, max_length=300)
+    paid_on: dt.date | None = None
 
 
 @router.get("", response_model=MyFeesOut)
 def my_fees(ctx: Owner, db: DB):
     org = ctx.shop.organisation
     return {
-        "plan": plans.plan_info(org),
+        "plan": plans.plan_info(org, db=db),
         "accounts": [{k: v for k, v in a.items()} for a in fees.accounts(db)],
         "payments": [fees.out(p) for p in fees.mine(db, org.id)],
     }
@@ -68,5 +71,6 @@ def report_payment(data: ReportIn, ctx: Owner, db: DB):
         proof_path=data.proof_path,
         months=data.months,
         note=data.note,
+        paid_on=data.paid_on,
     )
     return fees.out(p)

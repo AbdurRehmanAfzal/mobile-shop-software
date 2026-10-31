@@ -15,7 +15,7 @@ import { JOBS } from '@/features/counter/jobs'
 /** screens that use the whole laptop width (lists, overviews, the side-by-side sale); forms stay at 3xl */
 const WIDE = ['/sale/new', '/stock', '/khata', '/hisaab', '/reports', '/audit', '/sales', '/purchases', '/invoices', '/parties', '/expenses', '/installments', '/repairs', '/accessories', '/payments', '/returns', '/admin', '/loans']
 import { useModules } from '@/lib/modules'
-import PlanBanner from '@/components/PlanBanner'
+import { PlanBar, PlanOverlays } from '@/components/PlanReminders'
 import OfflineBar from '@/components/OfflineBar'
 
 /** each language's name written in itself, so anyone can find their own */
@@ -64,7 +64,9 @@ export default function Shell() {
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-ground lg:max-w-[1360px]">
       {/* narrow phones (iPhone SE): the shop's name on its own line, the buttons spread under it */}
-      <header className="print:hidden sticky top-0 z-10 flex flex-wrap items-center gap-x-2 gap-y-2 bg-ground/90 px-5 pb-2 pt-[max(14px,env(safe-area-inset-top))] backdrop-blur max-[379px]:px-4">
+      <div className="sticky top-0 z-10">
+      <PlanBar />
+      <header className="print:hidden flex flex-wrap items-center gap-x-2 gap-y-2 bg-ground/90 px-5 pb-2 pt-[max(14px,env(safe-area-inset-top))] backdrop-blur max-[379px]:px-4">
         <NavLink to="/" className={`min-w-0 flex-1 line-clamp-2 max-[379px]:basis-full ${ur ? 'ur text-lg font-bold leading-snug' : 'text-lg font-extrabold leading-tight tracking-[-0.01em]'}`} dir={dir}>
           {shopName}
         </NavLink>
@@ -88,8 +90,9 @@ export default function Shell() {
           </button>
         </div>
       </header>
+      </div>
 
-      <PlanBanner />
+      <PlanOverlays />
       <OfflineBar />
       <div className="flex flex-1 gap-6 lg:px-5">
         <aside className="print:hidden sticky top-20 hidden h-fit w-64 shrink-0 flex-col gap-2 lg:flex" aria-label={pick('nav.home')}>

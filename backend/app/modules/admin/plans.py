@@ -19,25 +19,42 @@ from app.modules.ledger.service import ensure_default_cash_account
 
 PLANS = ("trial", "basic", "pro", "chain")
 WARN_DAYS = 7
-GRACE_DAYS = 15
+# owner addendum 3 (2026-10-31): grace defaults to 7 days, set in Super admin → Billing, per shop too
+GRACE_DAYS = 7
+# while soft-locked these still work: paying, uploading the proof, the reminder itself, logging in
+LOCKED_ALLOW = ("/api/v1/fees", "/api/v1/plan", "/api/v1/files", "/api/v1/auth", "/api/v1/me")
+
+
+def grace_for(org: Organisation, sched: dict | None = None) -> int:
+    if org.grace_days is not None:
+        return int(org.grace_days)
+    if sched is not None:
+        return int(sched.get("grace_days", GRACE_DAYS))
+    return GRACE_DAYS
 
 
 def days_left(org: Organisation, now: dt.datetime | None = None) -> int | None:
     if org.plan_expires_at is None:
         return None
-    now = now or utcnow()
+    now = now or _now()
     exp = org.plan_expires_at
     if exp.tzinfo is None:
         exp = exp.replace(tzinfo=dt.UTC)
     return (exp.date() - now.astimezone(dt.UTC).date()).days
 
 
-def status_of(org: Organisation, now: dt.datetime | None = None) -> str:
+def _now() -> dt.datetime:
+    from app.modules.plan import clockguard
+
+    return clockguard.now()
+
+
+def status_of(org: Organisation, now: dt.datetime | None = None, grace: int | None = None) -> str:
     """unlimited | ok | due_soon | expired (in grace) | locked"""
     left = days_left(org, now)
     if left is None:
         return "unlimited"
-    if left < -GRACE_DAYS:
+    if left < -(grace if grace is not None else grace_for(org)):
         return "locked"
     if left < 0:
         return "expired"
@@ -46,9 +63,26 @@ def status_of(org: Organisation, now: dt.datetime | None = None) -> str:
     return "ok"
 
 
-def plan_info(org: Organisation, now: dt.datetime | None = None) -> dict:
+def plan_info(
+    org: Organisation,
+    now: dt.datetime | None = None,
+    db=None,
+    with_pending: bool = True,
+    sched: dict | None = None,
+) -> dict:
     from app.modules.admin.modules import effective
 
+    if sched is None and db is not None:
+        from app.modules.plan import billing
+
+        sched = billing.schedule(db)
+    grace = grace_for(org, sched)
+    pending = None
+    if db is not None and with_pending:
+        from app.modules.plan.reminders import pending_payment
+
+        pend = pending_payment(db, org.id)
+        pending = str(pend.id) if pend else None
     return {
         "modules": effective(org),
         "modules_custom": org.modules is not None,
@@ -56,16 +90,26 @@ def plan_info(org: Organisation, now: dt.datetime | None = None) -> dict:
         "expires_at": org.plan_expires_at,
         "days_left": days_left(org, now),
         "monthly_fee": org.monthly_fee,
-        "status": status_of(org, now),
-        "grace_days": GRACE_DAYS,
+        "status": status_of(org, now, grace),
+        "grace_days": grace,
+        "started_at": org.plan_started_at,
+        "pending_payment_id": pending,
     }
 
 
-def assert_writable(org: Organisation, method: str, now: dt.datetime | None = None) -> None:
-    """Called for every request with a shop context: a locked plan may only read."""
+def assert_writable(
+    org: Organisation,
+    method: str,
+    now: dt.datetime | None = None,
+    path: str = "",
+    grace: int | None = None,
+) -> None:
+    """Called for every request with a shop context: a locked plan may only read — and pay."""
     if method in ("GET", "HEAD", "OPTIONS"):
         return
-    if status_of(org, now) == "locked":
+    if path and path.startswith(LOCKED_ALLOW):
+        return
+    if status_of(org, now, grace) == "locked":
         raise Forbidden(
             code="plan_expired",
             message_en="The subscription has expired. Contact the software provider to renew.",
