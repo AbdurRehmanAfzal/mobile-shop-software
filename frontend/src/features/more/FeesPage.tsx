@@ -8,6 +8,7 @@ import { BiAlert, BiButton, BiInput, BiLabel, useLang } from '@/components/Bilin
 import { Chip, ErrorText, KV, Loading, MoneyText, PageHeader, Section, fmtDate } from '@/components/ui'
 import type { PlanOut } from '@/lib/auth'
 import { openPrintable, uploadFile } from '@/lib/files'
+import { isoDay } from '@/lib/format'
 import { usePlanReminder, type Reminder } from '@/lib/planReminder'
 import { backupNow, waLink } from '@/components/PlanReminders'
 import { useDocMutation, useGet } from '@/lib/queries'
@@ -24,7 +25,7 @@ export default function FeesPage() {
   const redeem = useDocMutation<{ code: string }, { until: string | null; receipt_no: string | null }>('POST', () => '/api/v1/plan/redeem')
   const [code, setCode] = useState('')
   const [redeemed, setRedeemed] = useState<string | null>(null)
-  const [paidOn, setPaidOn] = useState(new Date().toISOString().slice(0, 10))
+  const [paidOn, setPaidOn] = useState(isoDay(0))
   const [backing, setBacking] = useState(false)
   const report = useDocMutation<Record<string, unknown>, Fee>('POST', () => '/api/v1/fees')
   const [amount, setAmount] = useState('')

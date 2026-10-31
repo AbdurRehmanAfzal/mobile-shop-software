@@ -120,13 +120,8 @@ export default function ItemForm({ item, compact = false, initialName = '', onDo
         {creating && !compact ? <BiInput label="acc.openingCost" type="number" inputMode="decimal" min={0} value={f.opening_cost} onChange={set('opening_cost')} className="num" /> : null}
       </div>
 
-      <button type="button" aria-expanded={more} onClick={() => setMore(!more)} className="tap flex min-h-12 items-center justify-between rounded-2xl border border-dashed border-line px-4 text-sm font-bold" data-testid="item-more">
-        <BiLabel text={more ? 'acc.less' : 'acc.more'} size="md" bold />
-        {more ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-      </button>
-
-      {more ? (
-        <div className="flex flex-col gap-3">
+      {compact ? (
+        <div className="flex flex-col gap-2" data-testid="item-quick-card">
           <div className="grid grid-cols-2 gap-2">
             <BiInput label="acc.brand" value={f.brand} onChange={set('brand')} list="item-brands" maxLength={80} />
             <datalist id="item-brands">{(opts?.brands ?? []).map((b) => <option key={b} value={b} />)}</datalist>
@@ -137,6 +132,29 @@ export default function ItemForm({ item, compact = false, initialName = '', onDo
           <div className="flex flex-wrap gap-1.5">
             {grades.map((g) => <button key={g} type="button" aria-pressed={f.grade === g} onClick={() => setF({ ...f, grade: g })} className={chip(f.grade === g)}>{gradeLabel(pick, g, exists)}</button>)}
           </div>
+        </div>
+      ) : null}
+      <button type="button" aria-expanded={more} onClick={() => setMore(!more)} className={`tap flex min-h-12 items-center justify-between rounded-2xl border-2 px-4 text-sm font-bold ${more ? 'border-ink' : 'border-dashed border-line bg-ground'}`} data-testid="item-more">
+        <BiLabel text={more ? 'acc.less' : 'acc.more'} size="md" bold />
+        {more ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+      </button>
+
+      {more ? (
+        <div className="flex flex-col gap-3">
+          {!compact ? (
+            <>
+              <div className="grid grid-cols-2 gap-2">
+                <BiInput label="acc.brand" value={f.brand} onChange={set('brand')} list="item-brands" maxLength={80} />
+                <datalist id="item-brands">{(opts?.brands ?? []).map((b) => <option key={b} value={b} />)}</datalist>
+                <BiInput label="acc.color" value={f.color} onChange={set('color')} maxLength={40} />
+              </div>
+              <BiInput label="acc.compatible" value={f.compatible} onChange={set('compatible')} placeholder={pick('acc.compatiblePh')} maxLength={200} />
+              <BiLabel text="acc.grade" size="md" tone="text-muted" />
+              <div className="flex flex-wrap gap-1.5">
+                {grades.map((g) => <button key={g} type="button" aria-pressed={f.grade === g} onClick={() => setF({ ...f, grade: g })} className={chip(f.grade === g)}>{gradeLabel(pick, g, exists)}</button>)}
+              </div>
+            </>
+          ) : null}
           <div className="grid grid-cols-2 gap-2">
             <BiInput label="acc.size" value={f.size} onChange={set('size')} maxLength={40} />
             <BiInput label="acc.capacity" value={f.capacity} onChange={set('capacity')} maxLength={40} dir="ltr" />

@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import { BiAlert, BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import { KindChooser, kindLabel } from '@/components/ItemKinds'
 import { Empty, ErrorText, fmtDate, Loading, MoneyText, PageHeader, Sheet } from '@/components/ui'
+import { isoDay } from '@/lib/format'
 import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
 
 type Tab = 'low' | 'value' | 'movers' | 'profit' | 'dead' | 'suppliers'
@@ -20,13 +21,12 @@ interface ProfitRow { key: string; units: number; revenue: string; cost: string;
 interface Dead { id: string; sku: string; name: string; category: string; qty: number; value: string; last_sold: string | null; days: number | null }
 interface Sup { party_id: string | null; party_name: string | null; bills: number; units: number; amount: string }
 
-const isoDay = (ago: number) => { const d = new Date(); d.setDate(d.getDate() - ago); return d.toISOString().slice(0, 10) }
 
 export default function AccessoryReportsPage() {
   const { pick, ur, cls } = useLang()
   const nav = useNavigate()
   const [tab, setTab] = useState<Tab>('low')
-  const [from, setFrom] = useState(isoDay(29))
+  const [from, setFrom] = useState(isoDay(-29))
   const [to, setTo] = useState(isoDay(0))
   const [group, setGroup] = useState<'category' | 'brand'>('category')
   const [days, setDays] = useState('60')
