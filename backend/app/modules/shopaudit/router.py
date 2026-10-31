@@ -12,7 +12,7 @@ from app.core.errors import ValidationFailed
 from app.core.periods import PRESETS, Period, resolve
 from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx, require_cap
-from app.modules.shopaudit import finance, reconcile, service
+from app.modules.shopaudit import finance, parties, reconcile, service
 
 router = APIRouter(prefix="/api/v1/shop-audit", tags=["shop-audit"])
 Reports = Annotated[Ctx, Depends(require_cap(Cap.REPORTS_ALL))]
@@ -185,3 +185,57 @@ def tax(
 ):
     """Tax charged on bills: summary and every taxed bill."""
     return plain(finance.tax(db, ctx.shop_id, _p(db, ctx, preset, date_from, date_to)))
+
+
+# ---- P5: customers & suppliers -----------------------------------------------------------------
+
+Metric = Annotated[str, Query(pattern="^(" + "|".join(parties.METRICS) + ")$")]
+
+
+@router.get("/parties/{party_id}/journey")
+def journey(party_id: uuid.UUID, ctx: Reports, db: DB, as_of: dt.date | None = None):
+    """One person from their first bill to the chosen day: counts, totals, money, balance, timeline."""
+    from app.core.clock import today as shop_today
+
+    return plain(
+        parties.journey(
+            db, ctx.shop_id, party_id, as_of or shop_today(), can_cost=ctx.can(Cap.VIEW_COST)
+        )
+    )
+
+
+@router.get("/rankings")
+def rankings(
+    ctx: Reports,
+    db: DB,
+    metric: Metric = "customers_sales",
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+    as_of: dt.date | None = None,
+    limit: int = 10,
+):
+    """Top customers / suppliers by one named metric."""
+    p = _p(db, ctx, preset, date_from, date_to, as_of)
+    return plain(
+        parties.rankings(
+            db, ctx.shop_id, p, metric, can_cost=ctx.can(Cap.VIEW_COST), limit=min(limit, 50)
+        )
+    )
+
+
+@router.get("/udhaar")
+def udhaar(
+    ctx: Reports,
+    db: DB,
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+    as_of: dt.date | None = None,
+    limit: int = 20,
+):
+    """Receivables and payables apart: totals, period movement, age bands, people, phones."""
+    p = _p(db, ctx, preset, date_from, date_to, as_of)
+    return plain(
+        parties.udhaar(db, ctx.shop_id, p, can_cost=ctx.can(Cap.VIEW_COST), limit=min(limit, 100))
+    )

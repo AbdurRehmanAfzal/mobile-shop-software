@@ -4,8 +4,8 @@ Authoritative requirements: `docs/16-SHOP-AUDIT-SPEC.md` (owner brief, 2026-10-3
 This file is the living plan: gap analysis, design, phases, tasks, acceptance criteria and the
 progress checklist. Update it at the end of every session (with `06-PROGRESS.md` and `09-SESSION-LOG.md`).
 
-**Current phase: 5 (Customers & suppliers) — P1–P4 done 2026-10-30/31.**
-**Exact next task: P5-1 `/shop-audit/parties/{id}/journey?as_of` (lifetime card + merged timeline), then P5-2 `/rankings`, P5-3 `/udhaar`, P5-4 `PartiesAuditPage` + `UdhaarAuditPage`.**
+**Current phase: 6 (Inventory intelligence) — P1–P5 done 2026-10-30/31.**
+**Exact next task: P6-1 `/shop-audit/inventory?as_of` (counts by condition × PTA × verification × category × brand, cost / expected / margin, most expensive), then P6-2 ageing bands + `shops.audit_prefs` + alerts, P6-3 `/verification`, P6-5 `InventoryAuditPage`.**
 
 ---
 
@@ -179,12 +179,12 @@ Prefix `/api/v1/audit` is taken by the audit log → new prefix **`/api/v1/shop-
 - [x] P4-5 Frontend `features/audit/FinancePage.tsx` at `/audit/finance` (section chip in `AuditLayout`): sub-tabs P&L (hero with % vs previous, `Bars` series, every line with the previous period in brackets), Cash & bank (opening / in / out / closing KPIs, reason cards with share bars, per-account cards with reason chips and transfers apart, channels, khata payments by method, remittance list → bill), Expenses (hero, series, categories with share and previous, largest, by person / account), Tax (KPIs, rows → bill). First chart component `components/charts/Bars.tsx` (tokens, hover value, tap, RTL-safe, empty state). Strings `audit.fin.*`, `audit.reason.*`, `audit.gran.*`, `pay.cheque/remittance/card/other/online` fallbacks.
 - [x] Tests `test_shopaudit_finance.py` (3: series sums to the period and the year is bucketed; reasons add up to each account's movement, channels exclude the transfer, remittance row and by-currency, expense once in P&L and once in cash; expenses by category / largest / users, tax rows = summary, salesman 403 on all five), e2e `audit-finance.spec.ts`.
 
-### Phase 5 — Customer & supplier intelligence
-- [ ] P5-1 `/parties/{id}/journey?as_of` (lifetime card + merged timeline).
-- [ ] P5-2 `/rankings` (8 metrics, metric named, clickable ids).
-- [ ] P5-3 `/udhaar` (receivable/payable apart, per party, per phone, age-of-debt buckets with "No due date" semantics, period movement).
-- [ ] P5-4 Frontend `PartiesAuditPage` (rankings + journey panel on the party page) and `UdhaarAuditPage`.
-- [ ] Tests: Vivo/A/B scenario as-of 15 Apr vs 18 Apr; rankings order; future payments excluded as-of.
+### Phase 5 — Customer & supplier intelligence ✅ 2026-10-31
+- [x] P5-1 `/parties/{id}/journey?as_of` — `shopaudit/parties.py`: party card, first / last dealing, phones sold to / bought from (bills, phones, value, profit; profit on phones sourced from a supplier), money both ways split into at-the-counter (cash legs of the document groups) and later (payments), refunds, returns, ledger balance as of the day, open receivable / payable per bill (current), merged timeline (sales, purchases, payments, returns with the phones). Cost-side figures only with VIEW_COST.
+- [x] P5-2 `/rankings?metric=` — 8 named metrics (customers by sales / bills / profit, suppliers by purchases / phones / profit on their phones, largest receivable / payable as of the day), total, share, count; profit metrics fall back for roles without cost.
+- [x] P5-3 `/udhaar` — `debt_position` totals, period movement from the party accounts by cause (udhaar given on sales, received, returns credited, udhaar taken on purchases, paid, returns to suppliers, repairs, other), per-party rows with the age of the oldest unpaid bill and the last payment, age bands `0-7 / 8-30 / 31-60 / 61+ / no_bill` per side (never "overdue": no due dates), phones on unpaid bills with the bill's remaining.
+- [x] P5-4 Frontend `PartiesAuditPage` (`/audit/people`: metric chips, total card, ranked rows with share bars → party page), `UdhaarAuditPage` (`/audit/udhaar`: both sides, movement, age bars, people lists, phones list), `PartyJourney` card on `PartyDetailPage` (owner / manager, as-of date, timeline). Strings `audit.rank/metric/udhaar/journey.*`.
+- [x] Tests `test_shopaudit_parties.py` (3: Ahmed / Bilal / Dealer journey incl. as-of 20 days ago and the refunded return; 8 rankings + this-month + bad metric 422; udhaar sides, movement, bands, phones, period inside, as-of), e2e `audit-parties.spec.ts`.
 
 ### Phase 6 — Inventory intelligence
 - [ ] P6-1 `/inventory?as_of` (counts by condition × PTA × verification × category × brand, cost/expected/margin, status counts, most expensive lists).
@@ -258,7 +258,7 @@ Prefix `/api/v1/audit` is taken by the audit log → new prefix **`/api/v1/shop-
 - [x] P2 integrity — 2026-10-30
 - [x] P3 periods & overview — 2026-10-31
 - [x] P4 financial — 2026-10-31
-- [ ] P5 parties
+- [x] P5 parties — 2026-10-31
 - [ ] P6 inventory
 - [ ] P7 products & invoices
 - [ ] P8 security
