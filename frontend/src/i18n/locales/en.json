@@ -1500,7 +1500,7 @@
   "landing": {
     "badge": "For mobile shops in Pakistan",
     "h1": "Run your mobile shop from your phone",
-    "sub": "New and used phones, ID check of the seller, udhaar khata, repairs, accessories, WhatsApp receipts and the day's hisaab — in Urdu or English, big buttons, no training needed.",
+    "sub": "New and used phones, ID check of the seller, udhaar khata, repairs, accessories, WhatsApp receipts — and now a full shop audit with charts, Excel import of your old stock, and an assistant that answers from your own data.",
     "ctaTrial": "Start free for {{n}} days",
     "waHello": "Assalam-o-Alaikum, I want to know about the Mobile Shop software.",
     "point1": "Works on any phone",
@@ -1588,7 +1588,10 @@
       "reports": "Profit and loss, best sellers, old stock, estimates — download or share.",
       "exports": "Every report and invoice as PDF, Excel or CSV, shared on WhatsApp.",
       "notifications": "Receipts to customers, udhaar reminders, the night report to the owner.",
-      "loans": "Phones given to another shop on amanat, tracked until they come back or are sold."
+      "loans": "Phones given to another shop on amanat, tracked until they come back or are sold.",
+      "installments": "Monthly plans with the advance, due dates and reminders.",
+      "attendance": "In / out on the phone, late marks, the month's sheet.",
+      "ai": "Questions answered from your data; CNIC and box labels read from a photo."
     },
     "extras": {
       "offline": {
@@ -1616,7 +1619,11 @@
       "stock": "Stock",
       "khata": "Udhaar khata",
       "reports": "Profit & reports",
-      "invoice": "Invoices"
+      "invoice": "Invoices",
+      "audit": "Shop audit",
+      "bulk": "Excel import",
+      "history": "Phone's history",
+      "finance": "Profit & cash charts"
     },
     "priceTitle": "Simple monthly price",
     "priceSub": "Start with {{n}} days free. Pay monthly, no contract. Prices in PKR per shop.",
@@ -1669,7 +1676,57 @@
     "about": "About the software ›",
     "haveShop": "Already a customer? Log in ›",
     "webTitle": "On a laptop too",
-    "webSub": "The same shop in the browser on a laptop or desktop: a side menu with keyboard shortcuts (F2 sale, F3 add stock…), wide lists and reports. One login, every device."
+    "webSub": "The same shop in the browser on a laptop or desktop: a side menu with keyboard shortcuts (F2 sale, F3 add stock…), wide lists and reports. One login, every device.",
+    "point4": "Shop audit with charts",
+    "newBadge": "New",
+    "newTitle": "What came in the last round",
+    "newSub": "Built from what shopkeepers asked for in testing — all included, in Urdu and English.",
+    "new": {
+      "audit": {
+        "t": "Shop audit, any period",
+        "d": "Profit, cash & bank, udhaar, stock and staff for any dates — opening, closing and as-of balances, every figure tappable to its bills, checks that catch mistakes, a complete report as PDF or Excel."
+      },
+      "bulk": {
+        "t": "Excel import & export",
+        "d": "Bring 300 old phones, your khata, accessories, sales and expenses in one sheet. Sample rows to copy, a check before anything is saved, and the same sheet back out."
+      },
+      "history": {
+        "t": "Every phone's own money",
+        "d": "What it cost, what it sold for, every payment and price change on one screen; every person's phones and payments on theirs — downloadable and shareable in every format."
+      },
+      "prices": {
+        "t": "Price rules against fraud",
+        "d": "The asking price is set at purchase; a change at the sale is recorded with the reason, and your rules decide who may sell under it — with the owner's PIN if you want."
+      },
+      "ai": {
+        "t": "Assistant & photo reading",
+        "d": "Ask in Urdu or English: \"how much did Ahmed owe last month?\" — answered from your shop's data. A photo of the CNIC or the box label fills the form."
+      },
+      "home": {
+        "t": "Home that shows the day",
+        "d": "Fast actions first, then today's sales, profit, cash, udhaar and stock with charts — what a shopkeeper looks at ten times a day."
+      },
+      "installments": {
+        "t": "Installments (qist)",
+        "d": "Sell on monthly installments with the advance, the plan and reminders for each due date."
+      },
+      "hazri": {
+        "t": "Staff attendance",
+        "d": "In and out with the phone, late marks, the month's hazri sheet per employee."
+      },
+      "otp": {
+        "t": "Forgot password? WhatsApp code",
+        "d": "A code on WhatsApp resets the password; nobody has to call."
+      },
+      "windows": {
+        "t": "One-PC Windows install",
+        "d": "A shop without internet can run everything on one Windows PC with a setup file and nightly backups."
+      }
+    },
+    "float": {
+      "wa": "Message us on WhatsApp",
+      "call": "Call us"
+    }
   },
   "inst": {
     "title": "Installments (qist)",

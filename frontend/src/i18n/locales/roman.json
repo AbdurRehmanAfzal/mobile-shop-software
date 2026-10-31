@@ -1500,7 +1500,7 @@
   "landing": {
     "badge": "Pakistan ki mobile shops ke liye",
     "h1": "Apni mobile shop apne phone se chalayein",
-    "sub": "Naye aur purane phone, bechne wale ka CNIC check, udhaar khata, marammat, accessories, WhatsApp raseed aur din ka hisaab — Urdu ya English mein, baray buttons, kisi training ki zaroorat nahi.",
+    "sub": "Naye aur purane mobile, bechne wale ki shanakht, udhaar khata, marammat, accessories, WhatsApp raseedein — aur ab charts ke saath poori dukaan ka audit, purane stock ki Excel se import, aur ek assistant jo aap ke apne data se jawab deta hai.",
     "ctaTrial": "{{n}} din muft shuru karein",
     "waHello": "Assalam-o-Alaikum, mujhe Mobile Shop software ke baare mein jaanna hai.",
     "point1": "Har phone par chalta hai",
@@ -1588,7 +1588,10 @@
       "reports": "Munafa o nuqsan, sab se zyada bikne wale, purana stock, andaze — download ya share.",
       "exports": "Har report aur bill PDF, Excel ya CSV mein, WhatsApp par share.",
       "notifications": "Customers ko raseed, udhaar ki yaad dahani, malik ko raat ki report.",
-      "loans": "Doosri dukaan ko amanat diye gaye phone, wapsi ya bikri tak nazar mein."
+      "loans": "Doosri dukaan ko amanat diye gaye phone, wapsi ya bikri tak nazar mein.",
+      "installments": "Advance, tareekhon aur yaad dehani ke saath mahana plan.",
+      "attendance": "Phone par aana / jaana, der ke nishan, mahine ki sheet.",
+      "ai": "Aap ke data se sawalon ke jawab; CNIC aur dabbe ke label tasveer se."
     },
     "extras": {
       "offline": {
@@ -1616,7 +1619,11 @@
       "stock": "Stock",
       "khata": "Udhaar khata",
       "reports": "Munafa aur reports",
-      "invoice": "Bill"
+      "invoice": "Bill",
+      "audit": "Dukaan ka audit",
+      "bulk": "Excel import",
+      "history": "Mobile ki kahani",
+      "finance": "Munafa aur naqd ke chart"
     },
     "priceTitle": "Saada mahana qeemat",
     "priceSub": "{{n}} din muft se shuru karein. Mahina-war adaigi, koi contract nahi. Qeemat PKR mein fi dukaan.",
@@ -1669,7 +1676,57 @@
     "about": "Software ke baare mein ›",
     "haveShop": "Pehle se customer hain? Login ›",
     "webTitle": "Laptop par bhi",
-    "webSub": "Wohi dukaan laptop ya desktop ke browser mein: keyboard shortcut wala side menu (F2 sale, F3 stock…), chaurri lists aur reports. Ek login, har device."
+    "webSub": "Wohi dukaan laptop ya desktop ke browser mein: keyboard shortcut wala side menu (F2 sale, F3 stock…), chaurri lists aur reports. Ek login, har device.",
+    "point4": "Charts ke saath dukaan ka audit",
+    "newBadge": "Naya",
+    "newTitle": "Pichhle daur mein kya aaya",
+    "newSub": "Dukaandaron ne testing mein jo manga usi se bana — sab shamil, Urdu aur English mein.",
+    "new": {
+      "audit": {
+        "t": "Dukaan ka audit, kisi bhi arse ka",
+        "d": "Kisi bhi tareekhon ka munafa, naqd o bank, udhaar, stock aur amla — shuru, aakhir aur kisi bhi din ka balance, har raqam tap karein to us ke bill, ghaltiyan pakarne wali jaanch, poori report PDF ya Excel mein."
+      },
+      "bulk": {
+        "t": "Excel se import aur export",
+        "d": "300 purane mobile, apna khata, accessories, bikri aur kharchay ek sheet mein layein. Naql karne ko sample rows, save hone se pehle jaanch, aur wahi sheet wapas bahar."
+      },
+      "history": {
+        "t": "Har mobile ka apna hisaab",
+        "d": "Kitne ka aaya, kitne ka bika, har adaigi aur qeemat ki tabdeeli ek screen par; har banday ke mobile aur adaigiyan us ki screen par — har format mein download aur share."
+      },
+      "prices": {
+        "t": "Fraud ke khilaf qeemat ke usool",
+        "d": "Tay qeemat khareedari par likhi jati hai; bikri par tabdeeli wajah ke saath record hoti hai, aur aap ke usool tay karte hain ke is se kam kaun bech sakta hai — chahein to malik ke PIN se."
+      },
+      "ai": {
+        "t": "Assistant aur tasveer parhna",
+        "d": "Urdu ya English mein poochein: \"pichhle mahine Ahmed par kitna baqi tha?\" — jawab aap ki dukaan ke data se. CNIC ya dabbe ke label ki tasveer form bhar deti hai."
+      },
+      "home": {
+        "t": "Home jo din dikhaye",
+        "d": "Pehle tez kaam, phir aaj ki bikri, munafa, naqd, udhaar aur stock charts ke saath — jo dukaandar din mein das baar dekhta hai."
+      },
+      "installments": {
+        "t": "Qistein",
+        "d": "Advance, plan aur har qist ki tareekh par yaad dehani ke saath qiston par bechein."
+      },
+      "hazri": {
+        "t": "Amle ki hazri",
+        "d": "Phone se aana jaana, der ke nishan, har mulazim ki mahine ki hazri sheet."
+      },
+      "otp": {
+        "t": "Password bhool gaye? WhatsApp code",
+        "d": "WhatsApp par code se password badlein; kisi ko phone nahi karna parta."
+      },
+      "windows": {
+        "t": "Ek PC par Windows install",
+        "d": "Internet ke baghair dukaan sab kuch ek Windows PC par chala sakti hai, setup file aur raat ke backup ke saath."
+      }
+    },
+    "float": {
+      "wa": "WhatsApp par paigham bhejein",
+      "call": "Humein call karein"
+    }
   },
   "inst": {
     "title": "Qistein",
