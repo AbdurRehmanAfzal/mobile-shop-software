@@ -233,6 +233,7 @@ def create_purchase(
                 "verification_status": vstatus,
                 "purchase_no": purchase.no,
                 "asking": str(device.asking_price) if device.asking_price is not None else None,
+                "barcode": device.barcode,
             },
         )
 

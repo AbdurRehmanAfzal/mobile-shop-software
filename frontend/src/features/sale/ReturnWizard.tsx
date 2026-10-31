@@ -9,6 +9,8 @@ import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import PartyPicker from '@/components/PartyPicker'
 import { ErrorText, List, PageHeader, Row, SearchBox, Stepper, fmtDate } from '@/components/ui'
+import { beep, useScan } from '@/lib/scanner'
+import { lookupCode } from '@/components/ScanListener'
 import { get } from '@/lib/api'
 import { useCashAccounts, useDevices, useDocMutation, useSale, useSales } from '@/lib/queries'
 import type { DeviceEvent, Invoice, Party } from '@/lib/types'
@@ -53,6 +55,11 @@ export default function ReturnWizard() {
     setSelected([`device:${found.deviceId}`])
     setStep(1)
   }
+
+  useScan(step === 0 ? async (code) => {
+    const r = await lookupCode(code).catch(() => null)
+    if (r?.kind === 'device' && r.device) { beep('ok'); setQ(''); await openDevice(r.device.id) } else { beep('error'); setQ(code) }
+  } : null)
 
   useEffect(() => {
     const d = params.get('device')

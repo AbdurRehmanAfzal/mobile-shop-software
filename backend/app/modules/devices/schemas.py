@@ -93,6 +93,11 @@ class DeviceIdentity(BaseModel):
     patch_details: str | None = None
     notes: str | None = None
     photos: list[str] = Field(default_factory=list)
+    # owner addendum 4: a typed / scanned barcode to use instead of a generated one, its type,
+    # and the maker's barcode from the box (both optional)
+    barcode: str | None = Field(default=None, max_length=64)
+    barcode_type: str | None = Field(default=None, max_length=12)
+    manufacturer_code: str | None = Field(default=None, max_length=64)
 
     @field_validator("imei1", "imei2")
     @classmethod
@@ -226,6 +231,9 @@ class DeviceOut(BaseModel):
     imei2: str | None
     serial: str | None
     category: str = "phone"
+    barcode: str | None = None
+    barcode_type: str | None = None
+    manufacturer_code: str | None = None
     cellular: bool | None = None
     size_mm: int | None = None
     battery_health: int | None = None

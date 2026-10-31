@@ -50,3 +50,11 @@ seeded with placeholders and are **hidden from shopkeepers until you replace the
    `.env` is for the development PC only.
 4. `ADMIN_WHATSAPP` (or the first number in `SUPERUSER_PHONES`) receives the "fee proof submitted"
    message.
+
+## Barcode scanners
+
+Any USB or Bluetooth scanner in its default keyboard mode (code + Enter) works on every main
+screen without a driver: Home (opens the phone), Sale (adds it with the asking price), Purchase
+(fills IMEI 1 then IMEI 2), Return, Stock list and Stock count. Settings → Barcode settings has a
+Test print and a Test scan box; `docs/23-BARCODES-PLAN.md` §6 walks through a real-scanner test.
+Old stock: press "Barcodes for old stock" there once, or run `python -m app.modules.barcodes.backfill`.

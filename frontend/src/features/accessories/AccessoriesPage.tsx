@@ -10,7 +10,7 @@ import { useAuth } from '@/lib/auth'
 import { api } from '@/lib/api'
 import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
 
-interface Accessory { id: string; sku: string; name: string; name_ur: string | null; category: string; qty: number; avg_cost: string | null; price: string; reorder_level: number; low_stock: boolean }
+interface Accessory { id: string; sku: string; name: string; name_ur: string | null; category: string; qty: number; avg_cost: string | null; price: string; reorder_level: number; low_stock: boolean; barcode?: string | null; barcode_type?: string | null }
 interface Pending { item_id: string; device_label: string; imei1: string; kind: string; pending_from: 'vendor' | 'shop'; expected_at: string | null; promised_to_customer_at: string | null; party_name: string | null; party_phone: string | null; overdue: boolean }
 
 export default function AccessoriesPage() {
@@ -68,7 +68,7 @@ export default function AccessoriesPage() {
             <Row
               key={a.id}
               title={ur && a.name_ur ? a.name_ur : a.name}
-              sub={<span className="flex items-center gap-1.5"><span dir="ltr">{a.sku}</span> · {kindLabel(pick, a.category)} {a.low_stock ? <Chip text="acc.low" tone="bad" /> : null}</span>}
+              sub={<span className="flex items-center gap-1.5"><span dir="ltr">{a.sku}{a.barcode && a.barcode !== a.sku ? ` · ${a.barcode}` : ''}</span> · {kindLabel(pick, a.category)} {a.low_stock ? <Chip text="acc.low" tone="bad" /> : null}</span>}
               right={<div className="flex flex-col items-end"><span className="num text-lg" dir="ltr">{a.qty}</span><MoneyText value={a.price} tone="muted" size="sm" /></div>}
               onClick={canCost ? () => { setAdjusting(a); setDelta(''); setNote('') } : undefined}
             />

@@ -6,6 +6,8 @@ import { useTranslation } from 'react-i18next'
 import { useLang } from '@/components/Bilingual'
 import { BtnText, Chip, Empty, Loading, MoneyText, PageHeader, Row, SearchBox, Sheet } from '@/components/ui'
 import { useBrands, useDevices } from '@/lib/queries'
+import { beep, useScan } from '@/lib/scanner'
+import { lookupCode } from '@/components/ScanListener'
 import type { Device } from '@/lib/types'
 import ImeiLookupSheet from './ImeiLookupSheet'
 import LabelSheet from '@/components/LabelSheet'
@@ -116,6 +118,10 @@ export default function StockPage() {
   const [picked, setPicked] = useState<string[]>([])
   const [labels, setLabels] = useState(false)
   const { data, isLoading } = useDevices({ q: q || undefined, status: filter === 'all' ? undefined : filter, ...preset, limit: 500 })
+  useScan(async (code) => {
+    const r = await lookupCode(code).catch(() => null)
+    if (r?.kind === 'device' && r.device) { beep('ok'); nav(`/stock/${r.device.id}`) } else if (r?.kind === 'item' && r.item) { beep('ok'); nav(`/accessories?q=${encodeURIComponent(r.item.sku)}`) } else { beep('error'); setQ(code) }
+  })
   const { data: brands } = useBrands()
 
   const counts = new Map<string, number>()

@@ -52,6 +52,19 @@ def create(db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, data: AccessoryC
     )
     db.add(a)
     db.flush()
+    # owner addendum 4: one barcode per SKU, made with the item
+    from app.modules.auth.models import Shop
+    from app.modules.barcodes.service import assign_item
+
+    assign_item(
+        db,
+        db.get(Shop, shop_id),
+        a,
+        value=data.barcode,
+        kind=data.barcode_type,
+        manufacturer_code=data.manufacturer_code,
+    )
+    db.flush()
     if data.opening_qty > 0:
         move(
             db,

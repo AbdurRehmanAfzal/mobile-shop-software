@@ -20,19 +20,34 @@ from app.core.clock import today as shop_today
 from app.core.errors import ValidationFailed
 from app.modules.accessories.models import Accessory
 from app.modules.auth.models import Shop
+from app.modules.barcodes import codes
 from app.modules.devices.models import Device
 from app.modules.devices.service import _base_query, to_out
 
 # width × height in mm; "a4" = a sheet of 38×21 labels (65 per page), the common office sheet
 SIZES: dict[str, tuple[float, float]] = {
     "38x25": (38, 25),
+    "40x30": (40, 30),
     "50x25": (50, 25),
     "50x30": (50, 30),
+    "58x40": (58, 40),  # 58 mm roll
     "60x40": (60, 40),
     "70x40": (70, 40),
     "a4": (38.1, 21.2),
 }
-FIELDS = ("shop", "name", "specs", "price", "barcode", "imei", "condition", "pta", "date", "code")
+FIELDS = (
+    "shop",
+    "name",
+    "specs",
+    "price",
+    "barcode",
+    "imei",
+    "last4",
+    "condition",
+    "pta",
+    "date",
+    "code",
+)
 DEFAULT_FIELDS = ("shop", "name", "specs", "price", "barcode", "imei", "condition")
 DEFAULT_CODE_WORD = "BLACKHORSE"
 
@@ -136,6 +151,7 @@ def _page(labels: list[str], w: float, h: float, sheet: bool, ur: bool, title: s
     .code{{font-size:{2.2 * s:.2f}mm;font-weight:700;font-family:'Courier New',monospace}}
     .bar{{height:{7.5 * s:.2f}mm;width:100%}}
     .bar svg{{display:block;width:100%;height:100%}}
+    .bar.qr{{height:{12 * s:.2f}mm;display:flex;justify-content:center}} .bar.qr svg{{width:auto;height:100%}}
     .imei{{font-size:{2.1 * s:.2f}mm;font-family:'Courier New',monospace;letter-spacing:.08em;text-align:center;white-space:nowrap}}
     .meta{{font-size:{1.9 * s:.2f}mm;color:#222;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
     .ur{{font-family:'Noto Nastaliq Urdu',Arial,sans-serif;direction:rtl}}
@@ -168,9 +184,14 @@ def _label(parts: dict, want: set[str], ur: bool) -> str:
     if row:
         mid.append(f'<div class="row">{"".join(row)}</div>')
     if "barcode" in want and parts.get("barcode"):
-        mid.append(f'<div class="bar">{barcode_svg(parts["barcode"])}</div>')
+        kind = parts.get("barcode_type") or "code128"
+        mid.append(
+            f'<div class="bar{" qr" if kind == "qr" else ""}">{codes.svg(kind, parts["barcode"])}</div>'
+        )
     if "imei" in want and parts.get("barcode"):
         mid.append(f'<div class="imei">{e(parts["barcode"])}</div>')
+    if "last4" in want and parts.get("last4"):
+        mid.append(f'<div class="imei">{e(parts["last4"])}</div>')
     meta = [
         parts.get("condition") if "condition" in want else None,
         parts.get("pta") if "pta" in want else None,
@@ -203,7 +224,9 @@ def _device_parts(d: dict, shop: Shop, ur: bool, word: str | None) -> dict:
         "specs": " · ".join(x for x in specs if x),
         "price": _money(d.get("asking_price")),
         "code": cost_code(d.get("cost_price"), word),
-        "barcode": d.get("imei1") or d.get("serial") or "",
+        "barcode": d.get("barcode") or d.get("imei1") or d.get("serial") or "",
+        "barcode_type": d.get("barcode_type") or "code128",
+        "last4": f"IMEI …{(d.get('imei1') or '')[-4:]}" if d.get("imei1") else "",
         "condition": cond,
         "pta": pta,
         "date": first.strftime("%d-%m-%y") if isinstance(first, dt.datetime) else "",
@@ -274,7 +297,9 @@ def items_html(
             "specs": "",
             "price": _money(a.price),
             "code": cost_code(a.avg_cost, shop.label_code_word),
-            "barcode": a.sku,
+            "barcode": a.barcode or a.sku,
+            "barcode_type": a.barcode_type or "code128",
+            "last4": "",
             "condition": "",
             "pta": "",
             "date": shop_today().strftime("%d-%m-%y"),

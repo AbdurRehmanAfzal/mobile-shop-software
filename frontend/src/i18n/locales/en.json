@@ -246,7 +246,9 @@
       "faulty_cleared": "Faulty cleared",
       "returned_to_supplier": "Returned to supplier",
       "price_changed": "Price changed",
-      "note": "Note"
+      "note": "Note",
+      "barcode_assigned": "Barcode assigned",
+      "label_printed": "Label printed"
     },
     "acc": {
       "box": "Box",
@@ -2370,7 +2372,8 @@
       "condition": "Condition",
       "pta": "PTA",
       "date": "Date",
-      "code": "Cost code"
+      "code": "Cost code",
+      "last4": "IMEI last 4"
     }
   },
   "otp": {
@@ -2580,5 +2583,52 @@
     "rows": "rows",
     "row": "Row",
     "downloadTemplate": "Download the sheet"
+  },
+  "barcode": {
+    "title": "Barcode settings",
+    "hint": "Every phone and item gets its own barcode the moment it is bought. Choose the type for new barcodes; old labels keep working.",
+    "type": "Barcode type for new labels",
+    "typeNote": "Code 128 reads on every scanner. EAN-13 is digits only (12 + check digit). QR for 2-D scanners and phone cameras.",
+    "prefix": "Shop prefix",
+    "start": "Start numbering from",
+    "mode": "Value",
+    "modeSeq": "Prefix + number (MS000123)",
+    "modeImei": "The phone's IMEI",
+    "eanImeiWarn": "EAN-13 cannot hold a 15-digit IMEI: phones will get Code 128 instead.",
+    "eanPrefixWarn": "EAN-13 is digits only: letters in the prefix are dropped for EAN labels.",
+    "next": "Next barcode",
+    "testPrint": "Test print",
+    "backfill": "Barcodes for old stock",
+    "backfilled": "Done",
+    "backfillResult": "{{d}} phones and {{i}} items got a barcode.",
+    "testScan": "Test scan",
+    "testScanHint": "Scan the printed label with your scanner (or type the code and press Enter). It should show the phone or item.",
+    "testScanBox": "Scan here",
+    "read": "Read",
+    "notFound": "Item not found",
+    "addIt": "Add it",
+    "label": "Barcode",
+    "notSellable": "This phone is not in stock",
+    "noQty": "No stock left of this item",
+    "openHistory": "History",
+    "manufacturer": "Maker's barcode (optional)",
+    "custom": "Own barcode (optional)"
+  },
+  "count": {
+    "title": "Stock count",
+    "hint": "Scan every phone and item on the shelf (or type the code). Then press Check: what is missing and what should not be there.",
+    "scanned": "scanned",
+    "clear": "Clear",
+    "typeCode": "Type a code and press Enter",
+    "check": "Check against stock",
+    "found": "Found",
+    "missing": "Missing",
+    "unexpected": "Should not be here",
+    "inStock": "{{n}} phones should be in stock.",
+    "items": "Items",
+    "scannedN": "scanned {{s}} of {{q}}",
+    "ok": "matches",
+    "diff": "differs",
+    "again": "Start a new count"
   }
 }

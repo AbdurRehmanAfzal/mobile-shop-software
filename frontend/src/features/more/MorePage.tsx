@@ -1,7 +1,7 @@
 /** "More": everything else, grouped, each icon in its job colour (docs/11 v2). */
 
 import { ChevronLeft, ChevronRight, Bot,
-  ArrowLeftRight, Archive, BarChart3, Bell, BookOpen, CalendarDays, Check, CreditCard, FileSpreadsheet, FileText, HandCoins, Headphones, KeyRound,
+  ArrowLeftRight, Archive, BarChart3, Bell, BookOpen, CalendarDays, Check, ClipboardList, CreditCard, FileSpreadsheet, FileText, HandCoins, Headphones, KeyRound,
   Landmark, Lock, LogOut, Package, PackagePlus, ShieldCheck, Receipt, RotateCcw, ScanLine, Settings, Smartphone, Store, Tag, Tags, Undo2, Users,
   Wallet, Wrench, type LucideIcon,
 } from 'lucide-react'
@@ -60,6 +60,7 @@ const GROUPS: Group[] = [
       { key: 'dashboard.imeiSearch', Icon: ScanLine, to: '/stock', tone: T.stock },
       { key: 'more.openingStock', Icon: Archive, to: '/stock/opening', roles: MANAGERS, tone: T.buy },
       { key: 'bulk.title', Icon: FileSpreadsheet, to: '/more/bulk', roles: MANAGERS, tone: T.buy },
+      { key: 'count.title', Icon: ClipboardList, to: '/stock/count', roles: MANAGERS, tone: T.stock },
       { key: 'more.catalogue', Icon: Tags, to: '/more/catalogue', roles: MANAGERS, tone: T.plain },
     ],
   },

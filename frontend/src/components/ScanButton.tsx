@@ -11,7 +11,8 @@ import { BtnText, Sheet } from './ui'
 import { canScanLive, scanLive, scanPhoto } from '@/lib/scan'
 
 /** `exclude`: the IMEI already in the other box; a scan skips it (IMEI 2 must not repeat IMEI 1) */
-export function ScanButton({ onImei, size = 'lg', exclude }: { onImei: (imei: string) => void; size?: 'lg' | 'sm'; exclude?: string }) {
+/** `onCode`: also accept a code that is not an IMEI (our MS… labels, maker's barcodes) */
+export function ScanButton({ onImei, onCode, size = 'lg', exclude }: { onImei: (imei: string) => void; onCode?: (code: string) => void; size?: 'lg' | 'sm'; exclude?: string }) {
   const { pick } = useLang()
   const aiOn = !!useAiStatus().data?.configured
   const file = useRef<HTMLInputElement>(null)
@@ -24,7 +25,8 @@ export function ScanButton({ onImei, size = 'lg', exclude }: { onImei: (imei: st
     setBusy(true)
     setFailed(false)
     try {
-      let found = (await scanPhoto(f)).filter((x) => x !== exclude)
+      let found = (await scanPhoto(f, !!onCode)).filter((x) => x !== exclude)
+      if (onCode && found.length === 1 && !/^\d{15}$/.test(found[0])) { onCode(found[0]); return }
       if (!found.length && aiOn) {
         try {
           const r = await readPhotoAi<ImeiAi>(f, 'imei')

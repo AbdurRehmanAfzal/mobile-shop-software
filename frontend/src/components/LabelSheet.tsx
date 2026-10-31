@@ -13,9 +13,9 @@ import { openPrintable } from '@/lib/files'
 import { useGet, useInvalidate } from '@/lib/queries'
 
 export type LabelKind = 'devices' | 'items'
-const SIZES = ['38x25', '50x25', '50x30', '60x40', '70x40', 'a4', 'custom'] as const
+const SIZES = ['38x25', '40x30', '50x25', '50x30', '58x40', '60x40', '70x40', 'a4', 'custom'] as const
 type Size = (typeof SIZES)[number]
-const FIELDS = ['shop', 'name', 'specs', 'price', 'barcode', 'imei', 'condition', 'pta', 'date', 'code'] as const
+const FIELDS = ['shop', 'name', 'specs', 'price', 'barcode', 'imei', 'last4', 'condition', 'pta', 'date', 'code'] as const
 type Field = (typeof FIELDS)[number]
 const DEFAULT: Prefs = { size: '50x30', w: '40', h: '20', fields: ['shop', 'name', 'specs', 'price', 'barcode', 'imei', 'condition'], copies: 1 }
 interface Prefs { size: Size; w: string; h: string; fields: Field[]; copies: number }
@@ -44,7 +44,7 @@ export default function LabelSheet({ kind, ids, open, onClose }: { kind: LabelKi
   const [err, setErr] = useState<unknown>(null)
   useEffect(() => { if (open) setP(load(shop?.label_prefs)) }, [open, shop?.label_prefs])
   const canCost = role === 'owner' || role === 'manager'
-  const fields = FIELDS.filter((f) => (canCost || f !== 'code') && (kind === 'devices' || !['specs', 'imei', 'condition', 'pta'].includes(f)))
+  const fields = FIELDS.filter((f) => (canCost || f !== 'code') && (kind === 'devices' || !['specs', 'last4', 'condition', 'pta'].includes(f)))
   const toggle = (f: Field) => setP({ ...p, fields: p.fields.includes(f) ? p.fields.filter((x) => x !== f) : [...p.fields, f] })
   const chip = (on: boolean) => `tap h-11 rounded-full border-2 px-3.5 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-[13px]'}`
   const path = labelPath(kind, ids, p)

@@ -34,6 +34,10 @@ class Accessory(UUIDPk, ShopScoped, Timestamped, Base):
     __table_args__ = (UniqueConstraint("shop_id", "sku", name="uq_accessories_shop_sku"),)
 
     sku: Mapped[str] = mapped_column(String(40), nullable=False)
+    # owner addendum 4: one barcode per SKU (made when the item is created), its type, maker's code
+    barcode: Mapped[str | None] = mapped_column(String(64), index=True)
+    barcode_type: Mapped[str | None] = mapped_column(String(12))
+    manufacturer_code: Mapped[str | None] = mapped_column(String(64), index=True)
     name: Mapped[str] = mapped_column(String(150), nullable=False, index=True)
     name_ur: Mapped[str | None] = mapped_column(String(150))
     category: Mapped[str] = mapped_column(String(20), nullable=False, default="other")

@@ -16,6 +16,7 @@ import { JOBS } from '@/features/counter/jobs'
 const WIDE = ['/sale/new', '/stock', '/khata', '/hisaab', '/reports', '/audit', '/sales', '/purchases', '/invoices', '/parties', '/expenses', '/installments', '/repairs', '/accessories', '/payments', '/returns', '/admin', '/loans']
 import { useModules } from '@/lib/modules'
 import { PlanBar, PlanOverlays } from '@/components/PlanReminders'
+import ScanListener from '@/components/ScanListener'
 import OfflineBar from '@/components/OfflineBar'
 
 /** each language's name written in itself, so anyone can find their own */
@@ -93,6 +94,7 @@ export default function Shell() {
       </div>
 
       <PlanOverlays />
+      <ScanListener />
       <OfflineBar />
       <div className="flex flex-1 gap-6 lg:px-5">
         <aside className="print:hidden sticky top-20 hidden h-fit w-64 shrink-0 flex-col gap-2 lg:flex" aria-label={pick('nav.home')}>
