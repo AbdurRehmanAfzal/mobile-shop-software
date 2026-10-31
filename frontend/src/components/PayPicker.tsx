@@ -18,8 +18,10 @@ export interface PayState {
   rate: string
   sender: string
   service: string
+  fee: string
+  status: '' | 'pending' | 'received' | 'settled'
 }
-export const newPay = (method: PayMethod = 'cash'): PayState => ({ method, bank: '', reference: '', chequeDate: isoDay(0), currency: 'SAR', foreign: '', rate: '', sender: '', service: '' })
+export const newPay = (method: PayMethod = 'cash'): PayState => ({ method, bank: '', reference: '', chequeDate: isoDay(0), currency: 'SAR', foreign: '', rate: '', sender: '', service: '', fee: '', status: '' })
 
 /** rupees a remittance comes to: foreign amount × rate */
 export const remitPkr = (p: PayState) => Math.round(Number(p.foreign || 0) * Number(p.rate || 0) * 100) / 100
@@ -39,7 +41,7 @@ export function payInfo(p: PayState): Record<string, unknown> | undefined {
   if (p.method === 'cheque') return { method: 'cheque', bank: p.bank, reference: ref, cheque_date: p.chequeDate || undefined }
   if (p.method === 'remittance') {
     const c = CURRENCIES.find((x) => x.code === p.currency)
-    return { method: 'remittance', currency: p.currency, country: c?.country, foreign_amount: Number(p.foreign), rate: Number(p.rate), sender_name: p.sender.trim(), service: p.service || undefined, reference: ref }
+    return { method: 'remittance', currency: p.currency, country: c?.country, foreign_amount: Number(p.foreign), rate: Number(p.rate), sender_name: p.sender.trim(), service: p.service || undefined, reference: ref, fee: Number(p.fee) > 0 ? Number(p.fee) : undefined, status: p.status || undefined }
   }
   return undefined
 }
@@ -135,6 +137,17 @@ export default function PayPicker({ value, onChange, remittance = false, udhaar 
             </div>
           </div>
           <BiInput label="paym.refOpt" value={value.reference} onChange={(e) => set({ reference: e.target.value })} placeholder="MTCN / Ref" maxLength={80} />
+          <div className="grid grid-cols-2 items-start gap-2">
+            <BiInput label="paym.fee" type="number" inputMode="decimal" min={0} value={value.fee} onChange={(e) => set({ fee: e.target.value })} className="num" hint="paym.feeHint" />
+            <div className="flex flex-col gap-1.5">
+              <BiLabel text="paym.status" size="md" tone="text-muted" />
+              <div className="flex flex-wrap gap-1.5">
+                {(['pending', 'received', 'settled'] as const).map((s) => (
+                  <button key={s} type="button" aria-pressed={value.status === s} onClick={() => set({ status: value.status === s ? '' : s })} className={small(value.status === s)}>{pick(`paym.st.${s}`)}</button>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       ) : null}
     </div>

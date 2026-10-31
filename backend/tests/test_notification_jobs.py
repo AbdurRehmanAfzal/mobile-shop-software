@@ -33,6 +33,11 @@ def _shop(db, owner):
     return db.get(Shop, uuid.UUID(owner.shop_id))
 
 
+def _notif(ran: dict) -> dict:
+    """the tick also takes stock snapshots now; these tests watch the notification jobs only"""
+    return {k: v for k, v in ran.items() if k != "snapshots"}
+
+
 def test_reminders_pick_old_udhaar_and_skip_recently_reminded(owner, db, cat):
     ahmed = _party(owner, name="Ahmed Khan", phone="03219876543", kinds=("customer",))
     bilal = _party(owner, name="Bilal", phone="03219876544", kinds=("customer",))
@@ -86,11 +91,11 @@ def test_daily_report_once_a_day_at_the_set_time(owner, db, cat):
     tz = dt.timezone(dt.timedelta(hours=5))
     d = today()  # the sale above happened today (shop time); the report is for that day
     early = dt.datetime(d.year, d.month, d.day, 21, 0, tzinfo=tz)
-    assert jobs.tick(db, early) == {"daily_report": 0, "reminders": 0}
+    assert _notif(jobs.tick(db, early)) == {"daily_report": 0, "reminders": 0}
     late = dt.datetime(d.year, d.month, d.day, 21, 31, tzinfo=tz)
     assert jobs.tick(db, late)["daily_report"] == 1
     assert jobs.tick(db, late)["daily_report"] == 0
-    assert db.query(JobRun).count() == 1
+    assert db.query(JobRun).filter(JobRun.job != "stock_snapshot").count() == 1
     (m,) = db.query(Message).filter_by(template_key="daily_report").all()
     assert m.recipient == "03001234567" and m.audience == "owner"
     assert "Sold: 1 phones, Rs. 1,000" in m.body and "To get: Rs. 1,000" in m.body

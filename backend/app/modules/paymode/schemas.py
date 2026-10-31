@@ -20,6 +20,8 @@ class PaymentInfo(BaseModel):
     foreign_amount: Decimal | None = Field(default=None, gt=0)
     rate: Decimal | None = Field(default=None, gt=0)
     service: str | None = Field(default=None, max_length=60)
+    fee: Decimal | None = Field(default=None, ge=0)
+    status: str | None = Field(default=None, pattern=r"^(pending|received|settled)$")
 
     @model_validator(mode="after")
     def _needed(self):
@@ -50,3 +52,5 @@ class PaymentDetailOut(BaseModel):
     foreign_amount: Decimal | None
     rate: Decimal | None
     service: str | None
+    fee: Decimal | None = None
+    status: str | None = None

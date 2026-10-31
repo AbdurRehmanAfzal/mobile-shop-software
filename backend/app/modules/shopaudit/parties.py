@@ -553,6 +553,7 @@ def udhaar(db: Session, shop_id: uuid.UUID, p: Period, *, can_cost: bool, limit:
     )
     # oldest open bill per party (age of the debt); phones on open bills
     oldest: dict = {}
+    due: dict = {}  # party -> earliest due date among open bills that carry one
     phones: list[dict] = []
     open_inv = db.execute(
         select(Invoice, InvoiceLine, Device.imei1, Brand.name, Model.name)
@@ -571,6 +572,8 @@ def udhaar(db: Session, shop_id: uuid.UUID, p: Period, *, can_cost: bool, limit:
         o = oldest.get(inv.party_id)
         if o is None or inv.date < o:
             oldest[inv.party_id] = inv.date
+        if inv.due_date and (inv.party_id not in due or inv.due_date < due[inv.party_id]):
+            due[inv.party_id] = inv.due_date
         if ln is not None and ln.device_id and ln.returned_at is None:
             phones.append(
                 {
@@ -588,6 +591,10 @@ def udhaar(db: Session, shop_id: uuid.UUID, p: Period, *, can_cost: bool, limit:
                     "doc_total": inv.total,
                     "doc_remaining": money(inv.total - inv.paid),
                     "age_days": (p.as_of - inv.date).days,
+                    "due_date": inv.due_date,
+                    "overdue_days": (p.as_of - inv.due_date).days
+                    if inv.due_date and inv.due_date < p.as_of
+                    else 0,
                 }
             )
     open_pur = db.execute(
@@ -607,6 +614,8 @@ def udhaar(db: Session, shop_id: uuid.UUID, p: Period, *, can_cost: bool, limit:
         o = oldest.get(pur.party_id)
         if o is None or pur.date < o:
             oldest[pur.party_id] = pur.date
+        if pur.due_date and (pur.party_id not in due or pur.due_date < due[pur.party_id]):
+            due[pur.party_id] = pur.due_date
         if ln is not None and ln.device_id and ln.returned_at is None:
             phones.append(
                 {
@@ -624,6 +633,10 @@ def udhaar(db: Session, shop_id: uuid.UUID, p: Period, *, can_cost: bool, limit:
                     "doc_total": pur.total if can_cost else None,
                     "doc_remaining": money(pur.total - pur.paid) if can_cost else None,
                     "age_days": (p.as_of - pur.date).days,
+                    "due_date": pur.due_date,
+                    "overdue_days": (p.as_of - pur.due_date).days
+                    if pur.due_date and pur.due_date < p.as_of
+                    else 0,
                 }
             )
     receivable_rows, payable_rows = [], []
@@ -631,10 +644,22 @@ def udhaar(db: Session, shop_id: uuid.UUID, p: Period, *, can_cost: bool, limit:
         "receivable": defaultdict(lambda: {"amount": ZERO, "parties": 0}),
         "payable": defaultdict(lambda: {"amount": ZERO, "parties": 0}),
     }
+    obands = {
+        "receivable": defaultdict(lambda: {"amount": ZERO, "parties": 0}),
+        "payable": defaultdict(lambda: {"amount": ZERO, "parties": 0}),
+    }
+    overdue_total = {"receivable": ZERO, "payable": ZERO}
     for pid, bal in balances.items():
         side = "receivable" if bal > ZERO else "payable"
         amt = abs(bal)
         od = oldest.get(pid)
+        dd = due.get(pid)
+        overdue = (p.as_of - dd).days if dd and dd < p.as_of else 0
+        oband = "no_due_date" if dd is None else "not_due" if overdue <= 0 else _band(overdue)
+        obands[side][oband]["amount"] = money(obands[side][oband]["amount"] + amt)
+        obands[side][oband]["parties"] += 1
+        if overdue > 0:
+            overdue_total[side] = money(overdue_total[side] + amt)
         age = (p.as_of - od).days if od else None
         band = _band(age) if age is not None else "no_bill"
         bands[side][band]["amount"] = money(bands[side][band]["amount"] + amt)
@@ -648,12 +673,16 @@ def udhaar(db: Session, shop_id: uuid.UUID, p: Period, *, can_cost: bool, limit:
             "age_days": age,
             "band": band,
             "last_payment": last_pay.get(pid),
+            "due_date": dd,
+            "overdue_days": overdue,
+            "overdue_band": oband,
         }
         (receivable_rows if side == "receivable" else payable_rows).append(row)
     receivable_rows.sort(key=lambda r: -r["amount"])
     payable_rows.sort(key=lambda r: -r["amount"])
     phones.sort(key=lambda r: -r["age_days"])
     band_keys = [k for _lo, _hi, k in AGE_BANDS] + ["no_bill"]
+    oband_keys = ["not_due"] + [k for _lo, _hi, k in AGE_BANDS] + ["no_due_date"]
     out = {
         "period": p.as_dict(),
         **totals,
@@ -671,6 +700,19 @@ def udhaar(db: Session, shop_id: uuid.UUID, p: Period, *, can_cost: bool, limit:
             )
         },
         "bands": band_keys,
+        "overdue_bands": oband_keys,
+        "receivable_overdue": overdue_total["receivable"],
+        "payable_overdue": overdue_total["payable"] if can_cost else None,
+        "receivable_overdue_bands": [
+            {"band": k, **obands["receivable"].get(k, {"amount": ZERO, "parties": 0})}
+            for k in oband_keys
+        ],
+        "payable_overdue_bands": [
+            {"band": k, **obands["payable"].get(k, {"amount": ZERO, "parties": 0})}
+            for k in oband_keys
+        ]
+        if can_cost
+        else [],
         "receivable_bands": [
             {"band": k, **bands["receivable"].get(k, {"amount": ZERO, "parties": 0})}
             for k in band_keys
@@ -683,7 +725,7 @@ def udhaar(db: Session, shop_id: uuid.UUID, p: Period, *, can_cost: bool, limit:
         "payable_rows": payable_rows[:limit] if can_cost else [],
         "phones": [r for r in phones if can_cost or r["side"] == "receivable"][: limit * 2],
         "notes": [
-            "Bills carry no due date: the age is counted from the oldest unpaid bill, so nothing is called overdue.",
+            "Age counts from the oldest unpaid bill; a bill is overdue only after the promise date typed on it (owner decision 2026-10-31). Bills without a promise date are never called overdue.",
             "A bill with several phones shows the bill's remaining amount on each phone.",
         ],
     }

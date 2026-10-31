@@ -10,6 +10,7 @@ import { Chip, Loading, Section, Sheet, fmtDate } from '@/components/ui'
 import PaymentForm, { type Allocation } from '@/features/payments/PaymentForm'
 import { useAuth } from '@/lib/auth'
 import { openPrintable } from '@/lib/files'
+import DownloadButton from '@/components/DownloadButton'
 import { useGet, useInvalidate } from '@/lib/queries'
 import type { Party } from '@/lib/types'
 
@@ -104,7 +105,7 @@ export default function UnitMoney({ deviceId }: { deviceId: string }) {
         {data.sale ? <SideCard side={data.sale} role="sold" /> : null}
       </Section>
 
-      <Section title="stock.history">
+      <Section title="stock.history" right={<DownloadButton path={`/api/v1/exports/devices/${deviceId}/history`} name={`history-${deviceId.slice(0, 8)}`} />}>
         <div className="card p-0">
           {[...data.timeline].reverse().map((t, i) => <TimelineRow key={i} t={t} first={i === 0} canCost={canCost} />)}
         </div>
@@ -127,21 +128,33 @@ function TimelineRow({ t, first, canCost }: { t: Record<string, unknown>; first:
   const title = kind === 'event' ? pick(`stock.events.${t.event as string}`) : pick(`unit.k.${kind}`)
   const amount = t.amount as string | null | undefined
   const after = kind === 'payment_out' || kind === 'purchase' ? (t.payable_after as string | undefined) : kind === 'payment_in' || kind === 'sale' ? (t.receivable_after as string | undefined) : undefined
+  // owner 2026-10-31: every row opens the record behind it
+  const docType = (t.doc_type ?? t.document_type) as string | null | undefined
+  const docId = (t.doc_id ?? t.document_id) as string | null | undefined
+  const to = kind === 'payment_in' || kind === 'payment_out'
+    ? (t.party_id ? `/parties/${String(t.party_id)}` : '/payments')
+    : docType === 'invoice' && docId ? `/sales/${docId}`
+    : docType === 'purchase' && docId ? `/purchases/${docId}`
+    : docType === 'loan' && docId ? '/loans'
+    : docType === 'repair' && docId ? `/repairs/${docId}`
+    : kind === 'event' && t.event === 'verified' ? `/stock/${String(t.device_id ?? '')}/verify`.replace('//verify', '/verify')
+    : null
+  const open = () => { if (to) nav(to) }
   return (
-    <div className={`flex gap-3 px-4 py-3 ${first ? '' : 'border-t border-line'}`}>
+    <div role={to ? 'link' : undefined} tabIndex={to ? 0 : undefined} onClick={open} onKeyDown={(e) => { if (to && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); open() } }} data-testid={to ? 'timeline-link' : undefined} className={`flex gap-3 px-4 py-3 ${first ? '' : 'border-t border-line'} ${to ? 'tap cursor-pointer' : ''}`}>
       <span className={`well mt-0.5 h-9 w-9 shrink-0 rounded-xl ${tone}`}>{icon}</span>
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
           <span className="text-[15px] font-bold text-ink">{title}{t.no ? <span className="font-medium text-muted" dir="ltr"> · {String(t.no)}</span> : null}</span>
           <span className="shrink-0 text-xs text-muted" dir="ltr">{fmtDate(String(t.date ?? t.at))}</span>
         </div>
-        {t.party_name ? <button type="button" onClick={() => t.party_id && nav(`/parties/${String(t.party_id)}`)} className={`text-start text-muted ${small}`}>{String(t.party_name)}</button> : null}
+        {t.party_name ? <button type="button" onClick={(e) => { e.stopPropagation(); if (t.party_id) nav(`/parties/${String(t.party_id)}`) }} className={`text-start text-muted ${small}`}>{String(t.party_name)}</button> : null}
         {amount != null && (kind !== 'event' || t.event !== 'purchased' || canCost) ? (
           <div className={`flex flex-wrap items-center gap-x-3 ${small}`} dir="auto">
             <span className="num text-ink" dir="ltr">Rs. {Number(amount).toLocaleString('en-US')}</span>
             {kind === 'purchase' || kind === 'sale' ? <span className="text-muted">{pick(kind === 'purchase' ? 'unit.upfrontPaid' : 'unit.upfrontReceived')} <span className="num" dir="ltr">{Number(t.upfront ?? 0).toLocaleString('en-US')}</span></span> : null}
             {after != null ? <span className="text-muted">{pick(kind === 'payment_out' || kind === 'purchase' ? 'unit.leftToPay' : 'unit.leftToGet')} <span className="num" dir="ltr">{Number(after).toLocaleString('en-US')}</span></span> : null}
-            {kind === 'payment_in' || kind === 'payment_out' ? <button type="button" onClick={() => openPrintable(`/api/v1/payments/${String(t.payment_id)}/receipt?format=thermal`)} className="tap inline-flex items-center gap-1 rounded-full border border-line px-2 py-0.5 text-ink"><Printer size={12} />{pick('unit.printReceipt')}</button> : null}
+            {kind === 'payment_in' || kind === 'payment_out' ? <button type="button" onClick={(e) => { e.stopPropagation(); void openPrintable(`/api/v1/payments/${String(t.payment_id)}/receipt?format=thermal`) }} className="tap inline-flex items-center gap-1 rounded-full border border-line px-2 py-0.5 text-ink"><Printer size={12} />{pick('unit.printReceipt')}</button> : null}
           </div>
         ) : null}
         {kind === 'event' && t.event === 'price_changed' && t.data ? <div className={`${small}`} dir="auto"><span className="num" dir="ltr">{Number((t.data as Record<string, unknown>).from ?? 0).toLocaleString('en-US')} → {Number((t.data as Record<string, unknown>).to ?? 0).toLocaleString('en-US')}</span>{(t.data as Record<string, unknown>).source === 'checkout' ? ` · ${pick('unit.atCheckout')}` : ''}{(t.data as Record<string, unknown>).reason ? ` · ${String((t.data as Record<string, unknown>).reason)}` : ''}{(t.data as Record<string, unknown>).approved_by ? ` · ${pick('unit.approved')}` : ''}</div> : null}

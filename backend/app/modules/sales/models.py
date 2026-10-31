@@ -42,6 +42,8 @@ class Invoice(UUIDPk, ShopScoped, Timestamped, Base):
         Uuid, ForeignKey("parties.id", ondelete="RESTRICT"), index=True
     )
     date: Mapped[dt.date] = mapped_column(Date, nullable=False)
+    # owner decision 2026-10-31: an optional promise date for udhaar (the audit calls it overdue after it)
+    due_date: Mapped[dt.date | None] = mapped_column(Date)
     subtotal: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
     discount: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
     tax_rate: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)

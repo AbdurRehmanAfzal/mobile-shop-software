@@ -39,3 +39,6 @@ class PaymentDetail(UUIDPk, ShopScoped, Timestamped, Base):
     foreign_amount: Mapped[Decimal | None] = mapped_column()
     rate: Mapped[Decimal | None] = mapped_column()
     service: Mapped[str | None] = mapped_column(String(60))  # Western Union, MoneyGram, ...
+    # owner decision 2026-10-31: what the service charged and where the money stands
+    fee: Mapped[Decimal | None] = mapped_column()
+    status: Mapped[str | None] = mapped_column(String(12))  # pending | received | settled

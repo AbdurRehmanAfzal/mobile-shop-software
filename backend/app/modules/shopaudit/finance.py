@@ -385,6 +385,7 @@ def international(db: Session, shop_id: uuid.UUID, p: Period) -> dict:
                 "pkr_amount": pay.amount,
                 "reference": pay.reference,
                 "fee": None,
+                "net": pay.amount,
                 "status": None,
             }
         )
@@ -397,6 +398,8 @@ def international(db: Session, shop_id: uuid.UUID, p: Period) -> dict:
         )
         c["foreign_amount"] = money(c["foreign_amount"] + (r["foreign_amount"] or ZERO))
         c["pkr_amount"] = money(c["pkr_amount"] + r["pkr_amount"])
+        c["fees"] = money(c.get("fees", ZERO) + (r["fee"] or ZERO))
+        c["net"] = money(c.get("net", ZERO) + r["net"])
         c["count"] += 1
     return {
         "period": p.as_dict(),
@@ -405,12 +408,15 @@ def international(db: Session, shop_id: uuid.UUID, p: Period) -> dict:
         "total_pkr_out": money(
             sum((r["pkr_amount"] for r in rows if r["direction"] == "out"), ZERO)
         ),
+        "total_fees": money(sum((r["fee"] or ZERO for r in rows), ZERO)),
+        "total_net_in": money(sum((r["net"] for r in rows if r["direction"] == "in"), ZERO)),
+        "by_status": {
+            k: sum(1 for r in rows if (r["status"] or "unknown") == k)
+            for k in ("pending", "received", "settled", "unknown")
+        },
         "by_currency": list(by_currency.values()),
         "notes": [
-            (
-                "Fees charged by the remittance service and the settlement status are not recorded; "
-                "the PKR amount is what was booked in the shop."
-            ),
+            "Fee and status are typed at the counter when known; net = PKR booked − fee. Rows without them show a blank.",
         ],
     }
 
@@ -438,8 +444,9 @@ def _remit_row(db, d: PaymentDetail, doc_type, doc_id, no, date, party_id, direc
         "rate": d.rate,
         "pkr_amount": d.amount,
         "reference": d.reference,
-        "fee": None,
-        "status": None,
+        "fee": d.fee,
+        "net": money(d.amount - (d.fee or ZERO)),
+        "status": d.status,
     }
 
 

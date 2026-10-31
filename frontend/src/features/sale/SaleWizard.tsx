@@ -79,6 +79,7 @@ export default function SaleWizard() {
   const [pay, setPay] = useDraft<PayState>('sale.payment', () => newPay())
   const [party, setParty] = useDraft<Party | null>('sale.party', null)
   const [paidNow, setPaidNow] = useDraft('sale.paidNow', '')
+  const [dueDate, setDueDate] = useDraft('sale.dueDate', '')
   const [overrideReason, setOverrideReason] = useDraft('sale.overrideReason', '')
   const [lossOk, setLossOk] = useDraft('sale.lossOk', false)
   // owner 2026-10-29: sold on installments (qist): advance now, the rest monthly, a guarantor
@@ -179,6 +180,7 @@ export default function SaleWizard() {
     const res = await m.mutateAsync({
       party_id: party?.id ?? null,
       approval_pin: pin || undefined,
+      due_date: udhaar && !inst.on && dueDate ? dueDate : undefined,
       devices: lines.map((l) => ({ device_id: l.device.id, price: Number(l.price || 0), warranty_days: Number(l.warranty_days || 0), new_asking_price: l.revise && l.new_asking !== '' && l.new_asking != null ? Number(l.new_asking) : undefined, asking_reason: l.revise && l.asking_reason ? l.asking_reason : undefined, ...accOut(l.acc) })),
       misc: misc.map((x) => ({ description: x.description.trim(), qty: Number(x.qty || 1), unit_price: Number(x.unit_price || 0), accessory_id: x.accessory_id })),
       discount: Number(discount || 0),
@@ -370,6 +372,7 @@ export default function SaleWizard() {
 
           {udhaar && !inst.on ? (
             <div className="flex flex-col gap-2 rounded-3xl bg-khata p-3 text-khata-fg">
+              <BiInput label="counter.promiseDate" type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} dir="ltr" hint="counter.promiseHint" />
               <PartyPicker value={party} onChange={setParty} kind="customer" label="counter.whoTakes" />
               <BiInput label="counter.paidNowOpt" type="number" inputMode="numeric" min={0} max={total} value={paidNow} onChange={(e) => setPaidNow(e.target.value)} />
             </div>

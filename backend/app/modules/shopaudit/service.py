@@ -156,7 +156,28 @@ def stock_walk(db: Session, shop_id: uuid.UUID, until: dt.datetime | None) -> di
     return last
 
 
-def stock_at(db: Session, shop_id: uuid.UUID, until: dt.datetime | None, can_cost: bool) -> dict:
+def stock_at(
+    db: Session,
+    shop_id: uuid.UUID,
+    until: dt.datetime | None,
+    can_cost: bool,
+    *,
+    use_snapshot: bool = True,
+) -> dict:
+    if until is not None and use_snapshot:
+        # a nightly snapshot for that exact day end (owner decision 2026-10-31) saves the event walk
+        from app.core.clock import shop_tz
+        from app.modules.shopaudit import snapshots
+
+        day = (until - dt.timedelta(seconds=1)).astimezone(shop_tz()).date()
+        cand = snapshots.get(db, shop_id, day) if day_end(day) == until else None
+        if cand is not None:
+            return {
+                "count": cand.count,
+                "cost_value": cand.cost_value if can_cost else None,
+                "asking_value": cand.asking_value,
+                "from_snapshot": True,
+            }
     if until is None:
         devs = db.scalars(
             select(Device).where(Device.shop_id == shop_id, Device.status == DeviceStatus.IN_STOCK)
