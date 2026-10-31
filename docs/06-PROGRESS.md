@@ -135,6 +135,8 @@ Plan `docs/18-BULK-EXCEL-PLAN.md` (module verdicts, sheet design, safety rules, 
 | Frontend `/more/bulk` (More → Bulk Excel): kind tiles, 3 steps, options, preview with counts + row sheet, import result, export, earlier imports; strings `bulk.*`, `help.bulk` en / ur / roman | ✅ | **2026-10-31** `features/more/BulkPage.tsx`; `bulk.spec.ts` |
 | Later (docs/18 §1): payments / udhaar receipts by sheet; returns, repairs, amanat, exchanges, installments stay manual | ⏳ | |
 
+| Landing page refresh (owner 2026-10-31): new-features section with its own screenshots, new screens in the galleries, WhatsApp + call floating buttons, mobile fit | ✅ | **2026-10-31** `LandingPage` section "What came in the last round" (audit, Excel, phone's money, price rules, assistant, Home, installments, hazri, OTP, Windows), galleries gain audit / finance / bulk / history, floating WhatsApp + call (bottom end, safe-area), hero point 4, header fits 360px; `scripts/landing-assets.mjs` seeds a busier demo month and shoots the new screens; strings `landing.new.*`, `landing.float.*` en / ur / roman |
+
 ## Backlog (owner requests, not started)
 | Item | Notes |
 |---|---|

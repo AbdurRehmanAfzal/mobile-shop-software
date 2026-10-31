@@ -2,7 +2,7 @@
  *  screenshots, a sample video, prices, the accounts to pay into and an "open a shop for me" form
  *  that reaches the product owner. Served at /welcome; a visitor on / without a login lands here. */
 
-import { ArrowLeftRight, BarChart3, BellRing, BookOpen, Check, CloudOff, Copy, CreditCard, Download, FileText, Fingerprint, HandCoins, Headphones, IdCard, Languages, MessageCircle, PackagePlus, PauseCircle, PlayCircle, Receipt, RotateCcw, ScanLine, ShieldCheck, Smartphone, Tag, Undo2, Users, Wallet, Wrench, type LucideIcon } from 'lucide-react'
+import { ArrowLeftRight, BarChart3, BellRing, BookOpen, Bot, CalendarCheck, Check, CloudOff, Copy, CreditCard, Download, FileSpreadsheet, FileText, Fingerprint, HandCoins, Headphones, History, IdCard, KeyRound, Languages, LineChart, MessageCircle, Monitor, PackagePlus, PauseCircle, Phone as PhoneIcon, PlayCircle, Receipt, RotateCcw, ScanLine, ShieldCheck, Smartphone, Tag, Undo2, Users, Wallet, Wrench, type LucideIcon } from 'lucide-react'
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { BiAlert, BiInput, BiLabel, useLang } from '@/components/Bilingual'
@@ -22,10 +22,16 @@ const BASICS: { key: string; Icon: LucideIcon }[] = [
   { key: 'khata', Icon: BookOpen }, { key: 'payments', Icon: HandCoins }, { key: 'invoices', Icon: FileText }, { key: 'returns', Icon: Undo2 },
   { key: 'hisaab', Icon: Receipt }, { key: 'staff', Icon: Users }, { key: 'imei', Icon: ScanLine }, { key: 'languages', Icon: Languages },
 ]
-const OPTIONAL: Record<string, LucideIcon> = { accessories: Headphones, repairs: Wrench, expenses: Wallet, held_sales: PauseCircle, tax: Receipt, exchange: ArrowLeftRight, reports: BarChart3, exports: Download, notifications: BellRing, loans: RotateCcw }
+const OPTIONAL: Record<string, LucideIcon> = { accessories: Headphones, repairs: Wrench, expenses: Wallet, held_sales: PauseCircle, tax: Receipt, exchange: ArrowLeftRight, reports: BarChart3, exports: Download, notifications: BellRing, loans: RotateCcw, installments: HandCoins, attendance: CalendarCheck, ai: Bot }
+/** what came in the last round (owner 2026-10-31): shown first, with its own screenshots */
+const NEW: { key: string; Icon: LucideIcon; shot?: string }[] = [
+  { key: 'audit', Icon: LineChart, shot: 'audit' }, { key: 'bulk', Icon: FileSpreadsheet, shot: 'bulk' }, { key: 'history', Icon: History, shot: 'history' },
+  { key: 'prices', Icon: ShieldCheck }, { key: 'ai', Icon: Bot }, { key: 'home', Icon: BarChart3, shot: 'home' },
+  { key: 'installments', Icon: HandCoins }, { key: 'hazri', Icon: CalendarCheck }, { key: 'otp', Icon: KeyRound }, { key: 'windows', Icon: Monitor },
+]
 const EXTRAS: { key: string; Icon: LucideIcon }[] = [{ key: 'offline', Icon: CloudOff }, { key: 'fingerprint', Icon: Fingerprint }, { key: 'cnic', Icon: ShieldCheck }, { key: 'whatsapp', Icon: MessageCircle }]
-const SHOTS = ['home', 'sale', 'stock', 'khata', 'reports', 'invoice'] as const
-const WEB_SHOTS = ['home', 'stock', 'reports', 'invoice'] as const
+const SHOTS = ['home', 'audit', 'sale', 'stock', 'bulk', 'khata', 'history', 'finance', 'invoice'] as const
+const WEB_SHOTS = ['home', 'audit', 'stock', 'bulk', 'finance', 'invoice'] as const
 
 export default function LandingPage() {
   const { pick, ur, roman, cls } = useLang()
@@ -37,12 +43,12 @@ export default function LandingPage() {
   const body = ur ? cls('md') : 'text-[15px] font-medium'
 
   return (
-    <div className="min-h-dvh bg-ground text-ink">
+    <div className="min-h-dvh overflow-x-hidden bg-ground text-ink">
       {/* top bar */}
       <header className="sticky top-0 z-20 border-b border-line bg-ground/90 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center gap-3 px-5 py-3">
           <span className="well h-9 w-9 shrink-0 rounded-xl bg-emerald text-white"><Smartphone size={20} strokeWidth={2.2} /></span>
-          <span className="flex-1 text-lg font-extrabold tracking-tight">Mobile Shop</span>
+          <span className="min-w-0 flex-1 truncate text-base font-extrabold tracking-tight sm:text-lg">Mobile Shop</span>
           <div className="flex gap-0.5 rounded-full bg-surface p-0.5" dir="ltr">
             {LOCALES.map((l) => (
               <button key={l} type="button" aria-pressed={l === locale} onClick={() => setLocale(l)} className={`tap h-8 rounded-full px-2.5 text-[12px] font-bold ${l === locale ? 'bg-ink text-ground' : 'text-ink'} ${l === 'ur' ? 'ur' : ''}`}>{LANG[l]}</button>
@@ -67,7 +73,7 @@ export default function LandingPage() {
             </div>
             <Link to="/login" className={`w-fit text-white/90 underline-offset-4 hover:underline sm:hidden ${ur ? cls('sm') : 'text-sm font-bold'}`}>{pick('landing.haveShop')}</Link>
             <div className={`flex flex-wrap gap-x-5 gap-y-1 pt-2 text-white/80 ${ur ? cls('sm') : 'text-sm font-semibold'}`}>
-              <span>✓ {pick('landing.point1')}</span><span>✓ {pick('landing.point2')}</span><span>✓ {pick('landing.point3')}</span>
+              <span>✓ {pick('landing.point1')}</span><span>✓ {pick('landing.point2')}</span><span>✓ {pick('landing.point3')}</span><span>✓ {pick('landing.point4')}</span>
             </div>
           </div>
           <div className="mx-auto w-full max-w-[260px] md:max-w-[300px]">
@@ -76,7 +82,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <main className="mx-auto flex max-w-5xl flex-col gap-14 px-5 pb-20 pt-6">
+      <main className="mx-auto flex max-w-5xl flex-col gap-14 px-5 pb-28 pt-6">
         {/* who it is for */}
         <section className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {(['used', 'new', 'repair'] as const).map((k) => (
@@ -85,6 +91,26 @@ export default function LandingPage() {
               <span className={`text-muted ${ur ? cls('sm') : 'text-sm font-medium'}`}>{pick(`landing.for.${k}.d`)}</span>
             </div>
           ))}
+        </section>
+
+        {/* new this round */}
+        <section id="new" className="flex flex-col gap-5">
+          <div>
+            <span className={`mb-2 inline-block rounded-full bg-emerald px-3 py-1 text-xs font-bold text-white ${ur ? 'ur text-sm' : ''}`}>{pick('landing.newBadge')}</span>
+            <h2 className={h2}>{pick('landing.newTitle')}</h2>
+            <p className={`text-muted ${body}`}>{pick('landing.newSub')}</p>
+          </div>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {NEW.map(({ key, Icon }) => <Feature key={key} Icon={Icon} title={pick(`landing.new.${key}.t`)} text={pick(`landing.new.${key}.d`)} tone="bg-emerald text-white" />)}
+          </div>
+          <div className="-mx-5 flex snap-x gap-4 overflow-x-auto px-5 pb-2">
+            {NEW.filter((n) => n.shot).map((n) => (
+              <figure key={n.key} className="w-[220px] shrink-0 snap-center">
+                <Phone src={`/landing/${n.shot}-${ur ? 'ur' : 'en'}.png`} small />
+                <figcaption className={`mt-2 text-center text-muted ${ur ? cls('sm') : 'text-sm font-semibold'}`}>{pick(`landing.shots.${n.shot}`)}</figcaption>
+              </figure>
+            ))}
+          </div>
         </section>
 
         {/* video */}
@@ -201,10 +227,20 @@ export default function LandingPage() {
         </section>
       </main>
 
+      {/* always-there contact: WhatsApp and a call, bottom corner */}
+      <div className="fixed bottom-[max(16px,env(safe-area-inset-bottom))] end-4 z-30 flex flex-col gap-2 print:hidden" data-testid="landing-contact">
+        <a href={wa(pick('landing.waHello'))} target="_blank" rel="noopener noreferrer" aria-label={pick('landing.float.wa')} title={pick('landing.float.wa')} className="tap flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-hero ring-4 ring-white/70">
+          <MessageCircle size={28} strokeWidth={2.2} />
+        </a>
+        <a href={`tel:${MAKER.tel}`} aria-label={pick('landing.float.call')} title={pick('landing.float.call')} className="tap flex h-14 w-14 items-center justify-center rounded-full bg-ink text-ground shadow-hero ring-4 ring-white/70">
+          <PhoneIcon size={26} strokeWidth={2.2} />
+        </a>
+      </div>
+
       <footer className="border-t border-line bg-surface">
         <div className={`mx-auto flex max-w-5xl flex-col gap-2 px-5 py-8 text-muted ${ur ? cls('sm') : 'text-sm font-medium'}`}>
           <span className="font-bold text-ink">Mobile Shop · {MAKER.company}</span>
-          <span dir="ltr">{MAKER.person} · {MAKER.phone} · <a href={`https://${MAKER.site}`} className="underline">{MAKER.site}</a></span>
+          <span dir="ltr">{MAKER.person} · <a href={`tel:${MAKER.tel}`} className="underline">{MAKER.phone}</a> · <a href={`https://${MAKER.site}`} className="underline">{MAKER.site}</a></span>
           <span>{pick('landing.footer')}</span>
         </div>
       </footer>
