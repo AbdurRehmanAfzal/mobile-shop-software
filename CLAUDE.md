@@ -18,7 +18,7 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 3. If a design decision was made, append an ADR to `docs/10-DECISIONS.md`.
 4. Commit (see rules below). The `/handoff` project skill walks through this.
 
-## Shop Audit programme (owner brief 2026-10-30, in progress)
+## Shop Audit programme (owner brief 2026-10-30; phases 1–10 delivered 2026-10-31, ADR-032)
 - Requirements: `docs/16-SHOP-AUDIT-SPEC.md` (authoritative, verbatim owner brief).
 - Living plan, gap analysis, phase checklist and the **exact next task**: `docs/17-SHOP-AUDIT-PLAN.md` — read it before touching `backend/app/modules/shopaudit` or `frontend/src/features/audit`.
 - Status rows live in `docs/06-PROGRESS.md` (section "Phase 5 — Shop Audit"); per-session results in `docs/09-SESSION-LOG.md`.

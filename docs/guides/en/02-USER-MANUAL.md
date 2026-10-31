@@ -823,6 +823,62 @@ a mistake is a return and a new bill.
 under the asking price in the period — phone, IMEI, who did it, old → new or asking vs sold, the
 difference, profit, reason, bill number, and who approved by PIN — with a count per person on top.
 
+## 15e. Shop audit: the whole business for any period
+
+**Where**: More → Shop audit (owner and manager), or the card at the top of Reports.
+
+**The period bar** is on every audit screen: Today, Yesterday, This week, Last week, This
+month, Last month, This year, All time, or From–to. **As of** adds a day for balances: pick
+30 April and every balance (cash & bank, who owes whom, phones in stock) is rebuilt as it stood
+that evening, from the ledger and the phone events — never from today's figures.
+
+**Overview**: net sales and real profit with the change against the period before; stock bought,
+expenses, money in and money out for the period; cash & bank, phones in stock, people who owe us
+and people we owe, each as **Start → End → Now**. The **checks** card shows the books proving
+themselves (cash start + in − out = end; every entry balanced; khata = ledger; stock start + in −
+out = end). Every tile opens the list behind the number.
+
+**Finance**: Profit & loss (sales before discounts, discounts, returns, net sales, cost of goods,
+gross profit, expenses, operating profit, other income, real profit — each with the period
+before in brackets, plus a day / week / month chart); Cash & bank (where money came from and
+went, each account with its reasons, money moved between own accounts shown apart, channels,
+remittances from abroad with sender, currency, rate and reference); Expenses (by category with
+the period before, largest entries, by person); Tax (every taxed bill).
+
+**People**: top customers and suppliers by the metric you pick (sales, bills, profit, purchases,
+phones, profit on their phones, largest amounts owed either way). Tap a person: their page now
+carries **Whole journey** — first and last dealing, phones sold to and bought from them, money
+received and paid (at the counter / later), returns, the balance, and the same picture as of any
+day.
+
+**Udhaar**: people owe us and we owe people kept apart, the period's movement (udhaar given,
+received, taken, paid, returns), the **age of each debt** counted from the oldest unpaid bill
+(bills carry no due date, so nothing is called overdue), the people and the phones on unpaid bills.
+
+**Stock**: what is in stock by condition, PTA, ID check, type and brand (a used PTA phone is in
+both), value at cost and at asking, expected margin, most expensive and thinnest-margin phones;
+**Age of stock** in the shop's own bands (Settings → Stock audit thresholds) with alerts — dead
+stock, high value and slow, thin margin, no asking price, ID check pending, came back more than
+once; **ID checks** — status counts, checks saved, and every skipped check with who skipped it,
+for which phone and supplier, and why (a skip is never a completed check).
+
+**Products**: what sold by model, brand or type — units, share, revenue, profit, margin, average
+price, average days to sell, returns, stock left — with a Top / Average / Low class and the
+thresholds spelled out; sold vs bought over the period. **Bills**: every document of the period by
+kind, status and employee, and everything that was voided with who and why.
+
+**Security** (owner only): one feed of every bent number or rule — asking price changed, sold
+under asking or under cost, discounts, voids, reversals, stock adjustments, opening balances,
+skipped ID checks, wrong owner PINs, admin actions — who, when, before → after, reason, who
+approved; per-employee counts with flags.
+
+**Reports**: the **complete shop audit report** — pick the sections, summary or detailed, Print /
+PDF or Excel (a sheet per section) for the chosen period, with the period, the as-of day, the
+currency and what is not recorded stated on it; and every individual report with its download.
+
+Not recorded, so not shown: due dates on bills, tax on purchases, remittance fees. Buying-side
+figures are for the owner and manager only.
+
 ## 16. Stock list, IMEI check and phone history
 
 ### Stock in shop (worth)
