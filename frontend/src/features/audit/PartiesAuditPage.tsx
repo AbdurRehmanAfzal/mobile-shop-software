@@ -27,7 +27,7 @@ export default function PartiesAuditPage() {
   const setMetric = (m: Metric) => { const o = new URLSearchParams(sp); o.set('metric', m); setSp(o, { replace: true }) }
   const { data, isLoading } = useGet<Rankings>(['audit-rankings', query, metric], `/api/v1/shop-audit/rankings?${query}&metric=${metric}&limit=20`)
   const small = ur ? cls('sm') : 'text-xs font-semibold'
-  const chip = (on: boolean) => `tap shrink-0 rounded-full border font-bold h-10 px-3.5 ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-sm'}`
+  const chip = (on: boolean) => `tap shrink-0 whitespace-nowrap rounded-full border font-bold min-h-10 px-3.5 py-2 ${ur ? 'leading-[1.9]' : 'leading-tight text-sm'} ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : ''}`
   const isCount = COUNT_METRICS.includes(metric)
   const shown = METRICS.filter((m) => canCost || !m.endsWith('_profit'))
   return (

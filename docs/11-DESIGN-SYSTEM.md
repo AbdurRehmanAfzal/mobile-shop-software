@@ -111,3 +111,9 @@ Stored outside the repo in `C:\Users\HP\Documents\projects\mobile shop\*.png` (F
 - **PIN login**: lock icon, PIN boxes, on-screen keypad, "forgot PIN → password".
 - **Lists**: search pill, underline tabs, rows with logo/initials + chevron (Bank Transfer); offer cards with stat columns + pill CTA (Mobile Packages) — to apply to stock cards next.
 Colours stay on our tokens (emerald + gold); the green band uses `emerald`. Switching to Easypaisa's brighter green is a single token change if the owner wants it.
+
+## Charts (2026-10-31)
+In-house SVG only (`frontend/src/components/charts/`): `Bars`, `Lines`, `Donut`. Rules: design tokens for colour (emerald = money in / sales, payable = out / under, receivable = attention, ink = profit), a nice-number axis with three light grid lines and short values (k / L / Cr), Latin digits, the hovered or tapped value in the caption, tap → the list behind the number, an empty state in words, and time always running left → right even in Urdu (`dir="ltr"` + `direction: ltr` on the axis rows). Daily series with gaps are bars first; lines are for weekly / monthly trends.
+
+## Tappable things (user test 2026-10-31)
+Anything that opens a screen looks like a button: a bordered surface, an icon well, the label, and a chevron on the end side; pressed state via `tap`. Icon-only tiles with a caption under them were not recognised as buttons by shopkeepers. In Urdu, long Nastaliq labels get a single column so they never overlap the icon. Chips use `min-h` + padding (never a fixed height) so Nastaliq ascenders fit, and chip rows wrap instead of scrolling off-screen.

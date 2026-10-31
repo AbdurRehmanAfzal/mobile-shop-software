@@ -34,13 +34,13 @@ export default function AuditLayout({ children, right }: { children: ReactNode; 
   const { period, set, query } = useAuditPeriod()
   const { data: resolved } = useGet<ResolvedPeriod>(['audit-period', query], `/api/v1/shop-audit/period?${query}`)
   const [asOfOpen, setAsOfOpen] = useState(!!period.asOf)
-  const chip = (on: boolean) => `tap shrink-0 rounded-full border font-bold h-10 px-3.5 ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-sm'}`
+  const chip = (on: boolean) => `tap shrink-0 whitespace-nowrap rounded-full border font-bold min-h-10 px-3.5 ${ur ? 'py-2 leading-[1.9]' : 'py-2 leading-tight text-sm'} ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : ''}`
   const date = 'h-11 min-w-0 flex-1 rounded-2xl border border-line bg-surface px-3 text-sm font-bold text-ink'
   return (
     <div className="flex flex-col gap-3">
       <PageHeader title="audit.title" right={right} help={<Help term="audit" />} />
       {sections.length > 1 ? (
-        <div className="flex gap-1.5 overflow-x-auto pb-1">
+        <div className="flex flex-wrap gap-1.5" data-testid="audit-sections">
           {sections.map((s) => (
             <Link key={s.to} to={`${s.to}?${new URLSearchParams(window.location.search).toString()}`} aria-current={pathname === s.to ? 'page' : undefined} className={chip(pathname === s.to)}>
               {pick(s.key)}

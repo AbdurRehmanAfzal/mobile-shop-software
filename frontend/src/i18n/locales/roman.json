@@ -745,7 +745,9 @@
     "expenses": "Kharche",
     "inStock": "Stock mein phone",
     "worth": "Maliyat (Rs)",
-    "phonesSold": "Bike phone: {{n}}"
+    "phonesSold": "Bike phone: {{n}}",
+    "glance": "Ek nazar mein",
+    "moneySplit": "Paisa kahan para hai"
   },
   "pin": {
     "title": "Apna PIN likhein",
