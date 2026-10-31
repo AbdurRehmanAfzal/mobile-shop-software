@@ -824,6 +824,61 @@ kar sakta; ghalti ho to wapsi aur naya bill.
 aur tay qeemat se kam har bikri — phone, IMEI, kis ne ki, purani → nayi ya tay vs bika, farq, munafa,
 wajah, bill number, aur PIN se kis ne manzoor ki — upar har bande ka shumaar.
 
+## 15e. Dukaan ka audit: kisi bhi arse ka poora karobar
+
+**Kahan**: Mazeed → Dukaan ka audit (maalik aur manager), ya Reports ke upar wala card.
+
+**Arse ki patti** har audit screen par hai: Aaj, Kal, Ye hafta, Pichla hafta, Ye mahina, Pichla
+mahina, Ye saal, Shuru se, ya Tareekh se tareekh tak. **Is din tak** balance ke liye ek din deta
+hai: 30 April chunein to har balance (naqad aur bank, kis par kya baqi, stock ke phone) us shaam
+jaisa dobara banta hai, ledger aur phone ke waqiat se — aaj ke hindson se kabhi nahi.
+
+**Khulasa**: khalis bikri aur asal munafa pichle arse ke muqable ke saath; arse ka khareeda stock,
+kharche, paisa aaya aur gaya; naqad aur bank, stock ke phone, logon par baqi aur hum ne dene —
+har ek **Shuru → Aakhir → Ab**. **Hisaab ki partaal** ka card dikhata hai ke kitaabein khud
+sabit hoti hain (naqad shuru + aaya − gaya = aakhir; har indraj barabar; khata = ledger; stock
+shuru + aaya − gaya = aakhir). Har khana apne peechay ki list kholta hai.
+
+**Maliyat**: Nafa o nuqsan (riayat se pehle bikri, riayat, wapsi, khalis bikri, laagat, gross
+munafa, kharche, operating munafa, deegar aamdan, asal munafa — har ek pichle arse ke saath
+bracket mein, aur din / hafta / mahina chart); Naqad aur bank (paisa kahan se aaya kahan gaya,
+har account apni wajohat ke saath, apne accounts ke darmiyan muntaqili alag, zariye, bairoon-e-
+mulk se tarseelat bhejne wale, currency, rate aur reference ke saath); Kharche (category ke lihaz
+se pichle arse ke saath, sab se bare, bande ke lihaz se); Tax (har tax wala bill).
+
+**Log**: chune hue paimane par sab se bare gahak aur supplier (bikri, bill, munafa, khareed,
+phone, un ke phones par munafa, dono taraf sab se bari raqmein). Bande ko dabayein: us ke page par
+ab **Poora safar** hai — pehla aur aakhri muamla, unhein beche aur un se khareede phone, wasool
+aur ada (counter par / baad mein), wapsiyan, balance, aur kisi bhi din ki wahi tasveer.
+
+**Udhaar**: logon par baqi aur hum ne dene alag alag, arse ki harkat (diya, wasool, liya, ada,
+wapsi), **har udhaar ki umar** sab se purane baqi bill se (billon ki aakhri tareekh nahi hoti,
+is liye kisi ko late nahi kaha jaata), log aur baqi billon ke phone.
+
+**Stock**: haalat, PTA, ID check, qisam aur brand ke lihaz se kya stock mein hai (used PTA phone
+dono mein), laagat aur tay qeemat par maliyat, mutawaqqa margin, sab se mehnge aur sab se kam
+margin wale; **Stock ki umar** dukaan ke apne band mein (Settings → Stock audit ki hadein) alerts
+ke saath — murda stock, mehnga aur sust, kam margin, tay qeemat nahi, ID check baqi, ek se zyada
+baar wapas aaya; **ID check** — haalat ke shumaar, mehfooz check, aur har chhora gaya check: kis
+ne, kis phone aur supplier par, kyun (chhora gaya check kabhi mukammal check nahi ginta).
+
+**Masnoo'at**: model, brand ya qisam ke lihaz se kya bika — unit, hissa, aamdan, munafa, margin,
+ausat qeemat, bikne ke ausat din, wapsi, bacha stock — Top / Ausat / Kam class aur hadein saaf
+likhi hui; arse mein bika vs khareeda. **Bill**: arse ka har dastawez qisam, haalat aur mulazim ke
+lihaz se, aur jo mansookh hua kis ne kyun.
+
+**Security** (sirf maalik): har mura hua hindsa ya usool ek feed mein — tay qeemat badli, tay ya
+laagat se kam bika, riayat, mansookhi, ultana, stock adjust, ibtidai balance, chhore gaye ID check,
+ghalat maalik PIN, admin karrawai — kis ne, kab, pehle → baad, wajah, kis ne manzoor kiya;
+mulazim ke lihaz se shumaar aur nishan.
+
+**Reports**: **dukaan ki mukammal audit report** — hisse chunein, khulasa ya tafseel, Print / PDF
+ya Excel (har hisse ki sheet) chune hue arse ki, jis par arsa, balance ka din, currency aur jo
+record nahi hota likha hota hai; aur har alag report apne download ke saath.
+
+Record nahi, is liye nahi dikhaya: billon ki aakhri tareekh, khareed par tax, tarseel ki fees.
+Khareed ki taraf ke hindse sirf maalik aur manager ke liye.
+
 ## 16. Stock list, IMEI check aur phone ki puri kahani
 
 ### Dukaan mein stock (kitne ka hai)

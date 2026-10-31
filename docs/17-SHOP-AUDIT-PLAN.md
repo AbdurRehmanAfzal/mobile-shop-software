@@ -215,11 +215,11 @@ Prefix `/api/v1/audit` is taken by the audit log → new prefix **`/api/v1/shop-
 - [x] P10-2 `GET /api/v1/shop-audit/report?sections&mode&format=pdf|xlsx|json` — `shopaudit/report.py` builds 15 sections from the same service calls the screens use (summary, P&L + series, cash + reasons + remittances, expenses + largest, tax + rows, top customers / suppliers, udhaar, inventory + dimensions, ageing + rows + alerts, products, invoices + employees + voided, ID checks + bypasses, reconciliation checks, security — owner only); Excel = cover sheet (shop, period, as-of, mode, currency, generated, sections) + one sheet per section; printable page with the period line, notes under each table.
 - [x] Tests `test_shopaudit_reports.py` (summary rows equal the overview payload; workbook sheets, headers, numeric cells, cover; printable page titles and detail series; 422 on a bad format; manager without security; salesman 403), e2e `audit-reports.spec.ts` (charts present and drill-down, section toggle, detailed print page, Excel download, individual list).
 
-### Phase 11 — Validation & reconciliation
-- [ ] P11-1 `/reconcile` endpoint + Overview "Checks" card (pass/fail per equation).
-- [ ] P11-2 Scenario suite (§22 list) in `tests/test_shopaudit_*.py`; large-data timing test (5k invoices on SQLite under N seconds).
-- [ ] P11-3 Playwright `audit.spec.ts` (period change, drill-down, export).
-- [ ] P11-4 Manuals (en + roman) "Shop Audit" chapter; ADR-032; docs 06/09 final.
+### Phase 11 — Validation & reconciliation ✅ 2026-10-31 (timing test deferred)
+- [x] P11-1 `/reconcile` + Overview checks card (landed in P3).
+- [x] P11-2 Scenario suite: `test_shopaudit_integrity / periods / finance / parties / inventory / products / security / reports.py` (17 tests covering §22 items 1–23 except 24). **Deferred**: the 5k-invoice timing test (CI runs on SQLite; a timing assertion there would be flaky — noted as backlog, see §5).
+- [x] P11-3 Playwright: `audit.spec.ts`, `audit-finance`, `audit-parties`, `audit-stock`, `audit-products`, `audit-security`, `audit-reports`, `transfer`, `pricerules`.
+- [x] P11-4 Manuals §15e (en + roman), ADR-032, docs 06 / 09 / 17, CLAUDE.md.
 
 ---
 
@@ -249,6 +249,8 @@ Prefix `/api/v1/audit` is taken by the audit log → new prefix **`/api/v1/shop-
 | Charts | In-house SVG, no new dependency. |
 | Security feed audience | Owner only. |
 | Legacy data before v2 | None imported; coverage note shows the first ledger date per shop. |
+| Large-data timing test (§22 item 24) | Deferred: CI uses SQLite, a wall-clock assertion would be flaky. The report queries are grouped SQL except the as-of stock walk (one pass over the shop's device events) and the per-party udhaar rows. Revisit with a Postgres timing job or a daily stock snapshot if a shop passes ~50k events. |
+| Per-bill remaining as-of a past day | Payment allocations carry no date of their own; the as-of views give ledger balances per person, per-bill remaining is current (stated on the screens). |
 
 ---
 
@@ -264,4 +266,4 @@ Prefix `/api/v1/audit` is taken by the audit log → new prefix **`/api/v1/shop-
 - [x] P8 security — 2026-10-31
 - [x] P9 dashboard — 2026-10-31
 - [x] P10 report center — 2026-10-31
-- [ ] P11 validation
+- [x] P11 validation — 2026-10-31 (timing test deferred)
