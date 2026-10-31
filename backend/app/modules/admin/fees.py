@@ -12,6 +12,7 @@ from sqlalchemy.orm import Mapped, Session, mapped_column
 
 from app.core.clock import today as shop_today
 from app.core.errors import Conflict, NotFound
+from app.core.periods import day_start
 from app.db.base import Base, UUIDPk, utcnow
 from app.modules.admin import plans
 from app.modules.audit.service import record_audit
@@ -392,7 +393,7 @@ def stats(db: Session) -> dict:
     month = db.scalar(
         select(func.coalesce(func.sum(FeePayment.amount), 0)).where(
             FeePayment.status == APPROVED,
-            FeePayment.handled_at >= dt.datetime.combine(first, dt.time.min, tzinfo=dt.UTC),
+            FeePayment.handled_at >= day_start(first),  # the shop's month, not UTC's (00:00–05:00 PKT on the 1st)
         )
     )
     return {
