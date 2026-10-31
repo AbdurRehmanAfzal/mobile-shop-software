@@ -32,6 +32,7 @@ log = logging.getLogger("notifications")
 DAILY = "daily_report"
 REMIND = "udhaar_reminder"
 INSTALL = "installment_reminders"
+SNAPSHOT = "stock_snapshot"
 
 
 # ---- udhaar reminders ----------------------------------------------------------------------
@@ -279,7 +280,7 @@ def _claim(db: Session, shop_id: uuid.UUID, job: str, day: dt.date) -> bool:
 def tick(db: Session, now: dt.datetime | None = None) -> dict:
     """What is due right now for every active shop. Safe to call as often as you like."""
     now = now or utcnow()
-    ran = {"daily_report": 0, "reminders": 0}
+    ran = {"daily_report": 0, "reminders": 0, "snapshots": 0}
     for shop in db.scalars(select(Shop).where(Shop.is_active.is_(True))).all():
         s: NotificationSettings = settings_for(shop)
         local = now.astimezone(ZoneInfo(shop.timezone or "Asia/Karachi"))
@@ -292,6 +293,13 @@ def tick(db: Session, now: dt.datetime | None = None) -> dict:
             queue_daily_report(db, shop, day)
             db.commit()
             ran["daily_report"] += 1
+        # the stock snapshot for the day that just ended (owner decision 2026-10-31), once a day
+        if _claim(db, shop.id, SNAPSHOT, day):
+            from app.modules.shopaudit.snapshots import nightly
+
+            nightly(db, shop.id, day)
+            db.commit()
+            ran["snapshots"] += 1
         remind_due = s.customer_reminder_whatsapp and is_due(s.reminder_time, local)
         if remind_due and _claim(db, shop.id, INSTALL, day):
             from app.modules.admin.modules import effective

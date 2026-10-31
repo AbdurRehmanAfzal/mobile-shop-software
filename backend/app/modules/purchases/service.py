@@ -108,6 +108,7 @@ def create_purchase(
         kind=data.kind,
         party_id=party.id,
         date=day,
+        due_date=data.due_date,
         purchased_at=at,
         subtotal=subtotal,
         discount=discount,

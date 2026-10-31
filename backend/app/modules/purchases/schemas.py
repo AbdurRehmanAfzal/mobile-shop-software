@@ -31,6 +31,7 @@ class MiscLineIn(BaseModel):
 
 
 class PurchaseCreate(BaseModel):
+    due_date: dt.date | None = None  # when we promised to pay the supplier
     kind: PurchaseKind
     party_id: uuid.UUID
     date: dt.date | None = None
@@ -84,6 +85,7 @@ class PurchaseOut(BaseModel):
     party_id: uuid.UUID
     party_name: str | None = None
     date: dt.date
+    due_date: dt.date | None = None
     purchased_at: dt.datetime | None = None
     subtotal: Decimal
     discount: Decimal

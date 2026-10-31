@@ -179,6 +179,7 @@ def create_sale(
         no=next_number(db, shop, shop.invoice_prefix or "INV", "next_invoice_no"),
         party_id=party.id if party else None,
         date=data.date or shop_today(),
+        due_date=data.due_date,
         subtotal=subtotal,
         discount=discount,
         tax_rate=money(rate),

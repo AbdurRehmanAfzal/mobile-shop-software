@@ -1031,7 +1031,10 @@
     "discounts": "Di gayi riayat",
     "salesReturns": "Gahakon ne wapas kiya",
     "netSales": "Khalis bikri",
-    "operatingProfit": "Kharchon ke baad munafa"
+    "operatingProfit": "Kharchon ke baad munafa",
+    "promiseDate": "Adaigi ka waada (ikhtiyari)",
+    "promiseDateBuy": "Supplier ko adaigi tak (ikhtiyari)",
+    "promiseHint": "Tareekh ke saath audit us ke baad udhaar ko late kehta hai; baghair tareekh sirf udhaar ki umar dikhti hai."
   },
   "admin": {
     "title": "Super admin",
@@ -1186,7 +1189,15 @@
     "sender": "Bhejne wale ka naam",
     "service": "Kis ke zariye aaye (agar pata ho)",
     "refOpt": "Reference / MTCN (agar ho)",
-    "restUdhaar": "Bahar se aaye paise bill se kam hain: Rs. {{n}} is gahak ke udhaar mein jayenge."
+    "restUdhaar": "Bahar se aaye paise bill se kam hain: Rs. {{n}} is gahak ke udhaar mein jayenge.",
+    "fee": "Service fees (Rs.)",
+    "feeHint": "Jo service ne rakhi; khalis = raqam − fees",
+    "status": "Raqam ki haalat",
+    "st": {
+      "pending": "Baqi",
+      "received": "Mausool",
+      "settled": "Tay"
+    }
   },
   "help": {
     "what": "Yeh kya hai?",
@@ -1943,7 +1954,14 @@
       "weOweShort": "hum ne dena",
       "lastPaid": "aakhri adaigi",
       "neverPaid": "abhi koi adaigi nahi",
-      "notes": "Jis bill mein kai phone hon us ka baqi har phone par dikhta hai."
+      "notes": "Jis bill mein kai phone hon us ka baqi har phone par dikhta hai.",
+      "overdue": "late",
+      "overdueTitle": "Late (waade ki tareekh guzar gayi)",
+      "overdueHint": "Sirf waade ki tareekh wale bill late ho sakte hain; baqi neeche udhaar ki umar dikhate hain.",
+      "notDue": "Abhi waqt nahi aaya",
+      "noDueDate": "Waade ki tareekh nahi",
+      "overdueBy": "{{n}} din late",
+      "dueOn": "tareekh"
     },
     "journey": {
       "title": "Poora safar",

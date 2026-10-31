@@ -44,6 +44,7 @@ export default function PurchaseWizard() {
   const [editing, setEditing] = useDraft<DeviceLineDraft | null>('purchase.editing', null)
   const [discount, setDiscount] = useDraft('purchase.discount', '')
   const [paidNow, setPaidNow] = useDraft('purchase.paidNow', '')
+  const [dueDate, setDueDate] = useDraft('purchase.dueDate', '')
   const [pay, setPay] = useDraft<PayState>('purchase.payment', () => newPay())
   const [more, setMore] = useDraft('purchase.more', false)
   const [skipCheck, setSkipCheck] = useDraft('purchase.skipCheck', false)
@@ -70,6 +71,7 @@ export default function PurchaseWizard() {
       paid,
       payment: payInfo(pay),
       reference: reference || undefined,
+      due_date: udhaar && dueDate ? dueDate : undefined,
       purchased_at: earlier && when ? new Date(when).toISOString() : undefined,
     })
     if (isQueued(res)) {
@@ -184,6 +186,7 @@ export default function PurchaseWizard() {
                 </>
               ) : null}
               {udhaar ? <BiInput label="counter.paidNowBuy" type="number" inputMode="numeric" min={0} max={total} value={paidNow} onChange={(e) => setPaidNow(e.target.value)} /> : null}
+              {udhaar ? <BiInput label="counter.promiseDateBuy" type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} dir="ltr" hint="counter.promiseHint" /> : null}
 
               <div className="card flex flex-col gap-2">
                 <BiLabel text="purchase.when" size="md" tone="text-muted" />

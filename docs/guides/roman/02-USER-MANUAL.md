@@ -879,6 +879,14 @@ record nahi hota likha hota hai; aur har alag report apne download ke saath.
 Record nahi, is liye nahi dikhaya: billon ki aakhri tareekh, khareed par tax, tarseel ki fees.
 Khareed ki taraf ke hindse sirf maalik aur manager ke liye.
 
+**Waade ki tareekh aur late** (2026-10-31): udhaar bikri par, ya jo khareed baad mein ada karni ho,
+waade ki tareekh likh sakte hain. Udhaar screen phir **late** (waade ke baad) alag band mein dikhati
+hai, har udhaar ki umar ke saath; baghair tareekh wale bill kabhi late nahi kehlate. **Tarseel ki
+fees aur haalat**: bahir se paisa aaye to service fees aur haalat (baqi / mausool / tay) likh sakte
+hain; Maliyat screen fees, khalis aur haalat dikhati hai. **Rozana stock snapshot**: raat ka job har
+din ka stock shumaar aur maliyat mehfooz karta hai, taake bari dukaanon mein "us din tak" foran
+jawab de; maalik Reports se dobara bana sakta hai.
+
 ## 16. Stock list, IMEI check aur phone ki puri kahani
 
 ### Dukaan mein stock (kitne ka hai)

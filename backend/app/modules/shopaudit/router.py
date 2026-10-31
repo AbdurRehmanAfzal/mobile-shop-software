@@ -400,3 +400,48 @@ def report_(
             }
         )
     return report.printable(shop.name, p, secs, mode, lang)
+
+
+# ---- owner decision 2026-10-31: daily stock snapshots ---------------------------------------------
+
+
+@router.post("/snapshots/backfill")
+def snapshots_backfill(ctx: Reports, db: DB, days: int = 90):
+    """Owner: rebuild the nightly stock snapshots for the last `days` days (a derived cache)."""
+    from app.core.clock import today as shop_today
+    from app.modules.shopaudit import snapshots
+
+    if ctx.role != Role.OWNER:
+        raise Forbidden()
+    t = shop_today()
+    n = snapshots.backfill(
+        db, ctx.shop_id, t - dt.timedelta(days=min(max(days, 1), 3660)), t - dt.timedelta(days=1)
+    )
+    db.commit()
+    return {"days": n}
+
+
+@router.get("/snapshots")
+def snapshots_list(ctx: Reports, db: DB, limit: int = 60):
+    from sqlalchemy import select
+
+    from app.modules.shopaudit.models import StockSnapshot
+
+    rows = db.scalars(
+        select(StockSnapshot)
+        .where(StockSnapshot.shop_id == ctx.shop_id)
+        .order_by(StockSnapshot.day.desc())
+        .limit(min(limit, 400))
+    ).all()
+    return plain(
+        [
+            {
+                "day": r.day,
+                "count": r.count,
+                "cost_value": r.cost_value if ctx.can(Cap.VIEW_COST) else None,
+                "asking_value": r.asking_value,
+                "taken_at": r.taken_at,
+            }
+            for r in rows
+        ]
+    )

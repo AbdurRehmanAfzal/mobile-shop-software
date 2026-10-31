@@ -879,6 +879,14 @@ currency and what is not recorded stated on it; and every individual report with
 Not recorded, so not shown: due dates on bills, tax on purchases, remittance fees. Buying-side
 figures are for the owner and manager only.
 
+**Promise dates and overdue** (added 2026-10-31): on an udhaar sale, or a purchase you will pay
+later, you may type the date promised. The Udhaar screen then shows what is **overdue** (past the
+promise), in bands, next to the age of every debt; bills without a date are never called overdue.
+**Remittance fee and status**: when money comes from abroad you may type the service fee and
+whether it is pending, received or settled; the Finance screen shows fee, net and status.
+**Daily stock snapshots**: the night job stores each day's stock count and value, so "as of" a past
+day answers at once in big shops; the owner can rebuild them from Reports (snapshots backfill).
+
 ## 16. Stock list, IMEI check and phone history
 
 ### Stock in shop (worth)

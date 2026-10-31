@@ -47,6 +47,7 @@ class Purchase(UUIDPk, ShopScoped, Timestamped, Base):
         Uuid, ForeignKey("parties.id", ondelete="RESTRICT"), nullable=False, index=True
     )
     date: Mapped[date] = mapped_column(Date, nullable=False)
+    due_date: Mapped[dt.date | None] = mapped_column(Date)  # when we promised to pay the supplier
     # when the phone was actually bought (shopkeeper may enter it later); null on old rows
     purchased_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
     subtotal: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)

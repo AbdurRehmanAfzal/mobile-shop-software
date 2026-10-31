@@ -4,8 +4,8 @@ Authoritative requirements: `docs/16-SHOP-AUDIT-SPEC.md` (owner brief, 2026-10-3
 This file is the living plan: gap analysis, design, phases, tasks, acceptance criteria and the
 progress checklist. Update it at the end of every session (with `06-PROGRESS.md` and `09-SESSION-LOG.md`).
 
-**Current phase: 11 (Validation) — P1–P10 done 2026-10-30/31.**
-**Exact next task: P11-2 final full backend suite + all `audit-*.spec.ts`; P11-4 manuals (en + roman) "Shop audit" chapter, ADR-032, docs 06/09; then the overnight report.**
+**Status: all phases delivered 2026-10-31; the owner's three follow-up decisions (due dates, remittance fee / status, daily stock snapshots) delivered the same day (P12, ADR-033).**
+**Exact next task: none open in this programme. Candidates: Urdu screenshots of the audit screens; a Postgres timing job for the as-of stock walk; per-bill remaining as-of (needs dated allocations).**
 
 ---
 
@@ -242,14 +242,14 @@ Prefix `/api/v1/audit` is taken by the audit log → new prefix **`/api/v1/shop-
 
 | Item | Decision / status |
 |---|---|
-| Due dates on sales/purchases | Not in the data model; show age of debt. Adding an optional `due_date` is a product decision for the owner (backlog). |
-| Remittance fees / status | Not recorded; report says so. Optional columns if the owner wants to type them. |
+| Due dates on sales/purchases | **Owner said yes (2026-10-31)**: optional `due_date` on invoices and purchases (migration `c4d6e8f0a1b3`), typed on udhaar sales / supplier credit; the udhaar audit shows overdue totals, bands (not due / 0-7 / 8-30 / 31-60 / 61+ / no promise date) and per-row "N days overdue"; bills without a date keep the age of debt only. |
+| Remittance fees / status | **Owner said yes (2026-10-31)**: `payment_details.fee` and `status` (pending / received / settled) typed in the pay picker; the international report shows fee, net (= PKR − fee), status, totals and by-status counts. |
 | Tax on purchases | Not recorded (used-phone trade); report says so. |
 | Cash ↔ bank transfers | Missing; built in P2-1 (additive). |
 | Charts | In-house SVG, no new dependency. |
 | Security feed audience | Owner only. |
 | Legacy data before v2 | None imported; coverage note shows the first ledger date per shop. |
-| Large-data timing test (§22 item 24) | Deferred: CI uses SQLite, a wall-clock assertion would be flaky. The report queries are grouped SQL except the as-of stock walk (one pass over the shop's device events) and the per-party udhaar rows. Revisit with a Postgres timing job or a daily stock snapshot if a shop passes ~50k events. |
+| Large-data timing test (§22 item 24) | Deferred (SQLite CI). **Owner said yes to snapshots (2026-10-31)**: `stock_snapshots` (one row per shop and day: count, cost, asking) taken by the nightly tick and rebuildable with `POST /shop-audit/snapshots/backfill`; `stock_at` reads the snapshot when one exists for the exact day end and walks the events otherwise. A Postgres timing job remains a candidate. |
 | Per-bill remaining as-of a past day | Payment allocations carry no date of their own; the as-of views give ledger balances per person, per-bill remaining is current (stated on the screens). |
 
 ---
@@ -267,3 +267,4 @@ Prefix `/api/v1/audit` is taken by the audit log → new prefix **`/api/v1/shop-
 - [x] P9 dashboard — 2026-10-31
 - [x] P10 report center — 2026-10-31
 - [x] P11 validation — 2026-10-31 (timing test deferred)
+- [x] P12 owner decisions (due dates, remittance fee / status, daily stock snapshots) — 2026-10-31

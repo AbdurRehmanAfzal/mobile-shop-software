@@ -35,6 +35,7 @@ class MiscSaleLineIn(BaseModel):
 
 
 class SaleCreate(BaseModel):
+    due_date: dt.date | None = None  # udhaar: when the customer promised to pay
     party_id: uuid.UUID | None = None
     date: dt.date | None = None
     devices: list[DeviceSaleLineIn] = Field(default_factory=list)
@@ -100,6 +101,7 @@ class SaleOut(BaseModel):
     created_by_name: str | None = None
     party_balance_after: Decimal | None = None
     date: dt.date
+    due_date: dt.date | None = None
     subtotal: Decimal
     discount: Decimal
     tax_rate: Decimal

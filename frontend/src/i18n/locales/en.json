@@ -1031,7 +1031,10 @@
     "discounts": "Discounts given",
     "salesReturns": "Returned by customers",
     "netSales": "Net sales",
-    "operatingProfit": "Profit after expenses"
+    "operatingProfit": "Profit after expenses",
+    "promiseDate": "Promised to pay by (optional)",
+    "promiseDateBuy": "We pay the supplier by (optional)",
+    "promiseHint": "With a date the audit calls the udhaar overdue after it; without one it only shows the age of the debt."
   },
   "admin": {
     "title": "Super admin",
@@ -1186,7 +1189,15 @@
     "sender": "Sender's name",
     "service": "Sent through (optional)",
     "refOpt": "Reference / MTCN (optional)",
-    "restUdhaar": "Remittance is less than the bill: Rs. {{n}} goes on this customer's udhaar."
+    "restUdhaar": "Remittance is less than the bill: Rs. {{n}} goes on this customer's udhaar.",
+    "fee": "Service fee (Rs.)",
+    "feeHint": "What the service kept; net = amount − fee",
+    "status": "Money status",
+    "st": {
+      "pending": "Pending",
+      "received": "Received",
+      "settled": "Settled"
+    }
   },
   "help": {
     "what": "What is this?",
@@ -1943,7 +1954,14 @@
       "weOweShort": "we owe",
       "lastPaid": "last paid",
       "neverPaid": "no payment yet",
-      "notes": "A bill with several phones shows the bill's remaining amount on each phone."
+      "notes": "A bill with several phones shows the bill's remaining amount on each phone.",
+      "overdue": "overdue",
+      "overdueTitle": "Overdue (past the promised date)",
+      "overdueHint": "Only bills with a promise date can be overdue; the rest show the age of the debt below.",
+      "notDue": "Not yet due",
+      "noDueDate": "No promise date",
+      "overdueBy": "{{n}} days overdue",
+      "dueOn": "due"
     },
     "journey": {
       "title": "Whole journey",
