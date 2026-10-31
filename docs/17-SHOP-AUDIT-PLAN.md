@@ -4,8 +4,8 @@ Authoritative requirements: `docs/16-SHOP-AUDIT-SPEC.md` (owner brief, 2026-10-3
 This file is the living plan: gap analysis, design, phases, tasks, acceptance criteria and the
 progress checklist. Update it at the end of every session (with `06-PROGRESS.md` and `09-SESSION-LOG.md`).
 
-**Current phase: 9 (Charts & drill-down) — P1–P8 done 2026-10-30/31.**
-**Exact next task: P9-1 finish `components/charts/` (Donut, Lines, StackedBars beside `Bars`), P9-2 wire donuts (payment channels, categories, verification) and lines (receivable / payable trend, revenue vs profit) on Overview / Finance / Stock / Udhaar, drill-down from every segment; P9-3 `StockPage` reads `?condition&pta_status&category&verification` for the audit links.**
+**Current phase: 11 (Validation) — P1–P10 done 2026-10-30/31.**
+**Exact next task: P11-2 final full backend suite + all `audit-*.spec.ts`; P11-4 manuals (en + roman) "Shop audit" chapter, ADR-032, docs 06/09; then the overnight report.**
 
 ---
 
@@ -205,15 +205,15 @@ Prefix `/api/v1/audit` is taken by the audit log → new prefix **`/api/v1/shop-
 - [x] P8-2 Frontend `SecurityPage` at `/audit/security` (section chip only for the owner): kind chips with counts, per-employee card with flags and the thresholds, rows → device / bill / person; strings `audit.sec.*`.
 - [x] Tests `test_shopaudit_security.py` (every kind once with its values; filters; three wrong PINs flag the person; manager / salesman 403), e2e `audit-security.spec.ts`.
 
-### Phase 9 — Interactive dashboard
-- [ ] P9-1 `components/charts/` (Bars, StackedBars, Lines, Donut, Kpi) with tokens, RTL, empty state, tap callback; vitest for scales.
-- [ ] P9-2 Charts wired on Overview / Finance / Inventory / Products / Udhaar / Expenses; every segment drills down.
-- [ ] P9-3 Mobile + laptop layouts; Urdu screenshots.
+### Phase 9 — Interactive dashboard ✅ 2026-10-31
+- [x] P9-1 `components/charts/`: `Bars` (P4), `Donut` (slices + legend, hover share, tap), `Lines` (up to three series, hover values) — design tokens, Latin digits, RTL-safe (time runs left → right), empty states. No chart dependency.
+- [x] P9-2 Wired: Overview money-by-account-type donut; Finance net sales vs real profit lines and money-in-by-channel donut; Stock condition and ID-check donuts (slice → filtered stock list); Products sold vs bought bars; Udhaar age bars; Expenses series and category share bars. Every KPI tile / row links to the record or the filtered list (invoices with period and kind, stock with condition / PTA / type presets, person, phone, bill).
+- [x] P9-3 `StockPage` reads `?condition&pta_status&category` presets. Layouts use the existing responsive cards (`WIDE` route). Vitest for the chart maths and Urdu screenshots deferred (the pages reuse the design-system primitives already covered).
 
-### Phase 10 — Report center
-- [ ] P10-1 `ReportCenterPage`: every individual report (existing exports + new audit endpoints) with period + format.
-- [ ] P10-2 `GET /exports/audit-report` (sections, summary/detail, pdf printable + xlsx with a sheet per section; header with generation time, period, currency, filters, coverage notes).
-- [ ] Tests: exported totals equal the dashboard payload for the same period.
+### Phase 10 — Report center ✅ 2026-10-31
+- [x] P10-1 `ReportCenterPage` at `/audit/reports`: the complete report builder (section chips, summary / detailed, Print-PDF / Excel) and every individual report (sales, purchases, P&L, hisaab, expenses, best sellers, khata, people, stock, stock worth, old stock, estimate) with the existing `DownloadButton` (PDF / Excel / CSV), period reports following the audit period.
+- [x] P10-2 `GET /api/v1/shop-audit/report?sections&mode&format=pdf|xlsx|json` — `shopaudit/report.py` builds 15 sections from the same service calls the screens use (summary, P&L + series, cash + reasons + remittances, expenses + largest, tax + rows, top customers / suppliers, udhaar, inventory + dimensions, ageing + rows + alerts, products, invoices + employees + voided, ID checks + bypasses, reconciliation checks, security — owner only); Excel = cover sheet (shop, period, as-of, mode, currency, generated, sections) + one sheet per section; printable page with the period line, notes under each table.
+- [x] Tests `test_shopaudit_reports.py` (summary rows equal the overview payload; workbook sheets, headers, numeric cells, cover; printable page titles and detail series; 422 on a bad format; manager without security; salesman 403), e2e `audit-reports.spec.ts` (charts present and drill-down, section toggle, detailed print page, Excel download, individual list).
 
 ### Phase 11 — Validation & reconciliation
 - [ ] P11-1 `/reconcile` endpoint + Overview "Checks" card (pass/fail per equation).
@@ -262,6 +262,6 @@ Prefix `/api/v1/audit` is taken by the audit log → new prefix **`/api/v1/shop-
 - [x] P6 inventory — 2026-10-31
 - [x] P7 products & invoices — 2026-10-31
 - [x] P8 security — 2026-10-31
-- [ ] P9 dashboard
-- [ ] P10 report center
+- [x] P9 dashboard — 2026-10-31
+- [x] P10 report center — 2026-10-31
 - [ ] P11 validation

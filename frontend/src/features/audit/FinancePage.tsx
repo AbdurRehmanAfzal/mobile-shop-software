@@ -8,6 +8,8 @@ import { useMemo } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import Bars from '@/components/charts/Bars'
+import Donut from '@/components/charts/Donut'
+import Lines from '@/components/charts/Lines'
 import { Empty, Loading, fmtDate } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
@@ -60,6 +62,12 @@ export default function FinancePage() {
             <span className={`opacity-80 ${small}`}>{pick('audit.vsPrevious')} <span className="num" dir="ltr">Rs. {n(canCost ? pnl.previous.net_profit : pnl.previous.net_sales)}</span> · {pick(`audit.gran.${pnl.granularity}`)}</span>
           </section>
           <section className="card"><Bars data={pnlBars} testid="fin-series" empty="audit.noData" /></section>
+          {canCost && pnl.series.length > 1 ? (
+            <section className="card" data-testid="fin-lines-chart">
+              <BiLabel text="audit.chart.revenueVsProfit" size="sm" tone="text-muted" bold />
+              <Lines labels={pnl.series.map((s) => label(s.bucket, pnl.granularity))} series={[{ label: pick('audit.netSales'), color: 'rgb(var(--emerald))', values: pnl.series.map((s) => Number(s.net_sales)) }, { label: pick('counter.netProfit'), color: 'rgb(var(--ink))', values: pnl.series.map((s) => Number(s.net_profit)) }]} empty="audit.noData" />
+            </section>
+          ) : null}
           <div className="card flex flex-col p-0" data-testid="fin-lines">
             <Line k="counter.grossSales" v={n(pnl.current.gross_sales)} prev={n(pnl.previous.gross_sales)} />
             {Number(pnl.current.discounts) || Number(pnl.previous.discounts) ? <Line k="counter.discounts" v={`− ${n(pnl.current.discounts)}`} prev={n(pnl.previous.discounts)} muted /> : null}
@@ -109,6 +117,10 @@ export default function FinancePage() {
             ))}
           </div>
           <BiLabel text="audit.fin.channels" size="md" bold />
+          <section className="card" data-testid="cash-donut">
+            <BiLabel text="audit.chart.channelsIn" size="sm" tone="text-muted" bold />
+            <Donut data={cash.by_kind.map((k) => ({ label: payLabel(k.kind), value: Number(k.in), key: k.kind }))} onTap={() => nav('/more/cash')} empty="audit.noData" />
+          </section>
           <div className="card divide-y divide-line p-0" data-testid="cash-channels">
             {cash.by_kind.map((k) => (
               <div key={k.kind} className="flex items-center gap-3 px-4 py-2.5">

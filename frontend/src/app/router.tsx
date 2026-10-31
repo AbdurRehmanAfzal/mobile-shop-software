@@ -44,6 +44,7 @@ import AuditInventoryPage from '@/features/audit/InventoryAuditPage'
 import AuditProductsPage from '@/features/audit/ProductsPage'
 import AuditInvoicePage from '@/features/audit/InvoiceAuditPage'
 import AuditSecurityPage from '@/features/audit/SecurityPage'
+import AuditReportCenterPage from '@/features/audit/ReportCenterPage'
 import StaffPage from '@/features/more/StaffPage'
 import CashAccountsPage from '@/features/more/CashAccountsPage'
 
@@ -116,6 +117,7 @@ export const router = createBrowserRouter([
           { path: '/audit/products', element: <ModuleGate module="reports"><AuditProductsPage /></ModuleGate> },
           { path: '/audit/bills', element: <ModuleGate module="reports"><AuditInvoicePage /></ModuleGate> },
           { path: '/audit/security', element: <ModuleGate module="reports"><AuditSecurityPage /></ModuleGate> },
+          { path: '/audit/reports', element: <ModuleGate module="reports"><AuditReportCenterPage /></ModuleGate> },
           { path: '/more/staff', element: <StaffPage /> },
           { path: '/more/cash', element: <CashAccountsPage /> },
           { path: '/more/catalogue', element: <CataloguePage /> },

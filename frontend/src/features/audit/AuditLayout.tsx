@@ -21,6 +21,7 @@ export const AUDIT_SECTIONS: { to: string; key: string; owner?: boolean }[] = [
   { to: '/audit/products', key: 'audit.nav.products' },
   { to: '/audit/bills', key: 'audit.nav.bills' },
   { to: '/audit/security', key: 'audit.nav.security', owner: true },
+  { to: '/audit/reports', key: 'audit.nav.reports' },
 ]
 
 interface ResolvedPeriod { preset: string; date_from: string; date_to: string; as_of: string; prev_from: string; prev_to: string; days: number }

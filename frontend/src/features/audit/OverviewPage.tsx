@@ -9,6 +9,7 @@ import { BiLabel, useLang } from '@/components/Bilingual'
 import { Loading } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
+import Donut from '@/components/charts/Donut'
 import AuditLayout from './AuditLayout'
 import { useAuditPeriod } from './period'
 
@@ -91,6 +92,12 @@ export default function OverviewPage() {
               extra={<div className={small}>{pick('audit.paidInPeriod')} <span className="num" dir="ltr">{n(data.debt.paid_in_period)}</span> · <span className="num">{data.debt.payable.parties}</span> {pick('audit.people')}</div>} />
           </section>
 
+          {Object.values(data.money.by_kind).some((v) => Number(v) > 0) ? (
+            <section className="card" data-testid="overview-donut">
+              <BiLabel text="audit.chart.moneyByKind" size="sm" tone="text-muted" bold />
+              <Donut data={Object.entries(data.money.by_kind).map(([k, v]) => ({ label: pick(`pay.${k}`), value: Math.max(0, Number(v)), key: k }))} empty="audit.noData" />
+            </section>
+          ) : null}
           {/* the books prove themselves */}
           {rc ? (
             <section className="card flex flex-col gap-2" data-testid="audit-checks">

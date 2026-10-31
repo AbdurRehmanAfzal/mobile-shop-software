@@ -119,9 +119,9 @@ Spec `docs/16-SHOP-AUDIT-SPEC.md` · plan + gap analysis + next task `docs/17-SH
 | P6 Inventory intelligence (as-of stock, bands, verification, alerts) | ✅ | **2026-10-31** `shopaudit/inventory.py` + `prefs.py`, routes `/shop-audit/inventory`, `/inventory/ageing`, `/verification`; `shops.audit_prefs` (migration `b3c5d7e9f1a2`) + Settings thresholds card; UI `/audit/stock`; `test_shopaudit_inventory.py`, `audit-stock.spec.ts` |
 | P7 Products & invoice audit | ✅ | **2026-10-31** `shopaudit/products.py`, routes `/shop-audit/products`, `/invoices`; UI `/audit/products`, `/audit/bills`; `test_shopaudit_products.py`, `audit-products.spec.ts` |
 | P8 Owner security feed | ✅ | **2026-10-31** `shopaudit/security.py` + `GET /shop-audit/security` (owner only; price changes, under asking / cost, discounts, voids, reversals, adjustments, opening balances, bypasses, wrong PINs, admin actions; per-employee flags), wrong owner PINs now audited; UI `/audit/security`; `test_shopaudit_security.py`, `audit-security.spec.ts` |
-| P9 Charts & drill-down dashboard | ⬜ | next |
-| P10 Report center & complete audit report | ⬜ | |
-| P11 Reconciliation, scenario tests, e2e, manuals, ADR-032 | ⬜ | |
+| P9 Charts & drill-down dashboard | ✅ | **2026-10-31** `components/charts/{Bars,Donut,Lines}` (in-house SVG), donuts / lines / bars across Overview, Finance, Stock, Products, Udhaar, Expenses; every tile and segment drills down (invoices with period + kind, stock with condition / PTA / type presets, person, phone) |
+| P10 Report center & complete audit report | ✅ | **2026-10-31** `shopaudit/report.py` + `GET /shop-audit/report` (15 sections, summary / detail, printable PDF page or Excel with a sheet per section, json for the screen); UI `/audit/reports` (builder + individual reports); `test_shopaudit_reports.py`, `audit-reports.spec.ts` |
+| P11 Reconciliation, scenario tests, e2e, manuals, ADR-032 | 🟡 | `/shop-audit/reconcile` + Overview checks card done in P3; scenario tests per phase (`test_shopaudit_*.py`, 7 files); final full run, manuals chapter and ADR-032 in progress |
 
 ## Backlog (owner requests, not started)
 | Item | Notes |

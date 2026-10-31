@@ -5,7 +5,7 @@ from app.core.security import hash_pin
 from tests.conftest import login
 from tests.test_devices import _stock
 from tests.test_price_rules import _set_owner_pin
-from tests.test_purchases import _dev, _party
+from tests.test_purchases import _party
 
 A, B, C, D = "490154203237518", "356938035643809", "352099001761481", "358812091717195"
 
@@ -64,7 +64,7 @@ def test_security_feed_collects_every_kind_and_flags_people(owner, client, cat):
         },
     )
     assert r.status_code == 201, r.text
-    inv_c = r.json()
+    r.json()
     # void by the owner, a wrong PIN by Ali under the "pin" rule, a bypass by Ali, an opening balance
     v = _stock(
         owner, cat, imei="358812091717197", condition="box_pack", cost_price=800, asking_price=1000
