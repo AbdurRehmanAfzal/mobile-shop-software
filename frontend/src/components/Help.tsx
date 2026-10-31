@@ -10,7 +10,7 @@ import { Sheet } from './ui'
 
 export type HelpTerm =
   | 'udhaar' | 'khata' | 'cost' | 'asking' | 'profit' | 'pta' | 'imei' | 'idcheck'
-  | 'opening' | 'cut' | 'inHand' | 'warranty' | 'tid' | 'cheque' | 'remittance' | 'void' | 'audit'
+  | 'opening' | 'cut' | 'inHand' | 'warranty' | 'tid' | 'cheque' | 'remittance' | 'void' | 'audit' | 'bulk'
 
 export default function Help({ term }: { term: HelpTerm }) {
   const { pick } = useLang()

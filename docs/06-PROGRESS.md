@@ -126,6 +126,15 @@ Spec `docs/16-SHOP-AUDIT-SPEC.md` · plan + gap analysis + next task `docs/17-SH
 | P12 Owner decisions: due dates on udhaar bills (overdue in the udhaar audit), remittance fee / status (net in the international report), daily stock snapshots (nightly job + backfill, used by as-of stock) | ✅ | **2026-10-31** migration `c4d6e8f0a1b3` (all nullable / new table), ADR-033; `test_shopaudit_decisions.py` (3) |
 | P11 Reconciliation, scenario tests, e2e, manuals, ADR-032 | ✅ | **2026-10-31** `/shop-audit/reconcile` + checks card (P3); 8 `test_shopaudit_*.py` files (17 tests); 9 audit e2e specs; manuals §15e (en + roman); ADR-032. Deferred: 5k-invoice timing test (SQLite CI) — see docs/17 §5 |
 
+## Phase 6 — Bulk Excel import / export (owner request 2026-10-31)
+Plan `docs/18-BULK-EXCEL-PLAN.md` (module verdicts, sheet design, safety rules, column specs).
+| Item | Status | Notes |
+|---|---|---|
+| Backend `modules/bulk`: templates (Data / Help / Lists, 3 yellow sample rows, dropdowns, EN or UR), parser (xlsx / csv, tolerant headers, Excel dates, `35,000`, Urdu digits), checks per kind in the shopkeeper's words, preview that writes nothing, all-or-nothing import through the existing services (`deferred_commits`), `bulk_imports` table + file hash, export in the template layout | ✅ | **2026-10-31** routes `/api/v1/bulk/{kinds,template,preview,import,export,imports}` (owner + manager); migration `d5e7f9a1b2c4`; `test_bulk.py` (14) |
+| Kinds: stock (opening stock or supplier purchases grouped per supplier + date, new brands / models / suppliers on the way), people (+ opening balances), items (+ opening qty), sales (in-stock IMEIs, khata needs a customer, under-cost guard), expenses (categories / accounts by name) | ✅ | **2026-10-31** sample rows recognised by their yellow fill (xlsx) or their sample IMEIs / phones / names (csv) and skipped; the same file again is warned about |
+| Frontend `/more/bulk` (More → Bulk Excel): kind tiles, 3 steps, options, preview with counts + row sheet, import result, export, earlier imports; strings `bulk.*`, `help.bulk` en / ur / roman | ✅ | **2026-10-31** `features/more/BulkPage.tsx`; `bulk.spec.ts` |
+| Later (docs/18 §1): payments / udhaar receipts by sheet; returns, repairs, amanat, exchanges, installments stay manual | ⏳ | |
+
 ## Backlog (owner requests, not started)
 | Item | Notes |
 |---|---|

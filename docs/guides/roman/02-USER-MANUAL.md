@@ -920,6 +920,54 @@ Buttons: **Bechein**, **Shanakhti card check**, **Amanat par dein**, **Kharab li
 
 ![Phone ki kahani](../images/device-history.png)
 
+## 15f. Bulk Excel: bohat si rows ek saath (Aur → Bulk Excel)
+
+Jab dukaan register ya kisi aur app se aati hai to 300 mobile ek ek kar ke koi nahi likhna chahta.
+**Aur → Bulk Excel** (malik aur manager) Excel ki sheet le leta hai.
+
+1. Chunein kya la rahe hain: **Mobile (stock)**, **Log**, **Accessories**, **Bikri** ya **Kharchay**.
+2. **Sheet download karein.** Excel mein teen sheets khulti hain: **Data** (sirf yehi bharni hai),
+   **Help** (har column: kya likhna hai, zaroori hai ya nahi) aur **Lists** (aap ke brand, model,
+   memory, rang, supplier, qismein — dropdown yahan se parhte hain). Data ki pehli teen rows
+   **peeli sample rows** hain, dukaandar ke lafzon mein (Vivo Y21 128 GB, 0300 number, Rs. 35,000).
+   Apni rows un ke neeche ya un ki jagah likhein; samples pehchan kar chhor diye jate hain, sample se
+   kabhi kuch nahi banta.
+3. Bharein. Tareekh `din-mahina-saal` (ya Excel ki date), raqam saadi rupon mein (`35,000` chalega),
+   halat / PTA / qisam dropdown se — likhe hue lafz bhi samajh aate hain (*New*, *Box pack*, *Used*,
+   *PTA*, *Non-PTA*, *JV*, *Customer*, *Supplier*, *They owe us*). App Urdu mein ho to headers Urdu
+   mein aate hain. CSV file bhi `.xlsx` ki tarah chalti hai.
+4. **Upload karein aur check karein.** Har row wapas aati hai: **theek**, **note** (kuch samjha gaya
+   ya banaya jayega — naya brand, naya banda), **ghalti** (wajah saaf lafzon mein: "IMEI 15 hindse
+   ho", "Tay qeemat cost se kam hai", "Batayein kaun dega") ya **chhori** (sample ya khali line).
+   Row par tap karein to har paigham aur value dikhti hai. **Abhi kuch save nahi hota.**
+5. Ghaltiyan Excel mein theek kar ke dobara upload karein — ya **Ghalat rows chhor dein, baqi
+   import karein** tick karein.
+6. **Import.** Ya to saari theek rows save hoti hain ya koi nahi. Nateeja batata hai kya bana
+   (mobile, khareed bill, log, brand, opening balance…) aur file yaad rakhi jati hai: wahi file
+   dobara upload karein to check khabardar karta hai.
+
+Har sheet kya karti hai:
+
+- **Mobile (stock)** — ek row = ek mobile. Apna purana stock ho to supplier khali chhorein (Purana
+  stock ki tarah, cost aap ke sarmaye ke muqabil). **Supplier ka phone** likhein to rows har supplier
+  aur tareekh ka **khareed bill** ban jati hain, *Abhi ada* us par aur baqi supplier ke khatay mein.
+  Naye brand aur model raste mein ban jate hain (*Naye brand aur model banayein* band karein to
+  anjaan wale refuse honge). Non-PTA / JV mobile ko SIM time chahiye.
+- **Log** — naam, phone aur qisam kafi hai. **Opening balance** aur **kaun dega** se khata shuru
+  hota hai. Jo number pehle se khatay mein hai woh chhor diya jata hai (us par kuch nahi badalta).
+- **Accessories** — naam, maujood tadaad, fi adad cost aur sale price; SKU khali chhorein to khud
+  ban jata hai.
+- **Bikri** — sirf woh mobile jo app ke stock mein hain, IMEI se. *Bika* aur *Wasool*; khatay mein
+  kuch baqi rahe to customer ka phone zaroori hai (naam se naya customer ban jata hai). Cost se kam
+  bechna refuse hota hai jab tak malik / manager *Cost se kam bechne dein* tick na kare. Har bikri
+  counter wale bill-banane se guzarti hai (ledger, kahani, khata).
+- **Kharchay** — tareekh, qisam (Lists sheet se), raqam, account (Cash, jab tak bank ya wallet ka
+  naam na likhein).
+
+Isi page par **Apna data download karein** dukaan ke maujooda mobile / log / accessories / bikri /
+kharchay bilkul template ki tarteeb mein deta hai, taake Excel mein theek kar ke file wapas la sakein.
+Pichhli imports neeche darj hain: kis ne ki aur kya bana.
+
 ## 15a. Rate ka mashwara (pichli baar kitne mein becha)
 
 Jahan bhi qeemat likhein, ek sabz box us model ki aap ki apni kahani dikhata hai: **Aakhri baar Rs. …

@@ -9,6 +9,7 @@ from app.modules.ai import models as _ai_models  # noqa: F401
 from app.modules.attendance import models as _attendance_models  # noqa: F401
 from app.modules.audit import models as _audit_models  # noqa: F401
 from app.modules.auth import models as _auth_models  # noqa: F401
+from app.modules.bulk import models as _bulk_models  # noqa: F401
 from app.modules.catalogue import models as _catalogue_models  # noqa: F401
 from app.modules.devices import models as _devices_models  # noqa: F401
 from app.modules.exchanges import models as _exchanges_models  # noqa: F401
