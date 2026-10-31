@@ -1288,6 +1288,11 @@
       "title": "Shop audit",
       "body": "One place to read the whole business for any period: what was sold and bought, the real profit, where the money came from and went, who owes whom, and the phones in stock. Balances show the start and the end of the period (or a chosen day); every tile opens the list behind the number.",
       "example": "Pick \"Last month\": sales 1,250,000, profit 180,000, cash & bank 300,000 at the start and 410,000 at the end, people owe 95,000."
+    },
+    "bulk": {
+      "title": "Bulk Excel",
+      "body": "Instead of typing one phone or one person at a time, you fill a sheet in Excel and upload it. The app checks every row and tells you, in plain words, what is wrong. Nothing is saved until you press Import, and then either every good row is saved or nothing is.",
+      "example": "50 old phones in stock: write them in the sheet in 20 minutes, upload once, done."
     }
   },
   "items": {
@@ -2349,5 +2354,68 @@
     "underAsking": "Sold under asking",
     "changed": "Asking changed",
     "changedAtSale": "Asking changed at sale"
+  },
+  "bulk": {
+    "title": "Bulk Excel",
+    "intro": "Enter many rows at once in Excel: download the sheet, fill it, upload it. You see a check first; nothing is saved until you press Import.",
+    "kind": {
+      "stock": "Phones (stock)",
+      "people": "People",
+      "items": "Accessories",
+      "sales": "Sales",
+      "expenses": "Expenses"
+    },
+    "step1": "Download the sheet",
+    "step1Hint": "It has three yellow sample rows, a Help sheet and dropdown lists. Write your data under or in place of the samples.",
+    "step2": "Fill it in Excel",
+    "step2Hint": {
+      "stock": "One row per phone. Leave the supplier blank for your own old stock; with a supplier phone it becomes a purchase bill.",
+      "people": "Name, phone and type are enough. Add an opening balance and who owes it if there is one.",
+      "items": "One row per item with the quantity in hand, the unit cost and the sale price.",
+      "sales": "Only phones that are already in stock in the app. If something stays on khata, give the customer's phone.",
+      "expenses": "Date, category and amount. Categories must match the Lists sheet."
+    },
+    "step3": "Upload and check",
+    "step3Hint": "Excel (.xlsx) or CSV. Up to 2,000 rows.",
+    "chooseFile": "Choose file",
+    "changeFile": "Change file",
+    "optCatalogue": "Create new brands and models from the sheet",
+    "optBelowCost": "Allow selling under cost (a loss)",
+    "optSkip": "Skip rows with errors, import the rest",
+    "check": "Check the file",
+    "previewTitle": "Check result",
+    "previewHint": "Tap a row to see every message and value. Nothing has been saved yet.",
+    "ok": "ok",
+    "warn": "note",
+    "error": "error",
+    "skip": "skipped",
+    "alreadyImported": "This same file was already imported on {{when}}. Importing it again may create duplicates.",
+    "fixFirst": "Fix the rows with errors in Excel and upload again, or tick 'skip rows with errors'.",
+    "import": "Import",
+    "doneTitle": "Imported",
+    "doneRows": "{{ok}} rows saved · {{skipped}} left out",
+    "created": {
+      "devices": "phones",
+      "purchases": "purchase bills",
+      "parties": "people",
+      "brands": "brands",
+      "models": "models",
+      "items": "items",
+      "invoices": "sales",
+      "expenses": "expenses",
+      "opening_balances": "opening balances"
+    },
+    "exportTitle": "Download my data",
+    "exportHint": {
+      "stock": "Every phone in stock, in the same layout. Fix it in Excel and bring it back if needed.",
+      "people": "Everyone in your khata with today's balance.",
+      "items": "All accessories with quantity, cost and price.",
+      "sales": "Every sold phone with its price, paid amount and customer.",
+      "expenses": "All expenses with category and account."
+    },
+    "history": "Earlier imports",
+    "rows": "rows",
+    "row": "Row",
+    "downloadTemplate": "Download the sheet"
   }
 }

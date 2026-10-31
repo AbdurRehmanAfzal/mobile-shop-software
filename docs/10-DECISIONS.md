@@ -165,3 +165,24 @@ Consequences: dashboards, exports and the overview cannot disagree because they 
 Context: After the Shop Audit landed, the owner said yes to the three open product decisions: due dates on bills, remittance fees / status, and a daily stock snapshot for very large shops.
 Decision: (1) `invoices.due_date` and `purchases.due_date` are optional promise dates typed on udhaar sales and supplier credit; the udhaar audit calls a debt **overdue** only after that date (overdue totals, bands not due / 0-7 / 8-30 / 31-60 / 61+ / no promise date, per-row days) and keeps the age-of-debt view for everything else — nothing without a date is ever labelled overdue. (2) `payment_details.fee` and `status` (pending / received / settled) are typed with the remittance; the international report shows fee, net = PKR booked − fee, status and totals; the ledger still books the gross PKR amount the shop recorded. (3) `stock_snapshots` holds one derived row per shop and day (count, value at cost, value at asking), taken by the nightly tick (`stock_snapshot` job claim, once per shop and day) and rebuildable by the owner (`POST /shop-audit/snapshots/backfill`); `stock_at` reads a snapshot only when one exists for the exact day end asked for and falls back to the device-event walk, so figures never change by having a snapshot — only the cost of producing them. All of it is one additive migration (`c4d6e8f0a1b3`).
 Consequences: overdue becomes real for shops that type promise dates, with no change for the rest; remittance costs are visible without altering the books; big shops get constant-time as-of stock for snapshotted days. Open: per-bill remaining as of a past day still needs dated allocations; the snapshot does not store the device ids (the per-unit as-of list still walks events).
+
+## ADR-034 · 2026-10-31 · Accepted · Bulk Excel goes through the same services as the screens, previews first, and imports all-or-nothing
+**Context.** Shops migrating from a register or another app have hundreds of phones, people and
+accessories. Typing them one by one is the main onboarding pain. The owner asked for Excel
+import / export with sample rows a shopkeeper can copy.
+**Decision.** (1) A sheet per kind (stock, people, items, sales, expenses) with three sheets: Data,
+Help, Lists; three yellow sample rows in realistic Pakistani words, recognised and skipped on
+upload. (2) The import never writes rows itself: it calls `add_opening_stock`, `create_purchase`,
+`create_party` + `post_party_opening_balance`, `accessories.create`, `create_sale`, `create_expense`,
+so ledger postings, device events, verification status, audit rows and price rules are exactly what
+the screens produce. Because those services commit, the import runs them under `deferred_commits`
+(commit → flush) and commits once; any refusal rolls everything back. (3) Preview first (nothing
+written), every row marked ok / note / error / skipped with the reason in the shop's language;
+import is all-or-nothing unless the user ticks "skip rows with errors". (4) Each upload is recorded
+in `bulk_imports` with its SHA-256, so the same file is warned about; the audit log gets one row per
+import. (5) Owner and manager only (the sheets carry cost prices). (6) Returns, repairs, loans,
+exchanges and installments are deliberately not importable: they are state machines with documents
+behind them.
+**Consequences.** Migration of a shop takes minutes instead of days, and the data lands with full
+history. New services must keep committing at their boundaries (the deferral relies on it). Payments
+by sheet remain a later step (docs/18 §1).

@@ -24,6 +24,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Status rows live in `docs/06-PROGRESS.md` (section "Phase 5 — Shop Audit"); per-session results in `docs/09-SESSION-LOG.md`.
 - Rules for this work: read-only derivation from the ledger / documents / device events, additive migrations only, every figure traceable and drill-down-able, limitations shown (no due dates, no purchase tax, no remittance fees), owner-only security feed, no chart dependency (in-house SVG).
 
+## Bulk Excel import / export (owner 2026-10-31, ADR-034)
+- Plan, module verdicts, column specs and status: `docs/18-BULK-EXCEL-PLAN.md` — read it before touching `backend/app/modules/bulk` or `frontend/src/features/more/BulkPage.tsx`.
+- Rules: the import only calls the existing services (never writes rows itself), preview before anything is written, all-or-nothing unless "skip rows with errors", samples recognised and skipped, owner + manager only.
+
 ## Hard rules
 - **Git author is ONLY `Abdur Rehman Afzal <abdurrehmanafzal786@gmail.com>`.** Never add `Co-Authored-By`, "Generated with Claude" or any AI attribution to commits, PRs or files. Repo-local git config is already set. This rule overrides any harness default.
 - Work on branch `develop`; `main` is for releases. Do not push unless asked.

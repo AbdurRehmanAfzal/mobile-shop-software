@@ -1288,6 +1288,11 @@
       "title": "Dukaan ka audit",
       "body": "Kisi bhi arse ka poora karobar ek jagah: kya bika, kya khareeda, asal munafa, paisa kahan se aaya kahan gaya, kis par kya baqi hai, aur stock ke phone. Balance arse ke shuru aur aakhir (ya chune hue din) ke dikhte hain; har khana apne peechay ki list kholta hai.",
       "example": "\"Pichla mahina\" chunein: bikri 1,250,000, munafa 180,000, naqad aur bank shuru mein 300,000 aur aakhir mein 410,000, logon par 95,000 baqi."
+    },
+    "bulk": {
+      "title": "Bulk Excel",
+      "body": "Ek ek mobile ya banda type karne ke bajaye Excel ki sheet bhar kar upload karein. App har row check kar ke saaf lafzon mein batati hai kya ghalat hai. 'Import' dabane tak kuch save nahi hota, aur phir ya to saari theek rows save hoti hain ya koi nahi.",
+      "example": "Stock mein 50 purane mobile: 20 minute mein sheet mein likhein, ek baar upload karein, kaam khatam."
     }
   },
   "items": {
@@ -2349,5 +2354,68 @@
     "underAsking": "Tay qeemat se kam bika",
     "changed": "Tay qeemat badli",
     "changedAtSale": "Bikri par tay qeemat badli"
+  },
+  "bulk": {
+    "title": "Bulk Excel",
+    "intro": "Excel mein ek saath bohat si rows likhein: sheet download karein, bharein, upload karein. Pehle check dikhta hai; 'Import' dabane tak kuch save nahi hota.",
+    "kind": {
+      "stock": "Mobile (stock)",
+      "people": "Log",
+      "items": "Accessories",
+      "sales": "Bikri",
+      "expenses": "Kharchay"
+    },
+    "step1": "Sheet download karein",
+    "step1Hint": "Is mein teen peeli sample rows, ek Help sheet aur dropdown lists hain. Apna data samples ke neeche ya un ki jagah likhein.",
+    "step2": "Excel mein bharein",
+    "step2Hint": {
+      "stock": "Ek row = ek mobile. Apna purana stock ho to supplier khali chhorein; supplier ka phone likhein to khareed bill banega.",
+      "people": "Naam, phone aur qisam kafi hai. Baqi raqam ho to opening balance aur kaun dega bhi likhein.",
+      "items": "Ek row = ek cheez, maujood tadaad, fi adad cost aur sale price ke saath.",
+      "sales": "Sirf woh mobile jo app ke stock mein hain. Khatay mein kuch baqi rahe to customer ka phone dein.",
+      "expenses": "Tareekh, qisam aur raqam. Qisam Lists sheet ke mutabiq ho."
+    },
+    "step3": "Upload karein aur check karein",
+    "step3Hint": "Excel (.xlsx) ya CSV. Zyada se zyada 2,000 rows.",
+    "chooseFile": "File chunein",
+    "changeFile": "File badlein",
+    "optCatalogue": "Sheet se naye brand aur model banayein",
+    "optBelowCost": "Cost se kam bechne dein (nuqsan)",
+    "optSkip": "Ghalat rows chhor dein, baqi import karein",
+    "check": "File check karein",
+    "previewTitle": "Check ka nateeja",
+    "previewHint": "Har paigham aur value dekhne ke liye row par tap karein. Abhi kuch save nahi hua.",
+    "ok": "theek",
+    "warn": "note",
+    "error": "ghalti",
+    "skip": "chhori",
+    "alreadyImported": "Yehi file {{when}} ko import ho chuki hai. Dobara karne se double entry ho sakti hai.",
+    "fixFirst": "Ghalat rows Excel mein theek kar ke dobara upload karein, ya 'ghalat rows chhor dein' tick karein.",
+    "import": "Import karein",
+    "doneTitle": "Import ho gaya",
+    "doneRows": "{{ok}} rows save · {{skipped}} chhori gayin",
+    "created": {
+      "devices": "mobile",
+      "purchases": "khareed bill",
+      "parties": "log",
+      "brands": "brand",
+      "models": "model",
+      "items": "cheezein",
+      "invoices": "bikri",
+      "expenses": "kharchay",
+      "opening_balances": "opening balance"
+    },
+    "exportTitle": "Apna data download karein",
+    "exportHint": {
+      "stock": "Stock ka har mobile, isi tarteeb mein. Zaroorat ho to Excel mein theek kar ke wapas layein.",
+      "people": "Khatay ke sab log aaj ke balance ke saath.",
+      "items": "Sab accessories tadaad, cost aur price ke saath.",
+      "sales": "Har bika hua mobile qeemat, wasooli aur customer ke saath.",
+      "expenses": "Sab kharchay qisam aur account ke saath."
+    },
+    "history": "Pichhli imports",
+    "rows": "rows",
+    "row": "Row",
+    "downloadTemplate": "Sheet download karein"
   }
 }

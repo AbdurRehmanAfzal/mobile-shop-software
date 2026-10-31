@@ -47,6 +47,7 @@ import AuditSecurityPage from '@/features/audit/SecurityPage'
 import AuditReportCenterPage from '@/features/audit/ReportCenterPage'
 import StaffPage from '@/features/more/StaffPage'
 import CashAccountsPage from '@/features/more/CashAccountsPage'
+import BulkPage from '@/features/more/BulkPage'
 
 function RequireAuth() {
   const token = useAuth((s) => s.accessToken)
@@ -120,6 +121,7 @@ export const router = createBrowserRouter([
           { path: '/audit/reports', element: <ModuleGate module="reports"><AuditReportCenterPage /></ModuleGate> },
           { path: '/more/staff', element: <StaffPage /> },
           { path: '/more/cash', element: <CashAccountsPage /> },
+          { path: '/more/bulk', element: <BulkPage /> },
           { path: '/more/catalogue', element: <CataloguePage /> },
           { path: '/more', element: <MorePage /> },
           { path: '/more/settings', element: <SettingsPage /> },

@@ -920,6 +920,54 @@ Buttons: **Sell**, **ID card check**, **Give on loan (amanat)**, **Mark faulty**
 
 ![Phone history](../images/device-history.png)
 
+## 15f. Bulk Excel: many rows at once (More → Bulk Excel)
+
+When a shop moves from a register or another app, nobody wants to type 300 phones one by one.
+**More → Bulk Excel** (owner and manager) takes an Excel sheet instead.
+
+1. Pick what you are bringing in: **Phones (stock)**, **People**, **Accessories**, **Sales** or
+   **Expenses**.
+2. **Download the sheet.** It opens in Excel with three sheets: **Data** (the only one you fill),
+   **Help** (every column: what to write, required or not) and **Lists** (your brands, models,
+   storages, colours, suppliers, categories — the dropdowns read from here). The first three rows
+   of Data are **yellow sample rows** in shopkeeper words (Vivo Y21 128 GB, 0300 numbers, Rs.
+   35,000). Write your rows under them or over them; the samples are recognised and skipped, so
+   nothing is ever created from a sample.
+3. Fill it. Dates as `dd-mm-yyyy` (or Excel dates), money in plain rupees (`35,000` is fine),
+   words like condition / PTA / type from the dropdown — typed words are understood too (*New*,
+   *Box pack*, *Used*, *PTA*, *Non-PTA*, *JV*, *Customer*, *Supplier*, *They owe us*). Urdu
+   headers come when the app is in Urdu. A CSV file works as well as `.xlsx`.
+4. **Upload and check.** Every row comes back marked **ok**, **note** (something was understood
+   or will be created — a new brand, a new person), **error** (with the reason in plain words:
+   "IMEI must be 15 digits", "Asking price is below cost", "Say who owes") or **skipped** (a
+   sample or an empty line). Tap a row to see every message and value. **Nothing is saved yet.**
+5. Fix the errors in Excel and upload again — or tick **Skip rows with errors, import the rest**.
+6. **Import.** Either every good row is saved or nothing is. The result says what was made
+   (phones, purchase bills, people, brands, opening balances…) and the file is remembered: upload
+   the same file twice and the check warns you.
+
+What each sheet does:
+
+- **Phones (stock)** — one row per phone. Leave the supplier blank for your own old stock (entered
+  like Old stock, cost against your capital). Give a **supplier phone** and the rows become a
+  **purchase bill** per supplier and date, with *Paid now* against it and the rest on the
+  supplier's khata. New brands and models are created on the way (tick off *Create new brands and
+  models* to refuse unknown ones). Non-PTA / JV phones need the SIM time.
+- **People** — name, phone and type are enough. An **opening balance** with **who owes** posts
+  the khata start. A phone number already in your khata is skipped (nothing changes on it).
+- **Accessories** — name, quantity in hand, unit cost and sale price; the SKU is made for you if
+  you leave it blank.
+- **Sales** — only phones that are in stock in the app, by IMEI. *Sold for* and *Paid now*; if
+  something stays on khata, the customer's phone is required (a new customer is created from the
+  name). Selling under cost is refused unless the owner / manager ticks *Allow selling under
+  cost*. Every sale goes through the same bill-making as the counter (ledger, history, khata).
+- **Expenses** — date, category (from the Lists sheet), amount, account (Cash unless you name a
+  bank or wallet).
+
+**Download my data** on the same page gives the shop's current phones / people / accessories /
+sales / expenses in exactly the template's layout, so you can correct in Excel and bring the file
+back. Earlier imports are listed at the bottom with who did them and what they made.
+
 ## 15a. Rate suggestion (what you sold it for last time)
 
 Wherever you type a price, a green box shows your own history for that model: **Last sold Rs. …
