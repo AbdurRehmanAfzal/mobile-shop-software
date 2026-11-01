@@ -207,6 +207,9 @@ Brief, research, audit, plan, assumptions `docs/28-PROVIDER-CONSOLE-PLAN.md` · 
 | Usage: last active per shop (throttled), one-PC heartbeat with version, deployment set by hand | ✅ | `tenancy._touch`, `/public/heartbeat`, `jobs._heartbeat` (needs `SAAS_URL` on the PC) |
 | One-PC key binding (first key links the customer) | ✅ | `plan/router.redeem` in `LOCAL_MODE` |
 
+## Owner side (open)
+Server env variables, server commands, manual testing and decisions: `docs/29-OWNER-PENDING.md` — none done yet (2026-11-01).
+
 ## Backlog (owner requests, not started)
 | Item | Notes |
 |---|---|

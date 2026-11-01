@@ -12,6 +12,9 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 4. If the task touches business rules, read the relevant section of `docs/02-FUNCTIONAL-REQUIREMENTS.md`.
 5. The `/kickoff` project skill does steps 1-2 for you (not `/resume`, which is a built-in Claude Code command).
 
+## Owner's pending list
+- `docs/29-OWNER-PENDING.md`: server env variables, server commands, manual testing and decisions still open on the owner's side (none done as of 2026-11-01). Keep it current: add every new env key, server command or manual-test step there.
+
 ## End-of-session protocol (ALWAYS do this before finishing)
 1. Update `docs/06-PROGRESS.md` (tick items, move items between columns).
 2. Append an entry to `docs/09-SESSION-LOG.md`: date, what was done, what was verified (tests run), what is next, open questions.
