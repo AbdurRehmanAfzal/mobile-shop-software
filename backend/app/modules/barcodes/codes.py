@@ -98,6 +98,10 @@ def _svg_strip(svg: str) -> str:
             f'width="100%" height="100%" viewBox="0 0 {w} {h}" preserveAspectRatio="none"',
             1,
         )
+        # python-barcode writes every bar as x="2.5mm" width="0.5mm"; inside a viewBox measured in
+        # plain millimetre numbers a "mm" unit is 3.78 times too big, so the bars overflowed and the
+        # printed sticker showed only the first few (found 2026-11-01 on the landing screenshot)
+        svg = re.sub(r'="(-?[\d.]+)mm"', r'="\1"', svg)
     return svg
 
 

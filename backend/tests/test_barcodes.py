@@ -159,6 +159,21 @@ def test_each_type_validates_renders_and_decodes_back(kind, value, stored):
     }
 
 
+@pytest.mark.parametrize("kind,stored", [("code128", "MS000002"), ("code39", "MS-000123"), ("ean13", "2000000000015")])
+def test_label_svg_bars_fit_inside_the_viewbox(kind, stored):
+    """The sticker prints the SVG, not the PNG: every bar must be in the viewBox's own units and
+    inside it (2026-11-01: bars carried "mm" units, were 3.78x too wide and the sticker was cut)."""
+    import re
+
+    svg = codes.svg(kind, stored)
+    w = float(re.search(r'viewBox="0 0 ([\d.]+) ([\d.]+)"', svg).group(1))
+    assert 'mm"' not in svg
+    bars = [(float(x), float(bw)) for x, bw in re.findall(r'<rect x="([\d.]+)" y="[\d.]+" width="([\d.]+)"', svg)]
+    assert len(bars) > 10
+    assert max(x + bw for x, bw in bars) <= w + 1e-6
+    assert min(x for x, _ in bars) >= 2.5 - 1e-6  # the left quiet zone stays
+
+
 def test_type_rules():
     assert codes.ean13_check_digit("400638133393") == "1"
     with pytest.raises(ValueError, match="ean13_length"):

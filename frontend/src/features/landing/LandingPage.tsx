@@ -2,7 +2,7 @@
  *  screenshots, a sample video, prices, the accounts to pay into and an "open a shop for me" form
  *  that reaches the product owner. Served at /welcome; a visitor on / without a login lands here. */
 
-import { ArrowLeftRight, BarChart3, BellRing, BookOpen, Bot, CalendarCheck, Check, CloudOff, Copy, CreditCard, Download, FileSpreadsheet, FileText, Fingerprint, HandCoins, Headphones, History, IdCard, KeyRound, Languages, LineChart, MessageCircle, Monitor, PackagePlus, PauseCircle, Phone as PhoneIcon, PlayCircle, Receipt, RotateCcw, ScanLine, ShieldCheck, Smartphone, Tag, Undo2, Users, Wallet, Wrench, type LucideIcon } from 'lucide-react'
+import { ArrowLeftRight, BarChart3, BellRing, BookOpen, Bot, Boxes, CalendarCheck, Check, ClipboardCheck, CloudOff, Copy, CreditCard, Download, FileSpreadsheet, FileText, Fingerprint, HandCoins, Headphones, History, IdCard, KeyRound, Languages, LineChart, Lock, MessageCircle, Monitor, PackagePlus, PauseCircle, Phone as PhoneIcon, PlayCircle, Receipt, RotateCcw, ScanBarcode, ScanLine, ShieldCheck, Smartphone, Tablet, Tag, Undo2, Users, Wallet, Wrench, type LucideIcon } from 'lucide-react'
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { BiAlert, BiInput, BiLabel, useLang } from '@/components/Bilingual'
@@ -25,13 +25,16 @@ const BASICS: { key: string; Icon: LucideIcon }[] = [
 const OPTIONAL: Record<string, LucideIcon> = { accessories: Headphones, repairs: Wrench, expenses: Wallet, held_sales: PauseCircle, tax: Receipt, exchange: ArrowLeftRight, reports: BarChart3, exports: Download, notifications: BellRing, loans: RotateCcw, installments: HandCoins, attendance: CalendarCheck, ai: Bot }
 /** what came in the last round (owner 2026-10-31): shown first, with its own screenshots */
 const NEW: { key: string; Icon: LucideIcon; shot?: string }[] = [
+  // owner 2026-11-01: the newest round first — barcodes, accessories by dozen / box, tablets & watches
+  { key: 'barcode', Icon: ScanBarcode, shot: 'label' }, { key: 'items', Icon: Boxes, shot: 'items' }, { key: 'devices', Icon: Tablet, shot: 'tablet' },
+  { key: 'lock', Icon: Lock }, { key: 'count', Icon: ClipboardCheck, shot: 'count' }, { key: 'itemreports', Icon: BarChart3, shot: 'itemreports' }, { key: 'reminders', Icon: BellRing },
   { key: 'audit', Icon: LineChart, shot: 'audit' }, { key: 'bulk', Icon: FileSpreadsheet, shot: 'bulk' }, { key: 'history', Icon: History, shot: 'history' },
   { key: 'prices', Icon: ShieldCheck }, { key: 'ai', Icon: Bot }, { key: 'home', Icon: BarChart3, shot: 'home' },
   { key: 'installments', Icon: HandCoins }, { key: 'hazri', Icon: CalendarCheck }, { key: 'otp', Icon: KeyRound }, { key: 'windows', Icon: Monitor },
 ]
 const EXTRAS: { key: string; Icon: LucideIcon }[] = [{ key: 'offline', Icon: CloudOff }, { key: 'fingerprint', Icon: Fingerprint }, { key: 'cnic', Icon: ShieldCheck }, { key: 'whatsapp', Icon: MessageCircle }]
-const SHOTS = ['home', 'audit', 'sale', 'stock', 'bulk', 'khata', 'history', 'finance', 'invoice'] as const
-const WEB_SHOTS = ['home', 'audit', 'stock', 'bulk', 'finance', 'invoice'] as const
+const SHOTS = ['home', 'sale', 'stock', 'items', 'tablet', 'audit', 'khata', 'history', 'finance', 'invoice'] as const
+const WEB_SHOTS = ['home', 'audit', 'stock', 'items', 'finance', 'invoice'] as const
 
 export default function LandingPage() {
   const { pick, ur, roman, cls } = useLang()
@@ -217,7 +220,7 @@ export default function LandingPage() {
         <section className="flex flex-col gap-3">
           <h2 className={h2}>{pick('landing.faqTitle')}</h2>
           <div className="card divide-y divide-line p-0">
-            {(['data', 'phone', 'offline', 'staff', 'cancel'] as const).map((k) => (
+            {(['data', 'phone', 'scanner', 'offline', 'staff', 'cancel'] as const).map((k) => (
               <details key={k} className="group px-4 py-3">
                 <summary className={`cursor-pointer list-none font-bold ${ur ? cls('md') : 'text-[15px]'}`}>{pick(`landing.faq.${k}.q`)}</summary>
                 <p className={`mt-1.5 text-muted ${ur ? cls('sm') : 'text-sm font-medium'}`}>{pick(`landing.faq.${k}.a`)}</p>
