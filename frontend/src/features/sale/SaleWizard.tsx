@@ -33,6 +33,7 @@ import SaleConfirm from './SaleConfirm'
 import { Tag as TagIcon } from 'lucide-react'
 import PriceHint from '@/components/PriceHint'
 import { HeldButton, HeldSalesSheet, useHeldSales, type HeldSale } from './HeldSales'
+import {withCur } from '@/lib/format'
 
 interface Line {
   device: Device
@@ -106,7 +107,7 @@ export default function SaleWizard() {
   const [confirming, setConfirming] = useState(false)
   const [devCat, setDevCat] = useState<'' | 'phone' | 'tablet' | 'watch'>('')
   const { data: stock } = useDevices({ status: 'in_stock', q: q || undefined, category: devCat || undefined })
-  const m = useDocMutation<Record<string, unknown>, Invoice>('POST', () => '/api/v1/sales', undefined, { kind: 'sale', label: (b) => `${pick('counter.sell')} · Rs. ${Number((b as { paid?: number }).paid ?? 0).toLocaleString('en-US')}` })
+  const m = useDocMutation<Record<string, unknown>, Invoice>('POST', () => '/api/v1/sales', undefined, { kind: 'sale', label: (b) => `${pick('counter.sell')} · ${withCur(Number((b as { paid?: number }).paid ?? 0).toLocaleString('en-US'))}` })
   // POS hold (owner 2026-10-28): park this bill, serve the next customer, resume it later
   const { data: held } = useHeldSales<Cart>()
   const [holding, setHolding] = useState(false)
@@ -344,7 +345,7 @@ export default function SaleWizard() {
                 <div className="flex flex-col gap-2 rounded-2xl bg-expense p-3 text-expense-fg">
                   <div className="flex items-start gap-2">
                     <TriangleAlert size={20} className="mt-0.5 shrink-0" />
-                    <span className={`font-semibold ${cls('sm')}`}>{pick('field.belowCost').replace('{{cost}}', `Rs. ${Number(l.device.cost_price).toLocaleString('en-US')}`)}</span>
+                    <span className={`font-semibold ${cls('sm')}`}>{pick('field.belowCost').replace('{{cost}}', `${withCur(Number(l.device.cost_price).toLocaleString('en-US'))}`)}</span>
                   </div>
                   {manager ? (
                     <button type="button" aria-pressed={lossOk} onClick={() => setLossOk(!lossOk)} className={chip(lossOk)}><Check size={20} />{pick('field.belowCostOk')}</button>
@@ -399,7 +400,7 @@ export default function SaleWizard() {
           {has('tax') ? <label className="tap flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl border border-line bg-surface px-4">
             <input type="checkbox" checked={taxOn} onChange={(e) => setTaxOn(e.target.checked)} className="h-6 w-6 accent-[rgb(var(--emerald))]" />
             <BiLabel text="saleTax.add" size="md" bold className="flex-1" />
-            {taxOn ? <span className="num text-sm text-muted" dir="ltr">+ Rs. {taxAmount.toLocaleString('en-US')}</span> : null}
+            {taxOn ? <span className="num text-sm text-muted" dir="ltr">+ {withCur(taxAmount.toLocaleString('en-US'))}</span> : null}
           </label> : null}
           {taxOn ? <BiInput label="saleTax.rate" type="number" inputMode="decimal" min={0} max={100} value={rateShown} onChange={(e) => setTaxRate(e.target.value)} className="num" /> : null}
 
@@ -473,11 +474,11 @@ export default function SaleWizard() {
           <div className="hero flex flex-col gap-1 px-5 py-4">
             <div className="flex items-center justify-between">
               <BiLabel text="common.total" size="md" tone="text-hero-text" bold />
-              <span className="num text-3xl" dir="ltr">Rs. {total.toLocaleString('en-US')}</span>
+              <span className="num text-3xl" dir="ltr">{withCur(total.toLocaleString('en-US'))}</span>
             </div>
             {taxOn && taxAmount > 0 ? (
               <span className={`text-hero-text/75 ${ur ? cls('sm') : 'text-xs font-semibold'}`} dir="ltr">
-                {pick('saleTax.incl')} Rs. {taxAmount.toLocaleString('en-US')} ({rateShown}%)
+                {pick('saleTax.incl')} {withCur(taxAmount.toLocaleString('en-US'))} ({rateShown}%)
               </span>
             ) : null}
             {owes ? (
@@ -501,7 +502,7 @@ export default function SaleWizard() {
           <div className="flex flex-col items-center gap-1 rounded-3xl bg-sell px-5 py-7 text-sell-fg">
             <span className="well mb-1 h-16 w-16 rounded-full bg-emerald text-white"><Check size={34} strokeWidth={2.6} /></span>
             <BiLabel text="sale.created" size="lg" bold tone="text-current" align="center" />
-            <span className="num text-[34px]" dir="ltr">Rs. {Number(result.total).toLocaleString('en-US')}</span>
+            <span className="num text-[34px]" dir="ltr">{withCur(Number(result.total).toLocaleString('en-US'))}</span>
             <span className="num text-sm opacity-80" dir="ltr">{result.no}</span>
             {result.party_balance_after && Number(result.party_balance_after) !== 0 ? (
               <span className={ur ? cls('sm') : 'text-sm font-semibold'}>{pick('party.balance')}: <span className="num" dir="ltr">{Number(result.party_balance_after).toLocaleString('en-US')}</span></span>

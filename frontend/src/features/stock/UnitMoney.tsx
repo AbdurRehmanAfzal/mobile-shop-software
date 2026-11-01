@@ -13,6 +13,7 @@ import { openPrintable } from '@/lib/files'
 import DownloadButton from '@/components/DownloadButton'
 import { useGet, useInvalidate } from '@/lib/queries'
 import type { Party } from '@/lib/types'
+import {withCur } from '@/lib/format'
 
 export interface PayRow { kind: 'payment_in' | 'payment_out'; at: string; date: string; payment_id: string; no: string; amount: string | null; payment_amount?: string; method: string; reference: string | null; notes: string | null; doc_no?: string; party_name?: string | null; party_id?: string | null; payable_after?: string; receivable_after?: string }
 export interface Side { doc_type: 'purchase' | 'invoice'; doc_id: string; no: string; date: string; party_id: string | null; party_name: string | null; party_phone: string | null; line_total: string | null; doc_total: string | null; doc_paid: string | null; shared_bill: boolean; upfront: string | null; payments: PayRow[]; paid: string | null; remaining: string | null; returned_at: string | null; asking_at_sale?: string | null }
@@ -151,7 +152,7 @@ function TimelineRow({ t, first, canCost }: { t: Record<string, unknown>; first:
         {t.party_name ? <button type="button" onClick={(e) => { e.stopPropagation(); if (t.party_id) nav(`/parties/${String(t.party_id)}`) }} className={`text-start text-muted ${small}`}>{String(t.party_name)}</button> : null}
         {amount != null && (kind !== 'event' || t.event !== 'purchased' || canCost) ? (
           <div className={`flex flex-wrap items-center gap-x-3 ${small}`} dir="auto">
-            <span className="num text-ink" dir="ltr">Rs. {Number(amount).toLocaleString('en-US')}</span>
+            <span className="num text-ink" dir="ltr">{withCur(Number(amount).toLocaleString('en-US'))}</span>
             {kind === 'purchase' || kind === 'sale' ? <span className="text-muted">{pick(kind === 'purchase' ? 'unit.upfrontPaid' : 'unit.upfrontReceived')} <span className="num" dir="ltr">{Number(t.upfront ?? 0).toLocaleString('en-US')}</span></span> : null}
             {after != null ? <span className="text-muted">{pick(kind === 'payment_out' || kind === 'purchase' ? 'unit.leftToPay' : 'unit.leftToGet')} <span className="num" dir="ltr">{Number(after).toLocaleString('en-US')}</span></span> : null}
             {kind === 'payment_in' || kind === 'payment_out' ? <button type="button" onClick={(e) => { e.stopPropagation(); void openPrintable(`/api/v1/payments/${String(t.payment_id)}/receipt?format=thermal`) }} className="tap inline-flex items-center gap-1 rounded-full border border-line px-2 py-0.5 text-ink"><Printer size={12} />{pick('unit.printReceipt')}</button> : null}

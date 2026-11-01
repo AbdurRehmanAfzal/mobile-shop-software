@@ -2,7 +2,7 @@
  *  login, which can be sent on WhatsApp. Owner (2026-10-26): shops are not self-service. */
 
 import { BarChart3, CalendarClock, ChevronRight, Check, CheckCircle2, CreditCard, GitBranch, Image as ImageIcon, KeyRound, LogIn, MessageCircle, Plus, Store, Trash2, X } from 'lucide-react'
-import { isoDay } from '@/lib/format'
+import {isoDay, withCur } from '@/lib/format'
 import { useEffect, useState } from 'react'
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { BiAlert, BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
@@ -164,7 +164,7 @@ export default function AdminPage() {
           <span className="well h-10 w-10 shrink-0 bg-emerald-tint text-emerald-deep"><CreditCard size={20} /></span>
           <span className="flex min-w-0 flex-1 flex-col">
             <BiLabel text="admin.feesTitle" size="md" bold />
-            <span className="text-xs text-muted">{pick('admin.thisMonth')} <span className="num" dir="ltr">Rs. {Number(feeStats?.month_total ?? 0).toLocaleString('en-US')}</span> · {pick('admin.pendingN').replace('{{n}}', String(feeStats?.pending ?? 0))}</span>
+            <span className="text-xs text-muted">{pick('admin.thisMonth')} <span className="num" dir="ltr">{withCur(Number(feeStats?.month_total ?? 0).toLocaleString('en-US'))}</span> · {pick('admin.pendingN').replace('{{n}}', String(feeStats?.pending ?? 0))}</span>
           </span>
           <button type="button" onClick={() => { setAccts(savedAccounts ? savedAccounts.map((a) => ({ ...a })) : []); setAcctsOpen(true) }} className={`tap rounded-full border border-line px-3 py-1.5 text-xs font-bold ${ur ? cls('sm') : ''}`}>{pick('admin.accounts')}</button>
           <button type="button" onClick={() => { if (billing) setBill(JSON.parse(JSON.stringify(billing))); setBillOpen(true) }} className={`tap rounded-full px-3 py-1.5 text-xs font-bold ${billing?.placeholders ? 'bg-payable-tint text-payable' : 'border border-line'} ${ur ? cls('sm') : ''}`} data-testid="billing-open">{pick('admin.billing')}</button>
@@ -178,7 +178,7 @@ export default function AdminPage() {
                     <span className="truncate text-[15px] font-bold">{f.shop_name}</span>
                     <span className="text-xs text-muted" dir="ltr">{f.method}{f.reference ? ` · ${f.reference}` : ''} · {f.months} {pick(f.months === 1 ? 'admin.month' : 'admin.months')} · {fmtDate(f.created_at)}</span>
                   </span>
-                  <span className="num text-lg" dir="ltr">Rs. {Number(f.amount).toLocaleString('en-US')}</span>
+                  <span className="num text-lg" dir="ltr">{withCur(Number(f.amount).toLocaleString('en-US'))}</span>
                 </div>
                 {f.note ? <span className="text-sm text-muted">{f.note}</span> : null}
                 <div className="flex gap-2">
@@ -301,7 +301,7 @@ export default function AdminPage() {
               </span>
               <span className="flex flex-col items-end gap-1">
                 <PlanChip s={s} />
-                <span className="text-xs text-muted">{Number(s.monthly_fee) ? <span className="num" dir="ltr">Rs. {Number(s.monthly_fee).toLocaleString('en-US')}/{pick('admin.month')}</span> : pick('admin.noFee')}</span>
+                <span className="text-xs text-muted">{Number(s.monthly_fee) ? <span className="num" dir="ltr">{withCur(Number(s.monthly_fee).toLocaleString('en-US'))}/{pick('admin.month')}</span> : pick('admin.noFee')}</span>
               </span>
             </button>
           ))}

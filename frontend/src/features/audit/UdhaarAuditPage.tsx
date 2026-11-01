@@ -11,6 +11,7 @@ import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
 import AuditLayout from './AuditLayout'
 import { useAuditPeriod } from './period'
+import {withCur } from '@/lib/format'
 
 type M = string
 interface Bal { opening: M; closing: M; as_of: M; current: M; parties: number }
@@ -38,13 +39,13 @@ export default function UdhaarAuditPage() {
           <section className="grid gap-2 sm:grid-cols-2">
             <Link to="/khata?f=get" className="tap flex flex-col gap-1 rounded-3xl bg-receivable-tint px-5 py-4 text-receivable" data-testid="udhaar-receivable">
               <div className="flex items-center gap-2"><ArrowDownLeft size={18} /><BiLabel text="audit.receivable" size="md" bold tone="text-current" /></div>
-              <span className="num text-[30px] leading-tight" dir="ltr">Rs. {n(main(data.receivable))}</span>
+              <span className="num text-[30px] leading-tight" dir="ltr">{withCur(n(main(data.receivable)))}</span>
               <span className={`opacity-80 ${small}`}>{pick('audit.opening')} <span className="num" dir="ltr">{n(data.receivable.opening)}</span> · {pick('audit.now')} <span className="num" dir="ltr">{n(data.receivable.current)}</span> · <span className="num">{data.receivable.parties}</span> {pick('audit.people')}{Number(data.receivable_overdue) ? <> · <span className="font-bold">{pick('audit.udhaar.overdue')} <span className="num" dir="ltr">{n(data.receivable_overdue)}</span></span></> : null}</span>
             </Link>
             {canCost ? (
               <Link to="/khata?f=give" className="tap flex flex-col gap-1 rounded-3xl bg-payable-tint px-5 py-4 text-payable" data-testid="udhaar-payable">
                 <div className="flex items-center gap-2"><ArrowUpRight size={18} /><BiLabel text="audit.payable" size="md" bold tone="text-current" /></div>
-                <span className="num text-[30px] leading-tight" dir="ltr">Rs. {n(main(data.payable))}</span>
+                <span className="num text-[30px] leading-tight" dir="ltr">{withCur(n(main(data.payable)))}</span>
                 <span className={`opacity-80 ${small}`}>{pick('audit.opening')} <span className="num" dir="ltr">{n(data.payable.opening)}</span> · {pick('audit.now')} <span className="num" dir="ltr">{n(data.payable.current)}</span> · <span className="num">{data.payable.parties}</span> {pick('audit.people')}</span>
               </Link>
             ) : null}

@@ -13,7 +13,7 @@ import PartyPicker from '@/components/PartyPicker'
 import { BtnText, Empty, ErrorText, fmtDate, IconChip, Loading, PageHeader, SearchBox, Section, Sheet } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { openPrintable } from '@/lib/files'
-import { isoDay } from '@/lib/format'
+import {isoDay, withCur } from '@/lib/format'
 import { useDocMutation, useGet } from '@/lib/queries'
 import type { Party } from '@/lib/types'
 
@@ -278,7 +278,7 @@ export function RepairDetailPage() {
           <BiInput label="counter.labourCharge" type="number" inputMode="numeric" min={0} value={labour} onChange={(e) => setLabour(e.target.value)} />
           <div className="hero flex items-center justify-between px-5 py-3">
             <BiLabel text="common.total" size="md" tone="text-hero-text" bold />
-            <span className="num text-2xl" dir="ltr">Rs. {draftTotal.toLocaleString('en-US')}</span>
+            <span className="num text-2xl" dir="ltr">{withCur(draftTotal.toLocaleString('en-US'))}</span>
           </div>
           <ErrorText error={partsM.error ?? labourM.error ?? statusM.error} />
           {stage < 2 ? <BiButton text="counter.markReady" full loading={partsM.isPending || labourM.isPending || statusM.isPending} onClick={() => saveBill(true)} /> : null}

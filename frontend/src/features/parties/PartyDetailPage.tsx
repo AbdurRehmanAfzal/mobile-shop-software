@@ -14,6 +14,7 @@ import PartyUnits, { usePartyUnits } from './PartyUnits'
 import PartyJourney from './PartyJourney'
 import { Printer } from 'lucide-react'
 import { openPrintable } from '@/lib/files'
+import {withCur } from '@/lib/format'
 
 export default function PartyDetailPage() {
   const { id } = useParams()
@@ -52,7 +53,7 @@ export default function PartyDetailPage() {
       <section className={`flex flex-col gap-2 rounded-3xl p-5 ${bal > 0 ? 'bg-khata text-khata-fg' : bal < 0 ? 'bg-expense text-expense-fg' : 'border border-line bg-surface text-ink'}`}>
         <BiLabel text={bal > 0 ? 'counter.toGet' : bal < 0 ? 'counter.toGive' : 'party.clear'} size="md" bold tone="text-current" />
         <div className="num text-[34px] leading-none" dir="ltr">
-          {bal === 0 ? '0' : `Rs. ${Math.abs(bal).toLocaleString('en-US')}`}
+          {bal === 0 ? '0' : `${withCur(Math.abs(bal).toLocaleString('en-US'))}`}
         </div>
         {units && (Number(units.receivable) > 0 || Number(units.payable ?? 0) > 0 || Number(units.other ?? 0) !== 0) ? (
           <div className="mt-1 grid grid-cols-3 gap-2" data-testid="party-split">

@@ -9,7 +9,7 @@ import { useState, type ReactNode } from 'react'
 import { BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import { Empty, Loading, PageHeader } from '@/components/ui'
-import { clampRange, isoDay } from '@/lib/format'
+import {clampRange, isoDay, withCur } from '@/lib/format'
 import { useGet } from '@/lib/queries'
 
 interface Pnl { gross_sales: string; discounts: string; sales_returns: string; net_sales: string; operating_expenses: string; operating_profit: string; sales: string; cogs: string; gross_profit: string; repair_income: string; other_income: string; expenses: Record<string, string>; total_expenses: string; net_profit: string; owner_drawing: string; tax_collected: string }
@@ -97,7 +97,7 @@ export default function ReportsPage() {
           <>
             <section className={`flex flex-col gap-1 rounded-3xl px-5 py-4 ${net >= 0 ? 'bg-sell text-sell-fg' : 'bg-expense text-expense-fg'}`}>
               <div className="flex items-center gap-1"><BiLabel text={net >= 0 ? 'counter.netProfit' : 'counter.netLoss'} size="md" bold tone="text-current" /><span className="[&_button]:text-current"><Help term="profit" /></span></div>
-              <span className="num text-[34px] leading-tight" dir="ltr">Rs. {n(net)}</span>
+              <span className="num text-[34px] leading-tight" dir="ltr">{withCur(n(net))}</span>
             </section>
             <div className="card flex flex-col p-0">
               {Number(pnl.discounts) || Number(pnl.sales_returns) ? (
@@ -156,7 +156,7 @@ export default function ReportsPage() {
           <>
             <section className="flex flex-col gap-1 rounded-3xl bg-buy px-5 py-4 text-buy-fg">
               <BiLabel text="counter.next7" size="md" bold tone="text-current" />
-              <span className="num text-[30px] leading-tight" dir="ltr">Rs. {n(fc.next_7_total)}</span>
+              <span className="num text-[30px] leading-tight" dir="ltr">{withCur(n(fc.next_7_total))}</span>
               <span className={small}>{pick('counter.lastWeek')}: <span className="num" dir="ltr">{n(fc.last_7_days)}</span> · {pick('counter.prevWeek')}: <span className="num" dir="ltr">{n(fc.previous_7_days)}</span></span>
             </section>
             <div className="card divide-y divide-line p-0">
@@ -219,7 +219,7 @@ export default function ReportsPage() {
               <div key={a.bucket} className={`flex flex-col rounded-3xl p-4 ${a.bucket === '60+' ? 'bg-expense text-expense-fg' : a.bucket === '31-60' ? 'bg-khata text-khata-fg' : 'bg-surface border border-line'}`}>
                 <span className={small}><span className="num" dir="ltr">{a.bucket}</span> {pick('counter.days')}</span>
                 <span className="num text-3xl">{a.count}</span>
-                {a.value !== null ? <span className="num text-sm opacity-80" dir="ltr">Rs. {n(a.value)}</span> : null}
+                {a.value !== null ? <span className="num text-sm opacity-80" dir="ltr">{withCur(n(a.value))}</span> : null}
               </div>
             ))}
           </div>

@@ -15,6 +15,7 @@ import { MAKER } from '@/features/auth/AuthLayout'
 import { useAuth } from '@/lib/auth'
 import { downloadFile, fileUrl, openPrintable } from '@/lib/files'
 import { popupAllowedOn, romanBarLine, usePlanReminder, type Reminder, type SnoozeOption } from '@/lib/planReminder'
+import {withCur } from '@/lib/format'
 
 const IDLE_MS = 60_000
 const REFRESH_EVERY_MS = 5 * 60_000
@@ -189,7 +190,7 @@ function PlanPopup() {
           <div className="grid grid-cols-3 gap-2 text-center">
             <Fact k="plan.pop.plan" v={data.plan} />
             <Fact k={data.stage === 'grace' || data.stage === 'locked' ? 'plan.pop.ended' : 'plan.pop.expires'} v={data.expires_at ? fmtDate(data.expires_at) : '—'} />
-            <Fact k="plan.pop.amount" v={`Rs. ${Number(data.amount_due).toLocaleString('en-US')}`} />
+            <Fact k="plan.pop.amount" v={`${withCur(Number(data.amount_due).toLocaleString('en-US'))}`} />
           </div>
           <div className="rounded-2xl border border-payable/30 bg-payable-tint/40 px-4 py-3"><Tri k="plan.pop.warning" size="sm" tone="text-payable" /></div>
           {data.clock_rolled_back ? <div className="rounded-2xl bg-receivable-tint px-4 py-2"><Tri k="plan.pop.clock" size="sm" tone="text-receivable" /></div> : null}

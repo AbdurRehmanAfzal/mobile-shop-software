@@ -2,6 +2,7 @@
 
 For Abdur Rehman Afzal, 2026-10-31. Everything here is yours to fill in or decide; the software
 ships with placeholders that stay hidden from shopkeepers until you replace them.
+**The full, current list of what is still open on your side is `docs/29-OWNER-PENDING.md`.**
 Spec: `docs/19-SUBSCRIPTION-REMINDERS-SPEC.md` · design and assumptions: `docs/20-SUBSCRIPTION-REMINDERS-PLAN.md`.
 
 ## 1. Settings you fill in the app (Super admin)
@@ -28,7 +29,7 @@ payment details in the popup.
 | `RENEWAL_PRIVATE_KEY` | signs renewal codes (Super admin → shop → Renewal code) | run `python -m app.modules.plan.renewal keygen` once on the VPS; paste both lines; **keep the private key only on the SaaS server** |
 | `RENEWAL_PUBLIC_KEY` | every install verifies codes with it, also the Windows one-PC build | same keygen output; for the Windows build put it in that install's settings too |
 | `ADMIN_WHATSAPP` (or the first number in `SUPERUSER_PHONES`) | receives "fee proof submitted" and "new shop request" | already in use |
-| after deploy | new tables / columns | `alembic upgrade head` (migration `e6f8a0b2c3d5`) |
+| after deploy | new tables / columns | nothing to run: the backend runs `alembic upgrade head` when it starts (see docs/29 §B) |
 
 The pair in the development PC's `.env` is a dev pair; generate a fresh one for production.
 

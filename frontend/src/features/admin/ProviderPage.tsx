@@ -13,6 +13,7 @@ import { api } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 import { useGet, useInvalidate } from '@/lib/queries'
 import { SITE } from './AppLinkCard'
+import {withCur } from '@/lib/format'
 
 type Tab = 'overview' | 'shops' | 'payments' | 'keys'
 interface Overview {
@@ -37,7 +38,7 @@ interface KeyRow {
 }
 interface SendOut { whatsapp: string; sms: string; text: string; link: string | null; key: KeyRow }
 
-const rs = (v: string | number | null | undefined) => `Rs. ${Math.round(Number(v ?? 0)).toLocaleString('en-US')}`
+const rs = (v: string | number | null | undefined) => `${withCur(Math.round(Number(v ?? 0)).toLocaleString('en-US'))}`
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 function Tile({ label, value, sub, tone = 'bg-surface', testid }: { label: string; value: ReactNode; sub?: ReactNode; tone?: string; testid?: string }) {

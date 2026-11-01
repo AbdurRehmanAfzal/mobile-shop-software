@@ -19,6 +19,7 @@ import ItemForm from './ItemForm'
 import DeviceLineSheet, { draftToApi, emptyDraft } from '@/features/purchase/DeviceLineSheet'
 import { post } from '@/lib/api'
 import { gradeLabel, unitLabel, type Batch, type Item, type TimelineRow } from './types'
+import {withCur } from '@/lib/format'
 
 export default function AccessoryDetailPage() {
   const { id } = useParams()
@@ -64,7 +65,7 @@ export default function AccessoryDetailPage() {
           </div>
           <div className="flex flex-col items-end">
             <BiLabel text="acc.price" size="sm" tone="text-current" />
-            <span className="num text-2xl" dir="ltr">Rs. {Number(it.price).toLocaleString('en-US')}</span>
+            <span className="num text-2xl" dir="ltr">{withCur(Number(it.price).toLocaleString('en-US'))}</span>
           </div>
         </div>
         <div className={`flex flex-wrap gap-x-3 gap-y-1 opacity-90 ${small}`}>
@@ -139,7 +140,7 @@ export default function AccessoryDetailPage() {
                   <span className={`well h-9 w-9 shrink-0 ${r.qty_delta > 0 ? 'bg-emerald-tint text-emerald-deep' : 'bg-payable-tint text-payable'}`}>{r.reason === 'adjust' ? <Wrench size={16} /> : r.qty_delta > 0 ? <ArrowDownLeft size={16} /> : <ArrowUpRight size={16} />}</span>
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-sm font-bold">{pick(`acc.move.${r.reason}`)}{r.party_name ? ` · ${r.party_name}` : ''}{r.doc_no && r.doc_no !== 'Opening stock' ? <span className="num text-muted" dir="ltr"> · {r.doc_no}</span> : null}</div>
-                    <div className={`text-muted ${small}`} dir="ltr">{fmtDateTime(r.at)}{r.amount != null ? ` · Rs. ${Number(r.amount).toLocaleString('en-US')}` : ''}{r.remaining != null && Number(r.remaining) > 0 ? ` · ${pick('common.due')} ${Number(r.remaining).toLocaleString('en-US')}` : ''}</div>
+                    <div className={`text-muted ${small}`} dir="ltr">{fmtDateTime(r.at)}{r.amount != null ? ` · ${withCur(Number(r.amount).toLocaleString('en-US'))}` : ''}{r.remaining != null && Number(r.remaining) > 0 ? ` · ${pick('common.due')} ${Number(r.remaining).toLocaleString('en-US')}` : ''}</div>
                   </div>
                   <div className="flex flex-col items-end">
                     <span className={`num text-sm ${r.qty_delta > 0 ? 'text-emerald-deep' : 'text-payable'}`} dir="ltr">{r.qty_delta > 0 ? '+' : ''}{r.qty_delta}</span>

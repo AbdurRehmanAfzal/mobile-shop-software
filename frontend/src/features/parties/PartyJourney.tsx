@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { BiLabel, useLang } from '@/components/Bilingual'
 import { fmtDate } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
-import { isoDay } from '@/lib/format'
+import {isoDay, withCur } from '@/lib/format'
 import { useGet } from '@/lib/queries'
 import { Link } from 'react-router-dom'
 import DownloadButton from '@/components/DownloadButton'
@@ -53,14 +53,14 @@ export default function PartyJourney({ partyId }: { partyId: string }) {
         {data.last_transaction ? <span>{pick('audit.journey.last')} <span dir="ltr">{fmtDate(data.last_transaction)}</span></span> : null}
       </div>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-        {tile('audit.journey.soldTo', `${data.sold.phones}`, `${data.sold.bills} ${pick('audit.bills')} · Rs. ${n(data.sold.value)}`)}
-        {tile('audit.journey.boughtFrom', `${data.bought.phones}`, `${data.bought.bills} ${pick('audit.bills')}${data.bought.value != null ? ` · Rs. ${n(data.bought.value)}` : ''}`)}
-        {tile('audit.journey.received', `Rs. ${n(data.money.received_total)}`, `${pick('audit.journey.atCounter')} ${n(data.money.received_at_counter)} · ${pick('audit.journey.later')} ${n(data.money.received_later)}`)}
-        {tile('audit.journey.paid', `Rs. ${n(data.money.paid_total)}`, data.money.paid_at_counter != null ? `${pick('audit.journey.atCounter')} ${n(data.money.paid_at_counter)} · ${pick('audit.journey.later')} ${n(data.money.paid_later)}` : undefined)}
-        {tile('audit.journey.profitOnSales', `Rs. ${n(data.sold.profit)}`)}
-        {data.bought.phones ? tile('audit.journey.profitOnSourced', `Rs. ${n(data.bought.sourced_profit)}`, `${data.bought.sourced_sold} ${pick('audit.journey.sourcedSold')}`) : null}
-        {tile('audit.journey.returns', `${data.returns.sale.count + data.returns.purchase.count}`, `Rs. ${n(Number(data.returns.sale.amount) + Number(data.returns.purchase.amount))} · ${pick('audit.journey.refunded')} ${n(data.money.refunded_to_them)}`)}
-        {tile(asOf ? 'audit.journey.balanceAsOf' : 'audit.journey.balance', `Rs. ${n(Math.abs(bal))}`, bal > 0 ? pick('audit.udhaar.theyOwe') : bal < 0 ? pick('audit.udhaar.weOweShort') : pick('audit.journey.settled'))}
+        {tile('audit.journey.soldTo', `${data.sold.phones}`, `${data.sold.bills} ${pick('audit.bills')} · ${withCur(n(data.sold.value))}`)}
+        {tile('audit.journey.boughtFrom', `${data.bought.phones}`, `${data.bought.bills} ${pick('audit.bills')}${data.bought.value != null ? ` · ${withCur(n(data.bought.value))}` : ''}`)}
+        {tile('audit.journey.received', `${withCur(n(data.money.received_total))}`, `${pick('audit.journey.atCounter')} ${n(data.money.received_at_counter)} · ${pick('audit.journey.later')} ${n(data.money.received_later)}`)}
+        {tile('audit.journey.paid', `${withCur(n(data.money.paid_total))}`, data.money.paid_at_counter != null ? `${pick('audit.journey.atCounter')} ${n(data.money.paid_at_counter)} · ${pick('audit.journey.later')} ${n(data.money.paid_later)}` : undefined)}
+        {tile('audit.journey.profitOnSales', `${withCur(n(data.sold.profit))}`)}
+        {data.bought.phones ? tile('audit.journey.profitOnSourced', `${withCur(n(data.bought.sourced_profit))}`, `${data.bought.sourced_sold} ${pick('audit.journey.sourcedSold')}`) : null}
+        {tile('audit.journey.returns', `${data.returns.sale.count + data.returns.purchase.count}`, `${withCur(n(Number(data.returns.sale.amount) + Number(data.returns.purchase.amount)))} · ${pick('audit.journey.refunded')} ${n(data.money.refunded_to_them)}`)}
+        {tile(asOf ? 'audit.journey.balanceAsOf' : 'audit.journey.balance', `${withCur(n(Math.abs(bal)))}`, bal > 0 ? pick('audit.udhaar.theyOwe') : bal < 0 ? pick('audit.udhaar.weOweShort') : pick('audit.journey.settled'))}
       </div>
       {data.timeline.length ? (
         <details>

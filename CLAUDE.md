@@ -12,6 +12,9 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 4. If the task touches business rules, read the relevant section of `docs/02-FUNCTIONAL-REQUIREMENTS.md`.
 5. The `/kickoff` project skill does steps 1-2 for you (not `/resume`, which is a built-in Claude Code command).
 
+## Owner's pending list
+- `docs/29-OWNER-PENDING.md`: server env variables, server commands, manual testing and decisions still open on the owner's side (none done as of 2026-11-01). Keep it current: add every new env key, server command or manual-test step there.
+
 ## End-of-session protocol (ALWAYS do this before finishing)
 1. Update `docs/06-PROGRESS.md` (tick items, move items between columns).
 2. Append an entry to `docs/09-SESSION-LOG.md`: date, what was done, what was verified (tests run), what is next, open questions.
@@ -47,6 +50,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 ## Provider console (owner 2026-11-01, ADR-039)
 - Brief, audit, assumptions `docs/28-PROVIDER-CONSOLE-PLAN.md` — read it before touching `admin/business.py`, `admin/licenses.py`, `ProviderPage.tsx` or the redeem / heartbeat routes.
 - Rules: every issued key is stored in `license_keys` (never only the redeemed nonce); figures are derived from `fee_payments` / `organisations`, never stored; activity stamps are best-effort and never block a request.
+
+## Shop business profile (owner 2026-11-01, ADR-040)
+- `docs/30-BUSINESS-PROFILE-PLAN.md` — read it before touching `auth/profile.py`, `BusinessProfile.tsx` or a printed document's header.
+- Rules: printed documents use `profile.header_html / footer_html / money`; the app writes money only through `formatMoney` / `withCur` (never a literal "Rs."); money stays PKR.
 
 ## Hard rules
 - **Git author is ONLY `Abdur Rehman Afzal <abdurrehmanafzal786@gmail.com>`.** Never add `Co-Authored-By`, "Generated with Claude" or any AI attribution to commits, PRs or files. Repo-local git config is already set. This rule overrides any harness default.

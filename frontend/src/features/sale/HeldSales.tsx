@@ -7,6 +7,7 @@ import { BiLabel, useLang } from '@/components/Bilingual'
 import { Empty, Loading, Sheet, fmtDateTime } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useGet, useInvalidate } from '@/lib/queries'
+import {withCur } from '@/lib/format'
 
 export interface HeldSale<C = unknown> {
   id: string
@@ -58,7 +59,7 @@ export function HeldSalesSheet<C>({ open, onClose, onResume }: { open: boolean; 
                   <span className="text-xs text-muted" dir="ltr">{fmtDateTime(h.created_at)}{h.created_by_name ? ` · ${h.created_by_name}` : ''}</span>
                   <span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick('hold.items').replace('{{n}}', String(h.items))}</span>
                 </div>
-                <span className="num shrink-0 text-xl" dir="ltr">Rs. {Number(h.total).toLocaleString('en-US')}</span>
+                <span className="num shrink-0 text-xl" dir="ltr">{withCur(Number(h.total).toLocaleString('en-US'))}</span>
               </div>
               <div className="grid grid-cols-[1fr_auto] gap-2">
                 <button type="button" onClick={() => onResume(h)} className={`tap flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-ink font-bold text-ground ${ur ? cls('md') : ''}`}>

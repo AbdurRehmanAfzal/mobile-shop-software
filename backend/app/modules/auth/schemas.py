@@ -71,6 +71,9 @@ class ShopOut(BaseModel):
     default_locale: str
     tax_enabled: bool
     is_active: bool
+    # docs/30: the app shows the logo and writes money with the shop's currency label
+    logo_path: str | None = None
+    currency: dict | None = None
 
 
 class ShopSettingsOut(ShopOut):
@@ -90,6 +93,26 @@ class ShopSettingsOut(ShopOut):
     audit_prefs: dict | None = None
     item_prefs: dict | None = None
     device_prefs: dict | None = None
+    address: str | None = None
+    whatsapp: str | None = None
+    legal_name: str | None = None
+    tagline: str | None = None
+    tagline_ur: str | None = None
+    business_type: str | None = None
+    registration_no: str | None = None
+    established_year: int | None = None
+    province: str | None = None
+    email: str | None = None
+    website: str | None = None
+    social: dict | None = None
+    opening_hours: str | None = None
+    owner_name: str | None = None
+    owner_cnic: str | None = None
+    fbr_pos_id: str | None = None
+    bank_details: dict | None = None
+    terms: str | None = None
+    terms_ur: str | None = None
+    print_prefs: dict | None = None
 
 
 class UserOut(BaseModel):
@@ -196,6 +219,85 @@ class ShopUpdate(BaseModel):
     audit_prefs: dict | None = None
     item_prefs: dict | None = None
     device_prefs: dict | None = None
+    # business profile (docs/30)
+    legal_name: str | None = Field(default=None, max_length=200)
+    tagline: str | None = Field(default=None, max_length=120)
+    tagline_ur: str | None = Field(default=None, max_length=120)
+    business_type: str | None = Field(default=None, pattern="^(sole|partnership|company|aop|other)$")
+    registration_no: str | None = Field(default=None, max_length=40)
+    established_year: int | None = Field(default=None, ge=1900, le=2100)
+    province: str | None = Field(default=None, pattern="^(punjab|sindh|kpk|balochistan|islamabad|gb|ajk)$")
+    email: str | None = Field(default=None, max_length=120)
+    website: str | None = Field(default=None, max_length=160)
+    social: dict | None = None
+    opening_hours: str | None = Field(default=None, max_length=120)
+    owner_name: str | None = Field(default=None, max_length=120)
+    owner_cnic: str | None = None
+    fbr_pos_id: str | None = Field(default=None, max_length=40)
+    bank_details: dict | None = None
+    terms: str | None = Field(default=None, max_length=1000)
+    terms_ur: str | None = Field(default=None, max_length=1000)
+    currency: dict | None = None
+    print_prefs: dict | None = None
+
+    @field_validator("ntn")
+    @classmethod
+    def _ntn(cls, v: str | None) -> str | None:
+        from app.modules.auth.profile import clean_ntn
+
+        return clean_ntn(v)
+
+    @field_validator("strn")
+    @classmethod
+    def _strn(cls, v: str | None) -> str | None:
+        from app.modules.auth.profile import clean_strn
+
+        return clean_strn(v)
+
+    @field_validator("owner_cnic")
+    @classmethod
+    def _cnic(cls, v: str | None) -> str | None:
+        from app.core.pk import normalise_cnic
+
+        return normalise_cnic(v) if v and v.strip() else None
+
+    @field_validator("email")
+    @classmethod
+    def _email(cls, v: str | None) -> str | None:
+        if not v or not v.strip():
+            return None
+        v = v.strip()
+        if "@" not in v or "." not in v.split("@")[-1]:
+            raise ValueError("Email looks wrong")
+        return v
+
+    @field_validator("currency")
+    @classmethod
+    def _currency(cls, v: dict | None) -> dict | None:
+        from app.modules.auth.profile import clean_currency
+
+        return clean_currency(v)
+
+    @field_validator("print_prefs")
+    @classmethod
+    def _print(cls, v: dict | None) -> dict | None:
+        from app.modules.auth.profile import clean_print_prefs
+
+        return clean_print_prefs(v)
+
+    @field_validator("social")
+    @classmethod
+    def _social(cls, v: dict | None) -> dict | None:
+        from app.modules.auth.profile import clean_social
+
+        return clean_social(v)
+
+    @field_validator("bank_details")
+    @classmethod
+    def _bank(cls, v: dict | None) -> dict | None:
+        from app.modules.auth.profile import clean_bank
+
+        return clean_bank(v)
 
     @field_validator("device_prefs")
     @classmethod

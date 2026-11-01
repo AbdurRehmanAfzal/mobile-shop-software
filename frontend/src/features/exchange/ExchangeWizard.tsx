@@ -15,6 +15,7 @@ import { useDevices, useDocMutation, useInvalidate } from '@/lib/queries'
 import type { Device, Party } from '@/lib/types'
 import { DeviceRow } from '@/features/stock/StockPage'
 import DeviceLineSheet, { draftToApi, emptyDraft, type DeviceLineDraft } from '@/features/purchase/DeviceLineSheet'
+import {withCur } from '@/lib/format'
 
 interface ExchangeOut { no: string; invoice_id: string; invoice_no: string | null; previous_balance: string; trade_in_value: string; new_total: string; new_balance: string }
 const n = (v: number | string) => Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 })
@@ -116,7 +117,7 @@ export default function ExchangeWizard() {
           </div>
           <div className={`flex flex-col gap-1 rounded-3xl p-4 ${diff > 0 ? 'bg-khata text-khata-fg' : diff < 0 ? 'bg-payable-tint text-payable' : 'bg-emerald-tint text-emerald-deep'}`}>
             <BiLabel text={diff > 0 ? 'exchange.customerPays' : diff < 0 ? 'exchange.shopPays' : 'exchange.even'} size="md" bold tone="text-current" />
-            {diff !== 0 ? <span className="num text-[32px] leading-none" dir="ltr">Rs. {n(Math.abs(diff))}</span> : null}
+            {diff !== 0 ? <span className="num text-[32px] leading-none" dir="ltr">{withCur(n(Math.abs(diff)))}</span> : null}
           </div>
           {diff > 0 ? <BiInput label="sale.paidNow" type="number" inputMode="numeric" min={0} max={diff} value={paid} onChange={(e) => setPaid(e.target.value)} className="num text-2xl" hint="exchange.paidHint" /> : null}
           <div className="hero flex items-center justify-between p-4">

@@ -48,6 +48,23 @@ services:
       WHATSAPP_TOKEN: ${WHATSAPP_TOKEN:-}
       WHATSAPP_PHONE_ID: ${WHATSAPP_PHONE_ID:-}
       WHATSAPP_TEMPLATES: ${WHATSAPP_TEMPLATES:-}
+      # 2026-11-01: these were documented in .env but never passed to the container
+      ADMIN_WHATSAPP: ${ADMIN_WHATSAPP:-}
+      SIGNUP_OTP: ${SIGNUP_OTP:-false}
+      OTP_DEV_ECHO: ${OTP_DEV_ECHO:-false}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+      SMTP_STARTTLS: ${SMTP_STARTTLS:-true}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      AI_MODEL: ${AI_MODEL:-claude-opus-5-5}
+      AI_VISION_MODEL: ${AI_VISION_MODEL:-claude-haiku-5-5}
+      AI_DAILY_LIMIT: ${AI_DAILY_LIMIT:-200}
+      # renewal / license keys (docs/19 §E, docs/28): the private key signs, only on this server
+      RENEWAL_PRIVATE_KEY: ${RENEWAL_PRIVATE_KEY:-}
+      RENEWAL_PUBLIC_KEY: ${RENEWAL_PUBLIC_KEY:-En5rRS7S_HhTvmEyAz1-5pS0AOsOJQIXiXmENyoa95o}
     volumes:
       - uploads:/data/uploads
     networks:

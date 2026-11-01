@@ -13,6 +13,7 @@ from app.db.base import ZERO, utcnow
 from app.db.refs import user_name
 from app.modules.accessories import service as acc_stock
 from app.modules.audit.service import record_audit
+from app.modules.auth import profile
 from app.modules.auth.models import Shop
 from app.modules.catalogue.models import Brand, Model
 from app.modules.devices.models import Device, DeviceAccessoryItem
@@ -651,7 +652,6 @@ def receipt_html(
     e = html.escape
     thermal = fmt == "thermal"
     width = "72mm" if thermal else "190mm"
-    shop_name = e(shop.name_ur) if ur and shop.name_ur else e(shop.name)
     rows = "".join(
         f"<tr><td>{e(ln['device_label'] or ln['description'] or '')}{_unit_bits(ln, ur)}<br><small>{e(ln['imei1'] or '')}"
         f"{' · ' + e(', '.join(ln['accessories_given'])) if ln['accessories_given'] else ''}"
@@ -742,17 +742,17 @@ th {{ border-bottom: 1px solid #111; text-align: {"right" if ur else "left"}; fo
 tr.tot td {{ border-top: 1px solid #111; font-weight: bold; }}
 small {{ color: #555; direction: ltr; unicode-bidi: isolate; }} .foot {{ margin-top: 10px; border-top: 1px dashed #999; padding-top: 6px; }}
 </style></head><body>
-<h1>{shop_name}</h1>
-<div class="c"><small>{e(shop.address or "")} {e(shop.city or "")}<br>{e(shop.phone or "")}{(" · NTN " + e(shop.ntn)) if shop.ntn else ""}</small></div>
+{profile.header_html(shop, ur, thermal)}
 <table><tr><td><b>{e(inv.no)}</b></td><td class="n">{inv.date.strftime("%d-%m-%Y")}</td></tr><tr><td colspan="2">{party_html}</td></tr></table>
 <table><thead><tr><th>{T["item"]}</th><th class="n">{T["qty"]}</th><th class="n">{T["price"]}</th><th class="n">{T["total"]}</th></tr></thead>
 <tbody>{rows}
 <tr><td colspan="3">{T["subtotal"]}</td><td class="n">{inv.subtotal:,.0f}</td></tr>{disc_html}{tax_html}
-<tr class="tot"><td colspan="3">{T["grand"]}</td><td class="n">Rs. {inv.total:,.0f}</td></tr>
+<tr class="tot"><td colspan="3">{T["grand"]}</td><td class="n">{e(profile.money(shop, inv.total))}</td></tr>
 <tr><td colspan="3">{T["paid"]}</td><td class="n">{inv.paid:,.0f}</td></tr>{paid_by_html}
 <tr><td colspan="3">{T["due"]}</td><td class="n">{out["balance_due"]:,.0f}</td></tr>{plan_html}{balance_html}
 </tbody></table>
 {pending_html}
+{profile.footer_html(shop, ur)}
 <div class="foot c">{e(T["thanks"])}</div>
 </body></html>"""
 

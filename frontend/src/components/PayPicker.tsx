@@ -4,7 +4,7 @@
 import { BookOpen, Banknote, Globe, Landmark, ScrollText, type LucideIcon } from 'lucide-react'
 import { BiInput, BiLabel, useLang } from './Bilingual'
 import Help from './Help'
-import { formatMoney, isoDay } from '@/lib/format'
+import { cur, formatMoney, isoDay } from '@/lib/format'
 import { ALL_BANKS, CURRENCIES, POPULAR_BANKS, REMIT_SERVICES } from '@/lib/pkPayments'
 
 export type PayMethod = 'cash' | 'online' | 'cheque' | 'remittance' | 'udhaar'
@@ -121,7 +121,7 @@ export default function PayPicker({ value, onChange, remittance = false, udhaar 
           </div>
           <div className="grid grid-cols-2 items-start gap-2">
             <BiInput label={{ en: `Amount (${value.currency})`, ur: `رقم (${value.currency})`, roman: `Kitne ${value.currency}` }} type="number" inputMode="decimal" min={0} value={value.foreign} onChange={(e) => set({ foreign: e.target.value })} className="num" />
-            <BiInput label={{ en: `1 ${value.currency} = Rs.`, ur: `1 ${value.currency} = روپے`, roman: `1 ${value.currency} = Rs.` }} type="number" inputMode="decimal" min={0} value={value.rate} onChange={(e) => set({ rate: e.target.value })} className="num" />
+            <BiInput label={{ en: `1 ${value.currency} = ${cur()}`, ur: `1 ${value.currency} = روپے`, roman: `1 ${value.currency} = ${cur()}` }} type="number" inputMode="decimal" min={0} value={value.rate} onChange={(e) => set({ rate: e.target.value })} className="num" />
           </div>
           <div className="flex items-center justify-between rounded-2xl bg-ground px-4 py-3">
             <BiLabel text="paym.inRupees" size="md" tone="text-muted" />

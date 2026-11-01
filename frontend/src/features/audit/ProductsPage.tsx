@@ -10,6 +10,7 @@ import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
 import AuditLayout from './AuditLayout'
 import { useAuditPeriod } from './period'
+import {withCur } from '@/lib/format'
 
 type M = string
 type Group = 'model' | 'brand' | 'category'
@@ -39,13 +40,13 @@ export default function ProductsPage() {
         <>
           <section className="grid grid-cols-2 gap-2 lg:grid-cols-4" data-testid="prod-kpis">
             <Kpi k="audit.prod.unitsSold" v={`${data.total_units}`} />
-            <Kpi k="audit.netSales" v={`Rs. ${n(data.total_revenue)}`} />
-            {canCost ? <Kpi k="counter.grossProfit" v={`Rs. ${n(data.total_profit)}`} /> : null}
+            <Kpi k="audit.netSales" v={`${withCur(n(data.total_revenue))}`} />
+            {canCost ? <Kpi k="counter.grossProfit" v={`${withCur(n(data.total_profit))}`} /> : null}
             <Kpi k="audit.prod.classes" v={`${data.classes.top} · ${data.classes.average} · ${data.classes.low}`} sub={`${pick('audit.prod.top')} · ${pick('audit.prod.average')} · ${pick('audit.prod.low')}`} />
           </section>
           <section className="card" data-testid="prod-series">
             <BiLabel text="audit.prod.soldVsBought" size="sm" tone="text-muted" bold />
-            <Bars data={data.series.map((s) => ({ label: label(s.bucket, data.granularity), value: s.units, hint: `${pick('audit.prod.bought')} ${s.bought_units} · Rs. ${n(s.revenue)}`, key: s.bucket }))} tone="rgb(var(--emerald))" height={110} empty="audit.noData" />
+            <Bars data={data.series.map((s) => ({ label: label(s.bucket, data.granularity), value: s.units, hint: `${pick('audit.prod.bought')} ${s.bought_units} · ${withCur(n(s.revenue))}`, key: s.bucket }))} tone="rgb(var(--emerald))" height={110} empty="audit.noData" />
             <Bars data={data.series.map((s) => ({ label: label(s.bucket, data.granularity), value: s.bought_units, key: `b${s.bucket}` }))} tone="rgb(var(--receivable))" height={60} empty="audit.noData" />
           </section>
           <div className="flex flex-wrap items-center gap-1.5">
@@ -58,7 +59,7 @@ export default function ProductsPage() {
                 <Link key={r.key} to={r.model_id ? `/stock?q=${encodeURIComponent(r.label)}` : '/accessories'} className="tap flex flex-col gap-1 px-4 py-2.5">
                   <div className="flex items-center justify-between gap-2">
                     <span className="flex min-w-0 items-center gap-2"><span className="truncate font-bold">{r.label}</span><span className={`shrink-0 rounded-full px-2 py-0.5 ${tone(r.performance)} ${ur ? cls('sm') : 'text-[11px] font-bold'}`}>{pick(`audit.prod.${r.performance}`)}</span></span>
-                    <span className="num font-bold" dir="ltr">{r.units} <span className="text-muted">·</span> Rs. {n(r.revenue)}</span>
+                    <span className="num font-bold" dir="ltr">{r.units} <span className="text-muted">·</span> {withCur(n(r.revenue))}</span>
                   </div>
                   <div className="h-1.5 w-full overflow-hidden rounded-full bg-ground"><div className="h-full rounded-full bg-emerald" style={{ width: `${Math.max(2, r.share)}%` }} /></div>
                   <div className={`flex flex-wrap gap-x-3 text-muted ${small}`} dir="auto">
