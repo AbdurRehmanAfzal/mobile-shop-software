@@ -1878,7 +1878,7 @@
   "landing": {
     "badge": "For mobile shops in Pakistan",
     "h1": "Run your mobile shop from your phone",
-    "sub": "New and used phones, ID check of the seller, udhaar khata, repairs, accessories, WhatsApp receipts — and now a full shop audit with charts, Excel import of your old stock, and an assistant that answers from your own data.",
+    "sub": "New and used phones, tablets and smart watches with their own barcodes, accessories bought by the dozen and sold by the piece, udhaar khata, repairs, WhatsApp receipts, a full shop audit with charts — in Urdu and English.",
     "ctaTrial": "Start free for {{n}} days",
     "waHello": "Assalam-o-Alaikum, I want to know about the Mobile Shop software.",
     "point1": "Works on any phone",
@@ -2001,7 +2001,12 @@
       "audit": "Shop audit",
       "bulk": "Excel import",
       "history": "Phone's history",
-      "finance": "Profit & cash charts"
+      "finance": "Profit & cash charts",
+      "items": "An item's page",
+      "tablet": "A tablet's page",
+      "count": "Stock count",
+      "itemreports": "Item reports",
+      "label": "Barcode labels"
     },
     "priceTitle": "Simple monthly price",
     "priceSub": "Start with {{n}} days free. Pay monthly, no contract. Prices in PKR per shop.",
@@ -2048,6 +2053,10 @@
       "cancel": {
         "q": "Can I stop any time?",
         "a": "Yes. Pay month by month; your data stays yours and can be downloaded as Excel at any time."
+      },
+      "scanner": {
+        "q": "Which barcode scanner works?",
+        "a": "Any USB or Bluetooth scanner that types like a keyboard — most do, and they cost about three to eight thousand rupees. Plug it in and scan, no setup. Without one, the phone camera reads IMEIs and barcodes too."
       }
     },
     "footer": "Made in Pakistan for Pakistani mobile shops.",
@@ -2055,10 +2064,10 @@
     "haveShop": "Already a customer? Log in ›",
     "webTitle": "On a laptop too",
     "webSub": "The same shop in the browser on a laptop or desktop: a side menu with keyboard shortcuts (F2 sale, F3 add stock…), wide lists and reports. One login, every device.",
-    "point4": "Shop audit with charts",
+    "point4": "Barcode scanner on every screen",
     "newBadge": "New",
     "newTitle": "What came in the last round",
-    "newSub": "Built from what shopkeepers asked for in testing — all included, in Urdu and English.",
+    "newSub": "Built from what shopkeepers asked for — the newest first, all included, in Urdu and English.",
     "new": {
       "audit": {
         "t": "Shop audit, any period",
@@ -2099,6 +2108,34 @@
       "windows": {
         "t": "One-PC Windows install",
         "d": "A shop without internet can run everything on one Windows PC with a setup file and nightly backups."
+      },
+      "barcode": {
+        "t": "Barcode on every unit, any scanner",
+        "d": "Each phone and item gets its own barcode the moment you buy it; labels print in your size. Plug in any USB or Bluetooth scanner: scan to sell, scan to find, scan the box's IMEI into a purchase."
+      },
+      "items": {
+        "t": "Accessories by the dozen, sold by the piece",
+        "d": "Buy 5 dozen cables at Rs. 1,200 a dozen — stock shows 60 pieces at Rs. 100 each. Brand, quality, fits which phone, wholesale and minimum price; every purchase batch kept with what is still left."
+      },
+      "devices": {
+        "t": "Tablets & smart watches, one by one",
+        "d": "Wi-Fi or SIM, RAM, storage, battery health, case size and the full spec sheet — your model library fills it the next time. The same history, bills and khata as phones."
+      },
+      "lock": {
+        "t": "Lock check before you buy",
+        "d": "A used tablet or watch is bought only after iCloud / Google / paired-device locks are checked; a device with a lock still on cannot be sold. Every check is on its history with who and when."
+      },
+      "count": {
+        "t": "Stock count with the scanner",
+        "d": "Scan everything on the shelf; the app tells you what is missing and what should not be there."
+      },
+      "itemreports": {
+        "t": "Item reports & a ready order list",
+        "d": "Low stock grouped by supplier with what to order, stock value at cost and at sale price, fast and slow items, dead stock, profit by brand — and change prices by % in one go."
+      },
+      "reminders": {
+        "t": "Clear plan reminders, data never locked",
+        "d": "A calm bar before your plan ends, pay from the app with the bank details shown, and even after the date you can still pay, export and download a full backup."
       }
     },
     "float": {

@@ -1878,7 +1878,7 @@
   "landing": {
     "badge": "Pakistan ki mobile shops ke liye",
     "h1": "Apni mobile shop apne phone se chalayein",
-    "sub": "Naye aur purane mobile, bechne wale ki shanakht, udhaar khata, marammat, accessories, WhatsApp raseedein — aur ab charts ke saath poori dukaan ka audit, purane stock ki Excel se import, aur ek assistant jo aap ke apne data se jawab deta hai.",
+    "sub": "Naye aur purane mobile, tablet aur smart watch apne barcode ke saath, darjan mein khareedi aur aik aik kar ke bikne wali accessories, udhaar khata, marammat, WhatsApp raseedein, charts ke saath poori dukaan ka audit — Urdu aur English mein.",
     "ctaTrial": "{{n}} din muft shuru karein",
     "waHello": "Assalam-o-Alaikum, mujhe Mobile Shop software ke baare mein jaanna hai.",
     "point1": "Har phone par chalta hai",
@@ -2001,7 +2001,12 @@
       "audit": "Dukaan ka audit",
       "bulk": "Excel import",
       "history": "Mobile ki kahani",
-      "finance": "Munafa aur naqd ke chart"
+      "finance": "Munafa aur naqd ke chart",
+      "items": "Item ka page",
+      "tablet": "Tablet ka page",
+      "count": "Stock ginti",
+      "itemreports": "Item reports",
+      "label": "Barcode label"
     },
     "priceTitle": "Saada mahana qeemat",
     "priceSub": "{{n}} din muft se shuru karein. Mahina-war adaigi, koi contract nahi. Qeemat PKR mein fi dukaan.",
@@ -2048,6 +2053,10 @@
       "cancel": {
         "q": "Kya main kisi bhi waqt chhor sakta hoon?",
         "a": "Ji haan. Mahina-war adaigi; aap ka data aap ka hai aur kisi bhi waqt Excel mein download ho sakta hai."
+      },
+      "scanner": {
+        "q": "Kaun sa barcode scanner chalta hai?",
+        "a": "Koi bhi USB ya Bluetooth scanner jo keyboard ki tarah likhe — zyada tar aise hi hain, teen se aath hazaar rupay ke. Lagayein aur scan karein, koi setting nahi. Scanner na ho to phone ka camera bhi IMEI aur barcode parhta hai."
       }
     },
     "footer": "Pakistan mein, Pakistani mobile shops ke liye banaya gaya.",
@@ -2055,10 +2064,10 @@
     "haveShop": "Pehle se customer hain? Login ›",
     "webTitle": "Laptop par bhi",
     "webSub": "Wohi dukaan laptop ya desktop ke browser mein: keyboard shortcut wala side menu (F2 sale, F3 stock…), chaurri lists aur reports. Ek login, har device.",
-    "point4": "Charts ke saath dukaan ka audit",
+    "point4": "Har screen par barcode scanner",
     "newBadge": "Naya",
     "newTitle": "Pichhle daur mein kya aaya",
-    "newSub": "Dukaandaron ne testing mein jo manga usi se bana — sab shamil, Urdu aur English mein.",
+    "newSub": "Dukaandaron ne jo manga usi se bana — sab se naya sab se upar, sab shamil, Urdu aur English mein.",
     "new": {
       "audit": {
         "t": "Dukaan ka audit, kisi bhi arse ka",
@@ -2099,6 +2108,34 @@
       "windows": {
         "t": "Ek PC par Windows install",
         "d": "Internet ke baghair dukaan sab kuch ek Windows PC par chala sakti hai, setup file aur raat ke backup ke saath."
+      },
+      "barcode": {
+        "t": "Har unit ka barcode, koi bhi scanner",
+        "d": "Khareedte hi har mobile aur item ka apna barcode banta hai; label aap ke size mein print. Koi bhi USB ya Bluetooth scanner lagayein: scan kar ke bechein, dhoondein, dabbe ka IMEI purchase mein daalein."
+      },
+      "items": {
+        "t": "Accessories darjan mein, bikein aik aik",
+        "d": "5 darjan cable 1,200 rupay darjan khareedein — stock mein 60 piece, 100 rupay fi piece. Brand, quality, kis phone ke liye, wholesale aur kam se kam qeemat; har purchase ka lot mehfooz ke kitna baqi hai."
+      },
+      "devices": {
+        "t": "Tablet aur smart watch, aik aik kar ke",
+        "d": "Wi-Fi ya SIM, RAM, storage, battery health, case size aur poori specs — agli baar aap ki model library khud bhar deti hai. Mobile jaisi hi history, bill aur khata."
+      },
+      "lock": {
+        "t": "Khareedne se pehle lock check",
+        "d": "Used tablet ya watch sirf iCloud / Google / paired lock check hone ke baad khareedi jati hai; lock lagi device bechi nahi ja sakti. Har check kis ne aur kab kiya, history mein darj."
+      },
+      "count": {
+        "t": "Scanner se stock ginti",
+        "d": "Shelf par sab kuch scan karein; app batati hai kya ghaib hai aur kya yahan nahi hona chahiye."
+      },
+      "itemreports": {
+        "t": "Item reports aur tayyar order list",
+        "d": "Kam stock supplier ke hisaab se kya mangwana hai ke saath, cost aur sale price par stock ki maliyat, tez aur sust item, ruka hua stock, brand ke hisaab se munafa — aur aik saath % se qeematein badlein."
+      },
+      "reminders": {
+        "t": "Wazeh plan yaad dehani, data kabhi band nahi",
+        "d": "Plan khatam hone se pehle pursukoon patti, dikhayi gayi bank tafseel se app mein adaigi, aur tareekh ke baad bhi adaigi, export aur poora backup download ho sakta hai."
       }
     },
     "float": {

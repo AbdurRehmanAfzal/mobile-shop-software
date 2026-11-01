@@ -52,7 +52,8 @@ async function seed() {
   const bilal = await post('/parties', { name: 'Bilal Ahmed', phone: '03215550002', kinds: ['customer'] })
   const usman = await post('/parties', { name: 'Usman Tariq', phone: '03215550004', kinds: ['customer'] })
   const dealer = await post('/parties', { name: 'Rehman Traders', phone: '03005550003', kinds: ['supplier'] })
-  const day = (n) => { const d = new Date(); d.setDate(d.getDate() - n); return d.toISOString().slice(0, 10) }
+  // the shop's local day (a UTC slice is yesterday after midnight PKT)
+  const day = (n) => { const d = new Date(); d.setDate(d.getDate() - n); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` }
   // a supplier purchase with part payment (so the audit has a supplier side)
   const tecno = brand('Tecno') ?? brand('Infinix')
   const tm = tecno ? await model(tecno, tecno.name === 'Tecno' ? 'Spark' : 'Smart') : null
@@ -71,6 +72,23 @@ async function seed() {
   await post('/sales', { party_id: ali.id, devices: [{ device_id: ids[5], price: 52000 }], paid: 52000 }).catch(() => undefined)
   await post('/payments', { party_id: bilal.id, direction: 'in', amount: 6000 }).catch(() => undefined)
   await post('/accessories', { name: 'Type-C charger 25W', category: 'charger', price: 1500, reorder_level: 5, opening_qty: 12, opening_cost: 900 })
+  // owner addendum 5: a cable with its card, bought by the dozen twice, some sold — batches, timeline, reports
+  const cable = await post('/accessories', { name: 'Baseus Type-C cable 1m', category: 'cable', price: 300, reorder_level: 20, brand: 'Baseus', grade: 'original', color: 'Black', compatible: 'All Type-C phones', wholesale_price: 220, min_price: 200, warranty_days: 30, location: 'Rack A2' })
+  await post('/purchases', { kind: 'supplier', party_id: dealer.id, date: day(20), supplier_invoice_no: 'RT-1042', misc: [{ description: cable.name, accessory_id: cable.id, qty: 3, unit: 'dozen', unit_cost: 1200 }], paid: 3600 }).catch((e) => console.log(e.message))
+  await post('/purchases', { kind: 'supplier', party_id: dealer.id, date: day(6), supplier_invoice_no: 'RT-1077', misc: [{ description: cable.name, accessory_id: cable.id, qty: 2, unit: 'dozen', unit_cost: 1320 }], extra_costs: 240, paid: 1500 }).catch((e) => console.log(e.message))
+  await post('/sales', { party_id: ali.id, date: day(4), misc: [{ description: cable.name, accessory_id: cable.id, qty: 6, unit_price: 300 }], paid: 1800 }).catch(() => undefined)
+  await post('/sales', { date: day(1), misc: [{ description: cable.name, accessory_id: cable.id, qty: 4, unit_price: 300 }], paid: 1200 }).catch(() => undefined)
+  await post('/accessories', { name: 'Silicone cover iPhone 13', category: 'cover', price: 650, reorder_level: 6, brand: 'Generic', opening_qty: 3, opening_cost: 280 }).catch(() => undefined)
+  // owner addendum 6: a SIM tablet with its spec sheet and a used watch with its lock check
+  let tabletId = ''
+  const sam = brand('Samsung'); const tabModel = sam ? await model(sam, 'Galaxy Tab A9+') : null
+  if (sam && tabModel) {
+    const tp = await post('/purchases', { kind: 'supplier', party_id: dealer.id, date: day(3), devices: [{ device: { category: 'tablet', cellular: true, imei1: '350123451234560', brand_id: sam.id, model_id: tabModel.id, storage_id: st(128).id, colour_id: col('Black').id, condition: 'box_pack', pta_status: 'pta_approved', ram_gb: 8, warranty_months: 12, warranty_by: 'brand', model_number: 'SM-X216B', specs: { os: 'Android 14', chipset: 'Snapdragon 695', display_in: 11, display_type: 'LCD', refresh_hz: 90, battery_mah: 7040, sim_type: 'nano', camera_rear_mp: 8, camera_front_mp: 5, port: 'Type-C', expandable: true } }, cost: 61000, asking_price: 68500 }], paid: 61000 }).catch((e) => { console.log(e.message); return null })
+    tabletId = tp?.lines?.[0]?.device_id ?? ''
+  }
+  const apple = brand('Apple'); const watchModel = apple ? await model(apple, 'Watch Series 9') : null
+  let watchId = ''
+  if (apple && watchModel) watchId = (await post('/devices/opening-stock', { category: 'watch', cellular: false, serial: 'H4KQ9X2LM1', brand_id: apple.id, model_id: watchModel.id, condition: 'used', grade: 'a', size_mm: 45, battery_health: 92, cost_price: 62000, asking_price: 71000, lock_checks: { activation: 'cleared', paired: 'cleared' }, specs: { os: 'watchOS 10', water: 'WR50', sensors: ['hr', 'spo2', 'ecg'], aod: true } }).catch((e) => { console.log(e.message); return {} })).id ?? ''
   await post('/accessories', { name: 'Tempered glass', category: 'glass', price: 300, reorder_level: 10, opening_qty: 4, opening_cost: 120 }).catch(() => undefined)
   await post('/repairs', { party_id: ali.id, device_desc: 'Samsung A54 — screen', imei: '490154203237526', fault_codes: ['screen'], estimate: 9500, advance: 3000 }).catch(() => undefined)
   const cats = await get('/expenses/categories').catch(() => [])
@@ -78,7 +96,7 @@ async function seed() {
   for (const [k, amount, desc, n] of [['electricity', 6200, null, 8], ['tea', 800, null, 3], ['transport', 1500, null, 1]]) {
     if (cat(k)) await post('/expenses', { category_id: cat(k).id, amount, description: desc, date: day(n) }).catch(() => undefined)
   }
-  return { phone: PHONE, deviceId: ids[1] }
+  return { phone: PHONE, deviceId: ids[1], itemId: cable.id, tabletId, watchId, headers: h }
 }
 
 async function login(page, locale) {
@@ -112,6 +130,20 @@ async function shots(browser, locale) {
   await take('finance', '/audit/finance?preset=this_month')
   await take('bulk', '/more/bulk', async () => { await page.getByTestId('bulk-page').getByRole('button', { name: /Phones|موبائل/ }).first().click(); await page.waitForTimeout(400) })
   await take('history', `/stock/${seeded.deviceId}`, async () => { await page.mouse.wheel(0, 1250); await page.waitForTimeout(700) })
+  await take('items', `/accessories/${seeded.itemId}`, async () => { await page.mouse.wheel(0, 520); await page.waitForTimeout(600) })
+  if (seeded.tabletId) await take('tablet', `/stock/${seeded.tabletId}`, async () => { await page.mouse.wheel(0, 760); await page.waitForTimeout(600) })
+  await take('itemreports', '/accessories/reports')
+  await take('count', '/stock/count', async () => { for (const code of ['MS000001', 'MS000002', '350123451234560']) { await page.keyboard.type(code, { delay: 5 }); await page.keyboard.press('Enter'); await page.waitForTimeout(500) } await page.getByRole('button', { name: /Check against stock|اسٹاک سے ملائیں|جانچ/ }).first().click().catch(() => undefined); await page.waitForTimeout(900) })
+  // the printed stickers: the label page the sheet opens, shown at a readable size
+  {
+    const ids = [seeded.deviceId, seeded.tabletId, seeded.watchId].filter(Boolean).join(',')
+    const q = new URLSearchParams({ ids, size: '50x30', copies: '1', fields: 'shop,name,specs,price,barcode,imei,condition', lang: locale })
+    const html = await (await fetch(`${API}/labels/devices?${q}`, { headers: seeded.headers })).text()
+    await page.setContent(html, { waitUntil: 'networkidle' })
+    await page.addStyleTag({ content: 'body{background:#eef2f7;display:flex;flex-direction:column;align-items:center;gap:18px;padding:40px 0;margin:0}.label{box-shadow:0 6px 18px rgba(14,22,19,.15);background:#fff;transform:scale(1.55);transform-origin:top center;margin-bottom:105px}' })
+    await page.waitForTimeout(400)
+    await page.screenshot({ path: join(OUT, `label-${locale}.png`) })
+  }
   await ctx.close()
 }
 
@@ -136,6 +168,7 @@ async function webShots(browser, locale) {
   await take('audit', '/audit?preset=this_month')
   await take('finance', '/audit/finance?preset=this_month')
   await take('bulk', '/more/bulk', async () => { await page.getByTestId('bulk-page').getByRole('button', { name: /Phones|موبائل/ }).first().click(); await page.waitForTimeout(400) })
+  await take('items', `/accessories/${seeded.itemId}`)
   await ctx.close()
 }
 
@@ -188,7 +221,7 @@ async function video(browser) {
 }
 
 const browser = await chromium.launch()
-let seeded = { phone: PHONE, deviceId: '' }
+let seeded = { phone: PHONE, deviceId: '', itemId: '', tabletId: '', watchId: '', headers: {} }
 const only = process.argv[2] // "shots" skips the video
 try {
   seeded = await seed()
