@@ -59,6 +59,10 @@ class Settings(BaseSettings):
     # install carries the public key. `python -m app.modules.plan.renewal keygen` makes a pair.
     renewal_private_key: str = ""
     renewal_public_key: str = "En5rRS7S_HhTvmEyAz1-5pS0AOsOJQIXiXmENyoa95o"
+    # provider console (docs/28): the one-PC install tells the SaaS server it is alive (version,
+    # plan end, keys used) when it has internet; empty = never
+    saas_url: str = ""
+    app_version: str = "2.0"
 
     @property
     def superusers(self) -> set[str]:

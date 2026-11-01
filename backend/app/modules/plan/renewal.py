@@ -58,6 +58,12 @@ def make_code(org_id: uuid.UUID, months: int, issued: dt.date | None = None) -> 
     return f"{PREFIX}.{_b64(body)}.{_b64(sig)}"
 
 
+def parse_nonce(code: str) -> str:
+    """the nonce of a code made here (no signature check: the provider just signed it)"""
+    body = _unb64("".join(code.split()).split(".")[1])
+    return body.decode().split("|")[3]
+
+
 def parse_code(code: str) -> dict:
     """Checks the signature with the public key and returns org_id, months, issued, nonce.
     Raises ValidationFailed `renewal_code_invalid` on anything wrong."""

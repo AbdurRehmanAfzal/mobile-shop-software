@@ -84,7 +84,32 @@ def get_current_user(
     user = db.get(User, uuid.UUID(payload["sub"]))
     if user is None or not user.is_active:
         raise Unauthorized(code="user_inactive")
+    _touch(db, user)
     return CurrentUser(user=user)
+
+
+_touched: dict[uuid.UUID, float] = {}
+
+
+def _touch(db: Session, user: User) -> None:
+    """provider console (docs/28): when a shop last used the app. Written at most once a minute per
+    organisation, before the request's own work, so it never mixes with a document's transaction."""
+    import time
+
+    from sqlalchemy import update
+
+    from app.db.base import utcnow
+    from app.modules.auth.models import Organisation
+
+    now = time.monotonic()
+    if now - _touched.get(user.organisation_id, -1e9) < 60:
+        return
+    _touched[user.organisation_id] = now
+    try:
+        db.execute(update(Organisation).where(Organisation.id == user.organisation_id).values(last_active_at=utcnow()))
+        db.commit()
+    except Exception:  # noqa: BLE001 — activity is best-effort, never blocks a request
+        db.rollback()
 
 
 def get_current_context(

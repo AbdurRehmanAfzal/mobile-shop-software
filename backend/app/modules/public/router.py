@@ -132,3 +132,65 @@ def request_shop(data: RequestIn, db: DB):
     db.commit()
     jobs.dispatch(db)
     return {"id": str(req.id), "ok": True}
+
+
+# ---- provider console (docs/28): the magic link that shows a license key, and the heartbeat --------
+
+
+@router.get("/key/{token}")
+def show_key(token: str, db: DB):
+    """A shopkeeper who lost the renewal key opens the link sent on WhatsApp / SMS: the key, its
+    months and the steps. Valid 7 days; every open is counted."""
+    from app.modules.admin import licenses
+    from app.modules.auth.models import Shop
+
+    k = licenses.by_token(db, token)
+    k.view_count += 1
+    k.last_viewed_at = utcnow()
+    shop = db.get(Shop, k.shop_id)
+    db.commit()
+    return {
+        "shop": shop.name if shop else "",
+        "months": k.months,
+        "code": k.code,
+        "status": k.status,
+        "issued_at": k.issued_at,
+        "expires_at": k.view_expires_at,
+    }
+
+
+class HeartbeatIn(BaseModel):
+    org_id: uuid.UUID
+    install_id: str = Field(min_length=4, max_length=64)
+    version: str | None = Field(default=None, max_length=40)
+    plan_expires_at: dt.datetime | None = None
+    redeemed: list[str] = Field(default_factory=list, max_length=200)
+
+
+@router.post("/heartbeat")
+def heartbeat(data: HeartbeatIn, db: DB):
+    """A one-PC install with internet says it is alive (docs/28): the provider sees it as an offline
+    customer with its last-seen time and version; keys it redeemed are marked used. The answer
+    lists keys the provider revoked."""
+    from app.modules.admin import licenses
+    from app.modules.auth.models import Organisation
+
+    org = db.get(Organisation, data.org_id)
+    if org is None:
+        return {"ok": False}
+    org.deployment = "local"
+    org.install_last_seen_at = utcnow()
+    org.install_version = data.version
+    for nonce in data.redeemed:
+        licenses.mark_redeemed(db, nonce, "local")
+    revoked = [
+        k.nonce
+        for k in db.scalars(
+            select(licenses.LicenseKey).where(
+                licenses.LicenseKey.organisation_id == org.id,
+                licenses.LicenseKey.status == licenses.REVOKED,
+            )
+        ).all()
+    ]
+    db.commit()
+    return {"ok": True, "revoked": revoked}

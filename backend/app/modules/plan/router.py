@@ -65,9 +65,22 @@ def thanks(data: ThanksIn, ctx: Money, db: DB):
 @router.post("/redeem")
 def redeem(data: RedeemIn, ctx: Owner, db: DB):
     """A signed renewal code from the provider (works offline): extends the plan once."""
+    from app.core.config import settings
+    from app.modules.admin import licenses
+
     info = renewal.parse_code(data.code)
     org = ctx.shop.organisation
-    if info["org_id"] != org.id:
+    if licenses.is_revoked(db, info["nonce"]):
+        raise ValidationFailed(
+            code="renewal_code_revoked",
+            message_en="This renewal code was cancelled by the software provider",
+            message_ur="یہ تجدیدی کوڈ سافٹ ویئر فراہم کرنے والے نے منسوخ کر دیا ہے",
+        )
+    # the one-PC install has its own organisation id: the first valid key links it to the
+    # customer it was issued for, and later keys must be for the same customer (docs/28)
+    if settings.local_mode and org.license_org_id is None and info["org_id"] != org.id:
+        org.license_org_id = info["org_id"]
+    if info["org_id"] not in (org.id, org.license_org_id):
         raise ValidationFailed(
             code="renewal_code_other_shop",
             message_en="This renewal code was issued for a different shop",
@@ -79,6 +92,7 @@ def redeem(data: RedeemIn, ctx: Owner, db: DB):
             message_en="This renewal code has already been used",
             message_ur="یہ تجدیدی کوڈ پہلے استعمال ہو چکا ہے",
         )
+    licenses.mark_redeemed(db, info["nonce"], "local" if settings.local_mode else "cloud")
     db.add(
         PlanRenewalCode(
             organisation_id=org.id,
