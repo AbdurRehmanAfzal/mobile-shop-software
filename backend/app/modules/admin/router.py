@@ -91,6 +91,25 @@ class ManualPaymentIn(BaseModel):
 
 class RenewalCodeIn(BaseModel):
     months: int = Field(default=1, ge=1, le=36)
+    note: str | None = Field(default=None, max_length=200)
+
+
+class KeySendIn(BaseModel):
+    via: Literal["whatsapp", "sms", "copy", "link"] = "whatsapp"
+    site: str = Field(default="", max_length=200)
+
+
+class KeyRevokeIn(BaseModel):
+    reason: str | None = Field(default=None, max_length=200)
+
+
+class KeyRenewIn(BaseModel):
+    months: int | None = Field(default=None, ge=1, le=36)
+    revoke_old: bool = True
+
+
+class DeploymentIn(BaseModel):
+    deployment: Literal["cloud", "local"]
 
 
 class BillingIn(BaseModel):
@@ -415,11 +434,13 @@ def record_payment(shop_id: uuid.UUID, data: ManualPaymentIn, current: Super, db
 
 @router.post("/shops/{shop_id}/renewal-code")
 def renewal_code(shop_id: uuid.UUID, data: RenewalCodeIn, current: Super, db: DB):
-    """A signed code the owner pastes in More → Software fees (works offline, once)."""
-    from app.modules.plan import renewal
+    """A signed code the owner pastes in More → Software fees (works offline, once). Kept in
+    `license_keys` (docs/28) so it can be found, resent, renewed or revoked later."""
+    from app.modules.admin import licenses
 
     shop = _shop(db, shop_id)
-    code = renewal.make_code(shop.organisation_id, data.months)
+    key = licenses.issue(db, shop, current.id, data.months, data.note)
+    code = key.code
     record_audit(
         db,
         shop_id=shop.id,
@@ -430,7 +451,7 @@ def renewal_code(shop_id: uuid.UUID, data: RenewalCodeIn, current: Super, db: DB
         after={"months": data.months},
     )
     db.commit()
-    return {"code": code, "months": data.months, "shop": shop.name}
+    return {"code": code, "months": data.months, "shop": shop.name, "key": licenses.to_out(key, shop.name)}
 
 
 @router.get("/payment-accounts")
@@ -494,3 +515,134 @@ def set_modules(shop_id: uuid.UUID, data: ModulesIn, current: Super, db: DB):
     db.commit()
     db.refresh(shop)
     return _rows(db, [shop])[0]
+
+
+
+# ---- provider console (docs/28) ------------------------------------------------------------------
+
+
+@router.get("/business/overview")
+def business_overview(_: Super, db: DB):
+    """MRR, collections (total / this month / last month / by month / by channel / by plan),
+    pending, coming and overdue fees, cloud vs one-PC, who is using the app, keys"""
+    from app.modules.admin import business
+    from app.modules.shopaudit.router import plain
+
+    return plain(business.overview(db))
+
+
+@router.get("/business/shops")
+def business_shops(
+    _: Super,
+    db: DB,
+    q: str | None = Query(default=None, max_length=80),
+    deployment: str | None = Query(default=None, pattern="^(cloud|local)$"),
+    status: str | None = Query(default=None, pattern="^(ok|due|due_soon|expired|locked|unlimited)$"),
+):
+    from app.modules.admin import business
+    from app.modules.shopaudit.router import plain
+
+    return plain(business.shops(db, q, deployment, status))
+
+
+@router.get("/business/payments")
+def business_payments(
+    _: Super,
+    db: DB,
+    method: str | None = Query(default=None, max_length=60),
+    status: str | None = Query(default=None, pattern="^(pending|approved|rejected)$"),
+    q: str | None = Query(default=None, max_length=80),
+    date_from: date | None = None,
+    date_to: date | None = None,
+):
+    from app.modules.admin import business
+    from app.modules.shopaudit.router import plain
+
+    return plain(business.payments(db, method, status, q, date_from, date_to))
+
+
+@router.get("/business/keys")
+def business_keys(
+    _: Super,
+    db: DB,
+    status: str | None = Query(default=None, pattern="^(issued|redeemed|revoked)$"),
+    shop_id: uuid.UUID | None = None,
+    q: str | None = Query(default=None, max_length=80),
+):
+    from app.modules.admin import business
+
+    return business.keys(db, status, shop_id, q)
+
+
+def _key_audit(db, current, k, action: str, after: dict | None = None) -> None:
+    record_audit(db, shop_id=k.shop_id, user_id=current.id, entity="license_key", entity_id=k.id, action=action, after=after or {})
+
+
+@router.post("/keys/{key_id}/send")
+def send_key(key_id: uuid.UUID, data: KeySendIn, current: Super, db: DB):
+    """resend a key: WhatsApp / SMS links with the key, its steps and the magic link (free — the
+    owner's own phone sends it); a fresh 7-day link when the old one ran out"""
+    from app.modules.admin import licenses
+
+    k = licenses.get(db, key_id)
+    if k.status == licenses.REVOKED:
+        raise Forbidden(code="key_revoked", message_en="This key was revoked", message_ur="یہ کی منسوخ ہو چکی ہے")
+    exp = licenses._aware(k.view_expires_at)
+    if not k.view_token or not exp or exp < datetime.now(tz=UTC):
+        licenses.new_link(k)
+    licenses.mark_sent(k, data.via)
+    shop = _shop(db, k.shop_id)
+    owner = _rows(db, [shop])[0]
+    _key_audit(db, current, k, "key_sent", {"via": data.via})
+    db.commit()
+    return {**licenses.share_links(k, shop.name, owner.owner_phone, data.site or ""), "key": licenses.to_out(k, shop.name)}
+
+
+@router.post("/keys/{key_id}/revoke")
+def revoke_key(key_id: uuid.UUID, data: KeyRevokeIn, current: Super, db: DB):
+    from app.modules.admin import licenses
+
+    k = licenses.get(db, key_id)
+    licenses.revoke(k, data.reason)
+    _key_audit(db, current, k, "key_revoked", {"reason": data.reason})
+    db.commit()
+    return licenses.to_out(k, _shop(db, k.shop_id).name)
+
+
+@router.post("/keys/{key_id}/renew")
+def renew_key(key_id: uuid.UUID, data: KeyRenewIn, current: Super, db: DB):
+    """a new key for the same shop (same months unless changed); the old unused one is revoked"""
+    from app.modules.admin import licenses
+
+    old = licenses.get(db, key_id)
+    shop = _shop(db, old.shop_id)
+    if data.revoke_old and old.status == licenses.ISSUED:
+        licenses.revoke(old, "renewed")
+    k = licenses.issue(db, shop, current.id, data.months or old.months, old.note, renewed_from=old.id)
+    _key_audit(db, current, k, "key_renewed", {"from": str(old.id), "months": k.months})
+    db.commit()
+    return licenses.to_out(k, shop.name)
+
+
+@router.post("/keys/{key_id}/link")
+def new_key_link(key_id: uuid.UUID, current: Super, db: DB):
+    """a fresh magic link (the old one stops working)"""
+    from app.modules.admin import licenses
+
+    k = licenses.get(db, key_id)
+    if k.status == licenses.REVOKED:
+        raise Forbidden(code="key_revoked", message_en="This key was revoked", message_ur="یہ کی منسوخ ہو چکی ہے")
+    licenses.new_link(k)
+    _key_audit(db, current, k, "key_link")
+    db.commit()
+    return {"token": k.view_token, "key": licenses.to_out(k, _shop(db, k.shop_id).name)}
+
+
+@router.patch("/shops/{shop_id}/deployment")
+def set_deployment(shop_id: uuid.UUID, data: DeploymentIn, current: Super, db: DB):
+    """cloud (website / Android app) or the one-PC Windows install"""
+    shop = _shop(db, shop_id)
+    shop.organisation.deployment = data.deployment
+    record_audit(db, shop_id=shop.id, user_id=current.id, entity="organisation", entity_id=shop.organisation_id, action="deployment", after={"deployment": data.deployment})
+    db.commit()
+    return {"deployment": data.deployment}

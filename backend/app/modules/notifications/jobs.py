@@ -284,6 +284,7 @@ def tick(db: Session, now: dt.datetime | None = None) -> dict:
     from app.modules.plan import clockguard
 
     clockguard.observe(db)
+    _heartbeat(db, now)
     for shop in db.scalars(select(Shop).where(Shop.is_active.is_(True))).all():
         s: NotificationSettings = settings_for(shop)
         local = now.astimezone(ZoneInfo(shop.timezone or "Asia/Karachi"))
@@ -324,3 +325,36 @@ def tick(db: Session, now: dt.datetime | None = None) -> dict:
             db.commit()
             ran["reminders"] += n
     return ran
+
+
+_last_beat: dt.datetime | None = None
+
+
+def _heartbeat(db: Session, now: dt.datetime) -> None:
+    """one-PC install only (docs/28): once an hour, when online, tell the provider it is alive.
+    Needs SAAS_URL and a linked customer (the first renewal key redeemed here sets it)."""
+    global _last_beat
+    from app.core.config import settings
+
+    if not (settings.local_mode and settings.saas_url):
+        return
+    if _last_beat and now - _last_beat < dt.timedelta(hours=1):
+        return
+    _last_beat = now
+    from app.modules.auth.models import Organisation
+    from app.modules.plan.models import PlanRenewalCode
+
+    org = db.scalar(select(Organisation).where(Organisation.license_org_id.is_not(None)))
+    if org is None:
+        return
+    import httpx
+
+    used = [n for (n,) in db.execute(select(PlanRenewalCode.nonce).where(PlanRenewalCode.organisation_id == org.id)).all()]
+    try:
+        httpx.post(
+            f"{settings.saas_url.rstrip('/')}/api/v1/public/heartbeat",
+            json={"org_id": str(org.license_org_id), "install_id": str(org.id), "version": settings.app_version, "plan_expires_at": org.plan_expires_at.isoformat() if org.plan_expires_at else None, "redeemed": used},
+            timeout=10,
+        )
+    except Exception:  # noqa: BLE001 — no internet is normal for this install
+        return

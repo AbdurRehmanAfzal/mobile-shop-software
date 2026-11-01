@@ -196,6 +196,17 @@ Spec `docs/26-TABLETS-WATCHES-SPEC.md` · audit, gap table, decision, migration 
 | CSV import of the model library | ✅ | `POST /devices/model-specs/import` (API; no screen yet — docs/27 §6) |
 | Per-type GST / FBR invoice changes | ❌ | not in this brief |
 
+## Phase 11 — Provider console (owner 2026-11-01)
+Brief, research, audit, plan, assumptions `docs/28-PROVIDER-CONSOLE-PLAN.md` · ADR-039.
+| Item | Status | Notes |
+|---|---|---|
+| Overview: MRR, average per shop, received this / last month / total, pending, coming in 7 / 30 days, overdue, by month (12), by channel, by package, plan status counts | ✅ | **2026-11-01** `admin/business.py`, `/admin/business/overview`, Super admin → Business |
+| Shops: package, status, days left, fee, paid total, last payment + channel, pending, cloud / one-PC, online now, last used, filters | ✅ | `/admin/business/shops`; shop sheet with payments, keys, "Remind on WhatsApp", where it runs |
+| Payments: all fee payments with channel / status filters, search, CSV | ✅ | `/admin/business/payments` |
+| License keys stored; make, send (WhatsApp / SMS / copy), magic link page `/key/:token`, renew, new link, cancel; status redeemed / revoked tracked | ✅ | `admin/licenses.py`, table `license_keys`, migration `c1e3a5b7d9f1` |
+| Usage: last active per shop (throttled), one-PC heartbeat with version, deployment set by hand | ✅ | `tenancy._touch`, `/public/heartbeat`, `jobs._heartbeat` (needs `SAAS_URL` on the PC) |
+| One-PC key binding (first key links the customer) | ✅ | `plan/router.redeem` in `LOCAL_MODE` |
+
 ## Backlog (owner requests, not started)
 | Item | Notes |
 |---|---|

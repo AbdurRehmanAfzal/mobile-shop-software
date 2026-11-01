@@ -1,10 +1,10 @@
 /** Super admin (product owner only): every customer shop, and "Open a new shop" with the owner's
  *  login, which can be sent on WhatsApp. Owner (2026-10-26): shops are not self-service. */
 
-import { CalendarClock, Check, CheckCircle2, CreditCard, GitBranch, Image as ImageIcon, KeyRound, LogIn, MessageCircle, Plus, Store, Trash2, X } from 'lucide-react'
+import { BarChart3, CalendarClock, ChevronRight, Check, CheckCircle2, CreditCard, GitBranch, Image as ImageIcon, KeyRound, LogIn, MessageCircle, Plus, Store, Trash2, X } from 'lucide-react'
 import { isoDay } from '@/lib/format'
 import { useEffect, useState } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { BiAlert, BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import { PhoneInput, isMobileOk } from '@/components/FieldInputs'
 import { BtnText, Empty, ErrorText, Loading, PageHeader, SearchBox, Sheet, fmtDate } from '@/components/ui'
@@ -99,11 +99,14 @@ export default function AdminPage() {
   const saveAccts = useDocMutation<Account[], Account[]>('PUT', () => '/api/v1/admin/payment-accounts')
   const [proofUrl, setProofUrl] = useState<string | null>(null)
   const inv = useInvalidate()
+  const [decided, setDecided] = useState<string[]>([])
   const decide = async (f: FeeRow, action: 'approve' | 'reject') => {
     const note = action === 'reject' ? window.prompt(pick('admin.rejectWhy')) ?? '' : null
     if (action === 'reject' && !note) return
     await api('POST', `/api/v1/admin/fee-payments/${f.id}/${action}`, action === 'approve' ? {} : { note })
-    inv('fee-pending', 'fee-stats', 'admin-shops')
+    // the row goes at once; the lists refresh behind it (the shop list can take a few seconds)
+    setDecided((d) => [...d, f.id])
+    inv('fee-pending', 'fee-stats', 'admin-shops', 'prov-overview', 'prov-shops', 'prov-pays')
   }
   const setPassword = useDocMutation<{ password: string; user_id?: string }, { user_id: string; name: string; phone: string }>('POST', () => `/api/v1/admin/shops/${sel?.id}/owner-password`)
   const openAsAdmin = async (shop: AdminShop) => {
@@ -116,6 +119,8 @@ export default function AdminPage() {
   const savePlan = useDocMutation<Record<string, unknown>, AdminShop>('PATCH', () => `/api/v1/admin/shops/${sel?.id}/plan`)
   const addBranch = useDocMutation<typeof branch, AdminShop>('POST', () => `/api/v1/admin/shops/${sel?.id}/branches`, (b) => ({ name: b.name, city: b.city || null }))
   const openShop = (s: AdminShop) => { setCodeOut(null); makeCode.reset(); recordPay.reset(); setPay({ amount: Number(s.monthly_fee) ? String(Number(s.monthly_fee)) : '', method: 'cash', months: '1', reference: '', paid_on: isoDay(0) }); setGrace(s.grace_days == null ? '' : String(s.grace_days)); setMods(s.modules_custom ? s.modules : null); saveModules.reset(); setPw(''); setPwDone(null); setPassword.reset(); setSel(s); setPlan({ plan: s.plan, monthly_fee: Number(s.monthly_fee) ? String(Number(s.monthly_fee)) : '', expires_on: s.plan_expires_at ? s.plan_expires_at.slice(0, 10) : '', note: s.fee_note ?? '' }); setBranch({ name: '', city: '' }); savePlan.reset(); addBranch.reset() }
+  const [params] = useSearchParams()
+  const wantShop = params.get('shop')
   const { data, isLoading } = useGet<AdminShop[]>(['admin-shops', q], isSuper ? `/api/v1/admin/shops${q ? `?q=${encodeURIComponent(q)}` : ''}` : null)
   const create = useDocMutation<typeof EMPTY & { request_id?: string | null }, AdminShop>('POST', () => '/api/v1/admin/shops', (x) => ({ ...x, city: x.city || null, phone: normalisePhone(x.phone) }))
   const { data: catalogue } = useGet<ModuleCatalogue>(['module-catalogue'], isSuper ? '/api/v1/admin/modules' : null)
@@ -124,6 +129,7 @@ export default function AdminPage() {
   const shown = (data ?? []).filter((s) => due === 'all' || (due === 'due' ? s.plan_status === 'due_soon' || s.plan_status === 'expired' : s.plan_status === 'locked'))
   const dueCount = (data ?? []).filter((s) => s.plan_status === 'due_soon' || s.plan_status === 'expired').length
   const lockedCount = (data ?? []).filter((s) => s.plan_status === 'locked').length
+  useEffect(() => { if (wantShop && data && !sel) { const s = data.find((x) => x.id === wantShop); if (s) openShop(s) } }, [wantShop, data]) // eslint-disable-line react-hooks/exhaustive-deps
   const set = (k: keyof typeof EMPTY) => (e: { target: { value: string } }) => setF({ ...f, [k]: e.target.value })
 
   if (!isSuper) return <Navigate to="/" replace />
@@ -146,6 +152,12 @@ export default function AdminPage() {
         }
       />
       <BiLabel text="admin.only" size="sm" tone="text-muted" />
+      {/* docs/28: the business view — income, channels, time left, usage, keys */}
+      <button type="button" onClick={() => nav('/admin/business')} className="tap hero flex items-center gap-3 px-5 py-4 text-start" data-testid="open-business">
+        <span className="well h-11 w-11 shrink-0 bg-white/15"><BarChart3 size={22} /></span>
+        <span className="flex-1 text-base font-extrabold">{pick('prov.open')}</span>
+        <ChevronRight size={20} className="rtl:rotate-180" />
+      </button>
       <AppLinkCard />
       <section className="card flex flex-col gap-2">
         <div className="flex items-center gap-3">
@@ -157,9 +169,9 @@ export default function AdminPage() {
           <button type="button" onClick={() => { setAccts(savedAccounts ? savedAccounts.map((a) => ({ ...a })) : []); setAcctsOpen(true) }} className={`tap rounded-full border border-line px-3 py-1.5 text-xs font-bold ${ur ? cls('sm') : ''}`}>{pick('admin.accounts')}</button>
           <button type="button" onClick={() => { if (billing) setBill(JSON.parse(JSON.stringify(billing))); setBillOpen(true) }} className={`tap rounded-full px-3 py-1.5 text-xs font-bold ${billing?.placeholders ? 'bg-payable-tint text-payable' : 'border border-line'} ${ur ? cls('sm') : ''}`} data-testid="billing-open">{pick('admin.billing')}</button>
         </div>
-        {fees?.length ? (
+        {fees?.filter((f) => !decided.includes(f.id)).length ? (
           <div className="divide-y divide-line">
-            {fees.map((f) => (
+            {fees.filter((f) => !decided.includes(f.id)).map((f) => (
               <div key={f.id} className="flex flex-col gap-1.5 py-3">
                 <div className="flex items-center gap-2">
                   <span className="flex min-w-0 flex-1 flex-col">

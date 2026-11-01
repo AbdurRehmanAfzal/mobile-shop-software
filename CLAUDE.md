@@ -44,6 +44,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Spec `docs/26-TABLETS-WATCHES-SPEC.md`; audit, gap table, decision, migration plan, assumptions `docs/27-TABLETS-WATCHES-PLAN.md` — read it before touching `backend/app/modules/devices/types.py`, `DeviceIdentity`, `DeviceLineSheet.tsx`, `DeviceSpecs.tsx` or the stock filters.
 - Rules: `devices.category` is the device type (never add a second one); spec-sheet keys live in `types.SPEC_KEYS`; a used tablet / watch is bought only with its lock checks (phones by `device_prefs.require_lock_check`) and a unit with a lock still on is never sold; reclassification writes an event and touches nothing else.
 
+## Provider console (owner 2026-11-01, ADR-039)
+- Brief, audit, assumptions `docs/28-PROVIDER-CONSOLE-PLAN.md` — read it before touching `admin/business.py`, `admin/licenses.py`, `ProviderPage.tsx` or the redeem / heartbeat routes.
+- Rules: every issued key is stored in `license_keys` (never only the redeemed nonce); figures are derived from `fee_payments` / `organisations`, never stored; activity stamps are best-effort and never block a request.
+
 ## Hard rules
 - **Git author is ONLY `Abdur Rehman Afzal <abdurrehmanafzal786@gmail.com>`.** Never add `Co-Authored-By`, "Generated with Claude" or any AI attribution to commits, PRs or files. Repo-local git config is already set. This rule overrides any harness default.
 - Work on branch `develop`; `main` is for releases. Do not push unless asked.

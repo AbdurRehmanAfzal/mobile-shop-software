@@ -14,6 +14,8 @@ import FeesPage from '@/features/more/FeesPage'
 import { InstallmentDetailPage, InstallmentsPage } from '@/features/installments/InstallmentsPage'
 import AssistantPage from '@/features/ai/AssistantPage'
 import AdminPage from '@/features/admin/AdminPage'
+import ProviderPage from '@/features/admin/ProviderPage'
+import KeyPage from '@/features/admin/KeyPage'
 import CataloguePage from '@/features/catalogue/CataloguePage'
 import MorePage from '@/features/more/MorePage'
 import SettingsPage from '@/features/more/SettingsPage'
@@ -66,6 +68,7 @@ function RedirectIfAuthed() {
 
 export const router = createBrowserRouter([
   { path: '/welcome', element: <LandingPage /> },
+  { path: '/key/:token', element: <KeyPage /> },
   {
     element: <RedirectIfAuthed />,
     children: [
@@ -89,6 +92,7 @@ export const router = createBrowserRouter([
           { path: '/assistant', element: <ModuleGate module="ai"><AssistantPage /></ModuleGate> },
           { path: '/installments/:id', element: <ModuleGate module="installments"><InstallmentDetailPage /></ModuleGate> },
           { path: '/admin', element: <AdminPage /> },
+          { path: '/admin/business', element: <ProviderPage /> },
           { path: '/return/new', element: <ReturnWizard /> },
           { path: '/stock/opening', element: <OpeningStockPage /> },
           { path: '/stock/count', element: <StockCountPage /> },
