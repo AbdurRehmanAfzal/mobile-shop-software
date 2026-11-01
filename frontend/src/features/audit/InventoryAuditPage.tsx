@@ -13,6 +13,7 @@ import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
 import AuditLayout from './AuditLayout'
 import { useAuditPeriod } from './period'
+import {withCur } from '@/lib/format'
 
 type M = string
 type Tab = 'summary' | 'ageing' | 'verification'
@@ -54,9 +55,9 @@ export default function InventoryAuditPage() {
         <>
           <section className="grid grid-cols-2 gap-2 lg:grid-cols-4" data-testid="inv-kpis">
             <Kpi k={period.asOf ? 'audit.inv.inStockAsOf' : 'audit.inv.inStock'} v={`${sum.count}`} sub={`${pick('audit.phones')}${sum.unpriced ? ` · ${sum.unpriced} ${pick('audit.inv.unpriced')}` : ''}`} tone="bg-stockt text-stockt-fg" />
-            {canCost ? <Kpi k="audit.atCost" v={`Rs. ${n(sum.cost_value)}`} tone="bg-buy text-buy-fg" /> : null}
-            <Kpi k="audit.atAsking" v={`Rs. ${n(sum.asking_value)}`} tone="bg-sell text-sell-fg" />
-            {canCost ? <Kpi k="audit.inv.expectedMargin" v={`Rs. ${n(sum.expected_margin)}`} sub={sum.expected_margin_pct != null ? `${sum.expected_margin_pct}%` : undefined} tone="bg-emerald-tint text-emerald-deep" /> : null}
+            {canCost ? <Kpi k="audit.atCost" v={`${withCur(n(sum.cost_value))}`} tone="bg-buy text-buy-fg" /> : null}
+            <Kpi k="audit.atAsking" v={`${withCur(n(sum.asking_value))}`} tone="bg-sell text-sell-fg" />
+            {canCost ? <Kpi k="audit.inv.expectedMargin" v={`${withCur(n(sum.expected_margin))}`} sub={sum.expected_margin_pct != null ? `${sum.expected_margin_pct}%` : undefined} tone="bg-emerald-tint text-emerald-deep" /> : null}
           </section>
           <section className="grid gap-2 sm:grid-cols-2" data-testid="inv-donuts">
             <div className="card"><BiLabel text="audit.chart.byCondition" size="sm" tone="text-muted" bold /><Donut data={sum.by_condition.map((d) => ({ label: dimLabel('condition', d.key), value: d.count, key: d.key }))} onTap={(s) => nav(stockLink('condition', String(s.key)))} empty="audit.noData" unit={pick('audit.phones')} /></div>
@@ -78,7 +79,7 @@ export default function InventoryAuditPage() {
             ))}
           </section>
           {sum.by_brand.length ? (
-            <section className="card"><BiLabel text="audit.inv.byBrand" size="sm" tone="text-muted" bold /><Bars data={sum.by_brand.slice(0, 12).map((b) => ({ label: b.brand, value: b.count, hint: `Rs. ${n(b.asking)}` }))} tone="rgb(var(--emerald))" height={110} /></section>
+            <section className="card"><BiLabel text="audit.inv.byBrand" size="sm" tone="text-muted" bold /><Bars data={sum.by_brand.slice(0, 12).map((b) => ({ label: b.brand, value: b.count, hint: `${withCur(n(b.asking))}` }))} tone="rgb(var(--emerald))" height={110} /></section>
           ) : null}
           <div className={`flex flex-wrap gap-x-4 text-muted ${small}`} data-testid="inv-status">
             {Object.entries(sum.status_counts).filter(([, v]) => v).map(([k, v]) => <span key={k}>{pick(`stock.status.${k}`)}: <span className="num">{v}</span></span>)}
@@ -97,7 +98,7 @@ export default function InventoryAuditPage() {
         <>
           <BiLabel text="audit.inv.ageHint" size="sm" tone="text-muted" />
           <section className="card" data-testid="age-bands">
-            <Bars data={age.bands.map((b, i) => ({ label: bandLabel(b.band, i, age.band_edges), value: b.count, hint: canCost ? `Rs. ${n(b.cost)}` : `Rs. ${n(b.asking)}`, key: b.band }))} tone="rgb(var(--emerald))" onTap={(b) => setBand(band === b.key ? null : (b.key as string))} empty="audit.noData" />
+            <Bars data={age.bands.map((b, i) => ({ label: bandLabel(b.band, i, age.band_edges), value: b.count, hint: canCost ? `${withCur(n(b.cost))}` : `${withCur(n(b.asking))}`, key: b.band }))} tone="rgb(var(--emerald))" onTap={(b) => setBand(band === b.key ? null : (b.key as string))} empty="audit.noData" />
             <div className="mt-2 flex flex-wrap gap-1.5">
               {age.bands.map((b, i) => <button key={b.band} type="button" aria-pressed={band === b.band} onClick={() => setBand(band === b.band ? null : b.band)} className={`tap min-h-9 whitespace-nowrap rounded-full border px-3 py-1.5 font-bold leading-tight ${band === b.band ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-xs'}`}>{bandLabel(b.band, i, age.band_edges)} · {b.count}</button>)}
               <Link to="/more/settings" className={`tap h-9 rounded-full border border-line bg-surface px-3 font-bold leading-9 text-muted ${ur ? cls('sm') : 'text-xs'}`}>{pick('audit.inv.thresholds')}</Link>

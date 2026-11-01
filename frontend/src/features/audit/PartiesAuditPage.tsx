@@ -9,6 +9,7 @@ import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
 import AuditLayout from './AuditLayout'
 import { useAuditPeriod } from './period'
+import {withCur } from '@/lib/format'
 
 const METRICS = ['customers_sales', 'customers_bills', 'customers_profit', 'suppliers_purchases', 'suppliers_devices', 'suppliers_profit', 'receivable', 'payable'] as const
 type Metric = (typeof METRICS)[number]
@@ -40,7 +41,7 @@ export default function PartiesAuditPage() {
         <>
           <section className="flex items-center justify-between rounded-3xl bg-ink px-5 py-4 text-ground" data-testid="rank-total">
             <span className="flex flex-col"><BiLabel text={`audit.metric.${metric}`} size="md" bold tone="text-current" /><span className={`opacity-80 ${small}`}><span className="num">{data.parties}</span> {pick('audit.people')} · {pick('audit.rank.metricNote')}</span></span>
-            <span className="num text-2xl font-bold" dir="ltr">{isCount ? n(data.total) : `Rs. ${n(data.total)}`}</span>
+            <span className="num text-2xl font-bold" dir="ltr">{isCount ? n(data.total) : `${withCur(n(data.total))}`}</span>
           </section>
           {!data.rows.length ? <Empty text="audit.noData" /> : (
             <div className="card divide-y divide-line p-0" data-testid="rank-rows">
@@ -52,7 +53,7 @@ export default function PartiesAuditPage() {
                     <span className="h-1.5 w-full overflow-hidden rounded-full bg-ground"><span className="block h-full rounded-full bg-emerald" style={{ width: `${Math.max(2, r.share)}%` }} /></span>
                     <span className={`text-muted ${small}`}>{r.phone ? <span dir="ltr">{r.phone} · </span> : null}{isCount ? null : <><span className="num">{r.share}%</span>{r.count ? <> · <span className="num">{r.count}</span> {pick(metric.startsWith('suppliers') && metric !== 'suppliers_purchases' ? 'audit.phones' : 'audit.bills')}</> : null}</>}</span>
                   </span>
-                  <span className="num font-bold" dir="ltr">{isCount ? n(r.value) : `Rs. ${n(r.value)}`}</span>
+                  <span className="num font-bold" dir="ltr">{isCount ? n(r.value) : `${withCur(n(r.value))}`}</span>
                 </Link>
               ))}
             </div>

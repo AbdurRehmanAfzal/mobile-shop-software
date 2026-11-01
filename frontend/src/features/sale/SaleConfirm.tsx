@@ -4,6 +4,7 @@ import { BiAlert, BiButton, BiInput, BiLabel, useLang } from '@/components/Bilin
 import { ErrorText, Sheet } from '@/components/ui'
 import { ApiError } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
+import {withCur } from '@/lib/format'
 
 /** One phone on the bill, as the confirmation shows it (owner 2026-10-30: check before you sell). */
 export interface ConfirmLine {
@@ -84,7 +85,7 @@ export default function SaleConfirm({
                   <span className="truncate font-bold">{l.label}</span>
                   {l.imei ? <span className={`text-muted ${small}`} dir="ltr">{l.imei}</span> : null}
                 </span>
-                <span className="num text-xl font-bold" dir="ltr">Rs. {n(l.sold)}</span>
+                <span className="num text-xl font-bold" dir="ltr">{withCur(n(l.sold))}</span>
               </div>
               <div className={`grid grid-cols-3 gap-2 ${small}`}>
                 {canCost ? (
@@ -118,7 +119,7 @@ export default function SaleConfirm({
         <div className="card flex flex-col gap-1.5">
           {misc > 0 ? <div className={`flex justify-between ${small}`}><span>{pick('confirm.items')}</span><span className="num" dir="ltr">{n(misc)}</span></div> : null}
           {partyName ? <div className={`flex justify-between ${small}`}><span>{pick('party.one')}</span><span>{partyName}</span></div> : null}
-          <div className="flex items-center justify-between"><BiLabel text="common.total" size="md" bold /><span className="num text-2xl font-bold" dir="ltr">Rs. {n(total)}</span></div>
+          <div className="flex items-center justify-between"><BiLabel text="common.total" size="md" bold /><span className="num text-2xl font-bold" dir="ltr">{withCur(n(total))}</span></div>
           <div className={`flex justify-between ${small}`}><span>{pick('confirm.paidNow')}</span><span className="num" dir="ltr">{n(paid)}</span></div>
           {me ? <div className={`flex justify-between text-muted ${small}`}><span>{pick('confirm.soldBy')}</span><span>{me.name}</span></div> : null}
         </div>

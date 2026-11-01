@@ -1,3 +1,4 @@
+import { setCurrency } from './format'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
@@ -26,6 +27,9 @@ export interface ShopOut {
   default_locale: 'en' | 'ur'
   tax_enabled: boolean
   is_active: boolean
+  /** docs/30 */
+  logo_path?: string | null
+  currency?: { symbol: string; position: 'before' | 'after'; decimals: 0 | 2 } | null
 }
 
 export interface PlanOut {
@@ -86,3 +90,8 @@ export const useAuth = create<AuthState>()(
 
 export const activeShop = (s: AuthState): ShopOut | undefined =>
   s.me?.shops.find((x) => x.id === s.activeShopId)
+
+// the active shop's currency label for every money text in the app (docs/30)
+const syncCurrency = (st: AuthState) => setCurrency(activeShop(st)?.currency ?? null)
+syncCurrency(useAuth.getState())
+useAuth.subscribe(syncCurrency)

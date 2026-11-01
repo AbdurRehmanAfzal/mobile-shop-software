@@ -10,6 +10,7 @@ from app.core.errors import Conflict, NotFound, ValidationFailed
 from app.db.base import ZERO, utcnow
 from app.modules.accessories import service as acc_stock
 from app.modules.audit.service import record_audit
+from app.modules.auth import profile
 from app.modules.auth.models import Shop, User
 from app.modules.catalogue.models import Brand, Model
 from app.modules.devices.models import Device
@@ -517,7 +518,6 @@ def job_sheet_html(db: Session, shop_id: uuid.UUID, job_id: uuid.UUID, lang: str
         if ur
         else ""
     )
-    shop_name = e(shop.name_ur) if ur and shop.name_ur else e(shop.name)
     bill = ""
     if job.status == RepairStatus.DELIVERED:
         bill = f"<tr><td>{T['total']}</td><td class='ltr'>Rs. {job.total:,.0f}</td></tr><tr><td>{T['paid']}</td><td class='ltr'>Rs. {job.paid:,.0f}</td></tr><tr><td>{T['due']}</td><td class='ltr'>Rs. {max(ZERO, job.total - job.paid):,.0f}</td></tr><tr><td>{T['warranty']}</td><td class='ltr'>{job.warranty_days}</td></tr>"
@@ -525,7 +525,7 @@ def job_sheet_html(db: Session, shop_id: uuid.UUID, job_id: uuid.UUID, lang: str
 <style>@page {{ size: 80mm auto; margin: 4mm; }} body {{ width: 72mm; margin: 0 auto; font-family: {"'Noto Nastaliq Urdu', serif" if ur else "Arial, sans-serif"}; font-size: 11px; color: #111; {"line-height: 1.9;" if ur else ""} }}
 h1 {{ font-size: 15px; margin: 0; text-align: center; }} .c {{ text-align: center; }} .ltr {{ direction: ltr; unicode-bidi: isolate; }}
 table {{ width: 100%; border-collapse: collapse; margin-top: 6px; }} td {{ padding: 3px 2px; vertical-align: top; border-bottom: 1px dotted #ccc; }} .foot {{ margin-top: 8px; border-top: 1px dashed #999; padding-top: 6px; font-size: 10px; }}</style></head><body>
-<h1>{shop_name}</h1><div class="c"><small>{e(shop.phone or "")}</small></div>
+{profile.header_html(shop, ur, True)}
 <div class="c"><b>{T["title"]}</b> · <span class="ltr">{e(job.no)}</span> · <span class="ltr">{job.created_at.strftime("%d-%m-%Y")}</span></div>
 <table>
 <tr><td>{T["customer"]}</td><td>{e(party.name) if party else "—"}<br><span class="ltr">{e(party.phone) if party else ""}</span></td></tr>

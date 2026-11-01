@@ -9,6 +9,7 @@ import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
 import AuditLayout from './AuditLayout'
 import { useAuditPeriod } from './period'
+import { withCur } from '@/lib/format'
 
 type M = string
 interface Audit { by_kind: { kind: string; count: number; amount: M | null; voided: number }[]; by_status: { status: string; count: number; amount: M; due: M }[]; by_user: { user_name: string | null; sales: number; sales_amount: M; purchases: number; payments: number; voids: number }[]; voided: { kind: string; id: string; no: string; date: string; amount: M | null; by: string | null; reason: string | null }[]; totals: { documents: number; voided: number } }
@@ -38,7 +39,7 @@ export default function InvoiceAuditPage() {
               <Link key={k.kind} to={k.kind.startsWith('payment') ? '/payments' : `/invoices?${KIND_LINK[k.kind]}${range}`} className="card tap flex min-w-0 flex-col gap-1">
                 <BiLabel text={`audit.doc.k.${k.kind}`} size="sm" tone="text-muted" bold />
                 <span className="num text-xl font-bold" dir="ltr">{k.count}</span>
-                <span className={`text-muted ${small}`}>{k.amount != null ? <>Rs. <span className="num" dir="ltr">{n(k.amount)}</span></> : null}{k.voided ? <span className="text-payable"> · {k.voided} {pick('audit.doc.voided')}</span> : null}</span>
+                <span className={`text-muted ${small}`}>{k.amount != null ? <span className="num" dir="ltr">{withCur(n(k.amount))}</span> : null}{k.voided ? <span className="text-payable"> · {k.voided} {pick('audit.doc.voided')}</span> : null}</span>
               </Link>
             ))}
           </div>
@@ -47,7 +48,7 @@ export default function InvoiceAuditPage() {
             {data.by_status.map((s) => (
               <div key={s.status} className="flex items-center gap-3 px-4 py-2">
                 <span className="flex-1 font-bold">{pick(`inv.state.${s.status}`)}</span>
-                <span className={`text-muted ${small}`} dir="ltr">{s.count} · Rs. {n(s.amount)}{Number(s.due) ? ` · ${pick('audit.doc.due')} ${n(s.due)}` : ''}</span>
+                <span className={`text-muted ${small}`} dir="ltr">{s.count} · {withCur(n(s.amount))}{Number(s.due) ? ` · ${pick('audit.doc.due')} ${n(s.due)}` : ''}</span>
               </div>
             ))}
           </div>
@@ -56,7 +57,7 @@ export default function InvoiceAuditPage() {
             {data.by_user.map((u, i) => (
               <div key={i} className="flex items-center gap-3 px-4 py-2">
                 <span className="flex-1 font-bold">{u.user_name ?? '—'}</span>
-                <span className={`text-muted ${small}`}><span className="num">{u.sales}</span> {pick('audit.doc.sales')} · Rs. <span className="num" dir="ltr">{n(u.sales_amount)}</span>{canCost ? <> · <span className="num">{u.purchases}</span> {pick('audit.doc.purchases')}</> : null} · <span className="num">{u.payments}</span> {pick('audit.doc.payments')}{u.voids ? <span className="text-payable"> · <span className="num">{u.voids}</span> {pick('audit.doc.voided')}</span> : null}</span>
+                <span className={`text-muted ${small}`}><span className="num">{u.sales}</span> {pick('audit.doc.sales')} · <span className="num" dir="ltr">{withCur(n(u.sales_amount))}</span>{canCost ? <> · <span className="num">{u.purchases}</span> {pick('audit.doc.purchases')}</> : null} · <span className="num">{u.payments}</span> {pick('audit.doc.payments')}{u.voids ? <span className="text-payable"> · <span className="num">{u.voids}</span> {pick('audit.doc.voided')}</span> : null}</span>
               </div>
             ))}
           </div>

@@ -97,6 +97,27 @@ class Shop(UUIDPk, Timestamped, Base):
     barcode_seq: Mapped[int] = mapped_column(Integer, default=0, nullable=False, server_default="0")
     # owner 2026-10-30: who may sell below asking / change the asking price (sales/approval.py)
     sale_rules: Mapped[dict | None] = mapped_column(JSON)
+    # business profile (owner 2026-11-01, docs/30): what the shop is, who owns it, how to reach it,
+    # its tax registrations, how money is written and what its bills print
+    legal_name: Mapped[str | None] = mapped_column(String(200))
+    tagline: Mapped[str | None] = mapped_column(String(120))
+    tagline_ur: Mapped[str | None] = mapped_column(String(120))
+    business_type: Mapped[str | None] = mapped_column(String(20))
+    registration_no: Mapped[str | None] = mapped_column(String(40))
+    established_year: Mapped[int | None] = mapped_column(Integer)
+    province: Mapped[str | None] = mapped_column(String(20))
+    email: Mapped[str | None] = mapped_column(String(120))
+    website: Mapped[str | None] = mapped_column(String(160))
+    social: Mapped[dict | None] = mapped_column(JSON)
+    opening_hours: Mapped[str | None] = mapped_column(String(120))
+    owner_name: Mapped[str | None] = mapped_column(String(120))
+    owner_cnic: Mapped[str | None] = mapped_column(String(15))
+    fbr_pos_id: Mapped[str | None] = mapped_column(String(40))
+    bank_details: Mapped[dict | None] = mapped_column(JSON)
+    terms: Mapped[str | None] = mapped_column(Text)
+    terms_ur: Mapped[str | None] = mapped_column(Text)
+    currency: Mapped[dict | None] = mapped_column(JSON)
+    print_prefs: Mapped[dict | None] = mapped_column(JSON)
     # Shop Audit (owner brief 2026-10-30): age bands, high-value, low-margin, performance, bypass thresholds
     audit_prefs: Mapped[dict | None] = mapped_column(JSON)
 

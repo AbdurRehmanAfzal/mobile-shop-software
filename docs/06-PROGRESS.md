@@ -207,6 +207,18 @@ Brief, research, audit, plan, assumptions `docs/28-PROVIDER-CONSOLE-PLAN.md` · 
 | Usage: last active per shop (throttled), one-PC heartbeat with version, deployment set by hand | ✅ | `tenancy._touch`, `/public/heartbeat`, `jobs._heartbeat` (needs `SAAS_URL` on the PC) |
 | One-PC key binding (first key links the customer) | ✅ | `plan/router.redeem` in `LOCAL_MODE` |
 
+## Phase 12 — Shop business profile (owner 2026-11-01)
+Brief, research, audit, assumptions `docs/30-BUSINESS-PROFILE-PLAN.md` · ADR-040.
+| Item | Status | Notes |
+|---|---|---|
+| Logo upload (printed on bills), legal name, tagline en / ur, address, WhatsApp, email, website, business type, registration, year, province, opening hours, social | ✅ | **2026-11-01** Settings → Logo & business details |
+| Owner name + CNIC | ✅ | Settings → Owner details |
+| NTN / STRN (validated) / FBR POS ID | ✅ | Settings → Tax registration (FBR) |
+| Currency label: Rs. / Rs / PKR / ₨ / روپے, before / after, paisa; whole app + bills | ✅ | Settings → Currency; `lib/format.ts` `withCur` |
+| Printed bill choices, terms en / ur, bank / wallet details | ✅ | Settings → Printed bill; `auth/profile.py` |
+| Notification texts and Excel sheets in the chosen label | ❌ | still "Rs." (docs/30 §Assumptions) |
+| FBR POS transmission (invoice no. + QR) | ❌ | needs PRAL integration |
+
 ## Owner side (open)
 Server env variables, server commands, manual testing and decisions: `docs/29-OWNER-PENDING.md` — none done yet (2026-11-01).
 

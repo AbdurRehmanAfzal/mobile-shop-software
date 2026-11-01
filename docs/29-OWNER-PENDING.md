@@ -72,6 +72,7 @@ the accessories "Opening stock" batches (made by the migration).
 | [ ] | Billing settings → schedule | grace days after expiry: 7 now (decide, section E) |
 | [ ] | Super admin → each shop | package, monthly fee, paid-until date |
 | [ ] | Business → Shops → a shop → "Where it runs" | mark one-PC customers as Offline |
+| [ ] | your own shop → Settings → Logo & business details / Tax registration / Currency | logo, NTN, how money is written |
 | [ ] | your own shop → Settings → Barcode settings | prefix and barcode type, test print |
 | [ ] | Settings → Item settings / Device settings | valuation (average / FIFO), negative stock, units; lock check for used mobiles |
 | [ ] | every shop that printed stickers since 2026-10-31 | **reprint them** — those stickers were cut and do not scan (fixed 2026-11-01) |
@@ -95,6 +96,7 @@ Close the app fully and open it again first (or install the newest APK from the 
 | [ ] | Business console | Super admin → Business → Overview / Shops / Payments / Keys | your real fees, channels, time left |
 | [ ] | License key | Business → Keys → Make a key → Send on WhatsApp → open the link on your phone | key page opens without login; Renew makes the old link expire |
 | [ ] | Bulk Excel | More → Bulk Excel → download sheet → fill → upload | preview first, then import |
+| [ ] | Business profile | Settings → upload your logo, fill Logo & business details, Owner, Tax registration (NTN), Currency, Printed bill → print a sale bill | logo, NTN, terms on the bill; money written your way everywhere |
 | [ ] | Landing page | open the website logged out | new cards, screenshots, scanner FAQ |
 
 ## E. Decisions waiting for you

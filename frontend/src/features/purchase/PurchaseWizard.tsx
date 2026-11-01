@@ -17,6 +17,7 @@ import { isQueued } from '@/lib/offline'
 import { useDocMutation } from '@/lib/queries'
 import type { Party, Purchase } from '@/lib/types'
 import DeviceLineSheet, { draftToApi, emptyDraft, type DeviceLineDraft } from './DeviceLineSheet'
+import {withCur } from '@/lib/format'
 
 type Kind = 'supplier' | 'walk_in' | 'shop' | 'trade_in'
 interface Misc {
@@ -64,7 +65,7 @@ export default function PurchaseWizard() {
   const [earlier, setEarlier] = useDraft('purchase.earlier', false)
   const [when, setWhen] = useDraft('purchase.when', localNow())
   const [result, setResult] = useState<Purchase | null>(null)
-  const m = useDocMutation<Record<string, unknown>, Purchase>('POST', () => '/api/v1/purchases', undefined, { kind: 'purchase', label: (b) => `${pick('counter.addStock')} · Rs. ${Number((b as { paid?: number }).paid ?? 0).toLocaleString('en-US')}` })
+  const m = useDocMutation<Record<string, unknown>, Purchase>('POST', () => '/api/v1/purchases', undefined, { kind: 'purchase', label: (b) => `${pick('counter.addStock')} · ${withCur(Number((b as { paid?: number }).paid ?? 0).toLocaleString('en-US'))}` })
 
   const subtotal = devices.reduce((s, d) => s + Number(d.cost || 0), 0) + misc.reduce((s, x) => s + Number(x.qty || 0) * Number(x.unit_cost || 0), 0)
   const total = Math.max(0, subtotal - Number(discount || 0)) + Number(extraCosts || 0)
@@ -180,7 +181,7 @@ export default function PurchaseWizard() {
                           <button key={u} type="button" aria-pressed={(x.unit ?? 'piece') === u} onClick={() => setMisc(misc.map((y) => (y.key === x.key ? { ...y, unit: u } : y)))} className={`tap h-8 rounded-full border-2 px-2.5 text-[12px] font-bold ${(x.unit ?? 'piece') === u ? 'border-ink bg-ink text-ground' : 'border-line bg-surface'}`}>{pick(`acc.units.${u}`)}{u !== 'piece' ? <span className="num" dir="ltr"> ×{(x.units ?? {})[u]}</span> : null}</button>
                         ))}
                       </div>
-                      {per(x) > 1 ? <span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`} dir="ltr">= {Number(x.qty || 0) * per(x)} {pick('purchase.pieces')}{Number(x.unit_cost) > 0 ? ` · Rs. ${(Number(x.unit_cost) / per(x)).toLocaleString('en-US', { maximumFractionDigits: 2 })} ${pick('purchase.perPiece')}` : ''}</span> : null}
+                      {per(x) > 1 ? <span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`} dir="ltr">= {Number(x.qty || 0) * per(x)} {pick('purchase.pieces')}{Number(x.unit_cost) > 0 ? ` · ${withCur((Number(x.unit_cost) / per(x)).toLocaleString('en-US', { maximumFractionDigits: 2 }))} ${pick('purchase.perPiece')}` : ''}</span> : null}
                     </div>
                   ) : (
                     <BiInput label="purchase.miscDesc" value={x.description} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, description: e.target.value } : y)))} />
@@ -243,7 +244,7 @@ export default function PurchaseWizard() {
               <div className="hero flex flex-col gap-1 px-5 py-4">
                 <div className="flex items-center justify-between">
                   <BiLabel text="common.total" size="md" tone="text-hero-text" bold />
-                  <span className="num text-3xl" dir="ltr">Rs. {total.toLocaleString('en-US')}</span>
+                  <span className="num text-3xl" dir="ltr">{withCur(total.toLocaleString('en-US'))}</span>
                 </div>
                 {udhaar ? (
                   <div className="flex items-center justify-between border-t border-white/15 pt-1.5">
@@ -264,7 +265,7 @@ export default function PurchaseWizard() {
           <div className="flex flex-col items-center gap-1 rounded-3xl bg-buy px-5 py-7 text-buy-fg">
             <span className="well mb-1 h-16 w-16 rounded-full bg-ink text-ground"><Check size={34} strokeWidth={2.6} /></span>
             <BiLabel text="purchase.created" size="lg" bold tone="text-current" align="center" />
-            <span className="num text-[34px]" dir="ltr">Rs. {Number(result.total).toLocaleString('en-US')}</span>
+            <span className="num text-[34px]" dir="ltr">{withCur(Number(result.total).toLocaleString('en-US'))}</span>
             <span className="num text-sm opacity-80" dir="ltr">{result.no}</span>
           </div>
           {kind !== 'supplier' && result.lines.some((l) => l.device_id) ? (

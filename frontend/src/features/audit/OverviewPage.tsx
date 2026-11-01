@@ -12,6 +12,7 @@ import { useGet } from '@/lib/queries'
 import Donut from '@/components/charts/Donut'
 import AuditLayout from './AuditLayout'
 import { useAuditPeriod } from './period'
+import {withCur } from '@/lib/format'
 
 type M = string
 interface Bal { opening: M; closing: M; as_of: M; current: M; parties?: number }
@@ -57,13 +58,13 @@ export default function OverviewPage() {
           <section className="grid gap-2 sm:grid-cols-2">
             <Link to={`/invoices?kind=sale&${range}`} className="tap flex flex-col gap-1 rounded-3xl bg-sell px-5 py-4 text-sell-fg" data-testid="kpi-sales">
               <div className="flex items-center justify-between"><BiLabel text="audit.netSales" size="md" bold tone="text-current" />{delta(data.sales.net_sales, data.previous.net_sales)}</div>
-              <span className="num text-[32px] leading-tight" dir="ltr">Rs. {n(data.sales.net_sales)}</span>
+              <span className="num text-[32px] leading-tight" dir="ltr">{withCur(n(data.sales.net_sales))}</span>
               <span className={`opacity-80 ${small}`}><span className="num">{data.sales.invoices}</span> {pick('audit.bills')} · <span className="num">{data.sales.phones_sold}</span> {pick('audit.phones')}{Number(data.sales.discounts) ? <> · {pick('counter.discounts')} <span className="num" dir="ltr">{n(data.sales.discounts)}</span></> : null}{Number(data.sales.sales_returns) ? <> · {pick('counter.salesReturns')} <span className="num" dir="ltr">{n(data.sales.sales_returns)}</span></> : null}</span>
             </Link>
             {canCost && data.profit ? (
               <Link to="/reports" className={`tap flex flex-col gap-1 rounded-3xl px-5 py-4 ${Number(data.profit.net_profit) >= 0 ? 'bg-ink text-ground' : 'bg-expense text-expense-fg'}`} data-testid="kpi-profit">
                 <div className="flex items-center justify-between"><BiLabel text={Number(data.profit.net_profit) >= 0 ? 'counter.netProfit' : 'counter.netLoss'} size="md" bold tone="text-current" />{data.previous.net_profit ? delta(data.profit.net_profit, data.previous.net_profit) : null}</div>
-                <span className="num text-[32px] leading-tight" dir="ltr">Rs. {n(data.profit.net_profit)}</span>
+                <span className="num text-[32px] leading-tight" dir="ltr">{withCur(n(data.profit.net_profit))}</span>
                 <span className={`opacity-80 ${small}`}>{pick('counter.grossProfit')} <span className="num" dir="ltr">{n(data.profit.gross_profit)}</span> · {pick('counter.cogs')} <span className="num" dir="ltr">{n(data.profit.cogs)}</span> · {pick('audit.expenses')} <span className="num" dir="ltr">{n(data.profit.operating_expenses)}</span></span>
               </Link>
             ) : null}
@@ -77,7 +78,7 @@ export default function OverviewPage() {
             <Tile to="/more/cash" icon={ArrowDownLeft} tone="bg-emerald-tint text-emerald-deep" label="audit.moneyIn" value={n(data.money.inflows)} sub={<span>{pick('audit.vsPrevious')}: <span className="num" dir="ltr">{n(data.previous.inflows)}</span></span>} testid="kpi-inflows" />
             <Tile to="/more/cash" icon={ArrowUpRight} tone="bg-payable-tint text-payable" label="audit.moneyOut" value={n(data.money.outflows)} sub={<span>{pick('audit.vsPrevious')}: <span className="num" dir="ltr">{n(data.previous.outflows)}</span></span>} testid="kpi-outflows" />
           </section>
-          {Number(data.money.transfers) ? <BiLabel text={{ en: `${pick('audit.transfersNote')} Rs. ${n(data.money.transfers)}`, ur: `${pick('audit.transfersNote')} Rs. ${n(data.money.transfers)}` }} size="sm" tone="text-muted" /> : null}
+          {Number(data.money.transfers) ? <BiLabel text={{ en: `${pick('audit.transfersNote')} ${withCur(n(data.money.transfers))}`, ur: `${pick('audit.transfersNote')} ${withCur(n(data.money.transfers))}` }} size="sm" tone="text-muted" /> : null}
 
           {/* balances: opening → closing, as-of, current */}
           <BiLabel text={asOf ? 'audit.balancesAsOf' : 'audit.balances'} size="md" bold />
@@ -145,7 +146,7 @@ function BalanceCard({ to, icon: Icon, tone, label, bal, asOf, unit, extra, test
         <BiLabel text={label} size="sm" tone="text-muted" bold />
       </div>
       <div className="flex items-end justify-between gap-2">
-        <span className="num text-2xl font-bold" dir="ltr">{unit ? `${n(main)} ${unit}` : `Rs. ${n(main)}`}</span>
+        <span className="num text-2xl font-bold" dir="ltr">{unit ? `${n(main)} ${unit}` : `${withCur(n(main))}`}</span>
         <span className={`text-muted ${small}`}>{pick(asOf ? 'audit.asOf' : 'audit.closing')}</span>
       </div>
       <div className={`flex flex-wrap gap-x-3 text-muted ${small}`}>

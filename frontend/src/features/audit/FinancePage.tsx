@@ -15,6 +15,7 @@ import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
 import AuditLayout from './AuditLayout'
 import { useAuditPeriod } from './period'
+import {withCur } from '@/lib/format'
 
 type M = string
 type Tab = 'pnl' | 'cash' | 'expenses' | 'tax'
@@ -58,8 +59,8 @@ export default function FinancePage() {
         <>
           <section className={`flex flex-col gap-1 rounded-3xl px-5 py-4 ${Number(canCost ? pnl.current.net_profit : pnl.current.net_sales) >= 0 ? 'bg-sell text-sell-fg' : 'bg-expense text-expense-fg'}`} data-testid="fin-hero">
             <div className="flex items-center justify-between"><BiLabel text={canCost ? 'counter.netProfit' : 'audit.netSales'} size="md" bold tone="text-current" />{pct(canCost ? pnl.current.net_profit : pnl.current.net_sales, canCost ? pnl.previous.net_profit : pnl.previous.net_sales)}</div>
-            <span className="num text-[32px] leading-tight" dir="ltr">Rs. {n(canCost ? pnl.current.net_profit : pnl.current.net_sales)}</span>
-            <span className={`opacity-80 ${small}`}>{pick('audit.vsPrevious')} <span className="num" dir="ltr">Rs. {n(canCost ? pnl.previous.net_profit : pnl.previous.net_sales)}</span> · {pick(`audit.gran.${pnl.granularity}`)}</span>
+            <span className="num text-[32px] leading-tight" dir="ltr">{withCur(n(canCost ? pnl.current.net_profit : pnl.current.net_sales))}</span>
+            <span className={`opacity-80 ${small}`}>{pick('audit.vsPrevious')} <span className="num" dir="ltr">{withCur(n(canCost ? pnl.previous.net_profit : pnl.previous.net_sales))}</span> · {pick(`audit.gran.${pnl.granularity}`)}</span>
           </section>
           <section className="card"><Bars data={pnlBars} testid="fin-series" empty="audit.noData" /></section>
           {canCost && pnl.series.length > 1 ? (
@@ -135,11 +136,11 @@ export default function FinancePage() {
           {intl && intl.rows.length ? (
             <>
               <div className="flex items-center gap-2"><Globe size={18} /><BiLabel text="audit.fin.international" size="md" bold /></div>
-              <div className={`text-muted ${small}`}>{intl.by_currency.map((c) => `${c.currency} ${n(c.foreign_amount)} → Rs. ${n(c.pkr_amount)}${Number(c.fees) ? ` − ${pick('paym.fee')} ${n(c.fees)} = ${n(c.net)}` : ''} (${c.count})`).join(' · ')}</div>
+              <div className={`text-muted ${small}`}>{intl.by_currency.map((c) => `${c.currency} ${n(c.foreign_amount)} → ${withCur(n(c.pkr_amount))}${Number(c.fees) ? ` − ${pick('paym.fee')} ${n(c.fees)} = ${n(c.net)}` : ''} (${c.count})`).join(' · ')}</div>
               <div className="card divide-y divide-line p-0" data-testid="cash-intl">
                 {intl.rows.map((r, i) => (
                   <Link key={i} to={r.document_type === 'sale' ? `/sales/${r.document_id}` : r.document_type === 'purchase' ? `/purchases/${r.document_id}` : '/payments'} className="tap flex flex-col gap-0.5 px-4 py-2.5">
-                    <div className="flex items-center justify-between gap-2"><span className="font-bold">{r.party_name ?? r.sender_name ?? '—'} <span className="font-medium text-muted" dir="ltr">· {r.document_no}</span></span><span className={`num font-bold ${r.direction === 'in' ? 'text-emerald-deep' : 'text-payable'}`} dir="ltr">{r.direction === 'in' ? '+' : '−'} Rs. {n(r.pkr_amount)}</span></div>
+                    <div className="flex items-center justify-between gap-2"><span className="font-bold">{r.party_name ?? r.sender_name ?? '—'} <span className="font-medium text-muted" dir="ltr">· {r.document_no}</span></span><span className={`num font-bold ${r.direction === 'in' ? 'text-emerald-deep' : 'text-payable'}`} dir="ltr">{r.direction === 'in' ? '+' : '−'} {withCur(n(r.pkr_amount))}</span></div>
                     <div className={`text-muted ${small}`} dir="auto"><span dir="ltr">{fmtDate(r.date)}</span>{r.currency ? ` · ${r.currency} ${n(r.foreign_amount)} @ ${r.rate}` : ''}{r.service ? ` · ${r.service}` : ''}{r.country ? ` · ${r.country}` : ''}{r.sender_name && r.party_name ? ` · ${r.sender_name}` : ''}{r.reference ? ` · ${r.reference}` : ''}{r.fee != null ? ` · ${pick('paym.fee')} ${n(r.fee)} → ${n(r.net)}` : ''}{r.status ? ` · ${pick(`paym.st.${r.status}`)}` : ''}</div>
                   </Link>
                 ))}
@@ -155,7 +156,7 @@ export default function FinancePage() {
         <>
           <section className="flex flex-col gap-1 rounded-3xl bg-expense px-5 py-4 text-expense-fg" data-testid="exp-hero">
             <div className="flex items-center justify-between"><BiLabel text="audit.expenses" size="md" bold tone="text-current" />{pct(exp.total, exp.previous_total)}</div>
-            <span className="num text-[32px] leading-tight" dir="ltr">Rs. {n(exp.total)}</span>
+            <span className="num text-[32px] leading-tight" dir="ltr">{withCur(n(exp.total))}</span>
             <span className={`opacity-80 ${small}`}><span className="num">{exp.count}</span> {pick('audit.fin.entries')} · {pick('audit.vsPrevious')} <span className="num" dir="ltr">{n(exp.previous_total)}</span>{Number(exp.owner_drawing) ? <> · {pick('counter.ownerTook')} <span className="num" dir="ltr">{n(exp.owner_drawing)}</span></> : null}</span>
           </section>
           <section className="card"><Bars data={exp.series.map((s) => ({ label: label(s.bucket, exp.granularity), value: Number(s.amount), key: s.bucket }))} tone="rgb(var(--payable))" testid="exp-series" empty="audit.noData" /></section>

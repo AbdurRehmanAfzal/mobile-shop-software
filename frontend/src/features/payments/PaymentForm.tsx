@@ -7,6 +7,7 @@ import { Printer } from 'lucide-react'
 import { openPrintable } from '@/lib/files'
 import { useDocMutation } from '@/lib/queries'
 import type { Party, Payment } from '@/lib/types'
+import {withCur } from '@/lib/format'
 
 /** owner 2026-10-30: a payment for one specific bill (one phone) — allocated to it, up to what is left */
 export interface Allocation { document_type: 'invoice' | 'purchase'; document_id: string; document_no: string; remaining: number }
@@ -19,7 +20,7 @@ export default function PaymentForm({ party, direction, onDone, allocation }: { 
   const [notes, setNotes] = useState('')
   const [result, setResult] = useState<Payment | null>(null)
   const [queued, setQueued] = useState(false)
-  const m = useDocMutation<Record<string, unknown>, Payment>('POST', () => '/api/v1/payments', undefined, { kind: 'payment', label: (b) => `${pick(direction === 'in' ? 'pay.in' : 'pay.out')} · ${party.name} · Rs. ${Number((b as { amount?: number }).amount ?? 0).toLocaleString('en-US')}` })
+  const m = useDocMutation<Record<string, unknown>, Payment>('POST', () => '/api/v1/payments', undefined, { kind: 'payment', label: (b) => `${pick(direction === 'in' ? 'pay.in' : 'pay.out')} · ${party.name} · ${withCur(Number((b as { amount?: number }).amount ?? 0).toLocaleString('en-US'))}` })
 
   async function submit(e: FormEvent) {
     e.preventDefault()

@@ -2,13 +2,30 @@
 
 const latin = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 })
 
+/** how the shop writes money (Settings → Currency, docs/30); always PKR underneath */
+export interface Currency { symbol: string; position: 'before' | 'after'; decimals: 0 | 2 }
+let CUR: Currency = { symbol: 'Rs.', position: 'before', decimals: 0 }
+const fixed2 = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+
+export function setCurrency(c: Partial<Currency> | null | undefined) {
+  CUR = { symbol: c?.symbol || 'Rs.', position: c?.position === 'after' ? 'after' : 'before', decimals: c?.decimals === 2 ? 2 : 0 }
+}
+
+/** the currency label alone, e.g. "Rs." or "PKR" */
+export const cur = () => CUR.symbol
+
+/** a number with the shop's currency label, e.g. "Rs. 45,000" or "45,000 PKR" */
+export function withCur(body: string): string {
+  return CUR.position === 'after' ? `${body} ${CUR.symbol}` : `${CUR.symbol} ${body}`
+}
+
 export function formatMoney(value: number | string | null | undefined): string {
-  if (value === null || value === undefined || value === '') return 'Rs. 0'
+  if (value === null || value === undefined || value === '') return withCur('0')
   const n = typeof value === 'string' ? Number(value) : value
-  if (!Number.isFinite(n)) return 'Rs. 0'
+  if (!Number.isFinite(n)) return withCur('0')
   const abs = Math.abs(n)
-  const body = latin.format(abs)
-  return n < 0 ? `-Rs. ${body}` : `Rs. ${body}`
+  const body = CUR.decimals === 2 ? fixed2.format(abs) : latin.format(abs)
+  return n < 0 ? `-${withCur(body)}` : withCur(body)
 }
 
 /** Convert Arabic-Indic / Urdu digits typed by a user to Latin digits. */

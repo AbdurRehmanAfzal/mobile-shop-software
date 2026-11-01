@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Annotated
 from urllib.parse import parse_qsl, urlsplit
 
-from fastapi import APIRouter, Depends, Header
+from fastapi import APIRouter, Depends, Header, UploadFile
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.core.config import settings
@@ -191,6 +191,37 @@ def update_current_shop(
     data: ShopUpdate, ctx: Annotated[Ctx, Depends(require_cap(Cap.MANAGE_SETTINGS))], db: DB
 ):
     return service.update_shop(db, ctx.user, ctx.shop, data)
+
+
+@shops.post("/current/logo", response_model=ShopSettingsOut)
+async def upload_logo(
+    ctx: Annotated[Ctx, Depends(require_cap(Cap.MANAGE_SETTINGS))],
+    db: DB,
+    file: UploadFile,
+):
+    """the shop's logo (docs/30): JPG / PNG / WEBP up to 600 KB; printed on bills when switched on"""
+    from app.core.errors import ValidationFailed
+    from app.modules.audit.service import record_audit
+    from app.modules.auth.profile import LOGO_MAX
+    from app.modules.files import service as files
+
+    data = await file.read()
+    if (file.content_type or "") not in ("image/jpeg", "image/png", "image/webp"):
+        raise ValidationFailed(code="logo_type", message_en="The logo must be a JPG, PNG or WEBP picture", message_ur="لوگو JPG، PNG یا WEBP تصویر ہونا چاہیے")
+    if len(data) > LOGO_MAX:
+        raise ValidationFailed(code="logo_too_large", message_en="The logo is larger than 600 KB", message_ur="لوگو 600 KB سے بڑا ہے")
+    shop = ctx.shop
+    shop.logo_path = files.save(shop.id, file.content_type or "", data, "logo")
+    record_audit(db, shop_id=shop.id, user_id=ctx.user.id, entity="shop", entity_id=shop.id, action="logo", after={"logo_path": shop.logo_path})
+    db.commit()
+    return shop
+
+
+@shops.delete("/current/logo", response_model=ShopSettingsOut)
+def remove_logo(ctx: Annotated[Ctx, Depends(require_cap(Cap.MANAGE_SETTINGS))], db: DB):
+    ctx.shop.logo_path = None
+    db.commit()
+    return ctx.shop
 
 
 # ---- staff ----------------------------------------------------------------

@@ -10,6 +10,7 @@ import { PhoneInput } from '@/components/FieldInputs'
 import { ErrorText, Loading, PageHeader } from '@/components/ui'
 import { get, patch } from '@/lib/api'
 import BarcodeCard from './BarcodeCard'
+import BusinessProfileCards from './BusinessProfile'
 import { useAuth } from '@/lib/auth'
 
 interface ShopFull {
@@ -108,7 +109,7 @@ export default function SettingsPage() {
     m.mutate({
       name: f!.name, name_ur: null, city: f!.city || null, phone: f!.phone || null, default_locale: f!.default_locale,
       tax_enabled: f!.tax_enabled, tax_inclusive: f!.tax_inclusive, tax_rate: Number(f!.tax_rate || 0),
-      ntn: f!.ntn || null, strn: f!.strn || null, receipt_footer: f!.receipt_footer || null, receipt_footer_ur: f!.receipt_footer_ur || null,
+      receipt_footer: f!.receipt_footer || null, receipt_footer_ur: f!.receipt_footer_ur || null,
       invoice_prefix: f!.invoice_prefix || 'INV',
       fingerprint_staff: f!.fingerprint_staff,
     })
@@ -141,10 +142,6 @@ export default function SettingsPage() {
           <>
             <BiInput label="settings.taxRate" type="number" inputMode="decimal" min={0} max={100} value={f.tax_rate} onChange={set('tax_rate')} placeholder="18" className="num" />
             <Toggle on={f.tax_inclusive} onChange={flag('tax_inclusive')} text="settings.taxInclusive" />
-            <div className="grid grid-cols-2 gap-2">
-              <BiInput label="settings.ntn" value={f.ntn} onChange={set('ntn')} dir="ltr" />
-              <BiInput label="settings.strn" value={f.strn} onChange={set('strn')} dir="ltr" />
-            </div>
           </>
         ) : null}
       </Card>
@@ -161,6 +158,8 @@ export default function SettingsPage() {
         ) : null}
       </Card>
 
+      {/* docs/30: logo, business, owner, tax registration, currency, printed bill */}
+      <BusinessProfileCards Card={Card} Toggle={Toggle} />
       <BarcodeCard Card={Card} />
       <CodeWordCard current={data?.label_code_word ?? null} />
       <SaleRulesCard current={data?.sale_rules ?? null} />

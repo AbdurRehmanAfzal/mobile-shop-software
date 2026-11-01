@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
 import { BtnText, Empty, Loading, PageHeader } from '@/components/ui'
-import { toLakh } from '@/lib/format'
+import {toLakh, withCur } from '@/lib/format'
 import { useGet } from '@/lib/queries'
 import type { StockSummary } from '@/lib/types'
 
@@ -34,7 +34,7 @@ export default function StockSummaryPage() {
         <>
           <section className="flex flex-col rounded-3xl bg-stockt px-5 py-4 text-stockt-fg">
             <BiLabel text={{ en: `${pick('counter.stockWorth')} (${pick(data.basis === 'cost' ? 'counter.worthCost' : 'counter.worthAsking')})`, ur: `${pick('counter.stockWorth')} (${pick(data.basis === 'cost' ? 'counter.worthCost' : 'counter.worthAsking')})` }} size="sm" bold tone="text-current" />
-            <span className="num text-[34px] leading-tight" dir="ltr">Rs. {n(data.value)}</span>
+            <span className="num text-[34px] leading-tight" dir="ltr">{withCur(n(data.value))}</span>
             <span className={ur ? cls('sm') : 'text-sm font-semibold'}>
               <span className="num">{data.count}</span> {pick('counter.phones')}
               {Number(data.value) >= 100_000 ? <> · <span className="num">{toLakh(data.value)}</span> {pick('counter.lakh')}</> : null}

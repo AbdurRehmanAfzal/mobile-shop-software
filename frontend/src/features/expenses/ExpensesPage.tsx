@@ -6,6 +6,7 @@ import RemoveSheet from '@/components/RemoveSheet'
 import { BtnText, Chip, ErrorText, fmtDate, KV, List, Loading, MoneyText, PageHeader, Row, Sheet } from '@/components/ui'
 import { api, post } from '@/lib/api'
 import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
+import {withCur } from '@/lib/format'
 
 interface Category { id: string; key: string; name: string; name_ur: string | null; is_global: boolean }
 interface Expense { id: string; no: string; category_id: string; cash_account_id: string; party_id: string | null; staff_user_id: string | null; notes: string | null; category_name: string | null; category_key: string; amount: string; date: string; description: string | null; staff_name: string | null; party_name: string | null; status: string }
@@ -22,7 +23,7 @@ export default function ExpensesPage() {
   const [amount, setAmount] = useState('')
   const [desc, setDesc] = useState('')
   const [counted, setCounted] = useState('')
-  const create = useDocMutation<Record<string, unknown>, Expense>('POST', () => '/api/v1/expenses', undefined, { kind: 'expense', label: (b) => `${pick('more.expenses')} · Rs. ${Number((b as { amount?: number }).amount ?? 0).toLocaleString('en-US')}` })
+  const create = useDocMutation<Record<string, unknown>, Expense>('POST', () => '/api/v1/expenses', undefined, { kind: 'expense', label: (b) => `${pick('more.expenses')} · ${withCur(Number((b as { amount?: number }).amount ?? 0).toLocaleString('en-US'))}` })
   const edit = useDocMutation<Record<string, unknown> & { id: string }, Expense>('PUT', (i) => `/api/v1/expenses/${i.id}`, ({ id: _id, ...body }) => body)
   const [current, setCurrent] = useState<Expense | null>(null)
   const [editingId, setEditingId] = useState<string | null>(null)
