@@ -79,6 +79,15 @@ the accessories "Opening stock" batches (made by the migration).
 
 ## D. Manual testing (nothing tested by you yet)
 
+**Demo shop with sample data in every module** (2026-11-02): `cd frontend && node scripts/demo-shop.mjs`
+with the backend running. Locally it made "Demo Mobile Centre": owner `03001112233`, manager
+`03221112233`, salesman `03331112233`, password `demo12345` — about two months of purchases
+(cash / credit), sales (cash, udhaar, part paid, discount, tax, installments, wholesale, Easypaisa,
+bank), returns both ways, a void, a price change, ID checks (pending / flagged / skipped with a
+reason), tablet, watch, accessories by the dozen, a loan to another shop, repairs, bank deposit,
+supplier payments, expenses. For the live server: `API=https://<domain>/api/v1 PHONE=03xxxxxxxxx
+node scripts/demo-shop.mjs` — only if you want a demo shop on production.
+
 Close the app fully and open it again first (or install the newest APK from the latest Deploy run →
 `android / apk`), so the newest version loads.
 
