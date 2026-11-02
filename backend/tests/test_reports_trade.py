@@ -140,3 +140,25 @@ def test_staff_report_agrees_with_sales_and_hides_security_from_the_manager(owne
     assert m["security_shown"] is False and all(r["security"] is None for r in m["rows"])
     assert m["totals"]["sales_billed"] == "4400.00"
     assert ali.get("/api/v1/shop-audit/staff", params=win).status_code == 403
+
+
+def test_people_counts_and_supplier_wise_stock(owner, client, cat):
+    t, _ali = _seed(owner, client, cat)
+    win = _win(t)
+    rk = owner.get("/api/v1/shop-audit/rankings", params=win).json()
+    c = rk["counts"]
+    # one customer and one supplier were added today, both dealt with the shop in the window
+    assert c["customer"]["total"] >= 1 and c["customer"]["new"] >= 1
+    assert c["customer"]["active"] == 1
+    assert c["supplier"]["total"] == 1 and c["supplier"]["active"] == 1
+    # a window that ends before they existed counts nothing
+    old = owner.get(
+        "/api/v1/shop-audit/rankings",
+        params={"date_from": "2020-01-01", "date_to": "2020-01-31"},
+    ).json()["counts"]
+    assert old["customer"]["total"] == 0 and old["supplier"]["new"] == 0
+    inv = owner.get("/api/v1/shop-audit/inventory").json()
+    sup = inv["by_supplier"]
+    # the voided and the returned Nokia are back in stock, both from Dealer; counts add up
+    assert sum(r["count"] for r in sup) == inv["count"] == 2
+    assert sup[0]["name"] == "Dealer" and sup[0]["cost"] == "1600.00"

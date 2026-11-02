@@ -15,7 +15,7 @@ from sqlalchemy.orm import Session
 
 from app.core.clock import local_day
 from app.core.errors import NotFound
-from app.core.periods import Period, day_end
+from app.core.periods import Period, day_end, day_start
 from app.db.base import ZERO
 from app.modules.catalogue.models import Brand, Model
 from app.modules.devices.models import Device
@@ -455,6 +455,7 @@ def rankings(
     return {
         "metric": metric,
         "period": p.as_dict(),
+        "counts": people_counts(db, shop_id, p),
         "total": total,
         "parties": len(rows),
         "rows": [
@@ -470,6 +471,48 @@ def rankings(
             for i, (pid, v, c) in enumerate(top)
         ],
     }
+
+
+def people_counts(db: Session, shop_id: uuid.UUID, p: Period) -> dict:
+    """customers / suppliers / other shops: on the books by the period end, new in the period,
+    and how many actually dealt with the shop in the period (docs/31 R5)"""
+    start, end = day_start(p.date_from), day_end(p.date_to)
+    out = {k: {"total": 0, "new": 0, "active": 0} for k in ("customer", "supplier", "shop")}
+    for kinds, created in db.execute(
+        select(Party.kinds, Party.created_at).where(
+            Party.shop_id == shop_id, Party.created_at < end
+        )
+    ).all():
+        for k in kinds or []:
+            if k in out:
+                out[k]["total"] += 1
+                c = created if created.tzinfo else created.replace(tzinfo=dt.UTC)
+                if c >= start:
+                    out[k]["new"] += 1
+    out["customer"]["active"] = int(
+        db.scalar(
+            select(func.count(func.distinct(Invoice.party_id))).where(
+                Invoice.shop_id == shop_id,
+                Invoice.date >= p.date_from,
+                Invoice.date <= p.date_to,
+                Invoice.status != InvoiceStatus.VOID,
+                Invoice.party_id.is_not(None),
+            )
+        )
+        or 0
+    )
+    out["supplier"]["active"] = int(
+        db.scalar(
+            select(func.count(func.distinct(Purchase.party_id))).where(
+                Purchase.shop_id == shop_id,
+                Purchase.date >= p.date_from,
+                Purchase.date <= p.date_to,
+                Purchase.status == PurchaseStatus.POSTED,
+            )
+        )
+        or 0
+    )
+    return out
 
 
 # ---- udhaar (receivables / payables apart) -----------------------------------------------------

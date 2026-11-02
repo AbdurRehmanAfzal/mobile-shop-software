@@ -167,6 +167,19 @@ def summary(
         x["count"] += 1
         x["cost"] = money(x["cost"] + (d.cost_price or ZERO))
         x["asking"] = money(x["asking"] + (d.asking_price or ZERO))
+    # supplier-wise stock (docs/31 R5): who the phone was bought from; trade-ins / opening stock apart
+    sups = _suppliers(db, shop_id, [d.id for d in devs])
+    by_sup: dict = {}
+    for d in devs:
+        sp = sups.get(d.id) or {}
+        k = sp.get("party_id")
+        x = by_sup.setdefault(
+            k,
+            {"party_id": k, "name": sp.get("party_name"), "count": 0, "cost": ZERO, "asking": ZERO},
+        )
+        x["count"] += 1
+        x["cost"] = money(x["cost"] + (d.cost_price or ZERO))
+        x["asking"] = money(x["asking"] + (d.asking_price or ZERO))
     cost_total = money(sum((d.cost_price or ZERO for d in devs), ZERO))
     asking_total = money(sum((d.asking_price or ZERO for d in devs), ZERO))
     priced = [d for d in devs if d.cost_price is not None and d.asking_price is not None]
@@ -194,6 +207,10 @@ def summary(
         "by_brand": sorted(
             (({**b, "cost": b["cost"] if can_cost else None}) for b in brands.values()),
             key=lambda b: -b["count"],
+        ),
+        "by_supplier": sorted(
+            (({**b, "cost": b["cost"] if can_cost else None}) for b in by_sup.values()),
+            key=lambda b: (b["party_id"] is None, -b["count"]),
         ),
         "status_counts": {s.value: int(status_counts.get(s.value, 0)) for s in DeviceStatus},
         "most_expensive_cost": by_cost if can_cost else [],
