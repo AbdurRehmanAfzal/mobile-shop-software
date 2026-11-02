@@ -7,6 +7,7 @@ import { BiLabel, useLang, type BiText } from './Bilingual'
 import { formatMoney } from '@/lib/format'
 import { ApiError } from '@/lib/api'
 import { ScanButton } from './ScanButton'
+import Help from './Help'
 
 export function PageHeader({ title, back = true, right, help }: { title: string | BiText; back?: boolean; right?: ReactNode; help?: ReactNode }) {
   const nav = useNavigate()
@@ -180,11 +181,12 @@ export function Pending({ error, retry }: { error: unknown; retry?: () => unknow
   )
 }
 
-export function Section({ title, children, right }: { title: string | BiText; children: ReactNode; right?: ReactNode }) {
+/** `help`: a key under `help.` — a "?" with an explanation and an example beside the title (docs/33) */
+export function Section({ title, children, right, help }: { title: string | BiText; children: ReactNode; right?: ReactNode; help?: string }) {
   return (
     <section className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
-        <BiLabel text={title} size="sm" tone="text-muted" bold />
+        <span className="flex items-center gap-1"><BiLabel text={title} size="sm" tone="text-muted" bold />{help ? <Help term={help} size="sm" /> : null}</span>
         {right}
       </div>
       {children}
@@ -192,11 +194,11 @@ export function Section({ title, children, right }: { title: string | BiText; ch
   )
 }
 
-export function KV({ k, v }: { k: string | BiText; v: ReactNode }) {
+export function KV({ k, v, help }: { k: string | BiText; v: ReactNode; help?: string }) {
   const { pick } = useLang()
   return (
     <div className="flex items-center justify-between gap-3 py-1.5">
-      <span className="text-sm text-muted">{pick(k)}</span>
+      <span className="flex items-center gap-1 text-sm text-muted">{pick(k)}{help ? <Help term={help} size="sm" /> : null}</span>
       <span className="text-sm font-semibold text-ink" dir="auto">
         {v}
       </span>

@@ -1467,6 +1467,98 @@
       "title": "Bulk Excel",
       "body": "Instead of typing one phone or one person at a time, you fill a sheet in Excel and upload it. The app checks every row and tells you, in plain words, what is wrong. Nothing is saved until you press Import, and then either every good row is saved or nothing is.",
       "example": "50 old phones in stock: write them in the sheet in 20 minutes, upload once, done."
+    },
+    "common": {
+      "name": {
+        "title": "Name",
+        "body": "The person's or shop's name as you call them. It shows on bills, the khata and WhatsApp messages.",
+        "example": "Bilal Ahmed, or \"Star Mobiles (Hall Road)\"."
+      },
+      "phone": {
+        "title": "Mobile number",
+        "body": "The person's mobile number. It finds them quickly and is used for WhatsApp bills and reminders.",
+        "example": "0321 5550002 — type it once; next time just search 0321555."
+      },
+      "cnic": {
+        "title": "CNIC (ID card)",
+        "body": "The 13-digit number on the person's ID card. Keep it when you buy a used phone, so you know who sold it.",
+        "example": "35202-1234567-1"
+      },
+      "address": {
+        "title": "Address",
+        "body": "Where the person or shop is. Optional; useful for dealers and for delivery.",
+        "example": "Shop 14, Hafeez Centre, Gulberg, Lahore."
+      },
+      "notes": {
+        "title": "Note",
+        "body": "Anything you want to remember about this entry. Only your shop sees it.",
+        "example": "\"Will pay the rest on Friday\" or \"box has a scratch\"."
+      },
+      "amount": {
+        "title": "Amount",
+        "body": "How much money, in rupees. Type only the number; the app adds commas.",
+        "example": "25000 shows as Rs. 25,000."
+      },
+      "date": {
+        "title": "Date",
+        "body": "The day this happened. It is today unless you change it; reports count it on this day.",
+        "example": "You forgot to enter yesterday's sale: set yesterday's date and it counts in yesterday's hisaab."
+      },
+      "method": {
+        "title": "How it was paid",
+        "body": "Cash, online (bank app / Easypaisa / JazzCash), cheque or from abroad. It decides which account the money goes into.",
+        "example": "Customer sends Rs. 10,000 on Easypaisa: choose Online → Easypaisa; it lands in the Easypaisa account, not the galla."
+      },
+      "account": {
+        "title": "Account (galla / bank / wallet)",
+        "body": "Where the shop keeps money: the galla (cash drawer), a bank account, Easypaisa or JazzCash. Each has its own balance.",
+        "example": "Galla Rs. 40,000 + HBL Rs. 2,00,000 + Easypaisa Rs. 15,000 = Rs. 2,55,000 in all."
+      },
+      "discount": {
+        "title": "Discount",
+        "body": "Money taken off the price for the customer. It lowers the bill and your profit.",
+        "example": "Phone Rs. 32,000, discount Rs. 500 → customer pays Rs. 31,500."
+      },
+      "tax": {
+        "title": "Tax (sales tax)",
+        "body": "Government sales tax added on top of the price, if your shop is registered. It is collected for the government, not your income.",
+        "example": "Bill Rs. 10,000 with 18% tax → customer pays Rs. 11,800; Rs. 1,800 is tax."
+      },
+      "paid": {
+        "title": "Paid now",
+        "body": "The money given at the counter right now. Whatever is not paid stays as udhaar on the khata.",
+        "example": "Bill Rs. 50,000, paid now Rs. 20,000 → Rs. 30,000 udhaar."
+      },
+      "remaining": {
+        "title": "Remaining (baqi)",
+        "body": "What is still to be paid on this bill or khata after everything paid so far.",
+        "example": "Bill Rs. 30,000, paid Rs. 18,000 → remaining Rs. 12,000."
+      },
+      "qty": {
+        "title": "Quantity",
+        "body": "How many pieces. Items bought by the dozen or box are still counted in pieces.",
+        "example": "2 dozen cables = 24 pieces."
+      },
+      "period": {
+        "title": "Period",
+        "body": "Which days the screen counts: today, this week, this month, a custom from–to, and so on. Every figure on the screen is for these days only.",
+        "example": "\"This month\" on 15 March counts 1 to 15 March; \"Last month\" counts all of February."
+      },
+      "asOf": {
+        "title": "As of a day",
+        "body": "Shows balances (stock, udhaar, cash) as they were at the end of that day, not today.",
+        "example": "As of 31 January: how much udhaar people owed on that night, even if they paid later."
+      },
+      "download": {
+        "title": "Print / Excel",
+        "body": "Print this screen or save it as a PDF, or download it as an Excel sheet to keep or send to your accountant.",
+        "example": "End of month: Excel → send to the accountant on WhatsApp."
+      },
+      "search": {
+        "title": "Search",
+        "body": "Type part of a name, mobile number, IMEI or bill number; the list shows only what matches.",
+        "example": "Type 4512 to find the phone whose IMEI ends in 4512."
+      }
     }
   },
   "items": {

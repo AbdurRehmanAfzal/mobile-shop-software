@@ -1467,6 +1467,98 @@
       "title": "Bulk Excel",
       "body": "Ek ek mobile ya banda type karne ke bajaye Excel ki sheet bhar kar upload karein. App har row check kar ke saaf lafzon mein batati hai kya ghalat hai. 'Import' dabane tak kuch save nahi hota, aur phir ya to saari theek rows save hoti hain ya koi nahi.",
       "example": "Stock mein 50 purane mobile: 20 minute mein sheet mein likhein, ek baar upload karein, kaam khatam."
+    },
+    "common": {
+      "name": {
+        "title": "Naam",
+        "body": "Bande ya dukaan ka naam jaise aap pukarte hain. Yeh bill, khate aur WhatsApp message par aata hai.",
+        "example": "Bilal Ahmed, ya \"Star Mobiles (Hall Road)\"."
+      },
+      "phone": {
+        "title": "Mobile number",
+        "body": "Bande ka mobile number. Is se woh jaldi mil jata hai aur WhatsApp bill aur reminder isi par jata hai.",
+        "example": "0321 5550002 — ek baar likhein, agli baar sirf 0321555 search karein."
+      },
+      "cnic": {
+        "title": "CNIC (shanakhti card)",
+        "body": "Bande ke shanakhti card ka 13 hindson wala number. Purana phone khareedte waqt zaroor likhein taake pata ho kis ne becha.",
+        "example": "35202-1234567-1"
+      },
+      "address": {
+        "title": "Pata",
+        "body": "Banda ya dukaan kahan hai. Lazmi nahi; dealer aur delivery ke liye kaam aata hai.",
+        "example": "Shop 14, Hafeez Centre, Gulberg, Lahore."
+      },
+      "notes": {
+        "title": "Note",
+        "body": "Is entry ke baare mein jo baat yaad rakhni ho. Yeh sirf aap ki dukaan dekhti hai.",
+        "example": "\"Baqi jumma ko dega\" ya \"dabbe par kharash hai\"."
+      },
+      "amount": {
+        "title": "Raqam",
+        "body": "Kitne paise, rupay mein. Sirf number likhein; comma app khud lagati hai.",
+        "example": "25000 likhein to Rs. 25,000 dikhega."
+      },
+      "date": {
+        "title": "Tareekh",
+        "body": "Yeh kis din hua. Khud aaj ki tareekh hoti hai; report isi din mein ginti hai.",
+        "example": "Kal ki sale likhna bhool gaye: kal ki tareekh rakhein to kal ke hisaab mein aayegi."
+      },
+      "method": {
+        "title": "Adaigi kaise hui",
+        "body": "Naqd, online (bank app / Easypaisa / JazzCash), cheque ya bahar mulk se. Isi se tay hota hai ke raqam kis account mein jaye.",
+        "example": "Customer ne 10,000 Easypaisa par bheje: Online → Easypaisa chunein; raqam Easypaisa account mein jayegi, galle mein nahi."
+      },
+      "account": {
+        "title": "Account (galla / bank / wallet)",
+        "body": "Dukaan ke paise kahan hain: galla (naqd daraz), bank account, Easypaisa ya JazzCash. Har ek ka apna baqaya hai.",
+        "example": "Galla 40,000 + HBL 2,00,000 + Easypaisa 15,000 = kul 2,55,000."
+      },
+      "discount": {
+        "title": "Discount (riayat)",
+        "body": "Customer ke liye qeemat mein se kam ki gayi raqam. Is se bill aur munafa dono kam hote hain.",
+        "example": "Phone 32,000, discount 500 → customer 31,500 dega."
+      },
+      "tax": {
+        "title": "Tax (sales tax)",
+        "body": "Sarkari sales tax jo qeemat ke upar lagta hai, agar dukaan registered hai. Yeh hukumat ke liye jama hota hai, aap ki aamdani nahi.",
+        "example": "Bill 10,000 aur 18% tax → customer 11,800 dega; 1,800 tax hai."
+      },
+      "paid": {
+        "title": "Abhi ada",
+        "body": "Jo raqam abhi counter par di gayi. Jo baqi rahe woh khate mein udhaar rehti hai.",
+        "example": "Bill 50,000, abhi ada 20,000 → 30,000 udhaar."
+      },
+      "remaining": {
+        "title": "Baqi",
+        "body": "Is bill ya khate par ab tak ki adaigi ke baad jo raqam abhi deni hai.",
+        "example": "Bill 30,000, ada 18,000 → baqi 12,000."
+      },
+      "qty": {
+        "title": "Tadaad",
+        "body": "Kitne piece. Darjan ya dabbe mein khareedi cheez bhi piece mein gini jati hai.",
+        "example": "2 darjan cable = 24 piece."
+      },
+      "period": {
+        "title": "Arsa (period)",
+        "body": "Screen kin dinon ko ginti hai: aaj, is hafte, is mahine, apni marzi ki tareekh se tareekh tak waghera. Screen ka har adad sirf inhi dinon ka hai.",
+        "example": "15 March ko \"is mahine\" yani 1 se 15 March; \"pichla mahina\" yani poora February."
+      },
+      "asOf": {
+        "title": "Kisi din tak (as of)",
+        "body": "Baqaya (stock, udhaar, naqd) us din ke aakhir mein jaisa tha waisa dikhata hai, aaj wala nahi.",
+        "example": "31 January tak: us raat logon par kitna udhaar tha, chahe baad mein ada kar diya ho."
+      },
+      "download": {
+        "title": "Print / Excel",
+        "body": "Yeh screen print karein ya PDF banayein, ya Excel sheet download kar ke rakhein ya accountant ko bhejein.",
+        "example": "Mahine ke aakhir mein: Excel → accountant ko WhatsApp par bhejein."
+      },
+      "search": {
+        "title": "Search",
+        "body": "Naam, mobile number, IMEI ya bill number ka kuch hissa likhein; list mein sirf milti cheezein rahengi.",
+        "example": "4512 likhein to woh phone milega jis ka IMEI 4512 par khatam hota hai."
+      }
     }
   },
   "items": {
