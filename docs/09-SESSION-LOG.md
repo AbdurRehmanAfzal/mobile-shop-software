@@ -633,3 +633,15 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - tsc; vitest 35;
 - Playwright `lending.spec.ts` + audit-finance / audit / audit-reports / reports-audit / core-flow / counter / paymode / units / crud (20 passed).
 **Next**: owner tries len-den on the demo shop (Usman has 15,000 that can be adjusted against his bills). PR #25 (reports) still waits for the owner's merge; this work rides with it or a later PR. Open: audit-parties e2e step; the person's money split card ("Other / opening") counts len-den as "other".
+
+## 2026-11-02 · Len-den return dates and reminders
+- Owner on the three len-den choices: 1 adjust as a button — ok; 2 roles — ok; 3 "reminder hona chye". Built (docs/32 §7, ADR-042):
+  - `payments.due_date / reminded_at` (migration `f4b6d8f0a2c4`) and `payments/lending_due.py` (per-person status, counts, hand reminder, night job with a 3-day gap, date change with an audit row);
+  - templates `lending_due` / `lending_late`; dashboard and overview counts; `/payments/lending-due`; audit `due` list and report table;
+  - UI: return date on the form, due badge, "Send reminder", change date, home alerts, overview chips, audit list; strings en / ur / roman;
+  - demo shop: Tariq late, Star Mobiles due in 2 days, Bilal later.
+**Verified**:
+- backend `test_lending.py` (4) + full suite, ruff;
+- tsc; vitest;
+- Playwright `lending.spec.ts` (2) + reminders / counter / audit specs.
+**Next**: owner tries it on the demo shop (Tariq is late → Send reminder). Still open: PR #25 merge; audit-parties e2e step; the party money split counts len-den as "other".

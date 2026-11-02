@@ -17,7 +17,9 @@ type M = string
 interface Open { amount: M; people: number }
 interface Person { party_id: string; name: string | null; phone: string | null; lent: M; borrowed: M; entries: number; open: M; khata: M; last_date: string | null }
 interface Entry { id: string; no: string; party_id: string; party_name: string | null; direction: 'in' | 'out'; amount: M; method: string; date: string; notes: string | null; by: string | null }
+interface DueRow { party_id: string; name: string | null; phone: string | null; side: 'owes_us' | 'we_owe'; amount: M; due_date: string; days_late: number; status: 'late' | 'today' | 'soon' | 'later'; reminded_at: string | null }
 interface Lending {
+  due: DueRow[]
   granularity: string
   totals: { lent: M; borrowed: M; net: M; lent_count: number; borrowed_count: number; previous_lent: M; previous_borrowed: M; voided: number; adjusted_on_bills: M }
   owed_to_shop: Open
@@ -79,6 +81,25 @@ export default function LendingAuditPage() {
                     <span>{pick(`pay.${m.method}`)}</span>
                     <span className="num" dir="ltr">{pick('lending.lent')} {n(m.lent)} · {pick('lending.borrowed')} {n(m.borrowed)}</span>
                   </div>
+                ))}
+              </div>
+            </>
+          ) : null}
+
+          {d.due.length ? (
+            <>
+              <BiLabel text="audit.lend.due" size="md" bold />
+              <BiLabel text="audit.lend.dueHint" size="sm" tone="text-muted" />
+              <div className="card divide-y divide-line p-0" data-testid="lend-due">
+                {d.due.map((r) => (
+                  <Link key={r.party_id} to={`/parties/${r.party_id}`} className="tap flex items-center gap-3 px-4 py-2.5">
+                    <span className={`shrink-0 rounded-full px-2.5 py-1 ${small} ${r.status === 'late' ? 'bg-payable-tint text-payable' : r.status === 'later' ? 'bg-ground text-muted' : 'bg-receivable-tint text-receivable'}`}>{pick(`audit.lend.st.${r.status}`)}</span>
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <span className="truncate font-bold">{r.name ?? '—'}</span>
+                      <span className={`text-muted ${small}`}>{pick(r.side === 'we_owe' ? 'lending.weOwe' : 'lending.theyOwe')} · <span dir="ltr">{fmtDate(r.due_date)}</span>{r.days_late ? <> · {pick('lending.lateBy').replace('{{n}}', String(r.days_late))}</> : null}</span>
+                    </span>
+                    <span className={`num font-bold ${r.side === 'we_owe' ? 'text-payable' : 'text-receivable'}`} dir="ltr">{n(r.amount)}</span>
+                  </Link>
                 ))}
               </div>
             </>

@@ -1182,7 +1182,9 @@
     "operatingProfit": "Profit after expenses",
     "promiseDate": "Promised to pay by (optional)",
     "promiseDateBuy": "We pay the supplier by (optional)",
-    "promiseHint": "With a date the audit calls the udhaar overdue after it; without one it only shows the age of the debt."
+    "promiseHint": "With a date the audit calls the udhaar overdue after it; without one it only shows the age of the debt.",
+    "lendLate": "people late returning len-den",
+    "lendWeOwe": "len-den the shop must give back soon"
   },
   "admin": {
     "title": "Super admin",
@@ -2712,7 +2714,9 @@
       "title": "Needs a look now",
       "idChecks": "ID checks not cleared",
       "lateInstallments": "Late installments",
-      "dueToday": "Installments due today"
+      "dueToday": "Installments due today",
+      "lendingLate": "Len-den late",
+      "lendingWeOwe": "Len-den to give back"
     },
     "cnt": {
       "customer": "Customers",
@@ -2734,7 +2738,15 @@
       "entries": "Entries",
       "khata": "Whole khata",
       "series": "Given and taken",
-      "byMethod": "How it moved"
+      "byMethod": "How it moved",
+      "due": "Return dates",
+      "dueHint": "Late first. Money lent: remind the person on WhatsApp. Money borrowed: the shop has to give it back.",
+      "st": {
+        "late": "Late",
+        "today": "Today",
+        "soon": "In 3 days",
+        "later": "Later"
+      }
     }
   },
   "label": {
@@ -3215,6 +3227,17 @@
     "saveGive": "Save — money given",
     "saveTake": "Save — money taken",
     "formHintOut": "Money going from the shop to this person, not for any bill",
-    "formHintIn": "Money coming to the shop from this person, not for any bill"
+    "formHintIn": "Money coming to the shop from this person, not for any bill",
+    "dueDate": "Return date (optional)",
+    "dueOn": "Due back {{date}}",
+    "lateBy": "{{n}} days late",
+    "dueToday": "Due back today",
+    "weGiveBy": "We give back by {{date}}",
+    "remind": "Send reminder",
+    "lastReminded": "Last reminded {{date}}",
+    "changeDate": "Return date",
+    "saveDate": "Save date",
+    "reminderOpened": "WhatsApp opened with the reminder",
+    "reminderSent": "Reminder sent"
   }
 }

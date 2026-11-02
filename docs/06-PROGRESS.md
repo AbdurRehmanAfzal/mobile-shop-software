@@ -246,6 +246,7 @@ Plan, audit, assumptions `docs/32-LENDING-PLAN.md`, ADR-041.
 | Reports keep it apart: cash & bank, day report, overview, udhaar, complete report | ✅ | |
 | Audit screen `/audit/lending` (period, open, per person, series, entries, print / Excel) | ✅ | |
 | Demo shop has len-den (Tariq, Star Mobiles, Usman, Bilal) | ✅ | |
+| Return dates + reminders (WhatsApp to who owes, night job, home / overview alerts for what the shop owes) | ✅ | docs/32 §7, ADR-042, migration `f4b6d8f0a2c4` |
 
 ## Owner side (open)
 Server env variables, server commands, manual testing and decisions: `docs/29-OWNER-PENDING.md` — none done yet (2026-11-01).

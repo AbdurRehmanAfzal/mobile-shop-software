@@ -572,6 +572,35 @@ def build(
                 "notes": [],
             }
         )
+        if x["due"]:
+            out.append(
+                {
+                    "key": "lending_due",
+                    "title": "Len-den return dates",
+                    "header": [
+                        "Name",
+                        "Phone",
+                        "Side",
+                        "Amount",
+                        "Due",
+                        "Days late",
+                        "Last reminded",
+                    ],
+                    "rows": [
+                        [
+                            y["name"],
+                            y["phone"],
+                            "owes us" if y["side"] == "owes_us" else "we owe",
+                            y["amount"],
+                            y["due_date"],
+                            y["days_late"],
+                            y["reminded_at"],
+                        ]
+                        for y in x["due"]
+                    ],
+                    "notes": [],
+                }
+            )
         if detail:
             out.append(
                 {

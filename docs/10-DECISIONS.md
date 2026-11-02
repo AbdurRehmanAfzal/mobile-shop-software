@@ -232,3 +232,8 @@ by sheet remain a later step (docs/18 §1).
 - Adjusting is a deliberate button, not automatic at the counter.
 - No interest, due date or reminder for len-den.
 
+
+## ADR-042 · 2026-11-02 · Accepted · Len-den return dates: one optional date per entry, the earliest open one counts per person; reminders to people who owe, alerts for what the shop owes
+**Context.** The owner wants reminders for len-den (docs/32 §7).
+**Decision.** `payments.due_date` and `reminded_at` (migration `f4b6d8f0a2c4`). The status is derived per person from their open entries on their side. A person who owes the shop gets a WhatsApp reminder, by hand or from the night job (a day before, on the day, then every 3 days; only when the shop's udhaar reminders are on). What the shop owes is never messaged to the person; it is shown to the owner (home, overview, audit). Changing a date is an audit row; nothing is deleted.
+**Consequences.** The udhaar reminder (balance untouched N days) and the len-den reminder can both reach the same person; each has its own gap.

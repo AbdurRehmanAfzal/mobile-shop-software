@@ -5,7 +5,7 @@ import uuid
 from decimal import Decimal
 from enum import StrEnum
 
-from sqlalchemy import JSON, Date, ForeignKey, Index, String, Text, UniqueConstraint, Uuid
+from sqlalchemy import JSON, Date, DateTime, ForeignKey, Index, String, Text, UniqueConstraint, Uuid
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import ZERO, Base, ShopScoped, Timestamped, UUIDPk
@@ -56,6 +56,9 @@ class Payment(UUIDPk, ShopScoped, Timestamped, Base):
     reference: Mapped[str | None] = mapped_column(String(80))
     date: Mapped[dt.date] = mapped_column(Date, nullable=False)
     notes: Mapped[str | None] = mapped_column(Text)
+    # len-den only (docs/32 §7): the promised return date and the last reminder sent for it
+    due_date: Mapped[dt.date | None] = mapped_column(Date)
+    reminded_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
     allocations: Mapped[list[dict]] = mapped_column(
         JSON, nullable=False, default=list
     )  # [{document_type, document_id, amount}]

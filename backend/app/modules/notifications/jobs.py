@@ -32,6 +32,7 @@ log = logging.getLogger("notifications")
 DAILY = "daily_report"
 REMIND = "udhaar_reminder"
 INSTALL = "installment_reminders"
+LENDING = "lending_reminders"
 SNAPSHOT = "stock_snapshot"
 
 
@@ -312,6 +313,11 @@ def tick(db: Session, now: dt.datetime | None = None) -> dict:
             if "installments" in effective(shop.organisation):
                 ran["reminders"] += auto_reminders(db, shop)
                 db.commit()
+        if remind_due and _claim(db, shop.id, LENDING, day):
+            from app.modules.payments.lending_due import auto_reminders as lending_reminders
+
+            ran["reminders"] += lending_reminders(db, shop, day)
+            db.commit()
         if remind_due and _claim(db, shop.id, REMIND, day):
             n = len(
                 queue_reminders(
@@ -349,11 +355,22 @@ def _heartbeat(db: Session, now: dt.datetime) -> None:
         return
     import httpx
 
-    used = [n for (n,) in db.execute(select(PlanRenewalCode.nonce).where(PlanRenewalCode.organisation_id == org.id)).all()]
+    used = [
+        n
+        for (n,) in db.execute(
+            select(PlanRenewalCode.nonce).where(PlanRenewalCode.organisation_id == org.id)
+        ).all()
+    ]
     try:
         httpx.post(
             f"{settings.saas_url.rstrip('/')}/api/v1/public/heartbeat",
-            json={"org_id": str(org.license_org_id), "install_id": str(org.id), "version": settings.app_version, "plan_expires_at": org.plan_expires_at.isoformat() if org.plan_expires_at else None, "redeemed": used},
+            json={
+                "org_id": str(org.license_org_id),
+                "install_id": str(org.id),
+                "version": settings.app_version,
+                "plan_expires_at": org.plan_expires_at.isoformat() if org.plan_expires_at else None,
+                "redeemed": used,
+            },
             timeout=10,
         )
     except Exception:  # noqa: BLE001 — no internet is normal for this install

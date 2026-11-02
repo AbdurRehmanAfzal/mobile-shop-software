@@ -1182,7 +1182,9 @@
     "operatingProfit": "Kharchon ke baad munafa",
     "promiseDate": "Adaigi ka waada (ikhtiyari)",
     "promiseDateBuy": "Supplier ko adaigi tak (ikhtiyari)",
-    "promiseHint": "Tareekh ke saath audit us ke baad udhaar ko late kehta hai; baghair tareekh sirf udhaar ki umar dikhti hai."
+    "promiseHint": "Tareekh ke saath audit us ke baad udhaar ko late kehta hai; baghair tareekh sirf udhaar ki umar dikhti hai.",
+    "lendLate": "log len-den ki wapsi mein der kar rahe hain",
+    "lendWeOwe": "len-den jo dukaan ne jald wapas dena hai"
   },
   "admin": {
     "title": "Super admin",
@@ -2712,7 +2714,9 @@
       "title": "Abhi dekhna zaroori hai",
       "idChecks": "Shanakht ki jaanch baqi",
       "lateInstallments": "Der wali qistein",
-      "dueToday": "Aaj ki qistein"
+      "dueToday": "Aaj ki qistein",
+      "lendingLate": "Len-den mein der",
+      "lendingWeOwe": "Len-den wapas dena hai"
     },
     "cnt": {
       "customer": "Gahak",
@@ -2734,7 +2738,15 @@
       "entries": "Entries",
       "khata": "Poora khata",
       "series": "Di aur li",
-      "byMethod": "Kaise aayi gayi"
+      "byMethod": "Kaise aayi gayi",
+      "due": "Wapsi ki tareekhein",
+      "dueHint": "Der wale pehle. Di hui raqam: bande ko WhatsApp par yaad dilayein. Li hui raqam: dukaan ne wapas deni hai.",
+      "st": {
+        "late": "Der",
+        "today": "Aaj",
+        "soon": "3 din mein",
+        "later": "Baad mein"
+      }
     }
   },
   "label": {
@@ -3215,6 +3227,17 @@
     "saveGive": "Save karein — raqam di",
     "saveTake": "Save karein — raqam li",
     "formHintOut": "Dukaan se is bande ko raqam, kisi bill ke liye nahi",
-    "formHintIn": "Is bande se dukaan mein raqam, kisi bill ke liye nahi"
+    "formHintIn": "Is bande se dukaan mein raqam, kisi bill ke liye nahi",
+    "dueDate": "Wapsi ki tareekh (optional)",
+    "dueOn": "{{date}} ko wapsi",
+    "lateBy": "{{n}} din der",
+    "dueToday": "Aaj wapsi hai",
+    "weGiveBy": "{{date}} tak hum ne wapas dene hain",
+    "remind": "Reminder bhejein",
+    "lastReminded": "Aakhri reminder {{date}}",
+    "changeDate": "Wapsi ki tareekh",
+    "saveDate": "Tareekh save karein",
+    "reminderOpened": "Reminder ke sath WhatsApp khul gaya",
+    "reminderSent": "Reminder bhej diya"
   }
 }

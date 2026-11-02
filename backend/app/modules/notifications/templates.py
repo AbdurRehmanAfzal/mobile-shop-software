@@ -101,6 +101,26 @@ TEMPLATES: dict[str, dict[str, dict[str, str]]] = {
             ),
         },
     },
+    "lending_due": {
+        "en": {
+            "subject": "Reminder: {shop}",
+            "body": "{customer}, a reminder from {shop}: Rs. {amount} you took from us is to come back on {due}. Thank you.",
+        },
+        "ur": {
+            "subject": "یاد دہانی: {shop}",
+            "body": "{customer}، {shop} کی طرف سے یاد دہانی: ہم سے لی گئی Rs. {amount} کی رقم {due} کو واپس کرنی ہے۔ شکریہ۔",
+        },
+    },
+    "lending_late": {
+        "en": {
+            "subject": "Money due: {shop}",
+            "body": "{customer}, Rs. {amount} you took from {shop} was to come back on {due} ({late} days ago). Please return it at your earliest. Thank you.",
+        },
+        "ur": {
+            "subject": "رقم کی واپسی: {shop}",
+            "body": "{customer}، {shop} سے لی گئی Rs. {amount} کی رقم {due} کو واپس کرنی تھی ({late} دن ہو گئے)۔ براہ کرم جلد واپس کر دیں۔ شکریہ۔",
+        },
+    },
     "installment_due": {
         "en": {
             "subject": "Installment due: {shop}",

@@ -8,9 +8,15 @@ from app.core.idempotency import IdemKey
 from app.core.idempotency import run as idempotent
 from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx, require_cap
+from app.modules.notifications import jobs
+from app.modules.notifications.models import Message
+from app.modules.notifications.schemas import MessageOut
+from app.modules.payments import lending_due as lending_due_mod
 from app.modules.payments import service
 from app.modules.payments.models import PaymentDirection, PaymentPurpose
 from app.modules.payments.schemas import (
+    DueDateIn,
+    LendingDueRow,
     PartyLendingOut,
     PaymentCreate,
     PaymentOut,
@@ -62,6 +68,28 @@ def party_lending(party_id: uuid.UUID, ctx: Transact, db: DB):
     """A person's len-den (docs/32): what is still open, the part of the khata from bills, the
     entries, and what could be adjusted against their open bills."""
     return service.party_lending(db, ctx.shop_id, party_id)
+
+
+@router.get("/lending-due", response_model=list[LendingDueRow])
+def lending_due(ctx: Transact, db: DB):
+    """Everyone whose open len-den has a return date, earliest first (docs/32 §7)."""
+    return lending_due_mod.due_rows(db, ctx.shop_id)
+
+
+@router.post("/lending/{party_id}/remind", response_model=MessageOut)
+def lending_remind(party_id: uuid.UUID, ctx: Transact, db: DB):
+    """A WhatsApp reminder to a person who owes len-den; sent at once with the Cloud API, otherwise
+    it carries its wa.me link."""
+    msg = lending_due_mod.remind(db, ctx.shop, ctx.id, party_id)
+    mid = msg.id
+    jobs.dispatch(db)
+    return db.get(Message, mid)
+
+
+@router.patch("/{payment_id}/due-date", response_model=PaymentOut)
+def set_due_date(payment_id: uuid.UUID, data: DueDateIn, ctx: Transact, db: DB):
+    p = lending_due_mod.set_due_date(db, ctx.shop_id, ctx.id, payment_id, data.due_date)
+    return service.to_out(db, p)
 
 
 @router.post("/settle/{party_id}", response_model=SettleOut)

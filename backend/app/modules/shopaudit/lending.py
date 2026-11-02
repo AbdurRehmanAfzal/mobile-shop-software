@@ -17,6 +17,7 @@ from app.db.base import ZERO
 from app.db.refs import user_name
 from app.modules.ledger.service import money
 from app.modules.parties.models import Party
+from app.modules.payments.lending_due import due_rows
 from app.modules.payments.models import Payment, PaymentPurpose
 from app.modules.payments.service import lending_balances
 from app.modules.shopaudit.finance import bucket_of, buckets, granularity
@@ -144,6 +145,8 @@ def lending(db: Session, shop_id: uuid.UUID, p: Period, *, limit: int = 50) -> d
             {"bucket": b, "lent": series[b]["lent"], "borrowed": series[b]["borrowed"]}
             for b in buckets(p)
         ],
+        # return dates (docs/32 §7): late first, today, soon, later
+        "due": due_rows(db, shop_id),
         "people": people[:limit],
         "people_total": len(people),
         "entries": [

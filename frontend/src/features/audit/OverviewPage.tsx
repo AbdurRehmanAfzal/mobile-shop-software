@@ -29,7 +29,7 @@ export interface Overview {
   debt: { receivable: Bal; payable: Bal; received_in_period: M; paid_in_period: M }
   stock: { opening: StockAt; closing: StockAt; as_of: StockAt; current: StockAt; note: string }
   previous: { net_sales: M; net_profit: M | null; total_expenses: M; inflows: M; outflows: M }
-  attention?: { verification_pending: number; verification_flagged: number; alerts: Record<string, number>; alerts_total: number; installments_due_today: number; installments_overdue: number; installments_late_amount: M }
+  attention?: { verification_pending: number; verification_flagged: number; alerts: Record<string, number>; alerts_total: number; installments_due_today: number; installments_overdue: number; installments_late_amount: M; lending_late?: number; lending_late_amount?: M; lending_we_owe_due?: number; lending_we_owe_amount?: M }
 }
 interface Reconcile { ok: boolean; checks: { key: string; ok: boolean; left: string | number; right: string | number; diff: string | number; name?: string }[] }
 
@@ -72,13 +72,15 @@ export default function OverviewPage() {
             ) : null}
           </section>
 
-          {data.attention && (data.attention.verification_pending + data.attention.verification_flagged + data.attention.alerts_total + data.attention.installments_overdue + data.attention.installments_due_today) > 0 ? (
+          {data.attention && (data.attention.verification_pending + data.attention.verification_flagged + data.attention.alerts_total + data.attention.installments_overdue + data.attention.installments_due_today + (data.attention.lending_late ?? 0) + (data.attention.lending_we_owe_due ?? 0)) > 0 ? (
             <section className="card flex flex-col gap-2" data-testid="audit-attention">
               <div className="flex items-center gap-2"><AlertTriangle size={18} className="text-receivable" /><BiLabel text="audit.att.title" size="md" bold /></div>
               <div className="flex flex-wrap gap-1.5">
                 {data.attention.verification_pending + data.attention.verification_flagged ? <Link to="/audit/stock?tab=verification" className="tap rounded-full border border-line bg-surface px-3 py-1.5"><span className={small}>{pick('audit.att.idChecks')} <span className="num">{data.attention.verification_pending + data.attention.verification_flagged}</span>{data.attention.verification_flagged ? <span className="text-payable"> · {pick('stock.verification.flagged')} <span className="num">{data.attention.verification_flagged}</span></span> : null}</span></Link> : null}
                 {Object.entries(data.attention.alerts).map(([k, v]) => <Link key={k} to="/audit/stock?tab=ageing" className="tap rounded-full border border-line bg-surface px-3 py-1.5"><span className={small}>{pick(`audit.alert.${k}`)} <span className="num">{v}</span></span></Link>)}
                 {data.attention.installments_overdue ? <Link to="/installments" className="tap rounded-full border border-payable/40 bg-payable-tint px-3 py-1.5 text-payable"><span className={small}>{pick('audit.att.lateInstallments')} <span className="num">{data.attention.installments_overdue}</span> · <span className="num" dir="ltr">{withCur(n(data.attention.installments_late_amount))}</span></span></Link> : null}
+                {data.attention.lending_late ? <Link to={`/audit/lending?${range}`} className="tap rounded-full border border-payable/40 bg-payable-tint px-3 py-1.5 text-payable"><span className={small}>{pick('audit.att.lendingLate')} <span className="num">{data.attention.lending_late}</span> · <span className="num" dir="ltr">{withCur(n(data.attention.lending_late_amount))}</span></span></Link> : null}
+                {data.attention.lending_we_owe_due ? <Link to={`/audit/lending?${range}`} className="tap rounded-full border border-line bg-surface px-3 py-1.5"><span className={small}>{pick('audit.att.lendingWeOwe')} <span className="num">{data.attention.lending_we_owe_due}</span> · <span className="num" dir="ltr">{withCur(n(data.attention.lending_we_owe_amount))}</span></span></Link> : null}
                 {data.attention.installments_due_today ? <Link to="/installments" className="tap rounded-full border border-line bg-surface px-3 py-1.5"><span className={small}>{pick('audit.att.dueToday')} <span className="num">{data.attention.installments_due_today}</span></span></Link> : null}
               </div>
             </section>

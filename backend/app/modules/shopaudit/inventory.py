@@ -438,6 +438,7 @@ def attention(db: Session, shop_id: uuid.UUID, shop, *, can_cost: bool) -> dict:
     """What needs a look today, for the overview (docs/31 R6): ID checks not cleared on phones in
     stock, the stock alerts by kind, installments due today / late. Always "now", not the period."""
     from app.modules.installments.service import counts as installment_counts
+    from app.modules.payments.lending_due import counts as lending_counts
 
     pending = dict(
         db.execute(
@@ -458,4 +459,5 @@ def attention(db: Session, shop_id: uuid.UUID, shop, *, can_cost: bool) -> dict:
         "alerts": alerts,
         "alerts_total": sum(alerts.values()),
         **installment_counts(db, shop_id),
+        **lending_counts(db, shop_id),
     }

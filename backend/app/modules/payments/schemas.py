@@ -27,6 +27,8 @@ class PaymentCreate(BaseModel):
     payment: PaymentInfo | None = None
     date: dt.date | None = None
     notes: str | None = None
+    # len-den only: the date the money is to come back (reminders, docs/32 §7)
+    due_date: dt.date | None = None
     allocations: list[AllocationIn] | None = Field(
         default=None, description="None = auto-allocate FIFO to open documents"
     )
@@ -56,6 +58,8 @@ class PaymentOut(BaseModel):
     payment: PaymentDetailOut | None = None
     date: dt.date
     notes: str | None
+    due_date: dt.date | None = None
+    reminded_at: dt.datetime | None = None
     allocations: list[AllocationOut]
     unallocated: Decimal
     status: str
@@ -85,6 +89,26 @@ class LendingEntry(BaseModel):
     method: PaymentMethod
     notes: str | None
     status: str
+    due_date: dt.date | None = None
+
+
+class LendingDue(BaseModel):
+    side: str  # owes_us | we_owe
+    amount: Decimal
+    due_date: dt.date
+    days_late: int
+    status: str  # late | today | soon | later
+    reminded_at: dt.datetime | None = None
+
+
+class LendingDueRow(LendingDue):
+    party_id: uuid.UUID
+    name: str | None
+    phone: str | None
+
+
+class DueDateIn(BaseModel):
+    due_date: dt.date | None = None
 
 
 class PartyLendingOut(BaseModel):
@@ -95,6 +119,7 @@ class PartyLendingOut(BaseModel):
     lent: Decimal  # all money lent to the person (posted)
     borrowed: Decimal  # all money borrowed from the person (posted)
     settle: dict[str, SettleSide]
+    due: LendingDue | None = None
     entries: list[LendingEntry]
 
 

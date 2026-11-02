@@ -59,7 +59,7 @@ person may buy from the shop or sell to it. Handle this properly, with statistic
 2. Adjusting against bills is a button, not automatic at the counter, so the shopkeeper decides.
 3. Any staff who may take payments may record len-den (TRANSACT); the report is owner / manager
    (REPORTS_ALL).
-4. No interest, due dates or reminders for len-den (none were asked for).
+4. No interest on len-den. Return dates and reminders: §7 (owner 2026-11-02 asked for them).
 
 ## 6. Verification
 - Backend `tests/test_lending.py` (3 tests):
@@ -69,3 +69,33 @@ person may buy from the shop or sell to it. Handle this properly, with statistic
   - Rules, void, roles, shop isolation, report json / xlsx / pdf.
 - Playwright `e2e/lending.spec.ts`: take / give from the person's screen, adjust against a later
   bill, the audit screen, the udhaar line.
+
+## 7. Return dates and reminders (owner 2026-11-02: "reminder hona chye")
+Owner's answers to §5: 1 adjust stays a button (ok), 2 roles ok, 3 reminders wanted.
+- Database: `payments.due_date` (the promised return date, len-den only, optional) and
+  `payments.reminded_at`, migration `f4b6d8f0a2c4`, additive.
+- The date is set when the entry is made, and can be changed later:
+  `PATCH /payments/{id}/due-date`, an audit row. A bill payment cannot carry one
+  (`due_date_lending_only`).
+- Per person, the date that counts is the earliest one among their still-open entries on the side
+  they are on. Status: late / today / soon (≤ 3 days) / later (`payments/lending_due.py`).
+- **They owe the shop** (money lent):
+  - A WhatsApp reminder by hand: "Send reminder" on the person's card,
+    `POST /payments/lending/{party}/remind`. It works with or without a date; templates
+    `lending_due` / `lending_late`, en / ur.
+  - The night job sends one when it is due tomorrow or earlier, at most once every 3 days per
+    person. It runs only when the shop's udhaar reminders are on (Settings → Notifications), at the
+    same time, as job `lending_reminders`.
+  - Without the WhatsApp Cloud API, WhatsApp opens with the message ready.
+- **The shop owes them** (money borrowed): no message to the person. The owner sees it on the home
+  screen ("len-den the shop must give back soon", due within 3 days or late), in the overview
+  "needs a look" and in the audit list.
+- Home screen: people late returning len-den, and len-den to give back soon. Overview chips.
+  `/shop-audit/lending` `due` list and the report table `lending_due`. `GET /payments/lending-due`.
+- Verified: `test_return_dates_reminders_and_alerts`, which covers:
+  - rule, late / soon, home and overview counts, list order, report table;
+  - the hand reminder (WhatsApp link, amount, stamp) and no reminder to someone the shop owes;
+  - the night job and its 3-day gap, changing the date, a paid-back loan clears it.
+
+  Playwright covers: return date on the form, the "2 days late" badge, WhatsApp opens, the home
+  alert, the audit list, changing the date.

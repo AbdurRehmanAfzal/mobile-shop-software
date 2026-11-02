@@ -203,3 +203,93 @@ def test_lending_rules_void_roles_isolation_and_report(owner, other_owner, clien
             params={"preset": "today", "sections": "lending", "format": fmt},
         )
         assert r.status_code == 200, r.text
+
+
+def test_return_dates_reminders_and_alerts(owner, db):
+    import datetime as dt
+    import uuid
+
+    from app.core.clock import today
+    from app.modules.auth.models import Shop
+    from app.modules.notifications import jobs
+    from app.modules.notifications.models import Message
+
+    t = today()
+    tariq = _party(owner, name="Tariq", phone="03215550009", kinds=("customer",))
+    star = _party(owner, name="Star Mobiles", phone="03005550103", kinds=("shop",))
+    # a return date is only for len-den
+    r = owner.post(
+        P,
+        json={"party_id": tariq["id"], "direction": "in", "amount": 10, "due_date": t.isoformat()},
+    )
+    assert r.status_code == 422 and r.json()["error"]["code"] == "due_date_lending_only"
+    # lent to Tariq, to come back yesterday: late
+    lent = _lend(owner, tariq["id"], "out", 25000, due_date=(t - dt.timedelta(days=1)).isoformat())
+    assert lent["due_date"] == (t - dt.timedelta(days=1)).isoformat()
+    due = owner.get(f"{P}/lending/{tariq['id']}").json()["due"]
+    assert due["side"] == "owes_us" and due["status"] == "late" and due["days_late"] == 1
+    assert due["amount"] == "25000.00"
+    # borrowed from Star Mobiles, to give back in 2 days: the shop must pay soon
+    borrowed = _lend(
+        owner, star["id"], "in", 50000, due_date=(t + dt.timedelta(days=2)).isoformat()
+    )
+    s = owner.get(f"{P}/lending/{star['id']}").json()["due"]
+    assert s["side"] == "we_owe" and s["status"] == "soon"
+    # home screen and overview alerts
+    dash = owner.get("/api/v1/reports/dashboard").json()
+    assert dash["lending_late"] == 1 and dash["lending_late_amount"] == "25000.00"
+    assert dash["lending_we_owe_due"] == 1 and dash["lending_we_owe_amount"] == "50000.00"
+    att = owner.get("/api/v1/shop-audit/overview", params={"preset": "today"}).json()["attention"]
+    assert att["lending_late"] == 1 and att["lending_we_owe_due"] == 1
+    # the list and the audit screen, earliest first
+    rows = owner.get(f"{P}/lending-due").json()
+    assert [x["name"] for x in rows] == ["Tariq", "Star Mobiles"]
+    rep = owner.get("/api/v1/shop-audit/lending", params={"preset": "today"}).json()
+    assert [x["status"] for x in rep["due"]] == ["late", "soon"]
+    j = owner.get(
+        "/api/v1/shop-audit/report",
+        params={"preset": "today", "sections": "lending", "format": "json"},
+    ).json()
+    due_sec = next(s for s in j["sections"] if s["key"] == "lending_due")
+    assert [r[0] for r in due_sec["rows"]] == ["Tariq", "Star Mobiles"]
+    # a reminder by hand: WhatsApp link with the amount and the date
+    m = owner.post(f"{P}/lending/{tariq['id']}/remind")
+    assert m.status_code == 200, m.text
+    m = m.json()
+    assert m["template_key"] == "lending_late" and m["recipient"] == "03215550009"
+    assert "25,000" in m["body"] and m["link"].startswith("https://wa.me/")
+    assert owner.get(f"{P}/lending/{tariq['id']}").json()["due"]["reminded_at"] is not None
+    # the shop owes Star Mobiles: no reminder to them
+    r = owner.post(f"{P}/lending/{star['id']}/remind")
+    assert r.status_code == 422 and r.json()["error"]["code"] == "nothing_to_remind"
+    # the night job: on when udhaar reminders are on; Tariq was reminded just now -> skipped
+    owner.put(
+        "/api/v1/notifications/settings",
+        json={"customer_reminder_whatsapp": True, "reminder_time": "00:00", "language": "en"},
+    )
+    shop = db.get(Shop, uuid.UUID(owner.shop_id))
+    db.refresh(shop)
+    jobs.tick(db)
+    assert db.query(Message).filter_by(template_key="lending_late").count() == 1
+    # three days later he is reminded again (once a day at most: the job runs once per day)
+    from app.modules.payments.lending_due import auto_reminders
+    from app.modules.payments.models import Payment
+
+    db.get(Payment, uuid.UUID(lent["id"])).reminded_at = None
+    db.commit()
+    assert auto_reminders(db, shop) == 1
+    db.commit()
+    assert auto_reminders(db, shop) == 0
+    # changing the date: an audit row, and the alert follows the new date
+    r = owner.patch(
+        f"{P}/{borrowed['id']}/due-date", json={"due_date": (t + dt.timedelta(days=20)).isoformat()}
+    )
+    assert r.status_code == 200 and r.json()["due_date"] == (t + dt.timedelta(days=20)).isoformat()
+    assert owner.get("/api/v1/reports/dashboard").json()["lending_we_owe_due"] == 0
+    owner.post(P, json={"party_id": tariq["id"], "direction": "in", "amount": 10})
+    bill = owner.get(P, params={"purpose": "bill"}).json()
+    assert owner.patch(f"{P}/{bill[0]['id']}/due-date", json={"due_date": None}).status_code == 422
+    # paid back in full: no date, no alert
+    _lend(owner, tariq["id"], "in", 25000)
+    assert owner.get(f"{P}/lending/{tariq['id']}").json()["due"] is None
+    assert owner.get("/api/v1/reports/dashboard").json()["lending_late"] == 0

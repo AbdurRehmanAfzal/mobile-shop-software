@@ -106,6 +106,12 @@ def create_payment(
             message_en="Money lent or borrowed is not paid against a bill",
             message_ur="لین دین کی رقم کسی بل کے بدلے نہیں ہوتی",
         )
+    if data.due_date is not None and not lending:
+        raise ValidationFailed(
+            code="due_date_lending_only",
+            message_en="A return date is only for a len-den entry",
+            message_ur="واپسی کی تاریخ صرف لین دین پر ہوتی ہے",
+        )
     if lending:
         pass
     elif data.allocations is not None:
@@ -168,6 +174,7 @@ def create_payment(
         reference=data.reference or (data.payment.reference if data.payment else None),
         date=data.date or shop_today(),
         notes=data.notes,
+        due_date=data.due_date,
         allocations=allocations,
         created_by=user_id,
     )
@@ -455,6 +462,7 @@ def party_lending(db: Session, shop_id: uuid.UUID, party_id: uuid.UUID) -> dict:
         "lent": money(sum((p.amount for p in posted if p.direction == "out"), ZERO)),
         "borrowed": money(sum((p.amount for p in posted if p.direction == "in"), ZERO)),
         "settle": settle_summary(db, shop_id, party_id),
+        "due": _due(db, shop_id, party_id),
         "entries": [
             {
                 "id": p.id,
@@ -466,7 +474,15 @@ def party_lending(db: Session, shop_id: uuid.UUID, party_id: uuid.UUID) -> dict:
                 "method": p.method,
                 "notes": p.notes,
                 "status": p.status,
+                "due_date": p.due_date,
             }
             for p in rows
         ],
     }
+
+
+def _due(db: Session, shop_id: uuid.UUID, party_id: uuid.UUID) -> dict | None:
+    from app.modules.payments.lending_due import due_by_party
+
+    row = due_by_party(db, shop_id, [party_id]).get(party_id)
+    return {k: v for k, v in row.items() if k != "entries"} if row else None
