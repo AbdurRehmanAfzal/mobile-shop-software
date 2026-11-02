@@ -18,6 +18,7 @@ export const AUDIT_SECTIONS: { to: string; key: string; owner?: boolean }[] = [
   { to: '/audit/sales', key: 'audit.nav.sales' },
   { to: '/audit/people', key: 'audit.nav.people' },
   { to: '/audit/udhaar', key: 'audit.nav.udhaar' },
+  { to: '/audit/lending', key: 'audit.nav.lending' },
   { to: '/audit/stock', key: 'audit.nav.stock' },
   { to: '/audit/products', key: 'audit.nav.products' },
   { to: '/audit/bills', key: 'audit.nav.bills' },

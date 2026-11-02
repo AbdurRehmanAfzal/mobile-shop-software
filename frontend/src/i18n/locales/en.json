@@ -1157,7 +1157,8 @@
       "udhaar_back": "Udhaar received",
       "repairs": "Repairs",
       "other": "Other",
-      "transfer": "Moved in from own account"
+      "transfer": "Moved in from own account",
+      "lending": "Len-den taken"
     },
     "outWhy": {
       "stock": "Stock bought",
@@ -1165,7 +1166,8 @@
       "expenses": "Expenses",
       "paid_out": "Paid to people",
       "other": "Other",
-      "transfer": "Moved to own account"
+      "transfer": "Moved to own account",
+      "lending": "Len-den given"
     },
     "week": "Week",
     "exchangeHint": "Take the customer's old phone and give a new one; the difference is worked out for you",
@@ -2300,7 +2302,8 @@
       "security": "Security",
       "reports": "Reports",
       "sales": "Sales & purchases",
-      "staff": "Staff"
+      "staff": "Staff",
+      "lending": "Len-den"
     },
     "preset": {
       "today": "Today",
@@ -2397,7 +2400,9 @@
       "repair_parts": "Repair parts",
       "fees": "Software fee",
       "transfer_out": "Moved to own account",
-      "other_out": "Other out"
+      "other_out": "Other out",
+      "lent": "Len-den given",
+      "borrowed": "Len-den taken"
     },
     "rank": {
       "hint": "Top customers and suppliers by the metric you pick; tap a person for their whole journey.",
@@ -2423,7 +2428,9 @@
         "paid": "Paid to people",
         "purchase_returns": "Returns to suppliers",
         "repairs": "Repair bills",
-        "other": "Other / opening"
+        "other": "Other / opening",
+        "lent": "Len-den given",
+        "borrowed": "Len-den taken"
       },
       "age": "Age of the debt",
       "ageHint": "Bills carry no due date, so the age counts from the oldest unpaid bill; nothing is called overdue.",
@@ -2448,7 +2455,8 @@
       "plansLeft": "Still to come",
       "plansLate": "Late plans",
       "plansLateAmount": "Late amount",
-      "plansNote": "Installment bills are already inside \"people owe us\" above; this shows which part is on installments."
+      "plansNote": "Installment bills are already inside \"people owe us\" above; this shows which part is on installments.",
+      "ofLending": "of which len-den"
     },
     "journey": {
       "title": "Whole journey",
@@ -2645,7 +2653,8 @@
         "insights": "Business insights",
         "sales": "Sales",
         "purchases": "Purchases",
-        "staff": "Employee activity"
+        "staff": "Employee activity",
+        "lending": "Len-den"
       },
       "i": {
         "sales": "Sales",
@@ -2711,6 +2720,21 @@
       "shop": "Other shops",
       "new": "new",
       "active": "dealt"
+    },
+    "lend": {
+      "hint": "Money given to or taken from people with no bill. It is a part of the udhaar, not extra.",
+      "owedToShop": "People owe us (len-den)",
+      "shopOwes": "We owe people (len-den)",
+      "lent": "Given in the period",
+      "borrowed": "Taken in the period",
+      "prev": "Previous period",
+      "adjusted": "Adjusted against bills",
+      "voided": "Cancelled entries",
+      "people": "Len-den by person",
+      "entries": "Entries",
+      "khata": "Whole khata",
+      "series": "Given and taken",
+      "byMethod": "How it moved"
     }
   },
   "label": {
@@ -3168,5 +3192,29 @@
     "termsUr": "Terms (Urdu)",
     "bank": "Bank details on the bill",
     "wallet": "Easypaisa / JazzCash"
+  },
+  "lending": {
+    "title": "Len-den",
+    "hint": "Money given to or taken from this person with no bill. It stays in their khata and can be adjusted against a later sale or purchase.",
+    "give": "Gave money (len-den)",
+    "take": "Took money (len-den)",
+    "open": "Len-den open",
+    "theyOwe": "They owe us (len-den)",
+    "weOwe": "We owe them (len-den)",
+    "clear": "No len-den open",
+    "lent": "Given",
+    "borrowed": "Taken",
+    "fromBills": "From bills",
+    "entries": "Len-den entries",
+    "settleTitle": "Adjust against bills",
+    "settleIn": "{{amount}} of the money they gave can pay their open sale bills",
+    "settleOut": "{{amount}} of the money we gave can pay our open purchase bills to them",
+    "settle": "Adjust now",
+    "settled": "Adjusted {{amount}} against bills",
+    "cancelled": "Cancelled",
+    "saveGive": "Save — money given",
+    "saveTake": "Save — money taken",
+    "formHintOut": "Money going from the shop to this person, not for any bill",
+    "formHintIn": "Money coming to the shop from this person, not for any bill"
   }
 }

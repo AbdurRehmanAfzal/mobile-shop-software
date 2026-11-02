@@ -217,3 +217,18 @@ by sheet remain a later step (docs/18 §1).
 **Decision.** (1) Profile fields are columns on `shops` (legal name, tagline en / ur, business type, registration, year, province, email, website, social, opening hours, owner name / CNIC, FBR POS ID, bank details, terms en / ur, currency, print choices); NTN / STRN / CNIC / email are validated. (2) The logo is uploaded through `POST /shops/current/logo` and printed inlined as a data URI, so printed pages, PDFs and shared links show it without a login. (3) `auth/profile.py` builds one header and one footer for printed documents (sale bill, repair slip), driven by the shop's print choices. (4) Money is always PKR (hard rule); `shops.currency` only decides how it is written (sign, before / after, paisa). The app reads it from `/me` and formats every amount through `formatMoney` / `withCur`. (5) Migration `d2f4b6c8e0a2`, additive.
 **Consequences.** A shop's change in Settings shows on every bill and screen at once. Notification templates and Excel sheets keep "Rs." until moved to the label. FBR POS transmission stays out of scope.
 
+## ADR-041 · 2026-11-02 · Accepted · Len-den is a payment with purpose `lending` in the person's one khata, posted under its own document type, adjusted against bills only on demand
+**Context.** Shops give and take money with people with no bill; the same person may later buy or sell (docs/32). Such money already reached the khata as a stand-alone payment, but every report called it udhaar received / paid to people, and it could never pay a later bill.
+**Decision.**
+- (1) `payments.purpose` (`bill` default, `lending`), migration `e3a5c7e9f1b3`, additive.
+- (2) A lending entry posts to the same party account, so the khata nets with later bills. Its ledger group is `lending` (reversal `reversal:lending`), and every report names it: cash reasons `lent` / `borrowed`, day report `lending`, udhaar movement `lent` / `borrowed`, overview `lent_in_period` / `borrowed_in_period`.
+- (3) A lending entry is never allocated when made; allocations on one are refused.
+- (4) Open len-den per person = unallocated lending out − unallocated lending in. It is a part of the khata, never a second balance.
+- (5) `POST /payments/settle/{party_id}` puts free money (advances first, then the net of len-den) on the person's open bills, oldest first. The ledger is untouched; it only marks the bills paid, and it is an audit row.
+- (6) A report screen `/shop-audit/lending` and the complete-report section `lending`.
+
+**Consequences.**
+- Existing payments read as before (`bill`).
+- Adjusting is a deliberate button, not automatic at the counter.
+- No interest, due date or reminder for len-den.
+

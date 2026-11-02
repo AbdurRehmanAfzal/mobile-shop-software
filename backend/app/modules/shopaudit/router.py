@@ -16,6 +16,7 @@ from app.modules.auth.models import Shop
 from app.modules.shopaudit import (
     finance,
     inventory,
+    lending,
     parties,
     products,
     reconcile,
@@ -254,6 +255,21 @@ def udhaar(
     out = parties.udhaar(db, ctx.shop_id, p, can_cost=ctx.can(Cap.VIEW_COST), limit=min(limit, 100))
     out["installments"] = parties.installments_block(db, ctx.shop_id)
     return plain(out)
+
+
+@router.get("/lending")
+def lending_report(
+    ctx: Reports,
+    db: DB,
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+    as_of: dt.date | None = None,
+    limit: int = 50,
+):
+    """Len-den (docs/32): money lent / borrowed with no bill — period, open per person, series."""
+    p = _p(db, ctx, preset, date_from, date_to, as_of)
+    return plain(lending.lending(db, ctx.shop_id, p, limit=min(limit, 200)))
 
 
 # ---- P6: inventory intelligence -----------------------------------------------------------------

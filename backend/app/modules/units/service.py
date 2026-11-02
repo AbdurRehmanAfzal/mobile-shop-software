@@ -463,6 +463,11 @@ def payment_receipt_html(
         "thanks": shop.receipt_footer_ur or "شکریہ" if ur else shop.receipt_footer or "Thank you",
         "void": "منسوخ" if ur else "VOID",
     }
+    if p.purpose == "lending":  # len-den, no bill (docs/32)
+        T["in"] = "لین دین — رقم لی" if ur else "Len-den — money taken"
+        T["out"] = "لین دین — رقم دی" if ur else "Len-den — money given"
+        T["from"] = "سے لی" if ur else "Taken from"
+        T["to"] = "کو دی" if ur else "Given to"
     e = html.escape
     method = {
         "cash": ("نقد", "Cash"),

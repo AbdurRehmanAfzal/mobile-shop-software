@@ -619,3 +619,17 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - R1-R9 done (docs/31 §4): R1 error + retry on the audit screens; R2 / R3 `shopaudit/trade.py` sales and purchase reports (at the counter vs credit, paid / part / unpaid, per employee and person, series, filtered list) reconciling with overview and Products; R4 `shopaudit/staff.py` staff report (security columns owner-only; the existing staff-activity log is linked); R5 people counts + stock by supplier; R6 overview "needs a look"; R7 installments in udhaar; R8 report sections insights / sales / purchases / staff; R9 print / Excel on every audit screen; UI `/audit/sales`, `/audit/staff`; 54 strings en / ur / roman. No migration.
 **Verified**: backend `test_reports_trade.py` (7) + shop-audit / installments suites + full suite, ruff; tsc; vitest 35; Playwright `reports-audit` + 6 audit specs + core-flow / counter / v2-screens / installments green. `audit-parties.spec.ts` fails at the journey "Every dealing" step also without this session's screen changes — pre-existing, open.
 **Next**: owner reviews; merge to `main` / deploy only after the owner says so. Open: fix the audit-parties e2e step.
+
+## 2026-11-02 · Demo shop, expenses on today, len-den (owner requests)
+- Owner: "make a shop with mock data in every module". `frontend/scripts/demo-shop.mjs` builds one through the real API (see docs/29 §D); local shop "Demo Mobile Centre", owner `03001112233` / `demo12345`.
+- Owner: "total expense shows 0". All demo expenses were dated in October and "today / this month" (2 Nov) had none — not an app bug. The demo now has expenses today and this month. The galla was also negative (no opening cash; the default cash account takes no opening balance through the API), so the demo opens HBL with 900,000 and draws 450,000 into the galla on day one. The existing demo shop was patched the same way.
+- Owner: some people give and take money with the shop with no bill, and may buy or sell later; handle it with statistics, reports, in and out. Audit: such payments already went into the khata, but every report called them udhaar received / paid to people, and they could never pay a later bill. Built len-den (docs/32, ADR-041):
+  - `payments.purpose` (migration `e3a5c7e9f1b3`) and its own ledger type `lending`;
+  - open len-den per person; adjust against open bills (net only);
+  - `/shop-audit/lending` and the report section; cash / day report / overview / udhaar split;
+  - person-screen card, `/audit/lending`, strings en / ur / roman; len-den in the demo shop.
+**Verified**:
+- backend `test_lending.py` (3) + full suite green, ruff clean;
+- tsc; vitest 35;
+- Playwright `lending.spec.ts` + audit-finance / audit / audit-reports / reports-audit / core-flow / counter / paymode / units / crud (20 passed).
+**Next**: owner tries len-den on the demo shop (Usman has 15,000 that can be adjusted against his bills). PR #25 (reports) still waits for the owner's merge; this work rides with it or a later PR. Open: audit-parties e2e step; the person's money split card ("Other / opening") counts len-den as "other".

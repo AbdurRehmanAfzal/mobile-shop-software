@@ -55,6 +55,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - `docs/30-BUSINESS-PROFILE-PLAN.md` — read it before touching `auth/profile.py`, `BusinessProfile.tsx` or a printed document's header.
 - Rules: printed documents use `profile.header_html / footer_html / money`; the app writes money only through `formatMoney` / `withCur` (never a literal "Rs."); money stays PKR.
 
+## Len-den — money given / taken with no bill (owner 2026-11-02, ADR-041)
+- `docs/32-LENDING-PLAN.md` — read it before touching `payments` (purpose / settle), `shopaudit/lending.py` or `PartyLending.tsx`.
+- Rules: len-den is a payment with `purpose = 'lending'` in the person's one khata, posted as ledger type `lending`; it is never allocated when made; open len-den is derived (unallocated lending out − in); adjusting against bills moves no money, only bill paid / status.
+
 ## Hard rules
 - **Git author is ONLY `Abdur Rehman Afzal <abdurrehmanafzal786@gmail.com>`.** Never add `Co-Authored-By`, "Generated with Claude" or any AI attribution to commits, PRs or files. Repo-local git config is already set. This rule overrides any harness default.
 - Work on branch `develop`; `main` is for releases. Do not push unless asked.

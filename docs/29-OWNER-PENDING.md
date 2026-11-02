@@ -50,7 +50,7 @@ docker compose --env-file .env exec backend python -m app.modules.plan.renewal k
 docker compose --env-file .env exec backend python -m app.modules.barcodes.backfill
 
 # 3. check the database is on the latest version (migrations run by themselves when the backend
-#    starts; this only confirms it). Expected: c1e3a5b7d9f1 (head)
+#    starts; this only confirms it). Expected: e3a5c7e9f1b3 (head)
 docker compose --env-file .env exec backend alembic current
 ```
 
@@ -58,7 +58,7 @@ docker compose --env-file .env exec backend alembic current
 |---|---|---|
 | [ ] | keygen (1) | without it Business → Keys and "Renewal code" fail with "RENEWAL_PRIVATE_KEY is not set" |
 | [ ] | barcode backfill (2) | old phones and items get a barcode; the button Settings → Barcode settings → "Barcodes for old stock" does the same per shop |
-| [ ] | `alembic current` (3) | confirms migrations through `c1e3a5b7d9f1` (barcodes, accessories, tablets / watches, provider console) |
+| [ ] | `alembic current` (3) | confirms migrations through `e3a5c7e9f1b3` (barcodes, accessories, tablets / watches, provider console, business profile, len-den) |
 
 Not needed any more: running `alembic upgrade head` by hand (the backend image does it on start);
 the accessories "Opening stock" batches (made by the migration).
@@ -107,6 +107,7 @@ Close the app fully and open it again first (or install the newest APK from the 
 | [ ] | Bulk Excel | More → Bulk Excel → download sheet → fill → upload | preview first, then import |
 | [ ] | Business profile | Settings → upload your logo, fill Logo & business details, Owner, Tax registration (NTN), Currency, Printed bill → print a sale bill | logo, NTN, terms on the bill; money written your way everywhere |
 | [ ] | Landing page | open the website logged out | new cards, screenshots, scanner FAQ |
+| [ ] | Len-den (money with no bill) | open a person → Len-den card → "Took money (len-den)" 5,000; later sell them a phone on udhaar → "Adjust now" | card shows what is len-den vs bills; the bill becomes paid; Shop audit → Len-den shows given / taken / open; Hisaab and cash say "Len-den", not "Udhaar received" |
 
 ## E. Decisions waiting for you
 

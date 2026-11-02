@@ -1157,7 +1157,8 @@
       "udhaar_back": "Udhaar wapas mila",
       "repairs": "Marammat",
       "other": "Kuch aur",
-      "transfer": "Apne account se aaya"
+      "transfer": "Apne account se aaya",
+      "lending": "Len-den mein li"
     },
     "outWhy": {
       "stock": "Stock khareeda",
@@ -1165,7 +1166,8 @@
       "expenses": "Kharche",
       "paid_out": "Logon ko diye",
       "other": "Kuch aur",
-      "transfer": "Apne account mein gaya"
+      "transfer": "Apne account mein gaya",
+      "lending": "Len-den mein di"
     },
     "week": "Hafta",
     "exchangeHint": "Gahak ka purana phone lein aur naya dein; farq khud hisaab ho jata hai",
@@ -2300,7 +2302,8 @@
       "security": "Security",
       "reports": "Reports",
       "sales": "Sales aur khareed",
-      "staff": "Staff"
+      "staff": "Staff",
+      "lending": "Len-den"
     },
     "preset": {
       "today": "Aaj",
@@ -2397,7 +2400,9 @@
       "repair_parts": "Marammat ke purze",
       "fees": "Software fees",
       "transfer_out": "Apne account mein gaya",
-      "other_out": "Deegar kharch"
+      "other_out": "Deegar kharch",
+      "lent": "Len-den mein di",
+      "borrowed": "Len-den mein li"
     },
     "rank": {
       "hint": "Chune hue paimane par sab se bare gahak aur supplier; kisi bande ko dabayein to poora safar.",
@@ -2423,7 +2428,9 @@
         "paid": "Logon ko ada",
         "purchase_returns": "Supplier ko wapsi",
         "repairs": "Marammat ke bill",
-        "other": "Deegar / ibtidai"
+        "other": "Deegar / ibtidai",
+        "lent": "Len-den mein di",
+        "borrowed": "Len-den mein li"
       },
       "age": "Udhaar ki umar",
       "ageHint": "Billon ki aakhri tareekh nahi hoti, is liye umar sab se purane baqi bill se gini jaati hai; kisi ko late nahi kaha jaata.",
@@ -2448,7 +2455,8 @@
       "plansLeft": "Abhi aana hai",
       "plansLate": "Der wale plan",
       "plansLateAmount": "Der wali raqam",
-      "plansNote": "Qiston ke bill upar \"logon ne dena hai\" mein shamil hain; ye batata hai ke us mein se kitna qiston par hai."
+      "plansNote": "Qiston ke bill upar \"logon ne dena hai\" mein shamil hain; ye batata hai ke us mein se kitna qiston par hai.",
+      "ofLending": "jis mein len-den"
     },
     "journey": {
       "title": "Poora safar",
@@ -2645,7 +2653,8 @@
         "insights": "Karobar ki aham baatein",
         "sales": "Sales",
         "purchases": "Khareed",
-        "staff": "Staff ka kaam"
+        "staff": "Staff ka kaam",
+        "lending": "Len-den"
       },
       "i": {
         "sales": "Bikri",
@@ -2711,6 +2720,21 @@
       "shop": "Doosri dukanein",
       "new": "naye",
       "active": "len den"
+    },
+    "lend": {
+      "hint": "Logon ko baghair bill ke di ya un se li gayi raqam. Yeh udhaar ka hissa hai, us ke ilawa nahi.",
+      "owedToShop": "Logon ne dene hain (len-den)",
+      "shopOwes": "Hum ne dene hain (len-den)",
+      "lent": "Is arse mein di",
+      "borrowed": "Is arse mein li",
+      "prev": "Pichla arsa",
+      "adjusted": "Bills mein adjust",
+      "voided": "Mansookh entries",
+      "people": "Banda-war len-den",
+      "entries": "Entries",
+      "khata": "Poora khata",
+      "series": "Di aur li",
+      "byMethod": "Kaise aayi gayi"
     }
   },
   "label": {
@@ -3168,5 +3192,29 @@
     "termsUr": "Sharait (Urdu)",
     "bank": "Bill par bank ki tafseel",
     "wallet": "Easypaisa / JazzCash"
+  },
+  "lending": {
+    "title": "Len-den",
+    "hint": "Is bande ko baghair bill ke di ya is se li gayi raqam. Yeh is ke khate mein rehti hai aur baad ki khareed ya farokht mein adjust ho sakti hai.",
+    "give": "Raqam di (len-den)",
+    "take": "Raqam li (len-den)",
+    "open": "Khula len-den",
+    "theyOwe": "Inhon ne dene hain (len-den)",
+    "weOwe": "Hum ne dene hain (len-den)",
+    "clear": "Koi len-den baqi nahi",
+    "lent": "Di",
+    "borrowed": "Li",
+    "fromBills": "Bills se",
+    "entries": "Len-den ki tafseel",
+    "settleTitle": "Bills mein adjust karein",
+    "settleIn": "In ki di hui raqam mein se {{amount}} in ke khule bills mein lag sakte hain",
+    "settleOut": "Hamari di hui raqam mein se {{amount}} in se khareed ke khule bills mein lag sakte hain",
+    "settle": "Abhi adjust karein",
+    "settled": "{{amount}} bills mein adjust ho gaye",
+    "cancelled": "Mansookh",
+    "saveGive": "Save karein — raqam di",
+    "saveTake": "Save karein — raqam li",
+    "formHintOut": "Dukaan se is bande ko raqam, kisi bill ke liye nahi",
+    "formHintIn": "Is bande se dukaan mein raqam, kisi bill ke liye nahi"
   }
 }

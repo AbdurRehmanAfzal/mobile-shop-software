@@ -9,8 +9,14 @@ from app.core.idempotency import run as idempotent
 from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx, require_cap
 from app.modules.payments import service
-from app.modules.payments.models import PaymentDirection
-from app.modules.payments.schemas import PaymentCreate, PaymentOut, VoidIn
+from app.modules.payments.models import PaymentDirection, PaymentPurpose
+from app.modules.payments.schemas import (
+    PartyLendingOut,
+    PaymentCreate,
+    PaymentOut,
+    SettleOut,
+    VoidIn,
+)
 
 router = APIRouter(prefix="/api/v1/payments", tags=["payments"])
 Transact = Annotated[Ctx, Depends(require_cap(Cap.TRANSACT))]
@@ -33,6 +39,7 @@ def list_payments(
     db: DB,
     party_id: uuid.UUID | None = None,
     direction: PaymentDirection | None = None,
+    purpose: PaymentPurpose | None = None,
     date_from: dt.date | None = None,
     date_to: dt.date | None = None,
     limit: int = Query(default=100, le=500),
@@ -42,11 +49,24 @@ def list_payments(
         ctx.shop_id,
         party_id=party_id,
         direction=direction,
+        purpose=purpose,
         date_from=date_from,
         date_to=date_to,
         limit=limit,
     )
     return [service.to_out(db, p) for p in rows]
+
+
+@router.get("/lending/{party_id}", response_model=PartyLendingOut)
+def party_lending(party_id: uuid.UUID, ctx: Transact, db: DB):
+    """A person's len-den (docs/32): what is still open, the part of the khata from bills, the
+    entries, and what could be adjusted against their open bills."""
+    return service.party_lending(db, ctx.shop_id, party_id)
+
+
+@router.post("/settle/{party_id}", response_model=SettleOut)
+def settle(party_id: uuid.UUID, ctx: Transact, db: DB):
+    return service.settle(db, ctx.shop_id, ctx.id, party_id)
 
 
 @router.get("/{payment_id}", response_model=PaymentOut)

@@ -23,6 +23,7 @@ from app.modules.ledger.models import LedgerEntry, LedgerGroup
 from app.modules.ledger.service import money, party_balance
 from app.modules.parties.models import Party
 from app.modules.payments.models import Payment
+from app.modules.payments.service import lending_balances
 from app.modules.purchases.models import Purchase, PurchaseLine, PurchaseStatus
 from app.modules.returns.models import ReturnDoc
 from app.modules.sales.models import Invoice, InvoiceLine, InvoiceStatus
@@ -554,6 +555,12 @@ def udhaar(db: Session, shop_id: uuid.UUID, p: Period, *, can_cost: bool, limit:
         elif doc_type == "payment":
             moves["received"] += cr
             moves["paid"] += dr
+        elif doc_type == "lending":
+            moves["lent"] += dr
+            moves["borrowed"] += cr
+        elif doc_type == "reversal:lending":
+            moves["lent"] -= cr
+            moves["borrowed"] -= dr
         elif doc_type in ("sale_return", "exchange_refund"):
             moves["sale_returns"] += money(cr - dr)
         elif doc_type == "purchase_return":
@@ -682,6 +689,7 @@ def udhaar(db: Session, shop_id: uuid.UUID, p: Period, *, can_cost: bool, limit:
                     else 0,
                 }
             )
+    lend = lending_balances(db, shop_id, until=p.as_of)
     receivable_rows, payable_rows = [], []
     bands = {
         "receivable": defaultdict(lambda: {"amount": ZERO, "parties": 0}),
@@ -719,6 +727,8 @@ def udhaar(db: Session, shop_id: uuid.UUID, p: Period, *, can_cost: bool, limit:
             "due_date": dd,
             "overdue_days": overdue,
             "overdue_band": oband,
+            # the part of this khata that is len-den (docs/32)
+            "lending": abs(lend.get(pid, ZERO)),
         }
         (receivable_rows if side == "receivable" else payable_rows).append(row)
     receivable_rows.sort(key=lambda r: -r["amount"])
@@ -739,8 +749,15 @@ def udhaar(db: Session, shop_id: uuid.UUID, p: Period, *, can_cost: bool, limit:
                 "paid",
                 "purchase_returns",
                 "repairs",
+                "lent",
+                "borrowed",
                 "other",
             )
+        },
+        # of the receivable / payable, how much is len-den (money with no bill)
+        "lending": {
+            "receivable": money(sum((v for v in lend.values() if v > ZERO), ZERO)),
+            "payable": money(sum((-v for v in lend.values() if v < ZERO), ZERO)),
         },
         "bands": band_keys,
         "overdue_bands": oband_keys,
@@ -775,7 +792,7 @@ def udhaar(db: Session, shop_id: uuid.UUID, p: Period, *, can_cost: bool, limit:
     if not can_cost:
         out["payable"] = {k: None for k in out["payable"]}
         out["movement"] = {
-            k: (v if k in ("udhaar_given", "received", "sale_returns") else None)
+            k: (v if k in ("udhaar_given", "received", "sale_returns", "lent") else None)
             for k, v in out["movement"].items()
         }
         out["payable_bands"] = []

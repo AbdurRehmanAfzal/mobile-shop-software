@@ -105,21 +105,25 @@ def debt_position(db: Session, shop_id: uuid.UUID, p: Period) -> dict:
     closing = debt_split(db, shop_id, day_end(p.date_to))
     as_of = debt_split(db, shop_id, day_end(p.as_of))
     current = debt_split(db, shop_id, None)
-    pay_in, pay_out = ZERO, ZERO
-    for direction, total in db.execute(
-        select(Payment.direction, func.coalesce(func.sum(Payment.amount), 0))
+    # bill money apart from len-den (money lent / borrowed with no bill, docs/32)
+    sums = {
+        ("in", "bill"): ZERO,
+        ("out", "bill"): ZERO,
+        ("in", "lending"): ZERO,
+        ("out", "lending"): ZERO,
+    }
+    for direction, purpose, total in db.execute(
+        select(Payment.direction, Payment.purpose, func.coalesce(func.sum(Payment.amount), 0))
         .where(
             Payment.shop_id == shop_id,
             Payment.date >= p.date_from,
             Payment.date <= p.date_to,
             Payment.status != "voided",
         )
-        .group_by(Payment.direction)
+        .group_by(Payment.direction, Payment.purpose)
     ).all():
-        if direction == "in":
-            pay_in = money(total)
-        else:
-            pay_out = money(total)
+        sums[(direction, purpose)] = money(total)
+    pay_in, pay_out = sums[("in", "bill")], sums[("out", "bill")]
     return {
         "receivable": {
             "opening": opening["receivable"],
@@ -137,6 +141,8 @@ def debt_position(db: Session, shop_id: uuid.UUID, p: Period) -> dict:
         },
         "received_in_period": pay_in,
         "paid_in_period": pay_out,
+        "lent_in_period": sums[("out", "lending")],
+        "borrowed_in_period": sums[("in", "lending")],
     }
 
 

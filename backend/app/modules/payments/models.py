@@ -16,6 +16,11 @@ class PaymentDirection(StrEnum):
     OUT = "out"
 
 
+class PaymentPurpose(StrEnum):
+    BILL = "bill"  # against the person's bills (or an advance for later bills)
+    LENDING = "lending"  # len-den: money lent to / borrowed from a person, no bill (docs/32)
+
+
 class PaymentMethod(StrEnum):
     CASH = "cash"
     BANK = "bank"
@@ -40,6 +45,9 @@ class Payment(UUIDPk, ShopScoped, Timestamped, Base):
         Uuid, ForeignKey("parties.id", ondelete="RESTRICT"), nullable=False, index=True
     )
     direction: Mapped[str] = mapped_column(String(3), nullable=False)
+    purpose: Mapped[str] = mapped_column(
+        String(10), nullable=False, default=PaymentPurpose.BILL, server_default="bill"
+    )
     amount: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
     cash_account_id: Mapped[uuid.UUID] = mapped_column(
         Uuid, ForeignKey("cash_accounts.id", ondelete="RESTRICT"), nullable=False

@@ -235,6 +235,18 @@ Audit + gap analysis + status `docs/31-REPORTS-MODULE-AUDIT.md`.
 | `audit-parties.spec.ts` journey "Every dealing" step | ❌ | pre-existing e2e failure, follow-up |
 | Merge to `main` / deploy | ⏸ | waits for the owner's approval (owner rule for this brief) |
 
+## Phase 14 — Len-den: money given / taken with no bill (owner 2026-11-02)
+Plan, audit, assumptions `docs/32-LENDING-PLAN.md`, ADR-041.
+| Item | Status | Notes |
+|---|---|---|
+| `payments.purpose` (`bill` / `lending`), migration `e3a5c7e9f1b3` | ✅ | additive; every old payment is `bill` |
+| Len-den in the person's one khata, own ledger type `lending` | ✅ | never put on a bill when made |
+| Person's screen: open len-den, given / taken / from bills, give / take buttons, entries | ✅ | `PartyLending` |
+| Adjust free money against open bills (net of len-den only) | ✅ | `POST /payments/settle/{party}` |
+| Reports keep it apart: cash & bank, day report, overview, udhaar, complete report | ✅ | |
+| Audit screen `/audit/lending` (period, open, per person, series, entries, print / Excel) | ✅ | |
+| Demo shop has len-den (Tariq, Star Mobiles, Usman, Bilal) | ✅ | |
+
 ## Owner side (open)
 Server env variables, server commands, manual testing and decisions: `docs/29-OWNER-PENDING.md` — none done yet (2026-11-01).
 

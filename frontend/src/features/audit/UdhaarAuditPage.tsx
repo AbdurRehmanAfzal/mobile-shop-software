@@ -20,7 +20,7 @@ interface Band { band: string; amount: M; parties: number }
 interface Row { party_id: string; name: string | null; phone: string | null; amount: M; oldest_bill: string | null; age_days: number | null; band: string; last_payment: string | null; due_date: string | null; overdue_days: number; overdue_band: string }
 interface Phone { side: 'receivable' | 'payable'; party_id: string; party_name: string | null; device_id: string; label: string; imei1: string; doc_type: string; doc_id: string; no: string; date: string; agreed: M | null; doc_remaining: M | null; age_days: number; due_date: string | null; overdue_days: number }
 interface Plans { open: number; remaining: M; late_plans: number; late_amount: M; rows: { id: string; invoice_no: string; party_name: string; item: string; monthly: M; remaining: M; overdue_count: number; overdue_amount: M; next_due: string | null; days_late: number }[] }
-interface Udhaar { installments?: Plans; receivable: Bal; payable: Bal; received_in_period: M; paid_in_period: M; movement: Record<string, M | null>; bands: string[]; receivable_bands: Band[]; payable_bands: Band[]; overdue_bands: string[]; receivable_overdue: M; payable_overdue: M | null; receivable_overdue_bands: Band[]; payable_overdue_bands: Band[]; receivable_rows: Row[]; payable_rows: Row[]; phones: Phone[]; notes: string[] }
+interface Udhaar { lending?: { receivable: M; payable: M }; installments?: Plans; receivable: Bal; payable: Bal; received_in_period: M; paid_in_period: M; movement: Record<string, M | null>; bands: string[]; receivable_bands: Band[]; payable_bands: Band[]; overdue_bands: string[]; receivable_overdue: M; payable_overdue: M | null; receivable_overdue_bands: Band[]; payable_overdue_bands: Band[]; receivable_rows: Row[]; payable_rows: Row[]; phones: Phone[]; notes: string[] }
 
 const n = (v: M | number | null | undefined) => (v == null ? '—' : Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 }))
 
@@ -52,10 +52,17 @@ export default function UdhaarAuditPage() {
               </Link>
             ) : null}
           </section>
+          {data.lending && (Number(data.lending.receivable) || Number(data.lending.payable)) ? (
+            <Link to={`/audit/lending?${new URLSearchParams(window.location.search).toString()}`} className={`tap card flex flex-wrap items-center gap-x-4 gap-y-1 ${small}`} data-testid="udhaar-lending">
+              <span className="font-bold">{pick('audit.udhaar.ofLending')}</span>
+              <span className="text-receivable">{pick('audit.lend.owedToShop')} <span className="num" dir="ltr">{n(data.lending.receivable)}</span></span>
+              {canCost ? <span className="text-payable">{pick('audit.lend.shopOwes')} <span className="num" dir="ltr">{n(data.lending.payable)}</span></span> : null}
+            </Link>
+          ) : null}
 
           <BiLabel text="audit.udhaar.movement" size="md" bold />
           <div className="card grid grid-cols-2 gap-x-4 gap-y-1 sm:grid-cols-4" data-testid="udhaar-movement">
-            {(['udhaar_given', 'received', 'sale_returns', 'udhaar_taken', 'paid', 'purchase_returns', 'repairs', 'other'] as const).map((k) => data.movement[k] == null ? null : (
+            {(['udhaar_given', 'received', 'sale_returns', 'udhaar_taken', 'paid', 'purchase_returns', 'lent', 'borrowed', 'repairs', 'other'] as const).map((k) => data.movement[k] == null ? null : (
               <div key={k} className="flex items-center justify-between gap-2"><span className={`text-muted ${small}`}>{pick(`audit.udhaar.m.${k}`)}</span><span className="num font-bold" dir="ltr">{n(data.movement[k])}</span></div>
             ))}
           </div>

@@ -51,6 +51,7 @@ import AuditSecurityPage from '@/features/audit/SecurityPage'
 import AuditReportCenterPage from '@/features/audit/ReportCenterPage'
 import AuditTradePage from '@/features/audit/TradePage'
 import AuditStaffPage from '@/features/audit/StaffAuditPage'
+import AuditLendingPage from '@/features/audit/LendingAuditPage'
 import StaffPage from '@/features/more/StaffPage'
 import CashAccountsPage from '@/features/more/CashAccountsPage'
 import BulkPage from '@/features/more/BulkPage'
@@ -131,6 +132,7 @@ export const router = createBrowserRouter([
           { path: '/audit/bills', element: <ModuleGate module="reports"><AuditInvoicePage /></ModuleGate> },
           { path: '/audit/sales', element: <ModuleGate module="reports"><AuditTradePage /></ModuleGate> },
           { path: '/audit/staff', element: <ModuleGate module="reports"><AuditStaffPage /></ModuleGate> },
+          { path: '/audit/lending', element: <ModuleGate module="reports"><AuditLendingPage /></ModuleGate> },
           { path: '/audit/security', element: <ModuleGate module="reports"><AuditSecurityPage /></ModuleGate> },
           { path: '/audit/reports', element: <ModuleGate module="reports"><AuditReportCenterPage /></ModuleGate> },
           { path: '/more/staff', element: <StaffPage /> },

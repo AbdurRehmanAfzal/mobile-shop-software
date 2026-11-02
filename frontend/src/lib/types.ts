@@ -307,6 +307,7 @@ export interface Payment {
   party_name: string | null
   party_balance_after: Money | null
   direction: 'in' | 'out'
+  purpose?: 'bill' | 'lending'
   amount: Money
   method: string
   reference: string | null

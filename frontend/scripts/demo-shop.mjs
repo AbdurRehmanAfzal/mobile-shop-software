@@ -198,6 +198,15 @@ async function main() {
   if (rehman) await step('paid Rehman Traders 20,000 cash', () => post('/payments', { party_id: rehman.id, direction: 'out', amount: 20000, date: day(5) }))
   if (cash && bank) await step('cash deposited in HBL (transfer)', () => post('/ledger/transfers', { from_account_id: cash.id, to_account_id: bank.id, amount: 100000, date: day(7), note: 'weekly deposit' }))
 
+  console.log('\nLen-den (money given / taken with no bill, docs/32)')
+  const tariq = await P('Tariq Bhai (neighbour)', '03215550009', ['customer'])
+  const lend = (name, party, direction, amount, n, notes, extra = {}) => party && step(name, () => post('/payments', { party_id: party.id, direction, purpose: 'lending', amount, date: day(n), notes, ...extra }))
+  await lend('lent Tariq 25,000', tariq, 'out', 25000, 20, 'for his daughter\'s fee')
+  await lend('Tariq paid back 10,000', tariq, 'in', 10000, 4, 'first part back')
+  await lend('borrowed 50,000 from Star Mobiles (bank)', otherShop, 'in', 50000, 15, 'short for the Madina bill', { cash_account_id: bank?.id })
+  await lend('Usman left 15,000 with the shop', usman, 'in', 15000, 12, 'keep it, he will buy later')
+  await lend('lent Bilal 3,000 today', bilal, 'out', 3000, 0, null)
+
   console.log('\nLoan, repairs, expenses')
   if (otherShop && opening.ip12) await step('iPhone 12 lent to Star Mobiles', () => post('/loans', { device_id: opening.ip12, party_id: otherShop.id, expected_back_at: day(-3), notes: 'customer wants to see it' }))
   await step('repair: Samsung A54 screen (advance 3,000)', () => post('/repairs', { party_id: ali?.id, device_desc: 'Samsung A54 — screen broken', imei: '490154203237526', fault_codes: ['screen'], estimate: 9500, advance: 3000 }))

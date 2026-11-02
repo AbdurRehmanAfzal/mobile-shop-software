@@ -12,6 +12,7 @@ import PartyForm from './PartyForm'
 import PaymentForm from '@/features/payments/PaymentForm'
 import PartyUnits, { usePartyUnits } from './PartyUnits'
 import PartyJourney from './PartyJourney'
+import PartyLending from './PartyLending'
 import { Printer } from 'lucide-react'
 import { openPrintable } from '@/lib/files'
 import {withCur } from '@/lib/format'
@@ -87,6 +88,7 @@ export default function PartyDetailPage() {
         {party.address ? <KV k="party.address" v={party.address} /> : null}
       </section>
 
+      <PartyLending party={party} />
       <PartyJourney partyId={party.id} />
       <PartyUnits party={party} />
 
@@ -108,7 +110,7 @@ export default function PartyDetailPage() {
                     {fmtDate(r.at)}
                   </div>
                 </div>
-                {r.document_type === 'payment' && r.document_id ? <button type="button" aria-label={pick('unit.printReceipt')} onClick={() => openPrintable(`/api/v1/payments/${r.document_id}/receipt?format=thermal`)} className="tap rounded-full border border-line p-2 text-ink"><Printer size={14} /></button> : null}
+                {(r.document_type === 'payment' || r.document_type === 'lending') && r.document_id ? <button type="button" aria-label={pick('unit.printReceipt')} onClick={() => openPrintable(`/api/v1/payments/${r.document_id}/receipt?format=thermal`)} className="tap rounded-full border border-line p-2 text-ink"><Printer size={14} /></button> : null}
                 <div className="text-end">
                   {Number(r.debit) > 0 ? <MoneyText value={r.debit} tone="ink" size="sm" /> : <MoneyText value={-Number(r.credit)} size="sm" />}
                   <div className="text-xs text-muted" dir="ltr">

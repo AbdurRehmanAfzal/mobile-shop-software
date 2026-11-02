@@ -16,6 +16,7 @@ from app.core.periods import Period
 from app.modules.shopaudit import (
     finance,
     inventory,
+    lending,
     parties,
     products,
     reconcile,
@@ -36,6 +37,7 @@ SECTIONS = (
     "customers",
     "suppliers",
     "udhaar",
+    "lending",
     "inventory",
     "ageing",
     "products",
@@ -58,6 +60,7 @@ TITLES = {
     "customers": "Top customers",
     "suppliers": "Top suppliers",
     "udhaar": "Udhaar (receivables / payables)",
+    "lending": "Len-den (money lent / borrowed, no bill)",
     "inventory": "Inventory valuation",
     "ageing": "Stock ageing",
     "products": "Product performance",
@@ -517,6 +520,89 @@ def build(
                     "notes": [],
                 }
             )
+    if "lending" in want:
+        x = lending.lending(db, shop_id, p, limit=limit)
+        t = x["totals"]
+        h, r = _kv(
+            [
+                ("Lent (given) in the period", f"{_s(t['lent'])} ({t['lent_count']})"),
+                ("Borrowed (taken) in the period", f"{_s(t['borrowed'])} ({t['borrowed_count']})"),
+                (
+                    "Previous period: lent / borrowed",
+                    f"{_s(t['previous_lent'])} / {_s(t['previous_borrowed'])}",
+                ),
+                (
+                    "Open now: people owe us",
+                    f"{_s(x['owed_to_shop']['amount'])} ({x['owed_to_shop']['people']})",
+                ),
+                (
+                    "Open now: we owe people",
+                    f"{_s(x['shop_owes']['amount'])} ({x['shop_owes']['people']})",
+                ),
+                ("Adjusted against bills (all time)", t["adjusted_on_bills"]),
+                ("Cancelled entries in the period", t["voided"]),
+            ]
+        )
+        out.append({"key": "lending", "header": h, "rows": r, "notes": x["notes"]})
+        out.append(
+            {
+                "key": "lending_people",
+                "title": "Len-den by person",
+                "header": [
+                    "Name",
+                    "Phone",
+                    "Lent",
+                    "Borrowed",
+                    "Open (+ owes us)",
+                    "Khata",
+                    "Last",
+                ],
+                "rows": [
+                    [
+                        y["name"],
+                        y["phone"],
+                        y["lent"],
+                        y["borrowed"],
+                        y["open"],
+                        y["khata"],
+                        y["last_date"],
+                    ]
+                    for y in x["people"]
+                ],
+                "notes": [],
+            }
+        )
+        if detail:
+            out.append(
+                {
+                    "key": "lending_entries",
+                    "title": "Len-den entries",
+                    "header": [
+                        "No",
+                        "Date",
+                        "Person",
+                        "Given / taken",
+                        "Amount",
+                        "Method",
+                        "By",
+                        "Note",
+                    ],
+                    "rows": [
+                        [
+                            y["no"],
+                            y["date"],
+                            y["party_name"],
+                            "given" if y["direction"] == "out" else "taken",
+                            y["amount"],
+                            y["method"],
+                            y["by"],
+                            y["notes"],
+                        ]
+                        for y in x["entries"]
+                    ],
+                    "notes": [],
+                }
+            )
     if "udhaar" in want:
         x = parties.udhaar(db, shop_id, p, can_cost=can_cost, limit=limit)
         h, r = _kv(
@@ -532,6 +618,10 @@ def build(
                     else None,
                 ),
                 *[(f"Movement · {k}", v) for k, v in x["movement"].items() if v is not None],
+                (
+                    "Of which len-den: owed to us / we owe",
+                    f"{_s(x['lending']['receivable'])} / {_s(x['lending']['payable'])}",
+                ),
             ]
         )
         out.append({"key": "udhaar", "header": h, "rows": r, "notes": x["notes"]})
