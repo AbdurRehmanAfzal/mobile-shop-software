@@ -21,10 +21,14 @@ from app.modules.shopaudit import (
     reconcile,
     security,
     service,
+    trade,
 )
 
 SECTIONS = (
     "summary",
+    "insights",
+    "sales",
+    "purchases",
     "pnl",
     "cash",
     "expenses",
@@ -38,10 +42,15 @@ SECTIONS = (
     "invoices",
     "verification",
     "checks",
+    "staff",
     "security",
 )
 TITLES = {
     "summary": "Executive summary",
+    "insights": "Important business insights",
+    "sales": "Sales",
+    "purchases": "Purchases",
+    "staff": "Employee activity",
     "pnl": "Profit & loss",
     "cash": "Cash & bank",
     "expenses": "Expenses",
@@ -126,6 +135,119 @@ def build(
         h, r = _kv(rows)
         out.append(
             {"key": "summary", "header": h, "rows": r, "notes": o["coverage"]["limitations"]}
+        )
+    if "insights" in want:
+        from app.modules.shopaudit import insights
+
+        xs = insights.build(db, shop_id, shop, p, can_cost=can_cost, is_owner=is_owner)
+        out.append(
+            {
+                "key": "insights",
+                "header": ["Topic", "Look", "Finding"],
+                "rows": [[i["key"], i["level"], i["text"]] for i in xs],
+                "notes": ["Rules read off the figures in this report; nothing is estimated."],
+            }
+        )
+    if "sales" in want:
+        x = trade.sales(db, shop_id, p, can_cost=can_cost, limit=limit)
+        t = x["totals"]
+        h, r = _kv(
+            [
+                ("Sale bills", t["bills"]),
+                ("Billed (tax included)", t["billed"]),
+                ("Discounts", t["discount"]),
+                ("Tax", t["tax"]),
+                ("Returned", t["returned"]),
+                ("At the counter / on credit", f"{_s(t['at_counter'])} / {_s(t['on_credit'])}"),
+                ("Cash bills / credit bills", f"{t['cash_bills']} / {t['credit_bills']}"),
+                ("Still due on these bills", t["due"]),
+                ("Profit / margin %", f"{_s(t['profit'])} / {_s(t['margin_pct'])}"),
+                (
+                    "Period before: bills / billed",
+                    f"{t['previous_bills']} / {_s(t['previous_billed'])}",
+                ),
+            ]
+        )
+        out.append({"key": "sales", "header": h, "rows": r, "notes": x["notes"]})
+        out.append(
+            {
+                "key": "sales_users",
+                "title": "Sales by employee",
+                "header": [
+                    "Employee",
+                    "Bills",
+                    "Billed",
+                    "Discount",
+                    "On credit",
+                    "Profit",
+                    "Returns",
+                ],
+                "rows": [
+                    [
+                        u["user_name"],
+                        u["bills"],
+                        u["billed"],
+                        u["discount"],
+                        u["on_credit"],
+                        u["profit"],
+                        u["returns"],
+                    ]
+                    for u in x["by_user"]
+                ],
+                "notes": [],
+            }
+        )
+        if detail:
+            out.append(
+                {
+                    "key": "sales_rows",
+                    "title": "Sale bills",
+                    "header": ["Date", "Bill", "Customer", "By", "Billed", "Paid", "Due", "Status"],
+                    "rows": [
+                        [
+                            b["date"],
+                            b["no"],
+                            b["party_name"],
+                            b["user_name"],
+                            b["billed"],
+                            b["paid"],
+                            b["due"],
+                            b["pay_status"],
+                        ]
+                        for b in x["rows"]
+                    ],
+                    "notes": [],
+                }
+            )
+    if "purchases" in want and can_cost:
+        x = trade.purchases(db, shop_id, p, limit=limit)
+        t = x["totals"]
+        h, r = _kv(
+            [
+                ("Purchase bills", t["bills"]),
+                ("Phones / items bought", f"{t['phones']} / {t['items']}"),
+                ("Total", t["total"]),
+                ("Paid at purchase / on credit", f"{_s(t['at_counter'])} / {_s(t['on_credit'])}"),
+                ("Still owed on these bills", t["owed"]),
+                ("Returned to suppliers", f"{t['returns']} / {_s(t['returns_amount'])}"),
+                (
+                    "Period before: bills / total",
+                    f"{t['previous_bills']} / {_s(t['previous_total'])}",
+                ),
+            ]
+        )
+        out.append({"key": "purchases", "header": h, "rows": r, "notes": x["notes"]})
+        out.append(
+            {
+                "key": "purchase_parties",
+                "title": "Purchases by supplier",
+                "header": ["Supplier", "Bills", "Phones", "Total", "Owed"],
+                "rows": [
+                    [b["name"], b["bills"], b["phones"], b["total"], b["owed"]]
+                    for b in x["by_party"]
+                ],
+                "notes": [],
+            }
         )
     if "pnl" in want:
         x = finance.pnl(db, shop_id, p)
@@ -675,6 +797,46 @@ def build(
                     for c in rows
                 ],
                 "notes": [],
+            }
+        )
+    if "staff" in want:
+        from app.modules.shopaudit import staff as staff_mod
+
+        x = staff_mod.staff(db, shop_id, shop, p, can_cost=can_cost, is_owner=is_owner)
+        out.append(
+            {
+                "key": "staff",
+                "header": [
+                    "Employee",
+                    "Sale bills",
+                    "Billed",
+                    "Discount",
+                    "Profit",
+                    "Purchases",
+                    "Expenses",
+                    "Payments in / out",
+                    "Security events",
+                    "Flags",
+                ],
+                "rows": [
+                    [
+                        r["user_name"],
+                        (r["sales"] or {}).get("bills", 0),
+                        (r["sales"] or {}).get("billed"),
+                        (r["sales"] or {}).get("discount"),
+                        (r["sales"] or {}).get("profit"),
+                        (r["purchases"] or {}).get("total"),
+                        (r["expenses"] or {}).get("amount"),
+                        (
+                            f"{(r['payments'] or {}).get('in_count', 0)} / "
+                            f"{(r['payments'] or {}).get('out_count', 0)}"
+                        ),
+                        (r["security"] or {}).get("total") if is_owner else None,
+                        ", ".join((r["security"] or {}).get("flags", [])) if is_owner else None,
+                    ]
+                    for r in x["rows"]
+                ],
+                "notes": x["notes"],
             }
         )
     if "security" in want and is_owner:

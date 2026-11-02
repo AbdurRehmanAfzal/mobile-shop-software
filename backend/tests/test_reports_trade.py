@@ -203,3 +203,34 @@ def test_overview_attention_and_udhaar_installments(owner, db, cat):
     assert ins["rows"][0]["invoice_no"] and ins["rows"][0]["party_name"] == "Ahmed Khan"
     # the plan's bill is part of the receivable, not added on top of it
     assert float(ud["receivable"]["current"]) >= 45000.0
+
+
+def test_complete_report_has_sales_purchases_staff_and_insights(owner, client, cat):
+    t, ali = _seed(owner, client, cat)
+    win = _win(t)
+    secs = "summary,insights,sales,purchases,staff"
+    j = owner.get(
+        "/api/v1/shop-audit/report", params={**win, "sections": secs, "format": "json"}
+    ).json()
+    keys = [s["key"] for s in j["sections"]]
+    assert keys[:2] == ["summary", "insights"]
+    assert {"sales", "sales_users", "purchases", "purchase_parties", "staff"} <= set(keys)
+    by = {s["key"]: s for s in j["sections"]}
+    sales_kv = dict((r[0], r[1]) for r in by["sales"]["rows"])
+    assert sales_kv["Billed (tax included)"] == "4400.00"
+    assert sales_kv["At the counter / on credit"] == "3,900.00 / 500.00"
+    topics = [r[0] for r in by["insights"]["rows"]]
+    assert "checks" in topics and "top_product" in topics
+    assert all(r[1] in ("good", "watch", "info") for r in by["insights"]["rows"])
+    # detail adds the bill list; Excel has a sheet per section
+    d = owner.get(
+        "/api/v1/shop-audit/report",
+        params={**win, "sections": "sales", "mode": "detail", "format": "json"},
+    ).json()
+    rows = next(s for s in d["sections"] if s["key"] == "sales_rows")["rows"]
+    assert len(rows) == 5
+    x = owner.get("/api/v1/shop-audit/report", params={**win, "sections": secs, "format": "xlsx"})
+    assert x.status_code == 200 and x.content[:2] == b"PK"
+    pdf = owner.get("/api/v1/shop-audit/report", params={**win, "sections": secs, "format": "pdf"})
+    assert pdf.status_code == 200 and "Important business insights" in pdf.text
+    assert "Employee activity" in pdf.text
