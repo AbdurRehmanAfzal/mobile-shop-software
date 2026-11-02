@@ -82,10 +82,12 @@ async function main() {
 
   console.log('\nSettings, accounts, staff')
   await step('shop profile + tax registration', () => patch('/shops/current', { address: 'Shop 14, Hafeez Centre, Gulberg III, Lahore', whatsapp: '03001234567', email: 'demo@example.com', legal_name: 'Demo Mobile Centre (Pvt) Ltd', tagline_en: 'New and used mobiles, tablets, watches', ntn: '1234567-8', owner_name: 'Abdur Rehman', terms_en: 'Checked phones only. 7-day checking warranty on used phones.' }))
-  const bank = await step('bank account (HBL)', () => post('/ledger/accounts', { kind: 'bank', name: 'HBL Current' }))
+  const bank = await step('bank account (HBL)', () => post('/ledger/accounts', { kind: 'bank', name: 'HBL Current', opening_balance: 900000, opening_date: day(58) }))
   const ep = await step('Easypaisa account', () => post('/ledger/accounts', { kind: 'easypaisa', name: 'Shop Easypaisa' }))
   const accounts = (await get('/ledger/accounts').catch(() => [])) ?? []
   const cash = accounts.find((a) => a.kind === 'cash')
+  // the galla starts with cash drawn from the bank (the default cash account takes no opening balance)
+  if (cash && bank) await step('opening cash: 450,000 drawn from HBL into the galla', () => post('/ledger/transfers', { from_account_id: bank.id, to_account_id: cash.id, amount: 450000, date: day(58), note: 'opening cash' }))
   await step('manager (Imran)', () => post('/staff', { name: 'Imran Manager', phone: '0322' + PHONE.slice(4), password: PASS, role: 'manager' }))
   await step('salesman (Kashif)', () => post('/staff', { name: 'Kashif Salesman', phone: '0333' + PHONE.slice(4), password: PASS, role: 'salesman' }))
 
@@ -202,7 +204,9 @@ async function main() {
   await step('repair: iPhone 11 battery', () => post('/repairs', { party_id: sana?.id, device_desc: 'iPhone 11 — battery drains', fault_codes: ['battery'], estimate: 7000, advance: 0 }))
   const cats = (await get('/expenses/categories').catch(() => [])) ?? []
   const cat = (k) => cats.find((c) => c.key === k)
-  for (const [k, amount, n, desc] of [['rent', 85000, 30, 'shop rent'], ['salary', 45000, 29, 'Kashif salary'], ['electricity', 18200, 20, null], ['mobile_bill', 3500, 19, null], ['tea', 1200, 6, null], ['transport', 1500, 3, 'Hall Road trip'], ['tea', 900, 1, null], ['other', 4500, 12, 'AC service'], ['owner_drawing', 20000, 9, 'home expenses'], ['advance', 5000, 8, 'Kashif advance']]) {
+  for (const [k, amount, n, desc] of [['rent', 85000, 30, 'shop rent'], ['salary', 45000, 29, 'Kashif salary'], ['electricity', 18200, 20, null], ['mobile_bill', 3500, 19, null], ['tea', 1200, 6, null], ['transport', 1500, 3, 'Hall Road trip'], ['tea', 900, 1, null], ['other', 4500, 12, 'AC service'], ['owner_drawing', 20000, 9, 'home expenses'], ['advance', 5000, 8, 'Kashif advance'],
+    // this month and today, so the 'today' and 'this month' screens have expenses too
+    ['electricity', 2600, 0, 'generator fuel'], ['tea', 450, 0, null], ['transport', 700, 0, 'parcel to customer'], ['other', 1500, 0, 'shop cleaning'], ['advance', 2000, 0, 'Imran advance'], ['mobile_bill', 1200, 1, 'internet']]) {
     const c = cat(k)
     if (c) await step(`expense ${c.key} ${amount}`, () => post('/expenses', { category_id: c.id, amount, date: day(n), description: desc }))
   }
