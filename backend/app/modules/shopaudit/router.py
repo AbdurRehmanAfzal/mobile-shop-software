@@ -22,6 +22,7 @@ from app.modules.shopaudit import (
     report,
     security,
     service,
+    trade,
 )
 
 router = APIRouter(prefix="/api/v1/shop-audit", tags=["shop-audit"])
@@ -320,6 +321,74 @@ def invoices_(
     """Documents in the period by kind, status and employee; everything that was voided."""
     p = _p(db, ctx, preset, date_from, date_to)
     return plain(products.invoices(db, ctx.shop_id, p, can_cost=ctx.can(Cap.VIEW_COST)))
+
+
+# ---- reports audit R2 / R3: sales and purchase reports (docs/31) ---------------------------------
+
+PayStatus = Annotated[str | None, Query(pattern="^(" + "|".join(trade.PAY_STATUSES) + ")$")]
+
+
+@router.get("/sales")
+def sales_(
+    ctx: Reports,
+    db: DB,
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+    user_id: uuid.UUID | None = None,
+    party_id: uuid.UUID | None = None,
+    status: PayStatus = None,
+    q: Annotated[str | None, Query(max_length=60)] = None,
+    limit: int = 100,
+):
+    """Sale bills of the period: at the counter vs credit, paid / part / unpaid, per employee
+    (discount, profit, returns), per customer, series, and the bill list."""
+    p = _p(db, ctx, preset, date_from, date_to)
+    return plain(
+        trade.sales(
+            db,
+            ctx.shop_id,
+            p,
+            can_cost=ctx.can(Cap.VIEW_COST),
+            user_id=user_id,
+            party_id=party_id,
+            status=status,
+            q=q,
+            limit=limit,
+        )
+    )
+
+
+@router.get("/purchases")
+def purchases_(
+    ctx: Reports,
+    db: DB,
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+    user_id: uuid.UUID | None = None,
+    party_id: uuid.UUID | None = None,
+    status: PayStatus = None,
+    q: Annotated[str | None, Query(max_length=60)] = None,
+    limit: int = 100,
+):
+    """Purchase bills of the period: paid at purchase vs on credit, paid / owed, per supplier,
+    per employee, series, and the bill list. Cost figures: VIEW_COST only."""
+    if not ctx.can(Cap.VIEW_COST):
+        raise Forbidden()
+    p = _p(db, ctx, preset, date_from, date_to)
+    return plain(
+        trade.purchases(
+            db,
+            ctx.shop_id,
+            p,
+            user_id=user_id,
+            party_id=party_id,
+            status=status,
+            q=q,
+            limit=limit,
+        )
+    )
 
 
 # ---- P8: owner security feed ---------------------------------------------------------------------
