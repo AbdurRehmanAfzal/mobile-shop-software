@@ -217,7 +217,7 @@ Everything is read-only; no migration is needed.
 
 | Task | Status | Commit / notes |
 |---|---|---|
-| R1 | ⬜ | |
+| R1 | ✅ | `components/ui.tsx` `Pending` (error + retry) on all eight audit screens; vitest `Pending.test.tsx` |
 | R2 | ⬜ | |
 | R3 | ⬜ | |
 | R4 | ⬜ | |

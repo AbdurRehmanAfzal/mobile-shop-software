@@ -8,7 +8,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import Bars from '@/components/charts/Bars'
 import Donut from '@/components/charts/Donut'
-import { Empty, Loading, fmtDate, fmtDateTime } from '@/components/ui'
+import { Empty, fmtDate, fmtDateTime, Pending } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
 import AuditLayout from './AuditLayout'
@@ -36,9 +36,9 @@ export default function InventoryAuditPage() {
   const tab = ((['summary', 'ageing', 'verification'] as const).find((t) => t === sp.get('tab')) ?? 'summary') as Tab
   const setTab = (t: Tab) => { const o = new URLSearchParams(sp); o.set('tab', t); setSp(o, { replace: true }) }
   const asOfQ = period.asOf ? `?as_of=${period.asOf}` : ''
-  const { data: sum } = useGet<Summary>(['audit-inventory', asOfQ], tab === 'summary' ? `/api/v1/shop-audit/inventory${asOfQ}` : null)
-  const { data: age } = useGet<Ageing>(['audit-ageing'], tab === 'ageing' ? '/api/v1/shop-audit/inventory/ageing' : null)
-  const { data: ver } = useGet<Verification>(['audit-verification', query], tab === 'verification' ? `/api/v1/shop-audit/verification?${query}` : null)
+  const { data: sum, error: sumErr, refetch: sumAgain } = useGet<Summary>(['audit-inventory', asOfQ], tab === 'summary' ? `/api/v1/shop-audit/inventory${asOfQ}` : null)
+  const { data: age, error: ageErr, refetch: ageAgain } = useGet<Ageing>(['audit-ageing'], tab === 'ageing' ? '/api/v1/shop-audit/inventory/ageing' : null)
+  const { data: ver, error: verErr, refetch: verAgain } = useGet<Verification>(['audit-verification', query], tab === 'verification' ? `/api/v1/shop-audit/verification?${query}` : null)
   const [band, setBand] = useState<string | null>(null)
   const [dim, setDim] = useState<{ kind: string; key: string } | null>(null)
   const small = ur ? cls('sm') : 'text-xs font-semibold'
@@ -51,7 +51,7 @@ export default function InventoryAuditPage() {
     <AuditLayout>
       <BiSegmented<Tab> value={tab} onChange={setTab} options={[{ value: 'summary', text: 'audit.inv.summary' }, { value: 'ageing', text: 'audit.inv.ageing' }, { value: 'verification', text: 'audit.inv.verification' }]} />
 
-      {tab === 'summary' ? (!sum ? <Loading /> : (
+      {tab === 'summary' ? (!sum ? <Pending error={sumErr} retry={sumAgain} /> : (
         <>
           <section className="grid grid-cols-2 gap-2 lg:grid-cols-4" data-testid="inv-kpis">
             <Kpi k={period.asOf ? 'audit.inv.inStockAsOf' : 'audit.inv.inStock'} v={`${sum.count}`} sub={`${pick('audit.phones')}${sum.unpriced ? ` · ${sum.unpriced} ${pick('audit.inv.unpriced')}` : ''}`} tone="bg-stockt text-stockt-fg" />
@@ -94,7 +94,7 @@ export default function InventoryAuditPage() {
         </>
       )) : null}
 
-      {tab === 'ageing' ? (!age ? <Loading /> : (
+      {tab === 'ageing' ? (!age ? <Pending error={ageErr} retry={ageAgain} /> : (
         <>
           <BiLabel text="audit.inv.ageHint" size="sm" tone="text-muted" />
           <section className="card" data-testid="age-bands">
@@ -131,7 +131,7 @@ export default function InventoryAuditPage() {
         </>
       )) : null}
 
-      {tab === 'verification' ? (!ver ? <Loading /> : (
+      {tab === 'verification' ? (!ver ? <Pending error={verErr} retry={verAgain} /> : (
         <>
           <section className="grid grid-cols-2 gap-2 lg:grid-cols-4" data-testid="ver-kpis">
             {(['clear', 'pending', 'flagged', 'not_required'] as const).map((k) => <Kpi key={k} k={`stock.verification.${k}`} v={`${ver.in_stock[k] ?? 0}`} sub={`${pick('audit.inv.inStock')} · ${pick('audit.inv.allTime')} ${ver.all_devices[k] ?? 0}`} tone={k === 'flagged' ? 'bg-payable-tint text-payable' : k === 'pending' ? 'bg-receivable-tint text-receivable' : 'bg-emerald-tint text-emerald-deep'} />)}

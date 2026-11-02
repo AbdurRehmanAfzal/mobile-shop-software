@@ -6,7 +6,7 @@ import { ArrowDownLeft, ArrowUpRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
 import Bars from '@/components/charts/Bars'
-import { Empty, Loading, fmtDate } from '@/components/ui'
+import { Empty, fmtDate, Pending } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
 import AuditLayout from './AuditLayout'
@@ -27,14 +27,14 @@ export default function UdhaarAuditPage() {
   const role = useAuth((s) => s.me?.user.role)
   const canCost = role === 'owner' || role === 'manager'
   const { period, query } = useAuditPeriod()
-  const { data, isLoading } = useGet<Udhaar>(['audit-udhaar', query], `/api/v1/shop-audit/udhaar?${query}`)
+  const { data, isLoading, error, refetch } = useGet<Udhaar>(['audit-udhaar', query], `/api/v1/shop-audit/udhaar?${query}`)
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   const asOf = !!period.asOf
   const main = (b: Bal) => (asOf ? b.as_of : b.closing)
   const bandLabel = (b: string) => (b === 'no_bill' ? pick('audit.udhaar.noBill') : b === 'no_due_date' ? pick('audit.udhaar.noDueDate') : b === 'not_due' ? pick('audit.udhaar.notDue') : `${b} ${pick('audit.days')}`)
   return (
     <AuditLayout>
-      {isLoading || !data ? <Loading /> : (
+      {isLoading || !data ? <Pending error={error} retry={refetch} /> : (
         <>
           <section className="grid gap-2 sm:grid-cols-2">
             <Link to="/khata?f=get" className="tap flex flex-col gap-1 rounded-3xl bg-receivable-tint px-5 py-4 text-receivable" data-testid="udhaar-receivable">

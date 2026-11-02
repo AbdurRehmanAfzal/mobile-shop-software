@@ -6,7 +6,7 @@ import { ArrowDownLeft, ArrowUpRight, BookOpen, CheckCircle2, Landmark, Package,
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
-import { Loading } from '@/components/ui'
+import { Pending } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
 import Donut from '@/components/charts/Donut'
@@ -38,7 +38,7 @@ export default function OverviewPage() {
   const role = useAuth((s) => s.me?.user.role)
   const canCost = role === 'owner' || role === 'manager'
   const { period, query } = useAuditPeriod()
-  const { data, isLoading } = useGet<Overview>(['audit-overview', query], `/api/v1/shop-audit/overview?${query}`)
+  const { data, isLoading, error, refetch } = useGet<Overview>(['audit-overview', query], `/api/v1/shop-audit/overview?${query}`)
   const { data: rc } = useGet<Reconcile>(['audit-reconcile', query], `/api/v1/shop-audit/reconcile?${query}`)
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   const range = period.preset === 'custom' ? `from=${period.from}&to=${period.to}` : data ? `from=${data.period.date_from}&to=${data.period.date_to}` : ''
@@ -52,7 +52,7 @@ export default function OverviewPage() {
 
   return (
     <AuditLayout>
-      {isLoading || !data ? <Loading /> : (
+      {isLoading || !data ? <Pending error={error} retry={refetch} /> : (
         <>
           {/* hero: net sales and real profit for the period */}
           <section className="grid gap-2 sm:grid-cols-2">

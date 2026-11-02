@@ -4,7 +4,7 @@
 import { FileText, Trash2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
-import { Empty, Loading, fmtDate } from '@/components/ui'
+import { Empty, fmtDate, Pending } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
 import AuditLayout from './AuditLayout'
@@ -22,13 +22,13 @@ export default function InvoiceAuditPage() {
   const role = useAuth((s) => s.me?.user.role)
   const canCost = role === 'owner' || role === 'manager'
   const { period, query } = useAuditPeriod()
-  const { data, isLoading } = useGet<Audit>(['audit-invoices', query], `/api/v1/shop-audit/invoices?${query}`)
+  const { data, isLoading, error, refetch } = useGet<Audit>(['audit-invoices', query], `/api/v1/shop-audit/invoices?${query}`)
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   const range = period.preset === 'custom' ? `&from=${period.from}&to=${period.to}` : ''
   const open = (kind: string, id: string) => (kind === 'sale' ? `/sales/${id}` : kind === 'purchase' ? `/purchases/${id}` : '/payments')
   return (
     <AuditLayout>
-      {isLoading || !data ? <Loading /> : (
+      {isLoading || !data ? <Pending error={error} retry={refetch} /> : (
         <>
           <section className="flex items-center justify-between rounded-3xl bg-khata px-5 py-4 text-khata-fg" data-testid="bills-total">
             <span className="flex items-center gap-2"><FileText size={20} /><BiLabel text="audit.doc.documents" size="md" bold tone="text-current" /></span>

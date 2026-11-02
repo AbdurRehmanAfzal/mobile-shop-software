@@ -4,7 +4,7 @@
 import { Crown } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
-import { Empty, Loading } from '@/components/ui'
+import { Empty, Pending } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
 import AuditLayout from './AuditLayout'
@@ -26,7 +26,7 @@ export default function PartiesAuditPage() {
   const [sp, setSp] = useSearchParams()
   const metric = (METRICS.find((m) => m === sp.get('metric')) ?? 'customers_sales') as Metric
   const setMetric = (m: Metric) => { const o = new URLSearchParams(sp); o.set('metric', m); setSp(o, { replace: true }) }
-  const { data, isLoading } = useGet<Rankings>(['audit-rankings', query, metric], `/api/v1/shop-audit/rankings?${query}&metric=${metric}&limit=20`)
+  const { data, isLoading, error, refetch } = useGet<Rankings>(['audit-rankings', query, metric], `/api/v1/shop-audit/rankings?${query}&metric=${metric}&limit=20`)
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   const chip = (on: boolean) => `tap shrink-0 whitespace-nowrap rounded-full border font-bold min-h-10 px-3.5 py-2 ${ur ? 'leading-[1.9]' : 'leading-tight text-sm'} ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : ''}`
   const isCount = COUNT_METRICS.includes(metric)
@@ -37,7 +37,7 @@ export default function PartiesAuditPage() {
       <div className="flex flex-wrap gap-1.5" data-testid="metric-chips">
         {shown.map((m) => <button key={m} type="button" aria-pressed={metric === m} onClick={() => setMetric(m)} className={chip(metric === m)}>{pick(`audit.metric.${m}`)}</button>)}
       </div>
-      {isLoading || !data ? <Loading /> : (
+      {isLoading || !data ? <Pending error={error} retry={refetch} /> : (
         <>
           <section className="flex items-center justify-between rounded-3xl bg-ink px-5 py-4 text-ground" data-testid="rank-total">
             <span className="flex flex-col"><BiLabel text={`audit.metric.${metric}`} size="md" bold tone="text-current" /><span className={`opacity-80 ${small}`}><span className="num">{data.parties}</span> {pick('audit.people')} · {pick('audit.rank.metricNote')}</span></span>

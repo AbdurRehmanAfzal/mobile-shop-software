@@ -164,6 +164,22 @@ export function ErrorText({ error }: { error: unknown }) {
   return <div className="rounded-2xl border border-payable/30 bg-payable-tint/40 px-4 py-3 text-sm font-semibold text-payable">{msg}</div>
 }
 
+/** What a screen shows while its data is not there: the skeleton, or — when the request failed —
+ *  the reason and a retry button (never a skeleton forever). */
+export function Pending({ error, retry }: { error: unknown; retry?: () => unknown }) {
+  if (!error) return <Loading />
+  return (
+    <div className="flex flex-col items-start gap-2 py-2" data-testid="load-error">
+      <ErrorText error={error} />
+      {retry ? (
+        <button type="button" onClick={() => retry()} className="tap min-h-10 rounded-full border border-line bg-surface px-4 text-sm font-bold text-ink">
+          <BiLabel text="offline.retry" size="sm" />
+        </button>
+      ) : null}
+    </div>
+  )
+}
+
 export function Section({ title, children, right }: { title: string | BiText; children: ReactNode; right?: ReactNode }) {
   return (
     <section className="flex flex-col gap-2">

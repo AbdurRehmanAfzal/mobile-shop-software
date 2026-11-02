@@ -5,7 +5,7 @@ import { useSearchParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import Bars from '@/components/charts/Bars'
-import { Empty, Loading } from '@/components/ui'
+import { Empty, Pending } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
 import AuditLayout from './AuditLayout'
@@ -29,14 +29,14 @@ export default function ProductsPage() {
   const group = ((['model', 'brand', 'category'] as const).find((g) => g === sp.get('group')) ?? 'model') as Group
   const cls_ = ((['all', 'top', 'average', 'low'] as const).find((c) => c === sp.get('class')) ?? 'all')
   const setParam = (k: string, v: string) => { const o = new URLSearchParams(sp); o.set(k, v); setSp(o, { replace: true }) }
-  const { data, isLoading } = useGet<Products>(['audit-products', query, group], `/api/v1/shop-audit/products?${query}&group=${group}`)
+  const { data, isLoading, error, refetch } = useGet<Products>(['audit-products', query, group], `/api/v1/shop-audit/products?${query}&group=${group}`)
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   const tone = (p: Row['performance']) => (p === 'top' ? 'bg-emerald-tint text-emerald-deep' : p === 'low' ? 'bg-payable-tint text-payable' : 'bg-ground text-muted')
   const rows = data ? data.rows.filter((r) => cls_ === 'all' || r.performance === cls_) : []
   return (
     <AuditLayout>
       <BiSegmented<Group> value={group} onChange={(g) => setParam('group', g)} options={[{ value: 'model', text: 'audit.prod.byModel' }, { value: 'brand', text: 'audit.prod.byBrand' }, { value: 'category', text: 'audit.prod.byType' }]} />
-      {isLoading || !data ? <Loading /> : (
+      {isLoading || !data ? <Pending error={error} retry={refetch} /> : (
         <>
           <section className="grid grid-cols-2 gap-2 lg:grid-cols-4" data-testid="prod-kpis">
             <Kpi k="audit.prod.unitsSold" v={`${data.total_units}`} />

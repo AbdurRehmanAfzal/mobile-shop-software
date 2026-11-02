@@ -10,7 +10,7 @@ import { BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import Bars from '@/components/charts/Bars'
 import Donut from '@/components/charts/Donut'
 import Lines from '@/components/charts/Lines'
-import { Empty, Loading, fmtDate } from '@/components/ui'
+import { Empty, fmtDate, Pending } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
 import AuditLayout from './AuditLayout'
@@ -39,11 +39,11 @@ export default function FinancePage() {
   const [sp, setSp] = useSearchParams()
   const tab = ((['pnl', 'cash', 'expenses', 'tax'] as const).find((t) => t === sp.get('tab')) ?? 'pnl') as Tab
   const setTab = (t: Tab) => { const o = new URLSearchParams(sp); o.set('tab', t); setSp(o, { replace: true }) }
-  const { data: pnl } = useGet<Pnl>(['audit-pnl', query], tab === 'pnl' ? `/api/v1/shop-audit/pnl?${query}` : null)
-  const { data: cash } = useGet<Cash>(['audit-cash', query], tab === 'cash' ? `/api/v1/shop-audit/cash?${query}` : null)
+  const { data: pnl, error: pnlErr, refetch: pnlAgain } = useGet<Pnl>(['audit-pnl', query], tab === 'pnl' ? `/api/v1/shop-audit/pnl?${query}` : null)
+  const { data: cash, error: cashErr, refetch: cashAgain } = useGet<Cash>(['audit-cash', query], tab === 'cash' ? `/api/v1/shop-audit/cash?${query}` : null)
   const { data: intl } = useGet<Intl>(['audit-intl', query], tab === 'cash' ? `/api/v1/shop-audit/international?${query}` : null)
-  const { data: exp } = useGet<Expenses>(['audit-expenses', query], tab === 'expenses' ? `/api/v1/shop-audit/expenses?${query}` : null)
-  const { data: tax } = useGet<Tax>(['audit-tax', query], tab === 'tax' ? `/api/v1/shop-audit/tax?${query}` : null)
+  const { data: exp, error: expErr, refetch: expAgain } = useGet<Expenses>(['audit-expenses', query], tab === 'expenses' ? `/api/v1/shop-audit/expenses?${query}` : null)
+  const { data: tax, error: taxErr, refetch: taxAgain } = useGet<Tax>(['audit-tax', query], tab === 'tax' ? `/api/v1/shop-audit/tax?${query}` : null)
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   const range = period.preset === 'custom' ? `from=${period.from}&to=${period.to}` : ''
   const pct = (now: M, before: M) => { const a = Number(now), b = Number(before); if (!b) return null; const p = Math.round(((a - b) / Math.abs(b)) * 100); return <span className={`num ${p >= 0 ? 'text-emerald-deep' : 'text-payable'}`} dir="ltr">{p >= 0 ? '+' : ''}{p}%</span> }
@@ -55,7 +55,7 @@ export default function FinancePage() {
     <AuditLayout>
       <BiSegmented<Tab> value={tab} onChange={setTab} options={[{ value: 'pnl', text: 'audit.fin.pnl' }, { value: 'cash', text: 'audit.fin.cash' }, { value: 'expenses', text: 'audit.fin.expenses' }, { value: 'tax', text: 'audit.fin.tax' }]} />
 
-      {tab === 'pnl' ? (!pnl ? <Loading /> : (
+      {tab === 'pnl' ? (!pnl ? <Pending error={pnlErr} retry={pnlAgain} /> : (
         <>
           <section className={`flex flex-col gap-1 rounded-3xl px-5 py-4 ${Number(canCost ? pnl.current.net_profit : pnl.current.net_sales) >= 0 ? 'bg-sell text-sell-fg' : 'bg-expense text-expense-fg'}`} data-testid="fin-hero">
             <div className="flex items-center justify-between"><BiLabel text={canCost ? 'counter.netProfit' : 'audit.netSales'} size="md" bold tone="text-current" />{pct(canCost ? pnl.current.net_profit : pnl.current.net_sales, canCost ? pnl.previous.net_profit : pnl.previous.net_sales)}</div>
@@ -91,7 +91,7 @@ export default function FinancePage() {
         </>
       )) : null}
 
-      {tab === 'cash' ? (!cash ? <Loading /> : (
+      {tab === 'cash' ? (!cash ? <Pending error={cashErr} retry={cashAgain} /> : (
         <>
           <section className="grid grid-cols-2 gap-2 lg:grid-cols-4" data-testid="cash-totals">
             <Kpi icon={<Landmark size={18} />} tone="bg-sell text-sell-fg" k="audit.opening" v={n(cash.opening)} />
@@ -152,7 +152,7 @@ export default function FinancePage() {
         </>
       )) : null}
 
-      {tab === 'expenses' ? (!exp ? <Loading /> : (
+      {tab === 'expenses' ? (!exp ? <Pending error={expErr} retry={expAgain} /> : (
         <>
           <section className="flex flex-col gap-1 rounded-3xl bg-expense px-5 py-4 text-expense-fg" data-testid="exp-hero">
             <div className="flex items-center justify-between"><BiLabel text="audit.expenses" size="md" bold tone="text-current" />{pct(exp.total, exp.previous_total)}</div>
@@ -196,7 +196,7 @@ export default function FinancePage() {
         </>
       )) : null}
 
-      {tab === 'tax' ? (!tax ? <Loading /> : (
+      {tab === 'tax' ? (!tax ? <Pending error={taxErr} retry={taxAgain} /> : (
         <>
           <section className="grid grid-cols-2 gap-2 lg:grid-cols-4" data-testid="tax-totals">
             <Kpi icon={<Receipt size={18} />} tone="bg-khata text-khata-fg" k="audit.fin.taxedBills" v={`${tax.taxed_invoices} / ${tax.invoices}`} />
