@@ -391,6 +391,31 @@ def purchases_(
     )
 
 
+@router.get("/staff")
+def staff_(
+    ctx: Reports,
+    db: DB,
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+):
+    """One row per employee: sales (discount, profit, credit, returns), purchases, payments,
+    expenses; the security counts and flags for the owner only."""
+    from app.modules.shopaudit import staff
+
+    p = _p(db, ctx, preset, date_from, date_to)
+    return plain(
+        staff.staff(
+            db,
+            ctx.shop_id,
+            _shop(db, ctx),
+            p,
+            can_cost=ctx.can(Cap.VIEW_COST),
+            is_owner=ctx.role == Role.OWNER,
+        )
+    )
+
+
 # ---- P8: owner security feed ---------------------------------------------------------------------
 
 Kind = Annotated[str | None, Query(pattern="^(" + "|".join(security.KINDS) + ")$")]

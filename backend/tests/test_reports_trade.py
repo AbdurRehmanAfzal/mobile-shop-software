@@ -112,3 +112,31 @@ def test_manager_sees_both_reports(owner, client, cat):
     mgr = login(client, "03219998888")
     assert mgr.get("/api/v1/shop-audit/sales", params={"preset": "this_year"}).status_code == 200
     assert mgr.get("/api/v1/shop-audit/purchases", params={"preset": "all_time"}).status_code == 200
+
+
+def test_staff_report_agrees_with_sales_and_hides_security_from_the_manager(owner, client, cat):
+    t, ali = _seed(owner, client, cat)
+    win = _win(t)
+    st = owner.get("/api/v1/shop-audit/staff", params=win).json()
+    s = owner.get("/api/v1/shop-audit/sales", params=win).json()
+    rows = {r["user_name"]: r for r in st["rows"]}
+    a = rows["Ali"]
+    assert a["sales"]["bills"] == 2 and a["sales"]["profit"] == "600.00"
+    assert a["sales"]["on_credit"] == "500.00"
+    assert st["totals"]["sales_billed"] == s["totals"]["billed"] == "4400.00"
+    assert sum(float(r["sales"]["billed"]) for r in st["rows"] if r["sales"]) == 4400.0
+    o = next(r for n, r in rows.items() if n != "Ali")
+    assert o["purchases"]["bills"] == 1 and o["purchases"]["total"] == "4000.00"
+    assert o["sales"]["returns"] == 1
+    # owner sees the security counts: the void Ali typed is voided by the owner
+    assert st["security_shown"] is True
+    assert o["security"] and o["security"]["kinds"].get("void", 0) >= 1
+    owner.post(
+        "/api/v1/staff",
+        json={"name": "Mo", "phone": "03219998888", "password": "secret123", "role": "manager"},
+    )
+    mgr = login(client, "03219998888")
+    m = mgr.get("/api/v1/shop-audit/staff", params=win).json()
+    assert m["security_shown"] is False and all(r["security"] is None for r in m["rows"])
+    assert m["totals"]["sales_billed"] == "4400.00"
+    assert ali.get("/api/v1/shop-audit/staff", params=win).status_code == 403
