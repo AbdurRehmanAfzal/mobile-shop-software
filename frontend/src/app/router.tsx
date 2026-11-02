@@ -49,6 +49,8 @@ import AuditProductsPage from '@/features/audit/ProductsPage'
 import AuditInvoicePage from '@/features/audit/InvoiceAuditPage'
 import AuditSecurityPage from '@/features/audit/SecurityPage'
 import AuditReportCenterPage from '@/features/audit/ReportCenterPage'
+import AuditTradePage from '@/features/audit/TradePage'
+import AuditStaffPage from '@/features/audit/StaffAuditPage'
 import StaffPage from '@/features/more/StaffPage'
 import CashAccountsPage from '@/features/more/CashAccountsPage'
 import BulkPage from '@/features/more/BulkPage'
@@ -127,6 +129,8 @@ export const router = createBrowserRouter([
           { path: '/audit/stock', element: <ModuleGate module="reports"><AuditInventoryPage /></ModuleGate> },
           { path: '/audit/products', element: <ModuleGate module="reports"><AuditProductsPage /></ModuleGate> },
           { path: '/audit/bills', element: <ModuleGate module="reports"><AuditInvoicePage /></ModuleGate> },
+          { path: '/audit/sales', element: <ModuleGate module="reports"><AuditTradePage /></ModuleGate> },
+          { path: '/audit/staff', element: <ModuleGate module="reports"><AuditStaffPage /></ModuleGate> },
           { path: '/audit/security', element: <ModuleGate module="reports"><AuditSecurityPage /></ModuleGate> },
           { path: '/audit/reports', element: <ModuleGate module="reports"><AuditReportCenterPage /></ModuleGate> },
           { path: '/more/staff', element: <StaffPage /> },

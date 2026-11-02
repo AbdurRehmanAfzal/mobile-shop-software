@@ -8,6 +8,7 @@ import { Empty, fmtDate, Pending } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
 import AuditLayout from './AuditLayout'
+import SectionDownload from './SectionDownload'
 import { useAuditPeriod } from './period'
 import { withCur } from '@/lib/format'
 
@@ -27,7 +28,7 @@ export default function InvoiceAuditPage() {
   const range = period.preset === 'custom' ? `&from=${period.from}&to=${period.to}` : ''
   const open = (kind: string, id: string) => (kind === 'sale' ? `/sales/${id}` : kind === 'purchase' ? `/purchases/${id}` : '/payments')
   return (
-    <AuditLayout>
+    <AuditLayout right={<SectionDownload sections={['invoices']} name="bills" />}>
       {isLoading || !data ? <Pending error={error} retry={refetch} /> : (
         <>
           <section className="flex items-center justify-between rounded-3xl bg-khata px-5 py-4 text-khata-fg" data-testid="bills-total">

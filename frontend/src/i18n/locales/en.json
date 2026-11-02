@@ -2298,7 +2298,9 @@
       "products": "Products",
       "bills": "Bills",
       "security": "Security",
-      "reports": "Reports"
+      "reports": "Reports",
+      "sales": "Sales & purchases",
+      "staff": "Staff"
     },
     "preset": {
       "today": "Today",
@@ -2440,7 +2442,13 @@
       "notDue": "Not yet due",
       "noDueDate": "No promise date",
       "overdueBy": "{{n}} days overdue",
-      "dueOn": "due"
+      "dueOn": "due",
+      "plans": "Installments",
+      "plansOpen": "Open plans",
+      "plansLeft": "Still to come",
+      "plansLate": "Late plans",
+      "plansLateAmount": "Late amount",
+      "plansNote": "Installment bills are already inside \"people owe us\" above; this shows which part is on installments."
     },
     "journey": {
       "title": "Whole journey",
@@ -2519,7 +2527,9 @@
       "skipped": "skipped",
       "intakes": "intakes",
       "was": "was",
-      "noBypass": "No skipped check in this period"
+      "noBypass": "No skipped check in this period",
+      "bySupplier": "Stock by supplier",
+      "noSupplier": "No supplier (trade-in / opening stock)"
     },
     "prefs": {
       "title": "Stock audit thresholds",
@@ -2631,7 +2641,11 @@
         "invoices": "Invoice statistics",
         "verification": "ID checks",
         "checks": "Reconciliation checks",
-        "security": "Security & fraud"
+        "security": "Security & fraud",
+        "insights": "Business insights",
+        "sales": "Sales",
+        "purchases": "Purchases",
+        "staff": "Employee activity"
       },
       "i": {
         "sales": "Sales",
@@ -2647,6 +2661,56 @@
         "ageing": "Old stock",
         "forecast": "Sales estimate"
       }
+    },
+    "trade": {
+      "sales": "Sales",
+      "purchases": "Purchases",
+      "billed": "Billed",
+      "bought": "Bought",
+      "units": "items sold",
+      "items": "items",
+      "atCounter": "Paid at the counter",
+      "onCredit": "On credit",
+      "paidNow": "Paid at purchase",
+      "owed": "still owed",
+      "tax": "Tax",
+      "avgBill": "Average bill",
+      "returns": "returns",
+      "returnedToSupplier": "Returned to suppliers:",
+      "byUser": "By employee",
+      "byCustomer": "By customer",
+      "bySupplier": "By supplier",
+      "bills": "Bills",
+      "walkIn": "Walk-in customer",
+      "searchSales": "Bill number or customer",
+      "searchPurchases": "Bill number, supplier or their bill no.",
+      "st": {
+        "paid": "Fully paid",
+        "partial": "Part paid",
+        "unpaid": "Not paid",
+        "returned": "Returned"
+      }
+    },
+    "staff": {
+      "title": "Sales by the team",
+      "hint": "What each person sold, bought, received and spent in this period. Tap a card to see their bills.",
+      "hintOwner": "What each person sold, bought, received and spent, and their voids, price changes and skipped checks (only you see these).",
+      "sold": "Sold",
+      "payments": "Payments in / out",
+      "log": "Open their activity log"
+    },
+    "att": {
+      "title": "Needs a look now",
+      "idChecks": "ID checks not cleared",
+      "lateInstallments": "Late installments",
+      "dueToday": "Installments due today"
+    },
+    "cnt": {
+      "customer": "Customers",
+      "supplier": "Suppliers",
+      "shop": "Other shops",
+      "new": "new",
+      "active": "dealt"
     }
   },
   "label": {

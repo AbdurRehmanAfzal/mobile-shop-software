@@ -2298,7 +2298,9 @@
       "products": "Masnoo'at",
       "bills": "Bill",
       "security": "Security",
-      "reports": "Reports"
+      "reports": "Reports",
+      "sales": "Sales aur khareed",
+      "staff": "Staff"
     },
     "preset": {
       "today": "Aaj",
@@ -2440,7 +2442,13 @@
       "notDue": "Abhi waqt nahi aaya",
       "noDueDate": "Waade ki tareekh nahi",
       "overdueBy": "{{n}} din late",
-      "dueOn": "tareekh"
+      "dueOn": "tareekh",
+      "plans": "Qistein",
+      "plansOpen": "Jaari plan",
+      "plansLeft": "Abhi aana hai",
+      "plansLate": "Der wale plan",
+      "plansLateAmount": "Der wali raqam",
+      "plansNote": "Qiston ke bill upar \"logon ne dena hai\" mein shamil hain; ye batata hai ke us mein se kitna qiston par hai."
     },
     "journey": {
       "title": "Poora safar",
@@ -2519,7 +2527,9 @@
       "skipped": "chhore",
       "intakes": "khareedein",
       "was": "pehle",
-      "noBypass": "Is arse mein koi check nahi chhora gaya"
+      "noBypass": "Is arse mein koi check nahi chhora gaya",
+      "bySupplier": "Supplier ke hisaab se stock",
+      "noSupplier": "Supplier nahi (badle mein / shuru ka stock)"
     },
     "prefs": {
       "title": "Stock audit ki hadein",
@@ -2631,7 +2641,11 @@
         "invoices": "Billon ke adaad",
         "verification": "ID check",
         "checks": "Hisaab ki partaal",
-        "security": "Security"
+        "security": "Security",
+        "insights": "Karobar ki aham baatein",
+        "sales": "Sales",
+        "purchases": "Khareed",
+        "staff": "Staff ka kaam"
       },
       "i": {
         "sales": "Bikri",
@@ -2647,6 +2661,56 @@
         "ageing": "Purana stock",
         "forecast": "Bikri ka andaza"
       }
+    },
+    "trade": {
+      "sales": "Sales",
+      "purchases": "Khareed",
+      "billed": "Bills ki raqam",
+      "bought": "Khareeda",
+      "units": "cheezein bikein",
+      "items": "cheezein",
+      "atCounter": "Counter par wasool",
+      "onCredit": "Udhaar par",
+      "paidNow": "Khareedte waqt ada",
+      "owed": "abhi dena hai",
+      "tax": "Tax",
+      "avgBill": "Ausat bill",
+      "returns": "wapsiyan",
+      "returnedToSupplier": "Supplier ko wapas:",
+      "byUser": "Mulazim ke hisaab se",
+      "byCustomer": "Gahak ke hisaab se",
+      "bySupplier": "Supplier ke hisaab se",
+      "bills": "Bills",
+      "walkIn": "Aam gahak",
+      "searchSales": "Bill number ya gahak",
+      "searchPurchases": "Bill number, supplier ya un ka bill no.",
+      "st": {
+        "paid": "Poora ada",
+        "partial": "Kuch ada",
+        "unpaid": "Ada nahi",
+        "returned": "Wapas"
+      }
+    },
+    "staff": {
+      "title": "Staff ki sales",
+      "hint": "Is muddat mein har shakhs ne kya becha, khareeda, wasool kiya aur kharch kiya. Un ke bills dekhne ke liye card dabayein.",
+      "hintOwner": "Har shakhs ki sales, khareed, wasooli aur kharch, aur un ki mansookhiyan, qeemat ki tabdeeliyan aur chhori gayi jaanch (ye sirf aap dekhte hain).",
+      "sold": "Becha",
+      "payments": "Raqam aayi / gayi",
+      "log": "Un ka kaam ka record kholein"
+    },
+    "att": {
+      "title": "Abhi dekhna zaroori hai",
+      "idChecks": "Shanakht ki jaanch baqi",
+      "lateInstallments": "Der wali qistein",
+      "dueToday": "Aaj ki qistein"
+    },
+    "cnt": {
+      "customer": "Gahak",
+      "supplier": "Supplier",
+      "shop": "Doosri dukanein",
+      "new": "naye",
+      "active": "len den"
     }
   },
   "label": {

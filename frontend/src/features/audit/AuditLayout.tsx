@@ -15,11 +15,13 @@ import { PRESETS, useAuditPeriod, type Preset } from './period'
 export const AUDIT_SECTIONS: { to: string; key: string; owner?: boolean }[] = [
   { to: '/audit', key: 'audit.nav.overview' },
   { to: '/audit/finance', key: 'audit.nav.finance' },
+  { to: '/audit/sales', key: 'audit.nav.sales' },
   { to: '/audit/people', key: 'audit.nav.people' },
   { to: '/audit/udhaar', key: 'audit.nav.udhaar' },
   { to: '/audit/stock', key: 'audit.nav.stock' },
   { to: '/audit/products', key: 'audit.nav.products' },
   { to: '/audit/bills', key: 'audit.nav.bills' },
+  { to: '/audit/staff', key: 'audit.nav.staff' },
   { to: '/audit/security', key: 'audit.nav.security', owner: true },
   { to: '/audit/reports', key: 'audit.nav.reports' },
 ]

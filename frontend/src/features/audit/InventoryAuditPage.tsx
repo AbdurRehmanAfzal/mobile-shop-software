@@ -12,6 +12,7 @@ import { Empty, fmtDate, fmtDateTime, Pending } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
 import AuditLayout from './AuditLayout'
+import SectionDownload from './SectionDownload'
 import { useAuditPeriod } from './period'
 import {withCur } from '@/lib/format'
 
@@ -19,7 +20,7 @@ type M = string
 type Tab = 'summary' | 'ageing' | 'verification'
 interface Dim { key: string; count: number; cost: M | null; asking: M }
 interface Row { device_id: string; label: string; brand: string; model: string; imei1: string; category: string; condition: string; pta_status: string; verification_status: string; status: string; supplier: string | null; supplier_id: string | null; purchase_no: string | null; intake_date: string | null; days: number; band: string; cost: M | null; asking: M | null; margin: M | null; margin_pct: number | null }
-interface Summary { as_of: string | null; count: number; cost_value: M | null; asking_value: M; expected_margin: M | null; expected_margin_pct: number | null; unpriced: number; no_cost: number; by_condition: Dim[]; by_pta: Dim[]; by_verification: Dim[]; by_category: Dim[]; by_brand: { brand: string; count: number; cost: M | null; asking: M }[]; status_counts: Record<string, number>; most_expensive_cost: Row[]; most_expensive_asking: Row[]; highest_margin: Row[]; lowest_margin: Row[]; prefs: { age_bands: number[]; high_value: number; low_margin_pct: number } }
+interface Summary { by_supplier?: { party_id: string | null; name: string | null; count: number; cost: M | null; asking: M }[]; as_of: string | null; count: number; cost_value: M | null; asking_value: M; expected_margin: M | null; expected_margin_pct: number | null; unpriced: number; no_cost: number; by_condition: Dim[]; by_pta: Dim[]; by_verification: Dim[]; by_category: Dim[]; by_brand: { brand: string; count: number; cost: M | null; asking: M }[]; status_counts: Record<string, number>; most_expensive_cost: Row[]; most_expensive_asking: Row[]; highest_margin: Row[]; lowest_margin: Row[]; prefs: { age_bands: number[]; high_value: number; low_margin_pct: number } }
 interface Alert { kind: string; device_id: string; label: string; imei1: string; days: number; cost: M | null; asking: M | null; margin_pct: number | null; supplier: string | null; times?: number }
 interface Ageing { band_keys: string[]; band_edges: number[]; bands: { band: string; count: number; cost: M | null; asking: M }[]; rows: Row[]; alerts: Alert[]; alert_counts: Record<string, number>; prefs: { high_value: number; low_margin_pct: number } }
 interface Verification { in_stock: Record<string, number>; all_devices: Record<string, number>; checks_in_period: Record<string, number>; bypasses: number; rows: { at: string; device_id: string; label: string; imei1: string; party_name: string | null; purchase_no: string | null; user_name: string | null; reason: string | null; previous: string | null; status_now: string; device_status: string }[]; by_user: { user_name: string | null; bypasses: number; flagged_bypassed: number; intakes: number; share: number | null; unusual: boolean }[]; prefs: { bypass_share: number; bypass_min: number } }
@@ -48,7 +49,7 @@ export default function InventoryAuditPage() {
   const stockLink = (kind: string, key: string) => `/stock?${kind === 'condition' ? 'condition' : kind === 'pta' ? 'pta_status' : kind === 'category' ? 'category' : 'verification'}=${key}`
 
   return (
-    <AuditLayout>
+    <AuditLayout right={<SectionDownload sections={tab === 'summary' ? ['inventory'] : tab === 'ageing' ? ['ageing'] : ['verification']} name="stock-audit" />}>
       <BiSegmented<Tab> value={tab} onChange={setTab} options={[{ value: 'summary', text: 'audit.inv.summary' }, { value: 'ageing', text: 'audit.inv.ageing' }, { value: 'verification', text: 'audit.inv.verification' }]} />
 
       {tab === 'summary' ? (!sum ? <Pending error={sumErr} retry={sumAgain} /> : (
@@ -80,6 +81,17 @@ export default function InventoryAuditPage() {
           </section>
           {sum.by_brand.length ? (
             <section className="card"><BiLabel text="audit.inv.byBrand" size="sm" tone="text-muted" bold /><Bars data={sum.by_brand.slice(0, 12).map((b) => ({ label: b.brand, value: b.count, hint: `${withCur(n(b.asking))}` }))} tone="rgb(var(--emerald))" height={110} /></section>
+          ) : null}
+          {sum.by_supplier?.length ? (
+            <section className="card divide-y divide-line p-0" data-testid="inv-by-supplier">
+              <div className="px-4 pt-3 pb-1"><BiLabel text="audit.inv.bySupplier" size="sm" tone="text-muted" bold /></div>
+              {sum.by_supplier.slice(0, 15).map((r, i) => (
+                <Link key={i} to={r.party_id ? `/parties/${r.party_id}` : '/stock'} className="tap flex items-center gap-3 px-4 py-2">
+                  <span className="min-w-0 flex-1 truncate font-bold">{r.name ?? pick('audit.inv.noSupplier')}</span>
+                  <span className={`text-muted ${small}`}><span className="num">{r.count}</span> {pick('audit.phones')}{canCost && r.cost != null ? <> · {pick('audit.atCost')} <span className="num" dir="ltr">{n(r.cost)}</span></> : null}</span>
+                </Link>
+              ))}
+            </section>
           ) : null}
           <div className={`flex flex-wrap gap-x-4 text-muted ${small}`} data-testid="inv-status">
             {Object.entries(sum.status_counts).filter(([, v]) => v).map(([k, v]) => <span key={k}>{pick(`stock.status.${k}`)}: <span className="num">{v}</span></span>)}

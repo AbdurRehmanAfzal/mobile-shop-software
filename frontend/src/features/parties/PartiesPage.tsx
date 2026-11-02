@@ -1,6 +1,6 @@
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiSegmented, useLang } from '@/components/Bilingual'
 import { BalanceLabel, BtnText, Empty, List, Loading, PageHeader, Row, SearchBox, Sheet } from '@/components/ui'
 import { useParties } from '@/lib/queries'
@@ -12,7 +12,9 @@ export default function PartiesPage() {
   const nav = useNavigate()
   const { pick } = useLang()
   const [q, setQ] = useState('')
-  const [filter, setFilter] = useState<Filter>('all')
+  // the shop audit's people counts open this list on one kind (docs/31)
+  const [sp] = useSearchParams()
+  const [filter, setFilter] = useState<Filter>(((['customer', 'supplier', 'shop'] as const).find((k) => k === sp.get('kind')) ?? 'all') as Filter)
   const [adding, setAdding] = useState(false)
   const params = { q: q || undefined, kind: filter === 'all' || filter === 'balance' ? undefined : filter, with_balance: filter === 'balance' ? true : undefined }
   const { data, isLoading } = useParties(params)

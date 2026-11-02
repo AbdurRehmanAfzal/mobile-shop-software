@@ -9,6 +9,7 @@ import { Empty, Pending } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
 import AuditLayout from './AuditLayout'
+import SectionDownload from './SectionDownload'
 import { useAuditPeriod } from './period'
 import {withCur } from '@/lib/format'
 
@@ -34,7 +35,7 @@ export default function ProductsPage() {
   const tone = (p: Row['performance']) => (p === 'top' ? 'bg-emerald-tint text-emerald-deep' : p === 'low' ? 'bg-payable-tint text-payable' : 'bg-ground text-muted')
   const rows = data ? data.rows.filter((r) => cls_ === 'all' || r.performance === cls_) : []
   return (
-    <AuditLayout>
+    <AuditLayout right={<SectionDownload sections={['products']} name="products" />}>
       <BiSegmented<Group> value={group} onChange={(g) => setParam('group', g)} options={[{ value: 'model', text: 'audit.prod.byModel' }, { value: 'brand', text: 'audit.prod.byBrand' }, { value: 'category', text: 'audit.prod.byType' }]} />
       {isLoading || !data ? <Pending error={error} retry={refetch} /> : (
         <>

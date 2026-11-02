@@ -14,6 +14,7 @@ import { Empty, fmtDate, Pending } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
 import AuditLayout from './AuditLayout'
+import SectionDownload from './SectionDownload'
 import { useAuditPeriod } from './period'
 import {withCur } from '@/lib/format'
 
@@ -52,7 +53,7 @@ export default function FinancePage() {
   const pnlBars = useMemo(() => (pnl ? pnl.series.map((s) => ({ label: label(s.bucket, pnl.granularity), value: Number(canCost ? s.net_profit : s.net_sales), hint: canCost ? `${pick('audit.netSales')} ${n(s.net_sales)}` : undefined, key: s.bucket })) : []), [pnl, canCost, pick])
 
   return (
-    <AuditLayout>
+    <AuditLayout right={<SectionDownload sections={tab === 'pnl' ? ['pnl'] : tab === 'cash' ? ['cash'] : tab === 'expenses' ? ['expenses'] : ['tax']} name={`finance-${tab}`} />}>
       <BiSegmented<Tab> value={tab} onChange={setTab} options={[{ value: 'pnl', text: 'audit.fin.pnl' }, { value: 'cash', text: 'audit.fin.cash' }, { value: 'expenses', text: 'audit.fin.expenses' }, { value: 'tax', text: 'audit.fin.tax' }]} />
 
       {tab === 'pnl' ? (!pnl ? <Pending error={pnlErr} retry={pnlAgain} /> : (

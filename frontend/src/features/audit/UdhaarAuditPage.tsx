@@ -10,6 +10,7 @@ import { Empty, fmtDate, Pending } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
 import AuditLayout from './AuditLayout'
+import SectionDownload from './SectionDownload'
 import { useAuditPeriod } from './period'
 import {withCur } from '@/lib/format'
 
@@ -18,7 +19,8 @@ interface Bal { opening: M; closing: M; as_of: M; current: M; parties: number }
 interface Band { band: string; amount: M; parties: number }
 interface Row { party_id: string; name: string | null; phone: string | null; amount: M; oldest_bill: string | null; age_days: number | null; band: string; last_payment: string | null; due_date: string | null; overdue_days: number; overdue_band: string }
 interface Phone { side: 'receivable' | 'payable'; party_id: string; party_name: string | null; device_id: string; label: string; imei1: string; doc_type: string; doc_id: string; no: string; date: string; agreed: M | null; doc_remaining: M | null; age_days: number; due_date: string | null; overdue_days: number }
-interface Udhaar { receivable: Bal; payable: Bal; received_in_period: M; paid_in_period: M; movement: Record<string, M | null>; bands: string[]; receivable_bands: Band[]; payable_bands: Band[]; overdue_bands: string[]; receivable_overdue: M; payable_overdue: M | null; receivable_overdue_bands: Band[]; payable_overdue_bands: Band[]; receivable_rows: Row[]; payable_rows: Row[]; phones: Phone[]; notes: string[] }
+interface Plans { open: number; remaining: M; late_plans: number; late_amount: M; rows: { id: string; invoice_no: string; party_name: string; item: string; monthly: M; remaining: M; overdue_count: number; overdue_amount: M; next_due: string | null; days_late: number }[] }
+interface Udhaar { installments?: Plans; receivable: Bal; payable: Bal; received_in_period: M; paid_in_period: M; movement: Record<string, M | null>; bands: string[]; receivable_bands: Band[]; payable_bands: Band[]; overdue_bands: string[]; receivable_overdue: M; payable_overdue: M | null; receivable_overdue_bands: Band[]; payable_overdue_bands: Band[]; receivable_rows: Row[]; payable_rows: Row[]; phones: Phone[]; notes: string[] }
 
 const n = (v: M | number | null | undefined) => (v == null ? '—' : Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 }))
 
@@ -33,7 +35,7 @@ export default function UdhaarAuditPage() {
   const main = (b: Bal) => (asOf ? b.as_of : b.closing)
   const bandLabel = (b: string) => (b === 'no_bill' ? pick('audit.udhaar.noBill') : b === 'no_due_date' ? pick('audit.udhaar.noDueDate') : b === 'not_due' ? pick('audit.udhaar.notDue') : `${b} ${pick('audit.days')}`)
   return (
-    <AuditLayout>
+    <AuditLayout right={<SectionDownload sections={['udhaar']} name="udhaar" />}>
       {isLoading || !data ? <Pending error={error} retry={refetch} /> : (
         <>
           <section className="grid gap-2 sm:grid-cols-2">
@@ -102,6 +104,26 @@ export default function UdhaarAuditPage() {
               ))}
             </div>
           )}
+          {data.installments && data.installments.open ? (
+            <>
+              <BiLabel text="audit.udhaar.plans" size="md" bold />
+              <Link to="/installments" className="card tap grid grid-cols-2 gap-2 sm:grid-cols-4" data-testid="udhaar-plans">
+                <span className="flex flex-col"><span className={`text-muted ${small}`}>{pick('audit.udhaar.plansOpen')}</span><span className="num text-lg font-bold">{data.installments.open}</span></span>
+                <span className="flex flex-col"><span className={`text-muted ${small}`}>{pick('audit.udhaar.plansLeft')}</span><span className="num text-lg font-bold" dir="ltr">{withCur(n(data.installments.remaining))}</span></span>
+                <span className="flex flex-col"><span className={`text-muted ${small}`}>{pick('audit.udhaar.plansLate')}</span><span className="num text-lg font-bold text-payable">{data.installments.late_plans}</span></span>
+                <span className="flex flex-col"><span className={`text-muted ${small}`}>{pick('audit.udhaar.plansLateAmount')}</span><span className="num text-lg font-bold text-payable" dir="ltr">{withCur(n(data.installments.late_amount))}</span></span>
+              </Link>
+              <div className="card divide-y divide-line p-0" data-testid="udhaar-plan-rows">
+                {data.installments.rows.map((r) => (
+                  <Link key={r.id} to={`/installments/${r.id}`} className="tap flex items-center gap-3 px-4 py-2">
+                    <span className="flex min-w-0 flex-1 flex-col"><span className="truncate font-bold">{r.party_name} <span className="font-medium text-muted" dir="ltr">· {r.invoice_no}</span></span><span className={`text-muted ${small}`}>{r.item}{r.next_due ? <> · {pick('audit.udhaar.dueOn')} <span dir="ltr">{fmtDate(r.next_due)}</span></> : null}{r.overdue_count ? <span className="text-payable"> · {pick('audit.udhaar.overdueBy').replace('{{n}}', String(r.days_late))}</span> : null}</span></span>
+                    <span className="num font-bold text-receivable" dir="ltr">{n(r.remaining)}</span>
+                  </Link>
+                ))}
+              </div>
+              <BiLabel text="audit.udhaar.plansNote" size="sm" tone="text-muted" />
+            </>
+          ) : null}
           <BiLabel text="audit.udhaar.notes" size="sm" tone="text-muted" />
         </>
       )}

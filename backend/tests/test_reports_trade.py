@@ -206,7 +206,7 @@ def test_overview_attention_and_udhaar_installments(owner, db, cat):
 
 
 def test_complete_report_has_sales_purchases_staff_and_insights(owner, client, cat):
-    t, ali = _seed(owner, client, cat)
+    t, _ali = _seed(owner, client, cat)
     win = _win(t)
     secs = "summary,insights,sales,purchases,staff"
     j = owner.get(
@@ -216,7 +216,7 @@ def test_complete_report_has_sales_purchases_staff_and_insights(owner, client, c
     assert keys[:2] == ["summary", "insights"]
     assert {"sales", "sales_users", "purchases", "purchase_parties", "staff"} <= set(keys)
     by = {s["key"]: s for s in j["sections"]}
-    sales_kv = dict((r[0], r[1]) for r in by["sales"]["rows"])
+    sales_kv = {r[0]: r[1] for r in by["sales"]["rows"]}
     assert sales_kv["Billed (tax included)"] == "4400.00"
     assert sales_kv["At the counter / on credit"] == "3,900.00 / 500.00"
     topics = [r[0] for r in by["insights"]["rows"]]

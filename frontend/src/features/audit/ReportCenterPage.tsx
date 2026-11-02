@@ -13,7 +13,7 @@ import { downloadFile } from '@/lib/files'
 import AuditLayout from './AuditLayout'
 import { useAuditPeriod } from './period'
 
-const SECTIONS = ['summary', 'pnl', 'cash', 'expenses', 'tax', 'customers', 'suppliers', 'udhaar', 'inventory', 'ageing', 'products', 'invoices', 'verification', 'checks', 'security'] as const
+const SECTIONS = ['summary', 'insights', 'sales', 'purchases', 'pnl', 'cash', 'expenses', 'tax', 'customers', 'suppliers', 'udhaar', 'inventory', 'ageing', 'products', 'invoices', 'verification', 'checks', 'staff', 'security'] as const
 type Section = (typeof SECTIONS)[number]
 type Mode = 'summary' | 'detail'
 
