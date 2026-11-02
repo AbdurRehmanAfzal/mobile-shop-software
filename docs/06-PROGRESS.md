@@ -219,6 +219,22 @@ Brief, research, audit, assumptions `docs/30-BUSINESS-PROFILE-PLAN.md` · ADR-04
 | Notification texts and Excel sheets in the chosen label | ❌ | still "Rs." (docs/30 §Assumptions) |
 | FBR POS transmission (invoice no. + QR) | ❌ | needs PRAL integration |
 
+## Phase 13 — Reports module audit (owner 2026-11-01)
+Audit + gap analysis + status `docs/31-REPORTS-MODULE-AUDIT.md`.
+| Item | Status | Notes |
+|---|---|---|
+| Audit of 15 categories + common requirements | ✅ | **2026-11-02** most of it existed (shop audit) |
+| Error + retry on audit screens (was: loading forever) | ✅ | R1 |
+| Sales report: counter vs credit, paid / part / unpaid, per employee / customer, filters | ✅ | R2 `/audit/sales` |
+| Purchase report: paid / owed, per supplier / employee | ✅ | R3 |
+| Staff report (owner-only security columns) | ✅ | R4 `/audit/staff` |
+| Customer / supplier counts, stock by supplier | ✅ | R5 |
+| Overview "needs a look", installments in udhaar | ✅ | R6 / R7 |
+| Complete report: insights, sales, purchases, employee activity | ✅ | R8 |
+| Print / Excel on every audit screen | ✅ | R9 |
+| `audit-parties.spec.ts` journey "Every dealing" step | ❌ | pre-existing e2e failure, follow-up |
+| Merge to `main` / deploy | ⏸ | waits for the owner's approval (owner rule for this brief) |
+
 ## Owner side (open)
 Server env variables, server commands, manual testing and decisions: `docs/29-OWNER-PENDING.md` — none done yet (2026-11-01).
 

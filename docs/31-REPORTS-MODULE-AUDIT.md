@@ -218,12 +218,24 @@ Everything is read-only; no migration is needed.
 | Task | Status | Commit / notes |
 |---|---|---|
 | R1 | ✅ | `components/ui.tsx` `Pending` (error + retry) on all eight audit screens; vitest `Pending.test.tsx` |
-| R2 | ⬜ | |
-| R3 | ⬜ | |
-| R4 | ⬜ | |
-| R5 | ⬜ | |
-| R6 | ⬜ | |
-| R7 | ⬜ | |
-| R8 | ⬜ | |
-| R9 | ⬜ | |
-| UI | ⬜ | |
+| R2 | ✅ | `shopaudit/trade.py` `sales`, `GET /shop-audit/sales` (filters `user_id`, `party_id`, `status`, `q`); test `test_reports_trade.py` — billed = overview, profit = Products, at the counter + credit = billed, statuses add up |
+| R3 | ✅ | `trade.purchases`, `GET /shop-audit/purchases` (VIEW_COST); totals = overview; credit purchase, isolation |
+| R4 | ✅ | `shopaudit/staff.py`, `GET /shop-audit/staff`; regroups sales / purchases / expenses / payments / security by person; security columns owner-only. `StaffPage` activity (`/api/v1/staff-activity`) already existed and is linked, not duplicated |
+| R5 | ✅ | `parties.people_counts` → `rankings.counts`; `inventory.summary.by_supplier`; People list opens on `?kind=` |
+| R6 | ✅ | `inventory.attention` → `overview.attention` |
+| R7 | ✅ | `parties.installments_block` → `udhaar.installments` (part of the receivable, never added on top) |
+| R8 | ✅ | report sections `insights` (`shopaudit/insights.py`, rules only), `sales`, `purchases`, `staff` |
+| R9 | ✅ | `features/audit/SectionDownload.tsx` (print / Excel of the screen's own sections) on every audit screen |
+| UI | ✅ | `TradePage` `/audit/sales` (Sales · Purchases: hero, counter vs credit, status cards that filter, series, employees, people, search, bill list → bill), `StaffAuditPage` `/audit/staff`; overview "needs a look", people counts, stock by supplier, udhaar installments; strings en / ur / roman (54); e2e `reports-audit.spec.ts` |
+
+## 5. Verification (2026-11-02)
+
+- Backend: `test_reports_trade.py` (7) + every `test_shopaudit_*`, installments, full suite; ruff.
+- Frontend: tsc, vitest 35 (incl. `Pending.test.tsx`), Playwright `reports-audit` + audit, audit-finance, audit-stock, audit-products, audit-reports, audit-security, core-flow, counter, v2-screens, installments.
+- Found, not caused by this work: `audit-parties.spec.ts` fails at "Every dealing" on the person page (also fails with this session's screen changes removed); the backend journey tests pass. Left for a follow-up.
+
+## 6. Not done / out of scope (stated, not hidden)
+
+- Tax paid to the authority, purchase tax, tax filing: not recorded in the app (limitation shown on the tax screen).
+- Credit / debit notes: not a document type; returns play that role.
+- Per-bill remaining "as of" a past day: allocations carry no date (docs/17 §5); paid / due on the sales and purchase reports are today's figures and say so.
