@@ -162,3 +162,44 @@ def test_people_counts_and_supplier_wise_stock(owner, client, cat):
     # the voided and the returned Nokia are back in stock, both from Dealer; counts add up
     assert sum(r["count"] for r in sup) == inv["count"] == 2
     assert sup[0]["name"] == "Dealer" and sup[0]["cost"] == "1600.00"
+
+
+def test_overview_attention_and_udhaar_installments(owner, db, cat):
+    import uuid
+
+    from app.core.clock import today
+    from app.modules.installments.models import InstallmentPlan
+    from tests.test_devices import _stock
+    from tests.test_purchases import _party
+
+    c = _party(owner, name="Ahmed Khan", phone="03219876543", kinds=("customer",))
+    d = _stock(owner, cat, imei="490154203237518", condition="box_pack", cost_price=40000, asking_price=60000)
+    used = _stock(owner, cat, imei="356938035643809", condition="used", cost_price=10000, asking_price=None)
+    r = owner.post(
+        "/api/v1/sales",
+        json={
+            "party_id": c["id"],
+            "devices": [{"device_id": d["id"], "price": 60000}],
+            "paid": 15000,
+            "installments": {"months": 5, "due_day": 10},
+        },
+    )
+    assert r.status_code == 201, r.text
+    plan_id = owner.get("/api/v1/installments").json()[0]["id"]
+    plan = db.get(InstallmentPlan, uuid.UUID(plan_id))
+    plan.first_due = today() - dt.timedelta(days=40)
+    db.commit()
+    ov = owner.get("/api/v1/shop-audit/overview", params={"preset": "this_month"}).json()
+    at = ov["attention"]
+    assert at["installments_overdue"] == 1 and float(at["installments_late_amount"]) > 0
+    # the used phone in stock has no asking price → an alert; its ID check state is counted
+    stock = owner.get(f"/api/v1/devices/{used['id']}").json()
+    assert at["alerts_total"] >= 1 and at["alerts"].get("missing_asking", 0) >= 1
+    vs = stock["verification_status"]
+    assert at["verification_pending"] == (1 if vs == "pending" else 0)
+    ud = owner.get("/api/v1/shop-audit/udhaar", params={"preset": "this_month"}).json()
+    ins = ud["installments"]
+    assert ins["open"] == 1 and ins["remaining"] == "45000.00" and ins["late_plans"] == 1
+    assert ins["rows"][0]["invoice_no"] and ins["rows"][0]["party_name"] == "Ahmed Khan"
+    # the plan's bill is part of the receivable, not added on top of it
+    assert float(ud["receivable"]["current"]) >= 45000.0

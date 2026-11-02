@@ -90,7 +90,11 @@ def overview(
     """The KPI set for the period: sales, purchases, profit, expenses, money, debt, stock — each
     balance with opening / closing / as-of / current, each flow as the period's sum."""
     p = period_of(db, ctx.shop_id, preset, date_from, date_to, as_of)
-    return plain(service.overview(db, ctx.shop_id, p, can_cost=ctx.can(Cap.VIEW_COST)))
+    out = service.overview(db, ctx.shop_id, p, can_cost=ctx.can(Cap.VIEW_COST))
+    out["attention"] = inventory.attention(
+        db, ctx.shop_id, _shop(db, ctx), can_cost=ctx.can(Cap.VIEW_COST)
+    )
+    return plain(out)
 
 
 @router.get("/reconcile")
@@ -247,9 +251,9 @@ def udhaar(
 ):
     """Receivables and payables apart: totals, period movement, age bands, people, phones."""
     p = _p(db, ctx, preset, date_from, date_to, as_of)
-    return plain(
-        parties.udhaar(db, ctx.shop_id, p, can_cost=ctx.can(Cap.VIEW_COST), limit=min(limit, 100))
-    )
+    out = parties.udhaar(db, ctx.shop_id, p, can_cost=ctx.can(Cap.VIEW_COST), limit=min(limit, 100))
+    out["installments"] = parties.installments_block(db, ctx.shop_id)
+    return plain(out)
 
 
 # ---- P6: inventory intelligence -----------------------------------------------------------------

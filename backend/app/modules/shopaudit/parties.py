@@ -780,3 +780,40 @@ def udhaar(db: Session, shop_id: uuid.UUID, p: Period, *, can_cost: bool, limit:
         }
         out["payable_bands"] = []
     return out
+
+
+def installments_block(db: Session, shop_id: uuid.UUID, limit: int = 10) -> dict:
+    """Installment plans still open (docs/31 R7): how much is left, how much is late, the plans
+    with the most late money first. Their bills are inside the receivable figures already — this
+    shows which part of the receivable is on installments, it is not added again."""
+    from app.modules.installments.service import list_plans
+
+    plans = list_plans(db, shop_id, "active")
+    late = [r for r in plans if r["overdue_count"]]
+    plans_sorted = sorted(plans, key=lambda r: (-r["overdue_amount"], r["next_due"] or dt.date.max))
+    return {
+        "open": len(plans),
+        "remaining": money(sum((r["remaining"] for r in plans), ZERO)),
+        "late_plans": len(late),
+        "late_amount": money(sum((r["overdue_amount"] for r in late), ZERO)),
+        "rows": [
+            {
+                k: r[k]
+                for k in (
+                    "id",
+                    "invoice_id",
+                    "invoice_no",
+                    "party_id",
+                    "party_name",
+                    "item",
+                    "monthly",
+                    "remaining",
+                    "overdue_count",
+                    "overdue_amount",
+                    "next_due",
+                    "days_late",
+                )
+            }
+            for r in plans_sorted[:limit]
+        ],
+    }

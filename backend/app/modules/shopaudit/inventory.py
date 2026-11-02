@@ -432,3 +432,30 @@ def verification(db: Session, shop_id: uuid.UUID, shop, p: Period) -> dict:
             "'Unusual' = the person skipped at least the minimum number of checks and at least the share of their own intakes set in the thresholds, or skipped a flagged phone.",
         ],
     }
+
+
+def attention(db: Session, shop_id: uuid.UUID, shop, *, can_cost: bool) -> dict:
+    """What needs a look today, for the overview (docs/31 R6): ID checks not cleared on phones in
+    stock, the stock alerts by kind, installments due today / late. Always "now", not the period."""
+    from app.modules.installments.service import counts as installment_counts
+
+    pending = dict(
+        db.execute(
+            select(Device.verification_status, func.count(Device.id))
+            .where(
+                Device.shop_id == shop_id,
+                Device.status == DeviceStatus.IN_STOCK,
+                Device.verification_status.in_(("pending", "flagged")),
+            )
+            .group_by(Device.verification_status)
+        ).all()
+    )
+    age = ageing(db, shop_id, shop, can_cost=can_cost)
+    alerts = {k: n for k, n in age["alert_counts"].items() if n}
+    return {
+        "verification_pending": int(pending.get("pending", 0)),
+        "verification_flagged": int(pending.get("flagged", 0)),
+        "alerts": alerts,
+        "alerts_total": sum(alerts.values()),
+        **installment_counts(db, shop_id),
+    }
