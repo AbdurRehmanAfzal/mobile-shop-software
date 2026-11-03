@@ -30,4 +30,20 @@ test('a ? explains a word in plain language', async ({ page }) => {
   await page.goto('/khata')
   await page.locator('[data-help="khata"]').first().click()
   await expect(page.getByText(/One page per person/)).toBeVisible()
+
+  // owner 2026-11-03: the explanation has its own language switch; the app stays in English
+  const sheet = page.getByTestId('help-sheet')
+  await sheet.getByRole('button', { name: 'اردو' }).click()
+  await expect(sheet).toContainText('مثال')
+  await expect(sheet.getByText(/One page per person/)).toHaveCount(0)
+  await page.screenshot({ path: 'test-results/help-urdu-in-english-app.png' })
+  await sheet.getByRole('button', { name: 'Roman' }).click()
+  await expect(sheet).toContainText('Misaal')
+  await page.getByRole('button', { name: 'Close' }).last().click()
+  // the app itself is still in English
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en')
+  expect(await page.evaluate(() => localStorage.getItem('locale'))).toBe('en')
+  // the next "?" opens in the language picked last
+  await page.locator('[data-help]').first().click()
+  await expect(page.getByTestId('help-sheet').getByRole('button', { name: 'Roman' })).toHaveAttribute('aria-pressed', 'true')
 })

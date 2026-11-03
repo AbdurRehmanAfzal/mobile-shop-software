@@ -7390,7 +7390,8 @@
         "body": "All the lab's charges for phones that came back.",
         "example": "Rs. 4,000 + Rs. 500 = Rs. 4,500."
       }
-    }
+    },
+    "language": "Language of the explanation"
   },
   "items": {
     "sellButton": "Accessory / watch",

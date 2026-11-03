@@ -715,3 +715,8 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - Playwright `landing.spec.ts` (prices scoped to #pricing; the video section and the guide open);
 - desktop / phone / Urdu screenshots checked; no horizontal overflow.
 - mp4 still not produced on this PC (ffmpeg without H.264); the webm plays on current iPhone / Android.
+
+## 2026-11-03 · Help sheet with its own language switch
+- Owner (from testing): the "?" explanation followed the app's language; to read it in Urdu or Roman the whole app had to change.
+- Now every "?" sheet has an English / اردو / Roman switch. Only the explanation changes (title, explanation, example, with Urdu in Nastaliq right-to-left); the app keeps its language. The last pick is remembered on the device (`mobileshop.helpLang`) and the next "?" opens in it.
+**Verified**: tsc; vitest 43; Playwright `help.spec.ts` (English app → Urdu explanation → Roman; the app stays `lang=en`; the next "?" opens in Roman).
