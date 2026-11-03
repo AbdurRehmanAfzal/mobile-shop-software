@@ -7390,7 +7390,8 @@
         "body": "Wapas aane wale phones par lab ke saare charges.",
         "example": "Rs. 4,000 + Rs. 500 = Rs. 4,500."
       }
-    }
+    },
+    "language": "Wazahat ki zaban"
   },
   "items": {
     "sellButton": "Accessory / ghari",
@@ -7827,7 +7828,7 @@
       }
     },
     "videoTitle": "2 minute mein chalta dekhein",
-    "videoSub": "Ek sale, stock list, udhaar khata aur din ka hisaab — khud app par record kiya gaya.",
+    "videoSub": "App par hi record ki gayi: bill ke sath sale, shop audit, stock, udhaar khata, din ka hisaab, repair labs aur ek khula hua \"?\".",
     "videoHint": "Chalane ke liye dabayein. Awaz nahi.",
     "modulesTitle": "Counter ki har zaroorat",
     "modulesSub": "Basic cheezein har plan mein. Baqi jab zaroorat ho shamil karein.",
@@ -7934,7 +7935,15 @@
       "tablet": "Tablet ka page",
       "count": "Stock ginti",
       "itemreports": "Item reports",
-      "label": "Barcode label"
+      "label": "Barcode label",
+      "repairlab": "Repair lab ka record",
+      "repairjob": "Lab mein phone",
+      "sticker": "Repair sticker",
+      "lending": "Khate mein len-den",
+      "help": "Khula hua \"?\"",
+      "trade": "Sale report",
+      "auditrepairs": "Repair audit",
+      "repairs": "Repair audit"
     },
     "priceTitle": "Saada mahana qeemat",
     "priceSub": "{{n}} din muft se shuru karein. Mahina-war adaigi, koi contract nahi. Qeemat PKR mein fi dukaan.",
@@ -8064,12 +8073,230 @@
       "reminders": {
         "t": "Wazeh plan yaad dehani, data kabhi band nahi",
         "d": "Plan khatam hone se pehle pursukoon patti, dikhayi gayi bank tafseel se app mein adaigi, aur tareekh ke baad bhi adaigi, export aur poora backup download ho sakta hai."
+      },
+      "repairlabs": {
+        "t": "Market ki repair labs",
+        "d": "Phone Zain Lab ya Ali Lab ko bhejein aur darj karein: kis ke paas hai, kab se, rate kya. Theek ho ya na ho, lab ka charge us ke khate mein. Har lab ka record: kitne phone, kitne theek, kitne din, kitna dena hai."
+      },
+      "sticker": {
+        "t": "Repair sticker, aap ke khane",
+        "d": "Customer ke phone ka sticker print karein: job number, barcode, customer, model, IMEI, kharabi, tayyar hone ki tareekh. Print se pehle khane chunein; scan karein to job khul jaye."
+      },
+      "lending": {
+        "t": "Reminder ke sath len-den",
+        "d": "Baghair bill ke kisi ko di ya us se li gayi raqam: bills se alag, baad ki sale mein adjust, wapsi ki tareekh aur WhatsApp reminder ke sath."
+      },
+      "help": {
+        "t": "Har cheez par misaal ke sath \"?\"",
+        "d": "Har khane, card aur tab par chhota \"?\" jo use Urdu, Roman Urdu ya English mein dukaan ki misaal ke sath samjhata hai. 1,100 se zyada wazahatein."
+      },
+      "trade": {
+        "t": "Sale, khareed aur staff ki report",
+        "d": "Counter par wasool vs udhaar, poore / kuch / baghair ada bill, har mulazim aur har customer ke hisaab se, har screen par print aur Excel."
+      },
+      "repairaudit": {
+        "t": "Shop audit mein repair",
+        "d": "Aaye aur wapas diye phone, repair ki aamdani, parts, lab charges aur asal munafa, har lab ka theek %, der wali jobs aur lab mein der wale phone."
+      },
+      "roles": {
+        "t": "Munafe ke baghair salesman",
+        "d": "Salesman bech sakta hai, stock daal sakta hai, wapsi aur paison ka len-den kar sakta hai — lekin khareed qeemat, munafa aur dukaan ka audit kabhi nahi dekhta."
+      },
+      "gst": {
+        "t": "Har item ka GST",
+        "d": "Jis item ka apna GST % ho, tax wale bill par usi rate se; bill par \"Tax (item-war)\". Phone par bill ka rate."
       }
     },
     "float": {
       "wa": "WhatsApp par paigham bhejein",
       "call": "Humein call karein"
-    }
+    },
+    "guideLink": "Har module kaise kaam karta hai",
+    "guideTitle": "Har module kaise kaam karta hai",
+    "guideSub": "Har module do tarah se: dukaan ki aasan zaban mein misaal ke sath, aur technical parhne wale ke liye ke andar se kaise kaam karta hai. Kholne ke liye kisi module par tap karein.",
+    "guideShop": "Dukaan ki zaban mein",
+    "guideTech": "Andar se kaise kaam karta hai",
+    "vsteps": {
+      "sell": {
+        "t": "Phone bechein",
+        "d": "Galaxy A55 chunein, qeemat khud aa jati hai."
+      },
+      "bill": {
+        "t": "Bill banayein",
+        "d": "Confirm karein; bill print ya WhatsApp ke liye tayyar."
+      },
+      "audit": {
+        "t": "Shop audit",
+        "d": "Mahine ki sale, munafa, naqd aur udhaar."
+      },
+      "stock": {
+        "t": "Stock",
+        "d": "Har phone apne IMEI, haalat aur qeemat ke sath."
+      },
+      "khata": {
+        "t": "Udhaar khata",
+        "d": "Kis ne dene hain aur kis ko dene hain."
+      },
+      "hisaab": {
+        "t": "Din ka hisaab",
+        "d": "Kya aaya, kya gaya, galle mein kitna hai."
+      },
+      "labs": {
+        "t": "Repair labs",
+        "d": "Lab ka record aur repair audit."
+      },
+      "help": {
+        "t": "Khula hua \"?\"",
+        "d": "Koi bhi lafz misaal ke sath."
+      }
+    },
+    "guide": {
+      "sale": {
+        "t": "Sale",
+        "s": "Chand tap mein phone ya item bechein: naqd, online, cheque, bahar se, udhaar ya qiston par.",
+        "e": "Bilal ne Infinix Hot 40 Rs. 34,500 mein liya, Rs. 20,000 Easypaisa par diye: bill print, Rs. 14,500 us ke khate mein, phone stock se nikal gaya.",
+        "x1": "Ek sale bill, us ki lines aur ek balanced ledger entry likhti hai (sale, tax, maal ki laagat, naqd / bank / khata).",
+        "x2": "Har phone ka na badalne wala \"bik gaya\" event banta hai; stock aur laagat hisaab se nikalte hain, haath se nahi likhe jaate.",
+        "x3": "Maangi qeemat ya laagat se kam par owner / manager ka PIN chahiye (har dukaan ke apne qeemat ke usool)."
+      },
+      "purchase": {
+        "t": "Stock daalein (khareed)",
+        "s": "Dealer se phone aur item khareedein, ya customer se purana phone, abhi ada ya dealer ke udhaar par.",
+        "e": "Rehman Traders ne 2 Tecno phone Rs. 28,500 fi diye, aap ne Rs. 40,000 diye: Rs. 17,000 us ke khate mein, dono phone barcode ke sath stock mein.",
+        "x1": "Har line ek device (dukaan mein IMEI munfarid) ya item ka batch us ki asal laagat par kholti hai.",
+        "x2": "Ledger: laagat par stock vs naqd aur supplier ka khata; dealer ko wapsi ulta entry hai.",
+        "x3": "Customer se purana phone bechne se pehle shanakht ki jaanch (CNIC) chahiye."
+      },
+      "stock": {
+        "t": "Stock aur IMEI",
+        "s": "Har phone apne IMEI, PTA, haalat, qeemat aur khareed se farokht tak poori history ke sath.",
+        "e": "4512 search karein: woh iPhone 13 khulega jis ka IMEI 4512 par khatam hota hai, kab aur kis se khareeda, qeemat ki tabdeeliyan aur kis ko becha.",
+        "x1": "Haalat ek state machine se aati hai (stock, bik gaya, dukaan ke paas, repair, wapas…); har tabdeeli ek event hai.",
+        "x2": "History ki screen sirf inhi events se banti hai, is liye khaton se kabhi mukhtalif nahi hoti.",
+        "x3": "Tablet aur smart watch isi device record mein hain, qism aur spec sheet ke sath."
+      },
+      "verify": {
+        "t": "Shanakht ki jaanch (purane phone)",
+        "s": "Purana phone bechne se pehle bechne wale ki jaanch: CNIC, us ka number, IMEI block to nahi.",
+        "e": "Usman ne purana Redmi becha: aap us ka CNIC scan karte hain, PTA darj karte hain; phone par \"jaanch mukammal\" aane ke baad hi bikta hai.",
+        "x1": "Har device ki jaanch ki haalat hai (baqi / mukammal / mashkook); baqi wala phone nahi bikta.",
+        "x2": "Chhorne ke liye wajah chahiye (\"main ise janta hun\") aur yeh sirf owner ke security audit mein dikhta hai.",
+        "x3": "CNIC ki tasveer har dukaan ki apni mehfooz jagah mein rehti hai."
+      },
+      "khata": {
+        "t": "Udhaar khata",
+        "s": "Har bande ka ek safha: udhaar par becha ya khareeda, har adaigi, aur baqaya.",
+        "e": "Bilal ka khata: do phone udhaar Rs. 46,000, ada Rs. 26,000 → aap ne Rs. 20,000 lene hain; ek tap mein WhatsApp reminder.",
+        "x1": "Baqaya sirf likhe jaane wale ledger se nikalta hai; kuch bhi badla nahi jata — durusti naya ulta entry hai.",
+        "x2": "Umar sab se purane ghair ada bill se; der sirf wade ki tareekh ke baad.",
+        "x3": "Kisi bhi arse ka statement PDF / Excel mein."
+      },
+      "lending": {
+        "t": "Len-den (baghair bill ki raqam)",
+        "s": "Kisi ko di ya us se li gayi raqam baghair bill ke, bills se alag, wapsi ki tareekh aur reminder ke sath.",
+        "e": "Tariq ko Rs. 25,000 diye, 5 tareekh tak wapsi; us ne Rs. 10,000 lautaye. Card par Rs. 15,000 baqi; 6 tareekh ko WhatsApp reminder.",
+        "x1": "Isi khate mein \"lending\" maqsad wali adaigi, apni ledger qism ke sath taake har report use alag rakhe.",
+        "x2": "Khula len-den hisaab se nikalta hai; \"bills mein adjust\" koi raqam nahi hilata, sirf bill ki haalat.",
+        "x3": "Wapsi ka reminder raat ka kaam bhejta hai, zyada se zyada har 3 din."
+      },
+      "payments": {
+        "t": "Raqam ka aana jana aur accounts",
+        "s": "Galla, bank, Easypaisa, JazzCash aur cheque ka apna apna baqaya; har adaigi sahi jagah jati hai.",
+        "e": "Customer ne Easypaisa par Rs. 10,000 bheje: Easypaisa ka baqaya barha, galla nahi. Ek tap mein galle se HBL mein Rs. 1,00,000.",
+        "x1": "Har account ek ledger account hai; transfer apni entry hai aur kabhi aamdani ya kharcha nahi.",
+        "x2": "Online / cheque / bahar ki tafseel (TID, bank, rate) adaigi ke sath mehfooz.",
+        "x3": "Din band karte waqt gina hua galla mutawaqqa se milaya jata hai aur farq mehfooz hota hai."
+      },
+      "returns": {
+        "t": "Wapsi aur tabadla",
+        "s": "Customer phone wapas kare (poori raqam ya katauti ke sath), aap dealer ko wapas karein, ya purana de kar naya lein.",
+        "e": "Customer ne Rs. 10,000 ka phone wapas kiya; aap ne Rs. 9,000 lautaye aur Rs. 1,000 rakhe: phone stock mein wapas, Rs. 1,000 doosri aamdani.",
+        "x1": "Wapsi ek naya document hai jo sale ka hissa ulatta hai; asal bill kabhi nahi badalta.",
+        "x2": "Phone par \"wapas\" event banta hai aur woh phir bik sakta hai.",
+        "x3": "Tabadle mein farq ek entry mein."
+      },
+      "repairs": {
+        "t": "Repair aur repair labs",
+        "s": "Phone lein, khud theek karein ya market ki lab ko bhejein, sticker lagayein, bill ke sath wapas karein.",
+        "e": "Ahmed ke iPhone 11 ki screen: Rs. 3,000 advance, Zain Lab ko bheja (Rs. 8,500), theek ho kar aaya; Ahmed ko \"tayyar\" ka message gaya.",
+        "x1": "Job ka status flow hai; lab ka har chakkar apni row hai (bheja, theek / nahi, mansookh) poori history ke sath.",
+        "x2": "Lab ka charge us ke khate mein; customer ke phone par repair ki laagat, dukaan ke phone par us phone ki qeemat mein.",
+        "x3": "Sticker ka barcode job number hai; screen lock kabhi print nahi hota."
+      },
+      "items": {
+        "t": "Accessories aur items",
+        "s": "Charger, cable, cover, glass: darjan ya dabbe mein khareedein, piece mein bechein, kam stock ki ittila ke sath.",
+        "e": "3 darjan cable Rs. 1,200 fi darjan: 36 piece Rs. 100 fi. 6 beche: stock 30 aur munafa durust.",
+        "x1": "Har aamad ek batch kholti hai; nikasi sab se purane se (FIFO) ya ausat laagat se, dukaan ki pasand.",
+        "x2": "Kam az kam qeemat, dealer ki wholesale qeemat, promo qeemat aur apna GST %.",
+        "x3": "Adjustment ke liye wajah; item ka kuch bhi delete nahi hota."
+      },
+      "installments": {
+        "t": "Qistein",
+        "s": "Zamin ke sath mahana qiston par bechein; dekhein aaj kis ki qist hai aur kaun der se hai.",
+        "e": "Rs. 60,000 ka phone, Rs. 15,000 abhi aur 10 tareekh ko Rs. 7,500 ki 6 qistein; ek din pehle reminder.",
+        "x1": "Plan sirf batata hai ke udhaar kaise wapas hoga; raqam customer ke khate mein hi rehti hai.",
+        "x2": "Baqi / der plan ke muqable adaigiyon se nikalta hai.",
+        "x3": "Reminder raat ka kaam bhejta hai."
+      },
+      "expenses": {
+        "t": "Kharche aur din band",
+        "s": "Kiraya, bill, tankhwah, chai: qismon mein likhein; galla gin kar din band karein.",
+        "e": "Aaj bijli Rs. 6,200 aur chai Rs. 800; raat ko galle mein Rs. 45,200 gine, mutawaqqa Rs. 45,000: +200 mehfooz.",
+        "x1": "Kharcha chune gaye account par ledger entry hai; durusti mansookh kar ke dobara.",
+        "x2": "Owner ki nikali raqam alag rehti hai aur kabhi kharcha nahi.",
+        "x3": "Kharche har report mein kharchon ke baad ke munafe mein jaate hain."
+      },
+      "audit": {
+        "t": "Shop audit aur reports",
+        "s": "Kisi bhi arse ka munafa, naqd, udhaar, stock, sale, khareed, staff, repair aur len-den, print aur Excel ke sath.",
+        "e": "Is mahine: net sale Rs. 7,18,800, majmui munafa, kharche, asal munafa; kis ne kya becha; kaun se phone 90 din purane hain.",
+        "x1": "Sirf parhna: har adad ledger, documents aur device events se nikalta hai aur bill tak khola ja sakta hai.",
+        "x2": "Arse, \"kisi din tak\" aur pichla arsa; milan ki jaanch ke khate barabar hain.",
+        "x3": "Laagat aur munafa sirf owner aur manager ko; security feed sirf owner ko."
+      },
+      "staff": {
+        "t": "Staff aur roles",
+        "s": "Owner, manager, salesman, technician: har ek wahi dekhta hai jo us ke kaam ko chahiye. Hazri aur kaam ka record.",
+        "e": "Kashif (salesman) bechta aur stock daalta hai lekin khareed qeemat ya dukaan ka munafa kabhi nahi dekhta; Imran (manager) reports dekhta hai.",
+        "x1": "Role → ijazat ka table har request par server par check hota hai, sirf screen par chhupaya nahi jata.",
+        "x2": "Har kaam audit log mein kis ne aur kab ke sath.",
+        "x3": "Qeemat ke usool se hatne ke liye owner / manager ka PIN."
+      },
+      "barcodes": {
+        "t": "Barcode aur sticker",
+        "s": "Har phone aur item ka barcode; qeemat aur repair sticker print karein; kisi bhi scanner se scan.",
+        "e": "Counter par sticker scan karein: phone sale mein aa gaya. Shelf scan karein: stock ginti batati hai kya ghayab hai.",
+        "x1": "Barcode khareed ke andar hi milta hai aur kabhi nahi badalta; phone, item, IMEI aur SKU sab mein munfarid.",
+        "x2": "Code 128 / EAN / QR; koi bhi USB / Bluetooth scanner keyboard ki tarah kaam karta hai.",
+        "x3": "Har print ka record."
+      },
+      "help": {
+        "t": "Urdu, Roman Urdu, English — aur har jagah \"?\"",
+        "s": "App ek waqt mein ek zaban dikhati hai; har khane, card aur tab par wazahat aur misaal wala \"?\".",
+        "e": "\"Net sale\" samajh nahi aaya? \"?\" dabayein: \"Discount aur wapsi ke baad ki sale — Rs. 1,20,000 becha, Rs. 40,000 ka wapas aaya → Rs. 80,000\".",
+        "x1": "Saari likhawat tarjume ki files se; bill aur message dukaan ki zaban mein.",
+        "x2": "1,100 se zyada wazahatein, har ek unwan, wazahat aur misaal ke sath teeno zabanon mein.",
+        "x3": "Agar kisi \"?\" mein koi zaban ya misaal kam ho to test build rok deta hai."
+      },
+      "devices": {
+        "t": "Phone, laptop, Windows, baghair internet",
+        "s": "Kisi bhi phone ke browser par, Android app ke taur par, keyboard shortcuts ke sath laptop par, ya baghair internet ek Windows computer par.",
+        "e": "Internet gaya: sale phone par intezar karti hai aur connection aate hi chali jati hai. Ghar par laptop se audit dekhein.",
+        "x1": "Ek PWA (install hone wali web app) aur Android app, ek hi code se.",
+        "x2": "Baghair internet ki sale munfarid key ke sath qatar mein taake ek hi baar jaye.",
+        "x3": "Ek computer wali Windows install ka apna database, aur provider ko apni khabar deti hai."
+      },
+      "security": {
+        "t": "Data ki hifazat",
+        "s": "Aap ki dukaan ka data sirf aap ka; har tabdeeli darj; kuch bhi delete nahi hota.",
+        "e": "Salesman ne bill mansookh kiya: owner security feed mein dekhta hai kis ne, kab aur kyun.",
+        "x1": "Har table dukaan ke hisaab se alag; koi bhi query doosri dukaan ki rows nahi parh sakti.",
+        "x2": "Raqam bilkul durust (decimal, kabhi float nahi); ledger aur device events sirf likhe jaate hain.",
+        "x3": "Fingerprint / PIN login, bhoole password ke liye phone OTP, rozana backup."
+      }
+    },
+    "earlier": "Pehle aane wali {{n}} sahuliyat"
   },
   "inst": {
     "title": "Qistein",

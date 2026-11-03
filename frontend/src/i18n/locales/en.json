@@ -7390,7 +7390,8 @@
         "body": "All the lab's charges for phones that came back.",
         "example": "Rs. 4,000 + Rs. 500 = Rs. 4,500."
       }
-    }
+    },
+    "language": "Language of the explanation"
   },
   "items": {
     "sellButton": "Accessory / watch",
@@ -7827,7 +7828,7 @@
       }
     },
     "videoTitle": "See it work in 2 minutes",
-    "videoSub": "A sale, the stock list, the udhaar khata and the day's hisaab — recorded on the app itself.",
+    "videoSub": "Recorded on the app itself: a sale with its bill, the shop audit, stock, the udhaar khata, the day's hisaab, repair labs and a \"?\" opened.",
     "videoHint": "Tap to play. No sound.",
     "modulesTitle": "Everything a counter needs",
     "modulesSub": "The basics come with every plan. The rest you add when you need it.",
@@ -7934,7 +7935,15 @@
       "tablet": "A tablet's page",
       "count": "Stock count",
       "itemreports": "Item reports",
-      "label": "Barcode labels"
+      "label": "Barcode labels",
+      "repairlab": "A repair lab's record",
+      "repairjob": "A phone at a lab",
+      "sticker": "Repair sticker",
+      "lending": "Len-den on a khata",
+      "help": "A \"?\" opened",
+      "trade": "Sales report",
+      "auditrepairs": "Repairs audit",
+      "repairs": "Repairs audit"
     },
     "priceTitle": "Simple monthly price",
     "priceSub": "Start with {{n}} days free. Pay monthly, no contract. Prices in PKR per shop.",
@@ -8064,12 +8073,230 @@
       "reminders": {
         "t": "Clear plan reminders, data never locked",
         "d": "A calm bar before your plan ends, pay from the app with the bank details shown, and even after the date you can still pay, export and download a full backup."
+      },
+      "repairlabs": {
+        "t": "Repair labs in the market",
+        "d": "Send a phone to Zain Lab or Ali Lab and record it: who has it, since when, the rate. Back fixed or not, the lab's charge goes on its khata. Every lab's record: phones sent, fixed %, days, what you owe."
+      },
+      "sticker": {
+        "t": "Repair sticker, your fields",
+        "d": "Print a sticker for the customer's phone: job no., barcode, customer, model, IMEI, problem, ready date. Pick the fields before printing; scan it to open the job."
+      },
+      "lending": {
+        "t": "Len-den with reminders",
+        "d": "Money given to or taken from a person with no bill: kept apart from bills, adjusted against a later sale, with a return date and a WhatsApp reminder."
+      },
+      "help": {
+        "t": "A \"?\" with an example on everything",
+        "d": "Every field, card and tab has a small \"?\" that explains it in Urdu, Roman Urdu or English, with a real shop example. Over 1,100 explanations."
+      },
+      "trade": {
+        "t": "Sales, purchase and staff reports",
+        "d": "Paid at the counter vs on udhaar, paid / part / unpaid bills, per employee and per customer, with print and Excel on every screen."
+      },
+      "repairaudit": {
+        "t": "Repairs in the shop audit",
+        "d": "Phones in and out, repair income, parts, lab charges and real repair profit, every lab's fixed %, late jobs and phones late at a lab."
+      },
+      "roles": {
+        "t": "Salesman without profit",
+        "d": "A salesman can sell, add stock, take returns and money in / out — but never sees buying prices, profit or the shop's audit."
+      },
+      "gst": {
+        "t": "GST per item",
+        "d": "An item with its own GST % is taxed at that rate on a taxed bill; the bill says \"Tax (by item)\". Phones keep the bill's rate."
       }
     },
     "float": {
       "wa": "Message us on WhatsApp",
       "call": "Call us"
-    }
+    },
+    "guideLink": "How each module works",
+    "guideTitle": "How each module works",
+    "guideSub": "Every module in two ways: in plain shop words with an example, and how it works inside for the technical reader. Tap a module to open it.",
+    "guideShop": "In shop words",
+    "guideTech": "How it works inside",
+    "vsteps": {
+      "sell": {
+        "t": "Sell a phone",
+        "d": "Pick the Galaxy A55, the price fills itself."
+      },
+      "bill": {
+        "t": "Make the bill",
+        "d": "Confirm; the bill is ready to print or WhatsApp."
+      },
+      "audit": {
+        "t": "Shop audit",
+        "d": "Sales, profit, cash and udhaar for the month."
+      },
+      "stock": {
+        "t": "Stock",
+        "d": "Every phone with its IMEI, status and price."
+      },
+      "khata": {
+        "t": "Udhaar khata",
+        "d": "Who owes you and whom you owe."
+      },
+      "hisaab": {
+        "t": "Day's hisaab",
+        "d": "What came in, what went out, what is in the galla."
+      },
+      "labs": {
+        "t": "Repair labs",
+        "d": "A lab's record and the repairs audit."
+      },
+      "help": {
+        "t": "A \"?\" opened",
+        "d": "Any word explained with an example."
+      }
+    },
+    "guide": {
+      "sale": {
+        "t": "Sale",
+        "s": "Sell a phone or item in a few taps: cash, online, cheque, from abroad, udhaar or installments.",
+        "e": "Bilal buys an Infinix Hot 40 for Rs. 34,500, pays Rs. 20,000 on Easypaisa: the bill prints, Rs. 14,500 goes on his khata, the phone leaves stock.",
+        "x1": "One sale writes the bill, its lines and one balanced ledger entry (sales, tax, cost of goods, cash / bank / party).",
+        "x2": "Each phone gets an immutable \"sold\" event; stock and its cost are derived, never typed.",
+        "x3": "Below the asking price or below cost needs the owner / manager PIN (price rules per shop)."
+      },
+      "purchase": {
+        "t": "Add stock (purchase)",
+        "s": "Buy phones and items from a dealer, or a used phone from a customer, paid now or on the dealer's udhaar.",
+        "e": "Rehman Traders sends 2 Tecno phones at Rs. 28,500 each, you pay Rs. 40,000: Rs. 17,000 is on his khata, both phones are in stock with a barcode.",
+        "x1": "Each line opens a device (IMEI-unique per shop) or an item batch at its landed cost.",
+        "x2": "Ledger: stock at cost against cash and the supplier's account; returns to the dealer are reversing entries.",
+        "x3": "A used phone from a customer needs the ID check (CNIC) before it can be sold."
+      },
+      "stock": {
+        "t": "Stock and IMEI",
+        "s": "Every phone with its IMEI, PTA status, condition, price and full history from purchase to sale.",
+        "e": "Search 4512: the iPhone 13 whose IMEI ends in 4512 opens with when it was bought, from whom, its price changes and who it was sold to.",
+        "x1": "Status comes from a state machine (in stock, sold, at a shop, in repair, returned…); every change is an event row.",
+        "x2": "The history screen is built only from those events, so it can never disagree with the books.",
+        "x3": "Tablets and smart watches are the same device record with a type and a spec sheet."
+      },
+      "verify": {
+        "t": "ID check (used phones)",
+        "s": "Before selling a used phone, check the seller: CNIC, phone of the seller, IMEI not blocked.",
+        "e": "Usman sells you a used Redmi: you scan his CNIC, note the PTA status; the phone shows \"ID check done\" before it can be sold.",
+        "x1": "A device carries a verification status (pending / done / flagged); a pending one blocks the sale.",
+        "x2": "Skipping it needs a reason (\"I know this person\") and is listed in the owner-only security audit.",
+        "x3": "The CNIC photo is stored privately per shop."
+      },
+      "khata": {
+        "t": "Udhaar khata",
+        "s": "One page per person: everything sold to or bought from them on udhaar, every payment, and the balance.",
+        "e": "Bilal's khata: two phones on udhaar Rs. 46,000, paid Rs. 26,000 → you will get Rs. 20,000; WhatsApp him a reminder in one tap.",
+        "x1": "Balances are derived from an append-only ledger; nothing is ever edited — a correction is a new reversing entry.",
+        "x2": "Ageing by the oldest unpaid bill, overdue only after a promise date.",
+        "x3": "A statement downloads as PDF / Excel for any period."
+      },
+      "lending": {
+        "t": "Len-den (money with no bill)",
+        "s": "Money you give a person or take from them with no bill, kept apart from bills, with a return date and reminders.",
+        "e": "You lend Tariq Rs. 25,000, back by the 5th; he returns Rs. 10,000. The card shows Rs. 15,000 open; on the 6th a WhatsApp reminder goes out.",
+        "x1": "A payment with purpose \"lending\" in the same khata, posted under its own ledger type so every report keeps it apart.",
+        "x2": "Open len-den is derived (unallocated lent − borrowed); \"adjust against bills\" moves no money, only bill status.",
+        "x3": "Return-date reminders run in the night job, at most every 3 days."
+      },
+      "payments": {
+        "t": "Money in / out and accounts",
+        "s": "Galla, bank, Easypaisa, JazzCash and cheques each have their own balance; every payment lands in the right one.",
+        "e": "A customer sends Rs. 10,000 on Easypaisa: the Easypaisa balance goes up, not the galla. Move Rs. 1,00,000 from galla to HBL in one tap.",
+        "x1": "Each account is a ledger account; transfers are their own entries and are never income or expense.",
+        "x2": "Online / cheque / remittance details (TID, bank, rate) are stored with the payment.",
+        "x3": "The day close compares the counted galla with the expected one and keeps the difference."
+      },
+      "returns": {
+        "t": "Returns and exchange",
+        "s": "A customer returns a phone (full refund or with a cut), you return one to the dealer, or swap old for new.",
+        "e": "A customer returns a phone of Rs. 10,000; you give back Rs. 9,000 and keep Rs. 1,000: the phone is back in stock, Rs. 1,000 is other income.",
+        "x1": "A return is a new document reversing the sale's share; the original bill is never changed.",
+        "x2": "The phone gets a \"returned\" event and is sellable again.",
+        "x3": "Exchanges post the difference in one entry."
+      },
+      "repairs": {
+        "t": "Repairs and repair labs",
+        "s": "Take a phone in, fix it or send it to a lab in the market, print its sticker, give it back with the bill.",
+        "e": "Ahmed's iPhone 11 screen: you take Rs. 3,000 advance, send it to Zain Lab (Rs. 8,500), it comes back fixed; Ahmed gets a \"ready\" message.",
+        "x1": "A job has a status flow; every lab trip is its own row (sent, back fixed / not fixed, cancelled) with full history.",
+        "x2": "The lab's charge goes to its khata; on a customer's phone it is a cost of the repair, on the shop's phone it is added to that phone's cost.",
+        "x3": "The sticker's barcode is the job number; the screen lock is never printed."
+      },
+      "items": {
+        "t": "Accessories and items",
+        "s": "Chargers, cables, covers, glass: bought by the dozen or box, sold by the piece, with low-stock alerts.",
+        "e": "Buy 3 dozen cables at Rs. 1,200 a dozen: 36 pieces at Rs. 100 each. Sell 6: the stock shows 30 and the profit is right.",
+        "x1": "Every incoming movement opens a batch; outgoing ones empty the oldest first (FIFO) or use the average cost, per shop.",
+        "x2": "Minimum price, wholesale price for dealers, promo price, and an own GST %.",
+        "x3": "Adjustments need a reason; nothing on an item is ever deleted."
+      },
+      "installments": {
+        "t": "Installments (qist)",
+        "s": "Sell on monthly installments with a guarantor; see who is due today and who is late.",
+        "e": "A phone of Rs. 60,000, Rs. 15,000 now and 6 installments of Rs. 7,500 on the 10th; a reminder goes a day before.",
+        "x1": "The plan only says how the udhaar is paid back; the money stays in the customer's khata.",
+        "x2": "Due / late is derived from payments made against the plan.",
+        "x3": "Reminders are queued by the night job."
+      },
+      "expenses": {
+        "t": "Expenses and day close",
+        "s": "Rent, bills, salaries, tea: write them in categories; close the day by counting the galla.",
+        "e": "Electricity Rs. 6,200 and tea Rs. 800 today; at night you count Rs. 45,200 in the galla against Rs. 45,000 expected: +200 is saved.",
+        "x1": "An expense is a ledger entry against the chosen account; a correction cancels and re-posts.",
+        "x2": "Owner drawings are kept apart and are never an expense.",
+        "x3": "Expenses feed profit after expenses in every report."
+      },
+      "audit": {
+        "t": "Shop audit and reports",
+        "s": "Profit, cash, udhaar, stock, sales, purchases, staff, repairs and len-den for any period, with print and Excel.",
+        "e": "This month: net sales Rs. 7,18,800, gross profit, expenses, real profit; who sold what; which phones are 90 days old.",
+        "x1": "Read-only: every figure is derived from the ledger, documents and device events, and can be drilled down to the bill.",
+        "x2": "Periods, an \"as of\" day and the previous period; reconciliation checks that the books balance.",
+        "x3": "Cost and profit only for the owner and manager; the security feed only for the owner."
+      },
+      "staff": {
+        "t": "Staff and roles",
+        "s": "Owner, manager, salesman, technician: each sees only what their work needs. Attendance and an activity log.",
+        "e": "Kashif (salesman) sells and adds stock but never sees the buying price or the shop's profit; Imran (manager) sees reports.",
+        "x1": "A role → capability matrix is checked on the server for every request, not only hidden in the screen.",
+        "x2": "Every action is in an audit log with who and when.",
+        "x3": "Price-rule overrides need the owner / manager PIN."
+      },
+      "barcodes": {
+        "t": "Barcodes and stickers",
+        "s": "Every phone and item gets a barcode; print price stickers and repair stickers; scan with any scanner.",
+        "e": "Scan a sticker at the counter: the phone is added to the sale. Scan the shelf: the stock count shows what is missing.",
+        "x1": "A barcode is given inside the purchase transaction and never changes; uniqueness spans phones, items, IMEIs and SKUs.",
+        "x2": "Code 128 / EAN / QR; any USB / Bluetooth scanner works as a keyboard.",
+        "x3": "Every print is logged."
+      },
+      "help": {
+        "t": "Urdu, Roman Urdu, English — and a \"?\" everywhere",
+        "s": "The app shows one language at a time; every field, card and tab has a \"?\" with an explanation and an example.",
+        "e": "Not sure what \"Net sales\" means? Tap the \"?\": \"Sales after discounts and returns — sold Rs. 1,20,000, one came back Rs. 40,000 → Rs. 80,000\".",
+        "x1": "All text comes from translation files; the bills and messages follow the shop's language.",
+        "x2": "1,100+ help terms, each with title, explanation and example in three languages.",
+        "x3": "A test fails the build if any \"?\" misses a language or an example."
+      },
+      "devices": {
+        "t": "Phone, laptop, Windows, offline",
+        "s": "Works on any phone browser, as an Android app, on a laptop with keyboard shortcuts, or on one Windows PC without internet.",
+        "e": "Internet goes: the sale waits on the phone and is sent once the connection is back. At home you check the audit on the laptop.",
+        "x1": "A PWA (installable web app) and a Capacitor Android app from the same code.",
+        "x2": "Offline sales are queued with an idempotency key so they are sent once.",
+        "x3": "The one-PC Windows install keeps its own database and checks in with the provider."
+      },
+      "security": {
+        "t": "Data safety",
+        "s": "Your shop's data is only yours; every change is recorded; nothing is deleted.",
+        "e": "A salesman cancels a bill: the owner sees it in the security feed with who, when and why.",
+        "x1": "Every table is scoped by shop; no query can read another shop's rows.",
+        "x2": "Money is exact (decimal, never floating point); the ledger and device events are append-only.",
+        "x3": "Fingerprint / PIN login, phone OTP for a forgotten password, daily backups."
+      }
+    },
+    "earlier": "{{n}} features added earlier"
   },
   "inst": {
     "title": "Installments (qist)",
