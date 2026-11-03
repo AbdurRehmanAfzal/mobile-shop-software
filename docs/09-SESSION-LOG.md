@@ -720,3 +720,23 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - Owner (from testing): the "?" explanation followed the app's language; to read it in Urdu or Roman the whole app had to change.
 - Now every "?" sheet has an English / اردو / Roman switch. Only the explanation changes (title, explanation, example, with Urdu in Nastaliq right-to-left); the app keeps its language. The last pick is remembered on the device (`mobileshop.helpLang`) and the next "?" opens in it.
 **Verified**: tsc; vitest 43; Playwright `help.spec.ts` (English app → Urdu explanation → Roman; the app stays `lang=en`; the next "?" opens in Roman).
+
+## 2026-11-03 · Landing: what makes it different, yearly price, SEO / AEO / GEO, on-screen signature
+- Owner:
+  - Make the landing unique: highlight the Android app, online, offline, consent sign and verification.
+  - Add a yearly package with a discount (owner: 2 months free).
+  - Fix the unreadable "Start free for 14 days" button.
+  - SEO / AEO / GEO; proper links to oopsolutions.com and ifixapplephone.com (owner: https://ifixapplephone.com).
+- Built:
+  - "Why it is different": a dark band under the hero, six pillars (Android app with the APK download, online, offline, seller's signed consent, used-phone verification, three languages + "?").
+  - Hero copy rewritten. The hero CTA uses fixed dark text on white (`text-ink` turned light in the dark theme).
+  - Pricing: a monthly / yearly switch (yearly by default), "2 months free on yearly", the struck 12-month price and the per-month figure. Backend `/public/info` gives `yearly_price` and `yearly_paid_months` = 10.
+  - FAQ: Android app, verification, consent, yearly. Footer "Our other sites": OOP Solutions and iFix Apple Phone.
+  - SEO in `index.html`: title, description, keywords, canonical `/welcome`, hreflang, Open Graph / Twitter with an image, and JSON-LD (Organization with sameAs, SoftwareApplication with PKR offers and downloadUrl, FAQPage). A `<noscript>` summary is there for crawlers without JavaScript.
+  - New files: `robots.txt` (AI bots allowed, /api blocked), `sitemap.xml`, and `llms.txt` (GEO: product, modules, prices, links). The landing sets the tab title and description per language. The service worker no longer serves the app for these files, and no longer precaches the 13 MB of landing screenshots (16 MB → 3.7 MB on every shop phone).
+  - Consent sign was only a checkbox and a printed paper. Now the seller signs on the screen (`SignaturePad` on the ID check); the image is saved as `declaration_path`, the declaration is marked signed, and the printed declaration shows the signature above the line.
+**Verified**:
+- backend `test_public` (+ yearly), `test_verification` (+ signature on the declaration), ruff;
+- tsc; vitest 43;
+- Playwright `landing` (unique band, yearly / monthly, sites, CTA colour), `signature`, `verify-done`, `help`;
+- desktop dark, Urdu phone checked; no overflow.

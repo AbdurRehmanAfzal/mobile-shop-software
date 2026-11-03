@@ -37,8 +37,11 @@ export default defineConfig(({ mode }) => ({
       workbox: {
         // App shell only. Shop data (API, uploads) is never cached: it is per-tenant and sensitive.
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        // the landing page's screenshots are for visitors, not the shop's phones (13 MB of data)
+        globIgnores: ['landing/**'],
         navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\/api\//, /^\/health/],
+        // the files for search / answer engines and the Android app are real files, never the app
+        navigateFallbackDenylist: [/^\/api\//, /^\/health/, /^\/(robots\.txt|sitemap\.xml|llms\.txt|app\.apk)$/],
         runtimeCaching: [
           {
             urlPattern: ({ url }) => url.origin === 'https://fonts.googleapis.com' || url.origin === 'https://fonts.gstatic.com',

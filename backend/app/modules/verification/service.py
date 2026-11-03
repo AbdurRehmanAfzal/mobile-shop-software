@@ -1,3 +1,4 @@
+import base64
 import html
 import uuid
 
@@ -13,7 +14,7 @@ from app.modules.catalogue.models import Brand, Model
 from app.modules.devices.models import Device
 from app.modules.devices.service import apply_event, get_device
 from app.modules.devices.state import DeviceCondition, EventType, VerificationStatus
-from app.modules.files.service import belongs
+from app.modules.files.service import belongs, resolve
 from app.modules.parties.models import Party
 from app.modules.verification.models import Verification
 from app.modules.verification.schemas import VerificationIn
@@ -204,6 +205,18 @@ def declaration_html(
     v = latest(db, shop_id, device)
     seller = db.get(Party, v.seller_party_id) if v and v.seller_party_id else None
     brand = db.get(Brand, device.brand_id)
+    # the seller's signature drawn on the screen (owner 2026-11-03), printed above the line
+    sig_img = ""
+    if v is not None and v.declaration_path:
+        try:
+            raw = resolve(shop_id, v.declaration_path).read_bytes()
+            if len(raw) < 400_000:
+                sig_img = (
+                    f'<img src="data:image/png;base64,{base64.b64encode(raw).decode()}" '
+                    'alt="" style="display:block;max-height:70px;margin:0 auto 4px">'
+                )
+        except Exception:  # noqa: BLE001 — a missing file never breaks the printout
+            sig_img = ""
     model = db.get(Model, device.model_id)
     e = html.escape
     cond_en = {
@@ -281,5 +294,5 @@ table {{ width: 100%; border-collapse: collapse; }} td {{ padding: 4px 6px; bord
 <tr><td>{T["price"]}</td><td class="ltr">Rs. {device.cost_price if device.cost_price is not None else "________"}</td></tr>
 </table>
 <p>{T["text"]}</p>
-<div class="sig"><div>{T["sig"]}</div><div>{T["for"]} {shop_name}</div></div>
+<div class="sig"><div>{sig_img}{T["sig"]}</div><div>{T["for"]} {shop_name}</div></div>
 </body></html>"""

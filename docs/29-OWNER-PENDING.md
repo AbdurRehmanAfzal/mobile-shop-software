@@ -110,6 +110,7 @@ Close the app fully and open it again first (or install the newest APK from the 
 | [ ] | Len-den (money with no bill) | open a person → Len-den card → "Took money (len-den)" 5,000; later sell them a phone on udhaar → "Adjust now" | card shows what is len-den vs bills; the bill becomes paid; Shop audit → Len-den shows given / taken / open; Hisaab and cash say "Len-den", not "Udhaar received" |
 | [ ] | Repair labs | Repairs → Repair labs → Add a lab (name, mobile, market); a repair job → Send to a lab → Back from lab (charge, paid now) | the lab's record shows the phone, fixed %, what you owe; Audit → Repairs shows income, lab charges, profit |
 | [ ] | Repair sticker | a repair job → Print sticker → tick the fields → Print on your label printer → scan it on Home | sticker with the details you picked; the scan opens the job |
+| [ ] | Seller signs on the screen | buy a used phone → ID check → the seller signs in the box → Use this signature → Save → Print declaration | the printed declaration shows the signature |
 | [ ] | Help "?" everywhere | open any screen in Urdu and in English → tap the small ? next to a card, tab or field | a sheet with what it is and an example; tell me any text that is unclear or wrong |
 | [ ] | Len-den reminder | demo shop → Tariq Bhai → Send reminder; Settings → Notifications → udhaar reminders on | WhatsApp opens with "Rs. 15,000 … was to come back on …"; home shows "people late returning len-den" and "len-den the shop must give back soon" (Star Mobiles) |
 

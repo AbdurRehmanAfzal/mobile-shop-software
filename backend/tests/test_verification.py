@@ -169,3 +169,24 @@ def test_declaration_is_bilingual_html_and_isolated(owner, other_owner, cat):
         and "declare" not in body
     )
     assert other_owner.get(f"/api/v1/devices/{d['id']}/verification/declaration").status_code == 404
+
+
+def test_signature_drawn_on_the_screen_is_printed_on_the_declaration(owner, cat):
+    """owner 2026-11-03 ("consent sign"): the seller's signature image goes on the declaration"""
+    d = _stock(owner, cat, condition="used")
+    sig = _upload(owner, purpose="signature").json()["path"]
+    r = owner.put(
+        f"/api/v1/devices/{d['id']}/verification",
+        json={"declaration_signed": True, "declaration_path": sig},
+    )
+    assert r.status_code in (200, 201), r.text
+    assert r.json()["declaration_path"] == sig
+    page = owner.get(
+        f"/api/v1/devices/{d['id']}/verification/declaration", params={"lang": "en"}
+    ).text
+    assert "data:image/png;base64," in page
+    # without a signature the line stays empty, as before
+    d2 = _stock(owner, cat, imei="356938035643809", condition="used")
+    owner.put(f"/api/v1/devices/{d2['id']}/verification", json={"declaration_signed": True})
+    page2 = owner.get(f"/api/v1/devices/{d2['id']}/verification/declaration").text
+    assert "data:image/png" not in page2
