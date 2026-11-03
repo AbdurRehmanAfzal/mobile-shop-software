@@ -38,4 +38,6 @@ class Party(UUIDPk, ShopScoped, Timestamped, Base):
     balance: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     # owner addendum 5: a dealer / wholesale customer gets the wholesale price of items
-    wholesale: Mapped[bool] = mapped_column(Boolean, default=False, server_default="0", nullable=False)
+    wholesale: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default="0", nullable=False
+    )

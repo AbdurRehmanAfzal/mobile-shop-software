@@ -94,7 +94,7 @@ export default function VerifyPage() {
     const Icon = r === 'clear' ? ShieldCheck : r === 'flagged' ? ShieldAlert : CheckCircle2
     return (
       <div className="flex flex-col gap-3">
-        <PageHeader title="verify.title" />
+        <PageHeader title="verify.title" help={<Help term="idcheck" />} />
         <div className={`flex flex-col items-center gap-2 rounded-3xl px-5 py-7 text-center ${tone}`}>
           <span className="well mb-1 h-16 w-16 rounded-full bg-surface text-current"><Icon size={34} strokeWidth={2.4} /></span>
           <BiLabel text="verify.saved" size="lg" bold tone="text-current" align="center" />
@@ -124,29 +124,32 @@ export default function VerifyPage() {
             {device.imei1}
           </div>
         </div>
-        <Chip text={`stock.verification.${device.verification_status}`} tone={device.verification_status === 'flagged' ? 'bad' : device.verification_status === 'clear' ? 'ok' : 'warn'} />
+        <span className="flex items-center gap-1"><Chip text={`stock.verification.${device.verification_status}`} tone={device.verification_status === 'flagged' ? 'bad' : device.verification_status === 'clear' ? 'ok' : 'warn'} /><Help term="device.verification" size="sm" /></span>
       </div>
 
-      <Section title="verify.seller">
+      <Section title="verify.seller" help="stock.verify.seller">
         <PartyPicker value={party} onChange={setParty} kind="customer" label="verify.seller" />
         {/* the CNIC photo fills the number and is kept as the front photo (owner 2026-10-28) */}
         <CnicScanButton onRead={async (d, photo) => { if (d.cnic) set('cnic_no', d.cnic); set('cnic_front_path', await uploadFile(photo, 'cnic')) }} />
         <CnicInput label="verify.cnic" value={f.cnic_no ?? party?.cnic ?? ''} onChange={(v) => set('cnic_no', v)} />
-        <div className="grid grid-cols-2 gap-2">
+        <div className="flex items-start gap-1">
+        <div className="grid min-w-0 flex-1 grid-cols-2 gap-2">
           <PhotoTile label={pick('verify.cnicFront')} path={f.cnic_front_path ?? null} purpose="cnic" onPick={(p) => set('cnic_front_path', p)} />
           <PhotoTile label={pick('verify.cnicBack')} path={f.cnic_back_path ?? null} purpose="cnic" onPick={(p) => set('cnic_back_path', p)} />
           <PhotoTile label={pick('verify.sellerPhoto')} path={f.seller_photo_path ?? null} purpose="seller" onPick={(p) => set('seller_photo_path', p)} />
           {/* owner 2026-10-27: a photo of the phone itself, next to the ID card and the seller */}
           <PhotoTile label={pick('verify.devicePhoto')} path={f.device_photos?.[0] ?? null} purpose="device" onPick={(p) => set('device_photos', [p, ...(f.device_photos ?? []).slice(1)])} />
         </div>
+        <Help term="stock.verify.photos" size="sm" />
+        </div>
       </Section>
 
-      <Section title="verify.egadget" right={<a href="https://egadget.punjab.gov.pk" target="_blank" rel="noreferrer" className="flex items-center gap-1 text-xs font-bold text-emerald"><ExternalLink size={12} />{pick('verify.egadgetOpen')}</a>}>
+      <Section title="verify.egadget" help="stock.verify.egadget" right={<a href="https://egadget.punjab.gov.pk" target="_blank" rel="noreferrer" className="flex items-center gap-1 text-xs font-bold text-emerald"><ExternalLink size={12} />{pick('verify.egadgetOpen')}</a>}>
         <BiSegmented<'clear' | 'flagged' | 'not_checked'> value={f.egadget_result ?? 'not_checked'} onChange={(v) => set('egadget_result', v)} options={[{ value: 'clear', text: 'verify.clear' }, { value: 'flagged', text: 'verify.flagged' }, { value: 'not_checked', text: 'verify.notChecked' }]} />
-        <BiInput label="verify.egadgetRef" value={f.egadget_ref ?? ''} onChange={(e) => set('egadget_ref', e.target.value)} />
+        <BiInput label="verify.egadgetRef" help={<Help term="stock.verify.egadgetRef" size="sm" />} value={f.egadget_ref ?? ''} onChange={(e) => set('egadget_ref', e.target.value)} />
       </Section>
 
-      <Section title="verify.ptaChecked">
+      <Section title="verify.ptaChecked" help="stock.verify.pta">
         <label className="card flex items-center gap-3">
           <input type="checkbox" checked={!!f.pta_checked} onChange={(e) => set('pta_checked', e.target.checked)} className="h-6 w-6 accent-[#136F56]" />
           <span className="flex-1 text-sm font-semibold">{pick('verify.ptaChecked')}</span>
@@ -155,19 +158,19 @@ export default function VerifyPage() {
         {f.pta_checked ? <BiSegmented<PtaStatus> value={f.pta_result ?? device.pta_status} onChange={(v) => set('pta_result', v)} options={[{ value: 'pta_approved', text: 'stock.pta.pta_approved' }, { value: 'non_pta', text: 'stock.pta.non_pta' }, { value: 'jv', text: 'stock.pta.jv' }]} /> : null}
       </Section>
 
-      <Section title="verify.declaration" right={<button type="button" onClick={() => openPrintable(`/api/v1/devices/${id}/verification/declaration`)} className="text-xs font-bold text-emerald">{pick('common.print')}</button>}>
+      <Section title="verify.declaration" help="stock.verify.declaration" right={<button type="button" onClick={() => openPrintable(`/api/v1/devices/${id}/verification/declaration`)} className="text-xs font-bold text-emerald">{pick('common.print')}</button>}>
         <label className="card flex items-center gap-3">
           <input type="checkbox" checked={!!f.declaration_signed} onChange={(e) => set('declaration_signed', e.target.checked)} className="h-6 w-6 accent-[#136F56]" />
           <span className="flex-1 text-sm font-semibold">{pick('verify.declaration')}</span>
         </label>
-        <BiInput label="verify.notes" value={f.physical_notes ?? ''} onChange={(e) => set('physical_notes', e.target.value)} />
+        <BiInput label="verify.notes" help={<Help term="stock.verify.notes" size="sm" />} value={f.physical_notes ?? ''} onChange={(e) => set('physical_notes', e.target.value)} />
       </Section>
 
       {existing ? (
         <div className="card">
-          <KV k="verify.result" v={<Chip text={`verify.${result === 'pending' ? 'notChecked' : result}`} tone={result === 'flagged' ? 'bad' : result === 'clear' ? 'ok' : 'warn'} />} />
-          {existing.missing.length ? <KV k="verify.missing" v={missingText(existing)} /> : null}
-          {existing.override_reason ? <KV k="verify.override" v={existing.override_reason} /> : null}
+          <KV k="verify.result" help="stock.verify.result" v={<Chip text={`verify.${result === 'pending' ? 'notChecked' : result}`} tone={result === 'flagged' ? 'bad' : result === 'clear' ? 'ok' : 'warn'} />} />
+          {existing.missing.length ? <KV k="verify.missing" help="stock.verify.missing" v={missingText(existing)} /> : null}
+          {existing.override_reason ? <KV k="verify.override" help="stock.verify.override" v={existing.override_reason} /> : null}
         </div>
       ) : null}
       <ErrorText error={save.error ?? override.error} />
@@ -176,7 +179,7 @@ export default function VerifyPage() {
 
       <Sheet open={overrideOpen} onClose={() => setOverrideOpen(false)} title="verify.override">
         <div className="flex flex-col gap-3">
-          <BiInput label="verify.overrideReason" value={reason} onChange={(e) => setReason(e.target.value)} minLength={5} autoFocus />
+          <BiInput label="verify.overrideReason" help={<Help term="stock.verify.overrideReason" size="sm" />} value={reason} onChange={(e) => setReason(e.target.value)} minLength={5} autoFocus />
           <BiButton text="common.confirm" full variant="danger" loading={override.isPending} disabled={reason.trim().length < 5} onClick={async () => { const v = await override.mutateAsync({ reason }); setOverrideOpen(false); setDone(v); window.scrollTo({ top: 0 }) }} />
         </div>
       </Sheet>

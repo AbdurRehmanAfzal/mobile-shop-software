@@ -156,8 +156,11 @@ def create_sale(
         a0 = acc_stock.get_accessory(db, shop_id, ml.accessory_id)
         if a0.min_price is not None and money(ml.unit_price) < money(a0.min_price):
             approval.require(db, shop, ctx, "below_asking", data.approval_pin)
-        if a0.avg_cost is not None and a0.qty > 0 and money(ml.unit_price) < money(a0.avg_cost) and not (
-            data.below_cost_ok and ctx.can(Cap.VIEW_COST)
+        if (
+            a0.avg_cost is not None
+            and a0.qty > 0
+            and money(ml.unit_price) < money(a0.avg_cost)
+            and not (data.below_cost_ok and ctx.can(Cap.VIEW_COST))
         ):
             raise Conflict(
                 code="below_cost",
@@ -284,7 +287,11 @@ def create_sale(
         accessory = (
             acc_stock.get_accessory(db, shop_id, ml.accessory_id) if ml.accessory_id else None
         )
-        wdays = ml.warranty_days if ml.warranty_days is not None else (accessory.warranty_days if accessory else 0)
+        wdays = (
+            ml.warranty_days
+            if ml.warranty_days is not None
+            else (accessory.warranty_days if accessory else 0)
+        )
         if accessory is not None:
             mv = acc_stock.move(
                 db,
@@ -467,19 +474,36 @@ def list_invoices(
     return list(db.scalars(stmt.order_by(Invoice.created_at.desc()).limit(limit)).all())
 
 
-
 def _unit_bits(ln: dict, ur: bool) -> str:
     """owner addendum 6: the bill names the unit's type, storage / RAM, colour, condition and PTA"""
     if not ln.get("device_id"):
         return ""
-    kind = {"phone": ("Mobile", "موبائل"), "tablet": ("Tablet", "ٹیبلٹ"), "watch": ("Smart watch", "سمارٹ واچ")}.get(ln.get("category") or "phone", ("", ""))[1 if ur else 0]
-    cond = {"box_pack": ("Box pack", "باکس پیک"), "open_box": ("Open box", "کھلا باکس"), "used": ("Used", "استعمال شدہ"), "patched": ("Patched", "پیچ شدہ")}.get(ln.get("condition") or "", ("", ""))[1 if ur else 0]
+    kind = {
+        "phone": ("Mobile", "موبائل"),
+        "tablet": ("Tablet", "ٹیبلٹ"),
+        "watch": ("Smart watch", "سمارٹ واچ"),
+    }.get(ln.get("category") or "phone", ("", ""))[1 if ur else 0]
+    cond = {
+        "box_pack": ("Box pack", "باکس پیک"),
+        "open_box": ("Open box", "کھلا باکس"),
+        "used": ("Used", "استعمال شدہ"),
+        "patched": ("Patched", "پیچ شدہ"),
+    }.get(ln.get("condition") or "", ("", ""))[1 if ur else 0]
     if ln.get("grade"):
         cond = f"{cond} {str(ln['grade']).upper() if len(str(ln['grade'])) == 1 else ln['grade']}".strip()
-    pta = {"pta_approved": ("PTA approved", "PTA منظور"), "non_pta": ("Non-PTA", "نان PTA"), "jv": ("JV", "JV")}.get(ln.get("pta_status") or "", ("", ""))[1 if ur else 0]
-    mem = " + ".join(x for x in (ln.get("storage_name"), f"{ln['ram_gb']}GB RAM" if ln.get("ram_gb") else None) if x)
+    pta = {
+        "pta_approved": ("PTA approved", "PTA منظور"),
+        "non_pta": ("Non-PTA", "نان PTA"),
+        "jv": ("JV", "JV"),
+    }.get(ln.get("pta_status") or "", ("", ""))[1 if ur else 0]
+    mem = " + ".join(
+        x
+        for x in (ln.get("storage_name"), f"{ln['ram_gb']}GB RAM" if ln.get("ram_gb") else None)
+        if x
+    )
     bits = [b for b in (kind, mem, ln.get("colour_name"), cond, pta) if b]
     return f"<br><small>{html.escape(' · '.join(bits))}</small>" if bits else ""
+
 
 def to_out(db: Session, inv: Invoice, show_cost: bool) -> dict:
     party = db.get(Party, inv.party_id) if inv.party_id else None

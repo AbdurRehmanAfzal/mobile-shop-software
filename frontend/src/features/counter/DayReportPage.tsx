@@ -22,6 +22,25 @@ const HOW_TONE: Record<PaidHow, string> = {
   part: 'bg-khata text-khata-fg',
 }
 
+/** the "?" on each came-in / went-out reason (keys from reports/service.py `_IN` / `_OUT`, docs/33) */
+const IN_HELP: Record<string, { helpKey: string }> = {
+  sales: { helpKey: 'counter.why.sales' },
+  udhaar_back: { helpKey: 'counter.why.udhaarBack' },
+  repairs: { helpKey: 'counter.why.repairs' },
+  lending: { helpKey: 'counter.why.lendingIn' },
+  transfer: { helpKey: 'counter.why.transfer' },
+  other: { helpKey: 'counter.why.other' },
+}
+const OUT_HELP: Record<string, { helpKey: string }> = {
+  stock: { helpKey: 'counter.why.stock' },
+  returns: { helpKey: 'counter.why.returns' },
+  expenses: { helpKey: 'counter.why.expenses' },
+  paid_out: { helpKey: 'counter.why.paidOut' },
+  lending: { helpKey: 'counter.why.lendingOut' },
+  transfer: { helpKey: 'counter.why.transfer' },
+  other: { helpKey: 'counter.why.other' },
+}
+
 export default function DayReportPage() {
   const { pick, ur, cls } = useLang()
   const [params, setParams] = useSearchParams()
@@ -33,13 +52,13 @@ export default function DayReportPage() {
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title={period.from === period.to ? 'counter.dayTitle' : 'counter.hisaab'} right={<DownloadButton path={`/api/v1/exports/day?${periodQuery(period)}`} name={`hisaab-${span}`} />} />
+      <PageHeader title={period.from === period.to ? 'counter.dayTitle' : 'counter.hisaab'} help={<Help term="counter.dayReport" />} right={<DownloadButton path={`/api/v1/exports/day?${periodQuery(period)}`} name={`hisaab-${span}`} />} />
       <PeriodPicker value={period} onChange={(p) => setParams({ from: p.from, to: p.to }, { replace: true })} />
       {isLoading || !data ? <Loading /> : (
         <>
           <section className="flex items-center gap-3 rounded-3xl bg-sell px-5 py-4 text-sell-fg">
             <span className="flex flex-1 flex-col">
-              <BiLabel text="counter.sold" size="md" bold tone="text-current" />
+              <span className="flex items-center gap-1"><BiLabel text="counter.sold" size="md" bold tone="text-current" /><span className="[&_button]:text-current"><Help term="counter.glance.sales" size="sm" /></span></span>
               <span className={ur ? cls('sm') : 'text-sm font-semibold'}><span className="num">{data.phones_sold}</span> {pick('counter.phones')}</span>
             </span>
             <span className="num text-[30px]" dir="ltr">{withCur(n(data.sales_total))}</span>
@@ -48,27 +67,27 @@ export default function DayReportPage() {
           <section className="flex flex-col gap-1 rounded-3xl bg-hero px-5 py-4 text-hero-text">
             <div className="flex items-center gap-1"><BiLabel text="counter.netCash" size="md" bold tone="text-current" /><span className="text-hero-text [&_button]:text-current"><Help term="inHand" /></span></div>
             <span className={`num text-[30px] leading-tight ${Number(data.cash_net) < 0 ? 'text-[#F28B82]' : 'text-[#8FE3B4]'}`} dir="ltr">{Number(data.cash_net) < 0 ? '− ' : ''}{withCur(n(data.cash_net))}</span>
-            <Why label="counter.cameIn" total={data.money_in} parts={data.came_in} keyPrefix="counter.inWhy" tone="text-[#8FE3B4]" />
-            <Why label="counter.wentOut" total={data.money_out} parts={data.went_out} keyPrefix="counter.outWhy" tone="text-[#F28B82]" />
+            <Why label="counter.cameIn" help="counter.day.cameIn" reasons={IN_HELP} total={data.money_in} parts={data.came_in} keyPrefix="counter.inWhy" tone="text-[#8FE3B4]" />
+            <Why label="counter.wentOut" help="counter.day.wentOut" reasons={OUT_HELP} total={data.money_out} parts={data.went_out} keyPrefix="counter.outWhy" tone="text-[#F28B82]" />
             <BiLabel text="counter.netCashHint" size="sm" tone="text-current opacity-70" />
           </section>
 
           <div className="grid grid-cols-3 gap-2">
-            <Box label="counter.cashIn" value={n(data.received.cash)} tone="text-emerald" />
-            <Box label={Number(data.received.bank) > 0 ? 'counter.bank' : 'counter.easypaisa'} value={n(digital)} />
-            <Box label="counter.udhaarGiven" value={n(data.udhaar_given)} cls="bg-khata text-khata-fg border-transparent" />
-            <Box label="counter.udhaarBack" value={n(data.udhaar_received)} tone="text-emerald" />
-            <Box label="counter.expenses" value={n(data.expenses)} tone="text-payable" />
+            <Box label="counter.cashIn" help="counter.day.cashIn" value={n(data.received.cash)} tone="text-emerald" />
+            <Box label={Number(data.received.bank) > 0 ? 'counter.bank' : 'counter.easypaisa'} help="counter.day.digital" value={n(digital)} />
+            <Box label="counter.udhaarGiven" help="counter.day.udhaarGiven" value={n(data.udhaar_given)} cls="bg-khata text-khata-fg border-transparent" />
+            <Box label="counter.udhaarBack" help="counter.day.udhaarBack" value={n(data.udhaar_received)} tone="text-emerald" />
+            <Box label="counter.expenses" help="counter.glance.expenses" value={n(data.expenses)} tone="text-payable" />
             {Number(data.returns_refunded) > 0 || Number(data.returns_kept) > 0 ? (
               <>
-                <Box label="counter.returnsRefunded" value={n(data.returns_refunded)} cls="bg-ret text-ret-fg border-transparent" />
-                <Box label="counter.returnsKept" value={n(data.returns_kept)} cls="bg-ret text-ret-fg border-transparent" />
+                <Box label="counter.returnsRefunded" help="counter.day.refunded" value={n(data.returns_refunded)} cls="bg-ret text-ret-fg border-transparent" />
+                <Box label="counter.returnsKept" help="cut" value={n(data.returns_kept)} cls="bg-ret text-ret-fg border-transparent" />
               </>
             ) : null}
-            {data.profit !== null ? <Box label="counter.profit" value={n(data.profit)} cls="bg-hero text-hero-text border-transparent" /> : null}
+            {data.profit !== null ? <Box label="counter.profit" help="counter.glance.profit" value={n(data.profit)} cls="bg-hero text-hero-text border-transparent" /> : null}
           </div>
 
-          <BiLabel text="counter.whatSold" size="sm" bold tone="text-muted" />
+          <span className="flex items-center gap-1"><BiLabel text="counter.whatSold" size="sm" bold tone="text-muted" /><Help term="counter.day.items" size="sm" /></span>
           {!data.items.length ? <Empty text="counter.nothingSold" /> : (
             <div className="card divide-y divide-line p-0">
               {data.items.map((it, i) => (
@@ -89,31 +108,32 @@ export default function DayReportPage() {
   )
 }
 
-function Box({ label, value, tone = 'text-ink', cls: extra = 'bg-surface border-line' }: { label: string; value: string; tone?: string; cls?: string }) {
+function Box({ label, value, help, tone = 'text-ink', cls: extra = 'bg-surface border-line' }: { label: string; value: string; help?: string; tone?: string; cls?: string }) {
   const { ur, cls, pick } = useLang()
   return (
     <div className={`flex flex-col rounded-2xl border px-3 py-2 ${extra}`}>
-      <span className={`opacity-80 ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick(label)}</span>
+      <span className="flex items-center gap-0.5"><span className={`min-w-0 opacity-80 ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick(label)}</span>{help ? <span className="[&_button]:text-current"><Help term={help} size="sm" /></span> : null}</span>
       <span className={`num text-lg ${extra.includes('text-') ? '' : tone}`} dir="ltr">{value}</span>
     </div>
   )
 }
 
 /** "Came in 800,000: Sales 800,000" / "Went out 1,500,000: Stock bought 750,000 · Returns 750,000". */
-function Why({ label, total, parts, keyPrefix, tone }: { label: string; total: string; parts: Record<string, string>; keyPrefix: string; tone: string }) {
+function Why({ label, help, reasons, total, parts, keyPrefix, tone }: { label: string; help: string; reasons: Record<string, { helpKey: string }>; total: string; parts: Record<string, string>; keyPrefix: string; tone: string }) {
   const { pick, ur, cls } = useLang()
   const shown = Object.entries(parts).filter(([, v]) => Number(v) !== 0)
   return (
     <div className="flex flex-col gap-1 rounded-2xl bg-white/10 px-3 py-2">
       <div className="flex items-center justify-between gap-2">
-        <span className={ur ? cls('sm') : 'text-sm font-bold'}>{pick(label)}</span>
+        <span className="flex items-center gap-1"><span className={ur ? cls('sm') : 'text-sm font-bold'}>{pick(label)}</span><span className="[&_button]:text-current"><Help term={help} size="sm" /></span></span>
         <span className={`num text-lg ${tone}`} dir="ltr">{n(total)}</span>
       </div>
       {shown.length ? (
         <div className="flex flex-wrap gap-1.5">
           {shown.map(([k, v]) => (
-            <span key={k} className={`rounded-full bg-white/10 px-2.5 py-0.5 ${ur ? cls('sm') : 'text-xs font-semibold'}`}>
+            <span key={k} className={`inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-0.5 ${ur ? cls('sm') : 'text-xs font-semibold'}`}>
               {pick(`${keyPrefix}.${k}`)} <span className="num" dir="ltr">{n(v)}</span>
+              {reasons[k] ? <span className="-me-1.5 [&_button]:text-current"><Help term={reasons[k].helpKey} size="sm" /></span> : null}
             </span>
           ))}
         </div>

@@ -6,6 +6,7 @@ import { BarChart3, Plus, SlidersHorizontal } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { kindLabel } from '@/components/ItemKinds'
 import { BtnText, Chip, Empty, fmtDate, List, Loading, MoneyText, PageHeader, Row, SearchBox, Sheet } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
@@ -13,6 +14,13 @@ import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
 import { useScan } from '@/lib/scanner'
 import ItemForm from './ItemForm'
 import { gradeLabel, type Item, type ItemOptions } from './types'
+
+// each tab means something different: the "?" beside the tabs explains the open one (docs/33)
+const TABS = [
+  { value: 'stock' as const, text: 'acc.qty', help: 'items.tabs.stock' },
+  { value: 'low' as const, text: 'acc.low', help: 'items.tabs.low' },
+  { value: 'pending' as const, text: 'acc.pending', help: 'items.tabs.pending' },
+]
 
 interface Pending { item_id: string; device_label: string; imei1: string; kind: string; pending_from: 'vendor' | 'shop'; expected_at: string | null; promised_to_customer_at: string | null; party_name: string | null; party_phone: string | null; overdue: boolean }
 
@@ -48,32 +56,38 @@ export default function AccessoriesPage() {
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="acc.title" right={<button type="button" aria-label={pick('acc.new')} onClick={() => setAdding(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 bg-ink text-ground"><Plus size={22} /><BtnText k={'acc.new'} /></button>} />
-      <BiSegmented value={tab} onChange={setTab} options={[{ value: 'stock', text: 'acc.qty' }, { value: 'low', text: 'acc.low' }, { value: 'pending', text: 'acc.pending' }]} />
+      <PageHeader title="acc.title" help={<Help term="items.page" />} right={<button type="button" aria-label={pick('acc.new')} onClick={() => setAdding(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 bg-ink text-ground"><Plus size={22} /><BtnText k={'acc.new'} /></button>} />
+      <div className="flex items-center gap-1">
+        <div className="min-w-0 flex-1"><BiSegmented value={tab} onChange={setTab} options={TABS} /></div>
+        <Help term={TABS.find((x) => x.value === tab)!.help} size="sm" />
+      </div>
       {tab !== 'pending' ? (
         <>
-          <SearchBox value={q} onChange={setQ} placeholder="items.search" scan />
+          <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><SearchBox value={q} onChange={setQ} placeholder="items.search" scan /></div><Help term="common.search" size="sm" /></div>
           <div className="flex flex-wrap items-center gap-1.5">
             <button type="button" aria-pressed={filters} onClick={() => setFilters(!filters)} className={`${chip(filters || active)} inline-flex items-center gap-1`}><SlidersHorizontal size={14} /> {pick('acc.filters')}</button>
+            <Help term="items.filters" size="sm" />
             {canCost ? <button type="button" onClick={() => nav('/accessories/reports')} className={`${chip(false)} inline-flex items-center gap-1`} data-testid="item-reports"><BarChart3 size={14} /> {pick('acc.reports')}</button> : null}
+            {canCost ? <Help term="items.reportsLink" size="sm" /> : null}
             {brand ? <span className={chip(true)}>{brand}</span> : null}
             {grade ? <span className={chip(true)}>{gradeLabel(pick, grade, exists)}</span> : null}
             {out ? <span className={chip(true)}>{pick('acc.outOfStock')}</span> : null}
           </div>
           {filters ? (
             <div className="card flex flex-col gap-2" data-testid="item-filters">
-              <BiLabel text="acc.brand" size="sm" tone="text-muted" bold />
+              <span className="flex items-center gap-1"><BiLabel text="acc.brand" size="sm" tone="text-muted" bold /><Help term="items.brand" size="sm" /></span>
               <div className="flex flex-wrap gap-1.5">
                 <button type="button" aria-pressed={!brand} onClick={() => setBrand('')} className={chip(!brand)}>{pick('acc.allBrands')}</button>
                 {(opts?.brands ?? []).map((b) => <button key={b} type="button" aria-pressed={brand === b} onClick={() => setBrand(brand === b ? '' : b)} className={chip(brand === b)}>{b}</button>)}
               </div>
-              <BiLabel text="acc.grade" size="sm" tone="text-muted" bold />
+              <span className="flex items-center gap-1"><BiLabel text="acc.grade" size="sm" tone="text-muted" bold /><Help term="items.grade" size="sm" /></span>
               <div className="flex flex-wrap gap-1.5">
                 <button type="button" aria-pressed={!grade} onClick={() => setGrade('')} className={chip(!grade)}>{pick('acc.allGrades')}</button>
                 {(opts?.grades ?? []).filter((g) => g !== 'unspecified').map((g) => <button key={g} type="button" aria-pressed={grade === g} onClick={() => setGrade(grade === g ? '' : g)} className={chip(grade === g)}>{gradeLabel(pick, g, exists)}</button>)}
               </div>
               <div className="flex flex-wrap gap-1.5">
                 <button type="button" aria-pressed={out} onClick={() => setOut(!out)} className={chip(out)}>{pick('acc.outOfStock')}</button>
+                <Help term="items.outOfStock" size="sm" />
               </div>
             </div>
           ) : null}

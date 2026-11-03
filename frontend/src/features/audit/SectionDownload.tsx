@@ -4,6 +4,7 @@
 import { FileSpreadsheet, Printer } from 'lucide-react'
 import { useState } from 'react'
 import { useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { downloadFile, openPrintable } from '@/lib/files'
 import { useAuditPeriod } from './period'
 
@@ -31,6 +32,7 @@ export default function SectionDownload({ sections, name }: { sections: string[]
       >
         <FileSpreadsheet size={18} />
       </button>
+      <Help term="common.download" size="sm" />
     </span>
   )
 }

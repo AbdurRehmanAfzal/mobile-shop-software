@@ -6,6 +6,7 @@ import {isoDay, withCur } from '@/lib/format'
 import { useEffect, useState } from 'react'
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { BiAlert, BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { PhoneInput, isMobileOk } from '@/components/FieldInputs'
 import { BtnText, Empty, ErrorText, Loading, PageHeader, SearchBox, Sheet, fmtDate } from '@/components/ui'
 import { useAuth, type MeOut } from '@/lib/auth'
@@ -40,6 +41,7 @@ function ModulePicker({ catalogue, plan, value, onChange }: { catalogue: ModuleC
       <label className="flex items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-2.5">
         <input type="checkbox" checked={!custom} onChange={(e) => onChange(e.target.checked ? null : [...defaults])} className="h-6 w-6 accent-[rgb(var(--emerald))]" />
         <span className={`flex-1 font-semibold ${ur ? cls('sm') : 'text-sm'}`}>{pick('admin.followPlan').replace('{{plan}}', plan)}</span>
+        <Help term="admin.followPlan" size="sm" />
       </label>
       <div className="card grid grid-cols-1 divide-y divide-line p-0">
         {Object.entries(catalogue.modules).map(([k, names]) => (
@@ -144,6 +146,7 @@ export default function AdminPage() {
     <div className="flex flex-col gap-3">
       <PageHeader
         title="admin.title"
+        help={<Help term="admin.page" />}
         right={
           <button type="button" aria-label={pick('admin.newShop')} onClick={() => { setMade(null); setF(EMPTY); create.reset(); setOpen(true) }} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl bg-ink px-2 py-1 text-ground">
             <Plus size={20} />
@@ -153,18 +156,21 @@ export default function AdminPage() {
       />
       <BiLabel text="admin.only" size="sm" tone="text-muted" />
       {/* docs/28: the business view — income, channels, time left, usage, keys */}
-      <button type="button" onClick={() => nav('/admin/business')} className="tap hero flex items-center gap-3 px-5 py-4 text-start" data-testid="open-business">
-        <span className="well h-11 w-11 shrink-0 bg-white/15"><BarChart3 size={22} /></span>
-        <span className="flex-1 text-base font-extrabold">{pick('prov.open')}</span>
-        <ChevronRight size={20} className="rtl:rotate-180" />
-      </button>
+      <div className="flex items-center gap-1">
+        <button type="button" onClick={() => nav('/admin/business')} className="tap hero flex flex-1 items-center gap-3 px-5 py-4 text-start" data-testid="open-business">
+          <span className="well h-11 w-11 shrink-0 bg-white/15"><BarChart3 size={22} /></span>
+          <span className="flex-1 text-base font-extrabold">{pick('prov.open')}</span>
+          <ChevronRight size={20} className="rtl:rotate-180" />
+        </button>
+        <Help term="admin.business" size="sm" />
+      </div>
       <AppLinkCard />
       <section className="card flex flex-col gap-2">
         <div className="flex items-center gap-3">
           <span className="well h-10 w-10 shrink-0 bg-emerald-tint text-emerald-deep"><CreditCard size={20} /></span>
           <span className="flex min-w-0 flex-1 flex-col">
-            <BiLabel text="admin.feesTitle" size="md" bold />
-            <span className="text-xs text-muted">{pick('admin.thisMonth')} <span className="num" dir="ltr">{withCur(Number(feeStats?.month_total ?? 0).toLocaleString('en-US'))}</span> · {pick('admin.pendingN').replace('{{n}}', String(feeStats?.pending ?? 0))}</span>
+            <span className="flex items-center gap-1"><BiLabel text="admin.feesTitle" size="md" bold /><Help term="admin.fees" size="sm" /></span>
+            <span className="flex items-center gap-1 text-xs text-muted"><span>{pick('admin.thisMonth')} <span className="num" dir="ltr">{withCur(Number(feeStats?.month_total ?? 0).toLocaleString('en-US'))}</span> · {pick('admin.pendingN').replace('{{n}}', String(feeStats?.pending ?? 0))}</span><Help term="admin.feesMonth" size="sm" /></span>
           </span>
           <button type="button" onClick={() => { setAccts(savedAccounts ? savedAccounts.map((a) => ({ ...a })) : []); setAcctsOpen(true) }} className={`tap rounded-full border border-line px-3 py-1.5 text-xs font-bold ${ur ? cls('sm') : ''}`}>{pick('admin.accounts')}</button>
           <button type="button" onClick={() => { if (billing) setBill(JSON.parse(JSON.stringify(billing))); setBillOpen(true) }} className={`tap rounded-full px-3 py-1.5 text-xs font-bold ${billing?.placeholders ? 'bg-payable-tint text-payable' : 'border border-line'} ${ur ? cls('sm') : ''}`} data-testid="billing-open">{pick('admin.billing')}</button>
@@ -194,24 +200,24 @@ export default function AdminPage() {
       <Sheet open={billOpen} onClose={() => setBillOpen(false)} title="admin.billing">
         {bill ? (
           <div className="flex flex-col gap-3" data-testid="billing-sheet">
-            <BiLabel text="admin.billingHint" size="sm" tone="text-muted" />
+            <span className="flex items-center gap-1"><BiLabel text="admin.billingHint" size="sm" tone="text-muted" /><Help term="admin.billing" size="sm" /></span>
             {bill.placeholders ? <BiAlert text="admin.placeholders" kind="info" /> : null}
-            {([['bank_name', 'admin.bankName'], ['account_title', 'admin.accountTitle'], ['account_number', 'admin.accountNumber'], ['iban', 'admin.iban'], ['branch', 'admin.branch']] as const).map(([k, label]) => (
-              <BiInput key={k} label={label} value={bill.bank[k] ?? ''} onChange={(e) => setBill({ ...bill, bank: { ...bill.bank, [k]: e.target.value } })} dir="ltr" />
+            {([{ k: 'bank_name', label: 'admin.bankName', help: 'admin.bill.bankName' }, { k: 'account_title', label: 'admin.accountTitle', help: 'admin.bill.accountTitle' }, { k: 'account_number', label: 'admin.accountNumber', help: 'admin.bill.accountNumber' }, { k: 'iban', label: 'admin.iban', help: 'admin.bill.iban' }, { k: 'branch', label: 'admin.branch', help: 'admin.bill.branch' }] as const).map(({ k, label, help }) => (
+              <BiInput key={k} label={label} help={<Help term={help} size="sm" />} value={bill.bank[k] ?? ''} onChange={(e) => setBill({ ...bill, bank: { ...bill.bank, [k]: e.target.value } })} dir="ltr" />
             ))}
             <div className="grid grid-cols-2 gap-2">
-              <BiInput label="admin.supportPhone" value={bill.support.phone ?? ''} onChange={(e) => setBill({ ...bill, support: { ...bill.support, phone: e.target.value } })} dir="ltr" />
-              <BiInput label="admin.supportWa" value={bill.support.whatsapp ?? ''} onChange={(e) => setBill({ ...bill, support: { ...bill.support, whatsapp: e.target.value } })} dir="ltr" />
+              <BiInput label="admin.supportPhone" help={<Help term="admin.bill.supportPhone" size="sm" />} value={bill.support.phone ?? ''} onChange={(e) => setBill({ ...bill, support: { ...bill.support, phone: e.target.value } })} dir="ltr" />
+              <BiInput label="admin.supportWa" help={<Help term="admin.bill.supportWa" size="sm" />} value={bill.support.whatsapp ?? ''} onChange={(e) => setBill({ ...bill, support: { ...bill.support, whatsapp: e.target.value } })} dir="ltr" />
             </div>
-            <BiLabel text="admin.schedule" size="md" bold />
+            <span className="flex items-center gap-1"><BiLabel text="admin.schedule" size="md" bold /><Help term="admin.bill.schedule" size="sm" /></span>
             <div className="grid grid-cols-2 gap-2">
-              {([['info_days', 'admin.infoDays'], ['warn_days', 'admin.warnDays'], ['urgent_days', 'admin.urgentDays'], ['grace_days', 'admin.graceDays'], ['snooze_hours', 'admin.snoozeHours']] as const).map(([k, label]) => (
-                <BiInput key={k} label={label} type="number" inputMode="numeric" min={0} value={String(bill.schedule[k])} onChange={(e) => setBill({ ...bill, schedule: { ...bill.schedule, [k]: Number(e.target.value) } })} className="num" />
+              {([{ k: 'info_days', label: 'admin.infoDays', help: 'admin.bill.infoDays' }, { k: 'warn_days', label: 'admin.warnDays', help: 'admin.bill.warnDays' }, { k: 'urgent_days', label: 'admin.urgentDays', help: 'admin.bill.urgentDays' }, { k: 'grace_days', label: 'admin.graceDays', help: 'admin.bill.graceDays' }, { k: 'snooze_hours', label: 'admin.snoozeHours', help: 'admin.bill.snoozeHours' }] as const).map(({ k, label, help }) => (
+                <BiInput key={k} label={label} help={<Help term={help} size="sm" />} type="number" inputMode="numeric" min={0} value={String(bill.schedule[k])} onChange={(e) => setBill({ ...bill, schedule: { ...bill.schedule, [k]: Number(e.target.value) } })} className="num" />
               ))}
             </div>
-            <BiInput label={{ en: 'Note (English)', ur: 'نوٹ (انگریزی)', roman: 'Note (English)' }} value={bill.note.en ?? ''} onChange={(e) => setBill({ ...bill, note: { ...bill.note, en: e.target.value } })} />
-            <BiInput label={{ en: 'Note (Urdu)', ur: 'نوٹ (اردو)', roman: 'Note (Urdu)' }} value={bill.note.ur ?? ''} onChange={(e) => setBill({ ...bill, note: { ...bill.note, ur: e.target.value } })} dir="rtl" />
-            <BiInput label={{ en: 'Note (Roman)', ur: 'نوٹ (رومن)', roman: 'Note (Roman)' }} value={bill.note.roman ?? ''} onChange={(e) => setBill({ ...bill, note: { ...bill.note, roman: e.target.value } })} />
+            <BiInput label={{ en: 'Note (English)', ur: 'نوٹ (انگریزی)', roman: 'Note (English)' }} help={<Help term="admin.bill.note" size="sm" />} value={bill.note.en ?? ''} onChange={(e) => setBill({ ...bill, note: { ...bill.note, en: e.target.value } })} />
+            <BiInput label={{ en: 'Note (Urdu)', ur: 'نوٹ (اردو)', roman: 'Note (Urdu)' }} help={<Help term="admin.bill.note" size="sm" />} value={bill.note.ur ?? ''} onChange={(e) => setBill({ ...bill, note: { ...bill.note, ur: e.target.value } })} dir="rtl" />
+            <BiInput label={{ en: 'Note (Roman)', ur: 'نوٹ (رومن)', roman: 'Note (Roman)' }} help={<Help term="admin.bill.note" size="sm" />} value={bill.note.roman ?? ''} onChange={(e) => setBill({ ...bill, note: { ...bill.note, roman: e.target.value } })} />
             <ErrorText error={saveBilling.error} />
             <BiButton text="common.save" full loading={saveBilling.isPending} onClick={async () => { await saveBilling.mutateAsync(bill); inv('billing'); setBillOpen(false) }} />
           </div>
@@ -223,16 +229,16 @@ export default function AdminPage() {
       <Sheet open={acctsOpen} onClose={() => setAcctsOpen(false)} title="admin.accounts">
         {accts ? (
           <div className="flex flex-col gap-3">
-            <BiLabel text="admin.accountsHint" size="sm" tone="text-muted" />
+            <span className="flex items-center gap-1"><BiLabel text="admin.accountsHint" size="sm" tone="text-muted" /><Help term="admin.accounts" size="sm" /></span>
             {accts.map((a, i) => (
               <div key={i} className="card flex flex-col gap-2">
                 <div className="grid grid-cols-2 gap-2">
-                  <BiInput label="admin.acctLabel" value={a.label} onChange={(e) => setAccts(accts.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))} maxLength={40} />
-                  <BiInput label="admin.acctName" value={a.account_name} onChange={(e) => setAccts(accts.map((x, j) => (j === i ? { ...x, account_name: e.target.value } : x)))} maxLength={80} />
+                  <BiInput label="admin.acctLabel" help={<Help term="admin.acct.label" size="sm" />} value={a.label} onChange={(e) => setAccts(accts.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))} maxLength={40} />
+                  <BiInput label="admin.acctName" help={<Help term="admin.acct.name" size="sm" />} value={a.account_name} onChange={(e) => setAccts(accts.map((x, j) => (j === i ? { ...x, account_name: e.target.value } : x)))} maxLength={80} />
                 </div>
-                <BiInput label="admin.acctNumber" value={a.number} onChange={(e) => setAccts(accts.map((x, j) => (j === i ? { ...x, number: e.target.value } : x)))} maxLength={60} dir="ltr" className="num" />
+                <BiInput label="admin.acctNumber" help={<Help term="admin.acct.number" size="sm" />} value={a.number} onChange={(e) => setAccts(accts.map((x, j) => (j === i ? { ...x, number: e.target.value } : x)))} maxLength={60} dir="ltr" className="num" />
                 <div className="flex items-end gap-2">
-                  <div className="flex-1"><BiInput label="admin.acctNote" value={a.note ?? ''} onChange={(e) => setAccts(accts.map((x, j) => (j === i ? { ...x, note: e.target.value || null } : x)))} maxLength={120} /></div>
+                  <div className="flex-1"><BiInput label="admin.acctNote" help={<Help term="admin.acct.note" size="sm" />} value={a.note ?? ''} onChange={(e) => setAccts(accts.map((x, j) => (j === i ? { ...x, note: e.target.value || null } : x)))} maxLength={120} /></div>
                   <button type="button" aria-label={pick('crud.delete')} onClick={() => setAccts(accts.filter((_, j) => j !== i))} className="tap mb-1 flex h-12 w-12 items-center justify-center rounded-2xl border border-line text-payable"><Trash2 size={18} /></button>
                 </div>
               </div>
@@ -245,7 +251,7 @@ export default function AdminPage() {
       </Sheet>
       {shopReqs?.length ? (
         <section className="flex flex-col gap-2">
-          <BiLabel text="admin.shopRequests" size="md" bold />
+          <span className="flex items-center gap-1"><BiLabel text="admin.shopRequests" size="md" bold /><Help term="admin.shopRequests" size="sm" /></span>
           <div className="card divide-y divide-line p-0">
             {shopReqs.map((r) => (
               <div key={r.id} className="flex items-center gap-3 px-4 py-3">
@@ -265,7 +271,7 @@ export default function AdminPage() {
       ) : null}
       {reqs?.length ? (
         <section className="flex flex-col gap-2">
-          <BiLabel text="admin.pwRequests" size="md" bold />
+          <span className="flex items-center gap-1"><BiLabel text="admin.pwRequests" size="md" bold /><Help term="admin.pwRequests" size="sm" /></span>
           <div className="card divide-y divide-line p-0">
             {reqs.map((r) => (
               <div key={r.id} className="flex items-center gap-3 px-4 py-3">
@@ -288,8 +294,9 @@ export default function AdminPage() {
             {label} <span className="num">{n}</span>
           </button>
         ))}
+        <Help term="admin.filter" size="sm" />
       </div>
-      <BiLabel text="admin.shops" size="md" bold />
+      <span className="flex items-center gap-1"><BiLabel text="admin.shops" size="md" bold /><Help term="admin.shops" size="sm" /></span>
       {isLoading ? <Loading /> : !shown.length ? <Empty text="admin.none" /> : (
         <div className="card divide-y divide-line p-0">
           {shown.map((s) => (
@@ -313,13 +320,16 @@ export default function AdminPage() {
           <div className="flex flex-col gap-3">
             <div className="card flex flex-col gap-1" dir="ltr">
               <span className="text-sm text-muted">{sel.owner_name} · {sel.owner_phone} · {sel.users} {pick('admin.users')}</span>
-              <span className="flex items-center gap-2"><PlanChip s={sel} />{sel.plan_expires_at ? <span className="text-sm text-muted">{pick('admin.expires')} {fmtDate(sel.plan_expires_at)}</span> : null}</span>
+              <span className="flex items-center gap-2"><PlanChip s={sel} />{sel.plan_expires_at ? <span className="text-sm text-muted">{pick('admin.expires')} {fmtDate(sel.plan_expires_at)}</span> : null}<Help term="admin.planStatus" size="sm" /></span>
             </div>
-            <BiButton text="admin.openShop" icon={<LogIn size={20} />} full onClick={() => openAsAdmin(sel)} />
+            <div className="flex items-center gap-1">
+              <div className="flex-1"><BiButton text="admin.openShop" icon={<LogIn size={20} />} full onClick={() => openAsAdmin(sel)} /></div>
+              <Help term="admin.openShop" size="sm" />
+            </div>
 
-            <BiLabel text="admin.ownerPassword" size="md" bold className="mt-1" />
+            <span className="flex items-center gap-1 mt-1"><BiLabel text="admin.ownerPassword" size="md" bold /><Help term="admin.ownerPassword" size="sm" /></span>
             <div className="grid grid-cols-[1fr_auto] gap-2">
-              <BiInput label="admin.password" value={pw} onChange={(e) => setPw(e.target.value)} minLength={6} />
+              <BiInput label="admin.password" help={<Help term="admin.newPassword" size="sm" />} value={pw} onChange={(e) => setPw(e.target.value)} minLength={6} />
               <BiButton text="common.save" variant="secondary" disabled={pw.length < 6} loading={setPassword.isPending} onClick={async () => { const r = await setPassword.mutateAsync({ password: pw }); setPwDone({ ...r, password: pw }); setPw('') }} />
             </div>
             <ErrorText error={setPassword.error} />
@@ -333,53 +343,59 @@ export default function AdminPage() {
               </div>
             ) : null}
 
-            <BiLabel text="admin.modulesTitle" size="md" bold className="mt-1" />
+            <span className="flex items-center gap-1 mt-1"><BiLabel text="admin.modulesTitle" size="md" bold /><Help term="admin.modules" size="sm" /></span>
             <ModulePicker catalogue={catalogue} plan={plan.plan} value={mods} onChange={setMods} />
             <ErrorText error={saveModules.error} />
             <BiButton text="admin.saveModules" variant="secondary" full loading={saveModules.isPending} onClick={async () => { const r = await saveModules.mutateAsync({ modules: mods }); setSel(r) }} />
 
-            <BiLabel text="admin.planTitle" size="md" bold className="mt-1" />
+            <span className="flex items-center gap-1 mt-1"><BiLabel text="admin.planTitle" size="md" bold /><Help term="admin.plans" size="sm" /></span>
             <BiSegmented<(typeof PLANS)[number]> value={plan.plan as (typeof PLANS)[number]} onChange={(p) => setPlan({ ...plan, plan: p })} options={PLANS.map((p) => ({ value: p, text: { en: p, ur: p, roman: p } }))} />
             <div className="grid grid-cols-2 gap-2">
-              <BiInput label="admin.monthlyFee" type="number" inputMode="numeric" min={0} value={plan.monthly_fee} onChange={(e) => setPlan({ ...plan, monthly_fee: e.target.value })} className="num" />
-              <BiInput label="admin.expiresOn" type="date" value={plan.expires_on} onChange={(e) => setPlan({ ...plan, expires_on: e.target.value })} dir="ltr" />
+              <BiInput label="admin.monthlyFee" help={<Help term="admin.monthlyFee" size="sm" />} type="number" inputMode="numeric" min={0} value={plan.monthly_fee} onChange={(e) => setPlan({ ...plan, monthly_fee: e.target.value })} className="num" />
+              <BiInput label="admin.expiresOn" help={<Help term="admin.expiresOn" size="sm" />} type="date" value={plan.expires_on} onChange={(e) => setPlan({ ...plan, expires_on: e.target.value })} dir="ltr" />
             </div>
-            <BiInput label="admin.feeNote" value={plan.note} onChange={(e) => setPlan({ ...plan, note: e.target.value })} maxLength={200} />
-            <div className="grid grid-cols-3 gap-2">
+            <BiInput label="admin.feeNote" help={<Help term="admin.feeNote" size="sm" />} value={plan.note} onChange={(e) => setPlan({ ...plan, note: e.target.value })} maxLength={200} />
+            <div className="flex items-center gap-1">
+            <div className="grid flex-1 grid-cols-3 gap-2">
               {[1, 3, 12].map((m) => (
                 <button key={m} type="button" disabled={savePlan.isPending} onClick={async () => { const r = await savePlan.mutateAsync({ plan: plan.plan, monthly_fee: plan.monthly_fee === '' ? null : Number(plan.monthly_fee), note: plan.note, extend_months: m }); setSel(r); setPlan({ ...plan, expires_on: r.plan_expires_at ? r.plan_expires_at.slice(0, 10) : '' }) }} className={`tap flex min-h-12 items-center justify-center gap-1 rounded-2xl bg-emerald-tint font-bold text-emerald-deep ${ur ? cls('sm') : 'text-sm'}`}>
                   <CalendarClock size={16} /> +{m} {pick(m === 1 ? 'admin.month' : 'admin.months')}
                 </button>
               ))}
             </div>
+            <Help term="admin.extend" size="sm" />
+            </div>
             <ErrorText error={savePlan.error} />
-            <div className="grid grid-cols-2 gap-2">
+            <div className="flex items-center gap-1">
+            <div className="grid flex-1 grid-cols-2 gap-2">
               <BiButton text="admin.savePlan" full loading={savePlan.isPending} onClick={async () => { const r = await savePlan.mutateAsync({ plan: plan.plan, monthly_fee: plan.monthly_fee === '' ? null : Number(plan.monthly_fee), note: plan.note, expires_on: plan.expires_on || null, clear_expiry: !plan.expires_on }); setSel(r) }} />
               <BiButton text="admin.unlimited" variant="secondary" full loading={savePlan.isPending} onClick={async () => { const r = await savePlan.mutateAsync({ clear_expiry: true }); setSel(r); setPlan({ ...plan, expires_on: '' }) }} />
             </div>
+            <Help term="admin.unlimited" size="sm" />
+            </div>
 
             <div className="grid grid-cols-[1fr_auto] gap-2">
-              <BiInput label="admin.shopGrace" type="number" inputMode="numeric" min={0} max={90} value={grace} onChange={(e) => setGrace(e.target.value)} className="num" />
+              <BiInput label="admin.shopGrace" help={<Help term="admin.shopGrace" size="sm" />} type="number" inputMode="numeric" min={0} max={90} value={grace} onChange={(e) => setGrace(e.target.value)} className="num" />
               <BiButton text="common.save" variant="secondary" loading={savePlan.isPending} onClick={async () => { const r = await savePlan.mutateAsync({ set_grace: true, grace_days: grace === '' ? null : Number(grace) }); setSel({ ...r, grace_days: grace === '' ? null : Number(grace) }) }} />
             </div>
 
-            <BiLabel text="admin.recordPayment" size="md" bold className="mt-2" />
+            <span className="flex items-center gap-1 mt-2"><BiLabel text="admin.recordPayment" size="md" bold /><Help term="admin.recordPayment" size="sm" /></span>
             <BiLabel text="admin.recordHint" size="sm" tone="text-muted" />
             <div className="grid grid-cols-2 gap-2">
-              <BiInput label="fees.amount" type="number" inputMode="numeric" min={1} value={pay.amount} onChange={(e) => setPay({ ...pay, amount: e.target.value })} className="num" />
-              <BiInput label="fees.months" type="number" inputMode="numeric" min={1} max={36} value={pay.months} onChange={(e) => setPay({ ...pay, months: e.target.value })} className="num" />
-              <BiInput label="fees.method" value={pay.method} onChange={(e) => setPay({ ...pay, method: e.target.value })} />
-              <BiInput label="admin.paidOn" type="date" value={pay.paid_on} onChange={(e) => setPay({ ...pay, paid_on: e.target.value })} dir="ltr" />
+              <BiInput label="fees.amount" help={<Help term="admin.payAmount" size="sm" />} type="number" inputMode="numeric" min={1} value={pay.amount} onChange={(e) => setPay({ ...pay, amount: e.target.value })} className="num" />
+              <BiInput label="fees.months" help={<Help term="admin.payMonths" size="sm" />} type="number" inputMode="numeric" min={1} max={36} value={pay.months} onChange={(e) => setPay({ ...pay, months: e.target.value })} className="num" />
+              <BiInput label="fees.method" help={<Help term="admin.payMethod" size="sm" />} value={pay.method} onChange={(e) => setPay({ ...pay, method: e.target.value })} />
+              <BiInput label="admin.paidOn" help={<Help term="admin.paidOn" size="sm" />} type="date" value={pay.paid_on} onChange={(e) => setPay({ ...pay, paid_on: e.target.value })} dir="ltr" />
             </div>
-            <BiInput label="fees.reference" value={pay.reference} onChange={(e) => setPay({ ...pay, reference: e.target.value })} dir="ltr" />
+            <BiInput label="fees.reference" help={<Help term="tid" size="sm" />} value={pay.reference} onChange={(e) => setPay({ ...pay, reference: e.target.value })} dir="ltr" />
             <ErrorText error={recordPay.error} />
             {recordPay.data ? <BiAlert text={{ en: `${pick('admin.receipt')} ${recordPay.data.receipt_no ?? ''}`, ur: `${pick('admin.receipt')} ${recordPay.data.receipt_no ?? ''}`, roman: `${pick('admin.receipt')} ${recordPay.data.receipt_no ?? ''}` }} kind="success" /> : null}
             <BiButton text="admin.recordPayment" icon={<CreditCard size={20} />} variant="secondary" full disabled={!Number(pay.amount)} loading={recordPay.isPending} onClick={async () => { await recordPay.mutateAsync(pay); inv('admin-shops', 'fee-stats'); const rows = await get<AdminShop[]>('/api/v1/admin/shops'); const r = rows.find((x) => x.id === sel.id); if (r) setSel(r) }} data-testid="record-payment" />
 
-            <BiLabel text="admin.renewalCode" size="md" bold className="mt-2" />
+            <span className="flex items-center gap-1 mt-2"><BiLabel text="admin.renewalCode" size="md" bold /><Help term="admin.renewalCode" size="sm" /></span>
             <BiLabel text="admin.renewalHint" size="sm" tone="text-muted" />
             <div className="grid grid-cols-[1fr_auto] gap-2">
-              <BiInput label="fees.months" type="number" inputMode="numeric" min={1} max={36} value={codeMonths} onChange={(e) => setCodeMonths(e.target.value)} className="num" />
+              <BiInput label="fees.months" help={<Help term="admin.codeMonths" size="sm" />} type="number" inputMode="numeric" min={1} max={36} value={codeMonths} onChange={(e) => setCodeMonths(e.target.value)} className="num" />
               <BiButton text="admin.renewalCode" variant="secondary" loading={makeCode.isPending} onClick={async () => { const r = await makeCode.mutateAsync({ months: Number(codeMonths) || 1 }); setCodeOut(r.code) }} data-testid="make-code" />
             </div>
             <ErrorText error={makeCode.error} />
@@ -391,10 +407,10 @@ export default function AdminPage() {
               </div>
             ) : null}
 
-            <BiLabel text="admin.addBranch" size="md" bold className="mt-2" />
+            <span className="flex items-center gap-1 mt-2"><BiLabel text="admin.addBranch" size="md" bold /><Help term="admin.addBranch" size="sm" /></span>
             <BiLabel text="admin.branchHint" size="sm" tone="text-muted" />
-            <BiInput label="auth.shopName" value={branch.name} onChange={(e) => setBranch({ ...branch, name: e.target.value })} />
-            <BiInput label="auth.city" value={branch.city} onChange={(e) => setBranch({ ...branch, city: e.target.value })} />
+            <BiInput label="auth.shopName" help={<Help term="admin.branchName" size="sm" />} value={branch.name} onChange={(e) => setBranch({ ...branch, name: e.target.value })} />
+            <BiInput label="auth.city" help={<Help term="admin.city" size="sm" />} value={branch.city} onChange={(e) => setBranch({ ...branch, city: e.target.value })} />
             <ErrorText error={addBranch.error} />
             <BiButton text="admin.addBranch" icon={<GitBranch size={20} />} variant="secondary" full loading={addBranch.isPending} disabled={branch.name.trim().length < 2} onClick={async () => { const r = await addBranch.mutateAsync(branch); setSel(r); setBranch({ name: '', city: '' }) }} />
           </div>
@@ -408,7 +424,7 @@ export default function AdminPage() {
               <CheckCircle2 size={32} />
               <span className="text-lg font-extrabold">{made.shop.name}</span>
             </div>
-            <BiLabel text="admin.giveDetails" size="md" bold />
+            <span className="flex items-center gap-1"><BiLabel text="admin.giveDetails" size="md" bold /><Help term="admin.giveDetails" size="sm" /></span>
             <div className="card flex flex-col gap-1" dir="ltr">
               <span className="text-sm text-muted">{pick('auth.phone')}</span>
               <span className="num text-xl">{made.shop.owner_phone}</span>
@@ -422,14 +438,14 @@ export default function AdminPage() {
           </div>
         ) : (
           <div className="flex flex-col gap-3">
-            <BiInput label="auth.shopName" value={f.shop_name} onChange={set('shop_name')} />
-            <BiInput label="auth.city" value={f.city} onChange={set('city')} />
-            <BiInput label="admin.ownerName" value={f.owner_name} onChange={set('owner_name')} />
-            <PhoneInput label="admin.ownerPhone" value={f.phone} onChange={(phone) => setF({ ...f, phone })} />
-            <BiInput label="admin.password" value={f.password} onChange={set('password')} minLength={6} />
-            <BiLabel text="admin.language" size="md" tone="text-muted" />
+            <BiInput label="auth.shopName" help={<Help term="admin.shopName" size="sm" />} value={f.shop_name} onChange={set('shop_name')} />
+            <BiInput label="auth.city" help={<Help term="admin.city" size="sm" />} value={f.city} onChange={set('city')} />
+            <BiInput label="admin.ownerName" help={<Help term="admin.ownerName" size="sm" />} value={f.owner_name} onChange={set('owner_name')} />
+            <PhoneInput label="admin.ownerPhone" value={f.phone} onChange={(phone) => setF({ ...f, phone })} help={<Help term="admin.ownerPhone" size="sm" />} />
+            <BiInput label="admin.password" help={<Help term="admin.password" size="sm" />} value={f.password} onChange={set('password')} minLength={6} />
+            <span className="flex items-center gap-1"><BiLabel text="admin.language" size="md" tone="text-muted" /><Help term="admin.language" size="sm" /></span>
             <BiSegmented<'ur' | 'en'> value={f.locale} onChange={(locale) => setF({ ...f, locale })} options={[{ value: 'ur', text: { en: 'Urdu', ur: 'اردو', roman: 'Urdu' } }, { value: 'en', text: { en: 'English', ur: 'انگریزی', roman: 'English' } }]} />
-            <BiLabel text="admin.planTitle" size="md" tone="text-muted" />
+            <span className="flex items-center gap-1"><BiLabel text="admin.planTitle" size="md" tone="text-muted" /><Help term="admin.plans" size="sm" /></span>
             <BiSegmented<(typeof PLANS)[number]> value={f.plan} onChange={(plan) => setF({ ...f, plan, modules: null })} options={PLANS.map((p) => ({ value: p, text: { en: p, ur: p, roman: p } }))} />
             <ModulePicker catalogue={catalogue} plan={f.plan} value={f.modules} onChange={(modules) => setF({ ...f, modules })} />
             <ErrorText error={create.error} />

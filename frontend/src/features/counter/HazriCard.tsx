@@ -3,6 +3,7 @@
 
 import { Clock, LogIn, LogOut } from 'lucide-react'
 import { BiButton, BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { Chip, ErrorText } from '@/components/ui'
 import { useModules } from '@/lib/modules'
 import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
@@ -31,7 +32,7 @@ export default function HazriCard() {
       <div className="flex items-center gap-3">
         <span className={`well h-11 w-11 shrink-0 rounded-2xl ${r?.in_at && !r.out_at ? 'bg-emerald-tint text-emerald-deep' : 'bg-ground text-muted'}`}><Clock size={22} strokeWidth={1.9} /></span>
         <span className="flex min-w-0 flex-1 flex-col">
-          <BiLabel text="hazri.title" size="md" bold />
+          <span className="flex items-center gap-1"><BiLabel text="hazri.title" size="md" bold /><Help term="counter.hazri" size="sm" /></span>
           <span className={`text-muted ${small}`}>{line}</span>
         </span>
         {!r?.in_at ? (

@@ -8,6 +8,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import Bars from '@/components/charts/Bars'
 import Donut from '@/components/charts/Donut'
+import Help from '@/components/Help'
 import { Empty, fmtDate, fmtDateTime, Pending } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
@@ -24,6 +25,11 @@ interface Summary { by_supplier?: { party_id: string | null; name: string | null
 interface Alert { kind: string; device_id: string; label: string; imei1: string; days: number; cost: M | null; asking: M | null; margin_pct: number | null; supplier: string | null; times?: number }
 interface Ageing { band_keys: string[]; band_edges: number[]; bands: { band: string; count: number; cost: M | null; asking: M }[]; rows: Row[]; alerts: Alert[]; alert_counts: Record<string, number>; prefs: { high_value: number; low_margin_pct: number } }
 interface Verification { in_stock: Record<string, number>; all_devices: Record<string, number>; checks_in_period: Record<string, number>; bypasses: number; rows: { at: string; device_id: string; label: string; imei1: string; party_name: string | null; purchase_no: string | null; user_name: string | null; reason: string | null; previous: string | null; status_now: string; device_status: string }[]; by_user: { user_name: string | null; bypasses: number; flagged_bypassed: number; intakes: number; share: number | null; unusual: boolean }[]; prefs: { bypass_share: number; bypass_min: number } }
+
+const DIM_HELP: Record<string, { helpKey: string }> = { condition: { helpKey: 'audit.stock.dim.condition' }, pta: { helpKey: 'audit.stock.dim.pta' }, verification: { helpKey: 'audit.stock.dim.verification' }, category: { helpKey: 'audit.stock.dim.category' } }
+const BAND_HELP: Record<string, { helpKey: string }> = { fresh: { helpKey: 'audit.stock.band.fresh' }, normal: { helpKey: 'audit.stock.band.normal' }, slow: { helpKey: 'audit.stock.band.slow' }, attention: { helpKey: 'audit.stock.band.attention' }, dead: { helpKey: 'audit.stock.band.dead' } }
+const ALERT_HELP: Record<string, { helpKey: string }> = { dead_stock: { helpKey: 'audit.stock.alert.deadStock' }, high_value_slow: { helpKey: 'audit.stock.alert.highValueSlow' }, low_margin: { helpKey: 'audit.stock.alert.lowMargin' }, missing_cost: { helpKey: 'audit.stock.alert.missingCost' }, missing_asking: { helpKey: 'audit.stock.alert.missingAsking' }, verification_pending: { helpKey: 'audit.stock.alert.verificationPending' }, verification_flagged: { helpKey: 'audit.stock.alert.verificationFlagged' }, repeat_returns: { helpKey: 'audit.stock.alert.repeatReturns' } }
+const VER_HELP: Record<string, { helpKey: string }> = { clear: { helpKey: 'audit.stock.ver.clear' }, pending: { helpKey: 'audit.stock.ver.pending' }, flagged: { helpKey: 'audit.stock.ver.flagged' }, not_required: { helpKey: 'audit.stock.ver.notRequired' } }
 
 const n = (v: M | number | null | undefined) => (v == null ? '—' : Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 }))
 
@@ -50,25 +56,28 @@ export default function InventoryAuditPage() {
 
   return (
     <AuditLayout right={<SectionDownload sections={tab === 'summary' ? ['inventory'] : tab === 'ageing' ? ['ageing'] : ['verification']} name="stock-audit" />}>
-      <BiSegmented<Tab> value={tab} onChange={setTab} options={[{ value: 'summary', text: 'audit.inv.summary' }, { value: 'ageing', text: 'audit.inv.ageing' }, { value: 'verification', text: 'audit.inv.verification' }]} />
+      <div className="flex items-center gap-1">
+        <div className="min-w-0 flex-1"><BiSegmented<Tab> value={tab} onChange={setTab} options={[{ value: 'summary', text: 'audit.inv.summary' }, { value: 'ageing', text: 'audit.inv.ageing' }, { value: 'verification', text: 'audit.inv.verification' }]} /></div>
+        {tab === 'summary' ? <Help term="audit.stock.summary" size="sm" /> : tab === 'ageing' ? <Help term="audit.stock.ageing" size="sm" /> : <Help term="audit.stock.idChecks" size="sm" />}
+      </div>
 
       {tab === 'summary' ? (!sum ? <Pending error={sumErr} retry={sumAgain} /> : (
         <>
           <section className="grid grid-cols-2 gap-2 lg:grid-cols-4" data-testid="inv-kpis">
-            <Kpi k={period.asOf ? 'audit.inv.inStockAsOf' : 'audit.inv.inStock'} v={`${sum.count}`} sub={`${pick('audit.phones')}${sum.unpriced ? ` · ${sum.unpriced} ${pick('audit.inv.unpriced')}` : ''}`} tone="bg-stockt text-stockt-fg" />
-            {canCost ? <Kpi k="audit.atCost" v={`${withCur(n(sum.cost_value))}`} tone="bg-buy text-buy-fg" /> : null}
-            <Kpi k="audit.atAsking" v={`${withCur(n(sum.asking_value))}`} tone="bg-sell text-sell-fg" />
-            {canCost ? <Kpi k="audit.inv.expectedMargin" v={`${withCur(n(sum.expected_margin))}`} sub={sum.expected_margin_pct != null ? `${sum.expected_margin_pct}%` : undefined} tone="bg-emerald-tint text-emerald-deep" /> : null}
+            <Kpi k={period.asOf ? 'audit.inv.inStockAsOf' : 'audit.inv.inStock'} v={`${sum.count}`} sub={`${pick('audit.phones')}${sum.unpriced ? ` · ${sum.unpriced} ${pick('audit.inv.unpriced')}` : ''}`} tone="bg-stockt text-stockt-fg" help="audit.stock.inStock" />
+            {canCost ? <Kpi k="audit.atCost" v={`${withCur(n(sum.cost_value))}`} tone="bg-buy text-buy-fg" help="audit.stock.atCost" /> : null}
+            <Kpi k="audit.atAsking" v={`${withCur(n(sum.asking_value))}`} tone="bg-sell text-sell-fg" help="audit.stock.atAsking" />
+            {canCost ? <Kpi k="audit.inv.expectedMargin" v={`${withCur(n(sum.expected_margin))}`} sub={sum.expected_margin_pct != null ? `${sum.expected_margin_pct}%` : undefined} tone="bg-emerald-tint text-emerald-deep" help="audit.stock.expectedMargin" /> : null}
           </section>
           <section className="grid gap-2 sm:grid-cols-2" data-testid="inv-donuts">
-            <div className="card"><BiLabel text="audit.chart.byCondition" size="sm" tone="text-muted" bold /><Donut data={sum.by_condition.map((d) => ({ label: dimLabel('condition', d.key), value: d.count, key: d.key }))} onTap={(s) => nav(stockLink('condition', String(s.key)))} empty="audit.noData" unit={pick('audit.phones')} /></div>
-            <div className="card"><BiLabel text="audit.chart.byVerification" size="sm" tone="text-muted" bold /><Donut data={sum.by_verification.map((d) => ({ label: dimLabel('verification', d.key), value: d.count, key: d.key }))} onTap={() => nav('/stock')} empty="audit.noData" unit={pick('audit.phones')} /></div>
+            <div className="card"><span className="flex items-center gap-1"><BiLabel text="audit.chart.byCondition" size="sm" tone="text-muted" bold /><Help term="audit.stock.byCondition" size="sm" /></span><Donut data={sum.by_condition.map((d) => ({ label: dimLabel('condition', d.key), value: d.count, key: d.key }))} onTap={(s) => nav(stockLink('condition', String(s.key)))} empty="audit.noData" unit={pick('audit.phones')} /></div>
+            <div className="card"><span className="flex items-center gap-1"><BiLabel text="audit.chart.byVerification" size="sm" tone="text-muted" bold /><Help term="audit.stock.byVerification" size="sm" /></span><Donut data={sum.by_verification.map((d) => ({ label: dimLabel('verification', d.key), value: d.count, key: d.key }))} onTap={() => nav('/stock')} empty="audit.noData" unit={pick('audit.phones')} /></div>
           </section>
           <BiLabel text="audit.inv.dimsHint" size="sm" tone="text-muted" />
           <section className="grid gap-2 sm:grid-cols-2" data-testid="inv-dims">
             {([['condition', sum.by_condition], ['pta', sum.by_pta], ['verification', sum.by_verification], ['category', sum.by_category]] as const).map(([kind, rows]) => (
               <div key={kind} className="card flex flex-col gap-1.5">
-                <BiLabel text={`audit.inv.dim.${kind}`} size="sm" tone="text-muted" bold />
+                <span className="flex items-center gap-1"><BiLabel text={`audit.inv.dim.${kind}`} size="sm" tone="text-muted" bold />{DIM_HELP[kind] ? <Help term={DIM_HELP[kind].helpKey} size="sm" /> : null}</span>
                 {rows.filter((r) => r.count).map((r) => (
                   <Link key={r.key} to={stockLink(kind, r.key)} onClick={() => setDim({ kind, key: r.key })} className="tap flex items-center justify-between gap-2 rounded-xl px-1 py-0.5">
                     <span className={`font-bold ${ur ? cls('sm') : 'text-sm'}`}>{dimLabel(kind, r.key)}</span>
@@ -80,11 +89,11 @@ export default function InventoryAuditPage() {
             ))}
           </section>
           {sum.by_brand.length ? (
-            <section className="card"><BiLabel text="audit.inv.byBrand" size="sm" tone="text-muted" bold /><Bars data={sum.by_brand.slice(0, 12).map((b) => ({ label: b.brand, value: b.count, hint: `${withCur(n(b.asking))}` }))} tone="rgb(var(--emerald))" height={110} /></section>
+            <section className="card"><span className="flex items-center gap-1"><BiLabel text="audit.inv.byBrand" size="sm" tone="text-muted" bold /><Help term="audit.stock.byBrand" size="sm" /></span><Bars data={sum.by_brand.slice(0, 12).map((b) => ({ label: b.brand, value: b.count, hint: `${withCur(n(b.asking))}` }))} tone="rgb(var(--emerald))" height={110} /></section>
           ) : null}
           {sum.by_supplier?.length ? (
             <section className="card divide-y divide-line p-0" data-testid="inv-by-supplier">
-              <div className="px-4 pt-3 pb-1"><BiLabel text="audit.inv.bySupplier" size="sm" tone="text-muted" bold /></div>
+              <div className="flex items-center gap-1 px-4 pt-3 pb-1"><BiLabel text="audit.inv.bySupplier" size="sm" tone="text-muted" bold /><Help term="audit.stock.bySupplier" size="sm" /></div>
               {sum.by_supplier.slice(0, 15).map((r, i) => (
                 <Link key={i} to={r.party_id ? `/parties/${r.party_id}` : '/stock'} className="tap flex items-center gap-3 px-4 py-2">
                   <span className="min-w-0 flex-1 truncate font-bold">{r.name ?? pick('audit.inv.noSupplier')}</span>
@@ -93,14 +102,15 @@ export default function InventoryAuditPage() {
               ))}
             </section>
           ) : null}
-          <div className={`flex flex-wrap gap-x-4 text-muted ${small}`} data-testid="inv-status">
+          <div className={`flex flex-wrap items-center gap-x-4 text-muted ${small}`} data-testid="inv-status">
+            <Help term="audit.stock.statusCounts" size="sm" />
             {Object.entries(sum.status_counts).filter(([, v]) => v).map(([k, v]) => <span key={k}>{pick(`stock.status.${k}`)}: <span className="num">{v}</span></span>)}
           </div>
           <section className="grid gap-2 sm:grid-cols-2">
-            {canCost ? <TopList title="audit.inv.topCost" rows={sum.most_expensive_cost} value={(r) => n(r.cost)} testid="top-cost" /> : null}
-            <TopList title="audit.inv.topAsking" rows={sum.most_expensive_asking} value={(r) => n(r.asking)} testid="top-asking" />
-            {canCost ? <TopList title="audit.inv.topMargin" rows={sum.highest_margin} value={(r) => `${n(r.margin)} (${r.margin_pct}%)`} testid="top-margin" /> : null}
-            {canCost ? <TopList title="audit.inv.lowMargin" rows={sum.lowest_margin} value={(r) => `${n(r.margin)} (${r.margin_pct}%)`} testid="low-margin" /> : null}
+            {canCost ? <TopList title="audit.inv.topCost" rows={sum.most_expensive_cost} value={(r) => n(r.cost)} testid="top-cost" help="audit.stock.topCost" /> : null}
+            <TopList title="audit.inv.topAsking" rows={sum.most_expensive_asking} value={(r) => n(r.asking)} testid="top-asking" help="audit.stock.topAsking" />
+            {canCost ? <TopList title="audit.inv.topMargin" rows={sum.highest_margin} value={(r) => `${n(r.margin)} (${r.margin_pct}%)`} testid="top-margin" help="audit.stock.topMargin" /> : null}
+            {canCost ? <TopList title="audit.inv.lowMargin" rows={sum.lowest_margin} value={(r) => `${n(r.margin)} (${r.margin_pct}%)`} testid="low-margin" help="audit.stock.lowMargin" /> : null}
           </section>
           {dim ? null : null}
         </>
@@ -110,18 +120,20 @@ export default function InventoryAuditPage() {
         <>
           <BiLabel text="audit.inv.ageHint" size="sm" tone="text-muted" />
           <section className="card" data-testid="age-bands">
+            <span className="flex items-center gap-1"><BiLabel text="audit.inv.ageing" size="sm" tone="text-muted" bold /><Help term="audit.stock.bands" size="sm" /></span>
             <Bars data={age.bands.map((b, i) => ({ label: bandLabel(b.band, i, age.band_edges), value: b.count, hint: canCost ? `${withCur(n(b.cost))}` : `${withCur(n(b.asking))}`, key: b.band }))} tone="rgb(var(--emerald))" onTap={(b) => setBand(band === b.key ? null : (b.key as string))} empty="audit.noData" />
             <div className="mt-2 flex flex-wrap gap-1.5">
-              {age.bands.map((b, i) => <button key={b.band} type="button" aria-pressed={band === b.band} onClick={() => setBand(band === b.band ? null : b.band)} className={`tap min-h-9 whitespace-nowrap rounded-full border px-3 py-1.5 font-bold leading-tight ${band === b.band ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-xs'}`}>{bandLabel(b.band, i, age.band_edges)} · {b.count}</button>)}
-              <Link to="/more/settings" className={`tap h-9 rounded-full border border-line bg-surface px-3 font-bold leading-9 text-muted ${ur ? cls('sm') : 'text-xs'}`}>{pick('audit.inv.thresholds')}</Link>
+              {age.bands.map((b, i) => <span key={b.band} className="inline-flex items-center"><button type="button" aria-pressed={band === b.band} onClick={() => setBand(band === b.band ? null : b.band)} className={`tap min-h-9 whitespace-nowrap rounded-full border px-3 py-1.5 font-bold leading-tight ${band === b.band ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-xs'}`}>{bandLabel(b.band, i, age.band_edges)} · {b.count}</button>{BAND_HELP[b.band] ? <Help term={BAND_HELP[b.band].helpKey} size="sm" /> : null}</span>)}
+              <span className="inline-flex items-center"><Link to="/more/settings" className={`tap h-9 rounded-full border border-line bg-surface px-3 font-bold leading-9 text-muted ${ur ? cls('sm') : 'text-xs'}`}>{pick('audit.inv.thresholds')}</Link><Help term="audit.stock.thresholds" size="sm" /></span>
             </div>
           </section>
           {age.alerts.length ? (
             <section className="card flex flex-col gap-1.5" data-testid="age-alerts">
-              <div className="flex items-center gap-2"><AlertTriangle size={18} className="text-payable" /><BiLabel text="audit.inv.alerts" size="md" bold /><span className={`text-muted ${small}`}>({age.alerts.length})</span></div>
+              <div className="flex items-center gap-2"><AlertTriangle size={18} className="text-payable" /><BiLabel text="audit.inv.alerts" size="md" bold /><span className={`text-muted ${small}`}>({age.alerts.length})</span><Help term="audit.stock.alerts" size="sm" /></div>
               {age.alerts.slice(0, 30).map((a, i) => (
                 <Link key={i} to={`/stock/${a.device_id}`} className="tap flex items-center gap-3 rounded-xl px-1 py-1">
                   <span className={`shrink-0 rounded-full px-2 py-0.5 ${a.kind === 'verification_flagged' || a.kind === 'dead_stock' ? 'bg-payable-tint text-payable' : 'bg-receivable-tint text-receivable'} ${ur ? cls('sm') : 'text-[11px] font-bold'}`}>{pick(`audit.alert.${a.kind}`)}</span>
+                  {ALERT_HELP[a.kind] ? <Help term={ALERT_HELP[a.kind].helpKey} size="sm" /> : null}
                   <span className="flex min-w-0 flex-1 flex-col"><span className="truncate font-bold">{a.label} <span className="font-medium text-muted" dir="ltr">· {a.imei1}</span></span><span className={`text-muted ${small}`}><span className="num">{a.days}</span> {pick('audit.days')}{a.cost != null ? <> · {pick('audit.atCost')} <span className="num" dir="ltr">{n(a.cost)}</span></> : null}{a.margin_pct != null ? <> · <span className="num">{a.margin_pct}%</span></> : null}{a.times ? <> · ×{a.times}</> : null}{a.supplier ? ` · ${a.supplier}` : ''}</span></span>
                 </Link>
               ))}
@@ -146,12 +158,12 @@ export default function InventoryAuditPage() {
       {tab === 'verification' ? (!ver ? <Pending error={verErr} retry={verAgain} /> : (
         <>
           <section className="grid grid-cols-2 gap-2 lg:grid-cols-4" data-testid="ver-kpis">
-            {(['clear', 'pending', 'flagged', 'not_required'] as const).map((k) => <Kpi key={k} k={`stock.verification.${k}`} v={`${ver.in_stock[k] ?? 0}`} sub={`${pick('audit.inv.inStock')} · ${pick('audit.inv.allTime')} ${ver.all_devices[k] ?? 0}`} tone={k === 'flagged' ? 'bg-payable-tint text-payable' : k === 'pending' ? 'bg-receivable-tint text-receivable' : 'bg-emerald-tint text-emerald-deep'} />)}
+            {(['clear', 'pending', 'flagged', 'not_required'] as const).map((k) => <Kpi key={k} k={`stock.verification.${k}`} v={`${ver.in_stock[k] ?? 0}`} sub={`${pick('audit.inv.inStock')} · ${pick('audit.inv.allTime')} ${ver.all_devices[k] ?? 0}`} tone={k === 'flagged' ? 'bg-payable-tint text-payable' : k === 'pending' ? 'bg-receivable-tint text-receivable' : 'bg-emerald-tint text-emerald-deep'} help={VER_HELP[k].helpKey} />)}
           </section>
-          <div className={`text-muted ${small}`}>{pick('audit.inv.checksInPeriod')}: {Object.entries(ver.checks_in_period).map(([k, v]) => `${pick(`stock.verification.${k}`)} ${v}`).join(' · ')}</div>
+          <div className={`flex items-center gap-1 text-muted ${small}`}><span>{pick('audit.inv.checksInPeriod')}: {Object.entries(ver.checks_in_period).map(([k, v]) => `${pick(`stock.verification.${k}`)} ${v}`).join(' · ')}</span><Help term="audit.stock.checksInPeriod" size="sm" /></div>
           <section className="card flex flex-col gap-1.5" data-testid="ver-users">
-            <div className="flex items-center gap-2"><ShieldAlert size={18} /><BiLabel text="audit.inv.bypasses" size="md" bold /><span className={`text-muted ${small}`}>({ver.bypasses})</span></div>
-            <BiLabel text="audit.inv.bypassHint" size="sm" tone="text-muted" />
+            <div className="flex items-center gap-2"><ShieldAlert size={18} /><BiLabel text="audit.inv.bypasses" size="md" bold /><span className={`text-muted ${small}`}>({ver.bypasses})</span><Help term="audit.stock.bypasses" size="sm" /></div>
+            <span className="flex items-center gap-1"><BiLabel text="audit.inv.bypassHint" size="sm" tone="text-muted" /><Help term="audit.stock.unusual" size="sm" /></span>
             {ver.by_user.length ? ver.by_user.map((u, i) => (
               <div key={i} className="flex items-center justify-between gap-2">
                 <span className="font-bold">{u.user_name ?? '—'}{u.unusual ? <span className={`ms-2 rounded-full bg-payable-tint px-2 py-0.5 text-payable ${ur ? cls('sm') : 'text-[11px]'}`}>{pick('audit.inv.unusual')}</span> : null}</span>
@@ -178,23 +190,23 @@ export default function InventoryAuditPage() {
   )
 }
 
-function Kpi({ k, v, sub, tone }: { k: string; v: string; sub?: string; tone: string }) {
+function Kpi({ k, v, sub, tone, help }: { k: string; v: string; sub?: string; tone: string; help?: string }) {
   const { ur, cls } = useLang()
   return (
     <div className="card flex min-w-0 flex-col gap-1">
-      <span className={`inline-flex w-fit rounded-xl px-2 py-0.5 ${tone} ${ur ? cls('sm') : 'text-[11px] font-bold'}`}><BiLabel text={k} size="sm" tone="text-current" bold /></span>
+      <span className="flex items-center gap-1"><span className={`inline-flex w-fit rounded-xl px-2 py-0.5 ${tone} ${ur ? cls('sm') : 'text-[11px] font-bold'}`}><BiLabel text={k} size="sm" tone="text-current" bold /></span>{help ? <Help term={help} size="sm" /> : null}</span>
       <span className="num text-xl font-bold" dir="ltr">{v}</span>
       {sub ? <span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{sub}</span> : null}
     </div>
   )
 }
 
-function TopList({ title, rows, value, testid }: { title: string; rows: Row[]; value: (r: Row) => string; testid: string }) {
+function TopList({ title, rows, value, testid, help }: { title: string; rows: Row[]; value: (r: Row) => string; testid: string; help?: string }) {
   const { ur, cls } = useLang()
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   return (
     <div className="card flex flex-col gap-1 p-0" data-testid={testid}>
-      <div className="px-4 pt-3"><BiLabel text={title} size="sm" tone="text-muted" bold /></div>
+      <div className="flex items-center gap-1 px-4 pt-3"><BiLabel text={title} size="sm" tone="text-muted" bold />{help ? <Help term={help} size="sm" /> : null}</div>
       {!rows.length ? <div className={`px-4 pb-3 text-muted ${small}`}>—</div> : rows.map((r) => (
         <Link key={r.device_id} to={`/stock/${r.device_id}`} className="tap flex items-center gap-3 border-t border-line px-4 py-2">
           <span className="flex min-w-0 flex-1 flex-col"><span className="truncate font-bold">{r.label}</span><span className={`text-muted ${small}`} dir="ltr">{r.imei1} · {r.days} d</span></span>

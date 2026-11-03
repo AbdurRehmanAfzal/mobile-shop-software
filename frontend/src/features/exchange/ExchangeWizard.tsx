@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import DocActions from '@/components/DocShare'
 import DocLangPicker from '@/components/DocLangPicker'
+import Help from '@/components/Help'
 import PartyPicker from '@/components/PartyPicker'
 import { ErrorText, KV, List, PageHeader, SearchBox, Sheet, Stepper } from '@/components/ui'
 import { openPrintable } from '@/lib/files'
@@ -55,7 +56,7 @@ export default function ExchangeWizard() {
         <span className={`text-muted ${small}`} dir="ltr">{old.imei1}</span>
       </span>
       <span className="flex flex-col items-end">
-        <span className={`text-muted ${small}`}>{pick('exchange.tradeValue')}</span>
+        <span className="flex items-center gap-0.5"><span className={`text-muted ${small}`}>{pick('exchange.tradeValue')}</span><Help term="exchange.tradeValue" size="sm" /></span>
         <span className="num text-lg" dir="ltr">{n(tradeIn)}</span>
       </span>
     </div>
@@ -63,7 +64,7 @@ export default function ExchangeWizard() {
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="exchange.title" />
+      <PageHeader title="exchange.title" help={<Help term="exchange.page" />} />
       {!result ? (
         <>
           <div className="flex items-center gap-3 rounded-3xl bg-sell p-4 text-sell-fg">
@@ -83,7 +84,7 @@ export default function ExchangeWizard() {
 
       {step === 1 ? (
         <>
-          <BiLabel text="exchange.oldHint" size="sm" tone="text-muted" />
+          <span className="flex items-center gap-1"><BiLabel text="exchange.oldHint" size="sm" tone="text-muted" /><Help term="exchange.oldPhone" size="sm" /></span>
           {old ? (
             <>
               {oldCard}
@@ -99,7 +100,7 @@ export default function ExchangeWizard() {
           {newDev ? (
             <>
               <div className="card p-0"><DeviceRow d={newDev} onClick={() => setPicking(true)} /></div>
-              <BiInput label="sale.price" type="number" inputMode="numeric" min={0} value={price} onChange={(e) => setPrice(e.target.value)} className="num text-2xl" />
+              <BiInput label="sale.price" help={<Help term="exchange.newPrice" size="sm" />} type="number" inputMode="numeric" min={0} value={price} onChange={(e) => setPrice(e.target.value)} className="num text-2xl" />
             </>
           ) : <BiButton text="exchange.pickNew" icon={<Smartphone size={22} />} variant="secondary" full onClick={() => setPicking(true)} />}
           <BiButton text="common.next" icon={<Check size={22} />} full disabled={!newDev || !total} onClick={() => setStep(3)} />
@@ -111,17 +112,17 @@ export default function ExchangeWizard() {
           {oldCard}
           {newDev ? <div className="card p-0"><DeviceRow d={newDev} /></div> : null}
           <div className="card">
-            <KV k="exchange.newDevice" v={<span className="num" dir="ltr">{n(total)}</span>} />
-            <KV k="exchange.tradeValue" v={<span className="num" dir="ltr">− {n(tradeIn)}</span>} />
-            {previous ? <KV k="exchange.previous" v={<span className="num" dir="ltr">{n(previous)}</span>} /> : null}
+            <KV k="exchange.newDevice" help="exchange.newPrice" v={<span className="num" dir="ltr">{n(total)}</span>} />
+            <KV k="exchange.tradeValue" help="exchange.tradeValue" v={<span className="num" dir="ltr">− {n(tradeIn)}</span>} />
+            {previous ? <KV k="exchange.previous" help="exchange.previous" v={<span className="num" dir="ltr">{n(previous)}</span>} /> : null}
           </div>
           <div className={`flex flex-col gap-1 rounded-3xl p-4 ${diff > 0 ? 'bg-khata text-khata-fg' : diff < 0 ? 'bg-payable-tint text-payable' : 'bg-emerald-tint text-emerald-deep'}`}>
-            <BiLabel text={diff > 0 ? 'exchange.customerPays' : diff < 0 ? 'exchange.shopPays' : 'exchange.even'} size="md" bold tone="text-current" />
+            <span className="flex items-center gap-1"><BiLabel text={diff > 0 ? 'exchange.customerPays' : diff < 0 ? 'exchange.shopPays' : 'exchange.even'} size="md" bold tone="text-current" /><span className="[&_button]:text-current"><Help term="exchange.difference" size="sm" /></span></span>
             {diff !== 0 ? <span className="num text-[32px] leading-none" dir="ltr">{withCur(n(Math.abs(diff)))}</span> : null}
           </div>
-          {diff > 0 ? <BiInput label="sale.paidNow" type="number" inputMode="numeric" min={0} max={diff} value={paid} onChange={(e) => setPaid(e.target.value)} className="num text-2xl" hint="exchange.paidHint" /> : null}
+          {diff > 0 ? <BiInput label="sale.paidNow" help={<Help term="common.paid" size="sm" />} type="number" inputMode="numeric" min={0} max={diff} value={paid} onChange={(e) => setPaid(e.target.value)} className="num text-2xl" hint="exchange.paidHint" /> : null}
           <div className="hero flex items-center justify-between p-4">
-            <BiLabel text="exchange.newBalance" size="md" tone="text-gold-text" bold />
+            <span className="flex items-center gap-1"><BiLabel text="exchange.newBalance" size="md" tone="text-gold-text" bold /><span className="[&_button]:text-gold-text"><Help term="exchange.newBalance" size="sm" /></span></span>
             <span className="num text-2xl text-gold-text" dir="ltr">{n(newBalance)}</span>
           </div>
           <ErrorText error={m.error} />

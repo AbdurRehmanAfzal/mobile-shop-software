@@ -155,3 +155,84 @@ class RepairOut(BaseModel):
     created_at: dt.datetime
     parts: list[PartOut] = Field(default_factory=list)
     status_log: list[StatusLogOut] = Field(default_factory=list)
+    # repair labs (docs/34): every trip to an outside lab, and the one open now
+    trips: list["TripOut"] = Field(default_factory=list)
+    at_lab: "TripOut | None" = None
+
+
+# ---- repair labs (docs/34) ------------------------------------------------------------------------
+
+
+class SendIn(BaseModel):
+    lab_party_id: uuid.UUID
+    problem: str | None = Field(default=None, max_length=500)
+    quoted_cost: Decimal = Field(default=Decimal(0), ge=0)
+    expected_back: dt.date | None = None
+    sent_on: dt.date | None = None
+    notes: str | None = Field(default=None, max_length=500)
+
+
+class BackIn(BaseModel):
+    outcome: str = Field(pattern="^(fixed|not_fixed)$")
+    final_cost: Decimal = Field(default=Decimal(0), ge=0)
+    paid_now: Decimal = Field(default=Decimal(0), ge=0)
+    cash_account_id: uuid.UUID | None = None
+    back_on: dt.date | None = None
+    note: str | None = Field(default=None, max_length=500)
+
+
+class CancelIn(BaseModel):
+    reason: str = Field(min_length=3, max_length=300)
+
+
+class TripOut(BaseModel):
+    id: uuid.UUID
+    job_id: uuid.UUID
+    job_no: str | None
+    device_desc: str | None
+    customer_name: str | None
+    lab_party_id: uuid.UUID
+    lab_name: str | None
+    lab_phone: str | None
+    status: str
+    problem: str | None
+    quoted_cost: Decimal
+    sent_on: dt.date
+    expected_back: dt.date | None
+    sent_by_name: str | None
+    back_on: dt.date | None
+    received_by_name: str | None
+    outcome: str | None
+    final_cost: Decimal
+    paid_now: Decimal
+    days: int
+    late: bool
+    notes: str | None
+    back_note: str | None
+
+
+class LabStats(BaseModel):
+    party_id: uuid.UUID
+    name: str
+    phone: str | None
+    address: str | None
+    notes: str | None
+    balance: Decimal  # the lab's khata today: negative = the shop owes the lab
+    sent: int
+    at_lab: int
+    late: int
+    fixed: int
+    not_fixed: int
+    fix_rate: int | None
+    avg_days: float | None
+    cost: Decimal
+    paid_now: Decimal
+    last_sent: dt.date | None
+
+
+class LabDetailOut(LabStats):
+    is_lab: bool
+    trips: list[TripOut]
+
+
+RepairOut.model_rebuild()

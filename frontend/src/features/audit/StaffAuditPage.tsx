@@ -6,6 +6,7 @@ import { AlertTriangle, UserRound } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { Empty, Pending } from '@/components/ui'
 import { withCur } from '@/lib/format'
 import { useGet } from '@/lib/queries'
@@ -32,16 +33,16 @@ export default function StaffAuditPage() {
   const { query } = useAuditPeriod()
   const { data, error, refetch } = useGet<Staff>(['audit-staff', query], `/api/v1/shop-audit/staff?${query}`)
   const small = ur ? cls('sm') : 'text-xs font-semibold'
-  const stat = (k: string, v: ReactNode) => <span className="flex flex-col"><span className={`text-muted ${small}`}>{pick(k)}</span><span className="num font-bold" dir="ltr">{v}</span></span>
+  const stat = (k: string, v: ReactNode, { help }: { help: string }) => <span className="flex flex-col"><span className={`flex items-center gap-0.5 text-muted ${small}`}>{pick(k)}<Help term={help} size="sm" /></span><span className="num font-bold" dir="ltr">{v}</span></span>
   return (
     <AuditLayout right={<SectionDownload sections={['staff']} name="staff-report" />}>
       {!data ? <Pending error={error} retry={refetch} /> : (
         <>
           <section className="flex items-center justify-between rounded-3xl bg-ink px-5 py-4 text-ground" data-testid="staff-total">
-            <span className="flex flex-col"><BiLabel text="audit.staff.title" size="md" bold tone="text-current" /><span className={`opacity-80 ${small}`}><span className="num">{data.totals.people}</span> {pick('audit.people')} · {pick('counter.discounts')} <span className="num" dir="ltr">{n(data.totals.discount)}</span></span></span>
+            <span className="flex flex-col"><span className="flex items-center gap-1"><BiLabel text="audit.staff.title" size="md" bold tone="text-current" /><span className="rounded-full bg-ground"><Help term="audit.staff.total" size="sm" /></span></span><span className={`opacity-80 ${small}`}><span className="num">{data.totals.people}</span> {pick('audit.people')} · {pick('counter.discounts')} <span className="num" dir="ltr">{n(data.totals.discount)}</span></span></span>
             <span className="num text-2xl font-bold" dir="ltr">{withCur(n(data.totals.sales_billed))}</span>
           </section>
-          <BiLabel text={data.security_shown ? 'audit.staff.hintOwner' : 'audit.staff.hint'} size="sm" tone="text-muted" />
+          <span className="flex items-center gap-1"><BiLabel text={data.security_shown ? 'audit.staff.hintOwner' : 'audit.staff.hint'} size="sm" tone="text-muted" /><Help term="audit.staff" size="sm" /></span>
           {!data.rows.length ? <Empty text="audit.noData" /> : (
             <div className="grid gap-2 lg:grid-cols-2" data-testid="staff-rows">
               {data.rows.map((r, i) => (
@@ -49,25 +50,26 @@ export default function StaffAuditPage() {
                   <div className="flex items-center gap-2">
                     <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-ground"><UserRound size={18} /></span>
                     <span className="min-w-0 flex-1 truncate font-bold">{r.user_name ?? '—'}</span>
-                    {r.security?.flags.length ? <span className="inline-flex items-center gap-1 rounded-full bg-payable-tint px-2.5 py-1 text-payable" data-testid="staff-flag"><AlertTriangle size={14} /><span className={small}>{r.security.flags.map((f) => pick(`audit.sec.k.${f}`)).join(' · ')}</span></span> : null}
+                    {r.security?.flags.length ? <span className="inline-flex items-center gap-1 rounded-full bg-payable-tint px-2.5 py-1 text-payable" data-testid="staff-flag"><AlertTriangle size={14} /><span className={small}>{r.security.flags.map((f) => pick(`audit.sec.k.${f}`)).join(' · ')}</span><Help term="audit.staff.flag" size="sm" /></span> : null}
                   </div>
                   {r.sales ? (
                     <Link to={`/audit/sales?${new URLSearchParams(window.location.search).toString()}&user=${r.user_id ?? ''}`} className="tap grid grid-cols-3 gap-2 rounded-2xl bg-ground px-3 py-2">
-                      {stat('audit.staff.sold', `${withCur(n(r.sales.billed))}`)}
-                      {stat('audit.bills', r.sales.bills)}
-                      {stat('counter.discounts', n(r.sales.discount))}
-                      {r.sales.profit != null ? stat('counter.grossProfit', n(r.sales.profit)) : null}
-                      {stat('audit.trade.onCredit', n(r.sales.on_credit))}
-                      {stat('audit.trade.returns', r.sales.returns)}
+                      {stat('audit.staff.sold', `${withCur(n(r.sales.billed))}`, { help: 'audit.staff.sold' })}
+                      {stat('audit.bills', r.sales.bills, { help: 'audit.staff.bills' })}
+                      {stat('counter.discounts', n(r.sales.discount), { help: 'audit.staff.discount' })}
+                      {r.sales.profit != null ? stat('counter.grossProfit', n(r.sales.profit), { help: 'audit.staff.profit' }) : null}
+                      {stat('audit.trade.onCredit', n(r.sales.on_credit), { help: 'audit.staff.onCredit' })}
+                      {stat('audit.trade.returns', r.sales.returns, { help: 'audit.staff.returns' })}
                     </Link>
                   ) : null}
-                  <div className={`flex flex-wrap gap-x-4 gap-y-1 text-muted ${small}`}>
-                    {r.purchases ? <span>{pick('audit.trade.purchases')} <span className="num">{r.purchases.bills}</span> · <span className="num" dir="ltr">{n(r.purchases.total)}</span></span> : null}
-                    {r.payments ? <span>{pick('audit.staff.payments')} <span className="num" dir="ltr">{r.payments.in_count} / {r.payments.out_count}</span></span> : null}
-                    {r.expenses ? <span>{pick('audit.expenses')} <span className="num">{r.expenses.count}</span> · <span className="num" dir="ltr">{n(r.expenses.amount)}</span></span> : null}
+                  <div className={`flex flex-wrap items-center gap-x-4 gap-y-1 text-muted ${small}`}>
+                    {r.purchases ? <span className="inline-flex items-center gap-1"><span>{pick('audit.trade.purchases')} <span className="num">{r.purchases.bills}</span> · <span className="num" dir="ltr">{n(r.purchases.total)}</span></span><Help term="audit.staff.purchases" size="sm" /></span> : null}
+                    {r.payments ? <span className="inline-flex items-center gap-1"><span>{pick('audit.staff.payments')} <span className="num" dir="ltr">{r.payments.in_count} / {r.payments.out_count}</span></span><Help term="audit.staff.payments" size="sm" /></span> : null}
+                    {r.expenses ? <span className="inline-flex items-center gap-1"><span>{pick('audit.expenses')} <span className="num">{r.expenses.count}</span> · <span className="num" dir="ltr">{n(r.expenses.amount)}</span></span><Help term="audit.staff.expenses" size="sm" /></span> : null}
                   </div>
                   {r.security ? (
                     <Link to={`/audit/security?${new URLSearchParams(window.location.search).toString()}`} className={`tap flex flex-wrap gap-x-3 gap-y-1 ${small}`} data-testid="staff-security">
+                      <Help term="audit.staff.security" size="sm" />
                       {Object.entries(r.security.kinds).map(([k, v]) => <span key={k} className={r.security?.flags.includes(k) ? 'text-payable' : 'text-muted'}>{pick(`audit.sec.k.${k}`)} <span className="num">{v}</span></span>)}
                     </Link>
                   ) : null}

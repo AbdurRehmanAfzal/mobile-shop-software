@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import Bars from '@/components/charts/Bars'
+import Help from '@/components/Help'
 import { Empty, Pending } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
@@ -17,6 +18,8 @@ type M = string
 type Group = 'model' | 'brand' | 'category'
 interface Row { key: string; kind: 'device' | 'misc'; label: string; brand: string | null; model: string | null; category: string; model_id: string | null; brand_id: string | null; units: number; share: number; revenue: M; cost: M | null; profit: M | null; margin_pct: number | null; avg_price: M | null; avg_holding_days: number | null; returns: number; returns_amount: M; in_stock: number; performance: 'top' | 'average' | 'low' }
 interface Products { group: Group; granularity: 'day' | 'week' | 'month'; total_units: number; total_revenue: M; total_profit: M | null; rows: Row[]; classes: { top: number; average: number; low: number }; thresholds: { top_share: number; low_units: number }; series: { bucket: string; units: number; revenue: M; profit: M | null; bought_units: number; bought_cost: M | null }[] }
+
+const CLASS_HELP: Record<string, { helpKey: string }> = { top: { helpKey: 'audit.products.top' }, average: { helpKey: 'audit.products.average' }, low: { helpKey: 'audit.products.low' } }
 
 const n = (v: M | number | null | undefined) => (v == null ? '—' : Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 }))
 const label = (bucket: string, g: string) => (g === 'month' ? bucket.slice(0, 7) : bucket.slice(5))
@@ -36,23 +39,27 @@ export default function ProductsPage() {
   const rows = data ? data.rows.filter((r) => cls_ === 'all' || r.performance === cls_) : []
   return (
     <AuditLayout right={<SectionDownload sections={['products']} name="products" />}>
-      <BiSegmented<Group> value={group} onChange={(g) => setParam('group', g)} options={[{ value: 'model', text: 'audit.prod.byModel' }, { value: 'brand', text: 'audit.prod.byBrand' }, { value: 'category', text: 'audit.prod.byType' }]} />
+      <div className="flex items-center gap-1">
+        <div className="min-w-0 flex-1"><BiSegmented<Group> value={group} onChange={(g) => setParam('group', g)} options={[{ value: 'model', text: 'audit.prod.byModel' }, { value: 'brand', text: 'audit.prod.byBrand' }, { value: 'category', text: 'audit.prod.byType' }]} /></div>
+        <Help term="audit.products" size="sm" />
+      </div>
       {isLoading || !data ? <Pending error={error} retry={refetch} /> : (
         <>
           <section className="grid grid-cols-2 gap-2 lg:grid-cols-4" data-testid="prod-kpis">
-            <Kpi k="audit.prod.unitsSold" v={`${data.total_units}`} />
-            <Kpi k="audit.netSales" v={`${withCur(n(data.total_revenue))}`} />
-            {canCost ? <Kpi k="counter.grossProfit" v={`${withCur(n(data.total_profit))}`} /> : null}
-            <Kpi k="audit.prod.classes" v={`${data.classes.top} · ${data.classes.average} · ${data.classes.low}`} sub={`${pick('audit.prod.top')} · ${pick('audit.prod.average')} · ${pick('audit.prod.low')}`} />
+            <Kpi k="audit.prod.unitsSold" v={`${data.total_units}`} help="audit.products.unitsSold" />
+            <Kpi k="audit.netSales" v={`${withCur(n(data.total_revenue))}`} help="audit.products.sales" />
+            {canCost ? <Kpi k="counter.grossProfit" v={`${withCur(n(data.total_profit))}`} help="audit.products.profit" /> : null}
+            <Kpi k="audit.prod.classes" v={`${data.classes.top} · ${data.classes.average} · ${data.classes.low}`} sub={`${pick('audit.prod.top')} · ${pick('audit.prod.average')} · ${pick('audit.prod.low')}`} help="audit.products.classes" />
           </section>
           <section className="card" data-testid="prod-series">
-            <BiLabel text="audit.prod.soldVsBought" size="sm" tone="text-muted" bold />
+            <span className="flex items-center gap-1"><BiLabel text="audit.prod.soldVsBought" size="sm" tone="text-muted" bold /><Help term="audit.products.soldVsBought" size="sm" /></span>
             <Bars data={data.series.map((s) => ({ label: label(s.bucket, data.granularity), value: s.units, hint: `${pick('audit.prod.bought')} ${s.bought_units} · ${withCur(n(s.revenue))}`, key: s.bucket }))} tone="rgb(var(--emerald))" height={110} empty="audit.noData" />
             <Bars data={data.series.map((s) => ({ label: label(s.bucket, data.granularity), value: s.bought_units, key: `b${s.bucket}` }))} tone="rgb(var(--receivable))" height={60} empty="audit.noData" />
           </section>
           <div className="flex flex-wrap items-center gap-1.5">
-            {(['all', 'top', 'average', 'low'] as const).map((c) => <button key={c} type="button" aria-pressed={cls_ === c} onClick={() => setParam('class', c)} className={`tap min-h-9 whitespace-nowrap rounded-full border px-3 py-1.5 font-bold leading-tight ${cls_ === c ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-xs'}`}>{pick(c === 'all' ? 'common.all' : `audit.prod.${c}`)}</button>)}
-            <span className={`text-muted ${small}`}>{pick('audit.prod.thresholds').replace('{{top}}', String(data.thresholds.top_share)).replace('{{low}}', String(data.thresholds.low_units))} · <Link to="/more/settings" className="underline">{pick('audit.inv.thresholds')}</Link></span>
+            <Help term="audit.products.classFilter" size="sm" />
+            {(['all', 'top', 'average', 'low'] as const).map((c) => <span key={c} className="inline-flex items-center"><button type="button" aria-pressed={cls_ === c} onClick={() => setParam('class', c)} className={`tap min-h-9 whitespace-nowrap rounded-full border px-3 py-1.5 font-bold leading-tight ${cls_ === c ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-xs'}`}>{pick(c === 'all' ? 'common.all' : `audit.prod.${c}`)}</button>{CLASS_HELP[c] ? <Help term={CLASS_HELP[c].helpKey} size="sm" /> : null}</span>)}
+            <span className={`inline-flex items-center gap-1 text-muted ${small}`}><span>{pick('audit.prod.thresholds').replace('{{top}}', String(data.thresholds.top_share)).replace('{{low}}', String(data.thresholds.low_units))} · <Link to="/more/settings" className="underline">{pick('audit.inv.thresholds')}</Link></span><Help term="audit.products.thresholds" size="sm" /><Help term="audit.products.rowFigures" size="sm" /></span>
           </div>
           {!rows.length ? <Empty text="audit.noData" /> : (
             <div className="card divide-y divide-line p-0" data-testid="prod-rows">
@@ -81,11 +88,11 @@ export default function ProductsPage() {
   )
 }
 
-function Kpi({ k, v, sub }: { k: string; v: string; sub?: string }) {
+function Kpi({ k, v, sub, help }: { k: string; v: string; sub?: string; help?: string }) {
   const { ur, cls } = useLang()
   return (
     <div className="card flex min-w-0 flex-col gap-1">
-      <BiLabel text={k} size="sm" tone="text-muted" bold />
+      <span className="flex items-center gap-1"><BiLabel text={k} size="sm" tone="text-muted" bold />{help ? <Help term={help} size="sm" /> : null}</span>
       <span className="num text-xl font-bold" dir="ltr">{v}</span>
       {sub ? <span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{sub}</span> : null}
     </div>

@@ -20,6 +20,7 @@ from app.modules.shopaudit import (
     parties,
     products,
     reconcile,
+    repairs,
     report,
     security,
     service,
@@ -255,6 +256,20 @@ def udhaar(
     out = parties.udhaar(db, ctx.shop_id, p, can_cost=ctx.can(Cap.VIEW_COST), limit=min(limit, 100))
     out["installments"] = parties.installments_block(db, ctx.shop_id)
     return plain(out)
+
+
+@router.get("/repairs")
+def repairs_report(
+    ctx: Reports,
+    db: DB,
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+):
+    """Repairs (docs/34): came in / given back, income, parts, lab charges, profit, every repair
+    lab's record, faults, late jobs and phones late at a lab. Money only with VIEW_COST."""
+    p = _p(db, ctx, preset, date_from, date_to)
+    return plain(repairs.repairs(db, ctx.shop_id, p, can_cost=ctx.can(Cap.VIEW_COST)))
 
 
 @router.get("/lending")

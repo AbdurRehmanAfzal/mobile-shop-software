@@ -5,6 +5,7 @@
 import { CalendarClock, Check, X } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { BiLabel, useLang } from './Bilingual'
+import Help from './Help'
 import { isoDay } from '@/lib/format'
 
 export const ACC_KINDS = ['box', 'charger', 'cable', 'earphones', 'airpods', 'stylus', 'keyboard', 'strap'] as const
@@ -34,7 +35,7 @@ export function AccessoryPicker({ mode, value, onChange, category = 'phone' }: {
   }
   return (
     <div>
-      <BiLabel text={mode === 'buy' ? 'accx.titleBuy' : 'accx.titleSell'} size="md" bold />
+      <span className="flex items-center gap-1"><BiLabel text={mode === 'buy' ? 'accx.titleBuy' : 'accx.titleSell'} size="md" bold />{mode === 'buy' ? <Help term="device.accessoriesBuy" size="sm" /> : <Help term="device.accessoriesSell" size="sm" />}</span>
       <BiLabel text={mode === 'buy' ? 'accx.hintBuy' : 'accx.hintSell'} size="sm" tone="text-muted" className="mb-2" />
       <div className="card flex flex-col divide-y divide-line p-0">
         {ACC_FOR[category].map((k) => {

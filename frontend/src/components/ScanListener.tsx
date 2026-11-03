@@ -11,12 +11,13 @@ import { beep, installScanner, onUnclaimedScan } from '@/lib/scanner'
 
 export interface Lookup {
   code: string
-  kind: 'device' | 'item' | 'none'
+  kind: 'device' | 'item' | 'repair' | 'none'
   matched: string | null
   device: { id: string; imei1: string; brand_name: string; model_name: string; status: string; asking_price: string | null; barcode: string | null } | null
   item: { id: string; sku: string; name: string; name_ur: string | null; qty: number; price: string; barcode: string | null } | null
   status?: string
   sellable?: boolean
+  repair?: { id: string; no: string; status: string }
 }
 
 export async function lookupCode(code: string): Promise<Lookup> {
@@ -38,6 +39,10 @@ export default function ScanListener() {
         } else if (r.kind === 'item' && r.item) {
           beep('ok')
           nav(`/accessories?q=${encodeURIComponent(r.item.sku)}`)
+        } else if (r.kind === 'repair' && r.repair) {
+          // a repair sticker (docs/34)
+          beep('ok')
+          nav(`/repairs/${r.repair.id}`)
         } else {
           beep('error')
           setMiss(code)

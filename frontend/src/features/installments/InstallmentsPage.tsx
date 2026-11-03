@@ -6,6 +6,7 @@ import { BellRing, Check, HandCoins, MessageCircle, Phone, Receipt, UserCheck } 
 import { useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { BiAlert, BiButton, BiInput, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import PayPicker, { newPay, payInfo, payReady, type PayState } from '@/components/PayPicker'
 import { Chip, Empty, ErrorText, KV, Loading, PageHeader, SearchBox, Section, Sheet, fmtDate } from '@/components/ui'
 import { api } from '@/lib/api'
@@ -20,6 +21,13 @@ interface Row {
 interface Detail extends Row { schedule: { seq: number; due_date: string; amount: string; paid: string; status: 'paid' | 'partial' | 'today' | 'late' | 'due' }[]; payment_no?: string | null }
 type View = 'today' | 'overdue' | 'active' | 'closed'
 const VIEWS: View[] = ['today', 'overdue', 'active', 'closed']
+// the "?" beside the view chips explains the open one (docs/33)
+const VIEW_HELP = [
+  { view: 'today', helpKey: 'inst.view.today' },
+  { view: 'overdue', helpKey: 'inst.view.overdue' },
+  { view: 'active', helpKey: 'inst.view.active' },
+  { view: 'closed', helpKey: 'inst.view.closed' },
+]
 const n = (v: string | number | null | undefined) => Number(v ?? 0).toLocaleString('en-US', { maximumFractionDigits: 0 })
 
 export function InstallmentsPage() {
@@ -32,15 +40,16 @@ export function InstallmentsPage() {
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="inst.title" />
-      <div className="flex flex-wrap gap-1.5">
+      <PageHeader title="inst.title" help={<Help term="inst.page" />} />
+      <div className="flex flex-wrap items-center gap-1.5">
         {VIEWS.map((v) => (
           <button key={v} type="button" aria-pressed={view === v} onClick={() => setParams(v === 'active' ? {} : { view: v }, { replace: true })} className={`tap h-10 rounded-full border-2 px-3.5 font-bold ${view === v ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-[13px]'}`}>
             {pick(`inst.view.${v}`)}
           </button>
         ))}
+        <Help term={VIEW_HELP.find((x) => x.view === view)!.helpKey} size="sm" />
       </div>
-      <SearchBox value={q} onChange={setQ} placeholder="inst.search" />
+      <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><SearchBox value={q} onChange={setQ} placeholder="inst.search" /></div><Help term="common.search" size="sm" /></div>
       {isLoading ? <Loading /> : !data?.length ? <Empty text="inst.none" /> : (
         <div className="card divide-y divide-line p-0">
           {data.map((r) => (
@@ -86,7 +95,7 @@ export function InstallmentDetailPage() {
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="inst.title" />
+      <PageHeader title="inst.title" help={<Help term="inst.plan" />} />
       <div className={`flex flex-col gap-2 rounded-3xl p-4 ${p.overdue_count ? 'bg-payable-tint text-payable' : 'bg-hero text-hero-text shadow-hero'}`}>
         <div className="flex items-start justify-between gap-2">
           <span className="flex min-w-0 flex-col">
@@ -96,26 +105,26 @@ export function InstallmentDetailPage() {
           <Chip text={`inst.status.${p.status}`} tone={p.status === 'active' ? 'warn' : p.status === 'closed' ? 'ok' : 'bad'} />
         </div>
         <div className="grid grid-cols-3 gap-2">
-          {[['inst.total', p.total], ['inst.paidSoFar', p.paid], ['inst.remaining', p.remaining]].map(([k, v]) => (
+          {[{ k: 'inst.total', v: p.total, help: 'inst.total' }, { k: 'inst.paidSoFar', v: p.paid, help: 'inst.paid' }, { k: 'inst.remaining', v: p.remaining, help: 'inst.remaining' }].map(({ k, v, help }) => (
             <div key={k} className="flex flex-col rounded-2xl bg-white/10 px-3 py-2">
-              <span className={`opacity-80 ${small}`}>{pick(k)}</span>
+              <span className={`flex items-center gap-1 opacity-80 [&_button]:text-current ${small}`}>{pick(k)}<Help term={help} size="sm" /></span>
               <span className="num text-lg" dir="ltr">{n(v)}</span>
             </div>
           ))}
         </div>
-        <span className={small}>{pick('inst.planLine').replace('{{adv}}', n(p.advance)).replace('{{m}}', String(p.months)).replace('{{x}}', n(p.monthly)).replace('{{d}}', String(p.due_day))}</span>
+        <span className={`flex items-center gap-1 [&_button]:text-current ${small}`}>{pick('inst.planLine').replace('{{adv}}', n(p.advance)).replace('{{m}}', String(p.months)).replace('{{x}}', n(p.monthly)).replace('{{d}}', String(p.due_day))}<Help term="inst.planLine" size="sm" /></span>
       </div>
 
       {p.status === 'active' ? (
         <div className="grid grid-cols-2 gap-2">
-          <BiButton text="inst.collect" icon={<HandCoins size={20} />} full onClick={() => { setAmount(''); setPay(newPay()); collect.reset(); setDone(null); setOpen(true) }} />
-          <BiButton text="inst.remind" icon={<BellRing size={20} />} variant="secondary" full onClick={async () => { const m = await api<{ status: string; link: string | null }>('POST', `/api/v1/installments/${id}/remind`); if (m.status !== 'sent' && m.link) window.open(m.link, '_blank', 'noopener'); setRemindMsg(m.status === 'sent' ? 'inst.reminded' : 'inst.remindOpened'); inv('installment') }} />
+          <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><BiButton text="inst.collect" icon={<HandCoins size={20} />} full onClick={() => { setAmount(''); setPay(newPay()); collect.reset(); setDone(null); setOpen(true) }} /></div><Help term="inst.collect" size="sm" /></div>
+          <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><BiButton text="inst.remind" icon={<BellRing size={20} />} variant="secondary" full onClick={async () => { const m = await api<{ status: string; link: string | null }>('POST', `/api/v1/installments/${id}/remind`); if (m.status !== 'sent' && m.link) window.open(m.link, '_blank', 'noopener'); setRemindMsg(m.status === 'sent' ? 'inst.reminded' : 'inst.remindOpened'); inv('installment') }} /></div><Help term="inst.remind" size="sm" /></div>
         </div>
       ) : null}
       {remindMsg ? <BiAlert text={remindMsg} kind="success" /> : null}
       {done ? <BiAlert text={{ en: `${pick('inst.collected')} ${done}`, ur: `${pick('inst.collected')} ${done}`, roman: `${pick('inst.collected')} ${done}` }} kind="success" /> : null}
 
-      <Section title="inst.schedule">
+      <Section title="inst.schedule" help="inst.schedule">
         <div className="card divide-y divide-line p-0">
           {p.schedule.map((s) => (
             <div key={s.seq} className="flex items-center gap-3 px-4 py-2.5">
@@ -131,7 +140,7 @@ export function InstallmentDetailPage() {
         </div>
       </Section>
 
-      <Section title="inst.people">
+      <Section title="inst.people" help="inst.guarantor">
         <div className="card flex flex-col gap-2">
           <div className="flex items-center gap-3">
             <span className="flex min-w-0 flex-1 flex-col"><span className="font-bold">{p.party_name}</span><span className="text-xs text-muted" dir="ltr">{p.party_phone}</span></span>
@@ -151,8 +160,8 @@ export function InstallmentDetailPage() {
 
       <Sheet open={open} onClose={() => setOpen(false)} title="inst.collect">
         <div className="flex flex-col gap-3">
-          <KV k="inst.nextDue" v={<span dir="ltr">{p.next_due ? fmtDate(p.next_due) : '—'}</span>} />
-          <BiInput label="inst.amount" type="number" inputMode="numeric" min={1} max={Number(p.remaining)} value={amt} onChange={(e) => setAmount(e.target.value)} className="num text-2xl" />
+          <KV k="inst.nextDue" help="inst.nextDue" v={<span dir="ltr">{p.next_due ? fmtDate(p.next_due) : '—'}</span>} />
+          <BiInput label="inst.amount" help={<Help term="inst.amount" size="sm" />} type="number" inputMode="numeric" min={1} max={Number(p.remaining)} value={amt} onChange={(e) => setAmount(e.target.value)} className="num text-2xl" />
           <PayPicker value={pay} onChange={setPay} />
           <ErrorText error={collect.error} />
           <BiButton text="inst.collectNow" full loading={collect.isPending} disabled={!Number(amt) || Number(amt) > Number(p.remaining) || !payReady(pay)} onClick={async () => { const r = await collect.mutateAsync({ amount: Number(amt), payment: payInfo(pay) }); setDone(r.payment_no ?? ''); setOpen(false); inv('installment', 'installments', 'dashboard', 'parties') }} />

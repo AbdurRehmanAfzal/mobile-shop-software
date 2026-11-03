@@ -5,6 +5,7 @@
 import { CalendarRange, Route } from 'lucide-react'
 import { useState } from 'react'
 import { BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { fmtDate } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import {isoDay, withCur } from '@/lib/format'
@@ -39,32 +40,33 @@ export default function PartyJourney({ partyId }: { partyId: string }) {
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   if (!canCost || !data) return null
   const bal = Number(data.balance_as_of)
-  const tile = (k: string, v: string, sub?: string) => (
-    <div className="rounded-2xl bg-ground px-3 py-2"><BiLabel text={k} size="sm" tone="text-muted" /><div className="num text-lg font-bold" dir="ltr">{v}</div>{sub ? <div className={`text-muted ${small}`}>{sub}</div> : null}</div>
+  const tile = ({ k, v, sub, help }: { k: string; v: string; sub?: string; help: string }) => (
+    <div className="rounded-2xl bg-ground px-3 py-2"><span className="flex items-center gap-1"><BiLabel text={k} size="sm" tone="text-muted" /><Help term={help} size="sm" /></span><div className="num text-lg font-bold" dir="ltr">{v}</div>{sub ? <div className={`text-muted ${small}`}>{sub}</div> : null}</div>
   )
   return (
     <section className="card flex flex-col gap-3" data-testid="party-journey">
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2"><Route size={18} /><BiLabel text="audit.journey.title" size="md" bold /></div>
-        <span className="flex items-center gap-2"><DownloadButton path={`/api/v1/exports/parties/${partyId}/journey${asOf ? `?as_of=${asOf}` : ''}`} name={`journey-${partyId.slice(0, 8)}`} /><label className={`inline-flex items-center gap-1.5 text-muted ${small}`}><CalendarRange size={14} />{pick('audit.asOf')}<input type="date" aria-label="journey as of" value={asOf ?? isoDay(0)} max={isoDay(0)} onChange={(e) => setAsOf(e.target.value || null)} className="h-8 rounded-xl border border-line bg-surface px-2 text-xs font-bold text-ink" dir="ltr" /></label></span>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2"><Route size={18} /><BiLabel text="audit.journey.title" size="md" bold /><Help term="party.journey" size="sm" /></div>
+        <span className="flex min-w-0 flex-wrap items-center gap-2"><DownloadButton path={`/api/v1/exports/parties/${partyId}/journey${asOf ? `?as_of=${asOf}` : ''}`} name={`journey-${partyId.slice(0, 8)}`} /><label className={`inline-flex items-center gap-1.5 text-muted ${small}`}><CalendarRange size={14} />{pick('audit.asOf')}<input type="date" aria-label="journey as of" value={asOf ?? isoDay(0)} max={isoDay(0)} onChange={(e) => setAsOf(e.target.value || null)} className="h-8 rounded-xl border border-line bg-surface px-2 text-xs font-bold text-ink" dir="ltr" /></label><Help term="common.asOf" size="sm" /></span>
       </div>
-      <div className={`flex flex-wrap gap-x-3 text-muted ${small}`}>
+      <div className={`flex flex-wrap items-center gap-x-3 text-muted ${small}`}>
         {data.first_transaction ? <span>{pick('audit.journey.first')} <span dir="ltr">{fmtDate(data.first_transaction)}</span></span> : <span>{pick('audit.journey.none')}</span>}
         {data.last_transaction ? <span>{pick('audit.journey.last')} <span dir="ltr">{fmtDate(data.last_transaction)}</span></span> : null}
+        <Help term="party.j.firstLast" size="sm" />
       </div>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-        {tile('audit.journey.soldTo', `${data.sold.phones}`, `${data.sold.bills} ${pick('audit.bills')} · ${withCur(n(data.sold.value))}`)}
-        {tile('audit.journey.boughtFrom', `${data.bought.phones}`, `${data.bought.bills} ${pick('audit.bills')}${data.bought.value != null ? ` · ${withCur(n(data.bought.value))}` : ''}`)}
-        {tile('audit.journey.received', `${withCur(n(data.money.received_total))}`, `${pick('audit.journey.atCounter')} ${n(data.money.received_at_counter)} · ${pick('audit.journey.later')} ${n(data.money.received_later)}`)}
-        {tile('audit.journey.paid', `${withCur(n(data.money.paid_total))}`, data.money.paid_at_counter != null ? `${pick('audit.journey.atCounter')} ${n(data.money.paid_at_counter)} · ${pick('audit.journey.later')} ${n(data.money.paid_later)}` : undefined)}
-        {tile('audit.journey.profitOnSales', `${withCur(n(data.sold.profit))}`)}
-        {data.bought.phones ? tile('audit.journey.profitOnSourced', `${withCur(n(data.bought.sourced_profit))}`, `${data.bought.sourced_sold} ${pick('audit.journey.sourcedSold')}`) : null}
-        {tile('audit.journey.returns', `${data.returns.sale.count + data.returns.purchase.count}`, `${withCur(n(Number(data.returns.sale.amount) + Number(data.returns.purchase.amount)))} · ${pick('audit.journey.refunded')} ${n(data.money.refunded_to_them)}`)}
-        {tile(asOf ? 'audit.journey.balanceAsOf' : 'audit.journey.balance', `${withCur(n(Math.abs(bal)))}`, bal > 0 ? pick('audit.udhaar.theyOwe') : bal < 0 ? pick('audit.udhaar.weOweShort') : pick('audit.journey.settled'))}
+        {tile({ k: 'audit.journey.soldTo', v: `${data.sold.phones}`, sub: `${data.sold.bills} ${pick('audit.bills')} · ${withCur(n(data.sold.value))}`, help: 'party.j.soldTo' })}
+        {tile({ k: 'audit.journey.boughtFrom', v: `${data.bought.phones}`, sub: `${data.bought.bills} ${pick('audit.bills')}${data.bought.value != null ? ` · ${withCur(n(data.bought.value))}` : ''}`, help: 'party.j.boughtFrom' })}
+        {tile({ k: 'audit.journey.received', v: `${withCur(n(data.money.received_total))}`, sub: `${pick('audit.journey.atCounter')} ${n(data.money.received_at_counter)} · ${pick('audit.journey.later')} ${n(data.money.received_later)}`, help: 'party.j.received' })}
+        {tile({ k: 'audit.journey.paid', v: `${withCur(n(data.money.paid_total))}`, sub: data.money.paid_at_counter != null ? `${pick('audit.journey.atCounter')} ${n(data.money.paid_at_counter)} · ${pick('audit.journey.later')} ${n(data.money.paid_later)}` : undefined, help: 'party.j.paid' })}
+        {tile({ k: 'audit.journey.profitOnSales', v: `${withCur(n(data.sold.profit))}`, help: 'party.j.profitOnSales' })}
+        {data.bought.phones ? tile({ k: 'audit.journey.profitOnSourced', v: `${withCur(n(data.bought.sourced_profit))}`, sub: `${data.bought.sourced_sold} ${pick('audit.journey.sourcedSold')}`, help: 'party.j.profitOnSourced' }) : null}
+        {tile({ k: 'audit.journey.returns', v: `${data.returns.sale.count + data.returns.purchase.count}`, sub: `${withCur(n(Number(data.returns.sale.amount) + Number(data.returns.purchase.amount)))} · ${pick('audit.journey.refunded')} ${n(data.money.refunded_to_them)}`, help: 'party.j.returns' })}
+        {tile({ k: asOf ? 'audit.journey.balanceAsOf' : 'audit.journey.balance', v: `${withCur(n(Math.abs(bal)))}`, sub: bal > 0 ? pick('audit.udhaar.theyOwe') : bal < 0 ? pick('audit.udhaar.weOweShort') : pick('audit.journey.settled'), help: 'party.j.balance' })}
       </div>
       {data.timeline.length ? (
         <details>
-          <summary className={`cursor-pointer font-bold ${ur ? cls('sm') : 'text-sm'}`}>{pick('audit.journey.timeline')} ({data.timeline.length})</summary>
+          <summary className={`cursor-pointer font-bold ${ur ? cls('sm') : 'text-sm'}`}>{pick('audit.journey.timeline')} ({data.timeline.length}) <Help term="party.j.timeline" size="sm" /></summary>
           <div className="mt-2 divide-y divide-line" data-testid="journey-timeline">
             {data.timeline.map((t, i) => (
               <Link key={i} to={t.kind === 'sale' ? `/sales/${t.id}` : t.kind === 'purchase' ? `/purchases/${t.id}` : t.kind === 'sale_return' ? `/sales/${t.ref_id ?? ''}` : t.kind === 'purchase_return' ? `/purchases/${t.ref_id ?? ''}` : '/payments'} className="tap flex items-center gap-3 py-1.5" data-testid="journey-link">

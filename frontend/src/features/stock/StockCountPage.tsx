@@ -6,6 +6,7 @@ import { Check, ClipboardList, RotateCcw, ScanLine, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { Chip, ErrorText, PageHeader, Section } from '@/components/ui'
 import { api } from '@/lib/api'
 import { beep, useScan } from '@/lib/scanner'
@@ -38,52 +39,52 @@ export default function StockCountPage() {
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   return (
     <div className="flex flex-col gap-4">
-      <PageHeader title="count.title" />
+      <PageHeader title="count.title" help={<Help term="stock.countPage" />} />
       <BiLabel text="count.hint" size="sm" tone="text-muted" />
       <div className="card flex items-center gap-3">
         <span className="well h-12 w-12 shrink-0 bg-stockt text-stockt-fg"><ScanLine size={22} /></span>
         <span className="flex min-w-0 flex-1 flex-col">
           <span className="num text-3xl font-extrabold" dir="ltr">{codes.length}</span>
-          <span className={`text-muted ${small}`}>{pick('count.scanned')}</span>
+          <span className={`flex items-center gap-1 text-muted ${small}`}>{pick('count.scanned')}<Help term="stock.countScanned" size="sm" /></span>
         </span>
         <button type="button" aria-label={pick('count.clear')} onClick={() => { setCodes([]); setRes(null) }} className="tap flex h-11 items-center gap-1 rounded-xl border border-line px-3 text-xs font-bold text-payable"><Trash2 size={16} /> {pick('count.clear')}</button>
       </div>
       <form onSubmit={(e) => { e.preventDefault(); if (typed.trim()) { add(typed.trim()); setTyped('') } }}>
-        <BiInput label="count.typeCode" value={typed} onChange={(e) => setTyped(e.target.value)} dir="ltr" className="num" data-testid="count-code" />
+        <BiInput label="count.typeCode" help={<Help term="stock.countType" size="sm" />} value={typed} onChange={(e) => setTyped(e.target.value)} dir="ltr" className="num" data-testid="count-code" />
       </form>
       <BiButton text="count.check" icon={<ClipboardList size={20} />} full loading={busy} onClick={run} data-testid="count-run" />
       <ErrorText error={err} />
       {res ? (
         <>
           <div className="grid grid-cols-3 gap-2" data-testid="count-result">
-            <Tile n={res.found_devices.length} label="count.found" tone="bg-emerald-tint text-emerald-deep" />
-            <Tile n={res.missing.length} label="count.missing" tone="bg-payable-tint text-payable" />
-            <Tile n={res.unexpected.length} label="count.unexpected" tone="bg-receivable-tint text-receivable" />
+            <Tile n={res.found_devices.length} label="count.found" help="stock.countFound" tone="bg-emerald-tint text-emerald-deep" />
+            <Tile n={res.missing.length} label="count.missing" help="stock.countMissing" tone="bg-payable-tint text-payable" />
+            <Tile n={res.unexpected.length} label="count.unexpected" help="stock.countUnexpected" tone="bg-receivable-tint text-receivable" />
           </div>
-          <span className={`text-muted ${small}`}>{pick('count.inStock').replace('{{n}}', String(res.in_stock))}</span>
+          <span className={`flex items-center gap-1 text-muted ${small}`}>{pick('count.inStock').replace('{{n}}', String(res.in_stock))}<Help term="stock.countInStock" size="sm" /></span>
           {res.missing.length ? (
-            <Section title="count.missing">
+            <Section title="count.missing" help="stock.countMissing">
               <div className="card divide-y divide-line p-0">
                 {res.missing.map((m) => <Row key={m.id} title={m.imei1} sub={m.barcode ?? ''} onClick={() => nav(`/stock/${m.id}`)} />)}
               </div>
             </Section>
           ) : null}
           {res.unexpected.length ? (
-            <Section title="count.unexpected">
+            <Section title="count.unexpected" help="stock.countUnexpected">
               <div className="card divide-y divide-line p-0">
                 {res.unexpected.map((u, i) => <Row key={`${u.code}-${i}`} title={u.code} sub={u.reason === 'not_found' ? pick('barcode.notFound') : `${pick(`stock.status.${u.reason}`)}${u.imei1 ? ` · ${u.imei1}` : ''}`} onClick={u.device_id ? () => nav(`/stock/${u.device_id}`) : undefined} bad />)}
               </div>
             </Section>
           ) : null}
           {res.found_items.length ? (
-            <Section title="count.items">
+            <Section title="count.items" help="stock.countItems">
               <div className="card divide-y divide-line p-0">
                 {res.found_items.map((it) => <Row key={it.id} title={it.name} sub={`${it.sku} · ${pick('count.scannedN').replace('{{s}}', String(it.scanned)).replace('{{q}}', String(it.qty))}`} right={it.scanned === it.qty ? <Chip text="count.ok" tone="ok" /> : <Chip text="count.diff" tone="warn" />} />)}
               </div>
             </Section>
           ) : null}
           {res.found_devices.length ? (
-            <Section title="count.found">
+            <Section title="count.found" help="stock.countFound">
               <div className="card divide-y divide-line p-0">
                 {res.found_devices.map((d) => <Row key={d.id} title={d.imei1} sub={d.barcode ?? ''} onClick={() => nav(`/stock/${d.id}`)} right={<Check size={18} className="text-emerald" />} />)}
               </div>
@@ -96,11 +97,11 @@ export default function StockCountPage() {
   )
 }
 
-function Tile({ n, label, tone }: { n: number; label: string; tone: string }) {
+function Tile({ n, label, tone, help }: { n: number; label: string; tone: string; help: string }) {
   return (
     <div className={`flex flex-col items-center rounded-2xl px-2 py-3 ${tone}`}>
       <span className="num text-2xl font-extrabold">{n}</span>
-      <BiLabel text={label} size="sm" tone="text-current" align="center" />
+      <span className="flex items-center gap-1"><BiLabel text={label} size="sm" tone="text-current" align="center" /><Help term={help} size="sm" /></span>
     </div>
   )
 }

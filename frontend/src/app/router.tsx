@@ -35,6 +35,8 @@ import InvoicesPage from '@/features/invoices/InvoicesPage'
 import LoansPage from '@/features/loans/LoansPage'
 import ExpensesPage from '@/features/expenses/ExpensesPage'
 import { NewRepairPage, RepairDetailPage, RepairsPage } from '@/features/repairs/RepairsPages'
+import { LabDetailPage, LabsPage } from '@/features/repairs/RepairLabs'
+import AuditRepairsPage from '@/features/audit/RepairsAuditPage'
 import AccessoriesPage from '@/features/accessories/AccessoriesPage'
 import AccessoryDetailPage from '@/features/accessories/AccessoryDetailPage'
 import AccessoryReportsPage from '@/features/accessories/AccessoryReportsPage'
@@ -117,6 +119,8 @@ export const router = createBrowserRouter([
           { path: '/expenses', element: <ModuleGate module="expenses"><ExpensesPage /></ModuleGate> },
           { path: '/repairs', element: <ModuleGate module="repairs"><RepairsPage /></ModuleGate> },
           { path: '/repairs/new', element: <ModuleGate module="repairs"><NewRepairPage /></ModuleGate> },
+          { path: '/repairs/labs', element: <ModuleGate module="repairs"><LabsPage /></ModuleGate> },
+          { path: '/repairs/labs/:id', element: <ModuleGate module="repairs"><LabDetailPage /></ModuleGate> },
           { path: '/repairs/:id', element: <ModuleGate module="repairs"><RepairDetailPage /></ModuleGate> },
           { path: '/accessories', element: <ModuleGate module="accessories"><AccessoriesPage /></ModuleGate> },
           { path: '/accessories/reports', element: <ModuleGate module="accessories"><AccessoryReportsPage /></ModuleGate> },
@@ -133,6 +137,7 @@ export const router = createBrowserRouter([
           { path: '/audit/sales', element: <ModuleGate module="reports"><AuditTradePage /></ModuleGate> },
           { path: '/audit/staff', element: <ModuleGate module="reports"><AuditStaffPage /></ModuleGate> },
           { path: '/audit/lending', element: <ModuleGate module="reports"><AuditLendingPage /></ModuleGate> },
+          { path: '/audit/repairs', element: <ModuleGate module="reports"><AuditRepairsPage /></ModuleGate> },
           { path: '/audit/security', element: <ModuleGate module="reports"><AuditSecurityPage /></ModuleGate> },
           { path: '/audit/reports', element: <ModuleGate module="reports"><AuditReportCenterPage /></ModuleGate> },
           { path: '/more/staff', element: <StaffPage /> },

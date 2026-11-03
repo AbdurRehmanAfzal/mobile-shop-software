@@ -451,7 +451,12 @@ def renewal_code(shop_id: uuid.UUID, data: RenewalCodeIn, current: Super, db: DB
         after={"months": data.months},
     )
     db.commit()
-    return {"code": code, "months": data.months, "shop": shop.name, "key": licenses.to_out(key, shop.name)}
+    return {
+        "code": code,
+        "months": data.months,
+        "shop": shop.name,
+        "key": licenses.to_out(key, shop.name),
+    }
 
 
 @router.get("/payment-accounts")
@@ -517,7 +522,6 @@ def set_modules(shop_id: uuid.UUID, data: ModulesIn, current: Super, db: DB):
     return _rows(db, [shop])[0]
 
 
-
 # ---- provider console (docs/28) ------------------------------------------------------------------
 
 
@@ -537,7 +541,9 @@ def business_shops(
     db: DB,
     q: str | None = Query(default=None, max_length=80),
     deployment: str | None = Query(default=None, pattern="^(cloud|local)$"),
-    status: str | None = Query(default=None, pattern="^(ok|due|due_soon|expired|locked|unlimited)$"),
+    status: str | None = Query(
+        default=None, pattern="^(ok|due|due_soon|expired|locked|unlimited)$"
+    ),
 ):
     from app.modules.admin import business
     from app.modules.shopaudit.router import plain
@@ -575,7 +581,15 @@ def business_keys(
 
 
 def _key_audit(db, current, k, action: str, after: dict | None = None) -> None:
-    record_audit(db, shop_id=k.shop_id, user_id=current.id, entity="license_key", entity_id=k.id, action=action, after=after or {})
+    record_audit(
+        db,
+        shop_id=k.shop_id,
+        user_id=current.id,
+        entity="license_key",
+        entity_id=k.id,
+        action=action,
+        after=after or {},
+    )
 
 
 @router.post("/keys/{key_id}/send")
@@ -586,7 +600,11 @@ def send_key(key_id: uuid.UUID, data: KeySendIn, current: Super, db: DB):
 
     k = licenses.get(db, key_id)
     if k.status == licenses.REVOKED:
-        raise Forbidden(code="key_revoked", message_en="This key was revoked", message_ur="یہ کی منسوخ ہو چکی ہے")
+        raise Forbidden(
+            code="key_revoked",
+            message_en="This key was revoked",
+            message_ur="یہ کی منسوخ ہو چکی ہے",
+        )
     exp = licenses._aware(k.view_expires_at)
     if not k.view_token or not exp or exp < datetime.now(tz=UTC):
         licenses.new_link(k)
@@ -595,7 +613,10 @@ def send_key(key_id: uuid.UUID, data: KeySendIn, current: Super, db: DB):
     owner = _rows(db, [shop])[0]
     _key_audit(db, current, k, "key_sent", {"via": data.via})
     db.commit()
-    return {**licenses.share_links(k, shop.name, owner.owner_phone, data.site or ""), "key": licenses.to_out(k, shop.name)}
+    return {
+        **licenses.share_links(k, shop.name, owner.owner_phone, data.site or ""),
+        "key": licenses.to_out(k, shop.name),
+    }
 
 
 @router.post("/keys/{key_id}/revoke")
@@ -618,7 +639,9 @@ def renew_key(key_id: uuid.UUID, data: KeyRenewIn, current: Super, db: DB):
     shop = _shop(db, old.shop_id)
     if data.revoke_old and old.status == licenses.ISSUED:
         licenses.revoke(old, "renewed")
-    k = licenses.issue(db, shop, current.id, data.months or old.months, old.note, renewed_from=old.id)
+    k = licenses.issue(
+        db, shop, current.id, data.months or old.months, old.note, renewed_from=old.id
+    )
     _key_audit(db, current, k, "key_renewed", {"from": str(old.id), "months": k.months})
     db.commit()
     return licenses.to_out(k, shop.name)
@@ -631,7 +654,11 @@ def new_key_link(key_id: uuid.UUID, current: Super, db: DB):
 
     k = licenses.get(db, key_id)
     if k.status == licenses.REVOKED:
-        raise Forbidden(code="key_revoked", message_en="This key was revoked", message_ur="یہ کی منسوخ ہو چکی ہے")
+        raise Forbidden(
+            code="key_revoked",
+            message_en="This key was revoked",
+            message_ur="یہ کی منسوخ ہو چکی ہے",
+        )
     licenses.new_link(k)
     _key_audit(db, current, k, "key_link")
     db.commit()
@@ -643,6 +670,14 @@ def set_deployment(shop_id: uuid.UUID, data: DeploymentIn, current: Super, db: D
     """cloud (website / Android app) or the one-PC Windows install"""
     shop = _shop(db, shop_id)
     shop.organisation.deployment = data.deployment
-    record_audit(db, shop_id=shop.id, user_id=current.id, entity="organisation", entity_id=shop.organisation_id, action="deployment", after={"deployment": data.deployment})
+    record_audit(
+        db,
+        shop_id=shop.id,
+        user_id=current.id,
+        entity="organisation",
+        entity_id=shop.organisation_id,
+        action="deployment",
+        after={"deployment": data.deployment},
+    )
     db.commit()
     return {"deployment": data.deployment}

@@ -70,7 +70,7 @@ def list_devices(
         price_min=price_min,
         price_max=price_max,
         age_min=age_min,
-        lock_unchecked=lock_unchecked
+        lock_unchecked=lock_unchecked,
     )
     return [_hide_cost(ctx, r) for r in rows]
 
@@ -163,7 +163,11 @@ def options(ctx: Ctx):
     """grades, lock keys, spec keys and the shop's device settings (for the forms)"""
     from app.modules.devices import types as dtypes
 
-    return {**dtypes.prefs_for(ctx.shop), "lock_keys": list(dtypes.LOCK_KEYS), "spec_keys": list(dtypes.SPEC_KEYS)}
+    return {
+        **dtypes.prefs_for(ctx.shop),
+        "lock_keys": list(dtypes.LOCK_KEYS),
+        "spec_keys": list(dtypes.SPEC_KEYS),
+    }
 
 
 @router.get("/model-specs/{model_id}")
@@ -178,7 +182,14 @@ def get_model_specs(model_id: uuid.UUID, ctx: Ctx, db: DB):
 def put_model_specs(model_id: uuid.UUID, data: ModelSpecsIn, ctx: Transact, db: DB):
     from app.modules.devices import types as dtypes
 
-    return dtypes.set_model_specs(db, ctx.shop_id, model_id, model_number=data.model_number, ram_gb=data.ram_gb, specs=data.specs)
+    return dtypes.set_model_specs(
+        db,
+        ctx.shop_id,
+        model_id,
+        model_number=data.model_number,
+        ram_gb=data.ram_gb,
+        specs=data.specs,
+    )
 
 
 @router.post("/model-specs/import")
@@ -193,14 +204,18 @@ def import_model_specs(data: LibraryCsvIn, ctx: Transact, db: DB):
 def reclassify_preview(data: ReclassifyIn, ctx: Transact, db: DB):
     from app.modules.devices import types as dtypes
 
-    return dtypes.reclassify_preview(db, ctx.shop_id, data.device_ids, data.to_category, data.model_id)
+    return dtypes.reclassify_preview(
+        db, ctx.shop_id, data.device_ids, data.to_category, data.model_id
+    )
 
 
 @router.post("/reclassify/apply")
 def reclassify_apply(data: ReclassifyIn, ctx: Transact, db: DB):
     from app.modules.devices import types as dtypes
 
-    return dtypes.reclassify_apply(db, ctx.shop_id, ctx.id, data.device_ids, data.to_category, data.model_id, data.reason)
+    return dtypes.reclassify_apply(
+        db, ctx.shop_id, ctx.id, data.device_ids, data.to_category, data.model_id, data.reason
+    )
 
 
 @router.post("/from-item/{accessory_id}", response_model=DeviceOut, status_code=201)

@@ -39,7 +39,9 @@ class Organisation(UUIDPk, Timestamped, Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     # provider console (docs/28): cloud or one-PC install, last use of the app, the one-PC
     # install's heartbeat and version, and (on a one-PC install) the SaaS organisation its keys are for
-    deployment: Mapped[str] = mapped_column(String(10), default="cloud", server_default="cloud", nullable=False)
+    deployment: Mapped[str] = mapped_column(
+        String(10), default="cloud", server_default="cloud", nullable=False
+    )
     last_active_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     install_last_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     install_version: Mapped[str | None] = mapped_column(String(40))

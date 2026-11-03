@@ -2,6 +2,7 @@ import { BtnText } from '@/components/ui'
 import { Plus, X } from 'lucide-react'
 import { useState } from 'react'
 import { BiLabel, useLang } from './Bilingual'
+import Help from './Help'
 import { BalanceLabel, List, Row, SearchBox, Sheet } from './ui'
 import PartyForm from '@/features/parties/PartyForm'
 import { useParties } from '@/lib/queries'
@@ -31,7 +32,7 @@ export default function PartyPicker({ value, onChange, kind, label, allowNone }:
   }
   return (
     <div className="flex flex-col gap-2">
-      <BiLabel text={label} size="md" tone="text-muted" />
+      <span className="flex items-center gap-1"><BiLabel text={label} size="md" tone="text-muted" /><Help term="picker.party" size="sm" /></span>
       <div className="flex gap-2">
         <div className="flex-1">
           <SearchBox value={q} onChange={setQ} placeholder="party.searchPlaceholder" />
@@ -41,9 +42,12 @@ export default function PartyPicker({ value, onChange, kind, label, allowNone }:
         </button>
       </div>
       {allowNone ? (
-        <button type="button" onClick={() => onChange(null)} className="tap rounded-2xl border border-dashed border-line px-4 py-3 text-start text-sm font-semibold text-muted">
-          {pick('sale.cashCustomer')}
-        </button>
+        <div className="flex items-center gap-1">
+          <button type="button" onClick={() => onChange(null)} className="tap min-w-0 flex-1 rounded-2xl border border-dashed border-line px-4 py-3 text-start text-sm font-semibold text-muted">
+            {pick('sale.cashCustomer')}
+          </button>
+          <Help term="picker.walkIn" size="sm" />
+        </div>
       ) : null}
       {data?.length ? (
         <List>

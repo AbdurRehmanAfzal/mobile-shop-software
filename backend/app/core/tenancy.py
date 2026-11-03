@@ -106,7 +106,11 @@ def _touch(db: Session, user: User) -> None:
         return
     _touched[user.organisation_id] = now
     try:
-        db.execute(update(Organisation).where(Organisation.id == user.organisation_id).values(last_active_at=utcnow()))
+        db.execute(
+            update(Organisation)
+            .where(Organisation.id == user.organisation_id)
+            .values(last_active_at=utcnow())
+        )
         db.commit()
     except Exception:  # noqa: BLE001 — activity is best-effort, never blocks a request
         db.rollback()

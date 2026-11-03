@@ -6,6 +6,7 @@ import { ArrowDownLeft, ArrowUpRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
 import Bars from '@/components/charts/Bars'
+import Help from '@/components/Help'
 import { Empty, fmtDate, Pending } from '@/components/ui'
 import { withCur } from '@/lib/format'
 import { useGet } from '@/lib/queries'
@@ -32,6 +33,15 @@ interface Lending {
   entries: Entry[]
 }
 
+/** help per totals figure (docs/33) */
+const TOTAL_HELP: { key: string; helpKey: string }[] = [
+  { key: 'audit.lend.lent', helpKey: 'audit.lending.lent' },
+  { key: 'audit.lend.borrowed', helpKey: 'audit.lending.borrowed' },
+  { key: 'audit.lend.adjusted', helpKey: 'audit.lending.adjusted' },
+  { key: 'audit.lend.voided', helpKey: 'audit.lending.voided' },
+]
+const totalHelp = (k: string) => TOTAL_HELP.find((x) => x.key === k)?.helpKey
+
 const n = (v: M | number | null | undefined) => (v == null ? '—' : Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 }))
 const label = (bucket: string, g: string) => (g === 'month' ? bucket.slice(0, 7) : bucket.slice(5))
 
@@ -45,13 +55,13 @@ export default function LendingAuditPage() {
     <AuditLayout right={<SectionDownload sections={['lending']} name="len-den" />}>
       {!d ? <Pending error={error} retry={refetch} /> : (
         <>
-          <BiLabel text="audit.lend.hint" size="sm" tone="text-muted" />
+          <span className="flex items-center gap-1"><BiLabel text="audit.lend.hint" size="sm" tone="text-muted" /><Help term="audit.lending.what" size="sm" /></span>
           <section className="grid gap-2 sm:grid-cols-2">
             {([['owed_to_shop', 'audit.lend.owedToShop', 'bg-receivable-tint text-receivable', ArrowDownLeft], ['shop_owes', 'audit.lend.shopOwes', 'bg-payable-tint text-payable', ArrowUpRight]] as const).map(([k, t, tone, Icon]) => {
               const v = asOf ? d.as_of[k] : d[k]
               return (
                 <div key={k} className={`flex flex-col gap-1 rounded-3xl px-5 py-4 ${tone}`} data-testid={`lend-${k}`}>
-                  <div className="flex items-center gap-2"><Icon size={18} /><BiLabel text={t} size="md" bold tone="text-current" /></div>
+                  <div className="flex items-center gap-2"><Icon size={18} /><BiLabel text={t} size="md" bold tone="text-current" />{k === 'owed_to_shop' ? <Help term="audit.lending.owedToShop" size="sm" /> : <Help term="audit.lending.shopOwes" size="sm" />}</div>
                   <span className="num text-[30px] leading-tight" dir="ltr">{withCur(n(v.amount))}</span>
                   <span className={`opacity-80 ${small}`}><span className="num">{v.people}</span> {pick('audit.people')}</span>
                 </div>
@@ -62,19 +72,19 @@ export default function LendingAuditPage() {
           <div className="card grid grid-cols-2 gap-x-4 gap-y-2 sm:grid-cols-4" data-testid="lend-totals">
             {([['audit.lend.lent', d.totals.lent, `${d.totals.lent_count} · ${pick('audit.lend.prev')} ${n(d.totals.previous_lent)}`], ['audit.lend.borrowed', d.totals.borrowed, `${d.totals.borrowed_count} · ${pick('audit.lend.prev')} ${n(d.totals.previous_borrowed)}`], ['audit.lend.adjusted', d.totals.adjusted_on_bills, null], ['audit.lend.voided', d.totals.voided, null]] as const).map(([k, v, hint]) => (
               <span key={k} className="flex flex-col">
-                <span className={`text-muted ${small}`}>{pick(k)}</span>
+                <span className={`flex items-center gap-1 text-muted ${small}`}>{pick(k)}{totalHelp(k) ? <Help term={totalHelp(k) as string} size="sm" /> : null}</span>
                 <span className="num text-lg font-bold" dir="ltr">{typeof v === 'number' ? v : n(v)}</span>
                 {hint ? <span className={`text-muted ${small}`} dir="ltr">{hint}</span> : null}
               </span>
             ))}
           </div>
 
-          <BiLabel text="audit.lend.series" size="md" bold />
+          <span className="flex items-center gap-1"><BiLabel text="audit.lend.series" size="md" bold /><Help term="audit.lending.series" size="sm" /></span>
           <section className="card"><Bars data={d.series.map((x) => ({ label: label(x.bucket, d.granularity), value: Number(x.lent) + Number(x.borrowed), hint: `${pick('lending.lent')} ${n(x.lent)} · ${pick('lending.borrowed')} ${n(x.borrowed)}`, key: x.bucket }))} testid="lend-series" empty="audit.noData" /></section>
 
           {d.by_method.length ? (
             <>
-              <BiLabel text="audit.lend.byMethod" size="md" bold />
+              <span className="flex items-center gap-1"><BiLabel text="audit.lend.byMethod" size="md" bold /><Help term="audit.lending.byMethod" size="sm" /></span>
               <div className="card flex flex-col gap-1">
                 {d.by_method.map((m) => (
                   <div key={m.method} className={`flex items-center justify-between gap-2 ${small}`}>
@@ -88,7 +98,7 @@ export default function LendingAuditPage() {
 
           {d.due.length ? (
             <>
-              <BiLabel text="audit.lend.due" size="md" bold />
+              <span className="flex items-center gap-1"><BiLabel text="audit.lend.due" size="md" bold /><Help term="audit.lending.due" size="sm" /></span>
               <BiLabel text="audit.lend.dueHint" size="sm" tone="text-muted" />
               <div className="card divide-y divide-line p-0" data-testid="lend-due">
                 {d.due.map((r) => (
@@ -105,7 +115,7 @@ export default function LendingAuditPage() {
             </>
           ) : null}
 
-          <BiLabel text="audit.lend.people" size="md" bold />
+          <span className="flex items-center gap-1"><BiLabel text="audit.lend.people" size="md" bold /><Help term="audit.lending.people" size="sm" /></span>
           {!d.people.length ? <Empty text="audit.noData" /> : (
             <div className="card divide-y divide-line p-0" data-testid="lend-people">
               {d.people.map((r) => {
@@ -126,7 +136,7 @@ export default function LendingAuditPage() {
             </div>
           )}
 
-          <BiLabel text="audit.lend.entries" size="md" bold />
+          <span className="flex items-center gap-1"><BiLabel text="audit.lend.entries" size="md" bold /><Help term="audit.lending.entries" size="sm" /></span>
           {!d.entries.length ? <Empty text="audit.noData" /> : (
             <div className="card divide-y divide-line p-0" data-testid="lend-entries">
               {d.entries.map((e) => (

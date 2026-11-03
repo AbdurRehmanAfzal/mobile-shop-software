@@ -5,6 +5,7 @@
 import { Camera, Check, Copy, CreditCard, Download, KeyRound, MessageCircle, Printer, Send } from 'lucide-react'
 import { useRef, useState, type FormEvent } from 'react'
 import { BiAlert, BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { Chip, ErrorText, KV, Loading, MoneyText, PageHeader, Section, fmtDate } from '@/components/ui'
 import type { PlanOut } from '@/lib/auth'
 import { openPrintable, uploadFile } from '@/lib/files'
@@ -70,18 +71,18 @@ export default function FeesPage() {
   const tone = plan.status === 'locked' || plan.status === 'expired' ? 'bg-payable-tint text-payable' : plan.status === 'due_soon' ? 'bg-[#F59E0B]/15 text-[#92400E]' : 'bg-sell text-sell-fg'
   return (
     <div className="flex flex-col gap-4">
-      <PageHeader title="fees.title" />
+      <PageHeader title="fees.title" help={<Help term="more.tile.fees" />} />
       <div className={`flex flex-col gap-1 rounded-3xl p-4 ${tone}`}>
         <div className="flex items-center justify-between">
-          <BiLabel text="fees.yourPlan" size="sm" bold tone="text-current" />
+          <span className="flex items-center gap-1 [&_button]:text-current"><BiLabel text="fees.yourPlan" size="sm" bold tone="text-current" /><Help term="fees.plan" size="sm" /></span>
           <span className="rounded-full bg-black/10 px-2.5 py-0.5 text-xs font-bold uppercase">{plan.plan}</span>
         </div>
-        {fee ? <KV k="fees.monthly" v={<MoneyText value={plan.monthly_fee} tone="ink" size="lg" />} /> : null}
-        <KV k="fees.paidUntil" v={<span className="num" dir="ltr">{plan.expires_at ? fmtDate(plan.expires_at) : pick('admin.unlimited')}</span>} />
+        {fee ? <KV k="fees.monthly" v={<MoneyText value={plan.monthly_fee} tone="ink" size="lg" />} help="fees.monthly" /> : null}
+        <KV k="fees.paidUntil" v={<span className="num" dir="ltr">{plan.expires_at ? fmtDate(plan.expires_at) : pick('admin.unlimited')}</span>} help="fees.paidUntil" />
         {plan.days_left != null ? <span className={small}>{plan.days_left >= 0 ? pick('admin.daysLeft').replace('{{n}}', String(plan.days_left)) : pick('admin.expiredDays').replace('{{n}}', String(-plan.days_left))}</span> : null}
       </div>
 
-      <Section title="fees.payInto">
+      <Section title="fees.payInto" help="fees.payInto">
         {rem?.billing?.bank ? (
           <div className="card divide-y divide-line p-0" data-testid="fees-bank">
             {([['fees.bank', rem.billing.bank.bank_name], ['fees.accountTitle', rem.billing.bank.account_title], ['fees.reference', rem.billing.bank.account_number], ['fees.iban', rem.billing.bank.iban], ['fees.branch', rem.billing.bank.branch]] as const).filter(([, v]) => !!v).map(([k, v]) => (
@@ -113,49 +114,52 @@ export default function FeesPage() {
         {rem ? <a href={waLink(rem)} target="_blank" rel="noopener noreferrer" className="tap flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-emerald/40 bg-emerald-tint font-bold text-emerald-deep"><MessageCircle size={18} /> {pick('fees.support')}</a> : null}
       </Section>
 
-      <Section title="fees.reportTitle">
+      <Section title="fees.reportTitle" help="fees.report">
         {sent ? <BiAlert text="fees.sent" kind="success" /> : null}
         <form onSubmit={submit} className="flex flex-col gap-3">
           <div className="grid grid-cols-2 gap-2">
-            <BiInput label="fees.amount" type="number" inputMode="numeric" min={1} value={amt} onChange={(e) => setAmount(e.target.value)} required className="num" />
-            <BiInput label="fees.months" type="number" inputMode="numeric" min={1} max={36} value={months} onChange={(e) => setMonths(e.target.value)} className="num" />
+            <BiInput label="fees.amount" type="number" inputMode="numeric" min={1} value={amt} onChange={(e) => setAmount(e.target.value)} required className="num" help={<Help term="fees.amount" size="sm" />} />
+            <BiInput label="fees.months" type="number" inputMode="numeric" min={1} max={36} value={months} onChange={(e) => setMonths(e.target.value)} className="num" help={<Help term="fees.months" size="sm" />} />
           </div>
           <div>
-            <BiLabel text="fees.method" size="md" tone="text-muted" className="mb-1.5" />
+            <span className="mb-1.5 flex items-center gap-1"><BiLabel text="fees.method" size="md" tone="text-muted" /><Help term="fees.method" size="sm" /></span>
             <div className="flex flex-wrap gap-1.5">
               {(data.accounts.length ? data.accounts.map((a) => a.label) : ['Cash']).map((m) => (
                 <button key={m} type="button" aria-pressed={chosen === m} onClick={() => setMethod(m)} className={`tap h-10 rounded-full border-2 px-3.5 text-sm font-bold ${chosen === m ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'}`}>{m}</button>
               ))}
             </div>
           </div>
-          <BiInput label="fees.reference" value={reference} onChange={(e) => setReference(e.target.value)} maxLength={80} dir="ltr" />
-          <BiInput label="fees.paidOn" type="date" value={paidOn} onChange={(e) => setPaidOn(e.target.value)} dir="ltr" />
-          <button type="button" onClick={() => file.current?.click()} disabled={uploading} className={`tap flex min-h-14 items-center justify-center gap-2 rounded-2xl border-2 border-dashed px-4 font-bold ${proof ? 'border-emerald bg-emerald-tint text-emerald-deep' : 'border-line bg-surface text-ink'} disabled:opacity-60`}>
-            {proof ? <Check size={20} /> : <Camera size={20} />} {uploading ? '…' : pick(proof ? 'fees.proofDone' : 'fees.proof')}
-          </button>
+          <BiInput label="fees.reference" value={reference} onChange={(e) => setReference(e.target.value)} maxLength={80} dir="ltr" help={<Help term="fees.reference" size="sm" />} />
+          <BiInput label="fees.paidOn" type="date" value={paidOn} onChange={(e) => setPaidOn(e.target.value)} dir="ltr" help={<Help term="fees.paidOn" size="sm" />} />
+          <div className="flex items-center gap-1">
+            <button type="button" onClick={() => file.current?.click()} disabled={uploading} className={`tap flex min-h-14 min-w-0 flex-1 items-center justify-center gap-2 rounded-2xl border-2 border-dashed px-4 font-bold ${proof ? 'border-emerald bg-emerald-tint text-emerald-deep' : 'border-line bg-surface text-ink'} disabled:opacity-60`}>
+              {proof ? <Check size={20} /> : <Camera size={20} />} {uploading ? '…' : pick(proof ? 'fees.proofDone' : 'fees.proof')}
+            </button>
+            <Help term="fees.proof" size="sm" />
+          </div>
           <input ref={file} type="file" accept="image/*,application/pdf" className="hidden" data-testid="fee-proof" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; setUploading(true); try { setProof(await uploadFile(f, 'fee')) } finally { setUploading(false) } }} />
           <ErrorText error={report.error} />
           <BiButton type="submit" text="fees.send" icon={<Send size={20} />} full loading={report.isPending} disabled={!Number(amt) || !chosen} />
         </form>
       </Section>
 
-      <Section title="fees.code">
+      <Section title="fees.code" help="fees.code">
         <BiLabel text="fees.codeHint" size="sm" tone="text-muted" />
         {redeemed ? <BiAlert text={{ en: pick('fees.redeemed').replace('{{date}}', redeemed), ur: pick('fees.redeemed').replace('{{date}}', redeemed), roman: pick('fees.redeemed').replace('{{date}}', redeemed) }} kind="success" /> : null}
         <div className="grid grid-cols-[1fr_auto] gap-2">
-          <BiInput label="fees.codePaste" value={code} onChange={(e) => setCode(e.target.value)} dir="ltr" className="num" data-testid="renewal-code" />
+          <BiInput label="fees.codePaste" value={code} onChange={(e) => setCode(e.target.value)} dir="ltr" className="num" data-testid="renewal-code" help={<Help term="fees.codePaste" size="sm" />} />
           <BiButton text="fees.redeem" icon={<KeyRound size={18} />} variant="secondary" disabled={code.trim().length < 10} loading={redeem.isPending} onClick={async () => { const r = await redeem.mutateAsync({ code: code.trim() }); setRedeemed(r.until ? fmtDate(r.until) : '—'); setCode(''); refetch(); void refetchRem(); void refreshBar('open') }} />
         </div>
         <ErrorText error={redeem.error} />
       </Section>
 
-      <Section title="fees.backup">
+      <Section title="fees.backup" help="fees.backup">
         <BiLabel text="fees.backupHint" size="sm" tone="text-muted" />
         <BiButton text="fees.backup" icon={<Download size={20} />} variant="secondary" full loading={backing} onClick={async () => { setBacking(true); try { await backupNow() } finally { setBacking(false) } }} data-testid="fees-backup" />
       </Section>
 
       {data.payments.length ? (
-        <Section title="fees.history">
+        <Section title="fees.history" help="fees.history">
           <div className="card divide-y divide-line p-0">
             {data.payments.map((p) => (
               <div key={p.id} className="flex flex-col gap-1 px-4 py-3">

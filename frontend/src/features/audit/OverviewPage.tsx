@@ -6,6 +6,7 @@ import { AlertTriangle, ArrowDownLeft, ArrowUpRight, BookOpen, CheckCircle2, Lan
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { Pending } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
@@ -33,6 +34,19 @@ export interface Overview {
 }
 interface Reconcile { ok: boolean; checks: { key: string; ok: boolean; left: string | number; right: string | number; diff: string | number; name?: string }[] }
 
+/** one help text per stock alert kind the server sends (docs/33); unknown kinds get no icon */
+const ALERT_HELP: { key: string; helpKey: string }[] = [
+  { key: 'dead_stock', helpKey: 'audit.overview.alert.dead_stock' },
+  { key: 'high_value_slow', helpKey: 'audit.overview.alert.high_value_slow' },
+  { key: 'low_margin', helpKey: 'audit.overview.alert.low_margin' },
+  { key: 'missing_cost', helpKey: 'audit.overview.alert.missing_cost' },
+  { key: 'missing_asking', helpKey: 'audit.overview.alert.missing_asking' },
+  { key: 'verification_pending', helpKey: 'audit.overview.alert.verification_pending' },
+  { key: 'verification_flagged', helpKey: 'audit.overview.alert.verification_flagged' },
+  { key: 'repeat_returns', helpKey: 'audit.overview.alert.repeat_returns' },
+]
+const alertHelp = (k: string) => ALERT_HELP.find((a) => a.key === k)?.helpKey
+
 const n = (v: M | number | null | undefined) => (v == null ? '—' : Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 }))
 
 export default function OverviewPage() {
@@ -59,13 +73,13 @@ export default function OverviewPage() {
           {/* hero: net sales and real profit for the period */}
           <section className="grid gap-2 sm:grid-cols-2">
             <Link to={`/invoices?kind=sale&${range}`} className="tap flex flex-col gap-1 rounded-3xl bg-sell px-5 py-4 text-sell-fg" data-testid="kpi-sales">
-              <div className="flex items-center justify-between"><BiLabel text="audit.netSales" size="md" bold tone="text-current" />{delta(data.sales.net_sales, data.previous.net_sales)}</div>
+              <div className="flex items-center justify-between"><span className="flex items-center gap-1"><BiLabel text="audit.netSales" size="md" bold tone="text-current" /><Help term="audit.overview.netSales" size="sm" /></span>{delta(data.sales.net_sales, data.previous.net_sales)}</div>
               <span className="num text-[32px] leading-tight" dir="ltr">{withCur(n(data.sales.net_sales))}</span>
               <span className={`opacity-80 ${small}`}><span className="num">{data.sales.invoices}</span> {pick('audit.bills')} · <span className="num">{data.sales.phones_sold}</span> {pick('audit.phones')}{Number(data.sales.discounts) ? <> · {pick('counter.discounts')} <span className="num" dir="ltr">{n(data.sales.discounts)}</span></> : null}{Number(data.sales.sales_returns) ? <> · {pick('counter.salesReturns')} <span className="num" dir="ltr">{n(data.sales.sales_returns)}</span></> : null}</span>
             </Link>
             {canCost && data.profit ? (
               <Link to="/reports" className={`tap flex flex-col gap-1 rounded-3xl px-5 py-4 ${Number(data.profit.net_profit) >= 0 ? 'bg-ink text-ground' : 'bg-expense text-expense-fg'}`} data-testid="kpi-profit">
-                <div className="flex items-center justify-between"><BiLabel text={Number(data.profit.net_profit) >= 0 ? 'counter.netProfit' : 'counter.netLoss'} size="md" bold tone="text-current" />{data.previous.net_profit ? delta(data.profit.net_profit, data.previous.net_profit) : null}</div>
+                <div className="flex items-center justify-between"><span className="flex items-center gap-1"><BiLabel text={Number(data.profit.net_profit) >= 0 ? 'counter.netProfit' : 'counter.netLoss'} size="md" bold tone="text-current" /><Help term="audit.overview.realProfit" size="sm" /></span>{data.previous.net_profit ? delta(data.profit.net_profit, data.previous.net_profit) : null}</div>
                 <span className="num text-[32px] leading-tight" dir="ltr">{withCur(n(data.profit.net_profit))}</span>
                 <span className={`opacity-80 ${small}`}>{pick('counter.grossProfit')} <span className="num" dir="ltr">{n(data.profit.gross_profit)}</span> · {pick('counter.cogs')} <span className="num" dir="ltr">{n(data.profit.cogs)}</span> · {pick('audit.expenses')} <span className="num" dir="ltr">{n(data.profit.operating_expenses)}</span></span>
               </Link>
@@ -74,51 +88,51 @@ export default function OverviewPage() {
 
           {data.attention && (data.attention.verification_pending + data.attention.verification_flagged + data.attention.alerts_total + data.attention.installments_overdue + data.attention.installments_due_today + (data.attention.lending_late ?? 0) + (data.attention.lending_we_owe_due ?? 0)) > 0 ? (
             <section className="card flex flex-col gap-2" data-testid="audit-attention">
-              <div className="flex items-center gap-2"><AlertTriangle size={18} className="text-receivable" /><BiLabel text="audit.att.title" size="md" bold /></div>
+              <div className="flex items-center gap-2"><AlertTriangle size={18} className="text-receivable" /><BiLabel text="audit.att.title" size="md" bold /><Help term="audit.overview.attention" size="sm" /></div>
               <div className="flex flex-wrap gap-1.5">
-                {data.attention.verification_pending + data.attention.verification_flagged ? <Link to="/audit/stock?tab=verification" className="tap rounded-full border border-line bg-surface px-3 py-1.5"><span className={small}>{pick('audit.att.idChecks')} <span className="num">{data.attention.verification_pending + data.attention.verification_flagged}</span>{data.attention.verification_flagged ? <span className="text-payable"> · {pick('stock.verification.flagged')} <span className="num">{data.attention.verification_flagged}</span></span> : null}</span></Link> : null}
-                {Object.entries(data.attention.alerts).map(([k, v]) => <Link key={k} to="/audit/stock?tab=ageing" className="tap rounded-full border border-line bg-surface px-3 py-1.5"><span className={small}>{pick(`audit.alert.${k}`)} <span className="num">{v}</span></span></Link>)}
-                {data.attention.installments_overdue ? <Link to="/installments" className="tap rounded-full border border-payable/40 bg-payable-tint px-3 py-1.5 text-payable"><span className={small}>{pick('audit.att.lateInstallments')} <span className="num">{data.attention.installments_overdue}</span> · <span className="num" dir="ltr">{withCur(n(data.attention.installments_late_amount))}</span></span></Link> : null}
-                {data.attention.lending_late ? <Link to={`/audit/lending?${range}`} className="tap rounded-full border border-payable/40 bg-payable-tint px-3 py-1.5 text-payable"><span className={small}>{pick('audit.att.lendingLate')} <span className="num">{data.attention.lending_late}</span> · <span className="num" dir="ltr">{withCur(n(data.attention.lending_late_amount))}</span></span></Link> : null}
-                {data.attention.lending_we_owe_due ? <Link to={`/audit/lending?${range}`} className="tap rounded-full border border-line bg-surface px-3 py-1.5"><span className={small}>{pick('audit.att.lendingWeOwe')} <span className="num">{data.attention.lending_we_owe_due}</span> · <span className="num" dir="ltr">{withCur(n(data.attention.lending_we_owe_amount))}</span></span></Link> : null}
-                {data.attention.installments_due_today ? <Link to="/installments" className="tap rounded-full border border-line bg-surface px-3 py-1.5"><span className={small}>{pick('audit.att.dueToday')} <span className="num">{data.attention.installments_due_today}</span></span></Link> : null}
+                {data.attention.verification_pending + data.attention.verification_flagged ? <Link to="/audit/stock?tab=verification" className="tap rounded-full border border-line bg-surface px-3 py-1.5"><span className={`inline-flex items-center gap-1 ${small}`}>{pick('audit.att.idChecks')} <span className="num">{data.attention.verification_pending + data.attention.verification_flagged}</span>{data.attention.verification_flagged ? <span className="text-payable"> · {pick('stock.verification.flagged')} <span className="num">{data.attention.verification_flagged}</span></span> : null}<Help term="audit.overview.att.idChecks" size="sm" /></span></Link> : null}
+                {Object.entries(data.attention.alerts).map(([k, v]) => <Link key={k} to="/audit/stock?tab=ageing" className="tap rounded-full border border-line bg-surface px-3 py-1.5"><span className={`inline-flex items-center gap-1 ${small}`}>{pick(`audit.alert.${k}`)} <span className="num">{v}</span>{alertHelp(k) ? <Help term={alertHelp(k) as string} size="sm" /> : null}</span></Link>)}
+                {data.attention.installments_overdue ? <Link to="/installments" className="tap rounded-full border border-payable/40 bg-payable-tint px-3 py-1.5 text-payable"><span className={`inline-flex items-center gap-1 ${small}`}>{pick('audit.att.lateInstallments')} <span className="num">{data.attention.installments_overdue}</span> · <span className="num" dir="ltr">{withCur(n(data.attention.installments_late_amount))}</span><Help term="audit.overview.att.lateInstallments" size="sm" /></span></Link> : null}
+                {data.attention.lending_late ? <Link to={`/audit/lending?${range}`} className="tap rounded-full border border-payable/40 bg-payable-tint px-3 py-1.5 text-payable"><span className={`inline-flex items-center gap-1 ${small}`}>{pick('audit.att.lendingLate')} <span className="num">{data.attention.lending_late}</span> · <span className="num" dir="ltr">{withCur(n(data.attention.lending_late_amount))}</span><Help term="audit.overview.att.lendingLate" size="sm" /></span></Link> : null}
+                {data.attention.lending_we_owe_due ? <Link to={`/audit/lending?${range}`} className="tap rounded-full border border-line bg-surface px-3 py-1.5"><span className={`inline-flex items-center gap-1 ${small}`}>{pick('audit.att.lendingWeOwe')} <span className="num">{data.attention.lending_we_owe_due}</span> · <span className="num" dir="ltr">{withCur(n(data.attention.lending_we_owe_amount))}</span><Help term="audit.overview.att.lendingWeOwe" size="sm" /></span></Link> : null}
+                {data.attention.installments_due_today ? <Link to="/installments" className="tap rounded-full border border-line bg-surface px-3 py-1.5"><span className={`inline-flex items-center gap-1 ${small}`}>{pick('audit.att.dueToday')} <span className="num">{data.attention.installments_due_today}</span><Help term="audit.overview.att.dueToday" size="sm" /></span></Link> : null}
               </div>
             </section>
           ) : null}
 
           {/* flows of the period */}
-          <BiLabel text="audit.inPeriod" size="md" bold />
+          <span className="flex items-center gap-1"><BiLabel text="audit.inPeriod" size="md" bold /><Help term="audit.overview.inPeriod" size="sm" /></span>
           <section className="grid grid-cols-2 gap-2 lg:grid-cols-4">
-            <Tile to={`/invoices?kind=purchase&${range}`} icon={Package} tone="bg-buy text-buy-fg" label="audit.purchases" value={n(data.purchases.purchases_net)} sub={<><span className="num">{data.purchases.purchases}</span> {pick('audit.bills')} · <span className="num">{data.purchases.phones_bought}</span> {pick('audit.phones')}</>} testid="kpi-purchases" />
-            <Tile to="/expenses" icon={Wallet} tone="bg-expense text-expense-fg" label="audit.expenses" value={n(data.expenses.total)} sub={delta(data.expenses.total, data.previous.total_expenses) ?? <span>{pick('audit.vsPrevious')}: <span className="num" dir="ltr">{n(data.previous.total_expenses)}</span></span>} testid="kpi-expenses" />
-            <Tile to="/more/cash" icon={ArrowDownLeft} tone="bg-emerald-tint text-emerald-deep" label="audit.moneyIn" value={n(data.money.inflows)} sub={<span>{pick('audit.vsPrevious')}: <span className="num" dir="ltr">{n(data.previous.inflows)}</span></span>} testid="kpi-inflows" />
-            <Tile to="/more/cash" icon={ArrowUpRight} tone="bg-payable-tint text-payable" label="audit.moneyOut" value={n(data.money.outflows)} sub={<span>{pick('audit.vsPrevious')}: <span className="num" dir="ltr">{n(data.previous.outflows)}</span></span>} testid="kpi-outflows" />
+            <Tile to={`/invoices?kind=purchase&${range}`} icon={Package} tone="bg-buy text-buy-fg" label="audit.purchases" help="audit.overview.purchases" value={n(data.purchases.purchases_net)} sub={<><span className="num">{data.purchases.purchases}</span> {pick('audit.bills')} · <span className="num">{data.purchases.phones_bought}</span> {pick('audit.phones')}</>} testid="kpi-purchases" />
+            <Tile to="/expenses" icon={Wallet} tone="bg-expense text-expense-fg" label="audit.expenses" help="audit.overview.expenses" value={n(data.expenses.total)} sub={delta(data.expenses.total, data.previous.total_expenses) ?? <span>{pick('audit.vsPrevious')}: <span className="num" dir="ltr">{n(data.previous.total_expenses)}</span></span>} testid="kpi-expenses" />
+            <Tile to="/more/cash" icon={ArrowDownLeft} tone="bg-emerald-tint text-emerald-deep" label="audit.moneyIn" help="audit.overview.moneyIn" value={n(data.money.inflows)} sub={<span>{pick('audit.vsPrevious')}: <span className="num" dir="ltr">{n(data.previous.inflows)}</span></span>} testid="kpi-inflows" />
+            <Tile to="/more/cash" icon={ArrowUpRight} tone="bg-payable-tint text-payable" label="audit.moneyOut" help="audit.overview.moneyOut" value={n(data.money.outflows)} sub={<span>{pick('audit.vsPrevious')}: <span className="num" dir="ltr">{n(data.previous.outflows)}</span></span>} testid="kpi-outflows" />
           </section>
-          {Number(data.money.transfers) ? <BiLabel text={{ en: `${pick('audit.transfersNote')} ${withCur(n(data.money.transfers))}`, ur: `${pick('audit.transfersNote')} ${withCur(n(data.money.transfers))}` }} size="sm" tone="text-muted" /> : null}
+          {Number(data.money.transfers) ? <span className="flex items-center gap-1"><BiLabel text={{ en: `${pick('audit.transfersNote')} ${withCur(n(data.money.transfers))}`, ur: `${pick('audit.transfersNote')} ${withCur(n(data.money.transfers))}` }} size="sm" tone="text-muted" /><Help term="audit.overview.transfers" size="sm" /></span> : null}
 
           {/* balances: opening → closing, as-of, current */}
-          <BiLabel text={asOf ? 'audit.balancesAsOf' : 'audit.balances'} size="md" bold />
+          <span className="flex items-center gap-1"><BiLabel text={asOf ? 'audit.balancesAsOf' : 'audit.balances'} size="md" bold /><Help term="audit.overview.balances" size="sm" /></span>
           <section className="grid gap-2 sm:grid-cols-2">
-            <BalanceCard to="/more/cash" icon={Landmark} tone="bg-sell text-sell-fg" label="audit.cashBank" bal={data.money} asOf={asOf} testid="kpi-money"
+            <BalanceCard to="/more/cash" icon={Landmark} tone="bg-sell text-sell-fg" label="audit.cashBank" help="audit.overview.cashBank" bal={data.money} asOf={asOf} testid="kpi-money"
               extra={<div className={`flex flex-wrap gap-x-3 ${small}`}>{data.money.accounts.map((a) => <span key={a.cash_account_id}>{ur && a.name_ur ? a.name_ur : a.name} <span className="num" dir="ltr">{n(asOf ? a.as_of : a.closing)}</span></span>)}</div>} />
-            <BalanceCard to="/stock/summary" icon={Smartphone} tone="bg-stockt text-stockt-fg" label="audit.stock" bal={{ opening: String(data.stock.opening.count), closing: String(data.stock.closing.count), as_of: String(data.stock.as_of.count), current: String(data.stock.current.count) }} asOf={asOf} unit={pick('audit.phones')} testid="kpi-stock"
+            <BalanceCard to="/stock/summary" icon={Smartphone} tone="bg-stockt text-stockt-fg" label="audit.stock" help="audit.overview.stock" bal={{ opening: String(data.stock.opening.count), closing: String(data.stock.closing.count), as_of: String(data.stock.as_of.count), current: String(data.stock.current.count) }} asOf={asOf} unit={pick('audit.phones')} testid="kpi-stock"
               extra={<div className={small}>{canCost && data.stock.current.cost_value != null ? <>{pick('audit.atCost')} <span className="num" dir="ltr">{n((asOf ? data.stock.as_of : data.stock.closing).cost_value)}</span> · </> : null}{pick('audit.atAsking')} <span className="num" dir="ltr">{n((asOf ? data.stock.as_of : data.stock.closing).asking_value)}</span></div>} />
-            <BalanceCard to="/khata?f=get" icon={BookOpen} tone="bg-receivable-tint text-receivable" label="audit.receivable" bal={data.debt.receivable} asOf={asOf} testid="kpi-receivable"
+            <BalanceCard to="/khata?f=get" icon={BookOpen} tone="bg-receivable-tint text-receivable" label="audit.receivable" help="audit.overview.receivable" bal={data.debt.receivable} asOf={asOf} testid="kpi-receivable"
               extra={<div className={small}>{pick('audit.receivedInPeriod')} <span className="num" dir="ltr">{n(data.debt.received_in_period)}</span> · <span className="num">{data.debt.receivable.parties}</span> {pick('audit.people')}</div>} />
-            <BalanceCard to="/khata?f=give" icon={Receipt} tone="bg-payable-tint text-payable" label="audit.payable" bal={data.debt.payable} asOf={asOf} testid="kpi-payable"
+            <BalanceCard to="/khata?f=give" icon={Receipt} tone="bg-payable-tint text-payable" label="audit.payable" help="audit.overview.payable" bal={data.debt.payable} asOf={asOf} testid="kpi-payable"
               extra={<div className={small}>{pick('audit.paidInPeriod')} <span className="num" dir="ltr">{n(data.debt.paid_in_period)}</span> · <span className="num">{data.debt.payable.parties}</span> {pick('audit.people')}</div>} />
           </section>
 
           {Object.values(data.money.by_kind).some((v) => Number(v) > 0) ? (
             <section className="card" data-testid="overview-donut">
-              <BiLabel text="audit.chart.moneyByKind" size="sm" tone="text-muted" bold />
+              <span className="flex items-center gap-1"><BiLabel text="audit.chart.moneyByKind" size="sm" tone="text-muted" bold /><Help term="audit.overview.moneyByKind" size="sm" /></span>
               <Donut data={Object.entries(data.money.by_kind).map(([k, v]) => ({ label: pick(`pay.${k}`), value: Math.max(0, Number(v)), key: k }))} empty="audit.noData" />
             </section>
           ) : null}
           {/* the books prove themselves */}
           {rc ? (
             <section className="card flex flex-col gap-2" data-testid="audit-checks">
-              <div className="flex items-center gap-2"><ShieldCheck size={18} className={rc.ok ? 'text-emerald-deep' : 'text-payable'} /><BiLabel text={rc.ok ? 'audit.checksOk' : 'audit.checksFail'} size="md" bold /></div>
+              <div className="flex items-center gap-2"><ShieldCheck size={18} className={rc.ok ? 'text-emerald-deep' : 'text-payable'} /><BiLabel text={rc.ok ? 'audit.checksOk' : 'audit.checksFail'} size="md" bold /><Help term="audit.overview.checks" size="sm" /></div>
               <div className={`flex flex-wrap gap-x-4 gap-y-1 ${small}`}>
                 {rc.checks.map((c, i) => (
                   <span key={i} className={`inline-flex items-center gap-1 ${c.ok ? 'text-muted' : 'text-payable'}`}>{c.ok ? <CheckCircle2 size={13} /> : <XCircle size={13} />}{pick(`audit.check.${c.key}`)}{c.name ? ` · ${c.name}` : ''}{!c.ok ? <span className="num" dir="ltr"> ({String(c.diff)})</span> : null}</span>
@@ -129,7 +143,7 @@ export default function OverviewPage() {
 
           <div className={`flex flex-col gap-1 text-muted ${small}`}>
             {data.coverage.first_day ? <span>{pick('audit.coverage')} <span dir="ltr">{data.coverage.first_day}</span></span> : <span>{pick('audit.noRecords')}</span>}
-            <span>{pick('audit.limitations')}</span>
+            <span className="flex items-center gap-1">{pick('audit.limitations')}<Help term="audit.overview.limitations" size="sm" /></span>
           </div>
         </>
       )}
@@ -137,13 +151,14 @@ export default function OverviewPage() {
   )
 }
 
-function Tile({ to, icon: Icon, tone, label, value, sub, testid }: { to: string; icon: LucideIcon; tone: string; label: string; value: string; sub?: ReactNode; testid?: string }) {
+function Tile({ to, icon: Icon, tone, label, help, value, sub, testid }: { to: string; icon: LucideIcon; tone: string; label: string; help: string; value: string; sub?: ReactNode; testid?: string }) {
   const { ur, cls } = useLang()
   return (
     <Link to={to} className="card tap flex min-w-0 flex-col gap-2" data-testid={testid}>
       <div className="flex items-center gap-2">
         <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${tone}`}><Icon size={18} /></span>
         <BiLabel text={label} size="sm" tone="text-muted" bold />
+        <Help term={help} size="sm" />
       </div>
       <span className="num text-2xl font-bold" dir="ltr">{value}</span>
       {sub ? <span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{sub}</span> : null}
@@ -151,7 +166,7 @@ function Tile({ to, icon: Icon, tone, label, value, sub, testid }: { to: string;
   )
 }
 
-function BalanceCard({ to, icon: Icon, tone, label, bal, asOf, unit, extra, testid }: { to: string; icon: LucideIcon; tone: string; label: string; bal: { opening: M; closing: M; as_of: M; current: M }; asOf: boolean; unit?: string; extra?: ReactNode; testid?: string }) {
+function BalanceCard({ to, icon: Icon, tone, label, help, bal, asOf, unit, extra, testid }: { to: string; icon: LucideIcon; tone: string; label: string; help: string; bal: { opening: M; closing: M; as_of: M; current: M }; asOf: boolean; unit?: string; extra?: ReactNode; testid?: string }) {
   const { pick, ur, cls } = useLang()
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   const main = asOf ? bal.as_of : bal.closing
@@ -160,6 +175,7 @@ function BalanceCard({ to, icon: Icon, tone, label, bal, asOf, unit, extra, test
       <div className="flex items-center gap-2">
         <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${tone}`}><Icon size={18} /></span>
         <BiLabel text={label} size="sm" tone="text-muted" bold />
+        <Help term={help} size="sm" />
       </div>
       <div className="flex items-end justify-between gap-2">
         <span className="num text-2xl font-bold" dir="ltr">{unit ? `${n(main)} ${unit}` : `${withCur(n(main))}`}</span>

@@ -204,6 +204,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
 
   return (
     <div className="flex flex-col gap-3">
+      {edit ? null : <span className="flex items-center gap-1"><BiLabel text="devcat.what" size="md" tone="text-muted" /><Help term="device.category" size="sm" /></span>}
       {edit ? null : (
         <div className="grid grid-cols-3 gap-2" role="group" aria-label={pick('devcat.what')}>
           {(['phone', 'tablet', 'watch'] as const).map((c) => {
@@ -220,7 +221,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
       )}
       {phone || edit ? null : (
         <>
-          <BiLabel text="devx.connection" size="md" tone="text-muted" />
+          <span className="flex items-center gap-1"><BiLabel text="devx.connection" size="md" tone="text-muted" /><Help term="device.connection" size="sm" /></span>
           <BiSegmented<'no' | 'yes'>
             value={d.cellular ? 'yes' : 'no'}
             onChange={(v) => setD((x) => ({ ...x, cellular: v === 'yes', imei1: v === 'yes' ? x.imei1 : '' }))}
@@ -228,7 +229,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
           />
         </>
       )}
-      {sim ? <ImeiInput label="stock.imei" help={<Help term="imei" />} disabled={edit} placeholder={t('stock.imeiPlaceholder')} value={d.imei1} onChange={(v) => set('imei1', v)} exclude={d.imei2} autoFocus={!initial.imei1} /> : null}
+      {sim ? <ImeiInput label="stock.imei" help={<Help term="imei" size="sm" />} disabled={edit} placeholder={t('stock.imeiPlaceholder')} value={d.imei1} onChange={(v) => set('imei1', v)} exclude={d.imei2} autoFocus={!initial.imei1} /> : null}
       {sim && imeiDigits.length === 15 && lookup ? (
         <div className="flex flex-wrap gap-1.5">
           {!lookup.luhn_ok ? <Chip text="stock.luhnBad" tone="warn" /> : null}
@@ -245,16 +246,16 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
         </div>
       ) : null}
       {phone ? null : (
-        <BiInput label={sim ? 'devx.serialOpt' : 'devcat.serial'} value={d.serial} onChange={(e) => set('serial', e.target.value.toUpperCase())} disabled={edit} maxLength={24} dir="ltr" className="num" hint={sim ? undefined : 'devcat.serialHint'} />
+        <BiInput label={sim ? 'devx.serialOpt' : 'devcat.serial'} help={<Help term="device.serial" size="sm" />} value={d.serial} onChange={(e) => set('serial', e.target.value.toUpperCase())} disabled={edit} maxLength={24} dir="ltr" className="num" hint={sim ? undefined : 'devcat.serialHint'} />
       )}
-      {phone ? <ImeiInput label="stock.imei2" value={d.imei2} onChange={(v) => set('imei2', v)} exclude={toLatinDigits(d.imei1).replace(/\D/g, '')} /> : null}
+      {phone ? <ImeiInput label="stock.imei2" help={<Help term="device.imei2" size="sm" />} value={d.imei2} onChange={(v) => set('imei2', v)} exclude={toLatinDigits(d.imei1).replace(/\D/g, '')} /> : null}
       <div className="grid grid-cols-2 gap-2">
-        <BiInput label="barcode.manufacturer" value={d.manufacturer_code ?? ''} onChange={(e) => set('manufacturer_code', e.target.value)} dir="ltr" className="num" maxLength={64} />
-        <BiInput label="barcode.custom" value={d.barcode ?? ''} onChange={(e) => set('barcode', e.target.value)} dir="ltr" className="num" maxLength={64} disabled={edit} />
+        <BiInput label="barcode.manufacturer" help={<Help term="label.manufacturer" size="sm" />} value={d.manufacturer_code ?? ''} onChange={(e) => set('manufacturer_code', e.target.value)} dir="ltr" className="num" maxLength={64} />
+        <BiInput label="barcode.custom" help={<Help term="label.ownBarcode" size="sm" />} value={d.barcode ?? ''} onChange={(e) => set('barcode', e.target.value)} dir="ltr" className="num" maxLength={64} disabled={edit} />
       </div>
 
       <div>
-        <BiLabel text="stock.brand" size="md" tone="text-muted" className="mb-1.5" />
+        <span className="flex items-center gap-1 mb-1.5"><BiLabel text="stock.brand" size="md" tone="text-muted" /><Help term="device.brand" size="sm" /></span>
         <div className="flex flex-wrap gap-1.5">
           {brands?.map((b) => (
             <button key={b.id} type="button" onClick={() => { set('brand_id', b.id); set('brand_name', b.name); set('model_id', ''); set('model_name', '') }} className={`tap rounded-full border px-3 py-1.5 text-sm font-bold ${d.brand_id === b.id ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-muted'}`}>
@@ -273,7 +274,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
       </div>
       {d.brand_id ? (
         <div>
-          <BiLabel text="stock.model" size="md" tone="text-muted" className="mb-1.5" />
+          <span className="flex items-center gap-1 mb-1.5"><BiLabel text="stock.model" size="md" tone="text-muted" /><Help term="device.model" size="sm" /></span>
           {d.model_id ? (
             <button type="button" onClick={() => set('model_id', '')} className="tap w-full rounded-2xl border border-emerald bg-emerald-tint px-4 py-3 text-start font-bold text-emerald-deep">
               {d.model_name}
@@ -305,7 +306,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
       ) : null}
       {category === 'watch' ? (
         <div>
-          <BiLabel text="devx.size" size="md" tone="text-muted" className="mb-1.5" />
+          <span className="flex items-center gap-1 mb-1.5"><BiLabel text="devx.size" size="md" tone="text-muted" /><Help term="device.watchSize" size="sm" /></span>
           <div className="flex flex-wrap gap-1.5">
             {WATCH_SIZES.map((mm) => (
               <button key={mm} type="button" aria-pressed={d.size_mm === String(mm)} onClick={() => set('size_mm', d.size_mm === String(mm) ? '' : String(mm))} className={`tap num min-h-11 rounded-full border-2 px-3.5 text-sm ${d.size_mm === String(mm) ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'}`}>
@@ -319,7 +320,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
       <div className={`grid gap-2 ${category === 'watch' ? 'grid-cols-1' : 'grid-cols-2'}`}>
         {category === 'watch' ? null : (
         <div>
-          <BiLabel text="stock.storage" size="md" tone="text-muted" className="mb-1.5" />
+          <span className="flex items-center gap-1 mb-1.5"><BiLabel text="stock.storage" size="md" tone="text-muted" /><Help term="device.storage" size="sm" /></span>
           <select value={d.storage_id} onChange={(e) => set('storage_id', e.target.value)} className="min-h-12 w-full rounded-2xl border border-line bg-surface px-3 font-semibold">
             <option value="">—</option>
             {storages?.map((s) => (
@@ -342,7 +343,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
         </div>
         )}
         <div>
-          <BiLabel text="stock.colour" size="md" tone="text-muted" className="mb-1.5" />
+          <span className="flex items-center gap-1 mb-1.5"><BiLabel text="stock.colour" size="md" tone="text-muted" /><Help term="device.colour" size="sm" /></span>
           <select value={d.colour_id} onChange={(e) => set('colour_id', e.target.value)} className="min-h-12 w-full rounded-2xl border border-line bg-surface px-3 font-semibold">
             <option value="">—</option>
             {colours?.map((c) => (
@@ -366,30 +367,30 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
         </div>
       </div>
 
-      <BiLabel text="stock.conditionShort" size="md" tone="text-muted" />
+      <span className="flex items-center gap-1"><BiLabel text="stock.conditionShort" size="md" tone="text-muted" /><Help term="device.condition" size="sm" /></span>
       <BiSegmented<DeviceCondition> value={d.condition} onChange={(v) => set('condition', v)} options={[{ value: 'box_pack', text: 'stock.condition.box_pack' }, { value: 'open_box', text: 'stock.condition.open_box' }, { value: 'used', text: 'stock.condition.used' }, ...(phone ? [{ value: 'patched' as const, text: 'stock.condition.patched' }] : [])]} />
-      {d.condition === 'patched' ? <BiInput label="stock.patchDetails" value={d.patch_details} onChange={(e) => set('patch_details', e.target.value)} required /> : null}
+      {d.condition === 'patched' ? <BiInput label="stock.patchDetails" help={<Help term="device.patch" size="sm" />} value={d.patch_details} onChange={(e) => set('patch_details', e.target.value)} required /> : null}
       {!phone && d.condition !== 'box_pack' ? (
-        <BiInput label="devx.battery" type="number" inputMode="numeric" min={1} max={100} value={d.battery_health} onChange={(e) => set('battery_health', e.target.value)} hint="devx.batteryHint" error={batteryOk ? null : 'devx.batteryBad'} className="num" />
+        <BiInput label="devx.battery" help={<Help term="device.battery" size="sm" />} type="number" inputMode="numeric" min={1} max={100} value={d.battery_health} onChange={(e) => set('battery_health', e.target.value)} hint="devx.batteryHint" error={batteryOk ? null : 'devx.batteryBad'} className="num" />
       ) : null}
 
-      {showPta ? <div className="flex items-center gap-1"><BiLabel text="stock.ptaLabel" size="md" tone="text-muted" /><Help term="pta" /></div> : null}
+      {showPta ? <div className="flex items-center gap-1"><BiLabel text="stock.ptaLabel" size="md" tone="text-muted" /><Help term="device.pta" size="sm" /></div> : null}
       {showPta ? <BiSegmented<PtaStatus> value={d.pta_status} onChange={(v) => set('pta_status', v)} options={[{ value: 'pta_approved', text: 'stock.pta.pta_approved' }, { value: 'non_pta', text: 'stock.pta.non_pta' }, ...(phone ? [{ value: 'jv' as const, text: 'stock.pta.jv' }] : [])]} /> : null}
-      {needsSim ? <BiInput label="stock.simTime" type="number" inputMode="numeric" min={0} max={60} value={d.sim_time_months} onChange={(e) => set('sim_time_months', e.target.value)} required /> : null}
+      {needsSim ? <BiInput label="stock.simTime" help={<Help term="device.simTime" size="sm" />} type="number" inputMode="numeric" min={0} max={60} value={d.sim_time_months} onChange={(e) => set('sim_time_months', e.target.value)} required /> : null}
 
       {edit ? null : (
       <div className="grid grid-cols-2 items-start gap-2">
-        <BiInput label="purchase.cost" help={<Help term="cost" />} type="number" inputMode="decimal" min={0} value={d.cost} onChange={(e) => set('cost', e.target.value)} required />
-        <BiInput label="stock.asking" help={<Help term="asking" />} type="number" inputMode="decimal" min={0} value={d.asking_price} onChange={(e) => set('asking_price', e.target.value)} error={askingLow ? 'field.askingBelowCost' : null} />
+        <BiInput label="purchase.cost" help={<Help term="cost" size="sm" />} type="number" inputMode="decimal" min={0} value={d.cost} onChange={(e) => set('cost', e.target.value)} required />
+        <BiInput label="stock.asking" help={<Help term="asking" size="sm" />} type="number" inputMode="decimal" min={0} value={d.asking_price} onChange={(e) => set('asking_price', e.target.value)} error={askingLow ? 'field.askingBelowCost' : null} />
       </div>
       )}
       {!edit && d.model_id ? <PriceHint modelId={d.model_id} storageId={d.storage_id || null} condition={d.condition} onUse={(p) => set('asking_price', String(p))} /> : null}
-      <BiInput label={{ en: 'Warranty (months)', ur: 'وارنٹی (مہینے)' }} type="number" inputMode="numeric" min={0} max={60} value={d.warranty_months} onChange={(e) => set('warranty_months', e.target.value)} />
+      <BiInput label={{ en: 'Warranty (months)', ur: 'وارنٹی (مہینے)' }} help={<Help term="device.warrantyMonths" size="sm" />} type="number" inputMode="numeric" min={0} max={60} value={d.warranty_months} onChange={(e) => set('warranty_months', e.target.value)} />
 
       {/* owner addendum 6: the lock check a used unit must pass before it is bought */}
       {lockNeeded ? (
         <div className={`flex flex-col gap-2 rounded-2xl border-2 p-3 ${lockOk ? 'border-emerald bg-emerald-tint/40' : 'border-payable/50 bg-payable-tint/40'}`} data-testid="lock-block">
-          <BiLabel text="devx.lock.title" size="md" bold />
+          <span className="flex items-center gap-1"><BiLabel text="devx.lock.title" size="md" bold /><Help term="device.lock" size="sm" /></span>
           <BiLabel text="devx.lock.hint" size="sm" tone="text-muted" />
           <LockChecksEditor category={category} value={d.lock_checks ?? {}} onChange={(v) => set('lock_checks', v)} />
           <button type="button" role="switch" aria-checked={!!d.lock_checked} onClick={() => set('lock_checked', !d.lock_checked)} className="tap flex min-h-12 items-center gap-3 rounded-2xl border border-line bg-surface px-4 text-start" data-testid="lock-confirm">
@@ -407,20 +408,20 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
       {more ? (
         <div className="flex flex-col gap-3" data-testid="device-details">
           <div className="grid grid-cols-2 gap-2">
-            <BiInput label="devx.modelNumber" value={d.model_number ?? ''} onChange={(e) => set('model_number', e.target.value)} dir="ltr" className="num" maxLength={40} />
-            {category !== 'watch' ? <BiInput label="devx.ram" type="number" inputMode="numeric" min={1} max={64} value={d.ram_gb ?? ''} onChange={(e) => set('ram_gb', e.target.value)} className="num" /> : null}
+            <BiInput label="devx.modelNumber" help={<Help term="device.modelNumber" size="sm" />} value={d.model_number ?? ''} onChange={(e) => set('model_number', e.target.value)} dir="ltr" className="num" maxLength={40} />
+            {category !== 'watch' ? <BiInput label="devx.ram" help={<Help term="device.ram" size="sm" />} type="number" inputMode="numeric" min={1} max={64} value={d.ram_gb ?? ''} onChange={(e) => set('ram_gb', e.target.value)} className="num" /> : null}
           </div>
           {used ? (
             <div>
-              <BiLabel text="devx.grade" size="md" tone="text-muted" />
+              <span className="flex items-center gap-1"><BiLabel text="devx.grade" size="md" tone="text-muted" /><Help term="device.grade" size="sm" /></span>
               <div className="mt-1 flex flex-wrap gap-1.5">
                 {(dopts?.grades ?? ['a', 'b', 'refurbished', 'copy']).map((g) => <button key={g} type="button" aria-pressed={d.grade === g} onClick={() => set('grade', d.grade === g ? '' : g)} className={`tap h-10 rounded-full border-2 px-3.5 text-[13px] font-bold ${d.grade === g ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'}`}>{['a', 'b', 'refurbished', 'copy'].includes(g) ? pick(`devx.grades.${g}`) : g}</button>)}
               </div>
             </div>
           ) : null}
-          <BiLabel text="devx.warrantyBy" size="md" tone="text-muted" />
+          <span className="flex items-center gap-1"><BiLabel text="devx.warrantyBy" size="md" tone="text-muted" /><Help term="device.warrantyBy" size="sm" /></span>
           <BiSegmented<'shop' | 'supplier' | 'brand'> value={d.warranty_by || 'shop'} onChange={(v) => set('warranty_by', v)} options={[{ value: 'shop', text: 'devx.by.shop' }, { value: 'supplier', text: 'devx.by.supplier' }, { value: 'brand', text: 'devx.by.brand' }]} />
-          <BiLabel text="devx.specs" size="md" tone="text-muted" />
+          <span className="flex items-center gap-1"><BiLabel text="devx.specs" size="md" tone="text-muted" /><Help term="device.specs" size="sm" /></span>
           <SpecsEditor category={category} value={d.specs ?? {}} onChange={(v) => set('specs', v)} />
         </div>
       ) : null}

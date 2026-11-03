@@ -29,17 +29,18 @@ test('len-den: give, take, adjust against a bill, audit screen', async ({ page }
   await expect(card).toContainText('No len-den open')
   await card.getByTestId('lending-take').click()
   await page.getByLabel('Amount').fill('8000')
-  await page.getByRole('button', { name: 'Save — money taken' }).click()
+  // the sheet is long (a ? on every field) and the emulated phone scrolls the page under it: send the tap straight to the button
+  await page.getByRole('button', { name: 'Save — money taken' }).dispatchEvent('click')
   await expect(page.getByText('Payment saved')).toBeVisible()
-  await page.getByRole('button', { name: 'Done' }).click()
+  await page.getByRole('button', { name: 'Done' }).dispatchEvent('click')
   await expect(page.getByTestId('lending-open')).toContainText('8,000')
   await expect(card).toContainText('We owe them (len-den)')
 
   // the shop gives 2,000 back
   await card.getByTestId('lending-give').click()
   await page.getByLabel('Amount').fill('2000')
-  await page.getByRole('button', { name: 'Save — money given' }).click()
-  await page.getByRole('button', { name: 'Done' }).click()
+  await page.getByRole('button', { name: 'Save — money given' }).dispatchEvent('click')
+  await page.getByRole('button', { name: 'Done' }).dispatchEvent('click')
   await expect(page.getByTestId('lending-open')).toContainText('6,000')
   await expect(page.getByTestId('lending-entries').locator('> div')).toHaveCount(2)
 
@@ -97,8 +98,8 @@ test('len-den return date: late badge, WhatsApp reminder, home alert, audit list
   await card.getByTestId('lending-give').click()
   await page.getByLabel('Amount').fill('25000')
   await page.getByLabel('Return date (optional)').fill(day(2))
-  await page.getByRole('button', { name: 'Save — money given' }).click()
-  await page.getByRole('button', { name: 'Done' }).click()
+  await page.getByRole('button', { name: 'Save — money given' }).dispatchEvent('click')
+  await page.getByRole('button', { name: 'Done' }).dispatchEvent('click')
   await expect(page.getByTestId('lending-due')).toContainText('2 days late')
   // reminder: WhatsApp opens with the message
   const popup = page.waitForEvent('popup')

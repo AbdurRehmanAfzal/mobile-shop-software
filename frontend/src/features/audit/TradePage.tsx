@@ -6,6 +6,7 @@ import { HandCoins, Search, ShoppingBag, Truck } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import Bars from '@/components/charts/Bars'
+import Help from '@/components/Help'
 import { Empty, fmtDate, Pending } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { withCur } from '@/lib/format'
@@ -42,6 +43,14 @@ interface Purchases {
 const n = (v: M | number | null | undefined) => (v == null ? '—' : Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 }))
 const label = (bucket: string, g: string) => (g === 'month' ? bucket.slice(0, 7) : bucket.slice(5))
 const STATUSES: St[] = ['paid', 'partial', 'unpaid', 'returned']
+/** help per pay status and per tab (docs/33) */
+const STATUS_HELP: { key: St; helpKey: string }[] = [
+  { key: 'paid', helpKey: 'audit.trade.st.paid' },
+  { key: 'partial', helpKey: 'audit.trade.st.partial' },
+  { key: 'unpaid', helpKey: 'audit.trade.st.unpaid' },
+  { key: 'returned', helpKey: 'audit.trade.st.returned' },
+]
+const statusHelp = (k: St) => STATUS_HELP.find((x) => x.key === k)?.helpKey ?? 'audit.trade.st.paid'
 const TONE: Record<St, string> = { paid: 'text-emerald-deep', partial: 'text-receivable', unpaid: 'text-payable', returned: 'text-muted' }
 
 export default function TradePage() {
@@ -65,22 +74,29 @@ export default function TradePage() {
   const statusCards = (rows: StatusRow[]) => (
     <div className="grid grid-cols-2 gap-2 lg:grid-cols-4" data-testid="trade-status">
       {rows.map((r) => (
-        <button key={r.status} type="button" aria-pressed={status === r.status} onClick={() => set('status', status === r.status ? null : r.status)} className={`card tap flex min-w-0 flex-col gap-1 text-start ${status === r.status ? 'ring-2 ring-ink' : ''}`}>
+        <div key={r.status} className="relative min-w-0">
+        <button type="button" aria-pressed={status === r.status} onClick={() => set('status', status === r.status ? null : r.status)} className={`card tap flex w-full min-w-0 flex-col gap-1 text-start ${status === r.status ? 'ring-2 ring-ink' : ''}`}>
           <BiLabel text={`audit.trade.st.${r.status}`} size="sm" tone="text-muted" bold />
           <span className={`num text-xl font-bold ${TONE[r.status]}`}>{r.count}</span>
           <span className={`text-muted ${small}`} dir="ltr">{withCur(n(r.amount))}{Number(r.due) ? ` · ${pick('audit.doc.due')} ${n(r.due)}` : ''}</span>
         </button>
+        <span className="absolute end-1.5 top-1.5"><Help term={statusHelp(r.status)} size="sm" /></span>
+        </div>
       ))}
     </div>
   )
   const filterBar = (
     <div className="flex flex-col gap-2">
-      <label className="flex h-11 items-center gap-2 rounded-2xl border border-line bg-surface px-3">
+      <div className="flex items-center gap-1">
+      <label className="flex h-11 min-w-0 flex-1 items-center gap-2 rounded-2xl border border-line bg-surface px-3">
         <Search size={16} className="text-muted" />
         <input value={q} onChange={(e) => set('q', e.target.value)} placeholder={pick(tab === 'sales' ? 'audit.trade.searchSales' : 'audit.trade.searchPurchases')} aria-label="search" className="min-w-0 flex-1 bg-transparent text-sm font-semibold outline-none" />
       </label>
+      <Help term="common.search" size="sm" />
+      </div>
       {users.length > 1 || user ? (
-        <div className="flex flex-wrap gap-1.5" data-testid="trade-users">
+        <div className="flex flex-wrap items-center gap-1.5" data-testid="trade-users">
+          <Help term="audit.trade.userFilter" size="sm" />
           <button type="button" aria-pressed={!user} onClick={() => set('user', null)} className={chip(!user)}>{pick('common.all')}</button>
           {users.filter((u) => u.user_id).map((u) => <button key={u.user_id} type="button" aria-pressed={user === u.user_id} onClick={() => set('user', u.user_id)} className={chip(user === u.user_id)}>{u.user_name ?? '—'}</button>)}
         </div>
@@ -90,31 +106,36 @@ export default function TradePage() {
 
   return (
     <AuditLayout right={<SectionDownload sections={tab === 'sales' ? ['sales'] : ['purchases']} name={tab === 'sales' ? 'sales-report' : 'purchase-report'} />}>
-      {canCost ? <BiSegmented<Tab> value={tab} onChange={(t) => set('tab', t)} options={[{ value: 'sales', text: 'audit.trade.sales' }, { value: 'purchases', text: 'audit.trade.purchases' }]} /> : null}
+      {canCost ? (
+        <div className="flex items-center gap-1">
+          <div className="min-w-0 flex-1"><BiSegmented<Tab> value={tab} onChange={(t) => set('tab', t)} options={[{ value: 'sales', text: 'audit.trade.sales' }, { value: 'purchases', text: 'audit.trade.purchases' }]} /></div>
+          {tab === 'sales' ? <Help term="audit.trade.tab.sales" size="sm" /> : <Help term="audit.trade.tab.purchases" size="sm" />}
+        </div>
+      ) : null}
 
       {tab === 'sales' ? (!s.data ? <Pending error={s.error} retry={s.refetch} /> : (() => {
         const d = s.data, t = d.totals
         return (
           <>
             <section className="flex flex-col gap-1 rounded-3xl bg-sell px-5 py-4 text-sell-fg" data-testid="trade-hero">
-              <div className="flex items-center justify-between"><span className="flex items-center gap-2"><ShoppingBag size={20} /><BiLabel text="audit.trade.billed" size="md" bold tone="text-current" /></span>{t.change_pct != null ? <span className="num" dir="ltr">{t.change_pct >= 0 ? '+' : ''}{t.change_pct}%</span> : null}</div>
+              <div className="flex items-center justify-between"><span className="flex items-center gap-2"><ShoppingBag size={20} /><BiLabel text="audit.trade.billed" size="md" bold tone="text-current" /><Help term="audit.trade.billed" size="sm" /></span>{t.change_pct != null ? <span className="num" dir="ltr">{t.change_pct >= 0 ? '+' : ''}{t.change_pct}%</span> : null}</div>
               <span className="num text-[32px] leading-tight" dir="ltr">{withCur(n(t.billed))}</span>
               <span className={`opacity-80 ${small}`}><span className="num">{t.bills}</span> {pick('audit.bills')} · <span className="num">{t.units}</span> {pick('audit.trade.units')}{canCost && t.profit != null ? <> · {pick('counter.grossProfit')} <span className="num" dir="ltr">{n(t.profit)}</span>{t.margin_pct != null ? <span dir="ltr"> ({t.margin_pct}%)</span> : null}</> : null}</span>
             </section>
             <div className="grid grid-cols-2 gap-2" data-testid="trade-counter">
-              <div className="card flex min-w-0 flex-col gap-1"><span className="flex items-center gap-2"><HandCoins size={16} className="text-emerald-deep" /><BiLabel text="audit.trade.atCounter" size="sm" tone="text-muted" bold /></span><span className="num text-xl font-bold" dir="ltr">{withCur(n(t.at_counter))}</span><span className={`text-muted ${small}`}><span className="num">{t.cash_bills}</span> {pick('audit.bills')}</span></div>
-              <div className="card flex min-w-0 flex-col gap-1"><BiLabel text="audit.trade.onCredit" size="sm" tone="text-muted" bold /><span className="num text-xl font-bold text-receivable" dir="ltr">{withCur(n(t.on_credit))}</span><span className={`text-muted ${small}`}><span className="num">{t.credit_bills}</span> {pick('audit.bills')} · {pick('audit.doc.due')} <span className="num" dir="ltr">{n(t.due)}</span></span></div>
+              <div className="card flex min-w-0 flex-col gap-1"><span className="flex items-center gap-2"><HandCoins size={16} className="text-emerald-deep" /><BiLabel text="audit.trade.atCounter" size="sm" tone="text-muted" bold /><Help term="audit.trade.atCounter" size="sm" /></span><span className="num text-xl font-bold" dir="ltr">{withCur(n(t.at_counter))}</span><span className={`text-muted ${small}`}><span className="num">{t.cash_bills}</span> {pick('audit.bills')}</span></div>
+              <div className="card flex min-w-0 flex-col gap-1"><span className="flex items-center gap-1"><BiLabel text="audit.trade.onCredit" size="sm" tone="text-muted" bold /><Help term="audit.trade.onCredit" size="sm" /></span><span className="num text-xl font-bold text-receivable" dir="ltr">{withCur(n(t.on_credit))}</span><span className={`text-muted ${small}`}><span className="num">{t.credit_bills}</span> {pick('audit.bills')} · {pick('audit.doc.due')} <span className="num" dir="ltr">{n(t.due)}</span></span></div>
             </div>
             <div className={`flex flex-wrap gap-x-4 text-muted ${small}`}>
-              <span>{pick('counter.discounts')} <span className="num" dir="ltr">{n(t.discount)}</span></span>
-              <span>{pick('audit.trade.tax')} <span className="num" dir="ltr">{n(t.tax)}</span></span>
-              <span>{pick('counter.salesReturns')} <span className="num" dir="ltr">{n(t.returned)}</span></span>
-              <span>{pick('audit.trade.avgBill')} <span className="num" dir="ltr">{n(t.avg_bill)}</span></span>
+              <span className="inline-flex items-center gap-1">{pick('counter.discounts')} <span className="num" dir="ltr">{n(t.discount)}</span><Help term="audit.trade.discounts" size="sm" /></span>
+              <span className="inline-flex items-center gap-1">{pick('audit.trade.tax')} <span className="num" dir="ltr">{n(t.tax)}</span><Help term="common.tax" size="sm" /></span>
+              <span className="inline-flex items-center gap-1">{pick('counter.salesReturns')} <span className="num" dir="ltr">{n(t.returned)}</span><Help term="audit.trade.returned" size="sm" /></span>
+              <span className="inline-flex items-center gap-1">{pick('audit.trade.avgBill')} <span className="num" dir="ltr">{n(t.avg_bill)}</span><Help term="audit.trade.avgBill" size="sm" /></span>
             </div>
             {statusCards(d.by_status)}
-            <section className="card"><Bars data={d.series.map((x) => ({ label: label(x.bucket, d.granularity), value: Number(x.billed), hint: `${pick('audit.trade.onCredit')} ${n(x.on_credit)}`, key: x.bucket }))} testid="trade-series" empty="audit.noData" /></section>
+            <section className="card"><div className="flex justify-end"><Help term="audit.trade.salesSeries" size="sm" /></div><Bars data={d.series.map((x) => ({ label: label(x.bucket, d.granularity), value: Number(x.billed), hint: `${pick('audit.trade.onCredit')} ${n(x.on_credit)}`, key: x.bucket }))} testid="trade-series" empty="audit.noData" /></section>
             {filterBar}
-            <BiLabel text="audit.trade.byUser" size="md" bold />
+            <span className="flex items-center gap-1"><BiLabel text="audit.trade.byUser" size="md" bold /><Help term="audit.trade.byUser" size="sm" /></span>
             <div className="card divide-y divide-line p-0" data-testid="trade-by-user">
               {d.by_user.map((u, i) => (
                 <button key={i} type="button" onClick={() => set('user', u.user_id && user !== u.user_id ? u.user_id : null)} className="tap flex w-full items-center gap-3 px-4 py-2 text-start">
@@ -123,7 +144,7 @@ export default function TradePage() {
                 </button>
               ))}
             </div>
-            <BiLabel text="audit.trade.byCustomer" size="md" bold />
+            <span className="flex items-center gap-1"><BiLabel text="audit.trade.byCustomer" size="md" bold /><Help term="audit.trade.byCustomer" size="sm" /></span>
             <div className="card divide-y divide-line p-0" data-testid="trade-by-party">
               {d.by_party.map((r, i) => (
                 <Link key={i} to={r.party_id ? `/parties/${r.party_id}` : '/invoices?kind=sale'} className="tap flex items-center gap-3 px-4 py-2">
@@ -132,7 +153,7 @@ export default function TradePage() {
                 </Link>
               ))}
             </div>
-            <div className="flex items-center gap-2"><BiLabel text="audit.trade.bills" size="md" bold /><span className={`text-muted ${small}`}>({d.rows_total})</span></div>
+            <div className="flex items-center gap-2"><BiLabel text="audit.trade.bills" size="md" bold /><Help term="audit.trade.bills" size="sm" /><span className={`text-muted ${small}`}>({d.rows_total})</span></div>
             {!d.rows.length ? <Empty text="audit.noData" /> : (
               <div className="card divide-y divide-line p-0" data-testid="trade-rows">
                 {d.rows.map((r) => (
@@ -152,19 +173,19 @@ export default function TradePage() {
         return (
           <>
             <section className="flex flex-col gap-1 rounded-3xl bg-buy px-5 py-4 text-buy-fg" data-testid="trade-hero">
-              <div className="flex items-center justify-between"><span className="flex items-center gap-2"><Truck size={20} /><BiLabel text="audit.trade.bought" size="md" bold tone="text-current" /></span>{t.change_pct != null ? <span className="num" dir="ltr">{t.change_pct >= 0 ? '+' : ''}{t.change_pct}%</span> : null}</div>
+              <div className="flex items-center justify-between"><span className="flex items-center gap-2"><Truck size={20} /><BiLabel text="audit.trade.bought" size="md" bold tone="text-current" /><Help term="audit.trade.bought" size="sm" /></span>{t.change_pct != null ? <span className="num" dir="ltr">{t.change_pct >= 0 ? '+' : ''}{t.change_pct}%</span> : null}</div>
               <span className="num text-[32px] leading-tight" dir="ltr">{withCur(n(t.total))}</span>
               <span className={`opacity-80 ${small}`}><span className="num">{t.bills}</span> {pick('audit.bills')} · <span className="num">{t.phones}</span> {pick('audit.phones')}{t.items ? <> · <span className="num">{t.items}</span> {pick('audit.trade.items')}</> : null}</span>
             </section>
             <div className="grid grid-cols-2 gap-2" data-testid="trade-counter">
-              <div className="card flex min-w-0 flex-col gap-1"><BiLabel text="audit.trade.paidNow" size="sm" tone="text-muted" bold /><span className="num text-xl font-bold" dir="ltr">{withCur(n(t.at_counter))}</span><span className={`text-muted ${small}`}><span className="num">{t.cash_bills}</span> {pick('audit.bills')}</span></div>
-              <Link to="/khata?f=give" className="card tap flex min-w-0 flex-col gap-1"><BiLabel text="audit.trade.onCredit" size="sm" tone="text-muted" bold /><span className="num text-xl font-bold text-payable" dir="ltr">{withCur(n(t.on_credit))}</span><span className={`text-muted ${small}`}><span className="num">{t.credit_bills}</span> {pick('audit.bills')} · {pick('audit.trade.owed')} <span className="num" dir="ltr">{n(t.owed)}</span></span></Link>
+              <div className="card flex min-w-0 flex-col gap-1"><span className="flex items-center gap-1"><BiLabel text="audit.trade.paidNow" size="sm" tone="text-muted" bold /><Help term="audit.trade.paidNow" size="sm" /></span><span className="num text-xl font-bold" dir="ltr">{withCur(n(t.at_counter))}</span><span className={`text-muted ${small}`}><span className="num">{t.cash_bills}</span> {pick('audit.bills')}</span></div>
+              <Link to="/khata?f=give" className="card tap flex min-w-0 flex-col gap-1"><span className="flex items-center gap-1"><BiLabel text="audit.trade.onCredit" size="sm" tone="text-muted" bold /><Help term="audit.trade.purchaseCredit" size="sm" /></span><span className="num text-xl font-bold text-payable" dir="ltr">{withCur(n(t.on_credit))}</span><span className={`text-muted ${small}`}><span className="num">{t.credit_bills}</span> {pick('audit.bills')} · {pick('audit.trade.owed')} <span className="num" dir="ltr">{n(t.owed)}</span></span></Link>
             </div>
-            {t.returns ? <span className={`text-muted ${small}`}>{pick('audit.trade.returnedToSupplier')} <span className="num">{t.returns}</span> · <span className="num" dir="ltr">{withCur(n(t.returns_amount))}</span></span> : null}
+            {t.returns ? <span className={`flex items-center gap-1 text-muted ${small}`}>{pick('audit.trade.returnedToSupplier')} <span className="num">{t.returns}</span> · <span className="num" dir="ltr">{withCur(n(t.returns_amount))}</span><Help term="audit.trade.returnedToSupplier" size="sm" /></span> : null}
             {statusCards(d.by_status.filter((r) => r.status !== 'returned'))}
-            <section className="card"><Bars data={d.series.map((x) => ({ label: label(x.bucket, d.granularity), value: Number(x.total), hint: `${x.phones} ${pick('audit.phones')}`, key: x.bucket }))} tone="rgb(var(--payable))" testid="trade-series" empty="audit.noData" /></section>
+            <section className="card"><div className="flex justify-end"><Help term="audit.trade.purchaseSeries" size="sm" /></div><Bars data={d.series.map((x) => ({ label: label(x.bucket, d.granularity), value: Number(x.total), hint: `${x.phones} ${pick('audit.phones')}`, key: x.bucket }))} tone="rgb(var(--payable))" testid="trade-series" empty="audit.noData" /></section>
             {filterBar}
-            <BiLabel text="audit.trade.bySupplier" size="md" bold />
+            <span className="flex items-center gap-1"><BiLabel text="audit.trade.bySupplier" size="md" bold /><Help term="audit.trade.bySupplier" size="sm" /></span>
             <div className="card divide-y divide-line p-0" data-testid="trade-by-party">
               {d.by_party.map((r, i) => (
                 <Link key={i} to={r.party_id ? `/parties/${r.party_id}` : '/invoices?kind=purchase'} className="tap flex items-center gap-3 px-4 py-2">
@@ -173,13 +194,13 @@ export default function TradePage() {
                 </Link>
               ))}
             </div>
-            <BiLabel text="audit.trade.byUser" size="md" bold />
+            <span className="flex items-center gap-1"><BiLabel text="audit.trade.byUser" size="md" bold /><Help term="audit.trade.byUser" size="sm" /></span>
             <div className="card divide-y divide-line p-0" data-testid="trade-by-user">
               {d.by_user.map((u, i) => (
                 <div key={i} className="flex items-center gap-3 px-4 py-2"><span className="flex-1 font-bold">{u.user_name ?? '—'}</span><span className={`text-muted ${small}`}><span className="num">{u.bills}</span> {pick('audit.bills')} · <span className="num">{u.phones}</span> {pick('audit.phones')}</span><span className="num font-bold" dir="ltr">{withCur(n(u.total))}</span></div>
               ))}
             </div>
-            <div className="flex items-center gap-2"><BiLabel text="audit.trade.bills" size="md" bold /><span className={`text-muted ${small}`}>({d.rows_total})</span></div>
+            <div className="flex items-center gap-2"><BiLabel text="audit.trade.bills" size="md" bold /><Help term="audit.trade.bills" size="sm" /><span className={`text-muted ${small}`}>({d.rows_total})</span></div>
             {!d.rows.length ? <Empty text="audit.noData" /> : (
               <div className="card divide-y divide-line p-0" data-testid="trade-rows">
                 {d.rows.map((r) => (

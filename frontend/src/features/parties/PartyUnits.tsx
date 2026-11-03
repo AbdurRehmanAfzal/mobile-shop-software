@@ -31,7 +31,7 @@ export default function PartyUnits({ party }: { party: Party }) {
   if (!data) return <Loading />
   const alloc = (r: UnitRow): Allocation => ({ document_type: r.doc_type, document_id: r.doc_id, document_no: r.no, remaining: Number(r.remaining ?? 0) })
   return (
-    <Section title={{ en: `${pick('unit.phones')} (${data.rows.length})`, ur: `${pick('unit.phones')} (${data.rows.length})`, roman: `${pick('unit.phones')} (${data.rows.length})` }}>
+    <Section title={{ en: `${pick('unit.phones')} (${data.rows.length})`, ur: `${pick('unit.phones')} (${data.rows.length})`, roman: `${pick('unit.phones')} (${data.rows.length})` }} help="party.units">
       {!data.rows.length ? <Empty text="unit.noPhones" /> : (
         <div className="card divide-y divide-line p-0">
           {data.rows.map((r) => {

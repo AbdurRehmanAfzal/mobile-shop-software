@@ -211,6 +211,19 @@ async function main() {
   if (otherShop && opening.ip12) await step('iPhone 12 lent to Star Mobiles', () => post('/loans', { device_id: opening.ip12, party_id: otherShop.id, expected_back_at: day(-3), notes: 'customer wants to see it' }))
   await step('repair: Samsung A54 screen (advance 3,000)', () => post('/repairs', { party_id: ali?.id, device_desc: 'Samsung A54 — screen broken', imei: '490154203237526', fault_codes: ['screen'], estimate: 9500, advance: 3000 }))
   await step('repair: iPhone 11 battery', () => post('/repairs', { party_id: sana?.id, device_desc: 'iPhone 11 — battery drains', fault_codes: ['battery'], estimate: 7000, advance: 0 }))
+
+  // repair labs in the market (docs/34): one phone at a lab now (late), one back from two labs
+  const zain = await P('Zain Mobile Lab (Hall Road)', '03004440002', ['technician'], { address: 'Hall Road, Lahore' })
+  const aliLab = await P('Ali Repair Lab', '03004440001', ['technician'], { address: 'Hafeez Centre' })
+  const board = await step('repair: Redmi Note 12 no power', () => post('/repairs', { party_id: bilal?.id, device_desc: 'Redmi Note 12 — no power', fault_codes: ['dead'], estimate: 6000, advance: 1000, promised_at: day(-2) }))
+  const s23j = await step('repair: Vivo Y20 screen', () => post('/repairs', { party_id: usman?.id, device_desc: 'Vivo Y20 — screen lines', fault_codes: ['screen'], estimate: 7500, advance: 2000, promised_at: day(1) }))
+  if (board && aliLab && zain) {
+    const t1 = await step('Redmi to Ali Lab', () => post(`/repairs/${board.id}/lab`, { lab_party_id: aliLab.id, problem: 'board check', quoted_cost: 3000, sent_on: day(6), expected_back: day(4) }))
+    if (t1) await step('Ali Lab: not fixed, Rs. 500 checking', () => post(`/repairs/${board.id}/lab/${t1.id}/back`, { outcome: 'not_fixed', final_cost: 500, back_on: day(4) }))
+    const t2 = await step('Redmi to Zain Lab', () => post(`/repairs/${board.id}/lab`, { lab_party_id: zain.id, problem: 'board repair', quoted_cost: 3500, sent_on: day(4), expected_back: day(2) }))
+    if (t2) await step('Zain Lab: fixed, Rs. 3,500, paid 1,000', () => post(`/repairs/${board.id}/lab/${t2.id}/back`, { outcome: 'fixed', final_cost: 3500, paid_now: 1000, back_on: day(2) }))
+  }
+  if (s23j && zain) await step('Vivo to Zain Lab (late)', () => post(`/repairs/${s23j.id}/lab`, { lab_party_id: zain.id, problem: 'change screen', quoted_cost: 4000, sent_on: day(3), expected_back: day(1) }))
   const cats = (await get('/expenses/categories').catch(() => [])) ?? []
   const cat = (k) => cats.find((c) => c.key === k)
   for (const [k, amount, n, desc] of [['rent', 85000, 30, 'shop rent'], ['salary', 45000, 29, 'Kashif salary'], ['electricity', 18200, 20, null], ['mobile_bill', 3500, 19, null], ['tea', 1200, 6, null], ['transport', 1500, 3, 'Hall Road trip'], ['tea', 900, 1, null], ['other', 4500, 12, 'AC service'], ['owner_drawing', 20000, 9, 'home expenses'], ['advance', 5000, 8, 'Kashif advance'],

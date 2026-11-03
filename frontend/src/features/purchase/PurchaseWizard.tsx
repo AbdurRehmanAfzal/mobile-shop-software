@@ -115,13 +115,14 @@ export default function PurchaseWizard() {
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="counter.addStock" />
+      <PageHeader title="counter.addStock" help={<Help term="purchase.page" />} />
       <Stepper steps={steps} current={step} />
 
       {step === 0 ? (
         <div className="flex flex-col gap-3">
-          <BiLabel text="purchase.chooseTitle" size="lg" bold />
+          <span className="flex items-center gap-1"><BiLabel text="purchase.chooseTitle" size="lg" bold /><Help term="purchase.source" size="sm" /></span>
           <SourceCard
+            help="purchase.fromDealer"
             active={chosen && kind === 'supplier'}
             icon={<Store size={26} />}
             title="purchase.fromDealer"
@@ -129,6 +130,7 @@ export default function PurchaseWizard() {
             onClick={() => { if (kind !== 'supplier') setParty(null); setKind('supplier'); setChosen(true) }}
           />
           <SourceCard
+            help="purchase.fromCustomer"
             active={chosen && kind === 'walk_in'}
             icon={<UserRound size={26} />}
             title="purchase.fromCustomer"
@@ -137,7 +139,7 @@ export default function PurchaseWizard() {
           />
           {chosen ? (
             <>
-              <PartyPicker value={party} onChange={setParty} kind={partyKind} label={kind === 'supplier' ? 'purchase.selectDealer' : 'purchase.selectSeller'} />
+              <div className="flex items-start gap-1"><div className="min-w-0 flex-1"><PartyPicker value={party} onChange={setParty} kind={partyKind} label={kind === 'supplier' ? 'purchase.selectDealer' : 'purchase.selectSeller'} /></div>{kind === 'supplier' ? <Help term="purchase.dealer" size="sm" /> : <Help term="purchase.seller" size="sm" />}</div>
               <BiButton text="common.next" full disabled={!party} onClick={() => { setStep(1); if (!devices.length && (startImei || scanned)) setEditing({ ...emptyDraft(startImei, kind), manufacturer_code: startImei ? '' : scanned }) }} />
             </>
           ) : null}
@@ -165,9 +167,9 @@ export default function PurchaseWizard() {
               <BtnText k={'purchase.remove'} /></button>
             </div>
           ))}
-          <BiButton text="purchase.addDevice" icon={<Plus size={22} />} variant="secondary" full onClick={() => setEditing(emptyDraft('', kind))} />
+          <div className="flex items-center gap-1"><BiButton text="purchase.addDevice" icon={<Plus size={22} />} variant="secondary" className="flex-1" onClick={() => setEditing(emptyDraft('', kind))} /><Help term="purchase.lines" size="sm" /></div>
 
-          <BiButton text="items.buyButton" icon={<Watch size={22} />} variant="secondary" full onClick={() => setPickingItem(true)} />
+          <div className="flex items-center gap-1"><BiButton text="items.buyButton" icon={<Watch size={22} />} variant="secondary" className="flex-1" onClick={() => setPickingItem(true)} /><Help term="purchase.items" size="sm" /></div>
           {misc.length || kind === 'supplier' ? (
             <>
               {misc.map((x) => (
@@ -176,7 +178,8 @@ export default function PurchaseWizard() {
                     <div className="col-span-3 flex min-w-0 flex-col gap-1.5">
                       <span className="text-base font-extrabold">{x.description}</span>
                       {/* dozen / box / carton: the count is kept in pieces, the cost typed is per unit */}
-                      <div className="flex flex-wrap gap-1" data-testid="unit-chips">
+                      <div className="flex flex-wrap items-center gap-1" data-testid="unit-chips">
+                        <Help term="purchase.packUnit" size="sm" />
                         {UNITS.filter((u) => u === 'piece' || (x.units ?? {})[u]).map((u) => (
                           <button key={u} type="button" aria-pressed={(x.unit ?? 'piece') === u} onClick={() => setMisc(misc.map((y) => (y.key === x.key ? { ...y, unit: u } : y)))} className={`tap h-8 rounded-full border-2 px-2.5 text-[12px] font-bold ${(x.unit ?? 'piece') === u ? 'border-ink bg-ink text-ground' : 'border-line bg-surface'}`}>{pick(`acc.units.${u}`)}{u !== 'piece' ? <span className="num" dir="ltr"> ×{(x.units ?? {})[u]}</span> : null}</button>
                         ))}
@@ -184,10 +187,10 @@ export default function PurchaseWizard() {
                       {per(x) > 1 ? <span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`} dir="ltr">= {Number(x.qty || 0) * per(x)} {pick('purchase.pieces')}{Number(x.unit_cost) > 0 ? ` · ${withCur((Number(x.unit_cost) / per(x)).toLocaleString('en-US', { maximumFractionDigits: 2 }))} ${pick('purchase.perPiece')}` : ''}</span> : null}
                     </div>
                   ) : (
-                    <BiInput label="purchase.miscDesc" value={x.description} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, description: e.target.value } : y)))} />
+                    <BiInput label="purchase.miscDesc" help={<Help term="purchase.miscItem" size="sm" />} value={x.description} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, description: e.target.value } : y)))} />
                   )}
-                  <BiInput label="purchase.qty" type="number" inputMode="numeric" min={1} value={x.qty} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, qty: e.target.value } : y)))} />
-                  <BiInput label="purchase.unitCost" type="number" inputMode="numeric" min={0} value={x.unit_cost} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, unit_cost: e.target.value } : y)))} />
+                  <BiInput label="purchase.qty" help={<Help term="common.qty" size="sm" />} type="number" inputMode="numeric" min={1} value={x.qty} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, qty: e.target.value } : y)))} />
+                  <BiInput label="purchase.unitCost" help={<Help term="purchase.unitCost" size="sm" />} type="number" inputMode="numeric" min={0} value={x.unit_cost} onChange={(e) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, unit_cost: e.target.value } : y)))} />
                   <button type="button" aria-label={pick('purchase.remove')} onClick={() => setMisc(misc.filter((y) => y.key !== x.key))} className="tap mb-2 inline-flex h-9 shrink-0 items-center gap-1 rounded-xl px-2 text-payable">
                     <Trash2 size={16} />
                   <BtnText k={'purchase.remove'} /></button>
@@ -199,22 +202,22 @@ export default function PurchaseWizard() {
 
           {devices.length || misc.some((x) => x.description) ? (
             <>
-              <div className="flex items-center gap-1"><BiLabel text="counter.paidHowBuy" size="md" bold /><Help term="udhaar" /></div>
+              <div className="flex items-center gap-1"><BiLabel text="counter.paidHowBuy" size="md" bold /><Help term="purchase.paidHow" size="sm" /></div>
               <PayPicker value={pay} onChange={setPay} />
               {kind !== 'supplier' ? (
                 <>
-                  <BiLabel text="counter.idCheck" size="md" bold />
+                  <span className="flex items-center gap-1"><BiLabel text="counter.idCheck" size="md" bold /><Help term="purchase.idCheck" size="sm" /></span>
                   <div className="grid grid-cols-2 gap-2">
                     <button type="button" aria-pressed={!skipCheck} onClick={() => setSkipCheck(false)} className={chip(!skipCheck)}><ShieldCheck size={22} />{pick('counter.checkLater')}</button>
                     <button type="button" aria-pressed={skipCheck} onClick={() => setSkipCheck(true)} className={chip(skipCheck)}><UserCheck size={22} />{pick('counter.skipCheck')}</button>
                   </div>
                 </>
               ) : null}
-              {udhaar ? <BiInput label="counter.paidNowBuy" type="number" inputMode="numeric" min={0} max={total} value={paidNow} onChange={(e) => setPaidNow(e.target.value)} /> : null}
-              {udhaar ? <BiInput label="counter.promiseDateBuy" type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} dir="ltr" hint="counter.promiseHint" /> : null}
+              {udhaar ? <BiInput label="counter.paidNowBuy" help={<Help term="purchase.paidNow" size="sm" />} type="number" inputMode="numeric" min={0} max={total} value={paidNow} onChange={(e) => setPaidNow(e.target.value)} /> : null}
+              {udhaar ? <BiInput label="counter.promiseDateBuy" help={<Help term="purchase.dueDate" size="sm" />} type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} dir="ltr" hint="counter.promiseHint" /> : null}
 
               <div className="card flex flex-col gap-2">
-                <BiLabel text="purchase.when" size="md" tone="text-muted" />
+                <span className="flex items-center gap-1"><BiLabel text="purchase.when" size="md" tone="text-muted" /><Help term="purchase.when" size="sm" /></span>
                 <BiSegmented<'now' | 'earlier'>
                   value={earlier ? 'earlier' : 'now'}
                   onChange={(v) => { setEarlier(v === 'earlier'); if (v === 'earlier') setWhen(localNow()) }}
@@ -227,13 +230,13 @@ export default function PurchaseWizard() {
 
               {more ? (
                 <>
-                  <BiInput label="common.discount" type="number" inputMode="numeric" min={0} value={discount} onChange={(e) => setDiscount(e.target.value)} />
-                  {kind === 'supplier' ? <BiInput label="purchase.reference" value={reference} onChange={(e) => setReference(e.target.value)} /> : null}
-                  {kind === 'supplier' ? <BiInput label="purchase.supplierInvoice" value={supplierBill} onChange={(e) => setSupplierBill(e.target.value)} dir="ltr" maxLength={40} /> : null}
+                  <BiInput label="common.discount" help={<Help term="purchase.discount" size="sm" />} type="number" inputMode="numeric" min={0} value={discount} onChange={(e) => setDiscount(e.target.value)} />
+                  {kind === 'supplier' ? <BiInput label="purchase.reference" help={<Help term="purchase.reference" size="sm" />} value={reference} onChange={(e) => setReference(e.target.value)} /> : null}
+                  {kind === 'supplier' ? <BiInput label="purchase.supplierInvoice" help={<Help term="purchase.supplierBill" size="sm" />} value={supplierBill} onChange={(e) => setSupplierBill(e.target.value)} dir="ltr" maxLength={40} /> : null}
                   {kind === 'supplier' ? (
                     <div className="grid grid-cols-2 gap-2">
-                      <BiInput label="purchase.extraCosts" type="number" inputMode="numeric" min={0} value={extraCosts} onChange={(e) => setExtraCosts(e.target.value)} className="num" hint="purchase.extraHint" />
-                      <BiInput label="purchase.extraNote" value={extraNote} onChange={(e) => setExtraNote(e.target.value)} maxLength={120} />
+                      <BiInput label="purchase.extraCosts" help={<Help term="purchase.extraCosts" size="sm" />} type="number" inputMode="numeric" min={0} value={extraCosts} onChange={(e) => setExtraCosts(e.target.value)} className="num" hint="purchase.extraHint" />
+                      <BiInput label="purchase.extraNote" help={<Help term="purchase.extraNote" size="sm" />} value={extraNote} onChange={(e) => setExtraNote(e.target.value)} maxLength={120} />
                     </div>
                   ) : null}
                 </>
@@ -243,12 +246,12 @@ export default function PurchaseWizard() {
 
               <div className="hero flex flex-col gap-1 px-5 py-4">
                 <div className="flex items-center justify-between">
-                  <BiLabel text="common.total" size="md" tone="text-hero-text" bold />
+                  <span className="flex items-center gap-1"><BiLabel text="common.total" size="md" tone="text-hero-text" bold /><Help term="purchase.total" size="sm" /></span>
                   <span className="num text-3xl" dir="ltr">{withCur(total.toLocaleString('en-US'))}</span>
                 </div>
                 {udhaar ? (
                   <div className="flex items-center justify-between border-t border-white/15 pt-1.5">
-                    <BiLabel text="counter.stillToGive" size="sm" tone="text-gold-text" bold />
+                    <span className="flex items-center gap-1"><BiLabel text="counter.stillToGive" size="sm" tone="text-gold-text" bold /><Help term="purchase.stillToGive" size="sm" /></span>
                     <span className="num text-xl text-gold-text" dir="ltr">{(total - paid).toLocaleString('en-US')}</span>
                   </div>
                 ) : null}
@@ -270,7 +273,7 @@ export default function PurchaseWizard() {
           </div>
           {kind !== 'supplier' && result.lines.some((l) => l.device_id) ? (
             <div className="rounded-2xl border border-gold/40 bg-gold-tint/40 px-4 py-3">
-              <div className="flex items-center gap-2"><ShieldCheck size={20} className="text-gold-text" /><BiLabel text="purchase.verifyTitle" size="md" bold /></div>
+              <div className="flex items-center gap-2"><ShieldCheck size={20} className="text-gold-text" /><BiLabel text="purchase.verifyTitle" size="md" bold /><Help term="idcheck" size="sm" /></div>
               <BiLabel text="purchase.verifyHint" size="sm" tone="text-muted" className="mt-1" />
             </div>
           ) : null}
@@ -340,15 +343,17 @@ export default function PurchaseWizard() {
   )
 }
 
-function SourceCard({ active, icon, title, hint, onClick }: { active: boolean; icon: ReactNode; title: string; hint: string; onClick: () => void }) {
+function SourceCard({ active, icon, title, hint, onClick, help }: { active: boolean; icon: ReactNode; title: string; hint: string; onClick: () => void; help: string }) {
+  // the "?" sits beside the card, not inside it, so a tap on it does not choose the card (docs/33)
   return (
+    <div className="flex items-center gap-1">
     <button
       type="button"
       onClick={onClick}
       aria-pressed={active}
       // chosen = accent border + light accent wash; words keep the normal ink colour so they never vanish
       // into the card (owner 2026-10-27: on some looks the chosen card hid its icon and title)
-      className={`tap flex items-center gap-4 rounded-3xl border-2 px-4 py-4 text-start text-ink transition-colors ${active ? 'border-emerald bg-emerald-tint' : 'border-line bg-surface hover:border-muted/40'}`}
+      className={`tap flex min-w-0 flex-1 items-center gap-4 rounded-3xl border-2 px-4 py-4 text-start text-ink transition-colors ${active ? 'border-emerald bg-emerald-tint' : 'border-line bg-surface hover:border-muted/40'}`}
     >
       <span className={`well h-14 w-14 shrink-0 ${active ? 'bg-emerald text-white' : 'bg-ink text-ground'}`}>{icon}</span>
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
@@ -357,6 +362,8 @@ function SourceCard({ active, icon, title, hint, onClick }: { active: boolean; i
       </span>
       {active ? <Check size={22} className="shrink-0 text-emerald" /> : null}
     </button>
+    <Help term={help} size="sm" />
+    </div>
   )
 }
 

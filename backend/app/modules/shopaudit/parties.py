@@ -117,8 +117,16 @@ def journey(
     paid_counter = _cash_in_groups(
         db, shop_id, [p.ledger_group_id for p in purchases if p.ledger_group_id], "out"
     )
-    received_later = money(sum((p.amount for p in payments if p.direction == "in"), ZERO))
-    paid_later = money(sum((p.amount for p in payments if p.direction == "out"), ZERO))
+    # bill money only; len-den (money with no bill, docs/32) is counted apart
+    bill_pays = [p for p in payments if p.purpose != "lending"]
+    received_later = money(sum((p.amount for p in bill_pays if p.direction == "in"), ZERO))
+    paid_later = money(sum((p.amount for p in bill_pays if p.direction == "out"), ZERO))
+    lent = money(
+        sum((p.amount for p in payments if p.purpose == "lending" and p.direction == "out"), ZERO)
+    )
+    borrowed = money(
+        sum((p.amount for p in payments if p.purpose == "lending" and p.direction == "in"), ZERO)
+    )
     refunds_out = money(sum((r.refund_amount for r in returns if r.kind == "sale"), ZERO))
     refunds_in = money(sum((r.refund_amount for r in returns if r.kind == "purchase"), ZERO))
     # profit on what this person bought from us, and on what we sourced from them
@@ -196,6 +204,8 @@ def journey(
             "refunded_to_them": refunds_out,
             "refunded_by_them": refunds_in if can_cost else None,
             "payments": len(payments),
+            "lent": lent,
+            "borrowed": borrowed,
         },
         "returns": {
             "sale": {

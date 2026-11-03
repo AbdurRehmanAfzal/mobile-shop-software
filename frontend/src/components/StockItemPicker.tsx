@@ -5,6 +5,7 @@
 import { Plus, Watch } from 'lucide-react'
 import { useState } from 'react'
 import { BiButton, useLang } from './Bilingual'
+import Help from './Help'
 import { Empty, List, Loading, MoneyText, Row, SearchBox } from './ui'
 import { kindLabel, useItemKinds } from './ItemKinds'
 import ItemForm from '@/features/accessories/ItemForm'
@@ -42,8 +43,9 @@ export default function StockItemPicker({ mode, onPick }: { mode: 'sell' | 'buy'
 
   return (
     <div className="flex flex-col gap-3">
-      <SearchBox value={q} onChange={setQ} placeholder="items.search" />
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><SearchBox value={q} onChange={setQ} placeholder="items.search" /></div><Help term="stock.itemSearch" size="sm" /></div>
+      <div className="flex flex-wrap items-center gap-1.5">
+        <Help term="stock.itemKinds" size="sm" />
         <button type="button" aria-pressed={!cat} onClick={() => setCat('')} className={chip(!cat)}>{pick('common.all')}</button>
         {kinds.map((c) => (
           <button key={c} type="button" aria-pressed={cat === c} onClick={() => setCat(c)} className={chip(cat === c)}>{kindLabel(pick, c)}</button>

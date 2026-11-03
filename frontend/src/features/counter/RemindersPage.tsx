@@ -5,6 +5,7 @@
 import { BellRing, Check, MessageCircle, Send } from 'lucide-react'
 import { useState } from 'react'
 import { BiAlert, BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { Empty, ErrorText, Loading, PageHeader, fmtDate } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useGet, useInvalidate } from '@/lib/queries'
@@ -47,14 +48,15 @@ export default function RemindersPage() {
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="remind.title" />
+      <PageHeader title="remind.title" help={<Help term="counter.reminders" />} />
       <BiLabel text={auto ? 'remind.autoHint' : 'remind.handHint'} size="sm" tone="text-muted" />
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap items-center gap-1.5">
         {DAYS.map((d) => (
           <button key={d} type="button" aria-pressed={minDays === d} onClick={() => setMinDays(d)} className={`tap h-10 rounded-full border-2 px-3.5 font-bold ${minDays === d ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-[13px]'}`}>
             {d === 0 ? pick('remind.everyone') : pick('remind.olderThan').replace('{{n}}', String(d))}
           </button>
         ))}
+        <Help term="counter.remindFilter" size="sm" />
       </div>
 
       {done ? (

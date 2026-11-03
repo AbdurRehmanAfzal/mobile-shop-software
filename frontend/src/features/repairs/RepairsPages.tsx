@@ -2,13 +2,14 @@
  *  charge, "it is fixed") → give it back (bill, advance, left to take; the rest goes to khata).
  *  A four-stage bar shows where every job is. */
 
-import { CheckCircle2, Clock, HandCoins, Phone, Plus, Printer, Receipt, SlidersHorizontal, Trash2, Wrench, XCircle } from 'lucide-react'
+import { CheckCircle2, Clock, FlaskConical, HandCoins, Phone, Plus, Printer, Receipt, SlidersHorizontal, Tag, Trash2, Wrench, XCircle } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import DocActions from '@/components/DocShare'
 import DocLangPicker from '@/components/DocLangPicker'
 import { ImeiInput } from '@/components/FieldInputs'
+import Help from '@/components/Help'
 import PartyPicker from '@/components/PartyPicker'
 import { BtnText, Empty, ErrorText, fmtDate, IconChip, Loading, PageHeader, SearchBox, Section, Sheet } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
@@ -16,6 +17,8 @@ import { openPrintable } from '@/lib/files'
 import {isoDay, withCur } from '@/lib/format'
 import { useDocMutation, useGet } from '@/lib/queries'
 import type { Party } from '@/lib/types'
+import { JobLabs, type Trip } from './RepairLabs'
+import RepairSticker from './RepairSticker'
 
 interface Fault { code: string; en: string; ur: string }
 interface Part { description: string; accessory_id?: string | null; qty: number; unit_cost?: string; unit_price: string | number }
@@ -25,6 +28,7 @@ interface Job {
   estimate: string; advance: string; promised_at: string | null; overdue: boolean; status: string; parts_total: string; labour: string
   discount: string; total: string; paid: string; balance_due: string; warranty_days: number; outside_party_name: string | null
   outside_cost: string; created_at: string; parts: Part[]; status_log: { to_status: string; note: string | null; user_name: string | null; at: string }[]
+  trips?: Trip[]; at_lab?: Trip | null
 }
 interface Accessory { id: string; name: string; qty: number; price: string }
 
@@ -51,21 +55,30 @@ export function RepairsPage() {
   const ready = (data ?? []).filter((j) => stageOf(j.status) === 2)
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="repair.title" right={<button type="button" aria-label={pick('counter.rTitleNew')} onClick={() => nav('/repairs/new')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 bg-ink text-ground"><Plus size={22} /><BtnText k={'counter.rTitleNew'} /></button>} />
+      <PageHeader title="repair.title" help={<Help term="repair.page" />} right={<button type="button" aria-label={pick('counter.rTitleNew')} onClick={() => nav('/repairs/new')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 bg-ink text-ground"><Plus size={22} /><BtnText k={'counter.rTitleNew'} /></button>} />
       <button type="button" onClick={() => nav('/repairs/new')} className="tap flex min-h-16 items-center gap-3 rounded-3xl bg-repair px-4 text-repair-fg">
         <span className="well h-11 w-11 bg-surface"><Plus size={22} /></span>
         <span className={ur ? cls('lg') : 'text-lg font-extrabold'}>{pick('counter.rTitleNew')}</span>
       </button>
+      <div className="flex items-center gap-1">
+        <button type="button" onClick={() => nav('/repairs/labs')} className="tap flex min-h-12 flex-1 items-center gap-2 rounded-2xl border border-line bg-surface px-4 text-ink" data-testid="open-labs">
+          <FlaskConical size={20} /><BiLabel text="rlab.labs" size="md" bold tone="text-current" />
+        </button>
+        <Help term="rlab.labs" size="sm" />
+      </div>
       {ready.length ? <BiLabel text="counter.readyCall" size="sm" bold tone="text-sell-fg" /> : null}
-      <BiSegmented value={open ? 'open' : 'all'} onChange={(v) => setOpen(v === 'open')} options={[{ value: 'open', text: 'repair.open' }, { value: 'all', text: 'repair.all' }]} />
-      <SearchBox value={q} onChange={setQ} placeholder="repair.searchPlaceholder" />
+      <div className="flex items-center gap-1">
+        <div className="min-w-0 flex-1"><BiSegmented value={open ? 'open' : 'all'} onChange={(v) => setOpen(v === 'open')} options={[{ value: 'open', text: 'repair.open' }, { value: 'all', text: 'repair.all' }]} /></div>
+        <Help term="repair.view" size="sm" />
+      </div>
+      <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><SearchBox value={q} onChange={setQ} placeholder="repair.searchPlaceholder" /></div><Help term="common.search" size="sm" /></div>
       {isLoading ? <Loading /> : !data?.length ? <Empty text="repair.none" /> : (
         <div className="card divide-y divide-line p-0">
           {[...ready, ...data.filter((j) => stageOf(j.status) !== 2)].map((j) => (
             <button key={j.id} type="button" onClick={() => nav(`/repairs/${j.id}`)} className="tap flex w-full items-center gap-3 px-4 py-3 text-start">
               <span className="flex min-w-0 flex-1 flex-col">
                 <span className="truncate text-[15px] font-extrabold">{j.device_desc}</span>
-                <span className="truncate text-xs text-muted">{j.party_name ?? pick('repair.ownStock')} · <span dir="ltr">{j.no}</span>{j.promised_at ? <> · <span dir="ltr">{fmtDate(j.promised_at)}</span></> : null}</span>
+                <span className="truncate text-xs text-muted">{j.party_name ?? pick('repair.ownStock')} · <span dir="ltr">{j.no}</span>{j.promised_at ? <> · <span dir="ltr">{fmtDate(j.promised_at)}</span></> : null}{j.at_lab ? <> · <span className={j.at_lab.late ? 'font-bold text-payable' : 'font-bold text-repair-fg'}>{pick('rlab.atLabShort')}: {j.at_lab.lab_name}</span></> : null}</span>
               </span>
               <span className="flex flex-col items-end gap-1">
                 <StageChip status={j.status} overdue={j.overdue} />
@@ -95,10 +108,10 @@ export function NewRepairPage() {
   const days = [{ d: isoDay(0), t: 'counter.today' }, { d: isoDay(1), t: 'counter.tomorrow' }, { d: isoDay(3), t: 'counter.in3days' }]
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="counter.rTitleNew" />
+      <PageHeader title="counter.rTitleNew" help={<Help term="repair.new" />} />
       <PartyPicker value={party} onChange={setParty} kind="customer" label="repair.customer" />
-      <BiInput label="counter.phoneName" value={f.device_desc} onChange={set('device_desc')} />
-      <BiLabel text="counter.whatProblem" size="md" bold />
+      <BiInput label="counter.phoneName" help={<Help term="repair.device" size="sm" />} value={f.device_desc} onChange={set('device_desc')} />
+      <span className="flex items-center gap-1"><BiLabel text="counter.whatProblem" size="md" bold /><Help term="repair.faults" size="sm" /></span>
       <div className="flex flex-wrap gap-1.5">
         {faults?.map((x) => (
           <button key={x.code} type="button" aria-pressed={codes.includes(x.code)} onClick={() => toggle(codes, x.code, setCodes)} className={chip(codes.includes(x.code))}>
@@ -106,20 +119,20 @@ export function NewRepairPage() {
           </button>
         ))}
       </div>
-      <BiInput label="counter.otherProblem" value={f.fault_text} onChange={set('fault_text')} />
+      <BiInput label="counter.otherProblem" help={<Help term="repair.faultText" size="sm" />} value={f.fault_text} onChange={set('fault_text')} />
       <div className="grid grid-cols-2 gap-2">
-        <BiInput label="counter.estimateCost" type="number" inputMode="numeric" min={0} value={f.estimate} onChange={set('estimate')} />
-        <BiInput label="counter.advanceTaken" type="number" inputMode="numeric" min={0} value={f.advance} onChange={set('advance')} />
+        <BiInput label="counter.estimateCost" help={<Help term="repair.estimate" size="sm" />} type="number" inputMode="numeric" min={0} value={f.estimate} onChange={set('estimate')} />
+        <BiInput label="counter.advanceTaken" help={<Help term="repair.advance" size="sm" />} type="number" inputMode="numeric" min={0} value={f.advance} onChange={set('advance')} />
       </div>
-      <BiLabel text="counter.whenReady" size="md" bold />
+      <span className="flex items-center gap-1"><BiLabel text="counter.whenReady" size="md" bold /><Help term="repair.promised" size="sm" /></span>
       <div className="flex flex-wrap gap-1.5">
         {days.map((x) => <button key={x.d} type="button" aria-pressed={f.promised_at === x.d} onClick={() => setF({ ...f, promised_at: x.d })} className={chip(f.promised_at === x.d)}>{pick(x.t)}</button>)}
         <input type="date" aria-label={pick('counter.whenReady')} value={f.promised_at} min={isoDay(0)} onChange={set('promised_at')} className="h-10 rounded-full border border-line bg-surface px-3 text-sm font-bold" dir="ltr" />
       </div>
       {more ? (
         <>
-          <ImeiInput label="repair.imei" value={f.imei} onChange={(imei) => setF({ ...f, imei })} />
-          <BiLabel text="repair.received" size="md" tone="text-muted" />
+          <ImeiInput label="repair.imei" help={<Help term="imei" size="sm" />} value={f.imei} onChange={(imei) => setF({ ...f, imei })} />
+          <span className="flex items-center gap-1"><BiLabel text="repair.received" size="md" tone="text-muted" /><Help term="repair.received" size="sm" /></span>
           <div className="flex flex-wrap gap-1.5">
             {RECEIVED.map((x) => <button key={x} type="button" aria-pressed={received.includes(x)} onClick={() => toggle(received, x, setReceived)} className={chip(received.includes(x))}>{pick(`repair.acc.${x}`)}</button>)}
           </div>
@@ -152,6 +165,7 @@ export function RepairDetailPage() {
   const { data: faults } = useGet<Fault[]>(['faults'], '/api/v1/repairs/fault-codes')
   const { data: stock } = useGet<Accessory[]>(['accessories', 'all'], '/api/v1/accessories')
   const [sheet, setSheet] = useState<null | 'fix' | 'give'>(null)
+  const [sticker, setSticker] = useState(false)
   const [parts, setParts] = useState<Part[]>([])
   const [labour, setLabour] = useState('')
   const [paid, setPaid] = useState('')
@@ -184,7 +198,7 @@ export function RepairDetailPage() {
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title={{ en: j.device_desc, ur: j.device_desc }} right={<StageChip status={j.status} overdue={j.overdue} />} />
+      <PageHeader title={{ en: j.device_desc, ur: j.device_desc }} help={<Help term="repair.job" />} right={<StageChip status={j.status} overdue={j.overdue} />} />
 
       <section className="flex flex-col gap-2 rounded-3xl bg-repair p-4 text-repair-fg">
         <div className="flex items-center gap-3">
@@ -205,7 +219,8 @@ export function RepairDetailPage() {
         {j.promised_at && !closed ? <span className={small}>{pick('counter.whenReady')}: <span dir="ltr">{fmtDate(j.promised_at)}</span></span> : null}
       </section>
 
-      <div className="grid grid-cols-4 gap-1.5">
+      <div className="flex items-center gap-1">
+      <div className="grid min-w-0 flex-1 grid-cols-4 gap-1.5">
         {STAGES.map((s, i) => (
           <div key={s} className="flex flex-col gap-1">
             <span className={`h-1.5 rounded-full ${i <= stage ? 'bg-repair-fg' : 'bg-line'}`} />
@@ -213,10 +228,12 @@ export function RepairDetailPage() {
           </div>
         ))}
       </div>
+      <Help term="repair.stages" size="sm" />
+      </div>
 
       {stage < 2 ? (
         <>
-          <BiButton text="counter.markReady" icon={<CheckCircle2 size={22} />} full onClick={openFix} />
+          <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><BiButton text="counter.markReady" icon={<CheckCircle2 size={22} />} full onClick={openFix} /></div><Help term="repair.steps" size="sm" /></div>
           <div className="grid grid-cols-2 gap-2">
             {j.status !== 'in_progress' ? <BiButton text="counter.startFix" icon={<Wrench size={18} />} size="md" variant="secondary" loading={statusM.isPending} onClick={() => statusM.mutate({ status: 'in_progress' })} /> : null}
             {j.status !== 'waiting_parts' ? <BiButton text="counter.waitParts" icon={<Clock size={18} />} size="md" variant="secondary" loading={statusM.isPending} onClick={() => statusM.mutate({ status: 'waiting_parts' })} /> : null}
@@ -224,6 +241,7 @@ export function RepairDetailPage() {
           </div>
         </>
       ) : null}
+      <JobLabs jobId={j.id} open={!closed} trips={j.trips ?? []} atLab={j.at_lab ?? null} />
       {stage === 2 && canGive ? (
         <>
           <BiButton text="counter.giveBackCustomer" icon={<HandCoins size={22} />} full onClick={() => { setPaid(String(left)); setSheet('give') }} />
@@ -232,20 +250,25 @@ export function RepairDetailPage() {
       ) : null}
       <ErrorText error={statusM.error} />
 
-      <Section title="repair.bill">
+      <Section title="repair.bill" help="repair.bill">
         <div className="card flex flex-col p-0">
           {j.parts.map((p, i) => <Row key={i} label={`${p.description}${p.qty > 1 ? ` × ${p.qty}` : ''}`} value={n(Number(p.unit_price) * p.qty)} />)}
-          <Row label={pick('counter.labourCharge')} value={n(j.labour)} />
-          <Row label={pick('common.total')} value={n(Number(j.total) > 0 ? j.total : j.estimate)} strong />
-          {Number(j.advance) ? <Row label={pick('counter.advanceTaken')} value={`− ${n(j.advance)}`} /> : null}
-          {closed ? <Row label={pick('common.paid')} value={n(j.paid)} /> : <Row label={pick('counter.leftToTake')} value={n(Number(j.total) > 0 ? left : Math.max(0, Number(j.estimate) - Number(j.advance)))} strong />}
+          <Row label={pick('counter.labourCharge')} value={n(j.labour)} help="repair.labour" />
+          <Row label={pick('common.total')} value={n(Number(j.total) > 0 ? j.total : j.estimate)} strong help="repair.total" />
+          {Number(j.advance) ? <Row label={pick('counter.advanceTaken')} value={`− ${n(j.advance)}`} help="repair.advance" /> : null}
+          {closed ? <Row label={pick('common.paid')} value={n(j.paid)} help="repair.paid" /> : <Row label={pick('counter.leftToTake')} value={n(Number(j.total) > 0 ? left : Math.max(0, Number(j.estimate) - Number(j.advance)))} strong help="repair.left" />}
         </div>
       </Section>
       <DocLangPicker />
+      <div className="flex items-center gap-1">
+        <div className="min-w-0 flex-1"><BiButton text="rlab.printSticker" icon={<Tag size={20} />} size="md" variant="secondary" full onClick={() => setSticker(true)} /></div>
+        <Help term="rlab.sticker" size="sm" />
+      </div>
+      <RepairSticker ids={[j.id]} open={sticker} onClose={() => setSticker(false)} />
       <BiButton text="counter.printSlip" icon={<Printer size={20} />} size="md" variant="ghost" onClick={() => openPrintable(`/api/v1/repairs/${j.id}/job-sheet`)} />
       <DocActions path={`/api/v1/repairs/${j.id}/job-sheet`} name={`repair-${j.no}`} title={j.no} picker={false} />
 
-      <Section title="stock.history">
+      <Section title="stock.history" help="repair.history">
         <div className="card p-0">
           {[...j.status_log].reverse().map((l, i) => (
             <div key={i} className={`flex items-center justify-between gap-2 px-4 py-2.5 ${i ? 'border-t border-line' : ''}`}>
@@ -263,21 +286,22 @@ export function RepairDetailPage() {
         <div className="flex flex-col gap-3">
           {parts.map((p, i) => (
             <div key={i} className="grid grid-cols-[1fr_56px_96px_auto] items-end gap-2">
-              <BiInput label="counter.partName" value={p.description} onChange={(e) => setParts(parts.map((x, k) => (k === i ? { ...x, description: e.target.value } : x)))} />
-              <BiInput label="purchase.qty" type="number" min={1} value={p.qty} onChange={(e) => setParts(parts.map((x, k) => (k === i ? { ...x, qty: Number(e.target.value) || 1 } : x)))} />
-              <BiInput label="repair.partPrice" type="number" inputMode="numeric" min={0} value={p.unit_price} onChange={(e) => setParts(parts.map((x, k) => (k === i ? { ...x, unit_price: e.target.value } : x)))} />
+              <BiInput label="counter.partName" help={<Help term="repair.part" size="sm" />} value={p.description} onChange={(e) => setParts(parts.map((x, k) => (k === i ? { ...x, description: e.target.value } : x)))} />
+              <BiInput label="purchase.qty" help={<Help term="common.qty" size="sm" />} type="number" min={1} value={p.qty} onChange={(e) => setParts(parts.map((x, k) => (k === i ? { ...x, qty: Number(e.target.value) || 1 } : x)))} />
+              <BiInput label="repair.partPrice" help={<Help term="repair.partPrice" size="sm" />} type="number" inputMode="numeric" min={0} value={p.unit_price} onChange={(e) => setParts(parts.map((x, k) => (k === i ? { ...x, unit_price: e.target.value } : x)))} />
               <button type="button" aria-label={pick('crud.delete')} onClick={() => setParts(parts.filter((_, k) => k !== i))} className="tap mb-2 inline-flex h-9 shrink-0 items-center gap-1 rounded-xl px-2 text-payable"><Trash2 size={16} /><BtnText k={'crud.delete'} /></button>
             </div>
           ))}
           <div className="flex flex-wrap gap-1.5">
             <IconChip icon={<Plus size={18} />} text="counter.addPart" onClick={() => setParts([...parts, { description: '', qty: 1, unit_price: '' }])} />
+            <Help term="repair.fromStock" size="sm" />
             {stock?.filter((a) => a.qty > 0).slice(0, 8).map((a) => (
               <button key={a.id} type="button" onClick={() => setParts([...parts, { description: a.name, accessory_id: a.id, qty: 1, unit_price: a.price }])} className="tap rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-bold text-muted">+ {a.name} ({a.qty})</button>
             ))}
           </div>
-          <BiInput label="counter.labourCharge" type="number" inputMode="numeric" min={0} value={labour} onChange={(e) => setLabour(e.target.value)} />
+          <BiInput label="counter.labourCharge" help={<Help term="repair.labour" size="sm" />} type="number" inputMode="numeric" min={0} value={labour} onChange={(e) => setLabour(e.target.value)} />
           <div className="hero flex items-center justify-between px-5 py-3">
-            <BiLabel text="common.total" size="md" tone="text-hero-text" bold />
+            <span className="flex items-center gap-1 [&_button]:text-current"><BiLabel text="common.total" size="md" tone="text-hero-text" bold /><Help term="repair.total" size="sm" /></span>
             <span className="num text-2xl" dir="ltr">{withCur(draftTotal.toLocaleString('en-US'))}</span>
           </div>
           <ErrorText error={partsM.error ?? labourM.error ?? statusM.error} />
@@ -289,19 +313,19 @@ export function RepairDetailPage() {
       <Sheet open={sheet === 'give'} onClose={() => setSheet(null)} title="counter.giveBackCustomer">
         <div className="flex flex-col gap-3">
           <div className="card flex flex-col p-0">
-            <Row label={pick('common.total')} value={n(j.total)} />
-            {Number(j.advance) ? <Row label={pick('counter.advanceTaken')} value={`− ${n(j.advance)}`} /> : null}
-            <Row label={pick('counter.leftToTake')} value={n(left)} strong />
+            <Row label={pick('common.total')} value={n(j.total)} help="repair.total" />
+            {Number(j.advance) ? <Row label={pick('counter.advanceTaken')} value={`− ${n(j.advance)}`} help="repair.advance" /> : null}
+            <Row label={pick('counter.leftToTake')} value={n(left)} strong help="repair.left" />
           </div>
           {j.party_id ? (
             <>
-              <BiInput label="counter.takeNow" type="number" inputMode="numeric" min={0} value={paid} onChange={(e) => setPaid(e.target.value)} className="num text-2xl" />
+              <BiInput label="counter.takeNow" help={<Help term="common.paid" size="sm" />} type="number" inputMode="numeric" min={0} value={paid} onChange={(e) => setPaid(e.target.value)} className="num text-2xl" />
               {Number(paid || 0) < left ? <BiLabel text="counter.restToKhata" size="sm" tone="text-receivable" /> : null}
             </>
-          ) : (
-            <BiInput label="counter.outsideCostOpt" type="number" inputMode="numeric" min={0} value={outsideCost} onChange={(e) => setOutsideCost(e.target.value)} />
+          ) : (j.trips ?? []).some((t) => t.status === 'back') ? null : (
+            <BiInput label="counter.outsideCostOpt" help={<Help term="repair.outsideCost" size="sm" />} type="number" inputMode="numeric" min={0} value={outsideCost} onChange={(e) => setOutsideCost(e.target.value)} />
           )}
-          <BiInput label="counter.warrantyOpt" type="number" inputMode="numeric" min={0} value={warranty} onChange={(e) => setWarranty(e.target.value)} />
+          <BiInput label="counter.warrantyOpt" help={<Help term="warranty" size="sm" />} type="number" inputMode="numeric" min={0} value={warranty} onChange={(e) => setWarranty(e.target.value)} />
           <ErrorText error={deliverM.error} />
           <BiButton text="counter.giveBackCustomer" full loading={deliverM.isPending} onClick={async () => { await deliverM.mutateAsync({ paid: Number(paid || 0), warranty_days: warranty ? Number(warranty) : undefined, outside_cost: outsideCost ? Number(outsideCost) : undefined }); setSheet(null) }} />
         </div>
@@ -310,11 +334,11 @@ export function RepairDetailPage() {
   )
 }
 
-function Row({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
+function Row({ label, value, strong, help }: { label: string; value: string; strong?: boolean; help?: string }) {
   const { ur, cls } = useLang()
   return (
     <div className={`flex items-center justify-between gap-3 border-b border-line px-4 py-2.5 last:border-0 ${strong ? 'bg-ground/60' : ''}`}>
-      <span className={`${ur ? cls('md') : 'text-[15px]'} ${strong ? 'font-bold' : ''}`}>{label}</span>
+      <span className={`flex items-center gap-1 ${ur ? cls('md') : 'text-[15px]'} ${strong ? 'font-bold' : ''}`}>{label}{help ? <Help term={help} size="sm" /> : null}</span>
       <span className={`num ${strong ? 'text-lg' : 'text-base'}`} dir="ltr">{value}</span>
     </div>
   )

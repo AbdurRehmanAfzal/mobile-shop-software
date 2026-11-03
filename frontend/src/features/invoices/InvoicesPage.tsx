@@ -7,6 +7,7 @@ import { PackagePlus, Tag, Undo2, Wrench, type LucideIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { Chip, Empty, fmtDate, List, Loading, MoneyText, PageHeader, Row, SearchBox } from '@/components/ui'
 import PeriodPicker, { periodOf, periodQuery, type Period } from '@/features/counter/PeriodPicker'
 import { useAuth } from '@/lib/auth'
@@ -82,30 +83,35 @@ export default function InvoicesPage() {
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="inv.title" />
+      <PageHeader title="inv.title" help={<Help term="invoices.page" />} />
       <BiLabel text="inv.hint" size="sm" tone="text-muted" />
-      <SearchBox value={q} onChange={setQ} placeholder="inv.search" scan />
+      <div className="flex items-center gap-1">
+        <div className="min-w-0 flex-1"><SearchBox value={q} onChange={setQ} placeholder="inv.search" scan /></div>
+        <Help term="invoices.search" size="sm" />
+      </div>
       {q.trim() ? <BiLabel text="inv.allDates" size="sm" tone="text-muted" /> : <PeriodPicker value={period} onChange={setPeriod} size="sm" />}
 
-      <div className="flex flex-wrap gap-1.5" role="group" aria-label={pick('inv.type')}>
+      <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label={pick('inv.type')}>
         {kinds.map((k) => (
           <button key={k.v} type="button" aria-pressed={kind === k.v} onClick={() => setKind(k.v as typeof kind)} className={chip(kind === k.v)}>{pick(k.t)}</button>
         ))}
+        <Help term="invoices.kind" size="sm" />
       </div>
-      <div className="flex flex-wrap gap-1.5" role="group" aria-label={pick('inv.stateLabel')}>
+      <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label={pick('inv.stateLabel')}>
         {states.map((s) => (
           <button key={s.v} type="button" aria-pressed={state === s.v} onClick={() => setState(s.v)} className={chip(state === s.v)}>{pick(s.t)}</button>
         ))}
+        <Help term="invoices.state" size="sm" />
       </div>
 
       {data && (Number(data.to_get) > 0 || Number(data.to_give) > 0) ? (
         <div className="grid grid-cols-2 gap-2">
           <div className="card flex flex-col gap-0.5 p-3">
-            <BiLabel text="inv.toGet" size="sm" tone="text-muted" />
+            <span className="flex items-center gap-1"><BiLabel text="inv.toGet" size="sm" tone="text-muted" /><Help term="invoices.toGet" size="sm" /></span>
             <span className="num text-lg text-receivable" dir="ltr">{formatMoney(data.to_get)}</span>
           </div>
           <div className="card flex flex-col gap-0.5 p-3">
-            <BiLabel text="inv.toGive" size="sm" tone="text-muted" />
+            <span className="flex items-center gap-1"><BiLabel text="inv.toGive" size="sm" tone="text-muted" /><Help term="invoices.toGive" size="sm" /></span>
             <span className="num text-lg text-payable" dir="ltr">{formatMoney(data.to_give)}</span>
           </div>
         </div>

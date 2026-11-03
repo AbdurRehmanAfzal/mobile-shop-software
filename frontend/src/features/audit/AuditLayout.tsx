@@ -19,6 +19,7 @@ export const AUDIT_SECTIONS: { to: string; key: string; owner?: boolean }[] = [
   { to: '/audit/people', key: 'audit.nav.people' },
   { to: '/audit/udhaar', key: 'audit.nav.udhaar' },
   { to: '/audit/lending', key: 'audit.nav.lending' },
+  { to: '/audit/repairs', key: 'audit.nav.repairs' },
   { to: '/audit/stock', key: 'audit.nav.stock' },
   { to: '/audit/products', key: 'audit.nav.products' },
   { to: '/audit/bills', key: 'audit.nav.bills' },
@@ -52,7 +53,8 @@ export default function AuditLayout({ children, right }: { children: ReactNode; 
         </div>
       ) : null}
       <section className="card flex flex-col gap-2" data-testid="audit-period">
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <Help term="common.period" size="sm" />
           {PRESETS.map((k: Preset) => (
             <button key={k} type="button" aria-pressed={period.preset === k} onClick={() => set({ preset: k })} className={chip(period.preset === k)}>
               {pick(`audit.preset.${k}`)}
@@ -72,9 +74,12 @@ export default function AuditLayout({ children, right }: { children: ReactNode; 
               {fmtDate(resolved.date_from)} → {fmtDate(resolved.date_to)} · {resolved.days} {pick('audit.days')}
             </span>
           ) : <span />}
+          <span className="flex items-center gap-1">
           <button type="button" onClick={() => { if (asOfOpen) set({ asOf: null }); setAsOfOpen(!asOfOpen) }} className={`tap inline-flex h-9 items-center gap-1.5 rounded-full border px-3 font-bold ${asOfOpen ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-xs'}`}>
             <CalendarRange size={14} />{pick('audit.asOf')}{resolved && period.asOf ? <span dir="ltr"> · {fmtDate(resolved.as_of)}</span> : null}
           </button>
+          <Help term="common.asOf" size="sm" />
+          </span>
         </div>
         {asOfOpen ? (
           <div className="flex items-center gap-2">

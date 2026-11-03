@@ -92,6 +92,9 @@ def test_lent_money_is_in_the_khata_and_apart_in_every_report(owner, cat):
     assert rep["people"][0]["khata"] == "8000.00"
     assert sum(float(s["lent"]) for s in rep["series"]) == 5000.0
     assert rep["entries"][0]["notes"] == "for his shop rent"
+    # the person's journey: len-den is not "paid to them later", it has its own figure
+    j = owner.get(f"/api/v1/shop-audit/parties/{cus['id']}/journey").json()
+    assert j["money"]["paid_later"] == "0.00" and j["money"]["lent"] == "5000.00"
     # a normal payment is still put on the bill, as before
     back = owner.post(P, json={"party_id": cus["id"], "direction": "in", "amount": 3000}).json()
     assert back["purpose"] == "bill" and back["allocations"][0]["document_no"] == sale["no"]

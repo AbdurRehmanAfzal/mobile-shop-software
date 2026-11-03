@@ -237,3 +237,33 @@ by sheet remain a later step (docs/18 §1).
 **Context.** The owner wants reminders for len-den (docs/32 §7).
 **Decision.** `payments.due_date` and `reminded_at` (migration `f4b6d8f0a2c4`). The status is derived per person from their open entries on their side. A person who owes the shop gets a WhatsApp reminder, by hand or from the night job (a day before, on the day, then every 3 days; only when the shop's udhaar reminders are on). What the shop owes is never messaged to the person; it is shown to the owner (home, overview, audit). Changing a date is an audit row; nothing is deleted.
 **Consequences.** The udhaar reminder (balance untouched N days) and the len-den reminder can both reach the same person; each has its own gap.
+
+## ADR-043 · 2026-11-02 · Accepted · Help on everything: one `Help` component, texts per module namespace, a test that no term lacks a language or an example
+**Context.** Shopkeepers asked for an info icon with an example on every field, tab and card (docs/33).
+**Decision.**
+- `Help` takes any `help.<term>` (nested) and a small size; `Section`, `KV` and the phone / CNIC / IMEI inputs take a help key; the phone / CNIC / IMEI inputs show a default one.
+- Every term has `title`, `body` and `example` in en / ur / roman. `Help.test.ts` scans the code for literal terms and fails on any gap.
+- Terms built from server keys go through literal maps (`helpKey: '...'`), never template strings.
+- Shared wording lives once in `help.common.*`; module texts sit under the module's namespace.
+
+**Consequences.**
+- A new screen or field without its texts fails the test.
+- Tabs that are buttons get one icon beside the group, which explains the selected tab.
+
+## ADR-044 · 2026-11-03 · Accepted · Repair labs are `technician` parties; one `repair_dispatches` row per trip; the lab's charge is booked on return; a repair sticker with picked fields
+**Context.** Shops send phones to many repair labs in the market and want each lab's complete record, the history in the repairs module and in the audit, and a sticker with the phone's details whose fields they choose (docs/34).
+**Decision.**
+- (1) A lab is a party of kind `technician`.
+- (2) `repair_dispatches` keeps every trip: sent / back (fixed or not, charge, paid now) / cancelled. One open trip per job.
+- (3) The charge is booked when the phone comes back, credited to the lab's khata less what was paid now:
+  - customer's phone → `cogs`;
+  - own phone → `inventory` and the phone's cost.
+  Delivery books only an outside cost no trip already booked.
+- (4) Back fixed → `repaired` + the "ready" message.
+- (5) Status log, audit row and (own phone) `note` device event on every step.
+- (6) `/labels/repairs` prints the sticker with the fields asked for; the barcode is the job number and `barcodes/lookup` resolves it; the screen lock is never printed.
+- (7) `/shop-audit/repairs` and the report sections `repairs` / `repair_labs`.
+
+**Consequences.**
+- Repair profit now includes outside lab costs on customers' phones.
+- A lab's unpaid charges show on its khata like any payable.

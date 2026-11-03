@@ -223,10 +223,14 @@ class ShopUpdate(BaseModel):
     legal_name: str | None = Field(default=None, max_length=200)
     tagline: str | None = Field(default=None, max_length=120)
     tagline_ur: str | None = Field(default=None, max_length=120)
-    business_type: str | None = Field(default=None, pattern="^(sole|partnership|company|aop|other)$")
+    business_type: str | None = Field(
+        default=None, pattern="^(sole|partnership|company|aop|other)$"
+    )
     registration_no: str | None = Field(default=None, max_length=40)
     established_year: int | None = Field(default=None, ge=1900, le=2100)
-    province: str | None = Field(default=None, pattern="^(punjab|sindh|kpk|balochistan|islamabad|gb|ajk)$")
+    province: str | None = Field(
+        default=None, pattern="^(punjab|sindh|kpk|balochistan|islamabad|gb|ajk)$"
+    )
     email: str | None = Field(default=None, max_length=120)
     website: str | None = Field(default=None, max_length=160)
     social: dict | None = None

@@ -3,6 +3,7 @@
 import { Plus, X } from 'lucide-react'
 import { useState } from 'react'
 import { BiButton, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { BtnText, ErrorText } from '@/components/ui'
 
 export default function QuickAdd({
@@ -61,6 +62,7 @@ export default function QuickAdd({
           placeholder={pick(placeholder)}
           className="min-h-11 min-w-0 flex-1 rounded-xl border border-line bg-surface px-3 font-semibold"
         />
+        <Help term="catalogue.quickAdd" size="sm" />
         <BiButton text="common.save" size="sm" loading={busy} disabled={!valid(value)} onClick={save} />
         <button type="button" aria-label={pick('common.cancel')} onClick={() => setOpen(false)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 shrink-0 border border-line bg-surface">
           <X size={16} />

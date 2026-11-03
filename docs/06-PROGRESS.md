@@ -248,6 +248,27 @@ Plan, audit, assumptions `docs/32-LENDING-PLAN.md`, ADR-041.
 | Demo shop has len-den (Tariq, Star Mobiles, Usman, Bilal) | ✅ | |
 | Return dates + reminders (WhatsApp to who owes, night job, home / overview alerts for what the shop owes) | ✅ | docs/32 §7, ADR-042, migration `f4b6d8f0a2c4` |
 
+## Phase 15 — A "?" with an example on every field, tab and card (owner 2026-11-02)
+Plan `docs/33-HELP-EVERYWHERE-PLAN.md`, ADR-043.
+| Item | Status | Notes |
+|---|---|---|
+| `Help` takes any term + small size; `Section` / `KV` / `PhoneInput` / `CnicInput` / `ImeiInput` help | ✅ | |
+| Coverage test: every term used has title / body / example in en / ur / roman | ✅ | `components/Help.test.ts` |
+| Audit (13 screens), counter / sale / return / exchange / payment, purchase / stock / device fields, items / repairs / installments / expenses / khata / len-den, settings / staff / profile / notifications / bulk / accounts / fees / reports, super admin | ✅ | ~1,050 icons, 1,127 help terms |
+| Found on the way: audit bills status "open" read "In repair" | ✅ | sale words now |
+| Found on the way: person's journey counted len-den as "paid / received later" | ✅ | len-den apart (`lent` / `borrowed`) |
+| Found on the way: sheets opened inside moved boxes misplaced; the person page was wider than the phone | ✅ | sheets render into `<body>`; journey header wraps |
+
+## Phase 16 — Repair labs and the repair sticker (owner 2026-11-03)
+Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
+| Item | Status | Notes |
+|---|---|---|
+| `repair_dispatches` (one row per lab trip), migration `a5c7e9b1d3f6` | ✅ | additive |
+| Send to a lab / back fixed or not with the charge / cancel; one trip at a time | ✅ | charge to the lab's khata; customer phone → cost of repair, own phone → its cost |
+| Labs list and each lab's record | ✅ | `/repairs/labs`, `/repairs/labs/:id` |
+| Repair sticker with fields picked before printing; scan opens the job | ✅ | `/labels/repairs` |
+| Repairs in the shop audit + report sections | ✅ | `/audit/repairs` |
+
 ## Owner side (open)
 Server env variables, server commands, manual testing and decisions: `docs/29-OWNER-PENDING.md` — none done yet (2026-11-01).
 

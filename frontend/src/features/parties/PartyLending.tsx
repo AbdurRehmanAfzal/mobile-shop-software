@@ -6,6 +6,7 @@
 import { BellRing, CalendarClock, HandCoins } from 'lucide-react'
 import { useState } from 'react'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { ErrorText, fmtDate, Sheet } from '@/components/ui'
 import PaymentForm from '@/features/payments/PaymentForm'
 import { api, post } from '@/lib/api'
@@ -91,7 +92,7 @@ export default function PartyLending({ party }: { party: Party }) {
       <div className="flex items-center gap-2">
         <span className="well h-10 w-10 shrink-0 bg-ground text-ink"><HandCoins size={20} /></span>
         <span className="flex min-w-0 flex-1 flex-col">
-          <BiLabel text="lending.title" size="md" bold />
+          <span className="flex items-center gap-1"><BiLabel text="lending.title" size="md" bold /><Help term="lending.title" size="sm" /></span>
           <BiLabel text={open > 0 ? 'lending.theyOwe' : open < 0 ? 'lending.weOwe' : 'lending.clear'} size="sm" tone="text-muted" />
         </span>
         <span className={`num text-xl font-bold ${open > 0 ? 'text-receivable' : open < 0 ? 'text-payable' : 'text-muted'}`} dir="ltr" data-testid="lending-open">{open === 0 ? '0' : withCur(n(Math.abs(open)))}</span>
@@ -101,30 +102,38 @@ export default function PartyLending({ party }: { party: Party }) {
           <CalendarClock size={16} className="shrink-0" />
           <span className={`flex-1 font-bold ${small}`}>{dueText}</span>
           {due.reminded_at ? <span className={`opacity-80 ${small}`}>{pick('lending.lastReminded').replace('{{date}}', fmtDate(due.reminded_at))}</span> : null}
+          <span className="[&_button]:text-current"><Help term="lending.due" size="sm" /></span>
         </div>
       ) : null}
       {open > 0 && party.phone ? (
-        <BiButton text="lending.remind" icon={<BellRing size={18} />} variant="secondary" loading={busy} onClick={remind} />
+        <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><BiButton text="lending.remind" icon={<BellRing size={18} />} variant="secondary" full loading={busy} onClick={remind} /></div><Help term="lending.remind" size="sm" /></div>
       ) : null}
       <BiLabel text="lending.hint" size="sm" tone="text-muted" />
       {data.entries.length || Number(data.bills) !== 0 ? (
         <div className={`grid grid-cols-3 gap-2 rounded-2xl bg-ground px-3 py-2 ${small}`}>
-          <span className="flex flex-col"><span className="text-muted">{pick('lending.lent')}</span><span className="num font-bold" dir="ltr">{n(data.lent)}</span></span>
-          <span className="flex flex-col"><span className="text-muted">{pick('lending.borrowed')}</span><span className="num font-bold" dir="ltr">{n(data.borrowed)}</span></span>
-          <span className="flex flex-col"><span className="text-muted">{pick('lending.fromBills')}</span><span className="num font-bold" dir="ltr">{n(data.bills)}</span></span>
+          <span className="flex flex-col"><span className="flex items-center gap-1 text-muted">{pick('lending.lent')}<Help term="lending.lent" size="sm" /></span><span className="num font-bold" dir="ltr">{n(data.lent)}</span></span>
+          <span className="flex flex-col"><span className="flex items-center gap-1 text-muted">{pick('lending.borrowed')}<Help term="lending.borrowed" size="sm" /></span><span className="num font-bold" dir="ltr">{n(data.borrowed)}</span></span>
+          <span className="flex flex-col"><span className="flex items-center gap-1 text-muted">{pick('lending.fromBills')}<Help term="lending.fromBills" size="sm" /></span><span className="num font-bold" dir="ltr">{n(data.bills)}</span></span>
         </div>
       ) : null}
       <div className="grid grid-cols-2 gap-2">
-        <button type="button" onClick={() => setGiving('out')} className="tap flex min-h-12 items-center justify-center rounded-2xl border border-line bg-surface px-2 text-ink" data-testid="lending-give">
-          <BiLabel text="lending.give" size="sm" bold tone="text-current" align="center" />
-        </button>
-        <button type="button" onClick={() => setGiving('in')} className="tap flex min-h-12 items-center justify-center rounded-2xl border border-line bg-surface px-2 text-ink" data-testid="lending-take">
-          <BiLabel text="lending.take" size="sm" bold tone="text-current" align="center" />
-        </button>
+        {/* the "?" sits on top of each button, not inside it (docs/33) */}
+        <div className="relative">
+          <button type="button" onClick={() => setGiving('out')} className="tap flex min-h-12 w-full items-center justify-center rounded-2xl border border-line bg-surface px-7 text-ink" data-testid="lending-give">
+            <BiLabel text="lending.give" size="sm" bold tone="text-current" align="center" />
+          </button>
+          <span className="absolute end-1 top-1/2 -translate-y-1/2"><Help term="lending.give" size="sm" /></span>
+        </div>
+        <div className="relative">
+          <button type="button" onClick={() => setGiving('in')} className="tap flex min-h-12 w-full items-center justify-center rounded-2xl border border-line bg-surface px-7 text-ink" data-testid="lending-take">
+            <BiLabel text="lending.take" size="sm" bold tone="text-current" align="center" />
+          </button>
+          <span className="absolute end-1 top-1/2 -translate-y-1/2"><Help term="lending.take" size="sm" /></span>
+        </div>
       </div>
       {canSettle ? (
         <div className="flex flex-col gap-2 rounded-2xl bg-khata px-4 py-3 text-khata-fg" data-testid="lending-settle">
-          <BiLabel text="lending.settleTitle" size="md" bold tone="text-current" />
+          <span className="flex items-center gap-1 [&_button]:text-current"><BiLabel text="lending.settleTitle" size="md" bold tone="text-current" /><Help term="lending.settle" size="sm" /></span>
           {(['in', 'out'] as const).map((d) => Number(data.settle[d].amount) > 0 ? (
             <span key={d} className={small}>{pick(d === 'in' ? 'lending.settleIn' : 'lending.settleOut').replace('{{amount}}', withCur(n(data.settle[d].amount)))}</span>
           ) : null)}
@@ -135,6 +144,7 @@ export default function PartyLending({ party }: { party: Party }) {
       <ErrorText error={err} />
       {data.entries.length ? (
         <div className="flex flex-col divide-y divide-line" data-testid="lending-entries">
+          <span className="flex items-center gap-1 pb-1"><BiLabel text="lending.entries" size="sm" tone="text-muted" bold /><Help term="lending.entries" size="sm" /></span>
           {data.entries.slice(0, 8).map((e) => (
             <div key={e.id} className={`flex items-center gap-3 py-2 ${e.status === 'voided' ? 'opacity-50 line-through' : ''}`}>
               <span className="flex min-w-0 flex-1 flex-col">
@@ -153,7 +163,7 @@ export default function PartyLending({ party }: { party: Party }) {
       ) : null}
       <Sheet open={dating !== null} onClose={() => setDating(null)} title="lending.changeDate">
         <div className="flex flex-col gap-3">
-          <BiInput label="lending.dueDate" type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)} dir="ltr" />
+          <BiInput label="lending.dueDate" help={<Help term="lending.dueDate" size="sm" />} type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)} dir="ltr" />
           <ErrorText error={err} />
           <BiButton text="lending.saveDate" full loading={busy} onClick={saveDate} />
         </div>

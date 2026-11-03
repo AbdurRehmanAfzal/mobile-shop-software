@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BiButton, BiLabel } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { ImeiInput } from '@/components/FieldInputs'
 import { Chip } from '@/components/ui'
 import { toLatinDigits } from '@/lib/format'
@@ -23,7 +24,7 @@ export default function ImeiLookupSheet({ onOpenDevice, onBuy }: { onOpenDevice:
           {!data.luhn_ok ? <Chip text="stock.luhnBad" tone="warn" /> : null}
           {data.found && data.device ? (
             <>
-              <BiLabel text="stock.seenBefore" size="md" bold tone="text-receivable" />
+              <span className="flex items-center gap-1"><BiLabel text="stock.seenBefore" size="md" bold tone="text-receivable" /><Help term="stock.seenBefore" size="sm" /></span>
               <div className="text-sm text-muted">{t('stock.timesBought', { n: data.times_bought })}</div>
               <div className="card p-0">
                 <DeviceRow d={data.device} onClick={() => onOpenDevice(data.device!.id)} />
@@ -34,7 +35,7 @@ export default function ImeiLookupSheet({ onOpenDevice, onBuy }: { onOpenDevice:
             </>
           ) : (
             <>
-              <BiLabel text="stock.notSeen" size="md" bold tone="text-emerald-deep" />
+              <span className="flex items-center gap-1"><BiLabel text="stock.notSeen" size="md" bold tone="text-emerald-deep" /><Help term="stock.notSeen" size="sm" /></span>
               <BiButton text="purchase.title" full onClick={() => onBuy(digits)} />
             </>
           )}

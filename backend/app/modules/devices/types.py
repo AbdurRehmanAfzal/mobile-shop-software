@@ -26,13 +26,40 @@ LOCK_VALUES = ("cleared", "not_cleared", "na")
 DEFAULT_PREFS = {"grades": list(GRADES), "require_lock_check": False}
 # the spec keys a unit or a model may carry (anything else is dropped so the JSON stays tidy)
 SPEC_KEYS = (
-    "os", "os_version", "chipset", "expandable", "bluetooth", "wifi", "nfc", "gps", "weight_g",
-    "year", "display_in", "display_type", "resolution", "refresh_hz", "battery_mah",
+    "os",
+    "os_version",
+    "chipset",
+    "expandable",
+    "bluetooth",
+    "wifi",
+    "nfc",
+    "gps",
+    "weight_g",
+    "year",
+    "display_in",
+    "display_type",
+    "resolution",
+    "refresh_hz",
+    "battery_mah",
     # tablet
-    "sim_type", "camera_front_mp", "camera_rear_mp", "stylus_support", "unlock", "port", "fast_charge_w",
+    "sim_type",
+    "camera_front_mp",
+    "camera_rear_mp",
+    "stylus_support",
+    "unlock",
+    "port",
+    "fast_charge_w",
     # watch
-    "case_material", "band_material", "band_color", "band_size", "compatible_with", "sensors", "water",
-    "aod", "calling", "battery_days",
+    "case_material",
+    "band_material",
+    "band_color",
+    "band_size",
+    "compatible_with",
+    "sensors",
+    "water",
+    "aod",
+    "calling",
+    "battery_days",
 )
 
 
@@ -110,7 +137,9 @@ def model_specs(db: Session, shop_id: uuid.UUID, model_id: uuid.UUID) -> dict:
     m = db.get(Model, model_id)
     if m is None:
         raise NotFound(code="model_not_found")
-    own = db.scalar(select(ModelSpec).where(ModelSpec.shop_id == shop_id, ModelSpec.model_id == model_id))
+    own = db.scalar(
+        select(ModelSpec).where(ModelSpec.shop_id == shop_id, ModelSpec.model_id == model_id)
+    )
     specs = dict(m.specs or {})
     specs.update(own.specs or {} if own else {})
     return {
@@ -122,7 +151,15 @@ def model_specs(db: Session, shop_id: uuid.UUID, model_id: uuid.UUID) -> dict:
     }
 
 
-def learn_specs(db: Session, shop_id: uuid.UUID, model_id: uuid.UUID, *, model_number: str | None, ram_gb: int | None, specs: dict | None) -> None:
+def learn_specs(
+    db: Session,
+    shop_id: uuid.UUID,
+    model_id: uuid.UUID,
+    *,
+    model_number: str | None,
+    ram_gb: int | None,
+    specs: dict | None,
+) -> None:
     """Remember what the shop typed for this model, so the next unit fills itself. Only non-empty
     values are written; nothing the shop knew is erased."""
     incoming = dict(clean_specs(specs) or {})
@@ -130,7 +167,9 @@ def learn_specs(db: Session, shop_id: uuid.UUID, model_id: uuid.UUID, *, model_n
         incoming["ram_gb"] = ram_gb
     if not incoming and not model_number:
         return
-    own = db.scalar(select(ModelSpec).where(ModelSpec.shop_id == shop_id, ModelSpec.model_id == model_id))
+    own = db.scalar(
+        select(ModelSpec).where(ModelSpec.shop_id == shop_id, ModelSpec.model_id == model_id)
+    )
     if own is None:
         own = ModelSpec(shop_id=shop_id, model_id=model_id, specs={})
         db.add(own)
@@ -143,11 +182,21 @@ def learn_specs(db: Session, shop_id: uuid.UUID, model_id: uuid.UUID, *, model_n
     db.flush()
 
 
-def set_model_specs(db: Session, shop_id: uuid.UUID, model_id: uuid.UUID, *, model_number: str | None, ram_gb: int | None, specs: dict | None) -> dict:
+def set_model_specs(
+    db: Session,
+    shop_id: uuid.UUID,
+    model_id: uuid.UUID,
+    *,
+    model_number: str | None,
+    ram_gb: int | None,
+    specs: dict | None,
+) -> dict:
     """the shop edits its library entry (replaces its own sheet; the global one stays underneath)"""
     if db.get(Model, model_id) is None:
         raise NotFound(code="model_not_found")
-    own = db.scalar(select(ModelSpec).where(ModelSpec.shop_id == shop_id, ModelSpec.model_id == model_id))
+    own = db.scalar(
+        select(ModelSpec).where(ModelSpec.shop_id == shop_id, ModelSpec.model_id == model_id)
+    )
     if own is None:
         own = ModelSpec(shop_id=shop_id, model_id=model_id, specs={})
         db.add(own)
@@ -169,7 +218,11 @@ def import_library(db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, text: st
 
     rows = list(csv.DictReader(io.StringIO(text.lstrip("﻿"))))
     if not rows:
-        raise ValidationFailed(code="empty_csv", message_en="The file has no rows", message_ur="فائل میں کوئی قطار نہیں")
+        raise ValidationFailed(
+            code="empty_csv",
+            message_en="The file has no rows",
+            message_ur="فائل میں کوئی قطار نہیں",
+        )
     made_brands = made_models = updated = 0
     brands = {b["name"].lower(): b for b in list_brands(db, shop_id)}
     for r in rows:
@@ -185,10 +238,15 @@ def import_library(db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, text: st
             b = create_brand(db, shop_id, user_id, BrandCreate(name=bname))
             brands[bname.lower()] = b
             made_brands += 1
-        models = {m["name"].lower(): m for m in list_models(db, shop_id, uuid.UUID(str(b["id"])), None, 1000)}
+        models = {
+            m["name"].lower(): m
+            for m in list_models(db, shop_id, uuid.UUID(str(b["id"])), None, 1000)
+        }
         m = models.get(mname.lower())
         if m is None:
-            m = create_model(db, shop_id, user_id, ModelCreate(brand_id=b["id"], name=mname, category=category))
+            m = create_model(
+                db, shop_id, user_id, ModelCreate(brand_id=b["id"], name=mname, category=category)
+            )
             made_models += 1
         ram = r.get("ram_gb") or r.get("ram")
         try:
@@ -196,26 +254,56 @@ def import_library(db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, text: st
         except ValueError:
             ram_gb = None
         specs = {k: v for k, v in r.items() if k in SPEC_KEYS and v}
-        learn_specs(db, shop_id, uuid.UUID(str(m["id"])), model_number=r.get("model_number") or None, ram_gb=ram_gb, specs=specs)
+        learn_specs(
+            db,
+            shop_id,
+            uuid.UUID(str(m["id"])),
+            model_number=r.get("model_number") or None,
+            ram_gb=ram_gb,
+            specs=specs,
+        )
         updated += 1
     db.commit()
-    return {"rows": len(rows), "brands_made": made_brands, "models_made": made_models, "models_updated": updated}
+    return {
+        "rows": len(rows),
+        "brands_made": made_brands,
+        "models_made": made_models,
+        "models_updated": updated,
+    }
 
 
 # ---- lock checks ---------------------------------------------------------------------------------------
 
 
-def record_lock_check(db: Session, shop_id: uuid.UUID, user_id: uuid.UUID | None, device: Device, checks: dict, note: str | None = None) -> Device:
+def record_lock_check(
+    db: Session,
+    shop_id: uuid.UUID,
+    user_id: uuid.UUID | None,
+    device: Device,
+    checks: dict,
+    note: str | None = None,
+) -> Device:
     """Writes the lock status on the unit and a `lock_checked` event (who, when, what)."""
     from app.modules.devices.service import apply_event
 
     clean = clean_locks(checks)
     if not clean:
-        raise ValidationFailed(code="lock_checks_empty", message_en="Say which locks were checked", message_ur="بتائیں کون سے لاک چیک ہوئے")
+        raise ValidationFailed(
+            code="lock_checks_empty",
+            message_en="Say which locks were checked",
+            message_ur="بتائیں کون سے لاک چیک ہوئے",
+        )
     device.lock_checks = {**(device.lock_checks or {}), **clean}
     device.lock_checked_at = utcnow()
     device.lock_checked_by = user_id
-    apply_event(db, shop_id, user_id, device, EventType.LOCK_CHECKED, data={"locks": clean, "note": note, "ok": lock_ok(device)})
+    apply_event(
+        db,
+        shop_id,
+        user_id,
+        device,
+        EventType.LOCK_CHECKED,
+        data={"locks": clean, "note": note, "ok": lock_ok(device)},
+    )
     return device
 
 
@@ -237,17 +325,33 @@ def _row(db: Session, d: Device, to_category: str, model_id: uuid.UUID | None) -
     if to_category != "phone" and d.condition == DeviceCondition.PATCHED:
         problems.append("patched_is_phone_only")
     return {
-        "id": str(d.id), "imei1": d.imei1, "barcode": d.barcode, "status": d.status,
-        "from_category": d.category, "to_category": to_category,
-        "from_model": f"{brand.name if brand else ''} {model.name if model else ''}".strip() if model and model_id else None,
+        "id": str(d.id),
+        "imei1": d.imei1,
+        "barcode": d.barcode,
+        "status": d.status,
+        "from_category": d.category,
+        "to_category": to_category,
+        "from_model": f"{brand.name if brand else ''} {model.name if model else ''}".strip()
+        if model and model_id
+        else None,
         "model_id": str(model.id) if model else None,
-        "cellular_after": cellular, "events": d.event_count, "problems": problems,
+        "cellular_after": cellular,
+        "events": d.event_count,
+        "problems": problems,
     }
 
 
-def reclassify_preview(db: Session, shop_id: uuid.UUID, device_ids: list[uuid.UUID], to_category: str, model_id: uuid.UUID | None) -> list[dict]:
+def reclassify_preview(
+    db: Session,
+    shop_id: uuid.UUID,
+    device_ids: list[uuid.UUID],
+    to_category: str,
+    model_id: uuid.UUID | None,
+) -> list[dict]:
     if to_category not in CATEGORIES:
-        raise ValidationFailed(code="bad_category", message_en="Unknown device type", message_ur="نامعلوم قسم")
+        raise ValidationFailed(
+            code="bad_category", message_en="Unknown device type", message_ur="نامعلوم قسم"
+        )
     rows = []
     for did in device_ids:
         d = db.get(Device, did)
@@ -257,7 +361,15 @@ def reclassify_preview(db: Session, shop_id: uuid.UUID, device_ids: list[uuid.UU
     return rows
 
 
-def reclassify_apply(db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, device_ids: list[uuid.UUID], to_category: str, model_id: uuid.UUID | None, reason: str | None) -> list[dict]:
+def reclassify_apply(
+    db: Session,
+    shop_id: uuid.UUID,
+    user_id: uuid.UUID,
+    device_ids: list[uuid.UUID],
+    to_category: str,
+    model_id: uuid.UUID | None,
+    reason: str | None,
+) -> list[dict]:
     """Changes the type (and optionally the model) of existing units. IMEI / serial, barcode,
     events, invoices and balances are untouched; one `reclassified` event per unit."""
     from app.modules.devices.service import apply_event
@@ -267,7 +379,8 @@ def reclassify_apply(db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, device
     if bad:
         raise ValidationFailed(
             code="reclassify_blocked",
-            message_en=f"{len(bad)} unit(s) cannot be changed: " + ", ".join(sorted({p for r in bad for p in r["problems"]})),
+            message_en=f"{len(bad)} unit(s) cannot be changed: "
+            + ", ".join(sorted({p for r in bad for p in r["problems"]})),
             message_ur="کچھ یونٹ تبدیل نہیں ہو سکتے",
         )
     for r in rows:
@@ -289,12 +402,30 @@ def reclassify_apply(db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, device
             m = db.get(Model, model_id)
             d.model_id = m.id
             d.brand_id = m.brand_id
-        apply_event(db, shop_id, user_id, d, EventType.RECLASSIFIED, data={"before": before, "after": {"category": d.category, "model_id": str(d.model_id)}, "reason": reason})
+        apply_event(
+            db,
+            shop_id,
+            user_id,
+            d,
+            EventType.RECLASSIFIED,
+            data={
+                "before": before,
+                "after": {"category": d.category, "model_id": str(d.model_id)},
+                "reason": reason,
+            },
+        )
     db.commit()
     return rows
 
 
-def convert_item(db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, accessory_id: uuid.UUID, identity, cost: Decimal | None) -> dict:
+def convert_item(
+    db: Session,
+    shop_id: uuid.UUID,
+    user_id: uuid.UUID,
+    accessory_id: uuid.UUID,
+    identity,
+    cost: Decimal | None,
+) -> dict:
     """One counted watch / tablet becomes one serialized unit: the item's count goes down by one
     (adjustment with a reason) and the unit enters as opening stock at the item's cost."""
     from app.modules.accessories import service as acc
@@ -302,15 +433,36 @@ def convert_item(db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, accessory_
 
     item = acc.get_accessory(db, shop_id, accessory_id)
     if item.qty < 1:
-        raise ValidationFailed(code="insufficient_stock", message_en="The item has no stock to convert", message_ur="اس آئٹم کا اسٹاک نہیں")
+        raise ValidationFailed(
+            code="insufficient_stock",
+            message_en="The item has no stock to convert",
+            message_ur="اس آئٹم کا اسٹاک نہیں",
+        )
     unit_cost = money(cost) if cost is not None else money(item.avg_cost or ZERO)
     identity.cost_price = unit_cost
     out = add_opening_stock(db, shop_id, user_id, identity)
-    acc.move(db, shop_id, user_id, item, -1, "adjust", document_type="device_conversion", document_id=uuid.UUID(str(out["id"])), note=f"Converted to device {out['imei1']}")
+    acc.move(
+        db,
+        shop_id,
+        user_id,
+        item,
+        -1,
+        "adjust",
+        document_type="device_conversion",
+        document_id=uuid.UUID(str(out["id"])),
+        note=f"Converted to device {out['imei1']}",
+    )
     dev = db.get(Device, uuid.UUID(str(out["id"])))
     from app.modules.devices.service import apply_event
 
-    apply_event(db, shop_id, user_id, dev, EventType.NOTE, data={"text": f"Converted from item {item.sku} {item.name}", "accessory_id": str(item.id)})
+    apply_event(
+        db,
+        shop_id,
+        user_id,
+        dev,
+        EventType.NOTE,
+        data={"text": f"Converted from item {item.sku} {item.name}", "accessory_id": str(item.id)},
+    )
     db.commit()
     return out
 
@@ -321,8 +473,26 @@ def convert_item(db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, accessory_
 def stock_by_type(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
     """in-stock units per type: count, cost value, asking (retail) value, used units with an
     unchecked or failed lock check"""
-    rows = db.scalars(select(Device).where(Device.shop_id == shop_id, Device.status == DeviceStatus.IN_STOCK, Device.is_active.is_(True))).all()
-    out = {c: {"category": c, "count": 0, "cost": ZERO, "retail": ZERO, "used": 0, "lock_unchecked": 0, "lock_failed": 0, "non_pta": 0} for c in CATEGORIES}
+    rows = db.scalars(
+        select(Device).where(
+            Device.shop_id == shop_id,
+            Device.status == DeviceStatus.IN_STOCK,
+            Device.is_active.is_(True),
+        )
+    ).all()
+    out = {
+        c: {
+            "category": c,
+            "count": 0,
+            "cost": ZERO,
+            "retail": ZERO,
+            "used": 0,
+            "lock_unchecked": 0,
+            "lock_failed": 0,
+            "non_pta": 0,
+        }
+        for c in CATEGORIES
+    }
     cutoff = dt.datetime.now(dt.UTC) - dt.timedelta(days=60)
     slow = {c: 0 for c in CATEGORIES}
     for d in rows:
@@ -344,7 +514,11 @@ def stock_by_type(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
         out[c]["slow_60d"] = slow[c]
         if not show_cost:
             out[c]["cost"] = None
-    total = {"count": sum(g["count"] for g in out.values()), "cost": money(sum((g["cost"] or ZERO) for g in out.values())) if show_cost else None, "retail": money(sum(g["retail"] for g in out.values()))}
+    total = {
+        "count": sum(g["count"] for g in out.values()),
+        "cost": money(sum((g["cost"] or ZERO) for g in out.values())) if show_cost else None,
+        "retail": money(sum(g["retail"] for g in out.values())),
+    }
     return {"types": list(out.values()), "total": total}
 
 
@@ -354,15 +528,31 @@ def lock_unchecked(db: Session, shop_id: uuid.UUID) -> list[dict]:
         select(Device, Brand.name, Model.name)
         .join(Brand, Brand.id == Device.brand_id)
         .join(Model, Model.id == Device.model_id)
-        .where(Device.shop_id == shop_id, Device.status == DeviceStatus.IN_STOCK, Device.condition != DeviceCondition.BOX_PACK)
+        .where(
+            Device.shop_id == shop_id,
+            Device.status == DeviceStatus.IN_STOCK,
+            Device.condition != DeviceCondition.BOX_PACK,
+        )
         .order_by(Device.first_seen_at)
     ).all()
     return [
-        {"id": str(d.id), "imei1": d.imei1, "category": d.category, "name": f"{b} {m}", "condition": d.condition, "lock_checks": d.lock_checks, "ok": lock_ok(d) if d.lock_checks else None, "first_seen_at": d.first_seen_at}
+        {
+            "id": str(d.id),
+            "imei1": d.imei1,
+            "category": d.category,
+            "name": f"{b} {m}",
+            "condition": d.condition,
+            "lock_checks": d.lock_checks,
+            "ok": lock_ok(d) if d.lock_checks else None,
+            "first_seen_at": d.first_seen_at,
+        }
         for d, b, m in rows
         if not d.lock_checks or not lock_ok(d)
     ]
 
 
 def count_models(db: Session, shop_id: uuid.UUID) -> int:
-    return db.scalar(select(func.count()).select_from(ModelSpec).where(ModelSpec.shop_id == shop_id)) or 0
+    return (
+        db.scalar(select(func.count()).select_from(ModelSpec).where(ModelSpec.shop_id == shop_id))
+        or 0
+    )

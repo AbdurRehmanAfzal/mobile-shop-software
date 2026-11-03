@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { clampRange, isoDay } from '@/lib/format'
 
 export interface Period { from: string; to: string }
@@ -55,6 +56,7 @@ export default function PeriodPicker({ value, onChange, size = 'md' }: { value: 
             {pick(labels[k])}
           </button>
         ))}
+        <span className="flex items-center"><Help term="common.period" size="sm" /></span>
       </div>
       {custom ? (
         <div className="flex items-center gap-2" dir="ltr">

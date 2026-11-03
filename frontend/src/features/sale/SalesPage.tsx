@@ -23,6 +23,7 @@ export function SalesPage() {
     <div className="flex flex-col gap-3">
       <PageHeader
         title="more.sales"
+        help={<Help term="sale.list" />}
         back={false}
         right={
           <div className="flex gap-2">
@@ -33,7 +34,10 @@ export function SalesPage() {
           </div>
         }
       />
-      <BiSegmented value={status} onChange={setStatus} options={[{ value: 'all', text: 'common.all' }, { value: 'open', text: 'sale.status.open' }, { value: 'partially_paid', text: 'sale.status.partially_paid' }, { value: 'paid', text: 'sale.status.paid' }]} />
+      <div className="flex items-center gap-1">
+        <div className="min-w-0 flex-1"><BiSegmented value={status} onChange={setStatus} options={[{ value: 'all', text: 'common.all' }, { value: 'open', text: 'sale.status.open' }, { value: 'partially_paid', text: 'sale.status.partially_paid' }, { value: 'paid', text: 'sale.status.paid' }]} /></div>
+        <Help term="sale.statusFilter" size="sm" />
+      </div>
       {isLoading ? (
         <Loading />
       ) : !data?.length ? (
@@ -83,12 +87,12 @@ export function SaleDetailPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <PageHeader title={{ en: inv.no, ur: inv.no }} right={<Chip text={`sale.status.${inv.status}`} tone={TONE[inv.status]} />} />
+      <PageHeader title={{ en: inv.no, ur: inv.no }} help={<Help term="sale.detail" />} right={<Chip text={`sale.status.${inv.status}`} tone={TONE[inv.status]} />} />
       <div className="card">
-        <KV k="sale.steps.customer" v={inv.party_name ? <button type="button" className="text-emerald" onClick={() => nav(`/parties/${inv.party_id}`)}>{inv.party_name}</button> : pick('sale.cashCustomer')} />
-        <KV k="common.date" v={<span dir="ltr">{fmtDate(inv.date)}</span>} />
-        {inv.created_by_name ? <KV k="counter.soldBy" v={inv.created_by_name} /> : null}
-        {inv.payment ? <KV k="counter.howPaid" v={<span dir="ltr">{paidBy(inv.payment, pick)}</span>} /> : null}
+        <KV k="sale.steps.customer" help="sale.customer" v={inv.party_name ? <button type="button" className="text-emerald" onClick={() => nav(`/parties/${inv.party_id}`)}>{inv.party_name}</button> : pick('sale.cashCustomer')} />
+        <KV k="common.date" help="common.date" v={<span dir="ltr">{fmtDate(inv.date)}</span>} />
+        {inv.created_by_name ? <KV k="counter.soldBy" help="sale.soldBy" v={inv.created_by_name} /> : null}
+        {inv.payment ? <KV k="counter.howPaid" help="common.method" v={<span dir="ltr">{paidBy(inv.payment, pick)}</span>} /> : null}
       </div>
       <List>
         {inv.lines.map((l) => (
@@ -115,17 +119,17 @@ export function SaleDetailPage() {
         ))}
       </List>
       <div className="hero flex flex-col gap-1 p-4">
-        <KV k="common.total" v={<MoneyText value={inv.subtotal} tone="ink" />} />
-        {Number(inv.discount) > 0 ? <KV k="common.discount" v={<MoneyText value={-Number(inv.discount)} tone="ink" />} /> : null}
-        {Number(inv.tax_amount) > 0 ? <KV k="settings.tax" v={<MoneyText value={inv.tax_amount} tone="ink" />} /> : null}
-        <KV k="common.total" v={<MoneyText value={inv.total} tone="ink" />} />
-        <KV k="common.paid" v={<MoneyText value={inv.paid} tone="ink" />} />
-        {Number(inv.returned_total) > 0 ? <KV k="sale.return" v={<MoneyText value={-Number(inv.returned_total)} tone="ink" />} /> : null}
+        <KV k="common.total" help="sale.subtotal" v={<MoneyText value={inv.subtotal} tone="ink" />} />
+        {Number(inv.discount) > 0 ? <KV k="common.discount" help="common.discount" v={<MoneyText value={-Number(inv.discount)} tone="ink" />} /> : null}
+        {Number(inv.tax_amount) > 0 ? <KV k="settings.tax" help="common.tax" v={<MoneyText value={inv.tax_amount} tone="ink" />} /> : null}
+        <KV k="common.total" help="sale.total" v={<MoneyText value={inv.total} tone="ink" />} />
+        <KV k="common.paid" help="sale.paidSoFar" v={<MoneyText value={inv.paid} tone="ink" />} />
+        {Number(inv.returned_total) > 0 ? <KV k="sale.return" help="sale.returnedTotal" v={<MoneyText value={-Number(inv.returned_total)} tone="ink" />} /> : null}
         <div className="mt-1 flex items-center justify-between border-t border-white/15 pt-2">
-          <BiLabel text="common.due" size="md" tone="text-gold-text" bold />
+          <span className="flex items-center gap-1"><BiLabel text="common.due" size="md" tone="text-gold-text" bold /><span className="[&_button]:text-gold-text"><Help term="common.remaining" size="sm" /></span></span>
           <MoneyText value={inv.balance_due} tone="ink" size="lg" />
         </div>
-        {inv.profit != null ? <KV k="dashboard.profit" v={<MoneyText value={inv.profit} tone="ink" />} /> : null}
+        {inv.profit != null ? <KV k="dashboard.profit" help="sale.billProfit" v={<MoneyText value={inv.profit} tone="ink" />} /> : null}
       </div>
       <DocLangPicker />
       <div className="grid grid-cols-2 gap-2">
@@ -146,16 +150,16 @@ export function SaleDetailPage() {
               <MoneyText value={l.line_total} tone="ink" size="sm" />
             </label>
           ))}
-          <BiLabel text="sale.settlement" size="md" tone="text-muted" />
+          <span className="flex items-center gap-1"><BiLabel text="sale.settlement" size="md" tone="text-muted" /><Help term="sale.settlement" size="sm" /></span>
           <BiSegmented value={settlement} onChange={setSettlement} options={[{ value: 'refund', text: 'sale.refund' }, { value: 'credit', text: 'sale.credit' }, { value: 'income', text: 'sale.income' }]} />
-          <BiInput label="common.reason" value={reason} onChange={(e) => setReason(e.target.value)} />
+          <BiInput label="common.reason" help={<Help term="sale.returnReason" size="sm" />} value={reason} onChange={(e) => setReason(e.target.value)} />
           <ErrorText error={ret.error} />
           <BiButton text="common.confirm" full loading={ret.isPending} disabled={!selected.length} onClick={async () => { await ret.mutateAsync({ invoice_id: inv.id, line_ids: selected, settlement, reason: reason || undefined }); setReturning(false) }} />
         </div>
       </Sheet>
       <Sheet open={voiding} onClose={() => setVoiding(false)} title="common.void">
         <div className="flex flex-col gap-3">
-          <BiInput label="common.reason" value={reason} onChange={(e) => setReason(e.target.value)} minLength={3} autoFocus />
+          <BiInput label="common.reason" help={<Help term="void" size="sm" />} value={reason} onChange={(e) => setReason(e.target.value)} minLength={3} autoFocus />
           <ErrorText error={voidM.error} />
           <BiButton text="common.confirm" variant="danger" full loading={voidM.isPending} disabled={reason.trim().length < 3} onClick={async () => { await voidM.mutateAsync({ reason }); setVoiding(false) }} />
         </div>

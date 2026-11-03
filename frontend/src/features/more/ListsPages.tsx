@@ -1,4 +1,5 @@
 import DownloadButton from '@/components/DownloadButton'
+import Help from '@/components/Help'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
@@ -12,7 +13,7 @@ export function PurchasesPage() {
   const { data, isLoading } = usePurchases()
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="more.purchases" right={<DownloadButton path="/api/v1/exports/purchases" name="purchases" />} />
+      <PageHeader title="more.purchases" help={<Help term="more.tile.purchases" />} right={<DownloadButton path="/api/v1/exports/purchases" name="purchases" />} />
       {isLoading ? <Loading /> : !data?.length ? <Empty text="common.nothingFound" /> : (
         <List>
           {data.map((p) => (
@@ -40,11 +41,11 @@ export function PurchaseDetailPage() {
   const canManage = role === 'owner' || role === 'manager'
   return (
     <div className="flex flex-col gap-4">
-      <PageHeader title={{ en: p.no, ur: p.no }} right={p.status === 'voided' ? <Chip text="sale.status.void" tone="muted" /> : null} />
+      <PageHeader title={{ en: p.no, ur: p.no }} help={<Help term="more.purchaseDoc" />} right={p.status === 'voided' ? <Chip text="sale.status.void" tone="muted" /> : null} />
       <div className="card">
-        <KV k="purchase.steps.from" v={<button type="button" className="text-emerald" onClick={() => nav(`/parties/${p.party_id}`)}>{p.party_name}</button>} />
-        <KV k="common.date" v={<span dir="ltr">{p.purchased_at ? fmtDateTime(p.purchased_at) : fmtDate(p.date)}</span>} />
-        {p.created_by_name ? <KV k="counter.addedBy" v={p.created_by_name} /> : null}
+        <KV k="purchase.steps.from" v={<button type="button" className="text-emerald" onClick={() => nav(`/parties/${p.party_id}`)}>{p.party_name}</button>} help="more.purchaseFrom" />
+        <KV k="common.date" v={<span dir="ltr">{p.purchased_at ? fmtDateTime(p.purchased_at) : fmtDate(p.date)}</span>} help="common.date" />
+        {p.created_by_name ? <KV k="counter.addedBy" v={p.created_by_name} help="more.addedBy" /> : null}
       </div>
       <List>
         {p.lines.map((l) => (
@@ -52,11 +53,11 @@ export function PurchaseDetailPage() {
         ))}
       </List>
       <div className="hero flex flex-col gap-1 p-4">
-        <KV k="common.total" v={<MoneyText value={p.total} tone="ink" />} />
-        <KV k="common.paid" v={<MoneyText value={p.paid} tone="ink" />} />
-        {Number(p.returned_total) > 0 ? <KV k="sale.return" v={<MoneyText value={-Number(p.returned_total)} tone="ink" />} /> : null}
+        <KV k="common.total" v={<MoneyText value={p.total} tone="ink" />} help="more.purchaseTotal" />
+        <KV k="common.paid" v={<MoneyText value={p.paid} tone="ink" />} help="more.purchasePaid" />
+        {Number(p.returned_total) > 0 ? <KV k="sale.return" v={<MoneyText value={-Number(p.returned_total)} tone="ink" />} help="more.purchaseReturned" /> : null}
         <div className="mt-1 flex items-center justify-between border-t border-white/15 pt-2">
-          <BiLabel text="common.due" size="md" tone="text-gold-text" bold />
+          <span className="flex items-center gap-1 [&_button]:text-gold-text"><BiLabel text="common.due" size="md" tone="text-gold-text" bold /><Help term="more.purchaseDue" size="sm" /></span>
           <MoneyText value={p.balance_due} tone="ink" size="lg" />
         </div>
       </div>
@@ -75,15 +76,15 @@ export function PurchaseDetailPage() {
               <MoneyText value={l.net_cost} tone="ink" size="sm" />
             </label>
           ))}
-          <BiInput label="sale.refundAmount" type="number" inputMode="decimal" min={0} value={refund} onChange={(e) => setRefund(e.target.value)} />
-          <BiInput label="common.reason" value={reason} onChange={(e) => setReason(e.target.value)} />
+          <BiInput label="sale.refundAmount" type="number" inputMode="decimal" min={0} value={refund} onChange={(e) => setRefund(e.target.value)} help={<Help term="more.purchaseRefund" size="sm" />} />
+          <BiInput label="common.reason" value={reason} onChange={(e) => setReason(e.target.value)} help={<Help term="more.returnReason" size="sm" />} />
           <ErrorText error={ret.error} />
           <BiButton text="common.confirm" full loading={ret.isPending} disabled={!selected.length} onClick={async () => { await ret.mutateAsync({ purchase_id: p.id, line_ids: selected, refund_amount: Number(refund || 0), reason: reason || undefined }); setReturning(false) }} />
         </div>
       </Sheet>
       <Sheet open={voiding} onClose={() => setVoiding(false)} title="common.void">
         <div className="flex flex-col gap-3">
-          <BiInput label="common.reason" value={reason} onChange={(e) => setReason(e.target.value)} minLength={3} autoFocus />
+          <BiInput label="common.reason" value={reason} onChange={(e) => setReason(e.target.value)} minLength={3} autoFocus help={<Help term="void" size="sm" />} />
           <ErrorText error={voidM.error} />
           <BiButton text="common.confirm" variant="danger" full loading={voidM.isPending} disabled={reason.trim().length < 3} onClick={async () => { await voidM.mutateAsync({ reason }); setVoiding(false) }} />
         </div>
@@ -98,7 +99,7 @@ export function PaymentsPage() {
   const { data, isLoading } = usePayments()
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="more.payments" />
+      <PageHeader title="more.payments" help={<Help term="more.tile.payments" />} />
       {isLoading ? <Loading /> : !data?.length ? <Empty text="common.nothingFound" /> : (
         <List>
           {data.map((p) => (
@@ -115,7 +116,7 @@ export function ReturnsPage() {
   const { data, isLoading } = useReturns()
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="more.returns" />
+      <PageHeader title="more.returns" help={<Help term="more.tile.returns" />} />
       {isLoading ? <Loading /> : !data?.length ? <Empty text="common.nothingFound" /> : (
         <List>
           {data.map((r) => (

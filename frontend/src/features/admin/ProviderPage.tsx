@@ -8,6 +8,7 @@ import { useState, type ReactNode } from 'react'
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { BiAlert, BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import Bars from '@/components/charts/Bars'
+import Help from '@/components/Help'
 import { Empty, ErrorText, Loading, PageHeader, SearchBox, Sheet, fmtDate, fmtDateTime } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
@@ -41,11 +42,11 @@ interface SendOut { whatsapp: string; sms: string; text: string; link: string | 
 const rs = (v: string | number | null | undefined) => `${withCur(Math.round(Number(v ?? 0)).toLocaleString('en-US'))}`
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-function Tile({ label, value, sub, tone = 'bg-surface', testid }: { label: string; value: ReactNode; sub?: ReactNode; tone?: string; testid?: string }) {
+function Tile({ label, value, sub, tone = 'bg-surface', testid, help }: { label: string; value: ReactNode; sub?: ReactNode; tone?: string; testid?: string; help?: string }) {
   const { pick, ur, cls } = useLang()
   return (
     <div className={`flex flex-col gap-0.5 rounded-2xl border border-line px-3.5 py-3 ${tone}`} data-testid={testid}>
-      <span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick(label)}</span>
+      <span className="flex items-center gap-1"><span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick(label)}</span>{help ? <Help term={help} size="sm" /> : null}</span>
       <span className="num text-xl leading-tight" dir="ltr">{value}</span>
       {sub ? <span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{sub}</span> : null}
     </div>
@@ -77,8 +78,11 @@ export default function ProviderPage() {
   if (!isSuper) return <Navigate to="/" replace />
   return (
     <div className="flex flex-col gap-3" data-testid="provider-page">
-      <PageHeader title="prov.title" />
-      <BiSegmented<Tab> value={tab} onChange={setTab} options={[{ value: 'overview', text: 'prov.tab.overview' }, { value: 'shops', text: 'prov.tab.shops' }, { value: 'payments', text: 'prov.tab.payments' }, { value: 'keys', text: 'prov.tab.keys' }]} />
+      <PageHeader title="prov.title" help={<Help term="provider.page" />} />
+      <div className="flex items-center gap-1">
+        <div className="min-w-0 flex-1"><BiSegmented<Tab> value={tab} onChange={setTab} options={[{ value: 'overview', text: 'prov.tab.overview' }, { value: 'shops', text: 'prov.tab.shops' }, { value: 'payments', text: 'prov.tab.payments' }, { value: 'keys', text: 'prov.tab.keys' }]} /></div>
+        <Help term="provider.tabs" size="sm" />
+      </div>
       {tab === 'overview' ? <OverviewTab go={setTab} /> : tab === 'shops' ? <ShopsTab /> : tab === 'payments' ? <PaymentsTab /> : <KeysTab />}
       <span className={`text-muted ${ur ? cls('sm') : 'text-xs'}`}>{pick('admin.only')}</span>
     </div>
@@ -94,46 +98,53 @@ function OverviewTab({ go }: { go: (t: Tab) => void }) {
   return (
     <div className="flex flex-col gap-3" data-testid="prov-overview">
       <section className="hero flex flex-col gap-1 px-5 py-4">
-        <span className="text-sm text-hero-text/80">{pick('prov.mrr')}</span>
+        <span className="flex items-center gap-1"><span className="text-sm text-hero-text/80">{pick('prov.mrr')}</span><Help term="provider.mrr" size="sm" /></span>
         <span className="num text-3xl" dir="ltr">{rs(o.mrr)}</span>
-        <span className="text-xs text-hero-text/75">{pick('prov.arpu')}: <span className="num" dir="ltr">{rs(o.arpu)}</span> · {n('prov.shopsN', c.paid)}</span>
+        <span className="flex items-center gap-1 text-xs text-hero-text/75"><span>{pick('prov.arpu')}: <span className="num" dir="ltr">{rs(o.arpu)}</span> · {n('prov.shopsN', c.paid)}</span><Help term="provider.arpu" size="sm" /></span>
       </section>
       <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
-        <Tile label="prov.collectedMonth" value={rs(o.collected_month)} sub={<>{pick('prov.collectedPrev')}: <span className="num" dir="ltr">{rs(o.collected_prev_month)}</span></>} testid="prov-month" />
-        <Tile label="prov.collectedTotal" value={rs(o.collected_total)} sub={n('prov.shopsN', o.paying_shops)} />
-        <button type="button" onClick={() => go('payments')} className="text-start"><Tile label="prov.pending" value={rs(o.pending_amount)} sub={n('prov.shopsN', o.pending_count)} tone={o.pending_count ? 'bg-[#F59E0B]/10' : 'bg-surface'} /></button>
-        <Tile label="prov.coming7" value={rs(o.coming_7.amount)} sub={n('prov.shopsN', o.coming_7.count)} />
-        <Tile label="prov.coming30" value={rs(o.coming_30.amount)} sub={n('prov.shopsN', o.coming_30.count)} testid="prov-coming" />
-        <Tile label="prov.overdue" value={rs(o.overdue.amount)} sub={n('prov.shopsN', o.overdue.count)} tone={o.overdue.count ? 'bg-payable-tint/50' : 'bg-surface'} testid="prov-overdue" />
-        <Tile label="prov.onlineNow" value={c.online_now} sub={<>{pick('prov.activeToday')} {c.active_today} · {pick('prov.active7')} {c.active_7d}</>} />
-        <button type="button" onClick={() => go('keys')} className="text-start"><Tile label="prov.keys" value={o.keys.issued} sub={<>{pick('prov.keysRedeemed')} {o.keys.redeemed} · {pick('prov.keysRevoked')} {o.keys.revoked}</>} /></button>
+        <Tile label="prov.collectedMonth" help="provider.collectedMonth" value={rs(o.collected_month)} sub={<>{pick('prov.collectedPrev')}: <span className="num" dir="ltr">{rs(o.collected_prev_month)}</span></>} testid="prov-month" />
+        <Tile label="prov.collectedTotal" help="provider.collectedTotal" value={rs(o.collected_total)} sub={n('prov.shopsN', o.paying_shops)} />
+        <div className="relative">
+          <button type="button" onClick={() => go('payments')} className="w-full text-start"><Tile label="prov.pending" value={rs(o.pending_amount)} sub={n('prov.shopsN', o.pending_count)} tone={o.pending_count ? 'bg-[#F59E0B]/10' : 'bg-surface'} /></button>
+          <span className="absolute end-1 top-1"><Help term="provider.pending" size="sm" /></span>
+        </div>
+        <Tile label="prov.coming7" help="provider.coming7" value={rs(o.coming_7.amount)} sub={n('prov.shopsN', o.coming_7.count)} />
+        <Tile label="prov.coming30" help="provider.coming30" value={rs(o.coming_30.amount)} sub={n('prov.shopsN', o.coming_30.count)} testid="prov-coming" />
+        <Tile label="prov.overdue" help="provider.overdue" value={rs(o.overdue.amount)} sub={n('prov.shopsN', o.overdue.count)} tone={o.overdue.count ? 'bg-payable-tint/50' : 'bg-surface'} testid="prov-overdue" />
+        <Tile label="prov.onlineNow" help="provider.onlineNow" value={c.online_now} sub={<>{pick('prov.activeToday')} {c.active_today} · {pick('prov.active7')} {c.active_7d}</>} />
+        <div className="relative">
+          <button type="button" onClick={() => go('keys')} className="w-full text-start"><Tile label="prov.keys" value={o.keys.issued} sub={<>{pick('prov.keysRedeemed')} {o.keys.redeemed} · {pick('prov.keysRevoked')} {o.keys.revoked}</>} /></button>
+          <span className="absolute end-1 top-1"><Help term="provider.keysTile" size="sm" /></span>
+        </div>
       </div>
       <section className="card flex flex-col gap-2">
-        <BiLabel text="prov.byMonth" size="md" bold />
+        <span className="flex items-center gap-1"><BiLabel text="prov.byMonth" size="md" bold /><Help term="provider.byMonth" size="sm" /></span>
         <Bars data={o.monthly.map((m) => ({ label: MONTHS[Number(m.month.slice(5)) - 1], value: Number(m.amount), hint: `${m.month} · ${rs(m.amount)}` }))} testid="prov-monthly" />
       </section>
       <div className="grid gap-3 lg:grid-cols-2">
         <section className="card flex flex-col gap-2" data-testid="prov-channels">
-          <BiLabel text="prov.byChannel" size="md" bold />
+          <span className="flex items-center gap-1"><BiLabel text="prov.byChannel" size="md" bold /><Help term="provider.byChannel" size="sm" /></span>
           {!o.by_channel.length ? <BiLabel text="prov.none" size="sm" tone="text-muted" /> : o.by_channel.map((ch) => (
             <div key={ch.method} className="flex items-center justify-between gap-2 text-sm"><span className="font-bold capitalize">{ch.method.replace(/_/g, ' ')}</span><span className="num" dir="ltr">{ch.count} · {rs(ch.amount)}</span></div>
           ))}
         </section>
         <section className="card flex flex-col gap-2">
-          <BiLabel text="prov.byPlan" size="md" bold />
+          <span className="flex items-center gap-1"><BiLabel text="prov.byPlan" size="md" bold /><Help term="provider.byPlan" size="sm" /></span>
           {o.by_plan.map((p) => (
             <div key={p.plan} className="flex items-center justify-between gap-2 text-sm"><span className="font-bold capitalize">{p.plan}</span><span className="num" dir="ltr">{n('prov.shopsN', p.shops)} · {rs(p.mrr)}{pick('prov.perMonth')}</span></div>
           ))}
         </section>
         <section className="card flex flex-col gap-2 lg:col-span-2">
-          <BiLabel text="prov.usage" size="md" bold />
+          <span className="flex items-center gap-1"><BiLabel text="prov.usage" size="md" bold /><Help term="provider.usage" size="sm" /></span>
           <div className="grid grid-cols-2 gap-2">
-            <Tile label="prov.cloud" value={c.cloud} />
-            <Tile label="prov.local" value={c.local} />
+            <Tile label="prov.cloud" value={c.cloud} help="provider.cloud" />
+            <Tile label="prov.local" value={c.local} help="provider.local" />
           </div>
           <div className="flex flex-wrap gap-1.5">
             {(['ok', 'due_soon', 'expired', 'locked', 'unlimited'] as const).map((s) => <span key={s} className="inline-flex items-center gap-1"><StatusChip s={s} /><span className="num text-sm" dir="ltr">{c[s] ?? 0}</span></span>)}
             <span className="inline-flex items-center gap-1"><StatusChip s="trial" /><span className="num text-sm" dir="ltr">{c.trial}</span></span>
+            <Help term="provider.statuses" size="sm" />
           </div>
         </section>
       </div>
@@ -157,12 +168,14 @@ function ShopsTab() {
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   return (
     <div className="flex flex-col gap-2">
-      <SearchBox value={q} onChange={setQ} placeholder="common.search" />
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><SearchBox value={q} onChange={setQ} placeholder="common.search" /></div><Help term="provider.shopList" size="sm" /></div>
+      <div className="flex flex-wrap items-center gap-1.5">
         {([['', 'prov.all'], ['cloud', 'prov.cloud'], ['local', 'prov.local']] as const).map(([v, t]) => <button key={v} type="button" aria-pressed={dep === v} onClick={() => setDep(v)} className={chip(dep === v)}>{pick(t)}</button>)}
+        <Help term="provider.deployment" size="sm" />
       </div>
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap items-center gap-1.5">
         {([['', 'prov.all'], ['due', 'prov.st.due_soon'], ['expired', 'prov.st.expired'], ['locked', 'prov.st.locked'], ['ok', 'prov.st.ok']] as const).map(([v, t]) => <button key={v} type="button" aria-pressed={st === v} onClick={() => setSt(v)} className={chip(st === v)}>{pick(t)}</button>)}
+        <Help term="provider.statuses" size="sm" />
       </div>
       {!data ? <Loading /> : !data.length ? <Empty text="prov.none" /> : (
         <div className="card divide-y divide-line p-0" data-testid="prov-shops">
@@ -205,25 +218,25 @@ function ShopSheet({ r, onOpenAdmin }: { r: ShopRow; onOpenAdmin: () => void }) 
   return (
     <div className="flex flex-col gap-3" data-testid="prov-shop-sheet">
       <div className="grid grid-cols-2 gap-2">
-        <Tile label="prov.fee" value={`${rs(r.monthly_fee)}`} sub={<span className="capitalize">{r.plan}</span>} />
-        <Tile label="prov.status" value={r.days_left != null ? (r.days_left >= 0 ? pick('prov.daysLeft').replace('{{n}}', String(r.days_left)) : pick('prov.daysOver').replace('{{n}}', String(-r.days_left))) : '∞'} sub={<StatusChip s={r.plan_status} />} />
-        <Tile label="prov.paidTotal" value={rs(r.paid_total)} sub={`${r.payments}×`} />
-        <Tile label="prov.lastUsed" value={r.last_used_at ? fmtDate(r.last_used_at) : pick('prov.never')} sub={<UseChip r={r} />} />
+        <Tile label="prov.fee" help="provider.fee" value={`${rs(r.monthly_fee)}`} sub={<span className="capitalize">{r.plan}</span>} />
+        <Tile label="prov.status" help="provider.status" value={r.days_left != null ? (r.days_left >= 0 ? pick('prov.daysLeft').replace('{{n}}', String(r.days_left)) : pick('prov.daysOver').replace('{{n}}', String(-r.days_left))) : '∞'} sub={<StatusChip s={r.plan_status} />} />
+        <Tile label="prov.paidTotal" help="provider.paidTotal" value={rs(r.paid_total)} sub={`${r.payments}×`} />
+        <Tile label="prov.lastUsed" help="provider.lastUsed" value={r.last_used_at ? fmtDate(r.last_used_at) : pick('prov.never')} sub={<UseChip r={r} />} />
       </div>
-      {r.install_version ? <span className={`text-muted ${small}`}>{pick('prov.version')} <span className="num" dir="ltr">{r.install_version}</span></span> : null}
-      <BiLabel text="prov.deployment" size="md" tone="text-muted" />
+      {r.install_version ? <span className="flex items-center gap-1"><span className={`text-muted ${small}`}>{pick('prov.version')} <span className="num" dir="ltr">{r.install_version}</span></span><Help term="provider.version" size="sm" /></span> : null}
+      <span className="flex items-center gap-1"><BiLabel text="prov.deployment" size="md" tone="text-muted" /><Help term="provider.deployment" size="sm" /></span>
       <BiSegmented<'cloud' | 'local'> value={r.deployment} onChange={async (v) => { await api('PATCH', `/api/v1/admin/shops/${r.shop_id}/deployment`, { deployment: v }); await inv('prov-shops', 'prov-overview'); r.deployment = v }} options={[{ value: 'cloud', text: 'prov.cloud' }, { value: 'local', text: 'prov.local' }]} />
       <div className="grid grid-cols-2 gap-2">
         {wa ? <a href={remind} target="_blank" rel="noopener noreferrer" className="tap flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-emerald text-sm font-bold text-white"><MessageCircle size={18} /> {pick('prov.remind')}</a> : null}
         <BiButton text="prov.openAdmin" icon={<Store size={18} />} variant="secondary" onClick={onOpenAdmin} />
       </div>
-      <BiLabel text="prov.tab.payments" size="md" bold />
+      <span className="flex items-center gap-1"><BiLabel text="prov.tab.payments" size="md" bold /><Help term="provider.shopPayments" size="sm" /></span>
       {!pays?.rows.filter((p) => p.shop_id === r.shop_id).length ? <BiLabel text="prov.none" size="sm" tone="text-muted" /> : (
         <div className="card divide-y divide-line p-0">
           {pays.rows.filter((p) => p.shop_id === r.shop_id).map((p) => <PayLine key={p.id} p={p} />)}
         </div>
       )}
-      <BiLabel text="prov.keys" size="md" bold />
+      <span className="flex items-center gap-1"><BiLabel text="prov.keys" size="md" bold /><Help term="key.what" size="sm" /></span>
       <KeyList shopId={r.shop_id} shopName={r.name} />
     </div>
   )
@@ -268,18 +281,20 @@ function PaymentsTab() {
   }
   return (
     <div className="flex flex-col gap-2">
-      <SearchBox value={q} onChange={setQ} placeholder="common.search" />
-      <div className="flex flex-wrap gap-1.5" data-testid="prov-pay-channels">
+      <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><SearchBox value={q} onChange={setQ} placeholder="common.search" /></div><Help term="provider.payList" size="sm" /></div>
+      <div className="flex flex-wrap items-center gap-1.5" data-testid="prov-pay-channels">
         <button type="button" aria-pressed={!method} onClick={() => setMethod('')} className={chip(!method)}>{pick('prov.allChannels')}</button>
         {(data?.methods ?? []).map((m) => <button key={m} type="button" aria-pressed={method === m} onClick={() => setMethod(m)} className={chip(method === m)}>{m.replace(/_/g, ' ')}</button>)}
+        <Help term="provider.channels" size="sm" />
       </div>
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap items-center gap-1.5">
         {([['', 'prov.all'], ['pending', 'prov.st.pending'], ['approved', 'prov.st.approved'], ['rejected', 'prov.st.rejected']] as const).map(([v, t]) => <button key={v} type="button" aria-pressed={status === v} onClick={() => setStatus(v)} className={chip(status === v)}>{pick(t)}</button>)}
+        <Help term="provider.payStatus" size="sm" />
       </div>
       {!data ? <Loading /> : (
         <>
           <div className="flex items-center justify-between gap-2">
-            <span className="text-sm font-bold">{pick('prov.approvedTotal')}: <span className="num" dir="ltr">{rs(data.approved_total)}</span></span>
+            <span className="flex items-center gap-1"><span className="text-sm font-bold">{pick('prov.approvedTotal')}: <span className="num" dir="ltr">{rs(data.approved_total)}</span></span><Help term="provider.approvedTotal" size="sm" /></span>
             <button type="button" onClick={csv} className="tap rounded-full border border-line px-3 py-1.5 text-xs font-bold">{pick('prov.exportCsv')}</button>
           </div>
           {!data.rows.length ? <Empty text="prov.none" /> : <div className="card divide-y divide-line p-0" data-testid="prov-pays">{data.rows.map((p) => <PayLine key={p.id} p={p} />)}</div>}
@@ -297,11 +312,12 @@ function KeysTab() {
   const chip = (on: boolean) => `tap h-9 rounded-full border-2 px-3 text-[12px] font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface'}`
   return (
     <div className="flex flex-col gap-2">
-      <BiLabel text="prov.key.hint" size="sm" tone="text-muted" />
+      <span className="flex items-center gap-1"><BiLabel text="prov.key.hint" size="sm" tone="text-muted" /><Help term="key.what" size="sm" /></span>
       <BiButton text="prov.key.generate" icon={<KeyRound size={18} />} full onClick={() => setMaking(true)} />
       <SearchBox value={q} onChange={setQ} placeholder="common.search" />
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap items-center gap-1.5">
         {([['', 'prov.all'], ['issued', 'prov.key.issued'], ['redeemed', 'prov.key.redeemed'], ['revoked', 'prov.key.revoked']] as const).map(([v, t]) => <button key={v} type="button" aria-pressed={status === v} onClick={() => setStatus(v)} className={chip(status === v)}>{pick(t)}</button>)}
+        <Help term="key.status" size="sm" />
       </div>
       <KeyList status={status} q={q} />
       <Sheet open={making} onClose={() => setMaking(false)} title="prov.key.generate">
@@ -324,7 +340,7 @@ function MakeKey({ shopId, shopName }: { shopId?: string; shopName?: string }) {
   if (made) return <div className="flex flex-col gap-2"><BiAlert text="prov.key.made" kind="success" /><KeyCard k={made} /></div>
   return (
     <div className="flex flex-col gap-3" data-testid="make-key">
-      <BiLabel text="prov.key.forShop" size="md" tone="text-muted" />
+      <span className="flex items-center gap-1"><BiLabel text="prov.key.forShop" size="md" tone="text-muted" /><Help term="key.forShop" size="sm" /></span>
       {shop ? (
         <button type="button" onClick={() => !shopId && setShop(null)} className="tap rounded-2xl border border-emerald bg-emerald-tint px-4 py-3 text-start font-bold text-emerald-deep">{shop.name}</button>
       ) : (
@@ -335,10 +351,13 @@ function MakeKey({ shopId, shopName }: { shopId?: string; shopName?: string }) {
           </div>
         </>
       )}
-      <div className="grid grid-cols-4 gap-2">
+      <div className="flex items-center gap-1">
+      <div className="grid flex-1 grid-cols-4 gap-2">
         {['1', '3', '6', '12'].map((m) => <button key={m} type="button" aria-pressed={months === m} onClick={() => setMonths(m)} className={`tap min-h-12 rounded-2xl border-2 font-bold ${months === m ? 'border-ink bg-ink text-ground' : 'border-line bg-surface'}`}>{pick('prov.key.months').replace('{{n}}', m)}</button>)}
       </div>
-      <BiInput label="prov.key.note" value={note} onChange={(e) => setNote(e.target.value)} maxLength={200} />
+      <Help term="key.months" size="sm" />
+      </div>
+      <BiInput label="prov.key.note" help={<Help term="key.note" size="sm" />} value={note} onChange={(e) => setNote(e.target.value)} maxLength={200} />
       <ErrorText error={err} />
       <BiButton text="prov.key.generate" icon={<KeyRound size={18} />} full disabled={!shop} onClick={async () => {
         try {
@@ -399,6 +418,7 @@ function KeyCard({ k: initial }: { k: KeyRow }) {
         <span className="min-w-0 flex-1 truncate text-sm font-bold">{k.shop_name}</span>
         <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${tone}`}>{pick(`prov.key.${k.status}`)}</span>
         <span className="num text-sm" dir="ltr">{pick('prov.key.months').replace('{{n}}', String(k.months))}</span>
+        <Help term="key.card" size="sm" />
       </div>
       <span className="num break-all rounded-xl bg-ground px-3 py-2 text-[11px] leading-snug" dir="ltr" data-testid="key-code">{k.code}</span>
       <span className={`text-muted ${small}`}>

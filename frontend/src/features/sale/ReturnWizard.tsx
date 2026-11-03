@@ -115,18 +115,21 @@ export default function ReturnWizard() {
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="counter.returnJob" />
+      <PageHeader title="counter.returnJob" help={<Help term="sale.returnPage" />} />
       <Stepper steps={['counter.whatBack', 'counter.backHow', 'counter.doneTitle']} current={step} />
 
       {step === 0 ? (
         <div className="flex flex-col gap-3">
-          <SearchBox value={q} onChange={setQ} placeholder="counter.searchSold" scan />
+          <div className="flex items-center gap-1">
+            <div className="min-w-0 flex-1"><SearchBox value={q} onChange={setQ} placeholder="counter.searchSold" scan /></div>
+            <Help term="sale.returnSearch" size="sm" />
+          </div>
           {sold?.length ? (
             <List>
               {sold.map((d) => <DeviceRow key={d.id} d={d} onClick={() => void openDevice(d.id)} />)}
             </List>
           ) : null}
-          <BiLabel text="counter.orPickSale" size="sm" bold tone="text-muted" className="mt-2" />
+          <span className="mt-2 flex items-center gap-1"><BiLabel text="counter.orPickSale" size="sm" bold tone="text-muted" /><Help term="sale.recentSales" size="sm" /></span>
           <List>
             {recent?.filter((i: Invoice) => i.status !== 'void' && i.status !== 'returned').slice(0, 15).map((i: Invoice) => (
               <Row
@@ -143,6 +146,7 @@ export default function ReturnWizard() {
 
       {step === 1 && inv ? (
         <div className="flex flex-col gap-3">
+          <span className="flex items-center gap-1"><BiLabel text="counter.whatBack" size="sm" bold tone="text-muted" /><Help term="sale.returnLines" size="sm" /></span>
           <div className="card flex flex-col gap-1 p-0">
             {inv.lines.map((l) => {
               const back = !!l.returned_at
@@ -169,14 +173,14 @@ export default function ReturnWizard() {
           )}
 
           {paidFor === 0 && value > 0 ? (
-            <div className={`rounded-2xl bg-khata px-4 py-3 text-khata-fg ${small}`}>{pick('counter.onUdhaarOnly')}</div>
+            <div className={`flex items-center gap-1 rounded-2xl bg-khata px-4 py-3 text-khata-fg ${small}`}><span className="flex-1">{pick('counter.onUdhaarOnly')}</span><span className="[&_button]:text-current"><Help term="sale.onUdhaarOnly" size="sm" /></span></div>
           ) : value > 0 ? (
             <>
               <div className="flex items-center justify-between rounded-2xl border border-line bg-surface px-4 py-3">
-                <span className={small}>{pick('counter.paidForIt')}</span>
+                <span className="flex items-center gap-1"><span className={small}>{pick('counter.paidForIt')}</span><Help term="sale.paidForIt" size="sm" /></span>
                 <span className="num text-xl" dir="ltr">{n(paidFor)}</span>
               </div>
-              <BiLabel text="counter.giveFrom" size="md" bold />
+              <span className="flex items-center gap-1"><BiLabel text="counter.giveFrom" size="md" bold /><Help term="sale.giveFrom" size="sm" /></span>
               <div className="grid grid-cols-3 gap-2">
                 {accounts?.map((a) => (
                   <button key={a.id} type="button" aria-pressed={from?.kind === 'account' && from.id === a.id} onClick={() => setFrom({ kind: 'account', id: a.id })} className={chip(from?.kind === 'account' && from.id === a.id)}>
@@ -188,9 +192,9 @@ export default function ReturnWizard() {
               </div>
               {!toKhata ? (
                 <>
-                  <BiInput label="counter.giveBack" help={<Help term="cut" />} type="number" inputMode="numeric" min={0} max={paidFor} value={refund ?? String(paidFor)} onChange={(e) => setRefund(e.target.value)} className="num text-2xl" />
+                  <BiInput label="counter.giveBack" help={<Help term="sale.giveBack" size="sm" />} type="number" inputMode="numeric" min={0} max={paidFor} value={refund ?? String(paidFor)} onChange={(e) => setRefund(e.target.value)} className="num text-2xl" />
                   <div className="flex items-center justify-between rounded-2xl bg-ret px-4 py-3 text-ret-fg">
-                    <span className={small}>{pick('counter.cut')}</span>
+                    <span className="flex items-center gap-1"><span className={small}>{pick('counter.cut')}</span><span className="[&_button]:text-current"><Help term="cut" size="sm" /></span></span>
                     <span className="num text-2xl" dir="ltr">{n(cut)}</span>
                   </div>
                 </>
@@ -198,7 +202,7 @@ export default function ReturnWizard() {
             </>
           ) : null}
 
-          <BiInput label="counter.reasonOpt" value={reason} onChange={(e) => setReason(e.target.value)} />
+          <BiInput label="counter.reasonOpt" help={<Help term="sale.returnReason" size="sm" />} value={reason} onChange={(e) => setReason(e.target.value)} />
           <ErrorText error={m.error} />
           <BiButton text="counter.returnBtn" icon={<Undo2 size={22} />} full loading={m.isPending} disabled={!ok} onClick={submit} />
         </div>

@@ -4,6 +4,7 @@ import { Copy, KeyRound } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { BiAlert, BiButton, BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { Loading, fmtDate } from '@/components/ui'
 import { LOCALES, setLocale, type Locale } from '@/i18n'
 import { api } from '@/lib/api'
@@ -28,7 +29,7 @@ export default function KeyPage() {
       </div>
       <div className="flex flex-col items-center gap-2 text-center">
         <span className="well h-14 w-14 bg-emerald-tint text-emerald-deep"><KeyRound size={26} /></span>
-        <BiLabel text="keypage.title" size="lg" bold align="center" />
+        <span className="flex items-center gap-1"><BiLabel text="keypage.title" size="lg" bold align="center" /><Help term="key.pageWhat" size="sm" /></span>
       </div>
       {gone ? <BiAlert text="keypage.expired" /> : !data ? <Loading /> : (
         <div className="card flex flex-col gap-3">
@@ -39,7 +40,7 @@ export default function KeyPage() {
           {data.status === 'redeemed' ? <BiAlert text="keypage.used" kind="info" /> : null}
           <span className="num select-all break-all rounded-xl bg-ground px-3 py-3 text-sm leading-relaxed" dir="ltr" data-testid="shown-key">{data.code}</span>
           <BiButton text={copied ? 'prov.key.copied' : 'prov.key.copy'} icon={<Copy size={18} />} full onClick={async () => { try { await navigator.clipboard.writeText(data.code) } catch { /* select-all text above */ } setCopied(true) }} />
-          <BiLabel text="keypage.steps" size="sm" tone="text-muted" />
+          <span className="flex items-center gap-1"><BiLabel text="keypage.steps" size="sm" tone="text-muted" /><Help term="key.pageSteps" size="sm" /></span>
           {data.expires_at ? <span className="text-xs text-muted">{pick('keypage.validTill')} <span className="num" dir="ltr">{fmtDate(data.expires_at)}</span></span> : null}
         </div>
       )}

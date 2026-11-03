@@ -121,7 +121,11 @@ def update(
         if k == "compatible_model_ids" and v is not None:
             v = [str(x) for x in v]
         setattr(a, k, money(v) if isinstance(v, Decimal) else v)
-    if a.pricing_mode == "markup" and a.markup_pct is not None and ("markup_pct" in changes or "pricing_mode" in changes):
+    if (
+        a.pricing_mode == "markup"
+        and a.markup_pct is not None
+        and ("markup_pct" in changes or "pricing_mode" in changes)
+    ):
         new_price = inv.price_from_markup(a.avg_cost or ZERO, a.markup_pct)
         inv.log_price_change(db, shop_id, user_id, a, "price", a.price, new_price, source="markup")
         a.price = new_price
@@ -310,7 +314,9 @@ def list_accessories(
         stmt = stmt.where(Accessory.location.ilike(f"%{location}%"))
     if supplier_id is not None:
         bought = select(AccessoryBatch.accessory_id).where(AccessoryBatch.party_id == supplier_id)
-        skus = select(AccessorySupplierSku.accessory_id).where(AccessorySupplierSku.party_id == supplier_id)
+        skus = select(AccessorySupplierSku.accessory_id).where(
+            AccessorySupplierSku.party_id == supplier_id
+        )
         stmt = stmt.where(or_(Accessory.id.in_(bought), Accessory.id.in_(skus)))
     if low_only:
         stmt = stmt.where(Accessory.qty <= Accessory.reorder_level)

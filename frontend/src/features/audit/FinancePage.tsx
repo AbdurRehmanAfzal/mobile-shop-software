@@ -10,6 +10,7 @@ import { BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import Bars from '@/components/charts/Bars'
 import Donut from '@/components/charts/Donut'
 import Lines from '@/components/charts/Lines'
+import Help from '@/components/Help'
 import { Empty, fmtDate, Pending } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
@@ -29,6 +30,36 @@ interface Expenses { granularity: string; total: M; owner_drawing: M; count: num
 interface Tax { invoices: number; taxed_invoices: number; taxable_sales: M; tax_on_invoices: M; tax_net_of_returns: M; rows: { invoice_id: string; no: string; date: string; party_name: string | null; taxable: M; tax_rate: M; tax_inclusive: boolean; tax_amount: M; total: M; status: string; returned_total: M; fbr_invoice_no: string | null }[]; notes: string[] }
 
 const n = (v: M | number | null | undefined) => (v == null ? '—' : Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 }))
+/** help per tab and per cash reason the server sends (docs/33); unknown reasons get no icon */
+const TAB_HELP: { key: Tab; helpKey: string }[] = [
+  { key: 'pnl', helpKey: 'audit.finance.tab.pnl' },
+  { key: 'cash', helpKey: 'audit.finance.tab.cash' },
+  { key: 'expenses', helpKey: 'audit.finance.tab.expenses' },
+  { key: 'tax', helpKey: 'audit.finance.tab.tax' },
+]
+const REASON_HELP: { key: string; helpKey: string }[] = [
+  { key: 'sales_now', helpKey: 'audit.finance.reason.sales_now' },
+  { key: 'udhaar_received', helpKey: 'audit.finance.reason.udhaar_received' },
+  { key: 'borrowed', helpKey: 'audit.finance.reason.borrowed' },
+  { key: 'repairs', helpKey: 'audit.finance.reason.repairs' },
+  { key: 'refund_from_supplier', helpKey: 'audit.finance.reason.refund_from_supplier' },
+  { key: 'transfer_in', helpKey: 'audit.finance.reason.transfer_in' },
+  { key: 'opening', helpKey: 'audit.finance.reason.opening' },
+  { key: 'other_in', helpKey: 'audit.finance.reason.other_in' },
+  { key: 'stock_now', helpKey: 'audit.finance.reason.stock_now' },
+  { key: 'paid_to_people', helpKey: 'audit.finance.reason.paid_to_people' },
+  { key: 'lent', helpKey: 'audit.finance.reason.lent' },
+  { key: 'expenses', helpKey: 'audit.finance.reason.expenses' },
+  { key: 'refunds', helpKey: 'audit.finance.reason.refunds' },
+  { key: 'repair_parts', helpKey: 'audit.finance.reason.repair_parts' },
+  { key: 'fees', helpKey: 'audit.finance.reason.fees' },
+  { key: 'transfer_out', helpKey: 'audit.finance.reason.transfer_out' },
+  { key: 'other_out', helpKey: 'audit.finance.reason.other_out' },
+  { key: 'reversal', helpKey: 'audit.finance.reason.reversal' },
+]
+const reasonHelp = (k: string) => REASON_HELP.find((x) => x.key === (k.startsWith('reversal_of_') ? 'reversal' : k))?.helpKey
+const tabHelp = (t: Tab) => TAB_HELP.find((x) => x.key === t)?.helpKey ?? 'audit.finance.tab.pnl'
+
 const label = (bucket: string, g: string) => (g === 'month' ? bucket.slice(0, 7) : bucket.slice(5))
 
 export default function FinancePage() {
@@ -54,39 +85,42 @@ export default function FinancePage() {
 
   return (
     <AuditLayout right={<SectionDownload sections={tab === 'pnl' ? ['pnl'] : tab === 'cash' ? ['cash'] : tab === 'expenses' ? ['expenses'] : ['tax']} name={`finance-${tab}`} />}>
-      <BiSegmented<Tab> value={tab} onChange={setTab} options={[{ value: 'pnl', text: 'audit.fin.pnl' }, { value: 'cash', text: 'audit.fin.cash' }, { value: 'expenses', text: 'audit.fin.expenses' }, { value: 'tax', text: 'audit.fin.tax' }]} />
+      <div className="flex items-center gap-1">
+        <div className="min-w-0 flex-1"><BiSegmented<Tab> value={tab} onChange={setTab} options={[{ value: 'pnl', text: 'audit.fin.pnl' }, { value: 'cash', text: 'audit.fin.cash' }, { value: 'expenses', text: 'audit.fin.expenses' }, { value: 'tax', text: 'audit.fin.tax' }]} /></div>
+        <Help term={tabHelp(tab)} size="sm" />
+      </div>
 
       {tab === 'pnl' ? (!pnl ? <Pending error={pnlErr} retry={pnlAgain} /> : (
         <>
           <section className={`flex flex-col gap-1 rounded-3xl px-5 py-4 ${Number(canCost ? pnl.current.net_profit : pnl.current.net_sales) >= 0 ? 'bg-sell text-sell-fg' : 'bg-expense text-expense-fg'}`} data-testid="fin-hero">
-            <div className="flex items-center justify-between"><BiLabel text={canCost ? 'counter.netProfit' : 'audit.netSales'} size="md" bold tone="text-current" />{pct(canCost ? pnl.current.net_profit : pnl.current.net_sales, canCost ? pnl.previous.net_profit : pnl.previous.net_sales)}</div>
+            <div className="flex items-center justify-between"><span className="flex items-center gap-1"><BiLabel text={canCost ? 'counter.netProfit' : 'audit.netSales'} size="md" bold tone="text-current" />{canCost ? <Help term="audit.overview.realProfit" size="sm" /> : <Help term="audit.overview.netSales" size="sm" />}</span>{pct(canCost ? pnl.current.net_profit : pnl.current.net_sales, canCost ? pnl.previous.net_profit : pnl.previous.net_sales)}</div>
             <span className="num text-[32px] leading-tight" dir="ltr">{withCur(n(canCost ? pnl.current.net_profit : pnl.current.net_sales))}</span>
             <span className={`opacity-80 ${small}`}>{pick('audit.vsPrevious')} <span className="num" dir="ltr">{withCur(n(canCost ? pnl.previous.net_profit : pnl.previous.net_sales))}</span> · {pick(`audit.gran.${pnl.granularity}`)}</span>
           </section>
-          <section className="card"><Bars data={pnlBars} testid="fin-series" empty="audit.noData" /></section>
+          <section className="card"><div className="flex justify-end"><Help term="audit.finance.series" size="sm" /></div><Bars data={pnlBars} testid="fin-series" empty="audit.noData" /></section>
           {canCost && pnl.series.length > 1 ? (
             <section className="card" data-testid="fin-lines-chart">
-              <BiLabel text="audit.chart.revenueVsProfit" size="sm" tone="text-muted" bold />
+              <span className="flex items-center gap-1"><BiLabel text="audit.chart.revenueVsProfit" size="sm" tone="text-muted" bold /><Help term="audit.finance.salesVsProfit" size="sm" /></span>
               <Lines labels={pnl.series.map((s) => label(s.bucket, pnl.granularity))} series={[{ label: pick('audit.netSales'), color: 'rgb(var(--emerald))', values: pnl.series.map((s) => Number(s.net_sales)) }, { label: pick('counter.netProfit'), color: 'rgb(var(--ink))', values: pnl.series.map((s) => Number(s.net_profit)) }]} empty="audit.noData" />
             </section>
           ) : null}
           <div className="card flex flex-col p-0" data-testid="fin-lines">
-            <Line k="counter.grossSales" v={n(pnl.current.gross_sales)} prev={n(pnl.previous.gross_sales)} />
-            {Number(pnl.current.discounts) || Number(pnl.previous.discounts) ? <Line k="counter.discounts" v={`− ${n(pnl.current.discounts)}`} prev={n(pnl.previous.discounts)} muted /> : null}
-            {Number(pnl.current.sales_returns) || Number(pnl.previous.sales_returns) ? <Line k="counter.salesReturns" v={`− ${n(pnl.current.sales_returns)}`} prev={n(pnl.previous.sales_returns)} muted /> : null}
-            <Line k="counter.netSales" v={n(pnl.current.net_sales)} prev={n(pnl.previous.net_sales)} strong />
+            <Line k="counter.grossSales" help="audit.finance.grossSales" v={n(pnl.current.gross_sales)} prev={n(pnl.previous.gross_sales)} />
+            {Number(pnl.current.discounts) || Number(pnl.previous.discounts) ? <Line k="counter.discounts" help="audit.finance.discounts" v={`− ${n(pnl.current.discounts)}`} prev={n(pnl.previous.discounts)} muted /> : null}
+            {Number(pnl.current.sales_returns) || Number(pnl.previous.sales_returns) ? <Line k="counter.salesReturns" help="audit.finance.salesReturns" v={`− ${n(pnl.current.sales_returns)}`} prev={n(pnl.previous.sales_returns)} muted /> : null}
+            <Line k="counter.netSales" help="audit.overview.netSales" v={n(pnl.current.net_sales)} prev={n(pnl.previous.net_sales)} strong />
             {canCost ? (
               <>
-                <Line k="counter.cogs" v={`− ${n(pnl.current.cogs)}`} prev={n(pnl.previous.cogs)} muted />
-                <Line k="counter.grossProfit" v={n(pnl.current.gross_profit)} prev={n(pnl.previous.gross_profit)} strong />
-                <Line k="audit.expenses" v={`− ${n(pnl.current.operating_expenses)}`} prev={n(pnl.previous.operating_expenses)} muted />
-                <Line k="counter.operatingProfit" v={n(pnl.current.operating_profit)} prev={n(pnl.previous.operating_profit)} />
-                {Number(pnl.current.repair_income) + Number(pnl.current.other_income) + Number(pnl.previous.repair_income) + Number(pnl.previous.other_income) ? <Line k="counter.otherIncome" v={`+ ${n(Number(pnl.current.repair_income) + Number(pnl.current.other_income))}`} prev={n(Number(pnl.previous.repair_income) + Number(pnl.previous.other_income))} /> : null}
-                <Line k="counter.netProfit" v={n(pnl.current.net_profit)} prev={n(pnl.previous.net_profit)} strong />
+                <Line k="counter.cogs" help="audit.finance.cogs" v={`− ${n(pnl.current.cogs)}`} prev={n(pnl.previous.cogs)} muted />
+                <Line k="counter.grossProfit" help="audit.finance.grossProfit" v={n(pnl.current.gross_profit)} prev={n(pnl.previous.gross_profit)} strong />
+                <Line k="audit.expenses" help="audit.finance.opExpenses" v={`− ${n(pnl.current.operating_expenses)}`} prev={n(pnl.previous.operating_expenses)} muted />
+                <Line k="counter.operatingProfit" help="audit.finance.operatingProfit" v={n(pnl.current.operating_profit)} prev={n(pnl.previous.operating_profit)} />
+                {Number(pnl.current.repair_income) + Number(pnl.current.other_income) + Number(pnl.previous.repair_income) + Number(pnl.previous.other_income) ? <Line k="counter.otherIncome" help="audit.finance.otherIncome" v={`+ ${n(Number(pnl.current.repair_income) + Number(pnl.current.other_income))}`} prev={n(Number(pnl.previous.repair_income) + Number(pnl.previous.other_income))} /> : null}
+                <Line k="counter.netProfit" help="audit.overview.realProfit" v={n(pnl.current.net_profit)} prev={n(pnl.previous.net_profit)} strong />
               </>
             ) : null}
-            <Line k="counter.taxCollected" v={n(pnl.current.tax_collected)} prev={n(pnl.previous.tax_collected)} muted />
-            {canCost && Number(pnl.current.owner_drawing) ? <Line k="counter.ownerTook" v={n(pnl.current.owner_drawing)} prev={n(pnl.previous.owner_drawing)} muted /> : null}
+            <Line k="counter.taxCollected" help="audit.finance.taxCollected" v={n(pnl.current.tax_collected)} prev={n(pnl.previous.tax_collected)} muted />
+            {canCost && Number(pnl.current.owner_drawing) ? <Line k="counter.ownerTook" help="audit.finance.ownerTook" v={n(pnl.current.owner_drawing)} prev={n(pnl.previous.owner_drawing)} muted /> : null}
           </div>
           <Notes notes={pnl.notes} />
         </>
@@ -95,16 +129,16 @@ export default function FinancePage() {
       {tab === 'cash' ? (!cash ? <Pending error={cashErr} retry={cashAgain} /> : (
         <>
           <section className="grid grid-cols-2 gap-2 lg:grid-cols-4" data-testid="cash-totals">
-            <Kpi icon={<Landmark size={18} />} tone="bg-sell text-sell-fg" k="audit.opening" v={n(cash.opening)} />
-            <Kpi icon={<ArrowDownLeft size={18} />} tone="bg-emerald-tint text-emerald-deep" k="audit.moneyIn" v={n(cash.in_total)} />
-            <Kpi icon={<ArrowUpRight size={18} />} tone="bg-payable-tint text-payable" k="audit.moneyOut" v={n(cash.out_total)} />
-            <Kpi icon={<Landmark size={18} />} tone="bg-ink text-ground" k={period.asOf ? 'audit.asOf' : 'audit.closing'} v={n(period.asOf ? cash.as_of : cash.closing)} sub={<>{pick('audit.now')} <span className="num" dir="ltr">{n(cash.current)}</span></>} />
+            <Kpi icon={<Landmark size={18} />} tone="bg-sell text-sell-fg" k="audit.opening" help="audit.finance.cashOpening" v={n(cash.opening)} />
+            <Kpi icon={<ArrowDownLeft size={18} />} tone="bg-emerald-tint text-emerald-deep" k="audit.moneyIn" help="audit.finance.cashIn" v={n(cash.in_total)} />
+            <Kpi icon={<ArrowUpRight size={18} />} tone="bg-payable-tint text-payable" k="audit.moneyOut" help="audit.finance.cashOut" v={n(cash.out_total)} />
+            <Kpi icon={<Landmark size={18} />} tone="bg-ink text-ground" k={period.asOf ? 'audit.asOf' : 'audit.closing'} help="audit.finance.cashClosing" v={n(period.asOf ? cash.as_of : cash.closing)} sub={<>{pick('audit.now')} <span className="num" dir="ltr">{n(cash.current)}</span></>} />
           </section>
           <section className="grid gap-2 sm:grid-cols-2">
-            <ReasonCard title="audit.fin.cameIn" keys={cash.in_keys} values={cash.in} total={cash.in_total} tone="text-emerald-deep" reason={reason} />
-            <ReasonCard title="audit.fin.wentOut" keys={cash.out_keys} values={cash.out} total={cash.out_total} tone="text-payable" reason={reason} />
+            <ReasonCard title="audit.fin.cameIn" help="audit.finance.cameIn" keys={cash.in_keys} values={cash.in} total={cash.in_total} tone="text-emerald-deep" reason={reason} />
+            <ReasonCard title="audit.fin.wentOut" help="audit.finance.wentOut" keys={cash.out_keys} values={cash.out} total={cash.out_total} tone="text-payable" reason={reason} />
           </section>
-          <BiLabel text="audit.fin.perAccount" size="md" bold />
+          <span className="flex items-center gap-1"><BiLabel text="audit.fin.perAccount" size="md" bold /><Help term="audit.finance.perAccount" size="sm" /></span>
           <div className="grid gap-2 sm:grid-cols-2" data-testid="cash-accounts">
             {cash.accounts.map((a) => (
               <Link key={a.cash_account_id} to="/more/cash" className="card tap flex flex-col gap-1.5">
@@ -118,9 +152,9 @@ export default function FinancePage() {
               </Link>
             ))}
           </div>
-          <BiLabel text="audit.fin.channels" size="md" bold />
+          <span className="flex items-center gap-1"><BiLabel text="audit.fin.channels" size="md" bold /><Help term="audit.finance.channels" size="sm" /></span>
           <section className="card" data-testid="cash-donut">
-            <BiLabel text="audit.chart.channelsIn" size="sm" tone="text-muted" bold />
+            <span className="flex items-center gap-1"><BiLabel text="audit.chart.channelsIn" size="sm" tone="text-muted" bold /><Help term="audit.finance.channelsIn" size="sm" /></span>
             <Donut data={cash.by_kind.map((k) => ({ label: payLabel(k.kind), value: Number(k.in), key: k.kind }))} onTap={() => nav('/more/cash')} empty="audit.noData" />
           </section>
           <div className="card divide-y divide-line p-0" data-testid="cash-channels">
@@ -131,12 +165,12 @@ export default function FinancePage() {
               </div>
             ))}
             {cash.payments_by_method.length ? (
-              <div className={`px-4 py-2.5 text-muted ${small}`}>{pick('audit.fin.paymentsByMethod')}: {cash.payments_by_method.map((m) => `${payLabel(m.method)} +${n(m.in)} / −${n(m.out)} (${m.count})`).join(' · ')}</div>
+              <div className={`flex items-center gap-1 px-4 py-2.5 text-muted ${small}`}><span>{pick('audit.fin.paymentsByMethod')}: {cash.payments_by_method.map((m) => `${payLabel(m.method)} +${n(m.in)} / −${n(m.out)} (${m.count})`).join(' · ')}</span><Help term="audit.finance.paymentsByMethod" size="sm" /></div>
             ) : null}
           </div>
           {intl && intl.rows.length ? (
             <>
-              <div className="flex items-center gap-2"><Globe size={18} /><BiLabel text="audit.fin.international" size="md" bold /></div>
+              <div className="flex items-center gap-2"><Globe size={18} /><BiLabel text="audit.fin.international" size="md" bold /><Help term="audit.finance.international" size="sm" /></div>
               <div className={`text-muted ${small}`}>{intl.by_currency.map((c) => `${c.currency} ${n(c.foreign_amount)} → ${withCur(n(c.pkr_amount))}${Number(c.fees) ? ` − ${pick('paym.fee')} ${n(c.fees)} = ${n(c.net)}` : ''} (${c.count})`).join(' · ')}</div>
               <div className="card divide-y divide-line p-0" data-testid="cash-intl">
                 {intl.rows.map((r, i) => (
@@ -156,13 +190,14 @@ export default function FinancePage() {
       {tab === 'expenses' ? (!exp ? <Pending error={expErr} retry={expAgain} /> : (
         <>
           <section className="flex flex-col gap-1 rounded-3xl bg-expense px-5 py-4 text-expense-fg" data-testid="exp-hero">
-            <div className="flex items-center justify-between"><BiLabel text="audit.expenses" size="md" bold tone="text-current" />{pct(exp.total, exp.previous_total)}</div>
+            <div className="flex items-center justify-between"><span className="flex items-center gap-1"><BiLabel text="audit.expenses" size="md" bold tone="text-current" /><Help term="audit.finance.expTotal" size="sm" /></span>{pct(exp.total, exp.previous_total)}</div>
             <span className="num text-[32px] leading-tight" dir="ltr">{withCur(n(exp.total))}</span>
             <span className={`opacity-80 ${small}`}><span className="num">{exp.count}</span> {pick('audit.fin.entries')} · {pick('audit.vsPrevious')} <span className="num" dir="ltr">{n(exp.previous_total)}</span>{Number(exp.owner_drawing) ? <> · {pick('counter.ownerTook')} <span className="num" dir="ltr">{n(exp.owner_drawing)}</span></> : null}</span>
           </section>
-          <section className="card"><Bars data={exp.series.map((s) => ({ label: label(s.bucket, exp.granularity), value: Number(s.amount), key: s.bucket }))} tone="rgb(var(--payable))" testid="exp-series" empty="audit.noData" /></section>
+          <section className="card"><div className="flex justify-end"><Help term="audit.finance.expSeries" size="sm" /></div><Bars data={exp.series.map((s) => ({ label: label(s.bucket, exp.granularity), value: Number(s.amount), key: s.bucket }))} tone="rgb(var(--payable))" testid="exp-series" empty="audit.noData" /></section>
           {exp.by_category.length ? (
             <div className="card divide-y divide-line p-0" data-testid="exp-cats">
+              <div className="flex justify-end px-2 py-1"><Help term="audit.finance.expCats" size="sm" /></div>
               {exp.by_category.map((c) => {
                 const prev = exp.previous_by_category.find((x) => x.key === c.key)
                 const share = Number(exp.total) ? Math.round((Number(c.amount) / (Number(exp.total) + Number(exp.owner_drawing))) * 100) : 0
@@ -178,7 +213,7 @@ export default function FinancePage() {
           ) : <Empty text="audit.noData" />}
           {exp.largest.length ? (
             <>
-              <BiLabel text="audit.fin.largest" size="md" bold />
+              <span className="flex items-center gap-1"><BiLabel text="audit.fin.largest" size="md" bold /><Help term="audit.finance.largest" size="sm" /></span>
               <div className="card divide-y divide-line p-0" data-testid="exp-largest">
                 {exp.largest.map((e) => (
                   <Link key={e.id} to="/expenses" className="tap flex items-center gap-3 px-4 py-2.5">
@@ -189,7 +224,8 @@ export default function FinancePage() {
               </div>
             </>
           ) : null}
-          <div className={`flex flex-wrap gap-x-4 text-muted ${small}`}>
+          <div className={`flex flex-wrap items-center gap-x-4 text-muted ${small}`}>
+            <Help term="audit.finance.expByWho" size="sm" />
             {exp.by_user.map((u, i) => <span key={i}>{u.user_name ?? '—'}: <span className="num" dir="ltr">{n(u.amount)}</span> ({u.count})</span>)}
             {exp.by_account.map((a, i) => <span key={`a${i}`}>{a.name ?? a.kind}: <span className="num" dir="ltr">{n(a.amount)}</span></span>)}
           </div>
@@ -200,13 +236,14 @@ export default function FinancePage() {
       {tab === 'tax' ? (!tax ? <Pending error={taxErr} retry={taxAgain} /> : (
         <>
           <section className="grid grid-cols-2 gap-2 lg:grid-cols-4" data-testid="tax-totals">
-            <Kpi icon={<Receipt size={18} />} tone="bg-khata text-khata-fg" k="audit.fin.taxedBills" v={`${tax.taxed_invoices} / ${tax.invoices}`} />
-            <Kpi icon={<Receipt size={18} />} tone="bg-ground text-ink" k="audit.fin.taxable" v={n(tax.taxable_sales)} />
-            <Kpi icon={<Wallet size={18} />} tone="bg-sell text-sell-fg" k="counter.taxCollected" v={n(tax.tax_on_invoices)} />
-            <Kpi icon={<Wallet size={18} />} tone="bg-ink text-ground" k="audit.fin.taxNet" v={n(tax.tax_net_of_returns)} />
+            <Kpi icon={<Receipt size={18} />} tone="bg-khata text-khata-fg" k="audit.fin.taxedBills" help="audit.finance.taxedBills" v={`${tax.taxed_invoices} / ${tax.invoices}`} />
+            <Kpi icon={<Receipt size={18} />} tone="bg-ground text-ink" k="audit.fin.taxable" help="audit.finance.taxable" v={n(tax.taxable_sales)} />
+            <Kpi icon={<Wallet size={18} />} tone="bg-sell text-sell-fg" k="counter.taxCollected" help="audit.finance.taxOnBills" v={n(tax.tax_on_invoices)} />
+            <Kpi icon={<Wallet size={18} />} tone="bg-ink text-ground" k="audit.fin.taxNet" help="audit.finance.taxNet" v={n(tax.tax_net_of_returns)} />
           </section>
           {tax.rows.length ? (
             <div className="card divide-y divide-line p-0" data-testid="tax-rows">
+              <div className="flex justify-end px-2 py-1"><Help term="audit.finance.taxRows" size="sm" /></div>
               {tax.rows.map((r) => (
                 <Link key={r.invoice_id} to={`/sales/${r.invoice_id}`} className="tap flex items-center gap-3 px-4 py-2.5">
                   <span className="flex min-w-0 flex-1 flex-col"><span className="truncate font-bold">{r.party_name ?? pick('audit.fin.walkIn')} <span className="font-medium text-muted" dir="ltr">· {r.no}</span></span><span className={`text-muted ${small}`} dir="ltr">{fmtDate(r.date)} · {n(r.taxable)} @ {Number(r.tax_rate)}% {r.tax_inclusive ? pick('audit.fin.inclusive') : pick('audit.fin.exclusive')}{Number(r.returned_total) ? ` · ${pick('counter.salesReturns')} ${n(r.returned_total)}` : ''}</span></span>
@@ -224,37 +261,37 @@ export default function FinancePage() {
   )
 }
 
-function Line({ k, v, prev, strong, muted }: { k: string; v: string; prev?: string; strong?: boolean; muted?: boolean }) {
+function Line({ k, help, v, prev, strong, muted }: { k: string; help: string; v: string; prev?: string; strong?: boolean; muted?: boolean }) {
   const { pick, ur, cls } = useLang()
   return (
     <div className={`flex items-center justify-between gap-3 border-b border-line px-4 py-2.5 last:border-0 ${strong ? 'bg-ground/60' : ''}`}>
-      <span className={`${ur ? cls('md') : 'text-[15px]'} ${strong ? 'font-bold' : muted ? 'text-muted' : ''}`}>{pick(k)}</span>
+      <span className={`flex items-center gap-1 ${ur ? cls('md') : 'text-[15px]'} ${strong ? 'font-bold' : muted ? 'text-muted' : ''}`}>{pick(k)}<Help term={help} size="sm" /></span>
       <span className="flex items-baseline gap-2"><span className={`num ${strong ? 'text-xl' : 'text-base'} ${muted ? 'text-muted' : ''}`} dir="ltr">{v}</span>{prev != null ? <span className={`num text-muted ${ur ? cls('sm') : 'text-[11px]'}`} dir="ltr">({prev})</span> : null}</span>
     </div>
   )
 }
 
-function Kpi({ icon, tone, k, v, sub }: { icon: React.ReactNode; tone: string; k: string; v: string; sub?: React.ReactNode }) {
+function Kpi({ icon, tone, k, help, v, sub }: { icon: React.ReactNode; tone: string; k: string; help: string; v: string; sub?: React.ReactNode }) {
   const { ur, cls } = useLang()
   return (
     <div className="card flex min-w-0 flex-col gap-1.5">
-      <div className="flex items-center gap-2"><span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${tone}`}>{icon}</span><BiLabel text={k} size="sm" tone="text-muted" bold /></div>
+      <div className="flex items-center gap-2"><span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${tone}`}>{icon}</span><BiLabel text={k} size="sm" tone="text-muted" bold /><Help term={help} size="sm" /></div>
       <span className="num text-xl font-bold" dir="ltr">{v}</span>
       {sub ? <span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{sub}</span> : null}
     </div>
   )
 }
 
-function ReasonCard({ title, keys, values, total, tone, reason }: { title: string; keys: string[]; values: Record<string, string>; total: string; tone: string; reason: (k: string) => string }) {
+function ReasonCard({ title, help, keys, values, total, tone, reason }: { title: string; help: string; keys: string[]; values: Record<string, string>; total: string; tone: string; reason: (k: string) => string }) {
   const { ur, cls } = useLang()
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   const entries = [...keys.filter((k) => Number(values[k])).map((k) => [k, values[k]] as const), ...Object.entries(values).filter(([k, v]) => !keys.includes(k) && Number(v))]
   return (
     <div className="card flex flex-col gap-1.5" data-testid={`reasons-${title.split('.').pop()}`}>
-      <div className="flex items-center justify-between"><BiLabel text={title} size="md" bold /><span className={`num text-lg font-bold ${tone}`} dir="ltr">{n(total)}</span></div>
+      <div className="flex items-center justify-between"><span className="flex items-center gap-1"><BiLabel text={title} size="md" bold /><Help term={help} size="sm" /></span><span className={`num text-lg font-bold ${tone}`} dir="ltr">{n(total)}</span></div>
       {entries.length ? entries.map(([k, v]) => (
         <div key={k} className="flex items-center justify-between gap-2">
-          <span className={small}>{reason(k)}</span>
+          <span className={`flex items-center gap-1 ${small}`}>{reason(k)}{reasonHelp(k) ? <Help term={reasonHelp(k) as string} size="sm" /> : null}</span>
           <span className="flex flex-1 items-center gap-2"><span className="h-1.5 flex-1 overflow-hidden rounded-full bg-ground"><span className={`block h-full rounded-full ${tone === 'text-payable' ? 'bg-payable' : 'bg-emerald'}`} style={{ width: `${Number(total) ? Math.round((Number(v) / Number(total)) * 100) : 0}%` }} /></span><span className={`num ${small}`} dir="ltr">{n(v)}</span></span>
         </div>
       )) : <span className={`text-muted ${small}`}>—</span>}

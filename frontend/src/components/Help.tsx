@@ -20,14 +20,16 @@ export default function Help({ term, size = 'md' }: { term: HelpTerm; size?: 'sm
   const sm = size === 'sm'
   return (
     <>
+      {/* the name is only "What is this?": repeating the field's own words would make the "?" a
+          second element named like the field (the field's label, a card title, a button) */}
       <button
         type="button"
-        aria-label={`${pick('help.what')}: ${title}`}
+        aria-label={pick('help.what')}
         data-help={term}
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpen(true) }}
         className={`tap inline-flex shrink-0 items-center justify-center rounded-full align-middle ${sm ? 'h-6 w-6 text-emerald/80' : 'h-7 w-7 text-emerald'}`}
       >
-        <CircleHelp size={sm ? 15 : 20} />
+        <CircleHelp size={sm ? 15 : 20} aria-hidden />
       </button>
       <Sheet open={open} onClose={() => setOpen(false)} title={title}>
         <div className="flex flex-col gap-3">

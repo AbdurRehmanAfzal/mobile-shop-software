@@ -54,9 +54,13 @@ class Device(UUIDPk, ShopScoped, Timestamped, Base):
     ram_gb: Mapped[int | None] = mapped_column(Integer)
     warranty_by: Mapped[str | None] = mapped_column(String(10))  # shop | supplier | brand
     specs: Mapped[dict | None] = mapped_column(JSON)
-    lock_checks: Mapped[dict | None] = mapped_column(JSON)  # {activation|frp|account|paired|carrier: cleared|not_cleared|na}
+    lock_checks: Mapped[dict | None] = mapped_column(
+        JSON
+    )  # {activation|frp|account|paired|carrier: cleared|not_cleared|na}
     lock_checked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    lock_checked_by: Mapped[uuid.UUID | None] = mapped_column(Uuid, ForeignKey("users.id", ondelete="SET NULL"))
+    lock_checked_by: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid, ForeignKey("users.id", ondelete="SET NULL")
+    )
     brand_id: Mapped[uuid.UUID] = mapped_column(
         Uuid, ForeignKey("brands.id", ondelete="RESTRICT"), nullable=False
     )

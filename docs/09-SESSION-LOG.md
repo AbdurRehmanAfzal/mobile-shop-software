@@ -645,3 +645,43 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - tsc; vitest;
 - Playwright `lending.spec.ts` (2) + reminders / counter / audit specs.
 **Next**: owner tries it on the demo shop (Tariq is late → Send reminder). Still open: PR #25 merge; audit-parties e2e step; the party money split counts len-den as "other".
+
+## 2026-11-02 · Help "?" with an example on every field, tab and card
+- Owner: shopkeepers want an info icon with an example on every field, tab and card, in the audit and every module.
+- Made `Help` general (any term, small size), added help props to Section / KV / the phone, CNIC and IMEI inputs, 18 shared `help.common` terms and a coverage test (`Help.test.ts`).
+- The screens were split in seven groups, worked in parallel. Each group wrote a fragment that was merged into the locales with no overwrites. Result: about 1,050 icons and 1,127 help terms, each with title, explanation and example in en / ur / roman (docs/33, ADR-043).
+- Duplicate phone icons (a corner icon plus PhoneInput's own) were folded into the `help` prop.
+- Found and fixed on the way:
+  - The audit bills "by status" list showed sale bills as "In repair"; it now uses the sale words.
+  - The person's journey counted len-den in "received / paid later"; len-den is now separate (`lent` / `borrowed`).
+  - The cost-code docstring example was wrong (KHBBB, not HRBBB).
+- Raised for the owner:
+  - Item GST % is kept but not used on the bill.
+  - Two near-identical labels on the purchase form ("Supplier invoice no." / "Supplier bill no.").
+  - Super admin "Set password" always changes the owner's password, even on a staff member's request.
+**Verified**:
+- tsc; vitest 39 (incl. help coverage);
+- backend lending / journey / label tests;
+- full Playwright suite (see below).
+
+## 2026-11-03 · Repair labs and the repair sticker
+- Owner:
+  - Choose a repair lab / technician in the market, assign the phone, keep every lab's history and complete record, in repairs and in the audit.
+  - A sticker for the customer's phone with its details, the fields picked before printing.
+  - Research, build, make it live, push.
+- Research (RepairDesk / RepairShopr docs): tickets carry id, customer, device, IMEI, issue, due date; labels carry ticket no., customer, model, issue, barcode = ticket no.; passcodes stay off labels. No standard outsourced-lab record, so designed for the market (docs/34).
+- Built (ADR-044, migration `a5c7e9b1d3f6`):
+  - `repairs/labs.py`: send / back / cancel, labs, lab record, job trips; routes `/repairs/labs`, `/repairs/labs/{id}`, `/repairs/{id}/lab`, `/lab/{trip}/back`, `/lab/{trip}/cancel`.
+  - The charge is booked on return (customer → cogs, own phone → its cost); delivery does not book it twice.
+  - `labels/repair_labels.py` + `/labels/repairs`; scan of a job number opens the job.
+  - `shopaudit/repairs.py` + `/shop-audit/repairs` + report sections.
+  - UI: `RepairLabs.tsx`, `RepairSticker.tsx`, `RepairsAuditPage.tsx`, the repairs list / job page; 75 labels and 42 help terms in en / ur / roman.
+- Help-icon follow-ups found by the full e2e run:
+  - Sheets now render into `<body>` (a "?" sheet opened inside a translated box was misplaced).
+  - The person page's journey header made the page 484 px wide on a phone; it now wraps. With it, phone-sized clicks inside sheets work again.
+  - The "?" button's name is only "What is this?" (it no longer doubles the field's label).
+**Verified**:
+- backend `test_repair_labs.py` (3) + repair / label / barcode / audit / report / migration suites;
+- tsc; vitest;
+- Playwright `repair-labs.spec.ts`;
+- the overflow probe on 32 screens (Urdu): none wider than the phone.

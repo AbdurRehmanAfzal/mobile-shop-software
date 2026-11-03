@@ -5,6 +5,7 @@ import { ChevronDown, List as ListIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { BtnText, Empty, Loading, PageHeader } from '@/components/ui'
 import {toLakh, withCur } from '@/lib/format'
 import { useGet } from '@/lib/queries'
@@ -21,6 +22,7 @@ export default function StockSummaryPage() {
     <div className="flex flex-col gap-3">
       <PageHeader
         title="counter.stockTitle"
+        help={<Help term="counter.stockPage" />}
         right={
           <div className="flex gap-2">
           <DownloadButton path="/api/v1/exports/stock-summary" name="stock-worth" />
@@ -33,7 +35,7 @@ export default function StockSummaryPage() {
       {isLoading || !data ? <Loading /> : (
         <>
           <section className="flex flex-col rounded-3xl bg-stockt px-5 py-4 text-stockt-fg">
-            <BiLabel text={{ en: `${pick('counter.stockWorth')} (${pick(data.basis === 'cost' ? 'counter.worthCost' : 'counter.worthAsking')})`, ur: `${pick('counter.stockWorth')} (${pick(data.basis === 'cost' ? 'counter.worthCost' : 'counter.worthAsking')})` }} size="sm" bold tone="text-current" />
+            <span className="flex items-center gap-1"><BiLabel text={{ en: `${pick('counter.stockWorth')} (${pick(data.basis === 'cost' ? 'counter.worthCost' : 'counter.worthAsking')})`, ur: `${pick('counter.stockWorth')} (${pick(data.basis === 'cost' ? 'counter.worthCost' : 'counter.worthAsking')})` }} size="sm" bold tone="text-current" /><span className="[&_button]:text-current"><Help term="counter.stockValue" size="sm" /></span></span>
             <span className="num text-[34px] leading-tight" dir="ltr">{withCur(n(data.value))}</span>
             <span className={ur ? cls('sm') : 'text-sm font-semibold'}>
               <span className="num">{data.count}</span> {pick('counter.phones')}
@@ -43,7 +45,7 @@ export default function StockSummaryPage() {
 
           {!data.brands.length ? <Empty text="counter.noStock" /> : (
             <>
-              <BiLabel text="counter.tapBrand" size="sm" tone="text-muted" />
+              <span className="flex items-center gap-1"><BiLabel text="counter.tapBrand" size="sm" tone="text-muted" /><Help term="counter.stockBrands" size="sm" /></span>
               <div className="card divide-y divide-line p-0">
                 {data.brands.map((b) => {
                   const isOpen = open === b.brand_id

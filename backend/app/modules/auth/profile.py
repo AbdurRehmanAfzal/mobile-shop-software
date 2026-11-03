@@ -14,7 +14,15 @@ DEFAULT_CURRENCY = {"code": "PKR", "symbol": "Rs.", "position": "before", "decim
 SYMBOLS = ("Rs.", "Rs", "PKR", "₨", "روپے")
 BUSINESS_TYPES = ("sole", "partnership", "company", "aop", "other")
 PROVINCES = ("punjab", "sindh", "kpk", "balochistan", "islamabad", "gb", "ajk")
-DEFAULT_PRINT = {"logo": True, "ntn": True, "owner": False, "bank": False, "terms": True, "tagline": True, "social": False}
+DEFAULT_PRINT = {
+    "logo": True,
+    "ntn": True,
+    "owner": False,
+    "bank": False,
+    "terms": True,
+    "tagline": True,
+    "social": False,
+}
 LOGO_MAX = 600 * 1024
 
 
@@ -137,7 +145,12 @@ def logo_data_uri(shop: Shop) -> str | None:
     if len(data) > LOGO_MAX:
         return None
     ext = p.suffix.lower().lstrip(".")
-    mime = {"jpg": "image/jpeg", "jpeg": "image/jpeg", "png": "image/png", "webp": "image/webp"}.get(ext)
+    mime = {
+        "jpg": "image/jpeg",
+        "jpeg": "image/jpeg",
+        "png": "image/png",
+        "webp": "image/webp",
+    }.get(ext)
     if mime is None:
         return None
     return f"data:{mime};base64,{base64.b64encode(data).decode()}"
@@ -152,15 +165,28 @@ def header_html(shop: Shop, ur: bool, thermal: bool = False) -> str:
     logo = logo_data_uri(shop) if pp["logo"] else None
     if logo:
         h = "48px" if thermal else "64px"
-        parts.append(f'<img src="{logo}" alt="" style="max-height:{h};max-width:60%;object-fit:contain;display:block;margin:0 auto 4px">')
-    parts.append(f'<h1>{name}</h1>')
+        parts.append(
+            f'<img src="{logo}" alt="" style="max-height:{h};max-width:60%;object-fit:contain;display:block;margin:0 auto 4px">'
+        )
+    parts.append(f"<h1>{name}</h1>")
     if shop.legal_name and shop.legal_name.strip() and shop.legal_name.strip() != shop.name:
-        parts.append(f'<div><small>{e(shop.legal_name)}</small></div>')
+        parts.append(f"<div><small>{e(shop.legal_name)}</small></div>")
     tag = (shop.tagline_ur if ur and shop.tagline_ur else shop.tagline) if pp["tagline"] else None
     if tag:
-        parts.append(f'<div><i>{e(tag)}</i></div>')
+        parts.append(f"<div><i>{e(tag)}</i></div>")
     line1 = " ".join(x for x in (shop.address, shop.city) if x)
-    phones = " · ".join(x for x in (shop.phone, (f"WhatsApp {shop.whatsapp}" if shop.whatsapp and shop.whatsapp != shop.phone else None)) if x)
+    phones = " · ".join(
+        x
+        for x in (
+            shop.phone,
+            (
+                f"WhatsApp {shop.whatsapp}"
+                if shop.whatsapp and shop.whatsapp != shop.phone
+                else None
+            ),
+        )
+        if x
+    )
     line2 = " · ".join(x for x in (phones, shop.email, shop.website) if x)
     owner = None
     if pp["owner"] and shop.owner_name:
@@ -175,9 +201,11 @@ def header_html(shop: Shop, ur: bool, thermal: bool = False) -> str:
             tax.append(f"FBR POS {shop.fbr_pos_id}")
     for line in (line1, line2, owner, " · ".join(tax)):
         if line:
-            parts.append(f'<div><small>{e(line)}</small></div>')
+            parts.append(f"<div><small>{e(line)}</small></div>")
     if pp["social"] and shop.social:
-        parts.append(f'<div><small>{e(" · ".join(f"{k}: {v}" for k, v in shop.social.items()))}</small></div>')
+        parts.append(
+            f"<div><small>{e(' · '.join(f'{k}: {v}' for k, v in shop.social.items()))}</small></div>"
+        )
     parts.append("</div>")
     return "".join(parts)
 
@@ -189,12 +217,28 @@ def footer_html(shop: Shop, ur: bool) -> str:
     out = []
     terms = (shop.terms_ur if ur and shop.terms_ur else shop.terms) if pp["terms"] else None
     if terms:
-        out.append(f'<div class="terms" style="margin-top:6px;font-size:10px;white-space:pre-line">{e(terms)}</div>')
+        out.append(
+            f'<div class="terms" style="margin-top:6px;font-size:10px;white-space:pre-line">{e(terms)}</div>'
+        )
     b = shop.bank_details or {}
     if pp["bank"] and b:
-        bits = " · ".join(x for x in (b.get("bank"), b.get("title"), b.get("account"), b.get("iban"), b.get("wallet")) if x)
+        bits = " · ".join(
+            x
+            for x in (
+                b.get("bank"),
+                b.get("title"),
+                b.get("account"),
+                b.get("iban"),
+                b.get("wallet"),
+            )
+            if x
+        )
         label = "ادائیگی: " if ur else "Pay to: "
-        out.append(f'<div style="margin-top:4px;font-size:10px"><small>{e(label + bits)}</small></div>')
+        out.append(
+            f'<div style="margin-top:4px;font-size:10px"><small>{e(label + bits)}</small></div>'
+        )
     if shop.opening_hours:
-        out.append(f'<div style="margin-top:2px;font-size:10px"><small>{e(shop.opening_hours)}</small></div>')
+        out.append(
+            f'<div style="margin-top:2px;font-size:10px"><small>{e(shop.opening_hours)}</small></div>'
+        )
     return "".join(out)

@@ -58,7 +58,14 @@ def _aware(t: dt.datetime | None) -> dt.datetime | None:
     return t
 
 
-def issue(db: Session, shop, by_user_id: uuid.UUID | None, months: int, note: str | None = None, renewed_from: uuid.UUID | None = None) -> LicenseKey:
+def issue(
+    db: Session,
+    shop,
+    by_user_id: uuid.UUID | None,
+    months: int,
+    note: str | None = None,
+    renewed_from: uuid.UUID | None = None,
+) -> LicenseKey:
     from app.modules.plan import renewal
 
     code = renewal.make_code(shop.organisation_id, months)
@@ -119,9 +126,12 @@ def mark_redeemed(db: Session, nonce: str, where: str) -> None:
 
 
 def is_revoked(db: Session, nonce: str) -> bool:
-    return db.scalar(
-        select(LicenseKey.id).where(LicenseKey.nonce == nonce, LicenseKey.status == REVOKED)
-    ) is not None
+    return (
+        db.scalar(
+            select(LicenseKey.id).where(LicenseKey.nonce == nonce, LicenseKey.status == REVOKED)
+        )
+        is not None
+    )
 
 
 def by_token(db: Session, token: str) -> LicenseKey:
@@ -155,7 +165,9 @@ def share_links(k: LicenseKey, shop_name: str, phone: str | None, site: str) -> 
     text = message(k, shop_name, site)
     num = (phone or "").lstrip("0")
     return {
-        "whatsapp": f"https://wa.me/92{num}?text={quote(text)}" if num else f"https://wa.me/?text={quote(text)}",
+        "whatsapp": f"https://wa.me/92{num}?text={quote(text)}"
+        if num
+        else f"https://wa.me/?text={quote(text)}",
         "sms": f"sms:{phone or ''}?body={quote(text)}",
         "text": text,
         "link": link_url(k, site),

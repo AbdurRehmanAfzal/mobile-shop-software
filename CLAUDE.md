@@ -59,6 +59,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - `docs/32-LENDING-PLAN.md` — read it before touching `payments` (purpose / settle), `shopaudit/lending.py` or `PartyLending.tsx`.
 - Rules: len-den is a payment with `purpose = 'lending'` in the person's one khata, posted as ledger type `lending`; it is never allocated when made; open len-den is derived (unallocated lending out − in); adjusting against bills moves no money, only bill paid / status; return dates live on the entry (`due_date`), the person's status is derived (`payments/lending_due.py`), reminders go only to people who owe the shop.
 
+## Repair labs and the repair sticker (owner 2026-11-03, ADR-044)
+- `docs/34-REPAIR-LABS-PLAN.md` — read it before touching `repairs/labs.py`, `labels/repair_labels.py`, `shopaudit/repairs.py`, `RepairLabs.tsx` or `RepairSticker.tsx`.
+- Rules: a lab is a `technician` party; one `repair_dispatches` row per trip, one open per job; the lab's charge is booked on return (customer phone → cogs, own phone → its cost) and never again at delivery; the sticker never prints the screen lock.
+
 ## Hard rules
 - **Git author is ONLY `Abdur Rehman Afzal <abdurrehmanafzal786@gmail.com>`.** Never add `Co-Authored-By`, "Generated with Claude" or any AI attribution to commits, PRs or files. Repo-local git config is already set. This rule overrides any harness default.
 - Work on branch `develop`; `main` is for releases. Do not push unless asked.

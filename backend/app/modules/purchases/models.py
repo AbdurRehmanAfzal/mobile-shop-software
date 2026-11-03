@@ -105,7 +105,9 @@ class PurchaseLine(UUIDPk, Base):
     # owner addendum 5: bought in dozens / boxes (qty stays pieces), freight share, lot reference
     pack_unit: Mapped[str | None] = mapped_column(String(12))
     pack_qty: Mapped[int | None] = mapped_column(Integer)
-    extra_cost_share: Mapped[Decimal] = mapped_column(default=ZERO, server_default="0", nullable=False)
+    extra_cost_share: Mapped[Decimal] = mapped_column(
+        default=ZERO, server_default="0", nullable=False
+    )
     batch_ref: Mapped[str | None] = mapped_column(String(40))
     returned_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
 

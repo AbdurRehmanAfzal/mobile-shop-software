@@ -6,6 +6,7 @@ import { Check, HandCoins, Phone, Plus, RotateCcw, Smartphone, Store } from 'luc
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiAlert, BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import PartyPicker from '@/components/PartyPicker'
 import { Chip, ErrorText, List, Loading, PageHeader, SearchBox, Sheet, fmtDate } from '@/components/ui'
 import { DeviceRow } from '@/features/stock/StockPage'
@@ -39,22 +40,24 @@ export default function LoansPage() {
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="loan.title" />
+      <PageHeader title="loan.title" help={<Help term="loan.page" />} />
       <div className="flex flex-col gap-3 rounded-3xl bg-stockt p-4 text-stockt-fg">
         <div className="flex items-center gap-3">
           <span className="well h-12 w-12 shrink-0 rounded-2xl bg-white/15 text-current"><Store size={22} /></span>
           <span className="flex min-w-0 flex-1 flex-col">
             <span className="num text-[28px] leading-none" dir="ltr">{out?.length ?? 0}</span>
-            <BiLabel text="loan.outCount" size="sm" tone="text-current" className="opacity-80" />
+            <span className="flex items-center gap-1"><BiLabel text="loan.outCount" size="sm" tone="text-current" className="opacity-80" /><Help term="loan.outCount" size="sm" /></span>
           </span>
           {overdue ? <Chip text={{ en: `${overdue} ${pick('loan.overdue')}`, ur: `${overdue} ${pick('loan.overdue')}`, roman: `${overdue} ${pick('loan.overdue')}` }} tone="bad" /> : null}
+          {overdue ? <Help term="loan.overdue" size="sm" /> : null}
         </div>
         <BiLabel text="counter.loanHint" size="sm" tone="text-current" className="opacity-80" />
       </div>
       <BiButton text="loan.give" icon={<Plus size={22} />} full onClick={() => { setDone(null); setGiving(true) }} />
       {done ? <BiAlert text={done} kind="success" /> : null}
 
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap items-center gap-1.5">
+        <Help term="loan.views" size="sm" />
         {VIEWS.map((v) => (
           <button key={v} type="button" aria-pressed={view === v} onClick={() => setParams(v === 'out' ? {} : { view: v }, { replace: true })} className={`tap h-10 rounded-full border-2 px-3.5 font-bold ${view === v ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-[13px]'}`}>
             {pick(`loan.${v}`)}
@@ -128,10 +131,10 @@ export default function LoansPage() {
               <span className="well h-11 w-11 shrink-0 bg-stockt text-stockt-fg"><Smartphone size={20} /></span>
               <span className="flex min-w-0 flex-col"><span className="font-bold">{selling.device_label}</span><span className="text-xs text-muted">{selling.party_name}</span></span>
             </div>
-            <BiInput label="loan.price" type="number" inputMode="numeric" min={0} value={price} onChange={(e) => setPrice(e.target.value)} className="num text-2xl" autoFocus />
-            <BiInput label="sale.paidNow" type="number" inputMode="numeric" min={0} max={Number(price || 0)} value={paid} onChange={(e) => setPaid(e.target.value)} className="num" hint="loan.restOnKhata" />
+            <BiInput label="loan.price" help={<Help term="loan.price" size="sm" />} type="number" inputMode="numeric" min={0} value={price} onChange={(e) => setPrice(e.target.value)} className="num text-2xl" autoFocus />
+            <BiInput label="sale.paidNow" help={<Help term="loan.paidNow" size="sm" />} type="number" inputMode="numeric" min={0} max={Number(price || 0)} value={paid} onChange={(e) => setPaid(e.target.value)} className="num" hint="loan.restOnKhata" />
             <div className="flex items-center justify-between rounded-2xl bg-khata px-4 py-3 text-khata-fg">
-              <BiLabel text="loan.onTheirKhata" size="md" bold tone="text-current" />
+              <span className="flex items-center gap-1"><BiLabel text="loan.onTheirKhata" size="md" bold tone="text-current" /><Help term="loan.onKhata" size="sm" /></span>
               <span className="num text-2xl" dir="ltr">{n(Number(price || 0) - Number(paid || 0))}</span>
             </div>
             <ErrorText error={sell.error} />
@@ -159,7 +162,7 @@ function GiveSheet({ open, onClose, onDone }: { open: boolean; onClose: () => vo
   return (
     <Sheet open={open} onClose={() => { reset(); onClose() }} title="loan.give">
       <div className="flex flex-col gap-3">
-        <BiLabel text="loan.pickPhone" size="md" bold />
+        <span className="flex items-center gap-1"><BiLabel text="loan.pickPhone" size="md" bold /><Help term="loan.pickPhone" size="sm" /></span>
         {dev ? (
           <div className="card p-0"><DeviceRow d={dev} onClick={() => setDev(null)} /></div>
         ) : (
@@ -170,9 +173,9 @@ function GiveSheet({ open, onClose, onDone }: { open: boolean; onClose: () => vo
         )}
         {dev ? (
           <>
-            <PartyPicker value={shop} onChange={setShop} kind="shop" label="loan.whichShop" />
+            <div className="flex items-start gap-1"><div className="min-w-0 flex-1"><PartyPicker value={shop} onChange={setShop} kind="shop" label="loan.whichShop" /></div><Help term="loan.toShop" size="sm" /></div>
             <div>
-              <BiLabel text="loan.backIn" size="md" bold className="mb-1.5" />
+              <span className="mb-1.5 flex items-center gap-1"><BiLabel text="loan.backIn" size="md" bold /><Help term="loan.expectedBack" size="sm" /></span>
               <div className="flex flex-wrap gap-1.5">
                 {[3, 7, 15, 30].map((d) => (
                   <button key={d} type="button" aria-pressed={days === d} onClick={() => setDays(d)} className={`tap h-11 rounded-full border-2 px-4 font-bold ${days === d ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-sm'}`}>
@@ -184,7 +187,7 @@ function GiveSheet({ open, onClose, onDone }: { open: boolean; onClose: () => vo
                 </button>
               </div>
             </div>
-            <BiInput label="common.notes" value={notes} onChange={(e) => setNotes(e.target.value)} />
+            <BiInput label="common.notes" help={<Help term="common.notes" size="sm" />} value={notes} onChange={(e) => setNotes(e.target.value)} />
             <BiLabel text="loan.giveHint" size="sm" tone="text-muted" />
             <ErrorText error={m.error} />
             <BiButton text="loan.new" icon={<Check size={22} />} full loading={m.isPending} disabled={!shop} onClick={async () => { await m.mutateAsync({ device_id: dev.id, party_id: shop!.id, expected_back_at: days ? isoDay(days) : undefined, notes: notes || undefined }); reset(); onDone() }} />

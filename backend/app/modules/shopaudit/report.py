@@ -20,6 +20,7 @@ from app.modules.shopaudit import (
     parties,
     products,
     reconcile,
+    repairs,
     security,
     service,
     trade,
@@ -38,6 +39,7 @@ SECTIONS = (
     "suppliers",
     "udhaar",
     "lending",
+    "repairs",
     "inventory",
     "ageing",
     "products",
@@ -61,6 +63,7 @@ TITLES = {
     "suppliers": "Top suppliers",
     "udhaar": "Udhaar (receivables / payables)",
     "lending": "Len-den (money lent / borrowed, no bill)",
+    "repairs": "Repairs and repair labs",
     "inventory": "Inventory valuation",
     "ageing": "Stock ageing",
     "products": "Product performance",
@@ -520,6 +523,65 @@ def build(
                     "notes": [],
                 }
             )
+    if "repairs" in want:
+        x = repairs.repairs(db, shop_id, p, can_cost=can_cost)
+        c, m = x["counts"], x["money"]
+        h, r = _kv(
+            [
+                (
+                    "Phones taken in / given back / not fixed",
+                    f"{c['came']} / {c['given']} / {c['not_fixed']}",
+                ),
+                (
+                    "Open now / ready / late",
+                    f"{c['open_now']} / {c['ready_now']} / {c['late_now']}",
+                ),
+                ("At a lab now / late at a lab", f"{c['at_lab_now']} / {c['late_at_lab']}"),
+                ("Sent to labs / back from labs", f"{c['sent_to_lab']} / {c['back_from_lab']}"),
+                ("Repair income", m["income"]),
+                ("Parts cost", m["parts"]),
+                ("Lab charges (customer phones)", m["lab_customer"]),
+                ("Lab charges (shop's own phones, added to their cost)", m["lab_stock"]),
+                ("Repair profit", m["profit"]),
+            ]
+        )
+        out.append({"key": "repairs", "header": h, "rows": r, "notes": x["notes"]})
+        out.append(
+            {
+                "key": "repair_labs",
+                "title": "Repair labs",
+                "header": [
+                    "Lab",
+                    "Phone",
+                    "Sent",
+                    "At lab",
+                    "Late",
+                    "Fixed",
+                    "Not fixed",
+                    "Fix %",
+                    "Avg days",
+                    "Charges",
+                    "Khata",
+                ],
+                "rows": [
+                    [
+                        y["name"],
+                        y["phone"],
+                        y["sent"],
+                        y["at_lab"],
+                        y["late"],
+                        y["fixed"],
+                        y["not_fixed"],
+                        y["fix_rate"],
+                        y["avg_days"],
+                        y["cost"] if can_cost else None,
+                        y["balance"],
+                    ]
+                    for y in x["labs"]
+                ],
+                "notes": [],
+            }
+        )
     if "lending" in want:
         x = lending.lending(db, shop_id, p, limit=limit)
         t = x["totals"]

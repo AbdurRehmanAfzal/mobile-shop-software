@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight, Search, X } from 'lucide-react'
 import { useEffect, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { BiLabel, useLang, type BiText } from './Bilingual'
 import { formatMoney } from '@/lib/format'
@@ -38,8 +39,10 @@ export function Sheet({ open, onClose, title, children }: { open: boolean; onClo
     return () => window.removeEventListener('keydown', onKey)
   }, [open, onClose])
   if (!open) return null
-  return (
-    <div className="fixed inset-0 z-30 flex items-end justify-center bg-ink/50 backdrop-blur-sm" onClick={onClose}>
+  // rendered into <body>: a sheet opened from inside a moved / transformed box (a "?" pinned with
+  // translate, a card) would otherwise be placed relative to that box instead of the screen
+  return createPortal(
+    <div className="fixed inset-0 z-30 flex items-end justify-center bg-ink/50 backdrop-blur-sm" onClick={(e) => { e.stopPropagation(); onClose() }}>
       <div className="max-h-[92dvh] w-full max-w-md overflow-y-auto rounded-t-3xl bg-ground p-5 pb-[max(20px,env(safe-area-inset-bottom))]" onClick={(e) => e.stopPropagation()}>
         <div className="mb-4 flex items-center justify-between">
           <BiLabel text={title} size="lg" bold />
@@ -49,7 +52,8 @@ export function Sheet({ open, onClose, title, children }: { open: boolean; onClo
         </div>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
 

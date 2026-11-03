@@ -1,6 +1,7 @@
 import { Check, KeyRound, ShieldAlert, Tag } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { BiAlert, BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { ErrorText, Sheet } from '@/components/ui'
 import { ApiError } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
@@ -73,7 +74,7 @@ export default function SaleConfirm({
   return (
     <Sheet open={open} onClose={onClose} title="confirm.title">
       <div className="flex flex-col gap-3" data-testid="sale-confirm">
-        <BiLabel text="confirm.hint" size="sm" tone="text-muted" />
+        <span className="flex items-center gap-1"><BiLabel text="confirm.hint" size="sm" tone="text-muted" /><Help term="sale.confirm" size="sm" /></span>
         {lines.map((l, i) => {
           const askingNow = l.newAsking ?? l.asking
           const under = askingNow != null && l.sold < askingNow
@@ -89,13 +90,13 @@ export default function SaleConfirm({
               </div>
               <div className={`grid grid-cols-3 gap-2 ${small}`}>
                 {canCost ? (
-                  <div className="rounded-xl bg-ground px-3 py-2"><BiLabel text="confirm.cost" size="sm" tone="text-muted" /><div className="num" dir="ltr">{l.cost != null ? n(l.cost) : '—'}</div></div>
+                  <div className="rounded-xl bg-ground px-3 py-2"><span className="flex items-center gap-0.5"><BiLabel text="confirm.cost" size="sm" tone="text-muted" /><Help term="cost" size="sm" /></span><div className="num" dir="ltr">{l.cost != null ? n(l.cost) : '—'}</div></div>
                 ) : null}
-                <div className="rounded-xl bg-ground px-3 py-2"><BiLabel text="confirm.asking" size="sm" tone="text-muted" /><div className="num" dir="ltr">{l.asking != null ? n(l.asking) : '—'}</div></div>
+                <div className="rounded-xl bg-ground px-3 py-2"><span className="flex items-center gap-0.5"><BiLabel text="confirm.asking" size="sm" tone="text-muted" /><Help term="asking" size="sm" /></span><div className="num" dir="ltr">{l.asking != null ? n(l.asking) : '—'}</div></div>
                 {l.newAsking != null ? (
-                  <div className="rounded-xl bg-receivable-tint px-3 py-2 text-receivable"><BiLabel text="confirm.newAsking" size="sm" /><div className="num" dir="ltr">{n(l.newAsking)}</div></div>
+                  <div className="rounded-xl bg-receivable-tint px-3 py-2 text-receivable"><span className="flex items-center gap-0.5"><BiLabel text="confirm.newAsking" size="sm" /><span className="[&_button]:text-current"><Help term="sale.newAsking" size="sm" /></span></span><div className="num" dir="ltr">{n(l.newAsking)}</div></div>
                 ) : canCost && profit != null ? (
-                  <div className={`rounded-xl px-3 py-2 ${profit < 0 ? 'bg-payable-tint text-payable' : 'bg-emerald-tint text-emerald-deep'}`}><BiLabel text="confirm.profit" size="sm" /><div className="num" dir="ltr">{n(profit)}</div></div>
+                  <div className={`rounded-xl px-3 py-2 ${profit < 0 ? 'bg-payable-tint text-payable' : 'bg-emerald-tint text-emerald-deep'}`}><span className="flex items-center gap-0.5"><BiLabel text="confirm.profit" size="sm" /><span className="[&_button]:text-current"><Help term="sale.lineProfit" size="sm" /></span></span><div className="num" dir="ltr">{n(profit)}</div></div>
                 ) : null}
               </div>
               {l.newAsking != null ? (
@@ -108,6 +109,7 @@ export default function SaleConfirm({
                 <div className={`flex items-center gap-1.5 text-payable ${small}`}>
                   <ShieldAlert size={14} />
                   <span dir="auto">{pick('confirm.underAsking').replace('{{n}}', n(askingNow - l.sold))}</span>
+                  <span className="[&_button]:text-current"><Help term="sale.underAsking" size="sm" /></span>
                 </div>
               ) : null}
               {canCost && l.newAsking != null && profit != null ? (
@@ -119,8 +121,8 @@ export default function SaleConfirm({
         <div className="card flex flex-col gap-1.5">
           {misc > 0 ? <div className={`flex justify-between ${small}`}><span>{pick('confirm.items')}</span><span className="num" dir="ltr">{n(misc)}</span></div> : null}
           {partyName ? <div className={`flex justify-between ${small}`}><span>{pick('party.one')}</span><span>{partyName}</span></div> : null}
-          <div className="flex items-center justify-between"><BiLabel text="common.total" size="md" bold /><span className="num text-2xl font-bold" dir="ltr">{withCur(n(total))}</span></div>
-          <div className={`flex justify-between ${small}`}><span>{pick('confirm.paidNow')}</span><span className="num" dir="ltr">{n(paid)}</span></div>
+          <div className="flex items-center justify-between"><span className="flex items-center gap-1"><BiLabel text="common.total" size="md" bold /><Help term="sale.total" size="sm" /></span><span className="num text-2xl font-bold" dir="ltr">{withCur(n(total))}</span></div>
+          <div className={`flex items-center justify-between ${small}`}><span className="flex items-center gap-1">{pick('confirm.paidNow')}<Help term="common.paid" size="sm" /></span><span className="num" dir="ltr">{n(paid)}</span></div>
           {me ? <div className={`flex justify-between text-muted ${small}`}><span>{pick('confirm.soldBy')}</span><span>{me.name}</span></div> : null}
         </div>
         {flagged ? <BiLabel text="confirm.flagsNote" size="sm" tone="text-muted" /> : null}
@@ -128,6 +130,7 @@ export default function SaleConfirm({
         {needPin ? (
           <BiInput
             label="confirm.ownerPin"
+            help={<Help term="sale.ownerPin" size="sm" />}
             type="password"
             inputMode="numeric"
             maxLength={6}

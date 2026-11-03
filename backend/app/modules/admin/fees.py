@@ -393,7 +393,8 @@ def stats(db: Session) -> dict:
     month = db.scalar(
         select(func.coalesce(func.sum(FeePayment.amount), 0)).where(
             FeePayment.status == APPROVED,
-            FeePayment.handled_at >= day_start(first),  # the shop's month, not UTC's (00:00–05:00 PKT on the 1st)
+            FeePayment.handled_at
+            >= day_start(first),  # the shop's month, not UTC's (00:00–05:00 PKT on the 1st)
         )
     )
     return {
