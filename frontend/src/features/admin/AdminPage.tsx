@@ -75,6 +75,8 @@ export default function AdminPage() {
   const [plan, setPlan] = useState({ plan: 'basic', monthly_fee: '', expires_on: '', note: '' })
   const [branch, setBranch] = useState({ name: '', city: '' })
   const [pw, setPw] = useState('')
+  // the person who asked for a new password (opened from their request), else the owner
+  const [pwFor, setPwFor] = useState<PwReq | null>(null)
   const [pwDone, setPwDone] = useState<{ name: string; phone: string; password: string } | null>(null)
   const setActiveShop = useAuth((s) => s.setActiveShop)
   const setMe = useAuth((s) => s.setMe)
@@ -120,7 +122,7 @@ export default function AdminPage() {
   }
   const savePlan = useDocMutation<Record<string, unknown>, AdminShop>('PATCH', () => `/api/v1/admin/shops/${sel?.id}/plan`)
   const addBranch = useDocMutation<typeof branch, AdminShop>('POST', () => `/api/v1/admin/shops/${sel?.id}/branches`, (b) => ({ name: b.name, city: b.city || null }))
-  const openShop = (s: AdminShop) => { setCodeOut(null); makeCode.reset(); recordPay.reset(); setPay({ amount: Number(s.monthly_fee) ? String(Number(s.monthly_fee)) : '', method: 'cash', months: '1', reference: '', paid_on: isoDay(0) }); setGrace(s.grace_days == null ? '' : String(s.grace_days)); setMods(s.modules_custom ? s.modules : null); saveModules.reset(); setPw(''); setPwDone(null); setPassword.reset(); setSel(s); setPlan({ plan: s.plan, monthly_fee: Number(s.monthly_fee) ? String(Number(s.monthly_fee)) : '', expires_on: s.plan_expires_at ? s.plan_expires_at.slice(0, 10) : '', note: s.fee_note ?? '' }); setBranch({ name: '', city: '' }); savePlan.reset(); addBranch.reset() }
+  const openShop = (s: AdminShop) => { setCodeOut(null); makeCode.reset(); recordPay.reset(); setPay({ amount: Number(s.monthly_fee) ? String(Number(s.monthly_fee)) : '', method: 'cash', months: '1', reference: '', paid_on: isoDay(0) }); setGrace(s.grace_days == null ? '' : String(s.grace_days)); setMods(s.modules_custom ? s.modules : null); saveModules.reset(); setPw(''); setPwFor(null); setPwDone(null); setPassword.reset(); setSel(s); setPlan({ plan: s.plan, monthly_fee: Number(s.monthly_fee) ? String(Number(s.monthly_fee)) : '', expires_on: s.plan_expires_at ? s.plan_expires_at.slice(0, 10) : '', note: s.fee_note ?? '' }); setBranch({ name: '', city: '' }); savePlan.reset(); addBranch.reset() }
   const [params] = useSearchParams()
   const wantShop = params.get('shop')
   const { data, isLoading } = useGet<AdminShop[]>(['admin-shops', q], isSuper ? `/api/v1/admin/shops${q ? `?q=${encodeURIComponent(q)}` : ''}` : null)
@@ -280,7 +282,7 @@ export default function AdminPage() {
                   <span className="truncate text-[15px] font-bold">{r.name} · {r.shop_name}</span>
                   <span className="text-xs text-muted" dir="ltr">{r.phone} · {fmtDate(r.created_at)}</span>
                 </span>
-                <button type="button" onClick={() => { const s = data?.find((x) => x.id === r.shop_id); if (s) openShop(s) }} className={`tap rounded-full bg-ink px-3 py-1.5 text-xs font-bold text-ground`}>{pick('admin.setPassword')}</button>
+                <button type="button" onClick={() => { const s = data?.find((x) => x.id === r.shop_id); if (s) { openShop(s); setPwFor(r) } }} className={`tap rounded-full bg-ink px-3 py-1.5 text-xs font-bold text-ground`}>{pick('admin.setPassword')}</button>
                 <button type="button" aria-label={pick('admin.markDone')} onClick={async () => { await api('POST', `/api/v1/admin/password-requests/${r.id}/done`); create.reset() }} className="tap flex h-9 w-9 items-center justify-center rounded-full border border-line text-emerald"><Check size={16} /></button>
               </div>
             ))}
@@ -328,9 +330,18 @@ export default function AdminPage() {
             </div>
 
             <span className="flex items-center gap-1 mt-1"><BiLabel text="admin.ownerPassword" size="md" bold /><Help term="admin.ownerPassword" size="sm" /></span>
+            {pwFor ? (
+              <span className="flex flex-wrap items-center gap-2 rounded-2xl bg-ground px-3 py-2 text-sm" data-testid="pw-for">
+                <span className="text-muted">{pick('admin.pwFor')}</span>
+                <span className="font-bold">{pwFor.name}</span>
+                <span className="text-muted" dir="ltr">{pwFor.phone}</span>
+                <span className="rounded-full bg-surface px-2 py-0.5 text-xs font-bold">{pick(`staff.roles.${pwFor.role}`)}</span>
+                <button type="button" onClick={() => setPwFor(null)} className="tap ms-auto text-xs font-bold text-emerald underline">{pick('admin.pwForOwner')}</button>
+              </span>
+            ) : null}
             <div className="grid grid-cols-[1fr_auto] gap-2">
               <BiInput label="admin.password" help={<Help term="admin.newPassword" size="sm" />} value={pw} onChange={(e) => setPw(e.target.value)} minLength={6} />
-              <BiButton text="common.save" variant="secondary" disabled={pw.length < 6} loading={setPassword.isPending} onClick={async () => { const r = await setPassword.mutateAsync({ password: pw }); setPwDone({ ...r, password: pw }); setPw('') }} />
+              <BiButton text="common.save" variant="secondary" disabled={pw.length < 6} loading={setPassword.isPending} onClick={async () => { const r = await setPassword.mutateAsync({ password: pw, user_id: pwFor?.user_id }); setPwDone({ ...r, password: pw }); setPw('') }} />
             </div>
             <ErrorText error={setPassword.error} />
             {pwDone ? (

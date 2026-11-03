@@ -93,3 +93,39 @@ def test_staff_forgot_goes_to_the_shop_owner(client, owner, db):
         ).status_code
         == 200
     )
+
+
+def test_super_admin_sets_the_password_of_the_person_who_asked(client, owner, monkeypatch):
+    """owner 2026-11-03: "Set password" from a staff member's request changes that person's
+    password, not the owner's; the request is closed."""
+    admin = _admin(client, monkeypatch)
+    owner.post(
+        "/api/v1/staff",
+        json={
+            "name": "Sales Guy",
+            "phone": "03451112233",
+            "password": "secret123",
+            "role": "salesman",
+        },
+    )
+    client.post("/api/v1/auth/forgot", json={"phone": "03451112233"})
+    req = next(
+        r
+        for r in admin.get("/api/v1/admin/password-requests").json()
+        if r["phone"] == "03451112233"
+    )
+    assert req["role"] == "salesman"
+    r = admin.post(
+        f"/api/v1/admin/shops/{owner.shop_id}/owner-password",
+        json={"password": "fresh456", "user_id": req["user_id"]},
+    )
+    assert r.status_code == 200 and r.json()["phone"] == "03451112233"
+    ok = lambda phone, pw: (
+        client.post(
+            "/api/v1/auth/login", json={"phone": phone, "password": pw}
+        ).status_code
+    )
+    assert ok("03451112233", "fresh456") == 200
+    assert ok("03001234567", "secret123") == 200  # the owner's password is untouched
+    open_ = admin.get("/api/v1/admin/password-requests").json()
+    assert all(r["phone"] != "03451112233" for r in open_)

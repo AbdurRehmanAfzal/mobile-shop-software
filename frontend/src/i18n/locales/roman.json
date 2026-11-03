@@ -303,7 +303,7 @@
     "miscDesc": "Cheez",
     "qty": "Tadaad",
     "unitCost": "Fi cheez qeemat",
-    "reference": "Dealer bill number",
+    "reference": "Reference / parchi number",
     "cashAccount": "Paise kahan se diye",
     "created": "Khareedari mehfooz",
     "verifyNow": "Abhi shanakhti card check karein",
@@ -1269,7 +1269,9 @@
     "shopGrace": "Is dukaan ke riayati din (khali = default)",
     "paidOn": "Adaigi ki tareekh",
     "receipt": "Raseed",
-    "saved": "Mehfooz ho gaya"
+    "saved": "Mehfooz ho gaya",
+    "pwFor": "Naya password baraye",
+    "pwForOwner": "Is ki bajaye owner ka"
   },
   "field": {
     "badMobile": "3 se shuru hone wala 10 hindson ka mobile number likhein, maslan 300 1234567",
@@ -3733,8 +3735,8 @@
       },
       "taxRate": {
         "title": "GST %",
-        "body": "Ikhtiyari. Is cheez ka sales tax %, record ke liye cheez ke saath likha rehta hai. Bill par tax sale ke waqt dukan ki tax setting se lagta hai.",
-        "example": "Agar dukan sales tax mein registered nahi to khali chhor dein; agar is cheez par 18% GST hai to 18 likhein."
+        "body": "Optional. Jab sale par tax ho to is item par bill ke rate ki bajaye is ka apna GST % lagta hai; phone aur baghair rate wale item par bill ka rate. Baghair tax ki sale par tax nahi lagta.",
+        "example": "Bill par 18% tax: phone Rs. 10,000 → Rs. 1,800; do cable Rs. 1,000 ki, GST 5% → Rs. 100. Bill ka tax Rs. 1,900."
       },
       "taxIncl": {
         "title": "Qeemat mein tax shamil",
@@ -7458,7 +7460,8 @@
   "saleTax": {
     "add": "Is bill par tax lagayein",
     "rate": "Tax %",
-    "incl": "tax shamil"
+    "incl": "tax shamil",
+    "byItem": "item-war"
   },
   "hold": {
     "button": "Sale hold karein",

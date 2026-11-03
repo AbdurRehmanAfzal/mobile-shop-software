@@ -123,6 +123,6 @@ Close the app fully and open it again first (or install the newest APK from the 
 | [ ] | Lock check also for used **mobiles**? | off (tablets / watches always) |
 | [ ] | Tablet / watch page money card still says "Money on this phone" — change to "this device"? | not changed |
 | [ ] | One-PC installs: give each the `SAAS_URL=https://<your domain>` line so they report to Business | not set |
-| [ ] | Item GST %: should a sale bill use the item's own rate (today it uses the shop / sale rate; the item rate is only kept)? | not used |
-| [ ] | Purchase form: rename "Supplier invoice no." (free reference) to "Reference / slip no." so it is not confused with "Supplier bill no."? | not changed |
-| [ ] | Super admin → password request from a staff member: "Set password" changes the owner's password — fix to change the requester's? | not changed |
+| [x] | Item GST %: should a sale bill use the item's own rate? | **yes (owner 2026-11-03)**: when the bill is taxed, an item with its own GST % is taxed at it; others take the bill's rate; untaxed bills stay untaxed; the bill prints "Tax (by item)" |
+| [x] | Purchase form: rename "Supplier invoice no." to "Reference / slip no."? | **yes (owner 2026-11-03)**: renamed in en / ur / roman |
+| [x] | Super admin → password request from a staff member: change the requester's password? | **yes (owner 2026-11-03)**: opened from a request, "Set password" shows and changes that person's password; "Set the owner's instead" switches back |
