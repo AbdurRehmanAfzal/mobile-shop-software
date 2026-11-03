@@ -740,3 +740,14 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - tsc; vitest 43;
 - Playwright `landing` (unique band, yearly / monthly, sites, CTA colour), `signature`, `verify-done`, `help`;
 - desktop dark, Urdu phone checked; no overflow.
+
+## 2026-11-03 · User manual for buyers (English, Urdu, Roman) with screenshots and PDF
+- Owner: a detailed, module-wise user manual in Urdu, English and Roman, with screenshots, to give to every shop that buys the software and to turn into a PDF.
+- Built (`docs/manual/`, see its README):
+  - `en.md`: 26 chapters, about 27,000 words. It covers everything from getting the app to the shop audit, fees, an FAQ and a glossary. It was written from the 2026-10-31 guide, the app's real labels and the newer features (len-den, "?" help, repair labs and sticker, item GST, on-screen signature, business profile, barcodes, tablets / watches, accessories batches).
+  - `ur.md` (Urdu script, the app's own Urdu labels) and `roman.md` (Roman, labels from `roman.json`), with the same structure line by line.
+  - `frontend/scripts/manual-shots.mjs` makes a demo shop and takes 49 phone screenshots per language, including the printed repair sticker and price label (`ONLY=` retakes a few).
+  - `frontend/scripts/manual-pdf.mjs` turns the small markdown subset into print HTML and an A4 PDF. Each has a cover, contents, captioned pictures, tips and page numbers; the Urdu uses Nastaliq, right to left.
+- Found while writing: the old `docs/guides/en/02-USER-MANUAL.md` is out of date in many places (home "At a glance", on-screen signature, returns in 3 steps, exchange 4 steps, payment methods, settings cards, numbering). The new manual replaces it for buyers.
+**Verified**: all 49 shots in each language checked by name; the PDFs were built and their cover, an English chapter, an Urdu chapter (Nastaliq right to left) and a Roman chapter were looked at.
+**Open**: the owner should review the Urdu wording. The home screenshot shows a demo day with a loss.

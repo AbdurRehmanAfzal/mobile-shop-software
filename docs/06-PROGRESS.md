@@ -269,6 +269,15 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | Repair sticker with fields picked before printing; scan opens the job | ✅ | `/labels/repairs` |
 | Repairs in the shop audit + report sections | ✅ | `/audit/repairs` |
 
+## Phase 17 — User manual for buyers (owner 2026-11-03)
+`docs/manual/README.md`.
+| Item | Status | Notes |
+|---|---|---|
+| Module-wise manual, 26 chapters, English / Urdu / Roman | ✅ | `docs/manual/{en,ur,roman}.md` (parts in `parts/`) |
+| 49 screenshots per language from a demo shop | ✅ | `frontend/scripts/manual-shots.mjs` → `docs/manual/img/<lang>/` |
+| A4 PDF + HTML per language (cover, contents, page numbers, Nastaliq RTL) | ✅ | `frontend/scripts/manual-pdf.mjs` |
+| Owner review of the wording | ⏳ | `docs/29-OWNER-PENDING.md` D |
+
 ## Owner side (open)
 Server env variables, server commands, manual testing and decisions: `docs/29-OWNER-PENDING.md` — none done yet (2026-11-01).
 

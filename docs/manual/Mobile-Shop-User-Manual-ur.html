@@ -1,0 +1,1587 @@
+<!doctype html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>موبائل شاپ — استعمال کی گائیڈ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 18mm 16mm 20mm }
+  :root { --ink:#0E1613; --muted:#55615c; --brand:#5B5BF6; --navy:#0B2440; --soft:#EEF0FF; --line:#dfe3ea; --gold:#B7791F }
+  * { box-sizing: border-box }
+  body { margin:0; color:var(--ink); background:#fff; font-family:'Noto Nastaliq Urdu', serif; font-size:11pt; line-height:2.15 }
+  .cover { height: 257mm; display:flex; flex-direction:column; justify-content:center; padding: 0 6mm; page-break-after: always;
+    background: radial-gradient(120% 70% at 100% 0%, #e7e8ff 0%, #fff 60%) }
+  .cover .brand { font-family:'Inter',sans-serif; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--brand); font-size:10pt }
+  .cover h1 { font-size:40pt; line-height:1.25; margin:6mm 0 2mm; color:var(--navy) }
+  .cover .sub { font-size:22pt; color:var(--brand); font-weight:700 }
+  .cover .tag { margin-top:10mm; font-size:13pt; color:var(--muted); max-width:150mm }
+  .cover .shots { display:flex; gap:6mm; margin-top:14mm }
+  .cover .shots img { width:42mm; border-radius:5mm; box-shadow:0 8px 24px rgba(11,36,64,.18); border:1px solid var(--line) }
+  .cover .by { margin-top:auto; font-family:'Inter',sans-serif; font-size:9pt; color:var(--muted) }
+  .toc { page-break-after: always }
+  .toc h2 { border:0; margin-top:0 }
+  .toc ol { list-style:none; padding:0; columns:1; column-gap:10mm }
+  .toc li { padding:1.6mm 0; border-bottom:1px dotted var(--line); break-inside:avoid }
+  .toc a { color:var(--ink); text-decoration:none }
+  h2 { page-break-before: always; font-size:20pt; color:var(--navy); margin:0 0 4mm; padding-bottom:2.5mm; border-bottom:3px solid var(--brand); line-height:1.5 }
+  h3 { font-size:14pt; color:var(--brand); margin:6mm 0 1.5mm; page-break-after: avoid; line-height:1.6 }
+  p { margin: 0 0 2.6mm }
+  ul, ol { margin: 0 0 3mm; padding-right: 7mm }
+  li { margin: .8mm 0 }
+  strong { color:var(--navy) }
+  code { font-family:'Inter',sans-serif; background:var(--soft); padding:.2mm 1.4mm; border-radius:1mm; direction:ltr; unicode-bidi:embed }
+  figure { margin:4mm auto 5mm; text-align:center; page-break-inside:avoid }
+  figure img { max-height:118mm; max-width:72mm; border-radius:4mm; border:1px solid var(--line); box-shadow:0 4px 14px rgba(11,36,64,.12) }
+  figcaption { font-size:9.5pt; color:var(--muted); margin-top:1.5mm }
+  aside { margin:3mm 0; padding:2.5mm 4mm; border-radius:2.5mm; page-break-inside:avoid; background:var(--soft); border-right:4px solid var(--brand) }
+  aside.note { background:#FFF7E6; border-color:var(--gold) }
+  table { width:100%; border-collapse:collapse; margin:3mm 0 4mm; font-size:10pt; page-break-inside:auto }
+  tr { page-break-inside:avoid }
+  th, td { border:1px solid var(--line); padding:1.6mm 2.4mm; text-align:right; vertical-align:top }
+  th { background:var(--navy); color:#fff }
+  tbody tr:nth-child(even) td { background:#f7f8fb }
+</style>
+</head>
+<body>
+<section class="cover">
+  <div class="brand">OOP Solutions</div>
+  <h1>موبائل شاپ</h1>
+  <div class="sub">استعمال کی گائیڈ</div>
+  <div class="tag">اسٹاک، سیل، پرانے فون کی تصدیق، ریپئر، ادھار، لین دین، رپورٹس اور شاپ آڈٹ — قدم بہ قدم۔</div>
+  <div class="shots"><img src="img/ur/home.jpg" alt=""><img src="img/ur/sale-pick.jpg" alt=""><img src="img/ur/verify.jpg" alt=""></div>
+  <div class="by">OOP Solutions · mobileshop.oopsolutions.com · 2026-11-03</div>
+</section>
+<nav class="toc">
+  <h2>فہرست</h2>
+  <ol><li><a href="#c1">1. موبائل شاپ کا تعارف</a></li><li><a href="#c2">2. ایپ حاصل کرنا</a></li><li><a href="#c3">3. لاگ اِن</a></li><li><a href="#c4">4. ہوم اسکرین، مزید مینو اور "?" مدد</a></li><li><a href="#c5">5. زبان، تھیم اور انداز</a></li><li><a href="#c6">6. اسٹاک ڈالیں (خریداری)</a></li><li><a href="#c7">7. استعمال شدہ فون کی جانچ (شناخت چیک اور دستخط شدہ اقرار نامہ)</a></li><li><a href="#c8">8. بیچنا</a></li><li><a href="#c9">9. واپسی</a></li><li><a href="#c10">10. ایکسچینج</a></li><li><a href="#c11">11. اسٹاک، IMEI چیک اور فون کی ہسٹری</a></li><li><a href="#c12">12. قیمت کے اسٹیکر، بارکوڈ اور اسکیننگ</a></li><li><a href="#c13">13. ایکسیسریز اور چیزیں</a></li><li><a href="#c14">14. ریپئر اور ریپئر لیبز</a></li><li><a href="#c15">15. دوسری دکانوں کو امانت</a></li><li><a href="#c16">16. ادھار کھاتہ اور ادائیگیاں</a></li><li><a href="#c17">17. لین دین (بغیر بل کے دیے یا لیے پیسے)</a></li><li><a href="#c18">18. قسطیں (قسط)</a></li><li><a href="#c19">19. دن کا حساب، خرچے اور پیسوں کے اکاؤنٹ</a></li><li><a href="#c20">20. رپورٹس اور ڈاؤن لوڈ</a></li><li><a href="#c21">21. دکان کا آڈٹ</a></li><li><a href="#c22">22. عملہ، عہدے اور حاضری</a></li><li><a href="#c23">23. سیٹنگز، کاروبار کی پروفائل اور WhatsApp پیغامات</a></li><li><a href="#c24">24. بلک ایکسل سے ڈیٹا لانا اور نکالنا</a></li><li><a href="#c25">25. سافٹ ویئر فیس، بیک اپ اور PC ورژن</a></li><li><a href="#c26">26. عام سوالات اور مسائل کا حل</a></li></ol>
+</nav>
+<h2 id="c1">1. موبائل شاپ کا تعارف</h2>
+<p>موبائل شاپ پاکستان میں موبائل فون کی دکان چلانے کا سافٹ ویئر ہے۔ یہ آپ کا اسٹاک، آپ کی بِکری، آپ کی خریداری، آپ کا ادھار کھاتہ، آپ کی مرمت اور آپ کے دن کا حساب ایک ہی جگہ رکھتا ہے، آپ کے فون پر یا آپ کے کمپیوٹر پر۔</p>
+<p>یہ اصل دکانداروں کے ساتھ مل کر بنایا گیا ہے۔ بٹن بڑے ہیں، قدم چھوٹے ہیں، اور جمع تفریق ایپ خود کرتی ہے۔ اسے چلانے کے لیے کمپیوٹر کا کچھ بھی جاننا ضروری نہیں۔</p>
+<h3>یہ کس کے لیے ہے</h3>
+<ul>
+<li>وہ دکانیں جو ڈیلروں سے <strong>نئے باکس پیک فون</strong> خریدتی اور بیچتی ہیں۔</li>
+<li>وہ دکانیں جو آنے والے گاہکوں سے <strong>استعمال شدہ فون</strong> خریدتی اور بیچتی ہیں۔</li>
+<li>وہ دکانیں جو <strong>ٹیبلٹ، سمارٹ واچ اور ایکسیسریز</strong> (چارجر، کیبل، کور، گلاس، ہینڈز فری، پاور بینک) بھی بیچتی ہیں۔</li>
+<li>وہ دکانیں جو <strong>مرمت</strong> کرتی ہیں، دکان میں یا باہر کی لیب سے۔</li>
+<li><strong>مالک</strong>، جو گھر بیٹھے پورا کاروبار دیکھنا چاہتا ہے، اور <strong>عملہ</strong>، جو کاؤنٹر پر کام کرتا ہے۔</li>
+</ul>
+<h3>اس کتاب میں آنے والے دکان کے چند الفاظ</h3>
+<table><thead><tr><th>لفظ</th><th>مطلب</th></tr></thead><tbody><tr><td><strong>ادھار</strong></td><td>گاہک فون ابھی لے اور پیسے بعد میں دے، یا آپ ڈیلر سے فون لیں اور پیسے اسے بعد میں دیں۔</td></tr><tr><td><strong>کھاتہ</strong></td><td>ایک بندے کا چلتا حساب: اس نے آپ کو کتنے دینے ہیں، یا آپ نے اسے کتنے دینے ہیں۔</td></tr><tr><td><strong>گلہ</strong></td><td>کاؤنٹر پر پیسوں کی دراز۔</td></tr><tr><td><strong>حساب</strong></td><td>دن کا حساب: کیا آیا، کیا گیا، کیا بچا۔</td></tr><tr><td><strong>قسط</strong></td><td>گاہک کچھ پیسے ایڈوانس دیتا ہے اور باقی ہر مہینے تھوڑے تھوڑے۔</td></tr><tr><td><strong>لین دین</strong></td><td>بغیر بل کے دیے یا لیے پیسے، مثلاً ساتھ والے دکاندار کو ادھار۔</td></tr><tr><td><strong>PTA</strong></td><td>پاکستان ٹیلی کمیونیکیشن اتھارٹی۔ <strong>PTA منظور</strong> فون پاکستانی سم پر ہمیشہ چلتا ہے؛ <strong>نان PTA</strong> فون صرف کچھ وقت چلتا ہے؛ <strong>JV</strong> فون کی منظوری پیچ والی، غیر سرکاری ہوتی ہے۔</td></tr><tr><td><strong>IMEI</strong></td><td>فون کی پہچان کا 15 ہندسوں کا نمبر۔ دیکھنے کے لیے <code>*#06#</code> ملائیں، یا ڈبے سے پڑھ لیں۔</td></tr><tr><td><strong>CNIC</strong></td><td>قومی شناختی کارڈ۔ اس کا 13 ہندسوں کا نمبر یہ جانچنے کے لیے لیا جاتا ہے کہ استعمال شدہ فون آپ کو کس نے بیچا۔</td></tr></tbody></table>
+<h3>یہ دوسروں سے الگ کیوں ہے</h3>
+<ul>
+<li><strong>اینڈرائیڈ ایپ۔</strong> اسے دکان کے فون پر انسٹال کریں۔ کیمرہ ڈبے پر لکھا IMEI اسکین کرتا ہے اور CNIC کارڈ خود پڑھ لیتا ہے۔ آپ فنگر پرنٹ سے لاگ اِن کر سکتے ہیں۔</li>
+<li><strong>آن لائن اور آف لائن۔</strong> کسی بھی براؤزر میں کھولیں، فون، لیپ ٹاپ یا کمپیوٹر پر، اور گھر بیٹھے اپنی دکان لائیو دیکھیں۔ انٹرنیٹ چلا جائے تو بِکری فون میں محفوظ ہو جاتی ہے اور انٹرنیٹ آتے ہی چلی جاتی ہے۔ جس دکان میں انٹرنیٹ بالکل نہ ہو وہ اسے ایک Windows کمپیوٹر پر چلا سکتی ہے۔</li>
+<li><strong>استعمال شدہ فون کی تصدیق۔</strong> استعمال شدہ فون خریدنے سے پہلے ایپ بیچنے والے کا CNIC چیک کرنے، تصویریں لینے، eGadget اور PTA چیک کرنے، اور یہ دیکھنے میں مدد کرتی ہے کہ فون پر کوئی iCloud یا Google لاک تو نہیں لگا۔ جس فون کی جانچ ابھی باقی ہو وہ غلطی سے نہیں بک سکتا۔</li>
+<li><strong>بیچنے والے کی دستخط شدہ رضامندی۔</strong> بیچنے والا اقرار نامے پر اسکرین پر انگلی سے دستخط کرتا ہے۔ اس کے دستخط، اس کے CNIC کی تصویر اور فون کا IMEI ایک ساتھ محفوظ رہتے ہیں، اور دستخط اقرار نامے پر پرنٹ ہوتے ہیں۔</li>
+<li><strong>آپ کی زبان۔</strong> پوری ایپ <strong>اردو</strong>، <strong>رومن اردو</strong> یا <strong>انگریزی</strong> میں چلتی ہے، ایک وقت میں ایک زبان۔ بل اور WhatsApp پیغامات دکان کی زبان میں جاتے ہیں۔</li>
+<li><strong>ہر چیز پر "?"۔</strong> ہر خانے، کارڈ اور ٹیب کے ساتھ ایک چھوٹا سوالیہ نشان ہے۔ اسے دبائیں اور پڑھیں کہ اس کا مطلب کیا ہے، روپوں میں دکان کی مثال کے ساتھ۔</li>
+<li><strong>عہدے۔</strong> مالک طے کرتا ہے کہ کون کیا کر سکتا ہے۔ سیلز مین بیچ اور خرید سکتا ہے مگر خرید قیمت یا منافع کبھی نہیں دیکھتا۔</li>
+<li><strong>دکان کا مکمل آڈٹ۔</strong> ہر روپیہ اور ہر فون اپنے بل، بندے اور وقت تک ڈھونڈا جا سکتا ہے۔ کچھ بھی کبھی ڈیلیٹ نہیں ہوتا؛ غلطی نئی انٹری سے ٹھیک ہوتی ہے، اور پرانی نظر آتی رہتی ہے۔</li>
+</ul>
+<h3>سارے حصے ایک نظر میں</h3>
+<table><thead><tr><th>حصہ</th><th>کیا کرتا ہے</th></tr></thead><tbody><tr><td><strong>بیچیں</strong></td><td>نقد، ادھار، قسط اور کچھ پیسے والی بِکری، رسید پرنٹ، PDF اور WhatsApp پر۔</td></tr><tr><td><strong>اسٹاک ڈالیں</strong></td><td>ڈیلر یا گاہک سے فون، ٹیبلٹ، گھڑیاں اور ایکسیسریز خریدیں۔</td></tr><tr><td><strong>شناخت چیک</strong></td><td>استعمال شدہ فون کے لیے CNIC، تصویریں، eGadget، PTA، لاک چیک اور بیچنے والے کے دستخط۔</td></tr><tr><td><strong>ادھار</strong></td><td>کس نے آپ کو دینے ہیں اور آپ نے کس کو دینے ہیں، WhatsApp یاد دہانی کے ساتھ۔</td></tr><tr><td><strong>حساب</strong></td><td>آج کی بِکری، ہاتھ میں نقد، ادھار پر پیسے، خرچے اور منافع۔</td></tr><tr><td><strong>اسٹاک</strong></td><td>دکان کا ہر فون، اس کی مالیت، اس کی پوری ہسٹری اور بارکوڈ والا اسٹیکر۔</td></tr><tr><td><strong>واپسی اور ایکسچینج</strong></td><td>گاہک فون واپس لائے، یا پرانا فون دے کر نیا لے۔</td></tr><tr><td><strong>مرمت</strong></td><td>جاب کارڈ، مرمت کے اسٹیکر اور مرمت کی لیبیں۔</td></tr><tr><td><strong>ایکسیسریز</strong></td><td>گنتی والی چیزیں، پیس، درجن یا ڈبے میں خریدی، پیس میں بیچی۔</td></tr><tr><td><strong>قسطیں</strong></td><td>ایڈوانس، ماہانہ رقم، ضامن اور دیر کی یاد دہانی۔</td></tr><tr><td><strong>امانت</strong></td><td>دوسری دکانوں کو دیے یا ان سے لیے فون۔</td></tr><tr><td><strong>رپورٹس اور دکان کا آڈٹ</strong></td><td>منافع، سب سے زیادہ بکنے والے، قیمتیں، عملے کا کام، اور کسی بھی مدت کا پورا کاروبار۔</td></tr><tr><td><strong>عملہ</strong></td><td>مالک، منیجر، سیلز مین اور ٹیکنیشن، حاضری کے ساتھ۔</td></tr></tbody></table>
+<aside class="note"><strong>نوٹ:</strong> آپ کا پرووائیڈر آپ کی دکان کے لیے کچھ حصے آن یا آف کر سکتا ہے۔ اگر یہاں بتایا گیا کوئی بٹن نظر نہ آئے تو پرووائیڈر سے پوچھیں۔</aside>
+<h2 id="c2">2. ایپ حاصل کرنا</h2>
+<p>موبائل شاپ کئی طریقوں سے چلا سکتے ہیں۔ آپ کا ڈیٹا سب میں ایک ہی ہے، کیونکہ وہ ایک فون پر نہیں بلکہ سرور پر محفوظ رہتا ہے۔</p>
+<h3>براؤزر میں</h3>
+<ol>
+<li>اپنے فون یا کمپیوٹر پر <strong>Chrome</strong> کھولیں۔</li>
+<li><code>https://mobileshop.oopsolutions.com</code> پر جائیں۔</li>
+<li>لاگ اِن کریں (باب 3 دیکھیں)۔</li>
+</ol>
+<p>شروع کرنے کا یہ سب سے جلدی طریقہ ہے۔ یہ لیپ ٹاپ پر بھی چلتا ہے، جہاں کام سائیڈ مینو میں آتے ہیں اور آپ کی بورڈ کے بٹن استعمال کر سکتے ہیں: <strong>F2</strong> بیچیں، <strong>F3</strong> اسٹاک ڈالیں، <strong>F4</strong> ادھار، <strong>F6</strong> اسٹاک، <strong>F7</strong> مرمت، <strong>F8</strong> خرچہ، <strong>F9</strong> واپسی۔</p>
+<h3>Chrome سے ایپ کی طرح انسٹال کریں</h3>
+<ol>
+<li>اپنے Android فون پر Chrome میں <code>https://mobileshop.oopsolutions.com</code> کھولیں۔</li>
+<li>Chrome کا مینو دبائیں (اوپر دائیں تین نقطے)۔</li>
+<li><strong>Install app</strong> دبائیں (کچھ فونز پر <strong>Add to Home screen</strong> لکھا ہوتا ہے)۔</li>
+<li><strong>Install</strong> دبائیں۔ آپ کی ہوم اسکرین پر <strong>Mobile Shop</strong> کا آئیکن آ جائے گا۔ اسے کسی بھی دوسری ایپ کی طرح کھولیں۔</li>
+</ol>
+<h3>Android ایپ (APK فائل)</h3>
+<p>Android ایپ میں اسکین کے لیے فون کا کیمرہ اور لاگ اِن کے لیے فون کا فنگر پرنٹ ملتا ہے۔</p>
+<ol>
+<li>Android فون پر <code>https://mobileshop.oopsolutions.com/app.apk</code> کھولیں۔ آپ لاگ اِن صفحے پر <strong>اینڈرائیڈ ایپ ڈاؤن لوڈ کریں</strong> بھی دبا سکتے ہیں، یا آپ کا پرووائیڈر فائل WhatsApp پر بھیج سکتا ہے۔</li>
+<li>ڈاؤن لوڈ ہوئی فائل کھولیں۔</li>
+<li>پہلی بار Android کہہ سکتا ہے کہ اس ایپ کو ایپس انسٹال کرنے کی اجازت نہیں۔ <strong>Settings</strong> دبائیں، <strong>Allow from this source</strong> آن کریں، پھر واپس آئیں۔</li>
+<li><strong>Install</strong> دبائیں، پھر <strong>Open</strong>۔</li>
+</ol>
+<p>جب نیا ورژن آئے تو اسے پرانے کے اوپر انسٹال کر دیں۔ آپ کا ڈیٹا رہتا ہے۔</p>
+<aside class="tip"><strong>مشورہ:</strong> Android ایپ میں <strong>پرنٹ</strong> اور <strong>ڈاؤن لوڈ</strong> Chrome میں کھلتے ہیں۔ اپنا پرنٹر یا <strong>Save as PDF</strong> چنیں، پھر بیک بٹن سے ایپ میں واپس آئیں۔</aside>
+<h3>بغیر انٹرنیٹ کے کام</h3>
+<p>مارکیٹ میں انٹرنیٹ ہمیشہ اچھا نہیں ہوتا۔ موبائل شاپ اس کے لیے تیار ہے۔</p>
+<ul>
+<li>جب انٹرنیٹ چلا جائے تو ایک پٹی پر لکھا آتا ہے: <em>"انٹرنیٹ نہیں ہے۔ بِکری، اسٹاک، ادائیگی اور خرچے اس فون میں محفوظ ہو رہے ہیں اور انٹرنیٹ آتے ہی بھیج دیے جائیں گے۔"</em></li>
+<li>کام جاری رکھیں۔ آپ کی ہر انٹری پر لکھا آتا ہے <em>"اس فون میں محفوظ ہو گیا۔ انٹرنیٹ آتے ہی بھیج دیا جائے گا۔"</em></li>
+<li>ایک چھوٹا گنتی والا نشان بتاتا ہے کہ کتنی انٹریاں انتظار میں ہیں، مثلاً <strong>2 بھیجنے کے انتظار میں</strong>۔ اسے دبائیں تو <strong>بھیجنے کے انتظار میں</strong> کی لسٹ کھلتی ہے۔</li>
+<li>انٹرنیٹ واپس آنے پر ایپ انہیں اسی ترتیب سے، ہر ایک کو ایک بار، بھیج دیتی ہے۔ نہ کوئی بِکری گم ہوتی ہے نہ کوئی دو بار جاتی ہے۔</li>
+</ul>
+<aside class="note"><strong>اہم:</strong> جب تک انٹریاں انتظار میں ہوں، ایپ ڈیلیٹ نہ کریں اور اس کا ڈیٹا صاف نہ کریں۔ وہ ابھی سرور تک نہیں پہنچیں۔</aside>
+<h3>ایک Windows کمپیوٹر پر، بالکل بغیر انٹرنیٹ کے</h3>
+<p>جس دکان میں انٹرنیٹ قابلِ بھروسہ نہ ہو، وہاں پرووائیڈر <strong>Mobile Shop</strong> ایک Windows کمپیوٹر پر انسٹال کر سکتا ہے۔ آپ اسے Desktop سے کھولیں اور معمول کے مطابق کام کریں۔ سب کچھ اسی کمپیوٹر پر رہتا ہے، اور گھڑی کے پاس چھوٹے آئیکن میں <strong>Backup now</strong> ہے جو تاریخ والی کاپی بنا دیتا ہے۔ اپنے پرووائیڈر سے کہیں کہ یہ سیٹ کر دے۔</p>
+<h2 id="c3">3. لاگ اِن</h2>
+<p>آپ کی دکان سافٹ ویئر بنانے والی <strong>OOP Solutions</strong> کھولتی ہے۔ آپ کے لیے "دکان بنائیں" کا کوئی بٹن نہیں۔ جب آپ کی دکان تیار ہو جائے تو آپ کو WhatsApp پر ایک <strong>موبائل نمبر</strong> اور ایک <strong>پاس ورڈ</strong> ملتا ہے۔ اگر کسی اور دکان کے لیے ایپ چاہیے تو لاگ اِن صفحے پر <strong>اپنی دکان کے لیے یہ ایپ چاہیے؟ ہم سے رابطہ کریں</strong> دبائیں۔</p>
+<figure><img src="img/ur/login.jpg" alt=""><figcaption>تصویر 1: لاگ اِن صفحہ</figcaption></figure>
+<h3>پاس ورڈ سے لاگ اِن</h3>
+<ol>
+<li>اوپر اپنی زبان چنیں: <strong>اردو</strong>، <strong>Roman</strong> یا <strong>English</strong>۔</li>
+<li><strong>موبائل نمبر</strong> میں <strong>+92</strong> پہلے سے لکھا ہے۔ باقی نمبر شروع کے 0 کے بغیر لکھیں۔ <code>0300 1234567</code> کے لیے <code>3001234567</code> لکھیں۔</li>
+<li>اپنا <strong>پاس ورڈ</strong> لکھیں۔</li>
+<li><strong>لاگ اِن</strong> دبائیں۔</li>
+</ol>
+<aside class="tip"><strong>مشورہ:</strong> <code>0300…</code> یا <code>+92300…</code> جیسا نمبر پیسٹ کرنا بھی چلتا ہے۔ ایپ اسے خود ٹھیک کر لیتی ہے۔</aside>
+<h3>پاس ورڈ بھول گئے</h3>
+<ol>
+<li>لاگ اِن فارم کے نیچے <strong>پاس ورڈ بھول گئے؟</strong> دبائیں۔</li>
+<li>چیک کریں کہ آپ کا موبائل نمبر صحیح ہے۔</li>
+<li><strong>واٹس ایپ پر کوڈ بھیجیں</strong> دبائیں۔ اس نمبر پر 6 ہندسوں کا کوڈ آ جائے گا۔</li>
+<li>کوڈ لکھیں اور <strong>کوڈ کی تصدیق</strong> دبائیں۔</li>
+<li><strong>نیا پاس ورڈ</strong> چنیں۔ آپ لاگ اِن ہو جائیں گے۔</li>
+</ol>
+<p>کوڈ 10 منٹ تک چلتا ہے۔ اگر WhatsApp دستیاب نہ ہو تو اس کی جگہ درخواست بھیجیں۔ عملے کے کسی بندے کی درخواست دکان کے مالک کے پاس جاتی ہے، جو <strong>مزید ← عملہ ← وہ بندہ ← نیا پاس ورڈ</strong> میں نیا پاس ورڈ رکھ دیتا ہے۔ مالک کی اپنی درخواست سافٹ ویئر پرووائیڈر کے پاس جاتی ہے۔</p>
+<h3>فوری پن</h3>
+<p>اپنے فون پر پن پاس ورڈ سے جلدی ہے۔</p>
+<ol>
+<li>ایک بار پاس ورڈ سے لاگ اِن کریں۔</li>
+<li><strong>مزید ← فوری پن بنائیں</strong> دبائیں۔</li>
+<li>اپنا پاس ورڈ لکھیں، پھر 4 سے 6 ہندسوں کا پن، مثلاً <code>4821</code>۔</li>
+<li><strong>محفوظ کریں</strong> دبائیں۔</li>
+</ol>
+<p>اگلی بار یہ فون آپ کے نام کے ساتھ <strong>اپنا پن درج کریں</strong> والی اسکرین کھولے گا۔ ہندسے دبائیں اور آپ اندر۔</p>
+<ul>
+<li><strong>پن بھول گئے؟ پاس ورڈ استعمال کریں</strong> آپ کو پاس ورڈ والی اسکرین پر واپس لے جاتا ہے۔</li>
+<li><strong>دوسرا اکاؤنٹ استعمال کریں</strong> سے عملے کا کوئی دوسرا بندہ اسی فون پر لاگ اِن کر سکتا ہے۔</li>
+</ul>
+<aside class="tip"><strong>مشورہ:</strong> جب دکان کا قیمت کا اصول کہے تو مالک کا پن مانگی قیمت سے کم پر بِکری کو وہیں منظور کرنے کے لیے بھی استعمال ہوتا ہے (باب 8 دیکھیں)۔</aside>
+<h3>فنگر پرنٹ لاگ اِن</h3>
+<ol>
+<li>ایک بار پاس ورڈ سے لاگ اِن کریں۔</li>
+<li><strong>مزید ← فنگر پرنٹ لاگ اِن ← اس فون کے لیے آن کریں</strong> دبائیں۔</li>
+<li>فنگر پرنٹ سینسر کو چھوئیں۔</li>
+</ol>
+<p>اگلی بار لاگ اِن صفحے پر <strong>فنگر پرنٹ سے لاگ اِن</strong> آئے گا۔ ایک بار چھوئیں اور آپ اندر۔ لیپ ٹاپ پر یہ اس ڈیوائس کا چہرہ یا Windows Hello استعمال کر سکتا ہے۔ آپ کا فنگر پرنٹ کبھی فون سے باہر نہیں جاتا۔</p>
+<ul>
+<li><strong>مالک</strong> اسے ہمیشہ استعمال کر سکتا ہے۔ عملہ اسے تب ہی استعمال کر سکتا ہے جب مالک <strong>سیٹنگز</strong> میں آن کر دے کہ عملہ فنگر پرنٹ سے لاگ اِن کر سکتا ہے۔</li>
+<li>اسی کارڈ میں وہ سارے فون لکھے ہوتے ہیں جو اس طرح لاگ اِن کر سکتے ہیں۔ <strong>ہٹائیں</strong> کسی ایک کو فوراً روک دیتا ہے۔</li>
+</ul>
+<aside class="note"><strong>اہم:</strong> دکان کے مشترکہ فون پر، فون کی سیٹنگز میں محفوظ کوئی بھی انگلی آپ کا اکاؤنٹ کھول سکتی ہے۔ فنگر پرنٹ لاگ اِن صرف اپنے ذاتی فون پر آن کریں۔</aside>
+<h3>لاگ آؤٹ</h3>
+<p><strong>مزید</strong> دبائیں، نیچے تک اسکرول کریں اور <strong>لاگ آؤٹ</strong> دبائیں۔ جس فون کو دوسرے لوگ بھی استعمال کرتے ہوں اس پر ہمیشہ لاگ آؤٹ کریں۔</p>
+<h2 id="c4">4. ہوم اسکرین، مزید مینو اور "?" مدد</h2>
+<h3>ہوم اسکرین</h3>
+<p>لاگ اِن کے بعد ہوم اسکرین آتی ہے۔ جو کام آپ سب سے زیادہ کرتے ہیں وہ یہیں سے شروع ہوتے ہیں۔</p>
+<figure><img src="img/ur/home.jpg" alt=""><figcaption>تصویر 2: ہوم اسکرین</figcaption></figure>
+<p>اوپر سے نیچے تک:</p>
+<table><thead><tr><th>حصہ</th><th>کیا کرتا ہے</th></tr></thead><tbody><tr><td>اوپر کی پٹی</td><td>دکان کا نام، پھر <strong>English</strong> (زبان)، <strong>ڈارک</strong> (تھیم)، <strong>پیغامات</strong> اور <strong>مزید</strong>۔</td></tr><tr><td>سلام</td><td>آپ کے نام کے ساتھ "صبح بخیر"، "السلام علیکم" یا "شام بخیر"، اور <em>آج آپ کی دکان کا حال</em>۔</td></tr><tr><td>تلاش کا خانہ</td><td>IMEI، فون کا ماڈل یا کسی بندے کا نام لکھیں اور <strong>تلاش</strong> دبائیں۔ <strong>اسکین</strong> کیمرے سے بارکوڈ پڑھتا ہے۔</td></tr><tr><td><strong>بیچیں</strong></td><td>فون بیچیں، نقد یا ادھار (باب 8)۔</td></tr><tr><td><strong>اسٹاک ڈالیں</strong></td><td>آپ نے نیا یا استعمال شدہ فون خریدا (باب 6)۔</td></tr><tr><td>دوسرے کام</td><td><strong>ادھار</strong>، <strong>اسٹاک</strong>، <strong>مرمت</strong>، <strong>واپسی</strong>، <strong>بل</strong> اور <strong>خرچہ</strong>۔</td></tr><tr><td><strong>ایک نظر میں</strong></td><td><strong>آج</strong>، <strong>کل</strong>، <strong>ہفتہ</strong>، <strong>اس مہینے</strong> یا <strong>تاریخ سے تاریخ</strong> چنیں۔ کارڈز میں <strong>بِکری</strong> (اور بکے ہوئے فون)، <strong>منافع</strong>، <strong>نقد اور بینک</strong>، <strong>مجھے لینے ہیں</strong>، <strong>مجھے دینے ہیں</strong>، <strong>اسٹاک میں فون</strong>، <strong>خرچے</strong> اور <strong>پچھلے 7 دن</strong> کا چارٹ آتا ہے۔ پورے حساب کے لیے <strong>سب دیکھیں</strong> دبائیں۔</td></tr><tr><td><strong>توجہ طلب</strong></td><td>آپ کے انتظار میں کام، مثلاً "2 فون: شناختی کارڈ چیک باقی" یا "1 مرمت کے کام کھلے"۔ کوئی لائن دبائیں اور سیدھا وہاں پہنچیں۔</td></tr></tbody></table>
+<p>نیچے ایک پٹی ہے جس میں <strong>ہوم</strong>، <strong>اسٹاک</strong>، <strong>ادھار</strong>، <strong>حساب</strong> اور <strong>مزید</strong> ہیں۔ یہ ہر اسکرین پر ہوتی ہے، اس لیے آپ ہمیشہ واپس آ سکتے ہیں۔</p>
+<aside class="note"><strong>نوٹ:</strong> منافع اور خرید قیمت صرف مالک اور منیجر کو دکھتے ہیں۔ سیلز مین کو یہی ہوم اسکرین ان کے بغیر دکھتی ہے۔</aside>
+<h3>کہیں سے بھی اسکین</h3>
+<p>اگر آپ کے پاس USB یا Bluetooth بارکوڈ اسکینر ہے تو اسے لگا دیں۔ کوئی سیٹنگ نہیں چاہیے۔ ہوم اسکرین پر کسی فون کا اسٹیکر اسکین کریں اور اس کا صفحہ کھل جائے گا۔ کوئی انجان کوڈ اسکین کریں تو ایپ اسے شامل کرنے کا پوچھتی ہے۔ فون کا کی بورڈ اردو میں ہو تب بھی اسکینر چلتا ہے۔</p>
+<h3>مزید مینو</h3>
+<p>ایپ کا ہر حصہ گروپوں میں دیکھنے کے لیے <strong>مزید</strong> دبائیں (اوپر دائیں، یا نیچے)۔</p>
+<figure><img src="img/ur/more.jpg" alt=""><figcaption>تصویر 3: مزید مینو</figcaption></figure>
+<ul>
+<li><strong>روزمرہ کام</strong>: بیچیں، اسٹاک ڈالیں، واپسی، ادھار، قسطیں، اسسٹنٹ، مرمت، پرانا دے کر نیا، امانت، دن کا حساب۔</li>
+<li><strong>اسٹاک</strong>: اسٹاک لسٹ، دکان میں اسٹاک، ایکسیسریز، IMEI تلاش، پرانا اسٹاک، بلک ایکسل، اسٹاک گنتی، برانڈ اور ماڈل۔</li>
+<li><strong>ریکارڈ</strong>: بِکری، خریداری، بل، ملے / دیے پیسوں اور واپسی کی لسٹیں۔</li>
+<li><strong>حساب اور رپورٹس</strong>: نقد اور بینک، خرچے، دن بند کریں، رپورٹس اور دکان کا آڈٹ۔</li>
+<li><strong>دکان اور عملہ</strong>: دکان کی سیٹنگز، عملہ، لوگ اور کھاتہ، اطلاعات، سافٹ ویئر فیس۔</li>
+<li>نیچے: زبان، تھیم، انداز، <strong>فوری پن بنائیں</strong>، فنگر پرنٹ لاگ اِن اور <strong>لاگ آؤٹ</strong>۔</li>
+</ul>
+<p>آپ کو صرف وہی دکھے گا جس کی آپ کے عہدے کو اجازت ہے۔ مثلاً سیلز مین کو رپورٹس نہیں دکھتیں۔</p>
+<h3>ہر خانے اور کارڈ پر "?" مدد</h3>
+<p>دکانداروں نے ہمیں بتایا کہ سافٹ ویئر کے کچھ الفاظ سمجھنا مشکل ہوتا ہے۔ اس لیے ہر اسکرین کے نام، ہر ٹیب، ہر کارڈ اور ہر خانے کے ساتھ ایک چھوٹا <strong>?</strong> ہے۔</p>
+<ol>
+<li>جو چیز سمجھ نہ آئے اس کے ساتھ والا <strong>?</strong> دبائیں۔</li>
+<li>نیچے سے ایک شیٹ کھلتی ہے جس کا عنوان ہے <strong>یہ کیا ہے؟</strong></li>
+<li>اس میں چیز کا نام، اس کے بارے میں ایک دو آسان جملے، اور روپوں میں دکان کی اصل مثال والا <strong>مثال</strong> کا خانہ ہوتا ہے۔</li>
+<li>واپس جانے کے لیے <strong>بند کریں</strong> دبائیں۔ اسکرین پر کچھ نہیں بدلتا۔</li>
+</ol>
+<figure><img src="img/ur/help.jpg" alt=""><figcaption>تصویر 4: اپنی زبان کے بٹن والی "?" مدد کی شیٹ</figcaption></figure>
+<p>مدد کی شیٹ میں اوپر اس کا <strong>اپنا</strong> زبان کا بٹن ہے: <strong>اردو</strong>، <strong>Roman</strong> اور <strong>English</strong>۔ یہ صرف وضاحت بدلتا ہے، ایپ نہیں۔ یوں سیلز مین ایپ انگریزی میں رکھ کر مدد اردو میں پڑھ سکتا ہے، یا اس کا الٹ۔ ایپ اس کی آخری پسند یاد رکھتی ہے۔</p>
+<p><strong>مثال:</strong> آپ دکان کا آڈٹ دیکھ رہے ہیں اور نہیں جانتے کہ <strong>خالص بکری</strong> کا مطلب کیا ہے۔ اس کا <strong>?</strong> دبائیں۔ لکھا آتا ہے: مدت کی ساری بِکری، رعایت اور گاہکوں کی واپسی نکال کر۔ مثال: <em>3 فون Rs. 1,20,000 میں بیچے، Rs. 2,000 رعایت دی، ایک Samsung A15 Rs. 38,000 کا واپس آیا، تو خالص بکری Rs. 80,000 ہے۔</em></p>
+<aside class="tip"><strong>مشورہ:</strong> نئے سیلز مین کو سکھاتے وقت اسے کہیں کہ پہلی بار اسٹاک ڈالتے ہوئے ہر خانے کا <strong>?</strong> دبائے۔ دس منٹ میں اسے اسکرین سمجھ آ جائے گی۔</aside>
+<h2 id="c5">5. زبان، تھیم اور انداز</h2>
+<h3>زبان</h3>
+<p>ایپ <strong>ایک وقت میں ایک زبان</strong> دکھاتی ہے۔ اردو موڈ میں سب کچھ اردو میں، دائیں سے بائیں۔ انگریزی موڈ میں سب کچھ انگریزی میں۔ ہندسے ہر زبان میں ہمیشہ 0 سے 9 لکھے جاتے ہیں۔</p>
+<ol>
+<li>اوپر کی پٹی میں زبان کا بٹن دبائیں (اس پر موجودہ زبان لکھی ہوتی ہے، مثلاً <strong>English</strong>)۔</li>
+<li><strong>اردو</strong>، <strong>Roman Urdu</strong> یا <strong>English</strong> چنیں۔</li>
+</ol>
+<p>آپ اسے <strong>مزید ← زبان</strong> میں بھی بدل سکتے ہیں۔ ہر بندہ اپنے فون پر اپنی زبان چن سکتا ہے۔</p>
+<p>WhatsApp پیغامات <strong>دکان کی زبان</strong> میں جاتے ہیں، جو مالک <strong>دکان کی سیٹنگز</strong> میں رکھتا ہے۔ پرنٹ اور ڈاؤن لوڈ ہونے والے کاغذات (رسید، بل، اقرار نامے، جاب شیٹ، رپورٹس) کے لیے پرنٹ اور شیئر کے بٹنوں کے بالکل اوپر <strong>دستاویز کی زبان</strong> کا بٹن ہے: <strong>English</strong> یا <strong>اردو</strong>۔ شروع میں English چنا ہوتا ہے؛ اردو کاغذ کے لیے <strong>اردو</strong> دبائیں۔ ایپ بند کرنے تک آپ کی پسند رہتی ہے۔</p>
+<h3>ڈارک یا لائٹ</h3>
+<p>رات کو آنکھوں کے لیے آسان کالی اسکرین کے لیے اوپر کی پٹی میں <strong>ڈارک</strong> دبائیں۔ واپس آنے کے لیے <strong>لائٹ</strong> دبائیں۔ <strong>مزید ← تھیم</strong> میں <strong>فون کے مطابق</strong> بھی ہے، جو آپ کے فون کی اپنی سیٹنگ کے مطابق چلتا ہے۔</p>
+<h3>انداز</h3>
+<p><strong>مزید ← انداز</strong> پوری ایپ کے رنگ بدلتا ہے: <strong>ماڈرن</strong>، <strong>پروفیشنل</strong>، <strong>نیوی</strong> یا <strong>رنگین</strong>۔ جو آپ کے عملے کو پسند ہو وہ چنیں۔ یہ صرف رنگ بدلتا ہے، آپ کا ڈیٹا کبھی نہیں۔</p>
+<h2 id="c6">6. اسٹاک ڈالیں (خریداری)</h2>
+<p>جب بھی کوئی فون، ٹیبلٹ، گھڑی یا ایکسیسری دکان میں آئے تو <strong>اسٹاک ڈالیں</strong> استعمال کریں۔ اس کے تین قدم ہیں، جو اوپر کی پٹی دکھاتی ہے: <strong>1 کس سے لیا؟ ← 2 کون سا فون، کتنے میں؟ ← 3 مکمل</strong>۔</p>
+<p>یہ کیوں ضروری ہے: آپ کا ڈالا ہوا ہر فون پہلے دن سے اپنا صفحہ اور اپنی ہسٹری رکھتا ہے۔ بعد میں آپ دیکھ سکتے ہیں کہ کس سے خریدا، کتنے دیے، کس کو بیچا اور اس پر کتنا کمایا۔</p>
+<h3>قدم 1: موبائل کہاں سے آ رہا ہے؟</h3>
+<p>ہوم پر <strong>اسٹاک ڈالیں</strong> دبائیں۔ پہلی اسکرین پوچھتی ہے <strong>موبائل کہاں سے آ رہا ہے؟</strong> اور دو بڑے کارڈ دکھاتی ہے۔</p>
+<figure><img src="img/ur/purchase-source.jpg" alt=""><figcaption>تصویر 5: اسٹاک ڈالیں، قدم 1: موبائل کہاں سے آ رہا ہے؟</figcaption></figure>
+<ul>
+<li><strong>ڈیلر سے</strong>: ہول سیلر یا ڈسٹری بیوٹر۔ عام طور پر نئے یا باکس پیک فون۔</li>
+<li><strong>گاہک کا موبائل خریدیں</strong>: کوئی اپنا فون بیچنے آیا ہے۔ ایپ یہ چیک کرنے میں مدد کرے گی کہ فون چوری کا نہیں۔</li>
+</ul>
+<h3>ڈیلر سے خریداری</h3>
+<p><strong>مثال:</strong> آپ <strong>Rehman Traders</strong> سے ایک باکس پیک <strong>Samsung Galaxy A55 256GB Blue</strong> <strong>Rs. 92,000</strong> نقد میں خریدتے ہیں۔ آپ اسے <strong>Rs. 1,00,000</strong> میں بیچیں گے۔ ڈبہ اور کیبل ساتھ آئے؛ چارجر ڈیلر تین دن میں بھیجے گا۔</p>
+<ol>
+<li>ہوم پر <strong>اسٹاک ڈالیں</strong> دبائیں، پھر <strong>ڈیلر سے</strong>۔</li>
+<li><strong>ڈیلر چنیں</strong> میں چند حروف لکھیں (<code>Rehman</code>) اور <strong>Rehman Traders</strong> دبائیں۔ نیا ڈیلر ہے؟ <strong>+</strong> بٹن دبائیں اور اس کا نام اور موبائل نمبر لکھیں۔</li>
+<li><strong>اگلا</strong> دبائیں۔</li>
+<li><strong>موبائل شامل کریں</strong> دبائیں۔ <strong>موبائل شامل کریں</strong> کا فارم کھلتا ہے۔</li>
+<li><strong>یہ کیا ہے؟</strong> کے نیچے <strong>موبائل</strong> چنا رہنے دیں۔</li>
+<li><strong>IMEI</strong> میں 15 ہندسے لکھیں یا ڈبے کا بارکوڈ پڑھنے کے لیے <strong>اسکین</strong> دبائیں۔ خانے کے نیچے ایپ بتاتی ہے <strong>نیا IMEI، پہلے نہیں آیا</strong> یا <strong>یہ IMEI پہلے آپ کی دکان میں آ چکا ہے</strong>۔</li>
+<li>دو سم والے فون کے لیے <strong>IMEI 2</strong> بھی اسی طرح بھریں۔</li>
+<li><strong>برانڈ</strong> (<strong>Samsung</strong>) دبائیں، پھر <strong>ماڈل</strong> (<code>A55</code> لکھیں اور <strong>Galaxy A55</strong> دبائیں)۔</li>
+<li><strong>میموری</strong> (<code>256GB</code>) اور <strong>رنگ</strong> (<code>Blue</code>) چنیں۔</li>
+<li><strong>حالت</strong>: <strong>باکس پیک</strong> دبائیں۔ دوسرے انتخاب <strong>کھلا باکس</strong>، <strong>استعمال شدہ</strong> اور <strong>پیچ شدہ</strong> ہیں (پیچ شدہ پر <strong>پیچ کی تفصیل</strong> پوچھی جاتی ہے)۔</li>
+<li><strong>PTA اسٹیٹس</strong>: <strong>پی ٹی اے منظور</strong> دبائیں۔ <strong>نان پی ٹی اے</strong> اور <strong>جے وی</strong> پر ایپ <strong>سم ٹائم (مہینے)</strong> بھی پوچھتی ہے۔</li>
+<li><strong>خرید قیمت</strong>: <code>92000</code> لکھیں، جو آپ نے دیے۔</li>
+<li><strong>فروخت کی قیمت</strong>: <code>100000</code> لکھیں، جتنے میں بیچنا چاہتے ہیں۔</li>
+<li><strong>وارنٹی (مہینے)</strong>: ڈیلر والا فون عام طور پر 12 سے شروع ہوتا ہے۔</li>
+<li><strong>فون کے ساتھ کیا کیا آیا؟</strong> ڈبہ، چارجر، کیبل، ہینڈز فری اور AirPods کے لیے <strong>نہیں</strong>، <strong>مل گیا</strong> یا <strong>بعد میں</strong> چنیں۔ یہاں: ڈبہ <strong>مل گیا</strong>، کیبل <strong>مل گیا</strong>، چارجر <strong>بعد میں</strong>، اور <strong>کب دے گا؟</strong> میں تاریخ چنیں۔</li>
+<li><strong>شامل کریں</strong> دبائیں۔ فون لسٹ میں آ جاتا ہے۔ اگلے فون کے لیے دوبارہ <strong>موبائل شامل کریں</strong> دبائیں۔</li>
+</ol>
+<figure><img src="img/ur/purchase-device.jpg" alt=""><figcaption>تصویر 6: موبائل شامل کریں کا فارم</figcaption></figure>
+<p>جب سارے فون لسٹ میں آ جائیں تو اسی اسکرین پر پیسوں والا حصہ مکمل کریں:</p>
+<ol>
+<li><strong>پیسے کیسے دیے؟</strong> <strong>نقد</strong> دبائیں (یا کوئی اور طریقہ، نیچے دیکھیں)۔</li>
+<li><strong>کب خریدا؟</strong> <strong>ابھی</strong> رہنے دیں، یا اگر کل کی خریداری لکھ رہے ہیں تو <strong>پہلے</strong> دبا کر تاریخ اور وقت چنیں۔</li>
+<li>اضافی خانے چاہییں تو <strong>رعایت، بل نمبر</strong> دبائیں (نیچے "حوالہ / پرچی نمبر" دیکھیں)۔</li>
+<li><strong>کل</strong> چیک کریں: Rs. 92,000۔</li>
+<li><strong>اسٹاک میں ڈالیں</strong> دبائیں۔</li>
+</ol>
+<p>آپ کو <strong>خریداری محفوظ ہو گئی</strong>، رقم اور خریداری کا نمبر نظر آتا ہے، مثلاً <code>PUR-000001</code>۔ یہاں سے آپ بارکوڈ والے قیمت کے اسٹیکر پرنٹ کرنے کے لیے <strong>ان موبائلز کے اسٹیکر پرنٹ کریں</strong> بھی دبا سکتے ہیں۔</p>
+<aside class="note"><strong>نوٹ:</strong> <strong>فروخت کی قیمت</strong> <strong>خرید قیمت</strong> سے کم نہیں ہو سکتی۔ کم لکھیں تو ایپ کہتی ہے <em>"بیچنے کی قیمت خرید قیمت سے کم نہیں ہو سکتی"</em> اور <strong>شامل کریں</strong> گرے رہتا ہے۔</aside>
+<aside class="tip"><strong>مشورہ:</strong> ایک ہی IMEI آپ کے اسٹاک میں دو بار نہیں آ سکتا۔ اگر ایپ کوئی IMEI نہ لے تو اسٹاک لسٹ دیکھیں؛ ہو سکتا ہے فون پہلے سے وہاں ہو۔</aside>
+<h3>خریدتے وقت ریٹ کا مشورہ</h3>
+<p>ماڈل چنتے ہی <strong>فروخت کی قیمت</strong> کے نیچے ایک سبز خانہ اس ماڈل کی آپ کی اپنی ہسٹری دکھاتا ہے: آخری بار کب اور کتنے میں بیچا، چھ مہینے میں کتنے بیچے اور کس ریٹ کے بیچ، اور ابھی اسٹاک میں کتنے ہیں۔ مشورے والی قیمت لینے کے لیے <strong>استعمال کریں …</strong> دبائیں۔ یہ صرف آپ کی اپنی دکان کی بِکری پڑھتا ہے۔</p>
+<h3>پیسے کیسے دیے؟</h3>
+<p><strong>پیسے کیسے دیے؟</strong> کے نیچے ایک بڑا بٹن دبائیں۔</p>
+<table><thead><tr><th>بٹن</th><th>کب استعمال کریں</th><th>کیا پوچھتا ہے</th></tr></thead><tbody><tr><td><strong>نقد</strong></td><td>گلے سے پیسے</td><td>اور کچھ نہیں</td></tr><tr><td><strong>آن لائن</strong></td><td>بینک ایپ، IBFT، Raast، Easypaisa، JazzCash، SadaPay</td><td>کون سا بینک یا والٹ (یا <strong>کوئی اور بینک / والٹ</strong>)، اور چاہیں تو ٹرانزیکشن ID</td></tr><tr><td><strong>چیک</strong></td><td>آپ نے چیک دیا</td><td>بینک، چیک نمبر اور چیک کی تاریخ</td></tr><tr><td><strong>ادھار</strong></td><td>پیسے بعد میں دیں گے</td><td>ابھی کتنے دیے، اگر دیے</td></tr></tbody></table>
+<p>ہر طریقے کا اپنا حساب رہتا ہے، اس لیے دن کا حساب دکھاتا ہے کہ کتنا نقد گیا اور کتنا بینک سے۔ اگر آپ نے <strong>مزید ← نقد اور بینک</strong> میں اکاؤنٹ بنائے ہیں (مثلاً "Meezan Bank" یا "دکان کا Easypaisa") تو آپ بالکل وہی اکاؤنٹ چن سکتے ہیں۔</p>
+<h3>ادھار پر خریداری</h3>
+<p><strong>مثال:</strong> آپ <strong>Rehman Traders</strong> سے 3 فون <strong>Rs. 2,40,000</strong> میں خریدتے ہیں۔ <strong>Rs. 1,50,000</strong> ابھی دیتے ہیں اور باقی اگلے ہفتے۔</p>
+<ol>
+<li>اوپر کی طرح فون ڈالیں۔</li>
+<li><strong>پیسے کیسے دیے؟</strong> کے نیچے <strong>ادھار</strong> دبائیں۔</li>
+<li><strong>ابھی کتنے دیے؟ (اگر دیے)</strong> میں <code>150000</code> لکھیں۔</li>
+<li><strong>ابھی دینے ہیں</strong> میں <strong>90,000</strong> آتا ہے۔ یہ Rehman Traders کے کھاتے میں <strong>مجھے دینے ہیں</strong> کے نیچے چلا جاتا ہے۔</li>
+<li>اگر اس نے تاریخ مانی ہے تو <strong>سپلائر کو ادائیگی تک (اختیاری)</strong> بھریں۔ اس تاریخ کے بعد آڈٹ اس ادھار کو لیٹ دکھاتا ہے۔</li>
+<li><strong>اسٹاک میں ڈالیں</strong> دبائیں۔</li>
+</ol>
+<p>بعد میں جب اسے پیسے دیں تو <strong>ادھار ← پیسے دیے</strong> استعمال کریں اور Rehman Traders چنیں۔</p>
+<h3>حوالہ / پرچی نمبر اور ڈیلر کا بل نمبر</h3>
+<p>ڈیلر کی خریداری پر یہ اختیاری خانے دیکھنے کے لیے <strong>رعایت، بل نمبر</strong> دبائیں:</p>
+<ul>
+<li><strong>رعایت</strong>: وہ پیسے جو ڈیلر نے پورے بل پر کم کیے۔</li>
+<li><strong>حوالہ / پرچی نمبر</strong>: کوئی بھی نمبر یا لفظ جو بعد میں یہ خریداری ڈھونڈنے میں مدد کرے، جیسے ڈیلر کی پرچی یا لاٹ نمبر، مثلاً <code>Slip 4471</code> یا <code>Hall Road lot 3</code>۔ یہ صرف تلاش کے لیے رکھا جاتا ہے۔</li>
+<li><strong>سپلائر بل نمبر</strong>: ڈیلر کے اپنے بل پر چھپا نمبر، مثلاً <code>RT-2026-118</code>، تاکہ کبھی سوال ہو تو آپ اس کے کاغذ سے ملا سکیں۔</li>
+<li><strong>کرایہ / لوڈنگ (روپے)</strong> اور <strong>کرایے کا نوٹ</strong>: گاڑی یا لوڈنگ کا خرچہ۔ یہ لائنوں پر بانٹ کر چیز کی لاگت میں جوڑ دیا جاتا ہے، تاکہ آپ کا منافع صحیح رہے۔</li>
+</ul>
+<h3>کوئی برانڈ، ماڈل، میموری یا رنگ نہیں مل رہا</h3>
+<p>اگر <strong>موبائل شامل کریں</strong> فارم میں نہ ملے:</p>
+<ol>
+<li><strong>+ نیا برانڈ</strong>، <strong>+ نیا ماڈل</strong>، <strong>+ نئی میموری</strong> یا <strong>+ نیا رنگ</strong> دبائیں۔</li>
+<li>نام لکھیں، مثلاً برانڈ <code>Dcode</code>، ماڈل <code>Bold 3</code>۔</li>
+<li><strong>محفوظ کریں</strong> دبائیں۔ یہ فوراً چن لیا جاتا ہے اور اگلی بار لسٹ میں ہوگا۔</li>
+</ol>
+<p>اپنی انٹریوں کا نام آپ بعد میں <strong>مزید ← برانڈ اور ماڈل</strong> میں بدل یا انہیں ختم کر سکتے ہیں۔ پہلے سے موجود، اور کسی فون پر استعمال ہو چکی انٹریاں ختم نہیں ہو سکتیں۔</p>
+<h3>گاہک کا موبائل خریدنا</h3>
+<p><strong>مثال:</strong> <strong>Ali Raza</strong> اپنا استعمال شدہ <strong>Infinix Hot 40 128GB</strong> بیچنے آتا ہے۔ آپ <strong>Rs. 28,000</strong> طے کرتے ہیں۔ <strong>Rs. 20,000</strong> ابھی دیتے ہیں اور <strong>Rs. 8,000</strong> کل۔ آپ اسے <strong>Rs. 34,000</strong> میں بیچیں گے۔</p>
+<ol>
+<li><strong>اسٹاک ڈالیں ← گاہک کا موبائل خریدیں</strong>۔</li>
+<li><strong>موبائل بیچنے والا کون ہے؟</strong> کے نیچے بندے کو نام، فون یا CNIC سے تلاش کریں۔ نیا ہو تو <strong>+</strong> (<strong>نیا بندہ</strong>) دبائیں۔</li>
+<li><strong>نام</strong> (<code>Ali Raza</code>) اور <strong>موبائل نمبر</strong> (+92 لکھا رہتا ہے؛ <code>3005550606</code> لکھیں) بھریں۔</li>
+<li><strong>شناختی کارڈ</strong> بھریں: 13 ہندسے <code>3740512345673</code> لکھیں اور یہ <code>37405-1234567-3</code> بن کر دکھتا ہے۔ یا ایپ سے پڑھوانے کے لیے <strong>شناختی کارڈ اسکین (آگے کی تصویر)</strong> دبائیں (باب 7 دیکھیں)۔</li>
+<li><strong>محفوظ کریں</strong> دبائیں، پھر <strong>اگلا</strong>۔</li>
+<li><strong>موبائل شامل کریں</strong> دبائیں اور IMEI، <strong>Infinix</strong>، <strong>Hot 40</strong>، <code>128GB</code>، حالت <strong>استعمال شدہ</strong>، <strong>خرید قیمت</strong> <code>28000</code>، <strong>فروخت کی قیمت</strong> <code>34000</code> بھریں۔ <strong>شامل کریں</strong> دبائیں۔</li>
+<li><strong>پیسے کیسے دیے؟</strong> کے نیچے <strong>ادھار</strong> دبائیں اور <strong>ابھی کتنے دیے؟ (اگر دیے)</strong> میں <code>20000</code> لکھیں۔ <strong>ابھی دینے ہیں</strong> میں <strong>8,000</strong> آتا ہے، جو Ali Raza کے کھاتے میں جاتا ہے۔</li>
+<li><strong>شناختی کارڈ چیک</strong> کے نیچے <strong>ابھی یا بعد میں چیک</strong> (عام انتخاب) یا <strong>چھوڑیں، میں اسے جانتا ہوں</strong> چنیں۔</li>
+<li><strong>اسٹاک میں ڈالیں</strong> دبائیں۔</li>
+</ol>
+<p>مکمل ہونے والی اسکرین پر لکھا آتا ہے <strong>چیک کریں کہ موبائل چوری کا نہ ہو</strong>، ساتھ <strong>ابھی شناختی کارڈ چیک کریں</strong>، <strong>چھوڑیں، میں اسے جانتا ہوں</strong> اور <strong>اقرار نامہ پرنٹ کریں</strong>۔ چیک کے لیے باب 7 پر جائیں۔</p>
+<aside class="note"><strong>اہم:</strong> اگر آپ چھوڑ دیں تو فون پر <strong>تصدیق چھوڑ دی، جاننے والا</strong> آتا ہے اور اس کی ہسٹری میں آپ کا نام لکھا جاتا ہے۔ مالک آڈٹ میں ہر چھوڑی گئی تصدیق دیکھ سکتا ہے۔ صرف ان لوگوں کے لیے چھوڑیں جنہیں آپ واقعی جانتے ہیں۔</aside>
+<h3>ٹیبلٹ اور سمارٹ واچ</h3>
+<p>ٹیبلٹ اور سمارٹ واچ بھی فون کی طرح ایک ایک کر کے رکھے جاتے ہیں، ہر ایک کا اپنا صفحہ اور اپنی ہسٹری۔</p>
+<ol>
+<li><strong>موبائل شامل کریں</strong> میں <strong>یہ کیا ہے؟</strong> کے نیچے <strong>موبائل</strong> کی جگہ <strong>ٹیبلٹ</strong> یا <strong>سمارٹ واچ</strong> دبائیں۔</li>
+<li>صرف وہ برانڈ دکھتے ہیں جو یہ چیز بناتے ہیں، مثلاً ٹیبلٹ کے لیے Apple، Samsung اور Lenovo، یا گھڑی کے لیے Apple، Samsung، Huawei اور Amazfit۔</li>
+<li>اس قسم کے سوال بھریں (نیچے ٹیبل دیکھیں) اور <strong>شامل کریں</strong> دبائیں۔</li>
+</ol>
+<table><thead><tr><th></th><th>موبائل</th><th>ٹیبلٹ</th><th>سمارٹ واچ</th></tr></thead><tbody><tr><td>سم</td><td>ہمیشہ</td><td><strong>صرف وائی فائی</strong> یا <strong>وائی فائی + سم</strong></td><td><strong>سم نہیں (GPS)</strong> یا <strong>سم والی (Cellular)</strong></td></tr><tr><td>IMEI</td><td>IMEI اور IMEI 2</td><td>صرف سم کے ساتھ</td><td>صرف سم کے ساتھ</td></tr><tr><td>سیریل نمبر</td><td>ضرورت نہیں</td><td>سم کے بغیر ضروری</td><td>سم کے بغیر ضروری</td></tr><tr><td>PTA</td><td>پی ٹی اے منظور، نان پی ٹی اے، جے وی</td><td>صرف سم کے ساتھ، جے وی نہیں</td><td>صرف سم کے ساتھ، جے وی نہیں</td></tr><tr><td>سائز</td><td>میموری</td><td>میموری</td><td><strong>ڈائل کا سائز</strong> (38 سے 49 mm)</td></tr><tr><td>بیٹری ہیلتھ %</td><td>نہیں پوچھا جاتا</td><td>کھلے باکس یا استعمال شدہ کے لیے</td><td>کھلے باکس یا استعمال شدہ کے لیے</td></tr><tr><td>ساتھ کیا آیا</td><td>ڈبہ، چارجر، کیبل، ہینڈز فری، AirPods</td><td>ڈبہ، چارجر، کیبل، پین / اسٹائلس، کی بورڈ کور</td><td>ڈبہ، چارجر، اضافی اسٹریپ</td></tr></tbody></table>
+<p>سم کے بغیر IMEI نہیں ہوتا، اس لیے <strong>سیریل نمبر</strong> (ڈبے پر، یا ڈیوائس میں Settings ← About میں) تلاش کے لیے استعمال ہوتا ہے اور IMEI کی طرح دکھتا ہے۔</p>
+<h3>استعمال شدہ ڈیوائس کا لاک چیک</h3>
+<p>استعمال شدہ ٹیبلٹ یا گھڑی پرانے مالک کے اکاؤنٹ سے لاک ہو سکتی ہے۔ اگر ایسا ہو تو اگلا خریدار اسے استعمال نہیں کر سکتا۔ اس لیے جب آپ استعمال شدہ چیز خریدتے ہیں تو فارم میں <strong>لاک چیک (استعمال شدہ)</strong> کا خانہ آتا ہے:</p>
+<ul>
+<li><strong>iCloud / ایکٹیویشن لاک</strong> (Apple کا Find My)۔</li>
+<li><strong>Google / FRP لاک</strong> (ری سیٹ کے بعد Android پچھلا Google اکاؤنٹ مانگتا ہے)۔</li>
+<li><strong>Samsung / اکاؤنٹ لاک</strong> (کمپنی کا اپنا اکاؤنٹ)۔</li>
+<li><strong>جوڑی ہوئی ڈیوائس کا لاک</strong> (گھڑی جو ابھی تک پرانے مالک کے فون سے جڑی ہو)۔</li>
+</ul>
+<p>ہر ایک کے لیے <strong>ہٹ گیا</strong>، <strong>ابھی لگا ہے</strong> یا <strong>لاگو نہیں</strong> دبائیں، پھر <strong>لاک چیک ہو گیا اور ہٹ گیا</strong> پر نشان لگائیں۔</p>
+<ul>
+<li>ٹیبلٹ اور سمارٹ واچ کے لیے یہ چیک ہمیشہ ضروری ہے۔ استعمال شدہ موبائل کے لیے تب ضروری ہے جب مالک نے ڈیوائس کی سیٹنگز میں <strong>استعمال شدہ موبائل کے لیے بھی لاک چیک لازمی</strong> آن کیا ہو۔</li>
+<li>جس چیز پر کوئی بھی لاک <strong>ابھی لگا ہے</strong> ہو وہ خریدی نہیں جا سکتی: ایپ کہتی ہے <em>"ابھی لاک لگا ہے — ہٹنے تک نہ خریدیں"</em>۔ بیچنے والے سے کہیں کہ آپ کے سامنے ہٹائے، پھر اسے <strong>ہٹ گیا</strong> کریں۔</li>
+</ul>
+<p><strong>مثال:</strong> ایک گاہک استعمال شدہ <strong>iPad 9th gen Wi-Fi</strong> لاتا ہے۔ آپ اس میں Settings کھولتے ہیں اور دیکھتے ہیں کہ Find My ابھی آن ہے۔ <strong>iCloud / ایکٹیویشن لاک</strong> کو <strong>ابھی لگا ہے</strong> کریں۔ ایپ آپ کو اسے خریدنے نہیں دے گی۔ گاہک اپنی Apple ID سے سائن آؤٹ کرتا ہے؛ اب آپ <strong>ہٹ گیا</strong> کریں، خانے پر نشان لگائیں اور آگے چلیں۔</p>
+<h3>خریداری میں ایکسیسریز</h3>
+<p>چارجر، کیبل، کور، گلاس، ہینڈز فری، پاور بینک اور عام گھڑیاں (Casio، Naviforce) <strong>گنتی سے</strong> رکھی جاتی ہیں۔ ان کا IMEI نہیں ہوتا، صرف یہ کہ آپ کے پاس کتنی ہیں۔</p>
+<ol>
+<li>اسٹاک ڈالیں کے قدم 2 میں <strong>ایکسیسری / گھڑی ڈالیں</strong> دبائیں۔</li>
+<li>چیز کو <strong>نام یا کوڈ</strong> سے تلاش کریں اور دبائیں۔ لسٹ میں نہیں؟ <strong>نئی چیز (لسٹ میں نہیں)</strong> دبائیں، <strong>نام</strong> لکھیں، <strong>یہ کیا ہے؟</strong> چنیں (چارجر، کیبل، گھڑی وغیرہ، یا اپنی چیز کے لیے <strong>نئی قسم</strong>، مثلاً <em>رنگ لائٹ</em>)، <strong>بیچنے کی قیمت (ایک کی)</strong> لکھیں اور <strong>محفوظ کر کے ڈالیں</strong> دبائیں۔</li>
+<li>چنیں کہ ڈیلر نے کیسے بیچا: <strong>عدد</strong>، <strong>درجن</strong>، <strong>ڈبہ</strong> یا <strong>کارٹن</strong>۔</li>
+<li><strong>تعداد</strong> اور <strong>فی پیس قیمت</strong> لکھیں (ایک پیس کی قیمت، یا اگر وہ چنا ہو تو ایک درجن یا ڈبے کی)۔</li>
+<li>خریداری معمول کے مطابق مکمل کریں اور <strong>اسٹاک میں ڈالیں</strong> دبائیں۔</li>
+</ol>
+<p>اسٹاک ہمیشہ پیس میں رکھا جاتا ہے۔ <strong>مثال:</strong> آپ <strong>Rs. 1,200 فی درجن</strong> کے حساب سے <strong>5 درجن</strong> Type-C کیبل خریدتے ہیں۔ اسٹاک میں <strong>60 پیس</strong> <strong>Rs. 100 فی پیس</strong> آتے ہیں، اور لائن Rs. 6,000 کی بنتی ہے۔</p>
+<p>ڈیلر کی خریداری پر آپ <strong>+ چارجر، کور یا دوسرا سامان</strong> دبا کر ایک کھلی لائن بھی لکھ سکتے ہیں (نام، تعداد اور قیمت) جو اسٹاک کی چیز نہیں۔</p>
+<aside class="tip"><strong>مشورہ:</strong> ہر ایکسیسری کے <strong>ایکسیسریز</strong> میں اپنے صفحے پر مزید تفصیل ہو سکتی ہے: ڈیلر قیمت، کم سے کم قیمت، پرومو قیمت اور اپنا <strong>GST % (اختیاری)</strong>۔ کم سے کم قیمت اور GST % اسے بیچتے وقت استعمال ہوتے ہیں (باب 8)۔</aside>
+<h3>خریدتے وقت اسکین</h3>
+<ul>
+<li>کیمرے سے ڈبہ پڑھنے کے لیے <strong>IMEI</strong> کے ساتھ <strong>اسکین</strong> دبائیں۔ ڈبے پر کئی بارکوڈ ہوں تب بھی کیمرہ پہلے IMEI ڈھونڈتا ہے۔</li>
+<li>USB یا Bluetooth اسکینر سے ڈبہ اسکین کریں: پہلا اسکین <strong>IMEI</strong> بھرتا ہے، اگلا <strong>IMEI 2</strong>، پھر <strong>کمپنی کا بارکوڈ (اختیاری)</strong>۔</li>
+<li><strong>اپنا بارکوڈ (اختیاری)</strong> اس اسٹیکر کوڈ کے لیے ہے جو آپ پہلے سے استعمال کرتے ہیں۔ خالی چھوڑ دیں تو محفوظ کرتے وقت ایپ فون کو اپنا بارکوڈ دے دیتی ہے۔ وہ بارکوڈ کبھی نہیں بدلتا۔</li>
+</ul>
+<h3>دکان میں پہلے سے موجود پرانا اسٹاک</h3>
+<p>جب آپ ایپ شروع کرتے ہیں تو آپ کی شیلفوں پر پہلے سے موجود فونز کا نہ کوئی خریداری کا بل ہوتا ہے نہ کوئی پیسے دینے ہوتے ہیں۔ انہیں پرانے اسٹاک کے طور پر ڈالیں۔</p>
+<ol>
+<li><strong>مزید ← پرانا اسٹاک</strong>۔</li>
+<li><strong>موبائل شامل کریں</strong> دبائیں اور اوپر کی طرح فارم بھریں، جتنے میں لیا وہ <strong>خرید قیمت</strong> میں لکھیں۔</li>
+<li><strong>شامل کریں</strong> دبائیں۔ ہر فون کے لیے یہی کریں۔</li>
+<li><strong>محفوظ کریں</strong> دبائیں۔ آپ کو <strong>خریداری محفوظ ہو گئی</strong> نظر آتا ہے۔</li>
+</ol>
+<figure><img src="img/ur/oldstock.jpg" alt=""><figcaption>تصویر 7: پرانا اسٹاک (پہلے سے دکان میں)</figcaption></figure>
+<p>گلے سے کوئی پیسہ نہیں نکلتا۔ پرانا اسٹاک صرف آپ کا اسٹاک اور اس کی مالیت پوری کرتا ہے۔ <strong>مثال:</strong> Rs. 30,000، Rs. 45,000 اور Rs. 60,000 کے تین پرانے فون آپ کے اسٹاک کی مالیت میں Rs. 1,35,000 جوڑ دیتے ہیں۔</p>
+<aside class="tip"><strong>مشورہ:</strong> بہت سارے فون ڈالنے ہیں؟ کمپیوٹر پر شیٹ بھرنے اور سب ایک ساتھ لانے کے لیے <strong>مزید ← بلک ایکسل</strong> استعمال کریں۔</aside>
+<p>اگر پرانے اسٹاک کا کوئی فون غلطی سے ڈالا گیا ہو تو اسے اسٹاک لسٹ سے کھولیں اور وجہ لکھ کر <strong>پرانا اسٹاک اندراج ہٹائیں</strong> دبائیں۔</p>
+<h2 id="c7">7. استعمال شدہ فون کی جانچ (شناخت چیک اور دستخط شدہ اقرار نامہ)</h2>
+<p>کسی بندے سے خریدے گئے ہر استعمال شدہ فون، ٹیبلٹ یا گھڑی کے لیے یہ کریں۔ یہ آپ کو چوری کا فون خریدنے سے بچاتا ہے، اور اگر کبھی پولیس پوچھے تو بیچنے والے کی شناخت، تصویریں اور دستخط ایک ہی جگہ آپ کے پاس ہوتے ہیں۔</p>
+<h3>جانچ کھولنا</h3>
+<p><strong>تصدیق</strong> کی اسکرین تین طریقوں سے کھل سکتی ہے:</p>
+<ul>
+<li>خریدنے کے فوراً بعد: مکمل ہونے والی اسکرین پر <strong>ابھی شناختی کارڈ چیک کریں</strong>۔</li>
+<li>فون کے صفحے سے: <strong>شناختی کارڈ چیک</strong>۔</li>
+<li>ہوم سے: <strong>توجہ طلب ← فون: شناختی کارڈ چیک باقی</strong>۔</li>
+</ul>
+<figure><img src="img/ur/verify.jpg" alt=""><figcaption>تصویر 8: تصدیق کی اسکرین</figcaption></figure>
+<p>اوپر فون، اس کا IMEI اور اس کی حالت کا نشان نظر آتا ہے: <strong>شناخت چیک باقی</strong>، <strong>شناخت چیک ہو گیا</strong> یا <strong>چوری؟ نہ بیچیں</strong>۔</p>
+<h3>قدم بہ قدم</h3>
+<p><strong>مثال:</strong> آپ نے <strong>Usman Tariq</strong> سے استعمال شدہ <strong>Xiaomi Redmi Note 13</strong> <strong>Rs. 55,000</strong> میں خریدا۔</p>
+<ol>
+<li><strong>بیچنے والا</strong>: جس سے خریدا وہ پہلے سے بھرا ہوتا ہے۔ آپ نام، فون یا CNIC سے تلاش کر کے بدل سکتے ہیں۔</li>
+<li><strong>شناختی کارڈ نمبر</strong>: 13 ہندسے چیک کریں۔</li>
+<li>ہر تصویر والا خانہ دبائیں اور کیمرے سے تصویر لیں: <strong>شناختی کارڈ سامنے</strong>، <strong>شناختی کارڈ پیچھے</strong>، <strong>بیچنے والے کی تصویر</strong> اور <strong>موبائل کی تصویر</strong>۔</li>
+<li><strong>ای گیجٹ (پنجاب پولیس)</strong>: <strong>ای گیجٹ پورٹل کھولیں</strong> دبائیں، وہاں IMEI چیک کریں، واپس آئیں اور <strong>صاف</strong>، <strong>رپورٹ شدہ</strong> یا <strong>چیک نہیں کیا</strong> چنیں۔ اگر پورٹل دے تو <strong>حوالہ نمبر</strong> لکھیں۔</li>
+<li><strong>پی ٹی اے چیک کیا (8484)</strong>: IMEI PTA کو بھیجنے کے لیے <strong>SMS 8484</strong> دبائیں، پھر خانے پر نشان لگائیں اور <strong>پی ٹی اے نتیجہ</strong> چنیں۔</li>
+<li><strong>بیچنے والے نے اقرار نامہ پر دستخط کیے</strong>: بیچنے والا اسکرین پر دستخط کرتا ہے (نیچے دیکھیں)۔</li>
+<li><strong>موبائل کی حالت کے نوٹس</strong> (اختیاری)، مثلاً <em>پیچھے ہلکی خراش، اسکرین اصلی</em>۔</li>
+<li><strong>محفوظ کریں</strong> دبائیں۔</li>
+</ol>
+<p>نیچے <strong>نتیجہ</strong> کا کارڈ حالت دکھاتا ہے اور ایک <strong>ابھی باقی</strong> والی لائن جو بالکل بتاتی ہے کہ کیا ابھی نہیں ہوا، تاکہ آپ کو کبھی اندازہ نہ لگانا پڑے۔</p>
+<h3>لکھنے کی جگہ CNIC اسکین کریں</h3>
+<ol>
+<li><strong>شناختی کارڈ اسکین (آگے کی تصویر)</strong> دبائیں۔ یہ <strong>نیا بندہ</strong> والے فارم پر بھی ہے۔</li>
+<li>اچھی روشنی میں کارڈ کے سامنے والے حصے کی صاف تصویر لیں۔</li>
+<li>چند سیکنڈ میں <strong>نام</strong> اور <strong>CNIC نمبر</strong> بھر جاتے ہیں، اور تصویر شناختی کارڈ سامنے کے طور پر رکھ لی جاتی ہے۔ والد کا نام، تاریخ پیدائش اور کارڈ کی میعاد نوٹس میں چلی جاتی ہے۔</li>
+<li>محفوظ کرنے سے پہلے ہر بھرا ہوا خانہ چیک کریں اور غلط پڑھا گیا ہندسہ ٹھیک کریں۔</li>
+</ol>
+<p>اگر کارڈ کی میعاد ختم ہو چکی ہو تو آپ کو خبردار کیا جاتا ہے۔ اردو پتہ نہیں پڑھا جاتا؛ ضرورت ہو تو خود لکھیں۔</p>
+<aside class="note"><strong>نوٹ:</strong> تصویر آپ کے اپنے فون پر پڑھی جاتی ہے۔ صرف پڑھنے کے لیے کہیں نہیں بھیجی جاتی۔</aside>
+<h3>بیچنے والا اسکرین پر دستخط کرتا ہے</h3>
+<p>بیچنے والا اپنے ہاتھ سے تصدیق کرتا ہے کہ فون اس کا ہے اور چوری کا نہیں۔</p>
+<ol>
+<li><strong>بیچنے والے نے اقرار نامہ پر دستخط کیے</strong> تک اسکرول کریں۔</li>
+<li>فون بیچنے والے کو دیں۔ <strong>بیچنے والا یہاں دستخط کرے (انگلی یا ماؤس سے)</strong> کے نیچے وہ نقطوں والے خانے میں انگلی سے دستخط کرتا ہے۔</li>
+<li>پسند نہیں آئے؟ <strong>مٹائیں</strong> دبائیں اور وہ دوبارہ دستخط کرے۔</li>
+<li><strong>دستخط محفوظ کریں</strong> دبائیں۔ اقرار نامہ دستخط شدہ ہو جاتا ہے (<strong>بیچنے والے نے دستخط کر دیے</strong>)۔</li>
+<li>اسکرین کے نیچے <strong>محفوظ کریں</strong> دبائیں۔</li>
+</ol>
+<figure><img src="img/ur/signature.jpg" alt=""><figcaption>تصویر 9: بیچنے والا اسکرین پر دستخط کرتا ہے</figcaption></figure>
+<p>دستخط شناخت چیک کے ساتھ، اس کے CNIC کی تصویر اور فون کے IMEI کے پاس محفوظ ہو جاتے ہیں۔ بعد میں بدلنے کے لیے <strong>دوبارہ دستخط</strong> دبائیں۔</p>
+<h3>پرنٹ شدہ اقرار نامہ</h3>
+<p><strong>بیچنے والے نے اقرار نامہ پر دستخط کیے</strong> کے ساتھ <strong>پرنٹ</strong> دبائیں (یا محفوظ کرنے کے بعد <strong>اقرار نامہ پرنٹ کریں</strong>)۔ اقرار نامہ اس زبان میں پرنٹ ہوتا ہے جو آپ <strong>دستاویز کی زبان</strong> میں چنیں (English یا اردو)۔ اس میں دکان، بیچنے والے کا نام اور CNIC، فون اور اس کا IMEI، تاریخ، اور <strong>لائن کے اوپر اس کے دستخط</strong> ہوتے ہیں۔ آپ اسے PDF کے طور پر ڈاؤن لوڈ یا WhatsApp پر شیئر بھی کر سکتے ہیں۔</p>
+<aside class="tip"><strong>مشورہ:</strong> کچھ دکانیں اب بھی قلم سے دستخط شدہ کاغذی کاپی بھی پسند کرتی ہیں۔ پرنٹ کریں، اس سے دستخط کروائیں، اور فائل میں رکھ لیں۔ اسکرین والے دستخط ہر صورت ایپ میں محفوظ رہتے ہیں۔</aside>
+<h3>محفوظ کرنے کے بعد</h3>
+<p>نتیجے کی اسکرین بتاتی ہے کہ آپ کہاں کھڑے ہیں:</p>
+<ul>
+<li><strong>شناختی کارڈ چیک مکمل۔ یہ فون بیچا جا سکتا ہے۔</strong> ساتھ <strong>یہ فون ابھی بیچیں</strong> کا بٹن۔</li>
+<li><strong>محفوظ ہو گیا، مگر چیک ابھی مکمل نہیں۔ ابھی باقی: …</strong> باقی کام ہونے تک فون <strong>شناخت چیک باقی</strong> رہتا ہے۔</li>
+<li><strong>چوری کا شبہ۔ اسے نہ بیچیں؛ صرف مالک اجازت دے سکتا ہے۔</strong> فون پر <strong>چوری؟ نہ بیچیں</strong> آتا ہے۔</li>
+</ul>
+<p>وہاں سے آپ <strong>فون پر واپس</strong>، <strong>اقرار نامہ پرنٹ کریں</strong> یا <strong>کچھ بدلنا ہے</strong> پر جا سکتے ہیں۔</p>
+<h3>مالک کی اجازت</h3>
+<p>کبھی کاغذات کسی معقول وجہ سے نہیں ہوتے، مثلاً کسی قریبی رشتہ دار سے خریدا گیا فون۔ مالک یا منیجر <strong>مالک کی اجازت</strong> میں <strong>اجازت کی وجہ</strong> (کم از کم 5 حروف) لکھ سکتا ہے، مثلاً <em>3 سال سے پکا گاہک، شناختی کارڈ دیکھا</em>۔ پھر چیک مکمل مانا جاتا ہے۔ وجہ اور یہ کرنے والے کا نام فون کی ہسٹری میں رہتے ہیں۔</p>
+<h3>جس فون کا چیک باقی ہو</h3>
+<p>جس فون کا چیک نہ ہوا ہو وہ غلطی سے نہیں بک سکتا۔ بیچتے وقت ایپ کہتی ہے <em>"اس فون کا شناختی کارڈ چیک باقی ہے"</em> اور <strong>فروخت مکمل کریں</strong> گرے رہتا ہے جب تک آپ یہ نہ چنیں:</p>
+<ul>
+<li><strong>ابھی چیک کریں</strong>: تصدیق کی اسکرین کھولتا ہے۔</li>
+<li><strong>چھوڑ کر بیچیں (میں جانتا ہوں)</strong>: جسے بیچنے کی اجازت ہے وہ یہ کر سکتا ہے۔ آپ کا نام فون کی ہسٹری میں محفوظ ہوتا ہے اور مالک اسے آڈٹ میں دیکھتا ہے۔</li>
+</ul>
+<p>جس فون پر <strong>چوری؟ نہ بیچیں</strong> لگا ہو اسے صرف <strong>مالک</strong> لکھی ہوئی وجہ کے ساتھ بیچ سکتا ہے۔ جس ٹیبلٹ یا گھڑی پر لاک <strong>ابھی لگا ہے</strong> ہو وہ لاک ہٹنے تک بالکل نہیں بک سکتی۔</p>
+<h2 id="c8">8. بیچنا</h2>
+<p>بیچنے کے تین قدم ہیں، جو اوپر دکھتے ہیں: <strong>1 کون سا فون؟ ← 2 کتنے میں؟ ← 3 مکمل</strong>۔ ٹوٹل ایپ خود نکالتی ہے؛ آپ صرف طے شدہ قیمت لکھتے ہیں۔</p>
+<h3>قدم 1: فون چنیں</h3>
+<ol>
+<li>ہوم پر <strong>بیچیں</strong> دبائیں۔</li>
+<li>فون ڈھونڈیں: تلاش کے خانے میں IMEI کا کچھ حصہ، ماڈل، برانڈ یا نام لکھیں، یا ڈبہ یا دکان کا اسٹیکر پڑھنے کے لیے <strong>اسکین</strong> دبائیں۔</li>
+<li>لسٹ چھوٹی کرنے کے لیے <strong>سب</strong>، <strong>موبائل</strong>، <strong>ٹیبلٹ</strong> اور <strong>سمارٹ واچ</strong> کے بٹن استعمال کریں۔</li>
+<li><strong>جو فون بیچ رہے ہیں اس پر ٹیپ کریں</strong> کے نیچے فون دبائیں۔</li>
+</ol>
+<figure><img src="img/ur/sale-pick.jpg" alt=""><figcaption>تصویر 10: بیچیں، قدم 1: فون چنیں</figcaption></figure>
+<p>ہر لائن میں ماڈل، IMEI (یا گھڑی کا سیریل)، حالت، PTA کا نشان (مثلاً <strong>جے وی</strong>)، چیک کی حالت (<strong>شناخت چیک ہو گیا</strong> یا <strong>شناخت چیک باقی</strong>)، مانگی قیمت اور <strong>اسٹاک میں</strong> ہوتا ہے۔</p>
+<aside class="tip"><strong>مشورہ:</strong> USB اسکینر کے ساتھ آپ کو تلاش کا خانہ دبانے کی بھی ضرورت نہیں۔ بیچنے کی اسکرین پر فون کا اسٹیکر اسکین کریں اور وہ اپنی مانگی قیمت کے ساتھ بل میں آ جاتا ہے۔ کوئی ایکسیسری دو بار اسکین کریں تو اس کی تعداد 2 ہو جاتی ہے۔</aside>
+<h3>نقد بِکری</h3>
+<p><strong>مثال:</strong> آپ ایک <strong>Vivo Y28 128GB</strong> <strong>Rs. 36,000</strong> نقد میں، 1 مہینے کی وارنٹی کے ساتھ بیچتے ہیں۔ چارجر ابھی ساتھ جاتا ہے؛ ہینڈز فری کا اگلے ہفتے کا وعدہ ہے۔</p>
+<ol>
+<li>فون چنیں۔ قدم 2 کھلتا ہے۔</li>
+<li><strong>کتنے میں بیچا؟ (روپے)</strong> میں مانگی قیمت بھری ہوتی ہے۔ اگر کوئی اور قیمت طے ہوئی ہو تو اسے <code>36000</code> کر دیں۔</li>
+<li><strong>وارنٹی</strong>: <strong>کوئی نہیں</strong>، <strong>7 دن</strong>، <strong>1 مہینہ</strong>، <strong>3 مہینے</strong>، <strong>6 مہینے</strong> یا <strong>1 سال</strong> دبائیں۔ یہاں: <strong>1 مہینہ</strong>۔</li>
+<li><strong>فون کے ساتھ کیا کیا دے رہے ہیں؟</strong> ہر چیز کے لیے <strong>نہیں</strong>، <strong>دے دیا</strong> یا <strong>بعد میں</strong> دبائیں۔ یہاں: چارجر <strong>دے دیا</strong>، ہینڈز فری <strong>بعد میں</strong>، اور <strong>کب دیں گے؟</strong> میں تاریخ۔ جو چیزیں فون کے ساتھ آئی تھیں وہ <strong>دے دیا</strong> سے شروع ہوتی ہیں۔</li>
+<li>بل میں اور کچھ چاہیے؟ <strong>+ ایک اور فون</strong>، <strong>ایکسیسری / گھڑی</strong> (اسٹاک سے گنتی والی چیز) یا <strong>+ چارجر، کور یا دوسرا سامان</strong> (کھلی لائن، اسٹاک نہیں بدلتا) دبائیں۔ <strong>رعایت اور گاہک</strong> رعایت کا خانہ اور اختیاری گاہک کھولتا ہے۔</li>
+<li><strong>پیسے کیسے ملے؟</strong> <strong>نقد</strong> دبائیں۔</li>
+<li><strong>کل</strong> چیک کریں اور <strong>فروخت مکمل کریں</strong> دبائیں۔</li>
+<li><strong>بیچنے سے پہلے چیک کریں</strong> والی اسکرین ہر فون کی بیچی گئی قیمت اس کی مانگی قیمت کے سامنے دکھاتی ہے (اور مالک اور منیجر کے لیے اس کی لاگت اور منافع)۔ <strong>تصدیق کریں اور بل بنائیں</strong> دبائیں۔</li>
+</ol>
+<figure><img src="img/ur/sale-pay.jpg" alt=""><figcaption>تصویر 11: قدم 2: فون کے ساتھ کیا جا رہا ہے، مزید لائنیں، اور ٹیکس</figcaption></figure>
+<p>مکمل ہونے والی اسکرین پر <strong>فروخت مکمل</strong>، رقم اور بل نمبر آتا ہے، مثلاً <code>INV-000018</code>۔</p>
+<aside class="note"><strong>نوٹ:</strong> بغیر گاہک کی نقد بِکری میں پورے پیسے لینے ضروری ہیں۔ کچھ پیسوں کے لیے <strong>ادھار</strong> استعمال کریں اور گاہک چنیں۔</aside>
+<h3>ادھار بِکری</h3>
+<p><strong>مثال:</strong> <strong>Imran Ali</strong> ایک <strong>Redmi Note 13</strong> <strong>Rs. 58,000</strong> میں لیتا ہے۔ <strong>Rs. 20,000</strong> ابھی دیتا ہے اور باقی 30 تاریخ تک دینے کا وعدہ کرتا ہے۔</p>
+<ol>
+<li>فون چنیں اور قیمت چیک کریں۔</li>
+<li><strong>پیسے کیسے ملے؟</strong> کے نیچے <strong>ادھار</strong> دبائیں۔</li>
+<li><strong>اُدھار کس نے لیا؟</strong> <code>Imran</code> تلاش کریں اور <strong>Imran Ali</strong> دبائیں، یا نئے بندے کے لیے <strong>+</strong> دبائیں۔</li>
+<li><strong>ابھی کتنے ملے؟ (اگر ملے)</strong>: <code>20000</code> لکھیں۔ <strong>باقی اُدھار</strong> میں <strong>38,000</strong> آتا ہے۔</li>
+<li><strong>ادائیگی کا وعدہ (اختیاری)</strong>: 30 تاریخ چنیں۔ 31 سے آڈٹ اس ادھار کو لیٹ دکھاتا ہے۔</li>
+<li><strong>فروخت مکمل کریں</strong> دبائیں، پھر <strong>تصدیق کریں اور بل بنائیں</strong>۔</li>
+</ol>
+<p>Imran Ali اب <strong>ادھار ← مجھے لینے ہیں</strong> میں Rs. 38,000 کے ساتھ آ جاتا ہے۔ جب وہ پیسے دے تو <strong>ادھار ← پیسے ملے</strong> استعمال کریں۔</p>
+<aside class="tip"><strong>مشورہ:</strong> ہر مہینے پیسے دینے والے گاہک کے لیے اسی اسکرین پر <strong>قسطوں پر بیچیں</strong> آن کریں۔ ایپ ایڈوانس، ماہانہ رقم، آخری تاریخوں اور ضامن کے ساتھ پلان بنا دیتی ہے۔ <strong>مثال:</strong> فون Rs. 1,20,000، ایڈوانس Rs. 30,000، 6 مہینے، تو Rs. 15,000 مہینہ۔</aside>
+<h3>پیسے لینے کے طریقے</h3>
+<p><strong>پیسے کیسے ملے؟</strong> کے نیچے ایک بڑا بٹن دبائیں:</p>
+<table><thead><tr><th>بٹن</th><th>کب</th><th>کیا پوچھتا ہے</th></tr></thead><tbody><tr><td><strong>نقد</strong></td><td>ہاتھ میں پیسے</td><td>اور کچھ نہیں</td></tr><tr><td><strong>آن لائن</strong></td><td>بینک ایپ، IBFT، Raast، Easypaisa، JazzCash، SadaPay</td><td>کون سا بینک یا والٹ (یا <strong>کوئی اور بینک / والٹ</strong>)، اور چاہیں تو ٹرانزیکشن ID</td></tr><tr><td><strong>چیک</strong></td><td>گاہک چیک دیتا ہے</td><td>بینک، چیک نمبر اور چیک کی تاریخ</td></tr><tr><td><strong>بیرونِ ملک سے</strong></td><td>خریدار کے گھر والے دوسرے ملک سے پیسے بھیجتے ہیں</td><td>کرنسی، رقم، ریٹ، بھیجنے والے کا نام، اور چاہیں تو Western Union / MoneyGram اور MTCN</td></tr><tr><td><strong>ادھار</strong></td><td>پیسے بعد میں</td><td>گاہک، اور وہ ابھی کتنے دیتا ہے</td></tr></tbody></table>
+<p><strong>مثال (بیرونِ ملک سے):</strong> Usman کا بھائی ریاض سے <strong>Rs. 37,100</strong> کے فون کے لیے Western Union سے <strong>500 SAR</strong> بھیجتا ہے۔ <strong>بیرونِ ملک سے</strong> دبائیں، <strong>SAR</strong> چنیں، <code>500</code> اور ریٹ <code>74.20</code> لکھیں۔ ایپ <strong>Rs. 37,100</strong> دکھاتی ہے۔ بھیجنے والے کا نام لکھیں، <strong>Western Union</strong> دبائیں اور بِکری مکمل کریں۔ اگر پیسے بل سے کم ہوں تو باقی گاہک کے ادھار میں چلا جاتا ہے۔</p>
+<p>رسید پر لکھا ہوتا ہے کہ پیسے کیسے ملے، مثلاً <em>Online · Meezan Bank · Ref TID778812</em>، اور دن کا حساب دکھاتا ہے کہ ہر طریقے سے کتنا آیا۔</p>
+<h3>مانگی قیمت اور کم سے کم قیمت</h3>
+<p>ہر فون کی ایک <strong>مانگی قیمت</strong> ہوتی ہے، جو خریدتے وقت رکھی گئی۔ بیچتے وقت مانگی قیمت <strong>کتنے میں بیچا</strong> میں بھری ہوتی ہے۔ یہ ایک ہدف ہے؛ آپ اصل طے شدہ قیمت لکھتے ہیں۔</p>
+<ul>
+<li>اگر آپ مانگی قیمت سے کم بیچیں تو <strong>بیچنے سے پہلے چیک کریں</strong> والی اسکرین ایک سرخ لائن دکھاتی ہے، مثلاً <em>مانگی قیمت سے Rs. 2,000 کم</em>۔</li>
+<li>اگر مارکیٹ بدل گئی ہو تو <strong>طے قیمت بدلیں</strong> پر نشان لگائیں، <strong>نئی طے شدہ قیمت</strong> اور <strong>وجہ</strong> لکھیں، مثلاً <em>نیا ماڈل آ گیا، ریٹ Rs. 4,000 گر گیا</em>۔ یہ تبدیلی آپ کے نام کے ساتھ فون کی ہسٹری میں لکھی جاتی ہے۔</li>
+<li>ایکسیسری کی ایک <strong>کم سے کم قیمت</strong> ہو سکتی ہے۔ اس سے نیچے جائیں تو لائن پر لکھا آتا ہے <strong>کم سے کم قیمت سے کم — منیجر چاہیے</strong>۔</li>
+</ul>
+<p>مانگی قیمت سے نیچے کون جا سکتا ہے، یہ مالک <strong>دکان کی سیٹنگز ← قیمت کے اصول</strong> میں طے کرتا ہے۔ <strong>طے قیمت سے کم بیچنا</strong> اور <strong>طے قیمت بدلنا</strong> میں سے ہر ایک کے لیے وہ <strong>کوئی بھی</strong>، <strong>مالک / منیجر</strong> یا <strong>مالک کے پن سے</strong> چنتا ہے۔ مالک اور منیجر کو ہمیشہ اجازت ہے۔</p>
+<p><strong>مثال:</strong> مانگی قیمت Rs. 65,000 ہے۔ سیلز مین Rs. 62,000 طے کرتا ہے۔ دکان کا اصول <strong>مالک کے پن سے</strong> ہے۔ چیک والی اسکرین پر <strong>مالک کا پن</strong> کا خانہ آتا ہے؛ مالک اپنا پن لکھتا ہے اور <strong>پن کے ساتھ تصدیق</strong> دباتا ہے۔ فون کی ہسٹری میں مانگی قیمت سے Rs. 3,000 کم، سیلز مین کا نام اور مالک کی منظوری آ جاتی ہے۔</p>
+<aside class="note"><strong>نوٹ:</strong> پانچ غلط پن پر پن کا خانہ دس منٹ کے لیے بند ہو جاتا ہے۔</aside>
+<h3>خرید قیمت سے کم قیمت</h3>
+<p>اگر <strong>کتنے میں بیچا</strong> دکان کی دی گئی قیمت سے کم ہو تو ایک سرخ خانہ کہتا ہے کہ قیمت خرید قیمت سے کم ہے اور یہ نقصان ہے۔</p>
+<ul>
+<li><strong>مالک یا منیجر</strong>: اجازت دینے کے لیے <strong>مجھے پتا ہے، نقصان پر بیچیں</strong> دبائیں۔</li>
+<li><strong>سیلز مین</strong>: بِکری نہیں ہوتی۔ اسے قیمت بڑھانی ہوگی یا مالک کو بلانا ہوگا۔</li>
+</ul>
+<p><strong>مثال:</strong> Rs. 50,000 میں خریدا، Rs. 47,000 لکھا۔ یہ Rs. 3,000 کا نقصان ہے؛ اسے صرف مالک یا منیجر منظور کر سکتا ہے۔</p>
+<h3>ریٹ کا مشورہ</h3>
+<p><strong>کتنے میں بیچا</strong> کے نیچے ایک سبز خانہ اس فون کا آپ کا اپنا ریٹ دکھاتا ہے، مثلاً <em>آخری بار Rs. 57,500 میں 12-10-2026 کو بیچا</em>، بکنے میں کتنے دن لگے، چھ مہینے میں کتنے بیچے اور کس ریٹ کے بیچ، اور ابھی اسٹاک میں کتنے ہیں۔ مشورے والی قیمت لینے کے لیے <strong>استعمال کریں …</strong> دبائیں، جو آپ کی حالیہ بِکری کا درمیانہ ریٹ ہے، سو تک پورا کیا ہوا۔ مالک اور منیجر کو <em>عام طور پر Rs. … میں خریدا</em> بھی دکھتا ہے۔</p>
+<h3>ٹیکس اور آئٹم GST</h3>
+<p>ہر بِکری پر ٹیکس <strong>بند</strong> ہوتا ہے جب تک آپ اسے نہ لگائیں۔</p>
+<ol>
+<li><strong>اس بل پر ٹیکس لگائیں</strong> پر نشان لگائیں۔</li>
+<li><strong>ٹیکس %</strong> کا خانہ آتا ہے، دکان کے ریٹ سے شروع (عام طور پر 18)۔</li>
+<li>ٹیکس رعایت کے بعد بل کے اوپر جوڑا جاتا ہے، اور ٹوٹل پر لکھا آتا ہے کہ <strong>ٹیکس شامل</strong> ہے۔</li>
+</ol>
+<p><strong>آئٹم GST۔</strong> کسی ایکسیسری کا اپنا <strong>GST % (اختیاری)</strong> ہو سکتا ہے، جو <strong>ایکسیسریز</strong> میں اس کے صفحے پر رکھا جاتا ہے۔ ٹیکس والے بل پر اس چیز پر اس کے اپنے ریٹ سے ٹیکس لگتا ہے؛ فون اور بغیر ریٹ والی چیزیں بل کا ریٹ لیتی ہیں۔ پھر رسید پر لکھا آتا ہے <strong>ٹیکس (آئٹم وار)</strong>۔ بغیر ٹیکس کا بل بغیر ٹیکس ہی رہتا ہے۔</p>
+<p><strong>مثال:</strong> 18% ٹیکس والے بل میں Rs. 10,000 کا ایک فون اور Rs. 500 والی دو کیبلیں ہیں جن کا GST 5% ہے۔ فون پر ٹیکس Rs. 1,800 اور کیبلوں پر Rs. 50۔ بل کا ٹیکس Rs. 1,850 ہے اور رسید پر <strong>ٹیکس (آئٹم وار)</strong> آتا ہے۔ اسکرین اور رسید ہمیشہ پیسے پیسے تک ملتے ہیں۔</p>
+<h3>بِکری روکیں (ہولڈ)</h3>
+<p>گاہک ATM سے پیسے لینے گیا ہے؟ تب تک اگلے گاہک کو نمٹائیں۔</p>
+<ol>
+<li><strong>فروخت مکمل کریں</strong> کے نیچے <strong>سیل ہولڈ کریں</strong> دبائیں۔</li>
+<li><strong>ڈھونڈنے کے لیے نام (اختیاری)</strong> لکھیں، مثلاً <code>Ali ATM</code>، اور <strong>ہولڈ کریں</strong> دبائیں۔</li>
+<li>اسکرین اگلے گاہک کے لیے خالی ہو جاتی ہے۔ ابھی کچھ نہیں بکا اور فون اسٹاک میں ہی رہتا ہے۔</li>
+<li>جب Ali واپس آئے تو بیچنے کی اسکرین کے اوپر <strong>ہولڈ سیلز</strong> دبائیں، پھر <strong>دوبارہ کھولیں</strong>۔</li>
+</ol>
+<p>بل بالکل ویسا ہی واپس آتا ہے: قیمتیں، ٹیکس اور ادائیگی۔ ہولڈ بل دکان کے کسی بھی فون سے دوبارہ کھولا جا سکتا ہے۔ اگر اس دوران اس کا کوئی فون بک گیا ہو تو وہ بل سے نکال دیا جاتا ہے اور اسکرین آپ کو بتا دیتی ہے۔</p>
+<h3>رسید: پرنٹ، PDF اور WhatsApp</h3>
+<p><strong>فروخت مکمل</strong> کے بعد آپ یہ دبا سکتے ہیں:</p>
+<ul>
+<li>تھرمل پرنٹر کے لیے <strong>رسید پرنٹ (80mm)</strong>، یا عام پرنٹر کے لیے <strong>بل پرنٹ (A4)</strong>۔</li>
+<li>بل فائل کی صورت میں رکھنے کے لیے <strong>PDF ڈاؤن لوڈ</strong>۔</li>
+<li>WhatsApp، Gmail یا فون کی کسی بھی ایپ پر بھیجنے کے لیے <strong>PDF شیئر کریں</strong>۔</li>
+<li>دوبارہ شروع کرنے کے لیے <strong>ایک اور فروخت</strong>، یا بل کھولنے کے لیے <strong>فروخت دیکھیں</strong>۔</li>
+</ul>
+<p>یہی بٹن ہر بِکری کے صفحے پر ہوتے ہیں، جو آپ بعد میں <strong>بل</strong> سے کھول سکتے ہیں۔ صفحے پر گاہک، تاریخ، کس نے بیچا، ہر لائن، ٹوٹل، کتنے ملے، کتنے باقی ہیں اور، مالک اور منیجر کے لیے، منافع ہوتا ہے۔</p>
+<figure><img src="img/ur/sale-done.jpg" alt=""><figcaption>تصویر 12: دستاویز کی زبان کے بٹن کے ساتھ بِکری کا صفحہ</figcaption></figure>
+<p>پرنٹ کے بٹنوں کے بالکل اوپر <strong>دستاویز کی زبان</strong> ہے جس میں <strong>English</strong> اور <strong>اردو</strong> ہیں۔ شروع میں English چنا ہوتا ہے؛ یہ بل اردو میں پرنٹ یا شیئر کرنے کے لیے <strong>اردو</strong> دبائیں۔</p>
+<aside class="note"><strong>اہم:</strong> مکمل ہوئے بل کی رقمیں کوئی بھی نہیں بدل سکتا۔ اگر کچھ غلط تھا تو <strong>واپسی</strong> سے فون واپس لیں اور نیا بل بنائیں۔ دونوں ریکارڈ میں رہتے ہیں، اس لیے حساب ہمیشہ صاف رہتا ہے۔</aside>
+<h2 id="c9">9. واپسی</h2>
+<p>کبھی کبھی گاہک فون واپس لے آتا ہے: اس میں خرابی ہے، وہ اس کی پسند کا نہیں نکلا، یا بس اس کا ارادہ بدل گیا۔ <strong>واپسی</strong> والی اسکرین فون کو واپس آپ کے اسٹاک میں لے لیتی ہے، حساب لگاتی ہے کہ گاہک کو کتنے واپس دینے ہیں اور دکان کتنے رکھے گی، اور سب کچھ ریکارڈ میں لکھ دیتی ہے۔ کچھ بھی مٹایا نہیں جاتا: اصل بل ویسے ہی رہتا ہے، اور واپسی اس کے ساتھ اپنے نمبر سے جڑ جاتی ہے (مثلاً <strong>RET-000001</strong>)۔</p>
+<p>واپسی تین چھوٹے مرحلوں میں ہوتی ہے: <strong>کیا واپس آیا؟</strong>، <strong>کتنے واپس دینے ہیں؟</strong> اور <strong>ہو گیا</strong>۔</p>
+<h3>شروع کرنے سے پہلے</h3>
+<ul>
+<li>آپ کو بکا ہوا فون (یا وہ بل جس پر بکا تھا) چاہیے۔ اسے IMEI، خریدار کے نام یا خریدار کے فون نمبر سے ڈھونڈ سکتے ہیں۔</li>
+<li>اگر فون کسی بغیر نام والے گاہک کو بکا تھا تو ایپ پوچھے گی <strong>کس نے واپس کیا؟</strong> تاکہ رقم کسی بندے کے نام پر لکھی جائے۔</li>
+<li>کتنے واپس دینے ہیں، یہ دکان طے کرتی ہے۔ ایپ کبھی پوری رقم واپس کرنے پر مجبور نہیں کرتی۔</li>
+</ul>
+<h3>فون واپس لیں، قدم بہ قدم</h3>
+<p><strong>مثال:</strong> <strong>Usman Tariq</strong> نے <strong>Vivo Y17s</strong> نقد <strong>Rs. 37,000</strong> میں خریدا۔ دو دن بعد وہ اسپیکر کی خرابی کی وجہ سے اسے واپس لے آیا۔ آپ اسے <strong>Rs. 35,000</strong> واپس دینے پر راضی ہوتے ہیں اور زحمت کے <strong>Rs. 2,000</strong> رکھ لیتے ہیں۔</p>
+<ol>
+<li>ہوم پر <strong>واپسی</strong> دبائیں۔ آپ بکے ہوئے فون کا اپنا صفحہ کھول کر وہاں سے بھی <strong>واپسی</strong> دبا سکتے ہیں۔</li>
+<li>مرحلہ <strong>1/3 · کیا واپس آیا؟</strong> میں ایک سرچ باکس <strong>بِکا ہوا فون IMEI، خریدار کے نام یا فون سے ڈھونڈیں</strong> اور حال ہی میں بکے فونوں کی لسٹ نظر آتی ہے۔ IMEI کا کچھ حصہ لکھیں (مثلاً <strong>6706</strong>) یا <strong>Usman</strong>، یا <strong>اسکین</strong> دبا کر فون کا بارکوڈ یا IMEI اسکین کریں۔</li>
+<li>لسٹ میں <strong>Vivo Y17s</strong> پر دبائیں۔ آپ <strong>یا حالیہ فروخت میں سے چنیں</strong> سے پورا بل بھی چن سکتے ہیں۔</li>
+<li>مرحلہ 2 میں اس بل کی ہر لائن ٹک باکس کے ساتھ نظر آتی ہے۔ جس فون پر آپ نے دبایا وہ پہلے سے ٹک ہے۔ اگر بل پر چارجر یا کور بھی تھا جو واپس آ رہا ہے تو اسے بھی ٹک کریں۔ جو لائنیں پہلے واپس ہو چکی ہیں وہ ہلکی دکھتی ہیں اور ان پر <strong>واپس</strong> لکھا ہوتا ہے۔</li>
+<li>اگر فروخت پر گاہک کا نام نہیں تھا تو <strong>کس نے واپس کیا؟</strong> میں بندہ چنیں (یا نیا بندہ شامل کریں)۔</li>
+<li><strong>گاہک نے دیے تھے</strong> دکھاتا ہے کہ ٹک کی ہوئی لائنوں کے لیے گاہک نے اصل میں کتنے دیے: یہاں <strong>37,000</strong>۔</li>
+<li><strong>کہاں سے لوٹائیں</strong> میں دبائیں کہ پیسے کہاں سے جائیں گے: <strong>نقد</strong> (آپ کا گلہ) یا آپ کا کوئی بینک / والٹ اکاؤنٹ۔ جانے پہچانے گاہک کے لیے <strong>کھاتے میں جمع</strong> بھی ہے: پیسے دیے نہیں جاتے، اس کے کھاتے میں رہتے ہیں اور وہ اگلی خریداری میں استعمال کر سکتا ہے۔</li>
+<li><strong>گاہک کو واپس دیے (روپے)</strong> میں پوری رقم پہلے سے بھری ہوتی ہے۔ اسے <strong>35000</strong> کر دیں۔ <strong>دکان نے کاٹے</strong> والا خانہ خود بخود <strong>2,000</strong> دکھائے گا۔</li>
+<li><strong>کیوں؟ (اگر بتانا ہو)</strong> میں وجہ لکھیں، مثلاً <strong>اسپیکر خراب</strong>۔</li>
+<li><strong>واپس لیں</strong> دبائیں۔</li>
+</ol>
+<figure><img src="img/ur/return.jpg" alt=""><figcaption>تصویر 13: واپسی کی اسکرین: بکا ہوا فون IMEI، نام یا فون سے ڈھونڈیں، یا اسکین کریں</figcaption></figure>
+<p>آخری مرحلہ <strong>واپسی ہو گئی</strong> دکھاتا ہے، ساتھ واپس دی گئی رقم، دکان کی کاٹی ہوئی رقم اور واپسی کا نمبر۔ اس کے نیچے: <strong>فون واپس اسٹاک میں آ گیا</strong>۔ اگلی واپسی کے لیے <strong>ایک اور واپسی</strong> دبائیں، یا ہوم پر جائیں۔</p>
+<h3>اسکرین کے پیچھے کیا ہوتا ہے</h3>
+<ul>
+<li>فون کی حالت واپس <strong>اسٹاک میں</strong> ہو جاتی ہے اور اسے دوبارہ بیچا جا سکتا ہے۔ اس کی ہسٹری میں <strong>فروخت واپس</strong> کی لائن بندے، رقم اور وجہ کے ساتھ آ جاتی ہے۔</li>
+<li>دکان نے جو Rs. 2,000 رکھے وہ آمدنی میں گنے جاتے ہیں۔ دن کے حساب میں <strong>واپسی پر دیے</strong> (Rs. 35,000) اور <strong>واپسی پر کاٹے</strong> (Rs. 2,000) الگ الگ لائنوں میں آتے ہیں، تاکہ نقدی کی گنتی پھر بھی ملے۔</li>
+<li>اصل فروخت مٹائی نہیں جاتی۔ بل پر اور رپورٹوں میں واپس ہونے والی لائن کٹی ہوئی دکھتی ہے اور اس پر <strong>واپس</strong> لکھا ہوتا ہے۔</li>
+<li>جو چارجر یا کور آپ نے ٹک کیا وہ اس چیز کی اسٹاک گنتی میں واپس جڑ جاتا ہے۔</li>
+</ul>
+<h3>ادھار پر بکا ہوا فون</h3>
+<p>اگر فون ادھار پر بکا تھا اور گاہک نے کچھ نہیں دیا تھا تو ایپ دکھاتی ہے <strong>اس کے پیسے نہیں دیے تھے، اُدھار سے کم ہو جائے گا</strong>۔ کوئی نقدی نہیں ہلتی: رقم بس اس کے ذمے ادھار سے کم ہو جاتی ہے۔</p>
+<p>اگر اس نے کچھ حصہ دیا تھا تو صرف دیا ہوا حصہ ہی واپس ہو سکتا ہے؛ باقی اس کے ادھار سے کم ہو جاتا ہے۔</p>
+<p><strong>مثال:</strong> Bilal نے Rs. 50,000 کا فون لیا، Rs. 20,000 دیے اور Rs. 30,000 ادھار ہیں۔ وہ فون واپس کرتا ہے۔ <strong>گاہک نے دیے تھے</strong> میں <strong>20,000</strong> آتا ہے۔ آپ Rs. 18,000 نقد واپس دیتے ہیں اور دکان Rs. 2,000 کاٹتی ہے۔ اس فون کا Rs. 30,000 ادھار ختم ہو جاتا ہے۔</p>
+<aside class="tip"><strong>مشورہ:</strong> غلط بل کوئی بھی تبدیل نہیں کر سکتا۔ اگر فروخت غلط قیمت یا غلط فون کے ساتھ درج ہو گئی تو یہاں واپسی کریں اور نیا بل بنائیں۔ دونوں ریکارڈ میں رہتے ہیں، اس لیے کوئی چپکے سے فروخت نہیں بدل سکتا۔</aside>
+<aside class="note"><strong>نوٹ:</strong> اس اسکرین پر اسکیننگ چلتی ہے۔ USB اسکینر سے فون کا بارکوڈ اسکین کریں اور ایپ سیدھا اس فون کے مرحلہ 2 پر چلی جاتی ہے۔</aside>
+<h2 id="c10">10. ایکسچینج</h2>
+<p>ایکسچینج (یا اپ گریڈ) یہ ہے کہ گاہک اپنا پرانا فون دے اور نیا فون لے، اور فرق کے پیسے دے۔ <strong>ایکسچینج / اپ گریڈ</strong> والی اسکرین دونوں کام ایک ساتھ کرتی ہے: پرانا فون خرید کر آپ کے اسٹاک میں ڈالتی ہے اور نیا فون بیچتی ہے، اور فرق کا حساب خود لگاتی ہے۔</p>
+<p>اس کے چار مرحلے ہیں: <strong>گاہک</strong>، پرانا فون، نیا فون، اور <strong>حساب</strong>۔</p>
+<h3>ایکسچینج کریں، قدم بہ قدم</h3>
+<p><strong>مثال:</strong> <strong>Bilal Ahmed</strong> اپنا پرانا <strong>Oppo A17</strong> لاتا ہے۔ آپ اس کی قیمت <strong>Rs. 18,000</strong> لگاتے ہیں۔ وہ <strong>Rs. 54,000</strong> والا <strong>Infinix Note 40</strong> لیتا ہے۔ فرق Rs. 36,000 ہے۔ وہ ابھی <strong>Rs. 30,000</strong> دیتا ہے، اور <strong>Rs. 6,000</strong> اس کے کھاتے میں جاتے ہیں۔</p>
+<ol>
+<li><strong>مزید ← ایکسچینج (پرانا دے کر نیا)</strong> پر جائیں۔ اسکرین کا نام <strong>ایکسچینج / اپ گریڈ</strong> ہے۔</li>
+<li>مرحلہ <strong>1/4 · گاہک</strong>: <strong>گاہک منتخب کریں</strong> میں نام، فون یا CNIC سے ڈھونڈیں اور <strong>Bilal Ahmed</strong> پر دبائیں۔ اگر وہ نیا ہے تو <strong>+</strong> کا بٹن دبا کر شامل کریں۔ ہر نام کے ساتھ اس کا موجودہ حساب نظر آتا ہے، مثلاً <strong>مجھے لینے ہیں</strong> (اس نے آپ کو دینے ہیں) یا <strong>مجھے دینے ہیں</strong> (آپ نے اسے دینے ہیں)۔ <strong>اگلا</strong> دبائیں۔</li>
+<li><strong>پرانا موبائل درج کریں</strong> دبائیں۔ اسے بالکل فون خریدنے کی طرح بھریں: IMEI <strong>358812091717195</strong>، برانڈ <strong>Oppo</strong>، ماڈل <strong>A17</strong>، اسٹوریج، رنگ، حالت اور PTA کی حالت۔ <strong>خرید قیمت</strong> میں <strong>18000</strong> لکھیں: یہ پرانے فون کی قیمت ہے۔ اگر آپ کو پہلے سے پتہ ہے کہ اسے کتنے میں بیچیں گے تو <strong>فروخت کی قیمت</strong> لکھیں، مثلاً <strong>22000</strong>۔ <strong>شامل کریں</strong> دبائیں، پھر <strong>اگلا</strong>۔</li>
+<li>پرانا فون اب ایک کارڈ کی شکل میں اپنی قیمت کے ساتھ نظر آتا ہے۔ اگر غلطی ہو گئی تو <strong>پرانا موبائل بدلیں</strong> دبائیں۔</li>
+<li><strong>اسٹاک سے نیا موبائل چنیں</strong>: <strong>Infinix Note 40</strong> پر دبائیں۔ <strong>فروخت قیمت</strong> (<strong>54000</strong>) دیکھ لیں اور <strong>اگلا</strong> دبائیں۔</li>
+<li><strong>حساب</strong> دونوں فون دکھاتا ہے، پھر <strong>نیا موبائل</strong> 54,000، <strong>پرانے فون کی قیمت</strong> منفی 18,000 (اور <strong>پچھلا بقایا</strong> اگر اس کے ذمے پہلے سے کچھ تھا)، اور ایک رنگین کارڈ جو لفظوں میں بتاتا ہے: <strong>فرق گاہک دے گا Rs. 36,000</strong>۔</li>
+<li><strong>ابھی ادا</strong> میں لکھیں: <strong>30000</strong>۔ اس کے نیچے ایپ یاد دلاتی ہے: <strong>اس سے کم: باقی ان کے کھاتے پر جائے گا۔</strong> <strong>نیا بقایا</strong> اس ایکسچینج کے بعد اس کا پورا کھاتہ دکھاتا ہے: اگر پہلے اس کے ذمے کچھ نہیں تھا تو <strong>6,000</strong> دکھائے گا۔</li>
+<li><strong>ایکسچینج مکمل کریں</strong> دبائیں۔</li>
+</ol>
+<figure><img src="img/ur/exchange.jpg" alt=""><figcaption>تصویر 14: ایکسچینج / اپ گریڈ، مرحلہ 1: گاہک چنیں</figcaption></figure>
+<p>اسکرین <strong>ایکسچینج مکمل</strong> دکھاتی ہے، ساتھ رسید پرنٹ کرنے (80mm تھرمل یا A4)، ڈاؤن لوڈ یا شیئر کرنے، <strong>بل کھولیں</strong>، یا <strong>ایک اور ایکسچینج</strong> شروع کرنے کے بٹن۔</p>
+<h3>جب پرانا فون زیادہ قیمت کا ہو</h3>
+<p>کبھی گاہک کا فون اس فون سے زیادہ قیمت کا ہوتا ہے جو وہ لے رہا ہے۔ تب کارڈ کہتا ہے <strong>فرق آپ واپس دیں گے</strong>، اور خلاصے میں <strong>گاہک کو واپسی</strong> آتا ہے۔ اگر دونوں برابر ہوں تو لکھا آتا ہے <strong>کسی کو کچھ نہیں دینا</strong>۔</p>
+<h3>ایکسچینج کے بعد</h3>
+<ul>
+<li>پرانا فون اب آپ کے اسٹاک میں ہے، Bilal سے Rs. 18,000 میں خریدا ہوا۔ اس کا اپنا صفحہ اور ہسٹری ہے، باقی ہر خریداری کی طرح۔</li>
+<li>چونکہ پرانا فون گاہک سے آیا ہے، اس کا <strong>شناختی کارڈ چیک</strong> (CNIC، اقرار نامہ وغیرہ) بالکل ویسے کریں جیسے کسی بھی پرانے خریدے ہوئے فون کا کرتے ہیں۔ پرانے ٹیبلٹ اور گھڑیوں کا لاک چیک بھی کریں۔</li>
+<li>نیا فون عام بل پر بکتا ہے۔ منافع، دن کا حساب اور Bilal کا کھاتہ سب ایک ساتھ اپ ڈیٹ ہو جاتے ہیں۔</li>
+</ul>
+<aside class="tip"><strong>مشورہ:</strong> شروع کرنے سے پہلے گاہک کے ساتھ پرانے فون کی قیمت طے کر لیں۔ جو قیمت آپ <strong>خرید قیمت</strong> میں لکھتے ہیں وہی اس فون کی خرید قیمت بن جاتی ہے، اس لیے بعد میں اس پر منافع اسی رقم سے نکلتا ہے۔</aside>
+<h2 id="c11">11. اسٹاک، IMEI چیک اور فون کی ہسٹری</h2>
+<p>آپ کا سارا مال <strong>اسٹاک</strong> میں ہے۔ یہاں سے آپ دیکھ سکتے ہیں کہ اسٹاک کتنے کا ہے، کوئی بھی فون سیکنڈوں میں ڈھونڈ سکتے ہیں، چیک کر سکتے ہیں کہ کوئی IMEI پہلے آپ کی دکان میں آیا ہے یا نہیں، اور کسی فون کی آنے کے دن سے پوری کہانی کھول سکتے ہیں۔</p>
+<h3>اسٹاک کتنے کا ہے؟</h3>
+<p>نیچے والی پٹی میں <strong>اسٹاک</strong> دبائیں۔ پہلی اسکرین ہے <strong>اسٹاک کتنے کا ہے؟</strong></p>
+<ul>
+<li>اوپر: آپ کے پاس کتنے فون ہیں اور ان کی کل مالیت (رقم بڑی ہو تو لاکھ میں)۔</li>
+<li>نیچے: ہر برانڈ کی ایک لائن، کتنے فون اور ان کی مالیت۔ برانڈ پر دبا کر اس کے ماڈل دیکھیں۔</li>
+<li><strong>سب فون دیکھیں</strong> پوری اسٹاک لسٹ کھولتا ہے۔ <strong>ڈاؤن لوڈ</strong> یہی حساب فائل کی شکل میں دیتا ہے۔</li>
+</ul>
+<p>مالک اور منیجر کو مالیت لاگت پر دکھتی ہے۔ جس اسٹاف کو خرید قیمت دیکھنے کی اجازت نہیں، اسے فروخت کی قیمت پر دکھتی ہے۔</p>
+<h3>اسٹاک لسٹ</h3>
+<p>اسے <strong>سب فون دیکھیں</strong> سے کھولیں، یا <strong>مزید ← اسٹاک لسٹ</strong> سے۔</p>
+<p>اوپر پانچ بٹن ہیں: <strong>ڈاؤن لوڈ</strong>، <strong>شیئر</strong>، <strong>اسٹیکرز</strong>، <strong>IMEI چیک کریں</strong> اور <strong>اسٹاک ڈالیں</strong>۔ ان کے نیچے:</p>
+<ul>
+<li><strong>تلاش</strong>: IMEI، ماڈل، برانڈ، یا جس سے خریدا یا جسے بیچا اس کا نام یا فون نمبر لکھیں۔ کیمرہ استعمال کرنے کے لیے <strong>اسکین</strong> دبائیں، یا سیدھا USB اسکینر سے اسکین کریں۔</li>
+<li><strong>برانڈ کے گول بٹن</strong>: <strong>سب</strong>، پھر ہر برانڈ کا ایک گول بٹن اس کی گنتی کے ساتھ (مثلاً <strong>Apple · 2</strong>، <strong>Samsung · 2</strong>)۔ کسی پر دبائیں تو صرف وہی برانڈ دکھے گا۔</li>
+<li><strong>حالت کے بٹن</strong>: <strong>اسٹاک میں</strong>، <strong>امانت پر</strong>، <strong>فروخت</strong>، <strong>خراب</strong> اور <strong>سب</strong>۔</li>
+<li><strong>ترتیب</strong>: <strong>نئے پہلے</strong>، <strong>پرانے پہلے</strong>، <strong>قیمت: کم</strong>، <strong>قیمت: زیادہ</strong>۔</li>
+<li><strong>فلٹر</strong>: مزید انتخاب کھولتا ہے: <strong>گریڈ</strong> (Used A، Used B، Refurbished، Copy / China)، <strong>ریم (GB)</strong>، قیمت کی حد (کم سے کم اور زیادہ سے زیادہ فروخت قیمت)، اور ایک سوئچ <strong>لاک چیک نہیں ہوا</strong> جو صرف وہ پرانے موبائل دکھاتا ہے جن کا لاک چیک کبھی نہیں ہوا۔</li>
+</ul>
+<p>فلٹر کے نیچے ایپ بتاتی ہے کہ کتنے فون ملے، مثلاً <strong>7 موبائل</strong>۔ ہر فون ایک کارڈ ہے جس پر اس کا نام، رنگ اور اسٹوریج، فروخت کی قیمت، اور چار چھوٹے خانے ہیں: <strong>میموری</strong>، <strong>پی ٹی اے</strong>، <strong>حالت</strong> اور <strong>دن</strong> (کتنے دن سے دکان میں ہے)۔ نیچے IMEI، شناخت چیک کا نشان اور <strong>بیچیں</strong> کا بٹن ہے۔</p>
+<figure><img src="img/ur/stock-list.jpg" alt=""><figcaption>تصویر 15: اسٹاک لسٹ: تلاش، برانڈ کے گول بٹن، حالت کے بٹن اور فلٹر</figcaption></figure>
+<h3>اسٹاک لسٹ میں ٹیبلٹ اور سمارٹ واچ</h3>
+<p>ٹیبلٹ اور سمارٹ واچ فونوں کے ساتھ اسی اسٹاک میں رہتے ہیں۔ ان کے کارڈ وہ دکھاتے ہیں جو اس قسم کے لیے ضروری ہے: گھڑی اپنے کیس کا سائز اور <strong>GPS</strong> یا <strong>سم</strong> دکھاتی ہے؛ ٹیبلٹ <strong>وائی فائی</strong> یا <strong>سم</strong> دکھاتا ہے۔ جس موبائل میں سم نہیں اس کا IMEI نہیں ہوتا، اس لیے اس کا <strong>سیریل نمبر</strong> دکھایا اور ڈھونڈا جاتا ہے۔</p>
+<ul>
+<li>بیچتے وقت صرف ایک قسم دیکھنے کے لیے فروخت کی اسکرین پر اسٹاک کے اوپر <strong>سب · موبائل · ٹیبلٹ · سمارٹ واچ</strong> کے بٹن استعمال کریں۔</li>
+<li>قسم کے حساب سے گنتی اور مالیت کے لیے <strong>رپورٹس ← قسم کے حساب سے</strong> (<strong>قسم وار اسٹاک</strong>) پر جائیں: تعداد، لاگت پر اور فروخت قیمت پر مالیت، کتنے استعمال شدہ ہیں، کتنوں کا لاک چیک نہیں ہوا یا لاک ابھی لگا ہے، کتنے نان پی ٹی اے / جے وی ہیں، اور کتنے 60 دن سے پرانے ہیں۔</li>
+<li>اگر کوئی موبائل غلط قسم میں درج ہو گیا (مثلاً ٹیبلٹ موبائل کے طور پر محفوظ ہو گیا) تو مالک اسے اسٹاک لسٹ میں ٹک کر کے <strong>قسم بدلیں</strong> استعمال کر سکتا ہے۔ ہسٹری، IMEI یا سیریل، بارکوڈ اور حساب بالکل ویسے ہی رہتے ہیں؛ صرف قسم بدلتی ہے، اور یہ تبدیلی ہسٹری میں لکھی جاتی ہے۔</li>
+</ul>
+<h3>IMEI چیک کریں ("کیا یہ فون پہلے یہاں آیا ہے؟")</h3>
+<p>پرانا فون خریدنے سے پہلے یہ دیکھ لینا اچھا ہے کہ کہیں یہ پہلے آپ کی دکان سے تو نہیں گزرا۔</p>
+<ol>
+<li>اسٹاک لسٹ میں <strong>IMEI چیک کریں</strong> دبائیں (یا <strong>مزید ← IMEI تلاش</strong>)۔</li>
+<li>15 ہندسے لکھیں، یا <strong>اسکین</strong> دبا کر کیمرہ ڈبے پر لگے IMEI بارکوڈ کی طرف کریں۔ آپ فون پر <strong>*#06#</strong> ملا کر اسکرین بھی اسکین کر سکتے ہیں۔</li>
+<li>جواب ان میں سے ایک ہوگا:</li>
+</ol>
+<table><thead><tr><th>آپ کو کیا نظر آتا ہے</th><th>اس کا مطلب</th></tr></thead><tbody><tr><td><strong>نیا IMEI، پہلے نہیں آیا</strong></td><td>یہ فون کبھی آپ کی دکان میں نہیں آیا۔</td></tr><tr><td><strong>یہ IMEI پہلے آپ کی دکان میں آ چکا ہے</strong> · <strong>1 بار خریدا</strong></td><td>آپ یہ فون پہلے خرید چکے ہیں۔ اس پر دبا کر پوری ہسٹری کھولیں: کس نے آپ کو بیچا، آپ نے کس کو بیچا، وغیرہ۔</td></tr><tr><td><strong>IMEI کا چیک ہندسہ غلط ہے، دوبارہ دیکھیں</strong></td><td>نمبر غلط لکھا گیا ہے۔ ہر اصلی IMEI کا ایک آخری "چیک ہندسہ" ہوتا ہے؛ یہ والا نہیں ملتا۔</td></tr></tbody></table>
+<aside class="tip"><strong>مشورہ:</strong> چھ مہینے پہلے بیچا ہوا فون دوبارہ بکنے آئے تو یہ عام بات ہے۔ کل بیچا ہوا فون کسی دوسرے بندے کے ہاتھ واپس آئے تو سوال ضرور پوچھیں۔</aside>
+<h3>فون کا اپنا صفحہ</h3>
+<p>اسٹاک لسٹ میں کسی بھی فون پر دبا کر اس کا صفحہ کھولیں۔ اوپر والا گہرا کارڈ دکھاتا ہے:</p>
+<ul>
+<li>IMEI (یا سیریل) اور حالت، مثلاً <strong>اسٹاک میں</strong>، <strong>امانت پر</strong>، <strong>فروخت</strong>، <strong>مرمت میں</strong> یا <strong>خراب</strong>؛</li>
+<li><strong>بارکوڈ</strong> (مثلاً <strong>MS000006</strong>)، اسٹوریج اور رنگ؛</li>
+<li>حالت کے نشان (<strong>استعمال شدہ</strong>، <strong>باکس پیک</strong>...)، پی ٹی اے (<strong>پی ٹی اے منظور</strong>، <strong>نان پی ٹی اے</strong>، <strong>جے وی</strong>)، لاک چیک (<strong>لاک چیک نہیں ہوا</strong> یا <strong>لاک صاف</strong>) اور شناخت چیک (<strong>شناخت چیک ہو گیا</strong>، <strong>شناخت چیک باقی</strong>)؛</li>
+<li><strong>فروخت کی قیمت</strong> اور، صرف مالک اور منیجر کے لیے، <strong>لاگت</strong>۔</li>
+</ul>
+<p>کارڈ کے نیچے دو بڑے بٹن ہیں، <strong>بیچیں</strong> اور <strong>شناختی کارڈ چیک</strong>، اور پھر <strong>کام</strong>:</p>
+<table><thead><tr><th>بٹن</th><th>کیا کرتا ہے</th></tr></thead><tbody><tr><td><strong>امانت پر دیں</strong></td><td>یہ فون کسی دوسری دکان کو دیں (باب 15)۔</td></tr><tr><td><strong>خراب نشان لگائیں</strong></td><td>ٹھیک ہونے تک اسے بکنے والے اسٹاک سے نکال دیں۔</td></tr><tr><td><strong>مرمت کے لیے بھیجیں</strong></td><td>اپنے فون کی ریپئر جاب کھولیں (باب 14)۔</td></tr><tr><td><strong>اسٹیکر پرنٹ کریں</strong></td><td>بارکوڈ والا قیمت کا اسٹیکر پرنٹ کریں (باب 12)۔</td></tr><tr><td><strong>قیمت بدلیں</strong></td><td>نئی فروخت کی قیمت لگائیں؛ پرانی ہسٹری میں رہتی ہے۔</td></tr><tr><td><strong>نوٹ لکھیں</strong></td><td>جو یاد رکھنا ہو لکھیں، آپ کے نام اور وقت کے ساتھ۔</td></tr><tr><td><strong>تفصیل تبدیل کریں</strong></td><td>اسٹوریج، رنگ اور ایسی تفصیل درست کریں۔</td></tr><tr><td><strong>لاک چیک</strong></td><td>پرانے موبائل کے iCloud / Google (FRP) / اکاؤنٹ لاک چیک درج کریں۔</td></tr><tr><td><strong>واپسی</strong></td><td>بکے ہوئے فون پر دکھتا ہے: واپسی شروع کریں (باب 9)۔</td></tr></tbody></table>
+<figure><img src="img/ur/device-page.jpg" alt=""><figcaption>تصویر 16: فون کا اپنا صفحہ: IMEI، بارکوڈ، نشان، فروخت کی قیمت اور لاگت، اور کام کے بٹن</figcaption></figure>
+<h3>اس موبائل کا پیسہ</h3>
+<p>صفحے پر نیچے <strong>اس موبائل کا پیسہ</strong> کا کارڈ ہے۔ یہ بتاتا ہے "یہ فون کتنے کا پڑا، کتنے میں بکا، اور کیا ابھی کچھ باقی ہے؟"</p>
+<ul>
+<li><strong>لاگت</strong>، <strong>ابھی دینے ہیں</strong>، <strong>کتنے میں بکا</strong>، <strong>ابھی لینے ہیں</strong> اور <strong>منافع</strong> ایک لائن میں۔</li>
+<li><strong>کس سے خریدا</strong>: کس نے آپ کو بیچا، خریداری کا بل، طے شدہ قیمت، اس وقت آپ نے کتنے دیے، بعد کی ہر ادائیگی، اور کتنے ابھی دینے ہیں۔</li>
+<li><strong>کس کو بیچا</strong>: فروخت کے لیے یہی: طے شدہ قیمت، <strong>اسی وقت وصول</strong>، بعد کی ادائیگیاں، اور کتنے ابھی لینے ہیں۔</li>
+<li><strong>اس موبائل کی ادائیگی</strong> اور <strong>اس موبائل کی وصولی</strong>: ایسی ادائیگی لیں یا دیں جو اسی بل کے خلاف درج ہو، تاکہ فون کا حساب اور بندے کا کھاتہ ایک ساتھ چلیں۔</li>
+</ul>
+<p><strong>مثال:</strong> آپ نے Ahmed سے Vivo Rs. 35,000 میں خریدا اور Rs. 30,000 دیے (آپ نے اسے Rs. 5,000 دینے ہیں)۔ آپ نے اسے Bilal کو Rs. 40,000 میں بیچا اور اس نے Rs. 35,000 دیے (اس کے ذمے Rs. 5,000)۔ بعد میں آپ Ahmed کو Rs. 2,000 دیتے ہیں اور Bilal آپ کو Rs. 3,000 دیتا ہے۔ اب کارڈ دکھاتا ہے لاگت 35,000، ابھی دینے ہیں 3,000، بکا 40,000، ابھی لینے ہیں 2,000، منافع 5,000۔ Ahmed اور Bilal کے کھاتوں میں بالکل یہی رقمیں نظر آتی ہیں۔</p>
+<p>اگر فون پرانے اسٹاک کے طور پر درج ہوا تھا تو کارڈ پر لکھا آتا ہے <strong>پرانا اسٹاک: لاگت کے ساتھ درج، خریداری کا بل نہیں۔</strong></p>
+<aside class="note"><strong>نوٹ:</strong> خرید کا حساب (لاگت، بیچنے والے کو کتنے دینے ہیں، منافع) صرف مالک اور منیجر کو دکھتا ہے۔</aside>
+<h3>پوری ہسٹری</h3>
+<p>صفحے کے آخر میں <strong>ہسٹری</strong> ہے: اس فون کے ساتھ جو کچھ بھی ہوا اس کی ایک ٹائم لائن، نیا سب سے اوپر۔ ہر لائن میں تاریخ، بندہ، رقم اور وہ اسٹاف ممبر ہوتا ہے جس نے یہ کام کیا۔ آپ کو ایسی لائنیں نظر آئیں گی:</p>
+<ul>
+<li><strong>خریدا</strong> (بل اور جس سے خریدا) اور <strong>بارکوڈ لگا</strong>؛</li>
+<li><strong>تصدیق ہوئی</strong> (شناخت چیک، مثلاً "بیچنے والے کا CNIC کاؤنٹر پر دیکھا")؛</li>
+<li><strong>قیمت بدلی</strong> (پرانی اور نئی فروخت کی قیمت)؛</li>
+<li><strong>بیچا</strong> انوائس نمبر کے ساتھ (مثلاً <strong>INV-000017</strong>)، <strong>اسی وقت وصول</strong> اور <strong>لینے باقی</strong>؛</li>
+<li><strong>فروخت واپس</strong> واپسی کے نمبر کے ساتھ (مثلاً <strong>RET-000001</strong>)، واپس کی گئی رقم اور وجہ؛</li>
+<li><strong>امانت پر دیا</strong>، <strong>امانت واپس</strong>، <strong>مرمت کو بھیجا</strong>، <strong>مرمت سے واپس</strong>، <strong>خراب</strong>، <strong>لیبل پرنٹ ہوا</strong>، <strong>نوٹ</strong>۔</li>
+</ul>
+<p>ہسٹری کی لائنیں کبھی تبدیل یا ختم نہیں ہو سکتیں۔ غلطی نئی لائن سے درست ہوتی ہے، اس لیے ٹائم لائن ہمیشہ سچی کہانی بتاتی ہے۔ ہسٹری کے اوپر <strong>ڈاؤن لوڈ</strong> یا <strong>شیئر</strong> دبا کر اسے فائل کی شکل میں بھیجیں، مثلاً اس گاہک کو جو ثبوت چاہتا ہو کہ فون کہاں سے آیا۔</p>
+<figure><img src="img/ur/device-history.jpg" alt=""><figcaption>تصویر 17: فون کی ہسٹری: بیچا، تصدیق ہوئی، فروخت واپس، ہر ایک تاریخ، بندے اور رقم کے ساتھ</figcaption></figure>
+<h3>اسکینر سے اسٹاک گنتی</h3>
+<p>مہینے میں ایک بار (یا جب بھی لگے کہ کچھ کم ہے) اسکینر سے شیلف گنیں۔ ایپ بتاتی ہے کہ کیا غائب ہے اور کیا یہاں نہیں ہونا چاہیے۔</p>
+<ol>
+<li><strong>مزید ← اسٹاک گنتی</strong> پر جائیں۔ (مالک اور منیجر۔)</li>
+<li>شیلف کا ہر فون اور ہر چیز ایک کے بعد ایک اسکین کریں۔ USB یا Bluetooth اسکینر سب سے تیز ہے، لیکن آپ <strong>کوڈ لکھ کر Enter دبائیں</strong> میں کوڈ لکھ بھی سکتے ہیں۔ بڑا نمبر دکھاتا ہے کہ کتنے <strong>سکین ہوئے</strong>۔</li>
+<li>چارجروں کا ایک ہی ڈبہ پانچ بار اسکین کریں تو پانچ عدد گنے جاتے ہیں۔</li>
+<li>شیلف مکمل ہو جائے تو <strong>سٹاک سے ملائیں</strong> دبائیں۔</li>
+<li>نتیجے میں تین لسٹیں ہیں: <strong>ملے</strong> (اسکین ہوئے اور اسٹاک میں ہیں)، <strong>غائب</strong> (اسٹاک میں ہونے چاہییں مگر اسکین نہیں ہوئے) اور <strong>یہاں نہیں ہونا چاہیے</strong> (اسکین ہوئے، لیکن ایپ کے مطابق بک چکے ہیں، امانت پر ہیں، یا بالکل انجانے ہیں)۔ چیزوں کے لیے آپ کو <strong>10 میں سے 8 سکین</strong> نظر آتا ہے اور یہ کہ گنتی <strong>برابر</strong> ہے یا <strong>فرق</strong> ہے۔</li>
+<li>لسٹ میں کسی بھی فون پر دبا کر اس کا صفحہ کھولیں اور معاملہ سلجھائیں۔ <strong>صاف کریں</strong> یا <strong>نئی گنتی شروع کریں</strong> سے دوبارہ شروع کریں۔</li>
+</ol>
+<figure><img src="img/ur/stock-count.jpg" alt=""><figcaption>تصویر 18: اسٹاک گنتی: سب کچھ اسکین کریں، پھر سٹاک سے ملائیں</figcaption></figure>
+<p><strong>مثال:</strong> ایپ کہتی ہے <strong>12 موبائل سٹاک میں ہونے چاہییں۔</strong> آپ 11 اسکین کرتے ہیں۔ <strong>غائب</strong> میں ایک Samsung A15 آتا ہے۔ آپ اسے کھولتے ہیں اور ہسٹری میں دیکھتے ہیں کہ کل Star Mobiles کو <strong>امانت پر دیا</strong> گیا تھا، لیکن کبھی درج نہیں ہوا تھا۔ یا وہ واقعی غائب ہے، اور اب آپ کو پتہ ہے کہ کون سا۔</p>
+<aside class="tip"><strong>مشورہ:</strong> گنتی دکان کھولنے سے پہلے یا بند کرنے کے بعد کریں، جب بکری نہ ہو رہی ہو۔ گنتی کے دوران بکنے والا فون "غائب" میں آ جائے گا۔</aside>
+<h2 id="c12">12. قیمت کے اسٹیکر، بارکوڈ اور اسکیننگ</h2>
+<p>Mobile Shop میں ہر فون اور ہر چیز کو خریدتے ہی اپنا بارکوڈ مل جاتا ہے۔ آپ اسے ایک چھوٹے قیمت کے اسٹیکر پر پرنٹ کر کے ڈبے پر لگاتے ہیں، اور اس کے بعد ایک اسکین سے فون مل جاتا ہے: کاؤنٹر پر، واپسی میں، اسٹاک گنتی میں۔ 15 ہندسوں والے IMEI لکھنے کی ضرورت ختم۔</p>
+<h3>بارکوڈ کیسے ملتے ہیں</h3>
+<ul>
+<li>جب آپ اسٹاک ڈالتے ہیں تو ہر فون کو <strong>MS000006</strong> جیسا بارکوڈ ملتا ہے (آپ کی دکان کا سابقہ اور ایک نمبر)۔ چارجر جیسی چیزوں کو ہر چیز کا ایک بارکوڈ ملتا ہے، ہر عدد کا الگ نہیں۔</li>
+<li>بارکوڈ کبھی نہیں بدلتا اور کبھی کسی اور چیز کو نہیں دیا جاتا۔ اگر آپ فون بیچ کر بعد میں واپس خریدیں تو اس کا پرانا بارکوڈ ہی رہتا ہے۔</li>
+<li>بارکوڈ فون کے صفحے پر IMEI کے نیچے (<strong>بارکوڈ: MS000006</strong>) اور ہر چیز کی لائن پر نظر آتا ہے۔</li>
+<li>جس ڈبے پر پہلے سے کمپنی کا بارکوڈ ہو وہ بھی چل سکتا ہے: خریدتے وقت اسے <strong>کمپنی کا بارکوڈ (اختیاری)</strong> میں اسکین کریں۔ آپ <strong>اپنا بارکوڈ (اختیاری)</strong> میں اپنا کوڈ بھی لکھ سکتے ہیں۔</li>
+</ul>
+<h3>قیمت کا اسٹیکر پرنٹ کریں</h3>
+<p>اسٹیکر کئی جگہوں سے پرنٹ ہو سکتے ہیں:</p>
+<ul>
+<li><strong>ایک فون</strong>: اس کا صفحہ کھولیں اور <strong>اسٹیکر پرنٹ کریں</strong> دبائیں۔</li>
+<li><strong>کئی فون</strong>: اسٹاک لسٹ میں <strong>اسٹیکرز</strong> دبائیں، فون ٹک کریں (یا <strong>سب چنیں</strong>)، پھر <strong>اسٹیکرز (n)</strong> دبائیں۔</li>
+<li><strong>خریدتے ہی</strong>: خریداری کے نتیجے میں <strong>ان موبائلز کے اسٹیکر پرنٹ کریں</strong> ہوتا ہے (اور چیزوں کے لیے <strong>آئٹم لیبل پرنٹ کریں</strong>)۔</li>
+<li><strong>ایک چیز</strong>: چیز کا صفحہ کھولیں اور <strong>اسٹیکر پرنٹ کریں</strong> دبائیں۔ چارجروں کے پورے ڈبے کے لیے کاپیاں استعمال کریں۔</li>
+</ul>
+<p>پھر اسٹیکر شیٹ ایک بار چند باتیں پوچھتی ہے:</p>
+<ol>
+<li><strong>اسٹیکر سائز</strong>: لیبل پرنٹر کے لیے رول کے سائز جیسے 38×25، 40×30، 50×25، 50×30، 58×40، 60×40 اور 70×40 mm، عام پرنٹر کے لیے <strong>A4 شیٹ (65 فی صفحہ)</strong>، یا <strong>اپنا سائز (mm)</strong> اپنی <strong>چوڑائی (mm)</strong> اور <strong>اونچائی (mm)</strong> کے ساتھ۔</li>
+<li><strong>اس پر کیا ہو</strong>: لائن پر دبا کر اسے چالو یا بند کریں: <strong>دکان کا نام</strong>، <strong>ماڈل</strong>، اسٹوریج اور رنگ، <strong>قیمت</strong>، <strong>بارکوڈ</strong>، <strong>IMEI نمبر</strong>، <strong>IMEI آخری 4</strong>، <strong>حالت</strong>، <strong>پی ٹی اے</strong>، <strong>تاریخ</strong> اور <strong>لاگت کوڈ</strong>۔</li>
+<li><strong>ہر ایک کی کاپیاں</strong>: ہر فون یا چیز کے کتنے اسٹیکر۔</li>
+<li><strong>پرنٹ</strong> دبائیں۔ صفحہ پہلے سے بالکل ایک اسٹیکر کے سائز کا ہوتا ہے، اس لیے لیبل پرنٹر ہر اسٹیکر پر ایک پرنٹ کرتا ہے۔ آپ اسے PDF کی شکل میں ڈاؤن لوڈ یا شیئر بھی کر سکتے ہیں۔</li>
+</ol>
+<p><strong>یہ انتخاب یاد رکھیں</strong> ٹک کریں تو دکان اگلی بار وہی سائز اور لائنیں استعمال کرے گی۔</p>
+<p><strong>مثال:</strong> آپ ڈبے کے سامنے کے لیے صاف ستھرا اسٹیکر چاہتے ہیں۔ <strong>50×30</strong> چنیں اور صرف <strong>دکان کا نام</strong>، <strong>ماڈل</strong>، اسٹوریج اور رنگ، <strong>قیمت</strong> اور <strong>بارکوڈ</strong> چالو کریں۔ اسٹیکر پر لکھا آئے گا <em>AL-MADINA MOBILE ZONE · Xiaomi Redmi Note 13 · 256GB · Blue · Rs. 61,000</em> اور اس کے نیچے بارکوڈ <strong>MS000006</strong>۔</p>
+<figure><img src="img/ur/label.jpg" alt=""><figcaption>تصویر 19: پرنٹ شدہ قیمت کا اسٹیکر: دکان کا نام، ماڈل، اسٹوریج اور رنگ، قیمت، اور بارکوڈ</figcaption></figure>
+<h3>لاگت کوڈ (مالک کا راز)</h3>
+<p>کچھ دکاندار اسٹیکر پر خرید قیمت دیکھنا چاہتے ہیں، لیکن ایسے حروف میں جو گاہک نہ پڑھ سکے۔ اسے <strong>دکان کی ترتیبات ← اسٹیکر کا لاگت کوڈ</strong> میں سیٹ کریں: 10 الگ الگ حروف والا ایک لفظ لکھیں، مثلاً <strong>BLACKHORSE</strong>۔ ہندسہ 0 پہلا حرف ہے، 1 دوسرا، اور اسی طرح۔ پھر Rs. 45,000 لاگت والا فون <strong>KHBBB</strong> پرنٹ ہوگا۔</p>
+<aside class="note"><strong>اہم:</strong> صرف مالک اور منیجر اسٹیکر پر لاگت کوڈ ڈال سکتے ہیں۔ اگر سیلزمین اسے چالو کرے تو وہ بس چھوڑ دیا جاتا ہے۔</aside>
+<h3>بارکوڈ کی ترتیبات (مالک)</h3>
+<p><strong>مزید ← ترتیبات ← بارکوڈ کی ترتیبات</strong> میں مالک بارکوڈ سیٹ کرتا ہے۔ زیادہ تر دکانوں کو یہاں کچھ بدلنے کی ضرورت نہیں پڑتی۔</p>
+<ul>
+<li><strong>نئے لیبلوں کے لیے بارکوڈ قسم</strong>: <strong>Code 128</strong> (ہر اسکینر پڑھتا ہے، یہی پہلے سے سیٹ ہے)، <strong>EAN-13</strong> (صرف ہندسے) یا <strong>QR</strong> (2-D اسکینر اور فون کے کیمرے کے لیے)۔ اسے بدلنے پر بھی پرانے لیبل چلتے رہتے ہیں۔</li>
+<li><strong>دکان کا سابقہ</strong> اور <strong>نمبر یہاں سے شروع</strong>: وہ حروف اور نمبر جن سے نئے بارکوڈ شروع ہوتے ہیں۔</li>
+<li><strong>قیمت</strong>: <strong>سابقہ + نمبر (MS000123)</strong> یا <strong>موبائل کا IMEI</strong>۔</li>
+<li><strong>ٹیسٹ پرنٹ</strong> اور <strong>ٹیسٹ اسکین</strong>: ٹیسٹ اسٹیکر پرنٹ کریں، پھر اسے <strong>یہاں سکین کریں</strong> والے خانے میں اسکین کریں۔ اسے وہ فون یا چیز دکھانی چاہیے جس کا یہ ہے۔</li>
+<li><strong>پرانے اسٹاک کے بارکوڈ</strong>: اگر آپ بارکوڈ آنے سے پہلے ایپ استعمال کر رہے تھے تو اسے ایک بار دبائیں تاکہ ہر پرانے فون اور چیز کو بارکوڈ مل جائے۔ پھر اسٹاک لسٹ سے ان کے اسٹیکر پرنٹ کریں۔</li>
+</ul>
+<h3>USB یا Bluetooth اسکینر سے اسکیننگ</h3>
+<p>کوئی بھی عام بارکوڈ اسکینر چلتا ہے۔ اسے کمپیوٹر کے USB پورٹ میں لگائیں (یا Bluetooth والا جوڑ لیں)۔ کسی ڈرائیور یا سیٹنگ کی ضرورت نہیں۔</p>
+<p>اسکینر کو کوڈ لکھ کر خود Enter دبانا چاہیے۔ ایک بار Notepad میں ٹیسٹ کریں: بارکوڈ اسکین کریں تو کوڈ آنا چاہیے اور پھر نئی لائن۔ اگر ایسا نہ ہو تو اسکینر کی چھوٹی کتاب میں سے "add Enter / CR suffix" والا کوڈ اسکین کریں۔</p>
+<p>پہلے کسی خانے میں کلک کرنے کی ضرورت نہیں۔ ایپ میں جہاں بھی ہوں، بس اسکین کریں۔ یہ اردو کی بورڈ چالو ہونے پر بھی چلتا ہے۔</p>
+<h3>فون کے کیمرے سے اسکیننگ</h3>
+<p>فون پر کوئی بھی <strong>اسکین</strong> بٹن دبائیں (سرچ باکس کے ساتھ، اور خریدتے وقت IMEI کے خانوں میں)۔ کیمرہ کھلتا ہے: اسے بارکوڈ کی طرف کریں اور اچھی روشنی میں ہاتھ سیدھا رکھیں۔ اگر کیمرہ نہ کھلے تو <strong>تصویر لے کر پڑھیں</strong> دبائیں اور بارکوڈ کی تصویر لیں۔</p>
+<p>IMEI کے لیے ڈبے پر لگے IMEI بارکوڈ کی طرف کریں، یا فون پر <strong>*#06#</strong> ملا کر اسکرین اسکین کریں۔ اگر IMEI 1 پہلے سے بھرا ہو تو ایپ IMEI 2 کے بارکوڈ کی طرف کرنے کو کہتی ہے۔</p>
+<h3>اسکین کیا کھولتا ہے</h3>
+<p>ایپ اپنے بارکوڈ، IMEI 1، IMEI 2، چیزوں کے کوڈ اور کمپنی کے بارکوڈ پہچانتی ہے۔ کیا ہوگا، یہ اس پر ہے کہ آپ کہاں ہیں:</p>
+<table><thead><tr><th>آپ کہاں ہیں</th><th>اسکین کیا کرتا ہے</th></tr></thead><tbody><tr><td>ہوم، یا زیادہ تر اسکرینیں</td><td>فون یا چیز کا صفحہ کھولتا ہے۔ بکا ہوا فون اپنی ہسٹری کھولتا ہے۔</td></tr><tr><td>فروخت کی اسکرین</td><td>فون کو اس کی فروخت کی قیمت پر بل میں ڈالتا ہے۔ چیز اسکین کرنے سے 1 جڑتا ہے؛ دوبارہ اسکین کریں تو تعداد 2 ہو جاتی ہے۔</td></tr><tr><td>واپسی کی اسکرین</td><td>بکا ہوا فون ڈھونڈ کر سیدھا اس کے بل پر جاتا ہے۔</td></tr><tr><td>اسٹاک خریدنا</td><td>پہلے IMEI 1، پھر IMEI 2، پھر کمپنی کا بارکوڈ بھرتا ہے۔</td></tr><tr><td>اسٹاک گنتی</td><td>فون یا عدد گنتا ہے۔</td></tr><tr><td>ریپئر اسٹیکر، کہیں بھی</td><td>وہ ریپئر جاب کھولتا ہے (<strong>REP-</strong> نمبر، باب 14)۔</td></tr></tbody></table>
+<p>اگر کوڈ پہچانا نہ جائے تو ایپ بیپ کرتی ہے اور <strong>چیز نہیں ملی</strong> کے ساتھ <strong>شامل کریں</strong> کا بٹن دکھاتی ہے۔</p>
+<aside class="tip"><strong>مشورہ:</strong> اگر اسکین سے کچھ نہ ہو تو شاید کرسر کسی فارم کے خانے میں ہے۔ اسکرین کی خالی جگہ پر دبائیں اور دوبارہ اسکین کریں۔</aside>
+<h2 id="c13">13. ایکسیسریز اور چیزیں</h2>
+<p>چارجر، کیبل، کور، گلاس پروٹیکٹر، ہینڈز فری، پاور بینک، عام گھڑیاں اور ایسی چیزیں <strong>گنتی سے</strong> رکھی جاتی ہیں: کوئی IMEI نہیں، بس یہ کہ کتنی ہیں۔ ایپ انہیں چیزیں کہتی ہے۔ یہ <strong>مزید ← ایکسیسریز</strong> میں ملتی ہیں، <strong>چارجر، کور وغیرہ</strong> نام کی اسکرین پر۔</p>
+<p>اسکرین پر تین ٹیب ہیں: <strong>اسٹاک میں</strong>، <strong>کم اسٹاک</strong> اور <strong>باقی ایکسیسریز</strong>۔ لسٹ کے اوپر ایک سرچ باکس (<strong>نام یا کوڈ</strong>) <strong>اسکین</strong> کے ساتھ، ایک <strong>فلٹر</strong> کا بٹن (قسم، برانڈ، کوالٹی، سپلائر، شیلف، ختم شدہ) اور <strong>آئٹم رپورٹس</strong> ہیں۔ ہر لائن میں چیز کا نام، اس کی کوالٹی (مثلاً <strong>اوریجنل</strong>)، اس کا کوڈ (مثلاً <strong>BASEUSTY-001</strong>)، قسم، برانڈ، رنگ، شیلف (<strong>Rack A2</strong>)، کتنی باقی ہیں اور فروخت قیمت ہوتی ہے۔ جب چیز ختم ہونے لگے تو لال <strong>کم اسٹاک</strong> کا نشان آتا ہے۔</p>
+<figure><img src="img/ur/accessories.jpg" alt=""><figcaption>تصویر 20: چارجر، کور وغیرہ: چیزیں گنتی، قیمت، شیلف اور کم اسٹاک کے نشان کے ساتھ</figcaption></figure>
+<h3>چند آسان اصول</h3>
+<ul>
+<li><strong>گنتی ہمیشہ عدد میں ہوتی ہے۔</strong> آپ درجن، ڈبے یا کارٹن میں خرید سکتے ہیں، لیکن اسٹاک عدد میں رکھا جاتا ہے۔</li>
+<li><strong>فروخت قیمت ایک عدد کی قیمت ہے</strong> عام گاہک کے لیے۔</li>
+<li><strong>ہر خریداری اپنے الگ بیچ میں رکھی جاتی ہے</strong> اپنی تاریخ، سپلائر، تعداد اور لاگت کے ساتھ۔ جب آپ بیچتے ہیں تو سب سے پرانا بیچ پہلے ختم ہوتا ہے۔</li>
+<li><strong>کسی چیز کا کچھ بھی کبھی ختم نہیں کیا جاتا۔</strong> اگر گنتی غلط ہو تو آپ وجہ کے ساتھ اسے درست کرتے ہیں، اور یہ درستی ہسٹری میں لکھی جاتی ہے۔</li>
+</ul>
+<h3>نئی چیز شامل کریں</h3>
+<p><strong>مثال:</strong> <strong>Baseus Type-C cable 1m</strong>، فروخت قیمت Rs. 300 فی عدد، کبھی Rs. 200 سے کم نہیں، 20 رہ جائیں تو خبردار کرے۔</p>
+<ol>
+<li><strong>چارجر، کور وغیرہ</strong> میں <strong>نئی چیز</strong> دبائیں۔</li>
+<li><strong>نام</strong> لکھیں: <strong>Baseus Type-C cable 1m</strong>۔</li>
+<li><strong>قسم</strong> چنیں: <strong>تار</strong>۔ لسٹ میں چارجر، کیبل، کور، گلاس پروٹیکٹر، ہینڈز فری، پاور بینک، گھڑی، اسپیکر اور بہت کچھ ہے، اور آپ اپنی قسم بھی شامل کر سکتے ہیں۔</li>
+<li><strong>فروخت قیمت</strong> لکھیں: <strong>300</strong>۔</li>
+<li><strong>دوبارہ منگوائیں</strong> لکھیں: <strong>20</strong>۔ یہ آپ کی کم اسٹاک کی وارننگ ہے۔</li>
+<li>اگر شیلف پر پہلے سے کچھ ہیں تو <strong>شروع کی تعداد</strong> اور <strong>ایک کی لاگت</strong> لکھیں۔</li>
+<li>اگر مزید بھرنا چاہیں تو <strong>مزید تفصیل</strong> دبائیں۔ یہ سب اختیاری ہے: <strong>برانڈ</strong>، <strong>کس فون پر لگتا ہے</strong> (مثلاً "iPhone 14/15، Samsung A series")، <strong>کوالٹی</strong> (Original، Company / OEM، A-grade، Copy / China، Used)، <strong>رنگ</strong>، <strong>سائز</strong>، <strong>گنجائش (mAh / GB)</strong>، <strong>کنیکٹر</strong>، <strong>واٹ</strong>، <strong>ہول سیل قیمت</strong>، <strong>کم سے کم فروخت قیمت</strong> (<strong>200</strong>)، <strong>پرومو قیمت</strong> اپنی تاریخوں کے ساتھ، <strong>وارنٹی (دن)</strong>، <strong>شیلف / ریک</strong>، <strong>زیادہ سے زیادہ اسٹاک</strong>، <strong>سپلائر کے کوڈ</strong> اور <strong>نوٹ / تفصیل</strong>۔</li>
+<li><strong>محفوظ کریں</strong> دبائیں۔ چیز کو فوراً اپنا کوڈ اور بارکوڈ مل جاتا ہے۔</li>
+</ol>
+<p>اگر بہت ملتی جلتی چیز پہلے سے موجود ہو تو ایپ <strong>ملتے جلتے آئٹم پہلے سے موجود</strong> دکھاتی ہے، تاکہ آپ ایک ہی چیز دو بار نہ بنائیں۔</p>
+<aside class="tip"><strong>مشورہ:</strong> مصروفیت میں فارم چھوٹا رکھیں۔ نام، قیمت اور تعداد کافی ہیں؛ باقی بعد میں چیز کے صفحے پر <strong>ترمیم</strong> سے بھر سکتے ہیں۔</aside>
+<h3>چیزیں عدد، درجن یا ڈبے میں خریدنا</h3>
+<p>چیزیں عام طور پر ڈیلر سے خریدی جاتی ہیں، اکثر فونوں والے بل پر ہی۔</p>
+<ol>
+<li><strong>اسٹاک ڈالیں</strong> دبائیں اور ڈیلر چنیں۔</li>
+<li><strong>ایکسیسری / گھڑی ڈالیں</strong> دبائیں۔</li>
+<li>لسٹ سے چیز چنیں، یا <strong>نئی چیز (لسٹ میں نہیں)</strong> دبائیں، اس کا نام، یہ کیا ہے اور ایک کی فروخت قیمت بھریں، اور <strong>محفوظ کر کے ڈالیں</strong> دبائیں۔</li>
+<li>جس اکائی میں خریدا وہ دبائیں: <strong>عدد</strong>، <strong>درجن</strong>، <strong>ڈبہ</strong> یا <strong>کارٹن</strong>۔ کتنے لیے اور ایک اکائی کی قیمت لکھیں۔</li>
+<li>ایپ خود ایک عدد کی لاگت نکالتی ہے: Rs. 1,200 فی درجن کے حساب سے 3 درجن، Rs. 100 فی عدد کے 36 عدد بن جاتے ہیں۔</li>
+<li>چاہیں تو سپلائر کے بل کا نمبر اور کرایہ یا لوڈنگ کا خرچ بھریں۔ کرایہ لائنوں پر بانٹ کر لاگت میں جوڑ دیا جاتا ہے۔</li>
+<li>خریداری ہمیشہ کی طرح محفوظ کریں (ابھی ادا، باقی ڈیلر کے کھاتے میں)۔ نتیجے کی اسکرین پر اگر اسٹیکر چاہییں تو <strong>آئٹم لیبل پرنٹ کریں</strong> دبائیں۔</li>
+</ol>
+<p>درجن، ڈبے یا کارٹن میں کتنے عدد ہوتے ہیں، یہ ایک بار <strong>ترتیبات ← آئٹم کی ترتیبات</strong> میں سیٹ ہوتا ہے۔ کسی ایک چیز کا اپنا ڈبے کا سائز بھی ہو سکتا ہے (<strong>اس آئٹم کے ایک ڈبے میں عدد</strong>)۔</p>
+<h3>بیچ اور اوسط لاگت</h3>
+<p>ہر خریداری ایک بیچ ہے۔ چیز کے صفحے پر ہر بیچ سپلائر، تاریخ، کتنے خریدے، کتنے <strong>باقی</strong> ہیں، اور ایک عدد کی لاگت کے ساتھ نظر آتا ہے۔</p>
+<p><strong>مثال:</strong> آپ نے Rehman Traders سے Rs. 100 فی عدد کے حساب سے 3 درجن Baseus کیبل خریدیں، اور بعد میں 2 درجن مزید Rs. 120 فی عدد پر۔ اب آپ کے پاس 60 عدد ہیں اور <strong>اوسط لاگت</strong> <strong>Rs. 108</strong> ہے۔ آپ 10 عدد بیچتے ہیں: یہ پہلے پرانے Rs. 100 والے بیچ سے نکلتے ہیں، اس لیے وہ <strong>26 / 36 باقی</strong> دکھاتا ہے اور نیا بیچ ابھی بھی <strong>24 / 24 باقی</strong> دکھاتا ہے۔</p>
+<p>مالک <strong>ترتیبات ← آئٹم کی ترتیبات ← اسٹاک کی قیمت کا طریقہ</strong> میں طے کرتا ہے کہ اسٹاک کی مالیت کیسے لگے: <strong>اوسط لاگت</strong> (پہلے سے یہی سیٹ ہے) یا <strong>FIFO (پہلے پرانا)</strong>، جس میں ہر فروخت کی لاگت اسی بیچ سے لگتی ہے جس سے وہ اصل میں نکلی۔</p>
+<h3>چیزیں بیچنا</h3>
+<ol>
+<li><strong>بیچیں</strong> میں <strong>ایکسیسری / گھڑی</strong> دبائیں۔ یہی بٹن فون کے نیچے بھی آتا ہے، تاکہ آپ اس کے ساتھ چارجر یا کور بیچ سکیں۔</li>
+<li>چیز پر دبائیں، یا بس اس کا بارکوڈ اسکین کریں۔ ایک اور ڈالنے کے لیے دوبارہ اسکین کریں۔</li>
+<li>لائن دکھاتی ہے کہ اسٹاک میں کتنی ہیں۔ قیمت خود بھر جاتی ہے: عام گاہک کے لیے پرچون قیمت، اگر گاہک ڈیلر درج ہے تو <strong>ڈیلر قیمت</strong>، یا آفر چلنے کے دوران <strong>پرومو</strong> قیمت۔</li>
+<li>ضرورت ہو تو تعداد یا قیمت بدلیں، اور ہمیشہ کی طرح فروخت مکمل کریں۔</li>
+</ol>
+<p>گنتی کم ہو جاتی ہے اور منافع لاگت سے نکلتا ہے۔</p>
+<p>کچھ حفاظتی پابندیاں آپ کو بچاتی ہیں:</p>
+<ul>
+<li>آپ جتنا ہے اس سے زیادہ نہیں بیچ سکتے (<strong>اسٹاک سے زیادہ</strong>)، جب تک مالک نے آئٹم کی ترتیبات میں <strong>اسٹاک صفر ہو تو بھی بیچنے دیں</strong> چالو نہ کیا ہو۔</li>
+<li><strong>کم سے کم فروخت قیمت</strong> سے کم بیچنے پر <strong>کم سے کم قیمت سے کم — منیجر چاہیے</strong> آتا ہے۔ یہ وہی قیمت کا اصول ہے جو فون کو اس کی فروخت کی قیمت سے کم بیچنے پر لگتا ہے (باب 15 دیکھیں)۔</li>
+<li>لاگت سے کم بیچنے کے لیے مالک چاہیے۔</li>
+</ul>
+<aside class="note"><strong>نوٹ:</strong> فروخت کی اسکرین پر <strong>+ چارجر، کور یا دوسرا سامان</strong> بھی ہے، ایک کھلی لائن جس میں آپ بس نام اور قیمت لکھتے ہیں۔ ایک آدھ بار کے لیے ٹھیک ہے، لیکن یہ کسی چیز کی اسٹاک گنتی کو نہیں چھوتی۔ جو چیز آپ اسٹاک میں رکھتے ہیں اس کے لیے ہمیشہ <strong>ایکسیسری / گھڑی</strong> استعمال کریں یا اسے اسکین کریں۔</aside>
+<h3>باقی ایکسیسریز</h3>
+<p>کبھی چارجر یا ہینڈز فری کا وعدہ ہو جاتا ہے لیکن ابھی دیے نہیں گئے۔ <strong>باقی ایکسیسریز</strong> کا ٹیب انہیں سنبھال کر رکھتا ہے تاکہ کچھ بھولا نہ جائے:</p>
+<ul>
+<li><strong>سپلائر سے</strong>: ڈیلر نے ابھی آپ کو کچھ دینا ہے، مثلاً Galaxy A55 کا چارجر، اس تاریخ کے ساتھ جس کا اس نے وعدہ کیا۔</li>
+<li><strong>گاہک کو</strong>: آپ نے گاہک سے کسی چیز کا وعدہ کیا، مثلاً Vivo Y36 کے ساتھ ہینڈز فری۔</li>
+</ul>
+<p>یہ سوالوں <strong>فون کے ساتھ کیا کیا آیا؟</strong> (خریدتے وقت) اور <strong>فون کے ساتھ کیا کیا دے رہے ہیں؟</strong> (بیچتے وقت) سے آتی ہیں، جہاں ابھی آنے والی چیز کے لیے آپ <strong>بعد میں</strong> جواب دیتے ہیں۔ جب حوالے ہو جائے تو <strong>حوالے کر دیا</strong> دبائیں۔</p>
+<h3>اسٹاک الرٹ (کم اسٹاک)</h3>
+<p>ہر چیز کی ایک <strong>دوبارہ منگوائیں</strong> کی حد ہوتی ہے۔ جب گنتی اس حد پر یا اس سے نیچے آ جائے:</p>
+<ul>
+<li>چیز پر لال <strong>کم اسٹاک</strong> کا نشان آتا ہے اور وہ <strong>کم اسٹاک</strong> ٹیب میں آ جاتی ہے؛</li>
+<li>ہوم پر <em>توجہ چاہیے</em> کے نیچے "N چیزیں اسٹاک میں کم" آتا ہے، اور اس پر دبانے سے کم اسٹاک کا ٹیب کھلتا ہے؛</li>
+<li>مالک کی رات والی رپورٹ میں کم چیزیں لکھی ہوتی ہیں۔</li>
+</ul>
+<p><strong>آئٹم رپورٹس ← کم اسٹاک</strong> ایک قدم آگے جاتا ہے: یہ کم چیزوں کو ان کے آخری سپلائر کے حساب سے اکٹھا کرتا ہے اور بتاتا ہے کہ کتنی منگوانی ہیں، اندازاً خرچ کے ساتھ، تاکہ آپ تیار لسٹ کے ساتھ ڈیلر کو فون کر سکیں۔ باقی آئٹم رپورٹس دکھاتی ہیں <strong>اسٹاک کی مالیت</strong> (لاگت پر اور فروخت قیمت پر)، <strong>تیز / سست</strong> بکنے والی چیزیں، قسم اور برانڈ کے حساب سے <strong>منافع</strong>، <strong>رکا ہوا اسٹاک</strong> (کچھ دنوں سے نہیں بکا) اور <strong>سپلائر</strong>۔</p>
+<h3>اسٹاک درست کریں (ٹوٹ پھوٹ، گم، گنتی کی درستی)</h3>
+<p>گنتی صرف خرید، فروخت اور واپسی سے بدلنی چاہیے۔ جب کوئی عدد ٹوٹ جائے، گم ہو جائے، یا شیلف کی گنتی فرق ہو، تو اسے درست کریں:</p>
+<ol>
+<li>چیز کھولیں اور <strong>اسٹاک درست کریں</strong> دبائیں۔</li>
+<li><strong>تبدیلی (+/−)</strong> میں تبدیلی لکھیں، مثلاً دو ٹوٹے کور کے لیے <strong>-2</strong>۔</li>
+<li><strong>وجہ (لازمی)</strong> میں وجہ لکھیں، مثلاً <strong>ٹوٹ گئے</strong> یا <strong>گنتی کی درستی</strong>۔ وجہ کے بغیر ایپ محفوظ نہیں کرے گی۔</li>
+<li><strong>محفوظ کریں</strong> دبائیں۔ ہسٹری میں −2 کی <strong>ایڈجسٹ</strong> والی لائن آپ کے نام، وقت اور وجہ کے ساتھ آ جاتی ہے۔</li>
+</ol>
+<h3>چیز کا صفحہ</h3>
+<p>کسی بھی چیز پر دبا کر اس کا صفحہ کھولیں۔ اس پر یہ ہوتا ہے:</p>
+<ul>
+<li>تفصیل: <strong>فروخت قیمت</strong>، <strong>ہول سیل قیمت</strong>، <strong>کم سے کم فروخت قیمت</strong>، <strong>اوسط لاگت</strong>، <strong>فی عدد منافع</strong> (مارجن % کے ساتھ)، <strong>اسٹاک کی مالیت</strong>، <strong>دوبارہ منگوائیں</strong> اور <strong>شیلف / ریک</strong>؛</li>
+<li><strong>خریداری کے بیچ</strong>: ہر خریداری سپلائر، تاریخ، پیک (مثلاً <strong>3 درجن</strong>)، کتنے باقی ہیں اور لاگت کے ساتھ؛</li>
+<li><strong>ہسٹری</strong>: ہر آنا جانا اپنی تاریخ اور تعداد کے ساتھ: <strong>خریدا</strong> (کس سے، کتنے، کتنے ابھی دینے ہیں)، <strong>بیچا</strong> (کس کو، انوائس نمبر کے ساتھ)، <strong>واپس</strong>، <strong>ایڈجسٹ</strong>، <strong>مرمت میں لگا</strong>، اور فروخت قیمت، کم سے کم قیمت اور اوسط لاگت کے لیے <strong>قیمت بدلی</strong> کی لائنیں۔ ہر لائن کے ساتھ تبدیلی (مثلاً <strong>−4</strong>) اور اس کے بعد کی گنتی نظر آتی ہے۔</li>
+</ul>
+<p>صفحے کے بٹن: سب کے لیے <strong>اسٹیکر پرنٹ کریں</strong>، اور مالک اور منیجر کے لیے اوپر <strong>اسٹاک درست کریں</strong>، <strong>ترمیم</strong> اور <strong>ختم کریں</strong> (وہ چیز جو آپ اب نہیں بیچتے؛ اس کے پرانے بل اور ہسٹری رہتی ہے)۔</p>
+<p>ہماری کیبل والی مثال میں صفحہ دکھاتا ہے <strong>اوسط لاگت Rs. 108</strong>، Rs. 300 کی فروخت قیمت پر <strong>فی عدد منافع Rs. 192</strong> (178%)، اور باقی 50 عدد کی <strong>اسٹاک کی مالیت Rs. 5,400</strong>۔</p>
+<figure><img src="img/ur/item-page.jpg" alt=""><figcaption>تصویر 21: چیز کا صفحہ: اوسط لاگت، فی عدد منافع، اسٹاک کی مالیت، خریداری کے بیچ اور ہسٹری</figcaption></figure>
+<aside class="tip"><strong>مشورہ:</strong> ایک ساتھ بہت سی قیمتیں بدلنے کے لیے (مثلاً سب چارجر 10% مہنگے)، <strong>آئٹم رپورٹس</strong> کھولیں اور <strong>قیمتیں بدلیں</strong> دبائیں۔ 10% بڑھانے کے لیے <strong>+10</strong> لکھیں یا 5% کم کرنے کے لیے <strong>−5</strong>، یا روپوں میں رقم۔ ہر تبدیلی ہر چیز کی ہسٹری میں رہتی ہے۔</aside>
+<h2 id="c14">14. ریپئر اور ریپئر لیبز</h2>
+<p>ریپئر کا حصہ گاہک کے فون کے ساتھ اس لمحے سے چلتا ہے جب وہ کاؤنٹر پر آتا ہے، جب تک وہ واپس اس کے ہاتھ میں نہ چلا جائے: کیا خرابی ہے، آپ نے کیا وعدہ کیا، اس نے کتنا ایڈوانس دیا، کیا وہ باہر کی لیب میں گیا، لیب نے کتنا چارج کیا، اور آخر میں اس نے کتنے دیے۔</p>
+<p>ہر جاب چار مرحلوں سے گزرتی ہے، جو جاب پر ایک پٹی کی شکل میں نظر آتے ہیں: <strong>فون لیا ← ٹھیک ہو رہا ہے ← تیار ← واپس دے دیا</strong>۔ ہر جاب کو <strong>REP-000004</strong> جیسا نمبر ملتا ہے۔</p>
+<h3>ریپئر کی لسٹ</h3>
+<p>اسے ہوم ← <strong>مرمت</strong> سے کھولیں، یا <strong>مزید ← ریپئر</strong> سے۔ اوپر <strong>مرمت کے لیے فون لیں</strong> اور <strong>ریپئر لیبز</strong> ہیں۔ ان کے نیچے:</p>
+<ul>
+<li><strong>جاری</strong> وہ جابیں دکھاتا ہے جو ابھی واپس نہیں ہوئیں؛ <strong>سب</strong> ہر جاب دکھاتا ہے۔</li>
+<li>سرچ باکس جاب کو <strong>جاب نمبر، IMEI، نام یا فون</strong> سے ڈھونڈتا ہے۔</li>
+<li>ہر لائن میں فون اور خرابی (مثلاً <em>Vivo Y20 — اسکرین پر لائنیں</em>)، گاہک، جاب نمبر، تیار ہونے کی تاریخ، مرحلہ (<strong>فون لیا</strong>، <strong>ٹھیک ہو رہا ہے</strong>، <strong>تیار</strong>) اور رقم ہوتی ہے۔</li>
+<li>جب فون باہر کی لیب میں ہو تو لائن پر لیب کے نام کے ساتھ <strong>لیب میں</strong> لکھا آتا ہے، اور اگر لیب دیر کر رہی ہو تو لال رنگ میں۔</li>
+<li>جب جابیں تیار ہوں تو ایک لائن <strong>تیار ہے — گاہک کو بلائیں</strong> آپ کو فون کرنے کی یاد دلاتی ہے۔</li>
+</ul>
+<figure><img src="img/ur/repairs.jpg" alt=""><figcaption>تصویر 22: ریپئر کی لسٹ: جاری جابیں مرحلے اور رقم کے ساتھ، اور ریپئر لیبز کا راستہ</figcaption></figure>
+<h3>فون ریپئر کے لیے لیں</h3>
+<p><strong>مثال:</strong> <strong>Usman Tariq</strong> ایک <strong>Vivo Y20</strong> لاتا ہے جس کی اسکرین پر لائنیں ہیں۔ آپ کے خیال میں بل تقریباً <strong>Rs. 7,500</strong> بنے گا۔ وہ <strong>Rs. 2,000</strong> ایڈوانس دیتا ہے۔ آپ تین دن میں دینے کا وعدہ کرتے ہیں۔</p>
+<ol>
+<li><strong>مرمت کے لیے فون لیں</strong> دبائیں۔</li>
+<li><strong>گاہک</strong> میں نام، فون یا CNIC سے ڈھونڈیں اور <strong>Usman Tariq</strong> پر دبائیں۔ نئے گاہک کے لیے <strong>+</strong> دبا کر اس کا نام اور موبائل نمبر لکھیں۔</li>
+<li><strong>فون کا نام (جیسے Samsung A54)</strong> میں <strong>Vivo Y20</strong> لکھیں۔</li>
+<li><strong>کیا خرابی ہے؟</strong> میں ملتی جلتی خرابی کے بٹن دبائیں (مثلاً <strong>اسکرین / ڈسپلے</strong>)۔ اگر اس کی خرابی لسٹ میں نہیں تو <strong>کوئی اور خرابی (لکھیں)</strong> میں لکھیں: <strong>اسکرین پر لائنیں</strong>۔</li>
+<li><strong>اندازاً خرچ</strong> لکھیں: <strong>7500</strong>، اور <strong>ایڈوانس لیا</strong>: <strong>2000</strong>۔</li>
+<li><strong>کب تک تیار</strong> میں <strong>آج</strong>، <strong>کل</strong>، <strong>3 دن</strong> دبائیں، یا تاریخ چنیں۔</li>
+<li>اگر IMEI اور اس کے ساتھ چھوڑی چیزیں لکھنی ہوں تو <strong>IMEI، فون کے ساتھ چھوڑی چیزیں</strong> دبائیں: سم، میموری کارڈ، کور، چارجر، ڈبہ یا ہینڈز فری۔</li>
+<li><strong>محفوظ کریں اور پرچی پرنٹ کریں</strong> دبائیں۔ گاہک کی پرچی (جاب شیٹ) پرنٹ ہوتی ہے، اور جاب کھل جاتی ہے۔</li>
+</ol>
+<figure><img src="img/ur/repair-new.jpg" alt=""><figcaption>تصویر 23: فون ریپئر کے لیے لینا: گاہک چنیں، پھر فون اور خرابی</figcaption></figure>
+<p>ایڈوانس آپ کی نقدی میں آ جاتا ہے اور جاب کے کھاتے میں گنا جاتا ہے۔ اگر گاہک فون لینے کبھی واپس نہ آئے تو بھی ریکارڈ بالکل ٹھیک بتاتا ہے کہ اس نے کتنے دیے تھے۔</p>
+<aside class="tip"><strong>مشورہ:</strong> آپ کے اپنے اسٹاک کے فون بھی ریپئر ہو سکتے ہیں۔ فون کا صفحہ کھولیں اور <strong>مرمت کے لیے بھیجیں</strong> دبائیں۔ جاب پر <strong>دکان کا اپنا موبائل</strong> لکھا آتا ہے، اور ریپئر کا جو بھی خرچ ہو وہ اس فون کی لاگت میں جڑ جاتا ہے، تاکہ اس کا منافع صحیح رہے۔</aside>
+<h3>کام کے دوران</h3>
+<p>ریپئر کی لسٹ سے جاب کھولیں۔ مرحلے کی پٹی کے نیچے یہ ہیں:</p>
+<ul>
+<li><strong>کام شروع</strong>: جاب <strong>ٹھیک ہو رہا ہے</strong> پر چلی جاتی ہے۔</li>
+<li><strong>پرزوں کا انتظار</strong>: مثلاً، اسکرین مارکیٹ سے منگوائی ہوئی ہے۔</li>
+<li><strong>ٹھیک نہ ہو سکے</strong>: جاب بغیر ریپئر کے بند کرتا ہے (فون بغیر ٹھیک ہوئے واپس دیا جاتا ہے)۔</li>
+<li><strong>ٹھیک ہو گیا</strong>: بل کھولتا ہے (نیچے دیکھیں)۔</li>
+</ul>
+<p>نیچے <strong>اسٹیکر پرنٹ کریں</strong> (ریپئر اسٹیکر)، <strong>پرچی پرنٹ</strong> (گاہک کی جاب شیٹ دوبارہ)، اور <strong>دستاویز کی زبان</strong> ہیں، جو طے کرتی ہے کہ پرنٹ ہونے والی پرچی انگریزی میں ہو یا اردو میں۔</p>
+<h3>فون باہر کی لیب کو بھیجیں</h3>
+<p>مارکیٹ میں بہت سی دکانیں ہر چیز خود ٹھیک نہیں کرتیں۔ بورڈ کی خرابی یا iPhone کی اسکرین اکثر کسی ماہر لیب یا ٹیکنیشن کے پاس جاتی ہے۔ Mobile Shop ہر ایسے چکر کا پورا ریکارڈ رکھتا ہے: فون کس لیب کے پاس ہے، کب سے، انہیں کیا کرنا ہے، انہوں نے کتنا چارج کیا، اور دکان نے انہیں کتنے دینے ہیں۔</p>
+<p><strong>مثال (جاری):</strong> آپ کا ٹیکنیشن Vivo کی اسکرین ٹھیک نہیں کر سکتا۔ آپ اسے <strong>Zain Mobile Lab (Hall Road)</strong> کو دیتے ہیں۔ وہ <strong>Rs. 4,000</strong> بتاتے ہیں اور دو دن میں واپس کرنے کا وعدہ کرتے ہیں۔</p>
+<ol>
+<li>جاب پر <strong>لیب کو بھیجیں</strong> دبائیں۔</li>
+<li><strong>ریپئر لیب / ٹیکنیشن</strong> میں <strong>Zain Mobile Lab (Hall Road)</strong> چنیں۔ نئی لیب وہیں اس کے نام اور فون کے ساتھ شامل ہو سکتی ہے۔</li>
+<li><strong>لیب کیا کرے</strong> میں کام لکھیں، مثلاً <strong>اسکرین بدلنی ہے</strong>۔</li>
+<li><strong>لیب کا بتایا ریٹ</strong> لکھیں: <strong>4000</strong>۔ یہ صرف ریکارڈ کے لیے ہے؛ اصل چارج فون واپس آنے پر لکھا جاتا ہے۔</li>
+<li><strong>واپسی کی تاریخ</strong> چنیں: وہ دن جس کا لیب نے وعدہ کیا۔</li>
+<li><strong>بھیجیں</strong> دبائیں۔</li>
+</ol>
+<p>جاب <strong>ٹھیک ہو رہا ہے</strong> پر چلی جاتی ہے، اور اس پر <strong>ابھی لیب میں</strong> کا کارڈ آ جاتا ہے جس میں لیب کا نام، <strong>کال</strong> کا بٹن، بھیجنے کی تاریخ، کتنے دن سے وہاں ہے، متوقع دن اور ریٹ ہوتا ہے۔ اگر لیب نے متوقع دن تک واپس نہ کیا تو کارڈ لال ہو جاتا ہے اور لکھا آتا ہے <strong>دیر: متوقع دن تک واپس نہیں آیا</strong>۔</p>
+<figure><img src="img/ur/repair-job.jpg" alt=""><figcaption>تصویر 24: جب فون لیب میں ہو تو ریپئر جاب: دیر کی وارننگ، لیب سے واپس اور بھیجنا منسوخ</figcaption></figure>
+<p>ایک جاب کا ایک وقت میں صرف ایک لیب کا چکر کھلا رہ سکتا ہے۔ اگر آپ نے غلط لیب لکھ دی، یا لیب نے فون لیا ہی نہیں، تو <strong>بھیجنا منسوخ</strong> دبائیں اور <strong>کیوں منسوخ؟</strong> میں وجہ لکھیں۔ منسوخ شدہ چکر ہسٹری میں رہتا ہے۔</p>
+<h3>لیب سے واپس لائیں</h3>
+<ol>
+<li>جب لیب فون واپس کرے تو جاب کھولیں اور <strong>لیب سے واپس</strong> دبائیں۔</li>
+<li><strong>کیا لیب نے ٹھیک کیا؟</strong> کا جواب دیں: <strong>ٹھیک ہو گیا</strong> یا <strong>ٹھیک نہیں ہوا</strong>۔</li>
+<li>اس چکر کا <strong>لیب کا چارج</strong> لکھیں: <strong>4000</strong>۔ اگر لیب ٹھیک نہ کر سکی لیکن چیکنگ فیس لی تو بھی لکھیں۔</li>
+<li><strong>لیب کو ابھی دیے</strong> میں وہ لکھیں جو آپ نے موقع پر نقد دیا، مثلاً <strong>1500</strong>۔ ایپ دکھاتی ہے <strong>Rs. 2,500 لیب کے کھاتے میں (دکان نے دینے ہیں)</strong>۔</li>
+<li><strong>محفوظ کریں</strong> دبائیں۔</li>
+</ol>
+<p>اگر <strong>ٹھیک ہو گیا</strong> تھا تو جاب <strong>تیار</strong> ہو جاتی ہے اور گاہک کو معمول کا "آپ کا فون تیار ہے" والا میسج جاتا ہے۔ اگر <strong>ٹھیک نہیں ہوا</strong> تھا تو جاب کھلی رہتی ہے اور آپ اسے کسی دوسری لیب کو بھیج سکتے ہیں۔</p>
+<p>ہر چکر جاب پر <strong>لیب کے چکر</strong> میں لکھا ہوتا ہے: کون سی لیب، بھیجنے اور واپسی کی تاریخیں، ٹھیک ہوا یا نہیں، اور چارج۔ کچھ بھی کبھی ختم نہیں ہوتا۔</p>
+<p><strong>لیب کے چارج کا کیا ہوتا ہے</strong></p>
+<ul>
+<li>گاہک کے فون پر لیب کا چارج اس ریپئر کا خرچ ہے۔ آپ کا ریپئر کا منافع بل میں سے پرزے اور لیب کے چارج نکال کر بنتا ہے۔</li>
+<li>آپ کے اپنے اسٹاک کے فون پر لیب کا چارج اس فون کی لاگت میں جڑ جاتا ہے۔</li>
+<li>چارج ایک ہی بار درج ہوتا ہے، جب فون واپس آتا ہے۔ گاہک کو فون دیتے وقت دوبارہ درج نہیں ہوتا۔</li>
+<li>جو آپ نے موقع پر نہیں دیا وہ لیب کے کھاتے میں رہتا ہے۔ اسے بعد میں لیب کے کھاتے سے <strong>پیسے دیے</strong> کے ذریعے ادا کریں، کسی بھی دوسرے ڈیلر کی طرح۔</li>
+</ul>
+<p><strong>مثال:</strong> ایک فون Ali Repair Lab جاتا ہے، Rs. 500 چیکنگ فیس کے ساتھ <strong>ٹھیک نہیں ہوا</strong> واپس آتا ہے، پھر Zain Mobile Lab جاتا ہے اور Rs. 4,000 میں <strong>ٹھیک ہو گیا</strong> واپس آتا ہے۔ لیب کے چکر دونوں دکھاتا ہے۔ اس ریپئر کا لیب کا خرچ Rs. 4,500 ہے۔</p>
+<h3>جب ٹھیک ہو جائے</h3>
+<ol>
+<li>جاب کھولیں اور <strong>ٹھیک ہو گیا</strong> دبائیں۔ <strong>پرزے اور مزدوری</strong> کی شیٹ کھلتی ہے۔</li>
+<li>جو پرزے لگائے وہ <strong>+ پرزہ</strong> سے ڈالیں (نام، تعداد، قیمت)۔ اس کے نیچے اپنے اسٹاک کی کسی چیز پر دبائیں تاکہ وہ <strong>اسٹاک سے</strong> لگے: اس کی گنتی خود کم ہو جاتی ہے۔</li>
+<li><strong>مزدوری</strong> لکھیں۔ <strong>کل</strong> لکھتے لکھتے بنتا جاتا ہے۔</li>
+<li><strong>ٹھیک ہو گیا</strong> دبائیں۔ جاب <strong>تیار</strong> اور بل دکھاتی ہے: کل، منفی <strong>ایڈوانس لیا</strong>، برابر <strong>لینا باقی</strong>۔</li>
+<li>گاہک کو فون کرنے کے لیے <strong>کال</strong> دبائیں۔</li>
+</ol>
+<p><strong>مثال (جاری):</strong> Vivo کا بل Rs. 7,500 مزدوری ہے۔ ایڈوانس Rs. 2,000 تھا، اس لیے <strong>لینا باقی</strong> <strong>Rs. 5,500</strong> ہے۔</p>
+<h3>واپس دیں</h3>
+<ol>
+<li>جب گاہک آئے تو جاب کھولیں اور <strong>گاہک کو واپس دیں</strong> دبائیں۔</li>
+<li>کل، ایڈوانس اور <strong>لینا باقی</strong> دیکھ لیں۔</li>
+<li>جو وہ دیتا ہے وہ <strong>ابھی کتنے ملے</strong> میں لکھیں: <strong>5500</strong>۔ اگر وہ کم دے تو ایپ کہتی ہے <strong>باقی رقم گاہک کے کھاتے میں جائے گی</strong>۔</li>
+<li>اگر آپ ریپئر کی وارنٹی دیتے ہیں تو <strong>وارنٹی کے دن (اگر ہو)</strong> لکھیں۔</li>
+<li><strong>گاہک کو واپس دیں</strong> دبائیں۔ جاب پر <strong>واپس دے دیا</strong> آتا ہے اور وہ بند ہو جاتی ہے۔</li>
+</ol>
+<p>ہماری مثال میں دکان نے Rs. 7,500 کا بل بنایا اور لیب نے Rs. 4,000 لیے، اس لیے اس ریپئر پر منافع <strong>Rs. 3,500</strong> ہے۔</p>
+<aside class="note"><strong>نوٹ:</strong> آپ کے اپنے اسٹاک کے اس فون کے لیے جو لیب کے چکر سے نہیں گزرا، واپسی والی شیٹ میں <strong>باہر کے کاریگر کو دیے</strong> بھی ہوتا ہے، اس ٹیکنیشن کے لیے جسے آپ نے چکر درج کیے بغیر پیسے دیے۔</aside>
+<h3>ریپئر لیبز اور ان کا ریکارڈ</h3>
+<p>ریپئر کی لسٹ پر <strong>ریپئر لیبز</strong> دبائیں۔ آپ کو ہر وہ لیب اور ٹیکنیشن نظر آتا ہے جسے آپ فون بھیجتے ہیں۔ ہر کارڈ دکھاتا ہے کتنے فون <strong>بھیجے</strong>، ابھی کتنے <strong>لیب میں</strong> ہیں، <strong>ٹھیک %</strong>، اور <strong>دکان نے لیب کو دینے ہیں</strong>۔ <strong>1 دیر سے</strong> جیسا لال نشان خبردار کرتا ہے کہ کوئی لیب وعدے کے دن کے بعد بھی فون رکھے ہوئے ہے۔ <strong>لیب شامل کریں</strong> کے لیے اوپر <strong>+</strong> دبائیں۔</p>
+<figure><img src="img/ur/repair-labs.jpg" alt=""><figcaption>تصویر 25: ریپئر لیبز: ہر لیب بھیجے، لیب میں، ٹھیک % اور دکان نے کتنے دینے ہیں کے ساتھ</figcaption></figure>
+<p>کسی لیب پر دبا کر اس کا ریکارڈ کھولیں۔ اوپر <strong>دکان نے لیب کو دینے ہیں</strong> اس کے فون اور پتے کے ساتھ ہے اور <strong>لیب کا کھاتہ کھولیں</strong>۔ پھر نو اعداد:</p>
+<table><thead><tr><th>عدد</th><th>مطلب</th></tr></thead><tbody><tr><td><strong>بھیجے</strong></td><td>اس لیب کو بھیجے گئے فون (منسوخ چکر نہیں گنے جاتے)۔</td></tr><tr><td><strong>لیب میں</strong></td><td>جو فون ابھی اس لیب کے پاس ہیں۔</td></tr><tr><td><strong>دیر</strong></td><td>جو فون وعدے کے دن کے بعد بھی وہاں ہیں۔</td></tr><tr><td><strong>ٹھیک ہو گیا</strong></td><td>جو فون اس نے ٹھیک کر کے واپس کیے۔</td></tr><tr><td><strong>ٹھیک نہیں ہوا</strong></td><td>جو فون اس نے بغیر ٹھیک کیے واپس کیے۔</td></tr><tr><td><strong>ٹھیک %</strong></td><td>سب واپس آنے والوں میں سے کتنے ٹھیک ہوئے۔</td></tr><tr><td><strong>اوسط دن</strong></td><td>یہ عام طور پر فون کتنے دن رکھتی ہے۔</td></tr><tr><td><strong>چارجز</strong></td><td>اس نے جو کچھ چارج کیا۔</td></tr><tr><td><strong>موقع پر ادا</strong></td><td>فون لیتے وقت آپ نے کتنے دیے۔</td></tr></tbody></table>
+<p>اس کے نیچے <strong>لیب کے چکر</strong> ہر اس فون کی لسٹ ہے جو آپ نے وہاں بھیجا، جاب نمبر، تاریخوں، لگے دنوں، کام اور نتیجے (<strong>لیب میں</strong>، چارج کے ساتھ <strong>ٹھیک ہو گیا</strong>، <strong>ٹھیک نہیں ہوا</strong>) کے ساتھ۔</p>
+<figure><img src="img/ur/repair-lab.jpg" alt=""><figcaption>تصویر 26: ایک لیب کا ریکارڈ: دکان نے کتنے دینے ہیں، نو اعداد اور ہر لیب کا چکر</figcaption></figure>
+<aside class="tip"><strong>مشورہ:</strong> لیب چننے کے لیے یہ ریکارڈ استعمال کریں۔ جس لیب کا <strong>ٹھیک %</strong> زیادہ اور <strong>اوسط دن</strong> کم ہوں، اسے زیادہ کام بھیجنا فائدہ مند ہے۔ مالک ریپئر اور لیبز کو <strong>دکان کا آڈٹ ← ریپئر</strong> میں بھی دیکھتا ہے۔</aside>
+<h3>ریپئر اسٹیکر</h3>
+<p>جب گاہک کا فون آئے تو اس پر ایک چھوٹا اسٹیکر لگا دیں تاکہ وہ بینچ پر یا لیب میں کسی دوسرے فون سے کبھی نہ ملے۔</p>
+<ol>
+<li>جاب پر <strong>اسٹیکر پرنٹ کریں</strong> دبائیں۔ <strong>ریپئر اسٹیکر</strong> کی شیٹ کھلتی ہے: <em>اسے گاہک کے فون پر لگائیں۔ چنیں اس پر کیا ہو۔</em></li>
+<li><strong>اس پر کیا ہو</strong> میں ہر خانے پر دبا کر اسے ڈالیں یا ہٹائیں: <strong>دکان کا نام</strong>، <strong>جاب نمبر</strong>، <strong>بارکوڈ</strong>، <strong>گاہک</strong>، <strong>موبائل نمبر</strong>، <strong>فون ماڈل</strong>، <strong>IMEI</strong>، <strong>خرابی</strong>، <strong>ساتھ آیا</strong>، <strong>آنے کی تاریخ</strong>، <strong>کب تک تیار</strong>، <strong>اندازہ</strong>، <strong>ایڈوانس</strong>، <strong>باقی رقم</strong>، <strong>لیب</strong> اور <strong>نوٹ</strong>۔</li>
+<li><strong>اسٹیکر سائز</strong> (50×30، 58×40، 60×40، 70×40 mm یا A4 شیٹ) اور <strong>ہر ایک کی کاپیاں</strong> (1، 2 یا 3) چنیں۔</li>
+<li><strong>پرنٹ</strong> دبائیں۔</li>
+</ol>
+<p>آپ کے چنے ہوئے خانے، سائز اور کاپیاں اگلی بار کے لیے اسی فون یا کمپیوٹر پر یاد رہتے ہیں۔</p>
+<p>اسٹیکر پر بارکوڈ جاب نمبر ہے۔ اسے ایپ میں کہیں بھی اسکین کریں اور ریپئر جاب فوراً کھل جاتی ہے، جو تب بہت کام آتا ہے جب لیب ایک ساتھ پانچ فون واپس کرے۔</p>
+<p><strong>مثال:</strong> Vivo کے اسٹیکر پر لکھا ہے <em>AL-MADINA MOBILE ZONE · REP-000004 · Usman Tariq · 03215550003 · Vivo Y20 — اسکرین پر لائنیں · اسکرین / ڈسپلے · تیار 02-11 · باقی Rs. 5,500</em>، اور نیچے بارکوڈ۔</p>
+<figure><img src="img/ur/repair-sticker.jpg" alt=""><figcaption>تصویر 27: پرنٹ شدہ ریپئر اسٹیکر: جاب نمبر، گاہک، فون، خرابی، تیار ہونے کی تاریخ اور بارکوڈ</figcaption></figure>
+<aside class="note"><strong>اہم:</strong> فون کا اسکرین لاک (پاس ورڈ یا پیٹرن) اسٹیکر پر کبھی پرنٹ نہیں ہوتا، چاہے آپ کچھ بھی چنیں۔ اسٹیکر کوئی بھی دیکھ سکتا ہے، آپ کے کاؤنٹر پر یا لیب میں۔</aside>
+<aside class="tip"><strong>مشورہ:</strong> لیب کے چکر کے لیے چھوٹا اسٹیکر بہتر ہے: <strong>جاب نمبر</strong>، <strong>بارکوڈ</strong>، <strong>فون ماڈل</strong>، <strong>خرابی</strong> اور <strong>لیب</strong>۔ کاؤنٹر کے لیے <strong>گاہک</strong> اور <strong>موبائل نمبر</strong> بھی ڈالیں۔</aside>
+<h2 id="c15">15. دوسری دکانوں کو امانت</h2>
+<p>مارکیٹ میں دکانیں اکثر ایک دوسرے کو فون "امانت پر" دیتی ہیں: دوسری دکان اسے اپنے گاہک کو دکھاتی ہے اور یا تو بیچ دیتی ہے یا واپس لے آتی ہے۔ جب تک فون بک نہ جائے یا واپس نہ آئے، وہ <strong>آپ کا</strong> رہتا ہے۔ Mobile Shop ہر ایسے فون کا حساب رکھتا ہے تاکہ کوئی بھی کسی اور کے کاؤنٹر پر بھول نہ جائے۔</p>
+<h3>فون امانت پر دیں</h3>
+<p><strong>مثال:</strong> آپ ایک <strong>Apple iPhone 12</strong> تین دن کے لیے <strong>Star Mobiles (ہال روڈ)</strong> کو دیتے ہیں۔</p>
+<ol>
+<li><strong>مزید ← امانت</strong> پر جائیں۔ اوپر والا کارڈ دکھاتا ہے کتنے <strong>موبائل اس وقت دوسری دکانوں پر</strong> ہیں۔</li>
+<li><strong>موبائل امانت پر دیں</strong> دبائیں۔</li>
+<li><strong>کون سا فون؟</strong>: لسٹ میں iPhone 12 پر دبائیں، یا اسے ڈھونڈیں یا اسکین کریں۔</li>
+<li><strong>کس دکان کو؟</strong>: <strong>Star</strong> ڈھونڈیں۔ نئی دکان وہیں <strong>+</strong> سے شامل ہو سکتی ہے۔</li>
+<li><strong>واپسی</strong>: <strong>3 دن</strong> دبائیں (یا 7، 15، 30 دن، یا <strong>تاریخ نہیں</strong>)۔</li>
+<li>چاہیں تو <strong>نوٹس</strong> لکھیں، اور <strong>امانت پر دیں</strong> دبائیں۔</li>
+</ol>
+<p>یہی بٹن، <strong>امانت پر دیں</strong>، فون کے اپنے صفحے پر بھی ہے۔</p>
+<p>اب فون اسٹاک لسٹ میں <strong>امانت پر</strong> دکھتا ہے (اور آپ کے کاؤنٹر پر غلطی سے نہیں بکتا)، اور امانت کی اسکرین پر ایک کارڈ کی شکل میں آتا ہے جس میں کتنے دن سے باہر ہے (<strong>0 دن سے باہر</strong>)، دکان کا نام، دینے کی تاریخ اور <strong>کب تک واپس</strong>، اور ایک <strong>دکان</strong> کا بٹن ہوتا ہے جس سے دکان کا صفحہ کھول کر انہیں فون کر سکتے ہیں۔</p>
+<figure><img src="img/ur/loans.jpg" alt=""><figcaption>تصویر 28: امانت: دوسری دکانوں پر فون، موبائل واپس آ گیا اور انہوں نے رکھ لیا (فروخت) کے ساتھ</figcaption></figure>
+<h3>جب واپس آئے، یا وہ رکھ لیں</h3>
+<p>امانت کی اسکرین پر تین ٹیب ہیں: <strong>باہر</strong>، <strong>واپس آ گیا</strong> اور <strong>انہیں بیچے</strong>۔ <strong>باہر</strong> میں ہر کارڈ کے نیچے:</p>
+<ul>
+<li><strong>موبائل واپس آ گیا</strong>: ایپ پوچھتی ہے <em>کیا یہ فون آپ کے پاس واپس آ گیا؟ یہ واپس آپ کے اسٹاک میں جائے گا۔</em> <strong>جی، واپس آ گیا</strong> دبائیں۔ فون دوبارہ <strong>اسٹاک میں</strong> ہو جاتا ہے۔</li>
+<li><strong>انہوں نے رکھ لیا (فروخت)</strong>: دوسری دکان نے اسے بیچ دیا یا رکھنا چاہتی ہے۔ <strong>طے شدہ قیمت</strong> لکھیں (مثلاً <strong>150000</strong>) اور جو انہوں نے <strong>ابھی ادا</strong> کیا (مثلاً <strong>100000</strong>)۔ کارڈ دکھاتا ہے <strong>ان کے کھاتے میں</strong> <strong>50,000</strong>۔ <strong>تصدیق</strong> دبائیں۔ فروخت میں ایک عام بل بنتا ہے، اور باقی اس دکان کے کھاتے میں رہتا ہے۔</li>
+</ul>
+<p>جو امانت اپنی واپسی کی تاریخ سے گزر جائے اس پر <strong>تاریخ گزر گئی</strong> آتا ہے اور وہ اوپر والے کارڈ میں گنی جاتی ہے۔ <strong>انہیں بیچے</strong> والے ٹیب میں ہر اس فون کا <strong>بل کھولیں</strong> بٹن رہتا ہے جو انہوں نے رکھا۔</p>
+<aside class="tip"><strong>مشورہ:</strong> ہر امانت فون کی ہسٹری میں جاتی ہے (<strong>امانت پر دیا</strong>، <strong>امانت واپس</strong> یا <strong>بیچا</strong>)، اس لیے اگر کبھی کسی فون پر جھگڑا ہو تو تاریخ اور دکان ریکارڈ میں ہوتے ہیں۔</aside>
+<h3>فروخت کی قیمت، قیمت کی تبدیلی اور کون کم پر بیچ سکتا ہے</h3>
+<p>ہر فون کی ایک <strong>فروخت کی قیمت</strong> ہوتی ہے: وہ قیمت جو آپ اس کی چاہتے ہیں۔ یہ فون خریدتے وقت لگتی ہے، اور آپ اسے اس کے صفحے پر <strong>قیمت بدلیں</strong> سے بدل سکتے ہیں۔</p>
+<p><strong>بکری کے وقت</strong></p>
+<p>بل پر قیمت کے خانے کے ساتھ <strong>طے قیمت: 40,000</strong> نظر آتا ہے۔ اصل <strong>کتنے میں بکا</strong> کی رقم لکھیں: طے قیمت صرف ایک ہدف ہے۔</p>
+<p>اگر مارکیٹ بدل گئی ہو تو <strong>طے قیمت بدلیں</strong> ٹک کریں، نئی طے قیمت (مثلاً 45,000) اور وجہ لکھیں۔ پھر فروخت نئی رقم پر ہوتی ہے۔</p>
+<p><strong>بیچنے سے پہلے دیکھیں</strong></p>
+<p>جب آپ <strong>فروخت مکمل کریں</strong> دباتے ہیں تو ایک آخری اسکرین <strong>بیچنے سے پہلے دیکھیں</strong> بل کا ہر فون دکھاتی ہے: اس کی لاگت (صرف مالک اور منیجر)، طے قیمت، اگر بدلی تو نئی طے قیمت، بکنے کی قیمت اور منافع۔ جب کوئی فون اپنی طے قیمت سے کم پر جا رہا ہو تو لال لائن آتی ہے۔ بل لکھنے کے لیے <strong>تصدیق کریں اور بل بنائیں</strong> دبائیں۔</p>
+<p>اس کے بعد ایک ہی ریکارڈ ہوتا ہے: گاہک کی رسید، فون کی ہسٹری، رپورٹیں اور کھاتہ سب ایک ہی بکنے کی قیمت دکھاتے ہیں۔</p>
+<p><strong>کچھ بھی مٹایا نہیں جاتا</strong></p>
+<p>فون کی ہسٹری پہلی طے قیمت (40,000)، ایک لائن <strong>قیمت بدلی 40,000 ← 45,000 · بکری کے وقت · مارکیٹ ریٹ</strong> بیچنے والے کے نام اور وقت کے ساتھ، اور 45,000 پر فروخت سنبھال کر رکھتی ہے۔ فون کے پیسے والے کارڈ پر آپ کو <strong>اب طے قیمت</strong> اور، جب فرق ہو، <strong>پہلی طے قیمت</strong> نظر آتی ہے۔</p>
+<p><strong>قیمت کے اصول: کون طے قیمت سے کم پر بیچ سکتا ہے</strong></p>
+<p>یہ مالک <strong>مزید ← ترتیبات ← قیمت کے اصول</strong> میں طے کرتا ہے۔ دو سیٹنگز ہیں:</p>
+<ul>
+<li><strong>طے قیمت سے کم بیچنا</strong></li>
+<li><strong>طے قیمت بدلنا</strong></li>
+</ul>
+<p>ہر ایک کو یہ رکھا جا سکتا ہے:</p>
+<table><thead><tr><th>انتخاب</th><th>مطلب</th></tr></thead><tbody><tr><td><strong>کوئی بھی</strong></td><td>ہر اسٹاف ممبر یہ کر سکتا ہے۔</td></tr><tr><td><strong>مالک / منیجر</strong></td><td>اسٹاف کو میسج آتا ہے کہ اس کے لیے مالک یا منیجر چاہیے، اور وہ آگے نہیں بڑھ سکتے۔</td></tr><tr><td><strong>مالک کے PIN سے</strong></td><td>چیک والی اسکرین پر PIN کا خانہ آتا ہے۔ مالک موقع پر اپنا فوری PIN لکھتا ہے، فروخت ہو جاتی ہے، اور منظوری ریکارڈ میں لکھی جاتی ہے۔</td></tr></tbody></table>
+<p>مالک اور منیجر ہمیشہ دونوں کام کر سکتے ہیں۔ مالک اپنا PIN <strong>مزید ← اسٹاف</strong> میں سیٹ کرتا ہے۔ پانچ غلط PIN پر خانہ دس منٹ کے لیے بند ہو جاتا ہے۔ یہی اصول کسی چیز کو اس کی کم سے کم فروخت قیمت سے کم بیچنے پر بھی لگتا ہے (باب 13)۔</p>
+<p><strong>مثال:</strong> آپ کا سیلزمین Kashif Rs. 40,000 کا فون Rs. 38,500 میں بیچنا چاہتا ہے۔ اصول <strong>مالک کے PIN سے</strong> ہے۔ چیک والی اسکرین پر لال لائن دکھاتی ہے کہ فون طے قیمت سے Rs. 1,500 کم جا رہا ہے۔ آپ اس کے فون پر اپنا PIN لکھتے ہیں، بل بن جاتا ہے، اور ریکارڈ میں "مالک نے منظور کیا" لکھا آتا ہے۔</p>
+<p><strong>قیمتوں کی رپورٹ</strong></p>
+<p><strong>رپورٹس ← قیمتیں</strong> (مالک اور منیجر) چنے ہوئے عرصے میں طے قیمت کی ہر تبدیلی اور طے قیمت سے کم ہر فروخت کی لسٹ دیتی ہے: فون اور IMEI، کس نے کیا، پرانی اور نئی قیمت یا طے قیمت بمقابلہ بکنے کی قیمت، فرق، منافع، وجہ، بل نمبر، اور PIN سے کس نے منظور کیا۔ اوپر ہر بندے کی گنتی دکھائی جاتی ہے، تاکہ آپ ایک نظر میں دیکھ سکیں کہ سب سے زیادہ رعایت کون دیتا ہے۔</p>
+<aside class="note"><strong>اہم:</strong> مکمل ہو چکے بل کی رقمیں کوئی بھی نہیں بدل سکتا، مالک بھی نہیں۔ غلطی واپسی (باب 9) اور نئے بل سے درست ہوتی ہے، اس لیے ریکارڈ ہمیشہ سچا رہتا ہے۔</aside>
+<h2 id="c16">16. ادھار کھاتہ اور ادائیگیاں</h2>
+<p>ہر دکان کچھ چیزیں ادھار پر دیتی ہے اور کچھ ادھار پر لیتی ہے۔ ایپ میں اسے <strong>ادھار</strong> کہتے ہیں، اور ہر بندے کا ایک <strong>کھاتہ</strong> ہوتا ہے (اس کا حساب والا صفحہ)۔ ایپ ہر کھاتہ آپ کے لیے رکھتی ہے: اس بندے کے ساتھ ہر فروخت، خریداری، ادائیگی، واپسی اور لین دین خود بخود اس میں چڑھ جاتا ہے، اور بقایا ہمیشہ انہی اندراجات سے نکالا جاتا ہے۔ آپ کبھی ہاتھ سے بقایا نہیں لکھتے۔</p>
+<h3>ادھار کھاتہ کھولیں</h3>
+<p>نیچے والی پٹی میں <strong>ادھار</strong> دبائیں (یا ہوم ← <strong>ادھار</strong>، یا مزید ← <strong>ادھار</strong>)۔</p>
+<figure><img src="img/ur/khata.jpg" alt=""><figcaption>تصویر 29: ادھار کھاتہ: کس نے آپ کو دینا ہے اور آپ نے کس کو دینا ہے</figcaption></figure>
+<p>اوپر دو بڑے ڈبے نظر آتے ہیں:</p>
+<ul>
+<li><strong>مجھے لینے ہیں</strong> وہ کل رقم ہے جو لوگوں نے آپ کو دینی ہے، اور کتنے لوگوں نے۔ اسے دبائیں تو صرف وہی لوگ نظر آئیں گے۔</li>
+<li><strong>مجھے دینے ہیں</strong> وہ کل رقم ہے جو آپ نے دوسروں کو دینی ہے (ڈیلر، دوسری دکانیں، ریپئر لیب)، اور کتنے لوگوں کو۔</li>
+</ul>
+<p>ان کے نیچے لوگوں کی فہرست ہے۔ ہر نام کے ساتھ رقم اور رنگ میں <strong>مجھے لینے ہیں</strong> یا <strong>مجھے دینے ہیں</strong> لکھا ہوتا ہے۔ جس بندے کا حساب برابر ہو اس کے ساتھ <strong>صاف</strong> لکھا ہوتا ہے۔</p>
+<p>اوپر والے بٹن:</p>
+<ul>
+<li><strong>ڈاؤن لوڈ</strong> پورا کھاتہ PDF، Excel یا CSV میں دیتا ہے۔ <strong>شیئر</strong> اسے سیدھا WhatsApp یا کسی اور ایپ پر بھیج دیتا ہے۔</li>
+<li><strong>یاد دہانی</strong> WhatsApp یاد دہانی کی فہرست کھولتا ہے (نیچے دیکھیں)۔</li>
+<li><strong>نیا بندہ</strong> گاہک، ڈیلر، دوسری دکان یا ٹیکنیشن شامل کرتا ہے۔</li>
+</ul>
+<p>کسی کو جلدی ڈھونڈنے کے لیے سرچ والا خانہ (<strong>نام، فون یا شناختی کارڈ</strong>) استعمال کریں۔ فون نمبر کے چند ہندسے بھی کافی ہیں۔</p>
+<aside class="tip"><strong>مشورہ:</strong> کھاتے کے نیچے والے دو بٹن، <strong>پیسے ملے</strong> اور <strong>پیسے دیے</strong>، بندے کا صفحہ کھولے بغیر ادائیگی لکھنے کا سب سے تیز طریقہ ہیں۔</aside>
+<h3>نیا بندہ شامل کریں</h3>
+<ol>
+<li><strong>نیا بندہ</strong> دبائیں۔</li>
+<li><strong>نام</strong> اور <strong>موبائل نمبر</strong> لکھیں (+92 کے بعد، شروع والے 0 کے بغیر، مثلاً <code>3001234567</code>)۔</li>
+<li><strong>قسم</strong> چنیں: <strong>گاہک</strong>، <strong>ڈیلر</strong>، <strong>دوسری دکان</strong> یا <strong>ٹیکنیشن</strong>۔</li>
+<li>چاہیں تو <strong>شناختی کارڈ</strong>، <strong>شہر</strong>، <strong>پتہ</strong> اور <strong>واٹس ایپ</strong> نمبر بھی لکھیں اگر وہ موبائل نمبر سے الگ ہو۔</li>
+<li>اگر آپ کے پرانے رجسٹر میں اس بندے نے پہلے سے آپ کو دینا تھا (یا آپ نے اسے دینا تھا)، تو اسے <strong>پرانا بقایا</strong> میں لکھیں اور <strong>یہ مجھے دے گا</strong> یا <strong>میں اسے دوں گا</strong> چنیں۔</li>
+<li><strong>محفوظ کریں</strong> دبائیں۔</li>
+</ol>
+<aside class="note"><strong>نوٹ:</strong> جب آپ کسی نئے گاہک کو بیچتے ہیں یا کسی نئے بیچنے والے سے خریدتے ہیں تو بندہ خود بھی بن جاتا ہے۔ <strong>نیا بندہ</strong> کی ضرورت صرف تب ہے جب آپ کسی لین دین سے پہلے کسی کو شامل کرنا چاہیں۔</aside>
+<h3>پیسے ملے (گاہک آپ کو ادائیگی کرتا ہے)</h3>
+<p><strong>مثال:</strong> بلال احمد نے ایک فون کے Rs. 60,500 آپ کو دینے ہیں۔ آج وہ Rs. 10,000 لے کر آیا ہے۔</p>
+<ol>
+<li><strong>پیسے ملے</strong> دبائیں (کھاتے پر، یا بلال کے اپنے صفحے پر)۔</li>
+<li>اگر پہلے سے نہیں چنا تو <strong>Bilal Ahmed</strong> چنیں۔ اس کا بقایا نام کے ساتھ نظر آتا ہے۔</li>
+<li><strong>رقم</strong> میں <code>10000</code> لکھیں۔</li>
+<li><strong>طریقہ</strong> چنیں (نیچے فہرست دیکھیں)۔ یہاں <strong>نقد</strong> ہے۔</li>
+<li>چاہیں تو <strong>نوٹس</strong> لکھیں (مثلاً "پہلی قسط")۔</li>
+<li><strong>رقم وصول کریں</strong> دبائیں۔</li>
+</ol>
+<p>چار طریقے:</p>
+<ul>
+<li><strong>نقد</strong>: اس نے کاؤنٹر پر دیے۔ پیسے آپ کے گلے میں جاتے ہیں۔</li>
+<li><strong>آن لائن</strong>: اس نے بینک ٹرانسفر، Easypaisa، JazzCash یا کسی اور ایپ سے بھیجے۔ چنیں کہ آپ کے کس اکاؤنٹ میں آئے؛ گلہ نہیں بدلتا۔</li>
+<li><strong>چیک</strong>: اس نے چیک دیا۔ چیک کلیئر ہونے تک اپنے الگ اکاؤنٹ میں رہتے ہیں۔</li>
+<li><strong>بیرونِ ملک سے</strong>: کسی رشتہ دار نے ترسیلِ زر کی سروس سے بھیجے۔ رقم ان کی کرنسی میں اور ریٹ لکھیں (مثلاً 500 SAR × 74.20)؛ ایپ روپے خود نکال لیتی ہے۔</li>
+</ul>
+<p>بلال کا بقایا فوراً کم ہو کر Rs. 50,500 رہ جاتا ہے۔ ادائیگی پہلے اس کے سب سے پرانے بقایا بلوں میں لگتی ہے، اس لیے اس کے بل ٹھیک ٹھیک <strong>ادا شدہ</strong> یا <strong>کچھ ادا</strong> دکھاتے ہیں۔ رسید پرنٹ کرنے یا WhatsApp پر بھیجنے کے لیے تیار ہوتی ہے۔</p>
+<figure><img src="img/ur/payment.jpg" alt=""><figcaption>تصویر 30: پیسے ملے: رقم اور طریقہ</figcaption></figure>
+<aside class="tip"><strong>مشورہ:</strong> اگر کوئی بندہ اپنے بقایا سے زیادہ دے دے تو زائد رقم اس کے کھاتے میں ایڈوانس کے طور پر رہتی ہے۔ وہ اس کے اگلے بل میں لگ جاتی ہے۔</aside>
+<h3>پیسے دیے (آپ ڈیلر یا بیچنے والے کو ادائیگی کرتے ہیں)</h3>
+<p><strong>مثال:</strong> آپ نے Rehman Traders سے پانچ فون خریدے اور ابھی Rs. 47,280 دینے ہیں۔ آج آپ اپنے HBL اکاؤنٹ سے Rs. 20,000 دیتے ہیں۔</p>
+<ol>
+<li><strong>پیسے دیے</strong> دبائیں۔</li>
+<li><strong>Rehman Traders</strong> چنیں۔</li>
+<li><strong>رقم</strong> <code>20000</code>، <strong>طریقہ</strong> <strong>آن لائن</strong>، اکاؤنٹ <strong>HBL Current</strong>۔</li>
+<li><strong>رقم ادا کریں</strong> دبائیں۔</li>
+</ol>
+<p>Rehman Traders کو آپ نے جو دینا ہے وہ کم ہو کر Rs. 27,280 رہ جاتا ہے اور <strong>نقد اور بینک</strong> میں HBL کا بیلنس Rs. 20,000 کم ہو جاتا ہے۔</p>
+<aside class="note"><strong>اہم:</strong> <strong>پیسے ملے</strong> اور <strong>پیسے دیے</strong> بلوں کے لیے ہیں۔ اگر آپ بغیر کسی بل کے پیسے دیتے یا لیتے ہیں (دوست کو قرض، پڑوسی دکان سے ادھار لیے پیسے)، تو اس کے بجائے <strong>لین دین</strong> استعمال کریں۔ باب 17 دیکھیں۔</aside>
+<h3>بندے کا صفحہ</h3>
+<p>کھاتے میں کسی بھی نام کو دبائیں تو اس کا صفحہ کھل جاتا ہے۔</p>
+<figure><img src="img/ur/person.jpg" alt=""><figcaption>تصویر 31: ایک بندے کا کھاتہ صفحہ</figcaption></figure>
+<p>اوپر بڑا بقایا کارڈ ہے: <strong>مجھے لینے ہیں</strong>، <strong>مجھے دینے ہیں</strong> یا <strong>صاف</strong>۔ اس کے نیچے بقایا تین حصوں میں بٹا ہوتا ہے تاکہ آپ سمجھ سکیں کہ یہ کہاں سے آیا:</p>
+<ul>
+<li><strong>ان پر باقی (موبائل)</strong> وہ ہے جو ان کے فروخت والے بلوں پر ابھی ادا نہیں ہوا۔</li>
+<li><strong>ہم نے دینے (موبائل)</strong> وہ ہے جو ان سے خریداری کے بلوں پر آپ نے ابھی دینا ہے۔</li>
+<li><strong>دیگر / ابتدائی</strong> باقی سب کچھ ہے: آپ کی پرانی ڈائری کا ابتدائی بیلنس، ایکسیسریز، لین دین اور ایڈجسٹمنٹ۔</li>
+</ul>
+<p>اس کے نیچے آپ کو ملے گا:</p>
+<ul>
+<li>اس بندے کے لیے <strong>پیسے ملے</strong> اور <strong>پیسے دیے</strong> کے بٹن۔</li>
+<li>اس کا <strong>موبائل نمبر</strong>، کال اور WhatsApp کے ساتھ۔</li>
+<li><strong>لین دین</strong> کارڈ (باب 17)۔</li>
+<li>وہ فون جو آپ نے اسے بیچے اور اس سے خریدے۔</li>
+<li><strong>کھاتے کی ہسٹری</strong>: ہر فروخت، ادائیگی، واپسی اور لین دین، تاریخ، رقم اور ہر لائن کے بعد چلتے بقایا کے ساتھ۔</li>
+<li>نام، فون یا قسم بدلنے کے لیے <strong>ترمیم</strong>، غلطی سے بنے بندے کو ہٹانے کے لیے <strong>ختم کریں</strong>، اور اس کا اسٹیٹمنٹ PDF، Excel یا CSV میں لینے کے لیے <strong>ڈاؤن لوڈ</strong>۔</li>
+</ul>
+<aside class="tip"><strong>مشورہ:</strong> جب کوئی گاہک اپنے بقایا پر بحث کرے تو اس کا صفحہ کھولیں، <strong>ڈاؤن لوڈ</strong> ← <strong>PDF</strong> دبائیں اور اسے WhatsApp پر اسٹیٹمنٹ بھیج دیں۔ ہر لائن پر تاریخ اور بل نمبر ہوتا ہے۔</aside>
+<h3>غلطی ٹھیک کرنا</h3>
+<p>کھاتہ جلد والے رجسٹر کی طرح ہے: صفحے کبھی پھاڑے نہیں جاتے۔ اگر کوئی ادائیگی غلط لکھی گئی ہو تو اسے کھولیں اور وجہ لکھ کر منسوخ کریں۔ پرانا اندراج (کٹا ہوا) رہتا ہے اور ایک الٹا اندراج بقایا ٹھیک کر دیتا ہے۔ پھر صحیح اندراج کریں۔ اس طرح ہسٹری ہمیشہ بتاتی ہے کہ کیا ہوا اور کس نے کیا۔</p>
+<h3>WhatsApp پر ادھار کی یاد دہانی</h3>
+<p>ادھار کھاتے کے اوپر <strong>یاد دہانی</strong> دبائیں۔ ہر وہ بندہ جس نے آپ کو دینا ہے فہرست میں آ جاتا ہے، سب سے بڑا بقایا پہلے، ساتھ یہ کہ اس کا کھاتہ کتنے دن سے رکا ہے اور آخری یاد دہانی کب ہوئی۔ <strong>7 / 15 / 30 دن سے پرانا</strong> سے فہرست چھوٹی کریں۔</p>
+<ol>
+<li>نام کے ساتھ والا سبز WhatsApp بٹن دبائیں۔</li>
+<li>WhatsApp کھلتا ہے اور پیغام دکان کی زبان میں پہلے سے لکھا ہوتا ہے، مثلاً: "بلال، Al-Madina Mobile کی طرف سے یاد دہانی: آپ کے کھاتے پر Rs. 50,500 باقی ہیں۔"</li>
+<li>WhatsApp میں بھیجیں دبائیں۔</li>
+</ol>
+<p><strong>سب کو بھیجیں</strong> فہرست میں ایک ایک کر کے چلتا ہے تاکہ آپ ہر پیغام جلدی بھیج سکیں۔</p>
+<p><strong>خود بخود یاد دہانی:</strong> مزید ← <strong>اطلاعات</strong> ← <strong>ادھار کی یاد دہانی</strong> میں جائیں، <strong>گاہکوں کو خود یاد دلائیں</strong> پر نشان لگائیں، اور چنیں کہ کتنے خاموش دنوں کے بعد (<strong>جب کھاتہ اتنے دن سے رکا ہو</strong>) اور کس وقت۔ ہر رات ایپ ان لوگوں کو یاد دلاتی ہے جن کے کھاتے اتنے دن سے رکے ہوں۔ خود بخود بھیجنے کے لیے آپ کے سافٹ ویئر فراہم کنندہ کی طرف سے WhatsApp Business سروس لگی ہونی چاہیے؛ اس کے بغیر پیغامات <strong>پیغامات</strong> (اوپر والی گھنٹی) میں انتظار کرتے ہیں اور ایک دبانے سے WhatsApp میں کھل جاتے ہیں۔</p>
+<aside class="note"><strong>نوٹ:</strong> یاد دہانیاں ادب سے لکھی ہوتی ہیں اور کبھی اس بندے کو نہیں جاتیں جسے آپ نے پیسے دینے ہیں۔ قسط اور لین دین کی یاد دہانیاں بھی اسی سوئچ پر چلتی ہیں۔</aside>
+<h3>رات کی رپورٹ</h3>
+<p>مالک دکان پر نہ ہو تب بھی ہر رات پورے دن کا حساب WhatsApp یا ای میل پر لے سکتا ہے۔</p>
+<ol>
+<li>مزید ← <strong>اطلاعات</strong> میں جائیں۔</li>
+<li><strong>مالک کو</strong> کے نیچے <strong>مالک کا واٹس ایپ نمبر</strong> اور/یا <strong>مالک کا ای میل</strong> لکھیں۔</li>
+<li><strong>مالک کو رات کی رپورٹ</strong> کے نیچے <strong>ہر رات دن کا حساب بھیجیں · WhatsApp</strong> اور/یا <strong>· ای میل</strong> پر نشان لگائیں۔</li>
+<li>وقت (<strong>وقت</strong>) رکھیں، مثلاً 21:30۔</li>
+</ol>
+<p>ہر رات ایک پیغام آتا ہے جس میں ہوتا ہے: کتنے فون بکے اور رقم، ہاتھ میں پیسے، ادھار دیا اور وصول ہوا، خرچے، منافع، کل لینے اور دینے، اور اسٹاک میں فون۔ <strong>آج کا حساب ابھی بھیجیں</strong> اسے فوراً بھیج دیتا ہے، جو آزمانے کے لیے کام آتا ہے۔</p>
+<aside class="tip"><strong>مشورہ:</strong> اسی اسکرین پر آپ <strong>ہر سیل پر</strong> یا <strong>اسٹاک آنے پر</strong> پیغام بھی منگوا سکتے ہیں، WhatsApp یا ای میل سے۔ جو مالک دو دکانیں چلاتا ہے اس کے لیے اچھا ہے۔</aside>
+<h2 id="c17">17. لین دین (بغیر بل کے دیے یا لیے پیسے)</h2>
+<p>ہر بازار میں لوگوں کے درمیان بغیر کسی خرید و فروخت کے پیسے چلتے ہیں۔ آپ کسی پکے گاہک کو گھریلو ضرورت کے لیے Rs. 25,000 دیتے ہیں۔ پڑوسی دکان ڈیلر کو دینے کے لیے ایک دن کے لیے آپ کو Rs. 50,000 دیتی ہے۔ دکان کی زبان میں اسے <strong>لین دین</strong> کہتے ہیں۔ یہ نہ فروخت ہے نہ خریداری، اس لیے اس سے آپ کی فروخت یا ادھار کے حساب خراب نہیں ہونے چاہییں۔</p>
+<p>ایپ لین دین کو بندے کے بلوں والے اسی کھاتے میں رکھتی ہے، تاکہ ہر بندے کا ہمیشہ ایک ہی کل ہو۔ لیکن ہر جگہ اس پر لین دین کا نشان ہوتا ہے، اس لیے ہر رپورٹ اسے الگ دکھاتی ہے، اور بعد میں اگر وہ بندہ آپ سے خریدے یا آپ کو بیچے تو آپ اسے بل میں ایڈجسٹ کر سکتے ہیں۔</p>
+<figure><img src="img/ur/lending.jpg" alt=""><figcaption>تصویر 32: بندے کے صفحے پر لین دین کارڈ</figcaption></figure>
+<h3>دیے ہوئے پیسے لکھیں (لین دین باہر)</h3>
+<p><strong>مثال:</strong> عثمان، ایک پکا گاہک، Rs. 25,000 مانگتا ہے اور 29 تاریخ تک واپس کرنے کا وعدہ کرتا ہے۔</p>
+<ol>
+<li>ادھار کھاتے سے عثمان کا صفحہ کھولیں (اگر نیا ہے تو <strong>نیا بندہ</strong> سے شامل کریں)۔</li>
+<li>نیچے <strong>لین دین</strong> کارڈ تک جائیں اور <strong>رقم دی (لین دین)</strong> دبائیں۔</li>
+<li><strong>لین دین کی رقم</strong> لکھیں: <code>25000</code>۔</li>
+<li>چنیں کہ پیسے کیسے گئے: گلے سے <strong>نقد</strong>، یا بینک یا والٹ سے <strong>آن لائن</strong>۔</li>
+<li><strong>واپسی کی تاریخ (اختیاری)</strong> رکھیں، مثلاً 29-10-2026۔</li>
+<li>چاہیں تو نوٹ لکھیں ("بہن کی شادی کے لیے")۔</li>
+<li><strong>محفوظ کریں — رقم دی</strong> دبائیں۔</li>
+</ol>
+<p>اب عثمان کے کارڈ پر <strong>انہوں نے دینے ہیں (لین دین)</strong> Rs. 25,000 اور <strong>29-10-2026 کو واپسی</strong> نظر آتا ہے۔ "لین دین" کے عنوان والی چھوٹی رسید پرنٹ کی جا سکتی ہے یا اسے بھیجی جا سکتی ہے۔</p>
+<h3>لیے ہوئے پیسے لکھیں (لین دین اندر)</h3>
+<p><strong>مثال:</strong> ساتھ والی دکان Madina Telecom آپ کو Rs. 50,000 نقد دیتی ہے۔</p>
+<ol>
+<li>Madina Telecom کا صفحہ کھولیں۔</li>
+<li><strong>رقم لی (لین دین)</strong> دبائیں۔</li>
+<li>رقم <code>50000</code>، طریقہ <strong>نقد</strong>، اگر طے ہوئی ہو تو واپسی کی تاریخ۔</li>
+<li><strong>محفوظ کریں — رقم لی</strong> دبائیں۔</li>
+</ol>
+<p>کارڈ پر <strong>ہم نے دینے ہیں (لین دین)</strong> Rs. 50,000 نظر آتا ہے۔ پیسے اب آپ کے گلے میں ہیں، اور دن کا حساب اسے <strong>لین دین لیا</strong> دکھاتا ہے، فروخت نہیں۔</p>
+<h3>لین دین کارڈ کیا دکھاتا ہے</h3>
+<ul>
+<li>کھلا لین دین بڑے ہندسوں میں، <strong>انہوں نے دینے ہیں (لین دین)</strong>، <strong>ہم نے دینے ہیں (لین دین)</strong> یا <strong>کوئی لین دین باقی نہیں</strong> کے ساتھ۔</li>
+<li>واپسی کی تاریخ: تاریخ کے ساتھ <strong>واپسی</strong>، <strong>آج واپسی ہے</strong>، یا سرخ رنگ میں <strong>5 دن دیر</strong>۔ جو پیسے دکان نے دینے ہیں ان کے لیے لکھا ہوتا ہے <strong>تک ہم نے واپس دینے ہیں</strong> اور تاریخ۔</li>
+<li><strong>دیے</strong>: اس بندے کو دکان کی طرف سے دیے گئے سارے لین دین کے پیسے۔</li>
+<li><strong>لیے</strong>: اس بندے سے لیے گئے سارے لین دین کے پیسے، اس کی واپس کی ہوئی رقم سمیت۔</li>
+<li><strong>بلوں سے</strong>: کھاتے کا باقی بقایا جو بلوں سے آیا ہے، لین دین سے نہیں۔</li>
+<li><strong>لین دین کی تفصیل</strong>: ہر اندراج اپنے نمبر، تاریخ اور نوٹ کے ساتھ۔ دیے ہوئے منفی کے ساتھ، لیے ہوئے جمع کے ساتھ۔ منسوخ شدہ پر لکیر لگی ہوتی ہے۔</li>
+</ul>
+<p><strong>حل شدہ مثال:</strong> آپ نے عثمان کو Rs. 25,000 دیے۔ 30-10 کو اس نے Rs. 10,000 واپس کیے۔ کارڈ پر <strong>دیے</strong> 25,000، <strong>لیے</strong> 10,000، اور <strong>انہوں نے دینے ہیں (لین دین)</strong> Rs. 15,000 نظر آتا ہے۔</p>
+<h3>جب بندہ پیسے واپس کرے</h3>
+<p>لین دین کے واپس آنے والے پیسے بھی لین دین ہی ہیں۔ بندے کا صفحہ کھولیں اور جتنی رقم اس نے واپس کی اس کے ساتھ <strong>رقم لی (لین دین)</strong> دبائیں۔ اس کے لیے <strong>پیسے ملے</strong> استعمال نہ کریں، کیونکہ وہ بلوں کے لیے ہے۔</p>
+<p>اسی طرح جب آپ Madina Telecom کو ادھار لیے پیسے واپس کریں، تو <strong>رقم دی (لین دین)</strong> استعمال کریں۔</p>
+<h3>واپسی کی تاریخیں اور یاد دہانی</h3>
+<ol>
+<li>تاریخ اندراج کرتے وقت رکھیں، یا بعد میں: <strong>لین دین کی تفصیل</strong> میں کسی اندراج کے نیچے تاریخ والی لائن دبائیں، نئی <strong>واپسی کی تاریخ</strong> چنیں اور <strong>تاریخ محفوظ کریں</strong> دبائیں۔</li>
+<li>جب تاریخ قریب ہو یا گزر جائے تو کارڈ دیر کے دنوں کی تعداد کے ساتھ سرخ ہو جاتا ہے۔</li>
+<li><strong>یاد دہانی بھیجیں</strong> دبائیں۔ WhatsApp ایک مؤدب پیغام کے ساتھ کھلتا ہے جس میں رقم اور تاریخ ہوتی ہے۔ بھیجیں دبائیں۔ پھر کارڈ پر تاریخ کے ساتھ <strong>آخری یاد دہانی</strong> نظر آتی ہے۔</li>
+</ol>
+<p>اگر خود بخود یاد دہانی چالو ہو (مزید ← <strong>اطلاعات</strong> ← <strong>ادھار کی یاد دہانی</strong>)، تو ایپ ان لوگوں کو بھی یاد دلاتی ہے جن کا لین دین کل واپس ہونا ہے یا دیر ہو چکی ہے، زیادہ سے زیادہ تین دن میں ایک بار۔</p>
+<aside class="note"><strong>نوٹ:</strong> یاد دہانیاں صرف ان لوگوں کو جاتی ہیں جنہوں نے دکان کو دینا ہے۔ جب دکان نے کسی کو دینا ہو تو اسے کوئی پیغام نہیں جاتا؛ اس کے بجائے مالک کو ہوم اسکرین پر "دکان نے جلد لین دین واپس دینا ہے" نظر آتا ہے، تاکہ وہ پیسوں کا انتظام کر سکے۔</aside>
+<p>ہوم اسکرین کا <strong>توجہ طلب</strong> حصہ بھی "لین دین واپس کرنے میں دیر والے لوگ" دکھاتا ہے۔</p>
+<h3>لین دین کو بل میں ایڈجسٹ کریں</h3>
+<p>کبھی وہی بندہ بعد میں آپ سے فون خریدتا ہے، یا آپ کو بیچتا ہے۔ تب پہلے سے دیے ہوئے پیسے اس بل کی ادائیگی کر سکتے ہیں۔</p>
+<p><strong>مثال:</strong> کامران نے Rs. 10,000 آپ کے پاس لین دین کے طور پر رکھے (آپ نے <strong>رقم لی (لین دین)</strong> لکھا)۔ اگلے ہفتے وہ Rs. 8,000 کا ہینڈز فری، چارجر اور کور ادھار پر لیتا ہے۔ اب اس کے صفحے پر ایپ ایک کارڈ <strong>بلوں میں ایڈجسٹ کریں</strong> دکھاتی ہے: "ان کے دیے ہوئے پیسوں میں سے Rs. 8,000 ان کے کھلے فروخت بلوں میں لگ سکتے ہیں"۔</p>
+<ol>
+<li>بندے کا صفحہ کھولیں۔</li>
+<li><strong>بلوں میں ایڈجسٹ کریں</strong> کارڈ ڈھونڈیں۔</li>
+<li><strong>ابھی ایڈجسٹ کریں</strong> دبائیں۔</li>
+</ol>
+<p>بل <strong>ادا شدہ</strong> ہو جاتا ہے، اور Rs. 2,000 لین دین کے طور پر کھلے رہتے ہیں۔ کھاتے کا کل بالکل نہیں بدلتا؛ صرف بل اب ادا شدہ دکھاتے ہیں۔ گلے میں کوئی پیسہ نہیں ہلتا۔</p>
+<p>یہی الٹی طرف بھی کام کرتا ہے: دکان کے دیے ہوئے پیسے اس بندے کے دکان کے کھلے خریداری بلوں میں لگ سکتے ہیں۔ پہلے پرانے ایڈوانس استعمال ہوتے ہیں، پھر لین دین، سب سے پرانا پہلے۔</p>
+<aside class="tip"><strong>مشورہ:</strong> ایڈجسٹ کرنا کبھی خود بخود نہیں ہوتا۔ ایپ آپ سے پوچھتی ہے، کیونکہ صرف آپ جانتے ہیں کہ کامران نے پیسے اپنے بل کے لیے دیے تھے یا وہ واپس چاہتا ہے۔</aside>
+<h3>غلط لین دین اندراج منسوخ کرنا</h3>
+<p>اندراج کھولیں اور کسی بھی ادائیگی کی طرح وجہ لکھ کر منسوخ کریں۔ یہ فہرست میں لکیر لگا ہوا رہتا ہے، اور بقایا الٹے اندراج سے ٹھیک ہو جاتا ہے۔</p>
+<h3>رپورٹوں میں لین دین کہاں نظر آتا ہے</h3>
+<ul>
+<li><strong>دن کا حساب</strong>: <strong>گیا</strong> کے نیچے <strong>لین دین دیا</strong> اور <strong>آیا</strong> کے نیچے <strong>لین دین لیا</strong>۔</li>
+<li><strong>دکان کا آڈٹ ← ادھار</strong>: <strong>جس میں لین دین</strong> والی لائن بتاتی ہے کہ کل ادھار میں سے کتنا لین دین ہے۔ یہ کل کے اندر ہے، اضافی نہیں۔</li>
+<li><strong>دکان کا آڈٹ ← لین دین</strong>: اس کی اپنی پوری اسکرین (باب 21 دیکھیں)۔</li>
+<li>رپورٹوں میں <strong>ادھار وصولی</strong> صرف بلوں کے پیسے گنتی ہے، لین دین کبھی نہیں۔</li>
+</ul>
+<h2 id="c18">18. قسطیں (قسط)</h2>
+<p>بہت سے گاہک فون قسطوں پر لیتے ہیں: کچھ پیسے ابھی (ایڈوانس)، باقی برابر ماہانہ حصوں میں جنہیں <strong>قسط</strong> کہتے ہیں۔ ایک ضامن (<strong>ضامن</strong>) گاہک کی ضمانت دیتا ہے۔ ایپ پلان بناتی ہے، بتاتی ہے کس کی قسط آئی ہے، اور سب کچھ گاہک کے کھاتے میں رکھتی ہے۔</p>
+<aside class="note"><strong>نوٹ:</strong> قسطیں ایک ماڈیول ہے۔ اگر یہ نظر نہ آئے تو اپنے سافٹ ویئر فراہم کنندہ سے کہیں کہ آپ کی دکان کے لیے <strong>قسطیں</strong> چالو کر دے۔</aside>
+<h3>فون قسطوں پر بیچیں</h3>
+<p><strong>مثال:</strong> وقاص علی Rs. 85,000 کا Samsung Galaxy A35 لیتا ہے۔ وہ Rs. 25,000 ابھی دیتا ہے اور باقی 6 ماہانہ قسطوں میں۔</p>
+<ol>
+<li><strong>بیچیں</strong> دبائیں اور فون چنیں۔</li>
+<li>قیمت رکھیں: Rs. 85,000۔</li>
+<li><strong>قسطوں پر بیچیں</strong> پر نشان لگائیں۔</li>
+<li>گاہک چنیں، <strong>Waqas Ali</strong> (یا اسے شامل کریں)۔</li>
+<li><strong>ابھی ایڈوانس (روپے)</strong> لکھیں: <code>25000</code>۔ یہ اسی طریقے سے لیا جاتا ہے جو آپ نے فروخت پر چنا (نقد، آن لائن یا چیک)۔</li>
+<li><strong>کتنے مہینے</strong> کے نیچے <strong>3</strong>، <strong>6</strong>، <strong>9</strong>، <strong>12</strong>، <strong>18</strong> یا <strong>24</strong> دبائیں۔ یہاں <strong>6</strong> دبائیں۔</li>
+<li><strong>ماہانہ (روپے)</strong> کی رقم خود بھر جاتی ہے: (85,000 − 25,000) ÷ 6 = Rs. 10,000۔ اگر آپ نے کوئی اور رقم طے کی ہے تو بدل دیں؛ آخری قسط میں جو بچے وہ آ جاتا ہے۔</li>
+<li>قسط کی <strong>مہینے کی تاریخ</strong> رکھیں (مثلاً 10 تاریخ)۔ اگلے مہینے اسی تاریخ سے شروع کرنے کے لیے <strong>پہلی قسط</strong> خالی چھوڑیں، یا کوئی تاریخ چنیں۔</li>
+<li><strong>ضامن</strong> کے نیچے ضامن کا نام، موبائل اور شناختی کارڈ لکھیں۔</li>
+<li>فروخت مکمل کریں۔</li>
+</ol>
+<p>رسید پر پلان چھپتا ہے: "ایڈوانس Rs. 25,000 · 6 × Rs. 10,000 · ہر مہینے کی 10 تاریخ"، پہلی تاریخ اور ضامن۔ باقی (Rs. 60,000) وقاص کے کھاتے میں عام ادھار کی طرح رہتا ہے۔</p>
+<aside class="note"><strong>نوٹ:</strong> اگر مہینے اور ماہانہ رقم مل کر باقی رقم پوری نہ کریں، تو ایپ مکمل کرنے سے پہلے آپ سے انہیں چیک کرنے کو کہتی ہے۔</aside>
+<h3>قسطوں کی فہرست</h3>
+<p>مزید ← <strong>قسطیں</strong> میں جائیں۔</p>
+<figure><img src="img/ur/installments.jpg" alt=""><figcaption>تصویر 33: قسطیں: حالت کے حساب سے پلان</figcaption></figure>
+<p>چار ٹیب پلان دکھاتے ہیں:</p>
+<ul>
+<li><strong>آج کی</strong>: وہ قسطیں جو آج بنتی ہیں۔</li>
+<li><strong>دیر والی</strong>: وہ پلان جن کی کوئی قسط رہ گئی ہو۔</li>
+<li><strong>جاری</strong>: وہ سب پلان جن کی ادائیگی ابھی چل رہی ہے۔</li>
+<li><strong>مکمل</strong>: پوری طرح ادا شدہ پلان۔</li>
+</ul>
+<p><strong>نام، فون، بل نمبر یا ضامن</strong> سے ڈھونڈیں۔ فہرست میں ہر پلان پر گاہک، بل نمبر، کتنی قسطیں ادا ہوئیں (مثلاً 1/5)، باقی رقم اور اگلی تاریخ نظر آتی ہے۔</p>
+<p>شیڈول دیکھنے کے لیے پلان دبائیں۔ ہر قسط پر <strong>ادا شدہ</strong>، <strong>جزوی</strong>، <strong>آج</strong>، <strong>دیر</strong> یا <strong>باقی</strong> لکھا ہوتا ہے۔ گاہک اور ضامن کے نمبر کال اور WhatsApp کے ساتھ وہیں ہوتے ہیں۔</p>
+<h3>قسط لیں</h3>
+<ol>
+<li>پلان کھولیں اور <strong>قسط لیں</strong> دبائیں۔</li>
+<li>اگلی قسط کی رقم بھری ہوتی ہے۔ اگر وہ صرف کچھ حصہ دے، یا دو مہینے اکٹھے دے، تو بدل دیں۔</li>
+<li>نقد، آن لائن یا چیک چنیں۔</li>
+<li>محفوظ کریں۔</li>
+</ol>
+<p>یہ اس بل پر عام ادائیگی ہے، اس لیے کھاتہ، دن کا حساب اور گاہک کا اسٹیٹمنٹ سب برابر رہتے ہیں۔</p>
+<h3>یاد دہانی</h3>
+<ul>
+<li>کسی پلان پر <strong>واٹس ایپ پر یاد دلائیں</strong> دبائیں۔ WhatsApp اس پیغام کے ساتھ کھلتا ہے: "آپ کی Rs. 10,000 کی قسط 10-01-2027 کو بنتی ہے" (یا "5 دن دیر ہو چکی ہے")۔</li>
+<li>جب <strong>گاہکوں کو خود یاد دلائیں</strong> چالو ہو، تو جن پلانوں کی قسط کل بنتی ہے یا دیر ہو چکی ہے انہیں رات کو خود یاد دہانی چلی جاتی ہے، زیادہ سے زیادہ تین دن میں ایک بار۔</li>
+<li>ہوم کا <strong>توجہ طلب</strong> حصہ <strong>آج کی قسطیں</strong> اور <strong>قسط کے پلان تاخیر سے</strong> دکھاتا ہے۔</li>
+</ul>
+<aside class="tip"><strong>مشورہ:</strong> ہر صبح <strong>دیر والی</strong> ٹیب دیکھیں۔ ضامن کو جلدی اور ادب سے فون کرنا بعد کے بہت سے جھگڑوں سے بچاتا ہے۔</aside>
+<h2 id="c19">19. دن کا حساب، خرچے اور پیسوں کے اکاؤنٹ</h2>
+<p>دن کے آخر میں ہر دکاندار تین سوال پوچھتا ہے: میں نے کتنا بیچا، میرے ہاتھ میں کتنے پیسے ہیں، اور باقی کہاں گئے؟ <strong>دن کا حساب</strong> تینوں کا جواب ایک ہی اسکرین پر دیتا ہے۔</p>
+<h3>دن کا حساب کھولیں</h3>
+<p>نیچے والی پٹی میں <strong>حساب</strong> دبائیں (یا ہوم ← حساب والا کارڈ ← <strong>تفصیل دیکھیں</strong>، یا مزید ← <strong>دن کا حساب</strong>)۔</p>
+<p>اوپر مدت چنیں: <strong>آج</strong>، <strong>کل</strong>، <strong>ہفتہ</strong>، <strong>اس مہینے</strong> یا <strong>تاریخ سے تاریخ</strong>۔ <strong>تاریخ سے تاریخ</strong> کے لیے دو تاریخیں چنیں؛ "سے" والی تاریخ "تک" والی کے بعد نہیں ہو سکتی، اور کوئی بھی آنے والے دنوں کی نہیں ہو سکتی۔</p>
+<figure><img src="img/ur/hisaab.jpg" alt=""><figcaption>تصویر 34: دن کا حساب</figcaption></figure>
+<p>اوپر سے نیچے تک آپ کو یہ نظر آتا ہے:</p>
+<ul>
+<li><strong>فروخت ہوا</strong>: کتنے فون بکے اور کل رقم۔ جو فروخت واپس ہو گئی وہ نہیں گنی جاتی۔</li>
+<li><strong>آج ہاتھ میں بچا</strong>: بڑا گہرا کارڈ۔ یہ <strong>آیا</strong> میں سے <strong>گیا</strong> نکال کر ہے۔</li>
+<li><strong>آیا</strong>، وجوہات چھوٹے چپس میں: <strong>فروخت</strong>، <strong>ادھار وصولی</strong>، <strong>مرمت</strong>، <strong>لین دین لیا</strong>، <strong>اپنے اکاؤنٹ سے آیا</strong>، <strong>دیگر</strong>۔</li>
+<li><strong>گیا</strong>، وجوہات کے ساتھ: <strong>خریدا گیا سٹاک</strong>، <strong>واپسی</strong>، <strong>خرچے</strong>، <strong>لوگوں کو دیے</strong>، <strong>لین دین دیا</strong>، <strong>اپنے اکاؤنٹ میں گیا</strong>، <strong>دیگر</strong>۔</li>
+<li>ڈبے: <strong>نقد آیا</strong>، <strong>ایزی پیسہ</strong> (اور آپ کے دوسرے والٹ)، <strong>ادھار دیا</strong>، <strong>ادھار وصولی</strong>، <strong>خرچہ</strong>، <strong>واپسی پر لوٹایا</strong>، <strong>واپسی پر کاٹے</strong> اور <strong>منافع</strong> (صرف مالک اور منیجر)۔</li>
+<li><strong>کیا بکا</strong>: ہر فروخت، کس طرح ادائیگی ہوئی (<strong>نقد</strong>، <strong>ادھار</strong>، <strong>کچھ اُدھار</strong> وغیرہ) اور عملے میں سے کس نے بیچا۔</li>
+</ul>
+<p>اس کے پیچھے کے اندراج دیکھنے کے لیے کوئی چپ یا ڈبہ دبائیں۔ <strong>ڈاؤن لوڈ</strong> حساب کو PDF، Excel یا CSV میں دیتا ہے، اور <strong>شیئر</strong> اسے WhatsApp پر بھیجتا ہے۔</p>
+<h3>"ہاتھ میں بچے" کا مطلب، حل شدہ مثال کے ساتھ</h3>
+<p>"ہاتھ میں بچے" اصل پیسے ہیں: چنی ہوئی مدت میں جو کچھ آپ کے گلے، بینک اور والٹ میں آیا، اس میں سے جو کچھ گیا وہ نکال کر۔ یہ منافع نہیں ہے۔ اسٹاک پر خرچ کیے پیسے ضائع نہیں ہوئے؛ وہ اب آپ کی شیلف پر فون ہیں۔</p>
+<p><strong>Al-Madina Mobile پر ایک دن کی مثال:</strong></p>
+<table><thead><tr><th>آج کیا ہوا</th><th>آیا</th><th>گیا</th></tr></thead><tbody><tr><td>Vivo Y21 نقد بیچا</td><td>Rs. 38,000</td><td></td></tr><tr><td>Oppo A17 نقد بیچا</td><td>Rs. 45,000</td><td></td></tr><tr><td>بلال نے ادھار کا کچھ حصہ دیا</td><td>Rs. 10,000</td><td></td></tr><tr><td>مرمت والا فون دیا (اسکرین بدلی)</td><td>Rs. 6,000</td><td></td></tr><tr><td>ایک گاہک سے پرانا iPhone 11 خریدا</td><td></td><td>Rs. 72,000</td></tr><tr><td>بجلی کا بل اور چائے دی</td><td></td><td>Rs. 3,050</td></tr><tr><td>عثمان کو دیے (لین دین)</td><td></td><td>Rs. 3,000</td></tr><tr><td><strong>کل</strong></td><td><strong>Rs. 99,000</strong></td><td><strong>Rs. 78,050</strong></td></tr></tbody></table>
+<p>ہاتھ میں بچے = Rs. 99,000 − Rs. 78,050 = <strong>Rs. 20,950</strong>۔</p>
+<p>اب فرض کریں اسی دن آپ نے ایک ڈیلر سے Rs. 150,000 نقد میں پانچ فون بھی خریدے ہوتے۔ تب گیا Rs. 228,050 ہوتا اور ہاتھ میں بچے <strong>− Rs. 129,050</strong> دکھاتا۔ پریشان نہ ہوں۔ منفی کا مطلب یہ نہیں کہ آپ کا نقصان ہوا؛ Rs. 150,000 اب پانچ فونوں کی شکل میں آپ کی دکان میں کھڑے ہیں۔ آپ کا منافع الگ سے <strong>منافع</strong> میں اور رپورٹس میں نظر آتا ہے۔</p>
+<aside class="tip"><strong>مشورہ:</strong> جن دنوں آپ اسٹاک خریدتے ہیں یا کوئی گاہک فون واپس کرتا ہے، ان دنوں منفی "ہاتھ میں بچے" عام بات ہے۔ وجہ جاننے کے لیے <strong>گیا</strong> کے نیچے والے چپس دیکھیں۔</aside>
+<aside class="note"><strong>نوٹ:</strong> اپنے ہی اکاؤنٹس کے درمیان پیسے منتقل کرنا (مثلاً گلے سے بینک) <strong>اپنے اکاؤنٹ سے آیا</strong> اور <strong>اپنے اکاؤنٹ میں گیا</strong> کے طور پر دکھتا ہے۔ یہ نہ آمدنی ہے نہ خرچہ۔</aside>
+<h3>خرچہ لکھیں</h3>
+<p>مالک اور منیجر۔ ہوم ← <strong>خرچہ</strong>، یا مزید ← <strong>خرچے</strong>۔</p>
+<figure><img src="img/ur/expenses.jpg" alt=""><figcaption>تصویر 35: خرچوں کی فہرست اور دن بند کریں</figcaption></figure>
+<p>اسکرین کے اوپر آج کی <strong>نقدی آئی</strong>، <strong>نقدی گئی</strong> اور <strong>گلے میں ہونا چاہیے</strong> نظر آتا ہے، تاکہ آپ کو ہمیشہ پتا ہو کہ گلے میں کتنا ہونا چاہیے۔</p>
+<p><strong>مثال:</strong> آپ نے جنریٹر کے تیل کے Rs. 2,600 دیے۔</p>
+<ol>
+<li><strong>نیا خرچہ</strong> دبائیں۔</li>
+<li><strong>قسم</strong> چنیں: <strong>بجلی</strong>۔ دوسری تیار قسمیں ہیں <strong>دکان کا کرایہ</strong>، <strong>تنخواہ</strong>، <strong>عملے کا ایڈوانس</strong>، <strong>چائے پانی</strong>، <strong>مرمت کے پرزے</strong>، <strong>کرایہ / ٹرانسپورٹ</strong>، <strong>فون اور انٹرنیٹ</strong>، <strong>ٹیکس اور فیس</strong>، <strong>مالک نے نکالے</strong> اور <strong>دیگر</strong>۔</li>
+<li><strong>رقم</strong>: <code>2600</code>۔</li>
+<li><strong>تفصیل</strong> (اختیاری): "جنریٹر کا تیل"۔</li>
+<li><strong>محفوظ کریں</strong> دبائیں۔</li>
+</ol>
+<p>خرچہ گلے سے نکلتا ہے اور فہرست میں تاریخ اور تفصیل کے ساتھ نظر آتا ہے۔ یہ دن کے حساب میں <strong>خرچے</strong> کے نیچے اور منافع کی رپورٹ میں بھی آتا ہے۔</p>
+<p>اپنی قسم شامل کرنے کے لیے (مثلاً "کمیٹی" یا "جنریٹر")، قسموں کی فہرست کھولیں اور نام لکھیں۔ آپ اپنی بنائی قسموں کا نام بدل یا انہیں ہٹا بھی سکتے ہیں۔</p>
+<p>خرچہ ٹھیک کرنے کے لیے اسے دبائیں اور <strong>ترمیم</strong> چنیں، یا وجہ لکھ کر منسوخ کریں۔ منسوخ خرچہ فہرست میں کٹا ہوا رہتا ہے، اس لیے کچھ بھی بغیر نشان کے غائب نہیں ہوتا۔</p>
+<aside class="note"><strong>اہم:</strong> جو پیسے مالک اپنے لیے گھر لے جائے وہ <strong>مالک نے نکالے</strong> ہیں، دکان کا خرچہ نہیں۔ منافع کی رپورٹ اسے "مالک نے نکالے (خرچہ نہیں)" کے طور پر الگ رکھتی ہے، تاکہ آپ کا اصل منافع خراب نہ ہو۔</aside>
+<h3>دن بند کریں</h3>
+<p>رات کو گلہ گنیں اور دن بند کریں۔ اس سے غلطیاں تب پکڑی جاتی ہیں جب سب کو دن ابھی یاد ہو۔</p>
+<ol>
+<li><strong>خرچے</strong> پر <strong>دن بند کریں</strong> دبائیں۔</li>
+<li>آپ کو <strong>شروع کی نقدی</strong>، <strong>نقدی آئی</strong>، <strong>نقدی گئی</strong> اور <strong>گلے میں ہونا چاہیے</strong> نظر آتا ہے۔</li>
+<li>گلے کی نقدی گنیں اور <strong>گنی ہوئی نقدی</strong> میں لکھیں، مثلاً <code>168000</code>۔</li>
+<li><strong>فرق</strong> کوئی کمی یا زیادتی دکھاتا ہے۔ اگر ہونا چاہیے Rs. 168,350 تھا تو فرق − Rs. 350 ہے۔</li>
+<li><strong>دن بند کریں</strong> دبائیں۔</li>
+</ol>
+<p>ایک بار دن بند ہو جائے تو <strong>پہلے ہی بند</strong> لکھا آتا ہے۔</p>
+<aside class="tip"><strong>مشورہ:</strong> روز کا چھوٹا فرق عموماً اس کا مطلب ہے کہ گلے سے بغیر اندراج کے کھلے پیسے دیے گئے، یا چائے کا خرچہ نہیں لکھا گیا۔ اصول بنا لیں کہ گلے سے نکلنے والا ہر روپیہ لکھا جائے۔</aside>
+<h3>پیسوں کے اکاؤنٹ: گلہ، بینک، Easypaisa، JazzCash</h3>
+<p>زیادہ تر دکانیں ایک سے زیادہ جگہ پیسے رکھتی ہیں: گلہ، ایک بینک اکاؤنٹ، اور ایک دو والٹ جیسے Easypaisa اور JazzCash۔ ایپ ہر ایک کا الگ بیلنس رکھتی ہے۔</p>
+<p>مزید ← <strong>نقد اور بینک</strong> میں جائیں۔</p>
+<figure><img src="img/ur/accounts.jpg" alt=""><figcaption>تصویر 36: نقد اور بینک: ہر اکاؤنٹ اپنے بیلنس کے ساتھ</figcaption></figure>
+<p>ہر اکاؤنٹ اپنا نام، قسم اور بیلنس دکھاتا ہے۔ کسی اکاؤنٹ کو دبائیں تو اس کا <strong>روزنامچہ</strong> کھلتا ہے: ہر آنے اور جانے والا روپیہ، تاریخ اور وجہ کے ساتھ۔</p>
+<p><strong>اکاؤنٹ شامل کریں:</strong></p>
+<ol>
+<li><strong>نیا اکاؤنٹ</strong> دبائیں۔</li>
+<li><strong>اکاؤنٹ کا نام</strong> لکھیں، مثلاً "دکان کا Easypaisa" یا "HBL Current"۔</li>
+<li><strong>قسم</strong> چنیں (نقد، بینک، Easypaisa، JazzCash وغیرہ)۔</li>
+<li>چاہیں تو <strong>اکاؤنٹ / والٹ نمبر</strong> لکھیں۔</li>
+<li><strong>شروع کا بیلنس</strong> لکھیں: آج اس اکاؤنٹ میں جتنا ہے۔</li>
+<li>محفوظ کریں۔</li>
+</ol>
+<p>اب جب بھی آپ کسی فروخت، خریداری یا ادائیگی کے لیے <strong>آن لائن</strong> چنیں گے، نیا اکاؤنٹ ایک انتخاب کے طور پر آئے گا۔</p>
+<p><strong>اکاؤنٹس کے درمیان پیسے منتقل کریں۔</strong> مثال: ہر ہفتے کو آپ گلے سے Rs. 100,000 HBL میں جمع کراتے ہیں۔</p>
+<ol>
+<li><strong>اکاؤنٹس کے درمیان پیسے منتقل کریں</strong> دبائیں۔</li>
+<li><strong>کہاں سے</strong>: نقد۔ <strong>کہاں</strong>: HBL Current۔</li>
+<li><strong>رقم</strong>: <code>100000</code>۔ <strong>نوٹ</strong>: "ہفتے کی جمع"۔</li>
+<li><strong>منتقل کریں</strong> دبائیں۔</li>
+</ol>
+<p>صرف دو بیلنس بدلتے ہیں۔ یہ نہ فروخت ہے نہ خرچہ۔ منتقلی <strong>منتقل کی گئی رقم</strong> کے نیچے تاریخ اور کرنے والے کے نام کے ساتھ لکھی جاتی ہے۔</p>
+<aside class="tip"><strong>مشورہ:</strong> جب گاہک Easypaisa سے ادائیگی کرے تو ہمیشہ <strong>آن لائن</strong> اور پھر اپنا Easypaisa اکاؤنٹ چنیں۔ تب رات کو آپ کا گلہ پورا اترے گا، کیونکہ وہ پیسے کبھی گلے میں آئے ہی نہیں۔</aside>
+<h2 id="c20">20. رپورٹس اور ڈاؤن لوڈ</h2>
+<p>مالک اور منیجر: ہوم ← <strong>منافع اور رپورٹس</strong>، یا مزید ← <strong>رپورٹس</strong>۔</p>
+<figure><img src="img/ur/reports.jpg" alt=""><figcaption>تصویر 37: منافع اور رپورٹس</figcaption></figure>
+<p>اوپر ایک کارڈ ہے جو <strong>دکان کا آڈٹ</strong> کھولتا ہے (باب 21)، ایپ کی سب سے گہری رپورٹ۔ اس کے نیچے فوری رپورٹوں کی ٹیبیں ہیں:</p>
+<ul>
+<li><strong>منافع</strong>: مدت کا منافع۔</li>
+<li><strong>سب سے زیادہ بکنے والے</strong>: کون سے ماڈل سب سے زیادہ بکتے ہیں۔</li>
+<li><strong>اندازہ</strong>: اگلے 7 دن کا اندازہ اور کون سے فون ختم ہو جائیں گے۔</li>
+<li><strong>پرانا اسٹاک</strong>: فون اس حساب سے کہ کتنے دن سے دکان میں ہیں۔</li>
+<li><strong>قسم کے حساب سے</strong>: قسم کے حساب سے اسٹاک (فون، ٹیبلٹ، گھڑیاں)، تعداد، قیمتِ خرید پر اور مانگی قیمت پر مالیت کے ساتھ۔</li>
+<li><strong>قیمتیں</strong>: مانگی قیمت میں ہر تبدیلی اور مانگی قیمت سے کم ہر فروخت، کرنے والے کے نام کے ساتھ۔</li>
+</ul>
+<p>چپس سے مدت چنیں: <strong>آج</strong>، <strong>کل</strong>، <strong>7 دن</strong>، <strong>اس مہینے</strong> یا <strong>تاریخ سے تاریخ</strong>۔</p>
+<h3>منافع کی رپورٹ</h3>
+<p>منافع کی ٹیب ایک سادہ حساب کے گوشوارے کی طرح لائن بہ لائن پڑھی جاتی ہے:</p>
+<ul>
+<li><strong>رعایت سے پہلے بکری</strong></li>
+<li><strong>دی گئی رعایت</strong></li>
+<li><strong>گاہکوں نے واپس کیا</strong> (منفی)</li>
+<li><strong>خالص بکری</strong></li>
+<li><strong>بکے مال کی خرید قیمت</strong> (منفی)</li>
+<li><strong>فروخت پر منافع</strong></li>
+<li><strong>مرمت اور دوسری آمدنی</strong> (مرمت، واپسی پر رکھی کٹوتی)</li>
+<li>ہر خرچے کی قسم (منفی)</li>
+<li><strong>اصل منافع (خرچے نکال کر)</strong>، یا اگر خرچے زیادہ تھے تو <strong>نقصان (خرچے نکال کر)</strong>۔</li>
+</ul>
+<p>اس کے نیچے آپ کو <strong>جمع شدہ ٹیکس</strong> اور <strong>مالک نے نکالے (خرچہ نہیں)</strong> بھی نظر آتے ہیں۔</p>
+<p><strong>حل شدہ مثال (ایک ہفتہ):</strong> خالص بکری Rs. 420,000۔ بکے مال کی خرید قیمت Rs. 371,500۔ فروخت پر منافع Rs. 48,500۔ مرمت کی آمدنی Rs. 12,000۔ خرچے Rs. 18,200 (کرائے کا حصہ، بجلی، چائے، ٹرانسپورٹ)۔ اصل منافع = 48,500 + 12,000 − 18,200 = <strong>Rs. 42,300</strong>۔</p>
+<aside class="note"><strong>نوٹ:</strong> منافع تب گنا جاتا ہے جب فون بکتا ہے، نہ کہ جب پیسے ملتے ہیں۔ ادھار پر بکے فون کا منافع آج نظر آتا ہے، اور پیسے بعد میں، جب گاہک ادا کرے، "ہاتھ میں بچے" میں آتے ہیں۔</aside>
+<h3>سب سے زیادہ بکنے والے اور اندازہ</h3>
+<p><strong>سب سے زیادہ بکنے والے</strong> ماڈلوں کو اس حساب سے دکھاتا ہے کہ کتنے بکے اور کتنی رقم لائے۔ مارکیٹ سے خریدنے جانے سے پہلے اسے دیکھیں۔</p>
+<p><strong>اندازہ</strong> آپ کے پچھلے چار ہفتے دیکھتا ہے اور <strong>اگلے 7 دن (اندازہ)</strong> اور <strong>کون سا فون ختم ہونے والا ہے</strong> دکھاتا ہے، اس مشورے کے ساتھ: <strong>اور منگوائیں</strong>، <strong>ٹھیک ہے</strong> یا <strong>نہیں بک رہا</strong>۔ یہ آپ کی اپنی فروخت پر مبنی اندازہ ہے، وعدہ نہیں۔</p>
+<h3>پرانا اسٹاک اور قیمتیں</h3>
+<p><strong>پرانا اسٹاک</strong> دکان میں موجود فونوں کو اسٹاک میں دنوں کے حساب سے گروپ کرتا ہے۔ 60 دن سے پڑا فون شیلف پر پھنسا ہوا پیسہ ہے؛ کم قیمت یا ایکسچینج سودے کا سوچیں۔</p>
+<p><strong>قیمتیں</strong> مانگی قیمت کی ہر تبدیلی اور مانگی قیمت سے کم ہر فروخت دکھاتا ہے، کس نے اور کب کی۔ یہ آپ کے عملے کی دی ہوئی رعایتوں پر خاموش نظر ہے۔</p>
+<h3>ڈاؤن لوڈ اور شیئر کرنا (PDF، Excel، CSV)</h3>
+<p>ایپ کی تقریباً ہر فہرست ڈاؤن لوڈ یا شیئر کی جا سکتی ہے۔</p>
+<ol>
+<li>رپورٹ کے اوپر دائیں طرف <strong>ڈاؤن لوڈ</strong> یا <strong>شیئر</strong> دبائیں۔</li>
+<li>فارمیٹ چنیں (نیچے فہرست دیکھیں)۔</li>
+<li>ڈاؤن لوڈ فائل محفوظ کرتا ہے (ویب سائٹ: آپ کا Downloads فولڈر؛ Android ایپ: Documents › MobileShop)۔ شیئر آپ کے فون کی شیئر فہرست کھولتا ہے، تاکہ آپ اسے فوراً WhatsApp پر بھیج سکیں۔</li>
+</ol>
+<p>فارمیٹ:</p>
+<ul>
+<li><strong>PDF</strong>: بھیجنے یا رکھنے کے لیے تیار فائل۔ اردو رپورٹیں صحیح نستعلیق میں رہتی ہیں۔</li>
+<li><strong>ایکسل</strong>: Excel یا Google Sheets کے لیے۔</li>
+<li><strong>CSV</strong>: ایک سادہ فائل جو کوئی بھی سافٹ ویئر کھول سکتا ہے۔</li>
+<li><strong>پرنٹ</strong> (صرف ڈاؤن لوڈ میں): کاغذ پر پرنٹ۔</li>
+</ul>
+<p><strong>ڈاؤن لوڈ</strong> اور <strong>شیئر</strong> بٹن دن کے حساب، دکان کے اسٹاک، ادھار کھاتے، بندے کے صفحے، اسٹاک کی فہرست، خرچوں، فروخت کی فہرست اور خریداری کی فہرست پر بھی ہیں۔</p>
+<aside class="tip"><strong>مشورہ:</strong> مہینے کے آخر میں <strong>اس مہینے</strong> کی منافع رپورٹ PDF میں ڈاؤن لوڈ کریں اور اپنے ساتھ والی WhatsApp چیٹ میں رکھ لیں۔ ایک سال میں آپ کے پاس بغیر محنت کے بارہ ماہانہ گوشوارے ہوں گے۔</aside>
+<aside class="note"><strong>نوٹ:</strong> جو کمپیوٹر فائل شیئر نہیں کر سکتا وہ اس کے بجائے فائل ڈاؤن لوڈ کر دیتا ہے اور آپ کو بتا دیتا ہے۔</aside>
+<h2 id="c21">21. دکان کا آڈٹ</h2>
+<p><strong>دکان کا آڈٹ</strong> آپ کے کاروبار کا پورا معائنہ ہے۔ یہ ایسے سوالوں کا جواب دیتا ہے: "پچھلے مہینے میں نے اصل میں کتنا کمایا؟"، "پیسے کہاں گئے؟"، "کس نے مجھے دینا ہے، اور کب سے؟" اور "کون سے فون میری شیلف پر پھنسے ہیں؟"۔ ہر ہندسہ دکان کے اپنے ریکارڈ سے نکالا جاتا ہے، اور ہر ہندسے کو دبا کر اس کے پیچھے کے بالکل وہی بل، ادائیگیاں یا فون دیکھے جا سکتے ہیں۔</p>
+<p><strong>کہاں:</strong> مزید ← <strong>دکان کا آڈٹ</strong>، یا منافع اور رپورٹس کے اوپر <strong>دکان کا آڈٹ</strong> کارڈ۔ صرف مالک اور منیجر۔ (<strong>سیکیورٹی</strong> ٹیب صرف مالک کے لیے ہے۔)</p>
+<figure><img src="img/ur/audit.jpg" alt=""><figcaption>تصویر 38: دکان کا آڈٹ: ٹیبیں اور مدت کی پٹی</figcaption></figure>
+<h3>ٹیبیں اور مدت کی پٹی</h3>
+<p>اوپر یہ ٹیبیں ہیں: <strong>خلاصہ</strong>، <strong>مالیات</strong>، <strong>فروخت و خرید</strong>، <strong>لوگ</strong>، <strong>ادھار</strong>، <strong>لین دین</strong>، <strong>مرمت</strong>، <strong>اسٹاک</strong>، <strong>مصنوعات</strong>، <strong>بل</strong>، <strong>عملہ</strong>، <strong>سیکیورٹی</strong> اور <strong>رپورٹس</strong>۔</p>
+<p>ان کے نیچے مدت کی پٹی ہے، ہر ٹیب پر ایک جیسی:</p>
+<ul>
+<li><strong>آج</strong>، <strong>کل</strong>، <strong>یہ ہفتہ</strong>، <strong>پچھلا ہفتہ</strong>، <strong>یہ مہینہ</strong>، <strong>پچھلا مہینہ</strong>، <strong>یہ سال</strong>، <strong>شروع سے</strong>، یا کسی بھی دو تاریخوں کے لیے <strong>تاریخ سے تاریخ تک</strong>۔</li>
+<li>چپس کے نیچے والی لائن بالکل صحیح تاریخیں اور کتنے دن دکھاتی ہے، مثلاً "01-11-2026 ← 03-11-2026 · 3 دن"۔</li>
+<li><strong>اس دن تک</strong> سے آپ بیلنس کے لیے کوئی پچھلا دن چن سکتے ہیں۔ 30 ستمبر چنیں تو ہر بیلنس (نقد اور بینک، کس نے کس کو دینا ہے، اسٹاک میں فون) بالکل ویسا دوبارہ بن جاتا ہے جیسا اس شام تھا۔</li>
+</ul>
+<p>اوپر دائیں طرف دو گول بٹن <strong>پرنٹ</strong> اور <strong>ایکسل</strong> ہیں: جو اسکرین آپ دیکھ رہے ہیں وہ پرنٹ والے صفحے یا Excel فائل کی شکل میں دیتے ہیں۔</p>
+<p>زیادہ تر ہندسے پچھلی مدت کے مقابلے میں تبدیلی بھی دکھاتے ہیں، مثلاً سبز میں "+12%" یا سرخ میں "−8%"۔</p>
+<h3>اندر جائیں: ہر ہندسہ اپنی لائنیں کھولتا ہے</h3>
+<p>آڈٹ میں یہ سب سے اہم عادت ہے۔ جب کوئی ہندسہ عجیب لگے، اسے دبائیں۔</p>
+<p><strong>مثال:</strong> خلاصہ اس مہینے کے لیے "خرچے Rs. 38,400" دکھاتا ہے، اور آپ کو یہ زیادہ لگتا ہے۔ اسے دبائیں۔ ہر خرچے کی فہرست کھلتی ہے، سب سے بڑا پہلے، تاریخ، قسم، رقم اور لکھنے والے کے نام کے ساتھ۔ آپ کو Rs. 9,000 کا "مرمت کے پرزے" والا اندراج ملتا ہے جو کسی گاہک کی مرمت میں لگنا چاہیے تھا۔ اب آپ کو بالکل پتا ہے کہ کیا ٹھیک کرنا ہے۔</p>
+<p>یہی فروخت، آنے جانے والے پیسوں، لوگوں کے بقایا، اسٹاک میں فونوں اور باقی ہر چیز پر کام کرتا ہے۔ آڈٹ میں کوئی بھی ہندسہ ایسا نہیں جسے آپ چیک نہ کر سکیں۔</p>
+<h3>خلاصہ</h3>
+<p>خلاصہ پوری مدت کا ایک صفحہ ہے:</p>
+<ul>
+<li><strong>خالص بکری</strong>، بلوں اور فونوں کی تعداد کے ساتھ، اور گاہکوں نے کیا واپس کیا۔</li>
+<li><strong>اصل منافع (خرچے نکال کر)</strong>، یا نقصان۔</li>
+<li>مدت میں خریدا اسٹاک، خرچے، آنے والے اور جانے والے پیسے۔</li>
+<li>نقد اور بینک، اسٹاک میں فون، جن لوگوں نے ہمیں دینا ہے اور جنہیں ہم نے دینا ہے، ہر ایک <strong>شروع ← آخر ← ابھی</strong> کی شکل میں۔</li>
+<li><strong>ابھی دیکھنا ہے</strong>: آج نمٹانے والی چیزیں، جیسے کلیئر نہ ہوئی شناخت کی جانچ، اسٹاک کے الرٹ، دیر والی قسطیں اور لین دین کی واپسی کی تاریخیں۔ فہرست کھولنے کے لیے چپ دبائیں۔</li>
+<li><strong>جانچ</strong>: کھاتے خود کو ثابت کرتے ہیں۔ مثلاً: شروع کی نقدی + آئے پیسے − گئے پیسے = آخر کی نقدی؛ ہر اندراج برابر؛ کھاتہ لیجر سے ملتا ہے؛ شروع کا اسٹاک + آیا − گیا = آخر کا اسٹاک۔ سبز نشان کا مطلب ہے ہندسے آپس میں ملتے ہیں۔</li>
+</ul>
+<h3>مالیات: منافع اور نقدی</h3>
+<figure><img src="img/ur/audit-finance.jpg" alt=""><figcaption>تصویر 39: مالیات: نفع نقصان، نقد اور بینک، خرچے، ٹیکس</figcaption></figure>
+<p>مالیات کے چار حصے ہیں:</p>
+<ul>
+<li><strong>نفع نقصان</strong>: رعایت سے پہلے بکری، رعایتیں، واپسیاں، خالص بکری، بکے مال کی لاگت، مجموعی منافع، خرچے، خرچوں کے بعد منافع، دوسری آمدنی اور <strong>اصل منافع (خرچے نکال کر)</strong>۔ ہر لائن کے ساتھ بریکٹ میں پچھلی مدت ہوتی ہے، اور ایک چارٹ دن، ہفتے یا مہینے کے حساب سے منافع دکھاتا ہے۔</li>
+<li><strong>نقد اور بینک</strong>: پیسے کہاں سے آئے اور کہاں گئے، گلے، ہر بینک اور ہر والٹ کے لیے، مدت کے شروع سے آخر تک۔ اپنے ہی اکاؤنٹس کے درمیان منتقل پیسے الگ دکھائے جاتے ہیں۔ بیرونِ ملک سے آئے پیسوں پر بھیجنے والا، کرنسی، ریٹ اور حوالہ نظر آتا ہے۔</li>
+<li><strong>خرچے</strong>: قسم کے حساب سے پچھلی مدت کے ساتھ، سب سے بڑے اندراج اور کس نے لکھے۔</li>
+<li><strong>ٹیکس</strong>: ہر وہ بل جس پر ٹیکس لگا۔</li>
+</ul>
+<p><strong>حل شدہ مثال:</strong> پچھلے مہینے خالص بکری Rs. 1,250,000، مال کی لاگت Rs. 1,105,000، مجموعی منافع Rs. 145,000، خرچے Rs. 61,000، مرمت کی آمدنی Rs. 22,000۔ اصل منافع = 145,000 − 61,000 + 22,000 = <strong>Rs. 106,000</strong>۔</p>
+<h3>فروخت و خرید</h3>
+<figure><img src="img/ur/audit-sales.jpg" alt=""><figcaption>تصویر 40: فروخت و خرید: بلوں کی رقم، کاؤنٹر پر ادا، ادھار پر</figcaption></figure>
+<p>دو حصے، <strong>فروخت</strong> اور <strong>خریداری</strong>۔</p>
+<p><strong>فروخت</strong> پر: کل <strong>بلوں کی رقم</strong>، بلوں، بکی چیزوں اور <strong>فروخت پر منافع</strong> کے ساتھ؛ پھر <strong>کاؤنٹر پر ادا</strong> کے مقابلے میں <strong>ادھار پر</strong> (اور کتنا ابھی باقی ہے)؛ <strong>دی گئی رعایت</strong>، <strong>ٹیکس</strong>، <strong>گاہکوں نے واپس کیا</strong> اور <strong>اوسط بل</strong>؛ اور کتنے بل <strong>پورا ادا</strong>، <strong>کچھ ادا</strong> یا بالکل ادا نہیں ہوئے۔ اس کے نیچے ملازم اور گاہک کے حساب سے فروخت۔</p>
+<p><strong>خریداری</strong> پر: کیا خریدا، کیا ادا کیا اور کیا ابھی دینا ہے، ہر سپلائر اور ہر ملازم کے حساب سے۔</p>
+<h3>لوگ</h3>
+<p>آپ کے چنے ہوئے پیمانے پر سب سے بڑے گاہک اور سپلائر: فروخت، بلوں کی تعداد، منافع، خریداری، فون، یا دونوں طرف کی سب سے بڑی بقایا رقم۔ کسی بندے کو دبائیں تو اس کا <strong>پورا سفر</strong> کھلتا ہے: پہلا اور آخری لین دین، اسے بیچے اور اس سے خریدے فون، وصول اور ادا کیے پیسے، واپسیاں اور بقایا، کسی پچھلے دن کے حساب سے بھی۔</p>
+<h3>ادھار</h3>
+<figure><img src="img/ur/audit-udhaar.jpg" alt=""><figcaption>تصویر 41: ادھار: لوگوں نے ہمیں دینا ہے، ہم نے لوگوں کو دینا ہے</figcaption></figure>
+<ul>
+<li><strong>لوگوں نے دینا ہے</strong> اور <strong>ہم نے لوگوں کو دینا ہے</strong>، الگ الگ، ہر ایک شروع، ابھی، لوگوں کی تعداد اور تاریخ گزرے بقایا کے ساتھ۔</li>
+<li><strong>جس میں لین دین</strong>: ادھار کا وہ حصہ جو لین دین ہے۔ یہ کل کے اندر ہے، اضافی نہیں۔</li>
+<li>مدت میں کھاتے کیسے چلے: ادھار دیا، وصول ہوا، لیا، ادا کیا، واپسیاں، لین دین دیا اور لیا، ابتدائی بیلنس۔</li>
+<li><strong>ہر قرض کی عمر</strong>، سب سے پرانے بقایا بل سے گنی جاتی ہے، عمر کے خانوں میں۔</li>
+<li><strong>تاریخ گزر گئی</strong>: صرف وہ بل تاریخ گزرے ہو سکتے ہیں جن پر وعدے کی تاریخ تھی (فروخت پر "ادائیگی کا وعدہ")۔ بغیر تاریخ کا بل صرف اپنی عمر دکھاتا ہے؛ اسے کبھی تاریخ گزرا نہیں کہا جاتا۔</li>
+<li>بقایا بلوں والے لوگ اور فون۔</li>
+</ul>
+<aside class="tip"><strong>مشورہ:</strong> ہفتے میں ایک بار عمر کے حساب سے ترتیب دیں۔ 90 دن سے پرانے قرض کے لیے آج فون کرنا ضروری ہے، اگلے مہینے نہیں۔</aside>
+<h3>لین دین</h3>
+<figure><img src="img/ur/audit-lending.jpg" alt=""><figcaption>تصویر 42: دکان کے آڈٹ میں لین دین</figcaption></figure>
+<p>یہ ٹیب لوگوں کو دیے یا ان سے بغیر بل کے لیے پیسے دکھاتی ہے (باب 17):</p>
+<ul>
+<li><strong>لوگوں نے دینے ہیں (لین دین)</strong> اور <strong>ہم نے دینے ہیں (لین دین)</strong>: جو ابھی (یا اس دن تک والے دن) کھلا ہے، اور کتنے لوگ۔</li>
+<li>مدت میں دیا اور لیا لین دین، پچھلی مدت کے مقابلے میں۔</li>
+<li>بعد میں کتنا بلوں میں ایڈجسٹ ہوا، اور کتنے اندراج منسوخ ہوئے (کچھ ختم نہیں کیا جاتا)۔</li>
+<li>دن، ہفتے یا مہینے کے حساب سے چارٹ؛ طریقے کے حساب سے تقسیم (نقد، بینک، Easypaisa وغیرہ)۔</li>
+<li><strong>واپسی کی تاریخیں</strong>: تاریخ والے اندراج، دیر والے پہلے: دیر، آج، 3 دن میں، بعد میں۔</li>
+<li><strong>شخص وار لین دین</strong>: ہر بندے کا دیا اور لیا، اس کا پورا کھاتہ اور جو ابھی کھلا ہے۔</li>
+<li>مدت کا ہر اندراج اپنے نمبر، تاریخ، لکھنے والے اور نوٹ کے ساتھ۔</li>
+</ul>
+<h3>مرمت اور لیبیں</h3>
+<figure><img src="img/ur/audit-repairs.jpg" alt=""><figcaption>تصویر 43: دکان کے آڈٹ میں مرمت</figcaption></figure>
+<ul>
+<li>تعداد: <strong>آئے</strong>، <strong>واپس دے دیا</strong>، <strong>ٹھیک نہ ہو سکے</strong>، <strong>ابھی کھلے</strong>، <strong>تیار، لے نہیں گئے</strong>، <strong>ابھی دیر سے</strong>، <strong>ابھی لیب میں</strong> اور <strong>لیب میں دیر</strong>۔</li>
+<li>پیسے: <strong>مرمت کی آمدنی</strong>، <strong>پرزوں کی لاگت</strong>، <strong>لیب چارجز</strong>، <strong>ریپئر کا منافع</strong>، دکان کے اپنے فونوں پر لیب چارجز، اور اوسط بل۔</li>
+<li>مدت کا چارٹ، ہر ریپئر لیب اپنے ریکارڈ کے ساتھ، ابھی کیا دیکھنا ہے، اور سب سے عام خرابیاں۔</li>
+</ul>
+<p><strong>مثال:</strong> آپ کو "تیار، لے نہیں گئے 6" نظر آتا ہے۔ اسے دبائیں، اور ان چھ گاہکوں کو فون کریں۔ یہ پیسے اور شیلف کی جگہ ہے جو آپ کے کاؤنٹر پر انتظار کر رہی ہے۔</p>
+<h3>اسٹاک اور اس کی عمر</h3>
+<figure><img src="img/ur/audit-stock.jpg" alt=""><figcaption>تصویر 44: دکان کے آڈٹ میں اسٹاک</figcaption></figure>
+<p>اسٹاک کے تین حصے ہیں:</p>
+<ul>
+<li><strong>اسٹاک</strong>: ابھی (یا اس دن تک والے دن) اسٹاک میں فون، حالت، PTA، شناخت کی جانچ، قسم اور برانڈ کے حساب سے؛ <strong>قیمتِ خرید پر</strong> اور مانگی قیمت پر مالیت؛ متوقع مارجن؛ سب سے مہنگے فون اور سب سے کم مارجن والے۔</li>
+<li><strong>سٹاک کی عمر</strong>: عمر کے خانوں میں فون (تازہ، عام، سست، توجہ اور اس سے پرانے)، سیٹنگز ← <strong>اسٹاک آڈٹ کی حدیں</strong> میں آپ کی اپنی حدوں کے حساب سے۔ الرٹ بتاتے ہیں: مردہ اسٹاک، سست چلنے والے مہنگے فون، کم مارجن، بغیر مانگی قیمت والے فون، ابھی باقی شناخت کی جانچ، اور ایک سے زیادہ بار واپس آئے فون۔</li>
+<li><strong>شناخت کی جانچ</strong>: کتنی جانچ ہوئی، اور ہر چھوڑی گئی جانچ، کس نے چھوڑی، کس فون اور سپلائر کے لیے، اور کیوں۔ چھوڑی گئی جانچ کبھی مکمل جانچ میں نہیں گنی جاتی۔</li>
+</ul>
+<h3>مصنوعات، بل اور عملہ</h3>
+<ul>
+<li><strong>مصنوعات</strong>: ماڈل، برانڈ یا قسم کے حساب سے کیا بکا: تعداد، حصہ، آمدنی، منافع، مارجن، اوسط قیمت، بکنے کے اوسط دن، واپسیاں اور بچا اسٹاک، اوپر، درمیانہ یا کم کے نشان کے ساتھ۔</li>
+<li><strong>بل</strong>: مدت کا ہر بل قسم، حالت اور ملازم کے حساب سے، اور جو کچھ منسوخ ہوا، کس نے منسوخ کیا اور کیوں۔</li>
+<li><strong>عملہ</strong>: مدت میں ہر ملازم کی فروخت، وصول پیسے، خریداری اور کام۔ مالک کو سیکیورٹی والے کالم بھی نظر آتے ہیں۔</li>
+</ul>
+<h3>سیکیورٹی (صرف مالک)</h3>
+<p>ہر موڑے گئے ہندسے یا اصول کی ایک فہرست: مانگی قیمت بدلی، مانگی قیمت یا لاگت سے کم بیچا، رعایتیں، منسوخیاں، اسٹاک کی ایڈجسٹمنٹ، ابتدائی بیلنس، چھوڑی گئی شناخت کی جانچ اور مالک کے غلط پن۔ ہر لائن بتاتی ہے کس نے، کب، پہلے اور بعد میں، وجہ اور کس نے منظوری دی، ہر ملازم کی تعداد کے ساتھ۔</p>
+<h3>رپورٹس: مکمل آڈٹ رپورٹ</h3>
+<p><strong>رپورٹس</strong> ٹیب <strong>دکان کی مکمل آڈٹ رپورٹ</strong> بناتی ہے۔ جو حصے چاہیں چنیں، خلاصہ یا تفصیلی چنیں، اور اسے <strong>پرنٹ / PDF</strong> یا <strong>ایکسل</strong> میں لیں (ہر حصے کی ایک شیٹ)۔ رپورٹ میں مدت، اس دن تک والا دن، کرنسی اور جو ریکارڈ نہیں ہوتا وہ لکھا ہوتا ہے۔ ہر الگ رپورٹ بھی یہاں اپنے ڈاؤن لوڈ کے ساتھ موجود ہے۔</p>
+<h3>آڈٹ کیا نہیں دکھاتا</h3>
+<p>آڈٹ صرف وہی دکھاتا ہے جو ایپ ریکارڈ کرتی ہے، اور صاف صاف یہ بتاتا ہے:</p>
+<ul>
+<li><strong>بلوں پر ادائیگی کی آخری تاریخ</strong> ریکارڈ نہیں ہوتی جب تک آپ نے وعدے کی تاریخ نہ لکھی ہو، اس لیے ایپ قرض کو تاریخ گزرا کہنے کے بجائے اس کی عمر دکھاتی ہے۔</li>
+<li><strong>خریداری پر ٹیکس</strong> ریکارڈ نہیں ہوتا، اس لیے ان پٹ ٹیکس کا کوئی ہندسہ نہیں۔</li>
+<li><strong>ترسیلِ زر کی فیس</strong> صرف تب پتا ہوتی ہے جب بیرونِ ملک سے پیسے آنے پر آپ نے لکھی ہو۔</li>
+<li>خرید قیمتیں اور منافع صرف مالک اور منیجر کے لیے ہیں۔</li>
+</ul>
+<aside class="note"><strong>اہم:</strong> آڈٹ کبھی کچھ نہیں بدلتا۔ یہ صرف پڑھتا ہے۔ آپ اسے جتنی بار چاہیں، کسی بھی مدت کے لیے کھول سکتے ہیں، آپ کے ڈیٹا کو کوئی خطرہ نہیں۔</aside>
+<h2 id="c22">22. عملہ، عہدے اور حاضری</h2>
+<p>دکان میں کام کرنے والے ہر بندے کا اپنا لاگ ان ہونا چاہیے۔ تب ہر بل پر نظر آتا ہے کہ کس نے بنایا، مالک دیکھ سکتا ہے کہ ہر بندے نے کیا کیا، اور ہر بندہ صرف وہی دیکھتا ہے جس کی اس کا عہدہ اجازت دیتا ہے۔</p>
+<p>صرف مالک: مزید ← <strong>عملہ</strong>۔</p>
+<figure><img src="img/ur/staff.jpg" alt=""><figcaption>تصویر 45: عملہ: ہر ایک کے عہدے کے ساتھ فہرست</figcaption></figure>
+<p>عملے کی اسکرین پر تین ٹیبیں ہیں: <strong>عملہ</strong>، <strong>حاضری</strong> اور <strong>کارکردگی</strong>۔</p>
+<h3>ملازم شامل کریں</h3>
+<p><strong>مثال:</strong> ایک نیا سیلز مین، کاشف محمود۔</p>
+<ol>
+<li><strong>نیا ملازم</strong> دبائیں۔</li>
+<li><strong>نام</strong>: <code>Kashif Mehmood</code>۔ یہ نام اس کے بنائے بلوں پر چھپتا ہے۔</li>
+<li><strong>موبائل نمبر</strong>: <code>3005550707</code>۔ یہ اس کا لاگ ان ہے۔</li>
+<li><strong>پاس ورڈ</strong>: کم از کم 6 حروف۔</li>
+<li><strong>فوری پن (4-6 ہندسے)</strong>، مثلاً <code>4321</code>، اس کے اپنے فون پر جلدی لاگ ان کے لیے۔</li>
+<li><strong>عہدہ</strong>: <strong>سیلز مین</strong>۔</li>
+<li><strong>محفوظ کریں</strong> دبائیں۔</li>
+</ol>
+<p>بعد میں <strong>عہدہ</strong> بدلنے، <strong>نیا پاس ورڈ</strong> رکھنے، یا اسے <strong>بند کریں</strong> / <strong>فعال کریں</strong> کرنے کے لیے ملازم کو دبائیں۔ بند کیا گیا بندہ لاگ ان نہیں کر سکتا، لیکن اس کا کیا ہوا سب کچھ ریکارڈ میں رہتا ہے۔</p>
+<aside class="tip"><strong>مشورہ:</strong> جب کوئی دکان چھوڑے، اسی دن اسے بند کر دیں۔ ایک لاگ ان کبھی دو بندوں میں نہ بانٹیں۔</aside>
+<h3>چار عہدے</h3>
+<p>چار عہدے ہیں: <strong>مالک</strong>، <strong>منیجر</strong>، <strong>سیلز مین</strong> اور <strong>ٹیکنیشن</strong>۔ ہر دکان کا ایک مالک ہوتا ہے۔</p>
+<table><thead><tr><th>بندہ کیا کر سکتا ہے</th><th>مالک</th><th>منیجر</th><th>سیلز مین</th><th>ٹیکنیشن</th></tr></thead><tbody><tr><td>بیچنا، اسٹاک ڈالنا، واپسی لینا</td><td>ہاں</td><td>ہاں</td><td>ہاں</td><td>نہیں</td></tr><tr><td>پیسے ملے / دیے، لین دین</td><td>ہاں</td><td>ہاں</td><td>ہاں</td><td>نہیں</td></tr><tr><td>خرید قیمت اور منافع دیکھنا</td><td>ہاں</td><td>ہاں</td><td>نہیں</td><td>نہیں</td></tr><tr><td>خرید قیمت سے کم بیچنا</td><td>ہاں</td><td>ہاں</td><td>نہیں</td><td>نہیں</td></tr><tr><td>بل اور ادائیگیاں منسوخ کرنا</td><td>ہاں</td><td>ہاں</td><td>نہیں</td><td>نہیں</td></tr><tr><td>خرچے لکھنا، دن بند کرنا</td><td>ہاں</td><td>ہاں</td><td>نہیں</td><td>نہیں</td></tr><tr><td>منافع اور رپورٹس، دکان کا آڈٹ</td><td>ہاں</td><td>ہاں</td><td>نہیں</td><td>نہیں</td></tr><tr><td>آڈٹ میں سیکیورٹی فہرست</td><td>ہاں</td><td>نہیں</td><td>نہیں</td><td>نہیں</td></tr><tr><td>مرمت کے لیے فون لینا</td><td>ہاں</td><td>ہاں</td><td>ہاں</td><td>نہیں</td></tr><tr><td>مرمت پر کام کرنا</td><td>ہاں</td><td>ہاں</td><td>نہیں</td><td>ہاں</td></tr><tr><td>برانڈ اور ماڈل بدلنا</td><td>ہاں</td><td>ہاں</td><td>نہیں</td><td>نہیں</td></tr><tr><td>عملہ، دکان کی سیٹنگز، سافٹ ویئر فیس</td><td>ہاں</td><td>نہیں</td><td>نہیں</td><td>نہیں</td></tr><tr><td>رکی ہوئی شناخت کی جانچ کو آگے بڑھانا</td><td>ہاں</td><td>نہیں</td><td>نہیں</td><td>نہیں</td></tr></tbody></table>
+<p>سیلز مین اور ٹیکنیشن پھر بھی اپنے دن کا کام دیکھتے ہیں۔</p>
+<h3>جس سیلز مین کو منافع نہیں دیکھنا چاہیے اسے کون سا عہدہ دیں؟</h3>
+<p><strong>سیلز مین</strong> چنیں۔ سیلز مین بیچ سکتا ہے، اسٹاک ڈال سکتا ہے، واپسی لے سکتا ہے اور پیسے لے دے سکتا ہے، لیکن اسے کبھی خرید قیمتیں، منافع، رپورٹس یا دکان کا آڈٹ نظر نہیں آتا۔ جب وہ خرید قیمت سے کم بیچنے کی کوشش کرے، ایپ اسے روک دیتی ہے اور مالک یا منیجر کو بلانے کا کہتی ہے۔</p>
+<p><strong>منیجر</strong> صرف اس بندے کے لیے چنیں جس پر آپ پورے کاروبار کا بھروسہ کرتے ہیں، مثلاً بھائی یا پارٹنر جو آپ کے نہ ہونے پر دکان چلاتا ہے۔</p>
+<aside class="tip"><strong>مشورہ:</strong> سیٹنگز ← <strong>قیمت کے اصول</strong> میں آپ طے کرتے ہیں کہ مانگی قیمت سے کم کون بیچ سکتا ہے اور اسے کون بدل سکتا ہے: کوئی بھی، صرف مالک / منیجر، یا عملہ جو موقع پر مالک کا پن لکھے۔ ہر منظوری ریکارڈ ہوتی ہے۔</aside>
+<h3>حاضری</h3>
+<p>جب <strong>عملے کی حاضری</strong> ماڈیول چالو ہو، تو ہوم پر سب کے لیے <strong>حاضری</strong> کارڈ نظر آتا ہے۔</p>
+<ol>
+<li>آتے وقت <strong>حاضری لگائیں</strong> دبائیں۔</li>
+<li>جاتے وقت <strong>چھٹی کریں</strong> دبائیں۔</li>
+<li>پھر کارڈ پر کچھ ایسا نظر آتا ہے: "آیا 9:05 AM · گیا 7:10 PM · 10.1 گھنٹے"۔</li>
+</ol>
+<p>دن میں ایک حاضری۔ مالک عملہ ← <strong>حاضری</strong> کھولتا ہے، مدت چنتا ہے، اور ہر بندے کے لیے دیکھتا ہے: آج کی حالت، کام کے گھنٹے، اور <strong>حاضر</strong>، <strong>آدھا دن</strong>، <strong>چھٹی</strong>، <strong>غیر حاضر</strong> اور <strong>ریکارڈ نہیں</strong> کی گنتی۔ کسی دن کو ہاتھ سے لکھنے کے لیے بندے کو دبائیں، مثلاً کل = چھٹی، نوٹ "عید"۔ تنخواہ اور ایڈوانس <strong>خرچے</strong> کے ذریعے دیے جاتے ہیں (قسمیں <strong>تنخواہ</strong> اور <strong>عملے کا ایڈوانس</strong>)۔</p>
+<h3>کارکردگی: ہر بندے نے کیا کیا</h3>
+<p>عملہ ← <strong>کارکردگی</strong> چنی ہوئی مدت کے لیے ہر بندے کی <strong>فروخت (تعداد · روپے)</strong>، <strong>وصولی (روپے)</strong>، <strong>خریداری (تعداد · روپے)</strong>، <strong>خرچے (روپے)</strong>، <strong>مرمت</strong> اور <strong>کام</strong> کی تعداد دکھاتی ہے، اس کے <strong>آخری لاگ ان</strong> کے ساتھ۔ پورا ریکارڈ دیکھنے کے لیے بندے کو دبائیں: ہر بل، ادائیگی، خریداری، خرچہ، مرمت، منسوخی اور سیٹنگز کی تبدیلی، وقت، نمبر اور رقم کے ساتھ۔ یہ ایپ کے ہر تبدیلی کے ریکارڈ سے آتا ہے، اس لیے کچھ بھی چھوٹ نہیں سکتا۔</p>
+<h2 id="c23">23. سیٹنگز، کاروبار کی پروفائل اور WhatsApp پیغامات</h2>
+<h3>دکان کی سیٹنگز</h3>
+<p>صرف مالک: مزید ← <strong>دکان کی سیٹنگز</strong>۔ اسکرین کارڈوں سے بنی ہے، ہر موضوع کا ایک کارڈ۔</p>
+<figure><img src="img/ur/settings.jpg" alt=""><figcaption>تصویر 46: دکان کی سیٹنگز</figcaption></figure>
+<ul>
+<li><strong>دکان</strong>: <strong>دکان کا نام</strong>، <strong>شہر</strong> اور <strong>فون</strong>۔ رسیدوں پر چھپتا ہے اور پیغامات میں استعمال ہوتا ہے۔</li>
+<li><strong>پرنٹ اور پیغامات کی زبان</strong>: <strong>اردو</strong> یا <strong>انگریزی</strong>۔ رسیدیں، اقرار نامے اور WhatsApp پیغامات اسی زبان میں جاتے ہیں۔ ہر بندہ پھر بھی اپنی اسکرین کی زبان خود چن سکتا ہے۔</li>
+<li><strong>اسٹاف لاگ ان</strong>: پن کے بجائے <strong>اسٹاف بھی فنگر پرنٹ سے لاگ اِن کر سکے</strong>۔</li>
+<li><strong>سیلز ٹیکس</strong>: <strong>سیلز ٹیکس لگائیں</strong> چالو کریں، پھر <strong>ٹیکس کی شرح %</strong>، <strong>قیمت میں ٹیکس شامل</strong>، <strong>NTN</strong> اور <strong>STRN</strong> رکھیں۔ یہ شروع میں بند ہوتا ہے اور ضرورت پر بل پر نشان لگایا جاتا ہے۔</li>
+<li><strong>رسید</strong>: <strong>بل نمبر کا سابقہ</strong> (ایک مثال نظر آتی ہے، جیسے <code>INV-000123</code>)، <strong>رسید کی آخری لائن</strong> اور <strong>رسید کی آخری لائن (اردو)</strong>، مثلاً "7 دن کے بعد واپسی نہیں"۔</li>
+<li><strong>اسٹیکر پر قیمتِ خرید کا کوڈ</strong>: 10 حروف کا کوڈ والا لفظ تاکہ قیمت کے اسٹیکر پر خرید قیمت صرف آپ پڑھ سکیں۔</li>
+<li><strong>قیمت کے اصول</strong>: مانگی قیمت سے کم کون بیچ سکتا ہے اور اسے کون بدل سکتا ہے۔</li>
+<li><strong>اسٹاک آڈٹ کی حدیں</strong>: اسٹاک کی عمر کے خانے کہاں ختم ہوتے ہیں، کیا مہنگا گنا جائے اور کیا کم مارجن۔</li>
+<li><strong>آئٹم کی ترتیبات</strong>: اسٹاک کی قیمت کیسے لگے (اوسط قیمت یا FIFO)، اسٹاک صفر ہونے کے بعد بیچنے کی اجازت ہے یا نہیں، اور ایک درجن، ڈبے یا کارٹن میں کتنے پیس ہیں۔</li>
+<li><strong>ڈیوائس کی ترتیبات</strong>: کیا پرانے موبائلوں کو بھی لاک چیک چاہیے، اور پرانے یونٹس کے لیے آپ کے استعمال کیے گریڈ۔</li>
+<li><strong>بارکوڈ کی ترتیبات</strong>: نئے اسٹاک کے بارکوڈ کی قسم۔ پرانے لیبل چلتے رہتے ہیں۔</li>
+</ul>
+<p>جب آپ کچھ بھی بدلتے ہیں، نیچے والی ٹیبوں کے اوپر "ابھی محفوظ نہیں ہوا" کے ساتھ <strong>محفوظ کریں</strong> کی پٹی آتی ہے۔ اسے دبائیں اور <strong>محفوظ ہو گیا</strong> تبدیلی کی تصدیق کرتا ہے۔</p>
+<h3>کاروبار کی پروفائل: آپ کے بلوں پر لوگو اور تفصیل</h3>
+<p>انہی دکان کی سیٹنگز میں <strong>لوگو اور کاروبار کی تفصیل</strong> والے کارڈ طے کرتے ہیں کہ آپ کے چھپے بل کیسے دکھیں۔</p>
+<figure><img src="img/ur/business.jpg" alt=""><figcaption>تصویر 47: لوگو اور کاروبار کی تفصیل</figcaption></figure>
+<ol>
+<li><strong>لوگو اپ لوڈ کریں</strong> دبائیں اور ایک چوکور یا چوڑی تصویر (PNG یا JPG) چنیں۔ یہ ہر بل کے اوپر چھپتی ہے۔ بعد میں ضرورت ہو تو <strong>لوگو بدلیں</strong> یا <strong>لوگو ہٹائیں</strong>۔</li>
+<li>اگر دکان کے نام سے مختلف ہو تو <strong>رجسٹرڈ کاروباری نام</strong> بھریں (مثلاً آپ کے NTN پر کمپنی کا نام)، <strong>ٹیگ لائن (انگریزی)</strong> اور <strong>ٹیگ لائن (اردو)</strong>، <strong>پورا پتہ</strong>، <strong>واٹس ایپ نمبر</strong>، <strong>ای میل</strong>، <strong>ویب سائٹ / پیج</strong>، <strong>کاروبار کی قسم</strong>، <strong>صوبہ</strong> اور <strong>اوقات کار</strong> (مثلاً "صبح 11 – رات 10، جمعہ بند")۔</li>
+<li><strong>مالک کی تفصیل</strong>: مالک کا نام اور شناختی کارڈ۔</li>
+<li><strong>ٹیکس رجسٹریشن (FBR)</strong>: NTN، STRN اور <strong>FBR POS رجسٹریشن ID</strong> (صرف اگر آپ FBR کی پوائنٹ آف سیل اسکیم میں ہیں)۔ بھرے ہوں تو بلوں پر چھپتے ہیں۔</li>
+<li><strong>کرنسی</strong>: پیسہ ہمیشہ پاکستانی روپیہ ہے، لیکن آپ چنتے ہیں کہ یہ کیسے لکھا جائے: <strong>علامت</strong> (Rs.، Rs، PKR وغیرہ)، <strong>علامت کہاں ہو</strong> (<strong>پہلے (Rs. 500)</strong> یا <strong>بعد میں (500 PKR)</strong>)، اور <strong>صرف روپے</strong> یا <strong>ہمیشہ پیسے (.00)</strong>۔ <strong>ایسا دکھے گا</strong> نتیجہ دکھاتا ہے۔</li>
+<li><strong>چھپا ہوا بل</strong>: نشان لگائیں کہ فروخت کے بلوں اور مرمت کی پرچیوں پر کیا آئے: <strong>لوگو</strong>، <strong>ٹیگ لائن</strong>، <strong>NTN / STRN / FBR POS ID</strong>، <strong>مالک کا نام</strong>، <strong>بینک / والٹ کی تفصیل (بقایا ادا کرنے کے لیے)</strong>، <strong>شرائط (واپسی / وارنٹی)</strong> اور سوشل پیج۔ <strong>شرائط (انگریزی)</strong> اور <strong>شرائط (اردو)</strong> اور اپنے بینک اور Easypaisa / JazzCash کی تفصیل یہیں لکھیں۔</li>
+<li>محفوظ کرنے والی پٹی پر <strong>محفوظ کریں</strong> دبائیں۔</li>
+</ol>
+<aside class="tip"><strong>مشورہ:</strong> اپنا Easypaisa نمبر بل پر لکھوائیں (چھپا ہوا بل ← بینک / والٹ کی تفصیل)۔ ادھار پر لینے والے گاہکوں کو پھر بالکل پتا ہوتا ہے کہ پیسے کہاں بھیجنے ہیں۔</aside>
+<h3>WhatsApp پیغامات اور اطلاعات</h3>
+<p>مزید ← <strong>اطلاعات</strong> طے کرتا ہے کہ ایپ کیا بھیجے اور کس کو۔</p>
+<figure><img src="img/ur/notifications.jpg" alt=""><figcaption>تصویر 48: اطلاعات اور رات کی رپورٹ</figcaption></figure>
+<ul>
+<li><strong>مالک کو</strong>: <strong>مالک کا واٹس ایپ نمبر</strong> اور <strong>مالک کا ای میل</strong>۔ <strong>ہر سیل پر</strong> اور/یا <strong>اسٹاک آنے پر</strong> پر نشان لگائیں، WhatsApp یا ای میل سے۔</li>
+<li><strong>مالک کو رات کی رپورٹ</strong>: ہر رات دن کا حساب (باب 16)۔</li>
+<li><strong>ادھار کی یاد دہانی</strong>: کھاتہ کچھ دن رکا رہنے کے بعد <strong>گاہکوں کو خود یاد دلائیں</strong>۔ قسط اور لین دین کی یاد دہانیاں بھی اسی سوئچ پر چلتی ہیں۔</li>
+</ul>
+<p>اسکرین بتاتی ہے کہ پیغامات کیسے جاتے ہیں:</p>
+<ul>
+<li>"WhatsApp پیغامات سرور سے خود بخود جاتے ہیں۔" کا مطلب ہے آپ کے سافٹ ویئر فراہم کنندہ نے WhatsApp Business سروس لگا دی ہے؛ پیغامات خود جاتے ہیں۔</li>
+<li>ورنہ پیغامات WhatsApp میں کھلتے ہیں تاکہ آپ ایک دبانے سے بھیج دیں۔ وہ <strong>پیغامات</strong> (ہر اسکرین کے اوپر گھنٹی) میں انتظار کرتے ہیں جہاں آپ ہر ایک کو کھول کر <strong>بھیج دیا</strong> کر سکتے ہیں۔</li>
+<li>"ای میل سرور سے جاتی ہے (SMTP لگا ہوا ہے)۔" کا مطلب ہے ای میلز خود جاتی ہیں۔ اگر ای میل نہیں لگی تو اپنے سافٹ ویئر فراہم کنندہ سے کہیں؛ تب تک ای میل پیغامات فہرست میں انتظار کرتے ہیں۔</li>
+</ul>
+<p>گاہکوں کو جانے والے پیغامات (رسیدیں، یاد دہانیاں) <strong>پرنٹ اور پیغامات کی زبان</strong> والی دکان کی زبان میں جاتے ہیں۔</p>
+<h3>زبان، تھیم اور انداز</h3>
+<ul>
+<li><strong>زبان</strong>: کسی بھی اسکرین کے اوپر زبان والا بٹن دبائیں اور <strong>اردو</strong>، <strong>Roman Urdu</strong> یا <strong>English</strong> چنیں۔ ایپ ایک وقت میں ایک ہی زبان دکھاتی ہے؛ اردو دائیں سے بائیں پڑھی جاتی ہے۔ ہندسے ہمیشہ 0–9 ہوتے ہیں۔</li>
+<li><strong>ڈارک / لائٹ</strong>: اوپر <strong>ڈارک</strong> (یا <strong>لائٹ</strong>) دبائیں۔ مزید ← <strong>تھیم</strong> میں <strong>فون کے مطابق</strong> بھی ہے۔</li>
+<li><strong>انداز</strong>: مزید ← <strong>انداز</strong> چار اسٹائل دیتا ہے: <strong>ماڈرن</strong>، <strong>پروفیشنل</strong>، <strong>نیوی</strong> اور <strong>رنگین</strong>۔</li>
+<li>ہر اسکرین پر چھوٹے <strong>?</strong> بٹن ہیں۔ مثال کے ساتھ مختصر وضاحت کے لیے ایک دبائیں؛ ہر وضاحت کا اپنا English / اردو / Roman سوئچ ہے۔</li>
+</ul>
+<h2 id="c24">24. بلک ایکسل سے ڈیٹا لانا اور نکالنا</h2>
+<p>جب کوئی دکان رجسٹر یا کسی اور سافٹ ویئر سے آتی ہے، تو کوئی بھی 300 فون ایک ایک کر کے لکھنا نہیں چاہتا۔ <strong>بلک ایکسل</strong> سے آپ ایک Excel شیٹ بھر کر سارے رو ایک ساتھ لا سکتے ہیں۔ صرف مالک اور منیجر: مزید ← <strong>بلک ایکسل</strong>۔</p>
+<figure><img src="img/ur/bulk.jpg" alt=""><figcaption>تصویر 49: بلک ایکسل: چنیں کیا لانا ہے</figcaption></figure>
+<h3>قدم بہ قدم درآمد</h3>
+<p><strong>مثال:</strong> آپ کی دکان میں 120 فون ہیں اور آپ کے پرانے ادھار رجسٹر میں 45 گاہک ہیں۔</p>
+<ol>
+<li>چنیں کہ کیا لا رہے ہیں: <strong>فون (اسٹاک)</strong>، <strong>لوگ</strong>، <strong>ایکسیسریز</strong>، <strong>فروخت</strong> یا <strong>خرچے</strong>۔ پہلے <strong>لوگ</strong>، پھر <strong>فون (اسٹاک)</strong> سے شروع کریں۔</li>
+<li><strong>شیٹ ڈاؤن لوڈ کریں</strong> دبائیں۔ یہ Excel میں تین شیٹوں کے ساتھ کھلتی ہے: <strong>Data</strong> (صرف یہی بھرنی ہے)، <strong>Help</strong> (ہر کالم کی وضاحت، ضروری ہے یا نہیں) اور <strong>Lists</strong> (ڈراپ ڈاؤن کے لیے آپ کے برانڈ، ماڈل، رنگ، سپلائر اور قسمیں)۔</li>
+<li>Data کی پہلی تین قطاریں پیلے رنگ کی نمونہ قطاریں ہیں، مثلاً Rs. 35,000 کا Vivo Y21 128 GB۔ اپنی قطاریں ان کے نیچے یا ان کے اوپر لکھیں۔ نمونے پہچان کر چھوڑ دیے جاتے ہیں، اس لیے نمونے سے کبھی کچھ نہیں بنتا۔</li>
+<li>اسے بھریں۔ تاریخیں <code>dd-mm-yyyy</code> میں، پیسے سادہ روپوں میں (<code>35,000</code> ٹھیک ہے)، اور حالت، PTA یا قسم جیسے الفاظ ڈراپ ڈاؤن سے۔ لکھے ہوئے الفاظ بھی سمجھے جاتے ہیں: <em>New</em>، <em>Box pack</em>، <em>Used</em>، <em>PTA</em>، <em>Non-PTA</em>، <em>JV</em>، <em>Customer</em>، <em>Supplier</em>، <em>They owe us</em>۔ CSV فائل بھی چلتی ہے۔</li>
+<li>فائل اپ لوڈ کریں۔ ہر قطار پر نشان لگ کر واپس آتا ہے: <strong>ٹھیک</strong>، <strong>نوٹ</strong> (کچھ نیا بنے گا، جیسے نیا برانڈ یا نیا بندہ)، <strong>غلطی</strong> (سادہ الفاظ میں وجہ کے ساتھ، جیسے "IMEI کے 15 ہندسے ہونے چاہییں" یا "مانگی قیمت لاگت سے کم ہے") یا <strong>چھوڑی</strong> (نمونہ یا خالی لائن)۔ <strong>ابھی کچھ محفوظ نہیں ہوا۔</strong></li>
+<li>Excel میں غلطیاں ٹھیک کر کے دوبارہ اپ لوڈ کریں، یا <strong>غلط قطاریں چھوڑ دیں، باقی درآمد کریں</strong> پر نشان لگائیں۔</li>
+<li><strong>درآمد کریں</strong> دبائیں۔ یا تو ہر ٹھیک قطار محفوظ ہوتی ہے، یا کچھ بھی نہیں۔ نتیجہ بتاتا ہے کہ کیا بنا (فون، خریداری کے بل، لوگ، ابتدائی بیلنس وغیرہ)۔</li>
+</ol>
+<aside class="note"><strong>نوٹ:</strong> اگر آپ ایک ہی فائل دو بار اپ لوڈ کریں تو ایپ آپ کو خبردار کرتی ہے، تاکہ اسٹاک دو بار نہ چڑھے۔</aside>
+<h3>ہر شیٹ کیا کرتی ہے</h3>
+<ul>
+<li><strong>فون (اسٹاک)</strong>: ہر فون کی ایک قطار۔ اپنے پرانے اسٹاک کے لیے سپلائر خالی چھوڑیں۔ سپلائر کا فون نمبر دیں تو قطاریں ہر سپلائر اور تاریخ کا ایک خریداری بل بن جاتی ہیں، ادا شدہ رقم اس میں لگتی ہے اور باقی سپلائر کے کھاتے میں جاتا ہے۔ Non-PTA اور JV فونوں کے لیے SIM ٹائم ضروری ہے۔</li>
+<li><strong>لوگ</strong>: نام، فون اور قسم کافی ہیں۔ کون دے گا کے ساتھ <strong>ابتدائی بیلنس</strong> کھاتے کا شروع لکھ دیتا ہے۔ جو فون نمبر پہلے سے آپ کے کھاتے میں ہے وہ چھوڑ دیا جاتا ہے۔</li>
+<li><strong>ایکسیسریز</strong>: نام، ہاتھ میں تعداد، فی پیس لاگت اور بیچنے کی قیمت۔ اگر کوڈ (SKU) خالی چھوڑیں تو خود بن جاتا ہے۔</li>
+<li><strong>فروخت</strong>: صرف وہ فون جو ایپ میں پہلے سے اسٹاک میں ہیں، IMEI سے۔ اگر پیسے کھاتے میں رہیں تو گاہک کا فون نمبر ضروری ہے۔ لاگت سے کم بیچنا رد ہو جاتا ہے جب تک مالک یا منیجر اجازت نہ دے۔</li>
+<li><strong>خرچے</strong>: تاریخ، قسم، رقم اور اکاؤنٹ (نقد، جب تک آپ کسی بینک یا والٹ کا نام نہ لکھیں)۔</li>
+</ul>
+<p>ہر درآمد شدہ قطار انہی مراحل سے گزرتی ہے جن سے کاؤنٹر پر گزرتی ہے، اس لیے کھاتہ، لیجر اور فون کی ہسٹری پوری ہوتی ہے، بالکل ایسے جیسے آپ نے ہر ایک خود لکھا ہو۔</p>
+<h3>نکالنا: میرا ڈیٹا ڈاؤن لوڈ</h3>
+<p>اسی صفحے پر <strong>اپنا ڈیٹا ڈاؤن لوڈ کریں</strong> آپ کے موجودہ فون، لوگ، ایکسیسریز، فروخت یا خرچے بالکل اسی ترتیب میں دیتا ہے۔ آپ Excel میں چیزیں ٹھیک کر کے فائل واپس لا سکتے ہیں۔ پچھلی درآمدات نیچے فہرست میں ہوتی ہیں، کس نے کیں اور کیا بنا۔</p>
+<h2 id="c25">25. سافٹ ویئر فیس، بیک اپ اور PC ورژن</h2>
+<h3>آپ کا پلان اور فیس کی ادائیگی</h3>
+<p>صرف مالک: مزید ← <strong>سافٹ ویئر فیس</strong>۔</p>
+<ul>
+<li><strong>آپ کا پلان</strong>، <strong>ماہانہ فیس</strong> اور <strong>کب تک ادا</strong>۔</li>
+<li><strong>ان میں سے کسی میں ادا کریں</strong>: سافٹ ویئر فراہم کنندہ کے اکاؤنٹ (Easypaisa، JazzCash، SadaPay، بینک)، ہر ایک کے ساتھ نمبر کے لیے <strong>کاپی</strong> بٹن۔</li>
+</ul>
+<p><strong>ادائیگی کیسے کریں:</strong></p>
+<ol>
+<li>اپنی Easypaisa، JazzCash یا بینک ایپ سے فیس بھیجیں۔</li>
+<li>سافٹ ویئر فیس میں <strong>میں نے ادا کر دی</strong> بھریں: <strong>رقم (روپے)</strong>، <strong>مہینے</strong>، <strong>کس ذریعے ادا کیا</strong>، <strong>ٹرانزیکشن ID / حوالہ</strong>، اور <strong>اسکرین شاٹ لگائیں</strong>۔</li>
+<li><strong>بھیجیں</strong> دبائیں۔</li>
+</ol>
+<p><strong>آپ کی ادائیگیاں</strong> ہر ادائیگی کو <strong>چیک ہو رہی ہے</strong>، <strong>وصول ہو گئی</strong> یا <strong>قبول نہیں ہوئی</strong> (وجہ کے ساتھ) دکھاتا ہے۔ وصول ہوتے ہی آپ کی <strong>کب تک ادا</strong> والی تاریخ آگے بڑھ جاتی ہے، آپ کو "شکریہ! آپ کا پلان تجدید ہو گیا" نظر آتا ہے، اور آپ رسید پرنٹ کر سکتے ہیں۔</p>
+<p><strong>تجدیدی کوڈ:</strong> کبھی کبھی، خاص طور پر بغیر انٹرنیٹ والے PC ورژن کے لیے، فراہم کنندہ WhatsApp پر ایک کوڈ بھیجتا ہے۔ اسے <strong>تجدیدی کوڈ</strong> میں ڈالیں اور <strong>کوڈ سے تجدید کریں</strong> دبائیں۔ یہ بغیر انٹرنیٹ کے چلتا ہے، لیکن صرف ایک بار۔</p>
+<h3>فیس کی یاد دہانی</h3>
+<p>پلان ختم ہونے سے پہلے ایپ آپ کو ادب سے یاد دلاتی ہے:</p>
+<table><thead><tr><th>کب</th><th>آپ کو کیا نظر آتا ہے</th></tr></thead><tbody><tr><td>7 دن باقی</td><td>اوپر پیلی پٹی</td></tr><tr><td>3 دن باقی</td><td>نارنجی پٹی، اور دن میں ایک بار یاد دہانی کی کھڑکی</td></tr><tr><td>1 دن باقی اور آخری دن</td><td>سرخ پٹی، اور یاد دہانی کی کھڑکی زیادہ بار</td></tr><tr><td>پلان ختم، مہلت کے دن (عموماً 7)</td><td>سرخ پٹی: سب کچھ ابھی بھی چلتا ہے</td></tr><tr><td>مہلت کے دنوں کے بعد</td><td>صرف دیکھنے والی حالت (نیچے دیکھیں)</td></tr><tr><td>ادائیگی بھیج دی، ابھی چیک نہیں ہوئی</td><td>پرسکون نیلی پٹی: "ادائیگی موصول، تصدیق باقی ہے۔"</td></tr></tbody></table>
+<p>یاد دہانی کی کھڑکی میں پلان، ختم ہونے کی تاریخ، فیس، کہاں ادا کریں (<strong>کاپی</strong> بٹنوں کے ساتھ) اور تین بٹن ہوتے ہیں: <strong>ابھی فیس ادا کریں</strong>، <strong>بعد میں یاد دلائیں</strong> (4 گھنٹے میں، کل یا 3 دن میں) اور <strong>بند کریں</strong>۔ یہ واحد اسکرین ہے جو انگریزی، اردو اور رومن اردو اکٹھے دکھاتی ہے۔ یہ کبھی فروخت، ادائیگی یا کسی فارم کے بیچ میں نہیں کھلتی۔ عملے کو صرف ایک چھوٹی لائن نظر آتی ہے کہ مالک کو بتا دیں۔</p>
+<h3>اگر فیس ادا نہ ہو تو کیا ہوتا ہے</h3>
+<p><strong>کبھی کچھ ختم نہیں کیا جاتا۔</strong> مہلت کے دنوں کے بعد ایپ صرف دیکھنے والی حالت میں چلی جاتی ہے:</p>
+<ul>
+<li>آپ پھر بھی لاگ ان کر کے اپنا سارا ڈیٹا دیکھ سکتے ہیں۔</li>
+<li>آپ پھر بھی ہر رپورٹ اور فہرست ڈاؤن لوڈ کر سکتے ہیں، اور بیک اپ لے سکتے ہیں۔</li>
+<li>آپ پھر بھی فیس ادا کر سکتے ہیں۔</li>
+<li>نئی فروخت اور خریداری فیس ادا ہونے تک رکی رہتی ہیں۔</li>
+</ul>
+<p>جیسے ہی ادائیگی منظور ہو (یا تجدیدی کوڈ ڈالا جائے)، سب کچھ بالکل ویسا ہی دوبارہ کھل جاتا ہے۔</p>
+<h3>میرے ڈیٹا کا بیک اپ</h3>
+<p>سافٹ ویئر فیس میں (اور یاد دہانی کی کھڑکی میں) <strong>میرا ڈیٹا بیک اپ کریں</strong> دبائیں۔ یہ ہر فہرست (اسٹاک، کھاتہ، فروخت، خریداری، خرچے، ایکسیسریز اور مزید) Excel فائلوں کی شکل میں ایک zip میں ڈاؤن لوڈ کر دیتا ہے۔ یہ کسی بھی وقت چلتا ہے، پلان ختم ہونے کے بعد بھی۔</p>
+<aside class="tip"><strong>مشورہ:</strong> عادت بنا لیں: ہر مہینے کی 1 تاریخ کو <strong>میرا ڈیٹا بیک اپ کریں</strong> دبائیں اور zip اپنے کمپیوٹر یا Google Drive پر رکھ لیں۔</aside>
+<h3>بغیر انٹرنیٹ کے کام</h3>
+<p>اگر بازار کا انٹرنیٹ چلا جائے تو بیچتے رہیں۔ بغیر انٹرنیٹ کے کی گئی فروخت، خریداری، ادائیگی یا خرچہ فون پر محفوظ ہو جاتا ہے، اور اوپر والے حصے کے نیچے کی پٹی کہتی ہے "اس فون پر محفوظ ہے۔ انٹرنیٹ واپس آنے پر بھیج دیا جائے گا۔" کنکشن واپس آنے پر یہ خود، ترتیب سے، ہر ایک صرف ایک بار بھیج دیے جاتے ہیں۔ بل نمبر سرور پر پہنچنے پر ملتے ہیں۔ رپورٹس، ڈاؤن لوڈ اور WhatsApp بھیجنے کے لیے انٹرنیٹ چاہیے۔</p>
+<h3>PC ورژن (انٹرنیٹ کی ضرورت نہیں)</h3>
+<p>جن دکانوں کا انٹرنیٹ بھروسے کا نہیں وہ یہی سافٹ ویئر Windows کمپیوٹر پر چلا سکتی ہیں:</p>
+<ol>
+<li><strong>MobileShop-Setup.exe</strong> انسٹال کریں (آپ کا سافٹ ویئر فراہم کنندہ آپ کو دیتا ہے)۔</li>
+<li>ڈیسک ٹاپ سے <strong>موبائل شاپ</strong> کھولیں۔ گھڑی کے پاس ایک چھوٹا آئیکن آتا ہے، اور ایپ براؤزر میں کھل جاتی ہے۔</li>
+<li>ایک بار دکان کا اکاؤنٹ بنائیں، پھر معمول کے مطابق کام کریں۔</li>
+</ol>
+<p>سب کچھ اسی کمپیوٹر پر محفوظ ہوتا ہے۔ چھوٹے آئیکن کے مینو میں <strong>Backup now</strong> (تاریخ والی کاپی، جو ڈیسک ٹاپ پر بھی رکھی جاتی ہے)، <strong>Open data folder</strong> اور <strong>Quit</strong> ہیں۔ دکان کے Wi-Fi پر فون بھی اسے کھول سکتے ہیں؛ اس کے لیے اپنے سافٹ ویئر فراہم کنندہ سے کہیں۔ اپ ڈیٹ کے لیے نیا Setup چلائیں؛ آپ کا ڈیٹا رہتا ہے۔</p>
+<aside class="note"><strong>اہم:</strong> PC ورژن پر آپ کا ڈیٹا ایک ہی کمپیوٹر پر ہوتا ہے۔ ہر شام <strong>Backup now</strong> لیں اور ہفتے میں کم از کم ایک بار اسے USB یا Google Drive پر کاپی کریں۔</aside>
+<h2 id="c26">26. عام سوالات اور مسائل کا حل</h2>
+<p><strong>گاہک کہتا ہے اس کا بقایا غلط ہے۔</strong> ادھار کھاتے سے اس کا صفحہ کھولیں اور اس کے ساتھ <strong>کھاتے کی ہسٹری</strong> دیکھیں۔ ہر لائن پر تاریخ، بل نمبر اور چلتا بقایا ہوتا ہے۔ WhatsApp پر PDF اسٹیٹمنٹ بھیج دیں۔</p>
+<p><strong>میں نے ایک ادائیگی دو بار لکھ دی۔</strong> ان میں سے ایک کھولیں اور وجہ لکھ کر منسوخ کریں۔ بقایا الٹے اندراج سے ٹھیک ہو جاتا ہے، اور منسوخ والا کٹا ہوا نظر آتا رہتا ہے۔</p>
+<p><strong>ایک دوست نے مجھ سے پیسے ادھار لیے۔ کیا میں پیسے ملے / پیسے دیے استعمال کروں؟</strong> نہیں۔ اس کے صفحے پر <strong>رقم دی (لین دین)</strong> اور <strong>رقم لی (لین دین)</strong> استعمال کریں (باب 17)۔ پیسے ملے اور پیسے دیے بلوں کے لیے ہیں۔</p>
+<p><strong>ہاتھ میں بچے منفی ہے لیکن آج میں نے اچھا بیچا۔</strong> شاید آپ نے اسٹاک خریدا یا کسی واپسی پر پیسے لوٹائے۔ <strong>گیا</strong> کے نیچے والے چپس دیکھیں۔ اسٹاک پر خرچ پیسے اب آپ کی شیلف پر فون ہیں۔</p>
+<p><strong>میرے گلے کی گنتی گلے میں ہونا چاہیے سے نہیں ملتی۔</strong> دیکھیں کہیں کوئی آن لائن ادائیگی <strong>نقد</strong> تو نہیں لکھی گئی، یا کوئی خرچہ گلے سے دیا گیا مگر لکھا نہیں گیا۔ Easypaisa یا بینک سے ادائیگیاں ہمیشہ <strong>آن لائن</strong> ہونی چاہییں۔</p>
+<p><strong>اس مہینے منافع میں نقصان دکھ رہا ہے۔</strong> منافع کی رپورٹ کھولیں۔ <strong>گاہکوں نے واپس کیا</strong> اور خرچوں کی لائنیں دیکھیں۔ کوئی بڑی واپسی یا اس مہینے دیا گیا کرایہ مہینے کو نقصان میں بدل سکتا ہے۔ دکان کے آڈٹ کی مالیات ٹیب یہی چیز پچھلی مدت کے موازنے کے ساتھ دکھاتی ہے۔</p>
+<p><strong>میرے سیلز مین کو منافع نظر نہیں آنا چاہیے۔</strong> اسے <strong>سیلز مین</strong> کا عہدہ دیں (مزید ← عملہ ← اس کا نام ← عہدہ)۔ وہ بیچ سکتا ہے اور پیسے لے سکتا ہے لیکن اسے کبھی خرید قیمتیں، منافع یا رپورٹس نظر نہیں آتیں۔</p>
+<p><strong>مجھے خرچے، رپورٹس یا دکان کا آڈٹ نہیں مل رہا۔</strong> یہ مالک اور منیجر کے لیے ہیں۔ اگر آپ مالک ہیں اور پھر بھی کوئی چیز نظر نہیں آتی، تو ہو سکتا ہے وہ ماڈیول آپ کے پلان میں نہ ہو؛ اپنے سافٹ ویئر فراہم کنندہ سے پوچھیں۔</p>
+<p><strong>WhatsApp یاد دہانی خود نہیں گئی۔</strong> خود بخود بھیجنے کے لیے آپ کے سافٹ ویئر فراہم کنندہ کی طرف سے WhatsApp Business سروس لگی ہونی چاہیے۔ اس کے بغیر <strong>پیغامات</strong> (گھنٹی) کھولیں اور ہر پیغام کو دبا کر WhatsApp سے بھیجیں۔</p>
+<p><strong>رات کی رپورٹ نہیں آئی۔</strong> مزید ← <strong>اطلاعات</strong> چیک کریں: مالک کا نمبر لکھا ہو، <strong>ہر رات دن کا حساب بھیجیں</strong> پر نشان لگا ہو، اور وقت رکھا ہو۔ آزمانے کے لیے <strong>آج کا حساب ابھی بھیجیں</strong> دبائیں۔</p>
+<p><strong>قسط والے گاہک نے آدھی رقم دی۔</strong> پلان کھولیں، <strong>قسط لیں</strong> دبائیں اور رقم اتنی کر دیں جتنی اس نے دی۔ باقی آنے تک قسط پر <strong>جزوی</strong> لکھا رہتا ہے۔</p>
+<p><strong>بلک ایکسل اپ لوڈ میں غلطیاں آ رہی ہیں۔</strong> وجہ پڑھنے کے لیے سرخ قطار دبائیں ("IMEI کے 15 ہندسے ہونے چاہییں"، "بتائیں کس نے دینا ہے" وغیرہ)۔ Excel میں ٹھیک کر کے دوبارہ اپ لوڈ کریں، یا <strong>غلط قطاریں چھوڑ دیں، باقی درآمد کریں</strong> پر نشان لگائیں۔ جب تک آپ <strong>درآمد کریں</strong> نہ دبائیں کچھ محفوظ نہیں ہوتا۔</p>
+<p><strong>میرا لوگو بل پر نظر نہیں آتا۔</strong> دکان کی سیٹنگز ← <strong>چھپا ہوا بل</strong> دیکھیں: <strong>لوگو</strong> پر نشان لگا ہونا چاہیے۔ صاف PNG یا JPG استعمال کریں، اور محفوظ کرنے والی پٹی پر <strong>محفوظ کریں</strong> دبائیں۔</p>
+<p><strong>فیس کی یاد دہانی بار بار آتی ہے۔</strong> فیس ادا کریں اور ٹرانزیکشن ID کے ساتھ <strong>میں نے ادا کر دی</strong> دبائیں۔ پٹی نیلی ہو جاتی ہے ("ادائیگی موصول، تصدیق باقی ہے") اور یاد دہانیاں رک جاتی ہیں۔</p>
+<p><strong>میرا پلان ختم ہو گیا۔ کیا میرا ڈیٹا چلا گیا؟</strong> نہیں۔ کبھی کچھ ختم نہیں کیا جاتا۔ آپ سب کچھ دیکھ سکتے ہیں، ڈاؤن لوڈ کر سکتے ہیں اور بیک اپ لے سکتے ہیں۔ فیس وصول ہوتے ہی نئی فروخت دوبارہ کھل جاتی ہے۔</p>
+<p><strong>میں اپنا پاس ورڈ یا پن بھول گیا۔</strong> پن: <strong>پن بھول گئے؟ پاس ورڈ استعمال کریں</strong> دبائیں۔ پاس ورڈ: عملہ دکان کے مالک سے کہے (مزید ← عملہ ← نام ← <strong>نیا پاس ورڈ</strong>)۔ مالک سافٹ ویئر فراہم کنندہ سے کہے۔</p>
+<p><strong>Android ایپ میں پرنٹ یا ڈاؤن لوڈ کرنے سے Chrome کھلتا ہے۔</strong> یہ عام بات ہے: Chrome پرنٹ کی اسکرین دکھاتا ہے یا فائل محفوظ کرتا ہے۔ اگر لکھا آئے کہ لنک کی مدت ختم ہو گئی، تو واپس جا کر پرنٹ یا ڈاؤن لوڈ دوبارہ دبائیں۔</p>
+<p><strong>فروخت کے دوران انٹرنیٹ چلا گیا۔</strong> کام جاری رکھیں۔ فروخت فون پر محفوظ ہو جاتی ہے اور انٹرنیٹ واپس آنے پر بھیج دی جاتی ہے۔ اگر کوئی نہ بھیجی جا سکے (مثلاً وہی فون کسی اور ڈیوائس سے بک گیا)، تو وہ وجہ کے ساتھ سرخ رنگ میں نظر آتی ہے؛ اسے ٹھیک کریں اور <strong>دوبارہ کوشش</strong> دبائیں۔</p>
+<h3>الفاظ کی فہرست</h3>
+<table><thead><tr><th>لفظ</th><th>مطلب</th></tr></thead><tbody><tr><td><strong>Udhaar</strong></td><td>ادھار: چیز ابھی دی اور پیسے بعد میں، یا وہ پیسے جو آپ نے ابھی کسی کو دینے ہیں۔</td></tr><tr><td><strong>Khata</strong></td><td>بندے کا حساب والا صفحہ: جو کچھ بیچا، خریدا، ادا کیا اور وصول ہوا، بقایا کے ساتھ۔</td></tr><tr><td><strong>Len-den</strong></td><td>بغیر بل کے کسی بندے کو دیے یا اس سے لیے پیسے، اس کے کھاتے میں رکھے جاتے ہیں۔</td></tr><tr><td><strong>Qist</strong></td><td>قسطوں پر بکے فون کی ایک ماہانہ قسط۔</td></tr><tr><td><strong>Zamin</strong></td><td>ضامن جو قسط والے گاہک کی ضمانت دیتا ہے۔</td></tr><tr><td><strong>Amanat</strong></td><td>دوسری دکان کو دکھانے یا بیچنے کے لیے بھروسے پر دیا گیا فون؛ بکنے یا واپس آنے تک آپ کا رہتا ہے۔</td></tr><tr><td><strong>Galla</strong></td><td>کاؤنٹر پر پیسوں کا دراز۔</td></tr><tr><td><strong>Hisaab</strong></td><td>ایک دن یا مدت کا حساب: کیا آیا، کیا گیا، کیا بچا۔</td></tr><tr><td><strong>Left in hand</strong></td><td>مدت میں آئے پیسے میں سے گئے پیسے نکال کر۔ منافع جیسا نہیں۔</td></tr><tr><td><strong>Real profit</strong></td><td>فروخت پر منافع جمع دوسری آمدنی، خرچے نکال کر۔</td></tr><tr><td><strong>Owner drawing</strong></td><td>جو پیسے مالک اپنے لیے لیتا ہے؛ دکان کا خرچہ نہیں۔</td></tr><tr><td><strong>Close the day</strong></td><td>رات کو گلہ گن کر اس سے ملانا جو ایپ کے حساب سے ہونا چاہیے۔</td></tr><tr><td><strong>Asking price / Cost price</strong></td><td>جس قیمت پر آپ فون بیچنا چاہتے ہیں / جو آپ نے اس کے دیے۔</td></tr><tr><td><strong>IMEI</strong></td><td>فون کا 15 ہندسوں کا نمبر (<code>*#06#</code> ملائیں)۔ ڈبل SIM فونوں میں IMEI 1 اور IMEI 2 ہوتے ہیں۔</td></tr><tr><td><strong>CNIC</strong></td><td>پاکستانی قومی شناختی کارڈ نمبر، 13 ہندسے (12345-1234567-1)۔</td></tr><tr><td><strong>PTA</strong></td><td>پاکستان ٹیلی کمیونیکیشن اتھارٹی۔ <strong>PTA منظور</strong> فون پاکستانی SIM کے ساتھ چلتا ہے۔</td></tr><tr><td><strong>Non-PTA</strong></td><td>جو فون PTA میں رجسٹر نہیں؛ مقامی SIM صرف محدود وقت چلتی ہے (SIM ٹائم)۔</td></tr><tr><td><strong>JV</strong></td><td>PTA سے بچنے کے لیے پیچ کیا گیا فون؛ اس کا بھی SIM ٹائم ہوتا ہے اور اس میں خطرہ زیادہ ہے۔</td></tr><tr><td><strong>Box pack / Open box / Used / Patched</strong></td><td>فون کی حالت۔</td></tr><tr><td><strong>eGadget</strong></td><td>پنجاب پولیس کا پورٹل جس سے دیکھا جاتا ہے کہ فون کا IMEI چوری کے طور پر رپورٹ تو نہیں۔</td></tr><tr><td><strong>NTN / STRN</strong></td><td>FBR کا نیشنل ٹیکس نمبر اور سیلز ٹیکس رجسٹریشن نمبر۔</td></tr><tr><td><strong>FBR</strong></td><td>فیڈرل بورڈ آف ریونیو، پاکستان کا ٹیکس کا ادارہ۔</td></tr><tr><td><strong>Grace days</strong></td><td>پلان ختم ہونے کے بعد کے وہ دن جن میں ایپ پوری طرح چلتی ہے۔</td></tr><tr><td><strong>View-only mode</strong></td><td>مہلت کے دنوں کے بعد: آپ دیکھ، ڈاؤن لوڈ اور بیک اپ کر سکتے ہیں، لیکن نئے بل نہیں بنا سکتے۔</td></tr></tbody></table>
+</body>
+</html>

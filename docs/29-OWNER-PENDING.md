@@ -88,6 +88,11 @@ reason), tablet, watch, accessories by the dozen, a loan to another shop, repair
 supplier payments, expenses. For the live server: `API=https://<domain>/api/v1 PHONE=03xxxxxxxxx
 node scripts/demo-shop.mjs` — only if you want a demo shop on production.
 
+**User manual for buyers** (2026-11-03): read `docs/manual/Mobile-Shop-User-Manual-en.pdf`, `-ur.pdf`
+and `-roman.pdf` (26 chapters, 49 screenshots each) before giving them to shops. Check the Urdu
+wording in particular. The home screenshot shows the demo shop's day with a loss (demo expenses);
+say if you want a retake with a profitable day. How to edit and rebuild: `docs/manual/README.md`.
+
 Close the app fully and open it again first (or install the newest APK from the latest Deploy run →
 `android / apk`), so the newest version loads.
 
