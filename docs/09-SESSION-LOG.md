@@ -702,3 +702,16 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Verified**:
 - backend `test_item_gst.py` (2), `test_admin_access` (+1) + sale / tax / accessories suites;
 - vitest 43 (incl. `billTax.test.ts`); tsc.
+
+## 2026-11-03 · Landing page update
+- Owner: update the landing page with screenshots and detailed module explanations for non-technical and technical readers, and split the video section 50 / 50 (video one side, content the other).
+- Built:
+  - "What came in the last round": the newest 8 first (repair labs, repair sticker, len-den, a "?" everywhere, sales / purchase / staff reports, repairs audit, salesman without profit, item GST); the earlier rounds fold under "N features added earlier".
+  - Video section: the phone video on one side; on the other, the 8 steps it shows plus "Start free" and "How each module works". On a phone the text comes first.
+  - New section "How each module works": 18 modules, each opening into "In shop words" (a rupee example) and "How it works inside" (3 technical points), in en / ur / roman.
+  - `scripts/landing-assets.mjs` seeds repair labs, a phone at a lab and len-den with a return date, and adds shots: repair lab record, phone at a lab, repair sticker, len-den card, a "?" opened, sales report, repairs audit (phone + web). The video now also visits repair labs, the repairs audit and opens a "?".
+**Verified**:
+- tsc; vitest 43;
+- Playwright `landing.spec.ts` (prices scoped to #pricing; the video section and the guide open);
+- desktop / phone / Urdu screenshots checked; no horizontal overflow.
+- mp4 still not produced on this PC (ffmpeg without H.264); the webm plays on current iPhone / Android.

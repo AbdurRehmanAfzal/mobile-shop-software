@@ -2,7 +2,7 @@
  *  screenshots, a sample video, prices, the accounts to pay into and an "open a shop for me" form
  *  that reaches the product owner. Served at /welcome; a visitor on / without a login lands here. */
 
-import { ArrowLeftRight, BarChart3, BellRing, BookOpen, Bot, Boxes, CalendarCheck, Check, ClipboardCheck, CloudOff, Copy, CreditCard, Download, FileSpreadsheet, FileText, Fingerprint, HandCoins, Headphones, History, IdCard, KeyRound, Languages, LineChart, Lock, MessageCircle, Monitor, PackagePlus, PauseCircle, Phone as PhoneIcon, PlayCircle, Receipt, RotateCcw, ScanBarcode, ScanLine, ShieldCheck, Smartphone, Tablet, Tag, Undo2, Users, Wallet, Wrench, type LucideIcon } from 'lucide-react'
+import { ArrowLeftRight, BarChart3, BellRing, BookOpen, Bot, Boxes, CalendarCheck, Check, ChevronDown, CircleHelp, ClipboardCheck, CloudOff, Code2, Copy, CreditCard, Download, FileSpreadsheet, FileText, Fingerprint, FlaskConical, HandCoins, Headphones, History, IdCard, KeyRound, Languages, LineChart, Lock, MessageCircle, Monitor, PackagePlus, PauseCircle, Percent, Phone as PhoneIcon, PlayCircle, Receipt, RotateCcw, ScanBarcode, ScanLine, ShieldCheck, Smartphone, Store, Tablet, Tag, Undo2, UserCog, Users, Wallet, Wrench, type LucideIcon } from 'lucide-react'
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { BiAlert, BiInput, BiLabel, useLang } from '@/components/Bilingual'
@@ -25,16 +25,32 @@ const BASICS: { key: string; Icon: LucideIcon }[] = [
 const OPTIONAL: Record<string, LucideIcon> = { accessories: Headphones, repairs: Wrench, expenses: Wallet, held_sales: PauseCircle, tax: Receipt, exchange: ArrowLeftRight, reports: BarChart3, exports: Download, notifications: BellRing, loans: RotateCcw, installments: HandCoins, attendance: CalendarCheck, ai: Bot }
 /** what came in the last round (owner 2026-10-31): shown first, with its own screenshots */
 const NEW: { key: string; Icon: LucideIcon; shot?: string }[] = [
-  // owner 2026-11-01: the newest round first — barcodes, accessories by dozen / box, tablets & watches
+  // owner 2026-11-03: the newest round first — repair labs, the repair sticker, len-den, a "?" on
+  // every field, the sales / purchase / staff reports, item GST, a salesman role without profit
+  { key: 'repairlabs', Icon: FlaskConical, shot: 'repairlab' }, { key: 'sticker', Icon: Tag, shot: 'sticker' }, { key: 'lending', Icon: HandCoins, shot: 'lending' },
+  { key: 'help', Icon: CircleHelp, shot: 'help' }, { key: 'trade', Icon: BarChart3, shot: 'trade' }, { key: 'repairaudit', Icon: Wrench, shot: 'auditrepairs' },
+  { key: 'roles', Icon: UserCog }, { key: 'gst', Icon: Percent },
+  // owner 2026-11-01: barcodes, accessories by dozen / box, tablets & watches
   { key: 'barcode', Icon: ScanBarcode, shot: 'label' }, { key: 'items', Icon: Boxes, shot: 'items' }, { key: 'devices', Icon: Tablet, shot: 'tablet' },
   { key: 'lock', Icon: Lock }, { key: 'count', Icon: ClipboardCheck, shot: 'count' }, { key: 'itemreports', Icon: BarChart3, shot: 'itemreports' }, { key: 'reminders', Icon: BellRing },
   { key: 'audit', Icon: LineChart, shot: 'audit' }, { key: 'bulk', Icon: FileSpreadsheet, shot: 'bulk' }, { key: 'history', Icon: History, shot: 'history' },
   { key: 'prices', Icon: ShieldCheck }, { key: 'ai', Icon: Bot }, { key: 'home', Icon: BarChart3, shot: 'home' },
   { key: 'installments', Icon: HandCoins }, { key: 'hazri', Icon: CalendarCheck }, { key: 'otp', Icon: KeyRound }, { key: 'windows', Icon: Monitor },
 ]
+/** the newest round shown open; the rounds before fold under "earlier" */
+const LATEST = 8
 const EXTRAS: { key: string; Icon: LucideIcon }[] = [{ key: 'offline', Icon: CloudOff }, { key: 'fingerprint', Icon: Fingerprint }, { key: 'cnic', Icon: ShieldCheck }, { key: 'whatsapp', Icon: MessageCircle }]
-const SHOTS = ['home', 'sale', 'stock', 'items', 'tablet', 'audit', 'khata', 'history', 'finance', 'invoice'] as const
-const WEB_SHOTS = ['home', 'audit', 'stock', 'items', 'finance', 'invoice'] as const
+const SHOTS = ['home', 'sale', 'stock', 'repairjob', 'lending', 'trade', 'items', 'tablet', 'audit', 'khata', 'history', 'finance', 'invoice'] as const
+const WEB_SHOTS = ['home', 'audit', 'trade', 'repairs', 'repairlab', 'stock', 'items', 'finance', 'invoice'] as const
+/** owner 2026-11-03: every module explained twice — in shop words, and how it works inside */
+const GUIDE: { key: string; Icon: LucideIcon }[] = [
+  { key: 'sale', Icon: Tag }, { key: 'purchase', Icon: PackagePlus }, { key: 'stock', Icon: Smartphone }, { key: 'verify', Icon: IdCard },
+  { key: 'khata', Icon: BookOpen }, { key: 'lending', Icon: HandCoins }, { key: 'payments', Icon: Wallet }, { key: 'returns', Icon: Undo2 },
+  { key: 'repairs', Icon: Wrench }, { key: 'items', Icon: Headphones }, { key: 'installments', Icon: CalendarCheck }, { key: 'expenses', Icon: Receipt },
+  { key: 'audit', Icon: LineChart }, { key: 'staff', Icon: Users }, { key: 'barcodes', Icon: ScanBarcode }, { key: 'help', Icon: CircleHelp },
+  { key: 'devices', Icon: Monitor }, { key: 'security', Icon: ShieldCheck },
+]
+const VIDEO_STEPS = ['sell', 'bill', 'audit', 'stock', 'khata', 'hisaab', 'labs', 'help'] as const
 
 export default function LandingPage() {
   const { pick, ur, roman, cls } = useLang()
@@ -104,8 +120,17 @@ export default function LandingPage() {
             <p className={`text-muted ${body}`}>{pick('landing.newSub')}</p>
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {NEW.map(({ key, Icon }) => <Feature key={key} Icon={Icon} title={pick(`landing.new.${key}.t`)} text={pick(`landing.new.${key}.d`)} tone="bg-emerald text-white" />)}
+            {NEW.slice(0, LATEST).map(({ key, Icon }) => <Feature key={key} Icon={Icon} title={pick(`landing.new.${key}.t`)} text={pick(`landing.new.${key}.d`)} tone="bg-emerald text-white" />)}
           </div>
+          {/* the rounds before: folded, so the newest stays on top and the page stays short */}
+          <details className="group">
+            <summary className={`tap flex w-fit cursor-pointer list-none items-center gap-2 rounded-2xl border border-line bg-surface px-4 py-2.5 font-bold ${ur ? cls('md') : 'text-[15px]'}`}>
+              {pick('landing.earlier').replace('{{n}}', String(NEW.length - LATEST))}<ChevronDown size={18} className="transition-transform group-open:rotate-180" />
+            </summary>
+            <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {NEW.slice(LATEST).map(({ key, Icon }) => <Feature key={key} Icon={Icon} title={pick(`landing.new.${key}.t`)} text={pick(`landing.new.${key}.d`)} tone="bg-emerald-tint text-emerald-deep" />)}
+            </div>
+          </details>
           <div className="-mx-5 flex snap-x gap-4 overflow-x-auto px-5 pb-2">
             {NEW.filter((n) => n.shot).map((n) => (
               <figure key={n.key} className="w-[220px] shrink-0 snap-center">
@@ -116,17 +141,47 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* video */}
-        <section id="video" className="flex flex-col gap-4">
-          <h2 className={h2}>{pick('landing.videoTitle')}</h2>
-          <p className={`text-muted ${body}`}>{pick('landing.videoSub')}</p>
-          <div className="mx-auto w-full max-w-md overflow-hidden rounded-[28px] border border-line bg-surface shadow-hero">
-            <video controls playsInline preload="metadata" poster="/landing/sale-en.png" className="aspect-[9/16] w-full bg-black">
-              <source src="/landing/demo.mp4" type="video/mp4" />
-              <source src="/landing/demo.webm" type="video/webm" />
-            </video>
+        {/* video: half the video, half what it shows (owner 2026-11-03: a lone video in the middle looked empty) */}
+        <section id="video" className="grid grid-cols-1 items-center gap-8 rounded-[32px] border border-line bg-surface p-5 sm:p-8 md:grid-cols-2" data-testid="landing-video">
+          <div className="flex min-w-0 flex-col gap-4 md:order-2">
+            <h2 className={h2}>{pick('landing.videoTitle')}</h2>
+            <p className={`text-muted ${body}`}>{pick('landing.videoSub')}</p>
+            <ol className="flex flex-col gap-2.5">
+              {VIDEO_STEPS.map((s, i) => (
+                <li key={s} className="flex items-start gap-3">
+                  <span className="num flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald text-sm font-bold text-white">{i + 1}</span>
+                  <span className="flex min-w-0 flex-col">
+                    <span className={`font-bold ${ur ? cls('md') : 'text-[15px]'}`}>{pick(`landing.vsteps.${s}.t`)}</span>
+                    <span className={`text-muted ${ur ? cls('sm') : 'text-sm font-medium'}`}>{pick(`landing.vsteps.${s}.d`)}</span>
+                  </span>
+                </li>
+              ))}
+            </ol>
+            <div className="flex flex-wrap gap-2 pt-1">
+              <a href="#start" className={`tap flex min-h-12 items-center gap-2 rounded-2xl bg-emerald px-5 font-bold text-white ${ur ? cls('md') : 'text-[15px]'}`}><Check size={18} /> {pick('landing.ctaTrial').replace('{{n}}', String(info?.trial_days ?? 14))}</a>
+              <a href="#guide" className={`tap flex min-h-12 items-center gap-2 rounded-2xl border border-line bg-surface px-5 font-bold text-ink ${ur ? cls('md') : 'text-[15px]'}`}><BookOpen size={18} /> {pick('landing.guideLink')}</a>
+            </div>
           </div>
-          <span className={`flex items-center justify-center gap-2 text-muted ${ur ? cls('sm') : 'text-sm font-semibold'}`}><PlayCircle size={18} /> {pick('landing.videoHint')}</span>
+          <div className="flex min-w-0 flex-col items-center gap-3 md:order-1">
+            <div className="w-full max-w-[320px] overflow-hidden rounded-[28px] border-[6px] border-ink bg-ink shadow-hero">
+              <video controls playsInline preload="metadata" poster={`/landing/sale-${ur ? 'ur' : 'en'}.png`} className="aspect-[9/19.5] w-full bg-black object-cover">
+                <source src="/landing/demo.mp4" type="video/mp4" />
+                <source src="/landing/demo.webm" type="video/webm" />
+              </video>
+            </div>
+            <span className={`flex items-center gap-2 text-muted ${ur ? cls('sm') : 'text-sm font-semibold'}`}><PlayCircle size={18} /> {pick('landing.videoHint')}</span>
+          </div>
+        </section>
+
+        {/* every module explained twice: in shop words, and how it works inside */}
+        <section id="guide" className="flex flex-col gap-5" data-testid="landing-guide">
+          <div>
+            <h2 className={h2}>{pick('landing.guideTitle')}</h2>
+            <p className={`text-muted ${body}`}>{pick('landing.guideSub')}</p>
+          </div>
+          <div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-2">
+            {GUIDE.map(({ key, Icon }) => <Guide key={key} k={key} Icon={Icon} />)}
+          </div>
         </section>
 
         {/* modules */}
@@ -282,6 +337,37 @@ function Feature({ Icon, title, text, tone }: { Icon: LucideIcon; title: string;
         <span className={`text-muted ${ur ? cls('sm') : 'text-sm font-medium'}`}>{text}</span>
       </span>
     </div>
+  )
+}
+
+/** one module: a line that says what it is; open it for the shop words + example and the inside view */
+function Guide({ k, Icon }: { k: string; Icon: LucideIcon }) {
+  const { pick, ur, cls } = useLang()
+  const small = ur ? cls('sm') : 'text-sm font-medium'
+  const tech = [1, 2, 3].map((i) => pick(`landing.guide.${k}.x${i}`)).filter((x) => x && !x.startsWith('landing.'))
+  return (
+    <details className="group card flex flex-col gap-3 open:shadow-hero">
+      <summary className="flex cursor-pointer list-none items-center gap-3">
+        <span className="well h-11 w-11 shrink-0 rounded-2xl bg-emerald-tint text-emerald-deep"><Icon size={22} strokeWidth={2} /></span>
+        <span className="flex min-w-0 flex-1 flex-col">
+          <span className={`font-bold ${ur ? cls('md') : 'text-[15px]'}`}>{pick(`landing.guide.${k}.t`)}</span>
+          <span className={`text-muted ${small}`}>{pick(`landing.guide.${k}.s`)}</span>
+        </span>
+        <ChevronDown size={20} className="shrink-0 text-muted transition-transform group-open:rotate-180" />
+      </summary>
+      <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="flex flex-col gap-2 rounded-2xl bg-emerald-tint/60 p-3">
+          <span className={`flex items-center gap-1.5 font-bold text-emerald-deep ${small}`}><Store size={16} /> {pick('landing.guideShop')}</span>
+          <span className={small}>{pick(`landing.guide.${k}.e`)}</span>
+        </div>
+        <div className="flex flex-col gap-2 rounded-2xl bg-ground p-3">
+          <span className={`flex items-center gap-1.5 font-bold text-ink ${small}`}><Code2 size={16} /> {pick('landing.guideTech')}</span>
+          <ul className="flex flex-col gap-1.5">
+            {tech.map((t) => <li key={t} className={`flex items-start gap-2 text-muted ${small}`}><Check size={14} className="mt-1 shrink-0 text-emerald" />{t}</li>)}
+          </ul>
+        </div>
+      </div>
+    </details>
   )
 }
 

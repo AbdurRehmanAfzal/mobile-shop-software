@@ -96,7 +96,22 @@ async function seed() {
   for (const [k, amount, desc, n] of [['electricity', 6200, null, 8], ['tea', 800, null, 3], ['transport', 1500, null, 1]]) {
     if (cat(k)) await post('/expenses', { category_id: cat(k).id, amount, description: desc, date: day(n) }).catch(() => undefined)
   }
-  return { phone: PHONE, deviceId: ids[1], itemId: cable.id, tabletId, watchId, headers: h }
+  // repair labs (docs/34): one phone back from two labs, one at a lab now (late)
+  const zain = await post('/parties', { name: 'Zain Mobile Lab', phone: '03004440002', kinds: ['technician'], address: 'Hall Road, Lahore' })
+  const aliLab = await post('/parties', { name: 'Ali Repair Lab', phone: '03004440001', kinds: ['technician'], address: 'Hafeez Centre' })
+  const rj1 = await post('/repairs', { party_id: bilal.id, device_desc: 'Redmi Note 12 — no power', imei: '352099001761499', fault_codes: ['dead'], received_accessories: ['sim', 'cover'], estimate: 6000, advance: 1000, promised_at: day(-1) })
+  const t1 = await post(`/repairs/${rj1.id}/lab`, { lab_party_id: aliLab.id, problem: 'board check', quoted_cost: 3000, sent_on: day(6), expected_back: day(4) })
+  await post(`/repairs/${rj1.id}/lab/${t1.id}/back`, { outcome: 'not_fixed', final_cost: 500, back_on: day(4) })
+  const t2 = await post(`/repairs/${rj1.id}/lab`, { lab_party_id: zain.id, problem: 'board repair', quoted_cost: 3500, sent_on: day(4), expected_back: day(2) })
+  await post(`/repairs/${rj1.id}/lab/${t2.id}/back`, { outcome: 'fixed', final_cost: 3500, paid_now: 1000, back_on: day(2) })
+  const rj2 = await post('/repairs', { party_id: usman.id, device_desc: 'iPhone 11 — screen lines', imei: '356938035643817', fault_codes: ['screen'], received_accessories: ['cover'], estimate: 12500, advance: 3000, promised_at: day(-2) })
+  await post(`/repairs/${rj2.id}/lab`, { lab_party_id: zain.id, problem: 'change screen (original)', quoted_cost: 8500, sent_on: day(3), expected_back: day(1) })
+  // len-den (docs/32): money lent with a return date, part back; money left with the shop
+  const tariq = await post('/parties', { name: 'Tariq Bhai', phone: '03215550009', kinds: ['customer'] })
+  await post('/payments', { party_id: tariq.id, direction: 'out', purpose: 'lending', amount: 25000, date: day(20), due_date: day(5), notes: "daughter's fee" })
+  await post('/payments', { party_id: tariq.id, direction: 'in', purpose: 'lending', amount: 10000, date: day(4), notes: 'first part back' })
+  await post('/payments', { party_id: usman.id, direction: 'in', purpose: 'lending', amount: 15000, date: day(10), notes: 'kept with the shop' })
+  return { phone: PHONE, deviceId: ids[1], itemId: cable.id, tabletId, watchId, labId: zain.id, repairId: rj2.id, lendId: tariq.id, headers: h }
 }
 
 async function login(page, locale) {
@@ -134,6 +149,22 @@ async function shots(browser, locale) {
   if (seeded.tabletId) await take('tablet', `/stock/${seeded.tabletId}`, async () => { await page.mouse.wheel(0, 760); await page.waitForTimeout(600) })
   await take('itemreports', '/accessories/reports')
   await take('count', '/stock/count', async () => { for (const code of ['MS000001', 'MS000002', '350123451234560']) { await page.keyboard.type(code, { delay: 5 }); await page.keyboard.press('Enter'); await page.waitForTimeout(500) } await page.getByRole('button', { name: /Check against stock|اسٹاک سے ملائیں|جانچ/ }).first().click().catch(() => undefined); await page.waitForTimeout(900) })
+  // the newest round (2026-11-03): repair labs, len-den, the sales report, a "?" opened
+  await take('repairjob', `/repairs/${seeded.repairId}`, async () => { await page.mouse.wheel(0, 380); await page.waitForTimeout(600) })
+  await take('repairlab', `/repairs/labs/${seeded.labId}`)
+  await take('auditrepairs', '/audit/repairs?preset=this_month', async () => { await page.mouse.wheel(0, 330); await page.waitForTimeout(600) })
+  await take('trade', '/audit/sales?preset=this_month', async () => { await page.mouse.wheel(0, 330); await page.waitForTimeout(600) })
+  await take('lending', `/parties/${seeded.lendId}`, async () => { await page.getByTestId('party-lending').scrollIntoViewIfNeeded(); await page.mouse.wheel(0, -90); await page.waitForTimeout(600) })
+  await take('help', '/audit?preset=this_month', async () => { await page.locator('[data-help^="audit.overview"]').first().click(); await page.waitForTimeout(700) })
+  // the repair sticker with the fields picked, shown at a readable size
+  {
+    const q = new URLSearchParams({ ids: seeded.repairId, size: '58x40', copies: '1', fields: 'shop,no,barcode,customer,phone,device,imei,fault,accessories,promised,left', lang: locale })
+    const html = await (await fetch(`${API}/labels/repairs?${q}`, { headers: seeded.headers })).text()
+    await page.setContent(html, { waitUntil: 'networkidle' })
+    await page.addStyleTag({ content: 'body{background:#eef2f7;display:flex;flex-direction:column;align-items:center;padding:60px 0;margin:0}.label{box-shadow:0 6px 18px rgba(14,22,19,.15);background:#fff;transform:scale(1.5);transform-origin:top center}' })
+    await page.waitForTimeout(400)
+    await page.screenshot({ path: join(OUT, `sticker-${locale}.png`) })
+  }
   // the printed stickers: the label page the sheet opens, shown at a readable size
   {
     const ids = [seeded.deviceId, seeded.tabletId, seeded.watchId].filter(Boolean).join(',')
@@ -169,6 +200,9 @@ async function webShots(browser, locale) {
   await take('finance', '/audit/finance?preset=this_month')
   await take('bulk', '/more/bulk', async () => { await page.getByTestId('bulk-page').getByRole('button', { name: /Phones|موبائل/ }).first().click(); await page.waitForTimeout(400) })
   await take('items', `/accessories/${seeded.itemId}`)
+  await take('repairs', '/audit/repairs?preset=this_month')
+  await take('trade', '/audit/sales?preset=this_month')
+  await take('repairlab', `/repairs/labs/${seeded.labId}`)
   await ctx.close()
 }
 
@@ -202,6 +236,17 @@ async function video(browser) {
   await pause(3000)
   await page.goto(`${WEB}/reports`)
   await pause(2500)
+  // the newest round: repair labs, a lab's record, the repairs audit, a "?" with its example
+  await page.goto(`${WEB}/repairs/labs`)
+  await pause(2200)
+  await page.goto(`${WEB}/repairs/labs/${seeded.labId}`)
+  await pause(2500)
+  await page.goto(`${WEB}/audit/repairs?preset=this_month`)
+  await pause(2500)
+  await page.goto(`${WEB}/audit?preset=this_month`)
+  await pause(1200)
+  await page.locator('[data-help^="audit.overview"]').first().click().catch(() => undefined)
+  await pause(3000)
   await ctx.close()
   const files = readdirSync(dir).filter((f) => f.endsWith('.webm')).map((f) => join(dir, f)).sort((a, b) => statSync(b).mtimeMs - statSync(a).mtimeMs)
   if (!files.length) return
@@ -221,7 +266,7 @@ async function video(browser) {
 }
 
 const browser = await chromium.launch()
-let seeded = { phone: PHONE, deviceId: '', itemId: '', tabletId: '', watchId: '', headers: {} }
+let seeded = { phone: PHONE, deviceId: '', itemId: '', tabletId: '', watchId: '', labId: '', repairId: '', lendId: '', headers: {} }
 const only = process.argv[2] // "shots" skips the video
 try {
   seeded = await seed()
