@@ -19,7 +19,7 @@ eggs/
 .eggs/
 /legacy/backend/lib/
 /legacy/backend/lib64/
-parts/
+/parts/
 sdist/
 var/
 wheels/

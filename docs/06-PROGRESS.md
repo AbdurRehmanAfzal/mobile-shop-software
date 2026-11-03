@@ -276,6 +276,9 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | Module-wise manual, 26 chapters, English / Urdu / Roman | ✅ | `docs/manual/{en,ur,roman}.md` (parts in `parts/`) |
 | 49 screenshots per language from a demo shop | ✅ | `frontend/scripts/manual-shots.mjs` → `docs/manual/img/<lang>/` |
 | A4 PDF + HTML per language (cover, contents, page numbers, Nastaliq RTL) | ✅ | `frontend/scripts/manual-pdf.mjs` |
+| Super admin manual, English + Roman, 17 screenshots | ✅ | `admin-{en,roman}.md`, `frontend/scripts/manual-admin-shots.mjs` |
+| Developer and setup manual | ✅ | `developer-en.md` |
+| Operations runbook (internal; secrets only as placeholders) | ✅ | `operations-en.md` |
 | Owner review of the wording | ⏳ | `docs/29-OWNER-PENDING.md` D |
 
 ## Owner side (open)

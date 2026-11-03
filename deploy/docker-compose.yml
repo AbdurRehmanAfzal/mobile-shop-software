@@ -1,4 +1,4 @@
-# Production stack on the OOP Solutions VPS (Hostinger, 72.62.240.10), next to the website, n8n and
+# Production stack on the OOP Solutions VPS (Hostinger), next to the website, n8n and
 # the voice agent. HTTPS and routing come from the existing Traefik (n8n-traefik-1) on the Docker
 # network n8n_default, the same way oopsolutions.com is served. No ports are opened by this stack.
 #

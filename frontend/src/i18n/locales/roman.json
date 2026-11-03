@@ -9353,6 +9353,7 @@
       "redeemed": "Istemal ho gayi",
       "revoked": "Mansookh",
       "months": "{{n}} mahine",
+      "month": "{{n}} mahina",
       "sent": "{{n}} baar bheji",
       "viewed": "Link {{n}} baar khula",
       "where": {

@@ -751,3 +751,25 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - Found while writing: the old `docs/guides/en/02-USER-MANUAL.md` is out of date in many places (home "At a glance", on-screen signature, returns in 3 steps, exchange 4 steps, payment methods, settings cards, numbering). The new manual replaces it for buyers.
 **Verified**: all 49 shots in each language checked by name; the PDFs were built and their cover, an English chapter, an Urdu chapter (Nastaliq right to left) and a Roman chapter were looked at.
 **Open**: the owner should review the Urdu wording. The home screenshot shows a demo day with a loss.
+
+## 2026-11-03 · Super admin manual, developer manual, operations runbook
+- Owner: a manual for the super admin, one for developers (setup steps, what is needed), and our own manual with GitHub, setup, variables, server information and every command we run.
+- Built (`docs/manual/`, README lists the books):
+  - `admin-en.md` / `admin-roman.md`: 11 chapters with 17 screenshots (`frontend/scripts/manual-admin-shots.mjs`).
+  - `developer-en.md`: 13 chapters, about 10,600 words, checked against the real config, compose, workflows and scripts.
+  - `operations-en.md`: 13 chapters, about 11,000 words. It covers repo, releases, server, the full environment-variable table, command tables, backups and a "when something breaks" table. Secrets and the server address appear only as placeholders, with where each real value is kept.
+  - `manual-pdf.mjs` now builds every book (`node scripts/manual-pdf.mjs` or `... admin-en`). Wide tables wrap.
+- Fixed on the way:
+  - The provider overview's "Running" count was always 0 (`counts` had no `ok` key; test added).
+  - The Super admin "Software fees" card and the website / password request rows were squeezed on a phone; their buttons now go on their own line.
+  - "1 months" became "1 month"; "Rs. 2,500/ month" became "Rs. 2,500 / month".
+  - `.gitignore` `parts/` (meant for Python builds) also hid `docs/manual/parts/`; it is now `/parts/`.
+  - The server IP was removed from comments in `deploy/docker-compose.yml` and `deploy.yml`; it is still in older commits.
+  - The restart command in docs 12 / 29 now keeps `IMAGE_TAG=$(cat .current-tag)`.
+  - The manual-admin-shots script closes its sample website request again.
+- Runbook findings for the owner: `docs/29-OWNER-PENDING.md` section F (renewal key on the server, off-server backup, Android signing secrets, old images, settings compose does not pass, trial end date).
+**Verified**:
+- pytest `test_provider_console`, `test_admin_access`; ruff; tsc;
+- Playwright `landing`, `admin`, `admin-access`, `provider-console`;
+- all 7 PDFs built and spot-checked (tables, Urdu RTL, Roman);
+- scanned the new manuals for IP addresses and the local `.env` secret values: none (only the known test numbers).

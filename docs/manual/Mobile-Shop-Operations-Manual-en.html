@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mobile Shop — Operations Runbook (internal)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 18mm 16mm 20mm }
+  :root { --ink:#0E1613; --muted:#55615c; --brand:#5B5BF6; --navy:#0B2440; --soft:#EEF0FF; --line:#dfe3ea; --gold:#B7791F }
+  * { box-sizing: border-box }
+  body { margin:0; color:var(--ink); background:#fff; font-family:'Inter', system-ui, sans-serif; font-size:10.5pt; line-height:1.6 }
+  .cover { height: 257mm; display:flex; flex-direction:column; justify-content:center; padding: 0 6mm; page-break-after: always;
+    background: radial-gradient(120% 70% at 100% 0%, #e7e8ff 0%, #fff 60%) }
+  .cover .brand { font-family:'Inter',sans-serif; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--brand); font-size:10pt }
+  .cover h1 { font-size:44pt; line-height:1.25; margin:6mm 0 2mm; color:var(--navy) }
+  .cover .sub { font-size:22pt; color:var(--brand); font-weight:700 }
+  .cover .tag { margin-top:10mm; font-size:13pt; color:var(--muted); max-width:150mm }
+  .cover .shots { display:flex; gap:6mm; margin-top:14mm }
+  .cover .shots img { width:42mm; border-radius:5mm; box-shadow:0 8px 24px rgba(11,36,64,.18); border:1px solid var(--line) }
+  .cover .by { margin-top:auto; font-family:'Inter',sans-serif; font-size:9pt; color:var(--muted) }
+  .toc { page-break-after: always }
+  .toc h2 { border:0; margin-top:0 }
+  .toc ol { list-style:none; padding:0; columns:2; column-gap:10mm }
+  .toc li { padding:1.6mm 0; border-bottom:1px dotted var(--line); break-inside:avoid }
+  .toc a { color:var(--ink); text-decoration:none }
+  h2 { page-break-before: always; font-size:20pt; color:var(--navy); margin:0 0 4mm; padding-bottom:2.5mm; border-bottom:3px solid var(--brand); line-height:1.5 }
+  h3 { font-size:13pt; color:var(--brand); margin:6mm 0 1.5mm; page-break-after: avoid; line-height:1.6 }
+  p { margin: 0 0 2.6mm }
+  ul, ol { margin: 0 0 3mm; padding-left: 7mm }
+  li { margin: .8mm 0 }
+  strong { color:var(--navy) }
+  code { font-family:'Inter',sans-serif; background:var(--soft); padding:.2mm 1.4mm; border-radius:1mm; direction:ltr; unicode-bidi:embed }
+  figure { margin:4mm auto 5mm; text-align:center; page-break-inside:avoid }
+  figure img { max-height:118mm; max-width:72mm; border-radius:4mm; border:1px solid var(--line); box-shadow:0 4px 14px rgba(11,36,64,.12) }
+  figcaption { font-size:9pt; color:var(--muted); margin-top:1.5mm }
+  aside { margin:3mm 0; padding:2.5mm 4mm; border-radius:2.5mm; page-break-inside:avoid; background:var(--soft); border-left:4px solid var(--brand) }
+  aside.note { background:#FFF7E6; border-color:var(--gold) }
+  table { width:100%; border-collapse:collapse; margin:3mm 0 4mm; font-size:9.5pt; page-break-inside:auto }
+  table { table-layout:fixed }
+  table.wide { font-size:8.3pt }
+  th, td, code { overflow-wrap:anywhere }
+  tr { page-break-inside:avoid }
+  th, td { border:1px solid var(--line); padding:1.6mm 2.4mm; text-align:left; vertical-align:top }
+  th { background:var(--navy); color:#fff }
+  tbody tr:nth-child(even) td { background:#f7f8fb }
+</style>
+</head>
+<body>
+<section class="cover">
+  <div class="brand">OOP Solutions</div>
+  <h1>Mobile Shop</h1>
+  <div class="sub">Operations Runbook (internal)</div>
+  <div class="tag">Our own runbook: GitHub, branches, releases, the server, environment variables, every command we run, backups and what to do when something breaks.</div>
+  <div class="shots"></div>
+  <div class="by">OOP Solutions · mobileshop.oopsolutions.com · 2026-11-03</div>
+</section>
+<nav class="toc">
+  <h2>Contents</h2>
+  <ol><li><a href="#c1">1. The pieces and where they live</a></li><li><a href="#c2">2. Access you need</a></li><li><a href="#c3">3. Environment variables</a></li><li><a href="#c4">4. Daily development commands (Windows)</a></li><li><a href="#c5">5. Git and GitHub</a></li><li><a href="#c6">6. Releasing to production</a></li><li><a href="#c7">7. The server</a></li><li><a href="#c8">8. Backups and restore</a></li><li><a href="#c9">9. Android app and the Windows PC version</a></li><li><a href="#c10">10. Demo data, landing screenshots and the manuals</a></li><li><a href="#c11">11. Monitoring and health checks</a></li><li><a href="#c12">12. When something breaks</a></li><li><a href="#c13">13. Still pending on the owner's side</a></li></ol>
+</nav>
+<p>This is our own manual for running Mobile Shop day to day: where every piece lives, which access you need, every environment variable, every command we run, how a release goes live, how backups work and what to do when something breaks. It is written for the owner, Abdur Rehman Afzal, and for any team member who takes over operations.</p>
+<aside class="note"><strong>Important:</strong> Real passwords, tokens, API keys and the server's IP address are never written in this document or anywhere in the repository. They live only in three places: the server's <code>/opt/mobileshop/.env</code> (root only), GitHub → repository → Settings → Secrets and variables → Actions, and the owner's password manager. In this runbook they appear as placeholders such as <code>&lt;VPS_IP&gt;</code>, <code>&lt;SSH_USER&gt;</code> or <code>&lt;WHATSAPP_TOKEN&gt;</code>.</aside>
+<p>How to read the commands: every command is on its own line in <code>inline code</code>. "PowerShell" means the Windows PC in the office; "Git Bash" means the Bash shell that comes with Git for Windows; "server" means an SSH session on the VPS as root, inside <code>/opt/mobileshop</code> unless stated otherwise.</p>
+<h2 id="c1">1. The pieces and where they live</h2>
+<h3>The repository</h3>
+<ul>
+<li><strong>GitHub repository:</strong> <code>https://github.com/AbdurRehmanAfzal/mobile-shop-software</code> (remote <code>origin</code>, the only remote).</li>
+<li><strong>Local copy on the office PC:</strong> <code>C:\Users\HP\Documents\projects\mobile shop\mobile-shop-software</code>.</li>
+<li><strong>Layout:</strong> <code>backend/</code> (FastAPI, Python 3.12, SQLAlchemy 2, Alembic, pytest), <code>frontend/</code> (React, Vite, TypeScript, Tailwind, PWA, Capacitor Android project in <code>frontend/android</code>), <code>deploy/</code> (production stack), <code>local/</code> (the one-PC Windows program), <code>.github/workflows/</code> (CI and releases), <code>docs/</code> (living documentation), <code>legacy/</code> (the old v1, reference only — never extended).</li>
+<li><strong>Project context for Claude Code:</strong> <code>CLAUDE.md</code> at the root. Its hard rules apply to everyone, not only to Claude.</li>
+</ul>
+<h3>Branches</h3>
+<table><thead><tr><th>Branch</th><th>Purpose</th><th>What a push does</th></tr></thead><tbody><tr><td><code>develop</code></td><td>All daily work. Every commit lands here first.</td><td>Runs the CI workflow (checks only, nothing ships).</td></tr><tr><td><code>main</code></td><td>Releases only. Changes arrive by a pull request from <code>develop</code>.</td><td>Runs the Deploy workflow: checks, Android APK, Docker images, deploy to the VPS. Also runs the Windows workflow when <code>local/</code>, <code>backend/</code> or <code>frontend/</code> changed.</td></tr></tbody></table>
+<p><code>origin/HEAD</code> points to <code>main</code>. There are no other long-lived branches. Feature branches are allowed but are not part of the normal flow; we commit straight to <code>develop</code>.</p>
+<h3>GitHub Actions workflows</h3>
+<table><thead><tr><th>File</th><th>Name in the Actions tab</th><th>Triggered by</th><th>What it does</th></tr></thead><tbody><tr><td><code>.github/workflows/ci.yml</code></td><td>CI</td><td>push to <code>develop</code>, any pull request, or called by Deploy</td><td>Jobs <code>backend</code> (ruff, pytest on SQLite, <code>alembic upgrade head</code> / <code>downgrade base</code> / <code>upgrade head</code> on PostgreSQL 16), <code>frontend</code> (typecheck, vitest, production build), <code>stack</code> (builds the production images, runs db + backend + web together on the runner, runs <code>deploy/ci/smoke.sh</code>).</td></tr><tr><td><code>.github/workflows/deploy.yml</code></td><td>Deploy</td><td>push to <code>main</code>, or by hand (Run workflow)</td><td>Jobs <code>checks</code> (the whole CI, shown as <code>checks / backend</code>, <code>checks / frontend</code>, <code>checks / stack</code>), <code>android</code> (calls android.yml), <code>images</code> (pushes backend and web images to ghcr.io), <code>deploy</code> (SSH to the VPS, runs <code>deploy.sh &lt;sha&gt;</code>, then checks <code>APP_URL/health</code>).</td></tr><tr><td><code>.github/workflows/android.yml</code></td><td>Android</td><td>called by Deploy, or by hand</td><td>Builds the Capacitor app against <code>vars.APP_URL</code>, signs it with the release key if the secrets exist (else a debug "test" APK), uploads it as an artifact kept 90 days.</td></tr><tr><td><code>.github/workflows/windows.yml</code></td><td>Windows</td><td>by hand (with a version number), or a push to <code>main</code> that touches <code>local/</code>, <code>backend/</code>, <code>frontend/</code> or the workflow</td><td>Builds the one-PC program with PyInstaller and Inno Setup, smoke-tests <code>/health</code>, uploads <code>MobileShop-Setup-&lt;version&gt;.exe</code> as an artifact.</td></tr></tbody></table>
+<p>Concurrency: CI runs cancel an older run on the same branch; Deploy runs never cancel each other (group <code>deploy</code>), they queue.</p>
+<h3>The production server (VPS)</h3>
+<ul>
+<li><strong>Provider:</strong> Hostinger VPS, shared with the company website (oopsolutions.com), n8n and the voice agent. Address: <code>&lt;VPS_IP&gt;</code> (kept in GitHub secret <code>VPS_HOST</code> and in the password manager).</li>
+<li><strong>Users:</strong> <code>root</code> (you, for maintenance) and <code>deploy</code> (used only by GitHub Actions; its sudo rule allows exactly one command, <code>/opt/mobileshop/deploy.sh</code>).</li>
+<li><strong>App folder:</strong> <code>/opt/mobileshop</code> holds <code>docker-compose.yml</code>, <code>deploy.sh</code>, <code>backup.sh</code>, <code>.env</code> (mode 600, root only) and <code>.current-tag</code> (the commit sha that is live now).</li>
+<li><strong>Backups folder:</strong> <code>/opt/mobileshop-backups</code>. Backup log: <code>/var/log/mobileshop-backup.log</code>.</li>
+<li><strong>Sudoers rule:</strong> <code>/etc/sudoers.d/mobileshop-deploy</code>.</li>
+</ul>
+<h3>Domain, HTTPS and routing</h3>
+<ul>
+<li><strong>Production domain:</strong> <code>mobileshop.oopsolutions.com</code> (DNS A record in the Hostinger panel → <code>&lt;VPS_IP&gt;</code>).</li>
+<li><strong>Public pages:</strong> <code>/</code> is the app (login), <code>/welcome</code> is the landing page, <code>/app.apk</code> is the Android app, <code>/robots.txt</code>, <code>/sitemap.xml</code> and <code>/llms.txt</code> are for search and answer engines, <code>/health</code> answers <code>{"status":"ok","env":"prod"}</code> when the backend is up.</li>
+<li><strong>HTTPS:</strong> the VPS already runs Traefik (container <code>n8n-traefik-1</code>, Docker network <code>n8n_default</code>). Traefik owns ports 80 and 443, gets the Let's Encrypt certificate (resolver <code>mytlschallenge</code>) and redirects plain HTTP to HTTPS. Our stack opens no ports of its own.</li>
+<li><strong>Caddy:</strong> inside our <code>web</code> container. It serves the built React app on plain port 80, passes <code>/api/*</code> and <code>/health</code> to the backend, serves <code>/app.apk</code> as an Android package download, sets the security headers (HSTS, nosniff, frame and referrer policy, camera allowed only for this site) and limits request bodies to 10 MB. Config: <code>deploy/Caddyfile</code>.</li>
+</ul>
+<h3>Docker services (compose project <code>mobileshop</code>)</h3>
+<table><thead><tr><th>Service</th><th>Image</th><th>Networks</th><th>Role</th></tr></thead><tbody><tr><td><code>db</code></td><td><code>postgres:16-alpine</code></td><td><code>internal</code> only</td><td>The database. Data in volume <code>mobileshop_pgdata</code>. Health check <code>pg_isready</code>.</td></tr><tr><td><code>backend</code></td><td><code>ghcr.io/abdurrehmanafzal/mobile-shop-backend:&lt;sha&gt;</code></td><td><code>internal</code> (alias <code>mobileshop-backend</code>)</td><td>FastAPI with uvicorn (<code>WEB_WORKERS</code>, default 2). On every start it runs <code>alembic upgrade head</code>, then seeds the phone catalogue and expense categories (idempotent). Uploads in volume <code>mobileshop_uploads</code> at <code>/data/uploads</code>. Runs the in-process scheduler (night reports, reminders, queued messages).</td></tr><tr><td><code>web</code></td><td><code>ghcr.io/abdurrehmanafzal/mobile-shop-web:&lt;sha&gt;</code></td><td><code>internal</code> and <code>n8n_default</code></td><td>Caddy with the built React app and the APK. Carries the Traefik labels for the domain.</td></tr></tbody></table>
+<p>The images are built by the Deploy workflow and pushed to GitHub's container registry (ghcr.io) with two tags each: the commit sha and <code>latest</code>. The server always runs a sha tag; <code>deploy.sh</code> writes it to <code>.current-tag</code>.</p>
+<h3>Database and uploads</h3>
+<ul>
+<li><strong>Production:</strong> PostgreSQL 16, database <code>mobileshop</code>, user <code>mobileshop</code> (both from <code>.env</code>), reachable only from inside the stack.</li>
+<li><strong>Local development:</strong> SQLite file <code>backend/mobile_shop_v2.db</code> (git-ignored).</li>
+<li><strong>Migrations:</strong> Alembic, in <code>backend/alembic/versions</code> (48 files today). The current head is <code>a5c7e9b1d3f6</code> (repair dispatches). Migrations are additive and run automatically when the backend container starts.</li>
+<li><strong>Uploads:</strong> CNIC photos, signatures, fee screenshots, logos. Production: volume <code>mobileshop_uploads</code>. Local: <code>backend/uploads/</code>. They are sensitive (identity documents) — treat every copy accordingly.</li>
+</ul>
+<h3>Backups</h3>
+<ul>
+<li>A cron job at 02:30 server time runs <code>/opt/mobileshop/backup.sh</code>: a <code>pg_dump</code> in custom format (<code>db-YYYYMMDD-HHMM.dump</code>) and a tar of the uploads volume (<code>uploads-YYYYMMDD-HHMM.tgz</code>) into <code>/opt/mobileshop-backups</code>, kept 14 days.</li>
+<li>When <code>RCLONE_REMOTE</code> is set in <code>.env</code>, the same job copies the new files to an encrypted Google Drive remote and keeps 30 days there. As of today this is <strong>not set up yet</strong> (see chapter 13).</li>
+</ul>
+<h3>The Android app</h3>
+<ul>
+<li>Built by every release (the <code>android</code> job), signed with the release key when the GitHub secrets exist, and baked into the web image, so the newest app is always at <code>https://mobileshop.oopsolutions.com/app.apk</code>.</li>
+<li>App id <code>pk.mobileshop.app</code>, Capacitor 6. Version code = minutes since 1970 (always higher than the previous build); version name = date plus short commit sha.</li>
+<li>Each run also keeps the APK as an artifact named <code>mobile-shop-android-&lt;date&gt;-&lt;sha&gt;</code> for 90 days.</li>
+</ul>
+<h3>The Windows one-PC program</h3>
+<p>For shops without reliable internet: the same backend with SQLite on the shop's PC, serving the same web app at <code>http://127.0.0.1:8787</code>. Built by the Windows workflow or <code>local\build.ps1</code>. Data lives on the shop's PC in <code>%LOCALAPPDATA%\Mobile Shop\MobileShop\</code>. Details in <code>docs/15-LOCAL-WINDOWS.md</code>.</p>
+<h3>The company website</h3>
+<p><code>oopsolutions.com</code> is a separate repository (<code>oop-solutions</code>, built with Astro). A push to its <code>master</code> branch deploys it to the same VPS. It shares Traefik and the <code>deploy</code> user with Mobile Shop; its own <code>deploy/setup-vps.sh</code> created that user, so it must exist before Mobile Shop's setup can run.</p>
+<h2 id="c2">2. Access you need</h2>
+<p>Keep one entry per row in the password manager. Never share these in WhatsApp, email or a commit.</p>
+<table><thead><tr><th>Access</th><th>What it is for</th><th>Who has it</th><th>Where the real value is kept</th></tr></thead><tbody><tr><td>GitHub account <code>AbdurRehmanAfzal</code></td><td>Repository, Actions, pull requests, secrets, packages (ghcr.io)</td><td>Owner</td><td>Password manager (plus 2FA device)</td></tr><tr><td>GitHub CLI login on the office PC</td><td><code>gh pr</code>, <code>gh run</code> from PowerShell</td><td>Owner's PC</td><td><code>gh auth login</code> stores it in the Windows credential store</td></tr><tr><td>GitHub personal access token with <code>read:packages</code></td><td>Only if the ghcr.io images are private: <code>docker login ghcr.io</code> on the VPS</td><td>Owner</td><td>Password manager; Docker keeps it in <code>/root/.docker/config.json</code> on the VPS</td></tr><tr><td>VPS root SSH (<code>&lt;SSH_USER&gt;@&lt;VPS_IP&gt;</code>)</td><td>Server maintenance, <code>.env</code>, logs, backups, restores</td><td>Owner</td><td>Password manager (SSH key or root password)</td></tr><tr><td>VPS <code>deploy</code> user SSH key</td><td>GitHub Actions deploys</td><td>GitHub only</td><td>GitHub secret <code>VPS_SSH_KEY</code>; public half in <code>/home/deploy/.ssh/authorized_keys</code></td></tr><tr><td>Hostinger panel</td><td>VPS console, reboot, snapshots, DNS for oopsolutions.com</td><td>Owner</td><td>Password manager</td></tr><tr><td>Google Search Console</td><td>Indexing of <code>/welcome</code>, sitemap submission</td><td>Owner</td><td>Owner's Google account</td></tr><tr><td>Meta Business / WhatsApp Cloud API</td><td>Automatic WhatsApp (reminders, night report, OTP)</td><td>Owner</td><td><code>WHATSAPP_TOKEN</code>, <code>WHATSAPP_PHONE_ID</code> in server <code>.env</code>; master copy in password manager</td></tr><tr><td>Anthropic API (Claude)</td><td>The in-app assistant and photo reading</td><td>Owner</td><td><code>ANTHROPIC_API_KEY</code> in server <code>.env</code>; console login in password manager</td></tr><tr><td>SMTP account (e.g. Gmail app password)</td><td>Outgoing email</td><td>Owner</td><td><code>SMTP_*</code> in server <code>.env</code>; password manager</td></tr><tr><td>Google Drive + rclone crypt passwords</td><td>Off-server backup copy</td><td>Owner</td><td>rclone config on the VPS (<code>/root/.config/rclone/rclone.conf</code>); the two crypt passwords in the password manager (without them the backups cannot be opened)</td></tr><tr><td>Android release keystore (<code>mobileshop-release.jks</code>) and its password</td><td>Signing every app update</td><td>Owner</td><td>GitHub secrets <code>ANDROID_KEYSTORE_BASE64</code>, <code>ANDROID_KEYSTORE_PASSWORD</code>, <code>ANDROID_KEY_ALIAS</code>; a copy of the file and the password in the password manager, off the server</td></tr><tr><td>Renewal / license private key</td><td>Signs renewal codes and license keys</td><td>Server only</td><td><code>RENEWAL_PRIVATE_KEY</code> in server <code>.env</code>; optional sealed copy in the password manager</td></tr><tr><td>Super-admin login in the app</td><td>More → Super admin, Business console</td><td>Owner</td><td>The number is in <code>SUPERUSER_PHONES</code>; the password in the password manager</td></tr></tbody></table>
+<aside class="note"><strong>Important:</strong> When a team member leaves, rotate what they could see: the SSH key, the GitHub secrets they touched, and any API key that was in a file they opened.</aside>
+<h2 id="c3">3. Environment variables</h2>
+<p>There are four places variables come from:</p>
+<ul>
+<li><strong>Server stack:</strong> <code>/opt/mobileshop/.env</code>, read by <code>docker compose --env-file .env</code>. The template is <code>deploy/.env.example</code>. Only keys that <code>deploy/docker-compose.yml</code> passes into a container have any effect; a key you add to <code>.env</code> that the compose file does not pass is silently ignored.</li>
+<li><strong>Backend locally:</strong> <code>backend/.env</code> (git-ignored; template <code>backend/.env.example</code>). Every setting in <code>backend/app/core/config.py</code> can be set here, names are case-insensitive.</li>
+<li><strong>Frontend build:</strong> <code>VITE_API_URL</code> (template <code>frontend/.env.example</code>), set at build time.</li>
+<li><strong>GitHub Actions:</strong> repository secrets and variables.</li>
+</ul>
+<h3>Server stack (<code>/opt/mobileshop/.env</code>)</h3>
+<table class="wide"><thead><tr><th>Name</th><th>Used by</th><th>Required?</th><th>Example (not a real value)</th><th>What it does</th><th>Where the real value is kept</th></tr></thead><tbody><tr><td><code>APP_DOMAIN</code></td><td>web (Traefik labels), backend (CORS, passkeys)</td><td>Yes</td><td><code>mobileshop.oopsolutions.com</code></td><td>The public address. Builds <code>CORS_ORIGINS</code>, <code>WEBAUTHN_RP_ID</code> and <code>WEBAUTHN_ORIGINS</code>.</td><td>Server <code>.env</code></td></tr><tr><td><code>POSTGRES_DB</code></td><td>db, backend</td><td>No (default <code>mobileshop</code>)</td><td><code>mobileshop</code></td><td>Database name.</td><td>Server <code>.env</code></td></tr><tr><td><code>POSTGRES_USER</code></td><td>db, backend, backup.sh</td><td>No (default <code>mobileshop</code>)</td><td><code>mobileshop</code></td><td>Database user.</td><td>Server <code>.env</code></td></tr><tr><td><code>POSTGRES_PASSWORD</code></td><td>db, backend</td><td>Yes</td><td><code>&lt;POSTGRES_PASSWORD&gt;</code> (<code>openssl rand -hex 24</code>)</td><td>Database password; <code>setup-vps.sh</code> generates it. Never change it after the first start without changing it inside PostgreSQL too.</td><td>Server <code>.env</code>; password manager</td></tr><tr><td><code>SECRET_KEY</code></td><td>backend</td><td>Yes</td><td><code>&lt;SECRET_KEY&gt;</code> (<code>openssl rand -hex 32</code>)</td><td>Signs login tokens. With <code>APP_ENV=prod</code> the backend refuses to start if it is a default or shorter than 32 characters. Changing it logs everyone out.</td><td>Server <code>.env</code>; password manager</td></tr><tr><td><code>WEB_WORKERS</code></td><td>backend</td><td>No (default 2)</td><td><code>2</code></td><td>uvicorn worker processes.</td><td>Server <code>.env</code></td></tr><tr><td><code>PUBLIC_SIGNUP</code></td><td>backend</td><td>No (default <code>false</code>)</td><td><code>false</code></td><td>When false, <code>/api/v1/auth/signup</code> returns 403; only the super admin opens shops. Keep it false on production.</td><td>Server <code>.env</code></td></tr><tr><td><code>SUPERUSER_PHONES</code></td><td>backend</td><td>Yes</td><td><code>03001234567</code></td><td>Comma-separated login numbers that get More → Super admin and the Business console.</td><td>Server <code>.env</code></td></tr><tr><td><code>IMAGE_PREFIX</code></td><td>compose</td><td>No</td><td><code>ghcr.io/abdurrehmanafzal/mobile-shop</code></td><td>Where the images come from.</td><td>Server <code>.env</code></td></tr><tr><td><code>IMAGE_TAG</code></td><td>compose</td><td>Set per command</td><td><code>3313730…</code></td><td>Which image version runs. <code>deploy.sh</code> sets it; it is not stored in <code>.env</code>. Without it compose uses <code>latest</code>.</td><td><code>.current-tag</code> on the server</td></tr><tr><td><code>ADMIN_WHATSAPP</code></td><td>backend</td><td>No</td><td><code>03001234567</code></td><td>Receives "fee proof submitted", "new shop request" and forgot-password requests. Empty = the first <code>SUPERUSER_PHONES</code> number.</td><td>Server <code>.env</code></td></tr><tr><td><code>WHATSAPP_TOKEN</code></td><td>backend</td><td>No</td><td><code>&lt;WHATSAPP_TOKEN&gt;</code></td><td>Meta permanent system-user token. With <code>WHATSAPP_PHONE_ID</code> set, messages go out by themselves; empty = sent by hand from More → Messages.</td><td>Server <code>.env</code>; password manager</td></tr><tr><td><code>WHATSAPP_PHONE_ID</code></td><td>backend</td><td>No</td><td><code>&lt;WHATSAPP_PHONE_ID&gt;</code></td><td>Meta "Phone number ID" of the business number.</td><td>Server <code>.env</code></td></tr><tr><td><code>WHATSAPP_TEMPLATES</code></td><td>backend</td><td>No</td><td><code>{"udhaar_reminder":{"name":"udhaar_reminder_ur","lang":"ur"}}</code></td><td>JSON map from our message key to an approved Meta template. Keys without a template go as plain text.</td><td>Server <code>.env</code></td></tr><tr><td><code>SIGNUP_OTP</code></td><td>backend</td><td>No (default <code>false</code>)</td><td><code>false</code></td><td>Public signup must prove the number by a WhatsApp code.</td><td>Server <code>.env</code></td></tr><tr><td><code>OTP_DEV_ECHO</code></td><td>backend</td><td>No (default <code>false</code>)</td><td><code>false</code></td><td>Returns the OTP in the API response. <strong>Never true on production.</strong></td><td>Server <code>.env</code></td></tr><tr><td><code>SMTP_HOST</code></td><td>backend</td><td>No</td><td><code>smtp.gmail.com</code></td><td>Outgoing mail server. Empty = emails wait in Messages.</td><td>Server <code>.env</code></td></tr><tr><td><code>SMTP_PORT</code></td><td>backend</td><td>No (default 587)</td><td><code>587</code></td><td>Mail server port.</td><td>Server <code>.env</code></td></tr><tr><td><code>SMTP_USER</code></td><td>backend</td><td>No</td><td><code>&lt;SMTP_USER&gt;</code></td><td>Mail login.</td><td>Server <code>.env</code></td></tr><tr><td><code>SMTP_PASSWORD</code></td><td>backend</td><td>No</td><td><code>&lt;SMTP_PASSWORD&gt;</code></td><td>Mail password (Gmail: an app password).</td><td>Server <code>.env</code>; password manager</td></tr><tr><td><code>SMTP_FROM</code></td><td>backend</td><td>No</td><td><code>&lt;SMTP_FROM&gt;</code></td><td>Sender address.</td><td>Server <code>.env</code></td></tr><tr><td><code>SMTP_STARTTLS</code></td><td>backend</td><td>No (default <code>true</code>)</td><td><code>true</code></td><td>Use STARTTLS.</td><td>Server <code>.env</code></td></tr><tr><td><code>ANTHROPIC_API_KEY</code></td><td>backend</td><td>No</td><td><code>&lt;ANTHROPIC_API_KEY&gt;</code></td><td>Turns on the assistant and photo reading (CNIC, box label). Empty = "not switched on".</td><td>Server <code>.env</code>; password manager</td></tr><tr><td><code>AI_MODEL</code></td><td>backend</td><td>No</td><td><code>claude-opus-5-5</code></td><td>Model for the chat assistant.</td><td>Server <code>.env</code></td></tr><tr><td><code>AI_VISION_MODEL</code></td><td>backend</td><td>No</td><td><code>claude-haiku-5-5</code></td><td>Model for photo reading.</td><td>Server <code>.env</code></td></tr><tr><td><code>AI_DAILY_LIMIT</code></td><td>backend</td><td>No (default 200)</td><td><code>200</code></td><td>AI calls per shop per day.</td><td>Server <code>.env</code></td></tr><tr><td><code>RENEWAL_PRIVATE_KEY</code></td><td>backend</td><td>Yes, for keys and renewal codes</td><td><code>&lt;RENEWAL_PRIVATE_KEY&gt;</code></td><td>Signs renewal codes and license keys. Only ever on this server. Without it Business → Keys fails with "RENEWAL_PRIVATE_KEY is not set".</td><td>Server <code>.env</code> only</td></tr><tr><td><code>RENEWAL_PUBLIC_KEY</code></td><td>backend</td><td>Yes, with the private key</td><td><code>&lt;RENEWAL_PUBLIC_KEY&gt;</code></td><td>Verifies codes. Every one-PC install carries the same public key.</td><td>Server <code>.env</code>; also baked into each one-PC install</td></tr><tr><td><code>RCLONE_REMOTE</code></td><td>backup.sh (not a container)</td><td>No</td><td><code>gdrive-safe:</code></td><td>Off-server copy of each night's backup.</td><td>Server <code>.env</code></td></tr><tr><td><code>BACKUP_DIR</code></td><td>backup.sh</td><td>No (default <code>/opt/mobileshop-backups</code>)</td><td><code>/opt/mobileshop-backups</code></td><td>Where backups are written.</td><td>Environment of the cron line</td></tr></tbody></table>
+<p>Set by the compose file itself (do not put them in <code>.env</code>): <code>APP_ENV=prod</code>, <code>DATABASE_URL</code> (built from the Postgres keys), <code>CORS_ORIGINS</code> (the domain plus <code>https://localhost</code> and <code>capacitor://localhost</code> for the Android app), <code>UPLOAD_DIR=/data/uploads</code>, <code>WEBAUTHN_RP_ID</code>, <code>WEBAUTHN_ORIGINS</code>.</p>
+<h3>Backend settings not passed on the server</h3>
+<p>These exist in <code>backend/app/core/config.py</code> and work in <code>backend/.env</code> locally or in a one-PC install's <code>settings.env</code>, but <code>deploy/docker-compose.yml</code> does not pass them, so they keep their defaults on production unless the compose file is changed.</p>
+<table><thead><tr><th>Name</th><th>Default</th><th>What it does</th></tr></thead><tbody><tr><td><code>APP_ENV</code></td><td><code>dev</code></td><td><code>dev</code>, <code>test</code> or <code>prod</code>. <code>prod</code> hides <code>/docs</code> and enforces a strong <code>SECRET_KEY</code>.</td></tr><tr><td><code>DATABASE_URL</code></td><td><code>sqlite:///./mobile_shop_v2.db</code></td><td>Database. PostgreSQL form: <code>postgresql+psycopg://&lt;user&gt;:&lt;password&gt;@&lt;host&gt;:5432/mobileshop</code>.</td></tr><tr><td><code>ACCESS_TOKEN_MINUTES</code></td><td><code>30</code></td><td>Login token lifetime.</td></tr><tr><td><code>REFRESH_TOKEN_DAYS</code></td><td><code>30</code></td><td>Refresh token lifetime.</td></tr><tr><td><code>CORS_ORIGINS</code></td><td><code>["http://localhost:5173","http://127.0.0.1:5173"]</code></td><td>Allowed browser origins (JSON list).</td></tr><tr><td><code>WEBAUTHN_RP_ID</code></td><td><code>localhost</code></td><td>Passkey (fingerprint login) domain.</td></tr><tr><td><code>WEBAUTHN_ORIGINS</code></td><td><code>http://localhost:5173,https://localhost:5174</code></td><td>Passkey origins.</td></tr><tr><td><code>UPLOAD_DIR</code></td><td><code>./uploads</code></td><td>Upload folder.</td></tr><tr><td><code>DEFAULT_LOCALE</code></td><td><code>ur</code></td><td>Language for new shops.</td></tr><tr><td><code>TIMEZONE</code></td><td><code>Asia/Karachi</code></td><td>Business day and scheduler time zone.</td></tr><tr><td><code>WHATSAPP_API_VERSION</code></td><td><code>v21.0</code></td><td>Meta Graph API version.</td></tr><tr><td><code>SCHEDULER_ENABLED</code></td><td><code>true</code></td><td>The in-process clock (night report, reminders, sending queued messages). Set <code>false</code> locally so your PC does not send messages.</td></tr><tr><td><code>WEB_DIR</code></td><td>empty</td><td>One-PC install: the backend also serves the built web app from this folder.</td></tr><tr><td><code>LOCAL_MODE</code></td><td><code>false</code></td><td>One-PC install: the shop is <code>chain</code> with no expiry.</td></tr><tr><td><code>SAAS_URL</code></td><td>empty</td><td>One-PC install: reports version and plan to the SaaS server's Business console when online.</td></tr><tr><td><code>APP_VERSION</code></td><td><code>2.0</code></td><td>Version reported by a one-PC install.</td></tr></tbody></table>
+<h3>Local development (<code>backend/.env</code> on the office PC)</h3>
+<table><thead><tr><th>Name</th><th>Value locally</th><th>Why</th></tr></thead><tbody><tr><td><code>APP_ENV</code></td><td><code>dev</code></td><td>Shows <code>/docs</code>, relaxed checks.</td></tr><tr><td><code>DATABASE_URL</code></td><td><code>sqlite:///./mobile_shop_v2.db</code></td><td>Local SQLite file.</td></tr><tr><td><code>SECRET_KEY</code></td><td>any long random string</td><td>Dev only.</td></tr><tr><td><code>PUBLIC_SIGNUP</code></td><td><code>true</code></td><td>Tests, e2e and the screenshot scripts sign up throwaway shops.</td></tr><tr><td><code>SUPERUSER_PHONES</code></td><td>your test number plus <code>03990000099</code></td><td><code>03990000099</code> is the e2e and admin-screenshot super user.</td></tr><tr><td><code>SCHEDULER_ENABLED</code></td><td><code>false</code></td><td>No real WhatsApp or email from the dev PC.</td></tr><tr><td><code>OTP_DEV_ECHO</code></td><td><code>true</code> only if you are testing OTP</td><td>Code comes back in the response.</td></tr><tr><td><code>RENEWAL_PRIVATE_KEY</code> / <code>RENEWAL_PUBLIC_KEY</code></td><td>a dev pair</td><td>Never the production pair.</td></tr></tbody></table>
+<h3>One-PC install (<code>settings.env</code>)</h3>
+<table><thead><tr><th>Name</th><th>What it does</th></tr></thead><tbody><tr><td><code>MOBILESHOP_DATA</code></td><td>Data folder (default <code>%LOCALAPPDATA%\Mobile Shop\MobileShop</code>).</td></tr><tr><td><code>MOBILESHOP_PORT</code></td><td>Port (default <code>8787</code>).</td></tr><tr><td><code>MOBILESHOP_HOST</code></td><td><code>127.0.0.1</code> by default; <code>0.0.0.0</code> opens it to phones on the shop Wi-Fi.</td></tr><tr><td><code>SAAS_URL</code></td><td><code>https://mobileshop.oopsolutions.com</code> so the install reports to the Business console (pending decision, chapter 13).</td></tr><tr><td>plus any backend name above</td><td>Same names as <code>deploy/.env.example</code> (WhatsApp, SMTP, AI). A random <code>SECRET_KEY</code> is written on first run.</td></tr></tbody></table>
+<h3>Frontend</h3>
+<table><thead><tr><th>Name</th><th>Where</th><th>What it does</th></tr></thead><tbody><tr><td><code>VITE_API_URL</code></td><td>build time</td><td>Empty = same origin (<code>/api</code>), used by the web image, the dev server proxy (<code>/api</code> → <code>http://localhost:8000</code>) and the one-PC build. For the Android app it is the full site address (from the GitHub variable <code>APP_URL</code>).</td></tr></tbody></table>
+<h3>GitHub Actions secrets and variables</h3>
+<p>Repository → Settings → Secrets and variables → Actions.</p>
+<table class="wide"><thead><tr><th>Name</th><th>Kind</th><th>Read by</th><th>What it holds</th><th>Where the real value is kept</th></tr></thead><tbody><tr><td><code>VPS_HOST</code></td><td>Secret</td><td>deploy.yml <code>deploy</code> job</td><td><code>&lt;VPS_IP&gt;</code></td><td>GitHub; password manager</td></tr><tr><td><code>VPS_USER</code></td><td>Secret</td><td>deploy.yml <code>deploy</code> job</td><td><code>deploy</code></td><td>GitHub</td></tr><tr><td><code>VPS_SSH_KEY</code></td><td>Secret</td><td>deploy.yml <code>deploy</code> job</td><td>Private key of the <code>deploy</code> user</td><td>GitHub only (the public half is on the VPS)</td></tr><tr><td><code>ANDROID_KEYSTORE_BASE64</code></td><td>Secret</td><td>android.yml</td><td>The release keystore, base64 on one line</td><td>GitHub; keystore file in password manager</td></tr><tr><td><code>ANDROID_KEYSTORE_PASSWORD</code></td><td>Secret</td><td>android.yml</td><td>Keystore password</td><td>GitHub; password manager</td></tr><tr><td><code>ANDROID_KEY_ALIAS</code></td><td>Secret</td><td>android.yml</td><td><code>mobileshop</code></td><td>GitHub</td></tr><tr><td><code>GITHUB_TOKEN</code></td><td>Automatic</td><td>deploy.yml <code>images</code> job</td><td>Push to ghcr.io (needs <code>packages: write</code>, already set)</td><td>Provided by GitHub</td></tr><tr><td><code>APP_URL</code></td><td>Variable</td><td>android.yml (required), deploy.yml final check (optional)</td><td><code>https://mobileshop.oopsolutions.com</code></td><td>GitHub</td></tr></tbody></table>
+<p>The <code>deploy</code> job runs in the GitHub environment <code>production</code>. If you ever add protection rules (required reviewers) to that environment, every release will wait for an approval click.</p>
+<h3>Variables for the helper scripts</h3>
+<table><thead><tr><th>Name</th><th>Script</th><th>What it does</th></tr></thead><tbody><tr><td><code>API</code></td><td><code>demo-shop.mjs</code></td><td>API base, default <code>http://localhost:8000/api/v1</code>.</td></tr><tr><td><code>PHONE</code>, <code>PASS</code>, <code>SHOP</code></td><td><code>demo-shop.mjs</code></td><td>Login and shop name of the demo shop (defaults: random <code>0311…</code> number, <code>demo12345</code>, "Demo Mobile Centre").</td></tr><tr><td><code>ONLY</code></td><td><code>manual-shots.mjs</code></td><td>Comma list of screenshot names to retake.</td></tr><tr><td><code>SUPER_PHONE</code>, <code>SUPER_PASS</code></td><td><code>manual-admin-shots.mjs</code></td><td>Super-admin login (default <code>03990000099</code>; must be in <code>SUPERUSER_PHONES</code>).</td></tr></tbody></table>
+<h2 id="c4">4. Daily development commands (Windows)</h2>
+<p>All commands run on the office PC. The backend needs Python 3.12, the frontend Node 22. Open two terminals: one for the backend, one for the frontend.</p>
+<aside class="note"><strong>Important:</strong> Always set <code>PYTHONUTF8=1</code> before running any Python on Windows. Without it Urdu text crashes the console (cp1252).</aside>
+<h3>First-time setup of the PC</h3>
+<ol>
+<li>Clone: <code>git clone https://github.com/AbdurRehmanAfzal/mobile-shop-software.git</code></li>
+<li>Check the repo-local git identity: <code>git config user.name</code> must print <code>Abdur Rehman Afzal</code> and <code>git config user.email</code> must print <code>abdurrehmanafzal786@gmail.com</code>.</li>
+<li>Backend virtual environment (PowerShell, in <code>backend</code>): <code>py -3.12 -m venv .venv</code></li>
+<li>Install the backend with dev tools: <code>.venv\Scripts\pip install -e .[dev]</code></li>
+<li>Copy the template: <code>Copy-Item .env.example .env</code>, then set the local values from chapter 3 (<code>PUBLIC_SIGNUP=true</code>, <code>SCHEDULER_ENABLED=false</code>, <code>SUPERUSER_PHONES</code>).</li>
+<li>Frontend (in <code>frontend</code>): <code>npm install</code></li>
+<li>Playwright browser for e2e and screenshots (in <code>frontend</code>): <code>npx playwright install chromium</code></li>
+</ol>
+<h3>Run the app locally</h3>
+<table><thead><tr><th>What</th><th>Where</th><th>Command (PowerShell)</th></tr></thead><tbody><tr><td>UTF-8 for Python (each new terminal)</td><td>anywhere</td><td><code>$env:PYTHONUTF8 = "1"</code></td></tr><tr><td>UTF-8 in cmd.exe instead</td><td>anywhere</td><td><code>set PYTHONUTF8=1</code></td></tr><tr><td>Database to the latest version</td><td><code>backend</code></td><td><code>.venv\Scripts\alembic upgrade head</code></td></tr><tr><td>Show the local database version</td><td><code>backend</code></td><td><code>.venv\Scripts\alembic current</code></td></tr><tr><td>Start the backend on :8000</td><td><code>backend</code></td><td><code>.venv\Scripts\uvicorn app.main:app --reload --port 8000</code></td></tr><tr><td>Backend health</td><td>browser</td><td><code>http://localhost:8000/health</code></td></tr><tr><td>API docs (dev only)</td><td>browser</td><td><code>http://localhost:8000/docs</code></td></tr><tr><td>First local login without the signup page</td><td><code>backend</code></td><td><code>.venv\Scripts\python -m app.cli create-owner</code></td></tr><tr><td>Start the frontend on :5173</td><td><code>frontend</code></td><td><code>npm run dev</code></td></tr><tr><td>Frontend for phones on the same Wi-Fi (http)</td><td><code>frontend</code></td><td><code>npm run dev:lan</code>, then open <code>http://&lt;PC-IP&gt;:5173</code> on the phone</td></tr><tr><td>Frontend over https on :5174 (live camera on a phone)</td><td><code>frontend</code></td><td><code>npm run dev:phone</code>, then open <code>https://&lt;PC-IP&gt;:5174</code> and accept the self-signed certificate</td></tr><tr><td>Find the PC's Wi-Fi address</td><td>anywhere</td><td><code>ipconfig</code></td></tr></tbody></table>
+<p>For <code>dev:lan</code> and <code>dev:phone</code>, allow Node.js through Windows Firewall the first time it asks. The dev server proxies <code>/api</code> and <code>/health</code> to <code>http://localhost:8000</code>, so the backend must be running. Over plain http (<code>dev:lan</code>) the phone's camera falls back to taking a photo; the live scanner needs https (<code>dev:phone</code> or the live site).</p>
+<h3>Tests and checks (run before every commit)</h3>
+<table><thead><tr><th>What</th><th>Where</th><th>Command</th></tr></thead><tbody><tr><td>Backend lint (the same as CI)</td><td><code>backend</code></td><td><code>.venv\Scripts\ruff check app tests</code></td></tr><tr><td>All backend tests</td><td><code>backend</code></td><td><code>.venv\Scripts\pytest -q</code></td></tr><tr><td>Backend tests by name</td><td><code>backend</code></td><td><code>.venv\Scripts\pytest -q -k scenario</code></td></tr><tr><td>One backend test file</td><td><code>backend</code></td><td><code>.venv\Scripts\pytest -q tests/test_plan_reminders.py</code></td></tr><tr><td>Frontend type check</td><td><code>frontend</code></td><td><code>npm run typecheck</code></td></tr><tr><td>Frontend unit tests</td><td><code>frontend</code></td><td><code>npm test</code></td></tr><tr><td>Production build (catches the 2 MB service-worker precache limit)</td><td><code>frontend</code></td><td><code>npm run build</code></td></tr><tr><td>All end-to-end tests (backend on :8000 with <code>PUBLIC_SIGNUP=true</code>)</td><td><code>frontend</code></td><td><code>npm run e2e</code></td></tr><tr><td>One e2e file</td><td><code>frontend</code></td><td><code>npx playwright test e2e/crud.spec.ts</code></td></tr><tr><td>e2e by title</td><td><code>frontend</code></td><td><code>npx playwright test -g "bill number"</code></td></tr><tr><td>Report after an e2e failure</td><td><code>frontend</code></td><td><code>npx playwright show-report</code></td></tr></tbody></table>
+<p>The e2e suite (<code>frontend/e2e/*.spec.ts</code>, Pixel 7 size) starts <code>npm run dev</code> itself or reuses a running one. <code>admin.spec.ts</code> needs <code>03990000099</code> in the local <code>SUPERUSER_PHONES</code>.</p>
+<h3>Migrations on PostgreSQL locally (what CI does)</h3>
+<p>CI runs every migration up, all the way down and up again on PostgreSQL 16. To reproduce a CI migration failure on the PC, point <code>DATABASE_URL</code> at a local PostgreSQL for one terminal (in <code>backend</code>):</p>
+<ol>
+<li><code>$env:DATABASE_URL = "postgresql+psycopg://&lt;user&gt;:&lt;password&gt;@localhost:5432/&lt;test_db&gt;"</code></li>
+<li><code>.venv\Scripts\pip install -e .[dev,postgres]</code></li>
+<li><code>.venv\Scripts\alembic upgrade head</code></li>
+<li><code>.venv\Scripts\alembic downgrade base</code></li>
+<li><code>.venv\Scripts\alembic upgrade head</code></li>
+<li><code>Remove-Item Env:DATABASE_URL</code></li>
+</ol>
+<h3>A new migration</h3>
+<ol>
+<li>Change the models in <code>backend/app/modules/...</code>.</li>
+<li>Generate: <code>.venv\Scripts\alembic revision --autogenerate -m "short description"</code></li>
+<li>Read the generated file and keep it additive (new tables, new nullable columns, backfills). Never drop or rename a column that production data uses.</li>
+<li>Apply locally with <code>.venv\Scripts\alembic upgrade head</code>, run the tests, and test the downgrade once with <code>.venv\Scripts\alembic downgrade -1</code> followed by <code>upgrade head</code>.</li>
+<li>Update the expected head in <code>docs/29-OWNER-PENDING.md</code> (section B).</li>
+</ol>
+<h3>Python scripts on Windows</h3>
+<p>Heredoc Python (<code>python - &lt;&lt;EOF</code>) and heredocs with quotes sometimes hang or fail in this Windows shell. Write the script to a file (for example in your temp folder) and run it with the project's interpreter, with UTF-8 on:</p>
+<ul>
+<li><code>$env:PYTHONUTF8 = "1"; backend\.venv\Scripts\python C:\path\to\script.py</code></li>
+</ul>
+<h3>Ports used locally</h3>
+<table><thead><tr><th>Port</th><th>Who</th></tr></thead><tbody><tr><td>8000</td><td>Backend (uvicorn)</td></tr><tr><td>5173</td><td>Frontend dev server (<code>dev</code>, <code>dev:lan</code>)</td></tr><tr><td>5174</td><td>Frontend over https (<code>dev:phone</code>)</td></tr><tr><td>8787</td><td>One-PC Windows program</td></tr><tr><td>8080</td><td>CI only: the stack's web container on the runner</td></tr></tbody></table>
+<h2 id="c5">5. Git and GitHub</h2>
+<h3>The rules</h3>
+<ul>
+<li><strong>Author:</strong> every commit is authored by <code>Abdur Rehman Afzal &lt;abdurrehmanafzal786@gmail.com&gt;</code> only. The repo-local git config is already set to it.</li>
+<li><strong>No AI attribution, ever:</strong> no <code>Co-Authored-By</code> line and no "Generated with …" line in commits, pull requests or files. This overrides any tool's default.</li>
+<li><strong>Branch:</strong> work on <code>develop</code>. <code>main</code> changes only by a pull request from <code>develop</code>.</li>
+<li><strong>Push:</strong> only when the owner asks. Pushing <code>develop</code> is safe (CI only); merging into <code>main</code> is a production release.</li>
+<li><strong>Tests first:</strong> run the checks in chapter 4 before committing business logic (ledger, balances, device states, tax).</li>
+<li><strong>Docs with the code:</strong> update <code>docs/06-PROGRESS.md</code>, append to <code>docs/09-SESSION-LOG.md</code>, add an ADR to <code>docs/10-DECISIONS.md</code> for a design decision, and keep <code>docs/29-OWNER-PENDING.md</code> current with every new env key, server command or manual test.</li>
+<li><strong>Secrets:</strong> <code>.env</code> files are git-ignored. Never commit a <code>.env</code>, a keystore, a database dump or an uploads folder.</li>
+</ul>
+<h3>Commit messages</h3>
+<p>Use a type prefix and say what changed in shop words, as the history does: <code>feat(lending): …</code>, <code>fix(area): …</code>, <code>docs(manual): …</code>, <code>chore(demo): …</code>, <code>build(frontend): …</code>, <code>seo: …</code>.</p>
+<h3>Everyday git commands</h3>
+<table><thead><tr><th>What</th><th>Command</th></tr></thead><tbody><tr><td>Where am I, what changed</td><td><code>git status</code></td></tr><tr><td>Be on develop</td><td><code>git switch develop</code></td></tr><tr><td>Get the latest develop</td><td><code>git pull --ff-only origin develop</code></td></tr><tr><td>See the history</td><td><code>git log --oneline -15</code></td></tr><tr><td>Branches, local and remote</td><td><code>git branch -a</code></td></tr><tr><td>Remotes</td><td><code>git remote -v</code></td></tr><tr><td>Stage specific files</td><td><code>git add path/to/file1 path/to/file2</code></td></tr><tr><td>Commit</td><td><code>git commit -m "feat(area): what changed"</code></td></tr><tr><td>Push develop (runs CI)</td><td><code>git push origin develop</code></td></tr><tr><td>What is on develop but not yet on main</td><td><code>git log --oneline origin/main..origin/develop</code></td></tr><tr><td>Recent commits that touched a file</td><td><code>git log --oneline -5 -- path/to/file</code></td></tr><tr><td>Undo a pushed commit (a new reversing commit)</td><td><code>git revert &lt;sha&gt;</code></td></tr></tbody></table>
+<p>Never use <code>git push --force</code> on <code>develop</code> or <code>main</code>, and never rewrite published history.</p>
+<h3>GitHub CLI on this PC</h3>
+<p>The GitHub CLI is installed but not in PATH. Call it from PowerShell with its full path:</p>
+<ul>
+<li><code>&amp; "$env:ProgramFiles\GitHub CLI\gh.exe" auth status</code></li>
+</ul>
+<p>In the table below, <code>gh</code> stands for <code>&amp; "$env:ProgramFiles\GitHub CLI\gh.exe"</code>. For the current PowerShell window you can make a short alias with <code>Set-Alias gh "$env:ProgramFiles\GitHub CLI\gh.exe"</code>.</p>
+<table><thead><tr><th>What</th><th>Command</th></tr></thead><tbody><tr><td>Log in (once)</td><td><code>gh auth login</code></td></tr><tr><td>Open the release pull request develop → main</td><td><code>gh pr create --base main --head develop --title "Release: &lt;what ships&gt;" --body "&lt;what ships, what to test&gt;"</code></td></tr><tr><td>List open pull requests</td><td><code>gh pr list</code></td></tr><tr><td>See a pull request</td><td><code>gh pr view &lt;number&gt;</code></td></tr><tr><td>Watch a pull request's checks</td><td><code>gh pr checks &lt;number&gt; --watch</code></td></tr><tr><td>Merge with a merge commit (starts the release)</td><td><code>gh pr merge &lt;number&gt; --merge</code></td></tr><tr><td>Recent runs of every workflow</td><td><code>gh run list --limit 10</code></td></tr><tr><td>Recent Deploy runs</td><td><code>gh run list --workflow Deploy --limit 5</code></td></tr><tr><td>Recent CI runs on develop</td><td><code>gh run list --workflow CI --branch develop --limit 5</code></td></tr><tr><td>Watch a run until it ends, fail if it fails</td><td><code>gh run watch &lt;run-id&gt; --exit-status</code></td></tr><tr><td>Summary of a run (jobs, status)</td><td><code>gh run view &lt;run-id&gt;</code></td></tr><tr><td>Only the log of the failed steps</td><td><code>gh run view &lt;run-id&gt; --log-failed</code></td></tr><tr><td>Re-run only the failed jobs</td><td><code>gh run rerun &lt;run-id&gt; --failed</code></td></tr><tr><td>Run Deploy by hand on main</td><td><code>gh workflow run Deploy --ref main</code></td></tr><tr><td>Build the Android app by hand</td><td><code>gh workflow run Android --ref main</code></td></tr><tr><td>Build the Windows installer with a version</td><td><code>gh workflow run Windows --ref main -f version=2.1.0</code></td></tr><tr><td>Download all artifacts of a run</td><td><code>gh run download &lt;run-id&gt;</code></td></tr><tr><td>Download one artifact by name</td><td><code>gh run download &lt;run-id&gt; -n MobileShop-Setup</code></td></tr><tr><td>List secret names (values are never shown)</td><td><code>gh secret list</code></td></tr><tr><td>Set or replace a secret (it asks for the value)</td><td><code>gh secret set VPS_SSH_KEY</code></td></tr><tr><td>List repository variables</td><td><code>gh variable list</code></td></tr></tbody></table>
+<h3>What CI checks</h3>
+<p>On every push to <code>develop</code> and every pull request the CI workflow runs three jobs. A red job means the change would not be released.</p>
+<ul>
+<li><strong>backend:</strong> <code>pip install -e ".[dev,postgres]"</code>, <code>ruff check app tests</code>, <code>pytest -q -p no:warnings</code>, then on a real PostgreSQL 16 service <code>alembic upgrade head</code>, <code>alembic downgrade base</code>, <code>alembic upgrade head</code>.</li>
+<li><strong>frontend:</strong> <code>npm ci</code>, <code>npm run typecheck</code>, <code>npm test</code>, <code>npm run build</code>.</li>
+<li><strong>stack:</strong> creates a stand-in <code>n8n_default</code> network, builds and starts db, backend and web from <code>deploy/docker-compose.yml</code> plus <code>deploy/ci/compose.ci.yml</code> (web on <code>localhost:8080</code>, <code>PUBLIC_SIGNUP=true</code>), then runs <code>deploy/ci/smoke.sh</code>: health, the app page, a deep link, signup, the seeded catalogue (more than 10 brands), a person, a phone, a report.</li>
+</ul>
+<p>Common reasons CI goes red: ruff (an unused import, style), a test that depends on today's date, a migration that does not downgrade, a <code>package-lock.json</code> not committed with a new npm package, and the frontend bundle growing past the 2 MB the service worker precaches (the build fails; split the code, as was done for the language files in <code>a439678</code>).</p>
+<h2 id="c6">6. Releasing to production</h2>
+<p>A release is a merge of <code>develop</code> into <code>main</code>. The owner decides when. The push to <code>main</code> starts the Deploy workflow, which takes about 10 to 12 minutes from merge to live. A failed check means nothing shipped: production stays on the previous version.</p>
+<h3>Before you release</h3>
+<ol>
+<li>Everything is committed and pushed on <code>develop</code>, and the latest CI run on <code>develop</code> is green: <code>gh run list --workflow CI --branch develop --limit 3</code>.</li>
+<li>You know what ships: <code>git log --oneline origin/main..origin/develop</code>.</li>
+<li>If the release has a migration, read it once more: it will run on the production database by itself. It must be additive.</li>
+<li>If the release adds an environment variable, check that <code>deploy/docker-compose.yml</code> passes it into the container (otherwise setting it in <code>.env</code> does nothing) and that <code>docs/29-OWNER-PENDING.md</code> lists it.</li>
+<li>Check the server has a fresh backup (chapter 8). For a risky migration, take one by hand first on the server: <code>/opt/mobileshop/backup.sh</code>.</li>
+</ol>
+<h3>Release step by step</h3>
+<ol>
+<li>Open the pull request: <code>gh pr create --base main --head develop --title "Release: &lt;summary&gt;" --body "&lt;what ships&gt;"</code></li>
+<li>Wait for its checks: <code>gh pr checks &lt;number&gt; --watch</code></li>
+<li>Merge with a merge commit (not squash, not rebase): <code>gh pr merge &lt;number&gt; --merge</code></li>
+<li>Find the Deploy run it started: <code>gh run list --workflow Deploy --limit 1</code></li>
+<li>Watch it: <code>gh run watch &lt;run-id&gt; --exit-status</code></li>
+<li>Confirm it is live (see "Confirming the release is live" below).</li>
+<li>Record it in <code>docs/09-SESSION-LOG.md</code>: the PR number, the merge commit, the Deploy run id and what you checked on the live site.</li>
+</ol>
+<h3>What the Deploy workflow does</h3>
+<table><thead><tr><th>Job</th><th>What happens</th><th>If it fails</th></tr></thead><tbody><tr><td><code>checks / backend</code>, <code>checks / frontend</code>, <code>checks / stack</code></td><td>The whole CI on the merge commit.</td><td>Nothing is built or shipped. Production stays on the previous version.</td></tr><tr><td><code>android</code></td><td>Builds and signs the APK (artifact <code>mobile-shop-android-&lt;date&gt;-&lt;sha&gt;</code>).</td><td>The release still ships, but the new web image has no <code>/app.apk</code> (404 until the next good build).</td></tr><tr><td><code>images</code></td><td>Copies the APK into <code>frontend/public/app.apk</code>, builds and pushes <code>mobile-shop-backend</code> and <code>mobile-shop-web</code> to ghcr.io with tags <code>&lt;sha&gt;</code> and <code>latest</code>.</td><td>Nothing is deployed.</td></tr><tr><td><code>deploy</code></td><td>SSH as <code>deploy</code> to the VPS, <code>sudo -n /opt/mobileshop/deploy.sh &lt;sha&gt;</code>, then (if <code>APP_URL</code> is set) polls <code>APP_URL/health</code> for up to 2 minutes.</td><td><code>deploy.sh</code> rolls back by itself if the new version is not healthy; see below.</td></tr></tbody></table>
+<h3>What deploy.sh does on the server</h3>
+<ol>
+<li>Checks the tag looks like a commit sha (or <code>latest</code>) and reads the previous tag from <code>.current-tag</code>.</li>
+<li>Downloads <code>docker-compose.yml</code>, <code>backup.sh</code> and <code>deploy.sh</code> of that exact commit from <code>raw.githubusercontent.com</code>, so stack changes arrive with the release. If GitHub cannot be reached it keeps the old files and says so.</li>
+<li>Pulls the backend and web images for the tag, retrying up to 4 times (the registry sometimes drops mid-download).</li>
+<li>Runs <code>docker compose up -d --remove-orphans</code> with <code>IMAGE_TAG=&lt;sha&gt;</code>. The backend runs <code>alembic upgrade head</code> before it starts serving.</li>
+<li>Waits up to 90 seconds for <code>http://localhost/health</code> inside the web container.</li>
+<li>Healthy: writes the tag to <code>.current-tag</code>, removes dangling images, prints <code>deploy ok: &lt;sha&gt;</code>.</li>
+<li>Not healthy: prints the last 80 backend log lines, starts the previous tag again and fails the job.</li>
+</ol>
+<aside class="tip"><strong>Warning:</strong> The automatic rollback swaps the images back but does not undo a migration that already ran. Because migrations are additive, the old code normally runs on the newer schema. If it does not, restore the database from the backup taken before the release (chapter 8).</aside>
+<h3>Confirming the release is live</h3>
+<p>Do not rely on a green run alone; check that the live site serves the new code.</p>
+<aside class="note"><strong>Note:</strong> Every <code>/api/v1/...</code> path answers 401 without a login, and <code>/openapi.json</code> at the root returns the app's <code>index.html</code> (the single-page app catches every unknown path), so neither proves which version is live. <code>/docs</code> is hidden in production.</aside>
+<ol>
+<li>Health (backend up, production mode): <code>curl -s https://mobileshop.oopsolutions.com/health</code> prints <code>{"status":"ok","env":"prod"}</code>.</li>
+<li>Find the current app bundle (Git Bash): <code>curl -s https://mobileshop.oopsolutions.com/welcome | grep -o '/assets/index-[^"]*\.js'</code></li>
+<li>Look in that bundle for a string the release added, such as a new API path or route (Git Bash): <code>curl -s https://mobileshop.oopsolutions.com/assets/index-XXXX.js | grep -c 'repairs/labs'</code> — a count above 0 means the new code is live.</li>
+<li>The same in PowerShell, step 2: <code>$h = (Invoke-WebRequest -UseBasicParsing https://mobileshop.oopsolutions.com/welcome).Content; $js = [regex]::Match($h, '/assets/index-[^"]+\.js').Value; $js</code></li>
+<li>The same in PowerShell, step 3: <code>(Invoke-WebRequest -UseBasicParsing "https://mobileshop.oopsolutions.com$js").Content -match 'repairs/labs'</code></li>
+<li>The APK is there: <code>curl -sI https://mobileshop.oopsolutions.com/app.apk</code> answers 200 with <code>Content-Type: application/vnd.android.package-archive</code> (about 11 MB).</li>
+<li>On the server, the live tag is the merge commit: <code>cat /opt/mobileshop/.current-tag</code>.</li>
+</ol>
+<p>The texts of each language are in their own chunk (to keep the main bundle under 2 MB), so a new translation string may not be in <code>index-*.js</code>. Pick a code string such as an API path or a route name.</p>
+<p>Phones that already have the site or the PWA open may show the old version until the app is closed fully and opened again (the service worker updates on the next start). The Android app changes only when the new APK is installed.</p>
+<h3>Releasing by hand</h3>
+<ul>
+<li>Re-run a failed Deploy after a flaky step: <code>gh run rerun &lt;run-id&gt; --failed</code></li>
+<li>Deploy the current <code>main</code> again without a new commit: <code>gh workflow run Deploy --ref main</code></li>
+<li>Put an older version back (rollback), on the server as root: <code>/opt/mobileshop/deploy.sh &lt;older-sha&gt;</code> — read the migration warning above first.</li>
+<li>If the auto-mode of a coding assistant refuses to push <code>main</code>, the owner runs the push or the merge himself; <code>develop</code> can still be pushed.</li>
+</ul>
+<h2 id="c7">7. The server</h2>
+<h3>Getting in</h3>
+<ul>
+<li>From the office PC (PowerShell or Git Bash): <code>ssh &lt;SSH_USER&gt;@&lt;VPS_IP&gt;</code></li>
+<li>Then: <code>cd /opt/mobileshop</code></li>
+<li>If SSH does not answer at all, use the browser console in the Hostinger panel (VPS → Terminal).</li>
+</ul>
+<p>The <code>deploy</code> user is for GitHub only. Do maintenance as root (or a sudo user), never by widening the <code>deploy</code> user's sudo rule.</p>
+<aside class="note"><strong>Important:</strong> Inside <code>/opt/mobileshop</code>, always pass <code>--env-file .env</code> and, for any command that starts or recreates containers (<code>up</code>, <code>restart</code> after an image change), also <code>IMAGE_TAG=$(cat .current-tag)</code>. Without <code>IMAGE_TAG</code> compose falls back to the <code>latest</code> tag, which may be a different version from the one that is live (for example right after an automatic rollback).</aside>
+<h3>First-time setup (already done for production; for a new server)</h3>
+<p>The <code>deploy</code> user and Traefik come from the company website's setup (<code>oop-solutions/website/deploy/setup-vps.sh</code>), so that runs first.</p>
+<ol>
+<li>DNS: in the Hostinger panel, an A record for the app domain → <code>&lt;VPS_IP&gt;</code>.</li>
+<li>SSH key for CI (skip if the website's key is reused), on your PC: <code>ssh-keygen -t ed25519 -f ~/.ssh/mobileshop_deploy -C deploy@github</code></li>
+<li>Put the public half into <code>/home/deploy/.ssh/authorized_keys</code> on the VPS.</li>
+<li>On the VPS as root, get the repo: <code>git clone --depth 1 https://github.com/AbdurRehmanAfzal/mobile-shop-software.git /tmp/ms</code></li>
+<li>Run the setup: <code>bash /tmp/ms/deploy/setup-vps.sh</code> — it creates <code>/opt/mobileshop</code>, copies the compose file and scripts, creates <code>.env</code> with a fresh <code>POSTGRES_PASSWORD</code> and <code>SECRET_KEY</code>, writes the sudoers rule for <code>deploy</code> and installs the 02:30 backup cron line.</li>
+<li>Edit the secrets file: <code>nano /opt/mobileshop/.env</code> — set <code>APP_DOMAIN</code> and <code>SUPERUSER_PHONES</code> (and the other keys from chapter 3 as they become available).</li>
+<li>Only if the ghcr.io images are private: <code>docker login ghcr.io -u AbdurRehmanAfzal</code> (paste a token with <code>read:packages</code> when asked).</li>
+<li>GitHub: secrets <code>VPS_HOST</code>, <code>VPS_USER</code> (<code>deploy</code>), <code>VPS_SSH_KEY</code>; variable <code>APP_URL</code> (<code>https://&lt;domain&gt;</code>).</li>
+<li>First release: merge <code>develop</code> into <code>main</code>, or <code>gh workflow run Deploy --ref main</code>.</li>
+<li>First login (signup is closed, so make it on the server; it asks for the password without echoing it): <code>cd /opt/mobileshop &amp;&amp; docker compose --env-file .env exec backend python -m app.cli create-owner</code> — use the number that is in <code>SUPERUSER_PHONES</code>.</li>
+<li>Production renewal keys, once: <code>docker compose --env-file .env exec backend python -m app.modules.plan.renewal keygen</code> — paste both printed lines into <code>.env</code> as <code>RENEWAL_PRIVATE_KEY</code> and <code>RENEWAL_PUBLIC_KEY</code>, then restart the backend (below).</li>
+<li>Remove the temporary clone: <code>rm -rf /tmp/ms</code></li>
+</ol>
+<h3>Day-to-day server commands</h3>
+<p>All from <code>/opt/mobileshop</code> as root.</p>
+<table><thead><tr><th>What</th><th>Command</th></tr></thead><tbody><tr><td>Which version is live</td><td><code>cat .current-tag</code></td></tr><tr><td>Containers and their health</td><td><code>docker compose --env-file .env ps</code></td></tr><tr><td>Backend log, last 100 lines</td><td><code>docker compose --env-file .env logs --tail 100 backend</code></td></tr><tr><td>Follow the backend log live</td><td><code>docker compose --env-file .env logs -f backend</code></td></tr><tr><td>Web (Caddy) log</td><td><code>docker compose --env-file .env logs --tail 100 web</code></td></tr><tr><td>Database log</td><td><code>docker compose --env-file .env logs --tail 100 db</code></td></tr><tr><td>Health from inside the stack</td><td><code>docker compose --env-file .env exec -T web wget -qO- http://localhost/health</code></td></tr><tr><td>Health from outside</td><td><code>curl -s https://mobileshop.oopsolutions.com/health</code></td></tr><tr><td>Restart the backend (same version, e.g. after a code hang)</td><td><code>docker compose --env-file .env restart backend</code></td></tr><tr><td>Apply a changed <code>.env</code> to the backend</td><td><code>IMAGE_TAG=$(cat .current-tag) docker compose --env-file .env up -d backend</code></td></tr><tr><td>Apply a changed <code>.env</code> to the whole stack</td><td><code>IMAGE_TAG=$(cat .current-tag) docker compose --env-file .env up -d</code></td></tr><tr><td>Stop the app (keeps data)</td><td><code>docker compose --env-file .env stop backend web</code></td></tr><tr><td>Start it again</td><td><code>IMAGE_TAG=$(cat .current-tag) docker compose --env-file .env up -d</code></td></tr><tr><td>Deploy a given version by hand</td><td><code>/opt/mobileshop/deploy.sh &lt;sha&gt;</code></td></tr><tr><td>Resource use of the containers</td><td><code>docker stats --no-stream</code></td></tr><tr><td>Disk space</td><td><code>df -h /</code></td></tr><tr><td>Docker's disk use</td><td><code>docker system df</code></td></tr><tr><td>Images on the server</td><td><code>docker image ls 'ghcr.io/abdurrehmanafzal/*'</code></td></tr><tr><td>Remove unused images (old releases)</td><td><code>docker image prune -a -f --filter "until=168h"</code></td></tr><tr><td>Traefik log (certificate, routing)</td><td><code>docker logs --tail 100 n8n-traefik-1</code></td></tr><tr><td>Backup cron line is present</td><td><code>crontab -l</code></td></tr><tr><td>Backup log</td><td><code>tail -50 /var/log/mobileshop-backup.log</code></td></tr></tbody></table>
+<aside class="note"><strong>Note:</strong> <code>restart</code> keeps the existing container and its old environment. After editing <code>.env</code>, use <code>up -d</code> (which recreates the container), not <code>restart</code>.</aside>
+<h3>Editing the environment file</h3>
+<ol>
+<li><code>cp .env .env.bak-$(date +%Y%m%d)</code> (a dated copy before you change anything; it stays root-only in the same folder)</li>
+<li><code>nano .env</code></li>
+<li><code>IMAGE_TAG=$(cat .current-tag) docker compose --env-file .env up -d backend</code></li>
+<li><code>docker compose --env-file .env logs --tail 50 backend</code> — it should end with uvicorn "Application startup complete".</li>
+<li>Tick the key in <code>docs/29-OWNER-PENDING.md</code>.</li>
+</ol>
+<p>Keep values on one line, without spaces around <code>=</code>. Put a value that contains spaces in double quotes (<code>backup.sh</code> reads the same file as a shell script). JSON values such as <code>WHATSAPP_TEMPLATES</code> go on one line.</p>
+<h3>Database shell and queries</h3>
+<table><thead><tr><th>What</th><th>Command</th></tr></thead><tbody><tr><td>Open psql</td><td><code>docker compose --env-file .env exec db psql -U mobileshop -d mobileshop</code></td></tr><tr><td>Run one query</td><td><code>docker compose --env-file .env exec -T db psql -U mobileshop -d mobileshop -c "select count(*) from shops;"</code></td></tr><tr><td>Database size</td><td><code>docker compose --env-file .env exec -T db psql -U mobileshop -d mobileshop -c "select pg_size_pretty(pg_database_size('mobileshop'));"</code></td></tr><tr><td>List tables (inside psql)</td><td><code>\dt</code></td></tr><tr><td>Leave psql</td><td><code>\q</code></td></tr></tbody></table>
+<aside class="tip"><strong>Warning:</strong> Never update or delete rows by hand in production. The ledger and <code>device_events</code> are append-only; corrections are new reversing entries made through the app. Use psql to read, and only read, unless a written plan says otherwise and a fresh backup exists.</aside>
+<h3>Migrations on the server</h3>
+<p>Migrations run automatically every time the backend container starts (<code>alembic upgrade head</code> in the image's start command). You never need to run them by hand.</p>
+<table><thead><tr><th>What</th><th>Command</th></tr></thead><tbody><tr><td>Which revision the database is at</td><td><code>docker compose --env-file .env exec backend alembic current</code></td></tr><tr><td>Migration history</td><td><code>docker compose --env-file .env exec backend alembic history --verbose</code></td></tr><tr><td>Run them by hand (only if a start was interrupted)</td><td><code>docker compose --env-file .env exec backend alembic upgrade head</code></td></tr></tbody></table>
+<p>Expected today: <code>a5c7e9b1d3f6 (head)</code>. If the backend keeps restarting after a release, the log usually shows the failing migration first (chapter 12).</p>
+<h3>Server-side app commands</h3>
+<table><thead><tr><th>What</th><th>Command</th></tr></thead><tbody><tr><td>Create a shop with its owner login (first login on a new server)</td><td><code>docker compose --env-file .env exec backend python -m app.cli create-owner</code></td></tr><tr><td>Make a renewal / license key pair (once)</td><td><code>docker compose --env-file .env exec backend python -m app.modules.plan.renewal keygen</code></td></tr><tr><td>Give barcodes to stock entered before barcodes existed (safe to repeat)</td><td><code>docker compose --env-file .env exec backend python -m app.modules.barcodes.backfill</code></td></tr><tr><td>A Python shell inside the backend</td><td><code>docker compose --env-file .env exec backend python</code></td></tr></tbody></table>
+<h3>Files the server keeps</h3>
+<table><thead><tr><th>Path</th><th>What</th></tr></thead><tbody><tr><td><code>/opt/mobileshop/.env</code></td><td>All production secrets (mode 600)</td></tr><tr><td><code>/opt/mobileshop/.current-tag</code></td><td>The live commit sha</td></tr><tr><td><code>/opt/mobileshop/docker-compose.yml</code>, <code>deploy.sh</code>, <code>backup.sh</code></td><td>Refreshed from GitHub by every deploy</td></tr><tr><td><code>/opt/mobileshop-backups/</code></td><td>Nightly dumps and upload archives (14 days)</td></tr><tr><td><code>/var/log/mobileshop-backup.log</code></td><td>Backup log</td></tr><tr><td><code>/etc/sudoers.d/mobileshop-deploy</code></td><td>The <code>deploy</code> user's single allowed command</td></tr><tr><td><code>/home/deploy/.ssh/authorized_keys</code></td><td>The public half of <code>VPS_SSH_KEY</code></td></tr><tr><td>Docker volumes <code>mobileshop_pgdata</code>, <code>mobileshop_uploads</code></td><td>The database files and the uploads</td></tr></tbody></table>
+<h2 id="c8">8. Backups and restore</h2>
+<h3>What runs every night</h3>
+<p>At 02:30 (server time) cron runs <code>/opt/mobileshop/backup.sh</code>, which:</p>
+<ol>
+<li>Dumps the database with <code>pg_dump --format=custom</code> to <code>/opt/mobileshop-backups/db-YYYYMMDD-HHMM.dump</code>.</li>
+<li>Archives the uploads volume to <code>/opt/mobileshop-backups/uploads-YYYYMMDD-HHMM.tgz</code>.</li>
+<li>Deletes files in that folder older than 14 days.</li>
+<li>If <code>RCLONE_REMOTE</code> is set and rclone is installed, copies the last two days' files to that remote and deletes copies older than 30 days there.</li>
+</ol>
+<p>The log line <code>backup ok &lt;stamp&gt;</code> (and <code>offsite copy ok …</code> with rclone) goes to <code>/var/log/mobileshop-backup.log</code>.</p>
+<h3>Checking backups</h3>
+<p>On the server:</p>
+<ul>
+<li>Newest files: <code>ls -lht /opt/mobileshop-backups | head -6</code></li>
+<li>Last log lines: <code>tail -20 /var/log/mobileshop-backup.log</code></li>
+<li>Take a backup now: <code>/opt/mobileshop/backup.sh</code></li>
+<li>Off-server copies (when rclone is set up): <code>rclone ls gdrive-safe: | tail</code></li>
+<li>A dump is readable (lists its contents): <code>docker compose --env-file .env exec -T db pg_restore -l &lt; /opt/mobileshop-backups/db-YYYYMMDD-HHMM.dump | head</code></li>
+</ul>
+<p>A dump that is only a few bytes, or a log without <code>backup ok</code> for last night, means the backup failed: run it by hand and read the error.</p>
+<h3>Copying a backup to the office PC</h3>
+<ul>
+<li><code>scp &lt;SSH_USER&gt;@&lt;VPS_IP&gt;:/opt/mobileshop-backups/db-YYYYMMDD-HHMM.dump .</code></li>
+<li><code>scp &lt;SSH_USER&gt;@&lt;VPS_IP&gt;:/opt/mobileshop-backups/uploads-YYYYMMDD-HHMM.tgz .</code></li>
+</ul>
+<p>These files contain every shop's data and CNIC photos. Keep them encrypted (a BitLocker drive or an encrypted archive), never in the repository, never in a shared folder.</p>
+<h3>Setting up the off-server copy (Google Drive, encrypted)</h3>
+<p>Done once, as root on the VPS. Until this is done, all backups live on the same server as the database.</p>
+<ol>
+<li>Install rclone: <code>curl https://rclone.org/install.sh | bash</code></li>
+<li><code>rclone config</code> → <code>n</code> (new remote) → name <code>gdrive</code> → storage <code>drive</code> → leave client id and secret empty → scope <code>1</code> (full) → "Use web browser to automatically authenticate?" <strong>n</strong> → it prints an <code>rclone authorize "drive" "..."</code> command: run that on your PC (install rclone there too), log in to the Google account in the browser, paste the token it prints back into the VPS prompt.</li>
+<li>Encrypt it (the backup holds CNIC photos): <code>rclone config</code> → <code>n</code> → name <code>gdrive-safe</code> → storage <code>crypt</code> → remote <code>gdrive:mobileshop-backups</code> → filename encryption <code>standard</code> → two strong passwords. Store both in the password manager: without them the backups cannot be opened.</li>
+<li>Switch it on: <code>echo 'RCLONE_REMOTE=gdrive-safe:' &gt;&gt; /opt/mobileshop/.env</code></li>
+<li>Test: <code>/opt/mobileshop/backup.sh</code> — the last line says <code>offsite copy ok</code>.</li>
+<li>Look: <code>rclone ls gdrive-safe: | tail</code></li>
+</ol>
+<h3>Restore the database (production)</h3>
+<p>Restoring replaces today's data with the backup's. Every sale made since that backup is lost. Do it only on the owner's decision.</p>
+<ol>
+<li>Take a backup of the current state first, even if it is broken: <code>/opt/mobileshop/backup.sh</code></li>
+<li>Stop the app so nothing writes during the restore: <code>docker compose --env-file .env stop backend web</code></li>
+<li>Restore: <code>docker compose --env-file .env exec -T db pg_restore -U mobileshop -d mobileshop --clean --if-exists --no-owner &lt; /opt/mobileshop-backups/db-YYYYMMDD-HHMM.dump</code></li>
+<li>Start again with the live version: <code>IMAGE_TAG=$(cat .current-tag) docker compose --env-file .env up -d</code></li>
+<li>If the backup is from an older release, the backend runs the newer migrations on start; watch <code>docker compose --env-file .env logs -f backend</code>.</li>
+<li>Check <code>/health</code>, log in, open a shop and look at today's sales and a party balance.</li>
+</ol>
+<h3>Restore the uploads</h3>
+<ul>
+<li><code>docker run --rm -v mobileshop_uploads:/u -v /opt/mobileshop-backups:/b alpine sh -c "cd /u &amp;&amp; tar xzf /b/uploads-YYYYMMDD-HHMM.tgz"</code></li>
+</ul>
+<p>This adds back the files from the archive; files uploaded after it stay.</p>
+<h3>Restore from Google Drive</h3>
+<ol>
+<li><code>mkdir -p /root/restore &amp;&amp; rclone copy gdrive-safe: /root/restore --include "db-YYYYMMDD-*"</code></li>
+<li>Then restore from <code>/root/restore/db-YYYYMMDD-HHMM.dump</code> as above.</li>
+</ol>
+<h3>Practise a restore (once a month)</h3>
+<p>Restore into a separate scratch database, so production is never touched:</p>
+<ol>
+<li><code>docker compose --env-file .env exec -T db createdb -U mobileshop restore_test</code></li>
+<li><code>docker compose --env-file .env exec -T db pg_restore -U mobileshop -d restore_test --no-owner &lt; /opt/mobileshop-backups/db-YYYYMMDD-HHMM.dump</code></li>
+<li><code>docker compose --env-file .env exec -T db psql -U mobileshop -d restore_test -c "select count(*) from shops;"</code></li>
+<li><code>docker compose --env-file .env exec -T db dropdb -U mobileshop restore_test</code></li>
+</ol>
+<h3>Hostinger snapshots</h3>
+<p>The Hostinger panel can snapshot the whole VPS. Take one before a big server change (an OS upgrade, Docker upgrade, Traefik change). It complements the nightly backup; it does not replace it, because it lives with the same provider.</p>
+<h3>The one-PC installs</h3>
+<p>Their data lives on the shop's PC (<code>%LOCALAPPDATA%\Mobile Shop\MobileShop\mobileshop.db</code>). The tray menu's "Backup now" writes <code>backups\mobileshop-&lt;date&gt;.db</code> plus a Desktop copy. Restore: quit the program, copy a backup over <code>mobileshop.db</code>, start again. We have no copy of their data; tell each such shop to keep a USB copy.</p>
+<h2 id="c9">9. Android app and the Windows PC version</h2>
+<h3>Android: how it is built</h3>
+<ul>
+<li>Every release (Deploy → <code>android</code> job, which runs <code>.github/workflows/android.yml</code>): <code>npm ci</code>, <code>npm run build:native</code> (Vite in <code>native</code> mode with <code>VITE_API_URL=vars.APP_URL</code>, no service worker, then <code>cap sync android</code>), then Gradle <code>assembleRelease</code> signed with the release key.</li>
+<li>The signed APK becomes <code>frontend/public/app.apk</code> inside the web image, so it is served at <code>https://mobileshop.oopsolutions.com/app.apk</code>. The Super admin page has Download, WhatsApp and Share buttons for that link.</li>
+<li>It is also kept as the run's artifact <code>mobile-shop-android-&lt;YYYY.MM.DD&gt;-&lt;sha&gt;</code> for 90 days.</li>
+<li>Without the keystore secrets the job builds a <strong>debug-signed test APK</strong> (<code>…-test.apk</code>) and shows a warning. A phone that installed a test APK cannot be updated by a release-signed one (uninstall first), so production must always have the secrets.</li>
+</ul>
+<table><thead><tr><th>What</th><th>How</th></tr></thead><tbody><tr><td>Build the APK without a release</td><td><code>gh workflow run Android --ref main</code></td></tr><tr><td>Download the APK of a run</td><td><code>gh run download &lt;run-id&gt; -n mobile-shop-android-&lt;YYYY.MM.DD&gt;-&lt;sha&gt;</code></td></tr><tr><td>Which APK is live</td><td><code>curl -sI https://mobileshop.oopsolutions.com/app.apk</code> (size, date)</td></tr><tr><td>Check the release key secrets exist</td><td><code>gh secret list</code> (look for <code>ANDROID_KEYSTORE_BASE64</code>, <code>ANDROID_KEYSTORE_PASSWORD</code>, <code>ANDROID_KEY_ALIAS</code>)</td></tr></tbody></table>
+<h3>Android: the release key (one time, keep it forever)</h3>
+<p>Every update must be signed with the same key, or phones refuse to install it over the old app. Make it once (the VPS has Docker, so Java comes from a container):</p>
+<ol>
+<li><code>mkdir -p /root/android-key</code></li>
+<li><code>docker run --rm -it -v /root/android-key:/k eclipse-temurin:17-jdk keytool -genkeypair -v -keystore /k/mobileshop-release.jks -alias mobileshop -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=OOP Solutions, O=OOP Solutions, C=PK"</code></li>
+<li><code>base64 -w0 /root/android-key/mobileshop-release.jks; echo</code></li>
+<li>GitHub secrets: <code>ANDROID_KEYSTORE_BASE64</code> = that line, <code>ANDROID_KEYSTORE_PASSWORD</code> = the password you typed, <code>ANDROID_KEY_ALIAS</code> = <code>mobileshop</code>.</li>
+<li>Copy <code>mobileshop-release.jks</code> and the password into the password manager, then delete the folder from the server: <code>rm -rf /root/android-key</code></li>
+</ol>
+<aside class="note"><strong>Important:</strong> Losing the keystore or its password means no installed app can ever be updated again; every shop would have to uninstall and reinstall.</aside>
+<h3>Android: build on a PC with Android Studio (optional)</h3>
+<p>Not needed day to day (this PC has no Java or Android SDK; GitHub builds it). For a Play Store bundle:</p>
+<ol>
+<li>Install Android Studio (it brings JDK 17 and the SDK).</li>
+<li>In <code>frontend</code> (cmd.exe): <code>set VITE_API_URL=https://mobileshop.oopsolutions.com</code></li>
+<li><code>npm run build:native</code></li>
+<li><code>npx cap open android</code></li>
+<li>In Android Studio: Build → Generate Signed App Bundle / APK, with the same release keystore.</li>
+<li>Upload the <code>.aab</code> to Play Console (internal testing first).</li>
+</ol>
+<p>Icons and splash come from <code>frontend/assets/</code>; regenerate with <code>npx @capacitor/assets generate --android</code>.</p>
+<h3>Android: install on a phone</h3>
+<ol>
+<li>Open <code>https://mobileshop.oopsolutions.com/app.apk</code> on the phone (or send the file by WhatsApp or USB).</li>
+<li>Open the downloaded <code>mobile-shop.apk</code> and allow "Install unknown apps" for that browser once.</li>
+<li>For an update, install the new APK over the old one; data is on the server, nothing is lost.</li>
+</ol>
+<h3>The Windows one-PC program</h3>
+<table><thead><tr><th>What</th><th>How</th></tr></thead><tbody><tr><td>Build in GitHub with a version</td><td><code>gh workflow run Windows --ref main -f version=2.1.0</code></td></tr><tr><td>It also builds by itself</td><td>on a push to <code>main</code> that touches <code>local/</code>, <code>backend/</code> or <code>frontend/</code> (version 2.0.0 unless run by hand)</td></tr><tr><td>Download the installer</td><td><code>gh run download &lt;run-id&gt; -n MobileShop-Setup</code> (inside: <code>MobileShop-Setup-&lt;version&gt;.exe</code>)</td></tr><tr><td>Build on the PC (PowerShell, repo root)</td><td><code>.\local\build.ps1 -Version 2.1.0</code></td></tr><tr><td>Output on the PC</td><td><code>dist\MobileShop\MobileShop.exe</code>, and <code>dist\MobileShop-Setup-&lt;version&gt;.exe</code> when Inno Setup 6 (<code>iscc</code>) is on PATH</td></tr></tbody></table>
+<p>The PC build needs Python 3.12, Node 22 and Inno Setup 6. It uses its own virtual environment <code>backend\.venv-local</code> with the <code>local</code> extra (PyInstaller, pystray, pillow, tzdata). The workflow smoke-tests the bundle on port 8790 (<code>/health</code>, the app page, <code>/api/v1/public/info</code>) before it uploads it.</p>
+<p>For each install you hand out, put the production <code>RENEWAL_PUBLIC_KEY</code> in its <code>settings.env</code> (so renewal codes from the server work) and, once decided, <code>SAAS_URL=https://mobileshop.oopsolutions.com</code> (so it reports to Business).</p>
+<h2 id="c10">10. Demo data, landing screenshots and the manuals</h2>
+<p>All of these scripts live in <code>frontend/scripts/</code>, run from the <code>frontend</code> folder with Node 22, and talk to the <strong>local</strong> app. Start the backend on :8000 (with <code>PUBLIC_SIGNUP=true</code> in <code>backend/.env</code>, because every script signs up a fresh shop) and, for screenshots, the frontend on :5173. Playwright's Chromium must be installed (<code>npx playwright install chromium</code>).</p>
+<h3>Demo shop with sample data</h3>
+<p><code>demo-shop.mjs</code> makes a shop with about two months of data in every module, through the real API (so the ledger, device events, stock batches and price rules all apply): purchases (cash and credit), sales of every kind, returns both ways, a void, ID checks, a tablet and a watch, accessories by the dozen, a loan to another shop, repairs, a bank deposit, supplier payments, expenses and staff (manager and salesman logins).</p>
+<table><thead><tr><th>What</th><th>Command (in <code>frontend</code>)</th></tr></thead><tbody><tr><td>A demo shop on the local backend (random owner number)</td><td><code>node scripts/demo-shop.mjs</code></td></tr><tr><td>With a chosen login and name (Git Bash)</td><td><code>PHONE=03001112233 PASS=demo12345 SHOP="Demo Mobile Centre" node scripts/demo-shop.mjs</code></td></tr><tr><td>The same in PowerShell</td><td><code>$env:PHONE="03001112233"; $env:PASS="demo12345"; node scripts/demo-shop.mjs</code></td></tr></tbody></table>
+<p>Each step prints a tick or a cross; a cross is logged and the rest continues. Run it on a fresh local database when you want clean screenshots: stop the backend, rename <code>backend\mobile_shop_v2.db</code>, run <code>.venv\Scripts\alembic upgrade head</code>, start the backend again.</p>
+<aside class="tip"><strong>Warning:</strong> The script creates its shop with <code>/auth/signup</code>. Production has <code>PUBLIC_SIGNUP=false</code>, so pointing <code>API=https://mobileshop.oopsolutions.com/api/v1</code> at it is refused (403). A demo shop on production is a deliberate owner decision and would need a different route (a shop opened by the super admin); never turn public signup on in production for it.</aside>
+<h3>Landing page screenshots and video</h3>
+<p><code>landing-assets.mjs</code> signs up "Al-Madina Mobile Zone", fills it, and takes the landing page's phone screenshots and the sample video.</p>
+<ol>
+<li>Backend on :8000 and frontend on :5173 running.</li>
+<li><code>node scripts/landing-assets.mjs</code></li>
+<li>Output: <code>frontend/public/landing/*.png</code>, <code>frontend/public/landing/demo.webm</code>, and <code>demo.mp4</code> when Playwright's ffmpeg has an H.264 encoder (otherwise webm only, which Safari does not play).</li>
+<li>Look at the images, commit them with the landing change, release.</li>
+</ol>
+<p>The landing files are excluded from the service-worker precache (they are for visitors, about 13 MB), so their size does not hit the 2 MB limit, but keep them reasonable for visitors on mobile data.</p>
+<h3>User manual (English, Urdu, Roman Urdu)</h3>
+<p>Source and layout are described in <code>docs/manual/README.md</code>; the screenshot names in <code>docs/manual/SHOTS.md</code>.</p>
+<ol>
+<li>Edit the text in <code>docs/manual/en.md</code>, <code>ur.md</code>, <code>roman.md</code> (the three-part copies in <code>docs/manual/parts/</code> are caught by the root <code>.gitignore</code> rule <code>parts/</code>, so they exist only on the PC that made them; the joined <code>&lt;lang&gt;.md</code> files are the ones in git).</li>
+<li>Retake all screenshots in all three languages (it makes its own demo shop each run): <code>node scripts/manual-shots.mjs</code></li>
+<li>Retake only some, in some languages (Git Bash): <code>ONLY=home,sale-done node scripts/manual-shots.mjs en,ur,roman</code></li>
+<li>Build every manual that exists as HTML and A4 PDF: <code>node scripts/manual-pdf.mjs</code></li>
+<li>Build only some: <code>node scripts/manual-pdf.mjs ur,admin-en</code></li>
+<li>Output: <code>docs/manual/Mobile-Shop-User-Manual-&lt;lang&gt;.pdf</code> and <code>.html</code>.</li>
+</ol>
+<p>The Urdu PDF uses Noto Nastaliq Urdu from Google Fonts, so build with internet on.</p>
+<h3>Super-admin manual and its screenshots</h3>
+<ol>
+<li>Put the admin screenshot number in the local <code>SUPERUSER_PHONES</code> (default <code>03990000099</code>) and restart the backend.</li>
+<li>Take the shots (Git Bash): <code>SUPER_PHONE=03990000099 SUPER_PASS=&lt;local-test-password&gt; node scripts/manual-admin-shots.mjs en,roman</code></li>
+<li>Output: <code>docs/manual/img/&lt;lang&gt;/admin-NN.jpg</code>, <code>business-&lt;tab&gt;-N.jpg</code>, <code>admin-shop.jpg</code>, <code>admin-billing.jpg</code>, <code>admin-more.jpg</code>.</li>
+<li>Build: <code>node scripts/manual-pdf.mjs admin-en,admin-roman</code></li>
+</ol>
+<h3>The other books (developer manual, this runbook)</h3>
+<p><code>manual-pdf.mjs</code> knows the books <code>en</code>, <code>ur</code>, <code>roman</code>, <code>admin-en</code>, <code>admin-roman</code>, <code>developer-en</code> and <code>operations-en</code>. It builds each one whose markdown file exists in <code>docs/manual/</code>, as <code>Mobile-Shop-&lt;Book&gt;-Manual-&lt;lang&gt;.pdf</code>.</p>
+<ul>
+<li>This runbook only: <code>node scripts/manual-pdf.mjs operations-en</code></li>
+</ul>
+<p>The markdown subset the script understands: <code>#</code> title, <code>##</code> and <code>###</code> headings, paragraphs, single-level <code>-</code> and <code>1.</code> lists, tables with a header row, one-line <code>&gt;</code> notes, <code><strong>bold</strong></code>, inline code between single backticks, and <code>![Caption](shot:name)</code> for a screenshot. No HTML, no links, no nested lists, no code blocks.</p>
+<aside class="note"><strong>Important:</strong> This runbook and its PDF are internal. Do not hand them to shops or put them on the website.</aside>
+<h2 id="c11">11. Monitoring and health checks</h2>
+<p>There is no external uptime monitor yet. Until one is set up, these are the checks.</p>
+<h3>Every day (two minutes)</h3>
+<ol>
+<li><code>curl -s https://mobileshop.oopsolutions.com/health</code> prints <code>{"status":"ok","env":"prod"}</code>.</li>
+<li>Open <code>https://mobileshop.oopsolutions.com/welcome</code> and log in to your own shop: Home loads, today's figures show.</li>
+<li>More → Messages (super admin and your own shop): no pile of "Failed" messages. Failed rows keep the reason (expired WhatsApp token, template not approved, SMTP refused).</li>
+<li>Super admin → Fees: new fee proofs and shop requests are answered.</li>
+</ol>
+<h3>Every week (on the server)</h3>
+<ol>
+<li>Containers healthy: <code>docker compose --env-file .env ps</code> (all <code>Up</code>, <code>db</code> and <code>backend</code> <code>healthy</code>).</li>
+<li>Backups: <code>ls -lht /opt/mobileshop-backups | head -6</code> shows last night's two files; <code>tail -5 /var/log/mobileshop-backup.log</code> ends with <code>backup ok</code>.</li>
+<li>Disk: <code>df -h /</code> below 80 per cent; <code>docker system df</code> for images.</li>
+<li>Errors in the backend log: <code>docker compose --env-file .env logs --since 24h backend | grep -iE "error|traceback" | tail -20</code></li>
+<li>Memory: <code>docker stats --no-stream</code> (the VPS also runs the website, n8n and the voice agent).</li>
+</ol>
+<h3>Every month</h3>
+<ol>
+<li>Practise a restore (chapter 8).</li>
+<li>Remove old release images: <code>docker image prune -a -f --filter "until=168h"</code></li>
+<li>Check the GitHub Actions minutes and the ghcr.io storage in GitHub → Settings → Billing.</li>
+<li>Read <code>docs/29-OWNER-PENDING.md</code> and tick what is done.</li>
+</ol>
+<h3>Signals inside the app</h3>
+<ul>
+<li><strong>Audit log</strong> (More → Settings → Audit): <code>fee_payment/report|verify|reject</code>, <code>organisation/lock|unlock|renewal_code</code>, <code>shop/backup</code>, <code>billing/update</code>, <code>plan_reminder/snooze</code>.</li>
+<li><strong>Security feed</strong> in Shop audit (owner only).</li>
+<li><strong>Business console</strong> (Super admin → Business): fees received, shops, one-PC installs that reported in, keys issued.</li>
+<li><strong>Plan reminder state</strong> for a shop (as its owner): <code>GET /api/v1/plan/reminder?event=login</code>.</li>
+</ul>
+<h3>Suggested (not set up yet)</h3>
+<ul>
+<li>A free uptime monitor (for example UptimeRobot or Better Stack) on <code>https://mobileshop.oopsolutions.com/health</code> every 5 minutes, alerting the owner's email and WhatsApp.</li>
+<li>A weekly alert if <code>/var/log/mobileshop-backup.log</code> has no <code>backup ok</code> line for the last day.</li>
+<li>GitHub → Settings → Notifications: email on failed workflow runs (on by default for your own pushes; check it is not muted).</li>
+</ul>
+<h2 id="c12">12. When something breaks</h2>
+<p>First rule: find out what changed. Most incidents follow a release, a <code>.env</code> edit or a full disk. Look at <code>cat /opt/mobileshop/.current-tag</code>, the last Deploy run, and <code>docker compose --env-file .env logs --tail 100 backend</code>.</p>
+<h3>Symptom → check → fix</h3>
+<table><thead><tr><th>Symptom</th><th>Check</th><th>Fix</th></tr></thead><tbody><tr><td>Site does not open at all (browser timeout)</td><td>Hostinger panel: VPS running? <code>ssh</code> works? <code>docker ps</code> shows <code>n8n-traefik-1</code>?</td><td>Reboot from the panel if the VPS hangs. If Traefik is down, the website and n8n are down too: start it from its own compose folder (website setup). Then <code>IMAGE_TAG=$(cat .current-tag) docker compose --env-file .env up -d</code>.</td></tr><tr><td>502 / 504 Bad Gateway from Traefik</td><td><code>docker compose --env-file .env ps</code> — is <code>web</code> running?</td><td><code>IMAGE_TAG=$(cat .current-tag) docker compose --env-file .env up -d web</code></td></tr><tr><td>App page loads, but every action says it cannot reach the server; <code>/health</code> fails</td><td><code>docker compose --env-file .env ps</code> and <code>logs --tail 100 backend</code></td><td>If the backend restarts in a loop, read the first error: migration failure (restore or fix forward), <code>SECRET_KEY must be set…</code> (fix <code>.env</code>), database connection refused (see next row).</td></tr><tr><td>Backend log: cannot connect to the database</td><td><code>docker compose --env-file .env ps db</code> and <code>logs --tail 50 db</code></td><td>Disk full is the usual cause (<code>df -h /</code>). Free space (old images, old backups), then <code>IMAGE_TAG=$(cat .current-tag) docker compose --env-file .env up -d</code>.</td></tr><tr><td>Certificate error in the browser</td><td><code>docker logs --tail 100 n8n-traefik-1</code> (look for ACME errors); DNS still points to the VPS?</td><td>Fix DNS in Hostinger; Traefik retries by itself. Port 80 must stay open for the TLS challenge.</td></tr><tr><td>Deploy run red in <code>checks / …</code></td><td><code>gh run view &lt;run-id&gt; --log-failed</code></td><td>Nothing shipped. Fix on <code>develop</code>, push, new PR. If it is a flake (network, registry), <code>gh run rerun &lt;run-id&gt; --failed</code>.</td></tr><tr><td>Deploy red in <code>images</code></td><td>Log: registry login or build error</td><td>Re-run failed jobs. <code>packages: write</code> must stay in deploy.yml.</td></tr><tr><td>Deploy red in <code>deploy</code>: "VPS_SSH_KEY is not a valid private key" or "Permission denied (publickey)"</td><td><code>gh secret list</code>; on the VPS <code>/home/deploy/.ssh/authorized_keys</code></td><td>Put the whole private key (with BEGIN/END lines) in <code>VPS_SSH_KEY</code> again; make sure its public half is in <code>authorized_keys</code>.</td></tr><tr><td>Deploy red in <code>deploy</code>: "sudo: a password is required"</td><td><code>cat /etc/sudoers.d/mobileshop-deploy</code></td><td>Re-run <code>setup-vps.sh</code> from a fresh clone (it rewrites the rule), or restore the line <code>deploy ALL=(root) NOPASSWD: /opt/mobileshop/deploy.sh</code>.</td></tr><tr><td>Deploy log: "could not pull images"</td><td><code>docker login ghcr.io</code> still valid? Registry status</td><td>Re-run the job (the script already retried 4 times). For private images, log in again with a fresh <code>read:packages</code> token.</td></tr><tr><td>Deploy log: "new version is not healthy … rolling back"</td><td>The printed backend log lines</td><td>The old version is serving again. Fix the cause on <code>develop</code> and release again. If a migration ran and the old code fails on it, restore the pre-release backup (chapter 8).</td></tr><tr><td>Green Deploy, but the site still shows the old version</td><td>Bundle check (chapter 6); <code>cat .current-tag</code></td><td>If the server has the new tag: the phone's service worker still has the old shell — close the app fully and reopen, or clear site data. If not: the deploy job did not reach the server; re-run it.</td></tr><tr><td>A new <code>.env</code> setting has no effect</td><td><code>grep KEY_NAME docker-compose.yml</code></td><td>The compose file must pass the key into the container. Add it to <code>deploy/docker-compose.yml</code> (on <code>develop</code>), release, then <code>IMAGE_TAG=$(cat .current-tag) docker compose --env-file .env up -d backend</code>. Remember <code>restart</code> does not reload <code>.env</code>.</td></tr><tr><td>After a <code>.env</code> change the site went back to an older or newer version</td><td><code>docker compose --env-file .env images</code> vs <code>cat .current-tag</code></td><td>It was started without <code>IMAGE_TAG</code>, so compose used <code>latest</code>. Run <code>IMAGE_TAG=$(cat .current-tag) docker compose --env-file .env up -d</code>.</td></tr><tr><td>WhatsApp messages stay "Failed"</td><td>More → Messages, the failure reason; backend log</td><td>Token expired (make a new permanent system-user token), template not approved, or the 24-hour window. Update <code>.env</code>, then <code>up -d backend</code>.</td></tr><tr><td>No messages go out at all, none fail</td><td>Is the scheduler running? <code>logs backend</code> for scheduler lines</td><td><code>SCHEDULER_ENABLED</code> is not passed on the server (always on). Check <code>WHATSAPP_TOKEN</code> and <code>WHATSAPP_PHONE_ID</code> are both set; without them messages wait for the shop to send by hand.</td></tr><tr><td>Emails stay queued</td><td><code>SMTP_*</code> in <code>.env</code></td><td>Gmail needs an app password and port 587 with STARTTLS.</td></tr><tr><td>Assistant says "not switched on"</td><td><code>ANTHROPIC_API_KEY</code> set?</td><td>Set it, <code>up -d backend</code>. "Limit reached" means the shop used <code>AI_DAILY_LIMIT</code> calls today.</td></tr><tr><td>Business → Keys or "Renewal code": "RENEWAL_PRIVATE_KEY is not set"</td><td><code>.env</code></td><td>Run the keygen command (chapter 7), paste both lines, <code>up -d backend</code>.</td></tr><tr><td>A renewal code is refused on a one-PC install</td><td>Its <code>settings.env</code> <code>RENEWAL_PUBLIC_KEY</code></td><td>It must match the server's public key.</td></tr><tr><td><code>/app.apk</code> answers 404</td><td>The release's <code>android</code> job</td><td>It failed (often missing <code>APP_URL</code> variable or a Gradle error). Fix, then release again or run Android and the Deploy by hand.</td></tr><tr><td>Phones refuse to install the new APK ("App not installed", conflicting package)</td><td>Was the old one a test (debug) APK, or was the key changed?</td><td>Release key secrets must be the original keystore. A phone with a debug build must uninstall it once.</td></tr><tr><td>Camera scanning does not work on a phone</td><td>Is it the live https site (or <code>dev:phone</code>)?</td><td>Live camera needs https. The Caddy <code>Permissions-Policy</code> allows the camera for this site only.</td></tr><tr><td>Upload fails for a large photo</td><td>Size</td><td>Caddy refuses bodies over 10 MB. Ask for a smaller photo.</td></tr><tr><td>A shop says it is locked</td><td>Super admin → that shop → paid-until and grace days</td><td>Record the payment or extend; a renewal code for an offline shop. Soft-lock never blocks paying, exporting or the backup.</td></tr><tr><td>Super admin menu missing for the owner</td><td><code>SUPERUSER_PHONES</code> in <code>.env</code></td><td>Add the login number, <code>up -d backend</code>, log out and in.</td></tr><tr><td>A shop owner or staff member forgot the password</td><td>Super admin → the password request</td><td>Open the request and use "Set password" (it changes the requester's password).</td></tr><tr><td>The super admin forgot his own password</td><td>Is there a second number in <code>SUPERUSER_PHONES</code>?</td><td>Keep two super-admin logins so one can reset the other. <code>create-owner</code> makes a new shop and login; it does not reset an existing password.</td></tr><tr><td>Disk full</td><td><code>df -h /</code>, <code>docker system df</code>, <code>du -sh /opt/mobileshop-backups</code></td><td><code>docker image prune -a -f --filter "until=168h"</code>; old backups are already cut at 14 days; check the other apps on the VPS.</td></tr><tr><td>Backup log shows an error after a <code>.env</code> change</td><td><code>tail -30 /var/log/mobileshop-backup.log</code></td><td><code>backup.sh</code> sources <code>.env</code> as a shell file: a value with spaces must be in double quotes. Fix and run <code>/opt/mobileshop/backup.sh</code> by hand.</td></tr><tr><td>CI fails on the frontend build with a size error</td><td>Build log</td><td>The app bundle passed the 2 MB service-worker precache limit: split the code (lazy imports), as for the language chunks.</td></tr><tr><td>Local: Python crashes on Urdu text</td><td><code>$env:PYTHONUTF8</code></td><td><code>$env:PYTHONUTF8 = "1"</code> in that terminal.</td></tr><tr><td>Local: the phone cannot open the dev site</td><td>Same Wi-Fi? Firewall?</td><td><code>npm run dev:lan</code> (or <code>dev:phone</code>), allow Node in Windows Firewall, use the PC's address from <code>ipconfig</code>.</td></tr><tr><td>Local: e2e or screenshot scripts fail at signup</td><td><code>PUBLIC_SIGNUP</code></td><td>Set <code>PUBLIC_SIGNUP=true</code> in <code>backend/.env</code> and restart the backend.</td></tr><tr><td><code>gh</code> is not recognised</td><td>PATH</td><td>Use <code>&amp; "$env:ProgramFiles\GitHub CLI\gh.exe"</code>.</td></tr></tbody></table>
+<h3>Rolling back a bad release</h3>
+<ol>
+<li>Find the previous good sha: <code>gh run list --workflow Deploy --limit 5</code> or <code>git log --oneline origin/main -5</code>.</li>
+<li>On the server: <code>/opt/mobileshop/deploy.sh &lt;previous-sha&gt;</code></li>
+<li>If the bad release had a migration that the old code cannot live with, stop the app and restore the backup taken before the release (chapter 8).</li>
+<li>On <code>develop</code>: <code>git revert -m 1 &lt;bad-merge-sha&gt;</code> or fix forward, then release again. The server will follow <code>main</code> again on the next release.</li>
+</ol>
+<h3>Who to tell</h3>
+<ul>
+<li>Shops: if the site is down for more than 15 minutes in business hours, a WhatsApp broadcast to shop owners (the app keeps a list of shops in Super admin) saying it is being fixed and when to expect it back.</li>
+<li>Write every incident in <code>docs/09-SESSION-LOG.md</code>: what broke, why, what fixed it, what changes so it does not happen again.</li>
+</ul>
+<h2 id="c13">13. Still pending on the owner's side</h2>
+<p>Summary of <code>docs/29-OWNER-PENDING.md</code> as of 2026-11-03. That file is the authority; tick items there.</p>
+<h3>A. Environment variables on the server (<code>/opt/mobileshop/.env</code>)</h3>
+<p>None of these is confirmed done. After editing, <code>IMAGE_TAG=$(cat .current-tag) docker compose --env-file .env up -d backend</code>.</p>
+<table><thead><tr><th>Key</th><th>What it unlocks</th></tr></thead><tbody><tr><td><code>SUPERUSER_PHONES</code></td><td>Check your super-admin number is there.</td></tr><tr><td><code>ADMIN_WHATSAPP</code></td><td>Fee-proof, shop-request and password-request messages to you.</td></tr><tr><td><code>RENEWAL_PRIVATE_KEY</code>, <code>RENEWAL_PUBLIC_KEY</code></td><td>Business → Keys and renewal codes (from keygen, below).</td></tr><tr><td><code>WHATSAPP_TOKEN</code>, <code>WHATSAPP_PHONE_ID</code>, <code>WHATSAPP_TEMPLATES</code></td><td>Automatic WhatsApp: reminders, night report, OTP.</td></tr><tr><td><code>SMTP_HOST</code>, <code>SMTP_PORT</code>, <code>SMTP_USER</code>, <code>SMTP_PASSWORD</code>, <code>SMTP_FROM</code></td><td>Email.</td></tr><tr><td><code>ANTHROPIC_API_KEY</code>, <code>AI_DAILY_LIMIT</code></td><td>The assistant and photo reading.</td></tr><tr><td><code>RCLONE_REMOTE</code></td><td>The off-server backup copy (with the rclone setup in chapter 8).</td></tr><tr><td><code>SIGNUP_OTP</code>, <code>OTP_DEV_ECHO</code></td><td>Both <code>false</code> on production; check <code>OTP_DEV_ECHO</code> is never <code>true</code>.</td></tr></tbody></table>
+<h3>B. Commands on the server, still to run</h3>
+<ol>
+<li>Renewal key pair (once): <code>docker compose --env-file .env exec backend python -m app.modules.plan.renewal keygen</code> — paste both lines into <code>.env</code>, then <code>up -d backend</code>.</li>
+<li>Barcodes for old stock (once, safe to repeat): <code>docker compose --env-file .env exec backend python -m app.modules.barcodes.backfill</code></li>
+<li>Confirm the database version: <code>docker compose --env-file .env exec backend alembic current</code> — expected <code>a5c7e9b1d3f6 (head)</code>.</li>
+</ol>
+<h3>C. Settings in the app only the owner can fill</h3>
+<ul>
+<li>Super admin → Fees → Billing settings: bank name, title, account, IBAN, branch, support phone and WhatsApp (until then shopkeepers see no payment details).</li>
+<li>Super admin → Fees → Payment accounts: Easypaisa, JazzCash, SadaPay.</li>
+<li>Grace days (7 now), and each shop's package, fee and paid-until date.</li>
+<li>Business → Shops: mark one-PC customers as Offline.</li>
+<li>Your own shop: logo and business details, NTN, currency format, barcode prefix and type, item and device settings.</li>
+<li>Every shop that printed stickers since 2026-10-31 must reprint them (those stickers did not scan; fixed 2026-11-01).</li>
+</ul>
+<h3>D. Manual testing</h3>
+<p>Nothing has been tested by the owner yet. The list in <code>docs/29</code> covers subscription reminders, paying the fee, barcodes and stock count, accessories by the dozen, dealer price, tablets and watches with lock checks, the Business console and license keys, Bulk Excel, the business profile on printed bills, the landing page, len-den and its reminders, repair labs and the repair sticker, the on-screen seller signature and the help "?" sheets. Use a local demo shop (chapter 10) and the newest APK from the latest Deploy run. Read the three user-manual PDFs before giving them to shops, especially the Urdu wording.</p>
+<h3>E. Decisions waiting</h3>
+<table><thead><tr><th>Question</th><th>Now</th></tr></thead><tbody><tr><td>Grace days after plan end: 7 or 15?</td><td>7</td></tr><tr><td>Freight on a purchase: on the supplier's bill or a separate expense?</td><td>On the supplier's bill</td></tr><tr><td>Lock check also for used mobiles?</td><td>Off (tablets and watches always)</td></tr><tr><td>Tablet / watch money card "Money on this phone" → "this device"?</td><td>Not changed</td></tr><tr><td>One-PC installs report to Business with <code>SAAS_URL</code>?</td><td>Not set</td></tr></tbody></table>
+<h3>Also not done, from this runbook</h3>
+<ul>
+<li>The Android release keystore secrets: confirm with <code>gh secret list</code> that <code>ANDROID_KEYSTORE_BASE64</code>, <code>ANDROID_KEYSTORE_PASSWORD</code> and <code>ANDROID_KEY_ALIAS</code> exist and that the keystore is in the password manager.</li>
+<li>An uptime monitor on <code>/health</code> (chapter 11).</li>
+<li>A first practice restore (chapter 8).</li>
+</ul>
+</body>
+</html>

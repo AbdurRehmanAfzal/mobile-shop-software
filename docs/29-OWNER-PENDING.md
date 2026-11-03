@@ -16,7 +16,7 @@ File: `/opt/mobileshop/.env` (never commit it). After editing, restart the backe
 
 ```
 cd /opt/mobileshop
-docker compose --env-file .env up -d backend
+IMAGE_TAG=$(cat .current-tag) docker compose --env-file .env up -d backend
 ```
 
 > Fixed 2026-11-01: `deploy/docker-compose.yml` did not pass most of these to the backend container,
@@ -132,3 +132,14 @@ Close the app fully and open it again first (or install the newest APK from the 
 | [x] | Item GST %: should a sale bill use the item's own rate? | **yes (owner 2026-11-03)**: when the bill is taxed, an item with its own GST % is taxed at it; others take the bill's rate; untaxed bills stay untaxed; the bill prints "Tax (by item)" |
 | [x] | Purchase form: rename "Supplier invoice no." to "Reference / slip no."? | **yes (owner 2026-11-03)**: renamed in en / ur / roman |
 | [x] | Super admin → password request from a staff member: change the requester's password? | **yes (owner 2026-11-03)**: opened from a request, "Set password" shows and changes that person's password; "Set the owner's instead" switches back |
+
+## F. Found while writing the operations runbook (2026-11-03)
+Details in `docs/manual/operations-en.md`. None of these is broken today, but each is worth a look:
+- [ ] **Renewal key on the server:** run the renewal keygen on the server. Until then production checks codes with the default public key, so codes signed with the development PC's key would be accepted.
+- [ ] **Off-server backup:** `RCLONE_REMOTE` is not set, so every backup sits on the same VPS. Set it up and practise one restore.
+- [ ] **Android signing:** check that the three `ANDROID_KEYSTORE_*` GitHub secrets exist (`gh secret list`). Without them `/app.apk` is test-signed, and a properly signed APK cannot update it later.
+- [ ] **Old Docker images:** `deploy.sh` removes only untagged images. Once a month run `docker image prune -a --filter until=168h` on the server.
+- [ ] **Server IP in git history:** it was in two comments (removed 2026-11-03), but older commits still have it. If the repo ever goes public, assume the IP is known and keep SSH key-only.
+- [ ] **Settings the compose file does not pass:** `SCHEDULER_ENABLED`, `ACCESS_TOKEN_MINUTES`, `REFRESH_TOKEN_DAYS`, `DEFAULT_LOCALE`, `TIMEZONE`, `SAAS_URL`, `WHATSAPP_API_VERSION` in the server `.env` have no effect today (the defaults are used). Say if one of them should be settable on production.
+- [ ] **Demo shop on production:** `demo-shop.mjs` uses signup, which production keeps off (403). Open the shop from Super admin first if you ever want one there.
+- [ ] **Trial end date:** a new shop starts with no end date, even on trial. Set **Paid until** yourself, or decide that a trial should end by itself after 14 days.

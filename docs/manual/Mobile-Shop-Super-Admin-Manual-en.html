@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mobile Shop — Super Admin Manual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 18mm 16mm 20mm }
+  :root { --ink:#0E1613; --muted:#55615c; --brand:#5B5BF6; --navy:#0B2440; --soft:#EEF0FF; --line:#dfe3ea; --gold:#B7791F }
+  * { box-sizing: border-box }
+  body { margin:0; color:var(--ink); background:#fff; font-family:'Inter', system-ui, sans-serif; font-size:10.5pt; line-height:1.6 }
+  .cover { height: 257mm; display:flex; flex-direction:column; justify-content:center; padding: 0 6mm; page-break-after: always;
+    background: radial-gradient(120% 70% at 100% 0%, #e7e8ff 0%, #fff 60%) }
+  .cover .brand { font-family:'Inter',sans-serif; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--brand); font-size:10pt }
+  .cover h1 { font-size:44pt; line-height:1.25; margin:6mm 0 2mm; color:var(--navy) }
+  .cover .sub { font-size:22pt; color:var(--brand); font-weight:700 }
+  .cover .tag { margin-top:10mm; font-size:13pt; color:var(--muted); max-width:150mm }
+  .cover .shots { display:flex; gap:6mm; margin-top:14mm }
+  .cover .shots img { width:42mm; border-radius:5mm; box-shadow:0 8px 24px rgba(11,36,64,.18); border:1px solid var(--line) }
+  .cover .by { margin-top:auto; font-family:'Inter',sans-serif; font-size:9pt; color:var(--muted) }
+  .toc { page-break-after: always }
+  .toc h2 { border:0; margin-top:0 }
+  .toc ol { list-style:none; padding:0; columns:2; column-gap:10mm }
+  .toc li { padding:1.6mm 0; border-bottom:1px dotted var(--line); break-inside:avoid }
+  .toc a { color:var(--ink); text-decoration:none }
+  h2 { page-break-before: always; font-size:20pt; color:var(--navy); margin:0 0 4mm; padding-bottom:2.5mm; border-bottom:3px solid var(--brand); line-height:1.5 }
+  h3 { font-size:13pt; color:var(--brand); margin:6mm 0 1.5mm; page-break-after: avoid; line-height:1.6 }
+  p { margin: 0 0 2.6mm }
+  ul, ol { margin: 0 0 3mm; padding-left: 7mm }
+  li { margin: .8mm 0 }
+  strong { color:var(--navy) }
+  code { font-family:'Inter',sans-serif; background:var(--soft); padding:.2mm 1.4mm; border-radius:1mm; direction:ltr; unicode-bidi:embed }
+  figure { margin:4mm auto 5mm; text-align:center; page-break-inside:avoid }
+  figure img { max-height:118mm; max-width:72mm; border-radius:4mm; border:1px solid var(--line); box-shadow:0 4px 14px rgba(11,36,64,.12) }
+  figcaption { font-size:9pt; color:var(--muted); margin-top:1.5mm }
+  aside { margin:3mm 0; padding:2.5mm 4mm; border-radius:2.5mm; page-break-inside:avoid; background:var(--soft); border-left:4px solid var(--brand) }
+  aside.note { background:#FFF7E6; border-color:var(--gold) }
+  table { width:100%; border-collapse:collapse; margin:3mm 0 4mm; font-size:9.5pt; page-break-inside:auto }
+  table { table-layout:fixed }
+  table.wide { font-size:8.3pt }
+  th, td, code { overflow-wrap:anywhere }
+  tr { page-break-inside:avoid }
+  th, td { border:1px solid var(--line); padding:1.6mm 2.4mm; text-align:left; vertical-align:top }
+  th { background:var(--navy); color:#fff }
+  tbody tr:nth-child(even) td { background:#f7f8fb }
+</style>
+</head>
+<body>
+<section class="cover">
+  <div class="brand">OOP Solutions</div>
+  <h1>Mobile Shop</h1>
+  <div class="sub">Super Admin Manual</div>
+  <div class="tag">Opening shops, fees, renewal codes, license keys, the provider console and helping a shop — step by step.</div>
+  <div class="shots"><img src="img/en/admin-01.jpg" alt=""><img src="img/en/business-overview-1.jpg" alt=""><img src="img/en/admin-shop.jpg" alt=""></div>
+  <div class="by">OOP Solutions · mobileshop.oopsolutions.com · 2026-11-03</div>
+</section>
+<nav class="toc">
+  <h2>Contents</h2>
+  <ol><li><a href="#c1">1. What the super admin does</a></li><li><a href="#c2">2. Becoming a super admin and opening the screen</a></li><li><a href="#c3">3. Opening a new shop</a></li><li><a href="#c4">4. Plans, prices and billing settings</a></li><li><a href="#c5">5. Fee payments</a></li><li><a href="#c6">6. Renewal codes and license keys</a></li><li><a href="#c7">7. The business console</a></li><li><a href="#c8">8. Helping a shop</a></li><li><a href="#c9">9. The Android app link</a></li><li><a href="#c10">10. Your routine</a></li><li><a href="#c11">11. Common questions</a></li></ol>
+</nav>
+<h2 id="c1">1. What the super admin does</h2>
+<p>Mobile Shop is sold to shops as a service. Every shop gets its own private stock, khata, bills and staff. The person at OOP Solutions who runs the business side above all these shops is the <strong>super admin</strong>. Your work is to:</p>
+<ul>
+<li><strong>Open shops</strong> for new customers, including those who ask on the website, and send them their login.</li>
+<li><strong>Set each shop's plan</strong>: the package, the monthly fee and the date it is paid until.</li>
+<li><strong>Take fees</strong>: approve or reject the payments shops report, and record cash you receive by hand.</li>
+<li><strong>Issue renewal codes (license keys)</strong>, mainly for shops on the one-PC (offline) install.</li>
+<li><strong>Watch the business</strong> in the business console: income, fees coming and overdue, who uses the app.</li>
+<li><strong>Help shop people</strong>: a forgotten password, a problem inside a shop, a few extra days.</li>
+<li><strong>Share the Android app</strong> link.</li>
+</ul>
+<p>All of this happens inside the same app the shops use. When you log in with the super-admin number, extra screens appear that no shopkeeper sees.</p>
+<aside class="note"><strong>Important:</strong> Nothing you do as super admin ever deletes a shop's data. A shop that stops paying is locked to "view, pay and back up" only; its stock, khata and bills stay exactly as they were, and they come back to full use the moment the shop is renewed.</aside>
+<h3>The words used in this manual</h3>
+<table><thead><tr><th>Word</th><th>What it means</th></tr></thead><tbody><tr><td>Plan (package)</td><td>trial, basic, pro or chain; decides which parts of the app the shop gets</td></tr><tr><td>Paid until</td><td>The last day the shop's fee covers</td></tr><tr><td>Grace days</td><td>Days after "Paid until" when the shop still works fully, with a red reminder</td></tr><tr><td>Locked</td><td>Grace days are over: the shop can only view, pay and back up its data</td></tr><tr><td>Renewal code / license key</td><td>A signed code that adds months to one shop's plan; works without internet, once</td></tr><tr><td>Magic link</td><td>A web link that shows a key to the shopkeeper for 7 days, without a login</td></tr><tr><td>One-PC install</td><td>The Windows version of the app that runs on one shop computer, without your server</td></tr></tbody></table>
+<h2 id="c2">2. Becoming a super admin and opening the screen</h2>
+<h3>Who is a super admin</h3>
+<p>A person is a super admin only because their mobile number is on the server's list of super-admin numbers. There is no button in the app for it, so no shop owner or staff member can give himself this power. Once the number is on the list, the person simply logs in with it.</p>
+<aside class="note"><strong>Note:</strong> The super-admin numbers and the WhatsApp number that receives your alerts are server settings (SUPERUSER_PHONES and ADMIN_WHATSAPP), set as described in the Operations runbook.</aside>
+<h3>Opening the Super admin page</h3>
+<ol>
+<li>Log in with your super-admin mobile number and password.</li>
+<li>Tap <strong>More</strong> at the bottom of the screen.</li>
+<li>At the very top of More you see a dark banner, <strong>Super admin</strong>, with "Open a new shop" under it. Tap it.</li>
+</ol>
+<figure><img src="img/en/admin-more.jpg" alt=""><figcaption>Picture 1: The More menu: the dark Super admin banner at the very top, above Daily work</figcaption></figure>
+<p>The Super admin page opens. A line under the title says <strong>Only you (the product owner) see this page</strong>. Shopkeepers and their staff never see this banner or this page.</p>
+<figure><img src="img/en/admin-01.jpg" alt=""><figcaption>Picture 2: The top of the Super admin page: Open a new shop, the Business console button, the Android app card and the Software fees card with one payment to check</figcaption></figure>
+<p>From top to bottom the page has:</p>
+<table><thead><tr><th>Part</th><th>What it is for</th></tr></thead><tbody><tr><td><strong>Open a new shop</strong> (top right)</td><td>Opens a new customer shop (chapter 3)</td></tr><tr><td><strong>Business: fees, shops, keys</strong></td><td>Opens the business console (chapter 7)</td></tr><tr><td><strong>Android app</strong> card</td><td>The app download link to send to shops (chapter 9)</td></tr><tr><td><strong>Software fees</strong> card</td><td>This month's fees and how many payments are waiting, the <strong>Payment accounts</strong> and <strong>Billing settings</strong> buttons on their own row, then each payment to check (chapters 4 and 5)</td></tr><tr><td><strong>Shop requests from the website</strong></td><td>People who asked for a shop on the website (only shown when there are some)</td></tr><tr><td><strong>Password requests</strong></td><td>Shop people who tapped "Forgot password?" (only shown when there are some)</td></tr><tr><td>Search, <strong>All · Fees due · Locked</strong> and <strong>Customer shops</strong></td><td>Every shop, with its plan, days left and fee; tap one to manage it</td></tr></tbody></table>
+<p>Every heading has a small <strong>?</strong>: tap it for a short explanation with an example.</p>
+<aside class="tip"><strong>Tip:</strong> Your super-admin login also opens your own demo shop. Set its plan to <strong>Unlimited</strong> so it never gets fee reminders.</aside>
+<h2 id="c3">3. Opening a new shop</h2>
+<p>Shops cannot sign themselves up; every shop is opened by you. Before you start, agree the package and price with the shopkeeper (chapter 4) and ask for the shop's name, city, his name, his mobile number (it becomes his login) and the language his staff read best.</p>
+<h3>Opening the shop step by step</h3>
+<p>Example: Bilal Ahmed runs <strong>Star Mobiles</strong> on Hall Road, Lahore. His number is 0321 5550002.</p>
+<ol>
+<li>On the Super admin page tap <strong>Open a new shop</strong> (top right).</li>
+<li>Fill <strong>Shop name</strong> (Star Mobiles (Hall Road)), <strong>City</strong> (Lahore), <strong>Owner's name</strong> (Bilal Ahmed) and <strong>Owner's mobile (login)</strong> (321 5550002; the +92 is already there).</li>
+<li><strong>Password for the owner</strong>: at least 6 characters, easy to type on a phone, for example ms4821.</li>
+<li><strong>Shop language</strong>: <strong>Urdu</strong> or <strong>English</strong>, the language his app, bills and WhatsApp messages start in.</li>
+<li><strong>Plan and fee</strong>: tap <strong>trial</strong>, <strong>basic</strong>, <strong>pro</strong> or <strong>chain</strong>. Leave <strong>Follow the plan</strong> ticked unless you agreed special modules (chapter 4).</li>
+<li>Tap the big <strong>Open a new shop</strong> button. It stays grey until every field above is filled correctly.</li>
+</ol>
+<figure><img src="img/en/admin-newshop.jpg" alt=""><figcaption>Picture 3: The Open a new shop form: shop name, city, owner's name, owner's mobile, password, shop language and plan</figcaption></figure>
+<h3>Sending the login</h3>
+<p>The sheet now says <strong>Shop opened</strong> and shows <strong>Give these login details to the shop owner</strong>: the mobile number and the password, in large digits.</p>
+<ol>
+<li>Tap <strong>Send on WhatsApp</strong>. WhatsApp opens with a ready message to the owner: the shop name, his login, his password, the website address and the Android app link. Press send.</li>
+<li>Tap <strong>Open another shop</strong> for the next one, or close the sheet.</li>
+</ol>
+<aside class="note"><strong>Important:</strong> A new shop starts with <strong>no end date</strong> ("Unlimited" in the list). If you promised a 14-day trial or a paid month, open the shop from the list right away and set <strong>Paid until</strong> (chapter 4). Otherwise the shop will never get a reminder and will never lock.</aside>
+<h3>Opening a shop from a website request</h3>
+<p>The website has an <strong>Open my shop</strong> form: name, shop name, city, mobile number, the plan (<strong>Free trial</strong>, basic, pro or chain) and an optional note. When a visitor taps <strong>Send request</strong>, you get a WhatsApp message and the request appears at the top of the Super admin page under <strong>Shop requests from the website</strong>.</p>
+<figure><img src="img/en/admin-02.jpg" alt=""><figcaption>Picture 4: Shop requests from the website and Password requests, above the search, the filter buttons and the list of customer shops</figcaption></figure>
+<p>Each request shows the full shop name and city, then the person's name, his number, the plan he chose and the date. On the line under it are three buttons:</p>
+<table><thead><tr><th>Button</th><th>What it does</th></tr></thead><tbody><tr><td><strong>Open a new shop</strong></td><td>Opens the new-shop form already filled with his shop name, city, name, number and the plan he chose, plus a ready password. Check it, then tap <strong>Open a new shop</strong>. The request closes by itself.</td></tr><tr><td>Green WhatsApp circle</td><td>Opens a WhatsApp chat with him, to talk about price or ask a question first</td></tr><tr><td>Tick</td><td>Marks the request done without opening a shop (for example a duplicate, or someone who changed his mind)</td></tr></tbody></table>
+<p>Example: Usman from Saddar, Karachi asks for basic. Tap the WhatsApp circle, agree Rs. 1,500 a month, then tap <strong>Open a new shop</strong>, check his filled details, tap the button and <strong>Send on WhatsApp</strong>.</p>
+<h3>The list of customer shops</h3>
+<p>Below the requests is a search box, three filter buttons and <strong>Customer shops</strong>.</p>
+<figure><img src="img/en/admin-03.jpg" alt=""><figcaption>Picture 5: Customer shops: each row shows the owner, the plan with days left or Unlimited, and the monthly fee or "no fee set"</figcaption></figure>
+<p>Each row shows the shop and city, the owner and his number, a chip with the plan and time left (for example "basic · 12 days left", "pro · expired 3 days ago", "trial · Unlimited" or "Locked"), and the monthly fee or "no fee set". The filter buttons:</p>
+<table><thead><tr><th>Button</th><th>Shows</th></tr></thead><tbody><tr><td><strong>All</strong></td><td>Every shop, with the total count</td></tr><tr><td><strong>Fees due</strong></td><td>Shops whose plan ends in 7 days or less, or has already ended but is still in its grace days</td></tr><tr><td><strong>Locked</strong></td><td>Shops whose grace days are over</td></tr></tbody></table>
+<p>The search box finds a shop by name. Tap a shop to open its sheet: plan, payments, renewal code, password and branches, explained in the chapters below.</p>
+<h3>Adding a branch for the same owner</h3>
+<p>When an owner opens a second shop, do not open a new shop for him. Add a branch instead, so he uses the same login and pays one fee.</p>
+<ol>
+<li>Tap his shop in <strong>Customer shops</strong>.</li>
+<li>Scroll to <strong>Add a branch</strong>.</li>
+<li><strong>Shop name</strong>: for example Star Mobiles 2 (Hafeez Centre). <strong>City</strong>: Lahore.</li>
+<li>Tap <strong>Add a branch</strong>.</li>
+</ol>
+<p>He now switches between his shops in More → My shops with the same login. Each shop keeps its own stock, khata and bills, while the package and the fee stay one.</p>
+<h2 id="c4">4. Plans, prices and billing settings</h2>
+<h3>The four packages</h3>
+<p>Every shop is on one package. The package decides which parts of the app the shop can use. The basics are always on for every package: stock, sale, purchase, return, udhaar khata, payments, bills, ID check, the day's hisaab, settings and staff.</p>
+<table><thead><tr><th>Package</th><th>Who it is for</th><th>Extra parts it switches on</th></tr></thead><tbody><tr><td><strong>trial</strong></td><td>A new shop trying the app</td><td>Everything</td></tr><tr><td><strong>basic</strong></td><td>A small shop</td><td>Accessories and watches, expenses and day close, hold a sale, tax on bills</td></tr><tr><td><strong>pro</strong></td><td>A busy shop</td><td>Everything in basic, plus repairs, exchange, profit and reports, download and share (PDF / Excel), WhatsApp messages and reminders, installments (qist), staff attendance (hazri), the assistant and photo reading</td></tr><tr><td><strong>chain</strong></td><td>An owner with several shops</td><td>Everything, including loans to other shops (amanat)</td></tr></tbody></table>
+<h3>The prices</h3>
+<p>The website shows these list prices. They are monthly, in rupees. A year paid at once is 12 months for the price of 10, so the shop gets 2 months free.</p>
+<table><thead><tr><th>Package</th><th>Per month</th><th>Per year (12 months for the price of 10)</th></tr></thead><tbody><tr><td>Free trial</td><td>Rs. 0 for 14 days</td><td>—</td></tr><tr><td>basic</td><td>Rs. 1,500</td><td>Rs. 15,000</td></tr><tr><td>pro</td><td>Rs. 3,000</td><td>Rs. 30,000</td></tr><tr><td>chain</td><td>Rs. 6,000</td><td>Rs. 60,000</td></tr></tbody></table>
+<aside class="note"><strong>Note:</strong> The website's list prices are fixed on the server. To change them, ask the developer, as described in the Operations runbook. The fee each shop actually pays is set by you, shop by shop, in the app (below), so you can give a friend or a big customer a special price without touching the website.</aside>
+<h3>Setting a shop's package, fee and paid-until date</h3>
+<p>Tap a shop in <strong>Customer shops</strong>. Its sheet opens with the owner, the number of users, the plan chip and the <strong>Expires</strong> date. Scroll to <strong>Plan and fee</strong>.</p>
+<ol>
+<li>Tap the package: <strong>trial</strong>, <strong>basic</strong>, <strong>pro</strong> or <strong>chain</strong>.</li>
+<li><strong>Monthly fee (Rs)</strong>: what this shop pays you each month, for example 1500. Leave it empty or 0 for no fee.</li>
+<li><strong>Paid until</strong>: the last day the shop's fee covers. Reminders count down to this date.</li>
+<li><strong>Note (only you see it)</strong>: your own remark, for example "Pays every 3 months; first month free". The shop never sees it.</li>
+<li>Tap <strong>Save plan</strong>.</li>
+</ol>
+<p>Under the fee fields there are three quick buttons: <strong>+1 month</strong>, <strong>+3 months</strong> and <strong>+12 months</strong>. Each one adds months to the plan and saves at once. The months are added from <strong>Paid until</strong> if that date is still ahead, otherwise from today, so a shop that pays early never loses days.</p>
+<p>Example: Star Mobiles is paid until 20 November. Today is 10 November and Bilal asks for 3 more months. Tap <strong>+3 months</strong>: paid until becomes 20 February.</p>
+<aside class="note"><strong>Important:</strong> The +1 / +3 / +12 buttons only move the date. They do not record any money. When money has come in, use <strong>Record a payment</strong> (chapter 5) instead: it moves the date and also keeps a receipt.</aside>
+<aside class="note"><strong>Important:</strong> If you clear the <strong>Paid until</strong> box and tap <strong>Save plan</strong>, the shop gets no end date. It will never get a reminder and never lock. Do this only on purpose.</aside>
+<p>The button <strong>Unlimited</strong> does the same thing deliberately: it removes the end date. Use it for your own demo shop, a friend's shop or a lifetime deal.</p>
+<h3>Two worked examples</h3>
+<p><strong>A 14-day trial.</strong> Hamza Iqbal of Hamza Mobile Centre, Multan wants the free trial. Open his shop on <strong>trial</strong>, then in his sheet set <strong>Paid until</strong> to 14 days from today, leave the fee empty and tap <strong>Save plan</strong>. When he chooses basic, tap <strong>basic</strong>, type 1500 in <strong>Monthly fee (Rs)</strong>, <strong>Save plan</strong>, and take his first payment (chapter 5).</p>
+<p><strong>A year paid at once.</strong> Ali Mobiles takes pro for a year and pays Rs. 30,000. Tap <strong>pro</strong>, type 3000 in <strong>Monthly fee (Rs)</strong> and <strong>Save plan</strong>; keep the monthly figure here, because the business console uses it for monthly income. Then <strong>Record a payment</strong> with amount 30000 and months 12.</p>
+<h3>How the list shows each shop's state</h3>
+<p>The plan chip in <strong>Customer shops</strong> and in the shop's sheet is violet while the plan runs (or has no end date), turns amber when 7 days or less are left, and red once the plan has ended or the shop is locked.</p>
+<figure><img src="img/en/admin-14.jpg" alt=""><figcaption>Picture 6: Plan chips: violet for running or unlimited, amber when 7 days or less are left</figcaption></figure>
+<figure><img src="img/en/admin-05.jpg" alt=""><figcaption>Picture 7: Shops with a fee set, such as Reminder Shop on pro with 30 days left at Rs. 2,500 a month, among shops with no fee set</figcaption></figure>
+<h3>Modules for this shop</h3>
+<p>A shop may need one part of a higher package. While <strong>Follow the plan</strong> is ticked under <strong>Modules for this shop</strong>, the shop gets its package's parts, and they change by themselves with the package. Untick it and only the parts you tick are on, whatever the package; tick it again to go back.</p>
+<p>Example: a basic shop at Rs. 1,500 also wants repairs for Rs. 2,000 a month. Untick <strong>Follow the plan (basic)</strong>, tick <strong>Repairs</strong>, tap <strong>Save modules</strong>, then set <strong>Monthly fee (Rs)</strong> to 2000 and tap <strong>Save plan</strong>.</p>
+<h3>Billing settings: where shops pay and when they are reminded</h3>
+<p>These settings are for all shops at once. On the Super admin page, in the <strong>Software fees</strong> card, tap <strong>Billing settings</strong> (on the button row under the card's title). If the button is red, your real details have not been filled in yet.</p>
+<figure><img src="img/en/admin-billing.jpg" alt=""><figcaption>Picture 8: Billing settings: your bank details and support numbers, with the reminder schedule starting below them</figcaption></figure>
+<p>Fill in once:</p>
+<ul>
+<li><strong>Bank name</strong>, <strong>Account title</strong> (exactly as the bank shows it), <strong>Account number</strong>, <strong>IBAN</strong> (24 characters starting with PK) and <strong>Branch</strong>.</li>
+<li><strong>Support phone</strong> and <strong>Support WhatsApp</strong>: where shops call for help and send payment screenshots, for example +92 316 4001668.</li>
+<li><strong>Note (English)</strong>, <strong>Note (Urdu)</strong>, <strong>Note (Roman)</strong>: one short line shown with your payment details, for example "Please write your shop name in the transfer remarks."</li>
+</ul>
+<p>While the bank lines still say "PLACEHOLDER", the sheet warns <strong>Placeholders are still in place — fill in your real details.</strong> and shops do not see the bank block at all.</p>
+<p>Then the <strong>Reminder schedule (days before expiry)</strong>:</p>
+<table><thead><tr><th>Field</th><th>Default</th><th>What it does</th></tr></thead><tbody><tr><td><strong>Yellow bar from</strong></td><td>7</td><td>Days before the end date when a small yellow bar appears on the shop's screens. No popup yet.</td></tr><tr><td><strong>Orange bar + popup from</strong></td><td>3</td><td>The bar turns orange and a reminder popup shows once a day</td></tr><tr><td><strong>Red bar + popup from</strong></td><td>1</td><td>The bar turns red; the popup comes back after the snooze hours</td></tr><tr><td><strong>Grace days after expiry</strong></td><td>7</td><td>Days after the end date when the shop still works fully, with a red bar and the popup. After them the shop is locked.</td></tr><tr><td><strong>Snooze hours</strong></td><td>4</td><td>When the owner taps "Remind me later" on the red popup, it stays away this many hours</td></tr></tbody></table>
+<p>Tap <strong>Save</strong>. The change applies to every shop at once; no update to the app is needed.</p>
+<p>Example with the defaults: a plan ends on 30 November. The yellow bar shows from 23 November, the orange bar and daily popup from 27 November, red on 29 and 30 November. The shop works through its 7 grace days until 7 December and is locked from 8 December.</p>
+<aside class="note"><strong>Note:</strong> Only the shop owner sees the popup, in English, Urdu and Roman Urdu together; staff see a short line asking them to tell the owner. It never opens in the middle of a sale, purchase, return or payment.</aside>
+<h3>Payment accounts: your wallets</h3>
+<p>Easypaisa, JazzCash, SadaPay and other wallets go in a separate list. In the <strong>Software fees</strong> card tap <strong>Payment accounts</strong>.</p>
+<ol>
+<li>Tap <strong>Add an account</strong>.</li>
+<li>Fill <strong>Name (e.g. Easypaisa)</strong>, <strong>Account holder</strong> (the name registered on the account), <strong>Number / IBAN</strong> and, if you like, <strong>Note (optional)</strong>, for example "Send the screenshot on WhatsApp after paying."</li>
+<li>Repeat for each wallet. The bin button removes a row.</li>
+<li>Tap <strong>Save</strong>.</li>
+</ol>
+<p>Every shop sees these accounts on its <strong>Software fees</strong> screen under <strong>Pay into one of these</strong>, each with a <strong>Copy</strong> button; the website shows them too.</p>
+<h3>This shop's grace days</h3>
+<p>A trusted customer can get more grace days than the rest. In his sheet, <strong>This shop's grace days (empty = default)</strong>: type a number, for example 15, and tap <strong>Save</strong>. Leave it empty to use the number in Billing settings.</p>
+<p>Example: the default is 7. A dealer who has paid on time for two years gets 15: he is locked only 15 days after his end date.</p>
+<h2 id="c5">5. Fee payments</h2>
+<p>A shop's plan can be renewed in three ways. Use whichever fits how the money reached you.</p>
+<table><thead><tr><th>How the money came</th><th>What you do</th><th>Where</th></tr></thead><tbody><tr><td>The shop paid into your wallet or bank and reported it in the app</td><td>Check the screenshot, tap <strong>Received</strong></td><td>Software fees card (this chapter)</td></tr><tr><td>You received cash or saw a transfer yourself</td><td><strong>Record a payment</strong></td><td>The shop's sheet (this chapter)</td></tr><tr><td>A one-PC shop with no internet</td><td>Record the money, then send a <strong>renewal code</strong></td><td>Chapter 6</td></tr></tbody></table>
+<h3>What the shop does</h3>
+<p>The shop owner opens <strong>More → Software fees</strong> (or taps the reminder bar), copies one of your account numbers under <strong>Pay into one of these</strong> and sends the money from his own app. Then, under <strong>I have paid</strong>, he fills <strong>Amount (Rs)</strong>, <strong>Months</strong>, <strong>Paid through</strong>, <strong>Transaction ID / reference</strong>, <strong>Paid on</strong>, adds a screenshot and taps <strong>Send</strong>. His reminder bar turns calm blue ("verification pending"), the popup stops, and the payment shows as <strong>Being checked</strong>. You get a WhatsApp message.</p>
+<h3>Checking and approving a payment</h3>
+<p>On the Super admin page, the <strong>Software fees</strong> card shows a line like "This month Rs. 100,000 · 1 to check", the <strong>Payment accounts</strong> and <strong>Billing settings</strong> buttons, and below them every payment waiting for you. Each one shows the shop's name, how it was paid, the transaction ID, the months, the date and the amount (you can see one at the top of the page in chapter 2).</p>
+<ol>
+<li>Tap <strong>Screenshot</strong> to see the picture the shop sent. Close it when done.</li>
+<li>Open your own Easypaisa, JazzCash or bank app and find the same transaction ID and amount.</li>
+<li>If the money is there, tap <strong>Received · +N month(s)</strong>.</li>
+</ol>
+<p>The row disappears at once. The shop's <strong>Paid until</strong> moves forward by the months he reported (from his current end date if still ahead, otherwise from today), the payment gets a receipt number (SUB-0001, SUB-0002 and so on, across all your shops), and the owner gets a WhatsApp message and a one-time "Thank you, renewed until …" in the app. He can print the receipt from <strong>Your payments</strong>.</p>
+<p>Example: Ali Mobiles sends Rs. 4,500 on Easypaisa for 3 months of basic. You see Rs. 4,500 with the same ID in your Easypaisa, tap <strong>Received · +3 month(s)</strong>, and his plan runs 3 more months.</p>
+<h3>Rejecting a payment</h3>
+<p>If the money is not in your account, or the amount is wrong, tap <strong>Reject</strong>. A box asks <strong>Why not? (the shop owner will read this)</strong>; write a clear reason, for example "No Rs. 1,500 with ID 0123 in our Easypaisa. Please check and send again." The owner sees the payment as <strong>Not accepted</strong> with your reason and can report it again. His plan does not change. With an empty reason nothing is rejected.</p>
+<aside class="tip"><strong>Tip:</strong> The <strong>Received</strong> button always uses the months the shop reported. If he paid Rs. 3,000 but wrote 3 months on basic (Rs. 4,500), reject it with the reason, or approve it and then correct <strong>Paid until</strong> in his sheet so it matches what he paid.</aside>
+<h3>Recording money you received yourself</h3>
+<p>When Bilal hands you Rs. 4,500 in cash, or you see his bank transfer without a report in the app:</p>
+<ol>
+<li>Tap his shop in <strong>Customer shops</strong> and scroll to <strong>Record a payment</strong>.</li>
+<li><strong>Amount (Rs)</strong> starts as his monthly fee; change it to 4500. <strong>Months</strong>: 3.</li>
+<li><strong>Paid through</strong>: a word for the channel, such as cash, easypaisa, jazzcash or bank.</li>
+<li><strong>Paid on</strong>: the day the money was actually handed over or sent. <strong>Transaction ID / reference</strong>: if any.</li>
+<li>Tap <strong>Record a payment</strong>.</li>
+</ol>
+<p>A green line shows the receipt number, for example <strong>Receipt SUB-0007</strong>. The payment is saved as received and his plan is extended by 3 months at once.</p>
+<aside class="tip"><strong>Tip:</strong> Write the <strong>Paid through</strong> word the same way every time. The business console groups money by it; capitals and spaces do not matter, but "easypaisa" and "EP" count as two channels.</aside>
+<aside class="note"><strong>Note:</strong> The "This month" figure on the <strong>Software fees</strong> card counts payments by the day you approved them. The business console's <strong>Received this month</strong> counts them by <strong>Paid on</strong>, so a fee paid on 31 October and approved on 1 November is November on the card but October in the console. Use the console for your real monthly income.</aside>
+<p>All payments from every shop are listed in the business console under <strong>Payments</strong> (chapter 7), newest first, each with its receipt number and status.</p>
+<figure><img src="img/en/business-payments-2.jpg" alt=""><figcaption>Picture 9: Business → Payments: every fee with the shop, channel, date, months, reference and receipt number</figcaption></figure>
+<h2 id="c6">6. Renewal codes and license keys</h2>
+<p>A renewal code (also called a license key) is a long signed code that adds months to one shop's plan. The owner pastes it in <strong>More → Software fees → Renewal code</strong> and taps <strong>Renew with code</strong>. It works on the website, the Android app and the one-PC install, without internet, once, and only for the shop it was made for. You need keys mostly for one-PC (offline) shops, which cannot see your approvals on the server.</p>
+<aside class="note"><strong>Important:</strong> Making a key records no money. Record the payment first (chapter 5), then make the key.</aside>
+<aside class="note"><strong>Note:</strong> Keys are signed with a secret that lives only on your server (RENEWAL_PRIVATE_KEY). Each Windows install checks keys with the matching public key. Both are set up as described in the Operations runbook; until then, making a key shows an error.</aside>
+<h3>Making a key from the shop's sheet</h3>
+<ol>
+<li>Tap the shop in <strong>Customer shops</strong> and scroll to <strong>Renewal code</strong>.</li>
+<li>Type the <strong>Months</strong> and tap <strong>Renewal code</strong>.</li>
+<li>A green box says <strong>Code made — send it on WhatsApp</strong>. Tap <strong>Send code on WhatsApp</strong>; the message has the code and the steps for the owner.</li>
+</ol>
+<h3>Making a key from the business console</h3>
+<ol>
+<li>Open <strong>Business: fees, shops, keys</strong>, tap the <strong>Keys</strong> tab, then <strong>Make a key</strong>.</li>
+<li><strong>For which shop</strong>: search and tap the shop.</li>
+<li>Tap <strong>1 month</strong>, <strong>3 months</strong>, <strong>6 months</strong> or <strong>12 months</strong>.</li>
+<li><strong>Note (optional)</strong>: for example "Paid Rs. 4,500 cash, 3 months".</li>
+<li>Tap <strong>Make a key</strong>. The app says <strong>Key made — send it</strong> and shows the key's card.</li>
+</ol>
+<p>Either way, every key is kept in the Keys list.</p>
+<figure><img src="img/en/business-keys-1.jpg" alt=""><figcaption>Picture 10: Business → Keys: Make a key, the filters, and a key card with its send buttons</figcaption></figure>
+<h3>The key card</h3>
+<p>Each key card shows the shop, the status, the months, the full code, when it was made, how many times it was sent and through what, how many times its link was opened, and your note.</p>
+<table><thead><tr><th>Status</th><th>Meaning</th></tr></thead><tbody><tr><td><strong>Not used</strong></td><td>Made, waiting for the shop</td></tr><tr><td><strong>Used</strong></td><td>The shop renewed with it, on the website / app or on the one-PC install</td></tr><tr><td><strong>Cancelled</strong></td><td>You cancelled it, or it was replaced by a renewed key; it no longer works</td></tr></tbody></table>
+<p>The buttons on a key that is <strong>Not used</strong>:</p>
+<table><thead><tr><th>Button</th><th>What it does</th></tr></thead><tbody><tr><td><strong>Send on WhatsApp</strong></td><td>Opens WhatsApp with the key and its magic link</td></tr><tr><td><strong>Send SMS</strong></td><td>Opens your phone's SMS app with the same message</td></tr><tr><td><strong>Copy key</strong></td><td>Copies the message, to paste into any app</td></tr><tr><td><strong>Copy link</strong></td><td>Copies only the magic link</td></tr><tr><td><strong>Renew (new key)</strong></td><td>Makes a new key with the same months and cancels this one</td></tr><tr><td><strong>New magic link</strong></td><td>Gives this key a fresh link valid for 7 days; the old link stops working</td></tr><tr><td><strong>Cancel key</strong></td><td>Asks <strong>Why cancel this key?</strong>, then stops the key working</td></tr></tbody></table>
+<p>A key that is <strong>Used</strong> has only <strong>Renew (new key)</strong>, which makes a fresh key with the same months and leaves the used one as it is.</p>
+<figure><img src="img/en/business-keys-2.jpg" alt=""><figcaption>Picture 11: Older keys: a cancelled one shows "Sent 2× (link) · Link opened 2× · Cancelled: renewed"</figcaption></figure>
+<h3>The magic link</h3>
+<p>Every message you send from a key card also carries a magic link. The shopkeeper opens it, without any login, and sees <strong>Your renewal key</strong>: his shop, the months, the key, a <strong>Copy key</strong> button and the steps "Open the app → More → Software fees → Renewal code → paste the key → Renew." The link works for 7 days, and each opening is counted on the key card, so you know whether he has looked at it.</p>
+<h3>When things go wrong with a key</h3>
+<table><thead><tr><th>Problem</th><th>What to do</th></tr></thead><tbody><tr><td>The shopkeeper lost the message</td><td>Tap <strong>Send on WhatsApp</strong> again. It is the same key; the card shows Sent 2×.</td></tr><tr><td>The link has expired</td><td>Tap <strong>Send on WhatsApp</strong> again: a fresh 7-day link is made by itself</td></tr><tr><td>You think someone else has the link</td><td><strong>New magic link</strong>: the old link stops working at once; then send the new one</td></tr><tr><td>The key went to the wrong number</td><td><strong>Cancel key</strong> with the reason, then make a new one</td></tr><tr><td>You made the wrong number of months</td><td><strong>Cancel key</strong>, then <strong>Make a key</strong> with the right months</td></tr><tr><td>A key was used on a one-PC install that is offline, and then you cancelled it</td><td>The months already added stay; a key used offline before the cancel cannot be taken back</td></tr></tbody></table>
+<h3>Keys and the one-PC install</h3>
+<p>The first valid key pasted into a one-PC install links that install to its shop in your records. After that, only keys for that same shop work on it. When the shop PC has internet it checks in with your server, so its last use and its app version show in the business console. That check-in needs one setting on the shop PC (SAAS_URL), set when the install is done, as described in the Operations runbook.</p>
+<h2 id="c7">7. The business console</h2>
+<p>Open the business console from the Super admin page with the dark button <strong>Business: fees, shops, keys</strong>. The page, <strong>Business</strong>, has four tabs: <strong>Overview</strong>, <strong>Shops</strong>, <strong>Payments</strong> and <strong>Keys</strong>. Every figure is worked out from the payments you approved and the plans you set; nothing is typed by hand.</p>
+<h3>Overview: the totals</h3>
+<figure><img src="img/en/business-overview-1.jpg" alt=""><figcaption>Picture 12: Business → Overview: monthly income, money received, pending, coming and overdue fees, use and keys</figcaption></figure>
+<table><thead><tr><th>Tile</th><th>What it shows</th></tr></thead><tbody><tr><td><strong>Monthly income (MRR)</strong></td><td>The monthly fees of all shops on a paid package (basic, pro, chain) whose plan has not ended. Trial, ended and locked shops are not counted. Example: 3 shops at Rs. 1,500 and a 4th locked: Rs. 4,500.</td></tr><tr><td><strong>Average per paying shop</strong></td><td>MRR divided by the number of shops on a paid package (shown beside it). Ended and locked shops are in that number, so they pull the average down.</td></tr><tr><td><strong>Received this month</strong></td><td>Fees you approved, counted by the day they were paid, from the 1st of this month; <strong>Last month</strong> below it</td></tr><tr><td><strong>Received in total</strong></td><td>All approved fees since you started; <strong>Shops</strong> = how many different shops have ever paid</td></tr><tr><td><strong>Pending (to check)</strong></td><td>Reported payments you have not approved or rejected yet; tap it to open Payments</td></tr><tr><td><strong>Coming in 7 days</strong></td><td>Monthly fees of shops whose plan ends in the next 7 days: the shops to remind now</td></tr><tr><td><strong>Coming in 30 days</strong></td><td>The same for the next 30 days, including the 7-day ones</td></tr><tr><td><strong>Overdue</strong></td><td>Monthly fees of shops whose end date has passed (grace or locked): money you should already have</td></tr><tr><td><strong>Using it now</strong></td><td>Online shops used in the last 10 minutes and one-PC installs that checked in within the hour; <strong>Used today</strong> and <strong>Used this week</strong> below</td></tr><tr><td><strong>License keys</strong></td><td>Keys made but not used yet; <strong>Used</strong> and <strong>Cancelled</strong> below; tap it to open Keys</td></tr></tbody></table>
+<p>Further down: <strong>Received by month</strong> (a bar for each of the last 12 months), <strong>By channel</strong> (approved fees per <strong>Paid through</strong> word, for example "Easypaisa 12 · Rs. 30,000"), <strong>By package</strong> (shops and monthly income per package) and <strong>Who is using it</strong> (online and offline shops, and the number of shops in each plan status).</p>
+<figure><img src="img/en/business-overview-3.jpg" alt=""><figcaption>Picture 13: Overview, lower part: received by month, by channel, by package and who is using it</figcaption></figure>
+<p>The plan statuses used everywhere in the console:</p>
+<table><thead><tr><th>Status</th><th>Meaning</th></tr></thead><tbody><tr><td><strong>Running</strong></td><td>More than 7 days left</td></tr><tr><td><strong>Ending soon</strong></td><td>7 days or less left</td></tr><tr><td><strong>Expired (grace)</strong></td><td>Ended, but still working in its grace days</td></tr><tr><td><strong>Locked</strong></td><td>Grace days over: view, pay and back up only</td></tr><tr><td><strong>No end date</strong></td><td>Unlimited</td></tr><tr><td><strong>Trial</strong></td><td>On the trial package</td></tr></tbody></table>
+<aside class="tip"><strong>Tip:</strong> A big <strong>No end date</strong> number usually means shops were opened without a <strong>Paid until</strong> date. Go through them in the Super admin list and set the dates you agreed.</aside>
+<h3>Shops: one line per customer</h3>
+<figure><img src="img/en/business-shops-1.jpg" alt=""><figcaption>Picture 14: Business → Shops: filters for online / offline and plan status, with locked shops first</figcaption></figure>
+<p>The <strong>Shops</strong> tab lists every customer, locked and ending shops first. Each line shows the monthly fee, the package, the status and days left or over, <strong>Online (website / app)</strong> or <strong>Offline (one-PC install)</strong> (a green dot means in use right now), <strong>Paid in total</strong>, the <strong>Last payment</strong> and its channel, any <strong>Pending</strong> money and <strong>Last used</strong>.</p>
+<p>Search finds a shop by name. The first row of buttons filters by where the shop runs; the second (<strong>All</strong>, <strong>Ending soon</strong>, <strong>Expired (grace)</strong>, <strong>Locked</strong>, <strong>Running</strong>) by plan status.</p>
+<figure><img src="img/en/business-shops-2.jpg" alt=""><figcaption>Picture 15: Shops in their grace days: "Expired (grace) · 2 days over · Paid in total Rs. 0 · Last used never"</figcaption></figure>
+<aside class="tip"><strong>Tip:</strong> "Last used never" next to a new shop means the owner got his login but has not opened the app yet. Call him and help him log in; a shop that never starts will never pay.</aside>
+<h3>One shop's details</h3>
+<p>Tap a shop in the <strong>Shops</strong> tab. Its sheet opens.</p>
+<figure><img src="img/en/admin-shop.jpg" alt=""><figcaption>Picture 16: One shop in the business console: fee, plan status, paid in total, last used, where it runs, reminder button, payments and keys</figcaption></figure>
+<table><thead><tr><th>Part</th><th>What it shows or does</th></tr></thead><tbody><tr><td><strong>Fee</strong></td><td>The monthly fee, with the package below it</td></tr><tr><td><strong>Plan status</strong></td><td>Days left, or days over, with the status chip; ∞ means no end date</td></tr><tr><td><strong>Paid in total</strong></td><td>All approved fees from this shop; the × figure is how many payments</td></tr><tr><td><strong>Last used</strong></td><td>When someone in this shop last used the app (for a one-PC install, when it last checked in)</td></tr><tr><td><strong>Version</strong></td><td>Only for a one-PC install: the app version that PC reported, so you know if it needs an update</td></tr><tr><td><strong>Where it runs</strong></td><td>Tap <strong>Online (website / app)</strong> or <strong>Offline (one-PC install)</strong>. Set it yourself after installing the Windows version at a shop.</td></tr><tr><td><strong>Remind on WhatsApp</strong></td><td>Opens WhatsApp with a ready reminder: the shop's plan, when it ends or that it has ended, the fee, and "More → Software fees to pay"</td></tr><tr><td><strong>Open in shops list</strong></td><td>Jumps to this shop's sheet on the Super admin page, to change its plan, take a payment or set a password</td></tr><tr><td><strong>Payments</strong></td><td>Every fee this shop reported or you recorded, with channel, date, months, receipt and status</td></tr><tr><td><strong>License keys</strong></td><td>This shop's keys, with <strong>Make a key</strong></td></tr></tbody></table>
+<h3>Payments: every fee in one list</h3>
+<figure><img src="img/en/business-payments-1.jpg" alt=""><figcaption>Picture 17: Business → Payments: channel and status filters, the received total and Download CSV</figcaption></figure>
+<p>The <strong>Payments</strong> tab lists every fee from every shop, newest first: shop, channel, date paid, months ("1m"), reference, receipt number, amount and status (<strong>Pending</strong>, <strong>Received</strong> or <strong>Rejected</strong>).</p>
+<ul>
+<li><strong>Search</strong> by shop name, transaction ID or receipt number, for example SUB-0007.</li>
+<li>Filter by channel (<strong>All channels</strong>, then one button per channel) and by status.</li>
+<li><strong>Received (shown)</strong> adds up only the received payments in the filtered list.</li>
+<li><strong>Download CSV</strong> saves the filtered list as a spreadsheet file (software-fees.csv) for your accountant.</li>
+</ul>
+<p>The <strong>Keys</strong> tab is described in chapter 6.</p>
+<h2 id="c8">8. Helping a shop</h2>
+<h3>A shop person forgot the password</h3>
+<p>On the login screen anyone can tap <strong>Forgot password?</strong> and type their mobile number. A <strong>shop owner's</strong> request comes to you, on WhatsApp and under <strong>Password requests</strong> on the Super admin page. A <strong>staff member's</strong> request goes to his own shop owner (who resets it in More → Staff); it also shows in your list with his role, in case the owner asks for help.</p>
+<p>Each password request shows the person's full name and shop, his number and the date, with <strong>Set password</strong> and a tick on the line under it (you can see one in chapter 3).</p>
+<ol>
+<li>In <strong>Password requests</strong>, tap <strong>Set password</strong> on the person's row.</li>
+<li>The shop's sheet opens with a line <strong>New password for</strong> and the person's name, number and role.</li>
+<li>Type the new password (at least 6 characters, for example ms5521) and tap <strong>Save</strong>.</li>
+<li>A green box says <strong>Password changed. Send it to the owner:</strong> with the number and password. Tap <strong>Send on WhatsApp</strong>.</li>
+</ol>
+<p>The old password stops working at once and the request closes by itself. <strong>Set the owner's instead</strong> switches from the staff member to the owner. When an owner calls you without using the app, open his shop from <strong>Customer shops</strong> and start at step 3.</p>
+<aside class="note"><strong>Important:</strong> Before you change a password, make sure the request is really from that person. Call back on the shop's registered number. Never send a new password to a number other than the one the person logs in with.</aside>
+<p>The tick on a request row marks it done without changing anything, for example when the person remembered the password.</p>
+<h3>Looking inside a shop</h3>
+<p>When an owner says "a sale is missing" or "my khata looks wrong", you can see his shop with your own eyes.</p>
+<ol>
+<li>Tap his shop in <strong>Customer shops</strong>.</li>
+<li>Tap <strong>Open this shop</strong>.</li>
+</ol>
+<p>The app now shows his shop as if you were inside it: his home screen, stock, khata and sales. Your visit is written in that shop's activity log, so the owner can always see that you came in. To go back, tap <strong>More → Super admin</strong>.</p>
+<aside class="note"><strong>Important:</strong> Look, do not change. Anything you enter while inside a shop is real and is saved in that shop's books under your name. If something needs correcting, guide the owner to do it, or make the correction only with his permission.</aside>
+<h3>A shop that is locked</h3>
+<p>A shop is locked when its grace days are over and no payment has been approved. It sees a full-screen notice. It can still log in and see everything, pay you from <strong>More → Software fees</strong>, and download all its lists with <strong>Backup my data</strong>. It cannot sell, buy or change anything until it is renewed. Nothing is ever deleted; the day it is renewed, everything works again exactly as before.</p>
+<p>To unlock a shop, do one of these on its sheet in <strong>Customer shops</strong>:</p>
+<table><thead><tr><th>Situation</th><th>What to do</th></tr></thead><tbody><tr><td>He paid and reported it</td><td>Approve it in the <strong>Software fees</strong> card</td></tr><tr><td>He paid you in cash or you saw the transfer</td><td><strong>Record a payment</strong></td></tr><tr><td>He promises to pay in a few days and you trust him</td><td>Raise <strong>This shop's grace days</strong>, for example to 15, and <strong>Save</strong></td></tr><tr><td>A one-PC shop with no internet</td><td>Record the payment, then send a <strong>Renewal code</strong></td></tr><tr><td>Your own or a friend's shop</td><td><strong>Unlimited</strong></td></tr></tbody></table>
+<p>The shop unlocks as soon as you save; the owner only needs to refresh the app.</p>
+<aside class="note"><strong>Note:</strong> Changing the date on the shop's phone or computer does not help a shop avoid the reminders or the lock. The app keeps track of the latest real time it has seen and warns if the clock was set back.</aside>
+<p>If a shop simply stops paying, you need do nothing: it moves through the reminders, grace days and lock by itself. If the owner comes back months later, record his payment and he carries on with all his old stock and khata.</p>
+<h2 id="c9">9. The Android app link</h2>
+<p>The <strong>Android app</strong> card on the Super admin page has the download link of the shop app for Android phones. The link is your website address followed by /app.apk, for example <code>https://mobileshop.oopsolutions.com/app.apk</code>. It always gives the newest version, so the same link works for every shop, today and after every update.</p>
+<ul>
+<li><strong>Download</strong> saves the app on the phone you are holding, for example to install it on a shop's phone yourself.</li>
+<li><strong>WhatsApp</strong> opens WhatsApp with "Mobile Shop app for Android. Open this link on the phone and install:" and the link; pick the owner and send.</li>
+<li><strong>Share</strong> opens your phone's share menu; where there is none, it copies the link and says <strong>Link copied</strong>.</li>
+</ul>
+<p>The login message you send when you open a new shop (chapter 3) already includes this link.</p>
+<aside class="tip"><strong>Tip:</strong> Android may say the app is "from an unknown source" the first time. Tell the owner to tap <strong>Settings</strong>, allow installs from WhatsApp or the browser, and go back. This happens only once.</aside>
+<aside class="note"><strong>Note:</strong> Shops can also use the app in any phone or computer browser at your website address, without installing anything. The data is the same in both.</aside>
+<h2 id="c10">10. Your routine</h2>
+<table><thead><tr><th>When</th><th>What to do</th><th>Where</th></tr></thead><tbody><tr><td>Every day</td><td>Check each payment waiting ("N to check") against your wallet or bank app; approve or reject</td><td>Super admin → <strong>Software fees</strong> card</td></tr><tr><td>Every day</td><td>Answer <strong>Shop requests from the website</strong> and <strong>Password requests</strong></td><td>Super admin page, top</td></tr><tr><td>Every day</td><td><strong>Record a payment</strong> for any cash or transfer you received by hand</td><td>The shop's sheet</td></tr><tr><td>Every week</td><td>Send <strong>Remind on WhatsApp</strong> to every shop <strong>Ending soon</strong>; call <strong>Expired (grace)</strong> and <strong>Locked</strong> shops</td><td>Business → Shops</td></tr><tr><td>Every week</td><td>Call shops with <strong>Last used never</strong>, and shops whose keys are still <strong>Not used</strong></td><td>Business → Shops and Keys</td></tr><tr><td>Every month</td><td>Compare <strong>Received this month</strong> with your statements; <strong>Download CSV</strong> of received payments for your accountant</td><td>Business → Overview and Payments</td></tr><tr><td>Every month</td><td>Set <strong>Paid until</strong> for shops on <strong>No end date</strong> that should be paying; plan updates for one-PC installs with an old <strong>Version</strong></td><td>Super admin list; Business → Shops</td></tr><tr><td>When it changes</td><td>New bank account, wallet, support number or reminder timing</td><td><strong>Billing settings</strong>, <strong>Payment accounts</strong></td></tr></tbody></table>
+<aside class="tip"><strong>Tip:</strong> Approve payments quickly. A payment waiting for you does not move the shop's <strong>Paid until</strong>, so a shop near the end of its grace days can still be locked while you have not checked it.</aside>
+<h2 id="c11">11. Common questions</h2>
+<h3>A shop paid but is still locked. Why?</h3>
+<p>His payment is waiting for you. Look in the <strong>Software fees</strong> card for his payment and tap <strong>Received</strong>. If he paid in cash or you cannot find a report, use <strong>Record a payment</strong> in his sheet. If he is on a one-PC install, record the payment and send him a <strong>Renewal code</strong>.</p>
+<h3>I approved a payment by mistake.</h3>
+<p>The receipt and the history stay, because the money records are never deleted. Open the shop's sheet and set <strong>Paid until</strong> back to the right date, then <strong>Save plan</strong>. Write what happened in <strong>Note (only you see it)</strong>.</p>
+<h3>A shop wants to move from basic to pro.</h3>
+<p>Open its sheet, tap <strong>pro</strong>, change <strong>Monthly fee (Rs)</strong>, and tap <strong>Save plan</strong>. If <strong>Follow the plan</strong> is ticked under <strong>Modules for this shop</strong>, the new parts switch on by themselves.</p>
+<h3>What does "trial · Unlimited" in the list mean?</h3>
+<p>The shop is on trial and has no end date, so it will never be reminded or locked. Set <strong>Paid until</strong> if the trial should end.</p>
+<h3>I made a key with the wrong months.</h3>
+<p>If it is still <strong>Not used</strong>, tap <strong>Cancel key</strong> with a reason and make a new one. If it has already been <strong>Used</strong>, correct <strong>Paid until</strong> on the shop's sheet instead.</p>
+<h3>A one-PC shop shows "Last used never" although it works every day.</h3>
+<p>The one-PC install reports to you only when that PC has internet and its check-in setting is in place. Check the internet at the shop, and ask whoever installed it to check the setting described in the Operations runbook. The shop's work is not affected either way.</p>
+<h3>Can I give someone else at OOP Solutions super-admin access?</h3>
+<p>Yes, but only through the server: their mobile number is added to the super-admin list, as described in the Operations runbook. Give this only to people you trust with every shop's data and your income figures.</p>
+</body>
+</html>

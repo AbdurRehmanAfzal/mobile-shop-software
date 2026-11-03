@@ -132,7 +132,7 @@ function OverviewTab({ go }: { go: (t: Tab) => void }) {
         <section className="card flex flex-col gap-2">
           <span className="flex items-center gap-1"><BiLabel text="prov.byPlan" size="md" bold /><Help term="provider.byPlan" size="sm" /></span>
           {o.by_plan.map((p) => (
-            <div key={p.plan} className="flex items-center justify-between gap-2 text-sm"><span className="font-bold capitalize">{p.plan}</span><span className="num" dir="ltr">{n('prov.shopsN', p.shops)} · {rs(p.mrr)}{pick('prov.perMonth')}</span></div>
+            <div key={p.plan} className="flex items-center justify-between gap-2 text-sm"><span className="font-bold capitalize">{p.plan}</span><span className="num" dir="ltr">{n('prov.shopsN', p.shops)} · {rs(p.mrr)} {pick('prov.perMonth')}</span></div>
           ))}
         </section>
         <section className="card flex flex-col gap-2 lg:col-span-2">
@@ -183,7 +183,7 @@ function ShopsTab() {
             <button key={r.organisation_id} type="button" onClick={() => setSel(r)} className="tap flex w-full flex-col gap-1 px-4 py-3 text-start">
               <span className="flex items-center gap-2">
                 <span className="min-w-0 flex-1 truncate text-[15px] font-bold">{r.name}{r.city ? <span className="font-medium text-muted"> · {r.city}</span> : null}</span>
-                <span className="num text-sm" dir="ltr">{Number(r.monthly_fee) ? `${rs(r.monthly_fee)}${pick('prov.perMonth')}` : '—'}</span>
+                <span className="num text-sm" dir="ltr">{Number(r.monthly_fee) ? `${rs(r.monthly_fee)} ${pick('prov.perMonth')}` : '—'}</span>
               </span>
               <span className="flex flex-wrap items-center gap-1.5">
                 <span className="rounded-full bg-ground px-2 py-0.5 text-[11px] font-bold capitalize">{r.plan}</span>
@@ -353,7 +353,7 @@ function MakeKey({ shopId, shopName }: { shopId?: string; shopName?: string }) {
       )}
       <div className="flex items-center gap-1">
       <div className="grid flex-1 grid-cols-4 gap-2">
-        {['1', '3', '6', '12'].map((m) => <button key={m} type="button" aria-pressed={months === m} onClick={() => setMonths(m)} className={`tap min-h-12 rounded-2xl border-2 font-bold ${months === m ? 'border-ink bg-ink text-ground' : 'border-line bg-surface'}`}>{pick('prov.key.months').replace('{{n}}', m)}</button>)}
+        {['1', '3', '6', '12'].map((m) => <button key={m} type="button" aria-pressed={months === m} onClick={() => setMonths(m)} className={`tap min-h-12 rounded-2xl border-2 font-bold ${months === m ? 'border-ink bg-ink text-ground' : 'border-line bg-surface'}`}>{pick(m === '1' ? 'prov.key.month' : 'prov.key.months').replace('{{n}}', m)}</button>)}
       </div>
       <Help term="key.months" size="sm" />
       </div>
@@ -417,7 +417,7 @@ function KeyCard({ k: initial }: { k: KeyRow }) {
       <div className="flex items-center gap-2">
         <span className="min-w-0 flex-1 truncate text-sm font-bold">{k.shop_name}</span>
         <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${tone}`}>{pick(`prov.key.${k.status}`)}</span>
-        <span className="num text-sm" dir="ltr">{pick('prov.key.months').replace('{{n}}', String(k.months))}</span>
+        <span className="num text-sm" dir="ltr">{pick(k.months === 1 ? 'prov.key.month' : 'prov.key.months').replace('{{n}}', String(k.months))}</span>
         <Help term="key.card" size="sm" />
       </div>
       <span className="num break-all rounded-xl bg-ground px-3 py-2 text-[11px] leading-snug" dir="ltr" data-testid="key-code">{k.code}</span>

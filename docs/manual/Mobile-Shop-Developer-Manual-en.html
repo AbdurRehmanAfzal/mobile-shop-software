@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mobile Shop — Developer and Setup Manual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 18mm 16mm 20mm }
+  :root { --ink:#0E1613; --muted:#55615c; --brand:#5B5BF6; --navy:#0B2440; --soft:#EEF0FF; --line:#dfe3ea; --gold:#B7791F }
+  * { box-sizing: border-box }
+  body { margin:0; color:var(--ink); background:#fff; font-family:'Inter', system-ui, sans-serif; font-size:10.5pt; line-height:1.6 }
+  .cover { height: 257mm; display:flex; flex-direction:column; justify-content:center; padding: 0 6mm; page-break-after: always;
+    background: radial-gradient(120% 70% at 100% 0%, #e7e8ff 0%, #fff 60%) }
+  .cover .brand { font-family:'Inter',sans-serif; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--brand); font-size:10pt }
+  .cover h1 { font-size:44pt; line-height:1.25; margin:6mm 0 2mm; color:var(--navy) }
+  .cover .sub { font-size:22pt; color:var(--brand); font-weight:700 }
+  .cover .tag { margin-top:10mm; font-size:13pt; color:var(--muted); max-width:150mm }
+  .cover .shots { display:flex; gap:6mm; margin-top:14mm }
+  .cover .shots img { width:42mm; border-radius:5mm; box-shadow:0 8px 24px rgba(11,36,64,.18); border:1px solid var(--line) }
+  .cover .by { margin-top:auto; font-family:'Inter',sans-serif; font-size:9pt; color:var(--muted) }
+  .toc { page-break-after: always }
+  .toc h2 { border:0; margin-top:0 }
+  .toc ol { list-style:none; padding:0; columns:2; column-gap:10mm }
+  .toc li { padding:1.6mm 0; border-bottom:1px dotted var(--line); break-inside:avoid }
+  .toc a { color:var(--ink); text-decoration:none }
+  h2 { page-break-before: always; font-size:20pt; color:var(--navy); margin:0 0 4mm; padding-bottom:2.5mm; border-bottom:3px solid var(--brand); line-height:1.5 }
+  h3 { font-size:13pt; color:var(--brand); margin:6mm 0 1.5mm; page-break-after: avoid; line-height:1.6 }
+  p { margin: 0 0 2.6mm }
+  ul, ol { margin: 0 0 3mm; padding-left: 7mm }
+  li { margin: .8mm 0 }
+  strong { color:var(--navy) }
+  code { font-family:'Inter',sans-serif; background:var(--soft); padding:.2mm 1.4mm; border-radius:1mm; direction:ltr; unicode-bidi:embed }
+  figure { margin:4mm auto 5mm; text-align:center; page-break-inside:avoid }
+  figure img { max-height:118mm; max-width:72mm; border-radius:4mm; border:1px solid var(--line); box-shadow:0 4px 14px rgba(11,36,64,.12) }
+  figcaption { font-size:9pt; color:var(--muted); margin-top:1.5mm }
+  aside { margin:3mm 0; padding:2.5mm 4mm; border-radius:2.5mm; page-break-inside:avoid; background:var(--soft); border-left:4px solid var(--brand) }
+  aside.note { background:#FFF7E6; border-color:var(--gold) }
+  table { width:100%; border-collapse:collapse; margin:3mm 0 4mm; font-size:9.5pt; page-break-inside:auto }
+  table { table-layout:fixed }
+  table.wide { font-size:8.3pt }
+  th, td, code { overflow-wrap:anywhere }
+  tr { page-break-inside:avoid }
+  th, td { border:1px solid var(--line); padding:1.6mm 2.4mm; text-align:left; vertical-align:top }
+  th { background:var(--navy); color:#fff }
+  tbody tr:nth-child(even) td { background:#f7f8fb }
+</style>
+</head>
+<body>
+<section class="cover">
+  <div class="brand">OOP Solutions</div>
+  <h1>Mobile Shop</h1>
+  <div class="sub">Developer and Setup Manual</div>
+  <div class="tag">What the software needs, how to set it up on a PC or a server, how the code is laid out, and how to change it safely.</div>
+  <div class="shots"></div>
+  <div class="by">OOP Solutions · mobileshop.oopsolutions.com · 2026-11-03</div>
+</section>
+<nav class="toc">
+  <h2>Contents</h2>
+  <ol><li><a href="#c1">1. What the system is</a></li><li><a href="#c2">2. What you need</a></li><li><a href="#c3">3. Set up a development PC</a></li><li><a href="#c4">4. Run it</a></li><li><a href="#c5">5. Configuration</a></li><li><a href="#c6">6. The code</a></li><li><a href="#c7">7. Database and migrations</a></li><li><a href="#c8">8. Tests</a></li><li><a href="#c9">9. Rules every change must follow</a></li><li><a href="#c10">10. Making a change</a></li><li><a href="#c11">11. Production setup on a VPS</a></li><li><a href="#c12">12. The Android app and the Windows PC version</a></li><li><a href="#c13">13. Troubleshooting</a></li></ol>
+</nav>
+<h2 id="c1">1. What the system is</h2>
+<p>Mobile Shop is a mobile-shop management SaaS for Pakistani shops. It handles new and used phones (with ID checks and a full per-IMEI history), tablets and smart watches, accessories, purchases and sales, credit khata (udhaar), len-den, repairs and outside repair labs, installments, expenses, FBR tax, reports, the Shop Audit, staff and attendance, bulk Excel, barcodes and labels, subscription plans and a super-admin console. The interface works in three languages: English, Urdu (Nastaliq, right to left) and Roman Urdu.</p>
+<p>This manual is for two kinds of reader: a developer who is new to the code, and a technical person who must install the software. It covers a development PC, the offline Windows PC version for one shop, and a production Linux server.</p>
+<h3>The parts at a glance</h3>
+<table><thead><tr><th>Part</th><th>Technology</th><th>Where in the repo</th></tr></thead><tbody><tr><td>API server</td><td>Python 3.12, FastAPI, SQLAlchemy 2 (typed), Alembic, Pydantic v2</td><td><code>backend/</code></td></tr><tr><td>Database</td><td>PostgreSQL 16 in production; SQLite on a development PC and the offline Windows version</td><td><code>backend/alembic/</code> (migrations)</td></tr><tr><td>Web app</td><td>React 18, Vite 5, TypeScript, Tailwind 3, react-i18next, TanStack Query, Zustand; installable PWA</td><td><code>frontend/</code></td></tr><tr><td>Android app</td><td>Capacitor 6 wrapping the same React build (app id <code>pk.mobileshop.app</code>)</td><td><code>frontend/android/</code></td></tr><tr><td>Web server in production</td><td>Caddy 2.8 serving the built app and passing <code>/api</code> and <code>/health</code> to the backend</td><td><code>deploy/Caddyfile</code>, <code>deploy/web.Dockerfile</code></td></tr><tr><td>HTTPS in production</td><td>An existing Traefik on the server (the stack opens no ports itself)</td><td><code>deploy/docker-compose.yml</code> labels</td></tr><tr><td>Packaging</td><td>Docker images built by GitHub Actions and pushed to <code>ghcr.io</code></td><td><code>.github/workflows/</code></td></tr><tr><td>Offline PC version</td><td>The same backend, bundled with PyInstaller, with a tray launcher and an Inno Setup installer</td><td><code>local/</code>, <code>backend/app/local.py</code></td></tr></tbody></table>
+<h3>How a request flows</h3>
+<p>A shopkeeper's phone or PC opens the web app (or the Android app). The app calls the API under <code>/api/v1/...</code> with two headers: <code>Authorization: Bearer &lt;access token&gt;</code> and <code>X-Shop-Id: &lt;shop uuid&gt;</code>. In production, Traefik ends HTTPS and hands the request to the <code>web</code> container (Caddy), which passes <code>/api/*</code> and <code>/health</code> to the <code>backend</code> container (uvicorn). The backend works out the user and the active shop (<code>backend/app/core/tenancy.py</code>), checks the user's role capability and the shop's plan, runs the business logic in the module's <code>service.py</code>, writes to PostgreSQL in one transaction and returns JSON. Money is sent as strings with two decimals (for example <code>"25000.00"</code>).</p>
+<h3>Multi-tenancy in one paragraph</h3>
+<p>The hierarchy is <code>organisations</code> → <code>shops</code> → everything else. Every table that belongs to a shop has a <code>shop_id</code> column (the <code>ShopScoped</code> mixin in <code>backend/app/db/base.py</code>), and every service filters by the current shop explicitly. A row from another shop is reported as "not found", never "forbidden". There is no PostgreSQL row-level security; isolation is enforced in code and tested with two shops in <code>backend/tests/test_tenancy.py</code> and many module tests. The offline Windows version runs the same code with a single shop.</p>
+<h3>The two append-only logs</h3>
+<p>Two tables are the heart of the system and are never edited:</p>
+<ul>
+<li><code>ledger_entries</code>: every movement of money, written as a balanced double-entry group by the posting service in <code>backend/app/modules/ledger/service.py</code>. Party balances, cash in hand, statements and profit are all derived from it.</li>
+<li><code>device_events</code>: every event in a phone's life (purchase, sale, loan out, return, repair in and out, verification, price change, reclassification). The device's status is a projection checked by the state machine in <code>backend/app/modules/devices/state.py</code>; the history screen is built from these rows.</li>
+</ul>
+<p>Corrections are new reversing entries, never updates or deletes.</p>
+<h3>Background work</h3>
+<p>There is no separate worker. A small in-process clock (<code>backend/app/modules/notifications/scheduler.py</code>) ticks every minute inside the API: it sends the night report and reminders at each shop's time and dispatches queued WhatsApp and email messages. Backups in production are a cron job on the server (<code>deploy/backup.sh</code>).</p>
+<h2 id="c2">2. What you need</h2>
+<h3>Software</h3>
+<table><thead><tr><th>Tool</th><th>Version</th><th>Needed for</th></tr></thead><tbody><tr><td>Python</td><td>3.12 exactly (<code>requires-python = "&gt;=3.12,&lt;3.13"</code> in <code>backend/pyproject.toml</code>)</td><td>the backend, tests, the Windows build</td></tr><tr><td>Node.js</td><td>22 (what CI and the web image use)</td><td>the frontend, Playwright, the screenshot and manual scripts</td></tr><tr><td>Git</td><td>any recent version (Git for Windows includes Git Bash)</td><td>the code</td></tr><tr><td>Docker with Compose v2</td><td>recent</td><td>optional on a PC (PostgreSQL, the production stack); required on the server</td></tr><tr><td>Inno Setup 6</td><td>6.x, with <code>iscc</code> on PATH</td><td>only to make the Windows <code>Setup.exe</code></td></tr><tr><td>JDK 17 and the Android SDK (Android Studio)</td><td>JDK 17</td><td>only to build the Android app on your own PC; CI builds it without them</td></tr></tbody></table>
+<p>Check what is installed with <code>py -3.12 --version</code> (Windows) or <code>python3.12 --version</code> (Linux and macOS), <code>node --version</code> and <code>git --version</code>.</p>
+<h3>Accounts and services</h3>
+<table><thead><tr><th>What</th><th>Required?</th><th>Used for</th></tr></thead><tbody><tr><td>GitHub account with access to the repository</td><td>yes</td><td>code, CI, the image registry (<code>ghcr.io</code>), the Android and Windows builds</td></tr><tr><td>A Linux VPS (Ubuntu or Debian, 2 GB RAM or more)</td><td>for production</td><td>runs the Docker stack</td></tr><tr><td>A domain or sub-domain</td><td>for production</td><td>the app's address; HTTPS is required for the camera, the PWA install and passkeys</td></tr><tr><td>Meta WhatsApp Business (Cloud API)</td><td>optional</td><td>automatic WhatsApp messages and OTP codes; without it messages wait in More → Messages with a tap-to-send link</td></tr><tr><td>An SMTP mailbox (for example Gmail with an app password)</td><td>optional</td><td>emails</td></tr><tr><td>An Anthropic API key</td><td>optional</td><td>the AI assistant and reading photos (CNIC, box labels)</td></tr><tr><td>A Google Drive account and rclone</td><td>optional</td><td>an encrypted off-server copy of the nightly backup</td></tr></tbody></table>
+<h2 id="c3">3. Set up a development PC</h2>
+<p>Paths below are relative to the repository root. On Windows the commands are for PowerShell unless noted.</p>
+<h3>Windows: get the code</h3>
+<ol>
+<li>Install Python 3.12, Node 22 and Git for Windows.</li>
+<li>Clone the repository: <code>git clone https://github.com/AbdurRehmanAfzal/mobile-shop-software.git</code></li>
+<li>Go in: <code>cd mobile-shop-software</code></li>
+<li>Switch to the working branch: <code>git checkout develop</code> (all work happens on <code>develop</code>; <code>main</code> is for releases).</li>
+<li>Check the commit author is set for this repository: <code>git config user.name</code> and <code>git config user.email</code> (see chapter 10 for the rule).</li>
+</ol>
+<h3>Windows: always set PYTHONUTF8</h3>
+<p>Windows Python writes console output in the cp1252 code page by default. Urdu text in seeds, error messages and receipts then crashes with <code>UnicodeEncodeError</code>. Set the variable in every terminal before running Python:</p>
+<ul>
+<li>PowerShell, this terminal only: <code>$env:PYTHONUTF8 = "1"</code></li>
+<li>PowerShell, permanently for new terminals: <code>setx PYTHONUTF8 1</code></li>
+<li>cmd.exe: <code>set PYTHONUTF8=1</code></li>
+<li>Git Bash: <code>export PYTHONUTF8=1</code></li>
+</ul>
+<p>The Docker image, CI and the Windows build already set it.</p>
+<h3>Windows: backend</h3>
+<ol>
+<li>Go to the backend: <code>cd backend</code></li>
+<li>Create the virtual environment: <code>py -3.12 -m venv .venv</code></li>
+<li>Install the app and the developer tools (pytest, hypothesis, ruff, httpx, zxing-cpp): <code>.venv\Scripts\pip install -e ".[dev]"</code></li>
+<li>Optional, to work against PostgreSQL as well: <code>.venv\Scripts\pip install -e ".[dev,postgres]"</code></li>
+<li>Create your settings file from the example: <code>copy .env.example .env</code></li>
+<li>Edit <code>backend/.env</code> for local work (see below).</li>
+<li>Set <code>$env:PYTHONUTF8 = "1"</code> in this terminal.</li>
+<li>Create or update the SQLite database <code>backend/mobile_shop_v2.db</code>: <code>.venv\Scripts\alembic upgrade head</code></li>
+</ol>
+<h3>Windows: the local backend/.env</h3>
+<p><code>backend/.env</code> is ignored by git; never commit it. Every value is optional and the defaults suit a development PC (<code>backend/app/core/config.py</code>). For local work, add these lines on top of the example:</p>
+<table><thead><tr><th>Line</th><th>Why</th></tr></thead><tbody><tr><td><code>PUBLIC_SIGNUP=true</code></td><td>lets you and the Playwright tests sign up throwaway shops (production keeps it <code>false</code>)</td></tr><tr><td><code>SUPERUSER_PHONES=&lt;your-test-number&gt;,03990000099</code></td><td>your own test login gets More → Super admin; <code>03990000099</code> is the super user the Playwright specs use</td></tr><tr><td><code>OTP_DEV_ECHO=true</code></td><td>returns the OTP code in the API response; needed by <code>e2e/otp.spec.ts</code>; never on a server</td></tr><tr><td><code>RENEWAL_PRIVATE_KEY=&lt;dev private key&gt;</code> and <code>RENEWAL_PUBLIC_KEY=&lt;dev public key&gt;</code></td><td>needed for license and renewal keys and <code>e2e/provider-console.spec.ts</code>; make a pair with <code>.venv\Scripts\python -m app.modules.plan.renewal keygen</code></td></tr></tbody></table>
+<aside class="note"><strong>Important:</strong> never put a real customer's number, the production owner's login, production passwords or production keys in <code>.env</code> examples, tests, docs or commits. The development key pair is for the development PC only.</aside>
+<h3>Windows: frontend</h3>
+<ol>
+<li>Open a second terminal and go to the frontend: <code>cd frontend</code></li>
+<li>Install the packages: <code>npm install</code></li>
+<li>Optional: <code>copy .env.example .env</code>. The only key is <code>VITE_API_URL</code>; leave it empty so the Vite dev server proxies <code>/api</code> and <code>/health</code> to <code>http://localhost:8000</code>.</li>
+<li>Install the Playwright browser once (for the end-to-end tests and the screenshot scripts): <code>npx playwright install chromium</code></li>
+</ol>
+<h3>Linux and macOS notes</h3>
+<p>The steps are the same with Unix paths:</p>
+<ul>
+<li>Create the environment: <code>python3.12 -m venv .venv</code></li>
+<li>Install: <code>.venv/bin/pip install -e ".[dev]"</code></li>
+<li>Copy the settings: <code>cp .env.example .env</code></li>
+<li>Set the encoding (harmless on Linux): <code>export PYTHONUTF8=1</code></li>
+<li>Migrate: <code>.venv/bin/alembic upgrade head</code></li>
+<li>Run tools as <code>.venv/bin/pytest</code>, <code>.venv/bin/ruff</code>, <code>.venv/bin/uvicorn</code>, or activate the environment with <code>source .venv/bin/activate</code>.</li>
+</ul>
+<p>In Git Bash on Windows the scripts are under <code>.venv/Scripts/</code> instead of <code>.venv/bin/</code>.</p>
+<h3>Optional: a local PostgreSQL</h3>
+<p>SQLite is enough for daily work, but production is PostgreSQL 16, so check database-sensitive changes there too. A throwaway server with Docker:</p>
+<ol>
+<li>Start it: <code>docker run -d --name ms-pg -e POSTGRES_USER=ms -e POSTGRES_PASSWORD=&lt;local-password&gt; -e POSTGRES_DB=ms_test -p 5432:5432 postgres:16-alpine</code></li>
+<li>Install the driver: <code>.venv\Scripts\pip install -e ".[dev,postgres]"</code></li>
+<li>Point the backend at it in <code>backend/.env</code>: <code>DATABASE_URL=postgresql+psycopg://ms:&lt;local-password&gt;@localhost:5432/ms_test</code></li>
+</ol>
+<h2 id="c4">4. Run it</h2>
+<h3>The backend</h3>
+<ol>
+<li>In <code>backend/</code>, with <code>PYTHONUTF8=1</code> set: <code>.venv\Scripts\uvicorn app.main:app --reload --reload-dir app --port 8000</code></li>
+<li>Check it answers: open <code>http://localhost:8000/health</code>, which returns <code>{"status": "ok", "env": "dev"}</code>.</li>
+<li>The interactive API documentation is at <code>http://localhost:8000/docs</code> (hidden when <code>APP_ENV=prod</code>).</li>
+</ol>
+<p>On start, the app seeds the shared phone catalogue (brands, models, storages, colours) and the built-in expense categories. This is idempotent and safe on every start. The scheduler also starts unless <code>SCHEDULER_ENABLED=false</code>.</p>
+<aside class="tip"><strong>Tip:</strong> after adding a new route, restart uvicorn. The reloader on Windows has missed new routes, and an orphan worker has kept port 8000 with old code; see chapter 13.</aside>
+<h3>The frontend</h3>
+<ol>
+<li>In <code>frontend/</code>: <code>npm run dev</code></li>
+<li>Open <code>http://localhost:5173</code>. The dev server proxies <code>/api</code> and <code>/health</code> to port 8000.</li>
+</ol>
+<p>The dev-server scripts in <code>frontend/package.json</code>:</p>
+<table><thead><tr><th>Script</th><th>Address</th><th>Use</th></tr></thead><tbody><tr><td><code>npm run dev</code></td><td><code>http://localhost:5173</code></td><td>normal work and Playwright</td></tr><tr><td><code>npm run dev:lan</code></td><td><code>http://&lt;PC-IP&gt;:5173</code></td><td>a phone on the same Wi-Fi (plain http)</td></tr><tr><td><code>npm run dev:phone</code></td><td><code>https://&lt;PC-IP&gt;:5174</code></td><td>a phone with the live camera (IMEI and barcode scanning); self-signed certificate, accept the warning once</td></tr><tr><td><code>npm run preview</code></td><td><code>http://localhost:4173</code></td><td>check a production build locally</td></tr></tbody></table>
+<h3>A phone on the same Wi-Fi</h3>
+<ol>
+<li>Find the PC's address: <code>ipconfig</code> (the IPv4 address of the Wi-Fi adapter).</li>
+<li>Start <code>npm run dev:lan</code>, or <code>npm run dev:phone</code> when you need the in-page camera.</li>
+<li>On the phone open <code>http://&lt;PC-IP&gt;:5173</code> (or <code>https://&lt;PC-IP&gt;:5174</code>).</li>
+<li>When Windows asks, allow Node on Private networks. If the prompt was dismissed, an administrator PowerShell can open the ports: <code>New-NetFirewallRule -DisplayName "Vite dev (mobileshop)" -Direction Inbound -Protocol TCP -LocalPort 5173,5174 -Action Allow -Profile Private</code></li>
+</ol>
+<p>Only the Vite port needs to be reachable; Vite proxies the API to <code>localhost:8000</code>.</p>
+<aside class="note"><strong>Note:</strong> a phone browser opens the camera inside the page only on https or localhost. On the plain http link Android opens the separate camera app and Chrome may reload the page, and <code>crypto.randomUUID</code> and the clipboard are missing. Use <code>dev:phone</code> for scanning.</aside>
+<h3>The first login</h3>
+<ul>
+<li>With <code>PUBLIC_SIGNUP=true</code>, open <code>http://localhost:5173/signup</code> and create a shop.</li>
+<li>Or use the same command as on a server, which asks for the password without echoing it: <code>.venv\Scripts\python -m app.cli create-owner</code></li>
+<li>Use a number listed in <code>SUPERUSER_PHONES</code> if you want More → Super admin.</li>
+</ul>
+<h3>A demo shop full of sample data</h3>
+<p><code>frontend/scripts/demo-shop.mjs</code> builds a shop with sample data in every module through the real API, so all the business rules apply (ledger, device events, stock batches, verification, price rules).</p>
+<ol>
+<li>Start the backend on port 8000 (with <code>PUBLIC_SIGNUP=true</code>).</li>
+<li>In <code>frontend/</code>: <code>node scripts/demo-shop.mjs</code></li>
+<li>Optional: choose the login with the variables <code>PHONE</code>, <code>PASS</code> and <code>SHOP</code>.</li>
+</ol>
+<aside class="note"><strong>Important:</strong> the script can target another server with <code>API=https://&lt;domain&gt;/api/v1</code>. Only do that with the product owner's permission; it creates a real shop there.</aside>
+<h3>Other scripts in frontend/scripts</h3>
+<table><thead><tr><th>Script</th><th>What it does</th><th>Needs</th></tr></thead><tbody><tr><td><code>landing-assets.mjs</code></td><td>screenshots and the sample video for the landing page, into <code>public/landing/</code></td><td>backend on 8000, frontend on 5173 (ffmpeg optional for MP4)</td></tr><tr><td><code>manual-shots.mjs</code></td><td>user-manual screenshots in English, Urdu and Roman into <code>docs/manual/img/&lt;lang&gt;/</code>; <code>ONLY=name1,name2</code> retakes some</td><td>backend and frontend running</td></tr><tr><td><code>manual-admin-shots.mjs</code></td><td>super-admin and provider-console screenshots</td><td>backend and frontend; <code>SUPER_PHONE</code> and <code>SUPER_PASS</code> for a number in <code>SUPERUSER_PHONES</code></td></tr><tr><td><code>manual-pdf.mjs</code></td><td>turns <code>docs/manual/*.md</code> into print HTML and A4 PDFs; <code>node scripts/manual-pdf.mjs developer-en</code> builds just this book</td><td>Playwright Chromium</td></tr></tbody></table>
+<h2 id="c5">5. Configuration</h2>
+<p>All backend settings are read by <code>backend/app/core/config.py</code> (pydantic-settings) from environment variables or from a <code>.env</code> file in the backend's working folder. Names are not case-sensitive. On the server, <code>/opt/mobileshop/.env</code> feeds <code>deploy/docker-compose.yml</code>, which passes a fixed list of variables to the backend container. On the offline Windows version, <code>settings.env</code> in the data folder plays the same role.</p>
+<aside class="note"><strong>Important:</strong> this chapter names variables and shows placeholders only. Never copy a real secret, token, password or server address into documentation, tests or commits.</aside>
+<h3>Backend settings</h3>
+<table><thead><tr><th>Name</th><th>Required</th><th>Example</th><th>What it does</th></tr></thead><tbody><tr><td><code>APP_ENV</code></td><td>no (default <code>dev</code>)</td><td><code>prod</code></td><td><code>dev</code>, <code>test</code> or <code>prod</code>. In <code>prod</code> the app refuses to start with a default or short <code>SECRET_KEY</code> and hides <code>/docs</code>.</td></tr><tr><td><code>DATABASE_URL</code></td><td>no (default SQLite)</td><td><code>sqlite:///./mobile_shop_v2.db</code> or <code>postgresql+psycopg://&lt;user&gt;:&lt;password&gt;@&lt;host&gt;:5432/mobileshop</code></td><td>The database. PostgreSQL needs the <code>postgres</code> extra (psycopg 3).</td></tr><tr><td><code>SECRET_KEY</code></td><td>yes in production</td><td><code>&lt;random 64 hex characters&gt;</code></td><td>Signs the login tokens. At least 32 characters in <code>prod</code>; generate with <code>openssl rand -hex 32</code>.</td></tr><tr><td><code>ACCESS_TOKEN_MINUTES</code></td><td>no (30)</td><td><code>30</code></td><td>Life of an access token.</td></tr><tr><td><code>REFRESH_TOKEN_DAYS</code></td><td>no (30)</td><td><code>30</code></td><td>Life of a refresh token.</td></tr><tr><td><code>CORS_ORIGINS</code></td><td>no</td><td><code>["https://&lt;your-domain&gt;","https://localhost","capacitor://localhost"]</code></td><td>Allowed browser origins, as a JSON list. The Android app needs <code>https://localhost</code> and <code>capacitor://localhost</code>.</td></tr><tr><td><code>WEBAUTHN_RP_ID</code></td><td>no (<code>localhost</code>)</td><td><code>&lt;your-domain&gt;</code></td><td>Passkey (fingerprint login) domain.</td></tr><tr><td><code>WEBAUTHN_ORIGINS</code></td><td>no</td><td><code>https://&lt;your-domain&gt;</code></td><td>Comma-separated full origins allowed for passkeys.</td></tr><tr><td><code>UPLOAD_DIR</code></td><td>no (<code>./uploads</code>)</td><td><code>/data/uploads</code></td><td>Where CNIC photos, device photos, signatures and other uploads are stored.</td></tr><tr><td><code>DEFAULT_LOCALE</code></td><td>no (<code>ur</code>)</td><td><code>ur</code></td><td>Default language for new shops.</td></tr><tr><td><code>TIMEZONE</code></td><td>no (<code>Asia/Karachi</code>)</td><td><code>Asia/Karachi</code></td><td>The shop day and the scheduler's local time.</td></tr><tr><td><code>PUBLIC_SIGNUP</code></td><td>no (<code>false</code>)</td><td><code>false</code></td><td>When <code>false</code>, only the super admin opens shops (ADR-012). <code>true</code> on a development PC and the offline Windows version.</td></tr><tr><td><code>SUPERUSER_PHONES</code></td><td>yes in production</td><td><code>03XXXXXXXXX</code></td><td>Comma-separated login numbers of the product owner; they see More → Super admin and the provider console.</td></tr><tr><td><code>ADMIN_WHATSAPP</code></td><td>no</td><td><code>03XXXXXXXXX</code></td><td>Receives "fee proof submitted", "new shop request" and password-reset requests. Empty = the first super-user number.</td></tr><tr><td><code>WHATSAPP_TOKEN</code></td><td>no</td><td><code>&lt;permanent system-user token&gt;</code></td><td>Meta WhatsApp Cloud API token. With <code>WHATSAPP_PHONE_ID</code>, messages go out by themselves; empty = sent by hand from More → Messages.</td></tr><tr><td><code>WHATSAPP_PHONE_ID</code></td><td>no</td><td><code>&lt;phone number id&gt;</code></td><td>The WhatsApp business number's id from Meta.</td></tr><tr><td><code>WHATSAPP_API_VERSION</code></td><td>no (<code>v21.0</code>)</td><td><code>v21.0</code></td><td>Graph API version. Not passed by the compose file.</td></tr><tr><td><code>WHATSAPP_TEMPLATES</code></td><td>no</td><td><code>{"udhaar_reminder":{"name":"udhaar_reminder_ur","lang":"ur"}}</code></td><td>JSON map from our message keys to approved Meta templates (one body parameter each). Unmapped keys are sent as plain text.</td></tr><tr><td><code>SCHEDULER_ENABLED</code></td><td>no (<code>true</code>)</td><td><code>true</code></td><td>The in-process clock for night reports, reminders and the message queue.</td></tr><tr><td><code>OTP_DEV_ECHO</code></td><td>no (<code>false</code>)</td><td><code>false</code></td><td>Returns OTP codes in the API response, for local tests only. Never <code>true</code> in production.</td></tr><tr><td><code>SIGNUP_OTP</code></td><td>no (<code>false</code>)</td><td><code>false</code></td><td>Public signup must prove the phone number with a WhatsApp code.</td></tr><tr><td><code>SMTP_HOST</code></td><td>no</td><td><code>smtp.gmail.com</code></td><td>Mail server. Empty = emails stay queued in Messages.</td></tr><tr><td><code>SMTP_PORT</code></td><td>no (587)</td><td><code>587</code></td><td>Mail server port.</td></tr><tr><td><code>SMTP_USER</code></td><td>no</td><td><code>&lt;mailbox&gt;</code></td><td>Mail login.</td></tr><tr><td><code>SMTP_PASSWORD</code></td><td>no</td><td><code>&lt;app password&gt;</code></td><td>Mail password (for Gmail, an app password).</td></tr><tr><td><code>SMTP_FROM</code></td><td>no</td><td><code>&lt;sender address&gt;</code></td><td>The From address.</td></tr><tr><td><code>SMTP_STARTTLS</code></td><td>no (<code>true</code>)</td><td><code>true</code></td><td>Use STARTTLS.</td></tr><tr><td><code>ANTHROPIC_API_KEY</code></td><td>no</td><td><code>&lt;your-api-key&gt;</code></td><td>Switches on the AI assistant and photo reading. Empty = the feature says it is not switched on.</td></tr><tr><td><code>AI_MODEL</code></td><td>no (<code>claude-opus-5-5</code>)</td><td><code>claude-opus-5-5</code></td><td>Model for the assistant chat.</td></tr><tr><td><code>AI_VISION_MODEL</code></td><td>no (<code>claude-haiku-5-5</code>)</td><td><code>claude-haiku-5-5</code></td><td>Cheaper model for reading photos.</td></tr><tr><td><code>AI_DAILY_LIMIT</code></td><td>no (200)</td><td><code>200</code></td><td>AI calls per shop per day (chat and photos together).</td></tr><tr><td><code>RENEWAL_PRIVATE_KEY</code></td><td>only on the SaaS server</td><td><code>&lt;private key from keygen&gt;</code></td><td>Signs license and offline renewal keys. Keep it only on the production server.</td></tr><tr><td><code>RENEWAL_PUBLIC_KEY</code></td><td>no (a built-in default)</td><td><code>&lt;public key from keygen&gt;</code></td><td>Checks those keys; every install, including the offline Windows version, carries it.</td></tr><tr><td><code>WEB_DIR</code></td><td>no</td><td><code>C:\Program Files\Mobile Shop\web</code></td><td>When set, the backend also serves the built web app from this folder (used by the offline Windows version).</td></tr><tr><td><code>LOCAL_MODE</code></td><td>no (<code>false</code>)</td><td><code>true</code></td><td>The offline one-PC install: its organisation is plan <code>chain</code> with no expiry.</td></tr><tr><td><code>SAAS_URL</code></td><td>no</td><td><code>https://&lt;your-domain&gt;</code></td><td>Only with <code>LOCAL_MODE</code>: the offline install reports a heartbeat (version, plan end, keys used) to this server when it has internet. Empty = never.</td></tr><tr><td><code>APP_VERSION</code></td><td>no (<code>2.0</code>)</td><td><code>2.1.0</code></td><td>Version sent in that heartbeat.</td></tr></tbody></table>
+<h3>Server .env (deploy/.env.example)</h3>
+<p>These are the keys of <code>/opt/mobileshop/.env</code> on the server. <code>setup-vps.sh</code> creates the file from <code>deploy/.env.example</code> and fills in fresh database and secret passwords.</p>
+<table><thead><tr><th>Name</th><th>Required</th><th>Example</th><th>What it does</th></tr></thead><tbody><tr><td><code>APP_DOMAIN</code></td><td>yes</td><td><code>app.example.com</code></td><td>The app's address. Used for the Traefik route, CORS and passkeys. Its DNS A record points to the server.</td></tr><tr><td><code>POSTGRES_DB</code></td><td>no (<code>mobileshop</code>)</td><td><code>mobileshop</code></td><td>Database name.</td></tr><tr><td><code>POSTGRES_USER</code></td><td>no (<code>mobileshop</code>)</td><td><code>mobileshop</code></td><td>Database user.</td></tr><tr><td><code>POSTGRES_PASSWORD</code></td><td>yes</td><td><code>&lt;openssl rand -hex 24&gt;</code></td><td>Database password; compose refuses to start without it.</td></tr><tr><td><code>SECRET_KEY</code></td><td>yes</td><td><code>&lt;openssl rand -hex 32&gt;</code></td><td>As above; compose refuses to start without it.</td></tr><tr><td><code>WEB_WORKERS</code></td><td>no (2)</td><td><code>2</code></td><td>Number of uvicorn worker processes.</td></tr><tr><td><code>PUBLIC_SIGNUP</code></td><td>no (<code>false</code>)</td><td><code>false</code></td><td>Keep <code>false</code> in production.</td></tr><tr><td><code>SUPERUSER_PHONES</code></td><td>yes</td><td><code>03XXXXXXXXX</code></td><td>The product owner's login number(s).</td></tr><tr><td><code>IMAGE_PREFIX</code></td><td>no</td><td><code>ghcr.io/&lt;owner&gt;/mobile-shop</code></td><td>Where the images come from; <code>-backend</code> and <code>-web</code> are appended.</td></tr><tr><td><code>IMAGE_TAG</code></td><td>set by <code>deploy.sh</code></td><td><code>&lt;git sha&gt;</code></td><td>Which image version runs.</td></tr><tr><td><code>WHATSAPP_TOKEN</code>, <code>WHATSAPP_PHONE_ID</code>, <code>WHATSAPP_TEMPLATES</code></td><td>no</td><td>see above</td><td>Automatic WhatsApp.</td></tr><tr><td><code>RCLONE_REMOTE</code></td><td>no</td><td><code>gdrive-safe:</code></td><td>Read by <code>backup.sh</code> only: copies each night's backup to this rclone remote.</td></tr><tr><td><code>SIGNUP_OTP</code>, <code>OTP_DEV_ECHO</code></td><td>no</td><td><code>false</code>, <code>false</code></td><td>As above.</td></tr><tr><td><code>SMTP_HOST</code>, <code>SMTP_PORT</code>, <code>SMTP_USER</code>, <code>SMTP_PASSWORD</code>, <code>SMTP_FROM</code>, <code>SMTP_STARTTLS</code></td><td>no</td><td>see above</td><td>Email.</td></tr><tr><td><code>ANTHROPIC_API_KEY</code>, <code>AI_MODEL</code>, <code>AI_VISION_MODEL</code>, <code>AI_DAILY_LIMIT</code></td><td>no</td><td>see above</td><td>AI.</td></tr><tr><td><code>ADMIN_WHATSAPP</code></td><td>no</td><td><code>03XXXXXXXXX</code></td><td>As above.</td></tr><tr><td><code>RENEWAL_PRIVATE_KEY</code>, <code>RENEWAL_PUBLIC_KEY</code></td><td>yes for license keys</td><td>from keygen</td><td>As above.</td></tr></tbody></table>
+<p>The compose file sets <code>APP_ENV=prod</code>, <code>DATABASE_URL</code> (built from the <code>POSTGRES_</code> values, host <code>db</code>), <code>CORS_ORIGINS</code> (<code>https://APP_DOMAIN</code> plus the two Capacitor origins), <code>UPLOAD_DIR=/data/uploads</code>, <code>WEBAUTHN_RP_ID</code> and <code>WEBAUTHN_ORIGINS</code> itself.</p>
+<aside class="note"><strong>Note:</strong> the compose file passes only the variables listed in its <code>backend.environment</code> block. <code>SCHEDULER_ENABLED</code>, <code>DEFAULT_LOCALE</code>, <code>TIMEZONE</code>, <code>WHATSAPP_API_VERSION</code> and <code>SAAS_URL</code> are not in that block, so putting them in <code>/opt/mobileshop/.env</code> has no effect until a line is added to <code>deploy/docker-compose.yml</code>. Any new backend variable must be added there too, and to <code>docs/29-OWNER-PENDING.md</code>.</aside>
+<h3>Frontend</h3>
+<table><thead><tr><th>Name</th><th>Required</th><th>Example</th><th>What it does</th></tr></thead><tbody><tr><td><code>VITE_API_URL</code></td><td>no</td><td>empty, or <code>https://&lt;your-domain&gt;</code></td><td>Base address of the API, fixed at build time. Empty = same origin (the dev proxy, the web image and the offline version). The Android build sets it to the live server.</td></tr></tbody></table>
+<h3>Offline Windows version</h3>
+<table><thead><tr><th>Name</th><th>Where</th><th>What it does</th></tr></thead><tbody><tr><td><code>MOBILESHOP_DATA</code></td><td>environment</td><td>Data folder. Default <code>%LOCALAPPDATA%\MobileShop</code>.</td></tr><tr><td><code>MOBILESHOP_PORT</code></td><td>environment</td><td>Port, default <code>8787</code>.</td></tr><tr><td><code>MOBILESHOP_HOST</code></td><td><code>settings.env</code> or environment</td><td><code>0.0.0.0</code> opens the app to phones on the shop's Wi-Fi; default <code>127.0.0.1</code>.</td></tr><tr><td><code>MOBILESHOP_LOG</code></td><td>environment</td><td>Write <code>mobileshop.log</code> also when running from source.</td></tr></tbody></table>
+<p>On first run the launcher writes <code>settings.env</code> with <code>APP_ENV=prod</code>, a random <code>SECRET_KEY</code>, the SQLite path, the upload folder, <code>PUBLIC_SIGNUP=true</code>, <code>LOCAL_MODE=true</code>, <code>SCHEDULER_ENABLED=true</code> and matching CORS and passkey origins. WhatsApp, email and AI keys use the same names as the server and can be added there.</p>
+<h3>GitHub secrets and variables</h3>
+<p>Set them in the repository under Settings → Secrets and variables → Actions.</p>
+<table><thead><tr><th>Name</th><th>Kind</th><th>What it is for</th></tr></thead><tbody><tr><td><code>VPS_HOST</code></td><td>secret</td><td>The server's address for the deploy job.</td></tr><tr><td><code>VPS_USER</code></td><td>secret</td><td>The restricted SSH user, <code>deploy</code>.</td></tr><tr><td><code>VPS_SSH_KEY</code></td><td>secret</td><td>The private SSH key whose public half is in <code>/home/deploy/.ssh/authorized_keys</code>.</td></tr><tr><td><code>APP_URL</code></td><td>variable</td><td><code>https://&lt;your-domain&gt;</code>: the Android build's API address and the final health check after a deploy.</td></tr><tr><td><code>ANDROID_KEYSTORE_BASE64</code></td><td>secret</td><td>The release keystore file, base64-encoded on one line.</td></tr><tr><td><code>ANDROID_KEYSTORE_PASSWORD</code></td><td>secret</td><td>Its password.</td></tr><tr><td><code>ANDROID_KEY_ALIAS</code></td><td>secret</td><td>The key alias, for example <code>mobileshop</code>.</td></tr></tbody></table>
+<p>The deploy job also uses a GitHub environment named <code>production</code>; the image push uses the built-in <code>GITHUB_TOKEN</code>.</p>
+<h2 id="c6">6. The code</h2>
+<h3>Repository layout</h3>
+<table><thead><tr><th>Path</th><th>What it holds</th></tr></thead><tbody><tr><td><code>CLAUDE.md</code></td><td>Project context and the hard rules (read it first).</td></tr><tr><td><code>README.md</code></td><td>Documentation index.</td></tr><tr><td><code>docs/</code></td><td>Living documentation: requirements, architecture, data model, progress, session log, decisions (ADRs), design system, deployment, plans for each programme; <code>docs/guides/</code> and <code>docs/manual/</code> for readers; <code>docs/archive/</code> for the old v1 docs.</td></tr><tr><td><code>backend/</code></td><td>The FastAPI application, migrations and tests.</td></tr><tr><td><code>frontend/</code></td><td>The React app, the Android project, Playwright specs and helper scripts.</td></tr><tr><td><code>deploy/</code></td><td>Compose file, Caddyfile, web image, server scripts and the CI smoke test.</td></tr><tr><td><code>local/</code></td><td>The offline Windows build: <code>build.ps1</code>, <code>mobileshop.spec</code> (PyInstaller), <code>installer.iss</code> (Inno Setup).</td></tr><tr><td><code>.github/workflows/</code></td><td><code>ci.yml</code>, <code>deploy.yml</code>, <code>android.yml</code>, <code>windows.yml</code>.</td></tr><tr><td><code>.claude/skills/</code></td><td>Project skills for AI-assisted sessions: <code>kickoff</code>, <code>handoff</code>, <code>pk-mobile-domain</code>.</td></tr><tr><td><code>legacy/</code></td><td>The v1 prototype, for reference only; never extend it.</td></tr></tbody></table>
+<h3>Backend structure</h3>
+<table><thead><tr><th>Path</th><th>What it holds</th></tr></thead><tbody><tr><td><code>backend/app/main.py</code></td><td><code>create_app()</code>: the production-secret check, CORS, error handlers, <code>/health</code>, the <code>autoprint</code> middleware for print pages, every module's router, and the optional web-app mount (<code>WEB_DIR</code>).</td></tr><tr><td><code>backend/app/cli.py</code></td><td><code>python -m app.cli create-owner</code>: the first login on a server.</td></tr><tr><td><code>backend/app/local.py</code></td><td>The offline Windows launcher.</td></tr><tr><td><code>backend/app/core/config.py</code></td><td>Settings.</td></tr><tr><td><code>backend/app/core/tenancy.py</code></td><td>The current user and shop (<code>Ctx</code>), the <code>DB</code> session dependency, <code>require_cap(...)</code> and the plan gate.</td></tr><tr><td><code>backend/app/core/permissions.py</code></td><td>Roles and capabilities.</td></tr><tr><td><code>backend/app/core/errors.py</code></td><td><code>AppError</code> and its subclasses with a code and English and Urdu messages.</td></tr><tr><td><code>backend/app/core/security.py</code>, <code>ratelimit.py</code>, <code>idempotency.py</code></td><td>Tokens and bcrypt, rate limits, the <code>Idempotency-Key</code> handling for offline documents.</td></tr><tr><td><code>backend/app/core/pk.py</code>, <code>clock.py</code>, <code>periods.py</code></td><td>Pakistani helpers (phone numbers, CNIC, IMEI Luhn), the shop clock, report periods.</td></tr><tr><td><code>backend/app/db/base.py</code></td><td><code>Base</code>, the <code>UUIDPk</code>, <code>Timestamped</code> and <code>ShopScoped</code> mixins, <code>Decimal</code> mapped to <code>Numeric(14,2)</code>.</td></tr><tr><td><code>backend/app/db/models.py</code></td><td>Imports every module's models, so Alembic and the metadata see all tables.</td></tr><tr><td><code>backend/app/db/session.py</code></td><td>Engine, <code>SessionLocal</code>, <code>get_db</code>.</td></tr><tr><td><code>backend/app/seeds/catalogue.py</code></td><td>The shared brands, models, storages and colours.</td></tr></tbody></table>
+<p>Each domain module under <code>backend/app/modules/&lt;name&gt;/</code> usually has <code>models.py</code>, <code>schemas.py</code>, <code>service.py</code> and <code>router.py</code>. Routers stay thin (dependencies, then one service call); every rule lives in <code>service.py</code>, so tests and other services can reuse it.</p>
+<table><thead><tr><th>Module</th><th>Responsibility</th></tr></thead><tbody><tr><td><code>auth</code></td><td>Login, tokens, PIN switch, shops, staff, the business profile.</td></tr><tr><td><code>admin</code></td><td>Super admin: organisations, plans, fees, the provider console, license keys.</td></tr><tr><td><code>plan</code></td><td>Subscription stages, reminders, the clock guard, offline renewal keys.</td></tr><tr><td><code>catalogue</code></td><td>Brands, models, storages, colours, the per-shop model library.</td></tr><tr><td><code>parties</code></td><td>Customers, suppliers, dealers, technicians (repair labs): one khata per person.</td></tr><tr><td><code>ledger</code></td><td>The posting service, account keys and statements.</td></tr><tr><td><code>devices</code></td><td>Phones, tablets and watches: events, state machine, device types and spec keys, pricing, ageing.</td></tr><tr><td><code>verification</code></td><td>ID checks (CNIC, eGadget, PTA) and the signed seller declaration.</td></tr><tr><td><code>purchases</code>, <code>sales</code>, <code>returns</code>, <code>exchanges</code></td><td>The buying, selling, return and exchange documents.</td></tr><tr><td><code>payments</code></td><td>Money in and out, allocation against bills, len-den (<code>purpose = 'lending'</code>) and its due dates.</td></tr><tr><td><code>paymode</code></td><td>Which money account (cash drawer, bank, wallet) a payment lands in, by way of paying.</td></tr><tr><td><code>loans</code></td><td>Phones lent to and borrowed from other shops (amanat).</td></tr><tr><td><code>installments</code></td><td>Qist plans on top of an invoice.</td></tr><tr><td><code>invoices</code></td><td>One read-only list of every bill (sales, purchases, returns, repair jobs) to search and filter.</td></tr><tr><td><code>repairs</code></td><td>Repair jobs, repair labs and dispatches.</td></tr><tr><td><code>accessories</code></td><td>Counted items with purchase batches and price tiers.</td></tr><tr><td><code>units</code></td><td>Unit-wise money, derived: what one phone cost, sold for and still owes, per phone and per person.</td></tr><tr><td><code>expenses</code></td><td>Expenses and day close.</td></tr><tr><td><code>reports</code>, <code>shopaudit</code>, <code>exports</code>, <code>bulk</code></td><td>Reports, the read-only Shop Audit, CSV and Excel exports, bulk Excel import.</td></tr><tr><td><code>barcodes</code>, <code>labels</code></td><td>Barcodes assigned at purchase; label and repair-sticker print pages.</td></tr><tr><td><code>notifications</code>, <code>otp</code></td><td>The message queue, WhatsApp and email providers, the scheduler and its jobs; OTP codes.</td></tr><tr><td><code>ai</code></td><td>The assistant (read-only, shop-scoped tools) and photo reading.</td></tr><tr><td><code>attendance</code>, <code>audit</code></td><td>Staff attendance (hazri) and activity; the audit log.</td></tr><tr><td><code>files</code>, <code>fingerprint</code>, <code>public</code></td><td>Uploads; fingerprint login (app device keys and website passkeys); routes without login (plans and prices for the landing page, the "open a shop for me" request, the offline-install heartbeat).</td></tr></tbody></table>
+<h3>Frontend structure</h3>
+<table><thead><tr><th>Path</th><th>What it holds</th></tr></thead><tbody><tr><td><code>frontend/src/main.tsx</code></td><td>Providers: TanStack Query (with a persisted cache), i18n, router.</td></tr><tr><td><code>frontend/src/app/router.tsx</code></td><td>All routes.</td></tr><tr><td><code>frontend/src/app/Shell.tsx</code></td><td>Header, bottom tabs on a phone, side menu with F-keys on a laptop.</td></tr><tr><td><code>frontend/src/components/</code></td><td>Shared design-system pieces: <code>Bilingual.tsx</code> (<code>BiLabel</code>, <code>BiButton</code>, <code>BiInput</code> and friends), <code>ui.tsx</code> (page header, sheets, lists, money text, chips, sections), <code>Help.tsx</code> (the "?" sheets), pickers, scanners, <code>PlanReminders.tsx</code>, <code>ModuleGate.tsx</code>, <code>charts/</code> (in-house SVG).</td></tr><tr><td><code>frontend/src/features/&lt;module&gt;/</code></td><td>Pages per module: <code>counter</code> (home, hisaab, khata), <code>sale</code>, <code>purchase</code>, <code>stock</code>, <code>parties</code>, <code>payments</code>, <code>repairs</code>, <code>accessories</code>, <code>audit</code>, <code>reports</code>, <code>more</code> (settings, staff, bulk, profile), <code>admin</code>, <code>landing</code> and others.</td></tr><tr><td><code>frontend/src/lib/api.ts</code></td><td>Fetch wrapper: auth header, <code>X-Shop-Id</code>, token refresh, <code>ApiError</code>.</td></tr><tr><td><code>frontend/src/lib/queries.ts</code></td><td>Query hooks; keys start with the active shop id.</td></tr><tr><td><code>frontend/src/lib/format.ts</code></td><td><code>formatMoney</code> and <code>withCur</code> (the only way to write money), dates.</td></tr><tr><td><code>frontend/src/lib/offline.ts</code>, <code>outbox.ts</code></td><td>Cached reads and the outbox of documents sent with an <code>Idempotency-Key</code>.</td></tr><tr><td><code>frontend/src/lib/draft.ts</code>, <code>id.ts</code>, <code>scanner.ts</code>, <code>scan.ts</code></td><td>Form drafts that survive a reload, ids without <code>crypto.randomUUID</code>, the hardware-scanner listener, camera scanning.</td></tr><tr><td><code>frontend/src/i18n/index.ts</code></td><td>i18next setup and <code>setLocale()</code>.</td></tr><tr><td><code>frontend/src/i18n/locales/</code></td><td><code>en.json</code>, <code>ur.json</code>, <code>roman.json</code>, with the same keys in all three.</td></tr><tr><td><code>frontend/src/index.css</code></td><td>Design tokens (CSS variables) per look and theme.</td></tr><tr><td><code>frontend/e2e/</code></td><td>Playwright specs and <code>fixtures/</code> (barcode images, a fake camera stream).</td></tr></tbody></table>
+<h3>Languages and i18n</h3>
+<ul>
+<li>The UI shows one language at a time: Urdu mode is only Urdu (Nastaliq, right to left), English mode only English, Roman Urdu mode only Roman. Never stack English and Urdu labels.</li>
+<li>Every visible string is a key present in all three files. Labels take a key, never a literal sentence.</li>
+<li>Numbers are always Latin digits. Wrap them in the <code>.num</code> class or use the money components, because Nastaliq draws 0 as a dot.</li>
+<li>Use logical layout classes (<code>text-start</code>, <code>ps-</code>, <code>me-</code>, <code>start-</code>) so screens mirror correctly in Urdu.</li>
+<li>Server errors carry <code>message_en</code> and <code>message_ur</code>; the app shows the one for the current language (Roman mode shows English).</li>
+<li>Printed documents and notifications follow <code>shops.default_locale</code>, overridable with <code>?lang=en</code> or <code>?lang=ur</code>.</li>
+<li>Never turn a key that is a namespace object into a string (that once wiped a whole group of labels); pick a new name instead.</li>
+</ul>
+<h3>Help terms</h3>
+<p>Every field, tab and card that needs explaining gets a "?" through the one <code>Help</code> component (ADR-043, <code>docs/33-HELP-EVERYWHERE-PLAN.md</code>). The texts live under <code>help.</code> in the locale files, each term with a title, an explanation and an example in all three languages. <code>frontend/src/components/Help.test.ts</code> scans the code for every term used and fails if one lacks a language or the example.</p>
+<h3>Design system</h3>
+<p>The approved design is "Dukaan counter" (<code>docs/11-DESIGN-SYSTEM.md</code>), with the default look "Modern" (ADR-011). Build new screens only from the existing components on the CSS tokens in <code>index.css</code>. Every action looks like a button and has an icon with words (lucide icons, never emoji); no default-blue buttons and no bare white cards; tap targets at least 44 px and main actions 56 to 64 px; at most three steps for daily jobs; never colour alone for meaning. Phone and laptop use the same components. Charts are in-house SVG, with no chart library.</p>
+<h2 id="c7">7. Database and migrations</h2>
+<h3>One schema, two databases</h3>
+<p>The same SQLAlchemy models run on PostgreSQL 16 (production and CI) and SQLite (a development PC, the offline Windows version, the unit tests). Alembic migrations live in <code>backend/alembic/versions/</code> (about fifty files, one chain). <code>backend/alembic/env.py</code> takes the database address from the app's settings and renders batch mode on SQLite (<code>render_as_batch</code>), because SQLite cannot alter most things in place. In production the backend container runs <code>alembic upgrade head</code> every time it starts (see <code>backend/Dockerfile</code>); the offline Windows launcher does the same with its bundled migrations.</p>
+<h3>Useful commands (in backend/)</h3>
+<table><thead><tr><th>Task</th><th>Command</th></tr></thead><tbody><tr><td>Bring the database to the latest version</td><td><code>.venv\Scripts\alembic upgrade head</code></td></tr><tr><td>Show the current version</td><td><code>.venv\Scripts\alembic current</code></td></tr><tr><td>Show the chain</td><td><code>.venv\Scripts\alembic history</code></td></tr><tr><td>Draft a migration from model changes</td><td><code>.venv\Scripts\alembic revision --autogenerate -m "short description"</code></td></tr><tr><td>Undo one step (test the downgrade)</td><td><code>.venv\Scripts\alembic downgrade -1</code></td></tr><tr><td>On the server, check the version</td><td><code>docker compose --env-file .env exec backend alembic current</code></td></tr></tbody></table>
+<h3>How to write a migration</h3>
+<ol>
+<li>Change the model in the module's <code>models.py</code>. A new table uses the <code>UUIDPk</code>, <code>ShopScoped</code> and <code>Timestamped</code> mixins, and money as <code>Mapped[Decimal]</code> (which maps to <code>Numeric(14,2)</code>). A new module's models must be imported in <code>backend/app/db/models.py</code>.</li>
+<li>Bring your database to head first, then autogenerate.</li>
+<li>Review the generated file; it is a draft. Put a one-line docstring on top that says what changed and why.</li>
+<li>Keep <code>op.batch_alter_table(...)</code> blocks; they work on PostgreSQL too.</li>
+<li>Name every constraint, and copy the exact names from <code>upgrade()</code> into <code>downgrade()</code>.</li>
+<li>A new <code>NOT NULL</code> column on an existing table needs a <code>server_default</code>.</li>
+<li>Remove anything autogenerate added that you did not intend.</li>
+<li>Test up, down and up again, on SQLite and, before a release, on PostgreSQL.</li>
+</ol>
+<h3>Additive only</h3>
+<p>Migrations must be additive: add tables, add nullable columns or columns with defaults, add indexes. Never drop or rewrite data that shops have entered, and never edit an existing migration that has reached production. The Shop Audit, bulk Excel, barcodes, accessories, tablets and watches, len-den and repair-lab work were all delivered this way. Derived figures (balances, open len-den, unit-wise money, audit numbers) are computed, not stored.</p>
+<aside class="note"><strong>Note:</strong> SQLite's batch mode rebuilds the table and silently tolerates a wrong constraint name in a downgrade. PostgreSQL does not. A real bug of this kind (an FK named differently in upgrade and downgrade) was caught only by CI's PostgreSQL job.</aside>
+<p><code>backend/tests/test_migrations.py</code> runs <code>alembic upgrade head</code> on an empty SQLite file and checks that it produces exactly the tables and columns of the models; a forgotten migration fails it.</p>
+<h2 id="c8">8. Tests</h2>
+<h3>What CI runs</h3>
+<table><thead><tr><th>Job</th><th>Steps</th></tr></thead><tbody><tr><td>backend</td><td><code>pip install -e ".[dev,postgres]"</code>, <code>ruff check app tests</code>, <code>pytest -q -p no:warnings</code> on SQLite, then <code>alembic upgrade head</code>, <code>alembic downgrade base</code>, <code>alembic upgrade head</code> on PostgreSQL 16</td></tr><tr><td>frontend</td><td><code>npm ci --no-audit --no-fund</code>, <code>npm run typecheck</code>, <code>npm test</code>, <code>npm run build</code></td></tr><tr><td>stack</td><td>builds the production images, runs db, backend and web together, then <code>deploy/ci/smoke.sh</code> (health, the app page, a deep link, signup, the seeded catalogue, a person, a phone, a report)</td></tr></tbody></table>
+<p>Playwright is not run in CI. Run the relevant specs on your PC after any UI change.</p>
+<h3>Backend (in backend/, PYTHONUTF8=1)</h3>
+<table><thead><tr><th>Task</th><th>Command</th></tr></thead><tbody><tr><td>Lint, exactly as CI</td><td><code>.venv\Scripts\ruff check app tests</code></td></tr><tr><td>Auto-fix lint (import order and similar)</td><td><code>.venv\Scripts\ruff check app tests --fix</code></td></tr><tr><td>All tests</td><td><code>.venv\Scripts\pytest -q</code></td></tr><tr><td>One file</td><td><code>.venv\Scripts\pytest -q tests/test_ledger.py</code></td></tr><tr><td>Tests whose name matches</td><td><code>.venv\Scripts\pytest -q -k "lending"</code></td></tr><tr><td>Stop at the first failure, rerun the last failures</td><td><code>.venv\Scripts\pytest -q -x --lf</code></td></tr></tbody></table>
+<p>The tests use an in-memory SQLite database with a fresh schema, and <code>conftest.py</code> switches public signup on, so they do not need <code>backend/.env</code>. Useful fixtures in <code>backend/tests/conftest.py</code>: <code>client</code>, <code>db</code>, <code>owner</code> (a signed-up shop whose <code>.get/.post/.patch/.put/.delete</code> send the token and <code>X-Shop-Id</code>), <code>other_owner</code> (a second shop for leakage tests) and <code>cat</code> (the seeded catalogue). Property tests use hypothesis (for example, debits equal credits for any sequence of documents). IMEIs in tests must pass the Luhn check, for example <code>490154203237518</code> or <code>356938035643809</code>.</p>
+<p>To run the same tests on PostgreSQL, point <code>TEST_DATABASE_URL</code> at a disposable database (all tables are dropped and recreated):</p>
+<ol>
+<li>In PowerShell: <code>$env:TEST_DATABASE_URL = "postgresql+psycopg://ms:&lt;local-password&gt;@localhost:5432/ms_test"</code></li>
+<li>Run: <code>.venv\Scripts\pytest -q</code></li>
+<li>Clear it afterwards: <code>Remove-Item Env:TEST_DATABASE_URL</code></li>
+</ol>
+<p>To repeat CI's migration check on PostgreSQL, set <code>DATABASE_URL</code> the same way and run <code>alembic upgrade head</code>, <code>alembic downgrade base</code> and <code>alembic upgrade head</code>.</p>
+<h3>Frontend (in frontend/)</h3>
+<table><thead><tr><th>Task</th><th>Command</th></tr></thead><tbody><tr><td>Type check (strict)</td><td><code>npm run typecheck</code></td></tr><tr><td>Unit tests (Vitest, jsdom)</td><td><code>npm test</code></td></tr><tr><td>Unit tests in watch mode</td><td><code>npm run test:watch</code></td></tr><tr><td>One test file</td><td><code>npx vitest run src/lib/scan.test.ts</code></td></tr><tr><td>Production build</td><td><code>npm run build</code></td></tr></tbody></table>
+<p>The unit tests include the money format, scanners, the theme, the bilingual primitives and <code>Help.test.ts</code> (every "?" term has all three languages and an example).</p>
+<h3>End-to-end (Playwright)</h3>
+<p>The specs in <code>frontend/e2e/</code> run in one project at phone size (a Pixel 7 profile); laptop checks set their own viewport inside the spec. They need:</p>
+<ul>
+<li>the backend on port 8000 with <code>PUBLIC_SIGNUP=true</code> (specs sign up throwaway shops with random numbers);</li>
+<li><code>03990000099</code> in <code>SUPERUSER_PHONES</code> for the super-admin specs (<code>admin</code>, <code>admin-access</code>, <code>fees</code>, <code>plans</code>, <code>plan-reminders</code>, <code>modules</code>, <code>provider-console</code>, <code>landing</code>);</li>
+<li><code>OTP_DEV_ECHO=true</code> for <code>otp.spec.ts</code>, and a renewal key pair for <code>provider-console.spec.ts</code>;</li>
+<li>the frontend on port 5173; Playwright starts <code>npm run dev</code> itself or reuses a running one.</li>
+</ul>
+<table><thead><tr><th>Task</th><th>Command</th></tr></thead><tbody><tr><td>All specs</td><td><code>npm run e2e</code></td></tr><tr><td>One file</td><td><code>npx playwright test e2e/crud.spec.ts</code></td></tr><tr><td>By test title</td><td><code>npx playwright test -g "bill number"</code></td></tr><tr><td>Watch the browser</td><td><code>npx playwright test --headed</code></td></tr><tr><td>Open the report after a failure</td><td><code>npx playwright show-report</code></td></tr></tbody></table>
+<p><code>e2e/urdu.spec.ts</code> fails when English words leak into Urdu mode; run it after any screen change. <code>scan-live.spec.ts</code> feeds Chrome a fake camera from <code>e2e/fixtures/label-live.mjpeg</code>. Do not run two heavy Playwright suites on one PC at the same time. If <code>admin.spec.ts</code> times out in a full run, run it alone before investigating; it is a known flake under load.</p>
+<h3>Manual checks</h3>
+<p>Some things only a person can check: printing on a real 58 mm thermal printer, Urdu rendering on an Android phone, a real barcode scanner (<code>docs/23-BARCODES-PLAN.md</code>), live camera scanning on HTTPS. The full manual test plan is <code>docs/14-MANUAL-TEST-PLAN.md</code>; the owner's open test list is in <code>docs/29-OWNER-PENDING.md</code>.</p>
+<h2 id="c9">9. Rules every change must follow</h2>
+<p>These come from <code>CLAUDE.md</code> and the decisions in <code>docs/10-DECISIONS.md</code>. They are not optional.</p>
+<h3>Money</h3>
+<ul>
+<li>Money is never a float. The database uses <code>Numeric(14,2)</code>, Python uses <code>Decimal</code>, built from strings, never from floats.</li>
+<li>Round with <code>money()</code> from <code>backend/app/modules/ledger/service.py</code> (two places, half up).</li>
+<li>The API sends money as strings with two decimals; tests compare strings.</li>
+<li>The currency is PKR. The frontend writes money only through <code>formatMoney</code> or <code>withCur</code> from <code>lib/format.ts</code>, never a literal "Rs.". Server totals are the authority; client arithmetic is only for live previews.</li>
+</ul>
+<h3>Tenancy</h3>
+<ul>
+<li>Every tenant-owned table has <code>shop_id</code>, and every query filters by the current shop (<code>ctx.shop_id</code>).</li>
+<li>Load by id and shop; a row from another shop is "not found".</li>
+<li>Every id that arrives from the client (a party, a device, an account) must be checked to belong to the same shop.</li>
+<li>Shared rows (the seeded catalogue, built-in expense categories) have <code>shop_id</code> empty and are read together with the shop's own rows; shops may edit only their own.</li>
+<li>Every new endpoint gets a leakage test with <code>owner</code> and <code>other_owner</code>.</li>
+</ul>
+<h3>The ledger and device events</h3>
+<ul>
+<li>The ledger is append-only. All money goes through <code>post(...)</code> in the ledger service, which refuses unbalanced groups. Never update or delete a <code>ledger_entries</code> row.</li>
+<li>Balances are derived, never typed in. A correction is a reversing group (<code>reverse(...)</code>) plus, if needed, a new posting.</li>
+<li>Balance sign: positive means the person owes the shop ("lena hai"), negative means the shop owes the person ("dena hai").</li>
+<li>Every device change is a new <code>device_events</code> row written through <code>apply_event(...)</code> in <code>backend/app/modules/devices/service.py</code>. Illegal transitions raise an error from the state machine. A phone bought again keeps its one <code>devices</code> row.</li>
+<li>Documents post their ledger entries and device events in one database transaction.</li>
+</ul>
+<h3>Errors</h3>
+<p>Raise the <code>AppError</code> subclasses from <code>backend/app/core/errors.py</code> (<code>NotFound</code>, <code>Conflict</code>, <code>ValidationFailed</code> and others) with a stable <code>code</code> and messages in English and Urdu. The response shape is <code>{"error": {"code", "message_en", "message_ur", "details"}}</code>.</p>
+<h3>Language and UI</h3>
+<ul>
+<li>One language at a time; never stack English and Urdu.</li>
+<li>Every string in <code>en.json</code>, <code>ur.json</code> and <code>roman.json</code>; no hard-coded text.</li>
+<li>Latin digits always. Shop words, not accounting words (udhaar, lena and dena, "stock daalein", "ID card check").</li>
+<li>Every "?" help term has a title, an explanation and an example in all three languages.</li>
+<li>New screens only from the design-system components; the UI must feel premium and modern (no emoji icons, no default-blue buttons, no bare white cards).</li>
+</ul>
+<h3>Programme-specific rules</h3>
+<p>Several areas have their own plan document and rules; read the plan before touching that code. Examples: the Shop Audit is read-only and every figure must be traceable (<code>docs/17-SHOP-AUDIT-PLAN.md</code>); bulk import only calls the existing services and previews before writing (<code>docs/18-BULK-EXCEL-PLAN.md</code>); a barcode is assigned in the purchase transaction and never changes (<code>docs/23-BARCODES-PLAN.md</code>); accessories stock moves through batches, oldest first (<code>docs/25-ACCESSORIES-PLAN.md</code>); <code>devices.category</code> is the only device type (<code>docs/27-TABLETS-WATCHES-PLAN.md</code>); len-den is a payment with <code>purpose = 'lending'</code> (<code>docs/32-LENDING-PLAN.md</code>); a lab's charge is booked on return and the repair sticker never prints the screen lock (<code>docs/34-REPAIR-LABS-PLAN.md</code>). <code>CLAUDE.md</code> lists all of them.</p>
+<h3>Tests and docs</h3>
+<ul>
+<li>Business logic (ledger, balances, the device state machine, tax, numbering, tenancy) gets backend tests before the UI. Run the tests before committing.</li>
+<li>Stale docs are bugs. At the end of a piece of work, update <code>docs/06-PROGRESS.md</code>, append an entry to <code>docs/09-SESSION-LOG.md</code> (date, what was done, what was verified, what is next, open questions), add an ADR to <code>docs/10-DECISIONS.md</code> when a design decision was made, and keep <code>docs/04-DATA-MODEL.md</code> in step with the schema.</li>
+<li>Every new environment variable, server command or manual test step goes into <code>docs/29-OWNER-PENDING.md</code>, and every new backend variable into the compose file.</li>
+</ul>
+<h2 id="c10">10. Making a change</h2>
+<h3>Before you start</h3>
+<ol>
+<li>Read <code>docs/06-PROGRESS.md</code> (what is done, in progress and next).</li>
+<li>Read the last entry of <code>docs/09-SESSION-LOG.md</code> (where the last session stopped and its open questions).</li>
+<li>For business rules, read the relevant section of <code>docs/02-FUNCTIONAL-REQUIREMENTS.md</code> and the plan document for that area.</li>
+<li>Only then read the code you need. Do not re-audit the whole repository, and do not extend <code>legacy/</code>.</li>
+</ol>
+<p>With Claude Code, the project skills <code>/kickoff</code> and <code>/handoff</code> walk through the start and the end of a session.</p>
+<h3>A change from end to end</h3>
+<ol>
+<li>Model and a reviewed migration (chapter 7).</li>
+<li>Schemas for input and output in <code>schemas.py</code>.</li>
+<li>The rule in <code>service.py</code>: <code>Decimal</code>, shop checks, bilingual errors, ledger postings and device events through their services, one commit at the end.</li>
+<li>The route in <code>router.py</code> with the right dependency (<code>Ctx</code>, or <code>require_cap(Cap.X)</code>). Put fixed paths before <code>/{id}</code> paths. A new module's router must be added in <code>backend/app/main.py</code>. Restart uvicorn.</li>
+<li>Backend tests, including a tenancy test; <code>ruff</code> clean.</li>
+<li>The frontend: a hook in <code>lib/queries.ts</code> or the generic hooks, the type in <code>lib/types.ts</code>, the screen from design-system components.</li>
+<li>Keys in <code>en.json</code>, <code>ur.json</code> and <code>roman.json</code>; help terms if the field needs a "?".</li>
+<li>A Playwright spec, then <code>e2e/urdu.spec.ts</code>; look at the Urdu screen.</li>
+<li>Docs: data model, progress, session log, an ADR if a decision was made, the owner's pending list if something must be done on a server.</li>
+</ol>
+<h3>Branches</h3>
+<table><thead><tr><th>Branch</th><th>Use</th></tr></thead><tbody><tr><td><code>develop</code></td><td>All work. CI runs on every push.</td></tr><tr><td><code>main</code></td><td>Releases only. Every push to <code>main</code> deploys to production.</td></tr></tbody></table>
+<p>Do not push unless the owner asks. A release means merging <code>develop</code> into <code>main</code> and pushing <code>main</code>, and only the owner decides when. Open a pull request from <code>develop</code> to <code>main</code>, let CI pass, then merge; or, when the owner has said so, merge and push by hand:</p>
+<ol>
+<li><code>git checkout main</code></li>
+<li><code>git pull</code></li>
+<li><code>git merge develop</code></li>
+<li><code>git push origin main</code></li>
+<li><code>git checkout develop</code></li>
+</ol>
+<h3>Commits</h3>
+<ul>
+<li>The only commit author is <code>Abdur Rehman Afzal &lt;abdurrehmanafzal786@gmail.com&gt;</code>; the repository-local git config is already set. The project rule in <code>CLAUDE.md</code> forbids <code>Co-Authored-By</code> lines, "Generated with" lines or any AI attribution in commits, pull requests or files.</li>
+<li>Use short conventional messages that describe the visible result, for example <code>feat(repairs): ...</code>, <code>fix: ...</code>, <code>docs: session log - ...</code>, <code>ci: ...</code>, <code>style: ...</code>.</li>
+<li>Keep commits small, with tests green before each one.</li>
+</ul>
+<h3>What happens after a push</h3>
+<table><thead><tr><th>Event</th><th>Workflow</th><th>Result</th></tr></thead><tbody><tr><td>Push to <code>develop</code>, or any pull request</td><td><code>ci.yml</code></td><td>backend, frontend and stack jobs</td></tr><tr><td>Push to <code>main</code>, or Actions → Deploy → Run workflow</td><td><code>deploy.yml</code></td><td>CI, then the Android APK (<code>android.yml</code>), then the backend and web images pushed to <code>ghcr.io</code> (tagged with the commit and <code>latest</code>), then SSH to the server and <code>deploy.sh &lt;commit&gt;</code>, then a check of <code>APP_URL/health</code></td></tr><tr><td>Actions → Android → Run workflow</td><td><code>android.yml</code></td><td>an APK as a build artifact</td></tr><tr><td>Push to <code>main</code> touching <code>local/</code>, <code>backend/</code> or <code>frontend/</code>, or Actions → Windows → Run workflow</td><td><code>windows.yml</code></td><td><code>MobileShop-Setup-&lt;version&gt;.exe</code> as a build artifact</td></tr></tbody></table>
+<p>The site is deployed even if the APK build fails; the new web image then has no APK, so <code>/app.apk</code> returns 404 until the next successful release.</p>
+<h2 id="c11">11. Production setup on a VPS</h2>
+<h3>How production is arranged</h3>
+<p>The production stack (<code>deploy/docker-compose.yml</code>, Compose project name <code>mobileshop</code>) has three containers:</p>
+<table><thead><tr><th>Container</th><th>Image</th><th>Role</th></tr></thead><tbody><tr><td><code>db</code></td><td><code>postgres:16-alpine</code></td><td>The database, volume <code>mobileshop_pgdata</code>, only on the stack's internal network.</td></tr><tr><td><code>backend</code></td><td><code>&lt;IMAGE_PREFIX&gt;-backend:&lt;tag&gt;</code> from <code>backend/Dockerfile</code></td><td>FastAPI; runs <code>alembic upgrade head</code> and then uvicorn on port 8000; uploads in volume <code>mobileshop_uploads</code>; network alias <code>mobileshop-backend</code>.</td></tr><tr><td><code>web</code></td><td><code>&lt;IMAGE_PREFIX&gt;-web:&lt;tag&gt;</code> from <code>deploy/web.Dockerfile</code></td><td>Caddy on port 80 with the built React app (and <code>/app.apk</code> when the release built one); passes <code>/api</code> and <code>/health</code> to the backend.</td></tr></tbody></table>
+<p>The stack opens no ports on the server. HTTPS and routing come from a Traefik that already runs on the server: the <code>web</code> container joins the external Docker network <code>n8n_default</code> and carries Traefik labels for <code>Host(APP_DOMAIN)</code> on the entrypoints <code>websecure</code> (TLS with the certificate resolver <code>mytlschallenge</code>) and <code>web</code> (redirect to HTTPS). Releases are deployed by GitHub Actions over SSH as a restricted <code>deploy</code> user that may run exactly one command, <code>/opt/mobileshop/deploy.sh &lt;tag&gt;</code>.</p>
+<p>Caddy adds HSTS, <code>nosniff</code>, frame and referrer policies, allows the camera only for this site, and limits uploads to 10 MB. With <code>APP_ENV=prod</code> the backend refuses a weak <code>SECRET_KEY</code> and hides <code>/docs</code>.</p>
+<h3>Step 1: prepare a fresh server</h3>
+<p>On a new Ubuntu or Debian VPS, as root:</p>
+<ol>
+<li>Update the system: <code>apt update &amp;&amp; apt upgrade -y</code></li>
+<li>Install the basic tools: <code>apt install -y git curl openssl cron</code></li>
+<li>Install Docker Engine with the Compose plugin: <code>curl -fsSL https://get.docker.com | sh</code></li>
+<li>Check: <code>docker compose version</code></li>
+<li>Create the deploy user if the server does not already have one: <code>adduser --disabled-password --gecos "" deploy</code></li>
+<li>Create its SSH folder: <code>install -d -m 700 -o deploy -g deploy /home/deploy/.ssh</code></li>
+</ol>
+<h3>Step 2: make sure Traefik is there</h3>
+<p>The compose file expects what the owner's server already has. On a fresh server you must provide it:</p>
+<ul>
+<li>a Docker network named <code>n8n_default</code> (create it with <code>docker network create n8n_default</code> if it does not exist);</li>
+<li>a Traefik container on that network, publishing ports 80 and 443, with the Docker provider switched on, an entrypoint named <code>web</code> on port 80, an entrypoint named <code>websecure</code> on port 443, and a Let's Encrypt certificate resolver named <code>mytlschallenge</code> using the TLS challenge.</li>
+</ul>
+<p>If you run a different proxy, or Traefik with other names, change the network name and the <code>traefik.</code> labels of the <code>web</code> service in <code>deploy/docker-compose.yml</code> to match, in the repository (the server copy is replaced on each deploy).</p>
+<aside class="note"><strong>Note:</strong> <code>setup-vps.sh</code> stops with an error if the <code>deploy</code> user or the <code>n8n_default</code> network is missing.</aside>
+<h3>Step 3: the domain</h3>
+<ol>
+<li>Choose the address, for example <code>shop.&lt;your-domain&gt;</code>.</li>
+<li>At your DNS provider, add an A record for it pointing to the server's public IP address.</li>
+<li>Wait until <code>ping &lt;your-app-domain&gt;</code> answers from the server's address.</li>
+</ol>
+<h3>Step 4: install the stack files</h3>
+<p>As root on the server:</p>
+<ol>
+<li>Get the repository: <code>git clone --depth 1 https://github.com/AbdurRehmanAfzal/mobile-shop-software.git /tmp/ms</code></li>
+<li>Run the one-time setup: <code>bash /tmp/ms/deploy/setup-vps.sh</code></li>
+</ol>
+<p>The script creates <code>/opt/mobileshop</code> with <code>docker-compose.yml</code>, <code>deploy.sh</code> and <code>backup.sh</code>; creates <code>/opt/mobileshop/.env</code> (mode 600) from <code>deploy/.env.example</code> with a fresh <code>POSTGRES_PASSWORD</code> and <code>SECRET_KEY</code>; adds the sudoers rule <code>/etc/sudoers.d/mobileshop-deploy</code> that lets <code>deploy</code> run only <code>/opt/mobileshop/deploy.sh</code>; and installs a cron job at 02:30 for the nightly backup.</p>
+<h3>Step 5: fill in the server .env</h3>
+<ol>
+<li>Open it: <code>nano /opt/mobileshop/.env</code></li>
+<li>Set <code>APP_DOMAIN</code> to the address from step 3.</li>
+<li>Set <code>SUPERUSER_PHONES</code> to the product owner's login number.</li>
+<li>If you use a fork, set <code>IMAGE_PREFIX</code> to <code>ghcr.io/&lt;your-github-user-in-lowercase&gt;/mobile-shop</code>.</li>
+<li>Leave the optional keys (WhatsApp, SMTP, AI, rclone) empty for now; chapter 5 explains each one.</li>
+</ol>
+<aside class="note"><strong>Important:</strong> <code>/opt/mobileshop/.env</code> holds the database password and the token secret. Never commit it, paste it into chat or copy it into documentation.</aside>
+<h3>Step 6: access to the images</h3>
+<p>The images are on GitHub's registry. If the packages are private, log in on the server once with a GitHub personal access token that has <code>read:packages</code>: <code>docker login ghcr.io -u &lt;github-user&gt;</code></p>
+<h3>Step 7: connect GitHub Actions</h3>
+<ol>
+<li>On your own PC, make a key pair for the deploy job: <code>ssh-keygen -t ed25519 -f ~/.ssh/mobileshop_deploy -C deploy@github</code></li>
+<li>Add the public half (<code>mobileshop_deploy.pub</code>) to <code>/home/deploy/.ssh/authorized_keys</code> on the server, owned by <code>deploy</code> with mode 600.</li>
+<li>In the GitHub repository, add the secrets <code>VPS_HOST</code> (the server's address), <code>VPS_USER</code> (<code>deploy</code>) and <code>VPS_SSH_KEY</code> (the whole private key file).</li>
+<li>Add the repository variable <code>APP_URL</code> = <code>https://&lt;your-app-domain&gt;</code>.</li>
+<li>Add the Android signing secrets (chapter 12) if you want a release-signed APK.</li>
+</ol>
+<aside class="note"><strong>Note:</strong> if you deploy a fork, also change the repository address in <code>deploy/deploy.sh</code> (the <code>RAW=</code> line). Each deploy downloads <code>docker-compose.yml</code>, <code>backup.sh</code> and <code>deploy.sh</code> of that exact commit from the repository, so changes to them reach the server.</aside>
+<h3>Step 8: the first release</h3>
+<ol>
+<li>Merge <code>develop</code> into <code>main</code> and push, or run Actions → Deploy → Run workflow.</li>
+<li>On the server, follow the backend log: <code>docker compose -f /opt/mobileshop/docker-compose.yml logs -f backend</code></li>
+<li><code>deploy.sh</code> pulls the images (retrying up to four times), starts the stack, waits for <code>/health</code> and writes the tag to <code>/opt/mobileshop/.current-tag</code>. If the new version is not healthy it prints the backend log and goes back to the previous tag.</li>
+<li>The first request on a new domain makes Traefik fetch the certificate; for a minute HTTPS may fail. The workflow's final check retries for two minutes.</li>
+</ol>
+<h3>Step 9: the first login and the keys</h3>
+<p>Public signup is off in production, so the first account is made on the server. The command asks for the shop, name, number and a password that is not echoed:</p>
+<ol>
+<li><code>cd /opt/mobileshop</code></li>
+<li><code>docker compose --env-file .env exec backend python -m app.cli create-owner</code></li>
+<li>Use the number that is in <code>SUPERUSER_PHONES</code>, then open <code>https://&lt;your-app-domain&gt;</code>, log in, and open customer shops from More → Super admin.</li>
+</ol>
+<p>Make the production key pair for license and renewal keys once:</p>
+<ol>
+<li><code>docker compose --env-file .env exec backend python -m app.modules.plan.renewal keygen</code></li>
+<li>Paste both printed lines (<code>RENEWAL_PRIVATE_KEY=</code> and <code>RENEWAL_PUBLIC_KEY=</code>) into <code>/opt/mobileshop/.env</code>.</li>
+<li>Restart the backend: <code>docker compose --env-file .env up -d backend</code></li>
+</ol>
+<p>Keep the private key only on this server. The public key goes into every install, including the offline Windows build. Then, in the app as super admin, replace the billing placeholders under More → Super admin → Fees → Billing settings (bank, wallets, support numbers); the checklist is <code>docs/21-OWNER-SETUP-CHECKLIST.md</code>.</p>
+<h3>Step 10: optional services</h3>
+<ul>
+<li><strong>WhatsApp:</strong> in Meta Business, add a business number, note its Phone number ID and make a permanent system-user token with <code>whatsapp_business_messaging</code>. Put <code>WHATSAPP_TOKEN</code> and <code>WHATSAPP_PHONE_ID</code> in <code>.env</code>. Messages the shop starts (reminders, receipts, the night report) need approved templates, mapped in <code>WHATSAPP_TEMPLATES</code>. Restart the backend.</li>
+<li><strong>Email:</strong> set the <code>SMTP_</code> keys and restart the backend.</li>
+<li><strong>AI:</strong> set <code>ANTHROPIC_API_KEY</code> (and optionally <code>AI_DAILY_LIMIT</code>) and restart the backend.</li>
+<li><strong>Old stock without barcodes</strong> (only on a server that has data from before barcodes existed): <code>docker compose --env-file .env exec backend python -m app.modules.barcodes.backfill</code></li>
+</ul>
+<p>After every <code>.env</code> change: <code>docker compose --env-file .env up -d backend</code></p>
+<h3>Backups</h3>
+<p>The cron job runs <code>/opt/mobileshop/backup.sh</code> at 02:30 and logs to <code>/var/log/mobileshop-backup.log</code>. It writes a <code>pg_dump</code> (custom format) and a tarball of the uploads to <code>/opt/mobileshop-backups</code> and keeps 14 days there. With <code>RCLONE_REMOTE</code> set in <code>.env</code> and rclone installed, it also copies the new files off the server and deletes copies older than 30 days there.</p>
+<p>To set up an encrypted Google Drive copy, as root:</p>
+<ol>
+<li>Install rclone: <code>curl https://rclone.org/install.sh | bash</code></li>
+<li>Run <code>rclone config</code>, add a remote named <code>gdrive</code> of type <code>drive</code>, scope full, and answer "n" to the automatic browser login; run the printed <code>rclone authorize</code> command on your own PC and paste the token back.</li>
+<li>Run <code>rclone config</code> again and add a remote named <code>gdrive-safe</code> of type <code>crypt</code> over <code>gdrive:mobileshop-backups</code>, with standard filename encryption and two strong passwords. Keep both passwords safe; without them the backups cannot be opened. The backups contain CNIC photos, so never skip the encryption.</li>
+<li>Switch it on: <code>echo 'RCLONE_REMOTE=gdrive-safe:' &gt;&gt; /opt/mobileshop/.env</code></li>
+<li>Run it once: <code>/opt/mobileshop/backup.sh</code> (the last line says "offsite copy ok").</li>
+<li>Check: <code>rclone ls gdrive-safe: | tail</code></li>
+</ol>
+<p>To restore a database dump:</p>
+<ol>
+<li><code>cd /opt/mobileshop</code></li>
+<li><code>docker compose exec -T db pg_restore -U mobileshop -d mobileshop --clean &lt; /opt/mobileshop-backups/db-YYYYMMDD-HHMM.dump</code></li>
+</ol>
+<p>Uploads are restored by unpacking the matching <code>uploads-YYYYMMDD-HHMM.tgz</code> into the <code>mobileshop_uploads</code> volume.</p>
+<h3>Day to day on the server</h3>
+<table><thead><tr><th>Task</th><th>Command (in /opt/mobileshop)</th></tr></thead><tbody><tr><td>Status</td><td><code>docker compose ps</code></td></tr><tr><td>Backend log</td><td><code>docker compose logs --tail 100 backend</code></td></tr><tr><td>Web log</td><td><code>docker compose logs --tail 100 web</code></td></tr><tr><td>Version running</td><td><code>cat .current-tag</code></td></tr><tr><td>Database version</td><td><code>docker compose --env-file .env exec backend alembic current</code></td></tr><tr><td>Roll back to an older release</td><td><code>sudo /opt/mobileshop/deploy.sh &lt;older-commit-sha&gt;</code></td></tr><tr><td>Restart the backend after an .env change</td><td><code>docker compose --env-file .env up -d backend</code></td></tr></tbody></table>
+<aside class="note"><strong>Important:</strong> a rollback does not undo migrations. Rolling back across a schema change needs a database restore. Do not touch the production server without the owner's go-ahead.</aside>
+<h3>Running the production stack without CI</h3>
+<p>To try the production images on any machine with Docker (this is what CI's stack job does), from a checkout of the repository:</p>
+<ol>
+<li>Create Traefik's network: <code>docker network create n8n_default</code></li>
+<li>Go to the deploy folder: <code>cd deploy</code></li>
+<li>In Git Bash or Linux, start the stack with test values: <code>APP_DOMAIN=ci.localhost POSTGRES_PASSWORD=&lt;local-only&gt; SECRET_KEY=&lt;local-only-at-least-32-characters&gt; PUBLIC_SIGNUP=true IMAGE_PREFIX=mobileshop-ci IMAGE_TAG=local docker compose -f docker-compose.yml -f ci/compose.ci.yml up -d --build --wait db backend web</code></li>
+<li>The app is at <code>http://localhost:8080</code>. Run the smoke test from the repository root: <code>bash deploy/ci/smoke.sh</code></li>
+</ol>
+<h2 id="c12">12. The Android app and the Windows PC version</h2>
+<h3>The installable web app (PWA)</h3>
+<p>The web app is a PWA (<code>vite-plugin-pwa</code>). The service worker caches only the app shell, never API data or uploads, which are per shop and sensitive. On Android Chrome, open the site and choose Install app. A full install and the offline shell need HTTPS.</p>
+<h3>The Android app</h3>
+<p>The Android app in <code>frontend/android/</code> is a Capacitor 6 shell (app id <code>pk.mobileshop.app</code>) around the same React build, which talks to the cloud API. <code>npm run build:native</code> runs <code>tsc -b</code>, then <code>vite build --mode native</code> (no service worker, so an updated app never shows an older cached version) and <code>cap sync android</code>. The server must allow the origins <code>https://localhost</code> and <code>capacitor://localhost</code> in <code>CORS_ORIGINS</code> (the compose file does this).</p>
+<h3>Build it in GitHub Actions (no Android Studio needed)</h3>
+<p><code>android.yml</code> runs inside every release (called by <code>deploy.yml</code>) or by hand from Actions → Android → Run workflow:</p>
+<ol>
+<li>Version code = minutes since 1970, so every build installs over the previous one; version name = the date plus the short commit.</li>
+<li>Node 22 and Temurin JDK 17; <code>npm ci</code>; <code>npm run build:native</code> with <code>VITE_API_URL</code> = the repository variable <code>APP_URL</code> (the job fails if it is not set).</li>
+<li>With the signing secrets, <code>gradlew assembleRelease</code>; without them, <code>gradlew assembleDebug</code> and a warning (a test APK only).</li>
+<li>The APK is uploaded as the artifact <code>mobile-shop-android-&lt;date&gt;-&lt;commit&gt;</code>, kept 90 days. In a release, the deploy job copies it into the web image, so the latest app is always at <code>https://&lt;your-app-domain&gt;/app.apk</code>; the super-admin page shows that link with Download, WhatsApp and Share buttons.</li>
+</ol>
+<h3>The release key (one time, keep it forever)</h3>
+<p>Every update must be signed with the same key, or phones refuse to install it over the old app. Make it once, on any machine with Docker:</p>
+<ol>
+<li><code>mkdir -p /root/android-key</code></li>
+<li><code>docker run --rm -it -v /root/android-key:/k eclipse-temurin:17-jdk keytool -genkeypair -v -keystore /k/mobileshop-release.jks -alias mobileshop -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=&lt;your company&gt;, O=&lt;your company&gt;, C=PK"</code></li>
+<li>Print it as one base64 line: <code>base64 -w0 /root/android-key/mobileshop-release.jks; echo</code></li>
+<li>In GitHub secrets: <code>ANDROID_KEYSTORE_BASE64</code> (that line), <code>ANDROID_KEYSTORE_PASSWORD</code> (the password you typed), <code>ANDROID_KEY_ALIAS</code> (<code>mobileshop</code>).</li>
+<li>Keep a copy of the <code>.jks</code> file and its password off the server, for example in a password manager. Losing it means the app can never be updated in place.</li>
+</ol>
+<p><code>frontend/android/app/build.gradle</code> reads <code>APP_VERSION_CODE</code>, <code>APP_VERSION_NAME</code>, <code>ANDROID_KEYSTORE_FILE</code>, <code>ANDROID_KEYSTORE_PASSWORD</code>, <code>ANDROID_KEY_ALIAS</code> and, optionally, <code>ANDROID_KEY_PASSWORD</code> (falls back to the keystore password) from the environment.</p>
+<h3>Build it on your own PC</h3>
+<ol>
+<li>Install Android Studio (it brings JDK 17 and the Android SDK).</li>
+<li>In <code>frontend/</code>, set the API address for this build. PowerShell: <code>$env:VITE_API_URL = "https://&lt;your-app-domain&gt;"</code></li>
+<li>Build and sync: <code>npm run build:native</code></li>
+<li>Open the project: <code>npx cap open android</code></li>
+<li>In Android Studio, Build → Generate Signed App Bundle or APK, with the release key.</li>
+<li>Test the APK on a phone; for the Play Store, upload the <code>.aab</code> to an internal testing track first.</li>
+</ol>
+<p>To install an APK by hand, copy it to the phone (or download it from <code>/app.apk</code>), open it and allow "Install unknown apps" once. App icons and the splash screen come from <code>frontend/assets/</code> and are generated with <code>npx @capacitor/assets generate --android</code>.</p>
+<p>In the app, printing and downloads open in Chrome through a two-minute link for that one address (<code>POST /api/v1/auth/link</code>, with <code>autoprint=1</code> for print pages), because the WebView has no print dialog or download manager. iOS would use the same Capacitor project but needs a Mac with Xcode and an Apple developer account; it is not built yet.</p>
+<h3>The Windows PC version (one shop, no internet)</h3>
+<p>For shops without reliable internet, the same backend runs on the shop's PC with SQLite and serves the same web app (ADR-029, <code>docs/15-LOCAL-WINDOWS.md</code>). One shop per install; there is no cloud sync.</p>
+<p>What the shop gets:</p>
+<ul>
+<li><code>MobileShop-Setup-&lt;version&gt;.exe</code> installs to <code>Program Files\Mobile Shop</code>, with Start Menu and Desktop shortcuts and an optional "start with Windows".</li>
+<li><code>MobileShop.exe</code> puts an icon in the tray and opens the browser at <code>http://127.0.0.1:8787</code>. The tray menu has Open Mobile Shop, Backup now, Open data folder and Quit.</li>
+<li>The data lives in <code>%LOCALAPPDATA%\MobileShop</code>: <code>mobileshop.db</code>, <code>uploads\</code>, <code>backups\</code>, <code>settings.env</code> and <code>mobileshop.log</code>. Updates and uninstalls never touch it.</li>
+<li>On first run the shop creates its own account (public signup is on for this one PC). <code>LOCAL_MODE=true</code> makes its organisation plan <code>chain</code> with no expiry.</li>
+<li>Backup now writes <code>backups\mobileshop-&lt;date&gt;.db</code> and a copy on the Desktop. To restore: quit, copy a backup over <code>mobileshop.db</code>, start again.</li>
+<li>Phones on the shop's Wi-Fi can use it after adding <code>MOBILESHOP_HOST=0.0.0.0</code> to <code>settings.env</code> and allowing port 8787 in Windows Firewall; then open <code>http://&lt;PC-IP&gt;:8787</code>.</li>
+</ul>
+<p>How it is built:</p>
+<ul>
+<li><code>backend/app/local.py</code>: the launcher (data folder, <code>settings.env</code>, Alembic <code>upgrade head</code> with the bundled migrations, uvicorn in a thread, the browser, the pystray tray with a console fallback).</li>
+<li><code>WEB_DIR</code>: the backend mounts the built web app (<code>/assets</code> as static files, every other non-API path falls back to <code>index.html</code>).</li>
+<li><code>local/mobileshop.spec</code> (PyInstaller, one folder), <code>local/installer.iss</code> (Inno Setup 6), <code>local/build.ps1</code>.</li>
+<li>The Python extra <code>backend[local]</code>: pyinstaller, pystray, pillow, tzdata.</li>
+</ul>
+<h3>Build the Windows version</h3>
+<p>On a Windows PC with Python 3.12, Node 22 and, for the installer, Inno Setup 6 (<code>iscc</code> on PATH), from the repository root in PowerShell:</p>
+<ol>
+<li>Build: <code>.\local\build.ps1 -Version 2.1.0</code></li>
+<li>The script builds the web app with an empty <code>VITE_API_URL</code> (same origin), makes <code>backend\.venv-local</code> with the <code>local</code> extra, runs PyInstaller into <code>dist\MobileShop\</code>, and with Inno Setup writes <code>dist\MobileShop-Setup-2.1.0.exe</code>.</li>
+<li>Without Inno Setup you still get <code>dist\MobileShop\</code> to zip.</li>
+</ol>
+<p>Or in GitHub: Actions → Windows → Run workflow with a version. The workflow builds on a Windows runner, smoke-tests the bundle (<code>/health</code>, the app page, <code>/api/v1/public/info</code> on port 8790 with a temporary data folder), runs Inno Setup and uploads the artifact <code>MobileShop-Setup</code>.</p>
+<p>To make offline installs accept license and renewal keys from your SaaS server, the build must carry your production <code>RENEWAL_PUBLIC_KEY</code> (add it to the shop's <code>settings.env</code>, or change the default in <code>backend/app/core/config.py</code> before building). To let an offline install report its heartbeat when it has internet, add <code>SAAS_URL=https://&lt;your-app-domain&gt;</code> to its <code>settings.env</code>.</p>
+<h2 id="c13">13. Troubleshooting</h2>
+<table><thead><tr><th>Symptom</th><th>Cause and fix</th></tr></thead><tbody><tr><td><code>UnicodeEncodeError: 'charmap' codec can't encode</code></td><td><code>PYTHONUTF8=1</code> is not set in this terminal.</td></tr><tr><td><code>py -3.12</code> not found, or the wrong Python in the venv</td><td>Install Python 3.12; delete <code>backend/.venv</code> and recreate it with <code>py -3.12 -m venv .venv</code>.</td></tr><tr><td>Signup says it is closed (<code>signup_closed</code>, 403) on your PC</td><td>Add <code>PUBLIC_SIGNUP=true</code> to <code>backend/.env</code> and restart the backend.</td></tr><tr><td>No Super admin under More</td><td>Your login number is not in <code>SUPERUSER_PHONES</code>; add it and restart the backend (on the server: <code>up -d backend</code>).</td></tr><tr><td>A route you just wrote returns 404</td><td>The Windows reloader missed it, or an orphan process holds port 8000. Find it with <code>netstat -ano</code> and the port, stop it with <code>taskkill /PID &lt;pid&gt; /F</code>, and start uvicorn again with <code>--reload-dir app</code>. Also check the router is in <code>main.py</code> and fixed paths come before <code>/{id}</code>.</td></tr><tr><td><code>no such column</code> or <code>table has no column</code></td><td>Run <code>alembic upgrade head</code>. If it still fails, a migration is missing; <code>tests/test_migrations.py</code> will fail too.</td></tr><tr><td>A downgrade fails on PostgreSQL but works on SQLite</td><td>A constraint name differs between <code>upgrade()</code> and <code>downgrade()</code>.</td></tr><tr><td><code>shop_required</code> or <code>shop_forbidden</code> errors</td><td>The user has several shops and the <code>X-Shop-Id</code> header is missing, or the id is not one of theirs.</td></tr><tr><td>The app shows raw keys such as <code>expense.billRef</code></td><td>The key is missing in that locale file, or a namespace object was overwritten with a string.</td></tr><tr><td>English words in Urdu mode</td><td>A hard-coded string or a missing <code>ur.json</code> key; <code>e2e/urdu.spec.ts</code> finds them.</td></tr><tr><td>The phone cannot open <code>http://&lt;PC-IP&gt;:5173</code></td><td>Same Wi-Fi? Started with <code>npm run dev:lan</code>, not <code>npm run dev</code>? Node allowed in Windows Firewall on the Private profile?</td></tr><tr><td>The camera opens the camera app and the form resets</td><td>Use <code>npm run dev:phone</code> (https on 5174); long forms must use <code>useDraft</code>.</td></tr><tr><td><code>admin.spec.ts</code> or another super-admin spec fails</td><td>Check <code>03990000099</code> is in <code>SUPERUSER_PHONES</code>; if it fails only in a full run, run it alone (known flake).</td></tr><tr><td>The backend container will not start in production</td><td><code>docker compose logs --tail 200 backend</code>. A weak or missing <code>SECRET_KEY</code> stops it on purpose; a migration error shows here too.</td></tr><tr><td><code>set POSTGRES_PASSWORD in .env</code> or <code>set APP_DOMAIN in .env</code> from Compose</td><td>The server <code>.env</code> is missing that key, or Compose was run without <code>--env-file .env</code> from <code>/opt/mobileshop</code>.</td></tr><tr><td>A setting in <code>/opt/mobileshop/.env</code> has no effect</td><td>The compose file does not pass that variable to the backend (chapter 5), or the backend was not restarted with <code>up -d backend</code>.</td></tr><tr><td>The deploy job fails with "VPS_SSH_KEY is not a valid private key"</td><td>The secret must hold the whole private key file, including its first and last lines.</td></tr><tr><td>The deploy rolled back by itself</td><td>The new version failed <code>/health</code>. Read the backend log that <code>deploy.sh</code> printed (often a migration error).</td></tr><tr><td><code>could not pull images</code></td><td>The server cannot reach <code>ghcr.io</code>, or the packages are private and the server is not logged in (<code>docker login ghcr.io</code>).</td></tr><tr><td>The final check fails with curl exit code 60 right after the first deploy</td><td>Traefik is still fetching the certificate for a new domain; wait a minute and check <code>/health</code> again.</td></tr><tr><td><code>/app.apk</code> returns 404</td><td>The Android job failed in that release (often the <code>APP_URL</code> variable is missing); the site was deployed anyway.</td></tr><tr><td>The APK will not install over the old one</td><td>It is signed with a different key (debug against release) or has a lower version code; uninstall the old app or use the release key.</td></tr><tr><td>The Android app cannot log in</td><td><code>APP_URL</code> was wrong at build time, or the server's <code>CORS_ORIGINS</code> lacks <code>https://localhost</code> and <code>capacitor://localhost</code>.</td></tr><tr><td>WhatsApp messages stay in Messages as "Failed"</td><td>The row shows the reason. Outside the 24-hour window Meta needs an approved template mapped in <code>WHATSAPP_TEMPLATES</code>.</td></tr><tr><td>The offline Windows version does not open</td><td>Look at <code>mobileshop.log</code> in <code>%LOCALAPPDATA%\MobileShop</code>; check nothing else uses port 8787.</td></tr><tr><td>Phones cannot reach the offline Windows version</td><td>Add <code>MOBILESHOP_HOST=0.0.0.0</code> to <code>settings.env</code>, restart the program and allow port 8787 in Windows Firewall.</td></tr></tbody></table>
+<aside class="tip"><strong>Tip:</strong> when something is unclear, the newest truth is in the code and in <code>docs/06-PROGRESS.md</code> and the last entry of <code>docs/09-SESSION-LOG.md</code>. If this manual disagrees with <code>CLAUDE.md</code>, <code>CLAUDE.md</code> wins, and this manual should be fixed.</aside>
+</body>
+</html>

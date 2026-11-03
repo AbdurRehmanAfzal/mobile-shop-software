@@ -78,6 +78,7 @@ def overview(db: Session) -> dict:
         "total": 0,
         "paid": 0,
         "trial": 0,
+        "ok": 0,
         "unlimited": 0,
         "due_soon": 0,
         "expired": 0,

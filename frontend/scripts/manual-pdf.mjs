@@ -1,16 +1,28 @@
 // The user manual as print HTML and PDF (owner 2026-11-03). Reads docs/manual/<lang>.md (a small
 // markdown subset: ## / ### headings, paragraphs, - and 1. lists, tables, one-line > notes,
 // **bold**, `code`, and ![Caption](shot:name) for docs/manual/img/<lang>/name.jpg) and writes
-// docs/manual/Mobile-Shop-User-Manual-<lang>.html and .pdf. Run from frontend/:
-//   node scripts/manual-pdf.mjs            (all three)      node scripts/manual-pdf.mjs ur
+// docs/manual/Mobile-Shop-User-Manual-<lang>.html and .pdf. The other books (owner 2026-11-03) are
+// docs/manual/<book>-<lang>.md → Mobile-Shop-<Book>-Manual-<lang>: admin (the super admin), developer
+// (setting the software up) and operations (our own runbook). Run from frontend/:
+//   node scripts/manual-pdf.mjs                       every book that exists
+//   node scripts/manual-pdf.mjs ur,admin-en           just those
 
 import { chromium } from '@playwright/test'
-import { readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
 const DIR = join(process.cwd(), '..', 'docs', 'manual')
-const LANGS = (process.argv[2] ?? 'en,ur,roman').split(',')
+const ALL = ['en', 'ur', 'roman', 'admin-en', 'admin-roman', 'developer-en', 'operations-en']
+const NAMES = (process.argv[2] ?? ALL.join(',')).split(',').filter((n) => existsSync(join(DIR, `${n}.md`)))
+
+// each book: its subtitle and the three screenshots on its cover (none for the technical books)
+const BOOKS = {
+  user: { file: 'User', sub: null, shots: ['home', 'sale-pick', 'verify'] },
+  admin: { file: 'Super-Admin', sub: { en: 'Super Admin Manual', roman: 'Super Admin ki Guide' }, tag: { en: 'Opening shops, fees, renewal codes, license keys, the provider console and helping a shop — step by step.', roman: 'Shops kholna, fees, renewal code, license keys, provider console aur shop ki madad — qadam ba qadam.' }, shots: ['admin-01', 'business-overview-1', 'admin-shop'] },
+  developer: { file: 'Developer', sub: { en: 'Developer and Setup Manual' }, tag: { en: 'What the software needs, how to set it up on a PC or a server, how the code is laid out, and how to change it safely.' }, shots: [] },
+  operations: { file: 'Operations', sub: { en: 'Operations Runbook (internal)' }, tag: { en: 'Our own runbook: GitHub, branches, releases, the server, environment variables, every command we run, backups and what to do when something breaks.' }, shots: [] },
+}
 
 const T = {
   en: { title: 'Mobile Shop', sub: 'User Manual', tag: 'Stock, sales, used-phone verification, repairs, udhaar, len-den, reports and the shop audit — step by step.', contents: 'Contents', fig: 'Picture', page: 'Page', of: 'of', by: 'OOP Solutions · mobileshop.oopsolutions.com' },
@@ -62,7 +74,8 @@ function render(md, lang) {
       i--
       const cells = (r) => r.replace(/^\||\|$/g, '').split('|').map((c) => c.trim())
       const body = rows.filter((r, k) => !(k === 1 && /^\|[\s:|-]+\|?$/.test(r)))
-      out.push('<table><thead><tr>' + cells(body[0]).map((c) => `<th>${inline(c)}</th>`).join('') + '</tr></thead><tbody>' +
+      const wide = cells(body[0]).length > 4 ? ' class="wide"' : ''
+      out.push(`<table${wide}><thead><tr>` + cells(body[0]).map((c) => `<th>${inline(c)}</th>`).join('') + '</tr></thead><tbody>' +
         body.slice(1).map((r) => '<tr>' + cells(r).map((c) => `<td>${inline(c)}</td>`).join('') + '</tr>').join('') + '</tbody></table>')
       continue
     }
@@ -80,8 +93,8 @@ function render(md, lang) {
   return { body: out.join('\n'), toc }
 }
 
-function page(lang, { body, toc }) {
-  const t = T[lang]
+function page(lang, book, { body, toc }) {
+  const t = { ...T[lang], ...(book.sub ? { sub: book.sub[lang], tag: book.tag[lang] } : {}) }
   const rtl = lang === 'ur'
   const font = rtl ? "'Noto Nastaliq Urdu', serif" : "'Inter', system-ui, sans-serif"
   const date = new Date().toISOString().slice(0, 10)
@@ -125,6 +138,9 @@ function page(lang, { body, toc }) {
   aside { margin:3mm 0; padding:2.5mm 4mm; border-radius:2.5mm; page-break-inside:avoid; background:var(--soft); border-${rtl ? 'right' : 'left'}:4px solid var(--brand) }
   aside.note { background:#FFF7E6; border-color:var(--gold) }
   table { width:100%; border-collapse:collapse; margin:3mm 0 4mm; font-size:${rtl ? '10pt' : '9.5pt'}; page-break-inside:auto }
+  table { table-layout:fixed }
+  table.wide { font-size:${rtl ? '9pt' : '8.3pt'} }
+  th, td, code { overflow-wrap:anywhere }
   tr { page-break-inside:avoid }
   th, td { border:1px solid var(--line); padding:1.6mm 2.4mm; text-align:${rtl ? 'right' : 'left'}; vertical-align:top }
   th { background:var(--navy); color:#fff }
@@ -137,7 +153,7 @@ function page(lang, { body, toc }) {
   <h1>${t.title}</h1>
   <div class="sub">${t.sub}</div>
   <div class="tag">${t.tag}</div>
-  <div class="shots"><img src="img/${lang}/home.jpg" alt=""><img src="img/${lang}/sale-pick.jpg" alt=""><img src="img/${lang}/verify.jpg" alt=""></div>
+  <div class="shots">${book.shots.map((n) => `<img src="img/${lang}/${n}.jpg" alt="">`).join('')}</div>
   <div class="by">${t.by} · ${date}</div>
 </section>
 <nav class="toc">
@@ -150,15 +166,17 @@ ${body}
 }
 
 const browser = await chromium.launch()
-for (const lang of LANGS) {
-  const md = readFileSync(join(DIR, `${lang}.md`), 'utf8')
-  const name = `Mobile-Shop-User-Manual-${lang}`
+for (const src of NAMES) {
+  const [key, lang] = src.includes('-') ? src.split('-') : ['user', src]
+  const book = BOOKS[key]
+  const md = readFileSync(join(DIR, `${src}.md`), 'utf8')
+  const name = `Mobile-Shop-${book.file}-Manual-${lang}`
   const html = join(DIR, `${name}.html`)
-  writeFileSync(html, page(lang, render(md, lang)))
+  writeFileSync(html, page(lang, book, render(md, lang)))
   const p = await browser.newPage()
   await p.goto(pathToFileURL(html).href, { waitUntil: 'networkidle' })
   await p.evaluate(() => document.fonts.ready)
-  const t = T[lang]
+  const t = { ...T[lang], ...(book.sub ? { sub: book.sub[lang] } : {}) }
   await p.pdf({
     path: join(DIR, `${name}.pdf`), format: 'A4', printBackground: true, displayHeaderFooter: true,
     headerTemplate: '<span></span>',

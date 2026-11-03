@@ -9353,6 +9353,7 @@
       "redeemed": "Used",
       "revoked": "Cancelled",
       "months": "{{n}} months",
+      "month": "{{n}} month",
       "sent": "Sent {{n}}×",
       "viewed": "Link opened {{n}}×",
       "where": {
