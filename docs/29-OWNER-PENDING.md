@@ -143,3 +143,24 @@ Details in `docs/manual/operations-en.md`. None of these is broken today, but ea
 - [ ] **Settings the compose file does not pass:** `SCHEDULER_ENABLED`, `ACCESS_TOKEN_MINUTES`, `REFRESH_TOKEN_DAYS`, `DEFAULT_LOCALE`, `TIMEZONE`, `SAAS_URL`, `WHATSAPP_API_VERSION` in the server `.env` have no effect today (the defaults are used). Say if one of them should be settable on production.
 - [ ] **Demo shop on production:** `demo-shop.mjs` uses signup, which production keeps off (403). Open the shop from Super admin first if you ever want one there.
 - [ ] **Trial end date:** a new shop starts with no end date, even on trial. Set **Paid until** yourself, or decide that a trial should end by itself after 14 days.
+
+## G. Google Play Store (owner question 2026-11-03)
+Today the app is shared as an APK from `/app.apk`. Putting it on Play needs a developer account (yours) and some app changes (ours).
+
+**Your side: the account**
+- [ ] Decide the account type. **Organization (OOP Solutions) is recommended.** It shows the company name on the listing and skips the rule for new personal accounts (12 testers must keep the app installed for 14 days before it can go public). It needs a **D-U-N-S number** for OOP Solutions. That number is free from Dun & Bradstreet, takes from a few days up to about 30, and the company name must match exactly everywhere.
+- [ ] A Google account just for publishing (e.g. a company Gmail), a phone number, the company website (`oopsolutions.com`) and a support email.
+- [ ] Open `play.google.com/console`, choose the account type, fill in the details, and pay the one-time **US $25** with a card that works for international payments. Then finish the identity check (CNIC / company documents).
+- [ ] **Decide the package name before the first upload; it can never change.** Today it is `pk.mobileshop.app`; `com.oopsolutions.mobileshop` is an alternative.
+- [ ] Give us: a privacy-policy contact email, and a demo login (phone + password) for Google's reviewers.
+
+**Our side: changes before the first upload** (not done yet)
+- [ ] Target Android 16 (API 36): Play has required it since 31 Aug 2026; the app targets API 34 on Capacitor 6, so Capacitor must be upgraded.
+- [ ] Build an **AAB** (`bundleRelease`) in `android.yml` next to the APK; Play takes only AAB.
+- [ ] Signing: keep the same key for Play App Signing (the `ANDROID_KEYSTORE_*` secrets, see F). Then phones that installed `/app.apk` keep getting updates through Play.
+- [ ] A public **privacy policy** page (e.g. `/privacy`) in en / ur, and an **account / data deletion** page or request route. Play asks for both URLs.
+- [ ] Store listing material: app icon 512×512, feature graphic 1024×500, phone screenshots (we have them from the manual), short and full description in English and Urdu.
+
+**In Play Console after that (together)**
+- [ ] App content forms: privacy policy URL, Data safety (we collect phone numbers, CNIC and its photos, photos for the ID check, and sales data; data is encrypted in transit; deletion on request), content rating questionnaire, target audience 18+, no ads, app access (the demo login).
+- [ ] Upload the AAB to **Internal testing** first, then **Production**. Google's review usually takes a few days.
