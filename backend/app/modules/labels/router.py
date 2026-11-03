@@ -24,7 +24,47 @@ def _ids(ids: str) -> list[uuid.UUID]:
 
 @router.get("/options")
 def options():
-    return {"sizes": list(SIZES), "fields": list(FIELDS), "default_fields": list(DEFAULT_FIELDS)}
+    from app.modules.labels.repair_labels import REPAIR_DEFAULT, REPAIR_FIELDS
+
+    return {
+        "sizes": list(SIZES),
+        "fields": list(FIELDS),
+        "default_fields": list(DEFAULT_FIELDS),
+        # repair stickers (docs/34): the shop picks the fields before printing
+        "repair_fields": list(REPAIR_FIELDS),
+        "repair_default_fields": list(REPAIR_DEFAULT),
+    }
+
+
+@router.get("/repairs", response_class=HTMLResponse)
+def repair_labels(
+    ctx: Ctx,
+    db: DB,
+    ids: str = Query(min_length=36),
+    size: str = Query(default="58x40"),
+    w: float | None = None,
+    h: float | None = None,
+    fields: str | None = None,
+    copies: int = Query(default=1, ge=1, le=10),
+    lang: str | None = Query(default=None, pattern="^(en|ur)$"),
+):
+    """a sticker for each repair job, with the fields the shop picked (docs/34)"""
+    from app.modules.barcodes.service import log_print
+    from app.modules.labels.repair_labels import repairs_html
+
+    page = repairs_html(
+        db, ctx.shop_id, _ids(ids), size=size, w=w, h=h, fields=fields, copies=copies, lang=lang
+    )
+    log_print(
+        db,
+        ctx.shop_id,
+        ctx.user.id,
+        kind="repairs",
+        ids=_ids(ids),
+        copies=copies,
+        size=size if not (w and h) else f"{w}x{h}",
+    )
+    return page
 
 
 @router.get("/devices", response_class=HTMLResponse)

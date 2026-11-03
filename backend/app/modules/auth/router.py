@@ -207,12 +207,28 @@ async def upload_logo(
 
     data = await file.read()
     if (file.content_type or "") not in ("image/jpeg", "image/png", "image/webp"):
-        raise ValidationFailed(code="logo_type", message_en="The logo must be a JPG, PNG or WEBP picture", message_ur="لوگو JPG، PNG یا WEBP تصویر ہونا چاہیے")
+        raise ValidationFailed(
+            code="logo_type",
+            message_en="The logo must be a JPG, PNG or WEBP picture",
+            message_ur="لوگو JPG، PNG یا WEBP تصویر ہونا چاہیے",
+        )
     if len(data) > LOGO_MAX:
-        raise ValidationFailed(code="logo_too_large", message_en="The logo is larger than 600 KB", message_ur="لوگو 600 KB سے بڑا ہے")
+        raise ValidationFailed(
+            code="logo_too_large",
+            message_en="The logo is larger than 600 KB",
+            message_ur="لوگو 600 KB سے بڑا ہے",
+        )
     shop = ctx.shop
     shop.logo_path = files.save(shop.id, file.content_type or "", data, "logo")
-    record_audit(db, shop_id=shop.id, user_id=ctx.user.id, entity="shop", entity_id=shop.id, action="logo", after={"logo_path": shop.logo_path})
+    record_audit(
+        db,
+        shop_id=shop.id,
+        user_id=ctx.user.id,
+        entity="shop",
+        entity_id=shop.id,
+        action="logo",
+        after={"logo_path": shop.logo_path},
+    )
     db.commit()
     return shop
 

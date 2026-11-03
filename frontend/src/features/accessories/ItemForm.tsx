@@ -7,6 +7,7 @@ import i18next from 'i18next'
 import { ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { BiAlert, BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { KindChooser } from '@/components/ItemKinds'
 import PartyPicker from '@/components/PartyPicker'
 import { ErrorText } from '@/components/ui'
@@ -102,33 +103,33 @@ export default function ItemForm({ item, compact = false, initialName = '', onDo
 
   return (
     <div className="flex flex-col gap-3" data-testid="item-form">
-      <BiInput label="acc.name" value={f.name} onChange={set('name')} autoFocus={creating} maxLength={150} placeholder={pick('items.namePh')} />
+      <BiInput label="acc.name" help={<Help term="items.name" size="sm" />} value={f.name} onChange={set('name')} autoFocus={creating} maxLength={150} placeholder={pick('items.namePh')} />
       {similar.length ? (
         <div className="rounded-2xl border border-payable/40 bg-payable-tint/40 px-3 py-2" data-testid="similar-items">
-          <BiLabel text="acc.similar" size="sm" bold />
+          <span className="flex items-center gap-1"><BiLabel text="acc.similar" size="sm" bold /><Help term="items.similar" size="sm" /></span>
           <ul className="mt-1 flex flex-col gap-0.5 text-sm">
             {similar.map((x) => <li key={x.id} className="flex items-center justify-between gap-2"><span className="truncate font-semibold">{x.name}{x.brand ? ` · ${x.brand}` : ''}{x.color ? ` · ${x.color}` : ''}</span><span className="num shrink-0 text-xs text-muted" dir="ltr">{x.sku} · {x.qty}</span></li>)}
           </ul>
         </div>
       ) : null}
-      <BiLabel text="acc.category" size="md" tone="text-muted" />
+      <span className="flex items-center gap-1"><BiLabel text="acc.category" size="md" tone="text-muted" /><Help term="items.category" size="sm" /></span>
       <KindChooser value={f.category} onChange={(category) => setF({ ...f, category })} />
       <div className="grid grid-cols-2 gap-2">
-        <BiInput label={compact ? 'items.sellPrice' : 'acc.price'} type="number" inputMode="decimal" min={0} value={f.price} onChange={set('price')} className="num" />
-        <BiInput label="acc.reorder" type="number" inputMode="numeric" min={0} value={f.reorder_level} onChange={set('reorder_level')} className="num" />
-        {creating && !compact ? <BiInput label="acc.openingQty" type="number" inputMode="numeric" min={0} value={f.opening_qty} onChange={set('opening_qty')} className="num" /> : null}
-        {creating && !compact ? <BiInput label="acc.openingCost" type="number" inputMode="decimal" min={0} value={f.opening_cost} onChange={set('opening_cost')} className="num" /> : null}
+        <BiInput label={compact ? 'items.sellPrice' : 'acc.price'} help={<Help term="items.price" size="sm" />} type="number" inputMode="decimal" min={0} value={f.price} onChange={set('price')} className="num" />
+        <BiInput label="acc.reorder" help={<Help term="items.reorder" size="sm" />} type="number" inputMode="numeric" min={0} value={f.reorder_level} onChange={set('reorder_level')} className="num" />
+        {creating && !compact ? <BiInput label="acc.openingQty" help={<Help term="items.openingQty" size="sm" />} type="number" inputMode="numeric" min={0} value={f.opening_qty} onChange={set('opening_qty')} className="num" /> : null}
+        {creating && !compact ? <BiInput label="acc.openingCost" help={<Help term="items.openingCost" size="sm" />} type="number" inputMode="decimal" min={0} value={f.opening_cost} onChange={set('opening_cost')} className="num" /> : null}
       </div>
 
       {compact ? (
         <div className="flex flex-col gap-2" data-testid="item-quick-card">
           <div className="grid grid-cols-2 gap-2">
-            <BiInput label="acc.brand" value={f.brand} onChange={set('brand')} list="item-brands" maxLength={80} />
+            <BiInput label="acc.brand" help={<Help term="items.brand" size="sm" />} value={f.brand} onChange={set('brand')} list="item-brands" maxLength={80} />
             <datalist id="item-brands">{(opts?.brands ?? []).map((b) => <option key={b} value={b} />)}</datalist>
-            <BiInput label="acc.color" value={f.color} onChange={set('color')} maxLength={40} />
+            <BiInput label="acc.color" help={<Help term="items.color" size="sm" />} value={f.color} onChange={set('color')} maxLength={40} />
           </div>
-          <BiInput label="acc.compatible" value={f.compatible} onChange={set('compatible')} placeholder={pick('acc.compatiblePh')} maxLength={200} />
-          <BiLabel text="acc.grade" size="md" tone="text-muted" />
+          <BiInput label="acc.compatible" help={<Help term="items.compatible" size="sm" />} value={f.compatible} onChange={set('compatible')} placeholder={pick('acc.compatiblePh')} maxLength={200} />
+          <span className="flex items-center gap-1"><BiLabel text="acc.grade" size="md" tone="text-muted" /><Help term="items.grade" size="sm" /></span>
           <div className="flex flex-wrap gap-1.5">
             {grades.map((g) => <button key={g} type="button" aria-pressed={f.grade === g} onClick={() => setF({ ...f, grade: g })} className={chip(f.grade === g)}>{gradeLabel(pick, g, exists)}</button>)}
           </div>
@@ -144,65 +145,65 @@ export default function ItemForm({ item, compact = false, initialName = '', onDo
           {!compact ? (
             <>
               <div className="grid grid-cols-2 gap-2">
-                <BiInput label="acc.brand" value={f.brand} onChange={set('brand')} list="item-brands" maxLength={80} />
+                <BiInput label="acc.brand" help={<Help term="items.brand" size="sm" />} value={f.brand} onChange={set('brand')} list="item-brands" maxLength={80} />
                 <datalist id="item-brands">{(opts?.brands ?? []).map((b) => <option key={b} value={b} />)}</datalist>
-                <BiInput label="acc.color" value={f.color} onChange={set('color')} maxLength={40} />
+                <BiInput label="acc.color" help={<Help term="items.color" size="sm" />} value={f.color} onChange={set('color')} maxLength={40} />
               </div>
-              <BiInput label="acc.compatible" value={f.compatible} onChange={set('compatible')} placeholder={pick('acc.compatiblePh')} maxLength={200} />
-              <BiLabel text="acc.grade" size="md" tone="text-muted" />
+              <BiInput label="acc.compatible" help={<Help term="items.compatible" size="sm" />} value={f.compatible} onChange={set('compatible')} placeholder={pick('acc.compatiblePh')} maxLength={200} />
+              <span className="flex items-center gap-1"><BiLabel text="acc.grade" size="md" tone="text-muted" /><Help term="items.grade" size="sm" /></span>
               <div className="flex flex-wrap gap-1.5">
                 {grades.map((g) => <button key={g} type="button" aria-pressed={f.grade === g} onClick={() => setF({ ...f, grade: g })} className={chip(f.grade === g)}>{gradeLabel(pick, g, exists)}</button>)}
               </div>
             </>
           ) : null}
           <div className="grid grid-cols-2 gap-2">
-            <BiInput label="acc.size" value={f.size} onChange={set('size')} maxLength={40} />
-            <BiInput label="acc.capacity" value={f.capacity} onChange={set('capacity')} maxLength={40} dir="ltr" />
-            <BiInput label="acc.connector" value={f.connector} onChange={set('connector')} maxLength={40} dir="ltr" placeholder="Type-C" />
-            <BiInput label="acc.wattage" value={f.wattage} onChange={set('wattage')} maxLength={20} dir="ltr" placeholder="25W" />
+            <BiInput label="acc.size" help={<Help term="items.size" size="sm" />} value={f.size} onChange={set('size')} maxLength={40} />
+            <BiInput label="acc.capacity" help={<Help term="items.capacity" size="sm" />} value={f.capacity} onChange={set('capacity')} maxLength={40} dir="ltr" />
+            <BiInput label="acc.connector" help={<Help term="items.connector" size="sm" />} value={f.connector} onChange={set('connector')} maxLength={40} dir="ltr" placeholder="Type-C" />
+            <BiInput label="acc.wattage" help={<Help term="items.wattage" size="sm" />} value={f.wattage} onChange={set('wattage')} maxLength={20} dir="ltr" placeholder="25W" />
           </div>
 
           <div className="grid grid-cols-2 gap-2">
-            <BiInput label="acc.warranty" type="number" inputMode="numeric" min={0} value={f.warranty_days} onChange={set('warranty_days')} className="num" />
+            <BiInput label="acc.warranty" help={<Help term="warranty" size="sm" />} type="number" inputMode="numeric" min={0} value={f.warranty_days} onChange={set('warranty_days')} className="num" />
             <div>
-              <BiLabel text="acc.warrantyBy" size="md" tone="text-muted" />
+              <span className="flex items-center gap-1"><BiLabel text="acc.warrantyBy" size="md" tone="text-muted" /><Help term="items.warrantyBy" size="sm" /></span>
               <div className="mt-1"><BiSegmented<'shop' | 'supplier'> value={f.warranty_by} onChange={(v) => setF({ ...f, warranty_by: v })} options={[{ value: 'shop', text: 'acc.byShop' }, { value: 'supplier', text: 'acc.bySupplier' }]} /></div>
             </div>
           </div>
-          {Number(f.warranty_days) > 0 ? <BiInput label="acc.warrantyTerms" value={f.warranty_terms} onChange={set('warranty_terms')} maxLength={300} /> : null}
+          {Number(f.warranty_days) > 0 ? <BiInput label="acc.warrantyTerms" help={<Help term="items.warrantyTerms" size="sm" />} value={f.warranty_terms} onChange={set('warranty_terms')} maxLength={300} /> : null}
 
           <div className="grid grid-cols-2 gap-2">
-            <BiInput label="acc.piecesInBox" type="number" inputMode="numeric" min={1} value={f.box} onChange={set('box')} className="num" placeholder={String(opts?.units.box ?? 10)} />
-            <BiInput label="acc.piecesInCarton" type="number" inputMode="numeric" min={1} value={f.carton} onChange={set('carton')} className="num" placeholder={String(opts?.units.carton ?? 120)} />
+            <BiInput label="acc.piecesInBox" help={<Help term="items.piecesInBox" size="sm" />} type="number" inputMode="numeric" min={1} value={f.box} onChange={set('box')} className="num" placeholder={String(opts?.units.box ?? 10)} />
+            <BiInput label="acc.piecesInCarton" help={<Help term="items.piecesInCarton" size="sm" />} type="number" inputMode="numeric" min={1} value={f.carton} onChange={set('carton')} className="num" placeholder={String(opts?.units.carton ?? 120)} />
           </div>
 
-          <BiLabel text="acc.pricing" size="md" tone="text-muted" />
+          <span className="flex items-center gap-1"><BiLabel text="acc.pricing" size="md" tone="text-muted" /><Help term="items.pricing" size="sm" /></span>
           <BiSegmented<'fixed' | 'markup'> value={f.pricing_mode} onChange={(v) => setF({ ...f, pricing_mode: v })} options={[{ value: 'fixed', text: 'acc.fixed' }, { value: 'markup', text: 'acc.markup' }]} />
-          {f.pricing_mode === 'markup' ? <BiInput label="acc.markupPct" type="number" inputMode="decimal" min={0} value={f.markup_pct} onChange={set('markup_pct')} className="num" hint="acc.markupHint" /> : null}
+          {f.pricing_mode === 'markup' ? <BiInput label="acc.markupPct" help={<Help term="items.markupPct" size="sm" />} type="number" inputMode="decimal" min={0} value={f.markup_pct} onChange={set('markup_pct')} className="num" hint="acc.markupHint" /> : null}
           <div className="grid grid-cols-2 gap-2">
-            <BiInput label="acc.wholesale" type="number" inputMode="decimal" min={0} value={f.wholesale_price} onChange={set('wholesale_price')} className="num" />
-            <BiInput label="acc.minPrice" type="number" inputMode="decimal" min={0} value={f.min_price} onChange={set('min_price')} className="num" />
-            <BiInput label="acc.promo" type="number" inputMode="decimal" min={0} value={f.promo_price} onChange={set('promo_price')} className="num" />
-            <BiInput label="acc.taxRate" type="number" inputMode="decimal" min={0} max={100} value={f.tax_rate} onChange={set('tax_rate')} className="num" />
-            {f.promo_price ? <BiInput label="acc.promoFrom" type="date" value={f.promo_from} onChange={set('promo_from')} dir="ltr" /> : null}
-            {f.promo_price ? <BiInput label="acc.promoTo" type="date" value={f.promo_to} onChange={set('promo_to')} dir="ltr" /> : null}
+            <BiInput label="acc.wholesale" help={<Help term="items.wholesale" size="sm" />} type="number" inputMode="decimal" min={0} value={f.wholesale_price} onChange={set('wholesale_price')} className="num" />
+            <BiInput label="acc.minPrice" help={<Help term="items.minPrice" size="sm" />} type="number" inputMode="decimal" min={0} value={f.min_price} onChange={set('min_price')} className="num" />
+            <BiInput label="acc.promo" help={<Help term="items.promo" size="sm" />} type="number" inputMode="decimal" min={0} value={f.promo_price} onChange={set('promo_price')} className="num" />
+            <BiInput label="acc.taxRate" help={<Help term="items.taxRate" size="sm" />} type="number" inputMode="decimal" min={0} max={100} value={f.tax_rate} onChange={set('tax_rate')} className="num" />
+            {f.promo_price ? <BiInput label="acc.promoFrom" help={<Help term="items.promoDates" size="sm" />} type="date" value={f.promo_from} onChange={set('promo_from')} dir="ltr" /> : null}
+            {f.promo_price ? <BiInput label="acc.promoTo" help={<Help term="items.promoDates" size="sm" />} type="date" value={f.promo_to} onChange={set('promo_to')} dir="ltr" /> : null}
           </div>
-          {f.tax_rate.trim() ? <Toggle on={f.tax_inclusive} onChange={(v) => setF({ ...f, tax_inclusive: v })} text="acc.taxIncl" /> : null}
+          {f.tax_rate.trim() ? <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><Toggle on={f.tax_inclusive} onChange={(v) => setF({ ...f, tax_inclusive: v })} text="acc.taxIncl" /></div><Help term="items.taxIncl" size="sm" /></div> : null}
 
           <div className="grid grid-cols-2 gap-2">
-            <BiInput label="acc.maxStock" type="number" inputMode="numeric" min={0} value={f.max_stock} onChange={set('max_stock')} className="num" />
-            <BiInput label="acc.location" value={f.location} onChange={set('location')} list="item-locations" maxLength={60} />
+            <BiInput label="acc.maxStock" help={<Help term="items.maxStock" size="sm" />} type="number" inputMode="numeric" min={0} value={f.max_stock} onChange={set('max_stock')} className="num" />
+            <BiInput label="acc.location" help={<Help term="items.location" size="sm" />} value={f.location} onChange={set('location')} list="item-locations" maxLength={60} />
             <datalist id="item-locations">{(opts?.locations ?? []).map((b) => <option key={b} value={b} />)}</datalist>
           </div>
-          <Toggle on={f.show_in_sale} onChange={(v) => setF({ ...f, show_in_sale: v })} text="acc.showInSale" />
-          <BiInput label="acc.description" value={f.description} onChange={set('description')} maxLength={2000} />
+          <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><Toggle on={f.show_in_sale} onChange={(v) => setF({ ...f, show_in_sale: v })} text="acc.showInSale" /></div><Help term="items.showInSale" size="sm" /></div>
+          <BiInput label="acc.description" help={<Help term="common.notes" size="sm" />} value={f.description} onChange={set('description')} maxLength={2000} />
 
-          <BiLabel text="acc.supplierSkus" size="md" tone="text-muted" />
+          <span className="flex items-center gap-1"><BiLabel text="acc.supplierSkus" size="md" tone="text-muted" /><Help term="items.supplierSkus" size="sm" /></span>
           {f.supplier_skus.map((x, i) => (
             <div key={i} className="card flex flex-col gap-2">
               <PartyPicker value={x.party ?? (x.party_id ? ({ id: x.party_id, name: x.party_name ?? '' } as Party) : null)} onChange={(p) => setF({ ...f, supplier_skus: f.supplier_skus.map((y, j) => (j === i ? { ...y, party: p, party_id: p?.id ?? null, party_name: p?.name ?? null } : y)) })} kind="supplier" label="acc.supplierName" allowNone />
               <div className="flex items-end gap-2">
-                <div className="flex-1"><BiInput label="acc.supplierSku" value={x.sku} onChange={(e) => setF({ ...f, supplier_skus: f.supplier_skus.map((y, j) => (j === i ? { ...y, sku: e.target.value } : y)) })} dir="ltr" maxLength={60} /></div>
+                <div className="flex-1"><BiInput label="acc.supplierSku" help={<Help term="items.supplierSku" size="sm" />} value={x.sku} onChange={(e) => setF({ ...f, supplier_skus: f.supplier_skus.map((y, j) => (j === i ? { ...y, sku: e.target.value } : y)) })} dir="ltr" maxLength={60} /></div>
                 <button type="button" aria-label={pick('crud.delete')} onClick={() => setF({ ...f, supplier_skus: f.supplier_skus.filter((_, j) => j !== i) })} className="tap mb-1 flex h-10 w-10 items-center justify-center rounded-xl border border-line text-payable"><Trash2 size={16} /></button>
               </div>
             </div>

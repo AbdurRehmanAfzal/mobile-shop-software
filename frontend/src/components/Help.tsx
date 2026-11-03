@@ -1,41 +1,43 @@
-/** A small "?" next to a word shopkeepers may not know (owner, 2026-10-28: "credit, PTA ... non
- *  technical user ko nahi pata"). Tapping it opens a short, plain explanation with an example.
- *  Texts: i18n `help.<term>.title / body / example` in en, ur and roman. */
+/** A small "?" next to a word, a field, a tab or a card that a shopkeeper may not know (owner,
+ *  2026-10-28: "credit, PTA ... non technical user ko nahi pata"; 2026-11-02: an info icon with an
+ *  example on every field, tab and card, in the audit and every module — docs/33).
+ *  Tapping it opens a short, plain explanation with an example.
+ *  Texts: i18n `help.<term>.title / body / example` in en, ur and roman; `term` may be nested
+ *  (`audit.netSales`). `Help.test.ts` checks every term used in the code has all three. */
 
-import i18next from 'i18next'
 import { CircleHelp } from 'lucide-react'
 import { useState } from 'react'
 import { BiLabel, useLang } from './Bilingual'
 import { Sheet } from './ui'
 
-export type HelpTerm =
-  | 'udhaar' | 'khata' | 'cost' | 'asking' | 'profit' | 'pta' | 'imei' | 'idcheck'
-  | 'opening' | 'cut' | 'inHand' | 'warranty' | 'tid' | 'cheque' | 'remittance' | 'void' | 'audit' | 'bulk'
+/** any key under `help.` (kept as a name for the older call sites) */
+export type HelpTerm = string
 
-export default function Help({ term }: { term: HelpTerm }) {
+export default function Help({ term, size = 'md' }: { term: HelpTerm; size?: 'sm' | 'md' }) {
   const { pick } = useLang()
   const [open, setOpen] = useState(false)
   const title = pick(`help.${term}.title`)
-  const example = i18next.exists(`help.${term}.example`) ? pick(`help.${term}.example`) : ''
+  const sm = size === 'sm'
   return (
     <>
+      {/* the name is only "What is this?": repeating the field's own words would make the "?" a
+          second element named like the field (the field's label, a card title, a button) */}
       <button
         type="button"
-        aria-label={`${pick('help.what')}: ${title}`}
+        aria-label={pick('help.what')}
+        data-help={term}
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpen(true) }}
-        className="tap inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-emerald align-middle"
+        className={`tap inline-flex shrink-0 items-center justify-center rounded-full align-middle ${sm ? 'h-6 w-6 text-emerald/80' : 'h-7 w-7 text-emerald'}`}
       >
-        <CircleHelp size={20} />
+        <CircleHelp size={sm ? 15 : 20} aria-hidden />
       </button>
       <Sheet open={open} onClose={() => setOpen(false)} title={title}>
         <div className="flex flex-col gap-3">
           <BiLabel text={`help.${term}.body`} size="md" />
-          {example ? (
-            <div className="rounded-2xl bg-emerald-tint px-4 py-3">
-              <BiLabel text="help.example" size="sm" bold tone="text-emerald-deep" />
-              <BiLabel text={`help.${term}.example`} size="md" tone="text-ink" />
-            </div>
-          ) : null}
+          <div className="rounded-2xl bg-emerald-tint px-4 py-3">
+            <BiLabel text="help.example" size="sm" bold tone="text-emerald-deep" />
+            <BiLabel text={`help.${term}.example`} size="md" tone="text-ink" />
+          </div>
         </div>
       </Sheet>
     </>

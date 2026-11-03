@@ -1140,11 +1140,21 @@ def export_rows(db: Session, ctx, kind: str, lang: str | None) -> list[list]:
         ).all()
         return [
             [
-                a.name, a.category, a.sku, a.qty, _num(a.avg_cost), _num(a.price), a.reorder_level,
-                a.brand, None if a.grade == "unspecified" else a.grade, a.color, a.compatible,
+                a.name,
+                a.category,
+                a.sku,
+                a.qty,
+                _num(a.avg_cost),
+                _num(a.price),
+                a.reorder_level,
+                a.brand,
+                None if a.grade == "unspecified" else a.grade,
+                a.color,
+                a.compatible,
                 _num(a.wholesale_price) if a.wholesale_price is not None else None,
                 _num(a.min_price) if a.min_price is not None else None,
-                a.warranty_days or None, a.location,
+                a.warranty_days or None,
+                a.location,
             ]
             for a in rows
         ]

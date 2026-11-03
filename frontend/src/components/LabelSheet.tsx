@@ -5,6 +5,7 @@
 import { Check, Printer, Tag } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import DocActions from '@/components/DocShare'
 import { ErrorText, Sheet } from '@/components/ui'
 import { api } from '@/lib/api'
@@ -57,9 +58,9 @@ export default function LabelSheet({ kind, ids, open, onClose }: { kind: LabelKi
   return (
     <Sheet open={open} onClose={onClose} title="label.title">
       <div className="flex flex-col gap-3">
-        <BiLabel text={{ en: pick('label.count').replace('{{n}}', String(ids.length)), ur: pick('label.count').replace('{{n}}', String(ids.length)), roman: pick('label.count').replace('{{n}}', String(ids.length)) }} size="sm" tone="text-muted" />
+        <span className="flex items-center gap-1"><BiLabel text={{ en: pick('label.count').replace('{{n}}', String(ids.length)), ur: pick('label.count').replace('{{n}}', String(ids.length)), roman: pick('label.count').replace('{{n}}', String(ids.length)) }} size="sm" tone="text-muted" /><Help term="label.sheet" size="sm" /></span>
         <div>
-          <BiLabel text="label.size" size="md" bold className="mb-1.5" />
+          <span className="mb-1.5 flex items-center gap-1"><BiLabel text="label.size" size="md" bold /><Help term="label.size" size="sm" /></span>
           <div className="flex flex-wrap gap-1.5">
             {SIZES.map((s) => (
               <button key={s} type="button" aria-pressed={p.size === s} onClick={() => { setP({ ...p, size: s }); setSaved(false) }} className={chip(p.size === s)}>
@@ -69,13 +70,13 @@ export default function LabelSheet({ kind, ids, open, onClose }: { kind: LabelKi
           </div>
           {p.size === 'custom' ? (
             <div className="mt-2 grid grid-cols-2 gap-2">
-              <BiInput label="label.width" type="number" inputMode="numeric" min={20} max={110} value={p.w} onChange={(e) => setP({ ...p, w: e.target.value })} className="num" dir="ltr" />
-              <BiInput label="label.height" type="number" inputMode="numeric" min={10} max={110} value={p.h} onChange={(e) => setP({ ...p, h: e.target.value })} className="num" dir="ltr" />
+              <BiInput label="label.width" help={<Help term="label.customSize" size="sm" />} type="number" inputMode="numeric" min={20} max={110} value={p.w} onChange={(e) => setP({ ...p, w: e.target.value })} className="num" dir="ltr" />
+              <BiInput label="label.height" help={<Help term="label.customSize" size="sm" />} type="number" inputMode="numeric" min={10} max={110} value={p.h} onChange={(e) => setP({ ...p, h: e.target.value })} className="num" dir="ltr" />
             </div>
           ) : null}
         </div>
         <div>
-          <BiLabel text="label.fields" size="md" bold className="mb-1.5" />
+          <span className="mb-1.5 flex items-center gap-1"><BiLabel text="label.fields" size="md" bold /><Help term="label.fields" size="sm" /></span>
           <div className="flex flex-wrap gap-1.5">
             {fields.map((f) => {
               const on = p.fields.includes(f)
@@ -86,10 +87,10 @@ export default function LabelSheet({ kind, ids, open, onClose }: { kind: LabelKi
               )
             })}
           </div>
-          {p.fields.includes('code') ? <BiLabel text={{ en: `${pick('label.codeHint')} ${shop?.label_code_word ?? 'BLACKHORSE'}`, ur: `${pick('label.codeHint')} ${shop?.label_code_word ?? 'BLACKHORSE'}`, roman: `${pick('label.codeHint')} ${shop?.label_code_word ?? 'BLACKHORSE'}` }} size="sm" tone="text-muted" className="mt-1.5" /> : null}
+          {p.fields.includes('code') ? <span className="mt-1.5 flex items-center gap-1"><BiLabel text={{ en: `${pick('label.codeHint')} ${shop?.label_code_word ?? 'BLACKHORSE'}`, ur: `${pick('label.codeHint')} ${shop?.label_code_word ?? 'BLACKHORSE'}`, roman: `${pick('label.codeHint')} ${shop?.label_code_word ?? 'BLACKHORSE'}` }} size="sm" tone="text-muted" /><Help term="label.costCode" size="sm" /></span> : null}
         </div>
         <div>
-          <BiLabel text="label.copies" size="md" bold className="mb-1.5" />
+          <span className="mb-1.5 flex items-center gap-1"><BiLabel text="label.copies" size="md" bold /><Help term="label.copies" size="sm" /></span>
           <div className="flex flex-wrap gap-1.5">
             {[1, 2, 3, 5, 10].map((c) => (
               <button key={c} type="button" aria-pressed={p.copies === c} onClick={() => { setP({ ...p, copies: c }); setSaved(false) }} className={`${chip(p.copies === c)} num`}>{c}</button>
@@ -99,9 +100,12 @@ export default function LabelSheet({ kind, ids, open, onClose }: { kind: LabelKi
         <ErrorText error={err} />
         <BiButton text="label.print" icon={<Printer size={22} />} full disabled={!customOk || !p.fields.length} onClick={() => { setErr(null); void remember(); openPrintable(path).catch(setErr) }} />
         <DocActions path={path} name={`stickers-${ids.length}`} title={pick('label.title')} picker={false} />
-        <button type="button" onClick={remember} className={`tap inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl border border-line bg-surface px-3 font-bold ${ur ? cls('sm') : 'text-sm'}`}>
+        <div className="flex items-center gap-1">
+        <button type="button" onClick={remember} className={`tap inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-2xl border border-line bg-surface px-3 font-bold ${ur ? cls('sm') : 'text-sm'}`}>
           <Tag size={16} />{pick(saved ? 'label.saved' : 'label.remember')}
         </button>
+        <Help term="label.remember" size="sm" />
+        </div>
       </div>
     </Sheet>
   )

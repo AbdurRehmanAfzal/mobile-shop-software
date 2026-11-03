@@ -3,6 +3,7 @@
 
 import { TrendingUp } from 'lucide-react'
 import { BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { fmtDate } from '@/components/ui'
 import { useGet } from '@/lib/queries'
 
@@ -41,7 +42,7 @@ export default function PriceHint({ modelId, storageId, condition, excludeDevice
     <div className="flex items-start gap-3 rounded-2xl border border-emerald/30 bg-emerald-tint/50 px-3 py-2.5" data-testid="price-hint">
       <span className="well mt-0.5 h-9 w-9 shrink-0 rounded-xl bg-surface text-emerald-deep"><TrendingUp size={18} /></span>
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <BiLabel text={data.basis === 'exact' ? 'hint.titleExact' : data.basis === 'condition' ? 'hint.titleCondition' : data.basis === 'model' ? 'hint.titleModel' : 'hint.titleStock'} size="sm" bold tone="text-emerald-deep" />
+        <span className="flex items-center gap-1"><BiLabel text={data.basis === 'exact' ? 'hint.titleExact' : data.basis === 'condition' ? 'hint.titleCondition' : data.basis === 'model' ? 'hint.titleModel' : 'hint.titleStock'} size="sm" bold tone="text-emerald-deep" /><Help term="price.hint" size="sm" /></span>
         {lines.map((l) => <span key={l} className={`text-ink ${small}`} dir="auto">{l}</span>)}
       </span>
       {data.suggested && onUse ? (

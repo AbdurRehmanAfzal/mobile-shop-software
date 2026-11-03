@@ -3,6 +3,7 @@ import { ArrowDown, ArrowUp, Pencil, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import RemoveSheet from '@/components/RemoveSheet'
 import { BtnText, Chip, Empty, fmtDate, KV, Loading, MoneyText, PageHeader, Section, Sheet } from '@/components/ui'
 import { api } from '@/lib/api'
@@ -12,6 +13,7 @@ import PartyForm from './PartyForm'
 import PaymentForm from '@/features/payments/PaymentForm'
 import PartyUnits, { usePartyUnits } from './PartyUnits'
 import PartyJourney from './PartyJourney'
+import PartyLending from './PartyLending'
 import { Printer } from 'lucide-react'
 import { openPrintable } from '@/lib/files'
 import {withCur } from '@/lib/format'
@@ -36,6 +38,7 @@ export default function PartyDetailPage() {
     <div className="flex flex-col gap-4">
       <PageHeader
         title={{ en: party.name, ur: party.name_ur || party.name }}
+        help={<Help term="party.detail" />}
         right={
           <div className="flex gap-2">
             {canDelete ? (
@@ -51,47 +54,57 @@ export default function PartyDetailPage() {
       />
 
       <section className={`flex flex-col gap-2 rounded-3xl p-5 ${bal > 0 ? 'bg-khata text-khata-fg' : bal < 0 ? 'bg-expense text-expense-fg' : 'border border-line bg-surface text-ink'}`}>
-        <BiLabel text={bal > 0 ? 'counter.toGet' : bal < 0 ? 'counter.toGive' : 'party.clear'} size="md" bold tone="text-current" />
+        <span className="flex items-center gap-1 [&_button]:text-current"><BiLabel text={bal > 0 ? 'counter.toGet' : bal < 0 ? 'counter.toGive' : 'party.clear'} size="md" bold tone="text-current" /><Help term="party.balance" size="sm" /></span>
         <div className="num text-[34px] leading-none" dir="ltr">
           {bal === 0 ? '0' : `${withCur(Math.abs(bal).toLocaleString('en-US'))}`}
         </div>
         {units && (Number(units.receivable) > 0 || Number(units.payable ?? 0) > 0 || Number(units.other ?? 0) !== 0) ? (
           <div className="mt-1 grid grid-cols-3 gap-2" data-testid="party-split">
-            <div className="flex flex-col rounded-2xl bg-white/15 px-3 py-2"><span className="text-xs font-semibold opacity-80">{pick('unit.theyOweTotal')}</span><span className="num text-lg" dir="ltr">{Number(units.receivable).toLocaleString('en-US')}</span></div>
-            {units.payable != null ? <div className="flex flex-col rounded-2xl bg-white/15 px-3 py-2"><span className="text-xs font-semibold opacity-80">{pick('unit.weOweTotal')}</span><span className="num text-lg" dir="ltr">{Number(units.payable).toLocaleString('en-US')}</span></div> : null}
-            {units.other != null && Number(units.other) !== 0 ? <div className="flex flex-col rounded-2xl bg-white/15 px-3 py-2"><span className="text-xs font-semibold opacity-80">{pick('unit.other')}</span><span className="num text-lg" dir="ltr">{Number(units.other).toLocaleString('en-US')}</span></div> : null}
+            <div className="flex flex-col rounded-2xl bg-white/15 px-3 py-2"><span className="flex items-center gap-1 text-xs font-semibold opacity-80 [&_button]:text-current">{pick('unit.theyOweTotal')}<Help term="party.unitsReceivable" size="sm" /></span><span className="num text-lg" dir="ltr">{Number(units.receivable).toLocaleString('en-US')}</span></div>
+            {units.payable != null ? <div className="flex flex-col rounded-2xl bg-white/15 px-3 py-2"><span className="flex items-center gap-1 text-xs font-semibold opacity-80 [&_button]:text-current">{pick('unit.weOweTotal')}<Help term="party.unitsPayable" size="sm" /></span><span className="num text-lg" dir="ltr">{Number(units.payable).toLocaleString('en-US')}</span></div> : null}
+            {units.other != null && Number(units.other) !== 0 ? <div className="flex flex-col rounded-2xl bg-white/15 px-3 py-2"><span className="flex items-center gap-1 text-xs font-semibold opacity-80 [&_button]:text-current">{pick('unit.other')}<Help term="party.other" size="sm" /></span><span className="num text-lg" dir="ltr">{Number(units.other).toLocaleString('en-US')}</span></div> : null}
           </div>
         ) : null}
         <div className="mt-1 flex flex-wrap gap-1.5">
           {party.kinds.map((k) => (
             <Chip key={k} text={`party.${k}`} tone="muted" />
           ))}
+          <span className="[&_button]:text-current"><Help term="party.kinds" size="sm" /></span>
         </div>
       </section>
       <div className="grid grid-cols-2 gap-2.5">
-        <button type="button" onClick={() => setPaying('in')} className="tap flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-emerald text-white shadow-cta">
-          <ArrowDown size={20} strokeWidth={2.2} />
-          <BiLabel text="counter.gotMoney" size="md" bold tone="text-current" />
-        </button>
-        <button type="button" onClick={() => setPaying('out')} className="tap flex min-h-14 items-center justify-center gap-2 rounded-2xl border border-line bg-surface text-ink">
-          <ArrowUp size={20} strokeWidth={2.2} className="text-payable" />
-          <BiLabel text="counter.gaveMoney" size="md" bold tone="text-current" />
-        </button>
+        {/* the "?" sits on top of each button, not inside it (docs/33) */}
+        <div className="relative">
+          <button type="button" onClick={() => setPaying('in')} className="tap flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-emerald px-7 text-white shadow-cta">
+            <ArrowDown size={20} strokeWidth={2.2} />
+            <BiLabel text="counter.gotMoney" size="md" bold tone="text-current" />
+          </button>
+          <span className="absolute end-1 top-1/2 -translate-y-1/2 [&_button]:text-white"><Help term="party.gotMoney" size="sm" /></span>
+        </div>
+        <div className="relative">
+          <button type="button" onClick={() => setPaying('out')} className="tap flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl border border-line bg-surface px-7 text-ink">
+            <ArrowUp size={20} strokeWidth={2.2} className="text-payable" />
+            <BiLabel text="counter.gaveMoney" size="md" bold tone="text-current" />
+          </button>
+          <span className="absolute end-1 top-1/2 -translate-y-1/2"><Help term="party.gaveMoney" size="sm" /></span>
+        </div>
       </div>
 
       <section className="card">
-        <KV k="party.phone" v={<span dir="ltr">{party.phone}</span>} />
-        {party.whatsapp ? <KV k="party.whatsapp" v={<span dir="ltr">{party.whatsapp}</span>} /> : null}
-        {party.cnic ? <KV k="party.cnic" v={<span dir="ltr">{party.cnic}</span>} /> : null}
-        {party.city ? <KV k="party.city" v={party.city} /> : null}
-        {party.address ? <KV k="party.address" v={party.address} /> : null}
+        <KV k="party.phone" help="common.phone" v={<span dir="ltr">{party.phone}</span>} />
+        {party.whatsapp ? <KV k="party.whatsapp" help="party.whatsapp" v={<span dir="ltr">{party.whatsapp}</span>} /> : null}
+        {party.cnic ? <KV k="party.cnic" help="common.cnic" v={<span dir="ltr">{party.cnic}</span>} /> : null}
+        {party.city ? <KV k="party.city" help="party.city" v={party.city} /> : null}
+        {party.address ? <KV k="party.address" help="common.address" v={party.address} /> : null}
       </section>
 
+      <PartyLending party={party} />
       <PartyJourney partyId={party.id} />
       <PartyUnits party={party} />
 
       <Section
         title="party.statement"
+        help="party.statement"
         right={
           <DownloadButton path={`/api/v1/exports/parties/${party.id}/statement`} name={`khata-${party.name}`} />
         }
@@ -108,7 +121,7 @@ export default function PartyDetailPage() {
                     {fmtDate(r.at)}
                   </div>
                 </div>
-                {r.document_type === 'payment' && r.document_id ? <button type="button" aria-label={pick('unit.printReceipt')} onClick={() => openPrintable(`/api/v1/payments/${r.document_id}/receipt?format=thermal`)} className="tap rounded-full border border-line p-2 text-ink"><Printer size={14} /></button> : null}
+                {(r.document_type === 'payment' || r.document_type === 'lending') && r.document_id ? <button type="button" aria-label={pick('unit.printReceipt')} onClick={() => openPrintable(`/api/v1/payments/${r.document_id}/receipt?format=thermal`)} className="tap rounded-full border border-line p-2 text-ink"><Printer size={14} /></button> : null}
                 <div className="text-end">
                   {Number(r.debit) > 0 ? <MoneyText value={r.debit} tone="ink" size="sm" /> : <MoneyText value={-Number(r.credit)} size="sm" />}
                   <div className="text-xs text-muted" dir="ltr">

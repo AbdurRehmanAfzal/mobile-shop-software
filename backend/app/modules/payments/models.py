@@ -5,7 +5,7 @@ import uuid
 from decimal import Decimal
 from enum import StrEnum
 
-from sqlalchemy import JSON, Date, ForeignKey, Index, String, Text, UniqueConstraint, Uuid
+from sqlalchemy import JSON, Date, DateTime, ForeignKey, Index, String, Text, UniqueConstraint, Uuid
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import ZERO, Base, ShopScoped, Timestamped, UUIDPk
@@ -14,6 +14,11 @@ from app.db.base import ZERO, Base, ShopScoped, Timestamped, UUIDPk
 class PaymentDirection(StrEnum):
     IN = "in"
     OUT = "out"
+
+
+class PaymentPurpose(StrEnum):
+    BILL = "bill"  # against the person's bills (or an advance for later bills)
+    LENDING = "lending"  # len-den: money lent to / borrowed from a person, no bill (docs/32)
 
 
 class PaymentMethod(StrEnum):
@@ -40,6 +45,9 @@ class Payment(UUIDPk, ShopScoped, Timestamped, Base):
         Uuid, ForeignKey("parties.id", ondelete="RESTRICT"), nullable=False, index=True
     )
     direction: Mapped[str] = mapped_column(String(3), nullable=False)
+    purpose: Mapped[str] = mapped_column(
+        String(10), nullable=False, default=PaymentPurpose.BILL, server_default="bill"
+    )
     amount: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
     cash_account_id: Mapped[uuid.UUID] = mapped_column(
         Uuid, ForeignKey("cash_accounts.id", ondelete="RESTRICT"), nullable=False
@@ -48,6 +56,9 @@ class Payment(UUIDPk, ShopScoped, Timestamped, Base):
     reference: Mapped[str | None] = mapped_column(String(80))
     date: Mapped[dt.date] = mapped_column(Date, nullable=False)
     notes: Mapped[str | None] = mapped_column(Text)
+    # len-den only (docs/32 §7): the promised return date and the last reminder sent for it
+    due_date: Mapped[dt.date | None] = mapped_column(Date)
+    reminded_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
     allocations: Mapped[list[dict]] = mapped_column(
         JSON, nullable=False, default=list
     )  # [{document_type, document_id, amount}]

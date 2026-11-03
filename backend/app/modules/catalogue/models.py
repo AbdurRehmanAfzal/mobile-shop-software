@@ -75,11 +75,17 @@ class ModelSpec(UUIDPk, Base):
     __tablename__ = "model_specs"
     __table_args__ = (UniqueConstraint("shop_id", "model_id", name="uq_model_specs_shop_model"),)
 
-    shop_id: Mapped[uuid.UUID] = mapped_column(Uuid, ForeignKey("shops.id", ondelete="CASCADE"), nullable=False, index=True)
-    model_id: Mapped[uuid.UUID] = mapped_column(Uuid, ForeignKey("models.id", ondelete="CASCADE"), nullable=False, index=True)
+    shop_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("shops.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    model_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("models.id", ondelete="CASCADE"), nullable=False, index=True
+    )
     model_number: Mapped[str | None] = mapped_column(String(40))
     specs: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, nullable=False
+    )
 
 
 class Storage(UUIDPk, Base):

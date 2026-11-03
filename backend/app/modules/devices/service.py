@@ -214,9 +214,13 @@ def list_devices(
     if age_min:
         import datetime as _dt
 
-        stmt = stmt.where(Device.first_seen_at <= _dt.datetime.now(_dt.UTC) - _dt.timedelta(days=age_min))
+        stmt = stmt.where(
+            Device.first_seen_at <= _dt.datetime.now(_dt.UTC) - _dt.timedelta(days=age_min)
+        )
     if lock_unchecked:
-        stmt = stmt.where(Device.condition != DeviceCondition.BOX_PACK, Device.lock_checks.is_(None))
+        stmt = stmt.where(
+            Device.condition != DeviceCondition.BOX_PACK, Device.lock_checks.is_(None)
+        )
     if status:
         stmt = stmt.where(Device.status == status)
     if condition:
@@ -349,7 +353,14 @@ def _validate_catalogue(db: Session, shop_id: uuid.UUID, data) -> None:
         raise ValidationFailed(code="catalogue_mismatch")
 
 
-def new_device(db: Session, shop_id: uuid.UUID, data, *, require_lock: bool = True, user_id: uuid.UUID | None = None) -> Device:
+def new_device(
+    db: Session,
+    shop_id: uuid.UUID,
+    data,
+    *,
+    require_lock: bool = True,
+    user_id: uuid.UUID | None = None,
+) -> Device:
     """Create the device row (no event yet). Caller must apply a PURCHASED event in the same transaction.
     Owner addendum 6: a used tablet / watch (and a used phone when the shop says so) must come with
     its locks checked; what the shop typed about the model is remembered in its library."""
@@ -358,7 +369,9 @@ def new_device(db: Session, shop_id: uuid.UUID, data, *, require_lock: bool = Tr
 
     _validate_catalogue(db, shop_id, data)
     shop = db.get(Shop, shop_id)
-    if require_lock and dtypes.lock_required(shop, getattr(data, "category", "phone"), data.condition):
+    if require_lock and dtypes.lock_required(
+        shop, getattr(data, "category", "phone"), data.condition
+    ):
         locks = getattr(data, "lock_checks", None) or {}
         if not getattr(data, "lock_checked", False) and not locks:
             raise ValidationFailed(
@@ -397,7 +410,14 @@ def new_device(db: Session, shop_id: uuid.UUID, data, *, require_lock: bool = Tr
         device.lock_checked_by = user_id
     db.add(device)
     db.flush()
-    dtypes.learn_specs(db, shop_id, device.model_id, model_number=getattr(data, "model_number", None), ram_gb=device.ram_gb, specs=device.specs)
+    dtypes.learn_specs(
+        db,
+        shop_id,
+        device.model_id,
+        model_number=getattr(data, "model_number", None),
+        ram_gb=device.ram_gb,
+        specs=device.specs,
+    )
     # owner addendum 4: the barcode is born with the unit, in this same transaction
     from app.modules.auth.models import Shop
     from app.modules.barcodes.service import assign_device

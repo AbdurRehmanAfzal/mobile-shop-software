@@ -60,19 +60,28 @@ export default function KhataPage() {
       />
 
       <div className="grid grid-cols-2 gap-2.5">
-        <button type="button" aria-pressed={f === 'get'} onClick={() => setF(f === 'get' ? 'all' : 'get')} className={`tap flex flex-col rounded-3xl border-[3px] bg-khata px-4 py-3 text-start text-khata-fg ${f === 'get' ? 'border-khata-fg' : 'border-transparent'}`}>
-          <BiLabel text="counter.toGet" size="sm" bold tone="text-current" />
-          <span className="num text-2xl" dir="ltr">{n(dash?.receivable)}</span>
-          {!q ? <span className={small}><span className="num">{getCount}</span> {pick('counter.people')}</span> : null}
-        </button>
-        <button type="button" aria-pressed={f === 'give'} onClick={() => setF(f === 'give' ? 'all' : 'give')} className={`tap flex flex-col rounded-3xl border-[3px] bg-expense px-4 py-3 text-start text-expense-fg ${f === 'give' ? 'border-expense-fg' : 'border-transparent'}`}>
-          <BiLabel text="counter.toGive" size="sm" bold tone="text-current" />
-          <span className="num text-2xl" dir="ltr">{n(dash?.payable)}</span>
-          {!q ? <span className={small}><span className="num">{giveCount}</span> {pick('counter.people')}</span> : null}
-        </button>
+        <div className="relative">
+          <button type="button" aria-pressed={f === 'get'} onClick={() => setF(f === 'get' ? 'all' : 'get')} className={`tap flex w-full flex-col rounded-3xl border-[3px] bg-khata px-4 py-3 text-start text-khata-fg ${f === 'get' ? 'border-khata-fg' : 'border-transparent'}`}>
+            <BiLabel text="counter.toGet" size="sm" bold tone="text-current" />
+            <span className="num text-2xl" dir="ltr">{n(dash?.receivable)}</span>
+            {!q ? <span className={small}><span className="num">{getCount}</span> {pick('counter.people')}</span> : null}
+          </button>
+          <span className="absolute end-2 top-2 text-khata-fg [&_button]:text-current"><Help term="counter.glance.toGet" size="sm" /></span>
+        </div>
+        <div className="relative">
+          <button type="button" aria-pressed={f === 'give'} onClick={() => setF(f === 'give' ? 'all' : 'give')} className={`tap flex w-full flex-col rounded-3xl border-[3px] bg-expense px-4 py-3 text-start text-expense-fg ${f === 'give' ? 'border-expense-fg' : 'border-transparent'}`}>
+            <BiLabel text="counter.toGive" size="sm" bold tone="text-current" />
+            <span className="num text-2xl" dir="ltr">{n(dash?.payable)}</span>
+            {!q ? <span className={small}><span className="num">{giveCount}</span> {pick('counter.people')}</span> : null}
+          </button>
+          <span className="absolute end-2 top-2 text-expense-fg [&_button]:text-current"><Help term="counter.glance.toGive" size="sm" /></span>
+        </div>
       </div>
 
-      <SearchBox value={q} onChange={setQ} placeholder="party.searchPlaceholder" />
+      <div className="flex items-center gap-1">
+        <div className="min-w-0 flex-1"><SearchBox value={q} onChange={setQ} placeholder="party.searchPlaceholder" /></div>
+        <Help term="common.search" size="sm" />
+      </div>
 
       {isLoading ? <Loading /> : !rows.length ? <Empty text="counter.nobody" /> : (
         <div className="card divide-y divide-line p-0">

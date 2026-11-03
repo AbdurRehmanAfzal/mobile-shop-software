@@ -356,7 +356,12 @@ def deliver(
         job.discount = money(data.discount)
     if data.warranty_days is not None:
         job.warranty_days = data.warranty_days
-    if data.outside_cost is not None:
+    # a lab's charge was booked when the phone came back from the lab (docs/34); a cost typed here
+    # is only for a job that never went through a lab trip
+    from app.modules.repairs.labs import lab_cost_booked
+
+    booked = lab_cost_booked(db, job.id)
+    if data.outside_cost is not None and booked == ZERO:
         job.outside_cost = money(data.outside_cost)
     _recalc(job)
     paid = money(data.paid)
@@ -405,22 +410,22 @@ def deliver(
             job.bill_group_id = post(db, shop_id, user_id, posting).id
         job.paid = money(job.advance + paid)
     else:
-        # own stock device: outside technician cost adds to the device's cost
-        if job.outside_cost > ZERO:
+        # own stock device: outside technician cost adds to the device's cost (what a lab trip
+        # already booked is not booked again)
+        extra = money(job.outside_cost - booked)
+        if extra > ZERO:
             device = get_device(db, shop_id, job.device_id)
             posting = Posting(
                 document_type="repair_cost", document_id=job.id, memo=f"{job.no} {job.device_desc}"
             )
-            posting.debit(
-                acc.SysAccount.INVENTORY, job.outside_cost, device_id=device.id, memo=job.no
-            )
+            posting.debit(acc.SysAccount.INVENTORY, extra, device_id=device.id, memo=job.no)
             if job.outside_party_id:
-                posting.credit(acc.party_account(job.outside_party_id), job.outside_cost)
+                posting.credit(acc.party_account(job.outside_party_id), extra)
             else:
                 cash = _cash(db, shop_id, data.cash_account_id)
-                posting.credit(acc.cash_account(cash.id), job.outside_cost, memo=f"Repair {job.no}")
+                posting.credit(acc.cash_account(cash.id), extra, memo=f"Repair {job.no}")
             job.bill_group_id = post(db, shop_id, user_id, posting).id
-            device.cost_price = money((device.cost_price or ZERO) + job.outside_cost)
+            device.cost_price = money((device.cost_price or ZERO) + extra)
 
     _close_device(db, shop_id, user_id, job, repaired=True)
     job.status = RepairStatus.DELIVERED
@@ -437,6 +442,13 @@ def deliver(
     )
     db.commit()
     return job
+
+
+def _trips(db: Session, job: RepairJob) -> dict:
+    from app.modules.repairs.labs import job_trips
+
+    trips = job_trips(db, job.id)
+    return {"trips": trips, "at_lab": next((t for t in trips if t["status"] == "at_lab"), None)}
 
 
 def to_out(db: Session, job: RepairJob) -> dict:
@@ -465,6 +477,7 @@ def to_out(db: Session, job: RepairJob) -> dict:
         else (money(max(ZERO, job.estimate - job.advance)) if job.party_id and open_ else ZERO),
         "overdue": open_ and job.promised_at is not None and job.promised_at < shop_today(),
         "parts": list(job.parts),
+        **_trips(db, job),
         "status_log": [
             {
                 "from_status": lg.from_status,

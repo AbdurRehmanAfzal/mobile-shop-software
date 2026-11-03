@@ -217,3 +217,53 @@ by sheet remain a later step (docs/18 §1).
 **Decision.** (1) Profile fields are columns on `shops` (legal name, tagline en / ur, business type, registration, year, province, email, website, social, opening hours, owner name / CNIC, FBR POS ID, bank details, terms en / ur, currency, print choices); NTN / STRN / CNIC / email are validated. (2) The logo is uploaded through `POST /shops/current/logo` and printed inlined as a data URI, so printed pages, PDFs and shared links show it without a login. (3) `auth/profile.py` builds one header and one footer for printed documents (sale bill, repair slip), driven by the shop's print choices. (4) Money is always PKR (hard rule); `shops.currency` only decides how it is written (sign, before / after, paisa). The app reads it from `/me` and formats every amount through `formatMoney` / `withCur`. (5) Migration `d2f4b6c8e0a2`, additive.
 **Consequences.** A shop's change in Settings shows on every bill and screen at once. Notification templates and Excel sheets keep "Rs." until moved to the label. FBR POS transmission stays out of scope.
 
+## ADR-041 · 2026-11-02 · Accepted · Len-den is a payment with purpose `lending` in the person's one khata, posted under its own document type, adjusted against bills only on demand
+**Context.** Shops give and take money with people with no bill; the same person may later buy or sell (docs/32). Such money already reached the khata as a stand-alone payment, but every report called it udhaar received / paid to people, and it could never pay a later bill.
+**Decision.**
+- (1) `payments.purpose` (`bill` default, `lending`), migration `e3a5c7e9f1b3`, additive.
+- (2) A lending entry posts to the same party account, so the khata nets with later bills. Its ledger group is `lending` (reversal `reversal:lending`), and every report names it: cash reasons `lent` / `borrowed`, day report `lending`, udhaar movement `lent` / `borrowed`, overview `lent_in_period` / `borrowed_in_period`.
+- (3) A lending entry is never allocated when made; allocations on one are refused.
+- (4) Open len-den per person = unallocated lending out − unallocated lending in. It is a part of the khata, never a second balance.
+- (5) `POST /payments/settle/{party_id}` puts free money (advances first, then the net of len-den) on the person's open bills, oldest first. The ledger is untouched; it only marks the bills paid, and it is an audit row.
+- (6) A report screen `/shop-audit/lending` and the complete-report section `lending`.
+
+**Consequences.**
+- Existing payments read as before (`bill`).
+- Adjusting is a deliberate button, not automatic at the counter.
+- No interest, due date or reminder for len-den.
+
+
+## ADR-042 · 2026-11-02 · Accepted · Len-den return dates: one optional date per entry, the earliest open one counts per person; reminders to people who owe, alerts for what the shop owes
+**Context.** The owner wants reminders for len-den (docs/32 §7).
+**Decision.** `payments.due_date` and `reminded_at` (migration `f4b6d8f0a2c4`). The status is derived per person from their open entries on their side. A person who owes the shop gets a WhatsApp reminder, by hand or from the night job (a day before, on the day, then every 3 days; only when the shop's udhaar reminders are on). What the shop owes is never messaged to the person; it is shown to the owner (home, overview, audit). Changing a date is an audit row; nothing is deleted.
+**Consequences.** The udhaar reminder (balance untouched N days) and the len-den reminder can both reach the same person; each has its own gap.
+
+## ADR-043 · 2026-11-02 · Accepted · Help on everything: one `Help` component, texts per module namespace, a test that no term lacks a language or an example
+**Context.** Shopkeepers asked for an info icon with an example on every field, tab and card (docs/33).
+**Decision.**
+- `Help` takes any `help.<term>` (nested) and a small size; `Section`, `KV` and the phone / CNIC / IMEI inputs take a help key; the phone / CNIC / IMEI inputs show a default one.
+- Every term has `title`, `body` and `example` in en / ur / roman. `Help.test.ts` scans the code for literal terms and fails on any gap.
+- Terms built from server keys go through literal maps (`helpKey: '...'`), never template strings.
+- Shared wording lives once in `help.common.*`; module texts sit under the module's namespace.
+
+**Consequences.**
+- A new screen or field without its texts fails the test.
+- Tabs that are buttons get one icon beside the group, which explains the selected tab.
+
+## ADR-044 · 2026-11-03 · Accepted · Repair labs are `technician` parties; one `repair_dispatches` row per trip; the lab's charge is booked on return; a repair sticker with picked fields
+**Context.** Shops send phones to many repair labs in the market and want each lab's complete record, the history in the repairs module and in the audit, and a sticker with the phone's details whose fields they choose (docs/34).
+**Decision.**
+- (1) A lab is a party of kind `technician`.
+- (2) `repair_dispatches` keeps every trip: sent / back (fixed or not, charge, paid now) / cancelled. One open trip per job.
+- (3) The charge is booked when the phone comes back, credited to the lab's khata less what was paid now:
+  - customer's phone → `cogs`;
+  - own phone → `inventory` and the phone's cost.
+  Delivery books only an outside cost no trip already booked.
+- (4) Back fixed → `repaired` + the "ready" message.
+- (5) Status log, audit row and (own phone) `note` device event on every step.
+- (6) `/labels/repairs` prints the sticker with the fields asked for; the barcode is the job number and `barcodes/lookup` resolves it; the screen lock is never printed.
+- (7) `/shop-audit/repairs` and the report sections `repairs` / `repair_labs`.
+
+**Consequences.**
+- Repair profit now includes outside lab costs on customers' phones.
+- A lab's unpaid charges show on its khata like any payable.

@@ -2,11 +2,13 @@
 
 import { ChevronLeft, ChevronRight, Search, X } from 'lucide-react'
 import { useEffect, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { BiLabel, useLang, type BiText } from './Bilingual'
 import { formatMoney } from '@/lib/format'
 import { ApiError } from '@/lib/api'
 import { ScanButton } from './ScanButton'
+import Help from './Help'
 
 export function PageHeader({ title, back = true, right, help }: { title: string | BiText; back?: boolean; right?: ReactNode; help?: ReactNode }) {
   const nav = useNavigate()
@@ -37,8 +39,10 @@ export function Sheet({ open, onClose, title, children }: { open: boolean; onClo
     return () => window.removeEventListener('keydown', onKey)
   }, [open, onClose])
   if (!open) return null
-  return (
-    <div className="fixed inset-0 z-30 flex items-end justify-center bg-ink/50 backdrop-blur-sm" onClick={onClose}>
+  // rendered into <body>: a sheet opened from inside a moved / transformed box (a "?" pinned with
+  // translate, a card) would otherwise be placed relative to that box instead of the screen
+  return createPortal(
+    <div className="fixed inset-0 z-30 flex items-end justify-center bg-ink/50 backdrop-blur-sm" onClick={(e) => { e.stopPropagation(); onClose() }}>
       <div className="max-h-[92dvh] w-full max-w-md overflow-y-auto rounded-t-3xl bg-ground p-5 pb-[max(20px,env(safe-area-inset-bottom))]" onClick={(e) => e.stopPropagation()}>
         <div className="mb-4 flex items-center justify-between">
           <BiLabel text={title} size="lg" bold />
@@ -48,7 +52,8 @@ export function Sheet({ open, onClose, title, children }: { open: boolean; onClo
         </div>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
 
@@ -164,11 +169,28 @@ export function ErrorText({ error }: { error: unknown }) {
   return <div className="rounded-2xl border border-payable/30 bg-payable-tint/40 px-4 py-3 text-sm font-semibold text-payable">{msg}</div>
 }
 
-export function Section({ title, children, right }: { title: string | BiText; children: ReactNode; right?: ReactNode }) {
+/** What a screen shows while its data is not there: the skeleton, or — when the request failed —
+ *  the reason and a retry button (never a skeleton forever). */
+export function Pending({ error, retry }: { error: unknown; retry?: () => unknown }) {
+  if (!error) return <Loading />
+  return (
+    <div className="flex flex-col items-start gap-2 py-2" data-testid="load-error">
+      <ErrorText error={error} />
+      {retry ? (
+        <button type="button" onClick={() => retry()} className="tap min-h-10 rounded-full border border-line bg-surface px-4 text-sm font-bold text-ink">
+          <BiLabel text="offline.retry" size="sm" />
+        </button>
+      ) : null}
+    </div>
+  )
+}
+
+/** `help`: a key under `help.` — a "?" with an explanation and an example beside the title (docs/33) */
+export function Section({ title, children, right, help }: { title: string | BiText; children: ReactNode; right?: ReactNode; help?: string }) {
   return (
     <section className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
-        <BiLabel text={title} size="sm" tone="text-muted" bold />
+        <span className="flex items-center gap-1"><BiLabel text={title} size="sm" tone="text-muted" bold />{help ? <Help term={help} size="sm" /> : null}</span>
         {right}
       </div>
       {children}
@@ -176,11 +198,11 @@ export function Section({ title, children, right }: { title: string | BiText; ch
   )
 }
 
-export function KV({ k, v }: { k: string | BiText; v: ReactNode }) {
+export function KV({ k, v, help }: { k: string | BiText; v: ReactNode; help?: string }) {
   const { pick } = useLang()
   return (
     <div className="flex items-center justify-between gap-3 py-1.5">
-      <span className="text-sm text-muted">{pick(k)}</span>
+      <span className="flex items-center gap-1 text-sm text-muted">{pick(k)}{help ? <Help term={help} size="sm" /> : null}</span>
       <span className="text-sm font-semibold text-ink" dir="auto">
         {v}
       </span>

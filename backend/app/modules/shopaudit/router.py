@@ -16,12 +16,15 @@ from app.modules.auth.models import Shop
 from app.modules.shopaudit import (
     finance,
     inventory,
+    lending,
     parties,
     products,
     reconcile,
+    repairs,
     report,
     security,
     service,
+    trade,
 )
 
 router = APIRouter(prefix="/api/v1/shop-audit", tags=["shop-audit"])
@@ -89,7 +92,11 @@ def overview(
     """The KPI set for the period: sales, purchases, profit, expenses, money, debt, stock — each
     balance with opening / closing / as-of / current, each flow as the period's sum."""
     p = period_of(db, ctx.shop_id, preset, date_from, date_to, as_of)
-    return plain(service.overview(db, ctx.shop_id, p, can_cost=ctx.can(Cap.VIEW_COST)))
+    out = service.overview(db, ctx.shop_id, p, can_cost=ctx.can(Cap.VIEW_COST))
+    out["attention"] = inventory.attention(
+        db, ctx.shop_id, _shop(db, ctx), can_cost=ctx.can(Cap.VIEW_COST)
+    )
+    return plain(out)
 
 
 @router.get("/reconcile")
@@ -246,9 +253,38 @@ def udhaar(
 ):
     """Receivables and payables apart: totals, period movement, age bands, people, phones."""
     p = _p(db, ctx, preset, date_from, date_to, as_of)
-    return plain(
-        parties.udhaar(db, ctx.shop_id, p, can_cost=ctx.can(Cap.VIEW_COST), limit=min(limit, 100))
-    )
+    out = parties.udhaar(db, ctx.shop_id, p, can_cost=ctx.can(Cap.VIEW_COST), limit=min(limit, 100))
+    out["installments"] = parties.installments_block(db, ctx.shop_id)
+    return plain(out)
+
+
+@router.get("/repairs")
+def repairs_report(
+    ctx: Reports,
+    db: DB,
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+):
+    """Repairs (docs/34): came in / given back, income, parts, lab charges, profit, every repair
+    lab's record, faults, late jobs and phones late at a lab. Money only with VIEW_COST."""
+    p = _p(db, ctx, preset, date_from, date_to)
+    return plain(repairs.repairs(db, ctx.shop_id, p, can_cost=ctx.can(Cap.VIEW_COST)))
+
+
+@router.get("/lending")
+def lending_report(
+    ctx: Reports,
+    db: DB,
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+    as_of: dt.date | None = None,
+    limit: int = 50,
+):
+    """Len-den (docs/32): money lent / borrowed with no bill — period, open per person, series."""
+    p = _p(db, ctx, preset, date_from, date_to, as_of)
+    return plain(lending.lending(db, ctx.shop_id, p, limit=min(limit, 200)))
 
 
 # ---- P6: inventory intelligence -----------------------------------------------------------------
@@ -320,6 +356,99 @@ def invoices_(
     """Documents in the period by kind, status and employee; everything that was voided."""
     p = _p(db, ctx, preset, date_from, date_to)
     return plain(products.invoices(db, ctx.shop_id, p, can_cost=ctx.can(Cap.VIEW_COST)))
+
+
+# ---- reports audit R2 / R3: sales and purchase reports (docs/31) ---------------------------------
+
+PayStatus = Annotated[str | None, Query(pattern="^(" + "|".join(trade.PAY_STATUSES) + ")$")]
+
+
+@router.get("/sales")
+def sales_(
+    ctx: Reports,
+    db: DB,
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+    user_id: uuid.UUID | None = None,
+    party_id: uuid.UUID | None = None,
+    status: PayStatus = None,
+    q: Annotated[str | None, Query(max_length=60)] = None,
+    limit: int = 100,
+):
+    """Sale bills of the period: at the counter vs credit, paid / part / unpaid, per employee
+    (discount, profit, returns), per customer, series, and the bill list."""
+    p = _p(db, ctx, preset, date_from, date_to)
+    return plain(
+        trade.sales(
+            db,
+            ctx.shop_id,
+            p,
+            can_cost=ctx.can(Cap.VIEW_COST),
+            user_id=user_id,
+            party_id=party_id,
+            status=status,
+            q=q,
+            limit=limit,
+        )
+    )
+
+
+@router.get("/purchases")
+def purchases_(
+    ctx: Reports,
+    db: DB,
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+    user_id: uuid.UUID | None = None,
+    party_id: uuid.UUID | None = None,
+    status: PayStatus = None,
+    q: Annotated[str | None, Query(max_length=60)] = None,
+    limit: int = 100,
+):
+    """Purchase bills of the period: paid at purchase vs on credit, paid / owed, per supplier,
+    per employee, series, and the bill list. Cost figures: VIEW_COST only."""
+    if not ctx.can(Cap.VIEW_COST):
+        raise Forbidden()
+    p = _p(db, ctx, preset, date_from, date_to)
+    return plain(
+        trade.purchases(
+            db,
+            ctx.shop_id,
+            p,
+            user_id=user_id,
+            party_id=party_id,
+            status=status,
+            q=q,
+            limit=limit,
+        )
+    )
+
+
+@router.get("/staff")
+def staff_(
+    ctx: Reports,
+    db: DB,
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+):
+    """One row per employee: sales (discount, profit, credit, returns), purchases, payments,
+    expenses; the security counts and flags for the owner only."""
+    from app.modules.shopaudit import staff
+
+    p = _p(db, ctx, preset, date_from, date_to)
+    return plain(
+        staff.staff(
+            db,
+            ctx.shop_id,
+            _shop(db, ctx),
+            p,
+            can_cost=ctx.can(Cap.VIEW_COST),
+            is_owner=ctx.role == Role.OWNER,
+        )
+    )
 
 
 # ---- P8: owner security feed ---------------------------------------------------------------------

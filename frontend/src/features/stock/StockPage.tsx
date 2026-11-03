@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useLang, BiInput, BiLabel } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { BtnText, Chip, Empty, ErrorText, Loading, MoneyText, PageHeader, Row, SearchBox, Sheet } from '@/components/ui'
 import { useBrands, useDevices, useInvalidate } from '@/lib/queries'
 import { beep, useScan } from '@/lib/scanner'
@@ -153,6 +154,7 @@ export default function StockPage() {
       <PageHeader
         title="stock.title"
         back={false}
+        help={<Help term="stock.page" />}
         right={
           <div className="flex gap-2">
             <DownloadButton path={`/api/v1/exports/stock?status=${filter}`} name="stock" />
@@ -168,10 +170,11 @@ export default function StockPage() {
           </div>
         }
       />
-      <SearchBox value={q} onChange={setQ} placeholder="stock.searchPlaceholder" scan />
+      <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><SearchBox value={q} onChange={setQ} placeholder="stock.searchPlaceholder" scan /></div><Help term="stock.search" size="sm" /></div>
 
       {brandRow.length ? (
-        <div className="card -mx-1 flex gap-1 overflow-x-auto p-1.5">
+        <div className="card -mx-1 flex items-center gap-1 overflow-x-auto p-1.5">
+          <Help term="stock.brands" size="sm" />
           {[{ id: '', name: pick('stock.allBrands'), name_ur: null as string | null }, ...brandRow].map((b) => {
             const on = brand === b.id
             const label = ur && b.name_ur ? b.name_ur : b.name
@@ -190,14 +193,15 @@ export default function StockPage() {
 
       {/* owner 2026-10-27: the phone's own dropdown list mixed the chosen line's text with its colour;
           plain buttons show which one is on */}
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap items-center gap-1.5">
+        <Help term="stock.statusFilter" size="sm" />
         {(['in_stock', 'on_loan', 'sold', 'faulty', 'all'] as Filter[]).map((f) => (
           <button key={f} type="button" aria-pressed={filter === f} onClick={() => setFilter(f)} className={`tap h-11 shrink-0 rounded-full border-2 px-4 font-bold ${filter === f ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-sm'}`}>
             {f === 'all' ? pick('common.all') : pick(`stock.status.${f}`)}
           </button>
         ))}
       </div>
-      <div className="flex gap-2">
+      <div className="flex items-center gap-2">
         <label className="relative flex-1">
           <select value={sort} onChange={(e) => setSort(e.target.value as Sort)} className="min-h-11 w-full appearance-none rounded-xl border border-line bg-surface pe-8 ps-3 text-sm font-bold">
             {(['newest', 'oldest', 'priceLow', 'priceHigh'] as Sort[]).map((o) => (
@@ -208,21 +212,23 @@ export default function StockPage() {
           </select>
           <ArrowUpDown size={16} className="pointer-events-none absolute end-2.5 top-1/2 -translate-y-1/2 text-emerald" />
         </label>
+        <Help term="stock.sort" size="sm" />
       </div>
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap items-center gap-1.5">
         <button type="button" aria-pressed={more} onClick={() => setMore(!more)} className={`tap h-9 rounded-full border-2 px-3 text-[12px] font-bold ${more || fx.grade || fx.ram || fx.min || fx.max || fx.lock ? 'border-ink bg-ink text-ground' : 'border-line bg-surface'}`} data-testid="stock-filters">{pick('devx.filters')}</button>
+        <Help term="stock.filters" size="sm" />
         {fx.lock ? <span className="tap h-9 rounded-full border-2 border-ink bg-ink px-3 text-[12px] font-bold leading-8 text-ground">{pick('devx.lockUnchecked')}</span> : null}
       </div>
       {more ? (
         <div className="card grid grid-cols-2 gap-2">
-          <label className="flex flex-col gap-1"><BiLabel text="devx.grade" size="sm" tone="text-muted" /><select value={fx.grade} onChange={(e) => setFx({ ...fx, grade: e.target.value })} className="min-h-11 rounded-xl border border-line bg-surface px-3 text-sm font-bold"><option value="">{pick('devx.anyGrade')}</option>{['a', 'b', 'refurbished', 'copy'].map((g) => <option key={g} value={g}>{pick(`devx.grades.${g}`)}</option>)}</select></label>
-          <label className="flex flex-col gap-1"><BiLabel text="devx.ram" size="sm" tone="text-muted" /><select value={fx.ram} onChange={(e) => setFx({ ...fx, ram: e.target.value })} className="min-h-11 rounded-xl border border-line bg-surface px-3 text-sm font-bold"><option value="">{pick('devx.anyRam')}</option>{[2, 3, 4, 6, 8, 12, 16].map((g) => <option key={g} value={g}>{g} GB</option>)}</select></label>
-          <BiInput label="devx.priceMin" type="number" inputMode="numeric" min={0} value={fx.min} onChange={(e) => setFx({ ...fx, min: e.target.value })} className="num" />
-          <BiInput label="devx.priceMax" type="number" inputMode="numeric" min={0} value={fx.max} onChange={(e) => setFx({ ...fx, max: e.target.value })} className="num" />
-          <button type="button" role="switch" aria-checked={fx.lock} onClick={() => setFx({ ...fx, lock: !fx.lock })} className="tap col-span-2 flex min-h-11 items-center gap-3 rounded-2xl border border-line bg-ground px-4 text-start"><span className="flex-1"><BiLabel text="devx.lockUnchecked" size="md" bold /></span><span className={`flex h-7 w-12 shrink-0 items-center rounded-full p-1 ${fx.lock ? 'bg-emerald' : 'bg-line'}`}><span className={`h-5 w-5 rounded-full bg-white shadow transition-transform ${fx.lock ? 'translate-x-5 rtl:-translate-x-5' : ''}`} /></span></button>
+          <label className="flex flex-col gap-1"><span className="flex items-center gap-1"><BiLabel text="devx.grade" size="sm" tone="text-muted" /><Help term="device.grade" size="sm" /></span><select value={fx.grade} onChange={(e) => setFx({ ...fx, grade: e.target.value })} className="min-h-11 rounded-xl border border-line bg-surface px-3 text-sm font-bold"><option value="">{pick('devx.anyGrade')}</option>{['a', 'b', 'refurbished', 'copy'].map((g) => <option key={g} value={g}>{pick(`devx.grades.${g}`)}</option>)}</select></label>
+          <label className="flex flex-col gap-1"><span className="flex items-center gap-1"><BiLabel text="devx.ram" size="sm" tone="text-muted" /><Help term="device.ram" size="sm" /></span><select value={fx.ram} onChange={(e) => setFx({ ...fx, ram: e.target.value })} className="min-h-11 rounded-xl border border-line bg-surface px-3 text-sm font-bold"><option value="">{pick('devx.anyRam')}</option>{[2, 3, 4, 6, 8, 12, 16].map((g) => <option key={g} value={g}>{g} GB</option>)}</select></label>
+          <BiInput label="devx.priceMin" help={<Help term="stock.priceRange" size="sm" />} type="number" inputMode="numeric" min={0} value={fx.min} onChange={(e) => setFx({ ...fx, min: e.target.value })} className="num" />
+          <BiInput label="devx.priceMax" help={<Help term="stock.priceRange" size="sm" />} type="number" inputMode="numeric" min={0} value={fx.max} onChange={(e) => setFx({ ...fx, max: e.target.value })} className="num" />
+          <div className="col-span-2 flex items-center gap-1"><button type="button" role="switch" aria-checked={fx.lock} onClick={() => setFx({ ...fx, lock: !fx.lock })} className="tap flex min-h-11 flex-1 items-center gap-3 rounded-2xl border border-line bg-ground px-4 text-start"><span className="flex-1"><BiLabel text="devx.lockUnchecked" size="md" bold /></span><span className={`flex h-7 w-12 shrink-0 items-center rounded-full p-1 ${fx.lock ? 'bg-emerald' : 'bg-line'}`}><span className={`h-5 w-5 rounded-full bg-white shadow transition-transform ${fx.lock ? 'translate-x-5 rtl:-translate-x-5' : ''}`} /></span></button><Help term="stock.lockUnchecked" size="sm" /></div>
         </div>
       ) : null}
-      {data ? <div className="text-xs font-semibold text-muted">{t('stock.count', { n: rows.length })}</div> : null}
+      {data ? <div className="flex items-center gap-1 text-xs font-semibold text-muted">{t('stock.count', { n: rows.length })}<Help term="stock.card" size="sm" /></div> : null}
 
       {isLoading ? (
         <Loading />
@@ -244,7 +250,7 @@ export default function StockPage() {
       ) : null}
       <Sheet open={retype} onClose={() => setRetype(false)} title="devx.retype">
         <div className="flex flex-col gap-3">
-          <BiLabel text="devx.retypeHint" size="sm" tone="text-muted" />
+          <span className="flex items-center gap-1"><BiLabel text="devx.retypeHint" size="sm" tone="text-muted" /><Help term="device.retype" size="sm" /></span>
           <div className="grid grid-cols-3 gap-2">
             {(['phone', 'tablet', 'watch'] as const).map((c) => <button key={c} type="button" aria-pressed={toCat === c} onClick={() => { setToCat(c); setRetypeRows(null) }} className={`tap min-h-12 rounded-2xl border-2 font-bold ${toCat === c ? 'border-ink bg-ink text-ground' : 'border-line bg-surface'}`}>{pick(`devcat.${c}`)}</button>)}
           </div>

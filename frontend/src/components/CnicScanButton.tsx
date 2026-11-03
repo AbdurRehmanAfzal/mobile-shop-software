@@ -4,6 +4,7 @@
 import { IdCard } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { BiAlert, BiLabel, useLang } from './Bilingual'
+import Help from './Help'
 import { readCnic, type CnicData } from '@/lib/cnicOcr'
 import { readPhotoAi } from '@/lib/files'
 import { useAiStatus, type CnicAi } from '@/lib/ai'
@@ -47,7 +48,7 @@ export default function CnicScanButton({ onRead }: { onRead: (d: CnicData, photo
         <span className={ur ? cls('md') : ''}>{progress === null ? pick('cnicScan.button') : `${pick('cnicScan.reading')} ${Math.round(progress * 100)}%`}</span>
       </button>
       <input ref={file} type="file" accept="image/*" capture="environment" className="hidden" data-testid="cnic-photo" onChange={(e) => { const f = e.target.files?.[0]; if (f) void read(f) }} />
-      {progress === null && msg === null ? <BiLabel text="cnicScan.hint" size="sm" tone="text-muted" /> : null}
+      {progress === null && msg === null ? <span className="flex items-center gap-1"><BiLabel text="cnicScan.hint" size="sm" tone="text-muted" /><Help term="purchase.cnicScan" size="sm" /></span> : null}
       {msg === 'none' ? <BiAlert text="cnicScan.none" kind="info" /> : null}
       {msg === 'expired' ? <BiAlert text="cnicScan.expired" /> : null}
     </div>

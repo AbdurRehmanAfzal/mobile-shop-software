@@ -4,18 +4,32 @@
 import { Crown } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
-import { Empty, Loading } from '@/components/ui'
+import Help from '@/components/Help'
+import { Empty, Pending } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
 import AuditLayout from './AuditLayout'
+import SectionDownload from './SectionDownload'
 import { useAuditPeriod } from './period'
 import {withCur } from '@/lib/format'
 
 const METRICS = ['customers_sales', 'customers_bills', 'customers_profit', 'suppliers_purchases', 'suppliers_devices', 'suppliers_profit', 'receivable', 'payable'] as const
 type Metric = (typeof METRICS)[number]
-interface Rankings { metric: Metric; total: string; parties: number; rows: { rank: number; party_id: string; name: string | null; phone: string | null; value: string; count: number; share: number }[] }
+interface Count { total: number; new: number; active: number }
+interface Rankings { metric: Metric; counts?: Record<'customer' | 'supplier' | 'shop', Count>; total: string; parties: number; rows: { rank: number; party_id: string; name: string | null; phone: string | null; value: string; count: number; share: number }[] }
 
 const n = (v: string | number) => Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 })
+const METRIC_HELP: Record<string, { helpKey: string }> = {
+  customers_sales: { helpKey: 'audit.people.m.customersSales' },
+  customers_bills: { helpKey: 'audit.people.m.customersBills' },
+  customers_profit: { helpKey: 'audit.people.m.customersProfit' },
+  suppliers_purchases: { helpKey: 'audit.people.m.suppliersPurchases' },
+  suppliers_devices: { helpKey: 'audit.people.m.suppliersDevices' },
+  suppliers_profit: { helpKey: 'audit.people.m.suppliersProfit' },
+  receivable: { helpKey: 'audit.people.m.receivable' },
+  payable: { helpKey: 'audit.people.m.payable' },
+}
+const COUNT_HELP: Record<string, { helpKey: string }> = { customer: { helpKey: 'audit.people.cnt.customer' }, supplier: { helpKey: 'audit.people.cnt.supplier' }, shop: { helpKey: 'audit.people.cnt.shop' } }
 const COUNT_METRICS: Metric[] = ['customers_bills', 'suppliers_devices']
 
 export default function PartiesAuditPage() {
@@ -26,21 +40,33 @@ export default function PartiesAuditPage() {
   const [sp, setSp] = useSearchParams()
   const metric = (METRICS.find((m) => m === sp.get('metric')) ?? 'customers_sales') as Metric
   const setMetric = (m: Metric) => { const o = new URLSearchParams(sp); o.set('metric', m); setSp(o, { replace: true }) }
-  const { data, isLoading } = useGet<Rankings>(['audit-rankings', query, metric], `/api/v1/shop-audit/rankings?${query}&metric=${metric}&limit=20`)
+  const { data, isLoading, error, refetch } = useGet<Rankings>(['audit-rankings', query, metric], `/api/v1/shop-audit/rankings?${query}&metric=${metric}&limit=20`)
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   const chip = (on: boolean) => `tap shrink-0 whitespace-nowrap rounded-full border font-bold min-h-10 px-3.5 py-2 ${ur ? 'leading-[1.9]' : 'leading-tight text-sm'} ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : ''}`
   const isCount = COUNT_METRICS.includes(metric)
   const shown = METRICS.filter((m) => canCost || !m.endsWith('_profit'))
   return (
-    <AuditLayout>
-      <BiLabel text="audit.rank.hint" size="sm" tone="text-muted" />
-      <div className="flex flex-wrap gap-1.5" data-testid="metric-chips">
+    <AuditLayout right={<SectionDownload sections={['customers', 'suppliers']} name="people" />}>
+      <span className="flex items-center gap-1"><BiLabel text="audit.rank.hint" size="sm" tone="text-muted" /><Help term="audit.people" size="sm" /></span>
+      <div className="flex flex-wrap items-center gap-1.5" data-testid="metric-chips">
+        <Help term="audit.people.metric" size="sm" />
         {shown.map((m) => <button key={m} type="button" aria-pressed={metric === m} onClick={() => setMetric(m)} className={chip(metric === m)}>{pick(`audit.metric.${m}`)}</button>)}
       </div>
-      {isLoading || !data ? <Loading /> : (
+      {isLoading || !data ? <Pending error={error} retry={refetch} /> : (
         <>
+          {data.counts ? (
+            <div className="grid grid-cols-3 gap-2" data-testid="people-counts">
+              {(['customer', 'supplier', 'shop'] as const).map((k) => (
+                <Link key={k} to={`/parties?kind=${k}`} className="card tap flex min-w-0 flex-col gap-0.5">
+                  <span className="flex items-center gap-1"><BiLabel text={`audit.cnt.${k}`} size="sm" tone="text-muted" bold />{COUNT_HELP[k] ? <Help term={COUNT_HELP[k].helpKey} size="sm" /> : null}</span>
+                  <span className="num text-xl font-bold">{data.counts![k].total}</span>
+                  <span className={`text-muted ${small}`}>{pick('audit.cnt.new')} <span className="num">{data.counts![k].new}</span>{k !== 'shop' ? <> · {pick('audit.cnt.active')} <span className="num">{data.counts![k].active}</span></> : null}</span>
+                </Link>
+              ))}
+            </div>
+          ) : null}
           <section className="flex items-center justify-between rounded-3xl bg-ink px-5 py-4 text-ground" data-testid="rank-total">
-            <span className="flex flex-col"><BiLabel text={`audit.metric.${metric}`} size="md" bold tone="text-current" /><span className={`opacity-80 ${small}`}><span className="num">{data.parties}</span> {pick('audit.people')} · {pick('audit.rank.metricNote')}</span></span>
+            <span className="flex flex-col"><span className="flex items-center gap-1"><BiLabel text={`audit.metric.${metric}`} size="md" bold tone="text-current" />{METRIC_HELP[metric] ? <span className="rounded-full bg-ground"><Help term={METRIC_HELP[metric].helpKey} size="sm" /></span> : null}</span><span className={`opacity-80 ${small}`}><span className="num">{data.parties}</span> {pick('audit.people')} · {pick('audit.rank.metricNote')}</span></span>
             <span className="num text-2xl font-bold" dir="ltr">{isCount ? n(data.total) : `${withCur(n(data.total))}`}</span>
           </section>
           {!data.rows.length ? <Empty text="audit.noData" /> : (

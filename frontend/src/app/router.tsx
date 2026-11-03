@@ -35,6 +35,8 @@ import InvoicesPage from '@/features/invoices/InvoicesPage'
 import LoansPage from '@/features/loans/LoansPage'
 import ExpensesPage from '@/features/expenses/ExpensesPage'
 import { NewRepairPage, RepairDetailPage, RepairsPage } from '@/features/repairs/RepairsPages'
+import { LabDetailPage, LabsPage } from '@/features/repairs/RepairLabs'
+import AuditRepairsPage from '@/features/audit/RepairsAuditPage'
 import AccessoriesPage from '@/features/accessories/AccessoriesPage'
 import AccessoryDetailPage from '@/features/accessories/AccessoryDetailPage'
 import AccessoryReportsPage from '@/features/accessories/AccessoryReportsPage'
@@ -49,6 +51,9 @@ import AuditProductsPage from '@/features/audit/ProductsPage'
 import AuditInvoicePage from '@/features/audit/InvoiceAuditPage'
 import AuditSecurityPage from '@/features/audit/SecurityPage'
 import AuditReportCenterPage from '@/features/audit/ReportCenterPage'
+import AuditTradePage from '@/features/audit/TradePage'
+import AuditStaffPage from '@/features/audit/StaffAuditPage'
+import AuditLendingPage from '@/features/audit/LendingAuditPage'
 import StaffPage from '@/features/more/StaffPage'
 import CashAccountsPage from '@/features/more/CashAccountsPage'
 import BulkPage from '@/features/more/BulkPage'
@@ -114,6 +119,8 @@ export const router = createBrowserRouter([
           { path: '/expenses', element: <ModuleGate module="expenses"><ExpensesPage /></ModuleGate> },
           { path: '/repairs', element: <ModuleGate module="repairs"><RepairsPage /></ModuleGate> },
           { path: '/repairs/new', element: <ModuleGate module="repairs"><NewRepairPage /></ModuleGate> },
+          { path: '/repairs/labs', element: <ModuleGate module="repairs"><LabsPage /></ModuleGate> },
+          { path: '/repairs/labs/:id', element: <ModuleGate module="repairs"><LabDetailPage /></ModuleGate> },
           { path: '/repairs/:id', element: <ModuleGate module="repairs"><RepairDetailPage /></ModuleGate> },
           { path: '/accessories', element: <ModuleGate module="accessories"><AccessoriesPage /></ModuleGate> },
           { path: '/accessories/reports', element: <ModuleGate module="accessories"><AccessoryReportsPage /></ModuleGate> },
@@ -127,6 +134,10 @@ export const router = createBrowserRouter([
           { path: '/audit/stock', element: <ModuleGate module="reports"><AuditInventoryPage /></ModuleGate> },
           { path: '/audit/products', element: <ModuleGate module="reports"><AuditProductsPage /></ModuleGate> },
           { path: '/audit/bills', element: <ModuleGate module="reports"><AuditInvoicePage /></ModuleGate> },
+          { path: '/audit/sales', element: <ModuleGate module="reports"><AuditTradePage /></ModuleGate> },
+          { path: '/audit/staff', element: <ModuleGate module="reports"><AuditStaffPage /></ModuleGate> },
+          { path: '/audit/lending', element: <ModuleGate module="reports"><AuditLendingPage /></ModuleGate> },
+          { path: '/audit/repairs', element: <ModuleGate module="reports"><AuditRepairsPage /></ModuleGate> },
           { path: '/audit/security', element: <ModuleGate module="reports"><AuditSecurityPage /></ModuleGate> },
           { path: '/audit/reports', element: <ModuleGate module="reports"><AuditReportCenterPage /></ModuleGate> },
           { path: '/more/staff', element: <StaffPage /> },

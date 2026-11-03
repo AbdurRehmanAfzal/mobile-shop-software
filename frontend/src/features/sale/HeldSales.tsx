@@ -4,6 +4,7 @@
 
 import { CirclePause, Play, Trash2 } from 'lucide-react'
 import { BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { Empty, Loading, Sheet, fmtDateTime } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useGet, useInvalidate } from '@/lib/queries'
@@ -28,11 +29,14 @@ export function HeldButton({ count, onClick }: { count: number; onClick: () => v
   const { pick, ur, cls } = useLang()
   if (!count) return null
   return (
-    <button type="button" onClick={onClick} className={`tap flex min-h-14 w-full items-center gap-3 rounded-2xl bg-khata px-4 font-bold text-khata-fg ${ur ? cls('md') : 'text-[15px]'}`}>
-      <CirclePause size={22} className="shrink-0 text-khata-icon" />
-      <span className="flex-1 text-start">{pick('hold.list')}</span>
-      <span className="num rounded-full bg-ink px-2.5 py-0.5 text-sm text-ground">{count}</span>
-    </button>
+    <div className="flex items-center gap-1">
+      <button type="button" onClick={onClick} className={`tap flex min-h-14 min-w-0 flex-1 items-center gap-3 rounded-2xl bg-khata px-4 font-bold text-khata-fg ${ur ? cls('md') : 'text-[15px]'}`}>
+        <CirclePause size={22} className="shrink-0 text-khata-icon" />
+        <span className="flex-1 text-start">{pick('hold.list')}</span>
+        <span className="num rounded-full bg-ink px-2.5 py-0.5 text-sm text-ground">{count}</span>
+      </button>
+      <Help term="sale.held" size="sm" />
+    </div>
   )
 }
 
@@ -71,7 +75,7 @@ export function HeldSalesSheet<C>({ open, onClose, onResume }: { open: boolean; 
               </div>
             </div>
           ))}
-          <BiLabel text="hold.hint" size="sm" tone="text-muted" />
+          <span className="flex items-center gap-1"><BiLabel text="hold.hint" size="sm" tone="text-muted" /><Help term="sale.held" size="sm" /></span>
         </div>
       )}
     </Sheet>

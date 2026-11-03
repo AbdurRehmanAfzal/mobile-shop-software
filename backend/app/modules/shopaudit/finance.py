@@ -131,6 +131,7 @@ def pnl(db: Session, shop_id: uuid.UUID, p: Period) -> dict:
 IN_REASON = {
     "invoice": "sales_now",
     "payment": "udhaar_received",
+    "lending": "borrowed",
     "repair": "repairs",
     "repair_advance": "repairs",
     "repair_bill": "repairs",
@@ -143,6 +144,7 @@ IN_REASON = {
 OUT_REASON = {
     "purchase": "stock_now",
     "payment": "paid_to_people",
+    "lending": "lent",
     "expense": "expenses",
     "sale_return": "refunds",
     "exchange_refund": "refunds",
@@ -154,6 +156,7 @@ OUT_REASON = {
 IN_KEYS = (
     "sales_now",
     "udhaar_received",
+    "borrowed",
     "repairs",
     "refund_from_supplier",
     "transfer_in",
@@ -163,6 +166,7 @@ IN_KEYS = (
 OUT_KEYS = (
     "stock_now",
     "paid_to_people",
+    "lent",
     "expenses",
     "refunds",
     "repair_parts",

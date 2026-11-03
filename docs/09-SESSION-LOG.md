@@ -612,3 +612,76 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - PR #23 develop → main merged (`9ee7dcd`), Deploy ✓; production answers the new public routes (`/public/heartbeat` → ok:false for an unknown customer, `/public/key/x` → 404) and serves the Business and key pages.
 - Owner: (1) note everything still open on his side — no manual testing, no env variables on the server, no server commands → `docs/29-OWNER-PENDING.md` (server env table, commands, in-app settings, manual tests, decisions), linked from CLAUDE.md / docs 06 / 21; memory note. Found and fixed: `deploy/docker-compose.yml` passed only a few settings to the backend container, so `RENEWAL_*`, `ADMIN_WHATSAPP`, SMTP, AI and OTP keys in `.env` never reached it (renewal keys could not be made on production) — all passed now, `.env.example` updated. (2) Shop settings: logo, owner details, currency (default Rs.), NTN, business details — researched (FBR / POS receipt fields) → `docs/30-BUSINESS-PROFILE-PLAN.md`. Built `auth/profile.py`, 19 shop columns (migration `d2f4b6c8e0a2`), logo upload / remove routes, `ShopOut.currency / logo_path`, shared printed header / footer on the sale bill and repair slip; frontend `BusinessProfile.tsx` (five cards), currency label + position through `formatMoney` / `withCur` everywhere (74 hard-coded "Rs." replaced), duplicate NTN / STRN fields removed from the old tax card; strings en / ur / roman (62); ADR-040.
 **Verified**: backend `test_business_profile.py` (3) + sales / repairs / installments / links / auth / settings / migrations, full suite green, ruff clean; tsc; vitest 33; Playwright `business-profile.spec.ts` (logo shown, details / tax / currency / print saved, the app writes "0 PKR", the bill has the logo, tagline, NTN 1234567-8, FBR POS ID, terms and "1,500 PKR") + core-flow, counter, audit, audit-finance, item-params, provider-console, v2-screens, installments (18 passed).
+- PR #24 develop → main merged (`87c5ea0`), Deploy run 41335232424 ✓ (all jobs); migration `d2f4b6c8e0a2` runs in the backend container.
+
+## 2026-11-02 · Reports module audit (owner brief "Complete Reports Module Audit")
+- Audited the 15 report categories + the 20 common requirements against code and tests → `docs/31-REPORTS-MODULE-AUDIT.md` (18 was taken by the bulk Excel plan). Found: most of it exists (shop audit P1-P12); broken = audit screens never show an error (skeleton forever); missing = sales report (paid / part / unpaid, at the counter vs credit, per employee discount / profit), purchase report (paid / owed, per employee), staff report, people counts, by-supplier stock, overview attention, installments in udhaar, report sections sales / purchases / staff / insights, per-screen download. Plan R1-R9. Owner rule for this brief: no merge to `main` / deploy without approval.
+- R1-R9 done (docs/31 §4): R1 error + retry on the audit screens; R2 / R3 `shopaudit/trade.py` sales and purchase reports (at the counter vs credit, paid / part / unpaid, per employee and person, series, filtered list) reconciling with overview and Products; R4 `shopaudit/staff.py` staff report (security columns owner-only; the existing staff-activity log is linked); R5 people counts + stock by supplier; R6 overview "needs a look"; R7 installments in udhaar; R8 report sections insights / sales / purchases / staff; R9 print / Excel on every audit screen; UI `/audit/sales`, `/audit/staff`; 54 strings en / ur / roman. No migration.
+**Verified**: backend `test_reports_trade.py` (7) + shop-audit / installments suites + full suite, ruff; tsc; vitest 35; Playwright `reports-audit` + 6 audit specs + core-flow / counter / v2-screens / installments green. `audit-parties.spec.ts` fails at the journey "Every dealing" step also without this session's screen changes — pre-existing, open.
+**Next**: owner reviews; merge to `main` / deploy only after the owner says so. Open: fix the audit-parties e2e step.
+
+## 2026-11-02 · Demo shop, expenses on today, len-den (owner requests)
+- Owner: "make a shop with mock data in every module". `frontend/scripts/demo-shop.mjs` builds one through the real API (see docs/29 §D); local shop "Demo Mobile Centre", owner `03001112233` / `demo12345`.
+- Owner: "total expense shows 0". All demo expenses were dated in October and "today / this month" (2 Nov) had none — not an app bug. The demo now has expenses today and this month. The galla was also negative (no opening cash; the default cash account takes no opening balance through the API), so the demo opens HBL with 900,000 and draws 450,000 into the galla on day one. The existing demo shop was patched the same way.
+- Owner: some people give and take money with the shop with no bill, and may buy or sell later; handle it with statistics, reports, in and out. Audit: such payments already went into the khata, but every report called them udhaar received / paid to people, and they could never pay a later bill. Built len-den (docs/32, ADR-041):
+  - `payments.purpose` (migration `e3a5c7e9f1b3`) and its own ledger type `lending`;
+  - open len-den per person; adjust against open bills (net only);
+  - `/shop-audit/lending` and the report section; cash / day report / overview / udhaar split;
+  - person-screen card, `/audit/lending`, strings en / ur / roman; len-den in the demo shop.
+**Verified**:
+- backend `test_lending.py` (3) + full suite green, ruff clean;
+- tsc; vitest 35;
+- Playwright `lending.spec.ts` + audit-finance / audit / audit-reports / reports-audit / core-flow / counter / paymode / units / crud (20 passed).
+**Next**: owner tries len-den on the demo shop (Usman has 15,000 that can be adjusted against his bills). PR #25 (reports) still waits for the owner's merge; this work rides with it or a later PR. Open: audit-parties e2e step; the person's money split card ("Other / opening") counts len-den as "other".
+
+## 2026-11-02 · Len-den return dates and reminders
+- Owner on the three len-den choices: 1 adjust as a button — ok; 2 roles — ok; 3 "reminder hona chye". Built (docs/32 §7, ADR-042):
+  - `payments.due_date / reminded_at` (migration `f4b6d8f0a2c4`) and `payments/lending_due.py` (per-person status, counts, hand reminder, night job with a 3-day gap, date change with an audit row);
+  - templates `lending_due` / `lending_late`; dashboard and overview counts; `/payments/lending-due`; audit `due` list and report table;
+  - UI: return date on the form, due badge, "Send reminder", change date, home alerts, overview chips, audit list; strings en / ur / roman;
+  - demo shop: Tariq late, Star Mobiles due in 2 days, Bilal later.
+**Verified**:
+- backend `test_lending.py` (4) + full suite, ruff;
+- tsc; vitest;
+- Playwright `lending.spec.ts` (2) + reminders / counter / audit specs.
+**Next**: owner tries it on the demo shop (Tariq is late → Send reminder). Still open: PR #25 merge; audit-parties e2e step; the party money split counts len-den as "other".
+
+## 2026-11-02 · Help "?" with an example on every field, tab and card
+- Owner: shopkeepers want an info icon with an example on every field, tab and card, in the audit and every module.
+- Made `Help` general (any term, small size), added help props to Section / KV / the phone, CNIC and IMEI inputs, 18 shared `help.common` terms and a coverage test (`Help.test.ts`).
+- The screens were split in seven groups, worked in parallel. Each group wrote a fragment that was merged into the locales with no overwrites. Result: about 1,050 icons and 1,127 help terms, each with title, explanation and example in en / ur / roman (docs/33, ADR-043).
+- Duplicate phone icons (a corner icon plus PhoneInput's own) were folded into the `help` prop.
+- Found and fixed on the way:
+  - The audit bills "by status" list showed sale bills as "In repair"; it now uses the sale words.
+  - The person's journey counted len-den in "received / paid later"; len-den is now separate (`lent` / `borrowed`).
+  - The cost-code docstring example was wrong (KHBBB, not HRBBB).
+- Raised for the owner:
+  - Item GST % is kept but not used on the bill.
+  - Two near-identical labels on the purchase form ("Supplier invoice no." / "Supplier bill no.").
+  - Super admin "Set password" always changes the owner's password, even on a staff member's request.
+**Verified**:
+- tsc; vitest 39 (incl. help coverage);
+- backend lending / journey / label tests;
+- full Playwright suite (see below).
+
+## 2026-11-03 · Repair labs and the repair sticker
+- Owner:
+  - Choose a repair lab / technician in the market, assign the phone, keep every lab's history and complete record, in repairs and in the audit.
+  - A sticker for the customer's phone with its details, the fields picked before printing.
+  - Research, build, make it live, push.
+- Research (RepairDesk / RepairShopr docs): tickets carry id, customer, device, IMEI, issue, due date; labels carry ticket no., customer, model, issue, barcode = ticket no.; passcodes stay off labels. No standard outsourced-lab record, so designed for the market (docs/34).
+- Built (ADR-044, migration `a5c7e9b1d3f6`):
+  - `repairs/labs.py`: send / back / cancel, labs, lab record, job trips; routes `/repairs/labs`, `/repairs/labs/{id}`, `/repairs/{id}/lab`, `/lab/{trip}/back`, `/lab/{trip}/cancel`.
+  - The charge is booked on return (customer → cogs, own phone → its cost); delivery does not book it twice.
+  - `labels/repair_labels.py` + `/labels/repairs`; scan of a job number opens the job.
+  - `shopaudit/repairs.py` + `/shop-audit/repairs` + report sections.
+  - UI: `RepairLabs.tsx`, `RepairSticker.tsx`, `RepairsAuditPage.tsx`, the repairs list / job page; 75 labels and 42 help terms in en / ur / roman.
+- Help-icon follow-ups found by the full e2e run:
+  - Sheets now render into `<body>` (a "?" sheet opened inside a translated box was misplaced).
+  - The person page's journey header made the page 484 px wide on a phone; it now wraps. With it, phone-sized clicks inside sheets work again.
+  - The "?" button's name is only "What is this?" (it no longer doubles the field's label).
+**Verified**:
+- backend `test_repair_labs.py` (3) + repair / label / barcode / audit / report / migration suites;
+- tsc; vitest;
+- Playwright `repair-labs.spec.ts`;
+- the overflow probe on 32 screens (Urdu): none wider than the phone.

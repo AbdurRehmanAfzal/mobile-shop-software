@@ -7,6 +7,7 @@ import { Check, Printer, ScanLine, Sparkles } from 'lucide-react'
 import { useEffect, useState, type ReactNode } from 'react'
 import { BiAlert, BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import { ErrorText } from '@/components/ui'
+import Help from '@/components/Help'
 import { lookupCode, type Lookup } from '@/components/ScanListener'
 import { api, get } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
@@ -15,7 +16,12 @@ import { beep, useScan } from '@/lib/scanner'
 
 interface Prefs { type: string; prefix: string; value_mode: 'sequence' | 'imei'; pad: number; start_number: number; next_value: string; next_type: string; seq: number; types: { key: string; label: string }[] }
 
-export default function BarcodeCard({ Card }: { Card: (p: { icon: ReactNode; tone: string; title: string; hint?: string; children: ReactNode }) => JSX.Element }) {
+/** a bold label with its "?" */
+function Head({ text, help, className = '' }: { text: string; help: string; className?: string }) {
+  return <span className={`flex items-center gap-1 ${className}`}><BiLabel text={text} size="md" bold /><Help term={help} size="sm" /></span>
+}
+
+export default function BarcodeCard({ Card }: { Card: (p: { icon: ReactNode; tone: string; title: string; hint?: string; help?: string; children: ReactNode }) => JSX.Element }) {
   const { pick, ur, cls } = useLang()
   const qc = useQueryClient()
   const shopKey = useAuth((s) => s.activeShopId)
@@ -38,27 +44,27 @@ export default function BarcodeCard({ Card }: { Card: (p: { icon: ReactNode; ton
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   const warn = f.type === 'ean13' && f.value_mode === 'imei' ? 'barcode.eanImeiWarn' : f.type === 'ean13' && /[^0-9]/.test(f.prefix) ? 'barcode.eanPrefixWarn' : null
   return (
-    <Card icon={<ScanLine size={22} />} tone="bg-buy text-buy-fg" title="barcode.title" hint="barcode.hint">
-      <BiLabel text="barcode.type" size="md" bold />
+    <Card icon={<ScanLine size={22} />} tone="bg-buy text-buy-fg" title="barcode.title" hint="barcode.hint" help="barcode.card">
+      <Head text="barcode.type" help="barcode.type" />
       <BiSegmented<string> value={f.type} onChange={(v) => { setOk(false); setF({ ...f, type: v }) }} options={(data?.types ?? [{ key: 'code128', label: 'Code 128' }]).map((t) => ({ value: t.key, text: { en: t.label, ur: t.label, roman: t.label } }))} />
       <BiLabel text="barcode.typeNote" size="sm" tone="text-muted" />
       <div className="grid grid-cols-2 gap-2">
-        <BiInput label="barcode.prefix" value={f.prefix} onChange={(e) => { setOk(false); setF({ ...f, prefix: e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6) }) }} dir="ltr" className="num" />
-        <BiInput label="barcode.start" type="number" inputMode="numeric" min={1} value={f.start_number} onChange={(e) => { setOk(false); setF({ ...f, start_number: e.target.value }) }} dir="ltr" className="num" />
+        <BiInput label="barcode.prefix" value={f.prefix} onChange={(e) => { setOk(false); setF({ ...f, prefix: e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6) }) }} dir="ltr" className="num" help={<Help term="barcode.prefix" size="sm" />} />
+        <BiInput label="barcode.start" type="number" inputMode="numeric" min={1} value={f.start_number} onChange={(e) => { setOk(false); setF({ ...f, start_number: e.target.value }) }} dir="ltr" className="num" help={<Help term="barcode.start" size="sm" />} />
       </div>
-      <BiLabel text="barcode.mode" size="md" bold />
+      <Head text="barcode.mode" help="barcode.mode" />
       <BiSegmented<'sequence' | 'imei'> value={f.value_mode} onChange={(v) => { setOk(false); setF({ ...f, value_mode: v }) }} options={[{ value: 'sequence', text: 'barcode.modeSeq' }, { value: 'imei', text: 'barcode.modeImei' }]} />
       {warn ? <BiAlert text={warn} kind="info" /> : null}
-      {data ? <span className={`text-muted ${small}`} dir="ltr">{pick('barcode.next')}: <b className="num">{data.next_value}</b> · {data.next_type}</span> : null}
+      {data ? <span className="flex items-center gap-1"><span className={`text-muted ${small}`} dir="ltr">{pick('barcode.next')}: <b className="num">{data.next_value}</b> · {data.next_type}</span><Help term="barcode.next" size="sm" /></span> : null}
       <ErrorText error={m.error} />
       <BiButton text={ok ? 'settings.saved' : 'common.save'} icon={<Check size={20} />} variant="secondary" full loading={m.isPending} onClick={() => m.mutate()} data-testid="barcode-save" />
 
       <div className="mt-1 grid grid-cols-2 gap-2">
-        <BiButton text="barcode.testPrint" icon={<Printer size={18} />} variant="secondary" size="md" onClick={() => void openPrintable(`/api/v1/barcodes/test-label?type=${f.type}`)} />
-        <BiButton text={fill.data ? 'barcode.backfilled' : 'barcode.backfill'} icon={<Sparkles size={18} />} variant="secondary" size="md" loading={fill.isPending} onClick={() => fill.mutate()} />
+        <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><BiButton text="barcode.testPrint" icon={<Printer size={18} />} variant="secondary" size="md" full onClick={() => void openPrintable(`/api/v1/barcodes/test-label?type=${f.type}`)} /></div><Help term="barcode.testPrint" size="sm" /></div>
+        <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><BiButton text={fill.data ? 'barcode.backfilled' : 'barcode.backfill'} icon={<Sparkles size={18} />} variant="secondary" size="md" full loading={fill.isPending} onClick={() => fill.mutate()} /></div><Help term="barcode.backfill" size="sm" /></div>
       </div>
       {fill.data ? <span className={`text-muted ${small}`}>{pick('barcode.backfillResult').replace('{{d}}', String(fill.data.devices)).replace('{{i}}', String(fill.data.items))}</span> : null}
-      <BiLabel text="barcode.testScan" size="md" bold className="mt-1" />
+      <Head text="barcode.testScan" help="barcode.testScan" className="mt-1" />
       <BiLabel text="barcode.testScanHint" size="sm" tone="text-muted" />
       <form onSubmit={(e) => { e.preventDefault(); if (typed.trim()) { void test(typed.trim()); setTyped('') } }} className="flex gap-2">
         <BiInput label="barcode.testScanBox" value={typed} onChange={(e) => setTyped(e.target.value)} dir="ltr" className="num" data-testid="test-scan" />

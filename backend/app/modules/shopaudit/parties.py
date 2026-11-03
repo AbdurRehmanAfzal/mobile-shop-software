@@ -15,7 +15,7 @@ from sqlalchemy.orm import Session
 
 from app.core.clock import local_day
 from app.core.errors import NotFound
-from app.core.periods import Period, day_end
+from app.core.periods import Period, day_end, day_start
 from app.db.base import ZERO
 from app.modules.catalogue.models import Brand, Model
 from app.modules.devices.models import Device
@@ -23,6 +23,7 @@ from app.modules.ledger.models import LedgerEntry, LedgerGroup
 from app.modules.ledger.service import money, party_balance
 from app.modules.parties.models import Party
 from app.modules.payments.models import Payment
+from app.modules.payments.service import lending_balances
 from app.modules.purchases.models import Purchase, PurchaseLine, PurchaseStatus
 from app.modules.returns.models import ReturnDoc
 from app.modules.sales.models import Invoice, InvoiceLine, InvoiceStatus
@@ -116,8 +117,16 @@ def journey(
     paid_counter = _cash_in_groups(
         db, shop_id, [p.ledger_group_id for p in purchases if p.ledger_group_id], "out"
     )
-    received_later = money(sum((p.amount for p in payments if p.direction == "in"), ZERO))
-    paid_later = money(sum((p.amount for p in payments if p.direction == "out"), ZERO))
+    # bill money only; len-den (money with no bill, docs/32) is counted apart
+    bill_pays = [p for p in payments if p.purpose != "lending"]
+    received_later = money(sum((p.amount for p in bill_pays if p.direction == "in"), ZERO))
+    paid_later = money(sum((p.amount for p in bill_pays if p.direction == "out"), ZERO))
+    lent = money(
+        sum((p.amount for p in payments if p.purpose == "lending" and p.direction == "out"), ZERO)
+    )
+    borrowed = money(
+        sum((p.amount for p in payments if p.purpose == "lending" and p.direction == "in"), ZERO)
+    )
     refunds_out = money(sum((r.refund_amount for r in returns if r.kind == "sale"), ZERO))
     refunds_in = money(sum((r.refund_amount for r in returns if r.kind == "purchase"), ZERO))
     # profit on what this person bought from us, and on what we sourced from them
@@ -195,6 +204,8 @@ def journey(
             "refunded_to_them": refunds_out,
             "refunded_by_them": refunds_in if can_cost else None,
             "payments": len(payments),
+            "lent": lent,
+            "borrowed": borrowed,
         },
         "returns": {
             "sale": {
@@ -455,6 +466,7 @@ def rankings(
     return {
         "metric": metric,
         "period": p.as_dict(),
+        "counts": people_counts(db, shop_id, p),
         "total": total,
         "parties": len(rows),
         "rows": [
@@ -470,6 +482,48 @@ def rankings(
             for i, (pid, v, c) in enumerate(top)
         ],
     }
+
+
+def people_counts(db: Session, shop_id: uuid.UUID, p: Period) -> dict:
+    """customers / suppliers / other shops: on the books by the period end, new in the period,
+    and how many actually dealt with the shop in the period (docs/31 R5)"""
+    start, end = day_start(p.date_from), day_end(p.date_to)
+    out = {k: {"total": 0, "new": 0, "active": 0} for k in ("customer", "supplier", "shop")}
+    for kinds, created in db.execute(
+        select(Party.kinds, Party.created_at).where(
+            Party.shop_id == shop_id, Party.created_at < end
+        )
+    ).all():
+        for k in kinds or []:
+            if k in out:
+                out[k]["total"] += 1
+                c = created if created.tzinfo else created.replace(tzinfo=dt.UTC)
+                if c >= start:
+                    out[k]["new"] += 1
+    out["customer"]["active"] = int(
+        db.scalar(
+            select(func.count(func.distinct(Invoice.party_id))).where(
+                Invoice.shop_id == shop_id,
+                Invoice.date >= p.date_from,
+                Invoice.date <= p.date_to,
+                Invoice.status != InvoiceStatus.VOID,
+                Invoice.party_id.is_not(None),
+            )
+        )
+        or 0
+    )
+    out["supplier"]["active"] = int(
+        db.scalar(
+            select(func.count(func.distinct(Purchase.party_id))).where(
+                Purchase.shop_id == shop_id,
+                Purchase.date >= p.date_from,
+                Purchase.date <= p.date_to,
+                Purchase.status == PurchaseStatus.POSTED,
+            )
+        )
+        or 0
+    )
+    return out
 
 
 # ---- udhaar (receivables / payables apart) -----------------------------------------------------
@@ -511,6 +565,12 @@ def udhaar(db: Session, shop_id: uuid.UUID, p: Period, *, can_cost: bool, limit:
         elif doc_type == "payment":
             moves["received"] += cr
             moves["paid"] += dr
+        elif doc_type == "lending":
+            moves["lent"] += dr
+            moves["borrowed"] += cr
+        elif doc_type == "reversal:lending":
+            moves["lent"] -= cr
+            moves["borrowed"] -= dr
         elif doc_type in ("sale_return", "exchange_refund"):
             moves["sale_returns"] += money(cr - dr)
         elif doc_type == "purchase_return":
@@ -639,6 +699,7 @@ def udhaar(db: Session, shop_id: uuid.UUID, p: Period, *, can_cost: bool, limit:
                     else 0,
                 }
             )
+    lend = lending_balances(db, shop_id, until=p.as_of)
     receivable_rows, payable_rows = [], []
     bands = {
         "receivable": defaultdict(lambda: {"amount": ZERO, "parties": 0}),
@@ -676,6 +737,8 @@ def udhaar(db: Session, shop_id: uuid.UUID, p: Period, *, can_cost: bool, limit:
             "due_date": dd,
             "overdue_days": overdue,
             "overdue_band": oband,
+            # the part of this khata that is len-den (docs/32)
+            "lending": abs(lend.get(pid, ZERO)),
         }
         (receivable_rows if side == "receivable" else payable_rows).append(row)
     receivable_rows.sort(key=lambda r: -r["amount"])
@@ -696,8 +759,15 @@ def udhaar(db: Session, shop_id: uuid.UUID, p: Period, *, can_cost: bool, limit:
                 "paid",
                 "purchase_returns",
                 "repairs",
+                "lent",
+                "borrowed",
                 "other",
             )
+        },
+        # of the receivable / payable, how much is len-den (money with no bill)
+        "lending": {
+            "receivable": money(sum((v for v in lend.values() if v > ZERO), ZERO)),
+            "payable": money(sum((-v for v in lend.values() if v < ZERO), ZERO)),
         },
         "bands": band_keys,
         "overdue_bands": oband_keys,
@@ -732,8 +802,45 @@ def udhaar(db: Session, shop_id: uuid.UUID, p: Period, *, can_cost: bool, limit:
     if not can_cost:
         out["payable"] = {k: None for k in out["payable"]}
         out["movement"] = {
-            k: (v if k in ("udhaar_given", "received", "sale_returns") else None)
+            k: (v if k in ("udhaar_given", "received", "sale_returns", "lent") else None)
             for k, v in out["movement"].items()
         }
         out["payable_bands"] = []
     return out
+
+
+def installments_block(db: Session, shop_id: uuid.UUID, limit: int = 10) -> dict:
+    """Installment plans still open (docs/31 R7): how much is left, how much is late, the plans
+    with the most late money first. Their bills are inside the receivable figures already — this
+    shows which part of the receivable is on installments, it is not added again."""
+    from app.modules.installments.service import list_plans
+
+    plans = list_plans(db, shop_id, "active")
+    late = [r for r in plans if r["overdue_count"]]
+    plans_sorted = sorted(plans, key=lambda r: (-r["overdue_amount"], r["next_due"] or dt.date.max))
+    return {
+        "open": len(plans),
+        "remaining": money(sum((r["remaining"] for r in plans), ZERO)),
+        "late_plans": len(late),
+        "late_amount": money(sum((r["overdue_amount"] for r in late), ZERO)),
+        "rows": [
+            {
+                k: r[k]
+                for k in (
+                    "id",
+                    "invoice_id",
+                    "invoice_no",
+                    "party_id",
+                    "party_name",
+                    "item",
+                    "monthly",
+                    "remaining",
+                    "overdue_count",
+                    "overdue_amount",
+                    "next_due",
+                    "days_late",
+                )
+            }
+            for r in plans_sorted[:limit]
+        ],
+    }

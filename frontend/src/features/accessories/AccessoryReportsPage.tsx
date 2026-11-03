@@ -6,6 +6,7 @@ import { Percent } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BiAlert, BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { KindChooser, kindLabel } from '@/components/ItemKinds'
 import { Empty, ErrorText, fmtDate, Loading, MoneyText, PageHeader, Sheet } from '@/components/ui'
 import { isoDay } from '@/lib/format'
@@ -19,6 +20,15 @@ interface Mover { id: string; sku: string; name: string; category: string; brand
 interface Movers { from: string; to: string; fast: Mover[]; slow: Mover[] }
 interface ProfitRow { key: string; units: number; revenue: string; cost: string; profit: string }
 interface Dead { id: string; sku: string; name: string; category: string; qty: number; value: string; last_sold: string | null; days: number | null }
+// the six reports mean different things: the "?" beside the tabs explains the open one (docs/33)
+const TABS: { value: Tab; text: string; help: string }[] = [
+  { value: 'low', text: 'acc.r.low', help: 'items.r.low' },
+  { value: 'value', text: 'acc.r.valuation', help: 'items.r.value' },
+  { value: 'movers', text: 'acc.r.movers', help: 'items.r.movers' },
+  { value: 'profit', text: 'acc.r.profit', help: 'items.r.profit' },
+  { value: 'dead', text: 'acc.r.dead', help: 'items.r.dead' },
+  { value: 'suppliers', text: 'acc.r.suppliers', help: 'items.r.suppliers' },
+]
 interface Sup { party_id: string | null; party_name: string | null; bills: number; units: number; amount: string }
 
 
@@ -51,24 +61,27 @@ export default function AccessoryReportsPage() {
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="acc.reports" right={<button type="button" onClick={() => setBulk(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border border-line bg-surface px-1.5 py-1" data-testid="bulk-price"><Percent size={20} /><span className={small}>{pick('acc.bulkPrice')}</span></button>} />
-      <BiSegmented<Tab> value={tab} onChange={setTab} options={[{ value: 'low', text: 'acc.r.low' }, { value: 'value', text: 'acc.r.valuation' }, { value: 'movers', text: 'acc.r.movers' }, { value: 'profit', text: 'acc.r.profit' }, { value: 'dead', text: 'acc.r.dead' }, { value: 'suppliers', text: 'acc.r.suppliers' }]} />
+      <PageHeader title="acc.reports" help={<Help term="items.r.page" />} right={<button type="button" onClick={() => setBulk(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border border-line bg-surface px-1.5 py-1" data-testid="bulk-price"><Percent size={20} /><span className={small}>{pick('acc.bulkPrice')}</span></button>} />
+      <div className="flex items-center gap-1">
+        <div className="min-w-0 flex-1"><BiSegmented<Tab> value={tab} onChange={setTab} options={TABS} /></div>
+        <Help term={TABS.find((x) => x.value === tab)!.help} size="sm" />
+      </div>
       {dated ? (
         <div className="grid grid-cols-2 gap-2">
-          <BiInput label="report.from" type="date" value={from} onChange={(e) => setFrom(e.target.value)} dir="ltr" />
-          <BiInput label="report.to" type="date" value={to} onChange={(e) => setTo(e.target.value)} dir="ltr" />
+          <BiInput label="report.from" help={<Help term="common.period" size="sm" />} type="date" value={from} onChange={(e) => setFrom(e.target.value)} dir="ltr" />
+          <BiInput label="report.to" help={<Help term="common.period" size="sm" />} type="date" value={to} onChange={(e) => setTo(e.target.value)} dir="ltr" />
         </div>
       ) : null}
 
       {tab === 'low' ? (
         !low ? <Loading /> : !low.count ? <Empty text="acc.none" /> : (
           <div className="flex flex-col gap-3" data-testid="r-low">
-            <BiLabel text="acc.r.lowHint" size="sm" tone="text-muted" />
+            <span className="flex items-center gap-1"><BiLabel text="acc.r.lowHint" size="sm" tone="text-muted" /><Help term="items.r.suggest" size="sm" /></span>
             {low.groups.map((g) => (
               <section key={g.party_id ?? 'none'} className="card flex flex-col gap-2">
                 <div className="flex items-center justify-between gap-2">
                   <button type="button" disabled={!g.party_id} onClick={() => nav(`/parties/${g.party_id}`)} className="truncate text-start text-base font-extrabold">{g.party_name ?? pick('acc.r.noSupplier')}</button>
-                  <span className="flex flex-col items-end"><span className={`text-muted ${small}`}>{pick('acc.r.estimate')}</span><MoneyText value={g.estimated_cost} tone="ink" /></span>
+                  <span className="flex flex-col items-end"><span className={`flex items-center gap-1 text-muted ${small}`}>{pick('acc.r.estimate')}<Help term="items.r.estimate" size="sm" /></span><MoneyText value={g.estimated_cost} tone="ink" /></span>
                 </div>
                 <div className="flex flex-col divide-y divide-line">
                   {g.lines.map((l) => <Line key={l.id} title={l.name} sub={`${l.sku} · ${pick('acc.qty')} ${l.qty} / ${l.reorder_level}`} right={<><span className="num text-sm" dir="ltr">{pick('acc.r.suggest')} {l.suggest_qty}</span><MoneyText value={l.last_cost} tone="muted" size="sm" /></>} onClick={() => open(l.id)} />)}
@@ -83,11 +96,11 @@ export default function AccessoryReportsPage() {
         !val ? <Loading /> : (
           <div className="flex flex-col gap-3" data-testid="r-value">
             <div className="hero grid grid-cols-3 gap-2 px-5 py-4">
-              <div className="flex flex-col"><span className={`opacity-80 ${small}`}>{pick('acc.r.atCost')}</span><span className="num text-lg" dir="ltr">{Number(val.cost).toLocaleString('en-US')}</span></div>
-              <div className="flex flex-col"><span className={`opacity-80 ${small}`}>{pick('acc.r.atRetail')}</span><span className="num text-lg" dir="ltr">{Number(val.retail).toLocaleString('en-US')}</span></div>
-              <div className="flex flex-col"><span className={`opacity-80 ${small}`}>{pick('acc.r.expected')}</span><span className="num text-lg text-gold-text" dir="ltr">{Number(val.expected_profit).toLocaleString('en-US')}</span></div>
+              <div className="flex flex-col"><span className={`flex items-center gap-1 opacity-80 [&_button]:text-current ${small}`}>{pick('acc.r.atCost')}<Help term="items.r.atCost" size="sm" /></span><span className="num text-lg" dir="ltr">{Number(val.cost).toLocaleString('en-US')}</span></div>
+              <div className="flex flex-col"><span className={`flex items-center gap-1 opacity-80 [&_button]:text-current ${small}`}>{pick('acc.r.atRetail')}<Help term="items.r.atRetail" size="sm" /></span><span className="num text-lg" dir="ltr">{Number(val.retail).toLocaleString('en-US')}</span></div>
+              <div className="flex flex-col"><span className={`flex items-center gap-1 opacity-80 [&_button]:text-current ${small}`}>{pick('acc.r.expected')}<Help term="items.r.expected" size="sm" /></span><span className="num text-lg text-gold-text" dir="ltr">{Number(val.expected_profit).toLocaleString('en-US')}</span></div>
             </div>
-            <div className={`text-muted ${small}`} dir="ltr">{val.items} {pick('acc.r.items')} · {val.units} {pick('acc.r.units')}</div>
+            <div className={`flex items-center gap-1 text-muted ${small}`}><span dir="ltr">{val.items} {pick('acc.r.items')} · {val.units} {pick('acc.r.units')}</span><Help term="items.r.byCategory" size="sm" /></div>
             <div className="card flex flex-col divide-y divide-line">
               {val.by_category.map((c) => <Line key={c.category} title={kindLabel(pick, c.category)} sub={`${c.items} ${pick('acc.r.items')} · ${c.units} ${pick('acc.r.units')}`} right={<><MoneyText value={c.cost} tone="ink" /><MoneyText value={c.retail} tone="muted" size="sm" /></>} />)}
             </div>
@@ -98,9 +111,9 @@ export default function AccessoryReportsPage() {
       {tab === 'movers' ? (
         !mov ? <Loading /> : (
           <div className="flex flex-col gap-3" data-testid="r-movers">
-            <BiLabel text="acc.r.fast" size="sm" tone="text-muted" bold />
+            <span className="flex items-center gap-1"><BiLabel text="acc.r.fast" size="sm" tone="text-muted" bold /><Help term="items.r.fast" size="sm" /></span>
             {!mov.fast.length ? <Empty text="acc.none" /> : <div className="card flex flex-col divide-y divide-line">{mov.fast.map((m) => <Line key={m.id} title={m.name} sub={`${m.sku} · ${pick('acc.qty')} ${m.qty}${m.days_of_cover != null ? ` · ${m.days_of_cover} ${pick('acc.daysCover')}` : ''}`} right={<><span className="num text-sm" dir="ltr">{pick('acc.sold')} {m.sold}</span>{m.profit != null ? <MoneyText value={m.profit} size="sm" /> : null}</>} onClick={() => open(m.id)} />)}</div>}
-            <BiLabel text="acc.r.slow" size="sm" tone="text-muted" bold />
+            <span className="flex items-center gap-1"><BiLabel text="acc.r.slow" size="sm" tone="text-muted" bold /><Help term="items.r.slow" size="sm" /></span>
             {!mov.slow.length ? <Empty text="acc.none" /> : <div className="card flex flex-col divide-y divide-line">{mov.slow.map((m) => <Line key={m.id} title={m.name} sub={`${m.sku} · ${pick('acc.qty')} ${m.qty}`} right={<span className="num text-sm" dir="ltr">{pick('acc.sold')} {m.sold}</span>} onClick={() => open(m.id)} />)}</div>}
           </div>
         )
@@ -108,7 +121,10 @@ export default function AccessoryReportsPage() {
 
       {tab === 'profit' ? (
         <div className="flex flex-col gap-3" data-testid="r-profit">
-          <BiSegmented<'category' | 'brand'> value={group} onChange={setGroup} options={[{ value: 'category', text: 'acc.r.byCategory' }, { value: 'brand', text: 'acc.r.byBrand' }]} />
+          <div className="flex items-center gap-1">
+            <div className="min-w-0 flex-1"><BiSegmented<'category' | 'brand'> value={group} onChange={setGroup} options={[{ value: 'category', text: 'acc.r.byCategory' }, { value: 'brand', text: 'acc.r.byBrand' }]} /></div>
+            <Help term="items.r.group" size="sm" />
+          </div>
           {!prof ? <Loading /> : !prof.length ? <Empty text="acc.none" /> : (
             <div className="card flex flex-col divide-y divide-line">
               {prof.map((p) => <Line key={p.key} title={group === 'category' ? kindLabel(pick, p.key) : p.key} sub={`${p.units} ${pick('acc.r.units')} · ${pick('report.sales')} ${Number(p.revenue).toLocaleString('en-US')}`} right={<MoneyText value={p.profit} />} />)}
@@ -119,7 +135,7 @@ export default function AccessoryReportsPage() {
 
       {tab === 'dead' ? (
         <div className="flex flex-col gap-3" data-testid="r-dead">
-          <BiInput label="acc.r.notSoldFor" type="number" inputMode="numeric" min={7} max={730} value={days} onChange={(e) => setDays(e.target.value)} className="num" hint="acc.r.days" />
+          <BiInput label="acc.r.notSoldFor" help={<Help term="items.r.notSoldFor" size="sm" />} type="number" inputMode="numeric" min={7} max={730} value={days} onChange={(e) => setDays(e.target.value)} className="num" hint="acc.r.days" />
           {!dead ? <Loading /> : !dead.length ? <Empty text="acc.none" /> : (
             <div className="card flex flex-col divide-y divide-line">
               {dead.map((d) => <Line key={d.id} title={d.name} sub={`${d.sku} · ${pick('acc.qty')} ${d.qty} · ${pick('acc.r.lastSold')} ${d.last_sold ? fmtDate(d.last_sold) : pick('acc.r.never')}`} right={<MoneyText value={d.value} tone="ink" />} onClick={() => open(d.id)} />)}
@@ -153,13 +169,13 @@ function BulkPriceSheet({ open, onClose }: { open: boolean; onClose: () => void 
   return (
     <Sheet open={open} onClose={() => { setDone(null); onClose() }} title="acc.bulkPrice">
       <div className="flex flex-col gap-3">
-        <BiLabel text="acc.bulkField" size="md" tone="text-muted" />
+        <span className="flex items-center gap-1"><BiLabel text="acc.bulkField" size="md" tone="text-muted" /><Help term="items.bulk.field" size="sm" /></span>
         <BiSegmented<'price' | 'wholesale_price' | 'min_price'> value={field} onChange={setField} options={[{ value: 'price', text: 'acc.price' }, { value: 'wholesale_price', text: 'acc.wholesale' }, { value: 'min_price', text: 'acc.minPrice' }]} />
         <div className="grid grid-cols-2 gap-2">
-          <BiInput label="acc.bulkPct" type="number" inputMode="decimal" value={pct} onChange={(e) => setPct(e.target.value)} className="num" placeholder="10" />
-          <BiInput label="acc.bulkAmount" type="number" inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} className="num" />
+          <BiInput label="acc.bulkPct" help={<Help term="items.bulk.pct" size="sm" />} type="number" inputMode="decimal" value={pct} onChange={(e) => setPct(e.target.value)} className="num" placeholder="10" />
+          <BiInput label="acc.bulkAmount" help={<Help term="items.bulk.amount" size="sm" />} type="number" inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} className="num" />
         </div>
-        <BiLabel text="acc.bulkScope" size="md" tone="text-muted" />
+        <span className="flex items-center gap-1"><BiLabel text="acc.bulkScope" size="md" tone="text-muted" /><Help term="items.bulk.scope" size="sm" /></span>
         <div className="flex flex-wrap gap-1.5">
           <button type="button" aria-pressed={!category} onClick={() => setCategory('')} className={`tap h-10 rounded-full border-2 px-3.5 text-[13px] font-bold ${!category ? 'border-ink bg-ink text-ground' : 'border-line bg-surface'}`}>{pick('common.all')}</button>
         </div>

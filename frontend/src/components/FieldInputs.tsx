@@ -4,6 +4,7 @@
 import { useId, useState } from 'react'
 import { ScanButton } from './ScanButton'
 import { BiInput, BiLabel, useLang, type BiInputProps } from './Bilingual'
+import Help from './Help'
 import { toLatinDigits } from '@/lib/format'
 
 type Base = Omit<BiInputProps, 'value' | 'onChange' | 'type' | 'inputMode' | 'maxLength'> & {
@@ -24,8 +25,9 @@ export function localMobile(raw: string): string {
 
 export const isMobileOk = (v: string) => /^3\d{9}$/.test(localMobile(v))
 
-/** Shows +92 fixed in front; the parent gets the number as 03XXXXXXXXX ('' when empty). */
-export function PhoneInput({ label, value, onChange, error, id, required, ...rest }: Base) {
+/** Shows +92 fixed in front; the parent gets the number as 03XXXXXXXXX ('' when empty).
+ *  `help`: the "?" beside the label (docs/33); a mobile-number one by default, `null` for none. */
+export function PhoneInput({ label, value, onChange, error, id, required, help, ...rest }: Base) {
   const { pick, cls, dir } = useLang()
   const [touched, setTouched] = useState(false)
   const local = localMobile(value)
@@ -35,9 +37,12 @@ export function PhoneInput({ label, value, onChange, error, id, required, ...res
   const inputId = id ?? autoId
   return (
     <div>
-      <label htmlFor={inputId} className="block">
-        <BiLabel text={label} size="md" tone="text-muted" />
-      </label>
+      <div className="flex items-center gap-1">
+        <label htmlFor={inputId} className="block">
+          <BiLabel text={label} size="md" tone="text-muted" />
+        </label>
+        {help === undefined ? <Help term="common.phone" size="sm" /> : help}
+      </div>
       <div
         dir="ltr"
         className={`mt-1.5 flex min-h-14 w-full items-stretch overflow-hidden rounded-2xl border bg-surface focus-within:ring-2 ${
@@ -84,7 +89,8 @@ export function formatCnic(raw: string): string {
 
 export const isCnicOk = (v: string) => digits(v).length === 13
 
-export function CnicInput({ value, onChange, error, ...rest }: Base) {
+/** `help`: a CNIC "?" by default (docs/33), `null` for none */
+export function CnicInput({ value, onChange, error, help, ...rest }: Base) {
   const [touched, setTouched] = useState(false)
   const n = digits(value).length
   const bad = touched && n > 0 && n !== 13
@@ -92,6 +98,7 @@ export function CnicInput({ value, onChange, error, ...rest }: Base) {
     <BiInput
       {...rest}
       inputMode="numeric"
+      help={help === undefined ? <Help term="common.cnic" size="sm" /> : help}
       placeholder={rest.placeholder ?? '33100-1234567-1'}
       maxLength={15}
       value={formatCnic(value)}
@@ -107,7 +114,8 @@ export const IMEI_LEN = 15
 export const isImeiOk = (v: string) => digits(v).length === IMEI_LEN
 
 /** IMEI: digits only, never more than 15, with a Scan button (camera / photo of the barcode) */
-export function ImeiInput({ value, onChange, error, scan = true, exclude, ...rest }: Base & { scan?: boolean; exclude?: string }) {
+/** `help`: an IMEI "?" by default (docs/33), `null` for none */
+export function ImeiInput({ value, onChange, error, scan = true, exclude, help, ...rest }: Base & { scan?: boolean; exclude?: string }) {
   const [touched, setTouched] = useState(false)
   const n = digits(value).length
   const bad = touched && n > 0 && n !== IMEI_LEN
@@ -116,6 +124,7 @@ export function ImeiInput({ value, onChange, error, scan = true, exclude, ...res
       {...rest}
       inputMode="numeric"
       maxLength={IMEI_LEN}
+      help={help === undefined ? <Help term="imei" size="sm" /> : help}
       value={value}
       onChange={(e) => onChange(digits(e.target.value).slice(0, IMEI_LEN))}
       onBlur={(e) => { setTouched(true); rest.onBlur?.(e) }}

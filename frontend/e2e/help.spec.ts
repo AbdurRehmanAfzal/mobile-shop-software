@@ -15,12 +15,12 @@ test('a ? explains a word in plain language', async ({ page }) => {
   await expect(page.getByPlaceholder("IMEI, phone or person's name")).toBeVisible()
 
   await page.goto('/stock/opening')
-  await page.getByRole('button', { name: 'What is this?: Old stock' }).click()
+  await page.locator('[data-help="opening"]').first().click()
   await expect(page.getByText('Phones that were already in the shop before you started the app.', { exact: false })).toBeVisible()
   await page.getByRole('button', { name: 'Close' }).last().click()
 
   await page.getByRole('button', { name: 'Add device' }).click()
-  await page.getByRole('button', { name: 'What is this?: PTA status' }).click()
+  await page.locator('[data-help="device.pta"]').first().click()
   await expect(page.getByText(/Non-PTA: not registered/)).toBeVisible()
   await page.screenshot({ path: 'test-results/help-pta.png' })
   await page.getByRole('button', { name: 'Close' }).last().click()
@@ -28,6 +28,6 @@ test('a ? explains a word in plain language', async ({ page }) => {
   await expect(page.getByLabel('IMEI', { exact: true })).toBeVisible()
 
   await page.goto('/khata')
-  await page.getByRole('button', { name: 'What is this?: Khata (account)' }).click()
+  await page.locator('[data-help="khata"]').first().click()
   await expect(page.getByText(/One page per person/)).toBeVisible()
 })

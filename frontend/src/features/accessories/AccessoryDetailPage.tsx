@@ -8,6 +8,7 @@ import { ArrowDownLeft, ArrowUpRight, Pencil, RefreshCw, Tag, Trash2, Wrench } f
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { kindLabel } from '@/components/ItemKinds'
 import LabelSheet from '@/components/LabelSheet'
 import RemoveSheet from '@/components/RemoveSheet'
@@ -49,6 +50,7 @@ export default function AccessoryDetailPage() {
     <div className="flex flex-col gap-4">
       <PageHeader
         title={{ en: it.name, ur: it.name_ur || it.name }}
+        help={<Help term="items.detail" />}
         right={
           <div className="flex gap-2">
             {canCost ? <button type="button" aria-label={pick('crud.delete')} onClick={() => setRemoving(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border border-line bg-surface px-1.5 py-1 text-payable"><Trash2 size={18} /><BtnText k={'crud.delete'} /></button> : null}
@@ -60,11 +62,11 @@ export default function AccessoryDetailPage() {
       <section className={`flex flex-col gap-2 rounded-3xl p-5 ${it.qty <= 0 ? 'bg-expense text-expense-fg' : it.low_stock ? 'bg-khata text-khata-fg' : 'bg-stockt text-stockt-fg'}`} data-testid="item-hero">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <BiLabel text="acc.qty" size="md" bold tone="text-current" />
+            <span className="flex items-center gap-1 [&_button]:text-current"><BiLabel text="acc.qty" size="md" bold tone="text-current" /><Help term="items.qty" size="sm" /></span>
             <div className="num text-[34px] leading-none" dir="ltr">{it.qty} <span className="text-base">{unitLabel(pick, 'piece', exists)}</span></div>
           </div>
           <div className="flex flex-col items-end">
-            <BiLabel text="acc.price" size="sm" tone="text-current" />
+            <span className="flex items-center gap-1 [&_button]:text-current"><BiLabel text="acc.price" size="sm" tone="text-current" /><Help term="items.price" size="sm" /></span>
             <span className="num text-2xl" dir="ltr">{withCur(Number(it.price).toLocaleString('en-US'))}</span>
           </div>
         </div>
@@ -79,30 +81,30 @@ export default function AccessoryDetailPage() {
       </section>
 
       <div className="grid grid-cols-2 gap-2">
-        {canCost ? <BiButton text="acc.adjust" icon={<RefreshCw size={18} />} variant="secondary" onClick={() => { setDelta(''); setCost(''); setNote(''); setAdjusting(true) }} /> : null}
-        <BiButton text="label.button" icon={<Tag size={18} />} variant="secondary" onClick={() => setLabels(true)} />
+        {canCost ? <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><BiButton text="acc.adjust" icon={<RefreshCw size={18} />} variant="secondary" full onClick={() => { setDelta(''); setCost(''); setNote(''); setAdjusting(true) }} /></div><Help term="items.adjust" size="sm" /></div> : null}
+        <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><BiButton text="label.button" icon={<Tag size={18} />} variant="secondary" full onClick={() => setLabels(true)} /></div><Help term="items.labels" size="sm" /></div>
       </div>
       {/* owner addendum 6: a counted watch / tablet can be tracked one by one from here on */}
-      {canCost && it.qty > 0 && (it.category === 'watch' || it.category === 'tablet') ? <BiButton text="devx.makeUnit" variant="ghost" full onClick={() => setMaking(true)} /> : null}
+      {canCost && it.qty > 0 && (it.category === 'watch' || it.category === 'tablet') ? <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><BiButton text="devx.makeUnit" variant="ghost" full onClick={() => setMaking(true)} /></div><Help term="items.makeUnit" size="sm" /></div> : null}
 
       <div className="card">
-        {it.compatible ? <KV k="acc.compatible" v={it.compatible} /> : null}
-        {variant ? <KV k="acc.size" v={<span dir="ltr">{variant}</span>} /> : null}
-        {it.warranty_days ? <KV k="acc.warranty" v={<span dir="ltr">{it.warranty_days} · {pick(it.warranty_by === 'supplier' ? 'acc.bySupplier' : 'acc.byShop')}</span>} /> : null}
-        {it.location ? <KV k="acc.location" v={it.location} /> : null}
-        {it.wholesale_price ? <KV k="acc.wholesale" v={<MoneyText value={it.wholesale_price} tone="ink" />} /> : null}
-        {canCost && it.min_price ? <KV k="acc.minPrice" v={<MoneyText value={it.min_price} tone="ink" />} /> : null}
-        {it.promo_price ? <KV k="acc.promo" v={<span className="flex items-center gap-2"><MoneyText value={it.promo_price} tone="ink" />{it.promo_to ? <span className={`text-muted ${small}`} dir="ltr">→ {fmtDate(it.promo_to)}</span> : null}</span>} /> : null}
-        {canCost ? <KV k="acc.avgCost" v={<MoneyText value={it.avg_cost} tone="ink" />} /> : null}
-        {canCost && it.profit != null ? <KV k="acc.profitEach" v={<span className="flex items-center gap-2"><MoneyText value={it.profit} />{it.margin_pct != null ? <span className={`text-muted ${small}`} dir="ltr">{Number(it.margin_pct).toFixed(0)}%</span> : null}</span>} /> : null}
-        {canCost ? <KV k="acc.stockValue" v={<MoneyText value={it.stock_value} tone="ink" />} /> : null}
-        <KV k="acc.reorder" v={<span dir="ltr">{it.reorder_level}{it.max_stock ? ` – ${it.max_stock}` : ''}</span>} />
-        {it.supplier_skus?.length ? <KV k="acc.supplierSkus" v={<span className="flex flex-col items-end">{it.supplier_skus.map((x, i) => <span key={i} dir="ltr">{x.sku}{x.party_name ? ` · ${x.party_name}` : ''}</span>)}</span>} /> : null}
-        {it.description ? <KV k="acc.description" v={it.description} /> : null}
+        {it.compatible ? <KV k="acc.compatible" help="items.compatible" v={it.compatible} /> : null}
+        {variant ? <KV k="acc.size" help="items.size" v={<span dir="ltr">{variant}</span>} /> : null}
+        {it.warranty_days ? <KV k="acc.warranty" help="warranty" v={<span dir="ltr">{it.warranty_days} · {pick(it.warranty_by === 'supplier' ? 'acc.bySupplier' : 'acc.byShop')}</span>} /> : null}
+        {it.location ? <KV k="acc.location" help="items.location" v={it.location} /> : null}
+        {it.wholesale_price ? <KV k="acc.wholesale" help="items.wholesale" v={<MoneyText value={it.wholesale_price} tone="ink" />} /> : null}
+        {canCost && it.min_price ? <KV k="acc.minPrice" help="items.minPrice" v={<MoneyText value={it.min_price} tone="ink" />} /> : null}
+        {it.promo_price ? <KV k="acc.promo" help="items.promo" v={<span className="flex items-center gap-2"><MoneyText value={it.promo_price} tone="ink" />{it.promo_to ? <span className={`text-muted ${small}`} dir="ltr">→ {fmtDate(it.promo_to)}</span> : null}</span>} /> : null}
+        {canCost ? <KV k="acc.avgCost" help="items.avgCost" v={<MoneyText value={it.avg_cost} tone="ink" />} /> : null}
+        {canCost && it.profit != null ? <KV k="acc.profitEach" help="items.profitEach" v={<span className="flex items-center gap-2"><MoneyText value={it.profit} />{it.margin_pct != null ? <span className={`text-muted ${small}`} dir="ltr">{Number(it.margin_pct).toFixed(0)}%</span> : null}</span>} /> : null}
+        {canCost ? <KV k="acc.stockValue" help="items.stockValue" v={<MoneyText value={it.stock_value} tone="ink" />} /> : null}
+        <KV k="acc.reorder" help="items.reorder" v={<span dir="ltr">{it.reorder_level}{it.max_stock ? ` – ${it.max_stock}` : ''}</span>} />
+        {it.supplier_skus?.length ? <KV k="acc.supplierSkus" help="items.supplierSkus" v={<span className="flex flex-col items-end">{it.supplier_skus.map((x, i) => <span key={i} dir="ltr">{x.sku}{x.party_name ? ` · ${x.party_name}` : ''}</span>)}</span>} /> : null}
+        {it.description ? <KV k="acc.description" help="common.notes" v={it.description} /> : null}
       </div>
 
       {canCost ? (
-        <Section title="acc.batches">
+        <Section title="acc.batches" help="items.batches">
           {!batches?.length ? <Empty text="acc.none" /> : (
             <div className="card flex flex-col divide-y divide-line" data-testid="item-batches">
               {batches.map((b) => (
@@ -122,7 +124,7 @@ export default function AccessoryDetailPage() {
         </Section>
       ) : null}
 
-      <Section title="acc.timeline">
+      <Section title="acc.timeline" help="items.timeline">
         {!tl?.length ? <Empty text="acc.none" /> : (
           <div className="card flex flex-col divide-y divide-line" data-testid="item-timeline">
             {tl.map((r, i) => (
@@ -158,9 +160,9 @@ export default function AccessoryDetailPage() {
       </Sheet>
       <Sheet open={adjusting} onClose={() => setAdjusting(false)} title="acc.adjust">
         <div className="flex flex-col gap-3">
-          <BiInput label="acc.delta" type="number" inputMode="numeric" value={delta} onChange={(e) => setDelta(e.target.value)} placeholder="-2" className="num" autoFocus />
-          {Number(delta) > 0 ? <BiInput label="acc.cost" type="number" inputMode="decimal" min={0} value={cost} onChange={(e) => setCost(e.target.value)} className="num" /> : null}
-          <BiInput label="acc.reason" value={note} onChange={(e) => setNote(e.target.value)} placeholder={pick('acc.reasonPh')} maxLength={200} />
+          <BiInput label="acc.delta" help={<Help term="items.delta" size="sm" />} type="number" inputMode="numeric" value={delta} onChange={(e) => setDelta(e.target.value)} placeholder="-2" className="num" autoFocus />
+          {Number(delta) > 0 ? <BiInput label="acc.cost" help={<Help term="items.adjustCost" size="sm" />} type="number" inputMode="decimal" min={0} value={cost} onChange={(e) => setCost(e.target.value)} className="num" /> : null}
+          <BiInput label="acc.reason" help={<Help term="items.reason" size="sm" />} value={note} onChange={(e) => setNote(e.target.value)} placeholder={pick('acc.reasonPh')} maxLength={200} />
           <ErrorText error={adjust.error} />
           <BiButton text="common.save" full loading={adjust.isPending} disabled={!delta || Number(delta) === 0 || note.trim().length < 2} onClick={async () => { await adjust.mutateAsync({ qty_delta: Number(delta), unit_cost: cost ? Number(cost) : undefined, note: note.trim() }); setAdjusting(false); await refresh() }} />
         </div>

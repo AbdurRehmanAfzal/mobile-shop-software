@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiAlert, BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { isoDay } from '@/lib/format'
 import RemoveSheet from '@/components/RemoveSheet'
 import { Chip, ErrorText, KV, Loading, MoneyText, PageHeader, Section, Sheet } from '@/components/ui'
@@ -84,7 +85,7 @@ export default function DeviceDetailPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <PageHeader title={{ en: `${d.brand_name} ${d.model_name}`, ur: `${d.brand_name} ${d.model_name}` }} />
+      <PageHeader title={{ en: `${d.brand_name} ${d.model_name}`, ur: `${d.brand_name} ${d.model_name}` }} help={<Help term="stock.detail" />} />
 
       <section className="hero flex flex-col gap-2 p-5">
         <div className="flex items-start justify-between gap-2">
@@ -92,36 +93,37 @@ export default function DeviceDetailPage() {
             <div className="num text-lg" dir="ltr">
               {d.imei1}
             </div>
-            {d.barcode ? <div className="num text-xs text-hero-text/75" dir="ltr" data-testid="device-barcode">{pick('barcode.label')}: {d.barcode}{d.barcode_type && d.barcode_type !== 'code128' ? ` · ${d.barcode_type}` : ''}</div> : null}
+            {d.barcode ? <div className="num flex items-center gap-1 text-xs text-hero-text/75" dir="ltr" data-testid="device-barcode">{pick('barcode.label')}: {d.barcode}{d.barcode_type && d.barcode_type !== 'code128' ? ` · ${d.barcode_type}` : ''}<Help term="label.barcode" size="sm" /></div> : null}
             <div className="text-sm text-hero-text/75">
               {specLine(d, pick)}
             </div>
           </div>
-          <Chip text={`stock.status.${d.status}`} tone="ink" />
+          <span className="flex shrink-0 items-center gap-1"><Chip text={`stock.status.${d.status}`} tone="ink" /><Help term="device.status" size="sm" /></span>
         </div>
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap items-center gap-1.5">
           <Chip text={`stock.condition.${d.condition}`} />
           {d.grade ? <Chip text={['a', 'b', 'refurbished', 'copy'].includes(d.grade) ? `devx.grades.${d.grade}` : { en: d.grade, ur: d.grade }} /> : null}
           {hasPta(d) ? <Chip text={`stock.pta.${d.pta_status}`} tone={d.pta_status === 'pta_approved' ? 'ok' : 'warn'} /> : null}
           {d.condition !== 'box_pack' ? <Chip text={lockState(d.lock_checks) === 'ok' ? 'devx.lock.ok' : lockState(d.lock_checks) === 'bad' ? 'devx.lock.bad' : 'devx.lock.none'} tone={lockState(d.lock_checks) === 'ok' ? 'ok' : lockState(d.lock_checks) === 'bad' ? 'bad' : 'warn'} /> : null}
           {d.verification_status !== 'not_required' ? <Chip text={`stock.verification.${d.verification_status}`} tone={vTone} /> : null}
           {d.cycle_no > 1 ? <Chip text={{ en: `Cycle ${d.cycle_no}`, ur: `${d.cycle_no} بار` }} /> : null}
+          <Help term="device.badges" size="sm" />
         </div>
         <div className="mt-1 grid grid-cols-2 gap-2">
           <div className="rounded-xl bg-white/10 px-3 py-2">
-            <BiLabel text="stock.asking" size="sm" tone="text-hero-text/75" />
+            <span className="flex items-center gap-1"><BiLabel text="stock.asking" size="sm" tone="text-hero-text/75" /><Help term="asking" size="sm" /></span>
             <MoneyText value={d.asking_price} tone="ink" />
           </div>
           {canSeeCost ? (
             <div className="rounded-xl bg-white/10 px-3 py-2">
-              <BiLabel text="stock.cost" size="sm" tone="text-hero-text/75" />
+              <span className="flex items-center gap-1"><BiLabel text="stock.cost" size="sm" tone="text-hero-text/75" /><Help term="cost" size="sm" /></span>
               <MoneyText value={d.cost_price} tone="ink" />
             </div>
           ) : null}
         </div>
         {d.current_party_name ? (
-          <div className="text-sm text-hero-text/80">
-            {pick('stock.withParty')}: <b>{d.current_party_name}</b>
+          <div className="flex items-center gap-1 text-sm text-hero-text/80">
+            <span>{pick('stock.withParty')}: <b>{d.current_party_name}</b></span><Help term="stock.withParty" size="sm" />
           </div>
         ) : null}
       </section>
@@ -139,7 +141,7 @@ export default function DeviceDetailPage() {
 
       {d.status === 'sold' ? <BiButton text="counter.returnJob" variant="secondary" full onClick={() => nav(`/return/new?device=${d.id}`)} /> : null}
 
-      <Section title="stock.actions">
+      <Section title="stock.actions" help="stock.actions">
         <div className="grid grid-cols-2 gap-2">
           {inStock ? <BiButton text="stock.loanOut" variant="secondary" size="md" onClick={() => setSheet('loan')} /> : null}
           {inStock ? <BiButton text="stock.markFaulty" variant="secondary" size="md" onClick={() => simple('marked_faulty')} /> : null}
@@ -158,22 +160,22 @@ export default function DeviceDetailPage() {
         <ErrorText error={ev.error ?? loanM.error} />
       </Section>
 
-      <Section title="stock.device">
+      <Section title="stock.device" help="stock.deviceInfo">
         <div className="card">
-          {d.imei2 ? <KV k="stock.imei2" v={<span dir="ltr">{d.imei2}</span>} /> : null}
-          {d.serial ? <KV k="stock.serial" v={<span dir="ltr">{d.serial}</span>} /> : null}
-          {d.sim_time_months ? <KV k="stock.simTime" v={d.sim_time_months} /> : null}
-          {d.warranty_months ? <KV k="stock.warranty" v={`${d.warranty_months} ${pick('stock.months')}${d.warranty_by ? ` · ${pick(`devx.by.${d.warranty_by}`)}` : ''}`} /> : null}
-          {d.ram_gb ? <KV k="devx.ram" v={<span dir="ltr">{d.ram_gb} GB</span>} /> : null}
-          {specRows(d.category ?? 'phone', d.specs, pick).map(([k, v]) => <KV key={k} k={k} v={<span dir="ltr">{v}</span>} />)}
-          {d.lock_checks ? <KV k="devx.lock.title" v={<span className="flex flex-col items-end">{Object.entries(d.lock_checks).map(([k, v]) => <span key={k} className={v === 'not_cleared' ? 'text-payable' : ''}>{pick(`devx.lock.${k}`)}: {pick(`devx.lock.${v}`)}</span>)}</span>} /> : null}
-          {d.patch_details ? <KV k="stock.patchDetails" v={d.patch_details} /> : null}
-          {d.notes ? <KV k="common.notes" v={d.notes} /> : null}
+          {d.imei2 ? <KV k="stock.imei2" help="device.imei2" v={<span dir="ltr">{d.imei2}</span>} /> : null}
+          {d.serial ? <KV k="stock.serial" help="device.serial" v={<span dir="ltr">{d.serial}</span>} /> : null}
+          {d.sim_time_months ? <KV k="stock.simTime" help="device.simTime" v={d.sim_time_months} /> : null}
+          {d.warranty_months ? <KV k="stock.warranty" help="device.warrantyMonths" v={`${d.warranty_months} ${pick('stock.months')}${d.warranty_by ? ` · ${pick(`devx.by.${d.warranty_by}`)}` : ''}`} /> : null}
+          {d.ram_gb ? <KV k="devx.ram" help="device.ram" v={<span dir="ltr">{d.ram_gb} GB</span>} /> : null}
+          {specRows(d.category ?? 'phone', d.specs, pick).map(([k, v, h]) => <KV key={k} k={k} help={h} v={<span dir="ltr">{v}</span>} />)}
+          {d.lock_checks ? <KV k="devx.lock.title" help="device.lock" v={<span className="flex flex-col items-end">{Object.entries(d.lock_checks).map(([k, v]) => <span key={k} className={v === 'not_cleared' ? 'text-payable' : ''}>{pick(`devx.lock.${k}`)}: {pick(`devx.lock.${v}`)}</span>)}</span>} /> : null}
+          {d.patch_details ? <KV k="stock.patchDetails" help="device.patch" v={d.patch_details} /> : null}
+          {d.notes ? <KV k="common.notes" help="common.notes" v={d.notes} /> : null}
         </div>
       </Section>
 
       {d.accessories.length ? (
-        <Section title="stock.accessories">
+        <Section title="stock.accessories" help="stock.accessories">
           <div className="flex flex-wrap gap-1.5">
             {d.accessories.map((a) => {
               const label = a.kind === 'other' && a.label ? a.label : pick(`stock.acc.${a.kind}`)
@@ -190,7 +192,7 @@ export default function DeviceDetailPage() {
       <LabelSheet kind="devices" ids={[d.id]} open={sheet === 'label'} onClose={() => setSheet(null)} />
       <Sheet open={sheet === 'loan'} onClose={() => setSheet(null)} title="stock.loanOut">
         <div className="flex flex-col gap-3">
-          <BiLabel text="loan.toShop" size="md" tone="text-muted" />
+          <span className="flex items-center gap-1"><BiLabel text="loan.toShop" size="md" tone="text-muted" /><Help term="loan.toShop" size="sm" /></span>
           <select value={partyId} onChange={(e) => setPartyId(e.target.value)} className="min-h-12 w-full rounded-2xl border border-line bg-surface px-4 font-semibold">
             <option value="">—</option>
             {shops?.map((p) => (
@@ -199,8 +201,8 @@ export default function DeviceDetailPage() {
               </option>
             ))}
           </select>
-          <BiInput label="loan.expectedBack" type="date" min={isoDay(0)} value={expected} onChange={(e) => setExpected(e.target.value)} />
-          <BiInput label="common.notes" value={text} onChange={(e) => setText(e.target.value)} />
+          <BiInput label="loan.expectedBack" help={<Help term="loan.expectedBack" size="sm" />} type="date" min={isoDay(0)} value={expected} onChange={(e) => setExpected(e.target.value)} />
+          <BiInput label="common.notes" help={<Help term="common.notes" size="sm" />} value={text} onChange={(e) => setText(e.target.value)} />
           <ErrorText error={loanM.error} />
           <BiButton
             text="loan.new"
@@ -248,15 +250,15 @@ export default function DeviceDetailPage() {
 
       <Sheet open={sheet === 'lock'} onClose={() => setSheet(null)} title="devx.lock.title">
         <div className="flex flex-col gap-3">
-          <BiLabel text="devx.lock.hint" size="sm" tone="text-muted" />
+          <span className="flex items-center gap-1"><BiLabel text="devx.lock.hint" size="sm" tone="text-muted" /><Help term="device.lock" size="sm" /></span>
           <LockChecksEditor category={d.category ?? 'phone'} value={locks} onChange={setLocks} />
-          <BiInput label="devx.lock.note" value={lockNote} onChange={(e) => setLockNote(e.target.value)} maxLength={200} />
+          <BiInput label="devx.lock.note" help={<Help term="common.notes" size="sm" />} value={lockNote} onChange={(e) => setLockNote(e.target.value)} maxLength={200} />
           <BiButton text="common.save" full disabled={!Object.keys(locks).length} onClick={async () => { await post(`/api/v1/devices/${d.id}/lock-check`, { checks: locks, note: lockNote || null }); await inv('devices', 'device', 'history'); setSheet(null) }} />
         </div>
       </Sheet>
       <Sheet open={sheet === 'retype'} onClose={() => setSheet(null)} title="devx.retype">
         <div className="flex flex-col gap-3" data-testid="retype-sheet">
-          <BiLabel text="devx.retypeHint" size="sm" tone="text-muted" />
+          <span className="flex items-center gap-1"><BiLabel text="devx.retypeHint" size="sm" tone="text-muted" /><Help term="device.retype" size="sm" /></span>
           <BiLabel text="devx.retypeTo" size="md" tone="text-muted" />
           <div className="grid grid-cols-3 gap-2">
             {(['phone', 'tablet', 'watch'] as DeviceCategory[]).filter((c) => c !== (d.category ?? 'phone')).map((c) => <button key={c} type="button" aria-pressed={toCat === c} onClick={() => { setToCat(c); setPreview(null) }} className={`tap min-h-12 rounded-2xl border-2 font-bold ${toCat === c ? 'border-ink bg-ink text-ground' : 'border-line bg-surface'}`}>{pick(`devcat.${c}`)}</button>)}
@@ -283,10 +285,10 @@ export default function DeviceDetailPage() {
       {/* the buying price is only sent to the owner/manager; the server checks it for everyone */}
       <Sheet open={sheet === 'note' || sheet === 'price'} onClose={() => setSheet(null)} title={sheet === 'price' ? 'stock.changePrice' : 'stock.addNote'}>
         <div className="flex flex-col gap-3">
-          <BiInput label={sheet === 'price' ? 'stock.asking' : 'common.notes'} type={sheet === 'price' ? 'number' : 'text'} inputMode={sheet === 'price' ? 'decimal' : 'text'} value={text} onChange={(e) => setText(e.target.value)} autoFocus error={priceLow ? 'field.askingBelowCost' : null} />
+          <BiInput label={sheet === 'price' ? 'stock.asking' : 'common.notes'} help={sheet === 'price' ? <Help term="asking" size="sm" /> : <Help term="common.notes" size="sm" />} type={sheet === 'price' ? 'number' : 'text'} inputMode={sheet === 'price' ? 'decimal' : 'text'} value={text} onChange={(e) => setText(e.target.value)} autoFocus error={priceLow ? 'field.askingBelowCost' : null} />
           {sheet === 'price' ? <PriceHint modelId={d.model_id} storageId={d.storage_id} condition={d.condition} excludeDeviceId={d.id} onUse={(p) => setText(String(p))} /> : null}
-          {sheet === 'price' ? <BiInput label="confirm.reason" value={reason} onChange={(e) => setReason(e.target.value)} /> : null}
-          {sheet === 'price' && priceErr && (priceErr.code === 'pin_required' || priceErr.code === 'pin_wrong') ? <BiInput label="confirm.ownerPin" type="password" inputMode="numeric" maxLength={6} value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))} error={priceErr.code === 'pin_wrong' ? 'confirm.pinWrong' : 'confirm.pinNeeded'} className="num tracking-[.3em]" dir="ltr" /> : null}
+          {sheet === 'price' ? <BiInput label="confirm.reason" help={<Help term="price.reason" size="sm" />} value={reason} onChange={(e) => setReason(e.target.value)} /> : null}
+          {sheet === 'price' && priceErr && (priceErr.code === 'pin_required' || priceErr.code === 'pin_wrong') ? <BiInput label="confirm.ownerPin" help={<Help term="price.ownerPin" size="sm" />} type="password" inputMode="numeric" maxLength={6} value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))} error={priceErr.code === 'pin_wrong' ? 'confirm.pinWrong' : 'confirm.pinNeeded'} className="num tracking-[.3em]" dir="ltr" /> : null}
           {sheet === 'price' && priceErr && priceErr.code === 'approval_required' ? <BiAlert text="confirm.blocked" /> : null}
           <BiButton
             text="common.save"

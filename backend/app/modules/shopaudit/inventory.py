@@ -167,6 +167,19 @@ def summary(
         x["count"] += 1
         x["cost"] = money(x["cost"] + (d.cost_price or ZERO))
         x["asking"] = money(x["asking"] + (d.asking_price or ZERO))
+    # supplier-wise stock (docs/31 R5): who the phone was bought from; trade-ins / opening stock apart
+    sups = _suppliers(db, shop_id, [d.id for d in devs])
+    by_sup: dict = {}
+    for d in devs:
+        sp = sups.get(d.id) or {}
+        k = sp.get("party_id")
+        x = by_sup.setdefault(
+            k,
+            {"party_id": k, "name": sp.get("party_name"), "count": 0, "cost": ZERO, "asking": ZERO},
+        )
+        x["count"] += 1
+        x["cost"] = money(x["cost"] + (d.cost_price or ZERO))
+        x["asking"] = money(x["asking"] + (d.asking_price or ZERO))
     cost_total = money(sum((d.cost_price or ZERO for d in devs), ZERO))
     asking_total = money(sum((d.asking_price or ZERO for d in devs), ZERO))
     priced = [d for d in devs if d.cost_price is not None and d.asking_price is not None]
@@ -194,6 +207,10 @@ def summary(
         "by_brand": sorted(
             (({**b, "cost": b["cost"] if can_cost else None}) for b in brands.values()),
             key=lambda b: -b["count"],
+        ),
+        "by_supplier": sorted(
+            (({**b, "cost": b["cost"] if can_cost else None}) for b in by_sup.values()),
+            key=lambda b: (b["party_id"] is None, -b["count"]),
         ),
         "status_counts": {s.value: int(status_counts.get(s.value, 0)) for s in DeviceStatus},
         "most_expensive_cost": by_cost if can_cost else [],
@@ -414,4 +431,33 @@ def verification(db: Session, shop_id: uuid.UUID, shop, p: Period) -> dict:
             "A skipped check ('I know this person') is recorded as a bypass with the reason and who did it; it is never counted as a completed check.",
             "'Unusual' = the person skipped at least the minimum number of checks and at least the share of their own intakes set in the thresholds, or skipped a flagged phone.",
         ],
+    }
+
+
+def attention(db: Session, shop_id: uuid.UUID, shop, *, can_cost: bool) -> dict:
+    """What needs a look today, for the overview (docs/31 R6): ID checks not cleared on phones in
+    stock, the stock alerts by kind, installments due today / late. Always "now", not the period."""
+    from app.modules.installments.service import counts as installment_counts
+    from app.modules.payments.lending_due import counts as lending_counts
+
+    pending = dict(
+        db.execute(
+            select(Device.verification_status, func.count(Device.id))
+            .where(
+                Device.shop_id == shop_id,
+                Device.status == DeviceStatus.IN_STOCK,
+                Device.verification_status.in_(("pending", "flagged")),
+            )
+            .group_by(Device.verification_status)
+        ).all()
+    )
+    age = ageing(db, shop_id, shop, can_cost=can_cost)
+    alerts = {k: n for k, n in age["alert_counts"].items() if n}
+    return {
+        "verification_pending": int(pending.get("pending", 0)),
+        "verification_flagged": int(pending.get("flagged", 0)),
+        "alerts": alerts,
+        "alerts_total": sum(alerts.values()),
+        **installment_counts(db, shop_id),
+        **lending_counts(db, shop_id),
     }

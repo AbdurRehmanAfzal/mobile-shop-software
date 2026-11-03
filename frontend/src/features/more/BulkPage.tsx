@@ -23,12 +23,12 @@ interface Preview {
 }
 interface PastImport { id: string; kind: Kind; file_name: string | null; rows_total: number; rows_ok: number; rows_failed: number; rows_skipped: number; created: Record<string, number>; by: string | null; at: string }
 
-const KINDS: { kind: Kind; Icon: LucideIcon; tone: string }[] = [
-  { kind: 'stock', Icon: Smartphone, tone: 'bg-stockt text-stockt-fg' },
-  { kind: 'people', Icon: Users, tone: 'bg-khata text-khata-fg' },
-  { kind: 'items', Icon: Headphones, tone: 'bg-buy text-buy-fg' },
-  { kind: 'sales', Icon: Receipt, tone: 'bg-sell text-sell-fg' },
-  { kind: 'expenses', Icon: Wallet, tone: 'bg-expense text-expense-fg' },
+const KINDS: { kind: Kind; Icon: LucideIcon; tone: string; help: string }[] = [
+  { kind: 'stock', Icon: Smartphone, tone: 'bg-stockt text-stockt-fg', help: 'more.bulk.kindStock' },
+  { kind: 'people', Icon: Users, tone: 'bg-khata text-khata-fg', help: 'more.bulk.kindPeople' },
+  { kind: 'items', Icon: Headphones, tone: 'bg-buy text-buy-fg', help: 'more.bulk.kindItems' },
+  { kind: 'sales', Icon: Receipt, tone: 'bg-sell text-sell-fg', help: 'more.bulk.kindSales' },
+  { kind: 'expenses', Icon: Wallet, tone: 'bg-expense text-expense-fg', help: 'more.bulk.kindExpenses' },
 ]
 // which preview columns to show per kind (the rest is in the file; the screen stays readable on a phone)
 const SHOW: Record<Kind, string[]> = {
@@ -116,11 +116,15 @@ export default function BulkPage() {
 
       {/* 1. what */}
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
-        {KINDS.map(({ kind: k, Icon, tone }) => (
-          <button key={k} type="button" aria-pressed={kind === k} onClick={() => choose(k)} className={`tap flex min-h-[72px] items-center gap-3 rounded-3xl border-2 px-3 text-start ${kind === k ? 'border-ink bg-surface' : 'border-line bg-surface'}`}>
-            <span className={`well h-11 w-11 shrink-0 ${tone}`}><Icon size={22} /></span>
-            <BiLabel text={`bulk.kind.${k}`} size="md" bold />
-          </button>
+        {KINDS.map(({ kind: k, Icon, tone, help }) => (
+          // the "?" sits beside the tile's button (not inside it), at the far end
+          <div key={k} className="relative">
+            <button type="button" aria-pressed={kind === k} onClick={() => choose(k)} className={`tap flex min-h-[72px] w-full items-center gap-3 rounded-3xl border-2 pe-8 ps-3 text-start ${kind === k ? 'border-ink bg-surface' : 'border-line bg-surface'}`}>
+              <span className={`well h-11 w-11 shrink-0 ${tone}`}><Icon size={22} /></span>
+              <BiLabel text={`bulk.kind.${k}`} size="md" bold />
+            </button>
+            <span className="absolute end-1 top-1/2 -translate-y-1/2"><Help term={help} size="sm" /></span>
+          </div>
         ))}
       </div>
 
@@ -128,20 +132,20 @@ export default function BulkPage() {
         <>
           {/* 2. template + upload */}
           <section className="card flex flex-col gap-3" data-testid="bulk-steps">
-            <Step n={1} title="bulk.step1" hint="bulk.step1Hint">
+            <Step n={1} title="bulk.step1" hint="bulk.step1Hint" help="more.bulk.step1">
               <BiButton text="bulk.downloadTemplate" variant="secondary" icon={<Download size={20} />} loading={busy === 'template'} onClick={template} />
             </Step>
-            <Step n={2} title="bulk.step2" hint={`bulk.step2Hint.${kind}`} />
-            <Step n={3} title="bulk.step3" hint="bulk.step3Hint">
+            <Step n={2} title="bulk.step2" hint={`bulk.step2Hint.${kind}`} help="more.bulk.step2" />
+            <Step n={3} title="bulk.step3" hint="bulk.step3Hint" help="more.bulk.step3">
               <input ref={fileRef} type="file" accept=".xlsx,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv" className="hidden" data-testid="bulk-file" onChange={(e) => pickFile(e.target.files?.[0])} />
               <div className="flex flex-wrap items-center gap-2">
                 <BiButton text={file ? 'bulk.changeFile' : 'bulk.chooseFile'} variant={file ? 'secondary' : 'primary'} icon={<FileUp size={20} />} onClick={() => fileRef.current?.click()} />
                 {file ? <span className="num truncate text-sm font-semibold" dir="ltr">{file.name}</span> : null}
               </div>
               <div className="flex flex-col gap-2">
-                {kind === 'stock' ? <Toggle on={opts.create_catalogue} label="bulk.optCatalogue" onChange={(v) => setOpts({ ...opts, create_catalogue: v })} /> : null}
-                {kind === 'sales' ? <Toggle on={opts.allow_below_cost} label="bulk.optBelowCost" onChange={(v) => setOpts({ ...opts, allow_below_cost: v })} /> : null}
-                <Toggle on={opts.skip_errors} label="bulk.optSkip" onChange={(v) => setOpts({ ...opts, skip_errors: v })} />
+                {kind === 'stock' ? <Toggle on={opts.create_catalogue} label="bulk.optCatalogue" onChange={(v) => setOpts({ ...opts, create_catalogue: v })} help="more.bulk.optCatalogue" /> : null}
+                {kind === 'sales' ? <Toggle on={opts.allow_below_cost} label="bulk.optBelowCost" onChange={(v) => setOpts({ ...opts, allow_below_cost: v })} help="more.bulk.optBelowCost" /> : null}
+                <Toggle on={opts.skip_errors} label="bulk.optSkip" onChange={(v) => setOpts({ ...opts, skip_errors: v })} help="more.bulk.optSkip" />
               </div>
               <BiButton text="bulk.check" icon={<Upload size={20} />} full disabled={!file} loading={busy === 'preview'} onClick={() => run('preview')} />
             </Step>
@@ -151,7 +155,7 @@ export default function BulkPage() {
           {preview && counts ? (
             <section className="card flex flex-col gap-3" data-testid="bulk-preview">
               <div className="flex flex-wrap items-center gap-2">
-                <BiLabel text="bulk.previewTitle" size="md" bold />
+                <span className="flex items-center gap-1"><BiLabel text="bulk.previewTitle" size="md" bold /><Help term="more.bulk.preview" size="sm" /></span>
                 <span className={`text-muted ${small}`}>{preview.file_name}</span>
               </div>
               <div className="flex flex-wrap gap-2" data-testid="bulk-counts">
@@ -159,6 +163,7 @@ export default function BulkPage() {
                 <Count n={counts.warn} label="bulk.warn" tone="warn" />
                 <Count n={counts.error} label="bulk.error" tone="bad" />
                 <Count n={counts.skip} label="bulk.skip" tone="muted" />
+                <Help term="more.bulk.counts" size="sm" />
               </div>
               {preview.already_imported_at ? (
                 <div className="flex items-center gap-2 rounded-2xl bg-receivable-tint px-3 py-2 text-receivable"><AlertTriangle size={18} /><span className={small}>{pick('bulk.alreadyImported').replace('{{when}}', fmtDateTime(preview.already_imported_at))}</span></div>
@@ -185,7 +190,7 @@ export default function BulkPage() {
           {/* 4. done */}
           {done ? (
             <section className="card flex flex-col gap-2 border-emerald/40" data-testid="bulk-done">
-              <div className="flex items-center gap-2 text-emerald-deep"><Check size={20} /><BiLabel text="bulk.doneTitle" size="md" bold tone="text-current" /></div>
+              <div className="flex items-center gap-2 text-emerald-deep"><Check size={20} /><BiLabel text="bulk.doneTitle" size="md" bold tone="text-current" /><Help term="more.bulk.done" size="sm" /></div>
               <span className="num text-sm font-semibold" dir="auto">{createdLine(done.created)}</span>
               <span className={`text-muted ${small}`}>{pick('bulk.doneRows').replace('{{ok}}', String(done.counts.ok + done.counts.warn)).replace('{{skipped}}', String(done.counts.skip + done.counts.error))}</span>
             </section>
@@ -193,7 +198,7 @@ export default function BulkPage() {
 
           {/* export */}
           <section className="card flex flex-col gap-2">
-            <div className="flex items-center gap-2"><FileSpreadsheet size={18} /><BiLabel text="bulk.exportTitle" size="md" bold /></div>
+            <div className="flex items-center gap-2"><FileSpreadsheet size={18} /><BiLabel text="bulk.exportTitle" size="md" bold /><Help term="more.bulk.export" size="sm" /></div>
             <BiLabel text={`bulk.exportHint.${kind}`} size="sm" tone="text-muted" />
             <div className="flex gap-2">
               <BiButton text="counter.excel" variant="secondary" icon={<Download size={18} />} size="md" loading={busy === 'export'} onClick={() => exportData('xlsx')} />
@@ -206,7 +211,7 @@ export default function BulkPage() {
       {/* history */}
       {history?.length ? (
         <section className="flex flex-col gap-2">
-          <BiLabel text="bulk.history" size="md" bold />
+          <span className="flex items-center gap-1"><BiLabel text="bulk.history" size="md" bold /><Help term="more.bulk.history" size="sm" /></span>
           <div className="card divide-y divide-line p-0" data-testid="bulk-history">
             {history.map((h) => (
               <div key={h.id} className="flex items-center gap-3 px-3 py-2">
@@ -246,12 +251,12 @@ export default function BulkPage() {
   )
 }
 
-function Step({ n, title, hint, children }: { n: number; title: string; hint: string; children?: ReactNode }) {
+function Step({ n, title, hint, help, children }: { n: number; title: string; hint: string; help: string; children?: ReactNode }) {
   return (
     <div className="flex gap-3">
       <span className="well num h-9 w-9 shrink-0 bg-ink text-ground text-sm font-bold">{n}</span>
       <div className="flex min-w-0 flex-1 flex-col gap-2">
-        <BiLabel text={title} size="md" bold />
+        <span className="flex items-center gap-1"><BiLabel text={title} size="md" bold /><Help term={help} size="sm" /></span>
         <BiLabel text={hint} size="sm" tone="text-muted" />
         {children}
       </div>
@@ -259,13 +264,17 @@ function Step({ n, title, hint, children }: { n: number; title: string; hint: st
   )
 }
 
-function Toggle({ on, label, onChange }: { on: boolean; label: string; onChange: (v: boolean) => void }) {
+/** the "?" sits beside the switch, never inside it */
+function Toggle({ on, label, onChange, help }: { on: boolean; label: string; onChange: (v: boolean) => void; help: string }) {
   const { pick } = useLang()
   return (
-    <button type="button" role="switch" aria-checked={on} aria-label={pick(label)} onClick={() => onChange(!on)} className="tap flex min-h-11 items-center gap-3 rounded-2xl border border-line bg-surface px-3 text-start">
-      <span className={`flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition ${on ? 'bg-emerald justify-end' : 'bg-line justify-start'}`}><span className="h-5 w-5 rounded-full bg-white shadow" /></span>
-      <BiLabel text={label} size="sm" />
-    </button>
+    <div className="flex items-center gap-1">
+      <button type="button" role="switch" aria-checked={on} aria-label={pick(label)} onClick={() => onChange(!on)} className="tap flex min-h-11 min-w-0 flex-1 items-center gap-3 rounded-2xl border border-line bg-surface px-3 text-start">
+        <span className={`flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition ${on ? 'bg-emerald justify-end' : 'bg-line justify-start'}`}><span className="h-5 w-5 rounded-full bg-white shadow" /></span>
+        <BiLabel text={label} size="sm" />
+      </button>
+      <Help term={help} size="sm" />
+    </div>
   )
 }
 

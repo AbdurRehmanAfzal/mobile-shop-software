@@ -85,31 +85,83 @@ def list_accessories(
 def options(ctx: Ctx, db: DB):
     """units, grades and the shop's item settings (for the forms)"""
     p = inv.prefs_for(ctx.shop)
-    return plain({**p, "brands": list(db.scalars(select(Accessory.brand).where(Accessory.shop_id == ctx.shop_id, Accessory.brand.is_not(None)).group_by(Accessory.brand).order_by(Accessory.brand)).all()), "locations": list(db.scalars(select(Accessory.location).where(Accessory.shop_id == ctx.shop_id, Accessory.location.is_not(None)).group_by(Accessory.location)).all())})
+    return plain(
+        {
+            **p,
+            "brands": list(
+                db.scalars(
+                    select(Accessory.brand)
+                    .where(Accessory.shop_id == ctx.shop_id, Accessory.brand.is_not(None))
+                    .group_by(Accessory.brand)
+                    .order_by(Accessory.brand)
+                ).all()
+            ),
+            "locations": list(
+                db.scalars(
+                    select(Accessory.location)
+                    .where(Accessory.shop_id == ctx.shop_id, Accessory.location.is_not(None))
+                    .group_by(Accessory.location)
+                ).all()
+            ),
+        }
+    )
 
 
 @router.get("/similar")
-def similar(ctx: Ctx, db: DB, name: str = Query(min_length=2, max_length=150), brand: str | None = None, color: str | None = None, exclude: uuid.UUID | None = None):
+def similar(
+    ctx: Ctx,
+    db: DB,
+    name: str = Query(min_length=2, max_length=150),
+    brand: str | None = None,
+    color: str | None = None,
+    exclude: uuid.UUID | None = None,
+):
     """the duplicate warning: items that look like the one being typed"""
-    return plain([service.to_out(a, ctx.can(Cap.VIEW_COST)) for a in inv.similar(db, ctx.shop_id, name, brand, color, exclude)])
+    return plain(
+        [
+            service.to_out(a, ctx.can(Cap.VIEW_COST))
+            for a in inv.similar(db, ctx.shop_id, name, brand, color, exclude)
+        ]
+    )
 
 
 @router.get("/lookup")
-def lookup(ctx: Ctx, db: DB, code: str = Query(min_length=1, max_length=80), supplier_id: uuid.UUID | None = None):
+def lookup(
+    ctx: Ctx,
+    db: DB,
+    code: str = Query(min_length=1, max_length=80),
+    supplier_id: uuid.UUID | None = None,
+):
     """our SKU / barcode / maker's code / a supplier's SKU → the item (the purchase screen)"""
     c = code.strip()
-    a = db.scalar(select(Accessory).where(Accessory.shop_id == ctx.shop_id, Accessory.sku == c.upper()))
+    a = db.scalar(
+        select(Accessory).where(Accessory.shop_id == ctx.shop_id, Accessory.sku == c.upper())
+    )
     matched = "sku" if a else None
     if a is None:
-        a = db.scalar(select(Accessory).where(Accessory.shop_id == ctx.shop_id, Accessory.barcode.in_([c, c.upper()])))
+        a = db.scalar(
+            select(Accessory).where(
+                Accessory.shop_id == ctx.shop_id, Accessory.barcode.in_([c, c.upper()])
+            )
+        )
         matched = "barcode" if a else None
     if a is None:
-        a = db.scalar(select(Accessory).where(Accessory.shop_id == ctx.shop_id, Accessory.manufacturer_code == c))
+        a = db.scalar(
+            select(Accessory).where(
+                Accessory.shop_id == ctx.shop_id, Accessory.manufacturer_code == c
+            )
+        )
         matched = "manufacturer_code" if a else None
     if a is None:
         a = inv.by_supplier_sku(db, ctx.shop_id, c, supplier_id)
         matched = "supplier_sku" if a else None
-    return plain({"found": a is not None, "matched": matched, "item": service.to_out(a, ctx.can(Cap.VIEW_COST), db, ctx.shop) if a else None})
+    return plain(
+        {
+            "found": a is not None,
+            "matched": matched,
+            "item": service.to_out(a, ctx.can(Cap.VIEW_COST), db, ctx.shop) if a else None,
+        }
+    )
 
 
 @router.post("/bulk-price")
@@ -158,14 +210,22 @@ def report_valuation(ctx: Cost, db: DB):
 
 
 @router.get("/reports/movers")
-def report_movers(ctx: Ctx, db: DB, date_from: dt.date | None = None, date_to: dt.date | None = None):
+def report_movers(
+    ctx: Ctx, db: DB, date_from: dt.date | None = None, date_to: dt.date | None = None
+):
     d_to = date_to or shop_today()
     d_from = date_from or (d_to - dt.timedelta(days=29))
     return plain(inv.movers(db, ctx.shop_id, d_from, d_to, ctx.can(Cap.VIEW_COST)))
 
 
 @router.get("/reports/profit")
-def report_profit(ctx: Cost, db: DB, date_from: dt.date | None = None, date_to: dt.date | None = None, group: str = Query(default="category", pattern="^(category|brand)$")):
+def report_profit(
+    ctx: Cost,
+    db: DB,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+    group: str = Query(default="category", pattern="^(category|brand)$"),
+):
     d_to = date_to or shop_today()
     d_from = date_from or (d_to - dt.timedelta(days=29))
     return plain(inv.profit_by(db, ctx.shop_id, d_from, d_to, group))
@@ -177,7 +237,9 @@ def report_dead(ctx: Cost, db: DB, days: int = Query(default=60, ge=7, le=730)):
 
 
 @router.get("/reports/suppliers")
-def report_suppliers(ctx: Cost, db: DB, date_from: dt.date | None = None, date_to: dt.date | None = None):
+def report_suppliers(
+    ctx: Cost, db: DB, date_from: dt.date | None = None, date_to: dt.date | None = None
+):
     d_to = date_to or shop_today()
     d_from = date_from or (d_to - dt.timedelta(days=29))
     return plain(inv.supplier_summary(db, ctx.shop_id, d_from, d_to))
@@ -205,7 +267,15 @@ def price_for(accessory_id: uuid.UUID, ctx: Ctx, db: DB, party_id: uuid.UUID | N
     if party is not None and party.shop_id != ctx.shop_id:
         party = None
     price, tier = inv.sale_price_for(a, party)
-    return plain({"price": price, "tier": tier, "min_price": a.min_price, "qty": a.qty, "warranty_days": a.warranty_days})
+    return plain(
+        {
+            "price": price,
+            "tier": tier,
+            "min_price": a.min_price,
+            "qty": a.qty,
+            "warranty_days": a.warranty_days,
+        }
+    )
 
 
 @router.get("/{accessory_id}/timeline")
@@ -214,7 +284,11 @@ def timeline(accessory_id: uuid.UUID, ctx: Ctx, db: DB):
     a = service.get_accessory(db, ctx.shop_id, accessory_id)
     rows = inv.timeline(db, ctx.shop_id, a)
     if not ctx.can(Cap.VIEW_COST):
-        rows = [r for r in rows if not (r["kind"] == "price" and r["field"] in ("avg_cost", "min_price"))]
+        rows = [
+            r
+            for r in rows
+            if not (r["kind"] == "price" and r["field"] in ("avg_cost", "min_price"))
+        ]
         for r in rows:
             if r["kind"] == "move":
                 r["unit_cost"] = None

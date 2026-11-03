@@ -16,15 +16,21 @@ from app.core.periods import Period
 from app.modules.shopaudit import (
     finance,
     inventory,
+    lending,
     parties,
     products,
     reconcile,
+    repairs,
     security,
     service,
+    trade,
 )
 
 SECTIONS = (
     "summary",
+    "insights",
+    "sales",
+    "purchases",
     "pnl",
     "cash",
     "expenses",
@@ -32,16 +38,23 @@ SECTIONS = (
     "customers",
     "suppliers",
     "udhaar",
+    "lending",
+    "repairs",
     "inventory",
     "ageing",
     "products",
     "invoices",
     "verification",
     "checks",
+    "staff",
     "security",
 )
 TITLES = {
     "summary": "Executive summary",
+    "insights": "Important business insights",
+    "sales": "Sales",
+    "purchases": "Purchases",
+    "staff": "Employee activity",
     "pnl": "Profit & loss",
     "cash": "Cash & bank",
     "expenses": "Expenses",
@@ -49,6 +62,8 @@ TITLES = {
     "customers": "Top customers",
     "suppliers": "Top suppliers",
     "udhaar": "Udhaar (receivables / payables)",
+    "lending": "Len-den (money lent / borrowed, no bill)",
+    "repairs": "Repairs and repair labs",
     "inventory": "Inventory valuation",
     "ageing": "Stock ageing",
     "products": "Product performance",
@@ -126,6 +141,119 @@ def build(
         h, r = _kv(rows)
         out.append(
             {"key": "summary", "header": h, "rows": r, "notes": o["coverage"]["limitations"]}
+        )
+    if "insights" in want:
+        from app.modules.shopaudit import insights
+
+        xs = insights.build(db, shop_id, shop, p, can_cost=can_cost, is_owner=is_owner)
+        out.append(
+            {
+                "key": "insights",
+                "header": ["Topic", "Look", "Finding"],
+                "rows": [[i["key"], i["level"], i["text"]] for i in xs],
+                "notes": ["Rules read off the figures in this report; nothing is estimated."],
+            }
+        )
+    if "sales" in want:
+        x = trade.sales(db, shop_id, p, can_cost=can_cost, limit=limit)
+        t = x["totals"]
+        h, r = _kv(
+            [
+                ("Sale bills", t["bills"]),
+                ("Billed (tax included)", t["billed"]),
+                ("Discounts", t["discount"]),
+                ("Tax", t["tax"]),
+                ("Returned", t["returned"]),
+                ("At the counter / on credit", f"{_s(t['at_counter'])} / {_s(t['on_credit'])}"),
+                ("Cash bills / credit bills", f"{t['cash_bills']} / {t['credit_bills']}"),
+                ("Still due on these bills", t["due"]),
+                ("Profit / margin %", f"{_s(t['profit'])} / {_s(t['margin_pct'])}"),
+                (
+                    "Period before: bills / billed",
+                    f"{t['previous_bills']} / {_s(t['previous_billed'])}",
+                ),
+            ]
+        )
+        out.append({"key": "sales", "header": h, "rows": r, "notes": x["notes"]})
+        out.append(
+            {
+                "key": "sales_users",
+                "title": "Sales by employee",
+                "header": [
+                    "Employee",
+                    "Bills",
+                    "Billed",
+                    "Discount",
+                    "On credit",
+                    "Profit",
+                    "Returns",
+                ],
+                "rows": [
+                    [
+                        u["user_name"],
+                        u["bills"],
+                        u["billed"],
+                        u["discount"],
+                        u["on_credit"],
+                        u["profit"],
+                        u["returns"],
+                    ]
+                    for u in x["by_user"]
+                ],
+                "notes": [],
+            }
+        )
+        if detail:
+            out.append(
+                {
+                    "key": "sales_rows",
+                    "title": "Sale bills",
+                    "header": ["Date", "Bill", "Customer", "By", "Billed", "Paid", "Due", "Status"],
+                    "rows": [
+                        [
+                            b["date"],
+                            b["no"],
+                            b["party_name"],
+                            b["user_name"],
+                            b["billed"],
+                            b["paid"],
+                            b["due"],
+                            b["pay_status"],
+                        ]
+                        for b in x["rows"]
+                    ],
+                    "notes": [],
+                }
+            )
+    if "purchases" in want and can_cost:
+        x = trade.purchases(db, shop_id, p, limit=limit)
+        t = x["totals"]
+        h, r = _kv(
+            [
+                ("Purchase bills", t["bills"]),
+                ("Phones / items bought", f"{t['phones']} / {t['items']}"),
+                ("Total", t["total"]),
+                ("Paid at purchase / on credit", f"{_s(t['at_counter'])} / {_s(t['on_credit'])}"),
+                ("Still owed on these bills", t["owed"]),
+                ("Returned to suppliers", f"{t['returns']} / {_s(t['returns_amount'])}"),
+                (
+                    "Period before: bills / total",
+                    f"{t['previous_bills']} / {_s(t['previous_total'])}",
+                ),
+            ]
+        )
+        out.append({"key": "purchases", "header": h, "rows": r, "notes": x["notes"]})
+        out.append(
+            {
+                "key": "purchase_parties",
+                "title": "Purchases by supplier",
+                "header": ["Supplier", "Bills", "Phones", "Total", "Owed"],
+                "rows": [
+                    [b["name"], b["bills"], b["phones"], b["total"], b["owed"]]
+                    for b in x["by_party"]
+                ],
+                "notes": [],
+            }
         )
     if "pnl" in want:
         x = finance.pnl(db, shop_id, p)
@@ -395,6 +523,177 @@ def build(
                     "notes": [],
                 }
             )
+    if "repairs" in want:
+        x = repairs.repairs(db, shop_id, p, can_cost=can_cost)
+        c, m = x["counts"], x["money"]
+        h, r = _kv(
+            [
+                (
+                    "Phones taken in / given back / not fixed",
+                    f"{c['came']} / {c['given']} / {c['not_fixed']}",
+                ),
+                (
+                    "Open now / ready / late",
+                    f"{c['open_now']} / {c['ready_now']} / {c['late_now']}",
+                ),
+                ("At a lab now / late at a lab", f"{c['at_lab_now']} / {c['late_at_lab']}"),
+                ("Sent to labs / back from labs", f"{c['sent_to_lab']} / {c['back_from_lab']}"),
+                ("Repair income", m["income"]),
+                ("Parts cost", m["parts"]),
+                ("Lab charges (customer phones)", m["lab_customer"]),
+                ("Lab charges (shop's own phones, added to their cost)", m["lab_stock"]),
+                ("Repair profit", m["profit"]),
+            ]
+        )
+        out.append({"key": "repairs", "header": h, "rows": r, "notes": x["notes"]})
+        out.append(
+            {
+                "key": "repair_labs",
+                "title": "Repair labs",
+                "header": [
+                    "Lab",
+                    "Phone",
+                    "Sent",
+                    "At lab",
+                    "Late",
+                    "Fixed",
+                    "Not fixed",
+                    "Fix %",
+                    "Avg days",
+                    "Charges",
+                    "Khata",
+                ],
+                "rows": [
+                    [
+                        y["name"],
+                        y["phone"],
+                        y["sent"],
+                        y["at_lab"],
+                        y["late"],
+                        y["fixed"],
+                        y["not_fixed"],
+                        y["fix_rate"],
+                        y["avg_days"],
+                        y["cost"] if can_cost else None,
+                        y["balance"],
+                    ]
+                    for y in x["labs"]
+                ],
+                "notes": [],
+            }
+        )
+    if "lending" in want:
+        x = lending.lending(db, shop_id, p, limit=limit)
+        t = x["totals"]
+        h, r = _kv(
+            [
+                ("Lent (given) in the period", f"{_s(t['lent'])} ({t['lent_count']})"),
+                ("Borrowed (taken) in the period", f"{_s(t['borrowed'])} ({t['borrowed_count']})"),
+                (
+                    "Previous period: lent / borrowed",
+                    f"{_s(t['previous_lent'])} / {_s(t['previous_borrowed'])}",
+                ),
+                (
+                    "Open now: people owe us",
+                    f"{_s(x['owed_to_shop']['amount'])} ({x['owed_to_shop']['people']})",
+                ),
+                (
+                    "Open now: we owe people",
+                    f"{_s(x['shop_owes']['amount'])} ({x['shop_owes']['people']})",
+                ),
+                ("Adjusted against bills (all time)", t["adjusted_on_bills"]),
+                ("Cancelled entries in the period", t["voided"]),
+            ]
+        )
+        out.append({"key": "lending", "header": h, "rows": r, "notes": x["notes"]})
+        out.append(
+            {
+                "key": "lending_people",
+                "title": "Len-den by person",
+                "header": [
+                    "Name",
+                    "Phone",
+                    "Lent",
+                    "Borrowed",
+                    "Open (+ owes us)",
+                    "Khata",
+                    "Last",
+                ],
+                "rows": [
+                    [
+                        y["name"],
+                        y["phone"],
+                        y["lent"],
+                        y["borrowed"],
+                        y["open"],
+                        y["khata"],
+                        y["last_date"],
+                    ]
+                    for y in x["people"]
+                ],
+                "notes": [],
+            }
+        )
+        if x["due"]:
+            out.append(
+                {
+                    "key": "lending_due",
+                    "title": "Len-den return dates",
+                    "header": [
+                        "Name",
+                        "Phone",
+                        "Side",
+                        "Amount",
+                        "Due",
+                        "Days late",
+                        "Last reminded",
+                    ],
+                    "rows": [
+                        [
+                            y["name"],
+                            y["phone"],
+                            "owes us" if y["side"] == "owes_us" else "we owe",
+                            y["amount"],
+                            y["due_date"],
+                            y["days_late"],
+                            y["reminded_at"],
+                        ]
+                        for y in x["due"]
+                    ],
+                    "notes": [],
+                }
+            )
+        if detail:
+            out.append(
+                {
+                    "key": "lending_entries",
+                    "title": "Len-den entries",
+                    "header": [
+                        "No",
+                        "Date",
+                        "Person",
+                        "Given / taken",
+                        "Amount",
+                        "Method",
+                        "By",
+                        "Note",
+                    ],
+                    "rows": [
+                        [
+                            y["no"],
+                            y["date"],
+                            y["party_name"],
+                            "given" if y["direction"] == "out" else "taken",
+                            y["amount"],
+                            y["method"],
+                            y["by"],
+                            y["notes"],
+                        ]
+                        for y in x["entries"]
+                    ],
+                    "notes": [],
+                }
+            )
     if "udhaar" in want:
         x = parties.udhaar(db, shop_id, p, can_cost=can_cost, limit=limit)
         h, r = _kv(
@@ -410,6 +709,10 @@ def build(
                     else None,
                 ),
                 *[(f"Movement · {k}", v) for k, v in x["movement"].items() if v is not None],
+                (
+                    "Of which len-den: owed to us / we owe",
+                    f"{_s(x['lending']['receivable'])} / {_s(x['lending']['payable'])}",
+                ),
             ]
         )
         out.append({"key": "udhaar", "header": h, "rows": r, "notes": x["notes"]})
@@ -675,6 +978,46 @@ def build(
                     for c in rows
                 ],
                 "notes": [],
+            }
+        )
+    if "staff" in want:
+        from app.modules.shopaudit import staff as staff_mod
+
+        x = staff_mod.staff(db, shop_id, shop, p, can_cost=can_cost, is_owner=is_owner)
+        out.append(
+            {
+                "key": "staff",
+                "header": [
+                    "Employee",
+                    "Sale bills",
+                    "Billed",
+                    "Discount",
+                    "Profit",
+                    "Purchases",
+                    "Expenses",
+                    "Payments in / out",
+                    "Security events",
+                    "Flags",
+                ],
+                "rows": [
+                    [
+                        r["user_name"],
+                        (r["sales"] or {}).get("bills", 0),
+                        (r["sales"] or {}).get("billed"),
+                        (r["sales"] or {}).get("discount"),
+                        (r["sales"] or {}).get("profit"),
+                        (r["purchases"] or {}).get("total"),
+                        (r["expenses"] or {}).get("amount"),
+                        (
+                            f"{(r['payments'] or {}).get('in_count', 0)} / "
+                            f"{(r['payments'] or {}).get('out_count', 0)}"
+                        ),
+                        (r["security"] or {}).get("total") if is_owner else None,
+                        ", ".join((r["security"] or {}).get("flags", [])) if is_owner else None,
+                    ]
+                    for r in x["rows"]
+                ],
+                "notes": x["notes"],
             }
         )
     if "security" in want and is_owner:

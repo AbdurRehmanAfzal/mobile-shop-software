@@ -5,6 +5,7 @@
 import { ShieldAlert } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { Empty, Loading, fmtDateTime } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
@@ -16,6 +17,21 @@ interface Feed { counts: Record<string, number>; total: number; rows: Row[]; by_
 
 const n = (v: string | number | null | undefined) => (v == null || v === '' || isNaN(Number(v)) ? v ?? '—' : Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 }))
 const TONE: Record<string, string> = { asking_changed: 'bg-receivable-tint text-receivable', below_asking: 'bg-payable-tint text-payable', below_cost: 'bg-payable-tint text-payable', discount: 'bg-receivable-tint text-receivable', void: 'bg-payable-tint text-payable', reversal: 'bg-payable-tint text-payable', bypass: 'bg-payable-tint text-payable', pin_wrong: 'bg-payable-tint text-payable', security: 'bg-ink text-ground' }
+const KIND_HELP: Record<string, { helpKey: string }> = {
+  asking_changed: { helpKey: 'audit.security.k.askingChanged' },
+  below_asking: { helpKey: 'audit.security.k.belowAsking' },
+  below_cost: { helpKey: 'audit.security.k.belowCost' },
+  discount: { helpKey: 'audit.security.k.discount' },
+  void: { helpKey: 'audit.security.k.void' },
+  reversal: { helpKey: 'audit.security.k.reversal' },
+  stock_adjust: { helpKey: 'audit.security.k.stockAdjust' },
+  opening_balance: { helpKey: 'audit.security.k.openingBalance' },
+  bypass: { helpKey: 'audit.security.k.bypass' },
+  pin_wrong: { helpKey: 'audit.security.k.pinWrong' },
+  delete: { helpKey: 'audit.security.k.delete' },
+  security: { helpKey: 'audit.security.k.admin' },
+  transfer: { helpKey: 'audit.security.k.transfer' },
+}
 const linkTo = (l: Row['link']) => (!l ? null : l.type === 'device' ? `/stock/${l.id}` : l.type === 'invoice' ? `/sales/${l.id}` : l.type === 'purchase' ? `/purchases/${l.id}` : l.type === 'party' ? `/parties/${l.id}` : l.type === 'payment' ? '/payments' : l.type === 'expense' ? '/expenses' : null)
 
 export default function SecurityPage() {
@@ -30,15 +46,16 @@ export default function SecurityPage() {
   if (role !== 'owner') return <AuditLayout><Empty text="audit.sec.ownerOnly" /></AuditLayout>
   return (
     <AuditLayout>
-      <BiLabel text="audit.sec.hint" size="sm" tone="text-muted" />
+      <span className="flex items-center gap-1"><BiLabel text="audit.sec.hint" size="sm" tone="text-muted" /><Help term="audit.security" size="sm" /></span>
       {isLoading || !data ? (error ? <Empty text="audit.sec.ownerOnly" /> : <Loading />) : (
         <>
-          <div className="flex flex-wrap gap-1.5" data-testid="sec-kinds">
+          <div className="flex flex-wrap items-center gap-1.5" data-testid="sec-kinds">
+            <Help term="audit.security.kinds" size="sm" />
             <button type="button" aria-pressed={!kind} onClick={() => setKind(null)} className={`tap min-h-9 whitespace-nowrap rounded-full border px-3 py-1.5 font-bold leading-tight ${!kind ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-xs'}`}>{pick('common.all')} · {data.total}</button>
-            {data.kinds.filter((k) => data.counts[k]).map((k) => <button key={k} type="button" aria-pressed={kind === k} onClick={() => setKind(kind === k ? null : k)} className={`tap min-h-9 whitespace-nowrap rounded-full border px-3 py-1.5 font-bold leading-tight ${kind === k ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-xs'}`}>{pick(`audit.sec.k.${k}`)} · {data.counts[k]}</button>)}
+            {data.kinds.filter((k) => data.counts[k]).map((k) => <span key={k} className="inline-flex items-center"><button type="button" aria-pressed={kind === k} onClick={() => setKind(kind === k ? null : k)} className={`tap min-h-9 whitespace-nowrap rounded-full border px-3 py-1.5 font-bold leading-tight ${kind === k ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-xs'}`}>{pick(`audit.sec.k.${k}`)} · {data.counts[k]}</button>{KIND_HELP[k] ? <Help term={KIND_HELP[k].helpKey} size="sm" /> : null}</span>)}
           </div>
           <section className="card flex flex-col gap-1.5" data-testid="sec-users">
-            <div className="flex items-center gap-2"><ShieldAlert size={18} /><BiLabel text="audit.sec.byUser" size="md" bold /></div>
+            <div className="flex items-center gap-2"><ShieldAlert size={18} /><BiLabel text="audit.sec.byUser" size="md" bold /><Help term="audit.security.byUser" size="sm" /></div>
             {data.by_user.map((u) => (
               <div key={u.user_name} className="flex flex-wrap items-center justify-between gap-2">
                 <span className="font-bold">{u.user_name}{u.flags.length ? <span className={`ms-2 rounded-full bg-payable-tint px-2 py-0.5 text-payable ${ur ? cls('sm') : 'text-[11px]'}`}>{pick('audit.sec.flagged')}: {u.flags.map((f) => pick(`audit.sec.k.${f}`)).join(', ')}</span> : null}</span>
@@ -46,7 +63,7 @@ export default function SecurityPage() {
               </div>
             ))}
             {!data.by_user.length ? <span className={`text-muted ${small}`}>—</span> : null}
-            <span className={`text-muted ${small}`}>{pick('audit.sec.flagHint')} {Object.entries(data.flag_at).map(([k, v]) => `${pick(`audit.sec.k.${k}`)} ≥ ${v}`).join(' · ')}</span>
+            <span className={`flex items-center gap-1 text-muted ${small}`}><span>{pick('audit.sec.flagHint')} {Object.entries(data.flag_at).map(([k, v]) => `${pick(`audit.sec.k.${k}`)} ≥ ${v}`).join(' · ')}</span><Help term="audit.security.flagged" size="sm" /></span>
           </section>
           {!data.rows.length ? <Empty text="audit.sec.none" /> : (
             <div className="card divide-y divide-line p-0" data-testid="sec-rows">

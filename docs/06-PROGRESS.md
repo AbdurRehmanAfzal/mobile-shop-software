@@ -219,6 +219,56 @@ Brief, research, audit, assumptions `docs/30-BUSINESS-PROFILE-PLAN.md` · ADR-04
 | Notification texts and Excel sheets in the chosen label | ❌ | still "Rs." (docs/30 §Assumptions) |
 | FBR POS transmission (invoice no. + QR) | ❌ | needs PRAL integration |
 
+## Phase 13 — Reports module audit (owner 2026-11-01)
+Audit + gap analysis + status `docs/31-REPORTS-MODULE-AUDIT.md`.
+| Item | Status | Notes |
+|---|---|---|
+| Audit of 15 categories + common requirements | ✅ | **2026-11-02** most of it existed (shop audit) |
+| Error + retry on audit screens (was: loading forever) | ✅ | R1 |
+| Sales report: counter vs credit, paid / part / unpaid, per employee / customer, filters | ✅ | R2 `/audit/sales` |
+| Purchase report: paid / owed, per supplier / employee | ✅ | R3 |
+| Staff report (owner-only security columns) | ✅ | R4 `/audit/staff` |
+| Customer / supplier counts, stock by supplier | ✅ | R5 |
+| Overview "needs a look", installments in udhaar | ✅ | R6 / R7 |
+| Complete report: insights, sales, purchases, employee activity | ✅ | R8 |
+| Print / Excel on every audit screen | ✅ | R9 |
+| `audit-parties.spec.ts` journey "Every dealing" step | ❌ | pre-existing e2e failure, follow-up |
+| Merge to `main` / deploy | ⏸ | waits for the owner's approval (owner rule for this brief) |
+
+## Phase 14 — Len-den: money given / taken with no bill (owner 2026-11-02)
+Plan, audit, assumptions `docs/32-LENDING-PLAN.md`, ADR-041.
+| Item | Status | Notes |
+|---|---|---|
+| `payments.purpose` (`bill` / `lending`), migration `e3a5c7e9f1b3` | ✅ | additive; every old payment is `bill` |
+| Len-den in the person's one khata, own ledger type `lending` | ✅ | never put on a bill when made |
+| Person's screen: open len-den, given / taken / from bills, give / take buttons, entries | ✅ | `PartyLending` |
+| Adjust free money against open bills (net of len-den only) | ✅ | `POST /payments/settle/{party}` |
+| Reports keep it apart: cash & bank, day report, overview, udhaar, complete report | ✅ | |
+| Audit screen `/audit/lending` (period, open, per person, series, entries, print / Excel) | ✅ | |
+| Demo shop has len-den (Tariq, Star Mobiles, Usman, Bilal) | ✅ | |
+| Return dates + reminders (WhatsApp to who owes, night job, home / overview alerts for what the shop owes) | ✅ | docs/32 §7, ADR-042, migration `f4b6d8f0a2c4` |
+
+## Phase 15 — A "?" with an example on every field, tab and card (owner 2026-11-02)
+Plan `docs/33-HELP-EVERYWHERE-PLAN.md`, ADR-043.
+| Item | Status | Notes |
+|---|---|---|
+| `Help` takes any term + small size; `Section` / `KV` / `PhoneInput` / `CnicInput` / `ImeiInput` help | ✅ | |
+| Coverage test: every term used has title / body / example in en / ur / roman | ✅ | `components/Help.test.ts` |
+| Audit (13 screens), counter / sale / return / exchange / payment, purchase / stock / device fields, items / repairs / installments / expenses / khata / len-den, settings / staff / profile / notifications / bulk / accounts / fees / reports, super admin | ✅ | ~1,050 icons, 1,127 help terms |
+| Found on the way: audit bills status "open" read "In repair" | ✅ | sale words now |
+| Found on the way: person's journey counted len-den as "paid / received later" | ✅ | len-den apart (`lent` / `borrowed`) |
+| Found on the way: sheets opened inside moved boxes misplaced; the person page was wider than the phone | ✅ | sheets render into `<body>`; journey header wraps |
+
+## Phase 16 — Repair labs and the repair sticker (owner 2026-11-03)
+Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
+| Item | Status | Notes |
+|---|---|---|
+| `repair_dispatches` (one row per lab trip), migration `a5c7e9b1d3f6` | ✅ | additive |
+| Send to a lab / back fixed or not with the charge / cancel; one trip at a time | ✅ | charge to the lab's khata; customer phone → cost of repair, own phone → its cost |
+| Labs list and each lab's record | ✅ | `/repairs/labs`, `/repairs/labs/:id` |
+| Repair sticker with fields picked before printing; scan opens the job | ✅ | `/labels/repairs` |
+| Repairs in the shop audit + report sections | ✅ | `/audit/repairs` |
+
 ## Owner side (open)
 Server env variables, server commands, manual testing and decisions: `docs/29-OWNER-PENDING.md` — none done yet (2026-11-01).
 

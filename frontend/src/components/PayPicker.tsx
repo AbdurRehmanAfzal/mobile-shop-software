@@ -46,12 +46,12 @@ export function payInfo(p: PayState): Record<string, unknown> | undefined {
   return undefined
 }
 
-const METHODS: { m: PayMethod; Icon: LucideIcon; t: string }[] = [
-  { m: 'cash', Icon: Banknote, t: 'counter.cash' },
-  { m: 'online', Icon: Landmark, t: 'paym.online' },
-  { m: 'cheque', Icon: ScrollText, t: 'paym.cheque' },
-  { m: 'remittance', Icon: Globe, t: 'paym.remittance' },
-  { m: 'udhaar', Icon: BookOpen, t: 'counter.udhaar' },
+const METHODS: { m: PayMethod; Icon: LucideIcon; t: string; help: string }[] = [
+  { m: 'cash', Icon: Banknote, t: 'counter.cash', help: 'pay.cash' },
+  { m: 'online', Icon: Landmark, t: 'paym.online', help: 'pay.online' },
+  { m: 'cheque', Icon: ScrollText, t: 'paym.cheque', help: 'cheque' },
+  { m: 'remittance', Icon: Globe, t: 'paym.remittance', help: 'remittance' },
+  { m: 'udhaar', Icon: BookOpen, t: 'counter.udhaar', help: 'udhaar' },
 ]
 
 export default function PayPicker({ value, onChange, remittance = false, udhaar = true }: { value: PayState; onChange: (p: PayState) => void; remittance?: boolean; udhaar?: boolean }) {
@@ -65,7 +65,7 @@ export default function PayPicker({ value, onChange, remittance = false, udhaar 
 
   const bankChooser = (label: string) => (
     <div className="flex flex-col gap-2">
-      <BiLabel text={label} size="md" bold tone="text-current" />
+      <span className="flex items-center gap-1"><BiLabel text={label} size="md" bold tone="text-current" /><Help term="pay.bank" size="sm" /></span>
       <div className="flex flex-wrap gap-1.5">
         {POPULAR_BANKS.map((b) => (
           <button key={b} type="button" aria-pressed={value.bank === b} onClick={() => set({ bank: b })} className={small(value.bank === b)}>{b}</button>
@@ -84,11 +84,15 @@ export default function PayPicker({ value, onChange, remittance = false, udhaar 
   return (
     <div className="flex flex-col gap-3">
       <div className="grid grid-cols-3 gap-2">
-        {methods.map(({ m, Icon, t }) => (
-          <button key={m} type="button" aria-pressed={value.method === m} onClick={() => set({ method: m })} className={big(value.method === m)}>
-            <Icon size={22} />
-            <span className="leading-tight">{pick(t)}</span>
-          </button>
+        {methods.map(({ m, Icon, t, help }) => (
+          // the "?" sits beside the button (not inside it), in its corner (docs/33)
+          <div key={m} className="relative">
+            <button type="button" aria-pressed={value.method === m} onClick={() => set({ method: m })} className={`${big(value.method === m)} w-full`}>
+              <Icon size={22} />
+              <span className="leading-tight">{pick(t)}</span>
+            </button>
+            <span className={`absolute end-0.5 top-0.5 ${value.method === m ? '[&_button]:text-ground' : ''}`}><Help term={help} size="sm" /></span>
+          </div>
         ))}
       </div>
 
@@ -104,7 +108,7 @@ export default function PayPicker({ value, onChange, remittance = false, udhaar 
           {bankChooser('paym.chequeBank')}
           <div className="grid grid-cols-2 items-start gap-2">
             <BiInput label="paym.chequeNo" help={<Help term="cheque" />} inputMode="numeric" value={value.reference} onChange={(e) => set({ reference: e.target.value })} maxLength={30} />
-            <BiInput label="paym.chequeDate" type="date" value={value.chequeDate} onChange={(e) => set({ chequeDate: e.target.value })} />
+            <BiInput label="paym.chequeDate" help={<Help term="pay.chequeDate" size="sm" />} type="date" value={value.chequeDate} onChange={(e) => set({ chequeDate: e.target.value })} />
           </div>
         </div>
       ) : null}
@@ -120,27 +124,27 @@ export default function PayPicker({ value, onChange, remittance = false, udhaar 
             ))}
           </div>
           <div className="grid grid-cols-2 items-start gap-2">
-            <BiInput label={{ en: `Amount (${value.currency})`, ur: `رقم (${value.currency})`, roman: `Kitne ${value.currency}` }} type="number" inputMode="decimal" min={0} value={value.foreign} onChange={(e) => set({ foreign: e.target.value })} className="num" />
-            <BiInput label={{ en: `1 ${value.currency} = ${cur()}`, ur: `1 ${value.currency} = روپے`, roman: `1 ${value.currency} = ${cur()}` }} type="number" inputMode="decimal" min={0} value={value.rate} onChange={(e) => set({ rate: e.target.value })} className="num" />
+            <BiInput label={{ en: `Amount (${value.currency})`, ur: `رقم (${value.currency})`, roman: `Kitne ${value.currency}` }} help={<Help term="pay.foreign" size="sm" />} type="number" inputMode="decimal" min={0} value={value.foreign} onChange={(e) => set({ foreign: e.target.value })} className="num" />
+            <BiInput label={{ en: `1 ${value.currency} = ${cur()}`, ur: `1 ${value.currency} = روپے`, roman: `1 ${value.currency} = ${cur()}` }} help={<Help term="pay.rate" size="sm" />} type="number" inputMode="decimal" min={0} value={value.rate} onChange={(e) => set({ rate: e.target.value })} className="num" />
           </div>
           <div className="flex items-center justify-between rounded-2xl bg-ground px-4 py-3">
-            <BiLabel text="paym.inRupees" size="md" tone="text-muted" />
+            <span className="flex items-center gap-1"><BiLabel text="paym.inRupees" size="md" tone="text-muted" /><Help term="pay.inRupees" size="sm" /></span>
             <span className="num text-2xl text-ink" dir="ltr">{formatMoney(remitPkr(value))}</span>
           </div>
-          <BiInput label="paym.sender" value={value.sender} onChange={(e) => set({ sender: e.target.value })} maxLength={120} />
+          <BiInput label="paym.sender" help={<Help term="pay.sender" size="sm" />} value={value.sender} onChange={(e) => set({ sender: e.target.value })} maxLength={120} />
           <div className="flex flex-col gap-1.5">
-            <BiLabel text="paym.service" size="sm" tone="text-muted" />
+            <span className="flex items-center gap-1"><BiLabel text="paym.service" size="sm" tone="text-muted" /><Help term="pay.service" size="sm" /></span>
             <div className="flex flex-wrap gap-1.5">
               {REMIT_SERVICES.map((s) => (
                 <button key={s} type="button" aria-pressed={value.service === s} onClick={() => set({ service: value.service === s ? '' : s })} className={small(value.service === s)}>{s}</button>
               ))}
             </div>
           </div>
-          <BiInput label="paym.refOpt" value={value.reference} onChange={(e) => set({ reference: e.target.value })} placeholder="MTCN / Ref" maxLength={80} />
+          <BiInput label="paym.refOpt" help={<Help term="pay.mtcn" size="sm" />} value={value.reference} onChange={(e) => set({ reference: e.target.value })} placeholder="MTCN / Ref" maxLength={80} />
           <div className="grid grid-cols-2 items-start gap-2">
-            <BiInput label="paym.fee" type="number" inputMode="decimal" min={0} value={value.fee} onChange={(e) => set({ fee: e.target.value })} className="num" hint="paym.feeHint" />
+            <BiInput label="paym.fee" help={<Help term="pay.fee" size="sm" />} type="number" inputMode="decimal" min={0} value={value.fee} onChange={(e) => set({ fee: e.target.value })} className="num" hint="paym.feeHint" />
             <div className="flex flex-col gap-1.5">
-              <BiLabel text="paym.status" size="md" tone="text-muted" />
+              <span className="flex items-center gap-1"><BiLabel text="paym.status" size="md" tone="text-muted" /><Help term="pay.status" size="sm" /></span>
               <div className="flex flex-wrap gap-1.5">
                 {(['pending', 'received', 'settled'] as const).map((s) => (
                   <button key={s} type="button" aria-pressed={value.status === s} onClick={() => set({ status: value.status === s ? '' : s })} className={small(value.status === s)}>{pick(`paym.st.${s}`)}</button>

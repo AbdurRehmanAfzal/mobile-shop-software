@@ -6,6 +6,7 @@ import i18next from 'i18next'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { BiInput, useLang } from './Bilingual'
+import Help from './Help'
 import { useGet } from '@/lib/queries'
 
 /** the most used kinds come first */
@@ -40,7 +41,7 @@ export function KindChooser({ value, onChange }: { value: string; onChange: (kin
         </button>
       </div>
       {writing || custom ? (
-        <BiInput label="items.newKindName" value={value} onChange={(e) => onChange(e.target.value)} placeholder={pick('items.newKindPh')} maxLength={20} autoFocus />
+        <BiInput label="items.newKindName" help={<Help term="stock.newKind" size="sm" />} value={value} onChange={(e) => onChange(e.target.value)} placeholder={pick('items.newKindPh')} maxLength={20} autoFocus />
       ) : null}
     </div>
   )

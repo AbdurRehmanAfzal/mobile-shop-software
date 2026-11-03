@@ -234,9 +234,7 @@ def lookup(db: Session, shop_id: uuid.UUID, raw: str) -> Hit:
     if not code:
         return Hit("none")
     up = code.upper()
-    d = db.scalar(
-        select(Device).where(Device.shop_id == shop_id, Device.barcode.in_([code, up]))
-    )
+    d = db.scalar(select(Device).where(Device.shop_id == shop_id, Device.barcode.in_([code, up])))
     if d:
         return Hit("device", device=d, matched="barcode")
     d = db.scalar(select(Device).where(Device.shop_id == shop_id, Device.imei1 == code))
@@ -303,6 +301,16 @@ def lookup_out(db: Session, shop_id: uuid.UUID, raw: str, can_cost: bool) -> dic
             "avg_cost": str(a.avg_cost) if can_cost else None,
         }
         out["sellable"] = a.qty > 0 and a.is_active
+    if hit.kind == "none":
+        # a repair sticker carries the job number (docs/34): open that job
+        from app.modules.repairs.models import RepairJob
+
+        code = clean(raw).upper()
+        job = db.scalar(select(RepairJob).where(RepairJob.shop_id == shop_id, RepairJob.no == code))
+        if job is not None:
+            out["kind"] = "repair"
+            out["matched"] = "repair_no"
+            out["repair"] = {"id": str(job.id), "no": job.no, "status": job.status}
     return out
 
 

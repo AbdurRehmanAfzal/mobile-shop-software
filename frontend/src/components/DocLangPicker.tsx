@@ -3,6 +3,7 @@
 
 import { Languages } from 'lucide-react'
 import { useLang } from './Bilingual'
+import Help from './Help'
 import { useDocLang, type DocLang } from '@/lib/docLang'
 
 export default function DocLangPicker({ compact = false }: { compact?: boolean }) {
@@ -17,7 +18,7 @@ export default function DocLangPicker({ compact = false }: { compact?: boolean }
   return (
     <div className={`flex items-center gap-2 ${compact ? '' : 'rounded-2xl border border-line bg-surface px-3 py-2'}`} role="group" aria-label={pick('docLang.title')}>
       <Languages size={18} className="shrink-0 text-muted" />
-      <span className={`min-w-0 flex-1 text-muted ${ur ? cls('sm') : 'text-sm font-semibold'}`}>{pick('docLang.title')}</span>
+      <span className="flex min-w-0 flex-1 items-center gap-1"><span className={`min-w-0 text-muted ${ur ? cls('sm') : 'text-sm font-semibold'}`}>{pick('docLang.title')}</span><Help term="picker.docLang" size="sm" /></span>
       <div className="flex gap-1 rounded-xl bg-ground p-0.5">
         {opt('en', 'English')}
         {opt('ur', 'اردو')}

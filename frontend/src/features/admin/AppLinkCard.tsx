@@ -5,6 +5,7 @@ import { Capacitor } from '@capacitor/core'
 import { Check, Download, MessageCircle, Share2, Smartphone } from 'lucide-react'
 import { useState } from 'react'
 import { BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 
 /** the site's address, also inside the Android app (whose own origin is https://localhost) */
 export const SITE = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') || window.location.origin
@@ -38,7 +39,7 @@ export default function AppLinkCard() {
       <div className="flex items-center gap-3">
         <span className="well h-10 w-10 shrink-0 bg-emerald-tint text-emerald-deep"><Smartphone size={22} /></span>
         <div className="flex min-w-0 flex-col">
-          <BiLabel text="appLink.title" size="lg" bold />
+          <span className="flex items-center gap-1"><BiLabel text="appLink.title" size="lg" bold /><Help term="admin.appLink" size="sm" /></span>
           <span className="truncate text-sm text-muted" dir="ltr">{APP_LINK}</span>
         </div>
       </div>

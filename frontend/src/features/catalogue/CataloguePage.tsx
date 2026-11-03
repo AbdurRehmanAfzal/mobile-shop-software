@@ -4,6 +4,7 @@
 import { Pencil, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { BiButton, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { BtnText, Chip, ErrorText, List, PageHeader, Sheet } from '@/components/ui'
 import { parseStorage, useBrands, useCatalogueEdit, useColours, useModels, useStorages, type CatalogueKind } from '@/lib/queries'
 import QuickAdd from './QuickAdd'
@@ -38,10 +39,14 @@ export default function CataloguePage() {
     }
   }
 
+  // one "?" on the first built-in row explains them all (docs/33)
+  const firstBuiltin = rows.find((r) => r.is_global)?.id
   const addPlaceholder = tab === 'storages' ? 'catalogue.storagePh' : 'catalogue.namePh'
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="catalogue.title" />
+      <PageHeader title="catalogue.title" help={<Help term="catalogue.page" />} />
+      <div className="flex items-center gap-1">
+      <div className="min-w-0 flex-1">
       <BiSegmented<CatalogueKind>
         value={tab}
         onChange={(t) => { setTab(t); setError(null) }}
@@ -52,9 +57,12 @@ export default function CataloguePage() {
           { value: 'colours', text: 'catalogue.colours' },
         ]}
       />
+      </div>
+      {tab === 'brands' ? <Help term="catalogue.brands" size="sm" /> : tab === 'models' ? <Help term="catalogue.models" size="sm" /> : tab === 'storages' ? <Help term="catalogue.storages" size="sm" /> : <Help term="catalogue.colours" size="sm" />}
+      </div>
       {tab === 'models' ? (
         <div>
-          <BiLabel text="catalogue.pickBrand" size="md" tone="text-muted" className="mb-1.5" />
+          <span className="mb-1.5 flex items-center gap-1"><BiLabel text="catalogue.pickBrand" size="md" tone="text-muted" /><Help term="catalogue.pickBrand" size="sm" /></span>
           <div className="flex flex-wrap gap-1.5">
             {brands?.map((b) => (
               <button key={b.id} type="button" onClick={() => setBrandId(b.id)} className={`tap rounded-full border px-3 py-1.5 text-sm font-bold ${brandId === b.id ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-muted'}`}>
@@ -84,7 +92,7 @@ export default function CataloguePage() {
             <div key={r.id} className="flex items-center gap-2 px-3 py-2.5">
               <span className="min-w-0 flex-1 truncate font-semibold" dir="auto">{r.name}</span>
               {r.is_global ? (
-                <Chip text="catalogue.builtin" />
+                <span className="flex items-center gap-1"><Chip text="catalogue.builtin" />{r.id === firstBuiltin ? <Help term="catalogue.builtin" size="sm" /> : null}</span>
               ) : (
                 <>
                   <button type="button" aria-label={pick('catalogue.rename')} onClick={() => setEditing(r)} className="tap inline-flex h-9 shrink-0 items-center gap-1 rounded-xl px-2 border border-line bg-surface"><Pencil size={15} /><BtnText k={'catalogue.rename'} /></button>

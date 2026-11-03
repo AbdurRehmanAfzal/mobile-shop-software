@@ -48,7 +48,12 @@ def usage(org: Organisation, now: dt.datetime | None = None) -> dict:
     else:
         online = bool(last and now - last <= dt.timedelta(minutes=ONLINE_MINUTES))
         last_used = last
-    return {"deployment": deployment, "online": online, "last_used_at": last_used, "install_version": org.install_version}
+    return {
+        "deployment": deployment,
+        "online": online,
+        "last_used_at": last_used,
+        "install_version": org.install_version,
+    }
 
 
 def channel(method: str | None) -> str:
@@ -69,7 +74,20 @@ def overview(db: Session) -> dict:
     from app.modules.plan import billing
 
     sched = billing.schedule(db)
-    counts = {"total": 0, "paid": 0, "trial": 0, "unlimited": 0, "due_soon": 0, "expired": 0, "locked": 0, "cloud": 0, "local": 0, "online_now": 0, "active_today": 0, "active_7d": 0}
+    counts = {
+        "total": 0,
+        "paid": 0,
+        "trial": 0,
+        "unlimited": 0,
+        "due_soon": 0,
+        "expired": 0,
+        "locked": 0,
+        "cloud": 0,
+        "local": 0,
+        "online_now": 0,
+        "active_today": 0,
+        "active_7d": 0,
+    }
     mrr = ZERO
     coming_30 = ZERO
     coming_30_n = 0
@@ -120,7 +138,11 @@ def overview(db: Session) -> dict:
     total = month = prev = ZERO
     by_channel: dict[str, dict] = {}
     monthly: dict[str, Decimal] = {}
-    first12 = (month_start.replace(year=month_start.year - 1) if month_start.month == 12 else month_start.replace(year=month_start.year - 1, month=month_start.month + 1))
+    first12 = (
+        month_start.replace(year=month_start.year - 1)
+        if month_start.month == 12
+        else month_start.replace(year=month_start.year - 1, month=month_start.month + 1)
+    )
     for p in rows:
         amt = money(p.amount)
         total += amt
@@ -129,7 +151,9 @@ def overview(db: Session) -> dict:
             month += amt
         elif day >= prev_start:
             prev += amt
-        c = by_channel.setdefault(channel(p.method), {"method": channel(p.method), "count": 0, "amount": ZERO})
+        c = by_channel.setdefault(
+            channel(p.method), {"method": channel(p.method), "count": 0, "amount": ZERO}
+        )
         c["count"] += 1
         c["amount"] = money(c["amount"] + amt)
         if day >= first12:
@@ -139,8 +163,16 @@ def overview(db: Session) -> dict:
     for _ in range(12):
         series.append({"month": _month_key(d), "amount": monthly.get(_month_key(d), ZERO)})
         d = (d.replace(day=28) + dt.timedelta(days=4)).replace(day=1)
-    pend = db.execute(select(func.count(FeePayment.id), func.coalesce(func.sum(FeePayment.amount), 0)).where(FeePayment.status == PENDING)).one()
-    keys = dict(db.execute(select(LicenseKey.status, func.count(LicenseKey.id)).group_by(LicenseKey.status)).all())
+    pend = db.execute(
+        select(func.count(FeePayment.id), func.coalesce(func.sum(FeePayment.amount), 0)).where(
+            FeePayment.status == PENDING
+        )
+    ).one()
+    keys = dict(
+        db.execute(
+            select(LicenseKey.status, func.count(LicenseKey.id)).group_by(LicenseKey.status)
+        ).all()
+    )
     paying = len({p.organisation_id for p in rows})
     return {
         "counts": counts,
@@ -158,11 +190,17 @@ def overview(db: Session) -> dict:
         "by_channel": sorted(by_channel.values(), key=lambda c: -c["amount"]),
         "by_plan": sorted(by_plan.values(), key=lambda g: -g["shops"]),
         "monthly": series,
-        "keys": {"issued": keys.get(ISSUED, 0), "redeemed": keys.get(REDEEMED, 0), "revoked": keys.get(REVOKED, 0)},
+        "keys": {
+            "issued": keys.get(ISSUED, 0),
+            "redeemed": keys.get(REDEEMED, 0),
+            "revoked": keys.get(REVOKED, 0),
+        },
     }
 
 
-def shops(db: Session, q: str | None = None, deployment: str | None = None, status: str | None = None) -> list[dict]:
+def shops(
+    db: Session, q: str | None = None, deployment: str | None = None, status: str | None = None
+) -> list[dict]:
     """one row per customer (organisation): plan, time left, fees, payments, usage, keys"""
     from app.modules.plan import billing
 
@@ -172,7 +210,9 @@ def shops(db: Session, q: str | None = None, deployment: str | None = None, stat
     paid = {
         oid: (n, money(Decimal(str(s or 0))))
         for oid, n, s in db.execute(
-            select(FeePayment.organisation_id, func.count(FeePayment.id), func.sum(FeePayment.amount))
+            select(
+                FeePayment.organisation_id, func.count(FeePayment.id), func.sum(FeePayment.amount)
+            )
             .where(FeePayment.status == APPROVED)
             .group_by(FeePayment.organisation_id)
         ).all()
@@ -186,10 +226,16 @@ def shops(db: Session, q: str | None = None, deployment: str | None = None, stat
         ).all()
     }
     last: dict[uuid.UUID, FeePayment] = {}
-    for p in db.scalars(select(FeePayment).where(FeePayment.status == APPROVED).order_by(FeePayment.created_at)).all():
+    for p in db.scalars(
+        select(FeePayment).where(FeePayment.status == APPROVED).order_by(FeePayment.created_at)
+    ).all():
         last[p.organisation_id] = p
     keys: dict[uuid.UUID, dict] = {}
-    for oid, st, n in db.execute(select(LicenseKey.organisation_id, LicenseKey.status, func.count(LicenseKey.id)).group_by(LicenseKey.organisation_id, LicenseKey.status)).all():
+    for oid, st, n in db.execute(
+        select(LicenseKey.organisation_id, LicenseKey.status, func.count(LicenseKey.id)).group_by(
+            LicenseKey.organisation_id, LicenseKey.status
+        )
+    ).all():
         keys.setdefault(oid, {})[st] = n
     out = []
     for o in db.scalars(select(Organisation).where(Organisation.is_active.is_(True))).all():
@@ -202,39 +248,58 @@ def shops(db: Session, q: str | None = None, deployment: str | None = None, stat
         u = usage(o, now)
         if deployment and u["deployment"] != deployment:
             continue
-        if status and info["status"] != status and not (status == "due" and info["status"] in ("due_soon", "expired")):
+        if (
+            status
+            and info["status"] != status
+            and not (status == "due" and info["status"] in ("due_soon", "expired"))
+        ):
             continue
         lp = last.get(o.id)
         n, total = paid.get(o.id, (0, ZERO))
         k = keys.get(o.id, {})
-        out.append({
-            "organisation_id": str(o.id),
-            "shop_id": str(s.id),
-            "name": s.name,
-            "city": s.city,
-            "phone": s.phone,
-            "plan": o.plan,
-            "plan_status": info["status"],
-            "plan_expires_at": o.plan_expires_at,
-            "days_left": info["days_left"],
-            "monthly_fee": money(o.monthly_fee or ZERO),
-            "paid_total": total,
-            "payments": n,
-            "pending_amount": pending.get(o.id, ZERO),
-            "last_payment_at": (lp.paid_on or _aware(lp.handled_at).date()) if lp else None,
-            "last_payment_amount": money(lp.amount) if lp else None,
-            "last_channel": channel(lp.method) if lp else None,
-            **u,
-            "keys_unused": k.get(ISSUED, 0),
-            "keys_total": sum(k.values()),
-            "created_at": o.created_at,
-        })
+        out.append(
+            {
+                "organisation_id": str(o.id),
+                "shop_id": str(s.id),
+                "name": s.name,
+                "city": s.city,
+                "phone": s.phone,
+                "plan": o.plan,
+                "plan_status": info["status"],
+                "plan_expires_at": o.plan_expires_at,
+                "days_left": info["days_left"],
+                "monthly_fee": money(o.monthly_fee or ZERO),
+                "paid_total": total,
+                "payments": n,
+                "pending_amount": pending.get(o.id, ZERO),
+                "last_payment_at": (lp.paid_on or _aware(lp.handled_at).date()) if lp else None,
+                "last_payment_amount": money(lp.amount) if lp else None,
+                "last_channel": channel(lp.method) if lp else None,
+                **u,
+                "keys_unused": k.get(ISSUED, 0),
+                "keys_total": sum(k.values()),
+                "created_at": o.created_at,
+            }
+        )
     rank = {"locked": 0, "expired": 1, "due_soon": 2, "ok": 3, "unlimited": 4}
-    out.sort(key=lambda r: (rank.get(r["plan_status"], 5), r["days_left"] if r["days_left"] is not None else 99999))
+    out.sort(
+        key=lambda r: (
+            rank.get(r["plan_status"], 5),
+            r["days_left"] if r["days_left"] is not None else 99999,
+        )
+    )
     return out
 
 
-def payments(db: Session, method: str | None, status: str | None, q: str | None, d_from: dt.date | None, d_to: dt.date | None, limit: int = 500) -> dict:
+def payments(
+    db: Session,
+    method: str | None,
+    status: str | None,
+    q: str | None,
+    d_from: dt.date | None,
+    d_to: dt.date | None,
+    limit: int = 500,
+) -> dict:
     stmt = (
         select(FeePayment, Shop.name, Organisation.plan)
         .join(Shop, Shop.id == FeePayment.shop_id)
@@ -253,22 +318,40 @@ def payments(db: Session, method: str | None, status: str | None, q: str | None,
             continue
         if q and q.lower() not in f"{shop_name} {p.reference or ''} {p.receipt_no or ''}".lower():
             continue
-        rows.append({
-            "id": str(p.id), "shop_id": str(p.shop_id), "shop_name": shop_name, "plan": plan,
-            "amount": money(p.amount), "method": channel(p.method), "reference": p.reference, "months": p.months,
-            "status": p.status, "paid_on": day, "created_at": p.created_at, "receipt_no": p.receipt_no,
-            "note": p.note, "decision_note": p.decision_note,
-        })
+        rows.append(
+            {
+                "id": str(p.id),
+                "shop_id": str(p.shop_id),
+                "shop_name": shop_name,
+                "plan": plan,
+                "amount": money(p.amount),
+                "method": channel(p.method),
+                "reference": p.reference,
+                "months": p.months,
+                "status": p.status,
+                "paid_on": day,
+                "created_at": p.created_at,
+                "receipt_no": p.receipt_no,
+                "note": p.note,
+                "decision_note": p.decision_note,
+            }
+        )
         if p.status == APPROVED:
             total += money(p.amount)
-    methods = sorted({channel(m) for (m,) in db.execute(select(FeePayment.method).distinct()).all()})
+    methods = sorted(
+        {channel(m) for (m,) in db.execute(select(FeePayment.method).distinct()).all()}
+    )
     return {"rows": rows, "approved_total": money(total), "methods": methods}
 
 
 def keys(db: Session, status: str | None, shop_id: uuid.UUID | None, q: str | None) -> list[dict]:
     from app.modules.admin.licenses import to_out
 
-    stmt = select(LicenseKey, Shop.name).join(Shop, Shop.id == LicenseKey.shop_id).order_by(LicenseKey.issued_at.desc())
+    stmt = (
+        select(LicenseKey, Shop.name)
+        .join(Shop, Shop.id == LicenseKey.shop_id)
+        .order_by(LicenseKey.issued_at.desc())
+    )
     if status:
         stmt = stmt.where(LicenseKey.status == status)
     if shop_id:

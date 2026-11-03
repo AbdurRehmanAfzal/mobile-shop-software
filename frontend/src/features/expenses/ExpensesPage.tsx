@@ -2,6 +2,7 @@ import DownloadButton from '@/components/DownloadButton'
 import { Lock, Pencil, Plus, Trash2, Wallet } from 'lucide-react'
 import { useState } from 'react'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import RemoveSheet from '@/components/RemoveSheet'
 import { BtnText, Chip, ErrorText, fmtDate, KV, List, Loading, MoneyText, PageHeader, Row, Sheet } from '@/components/ui'
 import { api, post } from '@/lib/api'
@@ -42,6 +43,7 @@ export default function ExpensesPage() {
     <div className="flex flex-col gap-3">
       <PageHeader
         title="expense.title"
+        help={<Help term="expense.page" />}
         right={<DownloadButton path="/api/v1/exports/expenses" name="expenses" />}
       />
       {/* the two things done here, as big buttons in the page (not crowded into the header) */}
@@ -50,16 +52,20 @@ export default function ExpensesPage() {
           <span className="well h-11 w-11 shrink-0 bg-surface text-expense-icon"><Plus size={22} /></span>
           <BiLabel text="expense.new" size="md" bold tone="text-current" />
         </button>
-        <button type="button" onClick={() => setClosing(true)} className="tap flex min-h-[72px] items-center gap-3 rounded-3xl border border-line bg-surface px-3 text-start text-ink">
-          <span className="well h-11 w-11 shrink-0 bg-ground text-ink"><Lock size={20} /></span>
-          <BiLabel text="expense.dayClose" size="md" bold tone="text-current" />
-        </button>
+        {/* the "?" sits on top of the tile, not inside its button (docs/33) */}
+        <div className="relative">
+          <button type="button" onClick={() => setClosing(true)} className="tap flex min-h-[72px] w-full items-center gap-3 rounded-3xl border border-line bg-surface px-3 pe-8 text-start text-ink">
+            <span className="well h-11 w-11 shrink-0 bg-ground text-ink"><Lock size={20} /></span>
+            <BiLabel text="expense.dayClose" size="md" bold tone="text-current" />
+          </button>
+          <span className="absolute end-1 top-1"><Help term="expense.dayClose" size="sm" /></span>
+        </div>
       </div>
       {preview ? (
         <div className="hero grid grid-cols-3 gap-2 p-4">
-          {([['expense.in', preview.cash_in], ['expense.out', preview.cash_out], ['expense.expected', preview.expected]] as const).map(([k, v]) => (
+          {[{ k: 'expense.in', v: preview.cash_in, help: 'expense.in' }, { k: 'expense.out', v: preview.cash_out, help: 'expense.out' }, { k: 'expense.expected', v: preview.expected, help: 'expense.expected' }].map(({ k, v, help }) => (
             <div key={k}>
-              <BiLabel text={k} size="sm" tone="text-hero-text/75" />
+              <span className="flex items-center gap-1 [&_button]:text-current"><BiLabel text={k} size="sm" tone="text-hero-text/75" /><Help term={help} size="sm" /></span>
               <MoneyText value={v} tone="ink" />
             </div>
           ))}
@@ -87,7 +93,7 @@ export default function ExpensesPage() {
       <Sheet open={adding} onClose={() => { setAdding(false); setEditingId(null) }} title={editingId ? 'crud.editExpense' : 'expense.new'}>
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
-            <BiLabel text="expense.category" size="md" tone="text-muted" />
+            <span className="flex items-center gap-1"><BiLabel text="expense.category" size="md" tone="text-muted" /><Help term="expense.category" size="sm" /></span>
             <button type="button" onClick={() => setManaging(true)} className="text-xs font-bold text-emerald">{pick('crud.categories')}</button>
           </div>
           <div className="flex flex-wrap gap-1.5">
@@ -97,8 +103,8 @@ export default function ExpensesPage() {
               </button>
             ))}
           </div>
-          <BiInput label="expense.amount" type="number" inputMode="decimal" min={1} value={amount} onChange={(e) => setAmount(e.target.value)} />
-          <BiInput label="expense.description" value={desc} onChange={(e) => setDesc(e.target.value)} />
+          <BiInput label="expense.amount" help={<Help term="common.amount" size="sm" />} type="number" inputMode="decimal" min={1} value={amount} onChange={(e) => setAmount(e.target.value)} />
+          <BiInput label="expense.description" help={<Help term="expense.description" size="sm" />} value={desc} onChange={(e) => setDesc(e.target.value)} />
           <ErrorText error={editingId ? edit.error : create.error} />
           <BiButton
             text="common.save"
@@ -124,9 +130,9 @@ export default function ExpensesPage() {
         {current ? (
           <div className="flex flex-col gap-3">
             <div className="card">
-              <KV k="expense.amount" v={<MoneyText value={current.amount} tone="ink" />} />
-              <KV k="common.date" v={<span dir="ltr">{fmtDate(current.date)}</span>} />
-              {current.description ? <KV k="expense.description" v={current.description} /> : null}
+              <KV k="expense.amount" help="common.amount" v={<MoneyText value={current.amount} tone="ink" />} />
+              <KV k="common.date" help="common.date" v={<span dir="ltr">{fmtDate(current.date)}</span>} />
+              {current.description ? <KV k="expense.description" help="expense.description" v={current.description} /> : null}
             </div>
             <div className="grid grid-cols-2 gap-2">
               <button type="button" onClick={() => { setCatId(current.category_id); setAmount(String(Number(current.amount))); setDesc(current.description ?? ''); setEditingId(current.id); setCurrent(null); setAdding(true) }} className="tap flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-line bg-surface text-sm font-bold">
@@ -154,6 +160,7 @@ export default function ExpensesPage() {
       />
 
       <Sheet open={managing} onClose={() => setManaging(false)} title="crud.categories">
+        <div className="mb-2 flex justify-end"><Help term="expense.categories" size="sm" /></div>
         <List>
           {cats?.map((c) => (
             <div key={c.id} className="flex items-center gap-2 px-3 py-2.5">
@@ -172,7 +179,7 @@ export default function ExpensesPage() {
       <Sheet open={catEdit !== null} onClose={() => setCatEdit(null)} title="catalogue.rename">
         {catEdit ? (
           <div className="flex flex-col gap-3">
-            <BiInput label="catalogue.namePh" value={newCatName} onChange={(e) => setNewCatName(e.target.value)} autoFocus />
+            <BiInput label="catalogue.namePh" help={<Help term="expense.categoryName" size="sm" />} value={newCatName} onChange={(e) => setNewCatName(e.target.value)} autoFocus />
             <ErrorText error={renameCat.error} />
             <BiButton text="common.save" full loading={renameCat.isPending} disabled={!newCatName.trim()} onClick={async () => { await renameCat.mutateAsync({ id: catEdit.id, name: newCatName.trim() }); setCatEdit(null) }} />
           </div>
@@ -194,15 +201,15 @@ export default function ExpensesPage() {
         {preview ? (
           <div className="flex flex-col gap-3">
             <div className="card">
-              <KV k="expense.opening" v={<MoneyText value={preview.opening} tone="ink" />} />
-              <KV k="expense.in" v={<MoneyText value={preview.cash_in} tone="ink" />} />
-              <KV k="expense.out" v={<MoneyText value={preview.cash_out} tone="ink" />} />
-              <KV k="expense.expected" v={<MoneyText value={preview.expected} tone="ink" size="lg" />} />
+              <KV k="expense.opening" help="expense.opening" v={<MoneyText value={preview.opening} tone="ink" />} />
+              <KV k="expense.in" help="expense.in" v={<MoneyText value={preview.cash_in} tone="ink" />} />
+              <KV k="expense.out" help="expense.out" v={<MoneyText value={preview.cash_out} tone="ink" />} />
+              <KV k="expense.expected" help="expense.expected" v={<MoneyText value={preview.expected} tone="ink" size="lg" />} />
             </div>
             {preview.closed ? <BiLabel text="expense.alreadyClosed" size="md" bold tone="text-emerald-deep" align="center" /> : (
               <>
-                <BiInput label="expense.counted" type="number" inputMode="decimal" min={0} value={counted} onChange={(e) => setCounted(e.target.value)} autoFocus />
-                {counted !== '' ? <KV k="expense.difference" v={<MoneyText value={diff} />} /> : null}
+                <BiInput label="expense.counted" help={<Help term="expense.counted" size="sm" />} type="number" inputMode="decimal" min={0} value={counted} onChange={(e) => setCounted(e.target.value)} autoFocus />
+                {counted !== '' ? <KV k="expense.difference" help="expense.difference" v={<MoneyText value={diff} />} /> : null}
                 <ErrorText error={close.error} />
                 <BiButton text="expense.dayClose" full loading={close.isPending} disabled={counted === ''} onClick={async () => { await close.mutateAsync({ counted: Number(counted) }); setClosing(false) }} />
               </>

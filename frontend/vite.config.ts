@@ -51,6 +51,18 @@ export default defineConfig(({ mode }) => ({
     }),
   ],
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
+  build: {
+    rollupOptions: {
+      output: {
+        // each language in its own file: with a "?" and an example on every field (docs/33) the texts
+        // are large, and one bundle would pass the 2 MB a service worker precaches (offline start)
+        manualChunks: (id: string) => {
+          const m = id.match(/i18n[\\/]locales[\\/](\w+)\.json/)
+          return m ? `locale-${m[1]}` : undefined
+        },
+      },
+    },
+  },
   server: {
     port: 5173,
     proxy: {

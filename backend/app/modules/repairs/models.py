@@ -10,6 +10,7 @@ from sqlalchemy import (
     Date,
     DateTime,
     ForeignKey,
+    Index,
     Integer,
     String,
     Text,
@@ -170,3 +171,50 @@ class RepairStatusLog(UUIDPk, Base):
     at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
 
     job: Mapped[RepairJob] = relationship(back_populates="status_log")
+
+
+class DispatchStatus(StrEnum):
+    AT_LAB = "at_lab"
+    BACK = "back"
+    CANCELLED = "cancelled"
+
+
+class DispatchOutcome(StrEnum):
+    FIXED = "fixed"
+    NOT_FIXED = "not_fixed"
+
+
+class RepairDispatch(UUIDPk, ShopScoped, Timestamped, Base):
+    """A repair job sent to an outside repair lab / technician in the market (docs/34). One row per
+    trip: a phone that comes back unfixed and goes to a second lab has two rows, so the history of
+    every lab stays complete. The lab is a party of kind `technician`; its cost goes to its khata."""
+
+    __tablename__ = "repair_dispatches"
+    __table_args__ = (Index("ix_repair_dispatches_shop_status", "shop_id", "status"),)
+
+    job_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("repair_jobs.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    lab_party_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("parties.id", ondelete="RESTRICT"), nullable=False, index=True
+    )
+    status: Mapped[str] = mapped_column(String(12), nullable=False, default=DispatchStatus.AT_LAB)
+    problem: Mapped[str | None] = mapped_column(Text)  # what the lab was asked to do
+    quoted_cost: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
+    sent_on: Mapped[dt.date] = mapped_column(Date, nullable=False)
+    expected_back: Mapped[dt.date | None] = mapped_column(Date)
+    sent_by: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid, ForeignKey("users.id", ondelete="SET NULL")
+    )
+    back_on: Mapped[dt.date | None] = mapped_column(Date)
+    received_by: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid, ForeignKey("users.id", ondelete="SET NULL")
+    )
+    outcome: Mapped[str | None] = mapped_column(String(12))  # fixed | not_fixed
+    final_cost: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
+    paid_now: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
+    ledger_group_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid, ForeignKey("ledger_groups.id", ondelete="SET NULL")
+    )
+    notes: Mapped[str | None] = mapped_column(Text)
+    back_note: Mapped[str | None] = mapped_column(Text)

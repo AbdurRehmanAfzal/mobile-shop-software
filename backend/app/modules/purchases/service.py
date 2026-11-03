@@ -148,7 +148,9 @@ def create_purchase(
     line_no = 0
     devices: list[tuple[Device, Decimal]] = []
 
-    for dl, share, xshare in zip(data.devices, shares[: len(data.devices)], extras[: len(data.devices)], strict=True):
+    for dl, share, xshare in zip(
+        data.devices, shares[: len(data.devices)], extras[: len(data.devices)], strict=True
+    ):
         device = _device_for_purchase(db, shop_id, dl)
         if device.event_count and _aware(device.last_event_at) > at:
             raise Conflict(
@@ -220,10 +222,28 @@ def create_purchase(
                 pack_qty=ml.qty if per != 1 else None,
                 batch_ref=ml.batch_ref,
             )
-            inv.log_price_change(db, shop_id, user_id, accessory, "avg_cost", old_cost, accessory.avg_cost, source="purchase")
+            inv.log_price_change(
+                db,
+                shop_id,
+                user_id,
+                accessory,
+                "avg_cost",
+                old_cost,
+                accessory.avg_cost,
+                source="purchase",
+            )
             if accessory.pricing_mode == "markup" and accessory.markup_pct is not None:
                 new_price = inv.price_from_markup(accessory.avg_cost, accessory.markup_pct)
-                inv.log_price_change(db, shop_id, user_id, accessory, "price", accessory.price, new_price, source="markup")
+                inv.log_price_change(
+                    db,
+                    shop_id,
+                    user_id,
+                    accessory,
+                    "price",
+                    accessory.price,
+                    new_price,
+                    source="markup",
+                )
                 accessory.price = new_price
             if net > ZERO:
                 posting.debit(acc.SysAccount.INVENTORY, net, memo=accessory.name)

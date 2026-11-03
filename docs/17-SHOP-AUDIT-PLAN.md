@@ -5,6 +5,7 @@ This file is the living plan: gap analysis, design, phases, tasks, acceptance cr
 progress checklist. Update it at the end of every session (with `06-PROGRESS.md` and `09-SESSION-LOG.md`).
 
 **Status: all phases delivered 2026-10-31; the owner's three follow-up decisions (due dates, remittance fee / status, daily stock snapshots) delivered the same day (P12, ADR-033).**
+**2026-11-02: the reports module audit (`docs/31-REPORTS-MODULE-AUDIT.md`) added sales / purchase / staff reports, insights and per-screen downloads on top of this programme.**
 **Exact next task: none open in this programme. Candidates: Urdu screenshots of the audit screens; a Postgres timing job for the as-of stock walk; per-bill remaining as-of (needs dated allocations).**
 
 ---

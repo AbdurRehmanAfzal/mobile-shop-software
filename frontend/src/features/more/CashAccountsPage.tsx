@@ -1,6 +1,7 @@
 import { ArrowLeftRight, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import RemoveSheet from '@/components/RemoveSheet'
 import { BtnText, ErrorText, fmtDate, List, MoneyText, PageHeader, Row, Sheet } from '@/components/ui'
 import { api } from '@/lib/api'
@@ -36,16 +37,19 @@ export default function CashAccountsPage() {
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="cash.title" right={role === 'owner' ? <button type="button" aria-label="add" onClick={() => setAdding(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 bg-ink text-ground"><Plus size={22} /><BtnText k={'cash.new'} /></button> : undefined} />
+      <PageHeader title="cash.title" help={<Help term="more.tile.cash" />} right={role === 'owner' ? <button type="button" aria-label="add" onClick={() => setAdding(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 bg-ink text-ground"><Plus size={22} /><BtnText k={'cash.new'} /></button> : undefined} />
       <List>
         {data?.map((a) => <Row key={a.id} title={label(a)} sub={a.kind} right={<MoneyText value={a.balance} tone="ink" />} onClick={() => setBook(a)} />)}
       </List>
       {canMove && (data?.length ?? 0) > 1 ? (
-        <BiButton text="cash.move" icon={<ArrowLeftRight size={20} />} variant="secondary" full onClick={openMove} />
+        <div className="flex items-center gap-1">
+          <div className="min-w-0 flex-1"><BiButton text="cash.move" icon={<ArrowLeftRight size={20} />} variant="secondary" full onClick={openMove} /></div>
+          <Help term="accounts.move" size="sm" />
+        </div>
       ) : null}
       {transfers?.length ? (
         <>
-          <BiLabel text="cash.transfers" size="md" bold />
+          <span className="flex items-center gap-1"><BiLabel text="cash.transfers" size="md" bold /><Help term="accounts.transfers" size="sm" /></span>
           <div className="card divide-y divide-line p-0" data-testid="transfers">
             {transfers.map((t) => (
               <div key={t.id} className={`flex items-center gap-3 px-3 py-2 ${t.reversed ? 'line-through opacity-50' : ''}`}>
@@ -63,20 +67,20 @@ export default function CashAccountsPage() {
       <Sheet open={moving} onClose={() => setMoving(false)} title="cash.move">
         <div className="flex flex-col gap-3">
           <BiLabel text="cash.moveHint" size="sm" tone="text-muted" />
-          <BiLabel text="cash.from" size="md" tone="text-muted" />
+          <span className="flex items-center gap-1"><BiLabel text="cash.from" size="md" tone="text-muted" /><Help term="accounts.from" size="sm" /></span>
           <div className="flex flex-wrap gap-2">
             {data?.map((a) => (
               <button key={a.id} type="button" aria-pressed={mv.from === a.id} onClick={() => setMv({ ...mv, from: a.id, to: mv.to === a.id ? '' : mv.to })} className={`tap h-11 rounded-full border-2 px-3.5 text-sm font-bold ${mv.from === a.id ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'}`}>{label(a)}</button>
             ))}
           </div>
-          <BiLabel text="cash.to" size="md" tone="text-muted" />
+          <span className="flex items-center gap-1"><BiLabel text="cash.to" size="md" tone="text-muted" /><Help term="accounts.to" size="sm" /></span>
           <div className="flex flex-wrap gap-2">
             {data?.filter((a) => a.id !== mv.from).map((a) => (
               <button key={a.id} type="button" aria-pressed={mv.to === a.id} onClick={() => setMv({ ...mv, to: a.id })} className={`tap h-11 rounded-full border-2 px-3.5 text-sm font-bold ${mv.to === a.id ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'}`}>{label(a)}</button>
             ))}
           </div>
-          <BiInput label="cash.amount" type="number" inputMode="decimal" min={0} value={mv.amount} onChange={(e) => setMv({ ...mv, amount: e.target.value })} className="num text-2xl" autoFocus />
-          <BiInput label="cash.note" value={mv.note} onChange={(e) => setMv({ ...mv, note: e.target.value })} />
+          <BiInput label="cash.amount" type="number" inputMode="decimal" min={0} value={mv.amount} onChange={(e) => setMv({ ...mv, amount: e.target.value })} className="num text-2xl" autoFocus help={<Help term="accounts.moveAmount" size="sm" />} />
+          <BiInput label="cash.note" value={mv.note} onChange={(e) => setMv({ ...mv, note: e.target.value })} help={<Help term="common.notes" size="sm" />} />
           <ErrorText error={move.error} />
           <BiButton text="cash.moveNow" full loading={move.isPending} disabled={!mv.from || !mv.to || Number(mv.amount) <= 0} onClick={async () => { await move.mutateAsync({ from_account_id: mv.from, to_account_id: mv.to, amount: Number(mv.amount), note: mv.note || null }); setMoving(false) }} />
         </div>
@@ -84,11 +88,11 @@ export default function CashAccountsPage() {
 
       <Sheet open={adding} onClose={() => setAdding(false)} title="cash.new">
         <div className="flex flex-col gap-3">
-          <BiLabel text="cash.kind" size="md" tone="text-muted" />
+          <span className="flex items-center gap-1"><BiLabel text="cash.kind" size="md" tone="text-muted" /><Help term="accounts.kind" size="sm" /></span>
           <BiSegmented<Kind> value={f.kind} onChange={(kind) => setF({ ...f, kind })} options={[{ value: 'cash', text: 'pay.cash' }, { value: 'bank', text: 'pay.bank' }, { value: 'easypaisa', text: 'pay.easypaisa' }, { value: 'jazzcash', text: 'pay.jazzcash' }]} />
-          <BiInput label="cash.name" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} />
-          <BiInput label="cash.accountNo" value={f.account_no} onChange={(e) => setF({ ...f, account_no: e.target.value })} />
-          <BiInput label="cash.opening" type="number" inputMode="decimal" min={0} value={f.opening_balance} onChange={(e) => setF({ ...f, opening_balance: e.target.value })} />
+          <BiInput label="cash.name" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} help={<Help term="accounts.name" size="sm" />} />
+          <BiInput label="cash.accountNo" value={f.account_no} onChange={(e) => setF({ ...f, account_no: e.target.value })} help={<Help term="accounts.accountNo" size="sm" />} />
+          <BiInput label="cash.opening" type="number" inputMode="decimal" min={0} value={f.opening_balance} onChange={(e) => setF({ ...f, opening_balance: e.target.value })} help={<Help term="accounts.opening" size="sm" />} />
           <ErrorText error={create.error} />
           <BiButton text="common.save" full loading={create.isPending} disabled={!f.name} onClick={async () => { await create.mutateAsync({ ...f, name_ur: null, account_no: f.account_no || null, opening_balance: Number(f.opening_balance || 0) }); setAdding(false) }} />
         </div>
@@ -106,6 +110,9 @@ export default function CashAccountsPage() {
               </button>
             ) : null}
           </div>
+        ) : null}
+        {rows ? (
+          <span className="mb-2 flex items-center gap-1"><BiLabel text="cash.book" size="sm" tone="text-muted" bold /><Help term="accounts.book" size="sm" /></span>
         ) : null}
         {rows ? (
           <div className="card divide-y divide-line p-0">
@@ -128,7 +135,7 @@ export default function CashAccountsPage() {
       <Sheet open={editing !== null} onClose={() => setEditing(null)} title="crud.editAccount">
         {editing ? (
           <div className="flex flex-col gap-3">
-            <BiInput label="cash.name" value={newName} onChange={(e) => setNewName(e.target.value)} autoFocus />
+            <BiInput label="cash.name" value={newName} onChange={(e) => setNewName(e.target.value)} autoFocus help={<Help term="accounts.name" size="sm" />} />
             <ErrorText error={rename.error} />
             <BiButton text="common.save" full loading={rename.isPending} disabled={!newName.trim()} onClick={async () => { await rename.mutateAsync({ id: editing.id, name: newName.trim() }); setEditing(null) }} />
           </div>

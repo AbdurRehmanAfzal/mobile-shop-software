@@ -153,7 +153,10 @@ def cash_flow(db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date) -
             )
         ).one()
         opening = cash_balance(
-            db, shop_id, a.id, until=day_start(d_from)  # the shop's midnight, not UTC's
+            db,
+            shop_id,
+            a.id,
+            until=day_start(d_from),  # the shop's midnight, not UTC's
         )
         tin, tout = db.execute(
             select(
@@ -275,6 +278,8 @@ def dashboard(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
         "stock_value_asking": money(sum((d.asking_price or ZERO for d in stock), ZERO)),
         # installments (owner 2026-10-29): due today / late, for the home screen
         **__import__("app.modules.installments.service", fromlist=["counts"]).counts(db, shop_id),
+        # len-den return dates (docs/32 §7)
+        **__import__("app.modules.payments.lending_due", fromlist=["counts"]).counts(db, shop_id),
         # stock alert (owner 2026-10-29): counted items at or under their reorder level
         "low_stock_items": db.scalar(
             select(func.count(Accessory.id)).where(
@@ -367,6 +372,7 @@ def stock_summary(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
 _IN = {
     "invoice": "sales",
     "payment": "udhaar_back",
+    "lending": "lending",
     "repair": "repairs",
     "repair_advance": "repairs",
     "repair_bill": "repairs",
@@ -379,6 +385,7 @@ _OUT = {
     "exchange_refund": "returns",
     "expense": "expenses",
     "payment": "paid_out",
+    "lending": "lending",
     "transfer": "transfer",
     "reversal:transfer": "transfer",
 }
@@ -390,8 +397,11 @@ def _cash_by_reason(
     """Money in / out of cash, bank and Easypaisa in the period, grouped into shop words."""
     from app.modules.ledger.models import LedgerGroup
 
-    came_in = {k: ZERO for k in ("sales", "udhaar_back", "repairs", "transfer", "other")}
-    went_out = {k: ZERO for k in ("stock", "returns", "expenses", "paid_out", "transfer", "other")}
+    came_in = {k: ZERO for k in ("sales", "udhaar_back", "lending", "repairs", "transfer", "other")}
+    went_out = {
+        k: ZERO
+        for k in ("stock", "returns", "expenses", "paid_out", "lending", "transfer", "other")
+    }
     for doc_type, dr, cr in db.execute(
         select(
             LedgerGroup.document_type,
@@ -510,6 +520,8 @@ def day_report(
                 Payment.date <= day_to,
                 Payment.direction == "in",
                 Payment.status != "voided",
+                # len-den is not udhaar coming back (docs/32)
+                Payment.purpose == "bill",
             )
         )
         or 0

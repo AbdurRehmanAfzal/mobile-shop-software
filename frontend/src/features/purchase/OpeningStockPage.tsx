@@ -74,7 +74,7 @@ export default function OpeningStockPage() {
       {devices.length ? (
         <>
           <div className="card flex items-center justify-between">
-            <BiLabel text="common.total" size="md" tone="text-muted" />
+            <span className="flex items-center gap-1"><BiLabel text="common.total" size="md" tone="text-muted" /><Help term="purchase.openingTotal" size="sm" /></span>
             <MoneyText value={total} tone="ink" size="lg" />
           </div>
           <ErrorText error={error} />

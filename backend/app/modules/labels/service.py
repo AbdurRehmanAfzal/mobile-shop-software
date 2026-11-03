@@ -71,8 +71,8 @@ def code_word_ok(word: str | None) -> bool:
 
 
 def cost_code(amount: Decimal | None, word: str | None) -> str:
-    """45000 with BLACKHORSE → 'HRBBB' (digit n = n-th letter). The shop reads it, the customer
-    cannot."""
+    """45000 with BLACKHORSE → 'KHBBB' (digit n = the letter at position n, counting from 0:
+    B=0 L=1 A=2 C=3 K=4 H=5 …). The shop reads it, the customer cannot."""
     if amount is None:
         return ""
     w = (word or DEFAULT_CODE_WORD).upper()
@@ -205,7 +205,14 @@ def _label(parts: dict, want: set[str], ur: bool) -> str:
 def _device_parts(d: dict, shop: Shop, ur: bool, word: str | None) -> dict:
     cat = d.get("category") or "phone"
     specs = [
-        f"{d['size_mm']}mm" if cat == "watch" and d.get("size_mm") else " + ".join(x for x in (d.get("storage_name"), f"{d['ram_gb']}GB RAM" if d.get("ram_gb") else None) if x) or None,
+        f"{d['size_mm']}mm"
+        if cat == "watch" and d.get("size_mm")
+        else " + ".join(
+            x
+            for x in (d.get("storage_name"), f"{d['ram_gb']}GB RAM" if d.get("ram_gb") else None)
+            if x
+        )
+        or None,
         d.get("colour_name"),
         (
             None

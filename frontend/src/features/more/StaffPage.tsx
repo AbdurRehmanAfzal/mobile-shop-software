@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import { PhoneInput } from '@/components/FieldInputs'
+import Help from '@/components/Help'
 import { Chip, Empty, ErrorText, List, Loading, PageHeader, Row, Sheet, fmtDate } from '@/components/ui'
 import PeriodPicker, { periodOf, type Period } from '@/features/counter/PeriodPicker'
 import { tm, type Att } from '@/features/counter/HazriCard'
@@ -28,15 +29,19 @@ export default function StaffPage() {
   const has = useModules()
   const [params, setParams] = useSearchParams()
   const tab = ((['staff', 'hazri', 'activity'] as Tab[]).includes(params.get('tab') as Tab) ? params.get('tab') : 'staff') as Tab
-  const tabs: { k: Tab; Icon: typeof Users }[] = [{ k: 'staff', Icon: Users }, ...(has('attendance') ? [{ k: 'hazri' as Tab, Icon: CalendarCheck }] : []), { k: 'activity', Icon: Activity }]
+  const tabs: { k: Tab; Icon: typeof Users; help: string }[] = [{ k: 'staff', Icon: Users, help: 'staff.tab.staff' }, ...(has('attendance') ? [{ k: 'hazri' as Tab, Icon: CalendarCheck, help: 'staff.tab.hazri' }] : []), { k: 'activity', Icon: Activity, help: 'staff.tab.activity' }]
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="staff.title" />
+      <PageHeader title="staff.title" help={<Help term="more.tile.staff" />} />
       <div className="grid gap-1.5 rounded-2xl border border-line bg-surface p-1" style={{ gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))` }}>
-        {tabs.map(({ k, Icon }) => (
-          <button key={k} type="button" aria-pressed={tab === k} onClick={() => setParams(k === 'staff' ? {} : { tab: k }, { replace: true })} className={`tap flex min-h-12 items-center justify-center gap-2 rounded-xl font-bold ${tab === k ? 'bg-ink text-ground' : 'text-muted'} ${ur ? cls('sm') : 'text-sm'}`}>
-            <Icon size={18} />{pick(`hazri.tab.${k}`)}
-          </button>
+        {tabs.map(({ k, Icon, help }) => (
+          // the "?" sits beside the tab button, not inside it
+          <div key={k} className="flex min-w-0 items-center">
+            <button type="button" aria-pressed={tab === k} onClick={() => setParams(k === 'staff' ? {} : { tab: k }, { replace: true })} className={`tap flex min-h-12 min-w-0 flex-1 items-center justify-center gap-2 rounded-xl font-bold ${tab === k ? 'bg-ink text-ground' : 'text-muted'} ${ur ? cls('sm') : 'text-sm'}`}>
+              <Icon size={18} />{pick(`hazri.tab.${k}`)}
+            </button>
+            <Help term={help} size="sm" />
+          </div>
         ))}
       </div>
       {tab === 'staff' ? <StaffList /> : tab === 'hazri' ? <HazriTab /> : <ActivityTab />}
@@ -65,11 +70,11 @@ function StaffList() {
 
       <Sheet open={adding} onClose={() => setAdding(false)} title="staff.new">
         <div className="flex flex-col gap-3">
-          <BiInput label="staff.name" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} />
-          <PhoneInput label="staff.phone" value={f.phone} onChange={(phone) => setF({ ...f, phone })} />
-          <BiInput label="staff.password" type="password" value={f.password} onChange={(e) => setF({ ...f, password: e.target.value })} minLength={6} />
-          <BiInput label="staff.pin" inputMode="numeric" maxLength={6} value={f.pin} onChange={(e) => setF({ ...f, pin: e.target.value })} />
-          <BiLabel text="staff.role" size="md" tone="text-muted" />
+          <BiInput label="staff.name" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} help={<Help term="staff.name" size="sm" />} />
+          <PhoneInput label="staff.phone" value={f.phone} onChange={(phone) => setF({ ...f, phone })} help={<Help term="staff.phone" size="sm" />} />
+          <BiInput label="staff.password" type="password" value={f.password} onChange={(e) => setF({ ...f, password: e.target.value })} minLength={6} help={<Help term="staff.password" size="sm" />} />
+          <BiInput label="staff.pin" inputMode="numeric" maxLength={6} value={f.pin} onChange={(e) => setF({ ...f, pin: e.target.value })} help={<Help term="staff.pin" size="sm" />} />
+          <span className="flex items-center gap-1"><BiLabel text="staff.role" size="md" tone="text-muted" /><Help term="staff.role" size="sm" /></span>
           <BiSegmented<Role> value={f.role} onChange={(role) => setF({ ...f, role })} options={[{ value: 'salesman', text: 'staff.roles.salesman' }, { value: 'technician', text: 'staff.roles.technician' }, { value: 'manager', text: 'staff.roles.manager' }]} />
           <ErrorText error={create.error} />
           <BiButton text="common.save" icon={<Check size={22} />} full loading={create.isPending} disabled={!f.name || f.password.length < 6 || !f.phone} onClick={async () => { await create.mutateAsync({ name: f.name, phone: normalisePhone(f.phone), password: f.password, pin: f.pin || undefined, role: f.role }); setAdding(false); setF({ name: '', phone: '', password: '', pin: '', role: 'salesman' }) }} />
@@ -79,11 +84,14 @@ function StaffList() {
       <Sheet open={editing !== null} onClose={() => setEditing(null)} title={editing ? { en: editing.name, ur: editing.name, roman: editing.name } : ''}>
         {editing ? (
           <div className="flex flex-col gap-3">
-            <BiLabel text="staff.role" size="md" tone="text-muted" />
+            <span className="flex items-center gap-1"><BiLabel text="staff.role" size="md" tone="text-muted" /><Help term="staff.role" size="sm" /></span>
             <BiSegmented<Role> value={editing.role as Role} onChange={async (role) => { const u = await update.mutateAsync({ id: editing.id, role }); setEditing(u) }} options={[{ value: 'salesman', text: 'staff.roles.salesman' }, { value: 'technician', text: 'staff.roles.technician' }, { value: 'manager', text: 'staff.roles.manager' }]} />
-            <BiInput label="staff.resetPassword" type="password" value={pw} onChange={(e) => setPw(e.target.value)} minLength={6} />
+            <BiInput label="staff.resetPassword" type="password" value={pw} onChange={(e) => setPw(e.target.value)} minLength={6} help={<Help term="staff.resetPassword" size="sm" />} />
             <BiButton text="common.save" variant="secondary" full disabled={pw.length < 6} loading={update.isPending} onClick={async () => { await update.mutateAsync({ id: editing.id, password: pw }); setPw('') }} />
-            <BiButton text={editing.is_active ? 'staff.disable' : 'staff.enable'} variant={editing.is_active ? 'danger' : 'primary'} full loading={update.isPending} onClick={async () => { const u = await update.mutateAsync({ id: editing.id, is_active: !editing.is_active }); setEditing(u) }} />
+            <div className="flex items-center gap-1">
+              <div className="min-w-0 flex-1"><BiButton text={editing.is_active ? 'staff.disable' : 'staff.enable'} variant={editing.is_active ? 'danger' : 'primary'} full loading={update.isPending} onClick={async () => { const u = await update.mutateAsync({ id: editing.id, is_active: !editing.is_active }); setEditing(u) }} /></div>
+              <Help term="staff.disable" size="sm" />
+            </div>
             <ErrorText error={update.error} />
           </div>
         ) : null}
@@ -110,7 +118,7 @@ function HazriTab() {
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   return (
     <div className="flex flex-col gap-3">
-      <PeriodPicker value={period} onChange={setPeriod} size="sm" />
+      <div className="flex items-start gap-1"><div className="min-w-0 flex-1"><PeriodPicker value={period} onChange={setPeriod} size="sm" /></div><Help term="common.period" size="sm" /></div>
       {isLoading ? <Loading /> : !data?.length ? <Empty text="hazri.noRows" /> : (
         <div className="flex flex-col gap-2">
           {data.map((s) => (
@@ -140,10 +148,10 @@ function HazriTab() {
         {who ? (
           <div className="flex flex-col gap-3">
             <div className="card flex flex-col gap-2">
-              <BiLabel text="hazri.mark" size="md" bold />
-              <BiInput label="hazri.day" type="date" value={day} max={isoDay(0)} onChange={(e) => setDay(e.target.value)} dir="ltr" />
-              <BiSegmented<St> value={st} onChange={setSt} options={ST.map((s) => ({ value: s, text: `hazri.st.${s}` }))} />
-              <BiInput label="common.notes" value={note} onChange={(e) => setNote(e.target.value)} maxLength={300} />
+              <span className="flex items-center gap-1"><BiLabel text="hazri.mark" size="md" bold /><Help term="staff.hazriMark" size="sm" /></span>
+              <BiInput label="hazri.day" type="date" value={day} max={isoDay(0)} onChange={(e) => setDay(e.target.value)} dir="ltr" help={<Help term="common.date" size="sm" />} />
+              <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><BiSegmented<St> value={st} onChange={setSt} options={ST.map((s) => ({ value: s, text: `hazri.st.${s}` }))} /></div><Help term="staff.hazriStatus" size="sm" /></div>
+              <BiInput label="common.notes" value={note} onChange={(e) => setNote(e.target.value)} maxLength={300} help={<Help term="common.notes" size="sm" />} />
               <ErrorText error={mark.error} />
               <BiButton text="common.save" icon={<Check size={22} />} full loading={mark.isPending} disabled={!day} onClick={async () => { await mark.mutateAsync({ status: st, note: note || null }); inv('hazri-summary', 'hazri-rows', 'hazri-today', 'staff-activity') }} />
             </div>
@@ -182,7 +190,7 @@ function ActivityTab() {
   const word = (ns: string, k: string) => { const key = `${ns}.${k}`; const v = pick(key); return v === key || v === k ? k.replace(/_/g, ' ') : v }
   return (
     <div className="flex flex-col gap-3">
-      <PeriodPicker value={period} onChange={setPeriod} size="sm" />
+      <div className="flex items-start gap-1"><div className="min-w-0 flex-1"><PeriodPicker value={period} onChange={setPeriod} size="sm" /></div><Help term="common.period" size="sm" /></div>
       {isLoading ? <Loading /> : !data?.length ? <Empty text="activity.none" /> : (
         <div className="flex flex-col gap-2">
           {data.map((a) => (

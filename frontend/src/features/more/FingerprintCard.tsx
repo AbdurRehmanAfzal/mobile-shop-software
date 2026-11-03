@@ -4,6 +4,7 @@
 import { Fingerprint, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { BiAlert, BiButton, BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { ErrorText, fmtDate } from '@/components/ui'
 import { ApiError, api } from '@/lib/api'
 import { canUseHere, isOnHere, turnOffHere, turnOnHere } from '@/lib/fingerprint'
@@ -45,7 +46,7 @@ export default function FingerprintCard() {
     <section className="card flex flex-col gap-3">
       <div className="flex items-center gap-3">
         <span className="well h-10 w-10 shrink-0 bg-emerald-tint text-emerald-deep"><Fingerprint size={22} /></span>
-        <BiLabel text="fp.title" size="lg" bold />
+        <span className="flex items-center gap-1"><BiLabel text="fp.title" size="lg" bold /><Help term="more.fingerprint" size="sm" /></span>
       </div>
       {!data ? null : !data.allowed ? (
         <BiLabel text="fp.notAllowed" size="sm" tone="text-muted" />

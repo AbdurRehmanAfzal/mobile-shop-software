@@ -15,13 +15,15 @@ import { useTheme, type Palette, type Theme } from '@/lib/theme'
 import { api } from '@/lib/api'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import FingerprintCard from './FingerprintCard'
+import Help from '@/components/Help'
 import { ErrorText, Sheet } from '@/components/ui'
 import { rememberLogin } from '@/features/auth/LoginPage'
 
 type Icon = LucideIcon
 /** `tone` = the job colour (docs/11 v2) of the icon well */
-interface Item { key: string; Icon: Icon; to?: string; action?: 'pin'; roles?: Role[]; tone?: string }
-interface Group { title: string; items: Item[] }
+/** `help`: a key under `help.` for the "?" beside the tile (docs/33) */
+interface Item { key: string; Icon: Icon; to?: string; action?: 'pin'; roles?: Role[]; tone?: string; help: string }
+interface Group { title: string; help: string; items: Item[] }
 
 const MANAGERS: Role[] = ['owner', 'manager']
 const T = {
@@ -38,61 +40,66 @@ const T = {
 const GROUPS: Group[] = [
   {
     title: 'more.daily',
+    help: 'more.group.daily',
     items: [
-      { key: 'counter.sell', Icon: Tag, to: '/sale/new', tone: T.sell },
-      { key: 'counter.addStock', Icon: PackagePlus, to: '/purchase/new', tone: T.buy },
-      { key: 'counter.returnJob', Icon: Undo2, to: '/return/new', tone: T.ret },
-      { key: 'counter.khata', Icon: BookOpen, to: '/khata', tone: T.khata },
-      { key: 'inst.title', Icon: HandCoins, to: '/installments', tone: T.khata },
-      { key: 'ai.title', Icon: Bot, to: '/assistant', tone: T.plain },
-      { key: 'counter.repair', Icon: Wrench, to: '/repairs', tone: T.repair },
-      { key: 'more.exchange', Icon: ArrowLeftRight, to: '/exchange/new', tone: T.sell },
-      { key: 'more.loans', Icon: RotateCcw, to: '/loans', tone: T.stock },
-      { key: 'counter.dayTitle', Icon: CalendarDays, to: '/hisaab', tone: T.plain },
+      { key: 'counter.sell', Icon: Tag, to: '/sale/new', tone: T.sell, help: 'more.tile.sell' },
+      { key: 'counter.addStock', Icon: PackagePlus, to: '/purchase/new', tone: T.buy, help: 'more.tile.addStock' },
+      { key: 'counter.returnJob', Icon: Undo2, to: '/return/new', tone: T.ret, help: 'more.tile.returnJob' },
+      { key: 'counter.khata', Icon: BookOpen, to: '/khata', tone: T.khata, help: 'khata' },
+      { key: 'inst.title', Icon: HandCoins, to: '/installments', tone: T.khata, help: 'more.tile.installments' },
+      { key: 'ai.title', Icon: Bot, to: '/assistant', tone: T.plain, help: 'more.tile.assistant' },
+      { key: 'counter.repair', Icon: Wrench, to: '/repairs', tone: T.repair, help: 'more.tile.repairs' },
+      { key: 'more.exchange', Icon: ArrowLeftRight, to: '/exchange/new', tone: T.sell, help: 'more.tile.exchange' },
+      { key: 'more.loans', Icon: RotateCcw, to: '/loans', tone: T.stock, help: 'more.tile.loans' },
+      { key: 'counter.dayTitle', Icon: CalendarDays, to: '/hisaab', tone: T.plain, help: 'more.tile.hisaab' },
     ],
   },
   {
     title: 'more.stockGroup',
+    help: 'more.group.stock',
     items: [
-      { key: 'more.stock', Icon: Smartphone, to: '/stock', tone: T.stock },
-      { key: 'counter.stockWorth', Icon: BarChart3, to: '/stock/summary', tone: T.stock },
-      { key: 'more.accessories', Icon: Headphones, to: '/accessories', tone: T.stock },
-      { key: 'dashboard.imeiSearch', Icon: ScanLine, to: '/stock', tone: T.stock },
-      { key: 'more.openingStock', Icon: Archive, to: '/stock/opening', roles: MANAGERS, tone: T.buy },
-      { key: 'bulk.title', Icon: FileSpreadsheet, to: '/more/bulk', roles: MANAGERS, tone: T.buy },
-      { key: 'count.title', Icon: ClipboardList, to: '/stock/count', roles: MANAGERS, tone: T.stock },
-      { key: 'more.catalogue', Icon: Tags, to: '/more/catalogue', roles: MANAGERS, tone: T.plain },
+      { key: 'more.stock', Icon: Smartphone, to: '/stock', tone: T.stock, help: 'more.tile.stock' },
+      { key: 'counter.stockWorth', Icon: BarChart3, to: '/stock/summary', tone: T.stock, help: 'more.tile.stockWorth' },
+      { key: 'more.accessories', Icon: Headphones, to: '/accessories', tone: T.stock, help: 'more.tile.accessories' },
+      { key: 'dashboard.imeiSearch', Icon: ScanLine, to: '/stock', tone: T.stock, help: 'more.tile.imeiSearch' },
+      { key: 'more.openingStock', Icon: Archive, to: '/stock/opening', roles: MANAGERS, tone: T.buy, help: 'more.tile.openingStock' },
+      { key: 'bulk.title', Icon: FileSpreadsheet, to: '/more/bulk', roles: MANAGERS, tone: T.buy, help: 'bulk' },
+      { key: 'count.title', Icon: ClipboardList, to: '/stock/count', roles: MANAGERS, tone: T.stock, help: 'more.tile.count' },
+      { key: 'more.catalogue', Icon: Tags, to: '/more/catalogue', roles: MANAGERS, tone: T.plain, help: 'more.tile.catalogue' },
     ],
   },
   {
     title: 'more.records',
+    help: 'more.group.records',
     items: [
-      { key: 'inv.title', Icon: FileText, to: '/invoices', tone: T.khata },
-      { key: 'more.sales', Icon: Receipt, to: '/sales', tone: T.sell },
-      { key: 'more.purchases', Icon: Package, to: '/purchases', tone: T.buy },
-      { key: 'more.payments', Icon: HandCoins, to: '/payments', tone: T.khata },
-      { key: 'more.returns', Icon: Undo2, to: '/returns', tone: T.ret },
-      { key: 'party.title', Icon: Users, to: '/parties', tone: T.khata },
+      { key: 'inv.title', Icon: FileText, to: '/invoices', tone: T.khata, help: 'more.tile.invoices' },
+      { key: 'more.sales', Icon: Receipt, to: '/sales', tone: T.sell, help: 'more.tile.sales' },
+      { key: 'more.purchases', Icon: Package, to: '/purchases', tone: T.buy, help: 'more.tile.purchases' },
+      { key: 'more.payments', Icon: HandCoins, to: '/payments', tone: T.khata, help: 'more.tile.payments' },
+      { key: 'more.returns', Icon: Undo2, to: '/returns', tone: T.ret, help: 'more.tile.returns' },
+      { key: 'party.title', Icon: Users, to: '/parties', tone: T.khata, help: 'more.tile.parties' },
     ],
   },
   {
     title: 'more.accounts',
+    help: 'more.group.accounts',
     items: [
-      { key: 'more.expenses', Icon: Wallet, to: '/expenses', roles: MANAGERS, tone: T.expense },
-      { key: 'more.dayClose', Icon: Lock, to: '/expenses', roles: MANAGERS, tone: T.expense },
-      { key: 'more.cashAccounts', Icon: Landmark, to: '/more/cash', roles: MANAGERS, tone: T.sell },
-      { key: 'more.reports', Icon: FileText, to: '/reports', roles: MANAGERS, tone: T.plain },
-      { key: 'audit.title', Icon: BarChart3, to: '/audit', roles: MANAGERS, tone: T.plain },
+      { key: 'more.expenses', Icon: Wallet, to: '/expenses', roles: MANAGERS, tone: T.expense, help: 'more.tile.expenses' },
+      { key: 'more.dayClose', Icon: Lock, to: '/expenses', roles: MANAGERS, tone: T.expense, help: 'more.tile.dayClose' },
+      { key: 'more.cashAccounts', Icon: Landmark, to: '/more/cash', roles: MANAGERS, tone: T.sell, help: 'more.tile.cash' },
+      { key: 'more.reports', Icon: FileText, to: '/reports', roles: MANAGERS, tone: T.plain, help: 'more.tile.reports' },
+      { key: 'audit.title', Icon: BarChart3, to: '/audit', roles: MANAGERS, tone: T.plain, help: 'audit' },
     ],
   },
   {
     title: 'more.admin',
+    help: 'more.group.admin',
     items: [
-      { key: 'more.settings', Icon: Settings, to: '/more/settings', roles: ['owner'], tone: T.plain },
-      { key: 'more.staff', Icon: Users, to: '/more/staff', roles: ['owner'], tone: T.plain },
-      { key: 'more.notifications', Icon: Bell, to: '/more/notifications', roles: ['owner'], tone: T.plain },
-      { key: 'fees.title', Icon: CreditCard, to: '/more/fees', roles: ['owner'], tone: T.plain },
-      { key: 'pin.set', Icon: KeyRound, action: 'pin', tone: T.plain },
+      { key: 'more.settings', Icon: Settings, to: '/more/settings', roles: ['owner'], tone: T.plain, help: 'more.tile.settings' },
+      { key: 'more.staff', Icon: Users, to: '/more/staff', roles: ['owner'], tone: T.plain, help: 'more.tile.staff' },
+      { key: 'more.notifications', Icon: Bell, to: '/more/notifications', roles: ['owner'], tone: T.plain, help: 'more.tile.notifications' },
+      { key: 'fees.title', Icon: CreditCard, to: '/more/fees', roles: ['owner'], tone: T.plain, help: 'more.tile.fees' },
+      { key: 'pin.set', Icon: KeyRound, action: 'pin', tone: T.plain, help: 'more.tile.pin' },
     ],
   },
 ]
@@ -133,7 +140,7 @@ export default function MorePage() {
       ) : null}
       {me && me.shops.length > 1 ? (
         <section className="flex flex-col gap-2">
-          <BiLabel text="more.shops" size="md" bold />
+          <span className="flex items-center gap-1"><BiLabel text="more.shops" size="md" bold /><Help term="more.shops" size="sm" /></span>
           <div className="card divide-y divide-line p-0">
             {me.shops.map((s) => {
               const on = s.id === activeShopId
@@ -156,19 +163,22 @@ export default function MorePage() {
         if (!items.length) return null
         return (
           <section key={g.title} className="flex flex-col gap-2">
-            <BiLabel text={g.title} size="md" bold />
+            <span className="flex items-center gap-1"><BiLabel text={g.title} size="md" bold /><Help term={g.help} size="sm" /></span>
             <div className={`grid gap-2 ${ur ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-2'}`}>
-              {items.map(({ key, Icon, to, action, tone }) => (
-                <button
-                  key={key + (to ?? '')}
-                  type="button"
-                  onClick={() => (action === 'pin' ? setPinOpen(true) : to && nav(to))}
-                  className="tap flex min-h-[64px] items-center gap-3 rounded-2xl border border-line bg-surface px-3 py-2.5 text-start shadow-[0_1px_0_rgb(var(--line))] active:translate-y-px active:shadow-none"
-                >
-                  <span className={`well h-11 w-11 shrink-0 rounded-xl ${tone ?? T.plain}`}><Icon size={22} strokeWidth={1.9} /></span>
-                  <span className="min-w-0 flex-1"><BiLabel text={key} size="md" bold className="leading-tight" /></span>
-                  <span className="shrink-0 text-muted">{ur ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}</span>
-                </button>
+              {items.map(({ key, Icon, to, action, tone, help }) => (
+                // the "?" sits beside the tile's button (not inside it), at the far end
+                <div key={key + (to ?? '')} className="relative">
+                  <button
+                    type="button"
+                    onClick={() => (action === 'pin' ? setPinOpen(true) : to && nav(to))}
+                    className="tap flex min-h-[64px] w-full items-center gap-3 rounded-2xl border border-line bg-surface py-2.5 pe-8 ps-3 text-start shadow-[0_1px_0_rgb(var(--line))] active:translate-y-px active:shadow-none"
+                  >
+                    <span className={`well h-11 w-11 shrink-0 rounded-xl ${tone ?? T.plain}`}><Icon size={22} strokeWidth={1.9} /></span>
+                    <span className="min-w-0 flex-1"><BiLabel text={key} size="md" bold className="leading-tight" /></span>
+                    <span className="shrink-0 text-muted">{ur ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}</span>
+                  </button>
+                  <span className="absolute end-1 top-1/2 -translate-y-1/2"><Help term={help} size="sm" /></span>
+                </div>
               ))}
             </div>
           </section>
@@ -176,13 +186,13 @@ export default function MorePage() {
       })}
 
       <section className="flex flex-col gap-2">
-        <BiLabel text="more.app" size="md" bold />
+        <span className="flex items-center gap-1"><BiLabel text="more.app" size="md" bold /><Help term="more.app" size="sm" /></span>
         <div className="card flex flex-col gap-3">
-          <BiLabel text="more.language" size="sm" tone="text-muted" />
+          <span className="flex items-center gap-1"><BiLabel text="more.language" size="sm" tone="text-muted" /><Help term="more.language" size="sm" /></span>
           <BiSegmented<Locale> value={locale} onChange={setLocale} options={[{ value: 'ur', text: { en: 'Urdu', ur: 'اردو', roman: 'Urdu' } }, { value: 'roman', text: { en: 'Roman Urdu', ur: 'رومن اردو', roman: 'Roman Urdu' } }, { value: 'en', text: { en: 'English', ur: 'انگریزی', roman: 'English' } }]} />
-          <BiLabel text="more.look" size="sm" tone="text-muted" />
+          <span className="flex items-center gap-1"><BiLabel text="more.look" size="sm" tone="text-muted" /><Help term="more.look" size="sm" /></span>
           <BiSegmented<Palette> value={palette} onChange={setPalette} options={[{ value: 'modern', text: 'more.lookModern' }, { value: 'pro', text: 'more.lookPro' }, { value: 'navy', text: 'more.lookNavy' }, { value: 'colorful', text: 'more.lookColorful' }]} />
-          <BiLabel text="more.theme" size="sm" tone="text-muted" />
+          <span className="flex items-center gap-1"><BiLabel text="more.theme" size="sm" tone="text-muted" /><Help term="more.theme" size="sm" /></span>
           <BiSegmented<Theme> value={theme} onChange={setTheme} options={[{ value: 'light', text: 'more.themeLight' }, { value: 'dark', text: 'more.themeDark' }, { value: 'system', text: 'more.themeSystem' }]} />
         </div>
       </section>
@@ -200,8 +210,8 @@ export default function MorePage() {
       <Sheet open={pinOpen} onClose={() => setPinOpen(false)} title="pin.set">
         <div className="flex flex-col gap-3">
           <BiLabel text="pin.setHint" size="sm" tone="text-muted" />
-          <BiInput label="pin.current" type="password" value={pw} onChange={(e) => setPw(e.target.value)} />
-          <BiInput label="pin.title" inputMode="numeric" maxLength={6} value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))} />
+          <BiInput label="pin.current" type="password" value={pw} onChange={(e) => setPw(e.target.value)} help={<Help term="more.pinPassword" size="sm" />} />
+          <BiInput label="pin.title" inputMode="numeric" maxLength={6} value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))} help={<Help term="more.pinNew" size="sm" />} />
           <ErrorText error={pinErr} />
           <BiButton
             text="common.save"

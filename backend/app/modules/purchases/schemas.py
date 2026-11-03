@@ -27,7 +27,9 @@ class MiscLineIn(BaseModel):
     description: str = Field(min_length=1, max_length=200)
     accessory_id: uuid.UUID | None = None
     qty: int = Field(default=1, ge=1, le=10000)
-    unit_cost: Decimal = Field(ge=0, description="cost per `unit` as typed (per dozen when unit=dozen)")
+    unit_cost: Decimal = Field(
+        ge=0, description="cost per `unit` as typed (per dozen when unit=dozen)"
+    )
     # owner addendum 5: bought in dozens / boxes; stock is always kept in pieces
     unit: str = Field(default="piece", max_length=12)
     batch_ref: str | None = Field(default=None, max_length=40)

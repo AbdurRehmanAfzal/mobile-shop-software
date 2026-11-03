@@ -50,7 +50,7 @@ docker compose --env-file .env exec backend python -m app.modules.plan.renewal k
 docker compose --env-file .env exec backend python -m app.modules.barcodes.backfill
 
 # 3. check the database is on the latest version (migrations run by themselves when the backend
-#    starts; this only confirms it). Expected: c1e3a5b7d9f1 (head)
+#    starts; this only confirms it). Expected: a5c7e9b1d3f6 (head)
 docker compose --env-file .env exec backend alembic current
 ```
 
@@ -58,7 +58,7 @@ docker compose --env-file .env exec backend alembic current
 |---|---|---|
 | [ ] | keygen (1) | without it Business → Keys and "Renewal code" fail with "RENEWAL_PRIVATE_KEY is not set" |
 | [ ] | barcode backfill (2) | old phones and items get a barcode; the button Settings → Barcode settings → "Barcodes for old stock" does the same per shop |
-| [ ] | `alembic current` (3) | confirms migrations through `c1e3a5b7d9f1` (barcodes, accessories, tablets / watches, provider console) |
+| [ ] | `alembic current` (3) | confirms migrations through `a5c7e9b1d3f6` (barcodes, accessories, tablets / watches, provider console, business profile, len-den, len-den return dates, repair labs) |
 
 Not needed any more: running `alembic upgrade head` by hand (the backend image does it on start);
 the accessories "Opening stock" batches (made by the migration).
@@ -79,6 +79,15 @@ the accessories "Opening stock" batches (made by the migration).
 
 ## D. Manual testing (nothing tested by you yet)
 
+**Demo shop with sample data in every module** (2026-11-02): `cd frontend && node scripts/demo-shop.mjs`
+with the backend running. Locally it made "Demo Mobile Centre": owner `03001112233`, manager
+`03221112233`, salesman `03331112233`, password `demo12345` — about two months of purchases
+(cash / credit), sales (cash, udhaar, part paid, discount, tax, installments, wholesale, Easypaisa,
+bank), returns both ways, a void, a price change, ID checks (pending / flagged / skipped with a
+reason), tablet, watch, accessories by the dozen, a loan to another shop, repairs, bank deposit,
+supplier payments, expenses. For the live server: `API=https://<domain>/api/v1 PHONE=03xxxxxxxxx
+node scripts/demo-shop.mjs` — only if you want a demo shop on production.
+
 Close the app fully and open it again first (or install the newest APK from the latest Deploy run →
 `android / apk`), so the newest version loads.
 
@@ -98,6 +107,11 @@ Close the app fully and open it again first (or install the newest APK from the 
 | [ ] | Bulk Excel | More → Bulk Excel → download sheet → fill → upload | preview first, then import |
 | [ ] | Business profile | Settings → upload your logo, fill Logo & business details, Owner, Tax registration (NTN), Currency, Printed bill → print a sale bill | logo, NTN, terms on the bill; money written your way everywhere |
 | [ ] | Landing page | open the website logged out | new cards, screenshots, scanner FAQ |
+| [ ] | Len-den (money with no bill) | open a person → Len-den card → "Took money (len-den)" 5,000; later sell them a phone on udhaar → "Adjust now" | card shows what is len-den vs bills; the bill becomes paid; Shop audit → Len-den shows given / taken / open; Hisaab and cash say "Len-den", not "Udhaar received" |
+| [ ] | Repair labs | Repairs → Repair labs → Add a lab (name, mobile, market); a repair job → Send to a lab → Back from lab (charge, paid now) | the lab's record shows the phone, fixed %, what you owe; Audit → Repairs shows income, lab charges, profit |
+| [ ] | Repair sticker | a repair job → Print sticker → tick the fields → Print on your label printer → scan it on Home | sticker with the details you picked; the scan opens the job |
+| [ ] | Help "?" everywhere | open any screen in Urdu and in English → tap the small ? next to a card, tab or field | a sheet with what it is and an example; tell me any text that is unclear or wrong |
+| [ ] | Len-den reminder | demo shop → Tariq Bhai → Send reminder; Settings → Notifications → udhaar reminders on | WhatsApp opens with "Rs. 15,000 … was to come back on …"; home shows "people late returning len-den" and "len-den the shop must give back soon" (Star Mobiles) |
 
 ## E. Decisions waiting for you
 
@@ -109,3 +123,6 @@ Close the app fully and open it again first (or install the newest APK from the 
 | [ ] | Lock check also for used **mobiles**? | off (tablets / watches always) |
 | [ ] | Tablet / watch page money card still says "Money on this phone" — change to "this device"? | not changed |
 | [ ] | One-PC installs: give each the `SAAS_URL=https://<your domain>` line so they report to Business | not set |
+| [ ] | Item GST %: should a sale bill use the item's own rate (today it uses the shop / sale rate; the item rate is only kept)? | not used |
+| [ ] | Purchase form: rename "Supplier invoice no." (free reference) to "Reference / slip no." so it is not confused with "Supplier bill no."? | not changed |
+| [ ] | Super admin → password request from a staff member: "Set password" changes the owner's password — fix to change the requester's? | not changed |

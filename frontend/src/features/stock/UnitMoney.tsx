@@ -6,6 +6,7 @@ import { ArrowDown, ArrowUp, Printer, Receipt, RotateCcw, Tag, Wallet } from 'lu
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
+import Help from '@/components/Help'
 import { Chip, Loading, Section, Sheet, fmtDate } from '@/components/ui'
 import PaymentForm, { type Allocation } from '@/features/payments/PaymentForm'
 import { useAuth } from '@/lib/auth'
@@ -46,7 +47,7 @@ export default function UnitMoney({ deviceId }: { deviceId: string }) {
       <div className={`flex flex-col gap-2 rounded-3xl p-4 ${bought ? 'bg-buy text-buy-fg' : 'bg-sell text-sell-fg'}`}>
         <div className="flex items-start justify-between gap-2">
           <span className="flex min-w-0 flex-col">
-            <BiLabel text={bought ? 'unit.boughtFrom' : 'unit.soldTo'} size="sm" tone="text-current" className="opacity-80" />
+            <span className="flex items-center gap-1"><BiLabel text={bought ? 'unit.boughtFrom' : 'unit.soldTo'} size="sm" tone="text-current" className="opacity-80" />{bought ? <Help term="stock.unit.bought" size="sm" /> : <Help term="stock.unit.sold" size="sm" />}</span>
             <button type="button" onClick={() => side.party_id && nav(`/parties/${side.party_id}`)} className="truncate text-start text-lg font-extrabold underline-offset-2 hover:underline">{side.party_name ?? pick('sale.cashCustomer')}</button>
             <span className={`opacity-80 ${small}`} dir="ltr">{side.no} · {fmtDate(side.date)}{side.shared_bill ? ` · ${pick('unit.sharedBill').replace('{{t}}', n(side.doc_total))}` : ''}{!bought && side.asking_at_sale ? ` · ${pick('confirm.asking')} ${n(side.asking_at_sale)}` : ''}</span>
           </span>
@@ -54,9 +55,13 @@ export default function UnitMoney({ deviceId }: { deviceId: string }) {
         </div>
         {!hidden ? (
           <div className="grid grid-cols-3 gap-2">
-            {([['unit.agreed', side.line_total], [bought ? 'unit.paidOut' : 'unit.receivedIn', side.paid], [bought ? 'unit.stillToPay' : 'unit.stillToGet', side.remaining]] as [string, string | null][]).map(([k, v]) => (
+            {([
+              { k: 'unit.agreed', v: side.line_total, help: 'stock.unit.agreed' },
+              bought ? { k: 'unit.paidOut', v: side.paid, help: 'stock.unit.paidOut' } : { k: 'unit.receivedIn', v: side.paid, help: 'stock.unit.receivedIn' },
+              bought ? { k: 'unit.stillToPay', v: side.remaining, help: 'stock.unit.stillToPay' } : { k: 'unit.stillToGet', v: side.remaining, help: 'stock.unit.stillToGet' },
+            ] as { k: string; v: string | null; help: string }[]).map(({ k, v, help }) => (
               <div key={k} className="flex flex-col rounded-2xl bg-white/10 px-3 py-2">
-                <span className={`opacity-80 ${small}`}>{pick(k)}</span>
+                <span className={`flex items-center gap-1 opacity-80 ${small}`}>{pick(k)}<Help term={help} size="sm" /></span>
                 <span className="num text-lg" dir="ltr">{n(v)}</span>
               </div>
             ))}
@@ -64,7 +69,7 @@ export default function UnitMoney({ deviceId }: { deviceId: string }) {
         ) : <BiLabel text="unit.costHidden" size="sm" tone="text-current" className="opacity-80" />}
         {!hidden ? (
           <div className="flex flex-col gap-1 rounded-2xl bg-white/10 px-3 py-2">
-            <div className="flex items-center justify-between"><span className={small}>{pick(bought ? 'unit.upfrontPaid' : 'unit.upfrontReceived')} · <span dir="ltr">{fmtDate(side.date)}</span></span><span className="num" dir="ltr">{n(side.upfront)}</span></div>
+            <div className="flex items-center justify-between"><span className={`flex items-center gap-1 ${small}`}><span>{pick(bought ? 'unit.upfrontPaid' : 'unit.upfrontReceived')} · <span dir="ltr">{fmtDate(side.date)}</span></span><Help term="stock.unit.upfront" size="sm" /></span><span className="num" dir="ltr">{n(side.upfront)}</span></div>
             {side.payments.map((p) => (
               <div key={p.payment_id} className="flex items-center justify-between gap-2">
                 <span className={`flex min-w-0 items-center gap-1 ${small}`}><span dir="ltr">{p.no}</span> · <span dir="ltr">{fmtDate(p.date)}</span>{p.method !== 'cash' ? <span>· {pick(`pay.m.${p.method}`)}</span> : null}</span>
@@ -85,28 +90,28 @@ export default function UnitMoney({ deviceId }: { deviceId: string }) {
 
   return (
     <>
-      <Section title="unit.title">
+      <Section title="unit.title" help="stock.unit.title">
         <div className="card grid grid-cols-2 gap-2 sm:grid-cols-4" data-testid="unit-tiles">
           {([
-            canCost ? ['unit.cost', s.cost, 'text-ink'] : null,
-            canCost ? ['unit.stillToPay', s.payable, Number(s.payable) > 0 ? 'text-payable' : 'text-ink'] : null,
-            ['unit.askingNow', s.asking_price, 'text-ink'],
-            s.original_asking != null && s.original_asking !== s.asking_price ? ['unit.askingFirst', s.original_asking, 'text-muted'] : null,
-            ['unit.soldFor', s.sold_for, 'text-ink'],
-            ['unit.stillToGet', s.sold_for != null ? s.receivable : null, Number(s.receivable) > 0 ? 'text-receivable' : 'text-ink'],
-            canCost && s.margin != null ? ['unit.margin', s.margin, Number(s.margin) >= 0 ? 'text-emerald-deep' : 'text-payable'] : null,
-          ].filter(Boolean) as [string, string | null, string][]).map(([k, v, tone]) => (
+            canCost ? { k: 'unit.cost', v: s.cost, tone: 'text-ink', help: 'cost' } : null,
+            canCost ? { k: 'unit.stillToPay', v: s.payable, tone: Number(s.payable) > 0 ? 'text-payable' : 'text-ink', help: 'stock.unit.stillToPay' } : null,
+            { k: 'unit.askingNow', v: s.asking_price, tone: 'text-ink', help: 'stock.unit.askingNow' },
+            s.original_asking != null && s.original_asking !== s.asking_price ? { k: 'unit.askingFirst', v: s.original_asking, tone: 'text-muted', help: 'stock.unit.askingFirst' } : null,
+            { k: 'unit.soldFor', v: s.sold_for, tone: 'text-ink', help: 'stock.unit.soldFor' },
+            { k: 'unit.stillToGet', v: s.sold_for != null ? s.receivable : null, tone: Number(s.receivable) > 0 ? 'text-receivable' : 'text-ink', help: 'stock.unit.stillToGet' },
+            canCost && s.margin != null ? { k: 'unit.margin', v: s.margin, tone: Number(s.margin) >= 0 ? 'text-emerald-deep' : 'text-payable', help: 'stock.unit.margin' } : null,
+          ].filter(Boolean) as { k: string; v: string | null; tone: string; help: string }[]).map(({ k, v, tone, help }) => (
             <div key={k} className="flex flex-col rounded-2xl bg-ground px-3 py-2">
-              <span className={`text-muted ${small}`}>{pick(k)}</span>
+              <span className={`flex items-center gap-1 text-muted ${small}`}>{pick(k)}<Help term={help} size="sm" /></span>
               <span className={`num text-xl ${tone}`} dir="ltr">{v == null ? '—' : n(v)}</span>
             </div>
           ))}
         </div>
-        {data.purchase ? <SideCard side={data.purchase} role="bought" /> : s.source === 'opening_stock' ? <BiLabel text="unit.openingStock" size="sm" tone="text-muted" /> : null}
+        {data.purchase ? <SideCard side={data.purchase} role="bought" /> : s.source === 'opening_stock' ? <span className="flex items-center gap-1"><BiLabel text="unit.openingStock" size="sm" tone="text-muted" /><Help term="opening" size="sm" /></span> : null}
         {data.sale ? <SideCard side={data.sale} role="sold" /> : null}
       </Section>
 
-      <Section title="stock.history" right={<DownloadButton path={`/api/v1/exports/devices/${deviceId}/history`} name={`history-${deviceId.slice(0, 8)}`} />}>
+      <Section title="stock.history" help="stock.history" right={<DownloadButton path={`/api/v1/exports/devices/${deviceId}/history`} name={`history-${deviceId.slice(0, 8)}`} />}>
         <div className="card p-0">
           {[...data.timeline].reverse().map((t, i) => <TimelineRow key={i} t={t} first={i === 0} canCost={canCost} />)}
         </div>

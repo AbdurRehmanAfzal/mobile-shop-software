@@ -4,10 +4,12 @@
 import { FileText, Trash2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
-import { Empty, Loading, fmtDate } from '@/components/ui'
+import Help from '@/components/Help'
+import { Empty, fmtDate, Pending } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
 import AuditLayout from './AuditLayout'
+import SectionDownload from './SectionDownload'
 import { useAuditPeriod } from './period'
 import { withCur } from '@/lib/format'
 
@@ -15,6 +17,9 @@ type M = string
 interface Audit { by_kind: { kind: string; count: number; amount: M | null; voided: number }[]; by_status: { status: string; count: number; amount: M; due: M }[]; by_user: { user_name: string | null; sales: number; sales_amount: M; purchases: number; payments: number; voids: number }[]; voided: { kind: string; id: string; no: string; date: string; amount: M | null; by: string | null; reason: string | null }[]; totals: { documents: number; voided: number } }
 
 const n = (v: M | number | null | undefined) => (v == null ? '—' : Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 }))
+// a sale bill's status in the shop's words ("open" is not "in repair" here); void keeps inv.state.void
+const SALE_STATE: Record<string, string> = { open: 'audit.trade.st.unpaid', partially_paid: 'audit.trade.st.partial', paid: 'audit.trade.st.paid', returned: 'audit.trade.st.returned' }
+const KIND_HELP: Record<string, { helpKey: string }> = { sale: { helpKey: 'audit.bills.k.sale' }, purchase: { helpKey: 'audit.bills.k.purchase' }, payment_in: { helpKey: 'audit.bills.k.paymentIn' }, payment_out: { helpKey: 'audit.bills.k.paymentOut' }, sale_return: { helpKey: 'audit.bills.k.saleReturn' }, purchase_return: { helpKey: 'audit.bills.k.purchaseReturn' } }
 const KIND_LINK: Record<string, string> = { sale: 'kind=sale', purchase: 'kind=purchase', sale_return: 'kind=return', purchase_return: 'kind=return', payment_in: '', payment_out: '' }
 
 export default function InvoiceAuditPage() {
@@ -22,37 +27,37 @@ export default function InvoiceAuditPage() {
   const role = useAuth((s) => s.me?.user.role)
   const canCost = role === 'owner' || role === 'manager'
   const { period, query } = useAuditPeriod()
-  const { data, isLoading } = useGet<Audit>(['audit-invoices', query], `/api/v1/shop-audit/invoices?${query}`)
+  const { data, isLoading, error, refetch } = useGet<Audit>(['audit-invoices', query], `/api/v1/shop-audit/invoices?${query}`)
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   const range = period.preset === 'custom' ? `&from=${period.from}&to=${period.to}` : ''
   const open = (kind: string, id: string) => (kind === 'sale' ? `/sales/${id}` : kind === 'purchase' ? `/purchases/${id}` : '/payments')
   return (
-    <AuditLayout>
-      {isLoading || !data ? <Loading /> : (
+    <AuditLayout right={<SectionDownload sections={['invoices']} name="bills" />}>
+      {isLoading || !data ? <Pending error={error} retry={refetch} /> : (
         <>
           <section className="flex items-center justify-between rounded-3xl bg-khata px-5 py-4 text-khata-fg" data-testid="bills-total">
-            <span className="flex items-center gap-2"><FileText size={20} /><BiLabel text="audit.doc.documents" size="md" bold tone="text-current" /></span>
+            <span className="flex items-center gap-2"><FileText size={20} /><BiLabel text="audit.doc.documents" size="md" bold tone="text-current" /><Help term="audit.bills" size="sm" /></span>
             <span className="num text-2xl font-bold" dir="ltr">{data.totals.documents}</span>
           </section>
           <div className="grid grid-cols-2 gap-2 lg:grid-cols-3" data-testid="bills-kinds">
             {data.by_kind.filter((k) => canCost || !['purchase', 'purchase_return', 'payment_out'].includes(k.kind)).map((k) => (
               <Link key={k.kind} to={k.kind.startsWith('payment') ? '/payments' : `/invoices?${KIND_LINK[k.kind]}${range}`} className="card tap flex min-w-0 flex-col gap-1">
-                <BiLabel text={`audit.doc.k.${k.kind}`} size="sm" tone="text-muted" bold />
+                <span className="flex items-center gap-1"><BiLabel text={`audit.doc.k.${k.kind}`} size="sm" tone="text-muted" bold />{KIND_HELP[k.kind] ? <Help term={KIND_HELP[k.kind].helpKey} size="sm" /> : null}</span>
                 <span className="num text-xl font-bold" dir="ltr">{k.count}</span>
                 <span className={`text-muted ${small}`}>{k.amount != null ? <span className="num" dir="ltr">{withCur(n(k.amount))}</span> : null}{k.voided ? <span className="text-payable"> · {k.voided} {pick('audit.doc.voided')}</span> : null}</span>
               </Link>
             ))}
           </div>
-          <BiLabel text="audit.doc.byStatus" size="md" bold />
+          <span className="flex items-center gap-1"><BiLabel text="audit.doc.byStatus" size="md" bold /><Help term="audit.bills.byStatus" size="sm" /></span>
           <div className="card divide-y divide-line p-0" data-testid="bills-status">
             {data.by_status.map((s) => (
               <div key={s.status} className="flex items-center gap-3 px-4 py-2">
-                <span className="flex-1 font-bold">{pick(`inv.state.${s.status}`)}</span>
+                <span className="flex-1 font-bold">{pick(SALE_STATE[s.status] ?? `inv.state.${s.status}`)}</span>
                 <span className={`text-muted ${small}`} dir="ltr">{s.count} · {withCur(n(s.amount))}{Number(s.due) ? ` · ${pick('audit.doc.due')} ${n(s.due)}` : ''}</span>
               </div>
             ))}
           </div>
-          <BiLabel text="audit.doc.byUser" size="md" bold />
+          <span className="flex items-center gap-1"><BiLabel text="audit.doc.byUser" size="md" bold /><Help term="audit.bills.byUser" size="sm" /></span>
           <div className="card divide-y divide-line p-0" data-testid="bills-users">
             {data.by_user.map((u, i) => (
               <div key={i} className="flex items-center gap-3 px-4 py-2">
@@ -61,7 +66,7 @@ export default function InvoiceAuditPage() {
               </div>
             ))}
           </div>
-          <div className="flex items-center gap-2"><Trash2 size={16} className="text-payable" /><BiLabel text="audit.doc.voidedList" size="md" bold /><span className={`text-muted ${small}`}>({data.totals.voided})</span></div>
+          <div className="flex items-center gap-2"><Trash2 size={16} className="text-payable" /><BiLabel text="audit.doc.voidedList" size="md" bold /><span className={`text-muted ${small}`}>({data.totals.voided})</span><Help term="audit.bills.voided" size="sm" /></div>
           {!data.voided.length ? <Empty text="audit.doc.noVoid" /> : (
             <div className="card divide-y divide-line p-0" data-testid="bills-voided">
               {data.voided.map((v, i) => (

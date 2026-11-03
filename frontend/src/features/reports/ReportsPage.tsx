@@ -30,6 +30,20 @@ const n = (v: string | number | null | undefined) => Math.abs(Number(v ?? 0)).to
 /** "− 800" for money taken off; plain "0" when nothing was */
 const minus = (v: string | number) => (Number(v) ? `− ${n(v)}` : '0')
 const monthStart = () => { const d = new Date(); return isoDay(1 - d.getDate()) }
+/** the "?" beside the tab row explains the tab that is open (docs/33) */
+const TAB_HELP: { key: Tab; help: string }[] = [
+  { key: 'profit', help: 'report.tab.profit' },
+  { key: 'top', help: 'report.tab.top' },
+  { key: 'estimate', help: 'report.tab.estimate' },
+  { key: 'old', help: 'report.tab.old' },
+  { key: 'types', help: 'report.tab.types' },
+  { key: 'prices', help: 'report.tab.prices' },
+]
+/** a small tile label with its "?" (stock by type) */
+function TileLabel({ text, help }: { text: string; help: string }) {
+  const { pick, ur, cls } = useLang()
+  return <span className={`flex items-center gap-0.5 text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick(text)}<Help term={help} size="sm" /></span>
+}
 
 export default function ReportsPage() {
   const { pick, ur, cls } = useLang()
@@ -59,6 +73,7 @@ export default function ReportsPage() {
     <div className="flex flex-col gap-3">
       <PageHeader
         title="counter.reportTitle"
+        help={<Help term="more.tile.reports" />}
         right={tab === 'prices' || tab === 'types' ? null : (
           <DownloadButton
             path={tab === 'profit' ? `/api/v1/exports/profit-loss${qs}` : tab === 'top' ? `/api/v1/exports/top-sellers${qs}` : tab === 'estimate' ? '/api/v1/exports/forecast' : '/api/v1/exports/stock-ageing'}
@@ -68,15 +83,18 @@ export default function ReportsPage() {
       />
       <Link to="/audit" className="card tap flex items-center gap-3 print:hidden" data-testid="to-audit">
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ink text-ground"><BarChart3 size={20} /></span>
-        <span className="flex min-w-0 flex-col"><BiLabel text="audit.title" size="md" bold /><BiLabel text="audit.hint" size="sm" tone="text-muted" /></span>
+        <span className="flex min-w-0 flex-1 flex-col"><BiLabel text="audit.title" size="md" bold /><BiLabel text="audit.hint" size="sm" tone="text-muted" /></span>
+        <Help term="audit" size="sm" />
       </Link>
-      <div className="print:hidden">
-        <BiSegmented<Tab> value={tab} onChange={setTab} options={[{ value: 'profit', text: 'counter.tabProfit' }, { value: 'top', text: 'counter.tabTop' }, { value: 'estimate', text: 'counter.tabEstimate' }, { value: 'old', text: 'counter.tabOld' }, { value: 'types', text: 'devx.typesTab' }, { value: 'prices', text: 'prices.tab' }]} />
+      <div className="print:hidden flex items-center gap-1">
+        <div className="min-w-0 flex-1"><BiSegmented<Tab> value={tab} onChange={setTab} options={[{ value: 'profit', text: 'counter.tabProfit' }, { value: 'top', text: 'counter.tabTop' }, { value: 'estimate', text: 'counter.tabEstimate' }, { value: 'old', text: 'counter.tabOld' }, { value: 'types', text: 'devx.typesTab' }, { value: 'prices', text: 'prices.tab' }]} /></div>
+        <Help term={TAB_HELP.find((t) => t.key === tab)!.help} size="sm" />
       </div>
 
       {tab === 'profit' || tab === 'top' || tab === 'prices' ? (
         <div className="print:hidden flex flex-col gap-2">
-          <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
+          <div className="-mx-1 flex items-center gap-1.5 overflow-x-auto px-1 pb-1">
+            <Help term="common.period" size="sm" />
             {(['today', 'yesterday', 'last7', 'month', 'custom'] as const).map((r) => (
               <button key={r} type="button" aria-pressed={range === r} onClick={() => setRange(r)} className={chip(range === r)}>
                 {pick({ today: 'counter.today', yesterday: 'counter.yesterday', last7: 'counter.last7', month: 'counter.thisMonth', custom: 'counter.fromTo' }[r])}
@@ -102,26 +120,26 @@ export default function ReportsPage() {
             <div className="card flex flex-col p-0">
               {Number(pnl.discounts) || Number(pnl.sales_returns) ? (
                 <>
-                  <Line label="counter.grossSales" value={n(pnl.gross_sales)} />
-                  {Number(pnl.discounts) ? <Line label="counter.discounts" value={minus(pnl.discounts)} muted /> : null}
-                  {Number(pnl.sales_returns) ? <Line label="counter.salesReturns" value={minus(pnl.sales_returns)} muted /> : null}
-                  <Line label="counter.netSales" value={n(pnl.net_sales)} />
+                  <Line label="counter.grossSales" value={n(pnl.gross_sales)} help="report.grossSales" />
+                  {Number(pnl.discounts) ? <Line label="counter.discounts" value={minus(pnl.discounts)} muted help="report.discounts" /> : null}
+                  {Number(pnl.sales_returns) ? <Line label="counter.salesReturns" value={minus(pnl.sales_returns)} muted help="report.salesReturns" /> : null}
+                  <Line label="counter.netSales" value={n(pnl.net_sales)} help="report.netSales" />
                 </>
               ) : (
-                <Line label="counter.sold" value={n(pnl.sales)} />
+                <Line label="counter.sold" value={n(pnl.sales)} help="report.netSales" />
               )}
-              <Line label="counter.cogs" value={minus(pnl.cogs)} muted />
-              <Line label="counter.grossProfit" value={n(pnl.gross_profit)} strong />
+              <Line label="counter.cogs" value={minus(pnl.cogs)} muted help="report.cogs" />
+              <Line label="counter.grossProfit" value={n(pnl.gross_profit)} strong help="report.grossProfit" />
               {Object.entries(pnl.expenses).map(([k, v]) => <Line key={k} label={{ en: catName(k), ur: catName(k) }} value={minus(v)} muted />)}
-              {Number(pnl.total_expenses) ? <Line label="counter.operatingProfit" value={n(pnl.operating_profit)} /> : null}
-              {Number(pnl.repair_income) + Number(pnl.other_income) ? <Line label="counter.otherIncome" value={`+ ${n(Number(pnl.repair_income) + Number(pnl.other_income))}`} /> : null}
-              <Line label={net >= 0 ? 'counter.netProfit' : 'counter.netLoss'} value={n(net)} strong />
+              {Number(pnl.total_expenses) ? <Line label="counter.operatingProfit" value={n(pnl.operating_profit)} help="report.operatingProfit" /> : null}
+              {Number(pnl.repair_income) + Number(pnl.other_income) ? <Line label="counter.otherIncome" value={`+ ${n(Number(pnl.repair_income) + Number(pnl.other_income))}`} help="report.otherIncome" /> : null}
+              <Line label={net >= 0 ? 'counter.netProfit' : 'counter.netLoss'} value={n(net)} strong help="report.netProfit" />
             </div>
             <div className="card flex flex-col p-0">
-              <Line label="counter.taxCollected" value={n(pnl.tax_collected)} />
-              {Number(pnl.owner_drawing) ? <Line label="counter.ownerTook" value={n(pnl.owner_drawing)} muted /> : null}
+              <Line label="counter.taxCollected" value={n(pnl.tax_collected)} help="report.taxCollected" />
+              {Number(pnl.owner_drawing) ? <Line label="counter.ownerTook" value={n(pnl.owner_drawing)} muted help="report.ownerTook" /> : null}
             </div>
-            <BiLabel text="counter.lists" size="md" bold className="mt-2" />
+            <span className="mt-2 flex items-center gap-1"><BiLabel text="counter.lists" size="md" bold /><Help term="report.lists" size="sm" /></span>
             <div className="card divide-y divide-line p-0">
               {(['sales', 'purchases', 'expenses'] as const).map((k) => (
                 <div key={k} className="flex items-center justify-between gap-3 px-4 py-2">
@@ -155,7 +173,7 @@ export default function ReportsPage() {
         !fc ? <Loading /> : (
           <>
             <section className="flex flex-col gap-1 rounded-3xl bg-buy px-5 py-4 text-buy-fg">
-              <BiLabel text="counter.next7" size="md" bold tone="text-current" />
+              <span className="flex items-center gap-1 [&_button]:text-current"><BiLabel text="counter.next7" size="md" bold tone="text-current" /><Help term="report.next7" size="sm" /></span>
               <span className="num text-[30px] leading-tight" dir="ltr">{withCur(n(fc.next_7_total))}</span>
               <span className={small}>{pick('counter.lastWeek')}: <span className="num" dir="ltr">{n(fc.last_7_days)}</span> · {pick('counter.prevWeek')}: <span className="num" dir="ltr">{n(fc.previous_7_days)}</span></span>
             </section>
@@ -168,7 +186,7 @@ export default function ReportsPage() {
               ))}
             </div>
             <BiLabel text="counter.estimateNote" size="sm" tone="text-muted" />
-            <BiLabel text="counter.runOut" size="md" bold className="mt-2" />
+            <span className="mt-2 flex items-center gap-1"><BiLabel text="counter.runOut" size="md" bold /><Help term="report.runOut" size="sm" /></span>
             {!fc.models.length ? <Empty text="counter.noData" /> : (
               <div className="card divide-y divide-line p-0">
                 {fc.models.map((m) => (
@@ -198,12 +216,12 @@ export default function ReportsPage() {
               <section key={r.category} className="card flex flex-col gap-2">
                 <div className="flex items-center justify-between"><span className="text-base font-extrabold">{pick(`devcat.${r.category}`)}</span><span className="num text-lg" dir="ltr">{r.count}</span></div>
                 <div className="grid grid-cols-2 gap-2 text-sm">
-                  {r.cost != null ? <div className="flex flex-col rounded-xl bg-ground px-3 py-2"><span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick('devx.types.cost')}</span><span className="num" dir="ltr">{n(r.cost)}</span></div> : null}
-                  <div className="flex flex-col rounded-xl bg-ground px-3 py-2"><span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick('devx.types.retail')}</span><span className="num" dir="ltr">{n(r.retail)}</span></div>
-                  <div className="flex flex-col rounded-xl bg-ground px-3 py-2"><span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick('devx.types.used')}</span><span className="num" dir="ltr">{r.used}</span></div>
-                  <div className="flex flex-col rounded-xl bg-ground px-3 py-2"><span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick('devx.types.nonPta')}</span><span className="num" dir="ltr">{r.non_pta}</span></div>
-                  <div className={`flex flex-col rounded-xl px-3 py-2 ${r.lock_unchecked + r.lock_failed ? 'bg-payable-tint' : 'bg-ground'}`}><span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick('devx.types.lockUnchecked')} / {pick('devx.types.lockFailed')}</span><span className="num" dir="ltr">{r.lock_unchecked} / {r.lock_failed}</span></div>
-                  <div className="flex flex-col rounded-xl bg-ground px-3 py-2"><span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick('devx.types.slow')}</span><span className="num" dir="ltr">{r.slow_60d}</span></div>
+                  {r.cost != null ? <div className="flex flex-col rounded-xl bg-ground px-3 py-2"><TileLabel text="devx.types.cost" help="report.typeCost" /><span className="num" dir="ltr">{n(r.cost)}</span></div> : null}
+                  <div className="flex flex-col rounded-xl bg-ground px-3 py-2"><TileLabel text="devx.types.retail" help="report.typeRetail" /><span className="num" dir="ltr">{n(r.retail)}</span></div>
+                  <div className="flex flex-col rounded-xl bg-ground px-3 py-2"><TileLabel text="devx.types.used" help="report.typeUsed" /><span className="num" dir="ltr">{r.used}</span></div>
+                  <div className="flex flex-col rounded-xl bg-ground px-3 py-2"><TileLabel text="devx.types.nonPta" help="report.typeNonPta" /><span className="num" dir="ltr">{r.non_pta}</span></div>
+                  <div className={`flex flex-col rounded-xl px-3 py-2 ${r.lock_unchecked + r.lock_failed ? 'bg-payable-tint' : 'bg-ground'}`}><span className={`flex items-center gap-0.5 text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick('devx.types.lockUnchecked')} / {pick('devx.types.lockFailed')}<Help term="report.typeLock" size="sm" /></span><span className="num" dir="ltr">{r.lock_unchecked} / {r.lock_failed}</span></div>
+                  <div className="flex flex-col rounded-xl bg-ground px-3 py-2"><TileLabel text="devx.types.slow" help="report.typeSlow" /><span className="num" dir="ltr">{r.slow_60d}</span></div>
                 </div>
               </section>
             ))}
@@ -217,7 +235,7 @@ export default function ReportsPage() {
           <div className="grid grid-cols-2 gap-2">
             {age.map((a) => (
               <div key={a.bucket} className={`flex flex-col rounded-3xl p-4 ${a.bucket === '60+' ? 'bg-expense text-expense-fg' : a.bucket === '31-60' ? 'bg-khata text-khata-fg' : 'bg-surface border border-line'}`}>
-                <span className={small}><span className="num" dir="ltr">{a.bucket}</span> {pick('counter.days')}</span>
+                <span className={`flex items-center gap-1 [&_button]:text-current ${small}`}><span><span className="num" dir="ltr">{a.bucket}</span> {pick('counter.days')}</span><Help term="report.ageBucket" size="sm" /></span>
                 <span className="num text-3xl">{a.count}</span>
                 {a.value !== null ? <span className="num text-sm opacity-80" dir="ltr">{withCur(n(a.value))}</span> : null}
               </div>
@@ -229,7 +247,7 @@ export default function ReportsPage() {
       {tab === 'prices' ? (
         !prices ? <Loading /> : (
           <>
-            <BiLabel text="prices.hint" size="sm" tone="text-muted" />
+            <span className="flex items-start gap-1"><BiLabel text="prices.hint" size="sm" tone="text-muted" /><Help term="report.priceRows" size="sm" /></span>
             {prices.by_user.length ? (
               <div className="card divide-y divide-line p-0">
                 {prices.by_user.map((u) => (
@@ -266,11 +284,12 @@ export default function ReportsPage() {
   )
 }
 
-function Line({ label, value, strong, muted }: { label: string | { en: string; ur: string }; value: ReactNode; strong?: boolean; muted?: boolean }) {
+/** `help`: a key under `help.` for the "?" beside the line's label */
+function Line({ label, value, strong, muted, help }: { label: string | { en: string; ur: string }; value: ReactNode; strong?: boolean; muted?: boolean; help?: string }) {
   const { pick, ur, cls } = useLang()
   return (
     <div className={`flex items-center justify-between gap-3 border-b border-line px-4 py-2.5 last:border-0 ${strong ? 'bg-ground/60' : ''}`}>
-      <span className={`${ur ? cls('md') : 'text-[15px]'} ${strong ? 'font-bold' : muted ? 'text-muted' : ''}`}>{pick(label)}</span>
+      <span className={`flex items-center gap-1 ${ur ? cls('md') : 'text-[15px]'} ${strong ? 'font-bold' : muted ? 'text-muted' : ''}`}>{pick(label)}{help ? <Help term={help} size="sm" /> : null}</span>
       <span className={`num ${strong ? 'text-xl' : 'text-base'} ${muted ? 'text-muted' : ''}`} dir="ltr">{value}</span>
     </div>
   )

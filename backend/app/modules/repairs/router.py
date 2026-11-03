@@ -7,16 +7,23 @@ from fastapi.responses import HTMLResponse
 from app.core.errors import Forbidden
 from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx, CurrentContext, get_current_context
+from app.modules.repairs import labs as labs_svc
 from app.modules.repairs import service
 from app.modules.repairs.models import RepairStatus
 from app.modules.repairs.schemas import (
     FAULT_CODES,
+    BackIn,
+    CancelIn,
     DeliverIn,
+    LabDetailOut,
+    LabStats,
     PartIn,
     RepairCreate,
     RepairOut,
     RepairUpdate,
+    SendIn,
     StatusIn,
+    TripOut,
 )
 
 router = APIRouter(prefix="/api/v1/repairs", tags=["repairs"])
@@ -36,6 +43,17 @@ def _worker(ctx: Annotated[CurrentContext, Depends(get_current_context)]) -> Cur
 
 Creator = Annotated[CurrentContext, Depends(_creator)]
 Worker = Annotated[CurrentContext, Depends(_worker)]
+
+
+@router.get("/labs", response_model=list[LabStats])
+def labs(ctx: Worker, db: DB):
+    """every repair lab / outside technician with its record (docs/34)"""
+    return labs_svc.labs(db, ctx.shop_id)
+
+
+@router.get("/labs/{party_id}", response_model=LabDetailOut)
+def lab_detail(party_id: uuid.UUID, ctx: Worker, db: DB):
+    return labs_svc.lab_detail(db, ctx.shop_id, party_id)
 
 
 @router.get("/fault-codes")
@@ -97,6 +115,24 @@ def status(job_id: uuid.UUID, data: StatusIn, ctx: Worker, db: DB):
 @router.post("/{job_id}/deliver", response_model=RepairOut)
 def deliver(job_id: uuid.UUID, data: DeliverIn, ctx: Creator, db: DB):
     return service.to_out(db, service.deliver(db, ctx.shop_id, ctx.id, job_id, data))
+
+
+@router.post("/{job_id}/lab", response_model=TripOut, status_code=201)
+def send_to_lab(job_id: uuid.UUID, data: SendIn, ctx: Worker, db: DB):
+    d = labs_svc.send(db, ctx.shop_id, ctx.id, job_id, **data.model_dump())
+    return labs_svc.trip_out(db, d)
+
+
+@router.post("/{job_id}/lab/{dispatch_id}/back", response_model=TripOut)
+def back_from_lab(job_id: uuid.UUID, dispatch_id: uuid.UUID, data: BackIn, ctx: Creator, db: DB):
+    d = labs_svc.back(db, ctx.shop_id, ctx.id, job_id, dispatch_id, **data.model_dump())
+    return labs_svc.trip_out(db, d)
+
+
+@router.post("/{job_id}/lab/{dispatch_id}/cancel", response_model=TripOut)
+def cancel_lab(job_id: uuid.UUID, dispatch_id: uuid.UUID, data: CancelIn, ctx: Worker, db: DB):
+    d = labs_svc.cancel(db, ctx.shop_id, ctx.id, job_id, dispatch_id, data.reason)
+    return labs_svc.trip_out(db, d)
 
 
 @router.get("/{job_id}/job-sheet", response_class=HTMLResponse)
