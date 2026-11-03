@@ -685,3 +685,8 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - tsc; vitest;
 - Playwright `repair-labs.spec.ts`;
 - the overflow probe on 32 screens (Urdu): none wider than the phone.
+- Release: PR #25 develop → main merged (`c56c58e`) on the owner's "live kr do".
+  - Ships the reports audit, len-den with reminders, help on every field, and repair labs with the repair sticker.
+  - CI's first frontend build failed: the app bundle was 2.45 MB, over the 2 MB the service worker precaches. Each language now builds into its own chunk (largest file 1.19 MB) (`a439678`).
+  - Deploy run 41583856395 ✓; production bundle checked: `repairs/labs`, `labels/repairs`, `shop-audit/repairs` and the locale chunks are live.
+  - Migrations `e3a5c7e9f1b3`, `f4b6d8f0a2c4`, `a5c7e9b1d3f6` run in the backend container.
