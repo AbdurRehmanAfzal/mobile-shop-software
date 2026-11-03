@@ -303,7 +303,7 @@
     "miscDesc": "Item",
     "qty": "Qty",
     "unitCost": "Unit cost",
-    "reference": "Supplier invoice no.",
+    "reference": "Reference / slip no.",
     "cashAccount": "Paid from",
     "created": "Purchase saved",
     "verifyNow": "Check ID card now",
@@ -1269,7 +1269,9 @@
     "shopGrace": "This shop's grace days (empty = default)",
     "paidOn": "Paid on",
     "receipt": "Receipt",
-    "saved": "Saved"
+    "saved": "Saved",
+    "pwFor": "New password for",
+    "pwForOwner": "Set the owner's instead"
   },
   "field": {
     "badMobile": "Enter a 10-digit mobile number starting with 3, e.g. 300 1234567",
@@ -3733,8 +3735,8 @@
       },
       "taxRate": {
         "title": "GST %",
-        "body": "Optional. The sales tax % for this item, kept with the item for your record. The tax on a bill is set at the sale from the shop's tax setting.",
-        "example": "Leave it empty if your shop is not registered for sales tax; write 18 if this item carries 18% GST."
+        "body": "Optional. When a sale is taxed, this item is taxed at its own GST % instead of the bill's rate; phones and items without a rate take the bill's rate. A sale without tax stays without tax.",
+        "example": "Bill taxed at 18%: phone Rs. 10,000 → Rs. 1,800; two cables at Rs. 1,000 with GST 5% → Rs. 100. Bill tax Rs. 1,900."
       },
       "taxIncl": {
         "title": "Price includes tax",
@@ -7458,7 +7460,8 @@
   "saleTax": {
     "add": "Add tax to this bill",
     "rate": "Tax %",
-    "incl": "includes tax"
+    "incl": "includes tax",
+    "byItem": "by item"
   },
   "hold": {
     "button": "Hold sale",

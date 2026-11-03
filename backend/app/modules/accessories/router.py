@@ -274,6 +274,8 @@ def price_for(accessory_id: uuid.UUID, ctx: Ctx, db: DB, party_id: uuid.UUID | N
             "min_price": a.min_price,
             "qty": a.qty,
             "warranty_days": a.warranty_days,
+            # the item's own GST %: used on the bill when the sale is taxed (owner 2026-11-03)
+            "tax_rate": a.tax_rate,
         }
     )
 

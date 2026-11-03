@@ -57,6 +57,8 @@ interface Misc {
   tier?: 'retail' | 'wholesale' | 'promo'
   min_price?: string | null
   warranty_days?: number
+  /** the item's own GST % (owner 2026-11-03): used instead of the bill's rate when the sale is taxed */
+  tax_rate?: string | null
   /** the price is still the pre-filled one, so a change of customer may re-price it */
   auto?: boolean
 }
@@ -68,6 +70,23 @@ const newLine = (d: Device): Line => ({
   acc: Object.fromEntries(((d as Partial<DeviceDetail>).accessories ?? []).filter((a) => a.came_with && a.kind !== 'other').map((a) => [a.kind, { state: 'now', date: '' }])),
 })
 const WARRANTY = [0, 7, 30, 90, 180, 365] as const
+/** paisa rounding half-up, as the server's money() */
+const r2 = (x: number) => Math.round((x + Number.EPSILON) * 100) / 100
+/** The bill's tax exactly as the server works it out (sales.service): one rate on the whole bill, or
+ *  — when an item carries its own GST % — each line at its rate after its share of the discount
+ *  (the remainder of the discount on the last line). Must match, or a walk-in's full payment would
+ *  differ from the bill by a paisa. */
+export function billTax(phonePrices: number[], misc: { qty: string; unit_price: string; tax_rate?: string | null }[], discount: number, rate: number): number {
+  if (rate <= 0) return 0
+  const amounts = [...phonePrices, ...misc.map((m) => r2(Number(m.qty || 0) * Number(m.unit_price || 0)))]
+  const rates = [...phonePrices.map(() => rate), ...misc.map((m) => (m.tax_rate != null && m.tax_rate !== '' ? Number(m.tax_rate) : rate))]
+  const total = amounts.reduce((s, a) => s + a, 0)
+  const base = r2(Math.max(0, total - discount))
+  if (rates.every((r) => r === rate)) return r2((base * rate) / 100)
+  const shares = discount > 0 && total > 0 ? amounts.map((a) => r2((discount * a) / total)) : amounts.map(() => 0)
+  if (shares.length && discount > 0 && total > 0) shares[shares.length - 1] = r2(shares[shares.length - 1] + r2(discount - shares.reduce((s, x) => s + x, 0)))
+  return r2(amounts.reduce((s, a, i) => s + r2(((a - shares[i]) * rates[i]) / 100), 0))
+}
 /** what a held sale keeps: the screen's cart as it was */
 interface Cart { lines: Line[]; misc: Misc[]; discount: string; pay: PayState; party: Party | null; paidNow: string; taxOn: boolean; taxRate: string; more: boolean }
 
@@ -125,7 +144,7 @@ export default function SaleWizard() {
 
   const subtotal = lines.reduce((s, l) => s + Number(l.price || 0), 0) + misc.reduce((s, x) => s + Number(x.qty || 0) * Number(x.unit_price || 0), 0)
   const base = Math.max(0, subtotal - Number(discount || 0))
-  const taxAmount = taxOn ? Math.round(base * Number(rateShown || 0)) / 100 : 0
+  const taxAmount = taxOn ? billTax(lines.map((l) => Number(l.price || 0)), misc, Number(discount || 0), Number(rateShown || 0)) : 0
   const total = Math.round((base + taxAmount) * 100) / 100
   const udhaar = pay.method === 'udhaar' || inst.on
   // a remittance may cover only part of the bill: the rest goes on the customer's khata
@@ -157,7 +176,7 @@ export default function SaleWizard() {
     setMisc((ms) => {
       const same = ms.find((m) => m.accessory_id === it.id)
       if (same) return ms.map((m) => (m === same ? { ...m, qty: String(negativeOk ? Number(m.qty || 0) + 1 : Math.min(Number(m.qty || 0) + 1, it.qty)) } : m))
-      return [...ms, { key: uid(), description: ur && it.name_ur ? it.name_ur : it.name, qty: '1', unit_price: String(Number(pr.price) || ''), accessory_id: it.id, stock: pr.qty, tier: pr.tier, min_price: pr.min_price, warranty_days: pr.warranty_days, auto: true }]
+      return [...ms, { key: uid(), description: ur && it.name_ur ? it.name_ur : it.name, qty: '1', unit_price: String(Number(pr.price) || ''), accessory_id: it.id, stock: pr.qty, tier: pr.tier, min_price: pr.min_price, warranty_days: pr.warranty_days, tax_rate: pr.tax_rate ?? null, auto: true }]
     })
   }
   useEffect(() => {
@@ -490,7 +509,7 @@ export default function SaleWizard() {
             </div>
             {taxOn && taxAmount > 0 ? (
               <span className={`text-hero-text/75 ${ur ? cls('sm') : 'text-xs font-semibold'}`} dir="ltr">
-                {pick('saleTax.incl')} {withCur(taxAmount.toLocaleString('en-US'))} ({rateShown}%)
+                {pick('saleTax.incl')} {withCur(taxAmount.toLocaleString('en-US'))} ({misc.some((m) => m.tax_rate != null && m.tax_rate !== '' && Number(m.tax_rate) !== Number(rateShown)) ? pick('saleTax.byItem') : `${rateShown}%`})
               </span>
             ) : null}
             {owes ? (

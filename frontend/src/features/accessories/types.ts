@@ -77,7 +77,7 @@ export type TimelineRow =
   | { kind: 'move'; at: string; reason: string; qty_delta: number; qty_after: number; unit_cost: string | null; document_type: string | null; document_id: string | null; doc_no: string | null; party_id: string | null; party_name: string | null; amount: string | null; paid: string | null; remaining: string | null }
   | { kind: 'price'; at: string; field: string; old: string | null; new: string | null; source: string }
 
-export interface PriceFor { price: string; tier: 'retail' | 'wholesale' | 'promo'; min_price: string | null; qty: number; warranty_days: number }
+export interface PriceFor { price: string; tier: 'retail' | 'wholesale' | 'promo'; min_price: string | null; qty: number; warranty_days: number; tax_rate?: string | null }
 
 /** the known units in order; the shop's own extra units follow */
 export const UNIT_ORDER = ['piece', 'dozen', 'box', 'carton']

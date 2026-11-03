@@ -169,6 +169,11 @@ def create_sale(
             )
 
     # ---- money ------------------------------------------------------------------
+    item_rates = {
+        m.accessory_id: acc_stock.get_accessory(db, shop_id, m.accessory_id).tax_rate
+        for m in data.misc
+        if m.accessory_id
+    }
     line_amounts = [money(d.price) for d in data.devices] + [
         money(m.unit_price * m.qty) for m in data.misc
     ]
@@ -185,7 +190,31 @@ def create_sale(
         rate, inclusive = money(data.tax_rate), False
     else:
         rate, inclusive = (shop.tax_rate if shop.tax_enabled else ZERO), shop.tax_inclusive
-    tax, total = compute_tax(base, rate, inclusive)
+    # owner 2026-11-03: an item with its own GST % is taxed at that rate when the bill is taxed;
+    # phones and items without one take the bill's rate. No own rate anywhere → as before.
+    line_rates = [rate] * len(data.devices) + [
+        money(item_rates[m.accessory_id])
+        if rate > ZERO and m.accessory_id and item_rates.get(m.accessory_id) is not None
+        else rate
+        for m in data.misc
+    ]
+    shares = _allocate_discount(discount, line_amounts)
+    if any(r != rate for r in line_rates):
+        tax_shares = [
+            compute_tax(money(a - s), r, inclusive)[0]
+            for a, s, r in zip(line_amounts, shares, line_rates, strict=True)
+        ]
+        tax = money(sum(tax_shares, ZERO))
+        total = base if inclusive else money(base + tax)
+    else:
+        tax, total = compute_tax(base, rate, inclusive)
+        tax_shares = (
+            _allocate_discount(
+                tax, [money(a - s) for a, s in zip(line_amounts, shares, strict=True)]
+            )
+            if tax > ZERO
+            else [ZERO] * len(line_amounts)
+        )
     paid = money(data.paid)
     if paid > total:
         raise ValidationFailed(
@@ -227,12 +256,6 @@ def create_sale(
     db.flush()
     paymode.save(db, shop_id, "sale", invoice.id, data.payment, paid)
 
-    shares = _allocate_discount(discount, line_amounts)
-    tax_shares = (
-        _allocate_discount(tax, [money(a - s) for a, s in zip(line_amounts, shares, strict=True)])
-        if tax > ZERO
-        else [ZERO] * len(line_amounts)
-    )
     posting = Posting(
         document_type="invoice",
         document_id=invoice.id,
@@ -715,8 +738,14 @@ def receipt_html(
         if balance is not None and balance != 0
         else ""
     )
+    # one rate for the bill → "Tax 18%"; items with their own GST % → "Tax (by item)"
+    one_rate = (
+        compute_tax(money(inv.subtotal - inv.discount), inv.tax_rate, inv.tax_inclusive)[0]
+        == inv.tax_amount
+    )
+    rate_txt = f"{inv.tax_rate:.0f}%" if one_rate else ("(آئٹم وار)" if ur else "(by item)")
     tax_html = (
-        f"<tr><td colspan='3'>{T['tax']} {inv.tax_rate:.0f}% {T['incl'] if inv.tax_inclusive else ''}</td><td class='n'>{inv.tax_amount:,.0f}</td></tr>"
+        f"<tr><td colspan='3'>{T['tax']} {rate_txt} {T['incl'] if inv.tax_inclusive else ''}</td><td class='n'>{inv.tax_amount:,.0f}</td></tr>"
         if inv.tax_amount
         else ""
     )

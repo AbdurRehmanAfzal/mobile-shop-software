@@ -690,3 +690,15 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
   - CI's first frontend build failed: the app bundle was 2.45 MB, over the 2 MB the service worker precaches. Each language now builds into its own chunk (largest file 1.19 MB) (`a439678`).
   - Deploy run 41583856395 ✓; production bundle checked: `repairs/labs`, `labels/repairs`, `shop-audit/repairs` and the locale chunks are live.
   - Migrations `e3a5c7e9f1b3`, `f4b6d8f0a2c4`, `a5c7e9b1d3f6` run in the backend container.
+
+## 2026-11-03 · Owner's three decisions ("yes from my side")
+- **Item GST %:** a taxed bill uses an item's own GST % on its line; phones and items without a rate take the bill's rate; untaxed bills stay untaxed; no own rate anywhere → exactly as before.
+  - Done in `sales.service` and the price endpoint (`tax_rate`).
+  - The sale screen's `billTax` mirrors the server's rounding, so a walk-in's full payment matches the bill to the paisa.
+  - The receipt prints "Tax (by item)" when the rates differ.
+  - Item help text updated.
+- **Purchase form:** "Supplier invoice no." is now "Reference / slip no." (Urdu had shown the same words for both fields).
+- **Super admin "Set password":** opened from a request, it changes the requester's password (name / role shown, "Set the owner's instead"); the backend already took `user_id`, the screen never sent it.
+**Verified**:
+- backend `test_item_gst.py` (2), `test_admin_access` (+1) + sale / tax / accessories suites;
+- vitest 43 (incl. `billTax.test.ts`); tsc.
