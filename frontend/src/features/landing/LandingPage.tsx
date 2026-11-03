@@ -2,8 +2,8 @@
  *  screenshots, a sample video, prices, the accounts to pay into and an "open a shop for me" form
  *  that reaches the product owner. Served at /welcome; a visitor on / without a login lands here. */
 
-import { ArrowLeftRight, BarChart3, BellRing, BookOpen, Bot, Boxes, CalendarCheck, Check, ChevronDown, CircleHelp, ClipboardCheck, CloudOff, Code2, Copy, CreditCard, Download, FileSpreadsheet, FileText, Fingerprint, FlaskConical, HandCoins, Headphones, History, IdCard, KeyRound, Languages, LineChart, Lock, MessageCircle, Monitor, PackagePlus, PauseCircle, Percent, Phone as PhoneIcon, PlayCircle, Receipt, RotateCcw, ScanBarcode, ScanLine, ShieldCheck, Smartphone, Store, Tablet, Tag, Undo2, UserCog, Users, Wallet, Wrench, type LucideIcon } from 'lucide-react'
-import { useState, type FormEvent, type ReactNode } from 'react'
+import { ArrowLeftRight, BarChart3, BellRing, BookOpen, Bot, Boxes, CalendarCheck, Check, ChevronDown, CircleHelp, ClipboardCheck, CloudOff, Code2, FileSignature, Copy, CreditCard, Download, FileSpreadsheet, FileText, Fingerprint, FlaskConical, HandCoins, Headphones, History, IdCard, KeyRound, Languages, LineChart, Lock, MessageCircle, Monitor, PackagePlus, PauseCircle, Percent, Phone as PhoneIcon, PlayCircle, Receipt, RotateCcw, ScanBarcode, ScanLine, ShieldCheck, Smartphone, Store, Tablet, Tag, Undo2, UserCog, Users, Wallet, Wrench, type LucideIcon } from 'lucide-react'
+import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { BiAlert, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import { PhoneInput, isMobileOk } from '@/components/FieldInputs'
@@ -14,7 +14,7 @@ import { ApiError, post } from '@/lib/api'
 import { normalisePhone } from '@/lib/format'
 import { useGet } from '@/lib/queries'
 
-interface Info { plans: { key: string; price: number; modules: string[] }[]; trial_days: number; modules: Record<string, { en: string; ur: string }>; accounts: { label: string; account_name: string; number: string; note: string | null }[]; whatsapp: string | null }
+interface Info { plans: { key: string; price: number; yearly_price?: number; modules: string[] }[]; trial_days: number; yearly_paid_months?: number; modules: Record<string, { en: string; ur: string }>; accounts: { label: string; account_name: string; number: string; note: string | null }[]; whatsapp: string | null }
 
 const LANG: Record<Locale, string> = { ur: 'اردو', roman: 'Roman', en: 'English' }
 const BASICS: { key: string; Icon: LucideIcon }[] = [
@@ -50,6 +50,15 @@ const GUIDE: { key: string; Icon: LucideIcon }[] = [
   { key: 'audit', Icon: LineChart }, { key: 'staff', Icon: Users }, { key: 'barcodes', Icon: ScanBarcode }, { key: 'help', Icon: CircleHelp },
   { key: 'devices', Icon: Monitor }, { key: 'security', Icon: ShieldCheck },
 ]
+/** owner 2026-11-03: what no other software in Pakistan does together — shown right under the hero */
+const UNIQUE: { key: string; Icon: LucideIcon; href?: string }[] = [
+  { key: 'android', Icon: Smartphone, href: '/app.apk' }, { key: 'online', Icon: Monitor }, { key: 'offline', Icon: CloudOff },
+  { key: 'consent', Icon: FileSignature }, { key: 'verify', Icon: ShieldCheck }, { key: 'langs', Icon: Languages },
+]
+const SITES = [
+  { key: 'oop', href: 'https://oopsolutions.com', label: 'oopsolutions.com' },
+  { key: 'ifix', href: 'https://ifixapplephone.com', label: 'ifixapplephone.com' },
+] as const
 const VIDEO_STEPS = ['sell', 'bill', 'audit', 'stock', 'khata', 'hisaab', 'labs', 'help'] as const
 
 export default function LandingPage() {
@@ -58,6 +67,16 @@ export default function LandingPage() {
   const { data: info } = useGet<Info>(['public-info'], '/api/v1/public/info')
   const wa = (text: string) => `https://wa.me/${(info?.whatsapp ? `92${info.whatsapp.replace(/^0/, '')}` : MAKER.tel.replace('+', ''))}?text=${encodeURIComponent(text)}`
   const fmt = (n: number) => n.toLocaleString('en-US')
+  const [billing, setBilling] = useState<'month' | 'year'>('year')
+  // the tab title and description in the visitor's language (SEO, link previews); the app's on leaving
+  useEffect(() => {
+    const before = document.title
+    const meta = document.querySelector('meta[name="description"]')
+    const desc = meta?.getAttribute('content') ?? ''
+    document.title = pick('landing.metaTitle')
+    meta?.setAttribute('content', pick('landing.metaDesc'))
+    return () => { document.title = before; meta?.setAttribute('content', desc) }
+  }, [locale]) // eslint-disable-line react-hooks/exhaustive-deps
   const h2 = ur ? `${cls('xl')} font-bold` : 'text-[24px] font-extrabold tracking-[-0.02em] sm:text-[28px]'
   const body = ur ? cls('md') : 'text-[15px] font-medium'
 
@@ -87,7 +106,7 @@ export default function LandingPage() {
             <h1 className={ur ? 'ur text-[30px] font-bold leading-[1.8] sm:text-[36px]' : 'text-[34px] font-extrabold leading-[1.08] tracking-[-0.03em] sm:text-[40px] md:text-[46px]'}>{pick('landing.h1')}</h1>
             <p className={`max-w-lg text-white/85 ${ur ? cls('md') : 'text-[17px] font-medium'}`}>{pick('landing.sub')}</p>
             <div className="flex flex-wrap gap-2 pt-1">
-              <a href="#start" className={`tap flex min-h-14 items-center gap-2 rounded-2xl bg-white px-5 font-extrabold text-ink ${ur ? cls('md') : 'text-[15px]'}`}><Check size={20} /> {pick('landing.ctaTrial').replace('{{n}}', String(info?.trial_days ?? 14))}</a>
+              <a href="#start" className={`tap flex min-h-14 items-center gap-2 rounded-2xl bg-white px-5 font-extrabold text-[#0E1613] shadow-[0_10px_30px_-10px_rgba(0,0,0,.45)] ${ur ? cls('md') : 'text-[15px]'}`} data-testid="hero-cta"><Check size={20} strokeWidth={2.6} /> {pick('landing.ctaTrial').replace('{{n}}', String(info?.trial_days ?? 14))}</a>
               <a href={wa(pick('landing.waHello'))} target="_blank" rel="noopener noreferrer" className={`tap flex min-h-14 items-center gap-2 rounded-2xl bg-white/15 px-5 font-bold text-white ring-1 ring-inset ring-white/40 ${ur ? cls('md') : 'text-[15px]'}`}><MessageCircle size={20} /> WhatsApp</a>
             </div>
             <Link to="/login" className={`w-fit text-white/90 underline-offset-4 hover:underline sm:hidden ${ur ? cls('sm') : 'text-sm font-bold'}`}>{pick('landing.haveShop')}</Link>
@@ -97,6 +116,32 @@ export default function LandingPage() {
           </div>
           <div className="mx-auto w-full max-w-[260px] md:max-w-[300px]">
             <Phone src={`/landing/home-${ur ? 'ur' : 'en'}.png`} />
+          </div>
+        </div>
+      </section>
+
+      {/* what makes it different: Android app, online, offline, consent, verification, three languages */}
+      <section id="unique" className="bg-[#0E1613] text-white" data-testid="landing-unique">
+        <div className="mx-auto flex max-w-5xl flex-col gap-6 px-5 py-12">
+          <div className="flex flex-col gap-2">
+            <span className={`w-fit rounded-full bg-[#34D399] px-3 py-1 text-xs font-extrabold text-[#0E1613] ${ur ? 'ur text-sm' : ''}`}>{pick('landing.uniqueBadge')}</span>
+            <h2 className={ur ? 'ur text-[26px] font-bold leading-[1.8]' : 'text-[26px] font-extrabold tracking-[-0.02em] sm:text-[32px]'}>{pick('landing.uniqueTitle')}</h2>
+            <p className={`max-w-2xl text-white/75 ${body}`}>{pick('landing.uniqueSub')}</p>
+          </div>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {UNIQUE.map(({ key, Icon, href }) => (
+              <div key={key} className="flex flex-col gap-3 rounded-3xl border border-white/10 bg-white/[0.06] p-5">
+                <span className="flex items-center gap-3">
+                  <span className="well h-12 w-12 shrink-0 rounded-2xl bg-[#34D399] text-[#0E1613]"><Icon size={24} strokeWidth={2.2} /></span>
+                  <span className={`font-extrabold ${ur ? 'ur text-lg leading-[1.7]' : 'text-[17px]'}`}>{pick(`landing.unique.${key}.t`)}</span>
+                </span>
+                <span className={`text-white/80 ${ur ? cls('sm') : 'text-sm font-medium'}`}>{pick(`landing.unique.${key}.d`)}</span>
+                <ul className="flex flex-col gap-1.5">
+                  {[1, 2].map((i) => <li key={i} className={`flex items-start gap-2 text-white/90 ${ur ? cls('sm') : 'text-sm font-semibold'}`}><Check size={16} className="mt-0.5 shrink-0 text-[#34D399]" />{pick(`landing.unique.${key}.p${i}`)}</li>)}
+                </ul>
+                {href ? <a href={href} className={`tap mt-auto flex min-h-11 w-fit items-center gap-2 rounded-xl bg-white px-4 font-bold text-[#0E1613] ${ur ? cls('sm') : 'text-sm'}`}><Download size={16} /> {pick(`landing.unique.${key}.cta`)}</a> : null}
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -236,6 +281,14 @@ export default function LandingPage() {
         <section id="pricing" className="flex flex-col gap-4">
           <h2 className={h2}>{pick('landing.priceTitle')}</h2>
           <p className={`text-muted ${body}`}>{pick('landing.priceSub').replace('{{n}}', String(info?.trial_days ?? 14))}</p>
+          <div className="flex flex-wrap items-center gap-2" role="group" aria-label={pick('landing.billing')}>
+            {(['month', 'year'] as const).map((b) => (
+              <button key={b} type="button" aria-pressed={billing === b} onClick={() => setBilling(b)} className={`tap h-11 rounded-full border-2 px-4 font-bold ${billing === b ? 'border-[#0E1613] bg-[#0E1613] text-white' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-sm'}`} data-testid={`billing-${b}`}>
+                {pick(`landing.billing${b === 'month' ? 'Month' : 'Year'}`)}
+              </button>
+            ))}
+            <span className={`rounded-full bg-[#34D399] px-3 py-1 font-extrabold text-[#0E1613] ${ur ? cls('sm') : 'text-xs'}`}>{pick('landing.yearSave').replace('{{n}}', String(12 - (info?.yearly_paid_months ?? 10)))}</span>
+          </div>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
             {(info?.plans ?? []).filter((p) => p.key !== 'trial').map((p) => (
               <div key={p.key} className={`flex flex-col gap-3 rounded-3xl border p-5 ${p.key === 'pro' ? 'border-emerald bg-emerald-tint/40 shadow-hero' : 'border-line bg-surface'}`}>
@@ -243,7 +296,14 @@ export default function LandingPage() {
                   <span className="text-lg font-extrabold capitalize">{p.key}</span>
                   {p.key === 'pro' ? <span className={`rounded-full bg-emerald px-2.5 py-0.5 text-xs font-bold text-white ${ur ? 'ur' : ''}`}>{pick('landing.popular')}</span> : null}
                 </div>
-                <div className="flex items-baseline gap-1" dir="ltr"><span className="num text-[34px]">Rs. {fmt(p.price)}</span><span className="text-sm text-muted">/ {pick('admin.month')}</span></div>
+                {billing === 'year' ? (
+                  <div className="flex flex-col gap-0.5" data-testid={`year-${p.key}`}>
+                    <div className="flex items-baseline gap-1" dir="ltr"><span className="num text-[34px]">Rs. {fmt(p.yearly_price ?? p.price * 10)}</span><span className="text-sm text-muted">/ {pick('landing.year')}</span></div>
+                    <span className={`text-muted ${ur ? cls('sm') : 'text-sm font-semibold'}`}><s dir="ltr">Rs. {fmt(p.price * 12)}</s> · {pick('landing.perMonth').replace('{{n}}', fmt(Math.round((p.yearly_price ?? p.price * 10) / 12)))}</span>
+                  </div>
+                ) : (
+                  <div className="flex items-baseline gap-1" dir="ltr"><span className="num text-[34px]">Rs. {fmt(p.price)}</span><span className="text-sm text-muted">/ {pick('admin.month')}</span></div>
+                )}
                 <span className={`text-muted ${ur ? cls('sm') : 'text-sm font-semibold'}`}>{pick(`landing.plan.${p.key}`)}</span>
                 <ul className="flex flex-col gap-1.5">
                   <li className={`flex items-start gap-2 ${ur ? cls('sm') : 'text-sm font-medium'}`}><Check size={16} className="mt-0.5 shrink-0 text-emerald" /> {pick('landing.allBasics')}</li>
@@ -275,7 +335,7 @@ export default function LandingPage() {
         <section className="flex flex-col gap-3">
           <h2 className={h2}>{pick('landing.faqTitle')}</h2>
           <div className="card divide-y divide-line p-0">
-            {(['data', 'phone', 'scanner', 'offline', 'staff', 'cancel'] as const).map((k) => (
+            {(['android', 'offline', 'verify', 'consent', 'yearly', 'data', 'phone', 'scanner', 'staff', 'cancel'] as const).map((k) => (
               <details key={k} className="group px-4 py-3">
                 <summary className={`cursor-pointer list-none font-bold ${ur ? cls('md') : 'text-[15px]'}`}>{pick(`landing.faq.${k}.q`)}</summary>
                 <p className={`mt-1.5 text-muted ${ur ? cls('sm') : 'text-sm font-medium'}`}>{pick(`landing.faq.${k}.a`)}</p>
@@ -299,6 +359,10 @@ export default function LandingPage() {
         <div className={`mx-auto flex max-w-5xl flex-col gap-2 px-5 py-8 text-muted ${ur ? cls('sm') : 'text-sm font-medium'}`}>
           <span className="font-bold text-ink">Mobile Shop · {MAKER.company}</span>
           <span dir="ltr">{MAKER.person} · <a href={`tel:${MAKER.tel}`} className="underline">{MAKER.phone}</a> · <a href={`https://${MAKER.site}`} className="underline">{MAKER.site}</a></span>
+          <nav aria-label={pick('landing.sites')} className="flex flex-wrap gap-x-4 gap-y-1" data-testid="landing-sites">
+            <span className="font-bold text-ink">{pick('landing.sites')}:</span>
+            {SITES.map((s) => <a key={s.key} href={s.href} target="_blank" rel="noopener" className="font-bold text-emerald-deep underline-offset-4 hover:underline" dir="ltr">{pick(`landing.site.${s.key}`)} · {s.label}</a>)}
+          </nav>
           <span>{pick('landing.footer')}</span>
         </div>
       </footer>

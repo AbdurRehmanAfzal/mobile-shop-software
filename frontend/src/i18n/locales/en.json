@@ -366,7 +366,12 @@
     "sellNow": "Sell this phone now",
     "backToPhone": "Back to the phone",
     "printDeclaration": "Print the declaration",
-    "editAgain": "Change something"
+    "editAgain": "Change something",
+    "signHere": "Seller signs here (finger or mouse)",
+    "clearSign": "Erase",
+    "saveSign": "Use this signature",
+    "signed": "Signed by the seller",
+    "signAgain": "Sign again"
   },
   "sale": {
     "title": "New sale",
@@ -5189,6 +5194,11 @@
           "title": "Reason for override",
           "body": "Why you are clearing it without the full check — at least 5 letters. Write something you can explain later.",
           "example": "\"Regular customer for 3 years, CNIC seen\"."
+        },
+        "signature": {
+          "title": "Seller's signature",
+          "body": "The person selling you the phone signs on the screen that it is his and not stolen. It is saved with the ID check and printed on the declaration.",
+          "example": "Usman sells you a used Redmi: he signs with his finger, you tap Save — the declaration now shows his signature above the line."
         }
       }
     },
@@ -7805,9 +7815,9 @@
     "support": "Help on WhatsApp"
   },
   "landing": {
-    "badge": "For mobile shops in Pakistan",
+    "badge": "Built only for Pakistan's mobile shops",
     "h1": "Run your mobile shop from your phone",
-    "sub": "New and used phones, tablets and smart watches with their own barcodes, accessories bought by the dozen and sold by the piece, udhaar khata, repairs, WhatsApp receipts, a full shop audit with charts — in Urdu and English.",
+    "sub": "Used and new phones with CNIC verification and the seller's signed consent, udhaar khata, repairs and repair labs, accessories, a full shop audit — as an Android app, online on any browser, and offline. In Urdu, Roman Urdu and English.",
     "ctaTrial": "Start free for {{n}} days",
     "waHello": "Assalam-o-Alaikum, I want to know about the Mobile Shop software.",
     "point1": "Works on any phone",
@@ -7945,7 +7955,7 @@
       "auditrepairs": "Repairs audit",
       "repairs": "Repairs audit"
     },
-    "priceTitle": "Simple monthly price",
+    "priceTitle": "Simple prices — monthly or yearly",
     "priceSub": "Start with {{n}} days free. Pay monthly, no contract. Prices in PKR per shop.",
     "popular": "Most chosen",
     "choose": "Choose",
@@ -7994,6 +8004,22 @@
       "scanner": {
         "q": "Which barcode scanner works?",
         "a": "Any USB or Bluetooth scanner that types like a keyboard — most do, and they cost about three to eight thousand rupees. Plug it in and scan, no setup. Without one, the phone camera reads IMEIs and barcodes too."
+      },
+      "android": {
+        "q": "Is there an Android app?",
+        "a": "Yes. Download it from this page (Download the app) and install it on any Android phone. The same account also opens in any browser on a laptop or iPhone."
+      },
+      "verify": {
+        "q": "How does it check a used phone?",
+        "a": "When you buy a used phone you scan the seller's CNIC, note the PTA status and the IMEI; tablets and watches also need the iCloud / Google lock check. Until the check is done the phone cannot be sold; skipping needs a reason that the owner sees."
+      },
+      "consent": {
+        "q": "What is the seller's consent?",
+        "a": "The person selling you a used phone signs a declaration on the screen that the phone is his and not stolen. It is saved with his CNIC, the IMEI and the date, and can be printed any time."
+      },
+      "yearly": {
+        "q": "Is there a yearly package?",
+        "a": "Yes. Pay for a year at once and get 12 months for the price of 10 — two months free. Monthly payment is also there."
       }
     },
     "footer": "Made in Pakistan for Pakistani mobile shops.",
@@ -8296,7 +8322,62 @@
         "x3": "Fingerprint / PIN login, phone OTP for a forgotten password, daily backups."
       }
     },
-    "earlier": "{{n}} features added earlier"
+    "earlier": "{{n}} features added earlier",
+    "uniqueBadge": "Why it is different",
+    "uniqueTitle": "Everything a Pakistani mobile shop needs — together in one app",
+    "uniqueSub": "Other software is either for a general store, only online, or only in English. This one is made for the used-phone market: phone app, online, offline, verification and the seller's consent, in your language.",
+    "unique": {
+      "android": {
+        "t": "Android app",
+        "d": "Install it on your shop phone: big buttons, the camera scans IMEI and CNIC, fingerprint login.",
+        "p1": "Works on any Android phone",
+        "p2": "Barcode and CNIC scan with the camera",
+        "cta": "Download the app"
+      },
+      "online": {
+        "t": "Online, on any device",
+        "d": "Open it in any browser — phone, laptop or desktop — and see your shop live from home.",
+        "p1": "Laptop view with keyboard shortcuts",
+        "p2": "Staff on their own phones, each with a role"
+      },
+      "offline": {
+        "t": "Works offline",
+        "d": "Internet gone? The sale is saved on the phone and sent the moment the connection is back. Or run it on one Windows PC without internet.",
+        "p1": "No sale is lost or sent twice",
+        "p2": "One-PC Windows install with nightly backup"
+      },
+      "consent": {
+        "t": "Seller's signed consent",
+        "d": "When you buy a used phone, the seller signs the declaration on the screen — saved with the phone, his CNIC and the date.",
+        "p1": "Signature, CNIC photo and IMEI kept together",
+        "p2": "Print the declaration any time it is needed"
+      },
+      "verify": {
+        "t": "Used-phone verification",
+        "d": "Before you sell a used phone: the seller's CNIC, PTA status, IMEI checks, and the iCloud / Google lock on tablets and watches.",
+        "p1": "A phone with a check pending cannot be sold",
+        "p2": "Skips need a reason and reach the owner"
+      },
+      "langs": {
+        "t": "Urdu, Roman Urdu, English",
+        "d": "The whole app in the language your staff reads — and a \"?\" with an example on every field, in any of the three.",
+        "p1": "Bills and WhatsApp in the shop's language",
+        "p2": "1,100+ explanations with shop examples"
+      }
+    },
+    "billing": "Billing",
+    "billingMonth": "Monthly",
+    "billingYear": "Yearly",
+    "yearSave": "{{n}} months free on yearly",
+    "year": "year",
+    "perMonth": "Rs. {{n}} a month",
+    "sites": "Our other sites",
+    "site": {
+      "oop": "OOP Solutions",
+      "ifix": "iFix Apple Phone"
+    },
+    "metaTitle": "Mobile Shop Software Pakistan — Android app, online & offline",
+    "metaDesc": "Mobile shop software for Pakistan: used and new phones with CNIC verification and the seller's signed consent, udhaar khata, repairs and repair labs, shop audit. Android app, online and offline, Urdu and English. 14 days free."
   },
   "inst": {
     "title": "Installments (qist)",

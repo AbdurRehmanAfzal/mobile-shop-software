@@ -1,0 +1,29 @@
+# Mobile Shop by OOP Solutions — the public pages are open to search and answer engines;
+# the shop data (/api) is private and never crawled.
+User-agent: *
+Allow: /
+Allow: /welcome
+Allow: /llms.txt
+Disallow: /api/
+
+# AI search / answer engines are welcome to read the public pages
+User-agent: GPTBot
+Allow: /
+Disallow: /api/
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /api/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /api/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /api/
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://mobileshop.oopsolutions.com/sitemap.xml

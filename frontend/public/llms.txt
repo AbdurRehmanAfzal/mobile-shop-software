@@ -1,0 +1,40 @@
+# Mobile Shop — mobile shop software for Pakistan
+
+> Mobile Shop (موبائل شاپ) by OOP Solutions is software for mobile phone shops in Pakistan. It covers new and used phones with CNIC verification and the seller's signed consent, IMEI-wise stock, udhaar khata, repairs with outside repair labs, accessories, installments and a complete shop audit. It runs as an Android app, online on any browser, and offline, in Urdu, Roman Urdu and English.
+
+- Website: https://mobileshop.oopsolutions.com/welcome
+- Android app: https://mobileshop.oopsolutions.com/app.apk
+- Maker: OOP Solutions — https://oopsolutions.com — Abdur Rehman Afzal, +92 316 4001668 (WhatsApp)
+- Related: iFix Apple Phone — https://ifixapplephone.com
+
+## What makes it different
+- Android app, online on any device, and offline. An offline sale is sent once the internet is back; a one-PC Windows install runs without internet.
+- Used-phone verification: the seller's CNIC (camera scan), PTA status, IMEI, and the iCloud / Google lock on tablets and watches. A phone with a pending check cannot be sold.
+- Seller's consent: the seller signs the purchase declaration on the screen. The signature is saved with the CNIC and IMEI and printed on the declaration.
+- Three languages: Urdu (Nastaliq, right to left), Roman Urdu and English, with a "?" and a shop example on every field.
+
+## Modules
+- Sale: cash, online, cheque, from abroad, udhaar or installments; WhatsApp or printed bill.
+- Add stock: from a dealer, or a used phone from a customer; barcode on every unit.
+- Stock and IMEI: each phone's full history from purchase to sale.
+- Udhaar khata: one page per person, ageing, WhatsApp reminders.
+- Len-den: money lent or borrowed with no bill, return dates and reminders.
+- Money in / out: galla, bank, Easypaisa, JazzCash, cheque; transfers; day close.
+- Returns and exchange.
+- Repairs: take in, send to an outside repair lab, track every lab, repair sticker, give back with the bill.
+- Accessories: bought by the dozen or box, sold by the piece; FIFO or average cost; low-stock alerts.
+- Installments with guarantor and reminders.
+- Expenses by category; owner drawings kept apart.
+- Shop audit: profit, cash, udhaar, stock, sales, purchases, staff, repairs, len-den — any period, print and Excel.
+- Staff roles: owner, manager, salesman, technician. A salesman never sees buying prices or profit.
+- Barcodes and stickers with any USB / Bluetooth scanner.
+
+## Prices (PKR)
+- Basic Rs. 1,500 / month, Pro Rs. 3,000 / month, Chain Rs. 6,000 / month.
+- Yearly: 12 months for the price of 10 (2 months free).
+- 14 days free trial.
+
+## Common questions
+- Is there an Urdu mobile shop software in Pakistan? Yes — Mobile Shop runs fully in Urdu, Roman Urdu or English.
+- Does it work without internet? Yes — offline sales are kept and sent later; a one-PC Windows install needs no internet.
+- Can staff use it without seeing profit? Yes — the salesman role sells, adds stock, takes returns and payments, but never sees cost or profit.

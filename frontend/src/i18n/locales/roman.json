@@ -366,7 +366,12 @@
     "sellNow": "Ye phone abhi bechein",
     "backToPhone": "Phone par wapas",
     "printDeclaration": "Iqrar nama print karein",
-    "editAgain": "Kuch badalna hai"
+    "editAgain": "Kuch badalna hai",
+    "signHere": "Bechne wala yahan dastakhat kare (ungli ya mouse se)",
+    "clearSign": "Mitayein",
+    "saveSign": "Dastakhat save karein",
+    "signed": "Bechne wale ne dastakhat kar diye",
+    "signAgain": "Dobara dastakhat"
   },
   "sale": {
     "title": "Nayi bikri",
@@ -5189,6 +5194,11 @@
           "title": "Ijazat ki wajah",
           "body": "Poore check ke baghair kyun clear kar rahe hain — kam az kam 5 huroof. Aisa likhen jo baad mein samjha saken.",
           "example": "\"3 saal se mustaqil customer, CNIC dekha\"."
+        },
+        "signature": {
+          "title": "Bechne wale ke dastakhat",
+          "body": "Jo banda aap ko phone bech raha hai woh screen par dastakhat karta hai ke phone us ka hai aur chori ka nahi. Yeh jaanch ke sath mehfooz hota hai aur iqrar name par chhapta hai.",
+          "example": "Usman ne purana Redmi becha: us ne ungli se dastakhat kiye, aap ne Save dabaya — ab iqrar name par line ke upar us ke dastakhat hain."
         }
       }
     },
@@ -7805,9 +7815,9 @@
     "support": "WhatsApp par madad"
   },
   "landing": {
-    "badge": "Pakistan ki mobile shops ke liye",
+    "badge": "Sirf Pakistan ki mobile dukaanon ke liye bana",
     "h1": "Apni mobile shop apne phone se chalayein",
-    "sub": "Naye aur purane mobile, tablet aur smart watch apne barcode ke saath, darjan mein khareedi aur aik aik kar ke bikne wali accessories, udhaar khata, marammat, WhatsApp raseedein, charts ke saath poori dukaan ka audit — Urdu aur English mein.",
+    "sub": "Naye aur purane phone shanakhti card ki jaanch aur bechne wale ki dastakhat shuda razamandi ke sath, udhaar khata, repair aur repair labs, accessories, mukammal shop audit — Android app, kisi bhi browser par online, aur baghair internet. Urdu, Roman Urdu aur English mein.",
     "ctaTrial": "{{n}} din muft shuru karein",
     "waHello": "Assalam-o-Alaikum, mujhe Mobile Shop software ke baare mein jaanna hai.",
     "point1": "Har phone par chalta hai",
@@ -7945,7 +7955,7 @@
       "auditrepairs": "Repair audit",
       "repairs": "Repair audit"
     },
-    "priceTitle": "Saada mahana qeemat",
+    "priceTitle": "Saada qeemat — mahana ya saalana",
     "priceSub": "{{n}} din muft se shuru karein. Mahina-war adaigi, koi contract nahi. Qeemat PKR mein fi dukaan.",
     "popular": "Sab se zyada pasand",
     "choose": "Chunein",
@@ -7994,6 +8004,22 @@
       "scanner": {
         "q": "Kaun sa barcode scanner chalta hai?",
         "a": "Koi bhi USB ya Bluetooth scanner jo keyboard ki tarah likhe — zyada tar aise hi hain, teen se aath hazaar rupay ke. Lagayein aur scan karein, koi setting nahi. Scanner na ho to phone ka camera bhi IMEI aur barcode parhta hai."
+      },
+      "android": {
+        "q": "Kya Android app hai?",
+        "a": "Ji haan. Isi page se (App download karein) download kar ke kisi bhi Android phone par install karein. Yahi account laptop ya iPhone ke kisi bhi browser mein bhi khulta hai."
+      },
+      "verify": {
+        "q": "Purane phone ki jaanch kaise hoti hai?",
+        "a": "Purana phone khareedte waqt bechne wale ka shanakhti card scan karein, PTA aur IMEI darj karein; tablet aur watch par iCloud / Google lock ki jaanch bhi. Jaanch mukammal hone tak phone nahi bikta; chhorne ke liye wajah chahiye jo owner dekhta hai."
+      },
+      "consent": {
+        "q": "Bechne wale ki razamandi kya hai?",
+        "a": "Jo banda aap ko purana phone bechta hai woh screen par iqrar name par dastakhat karta hai ke phone us ka hai aur chori ka nahi. Yeh us ke shanakhti card, IMEI aur tareekh ke sath mehfooz hota hai aur kabhi bhi print ho sakta hai."
+      },
+      "yearly": {
+        "q": "Kya saalana package hai?",
+        "a": "Ji haan. Ek sath saal ki adaigi karein aur 10 mahinon ki qeemat mein 12 mahine lein — do mahine muft. Mahana adaigi bhi mojood hai."
       }
     },
     "footer": "Pakistan mein, Pakistani mobile shops ke liye banaya gaya.",
@@ -8296,7 +8322,62 @@
         "x3": "Fingerprint / PIN login, bhoole password ke liye phone OTP, rozana backup."
       }
     },
-    "earlier": "Pehle aane wali {{n}} sahuliyat"
+    "earlier": "Pehle aane wali {{n}} sahuliyat",
+    "uniqueBadge": "Yeh mukhtalif kyun hai",
+    "uniqueTitle": "Pakistani mobile dukaan ki har zaroorat — ek hi app mein",
+    "uniqueSub": "Doosre software ya to general store ke liye hain, ya sirf online, ya sirf English mein. Yeh purane phones ki market ke liye bana hai: phone app, online, baghair internet, jaanch aur bechne wale ki razamandi, aap ki zaban mein.",
+    "unique": {
+      "android": {
+        "t": "Android app",
+        "d": "Dukaan ke phone par install karein: bare button, camera IMEI aur shanakhti card scan karta hai, fingerprint login.",
+        "p1": "Kisi bhi Android phone par",
+        "p2": "Camera se barcode aur shanakhti card scan",
+        "cta": "App download karein"
+      },
+      "online": {
+        "t": "Online, kisi bhi device par",
+        "d": "Kisi bhi browser mein kholein — phone, laptop ya computer — aur ghar se apni dukaan live dekhein.",
+        "p1": "Keyboard shortcuts ke sath laptop view",
+        "p2": "Staff apne phone par, har ek ka apna role"
+      },
+      "offline": {
+        "t": "Baghair internet bhi",
+        "d": "Internet chala gaya? Sale phone par mehfooz rehti hai aur connection aate hi chali jati hai. Ya ek Windows computer par baghair internet chalayein.",
+        "p1": "Koi sale na gum hoti hai na do baar jati hai",
+        "p2": "Raat ke backup ke sath ek computer wali Windows install"
+      },
+      "consent": {
+        "t": "Bechne wale ki dastakhat shuda razamandi",
+        "d": "Purana phone khareedte waqt bechne wala screen par iqrar name par dastakhat karta hai — phone, us ke shanakhti card aur tareekh ke sath mehfooz.",
+        "p1": "Dastakhat, shanakhti card ki tasveer aur IMEI ek sath",
+        "p2": "Zaroorat parne par kabhi bhi iqrar nama print karein"
+      },
+      "verify": {
+        "t": "Purane phone ki jaanch",
+        "d": "Purana phone bechne se pehle: bechne wale ka shanakhti card, PTA, IMEI ki jaanch, aur tablet aur watch par iCloud / Google lock.",
+        "p1": "Jaanch baqi ho to phone nahi bikta",
+        "p2": "Chhorne ke liye wajah chahiye jo owner tak pohanchti hai"
+      },
+      "langs": {
+        "t": "Urdu, Roman Urdu, English",
+        "d": "Poori app us zaban mein jo aap ka staff parhta hai — aur har khane par misaal wala \"?\", teeno mein se kisi bhi zaban mein.",
+        "p1": "Bill aur WhatsApp dukaan ki zaban mein",
+        "p2": "Dukaan ki misaalon ke sath 1,100 se zyada wazahatein"
+      }
+    },
+    "billing": "Adaigi",
+    "billingMonth": "Mahana",
+    "billingYear": "Saalana",
+    "yearSave": "Saalana par {{n}} mahine muft",
+    "year": "saal",
+    "perMonth": "Rs. {{n}} mahina",
+    "sites": "Hamari doosri websites",
+    "site": {
+      "oop": "OOP Solutions",
+      "ifix": "iFix Apple Phone"
+    },
+    "metaTitle": "Mobile Shop Software Pakistan — Android app, online aur offline",
+    "metaDesc": "Pakistan ki mobile dukaanon ka software: shanakhti card ki jaanch aur bechne wale ke dastakhat ke sath naye aur purane phone, udhaar khata, repair aur repair labs, shop audit. Android app, online aur offline, Urdu aur English. 14 din muft."
   },
   "inst": {
     "title": "Qistein",

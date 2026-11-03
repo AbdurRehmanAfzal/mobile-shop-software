@@ -10,6 +10,7 @@ import PartyPicker from '@/components/PartyPicker'
 import { Chip, ErrorText, KV, Loading, PageHeader, Section, Sheet } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { fileObjectUrl, openPrintable, uploadFile } from '@/lib/files'
+import SignaturePad from './SignaturePad'
 import { useDevice, useDocMutation, useParty, useVerification } from '@/lib/queries'
 import type { Party, PtaStatus, Verification } from '@/lib/types'
 
@@ -78,6 +79,7 @@ export default function VerifyPage() {
       pta_checked: !!f.pta_checked,
       pta_result: f.pta_checked ? (f.pta_result ?? device!.pta_status) : null,
       declaration_signed: !!f.declaration_signed,
+      declaration_path: f.declaration_path ?? null,
       physical_notes: f.physical_notes || null,
     }
     const saved = await save.mutateAsync(body)
@@ -163,6 +165,8 @@ export default function VerifyPage() {
           <input type="checkbox" checked={!!f.declaration_signed} onChange={(e) => set('declaration_signed', e.target.checked)} className="h-6 w-6 accent-[#136F56]" />
           <span className="flex-1 text-sm font-semibold">{pick('verify.declaration')}</span>
         </label>
+        {/* owner 2026-11-03: the seller signs on the screen; the signature goes on the printed declaration */}
+        <SignaturePad path={f.declaration_path ?? null} onSaved={(p) => { set('declaration_path', p); set('declaration_signed', true) }} />
         <BiInput label="verify.notes" help={<Help term="stock.verify.notes" size="sm" />} value={f.physical_notes ?? ''} onChange={(e) => set('physical_notes', e.target.value)} />
       </Section>
 
