@@ -796,3 +796,20 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - screens checked at phone size, in English and Urdu.
 **Next**: item 2 (phone / accessory transfer between branches) once the owner says go.
 
+## 2026-11-04 · Competitor gap 2: phone and item transfer between branches
+- Owner: continue with the next competitor update.
+- Built (ADR-046):
+  - `modules/transfers`: tables `branch_transfers` / `branch_transfer_lines` (migration `b6d8f0a2c4e7`) and the routes `GET /transfers/branches`, `GET /transfers`, `GET /transfers/{id}`, `POST /transfers`.
+  - New device status `transferred` and events `transferred_out` / `transferred_in`. A unit bought back after a move works.
+  - Items move FIFO and open a "transfer" batch in the branch.
+  - Ledger account `branch_transfer` (equity), shown on the balance sheet.
+  - The phone's money page hides transfer cost from roles that cannot see cost and labels the unit "Came from another branch".
+  - Screens: More → Branch transfers (only for someone in two or more branches), Send to a branch (pick branch, phones by search / scan, items with a count, cost at the bottom), and one transfer's page. Buttons on the phone page and the item page; history rows link to the transfer. Text and "?" help in en / ur / roman.
+  - Found on the way: the stock Filters' Grade / RAM dropdowns had no name (the label wrapped the "?" button), so they now have `aria-label`. That was why `device-types.spec` could not find "RAM (GB)".
+**Verified**:
+- new `test_branch_transfers.py` (move, both sides, balance sheet, back again, rules); the full backend suite and ruff are green;
+- tsc; vitest 43;
+- Playwright `transfers.spec` (new), `books`, `accessories`, `add-device`, `audit-stock`, `barcodes`, `device-types`, `help`, `history`, `item-params`, `items`, `transfer`, `units`. Three of these failed only when run in parallel and passed when re-run on their own.
+**Note**: the backend dev server again did not pick up the new router until restarted.
+**Next**: item 3 (Play Store, which needs the owner's account first) or item 5 (repair status link for the customer).
+

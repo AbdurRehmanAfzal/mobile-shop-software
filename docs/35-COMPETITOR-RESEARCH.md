@@ -78,7 +78,7 @@ Rule for every item: additive only. Every item is a new table or column, a new s
 | # | Update | Why (competitor) | Size | Why it cannot break anything |
 |---|---|---|---|---|
 | 1 ✅ 2026-11-04 | Accounting reports: trial balance, balance sheet (cash-flow per account already existed) | HysabOne and BluePrimes sell "accounts" | small | read-only, derived from the existing ledger; a new tab |
-| 2 | Phone / accessory transfer between branches | HysabOne branch transfers | medium | a new device event "transfer"; accessories move their oldest batch; sale and purchase untouched |
+| 2 ✅ 2026-11-04 | Phone / accessory transfer between branches | HysabOne branch transfers | medium | a new device event "transfer"; accessories move their oldest batch; sale and purchase untouched |
 | 3 | Play Store release | HysabOne has store apps | medium | build and pages only (API 36, AAB, privacy / deletion); the app screens do not change |
 | 4 | FBR / PRA live e-invoicing | Moneypex and BluePrimes | large | per-shop switch, off by default; bills without it print as today; queued when offline |
 | 5 | Repair status link for the customer | HysabOne customer notifications | small | a public read-only page by REP number; the repair flow is unchanged |

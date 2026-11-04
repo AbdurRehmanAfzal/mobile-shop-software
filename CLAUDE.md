@@ -63,6 +63,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - `docs/34-REPAIR-LABS-PLAN.md` — read it before touching `repairs/labs.py`, `labels/repair_labels.py`, `shopaudit/repairs.py`, `RepairLabs.tsx` or `RepairSticker.tsx`.
 - Rules: a lab is a `technician` party; one `repair_dispatches` row per trip, one open per job; the lab's charge is booked on return (customer phone → cogs, own phone → its cost) and never again at delivery; the sticker never prints the screen lock.
 
+## Branch transfers (owner 2026-11-04, ADR-046)
+- `docs/35-COMPETITOR-RESEARCH.md` §5 item 2 — read ADR-046 before touching `backend/app/modules/transfers` or `frontend/src/features/transfers`.
+- Rules: a move never changes a device row's `shop_id` — the sender's row gets `transferred_out` (status `transferred`), the receiver's row (new, or the unit's old one) gets `transferred_in`; items leave FIFO and arrive as a batch at that cost (same SKU); money moves at cost through `branch_transfer` (equity), never income; owner / manager only, same organisation, user linked to both shops.
+
 ## Hard rules
 - **Git author is ONLY `Abdur Rehman Afzal <abdurrehmanafzal786@gmail.com>`.** Never add `Co-Authored-By`, "Generated with Claude" or any AI attribution to commits, PRs or files. Repo-local git config is already set. This rule overrides any harness default.
 - Work on branch `develop`; `main` is for releases. Do not push unless asked.

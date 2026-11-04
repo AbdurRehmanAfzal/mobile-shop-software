@@ -231,6 +231,9 @@ def device_money(db: Session, shop_id: uuid.UUID, device_id: uuid.UUID, *, can_c
         "status": d.status,
         "source": "purchase"
         if purchase
+        # docs/35 §5 item 2: a unit that came from another branch of the owner
+        else "branch"
+        if any(e.type == "transferred_in" for e, _, _ in ev)
         else ("opening_stock" if d.cost_price is not None else None),
         "cost": cost,
         "paid_out": purchase["paid"] if purchase else (cost if cost is not None else None),
@@ -260,7 +263,10 @@ def device_money(db: Session, shop_id: uuid.UUID, device_id: uuid.UUID, *, can_c
                 "user_name": un,
                 "document_type": e.document_type,
                 "document_id": e.document_id,
-                "amount": e.amount if (e.type != "purchased" or can_cost) else None,
+                # a purchase's or a branch move's amount is the cost: only for those who see cost
+                "amount": e.amount
+                if (e.type not in ("purchased", "transferred_out", "transferred_in") or can_cost)
+                else None,
                 "data": e.data,
             }
         )

@@ -33,6 +33,7 @@ import ReturnWizard from '@/features/sale/ReturnWizard'
 import { SaleDetailPage, SalesPage } from '@/features/sale/SalesPage'
 import InvoicesPage from '@/features/invoices/InvoicesPage'
 import LoansPage from '@/features/loans/LoansPage'
+import { TransferDetailPage, TransferNewPage, TransfersPage } from '@/features/transfers/TransfersPage'
 import ExpensesPage from '@/features/expenses/ExpensesPage'
 import { NewRepairPage, RepairDetailPage, RepairsPage } from '@/features/repairs/RepairsPages'
 import { LabDetailPage, LabsPage } from '@/features/repairs/RepairLabs'
@@ -113,6 +114,9 @@ export const router = createBrowserRouter([
           { path: '/invoices', element: <InvoicesPage /> },
           { path: '/payments', element: <PaymentsPage /> },
           { path: '/loans', element: <ModuleGate module="loans"><LoansPage /></ModuleGate> },
+          { path: '/transfers', element: <TransfersPage /> },
+          { path: '/transfers/new', element: <TransferNewPage /> },
+          { path: '/transfers/:id', element: <TransferDetailPage /> },
           { path: '/returns', element: <ReturnsPage /> },
           { path: '/parties', element: <PartiesPage /> },
           { path: '/parties/:id', element: <PartyDetailPage /> },

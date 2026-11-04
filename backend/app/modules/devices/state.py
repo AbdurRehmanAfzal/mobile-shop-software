@@ -36,6 +36,7 @@ class DeviceStatus(StrEnum):
     IN_REPAIR = "in_repair"
     FAULTY = "faulty"
     RETURNED_TO_SUPPLIER = "returned_to_supplier"
+    TRANSFERRED = "transferred"  # docs/35 §5 item 2: sent to another branch of the same owner
 
 
 class EventType(StrEnum):
@@ -60,12 +61,23 @@ class EventType(StrEnum):
     # owner addendum 6: a used unit's lock check (who / when / what), and a type change
     LOCK_CHECKED = "lock_checked"
     RECLASSIFIED = "reclassified"
+    # docs/35 §5 item 2: moved between two branches of one owner (the row in each shop keeps its own
+    # history; the receiving shop's row starts with "transferred_in")
+    TRANSFERRED_OUT = "transferred_out"
+    TRANSFERRED_IN = "transferred_in"
 
 
 # Events that move money and therefore may only be raised by document modules (purchase, sale,
 # loan settlement, returns), never through the generic events endpoint.
 MONEY_EVENTS = frozenset(
-    {EventType.PURCHASED, EventType.SOLD, EventType.SALE_RETURNED, EventType.RETURNED_TO_SUPPLIER}
+    {
+        EventType.PURCHASED,
+        EventType.SOLD,
+        EventType.SALE_RETURNED,
+        EventType.RETURNED_TO_SUPPLIER,
+        EventType.TRANSFERRED_OUT,
+        EventType.TRANSFERRED_IN,
+    }
 )
 
 # Events that never change status.
@@ -104,6 +116,12 @@ TRANSITIONS: dict[tuple[DeviceStatus | None, EventType], DeviceStatus] = {
     (S.FAULTY, E.FAULTY_CLEARED): S.IN_STOCK,
     (S.IN_STOCK, E.RETURNED_TO_SUPPLIER): S.RETURNED_TO_SUPPLIER,
     (S.FAULTY, E.RETURNED_TO_SUPPLIER): S.RETURNED_TO_SUPPLIER,
+    (S.TRANSFERRED, E.PURCHASED): S.IN_STOCK,  # bought back after it went to a branch
+    (S.IN_STOCK, E.TRANSFERRED_OUT): S.TRANSFERRED,
+    (None, E.TRANSFERRED_IN): S.IN_STOCK,
+    (S.SOLD, E.TRANSFERRED_IN): S.IN_STOCK,  # was here before, comes back from a branch
+    (S.RETURNED_TO_SUPPLIER, E.TRANSFERRED_IN): S.IN_STOCK,
+    (S.TRANSFERRED, E.TRANSFERRED_IN): S.IN_STOCK,
 }
 
 

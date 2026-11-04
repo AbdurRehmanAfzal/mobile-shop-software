@@ -28,6 +28,7 @@ KIND = {
     acc.SysAccount.TAX_PAYABLE: "liability",
     acc.SysAccount.SUSPENSE: "liability",
     acc.SysAccount.EQUITY: "equity",
+    acc.SysAccount.BRANCH: "equity",
     acc.SysAccount.SALES: "income",
     acc.SysAccount.DISCOUNTS: "income",
     acc.SysAccount.REPAIR_INCOME: "income",
@@ -41,7 +42,9 @@ DRAWING = acc.expense_account("owner_drawing")
 def _balances(db: Session, shop_id: uuid.UUID, as_of: dt.date) -> dict[str, Decimal]:
     """Σ(debit − credit) per ledger account up to the end of `as_of` (the shop's day)"""
     rows = db.execute(
-        select(LedgerEntry.account, func.coalesce(func.sum(LedgerEntry.debit - LedgerEntry.credit), 0))
+        select(
+            LedgerEntry.account, func.coalesce(func.sum(LedgerEntry.debit - LedgerEntry.credit), 0)
+        )
         .where(LedgerEntry.shop_id == shop_id, LedgerEntry.at < day_end(as_of))
         .group_by(LedgerEntry.account)
     ).all()
@@ -68,10 +71,28 @@ def _lines(db: Session, shop_id: uuid.UUID, as_of: dt.date) -> list[dict]:
         b = money(a.opening_balance + bal.pop(acc.cash_account(a.id), ZERO))
         opening += a.opening_balance
         if b != ZERO or a.is_active:
-            lines.append({"kind": "asset", "key": f"cash:{a.id}", "group": "cash", "name": a.name, "name_ur": a.name_ur or a.name, "balance": b})
+            lines.append(
+                {
+                    "kind": "asset",
+                    "key": f"cash:{a.id}",
+                    "group": "cash",
+                    "name": a.name,
+                    "name_ur": a.name_ur or a.name,
+                    "balance": b,
+                }
+            )
     # money of cash accounts that are no longer listed (none today; kept so the totals always agree)
     for k in [k for k in bal if acc.is_cash(k)]:
-        lines.append({"kind": "asset", "key": k, "group": "cash", "name": "Other money account", "name_ur": "دیگر کھاتہ", "balance": bal.pop(k)})
+        lines.append(
+            {
+                "kind": "asset",
+                "key": k,
+                "group": "cash",
+                "name": "Other money account",
+                "name_ur": "دیگر کھاتہ",
+                "balance": bal.pop(k),
+            }
+        )
     owe_us, we_owe, n_us, n_we = ZERO, ZERO, 0, 0
     for k in [k for k in bal if acc.is_party(k)]:
         v = bal.pop(k)
@@ -79,17 +100,46 @@ def _lines(db: Session, shop_id: uuid.UUID, as_of: dt.date) -> list[dict]:
             owe_us, n_us = owe_us + v, n_us + 1
         elif v < 0:
             we_owe, n_we = we_owe + v, n_we + 1
-    lines.append({"kind": "asset", "key": "receivable", "group": "parties", "count": n_us, "balance": money(owe_us)})
-    lines.append({"kind": "liability", "key": "payable", "group": "parties", "count": n_we, "balance": money(we_owe)})
+    lines.append(
+        {
+            "kind": "asset",
+            "key": "receivable",
+            "group": "parties",
+            "count": n_us,
+            "balance": money(owe_us),
+        }
+    )
+    lines.append(
+        {
+            "kind": "liability",
+            "key": "payable",
+            "group": "parties",
+            "count": n_we,
+            "balance": money(we_owe),
+        }
+    )
     if opening != ZERO:
-        lines.append({"kind": "equity", "key": "opening_cash", "group": "equity", "balance": money(-opening)})
+        lines.append(
+            {"kind": "equity", "key": "opening_cash", "group": "equity", "balance": money(-opening)}
+        )
     for k, v in sorted(bal.items()):
         if k == DRAWING:
-            lines.append({"kind": "equity", "key": "owner_drawing", "group": "equity", "balance": v})
+            lines.append(
+                {"kind": "equity", "key": "owner_drawing", "group": "equity", "balance": v}
+            )
         elif k.startswith(f"{acc.SysAccount.EXPENSE}:"):
             cat = k.split(":", 1)[1]
             en, ur = names.get(cat, (cat.replace("_", " ").capitalize(), cat))
-            lines.append({"kind": "expense", "key": k, "group": "expense", "name": en, "name_ur": ur, "balance": v})
+            lines.append(
+                {
+                    "kind": "expense",
+                    "key": k,
+                    "group": "expense",
+                    "name": en,
+                    "name_ur": ur,
+                    "balance": v,
+                }
+            )
         else:
             lines.append({"kind": KIND.get(k, "other"), "key": k, "group": "system", "balance": v})
     return lines
@@ -105,7 +155,13 @@ def trial_balance(db: Session, shop_id: uuid.UUID, as_of: dt.date) -> dict:
         rows.append({**ln, "debit": b if b > 0 else ZERO, "credit": -b if b < 0 else ZERO})
     debit = money(sum((r["debit"] for r in rows), ZERO))
     credit = money(sum((r["credit"] for r in rows), ZERO))
-    return {"as_of": as_of, "rows": rows, "debit": debit, "credit": credit, "balanced": debit == credit}
+    return {
+        "as_of": as_of,
+        "rows": rows,
+        "debit": debit,
+        "credit": credit,
+        "balanced": debit == credit,
+    }
 
 
 def balance_sheet(db: Session, shop_id: uuid.UUID, as_of: dt.date) -> dict:
@@ -118,15 +174,27 @@ def balance_sheet(db: Session, shop_id: uuid.UUID, as_of: dt.date) -> dict:
     assets = [{**ln, "amount": ln["balance"]} for ln in pick("asset")]
     liabilities = [{**ln, "amount": -ln["balance"]} for ln in pick("liability")]
     # profit since the shop began = income − expenses (owner drawing is not an expense here)
-    profit = money(-sum((ln["balance"] for ln in lines if ln["kind"] in ("income", "expense")), ZERO))
-    capital = money(-sum((ln["balance"] for ln in lines if ln["key"] in (acc.SysAccount.EQUITY, "opening_cash")), ZERO))
+    profit = money(
+        -sum((ln["balance"] for ln in lines if ln["kind"] in ("income", "expense")), ZERO)
+    )
+    capital = money(
+        -sum(
+            (ln["balance"] for ln in lines if ln["key"] in (acc.SysAccount.EQUITY, "opening_cash")),
+            ZERO,
+        )
+    )
     drawing = money(-sum((ln["balance"] for ln in lines if ln["key"] == "owner_drawing"), ZERO))
     other = money(-sum((ln["balance"] for ln in lines if ln["kind"] == "other"), ZERO))
+    branch = money(
+        -sum((ln["balance"] for ln in lines if ln["key"] == acc.SysAccount.BRANCH), ZERO)
+    )
     owner = [
         {"key": "capital", "amount": capital},
         {"key": "profit", "amount": profit},
         {"key": "owner_drawing", "amount": drawing},
     ]
+    if branch != ZERO:
+        owner.append({"key": "branch_transfer", "amount": branch})
     if other != ZERO:
         owner.append({"key": "other", "amount": other})
     for group in (assets, liabilities):

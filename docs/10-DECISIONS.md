@@ -277,3 +277,18 @@ by sheet remain a later step (docs/18 §1).
   - Profit so far = −Σ(income + expense accounts), so it equals P&L over all time.
 - **Consequences:** Nothing new is stored or posted. Both reports are always balanced by construction; a check line shows it, and a test asserts it. Checked on 1,238 local shops: all balanced, profit equal to P&L.
 
+## ADR-046 · 2026-11-04 · Accepted · Branch transfers: each shop keeps its own row for a phone; the move is two events and two ledger groups
+- **Context:** Owners with branches (chain plan) need to move phones and items between them (`docs/35` §5 item 2). IMEI and barcode are unique per shop, and every old bill, return and verification points at the shop's own device row.
+- **Decision:**
+  - Phones: a move never changes a row's `shop_id`.
+    - The sender's row gets `transferred_out` and the new status `transferred`; its history stays in that shop.
+    - The receiver gets a row for the same unit, either a new one or its old row if the unit was there before. Its next event is `transferred_in`, and it carries the cost, asking price, barcode (when free in that shop) and verification result.
+    - Both events are money events, so the generic events endpoint refuses them.
+  - Items: the oldest batches leave the sender at FIFO cost and open a batch at that cost in the receiver's item with the same SKU. If the branch has no item with that SKU, one is made from the sender's card.
+  - Money: stock moves at cost through a new equity-like account `branch_transfer`, nothing is sold and profit is untouched. Sender: Dr branch_transfer / Cr inventory. Receiver: Dr inventory / Cr branch_transfer. Across the owner the two sides cancel; the balance sheet shows the line under the owner's share.
+  - Who: owner and manager (`view_cost` + `transact`), only to a branch of the same organisation that the user works in. Instant, with no "in transit" step.
+  - The table is `branch_transfers` / `branch_transfer_lines` (migration `b6d8f0a2c4e7`, additive); numbers are `TRF-000001` per sending shop.
+- **Consequences:**
+  - Existing flows are untouched. Buying back a unit whose row is `transferred` works like buying back a sold one.
+  - The receiving shop sees no verification documents, only the result; those stay with the sender's row.
+

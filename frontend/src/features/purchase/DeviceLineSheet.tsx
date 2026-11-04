@@ -171,10 +171,10 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
     if (imei) { if (!d.imei1 || d.imei1 === imei) set('imei1', imei); else if (!d.imei2 && imei !== d.imei1) set('imei2', imei); beep('ok'); return }
     set('manufacturer_code', code); beep('ok')
   })
-  const inStockBlock = lookup?.found && lookup.device && !['sold', 'returned_to_supplier'].includes(lookup.device.status)
+  const inStockBlock = lookup?.found && lookup.device && !['sold', 'returned_to_supplier', 'transferred'].includes(lookup.device.status)
   // owner addendum 6: the serial of a Wi-Fi tablet / GPS watch is checked the same way
   const { data: serialLookup } = useSerialLookup(edit || category === 'phone' || d.cellular ? '' : d.serial)
-  const serialBlock = serialLookup?.found && serialLookup.device && !['sold', 'returned_to_supplier'].includes(serialLookup.device.status)
+  const serialBlock = serialLookup?.found && serialLookup.device && !['sold', 'returned_to_supplier', 'transferred'].includes(serialLookup.device.status)
   // the model library fills the sheet once a model is chosen (only empty fields)
   useEffect(() => {
     if (edit || !d.model_id) return

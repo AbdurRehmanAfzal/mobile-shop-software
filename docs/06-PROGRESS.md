@@ -285,7 +285,8 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | Item | Status | Notes |
 |---|---|---|
 | 1. Trial balance + balance sheet (Reports → Balance) | ✅ | `/reports/trial-balance`, `/reports/balance-sheet`, ADR-045; cash-flow per account already existed (`/reports/cash-flow`) |
-| 2–6 (branch transfer, Play Store, FBR live, repair status link, landing proof) | ⬜ | backlog below |
+| 2. Phone / item transfer between branches (More → Branch transfers, phone and item pages) | ✅ | `/transfers`, ADR-046, migration `b6d8f0a2c4e7` |
+| 3–6 (Play Store, FBR live, repair status link, landing proof) | ⬜ | backlog below |
 
 ## Owner side (open)
 Server env variables, server commands, manual testing and decisions: `docs/29-OWNER-PENDING.md` — none done yet (2026-11-01).
@@ -293,7 +294,6 @@ Server env variables, server commands, manual testing and decisions: `docs/29-OW
 ## Backlog (owner requests, not started)
 | Item | Notes |
 |---|---|
-| Competitor gap 2: phone / accessory transfer between branches | chain plan; new device event + batch move, both shops' history (`docs/35` §5) |
 | Competitor gap 3: Play Store release | API 36, AAB, privacy + deletion pages (`docs/29` G) |
 | Competitor gap 4: FBR / PRA live e-invoicing (PRAL) | per-shop switch, off by default; queue when offline; FBR no. + QR on the bill (FR-TAX-04) |
 | Competitor gap 5: customer repair-status link | public read-only link with the REP number, sent on WhatsApp |

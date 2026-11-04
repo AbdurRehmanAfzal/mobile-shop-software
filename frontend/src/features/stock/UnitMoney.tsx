@@ -21,7 +21,7 @@ export interface Side { doc_type: 'purchase' | 'invoice'; doc_id: string; no: st
 export interface UnitMoneyData {
   purchase: Side | null; sale: Side | null; purchases: Side[]; sales: Side[]
   returns: { kind: string; date: string; no: string; doc_no: string; amount: string; refund: string; kept: string; party_name: string | null; reason: string | null }[]
-  summary: { status: string; source: 'purchase' | 'opening_stock' | null; cost: string | null; paid_out: string | null; payable: string | null; asking_price: string | null; original_asking: string | null; sold_for: string | null; received: string; receivable: string; margin: string | null; refunded: string }
+  summary: { status: string; source: 'purchase' | 'opening_stock' | 'branch' | null; cost: string | null; paid_out: string | null; payable: string | null; asking_price: string | null; original_asking: string | null; sold_for: string | null; received: string; receivable: string; margin: string | null; refunded: string }
   timeline: Record<string, unknown>[]
 }
 const n = (v: string | number | null | undefined) => (v == null ? '—' : Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 }))
@@ -107,7 +107,7 @@ export default function UnitMoney({ deviceId }: { deviceId: string }) {
             </div>
           ))}
         </div>
-        {data.purchase ? <SideCard side={data.purchase} role="bought" /> : s.source === 'opening_stock' ? <span className="flex items-center gap-1"><BiLabel text="unit.openingStock" size="sm" tone="text-muted" /><Help term="opening" size="sm" /></span> : null}
+        {data.purchase ? <SideCard side={data.purchase} role="bought" /> : s.source === 'opening_stock' ? <span className="flex items-center gap-1"><BiLabel text="unit.openingStock" size="sm" tone="text-muted" /><Help term="opening" size="sm" /></span> : s.source === 'branch' ? <span className="flex items-center gap-1"><BiLabel text="unit.fromBranch" size="sm" tone="text-muted" /><Help term="transfer.page" size="sm" /></span> : null}
         {data.sale ? <SideCard side={data.sale} role="sold" /> : null}
       </Section>
 
@@ -143,6 +143,7 @@ function TimelineRow({ t, first, canCost }: { t: Record<string, unknown>; first:
     : docType === 'purchase' && docId ? `/purchases/${docId}`
     : docType === 'loan' && docId ? '/loans'
     : docType === 'repair' && docId ? `/repairs/${docId}`
+    : docType === 'branch_transfer' && docId ? `/transfers/${docId}`
     : kind === 'event' && t.event === 'verified' ? `/stock/${String(t.device_id ?? '')}/verify`.replace('//verify', '/verify')
     : null
   const open = () => { if (to) nav(to) }
@@ -165,6 +166,7 @@ function TimelineRow({ t, first, canCost }: { t: Record<string, unknown>; first:
         ) : null}
         {kind === 'event' && t.event === 'price_changed' && t.data ? <div className={`${small}`} dir="auto"><span className="num" dir="ltr">{Number((t.data as Record<string, unknown>).from ?? 0).toLocaleString('en-US')} → {Number((t.data as Record<string, unknown>).to ?? 0).toLocaleString('en-US')}</span>{(t.data as Record<string, unknown>).source === 'checkout' ? ` · ${pick('unit.atCheckout')}` : ''}{(t.data as Record<string, unknown>).reason ? ` · ${String((t.data as Record<string, unknown>).reason)}` : ''}{(t.data as Record<string, unknown>).approved_by ? ` · ${pick('unit.approved')}` : ''}</div> : null}
         {kind.startsWith('return') ? <div className={`text-muted ${small}`}>{pick('unit.refund')} <span className="num" dir="ltr">{Number(t.refund ?? 0).toLocaleString('en-US')}</span>{t.reason ? ` · ${String(t.reason)}` : ''}</div> : null}
+        {kind === 'event' && (t.event === 'transferred_out' || t.event === 'transferred_in') && t.data ? <div className={`text-muted ${small}`}>{pick(t.event === 'transferred_out' ? 'transfer.sentTo' : 'transfer.cameFrom').replace('{{shop}}', String((t.data as Record<string, unknown>).to_shop ?? (t.data as Record<string, unknown>).from_shop ?? '—'))}</div> : null}
         {t.data && typeof (t.data as Record<string, unknown>).note === 'string' ? <div className="text-sm text-muted">{String((t.data as Record<string, unknown>).note)}</div> : null}
         {t.data && typeof (t.data as Record<string, unknown>).reason === 'string' ? <div className="text-sm text-muted">{String((t.data as Record<string, unknown>).reason)}</div> : null}
         {t.user_name ? <div className={`text-muted ${small}`}>{String(t.user_name)}</div> : null}

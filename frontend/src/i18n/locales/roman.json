@@ -182,7 +182,8 @@
       "sold": "Bik gaya",
       "in_repair": "Marammat mein",
       "faulty": "Kharab",
-      "returned_to_supplier": "Dealer ko wapas"
+      "returned_to_supplier": "Dealer ko wapas",
+      "transferred": "Branch ko bheja"
     },
     "condition": {
       "box_pack": "Box pack",
@@ -250,7 +251,9 @@
       "price_changed": "Qeemat badli",
       "note": "Note",
       "barcode_assigned": "Barcode laga",
-      "label_printed": "Label print hua"
+      "label_printed": "Label print hua",
+      "transferred_out": "Branch ko bheja",
+      "transferred_in": "Branch se aaya"
     },
     "acc": {
       "box": "Dabba",
@@ -6670,6 +6673,11 @@
           "title": "Quick PIN",
           "body": "Poore password ke bajaye phone par app jaldi kholne ke liye 4 se 6 hindson ka PIN. Owner ka PIN salesman ki kam qeemat sale ki ijazat bhi deta hai.",
           "example": "PIN 4321 rakhein → agli dafa 4321 likh kar login."
+        },
+        "transfers": {
+          "title": "Branch transfer",
+          "body": "Is dukaan se mobile aur items apni doosri branch ko bhejein. Mobile is dukaan ke stock se nikal jata hai (us ki history yahin rehti hai) aur branch ke stock mein usi IMEI, barcode, khareed aur farokht ki qeemat ke saath aa jata hai. Items apni khareed ki qeemat ke saath jate hain. Kuch bikta nahi, is liye munafa nahi badalta.",
+          "example": "Saddar se Mall Road branch ko ek iPhone 13 aur 10 charger bhejein: Saddar ka stock khareed par Rs. 1,52,000 kam, Mall Road ka utna hi zyada."
         }
       },
       "pinPassword": {
@@ -7452,6 +7460,33 @@
         "title": "Ab tak ka munafa",
         "body": "App par dukaan shuru hone se is din tak ka saara munafa: wohi raqam jo Munafa ka tab is poore arse ke liye dikhata hai. Maalik ka nikaala hua yahan kharcha nahi gina jata.",
         "example": "Munafa ka tab pehle din se aaj tak Rs. 2,50,000 dikhaye → yahan bhi yehi."
+      }
+    },
+    "transfer": {
+      "page": {
+        "title": "Branch transfer",
+        "body": "Is dukaan se mobile aur items apni doosri branch ko bhejein. Mobile is dukaan ke stock se nikal jata hai (us ki history yahin rehti hai) aur branch ke stock mein usi IMEI, barcode, khareed aur farokht ki qeemat ke saath aa jata hai. Items apni khareed ki qeemat ke saath jate hain. Kuch bikta nahi, is liye munafa nahi badalta.",
+        "example": "Saddar se Mall Road branch ko ek iPhone 13 aur 10 charger bhejein: Saddar ka stock khareed par Rs. 1,52,000 kam, Mall Road ka utna hi zyada."
+      },
+      "to": {
+        "title": "Kis branch ko",
+        "body": "Woh branch jo stock legi. Sirf maalik ki woh branches dikhti hain jin mein aap kaam karte hain.",
+        "example": "Saddar ki dukaan → Mall Road chunein."
+      },
+      "phones": {
+        "title": "Mobile",
+        "body": "Yahan stock mein maujood mobile, tablet aur ghariyan jo branch ko jayengi. Talaash karein, IMEI ya barcode scan karein, ya mobile ke safhe se kholein.",
+        "example": "Galaxy A15 ka dabba scan karein → list mein aa jata hai."
+      },
+      "items": {
+        "title": "Items",
+        "body": "Charger, cover aur doosri gini jaane wali cheezein, kitne piece jayenge. Purane piece pehle jate hain, apni khareed ki qeemat par.",
+        "example": "Type-C cable × 10 → is dukaan mein 10 kam, branch mein 10 zyada."
+      },
+      "cost": {
+        "title": "Jaane wale stock ki maaliyat",
+        "body": "List mein har cheez ki khareed ki qeemat. Ye is dukaan ke stock se nikal kar branch ke stock mein jama hoti hai; na sale, na munafa, na naqad.",
+        "example": "Mobile khareed 1,40,000 + 10 cable 120 wali = Rs. 1,41,200."
       }
     }
   },
@@ -9188,7 +9223,8 @@
     "askingNow": "Ab tay qeemat",
     "askingFirst": "Pehli tay qeemat",
     "atCheckout": "bikri ke waqt",
-    "approved": "maalik ki manzoori"
+    "approved": "maalik ki manzoori",
+    "fromBranch": "Aap ki doosri branch se aaya"
   },
   "confirm": {
     "title": "Bechne se pehle check karein",
@@ -9641,7 +9677,32 @@
       "discounts": "Riayat",
       "repair_income": "Repair ki aamdan",
       "other_income": "Deegar aamdan",
-      "purchases": "Khareedari (items)"
+      "purchases": "Khareedari (items)",
+      "branch_transfer": "Branchon ko / se gaya maal"
     }
+  },
+  "transfer": {
+    "title": "Branch transfer",
+    "new": "Branch ko bhejein",
+    "none": "Abhi kuch bheja ya aaya nahi",
+    "sentTo": "{{shop}} ko bheja",
+    "cameFrom": "{{shop}} se aaya",
+    "lines": "{{n}} cheezein",
+    "pieces": "{{n}} piece",
+    "noBranch": "Aap sirf ek dukaan mein kaam karte hain. Provider se branch banwayein, phir aap in ke darmiyan stock bhej sakenge.",
+    "to": "Kis branch ko",
+    "phones": "Mobile",
+    "addPhone": "Mobile shamil karein",
+    "noPhones": "Koi mobile shamil nahi",
+    "items": "Items",
+    "addItem": "Item shamil karein",
+    "noItems": "Koi item shamil nahi",
+    "inStock": "Yahan {{n}} stock mein",
+    "qty": "Kitne",
+    "note": "Note (ikhtiyari)",
+    "cost": "Jaane wale stock ki maaliyat (khareed par)",
+    "send": "Abhi bhejein",
+    "sendBranch": "Doosri branch ko bhejein",
+    "remove": "Hatayein"
   }
 }

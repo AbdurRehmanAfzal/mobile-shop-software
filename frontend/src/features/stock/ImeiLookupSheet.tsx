@@ -29,7 +29,7 @@ export default function ImeiLookupSheet({ onOpenDevice, onBuy }: { onOpenDevice:
               <div className="card p-0">
                 <DeviceRow d={data.device} onClick={() => onOpenDevice(data.device!.id)} />
               </div>
-              {data.device.status === 'sold' || data.device.status === 'returned_to_supplier' ? (
+              {data.device.status === 'sold' || data.device.status === 'returned_to_supplier' || data.device.status === 'transferred' ? (
                 <BiButton text="purchase.title" full variant="secondary" onClick={() => onBuy(digits)} />
               ) : null}
             </>

@@ -58,7 +58,7 @@ export interface Colour {
 
 export type DeviceCondition = 'box_pack' | 'open_box' | 'used' | 'patched'
 export type PtaStatus = 'pta_approved' | 'non_pta' | 'jv' | 'unknown'
-export type DeviceStatus = 'in_stock' | 'on_loan' | 'with_customer_for_approval' | 'sold' | 'in_repair' | 'faulty' | 'returned_to_supplier'
+export type DeviceStatus = 'in_stock' | 'on_loan' | 'with_customer_for_approval' | 'sold' | 'in_repair' | 'faulty' | 'returned_to_supplier' | 'transferred'
 export type VerificationStatus = 'not_required' | 'pending' | 'clear' | 'flagged'
 
 export interface AccessoryItem {

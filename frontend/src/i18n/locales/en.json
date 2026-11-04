@@ -182,7 +182,8 @@
       "sold": "Sold",
       "in_repair": "In repair",
       "faulty": "Faulty",
-      "returned_to_supplier": "Returned to supplier"
+      "returned_to_supplier": "Returned to supplier",
+      "transferred": "Sent to a branch"
     },
     "condition": {
       "box_pack": "Box pack",
@@ -250,7 +251,9 @@
       "price_changed": "Price changed",
       "note": "Note",
       "barcode_assigned": "Barcode assigned",
-      "label_printed": "Label printed"
+      "label_printed": "Label printed",
+      "transferred_out": "Sent to a branch",
+      "transferred_in": "Came from a branch"
     },
     "acc": {
       "box": "Box",
@@ -6670,6 +6673,11 @@
           "title": "Quick PIN",
           "body": "A 4–6 digit PIN to open the app fast on your phone instead of the full password. The owner's PIN also approves a salesman's under-price sale.",
           "example": "Set PIN 4321 → next time type 4321 to log in."
+        },
+        "transfers": {
+          "title": "Branch transfers",
+          "body": "Send phones and items from this shop to another branch of yours. The phone leaves this shop's stock (its history stays here) and appears in the branch's stock with the same IMEI, barcode, buying price and selling price. Items move with their buying cost. Nothing is sold, so profit does not change.",
+          "example": "Send an iPhone 13 and 10 chargers from Saddar to the Mall Road branch: Saddar's stock goes down by Rs. 1,52,000 at cost, Mall Road's goes up by the same."
         }
       },
       "pinPassword": {
@@ -7452,6 +7460,33 @@
         "title": "Profit so far",
         "body": "All profit since the shop started on the app, up to this day: the same figure as the Profit tab for that whole time. Owner drawing is not counted as an expense here.",
         "example": "The Profit tab from the first day to today shows Rs. 2,50,000 → the same here."
+      }
+    },
+    "transfer": {
+      "page": {
+        "title": "Branch transfers",
+        "body": "Send phones and items from this shop to another branch of yours. The phone leaves this shop's stock (its history stays here) and appears in the branch's stock with the same IMEI, barcode, buying price and selling price. Items move with their buying cost. Nothing is sold, so profit does not change.",
+        "example": "Send an iPhone 13 and 10 chargers from Saddar to the Mall Road branch: Saddar's stock goes down by Rs. 1,52,000 at cost, Mall Road's goes up by the same."
+      },
+      "to": {
+        "title": "Send to",
+        "body": "The branch that receives the stock. Only the owner's other branches that you work in are shown.",
+        "example": "Saddar shop → pick Mall Road."
+      },
+      "phones": {
+        "title": "Phones",
+        "body": "Phones, tablets and watches in stock here that go to the branch. Search, scan the IMEI or barcode, or open this from a phone's page.",
+        "example": "Scan the box of the Galaxy A15 → it is added to the list."
+      },
+      "items": {
+        "title": "Items",
+        "body": "Chargers, covers and other counted items, with how many pieces go. The oldest pieces leave first, at their buying cost.",
+        "example": "Type-C cable × 10 → this shop has 10 fewer, the branch 10 more."
+      },
+      "cost": {
+        "title": "Stock value moving",
+        "body": "The buying cost of everything on the list. It leaves this shop's stock and is added to the branch's; no sale, no profit, no cash.",
+        "example": "Phone at cost 1,40,000 + 10 cables at 120 = Rs. 1,41,200."
       }
     }
   },
@@ -9188,7 +9223,8 @@
     "askingNow": "Asking now",
     "askingFirst": "First asking",
     "atCheckout": "at the sale",
-    "approved": "approved by owner"
+    "approved": "approved by owner",
+    "fromBranch": "Came from another branch of yours"
   },
   "confirm": {
     "title": "Check before you sell",
@@ -9641,7 +9677,32 @@
       "discounts": "Discounts",
       "repair_income": "Repair income",
       "other_income": "Other income",
-      "purchases": "Purchases (items)"
+      "purchases": "Purchases (items)",
+      "branch_transfer": "Moved to / from branches"
     }
+  },
+  "transfer": {
+    "title": "Branch transfers",
+    "new": "Send to a branch",
+    "none": "Nothing sent or received yet",
+    "sentTo": "Sent to {{shop}}",
+    "cameFrom": "Came from {{shop}}",
+    "lines": "{{n}} lines",
+    "pieces": "{{n}} pieces",
+    "noBranch": "You work in only one shop. Ask the provider to add a branch, then you can move stock between them.",
+    "to": "Send to",
+    "phones": "Phones",
+    "addPhone": "Add a phone",
+    "noPhones": "No phone added",
+    "items": "Items",
+    "addItem": "Add an item",
+    "noItems": "No item added",
+    "inStock": "{{n}} in stock here",
+    "qty": "How many",
+    "note": "Note (optional)",
+    "cost": "Stock value moving (at cost)",
+    "send": "Send now",
+    "sendBranch": "Send to another branch",
+    "remove": "Remove"
   }
 }

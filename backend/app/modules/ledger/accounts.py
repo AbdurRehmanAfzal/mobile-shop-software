@@ -21,6 +21,7 @@ class SysAccount(StrEnum):
     EXPENSE = "expense"  # prefix: expense:<category>
     EQUITY = "equity"  # opening balances / owner capital
     SUSPENSE = "suspense"  # unallocated money, must be cleared
+    BRANCH = "branch_transfer"  # stock moved to / from another branch of the same owner (equity)
 
 
 def party_account(party_id: uuid.UUID) -> str:

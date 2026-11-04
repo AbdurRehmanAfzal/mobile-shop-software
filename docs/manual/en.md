@@ -870,6 +870,23 @@ Once a month (or whenever you feel something is missing) count the shelf with th
 
 > **Tip:** Do the count before opening or after closing, when no sales are happening. A phone sold while you are counting will show up as "missing".
 
+### Sending stock to another branch
+
+If you have more than one branch, you can move phones and items between them. Nothing is sold: the stock leaves this shop at its buying price and arrives in the branch at the same price, so profit does not change.
+
+1. Open the phone and tap **Send to another branch** (or open an item and tap the same button, or go to **More → Branch transfers → Send to a branch**).
+2. Under **Send to**, tap the branch.
+3. Tap **Add a phone** to add more phones (search or scan the IMEI or barcode), and **Add an item** for chargers, covers and other items. Use **+** and **−** to set how many pieces go.
+4. Check **Stock value moving (at cost)** at the bottom, then tap **Send now**.
+
+**Example:** Saddar sends a Galaxy A04 (bought for Rs. 40,000) and 2 chargers (Rs. 900 each) to Mall Road. Saddar's stock goes down by Rs. 41,800 and Mall Road's goes up by Rs. 41,800.
+
+- In this shop the phone shows **Sent to a branch**; its whole history stays here.
+- In the branch it is in stock with the same IMEI, barcode and selling price, and its first line says it came from your other branch.
+- **More → Branch transfers** lists everything sent and received, with a number like TRF-000001.
+
+> **Note:** Only the owner and the manager can send stock, and only to branches they also work in. The button shows only when you have more than one branch.
+
 ## 12. Price stickers, barcodes and scanning
 
 Every phone and every item in Mobile Shop gets its own barcode the moment it is bought. You print it on a small price sticker, stick it on the box, and from then on one scan finds the phone: at the counter, in a return, in a stock count. No more typing 15-digit IMEIs.

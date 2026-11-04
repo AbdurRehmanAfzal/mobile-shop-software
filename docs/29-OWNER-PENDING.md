@@ -93,6 +93,11 @@ and `-roman.pdf` (26 chapters, 49 screenshots each) before giving them to shops.
 wording in particular. The home screenshot shows the demo shop's day with a loss (demo expenses);
 say if you want a retake with a profitable day. How to edit and rebuild: `docs/manual/README.md`.
 
+**Branch transfers** (2026-11-04): in a shop with two branches, open a phone → **Send to another branch** → pick the branch → add a charger × 2 → **Send now**. Check:
+1. The phone shows "Sent to a branch" here, and in the branch (switch shop in More) it is in stock with the same IMEI and price.
+2. More → Branch transfers lists it in both shops.
+3. Reports → Balance is still balanced in both shops.
+
 Close the app fully and open it again first (or install the newest APK from the latest Deploy run →
 `android / apk`), so the newest version loads.
 

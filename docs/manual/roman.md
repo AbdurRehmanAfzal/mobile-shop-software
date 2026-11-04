@@ -871,6 +871,23 @@ Mahine mein ek baar (ya jab bhi lage ke kuch ghayab hai) scanner se shelf gin le
 
 > **Mashwara:** Ginti dukaan kholne se pehle ya band karne ke baad karein, jab koi bikri na ho rahi ho. Ginti ke dauraan bika hua phone "ghayab" nazar aayega.
 
+### Doosri branch ko stock bhejna
+
+Agar aap ki ek se zyada branches hain to aap in ke darmiyan mobile aur items bhej sakte hain. Kuch bikta nahi: stock apni khareed ki qeemat par is dukaan se nikalta hai aur usi qeemat par branch mein aata hai, is liye munafa nahi badalta.
+
+1. Mobile kholein aur **Doosri branch ko bhejein** dabayein (ya item khol kar yehi button dabayein, ya **Mazeed → Branch transfer → Branch ko bhejein** par jayein).
+2. **Kis branch ko** ke neeche branch dabayein.
+3. Mazeed mobile ke liye **Mobile shamil karein** dabayein (talaash karein ya IMEI ya barcode scan karein), aur charger, cover aur doosri cheezon ke liye **Item shamil karein**. **+** aur **−** se piece ki tadaad rakhein.
+4. Neeche **Jaane wale stock ki maaliyat (khareed par)** dekhein, phir **Abhi bhejein** dabayein.
+
+**Misaal:** Saddar ek Galaxy A04 (khareed Rs. 40,000) aur 2 charger (Rs. 900 wale) Mall Road ko bhejta hai. Saddar ka stock Rs. 41,800 kam hota hai aur Mall Road ka Rs. 41,800 barhta hai.
+
+- Is dukaan mein mobile par **Branch ko bheja** likha aata hai; us ki poori history yahin rehti hai.
+- Branch mein woh usi IMEI, barcode aur farokht ki qeemat ke saath stock mein hota hai, aur us ki pehli line batati hai ke woh aap ki doosri branch se aaya.
+- **Mazeed → Branch transfer** mein sab bheja aur aaya hua maal TRF-000001 jaise number ke saath dikhta hai.
+
+> **Note:** Sirf maalik aur manager stock bhej sakte hain, aur sirf un branches ko jin mein woh bhi kaam karte hain. Button tabhi dikhta hai jab aap ki ek se zyada branch ho.
+
 ## 12. Price sticker, barcode aur scanning
 
 Mobile Shop mein har phone aur har item ko khareed ke lamhe hi apna barcode mil jata hai. Aap use chhote price sticker par print kar ke dabbe par chipka dete hain, aur us ke baad ek scan se phone mil jata hai: counter par, wapsi mein, stock ki ginti mein. 15 hindson wale IMEI likhne ki zaroorat khatam.

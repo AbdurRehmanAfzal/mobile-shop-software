@@ -25,6 +25,7 @@ import {withCur } from '@/lib/format'
 export default function AccessoryDetailPage() {
   const { id } = useParams()
   const nav = useNavigate()
+  const multiShop = useAuth((s) => (s.me?.shops.length ?? 0) > 1)
   const { pick, ur, cls } = useLang()
   const canCost = useAuth((s) => s.me?.user.role === 'owner' || s.me?.user.role === 'manager')
   const exists = (k: string) => i18next.exists(k)
@@ -84,6 +85,7 @@ export default function AccessoryDetailPage() {
         {canCost ? <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><BiButton text="acc.adjust" icon={<RefreshCw size={18} />} variant="secondary" full onClick={() => { setDelta(''); setCost(''); setNote(''); setAdjusting(true) }} /></div><Help term="items.adjust" size="sm" /></div> : null}
         <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><BiButton text="label.button" icon={<Tag size={18} />} variant="secondary" full onClick={() => setLabels(true)} /></div><Help term="items.labels" size="sm" /></div>
       </div>
+      {canCost && multiShop && it.qty > 0 ? <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><BiButton text="transfer.sendBranch" variant="secondary" full onClick={() => nav(`/transfers/new?item=${it.id}`)} /></div><Help term="transfer.page" size="sm" /></div> : null}
       {/* owner addendum 6: a counted watch / tablet can be tracked one by one from here on */}
       {canCost && it.qty > 0 && (it.category === 'watch' || it.category === 'tablet') ? <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><BiButton text="devx.makeUnit" variant="ghost" full onClick={() => setMaking(true)} /></div><Help term="items.makeUnit" size="sm" /></div> : null}
 
