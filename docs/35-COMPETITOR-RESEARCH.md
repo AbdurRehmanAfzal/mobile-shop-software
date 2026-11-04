@@ -71,6 +71,21 @@ not sold for Pakistan, and none has Urdu, PKR, udhaar or CNIC verification.
 5. **Social proof**: competitors show customer counts and logos; our landing has none yet. Add numbers and 2–3 shopkeeper quotes once real shops are live.
 6. **Trial without a card / instant start**: HysabOne says "setup in 10 minutes". Our shops are opened by the super admin from a request, so a quick reply on WhatsApp matters.
 
+## 5. Recommended updates, in order (owner question 2026-11-04)
+
+Rule for every item: additive only. Every item is a new table or column, a new screen or a new tab, and anything that changes behaviour is behind a per-shop switch that is off by default. Existing flows, data and tests stay as they are; one release per item.
+
+| # | Update | Why (competitor) | Size | Why it cannot break anything |
+|---|---|---|---|---|
+| 1 | Accounting reports: trial balance, balance sheet, cash-flow | HysabOne and BluePrimes sell "accounts" | small | read-only, derived from the existing ledger; a new tab |
+| 2 | Phone / accessory transfer between branches | HysabOne branch transfers | medium | a new device event "transfer"; accessories move their oldest batch; sale and purchase untouched |
+| 3 | Play Store release | HysabOne has store apps | medium | build and pages only (API 36, AAB, privacy / deletion); the app screens do not change |
+| 4 | FBR / PRA live e-invoicing | Moneypex and BluePrimes | large | per-shop switch, off by default; bills without it print as today; queued when offline |
+| 5 | Repair status link for the customer | HysabOne customer notifications | small | a public read-only page by REP number; the repair flow is unchanged |
+| 6 | Landing: customer count, quotes, faster trial | every competitor shows social proof | small | landing content; a self-start trial only if the owner wants it (OTP already exists) |
+
+Not to copy: per-add-on pricing (Moneypex) — keeping everything in one plan is our advantage.
+
 ## Sources
 - HysabOne mobile shop: https://hysabone.com/industries/mobile-shop/
 - HysabOne POS / pricing: https://hysabone.com/pos-software-pakistan/

@@ -287,6 +287,12 @@ Server env variables, server commands, manual testing and decisions: `docs/29-OW
 ## Backlog (owner requests, not started)
 | Item | Notes |
 |---|---|
+| Competitor gap 1: accounting reports (trial balance, balance sheet, cash-flow) | read-only, derived from the ledger; new tab in Reports / audit (`docs/35` §5) |
+| Competitor gap 2: phone / accessory transfer between branches | chain plan; new device event + batch move, both shops' history (`docs/35` §5) |
+| Competitor gap 3: Play Store release | API 36, AAB, privacy + deletion pages (`docs/29` G) |
+| Competitor gap 4: FBR / PRA live e-invoicing (PRAL) | per-shop switch, off by default; queue when offline; FBR no. + QR on the bill (FR-TAX-04) |
+| Competitor gap 5: customer repair-status link | public read-only link with the REP number, sent on WhatsApp |
+| Competitor gap 6: landing social proof + instant trial | customer count, shopkeeper quotes; optional self-start trial with OTP (owner decision) |
 
 ## Known issues / tech debt
 - Signup has no phone OTP verification; add before public launch (Phase 3).
