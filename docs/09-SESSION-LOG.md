@@ -780,3 +780,19 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
   - We lead on used-phone verification, Urdu, amanat / labs / len-den, and an all-in price.
   - Gaps: live FBR / PRA e-invoicing, Play Store, stock transfer between branches, simple accounting reports, social proof.
 - Sources are the vendors' own pages (claims, not tested).
+
+## 2026-11-04 · Competitor gap 1: trial balance and balance sheet
+- Owner: go ahead with the competitor-driven updates without disturbing existing work; item 1 first.
+- Built:
+  - `backend/app/modules/reports/accounts.py` and the routes `GET /reports/trial-balance?as_of=` and `GET /reports/balance-sheet?as_of=` (owner / manager, `reports_all`). They are read-only, derived from the ledger, and cash opening balances are included (ADR-045).
+  - Reports gets a new **Balance** tab (`BooksTab.tsx`, its own file; the other tabs are untouched). It has an as-of day, Balance sheet (has / owes / owner's share) and Trial balance (debit / credit, totals), plus a "Balanced" check line. The people lines open the khata.
+  - Text and "?" help with an example in en / ur / roman.
+  - User manual chapter 20 gains a section (all three languages), and the PDFs are rebuilt.
+**Verified**:
+- new `test_accounts_reports.py`; the full backend suite and ruff are green;
+- tsc; vitest 43 (help texts complete);
+- Playwright `books.spec.ts` (en + ur, older day), plus `audit-reports` and `reports-audit`;
+- all 1,238 local shops balance, with profit equal to P&L;
+- screens checked at phone size, in English and Urdu.
+**Next**: item 2 (phone / accessory transfer between branches) once the owner says go.
+

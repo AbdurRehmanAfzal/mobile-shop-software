@@ -1766,6 +1766,22 @@ Formats:
 
 > **Note:** Jo computer file share nahi kar sakta woh is ke bajaye file download kar leta hai aur aap ko bata deta hai.
 
+### Balance sheet aur trial balance
+
+**Balance** ka tab aap ki dukaan ka hisaab waise dikhata hai jaise accountant dekhta hai. Dono safhe har entry se bante hain, is liye in mein kuch bhi haath se nahi likha jata aur na hi yahan kuch badla ja sakta hai.
+
+1. **Mazeed → Reports** kholein aur **Balance** ka tab dabayein.
+2. **Is din tak** mein aaj ka din rehne dein ya purana din chunein, masalan saal ke hisaab ke liye 30 June.
+3. **Balance sheet** mein teen khaane hain: **Dukaan ke paas kya hai** (galla, bank aur wallet, **Logon ne aap ko dena hai**, **Stock (khareed ki qeemat par)**), **Dukaan ne kya dena hai** (**Aap ne logon ko dena hai**, **Liya hua tax, abhi jama karana hai**) aur **Maalik ka hissa** (maalik ki daali hui raqam, **Ab tak ka munafa**, minus **Maalik ne nikaale**).
+4. **Trial balance** dabayein to har khaata apne debit ya credit balance ke saath aur dono ka kul dikhega.
+5. Sabz line **Barabar hai** batati hai ke dukaan ke paas jo hai woh dena hai + maalik ka hissa ke barabar hai.
+
+**Misaal:** paas hai Rs. 9,50,000 = dena hai Rs. 1,50,000 + maalik ka hissa Rs. 8,00,000.
+
+> **Mashwara:** **Ab tak ka munafa** wohi raqam hai jo **Munafa** ka tab pehle din se us tareekh tak dikhata hai. **Logon ne aap ko dena hai** dabayein to udhaar khata khul jata hai.
+
+> **Note:** Ye tab sirf maalik aur manager ko dikhta hai.
+
 ## 21. Dukaan ka audit
 
 **Dukaan ka audit** aap ke karobar ka poora check-up hai. Yeh aise sawalon ka jawab deta hai: "Maine pichle mahine asal mein kitna kamaya?", "Paise kahan gaye?", "Kis ne mujhe dena hai, aur kab se?" aur "Kaun se phone meri shelf par atke hue hain?". Har figure dukaan ke apne records se nikalta hai, aur har figure par daba kar us ke peeche ke bilkul wahi bills, payments ya phone dekhe ja sakte hain.

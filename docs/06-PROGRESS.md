@@ -281,13 +281,18 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | Operations runbook (internal; secrets only as placeholders) | ✅ | `operations-en.md` |
 | Owner review of the wording | ⏳ | `docs/29-OWNER-PENDING.md` D |
 
+## Phase 18 — Competitor gaps (owner 2026-11-04, `docs/35` §5)
+| Item | Status | Notes |
+|---|---|---|
+| 1. Trial balance + balance sheet (Reports → Balance) | ✅ | `/reports/trial-balance`, `/reports/balance-sheet`, ADR-045; cash-flow per account already existed (`/reports/cash-flow`) |
+| 2–6 (branch transfer, Play Store, FBR live, repair status link, landing proof) | ⬜ | backlog below |
+
 ## Owner side (open)
 Server env variables, server commands, manual testing and decisions: `docs/29-OWNER-PENDING.md` — none done yet (2026-11-01).
 
 ## Backlog (owner requests, not started)
 | Item | Notes |
 |---|---|
-| Competitor gap 1: accounting reports (trial balance, balance sheet, cash-flow) | read-only, derived from the ledger; new tab in Reports / audit (`docs/35` §5) |
 | Competitor gap 2: phone / accessory transfer between branches | chain plan; new device event + batch move, both shops' history (`docs/35` §5) |
 | Competitor gap 3: Play Store release | API 36, AAB, privacy + deletion pages (`docs/29` G) |
 | Competitor gap 4: FBR / PRA live e-invoicing (PRAL) | per-shop switch, off by default; queue when offline; FBR no. + QR on the bill (FR-TAX-04) |

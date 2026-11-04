@@ -7171,6 +7171,11 @@
           "title": "Price changes",
           "body": "Every change of a phone's asking price and every sale under the asking price in the chosen days, with who did it, who approved it and by how much.",
           "example": "Ali sold an A15 asking Rs. 38,000 for Rs. 37,000 → listed as \"Sold under asking −1,000\"."
+        },
+        "books": {
+          "title": "Balance sheet tab",
+          "body": "Your shop's books in two pages: the balance sheet (what you have, what you owe, your share) and the trial balance (every account, debit and credit). Made from the ledger, never typed by hand.",
+          "example": "Your accountant asks for the balance sheet of 30 June → pick 30-06 and open Balance sheet."
         }
       },
       "grossSales": {
@@ -7401,7 +7406,54 @@
         "example": "Rs. 4,000 + Rs. 500 = Rs. 4,500."
       }
     },
-    "language": "Language of the explanation"
+    "language": "Language of the explanation",
+    "books": {
+      "tab": {
+        "title": "Balance sheet tab",
+        "body": "Your shop's books in two pages: the balance sheet (what you have, what you owe, your share) and the trial balance (every account, debit and credit). Made from the ledger, never typed by hand.",
+        "example": "Your accountant asks for the balance sheet of 30 June → pick 30-06 and open Balance sheet."
+      },
+      "asOf": {
+        "title": "As of",
+        "body": "The reports show everything up to the end of this day. Pick an older day to see the books as they were then.",
+        "example": "Pick 31-12-2025 → the balance sheet as it was on the last day of the year."
+      },
+      "sheet": {
+        "title": "Balance sheet",
+        "body": "Three boxes: what the shop has (money, people who owe you, stock), what it owes (people you owe, tax to pay) and the owner's share (money put in, profit so far, minus what the owner took). Has always equals owes + owner's share.",
+        "example": "Has Rs. 9,50,000 = owes Rs. 1,50,000 + owner's share Rs. 8,00,000."
+      },
+      "trial": {
+        "title": "Trial balance",
+        "body": "Every account with its balance on the debit side (what you have or spent) or the credit side (what you earned or owe). The two totals are always the same; an accountant uses it to check the books.",
+        "example": "Galla Rs. 40,000 debit · Sales Rs. 3,00,000 credit · Cost of goods sold Rs. 2,40,000 debit …"
+      },
+      "has": {
+        "title": "What the shop has",
+        "body": "Money in the galla, bank and wallets, the udhaar people owe you, and the stock at its buying price.",
+        "example": "Galla 40,000 + bank 1,10,000 + udhaar 60,000 + stock 7,40,000 = Rs. 9,50,000."
+      },
+      "owes": {
+        "title": "What the shop owes",
+        "body": "Money you still have to pay dealers and people (udhaar and len-den taken), and tax collected on bills that is still to be paid.",
+        "example": "Rehman Traders 1,20,000 + tax 30,000 = Rs. 1,50,000."
+      },
+      "owner": {
+        "title": "Owner's share",
+        "body": "What the shop is worth for the owner: the money and stock you started with or put in, plus the profit so far, minus what you took out for yourself.",
+        "example": "Put in 6,00,000 + profit 2,50,000 − took 50,000 = Rs. 8,00,000."
+      },
+      "check": {
+        "title": "Balanced",
+        "body": "The app checks that what the shop has equals what it owes plus the owner's share. It always should; if it ever does not, tell support.",
+        "example": "9,50,000 = 1,50,000 + 8,00,000 → balanced."
+      },
+      "profit": {
+        "title": "Profit so far",
+        "body": "All profit since the shop started on the app, up to this day: the same figure as the Profit tab for that whole time. Owner drawing is not counted as an expense here.",
+        "example": "The Profit tab from the first day to today shows Rs. 2,50,000 → the same here."
+      }
+    }
   },
   "items": {
     "sellButton": "Accessory / watch",
@@ -9555,5 +9607,41 @@
     "avgDays": "Avg days",
     "charges": "Charges",
     "paidSpot": "Paid on the spot"
+  },
+  "books": {
+    "tab": "Balance",
+    "asOf": "As of",
+    "sheet": "Balance sheet",
+    "trial": "Trial balance",
+    "has": "What the shop has",
+    "owes": "What the shop owes",
+    "owner": "Owner's share",
+    "total": "Total",
+    "ok": "Balanced: has = owes + owner's share",
+    "bad": "Not balanced — please tell support",
+    "debit": "Debit",
+    "credit": "Credit",
+    "account": "Account",
+    "people": "{{n}} people",
+    "hint": "Worked out from every entry up to the end of this day. Nothing here is typed by hand.",
+    "line": {
+      "receivable": "People who owe you",
+      "payable": "You owe people",
+      "inventory": "Stock at cost",
+      "tax_payable": "Tax collected, still to pay",
+      "suspense": "Money not yet matched",
+      "capital": "Owner's money (opening + put in)",
+      "profit": "Profit so far",
+      "owner_drawing": "Owner took",
+      "other": "Other",
+      "opening_cash": "Opening money in accounts",
+      "equity": "Owner's capital / opening stock",
+      "sales": "Sales",
+      "cogs": "Cost of goods sold",
+      "discounts": "Discounts",
+      "repair_income": "Repair income",
+      "other_income": "Other income",
+      "purchases": "Purchases (items)"
+    }
   }
 }

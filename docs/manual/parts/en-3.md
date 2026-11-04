@@ -463,6 +463,22 @@ The formats:
 
 > **Note:** A computer that cannot share files downloads the file instead and tells you so.
 
+### Balance sheet and trial balance
+
+The **Balance** tab shows your shop's books the way an accountant reads them. Both pages are worked out from every entry, so nothing on them is typed by hand and nothing can be changed there.
+
+1. Open **More → Reports** and tap the **Balance** tab.
+2. Under **As of**, keep today or pick an older day, for example 30 June for the yearly books.
+3. **Balance sheet** shows three boxes: **What the shop has** (galla, bank and wallets, **People who owe you**, **Stock at cost**), **What the shop owes** (**You owe people**, **Tax collected, still to pay**) and **Owner's share** (the owner's money put in, **Profit so far**, minus **Owner took**).
+4. Tap **Trial balance** to see every account with its debit or credit balance and the two totals.
+5. The green line **Balanced** confirms that what the shop has equals what it owes plus the owner's share.
+
+**Example:** has Rs. 9,50,000 = owes Rs. 1,50,000 + owner's share Rs. 8,00,000.
+
+> **Tip:** **Profit so far** is the same figure as the **Profit** tab from your first day to that date. Tap **People who owe you** to open the udhaar khata.
+
+> **Note:** Only the owner and the manager see this tab.
+
 ## 21. Shop audit
 
 The **Shop audit** is the full check-up of your business. It answers questions like: "How much did I really earn last month?", "Where did the money go?", "Who owes me, and since when?" and "Which phones are stuck on my shelf?". Every figure is worked out from the shop's own records, and every figure can be tapped to see the exact bills, payments or phones behind it.

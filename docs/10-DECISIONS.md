@@ -267,3 +267,13 @@ by sheet remain a later step (docs/18 §1).
 **Consequences.**
 - Repair profit now includes outside lab costs on customers' phones.
 - A lab's unpaid charges show on its khata like any payable.
+
+## ADR-045 · 2026-11-04 · Accepted · Trial balance and balance sheet are derived from the ledger, never stored
+- **Context:** Competitors (HysabOne, BluePrimes) sell "accounts"; shops' accountants ask for a balance sheet (docs/35 §5 item 1).
+- **Decision:** `reports/accounts.py` sums the ledger per account up to the end of the shop's day.
+  - Cash accounts add their opening balance, which lives on `cash_accounts`, not in the ledger, with the other side on "opening balances" (equity).
+  - Party accounts fold into two lines: people who owe the shop / people the shop owes.
+  - `expense:owner_drawing` reduces the owner's share on the balance sheet and is not an expense, as in the profit and loss report.
+  - Profit so far = −Σ(income + expense accounts), so it equals P&L over all time.
+- **Consequences:** Nothing new is stored or posted. Both reports are always balanced by construction; a check line shows it, and a test asserts it. Checked on 1,238 local shops: all balanced, profit equal to P&L.
+

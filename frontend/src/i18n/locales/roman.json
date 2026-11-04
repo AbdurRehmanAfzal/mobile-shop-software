@@ -7171,6 +7171,11 @@
           "title": "Qeemat ki tabdeeliyan",
           "body": "Chune hue dinon mein phone ki asking price ki har tabdeeli aur asking se kam har sale, kis ne ki, kis ne ijazat di aur kitni kam.",
           "example": "Ali ne Rs. 38,000 wala A15 Rs. 37,000 mein becha → \"Sold under asking −1,000\"."
+        },
+        "books": {
+          "title": "Balance sheet ka tab",
+          "body": "Aap ki dukaan ka hisaab do safhon mein: balance sheet (kya paas hai, kya dena hai, aap ka hissa) aur trial balance (har khaata, debit aur credit). Ledger se banta hai, haath se kuch nahi likha jata.",
+          "example": "Accountant 30 June ki balance sheet maange → 30-06 chunein aur Balance sheet kholein."
         }
       },
       "grossSales": {
@@ -7401,7 +7406,54 @@
         "example": "Rs. 4,000 + Rs. 500 = Rs. 4,500."
       }
     },
-    "language": "Wazahat ki zaban"
+    "language": "Wazahat ki zaban",
+    "books": {
+      "tab": {
+        "title": "Balance sheet ka tab",
+        "body": "Aap ki dukaan ka hisaab do safhon mein: balance sheet (kya paas hai, kya dena hai, aap ka hissa) aur trial balance (har khaata, debit aur credit). Ledger se banta hai, haath se kuch nahi likha jata.",
+        "example": "Accountant 30 June ki balance sheet maange → 30-06 chunein aur Balance sheet kholein."
+      },
+      "asOf": {
+        "title": "Is din tak",
+        "body": "Report is din ke aakhir tak ki har cheez dikhati hai. Purana din chunein to hisaab waisa dikhega jaisa us din tha.",
+        "example": "31-12-2025 chunein → saal ke aakhri din ki balance sheet."
+      },
+      "sheet": {
+        "title": "Balance sheet",
+        "body": "Teen khaane: dukaan ke paas kya hai (raqam, logon ka udhaar, stock), dukaan ne kya dena hai (logon ko, tax) aur maalik ka hissa (daali hui raqam, ab tak ka munafa, nikaali hui raqam minus). Paas hai hamesha dena hai + maalik ka hissa ke barabar hota hai.",
+        "example": "Paas hai Rs. 9,50,000 = dena hai Rs. 1,50,000 + maalik ka hissa Rs. 8,00,000."
+      },
+      "trial": {
+        "title": "Trial balance",
+        "body": "Har khaata apne balance ke saath, debit mein (jo paas hai ya kharch hua) ya credit mein (jo kamaya ya dena hai). Dono ka kul hamesha barabar hota hai; accountant is se hisaab check karta hai.",
+        "example": "Galla Rs. 40,000 debit · Sale Rs. 3,00,000 credit · Bike maal ki khareed Rs. 2,40,000 debit …"
+      },
+      "has": {
+        "title": "Dukaan ke paas kya hai",
+        "body": "Galle, bank aur wallet mein raqam, logon ne jo udhaar dena hai, aur stock apni khareed ki qeemat par.",
+        "example": "Galla 40,000 + bank 1,10,000 + udhaar 60,000 + stock 7,40,000 = Rs. 9,50,000."
+      },
+      "owes": {
+        "title": "Dukaan ne kya dena hai",
+        "body": "Jo raqam abhi dealeron aur logon ko deni hai (udhaar aur liya hua len-den), aur bilon par liya hua tax jo abhi jama karana hai.",
+        "example": "Rehman Traders 1,20,000 + tax 30,000 = Rs. 1,50,000."
+      },
+      "owner": {
+        "title": "Maalik ka hissa",
+        "body": "Maalik ke liye dukaan ki maaliyat: shuru mein ya baad mein daali hui raqam aur stock, jama ab tak ka munafa, minus jo aap ne apne liye nikaala.",
+        "example": "Daale 6,00,000 + munafa 2,50,000 − nikaale 50,000 = Rs. 8,00,000."
+      },
+      "check": {
+        "title": "Barabar hai",
+        "body": "App check karti hai ke dukaan ke paas jo hai woh dena hai + maalik ka hissa ke barabar ho. Hamesha hona chahiye; kabhi na ho to support ko batayein.",
+        "example": "9,50,000 = 1,50,000 + 8,00,000 → barabar."
+      },
+      "profit": {
+        "title": "Ab tak ka munafa",
+        "body": "App par dukaan shuru hone se is din tak ka saara munafa: wohi raqam jo Munafa ka tab is poore arse ke liye dikhata hai. Maalik ka nikaala hua yahan kharcha nahi gina jata.",
+        "example": "Munafa ka tab pehle din se aaj tak Rs. 2,50,000 dikhaye → yahan bhi yehi."
+      }
+    }
   },
   "items": {
     "sellButton": "Accessory / ghari",
@@ -9555,5 +9607,41 @@
     "avgDays": "Ausat din",
     "charges": "Charges",
     "paidSpot": "Mauqe par ada"
+  },
+  "books": {
+    "tab": "Balance",
+    "asOf": "Is din tak",
+    "sheet": "Balance sheet",
+    "trial": "Trial balance",
+    "has": "Dukaan ke paas kya hai",
+    "owes": "Dukaan ne kya dena hai",
+    "owner": "Maalik ka hissa",
+    "total": "Kul",
+    "ok": "Barabar hai: paas hai = dena hai + maalik ka hissa",
+    "bad": "Barabar nahi — support ko batayein",
+    "debit": "Debit",
+    "credit": "Credit",
+    "account": "Khaata",
+    "people": "{{n}} log",
+    "hint": "Is din ke aakhir tak ki har entry se hisaab bana hai. Yahan kuch bhi haath se nahi likha jata.",
+    "line": {
+      "receivable": "Logon ne aap ko dena hai",
+      "payable": "Aap ne logon ko dena hai",
+      "inventory": "Stock (khareed ki qeemat par)",
+      "tax_payable": "Liya hua tax, abhi jama karana hai",
+      "suspense": "Raqam jo abhi milayi nahi gayi",
+      "capital": "Maalik ki raqam (shuru ki + daali hui)",
+      "profit": "Ab tak ka munafa",
+      "owner_drawing": "Maalik ne nikaale",
+      "other": "Deegar",
+      "opening_cash": "Khaaton mein shuru ki raqam",
+      "equity": "Maalik ka sarmaya / purana stock",
+      "sales": "Sale",
+      "cogs": "Bike maal ki khareed",
+      "discounts": "Riayat",
+      "repair_income": "Repair ki aamdan",
+      "other_income": "Deegar aamdan",
+      "purchases": "Khareedari (items)"
+    }
   }
 }
