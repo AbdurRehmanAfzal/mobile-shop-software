@@ -773,3 +773,10 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - Playwright `landing`, `admin`, `admin-access`, `provider-console`;
 - all 7 PDFs built and spot-checked (tables, Urdu RTL, Roman);
 - scanned the new manuals for IP addresses and the local `.env` secret values: none (only the known test numbers).
+
+## 2026-11-04 · Competitor research
+- Owner shared HysabOne, Moneypex, BluePrimes and Capterra links to explore.
+- `docs/35-COMPETITOR-RESEARCH.md`: prices, add-ons, trials and a feature-by-feature table against ours, the Capterra names, and where we lead or lag.
+  - We lead on used-phone verification, Urdu, amanat / labs / len-den, and an all-in price.
+  - Gaps: live FBR / PRA e-invoicing, Play Store, stock transfer between branches, simple accounting reports, social proof.
+- Sources are the vendors' own pages (claims, not tested).
