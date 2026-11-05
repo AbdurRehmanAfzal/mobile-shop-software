@@ -21,7 +21,7 @@ interface LabLate { id: string; job_id: string; job_no: string | null; device_de
 interface Repairs {
   granularity: string
   counts: { came: number; given: number; not_fixed: number; open_now: number; ready_now: number; late_now: number; at_lab_now: number; late_at_lab: number; sent_to_lab: number; back_from_lab: number }
-  money: { income: M; parts: M | null; lab_customer: M | null; lab_stock: M | null; profit: M | null; avg_bill: M }
+  money: { income: M; parts: M | null; lab_customer: M | null; lab_stock: M | null; lab_waiting?: M | null; profit: M | null; avg_bill: M }
   labs: Lab[]
   faults: { code: string; en: string; ur: string; count: number }[]
   series: { bucket: string; came: number; given: number }[]
@@ -47,6 +47,7 @@ const MONEY = [
   { key: 'lab_customer', helpKey: 'audit.repairs.labCustomer' },
   { key: 'profit', helpKey: 'audit.repairs.profit' },
   { key: 'lab_stock', helpKey: 'audit.repairs.labStock' },
+  { key: 'lab_waiting', helpKey: 'audit.repairs.labWaiting' },
   { key: 'avg_bill', helpKey: 'audit.repairs.avgBill' },
 ] as const
 
@@ -81,7 +82,7 @@ export default function RepairsAuditPage() {
               {MONEY.map((m) => (
                 <span key={m.key} className="flex flex-col">
                   <span className={`flex items-center gap-1 text-muted ${small}`}>{pick(`audit.repairs.${m.helpKey.split('.').pop()}`)}<Help term={m.helpKey} size="sm" /></span>
-                  <span className={`num text-lg font-bold ${m.key === 'profit' && Number(d.money.profit) < 0 ? 'text-payable' : ''}`} dir="ltr">{n(d.money[m.key])}</span>
+                  <span className={`num text-lg font-bold ${m.key === 'profit' && Number(d.money.profit) < 0 ? 'text-payable' : ''}`} dir="ltr">{m.key === 'profit' && Number(d.money.profit) < 0 ? `− ${n(d.money.profit)}` : n(d.money[m.key] ?? 0)}</span>
                 </span>
               ))}
             </div>

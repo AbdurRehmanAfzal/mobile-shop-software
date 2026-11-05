@@ -873,7 +873,9 @@
     "amount": "Raqam",
     "note": "Note",
     "moveNow": "Muntaqil karein",
-    "transfers": "Muntaqil ki gayi raqam"
+    "transfers": "Muntaqil ki gayi raqam",
+    "belowZero": "{{name}} sifr se kam dikha raha hai. Aam tor par is ka matlab hai ke pehle din is mein jo raqam thi (shuru ki raqam) woh kabhi likhi hi nahi gayi, is liye is se har adaigi sifr se neeche chali gayi. Shuru ki raqam likhein to asal raqam dikhegi.",
+    "setOpening": "Shuru ki raqam likhein"
   },
   "home": {
     "hello": "Assalam-o-Alaikum",
@@ -2978,6 +2980,11 @@
           "title": "Sab se aam kharabiyan",
           "body": "Is arse mein kaun si kharabiyan sab se zyada aayin: woh parts stock mein rakhein.",
           "example": "Screen 9, battery 5, charging port 3."
+        },
+        "labWaiting": {
+          "title": "Jo job abhi wapas nahi di, un ki lab fees",
+          "body": "Gahakon ki un jobs ki lab fees jo abhi wapas nahi di gayin. Jab job bill ke saath wapas di jayegi to ye repair ke munafe mein shamil hogi.",
+          "example": "Vivo Y20 lab se aaya, fees Rs. 2,500, gahak kal aayega → aaj yahan, kal munafe mein."
         }
       }
     },
@@ -9093,7 +9100,8 @@
       "avgBill": "Ausat bill",
       "series": "Din-war aaye",
       "needsLook": "Abhi dekhna hai",
-      "faults": "Sab se aam kharabiyan"
+      "faults": "Sab se aam kharabiyan",
+      "labWaiting": "Jo job abhi wapas nahi di, un ki lab fees"
     }
   },
   "label": {

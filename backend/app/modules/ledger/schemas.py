@@ -135,3 +135,6 @@ class OpeningBalanceRequest(BaseModel):
 class CashAccountUpdate(BaseModel):
     name: str | None = Field(default=None, min_length=1, max_length=100)
     account_no: str | None = Field(default=None, max_length=60)
+    # owner 2026-11-05 (accounting audit): the galla made with the shop starts at 0; the money that
+    # was really in it on the first day can be set later, so its balance is not shown below zero
+    opening_balance: Decimal | None = Field(default=None, ge=0)

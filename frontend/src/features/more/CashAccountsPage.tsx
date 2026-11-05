@@ -1,4 +1,4 @@
-import { ArrowLeftRight, Pencil, Plus, Trash2 } from 'lucide-react'
+import { AlertTriangle, ArrowLeftRight, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
@@ -24,7 +24,12 @@ export default function CashAccountsPage() {
   const [editing, setEditing] = useState<CashAccount | null>(null)
   const [removing, setRemoving] = useState<CashAccount | null>(null)
   const [newName, setNewName] = useState('')
-  const rename = useDocMutation<{ id: string; name: string }, CashAccount>('PATCH', (i) => `/api/v1/ledger/accounts/${i.id}`, (i) => ({ name: i.name }))
+  const [newOpening, setNewOpening] = useState('')
+  // owner 2026-11-05 (accounting audit): the opening balance can be set later too
+  const rename = useDocMutation<{ id: string; name: string; opening_balance?: number }, CashAccount>('PATCH', (i) => `/api/v1/ledger/accounts/${i.id}`, (i) => ({ name: i.name, ...(i.opening_balance !== undefined ? { opening_balance: i.opening_balance } : {}) }))
+  const edit = (a: CashAccount) => { setNewName(a.name); setNewOpening(String(Number(a.opening_balance ?? 0))); setEditing(a) }
+  // a cheque account below zero is cheques given and not cleared yet — normal, no hint
+  const below = (data ?? []).filter((a) => Number(a.balance) < 0 && a.kind !== 'cheque' && a.kind !== 'remittance')
   const inv = useInvalidate()
   const label = (a: CashAccount) => (ur && a.name_ur ? a.name_ur : a.name)
   // Shop Audit P2-1: counter cash to the bank (or back) as one balanced move, never income or expense
@@ -41,6 +46,16 @@ export default function CashAccountsPage() {
       <List>
         {data?.map((a) => <Row key={a.id} title={label(a)} sub={a.kind} right={<MoneyText value={a.balance} tone="ink" />} onClick={() => setBook(a)} />)}
       </List>
+      {below.map((a) => (
+        <div key={a.id} className="flex items-start gap-3 rounded-2xl bg-payable-tint px-4 py-3 text-payable" data-testid="cash-below-zero">
+          <AlertTriangle size={20} className="mt-0.5 shrink-0" />
+          <div className="flex min-w-0 flex-1 flex-col gap-2">
+            <span className={ur ? 'text-sm leading-relaxed' : 'text-sm font-semibold'}>{pick('cash.belowZero').replace('{{name}}', label(a))}</span>
+            {role === 'owner' ? <BiButton text="cash.setOpening" size="md" variant="secondary" onClick={() => edit(a)} /> : null}
+          </div>
+          <Help term="accounts.opening" size="sm" />
+        </div>
+      ))}
       {canMove && (data?.length ?? 0) > 1 ? (
         <div className="flex items-center gap-1">
           <div className="min-w-0 flex-1"><BiButton text="cash.move" icon={<ArrowLeftRight size={20} />} variant="secondary" full onClick={openMove} /></div>
@@ -101,7 +116,7 @@ export default function CashAccountsPage() {
       <Sheet open={book !== null} onClose={() => setBook(null)} title="cash.book">
         {book && role === 'owner' ? (
           <div className="mb-3 grid grid-cols-2 gap-2">
-            <button type="button" onClick={() => { setNewName(book.name); setEditing(book); setBook(null) }} className="tap flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-line bg-surface text-sm font-bold">
+            <button type="button" onClick={() => { edit(book); setBook(null) }} className="tap flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-line bg-surface text-sm font-bold">
               <Pencil size={16} /> {pick('crud.editAccount')}
             </button>
             {!book.is_default ? (
@@ -135,9 +150,10 @@ export default function CashAccountsPage() {
       <Sheet open={editing !== null} onClose={() => setEditing(null)} title="crud.editAccount">
         {editing ? (
           <div className="flex flex-col gap-3">
-            <BiInput label="cash.name" value={newName} onChange={(e) => setNewName(e.target.value)} autoFocus help={<Help term="accounts.name" size="sm" />} />
+            <BiInput label="cash.name" value={newName} onChange={(e) => setNewName(e.target.value)} help={<Help term="accounts.name" size="sm" />} />
+            <BiInput label="cash.opening" type="number" inputMode="decimal" min={0} value={newOpening} onChange={(e) => setNewOpening(e.target.value)} help={<Help term="accounts.opening" size="sm" />} data-testid="opening-input" />
             <ErrorText error={rename.error} />
-            <BiButton text="common.save" full loading={rename.isPending} disabled={!newName.trim()} onClick={async () => { await rename.mutateAsync({ id: editing.id, name: newName.trim() }); setEditing(null) }} />
+            <BiButton text="common.save" full loading={rename.isPending} disabled={!newName.trim() || Number(newOpening) < 0} onClick={async () => { await rename.mutateAsync({ id: editing.id, name: newName.trim(), opening_balance: Number(newOpening || 0) }); await inv(); setEditing(null) }} />
           </div>
         ) : null}
       </Sheet>

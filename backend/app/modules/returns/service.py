@@ -147,7 +147,13 @@ def sale_return(
         if ln.tax_share > ZERO:
             posting.debit(acc.SysAccount.TAX_PAYABLE, ln.tax_share)
         if ln.cost > ZERO:
-            posting.debit(acc.SysAccount.INVENTORY, ln.cost, device_id=ln.device_id).credit(
+            # a phone or a stock item goes back into stock; a typed item goes back to the owner's goods
+            back = (
+                acc.SysAccount.INVENTORY
+                if ln.device_id or ln.accessory_id
+                else acc.SysAccount.EQUITY
+            )
+            posting.debit(back, ln.cost, device_id=ln.device_id).credit(
                 acc.SysAccount.COGS, ln.cost, device_id=ln.device_id
             )
         ln.returned_at = utcnow()
@@ -301,9 +307,34 @@ def purchase_return(
     if amount > ZERO:
         posting.debit(P, amount)
     for ln in lines:
-        if ln.net_cost > ZERO:
+        if ln.accessory_id:
+            a = acc_stock.get_accessory(db, shop_id, ln.accessory_id)
+            mv = acc_stock.move(
+                db,
+                shop_id,
+                user_id,
+                a,
+                -ln.qty,
+                "return",
+                document_type="purchase_return",
+                document_id=doc.id,
+                note=doc.no,
+            )
+            stock_value = getattr(mv, "cost_total", None) or money(mv.unit_cost * ln.qty)
+            if stock_value > ZERO:
+                posting.credit(acc.SysAccount.INVENTORY, stock_value, memo=ln.description)
+            diff = money(ln.net_cost - stock_value)
+            if diff > ZERO:
+                posting.credit(
+                    acc.SysAccount.COGS, diff, memo=f"{ln.description} returned above cost"
+                )
+            elif diff < ZERO:
+                posting.debit(
+                    acc.SysAccount.COGS, -diff, memo=f"{ln.description} returned below cost"
+                )
+        elif ln.net_cost > ZERO:
             posting.credit(
-                acc.SysAccount.INVENTORY if ln.device_id else acc.SysAccount.PURCHASES,
+                acc.SysAccount.INVENTORY if ln.device_id else acc.OTHER_PURCHASES,
                 ln.net_cost,
                 device_id=ln.device_id,
                 memo=ln.description,
@@ -315,19 +346,6 @@ def purchase_return(
     doc.ledger_group_id = group.id
 
     for ln in lines:
-        if ln.accessory_id:
-            a = acc_stock.get_accessory(db, shop_id, ln.accessory_id)
-            acc_stock.move(
-                db,
-                shop_id,
-                user_id,
-                a,
-                -ln.qty,
-                "return",
-                document_type="purchase_return",
-                document_id=doc.id,
-                note=doc.no,
-            )
         if ln.device_id:
             device = db.get(Device, ln.device_id)
             apply_event(

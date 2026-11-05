@@ -31,6 +31,8 @@ DEFAULT_CATEGORIES: list[tuple[str, str, str, int]] = [
     ("tea", "Tea & refreshments", "چائے پانی", 70),
     ("mobile_bill", "Phone & internet", "فون اور انٹرنیٹ", 80),
     ("tax_fee", "Taxes & fees", "ٹیکس اور فیس", 90),
+    # dealer-bill items not kept in stock (posted by purchases, not typed as an expense)
+    ("other_purchases", "Items bought, not in stock", "خریدی چیزیں (اسٹاک سے باہر)", 92),
     ("owner_drawing", "Owner drawing", "مالک نے نکالے", 95),
     ("other", "Other", "دیگر", 999),
 ]

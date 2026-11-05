@@ -381,7 +381,7 @@ def deliver(
         for part in job.parts:
             if part.accessory_id:
                 a = acc_stock.get_accessory(db, shop_id, part.accessory_id)
-                acc_stock.move(
+                mv = acc_stock.move(
                     db,
                     shop_id,
                     user_id,
@@ -392,8 +392,8 @@ def deliver(
                     document_id=job.id,
                     note=job.no,
                 )
-                part.unit_cost = a.avg_cost
-                pc = money(a.avg_cost * part.qty)
+                pc = getattr(mv, "cost_total", None) or money(mv.unit_cost * part.qty)
+                part.unit_cost = money(pc / part.qty) if part.qty else a.avg_cost
                 if pc > ZERO:
                     posting.debit(acc.SysAccount.COGS, pc, memo=part.description).credit(
                         acc.SysAccount.INVENTORY, pc

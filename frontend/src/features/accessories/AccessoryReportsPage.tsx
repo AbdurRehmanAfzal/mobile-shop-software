@@ -112,7 +112,7 @@ export default function AccessoryReportsPage() {
         !mov ? <Loading /> : (
           <div className="flex flex-col gap-3" data-testid="r-movers">
             <span className="flex items-center gap-1"><BiLabel text="acc.r.fast" size="sm" tone="text-muted" bold /><Help term="items.r.fast" size="sm" /></span>
-            {!mov.fast.length ? <Empty text="acc.none" /> : <div className="card flex flex-col divide-y divide-line">{mov.fast.map((m) => <Line key={m.id} title={m.name} sub={`${m.sku} · ${pick('acc.qty')} ${m.qty}${m.days_of_cover != null ? ` · ${m.days_of_cover} ${pick('acc.daysCover')}` : ''}`} right={<><span className="num text-sm" dir="ltr">{pick('acc.sold')} {m.sold}</span>{m.profit != null ? <MoneyText value={m.profit} size="sm" /> : null}</>} onClick={() => open(m.id)} />)}</div>}
+            {!mov.fast.length ? <Empty text="acc.none" /> : <div className="card flex flex-col divide-y divide-line">{mov.fast.map((m) => <Line key={m.id} title={m.name} sub={`${m.sku} · ${pick('acc.qty')} ${m.qty}${m.days_of_cover != null ? ` · ${m.days_of_cover} ${pick('acc.daysCover')}` : ''}`} right={<><span className="num text-sm" dir="ltr">{pick('acc.sold')} {m.sold}</span>{m.profit != null ? <MoneyText value={m.profit} size="sm" signed /> : null}</>} onClick={() => open(m.id)} />)}</div>}
             <span className="flex items-center gap-1"><BiLabel text="acc.r.slow" size="sm" tone="text-muted" bold /><Help term="items.r.slow" size="sm" /></span>
             {!mov.slow.length ? <Empty text="acc.none" /> : <div className="card flex flex-col divide-y divide-line">{mov.slow.map((m) => <Line key={m.id} title={m.name} sub={`${m.sku} · ${pick('acc.qty')} ${m.qty}`} right={<span className="num text-sm" dir="ltr">{pick('acc.sold')} {m.sold}</span>} onClick={() => open(m.id)} />)}</div>}
           </div>
@@ -127,7 +127,7 @@ export default function AccessoryReportsPage() {
           </div>
           {!prof ? <Loading /> : !prof.length ? <Empty text="acc.none" /> : (
             <div className="card flex flex-col divide-y divide-line">
-              {prof.map((p) => <Line key={p.key} title={group === 'category' ? kindLabel(pick, p.key) : p.key} sub={`${p.units} ${pick('acc.r.units')} · ${pick('report.sales')} ${Number(p.revenue).toLocaleString('en-US')}`} right={<MoneyText value={p.profit} />} />)}
+              {prof.map((p) => <Line key={p.key} title={group === 'category' ? kindLabel(pick, p.key) : p.key} sub={`${p.units} ${pick('acc.r.units')} · ${pick('report.sales')} ${Number(p.revenue).toLocaleString('en-US')}`} right={<MoneyText value={p.profit} signed />} />)}
             </div>
           )}
         </div>

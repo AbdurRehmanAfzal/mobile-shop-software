@@ -10,7 +10,7 @@ from tests.test_purchases import _party
 
 
 def test_categories_seeded_and_custom(db, owner):
-    assert seed_categories(db) == 11 and seed_categories(db) == 0
+    assert seed_categories(db) == 12 and seed_categories(db) == 0
     cats = owner.get("/api/v1/expenses/categories").json()
     rent = next(c for c in cats if c["key"] == "rent")
     assert rent["name_ur"] == "دکان کا کرایہ" and rent["is_global"]

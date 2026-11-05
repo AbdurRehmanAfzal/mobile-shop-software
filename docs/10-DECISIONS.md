@@ -309,3 +309,18 @@ by sheet remain a later step (docs/18 §1).
   - The whole message is still the single `{{1}}` of the approved Meta template, so no new template approval is needed.
   - Rotating `SECRET_KEY` invalidates old links (and logs everyone out anyway).
 
+## ADR-048 · 2026-11-05 · Accepted · Accounting audit: stock on the ledger always equals stock in the shop; a loss never reads as a profit
+- **Context:** The owner asked for a full recheck of the accounts after shopkeepers were confused by a minus they could not explain. An invariant script ran over all 1,268 local shops and every report of the demo shops. Phone stock matched to the paisa everywhere and every group was balanced; the problems found are listed below.
+- **Decisions:**
+  - A sale's typed "other item" (not from stock) with a buying price posts Dr cogs / Cr **equity** (the owner's goods, like opening stock), never Cr inventory. A customer return of it reverses into equity.
+  - A supplier return of a stock item takes the pieces out at their stock value (FIFO / average) as Cr inventory. A difference from the bill's price is posted to cogs. It no longer credits `purchases`.
+  - A repair part's cost is what left the stock (the movement's FIFO / average cost), as for a sale.
+  - A dealer bill's other item (not kept in stock) is spending: `expense:other_purchases`, a seeded category "Items bought, not in stock". It reaches every profit report. The old `purchases` account was in no profit report.
+  - `ledger/corrections.py` adds new, keyed, dated correction groups for postings made before the fix. It runs once in migration `c7e9a1b3d5f8`; nothing is changed or removed.
+  - Shop audit, repairs: profit matches each customer job's lab charge with its bill (the jobs given back in the period). Lab charges on jobs not given back yet are shown apart as "lab_waiting".
+  - Display: `MoneyText` shows "−" whenever its colour does not tell the sign (`ink` / `muted`, or `signed`). The day report, Reports (gross / operating profit, best sellers, price changes) and item profit show a loss as "− 2,100", never as a plain number.
+  - A cash / bank / wallet account's opening balance can be set later by the owner (audited). Cash & bank explains an account below zero, except cheques given and not cleared.
+- **Not changed:**
+  - A customer job's lab charge is still booked to cogs when the phone comes back (ADR-044); only the audit card matches it to the bill.
+  - Cash can still go below zero; the app explains it instead of blocking a sale.
+

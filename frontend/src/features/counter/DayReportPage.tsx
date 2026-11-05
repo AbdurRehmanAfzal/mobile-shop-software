@@ -12,6 +12,8 @@ import type { DayReport, PaidHow } from '@/lib/types'
 import PeriodPicker, { periodQuery, type Period } from './PeriodPicker'
 
 const n = (v: string | number | null | undefined) => Math.abs(Number(v ?? 0)).toLocaleString('en-US', { maximumFractionDigits: 0 })
+/** a figure that can be a loss: "− 2,100" when below zero (owner 2026-11-05 — a loss never shows as a profit) */
+const signed = (v: string | number | null | undefined) => (Number(v ?? 0) < 0 ? `− ${n(v)}` : n(v))
 
 const HOW_TONE: Record<PaidHow, string> = {
   cash: 'bg-sell text-sell-fg',
@@ -84,7 +86,7 @@ export default function DayReportPage() {
                 <Box label="counter.returnsKept" help="cut" value={n(data.returns_kept)} cls="bg-ret text-ret-fg border-transparent" />
               </>
             ) : null}
-            {data.profit !== null ? <Box label="counter.profit" help="counter.glance.profit" value={n(data.profit)} cls="bg-hero text-hero-text border-transparent" /> : null}
+            {data.profit !== null ? <Box label="counter.profit" help="counter.glance.profit" value={signed(data.profit)} cls="bg-hero text-hero-text border-transparent" /> : null}
           </div>
 
           <span className="flex items-center gap-1"><BiLabel text="counter.whatSold" size="sm" bold tone="text-muted" /><Help term="counter.day.items" size="sm" /></span>

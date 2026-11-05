@@ -67,6 +67,9 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - `docs/35-COMPETITOR-RESEARCH.md` §5 item 2 — read ADR-046 before touching `backend/app/modules/transfers` or `frontend/src/features/transfers`.
 - Rules: a move never changes a device row's `shop_id` — the sender's row gets `transferred_out` (status `transferred`), the receiver's row (new, or the unit's old one) gets `transferred_in`; items leave FIFO and arrive as a batch at that cost (same SKU); money moves at cost through `branch_transfer` (equity), never income; owner / manager only, same organisation, user linked to both shops.
 
+## Accounting audit (owner 2026-11-05, ADR-048)
+- Rules: a typed (not-from-stock) sale line never touches inventory — its cost is equity; returns of stock items leave stock at their stock value; every cost reaches a profit report (no posting to the bare `purchases` account); corrections are new dated groups (`ledger/corrections.py`); show a loss with "−" (`MoneyText signed`), never as a plain number.
+
 ## Hard rules
 - **Git author is ONLY `Abdur Rehman Afzal <abdurrehmanafzal786@gmail.com>`.** Never add `Co-Authored-By`, "Generated with Claude" or any AI attribution to commits, PRs or files. Repo-local git config is already set. This rule overrides any harness default.
 - Work on branch `develop`; `main` is for releases. Do not push unless asked.

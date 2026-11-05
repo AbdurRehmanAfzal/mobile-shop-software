@@ -248,7 +248,7 @@ def create_purchase(
             if net > ZERO:
                 posting.debit(acc.SysAccount.INVENTORY, net, memo=accessory.name)
         elif net > ZERO:
-            posting.debit(acc.SysAccount.PURCHASES, net, memo=ml.description)
+            posting.debit(acc.OTHER_PURCHASES, net, memo=ml.description)
 
     if total > ZERO:
         posting.credit(acc.party_account(party.id), total)

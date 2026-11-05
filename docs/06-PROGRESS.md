@@ -289,6 +289,19 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | 5. Customer repair status link (job page → WhatsApp; public `/r/<token>`) | ✅ | `/public/repair/{token}`, ADR-047 |
 | 3, 4, 6 (Play Store, FBR live, landing proof) | ⬜ | backlog below |
 
+## Phase 19 — Accounting audit (owner 2026-11-05, ADR-048)
+| Item | Status | Notes |
+|---|---|---|
+| Invariants over every shop (phone stock, item stock vs batches, balanced groups, negatives) | ✅ | phones matched everywhere; 6 shops had item stock −150 (fixed) |
+| Typed sale line cost → equity, not stock; its return the same | ✅ | `sales`, `returns` |
+| Supplier return of a stock item → out of stock at stock value | ✅ | was credited to `purchases` |
+| Repair part cost = FIFO / average that left stock | ✅ | was always average |
+| Dealer-bill other item → `expense:other_purchases` (in every profit report) | ✅ | |
+| One-time corrections of old postings | ✅ | migration `c7e9a1b3d5f8`, `ledger/corrections.py` |
+| Repair profit matched to the bill; lab charges on open jobs apart | ✅ | `shopaudit/repairs.py` |
+| A loss shows "−" (day report, reports, best sellers, item profit, Cash & bank) | ✅ | `MoneyText` |
+| Opening balance of a money account settable later; below-zero explained | ✅ | Cash & bank |
+
 ## Owner side (open)
 Server env variables, server commands, manual testing and decisions: `docs/29-OWNER-PENDING.md` — none done yet (2026-11-01).
 

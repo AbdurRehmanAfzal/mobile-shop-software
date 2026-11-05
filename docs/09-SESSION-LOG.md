@@ -834,3 +834,27 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
   - Compose passes `PUBLIC_URL: https://${APP_DOMAIN}`, so the owner has nothing new to set. `backend/.env.example`, the operations and developer manuals, and ADR-047 are updated.
 **Verified**: `test_repairs`: no link without a public address; with `PUBLIC_URL` the message carries `…/r/<token>`. `test_repair_status_link` and the notifications tests are green; ruff.
 
+## 2026-11-05 · Accounting audit: every calculation rechecked, bugs fixed (ADR-048)
+- Owner: recheck all the accounts; shopkeepers saw a minus in the mock demo they could not understand; fix any bug.
+- Checked:
+  - Invariants on all 1,268 local shops: every ledger group is balanced; every phone's ledger stock equals its cost (no mismatch anywhere); item stock on the ledger equals the batches; nothing below zero.
+  - Every report and audit API of the demo shops, scanned for negatives.
+- Bugs found and fixed:
+  1. A typed sale item's buying price was taken out of stock, so item stock went to −150 in 6 shops. It now comes out of the owner's goods (equity); its return goes back the same way.
+  2. A supplier return of a stock item credited `purchases`, so the stock value stayed too high. It now leaves stock at its stock value, and any difference goes to cogs.
+  3. A repair part was costed at the average while the stock left FIFO, so ledger and batches drifted apart. It now uses the cost that actually left.
+  4. A dealer bill's other item went to `purchases`, which no profit report counted, so profit was too high. It now goes to `expense:other_purchases` ("Items bought, not in stock").
+  5. The audit's repair profit went below zero when a lab charge came before the bill. It is now matched to the jobs given back, with "lab charges on jobs not given back" shown apart.
+  6. A loss was shown without a minus, reading as a profit, in: the day report profit, Reports gross / operating profit, best sellers, price changes, item profit and the repair card.
+  7. A money account below zero showed as a plain positive amount in Cash & bank (`MoneyText` with `ink` dropped the sign).
+- Explained, not bugs:
+  - The demo's loss comes from the demo data (~9% margins against Rs. 85,000 rent).
+  - Old demo shops show cash below zero because their opening cash was never entered. The owner can now set the opening balance later, and Cash & bank explains the minus.
+  - Purchases net below zero in a month is a month with returns and no buying.
+  - A day's net sales below zero is a day where returns were more than sales.
+- Old data: migration `c7e9a1b3d5f8` posts keyed, dated correction groups once. The local DB got 6 corrections, and the invariants are all clean after it.
+**Verified**:
+- new `test_accounting_audit.py` (6 tests); the full backend suite and ruff are green; tsc; vitest 43;
+- Playwright: accessories, audit-finance, audit-parties, audit-products, audit-reports, audit-stock, audit, books, items, repair-labs, repair, reports-audit, return, saletax, transfer, laptop, lending — all pass;
+- screens checked: Cash & bank with the below-zero note and after setting the opening balance.
+
