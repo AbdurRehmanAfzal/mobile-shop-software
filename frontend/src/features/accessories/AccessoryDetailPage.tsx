@@ -98,7 +98,7 @@ export default function AccessoryDetailPage() {
         {canCost && it.min_price ? <KV k="acc.minPrice" help="items.minPrice" v={<MoneyText value={it.min_price} tone="ink" />} /> : null}
         {it.promo_price ? <KV k="acc.promo" help="items.promo" v={<span className="flex items-center gap-2"><MoneyText value={it.promo_price} tone="ink" />{it.promo_to ? <span className={`text-muted ${small}`} dir="ltr">→ {fmtDate(it.promo_to)}</span> : null}</span>} /> : null}
         {canCost ? <KV k="acc.avgCost" help="items.avgCost" v={<MoneyText value={it.avg_cost} tone="ink" />} /> : null}
-        {canCost && it.profit != null ? <KV k="acc.profitEach" help="items.profitEach" v={<span className="flex items-center gap-2"><MoneyText value={it.profit} />{it.margin_pct != null ? <span className={`text-muted ${small}`} dir="ltr">{Number(it.margin_pct).toFixed(0)}%</span> : null}</span>} /> : null}
+        {canCost && it.profit != null ? <KV k="acc.profitEach" help="items.profitEach" v={<span className="flex items-center gap-2"><MoneyText value={it.profit} signed />{it.margin_pct != null ? <span className={`text-muted ${small}`} dir="ltr">{Number(it.margin_pct).toFixed(0)}%</span> : null}</span>} /> : null}
         {canCost ? <KV k="acc.stockValue" help="items.stockValue" v={<MoneyText value={it.stock_value} tone="ink" />} /> : null}
         <KV k="acc.reorder" help="items.reorder" v={<span dir="ltr">{it.reorder_level}{it.max_stock ? ` – ${it.max_stock}` : ''}</span>} />
         {it.supplier_skus?.length ? <KV k="acc.supplierSkus" help="items.supplierSkus" v={<span className="flex flex-col items-end">{it.supplier_skus.map((x, i) => <span key={i} dir="ltr">{x.sku}{x.party_name ? ` · ${x.party_name}` : ''}</span>)}</span>} /> : null}

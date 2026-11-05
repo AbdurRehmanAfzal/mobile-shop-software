@@ -24,6 +24,12 @@ class SysAccount(StrEnum):
     BRANCH = "branch_transfer"  # stock moved to / from another branch of the same owner (equity)
 
 
+# a dealer bill's "other item" that is not kept in stock (a display stand, bags): spending the
+# profit reports count like any expense (owner 2026-11-05; before that it went to `purchases`, which
+# no profit report showed)
+OTHER_PURCHASES = "expense:other_purchases"
+
+
 def party_account(party_id: uuid.UUID) -> str:
     return f"party:{party_id}"
 

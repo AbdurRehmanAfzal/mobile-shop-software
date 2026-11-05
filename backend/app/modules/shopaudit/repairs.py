@@ -87,8 +87,31 @@ def repairs(db: Session, shop_id: uuid.UUID, p: Period, *, can_cost: bool) -> di
         if d.status != DispatchStatus.CANCELLED and p.date_from <= d.sent_on <= p.date_to
     ]
     by_job = {j.id: j for j in jobs}
-    lab_customer = money(sum((d.final_cost for d in back_in if by_job[d.job_id].party_id), ZERO))
     lab_stock = money(sum((d.final_cost for d in back_in if not by_job[d.job_id].party_id), ZERO))
+    # owner 2026-11-05 (accounting audit): repair profit matches each job's lab charge with its bill —
+    # the charges of the customer jobs given back in the period, whenever the phone came back from
+    # the lab. A charge on a job not given back yet is shown apart, so profit never dips below zero
+    # only because the bill comes later.
+    given_ids = {j.id for j in given}
+    back_all = [d for d in trips if d.status == DispatchStatus.BACK]
+    lab_customer = money(
+        sum(
+            (d.final_cost for d in back_all if d.job_id in given_ids and by_job[d.job_id].party_id),
+            ZERO,
+        )
+    )
+    lab_waiting = money(
+        sum(
+            (
+                d.final_cost
+                for d in back_all
+                if by_job.get(d.job_id) is not None
+                and by_job[d.job_id].party_id
+                and by_job[d.job_id].status not in CLOSED_STATUSES
+            ),
+            ZERO,
+        )
+    )
 
     income = _ledger(db, shop_id, p, "repair_income")
     parts = money(-_ledger(db, shop_id, p, "cogs", ["repair_bill", "reversal:repair_bill"]))
@@ -136,6 +159,7 @@ def repairs(db: Session, shop_id: uuid.UUID, p: Period, *, can_cost: bool) -> di
             "parts": parts if can_cost else None,
             "lab_customer": lab_customer if can_cost else None,
             "lab_stock": lab_stock if can_cost else None,
+            "lab_waiting": lab_waiting if can_cost else None,
             "profit": profit if can_cost else None,
             "avg_bill": money(income / len(given)) if given else ZERO,
         },
@@ -164,6 +188,6 @@ def repairs(db: Session, shop_id: uuid.UUID, p: Period, *, can_cost: bool) -> di
         "late_at_lab": [trip_out(db, d) for d in sorted(late_lab, key=lambda d: d.expected_back)],
         "notes": [
             "Income is the repair bills of the period; parts are their recorded cost.",
-            "Lab charges count when the phone came back from the lab. On a customer's phone they are a cost of the repair; on the shop's own phone they are added to that phone's cost (shown apart, not in repair profit).",
+            "Repair profit takes each customer job's lab charge together with its bill (the jobs given back in the period). A lab charge on a job not given back yet is shown apart. On the shop's own phone the lab charge is added to that phone's cost (shown apart, not in repair profit).",
         ],
     }

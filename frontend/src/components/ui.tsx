@@ -85,13 +85,18 @@ export function List({ children }: { children: ReactNode }) {
   return <div className="card divide-y divide-line p-0">{children}</div>
 }
 
-export function MoneyText({ value, tone, size = 'md' }: { value: string | number | null | undefined; tone?: 'auto' | 'ink' | 'muted'; size?: 'sm' | 'md' | 'lg' }) {
+/** Money with its sign told apart. `auto` (the default) colours it — green to get, red to give — and
+ *  shows the amount alone, for places that say "lena hai / dena hai" beside it. With `ink` / `muted`
+ *  the colour says nothing, so a figure below zero carries "−"; `signed` always does, for a profit
+ *  that can be a loss (owner 2026-11-05: a minus must never read as a plus). */
+export function MoneyText({ value, tone, size = 'md', signed }: { value: string | number | null | undefined; tone?: 'auto' | 'ink' | 'muted'; size?: 'sm' | 'md' | 'lg'; signed?: boolean }) {
   const n = Number(value ?? 0)
   const colour = tone === 'ink' ? 'text-ink' : tone === 'muted' ? 'text-muted' : n > 0 ? 'text-receivable' : n < 0 ? 'text-payable' : 'text-muted'
   const sz = size === 'lg' ? 'text-2xl' : size === 'sm' ? 'text-sm' : 'text-base'
+  const minus = n < 0 && (signed || tone === 'ink' || tone === 'muted')
   return (
     <span className={`num ${sz} ${colour}`} dir="ltr">
-      {formatMoney(Math.abs(n))}
+      {minus ? '− ' : ''}{formatMoney(Math.abs(n))}
     </span>
   )
 }

@@ -873,7 +873,9 @@
     "amount": "Amount",
     "note": "Note",
     "moveNow": "Move",
-    "transfers": "Money moved"
+    "transfers": "Money moved",
+    "belowZero": "{{name}} shows less than zero. That usually means the money that was in it on the first day (its opening balance) was never entered, so every payment out of it went below zero. Set the opening balance and it will show the real amount.",
+    "setOpening": "Set the opening balance"
   },
   "home": {
     "hello": "Assalam-o-Alaikum",
@@ -2978,6 +2980,11 @@
           "title": "Most common problems",
           "body": "Which problems came in most in the period: keep those parts in stock.",
           "example": "Screen 9, battery 5, charging port 3."
+        },
+        "labWaiting": {
+          "title": "Lab charges on jobs not given back",
+          "body": "Lab charges already booked on customer jobs that are not given back yet. They join the repair profit when the job is given back with its bill.",
+          "example": "Vivo Y20 back from the lab, Rs. 2,500 charge, customer comes tomorrow → shown here today, in profit tomorrow."
         }
       }
     },
@@ -9093,7 +9100,8 @@
       "avgBill": "Average bill",
       "series": "Taken in by day",
       "needsLook": "Needs a look now",
-      "faults": "Most common problems"
+      "faults": "Most common problems",
+      "labWaiting": "Lab charges on jobs not given back"
     }
   },
   "label": {

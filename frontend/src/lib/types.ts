@@ -180,6 +180,7 @@ export interface CashAccount {
   name: string
   name_ur: string | null
   is_default: boolean
+  opening_balance?: Money
   balance: Money
 }
 

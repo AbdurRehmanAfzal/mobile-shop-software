@@ -589,12 +589,20 @@ def update_cash_account(
     a = db.get(CashAccount, account_id)
     if a is None or a.shop_id != shop_id or not a.is_active:
         raise NotFound(code="cash_account_not_found")
-    changes = data.model_dump(exclude_unset=True)
-    before = {k: getattr(a, k) for k in changes}
+    changes = {
+        k: v
+        for k, v in data.model_dump(exclude_unset=True).items()
+        if v is not None or k == "account_no"
+    }
+    before = {
+        k: str(getattr(a, k)) if isinstance(getattr(a, k), Decimal) else getattr(a, k)
+        for k in changes
+    }
     for k, v in changes.items():
-        setattr(a, k, v)
+        setattr(a, k, money(v) if k == "opening_balance" else v)
     if "name" in changes:
         a.name_ur = None
+    changes = {k: str(v) if isinstance(v, Decimal) else v for k, v in changes.items()}
     record_audit(
         db,
         shop_id=shop_id,

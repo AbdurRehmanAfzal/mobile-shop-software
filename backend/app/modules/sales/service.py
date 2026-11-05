@@ -351,8 +351,10 @@ def create_sale(
         )
         line_no += 1
         if cost > ZERO:
+            # an item from stock leaves the stock; a typed "other item" was never in it, so its
+            # cost comes out of the owner's goods (like opening stock) — the stock never goes below 0
             posting.debit(acc.SysAccount.COGS, cost, memo=ml.description).credit(
-                acc.SysAccount.INVENTORY, cost
+                acc.SysAccount.INVENTORY if accessory is not None else acc.SysAccount.EQUITY, cost
             )
     invoice.cost_total = cost_total
 

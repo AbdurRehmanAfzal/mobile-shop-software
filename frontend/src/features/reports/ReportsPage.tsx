@@ -28,6 +28,8 @@ interface PriceReport { rows: PriceRow[]; by_user: { user_name: string; asking_c
 type Range = 'today' | 'yesterday' | 'last7' | 'month' | 'custom'
 
 const n = (v: string | number | null | undefined) => Math.abs(Number(v ?? 0)).toLocaleString('en-US', { maximumFractionDigits: 0 })
+/** a figure that can be a loss: "− 2,100" when below zero (owner 2026-11-05 — a loss never shows as a profit) */
+const signed = (v: string | number | null | undefined) => (Number(v ?? 0) < 0 ? `− ${n(v)}` : n(v))
 /** "− 800" for money taken off; plain "0" when nothing was */
 const minus = (v: string | number) => (Number(v) ? `− ${n(v)}` : '0')
 const monthStart = () => { const d = new Date(); return isoDay(1 - d.getDate()) }
@@ -131,9 +133,9 @@ export default function ReportsPage() {
                 <Line label="counter.sold" value={n(pnl.sales)} help="report.netSales" />
               )}
               <Line label="counter.cogs" value={minus(pnl.cogs)} muted help="report.cogs" />
-              <Line label="counter.grossProfit" value={n(pnl.gross_profit)} strong help="report.grossProfit" />
+              <Line label="counter.grossProfit" value={signed(pnl.gross_profit)} strong help="report.grossProfit" />
               {Object.entries(pnl.expenses).map(([k, v]) => <Line key={k} label={{ en: catName(k), ur: catName(k) }} value={minus(v)} muted />)}
-              {Number(pnl.total_expenses) ? <Line label="counter.operatingProfit" value={n(pnl.operating_profit)} help="report.operatingProfit" /> : null}
+              {Number(pnl.total_expenses) ? <Line label="counter.operatingProfit" value={signed(pnl.operating_profit)} help="report.operatingProfit" /> : null}
               {Number(pnl.repair_income) + Number(pnl.other_income) ? <Line label="counter.otherIncome" value={`+ ${n(Number(pnl.repair_income) + Number(pnl.other_income))}`} help="report.otherIncome" /> : null}
               <Line label={net >= 0 ? 'counter.netProfit' : 'counter.netLoss'} value={n(net)} strong help="report.netProfit" />
             </div>
@@ -164,7 +166,7 @@ export default function ReportsPage() {
                   <span className="truncate text-[15px] font-extrabold">{t.name}</span>
                   <span className={`text-muted ${small}`}><span className="num">{t.qty}</span> {pick('counter.soldQty')} · <span className="num" dir="ltr">{n(t.amount)}</span></span>
                 </span>
-                {t.profit !== null ? <span className="num text-base text-emerald" dir="ltr">+{n(t.profit)}</span> : null}
+                {t.profit !== null ? <span className={`num text-base ${Number(t.profit) < 0 ? 'text-payable' : 'text-emerald'}`} dir="ltr">{Number(t.profit) < 0 ? signed(t.profit) : `+${n(t.profit)}`}</span> : null}
               </div>
             ))}
           </div>
@@ -271,7 +273,7 @@ export default function ReportsPage() {
                     <div className={`flex flex-wrap gap-x-3 ${small}`} dir="auto">
                       {r.kind === 'asking_changed' ? <span className="num" dir="ltr">{n(r.old_asking)} → {n(r.new_asking)}</span> : <span className="num" dir="ltr">{pick('confirm.asking')} {n(r.old_asking)} · {pick('unit.soldFor')} {n(r.sold_price)}</span>}
                       {r.diff ? <span className={`num ${Number(r.diff) < 0 ? 'text-payable' : 'text-emerald-deep'}`} dir="ltr">{Number(r.diff) < 0 ? '−' : '+'}{n(r.diff)}</span> : null}
-                      {r.profit != null ? <span className="text-muted">{pick('confirm.profit')} <span className="num" dir="ltr">{n(r.profit)}</span></span> : null}
+                      {r.profit != null ? <span className="text-muted">{pick('confirm.profit')} <span className={`num ${Number(r.profit) < 0 ? 'text-payable' : ''}`} dir="ltr">{signed(r.profit)}</span></span> : null}
                       {r.reason ? <span className="text-muted">{r.reason}</span> : null}
                       {r.approved_by ? <span className="text-muted">{pick('unit.approved')}: {r.approved_by}</span> : null}
                     </div>
