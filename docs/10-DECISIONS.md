@@ -292,3 +292,19 @@ by sheet remain a later step (docs/18 §1).
   - Existing flows are untouched. Buying back a unit whose row is `transferred` works like buying back a sold one.
   - The receiving shop sees no verification documents, only the result; those stay with the sender's row.
 
+## ADR-047 · 2026-11-05 · Accepted · The customer's repair status link is the job id signed with the server secret
+- **Context:** Customers ask on WhatsApp "is my phone ready?"; competitors send customer notifications (`docs/35` §5 item 5).
+- **Decision:**
+  - The link is `/r/<job id hex>.<HMAC-SHA256(secret_key, "repair-status:<id>")[:24]>`. Nothing is stored and it never expires; a changed link fails with "not valid".
+  - `GET /api/v1/public/repair/{token}` (no login) returns only:
+    - shop name, city and phone;
+    - job number, device and the IMEI's last 4 digits;
+    - faults, status steps with dates, ready-by day;
+    - bill or estimate, paid, left, warranty days;
+    - "at the workshop" when the job is at a lab.
+  - It never returns the customer's name or phone, the full IMEI, the screen lock, the lab's name, the technician or any cost.
+  - The job page sends the link with a WhatsApp button addressed to the customer's number, or copies it. The page builds the link from its own address, as the license magic link does.
+- **Consequences:**
+  - The automatic "repair ready" WhatsApp message does not carry the link yet, because the server does not know its public address. It can be added once a site-URL setting exists.
+  - Rotating `SECRET_KEY` invalidates old links (and logs everyone out anyway).
+

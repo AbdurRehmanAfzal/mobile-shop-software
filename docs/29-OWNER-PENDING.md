@@ -98,6 +98,8 @@ say if you want a retake with a profitable day. How to edit and rebuild: `docs/m
 2. More → Branch transfers lists it in both shops.
 3. Reports → Balance is still balanced in both shops.
 
+**Repair status link** (2026-11-05): open a repair job for a customer with a phone number → **Send status link to customer** → **Send on WhatsApp**. Open the link on another phone (not logged in): the steps, ready-by day and what is left to pay show; the customer's number and full IMEI do not. Move the job to "In progress" and refresh the link.
+
 Close the app fully and open it again first (or install the newest APK from the latest Deploy run →
 `android / apk`), so the newest version loads.
 

@@ -81,7 +81,7 @@ Rule for every item: additive only. Every item is a new table or column, a new s
 | 2 ✅ 2026-11-04 | Phone / accessory transfer between branches | HysabOne branch transfers | medium | a new device event "transfer"; accessories move their oldest batch; sale and purchase untouched |
 | 3 | Play Store release | HysabOne has store apps | medium | build and pages only (API 36, AAB, privacy / deletion); the app screens do not change |
 | 4 | FBR / PRA live e-invoicing | Moneypex and BluePrimes | large | per-shop switch, off by default; bills without it print as today; queued when offline |
-| 5 | Repair status link for the customer | HysabOne customer notifications | small | a public read-only page by REP number; the repair flow is unchanged |
+| 5 ✅ 2026-11-05 | Repair status link for the customer | HysabOne customer notifications | small | a public read-only page by REP number; the repair flow is unchanged |
 | 6 | Landing: customer count, quotes, faster trial | every competitor shows social proof | small | landing content; a self-start trial only if the owner wants it (OTP already exists) |
 
 Not to copy: per-add-on pricing (Moneypex) — keeping everything in one plan is our advantage.

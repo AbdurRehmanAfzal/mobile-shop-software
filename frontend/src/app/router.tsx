@@ -16,6 +16,7 @@ import AssistantPage from '@/features/ai/AssistantPage'
 import AdminPage from '@/features/admin/AdminPage'
 import ProviderPage from '@/features/admin/ProviderPage'
 import KeyPage from '@/features/admin/KeyPage'
+import RepairStatusPage from '@/features/repairs/RepairStatus'
 import CataloguePage from '@/features/catalogue/CataloguePage'
 import MorePage from '@/features/more/MorePage'
 import SettingsPage from '@/features/more/SettingsPage'
@@ -75,6 +76,7 @@ function RedirectIfAuthed() {
 export const router = createBrowserRouter([
   { path: '/welcome', element: <LandingPage /> },
   { path: '/key/:token', element: <KeyPage /> },
+  { path: '/r/:token', element: <RepairStatusPage /> },
   {
     element: <RedirectIfAuthed />,
     children: [

@@ -1239,6 +1239,17 @@ The barcode on the sticker is the job number. Scan it anywhere in the app and th
 
 > **Tip:** For a lab trip, a short sticker is best: **Job no.**, **Barcode**, **Phone model**, **Problem** and **Lab**. For the counter add **Customer** and **Mobile no.**
 
+### Sending the customer a status link
+
+Customers often call to ask whether their phone is ready. Send them a link once, and they can check it themselves.
+
+1. Open the repair job and tap **Send status link to customer**.
+2. Tap **Send on WhatsApp**. WhatsApp opens with the customer's number and a ready message; tap send. Or tap **Copy link** and paste it anywhere.
+
+The customer opens the link without logging in and sees the shop's name, the phone and job number, each step (**Received**, **Diagnosed**, **In progress**, **Ready**, **Delivered**) with its date, the ready-by day, the bill, what was paid and what is left, and a **Call the shop** button. The page changes as you move the job forward.
+
+> **Note:** The page never shows the customer's phone number, the full IMEI, the screen lock, the lab's name or your costs. Each link works for one job only, and a link that has been changed does not open.
+
 ## 15. Loans to other shops (amanat)
 
 In the market, shops often give phones to each other "on amanat": the other shop shows it to its customer and either sells it or brings it back. The phone stays **yours** until it is sold or comes back. Mobile Shop tracks every such phone so none is forgotten at someone else's counter.

@@ -813,3 +813,16 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Note**: the backend dev server again did not pick up the new router until restarted.
 **Next**: item 3 (Play Store, which needs the owner's account first) or item 5 (repair status link for the customer).
 
+## 2026-11-05 · Competitor gap 5: the customer's repair status link
+- Owner: continue with the next update.
+- Built (ADR-047):
+  - `repairs/status_link.py`: a signed token (no table, no migration) and `public_view`; `GET /public/repair/{token}`; `status_token` on the repair job output.
+  - On the job page, a **Send status link to customer** sheet with the link, a WhatsApp button to the customer's number, and Copy.
+  - The public page `/r/:token` (`RepairStatus.tsx`) has its own language switch and starts in the shop's language. It shows the status, the steps with dates, faults, ready-by day, bill / paid / left, warranty and a Call the shop button.
+  - Text and "?" help in en / ur / roman, plus a manual section.
+**Verified**:
+- `test_repair_status_link.py`: no login needed; no customer phone, full IMEI, lock or name; a changed link gives 404. `test_repairs` and `test_repair_labs` are green; ruff; tsc; help texts complete.
+- Playwright `repair-status.spec` (new), `repair`, `repair-labs`.
+**Open**: put the link inside the automatic "repair ready" WhatsApp message once the server knows its public address (a site-URL setting).
+**Next**: item 6 (landing: customer count, shopkeeper quotes, faster trial — needs real numbers / quotes from the owner) or item 4 (FBR live, needs PRAL credentials) or item 3 (Play Store, needs the owner's account).
+

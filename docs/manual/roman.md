@@ -1240,6 +1240,17 @@ Sticker par barcode job number hai. App mein kahin bhi ise scan karein aur repai
 
 > **Mashwara:** Lab ke chakkar ke liye chhota sticker behtar hai: **Job number**, **Barcode**, **Phone model**, **Kharabi** aur **Lab**. Counter ke liye **Gahak** aur **Mobile number** bhi daal dein.
 
+### Gahak ko status ka link bhejna
+
+Gahak aksar phone kar ke poochte hain ke un ka mobile tayyar hua ya nahi. Unhein ek baar link bhej dein, phir woh khud dekh lete hain.
+
+1. Repair ki job kholein aur **Gahak ko status ka link bhejein** dabayein.
+2. **WhatsApp par bhejein** dabayein. WhatsApp gahak ke number aur tayyar paigham ke saath khulta hai; bhej dein. Ya **Link copy karein** daba kar kahin bhi laga dein.
+
+Gahak baghair login link kholta hai aur dukaan ka naam, mobile aur job number, har marhala (**Mil gaya**, **Kharabi mil gayi**, **Kaam jaari**, **Tayyar**, **De diya**) apni tareekh ke saath, tayyar hone ka din, bill, di hui aur baqi raqam, aur **Dukaan ko call karein** ka button dekhta hai. Jaise jaise aap job aage barhate hain, safha badalta hai.
+
+> **Note:** Safhe par gahak ka phone number, poora IMEI, screen lock, lab ka naam ya aap ki laagat kabhi nahi dikhti. Har link sirf ek job ka hota hai, aur badla hua link nahi khulta.
+
 ## 15. Doosri dukaanon ko amanat
 
 Market mein dukaanein aksar ek doosre ko phone "amanat par" deti hain: doosri dukaan use apne customer ko dikhati hai aur ya to bech deti hai ya wapas le aati hai. Phone bikne ya wapas aane tak **aap ka** rehta hai. Mobile Shop aise har phone ka hisaab rakhta hai taa ke koi bhi kisi aur ke counter par bhool na jaye.

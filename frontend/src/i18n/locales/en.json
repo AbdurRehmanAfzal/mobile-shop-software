@@ -7488,6 +7488,13 @@
         "body": "The buying cost of everything on the list. It leaves this shop's stock and is added to the branch's; no sale, no profit, no cash.",
         "example": "Phone at cost 1,40,000 + 10 cables at 120 = Rs. 1,41,200."
       }
+    },
+    "rstatus": {
+      "link": {
+        "title": "Status link for the customer",
+        "body": "A private link for this job only. The customer sees the steps (received, checked, being repaired, ready, delivered) with dates, the ready-by day, the bill and what is left to pay. They never see their phone number, the full IMEI, the screen lock, the lab's name or your cost. A changed link does not open.",
+        "example": "Usman asks on WhatsApp \"is my phone ready?\" → send him the link once; he checks it himself after that."
+      }
     }
   },
   "items": {
@@ -9704,5 +9711,23 @@
     "send": "Send now",
     "sendBranch": "Send to another branch",
     "remove": "Remove"
+  },
+  "rstatus": {
+    "send": "Send status link to customer",
+    "sendHint": "The customer opens this link to see how the repair is going, when it will be ready and what is left to pay. No login.",
+    "whatsapp": "Send on WhatsApp",
+    "copy": "Copy link",
+    "copied": "Copied",
+    "message": "Assalam o Alaikum {{name}}, see the progress of your {{device}} repair ({{no}}) here: {{link}}",
+    "gone": "This link is not valid. Ask the shop to send it again.",
+    "atWorkshop": "At the workshop for repair",
+    "promised": "Ready by",
+    "bill": "Bill",
+    "estimate": "Estimate",
+    "paid": "Paid",
+    "left": "Left to pay",
+    "warranty": "Repair warranty: {{n}} days",
+    "call": "Call the shop",
+    "footer": "This page updates as the shop works on your phone."
   }
 }

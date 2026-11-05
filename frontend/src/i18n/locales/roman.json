@@ -7488,6 +7488,13 @@
         "body": "List mein har cheez ki khareed ki qeemat. Ye is dukaan ke stock se nikal kar branch ke stock mein jama hoti hai; na sale, na munafa, na naqad.",
         "example": "Mobile khareed 1,40,000 + 10 cable 120 wali = Rs. 1,41,200."
       }
+    },
+    "rstatus": {
+      "link": {
+        "title": "Gahak ke liye status ka link",
+        "body": "Sirf is job ka nijji link. Gahak marhale (mausool, check hua, repair ho rahi hai, tayyar, wapas diya) tareekhon ke saath, tayyar hone ka din, bill aur baqi raqam dekhta hai. Use apna phone number, poora IMEI, screen lock, lab ka naam ya aap ki laagat kabhi nahi dikhti. Badla hua link nahi khulta.",
+        "example": "Usman WhatsApp par poochta hai \"mera phone tayyar hai?\" → ek baar link bhej dein; phir woh khud dekh leta hai."
+      }
     }
   },
   "items": {
@@ -9704,5 +9711,23 @@
     "send": "Abhi bhejein",
     "sendBranch": "Doosri branch ko bhejein",
     "remove": "Hatayein"
+  },
+  "rstatus": {
+    "send": "Gahak ko status ka link bhejein",
+    "sendHint": "Gahak ye link khol kar dekhta hai ke repair kahan tak pohanchi, kab tayyar hoga aur kitna dena baqi hai. Login nahi chahiye.",
+    "whatsapp": "WhatsApp par bhejein",
+    "copy": "Link copy karein",
+    "copied": "Copy ho gaya",
+    "message": "Assalam o Alaikum {{name}}, apne {{device}} ki repair ({{no}}) yahan dekhein: {{link}}",
+    "gone": "Ye link durust nahi. Dukaan se dobara bhejne ko kahein.",
+    "atWorkshop": "Repair ke liye workshop par hai",
+    "promised": "Tayyar hoga",
+    "bill": "Bill",
+    "estimate": "Andazan kharch",
+    "paid": "Diye",
+    "left": "Baqi dene hain",
+    "warranty": "Repair ki warranty: {{n}} din",
+    "call": "Dukaan ko call karein",
+    "footer": "Dukaan jaise jaise kaam karti hai, ye safha badalta rehta hai."
   }
 }
