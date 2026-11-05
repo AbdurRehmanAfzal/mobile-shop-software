@@ -89,7 +89,7 @@ def apply_event(
     device.status = new_status
     device.event_count += 1
     device.last_event_at = at
-    if event_type == EventType.PURCHASED:
+    if event_type in (EventType.PURCHASED, EventType.TRANSFERRED_IN):
         if current is not None:
             device.cycle_no += 1
         if amount is not None:
@@ -110,6 +110,7 @@ def apply_event(
     ):
         device.current_party_id = party_id
     elif event_type in (
+        EventType.TRANSFERRED_OUT,
         EventType.LOAN_RETURNED,
         EventType.APPROVAL_RETURNED,
         EventType.REPAIR_RETURNED,

@@ -181,7 +181,7 @@ def move(
             a.avg_cost = money((total_before + unit_cost * qty_delta) / (a.qty + qty_delta))
         else:  # nothing (or a negative count) on hand: the new lot sets the cost
             a.avg_cost = money(unit_cost)
-        if reason in ("purchase", "return", "adjust", "void"):
+        if reason in ("purchase", "return", "adjust", "void", "transfer"):
             inv.add_batch(
                 db,
                 shop_id,

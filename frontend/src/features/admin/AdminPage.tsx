@@ -174,6 +174,9 @@ export default function AdminPage() {
             <span className="flex items-center gap-1"><BiLabel text="admin.feesTitle" size="md" bold /><Help term="admin.fees" size="sm" /></span>
             <span className="flex items-center gap-1 text-xs text-muted"><span>{pick('admin.thisMonth')} <span className="num" dir="ltr">{withCur(Number(feeStats?.month_total ?? 0).toLocaleString('en-US'))}</span> · {pick('admin.pendingN').replace('{{n}}', String(feeStats?.pending ?? 0))}</span><Help term="admin.feesMonth" size="sm" /></span>
           </span>
+        </div>
+        {/* on their own row: beside the title they squeezed it into a narrow column on a phone */}
+        <div className="flex flex-wrap gap-2">
           <button type="button" onClick={() => { setAccts(savedAccounts ? savedAccounts.map((a) => ({ ...a })) : []); setAcctsOpen(true) }} className={`tap rounded-full border border-line px-3 py-1.5 text-xs font-bold ${ur ? cls('sm') : ''}`}>{pick('admin.accounts')}</button>
           <button type="button" onClick={() => { if (billing) setBill(JSON.parse(JSON.stringify(billing))); setBillOpen(true) }} className={`tap rounded-full px-3 py-1.5 text-xs font-bold ${billing?.placeholders ? 'bg-payable-tint text-payable' : 'border border-line'} ${ur ? cls('sm') : ''}`} data-testid="billing-open">{pick('admin.billing')}</button>
         </div>
@@ -256,14 +259,14 @@ export default function AdminPage() {
           <span className="flex items-center gap-1"><BiLabel text="admin.shopRequests" size="md" bold /><Help term="admin.shopRequests" size="sm" /></span>
           <div className="card divide-y divide-line p-0">
             {shopReqs.map((r) => (
-              <div key={r.id} className="flex items-center gap-3 px-4 py-3">
+              <div key={r.id} className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3">
                 <span className="well h-10 w-10 shrink-0 bg-emerald-tint text-emerald-deep"><Store size={18} /></span>
-                <span className="flex min-w-0 flex-1 flex-col">
+                <span className="flex min-w-0 flex-1 basis-[calc(100%-3.25rem)] flex-col">
                   <span className="truncate text-[15px] font-bold">{r.shop_name}{r.city ? <span className="font-medium text-muted"> · {r.city}</span> : null}</span>
                   <span className="truncate text-xs text-muted" dir="ltr">{r.name} · {r.phone} · {r.plan} · {fmtDate(r.created_at)}</span>
                   {r.note ? <span className="text-xs text-muted">{r.note}</span> : null}
                 </span>
-                <button type="button" onClick={() => { setMade(null); setF({ ...EMPTY, shop_name: r.shop_name, city: r.city ?? '', owner_name: r.name, phone: r.phone.replace(/^0/, ''), plan: (r.plan as (typeof PLANS)[number]) || 'trial', password: PASSWORD() }); setFromReq(r.id); create.reset(); setOpen(true) }} className="tap rounded-full bg-ink px-3 py-1.5 text-xs font-bold text-ground">{pick('admin.newShop')}</button>
+                <button type="button" onClick={() => { setMade(null); setF({ ...EMPTY, shop_name: r.shop_name, city: r.city ?? '', owner_name: r.name, phone: r.phone.replace(/^0/, ''), plan: (r.plan as (typeof PLANS)[number]) || 'trial', password: PASSWORD() }); setFromReq(r.id); create.reset(); setOpen(true) }} className="tap ms-[3.25rem] rounded-full bg-ink px-3 py-1.5 text-xs font-bold text-ground">{pick('admin.newShop')}</button>
                 <a href={`https://wa.me/92${r.phone.replace(/^0/, '')}`} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="tap flex h-9 w-9 items-center justify-center rounded-full bg-emerald text-white"><MessageCircle size={16} /></a>
                 <button type="button" aria-label={pick('admin.markDone')} onClick={async () => { await api('POST', `/api/v1/admin/shop-requests/${r.id}/done`); create.reset() }} className="tap flex h-9 w-9 items-center justify-center rounded-full border border-line text-emerald"><Check size={16} /></button>
               </div>
@@ -276,13 +279,13 @@ export default function AdminPage() {
           <span className="flex items-center gap-1"><BiLabel text="admin.pwRequests" size="md" bold /><Help term="admin.pwRequests" size="sm" /></span>
           <div className="card divide-y divide-line p-0">
             {reqs.map((r) => (
-              <div key={r.id} className="flex items-center gap-3 px-4 py-3">
+              <div key={r.id} className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3">
                 <span className="well h-10 w-10 shrink-0 bg-payable-tint text-payable"><KeyRound size={18} /></span>
-                <span className="flex min-w-0 flex-1 flex-col">
+                <span className="flex min-w-0 flex-1 basis-[calc(100%-3.25rem)] flex-col">
                   <span className="truncate text-[15px] font-bold">{r.name} · {r.shop_name}</span>
                   <span className="text-xs text-muted" dir="ltr">{r.phone} · {fmtDate(r.created_at)}</span>
                 </span>
-                <button type="button" onClick={() => { const s = data?.find((x) => x.id === r.shop_id); if (s) { openShop(s); setPwFor(r) } }} className={`tap rounded-full bg-ink px-3 py-1.5 text-xs font-bold text-ground`}>{pick('admin.setPassword')}</button>
+                <button type="button" onClick={() => { const s = data?.find((x) => x.id === r.shop_id); if (s) { openShop(s); setPwFor(r) } }} className={`tap ms-[3.25rem] rounded-full bg-ink px-3 py-1.5 text-xs font-bold text-ground`}>{pick('admin.setPassword')}</button>
                 <button type="button" aria-label={pick('admin.markDone')} onClick={async () => { await api('POST', `/api/v1/admin/password-requests/${r.id}/done`); create.reset() }} className="tap flex h-9 w-9 items-center justify-center rounded-full border border-line text-emerald"><Check size={16} /></button>
               </div>
             ))}

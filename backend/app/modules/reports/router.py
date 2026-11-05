@@ -8,7 +8,7 @@ from app.core.clock import today as shop_today
 from app.core.errors import ValidationFailed
 from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx, require_cap
-from app.modules.reports import service
+from app.modules.reports import accounts, service
 
 router = APIRouter(prefix="/api/v1/reports", tags=["reports"])
 Reports = Annotated[Ctx, Depends(require_cap(Cap.REPORTS_ALL))]
@@ -70,6 +70,18 @@ def cash_flow(
     ctx: Reports, db: DB, date_from: dt.date | None = None, date_to: dt.date | None = None
 ):
     return _money(service.cash_flow(db, ctx.shop_id, *_range(date_from, date_to)))
+
+
+@router.get("/trial-balance")
+def trial_balance(ctx: Reports, db: DB, as_of: dt.date | None = None):
+    """every account's balance on the debit or credit side, at the end of `as_of` (default today)"""
+    return _money(accounts.trial_balance(db, ctx.shop_id, as_of or shop_today()))
+
+
+@router.get("/balance-sheet")
+def balance_sheet(ctx: Reports, db: DB, as_of: dt.date | None = None):
+    """what the shop has, what it owes and the owner's share, at the end of `as_of`"""
+    return _money(accounts.balance_sheet(db, ctx.shop_id, as_of or shop_today()))
 
 
 @router.get("/tax")

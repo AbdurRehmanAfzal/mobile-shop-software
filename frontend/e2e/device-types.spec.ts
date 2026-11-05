@@ -98,7 +98,7 @@ test('device types: tablet with specs, used watch needs the lock check, device p
   // 5. filters and the report by type
   await page.goto('/stock')
   await page.getByTestId('stock-filters').click()
-  await page.getByLabel('RAM (GB)').selectOption('8')
+  await page.getByRole('combobox', { name: /RAM/ }).selectOption('8')
   await expect(page.getByText('Galaxy Tab A9+').first()).toBeVisible()
   await expect(page.getByText('Watch Series 9')).toHaveCount(0)
   await page.goto('/reports')

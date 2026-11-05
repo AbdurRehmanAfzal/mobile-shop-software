@@ -269,12 +269,35 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | Repair sticker with fields picked before printing; scan opens the job | ✅ | `/labels/repairs` |
 | Repairs in the shop audit + report sections | ✅ | `/audit/repairs` |
 
+## Phase 17 — User manual for buyers (owner 2026-11-03)
+`docs/manual/README.md`.
+| Item | Status | Notes |
+|---|---|---|
+| Module-wise manual, 26 chapters, English / Urdu / Roman | ✅ | `docs/manual/{en,ur,roman}.md` (parts in `parts/`) |
+| 49 screenshots per language from a demo shop | ✅ | `frontend/scripts/manual-shots.mjs` → `docs/manual/img/<lang>/` |
+| A4 PDF + HTML per language (cover, contents, page numbers, Nastaliq RTL) | ✅ | `frontend/scripts/manual-pdf.mjs` |
+| Super admin manual, English + Roman, 17 screenshots | ✅ | `admin-{en,roman}.md`, `frontend/scripts/manual-admin-shots.mjs` |
+| Developer and setup manual | ✅ | `developer-en.md` |
+| Operations runbook (internal; secrets only as placeholders) | ✅ | `operations-en.md` |
+| Owner review of the wording | ⏳ | `docs/29-OWNER-PENDING.md` D |
+
+## Phase 18 — Competitor gaps (owner 2026-11-04, `docs/35` §5)
+| Item | Status | Notes |
+|---|---|---|
+| 1. Trial balance + balance sheet (Reports → Balance) | ✅ | `/reports/trial-balance`, `/reports/balance-sheet`, ADR-045; cash-flow per account already existed (`/reports/cash-flow`) |
+| 2. Phone / item transfer between branches (More → Branch transfers, phone and item pages) | ✅ | `/transfers`, ADR-046, migration `b6d8f0a2c4e7` |
+| 5. Customer repair status link (job page → WhatsApp; public `/r/<token>`) | ✅ | `/public/repair/{token}`, ADR-047 |
+| 3, 4, 6 (Play Store, FBR live, landing proof) | ⬜ | backlog below |
+
 ## Owner side (open)
 Server env variables, server commands, manual testing and decisions: `docs/29-OWNER-PENDING.md` — none done yet (2026-11-01).
 
 ## Backlog (owner requests, not started)
 | Item | Notes |
 |---|---|
+| Competitor gap 3: Play Store release | API 36, AAB, privacy + deletion pages (`docs/29` G) |
+| Competitor gap 4: FBR / PRA live e-invoicing (PRAL) | per-shop switch, off by default; queue when offline; FBR no. + QR on the bill (FR-TAX-04) |
+| Competitor gap 6: landing social proof + instant trial | customer count, shopkeeper quotes; optional self-start trial with OTP (owner decision) |
 
 ## Known issues / tech debt
 - Signup has no phone OTP verification; add before public launch (Phase 3).

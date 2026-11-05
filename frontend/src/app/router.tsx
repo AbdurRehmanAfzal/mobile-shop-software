@@ -16,6 +16,7 @@ import AssistantPage from '@/features/ai/AssistantPage'
 import AdminPage from '@/features/admin/AdminPage'
 import ProviderPage from '@/features/admin/ProviderPage'
 import KeyPage from '@/features/admin/KeyPage'
+import RepairStatusPage from '@/features/repairs/RepairStatus'
 import CataloguePage from '@/features/catalogue/CataloguePage'
 import MorePage from '@/features/more/MorePage'
 import SettingsPage from '@/features/more/SettingsPage'
@@ -33,6 +34,7 @@ import ReturnWizard from '@/features/sale/ReturnWizard'
 import { SaleDetailPage, SalesPage } from '@/features/sale/SalesPage'
 import InvoicesPage from '@/features/invoices/InvoicesPage'
 import LoansPage from '@/features/loans/LoansPage'
+import { TransferDetailPage, TransferNewPage, TransfersPage } from '@/features/transfers/TransfersPage'
 import ExpensesPage from '@/features/expenses/ExpensesPage'
 import { NewRepairPage, RepairDetailPage, RepairsPage } from '@/features/repairs/RepairsPages'
 import { LabDetailPage, LabsPage } from '@/features/repairs/RepairLabs'
@@ -74,6 +76,7 @@ function RedirectIfAuthed() {
 export const router = createBrowserRouter([
   { path: '/welcome', element: <LandingPage /> },
   { path: '/key/:token', element: <KeyPage /> },
+  { path: '/r/:token', element: <RepairStatusPage /> },
   {
     element: <RedirectIfAuthed />,
     children: [
@@ -113,6 +116,9 @@ export const router = createBrowserRouter([
           { path: '/invoices', element: <InvoicesPage /> },
           { path: '/payments', element: <PaymentsPage /> },
           { path: '/loans', element: <ModuleGate module="loans"><LoansPage /></ModuleGate> },
+          { path: '/transfers', element: <TransfersPage /> },
+          { path: '/transfers/new', element: <TransferNewPage /> },
+          { path: '/transfers/:id', element: <TransferDetailPage /> },
           { path: '/returns', element: <ReturnsPage /> },
           { path: '/parties', element: <PartiesPage /> },
           { path: '/parties/:id', element: <PartyDetailPage /> },

@@ -3,6 +3,7 @@
  *  which phone runs out), Old stock. One date-range row drives Profit and Best sellers. */
 
 import DownloadButton from '@/components/DownloadButton'
+import BooksTab from './BooksTab'
 import { Link } from 'react-router-dom'
 import { BarChart3 } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
@@ -20,7 +21,7 @@ interface Forecast {
 }
 interface Age { bucket: string; count: number; value: string | null }
 interface Cat { key: string; name: string; name_ur: string | null }
-type Tab = 'profit' | 'top' | 'estimate' | 'old' | 'prices' | 'types'
+type Tab = 'profit' | 'top' | 'estimate' | 'old' | 'prices' | 'types' | 'books'
 interface TypeRow { category: string; count: number; cost: string | null; retail: string; used: number; lock_unchecked: number; lock_failed: number; non_pta: number; slow_60d: number }
 interface PriceRow { kind: 'asking_changed' | 'below_asking'; at: string; device_id: string; label: string; imei1: string; old_asking: string | null; new_asking: string | null; sold_price: string | null; diff: string | null; user_name: string | null; approved_by: string | null; reason: string | null; source: string; invoice_no: string | null; profit: string | null }
 interface PriceReport { rows: PriceRow[]; by_user: { user_name: string; asking_changed: number; below_asking: number; under_by: string }[] }
@@ -38,6 +39,7 @@ const TAB_HELP: { key: Tab; help: string }[] = [
   { key: 'old', help: 'report.tab.old' },
   { key: 'types', help: 'report.tab.types' },
   { key: 'prices', help: 'report.tab.prices' },
+  { key: 'books', help: 'report.tab.books' },
 ]
 /** a small tile label with its "?" (stock by type) */
 function TileLabel({ text, help }: { text: string; help: string }) {
@@ -74,10 +76,10 @@ export default function ReportsPage() {
       <PageHeader
         title="counter.reportTitle"
         help={<Help term="more.tile.reports" />}
-        right={tab === 'prices' || tab === 'types' ? null : (
+        right={tab === 'prices' || tab === 'types' || tab === 'books' ? null : (
           <DownloadButton
             path={tab === 'profit' ? `/api/v1/exports/profit-loss${qs}` : tab === 'top' ? `/api/v1/exports/top-sellers${qs}` : tab === 'estimate' ? '/api/v1/exports/forecast' : '/api/v1/exports/stock-ageing'}
-            name={{ profit: 'profit-loss', top: 'best-sellers', estimate: 'estimate', old: 'old-stock', prices: 'prices', types: 'stock-by-type' }[tab]}
+            name={{ profit: 'profit-loss', top: 'best-sellers', estimate: 'estimate', old: 'old-stock', prices: 'prices', types: 'stock-by-type', books: 'balance-sheet' }[tab]}
           />
         )}
       />
@@ -87,7 +89,7 @@ export default function ReportsPage() {
         <Help term="audit" size="sm" />
       </Link>
       <div className="print:hidden flex items-center gap-1">
-        <div className="min-w-0 flex-1"><BiSegmented<Tab> value={tab} onChange={setTab} options={[{ value: 'profit', text: 'counter.tabProfit' }, { value: 'top', text: 'counter.tabTop' }, { value: 'estimate', text: 'counter.tabEstimate' }, { value: 'old', text: 'counter.tabOld' }, { value: 'types', text: 'devx.typesTab' }, { value: 'prices', text: 'prices.tab' }]} /></div>
+        <div className="min-w-0 flex-1"><BiSegmented<Tab> value={tab} onChange={setTab} options={[{ value: 'profit', text: 'counter.tabProfit' }, { value: 'top', text: 'counter.tabTop' }, { value: 'estimate', text: 'counter.tabEstimate' }, { value: 'old', text: 'counter.tabOld' }, { value: 'types', text: 'devx.typesTab' }, { value: 'prices', text: 'prices.tab' }, { value: 'books', text: 'books.tab' }]} /></div>
         <Help term={TAB_HELP.find((t) => t.key === tab)!.help} size="sm" />
       </div>
 
@@ -280,6 +282,8 @@ export default function ReportsPage() {
           </>
         )
       ) : null}
+
+      {tab === 'books' ? <BooksTab /> : null}
     </div>
   )
 }

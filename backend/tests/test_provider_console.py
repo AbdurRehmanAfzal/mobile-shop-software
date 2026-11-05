@@ -60,6 +60,8 @@ def test_overview_collections_coming_overdue_and_usage(client, owner, other_owne
     db.commit()
     o = admin.get("/api/v1/admin/business/overview").json()
     assert o["coming_30"] == {"count": 1, "amount": "3000.00"} and o["coming_7"]["count"] == 0
+    # a plan with more than 7 days left counts as running (the overview showed "Running 0")
+    assert o["counts"]["ok"] >= 1
     assert o["overdue"] == {"count": 1, "amount": "1500.00"}
     pays = admin.get("/api/v1/admin/business/payments", params={"method": "bank"}).json()
     assert [p["amount"] for p in pays["rows"]] == ["3000.00"] and "easypaisa" in pays["methods"]

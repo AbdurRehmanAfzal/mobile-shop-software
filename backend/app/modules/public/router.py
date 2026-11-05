@@ -4,6 +4,7 @@ owner's dashboard and WhatsApp."""
 
 import datetime as dt
 import uuid
+from decimal import Decimal
 
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
@@ -143,6 +144,17 @@ def request_shop(data: RequestIn, db: DB):
 
 
 # ---- provider console (docs/28): the magic link that shows a license key, and the heartbeat --------
+
+
+@router.get("/repair/{token}")
+def repair_status(token: str, db: DB):
+    """The customer's repair status page (docs/35 §5 item 5): read-only, from a signed link."""
+    from app.modules.repairs import status_link
+
+    return {
+        k: (f"{v:.2f}" if isinstance(v, Decimal) else v)
+        for k, v in status_link.public_view(db, status_link.job_for(db, token)).items()
+    }
 
 
 @router.get("/key/{token}")

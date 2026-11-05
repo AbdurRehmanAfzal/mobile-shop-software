@@ -3,7 +3,7 @@
 #   2. build the backend and web images, push them to GitHub's registry (ghcr.io), tagged with the commit
 #   3. SSH to the VPS as 'deploy' and run /opt/mobileshop/deploy.sh <tag> (pull, restart, health check, rollback)
 # Secrets (repo → Settings → Secrets and variables → Actions), the same as the oop-solutions website:
-#   VPS_HOST     72.62.240.10
+#   VPS_HOST     the server address (kept only in the GitHub secret)
 #   VPS_USER     deploy
 #   VPS_SSH_KEY  private key whose public half is in /home/deploy/.ssh/authorized_keys
 # Variable (optional): APP_URL, e.g. https://mobileshop.oopsolutions.com, for the final check.

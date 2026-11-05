@@ -19,6 +19,7 @@ import { useDocMutation, useGet } from '@/lib/queries'
 import type { Party } from '@/lib/types'
 import { JobLabs, type Trip } from './RepairLabs'
 import RepairSticker from './RepairSticker'
+import { StatusLinkButton } from './RepairStatus'
 
 interface Fault { code: string; en: string; ur: string }
 interface Part { description: string; accessory_id?: string | null; qty: number; unit_cost?: string; unit_price: string | number }
@@ -27,7 +28,7 @@ interface Job {
   device_desc: string; imei: string | null; fault_codes: string[]; fault_text: string | null; received_accessories: string[]
   estimate: string; advance: string; promised_at: string | null; overdue: boolean; status: string; parts_total: string; labour: string
   discount: string; total: string; paid: string; balance_due: string; warranty_days: number; outside_party_name: string | null
-  outside_cost: string; created_at: string; parts: Part[]; status_log: { to_status: string; note: string | null; user_name: string | null; at: string }[]
+  outside_cost: string; created_at: string; status_token?: string | null; parts: Part[]; status_log: { to_status: string; note: string | null; user_name: string | null; at: string }[]
   trips?: Trip[]; at_lab?: Trip | null
 }
 interface Accessory { id: string; name: string; qty: number; price: string }
@@ -265,6 +266,7 @@ export function RepairDetailPage() {
         <Help term="rlab.sticker" size="sm" />
       </div>
       <RepairSticker ids={[j.id]} open={sticker} onClose={() => setSticker(false)} />
+      {j.party_id ? <StatusLinkButton token={j.status_token} phone={j.party_phone} name={j.party_name} device={j.device_desc} no={j.no} /> : null}
       <BiButton text="counter.printSlip" icon={<Printer size={20} />} size="md" variant="ghost" onClick={() => openPrintable(`/api/v1/repairs/${j.id}/job-sheet`)} />
       <DocActions path={`/api/v1/repairs/${j.id}/job-sheet`} name={`repair-${j.no}`} title={j.no} picker={false} />
 

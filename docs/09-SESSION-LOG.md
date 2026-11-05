@@ -740,3 +740,97 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - tsc; vitest 43;
 - Playwright `landing` (unique band, yearly / monthly, sites, CTA colour), `signature`, `verify-done`, `help`;
 - desktop dark, Urdu phone checked; no overflow.
+
+## 2026-11-03 · User manual for buyers (English, Urdu, Roman) with screenshots and PDF
+- Owner: a detailed, module-wise user manual in Urdu, English and Roman, with screenshots, to give to every shop that buys the software and to turn into a PDF.
+- Built (`docs/manual/`, see its README):
+  - `en.md`: 26 chapters, about 27,000 words. It covers everything from getting the app to the shop audit, fees, an FAQ and a glossary. It was written from the 2026-10-31 guide, the app's real labels and the newer features (len-den, "?" help, repair labs and sticker, item GST, on-screen signature, business profile, barcodes, tablets / watches, accessories batches).
+  - `ur.md` (Urdu script, the app's own Urdu labels) and `roman.md` (Roman, labels from `roman.json`), with the same structure line by line.
+  - `frontend/scripts/manual-shots.mjs` makes a demo shop and takes 49 phone screenshots per language, including the printed repair sticker and price label (`ONLY=` retakes a few).
+  - `frontend/scripts/manual-pdf.mjs` turns the small markdown subset into print HTML and an A4 PDF. Each has a cover, contents, captioned pictures, tips and page numbers; the Urdu uses Nastaliq, right to left.
+- Found while writing: the old `docs/guides/en/02-USER-MANUAL.md` is out of date in many places (home "At a glance", on-screen signature, returns in 3 steps, exchange 4 steps, payment methods, settings cards, numbering). The new manual replaces it for buyers.
+**Verified**: all 49 shots in each language checked by name; the PDFs were built and their cover, an English chapter, an Urdu chapter (Nastaliq right to left) and a Roman chapter were looked at.
+**Open**: the owner should review the Urdu wording. The home screenshot shows a demo day with a loss.
+
+## 2026-11-03 · Super admin manual, developer manual, operations runbook
+- Owner: a manual for the super admin, one for developers (setup steps, what is needed), and our own manual with GitHub, setup, variables, server information and every command we run.
+- Built (`docs/manual/`, README lists the books):
+  - `admin-en.md` / `admin-roman.md`: 11 chapters with 17 screenshots (`frontend/scripts/manual-admin-shots.mjs`).
+  - `developer-en.md`: 13 chapters, about 10,600 words, checked against the real config, compose, workflows and scripts.
+  - `operations-en.md`: 13 chapters, about 11,000 words. It covers repo, releases, server, the full environment-variable table, command tables, backups and a "when something breaks" table. Secrets and the server address appear only as placeholders, with where each real value is kept.
+  - `manual-pdf.mjs` now builds every book (`node scripts/manual-pdf.mjs` or `... admin-en`). Wide tables wrap.
+- Fixed on the way:
+  - The provider overview's "Running" count was always 0 (`counts` had no `ok` key; test added).
+  - The Super admin "Software fees" card and the website / password request rows were squeezed on a phone; their buttons now go on their own line.
+  - "1 months" became "1 month"; "Rs. 2,500/ month" became "Rs. 2,500 / month".
+  - `.gitignore` `parts/` (meant for Python builds) also hid `docs/manual/parts/`; it is now `/parts/`.
+  - The server IP was removed from comments in `deploy/docker-compose.yml` and `deploy.yml`; it is still in older commits.
+  - The restart command in docs 12 / 29 now keeps `IMAGE_TAG=$(cat .current-tag)`.
+  - The manual-admin-shots script closes its sample website request again.
+- Runbook findings for the owner: `docs/29-OWNER-PENDING.md` section F (renewal key on the server, off-server backup, Android signing secrets, old images, settings compose does not pass, trial end date).
+**Verified**:
+- pytest `test_provider_console`, `test_admin_access`; ruff; tsc;
+- Playwright `landing`, `admin`, `admin-access`, `provider-console`;
+- all 7 PDFs built and spot-checked (tables, Urdu RTL, Roman);
+- scanned the new manuals for IP addresses and the local `.env` secret values: none (only the known test numbers).
+
+## 2026-11-04 · Competitor research
+- Owner shared HysabOne, Moneypex, BluePrimes and Capterra links to explore.
+- `docs/35-COMPETITOR-RESEARCH.md`: prices, add-ons, trials and a feature-by-feature table against ours, the Capterra names, and where we lead or lag.
+  - We lead on used-phone verification, Urdu, amanat / labs / len-den, and an all-in price.
+  - Gaps: live FBR / PRA e-invoicing, Play Store, stock transfer between branches, simple accounting reports, social proof.
+- Sources are the vendors' own pages (claims, not tested).
+
+## 2026-11-04 · Competitor gap 1: trial balance and balance sheet
+- Owner: go ahead with the competitor-driven updates without disturbing existing work; item 1 first.
+- Built:
+  - `backend/app/modules/reports/accounts.py` and the routes `GET /reports/trial-balance?as_of=` and `GET /reports/balance-sheet?as_of=` (owner / manager, `reports_all`). They are read-only, derived from the ledger, and cash opening balances are included (ADR-045).
+  - Reports gets a new **Balance** tab (`BooksTab.tsx`, its own file; the other tabs are untouched). It has an as-of day, Balance sheet (has / owes / owner's share) and Trial balance (debit / credit, totals), plus a "Balanced" check line. The people lines open the khata.
+  - Text and "?" help with an example in en / ur / roman.
+  - User manual chapter 20 gains a section (all three languages), and the PDFs are rebuilt.
+**Verified**:
+- new `test_accounts_reports.py`; the full backend suite and ruff are green;
+- tsc; vitest 43 (help texts complete);
+- Playwright `books.spec.ts` (en + ur, older day), plus `audit-reports` and `reports-audit`;
+- all 1,238 local shops balance, with profit equal to P&L;
+- screens checked at phone size, in English and Urdu.
+**Next**: item 2 (phone / accessory transfer between branches) once the owner says go.
+
+## 2026-11-04 · Competitor gap 2: phone and item transfer between branches
+- Owner: continue with the next competitor update.
+- Built (ADR-046):
+  - `modules/transfers`: tables `branch_transfers` / `branch_transfer_lines` (migration `b6d8f0a2c4e7`) and the routes `GET /transfers/branches`, `GET /transfers`, `GET /transfers/{id}`, `POST /transfers`.
+  - New device status `transferred` and events `transferred_out` / `transferred_in`. A unit bought back after a move works.
+  - Items move FIFO and open a "transfer" batch in the branch.
+  - Ledger account `branch_transfer` (equity), shown on the balance sheet.
+  - The phone's money page hides transfer cost from roles that cannot see cost and labels the unit "Came from another branch".
+  - Screens: More → Branch transfers (only for someone in two or more branches), Send to a branch (pick branch, phones by search / scan, items with a count, cost at the bottom), and one transfer's page. Buttons on the phone page and the item page; history rows link to the transfer. Text and "?" help in en / ur / roman.
+  - Found on the way: the stock Filters' Grade / RAM dropdowns had no name (the label wrapped the "?" button), so they now have `aria-label`. That was why `device-types.spec` could not find "RAM (GB)".
+**Verified**:
+- new `test_branch_transfers.py` (move, both sides, balance sheet, back again, rules); the full backend suite and ruff are green;
+- tsc; vitest 43;
+- Playwright `transfers.spec` (new), `books`, `accessories`, `add-device`, `audit-stock`, `barcodes`, `device-types`, `help`, `history`, `item-params`, `items`, `transfer`, `units`. Three of these failed only when run in parallel and passed when re-run on their own.
+**Note**: the backend dev server again did not pick up the new router until restarted.
+**Next**: item 3 (Play Store, which needs the owner's account first) or item 5 (repair status link for the customer).
+
+## 2026-11-05 · Competitor gap 5: the customer's repair status link
+- Owner: continue with the next update.
+- Built (ADR-047):
+  - `repairs/status_link.py`: a signed token (no table, no migration) and `public_view`; `GET /public/repair/{token}`; `status_token` on the repair job output.
+  - On the job page, a **Send status link to customer** sheet with the link, a WhatsApp button to the customer's number, and Copy.
+  - The public page `/r/:token` (`RepairStatus.tsx`) has its own language switch and starts in the shop's language. It shows the status, the steps with dates, faults, ready-by day, bill / paid / left, warranty and a Call the shop button.
+  - Text and "?" help in en / ur / roman, plus a manual section.
+**Verified**:
+- `test_repair_status_link.py`: no login needed; no customer phone, full IMEI, lock or name; a changed link gives 404. `test_repairs` and `test_repair_labs` are green; ruff; tsc; help texts complete.
+- Playwright `repair-status.spec` (new), `repair`, `repair-labs`.
+**Open**: put the link inside the automatic "repair ready" WhatsApp message once the server knows its public address (a site-URL setting). Done the same day (next entry).
+**Next**: item 6 (landing: customer count, shopkeeper quotes, faster trial — needs real numbers / quotes from the owner) or item 4 (FBR live, needs PRAL credentials) or item 3 (Play Store, needs the owner's account).
+
+## 2026-11-05 · The status link inside the automatic "repair ready" WhatsApp message
+- Owner: close the open gap.
+- Built:
+  - The `PUBLIC_URL` setting with `settings.public_base`, which falls back to the https entry of `WEBAUTHN_ORIGINS` and never uses localhost.
+  - `status_link.url()`; `on_repair_ready` adds a "See it here: <link>" line in the shop's language (template placeholder `{link_line}`).
+  - Compose passes `PUBLIC_URL: https://${APP_DOMAIN}`, so the owner has nothing new to set. `backend/.env.example`, the operations and developer manuals, and ADR-047 are updated.
+**Verified**: `test_repairs`: no link without a public address; with `PUBLIC_URL` the message carries `…/r/<token>`. `test_repair_status_link` and the notifications tests are green; ruff.
+

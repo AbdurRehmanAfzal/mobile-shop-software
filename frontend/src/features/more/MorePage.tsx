@@ -22,7 +22,8 @@ import { rememberLogin } from '@/features/auth/LoginPage'
 type Icon = LucideIcon
 /** `tone` = the job colour (docs/11 v2) of the icon well */
 /** `help`: a key under `help.` for the "?" beside the tile (docs/33) */
-interface Item { key: string; Icon: Icon; to?: string; action?: 'pin'; roles?: Role[]; tone?: string; help: string }
+/** `branches`: shown only to someone who works in more than one branch of the owner */
+interface Item { key: string; Icon: Icon; to?: string; action?: 'pin'; roles?: Role[]; tone?: string; help: string; branches?: boolean }
 interface Group { title: string; help: string; items: Item[] }
 
 const MANAGERS: Role[] = ['owner', 'manager']
@@ -65,6 +66,7 @@ const GROUPS: Group[] = [
       { key: 'more.openingStock', Icon: Archive, to: '/stock/opening', roles: MANAGERS, tone: T.buy, help: 'more.tile.openingStock' },
       { key: 'bulk.title', Icon: FileSpreadsheet, to: '/more/bulk', roles: MANAGERS, tone: T.buy, help: 'bulk' },
       { key: 'count.title', Icon: ClipboardList, to: '/stock/count', roles: MANAGERS, tone: T.stock, help: 'more.tile.count' },
+      { key: 'transfer.title', Icon: Store, to: '/transfers', roles: MANAGERS, tone: T.stock, help: 'more.tile.transfers', branches: true },
       { key: 'more.catalogue', Icon: Tags, to: '/more/catalogue', roles: MANAGERS, tone: T.plain, help: 'more.tile.catalogue' },
     ],
   },
@@ -123,7 +125,7 @@ export default function MorePage() {
   const [pinBusy, setPinBusy] = useState(false)
 
   const has = useModules()
-  const visible = (it: Item) => (!it.roles || (role !== undefined && it.roles.includes(role))) && (!it.to || !moduleFor(it.to) || has(moduleFor(it.to)!))
+  const visible = (it: Item) => (!it.roles || (role !== undefined && it.roles.includes(role))) && (!it.to || !moduleFor(it.to) || has(moduleFor(it.to)!)) && (!it.branches || (me?.shops.length ?? 0) > 1)
   const activeShopId = useAuth((s) => s.activeShopId)
   const setActiveShop = useAuth((s) => s.setActiveShop)
 

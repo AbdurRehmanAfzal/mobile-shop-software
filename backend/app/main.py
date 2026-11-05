@@ -40,6 +40,7 @@ from app.modules.reports.router import router as reports_router
 from app.modules.returns.router import router as returns_router
 from app.modules.sales.router import router as sales_router
 from app.modules.shopaudit.router import router as shopaudit_router
+from app.modules.transfers.router import router as transfers_router
 from app.modules.units.router import router as units_router
 from app.modules.verification.router import router as verification_router
 
@@ -179,6 +180,7 @@ def create_app() -> FastAPI:
     app.include_router(labels_router)
     app.include_router(attendance_router)
     app.include_router(staff_activity_router)
+    app.include_router(transfers_router)
     if settings.web_dir:
         _mount_web(app, settings.web_dir)
     return app

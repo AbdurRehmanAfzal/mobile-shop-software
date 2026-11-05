@@ -182,7 +182,8 @@
       "sold": "Sold",
       "in_repair": "In repair",
       "faulty": "Faulty",
-      "returned_to_supplier": "Returned to supplier"
+      "returned_to_supplier": "Returned to supplier",
+      "transferred": "Sent to a branch"
     },
     "condition": {
       "box_pack": "Box pack",
@@ -250,7 +251,9 @@
       "price_changed": "Price changed",
       "note": "Note",
       "barcode_assigned": "Barcode assigned",
-      "label_printed": "Label printed"
+      "label_printed": "Label printed",
+      "transferred_out": "Sent to a branch",
+      "transferred_in": "Came from a branch"
     },
     "acc": {
       "box": "Box",
@@ -6670,6 +6673,11 @@
           "title": "Quick PIN",
           "body": "A 4–6 digit PIN to open the app fast on your phone instead of the full password. The owner's PIN also approves a salesman's under-price sale.",
           "example": "Set PIN 4321 → next time type 4321 to log in."
+        },
+        "transfers": {
+          "title": "Branch transfers",
+          "body": "Send phones and items from this shop to another branch of yours. The phone leaves this shop's stock (its history stays here) and appears in the branch's stock with the same IMEI, barcode, buying price and selling price. Items move with their buying cost. Nothing is sold, so profit does not change.",
+          "example": "Send an iPhone 13 and 10 chargers from Saddar to the Mall Road branch: Saddar's stock goes down by Rs. 1,52,000 at cost, Mall Road's goes up by the same."
         }
       },
       "pinPassword": {
@@ -7171,6 +7179,11 @@
           "title": "Price changes",
           "body": "Every change of a phone's asking price and every sale under the asking price in the chosen days, with who did it, who approved it and by how much.",
           "example": "Ali sold an A15 asking Rs. 38,000 for Rs. 37,000 → listed as \"Sold under asking −1,000\"."
+        },
+        "books": {
+          "title": "Balance sheet tab",
+          "body": "Your shop's books in two pages: the balance sheet (what you have, what you owe, your share) and the trial balance (every account, debit and credit). Made from the ledger, never typed by hand.",
+          "example": "Your accountant asks for the balance sheet of 30 June → pick 30-06 and open Balance sheet."
         }
       },
       "grossSales": {
@@ -7401,7 +7414,88 @@
         "example": "Rs. 4,000 + Rs. 500 = Rs. 4,500."
       }
     },
-    "language": "Language of the explanation"
+    "language": "Language of the explanation",
+    "books": {
+      "tab": {
+        "title": "Balance sheet tab",
+        "body": "Your shop's books in two pages: the balance sheet (what you have, what you owe, your share) and the trial balance (every account, debit and credit). Made from the ledger, never typed by hand.",
+        "example": "Your accountant asks for the balance sheet of 30 June → pick 30-06 and open Balance sheet."
+      },
+      "asOf": {
+        "title": "As of",
+        "body": "The reports show everything up to the end of this day. Pick an older day to see the books as they were then.",
+        "example": "Pick 31-12-2025 → the balance sheet as it was on the last day of the year."
+      },
+      "sheet": {
+        "title": "Balance sheet",
+        "body": "Three boxes: what the shop has (money, people who owe you, stock), what it owes (people you owe, tax to pay) and the owner's share (money put in, profit so far, minus what the owner took). Has always equals owes + owner's share.",
+        "example": "Has Rs. 9,50,000 = owes Rs. 1,50,000 + owner's share Rs. 8,00,000."
+      },
+      "trial": {
+        "title": "Trial balance",
+        "body": "Every account with its balance on the debit side (what you have or spent) or the credit side (what you earned or owe). The two totals are always the same; an accountant uses it to check the books.",
+        "example": "Galla Rs. 40,000 debit · Sales Rs. 3,00,000 credit · Cost of goods sold Rs. 2,40,000 debit …"
+      },
+      "has": {
+        "title": "What the shop has",
+        "body": "Money in the galla, bank and wallets, the udhaar people owe you, and the stock at its buying price.",
+        "example": "Galla 40,000 + bank 1,10,000 + udhaar 60,000 + stock 7,40,000 = Rs. 9,50,000."
+      },
+      "owes": {
+        "title": "What the shop owes",
+        "body": "Money you still have to pay dealers and people (udhaar and len-den taken), and tax collected on bills that is still to be paid.",
+        "example": "Rehman Traders 1,20,000 + tax 30,000 = Rs. 1,50,000."
+      },
+      "owner": {
+        "title": "Owner's share",
+        "body": "What the shop is worth for the owner: the money and stock you started with or put in, plus the profit so far, minus what you took out for yourself.",
+        "example": "Put in 6,00,000 + profit 2,50,000 − took 50,000 = Rs. 8,00,000."
+      },
+      "check": {
+        "title": "Balanced",
+        "body": "The app checks that what the shop has equals what it owes plus the owner's share. It always should; if it ever does not, tell support.",
+        "example": "9,50,000 = 1,50,000 + 8,00,000 → balanced."
+      },
+      "profit": {
+        "title": "Profit so far",
+        "body": "All profit since the shop started on the app, up to this day: the same figure as the Profit tab for that whole time. Owner drawing is not counted as an expense here.",
+        "example": "The Profit tab from the first day to today shows Rs. 2,50,000 → the same here."
+      }
+    },
+    "transfer": {
+      "page": {
+        "title": "Branch transfers",
+        "body": "Send phones and items from this shop to another branch of yours. The phone leaves this shop's stock (its history stays here) and appears in the branch's stock with the same IMEI, barcode, buying price and selling price. Items move with their buying cost. Nothing is sold, so profit does not change.",
+        "example": "Send an iPhone 13 and 10 chargers from Saddar to the Mall Road branch: Saddar's stock goes down by Rs. 1,52,000 at cost, Mall Road's goes up by the same."
+      },
+      "to": {
+        "title": "Send to",
+        "body": "The branch that receives the stock. Only the owner's other branches that you work in are shown.",
+        "example": "Saddar shop → pick Mall Road."
+      },
+      "phones": {
+        "title": "Phones",
+        "body": "Phones, tablets and watches in stock here that go to the branch. Search, scan the IMEI or barcode, or open this from a phone's page.",
+        "example": "Scan the box of the Galaxy A15 → it is added to the list."
+      },
+      "items": {
+        "title": "Items",
+        "body": "Chargers, covers and other counted items, with how many pieces go. The oldest pieces leave first, at their buying cost.",
+        "example": "Type-C cable × 10 → this shop has 10 fewer, the branch 10 more."
+      },
+      "cost": {
+        "title": "Stock value moving",
+        "body": "The buying cost of everything on the list. It leaves this shop's stock and is added to the branch's; no sale, no profit, no cash.",
+        "example": "Phone at cost 1,40,000 + 10 cables at 120 = Rs. 1,41,200."
+      }
+    },
+    "rstatus": {
+      "link": {
+        "title": "Status link for the customer",
+        "body": "A private link for this job only. The customer sees the steps (received, checked, being repaired, ready, delivered) with dates, the ready-by day, the bill and what is left to pay. They never see their phone number, the full IMEI, the screen lock, the lab's name or your cost. A changed link does not open.",
+        "example": "Usman asks on WhatsApp \"is my phone ready?\" → send him the link once; he checks it himself after that."
+      }
+    }
   },
   "items": {
     "sellButton": "Accessory / watch",
@@ -9136,7 +9230,8 @@
     "askingNow": "Asking now",
     "askingFirst": "First asking",
     "atCheckout": "at the sale",
-    "approved": "approved by owner"
+    "approved": "approved by owner",
+    "fromBranch": "Came from another branch of yours"
   },
   "confirm": {
     "title": "Check before you sell",
@@ -9353,6 +9448,7 @@
       "redeemed": "Used",
       "revoked": "Cancelled",
       "months": "{{n}} months",
+      "month": "{{n}} month",
       "sent": "Sent {{n}}×",
       "viewed": "Link opened {{n}}×",
       "where": {
@@ -9554,5 +9650,84 @@
     "avgDays": "Avg days",
     "charges": "Charges",
     "paidSpot": "Paid on the spot"
+  },
+  "books": {
+    "tab": "Balance",
+    "asOf": "As of",
+    "sheet": "Balance sheet",
+    "trial": "Trial balance",
+    "has": "What the shop has",
+    "owes": "What the shop owes",
+    "owner": "Owner's share",
+    "total": "Total",
+    "ok": "Balanced: has = owes + owner's share",
+    "bad": "Not balanced — please tell support",
+    "debit": "Debit",
+    "credit": "Credit",
+    "account": "Account",
+    "people": "{{n}} people",
+    "hint": "Worked out from every entry up to the end of this day. Nothing here is typed by hand.",
+    "line": {
+      "receivable": "People who owe you",
+      "payable": "You owe people",
+      "inventory": "Stock at cost",
+      "tax_payable": "Tax collected, still to pay",
+      "suspense": "Money not yet matched",
+      "capital": "Owner's money (opening + put in)",
+      "profit": "Profit so far",
+      "owner_drawing": "Owner took",
+      "other": "Other",
+      "opening_cash": "Opening money in accounts",
+      "equity": "Owner's capital / opening stock",
+      "sales": "Sales",
+      "cogs": "Cost of goods sold",
+      "discounts": "Discounts",
+      "repair_income": "Repair income",
+      "other_income": "Other income",
+      "purchases": "Purchases (items)",
+      "branch_transfer": "Moved to / from branches"
+    }
+  },
+  "transfer": {
+    "title": "Branch transfers",
+    "new": "Send to a branch",
+    "none": "Nothing sent or received yet",
+    "sentTo": "Sent to {{shop}}",
+    "cameFrom": "Came from {{shop}}",
+    "lines": "{{n}} lines",
+    "pieces": "{{n}} pieces",
+    "noBranch": "You work in only one shop. Ask the provider to add a branch, then you can move stock between them.",
+    "to": "Send to",
+    "phones": "Phones",
+    "addPhone": "Add a phone",
+    "noPhones": "No phone added",
+    "items": "Items",
+    "addItem": "Add an item",
+    "noItems": "No item added",
+    "inStock": "{{n}} in stock here",
+    "qty": "How many",
+    "note": "Note (optional)",
+    "cost": "Stock value moving (at cost)",
+    "send": "Send now",
+    "sendBranch": "Send to another branch",
+    "remove": "Remove"
+  },
+  "rstatus": {
+    "send": "Send status link to customer",
+    "sendHint": "The customer opens this link to see how the repair is going, when it will be ready and what is left to pay. No login.",
+    "whatsapp": "Send on WhatsApp",
+    "copy": "Copy link",
+    "copied": "Copied",
+    "message": "Assalam o Alaikum {{name}}, see the progress of your {{device}} repair ({{no}}) here: {{link}}",
+    "gone": "This link is not valid. Ask the shop to send it again.",
+    "atWorkshop": "At the workshop for repair",
+    "promised": "Ready by",
+    "bill": "Bill",
+    "estimate": "Estimate",
+    "paid": "Paid",
+    "left": "Left to pay",
+    "warranty": "Repair warranty: {{n}} days",
+    "call": "Call the shop",
+    "footer": "This page updates as the shop works on your phone."
   }
 }

@@ -313,7 +313,11 @@ def _device_for_purchase(db: Session, shop_id: uuid.UUID, dl) -> Device:
     existing = by_imei(db, shop_id, dl.device.imei1)
     if existing is None:
         return new_device(db, shop_id, dl.device)
-    if existing.status not in (DeviceStatus.SOLD, DeviceStatus.RETURNED_TO_SUPPLIER):
+    if existing.status not in (
+        DeviceStatus.SOLD,
+        DeviceStatus.RETURNED_TO_SUPPLIER,
+        DeviceStatus.TRANSFERRED,
+    ):
         raise Conflict(
             code="imei_in_stock",
             message_en=f"IMEI {existing.imei1} is already in your shop (status: {existing.status})",

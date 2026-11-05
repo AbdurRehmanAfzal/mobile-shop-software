@@ -57,7 +57,7 @@ link the shopkeeper taps. To send by itself:
 1. Meta Business → WhatsApp → add a business phone number; note the **Phone number ID** and make a
    **permanent system-user token** with `whatsapp_business_messaging`.
 2. In `/opt/mobileshop/.env`: `WHATSAPP_TOKEN=...`, `WHATSAPP_PHONE_ID=...`, then
-   `docker compose up -d backend`.
+   `IMAGE_TAG=$(cat .current-tag) docker compose --env-file .env up -d backend` (keep `IMAGE_TAG`: without it compose starts the `latest` image, which after a rollback is the failed release).
 3. Meta allows free text only within 24 h of the customer's last message. Messages the shop starts
    (reminders, receipts, the night report) need **approved templates**: create one per key with a
    single `{{1}}` body parameter and map them in `WHATSAPP_TEMPLATES`, e.g.

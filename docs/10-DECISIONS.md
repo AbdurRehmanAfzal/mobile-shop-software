@@ -267,3 +267,45 @@ by sheet remain a later step (docs/18 §1).
 **Consequences.**
 - Repair profit now includes outside lab costs on customers' phones.
 - A lab's unpaid charges show on its khata like any payable.
+
+## ADR-045 · 2026-11-04 · Accepted · Trial balance and balance sheet are derived from the ledger, never stored
+- **Context:** Competitors (HysabOne, BluePrimes) sell "accounts"; shops' accountants ask for a balance sheet (docs/35 §5 item 1).
+- **Decision:** `reports/accounts.py` sums the ledger per account up to the end of the shop's day.
+  - Cash accounts add their opening balance, which lives on `cash_accounts`, not in the ledger, with the other side on "opening balances" (equity).
+  - Party accounts fold into two lines: people who owe the shop / people the shop owes.
+  - `expense:owner_drawing` reduces the owner's share on the balance sheet and is not an expense, as in the profit and loss report.
+  - Profit so far = −Σ(income + expense accounts), so it equals P&L over all time.
+- **Consequences:** Nothing new is stored or posted. Both reports are always balanced by construction; a check line shows it, and a test asserts it. Checked on 1,238 local shops: all balanced, profit equal to P&L.
+
+## ADR-046 · 2026-11-04 · Accepted · Branch transfers: each shop keeps its own row for a phone; the move is two events and two ledger groups
+- **Context:** Owners with branches (chain plan) need to move phones and items between them (`docs/35` §5 item 2). IMEI and barcode are unique per shop, and every old bill, return and verification points at the shop's own device row.
+- **Decision:**
+  - Phones: a move never changes a row's `shop_id`.
+    - The sender's row gets `transferred_out` and the new status `transferred`; its history stays in that shop.
+    - The receiver gets a row for the same unit, either a new one or its old row if the unit was there before. Its next event is `transferred_in`, and it carries the cost, asking price, barcode (when free in that shop) and verification result.
+    - Both events are money events, so the generic events endpoint refuses them.
+  - Items: the oldest batches leave the sender at FIFO cost and open a batch at that cost in the receiver's item with the same SKU. If the branch has no item with that SKU, one is made from the sender's card.
+  - Money: stock moves at cost through a new equity-like account `branch_transfer`, nothing is sold and profit is untouched. Sender: Dr branch_transfer / Cr inventory. Receiver: Dr inventory / Cr branch_transfer. Across the owner the two sides cancel; the balance sheet shows the line under the owner's share.
+  - Who: owner and manager (`view_cost` + `transact`), only to a branch of the same organisation that the user works in. Instant, with no "in transit" step.
+  - The table is `branch_transfers` / `branch_transfer_lines` (migration `b6d8f0a2c4e7`, additive); numbers are `TRF-000001` per sending shop.
+- **Consequences:**
+  - Existing flows are untouched. Buying back a unit whose row is `transferred` works like buying back a sold one.
+  - The receiving shop sees no verification documents, only the result; those stay with the sender's row.
+
+## ADR-047 · 2026-11-05 · Accepted · The customer's repair status link is the job id signed with the server secret
+- **Context:** Customers ask on WhatsApp "is my phone ready?"; competitors send customer notifications (`docs/35` §5 item 5).
+- **Decision:**
+  - The link is `/r/<job id hex>.<HMAC-SHA256(secret_key, "repair-status:<id>")[:24]>`. Nothing is stored and it never expires; a changed link fails with "not valid".
+  - `GET /api/v1/public/repair/{token}` (no login) returns only:
+    - shop name, city and phone;
+    - job number, device and the IMEI's last 4 digits;
+    - faults, status steps with dates, ready-by day;
+    - bill or estimate, paid, left, warranty days;
+    - "at the workshop" when the job is at a lab.
+  - It never returns the customer's name or phone, the full IMEI, the screen lock, the lab's name, the technician or any cost.
+  - The job page sends the link with a WhatsApp button addressed to the customer's number, or copies it. The page builds the link from its own address, as the license magic link does.
+- **Consequences:**
+  - The automatic "repair ready" WhatsApp message carries the link: "See it here: …". It is added 2026-11-05 through the `PUBLIC_URL` setting, which compose fills as `https://${APP_DOMAIN}`; when it is empty, the https entry of `WEBAUTHN_ORIGINS` is used. On a localhost / one-PC install there is no public address, so the line is left out.
+  - The whole message is still the single `{{1}}` of the approved Meta template, so no new template approval is needed.
+  - Rotating `SECRET_KEY` invalidates old links (and logs everyone out anyway).
+

@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mobile Shop — Super Admin ki Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 18mm 16mm 20mm }
+  :root { --ink:#0E1613; --muted:#55615c; --brand:#5B5BF6; --navy:#0B2440; --soft:#EEF0FF; --line:#dfe3ea; --gold:#B7791F }
+  * { box-sizing: border-box }
+  body { margin:0; color:var(--ink); background:#fff; font-family:'Inter', system-ui, sans-serif; font-size:10.5pt; line-height:1.6 }
+  .cover { height: 257mm; display:flex; flex-direction:column; justify-content:center; padding: 0 6mm; page-break-after: always;
+    background: radial-gradient(120% 70% at 100% 0%, #e7e8ff 0%, #fff 60%) }
+  .cover .brand { font-family:'Inter',sans-serif; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--brand); font-size:10pt }
+  .cover h1 { font-size:44pt; line-height:1.25; margin:6mm 0 2mm; color:var(--navy) }
+  .cover .sub { font-size:22pt; color:var(--brand); font-weight:700 }
+  .cover .tag { margin-top:10mm; font-size:13pt; color:var(--muted); max-width:150mm }
+  .cover .shots { display:flex; gap:6mm; margin-top:14mm }
+  .cover .shots img { width:42mm; border-radius:5mm; box-shadow:0 8px 24px rgba(11,36,64,.18); border:1px solid var(--line) }
+  .cover .by { margin-top:auto; font-family:'Inter',sans-serif; font-size:9pt; color:var(--muted) }
+  .toc { page-break-after: always }
+  .toc h2 { border:0; margin-top:0 }
+  .toc ol { list-style:none; padding:0; columns:2; column-gap:10mm }
+  .toc li { padding:1.6mm 0; border-bottom:1px dotted var(--line); break-inside:avoid }
+  .toc a { color:var(--ink); text-decoration:none }
+  h2 { page-break-before: always; font-size:20pt; color:var(--navy); margin:0 0 4mm; padding-bottom:2.5mm; border-bottom:3px solid var(--brand); line-height:1.5 }
+  h3 { font-size:13pt; color:var(--brand); margin:6mm 0 1.5mm; page-break-after: avoid; line-height:1.6 }
+  p { margin: 0 0 2.6mm }
+  ul, ol { margin: 0 0 3mm; padding-left: 7mm }
+  li { margin: .8mm 0 }
+  strong { color:var(--navy) }
+  code { font-family:'Inter',sans-serif; background:var(--soft); padding:.2mm 1.4mm; border-radius:1mm; direction:ltr; unicode-bidi:embed }
+  figure { margin:4mm auto 5mm; text-align:center; page-break-inside:avoid }
+  figure img { max-height:118mm; max-width:72mm; border-radius:4mm; border:1px solid var(--line); box-shadow:0 4px 14px rgba(11,36,64,.12) }
+  figcaption { font-size:9pt; color:var(--muted); margin-top:1.5mm }
+  aside { margin:3mm 0; padding:2.5mm 4mm; border-radius:2.5mm; page-break-inside:avoid; background:var(--soft); border-left:4px solid var(--brand) }
+  aside.note { background:#FFF7E6; border-color:var(--gold) }
+  table { width:100%; border-collapse:collapse; margin:3mm 0 4mm; font-size:9.5pt; page-break-inside:auto }
+  table { table-layout:fixed }
+  table.wide { font-size:8.3pt }
+  th, td, code { overflow-wrap:anywhere }
+  tr { page-break-inside:avoid }
+  th, td { border:1px solid var(--line); padding:1.6mm 2.4mm; text-align:left; vertical-align:top }
+  th { background:var(--navy); color:#fff }
+  tbody tr:nth-child(even) td { background:#f7f8fb }
+</style>
+</head>
+<body>
+<section class="cover">
+  <div class="brand">OOP Solutions</div>
+  <h1>Mobile Shop</h1>
+  <div class="sub">Super Admin ki Guide</div>
+  <div class="tag">Shops kholna, fees, renewal code, license keys, provider console aur shop ki madad — qadam ba qadam.</div>
+  <div class="shots"><img src="img/roman/admin-01.jpg" alt=""><img src="img/roman/business-overview-1.jpg" alt=""><img src="img/roman/admin-shop.jpg" alt=""></div>
+  <div class="by">OOP Solutions · mobileshop.oopsolutions.com · 2026-11-03</div>
+</section>
+<nav class="toc">
+  <h2>Fehrist</h2>
+  <ol><li><a href="#c1">1. Super admin kya karta hai</a></li><li><a href="#c2">2. Super admin banna aur screen kholna</a></li><li><a href="#c3">3. Nayi dukaan kholna</a></li><li><a href="#c4">4. Plan, qeematein aur billing settings</a></li><li><a href="#c5">5. Fees ki adaigiyan</a></li><li><a href="#c6">6. Renewal codes aur license keys</a></li><li><a href="#c7">7. Karobar console</a></li><li><a href="#c8">8. Dukaan ki madad</a></li><li><a href="#c9">9. Android app ka link</a></li><li><a href="#c10">10. Aap ka rozana ka kaam</a></li><li><a href="#c11">11. Aam sawalat</a></li></ol>
+</nav>
+<h2 id="c1">1. Super admin kya karta hai</h2>
+<p>Mobile Shop dukaanon ko service ke taur par bechi jati hai. Har dukaan ka apna alag stock, khata, bill aur staff hota hai. OOP Solutions mein jo banda in sab dukaanon ke upar karobar ka kaam chalata hai, woh <strong>super admin</strong> hai. Aap ka kaam hai:</p>
+<ul>
+<li><strong>Dukaanein kholna</strong> naye customers ke liye, un ki bhi jo website par request karte hain, aur unhein un ka login bhejna.</li>
+<li><strong>Har dukaan ka plan tay karna</strong>: package, mahana fees aur woh tareekh jab tak adaigi ho chuki hai.</li>
+<li><strong>Fees lena</strong>: dukaanon ki batayi hui adaigiyan qabool ya mustarad karna, aur haath se mila cash darj karna.</li>
+<li><strong>Renewal codes (license keys) dena</strong>, zyada tar un dukaanon ke liye jo aik computer (offline) wala install chalati hain.</li>
+<li><strong>Karobar par nazar rakhna</strong> karobar console mein: aamdani, aane wali aur guzri hui fees, kaun app istemal kar raha hai.</li>
+<li><strong>Dukaan walon ki madad</strong>: bhoola hua password, dukaan ke andar koi masla, kuch extra din.</li>
+<li><strong>Android app</strong> ka link share karna.</li>
+</ul>
+<p>Yeh sab usi app ke andar hota hai jo dukaanein istemal karti hain. Jab aap super admin number se login karte hain to kuch extra screens nazar aati hain jo kisi dukaandar ko nazar nahi aatin.</p>
+<aside class="note"><strong>Zaroori:</strong> Super admin ke taur par aap ka koi bhi kaam kabhi kisi dukaan ka data delete nahi karta. Jo dukaan fees dena band kar de woh sirf "dekhna, adaigi aur backup" tak band ho jati hai; us ka stock, khata aur bill bilkul waise hi rehte hain, aur renew hote hi sab kuch dobara poori tarah chalne lagta hai.</aside>
+<h3>Is guide mein istemal honay wale alfaaz</h3>
+<table><thead><tr><th>Lafz</th><th>Matlab</th></tr></thead><tbody><tr><td>Plan (package)</td><td>trial, basic, pro ya chain; yeh tay karta hai ke dukaan ko app ke kaun se hisse milte hain</td></tr><tr><td>Adaigi is tareekh tak (Paid until)</td><td>Woh aakhri din jis tak dukaan ki fees cover karti hai</td></tr><tr><td>Riayati din (Grace days)</td><td>"Adaigi is tareekh tak" ke baad ke din jin mein dukaan poori chalti hai, surkh yaad dehani ke sath</td></tr><tr><td>Band (Locked)</td><td>Riayati din khatam: dukaan sirf data dekh sakti hai, adaigi kar sakti hai aur backup le sakti hai</td></tr><tr><td>Renewal code / license key</td><td>Dastkhat shuda code jo aik dukaan ke plan mein mahine jorta hai; internet ke baghair, sirf aik baar chalta hai</td></tr><tr><td>Magic link</td><td>Web link jo dukaandar ko 7 din tak key dikhata hai, login ke baghair</td></tr><tr><td>Aik computer wala install</td><td>App ka Windows version jo dukaan ke aik computer par chalta hai, aap ke server ke baghair</td></tr></tbody></table>
+<h2 id="c2">2. Super admin banna aur screen kholna</h2>
+<h3>Super admin kaun hai</h3>
+<p>Koi banda sirf is liye super admin hai ke us ka mobile number server ki super-admin numbers wali list mein hai. App mein is ka koi button nahi, is liye koi dukaan ka maalik ya staff khud ko yeh taqat nahi de sakta. Number list mein aa jaye to woh banda bas usi number se login karta hai.</p>
+<aside class="note"><strong>Note:</strong> Super-admin numbers aur woh WhatsApp number jis par aap ko alerts aate hain, server ki settings hain (SUPERUSER_PHONES aur ADMIN_WHATSAPP), jo Operations runbook ke mutabiq set hoti hain.</aside>
+<h3>Super admin page kholna</h3>
+<ol>
+<li>Apne super-admin mobile number aur password se login karein.</li>
+<li>Screen ke neeche <strong>Mazeed</strong> dabayein.</li>
+<li>Mazeed ke bilkul upar aik dark banner nazar aata hai, <strong>Super admin</strong>, jis ke neeche "Nayi dukaan kholein" likha hai. Usay dabayein.</li>
+</ol>
+<figure><img src="img/roman/admin-more.jpg" alt=""><figcaption>Tasveer 1: Mazeed menu: bilkul upar dark Super admin banner, Roz ka kaam se upar</figcaption></figure>
+<p>Super admin page khul jata hai. Title ke neeche aik line likhi hai <strong>Yeh page sirf aap (product ke maalik) ko nazar aata hai</strong>. Dukaandar aur un ka staff yeh banner ya yeh page kabhi nahi dekhte.</p>
+<figure><img src="img/roman/admin-01.jpg" alt=""><figcaption>Tasveer 2: Super admin page ka upar wala hissa: Nayi dukaan kholein, Karobar console ka button, Android app card aur Software fees card jis mein aik adaigi check karni hai</figcaption></figure>
+<p>Upar se neeche tak page mein yeh hai:</p>
+<table><thead><tr><th>Hissa</th><th>Kis kaam ka hai</th></tr></thead><tbody><tr><td><strong>Nayi dukaan kholein</strong> (upar daayein)</td><td>Naye customer ki dukaan kholta hai (chapter 3)</td></tr><tr><td><strong>Karobar: fees, dukaanein, keys</strong></td><td>Karobar console kholta hai (chapter 7)</td></tr><tr><td><strong>Android app</strong> card</td><td>App download ka link jo dukaanon ko bhejna hai (chapter 9)</td></tr><tr><td><strong>Software fees</strong> card</td><td>Is mahine ki fees aur kitni adaigiyan intezar mein hain, <strong>Adaigi ke accounts</strong> aur <strong>Billing settings</strong> ke buttons apni alag line mein, phir har adaigi jo check karni hai (chapter 4 aur 5)</td></tr><tr><td><strong>Website se dukaan ki requests</strong></td><td>Jin logon ne website par dukaan maangi (sirf tab nazar aata hai jab koi ho)</td></tr><tr><td><strong>Password ki requests</strong></td><td>Dukaan ke log jinhon ne "Password bhool gaye?" dabaya (sirf tab nazar aata hai jab koi ho)</td></tr><tr><td>Search, <strong>Sab · Fees baqi · Band</strong> aur <strong>Customers ki dukaanein</strong></td><td>Har dukaan, us ke plan, baqi din aur fees ke sath; kisi ko daba kar usay manage karein</td></tr></tbody></table>
+<p>Har heading ke sath aik chhota <strong>?</strong> hai: daba kar misaal ke sath chhoti si wazahat parhein.</p>
+<aside class="tip"><strong>Mashwara:</strong> Aap ka super-admin login aap ki apni demo dukaan bhi kholta hai. Us ka plan <strong>Unlimited</strong> kar dein taake usay kabhi fees ki yaad dehani na aaye.</aside>
+<h2 id="c3">3. Nayi dukaan kholna</h2>
+<p>Dukaanein khud sign up nahi kar saktin; har dukaan aap kholte hain. Shuru karne se pehle dukaandar se package aur qeemat tay kar lein (chapter 4) aur us se dukaan ka naam, shehar, us ka naam, us ka mobile number (yahi us ka login banta hai) aur woh zubaan poochein jo us ka staff sab se achhi parhta hai.</p>
+<h3>Dukaan kholna qadam ba qadam</h3>
+<p>Misaal: Bilal Ahmed Hall Road, Lahore par <strong>Star Mobiles</strong> chalata hai. Us ka number 0321 5550002 hai.</p>
+<ol>
+<li>Super admin page par <strong>Nayi dukaan kholein</strong> (upar daayein) dabayein.</li>
+<li><strong>Dukaan ka naam</strong> (Star Mobiles (Hall Road)), <strong>Shehar</strong> (Lahore), <strong>Maalik ka naam</strong> (Bilal Ahmed) aur <strong>Maalik ka mobile (login)</strong> (321 5550002; +92 pehle se laga hai) bharein.</li>
+<li><strong>Maalik ka password</strong>: kam az kam 6 huroof, phone par likhna aasan ho, maslan ms4821.</li>
+<li><strong>Dukaan ki zubaan</strong>: <strong>Urdu</strong> ya <strong>English</strong>, woh zubaan jis mein us ki app, bill aur WhatsApp paighaam shuru honge.</li>
+<li><strong>Plan aur fees</strong>: <strong>trial</strong>, <strong>basic</strong>, <strong>pro</strong> ya <strong>chain</strong> dabayein. <strong>Plan ke mutabiq</strong> par tick rehne dein jab tak aap ne khaas modules tay na kiye hon (chapter 4).</li>
+<li>Bara <strong>Nayi dukaan kholein</strong> button dabayein. Jab tak upar ke sab khane theek na bharein, yeh grey rehta hai.</li>
+</ol>
+<figure><img src="img/roman/admin-newshop.jpg" alt=""><figcaption>Tasveer 3: Nayi dukaan kholein form: dukaan ka naam, shehar, maalik ka naam, maalik ka mobile, password, dukaan ki zubaan aur plan</figcaption></figure>
+<h3>Login bhejna</h3>
+<p>Ab sheet par <strong>Dukaan khul gayi</strong> likha aata hai aur <strong>Yeh login tafseel dukaan ke maalik ko dein</strong> nazar aata hai: mobile number aur password, bare numbers mein.</p>
+<ol>
+<li><strong>WhatsApp par bhejein</strong> dabayein. WhatsApp maalik ke liye tayyar paighaam ke sath khulta hai: dukaan ka naam, us ka login, password, website ka address aur Android app ka link. Send dabayein.</li>
+<li>Agli dukaan ke liye <strong>Ek aur dukaan kholein</strong> dabayein, ya sheet band kar dein.</li>
+</ol>
+<aside class="note"><strong>Zaroori:</strong> Nayi dukaan <strong>koi aakhri tareekh nahi</strong> ke sath shuru hoti hai (list mein "Unlimited"). Agar aap ne 14 din ka trial ya aik paid mahina wada kiya hai to foran list se dukaan khol kar <strong>Adaigi is tareekh tak</strong> set karein (chapter 4). Warna dukaan ko kabhi yaad dehani nahi aayegi aur woh kabhi band nahi hogi.</aside>
+<h3>Website ki request se dukaan kholna</h3>
+<p>Website par <strong>Meri dukaan kholein</strong> form hai: naam, dukaan ka naam, shehar, mobile number, plan (<strong>Muft trial</strong>, basic, pro ya chain) aur aik optional note. Jab koi visitor <strong>Request bhejein</strong> dabata hai to aap ko WhatsApp paighaam aata hai aur request Super admin page par <strong>Website se dukaan ki requests</strong> ke neeche nazar aati hai.</p>
+<figure><img src="img/roman/admin-02.jpg" alt=""><figcaption>Tasveer 4: Website se dukaan ki requests aur Password ki requests, search, filter buttons aur customers ki dukaanon ki list se upar</figcaption></figure>
+<p>Har request mein poora dukaan ka naam aur shehar hota hai, phir banday ka naam, us ka number, us ka chuna hua plan aur tareekh. Us ke neeche wali line mein teen buttons hain:</p>
+<table><thead><tr><th>Button</th><th>Kya karta hai</th></tr></thead><tbody><tr><td><strong>Nayi dukaan kholein</strong></td><td>Nayi dukaan ka form kholta hai jis mein us ki dukaan ka naam, shehar, naam, number aur chuna hua plan pehle se bhara hota hai, sath tayyar password bhi. Check karein, phir <strong>Nayi dukaan kholein</strong> dabayein. Request khud band ho jati hai.</td></tr><tr><td>Hara WhatsApp gol button</td><td>Us ke sath WhatsApp chat kholta hai, taake pehle qeemat ki baat ya koi sawal kar sakein</td></tr><tr><td>Tick</td><td>Dukaan khole baghair request ko mukammal mark karta hai (maslan dobara aayi request, ya kisi ne iraada badal liya)</td></tr></tbody></table>
+<p>Misaal: Saddar, Karachi se Usman basic maangta hai. WhatsApp gol button dabayein, Rs. 1,500 mahana tay karein, phir <strong>Nayi dukaan kholein</strong> dabayein, us ki bhari hui tafseel check karein, button dabayein aur <strong>WhatsApp par bhejein</strong>.</p>
+<h3>Customers ki dukaanon ki list</h3>
+<p>Requests ke neeche aik search box, teen filter buttons aur <strong>Customers ki dukaanein</strong> hain.</p>
+<figure><img src="img/roman/admin-03.jpg" alt=""><figcaption>Tasveer 5: Customers ki dukaanein: har line mein maalik, plan ke sath baqi din ya Unlimited, aur mahana fees ya "fees tay nahi"</figcaption></figure>
+<p>Har line mein dukaan aur shehar, maalik aur us ka number, plan aur baqi waqt ki chip (maslan "basic · 12 din baqi", "pro · 3 din pehle khatam", "trial · Unlimited" ya "Band"), aur mahana fees ya "fees tay nahi" hoti hai. Filter buttons:</p>
+<table><thead><tr><th>Button</th><th>Kya dikhata hai</th></tr></thead><tbody><tr><td><strong>Sab</strong></td><td>Har dukaan, kul ginti ke sath</td></tr><tr><td><strong>Fees baqi</strong></td><td>Woh dukaanein jin ka plan 7 din ya kam mein khatam hota hai, ya khatam ho chuka hai magar abhi riayati dinon mein hai</td></tr><tr><td><strong>Band</strong></td><td>Woh dukaanein jin ke riayati din khatam ho gaye</td></tr></tbody></table>
+<p>Search box naam se dukaan dhoondta hai. Kisi dukaan ko daba kar us ki sheet kholein: plan, adaigiyan, renewal code, password aur branches, jin ki wazahat agle chapters mein hai.</p>
+<h3>Usi maalik ke liye branch shamil karna</h3>
+<p>Jab koi maalik doosri dukaan kholta hai to us ke liye nayi dukaan na kholein. Branch shamil karein, taake woh usi login se chalaye aur aik hi fees de.</p>
+<ol>
+<li><strong>Customers ki dukaanein</strong> mein us ki dukaan dabayein.</li>
+<li><strong>Branch shamil karein</strong> tak scroll karein.</li>
+<li><strong>Dukaan ka naam</strong>: maslan Star Mobiles 2 (Hafeez Centre). <strong>Shehar</strong>: Lahore.</li>
+<li><strong>Branch shamil karein</strong> dabayein.</li>
+</ol>
+<p>Ab woh usi login se Mazeed → Meri dukaanein mein apni dukaanon ke darmiyan badal sakta hai. Har dukaan ka apna stock, khata aur bill rehta hai, jab ke package aur fees aik hi rehti hai.</p>
+<h2 id="c4">4. Plan, qeematein aur billing settings</h2>
+<h3>Chaar packages</h3>
+<p>Har dukaan aik package par hoti hai. Package tay karta hai ke dukaan app ke kaun se hisse istemal kar sakti hai. Buniyadi cheezein har package mein hamesha on hain: stock, sale, kharidari, wapsi, udhaar khata, adaigiyan, bill, ID check, din ka hisaab, settings aur staff.</p>
+<table><thead><tr><th>Package</th><th>Kis ke liye</th><th>Kaun se extra hisse on karta hai</th></tr></thead><tbody><tr><td><strong>trial</strong></td><td>Nayi dukaan jo app aazma rahi hai</td><td>Sab kuch</td></tr><tr><td><strong>basic</strong></td><td>Chhoti dukaan</td><td>Accessories aur watches, kharche aur din band karna, sale hold karna, bill par tax</td></tr><tr><td><strong>pro</strong></td><td>Masroof dukaan</td><td>Basic ka sab kuch, plus repair, exchange, munafa aur reports, download aur share (PDF / Excel), WhatsApp paighaam aur yaad dehani, qist, staff ki hazri, assistant aur photo se parhna</td></tr><tr><td><strong>chain</strong></td><td>Kayi dukaanon wala maalik</td><td>Sab kuch, doosri dukaanon ko amanat samet</td></tr></tbody></table>
+<h3>Qeematein</h3>
+<p>Website yeh list qeematein dikhati hai. Yeh mahana hain, rupay mein. Aik saal ikatha dene par 10 mahine ki qeemat mein 12 mahine milte hain, yaani dukaan ko 2 mahine muft.</p>
+<table><thead><tr><th>Package</th><th>Mahana</th><th>Saalana (10 ki qeemat mein 12 mahine)</th></tr></thead><tbody><tr><td>Muft trial</td><td>Rs. 0, 14 din ke liye</td><td>—</td></tr><tr><td>basic</td><td>Rs. 1,500</td><td>Rs. 15,000</td></tr><tr><td>pro</td><td>Rs. 3,000</td><td>Rs. 30,000</td></tr><tr><td>chain</td><td>Rs. 6,000</td><td>Rs. 60,000</td></tr></tbody></table>
+<aside class="note"><strong>Note:</strong> Website ki list qeematein server par tay hain. Inhein badalne ke liye developer se kahein, jaisa Operations runbook mein likha hai. Har dukaan asal mein jo fees deti hai woh aap app mein dukaan dukaan tay karte hain (neeche), is liye aap kisi dost ya bare customer ko website chhuye baghair khaas qeemat de sakte hain.</aside>
+<h3>Dukaan ka package, fees aur adaigi ki tareekh set karna</h3>
+<p><strong>Customers ki dukaanein</strong> mein koi dukaan dabayein. Us ki sheet maalik, users ki ginti, plan chip aur <strong>Khatam</strong> tareekh ke sath khulti hai. <strong>Plan aur fees</strong> tak scroll karein.</p>
+<ol>
+<li>Package dabayein: <strong>trial</strong>, <strong>basic</strong>, <strong>pro</strong> ya <strong>chain</strong>.</li>
+<li><strong>Mahana fees (Rs)</strong>: yeh dukaan aap ko har mahine kitna deti hai, maslan 1500. Fees na ho to khali ya 0 chhor dein.</li>
+<li><strong>Adaigi is tareekh tak</strong>: woh aakhri din jis tak dukaan ki fees cover karti hai. Yaad dehaniyan isi tareekh tak ginti karti hain.</li>
+<li><strong>Note (sirf aap dekhte hain)</strong>: aap ka apna note, maslan "Har 3 mahine baad deta hai; pehla mahina muft". Dukaan yeh kabhi nahi dekhti.</li>
+<li><strong>Plan save karein</strong> dabayein.</li>
+</ol>
+<p>Fees ke khanon ke neeche teen jaldi wale buttons hain: <strong>+1 mahina</strong>, <strong>+3 mahine</strong> aur <strong>+12 mahine</strong>. Har aik plan mein mahine jor kar foran save karta hai. Mahine <strong>Adaigi is tareekh tak</strong> se jurte hain agar woh tareekh abhi aage hai, warna aaj se, is liye jaldi adaigi karne wali dukaan ka koi din zaya nahi hota.</p>
+<p>Misaal: Star Mobiles ki adaigi 20 November tak hai. Aaj 10 November hai aur Bilal 3 mahine aur maangta hai. <strong>+3 mahine</strong> dabayein: adaigi 20 February tak ho jati hai.</p>
+<aside class="note"><strong>Zaroori:</strong> +1 / +3 / +12 buttons sirf tareekh aage karte hain. Yeh koi raqam darj nahi karte. Jab paisa aa gaya ho to is ki jagah <strong>Adaigi darj karein</strong> (chapter 5) istemal karein: yeh tareekh bhi aage karta hai aur raseed bhi rakhta hai.</aside>
+<aside class="note"><strong>Zaroori:</strong> Agar aap <strong>Adaigi is tareekh tak</strong> ka khana khali kar ke <strong>Plan save karein</strong> dabayein to dukaan ki koi aakhri tareekh nahi rehti. Usay kabhi yaad dehani nahi aayegi aur woh kabhi band nahi hogi. Yeh sirf jaan boojh kar karein.</aside>
+<p><strong>Unlimited</strong> button yahi kaam jaan boojh kar karta hai: aakhri tareekh hata deta hai. Isay apni demo dukaan, kisi dost ki dukaan ya umar bhar ke deal ke liye istemal karein.</p>
+<h3>Do misaalein</h3>
+<p><strong>14 din ka trial.</strong> Hamza Mobile Centre, Multan ke Hamza Iqbal muft trial chahte hain. Un ki dukaan <strong>trial</strong> par kholein, phir un ki sheet mein <strong>Adaigi is tareekh tak</strong> aaj se 14 din aage rakhein, fees khali chhorein aur <strong>Plan save karein</strong> dabayein. Jab woh basic chunein to <strong>basic</strong> dabayein, <strong>Mahana fees (Rs)</strong> mein 1500 likhein, <strong>Plan save karein</strong>, aur un ki pehli adaigi lein (chapter 5).</p>
+<p><strong>Poora saal ikatha.</strong> Ali Mobiles aik saal ke liye pro leti hai aur Rs. 30,000 deti hai. <strong>pro</strong> dabayein, <strong>Mahana fees (Rs)</strong> mein 3000 likhein aur <strong>Plan save karein</strong>; yahan mahana raqam hi rakhein, kyunke karobar console mahana aamdani ke liye isi ko istemal karta hai. Phir <strong>Adaigi darj karein</strong> raqam 30000 aur mahine 12 ke sath.</p>
+<h3>List har dukaan ki haalat kaise dikhati hai</h3>
+<p><strong>Customers ki dukaanein</strong> aur dukaan ki sheet mein plan chip jab tak plan chal raha ho (ya koi aakhri tareekh na ho) violet hoti hai, 7 din ya kam reh jayein to amber (narangi peeli), aur plan khatam ya dukaan band ho jaye to surkh.</p>
+<figure><img src="img/roman/admin-14.jpg" alt=""><figcaption>Tasveer 6: Plan chips: chalte ya unlimited plan ke liye violet, 7 din ya kam bachein to amber</figcaption></figure>
+<figure><img src="img/roman/admin-05.jpg" alt=""><figcaption>Tasveer 7: Fees wali dukaanein, maslan Reminder Shop pro par 30 din baqi aur Rs. 2,500 mahana, baghair fees wali dukaanon ke darmiyan</figcaption></figure>
+<h3>Is dukaan ke modules</h3>
+<p>Kisi dukaan ko oonche package ka sirf aik hissa chahiye ho sakta hai. Jab tak <strong>Is dukaan ke modules</strong> ke neeche <strong>Plan ke mutabiq</strong> par tick hai, dukaan ko us ke package ke hisse milte hain, aur package badalne par khud badal jate hain. Tick hata dein to sirf woh hisse on hote hain jin par aap tick karein, package jo bhi ho; wapas jaane ke liye dobara tick karein.</p>
+<p>Misaal: Rs. 1,500 wali basic dukaan Rs. 2,000 mahana mein repair bhi chahti hai. <strong>Plan ke mutabiq (basic)</strong> se tick hatayein, <strong>Marammat</strong> par tick lagayein, <strong>Modules save karein</strong> dabayein, phir <strong>Mahana fees (Rs)</strong> 2000 karein aur <strong>Plan save karein</strong> dabayein.</p>
+<h3>Billing settings: dukaanein kahan adaigi karein aur unhein kab yaad dilaya jaye</h3>
+<p>Yeh settings sab dukaanon ke liye aik sath hain. Super admin page par, <strong>Software fees</strong> card mein, <strong>Billing settings</strong> dabayein (card ke title ke neeche buttons wali line mein). Agar button surkh hai to aap ki asli tafseel abhi nahi bhari gayi.</p>
+<figure><img src="img/roman/admin-billing.jpg" alt=""><figcaption>Tasveer 8: Billing settings: aap ki bank tafseel aur support numbers, aur un ke neeche yaad dehani ka schedule shuru hota hai</figcaption></figure>
+<p>Aik baar bharein:</p>
+<ul>
+<li><strong>Bank ka naam</strong>, <strong>Account title</strong> (bilkul waisa jaisa bank dikhata hai), <strong>Account number</strong>, <strong>IBAN</strong> (24 huroof, PK se shuru) aur <strong>Branch</strong>.</li>
+<li><strong>Support phone</strong> aur <strong>Support WhatsApp</strong>: jahan dukaanein madad ke liye call karti hain aur adaigi ke screenshot bhejti hain, maslan +92 316 4001668.</li>
+<li><strong>Note (English)</strong>, <strong>Note (Urdu)</strong>, <strong>Note (Roman)</strong>: aik chhoti line jo aap ki adaigi ki tafseel ke sath nazar aati hai, maslan "Transfer ke remarks mein apni dukaan ka naam likhein."</li>
+</ul>
+<p>Jab tak bank wali lines mein "PLACEHOLDER" likha hai, sheet khabardar karti hai <strong>Abhi sample tafseel lagi hai — apni asli tafseel bharein.</strong> aur dukaanon ko bank wala hissa bilkul nazar nahi aata.</p>
+<p>Phir <strong>Yaad dehani ka schedule (miyad se pehle din)</strong>:</p>
+<table><thead><tr><th>Khana</th><th>Default</th><th>Kya karta hai</th></tr></thead><tbody><tr><td><strong>Peeli patti kab se</strong></td><td>7</td><td>Aakhri tareekh se kitne din pehle dukaan ki screens par chhoti peeli patti aati hai. Abhi popup nahi.</td></tr><tr><td><strong>Orange patti + popup kab se</strong></td><td>3</td><td>Patti orange ho jati hai aur yaad dehani ka popup din mein aik baar aata hai</td></tr><tr><td><strong>Surkh patti + popup kab se</strong></td><td>1</td><td>Patti surkh ho jati hai; snooze ghanton ke baad popup wapas aata hai</td></tr><tr><td><strong>Miyad ke baad riayati din</strong></td><td>7</td><td>Aakhri tareekh ke baad ke din jin mein dukaan poori chalti hai, surkh patti aur popup ke sath. Un ke baad dukaan band ho jati hai.</td></tr><tr><td><strong>Snooze ghante</strong></td><td>4</td><td>Jab maalik surkh popup par "Baad mein yaad dilayen" dabata hai to itne ghante popup nahi aata</td></tr></tbody></table>
+<p><strong>Mehfooz karein</strong> dabayein. Tabdeeli har dukaan par aik sath lagti hai; app update karne ki zaroorat nahi.</p>
+<p>Default ke sath misaal: plan 30 November ko khatam hota hai. Peeli patti 23 November se, orange patti aur rozana popup 27 November se, 29 aur 30 November ko surkh. Dukaan apne 7 riayati din 7 December tak chalti hai aur 8 December se band ho jati hai.</p>
+<aside class="note"><strong>Note:</strong> Popup sirf dukaan ka maalik dekhta hai, English, Urdu aur Roman Urdu teeno aik sath; staff ko aik chhoti line nazar aati hai ke maalik ko batayein. Yeh kabhi sale, kharidari, wapsi ya adaigi ke beech mein nahi khulta.</aside>
+<h3>Adaigi ke accounts: aap ke wallets</h3>
+<p>Easypaisa, JazzCash, SadaPay aur doosre wallets alag list mein jate hain. <strong>Software fees</strong> card mein <strong>Adaigi ke accounts</strong> dabayein.</p>
+<ol>
+<li><strong>Account shamil karein</strong> dabayein.</li>
+<li><strong>Naam (maslan Easypaisa)</strong>, <strong>Account holder</strong> (account par registered naam), <strong>Number / IBAN</strong> aur chahein to <strong>Note (optional)</strong> bharein, maslan "Adaigi ke baad screenshot WhatsApp par bhejein."</li>
+<li>Har wallet ke liye dohrayein. Kachre ka dabba wala button line hata deta hai.</li>
+<li><strong>Mehfooz karein</strong> dabayein.</li>
+</ol>
+<p>Har dukaan yeh accounts apni <strong>Software fees</strong> screen par <strong>In mein se kisi account mein bhejein</strong> ke neeche dekhti hai, har aik ke sath <strong>Copy</strong> button; website par bhi yeh nazar aate hain.</p>
+<h3>Is dukaan ke riayati din</h3>
+<p>Bharosemand customer ko baqiyon se zyada riayati din mil sakte hain. Us ki sheet mein <strong>Is dukaan ke riayati din (khali = default)</strong>: koi number likhein, maslan 15, aur <strong>Mehfooz karein</strong> dabayein. Billing settings wala number istemal karne ke liye khali chhor dein.</p>
+<p>Misaal: default 7 hai. Jis dealer ne do saal waqt par adaigi ki usay 15 milte hain: woh apni aakhri tareekh ke 15 din baad hi band hota hai.</p>
+<h2 id="c5">5. Fees ki adaigiyan</h2>
+<p>Dukaan ka plan teen tareeqon se renew ho sakta hai. Jis tareeqe se paisa aap tak pohncha, wahi istemal karein.</p>
+<table><thead><tr><th>Paisa kaise aaya</th><th>Aap kya karein</th><th>Kahan</th></tr></thead><tbody><tr><td>Dukaan ne aap ke wallet ya bank mein bheja aur app mein bataya</td><td>Screenshot check karein, <strong>Wasool</strong> dabayein</td><td>Software fees card (yahi chapter)</td></tr><tr><td>Aap ko cash mila ya aap ne transfer khud dekha</td><td><strong>Adaigi darj karein</strong></td><td>Dukaan ki sheet (yahi chapter)</td></tr><tr><td>Aik computer wali dukaan jahan internet nahi</td><td>Raqam darj karein, phir <strong>renewal code</strong> bhejein</td><td>Chapter 6</td></tr></tbody></table>
+<h3>Dukaan kya karti hai</h3>
+<p>Dukaan ka maalik <strong>Mazeed → Software fees</strong> kholta hai (ya yaad dehani ki patti dabata hai), <strong>In mein se kisi account mein bhejein</strong> ke neeche se aap ka koi account number copy karta hai aur apni app se paisa bhejta hai. Phir <strong>Main ne ada kar di</strong> ke neeche <strong>Raqam (Rs)</strong>, <strong>Mahine</strong>, <strong>Kis se bheji</strong>, <strong>Transaction ID / hawala</strong>, <strong>Adaigi ki tareekh</strong> bharta hai, screenshot lagata hai aur <strong>Bhejein</strong> dabata hai. Us ki yaad dehani ki patti halki neeli ho jati hai ("verification pending"), popup ruk jata hai, aur adaigi <strong>Check ho rahi hai</strong> dikhati hai. Aap ko WhatsApp paighaam aata hai.</p>
+<h3>Adaigi check aur qabool karna</h3>
+<p>Super admin page par <strong>Software fees</strong> card mein aik line hoti hai jaise "Is mahine Rs. 100,000 · 1 check karni hain", <strong>Adaigi ke accounts</strong> aur <strong>Billing settings</strong> ke buttons, aur un ke neeche har woh adaigi jo aap ka intezar kar rahi hai. Har aik mein dukaan ka naam, adaigi ka zariya, transaction ID, mahine, tareekh aur raqam hoti hai (chapter 2 mein page ke upar aik nazar aati hai).</p>
+<ol>
+<li>Dukaan ki bheji hui tasveer dekhne ke liye <strong>Screenshot</strong> dabayein. Dekh kar band kar dein.</li>
+<li>Apni Easypaisa, JazzCash ya bank app kholein aur wahi transaction ID aur raqam dhoondein.</li>
+<li>Agar paisa aa gaya hai to <strong>Wasool · +N mahine</strong> dabayein.</li>
+</ol>
+<p>Line foran ghayab ho jati hai. Dukaan ki <strong>Adaigi is tareekh tak</strong> us ke bataye hue mahinon jitni aage chali jati hai (agar us ki maujooda aakhri tareekh abhi aage hai to wahan se, warna aaj se), adaigi ko raseed number milta hai (SUB-0001, SUB-0002 waghera, aap ki sab dukaanon mein aik hi silsila), aur maalik ko WhatsApp paighaam aur app mein aik baar "Shukriya, renew ho gaya …" milta hai. Woh <strong>Aap ki adaigiyan</strong> se raseed print kar sakta hai.</p>
+<p>Misaal: Ali Mobiles basic ke 3 mahine ke liye Easypaisa par Rs. 4,500 bhejti hai. Aap apne Easypaisa mein usi ID ke sath Rs. 4,500 dekhte hain, <strong>Wasool · +3 mahine</strong> dabate hain, aur us ka plan 3 mahine aur chalta hai.</p>
+<h3>Adaigi mustarad karna</h3>
+<p>Agar paisa aap ke account mein nahi, ya raqam ghalat hai, to <strong>Mustarad</strong> dabayein. Aik box poochta hai <strong>Kyun nahi? (dukaandar ye parhe ga)</strong>; saaf wajah likhein, maslan "Hamare Easypaisa mein ID 0123 ke sath Rs. 1,500 nahi aaye. Check kar ke dobara bhejein." Maalik ko adaigi <strong>Qabool nahi hui</strong> aap ki wajah ke sath nazar aati hai aur woh dobara bata sakta hai. Us ka plan nahi badalta. Wajah khali ho to kuch mustarad nahi hota.</p>
+<aside class="tip"><strong>Mashwara:</strong> <strong>Wasool</strong> button hamesha wahi mahine lagata hai jo dukaan ne bataye. Agar us ne Rs. 3,000 diye magar basic par 3 mahine likhe (Rs. 4,500), to wajah likh kar mustarad karein, ya qabool kar ke us ki sheet mein <strong>Adaigi is tareekh tak</strong> theek kar dein taake jitna diya utna hi mile.</aside>
+<h3>Khud mili raqam darj karna</h3>
+<p>Jab Bilal aap ko Rs. 4,500 cash deta hai, ya aap us ka bank transfer dekhte hain magar app mein koi report nahi:</p>
+<ol>
+<li><strong>Customers ki dukaanein</strong> mein us ki dukaan dabayein aur <strong>Adaigi darj karein</strong> tak scroll karein.</li>
+<li><strong>Raqam (Rs)</strong> us ki mahana fees se shuru hoti hai; isay 4500 karein. <strong>Mahine</strong>: 3.</li>
+<li><strong>Kis zariye ada kiya</strong>: zariye ka aik lafz, jaise cash, easypaisa, jazzcash ya bank.</li>
+<li><strong>Adaigi ki tareekh</strong>: woh din jab paisa asal mein diya ya bheja gaya. <strong>Transaction ID / hawala</strong>: agar ho.</li>
+<li><strong>Adaigi darj karein</strong> dabayein.</li>
+</ol>
+<p>Aik hari line raseed number dikhati hai, maslan <strong>Raseed SUB-0007</strong>. Adaigi wasool shuda save hoti hai aur us ka plan foran 3 mahine barh jata hai.</p>
+<aside class="tip"><strong>Mashwara:</strong> <strong>Kis zariye ada kiya</strong> ka lafz har baar aik hi tarah likhein. Karobar console paise isi se group karta hai; bare chhote huroof aur space se farq nahi parta, magar "easypaisa" aur "EP" do alag zariye ginay jate hain.</aside>
+<aside class="note"><strong>Note:</strong> <strong>Software fees</strong> card par "Is mahine" wali raqam adaigiyan us din se ginti hai jis din aap ne qabool kin. Karobar console ka <strong>Is mahine wasool</strong> inhein <strong>Adaigi ki tareekh</strong> se ginta hai, is liye 31 October ko di gayi aur 1 November ko qabool hui fees card par November mein aur console mein October mein hai. Apni asal mahana aamdani ke liye console dekhein.</aside>
+<p>Har dukaan ki sab adaigiyan karobar console mein <strong>Adaigiyan</strong> ke neeche hain (chapter 7), nayi sab se upar, har aik apne raseed number aur haalat ke sath.</p>
+<figure><img src="img/roman/business-payments-2.jpg" alt=""><figcaption>Tasveer 9: Karobar → Adaigiyan: har fees dukaan, zariye, tareekh, mahine, hawale aur raseed number ke sath</figcaption></figure>
+<h2 id="c6">6. Renewal codes aur license keys</h2>
+<p>Renewal code (jise license key bhi kehte hain) aik lamba dastkhat shuda code hai jo aik dukaan ke plan mein mahine jorta hai. Maalik isay <strong>Mazeed → Software fees → Renewal code</strong> mein paste kar ke <strong>Code se renew karein</strong> dabata hai. Yeh website, Android app aur aik computer wale install par chalta hai, internet ke baghair, sirf aik baar, aur sirf usi dukaan ke liye jis ke liye banaya gaya. Keys zyada tar aik computer (offline) wali dukaanon ke liye chahiye hoti hain, jo server par aap ki manzoori nahi dekh saktin.</p>
+<aside class="note"><strong>Zaroori:</strong> Key banane se koi raqam darj nahi hoti. Pehle adaigi darj karein (chapter 5), phir key banayein.</aside>
+<aside class="note"><strong>Note:</strong> Keys aik secret se sign hoti hain jo sirf aap ke server par hai (RENEWAL_PRIVATE_KEY). Har Windows install keys ko us ki milti julti public key se check karta hai. Dono Operations runbook ke mutabiq set hoti hain; tab tak key banane par error aata hai.</aside>
+<h3>Dukaan ki sheet se key banana</h3>
+<ol>
+<li><strong>Customers ki dukaanein</strong> mein dukaan dabayein aur <strong>Renewal code</strong> tak scroll karein.</li>
+<li><strong>Mahine</strong> likhein aur <strong>Renewal code</strong> dabayein.</li>
+<li>Aik hara box kehta hai <strong>Code ban gaya — WhatsApp par bhejein</strong>. <strong>Code WhatsApp par bhejein</strong> dabayein; paighaam mein code aur maalik ke liye tareeqa hota hai.</li>
+</ol>
+<h3>Karobar console se key banana</h3>
+<ol>
+<li><strong>Karobar: fees, dukaanein, keys</strong> kholein, <strong>Keys</strong> tab dabayein, phir <strong>Key banayein</strong>.</li>
+<li><strong>Kis dukaan ke liye</strong>: dukaan dhoond kar dabayein.</li>
+<li><strong>1 mahina</strong>, <strong>3 mahine</strong>, <strong>6 mahine</strong> ya <strong>12 mahine</strong> dabayein.</li>
+<li><strong>Note (optional)</strong>: maslan "Rs. 4,500 cash diye, 3 mahine".</li>
+<li><strong>Key banayein</strong> dabayein. App kehti hai <strong>Key ban gayi — bhejein</strong> aur key ka card dikhati hai.</li>
+</ol>
+<p>Dono tareeqon se har key Keys list mein rakhi jati hai.</p>
+<figure><img src="img/roman/business-keys-1.jpg" alt=""><figcaption>Tasveer 10: Karobar → Keys: Key banayein, filters, aur aik key card apne bhejne wale buttons ke sath</figcaption></figure>
+<h3>Key ka card</h3>
+<p>Har key card mein dukaan, haalat, mahine, poora code, kab bani, kitni baar aur kis zariye bheji gayi, us ka link kitni baar khula, aur aap ka note hota hai.</p>
+<table><thead><tr><th>Haalat</th><th>Matlab</th></tr></thead><tbody><tr><td><strong>Istemal nahi hui</strong></td><td>Ban gayi, dukaan ka intezar hai</td></tr><tr><td><strong>Istemal ho gayi</strong></td><td>Dukaan ne is se renew kar liya, website / app par ya aik computer par</td></tr><tr><td><strong>Mansookh</strong></td><td>Aap ne mansookh ki, ya nayi key ne is ki jagah le li; ab yeh nahi chalti</td></tr></tbody></table>
+<p><strong>Istemal nahi hui</strong> wali key ke buttons:</p>
+<table><thead><tr><th>Button</th><th>Kya karta hai</th></tr></thead><tbody><tr><td><strong>WhatsApp par bhejein</strong></td><td>Key aur us ke magic link ke sath WhatsApp kholta hai</td></tr><tr><td><strong>SMS bhejein</strong></td><td>Wahi paighaam aap ke phone ki SMS app mein kholta hai</td></tr><tr><td><strong>Key copy karein</strong></td><td>Paighaam copy karta hai, kisi bhi app mein paste karne ke liye</td></tr><tr><td><strong>Link copy karein</strong></td><td>Sirf magic link copy karta hai</td></tr><tr><td><strong>Nayi key banayein</strong></td><td>Utne hi mahinon ki nayi key banata hai aur yeh wali mansookh karta hai</td></tr><tr><td><strong>Naya link</strong></td><td>Is key ko 7 din ka taza link deta hai; purana link chalna band ho jata hai</td></tr><tr><td><strong>Key mansookh karein</strong></td><td>Poochta hai <strong>Ye key kyun mansookh kar rahe hain?</strong>, phir key ko band kar deta hai</td></tr></tbody></table>
+<p><strong>Istemal ho gayi</strong> wali key par sirf <strong>Nayi key banayein</strong> hota hai, jo utne hi mahinon ki taza key banata hai aur istemal shuda key ko waise hi rehne deta hai.</p>
+<figure><img src="img/roman/business-keys-2.jpg" alt=""><figcaption>Tasveer 11: Purani keys: mansookh wali par likha hai "2 baar bheji (link) · Link 2 baar khula · Mansookh: renewed"</figcaption></figure>
+<h3>Magic link</h3>
+<p>Key card se bheje gaye har paighaam mein aik magic link bhi hota hai. Dukaandar isay kisi login ke baghair kholta hai aur <strong>Aap ki renewal key</strong> dekhta hai: us ki dukaan, mahine, key, <strong>Key copy karein</strong> button aur tareeqa "App kholein → Mazeed → Software fees → Renewal code → key paste karein → Renew." Link 7 din chalta hai, aur har dafa khulna key card par gina jata hai, taake aap ko pata ho ke us ne dekha ya nahi.</p>
+<h3>Jab key mein masla ho</h3>
+<table><thead><tr><th>Masla</th><th>Kya karein</th></tr></thead><tbody><tr><td>Dukaandar se paighaam gum ho gaya</td><td><strong>WhatsApp par bhejein</strong> dobara dabayein. Key wahi hai; card par 2 baar bheji likha aata hai.</td></tr><tr><td>Link ki miyad khatam ho gayi</td><td><strong>WhatsApp par bhejein</strong> dobara dabayein: 7 din ka taza link khud ban jata hai</td></tr><tr><td>Aap ko lagta hai link kisi aur ke paas hai</td><td><strong>Naya link</strong>: purana link foran band ho jata hai; phir naya bhejein</td></tr><tr><td>Key ghalat number par chali gayi</td><td>Wajah ke sath <strong>Key mansookh karein</strong>, phir nayi banayein</td></tr><tr><td>Aap ne ghalat mahine daal diye</td><td><strong>Key mansookh karein</strong>, phir sahi mahinon ke sath <strong>Key banayein</strong></td></tr><tr><td>Key aik offline computer par istemal ho chuki thi aur phir aap ne mansookh ki</td><td>Jo mahine jur chuke woh rehte hain; mansookhi se pehle offline istemal hui key wapas nahi li ja sakti</td></tr></tbody></table>
+<h3>Keys aur aik computer wala install</h3>
+<p>Aik computer wale install mein paste ki gayi pehli sahi key us install ko aap ke record mein us ki dukaan se jor deti hai. Us ke baad us par sirf usi dukaan ki keys chalti hain. Jab dukaan ke computer par internet hota hai to woh aap ke server se rabta karta hai, is liye us ka aakhri istemal aur app ka version karobar console mein nazar aata hai. Is rabte ke liye dukaan ke computer par aik setting (SAAS_URL) chahiye, jo install karte waqt Operations runbook ke mutabiq lagti hai.</p>
+<h2 id="c7">7. Karobar console</h2>
+<p>Super admin page se dark button <strong>Karobar: fees, dukaanein, keys</strong> ke zariye karobar console kholein. Page, <strong>Karobar</strong>, mein chaar tabs hain: <strong>Khulasa</strong>, <strong>Dukaanein</strong>, <strong>Adaigiyan</strong> aur <strong>Keys</strong>. Har raqam aap ki qabool ki hui adaigiyon aur set kiye hue plans se nikalti hai; haath se kuch nahi likha jata.</p>
+<h3>Khulasa: totals</h3>
+<figure><img src="img/roman/business-overview-1.jpg" alt=""><figcaption>Tasveer 12: Karobar → Khulasa: mahana aamdani, wasool raqam, pending, aane wali aur guzri hui fees, istemal aur keys</figcaption></figure>
+<table><thead><tr><th>Tile</th><th>Kya dikhata hai</th></tr></thead><tbody><tr><td><strong>Mahana aamdani (MRR)</strong></td><td>Paid package (basic, pro, chain) wali un sab dukaanon ki mahana fees jin ka plan khatam nahi hua. Trial, khatam aur band dukaanein nahi gini jatin. Misaal: Rs. 1,500 wali 3 dukaanein aur chauthi band: Rs. 4,500.</td></tr><tr><td><strong>Fi dukaan ausat</strong></td><td>MRR ko paid package wali dukaanon ki ginti (sath likhi hai) se taqseem. Khatam aur band dukaanein us ginti mein hain, is liye ausat ko neeche le aati hain.</td></tr><tr><td><strong>Is mahine wasool</strong></td><td>Aap ki qabool ki hui fees, adaigi ke din ke hisaab se, is mahine ki 1 tareekh se; neeche <strong>Pichla mahina</strong></td></tr><tr><td><strong>Kul wasool</strong></td><td>Shuru se ab tak qabool ki hui sab fees; <strong>Dukaanein</strong> = kitni alag dukaanon ne kabhi adaigi ki</td></tr><tr><td><strong>Pending (check karein)</strong></td><td>Batayi hui adaigiyan jo aap ne abhi qabool ya mustarad nahi kin; daba kar Adaigiyan kholein</td></tr><tr><td><strong>7 din mein aani hai</strong></td><td>Un dukaanon ki mahana fees jin ka plan agle 7 din mein khatam hota hai: jinhein abhi yaad dilana hai</td></tr><tr><td><strong>30 din mein aani hai</strong></td><td>Yahi agle 30 din ke liye, 7 din wali samet</td></tr><tr><td><strong>Tareekh guzar gayi</strong></td><td>Un dukaanon ki mahana fees jin ki aakhri tareekh guzar chuki (riayati ya band): woh paisa jo aap ko mil jana chahiye tha</td></tr><tr><td><strong>Abhi istemal mein</strong></td><td>Pichle 10 minute mein istemal hui online dukaanein aur pichle ghante mein rabta karne wale aik computer wale install; neeche <strong>Aaj istemal hua</strong> aur <strong>Is hafte istemal hua</strong></td></tr><tr><td><strong>License keys</strong></td><td>Bani hui magar abhi istemal na hui keys; neeche <strong>Istemal ho gayin</strong> aur <strong>Mansookh</strong>; daba kar Keys kholein</td></tr></tbody></table>
+<p>Aur neeche: <strong>Mahina waar wasooli</strong> (pichle 12 mahinon ka har mahine aik bar), <strong>Kis zariye se</strong> (har <strong>Kis zariye ada kiya</strong> lafz ki qabool shuda fees, maslan "Easypaisa 12 · Rs. 30,000"), <strong>Package ke hisaab se</strong> (har package ki dukaanein aur mahana aamdani) aur <strong>Kaun istemal kar raha hai</strong> (online aur offline dukaanein, aur har plan ki haalat mein dukaanon ki ginti).</p>
+<figure><img src="img/roman/business-overview-3.jpg" alt=""><figcaption>Tasveer 13: Khulasa, neeche wala hissa: mahina waar wasooli, kis zariye se, package ke hisaab se aur kaun istemal kar raha hai</figcaption></figure>
+<p>Console mein har jagah istemal honay wali plan ki haalatein:</p>
+<table><thead><tr><th>Haalat</th><th>Matlab</th></tr></thead><tbody><tr><td><strong>Chal raha hai</strong></td><td>7 din se zyada baqi</td></tr><tr><td><strong>Jald khatam</strong></td><td>7 din ya kam baqi</td></tr><tr><td><strong>Khatam (mohlat)</strong></td><td>Khatam, magar abhi riayati dinon mein chal raha hai</td></tr><tr><td><strong>Band</strong></td><td>Riayati din khatam: sirf dekhna, adaigi aur backup</td></tr><tr><td><strong>Koi aakhri tareekh nahi</strong></td><td>Unlimited</td></tr><tr><td><strong>Trial</strong></td><td>Trial package par</td></tr></tbody></table>
+<aside class="tip"><strong>Mashwara:</strong> <strong>Koi aakhri tareekh nahi</strong> ka bara number aksar yeh matlab rakhta hai ke dukaanein <strong>Adaigi is tareekh tak</strong> ke baghair kholi gayin. Super admin list mein un par jayein aur tay shuda tareekhein set karein.</aside>
+<h3>Dukaanein: har customer ki aik line</h3>
+<figure><img src="img/roman/business-shops-1.jpg" alt=""><figcaption>Tasveer 14: Karobar → Dukaanein: online / offline aur plan ki haalat ke filters, band dukaanein sab se upar</figcaption></figure>
+<p><strong>Dukaanein</strong> tab har customer ki list deta hai, band aur khatam hone wali dukaanein pehle. Har line mein mahana fees, package, haalat aur baqi ya guzre din, <strong>Online (website / app)</strong> ya <strong>Offline (aik computer)</strong> (hara nuqta matlab abhi istemal mein), <strong>Kul ada kiya</strong>, <strong>Aakhri adaigi</strong> aur us ka zariya, koi <strong>Pending</strong> raqam aur <strong>Aakhri istemal</strong> hota hai.</p>
+<p>Search naam se dukaan dhoondta hai. Buttons ki pehli line is se filter karti hai ke dukaan kahan chalti hai; doosri (<strong>Sab</strong>, <strong>Jald khatam</strong>, <strong>Khatam (mohlat)</strong>, <strong>Band</strong>, <strong>Chal raha hai</strong>) plan ki haalat se.</p>
+<figure><img src="img/roman/business-shops-2.jpg" alt=""><figcaption>Tasveer 15: Riayati dinon wali dukaanein: "Khatam (mohlat) · 2 din upar · Kul ada kiya Rs. 0 · Aakhri istemal kabhi nahi"</figcaption></figure>
+<aside class="tip"><strong>Mashwara:</strong> Nayi dukaan ke sath "Aakhri istemal kabhi nahi" ka matlab hai maalik ko login mil gaya magar us ne abhi app nahi kholi. Usay call kar ke login mein madad karein; jo dukaan kabhi shuru hi na ho woh kabhi adaigi nahi karegi.</aside>
+<h3>Aik dukaan ki tafseel</h3>
+<p><strong>Dukaanein</strong> tab mein koi dukaan dabayein. Us ki sheet khulti hai.</p>
+<figure><img src="img/roman/admin-shop.jpg" alt=""><figcaption>Tasveer 16: Karobar console mein aik dukaan: fees, plan ki haalat, kul ada kiya, aakhri istemal, kahan chalta hai, yaad dehani ka button, adaigiyan aur keys</figcaption></figure>
+<table><thead><tr><th>Hissa</th><th>Kya dikhata ya karta hai</th></tr></thead><tbody><tr><td><strong>Fees</strong></td><td>Mahana fees, neeche package</td></tr><tr><td><strong>Plan ki haalat</strong></td><td>Baqi din, ya guzre din, haalat ki chip ke sath; ∞ matlab koi aakhri tareekh nahi</td></tr><tr><td><strong>Kul ada kiya</strong></td><td>Is dukaan ki sab qabool shuda fees; × wala number kitni adaigiyan</td></tr><tr><td><strong>Aakhri istemal</strong></td><td>Is dukaan mein kisi ne aakhri baar app kab istemal ki (aik computer wale install ke liye, aakhri rabta kab hua)</td></tr><tr><td><strong>Version</strong></td><td>Sirf aik computer wale install ke liye: us computer ka bataya hua app version, taake pata chale update chahiye ya nahi</td></tr><tr><td><strong>Kahan chalta hai</strong></td><td><strong>Online (website / app)</strong> ya <strong>Offline (aik computer)</strong> dabayein. Kisi dukaan par Windows version install karne ke baad isay khud set karein.</td></tr><tr><td><strong>WhatsApp par yaad dilayein</strong></td><td>Tayyar yaad dehani ke sath WhatsApp kholta hai: dukaan ka plan, kab khatam hota hai ya khatam ho gaya, fees, aur "Adaigi ke liye Mazeed → Software fees"</td></tr><tr><td><strong>Dukaanon ki fehrist mein kholein</strong></td><td>Super admin page par is dukaan ki sheet par le jata hai, plan badalne, adaigi lene ya password rakhne ke liye</td></tr><tr><td><strong>Adaigiyan</strong></td><td>Is dukaan ki har batayi ya aap ki darj ki hui fees, zariye, tareekh, mahine, raseed aur haalat ke sath</td></tr><tr><td><strong>License keys</strong></td><td>Is dukaan ki keys, <strong>Key banayein</strong> ke sath</td></tr></tbody></table>
+<h3>Adaigiyan: har fees aik list mein</h3>
+<figure><img src="img/roman/business-payments-1.jpg" alt=""><figcaption>Tasveer 17: Karobar → Adaigiyan: zariye aur haalat ke filters, wasool total aur CSV download</figcaption></figure>
+<p><strong>Adaigiyan</strong> tab har dukaan ki har fees ki list deta hai, nayi sab se upar: dukaan, zariya, adaigi ki tareekh, mahine ("1m"), hawala, raseed number, raqam aur haalat (<strong>Pending</strong>, <strong>Wasool</strong> ya <strong>Radd</strong>).</p>
+<ul>
+<li>Dukaan ke naam, transaction ID ya raseed number se <strong>Dhoondein</strong>, maslan SUB-0007.</li>
+<li>Zariye se filter karein (<strong>Tamam zariye</strong>, phir har zariye ka aik button) aur haalat se.</li>
+<li><strong>Wasool (dikhayi gayi)</strong> filter shuda list mein sirf wasool adaigiyan jorta hai.</li>
+<li><strong>CSV download</strong> filter shuda list ko spreadsheet file (software-fees.csv) mein save karta hai, aap ke accountant ke liye.</li>
+</ul>
+<p><strong>Keys</strong> tab ki wazahat chapter 6 mein hai.</p>
+<h2 id="c8">8. Dukaan ki madad</h2>
+<h3>Dukaan ka koi banda password bhool gaya</h3>
+<p>Login screen par koi bhi <strong>Password bhool gaye?</strong> daba kar apna mobile number likh sakta hai. <strong>Dukaan ke maalik</strong> ki request aap ke paas aati hai, WhatsApp par aur Super admin page par <strong>Password ki requests</strong> ke neeche. <strong>Staff member</strong> ki request us ki apni dukaan ke maalik ke paas jati hai (jo Mazeed → Staff mein reset karta hai); yeh aap ki list mein bhi us ke role ke sath nazar aati hai, agar maalik madad maange.</p>
+<p>Har password request mein banday ka poora naam aur dukaan, us ka number aur tareekh hoti hai, aur neeche wali line mein <strong>Password rakhein</strong> aur aik tick (chapter 3 mein aik nazar aati hai).</p>
+<ol>
+<li><strong>Password ki requests</strong> mein banday ki line par <strong>Password rakhein</strong> dabayein.</li>
+<li>Dukaan ki sheet aik line <strong>Naya password baraye</strong> aur banday ke naam, number aur role ke sath khulti hai.</li>
+<li>Naya password likhein (kam az kam 6 huroof, maslan ms5521) aur <strong>Mehfooz karein</strong> dabayein.</li>
+<li>Aik hara box kehta hai <strong>Password badal gaya. Malik ko bhejein:</strong> number aur password ke sath. <strong>WhatsApp par bhejein</strong> dabayein.</li>
+</ol>
+<p>Purana password foran chalna band ho jata hai aur request khud band ho jati hai. <strong>Is ki bajaye owner ka</strong> staff member se maalik par badal deta hai. Jab koi maalik app istemal kiye baghair aap ko call kare to <strong>Customers ki dukaanein</strong> se us ki dukaan kholein aur qadam 3 se shuru karein.</p>
+<aside class="note"><strong>Zaroori:</strong> Password badalne se pehle yaqeen kar lein ke request waqai usi banday ki hai. Dukaan ke registered number par wapas call karein. Naya password kabhi us number ke ilawa kisi aur number par na bhejein jis se woh banda login karta hai.</aside>
+<p>Request line par tick usay kuch badle baghair mukammal mark karta hai, maslan jab banday ko password yaad aa gaya.</p>
+<h3>Dukaan ke andar dekhna</h3>
+<p>Jab maalik kahe "aik sale gum hai" ya "mera khata ghalat lag raha hai", to aap us ki dukaan apni aankhon se dekh sakte hain.</p>
+<ol>
+<li><strong>Customers ki dukaanein</strong> mein us ki dukaan dabayein.</li>
+<li><strong>Ye dukaan kholein</strong> dabayein.</li>
+</ol>
+<p>Ab app us ki dukaan aise dikhati hai jaise aap us ke andar hon: us ki home screen, stock, khata aur sales. Aap ka aana us dukaan ke activity log mein likha jata hai, is liye maalik hamesha dekh sakta hai ke aap aaye the. Wapas jaane ke liye <strong>Mazeed → Super admin</strong> dabayein.</p>
+<aside class="note"><strong>Zaroori:</strong> Dekhein, badlein nahi. Dukaan ke andar rehte hue aap jo bhi likhein woh asli hai aur us dukaan ke hisaab mein aap ke naam se save hota hai. Agar kuch theek karna hai to maalik ko rehnumai dein, ya sirf us ki ijazat se khud theek karein.</aside>
+<h3>Band dukaan</h3>
+<p>Dukaan tab band hoti hai jab us ke riayati din khatam ho jayein aur koi adaigi qabool na hui ho. Usay poori screen ka notice nazar aata hai. Woh phir bhi login kar ke sab kuch dekh sakti hai, <strong>Mazeed → Software fees</strong> se aap ko adaigi kar sakti hai, aur <strong>Mera data backup karein</strong> se apni sab lists download kar sakti hai. Renew hone tak woh na bech sakti hai, na khareed sakti hai, na kuch badal sakti hai. Kabhi kuch delete nahi hota; jis din renew ho, sab kuch bilkul pehle ki tarah dobara chalne lagta hai.</p>
+<p>Dukaan kholne ke liye <strong>Customers ki dukaanein</strong> mein us ki sheet par in mein se aik kaam karein:</p>
+<table><thead><tr><th>Soorat</th><th>Kya karein</th></tr></thead><tbody><tr><td>Us ne adaigi ki aur bataya</td><td><strong>Software fees</strong> card mein qabool karein</td></tr><tr><td>Us ne aap ko cash diya ya aap ne transfer dekha</td><td><strong>Adaigi darj karein</strong></td></tr><tr><td>Woh kuch din mein dene ka wada karta hai aur aap ko bharosa hai</td><td><strong>Is dukaan ke riayati din</strong> barhayein, maslan 15, aur <strong>Mehfooz karein</strong></td></tr><tr><td>Aik computer wali dukaan jahan internet nahi</td><td>Adaigi darj karein, phir <strong>Renewal code</strong> bhejein</td></tr><tr><td>Aap ki apni ya kisi dost ki dukaan</td><td><strong>Unlimited</strong></td></tr></tbody></table>
+<p>Save karte hi dukaan khul jati hai; maalik ko sirf app refresh karni hoti hai.</p>
+<aside class="note"><strong>Note:</strong> Dukaan ke phone ya computer ki tareekh badalne se yaad dehaniyon ya band hone se bacha nahi ja sakta. App sab se taza asli waqt yaad rakhti hai jo us ne dekha, aur ghari peeche karne par khabardar karti hai.</aside>
+<p>Agar koi dukaan bas adaigi band kar de to aap ko kuch nahi karna: woh khud yaad dehaniyon, riayati dinon aur band hone se guzarti hai. Agar maalik mahinon baad wapas aaye to us ki adaigi darj karein aur woh apne purane stock aur khate ke sath kaam jari rakhta hai.</p>
+<h2 id="c9">9. Android app ka link</h2>
+<p>Super admin page par <strong>Android app</strong> card mein Android phones ke liye dukaan ki app ka download link hai. Link aap ki website ka address aur us ke baad /app.apk hai, maslan <code>https://mobileshop.oopsolutions.com/app.apk</code>. Yeh hamesha naya tareen version deta hai, is liye yahi link har dukaan ke liye chalta hai, aaj bhi aur har update ke baad bhi.</p>
+<ul>
+<li><strong>Download</strong> app us phone par save karta hai jo aap ke haath mein hai, maslan dukaan ke phone par khud install karne ke liye.</li>
+<li><strong>WhatsApp</strong> "Android ke liye Mobile Shop app. Yeh link phone par khol kar install karein:" aur link ke sath WhatsApp kholta hai; maalik chun kar bhej dein.</li>
+<li><strong>Share</strong> aap ke phone ka share menu kholta hai; jahan yeh na ho wahan link copy kar ke <strong>Link copy ho gaya</strong> kehta hai.</li>
+</ul>
+<p>Nayi dukaan kholte waqt jo login paighaam aap bhejte hain (chapter 3) us mein yeh link pehle se hota hai.</p>
+<aside class="tip"><strong>Mashwara:</strong> Pehli baar Android keh sakta hai ke app "unknown source" se hai. Maalik ko kahein <strong>Settings</strong> dabaye, WhatsApp ya browser se install ki ijazat de, aur wapas aaye. Yeh sirf aik baar hota hai.</aside>
+<aside class="note"><strong>Note:</strong> Dukaanein kisi bhi phone ya computer ke browser mein aap ki website ke address par bhi app chala sakti hain, kuch install kiye baghair. Dono mein data aik hi hai.</aside>
+<h2 id="c10">10. Aap ka rozana ka kaam</h2>
+<table><thead><tr><th>Kab</th><th>Kya karein</th><th>Kahan</th></tr></thead><tbody><tr><td>Har roz</td><td>Har intezar karti adaigi ("N check karni hain") apne wallet ya bank app se milayein; qabool ya mustarad karein</td><td>Super admin → <strong>Software fees</strong> card</td></tr><tr><td>Har roz</td><td><strong>Website se dukaan ki requests</strong> aur <strong>Password ki requests</strong> ka jawab dein</td><td>Super admin page, upar</td></tr><tr><td>Har roz</td><td>Haath se mile har cash ya transfer ke liye <strong>Adaigi darj karein</strong></td><td>Dukaan ki sheet</td></tr><tr><td>Har hafte</td><td>Har <strong>Jald khatam</strong> dukaan ko <strong>WhatsApp par yaad dilayein</strong>; <strong>Khatam (mohlat)</strong> aur <strong>Band</strong> dukaanon ko call karein</td><td>Karobar → Dukaanein</td></tr><tr><td>Har hafte</td><td><strong>Aakhri istemal kabhi nahi</strong> wali dukaanon ko, aur jin ki keys abhi <strong>Istemal nahi hui</strong>, unhein call karein</td><td>Karobar → Dukaanein aur Keys</td></tr><tr><td>Har mahine</td><td><strong>Is mahine wasool</strong> ko apni statements se milayein; accountant ke liye wasool adaigiyon ka <strong>CSV download</strong></td><td>Karobar → Khulasa aur Adaigiyan</td></tr><tr><td>Har mahine</td><td><strong>Koi aakhri tareekh nahi</strong> wali jo dukaanein adaigi karni chahiyein un ki <strong>Adaigi is tareekh tak</strong> set karein; purane <strong>Version</strong> wale aik computer installs ke update ka plan banayein</td><td>Super admin list; Karobar → Dukaanein</td></tr><tr><td>Jab badle</td><td>Naya bank account, wallet, support number ya yaad dehani ka waqt</td><td><strong>Billing settings</strong>, <strong>Adaigi ke accounts</strong></td></tr></tbody></table>
+<aside class="tip"><strong>Mashwara:</strong> Adaigiyan jaldi qabool karein. Intezar karti adaigi dukaan ki <strong>Adaigi is tareekh tak</strong> aage nahi karti, is liye riayati dinon ke aakhir mein khari dukaan band ho sakti hai jab tak aap ne check nahi kiya.</aside>
+<h2 id="c11">11. Aam sawalat</h2>
+<h3>Dukaan ne adaigi kar di magar abhi bhi band hai. Kyun?</h3>
+<p>Us ki adaigi aap ka intezar kar rahi hai. <strong>Software fees</strong> card mein us ki adaigi dhoondein aur <strong>Wasool</strong> dabayein. Agar us ne cash diya ya aap ko report nahi milti to us ki sheet mein <strong>Adaigi darj karein</strong> istemal karein. Agar woh aik computer wale install par hai to adaigi darj kar ke usay <strong>Renewal code</strong> bhejein.</p>
+<h3>Main ne ghalti se adaigi qabool kar di.</h3>
+<p>Raseed aur history rehti hai, kyunke paison ka record kabhi delete nahi hota. Dukaan ki sheet kholein aur <strong>Adaigi is tareekh tak</strong> wapas sahi tareekh par karein, phir <strong>Plan save karein</strong>. Jo hua woh <strong>Note (sirf aap dekhte hain)</strong> mein likh dein.</p>
+<h3>Dukaan basic se pro par jana chahti hai.</h3>
+<p>Us ki sheet kholein, <strong>pro</strong> dabayein, <strong>Mahana fees (Rs)</strong> badlein, aur <strong>Plan save karein</strong> dabayein. Agar <strong>Is dukaan ke modules</strong> ke neeche <strong>Plan ke mutabiq</strong> par tick hai to naye hisse khud on ho jate hain.</p>
+<h3>List mein "trial · Unlimited" ka kya matlab hai?</h3>
+<p>Dukaan trial par hai aur us ki koi aakhri tareekh nahi, is liye usay kabhi yaad dehani nahi aayegi aur woh kabhi band nahi hogi. Agar trial khatam hona chahiye to <strong>Adaigi is tareekh tak</strong> set karein.</p>
+<h3>Main ne ghalat mahinon ki key bana di.</h3>
+<p>Agar woh abhi <strong>Istemal nahi hui</strong> to wajah ke sath <strong>Key mansookh karein</strong> dabayein aur nayi banayein. Agar woh <strong>Istemal ho gayi</strong> to is ki jagah dukaan ki sheet par <strong>Adaigi is tareekh tak</strong> theek karein.</p>
+<h3>Aik computer wali dukaan "Aakhri istemal kabhi nahi" dikhati hai halanke woh roz kaam karti hai.</h3>
+<p>Aik computer wala install aap ko sirf tab report karta hai jab us computer par internet ho aur us ki rabte wali setting lagi ho. Dukaan par internet check karein, aur jis ne install kiya us se Operations runbook wali setting check karwayein. Dono soorton mein dukaan ka kaam mutasir nahi hota.</p>
+<h3>Kya main OOP Solutions mein kisi aur ko super-admin access de sakta hoon?</h3>
+<p>Haan, magar sirf server ke zariye: un ka mobile number super-admin list mein shamil kiya jata hai, jaisa Operations runbook mein likha hai. Yeh sirf unhein dein jin par aap har dukaan ke data aur apni aamdani ke figures ke maamle mein bharosa karte hain.</p>
+</body>
+</html>

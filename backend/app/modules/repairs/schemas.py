@@ -119,6 +119,7 @@ class RepairOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: uuid.UUID
+    status_token: str | None = None
     no: str
     party_id: uuid.UUID | None
     party_name: str | None = None

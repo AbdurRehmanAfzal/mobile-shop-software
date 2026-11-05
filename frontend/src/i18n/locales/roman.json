@@ -182,7 +182,8 @@
       "sold": "Bik gaya",
       "in_repair": "Marammat mein",
       "faulty": "Kharab",
-      "returned_to_supplier": "Dealer ko wapas"
+      "returned_to_supplier": "Dealer ko wapas",
+      "transferred": "Branch ko bheja"
     },
     "condition": {
       "box_pack": "Box pack",
@@ -250,7 +251,9 @@
       "price_changed": "Qeemat badli",
       "note": "Note",
       "barcode_assigned": "Barcode laga",
-      "label_printed": "Label print hua"
+      "label_printed": "Label print hua",
+      "transferred_out": "Branch ko bheja",
+      "transferred_in": "Branch se aaya"
     },
     "acc": {
       "box": "Dabba",
@@ -6670,6 +6673,11 @@
           "title": "Quick PIN",
           "body": "Poore password ke bajaye phone par app jaldi kholne ke liye 4 se 6 hindson ka PIN. Owner ka PIN salesman ki kam qeemat sale ki ijazat bhi deta hai.",
           "example": "PIN 4321 rakhein → agli dafa 4321 likh kar login."
+        },
+        "transfers": {
+          "title": "Branch transfer",
+          "body": "Is dukaan se mobile aur items apni doosri branch ko bhejein. Mobile is dukaan ke stock se nikal jata hai (us ki history yahin rehti hai) aur branch ke stock mein usi IMEI, barcode, khareed aur farokht ki qeemat ke saath aa jata hai. Items apni khareed ki qeemat ke saath jate hain. Kuch bikta nahi, is liye munafa nahi badalta.",
+          "example": "Saddar se Mall Road branch ko ek iPhone 13 aur 10 charger bhejein: Saddar ka stock khareed par Rs. 1,52,000 kam, Mall Road ka utna hi zyada."
         }
       },
       "pinPassword": {
@@ -7171,6 +7179,11 @@
           "title": "Qeemat ki tabdeeliyan",
           "body": "Chune hue dinon mein phone ki asking price ki har tabdeeli aur asking se kam har sale, kis ne ki, kis ne ijazat di aur kitni kam.",
           "example": "Ali ne Rs. 38,000 wala A15 Rs. 37,000 mein becha → \"Sold under asking −1,000\"."
+        },
+        "books": {
+          "title": "Balance sheet ka tab",
+          "body": "Aap ki dukaan ka hisaab do safhon mein: balance sheet (kya paas hai, kya dena hai, aap ka hissa) aur trial balance (har khaata, debit aur credit). Ledger se banta hai, haath se kuch nahi likha jata.",
+          "example": "Accountant 30 June ki balance sheet maange → 30-06 chunein aur Balance sheet kholein."
         }
       },
       "grossSales": {
@@ -7401,7 +7414,88 @@
         "example": "Rs. 4,000 + Rs. 500 = Rs. 4,500."
       }
     },
-    "language": "Wazahat ki zaban"
+    "language": "Wazahat ki zaban",
+    "books": {
+      "tab": {
+        "title": "Balance sheet ka tab",
+        "body": "Aap ki dukaan ka hisaab do safhon mein: balance sheet (kya paas hai, kya dena hai, aap ka hissa) aur trial balance (har khaata, debit aur credit). Ledger se banta hai, haath se kuch nahi likha jata.",
+        "example": "Accountant 30 June ki balance sheet maange → 30-06 chunein aur Balance sheet kholein."
+      },
+      "asOf": {
+        "title": "Is din tak",
+        "body": "Report is din ke aakhir tak ki har cheez dikhati hai. Purana din chunein to hisaab waisa dikhega jaisa us din tha.",
+        "example": "31-12-2025 chunein → saal ke aakhri din ki balance sheet."
+      },
+      "sheet": {
+        "title": "Balance sheet",
+        "body": "Teen khaane: dukaan ke paas kya hai (raqam, logon ka udhaar, stock), dukaan ne kya dena hai (logon ko, tax) aur maalik ka hissa (daali hui raqam, ab tak ka munafa, nikaali hui raqam minus). Paas hai hamesha dena hai + maalik ka hissa ke barabar hota hai.",
+        "example": "Paas hai Rs. 9,50,000 = dena hai Rs. 1,50,000 + maalik ka hissa Rs. 8,00,000."
+      },
+      "trial": {
+        "title": "Trial balance",
+        "body": "Har khaata apne balance ke saath, debit mein (jo paas hai ya kharch hua) ya credit mein (jo kamaya ya dena hai). Dono ka kul hamesha barabar hota hai; accountant is se hisaab check karta hai.",
+        "example": "Galla Rs. 40,000 debit · Sale Rs. 3,00,000 credit · Bike maal ki khareed Rs. 2,40,000 debit …"
+      },
+      "has": {
+        "title": "Dukaan ke paas kya hai",
+        "body": "Galle, bank aur wallet mein raqam, logon ne jo udhaar dena hai, aur stock apni khareed ki qeemat par.",
+        "example": "Galla 40,000 + bank 1,10,000 + udhaar 60,000 + stock 7,40,000 = Rs. 9,50,000."
+      },
+      "owes": {
+        "title": "Dukaan ne kya dena hai",
+        "body": "Jo raqam abhi dealeron aur logon ko deni hai (udhaar aur liya hua len-den), aur bilon par liya hua tax jo abhi jama karana hai.",
+        "example": "Rehman Traders 1,20,000 + tax 30,000 = Rs. 1,50,000."
+      },
+      "owner": {
+        "title": "Maalik ka hissa",
+        "body": "Maalik ke liye dukaan ki maaliyat: shuru mein ya baad mein daali hui raqam aur stock, jama ab tak ka munafa, minus jo aap ne apne liye nikaala.",
+        "example": "Daale 6,00,000 + munafa 2,50,000 − nikaale 50,000 = Rs. 8,00,000."
+      },
+      "check": {
+        "title": "Barabar hai",
+        "body": "App check karti hai ke dukaan ke paas jo hai woh dena hai + maalik ka hissa ke barabar ho. Hamesha hona chahiye; kabhi na ho to support ko batayein.",
+        "example": "9,50,000 = 1,50,000 + 8,00,000 → barabar."
+      },
+      "profit": {
+        "title": "Ab tak ka munafa",
+        "body": "App par dukaan shuru hone se is din tak ka saara munafa: wohi raqam jo Munafa ka tab is poore arse ke liye dikhata hai. Maalik ka nikaala hua yahan kharcha nahi gina jata.",
+        "example": "Munafa ka tab pehle din se aaj tak Rs. 2,50,000 dikhaye → yahan bhi yehi."
+      }
+    },
+    "transfer": {
+      "page": {
+        "title": "Branch transfer",
+        "body": "Is dukaan se mobile aur items apni doosri branch ko bhejein. Mobile is dukaan ke stock se nikal jata hai (us ki history yahin rehti hai) aur branch ke stock mein usi IMEI, barcode, khareed aur farokht ki qeemat ke saath aa jata hai. Items apni khareed ki qeemat ke saath jate hain. Kuch bikta nahi, is liye munafa nahi badalta.",
+        "example": "Saddar se Mall Road branch ko ek iPhone 13 aur 10 charger bhejein: Saddar ka stock khareed par Rs. 1,52,000 kam, Mall Road ka utna hi zyada."
+      },
+      "to": {
+        "title": "Kis branch ko",
+        "body": "Woh branch jo stock legi. Sirf maalik ki woh branches dikhti hain jin mein aap kaam karte hain.",
+        "example": "Saddar ki dukaan → Mall Road chunein."
+      },
+      "phones": {
+        "title": "Mobile",
+        "body": "Yahan stock mein maujood mobile, tablet aur ghariyan jo branch ko jayengi. Talaash karein, IMEI ya barcode scan karein, ya mobile ke safhe se kholein.",
+        "example": "Galaxy A15 ka dabba scan karein → list mein aa jata hai."
+      },
+      "items": {
+        "title": "Items",
+        "body": "Charger, cover aur doosri gini jaane wali cheezein, kitne piece jayenge. Purane piece pehle jate hain, apni khareed ki qeemat par.",
+        "example": "Type-C cable × 10 → is dukaan mein 10 kam, branch mein 10 zyada."
+      },
+      "cost": {
+        "title": "Jaane wale stock ki maaliyat",
+        "body": "List mein har cheez ki khareed ki qeemat. Ye is dukaan ke stock se nikal kar branch ke stock mein jama hoti hai; na sale, na munafa, na naqad.",
+        "example": "Mobile khareed 1,40,000 + 10 cable 120 wali = Rs. 1,41,200."
+      }
+    },
+    "rstatus": {
+      "link": {
+        "title": "Gahak ke liye status ka link",
+        "body": "Sirf is job ka nijji link. Gahak marhale (mausool, check hua, repair ho rahi hai, tayyar, wapas diya) tareekhon ke saath, tayyar hone ka din, bill aur baqi raqam dekhta hai. Use apna phone number, poora IMEI, screen lock, lab ka naam ya aap ki laagat kabhi nahi dikhti. Badla hua link nahi khulta.",
+        "example": "Usman WhatsApp par poochta hai \"mera phone tayyar hai?\" → ek baar link bhej dein; phir woh khud dekh leta hai."
+      }
+    }
   },
   "items": {
     "sellButton": "Accessory / ghari",
@@ -9136,7 +9230,8 @@
     "askingNow": "Ab tay qeemat",
     "askingFirst": "Pehli tay qeemat",
     "atCheckout": "bikri ke waqt",
-    "approved": "maalik ki manzoori"
+    "approved": "maalik ki manzoori",
+    "fromBranch": "Aap ki doosri branch se aaya"
   },
   "confirm": {
     "title": "Bechne se pehle check karein",
@@ -9353,6 +9448,7 @@
       "redeemed": "Istemal ho gayi",
       "revoked": "Mansookh",
       "months": "{{n}} mahine",
+      "month": "{{n}} mahina",
       "sent": "{{n}} baar bheji",
       "viewed": "Link {{n}} baar khula",
       "where": {
@@ -9554,5 +9650,84 @@
     "avgDays": "Ausat din",
     "charges": "Charges",
     "paidSpot": "Mauqe par ada"
+  },
+  "books": {
+    "tab": "Balance",
+    "asOf": "Is din tak",
+    "sheet": "Balance sheet",
+    "trial": "Trial balance",
+    "has": "Dukaan ke paas kya hai",
+    "owes": "Dukaan ne kya dena hai",
+    "owner": "Maalik ka hissa",
+    "total": "Kul",
+    "ok": "Barabar hai: paas hai = dena hai + maalik ka hissa",
+    "bad": "Barabar nahi — support ko batayein",
+    "debit": "Debit",
+    "credit": "Credit",
+    "account": "Khaata",
+    "people": "{{n}} log",
+    "hint": "Is din ke aakhir tak ki har entry se hisaab bana hai. Yahan kuch bhi haath se nahi likha jata.",
+    "line": {
+      "receivable": "Logon ne aap ko dena hai",
+      "payable": "Aap ne logon ko dena hai",
+      "inventory": "Stock (khareed ki qeemat par)",
+      "tax_payable": "Liya hua tax, abhi jama karana hai",
+      "suspense": "Raqam jo abhi milayi nahi gayi",
+      "capital": "Maalik ki raqam (shuru ki + daali hui)",
+      "profit": "Ab tak ka munafa",
+      "owner_drawing": "Maalik ne nikaale",
+      "other": "Deegar",
+      "opening_cash": "Khaaton mein shuru ki raqam",
+      "equity": "Maalik ka sarmaya / purana stock",
+      "sales": "Sale",
+      "cogs": "Bike maal ki khareed",
+      "discounts": "Riayat",
+      "repair_income": "Repair ki aamdan",
+      "other_income": "Deegar aamdan",
+      "purchases": "Khareedari (items)",
+      "branch_transfer": "Branchon ko / se gaya maal"
+    }
+  },
+  "transfer": {
+    "title": "Branch transfer",
+    "new": "Branch ko bhejein",
+    "none": "Abhi kuch bheja ya aaya nahi",
+    "sentTo": "{{shop}} ko bheja",
+    "cameFrom": "{{shop}} se aaya",
+    "lines": "{{n}} cheezein",
+    "pieces": "{{n}} piece",
+    "noBranch": "Aap sirf ek dukaan mein kaam karte hain. Provider se branch banwayein, phir aap in ke darmiyan stock bhej sakenge.",
+    "to": "Kis branch ko",
+    "phones": "Mobile",
+    "addPhone": "Mobile shamil karein",
+    "noPhones": "Koi mobile shamil nahi",
+    "items": "Items",
+    "addItem": "Item shamil karein",
+    "noItems": "Koi item shamil nahi",
+    "inStock": "Yahan {{n}} stock mein",
+    "qty": "Kitne",
+    "note": "Note (ikhtiyari)",
+    "cost": "Jaane wale stock ki maaliyat (khareed par)",
+    "send": "Abhi bhejein",
+    "sendBranch": "Doosri branch ko bhejein",
+    "remove": "Hatayein"
+  },
+  "rstatus": {
+    "send": "Gahak ko status ka link bhejein",
+    "sendHint": "Gahak ye link khol kar dekhta hai ke repair kahan tak pohanchi, kab tayyar hoga aur kitna dena baqi hai. Login nahi chahiye.",
+    "whatsapp": "WhatsApp par bhejein",
+    "copy": "Link copy karein",
+    "copied": "Copy ho gaya",
+    "message": "Assalam o Alaikum {{name}}, apne {{device}} ki repair ({{no}}) yahan dekhein: {{link}}",
+    "gone": "Ye link durust nahi. Dukaan se dobara bhejne ko kahein.",
+    "atWorkshop": "Repair ke liye workshop par hai",
+    "promised": "Tayyar hoga",
+    "bill": "Bill",
+    "estimate": "Andazan kharch",
+    "paid": "Diye",
+    "left": "Baqi dene hain",
+    "warranty": "Repair ki warranty: {{n}} din",
+    "call": "Dukaan ko call karein",
+    "footer": "Dukaan jaise jaise kaam karti hai, ye safha badalta rehta hai."
   }
 }

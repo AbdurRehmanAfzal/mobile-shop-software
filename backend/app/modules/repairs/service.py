@@ -23,6 +23,7 @@ from app.modules.ledger.service import Posting, default_cash_account, money, pos
 from app.modules.notifications import service as notify
 from app.modules.parties.models import Party
 from app.modules.purchases.service import next_number
+from app.modules.repairs import status_link
 from app.modules.repairs.models import (
     CLOSED_STATUSES,
     TRANSITIONS,
@@ -478,6 +479,8 @@ def to_out(db: Session, job: RepairJob) -> dict:
         "overdue": open_ and job.promised_at is not None and job.promised_at < shop_today(),
         "parts": list(job.parts),
         **_trips(db, job),
+        # docs/35 §5 item 5: the customer's read-only status page (signed, nothing stored)
+        "status_token": status_link.token(job.id),
         "status_log": [
             {
                 "from_status": lg.from_status,
