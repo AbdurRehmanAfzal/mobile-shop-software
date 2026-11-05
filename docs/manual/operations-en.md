@@ -122,7 +122,7 @@ There are four places variables come from:
 
 | Name | Used by | Required? | Example (not a real value) | What it does | Where the real value is kept |
 |---|---|---|---|---|---|
-| `APP_DOMAIN` | web (Traefik labels), backend (CORS, passkeys) | Yes | `mobileshop.oopsolutions.com` | The public address. Builds `CORS_ORIGINS`, `WEBAUTHN_RP_ID` and `WEBAUTHN_ORIGINS`. | Server `.env` |
+| `APP_DOMAIN` | web (Traefik labels), backend (CORS, passkeys) | Yes | `mobileshop.oopsolutions.com` | The public address. Builds `CORS_ORIGINS`, `WEBAUTHN_RP_ID`, `WEBAUTHN_ORIGINS` and `PUBLIC_URL`. | Server `.env` |
 | `POSTGRES_DB` | db, backend | No (default `mobileshop`) | `mobileshop` | Database name. | Server `.env` |
 | `POSTGRES_USER` | db, backend, backup.sh | No (default `mobileshop`) | `mobileshop` | Database user. | Server `.env` |
 | `POSTGRES_PASSWORD` | db, backend | Yes | `<POSTGRES_PASSWORD>` (`openssl rand -hex 24`) | Database password; `setup-vps.sh` generates it. Never change it after the first start without changing it inside PostgreSQL too. | Server `.env`; password manager |
@@ -153,7 +153,7 @@ There are four places variables come from:
 | `RCLONE_REMOTE` | backup.sh (not a container) | No | `gdrive-safe:` | Off-server copy of each night's backup. | Server `.env` |
 | `BACKUP_DIR` | backup.sh | No (default `/opt/mobileshop-backups`) | `/opt/mobileshop-backups` | Where backups are written. | Environment of the cron line |
 
-Set by the compose file itself (do not put them in `.env`): `APP_ENV=prod`, `DATABASE_URL` (built from the Postgres keys), `CORS_ORIGINS` (the domain plus `https://localhost` and `capacitor://localhost` for the Android app), `UPLOAD_DIR=/data/uploads`, `WEBAUTHN_RP_ID`, `WEBAUTHN_ORIGINS`.
+Set by the compose file itself (do not put them in `.env`): `APP_ENV=prod`, `DATABASE_URL` (built from the Postgres keys), `CORS_ORIGINS` (the domain plus `https://localhost` and `capacitor://localhost` for the Android app), `UPLOAD_DIR=/data/uploads`, `WEBAUTHN_RP_ID`, `WEBAUTHN_ORIGINS`, `PUBLIC_URL` (`https://APP_DOMAIN`, for links in customer messages such as the repair status page).
 
 ### Backend settings not passed on the server
 
@@ -168,6 +168,7 @@ These exist in `backend/app/core/config.py` and work in `backend/.env` locally o
 | `CORS_ORIGINS` | `["http://localhost:5173","http://127.0.0.1:5173"]` | Allowed browser origins (JSON list). |
 | `WEBAUTHN_RP_ID` | `localhost` | Passkey (fingerprint login) domain. |
 | `WEBAUTHN_ORIGINS` | `http://localhost:5173,https://localhost:5174` | Passkey origins. |
+| `PUBLIC_URL` | empty | Address used for links in customer messages (repair status page). Empty: the https entry of `WEBAUTHN_ORIGINS`; on localhost no link is added. |
 | `UPLOAD_DIR` | `./uploads` | Upload folder. |
 | `DEFAULT_LOCALE` | `ur` | Language for new shops. |
 | `TIMEZONE` | `Asia/Karachi` | Business day and scheduler time zone. |

@@ -39,6 +39,12 @@ def token(job_id: uuid.UUID) -> str:
     return f"{job_id.hex}.{_sig(job_id)}"
 
 
+def url(job_id: uuid.UUID) -> str | None:
+    """the full link for messages, when this install has a public address"""
+    base = settings.public_base
+    return f"{base}/r/{token(job_id)}" if base else None
+
+
 def job_for(db: Session, tok: str) -> RepairJob:
     gone = NotFound(
         code="repair_link_invalid",

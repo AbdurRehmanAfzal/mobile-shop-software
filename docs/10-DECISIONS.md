@@ -305,6 +305,7 @@ by sheet remain a later step (docs/18 §1).
   - It never returns the customer's name or phone, the full IMEI, the screen lock, the lab's name, the technician or any cost.
   - The job page sends the link with a WhatsApp button addressed to the customer's number, or copies it. The page builds the link from its own address, as the license magic link does.
 - **Consequences:**
-  - The automatic "repair ready" WhatsApp message does not carry the link yet, because the server does not know its public address. It can be added once a site-URL setting exists.
+  - The automatic "repair ready" WhatsApp message carries the link: "See it here: …". It is added 2026-11-05 through the `PUBLIC_URL` setting, which compose fills as `https://${APP_DOMAIN}`; when it is empty, the https entry of `WEBAUTHN_ORIGINS` is used. On a localhost / one-PC install there is no public address, so the line is left out.
+  - The whole message is still the single `{{1}}` of the approved Meta template, so no new template approval is needed.
   - Rotating `SECRET_KEY` invalidates old links (and logs everyone out anyway).
 

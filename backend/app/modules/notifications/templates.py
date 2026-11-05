@@ -54,11 +54,11 @@ TEMPLATES: dict[str, dict[str, dict[str, str]]] = {
     "repair_ready": {
         "en": {
             "subject": "Your {device} is ready",
-            "body": "{customer}, your {device} ({repair_no}) is repaired and ready at {shop}. Bill: Rs. {total}{due_line}",
+            "body": "{customer}, your {device} ({repair_no}) is repaired and ready at {shop}. Bill: Rs. {total}{due_line}{link_line}",
         },
         "ur": {
             "subject": "آپ کا {device} تیار ہے",
-            "body": "{customer}، آپ کا {device} ({repair_no}) {shop} پر ٹھیک ہو کر تیار ہے۔ بل: Rs. {total}{due_line}",
+            "body": "{customer}، آپ کا {device} ({repair_no}) {shop} پر ٹھیک ہو کر تیار ہے۔ بل: Rs. {total}{due_line}{link_line}",
         },
     },
     "udhaar_reminder": {

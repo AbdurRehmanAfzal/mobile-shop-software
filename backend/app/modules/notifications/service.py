@@ -281,6 +281,13 @@ def on_repair_ready(db: Session, shop: Shop, job, party: Party) -> list[Message]
     due_line = (
         (f"، باقی Rs. {fmt(due)}" if lang == "ur" else f", due Rs. {fmt(due)}") if due > 0 else ""
     )
+    # docs/35 §5 item 5: the status page link, when the server has a public address
+    from app.modules.repairs.status_link import url as status_url
+
+    link = status_url(job.id)
+    link_line = (
+        (("\nحالت یہاں دیکھیں: " if lang == "ur" else "\nSee it here: ") + link) if link else ""
+    )
     ctx = {
         "shop": shop.name_ur if lang == "ur" and shop.name_ur else shop.name,
         "customer": party.name,
@@ -288,6 +295,7 @@ def on_repair_ready(db: Session, shop: Shop, job, party: Party) -> list[Message]
         "repair_no": job.no,
         "total": fmt(job.total),
         "due_line": due_line,
+        "link_line": link_line,
     }
     return [
         queue(

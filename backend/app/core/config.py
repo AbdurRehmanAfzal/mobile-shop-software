@@ -63,6 +63,19 @@ class Settings(BaseSettings):
     # plan end, keys used) when it has internet; empty = never
     saas_url: str = ""
     app_version: str = "2.0"
+    # the address customers reach the app at (https://<APP_DOMAIN>), for links inside WhatsApp
+    # messages such as the repair status page; empty = the https origin of WEBAUTHN_ORIGINS
+    public_url: str = ""
+
+    @property
+    def public_base(self) -> str:
+        """https address for links sent to customers, or "" when this install has none (a PC on
+        localhost): then messages simply leave the link out"""
+        for raw in [self.public_url, *self.webauthn_origins.split(",")]:
+            url = raw.strip().rstrip("/")
+            if url.startswith("https://") and "localhost" not in url and "127.0.0.1" not in url:
+                return url
+        return ""
 
     @property
     def superusers(self) -> set[str]:

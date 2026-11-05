@@ -222,6 +222,7 @@ All backend settings are read by `backend/app/core/config.py` (pydantic-settings
 | `CORS_ORIGINS` | no | `["https://<your-domain>","https://localhost","capacitor://localhost"]` | Allowed browser origins, as a JSON list. The Android app needs `https://localhost` and `capacitor://localhost`. |
 | `WEBAUTHN_RP_ID` | no (`localhost`) | `<your-domain>` | Passkey (fingerprint login) domain. |
 | `WEBAUTHN_ORIGINS` | no | `https://<your-domain>` | Comma-separated full origins allowed for passkeys. |
+| `PUBLIC_URL` | no | `https://<your-domain>` | Address for links inside customer messages (the repair status page). Empty: the https entry of `WEBAUTHN_ORIGINS`; on localhost the link is left out. |
 | `UPLOAD_DIR` | no (`./uploads`) | `/data/uploads` | Where CNIC photos, device photos, signatures and other uploads are stored. |
 | `DEFAULT_LOCALE` | no (`ur`) | `ur` | Default language for new shops. |
 | `TIMEZONE` | no (`Asia/Karachi`) | `Asia/Karachi` | The shop day and the scheduler's local time. |
@@ -276,7 +277,7 @@ These are the keys of `/opt/mobileshop/.env` on the server. `setup-vps.sh` creat
 | `ADMIN_WHATSAPP` | no | `03XXXXXXXXX` | As above. |
 | `RENEWAL_PRIVATE_KEY`, `RENEWAL_PUBLIC_KEY` | yes for license keys | from keygen | As above. |
 
-The compose file sets `APP_ENV=prod`, `DATABASE_URL` (built from the `POSTGRES_` values, host `db`), `CORS_ORIGINS` (`https://APP_DOMAIN` plus the two Capacitor origins), `UPLOAD_DIR=/data/uploads`, `WEBAUTHN_RP_ID` and `WEBAUTHN_ORIGINS` itself.
+The compose file sets `APP_ENV=prod`, `DATABASE_URL` (built from the `POSTGRES_` values, host `db`), `CORS_ORIGINS` (`https://APP_DOMAIN` plus the two Capacitor origins), `UPLOAD_DIR=/data/uploads`, `WEBAUTHN_RP_ID`, `WEBAUTHN_ORIGINS` and `PUBLIC_URL` itself.
 
 > **Note:** the compose file passes only the variables listed in its `backend.environment` block. `SCHEDULER_ENABLED`, `DEFAULT_LOCALE`, `TIMEZONE`, `WHATSAPP_API_VERSION` and `SAAS_URL` are not in that block, so putting them in `/opt/mobileshop/.env` has no effect until a line is added to `deploy/docker-compose.yml`. Any new backend variable must be added there too, and to `docs/29-OWNER-PENDING.md`.
 

@@ -823,6 +823,14 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Verified**:
 - `test_repair_status_link.py`: no login needed; no customer phone, full IMEI, lock or name; a changed link gives 404. `test_repairs` and `test_repair_labs` are green; ruff; tsc; help texts complete.
 - Playwright `repair-status.spec` (new), `repair`, `repair-labs`.
-**Open**: put the link inside the automatic "repair ready" WhatsApp message once the server knows its public address (a site-URL setting).
+**Open**: put the link inside the automatic "repair ready" WhatsApp message once the server knows its public address (a site-URL setting). Done the same day (next entry).
 **Next**: item 6 (landing: customer count, shopkeeper quotes, faster trial — needs real numbers / quotes from the owner) or item 4 (FBR live, needs PRAL credentials) or item 3 (Play Store, needs the owner's account).
+
+## 2026-11-05 · The status link inside the automatic "repair ready" WhatsApp message
+- Owner: close the open gap.
+- Built:
+  - The `PUBLIC_URL` setting with `settings.public_base`, which falls back to the https entry of `WEBAUTHN_ORIGINS` and never uses localhost.
+  - `status_link.url()`; `on_repair_ready` adds a "See it here: <link>" line in the shop's language (template placeholder `{link_line}`).
+  - Compose passes `PUBLIC_URL: https://${APP_DOMAIN}`, so the owner has nothing new to set. `backend/.env.example`, the operations and developer manuals, and ADR-047 are updated.
+**Verified**: `test_repairs`: no link without a public address; with `PUBLIC_URL` the message carries `…/r/<token>`. `test_repair_status_link` and the notifications tests are green; ruff.
 

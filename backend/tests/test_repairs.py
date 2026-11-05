@@ -95,6 +95,23 @@ def test_repair_ready_notification_in_shop_language(owner):
         and "Nokia 105" in msgs[0]["body"]
         and msgs[0]["lang"] == "ur"
     )
+    # no public address on this install (localhost): no link in the message
+    assert "/r/" not in msgs[0]["body"]
+
+
+def test_repair_ready_message_carries_the_status_link(owner, monkeypatch):
+    monkeypatch.setattr(
+        "app.core.config.settings.public_url", "https://shop.example.pk/", raising=False
+    )
+    owner.put("/api/v1/notifications/settings", json={"customer_on_repair_ready_whatsapp": True})
+    c = _customer(owner)
+    j = owner.post(
+        "/api/v1/repairs",
+        json={"party_id": c["id"], "device_desc": "Nokia 105", "fault_codes": ["dead"]},
+    ).json()
+    owner.post(f"/api/v1/repairs/{j['id']}/status", json={"status": "repaired"})
+    (msg,) = owner.get("/api/v1/notifications").json()
+    assert f"https://shop.example.pk/r/{j['status_token']}" in msg["body"]
 
 
 def test_stock_device_sent_outside_adds_cost(owner, cat):
