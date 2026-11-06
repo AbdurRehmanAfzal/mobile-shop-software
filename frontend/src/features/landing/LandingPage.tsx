@@ -2,7 +2,7 @@
  *  screenshots, a sample video, prices, the accounts to pay into and an "open a shop for me" form
  *  that reaches the product owner. Served at /welcome; a visitor on / without a login lands here. */
 
-import { ArrowLeftRight, BarChart3, BellRing, BookOpen, Bot, Boxes, CalendarCheck, Check, ChevronDown, CircleHelp, ClipboardCheck, CloudOff, Code2, FileSignature, Copy, CreditCard, Download, FileSpreadsheet, FileText, Fingerprint, FlaskConical, HandCoins, Headphones, History, IdCard, KeyRound, Languages, LineChart, Lock, MessageCircle, Monitor, PackagePlus, PauseCircle, Percent, Phone as PhoneIcon, PlayCircle, Receipt, RotateCcw, ScanBarcode, ScanLine, ShieldCheck, Smartphone, Store, Tablet, Tag, Undo2, UserCog, Users, Wallet, Wrench, type LucideIcon } from 'lucide-react'
+import { ArrowLeftRight, Banknote, BarChart3, Building2, Calculator, BellRing, BookOpen, Bot, Boxes, CalendarCheck, Check, ChevronDown, CircleHelp, ClipboardCheck, CloudOff, Code2, FileSignature, Copy, CreditCard, Download, FileSpreadsheet, FileText, Fingerprint, FlaskConical, HandCoins, Headphones, History, IdCard, KeyRound, Languages, LineChart, Link2, Lock, MessageCircle, Monitor, PackagePlus, PauseCircle, Percent, Phone as PhoneIcon, PlayCircle, QrCode, Receipt, RotateCcw, Scale, ScanBarcode, ScanLine, ShieldCheck, Smartphone, Store, Tablet, Tag, Undo2, UserCog, Users, Wallet, Wrench, type LucideIcon } from 'lucide-react'
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { BiAlert, BiInput, BiLabel, useLang } from '@/components/Bilingual'
@@ -25,6 +25,9 @@ const BASICS: { key: string; Icon: LucideIcon }[] = [
 const OPTIONAL: Record<string, LucideIcon> = { accessories: Headphones, repairs: Wrench, expenses: Wallet, held_sales: PauseCircle, tax: Receipt, exchange: ArrowLeftRight, reports: BarChart3, exports: Download, notifications: BellRing, loans: RotateCcw, installments: HandCoins, attendance: CalendarCheck, ai: Bot }
 /** what came in the last round (owner 2026-10-31): shown first, with its own screenshots */
 const NEW: { key: string; Icon: LucideIcon; shot?: string }[] = [
+  // owner 2026-11-06: FBR-ready bills, the tax invoice, balance sheet, branches, the repair link
+  { key: 'fbr', Icon: QrCode }, { key: 'taxbill', Icon: Receipt }, { key: 'books', Icon: Scale }, { key: 'transfers', Icon: Building2 },
+  { key: 'repairlink', Icon: Link2 }, { key: 'cashchange', Icon: Banknote }, { key: 'accounts', Icon: Calculator },
   // owner 2026-11-03: the newest round first — repair labs, the repair sticker, len-den, a "?" on
   // every field, the sales / purchase / staff reports, item GST, a salesman role without profit
   { key: 'repairlabs', Icon: FlaskConical, shot: 'repairlab' }, { key: 'sticker', Icon: Tag, shot: 'sticker' }, { key: 'lending', Icon: HandCoins, shot: 'lending' },
@@ -38,7 +41,7 @@ const NEW: { key: string; Icon: LucideIcon; shot?: string }[] = [
   { key: 'installments', Icon: HandCoins }, { key: 'hazri', Icon: CalendarCheck }, { key: 'otp', Icon: KeyRound }, { key: 'windows', Icon: Monitor },
 ]
 /** the newest round shown open; the rounds before fold under "earlier" */
-const LATEST = 8
+const LATEST = 7
 const EXTRAS: { key: string; Icon: LucideIcon }[] = [{ key: 'offline', Icon: CloudOff }, { key: 'fingerprint', Icon: Fingerprint }, { key: 'cnic', Icon: ShieldCheck }, { key: 'whatsapp', Icon: MessageCircle }]
 const SHOTS = ['home', 'sale', 'stock', 'repairjob', 'lending', 'trade', 'items', 'tablet', 'audit', 'khata', 'history', 'finance', 'invoice'] as const
 const WEB_SHOTS = ['home', 'audit', 'trade', 'repairs', 'repairlab', 'stock', 'items', 'finance', 'invoice'] as const
@@ -49,7 +52,10 @@ const GUIDE: { key: string; Icon: LucideIcon }[] = [
   { key: 'repairs', Icon: Wrench }, { key: 'items', Icon: Headphones }, { key: 'installments', Icon: CalendarCheck }, { key: 'expenses', Icon: Receipt },
   { key: 'audit', Icon: LineChart }, { key: 'staff', Icon: Users }, { key: 'barcodes', Icon: ScanBarcode }, { key: 'help', Icon: CircleHelp },
   { key: 'devices', Icon: Monitor }, { key: 'security', Icon: ShieldCheck },
+  { key: 'fbr', Icon: QrCode }, { key: 'books', Icon: Scale }, { key: 'transfers', Icon: Building2 },
 ]
+/** owner 2026-11-06: the FBR band — what the bill does with FBR, and what the shop needs first */
+const FBR_POINTS = [1, 2, 3, 4, 5, 6] as const
 /** owner 2026-11-03: what no other software in Pakistan does together — shown right under the hero */
 const UNIQUE: { key: string; Icon: LucideIcon; href?: string }[] = [
   { key: 'android', Icon: Smartphone, href: '/app.apk' }, { key: 'online', Icon: Monitor }, { key: 'offline', Icon: CloudOff },
@@ -184,6 +190,24 @@ export default function LandingPage() {
               </figure>
             ))}
           </div>
+        </section>
+
+        {/* FBR-ready bills (ADR-050): off by default, switched on with the shop after a sandbox test */}
+        <section id="fbr" className="grid grid-cols-1 gap-6 rounded-[32px] border border-emerald/30 bg-emerald-tint/40 p-5 sm:p-8 md:grid-cols-[1fr_1.2fr]" data-testid="landing-fbr">
+          <div className="flex min-w-0 flex-col gap-3">
+            <span className="flex items-center gap-3">
+              <span className="well h-12 w-12 shrink-0 rounded-2xl bg-emerald text-white"><QrCode size={24} strokeWidth={2.2} /></span>
+              <span className="rounded-full bg-[#0E1613] px-3 py-1 text-xs font-extrabold text-white" dir="ltr">{pick('landing.fbr.badge')}</span>
+            </span>
+            <h2 className={h2}>{pick('landing.fbr.title')}</h2>
+            <p className={`text-muted ${body}`}>{pick('landing.fbr.sub')}</p>
+            <p className={`rounded-2xl bg-surface p-3 text-muted ${ur ? cls('sm') : 'text-sm font-medium'}`}>{pick('landing.fbr.note')}</p>
+          </div>
+          <ul className="flex min-w-0 flex-col gap-2.5">
+            {FBR_POINTS.map((i) => (
+              <li key={i} className={`card flex items-start gap-3 ${ur ? cls('sm') : 'text-[15px] font-semibold'}`}><Check size={18} className="mt-0.5 shrink-0 text-emerald" />{pick(`landing.fbr.p${i}`)}</li>
+            ))}
+          </ul>
         </section>
 
         {/* video: half the video, half what it shows (owner 2026-11-03: a lone video in the middle looked empty) */}
@@ -335,7 +359,7 @@ export default function LandingPage() {
         <section className="flex flex-col gap-3">
           <h2 className={h2}>{pick('landing.faqTitle')}</h2>
           <div className="card divide-y divide-line p-0">
-            {(['android', 'offline', 'verify', 'consent', 'yearly', 'data', 'phone', 'scanner', 'staff', 'cancel'] as const).map((k) => (
+            {(['android', 'offline', 'verify', 'consent', 'yearly', 'data', 'phone', 'scanner', 'staff', 'fbr', 'branches', 'cancel'] as const).map((k) => (
               <details key={k} className="group px-4 py-3">
                 <summary className={`cursor-pointer list-none font-bold ${ur ? cls('md') : 'text-[15px]'}`}>{pick(`landing.faq.${k}.q`)}</summary>
                 <p className={`mt-1.5 text-muted ${ur ? cls('sm') : 'text-sm font-medium'}`}>{pick(`landing.faq.${k}.a`)}</p>

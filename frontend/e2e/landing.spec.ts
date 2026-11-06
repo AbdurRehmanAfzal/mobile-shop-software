@@ -36,6 +36,13 @@ test('landing page: modules, prices, request a shop; the super admin opens it fr
   await expect(page.locator('#pricing').getByText('Rs. 3,000')).toBeVisible()
   await expect(page.getByTestId('landing-sites').getByRole('link', { name: /ifixapplephone\.com/ })).toHaveAttribute('href', 'https://ifixapplephone.com')
   await expect(page.getByTestId('landing-sites').getByRole('link', { name: /oopsolutions\.com/ })).toHaveAttribute('href', 'https://oopsolutions.com')
+  // owner 2026-11-06: the FBR band, honest that it is off until the shop's NTN and token are in
+  const fbr = page.getByTestId('landing-fbr')
+  await expect(fbr).toContainText('Bills ready for FBR')
+  await expect(fbr).toContainText('QR code')
+  await expect(fbr).toContainText('Off by default')
+  await expect(page.locator('#new')).toContainText('Ready for FBR Digital Invoicing')
+  await expect(page.locator('#new')).toContainText('Move stock between branches')
   expect(await page.getByTestId('hero-cta').evaluate((e) => getComputedStyle(e).color)).toBe('rgb(14, 22, 19)')
   await page.screenshot({ path: 'test-results/landing.png', fullPage: true })
   // Urdu
