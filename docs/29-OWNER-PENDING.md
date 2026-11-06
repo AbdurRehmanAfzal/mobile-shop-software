@@ -183,3 +183,14 @@ Today the app is shared as an APK from `/app.apk`. Putting it on Play needs a de
 **In Play Console after that (together)**
 - [ ] App content forms: privacy policy URL, Data safety (we collect phone numbers, CNIC and its photos, photos for the ID check, and sales data; data is encrypted in transit; deletion on request), content rating questionnaire, target audience 18+, no ads, app access (the demo login).
 - [ ] Upload the AAB to **Internal testing** first, then **Production**. Google's review usually takes a few days.
+
+## H. FBR live invoicing (owner 2026-11-06: "abhi mere paas nahi, main search karta hun")
+Our side is being built so that only these remain (details in `docs/36-FBR-INVOICING-RESEARCH.md` §5):
+- [ ] **NTN** and **STRN** of the business (or a test business) that will report to FBR.
+- [ ] **IRIS access** for it, to get a **Digital Invoicing sandbox token** (IRIS → Digital Invoicing → integration / sandbox) and later the production token. For Tier-1 POS instead: a **test POS ID** (IRIS → POS client registration).
+- [ ] **Tax adviser's confirmation**:
+  - the current standard GST rate (17% or 18%);
+  - phones under the Ninth Schedule at retail (no tax on the bill);
+  - PCT / HS codes (phones `8517.1300`?, chargers, covers);
+  - whether repair bills need the provincial (PRA / SRB) system.
+- [ ] Decide who to target first: registered dealers (Digital Invoicing) or Tier-1 plaza shops (POS).
