@@ -310,7 +310,9 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | Bill: total excl. tax, tax by rate, phones' Ninth-Schedule note | ✅ | `invoice_lines.tax_rate` |
 | Cash given and change (sale screen + bill) | ✅ | `invoices.cash_tendered` |
 | Setting: phones' sales tax paid at import (off by default) | ✅ | Settings → tax |
-| Live FBR reporting (DI first, then POS / IMS) | ⬜ | needs sandbox token / test POS ID and a tax adviser (`docs/36` §5) |
+| FBR Digital Invoicing, our side: settings + encrypted token, queue / retry / claim, payload per PRAL spec, FBR number + QR on the bill, Settings card, bill status | ✅ | `modules/fbr`, ADR-050, migration `e9a1c3d5f7b0`; off by default |
+| FBR sandbox run, then production | ⬜ | needs NTN / STRN + IRIS token and a tax adviser (`docs/29` H) |
+| Returns as DI debit / credit notes; POS (IMS) for Tier-1 | ⬜ | after the sandbox run |
 
 ## Owner side (open)
 Server env variables, server commands, manual testing and decisions: `docs/29-OWNER-PENDING.md` — none done yet (2026-11-01).

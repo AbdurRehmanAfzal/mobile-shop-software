@@ -74,6 +74,9 @@ class Shop(UUIDPk, Timestamped, Base):
     phones_tax_at_import: Mapped[bool] = mapped_column(
         Boolean, default=False, nullable=False, server_default="0"
     )
+    # docs/36 §4 (ADR-050): FBR Digital Invoicing — on / off, sandbox / production, province, the sale
+    # type and HS code per kind of goods, and the security token (encrypted, never sent back out)
+    fbr_settings: Mapped[dict | None] = mapped_column(JSON)
     # owner allows staff to log in with their fingerprint too (owner 2026-10-28)
     fingerprint_staff: Mapped[bool] = mapped_column(
         Boolean, default=False, nullable=False, server_default="0"

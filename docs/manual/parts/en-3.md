@@ -752,6 +752,20 @@ Messages to customers (receipts, reminders) use the shop's language from **Langu
 - **Look**: More → **Look** gives four styles: **Modern**, **Professional**, **Navy** and **Colorful**.
 - Every screen has small **?** buttons. Tap one for a short explanation with an example; each explanation has its own English / Urdu / Roman switch.
 
+### FBR Digital Invoicing (for shops registered for sales tax)
+
+If FBR asks your business to report its invoices (sales-tax registered, notified by FBR), the app can send every sale bill to FBR by itself and print the FBR number and its QR code on the bill.
+
+1. Make sure your **NTN** and **STRN** are filled in under **Tax registration**.
+2. In IRIS (FBR's portal) get the **Digital Invoicing security token** (first the sandbox / test token).
+3. Open **More → Shop settings → FBR Digital Invoicing**, paste the token, choose **Sandbox (test)** and tap **Save**.
+4. Tap **Test with FBR**. When it says FBR accepted the test bill, turn on **Send bills to FBR** and **Save**.
+5. After a few good bills, switch to **Production (live)** with the production token.
+
+From then on, every sale goes to FBR right away. If the internet or FBR is down, the bill waits and goes by itself later. The bill page shows **FBR number**, **Waiting**, or **FBR turned this bill down** with the reason and a **Send again** button.
+
+> **Important:** The token is kept locked on the server and is never shown again. Ask your tax adviser to confirm the sale type and HS code for phones, other devices and items in the same card.
+
 ## 24. Bulk Excel import and export
 
 When a shop moves from a register or another software, nobody wants to type 300 phones one by one. **Bulk Excel** lets you fill an Excel sheet and bring all rows in at once. Owner and manager only: More → **Bulk Excel**.

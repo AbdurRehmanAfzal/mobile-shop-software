@@ -2,7 +2,7 @@ import datetime as dt
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, BackgroundTasks, Depends, Query
 from fastapi.responses import HTMLResponse
 
 from app.core.idempotency import IdemKey
@@ -18,13 +18,20 @@ Transact = Annotated[Ctx, Depends(require_cap(Cap.TRANSACT))]
 
 
 @router.post("", response_model=SaleOut, status_code=201)
-def create(data: SaleCreate, ctx: Transact, db: DB, idem: IdemKey = None):
+def create(
+    data: SaleCreate, ctx: Transact, db: DB, background: BackgroundTasks, idem: IdemKey = None
+):
     # the same Idempotency-Key (a phone's offline queue sending again) returns the first bill
     def make():
         inv = service.create_sale(db, ctx.shop_id, ctx, data)
         return service.to_out(db, inv, ctx.can(Cap.VIEW_COST))
 
-    return idempotent(db, ctx.shop_id, idem, "sales", make)
+    out = idempotent(db, ctx.shop_id, idem, "sales", make)
+    # docs/36 §4: the bill goes to FBR right after the answer (shops with FBR on; never blocks a sale)
+    from app.modules.fbr.service import send_soon
+
+    background.add_task(send_soon, ctx.shop_id)
+    return out
 
 
 # held sales come before /{invoice_id}, which would otherwise take "held" for an id

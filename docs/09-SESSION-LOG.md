@@ -881,3 +881,21 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - the receipt was rendered in English and Urdu and checked.
 **Next**: live FBR reporting once the owner provides sandbox credentials (`docs/36` §5).
 
+## 2026-11-06 · FBR Digital Invoicing, our side ready (ADR-050)
+- Owner: no NTN / STRN or tax adviser yet (noted in `docs/29` H); make it live, and do all the work on our side.
+- Release PR #31 opened (tax-invoice details); the owner merges.
+- Built (`modules/fbr`, migration `e9a1c3d5f7b0`, additive):
+  - settings with an encrypted, write-only token;
+  - the bill queued in the sale's transaction and sent in the background and every minute by the scheduler, with a claim against double posting and backoff;
+  - rejected on FBR "invalid" or 401 / 403;
+  - the payload per the PRAL DI spec;
+  - the FBR number and QR printed on the receipt;
+  - the Settings card (test with FBR, waiting / turned-down list, "Send again") and the FBR status on the bill page;
+  - en / ur / roman help and a manual section.
+- Found and fixed on this PC: a stopped `uvicorn --reload` left its multiprocessing child holding :8000 with old code. That was behind the earlier "backend did not pick up the new router" cases. Saved to memory (kill those children before restarting).
+**Verified**:
+- `test_fbr_di.py` (5 tests, with a stand-in for FBR): token secrecy, needs NTN, salesman 403; sent once, the payload fields, the receipt QR; unreachable → waiting with backoff; rejected → "Send again" → sent; a wrong token is a rejection; shops without FBR untouched.
+- The full backend suite; tsc; vitest 44.
+- Playwright `fbr.spec` (settings, token never shown again), `bill-details`, `saletax`, `invoices`, `books`, `hold`.
+**Next**: the sandbox run with the owner's token, the DI logo image, returns as notes.
+

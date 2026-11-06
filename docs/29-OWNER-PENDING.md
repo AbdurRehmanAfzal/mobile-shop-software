@@ -185,7 +185,7 @@ Today the app is shared as an APK from `/app.apk`. Putting it on Play needs a de
 - [ ] Upload the AAB to **Internal testing** first, then **Production**. Google's review usually takes a few days.
 
 ## H. FBR live invoicing (owner 2026-11-06: "abhi mere paas nahi, main search karta hun")
-Our side is being built so that only these remain (details in `docs/36-FBR-INVOICING-RESEARCH.md` §5):
+**Our side is ready (2026-11-06, ADR-050).** When you have the items below: More → Shop settings → **FBR Digital Invoicing** → paste the token → choose **Sandbox** → **Save** → **Test with FBR**. When the test passes, switch on **Send bills to FBR**, check a few bills, then move to **Production** with the production token. Details in `docs/36-FBR-INVOICING-RESEARCH.md` §5. What is needed:
 - [ ] **NTN** and **STRN** of the business (or a test business) that will report to FBR.
 - [ ] **IRIS access** for it, to get a **Digital Invoicing sandbox token** (IRIS → Digital Invoicing → integration / sandbox) and later the production token. For Tier-1 POS instead: a **test POS ID** (IRIS → POS client registration).
 - [ ] **Tax adviser's confirmation**:

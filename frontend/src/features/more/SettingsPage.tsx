@@ -11,6 +11,7 @@ import Help from '@/components/Help'
 import { ErrorText, Loading, PageHeader } from '@/components/ui'
 import { get, patch } from '@/lib/api'
 import BarcodeCard from './BarcodeCard'
+import FbrCard from './FbrCard'
 import BusinessProfileCards from './BusinessProfile'
 import { useAuth } from '@/lib/auth'
 
@@ -171,6 +172,8 @@ export default function SettingsPage() {
 
       {/* docs/30: logo, business, owner, tax registration, currency, printed bill */}
       <BusinessProfileCards Card={Card} Toggle={Toggle} />
+      {/* docs/36 §4: FBR Digital Invoicing */}
+      <FbrCard Card={Card} Toggle={Toggle} />
       <BarcodeCard Card={Card} />
       <CodeWordCard current={data?.label_code_word ?? null} />
       <SaleRulesCard current={data?.sale_rules ?? null} />

@@ -471,6 +471,10 @@ def create_sale(
             "asking_revised": len(revisions),
         },
     )
+    # docs/36 §4 (ADR-050): a shop with FBR Digital Invoicing on queues the bill with the sale
+    from app.modules.fbr.service import enqueue as fbr_enqueue
+
+    fbr_enqueue(db, shop, invoice.id)
     if commit:
         db.commit()
     else:
@@ -859,6 +863,21 @@ def receipt_html(
     words_html = (
         f"<div class='c'><small>{e(amount_in_words(inv.total, 'ur' if ur else 'en'))}</small></div>"
     )
+    # docs/36 §4 (ADR-050): the FBR Digital Invoicing number and its QR code (1 × 1 inch), or a note
+    # that the bill is still waiting to reach FBR
+    from app.modules.barcodes.codes import svg as code_svg
+    from app.modules.fbr.service import for_invoice as fbr_for
+
+    fbr_sub = fbr_for(db, inv.id)
+    fbr_html = ""
+    if inv.fbr_invoice_no:
+        fbr_html = (
+            f"<div class='c fbr'><b>FBR Digital Invoicing System</b><br>"
+            f"<div class='qr'>{code_svg('qr', inv.fbr_invoice_no)}</div>"
+            f"<small>{'ایف بی آر انوائس نمبر' if ur else 'FBR invoice no.'}</small><br><b dir='ltr'>{e(inv.fbr_invoice_no)}</b></div>"
+        )
+    elif fbr_sub is not None:
+        fbr_html = f"<div class='c'><small>{'ایف بی آر: بھیجنا باقی ہے' if ur else 'FBR: waiting to be sent'}</small></div>"
     font_link = (
         '<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">'
         if ur
@@ -875,7 +894,7 @@ h1 {{ font-size: {"15px" if thermal else "20px"}; margin: 0; text-align: center;
 table {{ width: 100%; border-collapse: collapse; margin-top: 6px; }} td, th {{ padding: 3px 2px; vertical-align: top; }}
 th {{ border-bottom: 1px solid #111; text-align: {"right" if ur else "left"}; font-size: 10px; }}
 tr.tot td {{ border-top: 1px solid #111; font-weight: bold; }}
-small {{ color: #555; direction: ltr; unicode-bidi: isolate; }} .foot {{ margin-top: 10px; border-top: 1px dashed #999; padding-top: 6px; }}
+small {{ color: #555; direction: ltr; unicode-bidi: isolate; }} .fbr {{ margin-top: 8px; }} .qr {{ width: 1in; height: 1in; margin: 4px auto; }} .foot {{ margin-top: 10px; border-top: 1px dashed #999; padding-top: 6px; }}
 </style></head><body>
 {profile.header_html(shop, ur, thermal)}
 <table><tr><td><b>{e(inv.no)}</b></td><td class="n">{when}</td></tr><tr><td colspan="2">{party_html}</td></tr>{cashier_html}</table>
@@ -887,6 +906,7 @@ small {{ color: #555; direction: ltr; unicode-bidi: isolate; }} .foot {{ margin-
 <tr><td colspan="3">{T["due"]}</td><td class="n">{out["balance_due"]:,.0f}</td></tr>{plan_html}{balance_html}
 </tbody></table>
 {words_html}
+{fbr_html}
 {pending_html}
 {profile.footer_html(shop, ur)}
 <div class="foot c">{e(T["thanks"])}</div>

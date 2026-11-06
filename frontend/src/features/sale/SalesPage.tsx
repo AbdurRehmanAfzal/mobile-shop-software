@@ -1,4 +1,5 @@
 import DownloadButton from '@/components/DownloadButton'
+import { FbrBillStatus } from '@/features/more/FbrCard'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -88,6 +89,7 @@ export function SaleDetailPage() {
   return (
     <div className="flex flex-col gap-4">
       <PageHeader title={{ en: inv.no, ur: inv.no }} help={<Help term="sale.detail" />} right={<Chip text={`sale.status.${inv.status}`} tone={TONE[inv.status]} />} />
+      <FbrBillStatus invoiceId={inv.id} />
       <div className="card">
         <KV k="sale.steps.customer" help="sale.customer" v={inv.party_name ? <button type="button" className="text-emerald" onClick={() => nav(`/parties/${inv.party_id}`)}>{inv.party_name}</button> : pick('sale.cashCustomer')} />
         <KV k="common.date" help="common.date" v={<span dir="ltr">{fmtDate(inv.date)}</span>} />

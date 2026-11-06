@@ -334,3 +334,31 @@ by sheet remain a later step (docs/18 §1).
   - Migration `d8f0b2c4e6a9` is additive.
 - **Next:** live FBR reporting (POS / IMS or Digital Invoicing) as in `docs/36` §4, once the owner provides sandbox credentials and a tax adviser confirms rates and PCT codes.
 
+## ADR-050 · 2026-11-06 · Accepted · FBR Digital Invoicing built ready-to-plug: queued per bill, sent through PRAL's DI API, never twice, off by default
+- **Context:** The owner wants all of our side done, so that only the NTN / STRN, the IRIS token and a tax adviser's word remain (`docs/36` §5). DI is FBR's current direction and has a documented 2025 spec and sandbox; POS / IMS can reuse the same queue later.
+- **Decision:**
+  - `shops.fbr_settings` (JSON) holds `enabled`, `env` (sandbox / production), `province`, and per kind of goods (phone / other device / item) the sale type, HS code and sandbox scenario.
+  - The token is encrypted (Fernet, key derived from `SECRET_KEY`) and is write-only: no API returns it.
+  - Switching on needs a token and the shop's NTN.
+  - `fbr_submissions`: one row per bill (`invoice_id`, `kind` unique), status pending / sent / rejected, attempts, last error, the request and FBR's answer, `next_try_at`.
+  - The bill is queued inside the sale's transaction. It is sent in a background task right after the response, and the scheduler sends what is waiting every minute.
+  - A **claim** (`next_try_at` pushed two minutes, conditional update) keeps two workers from posting the same bill. An accepted bill is never posted again.
+  - Outcomes:
+    - Unreachable: retried after 1, 2, 5, 10, 30, then 60 minutes.
+    - FBR "invalid" or a 401 / 403: rejected, until the shop fixes the cause and presses "Send again".
+    - Accepted: `invoices.fbr_invoice_no`.
+  - The receipt prints "FBR Digital Invoicing System", the QR (1 × 1 inch) of the FBR number and the number; until then it prints "FBR: waiting to be sent".
+  - Payload (`build_payload`) follows the PRAL DI spec field names:
+    - seller NTN, province (mapped to FBR's names), walk-in buyers "Unregistered";
+    - per line: excl. value, tax, total, discount, the sale type and HS code by kind;
+    - `scenarioId` only in sandbox.
+  - Settings → "FBR Digital Invoicing" card (owner): on / off, sandbox / production, token, sale types and HS codes, "Test with FBR" (sandbox validate method, nothing recorded at FBR), and the waiting / turned-down list with "Send again". Each bill's page shows its FBR status.
+- **Consequences:**
+  - Nothing changes for shops that do not switch it on, and FBR being down never stops a sale.
+  - Still to do once credentials exist:
+    - run the sandbox scenarios (SN015 / SN026 / SN027);
+    - confirm the DI logo image (we print the text "FBR Digital Invoicing System");
+    - add sale returns as debit / credit notes (`invoiceRefNo`);
+    - confirm sale types and HS codes with the tax adviser.
+  - Tests use a stand-in for FBR; the real FBR is never called from tests.
+

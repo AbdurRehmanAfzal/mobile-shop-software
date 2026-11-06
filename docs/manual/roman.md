@@ -2096,6 +2096,20 @@ Customers ko paighaam (raseedein, yaad dahani) **Print aur paighaam ki zubaan** 
 - **Andaaz**: More → **Andaaz** chaar style deta hai: **Modern**, **Professional**, **Navy** aur **Rangeen**.
 - Har screen par chhote **?** button hain. Kisi ek ko dabayein to misaal ke saath mukhtasar wazahat milti hai; har wazahat ka apna English / Urdu / Roman switch hai.
 
+### FBR Digital Invoicing (sales tax registered dukaanon ke liye)
+
+Agar FBR aap ke karobar ko invoice report karne ka kahe (sales tax registered, FBR ne bataya ho) to app har sale ka bill khud FBR ko bhej kar bill par FBR number aur us ka QR code chhaap sakti hai.
+
+1. Yaqeen kar lein ke **Tax registration** mein aap ka **NTN** aur **STRN** likha hai.
+2. IRIS (FBR ka portal) se **Digital Invoicing security token** lein (pehle sandbox / test wala).
+3. **Mazeed → Dukaan ki settings → FBR Digital Invoicing** kholein, token lagayein, **Sandbox (test)** chunein aur **Save** dabayein.
+4. **FBR se test karein** dabayein. Jab likha aaye ke FBR ne test bill maan liya, to **Bill FBR ko bhejein** on karein aur Save karein.
+5. Chand bill theek jaane ke baad production token ke saath **Production (asal)** par jayein.
+
+Is ke baad har sale foran FBR ko jati hai. Internet ya FBR band ho to bill intezar karta hai aur baad mein khud chala jata hai. Bill ke safhe par **FBR number**, **Baqi**, ya **FBR ne ye bill radd kiya** wajah ke saath aur **Dobara bhejein** ka button aata hai.
+
+> **Zaroori:** Token server par taale mein rehta hai aur dobara kabhi nahi dikhta. Isi card mein mobile, doosri devices aur items ki sale ki qism aur HS code apne tax advisor se pakke karwa lein.
+
 ## 24. Bulk Excel import aur export
 
 Jab koi dukaan register ya kisi aur software se aati hai, to koi bhi 300 phone ek ek kar ke likhna nahi chahta. **Bulk Excel** se aap ek Excel sheet bhar kar saari rows ek saath la sakte hain. Sirf owner aur manager: More → **Bulk Excel**.
