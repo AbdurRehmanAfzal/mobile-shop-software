@@ -899,3 +899,14 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - Playwright `fbr.spec` (settings, token never shown again), `bill-details`, `saletax`, `invoices`, `books`, `hold`.
 **Next**: the sandbox run with the owner's token, the DI logo image, returns as notes.
 
+
+## 2026-11-06 · Landing page: the latest round in detail
+- Owner: update the landing page with proper detail, then push and merge.
+- `LandingPage.tsx` + en / ur / roman:
+  - a new "Bills ready for FBR" band (`#fbr`). It says honestly that it is off by default and switched on with the shop after a sandbox test, once the NTN / STRN / IRIS token are in.
+  - The newest round leads "What came in the last round": FBR Digital Invoicing, the full tax invoice, cash given / change, balance sheet + trial balance, branch transfers, the repair status link, accounts checked end to end.
+  - Module guide: added tax bills & FBR, balance sheet, and branch transfers.
+  - FAQ: added FBR and two shops.
+  - Hero text and meta description now mention FBR-ready bills, branches and the balance sheet.
+**Verified**: tsc; Playwright `landing.spec` (extended for the FBR band and the new items); screenshots en (desktop) and ur (390 px), no sideways scroll.
+**Next**: screenshots for the new items once the owner has a demo shop with FBR numbers.

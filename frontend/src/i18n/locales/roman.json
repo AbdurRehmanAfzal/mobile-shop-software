@@ -7979,7 +7979,7 @@
   "landing": {
     "badge": "Sirf Pakistan ki mobile dukaanon ke liye bana",
     "h1": "Apni mobile shop apne phone se chalayein",
-    "sub": "Naye aur purane phone shanakhti card ki jaanch aur bechne wale ki dastakhat shuda razamandi ke sath, udhaar khata, repair aur repair labs, accessories, mukammal shop audit — Android app, kisi bhi browser par online, aur baghair internet. Urdu, Roman Urdu aur English mein.",
+    "sub": "Purane aur naye phone, CNIC verification aur bechne wale ki dastakhat shuda razamandi ke sath, udhaar khata, repair aur repair labs, accessories, FBR ke liye tayyar tax bill, branches, balance sheet aur poora shop audit — Android app, kisi bhi browser par online, aur offline. Urdu, Roman Urdu aur English mein.",
     "ctaTrial": "{{n}} din muft shuru karein",
     "waHello": "Assalam-o-Alaikum, mujhe Mobile Shop software ke baare mein jaanna hai.",
     "point1": "Har phone par chalta hai",
@@ -8182,6 +8182,14 @@
       "yearly": {
         "q": "Kya saalana package hai?",
         "a": "Ji haan. Ek sath saal ki adaigi karein aur 10 mahinon ki qeemat mein 12 mahine lein — do mahine muft. Mahana adaigi bhi mojood hai."
+      },
+      "fbr": {
+        "q": "Kya ye FBR ke sath chalta hai?",
+        "a": "Ji haan. Har bill pehle se tax invoice jaisa hai. Sales tax registered dukaanon ke liye app har bill FBR ke Digital Invoicing system ko bhejti hai aur FBR number aur QR chhapti hai. Shuru mein band hai; aap ko NTN, STRN aur IRIS token chahiye, aur sandbox test ke baad hum aap ke sath on karte hain."
+      },
+      "branches": {
+        "q": "Meri do dukaanein hain. Kya dono dekh sakta hoon?",
+        "a": "Ji haan. Ek login se aap ki saari dukaanein khulti hain; har ek ka apna stock, khata aur reports, aur branch transfer se ek se doosri ko stock bhej sakte hain."
       }
     },
     "footer": "Pakistan mein, Pakistani mobile shops ke liye banaya gaya.",
@@ -8194,6 +8202,34 @@
     "newTitle": "Pichhle daur mein kya aaya",
     "newSub": "Dukaandaron ne jo manga usi se bana — sab se naya sab se upar, sab shamil, Urdu aur English mein.",
     "new": {
+      "fbr": {
+        "t": "FBR Digital Invoicing ke liye tayyar",
+        "d": "Har bill khud FBR ko ja sakta hai aur bill par FBR number aur us ka QR code chhapta hai. Jab tak NTN aur IRIS token na lagayein, band rehta hai; internet band ho to bill intezar karta hai aur baad mein chala jata hai."
+      },
+      "taxbill": {
+        "t": "Poora tax invoice",
+        "d": "Raqam lafzon mein (lakh / crore), cashier aur waqt, tax ke baghair total, har rate ka tax aur kul tax — jaise FBR ka tax invoice hota hai. Ninth Schedule wale phone par tax chhoda ja sakta hai."
+      },
+      "cashchange": {
+        "t": "Customer ne kitne diye, kitne wapas",
+        "d": "Customer ne jo diya likhein; screen baqi wapas ki raqam dikhati hai aur bill par dono chhapte hain."
+      },
+      "books": {
+        "t": "Balance sheet aur trial balance",
+        "d": "Kisi bhi tareekh par dukaan ke paas kya hai, kis ka dena hai, aur maalik ka hissa kitna — har account sath sath, unhi entries se jin se baqi reports banti hain."
+      },
+      "transfers": {
+        "t": "Branches ke darmiyan stock",
+        "d": "Ek dukaan se doosri ko phone aur items bhejein. Har phone ki history dono dukaanon mein rehti hai; items laagat par jate hain, is liye kisi branch mein jhoota munafa nahi dikhta."
+      },
+      "repairlink": {
+        "t": "Repair ka status link",
+        "d": "Customer ko WhatsApp par link milta hai aur woh apne phone ka haal dekh leta hai — mil gaya, lab par, tayyar — dukaan ko call kiye baghair."
+      },
+      "accounts": {
+        "t": "Hisaab shuru se aakhir tak check",
+        "d": "Typed item se stock kabhi minus nahi hota, wapsi stock ki qeemat par hoti hai, aur nuqsan hamesha minus ke nishan ke sath dikhta hai."
+      },
       "audit": {
         "t": "Dukaan ka audit, kisi bhi arse ka",
         "d": "Kisi bhi tareekhon ka munafa, naqd o bank, udhaar, stock aur amla — shuru, aakhir aur kisi bhi din ka balance, har raqam tap karein to us ke bill, ghaltiyan pakarne wali jaanch, poori report PDF ya Excel mein."
@@ -8482,6 +8518,30 @@
         "x1": "Har table dukaan ke hisaab se alag; koi bhi query doosri dukaan ki rows nahi parh sakti.",
         "x2": "Raqam bilkul durust (decimal, kabhi float nahi); ledger aur device events sirf likhe jaate hain.",
         "x3": "Fingerprint / PIN login, bhoole password ke liye phone OTP, rozana backup."
+      },
+      "fbr": {
+        "t": "Tax bill aur FBR",
+        "s": "Har bill par poora tax invoice, aur registered dukaanon ke liye har bill FBR ko, number aur QR ke sath.",
+        "e": "Bilal ne charger aur cover Rs. 2,360 mein 18% tax ke sath beche: bill par Rs. 2,000 tax ke baghair, \"Tax 18% on 2,000 = 360\", raqam lafzon mein, aur FBR number us ke QR ke sath.",
+        "x1": "Bill sale ki usi transaction mein queue hota hai aur us ke bahar bheja jata hai, background mein aur har minute scheduler se.",
+        "x2": "Claim do workers ko ek hi bill bhejne se rokta hai; qabool hua bill dobara kabhi post nahi hota; dobara koshish 1 se 60 minute tak.",
+        "x3": "Token server par encrypted aur sirf likhne ke liye hai: koi screen ya API use wapas nahi deti."
+      },
+      "books": {
+        "t": "Balance sheet aur trial balance",
+        "s": "Kisi bhi tareekh par dukaan ke paas kya hai (stock, cash, wasool karna udhaar), kis ka dena hai (supplier, len-den) aur maalik ka hissa.",
+        "e": "30 June ko: stock Rs. 18,40,000, cash aur bank Rs. 2,15,000, customers ka dena Rs. 95,000, suppliers ko dena Rs. 3,10,000 — baqi aap ka sarmaya aur munafa.",
+        "x1": "Sirf aage badhne wale ledger se banta hai; haath se kuch nahi likha jata.",
+        "x2": "Trial balance: har account ka debit aur credit sath sath, hamesha barabar.",
+        "x3": "Durusti nayi tareekh wali entry hoti hai, is liye purani report baghair nishan ke nahi badalti."
+      },
+      "transfers": {
+        "t": "Branch transfer",
+        "s": "Apni ek dukaan se doosri ko phone aur accessories bhejein, aur dekhein kya raste mein hai.",
+        "e": "Gulberg branch 3 iPhone aur 20 charger Mall Road branch ko bhejti hai; phone Gulberg ke stock se nikal kar Mall Road mein apni poori history ke sath aate hain.",
+        "x1": "Phone ki row ki dukaan kabhi nahi badalti: bhejne wale ke haan \"transferred out\", lene wale ke haan \"transferred in\".",
+        "x2": "Items sab se purane batch se nikalte hain aur usi laagat par naye batch ki shakal mein aate hain.",
+        "x3": "Paisa laagat par branch account se jata hai, aamdani nahi banta; sirf maalik ya manager, ek hi karobar."
       }
     },
     "earlier": "Pehle aane wali {{n}} sahuliyat",
@@ -8539,7 +8599,19 @@
       "ifix": "iFix Apple Phone"
     },
     "metaTitle": "Mobile Shop Software Pakistan — Android app, online aur offline",
-    "metaDesc": "Pakistan ki mobile dukaanon ka software: shanakhti card ki jaanch aur bechne wale ke dastakhat ke sath naye aur purane phone, udhaar khata, repair aur repair labs, shop audit. Android app, online aur offline, Urdu aur English. 14 din muft."
+    "metaDesc": "Pakistan ki mobile shops ke liye software: purane aur naye phone CNIC verification aur bechne wale ki razamandi ke sath, udhaar khata, repair aur repair labs, FBR ke liye tayyar tax bill, branches, balance sheet, shop audit. Android app, online aur offline, Urdu aur English. 14 din muft.",
+    "fbr": {
+      "badge": "FBR",
+      "title": "FBR ke liye tayyar bill",
+      "sub": "Sales tax registered dukaanon ke liye. FBR ke Digital Invoicing (PRAL) ke qawaid ke mutabiq bana hai, is liye jis din aap ki dukaan ko invoice report karne hon, aap sirf on karte hain.",
+      "p1": "Har sale ka bill sale ke foran baad FBR ko jata hai — counter par koi extra qadam nahi.",
+      "p2": "FBR ka invoice number aur us ka QR code bill par chhapta hai.",
+      "p3": "Internet ya FBR band? Bill intezar karta hai aur khud chala jata hai; sale kabhi nahi rukti.",
+      "p4": "Har bill ek baar jata hai, do baar kabhi nahi; FBR jo bill radd kare us ki wajah aur \"Dobara bhejein\" ka button dikhta hai.",
+      "p5": "Aap ka FBR token server par taale mein rehta hai aur dobara kabhi nahi dikhta, aap ko bhi nahi.",
+      "p6": "Har qism ke maal ki sale type aur HS code — phone, doosri devices, accessories.",
+      "note": "Shuru mein band hai. Aap ko NTN, STRN aur IRIS ka Digital Invoicing token chahiye; FBR ke sandbox par test ke baad hum aap ke sath on karte hain. Sales tax mein registered nahi? Aap ke liye kuch nahi badalta."
+    }
   },
   "inst": {
     "title": "Qistein",

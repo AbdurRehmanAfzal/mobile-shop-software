@@ -7979,7 +7979,7 @@
   "landing": {
     "badge": "Built only for Pakistan's mobile shops",
     "h1": "Run your mobile shop from your phone",
-    "sub": "Used and new phones with CNIC verification and the seller's signed consent, udhaar khata, repairs and repair labs, accessories, a full shop audit — as an Android app, online on any browser, and offline. In Urdu, Roman Urdu and English.",
+    "sub": "Used and new phones with CNIC verification and the seller's signed consent, udhaar khata, repairs and repair labs, accessories, FBR-ready tax bills, branches, a balance sheet and a full shop audit — as an Android app, online on any browser, and offline. In Urdu, Roman Urdu and English.",
     "ctaTrial": "Start free for {{n}} days",
     "waHello": "Assalam-o-Alaikum, I want to know about the Mobile Shop software.",
     "point1": "Works on any phone",
@@ -8182,6 +8182,14 @@
       "yearly": {
         "q": "Is there a yearly package?",
         "a": "Yes. Pay for a year at once and get 12 months for the price of 10 — two months free. Monthly payment is also there."
+      },
+      "fbr": {
+        "q": "Does it work with FBR?",
+        "a": "Yes. Every bill already reads like a tax invoice. For sales-tax registered shops the app sends each bill to FBR's Digital Invoicing system and prints the FBR number and QR. It is off by default; you need your NTN, STRN and the IRIS token, and we switch it on with you after a sandbox test."
+      },
+      "branches": {
+        "q": "I have two shops. Can I see both?",
+        "a": "Yes. One login can open all your shops; each keeps its own stock, khata and reports, and you can send stock from one to the other with a branch transfer."
       }
     },
     "footer": "Made in Pakistan for Pakistani mobile shops.",
@@ -8194,6 +8202,34 @@
     "newTitle": "What came in the last round",
     "newSub": "Built from what shopkeepers asked for — the newest first, all included, in Urdu and English.",
     "new": {
+      "fbr": {
+        "t": "Ready for FBR Digital Invoicing",
+        "d": "Every bill can go to FBR by itself and print the FBR number with its QR code. Off until your NTN and IRIS token are in; if the internet is down the bill waits and goes later."
+      },
+      "taxbill": {
+        "t": "A proper tax invoice",
+        "d": "Amount in words (lakh / crore), cashier and time, total excl. tax, tax by rate and total tax — the way an FBR tax invoice reads. Phones under the Ninth Schedule can be left untaxed."
+      },
+      "cashchange": {
+        "t": "Cash given and change",
+        "d": "Type what the customer handed over; the screen shows the change and the bill prints both."
+      },
+      "books": {
+        "t": "Balance sheet and trial balance",
+        "d": "What the shop owns, owes and is worth on any date, and every account side by side — straight from the same entries as every other report."
+      },
+      "transfers": {
+        "t": "Move stock between branches",
+        "d": "Send phones and items from one shop to another. Each phone keeps its history in both shops; items move at cost, so neither branch shows a fake profit."
+      },
+      "repairlink": {
+        "t": "Repair status link",
+        "d": "The customer gets a link on WhatsApp and sees their phone's repair status — received, at the lab, ready — without calling the shop."
+      },
+      "accounts": {
+        "t": "Accounts checked end to end",
+        "d": "Stock never goes into minus by a typed item, returns leave stock at stock value, and a loss always shows with its minus sign."
+      },
       "audit": {
         "t": "Shop audit, any period",
         "d": "Profit, cash & bank, udhaar, stock and staff for any dates — opening, closing and as-of balances, every figure tappable to its bills, checks that catch mistakes, a complete report as PDF or Excel."
@@ -8482,6 +8518,30 @@
         "x1": "Every table is scoped by shop; no query can read another shop's rows.",
         "x2": "Money is exact (decimal, never floating point); the ledger and device events are append-only.",
         "x3": "Fingerprint / PIN login, phone OTP for a forgotten password, daily backups."
+      },
+      "fbr": {
+        "t": "Tax bills and FBR",
+        "s": "A full tax invoice on every bill, and — for registered shops — every bill sent to FBR with its number and QR.",
+        "e": "Bilal sells a charger and a cover for Rs. 2,360 with 18% tax: the bill shows Rs. 2,000 excl. tax, \"Tax 18% on 2,000 = 360\", the amount in words, and the FBR number with its QR.",
+        "x1": "The bill is queued in the same transaction as the sale and sent outside it, in the background and every minute by the scheduler.",
+        "x2": "A claim stops two workers sending the same bill; an accepted bill is never posted again; retries back off from 1 to 60 minutes.",
+        "x3": "The token is encrypted on the server and write-only: no screen or API ever returns it."
+      },
+      "books": {
+        "t": "Balance sheet and trial balance",
+        "s": "What the shop owns (stock, cash, udhaar to collect), owes (suppliers, len-den) and the owner's equity, on any date.",
+        "e": "On 30 June: stock Rs. 18,40,000, cash and bank Rs. 2,15,000, customers owe Rs. 95,000, suppliers are owed Rs. 3,10,000 — the rest is your capital and profit.",
+        "x1": "Built from the append-only ledger; nothing is typed in by hand.",
+        "x2": "Trial balance: every account's debit and credit side by side, always equal.",
+        "x3": "Corrections are new dated entries, so an old report never changes without a trace."
+      },
+      "transfers": {
+        "t": "Branch transfers",
+        "s": "Send phones and accessories from one of your shops to another, and see what is on the way.",
+        "e": "Gulberg branch sends 3 iPhones and 20 chargers to the Mall Road branch; the phones leave Gulberg's stock and arrive in Mall Road's with their full history.",
+        "x1": "A phone row never changes shop: the sender records \"transferred out\", the receiver \"transferred in\".",
+        "x2": "Items leave oldest batch first and arrive as a batch at that cost.",
+        "x3": "Money moves at cost through a branch account, never as income; owner or manager only, same business."
       }
     },
     "earlier": "{{n}} features added earlier",
@@ -8539,7 +8599,19 @@
       "ifix": "iFix Apple Phone"
     },
     "metaTitle": "Mobile Shop Software Pakistan — Android app, online & offline",
-    "metaDesc": "Mobile shop software for Pakistan: used and new phones with CNIC verification and the seller's signed consent, udhaar khata, repairs and repair labs, shop audit. Android app, online and offline, Urdu and English. 14 days free."
+    "metaDesc": "Mobile shop software for Pakistan: used and new phones with CNIC verification and the seller's signed consent, udhaar khata, repairs and repair labs, FBR-ready tax bills, branches, balance sheet, shop audit. Android app, online and offline, Urdu and English. 14 days free.",
+    "fbr": {
+      "badge": "FBR",
+      "title": "Bills ready for FBR",
+      "sub": "For shops registered for sales tax. Built to FBR's Digital Invoicing rules (PRAL), so the day your shop has to report its invoices, you only switch it on.",
+      "p1": "Every sale bill is sent to FBR right after the sale — no extra step at the counter.",
+      "p2": "The FBR invoice number and its QR code print on the bill.",
+      "p3": "Internet or FBR down? The bill waits and goes by itself; a sale is never stopped.",
+      "p4": "Each bill goes once, never twice; a bill FBR turns down shows the reason and a \"Send again\" button.",
+      "p5": "Your FBR token stays locked on the server and is never shown again, not even to you.",
+      "p6": "Sale type and HS code per kind of goods — phones, other devices, accessories.",
+      "note": "Off by default. You need your NTN, STRN and the IRIS Digital Invoicing token; we switch it on with you after a test with FBR's sandbox. Not registered for sales tax? Nothing changes for you."
+    }
   },
   "inst": {
     "title": "Installments (qist)",
