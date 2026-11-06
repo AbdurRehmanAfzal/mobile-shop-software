@@ -192,7 +192,10 @@ def create_sale(
         rate, inclusive = (shop.tax_rate if shop.tax_enabled else ZERO), shop.tax_inclusive
     # owner 2026-11-03: an item with its own GST % is taxed at that rate when the bill is taxed;
     # phones and items without one take the bill's rate. No own rate anywhere → as before.
-    line_rates = [rate] * len(data.devices) + [
+    # docs/36: a phone's sales tax is paid at import (Ninth Schedule) — with the shop's setting on, a
+    # taxed bill adds none on phone lines
+    phone_rate = ZERO if shop.phones_tax_at_import else rate
+    line_rates = [phone_rate if d.category == "phone" else rate for d in devices] + [
         money(item_rates[m.accessory_id])
         if rate > ZERO and m.accessory_id and item_rates.get(m.accessory_id) is not None
         else rate
@@ -216,6 +219,13 @@ def create_sale(
             else [ZERO] * len(line_amounts)
         )
     paid = money(data.paid)
+    tendered = money(data.cash_tendered) if data.cash_tendered is not None else None
+    if tendered is not None and tendered < paid:
+        raise ValidationFailed(
+            code="tendered_below_paid",
+            message_en="The cash given is less than the amount paid",
+            message_ur="دی گئی نقد رقم ادا شدہ رقم سے کم ہے",
+        )
     if paid > total:
         raise ValidationFailed(
             code="paid_exceeds_total",
@@ -248,6 +258,7 @@ def create_sale(
         paid=paid,
         cash_account_id=cash.id if cash else None,
         status=status_for(total, paid),
+        cash_tendered=tendered,
         notes=data.notes,
         created_by=user_id,
         loan_id=loan.id if loan is not None else None,
@@ -265,8 +276,13 @@ def create_sale(
     cost_total = ZERO
     line_no = 0
 
-    for dl, device, share, tshare in zip(
-        data.devices, devices, shares[: len(devices)], tax_shares[: len(devices)], strict=True
+    for dl, device, share, tshare, lrate in zip(
+        data.devices,
+        devices,
+        shares[: len(devices)],
+        tax_shares[: len(devices)],
+        line_rates[: len(devices)],
+        strict=True,
     ):
         net = money(dl.price - share)
         line_total = net if inclusive or tax == ZERO else money(net + tshare)
@@ -282,6 +298,7 @@ def create_sale(
                 unit_price=money(dl.price),
                 discount_share=share,
                 tax_share=tshare,
+                tax_rate=lrate if rate > ZERO else None,
                 line_total=line_total,
                 cost=cost,
                 asking_price=askings.get(device.id),
@@ -302,8 +319,12 @@ def create_sale(
             device.warranty_months = 0
             device.warranty_start = invoice.date
 
-    for ml, share, tshare in zip(
-        data.misc, shares[len(devices) :], tax_shares[len(devices) :], strict=True
+    for ml, share, tshare, lrate in zip(
+        data.misc,
+        shares[len(devices) :],
+        tax_shares[len(devices) :],
+        line_rates[len(devices) :],
+        strict=True,
     ):
         net = money(ml.unit_price * ml.qty - share)
         line_total = net if inclusive or tax == ZERO else money(net + tshare)
@@ -343,6 +364,7 @@ def create_sale(
                 unit_price=money(ml.unit_price),
                 discount_share=share,
                 tax_share=tshare,
+                tax_rate=lrate if rate > ZERO else None,
                 line_total=line_total,
                 cost=cost,
                 warranty_days=wdays or 0,
@@ -449,6 +471,10 @@ def create_sale(
             "asking_revised": len(revisions),
         },
     )
+    # docs/36 §4 (ADR-050): a shop with FBR Digital Invoicing on queues the bill with the sale
+    from app.modules.fbr.service import enqueue as fbr_enqueue
+
+    fbr_enqueue(db, shop, invoice.id)
     if commit:
         db.commit()
     else:
@@ -696,6 +722,16 @@ def receipt_html(
         "monthly": "ماہانہ" if ur else "monthly",
         "firstDue": "پہلی قسط" if ur else "First installment",
         "guarantor": "ضامن" if ur else "Guarantor",
+        "cashier": "کیشیئر" if ur else "Cashier",
+        "excl": "کل (ٹیکس کے بغیر)" if ur else "Total excl. tax",
+        "taxTotal": "کل ٹیکس" if ur else "Total tax",
+        "onAmount": "پر" if ur else "on",
+        "phones": "موبائل فون — سیلز ٹیکس درآمد پر ادا (نواں شیڈول)"
+        if ur
+        else "Mobile phones — sales tax paid at import (Ninth Schedule)",
+        "noTax": "بغیر ٹیکس" if ur else "No tax",
+        "given": "گاہک نے دیے" if ur else "Cash given",
+        "change": "واپس" if ur else "Change",
     }
     out = to_out(db, inv, show_cost=False)
     e = html.escape
@@ -751,6 +787,33 @@ def receipt_html(
         if inv.tax_amount
         else ""
     )
+    # docs/36: a taxed bill shows the tax by rate (as an FBR invoice does), the total without tax,
+    # and why phone lines carry none
+    rated = [ln for ln in inv.lines if ln.tax_rate is not None]
+    if rated and inv.tax_rate > ZERO:
+        by_rate: dict = {}
+        for ln in rated:
+            net = money(ln.line_total - ln.tax_share)  # the line without its tax, inclusive or not
+            b = by_rate.setdefault(money(ln.tax_rate), [ZERO, ZERO, False])
+            b[0] += net
+            b[1] += ln.tax_share
+            b[2] = b[2] or ln.kind == "device"
+        excl = money(sum((v[0] for v in by_rate.values()), ZERO))
+        parts = [f"<tr><td colspan='3'>{T['excl']}</td><td class='n'>{excl:,.0f}</td></tr>"]
+        for r, (base_amt, t_amt, has_phone) in sorted(by_rate.items(), reverse=True):
+            if r > ZERO:
+                parts.append(
+                    f"<tr><td colspan='3'>{T['tax']} {r:.0f}% {T['onAmount']} {base_amt:,.0f}</td><td class='n'>{t_amt:,.0f}</td></tr>"
+                )
+            else:
+                label = T["phones"] if has_phone and shop.phones_tax_at_import else T["noTax"]
+                parts.append(
+                    f"<tr><td colspan='3'><small>{label} · {base_amt:,.0f}</small></td><td class='n'>0</td></tr>"
+                )
+        parts.append(
+            f"<tr><td colspan='3'>{T['taxTotal']} {T['incl'] if inv.tax_inclusive else ''}</td><td class='n'>{inv.tax_amount:,.0f}</td></tr>"
+        )
+        tax_html = "".join(parts)
     # how it was paid: "Online · Meezan Bank · TID 123", "Remittance · 500 SAR × 74.20 · Ahmed"
     pay = out.get("payment")
     paid_by_html = ""
@@ -779,6 +842,42 @@ def receipt_html(
         if inv.discount
         else ""
     )
+    from app.core.clock import shop_tz
+    from app.core.words import amount_in_words
+    from app.modules.auth.models import User
+
+    made = inv.created_at if inv.created_at.tzinfo else inv.created_at.replace(tzinfo=dt.UTC)
+    when = f"{inv.date.strftime('%d-%m-%Y')} {made.astimezone(shop_tz()).strftime('%I:%M %p')}"
+    cashier = db.get(User, inv.created_by) if inv.created_by else None
+    cashier_html = (
+        f"<tr><td colspan='2'><small>{T['cashier']}: {e(cashier.name)}</small></td></tr>"
+        if cashier
+        else ""
+    )
+    change_html = (
+        f"<tr><td colspan='3'>{T['given']}</td><td class='n'>{inv.cash_tendered:,.0f}</td></tr>"
+        f"<tr><td colspan='3'>{T['change']}</td><td class='n'>{money(inv.cash_tendered - inv.paid):,.0f}</td></tr>"
+        if inv.cash_tendered is not None
+        else ""
+    )
+    words_html = (
+        f"<div class='c'><small>{e(amount_in_words(inv.total, 'ur' if ur else 'en'))}</small></div>"
+    )
+    # docs/36 §4 (ADR-050): the FBR Digital Invoicing number and its QR code (1 × 1 inch), or a note
+    # that the bill is still waiting to reach FBR
+    from app.modules.barcodes.codes import svg as code_svg
+    from app.modules.fbr.service import for_invoice as fbr_for
+
+    fbr_sub = fbr_for(db, inv.id)
+    fbr_html = ""
+    if inv.fbr_invoice_no:
+        fbr_html = (
+            f"<div class='c fbr'><b>FBR Digital Invoicing System</b><br>"
+            f"<div class='qr'>{code_svg('qr', inv.fbr_invoice_no)}</div>"
+            f"<small>{'ایف بی آر انوائس نمبر' if ur else 'FBR invoice no.'}</small><br><b dir='ltr'>{e(inv.fbr_invoice_no)}</b></div>"
+        )
+    elif fbr_sub is not None:
+        fbr_html = f"<div class='c'><small>{'ایف بی آر: بھیجنا باقی ہے' if ur else 'FBR: waiting to be sent'}</small></div>"
     font_link = (
         '<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">'
         if ur
@@ -795,17 +894,19 @@ h1 {{ font-size: {"15px" if thermal else "20px"}; margin: 0; text-align: center;
 table {{ width: 100%; border-collapse: collapse; margin-top: 6px; }} td, th {{ padding: 3px 2px; vertical-align: top; }}
 th {{ border-bottom: 1px solid #111; text-align: {"right" if ur else "left"}; font-size: 10px; }}
 tr.tot td {{ border-top: 1px solid #111; font-weight: bold; }}
-small {{ color: #555; direction: ltr; unicode-bidi: isolate; }} .foot {{ margin-top: 10px; border-top: 1px dashed #999; padding-top: 6px; }}
+small {{ color: #555; direction: ltr; unicode-bidi: isolate; }} .fbr {{ margin-top: 8px; }} .qr {{ width: 1in; height: 1in; margin: 4px auto; }} .foot {{ margin-top: 10px; border-top: 1px dashed #999; padding-top: 6px; }}
 </style></head><body>
 {profile.header_html(shop, ur, thermal)}
-<table><tr><td><b>{e(inv.no)}</b></td><td class="n">{inv.date.strftime("%d-%m-%Y")}</td></tr><tr><td colspan="2">{party_html}</td></tr></table>
+<table><tr><td><b>{e(inv.no)}</b></td><td class="n">{when}</td></tr><tr><td colspan="2">{party_html}</td></tr>{cashier_html}</table>
 <table><thead><tr><th>{T["item"]}</th><th class="n">{T["qty"]}</th><th class="n">{T["price"]}</th><th class="n">{T["total"]}</th></tr></thead>
 <tbody>{rows}
 <tr><td colspan="3">{T["subtotal"]}</td><td class="n">{inv.subtotal:,.0f}</td></tr>{disc_html}{tax_html}
 <tr class="tot"><td colspan="3">{T["grand"]}</td><td class="n">{e(profile.money(shop, inv.total))}</td></tr>
-<tr><td colspan="3">{T["paid"]}</td><td class="n">{inv.paid:,.0f}</td></tr>{paid_by_html}
+<tr><td colspan="3">{T["paid"]}</td><td class="n">{inv.paid:,.0f}</td></tr>{paid_by_html}{change_html}
 <tr><td colspan="3">{T["due"]}</td><td class="n">{out["balance_due"]:,.0f}</td></tr>{plan_html}{balance_html}
 </tbody></table>
+{words_html}
+{fbr_html}
 {pending_html}
 {profile.footer_html(shop, ur)}
 <div class="foot c">{e(T["thanks"])}</div>

@@ -17,6 +17,10 @@ def _run_once() -> None:
     with SessionLocal() as db:
         ran = jobs.tick(db)
         sent = jobs.dispatch(db)
+        # docs/36 §4: bills waiting for FBR (shops with Digital Invoicing on)
+        from app.modules.fbr.service import send_pending
+
+        sent["fbr"] = send_pending(db)
     if any(ran.values()) or any(sent.values()):
         log.info("scheduler: %s, dispatched %s", ran, sent)
 

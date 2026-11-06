@@ -98,6 +98,13 @@ say if you want a retake with a profitable day. How to edit and rebuild: `docs/m
 2. More → Branch transfers lists it in both shops.
 3. Reports → Balance is still balanced in both shops.
 
+**Tax invoice details** (2026-11-06):
+1. More → Settings → turn on **Phones: sales tax paid at import** (if you sell phones with tax bills).
+2. Sell a phone and a charger with **Add tax to this bill** ticked: tax only on the charger.
+3. Type **Cash given by the customer**: the change shows. Print the bill: it shows total excl. tax, tax by rate, the phones' note, cash given / change, the cashier, the time and the amount in words.
+
+**FBR live reporting (decision / credentials):** see `docs/36-FBR-INVOICING-RESEARCH.md` §5. That needs a test business's NTN + STRN with IRIS access (DI sandbox token or a test POS ID), plus a tax adviser's confirmation.
+
 **Accounts after the audit** (2026-11-05):
 1. More → Cash & bank. If the galla shows a red note, tap **Set the opening balance** and type the cash that was in it on the first day.
 2. Reports → Balance: both sheets say "Balanced", and "Stock at cost" is not below zero.
@@ -176,3 +183,14 @@ Today the app is shared as an APK from `/app.apk`. Putting it on Play needs a de
 **In Play Console after that (together)**
 - [ ] App content forms: privacy policy URL, Data safety (we collect phone numbers, CNIC and its photos, photos for the ID check, and sales data; data is encrypted in transit; deletion on request), content rating questionnaire, target audience 18+, no ads, app access (the demo login).
 - [ ] Upload the AAB to **Internal testing** first, then **Production**. Google's review usually takes a few days.
+
+## H. FBR live invoicing (owner 2026-11-06: "abhi mere paas nahi, main search karta hun")
+**Our side is ready (2026-11-06, ADR-050).** When you have the items below: More → Shop settings → **FBR Digital Invoicing** → paste the token → choose **Sandbox** → **Save** → **Test with FBR**. When the test passes, switch on **Send bills to FBR**, check a few bills, then move to **Production** with the production token. Details in `docs/36-FBR-INVOICING-RESEARCH.md` §5. What is needed:
+- [ ] **NTN** and **STRN** of the business (or a test business) that will report to FBR.
+- [ ] **IRIS access** for it, to get a **Digital Invoicing sandbox token** (IRIS → Digital Invoicing → integration / sandbox) and later the production token. For Tier-1 POS instead: a **test POS ID** (IRIS → POS client registration).
+- [ ] **Tax adviser's confirmation**:
+  - the current standard GST rate (17% or 18%);
+  - phones under the Ninth Schedule at retail (no tax on the bill);
+  - PCT / HS codes (phones `8517.1300`?, chargers, covers);
+  - whether repair bills need the provincial (PRA / SRB) system.
+- [ ] Decide who to target first: registered dealers (Digital Invoicing) or Tier-1 plaza shops (POS).

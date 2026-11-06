@@ -858,3 +858,44 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - Playwright: accessories, audit-finance, audit-parties, audit-products, audit-reports, audit-stock, audit, books, items, repair-labs, repair, reports-audit, return, saletax, transfer, laptop, lending — all pass;
 - screens checked: Cash & bank with the below-zero note and after setting the opening balance.
 
+## 2026-11-06 · FBR-style tax invoice details (docs/36 §6, ADR-049)
+- Owner: research how FBR invoices work, using the owner's sample receipt, then start.
+- Research: `docs/36-FBR-INVOICING-RESEARCH.md`.
+  - There are two systems: POS integration for Tier-1 retailers, and Digital Invoicing under the 2025 PRAL API.
+  - Phones fall under the Ninth Schedule (FBR's own FAQ).
+  - The doc covers the gap against our receipt, the design, and what is needed from the owner.
+- Built (no FBR credentials needed):
+  - On the bill:
+    - the amount in words (English / Urdu, lakh / crore), the cashier and the time;
+    - on taxed bills, "Total excl. tax", tax by rate and the phones' note;
+    - cash given and change.
+  - On the sale screen: a "Cash given by the customer" box that shows the change.
+  - In Settings: "Phones: sales tax paid at import" (off by default). On, phones carry no tax on a taxed bill, and the screen's `billTax` mirrors the server.
+  - Migration `d8f0b2c4e6a9` is additive.
+  - A user manual section in three languages; the PDFs are rebuilt.
+- Changed expectation: `test_item_gst` now checks one tax line per rate ("Tax 18% on 10,000", "Tax 5% on 2,000") instead of "Tax (by item)".
+**Verified**:
+- new `test_bill_details.py` (3 tests); the full backend suite and ruff are green;
+- tsc; vitest 44 (new billTax case);
+- Playwright `bill-details` (new), `saletax`, `accessories`, `items`, `return`, `laptop`, `hold`, `invoices`;
+- the receipt was rendered in English and Urdu and checked.
+**Next**: live FBR reporting once the owner provides sandbox credentials (`docs/36` §5).
+
+## 2026-11-06 · FBR Digital Invoicing, our side ready (ADR-050)
+- Owner: no NTN / STRN or tax adviser yet (noted in `docs/29` H); make it live, and do all the work on our side.
+- Release PR #31 opened (tax-invoice details); the owner merges.
+- Built (`modules/fbr`, migration `e9a1c3d5f7b0`, additive):
+  - settings with an encrypted, write-only token;
+  - the bill queued in the sale's transaction and sent in the background and every minute by the scheduler, with a claim against double posting and backoff;
+  - rejected on FBR "invalid" or 401 / 403;
+  - the payload per the PRAL DI spec;
+  - the FBR number and QR printed on the receipt;
+  - the Settings card (test with FBR, waiting / turned-down list, "Send again") and the FBR status on the bill page;
+  - en / ur / roman help and a manual section.
+- Found and fixed on this PC: a stopped `uvicorn --reload` left its multiprocessing child holding :8000 with old code. That was behind the earlier "backend did not pick up the new router" cases. Saved to memory (kill those children before restarting).
+**Verified**:
+- `test_fbr_di.py` (5 tests, with a stand-in for FBR): token secrecy, needs NTN, salesman 403; sent once, the payload fields, the receipt QR; unreachable → waiting with backoff; rejected → "Send again" → sent; a wrong token is a rejection; shops without FBR untouched.
+- The full backend suite; tsc; vitest 44.
+- Playwright `fbr.spec` (settings, token never shown again), `bill-details`, `saletax`, `invoices`, `books`, `hold`.
+**Next**: the sandbox run with the owner's token, the DI logo image, returns as notes.
+

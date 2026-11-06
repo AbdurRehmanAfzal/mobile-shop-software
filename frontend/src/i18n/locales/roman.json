@@ -422,7 +422,10 @@
     "keptAmount": "Rakhi gayi raqam",
     "returnDone": "Wapsi mehfooz",
     "selectLines": "Wapas hone wala saamaan chunein",
-    "minPrice": "Min"
+    "minPrice": "Min",
+    "cashGiven": "Gahak ne kitne naqad diye",
+    "change": "Wapas dene hain",
+    "cashShort": "Bill se kam"
   },
   "pay": {
     "title": "Paise",
@@ -551,7 +554,8 @@
     "codeWordHint": "Das mukhtalif harf; hindsa n = n-wan harf, taake khareed qeemat sirf aap parh sakein",
     "codeWordLabel": "Code lafz (10 harf)",
     "codeWordBad": "Bilkul 10 mukhtalif harf",
-    "codeWordExample": "Misaal"
+    "codeWordExample": "Misaal",
+    "phonesTaxAtImport": "Mobile: sales tax import par ada (bill par tax nahi)"
   },
   "expense": {
     "title": "Kharche",
@@ -5842,6 +5846,11 @@
         "title": "Wajah",
         "body": "Yeh kyun wapis aaya. Yeh wapsi ke saath aur phone ki history mein mehfooz hoti hai.",
         "example": "\"2 din baad speaker ne kaam chhor diya.\""
+      },
+      "cashGiven": {
+        "title": "Gahak ne naqad diye",
+        "body": "Gahak ne jitni naqad raqam di woh likhein. Screen aur chhapa hua bill wapas dene wali raqam dikhate hain. Zaroorat na ho to khaali chhor dein.",
+        "example": "Bill Rs. 41,180, gahak Rs. 42,000 deta hai → wapas Rs. 820."
       }
     },
     "exchange": {
@@ -6234,6 +6243,11 @@
         "title": "Purane unit ke grade",
         "body": "Purana phone, tablet ya ghari khareedte waqt chunne ke liye haalat ke grade, comma se alag. Stock aur sticker par dikhte hain.",
         "example": "\"a, b, refurbished, copy\" → saaf purana Samsung A15 grade \"a\", kharash wala \"b\"."
+      },
+      "phonesTaxAtImport": {
+        "title": "Mobile: tax import par ada",
+        "body": "Mobile phone Sales Tax Act ke Naveen Schedule mein hain: sales tax import karne ya banane wala deta hai, dukaan ke bechne par sales tax nahi lagta. On ho to tax wale bill par tax sirf accessories aur doosri cheezon par lagta hai, aur bill likhta hai ke mobile par kyun nahi. Band ho to har line par bill ki rate lagti hai (pehle ki tarah).",
+        "example": "Tax wala bill: mobile Rs. 40,000 + charger Rs. 1,000 par 18% → tax Rs. 180 (sirf charger par)."
       }
     },
     "biz": {
@@ -7501,6 +7515,53 @@
         "title": "Gahak ke liye status ka link",
         "body": "Sirf is job ka nijji link. Gahak marhale (mausool, check hua, repair ho rahi hai, tayyar, wapas diya) tareekhon ke saath, tayyar hone ka din, bill aur baqi raqam dekhta hai. Use apna phone number, poora IMEI, screen lock, lab ka naam ya aap ki laagat kabhi nahi dikhti. Badla hua link nahi khulta.",
         "example": "Usman WhatsApp par poochta hai \"mera phone tayyar hai?\" → ek baar link bhej dein; phir woh khud dekh leta hai."
+      }
+    },
+    "fbr": {
+      "what": {
+        "title": "FBR Digital Invoicing",
+        "body": "FBR ka nizaam (PRAL chalata hai) jo har sales tax invoice bante hi wusool kar ke use FBR number deta hai. Jis dukaan ko report karna lazmi hai (sales tax registered, FBR ne bataya ho) woh yahan on kare. Phir har bill khud FBR ko jata hai aur chhape bill par FBR number aur QR code aata hai.",
+        "example": "Bill INV-000120 bana → FBR ne 7000007DI1747119701593 diya → bill par QR ke saath chhapta hai."
+      },
+      "enabled": {
+        "title": "Bill FBR ko bhejein",
+        "body": "On: har sale ka bill line mein lag kar FBR ko jata hai; internet ya FBR band ho to intezar karta hai aur baad mein khud chala jata hai. Band: kuch nahi jata, bill pehle ki tarah chhapte hain.",
+        "example": "Shaam 5 baje internet band, teen bill bane → internet aate hi FBR ko chale jate hain."
+      },
+      "env": {
+        "title": "Sandbox ya production",
+        "body": "Sandbox FBR ka test nizaam hai: jaanch ke dauran test token ke saath istemal karein. Production asal nizaam hai: sirf IRIS ke production token ke saath us par jayein.",
+        "example": "Pehla hafta: Sandbox aur FBR se test; pass ho to Production."
+      },
+      "token": {
+        "title": "FBR security token",
+        "body": "Lambi chaabi jo FBR Digital Invoicing ke liye IRIS mein deta hai (kai saal chalti hai). Ye server par taale mein rehti hai aur dobara kabhi nahi dikhti, aap ko bhi nahi; badalne ke liye nayi likhein.",
+        "example": "IRIS → Digital Invoicing → token copy karein → yahan lagayein → Save."
+      },
+      "saleType": {
+        "title": "Sale ki qism",
+        "body": "FBR is line ke maal ko kaise dekhta hai, FBR ke apne alfaaz mein. Mobile: \"Mobile Phones\" (Naveen Schedule). Accessories: aam tor par \"Goods at standard rate (default)\". Badalne se pehle tax advisor se poochein.",
+        "example": "Mobile → Mobile Phones; charger → Goods at standard rate (default)."
+      },
+      "hs": {
+        "title": "HS code",
+        "body": "Maal ka customs / PCT code jo FBR har line par maangta hai. Pehle se likhe code aam hain; durust code tax advisor batayega.",
+        "example": "Mobile phone 8517.1300."
+      },
+      "test": {
+        "title": "FBR se test",
+        "body": "Ek farzi bill FBR ki test jaanch ko bhejta hai (FBR par kuch darj nahi hota). Batata hai ke token durust hai aur FBR dukaan ki tafseel maanta hai.",
+        "example": "Test → \"FBR ne test bill maan liya\": ab bhejna on kar sakte hain."
+      },
+      "status": {
+        "title": "Bill aur FBR",
+        "body": "Bheje: FBR ne number de diya. Baqi: abhi FBR tak nahi pohanche (har minute dobara koshish). Radd hue: FBR ne parh kar inkaar kiya — dikhayi gayi wajah theek karein (masalan HS code) aur Dobara bhejein dabayein.",
+        "example": "Radd: \"Invalid HS code\" → oopar HS code theek karein → Dobara bhejein."
+      },
+      "billSent": {
+        "title": "FBR number",
+        "body": "Woh number jo FBR ne is bill ko diya. Chhapa bill use QR code ke saath dikhata hai; gahak FBR se use check kar sakta hai.",
+        "example": "7000007DI1747119701593"
       }
     }
   },
@@ -9737,5 +9798,34 @@
     "warranty": "Repair ki warranty: {{n}} din",
     "call": "Dukaan ko call karein",
     "footer": "Dukaan jaise jaise kaam karti hai, ye safha badalta rehta hai."
+  },
+  "fbr": {
+    "title": "FBR Digital Invoicing",
+    "hint": "Har sale ka bill FBR ko bhejein aur us ka FBR number aur QR code chhapein",
+    "needNtn": "Pehle Tax registration mein dukaan ka NTN likhein.",
+    "enabled": "Bill FBR ko bhejein",
+    "enabledHint": "Band: FBR ko kuch nahi jata (pehle ki tarah)",
+    "env": "Kahan bhejein",
+    "sandbox": "Sandbox (test)",
+    "production": "Production (asal)",
+    "token": "FBR security token",
+    "tokenSaved": "mehfooz hai — badalne ke liye naya likhein",
+    "kind": {
+      "phone": "Mobile — sale ki qism",
+      "device": "Tablet / ghari — sale ki qism",
+      "item": "Accessories / items — sale ki qism"
+    },
+    "hs": "HS code",
+    "test": "FBR se test karein (sandbox)",
+    "testOk": "FBR ne test bill maan liya. Token aur format durust hain.",
+    "testBad": "FBR ne inkaar kiya",
+    "sent": "Bheje",
+    "waiting": "Baqi",
+    "rejected": "Radd hue",
+    "sendAgain": "Dobara bhejein",
+    "sendNow": "Baqi bill abhi bhejein",
+    "billSent": "FBR number",
+    "billRejected": "FBR ne ye bill radd kiya",
+    "billWaiting": "FBR tak pohanchna baqi hai — FBR jawab de to khud chala jayega"
   }
 }

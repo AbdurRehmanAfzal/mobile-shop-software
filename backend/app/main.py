@@ -22,6 +22,7 @@ from app.modules.devices.router import router as devices_router
 from app.modules.exchanges.router import router as exchanges_router
 from app.modules.expenses.router import router as expenses_router
 from app.modules.exports.router import router as exports_router
+from app.modules.fbr.router import router as fbr_router
 from app.modules.files.router import router as files_router
 from app.modules.installments.router import router as installments_router
 from app.modules.invoices.router import router as invoices_router
@@ -181,6 +182,7 @@ def create_app() -> FastAPI:
     app.include_router(attendance_router)
     app.include_router(staff_activity_router)
     app.include_router(transfers_router)
+    app.include_router(fbr_router)
     if settings.web_dir:
         _mount_web(app, settings.web_dir)
     return app

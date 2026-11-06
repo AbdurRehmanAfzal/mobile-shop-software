@@ -659,6 +659,19 @@ Print ke button ke bilkul upar **Document ki zabaan** hai jis mein **English** a
 
 > **Zaroori:** Mukammal bill ki raqam koi bhi edit nahi kar sakta. Agar kuch ghalat tha to **Wapsi** se phone wapas lein aur naya bill banayein. Dono record par rehte hain, is liye hisaab hamesha saaf rehta hai.
 
+### Tax wale bill, gahak ki di hui raqam aur wapsi
+
+Ab har bill par kul raqam ke neeche **raqam alfaaz mein** (masalan "Rupees Forty-One Thousand Seven Hundred Seventy Only"), bill banane wala **cashier** aur **waqt** chhapta hai.
+
+**Gahak ki di hui raqam aur wapsi.** Jab gahak naqad de to **Gahak ne kitne naqad diye** mein likhein. Screen wapas dene wali raqam dikhati hai, aur chhape bill par **Cash given** aur **Change** aata hai. Zaroorat na ho to khaali chhor dein.
+
+**Tax wale bill.** Jab aap **Is bill par tax lagayein** par nishaan lagayein to bill par **Total excl. tax**, har tax rate ki alag line (masalan "Tax 18% on 1,500") aur **Total tax** chhapta hai, FBR ke tax invoice ki tarah.
+
+**Mobile aur sales tax.** Mobile phone Naveen Schedule mein hain: un ka sales tax import karne wala deta hai, dukaan oopar se nahi lagati. **Mazeed → Dukaan ki settings → Mobile: sales tax import par ada (bill par tax nahi)** on karein to tax wale bill par tax sirf charger, cover aur doosri cheezon par lagega, aur mobile ki line par likha hoga "Mobile phones — sales tax paid at import (Ninth Schedule)".
+
+**Misaal:** mobile Rs. 40,000 + charger Rs. 1,500 par 18% → tax Rs. 270, kul Rs. 41,770. Gahak Rs. 42,000 deta hai → wapas Rs. 230.
+
+> **Note:** Bill seedha FBR ko bhejna (FBR number aur QR code) agla qadam hai, is ke liye dukaan ki FBR registration chahiye.
 
 ## 9. Wapsi (return)
 
@@ -2082,6 +2095,20 @@ Customers ko paighaam (raseedein, yaad dahani) **Print aur paighaam ki zubaan** 
 - **Dark / Light**: upar **Dark** (ya **Light**) dabayein. More → **Theme** mein **Phone ke mutabiq** bhi hai.
 - **Andaaz**: More → **Andaaz** chaar style deta hai: **Modern**, **Professional**, **Navy** aur **Rangeen**.
 - Har screen par chhote **?** button hain. Kisi ek ko dabayein to misaal ke saath mukhtasar wazahat milti hai; har wazahat ka apna English / Urdu / Roman switch hai.
+
+### FBR Digital Invoicing (sales tax registered dukaanon ke liye)
+
+Agar FBR aap ke karobar ko invoice report karne ka kahe (sales tax registered, FBR ne bataya ho) to app har sale ka bill khud FBR ko bhej kar bill par FBR number aur us ka QR code chhaap sakti hai.
+
+1. Yaqeen kar lein ke **Tax registration** mein aap ka **NTN** aur **STRN** likha hai.
+2. IRIS (FBR ka portal) se **Digital Invoicing security token** lein (pehle sandbox / test wala).
+3. **Mazeed → Dukaan ki settings → FBR Digital Invoicing** kholein, token lagayein, **Sandbox (test)** chunein aur **Save** dabayein.
+4. **FBR se test karein** dabayein. Jab likha aaye ke FBR ne test bill maan liya, to **Bill FBR ko bhejein** on karein aur Save karein.
+5. Chand bill theek jaane ke baad production token ke saath **Production (asal)** par jayein.
+
+Is ke baad har sale foran FBR ko jati hai. Internet ya FBR band ho to bill intezar karta hai aur baad mein khud chala jata hai. Bill ke safhe par **FBR number**, **Baqi**, ya **FBR ne ye bill radd kiya** wajah ke saath aur **Dobara bhejein** ka button aata hai.
+
+> **Zaroori:** Token server par taale mein rehta hai aur dobara kabhi nahi dikhta. Isi card mein mobile, doosri devices aur items ki sale ki qism aur HS code apne tax advisor se pakke karwa lein.
 
 ## 24. Bulk Excel import aur export
 

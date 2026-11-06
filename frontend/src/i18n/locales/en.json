@@ -422,7 +422,10 @@
     "keptAmount": "Amount kept",
     "returnDone": "Return saved",
     "selectLines": "Select items to return",
-    "minPrice": "Min"
+    "minPrice": "Min",
+    "cashGiven": "Cash given by the customer",
+    "change": "Change to give back",
+    "cashShort": "Less than the bill"
   },
   "pay": {
     "title": "Payment",
@@ -551,7 +554,8 @@
     "codeWordHint": "Ten different letters; digit n is the n-th letter, so only you can read the buying price on a sticker",
     "codeWordLabel": "Code word (10 letters)",
     "codeWordBad": "Exactly 10 different letters",
-    "codeWordExample": "Example"
+    "codeWordExample": "Example",
+    "phonesTaxAtImport": "Phones: sales tax paid at import (no tax on the bill)"
   },
   "expense": {
     "title": "Expenses",
@@ -5842,6 +5846,11 @@
         "title": "Reason",
         "body": "Why it came back. It is saved with the return and in the phone's history.",
         "example": "\"Speaker not working after 2 days.\""
+      },
+      "cashGiven": {
+        "title": "Cash given",
+        "body": "Type the cash the customer handed over. The screen and the printed bill show the change to give back. Leave it empty if you do not need it.",
+        "example": "Bill Rs. 41,180, the customer gives Rs. 42,000 → change Rs. 820."
       }
     },
     "exchange": {
@@ -6234,6 +6243,11 @@
         "title": "Grades of used units",
         "body": "The condition grades you pick from when you buy a used phone, tablet or watch, separated by commas. They show on stock and stickers.",
         "example": "\"a, b, refurbished, copy\" → a clean used Samsung A15 is graded \"a\", a scratched one \"b\"."
+      },
+      "phonesTaxAtImport": {
+        "title": "Phones: tax paid at import",
+        "body": "Mobile phones are in the Ninth Schedule of the Sales Tax Act: the importer or maker pays the sales tax, and no sales tax is added when a shop sells the phone. On, a taxed bill adds tax only to accessories and other items, and the bill says why the phone line has none. Off, every line takes the bill's rate (as before).",
+        "example": "A taxed bill: phone Rs. 40,000 + charger Rs. 1,000 at 18% → tax Rs. 180 (on the charger only)."
       }
     },
     "biz": {
@@ -7501,6 +7515,53 @@
         "title": "Status link for the customer",
         "body": "A private link for this job only. The customer sees the steps (received, checked, being repaired, ready, delivered) with dates, the ready-by day, the bill and what is left to pay. They never see their phone number, the full IMEI, the screen lock, the lab's name or your cost. A changed link does not open.",
         "example": "Usman asks on WhatsApp \"is my phone ready?\" → send him the link once; he checks it himself after that."
+      }
+    },
+    "fbr": {
+      "what": {
+        "title": "FBR Digital Invoicing",
+        "body": "FBR's system (run by PRAL) that receives every sales-tax invoice the moment it is made and gives it an FBR number. A shop that must report (sales-tax registered, notified by FBR) switches it on here. Each bill then goes to FBR by itself; the printed bill shows the FBR number and its QR code.",
+        "example": "Bill INV-000120 is made → FBR returns 7000007DI1747119701593 → the bill prints it with a QR."
+      },
+      "enabled": {
+        "title": "Send bills to FBR",
+        "body": "On: every sale bill is queued and sent to FBR; if the internet or FBR is down it waits and is sent by itself later. Off: nothing is sent and bills print as before.",
+        "example": "Internet off at 5 pm, three bills made → they go to FBR when the internet is back."
+      },
+      "env": {
+        "title": "Sandbox or production",
+        "body": "Sandbox is FBR's test system: use it with the test token while checking. Production is the real one: switch to it only with the production token from IRIS.",
+        "example": "First week: Sandbox and Test with FBR; when it passes, Production."
+      },
+      "token": {
+        "title": "FBR security token",
+        "body": "The long key FBR gives in IRIS for Digital Invoicing (valid for years). It is stored locked on the server and never shown again, not even to you; type a new one to replace it.",
+        "example": "IRIS → Digital Invoicing → copy the token → paste it here → Save."
+      },
+      "saleType": {
+        "title": "Sale type",
+        "body": "How FBR treats the goods on this line, in FBR's own words. Phones: \"Mobile Phones\" (Ninth Schedule). Accessories: usually \"Goods at standard rate (default)\". Ask your tax adviser before changing.",
+        "example": "Phones → Mobile Phones; chargers → Goods at standard rate (default)."
+      },
+      "hs": {
+        "title": "HS code",
+        "body": "The customs / PCT code of the goods that FBR asks for on every line. The defaults are common codes; your tax adviser confirms the right ones.",
+        "example": "Mobile phones 8517.1300."
+      },
+      "test": {
+        "title": "Test with FBR",
+        "body": "Sends a made-up bill to FBR's test check (nothing is recorded at FBR). It tells you if the token is right and FBR accepts the shop's details.",
+        "example": "Test → \"FBR accepted the test bill\": you can switch sending on."
+      },
+      "status": {
+        "title": "Bills and FBR",
+        "body": "Sent: FBR gave its number. Waiting: not reached FBR yet (tried again every minute). Turned down: FBR read it and said no — fix the reason it shows (for example an HS code) and press Send again.",
+        "example": "Turned down: \"Invalid HS code\" → fix the HS code above → Send again."
+      },
+      "billSent": {
+        "title": "FBR number",
+        "body": "The number FBR gave this bill. The printed bill shows it with its QR code; a customer can check it with FBR.",
+        "example": "7000007DI1747119701593"
       }
     }
   },
@@ -9737,5 +9798,34 @@
     "warranty": "Repair warranty: {{n}} days",
     "call": "Call the shop",
     "footer": "This page updates as the shop works on your phone."
+  },
+  "fbr": {
+    "title": "FBR Digital Invoicing",
+    "hint": "Send every sale bill to FBR and print its FBR number and QR code",
+    "needNtn": "Add the shop's NTN under Tax registration first.",
+    "enabled": "Send bills to FBR",
+    "enabledHint": "Off: nothing goes to FBR (as before)",
+    "env": "Where to send",
+    "sandbox": "Sandbox (test)",
+    "production": "Production (live)",
+    "token": "FBR security token",
+    "tokenSaved": "saved — type a new one to replace it",
+    "kind": {
+      "phone": "Phones — sale type",
+      "device": "Tablets / watches — sale type",
+      "item": "Accessories / items — sale type"
+    },
+    "hs": "HS code",
+    "test": "Test with FBR (sandbox)",
+    "testOk": "FBR accepted the test bill. The token and the format are right.",
+    "testBad": "FBR said no",
+    "sent": "Sent",
+    "waiting": "Waiting",
+    "rejected": "Turned down",
+    "sendAgain": "Send again",
+    "sendNow": "Send the waiting bills now",
+    "billSent": "FBR number",
+    "billRejected": "FBR turned this bill down",
+    "billWaiting": "Waiting to reach FBR — it is sent by itself when FBR answers"
   }
 }

@@ -659,6 +659,20 @@ Right above the print buttons there is **Document language** with **English** an
 
 > **Important:** A finished bill's amounts cannot be edited by anyone. If something was wrong, take the phone back with **Return** and make a new bill. Both stay on record, so the hisaab is always honest.
 
+### Tax bills, cash given and change
+
+Every bill now shows, below the total, the **amount in words** (for example "Rupees Forty-One Thousand Seven Hundred Seventy Only"), the **cashier** who made it and the **time**.
+
+**Cash given and change.** When the customer pays cash, type what they handed over in **Cash given by the customer**. The screen shows the change to give back, and the printed bill shows **Cash given** and **Change**. Leave it empty if you do not need it.
+
+**Tax bills.** When you tick **Add tax to this bill**, the printed bill shows **Total excl. tax**, one line for each tax rate (for example "Tax 18% on 1,500") and **Total tax**, like an FBR tax invoice.
+
+**Phones and sales tax.** Mobile phones are in the Ninth Schedule: the importer pays their sales tax, and the shop adds none. Turn on **More → Settings → Phones: sales tax paid at import** and a taxed bill adds tax only to chargers, covers and other items. The phone line says "Mobile phones — sales tax paid at import (Ninth Schedule)".
+
+**Example:** phone Rs. 40,000 + charger Rs. 1,500 at 18% → tax Rs. 270, total Rs. 41,770. The customer gives Rs. 42,000 → change Rs. 230.
+
+> **Note:** Sending bills to FBR live (the FBR number and QR code) is the next step and needs the shop's FBR registration.
+
 ## 9. Returns
 
 Sometimes a customer brings a phone back: it has a fault, it is not what he wanted, or he simply changed his mind. The **Return** screen takes the phone back into your stock, works out how much you give back and how much the shop keeps, and writes everything on the record. Nothing is deleted: the original bill stays, and the return is added next to it with its own number (for example **RET-000001**).
@@ -2081,6 +2095,20 @@ Messages to customers (receipts, reminders) use the shop's language from **Langu
 - **Dark / Light**: tap **Dark** (or **Light**) at the top. More → **Appearance** also has **System**.
 - **Look**: More → **Look** gives four styles: **Modern**, **Professional**, **Navy** and **Colorful**.
 - Every screen has small **?** buttons. Tap one for a short explanation with an example; each explanation has its own English / Urdu / Roman switch.
+
+### FBR Digital Invoicing (for shops registered for sales tax)
+
+If FBR asks your business to report its invoices (sales-tax registered, notified by FBR), the app can send every sale bill to FBR by itself and print the FBR number and its QR code on the bill.
+
+1. Make sure your **NTN** and **STRN** are filled in under **Tax registration**.
+2. In IRIS (FBR's portal) get the **Digital Invoicing security token** (first the sandbox / test token).
+3. Open **More → Shop settings → FBR Digital Invoicing**, paste the token, choose **Sandbox (test)** and tap **Save**.
+4. Tap **Test with FBR**. When it says FBR accepted the test bill, turn on **Send bills to FBR** and **Save**.
+5. After a few good bills, switch to **Production (live)** with the production token.
+
+From then on, every sale goes to FBR right away. If the internet or FBR is down, the bill waits and goes by itself later. The bill page shows **FBR number**, **Waiting**, or **FBR turned this bill down** with the reason and a **Send again** button.
+
+> **Important:** The token is kept locked on the server and is never shown again. Ask your tax adviser to confirm the sale type and HS code for phones, other devices and items in the same card.
 
 ## 24. Bulk Excel import and export
 

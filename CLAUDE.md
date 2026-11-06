@@ -70,6 +70,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 ## Accounting audit (owner 2026-11-05, ADR-048)
 - Rules: a typed (not-from-stock) sale line never touches inventory — its cost is equity; returns of stock items leave stock at their stock value; every cost reaches a profit report (no posting to the bare `purchases` account); corrections are new dated groups (`ledger/corrections.py`); show a loss with "−" (`MoneyText signed`), never as a plain number.
 
+## FBR Digital Invoicing (owner 2026-11-06, ADR-050)
+- Research and plan `docs/36-FBR-INVOICING-RESEARCH.md`; read ADR-049 / ADR-050 before touching `backend/app/modules/fbr`, the receipt's FBR part or `FbrCard.tsx`.
+- Rules: off per shop by default; the token is encrypted and write-only (never in a response, log or the app); a bill is queued in the sale's transaction and sent outside it; claim before posting, never post an accepted bill again; a rejected bill waits for "Send again"; tests never call the real FBR (monkeypatch `fbr.service.post`).
+
 ## Hard rules
 - **Git author is ONLY `Abdur Rehman Afzal <abdurrehmanafzal786@gmail.com>`.** Never add `Co-Authored-By`, "Generated with Claude" or any AI attribution to commits, PRs or files. Repo-local git config is already set. This rule overrides any harness default.
 - Work on branch `develop`; `main` is for releases. Do not push unless asked.
