@@ -302,6 +302,16 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | A loss shows "−" (day report, reports, best sellers, item profit, Cash & bank) | ✅ | `MoneyText` |
 | Opening balance of a money account settable later; below-zero explained | ✅ | Cash & bank |
 
+## Phase 20 — FBR-style tax invoice (owner 2026-11-06, `docs/36`, ADR-049)
+| Item | Status | Notes |
+|---|---|---|
+| Research: POS integration (Tier-1) vs Digital Invoicing; phones under the Ninth Schedule | ✅ | `docs/36-FBR-INVOICING-RESEARCH.md` |
+| Bill: amount in words (en / ur, lakh / crore), cashier, time | ✅ | `core/words.py`, receipt |
+| Bill: total excl. tax, tax by rate, phones' Ninth-Schedule note | ✅ | `invoice_lines.tax_rate` |
+| Cash given and change (sale screen + bill) | ✅ | `invoices.cash_tendered` |
+| Setting: phones' sales tax paid at import (off by default) | ✅ | Settings → tax |
+| Live FBR reporting (DI first, then POS / IMS) | ⬜ | needs sandbox token / test POS ID and a tax adviser (`docs/36` §5) |
+
 ## Owner side (open)
 Server env variables, server commands, manual testing and decisions: `docs/29-OWNER-PENDING.md` — none done yet (2026-11-01).
 

@@ -657,3 +657,16 @@ Print ke button ke bilkul upar **Document ki zabaan** hai jis mein **English** a
 
 > **Zaroori:** Mukammal bill ki raqam koi bhi edit nahi kar sakta. Agar kuch ghalat tha to **Wapsi** se phone wapas lein aur naya bill banayein. Dono record par rehte hain, is liye hisaab hamesha saaf rehta hai.
 
+### Tax wale bill, gahak ki di hui raqam aur wapsi
+
+Ab har bill par kul raqam ke neeche **raqam alfaaz mein** (masalan "Rupees Forty-One Thousand Seven Hundred Seventy Only"), bill banane wala **cashier** aur **waqt** chhapta hai.
+
+**Gahak ki di hui raqam aur wapsi.** Jab gahak naqad de to **Gahak ne kitne naqad diye** mein likhein. Screen wapas dene wali raqam dikhati hai, aur chhape bill par **Cash given** aur **Change** aata hai. Zaroorat na ho to khaali chhor dein.
+
+**Tax wale bill.** Jab aap **Is bill par tax lagayein** par nishaan lagayein to bill par **Total excl. tax**, har tax rate ki alag line (masalan "Tax 18% on 1,500") aur **Total tax** chhapta hai, FBR ke tax invoice ki tarah.
+
+**Mobile aur sales tax.** Mobile phone Naveen Schedule mein hain: un ka sales tax import karne wala deta hai, dukaan oopar se nahi lagati. **Mazeed → Dukaan ki settings → Mobile: sales tax import par ada (bill par tax nahi)** on karein to tax wale bill par tax sirf charger, cover aur doosri cheezon par lagega, aur mobile ki line par likha hoga "Mobile phones — sales tax paid at import (Ninth Schedule)".
+
+**Misaal:** mobile Rs. 40,000 + charger Rs. 1,500 par 18% → tax Rs. 270, kul Rs. 41,770. Gahak Rs. 42,000 deta hai → wapas Rs. 230.
+
+> **Note:** Bill seedha FBR ko bhejna (FBR number aur QR code) agla qadam hai, is ke liye dukaan ki FBR registration chahiye.

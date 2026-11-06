@@ -422,7 +422,10 @@
     "keptAmount": "Amount kept",
     "returnDone": "Return saved",
     "selectLines": "Select items to return",
-    "minPrice": "Min"
+    "minPrice": "Min",
+    "cashGiven": "Cash given by the customer",
+    "change": "Change to give back",
+    "cashShort": "Less than the bill"
   },
   "pay": {
     "title": "Payment",
@@ -551,7 +554,8 @@
     "codeWordHint": "Ten different letters; digit n is the n-th letter, so only you can read the buying price on a sticker",
     "codeWordLabel": "Code word (10 letters)",
     "codeWordBad": "Exactly 10 different letters",
-    "codeWordExample": "Example"
+    "codeWordExample": "Example",
+    "phonesTaxAtImport": "Phones: sales tax paid at import (no tax on the bill)"
   },
   "expense": {
     "title": "Expenses",
@@ -5842,6 +5846,11 @@
         "title": "Reason",
         "body": "Why it came back. It is saved with the return and in the phone's history.",
         "example": "\"Speaker not working after 2 days.\""
+      },
+      "cashGiven": {
+        "title": "Cash given",
+        "body": "Type the cash the customer handed over. The screen and the printed bill show the change to give back. Leave it empty if you do not need it.",
+        "example": "Bill Rs. 41,180, the customer gives Rs. 42,000 → change Rs. 820."
       }
     },
     "exchange": {
@@ -6234,6 +6243,11 @@
         "title": "Grades of used units",
         "body": "The condition grades you pick from when you buy a used phone, tablet or watch, separated by commas. They show on stock and stickers.",
         "example": "\"a, b, refurbished, copy\" → a clean used Samsung A15 is graded \"a\", a scratched one \"b\"."
+      },
+      "phonesTaxAtImport": {
+        "title": "Phones: tax paid at import",
+        "body": "Mobile phones are in the Ninth Schedule of the Sales Tax Act: the importer or maker pays the sales tax, and no sales tax is added when a shop sells the phone. On, a taxed bill adds tax only to accessories and other items, and the bill says why the phone line has none. Off, every line takes the bill's rate (as before).",
+        "example": "A taxed bill: phone Rs. 40,000 + charger Rs. 1,000 at 18% → tax Rs. 180 (on the charger only)."
       }
     },
     "biz": {

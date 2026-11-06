@@ -83,6 +83,7 @@ class ShopSettingsOut(ShopOut):
     strn: str | None = None
     tax_rate: Decimal = Decimal(0)
     tax_inclusive: bool = True
+    phones_tax_at_import: bool = False
     receipt_footer: str | None = None
     receipt_footer_ur: str | None = None
     invoice_prefix: str = "INV"
@@ -208,6 +209,7 @@ class ShopUpdate(BaseModel):
     tax_enabled: bool | None = None
     tax_rate: float | None = Field(default=None, ge=0, le=100)
     tax_inclusive: bool | None = None
+    phones_tax_at_import: bool | None = None
     receipt_footer: str | None = None
     receipt_footer_ur: str | None = None
     invoice_prefix: str | None = Field(default=None, min_length=1, max_length=10)

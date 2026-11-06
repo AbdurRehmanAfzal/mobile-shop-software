@@ -64,6 +64,8 @@ class Invoice(UUIDPk, ShopScoped, Timestamped, Base):
         Uuid
     )  # set when the sale settles a loan (loans module)
     fbr_invoice_no: Mapped[str | None] = mapped_column(String(60))
+    # docs/36: the cash the customer handed over, when the counter typed it (change = this − paid)
+    cash_tendered: Mapped[Decimal | None] = mapped_column()
     notes: Mapped[str | None] = mapped_column(Text)
     created_by: Mapped[uuid.UUID | None] = mapped_column(
         Uuid, ForeignKey("users.id", ondelete="SET NULL")
@@ -97,6 +99,8 @@ class InvoiceLine(UUIDPk, Base):
     unit_price: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
     discount_share: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
     tax_share: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
+    # docs/36: the rate this line was taxed at (the bill prints tax by rate); None on older bills
+    tax_rate: Mapped[Decimal | None] = mapped_column()
     line_total: Mapped[Decimal] = mapped_column(
         default=ZERO, nullable=False
     )  # what the customer pays for this line

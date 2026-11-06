@@ -35,9 +35,9 @@ def test_item_gst_on_a_taxed_bill(owner, cat):
     assert inv["tax_amount"] == "1900.00" and inv["total"] == "13900.00"
     shares = sorted(ln["tax_share"] for ln in inv["lines"])
     assert shares == ["100.00", "1800.00"]
-    # the printed bill does not claim one rate
+    # the printed bill does not claim one rate: each rate on its own line (docs/36)
     page = owner.get(f"/api/v1/sales/{inv['id']}/receipt", params={"lang": "en"}).text
-    assert "(by item)" in page and "18%" not in page
+    assert "Tax 18% on 10,000" in page and "Tax 5% on 2,000" in page and "Total tax" in page
 
 
 def test_untaxed_bill_and_no_own_rate_stay_as_before(owner, cat):

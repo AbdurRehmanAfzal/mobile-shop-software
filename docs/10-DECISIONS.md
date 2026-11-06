@@ -324,3 +324,13 @@ by sheet remain a later step (docs/18 §1).
   - A customer job's lab charge is still booked to cogs when the phone comes back (ADR-044); only the audit card matches it to the bill.
   - Cash can still go below zero; the app explains it instead of blocking a sale.
 
+## ADR-049 · 2026-11-06 · Accepted · Tax-invoice details on every bill; phones taxed at import (Ninth Schedule) by a shop setting
+- **Context:** The owner's sample FBR POS receipt and `docs/36` research: mobile phones are in the Ninth Schedule (sales tax paid at import, none added on later supplies), accessories carry the standard rate, and a tax invoice shows the total excluding tax, tax by rate and the amount in words.
+- **Decision:**
+  - `shops.phones_tax_at_import` (off by default, so existing shops' bills do not change): on, a taxed bill puts rate 0 on phone lines (`category == "phone"`) and prints why. The screen's `billTax` mirrors the server exactly (a per-phone rate).
+  - `invoice_lines.tax_rate` stores each line's rate. On a taxed bill the receipt prints "Total excl. tax", one "Tax r% on base" line per rate, the phones' Ninth-Schedule note and "Total tax". Older bills (no stored rates) print as before.
+  - `invoices.cash_tendered` (optional, must be ≥ paid) prints "Cash given" and "Change".
+  - Every bill prints the cashier, the time, and the amount in words (`core/words.py`: lakh / crore, English and Urdu).
+  - Migration `d8f0b2c4e6a9` is additive.
+- **Next:** live FBR reporting (POS / IMS or Digital Invoicing) as in `docs/36` §4, once the owner provides sandbox credentials and a tax adviser confirms rates and PCT codes.
+

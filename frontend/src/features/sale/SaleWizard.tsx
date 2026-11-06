@@ -76,10 +76,11 @@ const r2 = (x: number) => Math.round((x + Number.EPSILON) * 100) / 100
  *  — when an item carries its own GST % — each line at its rate after its share of the discount
  *  (the remainder of the discount on the last line). Must match, or a walk-in's full payment would
  *  differ from the bill by a paisa. */
-export function billTax(phonePrices: number[], misc: { qty: string; unit_price: string; tax_rate?: string | null }[], discount: number, rate: number): number {
+export function billTax(phonePrices: number[], misc: { qty: string; unit_price: string; tax_rate?: string | null }[], discount: number, rate: number, phoneRates?: (number | null)[]): number {
   if (rate <= 0) return 0
   const amounts = [...phonePrices, ...misc.map((m) => r2(Number(m.qty || 0) * Number(m.unit_price || 0)))]
-  const rates = [...phonePrices.map(() => rate), ...misc.map((m) => (m.tax_rate != null && m.tax_rate !== '' ? Number(m.tax_rate) : rate))]
+  // docs/36: a phone line may carry its own rate — 0 when the shop's phones are taxed at import
+  const rates = [...phonePrices.map((_, i) => phoneRates?.[i] ?? rate), ...misc.map((m) => (m.tax_rate != null && m.tax_rate !== '' ? Number(m.tax_rate) : rate))]
   const total = amounts.reduce((s, a) => s + a, 0)
   const base = r2(Math.max(0, total - discount))
   if (rates.every((r) => r === rate)) return r2((base * rate) / 100)
@@ -111,6 +112,8 @@ export default function SaleWizard() {
   const { data: itemOpts } = useGet<{ allow_negative_stock: boolean }>(['item-options'], has('accessories') ? '/api/v1/accessories/options' : null)
   const negativeOk = !!itemOpts?.allow_negative_stock
   const [paidNow, setPaidNow] = useDraft('sale.paidNow', '')
+  // docs/36: the cash the customer hands over, for the change on the bill (optional)
+  const [cashGiven, setCashGiven] = useDraft('sale.cashGiven', '')
   const [dueDate, setDueDate] = useDraft('sale.dueDate', '')
   const [overrideReason, setOverrideReason] = useDraft('sale.overrideReason', '')
   const [lossOk, setLossOk] = useDraft('sale.lossOk', false)
@@ -120,7 +123,7 @@ export default function SaleWizard() {
   // owner 2026-10-28: tax only when the shopkeeper ticks it; the rate starts at the shop's setting
   const [taxOn, setTaxOn] = useDraft('sale.taxOn', false)
   const [taxRate, setTaxRate] = useDraft('sale.taxRate', '')
-  const { data: shopSet } = useGet<{ tax_rate: string }>(['shop-full'], '/api/v1/shops/current')
+  const { data: shopSet } = useGet<{ tax_rate: string; phones_tax_at_import?: boolean }>(['shop-full'], '/api/v1/shops/current')
   const rateShown = taxRate !== '' ? taxRate : String(Number(shopSet?.tax_rate) || 18)
   const [result, setResult] = useState<Invoice | null>(null)
   const [confirming, setConfirming] = useState(false)
@@ -144,7 +147,8 @@ export default function SaleWizard() {
 
   const subtotal = lines.reduce((s, l) => s + Number(l.price || 0), 0) + misc.reduce((s, x) => s + Number(x.qty || 0) * Number(x.unit_price || 0), 0)
   const base = Math.max(0, subtotal - Number(discount || 0))
-  const taxAmount = taxOn ? billTax(lines.map((l) => Number(l.price || 0)), misc, Number(discount || 0), Number(rateShown || 0)) : 0
+  const phoneRates = lines.map((l) => (shopSet?.phones_tax_at_import && (l.device.category ?? 'phone') === 'phone' ? 0 : null))
+  const taxAmount = taxOn ? billTax(lines.map((l) => Number(l.price || 0)), misc, Number(discount || 0), Number(rateShown || 0), phoneRates) : 0
   const total = Math.round((base + taxAmount) * 100) / 100
   const udhaar = pay.method === 'udhaar' || inst.on
   // a remittance may cover only part of the bill: the rest goes on the customer's khata
@@ -223,7 +227,7 @@ export default function SaleWizard() {
   })
 
   function resetCart() {
-    setLines([]); setMisc([]); setParty(null); setPaidNow(''); setDiscount(''); setPay(newPay()); setTaxOn(false); setTaxRate(''); setMore(false); setOverrideReason(''); setLossOk(false); setInst({ on: false, months: '6', monthly: '', dueDay: '10', firstDue: '', gName: '', gPhone: '', gCnic: '' })
+    setLines([]); setMisc([]); setParty(null); setPaidNow(''); setCashGiven(''); setDiscount(''); setPay(newPay()); setTaxOn(false); setTaxRate(''); setMore(false); setOverrideReason(''); setLossOk(false); setInst({ on: false, months: '6', monthly: '', dueDay: '10', firstDue: '', gName: '', gPhone: '', gCnic: '' })
   }
 
   async function holdSale() {
@@ -261,6 +265,7 @@ export default function SaleWizard() {
       discount: Number(discount || 0),
       tax_rate: taxOn ? Number(rateShown || 0) : 0,
       paid,
+      cash_tendered: pay.method === 'cash' && cashGiven !== '' && Number(cashGiven) >= paid ? Number(cashGiven) : undefined,
       payment: inst.on && pay.method === 'udhaar' ? undefined : payInfo(pay),
       override_reason: overrideReason || undefined,
       below_cost_ok: lossLine && lossOk,
@@ -469,6 +474,18 @@ export default function SaleWizard() {
                 <CnicInput label="inst.gCnic" help={<Help term="sale.inst.gCnic" size="sm" />} value={inst.gCnic} onChange={(gCnic) => setI({ gCnic })} />
               </div>
               {!instOk && party ? <BiAlert text="inst.badPlan" /> : null}
+            </div>
+          ) : null}
+
+          {pay.method === 'cash' && !udhaar && total > 0 ? (
+            <div className="flex items-end gap-3" data-testid="cash-given">
+              <div className="min-w-0 flex-1"><BiInput label="sale.cashGiven" help={<Help term="sale.cashGiven" size="sm" />} type="number" inputMode="numeric" min={0} value={cashGiven} onChange={(e) => setCashGiven(e.target.value)} className="num" /></div>
+              {cashGiven !== '' && Number(cashGiven) >= paid ? (
+                <div className="flex flex-col items-end pb-2">
+                  <BiLabel text="sale.change" size="sm" tone="text-muted" />
+                  <span className="num text-xl font-bold text-emerald-deep" dir="ltr" data-testid="change">{withCur((Number(cashGiven) - paid).toLocaleString('en-US'))}</span>
+                </div>
+              ) : cashGiven !== '' ? <BiLabel text="sale.cashShort" size="sm" tone="text-payable" /> : null}
             </div>
           ) : null}
 

@@ -98,6 +98,13 @@ say if you want a retake with a profitable day. How to edit and rebuild: `docs/m
 2. More → Branch transfers lists it in both shops.
 3. Reports → Balance is still balanced in both shops.
 
+**Tax invoice details** (2026-11-06):
+1. More → Settings → turn on **Phones: sales tax paid at import** (if you sell phones with tax bills).
+2. Sell a phone and a charger with **Add tax to this bill** ticked: tax only on the charger.
+3. Type **Cash given by the customer**: the change shows. Print the bill: it shows total excl. tax, tax by rate, the phones' note, cash given / change, the cashier, the time and the amount in words.
+
+**FBR live reporting (decision / credentials):** see `docs/36-FBR-INVOICING-RESEARCH.md` §5. That needs a test business's NTN + STRN with IRIS access (DI sandbox token or a test POS ID), plus a tax adviser's confirmation.
+
 **Accounts after the audit** (2026-11-05):
 1. More → Cash & bank. If the galla shows a red note, tap **Set the opening balance** and type the cash that was in it on the first day.
 2. Reports → Balance: both sheets say "Balanced", and "Stock at cost" is not below zero.

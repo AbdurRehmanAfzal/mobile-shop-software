@@ -27,6 +27,7 @@ interface ShopFull {
   strn: string | null
   tax_rate: string
   tax_inclusive: boolean
+  phones_tax_at_import?: boolean
   receipt_footer: string | null
   receipt_footer_ur: string | null
   invoice_prefix: string
@@ -42,7 +43,7 @@ interface AuditPrefs { age_bands: number[]; high_value: number; low_margin_pct: 
 const DEFAULT_AUDIT_PREFS: AuditPrefs = { age_bands: [15, 30, 60, 90], high_value: 50000, low_margin_pct: 5, top_share: 20, low_units: 1, bypass_share: 50, bypass_min: 3 }
 type Rule = 'allow' | 'manager' | 'pin'
 
-type Form = { name: string; city: string; phone: string; default_locale: 'en' | 'ur'; tax_enabled: boolean; tax_rate: string; tax_inclusive: boolean; ntn: string; strn: string; receipt_footer: string; receipt_footer_ur: string; invoice_prefix: string; fingerprint_staff: boolean }
+type Form = { name: string; city: string; phone: string; default_locale: 'en' | 'ur'; tax_enabled: boolean; tax_rate: string; tax_inclusive: boolean; phones_tax_at_import: boolean; ntn: string; strn: string; receipt_footer: string; receipt_footer_ur: string; invoice_prefix: string; fingerprint_staff: boolean }
 
 /** `help`: a key under `help.` — the "?" beside the card title (docs/33) */
 function Card({ icon, tone, title, hint, help, children }: { icon: ReactNode; tone: string; title: string; hint?: string; help?: string; children: ReactNode }) {
@@ -92,7 +93,7 @@ export default function SettingsPage() {
     if (data)
       setF({
         name: data.name, city: data.city ?? '', phone: data.phone ?? '', default_locale: data.default_locale,
-        tax_enabled: data.tax_enabled, tax_rate: Number(data.tax_rate) ? String(Number(data.tax_rate)) : '', tax_inclusive: data.tax_inclusive,
+        tax_enabled: data.tax_enabled, tax_rate: Number(data.tax_rate) ? String(Number(data.tax_rate)) : '', tax_inclusive: data.tax_inclusive, phones_tax_at_import: !!data.phones_tax_at_import,
         ntn: data.ntn ?? '', strn: data.strn ?? '', receipt_footer: data.receipt_footer ?? '', receipt_footer_ur: data.receipt_footer_ur ?? '', invoice_prefix: data.invoice_prefix ?? 'INV', fingerprint_staff: !!data.fingerprint_staff,
       })
   }, [data])
@@ -106,17 +107,17 @@ export default function SettingsPage() {
   })
   if (!f) return <><PageHeader title="settings.title" /><Loading /></>
   const set = (k: keyof Form) => (e: { target: { value: string } }) => { setSaved(false); setF({ ...f, [k]: e.target.value }) }
-  const flag = (k: 'tax_enabled' | 'tax_inclusive' | 'fingerprint_staff') => (v: boolean) => { setSaved(false); setF({ ...f, [k]: v }) }
+  const flag = (k: 'tax_enabled' | 'tax_inclusive' | 'phones_tax_at_import' | 'fingerprint_staff') => (v: boolean) => { setSaved(false); setF({ ...f, [k]: v }) }
   const dirty = !!data && JSON.stringify(f) !== JSON.stringify({
     name: data.name, city: data.city ?? '', phone: data.phone ?? '', default_locale: data.default_locale,
-    tax_enabled: data.tax_enabled, tax_rate: Number(data.tax_rate) ? String(Number(data.tax_rate)) : '', tax_inclusive: data.tax_inclusive,
+    tax_enabled: data.tax_enabled, tax_rate: Number(data.tax_rate) ? String(Number(data.tax_rate)) : '', tax_inclusive: data.tax_inclusive, phones_tax_at_import: !!data.phones_tax_at_import,
     ntn: data.ntn ?? '', strn: data.strn ?? '', receipt_footer: data.receipt_footer ?? '', receipt_footer_ur: data.receipt_footer_ur ?? '', invoice_prefix: data.invoice_prefix ?? 'INV', fingerprint_staff: !!data.fingerprint_staff,
   })
 
   function submit() {
     m.mutate({
       name: f!.name, name_ur: null, city: f!.city || null, phone: f!.phone || null, default_locale: f!.default_locale,
-      tax_enabled: f!.tax_enabled, tax_inclusive: f!.tax_inclusive, tax_rate: Number(f!.tax_rate || 0),
+      tax_enabled: f!.tax_enabled, tax_inclusive: f!.tax_inclusive, tax_rate: Number(f!.tax_rate || 0), phones_tax_at_import: f!.phones_tax_at_import,
       receipt_footer: f!.receipt_footer || null, receipt_footer_ur: f!.receipt_footer_ur || null,
       invoice_prefix: f!.invoice_prefix || 'INV',
       fingerprint_staff: f!.fingerprint_staff,
@@ -152,6 +153,8 @@ export default function SettingsPage() {
             <Toggle on={f.tax_inclusive} onChange={flag('tax_inclusive')} text="settings.taxInclusive" help="settings.taxInclusive" />
           </>
         ) : null}
+        {/* docs/36: phones are in the Ninth Schedule — the tax was paid at import, none on the bill */}
+        <Toggle on={f.phones_tax_at_import} onChange={flag('phones_tax_at_import')} text="settings.phonesTaxAtImport" help="settings.phonesTaxAtImport" />
       </Card>
 
       <Card icon={<Receipt size={22} />} tone="bg-buy text-buy-fg" title="sale.receipt" hint="settings.receiptHint" help="settings.receipt">

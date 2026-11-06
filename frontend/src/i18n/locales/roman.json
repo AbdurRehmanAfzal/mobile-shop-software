@@ -422,7 +422,10 @@
     "keptAmount": "Rakhi gayi raqam",
     "returnDone": "Wapsi mehfooz",
     "selectLines": "Wapas hone wala saamaan chunein",
-    "minPrice": "Min"
+    "minPrice": "Min",
+    "cashGiven": "Gahak ne kitne naqad diye",
+    "change": "Wapas dene hain",
+    "cashShort": "Bill se kam"
   },
   "pay": {
     "title": "Paise",
@@ -551,7 +554,8 @@
     "codeWordHint": "Das mukhtalif harf; hindsa n = n-wan harf, taake khareed qeemat sirf aap parh sakein",
     "codeWordLabel": "Code lafz (10 harf)",
     "codeWordBad": "Bilkul 10 mukhtalif harf",
-    "codeWordExample": "Misaal"
+    "codeWordExample": "Misaal",
+    "phonesTaxAtImport": "Mobile: sales tax import par ada (bill par tax nahi)"
   },
   "expense": {
     "title": "Kharche",
@@ -5842,6 +5846,11 @@
         "title": "Wajah",
         "body": "Yeh kyun wapis aaya. Yeh wapsi ke saath aur phone ki history mein mehfooz hoti hai.",
         "example": "\"2 din baad speaker ne kaam chhor diya.\""
+      },
+      "cashGiven": {
+        "title": "Gahak ne naqad diye",
+        "body": "Gahak ne jitni naqad raqam di woh likhein. Screen aur chhapa hua bill wapas dene wali raqam dikhate hain. Zaroorat na ho to khaali chhor dein.",
+        "example": "Bill Rs. 41,180, gahak Rs. 42,000 deta hai → wapas Rs. 820."
       }
     },
     "exchange": {
@@ -6234,6 +6243,11 @@
         "title": "Purane unit ke grade",
         "body": "Purana phone, tablet ya ghari khareedte waqt chunne ke liye haalat ke grade, comma se alag. Stock aur sticker par dikhte hain.",
         "example": "\"a, b, refurbished, copy\" → saaf purana Samsung A15 grade \"a\", kharash wala \"b\"."
+      },
+      "phonesTaxAtImport": {
+        "title": "Mobile: tax import par ada",
+        "body": "Mobile phone Sales Tax Act ke Naveen Schedule mein hain: sales tax import karne ya banane wala deta hai, dukaan ke bechne par sales tax nahi lagta. On ho to tax wale bill par tax sirf accessories aur doosri cheezon par lagta hai, aur bill likhta hai ke mobile par kyun nahi. Band ho to har line par bill ki rate lagti hai (pehle ki tarah).",
+        "example": "Tax wala bill: mobile Rs. 40,000 + charger Rs. 1,000 par 18% → tax Rs. 180 (sirf charger par)."
       }
     },
     "biz": {

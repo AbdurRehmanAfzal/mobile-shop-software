@@ -659,6 +659,20 @@ Right above the print buttons there is **Document language** with **English** an
 
 > **Important:** A finished bill's amounts cannot be edited by anyone. If something was wrong, take the phone back with **Return** and make a new bill. Both stay on record, so the hisaab is always honest.
 
+### Tax bills, cash given and change
+
+Every bill now shows, below the total, the **amount in words** (for example "Rupees Forty-One Thousand Seven Hundred Seventy Only"), the **cashier** who made it and the **time**.
+
+**Cash given and change.** When the customer pays cash, type what they handed over in **Cash given by the customer**. The screen shows the change to give back, and the printed bill shows **Cash given** and **Change**. Leave it empty if you do not need it.
+
+**Tax bills.** When you tick **Add tax to this bill**, the printed bill shows **Total excl. tax**, one line for each tax rate (for example "Tax 18% on 1,500") and **Total tax**, like an FBR tax invoice.
+
+**Phones and sales tax.** Mobile phones are in the Ninth Schedule: the importer pays their sales tax, and the shop adds none. Turn on **More → Settings → Phones: sales tax paid at import** and a taxed bill adds tax only to chargers, covers and other items. The phone line says "Mobile phones — sales tax paid at import (Ninth Schedule)".
+
+**Example:** phone Rs. 40,000 + charger Rs. 1,500 at 18% → tax Rs. 270, total Rs. 41,770. The customer gives Rs. 42,000 → change Rs. 230.
+
+> **Note:** Sending bills to FBR live (the FBR number and QR code) is the next step and needs the shop's FBR registration.
+
 ## 9. Returns
 
 Sometimes a customer brings a phone back: it has a fault, it is not what he wanted, or he simply changed his mind. The **Return** screen takes the phone back into your stock, works out how much you give back and how much the shop keeps, and writes everything on the record. Nothing is deleted: the original bill stays, and the return is added next to it with its own number (for example **RET-000001**).
