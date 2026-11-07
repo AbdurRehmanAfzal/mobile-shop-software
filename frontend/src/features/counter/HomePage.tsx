@@ -4,7 +4,7 @@
  *  reports. Every card that opens something still says "See details ›" (owner: users did not know
  *  the cards could be tapped). */
 
-import { AlertTriangle, ArrowDownLeft, ArrowUpRight, Boxes, ChevronLeft, ChevronRight, HandCoins, Landmark, PiggyBank, Receipt, ScanLine, Search, ShieldAlert, Smartphone, Tag, TrendingUp, Wallet, Wrench } from 'lucide-react'
+import { AlertTriangle, ArrowDownLeft, ArrowUpRight, Boxes, ChevronLeft, ChevronRight, HandCoins, Landmark, Palette, PiggyBank, Receipt, ScanLine, Search, ShieldAlert, Smartphone, Tag, TrendingUp, Wallet, Wrench } from 'lucide-react'
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
@@ -23,6 +23,7 @@ import { Bot } from 'lucide-react'
 import PeriodPicker, { periodOf, periodQuery, type Period } from './PeriodPicker'
 import { JOBS, type Job } from './jobs'
 import { useModules } from '@/lib/modules'
+import { useLayout, type Layout } from '@/lib/theme'
 
 interface Dash {
   cash_in_hand?: string
@@ -59,6 +60,7 @@ export default function HomePage() {
   const { data: rep } = useGet<DayReport>(['day', period.from, period.to], `/api/v1/reports/day?${periodQuery(period)}`)
   const worth = dash ? dash.stock_value_cost ?? dash.stock_value_asking : null
   const has = useModules()
+  const layout = useLayout()
   const [big, small] = [JOBS.slice(0, 2), JOBS.slice(2).filter((j) => !j.module || has(j.module))]
   const firstName = (me?.user.name ?? '').trim().split(/\s+/)[0]
   const hisaab = `/hisaab?from=${period.from}&to=${period.to}`
@@ -81,6 +83,9 @@ export default function HomePage() {
             {pick(`home.greet.${greeting()}`)}{firstName ? `${ur ? '، ' : ', '}${firstName}` : ''}
           </span>
           <Help term="counter.home" />
+          <Link to="/more/appearance" aria-label={pick('look.title')} className={`tap ms-auto inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-full border border-line bg-surface px-3 font-bold text-ink ${ur ? cls('sm') : 'text-[13px]'}`} data-testid="home-appearance">
+            <Palette size={16} className="text-emerald" /> <span className="max-[379px]:hidden">{pick('look.title')}</span>
+          </Link>
         </span>
         <span className={`text-muted ${ur ? cls('sm') : 'text-sm font-medium'}`}>{pick('home.sub')}</span>
       </div>
@@ -98,8 +103,8 @@ export default function HomePage() {
 
       {/* fast actions first (owner's user test): sell, add stock, then the rest */}
       <div className="grid grid-cols-2 gap-2.5 lg:hidden">
-        {big.map((j) => (
-          <Link key={j.id} to={j.to} className={`tap flex min-h-[92px] items-center gap-3 rounded-3xl p-3 max-[360px]:flex-col max-[360px]:items-start ${j.tone}`}>
+        {big.map((j, i) => (
+          <Link key={j.id} to={j.to} className={`tap flex min-h-[92px] items-center gap-3 rounded-3xl p-3 max-[360px]:flex-col max-[360px]:items-start ${layout === 'bold' ? (i === 0 ? 'bg-emerald text-white shadow-cta' : 'bg-hero text-hero-text shadow-hero') : j.tone}`}>
             <span className={`well h-12 w-12 shrink-0 bg-surface ${j.ink}`}><j.Icon size={24} strokeWidth={1.9} /></span>
             <span className="flex min-w-0 flex-col">
               <span className="flex items-center gap-1"><BiLabel text={j.label} size="lg" bold tone="text-current" />{JOB_HELP[j.id] ? <span className="[&_button]:text-current"><Help term={JOB_HELP[j.id]!.helpKey} size="sm" /></span> : null}</span>
@@ -109,30 +114,22 @@ export default function HomePage() {
           </Link>
         ))}
       </div>
-      <div className="flex flex-wrap gap-2 lg:hidden" data-testid="fast-actions">
-        {small.map((j) => (
-          <Link key={j.id} to={j.to} className="tap flex shrink-0 items-center gap-2 rounded-full border border-line bg-surface py-2 pe-4 ps-2">
-            <span className={`well h-8 w-8 rounded-full ${ACCENT[j.id] ?? j.tone}`}><j.Icon size={16} strokeWidth={2.2} /></span>
-            <span className={`whitespace-nowrap font-bold text-ink ${ur ? cls('sm') : 'text-[13px]'}`}>{pick(j.label)}</span>
-          </Link>
-        ))}
-        <span className="flex items-center"><Help term="counter.otherJobs" size="sm" /></span>
-      </div>
+      <OtherJobs jobs={small} layout={layout} />
 
       {/* at a glance: the period's numbers and two charts (owner / manager) */}
       <section className="flex flex-col gap-2.5">
         <SectionTitle text="home.glance" help="counter.glanceAll" to={manager && has('reports') ? `/audit?${glanceQuery}` : hisaab} />
         <PeriodPicker value={period} onChange={setPeriod} size="sm" />
-        <div className="grid grid-cols-2 gap-2 lg:grid-cols-4" data-testid="glance">
-          <Glance to={hisaab} help="counter.glance.sales" icon={<Tag size={16} />} tone="bg-sell text-sell-fg" label="home.sales" value={rep?.sales_total} sub={pick('home.phonesSold').replace('{{n}}', String(rep?.phones_sold ?? 0))} />
-          {manager ? <Glance to={`/audit/finance?${glanceQuery}`} help="counter.glance.profit" icon={<PiggyBank size={16} />} tone="bg-ink text-ground" label="home.profit" value={rep?.profit} neg={Number(rep?.profit ?? 0) < 0} sub={glance ? `${pick('audit.vsPrevious')} ${fmt(glance.previous.net_profit)}` : undefined} /> : null}
-          <Glance to={hisaab} help="inHand" icon={<Wallet size={16} />} tone="bg-emerald-tint text-emerald-deep" label="counter.inHand" value={rep?.cash_net} neg={cashNeg} sub={glance ? `${pick('audit.moneyIn')} ${fmt(glance.money.inflows)} · ${pick('audit.moneyOut')} ${fmt(glance.money.outflows)}` : undefined} />
-          <Glance to="/more/cash" help="counter.glance.cashBank" icon={<Landmark size={16} />} tone="bg-khata text-khata-fg" label="audit.cashBank" value={dash?.cash_in_hand} neg={Number(dash?.cash_in_hand ?? 0) < 0} sub={pick('audit.now')} />
-          <Glance to="/khata?f=get" help="counter.glance.toGet" icon={<ArrowDownLeft size={16} />} tone="bg-receivable-tint text-receivable" label="counter.toGet" value={dash?.receivable} sub={glance ? `${pick('audit.receivedInPeriod')} ${fmt(glance.debt.received_in_period)}` : undefined} />
-          <Glance to="/khata?f=give" help="counter.glance.toGive" icon={<ArrowUpRight size={16} />} tone="bg-payable-tint text-payable" label="counter.toGive" value={dash?.payable} />
-          <Glance to="/stock/summary" help="counter.glance.inStock" icon={<Smartphone size={16} />} tone="bg-stockt text-stockt-fg" label="home.inStock" value={dash?.stock_count} plain sub={worth ? `${pick('home.worth')} ${fmt(worth)}` : undefined} />
-          <Glance to="/expenses" help="counter.glance.expenses" icon={<Receipt size={16} />} tone="bg-expense text-expense-fg" label="home.expenses" value={rep?.expenses} />
-        </div>
+        <GlanceSet layout={layout} items={[
+          { id: 'sales', to: hisaab, help: 'counter.glance.sales', icon: <Tag size={16} />, tone: 'bg-sell text-sell-fg', label: 'home.sales', value: rep?.sales_total, sub: pick('home.phonesSold').replace('{{n}}', String(rep?.phones_sold ?? 0)) },
+          ...(manager ? [{ id: 'profit', to: `/audit/finance?${glanceQuery}`, help: 'counter.glance.profit', icon: <PiggyBank size={16} />, tone: 'bg-ink text-ground', label: 'home.profit', value: rep?.profit, neg: Number(rep?.profit ?? 0) < 0, sub: glance ? `${pick('audit.vsPrevious')} ${fmt(glance.previous.net_profit)}` : undefined }] : []),
+          { id: 'inHand', to: hisaab, help: 'inHand', icon: <Wallet size={16} />, tone: 'bg-emerald-tint text-emerald-deep', label: 'counter.inHand', value: rep?.cash_net, neg: cashNeg, sub: glance ? `${pick('audit.moneyIn')} ${fmt(glance.money.inflows)} · ${pick('audit.moneyOut')} ${fmt(glance.money.outflows)}` : undefined },
+          { id: 'cashBank', to: '/more/cash', help: 'counter.glance.cashBank', icon: <Landmark size={16} />, tone: 'bg-khata text-khata-fg', label: 'audit.cashBank', value: dash?.cash_in_hand, neg: Number(dash?.cash_in_hand ?? 0) < 0, sub: pick('audit.now') },
+          { id: 'toGet', to: '/khata?f=get', help: 'counter.glance.toGet', icon: <ArrowDownLeft size={16} />, tone: 'bg-receivable-tint text-receivable', label: 'counter.toGet', value: dash?.receivable, sub: glance ? `${pick('audit.receivedInPeriod')} ${fmt(glance.debt.received_in_period)}` : undefined },
+          { id: 'toGive', to: '/khata?f=give', help: 'counter.glance.toGive', icon: <ArrowUpRight size={16} />, tone: 'bg-payable-tint text-payable', label: 'counter.toGive', value: dash?.payable },
+          { id: 'inStock', to: '/stock/summary', help: 'counter.glance.inStock', icon: <Smartphone size={16} />, tone: 'bg-stockt text-stockt-fg', label: 'home.inStock', value: dash?.stock_count, plain: true, sub: worth ? `${pick('home.worth')} ${fmt(worth)}` : undefined },
+          { id: 'expenses', to: '/expenses', help: 'counter.glance.expenses', icon: <Receipt size={16} />, tone: 'bg-expense text-expense-fg', label: 'home.expenses', value: rep?.expenses },
+        ]} />
         {dash?.sales_7d ? (
           <div className="grid grid-cols-1 gap-2.5 lg:grid-cols-2">
             <div className="card min-w-0" data-testid="home-bars">
@@ -202,6 +199,124 @@ function Glance({ to, icon, tone, label, value, sub, neg = false, plain = false,
       <span className={`num truncate text-[22px] leading-none ${neg ? 'text-payable' : 'text-ink'}`} dir="ltr">{neg ? '−' : ''}{plain ? String(value ?? 0) : fmt(value)}</span>
       {sub ? <span className={`truncate text-muted ${ur ? cls('sm') : 'text-[11px] font-semibold'}`}>{sub}</span> : null}
     </Link>
+  )
+}
+
+interface GlanceItem { id: string; to: string; icon: ReactNode; tone: string; label: string; value: string | number | null | undefined; sub?: string; neg?: boolean; plain?: boolean; help?: string }
+
+const show = (it: GlanceItem) => `${it.neg ? '−' : ''}${it.plain ? String(it.value ?? 0) : fmt(it.value)}`
+
+/** owner 2026-11-07: the day's numbers in the chosen design — Classic cards, Tiles (filled with
+ *  each number's colour), Simple (one list) or Bold (a dark hero with sales, profit and cash) */
+function GlanceSet({ items, layout }: { items: GlanceItem[]; layout: Layout }) {
+  const { pick, ur, cls } = useLang()
+  if (layout === 'tiles') {
+    return (
+      <div className="grid grid-cols-2 gap-2 lg:grid-cols-4" data-testid="glance" data-layout="tiles">
+        {items.map((it) => (
+          <Link key={it.id} to={it.to} className={`tap flex min-h-[112px] min-w-0 flex-col justify-between gap-2 rounded-3xl p-3.5 ${it.tone}`}>
+            <span className="flex items-center gap-2"><span className="well h-8 w-8 shrink-0 rounded-xl bg-surface/80">{it.icon}</span><BiLabel text={it.label} size="sm" tone="text-current" bold className="min-w-0 truncate" />{it.help ? <span className="ms-auto [&_button]:text-current"><Help term={it.help} size="sm" /></span> : null}</span>
+            <span className="num truncate text-[26px] leading-none" dir="ltr">{show(it)}</span>
+            {it.sub ? <span className={`truncate opacity-80 ${ur ? cls('sm') : 'text-[11px] font-semibold'}`}>{it.sub}</span> : <span />}
+          </Link>
+        ))}
+      </div>
+    )
+  }
+  if (layout === 'simple') {
+    return (
+      <div className="card grid grid-cols-1 gap-x-6 !py-1 lg:grid-cols-2" data-testid="glance" data-layout="simple">
+        {items.map((it) => (
+          <Link key={it.id} to={it.to} className="tap flex min-h-[58px] min-w-0 items-center gap-3 border-b border-line py-2 last:border-b-0 lg:[&:nth-last-child(2):nth-child(odd)]:border-b-0">
+            <span className={`well h-9 w-9 shrink-0 rounded-xl ${it.tone}`}>{it.icon}</span>
+            <span className="flex min-w-0 flex-1 flex-col">
+              <span className="flex items-center gap-1"><BiLabel text={it.label} size="sm" bold className="min-w-0 truncate" />{it.help ? <Help term={it.help} size="sm" /> : null}</span>
+              {it.sub ? <span className={`truncate text-muted ${ur ? cls('sm') : 'text-[11px] font-semibold'}`}>{it.sub}</span> : null}
+            </span>
+            <span className={`num shrink-0 text-lg ${it.neg ? 'text-payable' : 'text-ink'}`} dir="ltr">{show(it)}</span>
+            <Chevron className="shrink-0 text-muted" />
+          </Link>
+        ))}
+      </div>
+    )
+  }
+  if (layout === 'bold') {
+    const heroIds = ['sales', 'profit', 'inHand']
+    const [lead, ...pair] = items.filter((it) => heroIds.includes(it.id))
+    const rest = items.filter((it) => !heroIds.includes(it.id))
+    return (
+      <div className="flex flex-col gap-2" data-testid="glance" data-layout="bold">
+        {lead ? (
+          <div className="hero relative isolate flex flex-col gap-4 overflow-hidden p-5">
+            <span aria-hidden className="pointer-events-none absolute -end-16 -top-20 -z-10 h-56 w-56 rounded-full bg-emerald/40 blur-3xl" />
+            <Link to={lead.to} className="tap flex flex-col gap-1">
+              <span className="flex items-center gap-2"><span className="well h-8 w-8 rounded-xl bg-white/15">{lead.icon}</span><BiLabel text={lead.label} size="sm" bold tone="text-current opacity-85" /><span className="[&_button]:text-current">{lead.help ? <Help term={lead.help} size="sm" /> : null}</span></span>
+              <span className="num text-[38px] leading-none" dir="ltr">{show(lead)}</span>
+              {lead.sub ? <span className={`opacity-75 ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{lead.sub}</span> : null}
+            </Link>
+            <div className="grid grid-cols-2 gap-2">
+              {pair.map((it) => (
+                <Link key={it.id} to={it.to} className="tap flex min-w-0 flex-col gap-1 rounded-2xl bg-white/10 p-3">
+                  <BiLabel text={it.label} size="sm" bold tone="text-current opacity-80" className="truncate" />
+                  <span className={`num truncate text-[22px] leading-none ${it.neg ? 'text-[#FCA5A5]' : ''}`} dir="ltr">{show(it)}</span>
+                </Link>
+              ))}
+            </div>
+            <Link to={lead.to} className={`tap inline-flex w-fit items-center gap-1 font-bold opacity-90 ${ur ? cls('sm') : 'text-[13px]'}`}>{pick('home.seeAll')}<Chevron /></Link>
+          </div>
+        ) : null}
+        <div className="grid grid-cols-2 gap-2 lg:grid-cols-5">
+          {rest.map((it) => <Glance key={it.id} {...it} />)}
+        </div>
+      </div>
+    )
+  }
+  return (
+    <div className="grid grid-cols-2 gap-2 lg:grid-cols-4" data-testid="glance" data-layout="classic">
+      {items.map((it) => <Glance key={it.id} {...it} />)}
+    </div>
+  )
+}
+
+/** phone: the jobs after "Sell" and "Add stock", in the chosen design */
+function OtherJobs({ jobs, layout }: { jobs: Job[]; layout: Layout }) {
+  const { pick, ur, cls } = useLang()
+  const help = <span className="flex items-center"><Help term="counter.otherJobs" size="sm" /></span>
+  if (layout === 'tiles') {
+    return (
+      <div className="grid grid-cols-3 gap-2 lg:hidden" data-testid="fast-actions">
+        {jobs.map((j) => (
+          <Link key={j.id} to={j.to} className={`tap flex min-h-[84px] flex-col items-center justify-center gap-1.5 rounded-3xl p-2 text-center ${j.tone}`}>
+            <span className={`well h-10 w-10 rounded-2xl bg-surface ${j.ink}`}><j.Icon size={20} strokeWidth={2} /></span>
+            <span className={`line-clamp-2 font-bold leading-tight ${ur ? cls('sm') : 'text-[12px]'}`}>{pick(j.label)}</span>
+          </Link>
+        ))}
+      </div>
+    )
+  }
+  if (layout === 'bold') {
+    return (
+      <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-1 lg:hidden" data-testid="fast-actions">
+        {jobs.map((j) => (
+          <Link key={j.id} to={j.to} className="tap flex w-[68px] shrink-0 flex-col items-center gap-1 text-center">
+            <span className={`well h-14 w-14 rounded-full ${j.tone}`}><j.Icon size={22} strokeWidth={2} /></span>
+            <span className={`line-clamp-2 font-bold leading-tight text-ink ${ur ? cls('sm') : 'text-[11px]'}`}>{pick(j.label)}</span>
+          </Link>
+        ))}
+        {help}
+      </div>
+    )
+  }
+  return (
+    <div className="flex flex-wrap gap-2 lg:hidden" data-testid="fast-actions">
+      {jobs.map((j) => (
+        <Link key={j.id} to={j.to} className="tap flex shrink-0 items-center gap-2 rounded-full border border-line bg-surface py-2 pe-4 ps-2">
+          <span className={`well h-8 w-8 rounded-full ${layout === 'simple' ? `bg-ground ${j.ink}` : ACCENT[j.id] ?? j.tone}`}><j.Icon size={16} strokeWidth={2.2} /></span>
+          <span className={`whitespace-nowrap font-bold text-ink ${ur ? cls('sm') : 'text-[13px]'}`}>{pick(j.label)}</span>
+        </Link>
+      ))}
+      {help}
+    </div>
   )
 }
 

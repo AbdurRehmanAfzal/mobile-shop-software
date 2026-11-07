@@ -528,7 +528,8 @@
     "days": "din",
     "failed": "Nakaam",
     "emailOn": "Email server se jaati hai (SMTP set hai).",
-    "emailOff": "Email ke liye server par SMTP account chahiye (maslan Gmail app password); software provider se kahein. Tab tak email paighaam neeche list mein ruke rehte hain."
+    "emailOff": "Email ke liye server par SMTP account chahiye (maslan Gmail app password); software provider se kahein. Tab tak email paighaam neeche list mein ruke rehte hain.",
+    "settingsTab": "Settings"
   },
   "settings": {
     "title": "Dukaan ki settings",
@@ -6440,6 +6441,11 @@
           "title": "Bill par social page",
           "body": "On: aap ke Facebook / Instagram / TikTok naam chhapenge.",
           "example": "On → neeche \"IG: starmobiles.pk\"."
+        },
+        "qr": {
+          "title": "Bill par QR code",
+          "body": "On: har sale bill par aik chhota QR code. Gahak use scan kar ke bill online dekhta hai, baghair login ke, taake copy rakhe aur jaan le ke bill asli hai. Is mein gahak ka naam, phone ya khate ka baqaya kabhi nahi dikhta. Jis computer ka internet pata na ho, wahan QR mein bill number chhapta hai.",
+          "example": "On → gahak bill INV-0042 ka QR scan karta hai aur bill us ke phone par khul jata hai."
         }
       },
       "terms": {
@@ -7581,6 +7587,53 @@
         "title": "FBR number",
         "body": "Woh number jo FBR ne is bill ko diya. Chhapa bill use QR code ke saath dikhata hai; gahak FBR se use check kar sakta hai.",
         "example": "7000007DI1747119701593"
+      }
+    },
+    "look": {
+      "page": {
+        "title": "Appearance",
+        "body": "App apne liye badlein: roshan ya gehra, dashboard aur laptop side panel ka design, rang, bunyadi rang, likhai ka size, konay aur hindson ka font. Ye sirf isi phone ya computer par badalta hai; baqi staff apni pasand rakhta hai.",
+        "example": "\"Tiles\" aur \"Neela\" chunein → dashboard par baray rangeen khane aur buttons neele ho jate hain."
+      },
+      "theme": {
+        "title": "Roshan ya gehra",
+        "body": "Roshan chamakdar screen hai, gehra raat ko aankhon ke liye aasan. \"Phone ke mutabiq\" phone ki apni setting par chalta hai.",
+        "example": "\"Gehra\" chunein → poori app foran gehri ho jati hai."
+      },
+      "design": {
+        "title": "Design",
+        "body": "Dashboard aur laptop side panel ki tarteeb. Classic: rangeen qataarein aur cards. Tiles: baray rangeen khane. Saada: baghair khanon ki saaf fehrist. Bold: gehra panel aur din ki sale baray hindson mein. Har design mein pages aur buttons wohi rehte hain.",
+        "example": "\"Saada\" chunein → aaj ke hindse aik saaf fehrist mein nazar aate hain."
+      },
+      "palette": {
+        "title": "Rangon ka set",
+        "body": "Poori app ke rang: background, cards, gehra bara card aur numayan rang.",
+        "example": "\"Navy\" chunein → gehra neela andaaz, sunehri jhalak ke saath."
+      },
+      "accent": {
+        "title": "Bunyadi rang",
+        "body": "Khaas buttons (Save, Bechein), khule tab aur numayan cheezon ka rang. \"Pehle wala\" chune hue rangon ke set ka apna rang rakhta hai.",
+        "example": "\"Surkh\" chunein → Save ka button aur khula tab surkh ho jate hain."
+      },
+      "text": {
+        "title": "Likhai ka size",
+        "body": "Likhai aur buttons baray ho jate hain taake counter par parhna aasan ho.",
+        "example": "\"Bara\" chunein → har screen ki likhai thori bari ho jati hai."
+      },
+      "corners": {
+        "title": "Konay",
+        "body": "Buttons aur cards ke konay kitne gol hon.",
+        "example": "\"Seedhe\" chunein → cards aur buttons chakor konon wale."
+      },
+      "font": {
+        "title": "Hindson ka font",
+        "body": "English huroof aur hindson ka font. Urdu likhai hamesha Nastaliq mein rehti hai.",
+        "example": "\"Manrope\" chunein → 1,250 jaisi raqamein Manrope font mein."
+      },
+      "reset": {
+        "title": "Pehle jaisa karein",
+        "body": "Appearance ki har pasand app ki asal halat par wapas.",
+        "example": "Rang aazmane ke baad dabayein → roshan theme, Classic design, asal rang."
       }
     }
   },
@@ -9707,7 +9760,8 @@
       "owner": "Malik ka naam",
       "bank": "Bank / wallet tafseel (baqaya ada karne ke liye)",
       "terms": "Sharait (wapsi / warranty)",
-      "social": "Facebook / Instagram / TikTok"
+      "social": "Facebook / Instagram / TikTok",
+      "qr": "Bill online dekhne ka QR code"
     },
     "terms": "Sharait (English)",
     "termsUr": "Sharait (Urdu)",
@@ -9923,5 +9977,84 @@
     "menu": "Profile aur logout",
     "short": "Profile",
     "open": "Meri profile"
+  },
+  "look": {
+    "title": "Appearance",
+    "short": "Theme, design, rang, likhai ka size",
+    "hint": "App kaisi dikhe, khud chunein. Har tabdeeli foran nazar aati hai aur isi phone ya computer par mehfooz rehti hai.",
+    "theme": "Roshan ya gehra",
+    "design": "Dashboard aur side panel ka design",
+    "designs": {
+      "classic": {
+        "name": "Classic",
+        "hint": "Rangeen qataarein aur cards"
+      },
+      "tiles": {
+        "name": "Tiles",
+        "hint": "Baray rangeen khane"
+      },
+      "simple": {
+        "name": "Saada",
+        "hint": "Saaf fehrist, baghair khanon ke"
+      },
+      "bold": {
+        "name": "Bold",
+        "hint": "Gehra panel, baray hindse"
+      }
+    },
+    "palette": "Rangon ka set",
+    "accent": "Bunyadi rang",
+    "accents": {
+      "auto": "Pehle wala",
+      "emerald": "Sabz",
+      "blue": "Neela",
+      "violet": "Jamni",
+      "rose": "Surkh",
+      "orange": "Narinji",
+      "teal": "Feroza"
+    },
+    "text": "Likhai ka size",
+    "texts": {
+      "normal": "Aam",
+      "large": "Bara",
+      "xl": "Bohat bara"
+    },
+    "corners": "Konay",
+    "cornerSet": {
+      "auto": "Pehle wale",
+      "round": "Gol",
+      "soft": "Halke gol",
+      "square": "Seedhe"
+    },
+    "font": "Hindson ka font",
+    "fonts": {
+      "auto": "Pehle wala",
+      "inter": "Inter",
+      "manrope": "Manrope",
+      "system": "Phone wala"
+    },
+    "reset": "Pehle jaisa karein"
+  },
+  "billcheck": {
+    "gone": "Ye bill nahi mila. Dukaan se rabta karein.",
+    "genuine": "Is dukaan ka asli bill",
+    "state": {
+      "paid": "Poora ada ho gaya",
+      "partial": "Kuch ada, kuch baqi",
+      "unpaid": "Abhi ada nahi hua",
+      "void": "Ye bill mansookh ho gaya",
+      "returned": "Dukaan ko wapas ho gaya"
+    },
+    "warranty": "Warranty {{n}} din",
+    "subtotal": "Mizaan",
+    "discount": "Riayat",
+    "tax": "Tax",
+    "total": "Kul raqam",
+    "returned": "Wapsi",
+    "paid": "Ada",
+    "due": "Baqi raqam",
+    "fbr": "FBR invoice number",
+    "call": "Dukaan ko call karein",
+    "footer": "Ye page apne bill ki copy ke taur par rakhein."
   }
 }

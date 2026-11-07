@@ -362,6 +362,13 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-052 · 2026-11-07 · Accepted · Appearance is per device; the bill QR is a signed link
+**Context**: the owner asked for three more designs of the dashboard and side panel, an "Appearance" option where users change theme, design and colours, and a QR on the invoice.
+**Decision**:
+- Appearance (theme, palette, layout, accent, text size, corners, font) is stored in the browser (`mobileshop.look`, as the theme already was), not on the server: every counter PC / phone can look the way its user likes, and nothing changes for other staff. Accent / corners / font / text size are applied as inline CSS variables on `<html>`; the layout is `data-layout` and the dashboard and side panel render one of four designs (classic, tiles, simple, bold) from the same page list.
+- The bill QR holds `<public_base>/b/<invoice-id>.<hmac>` (as the repair status link, ADR in docs/35): nothing stored, cannot be guessed or edited. The page shows the bill and what is left on it, never the customer, the full IMEI, a cost or the khata balance. Without a public address the QR holds the bill number. A shop can switch it off (`print_prefs.qr`).
+**Consequences**: a user who changes PCs picks their look again; production needs `PUBLIC_URL` (or an https `WEBAUTHN_ORIGINS`) for the QR to carry a link.
+
 ## ADR-051 · 2026-11-07 · Accepted · Extra cash given on a sale can go to the customer's old udhaar
 - **Context:** A customer hands over Rs. 5,000 for a Rs. 2,000 bill. Usually the change goes back, but when he owes the shop from before, the shopkeeper wants to keep the extra against that.
 - **Decision:**

@@ -68,7 +68,7 @@ test('reminders: everyone who owes, one tap opens WhatsApp; night report setting
   await expect(page.getByRole('link', { name: '03219876544' })).toHaveAttribute('href', /wa\.me\/923219876544/)
 
   // the night report: owner number, switch on, time, send now -> WhatsApp opens with the hisaab
-  await page.goto('/more/notifications')
+  await page.goto('/more/notifications?tab=settings')
   await expect(page.getByText(/Automatic sending needs the WhatsApp Business API/)).toBeVisible()
   await page.getByLabel('Owner WhatsApp number').fill('3001234567')
   await page.getByLabel(/Send the day's hisaab every night · WhatsApp/).check()

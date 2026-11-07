@@ -17,6 +17,8 @@ import AdminPage from '@/features/admin/AdminPage'
 import ProviderPage from '@/features/admin/ProviderPage'
 import KeyPage from '@/features/admin/KeyPage'
 import RepairStatusPage from '@/features/repairs/RepairStatus'
+import BillCheckPage from '@/features/sale/BillCheckPage'
+import AppearancePage from '@/features/more/AppearancePage'
 import CataloguePage from '@/features/catalogue/CataloguePage'
 import MorePage from '@/features/more/MorePage'
 import SettingsPage from '@/features/more/SettingsPage'
@@ -77,6 +79,7 @@ export const router = createBrowserRouter([
   { path: '/welcome', element: <LandingPage /> },
   { path: '/key/:token', element: <KeyPage /> },
   { path: '/r/:token', element: <RepairStatusPage /> },
+  { path: '/b/:token', element: <BillCheckPage /> },
   {
     element: <RedirectIfAuthed />,
     children: [
@@ -147,6 +150,7 @@ export const router = createBrowserRouter([
           { path: '/audit/security', element: <ModuleGate module="reports"><AuditSecurityPage /></ModuleGate> },
           { path: '/audit/reports', element: <ModuleGate module="reports"><AuditReportCenterPage /></ModuleGate> },
           { path: '/more/staff', element: <StaffPage /> },
+          { path: '/more/appearance', element: <AppearancePage /> },
           { path: '/more/cash', element: <CashAccountsPage /> },
           { path: '/more/bulk', element: <BulkPage /> },
           { path: '/more/catalogue', element: <CataloguePage /> },

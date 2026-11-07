@@ -932,6 +932,22 @@ def receipt_html(
         )
     elif fbr_sub is not None:
         fbr_html = f"<div class='c'><small>{'ایف بی آر: بھیجنا باقی ہے' if ur else 'FBR: waiting to be sent'}</small></div>"
+    # owner 2026-11-07: the bill's own QR — scanned, it opens the bill online (bill_link.py); an
+    # install without a public address prints the bill number, which the shop's scanner finds
+    bill_qr_html = ""
+    if profile.print_prefs(shop)["qr"]:
+        from app.modules.sales import bill_link
+
+        link = bill_link.url(inv.id)
+        hint = (
+            ("بل آن لائن دیکھنے کے لیے اسکین کریں" if ur else "Scan to see this bill online")
+            if link
+            else ("بل نمبر" if ur else "Bill no.")
+        )
+        bill_qr_html = (
+            f"<div class='c bq'><div class='qr'>{code_svg('qr', link or inv.no)}</div>"
+            f"<small>{hint}</small></div>"
+        )
     font_link = (
         '<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">'
         if ur
@@ -948,7 +964,7 @@ h1 {{ font-size: {"15px" if thermal else "20px"}; margin: 0; text-align: center;
 table {{ width: 100%; border-collapse: collapse; margin-top: 6px; }} td, th {{ padding: 3px 2px; vertical-align: top; }}
 th {{ border-bottom: 1px solid #111; text-align: {"right" if ur else "left"}; font-size: 10px; }}
 tr.tot td {{ border-top: 1px solid #111; font-weight: bold; }}
-small {{ color: #555; direction: ltr; unicode-bidi: isolate; }} .fbr {{ margin-top: 8px; }} .qr {{ width: 1in; height: 1in; margin: 4px auto; }} .foot {{ margin-top: 10px; border-top: 1px dashed #999; padding-top: 6px; }}
+small {{ color: #555; direction: ltr; unicode-bidi: isolate; }} .fbr {{ margin-top: 8px; }} .qr {{ width: 1in; height: 1in; margin: 4px auto; }} .bq {{ margin-top: 8px; }} .bq .qr {{ width: 0.9in; height: 0.9in; }} .foot {{ margin-top: 10px; border-top: 1px dashed #999; padding-top: 6px; }}
 </style></head><body>
 {profile.header_html(shop, ur, thermal)}
 <table><tr><td><b>{e(inv.no)}</b></td><td class="n">{when}</td></tr><tr><td colspan="2">{party_html}</td></tr>{cashier_html}</table>
@@ -963,6 +979,7 @@ small {{ color: #555; direction: ltr; unicode-bidi: isolate; }} .fbr {{ margin-t
 {fbr_html}
 {pending_html}
 {profile.footer_html(shop, ur)}
+{bill_qr_html}
 <div class="foot c">{e(T["thanks"])}</div>
 </body></html>"""
 

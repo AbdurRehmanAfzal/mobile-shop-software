@@ -185,9 +185,9 @@ export const useReturns = () => {
   const k = useShopKey()
   return useQuery({ queryKey: [k, 'returns'], queryFn: () => get<ReturnDoc[]>('/api/v1/returns') })
 }
-export const useNotificationSettings = () => {
+export const useNotificationSettings = (enabled = true) => {
   const k = useShopKey()
-  return useQuery({ queryKey: [k, 'notif-settings'], queryFn: () => get<NotificationSettings>('/api/v1/notifications/settings') })
+  return useQuery({ queryKey: [k, 'notif-settings'], queryFn: () => get<NotificationSettings>('/api/v1/notifications/settings'), enabled })
 }
 export const useMessages = () => {
   const k = useShopKey()

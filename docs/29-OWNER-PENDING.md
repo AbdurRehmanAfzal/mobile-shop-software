@@ -112,6 +112,8 @@ say if you want a retake with a profitable day. How to edit and rebuild: `docs/m
 
 **Repair status link** (2026-11-05): open a repair job for a customer with a phone number → **Send status link to customer** → **Send on WhatsApp**. Open the link on another phone (not logged in): the steps, ready-by day and what is left to pay show; the customer's number and full IMEI do not. Move the job to "In progress" and refresh the link.
 
+**Bill QR + Appearance** (2026-11-07): make a sale → **Print** → scan the QR under the bill with another phone (not logged in): the bill opens with total, paid and what is left, without the customer's name or number. Settings → Business profile → Printed bill → switch "QR code to see the bill online" off and print again: no QR. Dashboard → **Appearance**: try Tiles, Simple and Bold on the laptop and phone, a main colour, Large text and Dark; reload; then **Back to default**.
+
 Close the app fully and open it again first (or install the newest APK from the latest Deploy run →
 `android / apk`), so the newest version loads.
 
