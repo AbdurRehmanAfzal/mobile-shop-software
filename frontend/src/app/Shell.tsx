@@ -45,7 +45,7 @@ const tabs = [
 
 /** a side-panel row: a bordered button with an icon well and a chevron, so it reads as tappable */
 const sideRow = (active: boolean) =>
-  `tap group flex min-h-14 items-center gap-3 rounded-2xl border px-2.5 font-bold transition-colors ${active ? 'border-ink bg-ink text-ground shadow-hero' : 'border-line bg-surface text-ink shadow-[0_1px_0_rgb(var(--line))] hover:border-ink/40 hover:bg-ground'}`
+  `tap group flex min-h-9 items-center gap-2.5 rounded-xl border px-2 py-0.5 font-bold transition-colors ${active ? 'border-ink bg-ink text-ground shadow-hero' : 'border-line bg-surface text-ink shadow-[0_1px_0_rgb(var(--line))] hover:border-ink/40 hover:bg-ground'}`
 
 /** owner 2026-11-06: top-right corner, as in every app — who is logged in, the profile, log out */
 function ProfileMenu() {
@@ -184,32 +184,32 @@ export default function Shell() {
       <ScanListener />
       <OfflineBar />
       <div className="flex flex-1 gap-6 lg:px-5">
-        <aside className="print:hidden sticky top-20 hidden h-fit w-64 shrink-0 flex-col gap-2 lg:flex" aria-label={pick('nav.home')}>
+        <aside className="print:hidden sticky top-[76px] hidden max-h-[calc(100dvh-88px)] w-60 shrink-0 flex-col gap-1 overflow-y-auto pb-2 lg:flex" aria-label={pick('nav.home')}>
           <NavLink to="/" end className={({ isActive }) => sideRow(isActive)} data-testid="side-home">
             {({ isActive }) => (
               <>
-                <span className={`well h-10 w-10 shrink-0 ${isActive ? 'bg-white/15 text-current' : 'bg-ground text-ink'}`}><Home size={20} strokeWidth={1.9} /></span>
-                <span className={`min-w-0 flex-1 ${ur ? cls('md') : 'text-[15px]'}`}>{pick('nav.dashboard')}</span>
-                <Chevron size={18} className="shrink-0 opacity-60" />
+                <span className={`well h-7 w-7 shrink-0 rounded-lg ${isActive ? 'bg-white/15 text-current' : 'bg-ground text-ink'}`}><Home size={16} strokeWidth={2} /></span>
+                <span className={`min-w-0 flex-1 ${ur ? cls('sm') : 'text-sm'}`}>{pick('nav.dashboard')}</span>
+                <Chevron size={16} className="shrink-0 opacity-60" />
               </>
             )}
           </NavLink>
           {jobs.map((j) => (
-            <NavLink key={j.id} to={j.to} className={({ isActive }) => `tap flex min-h-14 items-center gap-3 rounded-2xl px-3 font-bold ${j.tone} ${isActive ? 'ring-2 ring-current' : ''}`}>
-              <span className={`well h-10 w-10 bg-surface ${j.ink}`}><j.Icon size={20} strokeWidth={1.9} /></span>
-              <span className={`flex-1 ${ur ? cls('md') : 'text-[15px]'}`}>{pick(j.label)}</span>
+            <NavLink key={j.id} to={j.to} className={({ isActive }) => `tap flex min-h-9 items-center gap-2.5 rounded-xl px-2 py-0.5 font-bold ${j.tone} ${isActive ? 'ring-2 ring-current' : ''}`}>
+              <span className={`well h-7 w-7 shrink-0 rounded-lg bg-surface ${j.ink}`}><j.Icon size={16} strokeWidth={2} /></span>
+              <span className={`min-w-0 flex-1 ${ur ? cls('sm') : 'text-sm'}`}>{pick(j.label)}</span>
               <kbd className="rounded-md border border-line bg-surface px-1.5 font-sans text-[11px] font-bold text-muted" dir="ltr">{j.fkey}</kbd>
             </NavLink>
           ))}
-          <span className={`mt-2 px-1 text-muted ${ur ? cls('sm') : 'text-xs font-bold uppercase tracking-wider'}`}>{pick('nav.shopSection')}</span>
-          <nav className="flex flex-col gap-1.5" data-testid="side-shop">
+          <span className={`mt-1.5 px-1 text-muted ${ur ? cls('sm') : 'text-[11px] font-bold uppercase tracking-wider'}`}>{pick('nav.shopSection')}</span>
+          <nav className="flex flex-col gap-1" data-testid="side-shop">
             {shopLinks.map(({ to, key, Icon }) => (
               <NavLink key={to} to={to} end={to === '/more'} className={({ isActive }) => sideRow(isActive)}>
                 {({ isActive }) => (
                   <>
-                    <span className={`well h-10 w-10 shrink-0 ${isActive ? 'bg-white/15 text-current' : 'bg-ground text-ink'}`}><Icon size={20} strokeWidth={1.9} /></span>
-                    <span className={`min-w-0 flex-1 ${ur ? cls('md') : 'text-[15px]'}`}>{pick(key)}</span>
-                    <Chevron size={18} className="shrink-0 opacity-60" />
+                    <span className={`well h-7 w-7 shrink-0 rounded-lg ${isActive ? 'bg-white/15 text-current' : 'bg-ground text-ink'}`}><Icon size={16} strokeWidth={2} /></span>
+                    <span className={`min-w-0 flex-1 ${ur ? cls('sm') : 'text-sm'}`}>{pick(key)}</span>
+                    <Chevron size={16} className="shrink-0 opacity-60" />
                   </>
                 )}
               </NavLink>

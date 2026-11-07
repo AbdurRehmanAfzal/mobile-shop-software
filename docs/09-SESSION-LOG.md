@@ -936,3 +936,7 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
     - `responsive` waited for a chart named "7" that no longer exists;
     - `urdu` now allows official terms on Settings (NTN, STRN, FBR, QR, HS, Code 128, Enter…);
     - `counter` theme test uses the profile menu.
+- Owner follow-up: the side panel must fit on one screen without scrolling ("Day's hisaab" and "All options" were below the fold).
+  - Rows are now 36 px with a 28 px icon well and 14 px text; the panel is 240 px wide.
+  - It scrolls on its own only if the screen is very short.
+  - Measured: the last row ends at 661 px on 1280×720 and 1366×768, in English and Urdu.
