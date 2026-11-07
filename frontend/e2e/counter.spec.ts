@@ -215,16 +215,16 @@ test('reports download as PDF, Excel and CSV, print, and share', async ({ page }
   expect(k.suggestedFilename()).toMatch(/^udhaar-khata-.*\.xlsx$/)
 })
 
-test('language and theme buttons in the header, Roman Urdu', async ({ page }) => {
+test('language button in the header, theme in the profile menu, Roman Urdu', async ({ page }) => {
   await signup(page)
   await page.getByRole('button', { name: 'Language' }).click()
   await page.getByRole('button', { name: 'Roman Urdu' }).click()
   await expect(page.locator('main').getByText('Bechein')).toBeVisible()
   await expect(page.locator('main').getByText('Stock daalein')).toBeVisible()
-  await page.getByRole('button', { name: 'Dark' }).click()
+  await page.getByTestId('profile-button').click(); await page.getByTestId('profile-theme').click()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
   await page.screenshot({ path: 'test-results/home-roman-dark.png', fullPage: true })
-  await page.getByRole('button', { name: 'Light' }).click()
+  await page.getByTestId('profile-theme').click()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
   // back to Urdu: right to left
   await page.getByRole('button', { name: 'Zubaan' }).click()
@@ -255,7 +255,7 @@ test('looks: modern (default), professional, navy, colorful', async ({ page, req
   await page.goto('/more')
   await page.getByRole('button', { name: 'Modern' }).click()
   await page.goto('/')
-  await page.getByRole('button', { name: 'Dark' }).click()
+  await page.getByTestId('profile-button').click(); await page.getByTestId('profile-theme').click()
   await page.screenshot({ path: 'test-results/look-modern-dark.png', fullPage: true })
   void request
 })

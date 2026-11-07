@@ -51,6 +51,8 @@ class SaleCreate(BaseModel):
     tax_rate: Decimal | None = Field(default=None, ge=0, le=100)
     # docs/36: cash handed over by the customer (optional); the bill prints the change
     cash_tendered: Decimal | None = Field(default=None, ge=0)
+    # owner 2026-11-06: the extra cash (above this bill) kept against the customer's old udhaar
+    khata_adjust: Decimal | None = Field(default=None, gt=0)
     # owner 2026-10-29: sold on installments; `paid` is the advance, the rest comes monthly
     installments: InstallmentPlanIn | None = None
     notes: str | None = None
@@ -122,6 +124,8 @@ class SaleOut(BaseModel):
     tax_amount: Decimal
     total: Decimal
     paid: Decimal
+    cash_tendered: Decimal | None = None
+    khata_adjusted: Decimal | None = None
     balance_due: Decimal
     cost_total: Decimal | None
     returned_total: Decimal

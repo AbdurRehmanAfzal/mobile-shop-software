@@ -362,3 +362,17 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-051 · 2026-11-07 · Accepted · Extra cash given on a sale can go to the customer's old udhaar
+- **Context:** A customer hands over Rs. 5,000 for a Rs. 2,000 bill. Usually the change goes back, but when he owes the shop from before, the shopkeeper wants to keep the extra against that.
+- **Decision:**
+  - `SaleCreate.khata_adjust` is the part of the cash given above the bill that is not returned.
+  - It needs:
+    - a chosen customer;
+    - a fully paid bill;
+    - cash given ≥ paid + adjust;
+    - adjust ≤ what the customer owed before the sale (`party_balance`).
+  - The sale posts, **in the same transaction**, an ordinary payment in from the customer (`create_payment(..., commit=False)`). It is allocated FIFO to their oldest open bills, the same as taking it on the khata screen.
+  - The amount is kept on `invoices.khata_adjusted`. The receipt prints "Cash given", "Taken against old udhaar", and "Change" (= given − paid − adjusted).
+  - A sale with no customer is labelled "Walk-in customer" (was "Cash customer") on screen and on the bill.
+- **Consequences:** No new ledger type. The khata, statements, cash and reports see a normal payment in. Voiding the sale does not void that payment; void it from the payments list if needed.
+

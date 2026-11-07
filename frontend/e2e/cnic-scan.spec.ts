@@ -43,9 +43,11 @@ test('scan a CNIC photo into the new person form', async ({ page }) => {
 
   await page.goto('/parties')
   await page.getByRole('button', { name: 'New person' }).first().click()
+  // owner 2026-11-06: CNIC, city, address and notes sit under "More details"
+  await page.getByTestId('party-more').click()
   await page.getByTestId('cnic-photo').setInputFiles({ name: 'cnic.png', mimeType: 'image/png', buffer: Buffer.from(b64, 'base64') })
   await expect(page.getByLabel('Name', { exact: true })).toHaveValue('Bilal Ahmed Khan', { timeout: 90_000 })
-  await expect(page.getByLabel('CNIC')).toHaveValue('35202-1234567-1')
-  await expect(page.getByLabel('Notes')).toHaveValue(/S\/O Muhammad Aslam Khan · Born 10\.03\.1990 · CNIC valid till 05\.06\.2032/)
+  await expect(page.getByLabel('CNIC', { exact: true })).toHaveValue('35202-1234567-1')
+  await expect(page.getByLabel('Notes', { exact: true })).toHaveValue(/S\/O Muhammad Aslam Khan · Born 10\.03\.1990 · CNIC valid till 05\.06\.2032/)
   await page.screenshot({ path: 'test-results/cnic-scan.png', fullPage: true })
 })

@@ -65,7 +65,7 @@ for (const { name, device } of PHONES) {
         await login(page, locale)
         await page.waitForLoadState('networkidle')
         await page.screenshot({ path: `test-results/home-${name}-${locale}.png`, fullPage: true })
-        await page.getByRole('img', { name: /7/ }).scrollIntoViewIfNeeded()
+        await page.locator('svg[role="img"]').first().scrollIntoViewIfNeeded()
         await page.screenshot({ path: `test-results/hero-${name}-${locale}.png` })
         const wide: string[] = []
         for (const path of PAGES) {

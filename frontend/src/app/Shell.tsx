@@ -2,8 +2,8 @@
  *  Laptop (lg+): the same job tiles as a side menu with F-key shortcuts, content beside it. */
 
 import { BtnText, Sheet } from '@/components/ui'
-import { Bell, BookOpen, CalendarDays, Check, Home, Languages, Menu, Moon, MoreHorizontal, Smartphone, Sun } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { BarChart3, Bell, BookOpen, MoreHorizontal, CalendarDays, Check, ChevronLeft, ChevronRight, Home, Languages, LayoutGrid, LogOut, Menu, Moon, Settings, Smartphone, Store, Sun, UserRound, Users, type LucideIcon } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { noteRoute } from '@/lib/draft'
 import { useAuth, activeShop } from '@/lib/auth'
@@ -14,7 +14,7 @@ import { JOBS } from '@/features/counter/jobs'
 
 /** screens that use the whole laptop width (lists, overviews, the side-by-side sale); forms stay at 3xl */
 const WIDE = ['/sale/new', '/stock', '/khata', '/hisaab', '/reports', '/audit', '/sales', '/purchases', '/invoices', '/parties', '/expenses', '/installments', '/repairs', '/accessories', '/payments', '/returns', '/admin', '/loans']
-import { useModules } from '@/lib/modules'
+import { moduleFor, useModules } from '@/lib/modules'
 import { PlanBar, PlanOverlays } from '@/components/PlanReminders'
 import ScanListener from '@/components/ScanListener'
 import OfflineBar from '@/components/OfflineBar'
@@ -26,6 +26,15 @@ const LANG_NAMES: Record<Locale, BiText> = {
   en: { en: 'English', ur: 'English', roman: 'English' },
 }
 
+/** owner 2026-11-06: the side panel's shop pages, drawn as rows that look tappable */
+const SHOP_LINKS: { to: string; key: string; Icon: LucideIcon; roles?: string[] }[] = [
+  { to: '/hisaab', key: 'counter.dayTitle', Icon: CalendarDays },
+  { to: '/reports', key: 'more.reports', Icon: BarChart3, roles: ['owner', 'manager'] },
+  { to: '/more/staff', key: 'more.staff', Icon: Users, roles: ['owner'] },
+  { to: '/more/settings', key: 'more.settings', Icon: Settings, roles: ['owner'] },
+  { to: '/more', key: 'nav.allOptions', Icon: LayoutGrid },
+]
+
 const tabs = [
   { to: '/', key: 'nav.home', Icon: Home },
   { to: '/stock/summary', key: 'nav.stock', Icon: Smartphone },
@@ -33,6 +42,80 @@ const tabs = [
   { to: '/hisaab', key: 'nav.hisaab', Icon: CalendarDays },
   { to: '/more', key: 'nav.more', Icon: MoreHorizontal },
 ]
+
+/** a side-panel row: a bordered button with an icon well and a chevron, so it reads as tappable */
+const sideRow = (active: boolean) =>
+  `tap group flex min-h-14 items-center gap-3 rounded-2xl border px-2.5 font-bold transition-colors ${active ? 'border-ink bg-ink text-ground shadow-hero' : 'border-line bg-surface text-ink shadow-[0_1px_0_rgb(var(--line))] hover:border-ink/40 hover:bg-ground'}`
+
+/** owner 2026-11-06: top-right corner, as in every app — who is logged in, the profile, log out */
+function ProfileMenu() {
+  const me = useAuth((s) => s.me)
+  const shop = useAuth(activeShop)
+  const logout = useAuth((s) => s.logout)
+  const nav = useNavigate()
+  const { pick, ur, cls } = useLang()
+  const [open, setOpen] = useState(false)
+  // on a phone the dark / light switch lives here, so the header keeps room for the shop's name
+  const theme = useTheme((s) => s.theme)
+  const setTheme = useTheme((s) => s.setTheme)
+  const dark = theme === 'dark' || (theme === 'system' && window.matchMedia?.('(prefers-color-scheme: dark)').matches)
+  const box = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (!open) return
+    const away = (e: MouseEvent | TouchEvent) => { if (box.current && !box.current.contains(e.target as Node)) setOpen(false) }
+    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false) }
+    document.addEventListener('mousedown', away)
+    document.addEventListener('touchstart', away)
+    document.addEventListener('keydown', esc)
+    return () => { document.removeEventListener('mousedown', away); document.removeEventListener('touchstart', away); document.removeEventListener('keydown', esc) }
+  }, [open])
+  if (!me) return null
+  const name = me.user.name || me.user.phone
+  const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase()).join('') || '?'
+  const go = (to: string) => { setOpen(false); nav(to) }
+  const item = `tap flex min-h-12 w-full items-center gap-3 rounded-xl px-3 text-start font-bold hover:bg-ground ${ur ? cls('md') : 'text-[15px]'}`
+  return (
+    <div ref={box} className="relative">
+      <button type="button" aria-label={pick('profile.menu')} aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen(!open)} className="tap flex min-h-14 min-w-[52px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border border-line bg-surface px-1.5 py-1 text-ink" data-testid="profile-button">
+        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald text-[12px] font-extrabold text-white" dir="ltr">{initials}</span>
+        <BtnText k={'profile.short'} />
+      </button>
+      {open ? (
+        <div role="menu" className="absolute end-0 top-[calc(100%+8px)] z-40 w-[min(300px,calc(100vw-32px))] rounded-3xl border border-line bg-surface p-2 shadow-hero" data-testid="profile-menu">
+          <div className="flex items-center gap-3 rounded-2xl bg-ground p-3">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald text-base font-extrabold text-white" dir="ltr">{initials}</span>
+            <span className="flex min-w-0 flex-1 flex-col">
+              <span className="truncate text-[15px] font-extrabold" data-testid="profile-name">{name}</span>
+              <span className="num truncate text-xs text-muted" dir="ltr">{me.user.phone}</span>
+              <span className={`w-fit rounded-full bg-emerald-tint px-2 py-0.5 font-bold text-emerald-deep ${ur ? cls('sm') : 'text-[11px]'}`}>{pick(`staff.roles.${me.user.role}`)}</span>
+            </span>
+          </div>
+          {shop ? (
+            <div className={`flex items-center gap-2 px-3 py-2 text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>
+              <Store size={14} className="shrink-0" /><span className="truncate">{ur ? shop.name_ur || shop.name : shop.name}</span>
+            </div>
+          ) : null}
+          <div className="my-1 h-px bg-line" />
+          <button type="button" role="menuitem" onClick={() => go('/more')} className={item} data-testid="profile-open">
+            <UserRound size={20} className="shrink-0 text-muted" /> {pick('profile.open')}
+          </button>
+          {me.user.role === 'owner' ? (
+            <button type="button" role="menuitem" onClick={() => go('/more/settings')} className={item}>
+              <Settings size={20} className="shrink-0 text-muted" /> {pick('more.settings')}
+            </button>
+          ) : null}
+          <button type="button" role="menuitem" onClick={() => setTheme(dark ? 'light' : 'dark')} className={`${item} lg:hidden`} data-testid="profile-theme">
+            {dark ? <Sun size={20} className="shrink-0 text-muted" /> : <Moon size={20} className="shrink-0 text-muted" />} {pick(dark ? 'more.themeLight' : 'more.themeDark')}
+          </button>
+          <div className="my-1 h-px bg-line" />
+          <button type="button" role="menuitem" onClick={() => { setOpen(false); logout() }} className={`${item} text-payable`} data-testid="profile-logout">
+            <LogOut size={20} className="shrink-0" /> {pick('auth.logout')}
+          </button>
+        </div>
+      ) : null}
+    </div>
+  )
+}
 
 export default function Shell() {
   const { pathname } = useLocation()
@@ -49,6 +132,9 @@ export default function Shell() {
   const setTheme = useTheme((s) => s.setTheme)
   const dark = theme === 'dark' || (theme === 'system' && window.matchMedia?.('(prefers-color-scheme: dark)').matches)
   const shopName = ur ? shop?.name_ur || shop?.name || 'موبائل شاپ' : shop?.name || 'Mobile Shop'
+  const role = useAuth((s) => s.me?.user.role)
+  const shopLinks = SHOP_LINKS.filter((l) => (!l.roles || (role && l.roles.includes(role))) && (!moduleFor(l.to) || has(moduleFor(l.to)!)))
+  const Chevron = dir === 'rtl' ? ChevronLeft : ChevronRight
 
   // counter shortcuts on a laptop keyboard (F5 is left alone: it reloads the page)
   useEffect(() => {
@@ -77,7 +163,7 @@ export default function Shell() {
             <BtnText k={locale === 'roman' ? { en: 'Roman', ur: 'Roman', roman: 'Roman' } : LANG_NAMES[locale]} />
           </button>
           {/* shows the mode it switches to: a moon to go dark, a sun to go light */}
-          <button type="button" aria-label={pick(dark ? 'more.themeLight' : 'more.themeDark')} onClick={() => setTheme(dark ? 'light' : 'dark')} className="tap flex min-h-14 min-w-[52px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border border-line bg-surface px-1.5 py-1 text-ink">
+          <button type="button" aria-label={pick(dark ? 'more.themeLight' : 'more.themeDark')} onClick={() => setTheme(dark ? 'light' : 'dark')} className="tap hidden min-h-14 min-w-[52px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border border-line bg-surface px-1.5 py-1 text-ink lg:flex">
             {dark ? <Sun size={20} strokeWidth={1.75} /> : <Moon size={20} strokeWidth={1.75} />}
             <BtnText k={dark ? 'more.themeLight' : 'more.themeDark'} />
           </button>
@@ -89,6 +175,7 @@ export default function Shell() {
             <Menu size={20} strokeWidth={1.75} />
             <BtnText k={'nav.more'} />
           </button>
+          <ProfileMenu />
         </div>
       </header>
       </div>
@@ -98,8 +185,14 @@ export default function Shell() {
       <OfflineBar />
       <div className="flex flex-1 gap-6 lg:px-5">
         <aside className="print:hidden sticky top-20 hidden h-fit w-64 shrink-0 flex-col gap-2 lg:flex" aria-label={pick('nav.home')}>
-          <NavLink to="/" end className={({ isActive }) => `tap flex min-h-12 items-center gap-3 rounded-2xl px-3 text-[15px] font-bold ${isActive ? 'bg-ink text-ground' : 'text-ink'}`}>
-            <Home size={20} strokeWidth={1.9} /> <span className={ur ? cls('md') : ''}>{pick('nav.home')}</span>
+          <NavLink to="/" end className={({ isActive }) => sideRow(isActive)} data-testid="side-home">
+            {({ isActive }) => (
+              <>
+                <span className={`well h-10 w-10 shrink-0 ${isActive ? 'bg-white/15 text-current' : 'bg-ground text-ink'}`}><Home size={20} strokeWidth={1.9} /></span>
+                <span className={`min-w-0 flex-1 ${ur ? cls('md') : 'text-[15px]'}`}>{pick('nav.dashboard')}</span>
+                <Chevron size={18} className="shrink-0 opacity-60" />
+              </>
+            )}
           </NavLink>
           {jobs.map((j) => (
             <NavLink key={j.id} to={j.to} className={({ isActive }) => `tap flex min-h-14 items-center gap-3 rounded-2xl px-3 font-bold ${j.tone} ${isActive ? 'ring-2 ring-current' : ''}`}>
@@ -108,12 +201,20 @@ export default function Shell() {
               <kbd className="rounded-md border border-line bg-surface px-1.5 font-sans text-[11px] font-bold text-muted" dir="ltr">{j.fkey}</kbd>
             </NavLink>
           ))}
-          <NavLink to="/hisaab" className={({ isActive }) => `tap flex min-h-12 items-center gap-3 rounded-2xl px-3 text-[15px] font-bold ${isActive ? 'bg-ink text-ground' : 'text-ink'}`}>
-            <CalendarDays size={20} strokeWidth={1.9} /> <span className={ur ? cls('md') : ''}>{pick('counter.dayTitle')}</span>
-          </NavLink>
-          <NavLink to="/more" className="tap flex min-h-12 items-center gap-3 rounded-2xl px-3 text-sm font-semibold text-muted">
-            <MoreHorizontal size={20} strokeWidth={1.75} /> <span className={ur ? cls('sm') : ''}>{pick('counter.menu')}</span>
-          </NavLink>
+          <span className={`mt-2 px-1 text-muted ${ur ? cls('sm') : 'text-xs font-bold uppercase tracking-wider'}`}>{pick('nav.shopSection')}</span>
+          <nav className="flex flex-col gap-1.5" data-testid="side-shop">
+            {shopLinks.map(({ to, key, Icon }) => (
+              <NavLink key={to} to={to} end={to === '/more'} className={({ isActive }) => sideRow(isActive)}>
+                {({ isActive }) => (
+                  <>
+                    <span className={`well h-10 w-10 shrink-0 ${isActive ? 'bg-white/15 text-current' : 'bg-ground text-ink'}`}><Icon size={20} strokeWidth={1.9} /></span>
+                    <span className={`min-w-0 flex-1 ${ur ? cls('md') : 'text-[15px]'}`}>{pick(key)}</span>
+                    <Chevron size={18} className="shrink-0 opacity-60" />
+                  </>
+                )}
+              </NavLink>
+            ))}
+          </nav>
         </aside>
 
         <main className={`min-w-0 flex-1 px-5 pb-28 pt-1 max-[379px]:px-4 lg:px-0 lg:pb-10 ${wide ? 'lg:max-w-5xl' : 'lg:max-w-3xl'}`}>

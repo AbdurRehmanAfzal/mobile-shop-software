@@ -11,7 +11,10 @@
     "parties": "Parties",
     "more": "More",
     "khata": "Udhaar",
-    "hisaab": "Hisaab"
+    "hisaab": "Hisaab",
+    "dashboard": "Dashboard",
+    "shopSection": "Shop",
+    "allOptions": "All options"
   },
   "auth": {
     "login": "Login",
@@ -163,7 +166,9 @@
     "noParties": "No parties yet. Add your first customer or supplier.",
     "history": "Transactions",
     "wholesale": "Dealer / wholesale customer",
-    "wholesaleHint": "Gets the wholesale price of items"
+    "wholesaleHint": "Gets the wholesale price of items",
+    "moreDetails": "More details",
+    "moreDetailsHint": "CNIC, city, address, notes, wholesale price"
   },
   "stock": {
     "title": "Stock",
@@ -384,7 +389,7 @@
       "payment": "Payment",
       "done": "Done"
     },
-    "cashCustomer": "Cash customer (no account)",
+    "cashCustomer": "Walk-in customer",
     "selectCustomer": "Select customer",
     "pickDevice": "Pick from stock",
     "noItems": "No items yet",
@@ -425,7 +430,10 @@
     "minPrice": "Min",
     "cashGiven": "Cash given by the customer",
     "change": "Change to give back",
-    "cashShort": "Less than the bill"
+    "cashShort": "Less than the bill",
+    "walkInHint": "No khata kept. Choose a customer to put it on their khata.",
+    "chooseCustomer": "Choose customer",
+    "toKhata": "Keep {{n}} against their old udhaar (owes {{due}})"
   },
   "pay": {
     "title": "Payment",
@@ -4369,6 +4377,11 @@
         "title": "Phones",
         "body": "Every phone bought from or sold to this person: the agreed price, what is paid and what is still to pay or to get. Tap a phone to open it; the button takes a payment for that one phone.",
         "example": "iPhone 12 bought for Rs. 85,000 · paid Rs. 60,000 · still to pay Rs. 25,000."
+      },
+      "moreDetails": {
+        "title": "More details",
+        "body": "Name, phone and type are enough to start. Tick this to add the CNIC (or scan it), city, address, notes or the wholesale price.",
+        "example": "A new walk-in buyer: name and phone only. A dealer: tick it and switch on the wholesale price."
       }
     },
     "lending": {
@@ -5851,6 +5864,11 @@
         "title": "Cash given",
         "body": "Type the cash the customer handed over. The screen and the printed bill show the change to give back. Leave it empty if you do not need it.",
         "example": "Bill Rs. 41,180, the customer gives Rs. 42,000 → change Rs. 820."
+      },
+      "toKhata": {
+        "title": "Extra cash to old udhaar",
+        "body": "The customer gave more than this bill and owes the shop from before. Tick this and the extra is taken against their old udhaar instead of handed back as change. Their khata goes down and the bill prints it.",
+        "example": "Bill Rs. 2,000, he gives Rs. 5,000 and owes Rs. 3,000 from last month → tick it: change Rs. 0, old udhaar cleared."
       }
     },
     "exchange": {
@@ -6033,9 +6051,9 @@
         "example": "Type \"0300\" → Ali (0300 1234567) shows with Rs. 25,000 due; tap him."
       },
       "walkIn": {
-        "title": "Cash customer",
-        "body": "A walk-in who pays in full now: no name and no khata is kept.",
-        "example": "Someone buys a Rs. 800 charger and pays cash → leave it as cash customer."
+        "title": "Walk-in customer",
+        "body": "Someone who pays in full now and needs no khata. Every sale starts as walk-in; tap \"Choose customer\" to put the bill on a person's khata.",
+        "example": "Someone buys a Rs. 800 charger and pays cash → leave it as walk-in customer."
       },
       "docLang": {
         "title": "Document language",
@@ -9899,5 +9917,10 @@
     "billSent": "FBR number",
     "billRejected": "FBR turned this bill down",
     "billWaiting": "Waiting to reach FBR — it is sent by itself when FBR answers"
+  },
+  "profile": {
+    "menu": "Profile and log out",
+    "short": "Profile",
+    "open": "My profile"
   }
 }
