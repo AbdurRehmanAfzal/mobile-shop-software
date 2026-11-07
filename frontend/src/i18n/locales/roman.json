@@ -14,7 +14,8 @@
     "hisaab": "Hisaab",
     "dashboard": "Dashboard",
     "shopSection": "Dukaan",
-    "allOptions": "Saare options"
+    "allOptions": "Saare options",
+    "purchases": "Khareedari"
   },
   "auth": {
     "login": "Login",

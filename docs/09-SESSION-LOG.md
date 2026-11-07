@@ -940,3 +940,8 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
   - Rows are now 36 px with a 28 px icon well and 14 px text; the panel is 240 px wide.
   - It scrolls on its own only if the screen is very short.
   - Measured: the last row ends at 661 px on 1280×720 and 1366×768, in English and Urdu.
+- Owner follow-up 2 (side panel):
+  - **Borders clipped:** the panel's own scroll box cut the tile borders and the active ring at the left and right; the panel now has 6 px padding inside.
+  - **More pages:** People & khata, Shop audit, Cash & bank and Purchases join Day's hisaab, Reports, Staff and Settings, as compact tiles two to a row, with "All options" full width at the end. Hidden by role as on the More page.
+  - **Still one screen:** job rows are 32 px. The last tile ends at 662 px on 1280×720 in English and 682 px in Urdu.
+  - e2e: `laptop.spec` reads the glance tiles from `main`, since the side panel now also says "Cash & bank".

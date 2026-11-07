@@ -32,7 +32,7 @@ test('profile menu, walk-in, short person form, extra cash to old udhaar, side p
 
   // the side panel: dashboard and the shop pages as rows
   const side = page.getByTestId('side-shop')
-  for (const t of ["Day's hisaab", 'Reports', 'Staff', 'Settings', 'All options']) await expect(side.getByRole('link', { name: t })).toBeVisible()
+  for (const t of ['People & khata', 'Shop audit', "Day's hisaab", 'Reports', 'Cash & bank', 'Purchases', 'Staff', 'Settings', 'All options']) await expect(side.getByRole('link', { name: t })).toBeVisible()
   await expect(page.getByTestId('side-home')).toContainText('Dashboard')
   await side.getByRole('link', { name: 'Settings' }).click()
   await expect(page).toHaveURL(/\/more\/settings$/)

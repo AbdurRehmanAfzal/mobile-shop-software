@@ -25,8 +25,8 @@ test('laptop: side menu, two-column home, side-by-side sale, F-keys', async ({ p
   await expect(aside.getByText('F2')).toBeVisible()
   await expect(page.locator('nav.fixed')).toBeHidden()
   // home: the at-a-glance tiles run four to a row on a laptop (sales ... cash & bank on one line)
-  const sales = page.getByText('Sales', { exact: true }).first()
-  const cash = page.getByText('Cash & bank', { exact: true }).first()
+  const sales = page.locator('main').getByText('Sales', { exact: true }).first()
+  const cash = page.locator('main').getByText('Cash & bank', { exact: true }).first()
   const [hb, kb] = [await sales.boundingBox(), await cash.boundingBox()]
   expect(hb && kb && Math.abs(hb.y - kb.y) < 40 && kb.x > hb.x + 200).toBeTruthy()
   await page.screenshot({ path: 'test-results/laptop-home.png', fullPage: true })
