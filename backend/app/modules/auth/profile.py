@@ -22,6 +22,8 @@ DEFAULT_PRINT = {
     "terms": True,
     "tagline": True,
     "social": False,
+    # owner 2026-11-07: a QR on the sale bill that opens the bill online (bill_link.py)
+    "qr": True,
 }
 LOGO_MAX = 600 * 1024
 

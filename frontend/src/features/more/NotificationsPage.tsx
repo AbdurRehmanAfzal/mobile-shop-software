@@ -6,7 +6,8 @@ import Help from '@/components/Help'
 import { Chip, Empty, ErrorText, List, Loading, PageHeader, Section, fmtDate } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useDocMutation, useGet, useMessages, useNotificationSettings } from '@/lib/queries'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useAuth } from '@/lib/auth'
 import type { Message, NotificationSettings } from '@/lib/types'
 
 const EMPTY: NotificationSettings = {
@@ -30,8 +31,14 @@ function Toggle({ k, label, s, set, help }: { k: keyof NotificationSettings; lab
 export default function NotificationsPage() {
   const { pick, ur, cls } = useLang()
   const nav = useNavigate()
-  const { data } = useNotificationSettings()
-  const { data: prov } = useGet<{ whatsapp_api: boolean; email: boolean }>(['notif-provider'], '/api/v1/notifications/provider')
+  // owner 2026-11-07: the header's "Messages" button opened a long settings form (the messages were
+  // at the very bottom), and staff — who may not read the settings — saw an endless loader. Now:
+  // two tabs, Messages first; Settings only for the owner (the one role with manage_settings).
+  const owner = useAuth((st) => st.me?.user.role) === 'owner'
+  const [params, setParams] = useSearchParams()
+  const tab = owner && params.get('tab') === 'settings' ? 'settings' : 'messages'
+  const { data } = useNotificationSettings(owner)
+  const { data: prov } = useGet<{ whatsapp_api: boolean; email: boolean }>(['notif-provider'], owner ? '/api/v1/notifications/provider' : null)
   const [reportSent, setReportSent] = useState<string | null>(null)
   const sendReport = useDocMutation<Record<string, never>, Message>('POST', () => '/api/v1/notifications/daily-report')
   const { data: messages, refetch } = useMessages()
@@ -53,11 +60,62 @@ export default function NotificationsPage() {
     refetch()
   }
 
-  if (!form) return <Loading />
+  const header = (
+    <>
+      <PageHeader title={tab === 'settings' ? 'notif.title' : 'notif.queue'} help={<Help term="more.tile.notifications" />} />
+      {owner ? (
+        <div data-testid="notif-tabs">
+          <BiSegmented value={tab} onChange={(v) => setParams(v === 'settings' ? { tab: 'settings' } : {}, { replace: true })} options={[{ value: 'messages', text: 'notif.queue' }, { value: 'settings', text: 'notif.settingsTab' }]} />
+        </div>
+      ) : null}
+    </>
+  )
+
+  if (tab === 'messages') {
+    return (
+      <div className="flex flex-col gap-4" data-testid="notif-messages">
+        {header}
+        <Section title="notif.queue" help="notif.queue">
+          {messages === undefined ? <Loading /> : !messages.length ? (
+            <Empty text="notif.none" />
+          ) : (
+            <List>
+              {messages.map((m) => (
+                <div key={m.id} className="flex items-start gap-3 px-3 py-3">
+                  <span className="well h-9 w-9 shrink-0 bg-emerald-tint text-emerald-deep">{m.channel === 'whatsapp' ? <MessageCircle size={18} /> : <Mail size={18} />}</span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 text-xs text-muted">
+                      <span dir="ltr">{m.recipient}</span> · <span dir="ltr">{fmtDate(m.created_at)}</span> <Chip text={m.status === 'sent' ? 'notif.sent' : m.status === 'failed' ? 'notif.failed' : 'notif.queued'} tone={m.status === 'sent' ? 'ok' : m.status === 'failed' ? 'bad' : 'warn'} />
+                    </div>
+                    <div className="mt-1 whitespace-pre-line text-sm" dir="auto">
+                      {m.body}
+                    </div>
+                    {m.status === 'failed' && m.error ? <div className="mt-1 text-xs text-payable" dir="ltr">{m.error}</div> : null}
+                    {m.status !== 'sent' && m.link ? (
+                      <div className="mt-2 flex gap-2">
+                        <a href={m.link} target="_blank" rel="noreferrer" className="tap rounded-full bg-emerald px-3 py-1.5 text-xs font-bold text-white">
+                          {pick('common.share')}
+                        </a>
+                        <button type="button" onClick={() => markSent(m)} className="tap rounded-full border border-line px-3 py-1.5 text-xs font-bold text-muted">
+                          {pick('notif.markSent')}
+                        </button>
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+              ))}
+            </List>
+          )}
+        </Section>
+      </div>
+    )
+  }
+
+  if (!form) return <div className="flex flex-col gap-4">{header}<Loading /></div>
 
   return (
-    <div className="flex flex-col gap-4">
-      <PageHeader title="notif.title" help={<Help term="more.tile.notifications" />} />
+    <div className="flex flex-col gap-4" data-testid="notif-settings">
+      {header}
       <Section title="notif.toOwner" help="notif.toOwner">
         <PhoneInput label="notif.ownerWhatsapp" value={s.owner_whatsapp ?? ''} onChange={(v) => setS({ ...s, owner_whatsapp: v || null })} help={<Help term="notif.ownerWhatsapp" size="sm" />} />
         <BiInput label="notif.ownerEmail" type="email" value={s.owner_email ?? ''} onChange={(e) => setS({ ...s, owner_email: e.target.value || null })} help={<Help term="notif.ownerEmail" size="sm" />} />
@@ -123,38 +181,6 @@ export default function NotificationsPage() {
       {saved ? <BiLabel text="notif.saved" size="md" tone="text-emerald-deep" bold align="center" /> : null}
       <BiButton text="common.save" full loading={save.isPending} onClick={async () => { setS(await save.mutateAsync(s)); setSaved(true) }} />
 
-      <Section title="notif.queue" help="notif.queue">
-        {!messages?.length ? (
-          <Empty text="notif.none" />
-        ) : (
-          <List>
-            {messages.map((m) => (
-              <div key={m.id} className="flex items-start gap-3 px-3 py-3">
-                <span className="well h-9 w-9 shrink-0 bg-emerald-tint text-emerald-deep">{m.channel === 'whatsapp' ? <MessageCircle size={18} /> : <Mail size={18} />}</span>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 text-xs text-muted">
-                    <span dir="ltr">{m.recipient}</span> · <span dir="ltr">{fmtDate(m.created_at)}</span> <Chip text={m.status === 'sent' ? 'notif.sent' : m.status === 'failed' ? 'notif.failed' : 'notif.queued'} tone={m.status === 'sent' ? 'ok' : m.status === 'failed' ? 'bad' : 'warn'} />
-                  </div>
-                  <div className="mt-1 whitespace-pre-line text-sm" dir="auto">
-                    {m.body}
-                  </div>
-                  {m.status === 'failed' && m.error ? <div className="mt-1 text-xs text-payable" dir="ltr">{m.error}</div> : null}
-                  {m.status !== 'sent' && m.link ? (
-                    <div className="mt-2 flex gap-2">
-                      <a href={m.link} target="_blank" rel="noreferrer" className="tap rounded-full bg-emerald px-3 py-1.5 text-xs font-bold text-white">
-                        {pick('common.share')}
-                      </a>
-                      <button type="button" onClick={() => markSent(m)} className="tap rounded-full border border-line px-3 py-1.5 text-xs font-bold text-muted">
-                        {pick('notif.markSent')}
-                      </button>
-                    </div>
-                  ) : null}
-                </div>
-              </div>
-            ))}
-          </List>
-        )}
-      </Section>
     </div>
   )
 }

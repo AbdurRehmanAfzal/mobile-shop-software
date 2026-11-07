@@ -323,6 +323,15 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | New person form: name, phone, type; the rest under "More details" | ✅ | `PartyForm.tsx` (customers, dealers, labs) |
 | Extra cash given → change, or against the customer's old udhaar | ✅ | `invoices.khata_adjusted`, migration `a1c3e5f7b9d2`; ADR-051 |
 | Laptop side panel: Dashboard + Shop section (Day's hisaab, Reports, Staff, Settings, All options) as tappable rows | ✅ | `Shell.tsx` |
+| Side panel: People & khata, Shop audit, Cash & bank, Purchases as two-up tiles; one 1280×720 screen | ✅ | PR #34; now `app/SidePanel.tsx` |
+
+## Phase 22 — Appearance + bill QR (owner 2026-11-07, ADR-052)
+| Item | Status | Notes |
+|---|---|---|
+| Appearance page (`/more/appearance`): light / dark, design, colours, main colour, text size, corners, numbers font, back to default | ✅ | `AppearancePage.tsx`, `lib/theme.ts`; opened from the dashboard, the profile menu and More |
+| Three more designs for the dashboard and the laptop side panel: Tiles, Simple, Bold (Classic stays the default) | ✅ | `SidePanel.tsx`, `HomePage.tsx` `GlanceSet` / `OtherJobs`; each fits 1280×720 in en and ur |
+| QR on every sale bill → `/b/<token>`, the bill online without login (no name, phone, full IMEI, cost or balance) | ✅ | `sales/bill_link.py`, `GET /api/v1/public/bill/{token}`, `BillCheckPage.tsx`; print switch `print_prefs.qr` (on) |
+| Header "Messages": opens the messages (Owner also gets a Settings tab); staff no longer see an endless loader | ✅ | `NotificationsPage.tsx` tabs, More tile → `?tab=settings` |
 
 ## Owner side (open)
 Server env variables, server commands, manual testing and decisions: `docs/29-OWNER-PENDING.md` — none done yet (2026-11-01).

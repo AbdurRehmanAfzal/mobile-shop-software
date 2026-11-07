@@ -528,7 +528,8 @@
     "days": "days",
     "failed": "Failed",
     "emailOn": "Email is sent from the server (SMTP is set).",
-    "emailOff": "Email needs an SMTP account on the server (e.g. a Gmail app password); ask the software provider. Until then email messages wait in the list below."
+    "emailOff": "Email needs an SMTP account on the server (e.g. a Gmail app password); ask the software provider. Until then email messages wait in the list below.",
+    "settingsTab": "Settings"
   },
   "settings": {
     "title": "Shop settings",
@@ -6440,6 +6441,11 @@
           "title": "Social pages on the bill",
           "body": "On: your Facebook / Instagram / TikTok names are printed.",
           "example": "On → \"IG: starmobiles.pk\" at the bottom."
+        },
+        "qr": {
+          "title": "QR code on the bill",
+          "body": "On: every sale bill has a small QR code. The customer scans it and sees the bill online, without logging in, so they keep a copy and know it is genuine. It never shows their name, phone or balance. A computer without an internet address prints the bill number in the QR instead.",
+          "example": "On → a customer scans the QR on bill INV-0042 and the bill opens on their phone."
         }
       },
       "terms": {
@@ -7581,6 +7587,53 @@
         "title": "FBR number",
         "body": "The number FBR gave this bill. The printed bill shows it with its QR code; a customer can check it with FBR.",
         "example": "7000007DI1747119701593"
+      }
+    },
+    "look": {
+      "page": {
+        "title": "Appearance",
+        "body": "Change how the app looks for you: light or dark, the design of the dashboard and the laptop side panel, the colours, the main colour, the text size, corners and the numbers font. It changes only this phone or computer; other staff keep their own.",
+        "example": "Pick \"Tiles\" and \"Blue\" → the dashboard shows big coloured tiles and the buttons turn blue."
+      },
+      "theme": {
+        "title": "Light or dark",
+        "body": "Light is a bright screen, dark is easier on the eyes at night. \"Same as phone\" follows the phone's own setting.",
+        "example": "Pick \"Dark\" → the whole app turns dark at once."
+      },
+      "design": {
+        "title": "Design",
+        "body": "How the dashboard and the laptop side panel are laid out. Classic: coloured rows and cards. Tiles: big coloured tiles. Simple: a clean list without boxes. Bold: a dark panel with the day's sales in big numbers. The pages and buttons stay the same in every design.",
+        "example": "Pick \"Simple\" → today's numbers show as one tidy list."
+      },
+      "palette": {
+        "title": "Colours",
+        "body": "The set of colours for the whole app: background, cards, the dark hero card and the highlights.",
+        "example": "Pick \"Navy\" → a navy-blue look with a gold touch."
+      },
+      "accent": {
+        "title": "Main colour",
+        "body": "The colour of the main buttons (Save, Sell), the open tab and the highlights. \"Default\" uses the colour of the chosen colour set.",
+        "example": "Pick \"Red\" → the Save button and the open tab turn red."
+      },
+      "text": {
+        "title": "Text size",
+        "body": "Makes text and buttons bigger, for easier reading at the counter.",
+        "example": "Pick \"Large\" → every screen's text grows a little."
+      },
+      "corners": {
+        "title": "Corners",
+        "body": "How round the corners of buttons and cards are.",
+        "example": "Pick \"Sharp\" → square-cornered cards and buttons."
+      },
+      "font": {
+        "title": "Numbers font",
+        "body": "The font for English letters and numbers. Urdu text always stays in Nastaliq.",
+        "example": "Pick \"Manrope\" → amounts like 1,250 use the Manrope font."
+      },
+      "reset": {
+        "title": "Back to default",
+        "body": "Puts every appearance choice back to how the app came.",
+        "example": "After trying colours, tap it → light theme, Classic design, default colours."
       }
     }
   },
@@ -9707,7 +9760,8 @@
       "owner": "Owner's name",
       "bank": "Bank / wallet details (for paying a balance)",
       "terms": "Terms (returns / warranty)",
-      "social": "Facebook / Instagram / TikTok"
+      "social": "Facebook / Instagram / TikTok",
+      "qr": "QR code to see the bill online"
     },
     "terms": "Terms (English)",
     "termsUr": "Terms (Urdu)",
@@ -9923,5 +9977,84 @@
     "menu": "Profile and log out",
     "short": "Profile",
     "open": "My profile"
+  },
+  "look": {
+    "title": "Appearance",
+    "short": "Theme, design, colours, text size",
+    "hint": "Choose how the app looks. Every change shows straight away and is kept on this phone or computer.",
+    "theme": "Light or dark",
+    "design": "Design of the dashboard and side panel",
+    "designs": {
+      "classic": {
+        "name": "Classic",
+        "hint": "Coloured rows and cards"
+      },
+      "tiles": {
+        "name": "Tiles",
+        "hint": "Big coloured tiles"
+      },
+      "simple": {
+        "name": "Simple",
+        "hint": "A clean list, no boxes"
+      },
+      "bold": {
+        "name": "Bold",
+        "hint": "Dark panel, big numbers"
+      }
+    },
+    "palette": "Colours",
+    "accent": "Main colour",
+    "accents": {
+      "auto": "Default",
+      "emerald": "Green",
+      "blue": "Blue",
+      "violet": "Purple",
+      "rose": "Red",
+      "orange": "Orange",
+      "teal": "Teal"
+    },
+    "text": "Text size",
+    "texts": {
+      "normal": "Normal",
+      "large": "Large",
+      "xl": "Extra large"
+    },
+    "corners": "Corners",
+    "cornerSet": {
+      "auto": "Default",
+      "round": "Round",
+      "soft": "Soft",
+      "square": "Sharp"
+    },
+    "font": "Numbers font",
+    "fonts": {
+      "auto": "Default",
+      "inter": "Inter",
+      "manrope": "Manrope",
+      "system": "Phone's own"
+    },
+    "reset": "Back to default"
+  },
+  "billcheck": {
+    "gone": "This bill could not be found. Ask the shop for help.",
+    "genuine": "Genuine bill from this shop",
+    "state": {
+      "paid": "Fully paid",
+      "partial": "Part paid — some still left",
+      "unpaid": "Not paid yet",
+      "void": "This bill was cancelled",
+      "returned": "Returned to the shop"
+    },
+    "warranty": "Warranty {{n}} days",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "tax": "Tax",
+    "total": "Total",
+    "returned": "Returned",
+    "paid": "Paid",
+    "due": "Left to pay",
+    "fbr": "FBR invoice no.",
+    "call": "Call the shop",
+    "footer": "Keep this page as your copy of the bill."
   }
 }

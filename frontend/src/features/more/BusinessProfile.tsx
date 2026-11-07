@@ -43,8 +43,9 @@ const PRINT = [
   { key: 'bank', help: 'biz.print.bank' },
   { key: 'terms', help: 'biz.print.terms' },
   { key: 'social', help: 'biz.print.social' },
+  { key: 'qr', help: 'biz.print.qr' },
 ] as const
-const PRINT_DEFAULT: Record<string, boolean> = { logo: true, tagline: true, ntn: true, owner: false, bank: false, terms: true, social: false }
+const PRINT_DEFAULT: Record<string, boolean> = { logo: true, tagline: true, ntn: true, owner: false, bank: false, terms: true, social: false, qr: true }
 
 function useSave(after?: () => void) {
   const qc = useQueryClient()

@@ -157,6 +157,17 @@ def repair_status(token: str, db: DB):
     }
 
 
+@router.get("/bill/{token}")
+def bill_check(token: str, db: DB):
+    """The page the bill's QR opens (owner 2026-11-07): the bill, read-only, from a signed link."""
+    from app.modules.sales import bill_link
+
+    return {
+        k: (f"{v:.2f}" if isinstance(v, Decimal) else v)
+        for k, v in bill_link.public_view(db, bill_link.invoice_for(db, token)).items()
+    }
+
+
 @router.get("/key/{token}")
 def show_key(token: str, db: DB):
     """A shopkeeper who lost the renewal key opens the link sent on WhatsApp / SMS: the key, its

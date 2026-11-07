@@ -2,7 +2,7 @@
 
 import { ChevronLeft, ChevronRight, Bot,
   ArrowLeftRight, Archive, BarChart3, Bell, BookOpen, CalendarDays, Check, ClipboardList, CreditCard, FileSpreadsheet, FileText, HandCoins, Headphones, KeyRound,
-  Landmark, Lock, LogOut, Package, PackagePlus, ShieldCheck, Receipt, RotateCcw, ScanLine, Settings, Smartphone, Store, Tag, Tags, Undo2, Users,
+  Landmark, Lock, LogOut, Package, PackagePlus, Palette, ShieldCheck, Receipt, RotateCcw, ScanLine, Settings, Smartphone, Store, Tag, Tags, Undo2, Users,
   Wallet, Wrench, type LucideIcon,
 } from 'lucide-react'
 import { useState } from 'react'
@@ -11,7 +11,6 @@ import { useNavigate } from 'react-router-dom'
 import { setLocale, type Locale } from '@/i18n'
 import { useAuth, type Role } from '@/lib/auth'
 import { moduleFor, useModules } from '@/lib/modules'
-import { useTheme, type Palette, type Theme } from '@/lib/theme'
 import { api } from '@/lib/api'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import FingerprintCard from './FingerprintCard'
@@ -99,7 +98,7 @@ const GROUPS: Group[] = [
     items: [
       { key: 'more.settings', Icon: Settings, to: '/more/settings', roles: ['owner'], tone: T.plain, help: 'more.tile.settings' },
       { key: 'more.staff', Icon: Users, to: '/more/staff', roles: ['owner'], tone: T.plain, help: 'more.tile.staff' },
-      { key: 'more.notifications', Icon: Bell, to: '/more/notifications', roles: ['owner'], tone: T.plain, help: 'more.tile.notifications' },
+      { key: 'more.notifications', Icon: Bell, to: '/more/notifications?tab=settings', roles: ['owner'], tone: T.plain, help: 'more.tile.notifications' },
       { key: 'fees.title', Icon: CreditCard, to: '/more/fees', roles: ['owner'], tone: T.plain, help: 'more.tile.fees' },
       { key: 'pin.set', Icon: KeyRound, action: 'pin', tone: T.plain, help: 'more.tile.pin' },
     ],
@@ -112,10 +111,6 @@ export default function MorePage() {
   const nav = useNavigate()
   const logout = useAuth((s) => s.logout)
   const me = useAuth((s) => s.me)
-  const theme = useTheme((s) => s.theme)
-  const setTheme = useTheme((s) => s.setTheme)
-  const palette = useTheme((s) => s.palette)
-  const setPalette = useTheme((s) => s.setPalette)
   const locale = i18n.language as Locale
   const role = me?.user.role
   const [pinOpen, setPinOpen] = useState(false)
@@ -192,10 +187,14 @@ export default function MorePage() {
         <div className="card flex flex-col gap-3">
           <span className="flex items-center gap-1"><BiLabel text="more.language" size="sm" tone="text-muted" /><Help term="more.language" size="sm" /></span>
           <BiSegmented<Locale> value={locale} onChange={setLocale} options={[{ value: 'ur', text: { en: 'Urdu', ur: 'اردو', roman: 'Urdu' } }, { value: 'roman', text: { en: 'Roman Urdu', ur: 'رومن اردو', roman: 'Roman Urdu' } }, { value: 'en', text: { en: 'English', ur: 'انگریزی', roman: 'English' } }]} />
-          <span className="flex items-center gap-1"><BiLabel text="more.look" size="sm" tone="text-muted" /><Help term="more.look" size="sm" /></span>
-          <BiSegmented<Palette> value={palette} onChange={setPalette} options={[{ value: 'modern', text: 'more.lookModern' }, { value: 'pro', text: 'more.lookPro' }, { value: 'navy', text: 'more.lookNavy' }, { value: 'colorful', text: 'more.lookColorful' }]} />
-          <span className="flex items-center gap-1"><BiLabel text="more.theme" size="sm" tone="text-muted" /><Help term="more.theme" size="sm" /></span>
-          <BiSegmented<Theme> value={theme} onChange={setTheme} options={[{ value: 'light', text: 'more.themeLight' }, { value: 'dark', text: 'more.themeDark' }, { value: 'system', text: 'more.themeSystem' }]} />
+          <div className="flex items-center gap-1">
+            <button type="button" onClick={() => nav('/more/appearance')} className="tap flex min-h-14 min-w-0 flex-1 items-center gap-3 rounded-2xl border border-line bg-surface px-3 text-start" data-testid="more-appearance">
+              <span className="well h-10 w-10 shrink-0 rounded-xl bg-emerald-tint text-emerald-deep"><Palette size={20} /></span>
+              <span className="flex min-w-0 flex-1 flex-col"><BiLabel text="look.title" size="md" bold /><BiLabel text="look.short" size="sm" tone="text-muted" /></span>
+              <span className="shrink-0 text-muted">{ur ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}</span>
+            </button>
+            <Help term="look.page" size="sm" />
+          </div>
         </div>
       </section>
 
