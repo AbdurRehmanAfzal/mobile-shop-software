@@ -222,8 +222,13 @@ def post(
         r = httpx.post(url, json=body, headers={"Authorization": f"Bearer {token}"}, timeout=25)
     except httpx.HTTPError as e:
         return None, None, f"FBR not reachable: {e.__class__.__name__}"
-    if r.status_code in (401, 403):  # a wrong or expired token: no point trying again until it is fixed
-        return None, {"httpStatus": r.status_code}, f"FBR did not accept the token ({r.status_code}) — paste the right token in Settings → FBR"
+    # a wrong or expired token: no point trying again until it is fixed
+    if r.status_code in (401, 403):
+        return (
+            None,
+            {"httpStatus": r.status_code},
+            f"FBR did not accept the token ({r.status_code}) — paste the right token in Settings → FBR",
+        )
     try:
         data = r.json()
     except ValueError:

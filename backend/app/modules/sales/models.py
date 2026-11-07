@@ -66,6 +66,9 @@ class Invoice(UUIDPk, ShopScoped, Timestamped, Base):
     fbr_invoice_no: Mapped[str | None] = mapped_column(String(60))
     # docs/36: the cash the customer handed over, when the counter typed it (change = this − paid)
     cash_tendered: Mapped[Decimal | None] = mapped_column()
+    # owner 2026-11-06: of the cash given, the part kept against the customer's old udhaar instead of
+    # handed back as change (a payment received is posted for it with the sale)
+    khata_adjusted: Mapped[Decimal | None] = mapped_column()
     notes: Mapped[str | None] = mapped_column(Text)
     created_by: Mapped[uuid.UUID | None] = mapped_column(
         Uuid, ForeignKey("users.id", ondelete="SET NULL")

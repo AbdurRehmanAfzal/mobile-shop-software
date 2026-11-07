@@ -11,7 +11,10 @@
     "parties": "Khate",
     "more": "Mazeed",
     "khata": "Udhaar",
-    "hisaab": "Hisaab"
+    "hisaab": "Hisaab",
+    "dashboard": "Dashboard",
+    "shopSection": "Dukaan",
+    "allOptions": "Saare options"
   },
   "auth": {
     "login": "Login",
@@ -163,7 +166,9 @@
     "noParties": "Abhi koi khata nahi. Pehla gahak ya dealer daalein.",
     "history": "Len den",
     "wholesale": "Dealer / wholesale customer",
-    "wholesaleHint": "Items ki wholesale qeemat milti hai"
+    "wholesaleHint": "Items ki wholesale qeemat milti hai",
+    "moreDetails": "Mazeed tafseel",
+    "moreDetailsHint": "CNIC, shehar, pata, notes, wholesale rate"
   },
   "stock": {
     "title": "Stock",
@@ -384,7 +389,7 @@
       "payment": "Paise",
       "done": "Ho gaya"
     },
-    "cashCustomer": "Cash gahak (bina khate)",
+    "cashCustomer": "Walk-in customer",
     "selectCustomer": "Gahak chunein",
     "pickDevice": "Stock se chunein",
     "noItems": "Abhi kuch nahi",
@@ -425,7 +430,10 @@
     "minPrice": "Min",
     "cashGiven": "Gahak ne kitne naqad diye",
     "change": "Wapas dene hain",
-    "cashShort": "Bill se kam"
+    "cashShort": "Bill se kam",
+    "walkInHint": "Koi khata nahi. Khate mein daalna ho to customer chunein.",
+    "chooseCustomer": "Customer chunein",
+    "toKhata": "{{n}} us ke purane udhaar mein jama karein (dena hai {{due}})"
   },
   "pay": {
     "title": "Paise",
@@ -4369,6 +4377,11 @@
         "title": "Phones",
         "body": "Is shakhs se khareeda ya use becha har phone: tay qeemat, kitna diya aur kitna abhi dena ya lena hai. Phone par tap karein to khule ga; button isi ek phone ki payment leta hai.",
         "example": "iPhone 12 Rs. 85,000 mein khareeda · Rs. 60,000 diye · Rs. 25,000 dene baqi."
+      },
+      "moreDetails": {
+        "title": "Mazeed tafseel",
+        "body": "Shuru ke liye naam, phone aur qism kaafi hain. CNIC (ya us ki photo), shehar, pata, notes ya wholesale rate daalna ho to ye tick karein.",
+        "example": "Naya aam customer: sirf naam aur phone. Dealer: tick kar ke wholesale rate on karein."
       }
     },
     "lending": {
@@ -5851,6 +5864,11 @@
         "title": "Gahak ne naqad diye",
         "body": "Gahak ne jitni naqad raqam di woh likhein. Screen aur chhapa hua bill wapas dene wali raqam dikhate hain. Zaroorat na ho to khaali chhor dein.",
         "example": "Bill Rs. 41,180, gahak Rs. 42,000 deta hai → wapas Rs. 820."
+      },
+      "toKhata": {
+        "title": "Zaid raqam purane udhaar mein",
+        "body": "Customer ne is bill se zyada diye aur pehle ka udhaar bhi dena hai. Ye tick karein to zaid raqam change ki jagah us ke purane udhaar mein jama ho jati hai. Khata kam hota hai aur bill par chhapta hai.",
+        "example": "Bill Rs. 2,000, woh Rs. 5,000 deta hai aur pichhle mahine ka Rs. 3,000 dena hai → tick karein: wapas Rs. 0, purana udhaar khatam."
       }
     },
     "exchange": {
@@ -6033,9 +6051,9 @@
         "example": "\"0300\" likhein → Ali (0300 1234567) Rs. 25,000 baqi ke saath dikhe ga; use dabayen."
       },
       "walkIn": {
-        "title": "Cash gahak",
-        "body": "Raah chalta customer jo abhi poori raqam deta hai: na naam rakha jata hai na khata.",
-        "example": "Koi Rs. 800 ka charger cash mein khareedta hai → cash gahak hi rehne dein."
+        "title": "Walk-in customer",
+        "body": "Jo abhi poori raqam de aur khata na chahiye. Har sale walk-in se shuru hoti hai; bill kisi ke khate mein daalna ho to \"Customer chunein\" dabayein.",
+        "example": "Koi Rs. 800 ka charger cash mein khareedta hai → walk-in customer hi rehne dein."
       },
       "docLang": {
         "title": "Document ki zabaan",
@@ -9899,5 +9917,10 @@
     "billSent": "FBR number",
     "billRejected": "FBR ne ye bill radd kiya",
     "billWaiting": "FBR tak pohanchna baqi hai — FBR jawab de to khud chala jayega"
+  },
+  "profile": {
+    "menu": "Profile aur logout",
+    "short": "Profile",
+    "open": "Meri profile"
   }
 }

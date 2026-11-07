@@ -314,6 +314,16 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | FBR sandbox run, then production | ⬜ | needs NTN / STRN + IRIS token and a tax adviser (`docs/29` H) |
 | Returns as DI debit / credit notes; POS (IMS) for Tier-1 | ⬜ | after the sandbox run |
 
+## Phase 21 — Counter UX round (owner 2026-11-07, ADR-051)
+| Item | Status | Notes |
+|---|---|---|
+| Landing page: FBR-ready bills band, latest round, guide + FAQ | ✅ | PR #32, live |
+| Profile menu top right (name, phone, role, shop, My profile, Settings, Log out) | ✅ | `Shell.tsx` `ProfileMenu` |
+| Sale starts as "Walk-in customer"; "Choose customer" opens the picker | ✅ | bills / lists say "Walk-in customer" |
+| New person form: name, phone, type; the rest under "More details" | ✅ | `PartyForm.tsx` (customers, dealers, labs) |
+| Extra cash given → change, or against the customer's old udhaar | ✅ | `invoices.khata_adjusted`, migration `a1c3e5f7b9d2`; ADR-051 |
+| Laptop side panel: Dashboard + Shop section (Day's hisaab, Reports, Staff, Settings, All options) as tappable rows | ✅ | `Shell.tsx` |
+
 ## Owner side (open)
 Server env variables, server commands, manual testing and decisions: `docs/29-OWNER-PENDING.md` — none done yet (2026-11-01).
 

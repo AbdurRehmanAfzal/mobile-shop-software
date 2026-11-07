@@ -2,7 +2,7 @@
  *  → done. Customer is asked only for udhaar. Warranty and box/charger are shown under each phone
  *  (owner, 2026-10-27: hidden behind "more options" nobody found them); discount stays behind it. */
 
-import { Check, CirclePause, FileText, HandCoins, Headphones, Plus, Printer, Receipt, ShieldAlert, ShieldCheck, SlidersHorizontal, Smartphone, Trash2, TriangleAlert, UserCheck, Watch } from 'lucide-react'
+import { Check, CirclePause, FileText, HandCoins, Headphones, Plus, Printer, Receipt, ShieldAlert, ShieldCheck, SlidersHorizontal, Smartphone, Trash2, TriangleAlert, UserCheck, UserRound, Watch } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { clearDrafts, useDraft } from '@/lib/draft'
 import { useNavigate, useSearchParams } from 'react-router-dom'
@@ -114,6 +114,10 @@ export default function SaleWizard() {
   const [paidNow, setPaidNow] = useDraft('sale.paidNow', '')
   // docs/36: the cash the customer hands over, for the change on the bill (optional)
   const [cashGiven, setCashGiven] = useDraft('sale.cashGiven', '')
+  // owner 2026-11-06: the extra cash kept against the customer's old udhaar instead of handed back
+  const [toKhata, setToKhata] = useDraft('sale.toKhata', false)
+  // the customer box: walk-in until the shopkeeper chooses someone
+  const [pickCust, setPickCust] = useState(false)
   const [dueDate, setDueDate] = useDraft('sale.dueDate', '')
   const [overrideReason, setOverrideReason] = useDraft('sale.overrideReason', '')
   const [lossOk, setLossOk] = useDraft('sale.lossOk', false)
@@ -154,6 +158,10 @@ export default function SaleWizard() {
   // a remittance may cover only part of the bill: the rest goes on the customer's khata
   const paid = udhaar ? Math.min(Number(paidNow || 0), total) : pay.method === 'remittance' ? Math.min(remitPkr(pay), total) : total
   const owes = paid < total
+  // owner 2026-11-06: cash given above the bill — change, or (customer owes from before) his old udhaar
+  const extra = pay.method === 'cash' && !udhaar && cashGiven !== '' ? Math.max(0, Number(cashGiven) - paid) : 0
+  const oldDue = party ? Math.max(0, Number(party.balance) || 0) : 0
+  const adjust = toKhata && party ? Math.min(extra, oldDue) : 0
   const pendingLine = lines.find((l) => l.device.verification_status === 'pending')
   const flaggedLine = lines.find((l) => l.device.verification_status === 'flagged')
   const manager = role === 'owner' || role === 'manager'
@@ -266,6 +274,7 @@ export default function SaleWizard() {
       tax_rate: taxOn ? Number(rateShown || 0) : 0,
       paid,
       cash_tendered: pay.method === 'cash' && cashGiven !== '' && Number(cashGiven) >= paid ? Number(cashGiven) : undefined,
+      khata_adjust: adjust > 0 ? adjust : undefined,
       payment: inst.on && pay.method === 'udhaar' ? undefined : payInfo(pay),
       override_reason: overrideReason || undefined,
       below_cost_ok: lossLine && lossOk,
@@ -477,15 +486,47 @@ export default function SaleWizard() {
             </div>
           ) : null}
 
+          {!udhaar && !(owes && remitPkr(pay) > 0) ? (
+            party || pickCust ? (
+              <PartyPicker value={party} onChange={(p) => { setParty(p); if (!p) { setPickCust(false); setToKhata(false) } }} kind="customer" label="counter.customerOpt" allowNone />
+            ) : (
+              <div className="card flex items-center gap-3" data-testid="walk-in">
+                <span className="well h-11 w-11 shrink-0 bg-ground text-muted"><UserRound size={22} /></span>
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <BiLabel text="sale.cashCustomer" size="md" bold />
+                  <BiLabel text="sale.walkInHint" size="sm" tone="text-muted" />
+                </span>
+                <button type="button" onClick={() => setPickCust(true)} className="tap flex min-h-11 shrink-0 items-center gap-1.5 rounded-xl border border-line bg-surface px-3 font-bold" data-testid="choose-customer">
+                  <BtnText k="sale.chooseCustomer" />
+                </button>
+                <Help term="picker.walkIn" size="sm" />
+              </div>
+            )
+          ) : null}
+
           {pay.method === 'cash' && !udhaar && total > 0 ? (
+            <div className="flex flex-col gap-2">
             <div className="flex items-end gap-3" data-testid="cash-given">
               <div className="min-w-0 flex-1"><BiInput label="sale.cashGiven" help={<Help term="sale.cashGiven" size="sm" />} type="number" inputMode="numeric" min={0} value={cashGiven} onChange={(e) => setCashGiven(e.target.value)} className="num" /></div>
               {cashGiven !== '' && Number(cashGiven) >= paid ? (
                 <div className="flex flex-col items-end pb-2">
                   <BiLabel text="sale.change" size="sm" tone="text-muted" />
-                  <span className="num text-xl font-bold text-emerald-deep" dir="ltr" data-testid="change">{withCur((Number(cashGiven) - paid).toLocaleString('en-US'))}</span>
+                  <span className="num text-xl font-bold text-emerald-deep" dir="ltr" data-testid="change">{withCur((extra - adjust).toLocaleString('en-US'))}</span>
                 </div>
               ) : cashGiven !== '' ? <BiLabel text="sale.cashShort" size="sm" tone="text-payable" /> : null}
+            </div>
+            {/* the customer owes from before: the extra may go against that instead of back as change */}
+            {extra > 0 && oldDue > 0 ? (
+              <div className="flex items-center gap-1">
+                <label className="tap flex min-h-14 min-w-0 flex-1 cursor-pointer items-center gap-3 rounded-2xl border border-line bg-khata px-4 py-2 text-khata-fg" data-testid="to-khata">
+                  <input type="checkbox" checked={toKhata} onChange={(e) => setToKhata(e.target.checked)} className="h-6 w-6 shrink-0 accent-[rgb(var(--emerald))]" />
+                  <span className={`min-w-0 flex-1 font-bold ${ur ? cls('sm') : 'text-sm'}`}>
+                    {pick('sale.toKhata').replace('{{n}}', withCur(Math.min(extra, oldDue).toLocaleString('en-US'))).replace('{{due}}', withCur(oldDue.toLocaleString('en-US')))}
+                  </span>
+                </label>
+                <Help term="sale.toKhata" size="sm" />
+              </div>
+            ) : null}
             </div>
           ) : null}
 
@@ -500,8 +541,6 @@ export default function SaleWizard() {
               <span className={`font-bold ${cls('sm')}`}>{pick('paym.restUdhaar').replace('{{n}}', (total - paid).toLocaleString('en-US'))}</span>
               <PartyPicker value={party} onChange={setParty} kind="customer" label="counter.whoTakes" />
             </div>
-          ) : more ? (
-            <PartyPicker value={party} onChange={setParty} kind="customer" label="counter.customerOpt" allowNone />
           ) : null}
 
           {flaggedLine ? (

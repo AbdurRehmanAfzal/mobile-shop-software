@@ -232,6 +232,30 @@ def create_sale(
             message_en="Paid amount exceeds total",
             message_ur="ادا شدہ رقم کل سے زیادہ ہے",
         )
+    # owner 2026-11-06: the customer hands over more than the bill and owes the shop from before —
+    # the extra goes against the old udhaar instead of back as change
+    adjust = money(data.khata_adjust) if data.khata_adjust else ZERO
+    if adjust > ZERO:
+        from app.modules.ledger.service import party_balance
+
+        if party is None:
+            raise ValidationFailed(
+                code="adjust_needs_customer",
+                message_en="Choose the customer whose udhaar the extra cash goes to",
+                message_ur="وہ گاہک چنیں جس کے ادھار میں زائد رقم جائے",
+            )
+        if tendered is None or paid != total or money(tendered - paid) < adjust:
+            raise ValidationFailed(
+                code="adjust_exceeds_extra",
+                message_en="Only the cash given above a fully paid bill can go to the old udhaar",
+                message_ur="صرف پورے ادا شدہ بل سے زائد دی گئی رقم پرانے ادھار میں جا سکتی ہے",
+            )
+        if adjust > party_balance(db, shop_id, party.id):
+            raise ValidationFailed(
+                code="adjust_exceeds_due",
+                message_en="That is more than the customer owes from before",
+                message_ur="یہ گاہک کے پرانے بقایا سے زیادہ ہے",
+            )
     if party is None and paid != total:
         raise ValidationFailed(
             code="credit_needs_customer",
@@ -259,6 +283,7 @@ def create_sale(
         cash_account_id=cash.id if cash else None,
         status=status_for(total, paid),
         cash_tendered=tendered,
+        khata_adjusted=adjust if adjust > ZERO else None,
         notes=data.notes,
         created_by=user_id,
         loan_id=loan.id if loan is not None else None,
@@ -475,6 +500,28 @@ def create_sale(
     from app.modules.fbr.service import enqueue as fbr_enqueue
 
     fbr_enqueue(db, shop, invoice.id)
+    if adjust > ZERO:
+        # a payment received from the customer, allocated to their oldest open bills — the same as
+        # taking it on the khata screen, in the same transaction as the sale
+        from app.modules.payments.models import PaymentDirection
+        from app.modules.payments.schemas import PaymentCreate
+        from app.modules.payments.service import create_payment
+
+        create_payment(
+            db,
+            shop_id,
+            user_id,
+            PaymentCreate(
+                party_id=party.id,
+                direction=PaymentDirection.IN,
+                amount=adjust,
+                cash_account_id=data.cash_account_id,
+                payment=data.payment,
+                date=invoice.date,
+                notes=f"From the cash given on {invoice.no}",
+            ),
+            commit=False,
+        )
     if commit:
         db.commit()
     else:
@@ -710,7 +757,7 @@ def receipt_html(
         "due": "اس بل کا بقایا" if ur else "Due on this bill",
         "balance": "کھاتے کا بقایا" if ur else "Account balance",
         "pending": "باقی اشیاء" if ur else "Pending items",
-        "cash": "نقد گاہک" if ur else "Cash customer",
+        "cash": "واک اِن گاہک" if ur else "Walk-in customer",
         "thanks": shop.receipt_footer_ur or "خریداری کا شکریہ"
         if ur
         else shop.receipt_footer or "Thank you for your business",
@@ -732,6 +779,7 @@ def receipt_html(
         "noTax": "بغیر ٹیکس" if ur else "No tax",
         "given": "گاہک نے دیے" if ur else "Cash given",
         "change": "واپس" if ur else "Change",
+        "toKhata": "پرانے ادھار میں جمع" if ur else "Taken against old udhaar",
     }
     out = to_out(db, inv, show_cost=False)
     e = html.escape
@@ -854,9 +902,15 @@ def receipt_html(
         if cashier
         else ""
     )
+    kept = inv.khata_adjusted or ZERO
     change_html = (
         f"<tr><td colspan='3'>{T['given']}</td><td class='n'>{inv.cash_tendered:,.0f}</td></tr>"
-        f"<tr><td colspan='3'>{T['change']}</td><td class='n'>{money(inv.cash_tendered - inv.paid):,.0f}</td></tr>"
+        + (
+            f"<tr><td colspan='3'>{T['toKhata']}</td><td class='n'>{kept:,.0f}</td></tr>"
+            if kept
+            else ""
+        )
+        + f"<tr><td colspan='3'>{T['change']}</td><td class='n'>{money(inv.cash_tendered - inv.paid - kept):,.0f}</td></tr>"
         if inv.cash_tendered is not None
         else ""
     )

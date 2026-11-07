@@ -87,7 +87,7 @@ def _apply_allocation(
 
 
 def create_payment(
-    db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, data: PaymentCreate
+    db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, data: PaymentCreate, commit: bool = True
 ) -> Payment:
     shop = db.get(Shop, shop_id)
     party = db.get(Party, data.party_id)
@@ -217,7 +217,10 @@ def create_payment(
             "amount": str(amount),
         },
     )
-    db.commit()
+    if commit:
+        db.commit()
+    else:
+        db.flush()
     return payment
 
 

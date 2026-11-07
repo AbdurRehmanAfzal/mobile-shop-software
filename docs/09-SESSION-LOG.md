@@ -910,3 +910,33 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
   - Hero text and meta description now mention FBR-ready bills, branches and the balance sheet.
 **Verified**: tsc; Playwright `landing.spec` (extended for the FBR band and the new items); screenshots en (desktop) and ur (390 px), no sideways scroll.
 **Next**: screenshots for the new items once the owner has a demo shop with FBR numbers.
+
+## 2026-11-07 · Counter UX round (ADR-051)
+- PR #31 (tax invoice + FBR DI) and PR #32 (landing page) were merged by the owner and verified live:
+  - FBR route answers 401, not 404;
+  - the new strings are in the production locale chunk.
+- Owner request; build, push and merge:
+  - **Profile menu, top right:** avatar with initials; name, phone, role, shop; My profile, Shop settings, Log out. Closes on Esc or a click outside.
+  - **Walk-in customer:** a sale starts as "Walk-in customer" with a "Choose customer" button. Bills and lists say "Walk-in customer".
+  - **Person form:** name, phone and type only; CNIC (and the scan), city, address, notes and wholesale sit under "More details". It opens by itself when editing someone who has them. The same form serves customers, dealers and repair labs.
+  - **Extra cash:** the cash given above the bill is change, or (tick) taken against the customer's old udhaar. Backend `khata_adjust` (ADR-051), migration `a1c3e5f7b9d2`.
+  - **Laptop side panel:** Dashboard, then a "Shop" section (Day's hisaab, Reports, Staff, Settings, All options), drawn as bordered rows with an icon and a chevron, filtered by role and module.
+- The dev server again kept serving old code after a reload (memory note). Restarted it after stopping the leftover process.
+**Verified**:
+- `tests/test_change_to_khata.py` (refusals, adjust clears the old bill, receipt lines, walk-in change); the full backend suite; ruff.
+- tsc; vitest 44.
+- Playwright: the new `counter-ux.spec` (side panel, profile menu, short person form, walk-in, extra cash to old udhaar, log out); `cnic-scan` (opens "More details"); and the sale / khata / laptop / Urdu suites.
+- Screenshots: en desktop and ur 390 px, with no sideways scroll.
+**Next**: the user manual sections for these (profile menu, walk-in, extra cash to old udhaar).
+
+- Also fixed in this round:
+  - On phones the dark / light switch moved into the profile menu, so the header keeps four buttons and the shop's name is not cut off (Pixel 7 showed "Al-Mad…"). On a laptop it stays in the header.
+  - Home's two chart cards could push the page 15 px sideways on iPhone SE in Urdu. Now `grid-cols-1` + `min-w-0`.
+  - e2e:
+    - `responsive` waited for a chart named "7" that no longer exists;
+    - `urdu` now allows official terms on Settings (NTN, STRN, FBR, QR, HS, Code 128, Enter…);
+    - `counter` theme test uses the profile menu.
+- Owner follow-up: the side panel must fit on one screen without scrolling ("Day's hisaab" and "All options" were below the fold).
+  - Rows are now 36 px with a 28 px icon well and 14 px text; the panel is 240 px wide.
+  - It scrolls on its own only if the screen is very short.
+  - Measured: the last row ends at 661 px on 1280×720 and 1366×768, in English and Urdu.

@@ -134,12 +134,12 @@ export default function HomePage() {
           <Glance to="/expenses" help="counter.glance.expenses" icon={<Receipt size={16} />} tone="bg-expense text-expense-fg" label="home.expenses" value={rep?.expenses} />
         </div>
         {dash?.sales_7d ? (
-          <div className="grid gap-2.5 lg:grid-cols-2">
-            <div className="card" data-testid="home-bars">
+          <div className="grid grid-cols-1 gap-2.5 lg:grid-cols-2">
+            <div className="card min-w-0" data-testid="home-bars">
               <span className="flex items-center gap-1"><BiLabel text="home.week" size="sm" tone="text-muted" bold /><Help term="counter.chart.week" size="sm" /></span>
               <Bars data={dash.sales_7d.map((d) => ({ label: new Date(`${d.date}T12:00:00`).toLocaleDateString(ur ? 'ur-PK' : 'en-GB', { weekday: 'short' }), value: Number(d.total), key: d.date }))} onTap={(b) => nav(`/hisaab?from=${String(b.key)}&to=${String(b.key)}`)} height={120} empty="audit.noData" />
             </div>
-            <div className="card" data-testid="home-donut">
+            <div className="card min-w-0" data-testid="home-donut">
               <span className="flex items-center gap-1"><BiLabel text="home.moneySplit" size="sm" tone="text-muted" bold /><Help term="counter.chart.moneySplit" size="sm" /></span>
               <Donut size={104} data={[{ label: pick('audit.cashBank'), value: Math.max(0, Number(dash.cash_in_hand ?? 0)), key: 'cash' }, { label: pick('counter.toGet'), value: Number(dash.receivable ?? 0), key: 'get' }, { label: pick('counter.toGive'), value: Number(dash.payable ?? 0), key: 'give' }, { label: pick('home.worth'), value: Number(worth ?? 0), key: 'stock' }]} onTap={(s) => nav(s.key === 'cash' ? '/more/cash' : s.key === 'get' ? '/khata?f=get' : s.key === 'give' ? '/khata?f=give' : '/stock/summary')} empty="audit.noData" />
             </div>
