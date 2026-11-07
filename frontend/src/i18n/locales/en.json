@@ -14,7 +14,8 @@
     "hisaab": "Hisaab",
     "dashboard": "Dashboard",
     "shopSection": "Shop",
-    "allOptions": "All options"
+    "allOptions": "All options",
+    "purchases": "Purchases"
   },
   "auth": {
     "login": "Login",

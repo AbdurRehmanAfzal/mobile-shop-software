@@ -2,7 +2,7 @@
  *  Laptop (lg+): the same job tiles as a side menu with F-key shortcuts, content beside it. */
 
 import { BtnText, Sheet } from '@/components/ui'
-import { BarChart3, Bell, BookOpen, MoreHorizontal, CalendarDays, Check, ChevronLeft, ChevronRight, Home, Languages, LayoutGrid, LogOut, Menu, Moon, Settings, Smartphone, Store, Sun, UserRound, Users, type LucideIcon } from 'lucide-react'
+import { BarChart3, Bell, BookOpen, Landmark, LineChart, MoreHorizontal, Package, UserCog, CalendarDays, Check, ChevronLeft, ChevronRight, Home, Languages, LayoutGrid, LogOut, Menu, Moon, Settings, Smartphone, Store, Sun, UserRound, Users, type LucideIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { noteRoute } from '@/lib/draft'
@@ -26,13 +26,18 @@ const LANG_NAMES: Record<Locale, BiText> = {
   en: { en: 'English', ur: 'English', roman: 'English' },
 }
 
-/** owner 2026-11-06: the side panel's shop pages, drawn as rows that look tappable */
+/** owner 2026-11-06/07: the side panel's shop pages as tappable tiles, two to a row, so every one
+ *  fits one laptop screen; "All options" (the More page) closes the panel */
+const MANAGERS = ['owner', 'manager']
 const SHOP_LINKS: { to: string; key: string; Icon: LucideIcon; roles?: string[] }[] = [
+  { to: '/parties', key: 'party.title', Icon: Users },
+  { to: '/audit', key: 'audit.title', Icon: LineChart, roles: MANAGERS },
   { to: '/hisaab', key: 'counter.dayTitle', Icon: CalendarDays },
-  { to: '/reports', key: 'more.reports', Icon: BarChart3, roles: ['owner', 'manager'] },
-  { to: '/more/staff', key: 'more.staff', Icon: Users, roles: ['owner'] },
+  { to: '/reports', key: 'more.reports', Icon: BarChart3, roles: MANAGERS },
+  { to: '/more/cash', key: 'more.cashAccounts', Icon: Landmark, roles: MANAGERS },
+  { to: '/purchases', key: 'nav.purchases', Icon: Package },
+  { to: '/more/staff', key: 'more.staff', Icon: UserCog, roles: ['owner'] },
   { to: '/more/settings', key: 'more.settings', Icon: Settings, roles: ['owner'] },
-  { to: '/more', key: 'nav.allOptions', Icon: LayoutGrid },
 ]
 
 const tabs = [
@@ -45,7 +50,7 @@ const tabs = [
 
 /** a side-panel row: a bordered button with an icon well and a chevron, so it reads as tappable */
 const sideRow = (active: boolean) =>
-  `tap group flex min-h-9 items-center gap-2.5 rounded-xl border px-2 py-0.5 font-bold transition-colors ${active ? 'border-ink bg-ink text-ground shadow-hero' : 'border-line bg-surface text-ink shadow-[0_1px_0_rgb(var(--line))] hover:border-ink/40 hover:bg-ground'}`
+  `tap group flex min-h-8 items-center gap-2.5 rounded-xl border px-2 py-0 font-bold transition-colors ${active ? 'border-ink bg-ink text-ground shadow-hero' : 'border-line bg-surface text-ink shadow-[0_1px_0_rgb(var(--line))] hover:border-ink/40 hover:bg-ground'}`
 
 /** owner 2026-11-06: top-right corner, as in every app — who is logged in, the profile, log out */
 function ProfileMenu() {
@@ -184,36 +189,44 @@ export default function Shell() {
       <ScanListener />
       <OfflineBar />
       <div className="flex flex-1 gap-6 lg:px-5">
-        <aside className="print:hidden sticky top-[76px] hidden max-h-[calc(100dvh-88px)] w-60 shrink-0 flex-col gap-1 overflow-y-auto pb-2 lg:flex" aria-label={pick('nav.home')}>
+        <aside className="print:hidden sticky top-[76px] hidden max-h-[calc(100dvh-88px)] w-[252px] shrink-0 flex-col gap-1 overflow-y-auto p-1.5 lg:flex" aria-label={pick('nav.home')}>
           <NavLink to="/" end className={({ isActive }) => sideRow(isActive)} data-testid="side-home">
             {({ isActive }) => (
               <>
-                <span className={`well h-7 w-7 shrink-0 rounded-lg ${isActive ? 'bg-white/15 text-current' : 'bg-ground text-ink'}`}><Home size={16} strokeWidth={2} /></span>
+                <span className={`well h-6 w-6 shrink-0 rounded-lg ${isActive ? 'bg-white/15 text-current' : 'bg-ground text-ink'}`}><Home size={15} strokeWidth={2} /></span>
                 <span className={`min-w-0 flex-1 ${ur ? cls('sm') : 'text-sm'}`}>{pick('nav.dashboard')}</span>
                 <Chevron size={16} className="shrink-0 opacity-60" />
               </>
             )}
           </NavLink>
           {jobs.map((j) => (
-            <NavLink key={j.id} to={j.to} className={({ isActive }) => `tap flex min-h-9 items-center gap-2.5 rounded-xl px-2 py-0.5 font-bold ${j.tone} ${isActive ? 'ring-2 ring-current' : ''}`}>
-              <span className={`well h-7 w-7 shrink-0 rounded-lg bg-surface ${j.ink}`}><j.Icon size={16} strokeWidth={2} /></span>
+            <NavLink key={j.id} to={j.to} className={({ isActive }) => `tap flex min-h-8 items-center gap-2.5 rounded-xl px-2 py-0 font-bold ${j.tone} ${isActive ? 'ring-2 ring-current' : ''}`}>
+              <span className={`well h-6 w-6 shrink-0 rounded-lg bg-surface ${j.ink}`}><j.Icon size={15} strokeWidth={2} /></span>
               <span className={`min-w-0 flex-1 ${ur ? cls('sm') : 'text-sm'}`}>{pick(j.label)}</span>
               <kbd className="rounded-md border border-line bg-surface px-1.5 font-sans text-[11px] font-bold text-muted" dir="ltr">{j.fkey}</kbd>
             </NavLink>
           ))}
-          <span className={`mt-1.5 px-1 text-muted ${ur ? cls('sm') : 'text-[11px] font-bold uppercase tracking-wider'}`}>{pick('nav.shopSection')}</span>
-          <nav className="flex flex-col gap-1" data-testid="side-shop">
+          <span className={`mt-1 px-1 leading-tight text-muted ${ur ? cls('sm') : 'text-[11px] font-bold uppercase tracking-wider'}`}>{pick('nav.shopSection')}</span>
+          <nav className="grid grid-cols-2 gap-1" data-testid="side-shop">
             {shopLinks.map(({ to, key, Icon }) => (
-              <NavLink key={to} to={to} end={to === '/more'} className={({ isActive }) => sideRow(isActive)}>
+              <NavLink key={to} to={to} className={({ isActive }) => `tap flex min-h-[46px] min-w-0 flex-col items-center justify-center gap-0 rounded-xl border px-1 py-0.5 text-center font-bold transition-colors ${isActive ? 'border-ink bg-ink text-ground shadow-hero' : 'border-line bg-surface text-ink shadow-[0_1px_0_rgb(var(--line))] hover:border-ink/40 hover:bg-ground'}`}>
                 {({ isActive }) => (
                   <>
-                    <span className={`well h-7 w-7 shrink-0 rounded-lg ${isActive ? 'bg-white/15 text-current' : 'bg-ground text-ink'}`}><Icon size={16} strokeWidth={2} /></span>
-                    <span className={`min-w-0 flex-1 ${ur ? cls('sm') : 'text-sm'}`}>{pick(key)}</span>
-                    <Chevron size={16} className="shrink-0 opacity-60" />
+                    <span className={`well h-6 w-6 shrink-0 rounded-lg ${isActive ? 'bg-white/15 text-current' : 'bg-ground text-ink'}`}><Icon size={15} strokeWidth={2} /></span>
+                    <span className={`line-clamp-1 w-full ${ur ? cls('sm') : 'text-xs'}`}>{pick(key)}</span>
                   </>
                 )}
               </NavLink>
             ))}
+            <NavLink to="/more" end className={({ isActive }) => `col-span-2 ${sideRow(isActive)}`}>
+              {({ isActive }) => (
+                <>
+                  <span className={`well h-6 w-6 shrink-0 rounded-lg ${isActive ? 'bg-white/15 text-current' : 'bg-ground text-ink'}`}><LayoutGrid size={15} strokeWidth={2} /></span>
+                  <span className={`min-w-0 flex-1 ${ur ? cls('sm') : 'text-sm'}`}>{pick('nav.allOptions')}</span>
+                  <Chevron size={16} className="shrink-0 opacity-60" />
+                </>
+              )}
+            </NavLink>
           </nav>
         </aside>
 
