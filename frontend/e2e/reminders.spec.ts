@@ -41,8 +41,14 @@ test('reminders: everyone who owes, one tap opens WhatsApp; night report setting
   await udhaarSale(page, 'Bilal', '03219876544', '356938035643809', 12000)
 
   await page.goto('/khata')
+  const provider = page.waitForResponse((r) => r.url().includes('/notifications/provider'))
   await page.getByRole('button', { name: 'Udhaar reminders' }).click()
   await expect(page).toHaveURL(/\/khata\/reminders$/)
+  // this test covers sending by hand (wa.me links). A backend whose .env holds real WhatsApp Cloud API
+  // or SMTP keys would send for real to these test numbers, so it is skipped there: run the e2e
+  // backend with WHATSAPP_TOKEN= WHATSAPP_PHONE_ID= SMTP_HOST= (CI has none of them).
+  const prov = (await (await provider).json()) as { whatsapp_api: boolean; email: boolean }
+  test.skip(prov.whatsapp_api || prov.email, 'the backend has WhatsApp API / SMTP keys: messages would really be sent')
   await expect(page.getByText(/opens with the reminder ready/)).toBeVisible()
   // biggest balance first, both just entered today
   const rows = page.locator('.card > div')
@@ -89,5 +95,7 @@ test('reminders: everyone who owes, one tap opens WhatsApp; night report setting
   await expect(page.getByText('Opened in WhatsApp; tap send there.')).toBeVisible()
   await page.reload()
   await expect(page.locator('input[type="time"]').first()).toHaveValue('22:00')
-  await expect(page.getByText(/Sold: 2 phones/).first()).toBeVisible()
+  // the sent hisaab is listed on the Messages tab (owner 2026-11-07: messages first, settings beside)
+  await page.getByTestId('notif-tabs').getByRole('button', { name: 'Messages' }).click()
+  await expect(page.getByTestId('notif-messages').getByText(/Sold: 2 phones/).first()).toBeVisible()
 })

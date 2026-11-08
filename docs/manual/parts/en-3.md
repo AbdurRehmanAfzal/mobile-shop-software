@@ -30,7 +30,7 @@ Use the search box (**Name, phone or CNIC**) to find anyone quickly. Even a few 
 1. Tap **New person**.
 2. Write the **Name** and the **Mobile number** (after +92, without the first 0, for example `3001234567`).
 3. Pick the **Type**: **Customer**, **Dealer**, **Other shop** or **Technician**.
-4. If you want, add **CNIC**, **City**, **Address** and a **WhatsApp** number if it is different from the mobile.
+4. If you want more, tap **More details**: **CNIC** (and the CNIC scan), **City**, **Address**, **Notes** and, for a dealer, the wholesale price. It opens by itself when you edit someone who already has these.
 5. If this person already owed you (or you owed them) in your old register, write it in **Opening balance** and choose **Party owes me** or **I owe party**.
 6. Tap **Save**.
 
@@ -722,7 +722,7 @@ In the same Shop settings, the **Logo & business details** cards control how you
 3. **Owner details**: the owner's name and CNIC.
 4. **Tax registration (FBR)**: NTN, STRN and the **FBR POS registration ID** (only if you are in FBR's point-of-sale scheme). They are printed on bills when filled.
 5. **Currency**: money is always Pakistani rupees, but you choose how it is written: the **Sign** (Rs., Rs, PKR and so on), **Where the sign goes** (**Before (Rs. 500)** or **After (500 PKR)**), and **Rupees only** or **Always show paisa (.00)**. The **Looks like** preview shows the result.
-6. **Printed bill**: tick what appears on sale bills and repair slips: **Logo**, **Tagline**, **NTN / STRN / FBR POS ID**, **Owner's name**, **Bank / wallet details (for paying a balance)**, **Terms (returns / warranty)** and social pages. Write the **Terms (English)** and **Terms (Urdu)** and your bank and Easypaisa / JazzCash details here.
+6. **Printed bill**: tick what appears on sale bills and repair slips: **Logo**, **Tagline**, **NTN / STRN / FBR POS ID**, **Owner's name**, **Bank / wallet details (for paying a balance)**, **Terms (returns / warranty)** and social pages. Write the **Terms (English)** and **Terms (Urdu)** and your bank and Easypaisa / JazzCash details here. **QR code to see the bill online** (on at the start) prints the QR described in chapter 8.
 7. Tap **Save** on the Save bar.
 
 > **Tip:** Put your Easypaisa number on the bill (Printed bill → Bank / wallet details). Customers who buy on udhaar then know exactly where to send the money.

@@ -39,9 +39,14 @@ const items = await get('/accessories')
 const item = items.find((a) => /cable/i.test(a.name)) ?? items[0]
 const sales = await get('/sales?limit=20')
 const saleRows = Array.isArray(sales) ? sales : sales.items ?? []
-const sale = saleRows.find((s) => !/return/i.test(s.status ?? '') && !s.returned) ?? saleRows[0]
+const sale = saleRows.find((s) => s.status !== 'void' && Number(s.returned_total ?? 0) === 0 && s.party_id) ?? saleRows.find((s) => s.status !== 'void') ?? saleRows[0]
 const ids = { used: used?.id, device: anyDevice?.id, repair: atLab?.id, lab: lab?.party_id, item: item?.id, sale: sale?.id, tariq: party('Tariq'), bilal: party('Bilal') }
 console.log('ids', ids)
+// the bill's QR link (signed with the backend's own secret, as the printed bill does)
+let billToken = ''
+try {
+  if (ids.sale) billToken = execFileSync(join('..', 'backend', '.venv', 'Scripts', 'python'), ['-c', `import uuid; from app.modules.sales import bill_link; print(bill_link.token(uuid.UUID('${ids.sale}')))`], { cwd: join('..', 'backend'), env: { ...process.env, PYTHONUTF8: '1' } }).toString().trim()
+} catch (e) { console.log('bill token SKIPPED', String(e).split('\n')[0]) }
 
 const browser = await chromium.launch()
 for (const lang of LANGS) {
@@ -73,11 +78,14 @@ for (const lang of LANGS) {
   await page.waitForURL(/\/$/)
 
   await go('home', '/')
+  await go('profile-menu', '/', async () => { await page.getByTestId('profile-button').click(); await page.getByTestId('profile-menu').waitFor() })
+  await go('appearance', '/more/appearance')
   await go('more', '/more')
   await go('help', '/audit?preset=this_month', async () => { await page.locator('[data-help^="audit.overview"]').first().click() })
   await go('sale-pick', '/sale/new')
   await go('sale-pay', '/sale/new', async () => { await page.locator('main button').filter({ hasText: /Galaxy|iPhone|Infinix|Vivo|Tecno|Redmi|Oppo/ }).first().click(); await page.waitForTimeout(500); await page.mouse.wheel(0, 1500) })
   if (ids.sale) await go('sale-done', `/sales/${ids.sale}`)
+  if (billToken) await go('bill-check', `/b/${billToken}`)
   await go('purchase-source', '/purchase/new')
   await go('oldstock', '/stock/opening')
   await go('purchase-device', '/stock/opening', async () => { await page.locator('main button').filter({ hasText: /Add device|موبائل شامل کریں|Phone daalein/ }).first().click(); await page.waitForTimeout(500) })
@@ -144,6 +152,18 @@ for (const lang of LANGS) {
     }
   }
   const docLang = lang === 'ur' ? 'ur' : 'en'
+  // the printed 80 mm bill with its QR at the bottom
+  if (ids.sale && (!ONLY || ONLY.includes('bill-qr'))) {
+    try {
+      const html = await (await fetch(`${API}/sales/${ids.sale}/receipt?lang=${docLang}`, { headers: H })).text()
+      await page.setContent(html, { waitUntil: 'networkidle' })
+      await page.addStyleTag({ content: 'html,body{background:#eef2f7!important}body{padding:24px 0!important}' })
+      await page.waitForTimeout(400)
+      const h = await page.evaluate(() => Math.ceil(document.body.scrollHeight))
+      await page.screenshot({ path: join(dir, 'bill-qr.jpg'), type: 'jpeg', quality: 85, clip: { x: 0, y: 0, width: 390, height: Math.min(1600, h + 24) } })
+      console.log(lang, 'bill-qr')
+    } catch (e) { console.log(lang, 'bill-qr', 'SKIPPED', String(e).split('\n')[0]) }
+  }
   if (ids.repair) await printed('repair-sticker', `/labels/repairs?${new URLSearchParams({ ids: ids.repair, size: '58x40', fields: 'shop,no,barcode,customer,phone,device,imei,fault,accessories,promised,left', lang: docLang })}`)
   if (ids.device) await printed('label', `/labels/devices?${new URLSearchParams({ ids: ids.device, size: '50x30', fields: 'shop,name,specs,price,barcode,imei,condition', lang: docLang })}`)
   await ctx.close()

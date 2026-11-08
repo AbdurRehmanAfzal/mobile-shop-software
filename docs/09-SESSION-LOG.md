@@ -966,3 +966,21 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Note**: the local backend was an old orphan process without `/public/bill` (see memory "uvicorn orphan child"); restarted. One `landing.spec` run failed at the admin "Shop opened" step right after the restart, then passed twice.
 **Next**: user manual sections (profile menu, walk-in, extra cash, Appearance, bill QR); `reminders.spec` first hint check.
 
+## 2026-11-08 (later) — PR #36 live; user manual sections for the counter round, Appearance and the bill QR
+**Done**:
+- PR #36 (landing page screens) merged by the owner; Deploy and Windows green; checked live (new `landing/*.png` answer 200, the new strings are in the production locale chunk).
+- User manual (`parts/{en,ur,roman}-1.md`, `-3.md`, joined into `{en,ur,roman}.md`):
+  - ch. 3 Logout and ch. 4 header: the **Profile** button; new "The Profile menu" section (My profile → More, Shop settings for the owner, Appearance, Dark / Light on phones, Logout).
+  - ch. 5: "Dark or light" and "Look" replaced by one **Appearance** section with a table (light / dark / system, Classic / Tiles / Simple / Bold, colours, main colour, text size, corners, numbers font, back to default).
+  - ch. 8: walk-in customer and **Choose customer**; extra cash against old udhaar (ADR-051) with an example; the stale "FBR is the next step" note now points to ch. 23; new "The QR code on every bill" section (what the customer sees, what is never shown, the print switch, PC version without a public address).
+  - ch. 23: the person form's **More details**; the **QR code to see the bill online** print switch.
+- `scripts/manual-shots.mjs`: new shots `profile-menu`, `appearance`, `bill-qr` (the printed 80 mm bill) and `bill-check` (`/b/<token>`, token from the backend's `bill_link`); the sale used for `sale-done` is now one that is not cancelled (the old pick showed a voided bill). Listed in `SHOTS.md`. User manual PDFs + HTML rebuilt in all three languages.
+**Verified**: every label in the new text checked against `en.json` / `ur.json` / `roman.json` and the profile menu in `Shell.tsx` (Shop settings is owner-only, Dark / Light is phone-only, My profile opens More); screenshots looked at (en profile menu, en bill with "Scan to see this bill online", ur bill page, ur Appearance); the new sections looked at in the rebuilt HTML (ur QR, en Appearance, roman Profile menu).
+**Note**: for the bill shot the local backend ran with `PUBLIC_URL=https://mobileshop.oopsolutions.com` (without an https public address the QR holds only the bill number and says "Bill no.").
+**Next**: `e2e/reminders.spec.ts` first hint check (done below).
+
+### Same day — `reminders.spec` fixed
+- **Cause 1 (environment, not code):** the local `backend/.env` holds real WhatsApp Cloud API and SMTP keys, so `/notifications/provider` said "sent by itself" and the page showed the automatic hint instead of "opens with the reminder ready". Worse, with those keys "Send to all" would really message the test numbers. The spec now reads `/notifications/provider` and **skips itself** when either is set; CI has neither, so it still runs there. Developer manual (e2e section, PDF rebuilt): run the e2e backend with `WHATSAPP_TOKEN= WHATSAPP_PHONE_ID= SMTP_HOST=`.
+- **Cause 2 (stale test):** since the Messages / Settings tabs (2026-11-07) the sent night report is listed on the Messages tab; the last check now opens that tab.
+**Verified**: `reminders.spec` passed against a backend without the keys, and skipped (with the reason) against one with SMTP; `messages.spec` passed. Only `reminders.spec` depends on these keys (`provider-console` just checks a wa.me link).
+**Next**: nothing open from the log; FBR waits on the owner.

@@ -162,7 +162,7 @@ Next time the login page shows **Log in with fingerprint**. One touch and you ar
 
 ### Logout
 
-Tap **More**, scroll to the bottom and tap **Logout**. Always log out on a phone that other people use.
+Tap your **Profile** button (your initials, top right) and then **Logout**. **Logout** is also at the bottom of **More**. Always log out on a phone that other people use.
 
 ## 4. The home screen, the More menu and the "?" help
 
@@ -176,7 +176,7 @@ From top to bottom:
 
 | Part | What it does |
 |---|---|
-| Header | The shop's name, then **English** (language), **Dark** (theme), **Messages** and **More**. |
+| Header | The shop's name, then **English** (language), **Messages**, **More** and your **Profile** button (your initials). |
 | Greeting | "Good morning", "Good afternoon" or "Good evening" with your name, and *Here is your shop today*. |
 | Search box | Type an IMEI, a phone model or a person's name and tap **Search**. **Scan** reads a barcode with the camera. |
 | **Sell** | Sell a phone, cash or udhaar (chapter 8). |
@@ -188,6 +188,20 @@ From top to bottom:
 At the bottom is a bar with **Home**, **Stock**, **Udhaar**, **Hisaab** and **More**. It is on every screen, so you can always get back.
 
 > **Note:** Profit and buying prices are shown only to the owner and the manager. A salesman sees the same home screen without them.
+
+### The Profile menu
+
+Tap your **Profile** button at the top right (it shows your initials). A small menu opens with your name, mobile number, role (for example **Owner**) and the shop you are working in. Under it:
+
+- **My profile**: opens **More**, with your language, quick PIN and fingerprint login.
+- **Shop settings** (owner only).
+- **Appearance**: how the app looks (chapter 5).
+- **Dark** / **Light** (on a phone): switch the screen colour in one tap. On a laptop this button is in the header.
+- **Logout**.
+
+Tap outside the menu, or press Esc on a computer, to close it.
+
+![The Profile menu](shot:profile-menu)
 
 ### Scanning from anywhere
 
@@ -204,7 +218,7 @@ Tap **More** (top right, or at the bottom) to see every part of the app, sorted 
 - **Records**: the lists of sales, purchases, invoices, money received / paid and returns.
 - **Money & reports**: Cash & bank, Expenses, Close the day, Reports and the Shop audit.
 - **Shop & staff**: Shop settings, Staff, People & khata, Notifications, Software fees.
-- At the bottom: Language, Appearance, Look, **Set quick PIN**, fingerprint login and **Logout**.
+- At the bottom: Language, **Appearance**, **Set quick PIN**, fingerprint login and **Logout**.
 
 You will only see what your role allows. A salesman, for example, does not see Reports.
 
@@ -238,13 +252,24 @@ You can also change it in **More → Language**. Each person can choose his own 
 
 WhatsApp messages follow the **shop's language**, which the owner sets in **Shop settings**. For printed and downloaded papers (receipts, invoices, declarations, job sheets, reports) there is a **Document language** switch right above the print and share buttons: **English** or **اردو**. English is chosen at the start; tap **اردو** for an Urdu paper. Your choice holds until you close the app.
 
-### Dark or light
+### Appearance (theme, design, colours, text size)
 
-Tap **Dark** in the header to switch to a dark screen, which is easier on the eyes at night. Tap **Light** to come back. **More → Appearance** also has **System**, which follows your phone's own setting.
+Open **Appearance** from the **Profile** menu, from **More**, or from the button on the dashboard. Every change shows straight away and is kept **on this phone or computer only**. Each salesman can set his own phone the way he likes; your data never changes.
 
-### Look
+![The Appearance page](shot:appearance)
 
-**More → Look** changes the colours of the whole app: **Modern**, **Professional**, **Navy** or **Colorful**. Pick the one your staff likes. It changes only the colours, never your data.
+| Part | What it does |
+|---|---|
+| **Light or dark** | **Light**, **Dark**, or **System** (follows the phone's own setting). The **Dark** / **Light** item in the Profile menu does the same in one tap. |
+| **Design of the dashboard and side panel** | **Classic** (coloured rows and cards, as before), **Tiles** (big coloured tiles), **Simple** (a clean list, no boxes) or **Bold** (dark side panel and big numbers). On a laptop it also changes the side panel. |
+| **Colours** | The colour set of the whole app: **Modern**, **Professional**, **Navy** or **Colorful**. |
+| **Main colour** | The colour of buttons and highlights: **Default**, **Green**, **Blue**, **Purple**, **Red**, **Orange** or **Teal**. |
+| **Text size** | **Normal**, **Large** or **Extra large**. Good for older eyes. |
+| **Corners** | How round buttons and cards are: **Default**, **Round**, **Soft** or **Sharp**. |
+| **Numbers font** | The font for amounts: **Default**, **Inter**, **Manrope** or **Phone's own**. |
+| **Back to default** | Undo all of the above on this phone. |
+
+> **Tip:** On the shop's counter PC choose **Large** text and the **Bold** design: the day's sales and profit are big enough to read from a step away.
 
 ## 6. Add stock (buying)
 
@@ -559,7 +584,9 @@ Each row shows the model, the IMEI (or the serial for a watch), the condition, t
 
 The done screen shows **Sale complete**, the amount and the bill number, for example `INV-000018`.
 
-> **Note:** A cash sale with no customer must be paid in full. For part payment, use **Udhaar** and pick the customer.
+**Walk-in customer.** Every new sale starts as **Walk-in customer**: someone who pays in full now and needs no khata. The bill prints "Walk-in customer". To put the bill on a person's khata, tap **Choose customer** and pick them (or add a new person).
+
+> **Note:** A walk-in sale must be paid in full. For part payment, tap **Choose customer** (or **Udhaar**) and pick the customer.
 
 ### An udhaar sale
 
@@ -671,7 +698,26 @@ Every bill now shows, below the total, the **amount in words** (for example "Rup
 
 **Example:** phone Rs. 40,000 + charger Rs. 1,500 at 18% → tax Rs. 270, total Rs. 41,770. The customer gives Rs. 42,000 → change Rs. 230.
 
-> **Note:** Sending bills to FBR live (the FBR number and QR code) is the next step and needs the shop's FBR registration.
+**Extra cash against old udhaar.** Sometimes a customer who already owes the shop hands over more than this bill. When a customer is chosen and owes from before, a tick appears under the change: **Keep … against their old udhaar (owes …)**. Tick it and the extra is not given back as change; it is taken against their old udhaar. Their khata goes down, their oldest bills are marked paid, and the printed bill shows it.
+
+**Example:** Bill Rs. 2,000. Imran gives Rs. 5,000 and owes Rs. 3,000 from last month. Tick the box: change Rs. 0, old udhaar cleared.
+
+> **Note:** A shop registered for sales tax can send every bill to FBR and print the FBR number and its QR code. See **FBR Digital Invoicing** in chapter 23.
+
+### The QR code on every bill
+
+Every printed sale bill (80 mm and A4) has a QR code at the bottom with the words **Scan to see this bill online**. The customer scans it with the phone's camera and sees the bill without logging in: the shop's name, the bill number and date, each item (the IMEI shows only its last 4 digits), the total, what was paid and what is **Left to pay**, with a **Call the shop** button. It says **Genuine bill from this shop**, so a customer, a buyer of the phone later, or a warranty claim can check the bill is real.
+
+![A printed bill with its QR](shot:bill-qr)
+
+![The bill opened from the QR](shot:bill-check)
+
+- The page never shows the customer's phone number, CNIC, the buying price or the profit.
+- If the bill is later returned or cancelled, the page says so.
+- The link cannot be guessed or changed: a changed link shows "This bill could not be found".
+- To print bills without the QR, open **More → Shop settings → Business profile → Printed bill** and untick **QR code to see the bill online**.
+
+> **Note:** On the PC version with no internet address, the QR holds only the bill number.
 
 ## 9. Returns
 
@@ -1341,7 +1387,6 @@ The owner and manager may always do both. The owner sets his PIN under **More �
 
 > **Important:** A finished bill's amounts cannot be edited by anyone, not even the owner. A mistake is corrected with a return (chapter 9) and a new bill, so the record always stays true.
 
-
 ## 16. Udhaar khata and payments
 
 Every shop gives some things on credit and takes some things on credit. In the app this is called **udhaar** (credit), and every person has one **khata** (their account page). The app keeps each khata for you: every sale, purchase, payment, return and len-den with that person lands in it by itself, and the balance is always worked out from those records. You never type a balance by hand.
@@ -1374,7 +1419,7 @@ Use the search box (**Name, phone or CNIC**) to find anyone quickly. Even a few 
 1. Tap **New person**.
 2. Write the **Name** and the **Mobile number** (after +92, without the first 0, for example `3001234567`).
 3. Pick the **Type**: **Customer**, **Dealer**, **Other shop** or **Technician**.
-4. If you want, add **CNIC**, **City**, **Address** and a **WhatsApp** number if it is different from the mobile.
+4. If you want more, tap **More details**: **CNIC** (and the CNIC scan), **City**, **Address**, **Notes** and, for a dealer, the wholesale price. It opens by itself when you edit someone who already has these.
 5. If this person already owed you (or you owed them) in your old register, write it in **Opening balance** and choose **Party owes me** or **I owe party**.
 6. Tap **Save**.
 
@@ -2066,7 +2111,7 @@ In the same Shop settings, the **Logo & business details** cards control how you
 3. **Owner details**: the owner's name and CNIC.
 4. **Tax registration (FBR)**: NTN, STRN and the **FBR POS registration ID** (only if you are in FBR's point-of-sale scheme). They are printed on bills when filled.
 5. **Currency**: money is always Pakistani rupees, but you choose how it is written: the **Sign** (Rs., Rs, PKR and so on), **Where the sign goes** (**Before (Rs. 500)** or **After (500 PKR)**), and **Rupees only** or **Always show paisa (.00)**. The **Looks like** preview shows the result.
-6. **Printed bill**: tick what appears on sale bills and repair slips: **Logo**, **Tagline**, **NTN / STRN / FBR POS ID**, **Owner's name**, **Bank / wallet details (for paying a balance)**, **Terms (returns / warranty)** and social pages. Write the **Terms (English)** and **Terms (Urdu)** and your bank and Easypaisa / JazzCash details here.
+6. **Printed bill**: tick what appears on sale bills and repair slips: **Logo**, **Tagline**, **NTN / STRN / FBR POS ID**, **Owner's name**, **Bank / wallet details (for paying a balance)**, **Terms (returns / warranty)** and social pages. Write the **Terms (English)** and **Terms (Urdu)** and your bank and Easypaisa / JazzCash details here. **QR code to see the bill online** (on at the start) prints the QR described in chapter 8.
 7. Tap **Save** on the Save bar.
 
 > **Tip:** Put your Easypaisa number on the bill (Printed bill → Bank / wallet details). Customers who buy on udhaar then know exactly where to send the money.

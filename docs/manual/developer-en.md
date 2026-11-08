@@ -503,6 +503,7 @@ The specs in `frontend/e2e/` run in one project at phone size (a Pixel 7 profile
 - the backend on port 8000 with `PUBLIC_SIGNUP=true` (specs sign up throwaway shops with random numbers);
 - `03990000099` in `SUPERUSER_PHONES` for the super-admin specs (`admin`, `admin-access`, `fees`, `plans`, `plan-reminders`, `modules`, `provider-console`, `landing`);
 - `OTP_DEV_ECHO=true` for `otp.spec.ts`, and a renewal key pair for `provider-console.spec.ts`;
+- **no** WhatsApp Cloud API or SMTP keys (`WHATSAPP_TOKEN`, `WHATSAPP_PHONE_ID`, `SMTP_HOST`): with them a spec would really send to its test numbers, so `reminders.spec.ts` skips itself. If your `.env` holds them, start the e2e backend from Git Bash with `WHATSAPP_TOKEN= WHATSAPP_PHONE_ID= SMTP_HOST=` in front of `uvicorn` (an empty variable wins over `.env`; in cmd, `set X=` removes it instead, so `.env` would win);
 - the frontend on port 5173; Playwright starts `npm run dev` itself or reuses a running one.
 
 | Task | Command |
