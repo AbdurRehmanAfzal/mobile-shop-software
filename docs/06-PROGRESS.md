@@ -274,10 +274,11 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | Item | Status | Notes |
 |---|---|---|
 | Module-wise manual, 26 chapters, English / Urdu / Roman | ✅ | `docs/manual/{en,ur,roman}.md` (parts in `parts/`) |
-| 49 screenshots per language from a demo shop | ✅ | `frontend/scripts/manual-shots.mjs` → `docs/manual/img/<lang>/` |
+| 53 screenshots per language from a demo shop | ✅ | `frontend/scripts/manual-shots.mjs` → `docs/manual/img/<lang>/` |
 | A4 PDF + HTML per language (cover, contents, page numbers, Nastaliq RTL) | ✅ | `frontend/scripts/manual-pdf.mjs` |
 | Super admin manual, English + Roman, 17 screenshots | ✅ | `admin-{en,roman}.md`, `frontend/scripts/manual-admin-shots.mjs` |
 | Developer and setup manual | ✅ | `developer-en.md` |
+| Counter UX + Appearance + bill QR sections (2026-11-08): Profile menu (ch. 4), Appearance page (ch. 5, replaces Dark / Look), walk-in customer, extra cash against old udhaar and the QR on every bill (ch. 8), short person form with "More details" and the QR print switch (ch. 23), in en / ur / roman | ✅ | new shots `profile-menu`, `appearance`, `bill-qr`, `bill-check`; PDFs rebuilt |
 | Operations runbook (internal; secrets only as placeholders) | ✅ | `operations-en.md` |
 | Owner review of the wording | ⏳ | `docs/29-OWNER-PENDING.md` D |
 

@@ -7,11 +7,15 @@ by `frontend/scripts/manual-shots.mjs`, phone size). In the manual write `![Capt
 |---|---|
 | login | The login screen |
 | home | Home: fast actions, the day at a glance |
+| profile-menu | The Profile menu (top right): profile, settings, Appearance, dark, log out |
+| appearance | The Appearance page (light / dark, design, colours, text size) |
 | more | The More menu with every module |
 | help | A "?" opened, with its English / اردو / Roman switch |
 | sale-pick | Sale: picking the phone from stock |
 | sale-pay | Sale: price, discount, payment method, paid now |
 | sale-done | Sale: the bill made (print / WhatsApp) |
+| bill-qr | The printed 80 mm bill with its QR at the bottom |
+| bill-check | The bill opened from its QR (/b/<token>), what the customer sees |
 | purchase-source | Add stock: from a dealer or a customer |
 | purchase-device | Add stock: the device fields (IMEI, PTA, condition, price) |
 | oldstock | Old stock (opening stock) |

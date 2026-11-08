@@ -30,7 +30,7 @@ Kisi ko jaldi dhoondne ke liye search box (**Naam, phone ya CNIC**) istemal kare
 1. **Naya banda** dabayein.
 2. **Naam** aur **Mobile number** likhein (+92 ke baad, pehle 0 ke baghair, maslan `3001234567`).
 3. **Qism** chunein: **Gahak**, **Dealer**, **Doosri dukaan** ya **Karigar**.
-4. Chahein to **CNIC**, **Shehar**, **Pata** aur **WhatsApp** number daalein agar woh mobile se alag ho.
+4. Mazeed likhna ho to **Mazeed tafseel** dabayein: **CNIC** (aur card ka scan), **Shehar**, **Pata**, **Note** aur dealer ke liye wholesale qeemat. Jis bande ki yeh tafseel pehle se ho, usay badalte waqt yeh khud khul jata hai.
 5. Agar is bande ne aap ke purane register mein pehle se dena tha (ya aap ne us ko dena tha), to **Purana baqaya** mein likhein aur **Yeh mujhe dega** ya **Main isay doon ga** chunein.
 6. **Mehfooz karein** dabayein.
 
@@ -722,7 +722,7 @@ Isi Dukaan ki settings mein, **Logo aur karobar ki tafseel** cards tay karte hai
 3. **Malik ki tafseel**: owner ka naam aur CNIC.
 4. **Tax registration (FBR)**: NTN, STRN aur **FBR POS registration ID** (sirf agar aap FBR ki point-of-sale scheme mein hain). Bhare hon to bills par print hote hain.
 5. **Currency**: paise hamesha Pakistani rupay hain, lekin aap chunte hain ke likhe kaise jayein: **Nishan** (Rs., Rs, PKR waghera), **Nishan kahan** (**Pehle (Rs. 500)** ya **Baad mein (500 PKR)**), aur **Sirf rupay** ya **Hamesha paise (.00)**. **Aisa dikhega** preview natija dikhata hai.
-6. **Printed bill**: tick karein ke sale bills aur repair slips par kya aaye: **Logo**, **Tagline**, **NTN / STRN / FBR POS ID**, **Maalik ka naam**, **Bank / wallet tafseel (baqaya ada karne ke liye)**, **Sharait (wapsi / warranty)** aur social pages. **Sharait (English)** aur **Sharait (Urdu)** aur apne bank aur Easypaisa / JazzCash ki tafseel yahan likhein.
+6. **Printed bill**: tick karein ke sale bills aur repair slips par kya aaye: **Logo**, **Tagline**, **NTN / STRN / FBR POS ID**, **Maalik ka naam**, **Bank / wallet tafseel (baqaya ada karne ke liye)**, **Sharait (wapsi / warranty)** aur social pages. **Sharait (English)** aur **Sharait (Urdu)** aur apne bank aur Easypaisa / JazzCash ki tafseel yahan likhein. **Bill online dekhne ka QR code** (shuru se on) baab 8 wala QR chhaapta hai.
 7. Save bar par **Mehfooz karein** dabayein.
 
 > **Mashwara:** Apna Easypaisa number bill par daalein (Printed bill → Bank / wallet tafseel). Phir udhaar par khareedne wale customers ko bilkul pata hota hai ke paise kahan bhejne hain.

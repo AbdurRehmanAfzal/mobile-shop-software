@@ -160,7 +160,7 @@ Agli dafa login page par **Fingerprint se login** nazar aata hai. Ek touch aur a
 
 ### Logout
 
-**Mazeed** dabayein, neeche tak scroll karein aur **Logout** dabayein. Jis phone ko doosre log bhi istemal karte hain us par hamesha logout karein.
+Upar daayein kone mein apna **Profile** button (aap ke naam ke pehle huroof) dabayein, phir **Logout**. **Logout** **Mazeed** ke bilkul neeche bhi hai. Jis phone ko doosre log bhi istemal karte hain us par hamesha logout karein.
 
 ## 4. Home screen, Mazeed menu aur "?" madad
 
@@ -174,7 +174,7 @@ Upar se neeche tak:
 
 | Hissa | Kya karta hai |
 |---|---|
-| Header | Dukaan ka naam, phir **English** (zabaan), **Dark** (theme), **Paighaam** aur **Mazeed**. |
+| Header | Dukaan ka naam, phir **English** (zabaan), **Paighaam**, **Mazeed** aur aap ka **Profile** button (aap ke naam ke pehle huroof). |
 | Salaam | "Subah bakhair", "Assalam-o-Alaikum" ya "Shaam bakhair" aap ke naam ke saath, aur *Aaj aap ki dukaan ka haal*. |
 | Search box | IMEI, phone ka model ya kisi bande ka naam likhein aur **Dhoondein** dabayein. **Scan** camera se barcode parhta hai. |
 | **Bechein** | Phone bechein, cash ya udhaar (chapter 8). |
@@ -186,6 +186,20 @@ Upar se neeche tak:
 Neeche ek patti hai jis mein **Home**, **Stock**, **Udhaar**, **Hisaab** aur **Mazeed** hain. Yeh har screen par hai, is liye aap hamesha wapas aa sakte hain.
 
 > **Note:** Munafa aur khareed qeemat sirf maalik aur manager ko nazar aati hai. Salesman ko yahi home screen in ke baghair nazar aati hai.
+
+### Profile menu
+
+Upar daayein kone mein apna **Profile** button dabayein (us par aap ke naam ke pehle huroof hote hain). Ek chhota menu khulta hai jis mein aap ka naam, mobile number, ohda (maslan **Maalik**) aur woh dukaan hoti hai jis mein aap kaam kar rahe hain. Us ke neeche:
+
+- **Meri profile**: **Mazeed** kholta hai, jahan aap ki zabaan, jaldi PIN aur fingerprint login hai.
+- **Dukaan ki settings** (sirf maalik).
+- **Appearance**: app kaisi dikhe (baab 5).
+- **Dark** / **Light** (phone par): ek tap mein screen ka rang badlein. Laptop par yeh button header mein hai.
+- **Logout**.
+
+Band karne ke liye menu se bahar dabayein, ya computer par Esc dabayein.
+
+![Profile menu](shot:profile-menu)
 
 ### Kahin se bhi scan
 
@@ -202,7 +216,7 @@ App ke saare hisse groups mein dekhne ke liye **Mazeed** (upar dayein, ya neeche
 - **Record**: bikri, khareed, bill, mile / diye gaye paise aur wapsi ki listein.
 - **Hisaab aur report**: Cash aur bank, Kharche, Din band karein, Report aur Dukaan ka audit.
 - **Dukaan aur staff**: Dukaan ki settings, Staff, Log aur khata, Paighaam settings, Software fees.
-- Bilkul neeche: Zubaan, Theme, Andaaz, **Jaldi PIN banayein**, fingerprint login aur **Logout**.
+- Bilkul neeche: Zubaan, **Appearance**, **Jaldi PIN banayein**, fingerprint login aur **Logout**.
 
 Aap ko sirf wohi nazar aata hai jis ki aap ke role mein ijazat hai. Misaal ke taur par salesman ko Report nazar nahi aati.
 
@@ -236,13 +250,24 @@ Aap isay **Mazeed → Zubaan** mein bhi badal sakte hain. Har banda apne phone p
 
 WhatsApp paighaam **dukaan ki zabaan** mein jate hain, jo maalik **Dukaan ki settings** mein rakhta hai. Print aur download hone wale kaghzaat (raseed, bill, iqrar nama, job sheet, report) ke liye print aur share ke button ke bilkul upar **Document ki zabaan** ka switch hai: **English** ya **اردو**. Shuru mein English chuni hoti hai; Urdu kaghaz ke liye **اردو** dabayein. Aap ki pasand app band karne tak rehti hai.
 
-### Dark ya light
+### Appearance (theme, design, rang, likhai ka size)
 
-Raat ko aankhon ke liye aasaan dark screen ke liye header mein **Dark** dabayein. Wapas aane ke liye **Light** dabayein. **Mazeed → Theme** mein **Phone ke mutabiq** bhi hai, jo aap ke phone ki apni setting ke peeche chalta hai.
+**Appearance** **Profile** menu se, **Mazeed** se ya dashboard ke button se kholein. Har tabdeeli foran nazar aati hai aur **sirf isi phone ya computer** par mehfooz rehti hai. Har salesman apna phone apni pasand se rakh sakta hai; aap ka data kabhi nahi badalta.
 
-### Andaaz
+![Appearance ka page](shot:appearance)
 
-**Mazeed → Andaaz** poori app ke rang badalta hai: **Modern**, **Professional**, **Navy** ya **Rangeen**. Jo aap ke staff ko pasand ho woh chunein. Yeh sirf rang badalta hai, aap ka data kabhi nahi.
+| Hissa | Kya karta hai |
+|---|---|
+| **Roshan ya gehra** | **Light**, **Dark** ya **Phone ke mutabiq** (phone ki apni setting ke saath chalta hai). Profile menu mein **Dark** / **Light** yahi kaam ek tap mein karta hai. |
+| **Dashboard aur side panel ka design** | **Classic** (rangeen qataarein aur cards, pehle jaisa), **Tiles** (baray rangeen khane), **Saada** (saaf fehrist, baghair khanon ke) ya **Bold** (gehra side panel aur baray hindse). Laptop par yeh side panel bhi badalta hai. |
+| **Rangon ka set** | Poori app ke rang: **Modern**, **Professional**, **Navy** ya **Rangeen**. |
+| **Bunyadi rang** | Buttons aur numayan cheezon ka rang: **Pehle wala**, **Sabz**, **Neela**, **Jamni**, **Surkh**, **Narinji** ya **Feroza**. |
+| **Likhai ka size** | **Aam**, **Bara** ya **Bohat bara**. Kamzor nazar walon ke liye acha hai. |
+| **Konay** | Buttons aur cards kitne gol hon: **Pehle wale**, **Gol**, **Halke gol** ya **Seedhe**. |
+| **Hindson ka font** | Raqamon ka font: **Pehle wala**, **Inter**, **Manrope** ya **Phone wala**. |
+| **Pehle jaisa karein** | Is phone par upar ki sab tabdeeliyan wapas. |
+
+> **Mashwara:** Dukaan ke counter wale computer par **Bara** size aur **Bold** design chunein: din ki bikri aur munafa door se bhi parhe ja sakte hain.
 
 ## 6. Stock daalein (khareed)
 
@@ -557,7 +582,9 @@ Har line mein model, IMEI (ya ghari ka serial), haalat, PTA chip (misaal ke taur
 
 Ho gaya wali screen **Bikri ho gayi**, raqam aur bill number dikhati hai, misaal ke taur par `INV-000018`.
 
-> **Note:** Bina gahak ki cash bikri ke poore paise lena zaroori hai. Kuch paise ke liye **Udhaar** istemal karein aur gahak chunein.
+**Walk-in customer.** Har nayi bikri **Walk-in customer** se shuru hoti hai: woh banda jo abhi poore paise deta hai aur jis ka khata nahi rakhna. Bill par "Walk-in customer" chhapta hai. Bill kisi bande ke khate mein daalna ho to **Customer chunein** dabayein aur usay chunein (ya naya banda daalein).
+
+> **Note:** Walk-in bikri mein poore paise lena zaroori hai. Kuch paise ke liye **Customer chunein** (ya **Udhaar**) dabayein aur gahak chunein.
 
 ### Udhaar bikri
 
@@ -669,4 +696,23 @@ Ab har bill par kul raqam ke neeche **raqam alfaaz mein** (masalan "Rupees Forty
 
 **Misaal:** mobile Rs. 40,000 + charger Rs. 1,500 par 18% → tax Rs. 270, kul Rs. 41,770. Gahak Rs. 42,000 deta hai → wapas Rs. 230.
 
-> **Note:** Bill seedha FBR ko bhejna (FBR number aur QR code) agla qadam hai, is ke liye dukaan ki FBR registration chahiye.
+**Zyada cash purane udhaar mein.** Kabhi woh gahak jis ne dukaan ko pehle se dena hai, is bill se zyada paise de deta hai. Jab gahak chuna hua ho aur us ne pehle se dena ho, to wapsi ke neeche ek tick aata hai: **… us ke purane udhaar mein jama karein (dena hai …)**. Isay tick karein to zyada raqam wapas nahi di jati, us ke purane udhaar mein jama ho jati hai. Us ka khata kam ho jata hai, us ke sab se purane bill ada ho jate hain, aur chhape bill par yeh likha aata hai.
+
+**Misaal:** Bill Rs. 2,000. Imran Rs. 5,000 deta hai aur pichle mahine ke Rs. 3,000 dene hain. Tick karein: wapas Rs. 0, purana udhaar khatam.
+
+> **Note:** Sales tax mein registered dukaan har bill FBR ko bhej sakti hai aur FBR number aur us ka QR code chhaap sakti hai. Baab 23 mein **FBR Digital Invoicing** dekhein.
+
+### Har bill par QR code
+
+Har chhape hue bikri ke bill (80mm aur A4) ke neeche ek QR code hota hai aur saath likha hota hai **Scan to see this bill online** (Urdu bill par Urdu mein). Gahak phone ke camera se scan karta hai aur baghair login bill dekh leta hai: dukaan ka naam, bill number aur tareekh, har cheez (IMEI ke sirf aakhri 4 hindse), kul raqam, kitna ada hua aur **Baqi raqam**, aur **Dukaan ko call karein** ka button. Upar likha hota hai **Is dukaan ka asli bill**, taake gahak, baad mein phone khareedne wala, ya warranty ke waqt koi bhi dekh sake ke bill asli hai.
+
+![QR wala chhapa hua bill](shot:bill-qr)
+
+![QR se khula hua bill](shot:bill-check)
+
+- Is page par gahak ka phone number, CNIC, khareed qeemat ya munafa kabhi nahi aata.
+- Agar baad mein bill wapas ya cancel ho jaye to page yeh bata deta hai.
+- Link andaze se nahi banaya ja sakta aur na badla ja sakta hai: badla hua link "Ye bill nahi mila" dikhata hai.
+- QR ke baghair bill chhaapne hon to **Mazeed → Dukaan ki settings → Business profile → Printed bill** kholein aur **Bill online dekhne ka QR code** se tick hata dein.
+
+> **Note:** Computer wale version par, jis ka internet pata nahi hota, QR mein sirf bill number hota hai.
