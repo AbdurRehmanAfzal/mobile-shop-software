@@ -92,7 +92,7 @@ export default function RepairStatusPage() {
           </div>
           <section className={`flex flex-col gap-1 rounded-3xl px-5 py-4 ${ready ? 'bg-emerald-tint text-emerald-deep' : 'bg-repair text-repair-fg'}`}>
             <span className="flex items-center gap-2">{ready ? <CheckCircle2 size={22} /> : <Wrench size={22} />}<BiLabel text={`repair.status.${data.status}`} size="lg" bold tone="text-current" /></span>
-            <span className="text-base font-bold">{data.device}{data.imei_last4 ? <span className="font-medium opacity-75" dir="ltr"> · ••••{data.imei_last4}</span> : null}</span>
+            <span className="text-base font-bold"><bdi>{data.device}</bdi>{data.imei_last4 ? <span className="font-medium opacity-75"> · <bdi dir="ltr">••••{data.imei_last4}</bdi></span> : null}</span>
             <span className={`opacity-80 ${small}`} dir="ltr">{data.no}</span>
             {data.at_workshop && !data.closed ? <BiLabel text="rstatus.atWorkshop" size="sm" tone="text-current" /> : null}
           </section>

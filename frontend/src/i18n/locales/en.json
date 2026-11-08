@@ -8187,7 +8187,19 @@
       "help": "A \"?\" opened",
       "trade": "Sales report",
       "auditrepairs": "Repairs audit",
-      "repairs": "Repairs audit"
+      "repairs": "Repairs audit",
+      "books": "Balance sheet",
+      "appearance": "Appearance",
+      "bill": "The printed bill with its QR",
+      "billcheck": "The bill opened from its QR",
+      "repairlink": "Repair status for the customer",
+      "verify": "Verify a used phone",
+      "purchases": "Purchases",
+      "payments": "Payments",
+      "expenses": "Expenses",
+      "hisaab": "Day's hisaab",
+      "staff": "Staff",
+      "bold": "Bold design"
     },
     "priceTitle": "Simple prices — monthly or yearly",
     "priceSub": "Start with {{n}} days free. Pay monthly, no contract. Prices in PKR per shop.",
@@ -8401,6 +8413,14 @@
       "gst": {
         "t": "GST per item",
         "d": "An item with its own GST % is taxed at that rate on a taxed bill; the bill says \"Tax (by item)\". Phones keep the bill's rate."
+      },
+      "appearance": {
+        "t": "Make it look your way",
+        "d": "Light or dark, four designs of the dashboard (Classic, Tiles, Simple, Bold), your own main colour, bigger text and rounder or sharper corners — each PC and phone keeps its own look."
+      },
+      "billqr": {
+        "t": "A QR on every bill",
+        "d": "The customer scans the bill and sees it online: items, total, paid and what is left. No name, phone, cost or khata is ever shown."
       }
     },
     "float": {
@@ -8683,7 +8703,9 @@
       "p5": "Your FBR token stays locked on the server and is never shown again, not even to you.",
       "p6": "Sale type and HS code per kind of goods — phones, other devices, accessories.",
       "note": "Off by default. You need your NTN, STRN and the IRIS Digital Invoicing token; we switch it on with you after a test with FBR's sandbox. Not registered for sales tax? Nothing changes for you."
-    }
+    },
+    "zoom": "See this screen bigger",
+    "zoomHint": "Tap any screen to see it bigger."
   },
   "inst": {
     "title": "Installments (qist)",

@@ -8187,7 +8187,19 @@
       "help": "Khula hua \"?\"",
       "trade": "Sale report",
       "auditrepairs": "Repair audit",
-      "repairs": "Repair audit"
+      "repairs": "Repair audit",
+      "books": "Balance sheet",
+      "appearance": "Appearance",
+      "bill": "QR ke saath chhapa hua bill",
+      "billcheck": "QR se khula hua bill",
+      "repairlink": "Customer ke liye repair ka haal",
+      "verify": "Purane phone ki tasdeeq",
+      "purchases": "Khareedari",
+      "payments": "Payments",
+      "expenses": "Kharche",
+      "hisaab": "Din ka hisaab",
+      "staff": "Staff",
+      "bold": "Bold design"
     },
     "priceTitle": "Saada qeemat — mahana ya saalana",
     "priceSub": "{{n}} din muft se shuru karein. Mahina-war adaigi, koi contract nahi. Qeemat PKR mein fi dukaan.",
@@ -8401,6 +8413,14 @@
       "gst": {
         "t": "Har item ka GST",
         "d": "Jis item ka apna GST % ho, tax wale bill par usi rate se; bill par \"Tax (item-war)\". Phone par bill ka rate."
+      },
+      "appearance": {
+        "t": "Apni marzi ki shakal",
+        "d": "Light ya dark, dashboard ke chaar design (Classic, Tiles, Simple, Bold), apna rang, bara likha hua aur gol ya seedhe kone — har computer aur phone apni shakal yaad rakhta hai."
+      },
+      "billqr": {
+        "t": "Har bill par QR",
+        "d": "Customer bill scan kar ke use online dekhta hai: cheezein, total, diye hue aur baqi. Naam, phone, cost ya khata kabhi nazar nahi aata."
       }
     },
     "float": {
@@ -8683,7 +8703,9 @@
       "p5": "Aap ka FBR token server par taale mein rehta hai aur dobara kabhi nahi dikhta, aap ko bhi nahi.",
       "p6": "Har qism ke maal ki sale type aur HS code — phone, doosri devices, accessories.",
       "note": "Shuru mein band hai. Aap ko NTN, STRN aur IRIS ka Digital Invoicing token chahiye; FBR ke sandbox par test ke baad hum aap ke sath on karte hain. Sales tax mein registered nahi? Aap ke liye kuch nahi badalta."
-    }
+    },
+    "zoom": "Yeh screen bari dekhein",
+    "zoomHint": "Kisi bhi screen ko bara dekhne ke liye us par dabayein."
   },
   "inst": {
     "title": "Qistein",

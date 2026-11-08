@@ -2,8 +2,8 @@
  *  screenshots, a sample video, prices, the accounts to pay into and an "open a shop for me" form
  *  that reaches the product owner. Served at /welcome; a visitor on / without a login lands here. */
 
-import { ArrowLeftRight, Banknote, BarChart3, Building2, Calculator, BellRing, BookOpen, Bot, Boxes, CalendarCheck, Check, ChevronDown, CircleHelp, ClipboardCheck, CloudOff, Code2, FileSignature, Copy, CreditCard, Download, FileSpreadsheet, FileText, Fingerprint, FlaskConical, HandCoins, Headphones, History, IdCard, KeyRound, Languages, LineChart, Link2, Lock, MessageCircle, Monitor, PackagePlus, PauseCircle, Percent, Phone as PhoneIcon, PlayCircle, QrCode, Receipt, RotateCcw, Scale, ScanBarcode, ScanLine, ShieldCheck, Smartphone, Store, Tablet, Tag, Undo2, UserCog, Users, Wallet, Wrench, type LucideIcon } from 'lucide-react'
-import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
+import { ArrowLeftRight, Banknote, BarChart3, Building2, Calculator, BellRing, BookOpen, Bot, Boxes, CalendarCheck, Check, ChevronDown, CircleHelp, ClipboardCheck, CloudOff, Code2, FileSignature, Copy, CreditCard, Download, FileSpreadsheet, FileText, Fingerprint, FlaskConical, HandCoins, Headphones, History, IdCard, KeyRound, Languages, LineChart, Link2, Lock, MessageCircle, Monitor, PackagePlus, Palette, PauseCircle, Percent, Phone as PhoneIcon, PlayCircle, QrCode, Receipt, RotateCcw, Scale, ScanBarcode, ScanLine, ShieldCheck, Smartphone, Store, Tablet, Tag, Undo2, UserCog, Users, Wallet, Wrench, X, ZoomIn, type LucideIcon } from 'lucide-react'
+import { createContext, useContext, useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { BiAlert, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import { PhoneInput, isMobileOk } from '@/components/FieldInputs'
@@ -17,17 +17,21 @@ import { useGet } from '@/lib/queries'
 interface Info { plans: { key: string; price: number; yearly_price?: number; modules: string[] }[]; trial_days: number; yearly_paid_months?: number; modules: Record<string, { en: string; ur: string }>; accounts: { label: string; account_name: string; number: string; note: string | null }[]; whatsapp: string | null }
 
 const LANG: Record<Locale, string> = { ur: 'اردو', roman: 'Roman', en: 'English' }
-const BASICS: { key: string; Icon: LucideIcon }[] = [
-  { key: 'sale', Icon: Tag }, { key: 'purchase', Icon: PackagePlus }, { key: 'stock', Icon: Smartphone }, { key: 'verify', Icon: IdCard },
-  { key: 'khata', Icon: BookOpen }, { key: 'payments', Icon: HandCoins }, { key: 'invoices', Icon: FileText }, { key: 'returns', Icon: Undo2 },
-  { key: 'hisaab', Icon: Receipt }, { key: 'staff', Icon: Users }, { key: 'imei', Icon: ScanLine }, { key: 'languages', Icon: Languages },
+const BASICS: { key: string; Icon: LucideIcon; shot?: string }[] = [
+  { key: 'sale', Icon: Tag, shot: 'sale' }, { key: 'purchase', Icon: PackagePlus, shot: 'purchases' }, { key: 'stock', Icon: Smartphone, shot: 'stock' }, { key: 'verify', Icon: IdCard, shot: 'verify' },
+  { key: 'khata', Icon: BookOpen, shot: 'khata' }, { key: 'payments', Icon: HandCoins, shot: 'payments' }, { key: 'invoices', Icon: FileText, shot: 'invoice' }, { key: 'returns', Icon: Undo2 },
+  { key: 'hisaab', Icon: Receipt, shot: 'hisaab' }, { key: 'staff', Icon: Users, shot: 'staff' }, { key: 'imei', Icon: ScanLine, shot: 'history' }, { key: 'languages', Icon: Languages },
 ]
+/** owner 2026-11-08: "log text kam parhte hain, screen zyada dekhte hain" — a screen beside the text */
+const OPTIONAL_SHOT: Record<string, string> = { accessories: 'items', repairs: 'repairjob', expenses: 'expenses', reports: 'reports', exports: 'bulk' }
 const OPTIONAL: Record<string, LucideIcon> = { accessories: Headphones, repairs: Wrench, expenses: Wallet, held_sales: PauseCircle, tax: Receipt, exchange: ArrowLeftRight, reports: BarChart3, exports: Download, notifications: BellRing, loans: RotateCcw, installments: HandCoins, attendance: CalendarCheck, ai: Bot }
 /** what came in the last round (owner 2026-10-31): shown first, with its own screenshots */
 const NEW: { key: string; Icon: LucideIcon; shot?: string }[] = [
+  // owner 2026-11-07: the Appearance page with four designs, a QR on every bill
+  { key: 'appearance', Icon: Palette, shot: 'appearance' }, { key: 'billqr', Icon: QrCode, shot: 'billcheck' },
   // owner 2026-11-06: FBR-ready bills, the tax invoice, balance sheet, branches, the repair link
-  { key: 'fbr', Icon: QrCode }, { key: 'taxbill', Icon: Receipt }, { key: 'books', Icon: Scale }, { key: 'transfers', Icon: Building2 },
-  { key: 'repairlink', Icon: Link2 }, { key: 'cashchange', Icon: Banknote }, { key: 'accounts', Icon: Calculator },
+  { key: 'fbr', Icon: QrCode, shot: 'bill' }, { key: 'taxbill', Icon: Receipt, shot: 'invoice' }, { key: 'books', Icon: Scale, shot: 'books' }, { key: 'transfers', Icon: Building2 },
+  { key: 'repairlink', Icon: Link2, shot: 'repairlink' }, { key: 'cashchange', Icon: Banknote, shot: 'sale' }, { key: 'accounts', Icon: Calculator, shot: 'audit' },
   // owner 2026-11-03: the newest round first — repair labs, the repair sticker, len-den, a "?" on
   // every field, the sales / purchase / staff reports, item GST, a salesman role without profit
   { key: 'repairlabs', Icon: FlaskConical, shot: 'repairlab' }, { key: 'sticker', Icon: Tag, shot: 'sticker' }, { key: 'lending', Icon: HandCoins, shot: 'lending' },
@@ -41,26 +45,28 @@ const NEW: { key: string; Icon: LucideIcon; shot?: string }[] = [
   { key: 'installments', Icon: HandCoins }, { key: 'hazri', Icon: CalendarCheck }, { key: 'otp', Icon: KeyRound }, { key: 'windows', Icon: Monitor },
 ]
 /** the newest round shown open; the rounds before fold under "earlier" */
-const LATEST = 7
+const LATEST = 9
 const EXTRAS: { key: string; Icon: LucideIcon }[] = [{ key: 'offline', Icon: CloudOff }, { key: 'fingerprint', Icon: Fingerprint }, { key: 'cnic', Icon: ShieldCheck }, { key: 'whatsapp', Icon: MessageCircle }]
-const SHOTS = ['home', 'sale', 'stock', 'repairjob', 'lending', 'trade', 'items', 'tablet', 'audit', 'khata', 'history', 'finance', 'invoice'] as const
-const WEB_SHOTS = ['home', 'audit', 'trade', 'repairs', 'repairlab', 'stock', 'items', 'finance', 'invoice'] as const
+const SHOTS = ['home', 'sale', 'bill', 'billcheck', 'stock', 'verify', 'repairjob', 'repairlink', 'lending', 'trade', 'books', 'items', 'tablet', 'audit', 'khata', 'history', 'finance', 'invoice', 'appearance'] as const
+const WEB_SHOTS = ['home', 'bold', 'audit', 'trade', 'books', 'repairs', 'repairlab', 'stock', 'items', 'finance', 'invoice', 'appearance'] as const
 /** owner 2026-11-03: every module explained twice — in shop words, and how it works inside */
-const GUIDE: { key: string; Icon: LucideIcon }[] = [
-  { key: 'sale', Icon: Tag }, { key: 'purchase', Icon: PackagePlus }, { key: 'stock', Icon: Smartphone }, { key: 'verify', Icon: IdCard },
-  { key: 'khata', Icon: BookOpen }, { key: 'lending', Icon: HandCoins }, { key: 'payments', Icon: Wallet }, { key: 'returns', Icon: Undo2 },
-  { key: 'repairs', Icon: Wrench }, { key: 'items', Icon: Headphones }, { key: 'installments', Icon: CalendarCheck }, { key: 'expenses', Icon: Receipt },
-  { key: 'audit', Icon: LineChart }, { key: 'staff', Icon: Users }, { key: 'barcodes', Icon: ScanBarcode }, { key: 'help', Icon: CircleHelp },
-  { key: 'devices', Icon: Monitor }, { key: 'security', Icon: ShieldCheck },
-  { key: 'fbr', Icon: QrCode }, { key: 'books', Icon: Scale }, { key: 'transfers', Icon: Building2 },
+const GUIDE: { key: string; Icon: LucideIcon; shot?: string }[] = [
+  { key: 'sale', Icon: Tag, shot: 'sale' }, { key: 'purchase', Icon: PackagePlus, shot: 'purchases' }, { key: 'stock', Icon: Smartphone, shot: 'stock' }, { key: 'verify', Icon: IdCard, shot: 'verify' },
+  { key: 'khata', Icon: BookOpen, shot: 'khata' }, { key: 'lending', Icon: HandCoins, shot: 'lending' }, { key: 'payments', Icon: Wallet, shot: 'payments' }, { key: 'returns', Icon: Undo2 },
+  { key: 'repairs', Icon: Wrench, shot: 'repairjob' }, { key: 'items', Icon: Headphones, shot: 'items' }, { key: 'installments', Icon: CalendarCheck }, { key: 'expenses', Icon: Receipt, shot: 'expenses' },
+  { key: 'audit', Icon: LineChart, shot: 'audit' }, { key: 'staff', Icon: Users, shot: 'staff' }, { key: 'barcodes', Icon: ScanBarcode, shot: 'label' }, { key: 'help', Icon: CircleHelp, shot: 'help' },
+  { key: 'devices', Icon: Monitor, shot: 'tablet' }, { key: 'security', Icon: ShieldCheck },
+  { key: 'fbr', Icon: QrCode, shot: 'bill' }, { key: 'books', Icon: Scale, shot: 'books' }, { key: 'transfers', Icon: Building2 },
 ]
 /** owner 2026-11-06: the FBR band — what the bill does with FBR, and what the shop needs first */
 const FBR_POINTS = [1, 2, 3, 4, 5, 6] as const
 /** owner 2026-11-03: what no other software in Pakistan does together — shown right under the hero */
-const UNIQUE: { key: string; Icon: LucideIcon; href?: string }[] = [
-  { key: 'android', Icon: Smartphone, href: '/app.apk' }, { key: 'online', Icon: Monitor }, { key: 'offline', Icon: CloudOff },
-  { key: 'consent', Icon: FileSignature }, { key: 'verify', Icon: ShieldCheck }, { key: 'langs', Icon: Languages },
+const UNIQUE: { key: string; Icon: LucideIcon; href?: string; shot?: string; web?: boolean; flip?: boolean }[] = [
+  { key: 'android', Icon: Smartphone, href: '/app.apk', shot: 'home' }, { key: 'online', Icon: Monitor, shot: 'home', web: true }, { key: 'offline', Icon: CloudOff, shot: 'sale' },
+  { key: 'consent', Icon: FileSignature, shot: 'history' }, { key: 'verify', Icon: ShieldCheck, shot: 'verify' }, { key: 'langs', Icon: Languages, shot: 'home', flip: true },
 ]
+/** a tapped screen opens big (owner 2026-11-08) */
+const ZoomCtx = createContext<(src: string) => void>(() => undefined)
 const SITES = [
   { key: 'oop', href: 'https://oopsolutions.com', label: 'oopsolutions.com' },
   { key: 'ifix', href: 'https://ifixapplephone.com', label: 'ifixapplephone.com' },
@@ -74,6 +80,7 @@ export default function LandingPage() {
   const wa = (text: string) => `https://wa.me/${(info?.whatsapp ? `92${info.whatsapp.replace(/^0/, '')}` : MAKER.tel.replace('+', ''))}?text=${encodeURIComponent(text)}`
   const fmt = (n: number) => n.toLocaleString('en-US')
   const [billing, setBilling] = useState<'month' | 'year'>('year')
+  const [zoom, setZoom] = useState<string | null>(null)
   // the tab title and description in the visitor's language (SEO, link previews); the app's on leaving
   useEffect(() => {
     const before = document.title
@@ -87,6 +94,7 @@ export default function LandingPage() {
   const body = ur ? cls('md') : 'text-[15px] font-medium'
 
   return (
+    <ZoomCtx.Provider value={setZoom}>
     <div className="min-h-dvh overflow-x-hidden bg-ground text-ink">
       {/* top bar */}
       <header className="sticky top-0 z-20 border-b border-line bg-ground/90 backdrop-blur">
@@ -135,8 +143,9 @@ export default function LandingPage() {
             <p className={`max-w-2xl text-white/75 ${body}`}>{pick('landing.uniqueSub')}</p>
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {UNIQUE.map(({ key, Icon, href }) => (
+            {UNIQUE.map(({ key, Icon, href, shot, web, flip }) => (
               <div key={key} className="flex flex-col gap-3 rounded-3xl border border-white/10 bg-white/[0.06] p-5">
+                {shot ? <Thumb shot={shot} web={web} lang={flip ? (ur ? 'en' : 'ur') : undefined} banner /> : null}
                 <span className="flex items-center gap-3">
                   <span className="well h-12 w-12 shrink-0 rounded-2xl bg-[#34D399] text-[#0E1613]"><Icon size={24} strokeWidth={2.2} /></span>
                   <span className={`font-extrabold ${ur ? 'ur text-lg leading-[1.7]' : 'text-[17px]'}`}>{pick(`landing.unique.${key}.t`)}</span>
@@ -169,9 +178,10 @@ export default function LandingPage() {
             <span className={`mb-2 inline-block rounded-full bg-emerald px-3 py-1 text-xs font-bold text-white ${ur ? 'ur text-sm' : ''}`}>{pick('landing.newBadge')}</span>
             <h2 className={h2}>{pick('landing.newTitle')}</h2>
             <p className={`text-muted ${body}`}>{pick('landing.newSub')}</p>
+            <ZoomHint />
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {NEW.slice(0, LATEST).map(({ key, Icon }) => <Feature key={key} Icon={Icon} title={pick(`landing.new.${key}.t`)} text={pick(`landing.new.${key}.d`)} tone="bg-emerald text-white" />)}
+            {NEW.slice(0, LATEST).map(({ key, Icon, shot }) => <Feature key={key} Icon={Icon} shot={shot} title={pick(`landing.new.${key}.t`)} text={pick(`landing.new.${key}.d`)} tone="bg-emerald text-white" />)}
           </div>
           {/* the rounds before: folded, so the newest stays on top and the page stays short */}
           <details className="group">
@@ -179,17 +189,9 @@ export default function LandingPage() {
               {pick('landing.earlier').replace('{{n}}', String(NEW.length - LATEST))}<ChevronDown size={18} className="transition-transform group-open:rotate-180" />
             </summary>
             <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {NEW.slice(LATEST).map(({ key, Icon }) => <Feature key={key} Icon={Icon} title={pick(`landing.new.${key}.t`)} text={pick(`landing.new.${key}.d`)} tone="bg-emerald-tint text-emerald-deep" />)}
+              {NEW.slice(LATEST).map(({ key, Icon, shot }) => <Feature key={key} Icon={Icon} shot={shot} title={pick(`landing.new.${key}.t`)} text={pick(`landing.new.${key}.d`)} tone="bg-emerald-tint text-emerald-deep" />)}
             </div>
           </details>
-          <div className="-mx-5 flex snap-x gap-4 overflow-x-auto px-5 pb-2">
-            {NEW.filter((n) => n.shot).map((n) => (
-              <figure key={n.key} className="w-[220px] shrink-0 snap-center">
-                <Phone src={`/landing/${n.shot}-${ur ? 'ur' : 'en'}.png`} small />
-                <figcaption className={`mt-2 text-center text-muted ${ur ? cls('sm') : 'text-sm font-semibold'}`}>{pick(`landing.shots.${n.shot}`)}</figcaption>
-              </figure>
-            ))}
-          </div>
         </section>
 
         {/* FBR-ready bills (ADR-050): off by default, switched on with the shop after a sandbox test */}
@@ -202,6 +204,10 @@ export default function LandingPage() {
             <h2 className={h2}>{pick('landing.fbr.title')}</h2>
             <p className={`text-muted ${body}`}>{pick('landing.fbr.sub')}</p>
             <p className={`rounded-2xl bg-surface p-3 text-muted ${ur ? cls('sm') : 'text-sm font-medium'}`}>{pick('landing.fbr.note')}</p>
+            <div className="flex gap-3">
+              <figure className="w-[132px]"><Thumb shot="bill" /><figcaption className={`mt-1.5 text-center text-muted ${ur ? 'ur text-xs' : 'text-xs font-semibold'}`}>{pick('landing.shots.bill')}</figcaption></figure>
+              <figure className="w-[132px]"><Thumb shot="billcheck" /><figcaption className={`mt-1.5 text-center text-muted ${ur ? 'ur text-xs' : 'text-xs font-semibold'}`}>{pick('landing.shots.billcheck')}</figcaption></figure>
+            </div>
           </div>
           <ul className="flex min-w-0 flex-col gap-2.5">
             {FBR_POINTS.map((i) => (
@@ -247,9 +253,10 @@ export default function LandingPage() {
           <div>
             <h2 className={h2}>{pick('landing.guideTitle')}</h2>
             <p className={`text-muted ${body}`}>{pick('landing.guideSub')}</p>
+            <ZoomHint />
           </div>
           <div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-2">
-            {GUIDE.map(({ key, Icon }) => <Guide key={key} k={key} Icon={Icon} />)}
+            {GUIDE.map(({ key, Icon, shot }) => <Guide key={key} k={key} Icon={Icon} shot={shot} />)}
           </div>
         </section>
 
@@ -261,11 +268,11 @@ export default function LandingPage() {
           </div>
           <BiLabel text="landing.basicsTitle" size="md" bold />
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {BASICS.map(({ key, Icon }) => <Feature key={key} Icon={Icon} title={pick(`landing.basics.${key}.t`)} text={pick(`landing.basics.${key}.d`)} tone="bg-emerald-tint text-emerald-deep" />)}
+            {BASICS.map(({ key, Icon, shot }) => <Feature key={key} Icon={Icon} shot={shot} title={pick(`landing.basics.${key}.t`)} text={pick(`landing.basics.${key}.d`)} tone="bg-emerald-tint text-emerald-deep" />)}
           </div>
           <BiLabel text="landing.optionalTitle" size="md" bold className="mt-2" />
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {Object.entries(OPTIONAL).map(([key, Icon]) => <Feature key={key} Icon={Icon} title={pick(`modules.${key}`)} text={pick(`landing.optional.${key}`)} tone="bg-[#3B82F6]/15 text-[#2563EB]" />)}
+            {Object.entries(OPTIONAL).map(([key, Icon]) => <Feature key={key} Icon={Icon} shot={OPTIONAL_SHOT[key]} title={pick(`modules.${key}`)} text={pick(`landing.optional.${key}`)} tone="bg-[#3B82F6]/15 text-[#2563EB]" />)}
           </div>
           <BiLabel text="landing.extrasTitle" size="md" bold className="mt-2" />
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -280,7 +287,7 @@ export default function LandingPage() {
           <div className="-mx-5 flex snap-x gap-4 overflow-x-auto px-5 pb-2">
             {SHOTS.map((s) => (
               <figure key={s} className="w-[240px] shrink-0 snap-center">
-                <Phone src={`/landing/${s}-${ur ? 'ur' : 'en'}.png`} small />
+                <button type="button" className="block w-full" onClick={() => setZoom(`/landing/${s}-${ur ? 'ur' : 'en'}.png`)} aria-label={pick('landing.zoom')}><Phone src={`/landing/${s}-${ur ? 'ur' : 'en'}.png`} small /></button>
                 <figcaption className={`mt-2 text-center text-muted ${ur ? cls('sm') : 'text-sm font-semibold'}`}>{pick(`landing.shots.${s}`)}</figcaption>
               </figure>
             ))}
@@ -294,7 +301,7 @@ export default function LandingPage() {
           <div className="-mx-5 flex snap-x gap-4 overflow-x-auto px-5 pb-2">
             {WEB_SHOTS.map((s) => (
               <figure key={s} className="w-[min(92vw,620px)] shrink-0 snap-center">
-                <Browser src={`/landing/web-${s}-${ur ? 'ur' : 'en'}.png`} />
+                <button type="button" className="block w-full" onClick={() => setZoom(`/landing/web-${s}-${ur ? 'ur' : 'en'}.png`)} aria-label={pick('landing.zoom')}><Browser src={`/landing/web-${s}-${ur ? 'ur' : 'en'}.png`} /></button>
                 <figcaption className={`mt-2 text-center text-muted ${ur ? cls('sm') : 'text-sm font-semibold'}`}>{pick(`landing.shots.${s}`)}</figcaption>
               </figure>
             ))}
@@ -390,7 +397,9 @@ export default function LandingPage() {
           <span>{pick('landing.footer')}</span>
         </div>
       </footer>
+      {zoom ? <Zoom src={zoom} onClose={() => setZoom(null)} /> : null}
     </div>
+    </ZoomCtx.Provider>
   )
 }
 
@@ -415,21 +424,69 @@ function Browser({ src }: { src: string }) {
   )
 }
 
-function Feature({ Icon, title, text, tone }: { Icon: LucideIcon; title: string; text: string; tone: string }) {
+function Feature({ Icon, title, text, tone, shot }: { Icon: LucideIcon; title: string; text: string; tone: string; shot?: string }) {
   const { ur, cls } = useLang()
   return (
-    <div className="card flex gap-3">
-      <span className={`well h-11 w-11 shrink-0 rounded-2xl ${tone}`}><Icon size={22} strokeWidth={2} /></span>
-      <span className="flex min-w-0 flex-col">
-        <span className={`font-bold ${ur ? cls('md') : 'text-[15px]'}`}>{title}</span>
+    <div className="card flex gap-3" data-shot={shot}>
+      <span className="flex min-w-0 flex-1 flex-col gap-2">
+        <span className="flex items-center gap-3">
+          <span className={`well h-11 w-11 shrink-0 rounded-2xl ${tone}`}><Icon size={22} strokeWidth={2} /></span>
+          <span className={`min-w-0 font-bold ${ur ? cls('md') : 'text-[15px]'}`}>{title}</span>
+        </span>
         <span className={`text-muted ${ur ? cls('sm') : 'text-sm font-medium'}`}>{text}</span>
       </span>
+      {shot ? <Thumb shot={shot} className="w-[88px] self-start sm:w-[96px]" /> : null}
+    </div>
+  )
+}
+
+/** a small screen from the app beside a text; tapped, it opens big */
+function Thumb({ shot, web = false, lang, banner = false, className = '' }: { shot: string; web?: boolean; lang?: 'en' | 'ur'; banner?: boolean; className?: string }) {
+  const { pick, ur } = useLang()
+  const zoom = useContext(ZoomCtx)
+  const src = `/landing/${web ? 'web-' : ''}${shot}-${lang ?? (ur ? 'ur' : 'en')}.png`
+  const frame = web ? 'rounded-xl border border-white/20 bg-surface' : 'rounded-[16px] border-[3px] border-ink bg-ink'
+  const ratio = banner ? 'h-44 sm:h-48' : web ? 'aspect-[16/10]' : 'aspect-[9/16]'
+  return (
+    <button
+      type="button"
+      onClick={(e) => { e.preventDefault(); e.stopPropagation(); zoom(src) }}
+      aria-label={pick('landing.zoom')}
+      title={pick('landing.zoom')}
+      className={`tap group/t relative block shrink-0 overflow-hidden shadow-[0_8px_24px_-12px_rgba(14,22,19,.45)] ${frame} ${className}`}
+      data-testid="landing-thumb"
+    >
+      <img src={src} alt="" loading="lazy" className={`block w-full object-cover object-top ${ratio}`} />
+      <span className="absolute bottom-1.5 end-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-[#0E1613]/80 text-white transition-transform group-hover/t:scale-110"><ZoomIn size={13} strokeWidth={2.4} /></span>
+    </button>
+  )
+}
+
+function ZoomHint() {
+  const { pick, ur, cls } = useLang()
+  return <span className={`mt-2 flex w-fit items-center gap-1.5 rounded-full bg-surface px-3 py-1 text-muted ring-1 ring-inset ring-line ${ur ? cls('sm') : 'text-xs font-semibold'}`}><ZoomIn size={14} /> {pick('landing.zoomHint')}</span>
+}
+
+/** the screen at full size over the page; Esc, a tap outside or the cross closes it */
+function Zoom({ src, onClose }: { src: string; onClose: () => void }) {
+  const { pick } = useLang()
+  useEffect(() => {
+    const key = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', key)
+    const before = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { window.removeEventListener('keydown', key); document.body.style.overflow = before }
+  }, [onClose])
+  return (
+    <div role="dialog" aria-modal="true" aria-label={pick('landing.zoom')} onClick={onClose} className="fixed inset-0 z-50 flex items-center justify-center bg-[#0E1613]/85 p-4 backdrop-blur-sm" data-testid="landing-zoom">
+      <img src={src} alt="" className="max-h-[88dvh] max-w-full rounded-2xl object-contain shadow-hero" onClick={(e) => e.stopPropagation()} />
+      <button type="button" onClick={onClose} aria-label={pick('common.close')} className="tap absolute end-4 top-[max(16px,env(safe-area-inset-top))] flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#0E1613]"><X size={24} strokeWidth={2.4} /></button>
     </div>
   )
 }
 
 /** one module: a line that says what it is; open it for the shop words + example and the inside view */
-function Guide({ k, Icon }: { k: string; Icon: LucideIcon }) {
+function Guide({ k, Icon, shot }: { k: string; Icon: LucideIcon; shot?: string }) {
   const { pick, ur, cls } = useLang()
   const small = ur ? cls('sm') : 'text-sm font-medium'
   const tech = [1, 2, 3].map((i) => pick(`landing.guide.${k}.x${i}`)).filter((x) => x && !x.startsWith('landing.'))
@@ -441,6 +498,7 @@ function Guide({ k, Icon }: { k: string; Icon: LucideIcon }) {
           <span className={`font-bold ${ur ? cls('md') : 'text-[15px]'}`}>{pick(`landing.guide.${k}.t`)}</span>
           <span className={`text-muted ${small}`}>{pick(`landing.guide.${k}.s`)}</span>
         </span>
+        {shot ? <Thumb shot={shot} className="w-[72px] sm:w-[84px]" /> : null}
         <ChevronDown size={20} className="shrink-0 text-muted transition-transform group-open:rotate-180" />
       </summary>
       <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">

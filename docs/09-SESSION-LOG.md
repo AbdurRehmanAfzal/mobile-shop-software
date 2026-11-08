@@ -956,3 +956,13 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Next**: user manual sections (profile menu, walk-in, extra cash, Appearance, bill QR).
 **Open**: production must have `PUBLIC_URL` (or https `WEBAUTHN_ORIGINS`) for the QR to hold a link — likely already true, as the repair link uses the same.
 **Note**: `e2e/reminders.spec.ts` fails at its first hint check ("opens with the reminder ready") on `develop` before this change too — not touched here; look at it next.
+
+## 2026-11-08 — Landing page: a screen with every text
+**Done** (owner: "landing page may text k sath screenshot be lagao because log ziyadah text nahi prtay visual ko ziyadah prefer krtay hn"):
+- `LandingPage.tsx`: `Thumb` (a small phone / laptop screen beside the text, tap → `Zoom`, a full-size view; Esc, a tap outside or the cross closes it) on every new-feature card, the module cards (basics + optional), every module-guide row (visible while closed) and the "why it is different" cards; the FBR band shows the printed bill and the bill opened from its QR; a "Tap any screen to see it bigger" hint. The separate screenshot strip under the new features went (the cards carry the screens). Two new feature cards first: Appearance, QR on every bill (`landing.new.appearance|billqr`, en / ur / roman). Gallery images open big too.
+- `scripts/landing-assets.mjs`: new screens `books`, `appearance`, `bill` (printed receipt with QR), `billcheck` (`/b/<token>`, token made with the backend's `bill_link`), `repairlink` (`/r/<status_token>`), `verify`, `purchases`, `payments`, `expenses`, `hisaab`, `staff`; laptop `web-books`, `web-appearance`, `web-bold`. Demo shop now starts with a bank account and opening cash (cash and profit never show minus), a salesman, and a part-paid A55 bill. `LANDING_ONLY=a,b` / `LANDING_LANG=ur` retake just some screens. All screenshots regenerated.
+- `RepairStatus.tsx`: in Urdu the device name and "••••1234" ran together ("••••3817iPhone 11"); now isolated with `<bdi>`.
+**Verified**: tsc; vitest 45; Playwright `landing.spec` (now also: > 40 screens, a tap opens the big view, Esc closes) passed; every screen the page names exists in en + ur (44 names); page checked at 390 px (en, ur) and 1280 px — no sideways scroll; screenshots looked at (bill, bill page, home ur, Bold, balance sheet, verify, repair link).
+**Note**: the local backend was an old orphan process without `/public/bill` (see memory "uvicorn orphan child"); restarted. One `landing.spec` run failed at the admin "Shop opened" step right after the restart, then passed twice.
+**Next**: user manual sections (profile menu, walk-in, extra cash, Appearance, bill QR); `reminders.spec` first hint check.
+
