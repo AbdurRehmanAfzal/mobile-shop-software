@@ -31,6 +31,12 @@ test('landing page: modules, prices, request a shop; the super admin opens it fr
   const unique = page.getByTestId('landing-unique')
   for (const t of ['Android app', 'Works offline', "Seller's signed consent", 'Used-phone verification']) await expect(unique).toContainText(t)
   await expect(unique.getByRole('link', { name: 'Download the app' })).toHaveAttribute('href', '/app.apk')
+  // owner 2026-11-08: a screen beside the text everywhere; a tapped screen opens big and Esc closes it
+  expect(await page.getByTestId('landing-thumb').count()).toBeGreaterThan(40)
+  await page.locator('#new').getByTestId('landing-thumb').first().click()
+  await expect(page.getByTestId('landing-zoom')).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(page.getByTestId('landing-zoom')).toHaveCount(0)
   await expect(page.getByTestId('year-pro')).toContainText('Rs. 30,000')
   await page.getByTestId('billing-month').click()
   await expect(page.locator('#pricing').getByText('Rs. 3,000')).toBeVisible()

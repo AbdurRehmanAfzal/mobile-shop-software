@@ -14,6 +14,7 @@ const OUT = join(process.cwd(), 'public', 'landing')
 mkdirSync(OUT, { recursive: true })
 const PHONE = `038${Math.floor(10_000_000 + Math.random() * 89_999_999)}`
 const PASS = 'demo-secret-1'
+const THIS_MONTH = /This month|اس مہینے|یہ مہینہ/
 
 async function seed() {
   const r = await fetch(`${API}/auth/signup`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ shop_name: 'Al-Madina Mobile Zone', owner_name: 'Hamza Iqbal', phone: PHONE, password: PASS, city: 'Lahore' }) })
@@ -54,6 +55,11 @@ async function seed() {
   const dealer = await post('/parties', { name: 'Rehman Traders', phone: '03005550003', kinds: ['supplier'] })
   // the shop's local day (a UTC slice is yesterday after midnight PKT)
   const day = (n) => { const d = new Date(); d.setDate(d.getDate() - n); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` }
+  // money the shop started with: a bank account, part of it drawn into the drawer (cash never shows minus)
+  const bank = await post('/ledger/accounts', { kind: 'bank', name: 'Meezan Bank', opening_balance: 450000, opening_date: day(30) }).catch((e) => { console.log(e.message); return null })
+  const cashAcc = (await get('/ledger/accounts').catch(() => [])).find?.((a) => a.kind === 'cash')
+  if (bank && cashAcc) await post('/ledger/transfers', { from_account_id: bank.id, to_account_id: cashAcc.id, amount: 150000, date: day(30), note: 'Opening cash' }).catch((e) => console.log(e.message))
+  await post('/staff', { name: 'Bilal Salesman', phone: `031${Math.floor(10_000_000 + Math.random() * 89_999_999)}`, password: 'demo-secret-2', role: 'salesman' }).catch((e) => console.log(e.message))
   // a supplier purchase with part payment (so the audit has a supplier side)
   const tecno = brand('Tecno') ?? brand('Infinix')
   const tm = tecno ? await model(tecno, tecno.name === 'Tecno' ? 'Spark' : 'Smart') : null
@@ -69,7 +75,7 @@ async function seed() {
   await post('/sales', { party_id: bilal.id, date: day(5), devices: [{ device_id: ids[3], price: 46000 }], paid: 20000, due_date: day(-10) })
   if (pur) await post('/sales', { party_id: usman.id, date: day(2), devices: [{ device_id: pur.lines[0].device_id, price: 32500 }], paid: 32500 }).catch(() => undefined)
   await post('/sales', { date: day(1), devices: [{ device_id: ids[4], price: 61000 }], paid: 61000 }).catch(() => undefined)
-  await post('/sales', { party_id: ali.id, devices: [{ device_id: ids[5], price: 52000 }], paid: 52000 }).catch(() => undefined)
+  const lastSale = await post('/sales', { party_id: ali.id, devices: [{ device_id: ids[0], price: 99000 }], misc: [{ description: 'Silicone cover', qty: 1, unit_price: 650 }], paid: 80000, due_date: day(-7) }).catch((e) => { console.log(e.message); return null })
   await post('/payments', { party_id: bilal.id, direction: 'in', amount: 6000 }).catch(() => undefined)
   await post('/accessories', { name: 'Type-C charger 25W', category: 'charger', price: 1500, reorder_level: 5, opening_qty: 12, opening_cost: 900 })
   // owner addendum 5: a cable with its card, bought by the dozen twice, some sold — batches, timeline, reports
@@ -111,7 +117,15 @@ async function seed() {
   await post('/payments', { party_id: tariq.id, direction: 'out', purpose: 'lending', amount: 25000, date: day(20), due_date: day(5), notes: "daughter's fee" })
   await post('/payments', { party_id: tariq.id, direction: 'in', purpose: 'lending', amount: 10000, date: day(4), notes: 'first part back' })
   await post('/payments', { party_id: usman.id, direction: 'in', purpose: 'lending', amount: 15000, date: day(10), notes: 'kept with the shop' })
-  return { phone: PHONE, deviceId: ids[1], itemId: cable.id, tabletId, watchId, labId: zain.id, repairId: rj2.id, lendId: tariq.id, headers: h }
+  // owner 2026-11-08: the bill's QR page and the repair status page, opened from their signed links
+  const statusToken = (await get(`/repairs/${rj2.id}`).catch(() => ({}))).status_token ?? ''
+  let billToken = ''
+  if (lastSale?.id) {
+    try {
+      billToken = execFileSync(join('..', 'backend', '.venv', 'Scripts', 'python'), ['-c', `import uuid; from app.modules.sales import bill_link; print(bill_link.token(uuid.UUID('${lastSale.id}')))`], { cwd: join('..', 'backend'), env: { ...process.env, PYTHONUTF8: '1' } }).toString().trim()
+    } catch (e) { console.log('no bill token', e.message) }
+  }
+  return { phone: PHONE, deviceId: ids[1], verifyId: ids[5], itemId: cable.id, tabletId, watchId, labId: zain.id, repairId: rj2.id, lendId: tariq.id, saleId: lastSale?.id ?? '', billToken, statusToken, headers: h }
 }
 
 async function login(page, locale) {
@@ -129,13 +143,14 @@ async function shots(browser, locale) {
   const page = await ctx.newPage()
   await login(page, locale)
   const take = async (name, path, prep) => {
+    if (ONLY && !ONLY.includes(name)) return
     await page.goto(`${WEB}${path}`)
     await page.waitForLoadState('networkidle')
     if (prep) await prep()
     await page.waitForTimeout(600)
     await page.screenshot({ path: join(OUT, `${name}-${locale}.png`) })
   }
-  await take('home', '/', async () => { await page.getByRole('button', { name: /This month|یہ مہینہ/ }).first().click().catch(() => undefined); await page.waitForTimeout(700) })
+  await take('home', '/', async () => { await page.getByRole('button', { name: THIS_MONTH }).first().click().catch(() => undefined); await page.waitForTimeout(700) })
   await take('sale', '/sale/new', async () => { await page.getByRole('button', { name: /Galaxy A55|iPhone 13/ }).first().click(); await page.waitForTimeout(500) })
   await take('stock', '/stock')
   await take('khata', '/khata')
@@ -143,7 +158,7 @@ async function shots(browser, locale) {
   await take('invoice', '/invoices')
   await take('audit', '/audit?preset=this_month')
   await take('finance', '/audit/finance?preset=this_month')
-  await take('bulk', '/more/bulk', async () => { await page.getByTestId('bulk-page').getByRole('button', { name: /Phones|موبائل/ }).first().click(); await page.waitForTimeout(400) })
+  await take('bulk', '/more/bulk', async () => { await page.getByTestId('bulk-page').getByRole('button', { name: /Phones|موبائل/ }).first().click({ timeout: 5000 }).catch(() => undefined); await page.waitForTimeout(400) })
   await take('history', `/stock/${seeded.deviceId}`, async () => { await page.mouse.wheel(0, 1250); await page.waitForTimeout(700) })
   await take('items', `/accessories/${seeded.itemId}`, async () => { await page.mouse.wheel(0, 520); await page.waitForTimeout(600) })
   if (seeded.tabletId) await take('tablet', `/stock/${seeded.tabletId}`, async () => { await page.mouse.wheel(0, 760); await page.waitForTimeout(600) })
@@ -156,6 +171,26 @@ async function shots(browser, locale) {
   await take('trade', '/audit/sales?preset=this_month', async () => { await page.mouse.wheel(0, 330); await page.waitForTimeout(600) })
   await take('lending', `/parties/${seeded.lendId}`, async () => { await page.getByTestId('party-lending').scrollIntoViewIfNeeded(); await page.mouse.wheel(0, -90); await page.waitForTimeout(600) })
   await take('help', '/audit?preset=this_month', async () => { await page.locator('[data-help^="audit.overview"]').first().click(); await page.waitForTimeout(700) })
+  // owner 2026-11-08: a screen beside every text on the landing page
+  await take('books', '/reports', async () => { await page.getByRole('button', { name: /^(Balance|بیلنس)$/ }).first().click(); await page.waitForTimeout(900) })
+  await take('appearance', '/more/appearance')
+  await take('purchases', '/purchases')
+  await take('payments', '/payments')
+  await take('expenses', '/expenses')
+  await take('hisaab', '/hisaab')
+  await take('staff', '/more/staff')
+  if (seeded.verifyId) await take('verify', `/stock/${seeded.verifyId}/verify`)
+  if (seeded.statusToken) await take('repairlink', `/r/${seeded.statusToken}`)
+  if (seeded.billToken) await take('billcheck', `/b/${seeded.billToken}`)
+  // the printed sale bill with its QR, shown at a readable size
+  if (seeded.saleId && (!ONLY || ONLY.includes('bill'))) {
+    const html = await (await fetch(`${API}/sales/${seeded.saleId}/receipt?lang=${locale}`, { headers: seeded.headers })).text()
+    await page.setContent(html, { waitUntil: 'networkidle' })
+    await page.addStyleTag({ content: 'html,body{background:#eef2f7!important}body{padding:18px 0!important}' })
+    await page.waitForTimeout(400)
+    await page.screenshot({ path: join(OUT, `bill-${locale}.png`) })
+  }
+  if (ONLY) { await ctx.close(); return }
   // the repair sticker with the fields picked, shown at a readable size
   {
     const q = new URLSearchParams({ ids: seeded.repairId, size: '58x40', copies: '1', fields: 'shop,no,barcode,customer,phone,device,imei,fault,accessories,promised,left', lang: locale })
@@ -183,14 +218,16 @@ async function webShots(browser, locale) {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: 1.5 })
   const page = await ctx.newPage()
   await login(page, locale)
-  const take = async (name, path, prep) => {
+  let take = async (name, path, prep) => {
     await page.goto(`${WEB}${path}`)
     await page.waitForLoadState('networkidle')
     if (prep) await prep()
     await page.waitForTimeout(600)
     await page.screenshot({ path: join(OUT, `web-${name}-${locale}.png`) })
   }
-  await take('home', '/', async () => { await page.getByRole('button', { name: /This month|یہ مہینہ/ }).first().click().catch(() => undefined); await page.waitForTimeout(700) })
+  const webTake = take
+  take = async (name, path, prep) => { if (!ONLY || ONLY.includes(`web-${name}`)) await webTake(name, path, prep) }
+  await take('home', '/', async () => { await page.getByRole('button', { name: THIS_MONTH }).first().click().catch(() => undefined); await page.waitForTimeout(700) })
   await take('sale', '/sale/new', async () => { await page.getByRole('button', { name: /Galaxy A55|iPhone 13/ }).first().click(); await page.waitForTimeout(500) })
   await take('stock', '/stock')
   await take('khata', '/khata')
@@ -198,11 +235,16 @@ async function webShots(browser, locale) {
   await take('invoice', '/invoices')
   await take('audit', '/audit?preset=this_month')
   await take('finance', '/audit/finance?preset=this_month')
-  await take('bulk', '/more/bulk', async () => { await page.getByTestId('bulk-page').getByRole('button', { name: /Phones|موبائل/ }).first().click(); await page.waitForTimeout(400) })
+  await take('bulk', '/more/bulk', async () => { await page.getByTestId('bulk-page').getByRole('button', { name: /Phones|موبائل/ }).first().click({ timeout: 5000 }).catch(() => undefined); await page.waitForTimeout(400) })
   await take('items', `/accessories/${seeded.itemId}`)
   await take('repairs', '/audit/repairs?preset=this_month')
   await take('trade', '/audit/sales?preset=this_month')
   await take('repairlab', `/repairs/labs/${seeded.labId}`)
+  // owner 2026-11-08: the balance sheet, the Appearance page and the Bold design of the dashboard
+  await take('books', '/reports', async () => { await page.getByRole('button', { name: /^(Balance|بیلنس)$/ }).first().click(); await page.waitForTimeout(900) })
+  await take('appearance', '/more/appearance')
+  await page.evaluate(() => { const k = 'mobileshop.look'; const v = JSON.parse(localStorage.getItem(k) || '{"state":{}}'); v.state = { ...v.state, layout: 'bold' }; localStorage.setItem(k, JSON.stringify(v)) })
+  await take('bold', '/', async () => { await page.getByRole('button', { name: THIS_MONTH }).first().click().catch(() => undefined); await page.waitForTimeout(900) })
   await ctx.close()
 }
 
@@ -266,15 +308,16 @@ async function video(browser) {
 }
 
 const browser = await chromium.launch()
-let seeded = { phone: PHONE, deviceId: '', itemId: '', tabletId: '', watchId: '', labId: '', repairId: '', lendId: '', headers: {} }
+let seeded = { phone: PHONE, verifyId: '', saleId: '', billToken: '', statusToken: '', deviceId: '', itemId: '', tabletId: '', watchId: '', labId: '', repairId: '', lendId: '', headers: {} }
 const only = process.argv[2] // "shots" skips the video
+// LANDING_ONLY=books,bill,web-books retakes just those screens (both languages), no video
+const ONLY = process.env.LANDING_ONLY ? process.env.LANDING_ONLY.split(',') : null
 try {
   seeded = await seed()
-  await shots(browser, 'en')
-  await shots(browser, 'ur')
-  await webShots(browser, 'en')
-  await webShots(browser, 'ur')
-  if (only !== 'shots') await video(browser)
+  const langs = process.env.LANDING_LANG ? [process.env.LANDING_LANG] : ['en', 'ur']
+  for (const l of langs) await shots(browser, l)
+  for (const l of langs) await webShots(browser, l)
+  if (only !== 'shots' && !ONLY) await video(browser)
   console.log('done', readdirSync(OUT))
 } finally {
   await browser.close()

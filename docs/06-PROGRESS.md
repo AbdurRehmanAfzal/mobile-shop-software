@@ -331,6 +331,7 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | Appearance page (`/more/appearance`): light / dark, design, colours, main colour, text size, corners, numbers font, back to default | ✅ | `AppearancePage.tsx`, `lib/theme.ts`; opened from the dashboard, the profile menu and More |
 | Three more designs for the dashboard and the laptop side panel: Tiles, Simple, Bold (Classic stays the default) | ✅ | `SidePanel.tsx`, `HomePage.tsx` `GlanceSet` / `OtherJobs`; each fits 1280×720 in en and ur |
 | QR on every sale bill → `/b/<token>`, the bill online without login (no name, phone, full IMEI, cost or balance) | ✅ | `sales/bill_link.py`, `GET /api/v1/public/bill/{token}`, `BillCheckPage.tsx`; print switch `print_prefs.qr` (on) |
+| Landing page: a screen beside every text (owner 2026-11-08: "log text kam parhte hain") — each new feature, module card, module guide row and "why it is different" card carries a small app screen; a tap opens it big (Esc / tap closes); FBR band shows the printed bill + the bill opened from its QR; galleries gain bill, bill page, verify, repair link, balance sheet, Appearance, Bold design | ✅ | `LandingPage.tsx` `Thumb` / `Zoom`; `scripts/landing-assets.mjs` adds 12 phone + 3 laptop screens, opening cash so the demo never shows minus, `LANDING_ONLY` / `LANDING_LANG` to retake a few |
 | Header "Messages": opens the messages (Owner also gets a Settings tab); staff no longer see an endless loader | ✅ | `NotificationsPage.tsx` tabs, More tile → `?tab=settings` |
 
 ## Owner side (open)
