@@ -54,7 +54,7 @@
   <div class="sub">Developer and Setup Manual</div>
   <div class="tag">What the software needs, how to set it up on a PC or a server, how the code is laid out, and how to change it safely.</div>
   <div class="shots"></div>
-  <div class="by">OOP Solutions · mobileshop.oopsolutions.com · 2026-11-05</div>
+  <div class="by">OOP Solutions · mobileshop.oopsolutions.com · 2026-11-08</div>
 </section>
 <nav class="toc">
   <h2>Contents</h2>
@@ -269,6 +269,7 @@
 <li>the backend on port 8000 with <code>PUBLIC_SIGNUP=true</code> (specs sign up throwaway shops with random numbers);</li>
 <li><code>03990000099</code> in <code>SUPERUSER_PHONES</code> for the super-admin specs (<code>admin</code>, <code>admin-access</code>, <code>fees</code>, <code>plans</code>, <code>plan-reminders</code>, <code>modules</code>, <code>provider-console</code>, <code>landing</code>);</li>
 <li><code>OTP_DEV_ECHO=true</code> for <code>otp.spec.ts</code>, and a renewal key pair for <code>provider-console.spec.ts</code>;</li>
+<li><strong>no</strong> WhatsApp Cloud API or SMTP keys (<code>WHATSAPP_TOKEN</code>, <code>WHATSAPP_PHONE_ID</code>, <code>SMTP_HOST</code>): with them a spec would really send to its test numbers, so <code>reminders.spec.ts</code> skips itself. If your <code>.env</code> holds them, start the e2e backend from Git Bash with <code>WHATSAPP_TOKEN= WHATSAPP_PHONE_ID= SMTP_HOST=</code> in front of <code>uvicorn</code> (an empty variable wins over <code>.env</code>; in cmd, <code>set X=</code> removes it instead, so <code>.env</code> would win);</li>
 <li>the frontend on port 5173; Playwright starts <code>npm run dev</code> itself or reuses a running one.</li>
 </ul>
 <table><thead><tr><th>Task</th><th>Command</th></tr></thead><tbody><tr><td>All specs</td><td><code>npm run e2e</code></td></tr><tr><td>One file</td><td><code>npx playwright test e2e/crud.spec.ts</code></td></tr><tr><td>By test title</td><td><code>npx playwright test -g "bill number"</code></td></tr><tr><td>Watch the browser</td><td><code>npx playwright test --headed</code></td></tr><tr><td>Open the report after a failure</td><td><code>npx playwright show-report</code></td></tr></tbody></table>
