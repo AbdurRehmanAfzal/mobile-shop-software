@@ -1121,3 +1121,9 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - `tests/test_corrections_after_purchase.py` (2 tests: the IMEI rules, khata balances before / after, cash untouched, refused after a later payment, staff 403) and the full backend suite.
 - tsc.
 - Playwright `fix-after-purchase` (new) and `add-device` (the review shows the IMEI and the seller; Save stays disabled until the tick). The other purchase specs (counter, device-types, item-params, items, paymode) go through the review step.
+
+## 2026-11-10 — the sticker's "IMEI number" prints the IMEI again; labels.spec fixed
+**Cause found for the older `labels.spec` failure:**
+1. The settings page now has several cards, each with its own **Save**. The test clicked the last one, so the code word was never saved. The app itself saved it correctly. The code word card's Save now has `data-testid="codeword-save"` and the test uses it.
+2. A real bug: since the shop's own barcodes (ADR-036), the barcode value is `MS000001` instead of the IMEI, but the sticker field **IMEI number** still printed the barcode value. It now prints the IMEI (a Wi-Fi unit prints its serial). The bars still carry the barcode, so scanning is unchanged. When IMEI is not ticked and Barcode is, the readable code prints under the bars.
+**Verified**: the label and barcode backend tests (updated: `test_labels`, `test_barcodes`) and Playwright `labels.spec` pass.

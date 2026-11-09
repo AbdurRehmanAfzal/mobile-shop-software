@@ -196,8 +196,12 @@ def _label(parts: dict, want: set[str], ur: bool) -> str:
         mid.append(
             f'<div class="bar{" qr" if kind == "qr" else ""}">{codes.svg(kind, parts["barcode"])}</div>'
         )
-    if "imei" in want and parts.get("barcode"):
-        mid.append(f'<div class="imei">{e(parts["barcode"])}</div>')
+    # "IMEI number" prints the IMEI (or a Wi-Fi unit's serial); since the shop's own barcodes
+    # (ADR-036) the barcode value is no longer the IMEI, so it is used only when there is neither
+    if "imei" in want and (parts.get("imei") or parts.get("barcode")):
+        mid.append(f'<div class="imei">{e(parts.get("imei") or parts["barcode"])}</div>')
+    elif "barcode" in want and parts.get("barcode"):
+        mid.append(f'<div class="imei">{e(parts["barcode"])}</div>')  # the code, readable
     if "last4" in want and parts.get("last4"):
         mid.append(f'<div class="imei">{e(parts["last4"])}</div>')
     meta = [
@@ -244,6 +248,7 @@ def _device_parts(d: dict, shop: Shop, ur: bool, word: str | None) -> dict:
         "price": _money(d.get("asking_price")),
         "code": cost_code(d.get("cost_price"), word),
         "barcode": d.get("barcode") or d.get("imei1") or d.get("serial") or "",
+        "imei": d.get("imei1") or d.get("serial") or "",
         "barcode_type": d.get("barcode_type") or "code128",
         "last4": f"IMEI …{(d.get('imei1') or '')[-4:]}" if d.get("imei1") else "",
         "condition": cond,

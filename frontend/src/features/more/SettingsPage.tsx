@@ -213,7 +213,7 @@ function CodeWordCard({ current }: { current: string | null }) {
   return (
     <Card icon={<Tag size={22} />} tone="bg-stockt text-stockt-fg" title="settings.codeWord" hint="settings.codeWordHint" help="settings.codeWord">
       <BiInput label="settings.codeWordLabel" help={<Help term="settings.codeWordInput" size="sm" />} value={w} onChange={(e) => { setOk(false); setW(e.target.value.toUpperCase()) }} maxLength={10} dir="ltr" className="num tracking-[.2em]" error={w && !valid ? 'settings.codeWordBad' : null} hint={{ en: `${pick('settings.codeWordExample')}: 45000 = ${demo}`, ur: `${pick('settings.codeWordExample')}: 45000 = ${demo}`, roman: `${pick('settings.codeWordExample')}: 45000 = ${demo}` }} />
-      <BiButton text={ok ? 'settings.saved' : 'common.save'} icon={<Check size={20} />} variant="secondary" full disabled={(!!w && !valid) || (word === (current ?? '') && !ok)} loading={m.isPending} onClick={() => m.mutate()} />
+      <BiButton text={ok ? 'settings.saved' : 'common.save'} icon={<Check size={20} />} variant="secondary" full disabled={(!!w && !valid) || (word === (current ?? '') && !ok)} loading={m.isPending} onClick={() => m.mutate()} data-testid="codeword-save" />
     </Card>
   )
 }
