@@ -1,5 +1,5 @@
-import { Check, Headphones, PackagePlus, Plus, Printer, ShieldCheck, SlidersHorizontal, Smartphone, Store, Trash2, UserCheck, UserRound, Watch } from 'lucide-react'
-import { useState, type ReactNode } from 'react'
+import { Check, Headphones, PackagePlus, Pencil, Plus, Printer, ShieldCheck, SlidersHorizontal, Smartphone, Store, Trash2, UserCheck, UserRound, Watch } from 'lucide-react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { clearDrafts, useDraft } from '@/lib/draft'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
@@ -36,7 +36,7 @@ const per = (x: Misc) => (x.units ?? { piece: 1 })[x.unit ?? 'piece'] ?? 1
 
 export default function PurchaseWizard() {
   const nav = useNavigate()
-  const [params] = useSearchParams()
+  const [params, setParams] = useSearchParams()
   const { pick, ur, cls } = useLang()
   const [step, setStep] = useDraft('purchase.step', 0)
   // a scanned code nobody knows ("Add it"): an IMEI starts a walk-in line; any other code is kept as the maker's barcode
@@ -109,13 +109,29 @@ export default function PurchaseWizard() {
     clearDrafts('purchase.')
     setResult(res)
     setStep(2)
+    setParams((p) => { p.delete('step'); return p }, { replace: true })
   }
 
   const steps = ['counter.fromWhom', 'counter.phoneAndCost', 'counter.doneTitle']
+  // owner 2026-11-09: Back on the phones step went out of the page and the entry was lost. Step 2 is
+  // its own history entry (?step=2), so the header Back, the phone's back button and the browser's
+  // all return to step 1 with everything still filled in.
+  const goPhones = () => {
+    setStep(1)
+    if (params.get('step') !== '2') setParams((p) => { p.set('step', '2'); return p })
+  }
+  const backToStart = () => {
+    setStep(0)
+    setParams((p) => { p.delete('step'); return p }, { replace: true })
+  }
+  useEffect(() => {
+    if (step === 1 && params.get('step') !== '2') setStep(0)
+    else if (step === 0 && params.get('step') === '2' && party) setStep(1) // forward again
+  }, [params]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="counter.addStock" help={<Help term="purchase.page" />} />
+      <PageHeader title="counter.addStock" help={<Help term="purchase.page" />} onBack={step === 1 ? backToStart : undefined} />
       <Stepper steps={steps} current={step} />
 
       {step === 0 ? (
@@ -140,7 +156,7 @@ export default function PurchaseWizard() {
           {chosen ? (
             <>
               <div className="flex items-start gap-1"><div className="min-w-0 flex-1"><PartyPicker value={party} onChange={setParty} kind={partyKind} label={kind === 'supplier' ? 'purchase.selectDealer' : 'purchase.selectSeller'} /></div>{kind === 'supplier' ? <Help term="purchase.dealer" size="sm" /> : <Help term="purchase.seller" size="sm" />}</div>
-              <BiButton text="common.next" full disabled={!party} onClick={() => { setStep(1); if (!devices.length && (startImei || scanned)) setEditing({ ...emptyDraft(startImei, kind), manufacturer_code: startImei ? '' : scanned }) }} />
+              <BiButton text="common.next" full disabled={!party} onClick={() => { goPhones(); if (!devices.length && (startImei || scanned)) setEditing({ ...emptyDraft(startImei, kind), manufacturer_code: startImei ? '' : scanned }) }} />
             </>
           ) : null}
         </div>
@@ -162,6 +178,9 @@ export default function PurchaseWizard() {
                 </div>
               </button>
               <MoneyText value={d.cost} tone="ink" />
+              <button type="button" aria-label={pick('common.edit')} onClick={() => setEditing(d)} className="tap inline-flex h-9 shrink-0 items-center gap-1 rounded-xl px-2 text-emerald-deep" data-testid="device-edit">
+                <Pencil size={16} />
+              <BtnText k={'common.edit'} /></button>
               <button type="button" aria-label={pick('purchase.remove')} onClick={() => setDevices(devices.filter((x) => x.key !== d.key))} className="tap inline-flex h-9 shrink-0 items-center gap-1 rounded-xl px-2 text-payable">
                 <Trash2 size={16} />
               <BtnText k={'purchase.remove'} /></button>
@@ -326,11 +345,12 @@ export default function PurchaseWizard() {
         ) : null}
       </Sheet>
 
-      <Sheet open={editing !== null} onClose={() => setEditing(null)} title="purchase.addDevice">
+      <Sheet open={editing !== null} onClose={() => setEditing(null)} title={editing && devices.some((x) => x.key === editing.key) ? 'purchase.editDevice' : 'purchase.addDevice'}>
         {editing ? (
           <DeviceLineSheet
             key={editing.key}
             initial={editing}
+            again={devices.some((x) => x.key === editing.key)}
             draftKey="purchase-line"
             onSave={(d) => {
               setDevices((xs) => (xs.some((x) => x.key === d.key) ? xs.map((x) => (x.key === d.key ? d : x)) : [...xs, d]))

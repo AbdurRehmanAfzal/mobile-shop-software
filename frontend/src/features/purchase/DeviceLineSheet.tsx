@@ -153,7 +153,8 @@ export function draftToApi(d: DeviceLineDraft) {
 }
 
 /** `draftKey`: keep what is typed if the page reloads (camera on Android), see lib/draft */
-export default function DeviceLineSheet({ initial, onSave, edit = false, draftKey }: { initial: DeviceLineDraft; onSave: (d: DeviceLineDraft) => void; edit?: boolean; draftKey?: string }) {
+/** `again`: a phone already in the list is being changed (the button says Save, not Add) */
+export default function DeviceLineSheet({ initial, onSave, edit = false, again = false, draftKey }: { initial: DeviceLineDraft; onSave: (d: DeviceLineDraft) => void; edit?: boolean; again?: boolean; draftKey?: string }) {
   const { t } = useTranslation()
   const { pick, ur } = useLang()
   const [d, setD] = useDraft<DeviceLineDraft>(draftKey ? `${draftKey}.${initial.key}` : null, initial)
@@ -466,7 +467,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
 
       )}
 
-      <BiButton text={edit ? 'common.save' : 'common.add'} full disabled={!valid} onClick={() => { if (draftKey) clearDrafts(draftKey); onSave({ ...d, imei1: sim ? imeiDigits : '' }) }} />
+      <BiButton text={edit || again ? 'common.save' : 'common.add'} full disabled={!valid} onClick={() => { if (draftKey) clearDrafts(draftKey); onSave({ ...d, imei1: sim ? imeiDigits : '' }) }} />
     </div>
   )
 }

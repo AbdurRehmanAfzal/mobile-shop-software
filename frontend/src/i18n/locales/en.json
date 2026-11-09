@@ -289,7 +289,24 @@
     "conditionShort": "Condition",
     "ptaLabel": "PTA status",
     "addedOk": "Added. Add another or save.",
-    "addAnother": "Add another"
+    "addAnother": "Add another",
+    "view": {
+      "title": "How to show",
+      "cards": "Cards",
+      "table": "Table",
+      "grid": "Grid",
+      "list": "List"
+    },
+    "col": {
+      "device": "Device",
+      "colour": "Colour",
+      "battery": "Battery",
+      "cycles": "Cycles",
+      "cost": "Cost",
+      "asking": "Asking",
+      "status": "Status",
+      "total": "Total ({{n}})"
+    }
   },
   "purchase": {
     "title": "New purchase",
@@ -341,7 +358,8 @@
     "extraCosts": "Freight / loading (Rs.)",
     "extraNote": "Freight note",
     "extraHint": "Spread over the lines and added to the item cost",
-    "itemLabels": "Print item labels"
+    "itemLabels": "Print item labels",
+    "editDevice": "Change phone"
   },
   "verify": {
     "title": "Verification",
@@ -5315,6 +5333,11 @@
           "body": "The person selling you the phone signs on the screen that it is his and not stolen. It is saved with the ID check and printed on the declaration.",
           "example": "Usman sells you a used Redmi: he signs with his finger, you tap Save — the declaration now shows his signature above the line."
         }
+      },
+      "view": {
+        "title": "How to show the stock",
+        "body": "Cards: big cards with a Sell button. Table: like Excel, one row per phone and a column for each detail (storage, colour, condition, PTA, battery, IMEI, days in shop, cost, asking price); tap a column heading to sort by it, tap again to reverse; the last row adds up cost and asking price. Grid: small tiles, many on one screen. List: one short line per phone. Your choice is remembered on this phone or computer.",
+        "example": "To find the phones lying longest in the shop: Table → tap \"Days\" twice."
       }
     },
     "loan": {

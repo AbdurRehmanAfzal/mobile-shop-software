@@ -311,6 +311,8 @@ On Home, tap **Add stock**. The first screen asks **Where is the phone coming fr
 15. **What came with the phone?** For Box, Charger, Cable, Earphones and AirPods choose **No**, **Got it** or **Later**. Here: Box **Got it**, Cable **Got it**, Charger **Later**, and pick the date in **When will they give it?**
 16. Tap **Add**. The phone appears in the list. Tap **Add device** again for the next phone.
 
+    Forgot something, like the colour? Tap **Edit** on that phone in the list, change it and tap **Save**. **Back** (or the phone's own back button) takes you to the first step with everything still filled in; **Next** brings you back to your phones.
+
 ![The Add device form](shot:purchase-device)
 
 When all the phones are in the list, finish the payment part on the same screen:
@@ -833,6 +835,7 @@ At the top are five buttons: **Download**, **Share**, **Stickers**, **Check IMEI
 - **Status chips**: **In stock**, **On loan**, **Sold**, **Faulty** and **All**.
 - **Sort**: **Newest**, **Oldest first**, **Price: low**, **Price: high**.
 - **Filters**: opens more choices: **Grade** (Used A, Used B, Refurbished, Copy / China), **RAM (GB)**, a price range (lowest and highest asking price), and a switch **Lock not checked** that shows only used devices whose lock check was never done.
+- **Cards / Table / Grid / List**: how the phones are shown. **Cards** are the big cards described below. **Table** is like Excel: one row per phone and a column for each detail (memory, colour, condition, PTA, battery, IMEI, days, cost for the owner and manager, asking price, status). Tap a column heading to sort by it, and tap it again to reverse the order. The last row adds up cost and asking price; on a phone, slide the table sideways. **Grid** shows small tiles, many on one screen. **List** gives one short line per phone. The app remembers your choice on that phone or computer.
 
 Under the filters the app shows how many phones match, for example **7 phones**. Each phone is a card with its name, colour and storage, the asking price, and four small boxes: **Memory**, **PTA**, **Condition** and **Days** (how many days it has been in the shop). At the bottom are the IMEI, the ID check badge and a **Sell** button.
 

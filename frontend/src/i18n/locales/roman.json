@@ -289,7 +289,24 @@
     "conditionShort": "Haalat",
     "ptaLabel": "PTA status",
     "addedOk": "Daal diya. Aur daalein ya mehfooz karein.",
-    "addAnother": "Aur daalein"
+    "addAnother": "Aur daalein",
+    "view": {
+      "title": "Kaise dikhayein",
+      "cards": "Card",
+      "table": "Table",
+      "grid": "Grid",
+      "list": "List"
+    },
+    "col": {
+      "device": "Device",
+      "colour": "Rang",
+      "battery": "Battery",
+      "cycles": "Cycles",
+      "cost": "Khareed",
+      "asking": "Farokht",
+      "status": "Haalat",
+      "total": "Kul ({{n}})"
+    }
   },
   "purchase": {
     "title": "Nayi khareedari",
@@ -341,7 +358,8 @@
     "extraCosts": "Kiraya / loading (Rs.)",
     "extraNote": "Kiraya note",
     "extraHint": "Lines par taqseem ho kar cost mein shamil",
-    "itemLabels": "Item label print karein"
+    "itemLabels": "Item label print karein",
+    "editDevice": "Phone mein tabdeeli"
   },
   "verify": {
     "title": "Tasdeeq",
@@ -5315,6 +5333,11 @@
           "body": "Jo banda aap ko phone bech raha hai woh screen par dastakhat karta hai ke phone us ka hai aur chori ka nahi. Yeh jaanch ke sath mehfooz hota hai aur iqrar name par chhapta hai.",
           "example": "Usman ne purana Redmi becha: us ne ungli se dastakhat kiye, aap ne Save dabaya — ab iqrar name par line ke upar us ke dastakhat hain."
         }
+      },
+      "view": {
+        "title": "Stock kaise dikhayein",
+        "body": "Card: bare card, Bechein ke button ke saath. Table: Excel ki tarah, har phone ki ek line aur har tafseel ka ek column (storage, rang, haalat, PTA, battery, IMEI, dukaan mein din, khareed, farokht ki qeemat); column ke naam ko dabayein to us se tarteeb ho jaye, dobara dabayein to ulti; aakhri line khareed aur farokht ki qeemat ka jor dikhati hai. Grid: chhote khane, ek screen par bohat se. List: har phone ki ek chhoti line. Aap ka intikhab is phone ya computer par yaad rehta hai.",
+        "example": "Sab se zyada din se pare phone dekhne hon: Table → \"Din\" ko do dafa dabayein."
       }
     },
     "loan": {
