@@ -313,6 +313,8 @@ Home par **Stock daalein** dabayein. Pehli screen poochti hai **Phone kahan se a
 
     Kuch bhool gaye, jaise rang? List mein us phone par **Badlein** dabayein, badlein aur **Mehfooz karein** dabayein. **Wapas** (ya phone ka apna back button) aap ko pehle qadam par le jata hai aur sab kuch bhara rehta hai; **Aage** dabayein to aap ke phone wapas aa jate hain.
 
+    Yahi **Bechein**, **Exchange** aur **Wapsi** mein bhi hota hai: **Wapas**, phone ka back button ya pichle qadam ki patti par tap ek qadam peeche le jata hai aur sab kuch rehta hai. Neeche se khulne wala form (jaise **Phone daalein**) kuch bharne ke baad ghalti se bahar tap karne par band nahi hota: chhorna ho to **Band karein** dabayein.
+
 ![Phone daalein ka form](shot:purchase-device)
 
 Jab saare phone list mein aa jayein to isi screen par paison wala hissa mukammal karein:
@@ -836,6 +838,7 @@ Upar paanch buttons hain: **Download**, **Share**, **Stickers**, **IMEI check ka
 - **Tarteeb**: **Naye pehle**, **Purane pehle**, **Qeemat: kam**, **Qeemat: zyada**.
 - **Filter**: mazeed choices kholta hai: **Grade** (Used A, Used B, Refurbished, Copy / China), **RAM (GB)**, qeemat ki range (sab se kam aur sab se zyada bechne ki qeemat), aur ek switch **Lock check nahi** jo sirf woh used devices dikhata hai jin ka lock check kabhi nahi hua.
 - **Card / Table / Grid / List**: phone kaise dikhein. **Card** neeche bataye gaye bare card hain. **Table** Excel ki tarah hai: har phone ki ek line aur har tafseel ka ek column (memory, rang, haalat, PTA, battery, IMEI, din, khareed jo sirf maalik aur manager dekhte hain, farokht ki qeemat, haalat). Column ke naam ko dabayein to usi se tarteeb ho jati hai, dobara dabayein to ulti tarteeb. Aakhri line khareed aur farokht ka jor dikhati hai; phone par table ko side par khiskayein. **Grid** mein chhote khane hote hain, ek screen par bohat se. **List** mein har phone ki ek chhoti line hoti hai. App aap ka intikhab usi phone ya computer par yaad rakhti hai.
+- **Fields**: jo tafseel dekhni ho us par nishan lagayein (memory, rang, haalat, PTA, battery, region, IMEI, din, khareed, farokht waghera). Yeh charon andaaz mein lagta hai. Saath **Download** aur **Share** hain jo PDF / Excel / CSV inhi columns, aap ke filter aur isi tarteeb se banate hain.
 
 Filters ke neeche app batati hai ke kitne phone milte hain, masalan **7 phone**. Har phone ek card hai jis par us ka naam, rang aur storage, bechne ki qeemat, aur chaar chhote box hote hain: **Memory**, **PTA**, **Haalat** aur **Din** (dukaan mein kitne din se hai). Neeche IMEI, ID check ka badge aur **Bechein** button hota hai.
 

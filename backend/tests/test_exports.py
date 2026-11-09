@@ -97,3 +97,48 @@ def test_every_report_downloads_as_csv_excel_and_pdf(owner, cat):
     assert ws["A2"].value == "Sold" and ws["B2"].value == 1000
     # old .csv paths keep working
     assert owner.get("/api/v1/exports/stock.csv").status_code == 200
+
+
+def test_stock_export_with_the_fields_and_order_the_page_shows(client, owner, cat):
+    """owner 2026-11-09: the stock page downloads / shares what it shows: the fields picked, in that
+    order, its filters and its order; cost stays hidden for a salesman even when asked for"""
+    _stock(owner, cat, imei="490154203237518", condition="used", cost_price=800, asking_price=1000)
+    _stock(owner, cat, imei="356938035643809", condition="used", cost_price=1500, asking_price=2500)
+    r = owner.get(
+        "/api/v1/exports/stock.csv",
+        params={"cols": "imei,asking,cost,nope", "sort": "asking", "desc": "true"},
+    )
+    assert r.status_code == 200
+    lines = r.content.decode("utf-8").lstrip("﻿").strip().splitlines()
+    assert lines[0] == "IMEI,Asking price,Cost"
+    assert lines[1].startswith("356938035643809,2500.00") and lines[2].startswith("490154203237518")
+    # the page's filters (search, price range)
+    body = owner.get(
+        "/api/v1/exports/stock.csv", params={"cols": "imei", "q": "5643809"}
+    ).content.decode("utf-8")
+    assert "356938035643809" in body and "490154203237518" not in body
+    body = owner.get(
+        "/api/v1/exports/stock.csv", params={"cols": "imei", "price_max": 1200}
+    ).content.decode("utf-8")
+    assert "490154203237518" in body and "356938035643809" not in body
+    # Excel and PDF too, and Urdu headings
+    for fmt in ("xlsx", "pdf"):
+        assert (
+            owner.get(
+                "/api/v1/exports/stock", params={"cols": "name,asking", "format": fmt}
+            ).status_code
+            == 200
+        )
+    assert (
+        "مانگی قیمت"
+        in owner.get(
+            "/api/v1/exports/stock", params={"cols": "asking", "format": "pdf", "lang": "ur"}
+        ).text
+    )
+    owner.post(
+        "/api/v1/staff",
+        json={"name": "Sales", "phone": "03451112233", "password": "secret123", "role": "salesman"},
+    )
+    s = login(client, "03451112233")
+    body = s.get("/api/v1/exports/stock.csv", params={"cols": "imei,cost"}).content.decode("utf-8")
+    assert "Cost" not in body and "800.00" not in body

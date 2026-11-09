@@ -1,5 +1,5 @@
 import { Check, Headphones, PackagePlus, Pencil, Plus, Printer, ShieldCheck, SlidersHorizontal, Smartphone, Store, Trash2, UserCheck, UserRound, Watch } from 'lucide-react'
-import { useEffect, useState, type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { clearDrafts, useDraft } from '@/lib/draft'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
@@ -9,6 +9,7 @@ import StockItemPicker from '@/components/StockItemPicker'
 import PartyPicker from '@/components/PartyPicker'
 import { BtnText, Chip, ErrorText, IconChip, MoneyText, PageHeader, Sheet, Stepper } from '@/components/ui'
 import { uid } from '@/lib/id'
+import { useStepUrl } from '@/lib/steps'
 import { api } from '@/lib/api'
 import { openPrintable } from '@/lib/files'
 import LabelSheet from '@/components/LabelSheet'
@@ -36,9 +37,10 @@ const per = (x: Misc) => (x.units ?? { piece: 1 })[x.unit ?? 'piece'] ?? 1
 
 export default function PurchaseWizard() {
   const nav = useNavigate()
-  const [params, setParams] = useSearchParams()
+  const [params] = useSearchParams()
   const { pick, ur, cls } = useLang()
-  const [step, setStep] = useDraft('purchase.step', 0)
+  const [step, setStepRaw] = useDraft('purchase.step', 0)
+  const { go: setStep, back } = useStepUrl(step, setStepRaw, 2)
   // a scanned code nobody knows ("Add it"): an IMEI starts a walk-in line; any other code is kept as the maker's barcode
   const scanned = params.get('code') ?? ''
   const startImei = params.get('imei') ?? (/^\d{15}$/.test(scanned) ? scanned : '')
@@ -109,30 +111,14 @@ export default function PurchaseWizard() {
     clearDrafts('purchase.')
     setResult(res)
     setStep(2)
-    setParams((p) => { p.delete('step'); return p }, { replace: true })
   }
 
   const steps = ['counter.fromWhom', 'counter.phoneAndCost', 'counter.doneTitle']
-  // owner 2026-11-09: Back on the phones step went out of the page and the entry was lost. Step 2 is
-  // its own history entry (?step=2), so the header Back, the phone's back button and the browser's
-  // all return to step 1 with everything still filled in.
-  const goPhones = () => {
-    setStep(1)
-    if (params.get('step') !== '2') setParams((p) => { p.set('step', '2'); return p })
-  }
-  const backToStart = () => {
-    setStep(0)
-    setParams((p) => { p.delete('step'); return p }, { replace: true })
-  }
-  useEffect(() => {
-    if (step === 1 && params.get('step') !== '2') setStep(0)
-    else if (step === 0 && params.get('step') === '2' && party) setStep(1) // forward again
-  }, [params]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="counter.addStock" help={<Help term="purchase.page" />} onBack={step === 1 ? backToStart : undefined} />
-      <Stepper steps={steps} current={step} />
+      <PageHeader title="counter.addStock" help={<Help term="purchase.page" />} onBack={back} />
+      <Stepper steps={steps} current={step} onStep={step < 2 ? setStep : undefined} />
 
       {step === 0 ? (
         <div className="flex flex-col gap-3">
@@ -156,7 +142,7 @@ export default function PurchaseWizard() {
           {chosen ? (
             <>
               <div className="flex items-start gap-1"><div className="min-w-0 flex-1"><PartyPicker value={party} onChange={setParty} kind={partyKind} label={kind === 'supplier' ? 'purchase.selectDealer' : 'purchase.selectSeller'} /></div>{kind === 'supplier' ? <Help term="purchase.dealer" size="sm" /> : <Help term="purchase.seller" size="sm" />}</div>
-              <BiButton text="common.next" full disabled={!party} onClick={() => { goPhones(); if (!devices.length && (startImei || scanned)) setEditing({ ...emptyDraft(startImei, kind), manufacturer_code: startImei ? '' : scanned }) }} />
+              <BiButton text="common.next" full disabled={!party} onClick={() => { setStep(1); if (!devices.length && (startImei || scanned)) setEditing({ ...emptyDraft(startImei, kind), manufacturer_code: startImei ? '' : scanned }) }} />
             </>
           ) : null}
         </div>

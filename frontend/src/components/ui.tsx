@@ -1,7 +1,7 @@
 /** Shared layout pieces on the design system: page header, sheet, rows, chips, money, empty/loading states. */
 
 import { ChevronLeft, ChevronRight, Search, X } from 'lucide-react'
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { BiLabel, useLang, type BiText } from './Bilingual'
@@ -32,25 +32,37 @@ export function PageHeader({ title, back = true, right, help, onBack }: { title:
   )
 }
 
+/** A bottom sheet. Owner 2026-11-09: a tap beside a form by mistake closed it and everything typed
+ *  was lost. Once anything inside has been typed or chosen, a tap outside no longer closes it: a hint
+ *  points to Close instead. A sheet nobody touched (help, a list to look at) still closes outside. */
 export function Sheet({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string | BiText; children: ReactNode }) {
+  const { pick } = useLang()
+  const [touched, setTouched] = useState(false)
+  const [hint, setHint] = useState(false)
   useEffect(() => {
-    if (!open) return
+    if (!open) { setTouched(false); setHint(false); return }
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [open, onClose])
+  useEffect(() => {
+    if (!hint) return
+    const t = setTimeout(() => setHint(false), 2500)
+    return () => clearTimeout(t)
+  }, [hint])
   if (!open) return null
   // rendered into <body>: a sheet opened from inside a moved / transformed box (a "?" pinned with
   // translate, a card) would otherwise be placed relative to that box instead of the screen
   return createPortal(
-    <div className="fixed inset-0 z-30 flex items-end justify-center bg-ink/50 backdrop-blur-sm" onClick={(e) => { e.stopPropagation(); onClose() }}>
-      <div className="max-h-[92dvh] w-full max-w-md overflow-y-auto rounded-t-3xl bg-ground p-5 pb-[max(20px,env(safe-area-inset-bottom))]" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-30 flex items-end justify-center bg-ink/50 backdrop-blur-sm" onClick={(e) => { e.stopPropagation(); if (touched) setHint(true); else onClose() }} data-testid="sheet-backdrop">
+      <div className="max-h-[92dvh] w-full max-w-md overflow-y-auto rounded-t-3xl bg-ground p-5 pb-[max(20px,env(safe-area-inset-bottom))]" onClick={(e) => e.stopPropagation()} onInput={() => setTouched(true)} onChange={() => setTouched(true)} onClickCapture={(e) => { if ((e.target as HTMLElement).closest('[aria-pressed],[aria-checked],[role="radio"],[role="switch"],input,select,textarea')) setTouched(true) }}>
         <div className="mb-4 flex items-center justify-between">
           <BiLabel text={title} size="lg" bold />
-          <button type="button" aria-label="Close" onClick={onClose} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface">
+          <button type="button" aria-label="Close" onClick={onClose} className={`tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border ${hint ? 'border-payable bg-payable-tint text-payable' : 'border-line bg-surface'}`}>
             <X size={18} />
           <BtnText k={'common.close'} /></button>
         </div>
+        {hint ? <div role="status" className="mb-3 rounded-2xl bg-payable-tint px-4 py-2 text-sm font-bold text-payable" data-testid="sheet-keep">{pick('common.sheetKeep')}</div> : null}
         {children}
       </div>
     </div>,
@@ -216,14 +228,21 @@ export function KV({ k, v, help }: { k: string | BiText; v: ReactNode; help?: st
   )
 }
 
-export function Stepper({ steps, current }: { steps: (string | BiText)[]; current: number }) {
+/** `onStep`: an earlier step can be tapped to go back to it (nothing filled in is lost) */
+export function Stepper({ steps, current, onStep }: { steps: (string | BiText)[]; current: number; onStep?: (i: number) => void }) {
   const { pick } = useLang()
   return (
     <div className="mb-4 flex flex-col gap-2">
       <div className="grid gap-1.5" style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}>
-        {steps.map((_, i) => (
-          <div key={i} className={`h-1.5 rounded-full ${i <= current ? 'bg-gold' : 'bg-line'}`} />
-        ))}
+        {steps.map((s, i) =>
+          onStep && i < current ? (
+            <button key={i} type="button" aria-label={`${i + 1}/${steps.length} · ${pick(s)}`} onClick={() => onStep(i)} className="tap -my-2 flex h-6 items-center" data-testid={`step-${i + 1}`}>
+              <span className="h-1.5 w-full rounded-full bg-gold" />
+            </button>
+          ) : (
+            <div key={i} className={`h-1.5 rounded-full ${i <= current ? 'bg-gold' : 'bg-line'}`} />
+          ),
+        )}
       </div>
       <div className="text-sm font-semibold text-muted">
         {current + 1}/{steps.length} · {pick(steps[current])}

@@ -3,6 +3,7 @@
  *  cards, a settlement card that says in words who pays whom, a done screen like the sale's. */
 
 import { ArrowLeftRight, Check, FileText, Pencil, Plus, Printer, Receipt, Smartphone } from 'lucide-react'
+import { useStepUrl } from '@/lib/steps'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
@@ -26,7 +27,8 @@ export default function ExchangeWizard() {
   const nav = useNavigate()
   const inv = useInvalidate()
   const { pick, ur, cls } = useLang()
-  const [step, setStep] = useState(0)
+  const [step, setStepRaw] = useState(0)
+  const { go: setStep, back } = useStepUrl(step, setStepRaw, 4)
   const [party, setParty] = useState<Party | null>(null)
   const [old, setOld] = useState<DeviceLineDraft | null>(null)
   const [editingOld, setEditingOld] = useState(false)
@@ -64,14 +66,14 @@ export default function ExchangeWizard() {
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="exchange.title" help={<Help term="exchange.page" />} />
+      <PageHeader title="exchange.title" help={<Help term="exchange.page" />} onBack={result ? undefined : back} />
       {!result ? (
         <>
           <div className="flex items-center gap-3 rounded-3xl bg-sell p-4 text-sell-fg">
             <span className="well h-12 w-12 shrink-0 rounded-2xl bg-white/15 text-current"><ArrowLeftRight size={22} /></span>
             <BiLabel text="counter.exchangeHint" size="sm" tone="text-current" className="opacity-90" />
           </div>
-          <Stepper steps={STEPS} current={Math.min(step, 3)} />
+          <Stepper steps={STEPS} current={Math.min(step, 3)} onStep={result ? undefined : setStep} />
         </>
       ) : null}
 
@@ -135,6 +137,7 @@ export default function ExchangeWizard() {
             onClick={async () => {
               const res = await m.mutateAsync({ party_id: party!.id, trade_in: [draftToApi(old!)], devices: [{ device_id: newDev!.id, price: total }], paid: paidNow, refund: diff < 0 ? -diff : 0 })
               setResult(res)
+              setStep(4)
               inv('devices', 'parties', 'dashboard', 'sales', 'purchases')
             }}
           />

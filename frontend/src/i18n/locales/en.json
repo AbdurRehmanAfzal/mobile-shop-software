@@ -133,7 +133,8 @@
     "reason": "Reason",
     "void": "Cancel this bill",
     "today": "Today",
-    "close": "Close"
+    "close": "Close",
+    "sheetKeep": "Something is filled in here. Tap Close if you really want to leave."
   },
   "party": {
     "title": "People & khata",
@@ -305,7 +306,19 @@
       "cost": "Cost",
       "asking": "Asking",
       "status": "Status",
-      "total": "Total ({{n}})"
+      "total": "Total ({{n}})",
+      "simTime": "SIM time",
+      "imei": "IMEI",
+      "imei2": "IMEI 2",
+      "serial": "Serial",
+      "barcode": "Barcode",
+      "verification": "ID check"
+    },
+    "fields": {
+      "button": "Fields",
+      "title": "Which details to show",
+      "hint": "Tick what you want to see. It applies to Cards, Table, Grid and List, and to Download / Share.",
+      "reset": "Back to default"
     }
   },
   "purchase": {
@@ -5338,6 +5351,11 @@
         "title": "How to show the stock",
         "body": "Cards: big cards with a Sell button. Table: like Excel, one row per phone and a column for each detail (storage, colour, condition, PTA, battery, IMEI, days in shop, cost, asking price); tap a column heading to sort by it, tap again to reverse; the last row adds up cost and asking price. Grid: small tiles, many on one screen. List: one short line per phone. Your choice is remembered on this phone or computer.",
         "example": "To find the phones lying longest in the shop: Table → tap \"Days\" twice."
+      },
+      "fields": {
+        "title": "Which details to show",
+        "body": "Pick the details you want to see for each phone: memory, colour, condition, PTA, battery, region code, IMEI, days in shop, cost, asking price and more. The same choice is used in Cards, Table, Grid and List, and Download / Share make the file with exactly these columns, the filters you set and the same order. Cost shows only for the owner and manager. Your choice is remembered on this phone or computer.",
+        "example": "For a dealer's price list: tick only Memory, Colour, PTA and Asking, then Share → Excel."
       }
     },
     "loan": {

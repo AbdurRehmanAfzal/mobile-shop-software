@@ -311,6 +311,8 @@ Home par **Stock daalein** dabayein. Pehli screen poochti hai **Phone kahan se a
 
     Kuch bhool gaye, jaise rang? List mein us phone par **Badlein** dabayein, badlein aur **Mehfooz karein** dabayein. **Wapas** (ya phone ka apna back button) aap ko pehle qadam par le jata hai aur sab kuch bhara rehta hai; **Aage** dabayein to aap ke phone wapas aa jate hain.
 
+    Yahi **Bechein**, **Exchange** aur **Wapsi** mein bhi hota hai: **Wapas**, phone ka back button ya pichle qadam ki patti par tap ek qadam peeche le jata hai aur sab kuch rehta hai. Neeche se khulne wala form (jaise **Phone daalein**) kuch bharne ke baad ghalti se bahar tap karne par band nahi hota: chhorna ho to **Band karein** dabayein.
+
 ![Phone daalein ka form](shot:purchase-device)
 
 Jab saare phone list mein aa jayein to isi screen par paison wala hissa mukammal karein:

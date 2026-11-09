@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useLang, BiInput, BiLabel } from '@/components/Bilingual'
 import Help from '@/components/Help'
-import { BtnText, Chip, Empty, ErrorText, List, Loading, MoneyText, PageHeader, Row, SearchBox, Sheet } from '@/components/ui'
+import { BtnText, Chip, Empty, ErrorText, Loading, MoneyText, PageHeader, Row, SearchBox, Sheet } from '@/components/ui'
 import { useBrands, useDevices, useInvalidate } from '@/lib/queries'
 import { beep, useScan } from '@/lib/scanner'
 import { lookupCode } from '@/components/ScanListener'
@@ -16,7 +16,7 @@ import { api } from '@/lib/api'
 import { Tag } from 'lucide-react'
 import { BiButton } from '@/components/Bilingual'
 import { simTypeText } from '@/features/purchase/AppleVariant'
-import { StockGrid, StockTable, ViewSwitch, loadView, saveView, type StockView } from './StockViews'
+import { FieldsButton, StockGrid, StockList, StockTable, ViewSwitch, fieldBits, loadFields, loadView, saveFields, saveView, sortRows, FIELDS, type ColSort, type FieldKey, type StockView } from './StockViews'
 
 type Filter = 'in_stock' | 'on_loan' | 'sold' | 'faulty' | 'all'
 
@@ -65,10 +65,12 @@ export function DeviceRow({ d, onClick }: { d: Device; onClick?: () => void }) {
 const daysSince = (iso: string) => Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000))
 
 /** Offer-style card (owner's UI guide: Easypaisa "Buy Package"): title + price, stat columns, pill CTA. */
-export function DeviceCard({ d, onOpen, onSell, selected, onSelect }: { d: Device; onOpen: () => void; onSell?: () => void; selected?: boolean; onSelect?: () => void }) {
+export function DeviceCard({ d, onOpen, onSell, selected, onSelect, fields }: { d: Device; onOpen: () => void; onSell?: () => void; selected?: boolean; onSelect?: () => void; fields?: FieldKey[] }) {
   const { pick } = useLang()
   const vTone = d.verification_status === 'flagged' ? 'bad' : d.verification_status === 'pending' ? 'warn' : 'ok'
-  const stats: [string, string][] = [
+  // the stock page's chosen fields fill the four boxes (owner 2026-11-09); elsewhere the usual four
+  const picked: [string, string][] | null = fields ? fieldBits(d, fields, pick, ['asking', 'cost', 'imei', 'status', 'verification']).slice(0, 4).map((x) => [x.f.label, String(x.v)]) : null
+  const stats: [string, string][] = picked ?? [
     d.category === 'watch' ? ['devx.sizeShort', d.size_mm ? `${d.size_mm}mm` : '—'] : ['stock.storageShort', d.storage_name ?? '—'],
     hasPta(d) ? ['stock.ptaShort', pick(`stock.pta.${d.pta_status}`)] : ['devx.simLabel', pick(d.category === 'tablet' ? 'devx.wifiShort' : 'devx.gpsShort')],
     ['stock.conditionShort', pick(`stock.condition.${d.condition}`)],
@@ -82,20 +84,21 @@ export function DeviceCard({ d, onOpen, onSell, selected, onSelect }: { d: Devic
           <div className="truncate text-[17px] font-extrabold text-ink">{d.brand_name} {d.model_name}</div>
           <div className="truncate text-sm font-semibold text-emerald">{[d.colour_name, specLine(d, pick, false)].filter(Boolean).join(' · ') || '—'}</div>
         </div>
-        {d.asking_price ? <MoneyText value={d.asking_price} tone="ink" size="lg" /> : null}
+        {d.asking_price && (!fields || fields.includes('asking')) ? <MoneyText value={d.asking_price} tone="ink" size="lg" /> : null}
       </button>
-      <div className="grid grid-cols-4 border-y border-line py-2">
+      {fields?.includes('cost') && d.cost_price != null ? <span className="-mt-2 text-xs text-muted">{pick('stock.col.cost')} <MoneyText value={d.cost_price} tone="muted" size="sm" /></span> : null}
+      {stats.length ? <div className="grid border-y border-line py-2" style={{ gridTemplateColumns: `repeat(${stats.length}, minmax(0, 1fr))` }}>
         {stats.map(([k, v], i) => (
           <div key={k} className={`flex flex-col items-center gap-0.5 px-1 text-center ${i ? 'border-s border-line' : ''}`}>
             <span className="text-[11px] text-muted">{pick(k)}</span>
             <span className="truncate text-sm font-bold text-ink" dir="auto">{v}</span>
           </div>
         ))}
-      </div>
+      </div> : null}
       <div className="flex items-center gap-2">
         <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5 text-xs text-muted">
-          <span dir="ltr">{d.imei1}</span>
-          {d.verification_status !== 'not_required' ? <Chip text={`stock.verification.${d.verification_status}`} tone={vTone} /> : null}
+          {!fields || fields.includes('imei') ? <span dir="ltr">{d.imei1}</span> : null}
+          {d.verification_status !== 'not_required' && (!fields || fields.includes('verification') || d.verification_status === 'flagged') ? <Chip text={`stock.verification.${d.verification_status}`} tone={vTone} /> : null}
           {d.status !== 'in_stock' ? <Chip text={`stock.status.${d.status}`} tone="ink" /> : null}
         </div>
         {onSell && d.status === 'in_stock' && d.verification_status !== 'flagged' ? (
@@ -127,6 +130,8 @@ export default function StockPage() {
   // owner addendum 6: grade / RAM / price range / lock-unchecked filters, and a type change for the picked units
   const [more, setMore] = useState(false)
   const [view, setView] = useState<StockView>(loadView)
+  const [fields, setFields] = useState<FieldKey[]>(loadFields)
+  const [colSort, setColSort] = useState<ColSort>(null)
   const [fx, setFx] = useState({ grade: '', ram: '', min: '', max: '', lock: false })
   const [retype, setRetype] = useState(false)
   const [toCat, setToCat] = useState<'phone' | 'tablet' | 'watch'>('tablet')
@@ -144,7 +149,7 @@ export default function StockPage() {
   const counts = new Map<string, number>()
   for (const d of data ?? []) counts.set(d.brand_id, (counts.get(d.brand_id) ?? 0) + 1)
   const brandRow = (brands ?? []).filter((b) => counts.has(b.id))
-  const rows = [...(data ?? [])]
+  const sorted = [...(data ?? [])]
     .filter((d) => !brand || d.brand_id === brand)
     .sort((a, b) =>
       sort === 'priceLow'
@@ -155,6 +160,23 @@ export default function StockPage() {
             ? a.last_event_at.localeCompare(b.last_event_at)
             : b.last_event_at.localeCompare(a.last_event_at),
     )
+  const sortField = colSort ? (colSort.key === 'name' ? null : FIELDS.find((f) => f.key === colSort.key)) : null
+  const rows = colSort ? sortRows(sorted, (d) => (colSort.key === 'name' ? `${d.brand_name} ${d.model_name}` : sortField!.get(d, pick)), colSort.up) : sorted
+  // owner 2026-11-09: Download / Share give what the page shows: its filters, fields and order
+  const exportPath = (() => {
+    const p = new URLSearchParams({ status: filter, cols: ['name', ...fields].join(',') })
+    if (q) p.set('q', q)
+    if (brand) p.set('brand_id', brand)
+    for (const [k, v] of Object.entries(preset)) if (v) p.set(k, v)
+    if (fx.grade) p.set('grade', fx.grade)
+    if (fx.ram) p.set('ram_gb', fx.ram)
+    if (fx.min) p.set('price_min', fx.min)
+    if (fx.max) p.set('price_max', fx.max)
+    if (fx.lock) p.set('lock_unchecked', 'true')
+    const s = colSort ? { sort: colSort.key, desc: !colSort.up } : sort === 'priceLow' ? { sort: 'asking', desc: false } : sort === 'priceHigh' ? { sort: 'asking', desc: true } : sort === 'oldest' ? { sort: 'oldest', desc: false } : null
+    if (s) { p.set('sort', s.sort); if (s.desc) p.set('desc', 'true') }
+    return `/api/v1/exports/stock?${p.toString()}`
+  })()
 
   return (
     <div className="flex flex-col gap-3">
@@ -164,7 +186,6 @@ export default function StockPage() {
         help={<Help term="stock.page" />}
         right={
           <div className="flex gap-2">
-            <DownloadButton path={`/api/v1/exports/stock?status=${filter}`} name="stock" />
             <button type="button" aria-pressed={picking} aria-label={pick('label.many')} onClick={() => { setPicking(!picking); setPicked([]) }} className={`tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border ${picking ? 'border-ink bg-ink text-ground' : 'border-line bg-surface'}`}>
               <Tag size={20} />
             <BtnText k={'label.many'} /></button>
@@ -236,6 +257,10 @@ export default function StockPage() {
         </div>
       ) : null}
       <ViewSwitch value={view} onChange={(v) => { setView(v); saveView(v) }} />
+      <div className="flex flex-wrap items-center justify-end gap-1.5">
+        <FieldsButton value={fields} onChange={(v) => { setFields(v); saveFields(v) }} />
+        <DownloadButton path={exportPath} name="stock" />
+      </div>
       {data ? <div className="flex items-center gap-1 text-xs font-semibold text-muted">{t('stock.count', { n: rows.length })}<Help term="stock.card" size="sm" /></div> : null}
 
       {isLoading ? (
@@ -243,15 +268,15 @@ export default function StockPage() {
       ) : !rows.length ? (
         <Empty text={q || brand ? 'common.nothingFound' : 'stock.noDevices'} />
       ) : view === 'table' ? (
-        <StockTable rows={rows} onOpen={(d) => nav(`/stock/${d.id}`)} picked={picking ? picked : undefined} onPick={picking ? togglePick : undefined} />
+        <StockTable rows={rows} fields={fields} by={colSort} onSort={setColSort} onOpen={(d) => nav(`/stock/${d.id}`)} picked={picking ? picked : undefined} onPick={picking ? togglePick : undefined} />
       ) : view === 'grid' ? (
-        <StockGrid rows={rows} onOpen={(d) => nav(`/stock/${d.id}`)} picked={picking ? picked : undefined} onPick={picking ? togglePick : undefined} />
+        <StockGrid rows={rows} fields={fields} onOpen={(d) => nav(`/stock/${d.id}`)} picked={picking ? picked : undefined} onPick={picking ? togglePick : undefined} />
       ) : view === 'list' ? (
-        <div data-testid="stock-list"><List>{rows.map((d) => <div key={d.id} className={picking && picked.includes(d.id) ? 'bg-emerald-tint' : ''}><DeviceRow d={d} onClick={() => (picking ? togglePick(d) : nav(`/stock/${d.id}`))} /></div>)}</List></div>
+        <StockList rows={rows} fields={fields} onOpen={(d) => nav(`/stock/${d.id}`)} picked={picking ? picked : undefined} onPick={picking ? togglePick : undefined} />
       ) : (
         <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:items-start">
           {rows.map((d) => (
-            <DeviceCard key={d.id} d={d} onOpen={() => nav(`/stock/${d.id}`)} onSell={() => nav(`/sale/new?device=${d.id}`)} selected={picked.includes(d.id)} onSelect={picking ? () => setPicked((x) => (x.includes(d.id) ? x.filter((i) => i !== d.id) : [...x, d.id])) : undefined} />
+            <DeviceCard key={d.id} d={d} fields={fields} onOpen={() => nav(`/stock/${d.id}`)} onSell={() => nav(`/sale/new?device=${d.id}`)} selected={picked.includes(d.id)} onSelect={picking ? () => setPicked((x) => (x.includes(d.id) ? x.filter((i) => i !== d.id) : [...x, d.id])) : undefined} />
           ))}
         </div>
       )}

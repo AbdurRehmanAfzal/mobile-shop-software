@@ -1071,3 +1071,35 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
     - After saving, the `step` parameter is dropped, so Back from the done screen leaves the page as before.
     - Each added phone has an **Edit** button; the sheet then says "Change phone" and **Save**, not Add.
   - **Verified**: tsc; Playwright `add-device` (extended: header Back, browser back / forward, edit cost) and `counter` pass.
+
+### Same day — PR #41 live; fields, forms that keep their data, stickers on tablets
+**Owner**:
+- "table mein field options hone chahiye … sab style mein … download aur share bhi wahan stock mein".
+- "pop form ke bahar touch ho jaye to form khatam".
+- "previous step mein change karni ho to form start se".
+- "tab mein print sticker ka display show nahi ho raha".
+
+**Done**:
+- **Fields** (`StockViews.tsx`):
+  - One field list shared with the server. A chooser sheet with ticks and "Back to default", kept in `localStorage`.
+  - The Table columns, the Grid / List lines and the four boxes on the Cards follow it. A flagged ID check always shows.
+  - A table heading sort is lifted to the page.
+  - **Download / Share** moved beside the fields. `GET /exports/stock` takes `cols`, the page's filters (q, brand, condition, PTA, type, grade, RAM, price range, lock), and `sort` / `desc`. Cost is dropped for staff even when asked for. Urdu headings are added.
+  - Without `cols` the export is as before.
+- **Sheet** (`ui.tsx`): once something inside was typed or chosen, a tap outside does not close it; a red hint points to Close. Escape still closes it.
+- **Steps** (`lib/steps.ts`, `useStepUrl`) in Sell, Add stock, Exchange and Return:
+  - Each step is a history entry (`?step=N`). The header Back, the phone / browser back and a tap on an earlier step's bar go back with everything kept; Forward returns.
+  - The done screen is never kept in the address.
+  - A step is never pushed twice (React runs mount code twice in development).
+- **Stickers on tablets** (`lib/files.ts`):
+  - The print tab used to open after the fetch, which tablet browsers block as a pop-up. It now opens on the tap and is filled afterwards.
+  - If it is still blocked, the page shows inside the app in a full-screen frame with Print / Close.
+  - The sticker choices are saved before the page is made (`openPrintable(path, first)`).
+- **Docs**: user manual ch. 6 and ch. 11 (en / ur / roman).
+
+**Verified**:
+- `test_stock_export_with_the_fields_and_order_the_page_shows` and `test_exports`.
+- tsc.
+- Playwright `forms-keep` (new: a stray tap, sale Back / Forward / step bar, stickers with `window.open` blocked), `stock-views` (fields, the download URL), `add-device`, `counter`, `counter-ux`, `hold`, `return`, `saletax`.
+
+**Already failing before this change**: `labels.spec` (checked by stashing these changes). The code word typed in Settings in that test does not reach the sticker sheet ("BLACKHORSE" instead of "MOBILESHPK"), and the sticker has no IMEI. Not looked into yet.

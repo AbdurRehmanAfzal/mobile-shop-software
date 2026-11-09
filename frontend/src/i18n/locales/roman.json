@@ -133,7 +133,8 @@
     "reason": "Wajah",
     "void": "Yeh bill khatam karein",
     "today": "Aaj",
-    "close": "Band karein"
+    "close": "Band karein",
+    "sheetKeep": "Yahan kuch bhara hua hai. Agar waqai chhorna hai to Band karein dabayein."
   },
   "party": {
     "title": "Log aur khata",
@@ -305,7 +306,19 @@
       "cost": "Khareed",
       "asking": "Farokht",
       "status": "Haalat",
-      "total": "Kul ({{n}})"
+      "total": "Kul ({{n}})",
+      "simTime": "SIM time",
+      "imei": "IMEI",
+      "imei2": "IMEI 2",
+      "serial": "Serial",
+      "barcode": "Barcode",
+      "verification": "ID check"
+    },
+    "fields": {
+      "button": "Fields",
+      "title": "Kaun si tafseel dikhayein",
+      "hint": "Jo dekhna hai us par nishan lagayein. Yeh Card, Table, Grid aur List sab mein lagta hai, aur Download / Share mein bhi.",
+      "reset": "Pehle jaisa"
     }
   },
   "purchase": {
@@ -5338,6 +5351,11 @@
         "title": "Stock kaise dikhayein",
         "body": "Card: bare card, Bechein ke button ke saath. Table: Excel ki tarah, har phone ki ek line aur har tafseel ka ek column (storage, rang, haalat, PTA, battery, IMEI, dukaan mein din, khareed, farokht ki qeemat); column ke naam ko dabayein to us se tarteeb ho jaye, dobara dabayein to ulti; aakhri line khareed aur farokht ki qeemat ka jor dikhati hai. Grid: chhote khane, ek screen par bohat se. List: har phone ki ek chhoti line. Aap ka intikhab is phone ya computer par yaad rehta hai.",
         "example": "Sab se zyada din se pare phone dekhne hon: Table → \"Din\" ko do dafa dabayein."
+      },
+      "fields": {
+        "title": "Kaun si tafseel dikhayein",
+        "body": "Har phone ki jo tafseel dekhni ho chunein: memory, rang, haalat, PTA, battery, region code, IMEI, dukaan mein din, khareed, farokht ki qeemat waghera. Yahi intikhab Card, Table, Grid aur List mein lagta hai, aur Download / Share file bhi inhi columns, aap ke lagaye filter aur isi tarteeb se banata hai. Khareed sirf maalik aur manager ko dikhti hai. Aap ka intikhab isi phone ya computer par yaad rehta hai.",
+        "example": "Dealer ko rate list bhejni ho: sirf Memory, Rang, PTA aur Farokht par nishan lagayein, phir Share → Excel."
       }
     },
     "loan": {

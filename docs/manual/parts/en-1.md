@@ -311,6 +311,8 @@ On Home, tap **Add stock**. The first screen asks **Where is the phone coming fr
 
     Forgot something, like the colour? Tap **Edit** on that phone in the list, change it and tap **Save**. **Back** (or the phone's own back button) takes you to the first step with everything still filled in; **Next** brings you back to your phones.
 
+    The same works in **Sell**, **Exchange** and **Return**: **Back**, the phone's back button or a tap on the bar of an earlier step goes one step back and keeps everything. A form that pops up from below (like **Add device**) no longer closes when you tap beside it by mistake once something is filled in: tap **Close** to leave it.
+
 ![The Add device form](shot:purchase-device)
 
 When all the phones are in the list, finish the payment part on the same screen:
