@@ -10,7 +10,8 @@ import { ApiError } from '@/lib/api'
 import { ScanButton } from './ScanButton'
 import Help from './Help'
 
-export function PageHeader({ title, back = true, right, help }: { title: string | BiText; back?: boolean; right?: ReactNode; help?: ReactNode }) {
+/** `onBack`: a step-by-step form goes back one step instead of leaving the page */
+export function PageHeader({ title, back = true, right, help, onBack }: { title: string | BiText; back?: boolean; right?: ReactNode; help?: ReactNode; onBack?: () => void }) {
   const nav = useNavigate()
   const { ur } = useLang()
   const Back = ur ? ChevronRight : ChevronLeft
@@ -18,7 +19,7 @@ export function PageHeader({ title, back = true, right, help }: { title: string 
     // narrow phones: when the buttons on the right do not fit beside the title, they move under it
     <div className="mb-3 flex flex-wrap items-center gap-2">
       {back ? (
-        <button type="button" aria-label="Back" onClick={() => nav(-1)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface">
+        <button type="button" aria-label="Back" onClick={() => (onBack ? onBack() : nav(-1))} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface">
           <Back size={22} />
         <BtnText k={'common.back'} /></button>
       ) : null}

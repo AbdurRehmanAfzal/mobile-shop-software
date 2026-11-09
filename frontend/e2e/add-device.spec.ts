@@ -64,6 +64,22 @@ test('purchase wizard: add device from supplier', async ({ page }) => {
   await fillDevice(page, '356938035643809')
   await page.getByRole('button', { name: 'Add', exact: true }).last().click()
   await expect(page.getByText('356938035643809')).toBeVisible()
+
+  // owner 2026-11-09: Back goes to the first step and keeps everything; Next brings the phone back
+  await page.getByRole('button', { name: 'Back' }).click()
+  await expect(page.getByText('Rehman Traders')).toBeVisible()
+  await page.getByRole('button', { name: 'Next' }).click()
+  await expect(page.getByText('356938035643809')).toBeVisible()
+  // the phone's / browser's back button does the same
+  await page.goBack()
+  await expect(page.getByRole('button', { name: 'Next' })).toBeVisible()
+  await page.goForward()
+  await expect(page.getByText('356938035643809')).toBeVisible()
+  // change something on the phone already added
+  await page.getByTestId('device-edit').click()
+  await page.getByLabel('Cost price').fill('900')
+  await page.getByRole('button', { name: 'Save', exact: true }).last().click()
+  await expect(page.getByText('Rs. 900').first()).toBeVisible()
 })
 
 test("customer's phone: buy, then skip verification for a known person", async ({ page }) => {

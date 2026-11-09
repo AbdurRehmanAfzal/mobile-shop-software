@@ -358,7 +358,8 @@
     "extraCosts": "Freight / loading (Rs.)",
     "extraNote": "Freight note",
     "extraHint": "Spread over the lines and added to the item cost",
-    "itemLabels": "Print item labels"
+    "itemLabels": "Print item labels",
+    "editDevice": "Change phone"
   },
   "verify": {
     "title": "Verification",

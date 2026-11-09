@@ -1060,3 +1060,14 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - tsc passes.
 - Playwright `stock-views.spec` (new) passes: the totals, sorting both ways, grid, list, and the choice kept after a reload.
 - I looked at screenshots on a phone and on a laptop. On the phone, the row number was moved into the frozen column so it no longer shows from under it while sliding.
+
+### Same day — PR #40 live, PR #41 opened, Add stock "Back" fixed
+- PR #40: the first Deploy failed at "Prepare SSH". `ssh-keyscan` could not reach the VPS for a moment while the site itself kept answering, so it was a network blip and not the code. I re-ran the failed job and it succeeded. "Region code", "Dual eSIM" and "Battery cycle count" are now in the production locale chunk.
+- PR #41 (stock views) opened.
+- **Owner**: "stock add karte waqt mobile add kar ke next kiya, phir yaad aaya colour change karna hai, back jata hun to start se entry karni padti hai".
+  - **Cause**: on step 2 the header Back did `nav(-1)`, which leaves the page, and "Add stock" deliberately starts fresh when reopened.
+  - **Fix**:
+    - Step 2 is its own history entry (`?step=2`). The header Back (`PageHeader onBack`), the phone's back button and the browser's back all return to step 1 with the dealer, the phones and the payment kept; Forward or Next returns to step 2.
+    - After saving, the `step` parameter is dropped, so Back from the done screen leaves the page as before.
+    - Each added phone has an **Edit** button; the sheet then says "Change phone" and **Save**, not Add.
+  - **Verified**: tsc; Playwright `add-device` (extended: header Back, browser back / forward, edit cost) and `counter` pass.

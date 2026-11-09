@@ -358,7 +358,8 @@
     "extraCosts": "Kiraya / loading (Rs.)",
     "extraNote": "Kiraya note",
     "extraHint": "Lines par taqseem ho kar cost mein shamil",
-    "itemLabels": "Item label print karein"
+    "itemLabels": "Item label print karein",
+    "editDevice": "Phone mein tabdeeli"
   },
   "verify": {
     "title": "Tasdeeq",

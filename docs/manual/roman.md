@@ -311,6 +311,8 @@ Home par **Stock daalein** dabayein. Pehli screen poochti hai **Phone kahan se a
 15. **Phone ke saath kya kya aaya?** Box, Charger, Cable, Earphones aur AirPods ke liye **Nahi**, **Mil gaya** ya **Baad mein** chunein. Yahan: Box **Mil gaya**, Cable **Mil gaya**, Charger **Baad mein**, aur **Kab dega?** mein tareekh chunein.
 16. **Daalein** dabayein. Phone list mein aa jata hai. Agle phone ke liye dobara **Phone daalein** dabayein.
 
+    Kuch bhool gaye, jaise rang? List mein us phone par **Badlein** dabayein, badlein aur **Mehfooz karein** dabayein. **Wapas** (ya phone ka apna back button) aap ko pehle qadam par le jata hai aur sab kuch bhara rehta hai; **Aage** dabayein to aap ke phone wapas aa jate hain.
+
 ![Phone daalein ka form](shot:purchase-device)
 
 Jab saare phone list mein aa jayein to isi screen par paison wala hissa mukammal karein:

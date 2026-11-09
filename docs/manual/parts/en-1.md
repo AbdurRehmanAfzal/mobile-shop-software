@@ -309,6 +309,8 @@ On Home, tap **Add stock**. The first screen asks **Where is the phone coming fr
 15. **What came with the phone?** For Box, Charger, Cable, Earphones and AirPods choose **No**, **Got it** or **Later**. Here: Box **Got it**, Cable **Got it**, Charger **Later**, and pick the date in **When will they give it?**
 16. Tap **Add**. The phone appears in the list. Tap **Add device** again for the next phone.
 
+    Forgot something, like the colour? Tap **Edit** on that phone in the list, change it and tap **Save**. **Back** (or the phone's own back button) takes you to the first step with everything still filled in; **Next** brings you back to your phones.
+
 ![The Add device form](shot:purchase-device)
 
 When all the phones are in the list, finish the payment part on the same screen:
