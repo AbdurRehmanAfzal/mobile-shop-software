@@ -1042,3 +1042,21 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - The full backend suite, ruff and tsc.
 - Playwright `apple-variant` (now with health 91 % + 312 cycles) and `add-device` pass.
 - `device-types` failed once when run alongside the other specs and passed when run alone. Nothing it checks was changed here.
+
+### Same day — stock views (Cards / Table / Grid / List)
+**Owner**: "stock dekhte ke style hone chahiye, excel style mein row column, grid style aur bhi koi style".
+**Done**: a view switch on the stock page, a frontend-only change (`StockViews.tsx`):
+- **Cards** (the existing view).
+- **Table**, Excel-style:
+  - a column for device, memory, colour, condition, PTA, battery, IMEI and days;
+  - cycles, region and SIM only when some unit has them;
+  - cost only when the API sends it (`VIEW_COST`), plus asking and status;
+  - tap a heading to sort and tap again to reverse; the device column stays frozen and the header and total row stay in place;
+  - the total row adds up cost and asking; row numbers; tap a row to open it; checkboxes in sticker mode.
+- **Grid**: small tiles, 2 to 5 across.
+- **List**: the compact `DeviceRow`.
+- The choice is kept in `localStorage` (`stock.view`, read inside try/catch). The strings and help are in en / ur / roman, and user manual ch. 11 is updated.
+**Verified**:
+- tsc passes.
+- Playwright `stock-views.spec` (new) passes: the totals, sorting both ways, grid, list, and the choice kept after a reload.
+- I looked at screenshots on a phone and on a laptop. On the phone, the row number was moved into the frozen column so it no longer shows from under it while sliding.

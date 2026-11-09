@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useLang, BiInput, BiLabel } from '@/components/Bilingual'
 import Help from '@/components/Help'
-import { BtnText, Chip, Empty, ErrorText, Loading, MoneyText, PageHeader, Row, SearchBox, Sheet } from '@/components/ui'
+import { BtnText, Chip, Empty, ErrorText, List, Loading, MoneyText, PageHeader, Row, SearchBox, Sheet } from '@/components/ui'
 import { useBrands, useDevices, useInvalidate } from '@/lib/queries'
 import { beep, useScan } from '@/lib/scanner'
 import { lookupCode } from '@/components/ScanListener'
@@ -16,6 +16,7 @@ import { api } from '@/lib/api'
 import { Tag } from 'lucide-react'
 import { BiButton } from '@/components/Bilingual'
 import { simTypeText } from '@/features/purchase/AppleVariant'
+import { StockGrid, StockTable, ViewSwitch, loadView, saveView, type StockView } from './StockViews'
 
 type Filter = 'in_stock' | 'on_loan' | 'sold' | 'faulty' | 'all'
 
@@ -125,6 +126,7 @@ export default function StockPage() {
   const [labels, setLabels] = useState(false)
   // owner addendum 6: grade / RAM / price range / lock-unchecked filters, and a type change for the picked units
   const [more, setMore] = useState(false)
+  const [view, setView] = useState<StockView>(loadView)
   const [fx, setFx] = useState({ grade: '', ram: '', min: '', max: '', lock: false })
   const [retype, setRetype] = useState(false)
   const [toCat, setToCat] = useState<'phone' | 'tablet' | 'watch'>('tablet')
@@ -138,6 +140,7 @@ export default function StockPage() {
   const { data: brands } = useBrands()
   const inv = useInvalidate()
 
+  const togglePick = (d: Device) => setPicked((x) => (x.includes(d.id) ? x.filter((i) => i !== d.id) : [...x, d.id]))
   const counts = new Map<string, number>()
   for (const d of data ?? []) counts.set(d.brand_id, (counts.get(d.brand_id) ?? 0) + 1)
   const brandRow = (brands ?? []).filter((b) => counts.has(b.id))
@@ -232,12 +235,19 @@ export default function StockPage() {
           <div className="col-span-2 flex items-center gap-1"><button type="button" role="switch" aria-checked={fx.lock} onClick={() => setFx({ ...fx, lock: !fx.lock })} className="tap flex min-h-11 flex-1 items-center gap-3 rounded-2xl border border-line bg-ground px-4 text-start"><span className="flex-1"><BiLabel text="devx.lockUnchecked" size="md" bold /></span><span className={`flex h-7 w-12 shrink-0 items-center rounded-full p-1 ${fx.lock ? 'bg-emerald' : 'bg-line'}`}><span className={`h-5 w-5 rounded-full bg-white shadow transition-transform ${fx.lock ? 'translate-x-5 rtl:-translate-x-5' : ''}`} /></span></button><Help term="stock.lockUnchecked" size="sm" /></div>
         </div>
       ) : null}
+      <ViewSwitch value={view} onChange={(v) => { setView(v); saveView(v) }} />
       {data ? <div className="flex items-center gap-1 text-xs font-semibold text-muted">{t('stock.count', { n: rows.length })}<Help term="stock.card" size="sm" /></div> : null}
 
       {isLoading ? (
         <Loading />
       ) : !rows.length ? (
         <Empty text={q || brand ? 'common.nothingFound' : 'stock.noDevices'} />
+      ) : view === 'table' ? (
+        <StockTable rows={rows} onOpen={(d) => nav(`/stock/${d.id}`)} picked={picking ? picked : undefined} onPick={picking ? togglePick : undefined} />
+      ) : view === 'grid' ? (
+        <StockGrid rows={rows} onOpen={(d) => nav(`/stock/${d.id}`)} picked={picking ? picked : undefined} onPick={picking ? togglePick : undefined} />
+      ) : view === 'list' ? (
+        <div data-testid="stock-list"><List>{rows.map((d) => <div key={d.id} className={picking && picked.includes(d.id) ? 'bg-emerald-tint' : ''}><DeviceRow d={d} onClick={() => (picking ? togglePick(d) : nav(`/stock/${d.id}`))} /></div>)}</List></div>
       ) : (
         <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:items-start">
           {rows.map((d) => (

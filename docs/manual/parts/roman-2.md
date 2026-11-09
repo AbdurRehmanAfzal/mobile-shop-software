@@ -108,6 +108,7 @@ Upar paanch buttons hain: **Download**, **Share**, **Stickers**, **IMEI check ka
 - **Status ke chips**: **Stock mein**, **Amanat par**, **Bik gaya**, **Kharab** aur **Sab**.
 - **Tarteeb**: **Naye pehle**, **Purane pehle**, **Qeemat: kam**, **Qeemat: zyada**.
 - **Filter**: mazeed choices kholta hai: **Grade** (Used A, Used B, Refurbished, Copy / China), **RAM (GB)**, qeemat ki range (sab se kam aur sab se zyada bechne ki qeemat), aur ek switch **Lock check nahi** jo sirf woh used devices dikhata hai jin ka lock check kabhi nahi hua.
+- **Card / Table / Grid / List**: phone kaise dikhein. **Card** neeche bataye gaye bare card hain. **Table** Excel ki tarah hai: har phone ki ek line aur har tafseel ka ek column (memory, rang, haalat, PTA, battery, IMEI, din, khareed jo sirf maalik aur manager dekhte hain, farokht ki qeemat, haalat). Column ke naam ko dabayein to usi se tarteeb ho jati hai, dobara dabayein to ulti tarteeb. Aakhri line khareed aur farokht ka jor dikhati hai; phone par table ko side par khiskayein. **Grid** mein chhote khane hote hain, ek screen par bohat se. **List** mein har phone ki ek chhoti line hoti hai. App aap ka intikhab usi phone ya computer par yaad rakhti hai.
 
 Filters ke neeche app batati hai ke kitne phone milte hain, masalan **7 phone**. Har phone ek card hai jis par us ka naam, rang aur storage, bechne ki qeemat, aur chaar chhote box hote hain: **Memory**, **PTA**, **Haalat** aur **Din** (dukaan mein kitne din se hai). Neeche IMEI, ID check ka badge aur **Bechein** button hota hai.
 
