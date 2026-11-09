@@ -437,3 +437,32 @@ def test_apple_region_code_and_sim_setup(owner, cat):
     r = owner.patch(f"/api/v1/devices/{a['id']}", json={"sim_type": "physical_esim"})
     assert r.status_code == 200, r.text
     assert owner.get(f"/api/v1/devices/{a['id']}").json()["sim_type"] == "physical_esim"
+
+
+def test_apple_battery_cycle_count(owner, cat):
+    """owner 2026-11-09: an iPhone's battery cycle count is kept with its battery health"""
+    sup = _party(owner)
+    r = owner.post(
+        "/api/v1/purchases",
+        json={
+            "kind": "supplier",
+            "party_id": sup["id"],
+            "devices": [
+                {
+                    "device": _dev(
+                        cat, IMEI_A, condition="used", battery_health=88, battery_cycles=312
+                    ),
+                    "cost": 1000,
+                }
+            ],
+        },
+    )
+    assert r.status_code == 201, r.text
+    dev_id = r.json()["lines"][0]["device_id"]
+    d = owner.get(f"/api/v1/devices/{dev_id}").json()
+    assert d["battery_cycles"] == 312 and d["battery_health"] == 88
+    assert (
+        owner.patch(f"/api/v1/devices/{dev_id}", json={"battery_cycles": 9999}).status_code == 422
+    )
+    assert owner.patch(f"/api/v1/devices/{dev_id}", json={"battery_cycles": 320}).status_code == 200
+    assert owner.get(f"/api/v1/devices/{dev_id}").json()["battery_cycles"] == 320

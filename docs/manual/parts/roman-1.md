@@ -298,7 +298,7 @@ Home par **Stock daalein** dabayein. Pehli screen poochti hai **Phone kahan se a
 8. **Brand** (**Samsung**) dabayein, phir **Model** (`A55` likhein aur **Galaxy A55** dabayein).
 9. **Memory** (`256GB`) aur **Rang** (`Blue`) chunein.
 
-    **Apple** iPhone ke liye form **Region code** aur **SIM** bhi poochta hai. Region code Settings → General → About → Model Number ke aakhir mein hota hai (MLPF3**LL/A** → **LL/A** dabayein). SIM ke liye **Physical + eSIM**, **Double eSIM** (Americi iPhone 14 aur baad walon mein SIM tray nahi hoti), **Double physical SIM** ya **Sirf physical SIM** dabayein. List mein nahi? **Naya** daba kar likh dein; agli dafa app khud dikhaye gi. Dono stock list aur price sticker par nazar aate hain.
+    **Apple** iPhone ke liye form **Region code** aur **SIM** bhi poochta hai. Region code Settings → General → About → Model Number ke aakhir mein hota hai (MLPF3**LL/A** → **LL/A** dabayein). SIM ke liye **Physical + eSIM**, **Double eSIM** (Americi iPhone 14 aur baad walon mein SIM tray nahi hoti), **Double physical SIM** ya **Sirf physical SIM** dabayein. List mein nahi? **Naya** daba kar likh dein; agli dafa app khud dikhaye gi. Used ya open box iPhone ke liye **Battery cycle count** bhi poocha jata hai (iPhone 15 aur naye: Settings → General → About; purane mein khali chhor dein). Yeh sab stock list aur price sticker par nazar aate hain.
 10. **Haalat**: **Box pack** dabayein. Baqi options **Open box**, **Used** aur **Patch wala** hain (patch wala **Patch ki tafseel** maangta hai).
 11. **PTA status**: **PTA approved** dabayein. **Non-PTA** aur **JV** ke liye app **SIM time (mahine)** bhi poochti hai.
 12. **Khareed qeemat**: `92000` likhein, jo aap ne diye.

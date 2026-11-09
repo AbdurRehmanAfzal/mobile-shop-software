@@ -368,6 +368,7 @@ by sheet remain a later step (docs/18 §1).
 - `devices.region_code` (String 12, kept in capitals) and `devices.sim_type` (String 30: a key `physical_esim | dual_esim | dual_physical | physical`, or the shop's own words). Migration `d7f9b1c3e5a8`, additive and nullable.
 - Presets live in `devices/types.py` (`REGION_CODES`, `SIM_TYPES`). Values the shop added are not stored in settings. `GET /devices/options` derives them from what the shop's devices already use, so a new value is offered again from then on.
 - The form asks both only for an Apple device (brand Apple, or a model starting iPhone / iPad / Apple watch). The SIM row only shows on a unit that takes a SIM. Neither is required.
+- `devices.battery_cycles` (Integer 0–5000, migration `e1a3c5e7f9b2`): an Apple unit's battery cycle count. It is asked next to battery health for a used / open-box Apple unit and is not required.
 - They show in the stock line, on the device page and on the price sticker (English short form).
 **Consequences**: there is no stock filter by region yet, and the bulk Excel import / export does not carry these two columns yet.
 

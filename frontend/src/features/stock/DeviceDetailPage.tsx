@@ -44,6 +44,7 @@ function toDraft(d: DeviceDetail): DeviceLineDraft {
     warranty_by: d.warranty_by ?? '',
     specs: d.specs ?? {},
     region_code: d.region_code ?? '',
+    battery_cycles: d.battery_cycles != null ? String(d.battery_cycles) : '',
     sim_type: d.sim_type ?? '',
   }
 }
@@ -245,6 +246,7 @@ export default function DeviceDetailPage() {
                 ram_gb: x.category !== 'watch' && x.ram_gb ? Number(x.ram_gb) : null,
                 warranty_by: x.warranty_by || null,
                 region_code: isApple(x.brand_name, x.model_name) ? x.region_code || null : null,
+                battery_cycles: isApple(x.brand_name, x.model_name) && x.battery_cycles !== '' && x.battery_cycles != null ? Number(x.battery_cycles) : null,
                 sim_type: isApple(x.brand_name, x.model_name) && (x.category === 'phone' || x.cellular) ? x.sim_type || null : null,
                 specs: x.specs && Object.keys(x.specs).length ? x.specs : null,
               })

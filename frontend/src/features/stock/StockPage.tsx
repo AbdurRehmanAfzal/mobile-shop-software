@@ -29,6 +29,7 @@ export function specLine(d: Device, pick: (k: string) => string, withColour = tr
     d.region_code ?? null,
     simTypeText(d.sim_type, pick),
     d.battery_health ? pick('devx.bh').replace('{{n}}', String(d.battery_health)) : null,
+    d.battery_cycles != null ? pick('devx.cyclesShort').replace('{{n}}', String(d.battery_cycles)) : null,
   ].filter(Boolean).join(' · ')
 }
 

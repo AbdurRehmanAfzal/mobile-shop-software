@@ -50,7 +50,7 @@ docker compose --env-file .env exec backend python -m app.modules.plan.renewal k
 docker compose --env-file .env exec backend python -m app.modules.barcodes.backfill
 
 # 3. check the database is on the latest version (migrations run by themselves when the backend
-#    starts; this only confirms it). Expected: d7f9b1c3e5a8 (head)
+#    starts; this only confirms it). Expected: e1a3c5e7f9b2 (head)
 docker compose --env-file .env exec backend alembic current
 ```
 
@@ -144,7 +144,7 @@ Close the app fully and open it again first (or install the newest APK from the 
 
 **Delete a customer (2026-11-09, ADR-054)** — in Super admin open a test shop, scroll to "Delete this customer", Delete shop, type its name, a reason, Delete. Try to log in as that shop's owner: "This shop has been closed". The shop is gone from the list and shows under the "Deleted" filter; open it, "Bring it back", and log in again: everything is there.
 
-**iPhone region code and SIM (2026-11-09, ADR-055)**: in Buy → Add device, choose Apple → an iPhone. Under Colour, the form asks for the **Region code** (tap LL/A) and the **SIM** type (tap Dual eSIM). Tap **New** to add a code that is not in the list. Save the device. The stock line and the price sticker should show "LL/A · Dual eSIM".
+**iPhone region code and SIM (2026-11-09, ADR-055)**: in Buy → Add device, choose Apple → an iPhone. Under Colour, the form asks for the **Region code** (tap LL/A) and the **SIM** type (tap Dual eSIM). Tap **New** to add a code that is not in the list. Save the device. Choose **Used** and fill **Battery health %** 91 and **Battery cycle count** 312. The stock line and the price sticker should show "LL/A · Dual eSIM · Battery 91% · 312 cycles".
 
 ## E. Decisions waiting for you
 

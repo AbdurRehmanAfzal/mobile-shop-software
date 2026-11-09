@@ -79,6 +79,7 @@ class DeviceIdentity(BaseModel):
     size_mm: int | None = Field(default=None, ge=20, le=60)  # a watch's case
     battery_health: int | None = Field(default=None, ge=1, le=100)
     region_code: str | None = Field(default=None, max_length=12)  # ADR-055, e.g. LL/A
+    battery_cycles: int | None = Field(default=None, ge=0, le=5000)  # ADR-055, Apple
     sim_type: str | None = Field(default=None, max_length=30)  # ADR-055, e.g. physical_esim
     imei1: str | None = None
     imei2: str | None = None
@@ -212,6 +213,7 @@ class DeviceUpdate(BaseModel):
     size_mm: int | None = Field(default=None, ge=20, le=60)
     battery_health: int | None = Field(default=None, ge=1, le=100)
     region_code: str | None = Field(default=None, max_length=12)  # ADR-055, e.g. LL/A
+    battery_cycles: int | None = Field(default=None, ge=0, le=5000)  # ADR-055, Apple
     sim_type: str | None = Field(default=None, max_length=30)  # ADR-055, e.g. physical_esim
     brand_id: uuid.UUID | None = None
     model_id: uuid.UUID | None = None
@@ -295,6 +297,7 @@ class DeviceOut(BaseModel):
     size_mm: int | None = None
     battery_health: int | None = None
     region_code: str | None = None
+    battery_cycles: int | None = None
     sim_type: str | None = None
     grade: str | None = None
     ram_gb: int | None = None

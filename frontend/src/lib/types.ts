@@ -98,6 +98,7 @@ export interface Device {
   lock_ok?: boolean
   battery_health?: number | null
   region_code?: string | null
+  battery_cycles?: number | null
   sim_type?: string | null
   brand_id: UUID
   brand_name: string

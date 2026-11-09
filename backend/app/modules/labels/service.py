@@ -230,6 +230,7 @@ def _device_parts(d: dict, shop: Shop, ur: bool, word: str | None) -> dict:
         f"Battery {d['battery_health']}%" if d.get("battery_health") else None,
         # ADR-055: an iPhone's region code and SIM setup, as shopkeepers write them
         d.get("region_code"),
+        f"{d['battery_cycles']} cycles" if d.get("battery_cycles") is not None else None,
         _SIM_SHORT.get(d.get("sim_type") or "", d.get("sim_type")),
     ]
     cond = CONDITION.get(d.get("condition") or "", ("", ""))[1 if ur else 0]

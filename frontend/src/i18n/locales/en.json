@@ -4843,6 +4843,11 @@
         "title": "SIM",
         "body": "How the phone takes SIMs. US iPhones from the 14 onwards have no SIM tray (Dual eSIM). Most others take one physical SIM and an eSIM. China and Hong Kong models take two physical SIMs. Check the side of the phone for a SIM tray, and Settings → Mobile Data for eSIM. Not in the list? Tap New and type it.",
         "example": "LL/A iPhone 15 with no SIM tray → Dual eSIM."
+      },
+      "cycles": {
+        "title": "Battery cycle count",
+        "body": "How many times the battery has been charged from 0 to 100% in total. Fewer is better: an iPhone battery is made to keep about 80% of its health up to 500 cycles (iPhone 15 and newer: 1000). iPhone 15 and newer show it in Settings → General → About and in Settings → Battery → Battery Health. Older iPhones do not show it on the phone; a computer tool like 3uTools can read it. Leave it empty if you do not know.",
+        "example": "Used iPhone 15 Pro with 312 cycles and 91% health → write 312; the stock list shows \"Battery 91% · 312 cycles\"."
       }
     },
     "purchase": {
@@ -7980,7 +7985,11 @@
       "dual_esim": "Dual eSIM",
       "dual_physical": "Dual physical SIM",
       "physical": "Physical SIM only"
-    }
+    },
+    "cycles": "Battery cycle count",
+    "cyclesHint": "iPhone 15 and newer: Settings → General → About. Leave empty if not shown.",
+    "cyclesBad": "Write a number from 0 to 5000",
+    "cyclesShort": "{{n}} cycles"
   },
   "remind": {
     "title": "Udhaar reminders",

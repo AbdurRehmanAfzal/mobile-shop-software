@@ -34,6 +34,10 @@ test('iPhone: region code and SIM setup, with a new region added', async ({ page
   await page.getByPlaceholder('e.g. LL/A').fill('qn/a')
   await box.getByRole('button', { name: 'Save', exact: true }).click()
   await expect(box.getByRole('button', { name: 'QN/A', exact: true })).toHaveAttribute('aria-pressed', 'true')
+  // a used iPhone also asks its battery cycle count
+  await page.getByRole('button', { name: 'Used', exact: true }).click()
+  await page.getByLabel('Battery health %').fill('91')
+  await page.getByTestId('battery-cycles').fill('312')
   await page.screenshot({ path: 'test-results/apple-variant.png', fullPage: true })
   await page.getByLabel('Cost price').fill('150000')
   await page.getByRole('button', { name: 'Add', exact: true }).last().click()
@@ -41,5 +45,5 @@ test('iPhone: region code and SIM setup, with a new region added', async ({ page
   await expect(page.getByText('Purchase saved')).toBeVisible()
 
   await page.goto('/stock')
-  await expect(page.getByText(/QN\/A · Dual eSIM/).first()).toBeVisible()
+  await expect(page.getByText(/QN\/A · Dual eSIM · Battery 91% · 312 cycles/).first()).toBeVisible()
 })
