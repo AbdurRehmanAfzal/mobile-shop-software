@@ -109,6 +109,7 @@ Upar paanch buttons hain: **Download**, **Share**, **Stickers**, **IMEI check ka
 - **Tarteeb**: **Naye pehle**, **Purane pehle**, **Qeemat: kam**, **Qeemat: zyada**.
 - **Filter**: mazeed choices kholta hai: **Grade** (Used A, Used B, Refurbished, Copy / China), **RAM (GB)**, qeemat ki range (sab se kam aur sab se zyada bechne ki qeemat), aur ek switch **Lock check nahi** jo sirf woh used devices dikhata hai jin ka lock check kabhi nahi hua.
 - **Card / Table / Grid / List**: phone kaise dikhein. **Card** neeche bataye gaye bare card hain. **Table** Excel ki tarah hai: har phone ki ek line aur har tafseel ka ek column (memory, rang, haalat, PTA, battery, IMEI, din, khareed jo sirf maalik aur manager dekhte hain, farokht ki qeemat, haalat). Column ke naam ko dabayein to usi se tarteeb ho jati hai, dobara dabayein to ulti tarteeb. Aakhri line khareed aur farokht ka jor dikhati hai; phone par table ko side par khiskayein. **Grid** mein chhote khane hote hain, ek screen par bohat se. **List** mein har phone ki ek chhoti line hoti hai. App aap ka intikhab usi phone ya computer par yaad rakhti hai.
+- **Fields**: jo tafseel dekhni ho us par nishan lagayein (memory, rang, haalat, PTA, battery, region, IMEI, din, khareed, farokht waghera). Yeh charon andaaz mein lagta hai. Saath **Download** aur **Share** hain jo PDF / Excel / CSV inhi columns, aap ke filter aur isi tarteeb se banate hain.
 
 Filters ke neeche app batati hai ke kitne phone milte hain, masalan **7 phone**. Har phone ek card hai jis par us ka naam, rang aur storage, bechne ki qeemat, aur chaar chhote box hote hain: **Memory**, **PTA**, **Haalat** aur **Din** (dukaan mein kitne din se hai). Neeche IMEI, ID check ka badge aur **Bechein** button hota hai.
 
@@ -177,6 +178,13 @@ Page par neeche **Is phone ka paisa** wala card hai. Yeh jawab deta hai ke "yeh 
 Agar phone purane stock ke taur par darj hua tha, to card par likha aata hai **Purana stock: laagat ke saath darj, khareed ka bill nahi.**
 
 > **Note:** Khareed ke figures (khareed qeemat, bechne wale ko kitne dene hain, munafa) sirf maalik aur manager ko nazar aate hain.
+
+### IMEI ya bechne wala ghalat likha gaya
+
+Yeh sirf maalik ya manager durust kar sakte hain, aur har ek ke liye mukhtasar wajah likhni hoti hai. Kuch mitaya nahi jata: phone ki **History** mein **Durust kiya** ki line purani cheez, nayi cheez aur wajah ke saath aati hai.
+
+- **Ghalat IMEI:** phone kholein, **IMEI durust karein** dabayein, sahi IMEI 1 likhein (aur IMEI 2, ya nishan lagayein ke is phone ka IMEI 2 nahi), wajah likhein aur **Mehfooz karein** dabayein. Number 15 hindson ka ho aur dukaan ke kisi aur phone ka na ho. Barcode wahi rehta hai.
+- **Ghalat dealer ya customer:** khareedari kholein (**More → Purchases**, ya phone ki history mein khareedari wali line par tap), **Dealer / customer badlein** dabayein, sahi shakhs chunein, wajah likhein aur **Mehfooz karein** dabayein. Bill aur us ke saath di gayi raqam sahi shakhs ke khate mein chali jati hai; ghalat shakhs ka khata pehle jaisa ho jata hai. Agar baad mein is bill ki adaigi ho chuki ho ya kuch wapis hua ho to yeh nahi ho sakta: pehle woh khatam karein.
 
 ### Poori history
 

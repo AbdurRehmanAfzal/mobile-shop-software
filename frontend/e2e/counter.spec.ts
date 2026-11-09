@@ -122,7 +122,10 @@ test('profit, best sellers, estimate; skip the ID check while adding stock', asy
   await page.getByLabel('Asking price').fill('1000')
   await page.getByRole('button', { name: 'Add', exact: true }).last().click()
   await page.getByRole('button', { name: 'Skip, I know this person' }).click()
-  await page.getByRole('button', { name: 'Put in stock' }).click()
+  await page.getByTestId('purchase-review-open').click()
+  // owner 2026-11-09: every detail is shown once more and ticked before it is saved
+  await page.getByTestId('review-ok').check()
+  await page.getByTestId('purchase-save').click()
   await expect(page.getByText('Skipped, known person')).toBeVisible()
 
   // sell it, then read the reports
@@ -164,7 +167,10 @@ test('a phone with a pending ID check can be skipped and sold', async ({ page })
   await page.getByLabel('Cost price').fill('800')
   await page.getByLabel('Asking price').fill('1000')
   await page.getByRole('button', { name: 'Add', exact: true }).last().click()
-  await page.getByRole('button', { name: 'Put in stock' }).click()
+  await page.getByTestId('purchase-review-open').click()
+  // owner 2026-11-09: every detail is shown once more and ticked before it is saved
+  await page.getByTestId('review-ok').check()
+  await page.getByTestId('purchase-save').click()
   await expect(page.getByText('Purchase saved')).toBeVisible()
 
   await page.goto('/sale/new')

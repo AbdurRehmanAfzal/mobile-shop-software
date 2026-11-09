@@ -98,7 +98,7 @@ export default function LabelSheet({ kind, ids, open, onClose }: { kind: LabelKi
           </div>
         </div>
         <ErrorText error={err} />
-        <BiButton text="label.print" icon={<Printer size={22} />} full disabled={!customOk || !p.fields.length} onClick={() => { setErr(null); void remember(); openPrintable(path).catch(setErr) }} />
+        <BiButton text="label.print" icon={<Printer size={22} />} full disabled={!customOk || !p.fields.length} onClick={() => { setErr(null); openPrintable(path, remember).catch(setErr) }} />
         <DocActions path={path} name={`stickers-${ids.length}`} title={pick('label.title')} picker={false} />
         <div className="flex items-center gap-1">
         <button type="button" onClick={remember} className={`tap inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-2xl border border-line bg-surface px-3 font-bold ${ur ? cls('sm') : 'text-sm'}`}>

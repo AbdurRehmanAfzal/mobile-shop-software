@@ -313,6 +313,8 @@ On Home, tap **Add stock**. The first screen asks **Where is the phone coming fr
 
     Forgot something, like the colour? Tap **Edit** on that phone in the list, change it and tap **Save**. **Back** (or the phone's own back button) takes you to the first step with everything still filled in; **Next** brings you back to your phones.
 
+    The same works in **Sell**, **Exchange** and **Return**: **Back**, the phone's back button or a tap on the bar of an earlier step goes one step back and keeps everything. A form that pops up from below (like **Add device**) no longer closes when you tap beside it by mistake once something is filled in: tap **Close** to leave it.
+
 ![The Add device form](shot:purchase-device)
 
 When all the phones are in the list, finish the payment part on the same screen:
@@ -322,6 +324,7 @@ When all the phones are in the list, finish the payment part on the same screen:
 3. Tap **Discount, bill no.** if you need the extra boxes (see "Reference / slip no." below).
 4. Check the **Total**: Rs. 92,000.
 5. Tap **Put in stock**.
+6. **Check before saving** opens: the seller, every phone with its IMEI, memory, colour, condition, PTA, battery, cost and asking price, the total and how it was paid. If something is wrong, tap **Edit** on that phone. When all is right, tick **I have checked: every detail is right** and tap **Put in stock**.
 
 You see **Purchase saved**, the amount and the purchase number, for example `PUR-000001`. From here you can also tap **Print stickers for these phones** to print price stickers with a barcode.
 
@@ -836,6 +839,7 @@ At the top are five buttons: **Download**, **Share**, **Stickers**, **Check IMEI
 - **Sort**: **Newest**, **Oldest first**, **Price: low**, **Price: high**.
 - **Filters**: opens more choices: **Grade** (Used A, Used B, Refurbished, Copy / China), **RAM (GB)**, a price range (lowest and highest asking price), and a switch **Lock not checked** that shows only used devices whose lock check was never done.
 - **Cards / Table / Grid / List**: how the phones are shown. **Cards** are the big cards described below. **Table** is like Excel: one row per phone and a column for each detail (memory, colour, condition, PTA, battery, IMEI, days, cost for the owner and manager, asking price, status). Tap a column heading to sort by it, and tap it again to reverse the order. The last row adds up cost and asking price; on a phone, slide the table sideways. **Grid** shows small tiles, many on one screen. **List** gives one short line per phone. The app remembers your choice on that phone or computer.
+- **Fields**: tick which details show (memory, colour, condition, PTA, battery, region, IMEI, days, cost, asking and more). The choice applies to all four views. **Download** and **Share** sit next to it and make the PDF / Excel / CSV with exactly these columns, your filters and the same order.
 
 Under the filters the app shows how many phones match, for example **7 phones**. Each phone is a card with its name, colour and storage, the asking price, and four small boxes: **Memory**, **PTA**, **Condition** and **Days** (how many days it has been in the shop). At the bottom are the IMEI, the ID check badge and a **Sell** button.
 
@@ -904,6 +908,13 @@ Further down the page is the card **Money on this phone**. It answers "what did 
 If the phone was entered as old stock, the card says **Old stock: entered with its cost, no purchase bill.**
 
 > **Note:** Buying figures (cost, what you owe the seller, margin) are shown only to the owner and manager.
+
+### An IMEI or the seller typed wrong
+
+Only the owner or manager can put these right, and each needs a short reason. Nothing is deleted: the phone's **History** shows a **Corrected** line with the old value, the new one and the reason.
+
+- **Wrong IMEI:** open the phone, tap **Correct IMEI**, type the right IMEI 1 (and IMEI 2, or tick that the phone has no IMEI 2), write the reason and tap **Save**. The number must be 15 digits and not belong to another phone in the shop. The barcode stays the same.
+- **Wrong dealer or customer:** open the purchase (**More → Purchases**, or tap the purchase line in the phone's history), tap **Change dealer / customer**, pick the right person, write the reason and tap **Save**. The bill and what was paid with it move to the right person's khata; the wrong person's khata is back to what it was. This is not possible once money was paid later against that bill or something was returned on it: undo that first.
 
 ### The full history
 

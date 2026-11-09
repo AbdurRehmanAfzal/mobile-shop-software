@@ -311,6 +311,8 @@ Home par **Stock daalein** dabayein. Pehli screen poochti hai **Phone kahan se a
 
     Kuch bhool gaye, jaise rang? List mein us phone par **Badlein** dabayein, badlein aur **Mehfooz karein** dabayein. **Wapas** (ya phone ka apna back button) aap ko pehle qadam par le jata hai aur sab kuch bhara rehta hai; **Aage** dabayein to aap ke phone wapas aa jate hain.
 
+    Yahi **Bechein**, **Exchange** aur **Wapsi** mein bhi hota hai: **Wapas**, phone ka back button ya pichle qadam ki patti par tap ek qadam peeche le jata hai aur sab kuch rehta hai. Neeche se khulne wala form (jaise **Phone daalein**) kuch bharne ke baad ghalti se bahar tap karne par band nahi hota: chhorna ho to **Band karein** dabayein.
+
 ![Phone daalein ka form](shot:purchase-device)
 
 Jab saare phone list mein aa jayein to isi screen par paison wala hissa mukammal karein:
@@ -320,6 +322,7 @@ Jab saare phone list mein aa jayein to isi screen par paison wala hissa mukammal
 3. Agar extra dabbe chahiyein to **Riayat, bill number** dabayein (neeche "Reference / parchi number" dekhein).
 4. **Kul** check karein: Rs. 92,000.
 5. **Stock mein daalein** dabayein.
+6. **Save karne se pehle dekhein** khulta hai: bechne wala, har phone us ke IMEI, memory, rang, haalat, PTA, battery, khareed aur farokht ki qeemat ke saath, kul raqam aur adaigi ka tareeqa. Kuch ghalat ho to us phone par **Badlein** dabayein. Sab durust ho to **Main ne dekh liya: saari tafseel durust hai** par nishan lagayein aur **Stock mein daalein** dabayein.
 
 Aap ko **Khareedari mehfooz**, raqam aur khareed ka number nazar aata hai, misaal ke taur par `PUR-000001`. Yahan se aap barcode wale qeemat ke sticker print karne ke liye **In phones ke sticker print karein** bhi daba sakte hain.
 

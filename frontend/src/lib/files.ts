@@ -48,20 +48,65 @@ export async function fileObjectUrl(path: string, shopId?: string): Promise<stri
   return URL.createObjectURL(await res.blob())
 }
 
-/** Open an authenticated HTML document (receipt, declaration) in a new tab for printing. */
-export async function openPrintable(path: string): Promise<void> {
+/** Open an authenticated HTML document (receipt, declaration, stickers) in a new tab for printing.
+ *  Owner 2026-11-09: on a tablet the stickers never showed. The tab used to be opened after the
+ *  document was fetched, and tablet / phone browsers block a window that is not opened right on the
+ *  tap. It is now opened at once and filled when the document arrives. If the browser still blocks
+ *  it (or the app runs as an installed PWA), the document is shown inside the app instead, with
+ *  Print and Close buttons. */
+export async function openPrintable(path: string, first?: () => Promise<unknown>): Promise<void> {
   path = withDocLang(path)
-  if (Capacitor.isNativePlatform()) return openInChrome(path, true)
-  const headers = authHeaders()
-  const res = await fetch(`${BASE}${path}`, { headers })
-  const html = await res.text()
+  if (Capacitor.isNativePlatform()) {
+    await first?.()
+    return openInChrome(path, true)
+  }
   const w = window.open('', '_blank')
-  if (!w) return
+  if (w) w.document.write('<p style="font:16px sans-serif;padding:24px">…</p>')
+  const headers = authHeaders()
+  let html: string
+  try {
+    // `first`: something the page depends on (the sticker choices being saved), done after the tab
+    // is open so the tap still counts
+    await first?.()
+    const res = await fetch(`${BASE}${path}`, { headers })
+    html = await res.text()
+  } catch (e) {
+    w?.close()
+    throw e
+  }
+  if (!w || w.closed) {
+    showInApp(html)
+    return
+  }
   w.document.open()
   w.document.write(html)
   w.document.close()
   w.focus()
   setTimeout(() => w.print(), 600)
+}
+
+/** the printable page inside the app: a full-screen frame with Print and Close */
+function showInApp(html: string) {
+  const ur = document.documentElement.lang === 'ur'
+  const box = document.createElement('div')
+  box.setAttribute('data-testid', 'print-overlay')
+  box.style.cssText = 'position:fixed;inset:0;z-index:60;background:#fff;display:flex;flex-direction:column'
+  const bar = document.createElement('div')
+  bar.style.cssText = 'display:flex;gap:8px;padding:8px;border-bottom:1px solid #ddd;justify-content:flex-end'
+  const btn = (text: string, onClick: () => void, main = false) => {
+    const b = document.createElement('button')
+    b.type = 'button'
+    b.textContent = text
+    b.style.cssText = `min-height:48px;padding:0 20px;border-radius:14px;font-weight:700;font-size:16px;border:1px solid #ccc;${main ? 'background:#0E1613;color:#fff;border-color:#0E1613' : 'background:#fff'}`
+    b.onclick = onClick
+    return b
+  }
+  const frame = document.createElement('iframe')
+  frame.style.cssText = 'flex:1;border:0;width:100%'
+  frame.srcdoc = html
+  bar.append(btn(ur ? 'پرنٹ' : 'Print', () => frame.contentWindow?.print(), true), btn(ur ? 'بند کریں' : 'Close', () => box.remove()))
+  box.append(bar, frame)
+  document.body.appendChild(box)
 }
 
 /** Download an authenticated file (CSV export) and save it with the server's filename. */

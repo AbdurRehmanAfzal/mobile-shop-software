@@ -60,7 +60,10 @@ test('device types: tablet with specs, used watch needs the lock check, device p
   await expect(page.getByRole('button', { name: 'Add', exact: true }).last()).toBeEnabled()
   await page.screenshot({ path: 'test-results/devtypes-watch.png', fullPage: true })
   await page.getByRole('button', { name: 'Add', exact: true }).last().click()
-  await page.getByRole('button', { name: 'Put in stock' }).click()
+  await page.getByTestId('purchase-review-open').click()
+  // owner 2026-11-09: every detail is shown once more and ticked before it is saved
+  await page.getByTestId('review-ok').check()
+  await page.getByTestId('purchase-save').click()
   await expect(page.getByText('Purchase saved')).toBeVisible()
 
   // 3. the next tablet of the same model fills itself from the library

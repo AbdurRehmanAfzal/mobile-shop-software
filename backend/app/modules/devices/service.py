@@ -690,3 +690,88 @@ def cancel_opening_stock(
     )
     db.commit()
     return get_device_out(db, shop_id, device.id)
+
+
+def correct_imei(
+    db: Session,
+    shop_id: uuid.UUID,
+    user_id: uuid.UUID,
+    device_id: uuid.UUID,
+    *,
+    imei1: str | None,
+    imei2: str | None,
+    clear_imei2: bool,
+    reason: str,
+) -> dict:
+    """Owner 2026-11-09 (ADR-056): an IMEI typed wrong when the phone was added. The unit keeps its
+    history and barcode; a `corrected` event records the old and new number and why."""
+    from app.modules.devices.schemas import clean_imei
+
+    device = get_device(db, shop_id, device_id)
+    has_sim = device.category == "phone" or bool(device.cellular)
+    if not has_sim:
+        raise ValidationFailed(
+            code="no_imei",
+            message_en="This device has no SIM, so no IMEI; change its serial number instead",
+            message_ur="اس ڈیوائس میں سم نہیں، اس لیے IMEI نہیں؛ اس کا سیریل نمبر بدلیں",
+        )
+    try:
+        new1 = clean_imei(imei1) if imei1 else device.imei1
+        new2 = None if clear_imei2 else (clean_imei(imei2) if imei2 else device.imei2)
+    except ValueError as exc:
+        raise ValidationFailed(
+            code="imei_invalid",
+            message_en="IMEI must be 15 digits",
+            message_ur="IMEI پندرہ ہندسوں کا ہونا چاہیے",
+        ) from exc
+    if new2 and new2 == new1:
+        raise ValidationFailed(
+            code="imei_same",
+            message_en="IMEI 1 and IMEI 2 cannot be the same",
+            message_ur="IMEI 1 اور IMEI 2 ایک جیسے نہیں ہو سکتے",
+        )
+    changes = {
+        k: (old, new)
+        for k, old, new in (("imei1", device.imei1, new1), ("imei2", device.imei2, new2))
+        if old != new
+    }
+    if not changes:
+        raise ValidationFailed(
+            code="nothing_changed",
+            message_en="The IMEI is the same as before",
+            message_ur="IMEI پہلے جیسا ہی ہے",
+        )
+    for _old, new in changes.values():
+        if not new:
+            continue
+        other = by_imei(db, shop_id, new)
+        if other is not None and other.id != device.id:
+            raise Conflict(
+                code="imei_exists",
+                message_en=f"IMEI {new} belongs to another phone in your shop",
+                message_ur=f"IMEI {new} آپ کی دکان کے کسی اور فون کا ہے",
+            )
+    for k, (_old, new) in changes.items():
+        setattr(device, k, new)
+    db.flush()
+    for k, (old, new) in changes.items():
+        apply_event(
+            db,
+            shop_id,
+            user_id,
+            device,
+            EventType.CORRECTED,
+            data={"field": k, "from": old, "to": new, "reason": reason},
+        )
+    record_audit(
+        db,
+        shop_id=shop_id,
+        user_id=user_id,
+        entity="device",
+        entity_id=device.id,
+        action="imei_corrected",
+        before={k: v[0] for k, v in changes.items()},
+        after={**{k: v[1] for k, v in changes.items()}, "reason": reason},
+    )
+    db.commit()
+    return get_device_out(db, shop_id, device.id)

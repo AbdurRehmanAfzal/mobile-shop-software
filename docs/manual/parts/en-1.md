@@ -311,6 +311,8 @@ On Home, tap **Add stock**. The first screen asks **Where is the phone coming fr
 
     Forgot something, like the colour? Tap **Edit** on that phone in the list, change it and tap **Save**. **Back** (or the phone's own back button) takes you to the first step with everything still filled in; **Next** brings you back to your phones.
 
+    The same works in **Sell**, **Exchange** and **Return**: **Back**, the phone's back button or a tap on the bar of an earlier step goes one step back and keeps everything. A form that pops up from below (like **Add device**) no longer closes when you tap beside it by mistake once something is filled in: tap **Close** to leave it.
+
 ![The Add device form](shot:purchase-device)
 
 When all the phones are in the list, finish the payment part on the same screen:
@@ -320,6 +322,7 @@ When all the phones are in the list, finish the payment part on the same screen:
 3. Tap **Discount, bill no.** if you need the extra boxes (see "Reference / slip no." below).
 4. Check the **Total**: Rs. 92,000.
 5. Tap **Put in stock**.
+6. **Check before saving** opens: the seller, every phone with its IMEI, memory, colour, condition, PTA, battery, cost and asking price, the total and how it was paid. If something is wrong, tap **Edit** on that phone. When all is right, tick **I have checked: every detail is right** and tap **Put in stock**.
 
 You see **Purchase saved**, the amount and the purchase number, for example `PUR-000001`. From here you can also tap **Print stickers for these phones** to print price stickers with a barcode.
 

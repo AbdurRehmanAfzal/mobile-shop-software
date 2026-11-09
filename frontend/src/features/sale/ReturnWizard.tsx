@@ -3,6 +3,7 @@
  *  starts on step two. Backed by POST /returns/sale (refund + kept may go together). */
 
 import { Banknote, BookOpen, Check, Home, Undo2, Wallet } from 'lucide-react'
+import { useStepUrl } from '@/lib/steps'
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
@@ -31,7 +32,8 @@ export default function ReturnWizard() {
   const nav = useNavigate()
   const [params] = useSearchParams()
   const { pick, ur, cls } = useLang()
-  const [step, setStep] = useState(0)
+  const [step, setStepRaw] = useState(0)
+  const { go: setStep, back } = useStepUrl(step, setStepRaw, 2)
   const [q, setQ] = useState('')
   const [invoiceId, setInvoiceId] = useState<string | undefined>(params.get('invoice') ?? undefined)
   const [selected, setSelected] = useState<string[]>([])
@@ -115,8 +117,8 @@ export default function ReturnWizard() {
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="counter.returnJob" help={<Help term="sale.returnPage" />} />
-      <Stepper steps={['counter.whatBack', 'counter.backHow', 'counter.doneTitle']} current={step} />
+      <PageHeader title="counter.returnJob" help={<Help term="sale.returnPage" />} onBack={back} />
+      <Stepper steps={['counter.whatBack', 'counter.backHow', 'counter.doneTitle']} current={step} onStep={step < 2 ? setStep : undefined} />
 
       {step === 0 ? (
         <div className="flex flex-col gap-3">

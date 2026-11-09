@@ -96,6 +96,16 @@ UR_HEADERS = {
     "Type": "قسم",
     "Verification": "تصدیق",
     "WhatsApp": "واٹس ایپ",
+    "Device": "ڈیوائس",
+    "Battery %": "بیٹری %",
+    "Battery cycles": "بیٹری سائیکل",
+    "Region code": "ریجن کوڈ",
+    "SIM": "سم",
+    "Grade": "گریڈ",
+    "RAM (GB)": "ریم (GB)",
+    "Serial": "سیریل",
+    "Days in shop": "دکان میں دن",
+    "Barcode": "بارکوڈ",
 }
 UR_TITLES = {
     "stock": "اسٹاک",
@@ -207,11 +217,128 @@ tr:nth-child(even) td {{ background: #FBFAF7; }}
     return Response(content=page, media_type="text/html; charset=utf-8")
 
 
+# owner 2026-11-09: the stock page downloads / shares what it shows: its filters, the fields the
+# shopkeeper picked (`cols`, in that order) and its order. The keys are the stock page's field keys.
+STOCK_COLS: dict[str, tuple[str, object]] = {
+    "name": ("Device", lambda d: f"{d['brand_name']} {d['model_name']}"),
+    "storage": (
+        "Storage",
+        lambda d: (
+            d["storage_name"]
+            if d["category"] != "watch"
+            else (f"{d['size_mm']}mm" if d["size_mm"] else None)
+        ),
+    ),
+    "colour": ("Colour", lambda d: d["colour_name"]),
+    "condition": ("Condition", lambda d: d["condition"]),
+    "pta": ("PTA", lambda d: d["pta_status"]),
+    "sim_time": ("SIM time (months)", lambda d: d["sim_time_months"]),
+    "battery": ("Battery %", lambda d: d["battery_health"]),
+    "cycles": ("Battery cycles", lambda d: d["battery_cycles"]),
+    "region": ("Region code", lambda d: d["region_code"]),
+    "sim": ("SIM", lambda d: d["sim_type"]),
+    "grade": ("Grade", lambda d: d["grade"]),
+    "ram": ("RAM (GB)", lambda d: d["ram_gb"]),
+    "imei": ("IMEI", lambda d: d["imei1"]),
+    "imei2": ("IMEI 2", lambda d: d["imei2"]),
+    "serial": ("Serial", lambda d: d["serial"]),
+    "barcode": ("Barcode", lambda d: d["barcode"]),
+    "days": ("Days in shop", lambda d: _days_in(d["last_event_at"])),
+    "cost": ("Cost", lambda d: d["cost_price"]),
+    "asking": ("Asking price", lambda d: d["asking_price"]),
+    "status": ("Status", lambda d: d["status"]),
+    "verification": ("Verification", lambda d: d["verification_status"]),
+}
+
+
+def _days_in(at) -> int | None:
+    if at is None:
+        return None
+    if at.tzinfo is None:
+        at = at.replace(tzinfo=dt.UTC)
+    return max(0, (dt.datetime.now(dt.UTC) - at).days)
+
+
+def _stock_view(
+    ctx,
+    db,
+    cols: str,
+    status: str | None,
+    q: str | None,
+    brand_id: uuid.UUID | None,
+    filters: dict,
+    sort: str | None,
+    desc: bool,
+) -> tuple[list[str], list[list]]:
+    from app.modules.devices import service as devices
+
+    keys = [k for k in cols.split(",") if k in STOCK_COLS]
+    if not ctx.can(Cap.VIEW_COST):
+        keys = [k for k in keys if k != "cost"]
+    keys = keys or ["name"]
+    found = devices.list_devices(
+        db,
+        ctx.shop_id,
+        status=status if status and status != "all" else None,
+        q=q or None,
+        brand_id=brand_id,
+        limit=5000,
+        **filters,
+    )
+    if sort in STOCK_COLS and (sort != "cost" or "cost" in keys):
+        get = STOCK_COLS[sort][1]
+        have = [d for d in found if get(d) is not None]
+        none = [d for d in found if get(d) is None]
+        found = sorted(have, key=get, reverse=desc) + none
+    elif sort == "oldest":
+        found = list(reversed(found))
+    return [STOCK_COLS[k][0] for k in keys], [[STOCK_COLS[k][1](d) for k in keys] for d in found]
+
+
 @router.get("/stock.csv")
 @router.get("/stock")
 def stock(
-    ctx: Ctx, db: DB, format: Fmt = "csv", lang: Lang = None, status: str | None = "in_stock"
+    ctx: Ctx,
+    db: DB,
+    format: Fmt = "csv",
+    lang: Lang = None,
+    status: str | None = "in_stock",
+    cols: str | None = None,
+    q: str | None = None,
+    brand_id: uuid.UUID | None = None,
+    condition: str | None = None,
+    pta_status: str | None = None,
+    category: str | None = None,
+    grade: str | None = None,
+    ram_gb: int | None = None,
+    price_min: Decimal | None = None,
+    price_max: Decimal | None = None,
+    lock_unchecked: bool = False,
+    sort: str | None = None,
+    desc: bool = False,
 ):
+    if cols:
+        header, rows = _stock_view(
+            ctx,
+            db,
+            cols,
+            status,
+            q,
+            brand_id,
+            {
+                "condition": condition,
+                "pta_status": pta_status,
+                "category": category,
+                "grade": grade,
+                "ram_gb": ram_gb,
+                "price_min": price_min,
+                "price_max": price_max,
+                "lock_unchecked": lock_unchecked,
+            },
+            sort,
+            desc,
+        )
+        return _file(format, ctx, db, lang, "stock", header, rows)
     cost = ctx.can(Cap.VIEW_COST)
     stmt = (
         select(Device, Brand.name, Model.name, Storage.name, Colour.name)

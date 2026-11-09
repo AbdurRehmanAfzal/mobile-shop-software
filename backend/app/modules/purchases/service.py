@@ -473,6 +473,106 @@ def void_purchase(
     return p
 
 
+def change_party(
+    db: Session,
+    shop_id: uuid.UUID,
+    ctx,
+    purchase_id: uuid.UUID,
+    party_id: uuid.UUID,
+    reason: str,
+) -> Purchase:
+    """Owner 2026-11-09 (ADR-056): the wrong dealer / customer was picked when the stock was added.
+    Nothing is erased: one correction group, dated like the purchase, moves the bill and what was
+    paid with it from the old person's khata to the new one's; each phone's history says who it was
+    and who it is now. Refused once money was paid against this bill later or a phone went back to
+    the dealer (those were made with the old person: undo them first)."""
+    from app.modules.payments.models import Payment
+
+    if not ctx.can(Cap.VOID):
+        raise Forbidden()
+    p = get_purchase(db, shop_id, purchase_id)
+    if p.status == PurchaseStatus.VOIDED:
+        raise Conflict(
+            code="already_voided",
+            message_en="This purchase is cancelled",
+            message_ur="یہ خریداری منسوخ ہو چکی ہے",
+        )
+    new = db.get(Party, party_id)
+    if new is None or new.shop_id != shop_id or not new.is_active:
+        raise NotFound(code="party_not_found")
+    if new.id == p.party_id:
+        raise ValidationFailed(
+            code="same_party",
+            message_en="This is already the person on the purchase",
+            message_ur="خریداری پر پہلے ہی یہی شخص ہے",
+        )
+    later = [
+        x
+        for x in db.scalars(
+            select(Payment).where(
+                Payment.shop_id == shop_id,
+                Payment.party_id == p.party_id,
+                Payment.status != "voided",
+            )
+        ).all()
+        if any(str(a.get("document_id")) == str(p.id) for a in (x.allocations or []))
+    ]
+    if later or p.returned_total > ZERO:
+        raise Conflict(
+            code="purchase_has_later_money",
+            message_en="Money was paid against this purchase later, or something went back to the seller. Undo that first, then change the person.",
+            message_ur="اس خریداری کے بعد اس کی ادائیگی ہو چکی ہے یا کچھ واپس ہو چکا ہے۔ پہلے وہ ختم کریں، پھر شخص بدلیں۔",
+        )
+    old_id = p.party_id
+    old = db.get(Party, old_id)
+    total, paid = money(p.total), money(p.paid)
+    posting = Posting(
+        document_type="purchase_party_change",
+        document_id=p.id,
+        memo=f"{p.no}: {old.name if old else ''} -> {new.name} ({reason})",
+        at=p.purchased_at or at_for(p.date),
+    )
+    if total > ZERO:
+        posting.debit(acc.party_account(old_id), total).credit(acc.party_account(new.id), total)
+    if paid > ZERO:
+        posting.debit(acc.party_account(new.id), paid).credit(acc.party_account(old_id), paid)
+    if posting.lines:
+        post(db, shop_id, ctx.id, posting)
+    p.party_id = new.id
+    p.updated_at = utcnow()
+    for ln in p.lines:
+        if ln.device_id:
+            d = db.get(Device, ln.device_id)
+            apply_event(
+                db,
+                shop_id,
+                ctx.id,
+                d,
+                EventType.CORRECTED,
+                document_type="purchase",
+                document_id=p.id,
+                data={
+                    "field": "seller",
+                    "from": old.name if old else None,
+                    "to": new.name,
+                    "reason": reason,
+                    "purchase_no": p.no,
+                },
+            )
+    record_audit(
+        db,
+        shop_id=shop_id,
+        user_id=ctx.id,
+        entity="purchase",
+        entity_id=p.id,
+        action="party_changed",
+        before={"party_id": str(old_id)},
+        after={"party_id": str(new.id), "reason": reason},
+    )
+    db.commit()
+    return p
+
+
 def _aware(value: datetime) -> datetime:
     return value if value.tzinfo else value.replace(tzinfo=UTC)
 

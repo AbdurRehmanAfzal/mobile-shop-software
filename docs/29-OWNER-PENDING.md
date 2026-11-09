@@ -146,6 +146,12 @@ Close the app fully and open it again first (or install the newest APK from the 
 
 **iPhone region code and SIM (2026-11-09, ADR-055)**: in Buy → Add device, choose Apple → an iPhone. Under Colour, the form asks for the **Region code** (tap LL/A) and the **SIM** type (tap Dual eSIM). Tap **New** to add a code that is not in the list. Save the device. Choose **Used** and fill **Battery health %** 91 and **Battery cycle count** 312. The stock line and the price sticker should show "LL/A · Dual eSIM · Battery 91% · 312 cycles".
 
+**Corrections and check before saving (2026-11-09, ADR-056)**:
+1. Add stock on udhaar. A **Check before saving** screen appears. Save stays grey until you tick it.
+2. On the phone's page, **Correct IMEI**: change one digit and give a reason. The history shows the old and the new IMEI.
+3. On the purchase (**More → Purchases**), **Change dealer / customer** to another person. The old person's khata is clear and the new one owes the amount.
+4. Pay something against a second purchase, then try to change its person: it is refused.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

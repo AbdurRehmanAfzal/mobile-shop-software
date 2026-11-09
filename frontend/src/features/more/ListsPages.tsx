@@ -6,7 +6,8 @@ import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import { Chip, Empty, ErrorText, KV, List, Loading, MoneyText, PageHeader, Row, Sheet, fmtDate, fmtDateTime } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useDocMutation, usePayments, usePurchase, usePurchases, useReturns } from '@/lib/queries'
-import type { Purchase, ReturnDoc } from '@/lib/types'
+import type { Party, Purchase, ReturnDoc } from '@/lib/types'
+import PartyPicker from '@/components/PartyPicker'
 
 export function PurchasesPage() {
   const nav = useNavigate()
@@ -37,6 +38,10 @@ export function PurchaseDetailPage() {
   const [reason, setReason] = useState('')
   const ret = useDocMutation<Record<string, unknown>, ReturnDoc>('POST', () => '/api/v1/returns/purchase')
   const voidM = useDocMutation<{ reason: string }, Purchase>('POST', () => `/api/v1/purchases/${id}/void`)
+  // owner 2026-11-09 (ADR-056): the wrong dealer / customer was picked
+  const [moving, setMoving] = useState(false)
+  const [to, setTo] = useState<Party | null>(null)
+  const move = useDocMutation<{ party_id: string; reason: string }, Purchase>('POST', () => `/api/v1/purchases/${id}/party`)
   if (isLoading || !p) return <Loading />
   const canManage = role === 'owner' || role === 'manager'
   return (
@@ -65,8 +70,18 @@ export function PurchaseDetailPage() {
         <div className="grid grid-cols-2 gap-2">
           <BiButton text="sale.return" size="md" variant="secondary" onClick={() => { setSelected(p.lines.filter((l) => !l.returned_at).map((l) => l.id)); setReturning(true) }} />
           {canManage ? <BiButton text="common.void" size="md" variant="danger" onClick={() => setVoiding(true)} /> : null}
+          {canManage ? <div className="col-span-2 flex items-center gap-1"><div className="flex-1"><BiButton text="purchase.fix.partyButton" size="md" variant="secondary" full onClick={() => { setTo(null); setReason(''); move.reset(); setMoving(true) }} data-testid="purchase-party-change" /></div><Help term="purchase.fixParty" size="sm" /></div> : null}
         </div>
       ) : null}
+      <Sheet open={moving} onClose={() => setMoving(false)} title="purchase.fix.partyTitle">
+        <div className="flex flex-col gap-3">
+          <BiLabel text="purchase.fix.partyHint" size="sm" tone="text-muted" />
+          <PartyPicker value={to} onChange={setTo} kind={p.kind === 'supplier' ? 'supplier' : p.kind === 'shop' ? 'shop' : 'customer'} label="purchase.fix.partyNew" />
+          <BiInput label="common.reason" value={reason} onChange={(e) => setReason(e.target.value)} maxLength={200} help={<Help term="purchase.fixReason" size="sm" />} />
+          <ErrorText error={move.error} />
+          <BiButton text="common.save" full loading={move.isPending} disabled={!to || to.id === p.party_id || reason.trim().length < 2} onClick={async () => { await move.mutateAsync({ party_id: to!.id, reason: reason.trim() }); setMoving(false) }} data-testid="purchase-party-save" />
+        </div>
+      </Sheet>
       <Sheet open={returning} onClose={() => setReturning(false)} title="sale.return">
         <div className="flex flex-col gap-3">
           {p.lines.filter((l) => !l.returned_at).map((l) => (

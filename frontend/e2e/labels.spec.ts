@@ -42,6 +42,8 @@ test('stickers: options sheet, print page with barcode, many at once, cost code 
   await page.screenshot({ path: 'test-results/label-sheet.png', fullPage: true })
   const [pop] = await Promise.all([page.waitForEvent('popup'), page.getByRole('button', { name: 'Print', exact: true }).click()])
   await pop.waitForLoadState()
+  // the tab opens at once and is filled when the stickers arrive
+  await expect.poll(() => pop.content(), { timeout: 10_000 }).toContain('class="label"')
   const html = await pop.content()
   expect(html).toContain('490154203237518')
   expect(html).toContain('Rs. 45,000')
@@ -66,6 +68,8 @@ test('stickers: options sheet, print page with barcode, many at once, cost code 
   await page.getByRole('button', { name: 'A4 sheet (65 per page)' }).click()
   const [pop2] = await Promise.all([page.waitForEvent('popup'), page.getByRole('button', { name: 'Print', exact: true }).click()])
   await pop2.waitForLoadState()
+  // the tab opens at once and is filled when the stickers arrive
+  await expect.poll(() => pop2.content(), { timeout: 10_000 }).toContain('class="label"')
   const html2 = await pop2.content()
   expect(html2).toContain('size:A4')
   expect(html2).toContain('356938035643809')

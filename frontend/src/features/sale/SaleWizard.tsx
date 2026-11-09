@@ -3,6 +3,7 @@
  *  (owner, 2026-10-27: hidden behind "more options" nobody found them); discount stays behind it. */
 
 import { Check, CirclePause, FileText, HandCoins, Headphones, Plus, Printer, Receipt, ShieldAlert, ShieldCheck, SlidersHorizontal, Smartphone, Trash2, TriangleAlert, UserCheck, UserRound, Watch } from 'lucide-react'
+import { useStepUrl } from '@/lib/steps'
 import { useEffect, useState } from 'react'
 import { clearDrafts, useDraft } from '@/lib/draft'
 import { useNavigate, useSearchParams } from 'react-router-dom'
@@ -98,7 +99,8 @@ export default function SaleWizard() {
   const role = useAuth((s) => s.me?.user.role)
   const has = useModules()
   const laptop = useLaptop()
-  const [step, setStep] = useDraft('sale.step', 0)
+  const [step, setStepRaw] = useDraft('sale.step', 0)
+  const { go: setStep, back } = useStepUrl(step, setStepRaw, 2)
   const [lines, setLines] = useDraft<Line[]>('sale.lines', [])
   const [misc, setMisc] = useDraft<Misc[]>('sale.misc', [])
   const [picking, setPicking] = useState(false)
@@ -298,8 +300,8 @@ export default function SaleWizard() {
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="counter.sell" help={<Help term="sale.page" />} />
-      <div className="lg:hidden"><Stepper steps={['counter.whichPhone', 'counter.howMuch', 'counter.doneTitle']} current={step} /></div>
+      <PageHeader title="counter.sell" help={<Help term="sale.page" />} onBack={back} />
+      <div className="lg:hidden"><Stepper steps={['counter.whichPhone', 'counter.howMuch', 'counter.doneTitle']} current={step} onStep={step < 2 ? setStep : undefined} /></div>
 
       {holdMsg?.k === 'held' ? <BiAlert text="hold.done" kind="success" /> : null}
       {scanNote ? (

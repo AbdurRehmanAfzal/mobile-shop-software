@@ -133,7 +133,8 @@
     "reason": "Reason",
     "void": "Cancel this bill",
     "today": "Today",
-    "close": "Close"
+    "close": "Close",
+    "sheetKeep": "Something is filled in here. Tap Close if you really want to leave."
   },
   "party": {
     "title": "People & khata",
@@ -259,7 +260,10 @@
       "barcode_assigned": "Barcode assigned",
       "label_printed": "Label printed",
       "transferred_out": "Sent to a branch",
-      "transferred_in": "Came from a branch"
+      "transferred_in": "Came from a branch",
+      "corrected": "Corrected",
+      "lock_checked": "Lock checked",
+      "reclassified": "Type changed"
     },
     "acc": {
       "box": "Box",
@@ -305,7 +309,30 @@
       "cost": "Cost",
       "asking": "Asking",
       "status": "Status",
-      "total": "Total ({{n}})"
+      "total": "Total ({{n}})",
+      "simTime": "SIM time",
+      "imei": "IMEI",
+      "imei2": "IMEI 2",
+      "serial": "Serial",
+      "barcode": "Barcode",
+      "verification": "ID check"
+    },
+    "fields": {
+      "button": "Fields",
+      "title": "Which details to show",
+      "hint": "Tick what you want to see. It applies to Cards, Table, Grid and List, and to Download / Share.",
+      "reset": "Back to default"
+    },
+    "fixImei": {
+      "button": "Correct IMEI",
+      "title": "Correct the IMEI",
+      "hint": "Typed an IMEI wrong when the phone was added? Type the right number. The history keeps the old number.",
+      "clear2": "This phone has no IMEI 2 (remove it)",
+      "field": {
+        "imei1": "IMEI 1",
+        "imei2": "IMEI 2",
+        "seller": "Bought from"
+      }
     }
   },
   "purchase": {
@@ -359,7 +386,26 @@
     "extraNote": "Freight note",
     "extraHint": "Spread over the lines and added to the item cost",
     "itemLabels": "Print item labels",
-    "editDevice": "Change phone"
+    "editDevice": "Change phone",
+    "review": {
+      "title": "Check before saving",
+      "hint": "Look at every detail once more. Tap Edit on a phone to change it.",
+      "ok": "I have checked: every detail is right",
+      "paidNow": "Paid now",
+      "method": {
+        "cash": "Cash",
+        "online": "Online",
+        "cheque": "Cheque",
+        "remittance": "From abroad",
+        "udhaar": "Udhaar (pay later)"
+      }
+    },
+    "fix": {
+      "partyButton": "Change dealer / customer",
+      "partyTitle": "Change who it was bought from",
+      "partyHint": "Picked the wrong person by mistake? The bill and what was paid with it move to the right person's khata. The phones' history keeps both names.",
+      "partyNew": "The right person"
+    }
   },
   "verify": {
     "title": "Verification",
@@ -4993,6 +5039,21 @@
         "title": "Scan CNIC",
         "body": "Take a photo of the front of the ID card: the app reads the number and name for you and keeps the photo as the CNIC front. Always check what it filled.",
         "example": "Photo of the card → \"35202-1234567-1, Ahmed Raza\" filled in; fix a digit if it misread."
+      },
+      "review": {
+        "title": "Check before saving",
+        "body": "Before the stock is saved, every phone is shown once more with its IMEI, memory, colour, condition, PTA, battery, cost and asking price, with the total and how it was paid. Tick \"I have checked\" and then save. A mistake found here: tap Edit on that phone.",
+        "example": "You see IMEI ...809 but the box says ...890: Edit, fix it, then save."
+      },
+      "fixParty": {
+        "title": "Change dealer / customer",
+        "body": "If the wrong dealer or customer was picked when the stock was added, the owner or manager can change it here. Nothing is deleted: a correction moves the bill and the money paid with it from one khata to the other, and each phone's history shows the old and new name with the reason. It is not possible once money was paid later against this bill or something was returned; undo that first.",
+        "example": "Bought from Ali Mobiles but saved under Ali Traders: Change dealer / customer, pick Ali Mobiles, reason \"picked wrong name\"."
+      },
+      "fixReason": {
+        "title": "Reason",
+        "body": "Why it is changed. It shows in the phone's history.",
+        "example": "Picked the wrong name."
       }
     },
     "label": {
@@ -5338,6 +5399,21 @@
         "title": "How to show the stock",
         "body": "Cards: big cards with a Sell button. Table: like Excel, one row per phone and a column for each detail (storage, colour, condition, PTA, battery, IMEI, days in shop, cost, asking price); tap a column heading to sort by it, tap again to reverse; the last row adds up cost and asking price. Grid: small tiles, many on one screen. List: one short line per phone. Your choice is remembered on this phone or computer.",
         "example": "To find the phones lying longest in the shop: Table → tap \"Days\" twice."
+      },
+      "fields": {
+        "title": "Which details to show",
+        "body": "Pick the details you want to see for each phone: memory, colour, condition, PTA, battery, region code, IMEI, days in shop, cost, asking price and more. The same choice is used in Cards, Table, Grid and List, and Download / Share make the file with exactly these columns, the filters you set and the same order. Cost shows only for the owner and manager. Your choice is remembered on this phone or computer.",
+        "example": "For a dealer's price list: tick only Memory, Colour, PTA and Asking, then Share → Excel."
+      },
+      "fixImei": {
+        "title": "Correct the IMEI",
+        "body": "For an IMEI typed wrong when the phone was added. Only the owner or manager can do it, with a reason. The number must be 15 digits and not belong to another phone in the shop. The phone keeps its history and barcode; the history shows the old and the new number.",
+        "example": "Box says 356938035643809 but 356938035643890 was saved: Correct IMEI, type the right one, reason \"typing mistake\"."
+      },
+      "fixImeiReason": {
+        "title": "Reason",
+        "body": "Why the IMEI is changed. It shows in the phone's history.",
+        "example": "Typing mistake."
       }
     },
     "loan": {

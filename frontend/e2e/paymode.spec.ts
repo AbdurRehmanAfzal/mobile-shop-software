@@ -89,6 +89,9 @@ test('sale paid online and from abroad, purchase by cheque', async ({ page }) =>
   await page.getByRole('button', { name: 'Cheque', exact: true }).click()
   await page.getByRole('button', { name: 'HBL', exact: true }).click()
   await page.getByLabel('Cheque no.').fill('00123456')
-  await page.getByRole('button', { name: 'Put in stock' }).click()
+  await page.getByTestId('purchase-review-open').click()
+  // owner 2026-11-09: every detail is shown once more and ticked before it is saved
+  await page.getByTestId('review-ok').check()
+  await page.getByTestId('purchase-save').click()
   await expect(page.getByText('Purchase saved')).toBeVisible()
 })

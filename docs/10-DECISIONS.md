@@ -362,6 +362,20 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-056 · 2026-11-09 · Accepted · A wrong IMEI or seller is corrected, never erased; stock is checked before it is saved
+**Context**: in testing the owner found no way to put right an IMEI typed wrong, or the wrong dealer / customer picked, once the stock was saved, and asked for a final check before saving.
+**Decision**:
+- `POST /devices/{id}/correct-imei` (owner / manager, `Cap.VOID`, reason required):
+  - IMEI 1 / IMEI 2 must be 15 digits, unique in the shop and not equal to each other; IMEI 2 can be removed.
+  - The barcode and the history stay.
+  - A new status-neutral event `corrected` (`{field, from, to, reason}`) is written per changed number, plus an audit row.
+- `POST /purchases/{id}/party` (owner / manager, reason required): a new group `purchase_party_change`, dated like the purchase, moves the bill total and the amount paid with it from the old person's account to the new one's (debit old / credit new for the total, the reverse for the paid part). Cash is untouched.
+  - `purchase.party_id` changes.
+  - Each phone gets a `corrected` event (`field = seller`) and an audit row is written.
+  - Refused when a later payment is allocated to the bill or anything was returned on it (those were made with the old person).
+- The Add stock wizard shows every detail once more ("Check before saving"). Save stays disabled until "I have checked" is ticked; Edit on a phone goes back to its sheet.
+**Consequences**: older readers ignore the unknown event type. Sales and other documents keep the IMEI as printed at the time.
+
 ## ADR-055 · 2026-11-09 · Accepted · An Apple unit's region code and SIM setup are per-unit fields with shop-added values
 **Context**: shopkeepers buy and sell iPhones by their region code (the letters after the part number, e.g. MLPF3LL/A → LL/A) and SIM setup (US iPhones from the 14 have no SIM tray: dual eSIM; most others physical + eSIM; China / Hong Kong two physical SIMs). The owner asked for both, with "New" for values not in the list.
 **Decision**:

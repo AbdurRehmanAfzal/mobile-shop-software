@@ -282,6 +282,33 @@ def update_device(device_id: uuid.UUID, data: DeviceUpdate, ctx: Transact, db: D
     return _hide_cost(ctx, service.update_device(db, ctx.shop_id, ctx, device_id, data))
 
 
+class ImeiFixIn(BaseModel):
+    imei1: str | None = Field(default=None, max_length=30)
+    imei2: str | None = Field(default=None, max_length=30)
+    clear_imei2: bool = False
+    reason: str = Field(min_length=2, max_length=200)
+
+
+@router.post("/{device_id}/correct-imei", response_model=DeviceOut)
+def correct_imei(
+    device_id: uuid.UUID,
+    data: ImeiFixIn,
+    ctx: Annotated[Ctx, Depends(require_cap(Cap.VOID))],
+    db: DB,
+):
+    """owner / manager: put right an IMEI typed wrong (ADR-056); the history keeps the old one"""
+    return service.correct_imei(
+        db,
+        ctx.shop_id,
+        ctx.id,
+        device_id,
+        imei1=data.imei1,
+        imei2=data.imei2,
+        clear_imei2=data.clear_imei2,
+        reason=data.reason.strip(),
+    )
+
+
 @router.put("/{device_id}/accessories", response_model=list[AccessoryItemOut])
 def set_accessories(device_id: uuid.UUID, items: list[AccessoryItemIn], ctx: Transact, db: DB):
     return service.set_accessories(db, ctx.shop_id, ctx.id, device_id, items)
