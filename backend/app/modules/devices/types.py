@@ -393,8 +393,6 @@ def reclassify_apply(
             d.imei2 = None
         if to_category != "watch":
             d.size_mm = None
-        if to_category == "phone":
-            d.battery_health = None
         if not d.cellular and to_category != "phone":
             d.pta_status = "unknown"
             d.sim_time_months = None

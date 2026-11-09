@@ -300,7 +300,9 @@ On Home, tap **Add stock**. The first screen asks **Where is the phone coming fr
 10. **Condition**: tap **Box pack**. The other choices are **Open box**, **Used** and **Patched** (patched asks for **Patch details**).
 11. **PTA status**: tap **PTA approved**. For **Non-PTA** and **JV** the app also asks **SIM time (months)**.
 12. **Cost price**: type `92000`, what you paid.
-13. **Asking price**: type `100000`, what you want to sell it for.
+13. **Asking price (optional)**: type `100000`, what you want to sell it for. Not decided yet? Leave it empty and set it later from the phone's page (**Change price**).
+
+    For an **Open box**, **Used** or **Patched** phone the form also asks **Battery health %** (iPhone: Settings → Battery → Battery Health). Leave it empty if the phone does not show it.
 14. **Warranty (months)**: a dealer phone usually starts at 12.
 15. **What came with the phone?** For Box, Charger, Cable, Earphones and AirPods choose **No**, **Got it** or **Later**. Here: Box **Got it**, Cable **Got it**, Charger **Later**, and pick the date in **When will they give it?**
 16. Tap **Add**. The phone appears in the list. Tap **Add device** again for the next phone.
@@ -403,7 +405,7 @@ Tablets and smart watches are tracked one by one, just like phones, each with it
 | Serial number | Not needed | Needed without a SIM | Needed without a SIM |
 | PTA | PTA approved, Non-PTA, JV | Only with a SIM, no JV | Only with a SIM, no JV |
 | Size | Storage | Storage | **Case size** (38 to 49 mm) |
-| Battery health % | Not asked | For open box or used | For open box or used |
+| Battery health % | For open box, used or patched | For open box or used | For open box or used |
 | What came with it | Box, charger, cable, earphones, AirPods | Box, charger, cable, pen / stylus, keyboard cover | Box, charger, extra strap |
 
 Without a SIM there is no IMEI, so the **Serial number** (on the box, or in Settings → About on the device) is used for searching and shown like an IMEI.

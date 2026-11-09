@@ -4572,8 +4572,8 @@
       },
       "battery": {
         "title": "Battery health %",
-        "body": "How strong the battery still is compared with new (100%). Find it in Settings → Battery. Leave empty if the device does not show it.",
-        "example": "Used iPad 9th gen showing 86% → write 86. Below 80% buyers usually ask for less."
+        "body": "How strong the battery still is compared with new (100%). iPhone: Settings → Battery → Battery Health. iPad / watch: Settings → Battery. Many Android phones do not show it; then leave it empty.",
+        "example": "Used iPhone 12 showing 84% → write 84. Below 80% buyers usually ask for less."
       },
       "pta": {
         "title": "PTA status",
@@ -7957,7 +7957,9 @@
     "libraryHint": "Every unit you save teaches the library its model's specs; import a CSV (brand, model, category, model_number, os, chipset, display_in, ram_gb…).",
     "importCsv": "Import CSV",
     "imported": "Imported",
-    "unitCost": "Cost of this unit"
+    "unitCost": "Cost of this unit",
+    "askingOpt": "Asking price (optional)",
+    "askingOptHint": "Leave empty if not decided; set it later from the phone's page."
   },
   "remind": {
     "title": "Udhaar reminders",

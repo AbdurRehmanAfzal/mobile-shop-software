@@ -237,7 +237,7 @@ export default function DeviceDetailPage() {
                 warranty_months: Number(x.warranty_months || 0),
                 patch_details: x.patch_details || null,
                 ...(x.category === 'watch' ? { size_mm: x.size_mm ? Number(x.size_mm) : null } : {}),
-                ...(x.category !== 'phone' ? { battery_health: x.battery_health ? Number(x.battery_health) : null } : {}),
+                battery_health: x.battery_health ? Number(x.battery_health) : null,
                 grade: x.condition !== 'box_pack' && x.grade ? x.grade : null,
                 ram_gb: x.category !== 'watch' && x.ram_gb ? Number(x.ram_gb) : null,
                 warranty_by: x.warranty_by || null,

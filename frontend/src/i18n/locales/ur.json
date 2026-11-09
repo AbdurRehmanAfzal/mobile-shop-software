@@ -4572,8 +4572,8 @@
       },
       "battery": {
         "title": "بیٹری ہیلتھ %",
-        "body": "نئی (100%) کے مقابلے میں بیٹری کتنی مضبوط ہے۔ Settings → Battery میں دیکھیں۔ اگر ڈیوائس نہ دکھائے تو خالی چھوڑ دیں۔",
-        "example": "پرانا iPad 9th gen پر 86% → 86 لکھیں۔ 80% سے کم ہو تو گاہک کم دام دیتا ہے۔"
+        "body": "نئی (100%) کے مقابلے میں بیٹری کتنی مضبوط ہے۔ iPhone: Settings → Battery → Battery Health۔ iPad / واچ: Settings → Battery۔ بہت سے Android فون یہ نہیں دکھاتے؛ تب خالی چھوڑ دیں۔",
+        "example": "پرانا iPhone 12 پر 84% → 84 لکھیں۔ 80% سے کم ہو تو گاہک کم دام دیتا ہے۔"
       },
       "pta": {
         "title": "PTA اسٹیٹس",
@@ -7957,7 +7957,9 @@
     "libraryHint": "ہر محفوظ یونٹ لائبریری کو اس ماڈل کی خصوصیات سکھاتا ہے؛ CSV درآمد کریں (brand, model, category, model_number, os, chipset, display_in, ram_gb…)۔",
     "importCsv": "CSV درآمد",
     "imported": "درآمد ہو گیا",
-    "unitCost": "اس یونٹ کی لاگت"
+    "unitCost": "اس یونٹ کی لاگت",
+    "askingOpt": "فروخت کی قیمت (اختیاری)",
+    "askingOptHint": "ابھی طے نہیں تو خالی چھوڑ دیں؛ بعد میں فون کے صفحے سے لکھ دیں۔"
   },
   "remind": {
     "title": "ادھار کی یاد دہانی",

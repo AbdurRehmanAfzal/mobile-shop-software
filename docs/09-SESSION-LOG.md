@@ -1003,3 +1003,10 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - Docs: ADR-054, super admin manual "Deleting a customer" (en / roman), owner pending (head, manual test).
 **Verified**: `tests/test_shop_bin.py` (2) and the full backend suite; ruff; tsc; Playwright `shop-bin.spec` (new) and `fee-credit.spec`; screenshot of the delete confirmation looked at.
 **Next**: owner merges PR #38, then this one; owner tries it on a test shop (docs/29 D).
+
+### Same day — asking price optional, battery health for phones
+**Owner**: "asking price stock purchase krtay optional honi chye r battery health ki field be add kr do".
+- The asking price was already optional in the API and the form, but nothing said so; the label is now **Asking price (optional)** with the hint "Leave empty if not decided; set it later from the phone's page" (en / ur / roman).
+- **Battery health %** (the existing `devices.battery_health`, 1–100) is now asked for phones too when open box / used / patched, saved on purchase, opening stock and edit; a reclassification to phone no longer clears it. It already shows in the stock line ("Battery 84%") and on price stickers. Help text names where to find it on an iPhone.
+- User manual ch. 6 (step 13 and the phone / tablet / watch table) in three languages; PDFs rebuilt.
+**Verified**: new `test_phone_bought_without_asking_price_keeps_its_battery_health`; `test_purchases`, `test_device_category`, `test_device_types`; tsc; Playwright `add-device`, `device-types`, `counter` (13 passed); screenshot of the phone form looked at.

@@ -4572,8 +4572,8 @@
       },
       "battery": {
         "title": "Battery health %",
-        "body": "Nayi (100%) ke muqable mein battery kitni mazboot hai. Settings → Battery mein dekhen. Agar device na dikhaye to khali chhor den.",
-        "example": "Purana iPad 9th gen par 86% → 86 likhen. 80% se kam ho to customer kam daam deta hai."
+        "body": "Nayi (100%) ke muqable mein battery kitni mazboot hai. iPhone: Settings → Battery → Battery Health. iPad / watch: Settings → Battery. Bohat se Android phone yeh nahi dikhate; tab khali chhor dein.",
+        "example": "Purana iPhone 12 par 84% → 84 likhen. 80% se kam ho to customer kam daam deta hai."
       },
       "pta": {
         "title": "PTA status",
@@ -7957,7 +7957,9 @@
     "libraryHint": "Har save unit library ko model ki specs sikhata hai; CSV import karein (brand, model, category, model_number, os, chipset, display_in, ram_gb…).",
     "importCsv": "CSV import",
     "imported": "Import ho gaya",
-    "unitCost": "Is unit ki cost"
+    "unitCost": "Is unit ki cost",
+    "askingOpt": "Bechne ki qeemat (optional)",
+    "askingOptHint": "Abhi tay nahi to khali chhor dein; baad mein phone ke page se likh dein."
   },
   "remind": {
     "title": "Udhaar ki yaad dahani",
