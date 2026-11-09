@@ -4833,6 +4833,16 @@
           "body": "The year the model came out. Older models sell for less.",
           "example": "iPhone 13: 2021."
         }
+      },
+      "region": {
+        "title": "Region code",
+        "body": "The letters after the part number tell which country the iPhone was made for. Find it in Settings → General → About → Model Number (tap it once if it shows a code like A2633): MLPF3LL/A → LL/A. LL/A = USA, ZA/A = Singapore / Hong Kong, ZP/A = Hong Kong, CH/A = China, J/A = Japan, B/A = UK, AE/A = UAE, HN/A = India, X/A = Australia, C/A = Canada, KH/A = Korea. Not in the list? Tap New and type it.",
+        "example": "A US iPhone 14 Pro: Model Number MQ0D3LL/A → tap LL/A."
+      },
+      "simType": {
+        "title": "SIM",
+        "body": "How the phone takes SIMs. US iPhones from the 14 onwards have no SIM tray (Dual eSIM). Most others take one physical SIM and an eSIM. China and Hong Kong models take two physical SIMs. Check the side of the phone for a SIM tray, and Settings → Mobile Data for eSIM. Not in the list? Tap New and type it.",
+        "example": "LL/A iPhone 15 with no SIM tray → Dual eSIM."
       }
     },
     "purchase": {
@@ -7959,7 +7969,18 @@
     "imported": "Imported",
     "unitCost": "Cost of this unit",
     "askingOpt": "Asking price (optional)",
-    "askingOptHint": "Leave empty if not decided; set it later from the phone's page."
+    "askingOptHint": "Leave empty if not decided; set it later from the phone's page.",
+    "region": "Region code",
+    "regionPh": "e.g. LL/A",
+    "simTypeLabel": "SIM",
+    "simTypePh": "e.g. Physical + 2 eSIM",
+    "newOption": "New",
+    "simType": {
+      "physical_esim": "Physical + eSIM",
+      "dual_esim": "Dual eSIM",
+      "dual_physical": "Dual physical SIM",
+      "physical": "Physical SIM only"
+    }
   },
   "remind": {
     "title": "Udhaar reminders",

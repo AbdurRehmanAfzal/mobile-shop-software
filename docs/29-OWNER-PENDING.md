@@ -50,7 +50,7 @@ docker compose --env-file .env exec backend python -m app.modules.plan.renewal k
 docker compose --env-file .env exec backend python -m app.modules.barcodes.backfill
 
 # 3. check the database is on the latest version (migrations run by themselves when the backend
-#    starts; this only confirms it). Expected: c5e7a9b1d3f6 (head)
+#    starts; this only confirms it). Expected: d7f9b1c3e5a8 (head)
 docker compose --env-file .env exec backend alembic current
 ```
 
@@ -58,7 +58,7 @@ docker compose --env-file .env exec backend alembic current
 |---|---|---|
 | [ ] | keygen (1) | without it Business → Keys and "Renewal code" fail with "RENEWAL_PRIVATE_KEY is not set" |
 | [ ] | barcode backfill (2) | old phones and items get a barcode; the button Settings → Barcode settings → "Barcodes for old stock" does the same per shop |
-| [ ] | `alembic current` (3) | confirms migrations through `b3d5f7a9c1e4` (barcodes, accessories, tablets / watches, provider console, business profile, len-den, len-den return dates, repair labs, … , fees given on credit, deleted customers) |
+| [ ] | `alembic current` (3) | confirms migrations through `b3d5f7a9c1e4` (barcodes, accessories, tablets / watches, provider console, business profile, len-den, len-den return dates, repair labs, … , fees given on credit, deleted customers, iPhone region / SIM) |
 
 Not needed any more: running `alembic upgrade head` by hand (the backend image does it on start);
 the accessories "Opening stock" batches (made by the migration).
@@ -143,6 +143,8 @@ Close the app fully and open it again first (or install the newest APK from the 
 **Package on credit (2026-11-09, ADR-053)** — in Super admin open a test shop, "Give the package now, fee later": 2 months, check the amount, a note, "Extend on credit". Log in as that shop's owner: More → Software fees shows "Fee still to pay … Not paid", the fee invoice, and no note. Report Rs. 1,000, approve it: "Part paid", the package date does not move.
 
 **Delete a customer (2026-11-09, ADR-054)** — in Super admin open a test shop, scroll to "Delete this customer", Delete shop, type its name, a reason, Delete. Try to log in as that shop's owner: "This shop has been closed". The shop is gone from the list and shows under the "Deleted" filter; open it, "Bring it back", and log in again: everything is there.
+
+**iPhone region code and SIM (2026-11-09, ADR-055)**: in Buy → Add device, choose Apple → an iPhone. Under Colour, the form asks for the **Region code** (tap LL/A) and the **SIM** type (tap Dual eSIM). Tap **New** to add a code that is not in the list. Save the device. The stock line and the price sticker should show "LL/A · Dual eSIM".
 
 ## E. Decisions waiting for you
 

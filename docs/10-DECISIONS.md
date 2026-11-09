@@ -362,6 +362,15 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-055 · 2026-11-09 · Accepted · An Apple unit's region code and SIM setup are per-unit fields with shop-added values
+**Context**: shopkeepers buy and sell iPhones by their region code (the letters after the part number, e.g. MLPF3LL/A → LL/A) and SIM setup (US iPhones from the 14 have no SIM tray: dual eSIM; most others physical + eSIM; China / Hong Kong two physical SIMs). The owner asked for both, with "New" for values not in the list.
+**Decision**:
+- `devices.region_code` (String 12, kept in capitals) and `devices.sim_type` (String 30: a key `physical_esim | dual_esim | dual_physical | physical`, or the shop's own words). Migration `d7f9b1c3e5a8`, additive and nullable.
+- Presets live in `devices/types.py` (`REGION_CODES`, `SIM_TYPES`). Values the shop added are not stored in settings. `GET /devices/options` derives them from what the shop's devices already use, so a new value is offered again from then on.
+- The form asks both only for an Apple device (brand Apple, or a model starting iPhone / iPad / Apple watch). The SIM row only shows on a unit that takes a SIM. Neither is required.
+- They show in the stock line, on the device page and on the price sticker (English short form).
+**Consequences**: there is no stock filter by region yet, and the bulk Excel import / export does not carry these two columns yet.
+
 ## ADR-054 · 2026-11-09 · Accepted · Deleting a customer moves it to the bin; nothing is erased
 **Context**: the owner asked for a "delete shop" option. A shop's bills, khata, ledger and device events are append-only and tied together; erasing them would break the project's rules and could not be undone after a mistake.
 **Decision** (owner chose "bin" and "super admin, whole customer"):

@@ -97,6 +97,8 @@ export interface Device {
   lock_checked_at?: string | null
   lock_ok?: boolean
   battery_health?: number | null
+  region_code?: string | null
+  sim_type?: string | null
   brand_id: UUID
   brand_name: string
   model_id: UUID

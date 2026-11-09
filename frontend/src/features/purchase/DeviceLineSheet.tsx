@@ -25,6 +25,7 @@ import { LockChecksEditor, SpecsEditor, type LockChecks, type Specs } from '@/fe
 import type { AccessoryItem, Brand, Colour, DeviceCategory, DeviceCondition, Model, PtaStatus, Storage } from '@/lib/types'
 import { Smartphone, Tablet, Watch } from 'lucide-react'
 import QuickAdd from '@/features/catalogue/QuickAdd'
+import AppleVariant, { isApple } from './AppleVariant'
 
 export interface DeviceLineDraft {
   key: string
@@ -60,6 +61,9 @@ export interface DeviceLineDraft {
   ram_gb?: string
   warranty_by?: '' | 'shop' | 'supplier' | 'brand'
   model_number?: string
+  /** owner 2026-11-09 (ADR-055): an Apple unit's region code and SIM setup */
+  region_code?: string
+  sim_type?: string
   specs?: Specs
   lock_checks?: LockChecks
   lock_checked?: boolean
@@ -80,6 +84,8 @@ export function emptyDraft(imei = '', kind: 'supplier' | 'walk_in' | 'shop' | 't
     ram_gb: '',
     warranty_by: '',
     model_number: '',
+    region_code: '',
+    sim_type: '',
     specs: {},
     lock_checks: {},
     lock_checked: false,
@@ -131,6 +137,8 @@ export function draftToApi(d: DeviceLineDraft) {
       ram_gb: d.category !== 'watch' && d.ram_gb ? Number(d.ram_gb) : null,
       warranty_by: d.warranty_by || null,
       model_number: d.model_number || null,
+      region_code: isApple(d.brand_name, d.model_name) ? d.region_code || null : null,
+      sim_type: isApple(d.brand_name, d.model_name) && sim ? d.sim_type || null : null,
       specs: d.specs && Object.keys(d.specs).length ? d.specs : null,
       lock_checks: d.condition !== 'box_pack' && d.lock_checks && Object.keys(d.lock_checks).length ? d.lock_checks : null,
       lock_checked: d.condition !== 'box_pack' ? !!d.lock_checked : false,
@@ -150,7 +158,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
   const [more, setMore] = useState(false)
   const [fromLibrary, setFromLibrary] = useState(false)
   const nav = useNavigate()
-  const { data: dopts } = useGet<{ grades: string[]; require_lock_check: boolean }>(['device-options'], '/api/v1/devices/options')
+  const { data: dopts } = useGet<{ grades: string[]; require_lock_check: boolean; region_codes?: string[]; sim_types?: string[] }>(['device-options'], '/api/v1/devices/options')
   const set = <K extends keyof DeviceLineDraft>(k: K, v: DeviceLineDraft[K]) => setD((x) => ({ ...x, [k]: v }))
   const imeiDigits = toLatinDigits(d.imei1).replace(/\D/g, '')
   const { data: lookup } = useImeiLookup(edit ? '' : imeiDigits)
@@ -366,6 +374,10 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
           </div>
         </div>
       </div>
+
+      {isApple(d.brand_name, d.model_name) ? (
+        <AppleVariant region={d.region_code ?? ''} sim={d.sim_type ?? ''} showSim={sim} regionOptions={dopts?.region_codes} simOptions={dopts?.sim_types} onRegion={(v) => set('region_code', v)} onSim={(v) => set('sim_type', v)} />
+      ) : null}
 
       <span className="flex items-center gap-1"><BiLabel text="stock.conditionShort" size="md" tone="text-muted" /><Help term="device.condition" size="sm" /></span>
       <BiSegmented<DeviceCondition> value={d.condition} onChange={(v) => set('condition', v)} options={[{ value: 'box_pack', text: 'stock.condition.box_pack' }, { value: 'open_box', text: 'stock.condition.open_box' }, { value: 'used', text: 'stock.condition.used' }, ...(phone ? [{ value: 'patched' as const, text: 'stock.condition.patched' }] : [])]} />

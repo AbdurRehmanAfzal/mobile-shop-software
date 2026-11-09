@@ -16,6 +16,7 @@ import { LockChecksEditor, lockState, specRows, type LockChecks } from './Device
 import type { DeviceCategory } from '@/lib/types'
 import PriceHint from '@/components/PriceHint'
 import UnitMoney from './UnitMoney'
+import { isApple } from '@/features/purchase/AppleVariant'
 
 
 function toDraft(d: DeviceDetail): DeviceLineDraft {
@@ -42,6 +43,8 @@ function toDraft(d: DeviceDetail): DeviceLineDraft {
     ram_gb: d.ram_gb ? String(d.ram_gb) : '',
     warranty_by: d.warranty_by ?? '',
     specs: d.specs ?? {},
+    region_code: d.region_code ?? '',
+    sim_type: d.sim_type ?? '',
   }
 }
 
@@ -241,6 +244,8 @@ export default function DeviceDetailPage() {
                 grade: x.condition !== 'box_pack' && x.grade ? x.grade : null,
                 ram_gb: x.category !== 'watch' && x.ram_gb ? Number(x.ram_gb) : null,
                 warranty_by: x.warranty_by || null,
+                region_code: isApple(x.brand_name, x.model_name) ? x.region_code || null : null,
+                sim_type: isApple(x.brand_name, x.model_name) && (x.category === 'phone' || x.cellular) ? x.sim_type || null : null,
                 specs: x.specs && Object.keys(x.specs).length ? x.specs : null,
               })
               await inv('devices', 'device', 'history')

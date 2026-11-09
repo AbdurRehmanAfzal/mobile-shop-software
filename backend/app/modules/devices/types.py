@@ -21,6 +21,20 @@ from app.modules.ledger.service import money
 
 CATEGORIES = ("phone", "tablet", "watch")
 GRADES = ("a", "b", "refurbished", "copy")
+# owner 2026-11-09 (ADR-055): an Apple unit's region code (the letters after the part number in
+# Settings → General → About, e.g. MLPF3LL/A → LL/A) and its SIM setup. The shop may add its own.
+REGION_CODES = ("LL/A", "ZA/A", "ZP/A", "CH/A", "J/A", "B/A", "AE/A", "HN/A", "X/A", "C/A", "KH/A")
+SIM_TYPES = ("physical_esim", "dual_esim", "dual_physical", "physical")
+
+
+def clean_variant(v: str | None) -> str | None:
+    """trimmed, single spaces; region codes are kept in capitals (ll/a → LL/A)"""
+    v = " ".join((v or "").split())
+    if not v:
+        return None
+    return v if v in SIM_TYPES else (v.upper() if len(v) <= 6 and "/" in v else v)
+
+
 LOCK_KEYS = ("activation", "frp", "account", "paired", "carrier")
 LOCK_VALUES = ("cleared", "not_cleared", "na")
 DEFAULT_PREFS = {"grades": list(GRADES), "require_lock_check": False}

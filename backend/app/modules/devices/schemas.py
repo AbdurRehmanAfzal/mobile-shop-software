@@ -78,6 +78,8 @@ class DeviceIdentity(BaseModel):
     cellular: bool | None = None
     size_mm: int | None = Field(default=None, ge=20, le=60)  # a watch's case
     battery_health: int | None = Field(default=None, ge=1, le=100)
+    region_code: str | None = Field(default=None, max_length=12)  # ADR-055, e.g. LL/A
+    sim_type: str | None = Field(default=None, max_length=30)  # ADR-055, e.g. physical_esim
     imei1: str | None = None
     imei2: str | None = None
     serial: str | None = Field(default=None, max_length=60)
@@ -107,6 +109,13 @@ class DeviceIdentity(BaseModel):
     lock_checks: dict[str, str] | None = None
     lock_checked: bool = False
     model_number: str | None = Field(default=None, max_length=40)
+
+    @field_validator("region_code", "sim_type")
+    @classmethod
+    def _variant(cls, v: str | None) -> str | None:
+        from app.modules.devices.types import clean_variant
+
+        return clean_variant(v)
 
     @field_validator("specs")
     @classmethod
@@ -202,6 +211,8 @@ class DeviceUpdate(BaseModel):
     cellular: bool | None = None
     size_mm: int | None = Field(default=None, ge=20, le=60)
     battery_health: int | None = Field(default=None, ge=1, le=100)
+    region_code: str | None = Field(default=None, max_length=12)  # ADR-055, e.g. LL/A
+    sim_type: str | None = Field(default=None, max_length=30)  # ADR-055, e.g. physical_esim
     brand_id: uuid.UUID | None = None
     model_id: uuid.UUID | None = None
     imei2: str | None = None
@@ -221,6 +232,13 @@ class DeviceUpdate(BaseModel):
     ram_gb: int | None = Field(default=None, ge=1, le=64)
     warranty_by: Literal["shop", "supplier", "brand"] | None = None
     specs: dict | None = None
+
+    @field_validator("region_code", "sim_type")
+    @classmethod
+    def _variant(cls, v: str | None) -> str | None:
+        from app.modules.devices.types import clean_variant
+
+        return clean_variant(v)
 
     @field_validator("specs")
     @classmethod
@@ -276,6 +294,8 @@ class DeviceOut(BaseModel):
     cellular: bool | None = None
     size_mm: int | None = None
     battery_health: int | None = None
+    region_code: str | None = None
+    sim_type: str | None = None
     grade: str | None = None
     ram_gb: int | None = None
     warranty_by: str | None = None

@@ -4833,6 +4833,16 @@
           "body": "Model kis saal aaya. Purane model kam mein bikte hain.",
           "example": "iPhone 13: 2021."
         }
+      },
+      "region": {
+        "title": "Region code",
+        "body": "Part number ke aakhir ke huroof batate hain ke iPhone kis mulk ke liye bana. Settings → General → About → Model Number mein dekhein (agar A2633 jaisa code dikhe to ek dafa dabayein): MLPF3LL/A → LL/A. LL/A = America, ZA/A = Singapore / Hong Kong, ZP/A = Hong Kong, CH/A = China, J/A = Japan, B/A = UK, AE/A = Dubai, HN/A = India, X/A = Australia, C/A = Canada, KH/A = Korea. List mein nahi? Naya dabayein aur likh dein.",
+        "example": "Americi iPhone 14 Pro: Model Number MQ0D3LL/A → LL/A dabayein."
+      },
+      "simType": {
+        "title": "SIM",
+        "body": "Phone mein SIM kaise lagti hai. Americi iPhone 14 aur us ke baad walon mein SIM tray nahi hoti (Double eSIM). Zyada tar doosre ek physical SIM aur ek eSIM lete hain. China aur Hong Kong wale do physical SIM lete hain. Phone ki side par SIM tray dekhein, aur eSIM ke liye Settings → Mobile Data. List mein nahi? Naya dabayein aur likh dein.",
+        "example": "LL/A iPhone 15 baghair SIM tray → Double eSIM."
       }
     },
     "purchase": {
@@ -7959,7 +7969,18 @@
     "imported": "Import ho gaya",
     "unitCost": "Is unit ki cost",
     "askingOpt": "Bechne ki qeemat (optional)",
-    "askingOptHint": "Abhi tay nahi to khali chhor dein; baad mein phone ke page se likh dein."
+    "askingOptHint": "Abhi tay nahi to khali chhor dein; baad mein phone ke page se likh dein.",
+    "region": "Region code",
+    "regionPh": "maslan LL/A",
+    "simTypeLabel": "SIM",
+    "simTypePh": "maslan Physical + 2 eSIM",
+    "newOption": "Naya",
+    "simType": {
+      "physical_esim": "Physical + eSIM",
+      "dual_esim": "Double eSIM",
+      "dual_physical": "Double physical SIM",
+      "physical": "Sirf physical SIM"
+    }
   },
   "remind": {
     "title": "Udhaar ki yaad dahani",
