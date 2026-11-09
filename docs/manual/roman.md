@@ -2208,6 +2208,17 @@ Sirf owner: More → **Software fees**.
 
 **Renewal code:** kabhi kabhi, khaas kar baghair internet wale PC version ke liye, provider WhatsApp par ek code bhejta hai. Isay **Renewal code** mein paste karein aur **Code se renew karein** dabayein. Yeh baghair internet ke chalta hai, lekin sirf ek baar.
 
+### Fee jo abhi deni hai
+
+Kabhi software dene wala aap ke paise dene se pehle package barha deta hai (aap ne phone par baat ki). Tab **Software fees** mein **Fee jo abhi deni hai** nazar aata hai: har line mein us ka number (maslan `FEE-0001`), muddat, mahine aur fee, aur **Ada nahi hui**, **Kuch ada hui** ya **Ada ho gayi**. Us ke neeche **Abhi deni hai** mein kul raqam surkh rang mein hoti hai. Agar ada karne ka din tay hua ho to **Ada karne ki tareekh** nazar aati hai, aur din guzar jaye to **Ada karne ki tareekh guzar gayi**.
+
+- **Fee ka bill** bill kholta hai jise print karein ya rakh lein: har muddat, fee, aap ne kitna diya, kitna baqi hai, aur kahan ada karna hai.
+- Jab aap paise bhejte hain to pehle yeh baqi fee poori hoti hai, purani pehle; bachi raqam se **Adaigi is tareekh tak** aage barhti hai. **Main ne ada kar di** mein raqam pehle se baqi fee samait likhi hoti hai.
+- **Aap ki adaigiyan** mein payment ke neeche **Pichli fee mein gaya** aur woh hissa likha aata hai. Raseed par bhi.
+- Yaad-dehani wali khirki mein bhi "Pichli fee abhi baqi hai" nazar aata hai.
+
+**Misaal:** dene wale ne 9 tareekh ko 2 mahine Rs. 3,000 mein diye, 15 tak adaigi. Aap Rs. 1,000 bhejte hain: line **Kuch ada hui**, Rs. 2,000 baqi. Phir Rs. 3,500 bhejte hain: Rs. 2,000 purani fee poori karte hain (**Ada ho gayi**) aur Rs. 1,500 se ek mahina aur barhta hai.
+
 ### Fees ki yaad dahani
 
 Plan khatam hone se pehle app tameez se yaad dilati hai:

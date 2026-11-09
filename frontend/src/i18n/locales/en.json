@@ -1295,7 +1295,21 @@
     "receipt": "Receipt",
     "saved": "Saved",
     "pwFor": "New password for",
-    "pwForOwner": "Set the owner's instead"
+    "pwForOwner": "Set the owner's instead",
+    "credit": {
+      "title": "Give the package now, fee later",
+      "hint": "Only you see this. The shop sees the fee as unpaid on its fees page and invoice, never as a credit option.",
+      "dueOn": "To pay by (optional)",
+      "note": "Your note (only you see it)",
+      "give": "Extend on credit",
+      "given": "Package extended. The fee shows as unpaid for the shop.",
+      "list": "Fee not yet paid",
+      "send": "Send on WhatsApp",
+      "waText": "{{shop}} — Mobile Shop software fee\nTotal: {{total}}\nPaid: {{paid}}\nStill to pay: {{left}}\nSee the invoice in the app: More → Software fees.",
+      "filter": "Fee unpaid",
+      "chip": "Owes",
+      "clearsFirst": "This shop still owes {{n}} of earlier fee. A payment clears that first; the rest buys months."
+    }
   },
   "field": {
     "badMobile": "Enter a 10-digit mobile number starting with 3, e.g. 300 1234567",
@@ -3393,6 +3407,36 @@
         "title": "Login details",
         "body": "The mobile number and password the new shop owner logs in with. Send them on WhatsApp; the message also has the website and Android app links.",
         "example": "0321 5550002 · ms4821 → tap Send on WhatsApp."
+      },
+      "credit": {
+        "title": "Give the package now, fee later",
+        "body": "For a customer who asks you to extend the package and says he will send the money later. The package is extended at once and the fee is kept as unpaid. The shop only sees \"Not paid\", \"Part paid\" or \"Paid\" on its fees page, the fee invoice and the renewal popup. When money comes, it clears this fee first.",
+        "example": "Ali Mobiles asks for 2 more months and will pay on the 15th → 2 months, Rs. 3,000, to pay by the 15th. His package is extended now; his fees page shows Rs. 3,000 still to pay.",
+        "months": {
+          "title": "Months",
+          "body": "How many months to add to the package now.",
+          "example": "2 → a package ending on 10 March now ends on 10 May."
+        },
+        "amount": {
+          "title": "Amount",
+          "body": "The fee the shop owes for these months. It starts as the monthly fee × months; change it if you agreed another amount.",
+          "example": "Monthly fee Rs. 1,500 × 2 months → Rs. 3,000."
+        },
+        "dueOn": {
+          "title": "To pay by",
+          "body": "The day the customer promised to pay. After it, the fee shows as overdue to you and to the shop.",
+          "example": "Promised on the 15th → from the 16th it shows \"Was to be paid by 15\"."
+        },
+        "note": {
+          "title": "Your note",
+          "body": "For you only, to remember what was agreed. The shop never sees it, not on the invoice either.",
+          "example": "\"Said on the phone he pays after Eid.\""
+        },
+        "list": {
+          "title": "Fee not yet paid",
+          "body": "Every package given on credit for this shop, oldest first, with what was paid against it and what is left. Payments clear the oldest first.",
+          "example": "FEE-0003 Rs. 3,000, paid Rs. 1,000 → Part paid, Rs. 2,000 left."
+        }
       }
     },
     "provider": {
@@ -7140,6 +7184,11 @@
         "title": "Your payments",
         "body": "Every fee payment you reported and its state: being checked, received or not accepted. Print the receipt of a received one.",
         "example": "October Rs. 2,000 · Received → tap the receipt number to print it."
+      },
+      "due": {
+        "title": "Fee still to pay",
+        "body": "Months of your package that were given before the fee was paid. Each line shows its period, the fee, what you paid and what is left. A payment you send clears this first.",
+        "example": "FEE-0003 for 2 months Rs. 3,000, you paid Rs. 1,000 → Part paid, Rs. 2,000 still to pay."
       }
     },
     "accounts": {
@@ -7954,7 +8003,8 @@
       "backup": "Backup my data",
       "backupHint": "All your data as Excel files, any time. Nothing is ever deleted.",
       "clock": "This computer's clock looks wrong. The plan is counted from the last correct time.",
-      "pending": "Your payment is being checked. Thank you."
+      "pending": "Your payment is being checked. Thank you.",
+      "unpaid": "Fee still unpaid from before: {{amount}}"
     },
     "lock": {
       "title": "The plan has ended",
@@ -8046,7 +8096,20 @@
     "accountTitle": "Account title",
     "iban": "IBAN",
     "branch": "Branch",
-    "support": "Help on WhatsApp"
+    "support": "Help on WhatsApp",
+    "due": {
+      "title": "Fee still to pay",
+      "unpaid": "Not paid",
+      "partial": "Part paid",
+      "paid": "Paid",
+      "paidPart": "paid",
+      "promised": "To pay by",
+      "overdue": "Was to be paid by",
+      "left": "Still to pay",
+      "allPaid": "All fees are paid. Thank you!",
+      "invoice": "Fee invoice",
+      "toDues": "Went to earlier fee:"
+    }
   },
   "landing": {
     "badge": "Built only for Pakistan's mobile shops",

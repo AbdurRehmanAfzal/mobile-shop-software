@@ -192,6 +192,7 @@ function PlanPopup() {
             <Fact k={data.stage === 'grace' || data.stage === 'locked' ? 'plan.pop.ended' : 'plan.pop.expires'} v={data.expires_at ? fmtDate(data.expires_at) : '—'} />
             <Fact k="plan.pop.amount" v={`${withCur(Number(data.amount_due).toLocaleString('en-US'))}`} />
           </div>
+          {Number(data.fee_unpaid ?? 0) > 0 ? <div className="rounded-2xl bg-payable-tint px-4 py-3" data-testid="plan-unpaid"><Tri k="plan.pop.unpaid" vars={{ amount: withCur(Number(data.fee_unpaid).toLocaleString('en-US')) }} size="sm" bold tone="text-payable" /></div> : null}
           <div className="rounded-2xl border border-payable/30 bg-payable-tint/40 px-4 py-3"><Tri k="plan.pop.warning" size="sm" tone="text-payable" /></div>
           {data.clock_rolled_back ? <div className="rounded-2xl bg-receivable-tint px-4 py-2"><Tri k="plan.pop.clock" size="sm" tone="text-receivable" /></div> : null}
           {b && (b.note?.en || b.note?.ur || b.note?.roman) ? (

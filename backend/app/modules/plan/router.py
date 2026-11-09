@@ -7,6 +7,7 @@ import html
 import io
 import uuid
 import zipfile
+from decimal import Decimal
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, Query
@@ -111,6 +112,7 @@ def redeem(data: RedeemIn, ctx: Owner, db: DB):
         reference=info["nonce"],
         paid_on=info["issued"],
         note="Renewal code",
+        to_dues=Decimal(0),  # a code buys months; it never settles unpaid fee (ADR-053)
     )
     record_audit(
         db,
@@ -153,6 +155,7 @@ def receipt(payment_id: uuid.UUID, ctx: Money, db: DB, lang: Lang = None):
         "date": "تاریخ" if ur else "Date",
         "months": "مہینے" if ur else "Months",
         "until": "ادا شدہ تک" if ur else "Paid until",
+        "dues": "پچھلی باقی فیس میں" if ur else "Against fee still unpaid",
         "thanks": "شکریہ! آپ کا پلان تجدید ہو گیا۔" if ur else "Thank you! Your plan is renewed.",
     }
     rows = [
@@ -162,6 +165,7 @@ def receipt(payment_id: uuid.UUID, ctx: Money, db: DB, lang: Lang = None):
         (t["method"], p.method),
         (t["ref"], p.reference or "-"),
         (t["date"], paid_on),
+        *([(t["dues"], f"Rs. {p.to_dues:,.0f}")] if p.to_dues else []),
         (t["months"], str(p.months)),
         (t["until"], until),
     ]
@@ -170,6 +174,14 @@ def receipt(payment_id: uuid.UUID, ctx: Money, db: DB, lang: Lang = None):
 <style>body{{font-family:{"'Noto Nastaliq Urdu',serif" if ur else "system-ui,sans-serif"};max-width:560px;margin:32px auto;padding:0 20px;color:#0f172a}}h1{{font-size:22px;margin:0 0 4px}}.no{{font-size:28px;font-weight:800;margin:0 0 16px}}table{{width:100%;border-collapse:collapse}}th,td{{text-align:{"right" if ur else "left"};padding:8px 6px;border-bottom:1px solid #e2e8f0}}th{{font-weight:600;color:#475569;width:42%}}td{{font-family:system-ui,sans-serif;direction:ltr;text-align:{"right" if ur else "left"}}}.ok{{margin-top:18px;padding:12px 14px;border-radius:12px;background:#ecfdf5;color:#065f46;font-weight:600}}@media print{{button{{display:none}}}}</style></head>
 <body><h1>{e(t["title"])} · Mobile Shop</h1><p class="no">{e(p.receipt_no or "")}</p><table>{body}</table><p class="ok">{e(t["thanks"])}</p><button onclick="print()">Print</button></body></html>"""
     return HTMLResponse(page)
+
+
+@router.get("/fee-invoice", response_class=HTMLResponse)
+def fee_invoice(ctx: Money, db: DB, lang: Lang = None):
+    """The software fee invoice: packages not yet paid for, paid / part paid / unpaid (ADR-053)."""
+    from app.modules.plan.invoice import fee_invoice_html
+
+    return HTMLResponse(fee_invoice_html(db, ctx.shop, ur=lang == "ur"))
 
 
 # ---- backup -----------------------------------------------------------------------------------

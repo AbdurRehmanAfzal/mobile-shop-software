@@ -298,6 +298,24 @@ Har dukaan ki sab adaigiyan karobar console mein **Adaigiyan** ke neeche hain (c
 
 ![Karobar → Adaigiyan: har fees dukaan, zariye, tareekh, mahine, hawale aur raseed number ke sath](shot:business-payments-2)
 
+### Package abhi, fee baad mein (udhaar par)
+
+Gahak kehta hai: "mera package barha dein, paise 15 ko bhej doon ga." Mahine abhi de dein aur fee baqi rakhein. Yeh sirf aap dekhte hain; dukaan ko udhaar ka koi option nazar nahi aata, sirf fee **Ada nahi hui**, **Kuch ada hui** ya **Ada ho gayi**.
+
+1. Dukaan ki sheet kholein aur **Package abhi, fee baad mein** tak scroll karein.
+2. **Mahine**: maslan 2. **Raqam (Rs)** khud mahana fee × mahine se bhar jati hai (Rs. 3,000); koi aur raqam tay hui ho to badal dein.
+3. **Ada karne ki tareekh (marzi)**: jis din ka us ne waada kiya.
+4. **Aap ka note (sirf aap dekhenge)**: kya tay hua, maslan "Eid ke baad dega". Yeh dukaan ki screen ya bill par kabhi nahi aata.
+5. **Udhaar par package barhayein** dabayein. Package foran barh jata hai aur bill number banta hai (`FEE-0001`, `FEE-0002` …).
+
+Neeche **Fee jo abhi ada nahi hui** mein is dukaan ke aise sab package hain, purane pehle: muddat, mahine, fee, kitna ada hua, aap ka note aur chip. **Abhi deni hai** kul raqam dikhata hai. **Fee ka bill** wahi bill kholta hai jo dukaan dekhti hai (print ya PDF); **WhatsApp par bhejein** maalik ko kul, ada aur baqi ke saath message kholta hai.
+
+**Jab paise aayein.** Har payment jo aap qabool ya darj karte hain pehle baqi fee poori karti hai, purani pehle; sirf baqi raqam se mahine barhte hain. Aisi dukaan ki pending payment par "Is dukaan ne pichli fee ke … abhi dene hain" likha aata hai; jo payment sirf purani fee poori kare us se package dobara nahi barhta. **Khud mili raqam darj karna** mein jab paise sirf purani fee ke hon to **Mahine** 0 likhein. Renewal code kabhi baqi fee mein nahi ginta.
+
+Dukaanon ki list mein aisi dukaan par **Baqi Rs. …** likha aata hai, aur **Fee baqi** filter sab dikhata hai.
+
+**Misaal:** Ali Mobiles, Rs. 1,500 mahana, 9 tareekh ko 2 mahine maangta hai aur 15 ka waada karta hai → 2 mahine, Rs. 3,000, 15 tareekh. 14 ko Rs. 1,000 bhejta hai: qabool karein; bill **Kuch ada hui**, Rs. 2,000 baqi, aur package nahi hilta. 20 ko Rs. 3,500 bhejta hai: Rs. 2,000 fee poori (**Ada ho gayi**) aur Rs. 1,500 se ek mahina aur.
+
 ## 6. Renewal codes aur license keys
 
 Renewal code (jise license key bhi kehte hain) aik lamba dastkhat shuda code hai jo aik dukaan ke plan mein mahine jorta hai. Maalik isay **Mazeed → Software fees → Renewal code** mein paste kar ke **Code se renew karein** dabata hai. Yeh website, Android app aur aik computer wale install par chalta hai, internet ke baghair, sirf aik baar, aur sirf usi dukaan ke liye jis ke liye banaya gaya. Keys zyada tar aik computer (offline) wali dukaanon ke liye chahiye hoti hain, jo server par aap ki manzoori nahi dekh saktin.

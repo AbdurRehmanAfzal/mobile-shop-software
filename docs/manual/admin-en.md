@@ -298,6 +298,24 @@ All payments from every shop are listed in the business console under **Payments
 
 ![Business → Payments: every fee with the shop, channel, date, months, reference and receipt number](shot:business-payments-2)
 
+### Package now, fee later (on credit)
+
+A customer says: "extend my package, I will send the money on the 15th." Give the months now and keep the fee as unpaid. Only you see this; the shop never sees a credit option, only the fee as **Not paid**, **Part paid** or **Paid**.
+
+1. Open the shop's sheet and scroll to **Give the package now, fee later**.
+2. **Months**: for example 2. **Amount (Rs)** fills itself with monthly fee × months (Rs. 3,000); change it if you agreed another amount.
+3. **To pay by (optional)**: the day he promised.
+4. **Your note (only you see it)**: what was agreed, for example "said he pays after Eid". It never appears on the shop's screens or invoice.
+5. Tap **Extend on credit**. The package is extended at once and an invoice number is made (`FEE-0001`, `FEE-0002` …).
+
+Under it, **Fee not yet paid** lists every package given this way for the shop, oldest first: period, months, fee, what was paid, your note, and the chip. **Still to pay** shows the total. **Fee invoice** opens the same invoice the shop sees (to print or save as PDF); **Send on WhatsApp** opens a message to the owner with the total, paid and still to pay.
+
+**When money comes.** Every payment you approve or record clears the unpaid fee first, oldest first; only the rest buys months. A pending payment from such a shop shows "This shop still owes …"; approving a payment that only covers the old fee does not extend the package again. In **Recording money you received yourself**, put **Months** 0 when the money is only for the old fee. Renewal codes never count against unpaid fee.
+
+The shop list shows **Owes Rs. …** on such a shop, and the **Fee unpaid** filter lists them all.
+
+**Example:** Ali Mobiles, Rs. 1,500 a month, asks for 2 months on the 9th and promises the 15th → 2 months, Rs. 3,000, to pay by the 15th. On the 14th he sends Rs. 1,000: approve it; the invoice shows **Part paid**, Rs. 2,000 left, and his package does not move. On the 20th he sends Rs. 3,500: Rs. 2,000 clears the fee (**Paid**) and Rs. 1,500 buys one more month.
+
 ## 6. Renewal codes and license keys
 
 A renewal code (also called a license key) is a long signed code that adds months to one shop's plan. The owner pastes it in **More → Software fees → Renewal code** and taps **Renew with code**. It works on the website, the Android app and the one-PC install, without internet, once, and only for the shop it was made for. You need keys mostly for one-PC (offline) shops, which cannot see your approvals on the server.

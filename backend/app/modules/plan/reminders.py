@@ -147,6 +147,12 @@ def _note_lock_transition(db: Session, shop: Shop, org: Organisation, stage: str
     db.commit()
 
 
+def _fee_unpaid(db: Session, org_id):
+    from app.modules.admin.fees import dues_left
+
+    return dues_left(db, org_id)
+
+
 def status(db: Session, ctx, *, event: str = "open") -> dict:
     """Everything the bar, the popup and the lock screen need, for this user, right now."""
     shop: Shop = ctx.shop
@@ -200,6 +206,8 @@ def status(db: Session, ctx, *, event: str = "open") -> dict:
         "expires_at": org.plan_expires_at,
         "plan": org.plan,
         "amount_due": f"{org.monthly_fee:.2f}",
+        # fee still unpaid for packages already given (ADR-053); owner / manager only
+        "fee_unpaid": f"{_fee_unpaid(db, org.id):.2f}" if money_side else None,
         "currency": "PKR",
         "last_payment_at": paid.handled_at if paid else None,
         "pending_payment": (

@@ -31,12 +31,47 @@ class FeeOut(BaseModel):
     handled_at: dt.datetime | None
     paid_on: dt.date | None = None
     receipt_no: str | None = None
+    to_dues: Decimal = Decimal(0)
+
+
+class DueOut(BaseModel):
+    invoice_no: str
+    months: int
+    amount: Decimal
+    paid: Decimal
+    left: Decimal
+    status: str
+    period_from: dt.date | None
+    period_to: dt.date | None
+    due_on: dt.date | None
+    overdue: bool
+
+
+class DuesOut(BaseModel):
+    rows: list[DueOut]
+    total: Decimal
+    paid: Decimal
+    left: Decimal
+
+
+class DueAdminOut(DueOut):
+    id: uuid.UUID
+    note: str | None = None  # the provider's own note
+    created_at: dt.datetime
+
+
+class DuesAdminOut(BaseModel):
+    rows: list[DueAdminOut]
+    total: Decimal
+    paid: Decimal
+    left: Decimal
 
 
 class MyFeesOut(BaseModel):
     plan: PlanOut
     accounts: list[dict]
     payments: list[FeeOut]
+    dues: DuesOut  # fee still to pay for packages already given (ADR-053); no provider notes
 
 
 class ReportIn(BaseModel):
@@ -56,6 +91,7 @@ def my_fees(ctx: Owner, db: DB):
         "plan": plans.plan_info(org, db=db),
         "accounts": [{k: v for k, v in a.items()} for a in fees.accounts(db)],
         "payments": [fees.out(p) for p in fees.mine(db, org.id)],
+        "dues": fees.dues(db, org.id, for_provider=False),
     }
 
 

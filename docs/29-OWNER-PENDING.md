@@ -50,7 +50,7 @@ docker compose --env-file .env exec backend python -m app.modules.plan.renewal k
 docker compose --env-file .env exec backend python -m app.modules.barcodes.backfill
 
 # 3. check the database is on the latest version (migrations run by themselves when the backend
-#    starts; this only confirms it). Expected: a5c7e9b1d3f6 (head)
+#    starts; this only confirms it). Expected: b3d5f7a9c1e4 (head)
 docker compose --env-file .env exec backend alembic current
 ```
 
@@ -58,7 +58,7 @@ docker compose --env-file .env exec backend alembic current
 |---|---|---|
 | [ ] | keygen (1) | without it Business → Keys and "Renewal code" fail with "RENEWAL_PRIVATE_KEY is not set" |
 | [ ] | barcode backfill (2) | old phones and items get a barcode; the button Settings → Barcode settings → "Barcodes for old stock" does the same per shop |
-| [ ] | `alembic current` (3) | confirms migrations through `a5c7e9b1d3f6` (barcodes, accessories, tablets / watches, provider console, business profile, len-den, len-den return dates, repair labs) |
+| [ ] | `alembic current` (3) | confirms migrations through `b3d5f7a9c1e4` (barcodes, accessories, tablets / watches, provider console, business profile, len-den, len-den return dates, repair labs, … , fees given on credit) |
 
 Not needed any more: running `alembic upgrade head` by hand (the backend image does it on start);
 the accessories "Opening stock" batches (made by the migration).
@@ -139,6 +139,8 @@ Close the app fully and open it again first (or install the newest APK from the 
 | [ ] | Seller signs on the screen | buy a used phone → ID check → the seller signs in the box → Use this signature → Save → Print declaration | the printed declaration shows the signature |
 | [ ] | Help "?" everywhere | open any screen in Urdu and in English → tap the small ? next to a card, tab or field | a sheet with what it is and an example; tell me any text that is unclear or wrong |
 | [ ] | Len-den reminder | demo shop → Tariq Bhai → Send reminder; Settings → Notifications → udhaar reminders on | WhatsApp opens with "Rs. 15,000 … was to come back on …"; home shows "people late returning len-den" and "len-den the shop must give back soon" (Star Mobiles) |
+
+**Package on credit (2026-11-09, ADR-053)** — in Super admin open a test shop, "Give the package now, fee later": 2 months, check the amount, a note, "Extend on credit". Log in as that shop's owner: More → Software fees shows "Fee still to pay … Not paid", the fee invoice, and no note. Report Rs. 1,000, approve it: "Part paid", the package date does not move.
 
 ## E. Decisions waiting for you
 
