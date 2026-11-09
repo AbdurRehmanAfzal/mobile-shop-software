@@ -48,6 +48,12 @@ class Device(UUIDPk, ShopScoped, Timestamped, Base):
     cellular: Mapped[bool | None] = mapped_column()
     size_mm: Mapped[int | None] = mapped_column(Integer)
     battery_health: Mapped[int | None] = mapped_column(Integer)
+    # owner 2026-11-09 (ADR-055): an Apple unit's region code (LL/A, ZA/A, CH/A ...) and its SIM
+    # setup (a key of types.SIM_TYPES, or the shop's own words)
+    region_code: Mapped[str | None] = mapped_column(String(12))
+    # how many times the battery was charged through (iPhone: Settings → General → About)
+    battery_cycles: Mapped[int | None] = mapped_column(Integer)
+    sim_type: Mapped[str | None] = mapped_column(String(30))
     # owner addendum 6 (2026-10-31, docs/26): a used unit's grade, RAM (a variant like storage),
     # who gives the warranty, the spec sheet, and the lock checks a used unit was bought with
     grade: Mapped[str | None] = mapped_column(String(20))

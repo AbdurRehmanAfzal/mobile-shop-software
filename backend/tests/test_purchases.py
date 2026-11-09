@@ -403,3 +403,66 @@ def test_phone_bought_without_asking_price_keeps_its_battery_health(owner, cat):
     r = owner.patch(f"/api/v1/devices/{dev_id}", json={"battery_health": 81})
     assert r.status_code == 200, r.text
     assert owner.get(f"/api/v1/devices/{dev_id}").json()["battery_health"] == 81
+
+
+def test_apple_region_code_and_sim_setup(owner, cat):
+    """owner 2026-11-09 (ADR-055): an iPhone's region code (LL/A) and SIM setup are kept on the unit;
+    the shop may add its own, and the form then offers them next time"""
+    sup = _party(owner)
+    opts = owner.get("/api/v1/devices/options").json()
+    assert "LL/A" in opts["region_codes"] and "dual_esim" in opts["sim_types"]
+    r = owner.post(
+        "/api/v1/purchases",
+        json={
+            "kind": "supplier",
+            "party_id": sup["id"],
+            "devices": [
+                {
+                    "device": _dev(cat, IMEI_A, region_code=" ll/a ", sim_type="dual_esim"),
+                    "cost": 1000,
+                },
+                {
+                    "device": _dev(cat, IMEI_B, region_code="QN/A", sim_type="Physical + 2 eSIM"),
+                    "cost": 1000,
+                },
+            ],
+        },
+    )
+    assert r.status_code == 201, r.text
+    a = owner.get(f"/api/v1/devices/{r.json()['lines'][0]['device_id']}").json()
+    assert a["region_code"] == "LL/A" and a["sim_type"] == "dual_esim"
+    opts = owner.get("/api/v1/devices/options").json()
+    assert opts["region_codes"].count("LL/A") == 1 and "QN/A" in opts["region_codes"]
+    assert "Physical + 2 eSIM" in opts["sim_types"]
+    r = owner.patch(f"/api/v1/devices/{a['id']}", json={"sim_type": "physical_esim"})
+    assert r.status_code == 200, r.text
+    assert owner.get(f"/api/v1/devices/{a['id']}").json()["sim_type"] == "physical_esim"
+
+
+def test_apple_battery_cycle_count(owner, cat):
+    """owner 2026-11-09: an iPhone's battery cycle count is kept with its battery health"""
+    sup = _party(owner)
+    r = owner.post(
+        "/api/v1/purchases",
+        json={
+            "kind": "supplier",
+            "party_id": sup["id"],
+            "devices": [
+                {
+                    "device": _dev(
+                        cat, IMEI_A, condition="used", battery_health=88, battery_cycles=312
+                    ),
+                    "cost": 1000,
+                }
+            ],
+        },
+    )
+    assert r.status_code == 201, r.text
+    dev_id = r.json()["lines"][0]["device_id"]
+    d = owner.get(f"/api/v1/devices/{dev_id}").json()
+    assert d["battery_cycles"] == 312 and d["battery_health"] == 88
+    assert (
+        owner.patch(f"/api/v1/devices/{dev_id}", json={"battery_cycles": 9999}).status_code == 422
+    )
+    assert owner.patch(f"/api/v1/devices/{dev_id}", json={"battery_cycles": 320}).status_code == 200
+    assert owner.get(f"/api/v1/devices/{dev_id}").json()["battery_cycles"] == 320

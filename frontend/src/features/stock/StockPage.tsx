@@ -15,6 +15,7 @@ import LabelSheet from '@/components/LabelSheet'
 import { api } from '@/lib/api'
 import { Tag } from 'lucide-react'
 import { BiButton } from '@/components/Bilingual'
+import { simTypeText } from '@/features/purchase/AppleVariant'
 
 type Filter = 'in_stock' | 'on_loan' | 'sold' | 'faulty' | 'all'
 
@@ -25,7 +26,10 @@ export function specLine(d: Device, pick: (k: string) => string, withColour = tr
     cat === 'watch' ? (d.size_mm ? `${d.size_mm}mm` : null) : d.storage_name,
     cat === 'phone' ? null : pick(d.cellular ? 'devx.simShort' : cat === 'tablet' ? 'devx.wifiShort' : 'devx.gpsShort'),
     withColour ? d.colour_name : null,
+    d.region_code ?? null,
+    simTypeText(d.sim_type, pick),
     d.battery_health ? pick('devx.bh').replace('{{n}}', String(d.battery_health)) : null,
+    d.battery_cycles != null ? pick('devx.cyclesShort').replace('{{n}}', String(d.battery_cycles)) : null,
   ].filter(Boolean).join(' · ')
 }
 

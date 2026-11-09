@@ -1010,3 +1010,35 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - **Battery health %** (the existing `devices.battery_health`, 1–100) is now asked for phones too when open box / used / patched, saved on purchase, opening stock and edit; a reclassification to phone no longer clears it. It already shows in the stock line ("Battery 84%") and on price stickers. Help text names where to find it on an iPhone.
 - User manual ch. 6 (step 13 and the phone / tablet / watch table) in three languages; PDFs rebuilt.
 **Verified**: new `test_phone_bought_without_asking_price_keeps_its_battery_health`; `test_purchases`, `test_device_category`, `test_device_types`; tsc; Playwright `add-device`, `device-types`, `counter` (13 passed); screenshot of the phone form looked at.
+
+### Same day — PR #39 merged; iPhone region code and SIM setup (ADR-055)
+**Owner**: "iPhone may ak r cheez note ki hai apple phone may LLA, physical + esim, double esim … R&D kr k add krna hai … new add ka be option".
+**Research**:
+- Region code is the suffix of the part number (Settings → General → About → Model Number). LL/A = USA, ZA/A = Singapore / HK, ZP/A = Hong Kong, CH/A = China, J/A = Japan, B/A = UK, AE/A = UAE, HN/A = India, X/A = Australia, C/A = Canada, KH/A = Korea.
+- SIM: US iPhones from the 14 onwards are eSIM-only (dual eSIM); China / HK have dual physical SIM; most others have physical + eSIM.
+**Done**:
+- `devices.region_code` and `sim_type` (migration `d7f9b1c3e5a8`).
+- Presets in `types.py`; `/devices/options` adds the shop's own values.
+- `AppleVariant.tsx` in the add / edit device form for Apple units, with chips and "+ New".
+- The values show in the stock line, on the device page and on the price sticker.
+- en / ur / roman + help; user manual ch. 6.
+**Verified**:
+- `test_apple_region_code_and_sim_setup`, and the label / purchase / device tests.
+- ruff and tsc pass.
+- Playwright `apple-variant.spec` (new) passes.
+- I looked at a screenshot of the form.
+**Not yet**: a stock filter by region, and the bulk Excel columns.
+
+### Same day — PR #40 opened; battery cycle count for Apple
+**Owner**: "ok push and add field battery circle charge for apple phone".
+**Done**:
+- Pushed and opened PR #40 (region / SIM).
+- `devices.battery_cycles` (migration `e1a3c5e7f9b2`, additive, 0–5000), asked next to battery health for a used / open-box Apple unit, on purchase, opening stock and edit.
+- The cycle count shows in the stock line ("312 cycles"), on the device page and on the price sticker.
+- Help text: iPhone 15 and newer show it in Settings → General → About; older iPhones need a computer tool.
+- en / ur / roman; user manual ch. 6.
+**Verified**:
+- `test_apple_battery_cycle_count`.
+- The full backend suite, ruff and tsc.
+- Playwright `apple-variant` (now with health 91 % + 312 cycles) and `add-device` pass.
+- `device-types` failed once when run alongside the other specs and passed when run alone. Nothing it checks was changed here.

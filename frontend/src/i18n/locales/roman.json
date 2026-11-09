@@ -4833,6 +4833,21 @@
           "body": "Model kis saal aaya. Purane model kam mein bikte hain.",
           "example": "iPhone 13: 2021."
         }
+      },
+      "region": {
+        "title": "Region code",
+        "body": "Part number ke aakhir ke huroof batate hain ke iPhone kis mulk ke liye bana. Settings → General → About → Model Number mein dekhein (agar A2633 jaisa code dikhe to ek dafa dabayein): MLPF3LL/A → LL/A. LL/A = America, ZA/A = Singapore / Hong Kong, ZP/A = Hong Kong, CH/A = China, J/A = Japan, B/A = UK, AE/A = Dubai, HN/A = India, X/A = Australia, C/A = Canada, KH/A = Korea. List mein nahi? Naya dabayein aur likh dein.",
+        "example": "Americi iPhone 14 Pro: Model Number MQ0D3LL/A → LL/A dabayein."
+      },
+      "simType": {
+        "title": "SIM",
+        "body": "Phone mein SIM kaise lagti hai. Americi iPhone 14 aur us ke baad walon mein SIM tray nahi hoti (Double eSIM). Zyada tar doosre ek physical SIM aur ek eSIM lete hain. China aur Hong Kong wale do physical SIM lete hain. Phone ki side par SIM tray dekhein, aur eSIM ke liye Settings → Mobile Data. List mein nahi? Naya dabayein aur likh dein.",
+        "example": "LL/A iPhone 15 baghair SIM tray → Double eSIM."
+      },
+      "cycles": {
+        "title": "Battery cycle count",
+        "body": "Battery kul kitni dafa 0 se 100% tak charge hui. Kam ho to behtar hai: iPhone ki battery 500 cycles tak (iPhone 15 aur naye: 1000) taqreeban 80% health rakhne ke liye bani hai. iPhone 15 aur naye yeh Settings → General → About aur Settings → Battery → Battery Health mein dikhate hain. Purane iPhone phone par nahi dikhate; computer ka 3uTools jaisa tool parh leta hai. Maloom na ho to khali chhor dein.",
+        "example": "Used iPhone 15 Pro, 312 cycles aur 91% health → 312 likhein; stock list mein \"Battery 91% · 312 cycles\" dikhega."
       }
     },
     "purchase": {
@@ -7959,7 +7974,22 @@
     "imported": "Import ho gaya",
     "unitCost": "Is unit ki cost",
     "askingOpt": "Bechne ki qeemat (optional)",
-    "askingOptHint": "Abhi tay nahi to khali chhor dein; baad mein phone ke page se likh dein."
+    "askingOptHint": "Abhi tay nahi to khali chhor dein; baad mein phone ke page se likh dein.",
+    "region": "Region code",
+    "regionPh": "maslan LL/A",
+    "simTypeLabel": "SIM",
+    "simTypePh": "maslan Physical + 2 eSIM",
+    "newOption": "Naya",
+    "simType": {
+      "physical_esim": "Physical + eSIM",
+      "dual_esim": "Double eSIM",
+      "dual_physical": "Double physical SIM",
+      "physical": "Sirf physical SIM"
+    },
+    "cycles": "Battery cycle count",
+    "cyclesHint": "iPhone 15 aur naye: Settings → General → About. Na dikhe to khali chhor dein.",
+    "cyclesBad": "0 se 5000 tak ka number likhein",
+    "cyclesShort": "{{n}} cycles"
   },
   "remind": {
     "title": "Udhaar ki yaad dahani",

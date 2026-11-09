@@ -66,6 +66,14 @@ PTA = {
 }
 
 
+_SIM_SHORT = {
+    "physical_esim": "SIM + eSIM",
+    "dual_esim": "Dual eSIM",
+    "dual_physical": "Dual SIM",
+    "physical": "Physical SIM",
+}
+
+
 def code_word_ok(word: str | None) -> bool:
     return word is None or (len(word) == 10 and word.isalpha() and len(set(word.upper())) == 10)
 
@@ -220,6 +228,10 @@ def _device_parts(d: dict, shop: Shop, ur: bool, word: str | None) -> dict:
             else ("SIM" if d.get("cellular") else ("Wi-Fi" if cat == "tablet" else "GPS"))
         ),
         f"Battery {d['battery_health']}%" if d.get("battery_health") else None,
+        # ADR-055: an iPhone's region code and SIM setup, as shopkeepers write them
+        d.get("region_code"),
+        f"{d['battery_cycles']} cycles" if d.get("battery_cycles") is not None else None,
+        _SIM_SHORT.get(d.get("sim_type") or "", d.get("sim_type")),
     ]
     cond = CONDITION.get(d.get("condition") or "", ("", ""))[1 if ur else 0]
     pta = PTA.get(d.get("pta_status") or "", ("", ""))[1 if ur else 0]

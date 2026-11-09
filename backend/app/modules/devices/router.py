@@ -159,14 +159,31 @@ class LibraryCsvIn(BaseModel):
 
 
 @router.get("/options")
-def options(ctx: Ctx):
-    """grades, lock keys, spec keys and the shop's device settings (for the forms)"""
-    from app.modules.devices import types as dtypes
+def options(ctx: Ctx, db: DB):
+    """grades, lock keys, spec keys and the shop's device settings (for the forms); the Apple
+    region codes and SIM setups, with the ones this shop added itself (ADR-055)"""
+    from sqlalchemy import select
 
+    from app.modules.devices import types as dtypes
+    from app.modules.devices.models import Device
+
+    def used(col) -> list[str]:
+        return sorted(
+            v
+            for v in db.scalars(
+                select(col).where(Device.shop_id == ctx.shop_id, col.is_not(None)).distinct()
+            ).all()
+            if v
+        )
+
+    regions = list(dtypes.REGION_CODES)
+    sims = list(dtypes.SIM_TYPES)
     return {
         **dtypes.prefs_for(ctx.shop),
         "lock_keys": list(dtypes.LOCK_KEYS),
         "spec_keys": list(dtypes.SPEC_KEYS),
+        "region_codes": regions + [v for v in used(Device.region_code) if v not in regions],
+        "sim_types": sims + [v for v in used(Device.sim_type) if v not in sims],
     }
 
 

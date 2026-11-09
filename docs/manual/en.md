@@ -299,6 +299,8 @@ On Home, tap **Add stock**. The first screen asks **Where is the phone coming fr
 7. For a dual-SIM phone, fill **IMEI 2** the same way.
 8. Tap the **Brand** (**Samsung**), then the **Model** (type `A55` and tap **Galaxy A55**).
 9. Choose **Storage** (`256GB`) and **Colour** (`Blue`).
+
+    For an **Apple** iPhone the form also asks the **Region code** and the **SIM** type. The region code is the end of Settings → General → About → Model Number (MLPF3**LL/A** → tap **LL/A**). For SIM, tap **Physical + eSIM**, **Dual eSIM** (US iPhones from the 14 onwards have no SIM tray), **Dual physical SIM** or **Physical SIM only**. Not in the list? Tap **New** and type it; the app offers it next time. For a used or open-box iPhone it also asks **Battery cycle count** (iPhone 15 and newer: Settings → General → About; leave empty on older ones). These show on the stock list and the price sticker.
 10. **Condition**: tap **Box pack**. The other choices are **Open box**, **Used** and **Patched** (patched asks for **Patch details**).
 11. **PTA status**: tap **PTA approved**. For **Non-PTA** and **JV** the app also asks **SIM time (months)**.
 12. **Cost price**: type `92000`, what you paid.
