@@ -519,6 +519,21 @@ Save karte hi dukaan khul jati hai; maalik ko sirf app refresh karni hoti hai.
 
 Agar koi dukaan bas adaigi band kar de to aap ko kuch nahi karna: woh khud yaad dehaniyon, riayati dinon aur band hone se guzarti hai. Agar maalik mahinon baad wapas aaye to us ki adaigi darj karein aur woh apne purane stock aur khate ke sath kaam jari rakhta hai.
 
+### Customer delete karna
+
+Jab koi customer dukaan band kar de ya hamesha ke liye chala jaye to aap use delete kar sakte hain. Kuch mitaya nahi jata; woh sirf **Deleted** mein chala jata hai.
+
+1. **Customers ki dukaanein** mein us ki dukaan kholein aur sheet ke aakhir mein **Yeh customer delete karein** tak jayein.
+2. **Dukaan delete karein** dabayein.
+3. Dukaan ka naam bilkul waisa likhein jaisa dikh raha hai (chhote bare huroof se farq nahi parta), aur chahein to **Wajah** jo sirf aap dekhein ge.
+4. **Delete karein** dabayein.
+
+Usi waqt dukaan aur us ki sab branches band ho jati hain: maalik aur staff login nahi kar sakte (unhein "Yeh dukaan band kar di gayi hai. Support se rabta karein." nazar aata hai), aur dukaan aap ki list, karobar ke figures aur raat ke messages se hat jati hai. Us ke bill, khata, phone aur history sab waise hi mehfooz rehte hain.
+
+Use dobara dhoondne ke liye list ke upar **Deleted** filter dabayein. Us ki dukaan kholein aur **Wapis laayen** dabayein: woh foran login kar sakta hai aur bilkul pehle ki tarah kaam jari rakhta hai.
+
+> **Note:** Aap ki apni dukaan kabhi delete nahi hoti. Aik computer wali dukaan apne computer par chalti rehti hai; delete se woh sirf aap ki cloud list se chhupti hai. Maalik ka mobile number delete shuda dukaan ke sath rehta hai, is liye agar woh wapis aaye to nayi dukaan kholne ke bajaye purani wapis laayen.
+
 ## 9. Android app ka link
 
 Super admin page par **Android app** card mein Android phones ke liye dukaan ki app ka download link hai. Link aap ki website ka address aur us ke baad /app.apk hai, maslan `https://mobileshop.oopsolutions.com/app.apk`. Yeh hamesha naya tareen version deta hai, is liye yahi link har dukaan ke liye chalta hai, aaj bhi aur har update ke baad bhi.

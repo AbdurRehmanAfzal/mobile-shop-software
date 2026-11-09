@@ -1309,6 +1309,18 @@
       "filter": "Fee unpaid",
       "chip": "Owes",
       "clearsFirst": "This shop still owes {{n}} of earlier fee. A payment clears that first; the rest buys months."
+    },
+    "bin": {
+      "title": "Delete this customer",
+      "delete": "Delete shop",
+      "warn": "The shop and all its branches go to Deleted. Nobody of theirs can sign in, and it leaves your lists and figures. All its records are kept; you can bring it back at any time.",
+      "typeName": "Type the shop's name to confirm",
+      "reason": "Reason (only you see it)",
+      "confirm": "Delete",
+      "filter": "Deleted",
+      "inBin": "This shop is deleted",
+      "since": "Deleted on",
+      "restore": "Bring it back"
     }
   },
   "field": {
@@ -3437,6 +3449,21 @@
           "body": "Every package given on credit for this shop, oldest first, with what was paid against it and what is left. Payments clear the oldest first.",
           "example": "FEE-0003 Rs. 3,000, paid Rs. 1,000 → Part paid, Rs. 2,000 left."
         }
+      },
+      "bin": {
+        "title": "Delete a customer",
+        "body": "Deleting moves the customer, with all its branches, to Deleted. Their owner and staff can no longer sign in, and the shop leaves the shop list, your figures and the night messages. Nothing is erased: bills, khata, phones and history all stay. Open Deleted and press Bring it back to restore it exactly as it was.",
+        "example": "Ali Mobiles closed its shop → Delete shop, type \"Ali Mobiles\", reason \"shop closed\". If he comes back in six months, Deleted → Ali Mobiles → Bring it back.",
+        "typeName": {
+          "title": "Shop name",
+          "body": "So a shop is never deleted by mistake, type its name exactly as shown. Capital or small letters do not matter.",
+          "example": "Ali Mobiles → type ali mobiles."
+        },
+        "reason": {
+          "title": "Reason",
+          "body": "Why you deleted it. Only you see this, in Deleted.",
+          "example": "Shop closed / did not pay for 6 months."
+        }
       }
     },
     "provider": {
@@ -4545,8 +4572,8 @@
       },
       "battery": {
         "title": "Battery health %",
-        "body": "How strong the battery still is compared with new (100%). Find it in Settings → Battery. Leave empty if the device does not show it.",
-        "example": "Used iPad 9th gen showing 86% → write 86. Below 80% buyers usually ask for less."
+        "body": "How strong the battery still is compared with new (100%). iPhone: Settings → Battery → Battery Health. iPad / watch: Settings → Battery. Many Android phones do not show it; then leave it empty.",
+        "example": "Used iPhone 12 showing 84% → write 84. Below 80% buyers usually ask for less."
       },
       "pta": {
         "title": "PTA status",
@@ -7930,7 +7957,9 @@
     "libraryHint": "Every unit you save teaches the library its model's specs; import a CSV (brand, model, category, model_number, os, chipset, display_in, ram_gb…).",
     "importCsv": "Import CSV",
     "imported": "Imported",
-    "unitCost": "Cost of this unit"
+    "unitCost": "Cost of this unit",
+    "askingOpt": "Asking price (optional)",
+    "askingOptHint": "Leave empty if not decided; set it later from the phone's page."
   },
   "remind": {
     "title": "Udhaar reminders",

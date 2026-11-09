@@ -302,7 +302,9 @@ Home par **Stock daalein** dabayein. Pehli screen poochti hai **Phone kahan se a
 10. **Haalat**: **Box pack** dabayein. Baqi options **Open box**, **Used** aur **Patch wala** hain (patch wala **Patch ki tafseel** maangta hai).
 11. **PTA status**: **PTA approved** dabayein. **Non-PTA** aur **JV** ke liye app **SIM time (mahine)** bhi poochti hai.
 12. **Khareed qeemat**: `92000` likhein, jo aap ne diye.
-13. **Bechne ki qeemat**: `100000` likhein, jitne mein aap bechna chahte hain.
+13. **Bechne ki qeemat (optional)**: `100000` likhein, jitne mein aap bechna chahte hain. Abhi tay nahi? Khali chhor dein aur baad mein phone ke page se likh dein.
+
+    **Open box**, **Used** ya **Patch wala** phone ke liye form **Battery health %** bhi poochta hai (iPhone: Settings → Battery → Battery Health). Phone na dikhaye to khali chhor dein.
 14. **Warranty (mahine)**: dealer ka phone aam taur par 12 se shuru hota hai.
 15. **Phone ke saath kya kya aaya?** Box, Charger, Cable, Earphones aur AirPods ke liye **Nahi**, **Mil gaya** ya **Baad mein** chunein. Yahan: Box **Mil gaya**, Cable **Mil gaya**, Charger **Baad mein**, aur **Kab dega?** mein tareekh chunein.
 16. **Daalein** dabayein. Phone list mein aa jata hai. Agle phone ke liye dobara **Phone daalein** dabayein.
@@ -405,7 +407,7 @@ Tablet aur smart watch bhi phone ki tarah ek ek kar ke track hoti hain, har ek k
 | Serial number | Zaroorat nahi | SIM ke baghair zaroori | SIM ke baghair zaroori |
 | PTA | PTA approved, Non-PTA, JV | Sirf SIM ke saath, JV nahi | Sirf SIM ke saath, JV nahi |
 | Size | Memory | Memory | **Dial ka size** (38 se 49 mm) |
-| Battery health % | Nahi poocha jata | Open box ya used ke liye | Open box ya used ke liye |
+| Battery health % | Open box, used ya patch wala ke liye | Open box ya used ke liye | Open box ya used ke liye |
 | Saath kya aaya | Box, charger, cable, earphone, AirPods | Box, charger, cable, pen / stylus, keyboard cover | Box, charger, extra strap |
 
 SIM ke baghair IMEI nahi hota, is liye **Serial number** (dabbe par, ya device mein Settings → About mein) dhoondne ke liye istemal hota hai aur IMEI ki tarah dikhaya jata hai.

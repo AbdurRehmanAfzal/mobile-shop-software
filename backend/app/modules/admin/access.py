@@ -65,7 +65,7 @@ def _home_shop(db: Session, user: User) -> Shop:
 
 def enter_shop(db: Session, admin: User, shop_id: uuid.UUID) -> Shop:
     shop = db.get(Shop, shop_id)
-    if shop is None or not shop.is_active:
+    if shop is None or not shop.is_active or not shop.organisation.is_active:
         raise NotFound()
     record_audit(
         db,

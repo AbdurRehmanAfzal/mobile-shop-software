@@ -19,7 +19,7 @@ from app.core.errors import Forbidden, Unauthorized
 from app.core.permissions import Cap, Role, role_has
 from app.core.security import decode_token
 from app.db.session import get_db
-from app.modules.auth.models import Shop, User, UserShop
+from app.modules.auth.models import Organisation, Shop, User, UserShop
 
 _bearer = HTTPBearer(auto_error=False)
 
@@ -84,6 +84,9 @@ def get_current_user(
     user = db.get(User, uuid.UUID(payload["sub"]))
     if user is None or not user.is_active:
         raise Unauthorized(code="user_inactive")
+    from app.modules.auth.service import assert_org_open
+
+    assert_org_open(db, user)
     _touch(db, user)
     return CurrentUser(user=user)
 
@@ -127,7 +130,12 @@ def get_current_context(
     assigned = db.scalars(
         select(Shop)
         .join(UserShop, UserShop.shop_id == Shop.id)
-        .where(UserShop.user_id == current.id, Shop.is_active.is_(True))
+        .join(Organisation, Organisation.id == Shop.organisation_id)
+        .where(
+            UserShop.user_id == current.id,
+            Shop.is_active.is_(True),
+            Organisation.is_active.is_(True),
+        )
         .order_by(Shop.created_at)
     ).all()
     if not assigned:
@@ -157,7 +165,7 @@ def get_current_context(
 
     if is_superuser(current.user):
         shop = db.get(Shop, wanted)
-        if shop is not None and shop.is_active:
+        if shop is not None and shop.is_active and shop.organisation.is_active:
             return CurrentContext(user=current.user, shop=shop)
     # Deliberately the same error whether the shop exists or not: no enumeration.
     raise Forbidden(

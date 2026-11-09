@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 
 from app.db.base import ZERO, utcnow
 from app.modules.accessories.models import Accessory
-from app.modules.auth.models import Shop
+from app.modules.auth.models import Organisation, Shop
 from app.modules.devices.models import Device
 from app.modules.devices.state import DeviceStatus
 from app.modules.ledger.models import LedgerEntry
@@ -286,7 +286,11 @@ def tick(db: Session, now: dt.datetime | None = None) -> dict:
 
     clockguard.observe(db)
     _heartbeat(db, now)
-    for shop in db.scalars(select(Shop).where(Shop.is_active.is_(True))).all():
+    for shop in db.scalars(
+        select(Shop)
+        .join(Organisation, Organisation.id == Shop.organisation_id)
+        .where(Shop.is_active.is_(True), Organisation.is_active.is_(True))
+    ).all():
         s: NotificationSettings = settings_for(shop)
         local = now.astimezone(ZoneInfo(shop.timezone or "Asia/Karachi"))
         day = local.date()
@@ -347,7 +351,6 @@ def _heartbeat(db: Session, now: dt.datetime) -> None:
     if _last_beat and now - _last_beat < dt.timedelta(hours=1):
         return
     _last_beat = now
-    from app.modules.auth.models import Organisation
     from app.modules.plan.models import PlanRenewalCode
 
     org = db.scalar(select(Organisation).where(Organisation.license_org_id.is_not(None)))

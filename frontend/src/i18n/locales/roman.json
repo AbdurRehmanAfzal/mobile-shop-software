@@ -1309,6 +1309,18 @@
       "filter": "Fee baqi",
       "chip": "Baqi",
       "clearsFirst": "Is dukaan ne pichli fee ke {{n}} abhi dene hain. Payment pehle yeh poora karti hai, baqi se mahine barhte hain."
+    },
+    "bin": {
+      "title": "Yeh customer delete karein",
+      "delete": "Dukaan delete karein",
+      "warn": "Dukaan apni sab branches ke saath Deleted mein chali jaye gi. Us ka koi banda login nahi kar sake ga aur yeh aap ki list aur hisaab se hat jaye gi. Us ka saara record mehfooz rahe ga; aap jab chahein wapis la sakte hain.",
+      "typeName": "Tasdeeq ke liye dukaan ka naam likhein",
+      "reason": "Wajah (sirf aap dekhein ge)",
+      "confirm": "Delete karein",
+      "filter": "Deleted",
+      "inBin": "Yeh dukaan delete shuda hai",
+      "since": "Delete ki tareekh",
+      "restore": "Wapis laayen"
     }
   },
   "field": {
@@ -3437,6 +3449,21 @@
           "body": "Is dukaan ko udhaar par diye gaye sab package, purane pehle, har ek par kitna ada hua aur kitna baqi hai. Payment pehle sab se purana poora karti hai.",
           "example": "FEE-0003 Rs. 3,000, ada Rs. 1,000 → Kuch ada hui, Rs. 2,000 baqi."
         }
+      },
+      "bin": {
+        "title": "Customer delete karna",
+        "body": "Delete karne se customer apni sab branches ke saath Deleted mein chala jata hai. Us ka maalik aur staff login nahi kar sakte, aur dukaan list, aap ke hisaab aur raat ke messages se hat jati hai. Kuch mit'ta nahi: bill, khata, phone aur history sab mehfooz rehte hain. Deleted kholein aur Wapis laayen dabayein, dukaan bilkul waisi hi wapis aa jaye gi.",
+        "example": "Ali Mobiles ne dukaan band kar di → Dukaan delete karein, naam \"Ali Mobiles\" likhein, wajah \"dukaan band\". Chhe mahine baad wapis aaye to Deleted → Ali Mobiles → Wapis laayen.",
+        "typeName": {
+          "title": "Dukaan ka naam",
+          "body": "Taake ghalti se koi dukaan delete na ho, us ka naam bilkul waisa hi likhein jaisa dikh raha hai. Chhote bare huroof se farq nahi parta.",
+          "example": "Ali Mobiles → ali mobiles likhein."
+        },
+        "reason": {
+          "title": "Wajah",
+          "body": "Aap ne kyun delete ki. Yeh sirf aap Deleted mein dekhein ge.",
+          "example": "Dukaan band / chhe mahine se fee nahi di."
+        }
       }
     },
     "provider": {
@@ -4545,8 +4572,8 @@
       },
       "battery": {
         "title": "Battery health %",
-        "body": "Nayi (100%) ke muqable mein battery kitni mazboot hai. Settings → Battery mein dekhen. Agar device na dikhaye to khali chhor den.",
-        "example": "Purana iPad 9th gen par 86% → 86 likhen. 80% se kam ho to customer kam daam deta hai."
+        "body": "Nayi (100%) ke muqable mein battery kitni mazboot hai. iPhone: Settings → Battery → Battery Health. iPad / watch: Settings → Battery. Bohat se Android phone yeh nahi dikhate; tab khali chhor dein.",
+        "example": "Purana iPhone 12 par 84% → 84 likhen. 80% se kam ho to customer kam daam deta hai."
       },
       "pta": {
         "title": "PTA status",
@@ -7930,7 +7957,9 @@
     "libraryHint": "Har save unit library ko model ki specs sikhata hai; CSV import karein (brand, model, category, model_number, os, chipset, display_in, ram_gb…).",
     "importCsv": "CSV import",
     "imported": "Import ho gaya",
-    "unitCost": "Is unit ki cost"
+    "unitCost": "Is unit ki cost",
+    "askingOpt": "Bechne ki qeemat (optional)",
+    "askingOptHint": "Abhi tay nahi to khali chhor dein; baad mein phone ke page se likh dein."
   },
   "remind": {
     "title": "Udhaar ki yaad dahani",

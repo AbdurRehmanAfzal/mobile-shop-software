@@ -111,7 +111,7 @@ export function draftToApi(d: DeviceLineDraft) {
       category: d.category ?? 'phone',
       cellular: phone ? null : !!d.cellular,
       size_mm: d.category === 'watch' && d.size_mm ? Number(d.size_mm) : null,
-      battery_health: !phone && d.battery_health ? Number(d.battery_health) : null,
+      battery_health: d.condition !== 'box_pack' && d.battery_health ? Number(d.battery_health) : null,
       imei1: sim ? d.imei1 || null : null,
       imei2: phone ? d.imei2 || null : null,
       serial: d.serial || null,
@@ -370,7 +370,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
       <span className="flex items-center gap-1"><BiLabel text="stock.conditionShort" size="md" tone="text-muted" /><Help term="device.condition" size="sm" /></span>
       <BiSegmented<DeviceCondition> value={d.condition} onChange={(v) => set('condition', v)} options={[{ value: 'box_pack', text: 'stock.condition.box_pack' }, { value: 'open_box', text: 'stock.condition.open_box' }, { value: 'used', text: 'stock.condition.used' }, ...(phone ? [{ value: 'patched' as const, text: 'stock.condition.patched' }] : [])]} />
       {d.condition === 'patched' ? <BiInput label="stock.patchDetails" help={<Help term="device.patch" size="sm" />} value={d.patch_details} onChange={(e) => set('patch_details', e.target.value)} required /> : null}
-      {!phone && d.condition !== 'box_pack' ? (
+      {d.condition !== 'box_pack' ? (
         <BiInput label="devx.battery" help={<Help term="device.battery" size="sm" />} type="number" inputMode="numeric" min={1} max={100} value={d.battery_health} onChange={(e) => set('battery_health', e.target.value)} hint="devx.batteryHint" error={batteryOk ? null : 'devx.batteryBad'} className="num" />
       ) : null}
 
@@ -381,7 +381,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, draftKe
       {edit ? null : (
       <div className="grid grid-cols-2 items-start gap-2">
         <BiInput label="purchase.cost" help={<Help term="cost" size="sm" />} type="number" inputMode="decimal" min={0} value={d.cost} onChange={(e) => set('cost', e.target.value)} required />
-        <BiInput label="stock.asking" help={<Help term="asking" size="sm" />} type="number" inputMode="decimal" min={0} value={d.asking_price} onChange={(e) => set('asking_price', e.target.value)} error={askingLow ? 'field.askingBelowCost' : null} />
+        <BiInput label="devx.askingOpt" help={<Help term="asking" size="sm" />} type="number" inputMode="decimal" min={0} value={d.asking_price} onChange={(e) => set('asking_price', e.target.value)} hint="devx.askingOptHint" error={askingLow ? 'field.askingBelowCost' : null} />
       </div>
       )}
       {!edit && d.model_id ? <PriceHint modelId={d.model_id} storageId={d.storage_id || null} condition={d.condition} onUse={(p) => set('asking_price', String(p))} /> : null}

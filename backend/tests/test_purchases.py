@@ -376,3 +376,30 @@ def test_backdated_cash_purchase_into_a_closed_day_is_blocked(owner, cat):
         },
     )
     assert r.status_code == 201, r.text
+
+
+def test_phone_bought_without_asking_price_keeps_its_battery_health(owner, cat):
+    """owner 2026-11-09: the asking price may stay empty at purchase, and a used phone keeps the
+    battery health it was bought with (before, only tablets / watches had it)"""
+    sup = _party(owner)
+    r = owner.post(
+        "/api/v1/purchases",
+        json={
+            "kind": "supplier",
+            "party_id": sup["id"],
+            "devices": [
+                {
+                    "device": _dev(cat, IMEI_A, condition="used", battery_health=84),
+                    "cost": 30000,
+                }
+            ],
+        },
+    )
+    assert r.status_code == 201, r.text
+    dev_id = r.json()["lines"][0]["device_id"]
+    d = owner.get(f"/api/v1/devices/{dev_id}").json()
+    assert d["asking_price"] is None and d["battery_health"] == 84 and d["category"] == "phone"
+    # changed later from the phone's page
+    r = owner.patch(f"/api/v1/devices/{dev_id}", json={"battery_health": 81})
+    assert r.status_code == 200, r.text
+    assert owner.get(f"/api/v1/devices/{dev_id}").json()["battery_health"] == 81
