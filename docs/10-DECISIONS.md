@@ -362,6 +362,15 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-053 · 2026-11-09 · Accepted · A package given on credit is an unpaid fee; payments clear it first
+**Context**: some customers ask the provider to extend the package and promise to pay later (agreed by word). The owner wants to do that, with the customer never seeing a credit option, and the fee invoice showing the fee as not paid / part paid.
+**Decision**:
+- `fee_dues`: one row per extension on credit (invoice `FEE-0001` …, months, amount, period, promised day, the provider's own note). Made only by the super admin (`POST /admin/shops/{id}/credit`); the plan is extended in the same step. Never edited.
+- `fee_payments.to_dues`: the part of an approved payment that cleared unpaid fee, set at approval and never changed. By default a payment clears all the unpaid fee it can, then buys months (reported months, or none when it all went to the fee). A renewal code never counts against unpaid fee.
+- Paid / left / status per invoice are derived (dues oldest first against the sum of `to_dues`), never stored.
+- The shop sees `dues` on its fees page (without the note), the fee invoice (`/plan/fee-invoice`, the provider prints the same page), and `fee_unpaid` in the reminder popup. The word "credit" never reaches the shop.
+**Consequences**: the provider's list shows "Owes" and a "Fee unpaid" filter; the plan stage (reminders, lock) still follows only the paid-until date, so a shop with unpaid fee keeps working until its package ends.
+
 ## ADR-052 · 2026-11-07 · Accepted · Appearance is per device; the bill QR is a signed link
 **Context**: the owner asked for three more designs of the dashboard and side panel, an "Appearance" option where users change theme, design and colours, and a QR on the invoice.
 **Decision**:

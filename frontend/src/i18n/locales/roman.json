@@ -1295,7 +1295,21 @@
     "receipt": "Raseed",
     "saved": "Mehfooz ho gaya",
     "pwFor": "Naya password baraye",
-    "pwForOwner": "Is ki bajaye owner ka"
+    "pwForOwner": "Is ki bajaye owner ka",
+    "credit": {
+      "title": "Package abhi, fee baad mein",
+      "hint": "Yeh sirf aap dekhte hain. Dukaan ko apne fees page aur bill par fee sirf baqi nazar aati hai, udhaar ka koi option nahi.",
+      "dueOn": "Ada karne ki tareekh (marzi)",
+      "note": "Aap ka note (sirf aap dekhenge)",
+      "give": "Udhaar par package barhayein",
+      "given": "Package barh gaya. Dukaan ko fee baqi nazar aayegi.",
+      "list": "Fee jo abhi ada nahi hui",
+      "send": "WhatsApp par bhejein",
+      "waText": "{{shop}} — Mobile Shop software fee\nKul: {{total}}\nAda: {{paid}}\nAbhi deni hai: {{left}}\nBill app mein dekhein: Mazeed → Software fees.",
+      "filter": "Fee baqi",
+      "chip": "Baqi",
+      "clearsFirst": "Is dukaan ne pichli fee ke {{n}} abhi dene hain. Payment pehle yeh poora karti hai, baqi se mahine barhte hain."
+    }
   },
   "field": {
     "badMobile": "3 se shuru hone wala 10 hindson ka mobile number likhein, maslan 300 1234567",
@@ -3393,6 +3407,36 @@
         "title": "Login tafseel",
         "body": "Woh mobile number aur password jis se nayi dukaan ka maalik login karega. WhatsApp par bhejein; paigham mein website aur Android app ka link bhi hai.",
         "example": "0321 5550002 · ms4821 → WhatsApp par bhejein dabayein."
+      },
+      "credit": {
+        "title": "Package abhi, fee baad mein",
+        "body": "Us gahak ke liye jo kehta hai package barha dein, paise baad mein bhej doon ga. Package foran barh jata hai aur fee baqi likhi jati hai. Dukaan ko apne fees page, fee ke bill aur yaad-dehani mein sirf \"Ada nahi hui\", \"Kuch ada hui\" ya \"Ada ho gayi\" nazar aata hai. Paise aayein to pehle yeh fee poori hoti hai.",
+        "example": "Ali Mobiles 2 mahine aur maangta hai aur 15 tareekh ko dega → 2 mahine, Rs. 3,000, 15 tareekh. Package abhi barh gaya; us ke fees page par Rs. 3,000 baqi dikhta hai.",
+        "months": {
+          "title": "Mahine",
+          "body": "Package mein abhi kitne mahine barhane hain.",
+          "example": "2 → 10 March ko khatam hone wala package ab 10 May ko khatam hoga."
+        },
+        "amount": {
+          "title": "Raqam",
+          "body": "In mahinon ki fee jo dukaan ne deni hai. Shuru mein mahana fee × mahine hoti hai; koi aur raqam tay hui ho to badal dein.",
+          "example": "Mahana fee Rs. 1,500 × 2 mahine → Rs. 3,000."
+        },
+        "dueOn": {
+          "title": "Ada karne ki tareekh",
+          "body": "Jis din gahak ne paise dene ka waada kiya. Us ke baad aap ko bhi aur dukaan ko bhi fee der se nazar aati hai.",
+          "example": "15 tareekh ka waada → 16 se \"Ada karne ki tareekh guzar gayi 15\" dikhta hai."
+        },
+        "note": {
+          "title": "Aap ka note",
+          "body": "Sirf aap ke liye, ke kya tay hua tha. Dukaan isay kabhi nahi dekhti, bill par bhi nahi.",
+          "example": "\"Phone par kaha Eid ke baad dega.\""
+        },
+        "list": {
+          "title": "Fee jo abhi ada nahi hui",
+          "body": "Is dukaan ko udhaar par diye gaye sab package, purane pehle, har ek par kitna ada hua aur kitna baqi hai. Payment pehle sab se purana poora karti hai.",
+          "example": "FEE-0003 Rs. 3,000, ada Rs. 1,000 → Kuch ada hui, Rs. 2,000 baqi."
+        }
       }
     },
     "provider": {
@@ -7140,6 +7184,11 @@
         "title": "Aap ki adaigiyan",
         "body": "Har batayi gayi fees aur us ki haalat: being checked, received ya not accepted. Received wali ki raseed chhaapein.",
         "example": "October Rs. 2,000 · Received → raseed number daba kar chhaapein."
+      },
+      "due": {
+        "title": "Fee jo abhi deni hai",
+        "body": "Aap ke package ke woh mahine jo fee ada hone se pehle diye gaye. Har line mein muddat, fee, aap ne kitna diya aur kitna baqi hai. Aap jo payment bhejenge woh pehle yeh poora karegi.",
+        "example": "FEE-0003, 2 mahine Rs. 3,000, aap ne Rs. 1,000 diye → Kuch ada hui, Rs. 2,000 abhi dene hain."
       }
     },
     "accounts": {
@@ -7954,7 +8003,8 @@
       "backup": "Mera data backup karein",
       "backupHint": "Aap ka saara data Excel files mein, kisi bhi waqt. Kuch bhi kabhi delete nahi hota.",
       "clock": "Is computer ki ghari ghalat lagti hai. Plan aakhri durust waqt se gina jata hai.",
-      "pending": "Aap ki payment check ho rahi hai. Shukriya."
+      "pending": "Aap ki payment check ho rahi hai. Shukriya.",
+      "unpaid": "Pichli fee abhi baqi hai: {{amount}}"
     },
     "lock": {
       "title": "Plan khatam ho gaya hai",
@@ -8046,7 +8096,20 @@
     "accountTitle": "Account title",
     "iban": "IBAN",
     "branch": "Branch",
-    "support": "WhatsApp par madad"
+    "support": "WhatsApp par madad",
+    "due": {
+      "title": "Fee jo abhi deni hai",
+      "unpaid": "Ada nahi hui",
+      "partial": "Kuch ada hui",
+      "paid": "Ada ho gayi",
+      "paidPart": "ada",
+      "promised": "Ada karne ki tareekh",
+      "overdue": "Ada karne ki tareekh guzar gayi",
+      "left": "Abhi deni hai",
+      "allPaid": "Saari fee ada ho chuki hai. Shukriya!",
+      "invoice": "Fee ka bill",
+      "toDues": "Pichli fee mein gaya:"
+    }
   },
   "landing": {
     "badge": "Sirf Pakistan ki mobile dukaanon ke liye bana",

@@ -13,14 +13,15 @@ import { useAuth, type MeOut } from '@/lib/auth'
 import { api, get } from '@/lib/api'
 import { fileObjectUrl } from '@/lib/files'
 import AppLinkCard, { APP_LINK, SITE } from './AppLinkCard'
+import FeeCreditCard from './FeeCreditCard'
 import { normalisePhone } from '@/lib/format'
 import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
 
-interface AdminShop { id: string; organisation_id: string; name: string; city: string | null; owner_name: string | null; owner_phone: string | null; users: number; branches: number; created_at: string; plan: string; plan_expires_at: string | null; days_left: number | null; monthly_fee: string; fee_note: string | null; plan_status: 'unlimited' | 'ok' | 'due_soon' | 'expired' | 'locked'; modules: string[]; modules_custom: boolean; grace_days?: number | null }
+interface AdminShop { id: string; organisation_id: string; name: string; city: string | null; owner_name: string | null; owner_phone: string | null; users: number; branches: number; created_at: string; plan: string; plan_expires_at: string | null; days_left: number | null; monthly_fee: string; fee_note: string | null; plan_status: 'unlimited' | 'ok' | 'due_soon' | 'expired' | 'locked'; modules: string[]; modules_custom: boolean; grace_days?: number | null; fee_due?: string }
 interface BillingOut { bank: { bank_name: string; account_title: string; account_number: string; iban: string; branch: string }; support: { phone: string; whatsapp: string }; schedule: { info_days: number; warn_days: number; urgent_days: number; grace_days: number; snooze_hours: number }; note: { en: string; ur: string; roman: string }; qr_path: string | null; placeholders: boolean }
-type DueFilter = 'all' | 'due' | 'locked'
+type DueFilter = 'all' | 'due' | 'locked' | 'unpaid'
 interface Account { label: string; account_name: string; number: string; note: string | null }
-interface FeeRow { id: string; shop_id: string; shop_name: string; plan: string; amount: string; method: string; reference: string | null; proof_path: string | null; months: number; note: string | null; status: string; decision_note: string | null; created_at: string; paid_on?: string | null; receipt_no?: string | null }
+interface FeeRow { id: string; shop_id: string; shop_name: string; plan: string; amount: string; method: string; reference: string | null; proof_path: string | null; months: number; note: string | null; status: string; decision_note: string | null; created_at: string; paid_on?: string | null; receipt_no?: string | null; to_dues?: string; fee_due?: string }
 interface ShopReq { id: string; name: string; shop_name: string; city: string | null; phone: string; plan: string; note: string | null; created_at: string }
 interface PwReq { id: string; shop_id: string; shop_name: string; user_id: string; name: string; phone: string; role: string; sent_to: string; created_at: string }
 const PLANS = ['trial', 'basic', 'pro', 'chain'] as const
@@ -94,7 +95,7 @@ export default function AdminPage() {
   useEffect(() => { if (billOpen && !bill && billing) setBill(JSON.parse(JSON.stringify(billing))) }, [billOpen, bill, billing])
   const saveBilling = useDocMutation<BillingOut, BillingOut>('PUT', () => '/api/v1/admin/billing', (b) => ({ bank: b.bank, support: b.support, schedule: b.schedule, note: b.note }))
   const [pay, setPay] = useState({ amount: '', method: 'cash', months: '1', reference: '', paid_on: isoDay(0) })
-  const recordPay = useDocMutation<typeof pay, FeeRow>('POST', () => `/api/v1/admin/shops/${sel?.id}/payments`, (p) => ({ amount: Number(p.amount), method: p.method, months: Number(p.months) || 1, reference: p.reference || null, paid_on: p.paid_on || null }))
+  const recordPay = useDocMutation<typeof pay, FeeRow>('POST', () => `/api/v1/admin/shops/${sel?.id}/payments`, (p) => ({ amount: Number(p.amount), method: p.method, months: p.months === '' ? 1 : Number(p.months), reference: p.reference || null, paid_on: p.paid_on || null }))
   const [codeMonths, setCodeMonths] = useState('1')
   const [codeOut, setCodeOut] = useState<string | null>(null)
   const makeCode = useDocMutation<{ months: number }, { code: string }>('POST', () => `/api/v1/admin/shops/${sel?.id}/renewal-code`)
@@ -130,7 +131,9 @@ export default function AdminPage() {
   const { data: catalogue } = useGet<ModuleCatalogue>(['module-catalogue'], isSuper ? '/api/v1/admin/modules' : null)
   const [mods, setMods] = useState<string[] | null>(null)
   const saveModules = useDocMutation<{ modules: string[] | null }, AdminShop>('PATCH', () => `/api/v1/admin/shops/${sel?.id}/modules`)
-  const shown = (data ?? []).filter((s) => due === 'all' || (due === 'due' ? s.plan_status === 'due_soon' || s.plan_status === 'expired' : s.plan_status === 'locked'))
+  const owes = (s: AdminShop) => Number(s.fee_due ?? 0) > 0
+  const shown = (data ?? []).filter((s) => due === 'all' || (due === 'unpaid' ? owes(s) : due === 'due' ? s.plan_status === 'due_soon' || s.plan_status === 'expired' : s.plan_status === 'locked'))
+  const unpaidCount = (data ?? []).filter(owes).length
   const dueCount = (data ?? []).filter((s) => s.plan_status === 'due_soon' || s.plan_status === 'expired').length
   const lockedCount = (data ?? []).filter((s) => s.plan_status === 'locked').length
   useEffect(() => { if (wantShop && data && !sel) { const s = data.find((x) => x.id === wantShop); if (s) openShop(s) } }, [wantShop, data]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -192,6 +195,7 @@ export default function AdminPage() {
                   <span className="num text-lg" dir="ltr">{withCur(Number(f.amount).toLocaleString('en-US'))}</span>
                 </div>
                 {f.note ? <span className="text-sm text-muted">{f.note}</span> : null}
+                {Number(f.fee_due ?? 0) > 0 ? <span className={`rounded-xl bg-payable-tint px-3 py-2 font-semibold text-payable ${ur ? cls('sm') : 'text-xs'}`}>{pick('admin.credit.clearsFirst').replace('{{n}}', withCur(Number(f.fee_due).toLocaleString('en-US')))}</span> : null}
                 <div className="flex gap-2">
                   {f.proof_path ? <button type="button" onClick={async () => setProofUrl(await fileObjectUrl(f.proof_path!, f.shop_id))} className="tap flex h-10 items-center gap-1 rounded-xl border border-line px-3 text-xs font-bold"><ImageIcon size={16} /> {pick('admin.proof')}</button> : null}
                   <button type="button" onClick={() => decide(f, 'approve')} className="tap flex h-10 flex-1 items-center justify-center gap-1 rounded-xl bg-emerald text-sm font-bold text-white"><Check size={16} /> {pick('admin.approveMonths').replace('{{n}}', String(f.months))}</button>
@@ -294,7 +298,7 @@ export default function AdminPage() {
       ) : null}
       <SearchBox value={q} onChange={setQ} placeholder="common.search" />
       <div className="flex flex-wrap gap-1.5">
-        {([['all', pick('common.all'), data?.length ?? 0], ['due', pick('admin.feesDue'), dueCount], ['locked', pick('admin.locked'), lockedCount]] as const).map(([k, label, n]) => (
+        {([['all', pick('common.all'), data?.length ?? 0], ['due', pick('admin.feesDue'), dueCount], ['locked', pick('admin.locked'), lockedCount], ['unpaid', pick('admin.credit.filter'), unpaidCount]] as const).map(([k, label, n]) => (
           <button key={k} type="button" aria-pressed={due === k} onClick={() => setDue(k)} className={`tap h-10 rounded-full border-2 px-3.5 font-bold ${due === k ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-[13px]'}`}>
             {label} <span className="num">{n}</span>
           </button>
@@ -313,6 +317,7 @@ export default function AdminPage() {
               </span>
               <span className="flex flex-col items-end gap-1">
                 <PlanChip s={s} />
+                {Number(s.fee_due ?? 0) > 0 ? <span className="rounded-full bg-payable-tint px-2 py-0.5 text-xs font-bold text-payable" data-testid="fee-due-chip">{pick('admin.credit.chip')} <span className="num" dir="ltr">{withCur(Number(s.fee_due).toLocaleString('en-US'))}</span></span> : null}
                 <span className="text-xs text-muted">{Number(s.monthly_fee) ? <span className="num" dir="ltr">{withCur(Number(s.monthly_fee).toLocaleString('en-US'))}/{pick('admin.month')}</span> : pick('admin.noFee')}</span>
               </span>
             </button>
@@ -397,14 +402,17 @@ export default function AdminPage() {
             <BiLabel text="admin.recordHint" size="sm" tone="text-muted" />
             <div className="grid grid-cols-2 gap-2">
               <BiInput label="fees.amount" help={<Help term="admin.payAmount" size="sm" />} type="number" inputMode="numeric" min={1} value={pay.amount} onChange={(e) => setPay({ ...pay, amount: e.target.value })} className="num" />
-              <BiInput label="fees.months" help={<Help term="admin.payMonths" size="sm" />} type="number" inputMode="numeric" min={1} max={36} value={pay.months} onChange={(e) => setPay({ ...pay, months: e.target.value })} className="num" />
+              <BiInput label="fees.months" help={<Help term="admin.payMonths" size="sm" />} type="number" inputMode="numeric" min={0} max={36} value={pay.months} onChange={(e) => setPay({ ...pay, months: e.target.value })} className="num" />
               <BiInput label="fees.method" help={<Help term="admin.payMethod" size="sm" />} value={pay.method} onChange={(e) => setPay({ ...pay, method: e.target.value })} />
               <BiInput label="admin.paidOn" help={<Help term="admin.paidOn" size="sm" />} type="date" value={pay.paid_on} onChange={(e) => setPay({ ...pay, paid_on: e.target.value })} dir="ltr" />
             </div>
             <BiInput label="fees.reference" help={<Help term="tid" size="sm" />} value={pay.reference} onChange={(e) => setPay({ ...pay, reference: e.target.value })} dir="ltr" />
+            {Number(sel.fee_due ?? 0) > 0 ? <span className={`rounded-xl bg-payable-tint px-3 py-2 font-semibold text-payable ${ur ? cls('sm') : 'text-xs'}`}>{pick('admin.credit.clearsFirst').replace('{{n}}', withCur(Number(sel.fee_due).toLocaleString('en-US')))}</span> : null}
             <ErrorText error={recordPay.error} />
             {recordPay.data ? <BiAlert text={{ en: `${pick('admin.receipt')} ${recordPay.data.receipt_no ?? ''}`, ur: `${pick('admin.receipt')} ${recordPay.data.receipt_no ?? ''}`, roman: `${pick('admin.receipt')} ${recordPay.data.receipt_no ?? ''}` }} kind="success" /> : null}
             <BiButton text="admin.recordPayment" icon={<CreditCard size={20} />} variant="secondary" full disabled={!Number(pay.amount)} loading={recordPay.isPending} onClick={async () => { await recordPay.mutateAsync(pay); inv('admin-shops', 'fee-stats'); const rows = await get<AdminShop[]>('/api/v1/admin/shops'); const r = rows.find((x) => x.id === sel.id); if (r) setSel(r) }} data-testid="record-payment" />
+
+            <FeeCreditCard shop={sel} onSaved={(r) => { setSel(r); setPlan({ ...plan, expires_on: r.plan_expires_at ? r.plan_expires_at.slice(0, 10) : '' }) }} />
 
             <span className="flex items-center gap-1 mt-2"><BiLabel text="admin.renewalCode" size="md" bold /><Help term="admin.renewalCode" size="sm" /></span>
             <BiLabel text="admin.renewalHint" size="sm" tone="text-muted" />

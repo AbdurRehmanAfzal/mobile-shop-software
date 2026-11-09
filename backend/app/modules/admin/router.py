@@ -10,6 +10,7 @@ from decimal import Decimal
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, Query
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 
@@ -17,12 +18,14 @@ from app.core.errors import Forbidden, NotFound
 from app.core.permissions import Role
 from app.core.tenancy import DB, CurrentUser, get_current_user
 from app.modules.admin import access, fees, modules, plans
+from app.modules.admin.fees_router import DuesAdminOut
 from app.modules.audit.service import record_audit
 from app.modules.auth import service
 from app.modules.auth.models import Shop, User, UserShop
 from app.modules.auth.schemas import SignupRequest
 
 router = APIRouter(prefix="/api/v1/admin", tags=["admin"])
+Lang = Annotated[str | None, Query(pattern="^(en|ur)$")]
 
 
 def _super(current: Annotated[CurrentUser, Depends(get_current_user)]) -> CurrentUser:
@@ -56,6 +59,7 @@ class AdminShopOut(BaseModel):
     plan_status: str
     modules: list[str]
     modules_custom: bool
+    fee_due: Decimal = Decimal(0)  # unpaid fee from packages given on credit (ADR-053)
 
 
 class ModulesIn(BaseModel):
@@ -83,9 +87,19 @@ class PlanIn(BaseModel):
 class ManualPaymentIn(BaseModel):
     amount: Decimal = Field(gt=0)
     method: str = Field(default="cash", min_length=1, max_length=60)
-    months: int = Field(default=1, ge=1, le=36)
+    # 0 = the whole payment only clears unpaid fee (ADR-053)
+    months: int = Field(default=1, ge=0, le=36)
     reference: str | None = Field(default=None, max_length=80)
     paid_on: date | None = None
+    note: str | None = Field(default=None, max_length=300)
+
+
+class CreditIn(BaseModel):
+    """a package extended now, paid later (agreed by word with the customer; ADR-053)"""
+
+    months: int = Field(ge=1, le=36)
+    amount: Decimal = Field(gt=0)
+    due_on: date | None = None
     note: str | None = Field(default=None, max_length=300)
 
 
@@ -169,6 +183,8 @@ class FeeRowOut(BaseModel):
     handled_at: datetime | None
     paid_on: date | None = None
     receipt_no: str | None = None
+    to_dues: Decimal = Decimal(0)
+    fee_due: Decimal = Decimal(0)
 
 
 class FeeStatsOut(BaseModel):
@@ -178,7 +194,7 @@ class FeeStatsOut(BaseModel):
 
 
 class DecideIn(BaseModel):
-    months: int | None = Field(default=None, ge=1, le=36)
+    months: int | None = Field(default=None, ge=0, le=36)
     note: str | None = Field(default=None, max_length=200)
 
 
@@ -236,6 +252,7 @@ def _rows(db, shops: list[Shop]) -> list[AdminShopOut]:
     else:
         users, branches = {}, {}
     sched = billing.schedule(db)
+    owed = fees.dues_left_by_org(db, org_ids)
     out = []
     for s in shops:
         owner = owners.get(s.organisation_id)
@@ -260,6 +277,7 @@ def _rows(db, shops: list[Shop]) -> list[AdminShopOut]:
                 plan_status=info["status"],
                 modules=info["modules"],
                 modules_custom=info["modules_custom"],
+                fee_due=owed.get(s.organisation_id, Decimal(0)),
             )
         )
     return out
@@ -430,6 +448,39 @@ def record_payment(shop_id: uuid.UUID, data: ManualPaymentIn, current: Super, db
         note=data.note,
     )
     return next(r for r in fees.listing(db, None) if r["id"] == p.id)
+
+
+@router.post("/shops/{shop_id}/credit", response_model=AdminShopOut, status_code=201)
+def extend_on_credit(shop_id: uuid.UUID, data: CreditIn, current: Super, db: DB):
+    """Extend the package now; the fee stays unpaid until the customer pays (ADR-053). Only the
+    provider has this; the shop sees the fee as unpaid on its fees page and invoice."""
+    shop = _shop(db, shop_id)
+    fees.extend_on_credit(
+        db,
+        current.user,
+        shop,
+        months=data.months,
+        amount=data.amount,
+        due_on=data.due_on,
+        note=data.note,
+    )
+    db.refresh(shop)
+    return _rows(db, [shop])[0]
+
+
+@router.get("/shops/{shop_id}/fee-dues", response_model=DuesAdminOut)
+def fee_dues(shop_id: uuid.UUID, _: Super, db: DB):
+    """the shop's packages given on credit: paid / left per invoice, with the provider's notes"""
+    shop = _shop(db, shop_id)
+    return fees.dues(db, shop.organisation_id, for_provider=True)
+
+
+@router.get("/shops/{shop_id}/fee-invoice", response_class=HTMLResponse)
+def fee_invoice(shop_id: uuid.UUID, _: Super, db: DB, lang: Lang = None):
+    """the same fee invoice the shop sees (never the provider's notes), to print or send"""
+    from app.modules.plan.invoice import fee_invoice_html
+
+    return HTMLResponse(fee_invoice_html(db, _shop(db, shop_id), ur=lang == "ur"))
 
 
 @router.post("/shops/{shop_id}/renewal-code")

@@ -2208,6 +2208,17 @@ Owner only: More → **Software fees**.
 
 **Renewal code:** sometimes, especially for the PC version without internet, the provider sends a code on WhatsApp. Paste it in **Renewal code** and tap **Renew with code**. It works without internet, but only once.
 
+### Fee still to pay
+
+Sometimes the software provider extends your package before you pay (you agreed on the phone). Then **Software fees** shows **Fee still to pay**: each line has its number (for example `FEE-0001`), the period, the months and the fee, with **Not paid**, **Part paid** or **Paid**. Below it, **Still to pay** shows the total in red. If a day to pay was agreed, it shows **To pay by** with the date, or **Was to be paid by** once that day has passed.
+
+- **Fee invoice** opens the invoice to print or keep: each period, the fee, what you paid, what is left, and where to pay.
+- When you send money, it first clears the fee still to pay, oldest first; the rest moves your **Paid until** date forward. The amount in **I have paid** already includes what is still to pay.
+- In **Your payments**, a payment shows **Went to earlier fee** with the part that cleared it. The receipt shows it too.
+- The reminder window also shows "Fee still unpaid from before".
+
+**Example:** the provider gave 2 months for Rs. 3,000 on the 9th, to pay by the 15th. You send Rs. 1,000: the line shows **Part paid**, Rs. 2,000 still to pay. Next you send Rs. 3,500: Rs. 2,000 clears the old fee (**Paid**) and Rs. 1,500 buys one more month.
+
 ### Fee reminders
 
 The app reminds you politely before the plan ends:

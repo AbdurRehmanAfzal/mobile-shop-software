@@ -9,14 +9,15 @@ import Help from '@/components/Help'
 import { Chip, ErrorText, KV, Loading, MoneyText, PageHeader, Section, fmtDate } from '@/components/ui'
 import type { PlanOut } from '@/lib/auth'
 import { openPrintable, uploadFile } from '@/lib/files'
-import { isoDay } from '@/lib/format'
+import { isoDay, withCur } from '@/lib/format'
 import { usePlanReminder, type Reminder } from '@/lib/planReminder'
 import { backupNow, waLink } from '@/components/PlanReminders'
 import { useDocMutation, useGet } from '@/lib/queries'
+import { dueTone, type Dues } from '@/features/admin/FeeCreditCard'
 
 interface Account { label: string; account_name: string; number: string; note: string | null }
-interface Fee { id: string; amount: string; method: string; reference: string | null; proof_path: string | null; months: number; note: string | null; status: 'pending' | 'approved' | 'rejected'; decision_note: string | null; created_at: string; handled_at: string | null; paid_on: string | null; receipt_no: string | null }
-interface MyFees { plan: PlanOut; accounts: Account[]; payments: Fee[] }
+interface Fee { id: string; amount: string; method: string; reference: string | null; proof_path: string | null; months: number; note: string | null; status: 'pending' | 'approved' | 'rejected'; decision_note: string | null; created_at: string; handled_at: string | null; paid_on: string | null; receipt_no: string | null; to_dues?: string }
+interface MyFees { plan: PlanOut; accounts: Account[]; payments: Fee[]; dues?: Dues }
 
 export default function FeesPage() {
   const { pick, ur, cls } = useLang()
@@ -43,7 +44,9 @@ export default function FeesPage() {
   if (isLoading || !data) return <Loading />
   const plan = data.plan
   const fee = Number(plan.monthly_fee) || 0
-  const amt = amount === '' && fee ? String(fee * Math.max(1, Number(months) || 1)) : amount
+  const owed = Number(data.dues?.left ?? 0)
+  // what is still unpaid is cleared first, so the suggested amount includes it (ADR-053)
+  const amt = amount === '' && (fee || owed) ? String(owed + fee * Math.max(1, Number(months) || 1)) : amount
   const chosen = method || data.accounts[0]?.label || ''
 
   async function copy(a: Account) {
@@ -81,6 +84,33 @@ export default function FeesPage() {
         <KV k="fees.paidUntil" v={<span className="num" dir="ltr">{plan.expires_at ? fmtDate(plan.expires_at) : pick('admin.unlimited')}</span>} help="fees.paidUntil" />
         {plan.days_left != null ? <span className={small}>{plan.days_left >= 0 ? pick('admin.daysLeft').replace('{{n}}', String(plan.days_left)) : pick('admin.expiredDays').replace('{{n}}', String(-plan.days_left))}</span> : null}
       </div>
+
+      {data.dues?.rows.length ? (
+        <Section title="fees.due.title" help="fees.due">
+          <div className="card divide-y divide-line p-0" data-testid="fees-dues">
+            {data.dues.rows.map((d) => (
+              <div key={d.invoice_no} className="flex flex-col gap-1 px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <span className="flex min-w-0 flex-1 flex-col"><span className="num text-sm font-bold" dir="ltr">{d.invoice_no}</span><span className="num whitespace-nowrap text-xs text-muted" dir="ltr">{d.period_from ? fmtDate(d.period_from) : '—'} – {d.period_to ? fmtDate(d.period_to) : '—'}</span></span>
+                  <Chip text={`fees.due.${d.status}`} tone={dueTone(d.status)} />
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <span className="text-muted">{d.months} {pick(d.months === 1 ? 'admin.month' : 'admin.months')}</span>
+                  <span className="flex-1" />
+                  <MoneyText value={d.amount} tone="ink" size="sm" />
+                  {Number(d.paid) ? <span className="text-muted"><span className={small}>{pick('fees.due.paidPart')} </span><MoneyText value={d.paid} tone="muted" size="sm" /></span> : null}
+                </div>
+                {d.due_on && d.status !== 'paid' ? <span className={`${d.overdue ? 'font-bold text-payable' : 'text-muted'} ${small}`}>{pick(d.overdue ? 'fees.due.overdue' : 'fees.due.promised')} <span className="num" dir="ltr">{fmtDate(d.due_on)}</span></span> : null}
+              </div>
+            ))}
+          </div>
+          <div className={`flex items-center justify-between rounded-2xl px-4 py-3 ${owed > 0 ? 'bg-payable-tint text-payable' : 'bg-emerald-tint text-emerald-deep'}`}>
+            <BiLabel text={owed > 0 ? 'fees.due.left' : 'fees.due.allPaid'} size="sm" bold tone="text-current" />
+            {owed > 0 ? <span className="num text-lg font-extrabold" dir="ltr" data-testid="fees-due-left">{withCur(owed.toLocaleString('en-US'))}</span> : null}
+          </div>
+          <BiButton text="fees.due.invoice" icon={<Printer size={20} />} variant="secondary" full onClick={() => void openPrintable('/api/v1/plan/fee-invoice')} data-testid="fees-invoice" />
+        </Section>
+      ) : null}
 
       <Section title="fees.payInto" help="fees.payInto">
         {rem?.billing?.bank ? (
@@ -172,6 +202,7 @@ export default function FeesPage() {
                   <Chip text={`fees.status.${p.status}`} tone={p.status === 'approved' ? 'ok' : p.status === 'rejected' ? 'bad' : 'warn'} />
                   {p.status === 'approved' ? <button type="button" onClick={() => void openPrintable(`/api/v1/plan/receipts/${p.id}?lang=${ur ? 'ur' : 'en'}`)} className="tap flex h-8 items-center gap-1 rounded-full border border-line px-2.5 text-xs font-bold"><Printer size={14} /> {p.receipt_no ?? pick('fees.receipt')}</button> : null}
                 </div>
+                {Number(p.to_dues ?? 0) > 0 ? <span className={`text-muted ${small}`}>{pick('fees.due.toDues')} <span className="num" dir="ltr">{withCur(Number(p.to_dues).toLocaleString('en-US'))}</span></span> : null}
                 {p.decision_note ? <span className="text-sm text-payable">{p.decision_note}</span> : null}
               </div>
             ))}

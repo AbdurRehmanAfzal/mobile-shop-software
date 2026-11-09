@@ -25,6 +25,7 @@ export interface Reminder {
   expires_at: string | null
   plan: string
   amount_due: string
+  fee_unpaid?: string | null  // fee still unpaid for packages already given (ADR-053)
   currency: string
   last_payment_at: string | null
   pending_payment: { id: string; amount: string; created_at: string } | null
