@@ -362,6 +362,16 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-054 · 2026-11-09 · Accepted · Deleting a customer moves it to the bin; nothing is erased
+**Context**: the owner asked for a "delete shop" option. A shop's bills, khata, ledger and device events are append-only and tied together; erasing them would break the project's rules and could not be undone after a mistake.
+**Decision** (owner chose "bin" and "super admin, whole customer"):
+- Only the super admin deletes, and only a whole customer (organisation, all its branches), from the shop sheet. The shop's name must be typed again; an optional private reason is kept. The provider's own organisation can never be deleted.
+- Delete sets `organisations.is_active = false` with `deleted_at / deleted_by / deleted_reason` (migration `c5e7a9b1d3f6`, additive). No row of the shop is changed or removed. Each delete and restore writes an audit row.
+- A deleted customer cannot sign in (`shop_closed`), its tokens stop working on the next request, refresh fails, the super admin cannot open it, it leaves the shop list, the business console figures and the night jobs. It is listed under the **Deleted** filter.
+- **Bring it back** clears the fields; the shop works exactly as before.
+- The one-PC heartbeat / licence routes do not look at `is_active`, so a PC install keeps working even if its cloud entry is deleted.
+**Consequences**: permanent erasure (e.g. a data request) is not built; if needed later it is a separate, deliberate step. A deleted customer's owner phone stays taken, so the same number cannot open a new shop; restore the old one instead.
+
 ## ADR-053 · 2026-11-09 · Accepted · A package given on credit is an unpaid fee; payments clear it first
 **Context**: some customers ask the provider to extend the package and promise to pay later (agreed by word). The owner wants to do that, with the customer never seeing a credit option, and the fee invoice showing the fee as not paid / part paid.
 **Decision**:

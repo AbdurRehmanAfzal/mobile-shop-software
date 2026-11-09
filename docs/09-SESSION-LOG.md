@@ -994,3 +994,12 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - Docs: ADR-053; user manual ch. 25 "Fee still to pay" (3 languages); super admin manual "Package now, fee later" (en / roman); owner pending (migration head, manual test); PDFs rebuilt.
 **Verified**: `tests/test_fee_dues.py` (3: credit → unpaid → part paid → paid, oldest first, staff / other shops see nothing, no note / "credit" on the shop side); `test_fees`, `test_plans`, `test_plan_reminders`, `test_provider_console`; ruff; tsc; Playwright `fee-credit.spec` (new), `fees.spec`, `plan-reminders.spec` (failed once while the backend suite ran beside it, passed alone); screenshots of the admin card and the shop's fees page looked at.
 **Next**: owner to try it on a test shop (docs/29 D).
+
+## 2026-11-09 (later) — Delete a customer, into the bin (ADR-054)
+**Owner**: "shop delete ka option be hona chye". Asked: owner chose **bin (restorable)** and **super admin deletes a whole customer**. Also: "ak software install kia hai so ap ki update say wo disturb na ho" — the change is additive and does nothing until the super admin presses Delete; the one-PC heartbeat / licence routes do not look at `is_active`.
+**Done**:
+- Backend: `organisations.deleted_at / deleted_by / deleted_reason` (migration `c5e7a9b1d3f6`, additive); `admin/bin.py` (`delete` needs the shop name typed again, never the provider's own organisation; `restore`; audit rows). `POST /admin/shops/{id}/delete`, `POST /admin/shops/{id}/restore`, `GET /admin/shops?deleted=true`; rows carry `deleted_at / deleted_reason`. `auth.service.assert_org_open` blocks login, refresh and every request (`shop_closed`); the shop context, "Open this shop" and the night `tick` skip closed customers.
+- Frontend: `ShopBinCard.tsx` at the end of the shop sheet (Delete shop → warning, type the name, reason, Delete); a deleted shop's sheet shows only "This shop is deleted" with **Bring it back**; a **Deleted** filter on the shop list. en / ur / roman + help.
+- Docs: ADR-054, super admin manual "Deleting a customer" (en / roman), owner pending (head, manual test).
+**Verified**: `tests/test_shop_bin.py` (2) and the full backend suite; ruff; tsc; Playwright `shop-bin.spec` (new) and `fee-credit.spec`; screenshot of the delete confirmation looked at.
+**Next**: owner merges PR #38, then this one; owner tries it on a test shop (docs/29 D).

@@ -519,6 +519,21 @@ The shop unlocks as soon as you save; the owner only needs to refresh the app.
 
 If a shop simply stops paying, you need do nothing: it moves through the reminders, grace days and lock by itself. If the owner comes back months later, record his payment and he carries on with all his old stock and khata.
 
+### Deleting a customer
+
+When a customer closes his shop or leaves for good, you can delete him. Nothing is erased; he only goes to **Deleted**.
+
+1. Open his shop in **Customer shops** and scroll to the end of the sheet, **Delete this customer**.
+2. Tap **Delete shop**.
+3. Type the shop's name exactly as shown (capital or small letters do not matter), and if you like a **Reason** that only you see.
+4. Tap **Delete**.
+
+From that moment the shop and all its branches are closed: the owner and his staff cannot log in (they see "This shop has been closed. Please contact support."), and the shop leaves your list, your business figures and the night messages. His bills, khata, phones and history all stay as they were.
+
+To find him again tap the **Deleted** filter above the shop list. Open his shop and tap **Bring it back**: he can log in at once and carries on exactly as before.
+
+> **Note:** Your own shop can never be deleted. A one-PC shop keeps working on its computer; deleting only hides it from your cloud lists. The owner's mobile number stays with the deleted shop, so if he comes back, bring the old shop back instead of opening a new one.
+
 ## 9. The Android app link
 
 The **Android app** card on the Super admin page has the download link of the shop app for Android phones. The link is your website address followed by /app.apk, for example `https://mobileshop.oopsolutions.com/app.apk`. It always gives the newest version, so the same link works for every shop, today and after every update.

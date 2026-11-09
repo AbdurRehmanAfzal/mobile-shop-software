@@ -37,6 +37,11 @@ class Organisation(UUIDPk, Timestamped, Base):
     # owner 2026-10-29: modules switched on for this shop; None = the plan's defaults
     modules: Mapped[list | None] = mapped_column(JSON)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    # owner 2026-11-09 (ADR-054): the super admin moved this customer to the bin (is_active False);
+    # every row stays, a restore brings it back
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    deleted_by: Mapped[uuid.UUID | None] = mapped_column(Uuid)
+    deleted_reason: Mapped[str | None] = mapped_column(String(200))
     # provider console (docs/28): cloud or one-PC install, last use of the app, the one-PC
     # install's heartbeat and version, and (on a one-PC install) the SaaS organisation its keys are for
     deployment: Mapped[str] = mapped_column(

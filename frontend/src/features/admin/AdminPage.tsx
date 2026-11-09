@@ -14,12 +14,13 @@ import { api, get } from '@/lib/api'
 import { fileObjectUrl } from '@/lib/files'
 import AppLinkCard, { APP_LINK, SITE } from './AppLinkCard'
 import FeeCreditCard from './FeeCreditCard'
+import ShopBinCard from './ShopBinCard'
 import { normalisePhone } from '@/lib/format'
 import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
 
-interface AdminShop { id: string; organisation_id: string; name: string; city: string | null; owner_name: string | null; owner_phone: string | null; users: number; branches: number; created_at: string; plan: string; plan_expires_at: string | null; days_left: number | null; monthly_fee: string; fee_note: string | null; plan_status: 'unlimited' | 'ok' | 'due_soon' | 'expired' | 'locked'; modules: string[]; modules_custom: boolean; grace_days?: number | null; fee_due?: string }
+interface AdminShop { id: string; organisation_id: string; name: string; city: string | null; owner_name: string | null; owner_phone: string | null; users: number; branches: number; created_at: string; plan: string; plan_expires_at: string | null; days_left: number | null; monthly_fee: string; fee_note: string | null; plan_status: 'unlimited' | 'ok' | 'due_soon' | 'expired' | 'locked'; modules: string[]; modules_custom: boolean; grace_days?: number | null; fee_due?: string; deleted_at?: string | null; deleted_reason?: string | null }
 interface BillingOut { bank: { bank_name: string; account_title: string; account_number: string; iban: string; branch: string }; support: { phone: string; whatsapp: string }; schedule: { info_days: number; warn_days: number; urgent_days: number; grace_days: number; snooze_hours: number }; note: { en: string; ur: string; roman: string }; qr_path: string | null; placeholders: boolean }
-type DueFilter = 'all' | 'due' | 'locked' | 'unpaid'
+type DueFilter = 'all' | 'due' | 'locked' | 'unpaid' | 'bin'
 interface Account { label: string; account_name: string; number: string; note: string | null }
 interface FeeRow { id: string; shop_id: string; shop_name: string; plan: string; amount: string; method: string; reference: string | null; proof_path: string | null; months: number; note: string | null; status: string; decision_note: string | null; created_at: string; paid_on?: string | null; receipt_no?: string | null; to_dues?: string; fee_due?: string }
 interface ShopReq { id: string; name: string; shop_name: string; city: string | null; phone: string; plan: string; note: string | null; created_at: string }
@@ -127,12 +128,14 @@ export default function AdminPage() {
   const [params] = useSearchParams()
   const wantShop = params.get('shop')
   const { data, isLoading } = useGet<AdminShop[]>(['admin-shops', q], isSuper ? `/api/v1/admin/shops${q ? `?q=${encodeURIComponent(q)}` : ''}` : null)
+  // the bin (ADR-054): customers the super admin deleted, kept until restored
+  const { data: binned, isLoading: binLoading } = useGet<AdminShop[]>(['admin-shops', 'bin', q], isSuper ? `/api/v1/admin/shops?deleted=true${q ? `&q=${encodeURIComponent(q)}` : ''}` : null)
   const create = useDocMutation<typeof EMPTY & { request_id?: string | null }, AdminShop>('POST', () => '/api/v1/admin/shops', (x) => ({ ...x, city: x.city || null, phone: normalisePhone(x.phone) }))
   const { data: catalogue } = useGet<ModuleCatalogue>(['module-catalogue'], isSuper ? '/api/v1/admin/modules' : null)
   const [mods, setMods] = useState<string[] | null>(null)
   const saveModules = useDocMutation<{ modules: string[] | null }, AdminShop>('PATCH', () => `/api/v1/admin/shops/${sel?.id}/modules`)
   const owes = (s: AdminShop) => Number(s.fee_due ?? 0) > 0
-  const shown = (data ?? []).filter((s) => due === 'all' || (due === 'unpaid' ? owes(s) : due === 'due' ? s.plan_status === 'due_soon' || s.plan_status === 'expired' : s.plan_status === 'locked'))
+  const shown = due === 'bin' ? binned ?? [] : (data ?? []).filter((s) => due === 'all' || (due === 'unpaid' ? owes(s) : due === 'due' ? s.plan_status === 'due_soon' || s.plan_status === 'expired' : s.plan_status === 'locked'))
   const unpaidCount = (data ?? []).filter(owes).length
   const dueCount = (data ?? []).filter((s) => s.plan_status === 'due_soon' || s.plan_status === 'expired').length
   const lockedCount = (data ?? []).filter((s) => s.plan_status === 'locked').length
@@ -298,7 +301,7 @@ export default function AdminPage() {
       ) : null}
       <SearchBox value={q} onChange={setQ} placeholder="common.search" />
       <div className="flex flex-wrap gap-1.5">
-        {([['all', pick('common.all'), data?.length ?? 0], ['due', pick('admin.feesDue'), dueCount], ['locked', pick('admin.locked'), lockedCount], ['unpaid', pick('admin.credit.filter'), unpaidCount]] as const).map(([k, label, n]) => (
+        {([['all', pick('common.all'), data?.length ?? 0], ['due', pick('admin.feesDue'), dueCount], ['locked', pick('admin.locked'), lockedCount], ['unpaid', pick('admin.credit.filter'), unpaidCount], ['bin', pick('admin.bin.filter'), binned?.length ?? 0]] as const).map(([k, label, n]) => (
           <button key={k} type="button" aria-pressed={due === k} onClick={() => setDue(k)} className={`tap h-10 rounded-full border-2 px-3.5 font-bold ${due === k ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-[13px]'}`}>
             {label} <span className="num">{n}</span>
           </button>
@@ -306,7 +309,7 @@ export default function AdminPage() {
         <Help term="admin.filter" size="sm" />
       </div>
       <span className="flex items-center gap-1"><BiLabel text="admin.shops" size="md" bold /><Help term="admin.shops" size="sm" /></span>
-      {isLoading ? <Loading /> : !shown.length ? <Empty text="admin.none" /> : (
+      {(due === 'bin' ? binLoading : isLoading) ? <Loading /> : !shown.length ? <Empty text="admin.none" /> : (
         <div className="card divide-y divide-line p-0">
           {shown.map((s) => (
             <button key={s.id} type="button" onClick={() => openShop(s)} className="tap flex w-full items-center gap-3 px-4 py-3 text-start">
@@ -332,6 +335,7 @@ export default function AdminPage() {
               <span className="text-sm text-muted">{sel.owner_name} · {sel.owner_phone} · {sel.users} {pick('admin.users')}</span>
               <span className="flex items-center gap-2"><PlanChip s={sel} />{sel.plan_expires_at ? <span className="text-sm text-muted">{pick('admin.expires')} {fmtDate(sel.plan_expires_at)}</span> : null}<Help term="admin.planStatus" size="sm" /></span>
             </div>
+            {sel.deleted_at ? <ShopBinCard shop={sel} onSaved={setSel} /> : <>
             <div className="flex items-center gap-1">
               <div className="flex-1"><BiButton text="admin.openShop" icon={<LogIn size={20} />} full onClick={() => openAsAdmin(sel)} /></div>
               <Help term="admin.openShop" size="sm" />
@@ -435,6 +439,8 @@ export default function AdminPage() {
             <BiInput label="auth.city" help={<Help term="admin.city" size="sm" />} value={branch.city} onChange={(e) => setBranch({ ...branch, city: e.target.value })} />
             <ErrorText error={addBranch.error} />
             <BiButton text="admin.addBranch" icon={<GitBranch size={20} />} variant="secondary" full loading={addBranch.isPending} disabled={branch.name.trim().length < 2} onClick={async () => { const r = await addBranch.mutateAsync(branch); setSel(r); setBranch({ name: '', city: '' }) }} />
+            <ShopBinCard shop={sel} onSaved={setSel} />
+            </>}
           </div>
         ) : null}
       </Sheet>

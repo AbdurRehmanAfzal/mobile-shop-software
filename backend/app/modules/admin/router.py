@@ -21,7 +21,7 @@ from app.modules.admin import access, fees, modules, plans
 from app.modules.admin.fees_router import DuesAdminOut
 from app.modules.audit.service import record_audit
 from app.modules.auth import service
-from app.modules.auth.models import Shop, User, UserShop
+from app.modules.auth.models import Organisation, Shop, User, UserShop
 from app.modules.auth.schemas import SignupRequest
 
 router = APIRouter(prefix="/api/v1/admin", tags=["admin"])
@@ -60,6 +60,13 @@ class AdminShopOut(BaseModel):
     modules: list[str]
     modules_custom: bool
     fee_due: Decimal = Decimal(0)  # unpaid fee from packages given on credit (ADR-053)
+    deleted_at: datetime | None = None  # in the bin (ADR-054)
+    deleted_reason: str | None = None
+
+
+class DeleteIn(BaseModel):
+    confirm_name: str = Field(min_length=1, max_length=200)  # the shop's name, typed again
+    reason: str | None = Field(default=None, max_length=200)
 
 
 class ModulesIn(BaseModel):
@@ -278,6 +285,8 @@ def _rows(db, shops: list[Shop]) -> list[AdminShopOut]:
                 modules=info["modules"],
                 modules_custom=info["modules_custom"],
                 fee_due=owed.get(s.organisation_id, Decimal(0)),
+                deleted_at=org.deleted_at,
+                deleted_reason=org.deleted_reason,
             )
         )
     return out
@@ -346,8 +355,14 @@ def add_branch(shop_id: uuid.UUID, data: BranchIn, current: Super, db: DB):
 
 
 @router.get("/shops", response_model=list[AdminShopOut])
-def list_shops(_: Super, db: DB, q: str | None = None):
-    stmt = select(Shop).order_by(Shop.created_at.desc())
+def list_shops(_: Super, db: DB, q: str | None = None, deleted: bool = False):
+    """every customer shop; `deleted=true` lists the ones in the bin instead (ADR-054)"""
+    stmt = (
+        select(Shop)
+        .join(Organisation, Organisation.id == Shop.organisation_id)
+        .where(Organisation.is_active.is_(not deleted))
+        .order_by(Shop.created_at.desc())
+    )
     if q:
         stmt = stmt.where(Shop.name.ilike(f"%{q}%"))
     return _rows(db, list(db.scalars(stmt).all()))
@@ -481,6 +496,29 @@ def fee_invoice(shop_id: uuid.UUID, _: Super, db: DB, lang: Lang = None):
     from app.modules.plan.invoice import fee_invoice_html
 
     return HTMLResponse(fee_invoice_html(db, _shop(db, shop_id), ur=lang == "ur"))
+
+
+@router.post("/shops/{shop_id}/delete", response_model=AdminShopOut)
+def delete_customer(shop_id: uuid.UUID, data: DeleteIn, current: Super, db: DB):
+    """Move the customer (all its branches) to the bin (ADR-054): nobody of theirs can sign in,
+    it leaves the lists, figures and night jobs; every row stays and a restore brings it back."""
+    from app.modules.admin import bin as bin_
+
+    shop = _shop(db, shop_id)
+    bin_.delete(db, current.user, shop, confirm_name=data.confirm_name, reason=data.reason)
+    db.refresh(shop)
+    return _rows(db, [shop])[0]
+
+
+@router.post("/shops/{shop_id}/restore", response_model=AdminShopOut)
+def restore_customer(shop_id: uuid.UUID, current: Super, db: DB):
+    """bring a customer back from the bin, exactly as it was"""
+    from app.modules.admin import bin as bin_
+
+    shop = _shop(db, shop_id)
+    bin_.restore(db, current.user, shop)
+    db.refresh(shop)
+    return _rows(db, [shop])[0]
 
 
 @router.post("/shops/{shop_id}/renewal-code")

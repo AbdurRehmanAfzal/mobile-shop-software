@@ -1309,6 +1309,18 @@
       "filter": "Fee baqi",
       "chip": "Baqi",
       "clearsFirst": "Is dukaan ne pichli fee ke {{n}} abhi dene hain. Payment pehle yeh poora karti hai, baqi se mahine barhte hain."
+    },
+    "bin": {
+      "title": "Yeh customer delete karein",
+      "delete": "Dukaan delete karein",
+      "warn": "Dukaan apni sab branches ke saath Deleted mein chali jaye gi. Us ka koi banda login nahi kar sake ga aur yeh aap ki list aur hisaab se hat jaye gi. Us ka saara record mehfooz rahe ga; aap jab chahein wapis la sakte hain.",
+      "typeName": "Tasdeeq ke liye dukaan ka naam likhein",
+      "reason": "Wajah (sirf aap dekhein ge)",
+      "confirm": "Delete karein",
+      "filter": "Deleted",
+      "inBin": "Yeh dukaan delete shuda hai",
+      "since": "Delete ki tareekh",
+      "restore": "Wapis laayen"
     }
   },
   "field": {
@@ -3436,6 +3448,21 @@
           "title": "Fee jo abhi ada nahi hui",
           "body": "Is dukaan ko udhaar par diye gaye sab package, purane pehle, har ek par kitna ada hua aur kitna baqi hai. Payment pehle sab se purana poora karti hai.",
           "example": "FEE-0003 Rs. 3,000, ada Rs. 1,000 → Kuch ada hui, Rs. 2,000 baqi."
+        }
+      },
+      "bin": {
+        "title": "Customer delete karna",
+        "body": "Delete karne se customer apni sab branches ke saath Deleted mein chala jata hai. Us ka maalik aur staff login nahi kar sakte, aur dukaan list, aap ke hisaab aur raat ke messages se hat jati hai. Kuch mit'ta nahi: bill, khata, phone aur history sab mehfooz rehte hain. Deleted kholein aur Wapis laayen dabayein, dukaan bilkul waisi hi wapis aa jaye gi.",
+        "example": "Ali Mobiles ne dukaan band kar di → Dukaan delete karein, naam \"Ali Mobiles\" likhein, wajah \"dukaan band\". Chhe mahine baad wapis aaye to Deleted → Ali Mobiles → Wapis laayen.",
+        "typeName": {
+          "title": "Dukaan ka naam",
+          "body": "Taake ghalti se koi dukaan delete na ho, us ka naam bilkul waisa hi likhein jaisa dikh raha hai. Chhote bare huroof se farq nahi parta.",
+          "example": "Ali Mobiles → ali mobiles likhein."
+        },
+        "reason": {
+          "title": "Wajah",
+          "body": "Aap ne kyun delete ki. Yeh sirf aap Deleted mein dekhein ge.",
+          "example": "Dukaan band / chhe mahine se fee nahi di."
         }
       }
     },

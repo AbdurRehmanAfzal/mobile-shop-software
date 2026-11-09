@@ -127,10 +127,23 @@ def _login(db: Session, phone: str, secret: str, *, use_pin: bool) -> tuple[User
         raise Unauthorized(
             code="user_inactive", message_en="Account disabled", message_ur="اکاؤنٹ بند ہے"
         )
+    assert_org_open(db, user)
     login_limiter.reset(key)
     user.last_login_at = utcnow()
     db.commit()
     return user, _tokens(user)
+
+
+def assert_org_open(db: Session, user: User) -> None:
+    """a customer the super admin moved to the bin (ADR-054) cannot sign in or use the app; the
+    product owner's own organisation is never in the bin"""
+    org = db.get(Organisation, user.organisation_id)
+    if org is not None and not org.is_active:
+        raise Unauthorized(
+            code="shop_closed",
+            message_en="This shop has been closed. Please contact support.",
+            message_ur="یہ دکان بند کر دی گئی ہے۔ سپورٹ سے رابطہ کریں۔",
+        )
 
 
 def set_own_pin(db: Session, user: User, password: str, pin: str | None) -> None:
@@ -147,6 +160,7 @@ def refresh(db: Session, refresh_token: str) -> tuple[User, TokenPair]:
     user = db.get(User, uuid.UUID(payload["sub"]))
     if user is None or not user.is_active:
         raise Unauthorized(code="user_inactive")
+    assert_org_open(db, user)
     return user, _tokens(user)
 
 
