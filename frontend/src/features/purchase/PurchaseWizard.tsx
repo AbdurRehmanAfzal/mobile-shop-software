@@ -15,7 +15,7 @@ import { openPrintable } from '@/lib/files'
 import LabelSheet from '@/components/LabelSheet'
 import { Tag } from 'lucide-react'
 import { isQueued } from '@/lib/offline'
-import { useDocMutation } from '@/lib/queries'
+import { useColours, useDocMutation, useStorages } from '@/lib/queries'
 import type { Party, Purchase } from '@/lib/types'
 import DeviceLineSheet, { draftToApi, emptyDraft, type DeviceLineDraft } from './DeviceLineSheet'
 import {withCur } from '@/lib/format'
@@ -67,6 +67,11 @@ export default function PurchaseWizard() {
   const [earlier, setEarlier] = useDraft('purchase.earlier', false)
   const [when, setWhen] = useDraft('purchase.when', localNow())
   const [result, setResult] = useState<Purchase | null>(null)
+  // owner 2026-11-09: everything is shown once more and ticked as right before it is saved
+  const [reviewing, setReviewing] = useState(false)
+  const [checked, setChecked] = useState(false)
+  const { data: storages } = useStorages()
+  const { data: colours } = useColours()
   const m = useDocMutation<Record<string, unknown>, Purchase>('POST', () => '/api/v1/purchases', undefined, { kind: 'purchase', label: (b) => `${pick('counter.addStock')} · ${withCur(Number((b as { paid?: number }).paid ?? 0).toLocaleString('en-US'))}` })
 
   const subtotal = devices.reduce((s, d) => s + Number(d.cost || 0), 0) + misc.reduce((s, x) => s + Number(x.qty || 0) * Number(x.unit_cost || 0), 0)
@@ -262,7 +267,7 @@ export default function PurchaseWizard() {
                 ) : null}
               </div>
               <ErrorText error={m.error} />
-              <BiButton text="counter.putInStock" icon={<PackagePlus size={22} />} full loading={m.isPending} disabled={(earlier && !when) || total <= 0 || !payReady(pay)} onClick={submit} />
+              <BiButton text="counter.putInStock" icon={<PackagePlus size={22} />} full loading={m.isPending} disabled={(earlier && !when) || total <= 0 || !payReady(pay)} onClick={() => { setChecked(false); m.reset(); setReviewing(true) }} data-testid="purchase-review-open" />
             </>
           ) : null}
         </div>
@@ -318,6 +323,72 @@ export default function PurchaseWizard() {
           <BiButton text="nav.stock" icon={<Smartphone size={22} />} full variant="secondary" onClick={() => nav('/stock')} />
         </div>
       ) : null}
+
+      <Sheet open={reviewing} onClose={() => setReviewing(false)} title="purchase.review.title">
+        <div className="flex flex-col gap-3" data-testid="purchase-review">
+          <span className="flex items-center gap-1"><BiLabel text="purchase.review.hint" size="sm" tone="text-muted" /><Help term="purchase.review" size="sm" /></span>
+          <div className="card flex flex-col gap-1">
+            <span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick(kind === 'supplier' ? 'purchase.selectDealer' : 'purchase.selectSeller')}</span>
+            <span className="text-[16px] font-extrabold">{party?.name}</span>
+            {party?.phone ? <span className="num text-sm text-muted" dir="ltr">{party.phone}</span> : null}
+          </div>
+          {devices.map((d, i) => {
+            const rows: [string, string | null][] = [
+              ['stock.imei', d.imei1 || null],
+              ['stock.imei2', d.imei2 || null],
+              ['devcat.serial', !d.imei1 && d.serial ? d.serial : null],
+              ['stock.storageShort', storages?.find((s) => s.id === d.storage_id)?.name ?? null],
+              ['stock.col.colour', colours?.find((c) => c.id === d.colour_id)?.name ?? null],
+              ['stock.conditionShort', pick(`stock.condition.${d.condition}`)],
+              ['stock.ptaShort', (d.category ?? 'phone') === 'phone' || d.cellular ? pick(`stock.pta.${d.pta_status}`) : null],
+              ['stock.simTime', d.sim_time_months || null],
+              ['stock.col.battery', d.battery_health ? `${d.battery_health}%` : null],
+              ['stock.col.cycles', d.battery_cycles || null],
+              ['devx.region', d.region_code || null],
+              ['purchase.cost', d.cost ? withCur(Number(d.cost).toLocaleString('en-US')) : null],
+              ['stock.asking', d.asking_price ? withCur(Number(d.asking_price).toLocaleString('en-US')) : null],
+            ]
+            return (
+              <div key={d.key} className="card flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="num well h-7 w-7 shrink-0 rounded-full bg-ground text-xs font-bold">{i + 1}</span>
+                  <span className="min-w-0 flex-1 truncate text-[15px] font-extrabold">{d.brand_name} {d.model_name}</span>
+                  <button type="button" onClick={() => { setReviewing(false); setEditing(d) }} className="tap inline-flex h-9 items-center gap-1 rounded-xl px-2 text-emerald-deep" data-testid="review-edit"><Pencil size={15} /><BtnText k="common.edit" /></button>
+                </div>
+                <div className="grid grid-cols-2 gap-x-3 gap-y-1">
+                  {rows.filter(([, v]) => v).map(([k, v]) => (
+                    <div key={k} className="flex min-w-0 flex-col">
+                      <span className={`text-muted ${ur ? cls('sm') : 'text-[11px] font-semibold'}`}>{pick(k)}</span>
+                      <span className="num truncate text-sm font-bold" dir={k.startsWith('stock.imei') || k === 'devcat.serial' ? 'ltr' : 'auto'}>{v}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          })}
+          {misc.filter((x) => x.description).map((x) => (
+            <div key={x.key} className="card flex items-center justify-between gap-2">
+              <span className="min-w-0 truncate font-bold">{x.description} <span className="num text-muted" dir="ltr">× {x.qty}</span></span>
+              <MoneyText value={Number(x.qty || 0) * Number(x.unit_cost || 0)} tone="ink" />
+            </div>
+          ))}
+          <div className="card flex flex-col gap-1.5">
+            {Number(discount || 0) > 0 ? <div className="flex justify-between text-sm"><BiLabel text="common.discount" size="sm" tone="text-muted" /><MoneyText value={-Number(discount)} tone="ink" size="sm" /></div> : null}
+            {Number(extraCosts || 0) > 0 ? <div className="flex justify-between text-sm"><BiLabel text="purchase.extraCosts" size="sm" tone="text-muted" /><MoneyText value={extraCosts} tone="ink" size="sm" /></div> : null}
+            <div className="flex justify-between"><BiLabel text="common.total" size="md" bold /><MoneyText value={total} tone="ink" size="lg" /></div>
+            <div className="flex justify-between text-sm"><BiLabel text="counter.paidHowBuy" size="sm" tone="text-muted" /><span className="font-bold">{pick(`purchase.review.method.${pay.method}`)}</span></div>
+            <div className="flex justify-between text-sm"><BiLabel text="purchase.review.paidNow" size="sm" tone="text-muted" /><MoneyText value={paid} tone="ink" size="sm" /></div>
+            {total - paid > 0 ? <div className="flex justify-between text-sm"><BiLabel text="counter.stillToGive" size="sm" tone="text-muted" /><MoneyText value={total - paid} tone="ink" size="sm" /></div> : null}
+            <div className="flex justify-between text-sm"><BiLabel text="purchase.when" size="sm" tone="text-muted" /><span className="num font-bold" dir="ltr">{earlier && when ? when.replace('T', ' ') : pick('purchase.whenNow')}</span></div>
+          </div>
+          <label className={`tap flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl border-2 px-4 ${checked ? 'border-emerald bg-emerald-tint' : 'border-line bg-surface'}`}>
+            <input type="checkbox" checked={checked} onChange={(e) => setChecked(e.target.checked)} className="h-6 w-6 shrink-0 accent-[rgb(var(--emerald))]" data-testid="review-ok" />
+            <BiLabel text="purchase.review.ok" size="md" bold />
+          </label>
+          <ErrorText error={m.error} />
+          <BiButton text="counter.putInStock" icon={<PackagePlus size={22} />} full loading={m.isPending} disabled={!checked} onClick={async () => { await submit(); setReviewing(false) }} data-testid="purchase-save" />
+        </div>
+      </Sheet>
 
       <Sheet open={pickingItem} onClose={() => setPickingItem(false)} title="items.buyTitle">
         {pickingItem ? (

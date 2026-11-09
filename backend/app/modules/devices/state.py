@@ -65,6 +65,9 @@ class EventType(StrEnum):
     # history; the receiving shop's row starts with "transferred_in")
     TRANSFERRED_OUT = "transferred_out"
     TRANSFERRED_IN = "transferred_in"
+    # owner 2026-11-09 (ADR-056): a typing mistake put right after the purchase (IMEI, the seller);
+    # the event keeps what it was, what it is now and why
+    CORRECTED = "corrected"
 
 
 # Events that move money and therefore may only be raised by document modules (purchase, sale,
@@ -90,6 +93,7 @@ NEUTRAL_EVENTS = frozenset(
         EventType.LABEL_PRINTED,
         EventType.LOCK_CHECKED,
         EventType.RECLASSIFIED,
+        EventType.CORRECTED,
     }
 )
 

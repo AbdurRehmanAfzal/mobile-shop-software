@@ -324,6 +324,7 @@ When all the phones are in the list, finish the payment part on the same screen:
 3. Tap **Discount, bill no.** if you need the extra boxes (see "Reference / slip no." below).
 4. Check the **Total**: Rs. 92,000.
 5. Tap **Put in stock**.
+6. **Check before saving** opens: the seller, every phone with its IMEI, memory, colour, condition, PTA, battery, cost and asking price, the total and how it was paid. If something is wrong, tap **Edit** on that phone. When all is right, tick **I have checked: every detail is right** and tap **Put in stock**.
 
 You see **Purchase saved**, the amount and the purchase number, for example `PUR-000001`. From here you can also tap **Print stickers for these phones** to print price stickers with a barcode.
 
@@ -907,6 +908,13 @@ Further down the page is the card **Money on this phone**. It answers "what did 
 If the phone was entered as old stock, the card says **Old stock: entered with its cost, no purchase bill.**
 
 > **Note:** Buying figures (cost, what you owe the seller, margin) are shown only to the owner and manager.
+
+### An IMEI or the seller typed wrong
+
+Only the owner or manager can put these right, and each needs a short reason. Nothing is deleted: the phone's **History** shows a **Corrected** line with the old value, the new one and the reason.
+
+- **Wrong IMEI:** open the phone, tap **Correct IMEI**, type the right IMEI 1 (and IMEI 2, or tick that the phone has no IMEI 2), write the reason and tap **Save**. The number must be 15 digits and not belong to another phone in the shop. The barcode stays the same.
+- **Wrong dealer or customer:** open the purchase (**More → Purchases**, or tap the purchase line in the phone's history), tap **Change dealer / customer**, pick the right person, write the reason and tap **Save**. The bill and what was paid with it move to the right person's khata; the wrong person's khata is back to what it was. This is not possible once money was paid later against that bill or something was returned on it: undo that first.
 
 ### The full history
 

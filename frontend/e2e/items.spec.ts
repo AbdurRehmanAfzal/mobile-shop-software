@@ -32,7 +32,10 @@ test('buy 3 watches from a dealer, sell one, stock shows 2', async ({ page }) =>
   await page.getByLabel('Qty').fill('3')
   await page.getByLabel('Unit cost').fill('4500')
   await page.screenshot({ path: 'test-results/items-buy.png', fullPage: true })
-  await page.getByRole('button', { name: 'Put in stock' }).click()
+  await page.getByTestId('purchase-review-open').click()
+  // owner 2026-11-09: every detail is shown once more and ticked before it is saved
+  await page.getByTestId('review-ok').check()
+  await page.getByTestId('purchase-save').click()
   await expect(page.getByText('Purchase saved')).toBeVisible()
 
   // sell one
@@ -69,7 +72,10 @@ test('buy 3 watches from a dealer, sell one, stock shows 2', async ({ page }) =>
   await page.getByRole('button', { name: 'Save and add' }).click()
   await page.getByLabel('Qty').fill('2')
   await page.getByLabel('Unit cost').fill('1800')
-  await page.getByRole('button', { name: 'Put in stock' }).click()
+  await page.getByTestId('purchase-review-open').click()
+  // owner 2026-11-09: every detail is shown once more and ticked before it is saved
+  await page.getByTestId('review-ok').check()
+  await page.getByTestId('purchase-save').click()
   await expect(page.getByText('Purchase saved')).toBeVisible()
   await page.goto('/sale/new')
   await page.getByRole('button', { name: 'Accessory / watch' }).click()

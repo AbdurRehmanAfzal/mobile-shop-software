@@ -322,6 +322,7 @@ Jab saare phone list mein aa jayein to isi screen par paison wala hissa mukammal
 3. Agar extra dabbe chahiyein to **Riayat, bill number** dabayein (neeche "Reference / parchi number" dekhein).
 4. **Kul** check karein: Rs. 92,000.
 5. **Stock mein daalein** dabayein.
+6. **Save karne se pehle dekhein** khulta hai: bechne wala, har phone us ke IMEI, memory, rang, haalat, PTA, battery, khareed aur farokht ki qeemat ke saath, kul raqam aur adaigi ka tareeqa. Kuch ghalat ho to us phone par **Badlein** dabayein. Sab durust ho to **Main ne dekh liya: saari tafseel durust hai** par nishan lagayein aur **Stock mein daalein** dabayein.
 
 Aap ko **Khareedari mehfooz**, raqam aur khareed ka number nazar aata hai, misaal ke taur par `PUR-000001`. Yahan se aap barcode wale qeemat ke sticker print karne ke liye **In phones ke sticker print karein** bhi daba sakte hain.
 

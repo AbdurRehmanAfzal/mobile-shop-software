@@ -3,6 +3,7 @@ from datetime import date
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
+from pydantic import BaseModel, Field
 
 from app.core.errors import Forbidden
 from app.core.idempotency import IdemKey
@@ -55,3 +56,17 @@ def get(purchase_id: uuid.UUID, ctx: Ctx, db: DB):
 @router.post("/{purchase_id}/void", response_model=PurchaseOut)
 def void(purchase_id: uuid.UUID, data: VoidIn, ctx: Ctx, db: DB):
     return service.to_out(db, service.void_purchase(db, ctx.shop_id, ctx, purchase_id, data.reason))
+
+
+class PartyChangeIn(BaseModel):
+    party_id: uuid.UUID
+    reason: str = Field(min_length=2, max_length=200)
+
+
+@router.post("/{purchase_id}/party", response_model=PurchaseOut)
+def change_party(purchase_id: uuid.UUID, data: PartyChangeIn, ctx: Ctx, db: DB):
+    """owner / manager: the wrong dealer / customer was picked (ADR-056)"""
+    return service.to_out(
+        db,
+        service.change_party(db, ctx.shop_id, ctx, purchase_id, data.party_id, data.reason.strip()),
+    )

@@ -179,6 +179,13 @@ Agar phone purane stock ke taur par darj hua tha, to card par likha aata hai **P
 
 > **Note:** Khareed ke figures (khareed qeemat, bechne wale ko kitne dene hain, munafa) sirf maalik aur manager ko nazar aate hain.
 
+### IMEI ya bechne wala ghalat likha gaya
+
+Yeh sirf maalik ya manager durust kar sakte hain, aur har ek ke liye mukhtasar wajah likhni hoti hai. Kuch mitaya nahi jata: phone ki **History** mein **Durust kiya** ki line purani cheez, nayi cheez aur wajah ke saath aati hai.
+
+- **Ghalat IMEI:** phone kholein, **IMEI durust karein** dabayein, sahi IMEI 1 likhein (aur IMEI 2, ya nishan lagayein ke is phone ka IMEI 2 nahi), wajah likhein aur **Mehfooz karein** dabayein. Number 15 hindson ka ho aur dukaan ke kisi aur phone ka na ho. Barcode wahi rehta hai.
+- **Ghalat dealer ya customer:** khareedari kholein (**More → Purchases**, ya phone ki history mein khareedari wali line par tap), **Dealer / customer badlein** dabayein, sahi shakhs chunein, wajah likhein aur **Mehfooz karein** dabayein. Bill aur us ke saath di gayi raqam sahi shakhs ke khate mein chali jati hai; ghalat shakhs ka khata pehle jaisa ho jata hai. Agar baad mein is bill ki adaigi ho chuki ho ya kuch wapis hua ho to yeh nahi ho sakta: pehle woh khatam karein.
+
 ### Poori history
 
 Page ke bilkul neeche **History** hai: is phone ke saath jo kuch bhi hua us ki ek timeline, sab se naya upar. Har line par tareekh, banda, raqam aur woh staff member hota hai jis ne kaam kiya. Aap is tarah ki lines dekhenge:

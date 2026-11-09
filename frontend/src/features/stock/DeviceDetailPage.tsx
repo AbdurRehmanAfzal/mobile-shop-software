@@ -6,7 +6,8 @@ import { isoDay } from '@/lib/format'
 import RemoveSheet from '@/components/RemoveSheet'
 import { Chip, ErrorText, KV, Loading, MoneyText, PageHeader, Section, Sheet } from '@/components/ui'
 import LabelSheet from '@/components/LabelSheet'
-import { ApiError, patch, post } from '@/lib/api'
+import { ApiError, api, patch, post } from '@/lib/api'
+import { ImeiInput } from '@/components/FieldInputs'
 import { useAuth } from '@/lib/auth'
 import { useDevice, useDeviceEvent, useDeviceHistory, useDocMutation, useInvalidate, useParties } from '@/lib/queries'
 import type { DeviceDetail, Loan } from '@/lib/types'
@@ -58,7 +59,10 @@ export default function DeviceDetailPage() {
   const { data: history } = useDeviceHistory(id)
   const ev = useDeviceEvent()
   const loanM = useDocMutation<{ device_id: string; party_id: string; expected_back_at?: string; notes?: string }, Loan>('POST', () => '/api/v1/loans')
-  const [sheet, setSheet] = useState<null | 'loan' | 'note' | 'price' | 'edit' | 'remove' | 'label' | 'lock' | 'retype'>(null)
+  const [sheet, setSheet] = useState<null | 'loan' | 'note' | 'price' | 'edit' | 'remove' | 'label' | 'lock' | 'retype' | 'imei'>(null)
+  // owner 2026-11-09 (ADR-056): an IMEI typed wrong
+  const [fix, setFix] = useState({ imei1: '', imei2: '', clear2: false, reason: '' })
+  const [fixErr, setFixErr] = useState<unknown>(null)
   // owner addendum 6: lock check and type change
   const [locks, setLocks] = useState<LockChecks>({})
   const [lockNote, setLockNote] = useState('')
@@ -158,6 +162,7 @@ export default function DeviceDetailPage() {
           <BiButton text="stock.changePrice" variant="secondary" size="md" onClick={() => { setText(d.asking_price ?? ''); setSheet('price') }} />
           <BiButton text="stock.addNote" variant="secondary" size="md" onClick={() => { setText(''); setSheet('note') }} />
           <BiButton text="crud.editDetails" variant="secondary" size="md" onClick={() => setSheet('edit')} />
+          {canSeeCost && ((d.category ?? 'phone') === 'phone' || d.cellular) ? <BiButton text="stock.fixImei.button" variant="secondary" size="md" onClick={() => { setFix({ imei1: d.imei1, imei2: d.imei2 ?? '', clear2: false, reason: '' }); setFixErr(null); setSheet('imei') }} data-testid="fix-imei" /> : null}
           {d.condition !== 'box_pack' ? <BiButton text="devx.lock.button" variant="secondary" size="md" onClick={() => { setLocks(d.lock_checks ?? {}); setLockNote(''); setSheet('lock') }} /> : null}
           {canSeeCost ? <BiButton text="devx.retype" variant="secondary" size="md" onClick={() => { setToCat((d.category ?? 'phone') === 'phone' ? 'tablet' : 'phone'); setPreview(null); setRetypeErr(null); setSheet('retype') }} /> : null}
           {inStock && canSeeCost && multiShop ? <BiButton text="transfer.sendBranch" variant="secondary" size="md" onClick={() => nav(`/transfers/new?device=${d.id}`)} /> : null}
@@ -263,6 +268,29 @@ export default function DeviceDetailPage() {
           <LockChecksEditor category={d.category ?? 'phone'} value={locks} onChange={setLocks} />
           <BiInput label="devx.lock.note" help={<Help term="common.notes" size="sm" />} value={lockNote} onChange={(e) => setLockNote(e.target.value)} maxLength={200} />
           <BiButton text="common.save" full disabled={!Object.keys(locks).length} onClick={async () => { await post(`/api/v1/devices/${d.id}/lock-check`, { checks: locks, note: lockNote || null }); await inv('devices', 'device', 'history'); setSheet(null) }} />
+        </div>
+      </Sheet>
+      <Sheet open={sheet === 'imei'} onClose={() => setSheet(null)} title="stock.fixImei.title">
+        <div className="flex flex-col gap-3">
+          <span className="flex items-center gap-1"><BiLabel text="stock.fixImei.hint" size="sm" tone="text-muted" /><Help term="stock.fixImei" size="sm" /></span>
+          <ImeiInput label="stock.imei" help={<Help term="imei" size="sm" />} value={fix.imei1} onChange={(v) => setFix({ ...fix, imei1: v })} exclude={fix.imei2} />
+          {!fix.clear2 ? <ImeiInput label="stock.imei2" help={<Help term="imei" size="sm" />} value={fix.imei2} onChange={(v) => setFix({ ...fix, imei2: v })} exclude={fix.imei1} /> : null}
+          {d.imei2 ? <label className="flex min-h-11 items-center gap-3"><input type="checkbox" checked={fix.clear2} onChange={(e) => setFix({ ...fix, clear2: e.target.checked })} className="h-5 w-5 accent-[rgb(var(--emerald))]" /><BiLabel text="stock.fixImei.clear2" size="sm" /></label> : null}
+          <BiInput label="common.reason" value={fix.reason} onChange={(e) => setFix({ ...fix, reason: e.target.value })} maxLength={200} help={<Help term="stock.fixImeiReason" size="sm" />} />
+          <ErrorText error={fixErr} />
+          <BiButton
+            text="common.save"
+            full
+            disabled={fix.reason.trim().length < 2 || fix.imei1.replace(/\D/g, '').length !== 15 || (!fix.clear2 && fix.imei2 !== '' && fix.imei2.replace(/\D/g, '').length !== 15)}
+            onClick={async () => {
+              try {
+                await api('POST', `/api/v1/devices/${d.id}/correct-imei`, { imei1: fix.imei1 !== d.imei1 ? fix.imei1 : undefined, imei2: !fix.clear2 && fix.imei2 && fix.imei2 !== d.imei2 ? fix.imei2 : undefined, clear_imei2: fix.clear2, reason: fix.reason.trim() })
+                await inv('devices', 'device', 'history', 'unit-money')
+                setSheet(null)
+              } catch (e) { setFixErr(e) }
+            }}
+            data-testid="fix-imei-save"
+          />
         </div>
       </Sheet>
       <Sheet open={sheet === 'retype'} onClose={() => setSheet(null)} title="devx.retype">

@@ -260,7 +260,10 @@
       "barcode_assigned": "Barcode laga",
       "label_printed": "Label print hua",
       "transferred_out": "Branch ko bheja",
-      "transferred_in": "Branch se aaya"
+      "transferred_in": "Branch se aaya",
+      "corrected": "Durust kiya",
+      "lock_checked": "Lock check",
+      "reclassified": "Qism badli"
     },
     "acc": {
       "box": "Dabba",
@@ -319,6 +322,17 @@
       "title": "Kaun si tafseel dikhayein",
       "hint": "Jo dekhna hai us par nishan lagayein. Yeh Card, Table, Grid aur List sab mein lagta hai, aur Download / Share mein bhi.",
       "reset": "Pehle jaisa"
+    },
+    "fixImei": {
+      "button": "IMEI durust karein",
+      "title": "IMEI durust karein",
+      "hint": "Phone daalte waqt IMEI ghalat likha gaya? Sahi number likhein. History mein purana number rahe ga.",
+      "clear2": "Is phone ka IMEI 2 nahi hai (hata dein)",
+      "field": {
+        "imei1": "IMEI 1",
+        "imei2": "IMEI 2",
+        "seller": "Jis se khareeda"
+      }
     }
   },
   "purchase": {
@@ -372,7 +386,26 @@
     "extraNote": "Kiraya note",
     "extraHint": "Lines par taqseem ho kar cost mein shamil",
     "itemLabels": "Item label print karein",
-    "editDevice": "Phone mein tabdeeli"
+    "editDevice": "Phone mein tabdeeli",
+    "review": {
+      "title": "Save karne se pehle dekhein",
+      "hint": "Har tafseel ek dafa aur dekh lein. Kisi phone mein tabdeeli ke liye Badlein dabayein.",
+      "ok": "Main ne dekh liya: saari tafseel durust hai",
+      "paidNow": "Abhi diye",
+      "method": {
+        "cash": "Naqd",
+        "online": "Online",
+        "cheque": "Cheque",
+        "remittance": "Bahar se",
+        "udhaar": "Udhaar (baad mein dena)"
+      }
+    },
+    "fix": {
+      "partyButton": "Dealer / customer badlein",
+      "partyTitle": "Jis se khareeda woh badlein",
+      "partyHint": "Ghalti se ghalat shakhs chun liya? Bill aur us ke saath di gayi raqam sahi shakhs ke khate mein chali jaye gi. Phones ki history mein dono naam rahenge.",
+      "partyNew": "Sahi shakhs"
+    }
   },
   "verify": {
     "title": "Tasdeeq",
@@ -5006,6 +5039,21 @@
         "title": "CNIC scan",
         "body": "Shanakhti card ke samne ki photo len: app number aur naam khud parhti hai aur photo CNIC front ke tor par rakhti hai. Jo bhara ho use zaroor dekhen.",
         "example": "Card ki photo → \"35202-1234567-1, Ahmed Raza\" bhar gaya; koi hindsa ghalat ho to theek karen."
+      },
+      "review": {
+        "title": "Save karne se pehle dekhein",
+        "body": "Stock save hone se pehle har phone ek dafa phir dikhaya jata hai: IMEI, memory, rang, haalat, PTA, battery, khareed aur farokht ki qeemat, kul raqam aur adaigi ka tareeqa. \"Main ne dekh liya\" par nishan lagayein phir save karein. Yahan ghalti nazar aaye to us phone par Badlein dabayein.",
+        "example": "IMEI ...809 dikh raha hai magar dabbe par ...890 hai: Badlein, durust karein, phir save."
+      },
+      "fixParty": {
+        "title": "Dealer / customer badlein",
+        "body": "Agar stock daalte waqt ghalat dealer ya customer chun liya gaya ho to maalik ya manager yahan badal sakta hai. Kuch mitaya nahi jata: ek durusti bill aur us ke saath di gayi raqam ek khate se doosre mein le jati hai, aur har phone ki history mein purana aur naya naam wajah ke saath dikhta hai. Agar baad mein is bill ki adaigi ho chuki ho ya kuch wapis hua ho to yeh nahi ho sakta; pehle woh khatam karein.",
+        "example": "Ali Mobiles se khareeda magar Ali Traders ke naam save ho gaya: Dealer / customer badlein, Ali Mobiles chunein, wajah \"ghalat naam chuna\"."
+      },
+      "fixReason": {
+        "title": "Wajah",
+        "body": "Kyun badla. Yeh phone ki history mein dikhti hai.",
+        "example": "Ghalat naam chuna."
       }
     },
     "label": {
@@ -5356,6 +5404,16 @@
         "title": "Kaun si tafseel dikhayein",
         "body": "Har phone ki jo tafseel dekhni ho chunein: memory, rang, haalat, PTA, battery, region code, IMEI, dukaan mein din, khareed, farokht ki qeemat waghera. Yahi intikhab Card, Table, Grid aur List mein lagta hai, aur Download / Share file bhi inhi columns, aap ke lagaye filter aur isi tarteeb se banata hai. Khareed sirf maalik aur manager ko dikhti hai. Aap ka intikhab isi phone ya computer par yaad rehta hai.",
         "example": "Dealer ko rate list bhejni ho: sirf Memory, Rang, PTA aur Farokht par nishan lagayein, phir Share → Excel."
+      },
+      "fixImei": {
+        "title": "IMEI durust karein",
+        "body": "Phone daalte waqt ghalat likhe gaye IMEI ke liye. Sirf maalik ya manager, wajah ke saath. Number 15 hindson ka ho aur dukaan ke kisi aur phone ka na ho. Phone ki history aur barcode wahi rehte hain; history mein purana aur naya number dikhta hai.",
+        "example": "Dabbe par 356938035643809 hai magar 356938035643890 save hua: IMEI durust karein, sahi likhein, wajah \"likhne mein ghalti\"."
+      },
+      "fixImeiReason": {
+        "title": "Wajah",
+        "body": "IMEI kyun badla. Yeh phone ki history mein dikhti hai.",
+        "example": "Likhne mein ghalti."
       }
     },
     "loan": {

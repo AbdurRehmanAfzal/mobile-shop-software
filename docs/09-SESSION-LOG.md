@@ -1103,3 +1103,21 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - Playwright `forms-keep` (new: a stray tap, sale Back / Forward / step bar, stickers with `window.open` blocked), `stock-views` (fields, the download URL), `add-device`, `counter`, `counter-ux`, `hold`, `return`, `saletax`.
 
 **Already failing before this change**: `labels.spec` (checked by stashing these changes). The code word typed in Settings in that test does not reach the sticker sheet ("BLACKHORSE" instead of "MOBILESHPK"), and the sticker has no IMEI. Not looked into yet.
+
+### Same day — corrections after saving, check before saving (ADR-056)
+**Owner**: "stock mein add karne ke baad IMEI ghalat ho to dono IMEI update ka option nahi … customer / dealer ghalat dal diya to change ka option nahi … add stock save se pehle poori detail dekhni chahiye, check box ok kar ke save ho".
+**Done**:
+- Backend:
+  - `devices.correct_imei` + `POST /devices/{id}/correct-imei`.
+  - `purchases.change_party` + `POST /purchases/{id}/party`: a correction group dated like the purchase that moves total and paid between the two khatas; refused after a later allocated payment or a return.
+  - New neutral event `corrected`.
+- Frontend:
+  - **Correct IMEI** on the phone page (owner / manager) and **Change dealer / customer** on the purchase page.
+  - The timeline shows "IMEI 1: old → new" and "Bought from: old → new".
+  - The Add stock **Check before saving** sheet: seller, every phone with its details, items, total, payment, date; Edit per phone; Save only after the tick.
+  - Labels for the `lock_checked` / `reclassified` events, which had no text before.
+- Docs: ADR-056, user manual ch. 6 (step 6) and ch. 11 (new section), owner pending.
+**Verified**:
+- `tests/test_corrections_after_purchase.py` (2 tests: the IMEI rules, khata balances before / after, cash untouched, refused after a later payment, staff 403) and the full backend suite.
+- tsc.
+- Playwright `fix-after-purchase` (new) and `add-device` (the review shows the IMEI and the seller; Save stays disabled until the tick). The other purchase specs (counter, device-types, item-params, items, paymode) go through the review step.
