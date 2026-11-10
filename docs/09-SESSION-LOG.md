@@ -1267,3 +1267,18 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - Playwright `device-styles` (new): Classic as before; in Smart the rows, the dealer card with what is owed, the inline price change and Pay prefilled; the Tabs people tab; a Tiles tile opens the price sheet; Compact is kept after a reload and its Sell works.
 - Regression: `units`, `reserve`, `fix-after-purchase`.
 - I looked at screenshots (Smart, Tiles).
+
+### Same day — PR #46 live; udhaar part paid by cash / online / cheque (ADR-062)
+**Release**: the owner merged PR #46. Deploy and Windows succeeded. On live, `POST /devices/{id}/reserve|release`, `POST /accessories/{id}/reserve` and `GET /accessories/{id}/reservations` return 401 (the routes exist); `/health` returns 200.
+**Owner**: "udhaar pe jo payment ki hai woh cash ki, online ki ya cheque se — yeh bhi mention ho".
+**Done** (frontend only):
+- On a sale or purchase with Udhaar and "Paid now" > 0, a "How was the amount paid now paid?" box appears: Cash / Online / Cheque, with bank or wallet, TID or cheque no.
+- That is sent as the bill's `payment`, so the money lands in that account and the bill / receipt show it.
+- Save waits until the needed details are filled. The purchase review shows "Paid now by".
+- en / ur / roman strings + help, manual ch. 1 steps, ADR-062.
+**Verified**:
+- tsc.
+- pytest `test_paymode` (new: udhaar sale paid partly online → Bank / Online 400; purchase partly by cheque → Cheques −300).
+- Playwright `udhaar-part-pay` (new).
+- Regression: `core-flow`, `counter` and `forms-keep` pass. `core-flow` failed once under parallel load and passed alone in 11s.
+**Open**: the owner's "ak r chez ye option honay chye" from the reserve message — probably this request; to confirm.

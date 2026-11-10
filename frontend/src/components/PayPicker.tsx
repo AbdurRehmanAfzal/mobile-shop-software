@@ -157,3 +157,20 @@ export default function PayPicker({ value, onChange, remittance = false, udhaar 
     </div>
   )
 }
+
+/** Udhaar with something paid now (owner 2026-11-10): how that part was paid — cash, online or
+ *  cheque — with the same bank / TID / cheque details, so the khata shows where it went. */
+export function PartPay({ value, onChange, amount }: { value: PayState; onChange: (p: PayState) => void; amount: number }) {
+  if (!(amount > 0)) return null
+  return (
+    <div className="flex flex-col gap-2 rounded-2xl bg-surface p-3 text-ink" data-testid="part-pay">
+      <span className="flex items-center gap-1"><BiLabel text="paym.partHow" size="md" bold /><Help term="pay.part" size="sm" /></span>
+      <PayPicker value={value.method === 'udhaar' || value.method === 'remittance' ? { ...value, method: 'cash' } : value} onChange={onChange} udhaar={false} />
+    </div>
+  )
+}
+
+/** the `payment` sent for a bill: the chosen way, or — on udhaar — how the part paid now was paid */
+export const billPayment = (pay: PayState, part: PayState, paid: number) => pay.method === 'udhaar' ? (paid > 0 ? payInfo(part) : undefined) : payInfo(pay)
+/** the details needed are filled in, the part paid now on udhaar included */
+export const billPayReady = (pay: PayState, part: PayState, paid: number) => payReady(pay) && (pay.method !== 'udhaar' || !(paid > 0) || payReady(part))

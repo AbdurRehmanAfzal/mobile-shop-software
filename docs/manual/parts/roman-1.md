@@ -389,7 +389,7 @@ Apni entries ka naam baad mein **Mazeed → Brand aur model** mein badal ya dele
 4. **CNIC** bharein: 13 hindse `3740512345673` likhein aur yeh `37405-1234567-3` nazar aata hai. Ya app se parhwane ke liye **CNIC scan (aage ki tasweer)** dabayein (chapter 7 dekhein).
 5. **Mehfooz karein** dabayein, phir **Aage**.
 6. **Phone daalein** dabayein aur IMEI, **Infinix**, **Hot 40**, `128GB`, haalat **Used**, **Khareed qeemat** `28000`, **Bechne ki qeemat** `34000` bharein. **Daalein** dabayein.
-7. **Paise kaise diye?** ke neeche **Udhaar** dabayein aur **Abhi kitne diye (agar diye)** mein `20000` likhein. **Abhi dene hain** mein **8,000** aata hai, jo Ali Raza ke khate mein jata hai.
+7. **Paise kaise diye?** ke neeche **Udhaar** dabayein aur **Abhi kitne diye (agar diye)** mein `20000` likhein. **Abhi dene hain** mein **8,000** aata hai, jo Ali Raza ke khate mein jata hai. **Abhi di gayi raqam kaise di?** mein **Cash**, **Online** (bank ya wallet aur TID) ya **Cheque** (bank aur cheque number) chunein.
 8. **Shanakhti card check** ke neeche **Abhi ya baad mein check** (aam choice) ya **Chhorein, main isay jaanta hoon** chunein.
 9. **Stock mein daalein** dabayein.
 
@@ -602,7 +602,7 @@ Ho gaya wali screen **Bikri ho gayi**, raqam aur bill number dikhati hai, misaal
 1. Phone chunein aur qeemat check karein.
 2. **Paise kaise mile?** ke neeche **Udhaar** dabayein.
 3. **Udhaar kaun le raha hai?** `Imran` dhoondein aur **Imran Ali** dabayein, ya naye bande ke liye **+** dabayein.
-4. **Abhi kitne mile (agar mile)**: `20000` likhein. **Baqi udhaar** mein **38,000** aata hai.
+4. **Abhi kitne mile (agar mile)**: `20000` likhein. **Baqi udhaar** mein **38,000** aata hai. **Abhi di gayi raqam kaise di?** mein **Cash**, **Online** (bank ya wallet aur TID) ya **Cheque** chunein. Raqam usi account mein jati hai aur bill par likhi aati hai.
 5. **Adaigi ka waada (ikhtiyari)**: 30 tareekh chunein. 31 se audit is udhaar ko der wala dikhata hai.
 6. **Bikri mukammal karein** dabayein, phir **Tasdeeq karein aur bill banayein**.
 

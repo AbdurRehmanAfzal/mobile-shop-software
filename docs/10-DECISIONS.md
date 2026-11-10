@@ -362,6 +362,14 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-062 · 2026-11-10 · Accepted · On udhaar, the part paid now keeps its own way of paying
+**Context**: a sale or purchase on udhaar with something paid now always booked that part as cash. Shopkeepers often take or give that part by JazzCash / bank or a cheque and want it recorded.
+**Decision**:
+- When **Udhaar** is chosen and "Paid now" is more than 0, the form asks how that part was paid. The choices are Cash, Online and Cheque, with the same bank / TID / cheque fields as a normal payment (`PartPay` in `PayPicker.tsx`).
+- The bill's `payment` is that part's details (`billPayment`). The API already accepted `payment` with `paid < total`, so the money lands in that account (bank / wallet / cheques) and `payment_details` keeps the reference.
+- Frontend only. No API, data or migration change. The default stays Cash, so nothing changes unless it is chosen.
+**Consequences**: the receipt and bill detail already show the payment's method, so the part paid now shows its way there too.
+
 ## ADR-061 · 2026-11-10 · Accepted · A phone's page has selectable styles over the same actions
 **Context**: in shop testing, shopkeepers found the phone page hard to use: details, then actions, then customer, then history. They wanted the actions beside the values and the customer with the phone.
 **Decision**:

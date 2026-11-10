@@ -389,7 +389,7 @@ You can rename or delete your own entries later in **More → Brands & models**.
 4. Fill **CNIC**: type the 13 digits `3740512345673` and it shows as `37405-1234567-3`. Or tap **Scan CNIC (photo of the front)** to have the app read it (see chapter 7).
 5. Tap **Save**, then **Next**.
 6. Tap **Add device** and fill in the IMEI, **Infinix**, **Hot 40**, `128GB`, condition **Used**, **Cost price** `28000`, **Asking price** `34000`. Tap **Add**.
-7. Under **How did you pay?** tap **Udhaar** and type `20000` in **Paid now (if any)**. **Still to give** shows **8,000**, which goes into Ali Raza's khata.
+7. Under **How did you pay?** tap **Udhaar** and type `20000` in **Paid now (if any)**. **Still to give** shows **8,000**, which goes into Ali Raza's khata. Under **How was the amount paid now paid?** choose **Cash**, **Online** (bank or wallet, and the TID) or **Cheque** (bank and cheque number).
 8. Under **ID card check** choose **Check now / later** (the normal choice) or **Skip, I know this person**.
 9. Tap **Put in stock**.
 
@@ -602,7 +602,7 @@ The done screen shows **Sale complete**, the amount and the bill number, for exa
 1. Pick the phone and check the price.
 2. Under **How was it paid?** tap **Udhaar**.
 3. **Who is taking it on udhaar?** Search `Imran` and tap **Imran Ali**, or tap **+** for a new person.
-4. **Paid now (if any)**: type `20000`. **Remaining udhaar** shows **38,000**.
+4. **Paid now (if any)**: type `20000`. **Remaining udhaar** shows **38,000**. Under **How was the amount paid now paid?** choose **Cash**, **Online** (bank or wallet, and the TID) or **Cheque**. The money goes into that account and the bill shows it.
 5. **Promised to pay by (optional)**: pick the 30th. From the 31st the audit shows this udhaar as overdue.
 6. Tap **Complete sale**, then **Confirm and make the bill**.
 

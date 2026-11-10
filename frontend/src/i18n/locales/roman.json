@@ -1535,7 +1535,9 @@
       "pending": "Baqi",
       "received": "Mausool",
       "settled": "Tay"
-    }
+    },
+    "partHow": "Abhi di gayi raqam kaise di?",
+    "partBy": "Abhi ki raqam"
   },
   "help": {
     "what": "Yeh kya hai?",
@@ -6322,6 +6324,11 @@
         "title": "Raqam ki haalat",
         "body": "Baqi: abhi wasool nahi hui. Mausool: mil gayi. Tay: poora kaam khatam. Yeh international report mein aap ki apni nigrani ke liye hai.",
         "example": "MTCN mil gaya lekin bank se abhi raqam nahi li → Baqi."
+      },
+      "part": {
+        "title": "Abhi di gayi raqam ka tareeqa",
+        "body": "Udhaar mein jo raqam abhi di gayi woh cash, online (bank ya wallet aur TID) ya cheque (bank aur cheque number) ho sakti hai. Yeh usi account mein jati hai, aur bill aur khata dikhate hain ke kaise di. Baqi udhaar rehta hai.",
+        "example": "Bill 50,000: abhi 20,000 JazzCash se, 30,000 udhaar."
       }
     },
     "picker": {
