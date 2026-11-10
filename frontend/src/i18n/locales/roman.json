@@ -334,7 +334,8 @@
       "field": {
         "imei1": "IMEI 1",
         "imei2": "IMEI 2",
-        "seller": "Jis se khareeda"
+        "seller": "Jis se khareeda",
+        "cost": "Qeemat-e-khareed"
       }
     },
     "kind": {
@@ -440,6 +441,15 @@
       "partyTitle": "Jis se khareeda woh badlein",
       "partyHint": "Ghalti se ghalat shakhs chun liya? Bill aur us ke saath di gayi raqam sahi shakhs ke khate mein chali jaye gi. Phones ki history mein dono naam rahenge.",
       "partyNew": "Sahi shakhs"
+    },
+    "costFix": {
+      "button": "Qeemat-e-khareed badlein",
+      "title": "Qeemat-e-khareed badlein",
+      "hint": "Mobile daalte waqt qeemat ghalat likhi gayi. Bill, stock ki maliyat aur bechne wale ka khata durust ho jate hain; history mein purani qeemat rehti hai.",
+      "now": "Abhi ki qeemat-e-khareed",
+      "new": "Durust qeemat-e-khareed",
+      "more": "{{who}} ka khata: {{n}} zyada dene hain",
+      "less": "{{who}} ka khata: {{n}} kam dene hain"
     }
   },
   "verify": {
@@ -5102,6 +5112,11 @@
         "title": "Wajah",
         "body": "Kyun badla. Yeh phone ki history mein dikhti hai.",
         "example": "Ghalat naam chuna."
+      },
+      "costFix": {
+        "title": "Qeemat-e-khareed badlein",
+        "body": "Sirf owner ya manager, aur sirf jab mobile abhi dukaan mein ho (bika na ho). Farq bechne wale ke khate mein jata hai: zyada qeemat to use zyada dene hain, kam to kam (ya ada ho chuka ho to woh aap ko dega). Cash nahi hilta. Mobile ki history mein purani aur nayi qeemat aur wajah aati hai.",
+        "example": "10,000 likha, asal 12,000 tha: dealer ke khate mein 2,000 zyada dene hain."
       }
     },
     "label": {

@@ -1282,3 +1282,24 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - Playwright `udhaar-part-pay` (new).
 - Regression: `core-flow`, `counter` and `forms-keep` pass. `core-flow` failed once under parallel load and passed alone in 11s.
 **Open**: the owner's "ak r chez ye option honay chye" from the reserve message — probably this request; to confirm.
+
+### Same day — PR #47 opened (CI green); change a phone's purchase price (ADR-063)
+**Owner (from a shopkeeper)**: "purchase price mean cost change karne ka bhi option hona chahiye … jaldi kar do".
+**Done**:
+- `purchases/service.change_cost` and `POST /api/v1/purchases/cost`, for owner / manager, while the shop still holds the phone and it has not been sold since.
+  - One correction group moves the difference between Inventory and the seller's khata. Cash does not move.
+  - The line, the bill total and the phone's cost follow.
+  - A `corrected` event (field cost) and an audit row are written.
+- Phone page:
+  - a **Change purchase price** button (Classic) and the same action beside the cost (Smart / Tiles);
+  - the sheet shows the current price, the effect on the seller's khata ("2,000 more to give") and asks for a reason;
+  - the history shows "Purchase price: old → new".
+- en / ur / roman strings + help, manual ch. 10, ADR-063.
+- Answered the owner: opening cash can be set any time from More → Cash and Bank (owner only, audited).
+**Verified**:
+- pytest `test_purchase_cost_change` (up, down below paid → dealer owes, same price, no reason, salesman 403, sold → `cost_after_sale`), plus the full suite.
+- tsc.
+- Playwright `purchase-cost` (new) and `device-styles`.
+**Next**:
+- The owner merges #47, then this goes in a new PR.
+- Items' (accessories) purchase cost change is not done yet (FIFO batches), if asked.

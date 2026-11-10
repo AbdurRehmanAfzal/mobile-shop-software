@@ -114,7 +114,7 @@ function useFacts({ d, acts, canSeeCost }: LayoutProps) {
       <Mini a={a('fixImei')} />
     </> },
     { key: 'price', label: 'stock.asking', value: n(d.asking_price), ltr: true, actions: <Mini a={a('price')} /> },
-    ...(canSeeCost ? [{ key: 'cost', label: 'stock.cost', value: n(d.cost_price), ltr: true }] : []),
+    ...(canSeeCost ? [{ key: 'cost', label: 'stock.cost', value: n(d.cost_price), ltr: true, actions: <Mini a={a('fixCost')} /> }] : []),
     { key: 'status', label: 'dl.status', value: pick(`stock.status.${d.status}`), actions: <>{['sell', 'return', 'repairBack', 'approvalBack', 'faultyCleared'].map((k) => <Mini key={k} a={a(k)} />)}</> },
     { key: 'condition', label: 'stock.conditionShort', value: [pick(`stock.condition.${d.condition}`), d.grade ? pick(`devx.grades.${d.grade}`) : null].filter(Boolean).join(' · '), actions: <Mini a={a('edit')} /> },
     ...(hasPta(d) ? [{ key: 'pta', label: 'stock.ptaShort', value: [pick(`stock.pta.${d.pta_status}`), d.sim_time_months ? `${d.sim_time_months} ${pick('stock.months')}` : null].filter(Boolean).join(' · ') }] : []),
@@ -199,7 +199,7 @@ function MoreActions({ acts, shown }: { acts: Act[]; shown: string[] }) {
   )
 }
 
-const INLINE = ['sell', 'return', 'repairBack', 'approvalBack', 'faultyCleared', 'fixImei', 'price', 'edit', 'sticker', 'verify', 'lock', 'note', 'changeSeller']
+const INLINE = ['sell', 'return', 'repairBack', 'approvalBack', 'faultyCleared', 'fixImei', 'price', 'edit', 'sticker', 'verify', 'lock', 'note', 'changeSeller', 'fixCost']
 
 function Head({ d }: { d: DeviceDetail }) {
   const { pick } = useLang()
@@ -284,7 +284,7 @@ export function TilesLayout(p: LayoutProps) {
         {get('idcheck') != null ? tile('idcheck', 'stock.col.verification', get('idcheck'), a('verify')?.run, 'bg-gold-tint text-ink') : null}
         {get('lock') != null ? tile('lock', 'devx.lock.title', get('lock'), a('lock')?.run) : null}
         {tile('sticker', 'barcode.label', get('barcode'), a('sticker')?.run)}
-        {p.canSeeCost ? tile('cost', 'stock.cost', get('cost')) : null}
+        {p.canSeeCost ? tile('cost', 'stock.cost', get('cost'), a('fixCost')?.run) : null}
       </div>
       <People {...p} />
       <MoreActions acts={p.acts} shown={INLINE} />

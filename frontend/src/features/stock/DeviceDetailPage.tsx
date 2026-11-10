@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiAlert, BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
-import { isoDay } from '@/lib/format'
+import { isoDay, withCur } from '@/lib/format'
 import RemoveSheet from '@/components/RemoveSheet'
 import { Chip, ErrorText, KV, Loading, MoneyText, PageHeader, Section, Sheet } from '@/components/ui'
 import LabelSheet from '@/components/LabelSheet'
@@ -62,10 +62,13 @@ export default function DeviceDetailPage() {
   const { data: history } = useDeviceHistory(id)
   const ev = useDeviceEvent()
   const loanM = useDocMutation<{ device_id: string; party_id: string; expected_back_at?: string; notes?: string }, Loan>('POST', () => '/api/v1/loans')
-  const [sheet, setSheet] = useState<null | 'loan' | 'note' | 'price' | 'edit' | 'remove' | 'label' | 'lock' | 'retype' | 'imei'>(null)
+  const [sheet, setSheet] = useState<null | 'loan' | 'note' | 'price' | 'edit' | 'remove' | 'label' | 'lock' | 'retype' | 'imei' | 'cost'>(null)
   // owner 2026-11-09 (ADR-056): an IMEI typed wrong
   const [fix, setFix] = useState({ imei1: '', imei2: '', clear2: false, reason: '' })
   const [fixErr, setFixErr] = useState<unknown>(null)
+  // owner 2026-11-10 (ADR-063): a purchase price typed wrong
+  const [newCost, setNewCost] = useState({ cost: '', reason: '' })
+  const [costErr, setCostErr] = useState<unknown>(null)
   // owner addendum 6: lock check and type change
   const [locks, setLocks] = useState<LockChecks>({})
   const [lockNote, setLockNote] = useState('')
@@ -84,6 +87,11 @@ export default function DeviceDetailPage() {
   // the purchase this unit came in on (its latest), for "Change dealer / customer" (owner 2026-11-10)
   const boughtOn = [...(history ?? [])].reverse().find((e) => e.type === 'purchased' && e.document_type === 'purchase')?.document_id ?? null
   const multiShop = useAuth((s) => (s.me?.shops.length ?? 0) > 1)
+  // the price on that purchase now: what it was bought for, or the last correction of it
+  const buyEv = [...(history ?? [])].reverse().find((e) => e.type === 'purchased' && e.document_type === 'purchase')
+  const lastFix = (history ?? []).filter((e) => buyEv && e.seq > buyEv.seq && e.type === 'corrected' && (e.data as { field?: string } | null)?.field === 'cost').pop()
+  const boughtFor = lastFix ? Number((lastFix.data as { to?: string }).to ?? 0) : buyEv?.amount != null ? Number(buyEv.amount) : null
+  const soldSince = !!buyEv && (history ?? []).some((e) => e.seq > buyEv.seq && e.type === 'sold')
   const [style, setStyle] = useState<DeviceStyle>(loadStyle)
 
   if (isLoading || !d) return <Loading />
@@ -100,6 +108,9 @@ export default function DeviceDetailPage() {
 
   // every action of this page, for the styles that put each one beside its value (owner 2026-11-10)
   const phoneLike = (d.category ?? 'phone') === 'phone' || !!d.cellular
+  const canCost = canSeeCost && !!boughtOn && boughtFor != null && !soldSince && ['in_stock', 'faulty', 'in_repair', 'with_customer_for_approval', 'on_loan'].includes(d.status)
+  const openCost = () => { setNewCost({ cost: String(boughtFor ?? ''), reason: '' }); setCostErr(null); setSheet('cost') }
+  const costDiff = newCost.cost !== '' && boughtFor != null ? Number(newCost.cost) - boughtFor : 0
   const acts = ([
     inStock && d.verification_status !== 'flagged' ? { key: 'sell', label: 'stock.sell', run: () => nav(`/sale/new?device=${d.id}`), tone: 'primary' } : null,
     d.verification_status === 'pending' || d.verification_status === 'flagged' || d.condition !== 'box_pack' ? { key: 'verify', label: 'stock.verify', run: () => nav(`/stock/${d.id}/verify`), tone: d.verification_status === 'pending' ? 'gold' : undefined } : null,
@@ -115,6 +126,7 @@ export default function DeviceDetailPage() {
     { key: 'note', label: 'stock.addNote', run: () => { setText(''); setSheet('note') } },
     { key: 'edit', label: 'crud.editDetails', run: () => setSheet('edit') },
     canSeeCost && boughtOn ? { key: 'changeSeller', label: 'purchase.fix.partyButton', run: () => nav(`/purchases/${boughtOn}?change=1`) } : null,
+    canCost ? { key: 'fixCost', label: 'purchase.costFix.button', run: openCost } : null,
     canSeeCost ? { key: 'balances', label: 'bal.short', run: () => nav(`/balances?q=${encodeURIComponent(d.imei1)}`) } : null,
     canSeeCost && phoneLike ? { key: 'fixImei', label: 'stock.fixImei.button', run: () => { setFix({ imei1: d.imei1, imei2: d.imei2 ?? '', clear2: false, reason: '' }); setFixErr(null); setSheet('imei') } } : null,
     d.condition !== 'box_pack' ? { key: 'lock', label: 'devx.lock.button', run: () => { setLocks(d.lock_checks ?? {}); setLockNote(''); setSheet('lock') } } : null,
@@ -198,6 +210,7 @@ export default function DeviceDetailPage() {
           <BiButton text="stock.addNote" variant="secondary" size="md" onClick={() => { setText(''); setSheet('note') }} />
           <BiButton text="crud.editDetails" variant="secondary" size="md" onClick={() => setSheet('edit')} />
           {canSeeCost && boughtOn ? <BiButton text="purchase.fix.partyButton" variant="secondary" size="md" onClick={() => nav(`/purchases/${boughtOn}?change=1`)} data-testid="device-change-seller" /> : null}
+          {canCost ? <BiButton text="purchase.costFix.button" variant="secondary" size="md" onClick={openCost} data-testid="fix-cost" /> : null}
           {canSeeCost ? <BiButton text="bal.short" variant="secondary" size="md" onClick={() => nav(`/balances?q=${encodeURIComponent(d.imei1)}`)} data-testid="device-balances" /> : null}
           {canSeeCost && ((d.category ?? 'phone') === 'phone' || d.cellular) ? <BiButton text="stock.fixImei.button" variant="secondary" size="md" onClick={() => { setFix({ imei1: d.imei1, imei2: d.imei2 ?? '', clear2: false, reason: '' }); setFixErr(null); setSheet('imei') }} data-testid="fix-imei" /> : null}
           {d.condition !== 'box_pack' ? <BiButton text="devx.lock.button" variant="secondary" size="md" onClick={() => { setLocks(d.lock_checks ?? {}); setLockNote(''); setSheet('lock') }} /> : null}
@@ -312,6 +325,36 @@ export default function DeviceDetailPage() {
           <LockChecksEditor category={d.category ?? 'phone'} value={locks} onChange={setLocks} />
           <BiInput label="devx.lock.note" help={<Help term="common.notes" size="sm" />} value={lockNote} onChange={(e) => setLockNote(e.target.value)} maxLength={200} />
           <BiButton text="common.save" full disabled={!Object.keys(locks).length} onClick={async () => { await post(`/api/v1/devices/${d.id}/lock-check`, { checks: locks, note: lockNote || null }); await inv('devices', 'device', 'history'); setSheet(null) }} />
+        </div>
+      </Sheet>
+      <Sheet open={sheet === 'cost'} onClose={() => setSheet(null)} title="purchase.costFix.title">
+        <div className="flex flex-col gap-3" data-testid="cost-sheet">
+          <span className="flex items-center gap-1"><BiLabel text="purchase.costFix.hint" size="sm" tone="text-muted" /><Help term="purchase.costFix" size="sm" /></span>
+          <div className="flex items-center justify-between rounded-2xl bg-ground px-4 py-3">
+            <BiLabel text="purchase.costFix.now" size="sm" tone="text-muted" />
+            <MoneyText value={boughtFor ?? 0} tone="ink" />
+          </div>
+          <BiInput label="purchase.costFix.new" help={<Help term="purchase.costFix" size="sm" />} type="number" inputMode="decimal" min={0} value={newCost.cost} onChange={(e) => setNewCost({ ...newCost, cost: e.target.value })} className="num" autoFocus data-testid="cost-new" />
+          {costDiff !== 0 ? (
+            <div className={`rounded-2xl px-4 py-3 text-sm font-bold ${costDiff > 0 ? 'bg-payable-tint text-payable' : 'bg-emerald-tint text-emerald-deep'}`} data-testid="cost-effect">
+              {pick(costDiff > 0 ? 'purchase.costFix.more' : 'purchase.costFix.less').replace('{{n}}', withCur(Math.abs(costDiff).toLocaleString('en-US'))).replace('{{who}}', d.source_party_name ?? '')}
+            </div>
+          ) : null}
+          <BiInput label="common.reason" value={newCost.reason} onChange={(e) => setNewCost({ ...newCost, reason: e.target.value })} maxLength={200} help={<Help term="stock.fixImeiReason" size="sm" />} />
+          <ErrorText error={costErr} />
+          <BiButton
+            text="common.save"
+            full
+            disabled={newCost.reason.trim().length < 2 || newCost.cost === '' || Number(newCost.cost) < 0 || costDiff === 0}
+            onClick={async () => {
+              try {
+                await api('POST', '/api/v1/purchases/cost', { device_id: d.id, cost: Number(newCost.cost), reason: newCost.reason.trim() })
+                await inv('devices', 'device', 'history', 'unit-money', 'purchases', 'parties', 'balances')
+                setSheet(null)
+              } catch (e) { setCostErr(e) }
+            }}
+            data-testid="cost-save"
+          />
         </div>
       </Sheet>
       <Sheet open={sheet === 'imei'} onClose={() => setSheet(null)} title="stock.fixImei.title">

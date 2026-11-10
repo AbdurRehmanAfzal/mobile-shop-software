@@ -573,6 +573,119 @@ def change_party(
     return p
 
 
+# the shop still holds the unit (nothing was sold at the old cost)
+_HELD = (
+    DeviceStatus.IN_STOCK,
+    DeviceStatus.FAULTY,
+    DeviceStatus.IN_REPAIR,
+    DeviceStatus.WITH_CUSTOMER_FOR_APPROVAL,
+    DeviceStatus.ON_LOAN,
+)
+
+
+def change_cost(
+    db: Session,
+    shop_id: uuid.UUID,
+    ctx,
+    device_id: uuid.UUID,
+    cost: Decimal,
+    reason: str,
+) -> Purchase:
+    """Owner 2026-11-10 (ADR-063): the wrong purchase price was typed when the phone was added.
+    Nothing is erased: one correction group, dated like the purchase, moves the difference
+    between stock value and the seller's khata; the bill's total, the line and the phone's cost
+    follow, and the phone's history says from what to what. Only while the shop still holds the
+    phone from this purchase (a sale at the old cost has already taken it into profit)."""
+    if not ctx.can(Cap.VOID):
+        raise Forbidden()
+    d = db.get(Device, device_id)
+    if d is None or d.shop_id != shop_id:
+        raise NotFound(code="device_not_found")
+    came = [e for e in d.events if e.type in (EventType.PURCHASED, EventType.TRANSFERRED_IN)]
+    last = max(came, key=lambda e: e.seq) if came else None
+    if last is None or last.type != EventType.PURCHASED or last.document_type != "purchase":
+        raise Conflict(
+            code="no_purchase",
+            message_en="This phone did not come from a purchase bill",
+            message_ur="یہ موبائل خریداری کے بل سے نہیں آیا",
+        )
+    if d.status not in _HELD or any(
+        e.seq > last.seq and e.type == EventType.SOLD for e in d.events
+    ):
+        raise Conflict(
+            code="cost_after_sale",
+            message_en="This phone was sold or has left the shop; its purchase price can no longer be changed",
+            message_ur="یہ موبائل بک چکا ہے یا دکان سے جا چکا ہے؛ اب اس کی قیمتِ خرید نہیں بدل سکتی",
+        )
+    p = get_purchase(db, shop_id, last.document_id)
+    if p.status == PurchaseStatus.VOIDED:
+        raise Conflict(code="already_voided")
+    ln = next((x for x in p.lines if x.device_id == d.id and x.returned_at is None), None)
+    if ln is None:
+        raise Conflict(code="no_purchase")
+    old, new = money(ln.net_cost), money(cost)
+    diff = new - old
+    if diff == ZERO:
+        raise ValidationFailed(
+            code="same_cost",
+            message_en="This is already the purchase price",
+            message_ur="یہی پہلے سے قیمتِ خرید ہے",
+        )
+    party = db.get(Party, p.party_id)
+    posting = Posting(
+        document_type="purchase_cost_change",
+        document_id=p.id,
+        memo=f"{p.no} {d.imei1}: {old} -> {new} ({reason})",
+        at=p.purchased_at or at_for(p.date),
+    )
+    if diff > ZERO:
+        posting.debit(acc.SysAccount.INVENTORY, diff, device_id=d.id, memo=d.imei1).credit(
+            acc.party_account(p.party_id), diff
+        )
+    else:
+        posting.debit(acc.party_account(p.party_id), -diff).credit(
+            acc.SysAccount.INVENTORY, -diff, device_id=d.id, memo=d.imei1
+        )
+    post(db, shop_id, ctx.id, posting)
+    ln.unit_cost = money(ln.unit_cost + diff)
+    ln.net_cost = new
+    p.subtotal = money(p.subtotal + diff)
+    p.total = money(p.total + diff)
+    p.updated_at = utcnow()
+    apply_event(
+        db,
+        shop_id,
+        ctx.id,
+        d,
+        EventType.CORRECTED,
+        amount=new,
+        party_id=p.party_id,
+        document_type="purchase",
+        document_id=p.id,
+        data={
+            "field": "cost",
+            "from": str(old),
+            "to": str(new),
+            "reason": reason,
+            "purchase_no": p.no,
+            "party": party.name if party else None,
+        },
+    )
+    d.cost_price = money((d.cost_price or ZERO) + diff)
+    record_audit(
+        db,
+        shop_id=shop_id,
+        user_id=ctx.id,
+        entity="purchase",
+        entity_id=p.id,
+        action="cost_changed",
+        before={"device_id": str(d.id), "cost": str(old)},
+        after={"cost": str(new), "reason": reason},
+    )
+    db.commit()
+    return p
+
+
 def _aware(value: datetime) -> datetime:
     return value if value.tzinfo else value.replace(tzinfo=UTC)
 
