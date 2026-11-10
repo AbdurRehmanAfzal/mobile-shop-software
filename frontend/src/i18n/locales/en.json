@@ -334,7 +334,8 @@
       "field": {
         "imei1": "IMEI 1",
         "imei2": "IMEI 2",
-        "seller": "Bought from"
+        "seller": "Bought from",
+        "cost": "Purchase price"
       }
     },
     "kind": {
@@ -440,6 +441,15 @@
       "partyTitle": "Change who it was bought from",
       "partyHint": "Picked the wrong person by mistake? The bill and what was paid with it move to the right person's khata. The phones' history keeps both names.",
       "partyNew": "The right person"
+    },
+    "costFix": {
+      "button": "Change purchase price",
+      "title": "Change purchase price",
+      "hint": "The price was typed wrong when the phone was added. The bill, the stock value and the seller's khata are put right; the history keeps the old price.",
+      "now": "Purchase price now",
+      "new": "Correct purchase price",
+      "more": "{{who}}'s khata: {{n}} more to give",
+      "less": "{{who}}'s khata: {{n}} less to give"
     }
   },
   "verify": {
@@ -5102,6 +5112,11 @@
         "title": "Reason",
         "body": "Why it is changed. It shows in the phone's history.",
         "example": "Picked the wrong name."
+      },
+      "costFix": {
+        "title": "Change purchase price",
+        "body": "Only the owner or manager, only while the phone is still in the shop (not sold). The difference goes to the seller's khata: a higher price means more to give them, a lower one means less (or they owe you if it was paid). Cash does not move. The phone's history shows the old and new price and the reason.",
+        "example": "Typed 10,000, it was 12,000: the dealer's khata shows 2,000 more to give."
       }
     },
     "label": {

@@ -1,5 +1,6 @@
 import uuid
 from datetime import date
+from decimal import Decimal
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
@@ -69,4 +70,19 @@ def change_party(purchase_id: uuid.UUID, data: PartyChangeIn, ctx: Ctx, db: DB):
     return service.to_out(
         db,
         service.change_party(db, ctx.shop_id, ctx, purchase_id, data.party_id, data.reason.strip()),
+    )
+
+
+class CostChangeIn(BaseModel):
+    device_id: uuid.UUID
+    cost: Decimal = Field(ge=0, max_digits=14, decimal_places=2)
+    reason: str = Field(min_length=2, max_length=200)
+
+
+@router.post("/cost", response_model=PurchaseOut)
+def change_cost(data: CostChangeIn, ctx: Ctx, db: DB):
+    """owner / manager: the wrong purchase price was typed for a phone still in the shop (ADR-063)"""
+    return service.to_out(
+        db,
+        service.change_cost(db, ctx.shop_id, ctx, data.device_id, data.cost, data.reason.strip()),
     )

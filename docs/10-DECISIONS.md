@@ -362,6 +362,23 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-063 · 2026-11-10 · Accepted · A phone's purchase price can be put right while the shop holds it
+**Context**: shopkeepers type a wrong purchase price when adding stock. There was no way to correct it after saving.
+**Decision**:
+- `POST /purchases/cost {device_id, cost, reason}`. Owner / manager only (`Cap.VOID`).
+- Allowed only while the phone's latest intake is a purchase bill and the shop still holds it (in stock, faulty, in repair, with a customer on approval, on loan), with no sale since.
+- Nothing is erased: one correction group (`purchase_cost_change`), dated like the purchase, moves the difference between Inventory and the seller's party account.
+  - Higher price: more to give the seller.
+  - Lower price: less, or the seller owes the shop if it was already paid.
+  - Cash never moves.
+- The purchase line (`unit_cost`, `net_cost`), the bill's `subtotal` / `total` and `devices.cost_price` move by the difference. Lab charges already added to the phone's cost stay.
+- A `corrected` device event (`field: cost`, from → to, reason) and an audit row are written.
+- Phone page: **Change purchase price** (Classic button; beside the cost in Smart / Tiles). The sheet shows the effect on the seller's khata before saving.
+- No migration.
+**Consequences**:
+- A phone already sold is refused (`cost_after_sale`): its cost is in that sale's profit. The way is a return, then the change.
+- Items (accessories) bought on a bill are not covered yet: their cost sits in FIFO batches.
+
 ## ADR-062 · 2026-11-10 · Accepted · On udhaar, the part paid now keeps its own way of paying
 **Context**: a sale or purchase on udhaar with something paid now always booked that part as cash. Shopkeepers often take or give that part by JazzCash / bank or a cheque and want it recorded.
 **Decision**:
