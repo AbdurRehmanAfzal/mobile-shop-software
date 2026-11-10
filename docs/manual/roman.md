@@ -302,7 +302,7 @@ Home par **Stock daalein** dabayein. Pehli screen poochti hai **Phone kahan se a
 
     **Apple** iPhone ke liye form **Region code** aur **SIM** bhi poochta hai. Region code Settings → General → About → Model Number ke aakhir mein hota hai (MLPF3**LL/A** → **LL/A** dabayein). SIM ke liye **Physical + eSIM**, **Double eSIM** (Americi iPhone 14 aur baad walon mein SIM tray nahi hoti), **Double physical SIM** ya **Sirf physical SIM** dabayein. List mein nahi? **Naya** daba kar likh dein; agli dafa app khud dikhaye gi. Used ya open box iPhone ke liye **Battery cycle count** bhi poocha jata hai (iPhone 15 aur naye: Settings → General → About; purane mein khali chhor dein). Yeh sab stock list aur price sticker par nazar aate hain.
 10. **Haalat**: **Box pack** dabayein. Baqi options **Open box**, **Used** aur **Patch wala** hain (patch wala **Patch ki tafseel** maangta hai).
-11. **PTA status**: **PTA approved** dabayein. **Non-PTA** aur **JV** ke liye app **SIM time (mahine)** bhi poochti hai.
+11. **PTA status**: **PTA approved** dabayein. **Non-PTA** aur **JV** ke liye app **SIM time (mahine)** bhi poochti hai; yeh optional hai, maloom na ho to khali chhor dein.
 12. **Khareed qeemat**: `92000` likhein, jo aap ne diye.
 13. **Bechne ki qeemat (optional)**: `100000` likhein, jitne mein aap bechna chahte hain. Abhi tay nahi? Khali chhor dein aur baad mein phone ke page se likh dein.
 
@@ -937,6 +937,18 @@ Yeh sirf maalik ya manager durust kar sakte hain, aur har ek ke liye mukhtasar w
 
 - **Ghalat IMEI:** phone kholein, **IMEI durust karein** dabayein, sahi IMEI 1 likhein (aur IMEI 2, ya nishan lagayein ke is phone ka IMEI 2 nahi), wajah likhein aur **Mehfooz karein** dabayein. Number 15 hindson ka ho aur dukaan ke kisi aur phone ka na ho. Barcode wahi rehta hai.
 - **Ghalat dealer ya customer:** khareedari kholein (**More → Purchases**, ya phone ki history mein khareedari wali line par tap), **Dealer / customer badlein** dabayein, sahi shakhs chunein, wajah likhein aur **Mehfooz karein** dabayein. Bill aur us ke saath di gayi raqam sahi shakhs ke khate mein chali jati hai; ghalat shakhs ka khata pehle jaisa ho jata hai. Agar baad mein is bill ki adaigi ho chuki ho ya kuch wapis hua ho to yeh nahi ho sakta: pehle woh khatam karein.
+
+### Phone ya items customer ke liye reserve
+
+Phone ke page par **Customer ke liye reserve** dabayein, customer chunein, aur chahein to **Kab tak** aur note (maslan "advance 5,000"). Page phir naam ke saath **Reserve baraye** dikhata hai. Phone stock mein rehta hai magar **Bechne ke liye tayyar** mein nahi gina jata, stock screen par **Reserve** ka card hai, aur kisi aur ko bechne ki koshish ruk jati hai. Usi customer ko bechne se reserve khud khatam ho jata hai; woh na aaye to **Reserve khatam karein** dabayein. Item ke page par **Customer ke liye reserve** **Kitne** poochta hai: doosre sirf baqi piece khareed sakte hain. Koi raqam ya entry nahi hoti; phone ki history mein **Reserve hua** aur **Reserve khatam** aata hai.
+
+### Shelf / jagah
+
+Phone daalte ya badalte waqt **Shelf / jagah** (optional) batata hai ke phone kahan rakha hai, maslan **Rack A2**. Yeh phone ki line par dikhta hai, aur stock ka search aur **Shelf / jagah** filter use dhoond lete hain.
+
+### Jis se khareeda woh badlein
+
+Phone ke page par **Dealer / customer badlein** dabayein: us ki khareedari badalne ke liye tayyar khulti hai (upar "IMEI ya bechne wala ghalat likha gaya" dekhein). Items ke liye khareedari item ki movements se ya **More → Purchases** se kholein.
 
 ### Poori history
 

@@ -79,6 +79,7 @@ class DeviceIdentity(BaseModel):
     size_mm: int | None = Field(default=None, ge=20, le=60)  # a watch's case
     battery_health: int | None = Field(default=None, ge=1, le=100)
     region_code: str | None = Field(default=None, max_length=12)  # ADR-055, e.g. LL/A
+    location: str | None = Field(default=None, max_length=60)  # ADR-060, shelf
     battery_cycles: int | None = Field(default=None, ge=0, le=5000)  # ADR-055, Apple
     sim_type: str | None = Field(default=None, max_length=30)  # ADR-055, e.g. physical_esim
     imei1: str | None = None
@@ -183,8 +184,7 @@ class DeviceIdentity(BaseModel):
 
     @model_validator(mode="after")
     def _sim_time(self):
-        if self.pta_status in (PtaStatus.NON_PTA, PtaStatus.JV) and self.sim_time_months is None:
-            raise ValueError("sim_time_months is required for Non-PTA and JV devices")
+        # owner 2026-11-10: the SIM time of a Non-PTA / JV phone is optional (often not known)
         if self.condition == DeviceCondition.PATCHED and not self.patch_details:
             raise ValueError("patch_details is required for patched devices")
         return self
@@ -213,6 +213,7 @@ class DeviceUpdate(BaseModel):
     size_mm: int | None = Field(default=None, ge=20, le=60)
     battery_health: int | None = Field(default=None, ge=1, le=100)
     region_code: str | None = Field(default=None, max_length=12)  # ADR-055, e.g. LL/A
+    location: str | None = Field(default=None, max_length=60)  # ADR-060, shelf
     battery_cycles: int | None = Field(default=None, ge=0, le=5000)  # ADR-055, Apple
     sim_type: str | None = Field(default=None, max_length=30)  # ADR-055, e.g. physical_esim
     brand_id: uuid.UUID | None = None
@@ -299,6 +300,12 @@ class DeviceOut(BaseModel):
     region_code: str | None = None
     battery_cycles: int | None = None
     sim_type: str | None = None
+    location: str | None = None
+    reserved_party_id: uuid.UUID | None = None
+    reserved_party_name: str | None = None
+    reserved_until: date | None = None
+    reserved_note: str | None = None
+    reserved_at: datetime | None = None
     # who it was bought from (stock list, ADR-059); not on every endpoint
     source_party_id: uuid.UUID | None = None
     source_party_name: str | None = None

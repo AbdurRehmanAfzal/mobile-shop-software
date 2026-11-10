@@ -1219,3 +1219,34 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - `tests/test_stock_screen.py` (3): five units → on hand 5, available 3, approval 1, inspection 1; the sellable / inspection filters; either IMEI or the barcode finds one unit; cost / age filters; no posting by looking; charger 6 → 4 is low at a reorder level of 5, 0 is out; bought from + supplier filter; an older record with empty optional fields; staff see no cost and their cost filter is ignored.
 - Playwright `stock-screen.spec` (new): cards, the Available filter, the filter kept after opening a phone, Spare parts → items.
 - Regression: the full backend suite; Playwright stock-views, add-device, exchange-return, labels, balances, forms-keep.
+
+### Same day — reserve, shelf, SIM time optional, change seller from the phone (ADR-060)
+**Owner**:
+- "reserve aur shelf ka kaam kar do".
+- "non PTA select karte hain to SIM time ki field … optional kar do".
+- "purchase entry mein customer ghalat dal diya to change ka option": this already existed (ADR-056, live with PR #42) on the purchase page. It is now also reachable from the phone's page.
+
+**Done**:
+- **Backend:**
+  - Migration `a7c9e1b3d5f8` (devices: `location` + `reserved_*`; new table `accessory_reservations`).
+  - `reserve/` service and router.
+  - Sale hooks: a reserved phone goes only to its customer; held item pieces are protected and the buyer's own hold is filled.
+  - Stock status: `reserved` counts and available excludes reserved units. List filters `reserved` and `location`; the search matches the shelf.
+  - Device detail and list carry `reserved_party_name`.
+  - SIM time is no longer required (schema, edit, bulk).
+- **Frontend:**
+  - `ReserveCard.tsx` (phone hold / release; item holds with free count).
+  - A Reserved card and filter, a shelf field in the add / edit sheet, a shelf filter and column, the shelf in the spec line, and a reserved chip on cards.
+  - "Change dealer / customer" on the phone page opens its purchase with `?change=1`.
+  - SIM time optional with a hint.
+- **Docs:** en / ur / roman strings and help; user manual ch. 11 (three new sections) and ch. 6 (SIM time optional); ADR-060; owner pending.
+
+**Verified**:
+- `tests/test_reserve.py` (5):
+  - A phone: hold, the reserved count, not available, refused to another customer and to a walk-in, sold to its customer ends the hold, history.
+  - Release, shelf set / filter / search / edit.
+  - Item pieces: not more than free, others refused, the customer's hold filled, release.
+  - Non-PTA phone without SIM time; staff can reserve and see no cost.
+- `test_devices` updated (SIM time optional); the full backend suite.
+- Playwright `reserve.spec` (new); regression stock-screen, counter, add-device, items, device-types.
+- I looked at a screenshot of the reserved phone page.

@@ -42,6 +42,7 @@ export function specLine(d: Device, pick: (k: string) => string, withColour = tr
     simTypeText(d.sim_type, pick),
     d.battery_health ? pick('devx.bh').replace('{{n}}', String(d.battery_health)) : null,
     d.battery_cycles != null ? pick('devx.cyclesShort').replace('{{n}}', String(d.battery_cycles)) : null,
+    d.location ? `${pick('stock.shelf')}: ${d.location}` : null,
   ].filter(Boolean).join(' · ')
 }
 
@@ -111,6 +112,7 @@ export function DeviceCard({ d, onOpen, onSell, selected, onSelect, fields }: { 
           {!fields || fields.includes('imei') ? <span dir="ltr">{d.imei1}</span> : null}
           {d.verification_status !== 'not_required' && (!fields || fields.includes('verification') || d.verification_status === 'flagged') ? <Chip text={`stock.verification.${d.verification_status}`} tone={vTone} /> : null}
           {d.status !== 'in_stock' ? <Chip text={`stock.status.${d.status}`} tone="ink" /> : null}
+          {d.reserved_party_id ? <span className="rounded-full bg-gold-tint px-2 py-0.5 font-bold text-ink" data-testid="card-reserved-chip">{pick('reserve.chip')} {d.reserved_party_name}</span> : null}
         </div>
         {onSell && d.status === 'in_stock' && d.verification_status !== 'flagged' ? (
           <button type="button" onClick={onSell} className="tap min-h-11 shrink-0 rounded-full bg-emerald px-6 text-sm font-bold text-white shadow-cta">
@@ -149,7 +151,7 @@ export default function StockPage() {
   const [view, setView] = useState<StockView>(loadView)
   const [fields, setFields] = useState<FieldKey[]>(loadFields)
   const [colSort, setColSort] = useState<ColSort>(null)
-  const [fx, setFx] = useState({ grade: '', ram: '', min: '', max: '', lock: false, condition: '', pta: '', age: '', costMin: '', costMax: '', supplier: '', ...(kept?.fx ?? {}) })
+  const [fx, setFx] = useState({ grade: '', ram: '', min: '', max: '', lock: false, condition: '', pta: '', age: '', costMin: '', costMax: '', supplier: '', shelf: '', ...(kept?.fx ?? {}) })
   useEffect(() => { writeKept({ filter, brand, sort, kind, mode, fx }) }, [filter, brand, sort, kind, mode, fx])
   const { data: suppliers } = useGet<Party[]>(['parties', 'suppliers'], more ? '/api/v1/parties?kind=supplier' : null)
   const [retype, setRetype] = useState(false)
@@ -157,7 +159,7 @@ export default function StockPage() {
   const [retypeRows, setRetypeRows] = useState<{ id: string; imei1: string; problems: string[] }[] | null>(null)
   const [retypeErr, setRetypeErr] = useState<unknown>(null)
   const statusParam = mode === 'in_repair' || mode === 'faulty' || mode === 'with_customer_for_approval' ? mode : mode ? undefined : filter === 'all' ? undefined : filter
-  const { data, isLoading } = useDevices({ q: q || undefined, status: statusParam, ...preset, category: kind || preset.category, condition: fx.condition || preset.condition, pta_status: fx.pta || preset.pta_status, limit: 500, grade: fx.grade || undefined, ram_gb: fx.ram ? Number(fx.ram) : undefined, price_min: fx.min ? Number(fx.min) : undefined, price_max: fx.max ? Number(fx.max) : undefined, lock_unchecked: fx.lock || undefined, sellable: mode === 'sellable' || undefined, inspection: mode === 'inspection' || undefined, age_min: fx.age ? Number(fx.age) : undefined, cost_min: canCost && fx.costMin ? Number(fx.costMin) : undefined, cost_max: canCost && fx.costMax ? Number(fx.costMax) : undefined, supplier_id: fx.supplier || undefined })
+  const { data, isLoading } = useDevices({ q: q || undefined, status: statusParam, ...preset, category: kind || preset.category, condition: fx.condition || preset.condition, pta_status: fx.pta || preset.pta_status, limit: 500, grade: fx.grade || undefined, ram_gb: fx.ram ? Number(fx.ram) : undefined, price_min: fx.min ? Number(fx.min) : undefined, price_max: fx.max ? Number(fx.max) : undefined, lock_unchecked: fx.lock || undefined, sellable: mode === 'sellable' || undefined, inspection: mode === 'inspection' || undefined, reserved: mode === 'reserved' || undefined, location: fx.shelf || undefined, age_min: fx.age ? Number(fx.age) : undefined, cost_min: canCost && fx.costMin ? Number(fx.costMin) : undefined, cost_max: canCost && fx.costMax ? Number(fx.costMax) : undefined, supplier_id: fx.supplier || undefined })
   useScan(async (code) => {
     const r = await lookupCode(code).catch(() => null)
     if (r?.kind === 'device' && r.device) { beep('ok'); nav(`/stock/${r.device.id}`) } else if (r?.kind === 'item' && r.item) { beep('ok'); nav(`/accessories?q=${encodeURIComponent(r.item.sku)}`) } else { beep('error'); setQ(code) }
@@ -266,7 +268,7 @@ export default function StockPage() {
         <Help term="stock.sort" size="sm" />
       </div>
       <div className="flex flex-wrap items-center gap-1.5">
-        <button type="button" aria-pressed={more} onClick={() => setMore(!more)} className={`tap h-9 rounded-full border-2 px-3 text-[12px] font-bold ${more || fx.grade || fx.ram || fx.min || fx.max || fx.lock || fx.condition || fx.pta || fx.age || fx.costMin || fx.costMax || fx.supplier ? 'border-ink bg-ink text-ground' : 'border-line bg-surface'}`} data-testid="stock-filters">{pick('devx.filters')}</button>
+        <button type="button" aria-pressed={more} onClick={() => setMore(!more)} className={`tap h-9 rounded-full border-2 px-3 text-[12px] font-bold ${more || fx.grade || fx.ram || fx.min || fx.max || fx.lock || fx.condition || fx.pta || fx.age || fx.costMin || fx.costMax || fx.supplier || fx.shelf ? 'border-ink bg-ink text-ground' : 'border-line bg-surface'}`} data-testid="stock-filters">{pick('devx.filters')}</button>
         <Help term="stock.filters" size="sm" />
         {fx.lock ? <span className="tap h-9 rounded-full border-2 border-ink bg-ink px-3 text-[12px] font-bold leading-8 text-ground">{pick('devx.lockUnchecked')}</span> : null}
       </div>
@@ -280,6 +282,7 @@ export default function StockPage() {
           <label className="flex flex-col gap-1"><span className="flex items-center gap-1"><BiLabel text="stock.ptaShort" size="sm" tone="text-muted" /><Help term="device.pta" size="sm" /></span><select aria-label={pick('stock.ptaShort')} value={fx.pta} onChange={(e) => setFx({ ...fx, pta: e.target.value })} className="min-h-11 rounded-xl border border-line bg-surface px-3 text-sm font-bold"><option value="">{pick('common.all')}</option>{['pta_approved', 'non_pta', 'jv'].map((c) => <option key={c} value={c}>{pick(`stock.pta.${c}`)}</option>)}</select></label>
           <label className="flex flex-col gap-1"><span className="flex items-center gap-1"><BiLabel text="stock.fx.age" size="sm" tone="text-muted" /><Help term="stock.fx.age" size="sm" /></span><select aria-label={pick('stock.fx.age')} value={fx.age} onChange={(e) => setFx({ ...fx, age: e.target.value })} className="min-h-11 rounded-xl border border-line bg-surface px-3 text-sm font-bold" data-testid="fx-age"><option value="">{pick('common.all')}</option>{['30', '60', '90'].map((d) => <option key={d} value={d}>{pick('stock.fx.olderThan').replace('{{n}}', d)}</option>)}</select></label>
           <label className="flex flex-col gap-1"><span className="flex items-center gap-1"><BiLabel text="stock.fx.supplier" size="sm" tone="text-muted" /><Help term="stock.fx.supplier" size="sm" /></span><select aria-label={pick('stock.fx.supplier')} value={fx.supplier} onChange={(e) => setFx({ ...fx, supplier: e.target.value })} className="min-h-11 rounded-xl border border-line bg-surface px-3 text-sm font-bold"><option value="">{pick('common.all')}</option>{(suppliers ?? []).map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
+          <BiInput label="stock.shelf" help={<Help term="stock.shelf" size="sm" />} value={fx.shelf} onChange={(e) => setFx({ ...fx, shelf: e.target.value })} maxLength={60} />
           {canCost ? <BiInput label="stock.fx.costMin" help={<Help term="stock.fx.cost" size="sm" />} type="number" inputMode="numeric" min={0} value={fx.costMin} onChange={(e) => setFx({ ...fx, costMin: e.target.value })} className="num" /> : null}
           {canCost ? <BiInput label="stock.fx.costMax" help={<Help term="stock.fx.cost" size="sm" />} type="number" inputMode="numeric" min={0} value={fx.costMax} onChange={(e) => setFx({ ...fx, costMax: e.target.value })} className="num" /> : null}
           <div className="col-span-2 flex items-center gap-1"><button type="button" role="switch" aria-checked={fx.lock} onClick={() => setFx({ ...fx, lock: !fx.lock })} className="tap flex min-h-11 flex-1 items-center gap-3 rounded-2xl border border-line bg-ground px-4 text-start"><span className="flex-1"><BiLabel text="devx.lockUnchecked" size="md" bold /></span><span className={`flex h-7 w-12 shrink-0 items-center rounded-full p-1 ${fx.lock ? 'bg-emerald' : 'bg-line'}`}><span className={`h-5 w-5 rounded-full bg-white shadow transition-transform ${fx.lock ? 'translate-x-5 rtl:-translate-x-5' : ''}`} /></span></button><Help term="stock.lockUnchecked" size="sm" /></div>

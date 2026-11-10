@@ -68,6 +68,9 @@ class EventType(StrEnum):
     # owner 2026-11-09 (ADR-056): a typing mistake put right after the purchase (IMEI, the seller);
     # the event keeps what it was, what it is now and why
     CORRECTED = "corrected"
+    # ADR-060: held for one customer / the hold ended
+    RESERVED = "reserved"
+    UNRESERVED = "unreserved"
 
 
 # Events that move money and therefore may only be raised by document modules (purchase, sale,
@@ -94,6 +97,8 @@ NEUTRAL_EVENTS = frozenset(
         EventType.LOCK_CHECKED,
         EventType.RECLASSIFIED,
         EventType.CORRECTED,
+        EventType.RESERVED,
+        EventType.UNRESERVED,
     }
 )
 

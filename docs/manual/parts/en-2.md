@@ -208,6 +208,18 @@ Only the owner or manager can put these right, and each needs a short reason. No
 - **Wrong IMEI:** open the phone, tap **Correct IMEI**, type the right IMEI 1 (and IMEI 2, or tick that the phone has no IMEI 2), write the reason and tap **Save**. The number must be 15 digits and not belong to another phone in the shop. The barcode stays the same.
 - **Wrong dealer or customer:** open the purchase (**More → Purchases**, or tap the purchase line in the phone's history), tap **Change dealer / customer**, pick the right person, write the reason and tap **Save**. The bill and what was paid with it move to the right person's khata; the wrong person's khata is back to what it was. This is not possible once money was paid later against that bill or something was returned on it: undo that first.
 
+### Reserve a phone or items for a customer
+
+On a phone's page tap **Reserve for a customer**, pick the customer, and if you like **Hold until** and a note (for example "advance 5,000"). The page then shows **Reserved for** with the name. The phone stays in stock but is not counted under **Available to sell**, the stock screen has a **Reserved** card, and the sale refuses it for anyone else. Selling it to that customer ends the hold by itself; if they do not come, tap **Release**. On an item's page, **Reserve for a customer** asks **How many**: others can then buy only the pieces that are free. Nothing is charged or posted; the phone's history shows **Reserved** and **Reservation released**.
+
+### Shelf / place
+
+When adding or editing a phone, **Shelf / place** (optional) says where it sits, for example **Rack A2**. It shows on the phone's line, and the stock search and the **Shelf / place** filter find it.
+
+### Change who it was bought from
+
+On a phone's page tap **Change dealer / customer**: its purchase opens with the change ready (see "An IMEI or the seller typed wrong" above). For items, open the purchase from the item's movements or **More → Purchases**.
+
 ### The full history
 
 At the bottom of the page is **History**: one timeline of everything that ever happened to this phone, newest on top. Every line has the date, the person, the amount and the staff member who did it. You will see lines such as:

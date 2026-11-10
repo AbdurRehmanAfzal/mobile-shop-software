@@ -101,6 +101,11 @@ export interface Device {
   battery_cycles?: number | null
   source_party_id?: string | null
   source_party_name?: string | null
+  location?: string | null
+  reserved_party_id?: string | null
+  reserved_party_name?: string | null
+  reserved_until?: string | null
+  reserved_note?: string | null
   sim_type?: string | null
   brand_id: UUID
   brand_name: string

@@ -17,6 +17,7 @@ import { LockChecksEditor, lockState, specRows, type LockChecks } from './Device
 import type { DeviceCategory } from '@/lib/types'
 import PriceHint from '@/components/PriceHint'
 import UnitMoney from './UnitMoney'
+import { DeviceReserve } from './ReserveCard'
 import { isApple } from '@/features/purchase/AppleVariant'
 
 
@@ -45,6 +46,7 @@ function toDraft(d: DeviceDetail): DeviceLineDraft {
     warranty_by: d.warranty_by ?? '',
     specs: d.specs ?? {},
     region_code: d.region_code ?? '',
+    location: d.location ?? '',
     battery_cycles: d.battery_cycles != null ? String(d.battery_cycles) : '',
     sim_type: d.sim_type ?? '',
   }
@@ -78,6 +80,8 @@ export default function DeviceDetailPage() {
   const [expected, setExpected] = useState('')
   const { data: shops } = useParties({ kind: 'shop' })
   const canSeeCost = useAuth((s) => s.me?.user.role === 'owner' || s.me?.user.role === 'manager')
+  // the purchase this unit came in on (its latest), for "Change dealer / customer" (owner 2026-11-10)
+  const boughtOn = [...(history ?? [])].reverse().find((e) => e.type === 'purchased' && e.document_type === 'purchase')?.document_id ?? null
   const multiShop = useAuth((s) => (s.me?.shops.length ?? 0) > 1)
 
   if (isLoading || !d) return <Loading />
@@ -136,6 +140,7 @@ export default function DeviceDetailPage() {
           </div>
         ) : null}
       </section>
+      <DeviceReserve deviceId={d.id} d={d} inStock={inStock} />
 
       {inStock ? (
         <div className="grid grid-cols-2 gap-2">
@@ -162,6 +167,7 @@ export default function DeviceDetailPage() {
           <BiButton text="stock.changePrice" variant="secondary" size="md" onClick={() => { setText(d.asking_price ?? ''); setSheet('price') }} />
           <BiButton text="stock.addNote" variant="secondary" size="md" onClick={() => { setText(''); setSheet('note') }} />
           <BiButton text="crud.editDetails" variant="secondary" size="md" onClick={() => setSheet('edit')} />
+          {canSeeCost && boughtOn ? <BiButton text="purchase.fix.partyButton" variant="secondary" size="md" onClick={() => nav(`/purchases/${boughtOn}?change=1`)} data-testid="device-change-seller" /> : null}
           {canSeeCost ? <BiButton text="bal.short" variant="secondary" size="md" onClick={() => nav(`/balances?q=${encodeURIComponent(d.imei1)}`)} data-testid="device-balances" /> : null}
           {canSeeCost && ((d.category ?? 'phone') === 'phone' || d.cellular) ? <BiButton text="stock.fixImei.button" variant="secondary" size="md" onClick={() => { setFix({ imei1: d.imei1, imei2: d.imei2 ?? '', clear2: false, reason: '' }); setFixErr(null); setSheet('imei') }} data-testid="fix-imei" /> : null}
           {d.condition !== 'box_pack' ? <BiButton text="devx.lock.button" variant="secondary" size="md" onClick={() => { setLocks(d.lock_checks ?? {}); setLockNote(''); setSheet('lock') }} /> : null}
@@ -252,6 +258,7 @@ export default function DeviceDetailPage() {
                 ram_gb: x.category !== 'watch' && x.ram_gb ? Number(x.ram_gb) : null,
                 warranty_by: x.warranty_by || null,
                 region_code: isApple(x.brand_name, x.model_name) ? x.region_code || null : null,
+                location: x.location || null,
                 battery_cycles: isApple(x.brand_name, x.model_name) && x.battery_cycles !== '' && x.battery_cycles != null ? Number(x.battery_cycles) : null,
                 sim_type: isApple(x.brand_name, x.model_name) && (x.category === 'phone' || x.cellular) ? x.sim_type || null : null,
                 specs: x.specs && Object.keys(x.specs).length ? x.specs : null,

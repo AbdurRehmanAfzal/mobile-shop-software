@@ -362,6 +362,29 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-060 · 2026-11-10 · Accepted · Reserve stock for a customer without posting; a shelf for a phone; SIM time optional
+**Context**: after ADR-059 the owner asked for reserve and shelf, and to make the SIM time of a Non-PTA / JV phone optional.
+**Decision**:
+- **Phone:**
+  - New columns: `devices.reserved_party_id / reserved_at / reserved_until / reserved_note / reserved_by`.
+  - `POST /devices/{id}/reserve` (in stock only, one hold at a time) and `POST /devices/{id}/release`. Each writes a status-neutral event, `reserved` / `unreserved`.
+  - The status stays `in_stock` and nothing is posted.
+  - The sale (`check_device_sale`) refuses a reserved unit for anyone else (`reserved_for_other`, walk-in included) and clears the hold when its customer buys it.
+  - "Available to sell" excludes reserved units, and the stock screen has a **Reserved** card / filter.
+- **Item:**
+  - New table `accessory_reservations`, with fields `qty`, `fulfilled_qty` and `status` (open / done / released).
+  - Reserving is limited to free pieces (`not_enough_free`).
+  - The sale refuses selling pieces held for others unless the shop allows selling into minus (`reserved_stock`), and fills the buyer's own hold oldest first.
+  - Release: `POST /accessories/reservations/{id}/release`.
+- **Shelf:** `devices.location` (String 60). It is set on purchase, opening stock or edit, searched, filtered (`location`) and shown in the spec line and a "Shelf / place" field.
+- **SIM time:** the SIM time of a Non-PTA / JV phone is optional (schema, edit, bulk import, form).
+- **Change seller:** the phone page has "Change dealer / customer", which opens its purchase with the ADR-056 change sheet (`?change=1`).
+- Migration `a7c9e1b3d5f8` is additive (nullable columns + new table).
+**Consequences**:
+- A hold does not expire by itself; the owner releases it.
+- Reserving takes no advance; an advance is taken as a normal payment.
+- A reserved unit can still go out on loan or to repair; the hold stays on it.
+
 ## ADR-059 · 2026-11-10 · Accepted · The stock screen's kind tabs, status cards and filters are read-only views over the existing statuses; "reserved" is not added
 **Context**: an owner brief asked for the stock screen to show available / reserved / inspection / low / out / value, filters by status, source, age and cost, and filters kept when coming back from an item. The shops are live, so only gaps that are safe to add were in scope.
 **Decision**:

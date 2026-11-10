@@ -88,6 +88,7 @@ def test_items_low_and_out(owner):
         "on_hand": 6,
         "low": 0,
         "out": 0,
+        "reserved": 0,
     }
     r = owner.post(f"/api/v1/accessories/{c['id']}/adjust", json={"qty_delta": -2, "note": "count"})
     assert r.status_code in (200, 201), r.text
@@ -95,6 +96,7 @@ def test_items_low_and_out(owner):
         "on_hand": 4,
         "low": 1,
         "out": 0,
+        "reserved": 0,
     }
     owner.post(f"/api/v1/accessories/{c['id']}/adjust", json={"qty_delta": -4, "note": "damaged"})
     assert owner.get("/api/v1/devices/stock-status").json()["items"]["out"] == 1

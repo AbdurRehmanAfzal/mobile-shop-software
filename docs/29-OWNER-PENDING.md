@@ -50,7 +50,7 @@ docker compose --env-file .env exec backend python -m app.modules.plan.renewal k
 docker compose --env-file .env exec backend python -m app.modules.barcodes.backfill
 
 # 3. check the database is on the latest version (migrations run by themselves when the backend
-#    starts; this only confirms it). Expected: f3a5c7e9b1d4 (head)
+#    starts; this only confirms it). Expected: a7c9e1b3d5f8 (head)
 docker compose --env-file .env exec backend alembic current
 ```
 
@@ -161,6 +161,12 @@ Close the app fully and open it again first (or install the newest APK from the 
 1. Udhaar → **Get / give**.
 2. Buy a phone from a dealer on udhaar and sell it to a customer on udhaar. The phone's row shows both Get and Give.
 3. Open the row, **Receive payment** 5,000, then **Make payment** to the dealer. The totals go down and the customer's and dealer's khata match.
+
+**Reserve and shelf (2026-11-10, ADR-060)**:
+1. Reserve a phone for a test customer. Selling it to another customer is refused; selling it to the same customer works.
+2. Reserve 2 of 6 chargers. Selling 5 to someone else is refused; 4 sells.
+3. Give a phone a shelf (Rack A2) and search for it.
+4. Add a Non-PTA phone without SIM time.
 
 ## E. Decisions waiting for you
 

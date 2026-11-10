@@ -198,6 +198,8 @@ def list_devices(
     cost_min: Decimal | None = None,
     cost_max: Decimal | None = None,
     supplier_id: uuid.UUID | None = None,
+    reserved: bool = False,
+    location: str | None = None,
 ) -> list[dict]:
     stmt = _base_query(shop_id)
     # owner brief 2026-11-10 (ADR-059): the stock screen's status cards and filters. "Sellable" is
@@ -209,8 +211,17 @@ def list_devices(
         stmt = stmt.where(
             Device.verification_status.not_in(
                 (VerificationStatus.PENDING, VerificationStatus.FLAGGED)
-            )
+            ),
+            Device.reserved_party_id.is_(None),
         )
+    if inspection:
+        stmt = stmt.where(Device.reserved_party_id.is_(None))
+    if reserved:
+        stmt = stmt.where(
+            Device.status == DeviceStatus.IN_STOCK, Device.reserved_party_id.is_not(None)
+        )
+    if location:
+        stmt = stmt.where(Device.location.ilike(f"%{location.strip()}%"))
     if cost_min is not None:
         stmt = stmt.where(Device.cost_price >= cost_min)
     if cost_max is not None:
@@ -276,6 +287,7 @@ def list_devices(
             who.name.ilike(like),
             Device.barcode.ilike(like),
             Device.manufacturer_code.ilike(like),
+            Device.location.ilike(like),
         ]
         if len(digits) >= 4:
             conds += [
@@ -317,10 +329,14 @@ def with_source(db: Session, rows: list[dict]) -> list[dict]:
             select(Party.id, Party.name).where(Party.id.in_({p for p, _ in latest.values() if p}))
         ).all()
     )
+    held = {r["reserved_party_id"] for r in rows if r.get("reserved_party_id")}
+    if held - set(names):
+        names.update(dict(db.execute(select(Party.id, Party.name).where(Party.id.in_(held))).all()))
     for r in rows:
         pid = latest.get(r["id"], (None, 0))[0]
         r["source_party_id"] = pid
         r["source_party_name"] = names.get(pid)
+        r["reserved_party_name"] = names.get(r.get("reserved_party_id"))
     return rows
 
 
@@ -336,13 +352,18 @@ def stock_status(db: Session, shop_id: uuid.UUID, *, category: str | None, can_c
         DeviceStatus.ON_LOAN,
     )
     q = select(
-        Device.status, Device.verification_status, Device.lock_checks, Device.cost_price
+        Device.status,
+        Device.verification_status,
+        Device.lock_checks,
+        Device.cost_price,
+        Device.reserved_party_id,
     ).where(Device.shop_id == shop_id, Device.status.in_(held))
     if category:
         q = q.where(Device.category == category)
     c = {
         "on_hand": 0,
         "available": 0,
+        "reserved": 0,
         "inspection": 0,
         "in_repair": 0,
         "faulty": 0,
@@ -350,12 +371,14 @@ def stock_status(db: Session, shop_id: uuid.UUID, *, category: str | None, can_c
         "on_loan": 0,
     }
     value = Decimal(0)
-    for status, ver, locks, cost in db.execute(q).all():
+    for status, ver, locks, cost, reserved in db.execute(q).all():
         c["on_hand"] += 1
         value += cost or Decimal(0)
         if status == DeviceStatus.IN_STOCK:
             lock_on = any(v == "not_cleared" for v in (locks or {}).values())
-            if lock_on or ver in (VerificationStatus.PENDING, VerificationStatus.FLAGGED):
+            if reserved:
+                c["reserved"] += 1
+            elif lock_on or ver in (VerificationStatus.PENDING, VerificationStatus.FLAGGED):
                 c["inspection"] += 1
             else:
                 c["available"] += 1
@@ -367,13 +390,19 @@ def stock_status(db: Session, shop_id: uuid.UUID, *, category: str | None, can_c
             c["approval"] += 1
         else:
             c["on_loan"] += 1
-    items = {"on_hand": 0, "low": 0, "out": 0}
+    from app.modules.reserve.service import held_by_item
+
+    items = {"on_hand": 0, "low": 0, "out": 0, "reserved": 0}
     item_value = Decimal(0)
-    for qty, reorder, avg in db.execute(
-        select(Accessory.qty, Accessory.reorder_level, Accessory.avg_cost).where(
+    rows_items = db.execute(
+        select(Accessory.id, Accessory.qty, Accessory.reorder_level, Accessory.avg_cost).where(
             Accessory.shop_id == shop_id, Accessory.is_active.is_(True)
         )
-    ).all():
+    ).all()
+    items["reserved"] = int(
+        sum((v or 0) for v in held_by_item(db, shop_id, [r[0] for r in rows_items]).values())
+    )
+    for _id, qty, reorder, avg in rows_items:
         items["on_hand"] += max(qty, 0)
         if qty <= 0:
             items["out"] += 1
@@ -654,8 +683,6 @@ def update_device(
     before = {k: _plain(getattr(device, k)) for k in changes}
     for k, v in changes.items():
         setattr(device, k, v)
-    if device.pta_status in (PtaStatus.NON_PTA, PtaStatus.JV) and device.sim_time_months is None:
-        raise ValidationFailed(code="sim_time_required")
     if asking is not None and device.cost_price is not None and money(asking) < device.cost_price:
         raise ValidationFailed(
             code="asking_below_cost",

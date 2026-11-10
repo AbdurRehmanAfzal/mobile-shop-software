@@ -39,7 +39,8 @@ export function PurchaseDetailPage() {
   const ret = useDocMutation<Record<string, unknown>, ReturnDoc>('POST', () => '/api/v1/returns/purchase')
   const voidM = useDocMutation<{ reason: string }, Purchase>('POST', () => `/api/v1/purchases/${id}/void`)
   // owner 2026-11-09 (ADR-056): the wrong dealer / customer was picked
-  const [moving, setMoving] = useState(false)
+  // opened from a phone's page with ?change=1: the change sheet opens by itself
+  const [moving, setMoving] = useState(() => new URLSearchParams(window.location.search).get('change') === '1')
   const [to, setTo] = useState<Party | null>(null)
   const move = useDocMutation<{ party_id: string; reason: string }, Purchase>('POST', () => `/api/v1/purchases/${id}/party`)
   if (isLoading || !p) return <Loading />
