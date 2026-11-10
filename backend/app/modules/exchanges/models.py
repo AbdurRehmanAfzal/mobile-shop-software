@@ -30,6 +30,11 @@ class Exchange(UUIDPk, ShopScoped, Timestamped, Base):
     previous_balance: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
     paid: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
     new_balance: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
+    # owner 2026-11-10 (ADR-057): the bill the old phone was sold on (when this shop sold it), the
+    # trade-in value put against the new bill (no money moves), and the money the shop paid back
+    original_invoice_id: Mapped[uuid.UUID | None] = mapped_column(Uuid)
+    trade_in_applied: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
+    refund: Mapped[Decimal] = mapped_column(default=ZERO, nullable=False)
     notes: Mapped[str | None] = mapped_column(Text)
     created_by: Mapped[uuid.UUID | None] = mapped_column(
         Uuid, ForeignKey("users.id", ondelete="SET NULL")

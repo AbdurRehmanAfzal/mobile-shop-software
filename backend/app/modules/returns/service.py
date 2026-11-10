@@ -90,13 +90,22 @@ def sale_return(
     # refund may go together with a cut the shop keeps (e.g. 100,000 back: 90,000 handed, 10,000 kept)
     if settlement == Settlement.CREDIT and (refund > ZERO or kept > ZERO):
         raise ValidationFailed(code="settlement_mismatch")
-    if refund + kept > excess_paid:
+    # owner 2026-11-10 (ADR-057): the shop's return rules may give back less than the bill price
+    # (a cut). The cut may be larger than what the customer had paid for it; then nothing is
+    # handed back and the rest of the old udhaar stays due (credit 25,000 on 30,000 owed: 5,000).
+    if kept > amount:
+        raise ValidationFailed(
+            code="cut_exceeds_value",
+            message_en=f"The cut cannot be more than the returned value {amount}",
+            message_ur=f"کٹوتی واپس شدہ مالیت {amount} سے زیادہ نہیں ہو سکتی",
+        )
+    if refund > max(ZERO, money(excess_paid - kept)):
         raise ValidationFailed(
             code="exceeds_excess",
-            message_en=f"Customer only has {excess_paid} to refund or keep",
-            message_ur=f"گاہک کی صرف {excess_paid} رقم واپسی/رکھنے کے لیے ہے",
+            message_en=f"Customer only has {max(ZERO, money(excess_paid - kept))} to get back",
+            message_ur=f"گاہک کو صرف {max(ZERO, money(excess_paid - kept))} واپس مل سکتے ہیں",
         )
-    if walk_in and refund + kept != excess_paid:
+    if walk_in and (kept > excess_paid or refund + kept != excess_paid):
         # a walk-in has no khata to hold the rest, so the whole amount is settled now
         raise ValidationFailed(
             code="walk_in_settle_all",

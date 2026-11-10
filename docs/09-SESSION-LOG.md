@@ -1121,3 +1121,38 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - `tests/test_corrections_after_purchase.py` (2 tests: the IMEI rules, khata balances before / after, cash untouched, refused after a later payment, staff 403) and the full backend suite.
 - tsc.
 - Playwright `fix-after-purchase` (new) and `add-device` (the review shows the IMEI and the seller; Save stays disabled until the tick). The other purchase specs (counter, device-types, item-params, items, paymode) go through the review step.
+
+## 2026-11-10 — the sticker's "IMEI number" prints the IMEI again; labels.spec fixed
+**Cause found for the older `labels.spec` failure:**
+1. The settings page now has several cards, each with its own **Save**. The test clicked the last one, so the code word was never saved. The app itself saved it correctly. The code word card's Save now has `data-testid="codeword-save"` and the test uses it.
+2. A real bug: since the shop's own barcodes (ADR-036), the barcode value is `MS000001` instead of the IMEI, but the sticker field **IMEI number** still printed the barcode value. It now prints the IMEI (a Wi-Fi unit prints its serial). The bars still carry the barcode, so scanning is unchanged. When IMEI is not ticked and Barcode is, the readable code prints under the bars.
+**Verified**: the label and barcode backend tests (updated: `test_labels`, `test_barcodes`) and Playwright `labels.spec` pass.
+
+### Same day — audit: exchanges, returns and udhaar settlements (owner brief, ADR-057)
+**Audit result** (each case run through the API: khata, cash, both bills, IMEI history, receipt):
+
+| Case | Before | Now |
+|---|---|---|
+| Exchange 90k, customer pays 20k / 8k / 0 | **Partial**: khata (0 / 12k / 20k) and cash right; the new bill stayed 70–90k "due" and the trade-in bill 70k "to give" | **Implemented**: the bill shows 0 / 12k / 20k due, the trade-in bill 0 |
+| Exchange 55k, shop pays 15k / 5k / 0 | **Partial**: right through the API; the screen always paid the full 15k | **Implemented**: "Shop pays now" all / part / none, trade-in bill shows 0 / 10k / 15k to give |
+| Exchange 70k, no money | **Partial** (both bills open) | **Implemented** (both closed) |
+| Keep the first sale, the phone back at the agreed value, IMEI history | **Implemented** (purchased → sold → purchased, cost 70k) | + the first bill linked (`original_invoice_id`) |
+| Payment method of the money paid now / back | **Missing** for exchanges (cash only) | **Implemented** (`payment`) |
+| Return, fully paid: refund 80k / 30k / 0 | **Partial**: the API left the rest as credit, but the screen made the unpaid part the shop's cut | **Implemented**: "The rest: customer's khata / shop keeps it" |
+| Return, partly paid, full credit (−50k to give) | **Implemented** | unchanged |
+| Return, credit of 25k on 30k owed (5k to get) | **Missing** (the cut was limited to what was paid) | **Implemented**: "Credit for what came back"; the cut may exceed what was paid |
+| Negotiated buyback 70k, 20k paid (−50k) | **Implemented** (Buy a customer's phone; buyback starts a new cycle) | unchanged |
+| Later payments 5k + 7k, 4k + 6k | **Implemented** for the khata; the bills now close too | — |
+| Receipt says who owes whom | **Partial**: a signed "Account balance" | **Implemented**: "To get from / To give to customer" (ur گاہک سے لینا / گاہک کو دینا), "Old phone taken back", "Paid now", "Paid to customer" |
+| Duplicate submission | **Missing**: no Idempotency-Key on the exchange / return POSTs | **Implemented** (server + one key per form) |
+| Rollback on failure | **Implemented** (one transaction) | test added (`refund_exceeds` leaves nothing) |
+| Reports | `received_today` counted `invoice.paid` (would count a trade-in as money) | from the cash entries |
+
+**Not verified / not done**:
+- A printed slip for a return (none existed; the screen shows the result).
+- The manual's screenshots of the exchange / return screens are not retaken.
+
+**Tests**:
+- `tests/test_exchange_return_settlement.py` (19): the 7 exchange cases, later collection and payout, refund cap + rollback, duplicate key, payment method on the receipt, 3 fully-paid returns, partly paid, smaller credit, cut rules, buyback, dashboard.
+- The full backend suite.
+- Playwright `exchange-return.spec` (new), `return`, `counter`.

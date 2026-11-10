@@ -44,6 +44,18 @@ Agar us ne kuch hissa diya tha, to sirf diya hua hissa hi wapas ho sakta hai; ba
 
 **Misaal:** Bilal ne Rs. 50,000 ka phone khareeda, Rs. 20,000 diye aur Rs. 30,000 baqi hain. Woh use wapas karta hai. **Gahak ne diye the** mein **20,000** aata hai. Aap Rs. 18,000 cash wapas dete hain aur dukaan Rs. 2,000 kaat leti hai. Is phone ka us ka Rs. 30,000 udhaar khatam ho jata hai.
 
+### Abhi kuch wapas, baqi baad mein
+
+Jaane pehchane customer ke liye **Gahak ko wapas (Rs)** mein woh raqam likhein jo abhi de rahe hain. Phir **Baqi, jo abhi wapas nahi diya** poochta hai ke baqi kahan jaye: **Customer ka khata (hum ne dena hai)** use customer ka haq rakhta hai, **Dukaan rakhe (katauti)** use dukaan ki katauti banata hai. Neeche ka gehra card saaf likhta hai: **Customer ko dena**, **Customer se lena** ya **Hisaab barabar**.
+
+**Misaal:** Ali ne 80,000 diye the. Aap abhi 30,000 dete hain aur **Customer ka khata** dabate hain: card **Customer ko dena 50,000** dikhata hai. Baad mein khate se (**Adaigi**) dein, maslan pehle 20,000 phir 30,000.
+
+### Bill ki qeemat se kam credit
+
+Agar wapsi ke usool kuch rakhte hain to **Wapas aayi cheez ka credit (Rs)** bill ki qeemat se kam kar dein. Farq dukaan ki katauti hai. Agar us bill ka baqaya tha to credit pehle woh khatam karta hai.
+
+**Misaal:** bill 80,000, Ali ne 50,000 diye (30,000 baqaya). Poora credit 80,000 ho to 30,000 khatam aur **Customer ko dena 50,000** baqi. Credit sirf 25,000 ho to **Customer se lena 5,000** baqi.
+
 > **Mashwara:** Ghalat bill koi bhi edit nahi kar sakta. Agar bikri ghalat qeemat ya ghalat phone ke saath darj ho gayi, to yahan wapsi karein aur naya bill banayein. Dono record par rehte hain, is liye koi chupke se bikri nahi badal sakta.
 
 > **Note:** Is screen par scanning chalti hai. USB scanner se phone ka barcode scan karein aur app seedha us phone ke qadam 2 par chali jaati hai.
@@ -74,6 +86,12 @@ Screen par **Exchange ho gaya** aata hai, saath mein receipt print karne (80mm t
 ### Jab purana phone zyada qeemti ho
 
 Kabhi customer ka phone us phone se zyada qeemat ka hota hai jo woh le raha hai. Tab card par likha aata hai **Farq aap wapas dein ge**, aur khulase mein **Gahak ko wapsi** aata hai. Agar dono barabar hon to likha aata hai **Kisi ko kuch nahi dena**.
+
+Jab farq dukaan ne dena ho to abhi poora, kuch ya kuch nahi de sakte hain: **Dukaan abhi de (Rs)** badlein. Jo na diya woh customer ke khate mein rehta hai aur gehra card raqam ke saath **Customer ko dena** likhta hai. Jab customer ne dena ho to kam **Abhi mile** se **Customer se lena** baqi rehta hai. Abhi ki raqam ka tareeqa chunein: **Naqd**, **Online** ya **Cheque**.
+
+Agar purana phone wahi hai jo aap ki dukaan ne pehle use becha tha to exchange pehli bikri qaim rakhta hai, phone tay shuda qeemat par stock mein wapas lata hai aur pehla bill jor deta hai (mukammal screen par **Pehla bill**). Chhape bill par **Purana phone wapas liya** exchange number ke saath, **Abhi wusool** (Urdu bill par: پرانا فون واپس لیا، ابھی وصول), aur aakhir mein **Customer se lena** ya **Customer ko dena** aata hai.
+
+**Misaal:** Ali ne phone 80,000 ka liya. Aap use 70,000 mein wapas lete hain aur woh 55,000 ka phone leta hai; dukaan ne 15,000 dene hain. Abhi 5,000 diye: **Customer ko dena 10,000**. Baad mein khate se pehle 4,000 phir 6,000 dein.
 
 ### Exchange ke baad
 

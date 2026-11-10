@@ -29,8 +29,9 @@ test('stickers: options sheet, print page with barcode, many at once, cost code 
   await page.goto('/more/settings')
   await page.getByLabel('Code word (10 letters)').fill('mobileshpk')
   await expect(page.getByText(/Example: 45000 = /)).toContainText('LEMMM')
-  await page.getByRole('button', { name: 'Save' }).last().click()
-  await expect(page.getByRole('button', { name: 'Saved' })).toBeVisible()
+  // the code word card's own Save (the settings page has several)
+  await page.getByTestId('codeword-save').click()
+  await expect(page.getByTestId('codeword-save')).toHaveText(/Saved/)
 
   // one phone: the sheet, the print page opens with the barcode and the price
   await page.goto(`/stock/${a.id}`)

@@ -363,7 +363,7 @@ def test_label_prints_are_logged_and_use_the_stored_barcode(owner, cat):
     )
     assert (
         r.status_code == 200
-        and d["barcode"] in r.text
+        and d["imei1"] in r.text
         and "IMEI …7518" in r.text
         and "@page{size:40mm 30mm" in r.text
     )

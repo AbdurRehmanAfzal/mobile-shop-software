@@ -4,6 +4,7 @@ from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.modules.paymode.schemas import PaymentInfo
 from app.modules.purchases.schemas import DeviceLineIn
 from app.modules.sales.schemas import DeviceSaleLineIn, MiscSaleLineIn
 
@@ -25,6 +26,8 @@ class ExchangeCreate(BaseModel):
         description="Cash the shop pays out when trade-in exceeds the new price",
     )
     cash_account_id: uuid.UUID | None = None
+    # how the money paid now (by the customer) or paid back (by the shop) moved: cash, online, cheque
+    payment: PaymentInfo | None = None
     override_reason: str | None = Field(default=None, max_length=500)
     notes: str | None = None
 
@@ -46,5 +49,9 @@ class ExchangeOut(BaseModel):
     previous_balance: Decimal
     paid: Decimal
     new_balance: Decimal
+    original_invoice_id: uuid.UUID | None = None
+    original_invoice_no: str | None = None
+    trade_in_applied: Decimal = Decimal(0)
+    refund: Decimal = Decimal(0)
     notes: str | None
     created_at: dt.datetime

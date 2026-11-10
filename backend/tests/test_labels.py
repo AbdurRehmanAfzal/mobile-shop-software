@@ -25,8 +25,14 @@ def test_device_and_item_labels(owner, client, cat):
     page = r.text
     assert page.count('class="label"') == 2
     assert "@page{size:50mm 30mm" in page and "Rs. 45,000" in page and "Rs. 9,500" in page
-    # owner addendum 4: the sticker carries the phone's own barcode (MS000001), not the IMEI
-    assert "MS000001" in page and "<svg" in page and "Box pack" in page and "Used" in page
+    # owner addendum 4: the bars carry the phone's own barcode (MS000001); "IMEI number" prints the
+    # IMEI under them (owner 2026-11-09), the code itself only when the IMEI is not asked for
+    assert "<svg" in page and "Box pack" in page and "Used" in page
+    assert IMEI_A in page and "MS000001" not in page
+    only_bar = owner.get(
+        f"/api/v1/labels/devices?ids={a['id']}&size=50x30&fields=name,barcode"
+    ).text
+    assert "MS000001" in only_bar and IMEI_A not in only_bar
     assert "KBBBB" not in page  # the cost code only when asked
 
     # copies, chosen fields, the cost code for the owner; A4 sheet

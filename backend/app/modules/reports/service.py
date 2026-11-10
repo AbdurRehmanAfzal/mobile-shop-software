@@ -24,6 +24,20 @@ from app.modules.repairs.models import CLOSED_STATUSES, RepairJob
 from app.modules.sales.models import Invoice, InvoiceLine, InvoiceStatus
 
 
+def _cash_on(db: Session, group_ids: list) -> Decimal:
+    """money into cash / bank accounts inside these ledger groups"""
+    if not group_ids:
+        return ZERO
+    return money(
+        db.scalar(
+            select(func.coalesce(func.sum(LedgerEntry.debit - LedgerEntry.credit), 0)).where(
+                LedgerEntry.group_id.in_(group_ids), LedgerEntry.cash_account_id.is_not(None)
+            )
+        )
+        or 0
+    )
+
+
 def _sum(
     db: Session,
     shop_id: uuid.UUID,
@@ -266,7 +280,9 @@ def dashboard(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
         ],
         "sales_count": len(todays),
         "sales_total": money(sum((i.total - i.returned_total for i in todays), ZERO)),
-        "received_today": money(sum((i.paid for i in todays), ZERO)),
+        # money that really came in at the counter on today's bills (not a trade-in or an old
+        # advance put against them, which also count in `paid`; owner 2026-11-10)
+        "received_today": _cash_on(db, [i.ledger_group_id for i in todays if i.ledger_group_id]),
         "profit_today": pnl["net_profit"] if pnl else None,
         "cash_in_hand": cash_total,
         "receivable": money(sum((b for b in balances if b > 0), ZERO)),

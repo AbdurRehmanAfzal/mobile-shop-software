@@ -203,13 +203,15 @@ export function useDocMutation<TIn, TOut>(
   path: (input: TIn) => string,
   body?: (input: TIn) => unknown,
   offline?: { kind: PendingKind; label: (input: TIn) => string },
+  /** `key`: one Idempotency-Key for one form, so a retry or a second tap posts it only once */
+  opts?: { key?: () => string },
 ) {
   const inv = useInvalidate()
   const shopId = useAuth((s) => s.activeShopId)
   return useMutation({
     mutationFn: async (input: TIn) => {
       const payload = body ? body(input) : input
-      const key = offline && method === 'POST' ? uid() : undefined
+      const key = opts?.key ? opts.key() : offline && method === 'POST' ? uid() : undefined
       try {
         return await api<TOut>(method, path(input), payload, { idempotencyKey: key })
       } catch (e) {
