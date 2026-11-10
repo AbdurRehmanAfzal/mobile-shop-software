@@ -156,3 +156,50 @@ def test_khata_payment_received_online_and_by_cheque(owner, cat):
     assert r.status_code == 201, r.text
     bal = _balances(owner)
     assert bal["Bank / Online"] == "600.00" and bal["Cheques"] == "400.00"
+
+
+def test_udhaar_with_part_paid_online_or_by_cheque(owner, cat):
+    """Owner 2026-11-10: on udhaar, the part paid now keeps its way (online / cheque), not cash."""
+    c = _customer(owner)
+    d = _stock(owner, cat, imei=A, condition="box_pack", cost_price=900, asking_price=1000)
+    r = owner.post(
+        "/api/v1/sales",
+        json={
+            "devices": [{"device_id": d["id"], "price": 1000}],
+            "party_id": c["id"],
+            "paid": 400,
+            "payment": {"method": "online", "bank": "JazzCash", "reference": "TID9"},
+        },
+    )
+    assert r.status_code == 201, r.text
+    sale = r.json()
+    assert sale["payment"]["method"] == "online" and sale["payment"]["reference"] == "TID9"
+    assert sale["status"] != "paid"
+    assert _balances(owner)["Bank / Online"] == "400.00"  # not the cash drawer
+
+    sup = _party(owner, name="Dealer Two", phone="03005557777", kinds=("supplier",))
+    r = owner.post(
+        "/api/v1/purchases",
+        json={
+            "kind": "supplier",
+            "party_id": sup["id"],
+            "devices": [
+                {
+                    "device": {
+                        "imei1": B,
+                        "brand_id": cat["brand"]["id"],
+                        "model_id": cat["model"]["id"],
+                        "condition": "box_pack",
+                        "pta_status": "pta_approved",
+                    },
+                    "cost": 1000,
+                }
+            ],
+            "paid": 300,
+            "payment": {"method": "cheque", "bank": "HBL", "reference": "556677"},
+        },
+    )
+    assert r.status_code == 201, r.text
+    p = r.json()
+    assert p["payment"]["method"] == "cheque" and p["payment"]["reference"] == "556677"
+    assert _balances(owner)["Cheques"] == "-300.00"

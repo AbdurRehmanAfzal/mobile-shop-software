@@ -4,7 +4,7 @@ import { clearDrafts, useDraft } from '@/lib/draft'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
-import PayPicker, { newPay, payInfo, payReady, type PayState } from '@/components/PayPicker'
+import PayPicker, { PartPay, billPayReady, billPayment, newPay, type PayState } from '@/components/PayPicker'
 import StockItemPicker from '@/components/StockItemPicker'
 import PartyPicker from '@/components/PartyPicker'
 import { BtnText, Chip, ErrorText, IconChip, MoneyText, PageHeader, Sheet, Stepper } from '@/components/ui'
@@ -57,6 +57,8 @@ export default function PurchaseWizard() {
   const [paidNow, setPaidNow] = useDraft('purchase.paidNow', '')
   const [dueDate, setDueDate] = useDraft('purchase.dueDate', '')
   const [pay, setPay] = useDraft<PayState>('purchase.payment', () => newPay())
+  // on udhaar: how the part paid now was paid (cash / online / cheque)
+  const [part, setPart] = useDraft<PayState>('purchase.partPay', () => newPay())
   const [more, setMore] = useDraft('purchase.more', false)
   const [skipCheck, setSkipCheck] = useDraft('purchase.skipCheck', false)
   const [reference, setReference] = useDraft('purchase.reference', '')
@@ -92,7 +94,7 @@ export default function PurchaseWizard() {
       extra_costs: Number(extraCosts || 0),
       extra_costs_note: extraNote || undefined,
       paid,
-      payment: payInfo(pay),
+      payment: billPayment(pay, part, paid),
       reference: reference || undefined,
       due_date: udhaar && dueDate ? dueDate : undefined,
       purchased_at: earlier && when ? new Date(when).toISOString() : undefined,
@@ -224,6 +226,7 @@ export default function PurchaseWizard() {
                 </>
               ) : null}
               {udhaar ? <BiInput label="counter.paidNowBuy" help={<Help term="purchase.paidNow" size="sm" />} type="number" inputMode="numeric" min={0} max={total} value={paidNow} onChange={(e) => setPaidNow(e.target.value)} /> : null}
+              {udhaar ? <PartPay value={part} onChange={setPart} amount={paid} /> : null}
               {udhaar ? <BiInput label="counter.promiseDateBuy" help={<Help term="purchase.dueDate" size="sm" />} type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} dir="ltr" hint="counter.promiseHint" /> : null}
 
               <div className="card flex flex-col gap-2">
@@ -267,7 +270,7 @@ export default function PurchaseWizard() {
                 ) : null}
               </div>
               <ErrorText error={m.error} />
-              <BiButton text="counter.putInStock" icon={<PackagePlus size={22} />} full loading={m.isPending} disabled={(earlier && !when) || total <= 0 || !payReady(pay)} onClick={() => { setChecked(false); m.reset(); setReviewing(true) }} data-testid="purchase-review-open" />
+              <BiButton text="counter.putInStock" icon={<PackagePlus size={22} />} full loading={m.isPending} disabled={(earlier && !when) || total <= 0 || !billPayReady(pay, part, paid)} onClick={() => { setChecked(false); m.reset(); setReviewing(true) }} data-testid="purchase-review-open" />
             </>
           ) : null}
         </div>
@@ -378,6 +381,7 @@ export default function PurchaseWizard() {
             <div className="flex justify-between"><BiLabel text="common.total" size="md" bold /><MoneyText value={total} tone="ink" size="lg" /></div>
             <div className="flex justify-between text-sm"><BiLabel text="counter.paidHowBuy" size="sm" tone="text-muted" /><span className="font-bold">{pick(`purchase.review.method.${pay.method}`)}</span></div>
             <div className="flex justify-between text-sm"><BiLabel text="purchase.review.paidNow" size="sm" tone="text-muted" /><MoneyText value={paid} tone="ink" size="sm" /></div>
+            {udhaar && paid > 0 ? <div className="flex justify-between text-sm" data-testid="review-part"><BiLabel text="paym.partBy" size="sm" tone="text-muted" /><span className="font-bold">{pick(`purchase.review.method.${part.method}`)}{part.bank ? ` · ${part.bank}` : ''}{part.reference ? ` · ${part.reference}` : ''}</span></div> : null}
             {total - paid > 0 ? <div className="flex justify-between text-sm"><BiLabel text="counter.stillToGive" size="sm" tone="text-muted" /><MoneyText value={total - paid} tone="ink" size="sm" /></div> : null}
             <div className="flex justify-between text-sm"><BiLabel text="purchase.when" size="sm" tone="text-muted" /><span className="num font-bold" dir="ltr">{earlier && when ? when.replace('T', ' ') : pick('purchase.whenNow')}</span></div>
           </div>

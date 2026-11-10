@@ -11,7 +11,7 @@ import { BiAlert, BiButton, BiInput, BiLabel, useLang } from '@/components/Bilin
 import Help from '@/components/Help'
 import PartyPicker from '@/components/PartyPicker'
 import { CnicInput, PhoneInput } from '@/components/FieldInputs'
-import PayPicker, { newPay, payInfo, payReady, remitPkr, type PayState } from '@/components/PayPicker'
+import PayPicker, { PartPay, billPayReady, billPayment, newPay, payInfo, remitPkr, type PayState } from '@/components/PayPicker'
 import StockItemPicker from '@/components/StockItemPicker'
 import type { PriceFor } from '@/features/accessories/types'
 import { AccessoryPicker, type AccValue } from '@/components/AccessoryPicker'
@@ -109,6 +109,8 @@ export default function SaleWizard() {
   const [q, setQ] = useState('')
   const [discount, setDiscount] = useDraft('sale.discount', '')
   const [pay, setPay] = useDraft<PayState>('sale.payment', () => newPay())
+  // on udhaar: how the part paid now was paid (cash / online / cheque)
+  const [part, setPart] = useDraft<PayState>('sale.partPay', () => newPay())
   const [party, setParty] = useDraft<Party | null>('sale.party', null)
   // the shop's item settings: may the count go below zero?
   const { data: itemOpts } = useGet<{ allow_negative_stock: boolean }>(['item-options'], has('accessories') ? '/api/v1/accessories/options' : null)
@@ -179,7 +181,7 @@ export default function SaleWizard() {
   const instRest = Math.max(0, total - paid)
   const instMonthly = inst.monthly !== '' ? Number(inst.monthly) : Math.ceil(instRest / Math.max(1, Number(inst.months) || 1))
   const instOk = !inst.on || (!!party && instRest > 0 && Number(inst.months) >= 1 && instMonthly > 0 && instMonthly * (Number(inst.months) - 1) < instRest)
-  const canSave = instOk && (!lossLine || (manager && lossOk)) && checkOk && total > 0 && payReady(pay) && (!owes || !!party) && lines.every((l) => Number(l.price) > 0) && misc.every((x) => x.description.trim() && Number(x.unit_price) > 0 && (x.stock === undefined || negativeOk || Number(x.qty) <= x.stock))
+  const canSave = instOk && (!lossLine || (manager && lossOk)) && checkOk && total > 0 && billPayReady(pay, part, paid) && (!owes || !!party) && lines.every((l) => Number(l.price) > 0) && misc.every((x) => x.description.trim() && Number(x.unit_price) > 0 && (x.stock === undefined || negativeOk || Number(x.qty) <= x.stock))
   // owner addendum 5: the price pre-filled for an item depends on the customer (dealer → wholesale,
   // a running promo → promo, else retail); lines the seller has not touched follow a customer change
   const priceItem = async (it: { id: string; qty: number; price: string; name: string; name_ur: string | null }, pid: string | null) => {
@@ -237,7 +239,7 @@ export default function SaleWizard() {
   })
 
   function resetCart() {
-    setLines([]); setMisc([]); setParty(null); setPaidNow(''); setCashGiven(''); setDiscount(''); setPay(newPay()); setTaxOn(false); setTaxRate(''); setMore(false); setOverrideReason(''); setLossOk(false); setInst({ on: false, months: '6', monthly: '', dueDay: '10', firstDue: '', gName: '', gPhone: '', gCnic: '' })
+    setLines([]); setMisc([]); setParty(null); setPaidNow(''); setCashGiven(''); setDiscount(''); setPay(newPay()); setPart(newPay()); setTaxOn(false); setTaxRate(''); setMore(false); setOverrideReason(''); setLossOk(false); setInst({ on: false, months: '6', monthly: '', dueDay: '10', firstDue: '', gName: '', gPhone: '', gCnic: '' })
   }
 
   async function holdSale() {
@@ -277,7 +279,7 @@ export default function SaleWizard() {
       paid,
       cash_tendered: pay.method === 'cash' && cashGiven !== '' && Number(cashGiven) >= paid ? Number(cashGiven) : undefined,
       khata_adjust: adjust > 0 ? adjust : undefined,
-      payment: inst.on && pay.method === 'udhaar' ? undefined : payInfo(pay),
+      payment: pay.method === 'udhaar' ? billPayment(pay, part, paid) : payInfo(pay),
       override_reason: overrideReason || undefined,
       below_cost_ok: lossLine && lossOk,
       installments: inst.on ? { months: Number(inst.months), monthly: inst.monthly !== '' ? Number(inst.monthly) : null, due_day: Number(inst.dueDay) || 10, first_due: inst.firstDue || null, guarantor_name: inst.gName || null, guarantor_phone: inst.gPhone || null, guarantor_cnic: inst.gCnic || null } : undefined,
@@ -537,6 +539,7 @@ export default function SaleWizard() {
               <BiInput label="counter.promiseDate" help={<Help term="sale.promiseDate" size="sm" />} type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} dir="ltr" hint="counter.promiseHint" />
               <PartyPicker value={party} onChange={setParty} kind="customer" label="counter.whoTakes" />
               <BiInput label="counter.paidNowOpt" help={<Help term="common.paid" size="sm" />} type="number" inputMode="numeric" min={0} max={total} value={paidNow} onChange={(e) => setPaidNow(e.target.value)} />
+              <PartPay value={part} onChange={setPart} amount={paid} />
             </div>
           ) : owes && remitPkr(pay) > 0 ? (
             <div className="flex flex-col gap-2 rounded-3xl bg-khata p-3 text-khata-fg">

@@ -1535,7 +1535,9 @@
       "pending": "Pending",
       "received": "Received",
       "settled": "Settled"
-    }
+    },
+    "partHow": "How was the amount paid now paid?",
+    "partBy": "Paid now by"
   },
   "help": {
     "what": "What is this?",
@@ -6322,6 +6324,11 @@
         "title": "Money status",
         "body": "Pending: not collected yet. Received: collected. Settled: fully done. It is for your own tracking in the international report.",
         "example": "MTCN given but not yet collected from the bank → Pending."
+      },
+      "part": {
+        "title": "How the part paid now was paid",
+        "body": "On udhaar, the amount paid now can be cash, online (choose the bank or wallet and the TID) or a cheque (bank and cheque number). It goes into that money account, and the bill and the khata show how it was paid. The rest stays udhaar.",
+        "example": "Bill 50,000: 20,000 by JazzCash now, 30,000 udhaar."
       }
     },
     "picker": {
