@@ -170,7 +170,8 @@
     "wholesale": "Dealer / wholesale customer",
     "wholesaleHint": "Gets the wholesale price of items",
     "moreDetails": "More details",
-    "moreDetailsHint": "CNIC, city, address, notes, wholesale price"
+    "moreDetailsHint": "CNIC, city, address, notes, wholesale price",
+    "phoneOpt": "Mobile number (optional)"
   },
   "stock": {
     "title": "Stock",

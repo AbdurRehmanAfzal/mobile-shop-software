@@ -28,7 +28,7 @@ Use the search box (**Name, phone or CNIC**) to find anyone quickly. Even a few 
 ### Add a new person
 
 1. Tap **New person**.
-2. Write the **Name** and the **Mobile number** (after +92, without the first 0, for example `3001234567`).
+2. Write the **Name** and, if they have one, the **Mobile number** (after +92, without the first 0, for example `3001234567`). The number is optional; without it there are no WhatsApp messages or reminders to that person. It can be added later with **Edit**.
 3. Pick the **Type**: **Customer**, **Dealer**, **Other shop** or **Technician**.
 4. If you want more, tap **More details**: **CNIC** (and the CNIC scan), **City**, **Address**, **Notes** and, for a dealer, the wholesale price. It opens by itself when you edit someone who already has these.
 5. If this person already owed you (or you owed them) in your old register, write it in **Opening balance** and choose **Party owes me** or **I owe party**.

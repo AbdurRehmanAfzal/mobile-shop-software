@@ -26,7 +26,8 @@ class Party(UUIDPk, ShopScoped, Timestamped, Base):
 
     name: Mapped[str] = mapped_column(String(200), nullable=False, index=True)
     name_ur: Mapped[str | None] = mapped_column(String(200))
-    phone: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
+    # owner 2026-11-10: optional (many without a number; NULLs never clash on the unique key)
+    phone: Mapped[str | None] = mapped_column(String(20), nullable=True, index=True)
     alt_phone: Mapped[str | None] = mapped_column(String(20))
     whatsapp: Mapped[str | None] = mapped_column(String(20))
     cnic: Mapped[str | None] = mapped_column(String(15), index=True)

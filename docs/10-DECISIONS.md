@@ -362,6 +362,20 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-064 · 2026-11-10 · Accepted · A person's mobile number is optional; "bought from" reads the bill
+**Context**:
+- Shopkeepers add many people with no number (walk-in sellers, one-time buyers), but the form required one.
+- After "Change dealer / customer" (ADR-056), the stock list's "Bought from" still showed the old person.
+**Decision**:
+- Migration `b9d1f3a5c7e2` drops NOT NULL on `parties.phone`. Every existing row keeps its number. The unique `(shop_id, phone)` key stays (NULLs never clash), so a number is still unique when given.
+- API: `phone` is optional on create and update, and `null` in responses.
+- The form shows "Mobile number (optional)".
+- Places that send WhatsApp or reminders already skip a person without a number. Printed slips print no number.
+- `devices.with_source` and the `supplier_id` stock filter take a purchase bill's person from `purchases.party_id` (current). The `purchased` event still keeps who it was then.
+**Consequences**:
+- The bulk Excel import still asks for a number, because the number is its match key.
+- Search by phone simply does not find people without one.
+
 ## ADR-063 · 2026-11-10 · Accepted · A phone's purchase price can be put right while the shop holds it
 **Context**: shopkeepers type a wrong purchase price when adding stock. There was no way to correct it after saving.
 **Decision**:

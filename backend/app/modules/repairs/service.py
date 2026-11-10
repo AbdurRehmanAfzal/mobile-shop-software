@@ -544,7 +544,7 @@ table {{ width: 100%; border-collapse: collapse; margin-top: 6px; }} td {{ paddi
 {profile.header_html(shop, ur, True)}
 <div class="c"><b>{T["title"]}</b> · <span class="ltr">{e(job.no)}</span> · <span class="ltr">{job.created_at.strftime("%d-%m-%Y")}</span></div>
 <table>
-<tr><td>{T["customer"]}</td><td>{e(party.name) if party else "—"}<br><span class="ltr">{e(party.phone) if party else ""}</span></td></tr>
+<tr><td>{T["customer"]}</td><td>{e(party.name) if party else "—"}<br><span class="ltr">{e(party.phone) if party and party.phone else ""}</span></td></tr>
 <tr><td>{T["device"]}</td><td>{e(job.device_desc)}<br><span class="ltr">{e(job.imei or "")}</span></td></tr>
 <tr><td>{T["fault"]}</td><td>{faults}</td></tr>
 <tr><td>{T["received"]}</td><td>{e(", ".join(job.received_accessories)) or "—"}</td></tr>

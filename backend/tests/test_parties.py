@@ -111,3 +111,24 @@ def test_technician_can_read_not_write(client, owner):
         "/api/v1/parties", json={"name": "X Y", "phone": "03211234567", "kinds": ["customer"]}
     )
     assert r.status_code == 403
+
+
+def test_phone_is_optional(owner):
+    """Owner 2026-11-10: a person can be added without a mobile number (more than one, too)."""
+    a = owner.post("/api/v1/parties", json={"name": "No Number One", "kinds": ["customer"]})
+    assert a.status_code == 201, a.text
+    assert a.json()["phone"] is None
+    b = owner.post(
+        "/api/v1/parties", json={"name": "No Number Two", "phone": "", "kinds": ["supplier"]}
+    )
+    assert b.status_code == 201, b.text
+    # a number can be added later, and is still unique
+    r = owner.patch(f"/api/v1/parties/{a.json()['id']}", json={"phone": "03007777777"})
+    assert r.status_code == 200 and r.json()["phone"] == "03007777777"
+    r = owner.patch(f"/api/v1/parties/{b.json()['id']}", json={"phone": "03007777777"})
+    assert r.status_code == 409
+    # search, statement and a sale on udhaar work without a number
+    assert any(p["name"] == "No Number Two" for p in owner.get("/api/v1/parties?q=Number").json())
+    pid = b.json()["id"]
+    assert owner.get(f"/api/v1/ledger/parties/{pid}/statement").status_code == 200
+    assert owner.get(f"/api/v1/exports/parties/{pid}/statement.csv").status_code == 200

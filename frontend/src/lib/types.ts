@@ -8,7 +8,7 @@ export interface Party {
   id: UUID
   name: string
   name_ur: string | null
-  phone: string
+  phone: string | null
   alt_phone: string | null
   whatsapp: string | null
   cnic: string | null

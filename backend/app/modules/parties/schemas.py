@@ -11,7 +11,7 @@ from app.modules.parties.models import PartyKind
 class PartyBase(BaseModel):
     name: str = Field(min_length=2, max_length=200)
     name_ur: str | None = Field(default=None, max_length=200)
-    phone: str
+    phone: str | None = None  # owner 2026-11-10: optional
     alt_phone: str | None = None
     whatsapp: str | None = None
     cnic: str | None = None
@@ -72,7 +72,7 @@ class PartyOut(BaseModel):
     id: uuid.UUID
     name: str
     name_ur: str | None
-    phone: str
+    phone: str | None
     alt_phone: str | None
     whatsapp: str | None
     cnic: str | None

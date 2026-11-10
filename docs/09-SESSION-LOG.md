@@ -1303,3 +1303,23 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 **Next**:
 - The owner merges #47, then this goes in a new PR.
 - Items' (accessories) purchase cost change is not done yet (FIFO batches), if asked.
+
+### Same day — PR #48 (CI green); seller name in stock, phone optional (ADR-064)
+**Owner**:
+- "customer change karte hain to stock ke table view mein purana naam hi aata hai".
+- "naye person ki entry mein phone number optional kar do".
+**Done**:
+- The stock list, the phone and the "bought from" filter read a purchase bill's person from the bill, not from the immutable purchase event. The event keeps the old person for history.
+- `parties.phone` is nullable. Additive migration `b9d1f3a5c7e2` relaxes NOT NULL only.
+  - API phone optional.
+  - Form label "Mobile number (optional)".
+  - Repair slip and statement file name do not need a number.
+- Manual ch. 3 (en / ur / roman), ADR-064.
+**Verified**:
+- pytest:
+  - `test_parties` (new: two people without a number, add one later, still unique, statement and csv work);
+  - `test_corrections_after_purchase` (new: after a seller change the list, the phone and the filter show the new person);
+  - full suite.
+- tsc.
+- Playwright `party-no-phone` (new), `add-device`, `fix-after-purchase`.
+**Owner side** (docs/29): the server runs `alembic upgrade head` on deploy, as usual, for `b9d1f3a5c7e2`.

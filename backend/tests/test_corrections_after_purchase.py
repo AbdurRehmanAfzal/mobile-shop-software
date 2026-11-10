@@ -134,3 +134,24 @@ def test_wrong_seller_put_right(client, owner, cat):
         ).status_code
         == 403
     )
+
+
+def test_stock_shows_the_seller_after_a_change(owner, cat):
+    """Owner 2026-11-10: after "change dealer / customer" the stock list, the phone and the
+    "bought from" filter show the new person (the purchase event keeps the old one)."""
+    wrong = _party(owner, name="Old Seller", phone="03004444444")
+    right = _party(owner, name="New Seller", phone="03005555555")
+    p = _buy(owner, cat, wrong)
+    dev = p["lines"][0]["device_id"]
+    r = owner.post(
+        f"/api/v1/purchases/{p['id']}/party", json={"party_id": right["id"], "reason": "wrong one"}
+    )
+    assert r.status_code == 200, r.text
+    row = next(d for d in owner.get("/api/v1/devices").json() if d["id"] == dev)
+    assert row["source_party_name"] == "New Seller"
+    assert owner.get(f"/api/v1/devices/{dev}").json()["source_party_name"] == "New Seller"
+    ids = lambda who: [
+        d["id"] for d in owner.get(f"/api/v1/devices?supplier_id={who['id']}").json()
+    ]
+    assert dev in ids(right)
+    assert dev not in ids(wrong)

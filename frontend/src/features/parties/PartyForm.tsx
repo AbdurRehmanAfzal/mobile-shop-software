@@ -39,6 +39,8 @@ export default function PartyForm({ party, defaultKinds = ['customer'], onDone }
       // one name and one phone: WhatsApp messages go to the phone number
       name_ur: null,
       whatsapp: null,
+      // owner 2026-11-10: the number is optional
+      phone: f.phone || null,
       cnic: f.cnic || null,
       city: f.city || null,
       address: f.address || null,
@@ -51,7 +53,7 @@ export default function PartyForm({ party, defaultKinds = ['customer'], onDone }
   return (
     <form onSubmit={submit} className="flex flex-col gap-3">
       <BiInput label="party.name" help={<Help term="common.name" size="sm" />} value={f.name} onChange={set('name')} required minLength={2} />
-      <PhoneInput label="party.phone" value={f.phone} onChange={(phone) => setF({ ...f, phone })} required />
+      <PhoneInput label="party.phoneOpt" value={f.phone} onChange={(phone) => setF({ ...f, phone })} />
       <div>
         <span className="flex items-center gap-1"><BiLabel text="party.kinds" size="md" tone="text-muted" /><Help term="party.kinds" size="sm" /></span>
         <div className="mt-1.5 grid grid-cols-2 gap-2">
