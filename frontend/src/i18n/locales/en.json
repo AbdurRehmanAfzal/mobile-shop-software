@@ -7952,6 +7952,13 @@
         "body": "Optional: the day you will hold it until. The hold does not end by itself; release it.",
         "example": "Friday."
       }
+    },
+    "dl": {
+      "styles": {
+        "title": "Page style",
+        "body": "Choose how a phone's page looks; it is remembered on this phone or computer. Classic is the page as before. Smart puts each action beside its value (Copy / Correct beside the IMEI, Change beside the price, Pay / Receive beside the customer) and keeps the history below. Tabs splits the page into Phone, Customer & money, and History. Tiles shows big squares to tap. Compact is one short list with Sell pinned at the bottom. All styles do the same things.",
+        "example": "A busy counter: Compact. A new salesman: Tiles."
+      }
     }
   },
   "items": {
@@ -10474,5 +10481,33 @@
     "itemHeld": "Reserved for customers",
     "free": "{{n}} free to sell",
     "chip": "Reserved:"
+  },
+  "dl": {
+    "title": "Page style",
+    "styles": {
+      "classic": "Classic",
+      "smart": "Smart",
+      "tabs": "Tabs",
+      "tiles": "Tiles",
+      "compact": "Compact"
+    },
+    "copy": "Copy",
+    "copied": "Copied",
+    "status": "Status",
+    "spec": "Details",
+    "edit": "Edit",
+    "notRecorded": "Not recorded",
+    "pay": "Pay",
+    "receive": "Receive",
+    "openBill": "Open bill",
+    "changePerson": "Change",
+    "more": "More actions",
+    "tab": {
+      "overview": "Phone",
+      "people": "Customer & money",
+      "history": "History"
+    },
+    "tapTo": "Tap to change",
+    "top": "Top"
   }
 }

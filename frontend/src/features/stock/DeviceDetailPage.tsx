@@ -18,6 +18,7 @@ import type { DeviceCategory } from '@/lib/types'
 import PriceHint from '@/components/PriceHint'
 import UnitMoney from './UnitMoney'
 import { DeviceReserve } from './ReserveCard'
+import { CompactLayout, SmartLayout, StyleSwitch, TabsLayout, TilesLayout, loadStyle, saveStyle, type Act, type DeviceStyle } from './DeviceLayouts'
 import { isApple } from '@/features/purchase/AppleVariant'
 
 
@@ -83,6 +84,7 @@ export default function DeviceDetailPage() {
   // the purchase this unit came in on (its latest), for "Change dealer / customer" (owner 2026-11-10)
   const boughtOn = [...(history ?? [])].reverse().find((e) => e.type === 'purchased' && e.document_type === 'purchase')?.document_id ?? null
   const multiShop = useAuth((s) => (s.me?.shops.length ?? 0) > 1)
+  const [style, setStyle] = useState<DeviceStyle>(loadStyle)
 
   if (isLoading || !d) return <Loading />
   const vTone = d.verification_status === 'flagged' ? 'bad' : d.verification_status === 'pending' ? 'warn' : 'ok'
@@ -96,10 +98,38 @@ export default function DeviceDetailPage() {
     await ev.mutateAsync({ id: d!.id, type })
   }
 
+  // every action of this page, for the styles that put each one beside its value (owner 2026-11-10)
+  const phoneLike = (d.category ?? 'phone') === 'phone' || !!d.cellular
+  const acts = ([
+    inStock && d.verification_status !== 'flagged' ? { key: 'sell', label: 'stock.sell', run: () => nav(`/sale/new?device=${d.id}`), tone: 'primary' } : null,
+    d.verification_status === 'pending' || d.verification_status === 'flagged' || d.condition !== 'box_pack' ? { key: 'verify', label: 'stock.verify', run: () => nav(`/stock/${d.id}/verify`), tone: d.verification_status === 'pending' ? 'gold' : undefined } : null,
+    d.status === 'sold' ? { key: 'return', label: 'counter.returnJob', run: () => nav(`/return/new?device=${d.id}`), tone: 'primary' } : null,
+    inStock ? { key: 'loan', label: 'stock.loanOut', run: () => setSheet('loan') } : null,
+    inStock ? { key: 'faulty', label: 'stock.markFaulty', run: () => void simple('marked_faulty') } : null,
+    d.status === 'faulty' ? { key: 'faultyCleared', label: 'stock.faultyCleared', run: () => void simple('faulty_cleared') } : null,
+    inStock || d.status === 'faulty' ? { key: 'repair', label: 'stock.sendRepair', run: () => void simple('sent_to_repair') } : null,
+    d.status === 'in_repair' ? { key: 'repairBack', label: 'stock.repairReturned', run: () => void simple('repair_returned') } : null,
+    d.status === 'with_customer_for_approval' ? { key: 'approvalBack', label: 'stock.approvalReturned', run: () => void simple('approval_returned') } : null,
+    { key: 'sticker', label: 'label.button', run: () => setSheet('label') },
+    { key: 'price', label: 'stock.changePrice', run: () => { setText(d.asking_price ?? ''); setSheet('price') } },
+    { key: 'note', label: 'stock.addNote', run: () => { setText(''); setSheet('note') } },
+    { key: 'edit', label: 'crud.editDetails', run: () => setSheet('edit') },
+    canSeeCost && boughtOn ? { key: 'changeSeller', label: 'purchase.fix.partyButton', run: () => nav(`/purchases/${boughtOn}?change=1`) } : null,
+    canSeeCost ? { key: 'balances', label: 'bal.short', run: () => nav(`/balances?q=${encodeURIComponent(d.imei1)}`) } : null,
+    canSeeCost && phoneLike ? { key: 'fixImei', label: 'stock.fixImei.button', run: () => { setFix({ imei1: d.imei1, imei2: d.imei2 ?? '', clear2: false, reason: '' }); setFixErr(null); setSheet('imei') } } : null,
+    d.condition !== 'box_pack' ? { key: 'lock', label: 'devx.lock.button', run: () => { setLocks(d.lock_checks ?? {}); setLockNote(''); setSheet('lock') } } : null,
+    canSeeCost ? { key: 'retype', label: 'devx.retype', run: () => { setToCat((d.category ?? 'phone') === 'phone' ? 'tablet' : 'phone'); setPreview(null); setRetypeErr(null); setSheet('retype') } } : null,
+    inStock && canSeeCost && multiShop ? { key: 'transfer', label: 'transfer.sendBranch', run: () => nav(`/transfers/new?device=${d.id}`) } : null,
+    canRemoveOpening ? { key: 'removeOld', label: 'crud.removeOldStock', run: () => setSheet('remove') } : null,
+  ] as (Act | null)[]).filter((x): x is Act => !!x)
+
   return (
     <div className="flex flex-col gap-4">
       <PageHeader title={{ en: `${d.brand_name} ${d.model_name}`, ur: `${d.brand_name} ${d.model_name}` }} help={<Help term="stock.detail" />} />
 
+      <StyleSwitch value={style} onChange={(v) => { setStyle(v); saveStyle(v) }} />
+      {style === 'classic' ? (
+        <>
       <section className="hero flex flex-col gap-2 p-5">
         <div className="flex items-start justify-between gap-2">
           <div>
@@ -206,6 +236,12 @@ export default function DeviceDetailPage() {
       ) : null}
 
       <UnitMoney deviceId={d.id} />
+        </>
+      ) : style === 'smart' ? <SmartLayout d={d} acts={acts} canSeeCost={canSeeCost} inStock={inStock} />
+        : style === 'tabs' ? <TabsLayout d={d} acts={acts} canSeeCost={canSeeCost} inStock={inStock} />
+        : style === 'tiles' ? <TilesLayout d={d} acts={acts} canSeeCost={canSeeCost} inStock={inStock} />
+        : <CompactLayout d={d} acts={acts} canSeeCost={canSeeCost} inStock={inStock} />}
+      {style !== 'classic' ? <ErrorText error={ev.error ?? loanM.error} /> : null}
 
       <LabelSheet kind="devices" ids={[d.id]} open={sheet === 'label'} onClose={() => setSheet(null)} />
       <Sheet open={sheet === 'loan'} onClose={() => setSheet(null)} title="stock.loanOut">

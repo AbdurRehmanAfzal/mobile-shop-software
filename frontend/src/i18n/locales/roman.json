@@ -7952,6 +7952,13 @@
         "body": "Optional: kis din tak rokna hai. Reserve khud khatam nahi hota; khatam karna parta hai.",
         "example": "Jumma."
       }
+    },
+    "dl": {
+      "styles": {
+        "title": "Page ka andaaz",
+        "body": "Phone ka page kaisa dikhe, chunein; yeh isi phone ya computer par yaad rehta hai. Purana: pehle wala page. Smart: har kaam apni cheez ke saath (IMEI ke saath Copy / Durust, qeemat ke saath Badlein, customer ke saath Dein / Wusool karein) aur neeche history. Tabs: Phone, Customer aur raqam, History alag alag. Khane: dabane ke liye bare khane. Mukhtasar: ek chhoti list, neeche Bechein ka button. Sab andaaz ek hi kaam karte hain.",
+        "example": "Rush wala counter: Mukhtasar. Naya salesman: Khane."
+      }
     }
   },
   "items": {
@@ -10474,5 +10481,33 @@
     "itemHeld": "Customers ke liye reserve",
     "free": "{{n}} bechne ke liye baqi",
     "chip": "Reserve:"
+  },
+  "dl": {
+    "title": "Page ka andaaz",
+    "styles": {
+      "classic": "Purana",
+      "smart": "Smart",
+      "tabs": "Tabs",
+      "tiles": "Khane",
+      "compact": "Mukhtasar"
+    },
+    "copy": "Copy",
+    "copied": "Copy ho gaya",
+    "status": "Haalat",
+    "spec": "Tafseel",
+    "edit": "Badlein",
+    "notRecorded": "Darj nahi",
+    "pay": "Dein",
+    "receive": "Wusool karein",
+    "openBill": "Bill kholein",
+    "changePerson": "Badlein",
+    "more": "Mazeed kaam",
+    "tab": {
+      "overview": "Phone",
+      "people": "Customer aur raqam",
+      "history": "History"
+    },
+    "tapTo": "Badalne ke liye dabayein",
+    "top": "Upar"
   }
 }

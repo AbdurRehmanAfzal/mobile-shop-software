@@ -26,7 +26,9 @@ export interface UnitMoneyData {
 }
 const n = (v: string | number | null | undefined) => (v == null ? '—' : Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 }))
 
-export default function UnitMoney({ deviceId }: { deviceId: string }) {
+/** `historyOnly`: the page styles that already show the people and money beside the phone show
+ *  only the timeline here (owner 2026-11-10) */
+export default function UnitMoney({ deviceId, historyOnly }: { deviceId: string; historyOnly?: boolean }) {
   const { pick, ur, cls } = useLang()
   const nav = useNavigate()
   const inv = useInvalidate()
@@ -90,7 +92,7 @@ export default function UnitMoney({ deviceId }: { deviceId: string }) {
 
   return (
     <>
-      <Section title="unit.title" help="stock.unit.title">
+      {historyOnly ? null : <Section title="unit.title" help="stock.unit.title">
         <div className="card grid grid-cols-2 gap-2 sm:grid-cols-4" data-testid="unit-tiles">
           {([
             canCost ? { k: 'unit.cost', v: s.cost, tone: 'text-ink', help: 'cost' } : null,
@@ -109,7 +111,7 @@ export default function UnitMoney({ deviceId }: { deviceId: string }) {
         </div>
         {data.purchase ? <SideCard side={data.purchase} role="bought" /> : s.source === 'opening_stock' ? <span className="flex items-center gap-1"><BiLabel text="unit.openingStock" size="sm" tone="text-muted" /><Help term="opening" size="sm" /></span> : s.source === 'branch' ? <span className="flex items-center gap-1"><BiLabel text="unit.fromBranch" size="sm" tone="text-muted" /><Help term="transfer.page" size="sm" /></span> : null}
         {data.sale ? <SideCard side={data.sale} role="sold" /> : null}
-      </Section>
+      </Section>}
 
       <Section title="stock.history" help="stock.history" right={<DownloadButton path={`/api/v1/exports/devices/${deviceId}/history`} name={`history-${deviceId.slice(0, 8)}`} />}>
         <div className="card p-0">

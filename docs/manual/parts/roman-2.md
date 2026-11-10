@@ -220,6 +220,18 @@ Phone daalte ya badalte waqt **Shelf / jagah** (optional) batata hai ke phone ka
 
 Phone ke page par **Dealer / customer badlein** dabayein: us ki khareedari badalne ke liye tayyar khulti hai (upar "IMEI ya bechne wala ghalat likha gaya" dekhein). Items ke liye khareedari item ki movements se ya **More → Purchases** se kholein.
 
+### Page ka andaaz: Purana, Smart, Tabs, Khane, Mukhtasar
+
+Phone ke page ke upar se chun sakte hain ke page kaisa dikhe. Yeh intikhab isi phone ya computer par yaad rehta hai.
+
+- **Purana**: pehle wala page.
+- **Smart**: har cheez ke saath us ka kaam. IMEI ke saath **Copy** aur **IMEI durust karein**, qeemat ke saath **Bechne ki qeemat badlein**, shelf ke saath **Badlein**, barcode ke saath **Sticker**, ID check ke saath **Tasdeeq**. Upar **Bechein** hai. Jis se khareeda (ya jise becha) woh baqi raqam ke saath dikhta hai, saath **Dein** / **Wusool karein**, **Bill kholein** aur **Badlein**. Neeche history.
+- **Tabs**: yahi page **Phone**, **Customer aur raqam** aur **History** mein.
+- **Khane**: bare khane; dabayein to badalne ka kaam khulta hai (qeemat, IMEI, haalat, shelf, sticker, ID check).
+- **Mukhtasar**: ek chhoti list, aur neeche **Bechein** ka button hamesha maujood.
+
+Sab andaaz ek hi kaam karte hain; jo kaam kisi cheez ke saath nahi woh **Mazeed kaam** mein hain.
+
 ### Poori history
 
 Page ke bilkul neeche **History** hai: is phone ke saath jo kuch bhi hua us ki ek timeline, sab se naya upar. Har line par tareekh, banda, raqam aur woh staff member hota hai jis ne kaam kiya. Aap is tarah ki lines dekhenge:

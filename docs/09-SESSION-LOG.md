@@ -1250,3 +1250,20 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - `test_devices` updated (SIM time optional); the full backend suite.
 - Playwright `reserve.spec` (new); regression stock-screen, counter, add-device, items, device-types.
 - I looked at a screenshot of the reserved phone page.
+
+### Same day — PR #45 live, PR #46 opened; phone page styles (ADR-061)
+**Owner (from shopkeepers in testing)**: "mobile detail page ka UI / UX different style hona chahiye … mobile detail, phir action, phir customer, phir history … IMEI ke saath value aur action … yeh bhi rakho aur 3–4 naye banao, style shopkeeper choose kare … data ko koi issue na ho".
+**Done** (frontend only; no API or data change):
+- A style switch at the top of the phone page (kept per device). Classic is the page as before and stays the default.
+- **Smart**: facts with their actions beside them (IMEI copy / correct, price change, condition / shelf edit, sticker, verify, lock, note), Sell on top, then the people with what is owed and pay / receive / open bill / change, More actions, and the history.
+- **Tabs**: Phone / Customer & money / History.
+- **Tiles**: tap a tile to change it.
+- **Compact**: a list with Sell pinned.
+- The page's actions became one list (`acts`) used by the new styles; Classic still renders its own buttons.
+- `UnitMoney historyOnly`, so the money cards are not shown twice.
+- en / ur / roman strings and help; user manual ch. 11 section; ADR-061.
+**Verified**:
+- tsc.
+- Playwright `device-styles` (new): Classic as before; in Smart the rows, the dealer card with what is owed, the inline price change and Pay prefilled; the Tabs people tab; a Tiles tile opens the price sheet; Compact is kept after a reload and its Sell works.
+- Regression: `units`, `reserve`, `fix-after-purchase`.
+- I looked at screenshots (Smart, Tiles).

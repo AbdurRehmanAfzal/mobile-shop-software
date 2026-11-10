@@ -220,6 +220,18 @@ When adding or editing a phone, **Shelf / place** (optional) says where it sits,
 
 On a phone's page tap **Change dealer / customer**: its purchase opens with the change ready (see "An IMEI or the seller typed wrong" above). For items, open the purchase from the item's movements or **More → Purchases**.
 
+### Page style: Classic, Smart, Tabs, Tiles, Compact
+
+At the top of a phone's page you can choose how it looks. The choice is remembered on that phone or computer.
+
+- **Classic**: the page as before.
+- **Smart**: every fact has its action beside it. **Copy** and **Correct IMEI** sit beside the IMEI, **Change asking price** beside the price, **Edit** beside the shelf, **Print sticker** beside the barcode and **Verify** beside the ID check. **Sell** is at the top. The person it was bought from (or sold to) shows with what is still owed and **Pay** / **Receive**, **Open bill** and **Change**. The history is below.
+- **Tabs**: the same page split into **Phone**, **Customer & money** and **History**.
+- **Tiles**: big squares; tap one to change it (price, IMEI, condition, shelf, sticker, ID check).
+- **Compact**: one short list, with **Sell** pinned at the bottom.
+
+Every style does the same things; any action not shown beside a value is under **More actions**.
+
 ### The full history
 
 At the bottom of the page is **History**: one timeline of everything that ever happened to this phone, newest on top. Every line has the date, the person, the amount and the staff member who did it. You will see lines such as:
