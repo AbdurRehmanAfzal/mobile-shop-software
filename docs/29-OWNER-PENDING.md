@@ -50,7 +50,7 @@ docker compose --env-file .env exec backend python -m app.modules.plan.renewal k
 docker compose --env-file .env exec backend python -m app.modules.barcodes.backfill
 
 # 3. check the database is on the latest version (migrations run by themselves when the backend
-#    starts; this only confirms it). Expected: e1a3c5e7f9b2 (head)
+#    starts; this only confirms it). Expected: f3a5c7e9b1d4 (head)
 docker compose --env-file .env exec backend alembic current
 ```
 
@@ -151,6 +151,11 @@ Close the app fully and open it again first (or install the newest APK from the 
 2. On the phone's page, **Correct IMEI**: change one digit and give a reason. The history shows the old and the new IMEI.
 3. On the purchase (**More → Purchases**), **Change dealer / customer** to another person. The old person's khata is clear and the new one owes the amount.
 4. Pay something against a second purchase, then try to change its person: it is refused.
+
+**Exchange and return settlement (2026-11-10, ADR-057)**:
+1. Sell a phone to a test customer for 80,000 cash.
+2. Exchange: take it back at 70,000, give a 55,000 phone, and pay 5,000 now. The screen and the bill say "To give to customer 10,000". The khata shows -10,000. Pay 4,000, then 6,000: settled.
+3. Return another 80,000 sale: give 30,000 now and pick Customer's khata. You should see "To give to customer 50,000".
 
 ## E. Decisions waiting for you
 

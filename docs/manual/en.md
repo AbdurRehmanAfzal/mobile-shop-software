@@ -774,6 +774,18 @@ If he had paid part of it, only the part he paid can be given back; the unpaid p
 
 **Example:** Bilal bought a phone for Rs. 50,000, paid Rs. 20,000 and owes Rs. 30,000. He returns it. **Customer had paid** shows **20,000**. You give back Rs. 18,000 in cash and the shop cuts Rs. 2,000. His Rs. 30,000 udhaar for this phone is cleared.
 
+### Part back now, the rest later
+
+For a known customer, under **Give back to customer (Rs)** type what you hand over now. **The rest, not handed back now** then asks where the rest goes: **Customer's khata (we owe)** keeps it as owed to him, **Shop keeps it (cut)** makes it the shop's cut. The dark card at the bottom says in words **To give to customer**, **To get from customer** or **Settled**.
+
+**Example:** Ali paid Rs. 80,000. You give Rs. 30,000 now and tap **Customer's khata**: the card shows **To give to customer 50,000**. Later pay him from his khata (**Pay**), for example 20,000 and then 30,000.
+
+### Less credit than the bill price
+
+If your return rules keep a part, change **Credit for what came back (Rs)** to less than the bill price. The difference is the shop's cut. If he still owed on that bill, the credit first clears that.
+
+**Example:** bill Rs. 80,000, Ali paid Rs. 50,000 (owes 30,000). With the full credit of 80,000 the 30,000 is cleared and **To give to customer 50,000** remains. With a credit of only 25,000, **To get from customer 5,000** remains.
+
 > **Tip:** A wrong bill cannot be edited, by anyone. If a sale was entered with the wrong price or phone, return it here and make a fresh bill. Both stay on the record, so nobody can quietly change a sale.
 
 > **Note:** Scanning works on this screen. Scan the phone's barcode with a USB scanner and it jumps straight to step 2 for that phone.
@@ -804,6 +816,12 @@ The screen shows **Exchange complete** with buttons to print the receipt (80mm t
 ### When the old phone is worth more
 
 Sometimes the customer's phone is worth more than the one he takes. Then the card says **You give back the difference**, and the summary shows **Refund to customer**. If the two are equal it says **Nothing to pay either way**.
+
+When the shop owes the difference you may pay all of it now, part of it, or nothing: change **Shop pays now (Rs)**. What is not paid stays in the customer's khata and the dark card says **To give to customer** with the amount. When the customer owes, a smaller **Paid now** leaves **To get from customer**. For money paid now choose how it moved: **Cash**, **Online** or **Cheque**.
+
+If the old phone is one your shop sold him earlier, the exchange keeps that first sale, brings the phone back into stock at the agreed value and links the first bill (**First bill** on the done screen). The printed bill shows **Old phone taken back** with the exchange number, **Paid now**, and at the bottom **To get from customer** or **To give to customer**.
+
+**Example:** Ali bought a phone for 80,000. You take it back at 70,000 and he takes one for 55,000; the shop owes 15,000. You pay 5,000 now: **To give to customer 10,000**. Later pay him 4,000 and then 6,000 from his khata.
 
 ### After the exchange
 

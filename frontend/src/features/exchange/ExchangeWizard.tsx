@@ -18,8 +18,10 @@ import type { Device, Party } from '@/lib/types'
 import { DeviceRow } from '@/features/stock/StockPage'
 import DeviceLineSheet, { draftToApi, emptyDraft, type DeviceLineDraft } from '@/features/purchase/DeviceLineSheet'
 import {withCur } from '@/lib/format'
+import PayPicker, { newPay, payInfo, payReady, type PayState } from '@/components/PayPicker'
+import { uid } from '@/lib/id'
 
-interface ExchangeOut { no: string; invoice_id: string; invoice_no: string | null; previous_balance: string; trade_in_value: string; new_total: string; new_balance: string }
+interface ExchangeOut { no: string; invoice_id: string; invoice_no: string | null; previous_balance: string; trade_in_value: string; new_total: string; new_balance: string; original_invoice_id?: string | null; original_invoice_no?: string | null; refund?: string }
 const n = (v: number | string) => Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 })
 const STEPS = ['sale.steps.customer', 'exchange.oldDevice', 'exchange.newDevice', 'exchange.settle']
 
@@ -37,9 +39,13 @@ export default function ExchangeWizard() {
   const [picking, setPicking] = useState(false)
   const [q, setQ] = useState('')
   const [paid, setPaid] = useState('')
+  // owner 2026-11-10 (ADR-057): the shop may pay back all, part or none of what it owes now
+  const [giveBack, setGiveBack] = useState<string | null>(null)
+  const [pay, setPay] = useState<PayState>(() => newPay())
+  const [idem, setIdem] = useState(uid)
   const [result, setResult] = useState<ExchangeOut | null>(null)
   const { data: stock } = useDevices({ status: 'in_stock', q: q || undefined })
-  const m = useDocMutation<Record<string, unknown>, ExchangeOut>('POST', () => '/api/v1/exchanges')
+  const m = useDocMutation<Record<string, unknown>, ExchangeOut>('POST', () => '/api/v1/exchanges', undefined, undefined, { key: () => idem })
   const small = ur ? cls('sm') : 'text-xs font-semibold'
 
   const tradeIn = Number(old?.cost || 0)
@@ -47,8 +53,11 @@ export default function ExchangeWizard() {
   const previous = Number(party?.balance ?? 0)
   const diff = total - tradeIn // > 0 the customer pays, < 0 the shop gives back
   const paidNow = diff > 0 ? Number(paid || 0) : 0
-  const newBalance = previous + Math.max(0, diff) - paidNow
-  const reset = () => { setStep(0); setParty(null); setOld(null); setNewDev(null); setPrice(''); setPaid(''); setResult(null); m.reset() }
+  const refundNow = diff < 0 ? Math.min(-diff, Math.max(0, giveBack === null ? -diff : Number(giveBack || 0))) : 0
+  const moneyMoves = paidNow > 0 || refundNow > 0
+  const newBalance = previous + diff - paidNow + refundNow
+  const owesWord = (b: number) => (b > 0 ? 'exchange.toGet' : b < 0 ? 'exchange.toGive' : 'exchange.settled')
+  const reset = () => { setStep(0); setParty(null); setOld(null); setNewDev(null); setPrice(''); setPaid(''); setGiveBack(null); setPay(newPay()); setIdem(uid()); setResult(null); m.reset() }
 
   const oldCard = old ? (
     <div className="card flex items-center gap-3">
@@ -122,10 +131,12 @@ export default function ExchangeWizard() {
             <span className="flex items-center gap-1"><BiLabel text={diff > 0 ? 'exchange.customerPays' : diff < 0 ? 'exchange.shopPays' : 'exchange.even'} size="md" bold tone="text-current" /><span className="[&_button]:text-current"><Help term="exchange.difference" size="sm" /></span></span>
             {diff !== 0 ? <span className="num text-[32px] leading-none" dir="ltr">{withCur(n(Math.abs(diff)))}</span> : null}
           </div>
-          {diff > 0 ? <BiInput label="sale.paidNow" help={<Help term="common.paid" size="sm" />} type="number" inputMode="numeric" min={0} max={diff} value={paid} onChange={(e) => setPaid(e.target.value)} className="num text-2xl" hint="exchange.paidHint" /> : null}
-          <div className="hero flex items-center justify-between p-4">
-            <span className="flex items-center gap-1"><BiLabel text="exchange.newBalance" size="md" tone="text-gold-text" bold /><span className="[&_button]:text-gold-text"><Help term="exchange.newBalance" size="sm" /></span></span>
-            <span className="num text-2xl text-gold-text" dir="ltr">{n(newBalance)}</span>
+          {diff > 0 ? <BiInput label="sale.paidNow" help={<Help term="common.paid" size="sm" />} type="number" inputMode="numeric" min={0} max={diff} value={paid} onChange={(e) => setPaid(e.target.value)} className="num text-2xl" hint="exchange.paidHint" data-testid="exchange-paid" /> : null}
+          {diff < 0 ? <BiInput label="exchange.shopPaysNow" help={<Help term="exchange.shopPaysNow" size="sm" />} type="number" inputMode="numeric" min={0} max={-diff} value={giveBack ?? String(-diff)} onChange={(e) => setGiveBack(e.target.value)} className="num text-2xl" hint="exchange.shopPaysHint" data-testid="exchange-give" /> : null}
+          {moneyMoves ? <PayPicker value={pay} onChange={setPay} udhaar={false} /> : null}
+          <div className="hero flex items-center justify-between p-4" data-testid="exchange-balance">
+            <span className="flex items-center gap-1"><BiLabel text={owesWord(newBalance)} size="md" tone="text-gold-text" bold /><span className="[&_button]:text-gold-text"><Help term="exchange.newBalance" size="sm" /></span></span>
+            {newBalance !== 0 ? <span className="num text-2xl text-gold-text" dir="ltr">{n(Math.abs(newBalance))}</span> : null}
           </div>
           <ErrorText error={m.error} />
           <BiButton
@@ -133,9 +144,9 @@ export default function ExchangeWizard() {
             icon={<Check size={22} />}
             full
             loading={m.isPending}
-            disabled={paidNow > Math.max(0, diff)}
+            disabled={paidNow > Math.max(0, diff) || (moneyMoves && !payReady(pay))}
             onClick={async () => {
-              const res = await m.mutateAsync({ party_id: party!.id, trade_in: [draftToApi(old!)], devices: [{ device_id: newDev!.id, price: total }], paid: paidNow, refund: diff < 0 ? -diff : 0 })
+              const res = await m.mutateAsync({ party_id: party!.id, trade_in: [draftToApi(old!)], devices: [{ device_id: newDev!.id, price: total }], paid: paidNow, refund: refundNow, payment: moneyMoves ? payInfo(pay) : undefined })
               setResult(res)
               setStep(4)
               inv('devices', 'parties', 'dashboard', 'sales', 'purchases')
@@ -150,7 +161,8 @@ export default function ExchangeWizard() {
             <span className="well mb-1 h-16 w-16 rounded-full bg-emerald text-white"><Check size={34} strokeWidth={2.6} /></span>
             <BiLabel text="exchange.done" size="lg" bold tone="text-current" align="center" />
             <span className="num text-sm opacity-80" dir="ltr">{result.no}{result.invoice_no ? ` · ${result.invoice_no}` : ''}</span>
-            <span className={ur ? cls('sm') : 'text-sm font-semibold'}>{pick('exchange.newBalance')}: <span className="num" dir="ltr">{n(result.new_balance)}</span></span>
+            <span className={ur ? cls('sm') : 'text-sm font-semibold'} data-testid="exchange-result-balance">{pick(owesWord(Number(result.new_balance)))}{Number(result.new_balance) ? <>: <span className="num" dir="ltr">{n(Math.abs(Number(result.new_balance)))}</span></> : null}</span>
+            {result.original_invoice_no ? <span className="num text-xs opacity-80" dir="ltr">{pick('exchange.firstBill')} {result.original_invoice_no}</span> : null}
           </div>
           <DocLangPicker />
           <BiButton text="sale.printThermal" icon={<Printer size={22} />} full onClick={() => openPrintable(`/api/v1/sales/${result.invoice_id}/receipt?format=thermal`)} />

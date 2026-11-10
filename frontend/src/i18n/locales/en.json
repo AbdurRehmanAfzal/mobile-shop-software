@@ -891,7 +891,13 @@
     "paidHint": "Less than that: the rest goes on their khata.",
     "confirm": "Complete exchange",
     "another": "Another exchange",
-    "viewBill": "Open the bill"
+    "viewBill": "Open the bill",
+    "toGet": "To get from customer",
+    "toGive": "To give to customer",
+    "settled": "Settled: nobody owes",
+    "shopPaysNow": "Shop pays now (Rs)",
+    "shopPaysHint": "Less than this: the rest stays in the customer's khata as owed to them.",
+    "firstBill": "First bill"
   },
   "report": {
     "title": "Reports",
@@ -1272,7 +1278,12 @@
     "promiseDateBuy": "We pay the supplier by (optional)",
     "promiseHint": "With a date the audit calls the udhaar overdue after it; without one it only shows the age of the debt.",
     "lendLate": "people late returning len-den",
-    "lendWeOwe": "len-den the shop must give back soon"
+    "lendWeOwe": "len-den the shop must give back soon",
+    "returnCredit": "Credit for what came back (Rs)",
+    "returnCreditHint": "Less than the bill price if your return rules keep a part.",
+    "restGoes": "The rest, not handed back now",
+    "restKhata": "Customer's khata (we owe)",
+    "restCut": "Shop keeps it (cut)"
   },
   "admin": {
     "title": "Super admin",
@@ -6056,6 +6067,16 @@
         "title": "Extra cash to old udhaar",
         "body": "The customer gave more than this bill and owes the shop from before. Tick this and the extra is taken against their old udhaar instead of handed back as change. Their khata goes down and the bill prints it.",
         "example": "Bill Rs. 2,000, he gives Rs. 5,000 and owes Rs. 3,000 from last month → tick it: change Rs. 0, old udhaar cleared."
+      },
+      "returnCredit": {
+        "title": "Credit for what came back",
+        "body": "How much the customer gets for the returned phone. Normally the bill price. If your return rules keep a part, type less: the difference is the shop's cut. If the customer still owed on the bill, the credit first clears that; if the credit is less than what they owed, the rest is still to get from them.",
+        "example": "Bill 80,000, paid 50,000 (30,000 owed). Credit 25,000: 5,000 still to get."
+      },
+      "restGoes": {
+        "title": "The rest",
+        "body": "What the customer paid for the returned phone but is not handed back now. Customer's khata: the shop owes it and pays later. Shop keeps it: it is the shop's cut (income).",
+        "example": "80,000 to give back, 30,000 now: Customer's khata leaves 50,000 To give to customer."
       }
     },
     "exchange": {
@@ -6093,6 +6114,11 @@
         "title": "New balance",
         "body": "The customer's khata after this exchange: previous balance + difference − paid now.",
         "example": "Previous Rs. 0, difference Rs. 70,000, paid Rs. 50,000 → new balance Rs. 20,000 on his khata."
+      },
+      "shopPaysNow": {
+        "title": "Shop pays now",
+        "body": "When the new phone costs less than the old one's agreed value, the shop owes the difference. Pay all of it now, part of it, or nothing; what is not paid now stays in the customer's khata as owed to them and is paid later from the khata (Pay).",
+        "example": "Owes 15,000, pays 5,000 now: 10,000 To give to customer. Later 4,000 and then 6,000 close it."
       }
     },
     "invoices": {

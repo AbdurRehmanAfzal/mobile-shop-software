@@ -4,6 +4,7 @@
 
 import { Banknote, BookOpen, Check, Home, Undo2, Wallet } from 'lucide-react'
 import { useStepUrl } from '@/lib/steps'
+import { uid } from '@/lib/id'
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
@@ -40,6 +41,11 @@ export default function ReturnWizard() {
   // null = not typed yet (show the full amount); '' = the user cleared the box to type their own
   const [refund, setRefund] = useState<string | null>(null)
   const [from, setFrom] = useState<GiveFrom | null>(null)
+  // owner 2026-11-10 (ADR-057): the credit for what came back may be less than the bill price, and
+  // what is not handed back now may stay in the customer's khata instead of being the shop's cut
+  const [credit, setCredit] = useState<string | null>(null)
+  const [rest, setRest] = useState<'cut' | 'khata'>('cut')
+  const [idem, setIdem] = useState(uid)
   const [who, setWho] = useState<Party | null>(null)
   const [reason, setReason] = useState('')
   const [done, setDone] = useState<ReturnDoc | null>(null)
@@ -47,7 +53,7 @@ export default function ReturnWizard() {
   const { data: recent } = useSales({})
   const { data: inv } = useSale(invoiceId)
   const { data: accounts } = useCashAccounts()
-  const m = useDocMutation<Record<string, unknown>, ReturnDoc>('POST', () => '/api/v1/returns/sale')
+  const m = useDocMutation<Record<string, unknown>, ReturnDoc>('POST', () => '/api/v1/returns/sale', undefined, undefined, { key: () => idem })
   const cashId = accounts?.find((a) => a.is_default)?.id ?? accounts?.[0]?.id
 
   async function openDevice(id: string) {
@@ -86,15 +92,20 @@ export default function ReturnWizard() {
 
   const value = inv ? inv.lines.filter((l) => selected.includes(l.id)).reduce((s, l) => s + Number(l.line_total), 0) : 0
   const outstanding = inv ? Math.max(0, Number(inv.total) - Number(inv.returned_total) - Number(inv.paid)) : 0
-  const paidFor = Math.max(0, value - outstanding) // what the customer actually paid for what came back
   const walkIn = !!inv && !inv.party_id
+  const creditNum = walkIn ? value : Math.min(value, Math.max(0, credit === null ? value : Number(credit || 0)))
+  const deduction = value - creditNum
+  const paidFor = Math.max(0, creditNum - outstanding) // what can be given back for what came back
   const toKhata = from?.kind === 'khata'
   const give = toKhata ? 0 : Math.min(refund === null ? paidFor : Number(refund || 0), paidFor)
-  const cut = toKhata ? 0 : paidFor - give
+  const left = paidFor - give // not handed back now
+  const cut = deduction + (toKhata || rest === 'khata' ? 0 : left)
+  // + the shop still owes the customer, − the customer still owes on this bill
+  const after = toKhata || rest === 'khata' ? left : creditNum < outstanding ? -(outstanding - creditNum) : 0
   const ok = !!inv && selected.length > 0 && (!walkIn || !!who) && !!from
 
   // refund editing resets when the picked lines change
-  useEffect(() => setRefund(null), [value])
+  useEffect(() => { setRefund(null); setCredit(null) }, [value])
 
   async function submit() {
     if (!inv) return
@@ -102,13 +113,14 @@ export default function ReturnWizard() {
       invoice_id: inv.id,
       line_ids: selected,
       party_id: walkIn ? who?.id : undefined,
-      settlement: toKhata || paidFor === 0 ? 'credit' : give > 0 ? 'refund' : 'income',
-      refund_amount: toKhata || paidFor === 0 ? undefined : give,
-      kept_amount: toKhata || paidFor === 0 ? undefined : cut,
+      settlement: give > 0 ? 'refund' : cut > 0 ? 'income' : 'credit',
+      refund_amount: give > 0 || cut > 0 ? give : undefined,
+      kept_amount: give > 0 || cut > 0 ? cut : undefined,
       cash_account_id: from?.kind === 'account' && give > 0 ? from.id : undefined,
       reason: reason || undefined,
     })
     setDone(res)
+    setIdem(uid())
     setStep(2)
   }
 
@@ -174,6 +186,9 @@ export default function ReturnWizard() {
             <div className={`text-muted ${small}`}>{inv.party_name}</div>
           )}
 
+          {!walkIn && value > 0 ? (
+            <BiInput label="counter.returnCredit" help={<Help term="sale.returnCredit" size="sm" />} type="number" inputMode="numeric" min={0} max={value} value={credit ?? String(value)} onChange={(e) => setCredit(e.target.value)} className="num" hint="counter.returnCreditHint" data-testid="return-credit" />
+          ) : null}
           {paidFor === 0 && value > 0 ? (
             <div className={`flex items-center gap-1 rounded-2xl bg-khata px-4 py-3 text-khata-fg ${small}`}><span className="flex-1">{pick('counter.onUdhaarOnly')}</span><span className="[&_button]:text-current"><Help term="sale.onUdhaarOnly" size="sm" /></span></div>
           ) : value > 0 ? (
@@ -195,15 +210,32 @@ export default function ReturnWizard() {
               {!toKhata ? (
                 <>
                   <BiInput label="counter.giveBack" help={<Help term="sale.giveBack" size="sm" />} type="number" inputMode="numeric" min={0} max={paidFor} value={refund ?? String(paidFor)} onChange={(e) => setRefund(e.target.value)} className="num text-2xl" />
-                  <div className="flex items-center justify-between rounded-2xl bg-ret px-4 py-3 text-ret-fg">
-                    <span className="flex items-center gap-1"><span className={small}>{pick('counter.cut')}</span><span className="[&_button]:text-current"><Help term="cut" size="sm" /></span></span>
-                    <span className="num text-2xl" dir="ltr">{n(cut)}</span>
-                  </div>
+                  {left > 0 && !walkIn ? (
+                    <>
+                      <span className="flex items-center gap-1"><BiLabel text="counter.restGoes" size="md" bold /><Help term="sale.restGoes" size="sm" /></span>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button type="button" aria-pressed={rest === 'khata'} onClick={() => setRest('khata')} className={chip(rest === 'khata')} data-testid="rest-khata"><BookOpen size={22} />{pick('counter.restKhata')}</button>
+                        <button type="button" aria-pressed={rest === 'cut'} onClick={() => setRest('cut')} className={chip(rest === 'cut')} data-testid="rest-cut"><Wallet size={22} />{pick('counter.restCut')}</button>
+                      </div>
+                    </>
+                  ) : null}
+                  {cut > 0 ? (
+                    <div className="flex items-center justify-between rounded-2xl bg-ret px-4 py-3 text-ret-fg">
+                      <span className="flex items-center gap-1"><span className={small}>{pick('counter.cut')}</span><span className="[&_button]:text-current"><Help term="cut" size="sm" /></span></span>
+                      <span className="num text-2xl" dir="ltr">{n(cut)}</span>
+                    </div>
+                  ) : null}
                 </>
               ) : null}
             </>
           ) : null}
 
+          {value > 0 && !walkIn ? (
+            <div className="hero flex items-center justify-between p-4" data-testid="return-after">
+              <BiLabel text={after > 0 ? 'exchange.toGive' : after < 0 ? 'exchange.toGet' : 'exchange.settled'} size="md" tone="text-gold-text" bold />
+              {after !== 0 ? <span className="num text-2xl text-gold-text" dir="ltr">{n(Math.abs(after))}</span> : null}
+            </div>
+          ) : null}
           <BiInput label="counter.reasonOpt" help={<Help term="sale.returnReason" size="sm" />} value={reason} onChange={(e) => setReason(e.target.value)} />
           <ErrorText error={m.error} />
           <BiButton text="counter.returnBtn" icon={<Undo2 size={22} />} full loading={m.isPending} disabled={!ok} onClick={submit} />

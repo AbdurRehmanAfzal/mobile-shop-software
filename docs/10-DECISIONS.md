@@ -362,6 +362,34 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-057 · 2026-11-10 · Accepted · Exchanges and returns settle like udhaar: the trade-in is put against the new bill, the rest is paid now, partly or later
+**Context**: an owner audit brief with tables of exchange and return cases (a phone sold days ago comes back; trade-in at an agreed value or a return; whoever owes pays all, part or nothing now).
+- The khata and cash were already right in every case, and the IMEI history kept the first sale.
+- The bills were not: the trade-in purchase and the new bill both stayed "open" (e.g. 70,000 to give and 82,000 to get on a 12,000 receivable).
+- The screen always paid the shop's whole difference, the exchange had no payment method, no link to the first bill and no Idempotency-Key.
+- The return screen could not keep the rest in the khata after a part refund, nor give less credit than was owed.
+- The dashboard's "received today" counted `invoice.paid`.
+**Decision**:
+- **Exchange**:
+  - The trade-in value is applied to the new bill (`invoice.paid`) and its own bill (`purchase.paid`) without moving money, like len-den adjusting (ADR-041); a refund also marks the trade-in bill paid.
+  - The refund is limited to what the shop owes (`refund_exceeds`).
+  - The money paid now or back carries a `payment` method (cash / online / cheque).
+  - `exchanges.original_invoice_id` (the bill this shop sold the phone on to this customer, found from its `sold` event), `trade_in_applied` and `refund` (migration `f3a5c7e9b1d4`, additive).
+  - The POST takes an Idempotency-Key.
+- **Return**:
+  - The cut (`kept_amount`) may be larger than what was paid for the returned lines, so the credit can be less than the bill price; nothing may then be handed back and the rest of the old udhaar stays due (`cut_exceeds_value` when the cut is more than the value).
+  - The POST takes an Idempotency-Key.
+- **Screens**:
+  - Exchange: "Shop pays now" (all / part / none), a payment method, "To get from customer / To give to customer / Settled", "First bill".
+  - Return: "Credit for what came back", "The rest: customer's khata / shop keeps it", and a card with who owes whom.
+  - Both send one Idempotency-Key per form (`useDocMutation(..., { key })`).
+- **Receipt**: an exchange bill shows "Old phone taken back · EXC-…", "Paid now", "Paid to customer". Any bill's balance line reads "To get from customer / To give to customer" (ur: گاہک سے لینا / گاہک کو دینا) instead of a signed "Account balance".
+- **Dashboard**: `received_today` is the money in cash / bank accounts inside today's sale postings.
+**Consequences**:
+- Old exchanges keep their open bills; nothing is rewritten.
+- A negotiated buyback with no replacement stays a normal "Buy a customer's phone" purchase (already right; the first sale stays in the phone's history).
+- The return has no printed slip of its own (unchanged).
+
 ## ADR-056 · 2026-11-09 · Accepted · A wrong IMEI or seller is corrected, never erased; stock is checked before it is saved
 **Context**: in testing the owner found no way to put right an IMEI typed wrong, or the wrong dealer / customer picked, once the stock was saved, and asked for a final check before saving.
 **Decision**:

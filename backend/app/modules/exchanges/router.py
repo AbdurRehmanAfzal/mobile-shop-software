@@ -3,6 +3,8 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 
+from app.core.idempotency import IdemKey
+from app.core.idempotency import run as idempotent
 from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx, require_cap
 from app.modules.exchanges import service
@@ -13,8 +15,15 @@ Transact = Annotated[Ctx, Depends(require_cap(Cap.TRANSACT))]
 
 
 @router.post("", response_model=ExchangeOut, status_code=201)
-def create(data: ExchangeCreate, ctx: Transact, db: DB):
-    return service.to_out(db, service.create_exchange(db, ctx.shop_id, ctx, data))
+def create(data: ExchangeCreate, ctx: Transact, db: DB, idem: IdemKey = None):
+    # owner 2026-11-10: a double tap or a retry never posts it twice
+    return idempotent(
+        db,
+        ctx.shop_id,
+        idem,
+        "exchanges",
+        lambda: service.to_out(db, service.create_exchange(db, ctx.shop_id, ctx, data)),
+    )
 
 
 @router.get("", response_model=list[ExchangeOut])

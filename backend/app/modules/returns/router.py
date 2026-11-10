@@ -3,6 +3,8 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 
+from app.core.idempotency import IdemKey
+from app.core.idempotency import run as idempotent
 from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx, require_cap
 from app.modules.returns import service
@@ -14,8 +16,15 @@ Transact = Annotated[Ctx, Depends(require_cap(Cap.TRANSACT))]
 
 
 @router.post("/sale", response_model=ReturnOut, status_code=201)
-def sale_return(data: SaleReturnIn, ctx: Transact, db: DB):
-    return service.to_out(db, service.sale_return(db, ctx.shop_id, ctx.id, data))
+def sale_return(data: SaleReturnIn, ctx: Transact, db: DB, idem: IdemKey = None):
+    # owner 2026-11-10: a double tap or a retry never posts it twice
+    return idempotent(
+        db,
+        ctx.shop_id,
+        idem,
+        "returns",
+        lambda: service.to_out(db, service.sale_return(db, ctx.shop_id, ctx.id, data)),
+    )
 
 
 @router.post("/purchase", response_model=ReturnOut, status_code=201)

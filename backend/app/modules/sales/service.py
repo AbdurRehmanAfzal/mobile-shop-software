@@ -756,6 +756,12 @@ def receipt_html(
         "paid": "وصول" if ur else "Paid",
         "due": "اس بل کا بقایا" if ur else "Due on this bill",
         "balance": "کھاتے کا بقایا" if ur else "Account balance",
+        # owner 2026-11-10 (ADR-057): who owes whom, in words, and an exchange's trade-in
+        "toGet": "گاہک سے لینا" if ur else "To get from customer",
+        "toGive": "گاہک کو دینا" if ur else "To give to customer",
+        "tradeIn": "پرانا فون واپس لیا" if ur else "Old phone taken back",
+        "paidNow": "ابھی وصول" if ur else "Paid now",
+        "refunded": "گاہک کو دیے" if ur else "Paid to customer",
         "pending": "باقی اشیاء" if ur else "Pending items",
         "cash": "واک اِن گاہک" if ur else "Walk-in customer",
         "thanks": shop.receipt_footer_ur or "خریداری کا شکریہ"
@@ -820,10 +826,26 @@ def receipt_html(
         )
     balance = out["party_balance_after"]
     balance_html = (
-        f"<tr class='tot'><td colspan='3'>{T['balance']}</td><td class='n'>{balance:,.0f}</td></tr>"
+        f"<tr class='tot'><td colspan='3'>{T['toGet'] if balance > 0 else T['toGive']}</td><td class='n'>{abs(balance):,.0f}</td></tr>"
         if balance is not None and balance != 0
         else ""
     )
+    # an exchange: the old phone's value went against this bill, so "paid" is split into the
+    # trade-in and the money really paid now
+    from app.modules.exchanges.models import Exchange
+
+    ex = db.scalar(select(Exchange).where(Exchange.invoice_id == inv.id))
+    paid_rows = f'<tr><td colspan="3">{T["paid"]}</td><td class="n">{inv.paid:,.0f}</td></tr>'
+    if ex is not None and ex.trade_in_applied:
+        paid_rows = (
+            f'<tr><td colspan="3">{T["tradeIn"]} · {e(ex.no)}</td><td class="n">{ex.trade_in_applied:,.0f}</td></tr>'
+            f'<tr><td colspan="3">{T["paidNow"]}</td><td class="n">{money(inv.paid - ex.trade_in_applied):,.0f}</td></tr>'
+        )
+        if ex.refund:
+            paid_rows += (
+                f'<tr><td colspan="3">{T["refunded"]}</td><td class="n">{ex.refund:,.0f}</td></tr>'
+            )
+
     # one rate for the bill → "Tax 18%"; items with their own GST % → "Tax (by item)"
     one_rate = (
         compute_tax(money(inv.subtotal - inv.discount), inv.tax_rate, inv.tax_inclusive)[0]
@@ -972,7 +994,7 @@ small {{ color: #555; direction: ltr; unicode-bidi: isolate; }} .fbr {{ margin-t
 <tbody>{rows}
 <tr><td colspan="3">{T["subtotal"]}</td><td class="n">{inv.subtotal:,.0f}</td></tr>{disc_html}{tax_html}
 <tr class="tot"><td colspan="3">{T["grand"]}</td><td class="n">{e(profile.money(shop, inv.total))}</td></tr>
-<tr><td colspan="3">{T["paid"]}</td><td class="n">{inv.paid:,.0f}</td></tr>{paid_by_html}{change_html}
+{paid_rows}{paid_by_html}{change_html}
 <tr><td colspan="3">{T["due"]}</td><td class="n">{out["balance_due"]:,.0f}</td></tr>{plan_html}{balance_html}
 </tbody></table>
 {words_html}

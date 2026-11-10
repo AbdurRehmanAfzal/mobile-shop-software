@@ -891,7 +891,13 @@
     "paidHint": "Is se kam: baqi un ke khate par jaye ga.",
     "confirm": "Exchange mukammal karein",
     "another": "Ek aur exchange",
-    "viewBill": "Bill kholein"
+    "viewBill": "Bill kholein",
+    "toGet": "Customer se lena",
+    "toGive": "Customer ko dena",
+    "settled": "Hisaab barabar: kisi par kuch nahi",
+    "shopPaysNow": "Dukaan abhi de (Rs)",
+    "shopPaysHint": "Is se kam: baqi customer ke khate mein un ka haq rahe ga.",
+    "firstBill": "Pehla bill"
   },
   "report": {
     "title": "Report",
@@ -1272,7 +1278,12 @@
     "promiseDateBuy": "Supplier ko adaigi tak (ikhtiyari)",
     "promiseHint": "Tareekh ke saath audit us ke baad udhaar ko late kehta hai; baghair tareekh sirf udhaar ki umar dikhti hai.",
     "lendLate": "log len-den ki wapsi mein der kar rahe hain",
-    "lendWeOwe": "len-den jo dukaan ne jald wapas dena hai"
+    "lendWeOwe": "len-den jo dukaan ne jald wapas dena hai",
+    "returnCredit": "Wapas aayi cheez ka credit (Rs)",
+    "returnCreditHint": "Agar wapsi ke usool kuch kaat-te hain to bill ki qeemat se kam likhein.",
+    "restGoes": "Baqi, jo abhi wapas nahi diya",
+    "restKhata": "Customer ka khata (hum ne dena hai)",
+    "restCut": "Dukaan rakhe (katauti)"
   },
   "admin": {
     "title": "Super admin",
@@ -6056,6 +6067,16 @@
         "title": "Zaid raqam purane udhaar mein",
         "body": "Customer ne is bill se zyada diye aur pehle ka udhaar bhi dena hai. Ye tick karein to zaid raqam change ki jagah us ke purane udhaar mein jama ho jati hai. Khata kam hota hai aur bill par chhapta hai.",
         "example": "Bill Rs. 2,000, woh Rs. 5,000 deta hai aur pichhle mahine ka Rs. 3,000 dena hai → tick karein: wapas Rs. 0, purana udhaar khatam."
+      },
+      "returnCredit": {
+        "title": "Wapas aayi cheez ka credit",
+        "body": "Wapas aaye phone ke badle customer ko kitna mile. Aam taur par bill ki qeemat. Agar wapsi ke usool kuch rakhte hain to kam likhein: farq dukaan ki katauti hai. Agar customer par bill ka baqaya tha to credit pehle woh khatam karta hai; credit baqaye se kam ho to baqi abhi bhi customer se lena hai.",
+        "example": "Bill 80,000, diye 50,000 (30,000 baqaya). Credit 25,000: abhi 5,000 lena hai."
+      },
+      "restGoes": {
+        "title": "Baqi raqam",
+        "body": "Wapas aaye phone ki jo raqam customer ne di thi magar abhi wapas nahi di. Customer ka khata: dukaan ne deni hai aur baad mein de gi. Dukaan rakhe: yeh dukaan ki katauti (aamdani) hai.",
+        "example": "80,000 wapas dene hain, abhi 30,000: Customer ka khata chunein to 50,000 Customer ko dena."
       }
     },
     "exchange": {
@@ -6093,6 +6114,11 @@
         "title": "Naya balance",
         "body": "Is exchange ke baad customer ka khata: pichla balance + farq − abhi ada.",
         "example": "Pichla Rs. 0, farq Rs. 70,000, ada Rs. 50,000 → naya balance Rs. 20,000 us ke khate mein."
+      },
+      "shopPaysNow": {
+        "title": "Dukaan abhi de",
+        "body": "Jab naya phone purane phone ki tay shuda qeemat se sasta ho to farq dukaan ne dena hota hai. Abhi poora dein, kuch dein ya kuch nahi; jo abhi na diya woh customer ke khate mein un ka haq rehta hai aur baad mein khate se (Adaigi) diya jata hai.",
+        "example": "15,000 dene hain, abhi 5,000 diye: 10,000 Customer ko dena. Baad mein 4,000 aur phir 6,000 se hisaab khatam."
       }
     },
     "invoices": {
