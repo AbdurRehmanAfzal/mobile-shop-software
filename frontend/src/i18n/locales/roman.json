@@ -170,7 +170,8 @@
     "wholesale": "Dealer / wholesale customer",
     "wholesaleHint": "Items ki wholesale qeemat milti hai",
     "moreDetails": "Mazeed tafseel",
-    "moreDetailsHint": "CNIC, shehar, pata, notes, wholesale rate"
+    "moreDetailsHint": "CNIC, shehar, pata, notes, wholesale rate",
+    "phoneOpt": "Mobile number (agar ho)"
   },
   "stock": {
     "title": "Stock",

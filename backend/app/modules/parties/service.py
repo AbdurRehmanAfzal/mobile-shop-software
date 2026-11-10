@@ -53,7 +53,7 @@ def list_parties(
 
 
 def create_party(db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, data: PartyCreate) -> Party:
-    existing = by_phone(db, shop_id, data.phone)
+    existing = by_phone(db, shop_id, data.phone) if data.phone else None
     if existing is not None and not existing.is_active:
         # same number as an archived party: bring it back with the new details
         for k, v in data.model_dump().items():
@@ -97,7 +97,7 @@ def update_party(
 ) -> Party:
     party = get_party(db, shop_id, party_id)
     changes = data.model_dump(exclude_unset=True)
-    if "phone" in changes and changes["phone"] != party.phone:
+    if changes.get("phone") and changes["phone"] != party.phone:
         other = by_phone(db, shop_id, changes["phone"])
         if other and other.id != party.id:
             raise Conflict(code="party_phone_exists")

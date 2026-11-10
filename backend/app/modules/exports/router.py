@@ -462,7 +462,7 @@ def statement(
         ctx,
         db,
         lang,
-        f"statement-{party.phone}",
+        f"statement-{party.phone or party.name}",
         ["Date", "Details", "Type", "Debit (they owe)", "Credit (paid)", "Balance"],
         rows,
     )

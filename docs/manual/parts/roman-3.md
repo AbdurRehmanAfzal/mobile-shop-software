@@ -28,7 +28,7 @@ Kisi ko jaldi dhoondne ke liye search box (**Naam, phone ya CNIC**) istemal kare
 ### Naya banda daalein
 
 1. **Naya banda** dabayein.
-2. **Naam** aur **Mobile number** likhein (+92 ke baad, pehle 0 ke baghair, maslan `3001234567`).
+2. **Naam** likhein aur agar ho to **Mobile number** (+92 ke baad, pehle 0 ke baghair, maslan `3001234567`). Number zaroori nahi; number ke baghair us shakhs ko WhatsApp message ya reminder nahi jata. Baad mein **Edit** se daal sakte hain.
 3. **Qism** chunein: **Gahak**, **Dealer**, **Doosri dukaan** ya **Karigar**.
 4. Mazeed likhna ho to **Mazeed tafseel** dabayein: **CNIC** (aur card ka scan), **Shehar**, **Pata**, **Note** aur dealer ke liye wholesale qeemat. Jis bande ki yeh tafseel pehle se ho, usay badalte waqt yeh khud khul jata hai.
 5. Agar is bande ne aap ke purane register mein pehle se dena tha (ya aap ne us ko dena tha), to **Purana baqaya** mein likhein aur **Yeh mujhe dega** ya **Main isay doon ga** chunein.

@@ -227,12 +227,25 @@ def list_devices(
     if cost_max is not None:
         stmt = stmt.where(Device.cost_price <= cost_max)
     if supplier_id:
+        from app.modules.purchases.models import Purchase, PurchaseLine
+
+        # a purchase bill's person is read from the bill (it may have been changed, ADR-056)
         bought = (
             select(DeviceEvent.device_id)
             .where(
                 DeviceEvent.shop_id == shop_id,
                 DeviceEvent.party_id == supplier_id,
                 DeviceEvent.type.in_((EventType.PURCHASED, EventType.TRANSFERRED_IN)),
+                or_(DeviceEvent.document_type.is_(None), DeviceEvent.document_type != "purchase"),
+            )
+            .union(
+                select(PurchaseLine.device_id)
+                .join(Purchase, Purchase.id == PurchaseLine.purchase_id)
+                .where(
+                    Purchase.shop_id == shop_id,
+                    Purchase.party_id == supplier_id,
+                    PurchaseLine.device_id.is_not(None),
+                )
             )
             .scalar_subquery()
         )
@@ -315,25 +328,42 @@ def with_source(db: Session, rows: list[dict]) -> list[dict]:
     ids = [r["id"] for r in rows]
     if not ids:
         return rows
+    from app.modules.purchases.models import Purchase
+
     latest: dict = {}
-    for dev_id, party_id, seq in db.execute(
-        select(DeviceEvent.device_id, DeviceEvent.party_id, DeviceEvent.seq).where(
+    for dev_id, party_id, seq, doc_type, doc_id in db.execute(
+        select(
+            DeviceEvent.device_id,
+            DeviceEvent.party_id,
+            DeviceEvent.seq,
+            DeviceEvent.document_type,
+            DeviceEvent.document_id,
+        ).where(
             DeviceEvent.device_id.in_(ids),
             DeviceEvent.type.in_((EventType.PURCHASED, EventType.TRANSFERRED_IN)),
         )
     ).all():
         if dev_id not in latest or seq > latest[dev_id][1]:
-            latest[dev_id] = (party_id, seq)
+            latest[dev_id] = (party_id, seq, doc_id if doc_type == "purchase" else None)
+    # the event keeps who it was then; the bill says who it is now (seller changed, ADR-056)
+    bills = {x for _p, _s, x in latest.values() if x}
+    if bills:
+        now = dict(
+            db.execute(select(Purchase.id, Purchase.party_id).where(Purchase.id.in_(bills))).all()
+        )
+        latest = {k: (now.get(x, p) if x else p, s, x) for k, (p, s, x) in latest.items()}
     names = dict(
         db.execute(
-            select(Party.id, Party.name).where(Party.id.in_({p for p, _ in latest.values() if p}))
+            select(Party.id, Party.name).where(
+                Party.id.in_({p for p, _s, _x in latest.values() if p})
+            )
         ).all()
     )
     held = {r["reserved_party_id"] for r in rows if r.get("reserved_party_id")}
     if held - set(names):
         names.update(dict(db.execute(select(Party.id, Party.name).where(Party.id.in_(held))).all()))
     for r in rows:
-        pid = latest.get(r["id"], (None, 0))[0]
+        pid = latest.get(r["id"], (None, 0, None))[0]
         r["source_party_id"] = pid
         r["source_party_name"] = names.get(pid)
         r["reserved_party_name"] = names.get(r.get("reserved_party_id"))
