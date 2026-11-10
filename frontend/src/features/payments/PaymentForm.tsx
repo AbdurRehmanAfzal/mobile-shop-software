@@ -7,6 +7,7 @@ import { ErrorText, MoneyText } from '@/components/ui'
 import { Printer } from 'lucide-react'
 import { openPrintable } from '@/lib/files'
 import { useDocMutation } from '@/lib/queries'
+import { uid } from '@/lib/id'
 import type { Party, Payment } from '@/lib/types'
 import {withCur } from '@/lib/format'
 
@@ -14,21 +15,25 @@ import {withCur } from '@/lib/format'
 export interface Allocation { document_type: 'invoice' | 'purchase'; document_id: string; document_no: string; remaining: number }
 
 /** `lending` = len-den (docs/32): money given / taken with no bill, never put on a bill when it is made */
-export default function PaymentForm({ party, direction, onDone, allocation, lending }: { party: Party; direction: 'in' | 'out'; onDone: (p: Payment) => void; allocation?: Allocation; lending?: boolean }) {
+/** `amount`: prefilled (an open balance with no bill behind it); `noAllocation`: the money is for
+ *  something that is not a bill (a lab charge, a return credit), so it must not be put on another
+ *  bill of the same person; one Idempotency-Key per form, so a retry posts it once (ADR-058) */
+export default function PaymentForm({ party, direction, onDone, allocation, lending, amount: start, noAllocation }: { party: Party; direction: 'in' | 'out'; onDone: (p: Payment) => void; allocation?: Allocation; lending?: boolean; amount?: number; noAllocation?: boolean }) {
   const { pick } = useLang()
-  const [amount, setAmount] = useState(allocation ? String(allocation.remaining) : '')
+  const [amount, setAmount] = useState(allocation ? String(allocation.remaining) : start ? String(start) : '')
+  const [idem] = useState(uid)
   // cash / online / cheque / from abroad, the same as on a sale (owner 2026-10-28)
   const [pay, setPay] = useState<PayState>(() => newPay())
   const [notes, setNotes] = useState('')
   const [due, setDue] = useState('')
   const [result, setResult] = useState<Payment | null>(null)
   const [queued, setQueued] = useState(false)
-  const m = useDocMutation<Record<string, unknown>, Payment>('POST', () => '/api/v1/payments', undefined, { kind: 'payment', label: (b) => `${pick(lending ? (direction === 'in' ? 'lending.take' : 'lending.give') : direction === 'in' ? 'pay.in' : 'pay.out')} · ${party.name} · ${withCur(Number((b as { amount?: number }).amount ?? 0).toLocaleString('en-US'))}` })
+  const m = useDocMutation<Record<string, unknown>, Payment>('POST', () => '/api/v1/payments', undefined, { kind: 'payment', label: (b) => `${pick(lending ? (direction === 'in' ? 'lending.take' : 'lending.give') : direction === 'in' ? 'pay.in' : 'pay.out')} · ${party.name} · ${withCur(Number((b as { amount?: number }).amount ?? 0).toLocaleString('en-US'))}` }, { key: () => idem })
 
   async function submit(e: FormEvent) {
     e.preventDefault()
     const alloc = allocation ? [{ document_type: allocation.document_type, document_id: allocation.document_id, amount: Math.min(Number(amount), allocation.remaining) }] : undefined
-    const res = await m.mutateAsync({ party_id: party.id, direction, amount: Number(amount), payment: payInfo(pay), notes: notes || undefined, allocations: alloc, purpose: lending ? 'lending' : undefined, due_date: lending && due ? due : undefined })
+    const res = await m.mutateAsync({ party_id: party.id, direction, amount: Number(amount), payment: payInfo(pay), notes: notes || undefined, allocations: alloc ?? (noAllocation ? [] : undefined), purpose: lending ? 'lending' : undefined, due_date: lending && due ? due : undefined })
     if (isQueued(res)) {
       setQueued(true)
       return

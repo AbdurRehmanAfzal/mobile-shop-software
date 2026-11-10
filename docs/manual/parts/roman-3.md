@@ -96,6 +96,19 @@ Us ke neeche aap ko milega:
 
 > **Mashwara:** Jab koi customer apne baqaye par behes kare, to us ka safha kholein, **Download** → **PDF** dabayein aur statement WhatsApp par bhej dein. Har line par tareekh aur bill number hai.
 
+### Khule baqaya jaat: phone, customer, dealer, technician ke hisaab se lena / dena
+
+Sirf maalik aur manager ke liye. **Udhaar** screen par upar **Lena / Dena** dabayein (ya **More → Khule baqaya jaat**).
+
+- Upar ke do card dukaan ka kul hain: **Lena hai** aur **Dena hai**. Kisi ek par dabayein to sirf wahi taraf dikhe gi.
+- **Mobile / IMEI**, **Customer**, **Dealer** aur **Technician** mein badlein. Yeh wahi raqam chaar tarah dikhati hai; har raqam ek hi dafa gini jati hai.
+- IMEI, model, naam ya bill number se dhoondein.
+- Har line **Lena** aur **Dena** alag dikhati hai, chahe ek hi phone ya shakhs par dono hon. Misaal: ek phone Bilal se udhaar par 20,000 mein khareeda, Ali ko udhaar par 15,000 mein becha aur Usman ki lab mein repair hua (2,000 abhi nahi diye) to **Lena 15,000** aur **Dena 22,000**.
+- Jis bill mein ek se zyada phone hon us ka baqaya bill par rehta hai. Phone wale hisse mein yeh ek dafa **IMEI ke baghair (kai phone ka bill)** mein aata hai, aur shakhs ke neeche bhi dikhta hai.
+- Jo kisi bill se na jure, jaise purana baqaya ya advance, woh shakhs ke neeche **Purana baqaya / deegar** mein aata hai.
+
+Kisi line par dabayein to har bill, kaam ya lab charge dikhe ga: shakhs, kul raqam, kitna diya (adaigiyon ke saath) aur kitna baqi. **Kholein** bill dikhata hai. **Raqam wusool karein** ya **Raqam dein** mamool ka adaigi form shakhs, simt, raqam aur bill ke saath bhara hua kholta hai; **Yeh ada hoga** wali line batati hai ke raqam kis cheez ki hai. Poori ya kuch raqam de sakte hain. Raseed mamool ke mutabiq chhapti hai aur har list taaza ho jati hai.
+
 ### Ghalti theek karna
 
 Khata ek jild wale register ki tarah hai: safhe kabhi phade nahi jate. Agar koi payment ghalat likhi gayi, to usay kholein aur wajah likh kar cancel karein. Purani entry rehti hai (kati hui) aur ek ulti entry baqaya theek kar deti hai. Phir sahi entry daalein. Is tarah history hamesha dikhati hai ke kya hua aur kis ne kiya.

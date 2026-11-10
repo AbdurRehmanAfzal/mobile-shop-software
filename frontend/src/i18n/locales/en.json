@@ -6935,6 +6935,11 @@
           "title": "Branch transfers",
           "body": "Send phones and items from this shop to another branch of yours. The phone leaves this shop's stock (its history stays here) and appears in the branch's stock with the same IMEI, barcode, buying price and selling price. Items move with their buying cost. Nothing is sold, so profit does not change.",
           "example": "Send an iPhone 13 and 10 chargers from Saddar to the Mall Road branch: Saddar's stock goes down by Rs. 1,52,000 at cost, Mall Road's goes up by the same."
+        },
+        "balances": {
+          "title": "Open balances",
+          "body": "What is still to get and to give, by phone, customer, dealer and technician.",
+          "example": "IMEI ...1234 shows to get 15,000 (Ali's sale) and to give 22,000 (Bilal's purchase 20,000 + Usman's lab charge 2,000)."
         }
       },
       "pinPassword": {
@@ -7850,6 +7855,18 @@
         "title": "Back to default",
         "body": "Puts every appearance choice back to how the app came.",
         "example": "After trying colours, tap it → light theme, Classic design, default colours."
+      }
+    },
+    "bal": {
+      "page": {
+        "title": "Open balances",
+        "body": "Everything still owed, both ways, on one screen. To get is money people owe the shop (sale bills on udhaar, repair jobs delivered on udhaar). To give is money the shop owes (purchase bills not fully paid, return credits, repair-lab charges). Tap a row to see the bills or jobs behind it, what was paid and what is left, then Receive payment or Make payment: the usual payment form opens with the person, the direction and the bill filled in. Each amount is counted once in the totals. Only the owner and manager see this screen.",
+        "example": "IMEI ...1234 shows to get 15,000 (Ali's sale) and to give 22,000 (Bilal's purchase 20,000 + Usman's lab charge 2,000)."
+      },
+      "views": {
+        "title": "Show by",
+        "body": "The same amounts grouped four ways: by phone (IMEI), by customer, by dealer and by technician. A bill with several phones shows under \"Unallocated by IMEI\" once. Something no bill explains, like an old balance or an advance, shows as \"Old balance / other\" under the person.",
+        "example": "Dealer: every dealer the shop still has to pay, with the purchase bills."
       }
     }
   },
@@ -10325,5 +10342,38 @@
     "fbr": "FBR invoice no.",
     "call": "Call the shop",
     "footer": "Keep this page as your copy of the bill."
+  },
+  "bal": {
+    "title": "Open balances",
+    "short": "Get / give",
+    "toGet": "To get (receivable)",
+    "toGive": "To give (payable)",
+    "get": "Get",
+    "give": "Give",
+    "view": "Show by",
+    "views": {
+      "imei": "Mobile / IMEI",
+      "customer": "Customer",
+      "dealer": "Dealer",
+      "technician": "Technician"
+    },
+    "search": "IMEI, phone model, name or bill no.",
+    "none": "Nothing is owed either way",
+    "unallocated": "Unallocated by IMEI",
+    "unallocatedHint": "A bill with more than one phone keeps what is left on the bill, not on each phone. It is counted once here and under the person.",
+    "total": "Total",
+    "paid": "Paid",
+    "notOnBill": "Payment not on a bill",
+    "open": "Open",
+    "receive": "Receive payment",
+    "pay": "Make payment",
+    "settles": "This settles:",
+    "src": {
+      "invoice": "Sale bill",
+      "purchase": "Purchase bill",
+      "repair": "Repair job",
+      "lab": "Repair lab charge",
+      "other": "Old balance / other"
+    }
   }
 }

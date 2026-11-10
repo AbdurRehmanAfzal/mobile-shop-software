@@ -6935,6 +6935,11 @@
           "title": "Branch transfer",
           "body": "Is dukaan se mobile aur items apni doosri branch ko bhejein. Mobile is dukaan ke stock se nikal jata hai (us ki history yahin rehti hai) aur branch ke stock mein usi IMEI, barcode, khareed aur farokht ki qeemat ke saath aa jata hai. Items apni khareed ki qeemat ke saath jate hain. Kuch bikta nahi, is liye munafa nahi badalta.",
           "example": "Saddar se Mall Road branch ko ek iPhone 13 aur 10 charger bhejein: Saddar ka stock khareed par Rs. 1,52,000 kam, Mall Road ka utna hi zyada."
+        },
+        "balances": {
+          "title": "Khule baqaya jaat",
+          "body": "Phone, customer, dealer, technician ke hisaab se lena / dena",
+          "example": "IMEI ...1234 par Lena 15,000 (Ali ki bikri) aur Dena 22,000 (Bilal ki khareed 20,000 + Usman ka lab charge 2,000)."
         }
       },
       "pinPassword": {
@@ -7850,6 +7855,18 @@
         "title": "Pehle jaisa karein",
         "body": "Appearance ki har pasand app ki asal halat par wapas.",
         "example": "Rang aazmane ke baad dabayein → roshan theme, Classic design, asal rang."
+      }
+    },
+    "bal": {
+      "page": {
+        "title": "Khule baqaya jaat",
+        "body": "Dono taraf ka saara baqaya ek screen par. Lena hai: jo logon ne dukaan ko dena hai (udhaar par beche bill, udhaar par diye repair ke kaam). Dena hai: jo dukaan ne dena hai (poore ada na huye khareed ke bill, wapsi ka credit, lab ke charge). Kisi line par tap karein to us ke bill ya kaam, di gayi raqam aur baqi nazar aaye ga, phir Raqam wusool karein ya Raqam dein: mamool ka adaigi form shakhs, simt aur bill ke saath bhara hua khulta hai. Har raqam kul mein ek hi dafa gini jati hai. Yeh screen sirf maalik aur manager dekhte hain.",
+        "example": "IMEI ...1234 par Lena 15,000 (Ali ki bikri) aur Dena 22,000 (Bilal ki khareed 20,000 + Usman ka lab charge 2,000)."
+      },
+      "views": {
+        "title": "Kis tarah dikhayein",
+        "body": "Yahi raqamein chaar tarah: phone (IMEI) ke hisaab se, customer, dealer aur technician ke hisaab se. Kai phone wala bill \"IMEI ke baghair\" mein ek dafa aata hai. Jo kisi bill se na jure, jaise purana baqaya ya advance, woh shakhs ke neeche \"Purana baqaya / deegar\" mein aata hai.",
+        "example": "Dealer: har woh dealer jise dukaan ne abhi dena hai, khareed ke billon ke saath."
       }
     }
   },
@@ -10325,5 +10342,38 @@
     "fbr": "FBR invoice number",
     "call": "Dukaan ko call karein",
     "footer": "Ye page apne bill ki copy ke taur par rakhein."
+  },
+  "bal": {
+    "title": "Khule baqaya jaat",
+    "short": "Lena / Dena",
+    "toGet": "Lena hai",
+    "toGive": "Dena hai",
+    "get": "Lena",
+    "give": "Dena",
+    "view": "Kis tarah dikhayein",
+    "views": {
+      "imei": "Mobile / IMEI",
+      "customer": "Customer",
+      "dealer": "Dealer",
+      "technician": "Technician"
+    },
+    "search": "IMEI, model, naam ya bill number",
+    "none": "Kisi taraf kuch baqi nahi",
+    "unallocated": "IMEI ke baghair (kai phone ka bill)",
+    "unallocatedHint": "Jis bill mein ek se zyada phone hon us ka baqaya bill par rehta hai, har phone par nahi. Yeh yahan aur shakhs ke neeche ek hi dafa gina jata hai.",
+    "total": "Kul",
+    "paid": "Diye",
+    "notOnBill": "Bill ke baghair adaigi",
+    "open": "Kholein",
+    "receive": "Raqam wusool karein",
+    "pay": "Raqam dein",
+    "settles": "Yeh ada hoga:",
+    "src": {
+      "invoice": "Bikri ka bill",
+      "purchase": "Khareed ka bill",
+      "repair": "Repair ka kaam",
+      "lab": "Lab ka charge",
+      "other": "Purana baqaya / deegar"
+    }
   }
 }

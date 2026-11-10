@@ -362,6 +362,28 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-058 · 2026-11-10 · Accepted · Open balances: one read-only view of lena / dena by phone, customer, dealer and technician
+**Context**: an owner brief asked for one screen of what is still owed, both ways, by Mobile / IMEI, customer, dealer and technician, with drill-down and payment straight from a row. The audit found:
+- The **Udhaar khata** shows one net balance per person, with no split, no dealer / technician tabs and no IMEI view.
+- **Money on this phone** (`/devices/{id}/money`) and **a person's phones** (`/parties/{id}/units`) show one phone or one person at a time.
+- Payments posted fine, and `PaymentForm` already took an allocation, but it sent a new Idempotency-Key on every try.
+**Decision**:
+- `GET /balances?view=imei|customer|dealer|technician&direction=&q=` (owner / manager, `VIEW_COST`), `balances/service.py`. It is read-only: nothing new is stored. Its sources are:
+  - sale bills (`total − returned − paid`; below zero a return credit to give);
+  - purchase bills (the same, the other way);
+  - repair jobs delivered on udhaar;
+  - repair-lab charges not paid (`final_cost − paid_now`);
+  - a person's payments not on a bill, applied oldest first to their non-bill items (lab charges, return credits / repair jobs).
+- What the bills cannot explain becomes one **Other** row per person, so each person's get − give equals their ledger balance and every amount is counted once.
+- A phone's key is the single IMEI on the item. A bill with more than one phone goes under **Unallocated by IMEI**, never split.
+- The tab follows the person's kinds: technician, then dealer (supplier / shop), then customer.
+- The screen is `/balances` (**Udhaar → Get / give**, **More → Open balances**, owner / manager). A row opens its items; **Receive / Make payment** opens `PaymentForm` with the person, the direction, the amount and the bill.
+- `PaymentForm`: an `amount` prefill, `noAllocation` (money for a non-bill item is not put on another bill), and one Idempotency-Key per form.
+**Consequences**:
+- A payment for a lab charge or a return credit is recorded "not on a bill" (allocations only exist for sale / purchase bills); the view applies it oldest first.
+- Salesmen keep the khata, not this screen.
+- An open amount on a multi-phone bill is not apportioned per phone here; **Money on this phone** still shows its proportional share.
+
 ## ADR-057 · 2026-11-10 · Accepted · Exchanges and returns settle like udhaar: the trade-in is put against the new bill, the rest is paid now, partly or later
 **Context**: an owner audit brief with tables of exchange and return cases (a phone sold days ago comes back; trade-in at an agreed value or a return; whoever owes pays all, part or nothing now).
 - The khata and cash were already right in every case, and the IMEI history kept the first sale.

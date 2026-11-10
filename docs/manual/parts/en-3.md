@@ -96,6 +96,19 @@ Below that you will find:
 
 > **Tip:** When a customer argues about his balance, open his page, tap **Download** → **PDF** and send him the statement on WhatsApp. Every line has a date and a bill number.
 
+### Open balances: to get / to give by phone, customer, dealer, technician
+
+Owner and manager only. On the **Udhaar** screen tap **Get / give** at the top (or **More → Open balances**).
+
+- The two cards at the top are the shop's totals: **To get (receivable)** and **To give (payable)**. Tap one to see only that side.
+- Switch between **Mobile / IMEI**, **Customer**, **Dealer** and **Technician**. It is the same money grouped four ways; each amount is counted once.
+- Search by IMEI, phone model, name or bill number.
+- Each row shows **Get** and **Give** separately, even when the same phone or person has both. Example: one phone bought from Bilal on udhaar (20,000), sold to Ali on udhaar (15,000) and repaired at Usman's lab (2,000 not paid) shows **Get 15,000** and **Give 22,000**.
+- A bill with more than one phone keeps what is left on the bill. In the phone view it shows once under **Unallocated by IMEI**, and it still shows under the person.
+- Something no bill explains, like an old balance or an advance, shows under the person as **Old balance / other**.
+
+Tap a row to see each bill, job or lab charge behind it: the person, the total, what was paid (with the payments) and what is left. **Open** shows the bill. **Receive payment** or **Make payment** opens the usual payment form with the person, the direction, the amount and the bill already filled in; the line **This settles** says what the money is for. You can pay all or part. The payment receipt prints as usual, and every list updates.
+
 ### Fixing a mistake
 
 The khata is like a bound register: pages are never torn out. If a payment was entered wrongly, open it and cancel it with a reason. The old entry stays (crossed out) and a reversing entry fixes the balance. Then enter the correct one. This way the history always shows what happened and who did it.

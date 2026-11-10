@@ -3,7 +3,7 @@
 import { ChevronLeft, ChevronRight, Bot,
   ArrowLeftRight, Archive, BarChart3, Bell, BookOpen, CalendarDays, Check, ClipboardList, CreditCard, FileSpreadsheet, FileText, HandCoins, Headphones, KeyRound,
   Landmark, Lock, LogOut, Package, PackagePlus, Palette, ShieldCheck, Receipt, RotateCcw, ScanLine, Settings, Smartphone, Store, Tag, Tags, Undo2, Users,
-  Wallet, Wrench, type LucideIcon,
+  Scale, Wallet, Wrench, type LucideIcon,
 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -46,6 +46,7 @@ const GROUPS: Group[] = [
       { key: 'counter.addStock', Icon: PackagePlus, to: '/purchase/new', tone: T.buy, help: 'more.tile.addStock' },
       { key: 'counter.returnJob', Icon: Undo2, to: '/return/new', tone: T.ret, help: 'more.tile.returnJob' },
       { key: 'counter.khata', Icon: BookOpen, to: '/khata', tone: T.khata, help: 'khata' },
+      { key: 'bal.title', Icon: Scale, to: '/balances', tone: T.khata, help: 'more.tile.balances', roles: MANAGERS },
       { key: 'inst.title', Icon: HandCoins, to: '/installments', tone: T.khata, help: 'more.tile.installments' },
       { key: 'ai.title', Icon: Bot, to: '/assistant', tone: T.plain, help: 'more.tile.assistant' },
       { key: 'counter.repair', Icon: Wrench, to: '/repairs', tone: T.repair, help: 'more.tile.repairs' },

@@ -157,6 +157,11 @@ Close the app fully and open it again first (or install the newest APK from the 
 2. Exchange: take it back at 70,000, give a 55,000 phone, and pay 5,000 now. The screen and the bill say "To give to customer 10,000". The khata shows -10,000. Pay 4,000, then 6,000: settled.
 3. Return another 80,000 sale: give 30,000 now and pick Customer's khata. You should see "To give to customer 50,000".
 
+**Open balances (2026-11-10, ADR-058)**:
+1. Udhaar → **Get / give**.
+2. Buy a phone from a dealer on udhaar and sell it to a customer on udhaar. The phone's row shows both Get and Give.
+3. Open the row, **Receive payment** 5,000, then **Make payment** to the dealer. The totals go down and the customer's and dealer's khata match.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |
