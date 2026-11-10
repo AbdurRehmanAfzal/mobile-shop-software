@@ -299,6 +299,9 @@ class DeviceOut(BaseModel):
     region_code: str | None = None
     battery_cycles: int | None = None
     sim_type: str | None = None
+    # who it was bought from (stock list, ADR-059); not on every endpoint
+    source_party_id: uuid.UUID | None = None
+    source_party_name: str | None = None
     grade: str | None = None
     ram_gb: int | None = None
     warranty_by: str | None = None

@@ -32,9 +32,10 @@ export default function BalancesPage() {
   const { pick, ur, cls } = useLang()
   const nav = useNavigate()
   const inv = useInvalidate()
-  const [view, setView] = useState<View>('imei')
+  // a phone's page links here with ?q=<IMEI> (ADR-059)
+  const [view, setView] = useState<View>(() => (new URLSearchParams(window.location.search).get('view') as View) || 'imei')
   const [dir, setDir] = useState<Dir>('')
-  const [q, setQ] = useState('')
+  const [q, setQ] = useState(() => new URLSearchParams(window.location.search).get('q') ?? '')
   const [open, setOpen] = useState<Group | null>(null)
   const [paying, setPaying] = useState<{ item: Item; party: Party } | null>(null)
   const path = `/api/v1/balances?view=${view}${dir ? `&direction=${dir}` : ''}${q ? `&q=${encodeURIComponent(q)}` : ''}`

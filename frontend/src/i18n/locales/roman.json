@@ -315,7 +315,8 @@
       "imei2": "IMEI 2",
       "serial": "Serial",
       "barcode": "Barcode",
-      "verification": "ID check"
+      "verification": "ID check",
+      "source": "Jis se khareeda"
     },
     "fields": {
       "button": "Fields",
@@ -333,6 +334,33 @@
         "imei2": "IMEI 2",
         "seller": "Jis se khareeda"
       }
+    },
+    "kind": {
+      "all": "Saara stock",
+      "phone": "Mobiles",
+      "tablet": "Tablets",
+      "watch": "Smartwatches",
+      "items": "Accessories",
+      "part": "Spare parts",
+      "other": "Deegar"
+    },
+    "card": {
+      "available": "Bechne ke liye tayyar",
+      "onHand": "Dukaan mein",
+      "approval": "Customer ke paas (manzoori)",
+      "inspection": "Jaanch mein",
+      "repair": "Repair mein",
+      "faulty": "Kharab",
+      "low": "Kam stock (items)",
+      "out": "Khatam (items)",
+      "value": "Khareed ke hisaab se maliyat"
+    },
+    "fx": {
+      "age": "Stock ki umar",
+      "olderThan": "{{n}}+ din",
+      "supplier": "Jis se khareeda",
+      "costMin": "Khareed se",
+      "costMax": "Khareed tak"
     }
   },
   "purchase": {
@@ -5425,6 +5453,33 @@
         "title": "Wajah",
         "body": "IMEI kyun badla. Yeh phone ki history mein dikhti hai.",
         "example": "Likhne mein ghalti."
+      },
+      "kinds": {
+        "title": "Stock ki qism",
+        "body": "Mobiles, tablets aur smartwatches yahan ek ek kar ke gine jate hain (har ek ka IMEI ya serial). Accessories, spare parts aur deegar items tadaad se gine jate hain: yeh tabs items wali screen usi qism ke saath kholte hain.",
+        "example": "Spare parts: items ki list sirf parts ke saath khulti hai."
+      },
+      "cards": {
+        "title": "Stock ek nazar mein",
+        "body": "Bechne ke liye tayyar: stock mein aur tayyar (ID check ho gaya ya zaroorat nahi, koi lock baqi nahi); Dukaan mein har woh phone ginta hai jo dukaan ke paas hai, tayyar na ho to bhi. Customer ke paas (manzoori), Jaanch mein (ID check baqi ya mashkook, ya lock baqi), Repair mein aur Kharab baqi hain. Card par tap karein to sirf wahi dikhein ge. Kam / khatam stock items ko un ki apni had se ginta hai aur items ki list kholta hai. Khareed ke hisaab se maliyat (maalik aur manager) stock ki laagat hai. Dekhne se kuch nahi badalta.",
+        "example": "5 iPhone: 3 tayyar, 1 customer ke paas, 1 jaanch mein; dukaan mein 5."
+      },
+      "fx": {
+        "age": {
+          "title": "Stock ki umar",
+          "body": "Sirf woh phone jo is se zyada din se dukaan mein hain.",
+          "example": "60+ din: jin ki qeemat kam karni ya jaldi bechne hain."
+        },
+        "supplier": {
+          "title": "Jis se khareeda",
+          "body": "Sirf is dealer se khareede (ya branch se aaye) phone.",
+          "example": "Rehman Traders: un ka jo abhi dukaan mein hai."
+        },
+        "cost": {
+          "title": "Khareed ki had",
+          "body": "Sirf woh phone jin ki khareed qeemat is had mein hai. Sirf maalik aur manager.",
+          "example": "50,000 se 80,000 tak."
+        }
       }
     },
     "loan": {

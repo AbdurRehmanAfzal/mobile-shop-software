@@ -35,13 +35,16 @@ export default function AccessoriesPage() {
   const [filters, setFilters] = useState(false)
   const [brand, setBrand] = useState('')
   const [grade, setGrade] = useState('')
-  const [out, setOut] = useState(false)
+  const [out, setOut] = useState(params.get('out') === '1')
+  // the stock screen's Spare parts / Other tabs open this list with that category (ADR-059)
+  const [category, setCategory] = useState(params.get('category') ?? '')
   const qs = new URLSearchParams()
   if (tab === 'low') qs.set('low_only', 'true')
   if (q.trim()) qs.set('q', q.trim())
   if (brand) qs.set('brand', brand)
   if (grade) qs.set('grade', grade)
   if (out) qs.set('out_only', 'true')
+  if (category) qs.set('category', category)
   const { data, isLoading } = useGet<Item[]>(['accessories', tab, qs.toString()], tab === 'pending' ? null : `/api/v1/accessories?${qs}`)
   const { data: opts } = useGet<ItemOptions>(['item-options'], '/api/v1/accessories/options')
   const { data: pending } = useGet<Pending[]>(['acc-pending'], tab === 'pending' ? '/api/v1/accessories/pending' : null)
@@ -72,6 +75,7 @@ export default function AccessoriesPage() {
             {brand ? <span className={chip(true)}>{brand}</span> : null}
             {grade ? <span className={chip(true)}>{gradeLabel(pick, grade, exists)}</span> : null}
             {out ? <span className={chip(true)}>{pick('acc.outOfStock')}</span> : null}
+            {category ? <button type="button" onClick={() => setCategory('')} className={chip(true)} data-testid="acc-category">{kindLabel(pick, category)} ×</button> : null}
           </div>
           {filters ? (
             <div className="card flex flex-col gap-2" data-testid="item-filters">

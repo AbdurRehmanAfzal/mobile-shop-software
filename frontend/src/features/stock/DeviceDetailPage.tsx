@@ -162,6 +162,7 @@ export default function DeviceDetailPage() {
           <BiButton text="stock.changePrice" variant="secondary" size="md" onClick={() => { setText(d.asking_price ?? ''); setSheet('price') }} />
           <BiButton text="stock.addNote" variant="secondary" size="md" onClick={() => { setText(''); setSheet('note') }} />
           <BiButton text="crud.editDetails" variant="secondary" size="md" onClick={() => setSheet('edit')} />
+          {canSeeCost ? <BiButton text="bal.short" variant="secondary" size="md" onClick={() => nav(`/balances?q=${encodeURIComponent(d.imei1)}`)} data-testid="device-balances" /> : null}
           {canSeeCost && ((d.category ?? 'phone') === 'phone' || d.cellular) ? <BiButton text="stock.fixImei.button" variant="secondary" size="md" onClick={() => { setFix({ imei1: d.imei1, imei2: d.imei2 ?? '', clear2: false, reason: '' }); setFixErr(null); setSheet('imei') }} data-testid="fix-imei" /> : null}
           {d.condition !== 'box_pack' ? <BiButton text="devx.lock.button" variant="secondary" size="md" onClick={() => { setLocks(d.lock_checks ?? {}); setLockNote(''); setSheet('lock') }} /> : null}
           {canSeeCost ? <BiButton text="devx.retype" variant="secondary" size="md" onClick={() => { setToCat((d.category ?? 'phone') === 'phone' ? 'tablet' : 'phone'); setPreview(null); setRetypeErr(null); setSheet('retype') }} /> : null}

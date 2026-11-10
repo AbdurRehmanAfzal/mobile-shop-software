@@ -1,24 +1,35 @@
 import DownloadButton from '@/components/DownloadButton'
 import { ArrowUpDown, PackagePlus, ScanLine } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useLang, BiInput, BiLabel } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import { BtnText, Chip, Empty, ErrorText, Loading, MoneyText, PageHeader, Row, SearchBox, Sheet } from '@/components/ui'
-import { useBrands, useDevices, useInvalidate } from '@/lib/queries'
+import { useBrands, useDevices, useGet, useInvalidate } from '@/lib/queries'
+import { useAuth } from '@/lib/auth'
 import { beep, useScan } from '@/lib/scanner'
 import { lookupCode } from '@/components/ScanListener'
-import type { Device } from '@/lib/types'
+import type { Device, Party } from '@/lib/types'
 import ImeiLookupSheet from './ImeiLookupSheet'
 import LabelSheet from '@/components/LabelSheet'
 import { api } from '@/lib/api'
 import { Tag } from 'lucide-react'
 import { BiButton } from '@/components/Bilingual'
 import { simTypeText } from '@/features/purchase/AppleVariant'
+import { KindTabs, StatusCards, type Kind, type Mode } from './StockCards'
 import { FieldsButton, StockGrid, StockList, StockTable, ViewSwitch, fieldBits, loadFields, loadView, saveFields, saveView, sortRows, FIELDS, type ColSort, type FieldKey, type StockView } from './StockViews'
 
 type Filter = 'in_stock' | 'on_loan' | 'sold' | 'faulty' | 'all'
+
+interface Kept { filter: Filter; brand: string; sort: Sort; kind: Kind; mode: Mode; fx: Record<string, string | boolean> }
+const KEEP = 'stock.filters'
+function readKept(): Kept | null {
+  try { return JSON.parse(sessionStorage.getItem(KEEP) ?? 'null') } catch { return null }
+}
+function writeKept(k: Kept) {
+  try { sessionStorage.setItem(KEEP, JSON.stringify(k)) } catch { /* private mode */ }
+}
 
 /** what matters for this kind of device, e.g. "128GB · Black", "45mm · GPS · Battery 91%" */
 export function specLine(d: Device, pick: (k: string) => string, withColour = true): string {
@@ -120,9 +131,15 @@ export default function StockPage() {
   const [q, setQ] = useState(() => new URLSearchParams(window.location.search).get('q') ?? '')
   // opened from the Shop Audit: condition / PTA / type come in the link
   const [preset] = useState(() => { const sp = new URLSearchParams(window.location.search); return { condition: sp.get('condition') ?? undefined, pta_status: sp.get('pta_status') ?? undefined, category: sp.get('category') ?? undefined } })
-  const [filter, setFilter] = useState<Filter>('in_stock')
-  const [brand, setBrand] = useState<string>('')
-  const [sort, setSort] = useState<Sort>('newest')
+  // owner brief 2026-11-10 (ADR-059): the chosen filters come back when the shopkeeper returns from
+  // a phone's page (kept for this tab only; a link from the Shop Audit starts fresh)
+  const kept = useState(() => (preset.condition || preset.pta_status || preset.category ? null : readKept()))[0]
+  const [filter, setFilter] = useState<Filter>(kept?.filter ?? 'in_stock')
+  const [brand, setBrand] = useState<string>(kept?.brand ?? '')
+  const [sort, setSort] = useState<Sort>(kept?.sort ?? 'newest')
+  const [kind, setKind] = useState<Kind>(kept?.kind ?? '')
+  const [mode, setMode] = useState<Mode>(kept?.mode ?? '')
+  const canCost = useAuth((s) => s.me?.user.role === 'owner' || s.me?.user.role === 'manager')
   const [lookup, setLookup] = useState(false)
   const [picking, setPicking] = useState(false)
   const [picked, setPicked] = useState<string[]>([])
@@ -132,12 +149,15 @@ export default function StockPage() {
   const [view, setView] = useState<StockView>(loadView)
   const [fields, setFields] = useState<FieldKey[]>(loadFields)
   const [colSort, setColSort] = useState<ColSort>(null)
-  const [fx, setFx] = useState({ grade: '', ram: '', min: '', max: '', lock: false })
+  const [fx, setFx] = useState({ grade: '', ram: '', min: '', max: '', lock: false, condition: '', pta: '', age: '', costMin: '', costMax: '', supplier: '', ...(kept?.fx ?? {}) })
+  useEffect(() => { writeKept({ filter, brand, sort, kind, mode, fx }) }, [filter, brand, sort, kind, mode, fx])
+  const { data: suppliers } = useGet<Party[]>(['parties', 'suppliers'], more ? '/api/v1/parties?kind=supplier' : null)
   const [retype, setRetype] = useState(false)
   const [toCat, setToCat] = useState<'phone' | 'tablet' | 'watch'>('tablet')
   const [retypeRows, setRetypeRows] = useState<{ id: string; imei1: string; problems: string[] }[] | null>(null)
   const [retypeErr, setRetypeErr] = useState<unknown>(null)
-  const { data, isLoading } = useDevices({ q: q || undefined, status: filter === 'all' ? undefined : filter, ...preset, limit: 500, grade: fx.grade || undefined, ram_gb: fx.ram ? Number(fx.ram) : undefined, price_min: fx.min ? Number(fx.min) : undefined, price_max: fx.max ? Number(fx.max) : undefined, lock_unchecked: fx.lock || undefined })
+  const statusParam = mode === 'in_repair' || mode === 'faulty' || mode === 'with_customer_for_approval' ? mode : mode ? undefined : filter === 'all' ? undefined : filter
+  const { data, isLoading } = useDevices({ q: q || undefined, status: statusParam, ...preset, category: kind || preset.category, condition: fx.condition || preset.condition, pta_status: fx.pta || preset.pta_status, limit: 500, grade: fx.grade || undefined, ram_gb: fx.ram ? Number(fx.ram) : undefined, price_min: fx.min ? Number(fx.min) : undefined, price_max: fx.max ? Number(fx.max) : undefined, lock_unchecked: fx.lock || undefined, sellable: mode === 'sellable' || undefined, inspection: mode === 'inspection' || undefined, age_min: fx.age ? Number(fx.age) : undefined, cost_min: canCost && fx.costMin ? Number(fx.costMin) : undefined, cost_max: canCost && fx.costMax ? Number(fx.costMax) : undefined, supplier_id: fx.supplier || undefined })
   useScan(async (code) => {
     const r = await lookupCode(code).catch(() => null)
     if (r?.kind === 'device' && r.device) { beep('ok'); nav(`/stock/${r.device.id}`) } else if (r?.kind === 'item' && r.item) { beep('ok'); nav(`/accessories?q=${encodeURIComponent(r.item.sku)}`) } else { beep('error'); setQ(code) }
@@ -164,7 +184,8 @@ export default function StockPage() {
   const rows = colSort ? sortRows(sorted, (d) => (colSort.key === 'name' ? `${d.brand_name} ${d.model_name}` : sortField!.get(d, pick)), colSort.up) : sorted
   // owner 2026-11-09: Download / Share give what the page shows: its filters, fields and order
   const exportPath = (() => {
-    const p = new URLSearchParams({ status: filter, cols: ['name', ...fields].join(',') })
+    const p = new URLSearchParams({ status: statusParam ?? 'all', cols: ['name', ...fields].join(',') })
+    if (kind) p.set('category', kind)
     if (q) p.set('q', q)
     if (brand) p.set('brand_id', brand)
     for (const [k, v] of Object.entries(preset)) if (v) p.set(k, v)
@@ -198,6 +219,8 @@ export default function StockPage() {
           </div>
         }
       />
+      <KindTabs value={kind} onChange={(k) => { setKind(k); setBrand('') }} />
+      <StatusCards kind={kind} mode={mode} onMode={(m) => { setMode(m); if (m) setFilter('in_stock') }} canCost={canCost} />
       <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><SearchBox value={q} onChange={setQ} placeholder="stock.searchPlaceholder" scan /></div><Help term="stock.search" size="sm" /></div>
 
       {brandRow.length ? (
@@ -224,7 +247,7 @@ export default function StockPage() {
       <div className="flex flex-wrap items-center gap-1.5">
         <Help term="stock.statusFilter" size="sm" />
         {(['in_stock', 'on_loan', 'sold', 'faulty', 'all'] as Filter[]).map((f) => (
-          <button key={f} type="button" aria-pressed={filter === f} onClick={() => setFilter(f)} className={`tap h-11 shrink-0 rounded-full border-2 px-4 font-bold ${filter === f ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-sm'}`}>
+          <button key={f} type="button" aria-pressed={filter === f} onClick={() => { setFilter(f); setMode('') }} className={`tap h-11 shrink-0 rounded-full border-2 px-4 font-bold ${filter === f && !mode ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-sm'}`}>
             {f === 'all' ? pick('common.all') : pick(`stock.status.${f}`)}
           </button>
         ))}
@@ -243,7 +266,7 @@ export default function StockPage() {
         <Help term="stock.sort" size="sm" />
       </div>
       <div className="flex flex-wrap items-center gap-1.5">
-        <button type="button" aria-pressed={more} onClick={() => setMore(!more)} className={`tap h-9 rounded-full border-2 px-3 text-[12px] font-bold ${more || fx.grade || fx.ram || fx.min || fx.max || fx.lock ? 'border-ink bg-ink text-ground' : 'border-line bg-surface'}`} data-testid="stock-filters">{pick('devx.filters')}</button>
+        <button type="button" aria-pressed={more} onClick={() => setMore(!more)} className={`tap h-9 rounded-full border-2 px-3 text-[12px] font-bold ${more || fx.grade || fx.ram || fx.min || fx.max || fx.lock || fx.condition || fx.pta || fx.age || fx.costMin || fx.costMax || fx.supplier ? 'border-ink bg-ink text-ground' : 'border-line bg-surface'}`} data-testid="stock-filters">{pick('devx.filters')}</button>
         <Help term="stock.filters" size="sm" />
         {fx.lock ? <span className="tap h-9 rounded-full border-2 border-ink bg-ink px-3 text-[12px] font-bold leading-8 text-ground">{pick('devx.lockUnchecked')}</span> : null}
       </div>
@@ -253,6 +276,12 @@ export default function StockPage() {
           <label className="flex flex-col gap-1"><span className="flex items-center gap-1"><BiLabel text="devx.ram" size="sm" tone="text-muted" /><Help term="device.ram" size="sm" /></span><select aria-label={pick('devx.ram')} value={fx.ram} onChange={(e) => setFx({ ...fx, ram: e.target.value })} className="min-h-11 rounded-xl border border-line bg-surface px-3 text-sm font-bold"><option value="">{pick('devx.anyRam')}</option>{[2, 3, 4, 6, 8, 12, 16].map((g) => <option key={g} value={g}>{g} GB</option>)}</select></label>
           <BiInput label="devx.priceMin" help={<Help term="stock.priceRange" size="sm" />} type="number" inputMode="numeric" min={0} value={fx.min} onChange={(e) => setFx({ ...fx, min: e.target.value })} className="num" />
           <BiInput label="devx.priceMax" help={<Help term="stock.priceRange" size="sm" />} type="number" inputMode="numeric" min={0} value={fx.max} onChange={(e) => setFx({ ...fx, max: e.target.value })} className="num" />
+          <label className="flex flex-col gap-1"><span className="flex items-center gap-1"><BiLabel text="stock.conditionShort" size="sm" tone="text-muted" /><Help term="device.condition" size="sm" /></span><select aria-label={pick('stock.conditionShort')} value={fx.condition} onChange={(e) => setFx({ ...fx, condition: e.target.value })} className="min-h-11 rounded-xl border border-line bg-surface px-3 text-sm font-bold" data-testid="fx-condition"><option value="">{pick('common.all')}</option>{['box_pack', 'open_box', 'used', 'patched'].map((c) => <option key={c} value={c}>{pick(`stock.condition.${c}`)}</option>)}</select></label>
+          <label className="flex flex-col gap-1"><span className="flex items-center gap-1"><BiLabel text="stock.ptaShort" size="sm" tone="text-muted" /><Help term="device.pta" size="sm" /></span><select aria-label={pick('stock.ptaShort')} value={fx.pta} onChange={(e) => setFx({ ...fx, pta: e.target.value })} className="min-h-11 rounded-xl border border-line bg-surface px-3 text-sm font-bold"><option value="">{pick('common.all')}</option>{['pta_approved', 'non_pta', 'jv'].map((c) => <option key={c} value={c}>{pick(`stock.pta.${c}`)}</option>)}</select></label>
+          <label className="flex flex-col gap-1"><span className="flex items-center gap-1"><BiLabel text="stock.fx.age" size="sm" tone="text-muted" /><Help term="stock.fx.age" size="sm" /></span><select aria-label={pick('stock.fx.age')} value={fx.age} onChange={(e) => setFx({ ...fx, age: e.target.value })} className="min-h-11 rounded-xl border border-line bg-surface px-3 text-sm font-bold" data-testid="fx-age"><option value="">{pick('common.all')}</option>{['30', '60', '90'].map((d) => <option key={d} value={d}>{pick('stock.fx.olderThan').replace('{{n}}', d)}</option>)}</select></label>
+          <label className="flex flex-col gap-1"><span className="flex items-center gap-1"><BiLabel text="stock.fx.supplier" size="sm" tone="text-muted" /><Help term="stock.fx.supplier" size="sm" /></span><select aria-label={pick('stock.fx.supplier')} value={fx.supplier} onChange={(e) => setFx({ ...fx, supplier: e.target.value })} className="min-h-11 rounded-xl border border-line bg-surface px-3 text-sm font-bold"><option value="">{pick('common.all')}</option>{(suppliers ?? []).map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
+          {canCost ? <BiInput label="stock.fx.costMin" help={<Help term="stock.fx.cost" size="sm" />} type="number" inputMode="numeric" min={0} value={fx.costMin} onChange={(e) => setFx({ ...fx, costMin: e.target.value })} className="num" /> : null}
+          {canCost ? <BiInput label="stock.fx.costMax" help={<Help term="stock.fx.cost" size="sm" />} type="number" inputMode="numeric" min={0} value={fx.costMax} onChange={(e) => setFx({ ...fx, costMax: e.target.value })} className="num" /> : null}
           <div className="col-span-2 flex items-center gap-1"><button type="button" role="switch" aria-checked={fx.lock} onClick={() => setFx({ ...fx, lock: !fx.lock })} className="tap flex min-h-11 flex-1 items-center gap-3 rounded-2xl border border-line bg-ground px-4 text-start"><span className="flex-1"><BiLabel text="devx.lockUnchecked" size="md" bold /></span><span className={`flex h-7 w-12 shrink-0 items-center rounded-full p-1 ${fx.lock ? 'bg-emerald' : 'bg-line'}`}><span className={`h-5 w-5 rounded-full bg-white shadow transition-transform ${fx.lock ? 'translate-x-5 rtl:-translate-x-5' : ''}`} /></span></button><Help term="stock.lockUnchecked" size="sm" /></div>
         </div>
       ) : null}

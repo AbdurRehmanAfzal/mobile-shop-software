@@ -99,6 +99,8 @@ export interface Device {
   battery_health?: number | null
   region_code?: string | null
   battery_cycles?: number | null
+  source_party_id?: string | null
+  source_party_name?: string | null
   sim_type?: string | null
   brand_id: UUID
   brand_name: string

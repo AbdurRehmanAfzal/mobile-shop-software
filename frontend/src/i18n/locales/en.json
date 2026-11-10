@@ -315,7 +315,8 @@
       "imei2": "IMEI 2",
       "serial": "Serial",
       "barcode": "Barcode",
-      "verification": "ID check"
+      "verification": "ID check",
+      "source": "Bought from"
     },
     "fields": {
       "button": "Fields",
@@ -333,6 +334,33 @@
         "imei2": "IMEI 2",
         "seller": "Bought from"
       }
+    },
+    "kind": {
+      "all": "All stock",
+      "phone": "Mobiles",
+      "tablet": "Tablets",
+      "watch": "Smartwatches",
+      "items": "Accessories",
+      "part": "Spare parts",
+      "other": "Other"
+    },
+    "card": {
+      "available": "Available to sell",
+      "onHand": "On hand",
+      "approval": "With customer (approval)",
+      "inspection": "Inspection",
+      "repair": "In repair",
+      "faulty": "Damaged / faulty",
+      "low": "Low stock (items)",
+      "out": "Out of stock (items)",
+      "value": "Value at cost"
+    },
+    "fx": {
+      "age": "Stock age",
+      "olderThan": "{{n}}+ days",
+      "supplier": "Bought from",
+      "costMin": "Cost from",
+      "costMax": "Cost up to"
     }
   },
   "purchase": {
@@ -5425,6 +5453,33 @@
         "title": "Reason",
         "body": "Why the IMEI is changed. It shows in the phone's history.",
         "example": "Typing mistake."
+      },
+      "kinds": {
+        "title": "Kind of stock",
+        "body": "Mobiles, tablets and smartwatches are counted one by one here (each with its IMEI or serial). Accessories, spare parts and other items are counted by quantity: those tabs open the items screen with that kind picked.",
+        "example": "Spare parts: opens the items list showing only parts."
+      },
+      "cards": {
+        "title": "Stock at a glance",
+        "body": "Available to sell: in stock and ready (ID check done or not needed, no lock left on); On hand counts every unit the shop holds, including those not ready. With customer (approval), Inspection (ID check pending or flagged, or a lock still on), In repair and Damaged are the rest. Tap a card to see only those. Low / Out of stock counts items by their own reorder level and opens the items list. Value at cost (owner and manager) is what the stock cost. Looking never changes anything.",
+        "example": "5 iPhones: 3 Available, 1 With customer, 1 Inspection; On hand 5."
+      },
+      "fx": {
+        "age": {
+          "title": "Stock age",
+          "body": "Only units in the shop longer than this.",
+          "example": "60+ days: phones to push or reprice."
+        },
+        "supplier": {
+          "title": "Bought from",
+          "body": "Only units bought from this dealer (or brought in from a branch).",
+          "example": "Rehman Traders: everything still here from him."
+        },
+        "cost": {
+          "title": "Cost range",
+          "body": "Only units whose buying price is in this range. Owner and manager only.",
+          "example": "From 50,000 up to 80,000."
+        }
       }
     },
     "loan": {

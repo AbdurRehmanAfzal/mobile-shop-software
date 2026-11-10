@@ -51,7 +51,13 @@ def list_devices(
     price_max: Decimal | None = None,
     age_min: int | None = None,
     lock_unchecked: bool = False,
+    sellable: bool = False,
+    inspection: bool = False,
+    cost_min: Decimal | None = None,
+    cost_max: Decimal | None = None,
+    supplier_id: uuid.UUID | None = None,
 ):
+    can_cost = ctx.can(Cap.VIEW_COST)
     rows = service.list_devices(
         db,
         ctx.shop_id,
@@ -71,8 +77,24 @@ def list_devices(
         price_max=price_max,
         age_min=age_min,
         lock_unchecked=lock_unchecked,
+        sellable=sellable,
+        inspection=inspection,
+        # a cost range is a cost: owner / manager only (ignored for staff)
+        cost_min=cost_min if can_cost else None,
+        cost_max=cost_max if can_cost else None,
+        supplier_id=supplier_id,
     )
     return [_hide_cost(ctx, r) for r in rows]
+
+
+@router.get("/stock-status")
+def stock_status(ctx: Ctx, db: DB, category: Literal["phone", "tablet", "watch"] | None = None):
+    """the stock screen's cards (ADR-059): units by status, items low / out, value at cost"""
+    from app.modules.units.router import _plain
+
+    return _plain(
+        service.stock_status(db, ctx.shop_id, category=category, can_cost=ctx.can(Cap.VIEW_COST))
+    )
 
 
 @router.get("/imei/{imei}", response_model=ImeiLookupOut)
