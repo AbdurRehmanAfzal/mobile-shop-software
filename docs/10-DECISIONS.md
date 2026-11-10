@@ -362,6 +362,24 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-059 · 2026-11-10 · Accepted · The stock screen's kind tabs, status cards and filters are read-only views over the existing statuses; "reserved" is not added
+**Context**: an owner brief asked for the stock screen to show available / reserved / inspection / low / out / value, filters by status, source, age and cost, and filters kept when coming back from an item. The shops are live, so only gaps that are safe to add were in scope.
+**Decision**:
+- `GET /devices/stock-status`: counts units held by the shop (in stock, faulty, in repair, with a customer for approval, on loan).
+  - **Available** uses the sale's own rule: in stock, ID check not pending / flagged, no lock `not_cleared`.
+  - **Inspection** is an in-stock unit that the sale would refuse.
+  - Items low / out use each item's `reorder_level`.
+  - Value at cost (devices' cost + items' qty × avg cost) is for `VIEW_COST` only.
+- `GET /devices` takes optional `sellable`, `inspection`, `cost_min / cost_max` (ignored for staff) and `supplier_id`. The search also matches the barcode / maker's code. Each row carries `source_party_id / name` (its latest purchase or branch intake), read in one query.
+- The stock export can include a "Bought from" column.
+- **Screen**:
+  - Kind tabs: phones / tablets / watches filter the list; accessories / spare parts / other open the items screen with `?category=`.
+  - Status cards that toggle a filter, and more filters (condition, PTA, age 30 / 60 / 90, bought from, cost range).
+  - The kind, card, status, filters and sort are kept in `sessionStorage` for the tab, so returning from a phone restores them; a Shop Audit link starts fresh.
+  - The phone page has a "Get / give" link to its open balances.
+- Defaults, routes and the existing API fields are unchanged; no migration.
+**Not done (would change transaction rules)**: reserving a unit or part of an item's quantity. There is no reservation in the app; the closest existing state is "with customer for approval", shown as its own card. Also not done: branch / shelf filters for phones (phones have no shelf), and a received-date range (age buckets cover it).
+
 ## ADR-058 · 2026-11-10 · Accepted · Open balances: one read-only view of lena / dena by phone, customer, dealer and technician
 **Context**: an owner brief asked for one screen of what is still owed, both ways, by Mobile / IMEI, customer, dealer and technician, with drill-down and payment straight from a row. The audit found:
 - The **Udhaar khata** shows one net balance per person, with no split, no dealer / technician tabs and no IMEI view.

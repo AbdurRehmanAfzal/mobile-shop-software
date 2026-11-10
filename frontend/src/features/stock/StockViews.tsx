@@ -36,7 +36,7 @@ export const loadView = () => load<StockView>('stock.view', (v): v is StockView 
 export const saveView = (v: StockView) => save('stock.view', v)
 
 /** every field a unit can show; `key` is shared with the server's stock export (`cols`) */
-export type FieldKey = 'storage' | 'colour' | 'condition' | 'pta' | 'sim_time' | 'battery' | 'cycles' | 'region' | 'sim' | 'grade' | 'ram' | 'imei' | 'imei2' | 'serial' | 'barcode' | 'days' | 'cost' | 'asking' | 'status' | 'verification'
+export type FieldKey = 'source' | 'storage' | 'colour' | 'condition' | 'pta' | 'sim_time' | 'battery' | 'cycles' | 'region' | 'sim' | 'grade' | 'ram' | 'imei' | 'imei2' | 'serial' | 'barcode' | 'days' | 'cost' | 'asking' | 'status' | 'verification'
 type Field = { key: FieldKey; label: string; get: (d: Device, pick: (k: string) => string) => string | number | null; num?: boolean; money?: boolean; ltr?: boolean; apple?: boolean }
 
 const daysSince = (iso: string) => Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000))
@@ -59,6 +59,7 @@ export const FIELDS: Field[] = [
   { key: 'serial', label: 'stock.col.serial', get: (d) => d.serial ?? null, ltr: true },
   { key: 'barcode', label: 'stock.col.barcode', get: (d) => d.barcode ?? null, ltr: true },
   { key: 'days', label: 'stock.daysIn', get: (d) => daysSince(d.last_event_at), num: true },
+  { key: 'source', label: 'stock.col.source', get: (d) => d.source_party_name ?? null },
   { key: 'cost', label: 'stock.col.cost', get: (d) => (d.cost_price != null ? Number(d.cost_price) : null), num: true, money: true },
   { key: 'asking', label: 'stock.col.asking', get: (d) => (d.asking_price != null ? Number(d.asking_price) : null), num: true, money: true },
   { key: 'status', label: 'stock.col.status', get: (d, p) => p(`stock.status.${d.status}`) },

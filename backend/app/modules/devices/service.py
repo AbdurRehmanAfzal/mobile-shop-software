@@ -193,8 +193,39 @@ def list_devices(
     price_max: Decimal | None = None,
     age_min: int | None = None,
     lock_unchecked: bool = False,
+    sellable: bool = False,
+    inspection: bool = False,
+    cost_min: Decimal | None = None,
+    cost_max: Decimal | None = None,
+    supplier_id: uuid.UUID | None = None,
 ) -> list[dict]:
     stmt = _base_query(shop_id)
+    # owner brief 2026-11-10 (ADR-059): the stock screen's status cards and filters. "Sellable" is
+    # the sale's own rule (in stock, ID check not pending / flagged, no lock left on); "inspection"
+    # is an in-stock unit that the sale would refuse for one of those reasons.
+    if sellable or inspection:
+        stmt = stmt.where(Device.status == DeviceStatus.IN_STOCK)
+    if sellable:
+        stmt = stmt.where(
+            Device.verification_status.not_in(
+                (VerificationStatus.PENDING, VerificationStatus.FLAGGED)
+            )
+        )
+    if cost_min is not None:
+        stmt = stmt.where(Device.cost_price >= cost_min)
+    if cost_max is not None:
+        stmt = stmt.where(Device.cost_price <= cost_max)
+    if supplier_id:
+        bought = (
+            select(DeviceEvent.device_id)
+            .where(
+                DeviceEvent.shop_id == shop_id,
+                DeviceEvent.party_id == supplier_id,
+                DeviceEvent.type.in_((EventType.PURCHASED, EventType.TRANSFERRED_IN)),
+            )
+            .scalar_subquery()
+        )
+        stmt = stmt.where(Device.id.in_(bought))
     if category:
         stmt = stmt.where(Device.category == category)
     # owner addendum 6: the fuller filter set
@@ -243,6 +274,8 @@ def list_devices(
             Brand.name.ilike(like),
             Device.serial.ilike(like),
             who.name.ilike(like),
+            Device.barcode.ilike(like),
+            Device.manufacturer_code.ilike(like),
         ]
         if len(digits) >= 4:
             conds += [
@@ -252,7 +285,109 @@ def list_devices(
             ]
         stmt = stmt.where(or_(*conds))
     stmt = stmt.order_by(Device.last_event_at.desc()).limit(limit)
-    return [to_out(r) for r in db.execute(stmt).all()]
+    out = [to_out(r) for r in db.execute(stmt).all()]
+    if sellable:
+        out = [d for d in out if d["lock_ok"]]
+    if inspection:
+        out = [
+            d
+            for d in out
+            if not d["lock_ok"]
+            or d["verification_status"] in (VerificationStatus.PENDING, VerificationStatus.FLAGGED)
+        ]
+    return with_source(db, out)
+
+
+def with_source(db: Session, rows: list[dict]) -> list[dict]:
+    """who each unit was bought from (its latest purchase / branch intake), in one query"""
+    ids = [r["id"] for r in rows]
+    if not ids:
+        return rows
+    latest: dict = {}
+    for dev_id, party_id, seq in db.execute(
+        select(DeviceEvent.device_id, DeviceEvent.party_id, DeviceEvent.seq).where(
+            DeviceEvent.device_id.in_(ids),
+            DeviceEvent.type.in_((EventType.PURCHASED, EventType.TRANSFERRED_IN)),
+        )
+    ).all():
+        if dev_id not in latest or seq > latest[dev_id][1]:
+            latest[dev_id] = (party_id, seq)
+    names = dict(
+        db.execute(
+            select(Party.id, Party.name).where(Party.id.in_({p for p, _ in latest.values() if p}))
+        ).all()
+    )
+    for r in rows:
+        pid = latest.get(r["id"], (None, 0))[0]
+        r["source_party_id"] = pid
+        r["source_party_name"] = names.get(pid)
+    return rows
+
+
+def stock_status(db: Session, shop_id: uuid.UUID, *, category: str | None, can_cost: bool) -> dict:
+    """the stock screen's cards: units on hand by status, items low / out, value at cost"""
+    from app.modules.accessories.models import Accessory
+
+    held = (
+        DeviceStatus.IN_STOCK,
+        DeviceStatus.FAULTY,
+        DeviceStatus.IN_REPAIR,
+        DeviceStatus.WITH_CUSTOMER_FOR_APPROVAL,
+        DeviceStatus.ON_LOAN,
+    )
+    q = select(
+        Device.status, Device.verification_status, Device.lock_checks, Device.cost_price
+    ).where(Device.shop_id == shop_id, Device.status.in_(held))
+    if category:
+        q = q.where(Device.category == category)
+    c = {
+        "on_hand": 0,
+        "available": 0,
+        "inspection": 0,
+        "in_repair": 0,
+        "faulty": 0,
+        "approval": 0,
+        "on_loan": 0,
+    }
+    value = Decimal(0)
+    for status, ver, locks, cost in db.execute(q).all():
+        c["on_hand"] += 1
+        value += cost or Decimal(0)
+        if status == DeviceStatus.IN_STOCK:
+            lock_on = any(v == "not_cleared" for v in (locks or {}).values())
+            if lock_on or ver in (VerificationStatus.PENDING, VerificationStatus.FLAGGED):
+                c["inspection"] += 1
+            else:
+                c["available"] += 1
+        elif status == DeviceStatus.IN_REPAIR:
+            c["in_repair"] += 1
+        elif status == DeviceStatus.FAULTY:
+            c["faulty"] += 1
+        elif status == DeviceStatus.WITH_CUSTOMER_FOR_APPROVAL:
+            c["approval"] += 1
+        else:
+            c["on_loan"] += 1
+    items = {"on_hand": 0, "low": 0, "out": 0}
+    item_value = Decimal(0)
+    for qty, reorder, avg in db.execute(
+        select(Accessory.qty, Accessory.reorder_level, Accessory.avg_cost).where(
+            Accessory.shop_id == shop_id, Accessory.is_active.is_(True)
+        )
+    ).all():
+        items["on_hand"] += max(qty, 0)
+        if qty <= 0:
+            items["out"] += 1
+        elif qty <= (reorder or 0):
+            items["low"] += 1
+        item_value += max(qty, 0) * (avg or Decimal(0))
+    return {
+        "units": c,
+        "items": items,
+        "value_cost": money(value + (item_value if not category else Decimal(0)))
+        if can_cost
+        else None,
+        "units_value_cost": money(value) if can_cost else None,
+    }
 
 
 def get_device_out(db: Session, shop_id: uuid.UUID, device_id: uuid.UUID) -> dict:

@@ -1191,3 +1191,31 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - I looked at a screenshot.
 
 **Not verified**: the technician and refund rows in the UI (covered by the API test only).
+
+### Same day — PR #44 live; stock screen audit (owner brief, ADR-059)
+**Owner**: "44 merge kar di, next isko check karein" plus the stock-screen brief. The shops are live, so the work was kept additive: no migration, no change to routes, defaults or stock / ledger rules.
+
+**Audit** (Stock = `/stock`, items = `/accessories`):
+
+| Requirement | Before | Now |
+|---|---|---|
+| Kind tabs: All, Mobiles, Tablets, Smartwatches, Accessories, Spare parts, Other | **Partial**: devices and items on two screens, the type only via a Shop Audit link | **Implemented** (device kinds filter; item kinds open `/accessories?category=`) |
+| Search by model, IMEI (either), serial, SKU, barcode | **Partial**: no barcode search for phones | **Implemented** |
+| Available / on hand kept apart | **Missing** | **Implemented**: sale rule; on hand counts held units |
+| Reserved | **Missing**: no reservation exists | **Not added**: needs new transaction rules; "with customer (approval)" shown as its own card |
+| Inspection / repair / damaged | **Partial**: status chips for faulty only | **Implemented** cards (inspection = ID pending / flagged or lock on; in repair; faulty) |
+| Low / out of stock (items, by reorder level) | **Implemented** on the items screen | + cards on the stock screen |
+| Stock value at cost | **Implemented** in reports | + card (owner / manager) |
+| Cards apply filters | **Missing** | **Implemented** |
+| Filters: condition, PTA, age 30 / 60 / 90, bought from, cost range | **Partial** (API had condition / PTA / age; no UI, no supplier / cost) | **Implemented** |
+| Filters: branch / shelf, received date, network lock, warranty | Items have a shelf (`location`) and a filter on the items screen; phones have no shelf; age covers date | Not added |
+| Item-kind filters (type, compatible, connector, wattage, brand, colour) | **Implemented** on the items screen (filters + search) | unchanged |
+| Row: source / supplier, age | Age **Implemented**; source **Missing** | "Bought from" field (all views, export) |
+| Item click: identifiers, condition, status, cost / asking, history, price history, invoice links, read-only | **Implemented** (`DeviceDetailPage`, `UnitMoney` timeline links) | + link to its open balances |
+| Returning restores filters | **Missing** | **Implemented** (`sessionStorage`) |
+| Viewing / filtering posts nothing | — | test: ledger groups and device events unchanged |
+
+**Tests**:
+- `tests/test_stock_screen.py` (3): five units → on hand 5, available 3, approval 1, inspection 1; the sellable / inspection filters; either IMEI or the barcode finds one unit; cost / age filters; no posting by looking; charger 6 → 4 is low at a reorder level of 5, 0 is out; bought from + supplier filter; an older record with empty optional fields; staff see no cost and their cost filter is ignored.
+- Playwright `stock-screen.spec` (new): cards, the Available filter, the filter kept after opening a phone, Spare parts → items.
+- Regression: the full backend suite; Playwright stock-views, add-device, exchange-return, labels, balances, forms-keep.

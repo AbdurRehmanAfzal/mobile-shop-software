@@ -106,6 +106,7 @@ UR_HEADERS = {
     "Serial": "سیریل",
     "Days in shop": "دکان میں دن",
     "Barcode": "بارکوڈ",
+    "Bought from": "جس سے خریدا",
 }
 UR_TITLES = {
     "stock": "اسٹاک",
@@ -244,6 +245,7 @@ STOCK_COLS: dict[str, tuple[str, object]] = {
     "serial": ("Serial", lambda d: d["serial"]),
     "barcode": ("Barcode", lambda d: d["barcode"]),
     "days": ("Days in shop", lambda d: _days_in(d["last_event_at"])),
+    "source": ("Bought from", lambda d: d.get("source_party_name")),
     "cost": ("Cost", lambda d: d["cost_price"]),
     "asking": ("Asking price", lambda d: d["asking_price"]),
     "status": ("Status", lambda d: d["status"]),
