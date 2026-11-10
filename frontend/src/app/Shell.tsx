@@ -14,7 +14,7 @@ import { JOBS } from '@/features/counter/jobs'
 import SidePanel from './SidePanel'
 
 /** screens that use the whole laptop width (lists, overviews, the side-by-side sale); forms stay at 3xl */
-const WIDE = ['/sale/new', '/stock', '/khata', '/hisaab', '/reports', '/audit', '/sales', '/purchases', '/invoices', '/parties', '/expenses', '/installments', '/repairs', '/accessories', '/payments', '/returns', '/admin', '/loans']
+const WIDE = ['/sale/new', '/stock', '/khata', '/balances', '/hisaab', '/reports', '/audit', '/sales', '/purchases', '/invoices', '/parties', '/expenses', '/installments', '/repairs', '/accessories', '/payments', '/returns', '/admin', '/loans']
 import { useModules } from '@/lib/modules'
 import { PlanBar, PlanOverlays } from '@/components/PlanReminders'
 import ScanListener from '@/components/ScanListener'

@@ -2,7 +2,8 @@
  *  people with a balance, and two big buttons for money received / paid. `?f=get|give` preselects. */
 
 import DownloadButton from '@/components/DownloadButton'
-import { ArrowDown, ArrowUp, BellRing, Plus } from 'lucide-react'
+import { ArrowDown, ArrowUp, BellRing, Plus, Scale } from 'lucide-react'
+import { useAuth } from '@/lib/auth'
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
@@ -22,6 +23,8 @@ export default function KhataPage() {
   const { pick, ur, cls } = useLang()
   const nav = useNavigate()
   const has = useModules()
+  // owner brief 2026-11-10 (ADR-058): lena / dena by phone, customer, dealer, technician
+  const canBalances = useAuth((s) => s.me?.user.role === 'owner' || s.me?.user.role === 'manager')
   const [params, setParams] = useSearchParams()
   const f = (params.get('f') as Filter) || 'all'
   const [q, setQ] = useState('')
@@ -46,6 +49,10 @@ export default function KhataPage() {
         help={<Help term="khata" />}
         right={
           <div className="flex gap-2">
+            {canBalances ? <button type="button" aria-label={pick('bal.title')} onClick={() => nav('/balances')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border border-line bg-surface px-1.5 py-1 text-ink" data-testid="khata-balances">
+              <Scale size={20} strokeWidth={1.75} />
+              <BtnText k="bal.short" />
+            </button> : null}
             <DownloadButton path="/api/v1/exports/khata" name="udhaar-khata" />
             {has('notifications') ? <button type="button" aria-label={pick('remind.title')} onClick={() => nav('/khata/reminders')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border border-line bg-surface px-1.5 py-1 text-ink">
               <BellRing size={20} strokeWidth={1.75} />

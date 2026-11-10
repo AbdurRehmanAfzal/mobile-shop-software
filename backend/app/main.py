@@ -15,6 +15,7 @@ from app.modules.audit.router import router as audit_router
 from app.modules.auth.router import router as auth_router
 from app.modules.auth.router import shops as shops_router
 from app.modules.auth.router import staff as staff_router
+from app.modules.balances.router import router as balances_router
 from app.modules.barcodes.router import router as barcodes_router
 from app.modules.bulk.router import router as bulk_router
 from app.modules.catalogue.router import router as catalogue_router
@@ -183,6 +184,7 @@ def create_app() -> FastAPI:
     app.include_router(staff_activity_router)
     app.include_router(transfers_router)
     app.include_router(fbr_router)
+    app.include_router(balances_router)
     if settings.web_dir:
         _mount_web(app, settings.web_dir)
     return app

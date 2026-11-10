@@ -32,6 +32,10 @@ test('take in, fix, give back with the rest on khata', async ({ page }) => {
   await page.getByLabel('Other problem (write)').fill('screen broken')
   await page.getByLabel('Advance taken').fill('200')
   await page.getByRole('button', { name: 'Save and print slip' }).click()
+  // the slip opens in a new tab, or (when the browser blocks it) inside the app with Print / Close
+  const overlay = page.getByTestId('print-overlay')
+  await overlay.waitFor({ timeout: 5000 }).catch(() => undefined)
+  if (await overlay.count()) await overlay.getByRole('button', { name: 'Close' }).click()
   await expect(page.getByText('Taken in').first()).toBeVisible()
 
   await page.getByRole('button', { name: 'It is fixed' }).first().click()

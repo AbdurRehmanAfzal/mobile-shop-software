@@ -1156,3 +1156,38 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - `tests/test_exchange_return_settlement.py` (19): the 7 exchange cases, later collection and payout, refund cap + rollback, duplicate key, payment method on the receipt, 3 fully-paid returns, partly paid, smaller credit, cut rules, buyback, dashboard.
 - The full backend suite.
 - Playwright `exchange-return.spec` (new), `return`, `counter`.
+
+### Same day — PR #43 CI green; open balances dashboard (owner brief, ADR-058)
+**Owner**: an audit brief for one screen of open balances by Mobile/IMEI, customer, dealer and technician, with receive / pay from a row. Also: "existing cheez disturb na ho, ek do shop par online chal raha hai". The change is additive: a new read-only endpoint and a new screen, no migration, and the khata page is unchanged apart from one header button.
+
+**Audit**:
+
+| View | Balance | Drill-down | Receive | Pay |
+|---|---|---|---|---|
+| Mobile / IMEI | **Partial**: one phone at a time ("Money on this phone") | **Partial** | **Partial** ("Pay for this phone" on the purchase side) | **Partial** |
+| Customer | **Partial**: khata net only, no get / give split | **Implemented** (person page) | **Implemented** (khata buttons; no bill prefill) | **Implemented** |
+| Dealer | **Partial**: khata net, no dealer tab | **Implemented** | **Implemented** | **Implemented** (no bill prefill) |
+| Technician | **Partial**: the lab page has the lab's balance | **Partial** | **Implemented** | **Implemented** |
+| All four on one screen, totals once, unallocated multi-phone bill | **Missing** | | | |
+| Duplicate submission of a payment | **Partial**: the server is idempotent, but the form made a new key on each try | | | |
+
+**Done**:
+- `GET /balances` (read-only, owner / manager) and `/balances` (`BalancesPage`):
+  - tabs, get / give totals as filters, search;
+  - rows with get and give apart, a detail sheet with the bills / jobs / lab charges, paid, payments and left;
+  - Receive / Make payment opens `PaymentForm` prefilled (person, direction, amount, bill) with "This settles".
+- Links from the khata header and the More tile. `PaymentForm`: `amount`, `noAllocation`, one Idempotency-Key per form.
+- en / ur / roman strings with help; the English screen says "To get / To give" (one language at a time). User manual ch. 16 (new section), ADR-058, owner pending.
+
+**Verified**:
+- `tests/test_open_balances.py` (4): the owner's table.
+  - IMEI 1234 shows get 15,000 / give 22,000 before and 10,000 / 12,000 after; IMEI 5678 shows give 10,000 then 6,000.
+  - Totals go from 15,000 / 32,000 to 10,000 / 18,000.
+  - Every khata matches; the previous payment shows on its bill.
+  - A multi-phone bill's 12,000 shows once under "Unallocated by IMEI" and under the customer; search by bill / IMEI and the direction filter work.
+  - An old balance shows as Other; a payment sent twice with one key posts once; a salesman gets 403.
+- The full backend suite and tsc.
+- Playwright `balances.spec` (new): Udhaar → Get / give, the IMEI row, receive 5,000, the dealer tab, pay 8,000, totals and khata.
+- I looked at a screenshot.
+
+**Not verified**: the technician and refund rows in the UI (covered by the API test only).

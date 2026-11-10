@@ -8,6 +8,7 @@ import HomePage from '@/features/counter/HomePage'
 import StockSummaryPage from '@/features/counter/StockSummaryPage'
 import DayReportPage from '@/features/counter/DayReportPage'
 import KhataPage from '@/features/counter/KhataPage'
+import BalancesPage from '@/features/counter/BalancesPage'
 import RemindersPage from '@/features/counter/RemindersPage'
 import ModuleGate from '@/components/ModuleGate'
 import FeesPage from '@/features/more/FeesPage'
@@ -98,6 +99,7 @@ export const router = createBrowserRouter([
           { path: '/stock/summary', element: <StockSummaryPage /> },
           { path: '/hisaab', element: <DayReportPage /> },
           { path: '/khata', element: <KhataPage /> },
+          { path: '/balances', element: <BalancesPage /> },
           { path: '/khata/reminders', element: <ModuleGate module="notifications"><RemindersPage /></ModuleGate> },
           { path: '/installments', element: <ModuleGate module="installments"><InstallmentsPage /></ModuleGate> },
           { path: '/assistant', element: <ModuleGate module="ai"><AssistantPage /></ModuleGate> },
