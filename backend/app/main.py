@@ -39,6 +39,7 @@ from app.modules.public.router import router as public_router
 from app.modules.purchases.router import router as purchases_router
 from app.modules.repairs.router import router as repairs_router
 from app.modules.reports.router import router as reports_router
+from app.modules.reserve.router import router as reserve_router
 from app.modules.returns.router import router as returns_router
 from app.modules.sales.router import router as sales_router
 from app.modules.shopaudit.router import router as shopaudit_router
@@ -185,6 +186,7 @@ def create_app() -> FastAPI:
     app.include_router(transfers_router)
     app.include_router(fbr_router)
     app.include_router(balances_router)
+    app.include_router(reserve_router)
     if settings.web_dir:
         _mount_web(app, settings.web_dir)
     return app

@@ -65,6 +65,8 @@ export interface DeviceLineDraft {
   region_code?: string
   sim_type?: string
   battery_cycles?: string
+  /** owner 2026-11-10 (ADR-060): the shelf it sits on */
+  location?: string
   specs?: Specs
   lock_checks?: LockChecks
   lock_checked?: boolean
@@ -88,6 +90,7 @@ export function emptyDraft(imei = '', kind: 'supplier' | 'walk_in' | 'shop' | 't
     region_code: '',
     sim_type: '',
     battery_cycles: '',
+    location: '',
     specs: {},
     lock_checks: {},
     lock_checked: false,
@@ -140,6 +143,7 @@ export function draftToApi(d: DeviceLineDraft) {
       warranty_by: d.warranty_by || null,
       model_number: d.model_number || null,
       region_code: isApple(d.brand_name, d.model_name) ? d.region_code || null : null,
+      location: d.location || null,
       battery_cycles: isApple(d.brand_name, d.model_name) && d.condition !== 'box_pack' && d.battery_cycles !== '' && d.battery_cycles != null ? Number(d.battery_cycles) : null,
       sim_type: isApple(d.brand_name, d.model_name) && sim ? d.sim_type || null : null,
       specs: d.specs && Object.keys(d.specs).length ? d.specs : null,
@@ -212,7 +216,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
   const needsSim = showPta && (d.pta_status === 'non_pta' || d.pta_status === 'jv')
   // owner: the price you will sell at may not be lower than what you paid
   const askingLow = !edit && d.asking_price !== '' && d.cost !== '' && Number(d.asking_price) < Number(d.cost)
-  const valid = !askingLow && identityOk && d.brand_id && d.model_id && (edit || d.cost !== '') && (!needsSim || d.sim_time_months !== '') && (d.condition !== 'patched' || d.patch_details) && batteryOk && !inStockBlock && !serialBlock && lockOk
+  const valid = !askingLow && identityOk && d.brand_id && d.model_id && (edit || d.cost !== '') && (d.condition !== 'patched' || d.patch_details) && batteryOk && !inStockBlock && !serialBlock && lockOk
 
 
   return (
@@ -396,7 +400,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
 
       {showPta ? <div className="flex items-center gap-1"><BiLabel text="stock.ptaLabel" size="md" tone="text-muted" /><Help term="device.pta" size="sm" /></div> : null}
       {showPta ? <BiSegmented<PtaStatus> value={d.pta_status} onChange={(v) => set('pta_status', v)} options={[{ value: 'pta_approved', text: 'stock.pta.pta_approved' }, { value: 'non_pta', text: 'stock.pta.non_pta' }, ...(phone ? [{ value: 'jv' as const, text: 'stock.pta.jv' }] : [])]} /> : null}
-      {needsSim ? <BiInput label="stock.simTime" help={<Help term="device.simTime" size="sm" />} type="number" inputMode="numeric" min={0} max={60} value={d.sim_time_months} onChange={(e) => set('sim_time_months', e.target.value)} required /> : null}
+      {needsSim ? <BiInput label="stock.simTime" help={<Help term="device.simTime" size="sm" />} type="number" inputMode="numeric" min={0} max={60} value={d.sim_time_months} onChange={(e) => set('sim_time_months', e.target.value)} hint="stock.simTimeOptional" /> : null}
 
       {edit ? null : (
       <div className="grid grid-cols-2 items-start gap-2">
@@ -405,6 +409,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
       </div>
       )}
       {!edit && d.model_id ? <PriceHint modelId={d.model_id} storageId={d.storage_id || null} condition={d.condition} onUse={(p) => set('asking_price', String(p))} /> : null}
+      <BiInput label="stock.shelf" help={<Help term="stock.shelf" size="sm" />} value={d.location ?? ''} onChange={(e) => set('location', e.target.value)} maxLength={60} hint="stock.shelfHint" data-testid="device-shelf" />
       <BiInput label={{ en: 'Warranty (months)', ur: 'وارنٹی (مہینے)' }} help={<Help term="device.warrantyMonths" size="sm" />} type="number" inputMode="numeric" min={0} max={60} value={d.warranty_months} onChange={(e) => set('warranty_months', e.target.value)} />
 
       {/* owner addendum 6: the lock check a used unit must pass before it is bought */}

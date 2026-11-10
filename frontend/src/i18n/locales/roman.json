@@ -263,7 +263,9 @@
       "transferred_in": "Branch se aaya",
       "corrected": "Durust kiya",
       "lock_checked": "Lock check",
-      "reclassified": "Qism badli"
+      "reclassified": "Qism badli",
+      "reserved": "Reserve hua",
+      "unreserved": "Reserve khatam"
     },
     "acc": {
       "box": "Dabba",
@@ -353,7 +355,9 @@
       "faulty": "Kharab",
       "low": "Kam stock (items)",
       "out": "Khatam (items)",
-      "value": "Khareed ke hisaab se maliyat"
+      "value": "Khareed ke hisaab se maliyat",
+      "reserved": "Reserve",
+      "itemsHeld": "+ {{n}} items"
     },
     "fx": {
       "age": "Stock ki umar",
@@ -361,7 +365,10 @@
       "supplier": "Jis se khareeda",
       "costMin": "Khareed se",
       "costMax": "Khareed tak"
-    }
+    },
+    "shelf": "Shelf / jagah",
+    "shelfHint": "Optional, maslan Rack A2, Daraz 3",
+    "simTimeOptional": "Optional: maloom na ho to khali chhor dein."
   },
   "purchase": {
     "title": "Nayi khareedari",
@@ -4685,7 +4692,7 @@
       },
       "simTime": {
         "title": "SIM time (mahine)",
-        "body": "Non-PTA ya JV phone mein: Pakistani SIM mazeed kitne mahine chalegi. Yeh bharna zaroori hai, aur sale ki screen khareedar ko khabardar karti hai.",
+        "body": "Non-PTA ya JV phone mein: Pakistani SIM mazeed kitne mahine chalegi. Optional: maloom na ho to khali chhor dein; bhara ho to sale ki screen khareedar ko khabardar karti hai.",
         "example": "Non-PTA Pixel 7 jis mein taqreeban 2 mahine baqi → 2 likhen. Is ke baad PTA tax tak SIM band."
       },
       "warrantyMonths": {
@@ -5480,6 +5487,11 @@
           "body": "Sirf woh phone jin ki khareed qeemat is had mein hai. Sirf maalik aur manager.",
           "example": "50,000 se 80,000 tak."
         }
+      },
+      "shelf": {
+        "title": "Shelf / jagah",
+        "body": "Phone dukaan mein kahan rakha hai taake koi bhi dhoond le. Optional; search aur stock filter use dhoond lete hain.",
+        "example": "Rack A2"
       }
     },
     "loan": {
@@ -7922,6 +7934,30 @@
         "title": "Kis tarah dikhayein",
         "body": "Yahi raqamein chaar tarah: phone (IMEI) ke hisaab se, customer, dealer aur technician ke hisaab se. Kai phone wala bill \"IMEI ke baghair\" mein ek dafa aata hai. Jo kisi bill se na jure, jaise purana baqaya ya advance, woh shakhs ke neeche \"Purana baqaya / deegar\" mein aata hai.",
         "example": "Dealer: har woh dealer jise dukaan ne abhi dena hai, khareed ke billon ke saath."
+      }
+    },
+    "reserve": {
+      "page": {
+        "title": "Reserve",
+        "body": "Kisi ek customer ke liye phone (ya kisi item ke kuch piece) rok lein, maslan advance dene ke baad ya jab woh rakhne ko kahe. Reserve phone stock mein rehta hai magar bechne ke liye tayyar mein nahi gina jata, aur kisi aur ko bechne ki koshish ruk jati hai; usi customer ko bechne se reserve khatam ho jata hai. Woh na aaye to reserve khatam karein. Item ke liye doosre sirf woh piece khareed sakte hain jo reserve nahi. Koi raqam ya entry nahi hoti; phone ki history mein reserve aur us ka khatam hona likha jata hai.",
+        "example": "Ali Jumma ko iPhone 13 lene aaye ga → Ali ke liye reserve, Jumma tak. Sara khareedna chahe: nahi. Ali khareede: ho gaya."
+      },
+      "qty": {
+        "title": "Kitne",
+        "body": "Is customer ke liye kitne piece rokne hain; zyada se zyada jitne baqi hain.",
+        "example": "6 charger, Ali ke liye 2: doosron ke liye 4."
+      },
+      "until": {
+        "title": "Kab tak",
+        "body": "Optional: kis din tak rokna hai. Reserve khud khatam nahi hota; khatam karna parta hai.",
+        "example": "Jumma."
+      }
+    },
+    "dl": {
+      "styles": {
+        "title": "Page ka andaaz",
+        "body": "Phone ka page kaisa dikhe, chunein; yeh isi phone ya computer par yaad rehta hai. Purana: pehle wala page. Smart: har kaam apni cheez ke saath (IMEI ke saath Copy / Durust, qeemat ke saath Badlein, customer ke saath Dein / Wusool karein) aur neeche history. Tabs: Phone, Customer aur raqam, History alag alag. Khane: dabane ke liye bare khane. Mukhtasar: ek chhoti list, neeche Bechein ka button. Sab andaaz ek hi kaam karte hain.",
+        "example": "Rush wala counter: Mukhtasar. Naya salesman: Khane."
       }
     }
   },
@@ -10430,5 +10466,48 @@
       "lab": "Lab ka charge",
       "other": "Purana baqaya / deegar"
     }
+  },
+  "reserve": {
+    "title": "Customer ke liye reserve",
+    "hint": "Phone stock mein rehta hai magar jab tak aap reserve khatam na karein sirf yahi customer use khareed sakta hai. Koi raqam nahi li jati.",
+    "for": "Customer",
+    "qty": "Kitne",
+    "until": "Kab tak",
+    "note": "Note (advance, rang, ...)",
+    "save": "Reserve karein",
+    "heldFor": "Reserve baraye",
+    "release": "Reserve khatam karein",
+    "button": "Customer ke liye reserve",
+    "itemHeld": "Customers ke liye reserve",
+    "free": "{{n}} bechne ke liye baqi",
+    "chip": "Reserve:"
+  },
+  "dl": {
+    "title": "Page ka andaaz",
+    "styles": {
+      "classic": "Purana",
+      "smart": "Smart",
+      "tabs": "Tabs",
+      "tiles": "Khane",
+      "compact": "Mukhtasar"
+    },
+    "copy": "Copy",
+    "copied": "Copy ho gaya",
+    "status": "Haalat",
+    "spec": "Tafseel",
+    "edit": "Badlein",
+    "notRecorded": "Darj nahi",
+    "pay": "Dein",
+    "receive": "Wusool karein",
+    "openBill": "Bill kholein",
+    "changePerson": "Badlein",
+    "more": "Mazeed kaam",
+    "tab": {
+      "overview": "Phone",
+      "people": "Customer aur raqam",
+      "history": "History"
+    },
+    "tapTo": "Badalne ke liye dabayein",
+    "top": "Upar"
   }
 }

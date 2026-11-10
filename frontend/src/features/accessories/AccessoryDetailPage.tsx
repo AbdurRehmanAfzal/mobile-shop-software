@@ -14,6 +14,7 @@ import LabelSheet from '@/components/LabelSheet'
 import RemoveSheet from '@/components/RemoveSheet'
 import { BtnText, Chip, Empty, ErrorText, fmtDate, fmtDateTime, KV, Loading, MoneyText, PageHeader, Section, Sheet } from '@/components/ui'
 import { api } from '@/lib/api'
+import { ItemReserve } from '@/features/stock/ReserveCard'
 import { useAuth } from '@/lib/auth'
 import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
 import ItemForm from './ItemForm'
@@ -85,6 +86,7 @@ export default function AccessoryDetailPage() {
         {canCost ? <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><BiButton text="acc.adjust" icon={<RefreshCw size={18} />} variant="secondary" full onClick={() => { setDelta(''); setCost(''); setNote(''); setAdjusting(true) }} /></div><Help term="items.adjust" size="sm" /></div> : null}
         <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><BiButton text="label.button" icon={<Tag size={18} />} variant="secondary" full onClick={() => setLabels(true)} /></div><Help term="items.labels" size="sm" /></div>
       </div>
+      <ItemReserve itemId={it.id} qty={it.qty} />
       {canCost && multiShop && it.qty > 0 ? <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><BiButton text="transfer.sendBranch" variant="secondary" full onClick={() => nav(`/transfers/new?item=${it.id}`)} /></div><Help term="transfer.page" size="sm" /></div> : null}
       {/* owner addendum 6: a counted watch / tablet can be tracked one by one from here on */}
       {canCost && it.qty > 0 && (it.category === 'watch' || it.category === 'tablet') ? <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><BiButton text="devx.makeUnit" variant="ghost" full onClick={() => setMaking(true)} /></div><Help term="items.makeUnit" size="sm" /></div> : null}

@@ -34,7 +34,7 @@ from app.modules.bulk.spec import (
 )
 from app.modules.catalogue.models import Brand, Colour, Model, Storage
 from app.modules.devices.models import Device
-from app.modules.devices.state import DeviceStatus, PtaStatus
+from app.modules.devices.state import DeviceStatus
 from app.modules.expenses.models import ExpenseCategory
 from app.modules.ledger.models import CashAccount
 from app.modules.parties.models import Party
@@ -367,8 +367,6 @@ def _check_stock(db, ctx, rows, lang, opts: Options) -> list[RowResult]:
         condition = f.enum("condition", "condition", required=True)
         pta = f.enum("pta", "pta", required=True)
         sim_time = f.int("sim_time")
-        if pta in (PtaStatus.NON_PTA, PtaStatus.JV) and sim_time is None:
-            res.error(msg("sim_time_needed", lang))  # the device schema insists on it
         cost = f.money("cost", required=True)
         asking = f.money("asking")
         if cost is not None and asking is not None and asking < cost:

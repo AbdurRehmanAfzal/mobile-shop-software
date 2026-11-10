@@ -362,6 +362,44 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-061 · 2026-11-10 · Accepted · A phone's page has selectable styles over the same actions
+**Context**: in shop testing, shopkeepers found the phone page hard to use: details, then actions, then customer, then history. They wanted the actions beside the values and the customer with the phone.
+**Decision**:
+- The page keeps its data and every action and sheet. `DeviceDetailPage` builds one list of actions (`Act`), the same buttons as before with the same rules.
+- New styles in `DeviceLayouts.tsx` show the same facts with each action beside its value:
+  - **Smart**: facts with inline actions, the people with what is owed and pay / receive, then history.
+  - **Tabs**: Phone / Customer & money / History.
+  - **Tiles**: tap a fact to change it.
+  - **Compact**: a list with Sell pinned at the bottom.
+- **Classic** is the old page, unchanged, and stays the default.
+- The choice is per device (`localStorage` `device.style`).
+- `UnitMoney` gains `historyOnly`, so the new styles do not show the money cards twice.
+- Frontend only: no API, data or rule changes.
+**Consequences**: every style has to be kept in step when an action is added to the page (add it to `acts`; unknown ones appear under "More actions" automatically).
+
+## ADR-060 · 2026-11-10 · Accepted · Reserve stock for a customer without posting; a shelf for a phone; SIM time optional
+**Context**: after ADR-059 the owner asked for reserve and shelf, and to make the SIM time of a Non-PTA / JV phone optional.
+**Decision**:
+- **Phone:**
+  - New columns: `devices.reserved_party_id / reserved_at / reserved_until / reserved_note / reserved_by`.
+  - `POST /devices/{id}/reserve` (in stock only, one hold at a time) and `POST /devices/{id}/release`. Each writes a status-neutral event, `reserved` / `unreserved`.
+  - The status stays `in_stock` and nothing is posted.
+  - The sale (`check_device_sale`) refuses a reserved unit for anyone else (`reserved_for_other`, walk-in included) and clears the hold when its customer buys it.
+  - "Available to sell" excludes reserved units, and the stock screen has a **Reserved** card / filter.
+- **Item:**
+  - New table `accessory_reservations`, with fields `qty`, `fulfilled_qty` and `status` (open / done / released).
+  - Reserving is limited to free pieces (`not_enough_free`).
+  - The sale refuses selling pieces held for others unless the shop allows selling into minus (`reserved_stock`), and fills the buyer's own hold oldest first.
+  - Release: `POST /accessories/reservations/{id}/release`.
+- **Shelf:** `devices.location` (String 60). It is set on purchase, opening stock or edit, searched, filtered (`location`) and shown in the spec line and a "Shelf / place" field.
+- **SIM time:** the SIM time of a Non-PTA / JV phone is optional (schema, edit, bulk import, form).
+- **Change seller:** the phone page has "Change dealer / customer", which opens its purchase with the ADR-056 change sheet (`?change=1`).
+- Migration `a7c9e1b3d5f8` is additive (nullable columns + new table).
+**Consequences**:
+- A hold does not expire by itself; the owner releases it.
+- Reserving takes no advance; an advance is taken as a normal payment.
+- A reserved unit can still go out on loan or to repair; the hold stays on it.
+
 ## ADR-059 · 2026-11-10 · Accepted · The stock screen's kind tabs, status cards and filters are read-only views over the existing statuses; "reserved" is not added
 **Context**: an owner brief asked for the stock screen to show available / reserved / inspection / low / out / value, filters by status, source, age and cost, and filters kept when coming back from an item. The shops are live, so only gaps that are safe to add were in scope.
 **Decision**:

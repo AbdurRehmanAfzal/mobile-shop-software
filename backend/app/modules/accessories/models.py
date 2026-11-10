@@ -184,3 +184,31 @@ class AccessorySupplierSku(UUIDPk, ShopScoped, Base):
     created_at: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True), default=utcnow, nullable=False
     )
+
+
+class AccessoryReservation(UUIDPk, ShopScoped, Base):
+    """Some pieces of an item held for one customer (owner 2026-11-10, ADR-060). The pieces stay
+    in the item's count; others can buy only what is not held. A sale to that customer fills the
+    hold first; the owner / manager or the salesman can release it."""
+
+    __tablename__ = "accessory_reservations"
+
+    accessory_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("accessories.id", ondelete="RESTRICT"), nullable=False
+    )
+    party_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("parties.id", ondelete="RESTRICT"), nullable=False
+    )
+    qty: Mapped[int] = mapped_column(Integer, nullable=False)
+    fulfilled_qty: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    status: Mapped[str] = mapped_column(
+        String(10), nullable=False, default="open"
+    )  # open|done|released
+    until: Mapped[dt.date | None] = mapped_column(Date)
+    note: Mapped[str | None] = mapped_column(String(200))
+    created_by: Mapped[uuid.UUID | None] = mapped_column(Uuid)
+    created_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, nullable=False
+    )
+    closed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    close_reason: Mapped[str | None] = mapped_column(String(200))

@@ -54,6 +54,14 @@ class Device(UUIDPk, ShopScoped, Timestamped, Base):
     # how many times the battery was charged through (iPhone: Settings → General → About)
     battery_cycles: Mapped[int | None] = mapped_column(Integer)
     sim_type: Mapped[str | None] = mapped_column(String(30))
+    # owner 2026-11-10 (ADR-060): the shelf it sits on, and a hold for one customer (the unit stays
+    # in stock; only that customer can buy it until it is released)
+    location: Mapped[str | None] = mapped_column(String(60))
+    reserved_party_id: Mapped[uuid.UUID | None] = mapped_column(Uuid)
+    reserved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    reserved_until: Mapped[date | None] = mapped_column(Date)
+    reserved_note: Mapped[str | None] = mapped_column(String(200))
+    reserved_by: Mapped[uuid.UUID | None] = mapped_column(Uuid)
     # owner addendum 6 (2026-10-31, docs/26): a used unit's grade, RAM (a variant like storage),
     # who gives the warranty, the spec sheet, and the lock checks a used unit was bought with
     grade: Mapped[str | None] = mapped_column(String(20))

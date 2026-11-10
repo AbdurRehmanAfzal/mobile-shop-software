@@ -56,6 +56,8 @@ def list_devices(
     cost_min: Decimal | None = None,
     cost_max: Decimal | None = None,
     supplier_id: uuid.UUID | None = None,
+    reserved: bool = False,
+    location: str | None = Query(default=None, max_length=60),
 ):
     can_cost = ctx.can(Cap.VIEW_COST)
     rows = service.list_devices(
@@ -83,6 +85,8 @@ def list_devices(
         cost_min=cost_min if can_cost else None,
         cost_max=cost_max if can_cost else None,
         supplier_id=supplier_id,
+        reserved=reserved,
+        location=location,
     )
     return [_hide_cost(ctx, r) for r in rows]
 
@@ -285,7 +289,9 @@ def lock_check(device_id: uuid.UUID, data: LockCheckIn, ctx: Transact, db: DB):
 
 @router.get("/{device_id}", response_model=DeviceDetailOut)
 def get_device(device_id: uuid.UUID, ctx: Ctx, db: DB):
-    d = _hide_cost(ctx, service.get_device_out(db, ctx.shop_id, device_id))
+    d = _hide_cost(
+        ctx, service.with_source(db, [service.get_device_out(db, ctx.shop_id, device_id)])[0]
+    )
     device = service.get_device(db, ctx.shop_id, device_id)
     events = service.history(db, ctx.shop_id, device_id)
     return {**d, "accessories": list(device.accessories), "recent_events": events[-5:]}

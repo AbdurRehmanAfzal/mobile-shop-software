@@ -208,6 +208,30 @@ Yeh sirf maalik ya manager durust kar sakte hain, aur har ek ke liye mukhtasar w
 - **Ghalat IMEI:** phone kholein, **IMEI durust karein** dabayein, sahi IMEI 1 likhein (aur IMEI 2, ya nishan lagayein ke is phone ka IMEI 2 nahi), wajah likhein aur **Mehfooz karein** dabayein. Number 15 hindson ka ho aur dukaan ke kisi aur phone ka na ho. Barcode wahi rehta hai.
 - **Ghalat dealer ya customer:** khareedari kholein (**More → Purchases**, ya phone ki history mein khareedari wali line par tap), **Dealer / customer badlein** dabayein, sahi shakhs chunein, wajah likhein aur **Mehfooz karein** dabayein. Bill aur us ke saath di gayi raqam sahi shakhs ke khate mein chali jati hai; ghalat shakhs ka khata pehle jaisa ho jata hai. Agar baad mein is bill ki adaigi ho chuki ho ya kuch wapis hua ho to yeh nahi ho sakta: pehle woh khatam karein.
 
+### Phone ya items customer ke liye reserve
+
+Phone ke page par **Customer ke liye reserve** dabayein, customer chunein, aur chahein to **Kab tak** aur note (maslan "advance 5,000"). Page phir naam ke saath **Reserve baraye** dikhata hai. Phone stock mein rehta hai magar **Bechne ke liye tayyar** mein nahi gina jata, stock screen par **Reserve** ka card hai, aur kisi aur ko bechne ki koshish ruk jati hai. Usi customer ko bechne se reserve khud khatam ho jata hai; woh na aaye to **Reserve khatam karein** dabayein. Item ke page par **Customer ke liye reserve** **Kitne** poochta hai: doosre sirf baqi piece khareed sakte hain. Koi raqam ya entry nahi hoti; phone ki history mein **Reserve hua** aur **Reserve khatam** aata hai.
+
+### Shelf / jagah
+
+Phone daalte ya badalte waqt **Shelf / jagah** (optional) batata hai ke phone kahan rakha hai, maslan **Rack A2**. Yeh phone ki line par dikhta hai, aur stock ka search aur **Shelf / jagah** filter use dhoond lete hain.
+
+### Jis se khareeda woh badlein
+
+Phone ke page par **Dealer / customer badlein** dabayein: us ki khareedari badalne ke liye tayyar khulti hai (upar "IMEI ya bechne wala ghalat likha gaya" dekhein). Items ke liye khareedari item ki movements se ya **More → Purchases** se kholein.
+
+### Page ka andaaz: Purana, Smart, Tabs, Khane, Mukhtasar
+
+Phone ke page ke upar se chun sakte hain ke page kaisa dikhe. Yeh intikhab isi phone ya computer par yaad rehta hai.
+
+- **Purana**: pehle wala page.
+- **Smart**: har cheez ke saath us ka kaam. IMEI ke saath **Copy** aur **IMEI durust karein**, qeemat ke saath **Bechne ki qeemat badlein**, shelf ke saath **Badlein**, barcode ke saath **Sticker**, ID check ke saath **Tasdeeq**. Upar **Bechein** hai. Jis se khareeda (ya jise becha) woh baqi raqam ke saath dikhta hai, saath **Dein** / **Wusool karein**, **Bill kholein** aur **Badlein**. Neeche history.
+- **Tabs**: yahi page **Phone**, **Customer aur raqam** aur **History** mein.
+- **Khane**: bare khane; dabayein to badalne ka kaam khulta hai (qeemat, IMEI, haalat, shelf, sticker, ID check).
+- **Mukhtasar**: ek chhoti list, aur neeche **Bechein** ka button hamesha maujood.
+
+Sab andaaz ek hi kaam karte hain; jo kaam kisi cheez ke saath nahi woh **Mazeed kaam** mein hain.
+
 ### Poori history
 
 Page ke bilkul neeche **History** hai: is phone ke saath jo kuch bhi hua us ki ek timeline, sab se naya upar. Har line par tareekh, banda, raqam aur woh staff member hota hai jis ne kaam kiya. Aap is tarah ki lines dekhenge:

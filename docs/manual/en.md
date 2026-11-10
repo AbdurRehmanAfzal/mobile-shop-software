@@ -302,7 +302,7 @@ On Home, tap **Add stock**. The first screen asks **Where is the phone coming fr
 
     For an **Apple** iPhone the form also asks the **Region code** and the **SIM** type. The region code is the end of Settings → General → About → Model Number (MLPF3**LL/A** → tap **LL/A**). For SIM, tap **Physical + eSIM**, **Dual eSIM** (US iPhones from the 14 onwards have no SIM tray), **Dual physical SIM** or **Physical SIM only**. Not in the list? Tap **New** and type it; the app offers it next time. For a used or open-box iPhone it also asks **Battery cycle count** (iPhone 15 and newer: Settings → General → About; leave empty on older ones). These show on the stock list and the price sticker.
 10. **Condition**: tap **Box pack**. The other choices are **Open box**, **Used** and **Patched** (patched asks for **Patch details**).
-11. **PTA status**: tap **PTA approved**. For **Non-PTA** and **JV** the app also asks **SIM time (months)**.
+11. **PTA status**: tap **PTA approved**. For **Non-PTA** and **JV** the app also asks **SIM time (months)**; it is optional, leave it empty if you do not know.
 12. **Cost price**: type `92000`, what you paid.
 13. **Asking price (optional)**: type `100000`, what you want to sell it for. Not decided yet? Leave it empty and set it later from the phone's page (**Change price**).
 
@@ -937,6 +937,30 @@ Only the owner or manager can put these right, and each needs a short reason. No
 
 - **Wrong IMEI:** open the phone, tap **Correct IMEI**, type the right IMEI 1 (and IMEI 2, or tick that the phone has no IMEI 2), write the reason and tap **Save**. The number must be 15 digits and not belong to another phone in the shop. The barcode stays the same.
 - **Wrong dealer or customer:** open the purchase (**More → Purchases**, or tap the purchase line in the phone's history), tap **Change dealer / customer**, pick the right person, write the reason and tap **Save**. The bill and what was paid with it move to the right person's khata; the wrong person's khata is back to what it was. This is not possible once money was paid later against that bill or something was returned on it: undo that first.
+
+### Reserve a phone or items for a customer
+
+On a phone's page tap **Reserve for a customer**, pick the customer, and if you like **Hold until** and a note (for example "advance 5,000"). The page then shows **Reserved for** with the name. The phone stays in stock but is not counted under **Available to sell**, the stock screen has a **Reserved** card, and the sale refuses it for anyone else. Selling it to that customer ends the hold by itself; if they do not come, tap **Release**. On an item's page, **Reserve for a customer** asks **How many**: others can then buy only the pieces that are free. Nothing is charged or posted; the phone's history shows **Reserved** and **Reservation released**.
+
+### Shelf / place
+
+When adding or editing a phone, **Shelf / place** (optional) says where it sits, for example **Rack A2**. It shows on the phone's line, and the stock search and the **Shelf / place** filter find it.
+
+### Change who it was bought from
+
+On a phone's page tap **Change dealer / customer**: its purchase opens with the change ready (see "An IMEI or the seller typed wrong" above). For items, open the purchase from the item's movements or **More → Purchases**.
+
+### Page style: Classic, Smart, Tabs, Tiles, Compact
+
+At the top of a phone's page you can choose how it looks. The choice is remembered on that phone or computer.
+
+- **Classic**: the page as before.
+- **Smart**: every fact has its action beside it. **Copy** and **Correct IMEI** sit beside the IMEI, **Change asking price** beside the price, **Edit** beside the shelf, **Print sticker** beside the barcode and **Verify** beside the ID check. **Sell** is at the top. The person it was bought from (or sold to) shows with what is still owed and **Pay** / **Receive**, **Open bill** and **Change**. The history is below.
+- **Tabs**: the same page split into **Phone**, **Customer & money** and **History**.
+- **Tiles**: big squares; tap one to change it (price, IMEI, condition, shelf, sticker, ID check).
+- **Compact**: one short list, with **Sell** pinned at the bottom.
+
+Every style does the same things; any action not shown beside a value is under **More actions**.
 
 ### The full history
 

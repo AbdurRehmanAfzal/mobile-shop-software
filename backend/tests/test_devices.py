@@ -97,8 +97,10 @@ def test_box_pack_needs_no_verification_and_non_pta_needs_sim_time(owner, cat):
             "pta_status": "non_pta",
         },
     )
-    assert r.status_code == 422
-    d2 = _stock(owner, cat, imei="356938035643809", pta_status="jv", sim_time_months=4)
+    # owner 2026-11-10: the SIM time is optional now
+    assert r.status_code == 201, r.text
+    assert r.json()["sim_time_months"] is None
+    d2 = _stock(owner, cat, imei="353456789012348", pta_status="jv", sim_time_months=4)
     assert d2["sim_time_months"] == 4
 
 

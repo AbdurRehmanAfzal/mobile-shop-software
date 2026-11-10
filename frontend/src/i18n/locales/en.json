@@ -263,7 +263,9 @@
       "transferred_in": "Came from a branch",
       "corrected": "Corrected",
       "lock_checked": "Lock checked",
-      "reclassified": "Type changed"
+      "reclassified": "Type changed",
+      "reserved": "Reserved",
+      "unreserved": "Reservation released"
     },
     "acc": {
       "box": "Box",
@@ -353,7 +355,9 @@
       "faulty": "Damaged / faulty",
       "low": "Low stock (items)",
       "out": "Out of stock (items)",
-      "value": "Value at cost"
+      "value": "Value at cost",
+      "reserved": "Reserved",
+      "itemsHeld": "+ {{n}} item pieces"
     },
     "fx": {
       "age": "Stock age",
@@ -361,7 +365,10 @@
       "supplier": "Bought from",
       "costMin": "Cost from",
       "costMax": "Cost up to"
-    }
+    },
+    "shelf": "Shelf / place",
+    "shelfHint": "Optional, e.g. Rack A2, Drawer 3",
+    "simTimeOptional": "Optional: leave empty if you do not know."
   },
   "purchase": {
     "title": "New purchase",
@@ -4685,7 +4692,7 @@
       },
       "simTime": {
         "title": "SIM time (months)",
-        "body": "For a Non-PTA or JV phone: how many more months a Pakistani SIM will keep working in it. It must be filled, and the sale screen warns the buyer.",
+        "body": "For a Non-PTA or JV phone: how many more months a Pakistani SIM will keep working in it. Optional: leave it empty if you do not know; when filled, the sale screen warns the buyer.",
         "example": "Non-PTA Pixel 7 with about 2 months left → write 2. After that the SIM stops until PTA tax is paid."
       },
       "warrantyMonths": {
@@ -5480,6 +5487,11 @@
           "body": "Only units whose buying price is in this range. Owner and manager only.",
           "example": "From 50,000 up to 80,000."
         }
+      },
+      "shelf": {
+        "title": "Shelf / place",
+        "body": "Where the phone sits in the shop, so anyone can find it. Optional; search and the stock filter find it.",
+        "example": "Rack A2"
       }
     },
     "loan": {
@@ -7922,6 +7934,30 @@
         "title": "Show by",
         "body": "The same amounts grouped four ways: by phone (IMEI), by customer, by dealer and by technician. A bill with several phones shows under \"Unallocated by IMEI\" once. Something no bill explains, like an old balance or an advance, shows as \"Old balance / other\" under the person.",
         "example": "Dealer: every dealer the shop still has to pay, with the purchase bills."
+      }
+    },
+    "reserve": {
+      "page": {
+        "title": "Reserve",
+        "body": "Hold a phone (or some pieces of an item) for one customer, for example after they paid an advance or asked you to keep it. A reserved phone stays in stock but is not counted as Available to sell, and the sale refuses it for anyone else; selling it to that customer ends the hold. Release it if they do not come. For an item, others can buy only the pieces that are not held. Nothing is charged or posted; the phone's history records the reservation and its release.",
+        "example": "Ali will come on Friday for the iPhone 13 → Reserve for Ali, hold until Friday. Sara tries to buy it: refused. Ali buys it: done."
+      },
+      "qty": {
+        "title": "How many",
+        "body": "Pieces to hold for this customer; at most what is free.",
+        "example": "6 chargers, hold 2 for Ali: 4 free for others."
+      },
+      "until": {
+        "title": "Hold until",
+        "body": "Optional: the day you will hold it until. The hold does not end by itself; release it.",
+        "example": "Friday."
+      }
+    },
+    "dl": {
+      "styles": {
+        "title": "Page style",
+        "body": "Choose how a phone's page looks; it is remembered on this phone or computer. Classic is the page as before. Smart puts each action beside its value (Copy / Correct beside the IMEI, Change beside the price, Pay / Receive beside the customer) and keeps the history below. Tabs splits the page into Phone, Customer & money, and History. Tiles shows big squares to tap. Compact is one short list with Sell pinned at the bottom. All styles do the same things.",
+        "example": "A busy counter: Compact. A new salesman: Tiles."
       }
     }
   },
@@ -10430,5 +10466,48 @@
       "lab": "Repair lab charge",
       "other": "Old balance / other"
     }
+  },
+  "reserve": {
+    "title": "Reserve for a customer",
+    "hint": "The phone stays in stock but only this customer can buy it until you release it. Nothing is charged.",
+    "for": "Customer",
+    "qty": "How many",
+    "until": "Hold until",
+    "note": "Note (advance, colour, ...)",
+    "save": "Reserve",
+    "heldFor": "Reserved for",
+    "release": "Release",
+    "button": "Reserve for a customer",
+    "itemHeld": "Reserved for customers",
+    "free": "{{n}} free to sell",
+    "chip": "Reserved:"
+  },
+  "dl": {
+    "title": "Page style",
+    "styles": {
+      "classic": "Classic",
+      "smart": "Smart",
+      "tabs": "Tabs",
+      "tiles": "Tiles",
+      "compact": "Compact"
+    },
+    "copy": "Copy",
+    "copied": "Copied",
+    "status": "Status",
+    "spec": "Details",
+    "edit": "Edit",
+    "notRecorded": "Not recorded",
+    "pay": "Pay",
+    "receive": "Receive",
+    "openBill": "Open bill",
+    "changePerson": "Change",
+    "more": "More actions",
+    "tab": {
+      "overview": "Phone",
+      "people": "Customer & money",
+      "history": "History"
+    },
+    "tapTo": "Tap to change",
+    "top": "Top"
   }
 }

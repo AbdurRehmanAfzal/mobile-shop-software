@@ -110,6 +110,10 @@ def create_sale(
                 message_en=f"Device is {device.status}",
                 message_ur="موبائل اسٹاک میں نہیں",
             )
+        # ADR-060: a reserved phone goes only to its customer (that sale ends the hold)
+        from app.modules.reserve.service import check_device_sale
+
+        check_device_sale(db, device, party.id if party else None)
         try:
             assert_sellable(device)
         except NotSellable:
@@ -362,6 +366,18 @@ def create_sale(
             else (accessory.warranty_days if accessory else 0)
         )
         if accessory is not None:
+            # ADR-060: pieces held for other customers cannot be sold; this customer's hold is filled
+            from app.modules.accessories import stock as _inv
+            from app.modules.reserve.service import check_item_sale
+
+            check_item_sale(
+                db,
+                shop_id,
+                accessory,
+                ml.qty,
+                party.id if party else None,
+                _inv.prefs_for(shop)["allow_negative_stock"],
+            )
             mv = acc_stock.move(
                 db,
                 shop_id,

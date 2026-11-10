@@ -2,18 +2,18 @@
  *  watches here, accessories / spare parts / other on the items screen) and status cards that also
  *  filter the list. Counts come from GET /devices/stock-status (nothing is posted by looking). */
 
-import { AlertTriangle, CheckCircle2, Clock, PackageX, Search, UserCheck, Wallet, Wrench } from 'lucide-react'
+import { AlertTriangle, Bookmark, CheckCircle2, Clock, PackageX, Search, UserCheck, Wallet, Wrench } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import { useGet } from '@/lib/queries'
 
 export type Kind = '' | 'phone' | 'tablet' | 'watch'
-export type Mode = '' | 'sellable' | 'inspection' | 'in_repair' | 'faulty' | 'with_customer_for_approval'
+export type Mode = '' | 'sellable' | 'reserved' | 'inspection' | 'in_repair' | 'faulty' | 'with_customer_for_approval'
 
 interface StockStatus {
-  units: { on_hand: number; available: number; inspection: number; in_repair: number; faulty: number; approval: number; on_loan: number }
-  items: { on_hand: number; low: number; out: number }
+  units: { on_hand: number; available: number; reserved: number; inspection: number; in_repair: number; faulty: number; approval: number; on_loan: number }
+  items: { on_hand: number; low: number; out: number; reserved: number }
   value_cost: string | null
   units_value_cost: string | null
 }
@@ -74,6 +74,7 @@ export function StatusCards({ kind, mode, onMode, canCost }: { kind: Kind; mode:
     <div className="flex items-center gap-1">
       <div className="-mx-1 flex min-w-0 flex-1 gap-2 overflow-x-auto px-1 pb-1" data-testid="stock-cards">
         {card('available', CheckCircle2, 'stock.card.available', u.available, 'bg-emerald-tint text-emerald-deep', mode === 'sellable', () => toggle('sellable'), `${pick('stock.card.onHand')} ${u.on_hand}`)}
+        {card('reserved', Bookmark, 'stock.card.reserved', u.reserved, 'bg-gold-tint text-ink', mode === 'reserved', () => toggle('reserved'), !kind && data.items.reserved ? pick('stock.card.itemsHeld').replace('{{n}}', String(data.items.reserved)) : undefined)}
         {card('approval', UserCheck, 'stock.card.approval', u.approval, 'bg-surface text-ink', mode === 'with_customer_for_approval', () => toggle('with_customer_for_approval'))}
         {card('inspection', Search, 'stock.card.inspection', u.inspection, 'bg-gold-tint text-ink', mode === 'inspection', () => toggle('inspection'))}
         {card('repair', Wrench, 'stock.card.repair', u.in_repair, 'bg-surface text-ink', mode === 'in_repair', () => toggle('in_repair'))}
