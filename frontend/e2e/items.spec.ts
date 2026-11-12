@@ -45,6 +45,7 @@ test('buy 3 watches from a dealer, sell one, stock shows 2', async ({ page }) =>
   await page.getByText('Casio MTP-1302').click()
   await expect(page.getByText('In stock: 3')).toBeVisible()
   await page.screenshot({ path: 'test-results/items-sell.png', fullPage: true })
+  if (await page.getByTestId('walk-in-tick').isVisible()) await page.getByTestId('walk-in-tick').check() // walk-in is ticked on purpose (owner 2026-11-12)
   await page.getByRole('button', { name: 'Complete sale' }).click()
   await expect(page.getByText('Sale complete')).toBeVisible()
 

@@ -58,6 +58,7 @@ test('hold a sale, resume it as it was; a phone sold meanwhile comes off', async
   await expect(page.getByText('Sale held. Find it under Held sales.')).toBeVisible()
   await page.getByRole('button', { name: /Nokia/ }).first().click()
   await page.getByRole('button', { name: 'Skip and sell (I know this person)' }).click()
+  if (await page.getByTestId('walk-in-tick').isVisible()) await page.getByTestId('walk-in-tick').check() // walk-in is ticked on purpose (owner 2026-11-12)
   await page.getByRole('button', { name: 'Complete sale' }).click()
   await page.getByRole('button', { name: 'Confirm and make the bill' }).click()
   await expect(page.getByText('Sale complete')).toBeVisible()

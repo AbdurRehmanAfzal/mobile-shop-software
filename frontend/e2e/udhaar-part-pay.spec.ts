@@ -41,6 +41,7 @@ test('udhaar sale: the part paid now by JazzCash', async ({ page, request }) => 
   await part.getByRole('button', { name: 'JazzCash', exact: true }).click()
   await part.getByLabel('TID / reference (optional)').fill('TID4040')
   await page.screenshot({ path: 'test-results/udhaar-part-pay.png', fullPage: true })
+  if (await page.getByTestId('walk-in-tick').isVisible()) await page.getByTestId('walk-in-tick').check() // walk-in is ticked on purpose (owner 2026-11-12)
   await page.getByRole('button', { name: 'Complete sale' }).click()
   await page.getByRole('button', { name: 'Confirm and make the bill' }).click()
   await expect(page.getByText('Sale complete')).toBeVisible()

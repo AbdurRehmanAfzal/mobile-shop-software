@@ -87,6 +87,8 @@ export default function DeviceDetailPage() {
   // the purchase this unit came in on (its latest), for "Change dealer / customer" (owner 2026-11-10)
   const boughtOn = [...(history ?? [])].reverse().find((e) => e.type === 'purchased' && e.document_type === 'purchase')?.document_id ?? null
   const multiShop = useAuth((s) => (s.me?.shops.length ?? 0) > 1)
+  // the sale it went out on (its latest), for "Change customer" (owner 2026-11-12)
+  const soldOn = [...(history ?? [])].reverse().find((e) => e.type === 'sold' && e.document_type === 'invoice')?.document_id ?? null
   // the price on that purchase now: what it was bought for, or the last correction of it
   const buyEv = [...(history ?? [])].reverse().find((e) => e.type === 'purchased' && e.document_type === 'purchase')
   const lastFix = (history ?? []).filter((e) => buyEv && e.seq > buyEv.seq && e.type === 'corrected' && (e.data as { field?: string } | null)?.field === 'cost').pop()
@@ -127,6 +129,7 @@ export default function DeviceDetailPage() {
     { key: 'edit', label: 'crud.editDetails', run: () => setSheet('edit') },
     canSeeCost && boughtOn ? { key: 'changeSeller', label: 'purchase.fix.partyButton', run: () => nav(`/purchases/${boughtOn}?change=1`) } : null,
     canCost ? { key: 'fixCost', label: 'purchase.costFix.button', run: openCost } : null,
+    canSeeCost && soldOn && d.status === 'sold' ? { key: 'changeBuyer', label: 'sale.fix.button', run: () => nav(`/sales/${soldOn}?change=1`) } : null,
     canSeeCost ? { key: 'balances', label: 'bal.short', run: () => nav(`/balances?q=${encodeURIComponent(d.imei1)}`) } : null,
     canSeeCost && phoneLike ? { key: 'fixImei', label: 'stock.fixImei.button', run: () => { setFix({ imei1: d.imei1, imei2: d.imei2 ?? '', clear2: false, reason: '' }); setFixErr(null); setSheet('imei') } } : null,
     d.condition !== 'box_pack' ? { key: 'lock', label: 'devx.lock.button', run: () => { setLocks(d.lock_checks ?? {}); setLockNote(''); setSheet('lock') } } : null,
@@ -211,6 +214,7 @@ export default function DeviceDetailPage() {
           <BiButton text="crud.editDetails" variant="secondary" size="md" onClick={() => setSheet('edit')} />
           {canSeeCost && boughtOn ? <BiButton text="purchase.fix.partyButton" variant="secondary" size="md" onClick={() => nav(`/purchases/${boughtOn}?change=1`)} data-testid="device-change-seller" /> : null}
           {canCost ? <BiButton text="purchase.costFix.button" variant="secondary" size="md" onClick={openCost} data-testid="fix-cost" /> : null}
+          {canSeeCost && soldOn && d.status === 'sold' ? <BiButton text="sale.fix.button" variant="secondary" size="md" onClick={() => nav(`/sales/${soldOn}?change=1`)} data-testid="device-change-buyer" /> : null}
           {canSeeCost ? <BiButton text="bal.short" variant="secondary" size="md" onClick={() => nav(`/balances?q=${encodeURIComponent(d.imei1)}`)} data-testid="device-balances" /> : null}
           {canSeeCost && ((d.category ?? 'phone') === 'phone' || d.cellular) ? <BiButton text="stock.fixImei.button" variant="secondary" size="md" onClick={() => { setFix({ imei1: d.imei1, imei2: d.imei2 ?? '', clear2: false, reason: '' }); setFixErr(null); setSheet('imei') }} data-testid="fix-imei" /> : null}
           {d.condition !== 'box_pack' ? <BiButton text="devx.lock.button" variant="secondary" size="md" onClick={() => { setLocks(d.lock_checks ?? {}); setLockNote(''); setSheet('lock') }} /> : null}

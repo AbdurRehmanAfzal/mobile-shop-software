@@ -36,6 +36,7 @@ test('phone taxed at import, cash given and change, amount in words', async ({ p
   await page.getByLabel('Cash given by the customer').fill('41000')
   await expect(page.getByTestId('change')).toHaveText('Rs. 1,000')
   await page.screenshot({ path: 'test-results/bill-details-sale.png', fullPage: true })
+  if (await page.getByTestId('walk-in-tick').isVisible()) await page.getByTestId('walk-in-tick').check() // walk-in is ticked on purpose (owner 2026-11-12)
   await page.getByRole('button', { name: 'Complete sale' }).click()
   await page.getByRole('button', { name: 'Confirm and make the bill' }).click()
   await expect(page.getByText('Sale complete')).toBeVisible()

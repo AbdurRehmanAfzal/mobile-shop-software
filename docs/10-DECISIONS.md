@@ -362,6 +362,30 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-065 · 2026-11-12 · Accepted · A sale asks who is buying; the customer can be changed after the sale
+**Context**: a salesman left a sale on "Walk-in customer" by mistake (every sale started as walk-in). The owner wants the customer search in front, walk-in as a deliberate tick, and the customer changeable after the sale, so the phone's history shows who took it.
+**Decision**:
+- **Sale form.** The customer box ("Who is buying?") shows the search directly, with a "Walk-in customer (no name)" checkbox under it.
+  - **Complete sale** stays off until a customer is chosen or walk-in is ticked.
+  - Udhaar / installments already required a customer.
+  - Frontend only.
+- **After the sale.** `POST /sales/{id}/customer {party_id, reason}`, owner / manager only (`Cap.VOID`).
+  - Nothing is erased. One correction group (`sale_party_change`), dated like the sale:
+    - walk-in → customer: the bill shows in the customer's khata as bought and paid (debit and credit the same party; net nothing). The cash came in at the sale.
+    - customer → customer: the bill total and what was paid with it move from the old khata to the new one, as in ADR-056 for purchases.
+  - The invoice's `party_id` changes.
+  - Each phone gets a `corrected` event (`field: customer`). A still-sold phone's `current_party_id` follows.
+  - An audit row is written.
+  - Refused (`sale_has_later_money`) once a payment was allocated to the bill later, something was returned, there is an exchange or installment plan on it, or its extra cash went against the old person's udhaar.
+- **UI.**
+  - The bill page has **Put on a customer** (walk-in) / **Change customer**. It opens itself with `?change=1`.
+  - The sold phone's page has **Change customer** (Classic button; beside "Sold to" in Smart / Tabs / Tiles).
+- No migration.
+**Consequences**:
+- Cash sales need one more tap (the walk-in tick); this is intended.
+- A bill already sent to FBR keeps its FBR record as sent.
+- A walk-in bill put on a customer can then be returned through the normal return flow.
+
 ## ADR-064 · 2026-11-10 · Accepted · A person's mobile number is optional; "bought from" reads the bill
 **Context**:
 - Shopkeepers add many people with no number (walk-in sellers, one-time buyers), but the form required one.

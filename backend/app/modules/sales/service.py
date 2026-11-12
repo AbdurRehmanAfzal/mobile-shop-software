@@ -752,6 +752,128 @@ def void_invoice(
 # ---- receipt ----------------------------------------------------------------------------
 
 
+def change_customer(
+    db: Session,
+    shop_id: uuid.UUID,
+    ctx,
+    invoice_id: uuid.UUID,
+    party_id: uuid.UUID,
+    reason: str,
+) -> Invoice:
+    """Owner 2026-11-12 (ADR-065): a sale was made to "Walk-in customer" (or to the wrong person)
+    by mistake. Nothing is erased: the bill is put on the right person and one correction group,
+    dated like the sale, shows it in their khata: a walk-in bill shows as bought and paid (net
+    nothing, the cash already came in); a bill moved between two people takes what is left on it
+    from the old khata to the new one. Each phone's history says who it was and who it is now.
+    Refused once money was received against this bill later, something was returned or exchanged
+    on it, it is on installments, or its extra cash went against the old person's udhaar."""
+    from app.modules.exchanges.models import Exchange
+    from app.modules.installments.models import InstallmentPlan
+    from app.modules.payments.models import Payment
+
+    if not ctx.can(Cap.VOID):
+        raise Forbidden()
+    inv = get_invoice(db, shop_id, invoice_id)
+    if inv.status == InvoiceStatus.VOID:
+        raise Conflict(
+            code="already_voided",
+            message_en="This sale is cancelled",
+            message_ur="یہ فروخت منسوخ ہو چکی ہے",
+        )
+    new = db.get(Party, party_id)
+    if new is None or new.shop_id != shop_id or not new.is_active:
+        raise NotFound(code="party_not_found")
+    if new.id == inv.party_id:
+        raise ValidationFailed(
+            code="same_party",
+            message_en="This is already the customer on the bill",
+            message_ur="بل پر پہلے ہی یہی گاہک ہے",
+        )
+    later = inv.party_id is not None and any(
+        any(str(a.get("document_id")) == str(inv.id) for a in (x.allocations or []))
+        for x in db.scalars(
+            select(Payment).where(
+                Payment.shop_id == shop_id,
+                Payment.party_id == inv.party_id,
+                Payment.status != "voided",
+            )
+        ).all()
+    )
+    linked = (
+        inv.returned_total > ZERO
+        or (inv.khata_adjusted or ZERO) > ZERO
+        or db.scalar(select(InstallmentPlan.id).where(InstallmentPlan.invoice_id == inv.id))
+        or db.scalar(
+            select(Exchange.id).where(
+                (Exchange.invoice_id == inv.id) | (Exchange.original_invoice_id == inv.id)
+            )
+        )
+    )
+    if later or linked:
+        raise Conflict(
+            code="sale_has_later_money",
+            message_en="Money was received against this sale later, or something was returned, exchanged or put on installments on it. Undo that first, then change the customer.",
+            message_ur="اس فروخت کے بعد اس کی وصولی ہو چکی ہے یا کچھ واپس، تبدیل یا قسطوں پر ہو چکا ہے۔ پہلے وہ ختم کریں، پھر گاہک بدلیں۔",
+        )
+    old_id = inv.party_id
+    old = db.get(Party, old_id) if old_id else None
+    total, paid = money(inv.total), money(inv.paid)
+    posting = Posting(
+        document_type="sale_party_change",
+        document_id=inv.id,
+        memo=f"{inv.no}: {old.name if old else 'Walk-in'} -> {new.name} ({reason})",
+        at=at_for(inv.date),
+    )
+    if old_id is None:
+        # the cash came in at the sale: in the new khata the bill shows as bought and paid
+        if total > ZERO:
+            posting.debit(acc.party_account(new.id), total, memo=f"Bill {inv.no}").credit(
+                acc.party_account(new.id), total, memo=f"Paid at sale {inv.no}"
+            )
+    else:
+        if total > ZERO:
+            posting.debit(acc.party_account(new.id), total).credit(acc.party_account(old_id), total)
+        if paid > ZERO:
+            posting.debit(acc.party_account(old_id), paid).credit(acc.party_account(new.id), paid)
+    if posting.lines:
+        post(db, shop_id, ctx.id, posting)
+    inv.party_id = new.id
+    inv.updated_at = utcnow()
+    for ln in inv.lines:
+        if ln.device_id:
+            d = db.get(Device, ln.device_id)
+            apply_event(
+                db,
+                shop_id,
+                ctx.id,
+                d,
+                EventType.CORRECTED,
+                document_type="invoice",
+                document_id=inv.id,
+                data={
+                    "field": "customer",
+                    "from": old.name if old else None,
+                    "to": new.name,
+                    "reason": reason,
+                    "invoice_no": inv.no,
+                },
+            )
+            if d.status == DeviceStatus.SOLD and d.current_party_id == old_id:
+                d.current_party_id = new.id
+    record_audit(
+        db,
+        shop_id=shop_id,
+        user_id=ctx.id,
+        entity="invoice",
+        entity_id=inv.id,
+        action="customer_changed",
+        before={"party_id": str(old_id) if old_id else None},
+        after={"party_id": str(new.id), "reason": reason},
+    )
+    db.commit()
+    return inv
+
+
 def receipt_html(
     db: Session, shop_id: uuid.UUID, invoice_id: uuid.UUID, fmt: str, lang: str | None = None
 ) -> str:

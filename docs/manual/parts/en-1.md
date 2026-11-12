@@ -591,9 +591,11 @@ Each row shows the model, the IMEI (or the serial for a watch), the condition, t
 
 The done screen shows **Sale complete**, the amount and the bill number, for example `INV-000018`.
 
-**Walk-in customer.** Every new sale starts as **Walk-in customer**: someone who pays in full now and needs no khata. The bill prints "Walk-in customer". To put the bill on a person's khata, tap **Choose customer** and pick them (or add a new person).
+**Who is buying?** Every sale asks it. Search the customer by name, phone or CNIC (or tap **+** for a new person). Only when the buyer does not want to give a name, tick **Walk-in customer (no name)**: no khata is kept and the bill prints "Walk-in customer". Until one of the two is done, **Complete sale** stays off, so a walk-in is never chosen by mistake.
 
-> **Note:** A walk-in sale must be paid in full. For part payment, tap **Choose customer** (or **Udhaar**) and pick the customer.
+**Walk-in by mistake, or the wrong customer?** Owner or manager: open the bill (**More → Sales**, or **Change customer** on the sold phone's page), tap **Put on a customer** (or **Change customer**), choose the right person, write the reason and tap **Save**. A walk-in bill shows in their khata as bought and paid (nothing more owed); a bill on the wrong person moves with what is left on it. Cash does not move; the phone's history keeps both names. Not possible once money was received on that bill later, or something was returned, exchanged or put on installments on it.
+
+> **Note:** A walk-in sale must be paid in full. For part payment, choose the customer (or tap **Udhaar**).
 
 ### An udhaar sale
 

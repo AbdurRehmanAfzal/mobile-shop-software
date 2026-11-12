@@ -140,6 +140,7 @@ function People({ d, canSeeCost, acts }: LayoutProps) {
   if (money?.purchase && canSeeCost) sides.push({ side: money.purchase, role: 'bought' })
   if (money?.sale) sides.push({ side: money.sale, role: 'sold' })
   const changeSeller = acts.find((x) => x.key === 'changeSeller')
+  const changeBuyer = acts.find((x) => x.key === 'changeBuyer')
   return (
     <div className="flex flex-col gap-2" data-testid="dl-people">
       {d.reserved_party_id || d.status === 'in_stock' ? <DeviceReserve deviceId={d.id} d={d} inStock={d.status === 'in_stock'} /> : null}
@@ -161,6 +162,7 @@ function People({ d, canSeeCost, acts }: LayoutProps) {
               {rem > 0 && side.party_id ? <button type="button" onClick={() => setPaying({ side, dir: bought ? 'out' : 'in' })} className="tap inline-flex min-h-10 items-center gap-1 rounded-xl bg-white/90 px-3 font-bold text-ink" data-testid={`dl-${bought ? 'pay' : 'receive'}`}>{bought ? <ArrowUp size={16} /> : <ArrowDown size={16} />}{pick(bought ? 'dl.pay' : 'dl.receive')} {n(rem)}</button> : null}
               <button type="button" onClick={() => nav(bought ? `/purchases/${side.doc_id}` : `/sales/${side.doc_id}`)} className="tap inline-flex min-h-10 items-center rounded-xl border border-current/30 px-3 font-bold">{pick('dl.openBill')}</button>
               {bought && changeSeller ? <button type="button" onClick={changeSeller.run} className="tap inline-flex min-h-10 items-center rounded-xl border border-current/30 px-3 font-bold">{pick('dl.changePerson')}</button> : null}
+              {!bought && changeBuyer ? <button type="button" onClick={changeBuyer.run} className="tap inline-flex min-h-10 items-center rounded-xl border border-current/30 px-3 font-bold" data-testid="dl-change-buyer">{pick('dl.changePerson')}</button> : null}
             </div>
           </div>
         )
@@ -199,7 +201,7 @@ function MoreActions({ acts, shown }: { acts: Act[]; shown: string[] }) {
   )
 }
 
-const INLINE = ['sell', 'return', 'repairBack', 'approvalBack', 'faultyCleared', 'fixImei', 'price', 'edit', 'sticker', 'verify', 'lock', 'note', 'changeSeller', 'fixCost']
+const INLINE = ['sell', 'return', 'repairBack', 'approvalBack', 'faultyCleared', 'fixImei', 'price', 'edit', 'sticker', 'verify', 'lock', 'note', 'changeSeller', 'changeBuyer', 'fixCost']
 
 function Head({ d }: { d: DeviceDetail }) {
   const { pick } = useLang()

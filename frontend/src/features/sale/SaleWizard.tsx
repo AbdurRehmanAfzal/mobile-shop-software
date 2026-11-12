@@ -120,8 +120,8 @@ export default function SaleWizard() {
   const [cashGiven, setCashGiven] = useDraft('sale.cashGiven', '')
   // owner 2026-11-06: the extra cash kept against the customer's old udhaar instead of handed back
   const [toKhata, setToKhata] = useDraft('sale.toKhata', false)
-  // the customer box: walk-in until the shopkeeper chooses someone
-  const [pickCust, setPickCust] = useState(false)
+  // owner 2026-11-12: the customer is chosen, or "Walk-in" is ticked on purpose (no silent walk-in)
+  const [walkIn, setWalkIn] = useDraft('sale.walkIn', false)
   const [dueDate, setDueDate] = useDraft('sale.dueDate', '')
   const [overrideReason, setOverrideReason] = useDraft('sale.overrideReason', '')
   const [lossOk, setLossOk] = useDraft('sale.lossOk', false)
@@ -181,7 +181,7 @@ export default function SaleWizard() {
   const instRest = Math.max(0, total - paid)
   const instMonthly = inst.monthly !== '' ? Number(inst.monthly) : Math.ceil(instRest / Math.max(1, Number(inst.months) || 1))
   const instOk = !inst.on || (!!party && instRest > 0 && Number(inst.months) >= 1 && instMonthly > 0 && instMonthly * (Number(inst.months) - 1) < instRest)
-  const canSave = instOk && (!lossLine || (manager && lossOk)) && checkOk && total > 0 && billPayReady(pay, part, paid) && (!owes || !!party) && lines.every((l) => Number(l.price) > 0) && misc.every((x) => x.description.trim() && Number(x.unit_price) > 0 && (x.stock === undefined || negativeOk || Number(x.qty) <= x.stock))
+  const canSave = instOk && (!lossLine || (manager && lossOk)) && checkOk && total > 0 && billPayReady(pay, part, paid) && (!!party || walkIn) && (!owes || !!party) && lines.every((l) => Number(l.price) > 0) && misc.every((x) => x.description.trim() && Number(x.unit_price) > 0 && (x.stock === undefined || negativeOk || Number(x.qty) <= x.stock))
   // owner addendum 5: the price pre-filled for an item depends on the customer (dealer → wholesale,
   // a running promo → promo, else retail); lines the seller has not touched follow a customer change
   const priceItem = async (it: { id: string; qty: number; price: string; name: string; name_ur: string | null }, pid: string | null) => {
@@ -239,7 +239,7 @@ export default function SaleWizard() {
   })
 
   function resetCart() {
-    setLines([]); setMisc([]); setParty(null); setPaidNow(''); setCashGiven(''); setDiscount(''); setPay(newPay()); setPart(newPay()); setTaxOn(false); setTaxRate(''); setMore(false); setOverrideReason(''); setLossOk(false); setInst({ on: false, months: '6', monthly: '', dueDay: '10', firstDue: '', gName: '', gPhone: '', gCnic: '' })
+    setLines([]); setMisc([]); setParty(null); setPaidNow(''); setCashGiven(''); setDiscount(''); setPay(newPay()); setPart(newPay()); setWalkIn(false); setTaxOn(false); setTaxRate(''); setMore(false); setOverrideReason(''); setLossOk(false); setInst({ on: false, months: '6', monthly: '', dueDay: '10', firstDue: '', gName: '', gPhone: '', gCnic: '' })
   }
 
   async function holdSale() {
@@ -491,21 +491,23 @@ export default function SaleWizard() {
           ) : null}
 
           {!udhaar && !(owes && remitPkr(pay) > 0) ? (
-            party || pickCust ? (
-              <PartyPicker value={party} onChange={(p) => { setParty(p); if (!p) { setPickCust(false); setToKhata(false) } }} kind="customer" label="counter.customerOpt" allowNone />
-            ) : (
-              <div className="card flex items-center gap-3" data-testid="walk-in">
-                <span className="well h-11 w-11 shrink-0 bg-ground text-muted"><UserRound size={22} /></span>
-                <span className="flex min-w-0 flex-1 flex-col">
-                  <BiLabel text="sale.cashCustomer" size="md" bold />
-                  <BiLabel text="sale.walkInHint" size="sm" tone="text-muted" />
-                </span>
-                <button type="button" onClick={() => setPickCust(true)} className="tap flex min-h-11 shrink-0 items-center gap-1.5 rounded-xl border border-line bg-surface px-3 font-bold" data-testid="choose-customer">
-                  <BtnText k="sale.chooseCustomer" />
-                </button>
-                <Help term="picker.walkIn" size="sm" />
-              </div>
-            )
+            <div className={`flex flex-col gap-2 rounded-3xl border-2 p-3 ${party || walkIn ? 'border-line' : 'border-gold'}`} data-testid="customer-box">
+              {!walkIn ? <PartyPicker value={party} onChange={(p) => { setParty(p); if (p) setWalkIn(false); else setToKhata(false) }} kind="customer" label="sale.whoBuys" /> : null}
+              {!party ? (
+                <div className="flex items-center gap-1">
+                  <label className={`tap flex min-h-14 min-w-0 flex-1 cursor-pointer items-center gap-3 rounded-2xl border px-4 py-2 ${walkIn ? 'border-ink bg-ground' : 'border-line bg-surface'}`} data-testid="walk-in">
+                    <input type="checkbox" checked={walkIn} onChange={(e) => setWalkIn(e.target.checked)} className="h-6 w-6 shrink-0 accent-[rgb(var(--emerald))]" data-testid="walk-in-tick" />
+                    <span className="well h-9 w-9 shrink-0 bg-ground text-muted"><UserRound size={18} /></span>
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <BiLabel text="sale.walkInTick" size="md" bold />
+                      <BiLabel text="sale.walkInHint" size="sm" tone="text-muted" />
+                    </span>
+                  </label>
+                  <Help term="picker.walkIn" size="sm" />
+                </div>
+              ) : null}
+              {!party && !walkIn ? <BiLabel text="sale.pickOrWalkIn" size="sm" tone="text-gold-text" /> : null}
+            </div>
           ) : null}
 
           {pay.method === 'cash' && !udhaar && total > 0 ? (

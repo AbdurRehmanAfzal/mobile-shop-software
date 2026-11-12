@@ -54,6 +54,7 @@ test('signup → customer → credit sale → dashboard and balance', async ({ p
   await page.getByRole('button', { name: /Ahmed Khan/ }).first().click()
   await page.getByLabel('Paid now (if any)').fill('400')
   await page.screenshot({ path: 'test-results/sale-step2.png', fullPage: true })
+  if (await page.getByTestId('walk-in-tick').isVisible()) await page.getByTestId('walk-in-tick').check() // walk-in is ticked on purpose (owner 2026-11-12)
   await page.getByRole('button', { name: 'Complete sale' }).click()
   await page.getByRole('button', { name: 'Confirm and make the bill' }).click()
   await expect(page.getByText('Sale complete')).toBeVisible()

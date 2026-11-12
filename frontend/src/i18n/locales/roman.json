@@ -336,7 +336,8 @@
         "imei1": "IMEI 1",
         "imei2": "IMEI 2",
         "seller": "Jis se khareeda",
-        "cost": "Qeemat-e-khareed"
+        "cost": "Qeemat-e-khareed",
+        "customer": "Customer"
       }
     },
     "kind": {
@@ -542,9 +543,20 @@
     "cashGiven": "Gahak ne kitne naqad diye",
     "change": "Wapas dene hain",
     "cashShort": "Bill se kam",
-    "walkInHint": "Koi khata nahi. Khate mein daalna ho to customer chunein.",
+    "walkInHint": "Koi khata nahi. Sirf tab tick karein jab khareedar naam na dena chahe.",
     "chooseCustomer": "Customer chunein",
-    "toKhata": "{{n}} us ke purane udhaar mein jama karein (dena hai {{due}})"
+    "toKhata": "{{n}} us ke purane udhaar mein jama karein (dena hai {{due}})",
+    "whoBuys": "Kaun khareed raha hai?",
+    "walkInTick": "Walk-in customer (naam ke baghair)",
+    "pickOrWalkIn": "Customer chunein, ya Walk-in par tick karein.",
+    "fix": {
+      "button": "Customer badlein",
+      "buttonWalkIn": "Customer ke naam karein",
+      "title": "Customer badlein",
+      "hint": "Bill ghalat shakhs par chala gaya. Yeh baqi raqam ke saath durust customer ke khate mein jata hai; cash nahi hilta; mobile ki history mein dono naam rehte hain.",
+      "hintWalkIn": "Yeh sale walk-in customer ko hui. Chunein kis ne khareeda: bill us ke khate mein khareeda aur ada shuda dikhega, kuch baqi nahi, cash nahi hilta.",
+      "new": "Durust customer"
+    }
   },
   "pay": {
     "title": "Paise",
@@ -6162,6 +6174,16 @@
         "title": "Baqi raqam",
         "body": "Wapas aaye phone ki jo raqam customer ne di thi magar abhi wapas nahi di. Customer ka khata: dukaan ne deni hai aur baad mein de gi. Dukaan rakhe: yeh dukaan ki katauti (aamdani) hai.",
         "example": "80,000 wapas dene hain, abhi 30,000: Customer ka khata chunein to 50,000 Customer ko dena."
+      },
+      "fixCustomer": {
+        "title": "Sale ke baad customer badlein",
+        "body": "Sirf owner ya manager. Walk-in sale ka bill chune gaye shakhs ke khate mein khareeda aur ada shuda jata hai (kuch baqi nahi). Ghalat shakhs wale bill ki baqi raqam durust shakhs ke khate mein jati hai. Cash nahi hilta aur mobile ki history mein dono naam rehte hain. Agar baad mein is bill ki wusooli ho chuki ho ya kuch wapas, exchange ya qiston par ho chuka ho to pehle woh khatam karein.",
+        "example": "Salesman ne walk-in likha, asal mein Imran Ali tha: Customer ke naam karein, Imran Ali chunein."
+      },
+      "fixReason": {
+        "title": "Wajah",
+        "body": "Kyun badla ja raha hai; yeh mobile ki history aur audit mein rehti hai.",
+        "example": "Salesman ne ghalti se walk-in chuna."
       }
     },
     "exchange": {
@@ -6355,8 +6377,8 @@
       },
       "walkIn": {
         "title": "Walk-in customer",
-        "body": "Jo abhi poori raqam de aur khata na chahiye. Har sale walk-in se shuru hoti hai; bill kisi ke khate mein daalna ho to \"Customer chunein\" dabayein.",
-        "example": "Koi Rs. 800 ka charger cash mein khareedta hai → walk-in customer hi rehne dein."
+        "body": "Sirf tab tick karein jab khareedar naam na dena chahe: koi khata nahi banta aur bill par \"Walk-in customer\" aata hai. Warna upar se customer chunein taake mobile ki history mein naam rahe. Walk-in bill baad mein bill ke page se kisi customer ke naam kiya ja sakta hai.",
+        "example": "Koi 800 rupay ka charger cash le aur naam na de: Walk-in par tick karein."
       },
       "docLang": {
         "title": "Document ki zabaan",
