@@ -9770,7 +9770,8 @@
       "date": "Date",
       "code": "Cost code",
       "last4": "IMEI last 4"
-    }
+    },
+    "shortNote": "A short sticker (under 22 mm high) prints the phone name, price, a large barcode and the IMEI only, so they fit."
   },
   "otp": {
     "hint": "Write your mobile number. A code comes on WhatsApp; with it you set a new password yourself.",

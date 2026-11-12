@@ -50,6 +50,9 @@ FIELDS = (
 )
 DEFAULT_FIELDS = ("shop", "name", "specs", "price", "barcode", "imei", "condition")
 DEFAULT_CODE_WORD = "BLACKHORSE"
+# owner 2026-11-12: a short roll (e.g. 46×18 mm on a 58 mm printer) cannot hold every line; below
+# this height a sticker keeps the name, price, a full-width barcode and the IMEI only
+COMPACT_H = 22
 
 CONDITION = {
     "box_pack": ("Box pack", "باکس پیک"),
@@ -163,6 +166,13 @@ def _page(labels: list[str], w: float, h: float, sheet: bool, ur: bool, title: s
     .imei{{font-size:{2.1 * s:.2f}mm;font-family:'Courier New',monospace;letter-spacing:.08em;text-align:center;white-space:nowrap}}
     .meta{{font-size:{1.9 * s:.2f}mm;color:#222;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
     .ur{{font-family:'Noto Nastaliq Urdu',Arial,sans-serif;direction:rtl}}
+    .label.compact{{padding:0.5mm 0.8mm;justify-content:flex-start;gap:0.3mm}}
+    .compact .top{{display:flex;align-items:baseline;justify-content:space-between;gap:1mm;min-width:0}}
+    .compact .n1{{font-size:2.3mm;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}}
+    .compact .p1{{font-size:2.7mm;font-weight:900;white-space:nowrap}}
+    .compact .bar{{flex:1 1 auto;height:auto;min-height:5mm}}
+    .compact .bar.qr{{height:auto}}
+    .compact .imei{{font-size:2mm;font-weight:700;letter-spacing:.04em}}
     """
     body = "".join(labels)
     inner = f'<div class="grid">{body}</div>' if sheet else body
@@ -172,8 +182,28 @@ def _page(labels: list[str], w: float, h: float, sheet: bool, ur: bool, title: s
     )
 
 
-def _label(parts: dict, want: set[str], ur: bool) -> str:
+def _label(parts: dict, want: set[str], ur: bool, compact: bool = False) -> str:
     e = html.escape
+    if compact:
+        # a short sticker: name and price on one line, the barcode as large as the rest allows,
+        # the IMEI (or the code) under it; shop, specs, code word and the meta line are left out
+        top = []
+        if "name" in want and parts.get("name"):
+            top.append(f'<div class="n1">{e(parts["name"])}</div>')
+        if "price" in want and parts.get("price"):
+            top.append(f'<div class="p1">{e(parts["price"])}</div>')
+        out = [f'<div class="top">{"".join(top)}</div>'] if top else []
+        if "barcode" in want and parts.get("barcode"):
+            kind = parts.get("barcode_type") or "code128"
+            out.append(
+                f'<div class="bar{" qr" if kind == "qr" else ""}">{codes.svg(kind, parts["barcode"])}</div>'
+            )
+        text = parts.get("imei") if "imei" in want else None
+        text = text or (parts.get("last4") if "last4" in want else None)
+        text = text or (parts.get("barcode") if "barcode" in want else None)
+        if text:
+            out.append(f'<div class="imei">{e(text)}</div>')
+        return f'<div class="label compact">{"".join(out)}</div>'
     top = []
     if "shop" in want and parts.get("shop"):
         top.append(
@@ -281,7 +311,9 @@ def devices_html(
         d = by_id.get(did)
         if d is None:
             continue
-        lab = _label(_device_parts(d, shop, ur, shop.label_code_word), want, ur)
+        lab = _label(
+            _device_parts(d, shop, ur, shop.label_code_word), want, ur, not sheet and lh < COMPACT_H
+        )
         labels.extend([lab] * max(1, min(copies, 50)))
     if not labels:
         raise ValidationFailed(code="no_labels")
@@ -328,7 +360,7 @@ def items_html(
             "pta": "",
             "date": shop_today().strftime("%d-%m-%y"),
         }
-        lab = _label(parts, want, ur)
+        lab = _label(parts, want, ur, not sheet and lh < COMPACT_H)
         labels.extend([lab] * max(1, min(copies, 100)))
     if not labels:
         raise ValidationFailed(code="no_labels")

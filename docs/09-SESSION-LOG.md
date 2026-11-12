@@ -1359,3 +1359,23 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - pytest `test_faulty` (new: options, own fault, change faults, list with / without `with_faulty`, sale and bill text, cleared), plus devices, exports and the full suite.
 - tsc.
 - Playwright `faulty-and-models` (new: model filter and clear, faults sheet, faulty in the default stock list, sold from its page), plus the stock / sale regression specs.
+
+### Same day — stickers on a 58 mm MPT-II roll
+**Owner**:
+- Has an MPT-II 58 mm Bluetooth printer and a 56 mm roll, printing from Android through RawBT.
+- At 46 × 18 mm: the shop name, the barcode and the IMEI did not print; there was space on the left; "******" and "free version" lines appeared.
+**Found**:
+- The RawBT free version adds its own lines (paid removes them).
+- The printer prints 48 mm (384 dots at 203 dpi), so the width should be 48.
+- 18 mm cannot hold every line: in a local render the barcode was about 4 mm and the bottom line was cut.
+**Done**: below 22 mm high (`COMPACT_H`, roll sizes only, not the A4 sheet) a sticker prints:
+- name + price on one line;
+- a full-width barcode (about 9 mm on 18 mm);
+- the IMEI in bold.
+
+Shop, specs, code word and the condition line are left out. The sticker sheet shows a note when a custom height is under 22. The manual has a 58 mm / RawBT note (en / ur / roman).
+**Verified**:
+- pytest `test_labels` (new short-roll test), `test_barcodes`, `test_repair_labs`.
+- tsc.
+- Local renders at 46 × 18 and 48 × 15 looked at.
+**Open**: the owner to test-print at 48 × 18 (or 48 × 30) and send a photo. RawBT paid vs a direct Bluetooth print in the app is the owner's choice.

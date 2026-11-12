@@ -9770,7 +9770,8 @@
       "date": "Tareekh",
       "code": "Laagat code",
       "last4": "IMEI aakhri 4"
-    }
+    },
+    "shortNote": "Chhota sticker (22 mm se kam ooncha) sirf mobile ka naam, qeemat, bara barcode aur IMEI chhaapta hai taake sab poora aaye."
   },
   "otp": {
     "hint": "Apna mobile number likhein. WhatsApp par code aaye ga; us se aap khud naya password rakh sakein ge.",

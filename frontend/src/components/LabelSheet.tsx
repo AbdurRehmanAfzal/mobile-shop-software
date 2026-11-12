@@ -74,6 +74,7 @@ export default function LabelSheet({ kind, ids, open, onClose }: { kind: LabelKi
               <BiInput label="label.height" help={<Help term="label.customSize" size="sm" />} type="number" inputMode="numeric" min={10} max={110} value={p.h} onChange={(e) => setP({ ...p, h: e.target.value })} className="num" dir="ltr" />
             </div>
           ) : null}
+          {p.size === 'custom' && Number(p.h) > 0 && Number(p.h) < 22 ? <p className="mt-2 rounded-2xl bg-gold-tint px-3 py-2 text-sm font-semibold text-ink" data-testid="label-short-note">{pick('label.shortNote')}</p> : null}
         </div>
         <div>
           <span className="mb-1.5 flex items-center gap-1"><BiLabel text="label.fields" size="md" bold /><Help term="label.fields" size="sm" /></span>
