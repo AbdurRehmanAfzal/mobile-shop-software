@@ -11,7 +11,8 @@ import { BtnText, Chip, Empty, ErrorText, fmtDate, KV, List, Loading, MoneyText,
 import { useAuth } from '@/lib/auth'
 import { openPrintable } from '@/lib/files'
 import { useDocMutation, useSale, useSales } from '@/lib/queries'
-import type { Invoice, PaymentDetail, ReturnDoc } from '@/lib/types'
+import type { Invoice, Party, PaymentDetail, ReturnDoc } from '@/lib/types'
+import PartyPicker from '@/components/PartyPicker'
 
 const TONE: Record<Invoice['status'], 'ok' | 'warn' | 'bad' | 'muted' | 'ink'> = { paid: 'ok', partially_paid: 'warn', open: 'bad', returned: 'muted', void: 'muted' }
 
@@ -82,6 +83,11 @@ export function SaleDetailPage() {
   const [settlement, setSettlement] = useState<'refund' | 'credit' | 'income'>('refund')
   const ret = useDocMutation<Record<string, unknown>, ReturnDoc>('POST', () => '/api/v1/returns/sale')
   const voidM = useDocMutation<{ reason: string }, Invoice>('POST', () => `/api/v1/sales/${id}/void`)
+  // owner 2026-11-12 (ADR-065): sold to "Walk-in" or the wrong person by mistake; ?change=1 opens it
+  const [moving, setMoving] = useState(() => new URLSearchParams(window.location.search).get('change') === '1')
+  const [to, setTo] = useState<Party | null>(null)
+  const [why, setWhy] = useState('')
+  const move = useDocMutation<{ party_id: string; reason: string }, Invoice>('POST', () => `/api/v1/sales/${id}/customer`)
   if (isLoading || !inv) return <Loading />
   const active = inv.status !== 'void' && inv.status !== 'returned'
   const canManage = role === 'owner' || role === 'manager'
@@ -92,6 +98,7 @@ export function SaleDetailPage() {
       <FbrBillStatus invoiceId={inv.id} />
       <div className="card">
         <KV k="sale.steps.customer" help="sale.customer" v={inv.party_name ? <button type="button" className="text-emerald" onClick={() => nav(`/parties/${inv.party_id}`)}>{inv.party_name}</button> : pick('sale.cashCustomer')} />
+        {canManage && inv.status !== 'void' ? <div className="mt-2 flex items-center gap-1"><div className="flex-1"><BiButton text={inv.party_id ? 'sale.fix.button' : 'sale.fix.buttonWalkIn'} size="md" variant={inv.party_id ? 'secondary' : 'primary'} full onClick={() => { setTo(null); setWhy(''); move.reset(); setMoving(true) }} data-testid="sale-customer-change" /></div><Help term="sale.fixCustomer" size="sm" /></div> : null}
         <KV k="common.date" help="common.date" v={<span dir="ltr">{fmtDate(inv.date)}</span>} />
         {inv.created_by_name ? <KV k="counter.soldBy" help="sale.soldBy" v={inv.created_by_name} /> : null}
         {inv.payment ? <KV k="counter.howPaid" help="common.method" v={<span dir="ltr">{paidBy(inv.payment, pick)}</span>} /> : null}
@@ -142,6 +149,15 @@ export function SaleDetailPage() {
       </div>
       <DocActions path={`/api/v1/sales/${inv.id}/receipt?format=a4`} name={`invoice-${inv.no}`} title={inv.no} picker={false} />
 
+      <Sheet open={moving} onClose={() => setMoving(false)} title="sale.fix.title">
+        <div className="flex flex-col gap-3" data-testid="sale-customer-sheet">
+          <BiLabel text={inv.party_id ? 'sale.fix.hint' : 'sale.fix.hintWalkIn'} size="sm" tone="text-muted" />
+          <PartyPicker value={to} onChange={setTo} kind="customer" label="sale.fix.new" />
+          <BiInput label="common.reason" value={why} onChange={(e) => setWhy(e.target.value)} maxLength={200} help={<Help term="sale.fixReason" size="sm" />} />
+          <ErrorText error={move.error} />
+          <BiButton text="common.save" full loading={move.isPending} disabled={!to || to.id === inv.party_id || why.trim().length < 2} onClick={async () => { await move.mutateAsync({ party_id: to!.id, reason: why.trim() }); setMoving(false) }} data-testid="sale-customer-save" />
+        </div>
+      </Sheet>
       <Sheet open={returning} onClose={() => setReturning(false)} title="sale.return">
         <div className="flex flex-col gap-3">
           <BiLabel text="sale.selectLines" size="sm" tone="text-muted" />

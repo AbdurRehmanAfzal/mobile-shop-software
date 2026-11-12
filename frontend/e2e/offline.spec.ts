@@ -39,6 +39,7 @@ test('sale without internet waits on the phone and is sent once when back online
   await expect(page.getByRole('status')).toContainText('No internet')
   await page.getByRole('button', { name: /Nokia/ }).first().click()
   await page.getByRole('button', { name: 'Skip and sell (I know this person)' }).click()
+  if (await page.getByTestId('walk-in-tick').isVisible()) await page.getByTestId('walk-in-tick').check() // walk-in is ticked on purpose (owner 2026-11-12)
   await page.getByRole('button', { name: 'Complete sale' }).click()
   await page.getByRole('button', { name: 'Confirm and make the bill' }).click()
   await expect(page.getByRole('status')).toContainText('Saved on this phone')

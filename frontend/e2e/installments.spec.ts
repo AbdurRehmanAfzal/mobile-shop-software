@@ -57,6 +57,7 @@ test('installments: sold on qist from the sale, then the schedule, a collection 
   await page.getByLabel("Guarantor's name").fill('Bilal Ahmed')
   await page.getByLabel("Guarantor's mobile").fill('03001112222')
   await page.screenshot({ path: 'test-results/sale-installments.png', fullPage: true })
+  if (await page.getByTestId('walk-in-tick').isVisible()) await page.getByTestId('walk-in-tick').check() // walk-in is ticked on purpose (owner 2026-11-12)
   await page.getByRole('button', { name: 'Complete sale' }).click()
   await page.getByRole('button', { name: 'Confirm and make the bill' }).click()
   await expect(page.getByText('Sale complete')).toBeVisible()

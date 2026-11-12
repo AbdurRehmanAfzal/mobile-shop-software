@@ -593,9 +593,11 @@ Har line mein model, IMEI (ya ghari ka serial), haalat, PTA chip (misaal ke taur
 
 Ho gaya wali screen **Bikri ho gayi**, raqam aur bill number dikhati hai, misaal ke taur par `INV-000018`.
 
-**Walk-in customer.** Har nayi bikri **Walk-in customer** se shuru hoti hai: woh banda jo abhi poore paise deta hai aur jis ka khata nahi rakhna. Bill par "Walk-in customer" chhapta hai. Bill kisi bande ke khate mein daalna ho to **Customer chunein** dabayein aur usay chunein (ya naya banda daalein).
+**Kaun khareed raha hai?** Har bikri yeh poochti hai. Customer naam, phone ya CNIC se talaash karein (ya naya banda **+** se). Sirf tab jab khareedar naam na dena chahe, **Walk-in customer (naam ke baghair)** par tick karein: khata nahi banta aur bill par "Walk-in customer" chhapta hai. Jab tak dono mein se ek na ho, **Complete sale** band rehta hai, taake ghalti se walk-in na ho.
 
-> **Note:** Walk-in bikri mein poore paise lena zaroori hai. Kuch paise ke liye **Customer chunein** (ya **Udhaar**) dabayein aur gahak chunein.
+**Ghalti se walk-in ya ghalat customer?** Owner ya manager: bill kholein (**More → Sales**, ya bike hue mobile ke page par **Customer badlein**), **Customer ke naam karein** (ya **Customer badlein**) dabayein, durust banda chunein, wajah likhein aur **Save** karein. Walk-in bill us ke khate mein khareeda aur ada shuda aata hai (kuch baqi nahi); ghalat bande wala bill baqi raqam ke saath jata hai. Cash nahi hilta; mobile ki history mein dono naam rehte hain. Agar baad mein is bill ki wusooli ho chuki ho ya kuch wapas, exchange ya qiston par ho chuka ho to nahi hota.
+
+> **Note:** Walk-in bikri mein poore paise lena zaroori hai. Kuch paise ke liye customer chunein (ya **Udhaar** dabayein).
 
 ### Udhaar bikri
 

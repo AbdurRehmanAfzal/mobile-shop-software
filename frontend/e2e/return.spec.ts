@@ -39,6 +39,7 @@ test('walk-in return: hand back 900, shop cuts 100', async ({ page, request }) =
   // cash sale to a walk-in
   await page.goto('/sale/new')
   await page.getByRole('button', { name: /Nokia/ }).first().click()
+  if (await page.getByTestId('walk-in-tick').isVisible()) await page.getByTestId('walk-in-tick').check() // walk-in is ticked on purpose (owner 2026-11-12)
   await page.getByRole('button', { name: 'Complete sale' }).click()
   await page.getByRole('button', { name: 'Confirm and make the bill' }).click()
   await expect(page.getByText('Sale complete')).toBeVisible()

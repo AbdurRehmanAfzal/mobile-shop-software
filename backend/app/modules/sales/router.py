@@ -4,6 +4,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Query
 from fastapi.responses import HTMLResponse
+from pydantic import BaseModel, Field
 
 from app.core.idempotency import IdemKey
 from app.core.idempotency import run as idempotent
@@ -84,6 +85,23 @@ def void(invoice_id: uuid.UUID, data: VoidIn, ctx: Ctx, db: DB):
     return service.to_out(
         db,
         service.void_invoice(db, ctx.shop_id, ctx, invoice_id, data.reason),
+        ctx.can(Cap.VIEW_COST),
+    )
+
+
+class CustomerChangeIn(BaseModel):
+    party_id: uuid.UUID
+    reason: str = Field(min_length=2, max_length=200)
+
+
+@router.post("/{invoice_id}/customer", response_model=SaleOut)
+def change_customer(invoice_id: uuid.UUID, data: CustomerChangeIn, ctx: Ctx, db: DB):
+    """owner / manager: sold to "Walk-in" or the wrong person by mistake (ADR-065)"""
+    return service.to_out(
+        db,
+        service.change_customer(
+            db, ctx.shop_id, ctx, invoice_id, data.party_id, data.reason.strip()
+        ),
         ctx.can(Cap.VIEW_COST),
     )
 

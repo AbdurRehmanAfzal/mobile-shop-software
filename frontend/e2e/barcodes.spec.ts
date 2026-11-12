@@ -32,6 +32,7 @@ test('barcodes: made on purchase, printed, scanned into a sale, found anywhere, 
 
   // settings: prefix BS, Code 128 (default); the next value shows
   await page.goto('/more/settings')
+  await expect(page.getByText(/Next barcode/)).toContainText('MS000001') // loaded first, or the load resets the prefix
   await page.getByLabel('Shop prefix').fill('BS')
   await page.getByTestId('barcode-save').click()
   await expect(page.getByText('Saved', { exact: true }).first()).toBeVisible()
@@ -56,7 +57,7 @@ test('barcodes: made on purchase, printed, scanned into a sale, found anywhere, 
   // the phone's page shows the barcode; the label page carries it and the print is on the timeline
   await page.goto(`/stock/${a.id}`)
   await expect(page.getByTestId('device-barcode')).toContainText('BS000001')
-  const label = await page.request.get(`${API}/labels/devices?ids=${a.id}&size=50x30&fields=shop,name,barcode,imei,last4,price`, { headers })
+  const label = await page.request.get(`${API}/labels/devices?ids=${a.id}&size=50x30&fields=shop,name,barcode,last4,price`, { headers })
   const html = await label.text()
   expect(html).toContain('BS000001')
   expect(html).toContain('IMEI …7518')
@@ -80,6 +81,7 @@ test('barcodes: made on purchase, printed, scanned into a sale, found anywhere, 
   await expect(page.getByTestId('scan-note')).toContainText('Item not found')
   await expect(page.getByTestId('scan-note').getByRole('button', { name: 'Add it' })).toBeVisible()
   // complete the sale
+  if (await page.getByTestId('walk-in-tick').isVisible()) await page.getByTestId('walk-in-tick').check() // walk-in is ticked on purpose (owner 2026-11-12)
   await page.getByRole('button', { name: 'Complete sale' }).click()
   await page.getByRole('button', { name: 'Confirm and make the bill' }).click()
   await expect(page.getByText('Sale complete')).toBeVisible({ timeout: 15_000 })

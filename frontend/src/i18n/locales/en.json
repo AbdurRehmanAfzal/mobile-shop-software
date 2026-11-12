@@ -336,7 +336,8 @@
         "imei1": "IMEI 1",
         "imei2": "IMEI 2",
         "seller": "Bought from",
-        "cost": "Purchase price"
+        "cost": "Purchase price",
+        "customer": "Customer"
       }
     },
     "kind": {
@@ -542,9 +543,20 @@
     "cashGiven": "Cash given by the customer",
     "change": "Change to give back",
     "cashShort": "Less than the bill",
-    "walkInHint": "No khata kept. Choose a customer to put it on their khata.",
+    "walkInHint": "No khata kept. Tick only when the buyer does not want to give a name.",
     "chooseCustomer": "Choose customer",
-    "toKhata": "Keep {{n}} against their old udhaar (owes {{due}})"
+    "toKhata": "Keep {{n}} against their old udhaar (owes {{due}})",
+    "whoBuys": "Who is buying?",
+    "walkInTick": "Walk-in customer (no name)",
+    "pickOrWalkIn": "Choose the customer, or tick Walk-in.",
+    "fix": {
+      "button": "Change customer",
+      "buttonWalkIn": "Put on a customer",
+      "title": "Change the customer",
+      "hint": "The bill was put on the wrong person. It moves to the right customer's khata with what is left on it; cash does not move; the phone's history keeps both names.",
+      "hintWalkIn": "This sale was made to \"Walk-in\". Choose who bought it: the bill shows in their khata as bought and paid, nothing more is owed, cash does not move.",
+      "new": "Right customer"
+    }
   },
   "pay": {
     "title": "Payment",
@@ -6162,6 +6174,16 @@
         "title": "The rest",
         "body": "What the customer paid for the returned phone but is not handed back now. Customer's khata: the shop owes it and pays later. Shop keeps it: it is the shop's cut (income).",
         "example": "80,000 to give back, 30,000 now: Customer's khata leaves 50,000 To give to customer."
+      },
+      "fixCustomer": {
+        "title": "Change the customer after the sale",
+        "body": "Only the owner or manager. For a walk-in sale the bill goes into the chosen person's khata as bought and paid (they owe nothing more). For a bill on the wrong person, the bill and what is left on it move to the right person's khata. Cash does not move and the phone's history keeps both names. Not possible once money was received on this bill later, or something was returned, exchanged or put on installments on it: undo that first.",
+        "example": "A salesman sold to Walk-in, but it was Imran Ali: Put on a customer, choose Imran Ali."
+      },
+      "fixReason": {
+        "title": "Reason",
+        "body": "Why it is being changed; it stays in the phone's history and the audit.",
+        "example": "Salesman picked walk-in by mistake."
       }
     },
     "exchange": {
@@ -6355,8 +6377,8 @@
       },
       "walkIn": {
         "title": "Walk-in customer",
-        "body": "Someone who pays in full now and needs no khata. Every sale starts as walk-in; tap \"Choose customer\" to put the bill on a person's khata.",
-        "example": "Someone buys a Rs. 800 charger and pays cash → leave it as walk-in customer."
+        "body": "Tick only when the buyer does not want to give a name: no khata is kept and the bill shows \"Walk-in customer\". Otherwise choose the customer above, so the phone's history shows who took it. A walk-in bill can be put on a customer later from the bill.",
+        "example": "Someone buys a Rs. 800 charger, pays cash and gives no name: tick Walk-in."
       },
       "docLang": {
         "title": "Document language",

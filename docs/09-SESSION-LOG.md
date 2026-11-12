@@ -1323,3 +1323,22 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - tsc.
 - Playwright `party-no-phone` (new), `add-device`, `fix-after-purchase`.
 **Owner side** (docs/29): the server runs `alembic upgrade head` on deploy, as usual, for `b9d1f3a5c7e2`.
+
+### 2026-11-12 — PR #49 live; who is buying + change a sale's customer (ADR-065)
+**Owner**: a salesman left a sale on walk-in by mistake.
+- "choose customer ka option zyada visible ho, walk-in ka checkbox ho".
+- "after sell customer change ka option hona chahiye".
+**Done**:
+- Sale form: "Who is buying?" box with the customer search in front and a "Walk-in customer (no name)" tick. Complete sale waits for one of the two.
+- `sales/service.change_customer` and `POST /api/v1/sales/{id}/customer` (owner / manager):
+  - walk-in → customer posts the bill as bought + paid in their khata (net zero);
+  - customer → customer moves the total and what was paid;
+  - the phone's `corrected` event and `current_party_id` follow;
+  - refused after later money / return / exchange / installments / khata adjust.
+- Bill page: **Put on a customer** / **Change customer** (`?change=1`). Sold phone's page: **Change customer** (Classic + Smart's "Sold to").
+- e2e: every cash sale ticks walk-in before Complete sale (21 places). `counter-ux` now expects Complete sale off until chosen.
+- Manual ch. 1 (en / ur / roman), ADR-065.
+**Verified**:
+- pytest `test_sale_customer_change` (new; walk-in → customer, khata shows 2 rows, cash unchanged, history; customer → customer balances; refused after a later payment; same person; salesman 403), plus the full suite.
+- tsc.
+- Playwright `sale-customer` (new) and the sale specs.

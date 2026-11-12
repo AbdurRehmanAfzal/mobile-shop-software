@@ -52,6 +52,7 @@ test('laptop: side menu, two-column home, side-by-side sale, F-keys', async ({ p
   await row.click()
   await expect(page.getByLabel('Sold for (Rs)')).toHaveValue('1000')
   await expect(row).toBeVisible()
+  if (await page.getByTestId('walk-in-tick').isVisible()) await page.getByTestId('walk-in-tick').check() // walk-in is ticked on purpose (owner 2026-11-12)
   await expect(page.getByRole('button', { name: 'Complete sale' })).toBeEnabled()
   await page.screenshot({ path: 'test-results/laptop-sale.png', fullPage: true })
   await page.getByRole('button', { name: 'Complete sale' }).click()
