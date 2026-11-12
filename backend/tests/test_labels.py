@@ -95,3 +95,17 @@ def test_device_and_item_labels(owner, client, cat):
         and "Charger 25W" in r.text
         and it.json()["barcode"] in r.text  # owner addendum 4: the item's own barcode, not the SKU
     )
+
+
+def test_short_roll_keeps_name_price_barcode_imei(owner, cat):
+    """Owner 2026-11-12: a short sticker (46×18 mm on a 58 mm printer) keeps the name, price, a
+    full-width barcode and the IMEI; shop, specs and the condition line are left out so they fit."""
+    a = _stock(owner, cat, imei=IMEI_A, condition="used", cost_price=40000, asking_price=45000)
+    page = owner.get(f"/api/v1/labels/devices?ids={a['id']}&w=46&h=18&lang=en").text
+    assert "@page{size:46.0mm 18.0mm" in page or "@page{size:46mm 18mm" in page
+    assert 'class="label compact"' in page
+    assert "Rs. 45,000" in page and "<svg" in page and IMEI_A in page
+    assert "Used" not in page and 'class="shop' not in page
+    # 22 mm and up: the full sticker as before
+    full = owner.get(f"/api/v1/labels/devices?ids={a['id']}&w=48&h=30&lang=en").text
+    assert 'class="label"' in full and 'compact"' not in full and "Used" in full

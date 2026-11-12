@@ -1036,7 +1036,9 @@ You can print stickers from several places:
 
 The sticker sheet then asks a few things once:
 
-1. **Sticker size**: roll sizes such as 38×25, 40×30, 50×25, 50×30, 58×40, 60×40 and 70×40 mm for label printers, **A4 sheet (65 per page)** for an ordinary printer, or **Custom mm** with your own **Width (mm)** and **Height (mm)**.
+1. **Sticker size**: roll sizes such as 38×25, 40×30, 50×25, 50×30, 58×40, 60×40 and 70×40 mm for label printers, **A4 sheet (65 per page)** for an ordinary printer, or **Custom mm** with your own **Width (mm)** and **Height (mm)**. A sticker under 22 mm high prints the phone name, price, a large barcode and the IMEI only, so they fit.
+
+> **58 mm Bluetooth printer (e.g. MPT-II) with a 56–58 mm roll:** the printer prints 48 mm wide (203 dpi, 384 dots), so use **Custom mm**, **Width 48**. Height: 30 for the full sticker, about 18 for a short one. On Android, print through the **RawBT** app: the free version adds its own lines; the paid version does not.
 2. **What goes on it**: tap a line to switch it on or off: **Shop name**, **Model**, storage and colour, **Price**, **Barcode**, **IMEI number**, **IMEI last 4**, **Condition**, **PTA**, **Date** and **Cost code**.
 3. **Copies of each**: how many stickers per phone or item.
 4. Tap **Print**. The page is already exactly the size of one sticker, so a label printer prints one per sticker. You can also download or share it as a PDF.

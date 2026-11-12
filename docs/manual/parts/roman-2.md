@@ -304,7 +304,9 @@ Sticker kai jagah se print ho sakte hain:
 
 Phir sticker sheet ek dafa chand cheezein poochti hai:
 
-1. **Sticker ka size**: label printer ke liye roll ke size jaise 38×25, 40×30, 50×25, 50×30, 58×40, 60×40 aur 70×40 mm, aam printer ke liye **A4 sheet (65 fi safha)**, ya apni **Chaurai (mm)** aur **Unchai (mm)** ke saath **Apna size (mm)**.
+1. **Sticker ka size**: label printer ke liye roll ke size jaise 38×25, 40×30, 50×25, 50×30, 58×40, 60×40 aur 70×40 mm, aam printer ke liye **A4 sheet (65 fi safha)**, ya apni **Chaurai (mm)** aur **Unchai (mm)** ke saath **Apna size (mm)**. 22 mm se kam ooncha sticker sirf mobile ka naam, qeemat, bara barcode aur IMEI chhaapta hai taake sab poora aaye.
+
+> **58 mm Bluetooth printer (maslan MPT-II) aur 56–58 mm roll:** printer 48 mm chaura chhaapta hai (203 dpi, 384 dots), is liye **Apna size**, **Chaurai 48** rakhein. Unchai: poore sticker ke liye 30, chhote ke liye taqreeban 18. Android par **RawBT** app se print karein: us ka free version apni lines daalta hai, paid version nahi.
 2. **Is par kya ho**: kisi line par daba kar use on ya off karein: **Dukaan ka naam**, **Model**, storage aur rang, **Qeemat**, **Barcode**, **IMEI number**, **IMEI aakhri 4**, **Haalat**, **PTA**, **Tareekh** aur **Laagat code**.
 3. **Har ek ki copies**: har phone ya item ke kitne sticker.
 4. **Print karein** dabayein. Page pehle se bilkul ek sticker ke size ka hota hai, is liye label printer har sticker par ek print karta hai. Aap ise PDF ki shakal mein download ya share bhi kar sakte hain.
