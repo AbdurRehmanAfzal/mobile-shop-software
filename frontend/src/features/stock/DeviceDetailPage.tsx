@@ -20,6 +20,7 @@ import UnitMoney from './UnitMoney'
 import { DeviceReserve } from './ReserveCard'
 import { CompactLayout, SmartLayout, StyleSwitch, TabsLayout, TilesLayout, loadStyle, saveStyle, type Act, type DeviceStyle } from './DeviceLayouts'
 import { isApple } from '@/features/purchase/AppleVariant'
+import { FaultChip, FaultSheet } from './Faults'
 
 
 function toDraft(d: DeviceDetail): DeviceLineDraft {
@@ -66,6 +67,8 @@ export default function DeviceDetailPage() {
   // owner 2026-11-09 (ADR-056): an IMEI typed wrong
   const [fix, setFix] = useState({ imei1: '', imei2: '', clear2: false, reason: '' })
   const [fixErr, setFixErr] = useState<unknown>(null)
+  // owner 2026-11-12 (ADR-066): what is wrong with it
+  const [faultOpen, setFaultOpen] = useState(false)
   // owner 2026-11-10 (ADR-063): a purchase price typed wrong
   const [newCost, setNewCost] = useState({ cost: '', reason: '' })
   const [costErr, setCostErr] = useState<unknown>(null)
@@ -114,11 +117,12 @@ export default function DeviceDetailPage() {
   const openCost = () => { setNewCost({ cost: String(boughtFor ?? ''), reason: '' }); setCostErr(null); setSheet('cost') }
   const costDiff = newCost.cost !== '' && boughtFor != null ? Number(newCost.cost) - boughtFor : 0
   const acts = ([
-    inStock && d.verification_status !== 'flagged' ? { key: 'sell', label: 'stock.sell', run: () => nav(`/sale/new?device=${d.id}`), tone: 'primary' } : null,
+    (inStock || d.status === 'faulty') && d.verification_status !== 'flagged' ? { key: 'sell', label: 'stock.sell', run: () => nav(`/sale/new?device=${d.id}`), tone: 'primary' } : null,
     d.verification_status === 'pending' || d.verification_status === 'flagged' || d.condition !== 'box_pack' ? { key: 'verify', label: 'stock.verify', run: () => nav(`/stock/${d.id}/verify`), tone: d.verification_status === 'pending' ? 'gold' : undefined } : null,
     d.status === 'sold' ? { key: 'return', label: 'counter.returnJob', run: () => nav(`/return/new?device=${d.id}`), tone: 'primary' } : null,
     inStock ? { key: 'loan', label: 'stock.loanOut', run: () => setSheet('loan') } : null,
-    inStock ? { key: 'faulty', label: 'stock.markFaulty', run: () => void simple('marked_faulty') } : null,
+    inStock ? { key: 'faulty', label: 'stock.markFaulty', run: () => setFaultOpen(true) } : null,
+    d.status === 'faulty' ? { key: 'faultEdit', label: 'faulty.edit', run: () => setFaultOpen(true) } : null,
     d.status === 'faulty' ? { key: 'faultyCleared', label: 'stock.faultyCleared', run: () => void simple('faulty_cleared') } : null,
     inStock || d.status === 'faulty' ? { key: 'repair', label: 'stock.sendRepair', run: () => void simple('sent_to_repair') } : null,
     d.status === 'in_repair' ? { key: 'repairBack', label: 'stock.repairReturned', run: () => void simple('repair_returned') } : null,
@@ -165,6 +169,7 @@ export default function DeviceDetailPage() {
           {d.condition !== 'box_pack' ? <Chip text={lockState(d.lock_checks) === 'ok' ? 'devx.lock.ok' : lockState(d.lock_checks) === 'bad' ? 'devx.lock.bad' : 'devx.lock.none'} tone={lockState(d.lock_checks) === 'ok' ? 'ok' : lockState(d.lock_checks) === 'bad' ? 'bad' : 'warn'} /> : null}
           {d.verification_status !== 'not_required' ? <Chip text={`stock.verification.${d.verification_status}`} tone={vTone} /> : null}
           {d.cycle_no > 1 ? <Chip text={{ en: `Cycle ${d.cycle_no}`, ur: `${d.cycle_no} بار` }} /> : null}
+          <FaultChip faults={d.faults} />
           <Help term="device.badges" size="sm" />
         </div>
         <div className="mt-1 grid grid-cols-2 gap-2">
@@ -187,13 +192,13 @@ export default function DeviceDetailPage() {
       </section>
       <DeviceReserve deviceId={d.id} d={d} inStock={inStock} />
 
-      {inStock ? (
+      {inStock || d.status === 'faulty' ? (
         <div className="grid grid-cols-2 gap-2">
           <BiButton text="stock.sell" onClick={() => nav(`/sale/new?device=${d.id}`)} disabled={d.verification_status === 'flagged'} />
           {d.verification_status === 'pending' || d.verification_status === 'flagged' || d.condition !== 'box_pack' ? (
             <BiButton text="stock.verify" variant={d.verification_status === 'pending' ? 'gold' : 'secondary'} onClick={() => nav(`/stock/${d.id}/verify`)} />
           ) : (
-            <BiButton text="stock.loanOut" variant="secondary" onClick={() => setSheet('loan')} />
+            inStock ? <BiButton text="stock.loanOut" variant="secondary" onClick={() => setSheet('loan')} /> : <BiButton text="faulty.edit" variant="secondary" onClick={() => setFaultOpen(true)} />
           )}
         </div>
       ) : null}
@@ -203,7 +208,8 @@ export default function DeviceDetailPage() {
       <Section title="stock.actions" help="stock.actions">
         <div className="grid grid-cols-2 gap-2">
           {inStock ? <BiButton text="stock.loanOut" variant="secondary" size="md" onClick={() => setSheet('loan')} /> : null}
-          {inStock ? <BiButton text="stock.markFaulty" variant="secondary" size="md" onClick={() => simple('marked_faulty')} /> : null}
+          {inStock ? <BiButton text="stock.markFaulty" variant="secondary" size="md" onClick={() => setFaultOpen(true)} data-testid="mark-faulty" /> : null}
+          {d.status === 'faulty' ? <BiButton text="faulty.edit" variant="secondary" size="md" onClick={() => setFaultOpen(true)} data-testid="edit-faults" /> : null}
           {d.status === 'faulty' ? <BiButton text="stock.faultyCleared" variant="secondary" size="md" onClick={() => simple('faulty_cleared')} /> : null}
           {inStock || d.status === 'faulty' ? <BiButton text="stock.sendRepair" variant="secondary" size="md" onClick={() => simple('sent_to_repair')} /> : null}
           {d.status === 'in_repair' ? <BiButton text="stock.repairReturned" variant="secondary" size="md" onClick={() => simple('repair_returned')} /> : null}
@@ -331,6 +337,7 @@ export default function DeviceDetailPage() {
           <BiButton text="common.save" full disabled={!Object.keys(locks).length} onClick={async () => { await post(`/api/v1/devices/${d.id}/lock-check`, { checks: locks, note: lockNote || null }); await inv('devices', 'device', 'history'); setSheet(null) }} />
         </div>
       </Sheet>
+      <FaultSheet open={faultOpen} onClose={() => setFaultOpen(false)} deviceId={d.id} current={d.faults} />
       <Sheet open={sheet === 'cost'} onClose={() => setSheet(null)} title="purchase.costFix.title">
         <div className="flex flex-col gap-3" data-testid="cost-sheet">
           <span className="flex items-center gap-1"><BiLabel text="purchase.costFix.hint" size="sm" tone="text-muted" /><Help term="purchase.costFix" size="sm" /></span>

@@ -122,6 +122,12 @@ def apply_event(
         device.verification_status = (data or {}).get("result", VerificationStatus.CLEAR)
     elif event_type == EventType.PRICE_CHANGED and amount is not None:
         device.asking_price = money(amount)
+    # owner 2026-11-12 (ADR-066): what is wrong with it
+    if event_type == EventType.MARKED_FAULTY:
+        found = [str(x).strip()[:40] for x in (data or {}).get("faults") or [] if str(x).strip()]
+        device.faults = list(dict.fromkeys(found))[:12] or None
+    elif event_type == EventType.FAULTY_CLEARED:
+        device.faults = None
     db.flush()
     return event
 
@@ -194,6 +200,7 @@ def list_devices(
     age_min: int | None = None,
     lock_unchecked: bool = False,
     sellable: bool = False,
+    with_faulty: bool = False,
     inspection: bool = False,
     cost_min: Decimal | None = None,
     cost_max: Decimal | None = None,
@@ -277,7 +284,10 @@ def list_devices(
         stmt = stmt.where(
             Device.condition != DeviceCondition.BOX_PACK, Device.lock_checks.is_(None)
         )
-    if status:
+    if status == DeviceStatus.IN_STOCK and with_faulty:
+        # owner 2026-11-12 (ADR-066): a faulty unit is still stock and can be sold as it is
+        stmt = stmt.where(Device.status.in_((DeviceStatus.IN_STOCK, DeviceStatus.FAULTY)))
+    elif status:
         stmt = stmt.where(Device.status == status)
     if condition:
         stmt = stmt.where(Device.condition == condition)

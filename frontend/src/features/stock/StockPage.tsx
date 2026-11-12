@@ -1,4 +1,5 @@
 import DownloadButton from '@/components/DownloadButton'
+import { FaultChip } from './Faults'
 import { ArrowUpDown, PackagePlus, ScanLine } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -61,6 +62,7 @@ export function DeviceRow({ d, onClick }: { d: Device; onClick?: () => void }) {
           <Chip text={`stock.condition.${d.condition}`} />
           {hasPta(d) && d.pta_status !== 'pta_approved' ? <Chip text={`stock.pta.${d.pta_status}`} tone="warn" /> : null}
           {d.verification_status !== 'not_required' ? <Chip text={`stock.verification.${d.verification_status}`} tone={vTone} /> : null}
+          <FaultChip faults={d.faults} />
         </span>
       }
       right={
@@ -112,9 +114,10 @@ export function DeviceCard({ d, onOpen, onSell, selected, onSelect, fields }: { 
           {!fields || fields.includes('imei') ? <span dir="ltr">{d.imei1}</span> : null}
           {d.verification_status !== 'not_required' && (!fields || fields.includes('verification') || d.verification_status === 'flagged') ? <Chip text={`stock.verification.${d.verification_status}`} tone={vTone} /> : null}
           {d.status !== 'in_stock' ? <Chip text={`stock.status.${d.status}`} tone="ink" /> : null}
+          <FaultChip faults={d.faults} />
           {d.reserved_party_id ? <span className="rounded-full bg-gold-tint px-2 py-0.5 font-bold text-ink" data-testid="card-reserved-chip">{pick('reserve.chip')} {d.reserved_party_name}</span> : null}
         </div>
-        {onSell && d.status === 'in_stock' && d.verification_status !== 'flagged' ? (
+        {onSell && (d.status === 'in_stock' || d.status === 'faulty') && d.verification_status !== 'flagged' ? (
           <button type="button" onClick={onSell} className="tap min-h-11 shrink-0 rounded-full bg-emerald px-6 text-sm font-bold text-white shadow-cta">
             {pick('stock.sell')}
           </button>
@@ -135,7 +138,9 @@ export default function StockPage() {
   const [preset] = useState(() => { const sp = new URLSearchParams(window.location.search); return { condition: sp.get('condition') ?? undefined, pta_status: sp.get('pta_status') ?? undefined, category: sp.get('category') ?? undefined } })
   // owner brief 2026-11-10 (ADR-059): the chosen filters come back when the shopkeeper returns from
   // a phone's page (kept for this tab only; a link from the Shop Audit starts fresh)
-  const kept = useState(() => (preset.condition || preset.pta_status || preset.category ? null : readKept()))[0]
+  // owner 2026-11-12: a model opened from the stock summary is that model only (not every name that starts the same)
+  const [model, setModel] = useState<{ id: string; name: string } | null>(() => { const sp = new URLSearchParams(window.location.search); const id = sp.get('model_id'); return id ? { id, name: sp.get('model') ?? '' } : null })
+  const kept = useState(() => (preset.condition || preset.pta_status || preset.category || model ? null : readKept()))[0]
   const [filter, setFilter] = useState<Filter>(kept?.filter ?? 'in_stock')
   const [brand, setBrand] = useState<string>(kept?.brand ?? '')
   const [sort, setSort] = useState<Sort>(kept?.sort ?? 'newest')
@@ -159,7 +164,9 @@ export default function StockPage() {
   const [retypeRows, setRetypeRows] = useState<{ id: string; imei1: string; problems: string[] }[] | null>(null)
   const [retypeErr, setRetypeErr] = useState<unknown>(null)
   const statusParam = mode === 'in_repair' || mode === 'faulty' || mode === 'with_customer_for_approval' ? mode : mode ? undefined : filter === 'all' ? undefined : filter
-  const { data, isLoading } = useDevices({ q: q || undefined, status: statusParam, ...preset, category: kind || preset.category, condition: fx.condition || preset.condition, pta_status: fx.pta || preset.pta_status, limit: 500, grade: fx.grade || undefined, ram_gb: fx.ram ? Number(fx.ram) : undefined, price_min: fx.min ? Number(fx.min) : undefined, price_max: fx.max ? Number(fx.max) : undefined, lock_unchecked: fx.lock || undefined, sellable: mode === 'sellable' || undefined, inspection: mode === 'inspection' || undefined, reserved: mode === 'reserved' || undefined, location: fx.shelf || undefined, age_min: fx.age ? Number(fx.age) : undefined, cost_min: canCost && fx.costMin ? Number(fx.costMin) : undefined, cost_max: canCost && fx.costMax ? Number(fx.costMax) : undefined, supplier_id: fx.supplier || undefined })
+  // owner 2026-11-12 (ADR-066): a faulty phone is still stock (it can be sold as it is)
+  const withFaulty = statusParam === 'in_stock' && !mode
+  const { data, isLoading } = useDevices({ q: q || undefined, status: statusParam, with_faulty: withFaulty || undefined, model_id: model?.id, ...preset, category: kind || preset.category, condition: fx.condition || preset.condition, pta_status: fx.pta || preset.pta_status, limit: 500, grade: fx.grade || undefined, ram_gb: fx.ram ? Number(fx.ram) : undefined, price_min: fx.min ? Number(fx.min) : undefined, price_max: fx.max ? Number(fx.max) : undefined, lock_unchecked: fx.lock || undefined, sellable: mode === 'sellable' || undefined, inspection: mode === 'inspection' || undefined, reserved: mode === 'reserved' || undefined, location: fx.shelf || undefined, age_min: fx.age ? Number(fx.age) : undefined, cost_min: canCost && fx.costMin ? Number(fx.costMin) : undefined, cost_max: canCost && fx.costMax ? Number(fx.costMax) : undefined, supplier_id: fx.supplier || undefined })
   useScan(async (code) => {
     const r = await lookupCode(code).catch(() => null)
     if (r?.kind === 'device' && r.device) { beep('ok'); nav(`/stock/${r.device.id}`) } else if (r?.kind === 'item' && r.item) { beep('ok'); nav(`/accessories?q=${encodeURIComponent(r.item.sku)}`) } else { beep('error'); setQ(code) }
@@ -190,6 +197,8 @@ export default function StockPage() {
     if (kind) p.set('category', kind)
     if (q) p.set('q', q)
     if (brand) p.set('brand_id', brand)
+    if (model) p.set('model_id', model.id)
+    if (withFaulty) p.set('with_faulty', 'true')
     for (const [k, v] of Object.entries(preset)) if (v) p.set(k, v)
     if (fx.grade) p.set('grade', fx.grade)
     if (fx.ram) p.set('ram_gb', fx.ram)
@@ -224,6 +233,12 @@ export default function StockPage() {
       <KindTabs value={kind} onChange={(k) => { setKind(k); setBrand('') }} />
       <StatusCards kind={kind} mode={mode} onMode={(m) => { setMode(m); if (m) setFilter('in_stock') }} canCost={canCost} />
       <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><SearchBox value={q} onChange={setQ} placeholder="stock.searchPlaceholder" scan /></div><Help term="stock.search" size="sm" /></div>
+      {model ? (
+        <div className="flex items-center gap-2" data-testid="model-filter">
+          <span className="rounded-full bg-ink px-3 py-1.5 text-sm font-bold text-ground">{pick('stock.modelOnly')}: {model.name}</span>
+          <button type="button" onClick={() => setModel(null)} className="tap min-h-9 rounded-full border border-line bg-surface px-3 text-sm font-bold" data-testid="model-filter-clear">{pick('stock.modelClear')}</button>
+        </div>
+      ) : null}
 
       {brandRow.length ? (
         <div className="card -mx-1 flex items-center gap-1 overflow-x-auto p-1.5">

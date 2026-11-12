@@ -53,6 +53,7 @@ def list_devices(
     lock_unchecked: bool = False,
     sellable: bool = False,
     inspection: bool = False,
+    with_faulty: bool = False,
     cost_min: Decimal | None = None,
     cost_max: Decimal | None = None,
     supplier_id: uuid.UUID | None = None,
@@ -80,6 +81,7 @@ def list_devices(
         age_min=age_min,
         lock_unchecked=lock_unchecked,
         sellable=sellable,
+        with_faulty=with_faulty,
         inspection=inspection,
         # a cost range is a cost: owner / manager only (ignored for staff)
         cost_min=cost_min if can_cost else None,
@@ -210,6 +212,19 @@ def options(ctx: Ctx, db: DB):
         "spec_keys": list(dtypes.SPEC_KEYS),
         "region_codes": regions + [v for v in used(Device.region_code) if v not in regions],
         "sim_types": sims + [v for v in used(Device.sim_type) if v not in sims],
+        "faults": list(dtypes.FAULTS)
+        + sorted(
+            {
+                f
+                for fl in db.scalars(
+                    select(Device.faults).where(
+                        Device.shop_id == ctx.shop_id, Device.faults.is_not(None)
+                    )
+                ).all()
+                for f in (fl or [])
+                if f not in dtypes.FAULTS
+            }
+        ),
     }
 
 

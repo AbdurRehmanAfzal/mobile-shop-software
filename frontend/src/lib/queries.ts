@@ -112,7 +112,7 @@ export const useUpdateParty = () => {
 }
 
 // ---- devices ---------------------------------------------------------------------------------
-export const useDevices = (params: { status?: string; q?: string; brand_id?: string; condition?: string; pta_status?: string; category?: string; limit?: number; grade?: string; ram_gb?: number; price_min?: number; price_max?: number; lock_unchecked?: boolean; model_id?: string; sellable?: boolean; inspection?: boolean; cost_min?: number; cost_max?: number; age_min?: number; supplier_id?: string; reserved?: boolean; location?: string } = {}) => {
+export const useDevices = (params: { status?: string; q?: string; brand_id?: string; condition?: string; pta_status?: string; category?: string; limit?: number; grade?: string; ram_gb?: number; price_min?: number; price_max?: number; lock_unchecked?: boolean; model_id?: string; sellable?: boolean; inspection?: boolean; cost_min?: number; cost_max?: number; age_min?: number; supplier_id?: string; reserved?: boolean; location?: string; with_faulty?: boolean } = {}) => {
   const k = useShopKey()
   return useQuery({ queryKey: [k, 'devices', params], queryFn: () => get<Device[]>(`/api/v1/devices${qs(params)}`) })
 }
@@ -146,7 +146,7 @@ export const useVerification = (deviceId?: string) => {
 export const useDeviceEvent = () => {
   const inv = useInvalidate()
   return useMutation({
-    mutationFn: ({ id, ...body }: { id: string; type: string; party_id?: string; note?: string; expected_back_at?: string }) =>
+    mutationFn: ({ id, ...body }: { id: string; type: string; party_id?: string; note?: string; expected_back_at?: string; data?: Record<string, unknown> }) =>
       post<Device>(`/api/v1/devices/${id}/events`, body),
     onSuccess: () => inv('devices', 'device', 'history'),
   })

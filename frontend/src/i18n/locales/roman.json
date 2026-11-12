@@ -371,7 +371,9 @@
     },
     "shelf": "Shelf / jagah",
     "shelfHint": "Optional, maslan Rack A2, Daraz 3",
-    "simTimeOptional": "Optional: maloom na ho to khali chhor dein."
+    "simTimeOptional": "Optional: maloom na ho to khali chhor dein.",
+    "modelOnly": "Model",
+    "modelClear": "Sab dikhayein"
   },
   "purchase": {
     "title": "Nayi khareedari",
@@ -4983,6 +4985,11 @@
         "title": "Battery cycle count",
         "body": "Battery kul kitni dafa 0 se 100% tak charge hui. Kam ho to behtar hai: iPhone ki battery 500 cycles tak (iPhone 15 aur naye: 1000) taqreeban 80% health rakhne ke liye bani hai. iPhone 15 aur naye yeh Settings → General → About aur Settings → Battery → Battery Health mein dikhate hain. Purane iPhone phone par nahi dikhate; computer ka 3uTools jaisa tool parh leta hai. Maloom na ho to khali chhor dein.",
         "example": "Used iPhone 15 Pro, 312 cycles aur 91% health → 312 likhein; stock list mein \"Battery 91% · 312 cycles\" dikhega."
+      },
+      "faults": {
+        "title": "Kharabiyan",
+        "body": "Jo kharabi hai chunein: camera, LCD, display, dots, board, RAM waghera, ya apni likhein. Mobile stock ki list, apne page aur sale mein inhi ke saath faulty dikhta hai; jaisa hai waisa becha ja sakta hai aur bill par \"Sold as faulty\" aata hai. Theek ho jaye to \"Faulty cleared\" dabayein.",
+        "example": "Display par dots aur battery kamzor: Display par dots aur Battery dabayein."
       }
     },
     "purchase": {
@@ -10554,5 +10561,41 @@
     },
     "tapTo": "Badalne ke liye dabayein",
     "top": "Upar"
+  },
+  "fault": {
+    "camera": "Camera",
+    "lcd": "LCD",
+    "display": "Display",
+    "dots": "Display par dots",
+    "lines": "Display par lines",
+    "touch": "Touch",
+    "board": "Board",
+    "ram": "RAM",
+    "storage": "Storage",
+    "battery": "Battery",
+    "charging": "Charging",
+    "speaker": "Speaker",
+    "mic": "Mic",
+    "earpiece": "Earpiece",
+    "network": "Network / signal",
+    "wifi": "Wi-Fi",
+    "fingerprint": "Fingerprint",
+    "face_id": "Face ID",
+    "buttons": "Buttons",
+    "back_glass": "Back glass",
+    "body": "Body / frame",
+    "water": "Paani laga",
+    "software": "Software",
+    "dead": "Dead"
+  },
+  "faulty": {
+    "title": "Is mein kya kharabi hai?",
+    "edit": "Kharabiyan badlein",
+    "hint": "Jo jo kharabi hai, dabayein. List mein nahi? Neeche likhein aur + dabayein; agli baar bhi milegi. Mobile stock mein rehta hai aur jaisa hai waisa becha ja sakta hai.",
+    "addOwn": "Koi aur kharabi",
+    "addPlaceholder": "maslan hinge dheela",
+    "add": "Shamil karein",
+    "note": "Note (agar ho)",
+    "chip": "Faulty"
   }
 }

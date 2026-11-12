@@ -362,6 +362,29 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-066 · 2026-11-12 · Accepted · A faulty phone says what is wrong, stays in stock and can be sold; a model link filters by id
+**Context**: in a live shop:
+- "iPhone 17" in the stock summary opened the 8 "iPhone 17 Pro Max" too: the link searched the model's name.
+- "Mark faulty" said nothing about the fault.
+- A faulty phone left the stock list (only the Faulty card showed it) and could not be sold.
+**Decision**:
+- **Model link.** The stock summary and the audit's products page open `/stock?model_id=…&model=…`. The stock page filters by `model_id`, shows a "Model: X" chip with **Show all**, and the Download / Share export follows it. No backend change; `list_devices` already took `model_id`.
+- **Faults.**
+  - Additive migration `c3e5a7b9d1f4` adds `devices.faults` (JSON, nullable).
+  - `marked_faulty` with `data.faults` stores the list: trimmed, de-duplicated, 12 at most, 40 chars each. `faulty_cleared` empties it.
+  - `types.FAULTS` lists 24 common faults with en / ur names. `/devices/options` returns them plus the shop's own words already used.
+  - A faulty phone can be marked again to change its faults (`FAULTY → marked_faulty → FAULTY`).
+  - The sheet has the chips, an "Another fault" + box and a note.
+- **Faulty is stock and sellable.**
+  - New transition `FAULTY → sold`. The sale accepts a faulty unit.
+  - `list_devices(status=in_stock, with_faulty=true)` lists in-stock and faulty units. The stock page's default view and the sale's picker use it; plain `status=in_stock` is unchanged for every other caller.
+  - Cards, rows, the phone's page and the sale line show a red "Faulty: …" chip.
+  - The bill prints "Sold as faulty: …" under the unit.
+  - The status cards keep their own counts ("Available to sell" still excludes faulty; "Damaged / faulty" counts them).
+**Consequences**:
+- A phone marked faulty before this change has no list of faults (shows "Faulty" only) until it is edited.
+- The faults stay on a sold phone so its bill keeps saying so.
+
 ## ADR-065 · 2026-11-12 · Accepted · A sale asks who is buying; the customer can be changed after the sale
 **Context**: a salesman left a sale on "Walk-in customer" by mistake (every sale started as walk-in). The owner wants the customer search in front, walk-in as a deliberate tick, and the customer changeable after the sale, so the phone's history shows who took it.
 **Decision**:

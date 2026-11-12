@@ -115,7 +115,7 @@ function useFacts({ d, acts, canSeeCost }: LayoutProps) {
     </> },
     { key: 'price', label: 'stock.asking', value: n(d.asking_price), ltr: true, actions: <Mini a={a('price')} /> },
     ...(canSeeCost ? [{ key: 'cost', label: 'stock.cost', value: n(d.cost_price), ltr: true, actions: <Mini a={a('fixCost')} /> }] : []),
-    { key: 'status', label: 'dl.status', value: pick(`stock.status.${d.status}`), actions: <>{['sell', 'return', 'repairBack', 'approvalBack', 'faultyCleared'].map((k) => <Mini key={k} a={a(k)} />)}</> },
+    { key: 'status', label: 'dl.status', value: pick(`stock.status.${d.status}`), actions: <>{['sell', 'return', 'repairBack', 'approvalBack', 'faultyCleared', 'faultEdit'].map((k) => <Mini key={k} a={a(k)} />)}</> },
     { key: 'condition', label: 'stock.conditionShort', value: [pick(`stock.condition.${d.condition}`), d.grade ? pick(`devx.grades.${d.grade}`) : null].filter(Boolean).join(' · '), actions: <Mini a={a('edit')} /> },
     ...(hasPta(d) ? [{ key: 'pta', label: 'stock.ptaShort', value: [pick(`stock.pta.${d.pta_status}`), d.sim_time_months ? `${d.sim_time_months} ${pick('stock.months')}` : null].filter(Boolean).join(' · ') }] : []),
     { key: 'spec', label: 'dl.spec', value: specLine(d, pick) || null },
@@ -201,7 +201,7 @@ function MoreActions({ acts, shown }: { acts: Act[]; shown: string[] }) {
   )
 }
 
-const INLINE = ['sell', 'return', 'repairBack', 'approvalBack', 'faultyCleared', 'fixImei', 'price', 'edit', 'sticker', 'verify', 'lock', 'note', 'changeSeller', 'changeBuyer', 'fixCost']
+const INLINE = ['sell', 'return', 'repairBack', 'approvalBack', 'faultyCleared', 'fixImei', 'price', 'edit', 'sticker', 'verify', 'lock', 'note', 'changeSeller', 'changeBuyer', 'fixCost', 'faultEdit']
 
 function Head({ d }: { d: DeviceDetail }) {
   const { pick } = useLang()

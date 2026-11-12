@@ -96,6 +96,7 @@ export interface Device {
   lock_checks?: Record<string, 'cleared' | 'not_cleared' | 'na'> | null
   lock_checked_at?: string | null
   lock_ok?: boolean
+  faults?: string[] | null
   battery_health?: number | null
   region_code?: string | null
   battery_cycles?: number | null

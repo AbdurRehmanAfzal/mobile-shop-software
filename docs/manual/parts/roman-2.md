@@ -107,7 +107,7 @@ Jo kuch aap ka hai woh sab **Stock** mein hai. Yahan se aap dekh sakte hain ke a
 
 ### Mera stock kitne ka hai?
 
-Neeche wali bar mein **Stock** dabayein. Pehli screen hai **Mera stock kitne ka hai?**
+Neeche wali bar mein **Stock** dabayein. Pehli screen hai **Mera stock kitne ka hai?** Kisi brand ko khol kar model dabayein: stock ki list mein sirf wahi model aata hai (iPhone 17 dabane par iPhone 17 Pro Max nahi aata); **Sab dikhayein** se hat jata hai.
 
 - Sab se upar: aap ke paas kitne phone hain aur un ki kul qeemat (bari raqam ho to lakh mein dikhayi jaati hai).
 - Neeche: har brand ki ek line, kitne phone aur un ki qeemat ke saath. Kisi brand par dabayein to us ke models nazar aate hain.
@@ -175,7 +175,7 @@ Card ke neeche do bare buttons hain, **Bechein** aur **Shanakhti card check**, a
 | Button | Kya karta hai |
 |---|---|
 | **Amanat par dein** | Yeh phone kisi doosri dukaan ko dein (chapter 15). |
-| **Kharab likhein** | Theek hone tak ise bikne wale stock se nikaal dein. |
+| **Kharab likhein** | Jo kharabi hai chunein (Camera, LCD, Display, Display par dots, Board, RAM, Battery waghera), ya apni kharabi likh kar **+** dabayein (agli baar bhi milegi). Mobile stock ki list mein laal **Faulty: …** ke saath rehta hai aur jaisa hai waisa becha ja sakta hai; bill par **Sold as faulty** aata hai. **Kharabiyan badlein** se list badlein; theek ho jaye to **Faulty cleared**. |
 | **Marammat ko bhejein** | Apne phone ki repair job kholein (chapter 14). |
 | **Sticker print karein** | Is ka barcode wala price sticker print karein (chapter 12). |
 | **Qeemat badlein** | Nayi bechne ki qeemat lagayein; purani history mein rehti hai. |
