@@ -63,7 +63,7 @@ export default function StockSummaryPage() {
                       {isOpen ? (
                         <div className="bg-stockt/20 px-4 pb-2">
                           {b.models.map((m) => (
-                            <Link key={m.model_id} to={`/stock?q=${encodeURIComponent(m.name)}`} className="flex items-center gap-3 border-t border-dashed border-line py-2.5">
+                            <Link key={m.model_id} to={`/stock?model_id=${m.model_id}&model=${encodeURIComponent(m.name)}`} className="flex items-center gap-3 border-t border-dashed border-line py-2.5">
                               <span className="min-w-0 flex-1 truncate text-sm font-bold">{m.name}</span>
                               <span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}><span className="num">{m.count}</span> {pick('counter.phones')}</span>
                               <span className="num min-w-[84px] text-end text-[15px]" dir="ltr">{n(m.value)}</span>

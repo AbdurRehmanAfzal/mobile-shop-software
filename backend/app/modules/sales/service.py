@@ -102,6 +102,7 @@ def create_sale(
             )
         if device.status not in (
             DeviceStatus.IN_STOCK,
+            DeviceStatus.FAULTY,  # sold as it is (ADR-066)
             DeviceStatus.WITH_CUSTOMER_FOR_APPROVAL,
             DeviceStatus.ON_LOAN,
         ):
@@ -616,7 +617,14 @@ def _unit_bits(ln: dict, ur: bool) -> str:
         if x
     )
     bits = [b for b in (kind, mem, ln.get("colour_name"), cond, pta) if b]
-    return f"<br><small>{html.escape(' · '.join(bits))}</small>" if bits else ""
+    out = f"<br><small>{html.escape(' · '.join(bits))}</small>" if bits else ""
+    if ln.get("faults"):
+        # owner 2026-11-12 (ADR-066): a phone sold as faulty says so on the bill
+        from app.modules.devices.types import fault_text
+
+        word = "خرابی کے ساتھ بیچا" if ur else "Sold as faulty"
+        out += f"<br><small><b>{html.escape(word)}: {html.escape(fault_text(ln['faults'], ur))}</b></small>"
+    return out
 
 
 def to_out(db: Session, inv: Invoice, show_cost: bool) -> dict:
@@ -645,6 +653,7 @@ def to_out(db: Session, inv: Invoice, show_cost: bool) -> dict:
                     "condition": d.condition,
                     "grade": d.grade,
                     "serial": d.serial,
+                    "faults": d.faults,
                 }
         row = {
             **{c.name: getattr(ln, c.name) for c in InvoiceLine.__table__.columns},

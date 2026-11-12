@@ -64,7 +64,7 @@ export default function ProductsPage() {
           {!rows.length ? <Empty text="audit.noData" /> : (
             <div className="card divide-y divide-line p-0" data-testid="prod-rows">
               {rows.map((r) => (
-                <Link key={r.key} to={r.model_id ? `/stock?q=${encodeURIComponent(r.label)}` : '/accessories'} className="tap flex flex-col gap-1 px-4 py-2.5">
+                <Link key={r.key} to={r.model_id ? `/stock?model_id=${r.model_id}&model=${encodeURIComponent(r.label)}` : '/accessories'} className="tap flex flex-col gap-1 px-4 py-2.5">
                   <div className="flex items-center justify-between gap-2">
                     <span className="flex min-w-0 items-center gap-2"><span className="truncate font-bold">{r.label}</span><span className={`shrink-0 rounded-full px-2 py-0.5 ${tone(r.performance)} ${ur ? cls('sm') : 'text-[11px] font-bold'}`}>{pick(`audit.prod.${r.performance}`)}</span></span>
                     <span className="num font-bold" dir="ltr">{r.units} <span className="text-muted">·</span> {withCur(n(r.revenue))}</span>

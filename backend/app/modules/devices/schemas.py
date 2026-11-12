@@ -316,6 +316,7 @@ class DeviceOut(BaseModel):
     lock_checks: dict | None = None
     lock_checked_at: datetime | None = None
     lock_ok: bool = True
+    faults: list[str] | None = None
     brand_id: uuid.UUID
     brand_name: str
     model_id: uuid.UUID

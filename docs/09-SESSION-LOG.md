@@ -1342,3 +1342,20 @@ Newest entry at the bottom. Each entry: date · done · verified · next · open
 - pytest `test_sale_customer_change` (new; walk-in → customer, khata shows 2 rows, cash unchanged, history; customer → customer balances; refused after a later payment; same person; salesman 403), plus the full suite.
 - tsc.
 - Playwright `sale-customer` (new) and the sale specs.
+
+### Same day — model link, faults, faulty phones sellable (ADR-066)
+**Owner (from the live shop)**:
+1. "iPhone 17 pe click karein to 17 Pro Max show hota hai".
+2. Faulty should offer faults (camera, LCD, board, RAM, display, dots …) and allow the shop's own.
+3. A faulty phone should be sellable and show in stock (it only showed under the Faulty filter).
+**Done**:
+- The summary / products links use `model_id`; the stock page has a model chip with "Show all"; the export follows.
+- `devices.faults` (additive migration `c3e5a7b9d1f4`).
+  - Fault sheet: 24 common chips, "Another fault" +, note. The shop's own faults come back in `/devices/options`.
+  - "Change faults" while faulty; "Faulty cleared" empties them.
+- Faulty → sold allowed. The stock page's default view and the sale's picker list faulty units (`with_faulty`), with a red "Faulty: …" chip on cards, rows, the phone page and the sale line. The bill prints "Sold as faulty: …".
+- Manual ch. 2 (en / ur / roman), ADR-066.
+**Verified**:
+- pytest `test_faulty` (new: options, own fault, change faults, list with / without `with_faulty`, sale and bill text, cleared), plus devices, exports and the full suite.
+- tsc.
+- Playwright `faulty-and-models` (new: model filter and clear, faults sheet, faulty in the default stock list, sold from its page), plus the stock / sale regression specs.

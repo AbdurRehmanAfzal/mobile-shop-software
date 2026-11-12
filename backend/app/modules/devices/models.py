@@ -68,6 +68,9 @@ class Device(UUIDPk, ShopScoped, Timestamped, Base):
     ram_gb: Mapped[int | None] = mapped_column(Integer)
     warranty_by: Mapped[str | None] = mapped_column(String(10))  # shop | supplier | brand
     specs: Mapped[dict | None] = mapped_column(JSON)
+    # owner 2026-11-12 (ADR-066): what is wrong with a faulty unit (keys from types.FAULTS or the
+    # shop's own words); set by "marked_faulty", cleared by "faulty_cleared"
+    faults: Mapped[list | None] = mapped_column(JSON)
     lock_checks: Mapped[dict | None] = mapped_column(
         JSON
     )  # {activation|frp|account|paired|carrier: cleared|not_cleared|na}

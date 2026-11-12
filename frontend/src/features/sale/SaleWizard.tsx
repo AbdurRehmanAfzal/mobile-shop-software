@@ -28,6 +28,7 @@ import { lookupCode } from '@/components/ScanListener'
 import { useDevices, useDocMutation, useGet } from '@/lib/queries'
 import type { Device, DeviceDetail, Invoice, Party } from '@/lib/types'
 import { DeviceRow } from '@/features/stock/StockPage'
+import { FaultChip } from '@/features/stock/Faults'
 import DocActions from '@/components/DocShare'
 import DocLangPicker from '@/components/DocLangPicker'
 import SaleConfirm from './SaleConfirm'
@@ -136,7 +137,8 @@ export default function SaleWizard() {
   const [result, setResult] = useState<Invoice | null>(null)
   const [confirming, setConfirming] = useState(false)
   const [devCat, setDevCat] = useState<'' | 'phone' | 'tablet' | 'watch'>('')
-  const { data: stock } = useDevices({ status: 'in_stock', q: q || undefined, category: devCat || undefined })
+  // owner 2026-11-12 (ADR-066): a faulty phone can be sold as it is
+  const { data: stock } = useDevices({ status: 'in_stock', with_faulty: true, q: q || undefined, category: devCat || undefined })
   const m = useDocMutation<Record<string, unknown>, Invoice>('POST', () => '/api/v1/sales', undefined, { kind: 'sale', label: (b) => `${pick('counter.sell')} · ${withCur(Number((b as { paid?: number }).paid ?? 0).toLocaleString('en-US'))}` })
   // POS hold (owner 2026-10-28): park this bill, serve the next customer, resume it later
   const { data: held } = useHeldSales<Cart>()
@@ -257,7 +259,7 @@ export default function SaleWizard() {
     const c = h.cart
     // a phone may have been sold while the bill was held: it comes off this bill
     const now = await Promise.all(c.lines.map((l) => get<Device>(`/api/v1/devices/${l.device.id}`).catch(() => null)))
-    const still = c.lines.filter((_, i) => now[i]?.status === 'in_stock')
+    const still = c.lines.filter((_, i) => now[i]?.status === 'in_stock' || now[i]?.status === 'faulty')
     await api('DELETE', `/api/v1/sales/held/${h.id}`).catch(() => undefined)
     setLines(still); setMisc(c.misc ?? []); setDiscount(c.discount ?? ''); setPay(c.pay ?? newPay()); setParty(c.party ?? null)
     setPaidNow(c.paidNow ?? ''); setTaxOn(!!c.taxOn); setTaxRate(c.taxRate ?? ''); setMore(!!c.more)
@@ -362,6 +364,7 @@ export default function SaleWizard() {
                   <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted">
                     <span dir="ltr">{l.device.imei1}</span>
                     {l.device.verification_status === 'pending' || l.device.verification_status === 'flagged' ? <Chip text={`stock.verification.${l.device.verification_status}`} tone={l.device.verification_status === 'flagged' ? 'bad' : 'warn'} /> : null}
+                    <FaultChip faults={l.device.faults} />
                   </div>
                 </div>
                 <button type="button" aria-label={pick('crud.delete')} onClick={() => setLines(lines.filter((x) => x.device.id !== l.device.id))} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 text-payable">

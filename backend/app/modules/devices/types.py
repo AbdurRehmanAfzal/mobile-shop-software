@@ -23,6 +23,65 @@ CATEGORIES = ("phone", "tablet", "watch")
 GRADES = ("a", "b", "refurbished", "copy")
 # owner 2026-11-09 (ADR-055): an Apple unit's region code (the letters after the part number in
 # Settings → General → About, e.g. MLPF3LL/A → LL/A) and its SIM setup. The shop may add its own.
+# owner 2026-11-12 (ADR-066): the faults a shop meets most; the shop adds its own words too
+FAULTS = (
+    "camera",
+    "lcd",
+    "display",
+    "dots",
+    "lines",
+    "touch",
+    "board",
+    "ram",
+    "storage",
+    "battery",
+    "charging",
+    "speaker",
+    "mic",
+    "earpiece",
+    "network",
+    "wifi",
+    "fingerprint",
+    "face_id",
+    "buttons",
+    "back_glass",
+    "body",
+    "water",
+    "software",
+    "dead",
+)
+FAULT_LABELS = {
+    "camera": ("Camera", "کیمرہ"),
+    "lcd": ("LCD", "LCD"),
+    "display": ("Display", "ڈسپلے"),
+    "dots": ("Dots on display", "ڈسپلے پر ڈاٹ"),
+    "lines": ("Lines on display", "ڈسپلے پر لائنیں"),
+    "touch": ("Touch", "ٹچ"),
+    "board": ("Board", "بورڈ"),
+    "ram": ("RAM", "RAM"),
+    "storage": ("Storage", "اسٹوریج"),
+    "battery": ("Battery", "بیٹری"),
+    "charging": ("Charging", "چارجنگ"),
+    "speaker": ("Speaker", "اسپیکر"),
+    "mic": ("Mic", "مائیک"),
+    "earpiece": ("Earpiece", "ایئر پیس"),
+    "network": ("Network / signal", "نیٹ ورک / سگنل"),
+    "wifi": ("Wi-Fi", "وائی فائی"),
+    "fingerprint": ("Fingerprint", "فنگر پرنٹ"),
+    "face_id": ("Face ID", "فیس آئی ڈی"),
+    "buttons": ("Buttons", "بٹن"),
+    "back_glass": ("Back glass", "بیک گلاس"),
+    "body": ("Body / frame", "باڈی / فریم"),
+    "water": ("Water damage", "پانی لگا"),
+    "software": ("Software", "سافٹ ویئر"),
+    "dead": ("Dead", "ڈیڈ"),
+}
+
+
+def fault_text(faults: list | None, ur: bool) -> str:
+    return ", ".join(FAULT_LABELS.get(f, (f, f))[1 if ur else 0] for f in (faults or []))
+
+
 REGION_CODES = ("LL/A", "ZA/A", "ZP/A", "CH/A", "J/A", "B/A", "AE/A", "HN/A", "X/A", "C/A", "KH/A")
 SIM_TYPES = ("physical_esim", "dual_esim", "dual_physical", "physical")
 

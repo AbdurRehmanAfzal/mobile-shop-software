@@ -107,7 +107,7 @@ Everything you own sits in **Stock**. From here you can see what your stock is w
 
 ### What is my stock worth?
 
-Tap **Stock** on the bottom bar. The first screen is **What is my stock worth?**
+Tap **Stock** on the bottom bar. The first screen is **What is my stock worth?** Open a brand and tap a model: the stock list shows that model only (iPhone 17 does not bring iPhone 17 Pro Max); **Show all** removes it.
 
 - At the top: how many phones you have and their total value (shown in lakh when it is large).
 - Below: one row per brand, with how many phones and their value. Tap a brand to see its models.
@@ -175,7 +175,7 @@ Under the card are the two main buttons, **Sell** and **ID card check**, and the
 | Button | What it does |
 |---|---|
 | **Give on loan (amanat)** | Give this phone to another shop (chapter 15). |
-| **Mark faulty** | Take it out of the sellable stock until it is fixed. |
+| **Mark faulty** | Choose what is wrong (Camera, LCD, Display, Dots on display, Board, RAM, Battery and more), or write your own fault and tap **+** (it is offered next time too). The phone stays in the stock list with a red **Faulty: …** tag and can still be sold as it is; the bill says **Sold as faulty**. **Change faults** edits the list; **Faulty cleared** when it is fixed. |
 | **Send to repair** | Open a repair job for your own phone (chapter 14). |
 | **Print sticker** | Print its price sticker with barcode (chapter 12). |
 | **Change asking price** | Set a new asking price; the old one stays in the history. |

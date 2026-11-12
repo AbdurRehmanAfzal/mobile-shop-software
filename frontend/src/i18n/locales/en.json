@@ -371,7 +371,9 @@
     },
     "shelf": "Shelf / place",
     "shelfHint": "Optional, e.g. Rack A2, Drawer 3",
-    "simTimeOptional": "Optional: leave empty if you do not know."
+    "simTimeOptional": "Optional: leave empty if you do not know.",
+    "modelOnly": "Model",
+    "modelClear": "Show all"
   },
   "purchase": {
     "title": "New purchase",
@@ -4983,6 +4985,11 @@
         "title": "Battery cycle count",
         "body": "How many times the battery has been charged from 0 to 100% in total. Fewer is better: an iPhone battery is made to keep about 80% of its health up to 500 cycles (iPhone 15 and newer: 1000). iPhone 15 and newer show it in Settings → General → About and in Settings → Battery → Battery Health. Older iPhones do not show it on the phone; a computer tool like 3uTools can read it. Leave it empty if you do not know.",
         "example": "Used iPhone 15 Pro with 312 cycles and 91% health → write 312; the stock list shows \"Battery 91% · 312 cycles\"."
+      },
+      "faults": {
+        "title": "Faults",
+        "body": "Choose what is wrong: camera, LCD, display, dots, board, RAM and the rest, or write your own. The phone shows as Faulty with these in the stock list, on its page and in the sale; it can be sold as it is, and the bill says \"Sold as faulty\". When it is fixed, tap \"Faulty cleared\".",
+        "example": "Dots on the display and a weak battery: tap Dots on display and Battery."
       }
     },
     "purchase": {
@@ -10554,5 +10561,41 @@
     },
     "tapTo": "Tap to change",
     "top": "Top"
+  },
+  "fault": {
+    "camera": "Camera",
+    "lcd": "LCD",
+    "display": "Display",
+    "dots": "Dots on display",
+    "lines": "Lines on display",
+    "touch": "Touch",
+    "board": "Board",
+    "ram": "RAM",
+    "storage": "Storage",
+    "battery": "Battery",
+    "charging": "Charging",
+    "speaker": "Speaker",
+    "mic": "Mic",
+    "earpiece": "Earpiece",
+    "network": "Network / signal",
+    "wifi": "Wi-Fi",
+    "fingerprint": "Fingerprint",
+    "face_id": "Face ID",
+    "buttons": "Buttons",
+    "back_glass": "Back glass",
+    "body": "Body / frame",
+    "water": "Water damage",
+    "software": "Software",
+    "dead": "Dead"
+  },
+  "faulty": {
+    "title": "What is wrong with it?",
+    "edit": "Change faults",
+    "hint": "Tap every fault it has. Not in the list? Write it below and tap +; it is offered next time too. The phone stays in stock and can be sold as it is.",
+    "addOwn": "Another fault",
+    "addPlaceholder": "e.g. hinge loose",
+    "add": "Add",
+    "note": "Note (optional)",
+    "chip": "Faulty"
   }
 }

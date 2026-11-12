@@ -316,6 +316,8 @@ def stock(
     price_min: Decimal | None = None,
     price_max: Decimal | None = None,
     lock_unchecked: bool = False,
+    model_id: uuid.UUID | None = None,
+    with_faulty: bool = False,
     sort: str | None = None,
     desc: bool = False,
 ):
@@ -336,6 +338,8 @@ def stock(
                 "price_min": price_min,
                 "price_max": price_max,
                 "lock_unchecked": lock_unchecked,
+                "model_id": model_id,
+                "with_faulty": with_faulty,
             },
             sort,
             desc,
