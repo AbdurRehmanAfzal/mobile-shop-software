@@ -427,6 +427,7 @@ SYNONYMS: dict[str, dict[str, set[str]]] = {
         "pta_approved": {"pta", "ptaapproved", "approved", "ptaمنظور", "منظور", "yes"},
         "non_pta": {"nonpta", "non", "notapproved", "نان", "نانپی", "no"},
         "jv": {"jv", "جےوی", "جی"},
+        "cpid": {"cpid", "cp", "cpidapproved"},
         "unknown": {"unknown", "", "معلومنہیں", "نامعلوم"},
     },
     "party_type": {
@@ -467,6 +468,7 @@ ENUM_LABELS: dict[str, dict[str, tuple[str, str]]] = {
         "pta_approved": ("PTA approved", "PTA منظور"),
         "non_pta": ("Non-PTA", "Non-PTA"),
         "jv": ("JV", "JV"),
+        "cpid": ("CP ID", "CP ID"),
         "unknown": ("Unknown", "معلوم نہیں"),
     },
     "party_type": {

@@ -348,17 +348,26 @@ def stock_ageing(db: Session, shop_id: uuid.UUID, show_cost: bool) -> list[dict]
 
 
 def stock_summary(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
-    """In-stock phones grouped by brand, then model: count and value.
+    """Phones the shop holds, grouped by brand, then model: count and value.
 
     Value is at cost for owner/manager and at asking price for everyone else (`basis` says which).
+    Owner 2026-11-13: "held" is the stock screen's own rule (in stock, faulty, in repair, with a
+    customer on approval, on loan) — a faulty phone was in the stock list but not in this summary.
     """
     from app.modules.catalogue.models import Brand, Model
 
+    held = (
+        DeviceStatus.IN_STOCK,
+        DeviceStatus.FAULTY,
+        DeviceStatus.IN_REPAIR,
+        DeviceStatus.WITH_CUSTOMER_FOR_APPROVAL,
+        DeviceStatus.ON_LOAN,
+    )
     rows = db.execute(
         select(Device, Brand.name, Model.name)
         .join(Brand, Brand.id == Device.brand_id)
         .join(Model, Model.id == Device.model_id)
-        .where(Device.shop_id == shop_id, Device.status == DeviceStatus.IN_STOCK)
+        .where(Device.shop_id == shop_id, Device.status.in_(held))
     ).all()
     brands: dict[uuid.UUID, dict] = {}
     for d, brand_name, model_name in rows:

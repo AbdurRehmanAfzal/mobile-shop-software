@@ -362,6 +362,20 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-071 · 2026-11-13 · Accepted · CP ID as a PTA status; the purchase's person from everyone; an existing number is offered
+**Context**: the owner asked for three things:
+- CP ID as a PTA option;
+- a way to put the SIM lock on phones already added;
+- a fix for "Change dealer / customer" on a purchase. It listed dealers only, so a customer could not be found, and "New person" said the number was already saved without showing whom.
+**Decision**:
+- **CP ID.** `PtaStatus.CPID = "cpid"`. The column is text, so no migration.
+  - It appears in the add / edit form, the ID check, the stock filter, the sticker, the bill and the bulk import ("cpid", "cp").
+  - It does not ask for SIM time (only Non-PTA / JV do).
+- **SIM lock on old phones.** It is set by **Edit details** on the phone page (ADR-070's field is in the edit form).
+- **Purchase's person.** The change sheet's picker lists everyone, with no kind filter, so a dealer bill can move to a customer and the other way.
+- **Existing number.** When a new person's number is already saved (`party_phone_exists`), the person form looks it up and shows **Use this person**. This works in every picker.
+**Consequences**: the purchase keeps its own kind (dealer / customer) when its person changes; only the person moves.
+
 ## ADR-070 · 2026-11-13 · Accepted · A phone's SIM (carrier) lock, for information
 **Context**: shopkeepers want to know which phones are locked to a network (US / Japan / UK carrier phones), for both iPhone and Android.
 **Decision**:

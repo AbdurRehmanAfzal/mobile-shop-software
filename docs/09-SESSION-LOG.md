@@ -1460,3 +1460,26 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - pytest `test_sim_lock` (new: save, bad value 422, edit carrier, export, sale allowed), `test_devices`, `test_exports`.
 - tsc.
 - Playwright `add-device` (fills RAM + SIM lock AT&T, both in the review), `device-types`, `apple-variant`, `stock-views`.
+
+### Same day — CP ID, SIM lock on old phones, purchase person picker (ADR-071)
+**Owner**:
+- PTA should have a CP ID option.
+- Phones already added (SIM-locked) need editing later.
+- "Change dealer / customer" on a purchase shows only dealers, a customer is not found, and a new name says "already saved" without showing it.
+**Done**:
+- `PtaStatus.CPID` (text column, no migration), in the form, ID check, stock filter, sticker, bill and bulk import.
+- The SIM lock is set by Edit details (field from ADR-070).
+- The purchase's person picker has no kind filter.
+- `PartyForm` shows the person with an already-saved number with **Use this person**.
+- en / ur / roman strings, manual ch. 1 / 2, ADR-071.
+**Verified**:
+- Playwright `cpid-simlock-party` (new: purchase with CP ID, CP ID shown and pressed in the edit form, SIM lock Verizon by edit, the dealer bill's search finds a customer, the existing number offers "Use this person", bill moved to the customer), plus regression specs.
+- Full backend suite.
+- tsc.
+
+### Same day — stock summary missed a phone
+**Owner**: "OnePlus ka mobile add kiya, tap a brand to see its models ki list mein nahi aa raha; stock detail mein entry show ho rahi hai".
+**Found**: the summary counted `in_stock` only. The stock list shows faulty units too (ADR-066), and the status cards count every unit held. A OnePlus marked faulty, in repair, on approval or on loan shows in the list but not in the summary.
+**Done**: `reports.stock_summary` counts the held statuses (in stock, faulty, in repair, approval, on loan), the same rule as `devices.stock_status`. The home / export / AI stock worth follow.
+**Verified**: pytest `test_reports_simple` (new: a faulty and an in-repair phone count), `test_exports`, `test_stock_screen`, `test_ai`.
+**Open**: if the owner's OnePlus is plain "in stock" and still missing, ask for its status / screenshot.

@@ -166,7 +166,7 @@ export default function VerifyPage() {
           <span className="flex-1 text-sm font-semibold">{pick('verify.ptaChecked')}</span>
           <a href={`sms:8484?body=${device.imei1}`} className="text-xs font-bold text-emerald">SMS 8484</a>
         </label>
-        {f.pta_checked ? <BiSegmented<PtaStatus> value={f.pta_result ?? device.pta_status} onChange={(v) => set('pta_result', v)} options={[{ value: 'pta_approved', text: 'stock.pta.pta_approved' }, { value: 'non_pta', text: 'stock.pta.non_pta' }, { value: 'jv', text: 'stock.pta.jv' }]} /> : null}
+        {f.pta_checked ? <BiSegmented<PtaStatus> value={f.pta_result ?? device.pta_status} onChange={(v) => set('pta_result', v)} options={[{ value: 'pta_approved', text: 'stock.pta.pta_approved' }, { value: 'non_pta', text: 'stock.pta.non_pta' }, { value: 'jv', text: 'stock.pta.jv' }, { value: 'cpid', text: 'stock.pta.cpid' }]} /> : null}
       </Section>
 
       <Section title="verify.declaration" help="stock.verify.declaration" right={<button type="button" onClick={() => openPrintable(`/api/v1/devices/${id}/verification/declaration`)} className="text-xs font-bold text-emerald">{pick('common.print')}</button>}>

@@ -610,6 +610,7 @@ def _unit_bits(ln: dict, ur: bool) -> str:
         "pta_approved": ("PTA approved", "PTA منظور"),
         "non_pta": ("Non-PTA", "نان PTA"),
         "jv": ("JV", "JV"),
+        "cpid": ("CP ID", "CP ID"),
     }.get(ln.get("pta_status") or "", ("", ""))[1 if ur else 0]
     mem = " + ".join(
         x

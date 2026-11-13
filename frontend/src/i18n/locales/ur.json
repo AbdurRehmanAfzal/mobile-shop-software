@@ -171,7 +171,9 @@
     "wholesaleHint": "آئٹمز کی ہول سیل قیمت ملتی ہے",
     "moreDetails": "مزید تفصیل",
     "moreDetailsHint": "شناختی کارڈ، شہر، پتہ، نوٹس، ہول سیل ریٹ",
-    "phoneOpt": "موبائل نمبر (اگر ہو)"
+    "phoneOpt": "موبائل نمبر (اگر ہو)",
+    "alreadySaved": "یہ نمبر پہلے سے اس کے نام محفوظ ہے:",
+    "useThis": "یہی چنیں"
   },
   "stock": {
     "title": "اسٹاک",
@@ -203,7 +205,8 @@
       "pta_approved": "پی ٹی اے منظور",
       "non_pta": "نان پی ٹی اے",
       "jv": "جے وی",
-      "unknown": "معلوم نہیں"
+      "unknown": "معلوم نہیں",
+      "cpid": "CP ID"
     },
     "verification": {
       "not_required": "چیک کی ضرورت نہیں",

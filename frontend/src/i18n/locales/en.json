@@ -171,7 +171,9 @@
     "wholesaleHint": "Gets the wholesale price of items",
     "moreDetails": "More details",
     "moreDetailsHint": "CNIC, city, address, notes, wholesale price",
-    "phoneOpt": "Mobile number (optional)"
+    "phoneOpt": "Mobile number (optional)",
+    "alreadySaved": "This number is already saved for:",
+    "useThis": "Use this person"
   },
   "stock": {
     "title": "Stock",
@@ -203,7 +205,8 @@
       "pta_approved": "PTA approved",
       "non_pta": "Non-PTA",
       "jv": "JV",
-      "unknown": "Unknown"
+      "unknown": "Unknown",
+      "cpid": "CP ID"
     },
     "verification": {
       "not_required": "No check needed",

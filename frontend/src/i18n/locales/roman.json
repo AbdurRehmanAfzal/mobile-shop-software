@@ -171,7 +171,9 @@
     "wholesaleHint": "Items ki wholesale qeemat milti hai",
     "moreDetails": "Mazeed tafseel",
     "moreDetailsHint": "CNIC, shehar, pata, notes, wholesale rate",
-    "phoneOpt": "Mobile number (agar ho)"
+    "phoneOpt": "Mobile number (agar ho)",
+    "alreadySaved": "Yeh number pehle se is ke naam save hai:",
+    "useThis": "Yahi chunein"
   },
   "stock": {
     "title": "Stock",
@@ -203,7 +205,8 @@
       "pta_approved": "PTA approved",
       "non_pta": "Non-PTA",
       "jv": "JV",
-      "unknown": "Pata nahi"
+      "unknown": "Pata nahi",
+      "cpid": "CP ID"
     },
     "verification": {
       "not_required": "Check ki zaroorat nahi",

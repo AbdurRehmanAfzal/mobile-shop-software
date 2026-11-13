@@ -65,6 +65,7 @@ PTA = {
     "pta_approved": ("PTA approved", "PTA منظور"),
     "non_pta": ("Non-PTA", "نان PTA"),
     "jv": ("JV", "JV"),
+    "cpid": ("CP ID", "CP ID"),
     "unknown": ("", ""),
 }
 

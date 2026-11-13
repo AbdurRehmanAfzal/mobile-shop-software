@@ -405,7 +405,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
       ) : null}
 
       {showPta ? <div className="flex items-center gap-1"><BiLabel text="stock.ptaLabel" size="md" tone="text-muted" /><Help term="device.pta" size="sm" /></div> : null}
-      {showPta ? <BiSegmented<PtaStatus> value={d.pta_status} onChange={(v) => set('pta_status', v)} options={[{ value: 'pta_approved', text: 'stock.pta.pta_approved' }, { value: 'non_pta', text: 'stock.pta.non_pta' }, ...(phone ? [{ value: 'jv' as const, text: 'stock.pta.jv' }] : [])]} /> : null}
+      {showPta ? <BiSegmented<PtaStatus> value={d.pta_status} onChange={(v) => set('pta_status', v)} options={[{ value: 'pta_approved', text: 'stock.pta.pta_approved' }, { value: 'non_pta', text: 'stock.pta.non_pta' }, ...(phone ? [{ value: 'jv' as const, text: 'stock.pta.jv' }, { value: 'cpid' as const, text: 'stock.pta.cpid' }] : [])]} /> : null}
       {showPta ? <SimLockField value={d.sim_lock ?? ''} carrier={d.sim_lock_carrier ?? ''} onChange={(v, c) => setD((x) => ({ ...x, sim_lock: v, sim_lock_carrier: c }))} /> : null}
       {needsSim ? <BiInput label="stock.simTime" help={<Help term="device.simTime" size="sm" />} type="number" inputMode="numeric" min={0} max={60} value={d.sim_time_months} onChange={(e) => set('sim_time_months', e.target.value)} hint="stock.simTimeOptional" /> : null}
 

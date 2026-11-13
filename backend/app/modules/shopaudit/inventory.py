@@ -24,7 +24,7 @@ from app.modules.shopaudit.prefs import BAND_KEYS, band_of, prefs_for
 from app.modules.verification.models import Verification
 
 CONDITIONS = ("box_pack", "open_box", "used", "patched")
-PTA = ("pta_approved", "non_pta", "jv", "unknown")
+PTA = ("pta_approved", "non_pta", "jv", "cpid", "unknown")
 VERIFICATION = ("not_required", "pending", "clear", "flagged")
 CATEGORIES = ("phone", "tablet", "watch")
 
