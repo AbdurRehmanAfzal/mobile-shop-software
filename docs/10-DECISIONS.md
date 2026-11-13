@@ -362,6 +362,17 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-069 · 2026-11-13 · Accepted · The ID check keeps an optional photo of the seller's thumb impression
+**Context**: shopkeepers want the seller's thumb on record when buying a used phone, as an option. A real biometric match against NADRA needs a NADRA-licensed scanner and NADRA's BVS service, which a shop app cannot use.
+**Decision**:
+- Additive migration `d5f7b9c1e3a6` adds `verifications.thumb_path` (nullable).
+- The verification form has a **Thumb (optional)** photo tile. The seller presses an inked thumb on paper or in the declaration's box; the shop takes a photo. The file is shop-scoped like the CNIC photos.
+- It is not in `REQUIRED_FOR_CLEAR`: it never holds the check back or changes `missing`.
+- The printed declaration gets a **Thumb impression** box (34 × 38 mm). It holds the photo when there is one; otherwise it stays empty for an inked thumb on the paper.
+**Consequences**:
+- A fingerprint scanner could later fill the same `thumb_path` with its image without a schema change.
+- Matching or verifying a fingerprint is out of scope.
+
 ## ADR-068 · 2026-11-13 · Accepted · A person's phones by brand and model, with group pay / receive
 **Context**: on a customer's or dealer's page, the shopkeeper wants to see:
 - which brands and models, and how many;

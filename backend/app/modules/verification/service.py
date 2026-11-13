@@ -75,6 +75,7 @@ def upsert(
         "cnic_front_path",
         "cnic_back_path",
         "seller_photo_path",
+        "thumb_path",
         "egadget_screenshot_path",
         "declaration_path",
     ):
@@ -217,6 +218,18 @@ def declaration_html(
                 )
         except Exception:  # noqa: BLE001 — a missing file never breaks the printout
             sig_img = ""
+    # owner 2026-11-13 (ADR-069): the thumb impression's photo, or an empty box to press it on paper
+    thumb_img = ""
+    if v is not None and v.thumb_path:
+        try:
+            raw = resolve(shop_id, v.thumb_path).read_bytes()
+            if len(raw) < 3_000_000:
+                kind = "png" if v.thumb_path.lower().endswith(".png") else "jpeg"
+                thumb_img = (
+                    f'<img src="data:image/{kind};base64,{base64.b64encode(raw).decode()}" alt="">'
+                )
+        except Exception:  # noqa: BLE001 — a missing file never breaks the printout
+            thumb_img = ""
     model = db.get(Model, device.model_id)
     e = html.escape
     cond_en = {
@@ -249,6 +262,7 @@ def declaration_html(
             else "I, the seller named above, declare that I am the lawful owner of this mobile phone, that it is not stolen, snatched, lost or reported, and that I am selling it of my own free will. I accept full responsibility if this declaration is found false."
         ),
         "sig": "بیچنے والے کے دستخط / انگوٹھا" if ur else "Seller signature / thumb",
+        "thumb": "انگوٹھے کا نشان" if ur else "Thumb impression",
         "for": "دکان کی طرف سے" if ur else "For the shop",
     }
     seller_name = e(seller.name) if seller else "______________________"
@@ -281,6 +295,9 @@ table {{ width: 100%; border-collapse: collapse; }} td {{ padding: 4px 6px; bord
 .ltr {{ direction: ltr; unicode-bidi: isolate; }}
 .sig {{ display: flex; justify-content: space-between; margin-top: 36px; }} .sig div {{ width: 45%; border-top: 1px solid #333; padding-top: 4px; text-align: center; }}
 .shop {{ border-bottom: 2px solid #111; padding-bottom: 8px; }}
+.thumb {{ width: 34mm; margin: 18px 0 0 auto; text-align: center; font-size: 12px; }}
+.thumb .box {{ height: 38mm; border: 1px solid #333; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 4px; }}
+.thumb img {{ max-width: 100%; max-height: 100%; }}
 </style></head><body>
 <div class="shop"><h1>{shop_name}</h1><div>{e(shop.address or "")} {e(shop.city or "")} · <span class="ltr">{e(shop.phone or "")}</span></div></div>
 <h2>{T["title"]} · {T["date"]} <span class="ltr">{date}</span></h2>
@@ -294,5 +311,6 @@ table {{ width: 100%; border-collapse: collapse; }} td {{ padding: 4px 6px; bord
 <tr><td>{T["price"]}</td><td class="ltr">Rs. {device.cost_price if device.cost_price is not None else "________"}</td></tr>
 </table>
 <p>{T["text"]}</p>
+<div class="thumb"><div class="box">{thumb_img}</div>{T["thumb"]}</div>
 <div class="sig"><div>{sig_img}{T["sig"]}</div><div>{T["for"]} {shop_name}</div></div>
 </body></html>"""

@@ -73,6 +73,7 @@ export default function VerifyPage() {
       cnic_front_path: f.cnic_front_path ?? null,
       cnic_back_path: f.cnic_back_path ?? null,
       seller_photo_path: f.seller_photo_path ?? null,
+      thumb_path: f.thumb_path ?? null,
       device_photos: f.device_photos ?? [],
       egadget_result: f.egadget_result ?? 'not_checked',
       egadget_ref: f.egadget_ref || null,
@@ -143,6 +144,14 @@ export default function VerifyPage() {
           <PhotoTile label={pick('verify.devicePhoto')} path={f.device_photos?.[0] ?? null} purpose="device" onPick={(p) => set('device_photos', [p, ...(f.device_photos ?? []).slice(1)])} />
         </div>
         <Help term="stock.verify.photos" size="sm" />
+        </div>
+        {/* owner 2026-11-13 (ADR-069): the seller's thumb impression, optional */}
+        <div className="flex items-start gap-1">
+          <div className="grid min-w-0 flex-1 grid-cols-2 gap-2">
+            <PhotoTile label={pick('verify.thumb')} path={f.thumb_path ?? null} purpose="thumb" onPick={(p) => set('thumb_path', p)} />
+            <span className={`self-center text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick('verify.thumbHint')}</span>
+          </div>
+          <Help term="stock.verify.thumb" size="sm" />
         </div>
       </Section>
 

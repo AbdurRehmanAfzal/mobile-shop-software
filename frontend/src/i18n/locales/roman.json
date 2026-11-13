@@ -507,7 +507,9 @@
     "clearSign": "Mitayein",
     "saveSign": "Dastakhat save karein",
     "signed": "Bechne wale ne dastakhat kar diye",
-    "signAgain": "Dobara dastakhat"
+    "signAgain": "Dobara dastakhat",
+    "thumb": "Angootha (agar chahein)",
+    "thumbHint": "Ikhtiyari. Bechne wala siyahi laga angootha kaghaz par (ya chhape hue declaration ke khane mein) lagaye; us ki photo lein. Yeh isi tasdeeq ke saath rehti hai aur declaration par chhapti hai."
   },
   "sale": {
     "title": "Nayi bikri",
@@ -5500,6 +5502,11 @@
           "title": "Bechne wale ke dastakhat",
           "body": "Jo banda aap ko phone bech raha hai woh screen par dastakhat karta hai ke phone us ka hai aur chori ka nahi. Yeh jaanch ke sath mehfooz hota hai aur iqrar name par chhapta hai.",
           "example": "Usman ne purana Redmi becha: us ne ungli se dastakhat kiye, aap ne Save dabaya — ab iqrar name par line ke upar us ke dastakhat hain."
+        },
+        "thumb": {
+          "title": "Angoothe ka nishan",
+          "body": "Ikhtiyari: is baat ka record ke yeh mobile isi bechne wale ne becha, CNIC ki tasveeron aur dastakhat ke saath. Bechne wala siyahi laga angootha kaghaz par ya chhape declaration ke angoothe wale khane mein lagaye, aur aap photo lein. Is ke baghair bhi tasdeeq mukammal ho sakti hai. Yeh NADRA ka biometric match nahi; us ke liye licence wala fingerprint scanner aur NADRA ki apni service chahiye.",
+          "example": "Ali iPhone bech raha hai: stamp pad, declaration ke khane mein angootha, Angootha dabayein aur photo lein."
         }
       },
       "view": {

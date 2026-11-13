@@ -190,3 +190,22 @@ def test_signature_drawn_on_the_screen_is_printed_on_the_declaration(owner, cat)
     owner.put(f"/api/v1/devices/{d2['id']}/verification", json={"declaration_signed": True})
     page2 = owner.get(f"/api/v1/devices/{d2['id']}/verification/declaration").text
     assert "data:image/png" not in page2
+
+
+def test_thumb_impression_is_optional_and_printed(owner, other_owner, cat):
+    """owner 2026-11-13 (ADR-069): a photo of the seller's thumb impression, optional — it never
+    holds the check back; it prints in the declaration's thumb box (an empty box without it)"""
+    d = _stock(owner, cat, condition="used")
+    url = f"/api/v1/devices/{d['id']}/verification"
+    page = owner.get(f"{url}/declaration", params={"lang": "en"}).text
+    assert "Thumb impression" in page and 'class="thumb"' in page
+    thumb = _upload(owner, purpose="thumb").json()["path"]
+    r = owner.put(url, json={"thumb_path": thumb})
+    assert r.status_code in (200, 201), r.text
+    assert r.json()["thumb_path"] == thumb
+    assert "thumb_path" not in r.json()["missing"]
+    page = owner.get(f"{url}/declaration", params={"lang": "en"}).text
+    assert page.count("data:image/png;base64,") == 1
+    # another shop's file cannot be used
+    other = _upload(other_owner, purpose="thumb").json()["path"]
+    assert owner.put(url, json={"thumb_path": other}).status_code == 422

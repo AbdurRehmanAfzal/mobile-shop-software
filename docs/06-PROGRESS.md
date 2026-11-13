@@ -300,6 +300,7 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | Short sticker (under 22 mm, e.g. 48×18 on a 58 mm MPT-II roll): name + price, full-width barcode, IMEI only; note in the sticker sheet; manual guide for 58 mm Bluetooth printers / RawBT (owner 2026-11-12) | ✅ | `labels/service.COMPACT_H`, `LabelSheet.tsx`, `tests/test_labels.py` |
 | Change what was paid at a purchase (cash entered for an udhaar bill, or the other way), also after its phones were sold; correction group money account ↔ seller's khata; later payments stay (owner 2026-11-13, ADR-067) | ✅ | `purchases/service.change_paid`, `PaidFix.tsx`, `tests/test_purchase_paid_change.py`, `e2e/purchase-paid.spec.ts` |
 | A person's phones by brand → model → phone with counts, to give / to get per level and in all, group pay / receive (oldest bill first), list view kept (owner 2026-11-13, ADR-068) | ✅ | `PartyUnits.tsx`, `PaymentForm.tsx` (`allocations`), `units/service._unit_row`, `e2e/party-brands.spec.ts` |
+| Thumb impression on the ID check: optional photo, printed in the declaration's thumb box (empty box for an inked thumb); not a NADRA match (owner 2026-11-13, ADR-069; migration d5f7b9c1e3a6) | ✅ | `verification/*`, `VerifyPage.tsx`, `tests/test_verification.py`, `e2e/verify-thumb.spec.ts` |
 | Operations runbook (internal; secrets only as placeholders) | ✅ | `operations-en.md` |
 | Owner review of the wording | ⏳ | `docs/29-OWNER-PENDING.md` D |
 

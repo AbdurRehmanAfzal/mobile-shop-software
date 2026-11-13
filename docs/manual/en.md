@@ -496,7 +496,7 @@ At the top you see the phone, its IMEI and its status chip: **ID check pending**
 
 1. **Seller**: already filled with the person you bought from. You can change it by searching name, phone or CNIC.
 2. **CNIC number**: check the 13 digits.
-3. Tap each photo box and take a photo with the camera: **CNIC front**, **CNIC back**, **Seller photo** and **Phone photo**.
+3. Tap each photo box and take a photo with the camera: **CNIC front**, **CNIC back**, **Seller photo** and **Phone photo**. **Thumb (optional)**: the seller presses an inked thumb (stamp pad) on paper or in the **Thumb impression** box of the printed declaration; take a photo of it. It is kept with the check and printed in the declaration's thumb box. The check is complete without it. This is a record, not a NADRA biometric match (that needs a licensed fingerprint scanner).
 4. **eGadget (Punjab Police)**: tap **Open eGadget portal**, check the IMEI there, come back and choose **Clear**, **Flagged** or **Not checked**. Type the **Reference no.** if the portal gives one.
 5. **PTA checked (SMS 8484)**: tap **SMS 8484** to send the IMEI to PTA, then tick the box and pick the **PTA result**.
 6. **Seller signed declaration**: the seller signs on the screen (see below).

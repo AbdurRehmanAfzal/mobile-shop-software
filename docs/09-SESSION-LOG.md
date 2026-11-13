@@ -1419,3 +1419,18 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - tsc.
 - pytest `test_units`, `test_open_balances`, `test_payments`.
 - Playwright `party-brands` (new: totals, brand / model figures, open a model, pay a whole model 20,000 → dealer −30,000, list view), plus `units`, `balances`, `lending`, `device-styles`, `counter`.
+
+### Same day — PR #54 green; thumb impression on the ID check (ADR-069)
+**Owner**: "ID verify karte hue customer ka thumb bhi enter karwana hai … optional".
+**Told the owner**: a NADRA biometric match needs a licensed scanner and NADRA BVS (telcos / franchises only). The app keeps a record instead.
+**Done**:
+- `verifications.thumb_path`, additive migration `d5f7b9c1e3a6`.
+- Optional **Thumb (optional)** photo tile with a hint.
+- Not needed for "clear".
+- The declaration has a **Thumb impression** box: the photo if there is one, otherwise empty for an inked thumb on paper.
+- en / ur / roman strings + help, manual ch. 1, ADR-069.
+**Verified**:
+- pytest `test_verification` (new: box always printed, photo saved and printed, not in missing, another shop's file refused), plus the full suite.
+- tsc.
+- Playwright `verify-thumb` (new) and `cnic-scan`.
+**Open**: if the owner buys a USB fingerprint scanner, its image can fill the same field later. A NADRA match is not possible for us.

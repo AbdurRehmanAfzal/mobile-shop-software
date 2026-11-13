@@ -171,6 +171,7 @@ export interface Verification {
   cnic_front_path: string | null
   cnic_back_path: string | null
   seller_photo_path: string | null
+  thumb_path?: string | null
   device_photos: string[]
   egadget_result: 'clear' | 'flagged' | 'not_checked'
   egadget_ref: string | null

@@ -13,6 +13,7 @@ class VerificationIn(BaseModel):
     cnic_front_path: str | None = None
     cnic_back_path: str | None = None
     seller_photo_path: str | None = None
+    thumb_path: str | None = None  # optional (ADR-069)
     device_photos: list[str] = Field(default_factory=list)
     egadget_result: str = Field(default="not_checked", pattern="^(clear|flagged|not_checked)$")
     egadget_ref: str | None = Field(default=None, max_length=80)
