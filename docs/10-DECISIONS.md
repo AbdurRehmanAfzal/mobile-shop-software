@@ -362,6 +362,19 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-070 · 2026-11-13 · Accepted · A phone's SIM (carrier) lock, for information
+**Context**: shopkeepers want to know which phones are locked to a network (US / Japan / UK carrier phones), for both iPhone and Android.
+**Decision**:
+- Additive migration `e7a9c1d3f5b8` adds `devices.sim_lock` (`unlocked` | `locked`, nullable) and `devices.sim_lock_carrier` (≤ 40, nullable).
+- It is set when stock is added (any SIM-taking unit) and in Edit details, with network chips (AT&T, T-Mobile, Verizon, Sprint, Cricket, Docomo, KDDI / au, SoftBank, EE, Vodafone) or free text.
+- It shows:
+  - in the review before saving;
+  - as a chip on the phone's page;
+  - as a stock list field;
+  - in the Download / Share column "SIM lock".
+- It is separate from the lock checks (`lock_checks.carrier`), which stop a sale when not cleared. The SIM lock never stops a sale.
+**Consequences**: empty means "not checked"; old phones stay empty until edited.
+
 ## ADR-069 · 2026-11-13 · Accepted · The ID check keeps an optional photo of the seller's thumb impression
 **Context**: shopkeepers want the seller's thumb on record when buying a used phone, as an option. A real biometric match against NADRA needs a NADRA-licensed scanner and NADRA's BVS service, which a shop app cannot use.
 **Decision**:

@@ -36,7 +36,7 @@ export const loadView = () => load<StockView>('stock.view', (v): v is StockView 
 export const saveView = (v: StockView) => save('stock.view', v)
 
 /** every field a unit can show; `key` is shared with the server's stock export (`cols`) */
-export type FieldKey = 'shelf' | 'reserved' | 'source' | 'storage' | 'colour' | 'condition' | 'pta' | 'sim_time' | 'battery' | 'cycles' | 'region' | 'sim' | 'grade' | 'ram' | 'imei' | 'imei2' | 'serial' | 'barcode' | 'days' | 'cost' | 'asking' | 'status' | 'verification'
+export type FieldKey = 'shelf' | 'reserved' | 'source' | 'storage' | 'colour' | 'condition' | 'pta' | 'sim_time' | 'battery' | 'cycles' | 'region' | 'sim' | 'simlock' | 'grade' | 'ram' | 'imei' | 'imei2' | 'serial' | 'barcode' | 'days' | 'cost' | 'asking' | 'status' | 'verification'
 type Field = { key: FieldKey; label: string; get: (d: Device, pick: (k: string) => string) => string | number | null; num?: boolean; money?: boolean; ltr?: boolean; apple?: boolean }
 
 const daysSince = (iso: string) => Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000))
@@ -52,6 +52,7 @@ export const FIELDS: Field[] = [
   { key: 'cycles', label: 'stock.col.cycles', get: (d) => d.battery_cycles ?? null, num: true, apple: true },
   { key: 'region', label: 'devx.region', get: (d) => d.region_code ?? null, ltr: true, apple: true },
   { key: 'sim', label: 'devx.simTypeLabel', get: (d, p) => simTypeText(d.sim_type, p), apple: true },
+  { key: 'simlock', label: 'simlock.label', get: (d, p) => (d.sim_lock ? [p(`simlock.${d.sim_lock}`), d.sim_lock_carrier].filter(Boolean).join(' · ') : null) },
   { key: 'grade', label: 'devx.grade', get: (d, p) => (d.grade ? p(`devx.grades.${d.grade}`) : null) },
   { key: 'ram', label: 'devx.ram', get: (d) => (d.ram_gb ? `${d.ram_gb} GB` : null), ltr: true },
   { key: 'imei', label: 'stock.col.imei', get: (d) => d.imei1, ltr: true },

@@ -82,6 +82,8 @@ class DeviceIdentity(BaseModel):
     location: str | None = Field(default=None, max_length=60)  # ADR-060, shelf
     battery_cycles: int | None = Field(default=None, ge=0, le=5000)  # ADR-055, Apple
     sim_type: str | None = Field(default=None, max_length=30)  # ADR-055, e.g. physical_esim
+    sim_lock: Literal["unlocked", "locked"] | None = None  # ADR-070
+    sim_lock_carrier: str | None = Field(default=None, max_length=40)
     imei1: str | None = None
     imei2: str | None = None
     serial: str | None = Field(default=None, max_length=60)
@@ -216,6 +218,8 @@ class DeviceUpdate(BaseModel):
     location: str | None = Field(default=None, max_length=60)  # ADR-060, shelf
     battery_cycles: int | None = Field(default=None, ge=0, le=5000)  # ADR-055, Apple
     sim_type: str | None = Field(default=None, max_length=30)  # ADR-055, e.g. physical_esim
+    sim_lock: Literal["unlocked", "locked"] | None = None  # ADR-070
+    sim_lock_carrier: str | None = Field(default=None, max_length=40)
     brand_id: uuid.UUID | None = None
     model_id: uuid.UUID | None = None
     imei2: str | None = None
@@ -300,6 +304,8 @@ class DeviceOut(BaseModel):
     region_code: str | None = None
     battery_cycles: int | None = None
     sim_type: str | None = None
+    sim_lock: str | None = None
+    sim_lock_carrier: str | None = None
     location: str | None = None
     reserved_party_id: uuid.UUID | None = None
     reserved_party_name: str | None = None

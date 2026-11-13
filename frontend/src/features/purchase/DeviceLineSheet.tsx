@@ -64,6 +64,8 @@ export interface DeviceLineDraft {
   /** owner 2026-11-09 (ADR-055): an Apple unit's region code and SIM setup */
   region_code?: string
   sim_type?: string
+  sim_lock?: '' | 'unlocked' | 'locked'
+  sim_lock_carrier?: string
   battery_cycles?: string
   /** owner 2026-11-10 (ADR-060): the shelf it sits on */
   location?: string
@@ -89,6 +91,8 @@ export function emptyDraft(imei = '', kind: 'supplier' | 'walk_in' | 'shop' | 't
     model_number: '',
     region_code: '',
     sim_type: '',
+    sim_lock: '',
+    sim_lock_carrier: '',
     battery_cycles: '',
     location: '',
     specs: {},
@@ -146,6 +150,8 @@ export function draftToApi(d: DeviceLineDraft) {
       location: d.location || null,
       battery_cycles: isApple(d.brand_name, d.model_name) && d.condition !== 'box_pack' && d.battery_cycles !== '' && d.battery_cycles != null ? Number(d.battery_cycles) : null,
       sim_type: isApple(d.brand_name, d.model_name) && sim ? d.sim_type || null : null,
+      sim_lock: sim && d.sim_lock ? d.sim_lock : null,
+      sim_lock_carrier: sim && d.sim_lock === 'locked' ? d.sim_lock_carrier?.trim() || null : null,
       specs: d.specs && Object.keys(d.specs).length ? d.specs : null,
       lock_checks: d.condition !== 'box_pack' && d.lock_checks && Object.keys(d.lock_checks).length ? d.lock_checks : null,
       lock_checked: d.condition !== 'box_pack' ? !!d.lock_checked : false,
@@ -400,6 +406,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
 
       {showPta ? <div className="flex items-center gap-1"><BiLabel text="stock.ptaLabel" size="md" tone="text-muted" /><Help term="device.pta" size="sm" /></div> : null}
       {showPta ? <BiSegmented<PtaStatus> value={d.pta_status} onChange={(v) => set('pta_status', v)} options={[{ value: 'pta_approved', text: 'stock.pta.pta_approved' }, { value: 'non_pta', text: 'stock.pta.non_pta' }, ...(phone ? [{ value: 'jv' as const, text: 'stock.pta.jv' }] : [])]} /> : null}
+      {showPta ? <SimLockField value={d.sim_lock ?? ''} carrier={d.sim_lock_carrier ?? ''} onChange={(v, c) => setD((x) => ({ ...x, sim_lock: v, sim_lock_carrier: c }))} /> : null}
       {needsSim ? <BiInput label="stock.simTime" help={<Help term="device.simTime" size="sm" />} type="number" inputMode="numeric" min={0} max={60} value={d.sim_time_months} onChange={(e) => set('sim_time_months', e.target.value)} hint="stock.simTimeOptional" /> : null}
 
       {edit ? null : (
@@ -473,6 +480,33 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
       )}
 
       <BiButton text={edit || again ? 'common.save' : 'common.add'} full disabled={!valid} onClick={() => { if (draftKey) clearDrafts(draftKey); onSave({ ...d, imei1: sim ? imeiDigits : '' }) }} />
+    </div>
+  )
+}
+
+/** owner 2026-11-13 (ADR-070): is the phone locked to a network (carrier)? Information only — a
+ *  SIM-locked phone can still be sold. Tap a chosen choice again to clear it. */
+const CARRIERS = ['AT&T', 'T-Mobile', 'Verizon', 'Sprint', 'Cricket', 'Docomo', 'KDDI / au', 'SoftBank', 'EE', 'Vodafone']
+export function SimLockField({ value, carrier, onChange }: { value: '' | 'unlocked' | 'locked'; carrier: string; onChange: (v: '' | 'unlocked' | 'locked', carrier: string) => void }) {
+  const { pick } = useLang()
+  const chip = (on: boolean) => `tap min-h-11 rounded-2xl border-2 px-3 text-sm font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'}`
+  const small = (on: boolean) => `tap h-9 shrink-0 rounded-full border-2 px-3 text-[13px] font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'}`
+  return (
+    <div className="flex flex-col gap-2" data-testid="sim-lock">
+      <div className="flex items-center gap-1"><BiLabel text="simlock.label" size="md" tone="text-muted" /><Help term="device.simLock" size="sm" /></div>
+      <div className="grid grid-cols-2 gap-2">
+        {(['unlocked', 'locked'] as const).map((v) => (
+          <button key={v} type="button" aria-pressed={value === v} onClick={() => onChange(value === v ? '' : v, v === 'locked' ? carrier : '')} className={chip(value === v)} data-testid={`sim-lock-${v}`}>{pick(`simlock.${v}`)}</button>
+        ))}
+      </div>
+      {value === 'locked' ? (
+        <>
+          <div className="flex flex-wrap gap-1.5">
+            {CARRIERS.map((c) => <button key={c} type="button" aria-pressed={carrier === c} onClick={() => onChange('locked', carrier === c ? '' : c)} className={small(carrier === c)}>{c}</button>)}
+          </div>
+          <BiInput label="simlock.carrier" value={carrier} onChange={(e) => onChange('locked', e.target.value)} maxLength={40} dir="ltr" data-testid="sim-lock-carrier" />
+        </>
+      ) : null}
     </div>
   )
 }

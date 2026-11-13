@@ -108,6 +108,8 @@ export interface Device {
   reserved_until?: string | null
   reserved_note?: string | null
   sim_type?: string | null
+  sim_lock?: 'unlocked' | 'locked' | null
+  sim_lock_carrier?: string | null
   brand_id: UUID
   brand_name: string
   model_id: UUID

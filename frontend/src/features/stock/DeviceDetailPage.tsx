@@ -51,6 +51,8 @@ function toDraft(d: DeviceDetail): DeviceLineDraft {
     location: d.location ?? '',
     battery_cycles: d.battery_cycles != null ? String(d.battery_cycles) : '',
     sim_type: d.sim_type ?? '',
+    sim_lock: d.sim_lock ?? '',
+    sim_lock_carrier: d.sim_lock_carrier ?? '',
   }
 }
 
@@ -171,6 +173,7 @@ export default function DeviceDetailPage() {
           {d.verification_status !== 'not_required' ? <Chip text={`stock.verification.${d.verification_status}`} tone={vTone} /> : null}
           {d.cycle_no > 1 ? <Chip text={{ en: `Cycle ${d.cycle_no}`, ur: `${d.cycle_no} بار` }} /> : null}
           <FaultChip faults={d.faults} />
+          {d.sim_lock ? <Chip text={{ en: [pick(`simlock.${d.sim_lock}`), d.sim_lock_carrier].filter(Boolean).join(' · '), ur: [pick(`simlock.${d.sim_lock}`), d.sim_lock_carrier].filter(Boolean).join(' · ') }} tone={d.sim_lock === 'locked' ? 'warn' : 'ok'} /> : null}
           <Help term="device.badges" size="sm" />
         </div>
         <div className="mt-1 grid grid-cols-2 gap-2">
@@ -322,6 +325,8 @@ export default function DeviceDetailPage() {
                 location: x.location || null,
                 battery_cycles: isApple(x.brand_name, x.model_name) && x.battery_cycles !== '' && x.battery_cycles != null ? Number(x.battery_cycles) : null,
                 sim_type: isApple(x.brand_name, x.model_name) && (x.category === 'phone' || x.cellular) ? x.sim_type || null : null,
+                sim_lock: (x.category === 'phone' || x.cellular) && x.sim_lock ? x.sim_lock : null,
+                sim_lock_carrier: x.sim_lock === 'locked' ? x.sim_lock_carrier?.trim() || null : null,
                 specs: x.specs && Object.keys(x.specs).length ? x.specs : null,
               })
               await inv('devices', 'device', 'history')

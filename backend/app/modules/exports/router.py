@@ -238,6 +238,16 @@ STOCK_COLS: dict[str, tuple[str, object]] = {
     "cycles": ("Battery cycles", lambda d: d["battery_cycles"]),
     "region": ("Region code", lambda d: d["region_code"]),
     "sim": ("SIM", lambda d: d["sim_type"]),
+    "simlock": (
+        "SIM lock",
+        lambda d: (
+            None
+            if not d.get("sim_lock")
+            else "Unlocked"
+            if d["sim_lock"] == "unlocked"
+            else " ".join(x for x in ("Locked", d.get("sim_lock_carrier")) if x)
+        ),
+    ),
     "grade": ("Grade", lambda d: d["grade"]),
     "ram": ("RAM (GB)", lambda d: d["ram_gb"]),
     "imei": ("IMEI", lambda d: d["imei1"]),

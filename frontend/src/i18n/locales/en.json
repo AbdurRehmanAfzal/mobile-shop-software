@@ -319,7 +319,8 @@
       "serial": "Serial",
       "barcode": "Barcode",
       "verification": "ID check",
-      "source": "Bought from"
+      "source": "Bought from",
+      "simlock": "SIM lock (network)"
     },
     "fields": {
       "button": "Fields",
@@ -5011,6 +5012,11 @@
         "title": "Faults",
         "body": "Choose what is wrong: camera, LCD, display, dots, board, RAM and the rest, or write your own. The phone shows as Faulty with these in the stock list, on its page and in the sale; it can be sold as it is, and the bill says \"Sold as faulty\". When it is fixed, tap \"Faulty cleared\".",
         "example": "Dots on the display and a weak battery: tap Dots on display and Battery."
+      },
+      "simLock": {
+        "title": "SIM lock",
+        "body": "Is the phone locked to one network (carrier), as many US / Japan / UK phones are? Unlocked takes any SIM; SIM locked works only with that network's SIM unless unlocked. iPhone and Android both have it. Choose the network if you know it. It is for information: a SIM-locked phone can still be sold. Leave it empty if not checked.",
+        "example": "An iPhone 12 from the US locked to AT&T: SIM locked, AT&T."
       }
     },
     "purchase": {
@@ -10638,5 +10644,11 @@
     "add": "Add",
     "note": "Note (optional)",
     "chip": "Faulty"
+  },
+  "simlock": {
+    "label": "SIM lock (network)",
+    "unlocked": "Unlocked",
+    "locked": "SIM locked",
+    "carrier": "Locked to (network)"
   }
 }

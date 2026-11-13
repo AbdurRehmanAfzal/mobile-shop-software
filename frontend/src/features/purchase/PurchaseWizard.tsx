@@ -350,6 +350,7 @@ export default function PurchaseWizard() {
               ['stock.col.battery', d.battery_health ? `${d.battery_health}%` : null],
               ['stock.col.cycles', d.battery_cycles || null],
               ['devx.region', d.region_code || null],
+              ['simlock.label', d.sim_lock ? [pick(`simlock.${d.sim_lock}`), d.sim_lock === 'locked' ? d.sim_lock_carrier : ''].filter(Boolean).join(' · ') : null],
               ['purchase.cost', d.cost ? withCur(Number(d.cost).toLocaleString('en-US')) : null],
               ['stock.asking', d.asking_price ? withCur(Number(d.asking_price).toLocaleString('en-US')) : null],
             ]

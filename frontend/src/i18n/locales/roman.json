@@ -319,7 +319,8 @@
       "serial": "Serial",
       "barcode": "Barcode",
       "verification": "ID check",
-      "source": "Jis se khareeda"
+      "source": "Jis se khareeda",
+      "simlock": "SIM lock (network)"
     },
     "fields": {
       "button": "Fields",
@@ -5011,6 +5012,11 @@
         "title": "Kharabiyan",
         "body": "Jo kharabi hai chunein: camera, LCD, display, dots, board, RAM waghera, ya apni likhein. Mobile stock ki list, apne page aur sale mein inhi ke saath faulty dikhta hai; jaisa hai waisa becha ja sakta hai aur bill par \"Sold as faulty\" aata hai. Theek ho jaye to \"Faulty cleared\" dabayein.",
         "example": "Display par dots aur battery kamzor: Display par dots aur Battery dabayein."
+      },
+      "simLock": {
+        "title": "SIM lock",
+        "body": "Kya phone ek hi network (carrier) par lock hai, jaise America / Japan / UK ke kai phone? SIM lock nahi: har SIM chalegi; SIM lock hai: sirf usi network ki SIM chalegi jab tak khulwaya na jaye. iPhone aur Android dono mein hota hai. Network maloom ho to chunein. Yeh sirf maloomat hai: SIM lock phone bhi becha ja sakta hai. Check na kiya ho to khali chhor dein.",
+        "example": "America ka iPhone 12 jo AT&T par lock hai: SIM lock hai, AT&T."
       }
     },
     "purchase": {
@@ -10638,5 +10644,11 @@
     "add": "Shamil karein",
     "note": "Note (agar ho)",
     "chip": "Faulty"
+  },
+  "simlock": {
+    "label": "SIM lock (network)",
+    "unlocked": "SIM lock nahi",
+    "locked": "SIM lock hai",
+    "carrier": "Kis network par lock"
   }
 }

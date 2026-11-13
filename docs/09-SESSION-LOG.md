@@ -1447,3 +1447,16 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - Playwright `add-device` (now fills RAM under More details and checks it in the review).
 
 **Next**: the scanner model and platform from the owner.
+
+### Same day — SIM lock (ADR-070), then push
+**Owner**: "stock add karte hue mobile mein SIM lock ki field bhi honi chahiye (Apple aur Android dono)", in the same commit as RAM, then push.
+**Done**:
+- `devices.sim_lock` / `sim_lock_carrier` (additive migration `e7a9c1d3f5b8`).
+- `SimLockField`: Unlocked / SIM locked + network chips or text, on add and edit.
+- It shows in the review, on the phone page (chip), as a stock list field and in the export column.
+- It never blocks a sale.
+- en / ur / roman strings + help, manual ch. 1, ADR-070.
+**Verified**:
+- pytest `test_sim_lock` (new: save, bad value 422, edit carrier, export, sale allowed), `test_devices`, `test_exports`.
+- tsc.
+- Playwright `add-device` (fills RAM + SIM lock AT&T, both in the review), `device-types`, `apple-variant`, `stock-views`.

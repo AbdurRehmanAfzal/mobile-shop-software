@@ -54,6 +54,10 @@ class Device(UUIDPk, ShopScoped, Timestamped, Base):
     # how many times the battery was charged through (iPhone: Settings → General → About)
     battery_cycles: Mapped[int | None] = mapped_column(Integer)
     sim_type: Mapped[str | None] = mapped_column(String(30))
+    # owner 2026-11-13 (ADR-070): carrier (SIM) lock — "unlocked" or "locked" with the carrier;
+    # for information only, it never stops a sale (unlike the lock checks)
+    sim_lock: Mapped[str | None] = mapped_column(String(10))
+    sim_lock_carrier: Mapped[str | None] = mapped_column(String(40))
     # owner 2026-11-10 (ADR-060): the shelf it sits on, and a hold for one customer (the unit stays
     # in stock; only that customer can buy it until it is released)
     location: Mapped[str | None] = mapped_column(String(60))
