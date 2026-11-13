@@ -341,6 +341,8 @@ export default function PurchaseWizard() {
               ['stock.imei2', d.imei2 || null],
               ['devcat.serial', !d.imei1 && d.serial ? d.serial : null],
               ['stock.storageShort', storages?.find((s) => s.id === d.storage_id)?.name ?? null],
+              // owner 2026-11-13: RAM is checked before saving too
+              ['devx.ram', d.ram_gb || null],
               ['stock.col.colour', colours?.find((c) => c.id === d.colour_id)?.name ?? null],
               ['stock.conditionShort', pick(`stock.condition.${d.condition}`)],
               ['stock.ptaShort', (d.category ?? 'phone') === 'phone' || d.cellular ? pick(`stock.pta.${d.pta_status}`) : null],

@@ -1434,3 +1434,16 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - tsc.
 - Playwright `verify-thumb` (new) and `cnic-scan`.
 **Open**: if the owner buys a USB fingerprint scanner, its image can fill the same field later. A NADRA match is not possible for us.
+
+### Same day — RAM in the purchase review; scanner later
+**Owner**:
+- "pehle jo aap ne suggest kiya woh karo, baad mein scanner wala kaam" — the thumb photo (ADR-069) stays as built. A USB scanner (image from the vendor's web SDK, saved as a file in `thumb_path`, never base64 in the DB) comes later, once the owner picks a scanner model and says PC or mobile.
+- "stock mein save karne se pehle jo verification pop-up aata hai us mein RAM ki field bhi add kar dein".
+
+**Done**: the review before "Put in stock" lists **RAM (GB)** under storage, when given.
+
+**Verified**:
+- tsc.
+- Playwright `add-device` (now fills RAM under More details and checks it in the review).
+
+**Next**: the scanner model and platform from the owner.
