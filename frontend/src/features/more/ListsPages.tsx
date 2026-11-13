@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/auth'
 import { useDocMutation, usePayments, usePurchase, usePurchases, useReturns } from '@/lib/queries'
 import type { Party, Purchase, ReturnDoc } from '@/lib/types'
 import PartyPicker from '@/components/PartyPicker'
+import PaidFixSheet from '@/features/purchase/PaidFix'
 
 export function PurchasesPage() {
   const nav = useNavigate()
@@ -43,6 +44,8 @@ export function PurchaseDetailPage() {
   const [moving, setMoving] = useState(() => new URLSearchParams(window.location.search).get('change') === '1')
   const [to, setTo] = useState<Party | null>(null)
   const move = useDocMutation<{ party_id: string; reason: string }, Purchase>('POST', () => `/api/v1/purchases/${id}/party`)
+  // owner 2026-11-13 (ADR-067): what was paid at the purchase was entered wrong; ?paid=1 opens it
+  const [paidFix, setPaidFix] = useState(() => new URLSearchParams(window.location.search).get('paid') === '1')
   if (isLoading || !p) return <Loading />
   const canManage = role === 'owner' || role === 'manager'
   return (
@@ -71,9 +74,11 @@ export function PurchaseDetailPage() {
         <div className="grid grid-cols-2 gap-2">
           <BiButton text="sale.return" size="md" variant="secondary" onClick={() => { setSelected(p.lines.filter((l) => !l.returned_at).map((l) => l.id)); setReturning(true) }} />
           {canManage ? <BiButton text="common.void" size="md" variant="danger" onClick={() => setVoiding(true)} /> : null}
+          {canManage ? <div className="col-span-2 flex items-center gap-1"><div className="flex-1"><BiButton text="purchase.paidFix.button" size="md" variant="secondary" full onClick={() => setPaidFix(true)} data-testid="purchase-paid-change" /></div><Help term="purchase.paidFix" size="sm" /></div> : null}
           {canManage ? <div className="col-span-2 flex items-center gap-1"><div className="flex-1"><BiButton text="purchase.fix.partyButton" size="md" variant="secondary" full onClick={() => { setTo(null); setReason(''); move.reset(); setMoving(true) }} data-testid="purchase-party-change" /></div><Help term="purchase.fixParty" size="sm" /></div> : null}
         </div>
       ) : null}
+      {canManage && p.status === 'posted' ? <PaidFixSheet p={p} open={paidFix} onClose={() => setPaidFix(false)} /> : null}
       <Sheet open={moving} onClose={() => setMoving(false)} title="purchase.fix.partyTitle">
         <div className="flex flex-col gap-3">
           <BiLabel text="purchase.fix.partyHint" size="sm" tone="text-muted" />

@@ -362,6 +362,25 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-067 · 2026-11-13 · Accepted · What was paid at a purchase can be put right, even after its phones are sold
+**Context**: in a live shop a salesman entered purchases as "paid in full in cash" that really came on udhaar. Some of those phones were already sold. The owner needs the dealer's khata to show what is owed and the cash to be right, without disturbing the sales.
+**Decision**:
+- `GET /purchases/{id}/paid` returns `paid_at_purchase`, `paid_later` (payments allocated to the bill later) and `max_at_purchase`.
+- `POST /purchases/{id}/paid {paid_now, payment?, due_date?, reason}`. Owner / manager only (`Cap.VOID`).
+- Nothing is erased. One correction group (`purchase_paid_change`) moves the difference:
+  - less paid: debit the money account the bill was paid from, credit the seller's khata;
+  - more paid: debit the khata, credit the chosen account (cash / online / cheque).
+- The group is dated like the purchase; when that day's cash for that account is already closed, it is dated today.
+- `purchases.paid` moves by the difference; payments made later stay.
+- The bill's payment details follow: removed at 0, amount updated when lowered, added for a non-cash extra.
+- An optional new promised date is set.
+- Each phone gets a neutral `corrected` event (`field: paid`), and an audit row is written.
+- The phones' status, cost and sales are not touched, so it works after a sale.
+- Refused for a purchase made by an exchange (its money is the trade-in's) and for a voided one.
+- UI: **Change what was paid** on the purchase page (opens with `?paid=1`) and on the phone's page (also a sold phone). The sheet has **Nothing paid (all udhaar)**, **Paid in full** or an amount, how the extra was paid, a promised date, a live effect line and the reason.
+- No migration.
+**Consequences**: a correction dated today (closed day) shows in today's cash, not the purchase day's. The memo names the purchase.
+
 ## ADR-066 · 2026-11-12 · Accepted · A faulty phone says what is wrong, stays in stock and can be sold; a model link filters by id
 **Context**: in a live shop:
 - "iPhone 17" in the stock summary opened the 8 "iPhone 17 Pro Max" too: the link searched the model's name.
