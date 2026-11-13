@@ -1496,3 +1496,16 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - pytest `test_phone_serial` (new), `test_devices`, `test_device_types`.
 - tsc.
 - Playwright `add-device` (RAM + serial in the review), `device-types`, `apple-variant`, `cpid-simlock-party`, `crud`. `crud` timed out once at signup under load, then passed alone.
+
+### Same day — PR #56 green; faulty while adding stock
+**Owner**: "faulty field stock add karne wale form mein bhi daal dein, More details mein … existing functionality waisi hi".
+**Done**:
+- `DeviceIdentity.faults` (optional list).
+- On a purchase or an old-stock entry, a unit with faults comes in (`purchased`), then `mark_faulty_on_entry` raises `marked_faulty` with them: two events, as if marked by hand.
+- The add form's More details has **It came in faulty (optional)**: the fault chips plus the shop's own word. Not shown on edit; "Mark faulty" there is unchanged.
+- The review lists the faults.
+- en / ur / roman strings, manual ch. 2.
+**Verified**:
+- pytest `test_faulty` (new: a purchase with one faulty and one working phone), `test_purchases`, `test_devices`, `test_bulk`.
+- tsc.
+- Playwright `faulty-on-add` (new), `add-device`, `faulty-and-models`. `faulty-and-models` timed out once under load and passed alone.

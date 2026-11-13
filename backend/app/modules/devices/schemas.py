@@ -78,6 +78,8 @@ class DeviceIdentity(BaseModel):
     cellular: bool | None = None
     size_mm: int | None = Field(default=None, ge=20, le=60)  # a watch's case
     battery_health: int | None = Field(default=None, ge=1, le=100)
+    # owner 2026-11-13: a phone that comes in faulty is marked so when it is added (ADR-066 faults)
+    faults: list[str] = Field(default_factory=list, max_length=12)
     region_code: str | None = Field(default=None, max_length=12)  # ADR-055, e.g. LL/A
     location: str | None = Field(default=None, max_length=60)  # ADR-060, shelf
     battery_cycles: int | None = Field(default=None, ge=0, le=5000)  # ADR-055, Apple

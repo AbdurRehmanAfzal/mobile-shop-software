@@ -286,6 +286,11 @@ def create_purchase(
                 "barcode": device.barcode,
             },
         )
+    # owner 2026-11-13: a phone bought faulty is marked so at once
+    from app.modules.devices.service import mark_faulty_on_entry
+
+    for (device, _net), dl in zip(devices, data.devices, strict=True):
+        mark_faulty_on_entry(db, shop_id, user_id, device, dl.device.faults, at=at)
 
     labels = []
     for device, _net in devices:

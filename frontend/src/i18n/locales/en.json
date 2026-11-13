@@ -10647,7 +10647,9 @@
     "addPlaceholder": "e.g. hinge loose",
     "add": "Add",
     "note": "Note (optional)",
-    "chip": "Faulty"
+    "chip": "Faulty",
+    "onAdd": "It came in faulty (optional)",
+    "onAddHint": "Tap what is wrong only if the phone is faulty now; it goes into stock marked Faulty with these. Leave empty for a working phone."
   },
   "simlock": {
     "label": "SIM lock (network)",

@@ -10647,7 +10647,9 @@
     "addPlaceholder": "maslan hinge dheela",
     "add": "Shamil karein",
     "note": "Note (agar ho)",
-    "chip": "Faulty"
+    "chip": "Faulty",
+    "onAdd": "Yeh kharab haalat mein aaya (agar ho)",
+    "onAddHint": "Sirf tab dabayein jab phone abhi kharab ho; yeh stock mein inhi kharabiyon ke saath Faulty likha jayega. Theek phone ke liye khali chhor dein."
   },
   "simlock": {
     "label": "SIM lock (network)",
