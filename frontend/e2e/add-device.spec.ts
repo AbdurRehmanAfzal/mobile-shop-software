@@ -99,8 +99,8 @@ test("customer's phone: buy, then skip verification for a known person", async (
   await page.getByRole('button', { name: 'Next' }).click()
   await page.getByRole('button', { name: 'Add device' }).click()
   await fillDevice(page, '356789104552375')
-  await page.getByTestId('device-more').click()
-  await page.getByLabel('RAM (GB)').fill('4') // owner 2026-11-13: RAM shows in the review
+  await page.getByTestId('device-ram').fill('4') // owner 2026-11-13: RAM beside the storage, shown in the review
+  await page.getByTestId('device-serial').fill('f2lxk9abcd') // a phone's serial, optional, under the IMEIs
   await page.getByTestId('sim-lock-locked').click() // owner 2026-11-13: SIM (network) lock
   await page.getByTestId('sim-lock').getByRole('button', { name: 'AT&T', exact: true }).click()
   await page.getByRole('button', { name: 'Add', exact: true }).last().click()
@@ -115,6 +115,7 @@ test("customer's phone: buy, then skip verification for a known person", async (
   await expect(page.getByTestId('purchase-review')).toContainText('356789104552375')
   await expect(page.getByTestId('purchase-review')).toContainText('Ali Raza')
   await expect(page.getByTestId('purchase-review')).toContainText('RAM (GB)')
+  await expect(page.getByTestId('purchase-review')).toContainText('F2LXK9ABCD')
   await expect(page.getByTestId('purchase-review')).toContainText('SIM locked · AT&T')
   await expect(page.getByTestId('purchase-save')).toBeDisabled()
   await page.getByTestId('review-ok').check()

@@ -240,6 +240,12 @@ class DeviceUpdate(BaseModel):
     warranty_by: Literal["shop", "supplier", "brand"] | None = None
     specs: dict | None = None
 
+    @field_validator("serial")
+    @classmethod
+    def _serial(cls, v: str | None) -> str | None:
+        # owner 2026-11-13: a phone's serial (optional) is added or corrected later too
+        return clean_serial(v) if v else None
+
     @field_validator("region_code", "sim_type")
     @classmethod
     def _variant(cls, v: str | None) -> str | None:

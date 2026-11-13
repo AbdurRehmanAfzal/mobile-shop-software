@@ -339,7 +339,7 @@ export default function PurchaseWizard() {
             const rows: [string, string | null][] = [
               ['stock.imei', d.imei1 || null],
               ['stock.imei2', d.imei2 || null],
-              ['devcat.serial', !d.imei1 && d.serial ? d.serial : null],
+              ['devcat.serial', d.serial || null],
               ['stock.storageShort', storages?.find((s) => s.id === d.storage_id)?.name ?? null],
               // owner 2026-11-13: RAM is checked before saving too
               ['devx.ram', d.ram_gb || null],

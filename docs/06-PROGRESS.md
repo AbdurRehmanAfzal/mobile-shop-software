@@ -304,6 +304,7 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | RAM in the review before saving stock; SIM (network) lock on a phone — unlocked / locked + network, information only (owner 2026-11-13, ADR-070; migration e7a9c1d3f5b8) | ✅ | `DeviceLineSheet.tsx` (`SimLockField`), `PurchaseWizard.tsx`, `tests/test_sim_lock.py`, `e2e/add-device.spec.ts` |
 | CP ID as a PTA status; SIM lock / PTA on old phones by Edit details; purchase's person picker lists everyone; an already-saved number offers that person (owner 2026-11-13, ADR-071) | ✅ | `devices/state.PtaStatus`, `ListsPages.tsx`, `PartyForm.tsx`, `e2e/cpid-simlock-party.spec.ts` |
 | Stock worth by brand / model counts every phone the shop holds (in stock, faulty, in repair, on approval, on loan), like the stock cards — a faulty OnePlus was missing (owner 2026-11-13) | ✅ | `reports/service.stock_summary`, `tests/test_reports_simple.py` |
+| Phone serial number (optional) under the IMEIs on add / edit, shown in the review; RAM beside storage (owner 2026-11-13) | ✅ | `DeviceLineSheet.tsx`, `devices/schemas.DeviceUpdate._serial`, `tests/test_phone_serial.py`, `e2e/add-device.spec.ts` |
 | Operations runbook (internal; secrets only as placeholders) | ✅ | `operations-en.md` |
 | Owner review of the wording | ⏳ | `docs/29-OWNER-PENDING.md` D |
 

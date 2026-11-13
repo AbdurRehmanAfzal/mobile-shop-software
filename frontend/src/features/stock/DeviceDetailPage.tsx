@@ -309,6 +309,7 @@ export default function DeviceDetailPage() {
                 brand_id: x.brand_id,
                 model_id: x.model_id,
                 imei2: x.imei2 || null,
+                ...((x.category ?? 'phone') === 'phone' || x.cellular ? { serial: x.serial?.trim() || null } : {}),
                 storage_id: x.storage_id || null,
                 colour_id: x.colour_id || null,
                 condition: x.condition,
