@@ -175,7 +175,7 @@ Card ke neeche do bare buttons hain, **Bechein** aur **Shanakhti card check**, a
 | Button | Kya karta hai |
 |---|---|
 | **Amanat par dein** | Yeh phone kisi doosri dukaan ko dein (chapter 15). |
-| **Kharab likhein** | Jo kharabi hai chunein (Camera, LCD, Display, Display par dots, Board, RAM, Battery waghera), ya apni kharabi likh kar **+** dabayein (agli baar bhi milegi). Mobile stock ki list mein laal **Faulty: …** ke saath rehta hai aur jaisa hai waisa becha ja sakta hai; bill par **Sold as faulty** aata hai. **Kharabiyan badlein** se list badlein; theek ho jaye to **Faulty cleared**. |
+| **Kharab likhein** | Jo kharabi hai chunein (Camera, LCD, Display, Display par dots, Board, RAM, Battery waghera), ya apni kharabi likh kar **+** dabayein (agli baar bhi milegi). Mobile stock ki list mein laal **Faulty: …** ke saath rehta hai aur jaisa hai waisa becha ja sakta hai; bill par **Sold as faulty** aata hai. **Kharabiyan badlein** se list badlein; theek ho jaye to **Faulty cleared**. Jo phone kharab haalat mein aaye use stock daalte waqt hi Faulty likha ja sakta hai: **More details → Yeh kharab haalat mein aaya**, us ki kharabiyan dabayein; yeh stock mein Faulty likha jata hai. |
 | **Marammat ko bhejein** | Apne phone ki repair job kholein (chapter 14). |
 | **Sticker print karein** | Is ka barcode wala price sticker print karein (chapter 12). |
 | **Qeemat badlein** | Nayi bechne ki qeemat lagayein; purani history mein rehti hai. |

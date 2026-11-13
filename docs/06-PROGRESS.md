@@ -305,6 +305,7 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | CP ID as a PTA status; SIM lock / PTA on old phones by Edit details; purchase's person picker lists everyone; an already-saved number offers that person (owner 2026-11-13, ADR-071) | ✅ | `devices/state.PtaStatus`, `ListsPages.tsx`, `PartyForm.tsx`, `e2e/cpid-simlock-party.spec.ts` |
 | Stock worth by brand / model counts every phone the shop holds (in stock, faulty, in repair, on approval, on loan), like the stock cards — a faulty OnePlus was missing (owner 2026-11-13) | ✅ | `reports/service.stock_summary`, `tests/test_reports_simple.py` |
 | Phone serial number (optional) under the IMEIs on add / edit, shown in the review; RAM beside storage (owner 2026-11-13) | ✅ | `DeviceLineSheet.tsx`, `devices/schemas.DeviceUpdate._serial`, `tests/test_phone_serial.py`, `e2e/add-device.spec.ts` |
+| Mark a phone faulty while adding stock (More details → It came in faulty; purchase and old stock); Mark faulty afterwards unchanged (owner 2026-11-13) | ✅ | `DeviceLineSheet.tsx` (`FaultPicker`), `devices/service.mark_faulty_on_entry`, `tests/test_faulty.py`, `e2e/faulty-on-add.spec.ts` |
 | Operations runbook (internal; secrets only as placeholders) | ✅ | `operations-en.md` |
 | Owner review of the wording | ⏳ | `docs/29-OWNER-PENDING.md` D |
 

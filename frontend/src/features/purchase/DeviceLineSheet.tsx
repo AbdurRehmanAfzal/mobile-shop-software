@@ -5,6 +5,7 @@
  *  a watch GPS or cellular, case size, battery health, strap: no storage, IMEI 2 or JV. */
 
 import { useEffect, useState } from 'react'
+import { FaultPicker } from '@/features/stock/Faults'
 import { clearDrafts, useDraft } from '@/lib/draft'
 import { useTranslation } from 'react-i18next'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
@@ -66,6 +67,7 @@ export interface DeviceLineDraft {
   sim_type?: string
   sim_lock?: '' | 'unlocked' | 'locked'
   sim_lock_carrier?: string
+  faults?: string[]
   battery_cycles?: string
   /** owner 2026-11-10 (ADR-060): the shelf it sits on */
   location?: string
@@ -93,6 +95,7 @@ export function emptyDraft(imei = '', kind: 'supplier' | 'walk_in' | 'shop' | 't
     sim_type: '',
     sim_lock: '',
     sim_lock_carrier: '',
+    faults: [],
     battery_cycles: '',
     location: '',
     specs: {},
@@ -152,6 +155,7 @@ export function draftToApi(d: DeviceLineDraft) {
       sim_type: isApple(d.brand_name, d.model_name) && sim ? d.sim_type || null : null,
       sim_lock: sim && d.sim_lock ? d.sim_lock : null,
       sim_lock_carrier: sim && d.sim_lock === 'locked' ? d.sim_lock_carrier?.trim() || null : null,
+      faults: d.faults?.length ? d.faults : [],
       specs: d.specs && Object.keys(d.specs).length ? d.specs : null,
       lock_checks: d.condition !== 'box_pack' && d.lock_checks && Object.keys(d.lock_checks).length ? d.lock_checks : null,
       lock_checked: d.condition !== 'box_pack' ? !!d.lock_checked : false,
@@ -441,6 +445,8 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
       </button>
       {more ? (
         <div className="flex flex-col gap-3" data-testid="device-details">
+          {/* owner 2026-11-13: it came in faulty — mark it while adding (not when editing: use Mark faulty) */}
+          {!edit ? <FaultPicker value={d.faults ?? []} onChange={(faults) => setD((x) => ({ ...x, faults }))} /> : null}
           <div className="grid grid-cols-2 gap-2">
             <BiInput label="devx.modelNumber" help={<Help term="device.modelNumber" size="sm" />} value={d.model_number ?? ''} onChange={(e) => set('model_number', e.target.value)} dir="ltr" className="num" maxLength={40} />
           </div>

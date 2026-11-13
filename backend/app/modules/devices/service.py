@@ -606,6 +606,7 @@ def new_device(
             "manufacturer_code",
             "lock_checked",
             "model_number",
+            "faults",  # set by the "marked_faulty" event right after it comes in
         }
     )
     device = Device(shop_id=shop_id, **fields)
@@ -681,6 +682,7 @@ def add_opening_stock(
             else VerificationStatus.PENDING,
         },
     )
+    mark_faulty_on_entry(db, shop_id, user_id, device, getattr(data, "faults", None))
     record_audit(
         db,
         shop_id=shop_id,
@@ -692,6 +694,24 @@ def add_opening_stock(
     )
     db.commit()
     return get_device_out(db, shop_id, device.id)
+
+
+def mark_faulty_on_entry(
+    db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, device: Device, faults, at=None
+) -> None:
+    """owner 2026-11-13: faults chosen while adding stock — the unit comes in, then is marked faulty
+    (two events, the same as doing it by hand afterwards)"""
+    if not [f for f in (faults or []) if str(f).strip()]:
+        return
+    apply_event(
+        db,
+        shop_id,
+        user_id,
+        device,
+        EventType.MARKED_FAULTY,
+        at=at,
+        data={"faults": list(faults), "on_entry": True},
+    )
 
 
 def update_device(

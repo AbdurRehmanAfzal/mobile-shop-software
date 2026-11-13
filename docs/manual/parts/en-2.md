@@ -175,7 +175,7 @@ Under the card are the two main buttons, **Sell** and **ID card check**, and the
 | Button | What it does |
 |---|---|
 | **Give on loan (amanat)** | Give this phone to another shop (chapter 15). |
-| **Mark faulty** | Choose what is wrong (Camera, LCD, Display, Dots on display, Board, RAM, Battery and more), or write your own fault and tap **+** (it is offered next time too). The phone stays in the stock list with a red **Faulty: …** tag and can still be sold as it is; the bill says **Sold as faulty**. **Change faults** edits the list; **Faulty cleared** when it is fixed. |
+| **Mark faulty** | Choose what is wrong (Camera, LCD, Display, Dots on display, Board, RAM, Battery and more), or write your own fault and tap **+** (it is offered next time too). The phone stays in the stock list with a red **Faulty: …** tag and can still be sold as it is; the bill says **Sold as faulty**. **Change faults** edits the list; **Faulty cleared** when it is fixed. A phone that comes in faulty can be marked so while adding it: **More details → It came in faulty**, tap its faults; it goes into stock as Faulty. |
 | **Send to repair** | Open a repair job for your own phone (chapter 14). |
 | **Print sticker** | Print its price sticker with barcode (chapter 12). |
 | **Change asking price** | Set a new asking price; the old one stays in the history. |

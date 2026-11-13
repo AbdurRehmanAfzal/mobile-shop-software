@@ -66,3 +66,30 @@ export function FaultSheet({ open, onClose, deviceId, current }: { open: boolean
     </Sheet>
   )
 }
+
+/** the same choices in the add-stock form (owner 2026-11-13): an optional "it came in faulty" */
+export function FaultPicker({ value, onChange }: { value: string[]; onChange: (v: string[]) => void }) {
+  const { pick } = useLang()
+  const { data: opts } = useGet<{ faults?: string[] }>(['device-options'], '/api/v1/devices/options')
+  const [own, setOwn] = useState('')
+  const all = [...new Set([...(opts?.faults ?? FAULT_KEYS), ...value])]
+  const toggle = (f: string) => onChange(value.includes(f) ? value.filter((x) => x !== f) : [...value, f])
+  const addOwn = () => { const w = own.trim().slice(0, 40); if (w && !value.includes(w)) onChange([...value, w]); setOwn('') }
+  return (
+    <div className="flex flex-col gap-2 rounded-2xl border border-line bg-surface p-3" data-testid="add-faults">
+      <span className="flex items-center gap-1"><BiLabel text="faulty.onAdd" size="md" bold /><Help term="device.faults" size="sm" /></span>
+      <BiLabel text="faulty.onAddHint" size="sm" tone="text-muted" />
+      <div className="flex flex-wrap gap-1.5">
+        {all.map((f) => (
+          <button key={f} type="button" aria-pressed={value.includes(f)} onClick={() => toggle(f)} className={`tap min-h-9 rounded-full border-2 px-3 text-[13px] font-bold ${value.includes(f) ? 'border-payable bg-payable text-white' : 'border-line bg-surface text-ink'}`} data-testid={`add-fault-${f}`}>
+            {faultName(f, pick)}
+          </button>
+        ))}
+      </div>
+      <div className="flex items-end gap-2">
+        <div className="min-w-0 flex-1"><BiInput label="faulty.addOwn" value={own} onChange={(e) => setOwn(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addOwn() } }} maxLength={40} placeholder={pick('faulty.addPlaceholder')} /></div>
+        <button type="button" onClick={addOwn} disabled={!own.trim()} aria-label={pick('faulty.add')} className="tap mb-0.5 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-ink text-ground disabled:opacity-40"><Plus size={22} /></button>
+      </div>
+    </div>
+  )
+}
