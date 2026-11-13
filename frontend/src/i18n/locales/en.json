@@ -337,7 +337,8 @@
         "imei2": "IMEI 2",
         "seller": "Bought from",
         "cost": "Purchase price",
-        "customer": "Customer"
+        "customer": "Customer",
+        "paid": "Paid at purchase"
       }
     },
     "kind": {
@@ -454,6 +455,19 @@
       "new": "Correct purchase price",
       "more": "{{who}}'s khata: {{n}} more to give",
       "less": "{{who}}'s khata: {{n}} less to give"
+    },
+    "paidFix": {
+      "button": "Change what was paid",
+      "title": "What was paid at the purchase",
+      "hint": "For a purchase entered with the wrong payment, e.g. \"paid in full in cash\" when it came on udhaar. Only the money moves; the phones stay as they are, even if sold.",
+      "atPurchase": "Paid at the purchase now",
+      "later": "Paid later (stays)",
+      "allUdhaar": "Nothing paid (all udhaar)",
+      "full": "Paid in full",
+      "new": "Really paid at the purchase",
+      "effectLess": "{{n}} goes back into the money account; {{who}}'s khata: {{n}} more to give.",
+      "effectMore": "{{n}} goes out of the money account; {{who}}'s khata: {{n}} less to give.",
+      "how": "How was the extra paid?"
     }
   },
   "verify": {
@@ -5137,6 +5151,11 @@
         "title": "Change purchase price",
         "body": "Only the owner or manager, only while the phone is still in the shop (not sold). The difference goes to the seller's khata: a higher price means more to give them, a lower one means less (or they owe you if it was paid). Cash does not move. The phone's history shows the old and new price and the reason.",
         "example": "Typed 10,000, it was 12,000: the dealer's khata shows 2,000 more to give."
+      },
+      "paidFix": {
+        "title": "Change what was paid at a purchase",
+        "body": "Owner or manager. Set what was really paid when the stock was bought. Less than before: that money goes back into the account it was taken from (cash to the galla) and the seller's khata shows it as owed. More: it comes out of the account you choose. Payments made later against the bill stay. The phones are not touched, so this works after they are sold too. Each phone's history and the audit keep the change. If that day's cash is already closed, the change is dated today.",
+        "example": "Entered Rs. 20,000 paid in cash, but it came on udhaar: tap Nothing paid. The galla gets 20,000 back and the dealer's khata shows 20,000 to give."
       }
     },
     "label": {

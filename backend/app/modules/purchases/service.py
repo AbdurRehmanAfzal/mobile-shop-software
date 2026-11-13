@@ -573,6 +573,154 @@ def change_party(
     return p
 
 
+def paid_split(db: Session, p: Purchase) -> tuple[Decimal, Decimal, Decimal]:
+    """(paid later against this bill, paid at the purchase, the most that can be paid at it)"""
+    from app.modules.payments.models import Payment
+
+    later = ZERO
+    for x in db.scalars(
+        select(Payment).where(
+            Payment.shop_id == p.shop_id,
+            Payment.party_id == p.party_id,
+            Payment.status != "voided",
+        )
+    ).all():
+        for a in x.allocations or []:
+            if str(a.get("document_id")) == str(p.id):
+                later += money(Decimal(str(a.get("amount") or 0)))
+    old = max(ZERO, money(p.paid - later))
+    return later, old, money(p.total - p.returned_total - later)
+
+
+def change_paid(
+    db: Session,
+    shop_id: uuid.UUID,
+    ctx,
+    purchase_id: uuid.UUID,
+    paid_now: Decimal,
+    payment,
+    due_date,
+    reason: str,
+) -> Purchase:
+    """Owner 2026-11-13 (ADR-067): what was paid AT the purchase was entered wrong — e.g. "paid in
+    full in cash" for a bill that came on udhaar. Nothing is erased and the phones are not touched
+    (they may be sold already): one correction group moves the difference between the money
+    account and the seller's khata — less paid puts the cash back and the seller is owed it; more
+    paid takes it out of the chosen account. Dated like the purchase, or today when that day's cash
+    is already closed. Payments made against the bill later stay as they are."""
+    from app.modules.exchanges.models import Exchange
+
+    if not ctx.can(Cap.VOID):
+        raise Forbidden()
+    p = get_purchase(db, shop_id, purchase_id)
+    if p.status == PurchaseStatus.VOIDED:
+        raise Conflict(
+            code="already_voided",
+            message_en="This purchase is cancelled",
+            message_ur="یہ خریداری منسوخ ہو چکی ہے",
+        )
+    if db.scalar(select(Exchange.id).where(Exchange.purchase_id == p.id)):
+        raise Conflict(
+            code="purchase_from_exchange",
+            message_en="This purchase came from an exchange; its money is set by the exchange",
+            message_ur="یہ خریداری تبادلے سے آئی ہے؛ اس کی رقم تبادلہ طے کرتا ہے",
+        )
+    _later, old, room = paid_split(db, p)
+    new = money(paid_now)
+    if new < ZERO or new > room:
+        raise ValidationFailed(
+            code="paid_out_of_range",
+            message_en=f"Paid at the purchase can be 0 to {room}",
+            message_ur=f"خریداری کے وقت دی گئی رقم 0 سے {room} تک ہو سکتی ہے",
+        )
+    diff = new - old
+    if diff == ZERO:
+        raise ValidationFailed(
+            code="same_paid",
+            message_en="This is already what was paid",
+            message_ur="یہی پہلے سے دی گئی رقم ہے",
+        )
+    if diff < ZERO:
+        if p.cash_account_id is None:
+            raise Conflict(code="no_cash_account")
+        cash = db.get(CashAccount, p.cash_account_id)
+    else:
+        cash = paymode.account_for(db, shop_id, payment, None)
+    closed = db.scalar(
+        select(DayClose.id).where(
+            DayClose.shop_id == shop_id,
+            DayClose.cash_account_id == cash.id,
+            DayClose.date == p.date,
+        )
+    )
+    party = db.get(Party, p.party_id)
+    posting = Posting(
+        document_type="purchase_paid_change",
+        document_id=p.id,
+        memo=f"{p.no}: paid at purchase {old} -> {new} ({reason})",
+        at=utcnow() if closed else (p.purchased_at or at_for(p.date)),
+    )
+    if diff < ZERO:
+        # it never left: back into the money account, and the seller is owed it
+        posting.debit(acc.cash_account(cash.id), -diff, memo=f"Not paid {p.no}").credit(
+            acc.party_account(p.party_id), -diff
+        )
+    else:
+        posting.debit(acc.party_account(p.party_id), diff).credit(
+            acc.cash_account(cash.id), diff, memo=f"Paid {p.no}"
+        )
+    post(db, shop_id, ctx.id, posting)
+    p.paid = money(p.paid + diff)
+    if p.cash_account_id is None:
+        p.cash_account_id = cash.id
+    if due_date is not None:
+        p.due_date = due_date
+    p.updated_at = utcnow()
+    # the bill's "how it was paid" follows
+    detail = paymode.detail_for(db, shop_id, "purchase", p.id)
+    if new == ZERO and detail is not None:
+        db.delete(detail)
+    elif diff < ZERO and detail is not None:
+        detail.amount = new
+    elif diff > ZERO and payment is not None and payment.method != "cash":
+        if detail is not None and detail.method == payment.method:
+            detail.amount = money(detail.amount + diff)
+        elif detail is None:
+            paymode.save(db, shop_id, "purchase", p.id, payment, diff)
+    for ln in p.lines:
+        if ln.device_id:
+            d = db.get(Device, ln.device_id)
+            apply_event(
+                db,
+                shop_id,
+                ctx.id,
+                d,
+                EventType.CORRECTED,
+                document_type="purchase",
+                document_id=p.id,
+                data={
+                    "field": "paid",
+                    "from": str(old),
+                    "to": str(new),
+                    "reason": reason,
+                    "purchase_no": p.no,
+                    "party": party.name if party else None,
+                },
+            )
+    record_audit(
+        db,
+        shop_id=shop_id,
+        user_id=ctx.id,
+        entity="purchase",
+        entity_id=p.id,
+        action="paid_changed",
+        before={"paid_at_purchase": str(old)},
+        after={"paid_at_purchase": str(new), "reason": reason, "dated_today": bool(closed)},
+    )
+    db.commit()
+    return p
+
+
 # the shop still holds the unit (nothing was sold at the old cost)
 _HELD = (
     DeviceStatus.IN_STOCK,

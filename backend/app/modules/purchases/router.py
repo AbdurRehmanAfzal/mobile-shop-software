@@ -11,6 +11,7 @@ from app.core.idempotency import IdemKey
 from app.core.idempotency import run as idempotent
 from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx, require_cap
+from app.modules.paymode.schemas import PaymentInfo
 from app.modules.purchases import service
 from app.modules.purchases.schemas import PurchaseCreate, PurchaseOut, VoidIn
 
@@ -70,6 +71,40 @@ def change_party(purchase_id: uuid.UUID, data: PartyChangeIn, ctx: Ctx, db: DB):
     return service.to_out(
         db,
         service.change_party(db, ctx.shop_id, ctx, purchase_id, data.party_id, data.reason.strip()),
+    )
+
+
+class PaidChangeIn(BaseModel):
+    paid_now: Decimal = Field(ge=0, max_digits=14, decimal_places=2)
+    payment: PaymentInfo | None = None
+    due_date: date | None = None
+    reason: str = Field(min_length=2, max_length=200)
+
+
+@router.get("/{purchase_id}/paid")
+def paid_info(purchase_id: uuid.UUID, ctx: Ctx, db: DB):
+    """what was paid at the purchase and later, for the "change what was paid" sheet (ADR-067)"""
+    later, at_purchase, room = service.paid_split(
+        db, service.get_purchase(db, ctx.shop_id, purchase_id)
+    )
+    return {"paid_at_purchase": at_purchase, "paid_later": later, "max_at_purchase": room}
+
+
+@router.post("/{purchase_id}/paid", response_model=PurchaseOut)
+def change_paid(purchase_id: uuid.UUID, data: PaidChangeIn, ctx: Ctx, db: DB):
+    """owner / manager: what was paid at the purchase was entered wrong (ADR-067)"""
+    return service.to_out(
+        db,
+        service.change_paid(
+            db,
+            ctx.shop_id,
+            ctx,
+            purchase_id,
+            data.paid_now,
+            data.payment,
+            data.due_date,
+            data.reason.strip(),
+        ),
     )
 
 

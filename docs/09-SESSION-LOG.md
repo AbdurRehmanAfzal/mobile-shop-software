@@ -1379,3 +1379,23 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - tsc.
 - Local renders at 46 × 18 and 48 × 15 looked at.
 **Open**: the owner to test-print at 48 × 18 (or 48 × 30) and send a photo. RawBT paid vs a direct Bluetooth print in the app is the owner's choice.
+
+### 2026-11-13 — change what was paid at a purchase (ADR-067)
+**Owner (testing in a live shop)**: a salesman entered purchases as paid in full in cash, but they came on udhaar. Some phones were already sold. It must be possible to put the bill on udhaar so the khata shows what is owed, without disturbing the running shops.
+**Done**:
+- `purchases/service.paid_split` / `change_paid`.
+- `GET` / `POST /api/v1/purchases/{id}/paid`.
+- One correction group between the money account and the seller's khata, dated like the purchase (or today if that day's cash is closed).
+- Later payments stay. The payment details follow. Each phone gets a `corrected` event; an audit row is written.
+- Refused for exchange purchases.
+- `PaidFix.tsx` sheet on the purchase page (`?paid=1`) and on the phone's page (also sold).
+- en / ur / roman strings + help, manual ch. 2, ADR-067.
+**Verified**:
+- pytest `test_purchase_paid_change` (new):
+  - cash bill made udhaar after the phone was sold: galla +20,000, dealer −20,000, phone stays sold, history;
+  - then 5,000 online;
+  - same amount, out of range, salesman 403;
+  - a later payment stays and limits the range.
+- Full suite.
+- tsc.
+- Playwright `purchase-paid` (new), `fix-after-purchase`, `purchase-cost`.
