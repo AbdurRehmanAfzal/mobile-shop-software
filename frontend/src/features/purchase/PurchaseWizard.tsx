@@ -341,6 +341,8 @@ export default function PurchaseWizard() {
               ['stock.imei2', d.imei2 || null],
               ['devcat.serial', !d.imei1 && d.serial ? d.serial : null],
               ['stock.storageShort', storages?.find((s) => s.id === d.storage_id)?.name ?? null],
+              // owner 2026-11-13: RAM is checked before saving too
+              ['devx.ram', d.ram_gb || null],
               ['stock.col.colour', colours?.find((c) => c.id === d.colour_id)?.name ?? null],
               ['stock.conditionShort', pick(`stock.condition.${d.condition}`)],
               ['stock.ptaShort', (d.category ?? 'phone') === 'phone' || d.cellular ? pick(`stock.pta.${d.pta_status}`) : null],
@@ -348,6 +350,7 @@ export default function PurchaseWizard() {
               ['stock.col.battery', d.battery_health ? `${d.battery_health}%` : null],
               ['stock.col.cycles', d.battery_cycles || null],
               ['devx.region', d.region_code || null],
+              ['simlock.label', d.sim_lock ? [pick(`simlock.${d.sim_lock}`), d.sim_lock === 'locked' ? d.sim_lock_carrier : ''].filter(Boolean).join(' · ') : null],
               ['purchase.cost', d.cost ? withCur(Number(d.cost).toLocaleString('en-US')) : null],
               ['stock.asking', d.asking_price ? withCur(Number(d.asking_price).toLocaleString('en-US')) : null],
             ]

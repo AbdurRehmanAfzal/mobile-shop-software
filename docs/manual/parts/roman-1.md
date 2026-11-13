@@ -299,6 +299,8 @@ Home par **Stock daalein** dabayein. Pehli screen poochti hai **Phone kahan se a
 9. **Memory** (`256GB`) aur **Rang** (`Blue`) chunein.
 
     **Apple** iPhone ke liye form **Region code** aur **SIM** bhi poochta hai. Region code Settings → General → About → Model Number ke aakhir mein hota hai (MLPF3**LL/A** → **LL/A** dabayein). SIM ke liye **Physical + eSIM**, **Double eSIM** (Americi iPhone 14 aur baad walon mein SIM tray nahi hoti), **Double physical SIM** ya **Sirf physical SIM** dabayein. List mein nahi? **Naya** daba kar likh dein; agli dafa app khud dikhaye gi. Used ya open box iPhone ke liye **Battery cycle count** bhi poocha jata hai (iPhone 15 aur naye: Settings → General → About; purane mein khali chhor dein). Yeh sab stock list aur price sticker par nazar aate hain.
+
+    **SIM lock (network)** (har phone, iPhone ho ya Android): **SIM lock nahi** ya **SIM lock hai** dabayein; lock ho to network (AT&T, T-Mobile, Verizon …) dabayein ya likhein. Yeh phone ke page, save karne se pehle ki jaanch aur stock list ke column mein aata hai. Yeh sirf maloomat hai — SIM lock phone bhi becha ja sakta hai. Check na kiya ho to khali chhor dein. Jo phone pehle se stock mein hai us ka SIM lock (ya durust PTA) us ke page par **Edit details** se lagayein. PTA mein **PTA approved**, **Non-PTA**, **JV** aur **CP ID** hain.
 10. **Haalat**: **Box pack** dabayein. Baqi options **Open box**, **Used** aur **Patch wala** hain (patch wala **Patch ki tafseel** maangta hai).
 11. **PTA status**: **PTA approved** dabayein. **Non-PTA** aur **JV** ke liye app **SIM time (mahine)** bhi poochti hai; yeh optional hai, maloom na ho to khali chhor dein.
 12. **Khareed qeemat**: `92000` likhein, jo aap ne diye.
@@ -494,7 +496,7 @@ Upar aap ko phone, us ka IMEI aur us ka status chip nazar aata hai: **ID check b
 
 1. **Bechne wala**: jis se khareeda woh pehle se bhara hai. Naam, phone ya CNIC se dhoond kar badal sakte hain.
 2. **CNIC number**: 13 hindse check karein.
-3. Har tasweer ke dabbe par dabayein aur camera se tasweer lein: **CNIC aage**, **CNIC peeche**, **Bechne wale ki tasweer** aur **Mobile ki tasweer**.
+3. Har tasweer ke dabbe par dabayein aur camera se tasweer lein: **CNIC aage**, **CNIC peeche**, **Bechne wale ki tasweer** aur **Mobile ki tasweer**. **Angootha (agar chahein)**: bechne wala siyahi laga angootha (stamp pad) kaghaz par ya chhape hue declaration ke **Angoothe ka nishan** wale khane mein lagaye; us ki tasweer lein. Yeh tasdeeq ke saath rehti hai aur declaration ke khane mein chhapti hai. Is ke baghair bhi tasdeeq mukammal hoti hai. Yeh record hai, NADRA ka biometric match nahi (us ke liye licence wala fingerprint scanner chahiye).
 4. **eGadget (Punjab Police)**: **eGadget portal kholein** dabayein, wahan IMEI check karein, wapas aayein aur **Saaf**, **Report shuda** ya **Check nahi kiya** chunein. Agar portal de to **Reference number** likhein.
 5. **PTA check kiya (SMS 8484)**: IMEI PTA ko bhejne ke liye **SMS 8484** dabayein, phir dabbe par tick karein aur **PTA nateeja** chunein.
 6. **Bechne wale ne iqrar nama sign kiya**: bechne wala screen par sign karta hai (neeche dekhein).

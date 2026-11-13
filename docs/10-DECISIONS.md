@@ -362,6 +362,44 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-071 · 2026-11-13 · Accepted · CP ID as a PTA status; the purchase's person from everyone; an existing number is offered
+**Context**: the owner asked for three things:
+- CP ID as a PTA option;
+- a way to put the SIM lock on phones already added;
+- a fix for "Change dealer / customer" on a purchase. It listed dealers only, so a customer could not be found, and "New person" said the number was already saved without showing whom.
+**Decision**:
+- **CP ID.** `PtaStatus.CPID = "cpid"`. The column is text, so no migration.
+  - It appears in the add / edit form, the ID check, the stock filter, the sticker, the bill and the bulk import ("cpid", "cp").
+  - It does not ask for SIM time (only Non-PTA / JV do).
+- **SIM lock on old phones.** It is set by **Edit details** on the phone page (ADR-070's field is in the edit form).
+- **Purchase's person.** The change sheet's picker lists everyone, with no kind filter, so a dealer bill can move to a customer and the other way.
+- **Existing number.** When a new person's number is already saved (`party_phone_exists`), the person form looks it up and shows **Use this person**. This works in every picker.
+**Consequences**: the purchase keeps its own kind (dealer / customer) when its person changes; only the person moves.
+
+## ADR-070 · 2026-11-13 · Accepted · A phone's SIM (carrier) lock, for information
+**Context**: shopkeepers want to know which phones are locked to a network (US / Japan / UK carrier phones), for both iPhone and Android.
+**Decision**:
+- Additive migration `e7a9c1d3f5b8` adds `devices.sim_lock` (`unlocked` | `locked`, nullable) and `devices.sim_lock_carrier` (≤ 40, nullable).
+- It is set when stock is added (any SIM-taking unit) and in Edit details, with network chips (AT&T, T-Mobile, Verizon, Sprint, Cricket, Docomo, KDDI / au, SoftBank, EE, Vodafone) or free text.
+- It shows:
+  - in the review before saving;
+  - as a chip on the phone's page;
+  - as a stock list field;
+  - in the Download / Share column "SIM lock".
+- It is separate from the lock checks (`lock_checks.carrier`), which stop a sale when not cleared. The SIM lock never stops a sale.
+**Consequences**: empty means "not checked"; old phones stay empty until edited.
+
+## ADR-069 · 2026-11-13 · Accepted · The ID check keeps an optional photo of the seller's thumb impression
+**Context**: shopkeepers want the seller's thumb on record when buying a used phone, as an option. A real biometric match against NADRA needs a NADRA-licensed scanner and NADRA's BVS service, which a shop app cannot use.
+**Decision**:
+- Additive migration `d5f7b9c1e3a6` adds `verifications.thumb_path` (nullable).
+- The verification form has a **Thumb (optional)** photo tile. The seller presses an inked thumb on paper or in the declaration's box; the shop takes a photo. The file is shop-scoped like the CNIC photos.
+- It is not in `REQUIRED_FOR_CLEAR`: it never holds the check back or changes `missing`.
+- The printed declaration gets a **Thumb impression** box (34 × 38 mm). It holds the photo when there is one; otherwise it stays empty for an inked thumb on the paper.
+**Consequences**:
+- A fingerprint scanner could later fill the same `thumb_path` with its image without a schema change.
+- Matching or verifying a fingerprint is out of scope.
+
 ## ADR-068 · 2026-11-13 · Accepted · A person's phones by brand and model, with group pay / receive
 **Context**: on a customer's or dealer's page, the shopkeeper wants to see:
 - which brands and models, and how many;

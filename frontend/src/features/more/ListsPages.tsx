@@ -82,7 +82,8 @@ export function PurchaseDetailPage() {
       <Sheet open={moving} onClose={() => setMoving(false)} title="purchase.fix.partyTitle">
         <div className="flex flex-col gap-3">
           <BiLabel text="purchase.fix.partyHint" size="sm" tone="text-muted" />
-          <PartyPicker value={to} onChange={setTo} kind={p.kind === 'supplier' ? 'supplier' : p.kind === 'shop' ? 'shop' : 'customer'} label="purchase.fix.partyNew" />
+          {/* owner 2026-11-13: anyone — a dealer bill may really be a customer's, and the other way */}
+          <PartyPicker value={to} onChange={setTo} label="purchase.fix.partyNew" />
           <BiInput label="common.reason" value={reason} onChange={(e) => setReason(e.target.value)} maxLength={200} help={<Help term="purchase.fixReason" size="sm" />} />
           <ErrorText error={move.error} />
           <BiButton text="common.save" full loading={move.isPending} disabled={!to || to.id === p.party_id || reason.trim().length < 2} onClick={async () => { await move.mutateAsync({ party_id: to!.id, reason: reason.trim() }); setMoving(false) }} data-testid="purchase-party-save" />

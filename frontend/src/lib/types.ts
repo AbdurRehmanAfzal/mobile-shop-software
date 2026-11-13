@@ -57,7 +57,7 @@ export interface Colour {
 }
 
 export type DeviceCondition = 'box_pack' | 'open_box' | 'used' | 'patched'
-export type PtaStatus = 'pta_approved' | 'non_pta' | 'jv' | 'unknown'
+export type PtaStatus = 'pta_approved' | 'non_pta' | 'jv' | 'cpid' | 'unknown'
 export type DeviceStatus = 'in_stock' | 'on_loan' | 'with_customer_for_approval' | 'sold' | 'in_repair' | 'faulty' | 'returned_to_supplier' | 'transferred'
 export type VerificationStatus = 'not_required' | 'pending' | 'clear' | 'flagged'
 
@@ -108,6 +108,8 @@ export interface Device {
   reserved_until?: string | null
   reserved_note?: string | null
   sim_type?: string | null
+  sim_lock?: 'unlocked' | 'locked' | null
+  sim_lock_carrier?: string | null
   brand_id: UUID
   brand_name: string
   model_id: UUID
@@ -171,6 +173,7 @@ export interface Verification {
   cnic_front_path: string | null
   cnic_back_path: string | null
   seller_photo_path: string | null
+  thumb_path?: string | null
   device_photos: string[]
   egadget_result: 'clear' | 'flagged' | 'not_checked'
   egadget_ref: string | null

@@ -1419,3 +1419,67 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - tsc.
 - pytest `test_units`, `test_open_balances`, `test_payments`.
 - Playwright `party-brands` (new: totals, brand / model figures, open a model, pay a whole model 20,000 → dealer −30,000, list view), plus `units`, `balances`, `lending`, `device-styles`, `counter`.
+
+### Same day — PR #54 green; thumb impression on the ID check (ADR-069)
+**Owner**: "ID verify karte hue customer ka thumb bhi enter karwana hai … optional".
+**Told the owner**: a NADRA biometric match needs a licensed scanner and NADRA BVS (telcos / franchises only). The app keeps a record instead.
+**Done**:
+- `verifications.thumb_path`, additive migration `d5f7b9c1e3a6`.
+- Optional **Thumb (optional)** photo tile with a hint.
+- Not needed for "clear".
+- The declaration has a **Thumb impression** box: the photo if there is one, otherwise empty for an inked thumb on paper.
+- en / ur / roman strings + help, manual ch. 1, ADR-069.
+**Verified**:
+- pytest `test_verification` (new: box always printed, photo saved and printed, not in missing, another shop's file refused), plus the full suite.
+- tsc.
+- Playwright `verify-thumb` (new) and `cnic-scan`.
+**Open**: if the owner buys a USB fingerprint scanner, its image can fill the same field later. A NADRA match is not possible for us.
+
+### Same day — RAM in the purchase review; scanner later
+**Owner**:
+- "pehle jo aap ne suggest kiya woh karo, baad mein scanner wala kaam" — the thumb photo (ADR-069) stays as built. A USB scanner (image from the vendor's web SDK, saved as a file in `thumb_path`, never base64 in the DB) comes later, once the owner picks a scanner model and says PC or mobile.
+- "stock mein save karne se pehle jo verification pop-up aata hai us mein RAM ki field bhi add kar dein".
+
+**Done**: the review before "Put in stock" lists **RAM (GB)** under storage, when given.
+
+**Verified**:
+- tsc.
+- Playwright `add-device` (now fills RAM under More details and checks it in the review).
+
+**Next**: the scanner model and platform from the owner.
+
+### Same day — SIM lock (ADR-070), then push
+**Owner**: "stock add karte hue mobile mein SIM lock ki field bhi honi chahiye (Apple aur Android dono)", in the same commit as RAM, then push.
+**Done**:
+- `devices.sim_lock` / `sim_lock_carrier` (additive migration `e7a9c1d3f5b8`).
+- `SimLockField`: Unlocked / SIM locked + network chips or text, on add and edit.
+- It shows in the review, on the phone page (chip), as a stock list field and in the export column.
+- It never blocks a sale.
+- en / ur / roman strings + help, manual ch. 1, ADR-070.
+**Verified**:
+- pytest `test_sim_lock` (new: save, bad value 422, edit carrier, export, sale allowed), `test_devices`, `test_exports`.
+- tsc.
+- Playwright `add-device` (fills RAM + SIM lock AT&T, both in the review), `device-types`, `apple-variant`, `stock-views`.
+
+### Same day — CP ID, SIM lock on old phones, purchase person picker (ADR-071)
+**Owner**:
+- PTA should have a CP ID option.
+- Phones already added (SIM-locked) need editing later.
+- "Change dealer / customer" on a purchase shows only dealers, a customer is not found, and a new name says "already saved" without showing it.
+**Done**:
+- `PtaStatus.CPID` (text column, no migration), in the form, ID check, stock filter, sticker, bill and bulk import.
+- The SIM lock is set by Edit details (field from ADR-070).
+- The purchase's person picker has no kind filter.
+- `PartyForm` shows the person with an already-saved number with **Use this person**.
+- en / ur / roman strings, manual ch. 1 / 2, ADR-071.
+**Verified**:
+- Playwright `cpid-simlock-party` (new: purchase with CP ID, CP ID shown and pressed in the edit form, SIM lock Verizon by edit, the dealer bill's search finds a customer, the existing number offers "Use this person", bill moved to the customer), plus regression specs.
+- Full backend suite.
+- tsc.
+
+### Same day — stock summary missed a phone
+**Owner**: "OnePlus ka mobile add kiya, tap a brand to see its models ki list mein nahi aa raha; stock detail mein entry show ho rahi hai".
+**Found**: the summary counted `in_stock` only. The stock list shows faulty units too (ADR-066), and the status cards count every unit held. A OnePlus marked faulty, in repair, on approval or on loan shows in the list but not in the summary.
+**Done**: `reports.stock_summary` counts the held statuses (in stock, faulty, in repair, approval, on loan), the same rule as `devices.stock_status`. The home / export / AI stock worth follow.
+**Verified**: pytest `test_reports_simple` (new: a faulty and an in-repair phone count), `test_exports`, `test_stock_screen`, `test_ai`.
+**Open**: if the owner's OnePlus is plain "in stock" and still missing, ask for its status / screenshot.

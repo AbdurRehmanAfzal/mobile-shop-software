@@ -18,6 +18,7 @@ class PtaStatus(StrEnum):
     PTA_APPROVED = "pta_approved"
     NON_PTA = "non_pta"
     JV = "jv"
+    CPID = "cpid"  # owner 2026-11-13: registered by CP ID (ADR-071)
     UNKNOWN = "unknown"
 
 

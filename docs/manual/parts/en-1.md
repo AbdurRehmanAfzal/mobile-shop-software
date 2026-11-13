@@ -299,6 +299,8 @@ On Home, tap **Add stock**. The first screen asks **Where is the phone coming fr
 9. Choose **Storage** (`256GB`) and **Colour** (`Blue`).
 
     For an **Apple** iPhone the form also asks the **Region code** and the **SIM** type. The region code is the end of Settings → General → About → Model Number (MLPF3**LL/A** → tap **LL/A**). For SIM, tap **Physical + eSIM**, **Dual eSIM** (US iPhones from the 14 onwards have no SIM tray), **Dual physical SIM** or **Physical SIM only**. Not in the list? Tap **New** and type it; the app offers it next time. For a used or open-box iPhone it also asks **Battery cycle count** (iPhone 15 and newer: Settings → General → About; leave empty on older ones). These show on the stock list and the price sticker.
+
+    **SIM lock (network)** (any phone, iPhone or Android): tap **Unlocked** or **SIM locked**; for a locked one tap the network (AT&T, T-Mobile, Verizon …) or type it. It shows on the phone's page, in the review before saving, and as a stock list column. It is only information — a SIM-locked phone can still be sold. Leave it empty if you did not check. A phone already in stock gets its SIM lock (or a corrected PTA) from **Edit details** on its page. PTA has **PTA approved**, **Non-PTA**, **JV** and **CP ID**.
 10. **Condition**: tap **Box pack**. The other choices are **Open box**, **Used** and **Patched** (patched asks for **Patch details**).
 11. **PTA status**: tap **PTA approved**. For **Non-PTA** and **JV** the app also asks **SIM time (months)**; it is optional, leave it empty if you do not know.
 12. **Cost price**: type `92000`, what you paid.
@@ -494,7 +496,7 @@ At the top you see the phone, its IMEI and its status chip: **ID check pending**
 
 1. **Seller**: already filled with the person you bought from. You can change it by searching name, phone or CNIC.
 2. **CNIC number**: check the 13 digits.
-3. Tap each photo box and take a photo with the camera: **CNIC front**, **CNIC back**, **Seller photo** and **Phone photo**.
+3. Tap each photo box and take a photo with the camera: **CNIC front**, **CNIC back**, **Seller photo** and **Phone photo**. **Thumb (optional)**: the seller presses an inked thumb (stamp pad) on paper or in the **Thumb impression** box of the printed declaration; take a photo of it. It is kept with the check and printed in the declaration's thumb box. The check is complete without it. This is a record, not a NADRA biometric match (that needs a licensed fingerprint scanner).
 4. **eGadget (Punjab Police)**: tap **Open eGadget portal**, check the IMEI there, come back and choose **Clear**, **Flagged** or **Not checked**. Type the **Reference no.** if the portal gives one.
 5. **PTA checked (SMS 8484)**: tap **SMS 8484** to send the IMEI to PTA, then tick the box and pick the **PTA result**.
 6. **Seller signed declaration**: the seller signs on the screen (see below).

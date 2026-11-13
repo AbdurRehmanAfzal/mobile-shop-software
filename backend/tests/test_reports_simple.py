@@ -36,6 +36,18 @@ def test_stock_summary_by_brand_and_model(client, owner, cat):
     assert s2["basis"] == "asking" and s2["value"] == "4700.00"
 
 
+def test_stock_summary_counts_faulty_and_repair_phones(owner, cat):
+    """owner 2026-11-13: a faulty phone (a OnePlus) showed in the stock list but not in the brand /
+    model summary — the summary counts every phone the shop holds, as the stock cards do"""
+    a = _stock(owner, cat, imei=A, cost_price=1000, asking_price=1500)
+    b = _stock(owner, cat, imei=B, cost_price=2000, asking_price=2500)
+    _stock(owner, cat, imei=C, cost_price=500, asking_price=700)
+    owner.post(f"/api/v1/devices/{a['id']}/events", json={"type": "marked_faulty"})
+    owner.post(f"/api/v1/devices/{b['id']}/events", json={"type": "sent_to_repair"})
+    s = owner.get("/api/v1/reports/stock-summary").json()
+    assert s["count"] == 3 and s["value"] == "3500.00"
+
+
 def test_day_report(db, owner, cat):
     seed_categories(db)
     tea = next(c for c in owner.get("/api/v1/expenses/categories").json() if c["key"] == "tea")

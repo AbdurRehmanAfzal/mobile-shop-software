@@ -73,6 +73,7 @@ export default function VerifyPage() {
       cnic_front_path: f.cnic_front_path ?? null,
       cnic_back_path: f.cnic_back_path ?? null,
       seller_photo_path: f.seller_photo_path ?? null,
+      thumb_path: f.thumb_path ?? null,
       device_photos: f.device_photos ?? [],
       egadget_result: f.egadget_result ?? 'not_checked',
       egadget_ref: f.egadget_ref || null,
@@ -144,6 +145,14 @@ export default function VerifyPage() {
         </div>
         <Help term="stock.verify.photos" size="sm" />
         </div>
+        {/* owner 2026-11-13 (ADR-069): the seller's thumb impression, optional */}
+        <div className="flex items-start gap-1">
+          <div className="grid min-w-0 flex-1 grid-cols-2 gap-2">
+            <PhotoTile label={pick('verify.thumb')} path={f.thumb_path ?? null} purpose="thumb" onPick={(p) => set('thumb_path', p)} />
+            <span className={`self-center text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick('verify.thumbHint')}</span>
+          </div>
+          <Help term="stock.verify.thumb" size="sm" />
+        </div>
       </Section>
 
       <Section title="verify.egadget" help="stock.verify.egadget" right={<a href="https://egadget.punjab.gov.pk" target="_blank" rel="noreferrer" className="flex items-center gap-1 text-xs font-bold text-emerald"><ExternalLink size={12} />{pick('verify.egadgetOpen')}</a>}>
@@ -157,7 +166,7 @@ export default function VerifyPage() {
           <span className="flex-1 text-sm font-semibold">{pick('verify.ptaChecked')}</span>
           <a href={`sms:8484?body=${device.imei1}`} className="text-xs font-bold text-emerald">SMS 8484</a>
         </label>
-        {f.pta_checked ? <BiSegmented<PtaStatus> value={f.pta_result ?? device.pta_status} onChange={(v) => set('pta_result', v)} options={[{ value: 'pta_approved', text: 'stock.pta.pta_approved' }, { value: 'non_pta', text: 'stock.pta.non_pta' }, { value: 'jv', text: 'stock.pta.jv' }]} /> : null}
+        {f.pta_checked ? <BiSegmented<PtaStatus> value={f.pta_result ?? device.pta_status} onChange={(v) => set('pta_result', v)} options={[{ value: 'pta_approved', text: 'stock.pta.pta_approved' }, { value: 'non_pta', text: 'stock.pta.non_pta' }, { value: 'jv', text: 'stock.pta.jv' }, { value: 'cpid', text: 'stock.pta.cpid' }]} /> : null}
       </Section>
 
       <Section title="verify.declaration" help="stock.verify.declaration" right={<button type="button" onClick={() => openPrintable(`/api/v1/devices/${id}/verification/declaration`)} className="text-xs font-bold text-emerald">{pick('common.print')}</button>}>

@@ -171,7 +171,9 @@
     "wholesaleHint": "Gets the wholesale price of items",
     "moreDetails": "More details",
     "moreDetailsHint": "CNIC, city, address, notes, wholesale price",
-    "phoneOpt": "Mobile number (optional)"
+    "phoneOpt": "Mobile number (optional)",
+    "alreadySaved": "This number is already saved for:",
+    "useThis": "Use this person"
   },
   "stock": {
     "title": "Stock",
@@ -203,7 +205,8 @@
       "pta_approved": "PTA approved",
       "non_pta": "Non-PTA",
       "jv": "JV",
-      "unknown": "Unknown"
+      "unknown": "Unknown",
+      "cpid": "CP ID"
     },
     "verification": {
       "not_required": "No check needed",
@@ -319,7 +322,8 @@
       "serial": "Serial",
       "barcode": "Barcode",
       "verification": "ID check",
-      "source": "Bought from"
+      "source": "Bought from",
+      "simlock": "SIM lock (network)"
     },
     "fields": {
       "button": "Fields",
@@ -507,7 +511,9 @@
     "clearSign": "Erase",
     "saveSign": "Use this signature",
     "signed": "Signed by the seller",
-    "signAgain": "Sign again"
+    "signAgain": "Sign again",
+    "thumb": "Thumb (optional)",
+    "thumbHint": "Optional. The seller presses an inked thumb on paper (or in the box on the printed declaration); take a photo. It is kept with this check and printed on the declaration."
   },
   "sale": {
     "title": "New sale",
@@ -5009,6 +5015,11 @@
         "title": "Faults",
         "body": "Choose what is wrong: camera, LCD, display, dots, board, RAM and the rest, or write your own. The phone shows as Faulty with these in the stock list, on its page and in the sale; it can be sold as it is, and the bill says \"Sold as faulty\". When it is fixed, tap \"Faulty cleared\".",
         "example": "Dots on the display and a weak battery: tap Dots on display and Battery."
+      },
+      "simLock": {
+        "title": "SIM lock",
+        "body": "Is the phone locked to one network (carrier), as many US / Japan / UK phones are? Unlocked takes any SIM; SIM locked works only with that network's SIM unless unlocked. iPhone and Android both have it. Choose the network if you know it. It is for information: a SIM-locked phone can still be sold. Leave it empty if not checked.",
+        "example": "An iPhone 12 from the US locked to AT&T: SIM locked, AT&T."
       }
     },
     "purchase": {
@@ -5500,6 +5511,11 @@
           "title": "Seller's signature",
           "body": "The person selling you the phone signs on the screen that it is his and not stolen. It is saved with the ID check and printed on the declaration.",
           "example": "Usman sells you a used Redmi: he signs with his finger, you tap Save — the declaration now shows his signature above the line."
+        },
+        "thumb": {
+          "title": "Thumb impression",
+          "body": "Optional: a record that the seller sold this phone, next to the CNIC photos and the signature. The seller presses an inked thumb on paper or in the thumb box of the printed declaration, and you take a photo. It never holds the check back. It is not a NADRA biometric match; that needs a licensed fingerprint scanner and NADRA's own service.",
+          "example": "Ali sells an iPhone: stamp pad, thumb on the declaration's box, tap Thumb and take the photo."
         }
       },
       "view": {
@@ -10631,5 +10647,11 @@
     "add": "Add",
     "note": "Note (optional)",
     "chip": "Faulty"
+  },
+  "simlock": {
+    "label": "SIM lock (network)",
+    "unlocked": "Unlocked",
+    "locked": "SIM locked",
+    "carrier": "Locked to (network)"
   }
 }

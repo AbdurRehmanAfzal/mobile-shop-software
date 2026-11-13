@@ -26,6 +26,9 @@ class Verification(UUIDPk, ShopScoped, Timestamped, Base):
     cnic_front_path: Mapped[str | None] = mapped_column(String(300))
     cnic_back_path: Mapped[str | None] = mapped_column(String(300))
     seller_photo_path: Mapped[str | None] = mapped_column(String(300))
+    # owner 2026-11-13 (ADR-069): a photo of the seller's thumb impression; optional, never needed
+    # for "clear" (no NADRA biometric match: that needs a licensed scanner)
+    thumb_path: Mapped[str | None] = mapped_column(String(300))
     device_photos: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
     egadget_result: Mapped[str] = mapped_column(
         String(15), nullable=False, default="not_checked"

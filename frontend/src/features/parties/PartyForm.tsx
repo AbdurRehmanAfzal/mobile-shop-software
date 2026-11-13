@@ -5,7 +5,8 @@ import { cnicNote } from '@/lib/cnicOcr'
 import { CnicInput, PhoneInput } from '@/components/FieldInputs'
 import Help from '@/components/Help'
 import { ErrorText } from '@/components/ui'
-import { useCreateParty, useUpdateParty } from '@/lib/queries'
+import { useCreateParty, useGet, useUpdateParty } from '@/lib/queries'
+import { ApiError } from '@/lib/api'
 import type { Party, PartyKind } from '@/lib/types'
 
 const KINDS: PartyKind[] = ['customer', 'supplier', 'shop', 'technician']
@@ -31,6 +32,10 @@ export default function PartyForm({ party, defaultKinds = ['customer'], onDone }
   const toggle = (k: PartyKind) => setF({ ...f, kinds: f.kinds.includes(k) ? f.kinds.filter((x) => x !== k) : [...f.kinds, k] })
   const busy = create.isPending || update.isPending
   const error = create.error ?? update.error
+  // owner 2026-11-13: "already saved" showed no one — show the person with that number to pick
+  const taken = !party && error instanceof ApiError && error.code === 'party_phone_exists'
+  const digits = f.phone.replace(/\D/g, '').slice(-10)
+  const { data: same } = useGet<Party[]>(['parties', 'same-phone', digits], taken && digits.length >= 7 ? `/api/v1/parties?q=${digits}` : null)
 
   async function submit(e: FormEvent) {
     e.preventDefault()
@@ -94,6 +99,17 @@ export default function PartyForm({ party, defaultKinds = ['customer'], onDone }
         </div>
       ) : null}
       <ErrorText error={error} />
+      {taken && same?.length ? (
+        <div className="flex flex-col gap-2 rounded-2xl bg-gold-tint p-3" data-testid="party-exists">
+          <BiLabel text="party.alreadySaved" size="sm" bold />
+          {same.slice(0, 3).map((x) => (
+            <button key={x.id} type="button" onClick={() => onDone(x)} className="tap flex min-h-12 items-center justify-between gap-2 rounded-xl border border-line bg-surface px-3 text-start" data-testid="party-exists-use">
+              <span className="min-w-0"><span className="block truncate font-bold">{x.name}</span><span className="block text-xs text-muted" dir="ltr">{x.phone}</span></span>
+              <span className="shrink-0 rounded-full bg-emerald px-3 py-1 text-sm font-bold text-white">{pick('party.useThis')}</span>
+            </button>
+          ))}
+        </div>
+      ) : null}
       <BiButton type="submit" text="common.save" full loading={busy} disabled={f.kinds.length === 0} />
     </form>
   )
