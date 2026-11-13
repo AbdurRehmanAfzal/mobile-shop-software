@@ -18,9 +18,18 @@ export interface Allocation { document_type: 'invoice' | 'purchase'; document_id
 /** `amount`: prefilled (an open balance with no bill behind it); `noAllocation`: the money is for
  *  something that is not a bill (a lab charge, a return credit), so it must not be put on another
  *  bill of the same person; one Idempotency-Key per form, so a retry posts it once (ADR-058) */
-export default function PaymentForm({ party, direction, onDone, allocation, lending, amount: start, noAllocation }: { party: Party; direction: 'in' | 'out'; onDone: (p: Payment) => void; allocation?: Allocation; lending?: boolean; amount?: number; noAllocation?: boolean }) {
+export default function PaymentForm({ party, direction, onDone, allocation, allocations, lending, amount: start, noAllocation }: { party: Party; direction: 'in' | 'out'; onDone: (p: Payment) => void; allocation?: Allocation; allocations?: Allocation[]; lending?: boolean; amount?: number; noAllocation?: boolean }) {
   const { pick } = useLang()
-  const [amount, setAmount] = useState(allocation ? String(allocation.remaining) : start ? String(start) : '')
+  // owner 2026-11-13: several bills at once (a brand's or a model's phones); a bill shared by two
+  // phones comes once with both remainders, never more than the bill has left
+  const many = (() => {
+    if (!allocations?.length) return null
+    const by = new Map<string, Allocation>()
+    for (const a of allocations) { const x = by.get(a.document_id); by.set(a.document_id, x ? { ...x, remaining: x.remaining + a.remaining } : { ...a }) }
+    return [...by.values()]
+  })()
+  const manyTotal = many ? Math.round(many.reduce((t, a) => t + a.remaining, 0) * 100) / 100 : 0
+  const [amount, setAmount] = useState(allocation ? String(allocation.remaining) : many ? String(manyTotal) : start ? String(start) : '')
   const [idem] = useState(uid)
   // cash / online / cheque / from abroad, the same as on a sale (owner 2026-10-28)
   const [pay, setPay] = useState<PayState>(() => newPay())
@@ -32,7 +41,13 @@ export default function PaymentForm({ party, direction, onDone, allocation, lend
 
   async function submit(e: FormEvent) {
     e.preventDefault()
-    const alloc = allocation ? [{ document_type: allocation.document_type, document_id: allocation.document_id, amount: Math.min(Number(amount), allocation.remaining) }] : undefined
+    let alloc = allocation ? [{ document_type: allocation.document_type, document_id: allocation.document_id, amount: Math.min(Number(amount), allocation.remaining) }] : undefined
+    if (many) {
+      // oldest bill first, each up to what it has left; anything more stays on the khata
+      let left = Number(amount)
+      alloc = []
+      for (const a of many) { if (left <= 0) break; const x = Math.min(left, a.remaining); if (x > 0) alloc.push({ document_type: a.document_type, document_id: a.document_id, amount: Math.round(x * 100) / 100 }); left -= x }
+    }
     const res = await m.mutateAsync({ party_id: party.id, direction, amount: Number(amount), payment: payInfo(pay), notes: notes || undefined, allocations: alloc ?? (noAllocation ? [] : undefined), purpose: lending ? 'lending' : undefined, due_date: lending && due ? due : undefined })
     if (isQueued(res)) {
       setQueued(true)
@@ -92,6 +107,12 @@ export default function PaymentForm({ party, direction, onDone, allocation, lend
         <div className="flex items-center justify-between rounded-2xl bg-khata px-4 py-3 text-khata-fg">
           <span className="flex flex-col"><span className="flex items-center gap-1"><BiLabel text="unit.forBill" size="sm" tone="text-current" /><span className="[&_button]:text-current"><Help term="payment.forBill" size="sm" /></span></span><span className="font-bold" dir="ltr">{allocation.document_no}</span></span>
           <span className="flex flex-col items-end"><BiLabel text={direction === 'in' ? 'unit.stillToGet' : 'unit.stillToPay'} size="sm" tone="text-current" /><span className="num text-lg" dir="ltr">{allocation.remaining.toLocaleString('en-US')}</span></span>
+        </div>
+      ) : null}
+      {many ? (
+        <div className="flex items-center justify-between rounded-2xl bg-khata px-4 py-3 text-khata-fg" data-testid="pay-many">
+          <span className="flex flex-col"><span className="flex items-center gap-1"><BiLabel text="unit.forBills" size="sm" tone="text-current" /><span className="[&_button]:text-current"><Help term="payment.forBill" size="sm" /></span></span><span className="font-bold" dir="ltr">{many.map((a) => a.document_no).join(', ')}</span></span>
+          <span className="flex flex-col items-end"><BiLabel text={direction === 'in' ? 'unit.stillToGet' : 'unit.stillToPay'} size="sm" tone="text-current" /><span className="num text-lg" dir="ltr">{manyTotal.toLocaleString('en-US')}</span></span>
         </div>
       ) : null}
       {lending ? <span className="flex items-center gap-1"><BiLabel text={direction === 'in' ? 'lending.formHintIn' : 'lending.formHintOut'} size="sm" tone="text-muted" /><Help term="payment.lending" size="sm" /></span> : null}

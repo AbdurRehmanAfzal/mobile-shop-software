@@ -1399,3 +1399,23 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - Full suite.
 - tsc.
 - Playwright `purchase-paid` (new), `fix-after-purchase`, `purchase-cost`.
+
+### Same day — PR #52 redeployed, PR #53 green; a person's phones by brand and model (ADR-068)
+**Release**:
+- PR #52's Deploy failed at "Prepare SSH" (network); `gh run rerun --failed`, then success.
+- PR #53 CI is green, waiting for the owner.
+**Owner**: on a customer / supplier page show brands with how many phones and models, what is left to give / to get per phone, brand and model totals and a subtotal; all clickable; pay / receive there; a ledger for each. Keep the live shops undisturbed.
+**Done**:
+- Unit rows carry brand / model ids and names.
+- `PartyUnits`:
+  - totals card;
+  - **By brand and model** (default) / **One list** (old);
+  - brand → model → phone with counts and to give / to get;
+  - group Pay / Receive (one payment allocated oldest bill first; shared bill once);
+  - each phone still pays alone and opens its page (money ledger + history).
+- `PaymentForm.allocations`.
+- en / ur / roman strings + help, manual ch. 2, ADR-068.
+**Verified**:
+- tsc.
+- pytest `test_units`, `test_open_balances`, `test_payments`.
+- Playwright `party-brands` (new: totals, brand / model figures, open a model, pay a whole model 20,000 → dealer −30,000, list view), plus `units`, `balances`, `lending`, `device-styles`, `counter`.

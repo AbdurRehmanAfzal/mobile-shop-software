@@ -4606,6 +4606,11 @@
         "title": "Mazeed tafseel",
         "body": "Shuru ke liye naam, phone aur qism kaafi hain. CNIC (ya us ki photo), shehar, pata, notes ya wholesale rate daalna ho to ye tick karein.",
         "example": "Naya aam customer: sirf naam aur phone. Dealer: tick kar ke wholesale rate on karein."
+      },
+      "unitsByBrand": {
+        "title": "Brand aur model ke hisaab se mobile",
+        "body": "Is shakhs se khareede ya ise beche har mobile, pehle brand phir model ke hisaab se, har satah par kitne hain aur kitne dene (hum ne dene) ya lene (unhon ne dene) baqi hain, aur sab ka jor. Brand phir model dabayein to har mobile; mobile dabayein to us ka page, us ka apna raqam ka hisaab aur history. Brand ya model par Dein / Wusool karein us ke khule bill purane se pehle ada karta hai; har mobile ka apna button bhi hai. \"Ek list\" sab mobile ek list mein.",
+        "example": "Ali: Apple 3 mobile (40,000 lene hain) → iPhone 13 × 2 (25,000 lene hain) → har mobile apne bill ke saath."
       }
     },
     "lending": {
@@ -9893,7 +9898,16 @@
     "askingFirst": "Pehli tay qeemat",
     "atCheckout": "bikri ke waqt",
     "approved": "maalik ki manzoori",
-    "fromBranch": "Aap ki doosri branch se aaya"
+    "fromBranch": "Aap ki doosri branch se aaya",
+    "byBrand": "Brand aur model ke hisaab se",
+    "asList": "Ek list",
+    "totBought": "In se khareede",
+    "totSold": "Inhein beche",
+    "boughtWord": "khareede",
+    "soldWord": "beche",
+    "toGiveShort": "dene hain",
+    "toGetShort": "lene hain",
+    "forBills": "In bills ke liye"
   },
   "confirm": {
     "title": "Bechne se pehle check karein",

@@ -4606,6 +4606,11 @@
         "title": "More details",
         "body": "Name, phone and type are enough to start. Tick this to add the CNIC (or scan it), city, address, notes or the wholesale price.",
         "example": "A new walk-in buyer: name and phone only. A dealer: tick it and switch on the wholesale price."
+      },
+      "unitsByBrand": {
+        "title": "Phones by brand and model",
+        "body": "Every phone bought from or sold to this person, grouped by brand, then model, with how many and what is still to give (we owe them) or to get (they owe us) at each level and in all. Tap a brand, then a model, to see each phone; tap a phone to open its page with its own money ledger and history. Pay / Receive at a brand or model pays its open bills, oldest first; each phone also has its own. \"One list\" shows every phone in one list.",
+        "example": "Ali: Apple 3 phones (to get 40,000) → iPhone 13 × 2 (to get 25,000) → each phone with its bill."
       }
     },
     "lending": {
@@ -9893,7 +9898,16 @@
     "askingFirst": "First asking",
     "atCheckout": "at the sale",
     "approved": "approved by owner",
-    "fromBranch": "Came from another branch of yours"
+    "fromBranch": "Came from another branch of yours",
+    "byBrand": "By brand and model",
+    "asList": "One list",
+    "totBought": "Bought from them",
+    "totSold": "Sold to them",
+    "boughtWord": "bought",
+    "soldWord": "sold",
+    "toGiveShort": "to give",
+    "toGetShort": "to get",
+    "forBills": "For these bills"
   },
   "confirm": {
     "title": "Check before you sell",

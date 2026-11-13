@@ -195,6 +195,8 @@ Page par neeche **Is phone ka paisa** wala card hai. Yeh jawab deta hai ke "yeh 
 - **Kis ko becha**: yahi sab bikri ke liye: tay qeemat, **Usi waqt wasool**, baad ki adaigiyan, aur kitne abhi lene baqi hain.
 - **Is phone ki adaigi** aur **Is phone ki wasooli**: aisi adaigi lein ya dein jo isi bill ke khilaaf likhi jaye, taa ke phone ke figures aur bande ka khata saath saath chalein.
 
+**Bande ke mobile brand aur model ke hisaab se.** Customer ya dealer ke page par **Phones** pehle jor dikhata hai: in se khareede, inhein beche, **Abhi dene hain** aur **Abhi lene hain**. **Brand aur model ke hisaab se** (aam andaaz) har brand kitne mobile aur kitne dene / lene baqi hain ke saath; dabayein to us ke model, har ek isi hisaab ke saath; model dabayein to us ke mobile. Brand ya model par **Raqam dein** / **Raqam wusool karein** us ke saare khule bill ek saath, purane pehle ada karta hai; har mobile ka apna button bhi rehta hai. Mobile dabayein to us ka page, us ka apna raqam ka hisaab aur history; bande ka poora khata **Khata history** mein rehta hai. **Ek list** pehle ki tarah sab mobile ek list mein.
+
 **Misaal:** aap ne Ahmed se ek Vivo Rs. 35,000 mein khareeda aur Rs. 30,000 diye (Rs. 5,000 aap ne dene hain). Aap ne woh Bilal ko Rs. 40,000 mein becha aur us ne Rs. 35,000 diye (Rs. 5,000 us ne dene hain). Baad mein aap Ahmed ko Rs. 2,000 dete hain aur Bilal aap ko Rs. 3,000 deta hai. Ab card dikhata hai khareed qeemat 35,000, abhi dene hain 3,000, kitne mein bika 40,000, abhi lene hain 2,000, munafa 5,000. Ahmed aur Bilal ke khate ke page bilkul yahi numbers dikhate hain.
 
 Agar phone purane stock ke taur par darj hua tha, to card par likha aata hai **Purana stock: laagat ke saath darj, khareed ka bill nahi.**
