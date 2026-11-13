@@ -362,6 +362,20 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-068 · 2026-11-13 · Accepted · A person's phones by brand and model, with group pay / receive
+**Context**: on a customer's or dealer's page, the shopkeeper wants to see:
+- which brands and models, and how many;
+- per phone what is left to give / to get, with totals per model, per brand and in all;
+- everything clickable, with pay / receive at each level and a ledger for everything.
+**Decision**:
+- The existing `/parties/{id}/units` rows gain `brand_id/name` and `model_id/name` (additive).
+- `PartyUnits.tsx` shows the grand totals (bought / sold with their agreed sums, still to pay, still to get) and a **By brand and model** view (the default) next to **One list** (the old list, unchanged; the choice is kept per device).
+  - Brand → model → phones. Each level shows its count and what is left to give / to get.
+  - Pay / Receive on a brand or model sends one payment allocated over its open bills, oldest first, each up to what it has left; a bill shared by two phones is taken once. `PaymentForm` gains `allocations`.
+  - Each phone keeps its own Pay / Receive. A phone opens its page (its money ledger `UnitMoney` and history). The person's khata (statement) stays as it is.
+- No new money rules, no migration.
+**Consequences**: a group payment larger than the open bills leaves the rest on the khata, as an unallocated payment does today.
+
 ## ADR-067 · 2026-11-13 · Accepted · What was paid at a purchase can be put right, even after its phones are sold
 **Context**: in a live shop a salesman entered purchases as "paid in full in cash" that really came on udhaar. Some of those phones were already sold. The owner needs the dealer's khata to show what is owed and the cash to be right, without disturbing the sales.
 **Decision**:

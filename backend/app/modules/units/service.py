@@ -412,6 +412,11 @@ def _unit_row(db: Session, shop_id: uuid.UUID, dev: Device, side: dict) -> dict:
         "date": side["date"],
         "device_id": dev.id,
         "label": f"{out['brand_name']} {out['model_name']}",
+        # owner 2026-11-13: the person's phones by brand and model
+        "brand_id": out.get("brand_id"),
+        "brand_name": out.get("brand_name"),
+        "model_id": out.get("model_id"),
+        "model_name": out.get("model_name"),
         "imei1": dev.imei1,
         "storage_name": out.get("storage_name"),
         "colour_name": out.get("colour_name"),

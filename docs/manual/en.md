@@ -927,6 +927,8 @@ Further down the page is the card **Money on this phone**. It answers "what did 
 - **Sold to**: the same for the sale: agreed price, **Received at the time**, later payments, and what is still to get.
 - **Pay for this phone** and **Receive for this phone**: take a payment that is booked against this very bill, so the phone's figures and the person's khata move together.
 
+**A person's phones by brand and model.** On a customer's or dealer's page, **Phones** shows the totals first: phones bought from them and sold to them, **Still to pay** and **Still to get**. **By brand and model** (the usual view) lists each brand with how many and what is left to give / to get; tap it for its models, each with the same figures; tap a model for its phones. **Pay money** / **Receive money** on a brand or a model pays all its open bills at once, oldest first; each phone keeps its own button too. Tap a phone for its page, with its own money ledger and history; the person's whole khata stays under **Khata history**. **One list** shows every phone in one list as before.
+
 **Example:** you bought a Vivo from Ahmed for Rs. 35,000 and paid Rs. 30,000 (you owe him Rs. 5,000). You sold it to Bilal for Rs. 40,000 and he paid Rs. 35,000 (he owes Rs. 5,000). Later you pay Ahmed Rs. 2,000 and Bilal pays you Rs. 3,000. The card now shows cost 35,000, still to pay 3,000, sold for 40,000, still to get 2,000, margin 5,000. Ahmed's and Bilal's khata pages show exactly the same numbers.
 
 If the phone was entered as old stock, the card says **Old stock: entered with its cost, no purchase bill.**
