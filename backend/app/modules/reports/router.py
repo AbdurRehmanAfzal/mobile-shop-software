@@ -119,6 +119,9 @@ def day(
     """Hisaab of a day (`date`, default today) or a period (`date_from`..`date_to`: week, month,
     from-to); profit only with VIEW_COST."""
     d_from = date_from or date or shop_today()
+    if not ctx.can(Cap.VIEW_COST):
+        # owner 2026-11-13 (ADR-072): a salesman sees today's hisaab only
+        d_from, date_to = shop_today(), None
     _check_range(d_from, date_to or d_from)
     return _money(
         service.day_report(db, ctx.shop_id, d_from, ctx.can(Cap.VIEW_COST), date_to or d_from)

@@ -362,6 +362,18 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-072 · 2026-11-13 · Accepted · A salesman sees today's cash in hand and bank only
+**Context**: the owner wants a salesman to see only today's cash in hand and bank money. The salesman should not see the galla / bank totals, other days, or account balances.
+**Decision** (roles without `VIEW_COST`: salesman, technician; owner / manager unchanged):
+- `/reports/dashboard`:
+  - `cash_in_hand` (all accounts' balance) is `null`;
+  - new `today_cash` and `today_bank` give today's net movement (in − out since the shop day began) on cash accounts and on bank / wallet / cheque accounts. They are returned for everyone.
+- `/reports/day` and `/exports/day` serve today only for these roles, whatever dates are asked.
+- `/ledger/accounts` returns names (for picking) with `balance` and `opening_balance` as `null`. The cash book was already manager-only.
+- Home: the salesman has no period picker. The cash tile is **Cash in hand today** with **Bank / online today**, linking to today's hisaab, and the donut uses today's cash.
+- Hisaab: no period picker for a salesman.
+**Consequences**: the owner sees exactly what they saw before.
+
 ## ADR-071 · 2026-11-13 · Accepted · CP ID as a PTA status; the purchase's person from everyone; an existing number is offered
 **Context**: the owner asked for three things:
 - CP ID as a PTA option;

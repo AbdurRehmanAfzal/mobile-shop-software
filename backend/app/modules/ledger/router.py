@@ -62,7 +62,11 @@ def _group_out(g) -> GroupOut:
 def accounts(ctx: Ctx, db: DB):
     service.ensure_default_cash_account(db, ctx.shop_id)
     db.commit()
-    return service.list_cash_accounts(db, ctx.shop_id)
+    rows = service.list_cash_accounts(db, ctx.shop_id)
+    if ctx.can(Cap.VIEW_COST):
+        return rows
+    # owner 2026-11-13 (ADR-072): a salesman picks an account but sees no balances
+    return [{**r, "balance": None, "opening_balance": None} for r in rows]
 
 
 @router.post("/accounts", response_model=CashAccountOut, status_code=201)

@@ -1509,3 +1509,17 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - pytest `test_faulty` (new: a purchase with one faulty and one working phone), `test_purchases`, `test_devices`, `test_bulk`.
 - tsc.
 - Playwright `faulty-on-add` (new), `add-device`, `faulty-and-models`. `faulty-and-models` timed out once under load and passed alone.
+
+### Same day — PR #57 green; salesman sees today only (ADR-072)
+**Owner**: "salesman ko only today ka in hand aur bank cash nazar aana chahiye".
+**Done** (salesman / technician; owner / manager unchanged):
+- Dashboard: `cash_in_hand` is null; new `today_cash` / `today_bank` (today's net on cash vs bank-type accounts).
+- The day report and its export serve today only.
+- Account balances are hidden from `/ledger/accounts`.
+- Home has no period picker for a salesman; its tile shows **Cash in hand today** plus **Bank / online today**.
+- Hisaab has no period picker for a salesman.
+- en / ur / roman strings + help, ADR-072.
+**Verified**:
+- pytest `test_salesman_cash` (new: totals hidden, today cash 1,000 / bank 2,000, yesterday → today, the owner still gets yesterday, balances null), plus the tests touching accounts / dashboard / day.
+- tsc.
+- Playwright `salesman-cash` (new).

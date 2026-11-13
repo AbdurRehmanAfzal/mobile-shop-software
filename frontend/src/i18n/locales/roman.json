@@ -1065,7 +1065,9 @@
     "worth": "Maliyat (Rs)",
     "phonesSold": "Bike phone: {{n}}",
     "glance": "Ek nazar mein",
-    "moneySplit": "Paisa kahan para hai"
+    "moneySplit": "Paisa kahan para hai",
+    "todayCash": "Aaj galle mein cash",
+    "todayBank": "Aaj bank / online:"
   },
   "pin": {
     "title": "Apna PIN likhein",
@@ -5733,6 +5735,11 @@
           "title": "Kharche",
           "body": "In dinon ke likhe gaye dukaan ke kharche: kiraya, bill, tankhwahen, chai waghera. Cancel kiye gaye kharche nahi gine jate.",
           "example": "Kiraya Rs. 30,000 + bijli Rs. 8,000 + chai Rs. 2,000 → kharche Rs. 40,000."
+        },
+        "todayCashBank": {
+          "title": "Aaj ka cash aur bank",
+          "body": "Aaj galle mein jo cash aaya, jo nikla woh ghata kar; aur yahi bank / online accounts ka. Salesman sirf aaj ka dekhta hai, kul jor nahi.",
+          "example": "1,000 cash aur 2,000 JazzCash se becha: aaj galle mein 1,000, aaj bank 2,000."
         }
       },
       "chart": {

@@ -1065,7 +1065,9 @@
     "worth": "Worth (Rs)",
     "phonesSold": "Phones sold: {{n}}",
     "glance": "At a glance",
-    "moneySplit": "Where the money sits"
+    "moneySplit": "Where the money sits",
+    "todayCash": "Cash in hand today",
+    "todayBank": "Bank / online today:"
   },
   "pin": {
     "title": "Enter your PIN",
@@ -5733,6 +5735,11 @@
           "title": "Expenses",
           "body": "Shop expenses written for these days: rent, bills, salaries, tea and so on. Cancelled expenses are not counted.",
           "example": "Rent Rs. 30,000 + electricity Rs. 8,000 + tea Rs. 2,000 → Expenses Rs. 40,000."
+        },
+        "todayCashBank": {
+          "title": "Today's cash and bank",
+          "body": "What came into the galla (cash) today, less what went out, and the same for bank / online accounts. A salesman sees today only, not the totals.",
+          "example": "Sold for Rs. 1,000 cash and Rs. 2,000 by JazzCash: in hand today 1,000, bank today 2,000."
         }
       },
       "chart": {
