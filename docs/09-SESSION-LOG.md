@@ -1483,3 +1483,16 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Done**: `reports.stock_summary` counts the held statuses (in stock, faulty, in repair, approval, on loan), the same rule as `devices.stock_status`. The home / export / AI stock worth follow.
 **Verified**: pytest `test_reports_simple` (new: a faulty and an in-repair phone count), `test_exports`, `test_stock_screen`, `test_ai`.
 **Open**: if the owner's OnePlus is plain "in stock" and still missing, ask for its status / screenshot.
+
+### Same day — PR #55 merged; phone serial, RAM beside storage
+**Owner**: "Serial number field, optional, add stock mein IMEI ke neeche; RAM ko storage ki field ke saath".
+**Done**:
+- The serial field shows for a phone too, under IMEI 2. It is optional; when written it must be 4–20 letters / digits (as before).
+- It can be added or corrected by Edit details. `DeviceUpdate` now cleans the serial like a new one.
+- It shows in the review before saving.
+- A Wi-Fi tablet / GPS watch keeps its serial as its identity: required, and not changed on edit.
+- RAM moved out of "More details" to sit beside storage.
+**Verified**:
+- pytest `test_phone_serial` (new), `test_devices`, `test_device_types`.
+- tsc.
+- Playwright `add-device` (RAM + serial in the review), `device-types`, `apple-variant`, `cpid-simlock-party`, `crud`. `crud` timed out once at signup under load, then passed alone.

@@ -8314,7 +8314,8 @@
     "cycles": "بیٹری سائیکل کاؤنٹ",
     "cyclesHint": "iPhone 15 اور نئے: Settings → General → About۔ نہ دکھے تو خالی چھوڑ دیں۔",
     "cyclesBad": "0 سے 5000 تک کا نمبر لکھیں",
-    "cyclesShort": "{{n}} سائیکل"
+    "cyclesShort": "{{n}} سائیکل",
+    "serialBad": "4 سے 20 حروف یا ہندسے"
   },
   "remind": {
     "title": "ادھار کی یاد دہانی",

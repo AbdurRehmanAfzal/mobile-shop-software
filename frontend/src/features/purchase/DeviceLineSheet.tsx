@@ -222,7 +222,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
   const needsSim = showPta && (d.pta_status === 'non_pta' || d.pta_status === 'jv')
   // owner: the price you will sell at may not be lower than what you paid
   const askingLow = !edit && d.asking_price !== '' && d.cost !== '' && Number(d.asking_price) < Number(d.cost)
-  const valid = !askingLow && identityOk && d.brand_id && d.model_id && (edit || d.cost !== '') && (d.condition !== 'patched' || d.patch_details) && batteryOk && !inStockBlock && !serialBlock && lockOk
+  const valid = !askingLow && identityOk && (!sim || !d.serial.trim() || serialOk) && d.brand_id && d.model_id && (edit || d.cost !== '') && (d.condition !== 'patched' || d.patch_details) && batteryOk && !inStockBlock && !serialBlock && lockOk
 
 
   return (
@@ -268,10 +268,10 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
           {serialLookup.found && serialLookup.device ? <button type="button" onClick={() => nav(`/stock/${serialLookup.device!.id}`)} className="tap rounded-full border border-line px-3 text-xs font-bold underline">{pick('devx.openHistory')}</button> : null}
         </div>
       ) : null}
-      {phone ? null : (
-        <BiInput label={sim ? 'devx.serialOpt' : 'devcat.serial'} help={<Help term="device.serial" size="sm" />} value={d.serial} onChange={(e) => set('serial', e.target.value.toUpperCase())} disabled={edit} maxLength={24} dir="ltr" className="num" hint={sim ? undefined : 'devcat.serialHint'} />
-      )}
       {phone ? <ImeiInput label="stock.imei2" help={<Help term="device.imei2" size="sm" />} value={d.imei2} onChange={(v) => set('imei2', v)} exclude={toLatinDigits(d.imei1).replace(/\D/g, '')} /> : null}
+      {/* owner 2026-11-13: a phone's serial number too, optional, under the IMEIs; a Wi-Fi tablet /
+          GPS watch has only its serial (then required, its identity, not changed on edit) */}
+      <BiInput label={sim ? 'devx.serialOpt' : 'devcat.serial'} help={<Help term="device.serial" size="sm" />} value={d.serial} onChange={(e) => set('serial', e.target.value.toUpperCase())} disabled={edit && !sim} maxLength={24} dir="ltr" className="num" hint={sim ? undefined : 'devcat.serialHint'} error={sim && d.serial.trim() && !serialOk ? 'devx.serialBad' : null} data-testid="device-serial" />
       <div className="grid grid-cols-2 gap-2">
         <BiInput label="barcode.manufacturer" help={<Help term="label.manufacturer" size="sm" />} value={d.manufacturer_code ?? ''} onChange={(e) => set('manufacturer_code', e.target.value)} dir="ltr" className="num" maxLength={64} />
         <BiInput label="barcode.custom" help={<Help term="label.ownBarcode" size="sm" />} value={d.barcode ?? ''} onChange={(e) => set('barcode', e.target.value)} dir="ltr" className="num" maxLength={64} disabled={edit} />
@@ -365,6 +365,8 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
           </div>
         </div>
         )}
+        {/* owner 2026-11-13: RAM beside the storage */}
+        {category !== 'watch' ? <BiInput label="devx.ram" help={<Help term="device.ram" size="sm" />} type="number" inputMode="numeric" min={1} max={64} value={d.ram_gb ?? ''} onChange={(e) => set('ram_gb', e.target.value)} className="num" data-testid="device-ram" /> : null}
         <div>
           <span className="flex items-center gap-1 mb-1.5"><BiLabel text="stock.colour" size="md" tone="text-muted" /><Help term="device.colour" size="sm" /></span>
           <select value={d.colour_id} onChange={(e) => set('colour_id', e.target.value)} className="min-h-12 w-full rounded-2xl border border-line bg-surface px-3 font-semibold">
@@ -441,7 +443,6 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
         <div className="flex flex-col gap-3" data-testid="device-details">
           <div className="grid grid-cols-2 gap-2">
             <BiInput label="devx.modelNumber" help={<Help term="device.modelNumber" size="sm" />} value={d.model_number ?? ''} onChange={(e) => set('model_number', e.target.value)} dir="ltr" className="num" maxLength={40} />
-            {category !== 'watch' ? <BiInput label="devx.ram" help={<Help term="device.ram" size="sm" />} type="number" inputMode="numeric" min={1} max={64} value={d.ram_gb ?? ''} onChange={(e) => set('ram_gb', e.target.value)} className="num" /> : null}
           </div>
           {used ? (
             <div>

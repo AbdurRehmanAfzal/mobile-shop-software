@@ -8314,7 +8314,8 @@
     "cycles": "Battery cycle count",
     "cyclesHint": "iPhone 15 and newer: Settings → General → About. Leave empty if not shown.",
     "cyclesBad": "Write a number from 0 to 5000",
-    "cyclesShort": "{{n}} cycles"
+    "cyclesShort": "{{n}} cycles",
+    "serialBad": "4 to 20 letters or digits"
   },
   "remind": {
     "title": "Udhaar reminders",

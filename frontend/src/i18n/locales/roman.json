@@ -8314,7 +8314,8 @@
     "cycles": "Battery cycle count",
     "cyclesHint": "iPhone 15 aur naye: Settings → General → About. Na dikhe to khali chhor dein.",
     "cyclesBad": "0 se 5000 tak ka number likhein",
-    "cyclesShort": "{{n}} cycles"
+    "cyclesShort": "{{n}} cycles",
+    "serialBad": "4 se 20 huroof ya hindse"
   },
   "remind": {
     "title": "Udhaar ki yaad dahani",
