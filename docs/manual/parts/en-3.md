@@ -220,7 +220,9 @@ The same works the other way round: money the shop gave can pay the shop's open 
 
 ### Cancelling a wrong len-den entry
 
-Open the entry and cancel it with a reason, like any payment. It stays in the list, struck through, and the balance is corrected by a reversing entry.
+In **Len-den entries**, tap **Cancel** beside the wrong entry (owner or manager), write the reason, then tap **Cancel only**, or **Cancel and enter as Gave money / Took money** when it was entered the wrong way: the other side opens with the same amount; check the method and save. The cancelled entry stays in the list, struck through, and the balance and cash are corrected by a reversing entry.
+
+**Example:** Took Rs. 5,000 from Ali was entered, but the shop gave it: Cancel → reason "it was given" → **Cancel and enter as Gave money** → **Save — money given**. Ali now owes the shop 5,000.
 
 ### Where len-den shows in reports
 

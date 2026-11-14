@@ -458,7 +458,16 @@
       "now": "Purchase price now",
       "new": "Correct purchase price",
       "more": "{{who}}'s khata: {{n}} more to give",
-      "less": "{{who}}'s khata: {{n}} less to give"
+      "less": "{{who}}'s khata: {{n}} less to give",
+      "why": "Why is it changing?",
+      "cashOut": "Rs. {{n}} more goes out of the galla (it was paid); {{who}}'s khata stays as it is.",
+      "cashBack": "Rs. {{n}} comes back into the galla (it was not paid); {{who}}'s khata stays as it is.",
+      "mode": {
+        "paid": "Typing mistake",
+        "paidHint": "The money paid at the purchase was this price. Cash is corrected, not the khata.",
+        "khata": "The price really changed",
+        "khataHint": "The difference is owed: it goes to the seller's khata."
+      }
     },
     "paidFix": {
       "button": "Change what was paid",
@@ -1065,7 +1074,9 @@
     "worth": "Worth (Rs)",
     "phonesSold": "Phones sold: {{n}}",
     "glance": "At a glance",
-    "moneySplit": "Where the money sits"
+    "moneySplit": "Where the money sits",
+    "todayCash": "Cash in hand today",
+    "todayBank": "Bank / online today:"
   },
   "pin": {
     "title": "Enter your PIN",
@@ -4674,6 +4685,11 @@
         "title": "Return date",
         "body": "The day the money should come back. Leave empty for no date. After this day the entry shows as late and reminders can go out.",
         "example": "Set 15 June; on 16 June it shows \"1 day late\"."
+      },
+      "cancel": {
+        "title": "Cancel a len-den entry",
+        "body": "Owner or manager. A wrong entry is cancelled with a reason, never deleted: the money comes back off the khata and the cash account, and the entry stays in the list crossed out. \"Cancel and enter as …\" opens the other side with the same amount to save it the right way.",
+        "example": "Entered Took Rs. 5,000 from Ali, but you gave it: Cancel → Cancel and enter as Gave money → Save."
       }
     },
     "device": {
@@ -5172,6 +5188,11 @@
         "title": "Change what was paid at a purchase",
         "body": "Owner or manager. Set what was really paid when the stock was bought. Less than before: that money goes back into the account it was taken from (cash to the galla) and the seller's khata shows it as owed. More: it comes out of the account you choose. Payments made later against the bill stay. The phones are not touched, so this works after they are sold too. Each phone's history and the audit keep the change. If that day's cash is already closed, the change is dated today.",
         "example": "Entered Rs. 20,000 paid in cash, but it came on udhaar: tap Nothing paid. The galla gets 20,000 back and the dealer's khata shows 20,000 to give."
+      },
+      "costFixWhy": {
+        "title": "Typing mistake or a real change",
+        "body": "Typing mistake: the price was written wrong but the money paid at the purchase was the right price — e.g. typed 40,000, paid 45,000. The difference is corrected in the galla (5,000 more paid out); the seller's khata stays clear. Typed 30,000 for a 25,000 phone: 5,000 comes back into the galla. The price really changed: the difference is owed and goes to the seller's khata, as before.",
+        "example": "Typed 40,000, gave 45,000: Typing mistake → the galla shows 5,000 more paid, the khata stays 0."
       }
     },
     "label": {
@@ -5733,6 +5754,11 @@
           "title": "Expenses",
           "body": "Shop expenses written for these days: rent, bills, salaries, tea and so on. Cancelled expenses are not counted.",
           "example": "Rent Rs. 30,000 + electricity Rs. 8,000 + tea Rs. 2,000 → Expenses Rs. 40,000."
+        },
+        "todayCashBank": {
+          "title": "Today's cash and bank",
+          "body": "What came into the galla (cash) today, less what went out, and the same for bank / online accounts. A salesman sees today only, not the totals.",
+          "example": "Sold for Rs. 1,000 cash and Rs. 2,000 by JazzCash: in hand today 1,000, bank today 2,000."
         }
       },
       "chart": {
@@ -10281,7 +10307,13 @@
     "changeDate": "Return date",
     "saveDate": "Save date",
     "reminderOpened": "WhatsApp opened with the reminder",
-    "reminderSent": "Reminder sent"
+    "reminderSent": "Reminder sent",
+    "cancel": "Cancel",
+    "cancelTitle": "Cancel this len-den",
+    "cancelHint": "For an entry made by mistake, e.g. Took money when you Gave it. It is not deleted: it is cancelled (its money comes back off the khata and the cash), and the history keeps it with the reason.",
+    "cancelOnly": "Cancel only",
+    "cancelAsGive": "Cancel and enter as Gave money",
+    "cancelAsTake": "Cancel and enter as Took money"
   },
   "rlab": {
     "sticker": "Repair sticker",

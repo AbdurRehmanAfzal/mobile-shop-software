@@ -944,7 +944,7 @@ Yeh sirf maalik ya manager durust kar sakte hain, aur har ek ke liye mukhtasar w
 - **Ghalat IMEI:** phone kholein, **IMEI durust karein** dabayein, sahi IMEI 1 likhein (aur IMEI 2, ya nishan lagayein ke is phone ka IMEI 2 nahi), wajah likhein aur **Mehfooz karein** dabayein. Number 15 hindson ka ho aur dukaan ke kisi aur phone ka na ho. Barcode wahi rehta hai.
 - **Ghalat dealer ya customer:** khareedari kholein (**More → Purchases**, ya phone ki history mein khareedari wali line par tap), **Dealer / customer badlein** dabayein, sahi shakhs chunein, wajah likhein aur **Mehfooz karein** dabayein. Bill aur us ke saath di gayi raqam sahi shakhs ke khate mein chali jati hai; ghalat shakhs ka khata pehle jaisa ho jata hai. Agar baad mein is bill ki adaigi ho chuki ho ya kuch wapis hua ho to yeh nahi ho sakta: pehle woh khatam karein.
 - **Ada shuda likha, maal udhaar par aaya tha (ya ulta):** khareedari kholein (ya mobile, bika hua bhi) aur **Di gayi raqam badlein** dabayein. **Kuch nahi diya (poora udhaar)**, **Poora diya** dabayein ya khareedari ke waqt asal mein jitna diya likhein; zyada diya ho to tareeqa chunein (cash, online, cheque). Upar asar dikhta hai, maslan "20,000 wapas usi account mein; dealer ka khata: 20,000 zyada dene hain". Chahein to waade ki tareekh likhein, wajah likhein aur **Save** karein. Bill par baad mein di gayi raqam waisi rehti hai; mobiles ko kuch nahi hota. Sirf owner ya manager. Us din ka cash band ho chuka ho to tabdeeli aaj ki tareekh par lagti hai.
-- **Qeemat-e-khareed ghalat:** mobile kholein, **Qeemat-e-khareed badlein** dabayein, durust qeemat likhein, wajah likhein aur **Save** dabayein. Upar dikhta hai ke bechne wale ke khate par kya asar hoga, maslan "2,000 zyada dene hain". Bill ka total, stock ki maliyat aur mobile ki laagat saath badalte hain; cash nahi hilta; history mein purani qeemat rehti hai. Sirf owner ya manager, aur sirf jab mobile abhi dukaan mein ho (bika na ho).
+- **Qeemat-e-khareed ghalat:** mobile kholein, **Qeemat-e-khareed badlein** dabayein, durust qeemat likhein, wajah likhein aur **Save** dabayein. Pehle **Yeh kyun badal rahi hai?** chunein: **Likhne mein ghalti** (khareedari ke waqt isi qeemat ke paise diye — maslan 40,000 likha, 45,000 diye: 5,000 mazeed galle se nikle, khata saaf; 25,000 ke phone ke liye 30,000 likha: 5,000 galle mein wapas) ya **Qeemat waqai badli** (farq bechne wale ke khate mein, maslan "2,000 zyada dene hain"). Bill ka total, stock ki maliyat aur mobile ki laagat saath badalte hain; history mein purani qeemat rehti hai. Sirf owner ya manager, aur sirf jab mobile abhi dukaan mein ho (bika na ho).
 
 ### Phone ya items customer ke liye reserve
 
@@ -1683,7 +1683,9 @@ Ulta bhi aise hi hota hai: dukaan ke diye paise us bande ke dukaan ke khule khar
 
 ### Ghalat len-den entry cancel karna
 
-Entry kholein aur kisi bhi payment ki tarah wajah likh kar cancel karein. Yeh list mein kati hui rehti hai, aur baqaya ek ulti entry se theek ho jata hai.
+**Len-den entries** mein ghalat entry ke saath **Cancel** dabayein (owner ya manager), wajah likhein, phir **Sirf cancel karein**, ya agar ulti taraf daali gayi thi to **Cancel kar ke diye / liye mein daalein**: doosri taraf usi raqam ke saath khulti hai; tareeqa dekh kar save karein. Cancel entry list mein kati hui rehti hai, aur baqaya aur cash ulti entry se theek ho jate hain.
+
+**Misaal:** Ali se 5,000 liye likha gaya, magar dukaan ne diye thay: Cancel → wajah "diye thay" → **Cancel kar ke diye mein daalein** → Save. Ab Ali ne dukaan ko 5,000 dene hain.
 
 ### Len-den reports mein kahan dikhta hai
 

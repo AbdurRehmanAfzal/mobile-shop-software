@@ -4,6 +4,7 @@
  *  Return dates (§7): when it is due back, a WhatsApp reminder, and changing the date. */
 
 import { BellRing, CalendarClock, HandCoins } from 'lucide-react'
+import { useAuth } from '@/lib/auth'
 import { useState } from 'react'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
@@ -31,6 +32,13 @@ export default function PartyLending({ party }: { party: Party }) {
   const [done, setDone] = useState<string | null>(null)
   const [dating, setDating] = useState<Entry | null>(null)
   const [newDate, setNewDate] = useState('')
+  // owner 2026-11-14: an entry put the wrong way (taken instead of given) is cancelled, and can be
+  // entered again the right way with the same amount
+  const [cancelling, setCancelling] = useState<Entry | null>(null)
+  const [why, setWhy] = useState('')
+  const [prefill, setPrefill] = useState<number | null>(null)
+  const role = useAuth((x) => x.me?.user.role)
+  const canCancel = role === 'owner' || role === 'manager'
   const inv = useInvalidate()
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   if (!data) return null
@@ -50,6 +58,23 @@ export default function PartyLending({ party }: { party: Party }) {
       await inv()
     } catch (e) {
       setErr(e)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function cancel(flip: boolean) {
+    if (!cancelling) return
+    setBusy(true)
+    setErr(null)
+    try {
+      await post(`/api/v1/payments/${cancelling.id}/void`, { reason: why.trim() })
+      await inv()
+      const e = cancelling
+      setCancelling(null)
+      if (flip) { setPrefill(Number(e.amount)); setGiving(e.direction === 'out' ? 'in' : 'out') }
+    } catch (x) {
+      setErr(x)
     } finally {
       setBusy(false)
     }
@@ -157,6 +182,7 @@ export default function PartyLending({ party }: { party: Party }) {
                 ) : null}
               </span>
               <span className={`num font-bold ${e.direction === 'out' ? 'text-payable' : 'text-emerald-deep'}`} dir="ltr">{e.direction === 'out' ? '-' : '+'}{n(e.amount)}</span>
+              {canCancel && e.status === 'posted' ? <button type="button" onClick={() => { setWhy(''); setErr(null); setCancelling(e) }} className={`tap min-h-9 shrink-0 rounded-xl border border-line px-2 font-bold text-payable ${small}`} data-testid="lending-cancel">{pick('lending.cancel')}</button> : null}
             </div>
           ))}
         </div>
@@ -168,8 +194,23 @@ export default function PartyLending({ party }: { party: Party }) {
           <BiButton text="lending.saveDate" full loading={busy} onClick={saveDate} />
         </div>
       </Sheet>
-      <Sheet open={giving !== null} onClose={() => setGiving(null)} title={giving === 'in' ? 'lending.take' : 'lending.give'}>
-        {giving ? <PaymentForm party={party} direction={giving} lending onDone={() => setGiving(null)} /> : null}
+      <Sheet open={cancelling !== null} onClose={() => setCancelling(null)} title="lending.cancelTitle">
+        {cancelling ? (
+          <div className="flex flex-col gap-3" data-testid="lending-cancel-sheet">
+            <div className="card flex items-center justify-between">
+              <span className="flex flex-col"><span className="font-bold">{pick(cancelling.direction === 'out' ? 'lending.give' : 'lending.take')}</span><span className={`text-muted ${small}`} dir="ltr">{cancelling.no} · {fmtDate(cancelling.date)}</span></span>
+              <span className="num text-lg font-bold" dir="ltr">{n(cancelling.amount)}</span>
+            </div>
+            <BiLabel text="lending.cancelHint" size="sm" tone="text-muted" />
+            <BiInput label="common.reason" value={why} onChange={(e) => setWhy(e.target.value)} maxLength={200} help={<Help term="lending.cancel" size="sm" />} />
+            <ErrorText error={err} />
+            <BiButton text={cancelling.direction === 'in' ? 'lending.cancelAsGive' : 'lending.cancelAsTake'} full loading={busy} disabled={why.trim().length < 3} onClick={() => cancel(true)} data-testid="lending-cancel-flip" />
+            <BiButton text="lending.cancelOnly" variant="secondary" full loading={busy} disabled={why.trim().length < 3} onClick={() => cancel(false)} data-testid="lending-cancel-only" />
+          </div>
+        ) : null}
+      </Sheet>
+      <Sheet open={giving !== null} onClose={() => { setGiving(null); setPrefill(null) }} title={giving === 'in' ? 'lending.take' : 'lending.give'}>
+        {giving ? <PaymentForm key={`${giving}-${prefill ?? ''}`} party={party} direction={giving} lending amount={prefill ?? undefined} onDone={() => { setGiving(null); setPrefill(null) }} /> : null}
       </Sheet>
     </section>
   )

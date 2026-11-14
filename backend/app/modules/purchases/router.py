@@ -1,7 +1,7 @@
 import uuid
 from datetime import date
 from decimal import Decimal
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel, Field
@@ -110,6 +110,9 @@ def change_paid(purchase_id: uuid.UUID, data: PaidChangeIn, ctx: Ctx, db: DB):
 
 class CostChangeIn(BaseModel):
     device_id: uuid.UUID
+    # ADR-073: "khata" = the price changed, the difference is owed; "paid" = a typing mistake, the
+    # money paid at the purchase was this price (the difference is cash)
+    mode: Literal["khata", "paid"] = "khata"
     cost: Decimal = Field(ge=0, max_digits=14, decimal_places=2)
     reason: str = Field(min_length=2, max_length=200)
 
@@ -119,5 +122,7 @@ def change_cost(data: CostChangeIn, ctx: Ctx, db: DB):
     """owner / manager: the wrong purchase price was typed for a phone still in the shop (ADR-063)"""
     return service.to_out(
         db,
-        service.change_cost(db, ctx.shop_id, ctx, data.device_id, data.cost, data.reason.strip()),
+        service.change_cost(
+            db, ctx.shop_id, ctx, data.device_id, data.cost, data.reason.strip(), data.mode
+        ),
     )

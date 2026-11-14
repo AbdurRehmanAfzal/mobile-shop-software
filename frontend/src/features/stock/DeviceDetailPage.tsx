@@ -72,7 +72,7 @@ export default function DeviceDetailPage() {
   // owner 2026-11-12 (ADR-066): what is wrong with it
   const [faultOpen, setFaultOpen] = useState(false)
   // owner 2026-11-10 (ADR-063): a purchase price typed wrong
-  const [newCost, setNewCost] = useState({ cost: '', reason: '' })
+  const [newCost, setNewCost] = useState<{ cost: string; reason: string; mode: '' | 'paid' | 'khata' }>({ cost: '', reason: '', mode: '' })
   const [costErr, setCostErr] = useState<unknown>(null)
   // owner addendum 6: lock check and type change
   const [locks, setLocks] = useState<LockChecks>({})
@@ -116,7 +116,7 @@ export default function DeviceDetailPage() {
   // every action of this page, for the styles that put each one beside its value (owner 2026-11-10)
   const phoneLike = (d.category ?? 'phone') === 'phone' || !!d.cellular
   const canCost = canSeeCost && !!boughtOn && boughtFor != null && !soldSince && ['in_stock', 'faulty', 'in_repair', 'with_customer_for_approval', 'on_loan'].includes(d.status)
-  const openCost = () => { setNewCost({ cost: String(boughtFor ?? ''), reason: '' }); setCostErr(null); setSheet('cost') }
+  const openCost = () => { setNewCost({ cost: String(boughtFor ?? ''), reason: '', mode: '' }); setCostErr(null); setSheet('cost') }
   const costDiff = newCost.cost !== '' && boughtFor != null ? Number(newCost.cost) - boughtFor : 0
   const acts = ([
     (inStock || d.status === 'faulty') && d.verification_status !== 'flagged' ? { key: 'sell', label: 'stock.sell', run: () => nav(`/sale/new?device=${d.id}`), tone: 'primary' } : null,
@@ -355,8 +355,21 @@ export default function DeviceDetailPage() {
           </div>
           <BiInput label="purchase.costFix.new" help={<Help term="purchase.costFix" size="sm" />} type="number" inputMode="decimal" min={0} value={newCost.cost} onChange={(e) => setNewCost({ ...newCost, cost: e.target.value })} className="num" autoFocus data-testid="cost-new" />
           {costDiff !== 0 ? (
-            <div className={`rounded-2xl px-4 py-3 text-sm font-bold ${costDiff > 0 ? 'bg-payable-tint text-payable' : 'bg-emerald-tint text-emerald-deep'}`} data-testid="cost-effect">
-              {pick(costDiff > 0 ? 'purchase.costFix.more' : 'purchase.costFix.less').replace('{{n}}', withCur(Math.abs(costDiff).toLocaleString('en-US'))).replace('{{who}}', d.source_party_name ?? '')}
+            <div className="flex flex-col gap-2" data-testid="cost-mode">
+              {/* owner 2026-11-14 (ADR-073): a typing mistake (the money paid was this price) moves cash;
+                  a price that really changed goes to the seller's khata */}
+              <span className="flex items-center gap-1"><BiLabel text="purchase.costFix.why" size="md" bold /><Help term="purchase.costFixWhy" size="sm" /></span>
+              {(['paid', 'khata'] as const).map((m) => (
+                <button key={m} type="button" aria-pressed={newCost.mode === m} onClick={() => setNewCost({ ...newCost, mode: m })} className={`tap flex min-h-14 flex-col items-start justify-center rounded-2xl border-2 px-4 py-2 text-start ${newCost.mode === m ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'}`} data-testid={`cost-mode-${m}`}>
+                  <span className="font-bold">{pick(`purchase.costFix.mode.${m}`)}</span>
+                  <span className="text-xs opacity-80">{pick(`purchase.costFix.mode.${m}Hint`)}</span>
+                </button>
+              ))}
+            </div>
+          ) : null}
+          {costDiff !== 0 && newCost.mode ? (
+            <div className={`rounded-2xl px-4 py-3 text-sm font-bold ${(newCost.mode === 'khata' ? costDiff > 0 : costDiff > 0) ? 'bg-payable-tint text-payable' : 'bg-emerald-tint text-emerald-deep'}`} data-testid="cost-effect">
+              {pick(newCost.mode === 'khata' ? (costDiff > 0 ? 'purchase.costFix.more' : 'purchase.costFix.less') : (costDiff > 0 ? 'purchase.costFix.cashOut' : 'purchase.costFix.cashBack')).replace('{{n}}', withCur(Math.abs(costDiff).toLocaleString('en-US'))).replace('{{who}}', d.source_party_name ?? '')}
             </div>
           ) : null}
           <BiInput label="common.reason" value={newCost.reason} onChange={(e) => setNewCost({ ...newCost, reason: e.target.value })} maxLength={200} help={<Help term="stock.fixImeiReason" size="sm" />} />
@@ -364,10 +377,10 @@ export default function DeviceDetailPage() {
           <BiButton
             text="common.save"
             full
-            disabled={newCost.reason.trim().length < 2 || newCost.cost === '' || Number(newCost.cost) < 0 || costDiff === 0}
+            disabled={newCost.reason.trim().length < 2 || newCost.cost === '' || Number(newCost.cost) < 0 || costDiff === 0 || !newCost.mode}
             onClick={async () => {
               try {
-                await api('POST', '/api/v1/purchases/cost', { device_id: d.id, cost: Number(newCost.cost), reason: newCost.reason.trim() })
+                await api('POST', '/api/v1/purchases/cost', { device_id: d.id, cost: Number(newCost.cost), reason: newCost.reason.trim(), mode: newCost.mode })
                 await inv('devices', 'device', 'history', 'unit-money', 'purchases', 'parties', 'balances')
                 setSheet(null)
               } catch (e) { setCostErr(e) }

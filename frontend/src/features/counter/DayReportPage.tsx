@@ -2,6 +2,7 @@
  *  profit, and the list of what was sold. `?from=&to=` (or `?date=`) picks the period; default today. */
 
 import DownloadButton from '@/components/DownloadButton'
+import { useAuth } from '@/lib/auth'
 import { Link, useSearchParams } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
@@ -46,8 +47,10 @@ const OUT_HELP: Record<string, { helpKey: string }> = {
 export default function DayReportPage() {
   const { pick, ur, cls } = useLang()
   const [params, setParams] = useSearchParams()
+  const role = useAuth((x) => x.me?.user.role)
+  const manager = role === 'owner' || role === 'manager'
   const one = params.get('date')
-  const period: Period = { from: params.get('from') || one || isoDay(0), to: params.get('to') || one || isoDay(0) }
+  const period: Period = manager ? { from: params.get('from') || one || isoDay(0), to: params.get('to') || one || isoDay(0) } : { from: isoDay(0), to: isoDay(0) }
   const span = period.from === period.to ? period.from : `${period.from}-to-${period.to}`
   const { data, isLoading } = useGet<DayReport>(['day', period.from, period.to], `/api/v1/reports/day?${periodQuery(period)}`)
   const digital = data ? Number(data.received.easypaisa) + Number(data.received.jazzcash) + Number(data.received.bank) : 0
@@ -55,7 +58,8 @@ export default function DayReportPage() {
   return (
     <div className="flex flex-col gap-3">
       <PageHeader title={period.from === period.to ? 'counter.dayTitle' : 'counter.hisaab'} help={<Help term="counter.dayReport" />} right={<DownloadButton path={`/api/v1/exports/day?${periodQuery(period)}`} name={`hisaab-${span}`} />} />
-      <PeriodPicker value={period} onChange={(p) => setParams({ from: p.from, to: p.to }, { replace: true })} />
+      {/* owner 2026-11-13 (ADR-072): a salesman sees today's hisaab only */}
+      {manager ? <PeriodPicker value={period} onChange={(p) => setParams({ from: p.from, to: p.to }, { replace: true })} /> : null}
       {isLoading || !data ? <Loading /> : (
         <>
           <section className="flex items-center gap-3 rounded-3xl bg-sell px-5 py-4 text-sell-fg">

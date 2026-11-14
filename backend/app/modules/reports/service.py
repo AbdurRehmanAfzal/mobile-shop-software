@@ -258,6 +258,19 @@ def dashboard(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
             ZERO,
         )
     )
+    # owner 2026-11-13 (ADR-072): what came into / went out of the galla and the bank today
+    today_in = dict.fromkeys(("cash", "bank"), ZERO)
+    for kind, amount in db.execute(
+        select(CashAccount.kind, func.coalesce(func.sum(LedgerEntry.debit - LedgerEntry.credit), 0))
+        .join(LedgerEntry, LedgerEntry.cash_account_id == CashAccount.id)
+        .where(
+            CashAccount.shop_id == shop_id,
+            LedgerEntry.shop_id == shop_id,
+            LedgerEntry.at >= day_start(today),
+        )
+        .group_by(CashAccount.kind)
+    ).all():
+        today_in["cash" if kind == "cash" else "bank"] += money(amount or 0)
     # the last 7 shop days for the home screen's small chart (oldest first, days without sales = 0)
     week_from = today - dt.timedelta(days=6)
     per_day = dict(
@@ -284,7 +297,10 @@ def dashboard(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
         # advance put against them, which also count in `paid`; owner 2026-11-10)
         "received_today": _cash_on(db, [i.ledger_group_id for i in todays if i.ledger_group_id]),
         "profit_today": pnl["net_profit"] if pnl else None,
-        "cash_in_hand": cash_total,
+        # the galla + bank in all only for the owner / manager; a salesman sees today's (ADR-072)
+        "cash_in_hand": cash_total if show_cost else None,
+        "today_cash": money(today_in["cash"]),
+        "today_bank": money(today_in["bank"]),
         "receivable": money(sum((b for b in balances if b > 0), ZERO)),
         "payable": money(-sum((b for b in balances if b < 0), ZERO)),
         "stock_count": len(stock),

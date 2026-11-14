@@ -704,6 +704,8 @@ def day(
     date_to: dt.date | None = None,
 ):
     d_from = date_from or date or shop_today()
+    if not ctx.can(Cap.VIEW_COST):
+        d_from, date_to = shop_today(), None  # a salesman: today only (ADR-072)
     d = rep.day_report(db, ctx.shop_id, d_from, ctx.can(Cap.VIEW_COST), date_to or d_from)
     rows = [
         [

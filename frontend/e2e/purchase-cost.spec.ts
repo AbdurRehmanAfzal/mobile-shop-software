@@ -32,6 +32,9 @@ test('change a phone purchase price', async ({ page, request }) => {
   const sheet = page.getByTestId('cost-sheet')
   await expect(sheet).toContainText('10,000')
   await page.getByTestId('cost-new').fill('12000')
+  // owner 2026-11-14 (ADR-073): say why — here the price really changed, so it goes to the khata
+  await expect(page.getByTestId('cost-save')).toBeDisabled()
+  await page.getByTestId('cost-mode-khata').click()
   await expect(page.getByTestId('cost-effect')).toContainText('Price Traders')
   await expect(page.getByTestId('cost-effect')).toContainText('2,000 more to give')
   await expect(page.getByTestId('cost-save')).toBeDisabled() // the reason is still to write

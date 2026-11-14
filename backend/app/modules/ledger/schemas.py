@@ -25,11 +25,11 @@ class CashAccountOut(BaseModel):
     name: str
     name_ur: str | None
     account_no: str | None
-    opening_balance: Decimal
+    opening_balance: Decimal | None  # None for a salesman (ADR-072)
     opening_date: date | None
     is_default: bool
     is_active: bool
-    balance: Decimal
+    balance: Decimal | None
 
 
 class EntryOut(BaseModel):

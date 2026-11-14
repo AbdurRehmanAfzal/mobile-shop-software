@@ -26,7 +26,9 @@ import { useModules } from '@/lib/modules'
 import { useLayout, type Layout } from '@/lib/theme'
 
 interface Dash {
-  cash_in_hand?: string
+  cash_in_hand?: string | null
+  today_cash?: string
+  today_bank?: string
   receivable: string; payable: string; stock_count: number; stock_value_cost: string | null; stock_value_asking: string
   pending_verification: number; repairs_open: number; low_stock_items?: number; installments_due_today?: number; installments_overdue?: number; lending_late?: number; lending_we_owe_due?: number
   sales_7d?: { date: string; total: string }[]
@@ -119,12 +121,15 @@ export default function HomePage() {
       {/* at a glance: the period's numbers and two charts (owner / manager) */}
       <section className="flex flex-col gap-2.5">
         <SectionTitle text="home.glance" help="counter.glanceAll" to={manager && has('reports') ? `/audit?${glanceQuery}` : hisaab} />
-        <PeriodPicker value={period} onChange={setPeriod} size="sm" />
+        {/* owner 2026-11-13 (ADR-072): a salesman sees today only */}
+        {manager ? <PeriodPicker value={period} onChange={setPeriod} size="sm" /> : null}
         <GlanceSet layout={layout} items={[
           { id: 'sales', to: hisaab, help: 'counter.glance.sales', icon: <Tag size={16} />, tone: 'bg-sell text-sell-fg', label: 'home.sales', value: rep?.sales_total, sub: pick('home.phonesSold').replace('{{n}}', String(rep?.phones_sold ?? 0)) },
           ...(manager ? [{ id: 'profit', to: `/audit/finance?${glanceQuery}`, help: 'counter.glance.profit', icon: <PiggyBank size={16} />, tone: 'bg-ink text-ground', label: 'home.profit', value: rep?.profit, neg: Number(rep?.profit ?? 0) < 0, sub: glance ? `${pick('audit.vsPrevious')} ${fmt(glance.previous.net_profit)}` : undefined }] : []),
           { id: 'inHand', to: hisaab, help: 'inHand', icon: <Wallet size={16} />, tone: 'bg-emerald-tint text-emerald-deep', label: 'counter.inHand', value: rep?.cash_net, neg: cashNeg, sub: glance ? `${pick('audit.moneyIn')} ${fmt(glance.money.inflows)} · ${pick('audit.moneyOut')} ${fmt(glance.money.outflows)}` : undefined },
-          { id: 'cashBank', to: '/more/cash', help: 'counter.glance.cashBank', icon: <Landmark size={16} />, tone: 'bg-khata text-khata-fg', label: 'audit.cashBank', value: dash?.cash_in_hand, neg: Number(dash?.cash_in_hand ?? 0) < 0, sub: pick('audit.now') },
+          manager
+            ? { id: 'cashBank', to: '/more/cash', help: 'counter.glance.cashBank', icon: <Landmark size={16} />, tone: 'bg-khata text-khata-fg', label: 'audit.cashBank', value: dash?.cash_in_hand ?? undefined, neg: Number(dash?.cash_in_hand ?? 0) < 0, sub: pick('audit.now') }
+            : { id: 'cashBank', to: hisaab, help: 'counter.glance.todayCashBank', icon: <Landmark size={16} />, tone: 'bg-khata text-khata-fg', label: 'home.todayCash', value: dash?.today_cash, neg: Number(dash?.today_cash ?? 0) < 0, sub: `${pick('home.todayBank')} ${fmt(dash?.today_bank ?? 0)}` },
           { id: 'toGet', to: '/khata?f=get', help: 'counter.glance.toGet', icon: <ArrowDownLeft size={16} />, tone: 'bg-receivable-tint text-receivable', label: 'counter.toGet', value: dash?.receivable, sub: glance ? `${pick('audit.receivedInPeriod')} ${fmt(glance.debt.received_in_period)}` : undefined },
           { id: 'toGive', to: '/khata?f=give', help: 'counter.glance.toGive', icon: <ArrowUpRight size={16} />, tone: 'bg-payable-tint text-payable', label: 'counter.toGive', value: dash?.payable },
           { id: 'inStock', to: '/stock/summary', help: 'counter.glance.inStock', icon: <Smartphone size={16} />, tone: 'bg-stockt text-stockt-fg', label: 'home.inStock', value: dash?.stock_count, plain: true, sub: worth ? `${pick('home.worth')} ${fmt(worth)}` : undefined },
@@ -138,7 +143,7 @@ export default function HomePage() {
             </div>
             <div className="card min-w-0" data-testid="home-donut">
               <span className="flex items-center gap-1"><BiLabel text="home.moneySplit" size="sm" tone="text-muted" bold /><Help term="counter.chart.moneySplit" size="sm" /></span>
-              <Donut size={104} data={[{ label: pick('audit.cashBank'), value: Math.max(0, Number(dash.cash_in_hand ?? 0)), key: 'cash' }, { label: pick('counter.toGet'), value: Number(dash.receivable ?? 0), key: 'get' }, { label: pick('counter.toGive'), value: Number(dash.payable ?? 0), key: 'give' }, { label: pick('home.worth'), value: Number(worth ?? 0), key: 'stock' }]} onTap={(s) => nav(s.key === 'cash' ? '/more/cash' : s.key === 'get' ? '/khata?f=get' : s.key === 'give' ? '/khata?f=give' : '/stock/summary')} empty="audit.noData" />
+              <Donut size={104} data={[{ label: pick(manager ? 'audit.cashBank' : 'home.todayCash'), value: Math.max(0, Number((manager ? dash.cash_in_hand : dash.today_cash) ?? 0)), key: 'cash' }, { label: pick('counter.toGet'), value: Number(dash.receivable ?? 0), key: 'get' }, { label: pick('counter.toGive'), value: Number(dash.payable ?? 0), key: 'give' }, { label: pick('home.worth'), value: Number(worth ?? 0), key: 'stock' }]} onTap={(s) => nav(s.key === 'cash' ? (manager ? '/more/cash' : hisaab) : s.key === 'get' ? '/khata?f=get' : s.key === 'give' ? '/khata?f=give' : '/stock/summary')} empty="audit.noData" />
             </div>
           </div>
         ) : null}
