@@ -7125,6 +7125,11 @@
           "title": "Open balances",
           "body": "What is still to get and to give, by phone, customer, dealer and technician.",
           "example": "IMEI ...1234 shows to get 15,000 (Ali's sale) and to give 22,000 (Bilal's purchase 20,000 + Usman's lab charge 2,000)."
+        },
+        "overview": {
+          "title": "Business overview",
+          "body": "Sales, purchases, profit, money in / out, udhaar, customers, stock alerts and recent activity on one screen, each with View details.",
+          "example": "Today: 4 sales, 2 purchases, Rs. 25,000 received."
         }
       },
       "pinPassword": {
@@ -8090,6 +8095,73 @@
         "title": "Stock tally sheet",
         "body": "Prints on A4: the shop's name, number and date; the figures (phones on hand, in the shop and out for repair / approval / loan, faulty, reserved, stock value, items, to get / to give, and for the owner cash + bank); counts by brand and model; then every phone with all its details on two lines and a box to tick when found, the items with a Counted column, and signature lines. Print (A4) gives the sharpest paper; Download gives a PDF or an Excel (Summary, Phones and Items sheets, set to print on A4). Cost shows only for the owner or manager.",
         "example": "Month end: Print (A4), walk the shelves, tick each phone, write the count of each item, sign."
+      },
+      "staff": {
+        "title": "Staff copy",
+        "body": "A copy of the stock tally sheet with no money at all: no cost, no asking price, no stock value, no lena / dena, no cash and no seller — only the phones and items to count, with the Found box. The owner and manager can print it any time. A salesman or technician taps Ask the owner; the owner sees the request here (and on the home screen) and taps Allow or Say no. Allowed staff can print and download only this copy until the owner taps Take back.",
+        "example": "Owner allows Ahmed → Ahmed prints the staff copy and counts 42 phones; no price is on the paper."
+      }
+    },
+    "ov": {
+      "page": {
+        "title": "Business overview",
+        "body": "Everything about the shop on one screen for the period you pick: sales and purchases (paid and on udhaar), profit, expenses, money in and out and from / to whom, returns, udhaar given and collected, customers and dealers, who owes you and whom you owe, this month, top sold and bought, stock alerts and recent activity. Each card has View details to open the screen behind it. Only the owner and manager see it.",
+        "example": "Pick Today: 4 sales Rs. 1,20,000 (Rs. 90,000 paid, Rs. 30,000 on udhaar), 2 phones bought Rs. 70,000, received Rs. 25,000 from 3 people."
+      },
+      "sales": {
+        "title": "Sales",
+        "body": "The period's sale bills after returns. Paid is what came in on those bills (cash, bank, cheque); On udhaar is what is still left on them.",
+        "example": "Bill Rs. 15,000, Rs. 5,000 paid now and Rs. 2,000 later → paid 7,000, udhaar 8,000."
+      },
+      "purchases": {
+        "title": "Purchases",
+        "body": "The period's purchase bills after returns, the phones on them, what the shop has paid on them and what is still owed to the seller.",
+        "example": "Bill Rs. 10,000 with Rs. 4,000 paid → paid 4,000, udhaar 6,000."
+      },
+      "money": {
+        "title": "Money in and out",
+        "body": "Received and Paid out are the money that came in and went out in the period: payments entered on their own plus the money paid on the bills themselves (with how many people). Udhaar given is the part of sales left on udhaar; Udhaar collected is old udhaar paid back. Expenses and returns of the period are here too.",
+        "example": "Received Rs. 25,000 from 3 people; paid out Rs. 40,000 to 1 dealer."
+      },
+      "month": {
+        "title": "This month",
+        "body": "From the 1st of this month to today, whatever period is picked above.",
+        "example": "On the 14th: sales from the 1st to the 14th."
+      },
+      "people": {
+        "title": "Customers and dealers",
+        "body": "How many customers and dealers the shop has, how many were added in the period, the total customers owe (to get) and the total the shop owes (to give), today.",
+        "example": "Customers 120 (+3 new), to get Rs. 85,000 from 14 people."
+      },
+      "alerts": {
+        "title": "Stock alerts",
+        "body": "Phones on hand now and those that need a look: faulty, ID check pending, in repair, older than 60 days, reserved; accessories running low or finished.",
+        "example": "Faulty 2, older than 60 days 5 → sell or check them."
+      },
+      "remind": {
+        "title": "Payment reminders",
+        "body": "The people with the biggest balance today: who owes the shop (to get) and whom the shop owes (to give). Tap a name for their khata; View details for the whole list.",
+        "example": "Ali Rs. 30,000 to get → tap to receive or send a reminder."
+      },
+      "whom": {
+        "title": "From / to whom",
+        "body": "The period's money by person, biggest first: payments entered on their own plus the money paid on the bills themselves (at the sale or purchase). Walk-in sales are one row.",
+        "example": "Bilal Rs. 20,000 (2 payments)."
+      },
+      "top": {
+        "title": "Top sold and bought",
+        "body": "The models sold and bought most in the period, with the amount (and the profit on sales for the owner / manager).",
+        "example": "iPhone 13 × 3, Rs. 2,40,000, profit 18,000."
+      },
+      "recent": {
+        "title": "Recent activity",
+        "body": "The last things done in the shop and by whom. View details opens the full staff activity.",
+        "example": "Ahmed · sale · created · S-0042."
+      },
+      "modules": {
+        "title": "Totals by module",
+        "body": "How many sales, purchases, returns, transfers, payments, customers and dealers the shop has in all. Tap one to open its list.",
+        "example": "Sales 1,240 → the sales list."
       }
     }
   },
@@ -10742,6 +10814,77 @@
   "tally": {
     "title": "Stock tally sheet",
     "hint": "Every phone on hand, brand by brand and model by model, with the shop's figures and a box to tick — print it on A4 or save it as PDF / Excel to count the stock by hand.",
-    "print": "Print (A4)"
+    "print": "Print (A4)",
+    "staffHint": "The staff copy: every phone to count, with no prices or money.",
+    "staffCopy": "Staff copy (no prices)",
+    "staffCopyHint": "The same sheet with no cost, no asking, no lena / dena and no cash — give it to the staff to count.",
+    "requests": "Staff asking for the sheet",
+    "asked": "Asked",
+    "allowedSince": "Allowed since",
+    "approve": "Allow",
+    "reject": "Say no",
+    "revoke": "Take back",
+    "waiting": "Request sent — waiting for the owner to allow it.",
+    "rejected": "The owner said no. You can ask again.",
+    "revoked": "The owner took the permission back. You can ask again.",
+    "ask": "Ask the owner for the sheet",
+    "homeAsks": "{{n}} staff asked for the stock tally sheet"
+  },
+  "ov": {
+    "title": "Business overview",
+    "details": "View details",
+    "sales": "Sales",
+    "purchases": "Purchases",
+    "total": "Total",
+    "bills": "bills",
+    "phones": "phones",
+    "profit": "Profit",
+    "phonesSold": "Phones sold",
+    "phonesBought": "Phones bought",
+    "paidNow": "Paid (cash / bank)",
+    "onCredit": "On udhaar",
+    "money": "Money in and out",
+    "received": "Received",
+    "paidOut": "Paid out",
+    "people": "people",
+    "udhaarGiven": "Udhaar given",
+    "udhaarCollected": "Udhaar collected",
+    "expenses": "Expenses",
+    "returns": "Returns",
+    "returnsN": "Returns",
+    "month": "This month",
+    "salesMonth": "Sales",
+    "expensesMonth": "Expenses",
+    "profitMonth": "Profit",
+    "customersDealers": "Customers and dealers",
+    "customers": "Customers",
+    "dealers": "Dealers",
+    "new": "new",
+    "customerDue": "To get",
+    "weOwe": "To give",
+    "alerts": "Stock alerts",
+    "onHand": "On hand",
+    "available": "For sale",
+    "faulty": "Faulty",
+    "idPending": "ID check pending",
+    "inRepair": "In repair",
+    "old60": "Older than 60 days",
+    "reserved": "Reserved",
+    "itemsLow": "Items running low",
+    "itemsOut": "Items finished",
+    "remindGet": "Payment reminders — to get",
+    "remindGive": "Payment reminders — to give",
+    "nobody": "Nobody",
+    "nothing": "Nothing in this period",
+    "receivedFrom": "Received from",
+    "paidTo": "Paid to",
+    "payments": "Payments",
+    "topSold": "Top sold (with profit)",
+    "topBought": "Top bought",
+    "recent": "Recent activity",
+    "modules": "Totals by module (all time)",
+    "transfers": "Transfers",
+    "fullHisaab": "Open the full hisaab for this period",
+    "walkIn": "Walk-in customers"
   }
 }

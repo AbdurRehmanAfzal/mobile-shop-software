@@ -1578,3 +1578,36 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - tsc.
 - Playwright `stock-tally` (new: 24 phones, nothing wider than A4, A4 PDF from the browser = 2 pages, the app's own PDF 2 pages, 1588 px wide), `counter` (PDF download).
 - I looked at the A4 PDF and the app PDF pages.
+
+### Same day — business overview dashboard (ADR-076)
+**Owner**: asked for one dashboard with these figures, each with "view details", and "exist data ko disturb na karay":
+- total sale / purchase / credit / debit;
+- new and total customers and dealers;
+- today's phones sold and bought with the credit / debit split;
+- top sales with profit and top purchases;
+- expenses;
+- payments received and paid, and from / to whom;
+- reminder lists, this month, customer due, stock alerts, recent activity, module counts;
+- returns and udhaar given / collected.
+**Done**:
+- `reports/overview.py` + `GET /reports/overview`: read-only, owner / manager, profit only with VIEW_COST.
+- `OverviewPage.tsx` at `/overview`, with a period picker and 13 cards, each with View details. It is linked from the home screen (owner / manager) and More.
+- en / ur / roman strings + help, manual ch. 3, ADR-076.
+**Verified**:
+- pytest `test_overview` (new) and `test_modules`; full suite.
+- tsc, vitest `Help.test`.
+- Playwright `overview` (new: purchase 10,000 with 4,000 paid shows in Purchases, the dealer in "to give", View details → /purchases, name → party page); I looked at the screenshot.
+**Open**: money paid on the bill itself is not in "Paid to / Received from" (those list payment entries); add it there if the owner wants it.
+
+### Same day — overview counts bill money by person; stock tally staff copy with owner permission (ADR-077)
+**Owner**: "ek baat wala kam be kr dainy … A4 stock tally sheet … ak r A4 sheet honi chye jo cost, r asking k bagair ho … staff ko tally krnay k liye dyni hai … kise be trhan ki in out be nahi … staff account may download ka option hona chye but agr owner request accept karay".
+**Done**:
+- The overview's Received / Paid out and the people lists now include the money paid on the bill itself (`at_bill`); walk-in sales show as one row.
+- `stock-tally?staff=true` staff copy: no cost / asking / value / lena-dena / cash / seller; page, Excel and CSV.
+- `staffaccess` module and table (migration c8e2a4f6b0d1): staff ask, owner allows / says no / takes back. Non-manager roles get only the staff copy, and only when allowed (before, any user could download the full sheet).
+- TallySheetCard (owner: both copies + requests; staff: ask / waiting / staff copy) and a home notice for the owner.
+- en / ur / roman strings + help, manual ch. 2 / 3, ADR-077, docs/29 manual test.
+**Verified**:
+- pytest `test_staff_access` (new), `test_stock_tally`, `test_overview`, migrations; full suite.
+- tsc.
+- Playwright `tally-staff` (new: salesman asks → owner sees it on home → Allow → salesman has the staff copy only), `stock-tally`, `overview`; I looked at the screenshots.

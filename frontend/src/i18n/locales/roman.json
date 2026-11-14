@@ -7125,6 +7125,11 @@
           "title": "Khule baqaya jaat",
           "body": "Phone, customer, dealer, technician ke hisaab se lena / dena",
           "example": "IMEI ...1234 par Lena 15,000 (Ali ki bikri) aur Dena 22,000 (Bilal ki khareed 20,000 + Usman ka lab charge 2,000)."
+        },
+        "overview": {
+          "title": "Karobar ka khulasa",
+          "body": "Farokht, khareedari, munafa, aane jaane wali raqam, udhaar, gahak, stock alert aur haaliya kaam ek screen par, har ek ki tafseel ke saath.",
+          "example": "Aaj: 4 farokht, 2 khareedari, 25,000 wusool."
         }
       },
       "pinPassword": {
@@ -8090,6 +8095,73 @@
         "title": "Stock ginti sheet",
         "body": "A4 par chhapti hai: dukaan ka naam, number aur tareekh; figures (maujood mobile, dukaan mein aur bahar — repair / approval / amanat, faulty, reserved, stock ki maliyat, items, lena / dena, aur owner ke liye cash + bank); brand aur model ke hisaab se ginti; phir har mobile apni saari tafseel ke saath do lines mein aur milne par tick ka khana, items \"Ginay\" column ke saath, aur dastakhat ki lines. Print (A4) sab se saaf kaghaz deta hai; Download PDF ya Excel deta hai (Summary, Phones aur Items sheets, A4 par print ke liye tayyar). Qeemat-e-khareed sirf owner ya manager ko.",
         "example": "Mahine ke aakhir mein: Print (A4), shelf dekhein, har mobile par tick lagayein, har item ki ginti likhein, dastakhat karein."
+      },
+      "staff": {
+        "title": "Staff ki copy",
+        "body": "Stock ginti sheet ki aisi copy jis mein koi raqam nahi: na khareed qeemat, na farokht qeemat, na stock ki maliyat, na lena / dena, na cash aur na bechne wala — sirf ginne ke liye mobile aur items, \"Mila\" ke khane ke saath. Owner aur manager ise kabhi bhi chhaap sakte hain. Salesman ya technician \"Owner se sheet maangein\" dabata hai; owner darkhwast yahan (aur home screen par) dekh kar \"Ijazat dein\" ya \"Mana karein\" dabata hai. Ijazat wala staff sirf yehi copy chhaap aur download kar sakta hai, jab tak owner \"Ijazat wapas lein\" na dabaye.",
+        "example": "Owner Ahmed ko ijazat deta hai → Ahmed staff copy chhaap kar 42 mobile ginta hai; kaghaz par koi qeemat nahi."
+      }
+    },
+    "ov": {
+      "page": {
+        "title": "Karobar ka khulasa",
+        "body": "Chune hue arse ke liye dukaan ki har baat ek screen par: farokht aur khareedari (ada shuda aur udhaar), munafa, kharche, aane jaane wali raqam aur kis se / kis ko, wapsi, udhaar diya aur wusool, gahak aur dealer, kis ne dena hai aur kis ko dena hai, is mahine ka hisaab, sab se zyada bike aur khareede, stock alert aur haaliya kaam. Har card par \"Tafseel dekhein\" us ki screen kholta hai. Sirf owner aur manager dekhte hain.",
+        "example": "Aaj chunein: 4 farokht 1,20,000 (90,000 ada, 30,000 udhaar), 2 mobile khareede 70,000, 3 logon se 25,000 wusool."
+      },
+      "sales": {
+        "title": "Farokht",
+        "body": "Is arse ke farokht ke bill, wapsi ke baad. Ada shuda woh raqam hai jo in billon par aayi (cash, bank, cheque); udhaar woh jo abhi baqi hai.",
+        "example": "Bill 15,000, 5,000 abhi aur 2,000 baad mein → ada 7,000, udhaar 8,000."
+      },
+      "purchases": {
+        "title": "Khareedari",
+        "body": "Is arse ke khareedari ke bill wapsi ke baad, un par mobile, dukaan ne kitna ada kiya aur bechne wale ka kitna baqi hai.",
+        "example": "Bill 10,000, 4,000 ada → ada 4,000, udhaar 6,000."
+      },
+      "money": {
+        "title": "Aane aur jaane wali raqam",
+        "body": "Wusool aur ada woh raqam hai jo is arse mein aayi aur gayi: alag se darj payments aur bill par hi di gayi raqam (kitne log). Udhaar diya farokht ka woh hissa hai jo udhaar raha; udhaar wusool purana udhaar jo wapas aaya. Kharche aur wapsi bhi yahin hain.",
+        "example": "3 logon se 25,000 wusool; 1 dealer ko 40,000 ada."
+      },
+      "month": {
+        "title": "Is mahine",
+        "body": "Is mahine ki pehli tareekh se aaj tak, upar jo bhi arsa chuna ho.",
+        "example": "14 tareekh ko: 1 se 14 tak ki farokht."
+      },
+      "people": {
+        "title": "Gahak aur dealer",
+        "body": "Dukaan ke kitne gahak aur dealer hain, is arse mein kitne naye bane, gahakon se kul lena aur dukaan ne kul dena, aaj ke hisaab se.",
+        "example": "Gahak 120 (+3 naye), 14 logon se 85,000 lena."
+      },
+      "alerts": {
+        "title": "Stock alert",
+        "body": "Abhi maujood mobile aur jin par nazar chahiye: kharab, ID check baqi, repair mein, 60 din se purane, reserved; kam hote ya khatam items.",
+        "example": "Kharab 2, 60 din se purane 5 → inhein bechein ya dekhein."
+      },
+      "remind": {
+        "title": "Payment ki yaad dihani",
+        "body": "Aaj sab se zyada baqaya wale log: jinhon ne dukaan ko dena hai aur jin ko dukaan ne dena hai. Naam dabayein to khata; \"Tafseel dekhein\" se poori list.",
+        "example": "Ali se 30,000 lena → daba kar wusool karein ya yaad dihani bhejein."
+      },
+      "whom": {
+        "title": "Kis se / kis ko",
+        "body": "Is arse ki raqam har shakhs ke hisaab se, sab se bari pehle: alag se darj payments aur bill par hi di gayi raqam (farokht ya khareedari ke waqt). Walk-in farokht ek line mein.",
+        "example": "Bilal 20,000 (2 payments)."
+      },
+      "top": {
+        "title": "Sab se zyada bike aur khareede",
+        "body": "Is arse mein sab se zyada bikne aur khareede jaane wale model, raqam ke saath (aur owner / manager ke liye farokht ka munafa).",
+        "example": "iPhone 13 × 3, 2,40,000, munafa 18,000."
+      },
+      "recent": {
+        "title": "Haaliya kaam",
+        "body": "Dukaan mein aakhri kiye gaye kaam aur kis ne kiye. \"Tafseel dekhein\" staff ka poora record kholta hai.",
+        "example": "Ahmed · sale · created · S-0042."
+      },
+      "modules": {
+        "title": "Har hisse ki kul tadaad",
+        "body": "Dukaan mein kul kitni farokht, khareedari, wapsi, transfer, payments, gahak aur dealer hain. Dabayein to us ki list.",
+        "example": "Farokht 1,240 → farokht ki list."
       }
     }
   },
@@ -10742,6 +10814,77 @@
   "tally": {
     "title": "Stock ginti sheet",
     "hint": "Har maujood mobile, brand aur model ke hisaab se, dukaan ke figures aur tick lagane ke khane ke saath — A4 par print karein ya PDF / Excel mein save kar ke haath se stock ginein.",
-    "print": "Print (A4)"
+    "print": "Print (A4)",
+    "staffHint": "Staff ki copy: ginne ke liye har mobile, koi qeemat ya raqam nahi.",
+    "staffCopy": "Staff copy (baghair qeemat)",
+    "staffCopyHint": "Yehi sheet baghair khareed, farokht qeemat, lena / dena aur cash ke — staff ko ginti ke liye dein.",
+    "requests": "Staff jo sheet maang raha hai",
+    "asked": "Maangi",
+    "allowedSince": "Ijazat se",
+    "approve": "Ijazat dein",
+    "reject": "Mana karein",
+    "revoke": "Ijazat wapas lein",
+    "waiting": "Darkhwast bhej di — owner ki ijazat ka intezar hai.",
+    "rejected": "Owner ne mana kiya. Aap dobara maang sakte hain.",
+    "revoked": "Owner ne ijazat wapas le li. Aap dobara maang sakte hain.",
+    "ask": "Owner se sheet maangein",
+    "homeAsks": "{{n}} staff ne stock ginti sheet maangi hai"
+  },
+  "ov": {
+    "title": "Karobar ka khulasa",
+    "details": "Tafseel dekhein",
+    "sales": "Farokht",
+    "purchases": "Khareedari",
+    "total": "Kul",
+    "bills": "bill",
+    "phones": "mobile",
+    "profit": "Munafa",
+    "phonesSold": "Bike mobile",
+    "phonesBought": "Khareede mobile",
+    "paidNow": "Ada hua (cash / bank)",
+    "onCredit": "Udhaar par",
+    "money": "Aane aur jaane wali raqam",
+    "received": "Wusool hua",
+    "paidOut": "Ada kiya",
+    "people": "log",
+    "udhaarGiven": "Udhaar diya",
+    "udhaarCollected": "Udhaar wusool",
+    "expenses": "Kharche",
+    "returns": "Wapsi",
+    "returnsN": "Wapsi",
+    "month": "Is mahine",
+    "salesMonth": "Farokht",
+    "expensesMonth": "Kharche",
+    "profitMonth": "Munafa",
+    "customersDealers": "Gahak aur dealer",
+    "customers": "Gahak",
+    "dealers": "Dealer",
+    "new": "naye",
+    "customerDue": "Lena hai",
+    "weOwe": "Dena hai",
+    "alerts": "Stock alert",
+    "onHand": "Maujood",
+    "available": "Bikne ko",
+    "faulty": "Kharab",
+    "idPending": "ID check baqi",
+    "inRepair": "Repair mein",
+    "old60": "60 din se purane",
+    "reserved": "Reserved",
+    "itemsLow": "Kam hote items",
+    "itemsOut": "Khatam items",
+    "remindGet": "Yaad dihani — lena hai",
+    "remindGive": "Yaad dihani — dena hai",
+    "nobody": "Koi nahi",
+    "nothing": "Is arse mein kuch nahi",
+    "receivedFrom": "Kis se wusool hua",
+    "paidTo": "Kis ko ada kiya",
+    "payments": "Payments",
+    "topSold": "Sab se zyada bike (munafe ke saath)",
+    "topBought": "Sab se zyada khareede",
+    "recent": "Haaliya kaam",
+    "modules": "Har hisse ki kul tadaad",
+    "transfers": "Branch transfer",
+    "fullHisaab": "Is arse ka poora hisaab kholein",
+    "walkIn": "Walk-in gahak"
   }
 }

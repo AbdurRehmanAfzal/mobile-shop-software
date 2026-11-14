@@ -6,7 +6,10 @@ reserved, value, items, to get / to give, cash and bank for the owner); counts b
 then every phone, brand by brand and model by model, two lines per phone so every field fits, with
 a box to tick and a space to write; the items; and signature lines. The Excel has the same as a
 Summary sheet, a Phones sheet with one column per field and a "Found" column, and an Items sheet,
-set to print A4 landscape one page wide. Read-only: nothing is written."""
+set to print A4 landscape one page wide. Read-only: nothing is written.
+
+The staff copy (owner 2026-11-14, ADR-077, `blind=True`) is the same sheet with no money at all:
+no cost, no asking, no value, no to get / to give, no cash and no seller — only what to count."""
 
 import datetime as dt
 import html
@@ -36,6 +39,7 @@ IN_SHOP = (DeviceStatus.IN_STOCK, DeviceStatus.FAULTY)
 
 W = {
     "title": ("Stock tally sheet", "اسٹاک گنتی شیٹ"),
+    "title_staff": ("Stock tally sheet (staff copy)", "اسٹاک گنتی شیٹ (عملے کی کاپی)"),
     "printed": ("Printed", "چھپی"),
     "by": ("by", "از"),
     "phones": ("Phones on hand", "موجود موبائل"),
@@ -160,7 +164,10 @@ def _n(v) -> str:
     return f"{Decimal(v):,.0f}"
 
 
-def page(ctx, db, can_cost: bool, ur: bool) -> Response:
+def page(ctx, db, can_cost: bool, ur: bool, blind: bool = False) -> Response:
+    can_cost = can_cost and not blind
+    ask = not blind
+    title = _w("title_staff" if blind else "title", ur)
     from app.modules.auth.models import Shop
 
     shop = db.get(Shop, ctx.shop_id)
@@ -187,22 +194,27 @@ def page(ctx, db, can_cost: bool, ur: bool) -> Response:
         stat("to_get", data["to_get"], True),
         stat("to_give", data["to_give"], True),
     ]
+    if blind:
+        stats = [x for i, x in enumerate(stats) if i not in (6, 8, 9)]
     if can_cost:
         stats[6:6] = [stat("value_cost", data["value_cost"], True)]
         stats.append(stat("items_value", data["items_value"], True))
         stats.append(stat("cash", data["cash"], True))
 
     cost_th = f'<th class="n">{e(_w("cost", ur))}</th>' if can_cost else ""
+    ask_th = f'<th class="n">{e(_w("asking", ur))}</th>' if ask else ""
     brand_rows = "".join(
         f"<tr><td>{e(b or '')}</td><td class='n'>{v['count']}</td><td class='n'>{v['in_shop']}</td>"
         + (f"<td class='n'>{_n(v['cost'])}</td>" if can_cost else "")
-        + f"<td class='n'>{_n(v['asking'])}</td></tr>"
+        + (f"<td class='n'>{_n(v['asking'])}</td>" if ask else "")
+        + "</tr>"
         for b, v in sorted(data["brands"].items(), key=lambda x: (-x[1]["count"], x[0] or ""))
     )
     model_rows = "".join(
         f"<tr><td>{e(b or '')} {e(m or '')}</td><td class='n'>{v['count']}</td>"
         + (f"<td class='n'>{_n(v['cost'])}</td>" if can_cost else "")
-        + f"<td class='n'>{_n(v['asking'])}</td></tr>"
+        + (f"<td class='n'>{_n(v['asking'])}</td>" if ask else "")
+        + "</tr>"
         for (b, m), v in sorted(
             data["models"].items(), key=lambda x: (x[0][0] or "", x[0][1] or "")
         )
@@ -220,6 +232,8 @@ def page(ctx, db, can_cost: bool, ur: bool) -> Response:
             f"<th class='n'>{e(_w('price', ur))}</th>"
             if can_cost
             else f"<th class='n'>{e(_w('asking', ur))}</th>"
+            if ask
+            else ""
         )
         + f"<th class='note'>{e(_w('note', ur))}</th></tr></thead>"
     )
@@ -265,6 +279,7 @@ def page(ctx, db, can_cost: bool, ur: bool) -> Response:
                 if can_cost
                 else _n(d["asking_price"])
             )
+            price_td = f"<td class='n'>{price}</td>" if ask else ""
             trs.append(
                 f"<tr><td class='box'><span></span></td><td class='n'>{k}</td>"
                 f"<td class='mono'>{ids}</td>"
@@ -273,7 +288,7 @@ def page(ctx, db, can_cost: bool, ur: bool) -> Response:
                 f"<td>{e(bat1)}<br><span class='mu'>{e(bat2)}</span></td>"
                 f"<td class='mono'>{e(d.get('barcode') or '')}<br><span class='mu'>{e(d.get('location') or '')}</span></td>"
                 f"<td>{e(stat_)}{(' · ' + e(faults)) if faults else ''}<br><span class='mu'>{_days(d.get('first_seen_at') or d.get('last_event_at')) or 0}d</span></td>"
-                f"<td class='n'>{price}</td><td class='note'></td></tr>"
+                f"{price_td}<td class='note'></td></tr>"
             )
         blocks.append(
             f'<div class="model"><h4>{e(m or "")} <span>· {len(ds)}</span></h4>'
@@ -337,16 +352,16 @@ td.note, th.note { width: 70px; } td.counted { width: 60px; }
 .sign div { border-top: 1px solid #111; padding-top: 3px; font-size: 10px; }
 """
     page_html = f"""<!doctype html><html lang="{"ur" if ur else "en"}" dir="{"rtl" if ur else "ltr"}"><head><meta charset="utf-8">
-<title>{e(_w("title", ur))} {shop_today().isoformat()}</title>
+<title>{e(title)} {shop_today().isoformat()}</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Noto+Nastaliq+Urdu&display=swap">
 <style>{css}</style></head><body class="{"ur" if ur else ""}">
 <div class="top"><div><h1>{e(shop.name if shop else "")}</h1>
 <div class="sub">{e(addr)}</div></div>
-<div class="right"><b>{e(_w("title", ur))}</b>{e(_w("printed", ur))} {e(now)}{(" " + e(_w("by", ur)) + " " + e(who)) if who else ""}</div></div>
+<div class="right"><b>{e(title)}</b>{e(_w("printed", ur))} {e(now)}{(" " + e(_w("by", ur)) + " " + e(who)) if who else ""}</div></div>
 <div class="stats">{"".join(stats)}</div>
 <div class="two">
-<div><h2>{e(_w("by_brand", ur))}</h2><table><thead><tr><th>{e(_w("brand", ur))}</th><th class="n">{e(_w("count", ur))}</th><th class="n">{e(_w("in_shop", ur))}</th>{cost_th}<th class="n">{e(_w("asking", ur))}</th></tr></thead><tbody>{brand_rows}</tbody></table></div>
-<div><h2>{e(_w("by_model", ur))}</h2><table><thead><tr><th>{e(_w("model", ur))}</th><th class="n">{e(_w("count", ur))}</th>{cost_th}<th class="n">{e(_w("asking", ur))}</th></tr></thead><tbody>{model_rows}</tbody></table></div>
+<div><h2>{e(_w("by_brand", ur))}</h2><table><thead><tr><th>{e(_w("brand", ur))}</th><th class="n">{e(_w("count", ur))}</th><th class="n">{e(_w("in_shop", ur))}</th>{cost_th}{ask_th}</tr></thead><tbody>{brand_rows}</tbody></table></div>
+<div><h2>{e(_w("by_model", ur))}</h2><table><thead><tr><th>{e(_w("model", ur))}</th><th class="n">{e(_w("count", ur))}</th>{cost_th}{ask_th}</tr></thead><tbody>{model_rows}</tbody></table></div>
 </div>
 <h2>{e(_w("detail", ur))} <span>· {len(data["phones"])}</span></h2>
 {"".join(blocks) if blocks else f"<p>{e(_w('none', ur))}</p>"}
@@ -356,7 +371,9 @@ td.note, th.note { width: 70px; } td.counted { width: 60px; }
     return Response(content=page_html, media_type="text/html; charset=utf-8")
 
 
-def workbook(ctx, db, can_cost: bool, ur: bool) -> Response:
+def workbook(ctx, db, can_cost: bool, ur: bool, blind: bool = False) -> Response:
+    can_cost = can_cost and not blind
+    ask = not blind
     from openpyxl import Workbook
     from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
     from openpyxl.worksheet.properties import PageSetupProperties
@@ -412,7 +429,7 @@ def workbook(ctx, db, can_cost: bool, ur: bool) -> Response:
     )
     s.append(
         [
-            w("title"),
+            w("title_staff" if blind else "title"),
             f"{w('printed')} {dt.datetime.now().strftime('%d-%m-%Y %I:%M %p')}",
             user_name(db, ctx.id) or "",
         ]
@@ -428,13 +445,16 @@ def workbook(ctx, db, can_cost: bool, ur: bool) -> Response:
     ]
     if can_cost:
         figures.append((w("value_cost"), float(data["value_cost"])))
-    figures += [
-        (w("value_asking"), float(data["value_asking"])),
-        (w("items"), data["items_pieces"]),
-    ]
+    if ask:
+        figures.append((w("value_asking"), float(data["value_asking"])))
+    figures.append((w("items"), data["items_pieces"]))
     if can_cost:
         figures.append((w("items_value"), float(data["items_value"])))
-    figures += [(w("to_get"), float(data["to_get"])), (w("to_give"), float(data["to_give"]))]
+    if ask:
+        figures += [
+            (w("to_get"), float(data["to_get"])),
+            (w("to_give"), float(data["to_give"])),
+        ]
     if can_cost and data["cash"] is not None:
         figures.append((w("cash"), float(data["cash"])))
     for k, v in figures:
@@ -445,24 +465,30 @@ def workbook(ctx, db, can_cost: bool, ur: bool) -> Response:
     header_row(
         s,
         r,
-        [w("brand"), w("count"), w("in_shop")] + ([w("cost")] if can_cost else []) + [w("asking")],
+        [w("brand"), w("count"), w("in_shop")]
+        + ([w("cost")] if can_cost else [])
+        + ([w("asking")] if ask else []),
     )
     for b, v in sorted(data["brands"].items(), key=lambda x: (-x[1]["count"], x[0] or "")):
         s.append(
             [b, v["count"], v["in_shop"]]
             + ([float(v["cost"])] if can_cost else [])
-            + [float(v["asking"])]
+            + ([float(v["asking"])] if ask else [])
         )
     s.append([])
     r = s.max_row + 1
     header_row(
         s,
         r,
-        [w("brand"), w("model"), w("count")] + ([w("cost")] if can_cost else []) + [w("asking")],
+        [w("brand"), w("model"), w("count")]
+        + ([w("cost")] if can_cost else [])
+        + ([w("asking")] if ask else []),
     )
     for (b, m), v in sorted(data["models"].items(), key=lambda x: (x[0][0] or "", x[0][1] or "")):
         s.append(
-            [b, m, v["count"]] + ([float(v["cost"])] if can_cost else []) + [float(v["asking"])]
+            [b, m, v["count"]]
+            + ([float(v["cost"])] if can_cost else [])
+            + ([float(v["asking"])] if ask else [])
         )
     for col, width in zip("ABCDE", (34, 26, 14, 16, 16), strict=False):
         s.column_dimensions[col].width = width
@@ -491,13 +517,16 @@ def workbook(ctx, db, can_cost: bool, ur: bool) -> Response:
             "SIM",
             "Barcode",
             "Shelf",
-            "Bought from",
+        ]
+        + (["Bought from"] if ask else [])
+        + [
             "Status",
             "Faults",
             "Days",
         ]
         + (["Cost"] if can_cost else [])
-        + ["Asking", w("note")]
+        + (["Asking"] if ask else [])
+        + [w("note")]
     )
     header_row(p, 1, cols)
     for i, d in enumerate(data["phones"], start=1):
@@ -530,7 +559,9 @@ def workbook(ctx, db, can_cost: bool, ur: bool) -> Response:
                 d.get("sim_type"),
                 d.get("barcode"),
                 d.get("location"),
-                d.get("source_party_name"),
+            ]
+            + ([d.get("source_party_name")] if ask else [])
+            + [
                 STATUS.get(d["status"], (d["status"],))[0],
                 ", ".join(d.get("faults") or []) or None,
                 _days(d.get("first_seen_at") or d.get("last_event_at")),
@@ -540,16 +571,20 @@ def workbook(ctx, db, can_cost: bool, ur: bool) -> Response:
                 if can_cost
                 else []
             )
-            + [float(d["asking_price"]) if d["asking_price"] is not None else None, ""]
+            + ([float(d["asking_price"]) if d["asking_price"] is not None else None] if ask else [])
+            + [""]
         )
     for row in p.iter_rows(min_row=2):
         for c in row:
             c.border = box
             c.alignment = Alignment(vertical="top")
     widths = (
-        [7, 5, 12, 20, 17, 17, 14, 9, 6, 10, 9, 7, 8, 14, 7, 6, 7, 10, 12, 9, 16, 11, 16, 6]
+        [7, 5, 12, 20, 17, 17, 14, 9, 6, 10, 9, 7, 8, 14, 7, 6, 7, 10, 12, 9]
+        + ([16] if ask else [])
+        + [11, 16, 6]
         + ([10] if can_cost else [])
-        + [10, 18]
+        + ([10] if ask else [])
+        + [18]
     )
     for idx, width in enumerate(widths, start=1):
         p.column_dimensions[p.cell(row=1, column=idx).column_letter].width = width
@@ -578,5 +613,7 @@ def workbook(ctx, db, can_cost: bool, ur: bool) -> Response:
     return Response(
         content=buf.getvalue(),
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        headers={"Content-Disposition": f'attachment; filename="stock-tally-{stamp}.xlsx"'},
+        headers={
+            "Content-Disposition": f'attachment; filename="stock-tally{"-staff" if blind else ""}-{stamp}.xlsx"'
+        },
     )

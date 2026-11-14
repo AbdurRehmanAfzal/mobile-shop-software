@@ -33,5 +33,6 @@ from app.modules.repairs import models as _repairs_models  # noqa: F401
 from app.modules.returns import models as _returns_models  # noqa: F401
 from app.modules.sales import models as _sales_models  # noqa: F401
 from app.modules.shopaudit import models as _shopaudit_models  # noqa: F401
+from app.modules.staffaccess import models as _staffaccess_models  # noqa: F401
 from app.modules.transfers import models as _transfers_models  # noqa: F401
 from app.modules.verification import models as _verification_models  # noqa: F401

@@ -995,6 +995,13 @@ On **Stock → What is my stock worth?** (and on **Stock count**) the **Stock ta
 - Then the items with **In books** and an empty **Counted** column, and signature lines (Counted by, Checked by, Date).
 - The Excel has a **Summary** sheet, a **Phones** sheet (one column per field, a Found column, filters, set to print A4 landscape one page wide) and an **Items** sheet.
 
+#### Staff copy (no prices) and the owner's permission
+
+- Under the tally sheet, **Staff copy (no prices)** prints the same sheet with **no money at all**: no cost, no asking price, no stock value, no lena / dena, no cash and no seller. Give it to the staff to count.
+- A salesman or technician sees the card on **What is my stock worth?** with **Ask the owner for the sheet**. After tapping it, the card says the request is waiting.
+- The owner sees "**1 staff asked for the stock tally sheet**" on the home screen; it opens the card, with each request and **Allow** / **Say no**.
+- Once allowed, that staff member can print and download only the staff copy (PDF / Excel / CSV), until the owner taps **Take back**.
+
 ### Stock count with the scanner
 
 Once a month (or whenever you feel something is missing) count the shelf with the scanner. The app tells you what is missing and what should not be there.
@@ -1568,6 +1575,21 @@ Below that you will find:
 - **Edit** to change their name, phone or type, **Delete** to remove a person entered by mistake, and **Download** for their statement as PDF, Excel or CSV.
 
 > **Tip:** When a customer argues about his balance, open his page, tap **Download** → **PDF** and send him the statement on WhatsApp. Every line has a date and a bill number.
+
+### Business overview: everything on one screen
+
+Owner and manager: on the home screen tap **Business overview** (also in **More**). Pick **Today**, **Yesterday**, **Week**, **This month** or your own dates. Every card has **View details**, which opens the screen behind it.
+
+- **Sales** and **Purchases**: the total after returns, how many bills and phones, what was **paid** (cash / bank / cheque) and what is **on udhaar**; profit for the owner / manager.
+- **Money in and out**: payments **received** and **paid out** in the period (and from how many people), udhaar given and collected, expenses and returns.
+- **This month**: sales, expenses and profit from the 1st of the month to today.
+- **Customers and dealers**: how many there are, how many are new in the period, and the total to get / to give today.
+- **Stock alerts**: phones on hand and for sale, faulty, ID check pending, in repair, older than 60 days, reserved; items running low or finished.
+- **Payment reminders**: the 10 people who owe the shop most and the 10 the shop owes most; tap a name for their khata.
+- **Received from / Paid to**: the period's payments by person.
+- **Top sold** (with profit) and **Top bought** models; **Recent activity**; **Totals by module** (sales, purchases, returns, transfers, payments, customers, dealers) — tap one for its list.
+
+> **Received / Paid out** and the lists of people count both the payments entered on their own and the money paid on the bill itself (at the sale or purchase). A walk-in sale shows as **Walk-in customers**.
 
 ### Open balances: to get / to give by phone, customer, dealer, technician
 
