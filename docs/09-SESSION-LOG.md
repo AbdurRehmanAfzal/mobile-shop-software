@@ -1537,3 +1537,25 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - pytest `test_purchase_cost_change` (new: 40→45 paid → cash −5,000, khata 0; 30→25 → cash +5,000; nothing-paid refused), plus the full suite.
 - tsc.
 - Playwright `lending-cancel` (new: taken 5,000 cancelled, given 5,000 entered, balance +5,000), `purchase-cost` (mode choice), `lending`.
+
+### Same day — PR #58 green; login activity (ADR-074)
+**Owner**: the owner should know where the software is logged in, who is active, and login time and activity — only if the super admin allows.
+**Owner's choices**:
+- see **and** log out a device;
+- record always, show only when allowed.
+**Done**:
+- `login_sessions` (additive migration `a9c1e3f5b7d9`); `sid` in the tokens.
+- Sessions start on password / PIN / fingerprint / passkey / signup / reset; an older token gets one on refresh (`resumed`).
+- Each request refuses an ended session (`session_ended`) and notes last use (≤ 1 / min); `/auth/logout` ends it, and the app calls it.
+- `/api/v1/login-activity` (list, end) is owner-only, behind the new opt-in module `login_activity`, which is in no plan.
+- More → Login activity page:
+  - Online now / Logged in / Ended, with device, IP, method, since, last used;
+  - What they did → Staff Activity for that person;
+  - Log out this device.
+- Times are returned with UTC.
+- e2e `modules` locator fixed: the home shows two "Expense" links.
+- en / ur / roman strings + help, manual ch. 22, docs/29 item, ADR-074.
+**Verified**:
+- pytest `test_login_activity` (new: off until the module is on, salesman sees nothing, the owner ends a login → 401 + refresh refused, re-login works, an old token refreshes, logout ends the login, UTC times), `test_modules` (opt-in), `test_auth`, plus the full suite.
+- tsc.
+- Playwright `login-activity` (new), `modules`, `offline`, `fingerprint`, `admin`, `admin-access`, `core-flow`.

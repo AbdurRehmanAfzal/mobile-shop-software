@@ -23,10 +23,17 @@ from app.modules.auth.schemas import (
 from app.modules.ledger.service import ensure_default_cash_account
 
 
-def _tokens(user: User) -> TokenPair:
+def _tokens(
+    user: User, db: Session | None = None, method: str | None = None, sid=None
+) -> TokenPair:
+    # owner 2026-11-14 (ADR-074): a new sign-in starts a login session; the tokens carry its id
+    if sid is None and db is not None and method:
+        from app.modules.logins import service as logins
+
+        sid = logins.start(db, user, method)
     return TokenPair(
-        access_token=create_token(user.id, user.organisation_id, "access"),
-        refresh_token=create_token(user.id, user.organisation_id, "refresh"),
+        access_token=create_token(user.id, user.organisation_id, "access", sid),
+        refresh_token=create_token(user.id, user.organisation_id, "refresh", sid),
     )
 
 
@@ -53,7 +60,7 @@ def signup(db: Session, data: SignupRequest) -> tuple[User, TokenPair]:
             message_ur="نئی دکان OOP Solutions کھولتا ہے۔ براہ کرم ہم سے رابطہ کریں۔",
         )
     user = create_shop_with_owner(db, data)
-    return user, _tokens(user)
+    return user, _tokens(user, db, "signup")
 
 
 def create_shop_with_owner(
@@ -131,7 +138,7 @@ def _login(db: Session, phone: str, secret: str, *, use_pin: bool) -> tuple[User
     login_limiter.reset(key)
     user.last_login_at = utcnow()
     db.commit()
-    return user, _tokens(user)
+    return user, _tokens(user, db, "pin" if use_pin else "password")
 
 
 def assert_org_open(db: Session, user: User) -> None:
@@ -161,7 +168,15 @@ def refresh(db: Session, refresh_token: str) -> tuple[User, TokenPair]:
     if user is None or not user.is_active:
         raise Unauthorized(code="user_inactive")
     assert_org_open(db, user)
-    return user, _tokens(user)
+    from app.modules.logins import service as logins
+
+    sid = payload.get("sid")
+    if sid:
+        logins.check(db, sid)  # a login the owner ended cannot be renewed
+        logins.touch(db, sid)
+        return user, _tokens(user, sid=uuid.UUID(sid))
+    # a login from before sessions existed: it gets one now, no new sign-in needed
+    return user, _tokens(user, db, "resumed")
 
 
 def shops_for_user(db: Session, user_id: uuid.UUID) -> list[Shop]:
@@ -335,4 +350,4 @@ def reset_password(db: Session, phone: str, new_password: str) -> tuple[User, To
         )
     db.commit()
     login_limiter.reset(f"login:{phone}")
-    return user, _tokens(user)
+    return user, _tokens(user, db, "reset")

@@ -44,7 +44,7 @@ test('a basic-plan shop without repairs: no tile, a plain "not in your plan" pag
   await page.evaluate(() => localStorage.clear())
   await login(page, owner, 'owner1234')
   await expect(page.getByRole('link', { name: /^Repair/ })).toHaveCount(0)
-  await expect(page.getByRole('link', { name: /^Expense/ })).toBeVisible()
+  await expect(page.getByRole('link', { name: /^Expense/ }).first()).toBeVisible() // the quick action and the glance tile
   await page.goto('/repairs')
   await expect(page.getByText('This feature is not in your plan.')).toBeVisible()
   await page.screenshot({ path: 'test-results/module-off.png' })

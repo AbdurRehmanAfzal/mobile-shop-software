@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Annotated
 from urllib.parse import parse_qsl, urlsplit
 
-from fastapi import APIRouter, Depends, Header, UploadFile
+from fastapi import APIRouter, Depends, Header, Request, UploadFile
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.core.config import settings
@@ -147,6 +147,14 @@ def set_pin(
     data: SetPinRequest, current: Annotated[CurrentUser, Depends(get_current_user)], db: DB
 ):
     service.set_own_pin(db, current.user, data.password, data.pin)
+
+
+@router.post("/auth/logout", status_code=204)
+def logout(request: Request, current: Annotated[CurrentUser, Depends(get_current_user)], db: DB):
+    """ends this phone's / browser's login session (ADR-074)"""
+    from app.modules.logins import service as logins
+
+    logins.end_own(db, getattr(request.state, "sid", None), current.user.id)
 
 
 @router.post("/auth/refresh", response_model=TokenPair)
@@ -352,7 +360,7 @@ def fingerprint_device(
 @router.post("/auth/fingerprint/device-login", response_model=AuthResponse)
 def fingerprint_device_login(data: DeviceLoginIn, db: DB):
     user = fp.device_login(db, data.key_id, data.secret)
-    return AuthResponse(tokens=service._tokens(user), me=_me(db, user, None))
+    return AuthResponse(tokens=service._tokens(user, db, "fingerprint"), me=_me(db, user, None))
 
 
 @router.post("/auth/passkey/register-options")
@@ -375,7 +383,7 @@ def passkey_login_options():
 @router.post("/auth/passkey/login", response_model=AuthResponse)
 def passkey_login(data: PasskeyLoginIn, db: DB):
     user = fp.passkey_login(db, data.credential, data.token)
-    return AuthResponse(tokens=service._tokens(user), me=_me(db, user, None))
+    return AuthResponse(tokens=service._tokens(user, db, "passkey"), me=_me(db, user, None))
 
 
 @router.delete("/auth/fingerprint/keys/{key_id}", status_code=204)

@@ -2,7 +2,7 @@
  *  did (owner 2026-10-30). Owner only. */
 
 import { Activity, CalendarCheck, Check, Clock, Plus, Users } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import { PhoneInput } from '@/components/FieldInputs'
@@ -185,6 +185,9 @@ function ActivityTab() {
   const qs = `date_from=${period.from}&date_to=${period.to}`
   const { data, isLoading } = useGet<ActRow[]>(['staff-activity', qs], `/api/v1/staff-activity?${qs}`)
   const [who, setWho] = useState<ActRow | null>(null)
+  // owner 2026-11-14: opened from Login activity with ?who=<user>: that person's log opens
+  const [wanted] = useState(() => new URLSearchParams(window.location.search).get('who'))
+  useEffect(() => { if (wanted && data && !who) { const r = data.find((x) => x.user_id === wanted); if (r) setWho(r) } }, [wanted, data]) // eslint-disable-line react-hooks/exhaustive-deps
   const { data: log } = useGet<LogRow[]>(['staff-log', who?.user_id ?? '', qs], who ? `/api/v1/staff-activity/${who.user_id}/log?${qs}` : null)
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   const word = (ns: string, k: string) => { const key = `${ns}.${k}`; const v = pick(key); return v === key || v === k ? k.replace(/_/g, ' ') : v }

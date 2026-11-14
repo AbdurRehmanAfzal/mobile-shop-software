@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.core.errors import install_error_handlers
+from app.core.request_info import set_client_info
 from app.modules.accessories.router import router as accessories_router
 from app.modules.admin.fees_router import router as fees_router
 from app.modules.admin.router import router as admin_router
@@ -30,6 +31,7 @@ from app.modules.invoices.router import router as invoices_router
 from app.modules.labels.router import router as labels_router
 from app.modules.ledger.router import router as ledger_router
 from app.modules.loans.router import router as loans_router
+from app.modules.logins.router import router as logins_router
 from app.modules.notifications.router import router as notifications_router
 from app.modules.otp.router import router as otp_router
 from app.modules.parties.router import router as parties_router
@@ -115,6 +117,14 @@ def create_app() -> FastAPI:
     )
 
     @app.middleware("http")
+    async def client_info(request: Request, call_next):
+        """the caller's IP and browser, for the login sessions (ADR-074)"""
+        set_client_info(
+            request.client.host if request.client else None, request.headers.get("user-agent")
+        )
+        return await call_next(request)
+
+    @app.middleware("http")
     async def autoprint(request: Request, call_next):
         """`?autoprint=1` on a print page (receipt, declaration, job sheet, report "PDF") opens the
         print dialog as soon as it loads; used when the Android app opens it in Chrome."""
@@ -187,6 +197,7 @@ def create_app() -> FastAPI:
     app.include_router(fbr_router)
     app.include_router(balances_router)
     app.include_router(reserve_router)
+    app.include_router(logins_router)
     if settings.web_dir:
         _mount_web(app, settings.web_dir)
     return app

@@ -704,6 +704,15 @@ Din mein ek hazri. Owner Staff → **Hazri** kholta hai, muddat chunta hai, aur 
 
 Staff → **Activity** chuni hui muddat ke liye har bande ki **Bikri (tadaad · Rs)**, **Wasooli (Rs)**, **Khareed (tadaad · Rs)**, **Kharche (Rs)**, **Marammat** aur **Kaam** ki tadaad dikhata hai, un ke **Aakhri login** ke saath. Kisi bande par dabayein to poora log dikhta hai: har bill, payment, khareed, kharcha, repair, cancel aur settings ki tabdeeli, waqt, number aur raqam ke saath. Yeh us record se aata hai jo app har tabdeeli ka rakhti hai, is liye kuch bhi chhoot nahi sakta.
 
+### Login ki sargarmi: app kahan kahan login hai
+
+Sirf owner, aur sirf jab software provider ne aap ki dukaan ke liye **Login ki sargarmi** on ki ho: More → **Login ki sargarmi**. **Aaj**, **Pichle 7 din** ya **Pichle 30 din** chunein.
+
+- **Abhi online**: pichle 5 minute mein istemal hua. **Login hain**: abhi login hai magar abhi istemal nahi ho raha. **Band ho chuke**: logout hua ya aap ne kiya.
+- Har row mein banda aur us ka role, phone ya browser (dukaan ki app, Android par Chrome, Windows par Edge …), IP, kab aur kaise shuru hua (password, PIN, fingerprint …) aur aakhri istemal. **Yeh device** woh hai jo aap istemal kar rahe hain.
+- **Kya kaam kiya** us bande ke kaam kholta hai.
+- **Is device ko logout karein** woh login band karta hai: agle qadam par us phone ya browser ko password se dobara login karna hoga. Jo save kiya woh zaya nahi hota. Phone gum ho ya salesman chala jaye to istemal karein (phir Staff mein use band bhi karein).
+
 ## 23. Settings, karobar ki profile aur WhatsApp paighaam
 
 ### Dukaan ki settings

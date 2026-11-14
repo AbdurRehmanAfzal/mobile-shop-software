@@ -87,6 +87,14 @@ def get_current_user(
     from app.modules.auth.service import assert_org_open
 
     assert_org_open(db, user)
+    # owner 2026-11-14 (ADR-074): the login session behind this token
+    sid = payload.get("sid")
+    request.state.sid = sid
+    if sid:
+        from app.modules.logins import service as logins
+
+        logins.check(db, sid)
+        logins.touch(db, sid)
     _touch(db, user)
     return CurrentUser(user=user)
 
