@@ -109,7 +109,7 @@ Owner and manager: on the home screen tap **Business overview** (also in **More*
 - **Received from / Paid to**: the period's payments by person.
 - **Top sold** (with profit) and **Top bought** models; **Recent activity**; **Totals by module** (sales, purchases, returns, transfers, payments, customers, dealers) — tap one for its list.
 
-> Money paid on the bill itself (at the sale or purchase) is in the Sales / Purchases card as **Paid**; **Received / Paid out** count the payments entered on their own.
+> **Received / Paid out** and the lists of people count both the payments entered on their own and the money paid on the bill itself (at the sale or purchase). A walk-in sale shows as **Walk-in customers**.
 
 ### Open balances: to get / to give by phone, customer, dealer, technician
 

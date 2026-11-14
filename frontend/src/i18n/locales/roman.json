@@ -8095,6 +8095,11 @@
         "title": "Stock ginti sheet",
         "body": "A4 par chhapti hai: dukaan ka naam, number aur tareekh; figures (maujood mobile, dukaan mein aur bahar — repair / approval / amanat, faulty, reserved, stock ki maliyat, items, lena / dena, aur owner ke liye cash + bank); brand aur model ke hisaab se ginti; phir har mobile apni saari tafseel ke saath do lines mein aur milne par tick ka khana, items \"Ginay\" column ke saath, aur dastakhat ki lines. Print (A4) sab se saaf kaghaz deta hai; Download PDF ya Excel deta hai (Summary, Phones aur Items sheets, A4 par print ke liye tayyar). Qeemat-e-khareed sirf owner ya manager ko.",
         "example": "Mahine ke aakhir mein: Print (A4), shelf dekhein, har mobile par tick lagayein, har item ki ginti likhein, dastakhat karein."
+      },
+      "staff": {
+        "title": "Staff ki copy",
+        "body": "Stock ginti sheet ki aisi copy jis mein koi raqam nahi: na khareed qeemat, na farokht qeemat, na stock ki maliyat, na lena / dena, na cash aur na bechne wala — sirf ginne ke liye mobile aur items, \"Mila\" ke khane ke saath. Owner aur manager ise kabhi bhi chhaap sakte hain. Salesman ya technician \"Owner se sheet maangein\" dabata hai; owner darkhwast yahan (aur home screen par) dekh kar \"Ijazat dein\" ya \"Mana karein\" dabata hai. Ijazat wala staff sirf yehi copy chhaap aur download kar sakta hai, jab tak owner \"Ijazat wapas lein\" na dabaye.",
+        "example": "Owner Ahmed ko ijazat deta hai → Ahmed staff copy chhaap kar 42 mobile ginta hai; kaghaz par koi qeemat nahi."
       }
     },
     "ov": {
@@ -8115,7 +8120,7 @@
       },
       "money": {
         "title": "Aane aur jaane wali raqam",
-        "body": "Wusool aur ada woh payments hain jo is arse mein darj huin (kitne log). Udhaar diya farokht ka woh hissa hai jo udhaar raha; udhaar wusool purana udhaar jo wapas aaya. Kharche aur wapsi bhi yahin hain.",
+        "body": "Wusool aur ada woh raqam hai jo is arse mein aayi aur gayi: alag se darj payments aur bill par hi di gayi raqam (kitne log). Udhaar diya farokht ka woh hissa hai jo udhaar raha; udhaar wusool purana udhaar jo wapas aaya. Kharche aur wapsi bhi yahin hain.",
         "example": "3 logon se 25,000 wusool; 1 dealer ko 40,000 ada."
       },
       "month": {
@@ -8140,7 +8145,7 @@
       },
       "whom": {
         "title": "Kis se / kis ko",
-        "body": "Is arse ki payments har shakhs ke hisaab se, sab se bari pehle, kitni payments.",
+        "body": "Is arse ki raqam har shakhs ke hisaab se, sab se bari pehle: alag se darj payments aur bill par hi di gayi raqam (farokht ya khareedari ke waqt). Walk-in farokht ek line mein.",
         "example": "Bilal 20,000 (2 payments)."
       },
       "top": {
@@ -10809,7 +10814,21 @@
   "tally": {
     "title": "Stock ginti sheet",
     "hint": "Har maujood mobile, brand aur model ke hisaab se, dukaan ke figures aur tick lagane ke khane ke saath — A4 par print karein ya PDF / Excel mein save kar ke haath se stock ginein.",
-    "print": "Print (A4)"
+    "print": "Print (A4)",
+    "staffHint": "Staff ki copy: ginne ke liye har mobile, koi qeemat ya raqam nahi.",
+    "staffCopy": "Staff copy (baghair qeemat)",
+    "staffCopyHint": "Yehi sheet baghair khareed, farokht qeemat, lena / dena aur cash ke — staff ko ginti ke liye dein.",
+    "requests": "Staff jo sheet maang raha hai",
+    "asked": "Maangi",
+    "allowedSince": "Ijazat se",
+    "approve": "Ijazat dein",
+    "reject": "Mana karein",
+    "revoke": "Ijazat wapas lein",
+    "waiting": "Darkhwast bhej di — owner ki ijazat ka intezar hai.",
+    "rejected": "Owner ne mana kiya. Aap dobara maang sakte hain.",
+    "revoked": "Owner ne ijazat wapas le li. Aap dobara maang sakte hain.",
+    "ask": "Owner se sheet maangein",
+    "homeAsks": "{{n}} staff ne stock ginti sheet maangi hai"
   },
   "ov": {
     "title": "Karobar ka khulasa",
@@ -10865,6 +10884,7 @@
     "recent": "Haaliya kaam",
     "modules": "Har hisse ki kul tadaad",
     "transfers": "Branch transfer",
-    "fullHisaab": "Is arse ka poora hisaab kholein"
+    "fullHisaab": "Is arse ka poora hisaab kholein",
+    "walkIn": "Walk-in gahak"
   }
 }

@@ -81,31 +81,87 @@ def _sales_split(db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date
     return {"paid": paid, "credit": money(max(ZERO, total - paid))}
 
 
+def _at_bill(db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date) -> list[tuple]:
+    """money paid on the bill itself (at the sale / purchase), per bill of the period:
+    (direction, party_id, amount). It is the bill's paid less what later payments put on it."""
+    bills: list[tuple[str, str, object]] = []
+    for i in db.scalars(
+        select(Invoice).where(
+            Invoice.shop_id == shop_id,
+            Invoice.date >= d_from,
+            Invoice.date <= d_to,
+            Invoice.status != InvoiceStatus.VOID,
+        )
+    ):
+        bills.append(("in", "invoice", i))
+    for p in db.scalars(
+        select(Purchase).where(
+            Purchase.shop_id == shop_id,
+            Purchase.date >= d_from,
+            Purchase.date <= d_to,
+            Purchase.status != PurchaseStatus.VOIDED,
+        )
+    ):
+        bills.append(("out", "purchase", p))
+    if not bills:
+        return []
+    later: dict[str, object] = {}
+    for allocs in db.scalars(
+        select(Payment.allocations).where(
+            Payment.shop_id == shop_id, Payment.date >= d_from, Payment.status != "voided"
+        )
+    ):
+        for a in allocs or []:
+            key = f"{a.get('document_type')}:{a.get('document_id')}"
+            later[key] = later.get(key, ZERO) + money(a.get("amount") or 0)
+    out = []
+    for direction, kind, b in bills:
+        amount = money(min(b.paid, b.total) - later.get(f"{kind}:{b.id}", ZERO))
+        if amount > ZERO:
+            out.append((direction, b.party_id, amount))
+    return out
+
+
 def _payments(db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date) -> dict:
+    """money received and paid in the period by person: payments entered on their own plus the money
+    paid on the bills themselves (ADR-076); a walk-in sale has no person (party_id None)"""
     rows = db.execute(
-        select(Payment, Party.name)
-        .join(Party, Party.id == Payment.party_id)
-        .where(
+        select(Payment.direction, Payment.party_id, Payment.amount).where(
             Payment.shop_id == shop_id,
             Payment.date >= d_from,
             Payment.date <= d_to,
             Payment.status != "voided",
         )
     ).all()
+    bill = _at_bill(db, shop_id, d_from, d_to)
+    ids = {r.party_id for r in rows} | {pid for _, pid, _ in bill if pid}
+    names = (
+        dict(db.execute(select(Party.id, Party.name).where(Party.id.in_(ids))).all()) if ids else {}
+    )
     out = {}
     for direction in ("in", "out"):
-        by: dict[uuid.UUID, dict] = {}
-        for p, name in rows:
-            if p.direction != direction:
-                continue
+        by: dict[uuid.UUID | None, dict] = {}
+
+        def add(pid, amount, by=by):
             r = by.setdefault(
-                p.party_id, {"party_id": p.party_id, "name": name, "amount": ZERO, "count": 0}
+                pid,
+                {"party_id": pid, "name": names.get(pid), "amount": ZERO, "count": 0},
             )
-            r["amount"] = money(r["amount"] + p.amount)
+            r["amount"] = money(r["amount"] + amount)
             r["count"] += 1
+
+        for r in rows:
+            if r.direction == direction:
+                add(r.party_id, r.amount)
+        at_bill = ZERO
+        for d, pid, amount in bill:
+            if d == direction:
+                add(pid, amount)
+                at_bill += amount
         people = sorted(by.values(), key=lambda r: -r["amount"])
         out[direction] = {
             "total": money(sum((r["amount"] for r in people), ZERO)),
+            "at_bill": money(at_bill),
             "people": people[:10],
             "people_count": len(people),
         }

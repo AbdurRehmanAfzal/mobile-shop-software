@@ -169,6 +169,11 @@ Close the app fully and open it again first (or install the newest APK from the 
 3. Give a phone a shelf (Rack A2) and search for it.
 4. Add a Non-PTA phone without SIM time.
 
+**Business overview and the staff tally copy (2026-11-14, ADR-076 / 077)**:
+1. Home → **Business overview**. Pick Today: the sales, purchases, money in / out and the people lists match the day's bills; tap **View details** on a few cards.
+2. Stock → What is my stock worth? → **Staff copy (no prices)** → Print: no price or amount on the paper.
+3. Log in as a salesman → the same page → **Ask the owner for the sheet**. As the owner, the home screen shows the request → **Allow**. The salesman now prints the staff copy only. **Take back** stops it.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

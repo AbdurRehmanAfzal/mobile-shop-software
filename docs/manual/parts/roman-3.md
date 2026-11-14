@@ -109,7 +109,7 @@ Owner aur manager: home screen par **Karobar ka khulasa** dabayein (yeh **More**
 - **Kis se wusool / kis ko ada**: is arse ki payments har shakhs ke hisaab se.
 - **Sab se zyada bike** (munafe ke saath) aur **sab se zyada khareede** model; **Haaliya kaam**; **Har hisse ki kul tadaad** — dabayein to us ki list.
 
-> Bill par hi di gayi raqam (farokht ya khareedari ke waqt) farokht / khareedari ke card mein **Ada hua** mein hai; **Wusool / Ada** alag se darj ki gayi payments ginte hain.
+> **Wusool / Ada** aur logon ki lists dono ginti hain: alag se darj ki gayi payments aur bill par hi di gayi raqam (farokht ya khareedari ke waqt). Walk-in farokht **Walk-in gahak** mein aati hai.
 
 ### Khule baqaya jaat: phone, customer, dealer, technician ke hisaab se lena / dena
 

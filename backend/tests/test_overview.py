@@ -38,8 +38,13 @@ def test_overview_figures(client, owner, cat):
     pu = o["purchases"]
     assert pu["count"] == 2 and pu["total"] == "18000.00" and pu["paid"] == "12000.00"
     assert pu["credit"] == "6000.00" and pu["phones"] == 2 and pu["top"]
-    assert o["payments"]["in"]["total"] == "2000.00"
-    assert o["payments"]["in"]["people"][0]["party_id"] == cust["id"]
+    # received: 5,000 on the bill + 2,000 later, both from the customer; paid: 4,000 + 8,000 on bills
+    pin, pout = o["payments"]["in"], o["payments"]["out"]
+    assert pin["total"] == "7000.00" and pin["at_bill"] == "5000.00"
+    assert pin["people"][0]["party_id"] == cust["id"] and pin["people"][0]["amount"] == "7000.00"
+    assert pin["people"][0]["count"] == 2 and pin["people_count"] == 1
+    assert pout["total"] == "12000.00" and pout["at_bill"] == "12000.00"
+    assert pout["people"][0]["party_id"] == dealer["id"] and pout["people"][0]["count"] == 2
     assert o["people"]["new_customers"] >= 1 and o["people"]["new_dealers"] == 1
     assert o["dues"]["to_get"] == "8000.00" and o["dues"]["to_give"] == "6000.00"
     assert o["dues"]["to_get_list"][0]["party_id"] == cust["id"]

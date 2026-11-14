@@ -4,7 +4,7 @@
  *  reports. Every card that opens something still says "See details ›" (owner: users did not know
  *  the cards could be tapped). */
 
-import { AlertTriangle, ArrowDownLeft, ArrowUpRight, Boxes, LayoutDashboard, ChevronLeft, ChevronRight, HandCoins, Landmark, Palette, PiggyBank, Receipt, ScanLine, Search, ShieldAlert, Smartphone, Tag, TrendingUp, Wallet, Wrench } from 'lucide-react'
+import { AlertTriangle, ArrowDownLeft, ArrowUpRight, Boxes, LayoutDashboard, UserCheck, ChevronLeft, ChevronRight, HandCoins, Landmark, Palette, PiggyBank, Receipt, ScanLine, Search, ShieldAlert, Smartphone, Tag, TrendingUp, Wallet, Wrench } from 'lucide-react'
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
@@ -18,6 +18,7 @@ import Donut from '@/components/charts/Donut'
 import { isoDay } from '@/lib/format'
 import type { DayReport } from '@/lib/types'
 import HazriCard from './HazriCard'
+import type { TallyAccess } from '@/features/stock/TallySheetCard'
 import { useAiStatus } from '@/lib/ai'
 import { Bot } from 'lucide-react'
 import PeriodPicker, { periodOf, periodQuery, type Period } from './PeriodPicker'
@@ -71,6 +72,8 @@ export default function HomePage() {
   const preset = period.from === period.to && period.from === isoDay(0) ? 'today' : period.from === period.to && period.from === isoDay(-1) ? 'yesterday' : period.from === isoDay(-6) && period.to === isoDay(0) ? 'custom' : 'custom'
   const glanceQuery = preset === 'custom' ? `preset=custom&date_from=${period.from}&date_to=${period.to}` : `preset=${preset}`
   const { data: glance } = useGet<Glance>(['home-glance', glanceQuery], manager && has('reports') ? `/api/v1/shop-audit/overview?${glanceQuery}` : null)
+  const { data: tallyAcc } = useGet<TallyAccess>(['tally-access'], me?.user.role === 'owner' ? '/api/v1/staff-access/stock_tally' : null)
+  const tallyAsks = (tallyAcc?.requests ?? []).filter((r) => r.status === 'pending').length
 
   function search(e: FormEvent) {
     e.preventDefault()
@@ -135,6 +138,13 @@ export default function HomePage() {
           { id: 'inStock', to: '/stock/summary', help: 'counter.glance.inStock', icon: <Smartphone size={16} />, tone: 'bg-stockt text-stockt-fg', label: 'home.inStock', value: dash?.stock_count, plain: true, sub: worth ? `${pick('home.worth')} ${fmt(worth)}` : undefined },
           { id: 'expenses', to: '/expenses', help: 'counter.glance.expenses', icon: <Receipt size={16} />, tone: 'bg-expense text-expense-fg', label: 'home.expenses', value: rep?.expenses },
         ]} />
+        {/* owner 2026-11-14 (ADR-077): staff asked for the stock tally sheet */}
+        {tallyAsks ? (
+          <Link to="/stock/summary" data-testid="home-tally-asks" className={`tap flex min-h-12 items-center gap-2 rounded-2xl bg-gold/15 px-3 font-bold text-gold-text ${ur ? cls('sm') : 'text-sm'}`}>
+            <UserCheck size={18} /> {pick('tally.homeAsks').replace('{{n}}', String(tallyAsks))}
+            <ChevronRight size={16} className="ms-auto rtl:rotate-180" />
+          </Link>
+        ) : null}
         {/* owner 2026-11-14 (ADR-076): every figure on one screen */}
         {manager ? (
           <Link to="/overview" data-testid="home-overview" className={`tap flex min-h-12 items-center gap-2 rounded-2xl border border-line bg-surface px-3 font-bold text-ink ${ur ? cls('sm') : 'text-sm'}`}>

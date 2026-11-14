@@ -771,15 +771,28 @@ def day(
 
 
 @router.get("/stock-tally")
-def stock_tally(ctx: Ctx, db: DB, format: Fmt = "pdf", lang: Lang = None):
-    """owner 2026-11-14 (ADR-075): a sheet to count the stock by hand — A4 print page or Excel"""
+def stock_tally(ctx: Ctx, db: DB, format: Fmt = "pdf", lang: Lang = None, staff: bool = False):
+    """owner 2026-11-14 (ADR-075): a sheet to count the stock by hand — A4 print page or Excel.
+    `staff=true` (ADR-077) is the staff copy with no money at all. Owner / manager get either; any
+    other role only the staff copy, and only after the owner approved their request."""
+    from app.core.errors import Forbidden
     from app.modules.exports import tally
+    from app.modules.staffaccess.service import has_access
 
-    can_cost = ctx.can(Cap.VIEW_COST)
+    if not ctx.can(Cap.REPORTS_ALL):
+        if not has_access(db, ctx.shop_id, ctx.id, "stock_tally"):
+            raise Forbidden(
+                code="tally_not_allowed",
+                message_en="Ask the owner to allow the stock tally sheet first.",
+                message_ur="پہلے مالک سے اسٹاک گنتی شیٹ کی اجازت لیں۔",
+            )
+        staff = True
+    can_cost = ctx.can(Cap.VIEW_COST) and not staff
     if format == "csv":
         data = tally.collect(db, ctx.shop_id, can_cost)
         head = ["Brand", "Model", "IMEI", "IMEI 2", "Serial", "Storage", "Colour", "Status"]
-        head += ["Barcode", "Shelf"] + (["Cost"] if can_cost else []) + ["Asking", "Found"]
+        head += ["Barcode", "Shelf"] + (["Cost"] if can_cost else [])
+        head += ([] if staff else ["Asking"]) + ["Found"]
         rows = [
             [
                 d["brand_name"],
@@ -794,13 +807,15 @@ def stock_tally(ctx: Ctx, db: DB, format: Fmt = "pdf", lang: Lang = None):
                 d.get("location"),
             ]
             + ([d["cost_price"]] if can_cost else [])
-            + [d["asking_price"], ""]
+            + ([] if staff else [d["asking_price"]])
+            + [""]
             for d in data["phones"]
         ]
-        return _file("csv", ctx, db, lang, "stock-tally", head, rows)
+        name = "stock-tally-staff" if staff else "stock-tally"
+        return _file("csv", ctx, db, lang, name, head, rows)
     if format == "xlsx":
-        return tally.workbook(ctx, db, can_cost, lang == "ur")
-    return tally.page(ctx, db, can_cost, lang == "ur")
+        return tally.workbook(ctx, db, can_cost, lang == "ur", blind=staff)
+    return tally.page(ctx, db, can_cost, lang == "ur", blind=staff)
 
 
 @router.get("/stock-summary")

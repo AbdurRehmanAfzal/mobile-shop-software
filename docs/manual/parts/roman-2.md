@@ -261,6 +261,13 @@ History ki lines kabhi edit ya delete nahi ho saktin. Ghalti nayi line se theek 
 - Phir items **Record mein** aur khali **Ginay** column ke saath, aur dastakhat ki lines.
 - Excel mein **Summary**, **Phones** (har tafseel ka alag column, Mila column, filter, A4 landscape par ek page chaurai mein print) aur **Items** sheets.
 
+#### Staff ki copy (baghair qeemat) aur owner ki ijazat
+
+- Ginti sheet ke neeche **Staff copy (baghair qeemat)** yehi sheet **baghair kisi raqam** ke chhaapti hai: na khareed qeemat, na farokht qeemat, na stock ki maliyat, na lena / dena, na cash aur na bechne wala. Yeh staff ko ginti ke liye dein.
+- Salesman ya technician ko **Mera stock kitne ka hai?** par card mein **Owner se sheet maangein** nazar aata hai. Dabane ke baad card batata hai ke darkhwast intezar mein hai.
+- Owner ko home screen par "**1 staff ne stock ginti sheet maangi hai**" nazar aata hai; yeh card kholta hai, har darkhwast ke saath **Ijazat dein** / **Mana karein**.
+- Ijazat ke baad woh staff sirf staff copy (PDF / Excel / CSV) chhaap aur download kar sakta hai, jab tak owner **Ijazat wapas lein** na dabaye.
+
 ### Scanner se stock ki ginti
 
 Mahine mein ek baar (ya jab bhi lage ke kuch ghayab hai) scanner se shelf gin lein. App batati hai ke kya ghayab hai aur kya yahan nahi hona chahiye.

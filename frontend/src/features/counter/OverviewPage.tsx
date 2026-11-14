@@ -15,7 +15,7 @@ import { useGet } from '@/lib/queries'
 import PeriodPicker, { periodOf, periodQuery, type Period } from './PeriodPicker'
 
 type M = string
-interface Who { party_id: string; name: string; phone?: string | null; amount: M; count?: number }
+interface Who { party_id: string | null; name: string | null; phone?: string | null; amount: M; count?: number }
 interface Overview {
   sales: { total: M; count: number; phones: number; paid: M; credit: M; profit: M | null }
   purchases: { count: number; total: M; paid: M; credit: M; phones: number; top: { name: string; qty: number; amount: M }[] }
@@ -64,12 +64,19 @@ function People({ rows, empty, tone }: { rows: Who[]; empty: string; tone: strin
   if (!rows.length) return <BiLabel text={empty} size="sm" tone="text-muted" />
   return (
     <div className="divide-y divide-line">
-      {rows.map((r) => (
-        <Link key={r.party_id} to={`/parties/${r.party_id}`} className="tap flex items-center justify-between gap-2 py-2">
-          <span className="flex min-w-0 flex-col"><span className="truncate font-bold">{r.name}</span>{r.phone ? <span className="text-xs text-muted" dir="ltr">{r.phone}</span> : r.count ? <span className="text-xs text-muted">{r.count} × {pick('ov.payments')}</span> : null}</span>
-          <span className={`num shrink-0 font-bold ${tone}`} dir="ltr">{rs(r.amount)}</span>
-        </Link>
-      ))}
+      {rows.map((r) => {
+        const body = (
+          <>
+            <span className="flex min-w-0 flex-col"><span className="truncate font-bold">{r.name ?? pick('ov.walkIn')}</span>{r.phone ? <span className="text-xs text-muted" dir="ltr">{r.phone}</span> : r.count ? <span className="text-xs text-muted">{r.count} × {pick('ov.payments')}</span> : null}</span>
+            <span className={`num shrink-0 font-bold ${tone}`} dir="ltr">{rs(r.amount)}</span>
+          </>
+        )
+        return r.party_id ? (
+          <Link key={r.party_id} to={`/parties/${r.party_id}`} className="tap flex items-center justify-between gap-2 py-2">{body}</Link>
+        ) : (
+          <div key="walk-in" className="flex items-center justify-between gap-2 py-2">{body}</div>
+        )
+      })}
     </div>
   )
 }

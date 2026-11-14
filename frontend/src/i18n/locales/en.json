@@ -8095,6 +8095,11 @@
         "title": "Stock tally sheet",
         "body": "Prints on A4: the shop's name, number and date; the figures (phones on hand, in the shop and out for repair / approval / loan, faulty, reserved, stock value, items, to get / to give, and for the owner cash + bank); counts by brand and model; then every phone with all its details on two lines and a box to tick when found, the items with a Counted column, and signature lines. Print (A4) gives the sharpest paper; Download gives a PDF or an Excel (Summary, Phones and Items sheets, set to print on A4). Cost shows only for the owner or manager.",
         "example": "Month end: Print (A4), walk the shelves, tick each phone, write the count of each item, sign."
+      },
+      "staff": {
+        "title": "Staff copy",
+        "body": "A copy of the stock tally sheet with no money at all: no cost, no asking price, no stock value, no lena / dena, no cash and no seller — only the phones and items to count, with the Found box. The owner and manager can print it any time. A salesman or technician taps Ask the owner; the owner sees the request here (and on the home screen) and taps Allow or Say no. Allowed staff can print and download only this copy until the owner taps Take back.",
+        "example": "Owner allows Ahmed → Ahmed prints the staff copy and counts 42 phones; no price is on the paper."
       }
     },
     "ov": {
@@ -8115,7 +8120,7 @@
       },
       "money": {
         "title": "Money in and out",
-        "body": "Received and Paid out are the payments entered in the period (with how many people). Udhaar given is the part of sales left on udhaar; Udhaar collected is old udhaar paid back. Expenses and returns of the period are here too.",
+        "body": "Received and Paid out are the money that came in and went out in the period: payments entered on their own plus the money paid on the bills themselves (with how many people). Udhaar given is the part of sales left on udhaar; Udhaar collected is old udhaar paid back. Expenses and returns of the period are here too.",
         "example": "Received Rs. 25,000 from 3 people; paid out Rs. 40,000 to 1 dealer."
       },
       "month": {
@@ -8140,7 +8145,7 @@
       },
       "whom": {
         "title": "From / to whom",
-        "body": "The period's payments by person, biggest first, with how many payments each.",
+        "body": "The period's money by person, biggest first: payments entered on their own plus the money paid on the bills themselves (at the sale or purchase). Walk-in sales are one row.",
         "example": "Bilal Rs. 20,000 (2 payments)."
       },
       "top": {
@@ -10809,7 +10814,21 @@
   "tally": {
     "title": "Stock tally sheet",
     "hint": "Every phone on hand, brand by brand and model by model, with the shop's figures and a box to tick — print it on A4 or save it as PDF / Excel to count the stock by hand.",
-    "print": "Print (A4)"
+    "print": "Print (A4)",
+    "staffHint": "The staff copy: every phone to count, with no prices or money.",
+    "staffCopy": "Staff copy (no prices)",
+    "staffCopyHint": "The same sheet with no cost, no asking, no lena / dena and no cash — give it to the staff to count.",
+    "requests": "Staff asking for the sheet",
+    "asked": "Asked",
+    "allowedSince": "Allowed since",
+    "approve": "Allow",
+    "reject": "Say no",
+    "revoke": "Take back",
+    "waiting": "Request sent — waiting for the owner to allow it.",
+    "rejected": "The owner said no. You can ask again.",
+    "revoked": "The owner took the permission back. You can ask again.",
+    "ask": "Ask the owner for the sheet",
+    "homeAsks": "{{n}} staff asked for the stock tally sheet"
   },
   "ov": {
     "title": "Business overview",
@@ -10865,6 +10884,7 @@
     "recent": "Recent activity",
     "modules": "Totals by module (all time)",
     "transfers": "Transfers",
-    "fullHisaab": "Open the full hisaab for this period"
+    "fullHisaab": "Open the full hisaab for this period",
+    "walkIn": "Walk-in customers"
   }
 }

@@ -58,7 +58,7 @@ test('tally sheet on A4', async ({ page, request }) => {
   await page.goto('/stock/summary')
   await expect(page.getByTestId('tally-card')).toBeVisible()
   // the app's own PDF: every A4 page drawn on its own (sharp), here 2 pages
-  await page.getByTestId('tally-card').getByRole('button', { name: 'Download' }).click()
+  await page.getByTestId('tally-full').getByRole('button', { name: 'Download' }).click()
   const [pdf] = await Promise.all([page.waitForEvent('download', { timeout: 60_000 }), page.getByRole('button', { name: /PDF/ }).click()])
   expect(pdf.suggestedFilename()).toBe('stock-tally.pdf')
   await pdf.saveAs('test-results/stock-tally-app.pdf')

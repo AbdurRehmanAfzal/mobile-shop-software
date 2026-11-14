@@ -362,6 +362,27 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-077 · 2026-11-14 · Accepted · Stock tally staff copy, given to staff only with the owner's permission
+**Context**: the owner wants an A4 tally sheet to hand to the staff with no amount on it: no cost, no asking, no lena / dena. A salesman should download it only after the owner accepts their request. Until now any logged-in user could download the full tally sheet.
+**Decision**:
+- `GET /exports/stock-tally?staff=true` gives the staff copy (`tally.page / workbook(..., blind=True)` and the csv). It has no cost, asking, stock value, to get / to give, cash or seller. The title is "Stock tally sheet (staff copy)" and the file name is `stock-tally-staff`.
+- **Access:**
+  - Owner and manager (`REPORTS_ALL`) get either copy.
+  - Any other role gets 403 unless the latest request is approved, and then always gets the staff copy.
+- New table `staff_access` (migration c8e2a4f6b0d1, additive): shop, user, kind (`stock_tally`), status pending / approved / rejected / revoked, requested / decided at / by. Nothing is ever deleted.
+- **Routes** (`/staff-access`):
+  - `GET /stock_tally`: the owner gets `requests`, the latest of each staff member that is pending or approved;
+  - `POST /stock_tally/request`: asking twice keeps one request;
+  - `POST /requests/{id}/approve|reject|revoke`: owner only (`MANAGE_STAFF`); a request already answered gives 409.
+  - Approval lasts until the owner takes it back.
+- **UI:**
+  - The tally card shows the owner / manager the full copy and the Staff copy, plus the requests with Allow / Say no / Take back.
+  - Staff see Ask the owner, then the waiting state, then the staff copy only.
+  - The owner's home screen shows "N staff asked for the stock tally sheet".
+**Consequences**:
+- A salesman who downloaded the full sheet (live since ADR-075, the same day) now needs the owner's approval.
+- The stock-worth page itself is unchanged for staff (asking-price value, as before).
+
 ## ADR-076 · 2026-11-14 · Accepted · Business overview: every figure on one screen
 **Context**: the owner asked for one dashboard with the figures they check daily:
 - total sale, purchase, credit and debit; phones sold and bought with the paid / udhaar split;
@@ -383,7 +404,7 @@ Each card needs "View details". 2–3 shops run live installs, so existing data 
 - UI: `/overview` (`OverviewPage.tsx`), with a period picker and 13 cards. Each card links to its screen; each person row links to `/parties/{id}`. It is reached from the home screen and **More**.
 **Consequences**:
 - No migration, no write, no new setting.
-- Money paid on the bill itself counts in the bill's Paid. Received / Paid out count `payments` rows only.
+- Received / Paid out and the people lists count `payments` rows plus the money paid on the bill itself (a bill's paid less what later payments put on it; `at_bill`). Walk-in sales are one row with no person.
 
 ## ADR-075 · 2026-11-14 · Accepted · A stock tally sheet for A4, and sharper PDFs
 **Context**: the shop counts stock by hand and needs a PDF / Excel with every field, a header with the shop and its figures, and counts by brand and model. The stock export's PDF put every field on one line, so it did not fit A4. The app's PDF drew the whole page once and shrank it to the phone's canvas limit, so long reports came out blurred.

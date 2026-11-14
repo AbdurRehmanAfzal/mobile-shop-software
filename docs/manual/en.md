@@ -995,6 +995,13 @@ On **Stock → What is my stock worth?** (and on **Stock count**) the **Stock ta
 - Then the items with **In books** and an empty **Counted** column, and signature lines (Counted by, Checked by, Date).
 - The Excel has a **Summary** sheet, a **Phones** sheet (one column per field, a Found column, filters, set to print A4 landscape one page wide) and an **Items** sheet.
 
+#### Staff copy (no prices) and the owner's permission
+
+- Under the tally sheet, **Staff copy (no prices)** prints the same sheet with **no money at all**: no cost, no asking price, no stock value, no lena / dena, no cash and no seller. Give it to the staff to count.
+- A salesman or technician sees the card on **What is my stock worth?** with **Ask the owner for the sheet**. After tapping it, the card says the request is waiting.
+- The owner sees "**1 staff asked for the stock tally sheet**" on the home screen; it opens the card, with each request and **Allow** / **Say no**.
+- Once allowed, that staff member can print and download only the staff copy (PDF / Excel / CSV), until the owner taps **Take back**.
+
 ### Stock count with the scanner
 
 Once a month (or whenever you feel something is missing) count the shelf with the scanner. The app tells you what is missing and what should not be there.
@@ -1582,7 +1589,7 @@ Owner and manager: on the home screen tap **Business overview** (also in **More*
 - **Received from / Paid to**: the period's payments by person.
 - **Top sold** (with profit) and **Top bought** models; **Recent activity**; **Totals by module** (sales, purchases, returns, transfers, payments, customers, dealers) — tap one for its list.
 
-> Money paid on the bill itself (at the sale or purchase) is in the Sales / Purchases card as **Paid**; **Received / Paid out** count the payments entered on their own.
+> **Received / Paid out** and the lists of people count both the payments entered on their own and the money paid on the bill itself (at the sale or purchase). A walk-in sale shows as **Walk-in customers**.
 
 ### Open balances: to get / to give by phone, customer, dealer, technician
 

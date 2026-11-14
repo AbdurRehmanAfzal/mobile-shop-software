@@ -32,12 +32,16 @@ def test_tally_page_and_excel(client, owner, cat):
     heads = [c.value for c in ph[1]]
     assert "IMEI" in heads and "Cost" in heads and "Shelf" in heads
 
-    # a salesman: no cost anywhere
+    # a salesman: only after the owner allows it (ADR-077), and then the staff copy, no money
     owner.post(
         "/api/v1/staff",
         json={"name": "Sales", "phone": "03451112233", "password": "secret123", "role": "salesman"},
     )
     s = login(client, "03451112233")
+    assert s.get("/api/v1/exports/stock-tally?format=pdf").status_code == 403
+    s.post("/api/v1/staff-access/stock_tally/request")
+    rid = owner.get("/api/v1/staff-access/stock_tally").json()["requests"][0]["id"]
+    owner.post(f"/api/v1/staff-access/requests/{rid}/approve")
     sp = s.get("/api/v1/exports/stock-tally?format=pdf").text
     assert "Phones at cost" not in sp and "Cash + bank now" not in sp
     sx = load_workbook(io.BytesIO(s.get("/api/v1/exports/stock-tally?format=xlsx").content))
