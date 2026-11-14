@@ -1523,3 +1523,17 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - pytest `test_salesman_cash` (new: totals hidden, today cash 1,000 / bank 2,000, yesterday → today, the owner still gets yesterday, balances null), plus the tests touching accounts / dashboard / day.
 - tsc.
 - Playwright `salesman-cash` (new).
+
+### 2026-11-14 — cost typing mistake vs real change; cancel a wrong len-den (ADR-073)
+**Owner**:
+1. A len-den was entered as taken when it was given. It should be possible to delete it and enter it as given.
+2. Typed 40,000, paid 45,000: fixing the cost put 5,000 on the customer's khata. The reverse happens too. Ask whether the change is a mistake (no khata) or a real change (khata).
+**Done**:
+- `change_cost(mode)`: `paid` = typing mistake, cash corrected (out of / back into the account the bill was paid from) in the same correction group, khata nets 0; `khata` = as before. Purchase paid and the payment detail follow.
+- The sheet requires the choice and shows the effect.
+- Len-den entries have **Cancel**: reason, then the payment void. **Cancel and enter as …** opens the other side prefilled.
+- en / ur / roman strings + help, ADR-073.
+**Verified**:
+- pytest `test_purchase_cost_change` (new: 40→45 paid → cash −5,000, khata 0; 30→25 → cash +5,000; nothing-paid refused), plus the full suite.
+- tsc.
+- Playwright `lending-cancel` (new: taken 5,000 cancelled, given 5,000 entered, balance +5,000), `purchase-cost` (mode choice), `lending`.

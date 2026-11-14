@@ -458,7 +458,16 @@
       "now": "Abhi ki qeemat-e-khareed",
       "new": "Durust qeemat-e-khareed",
       "more": "{{who}} ka khata: {{n}} zyada dene hain",
-      "less": "{{who}} ka khata: {{n}} kam dene hain"
+      "less": "{{who}} ka khata: {{n}} kam dene hain",
+      "why": "Yeh kyun badal rahi hai?",
+      "cashOut": "{{n}} rupay mazeed galle se nikle (diye gaye thay); {{who}} ka khata waisa hi rahega.",
+      "cashBack": "{{n}} rupay galle mein wapas (nahi diye gaye thay); {{who}} ka khata waisa hi rahega.",
+      "mode": {
+        "paid": "Likhne mein ghalti",
+        "paidHint": "Khareedari ke waqt isi qeemat ke paise diye gaye thay. Cash durust hoga, khata nahi.",
+        "khata": "Qeemat waqai badli",
+        "khataHint": "Farq baqi hai: bechne wale ke khate mein jayega."
+      }
     },
     "paidFix": {
       "button": "Di gayi raqam badlein",
@@ -4676,6 +4685,11 @@
         "title": "Wapsi ki tareekh",
         "body": "Jis din paise wapas aane chahiye. Koi tareekh na ho to khali chhor dein. Is din ke baad indraaj late dikhta hai aur yaad dehani ja sakti hai.",
         "example": "15 June likhein; 16 June ko \"1 din ki der\" dikhe ga."
+      },
+      "cancel": {
+        "title": "Len-den ki entry cancel karein",
+        "body": "Owner ya manager. Ghalat entry wajah ke saath cancel hoti hai, kabhi mitti nahi: raqam khate aur cash se wapas, aur entry list mein kati hui rehti hai. \"Cancel kar ke … mein daalein\" usi raqam ke saath doosri taraf kholta hai taake durust daalein.",
+        "example": "Ali se 5,000 liye likha, magar aap ne diye thay: Cancel → Cancel kar ke diye mein daalein → Save."
       }
     },
     "device": {
@@ -5174,6 +5188,11 @@
         "title": "Khareedari ke waqt di gayi raqam badlein",
         "body": "Owner ya manager. Stock khareedte waqt asal mein jitna diya woh likhein. Pehle se kam: woh raqam usi account mein wapas aati hai jahan se nikli thi (cash galle mein) aur bechne wale ke khate mein deni dikhti hai. Zyada: jo account chunein us se nikalti hai. Bill par baad mein di gayi raqam waisi rehti hai. Mobile ko kuch nahi hota, is liye bikne ke baad bhi ho sakta hai. Har mobile ki history aur audit mein tabdeeli rehti hai. Agar us din ka cash band ho chuka ho to tabdeeli aaj ki tareekh par lagti hai.",
         "example": "20,000 cash diya likha, maal udhaar par aaya tha: Kuch nahi diya dabayein. Galle mein 20,000 wapas aur dealer ke khate mein 20,000 dene hain."
+      },
+      "costFixWhy": {
+        "title": "Likhne mein ghalti ya asal tabdeeli",
+        "body": "Likhne mein ghalti: qeemat ghalat likhi gayi magar khareedari ke waqt paise durust qeemat ke diye gaye — maslan 40,000 likha, 45,000 diye. Farq galle mein durust hota hai (5,000 mazeed nikle); bechne wale ka khata saaf rehta hai. 25,000 ke phone ke liye 30,000 likha: 5,000 galle mein wapas. Qeemat waqai badli: farq baqi hai aur pehle ki tarah bechne wale ke khate mein jata hai.",
+        "example": "40,000 likha, 45,000 diye: Likhne mein ghalti → galle mein 5,000 mazeed diye, khata 0."
       }
     },
     "label": {
@@ -10288,7 +10307,13 @@
     "changeDate": "Wapsi ki tareekh",
     "saveDate": "Tareekh save karein",
     "reminderOpened": "Reminder ke sath WhatsApp khul gaya",
-    "reminderSent": "Reminder bhej diya"
+    "reminderSent": "Reminder bhej diya",
+    "cancel": "Cancel",
+    "cancelTitle": "Yeh len-den cancel karein",
+    "cancelHint": "Ghalti se daali gayi raqam ke liye, maslan diye thay magar liye likh diya. Yeh mitti nahi: cancel hoti hai (raqam khate aur cash se wapas), aur history mein wajah ke saath rehti hai.",
+    "cancelOnly": "Sirf cancel karein",
+    "cancelAsGive": "Cancel kar ke diye mein daalein",
+    "cancelAsTake": "Cancel kar ke liye mein daalein"
   },
   "rlab": {
     "sticker": "Repair sticker",

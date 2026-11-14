@@ -307,6 +307,7 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | Phone serial number (optional) under the IMEIs on add / edit, shown in the review; RAM beside storage (owner 2026-11-13) | ✅ | `DeviceLineSheet.tsx`, `devices/schemas.DeviceUpdate._serial`, `tests/test_phone_serial.py`, `e2e/add-device.spec.ts` |
 | Mark a phone faulty while adding stock (More details → It came in faulty; purchase and old stock); Mark faulty afterwards unchanged (owner 2026-11-13) | ✅ | `DeviceLineSheet.tsx` (`FaultPicker`), `devices/service.mark_faulty_on_entry`, `tests/test_faulty.py`, `e2e/faulty-on-add.spec.ts` |
 | Salesman sees today's cash in hand and bank only: no galla / bank totals, today's hisaab only, account balances hidden (owner 2026-11-13, ADR-072) | ✅ | `reports/service.dashboard`, `reports/router.day`, `ledger/router.accounts`, `HomePage.tsx`, `DayReportPage.tsx`, `tests/test_salesman_cash.py`, `e2e/salesman-cash.spec.ts` |
+| Change purchase price: Typing mistake (cash corrected, khata unchanged) or The price really changed (khata); cancel a wrong len-den and re-enter it the other way (owner 2026-11-14, ADR-073) | ✅ | `purchases/service.change_cost(mode)`, `DeviceDetailPage.tsx`, `PartyLending.tsx`, `tests/test_purchase_cost_change.py`, `e2e/lending-cancel.spec.ts`, `e2e/purchase-cost.spec.ts` |
 | Operations runbook (internal; secrets only as placeholders) | ✅ | `operations-en.md` |
 | Owner review of the wording | ⏳ | `docs/29-OWNER-PENDING.md` D |
 

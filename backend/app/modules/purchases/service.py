@@ -743,6 +743,7 @@ def change_cost(
     device_id: uuid.UUID,
     cost: Decimal,
     reason: str,
+    mode: str = "khata",
 ) -> Purchase:
     """Owner 2026-11-10 (ADR-063): the wrong purchase price was typed when the phone was added.
     Nothing is erased: one correction group, dated like the purchase, moves the difference
@@ -785,11 +786,48 @@ def change_cost(
             message_ur="یہی پہلے سے قیمتِ خرید ہے",
         )
     party = db.get(Party, p.party_id)
+    # owner 2026-11-14 (ADR-073): "paid" = the price was typed wrong and the money paid at the
+    # purchase was the right price all along — the difference is cash, not the seller's khata
+    cash = None
+    closed = False
+    if mode == "paid":
+        _later, old_at, _room = paid_split(db, p)
+        if old_at + diff < ZERO:
+            raise ValidationFailed(
+                code="paid_out_of_range",
+                message_en="Less was paid at the purchase than this; use 'the price changed' instead",
+                message_ur="خریداری کے وقت اس سے کم دیا گیا تھا؛ 'قیمت بدلی' چنیں",
+            )
+        if diff < ZERO:
+            if p.cash_account_id is None:
+                raise Conflict(
+                    code="nothing_paid",
+                    message_en="Nothing was paid at this purchase; use 'the price changed' instead",
+                    message_ur="اس خریداری پر کچھ نہیں دیا گیا تھا؛ 'قیمت بدلی' چنیں",
+                )
+            cash = db.get(CashAccount, p.cash_account_id)
+        else:
+            from app.modules.ledger.service import default_cash_account
+
+            cash = (
+                db.get(CashAccount, p.cash_account_id)
+                if p.cash_account_id
+                else default_cash_account(db, shop_id)
+            )
+        closed = bool(
+            db.scalar(
+                select(DayClose.id).where(
+                    DayClose.shop_id == shop_id,
+                    DayClose.cash_account_id == cash.id,
+                    DayClose.date == p.date,
+                )
+            )
+        )
     posting = Posting(
         document_type="purchase_cost_change",
         document_id=p.id,
         memo=f"{p.no} {d.imei1}: {old} -> {new} ({reason})",
-        at=p.purchased_at or at_for(p.date),
+        at=utcnow() if closed else (p.purchased_at or at_for(p.date)),
     )
     if diff > ZERO:
         posting.debit(acc.SysAccount.INVENTORY, diff, device_id=d.id, memo=d.imei1).credit(
@@ -799,7 +837,24 @@ def change_cost(
         posting.debit(acc.party_account(p.party_id), -diff).credit(
             acc.SysAccount.INVENTORY, -diff, device_id=d.id, memo=d.imei1
         )
+    if cash is not None:
+        # the same difference was (not) paid at the purchase: the khata nets to nothing
+        if diff > ZERO:
+            posting.debit(acc.party_account(p.party_id), diff).credit(
+                acc.cash_account(cash.id), diff, memo=f"Paid {p.no}"
+            )
+        else:
+            posting.debit(acc.cash_account(cash.id), -diff, memo=f"Not paid {p.no}").credit(
+                acc.party_account(p.party_id), -diff
+            )
     post(db, shop_id, ctx.id, posting)
+    if cash is not None:
+        p.paid = money(p.paid + diff)
+        if p.cash_account_id is None:
+            p.cash_account_id = cash.id
+        detail = paymode.detail_for(db, shop_id, "purchase", p.id)
+        if detail is not None:
+            detail.amount = money(detail.amount + diff)
     ln.unit_cost = money(ln.unit_cost + diff)
     ln.net_cost = new
     p.subtotal = money(p.subtotal + diff)
@@ -822,6 +877,7 @@ def change_cost(
             "reason": reason,
             "purchase_no": p.no,
             "party": party.name if party else None,
+            "mode": mode,
         },
     )
     d.cost_price = money((d.cost_price or ZERO) + diff)

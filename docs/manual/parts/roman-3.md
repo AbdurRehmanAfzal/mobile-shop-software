@@ -220,7 +220,9 @@ Ulta bhi aise hi hota hai: dukaan ke diye paise us bande ke dukaan ke khule khar
 
 ### Ghalat len-den entry cancel karna
 
-Entry kholein aur kisi bhi payment ki tarah wajah likh kar cancel karein. Yeh list mein kati hui rehti hai, aur baqaya ek ulti entry se theek ho jata hai.
+**Len-den entries** mein ghalat entry ke saath **Cancel** dabayein (owner ya manager), wajah likhein, phir **Sirf cancel karein**, ya agar ulti taraf daali gayi thi to **Cancel kar ke diye / liye mein daalein**: doosri taraf usi raqam ke saath khulti hai; tareeqa dekh kar save karein. Cancel entry list mein kati hui rehti hai, aur baqaya aur cash ulti entry se theek ho jate hain.
+
+**Misaal:** Ali se 5,000 liye likha gaya, magar dukaan ne diye thay: Cancel → wajah "diye thay" → **Cancel kar ke diye mein daalein** → Save. Ab Ali ne dukaan ko 5,000 dene hain.
 
 ### Len-den reports mein kahan dikhta hai
 

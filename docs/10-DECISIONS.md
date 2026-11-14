@@ -362,6 +362,24 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-073 · 2026-11-14 · Accepted · A purchase price is changed as a typing mistake (cash) or a real change (khata); a wrong len-den is cancelled and re-entered
+**Context**:
+- **Purchase price typed wrong.** A customer's phone was entered at 40,000 paid 40,000, but 45,000 was really paid. "Change purchase price" (ADR-063) put the 5,000 on the seller's khata, as if the shop still owed it. The reverse happens too: typed 30,000 for a 25,000 phone.
+- **Len-den the wrong way.** A len-den was entered as "taken" when the money was "given", and could not be undone.
+**Decision**:
+- `POST /purchases/cost` takes `mode`:
+  - `khata` (the default, as before): the price really changed, and the difference is owed.
+  - `paid`: a typing mistake, where the money paid at the purchase was the corrected price.
+- In `paid` mode, the same correction group also posts the difference between the khata and the money account: more paid → out of the account the bill was paid from (or the default cash); less → back into it. The seller's khata nets to nothing.
+  - `purchases.paid` and the payment detail follow.
+  - It is refused when less than the new price was paid at the purchase.
+  - It is dated today when that day's cash is closed.
+- The sheet asks **Why is it changing?** (Typing mistake / The price really changed) before saving, and shows the effect on the galla or the khata.
+- Len-den: each posted entry has **Cancel** (owner / manager) with a reason. It uses the existing payment void, which reverses it; the entry stays in the list crossed out. **Cancel and enter as Gave / Took money** opens the other side with the same amount.
+**Consequences**:
+- Old API calls without `mode` behave as before.
+- The cancelled entry is never deleted.
+
 ## ADR-072 · 2026-11-13 · Accepted · A salesman sees today's cash in hand and bank only
 **Context**: the owner wants a salesman to see only today's cash in hand and bank money. The salesman should not see the galla / bank totals, other days, or account balances.
 **Decision** (roles without `VIEW_COST`: salesman, technician; owner / manager unchanged):
