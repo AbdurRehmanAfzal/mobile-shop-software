@@ -8084,6 +8084,13 @@
         "body": "Is dukaan ka har login: kaun, kis phone ya browser par (dukaan ki app, Android par Chrome, Windows par Edge …), kis IP se, kab se aur aakhri baar kab istemal hua. Abhi online = pichle 5 minute mein istemal hua. \"Is device ko logout karein\" woh login band karta hai: agle qadam par dobara login karna hoga. \"Kya kaam kiya\" us bande ke kaam kholta hai. Yeh page software provider on karta hai.",
         "example": "Salesman chala gaya: yahan us ka purana phone logout karein, phir Staff mein use band karein."
       }
+    },
+    "tally": {
+      "sheet": {
+        "title": "Stock ginti sheet",
+        "body": "A4 par chhapti hai: dukaan ka naam, number aur tareekh; figures (maujood mobile, dukaan mein aur bahar — repair / approval / amanat, faulty, reserved, stock ki maliyat, items, lena / dena, aur owner ke liye cash + bank); brand aur model ke hisaab se ginti; phir har mobile apni saari tafseel ke saath do lines mein aur milne par tick ka khana, items \"Ginay\" column ke saath, aur dastakhat ki lines. Print (A4) sab se saaf kaghaz deta hai; Download PDF ya Excel deta hai (Summary, Phones aur Items sheets, A4 par print ke liye tayyar). Qeemat-e-khareed sirf owner ya manager ko.",
+        "example": "Mahine ke aakhir mein: Print (A4), shelf dekhein, har mobile par tick lagayein, har item ki ginti likhein, dastakhat karein."
+      }
     }
   },
   "items": {
@@ -10731,5 +10738,10 @@
       "reset": "password reset",
       "resumed": "purana login"
     }
+  },
+  "tally": {
+    "title": "Stock ginti sheet",
+    "hint": "Har maujood mobile, brand aur model ke hisaab se, dukaan ke figures aur tick lagane ke khane ke saath — A4 par print karein ya PDF / Excel mein save kar ke haath se stock ginein.",
+    "print": "Print (A4)"
   }
 }

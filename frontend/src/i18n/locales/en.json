@@ -8084,6 +8084,13 @@
         "body": "Every login to this shop: who, on which phone or browser (the shop app, Chrome on Android, Edge on Windows …), from which IP, since when and when it was last used. Online now = used in the last 5 minutes. \"Log out this device\" ends that login: at its next step it must log in again. \"What they did\" opens that person's actions. Your software provider switches this page on.",
         "example": "A salesman left: log out his old phone here, then turn him off in Staff."
       }
+    },
+    "tally": {
+      "sheet": {
+        "title": "Stock tally sheet",
+        "body": "Prints on A4: the shop's name, number and date; the figures (phones on hand, in the shop and out for repair / approval / loan, faulty, reserved, stock value, items, to get / to give, and for the owner cash + bank); counts by brand and model; then every phone with all its details on two lines and a box to tick when found, the items with a Counted column, and signature lines. Print (A4) gives the sharpest paper; Download gives a PDF or an Excel (Summary, Phones and Items sheets, set to print on A4). Cost shows only for the owner or manager.",
+        "example": "Month end: Print (A4), walk the shelves, tick each phone, write the count of each item, sign."
+      }
     }
   },
   "items": {
@@ -10731,5 +10738,10 @@
       "reset": "password reset",
       "resumed": "earlier login"
     }
+  },
+  "tally": {
+    "title": "Stock tally sheet",
+    "hint": "Every phone on hand, brand by brand and model by model, with the shop's figures and a box to tick — print it on A4 or save it as PDF / Excel to count the stock by hand.",
+    "print": "Print (A4)"
   }
 }

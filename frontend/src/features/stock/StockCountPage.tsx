@@ -3,6 +3,7 @@
  *  (sold, unknown). Codes can also be typed; the list stays on this device until cleared. */
 
 import { Check, ClipboardList, RotateCcw, ScanLine, Trash2 } from 'lucide-react'
+import TallySheetCard from './TallySheetCard'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
@@ -41,6 +42,7 @@ export default function StockCountPage() {
     <div className="flex flex-col gap-4">
       <PageHeader title="count.title" help={<Help term="stock.countPage" />} />
       <BiLabel text="count.hint" size="sm" tone="text-muted" />
+      <TallySheetCard />
       <div className="card flex items-center gap-3">
         <span className="well h-12 w-12 shrink-0 bg-stockt text-stockt-fg"><ScanLine size={22} /></span>
         <span className="flex min-w-0 flex-1 flex-col">

@@ -770,6 +770,39 @@ def day(
     )
 
 
+@router.get("/stock-tally")
+def stock_tally(ctx: Ctx, db: DB, format: Fmt = "pdf", lang: Lang = None):
+    """owner 2026-11-14 (ADR-075): a sheet to count the stock by hand — A4 print page or Excel"""
+    from app.modules.exports import tally
+
+    can_cost = ctx.can(Cap.VIEW_COST)
+    if format == "csv":
+        data = tally.collect(db, ctx.shop_id, can_cost)
+        head = ["Brand", "Model", "IMEI", "IMEI 2", "Serial", "Storage", "Colour", "Status"]
+        head += ["Barcode", "Shelf"] + (["Cost"] if can_cost else []) + ["Asking", "Found"]
+        rows = [
+            [
+                d["brand_name"],
+                d["model_name"],
+                d["imei1"],
+                d.get("imei2"),
+                d.get("serial"),
+                d.get("storage_name"),
+                d.get("colour_name"),
+                d["status"],
+                d.get("barcode"),
+                d.get("location"),
+            ]
+            + ([d["cost_price"]] if can_cost else [])
+            + [d["asking_price"], ""]
+            for d in data["phones"]
+        ]
+        return _file("csv", ctx, db, lang, "stock-tally", head, rows)
+    if format == "xlsx":
+        return tally.workbook(ctx, db, can_cost, lang == "ur")
+    return tally.page(ctx, db, can_cost, lang == "ur")
+
+
 @router.get("/stock-summary")
 def stock_summary(ctx: Ctx, db: DB, format: Fmt = "csv", lang: Lang = None):
     s = rep.stock_summary(db, ctx.shop_id, ctx.can(Cap.VIEW_COST))

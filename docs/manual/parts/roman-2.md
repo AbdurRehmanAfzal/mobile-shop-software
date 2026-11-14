@@ -251,6 +251,16 @@ History ki lines kabhi edit ya delete nahi ho saktin. Ghalti nayi line se theek 
 
 ![Phone ki history: bika, check hua, bikri wapas, har ek tareekh, bande aur raqam ke saath](shot:device-history)
 
+### Stock ginti sheet (kaghaz par ginti)
+
+**Stock → Mera stock kitne ka hai?** (aur **Stock ginti**) par **Stock ginti sheet** ka card har maujood mobile haath se ginne ke liye chhaapta hai.
+
+- **Print (A4)** sheet printer ke liye kholta hai (ya "Save as PDF"); **Download** se **PDF** ya **Excel**.
+- Upar: dukaan ka naam, pata aur number, tareekh aur kis ne nikali; figures (maujood mobile, dukaan mein, bahar — repair / approval / amanat, faulty, reserved, ID check baqi, owner / manager ke liye qeemat-e-khareed aur farokht par maliyat, items, lena / dena, aur owner ke liye cash + bank); **brand** aur **model** ke hisaab se ginti.
+- Phir har mobile, brand aur model ke hisaab se, har ek do lines mein taake saari tafseel A4 par aaye: IMEI / IMEI 2 / serial, storage · RAM / rang, haalat · grade / PTA · SIM lock, battery / region · SIM, barcode / shelf, status / din, khareed / farokht, **Mila** ka khana aur **Note** ki jagah. Har page par column ke naam dobara aate hain; koi mobile do pages mein nahi kat-ta.
+- Phir items **Record mein** aur khali **Ginay** column ke saath, aur dastakhat ki lines.
+- Excel mein **Summary**, **Phones** (har tafseel ka alag column, Mila column, filter, A4 landscape par ek page chaurai mein print) aur **Items** sheets.
+
 ### Scanner se stock ki ginti
 
 Mahine mein ek baar (ya jab bhi lage ke kuch ghayab hai) scanner se shelf gin lein. App batati hai ke kya ghayab hai aur kya yahan nahi hona chahiye.
