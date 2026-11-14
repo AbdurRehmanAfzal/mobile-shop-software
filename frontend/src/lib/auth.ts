@@ -64,7 +64,7 @@ interface AuthState {
 
 export const useAuth = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       accessToken: null,
       refreshToken: null,
       me: null,
@@ -80,6 +80,9 @@ export const useAuth = create<AuthState>()(
       setMe: (me) => set({ me }),
       setActiveShop: (shopId) => set({ activeShopId: shopId }),
       logout: () => {
+        // owner 2026-11-14 (ADR-074): this phone's / browser's login session ends on the server too
+        const t = get().accessToken
+        if (t) void fetch(`${import.meta.env.VITE_API_URL?.replace(/\/$/, '') ?? ''}/api/v1/auth/logout`, { method: 'POST', headers: { Authorization: `Bearer ${t}` } }).catch(() => undefined)
         try { localStorage.removeItem('mobileshop.cache') } catch { /* private mode */ }
         set({ accessToken: null, refreshToken: null, me: null, activeShopId: null })
       },

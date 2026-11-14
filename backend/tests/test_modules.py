@@ -1,7 +1,7 @@
 """Owner (2026-10-29): the super admin decides a shop's modules; basics always on, the rest by plan or
 by hand. The API refuses a switched-off module; the app hides it."""
 
-from app.modules.admin.modules import MODULES, PLAN_DEFAULTS, effective, module_for
+from app.modules.admin.modules import MODULES, OPT_IN, PLAN_DEFAULTS, effective, module_for
 from tests.conftest import login, signup
 
 SUPER = "03990000099"
@@ -14,7 +14,8 @@ def _admin(client, monkeypatch):
 
 
 def test_catalogue_and_route_mapping():
-    assert set(PLAN_DEFAULTS["trial"]) == set(MODULES) == set(PLAN_DEFAULTS["chain"])
+    # opt-in modules (login activity, ADR-074) are never in a plan; the super admin turns them on
+    assert set(PLAN_DEFAULTS["trial"]) == set(MODULES) - OPT_IN == set(PLAN_DEFAULTS["chain"])
     assert "repairs" not in PLAN_DEFAULTS["basic"] and "repairs" in PLAN_DEFAULTS["pro"]
     assert module_for("/api/v1/repairs/abc/job-sheet") == "repairs"
     assert module_for("/api/v1/sales/held") == "held_sales" and module_for("/api/v1/sales") is None
@@ -25,7 +26,8 @@ def test_catalogue_and_route_mapping():
 def test_modules_follow_the_plan_unless_set_by_hand(client, owner, monkeypatch):
     admin = _admin(client, monkeypatch)
     me = owner.get("/api/v1/me").json()
-    assert set(me["plan"]["modules"]) == set(MODULES) and me["plan"]["modules_custom"] is False
+    assert set(me["plan"]["modules"]) == set(MODULES) - OPT_IN
+    assert me["plan"]["modules_custom"] is False
 
     # basic plan: repairs off -> the owner's repairs calls are refused, basics still work
     admin.patch(f"/api/v1/admin/shops/{owner.shop_id}/plan", json={"plan": "basic"})
@@ -73,4 +75,4 @@ def test_modules_follow_the_plan_unless_set_by_hand(client, owner, monkeypatch):
     assert set(cat["modules"]) == set(MODULES) and cat["plans"]["basic"] == PLAN_DEFAULTS["basic"]
     from app.modules.auth.models import Organisation
 
-    assert effective(Organisation(plan="chain")) == list(MODULES)
+    assert effective(Organisation(plan="chain")) == [k for k in MODULES if k not in OPT_IN]

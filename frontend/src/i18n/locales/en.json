@@ -8077,6 +8077,13 @@
         "body": "Choose how a phone's page looks; it is remembered on this phone or computer. Classic is the page as before. Smart puts each action beside its value (Copy / Correct beside the IMEI, Change beside the price, Pay / Receive beside the customer) and keeps the history below. Tabs splits the page into Phone, Customer & money, and History. Tiles shows big squares to tap. Compact is one short list with Sell pinned at the bottom. All styles do the same things.",
         "example": "A busy counter: Compact. A new salesman: Tiles."
       }
+    },
+    "logins": {
+      "page": {
+        "title": "Login activity",
+        "body": "Every login to this shop: who, on which phone or browser (the shop app, Chrome on Android, Edge on Windows …), from which IP, since when and when it was last used. Online now = used in the last 5 minutes. \"Log out this device\" ends that login: at its next step it must log in again. \"What they did\" opens that person's actions. Your software provider switches this page on.",
+        "example": "A salesman left: log out his old phone here, then turn him off in Staff."
+      }
     }
   },
   "items": {
@@ -10688,5 +10695,41 @@
     "unlocked": "Unlocked",
     "locked": "SIM locked",
     "carrier": "Locked to (network)"
+  },
+  "logins": {
+    "title": "Login activity",
+    "today": "Today",
+    "lastDays": "Last {{n}} days",
+    "none": "No logins in this period.",
+    "onlineNow": "Online now",
+    "loggedIn": "Logged in",
+    "ended": "Ended",
+    "thisDevice": "This device",
+    "online": "Online",
+    "endedByOwner": "Logged out by owner",
+    "loggedOut": "Logged out",
+    "since": "Since",
+    "lastUsed": "Last used",
+    "endedAt": "Ended",
+    "whatTheyDid": "What they did",
+    "end": "Log out this device",
+    "endTitle": "Log out this device?",
+    "endHint": "That phone or browser is logged out at its next step and must log in again with the password. Nothing they saved is lost.",
+    "unknownDevice": "Unknown device",
+    "theApp": "Shop app",
+    "browser": "Browser",
+    "justNow": "just now",
+    "minAgo": "{{n}} min ago",
+    "hoursAgo": "{{n}} h ago",
+    "daysAgo": "{{n}} days ago",
+    "method": {
+      "password": "password",
+      "pin": "PIN",
+      "fingerprint": "fingerprint",
+      "passkey": "passkey",
+      "signup": "new account",
+      "reset": "password reset",
+      "resumed": "earlier login"
+    }
   }
 }

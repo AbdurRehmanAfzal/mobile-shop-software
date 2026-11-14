@@ -24,10 +24,14 @@ MODULES: dict[str, dict[str, str]] = {
     "installments": {"en": "Installments (qist)", "ur": "قسطیں"},
     "attendance": {"en": "Staff attendance (hazri)", "ur": "عملے کی حاضری"},
     "ai": {"en": "Assistant & photo reading (AI)", "ur": "اسسٹنٹ اور تصویر پڑھنا (AI)"},
+    # owner 2026-11-14 (ADR-074): never in a plan; only the super admin switches it on for a shop
+    "login_activity": {"en": "Login activity (who is logged in where)", "ur": "لاگ اِن کی سرگرمی"},
 }
+# switched on by hand only, never by a plan
+OPT_IN = {"login_activity"}
 
 PLAN_DEFAULTS: dict[str, list[str]] = {
-    "trial": list(MODULES),
+    "trial": [k for k in MODULES if k not in OPT_IN],
     "basic": ["accessories", "expenses", "held_sales", "tax"],
     "pro": [
         "accessories",
@@ -43,7 +47,7 @@ PLAN_DEFAULTS: dict[str, list[str]] = {
         "attendance",
         "ai",
     ],
-    "chain": list(MODULES),
+    "chain": [k for k in MODULES if k not in OPT_IN],
 }
 
 # API prefix -> module; everything not listed is basic
@@ -68,6 +72,7 @@ ROUTE_MODULES: list[tuple[str, str]] = [
     ("/api/v1/reports/forecast", "reports"),
     ("/api/v1/reports/price-changes", "reports"),
     ("/api/v1/shop-audit", "reports"),
+    ("/api/v1/login-activity", "login_activity"),
 ]
 
 

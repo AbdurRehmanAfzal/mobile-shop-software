@@ -20,6 +20,7 @@ from app.modules.fingerprint import models as _fingerprint_models  # noqa: F401
 from app.modules.installments import models as _installments_models  # noqa: F401
 from app.modules.ledger import models as _ledger_models  # noqa: F401
 from app.modules.loans import models as _loans_models  # noqa: F401
+from app.modules.logins import models as _logins_models  # noqa: F401
 from app.modules.notifications import models as _notifications_models  # noqa: F401
 from app.modules.otp import models as _otp_models  # noqa: F401
 from app.modules.parties import models as _parties_models  # noqa: F401

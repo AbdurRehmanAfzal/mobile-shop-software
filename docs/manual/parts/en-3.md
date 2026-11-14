@@ -704,6 +704,15 @@ One check-in per day. The owner opens Staff → **Hazri**, picks the period, and
 
 Staff → **Activity** shows, for the chosen period, each person's **Sales (n · Rs)**, **Received (Rs)**, **Purchases (n · Rs)**, **Expenses (Rs)**, **Repairs** and the number of **Actions**, with their **Last login**. Tap a person to see the full log: every bill, payment, purchase, expense, repair, cancellation and settings change, with the time, number and amount. This comes from the record the app keeps of every change, so nothing can be left out.
 
+### Login activity: where the app is logged in
+
+Owner only, and only when your software provider has switched on **Login activity** for your shop: More → **Login activity**. Choose **Today**, **Last 7 days** or **Last 30 days**.
+
+- **Online now**: used in the last 5 minutes. **Logged in**: still logged in but not used just now. **Ended**: logged out, or logged out by you.
+- Each row shows the person and their role, the phone or browser (the shop app, Chrome on Android, Edge on Windows …), the IP address, when it started and how (password, PIN, fingerprint …) and when it was last used. **This device** marks the one you are using.
+- **What they did** opens that person's actions (see Activity above).
+- **Log out this device** ends that login: at its next step that phone or browser must log in again with the password. Nothing they saved is lost. Use it when a phone is lost or a salesman leaves (then also turn him off in Staff).
+
 ## 23. Settings, business profile and WhatsApp messages
 
 ### Shop settings

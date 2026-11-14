@@ -29,7 +29,12 @@ def hash_pin(pin: str) -> str:
     return hash_password(pin)
 
 
-def create_token(user_id: uuid.UUID, organisation_id: uuid.UUID, token_type: TokenType) -> str:
+def create_token(
+    user_id: uuid.UUID,
+    organisation_id: uuid.UUID,
+    token_type: TokenType,
+    sid: uuid.UUID | None = None,
+) -> str:
     now = datetime.now(UTC)
     if token_type == "access":
         exp = now + timedelta(minutes=settings.access_token_minutes)
@@ -43,6 +48,8 @@ def create_token(user_id: uuid.UUID, organisation_id: uuid.UUID, token_type: Tok
         "exp": int(exp.timestamp()),
         "jti": uuid.uuid4().hex,
     }
+    if sid is not None:
+        payload["sid"] = str(sid)  # the login session (ADR-074)
     return jwt.encode(payload, settings.secret_key, algorithm="HS256")
 
 

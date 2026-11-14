@@ -362,6 +362,26 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-074 · 2026-11-14 · Accepted · Login sessions; the owner sees and ends them when the super admin allows
+**Context**: the owner wants to know where the software is logged in, who is active, and with what login time and activity. This is visible to the owner only when the super admin allows it. Asked choices:
+- the owner can see **and** log out a device;
+- logins are recorded always, and shown only when allowed.
+**Decision**:
+- **Sessions.** New table `login_sessions` (additive migration `a9c1e3f5b7d9`): user, organisation, method (password / pin / fingerprint / passkey / signup / reset / resumed), IP, user agent, started, last seen, ended, ended by, reason.
+  - A sign-in starts a session; access and refresh tokens carry its id (`sid`).
+  - The refresh keeps the sid.
+  - A token from before (no sid) gets a session at its next refresh (`resumed`), so nobody has to log in again.
+  - Starting, touching and ending a session is best-effort: it never blocks a login or a request.
+- **Each request.** An ended session's token is refused with `session_ended`, and its refresh too. `last_seen_at` is written at most once a minute per session. `/auth/logout` ends the caller's own session, and the app calls it on logout.
+- **Owner page.** `/api/v1/login-activity` lists the sessions (online = used in the last 5 min) and `/{id}/end` ends one. It is owner-only (`Cap.MANAGE_STAFF`).
+- **Gate.** The routes sit behind the new module `login_activity`, which is in no plan (`OPT_IN`): the super admin switches it on per shop in the modules card. The More tile shows only then.
+- **UI.** More → Login activity: Online now / Logged in / Ended, device text from the user agent, "What they did" → Staff → Activity for that person, **Log out this device**.
+- Times are returned with UTC.
+**Consequences**:
+- The owner's tile appears after their next login once the module is on, because the plan is read at login.
+- The IP is the one the server sees (proxy headers on).
+- There is no geolocation.
+
 ## ADR-073 · 2026-11-14 · Accepted · A purchase price is changed as a typing mistake (cash) or a real change (khata); a wrong len-den is cancelled and re-entered
 **Context**:
 - **Purchase price typed wrong.** A customer's phone was entered at 40,000 paid 40,000, but 45,000 was really paid. "Change purchase price" (ADR-063) put the 5,000 on the seller's khata, as if the shop still owed it. The reverse happens too: typed 30,000 for a 25,000 phone.

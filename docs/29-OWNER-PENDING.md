@@ -75,6 +75,7 @@ the accessories "Opening stock" batches (made by the migration).
 | [ ] | your own shop → Settings → Logo & business details / Tax registration / Currency | logo, NTN, how money is written |
 | [ ] | your own shop → Settings → Barcode settings | prefix and barcode type, test print |
 | [ ] | Settings → Item settings / Device settings | valuation (average / FIFO), negative stock, units; lock check for used mobiles |
+| [ ] | Super admin → a shop → modules | switch on **Login activity** for each shop whose owner should see logins (ADR-074); the owner logs in again to see the tile |
 | [ ] | every shop that printed stickers since 2026-10-31 | **reprint them** — those stickers were cut and do not scan (fixed 2026-11-01) |
 
 ## D. Manual testing (nothing tested by you yet)

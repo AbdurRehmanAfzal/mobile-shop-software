@@ -8077,6 +8077,13 @@
         "body": "Phone ka page kaisa dikhe, chunein; yeh isi phone ya computer par yaad rehta hai. Purana: pehle wala page. Smart: har kaam apni cheez ke saath (IMEI ke saath Copy / Durust, qeemat ke saath Badlein, customer ke saath Dein / Wusool karein) aur neeche history. Tabs: Phone, Customer aur raqam, History alag alag. Khane: dabane ke liye bare khane. Mukhtasar: ek chhoti list, neeche Bechein ka button. Sab andaaz ek hi kaam karte hain.",
         "example": "Rush wala counter: Mukhtasar. Naya salesman: Khane."
       }
+    },
+    "logins": {
+      "page": {
+        "title": "Login ki sargarmi",
+        "body": "Is dukaan ka har login: kaun, kis phone ya browser par (dukaan ki app, Android par Chrome, Windows par Edge …), kis IP se, kab se aur aakhri baar kab istemal hua. Abhi online = pichle 5 minute mein istemal hua. \"Is device ko logout karein\" woh login band karta hai: agle qadam par dobara login karna hoga. \"Kya kaam kiya\" us bande ke kaam kholta hai. Yeh page software provider on karta hai.",
+        "example": "Salesman chala gaya: yahan us ka purana phone logout karein, phir Staff mein use band karein."
+      }
     }
   },
   "items": {
@@ -10688,5 +10695,41 @@
     "unlocked": "SIM lock nahi",
     "locked": "SIM lock hai",
     "carrier": "Kis network par lock"
+  },
+  "logins": {
+    "title": "Login ki sargarmi",
+    "today": "Aaj",
+    "lastDays": "Pichle {{n}} din",
+    "none": "Is arse mein koi login nahi.",
+    "onlineNow": "Abhi online",
+    "loggedIn": "Login hain",
+    "ended": "Band ho chuke",
+    "thisDevice": "Yeh device",
+    "online": "Online",
+    "endedByOwner": "Owner ne logout kiya",
+    "loggedOut": "Logout",
+    "since": "Kab se",
+    "lastUsed": "Aakhri istemal",
+    "endedAt": "Band hua",
+    "whatTheyDid": "Kya kaam kiya",
+    "end": "Is device ko logout karein",
+    "endTitle": "Is device ko logout karein?",
+    "endHint": "Woh phone ya browser apne agle qadam par logout ho jayega aur password se dobara login karna hoga. Jo save kiya woh zaya nahi hota.",
+    "unknownDevice": "Na-maloom device",
+    "theApp": "Dukaan ki app",
+    "browser": "Browser",
+    "justNow": "abhi",
+    "minAgo": "{{n}} minute pehle",
+    "hoursAgo": "{{n}} ghante pehle",
+    "daysAgo": "{{n}} din pehle",
+    "method": {
+      "password": "password",
+      "pin": "PIN",
+      "fingerprint": "fingerprint",
+      "passkey": "passkey",
+      "signup": "naya account",
+      "reset": "password reset",
+      "resumed": "purana login"
+    }
   }
 }
