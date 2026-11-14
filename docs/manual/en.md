@@ -1569,6 +1569,21 @@ Below that you will find:
 
 > **Tip:** When a customer argues about his balance, open his page, tap **Download** → **PDF** and send him the statement on WhatsApp. Every line has a date and a bill number.
 
+### Business overview: everything on one screen
+
+Owner and manager: on the home screen tap **Business overview** (also in **More**). Pick **Today**, **Yesterday**, **Week**, **This month** or your own dates. Every card has **View details**, which opens the screen behind it.
+
+- **Sales** and **Purchases**: the total after returns, how many bills and phones, what was **paid** (cash / bank / cheque) and what is **on udhaar**; profit for the owner / manager.
+- **Money in and out**: payments **received** and **paid out** in the period (and from how many people), udhaar given and collected, expenses and returns.
+- **This month**: sales, expenses and profit from the 1st of the month to today.
+- **Customers and dealers**: how many there are, how many are new in the period, and the total to get / to give today.
+- **Stock alerts**: phones on hand and for sale, faulty, ID check pending, in repair, older than 60 days, reserved; items running low or finished.
+- **Payment reminders**: the 10 people who owe the shop most and the 10 the shop owes most; tap a name for their khata.
+- **Received from / Paid to**: the period's payments by person.
+- **Top sold** (with profit) and **Top bought** models; **Recent activity**; **Totals by module** (sales, purchases, returns, transfers, payments, customers, dealers) — tap one for its list.
+
+> Money paid on the bill itself (at the sale or purchase) is in the Sales / Purchases card as **Paid**; **Received / Paid out** count the payments entered on their own.
+
 ### Open balances: to get / to give by phone, customer, dealer, technician
 
 Owner and manager only. On the **Udhaar** screen tap **Get / give** at the top (or **More → Open balances**).

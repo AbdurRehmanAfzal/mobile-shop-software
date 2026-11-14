@@ -1569,6 +1569,21 @@ Us ke neeche aap ko milega:
 
 > **Mashwara:** Jab koi customer apne baqaye par behes kare, to us ka safha kholein, **Download** → **PDF** dabayein aur statement WhatsApp par bhej dein. Har line par tareekh aur bill number hai.
 
+### Karobar ka khulasa: sab kuch ek screen par
+
+Owner aur manager: home screen par **Karobar ka khulasa** dabayein (yeh **More** mein bhi hai). **Aaj**, **Kal**, **Hafta**, **Is mahine** ya apni tareekhein chunein. Har card par **Tafseel dekhein** us ki screen kholta hai.
+
+- **Farokht** aur **Khareedari**: wapsi ke baad kul raqam, kitne bill aur mobile, kitna **ada hua** (cash / bank / cheque) aur kitna **udhaar par**; owner / manager ke liye munafa.
+- **Aane aur jaane wali raqam**: is arse mein **wusool** aur **ada** ki gayi payments (kitne log), udhaar diya aur wusool, kharche aur wapsi.
+- **Is mahine**: mahine ki pehli tareekh se aaj tak farokht, kharche aur munafa.
+- **Gahak aur dealer**: kul kitne, is arse mein kitne naye, aur aaj kul lena / dena.
+- **Stock alert**: maujood aur bikne ko mobile, kharab, ID check baqi, repair mein, 60 din se purane, reserved; kam hote ya khatam items.
+- **Yaad dihani**: sab se zyada dene wale 10 log aur jin 10 ko dukaan ne sab se zyada dena hai; naam dabayein to khata.
+- **Kis se wusool / kis ko ada**: is arse ki payments har shakhs ke hisaab se.
+- **Sab se zyada bike** (munafe ke saath) aur **sab se zyada khareede** model; **Haaliya kaam**; **Har hisse ki kul tadaad** — dabayein to us ki list.
+
+> Bill par hi di gayi raqam (farokht ya khareedari ke waqt) farokht / khareedari ke card mein **Ada hua** mein hai; **Wusool / Ada** alag se darj ki gayi payments ginte hain.
+
 ### Khule baqaya jaat: phone, customer, dealer, technician ke hisaab se lena / dena
 
 Sirf maalik aur manager ke liye. **Udhaar** screen par upar **Lena / Dena** dabayein (ya **More → Khule baqaya jaat**).

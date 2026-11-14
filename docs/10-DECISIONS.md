@@ -362,6 +362,29 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-076 · 2026-11-14 · Accepted · Business overview: every figure on one screen
+**Context**: the owner asked for one dashboard with the figures they check daily:
+- total sale, purchase, credit and debit; phones sold and bought with the paid / udhaar split;
+- customers and dealers, total and new; payments received and paid, and from / to whom;
+- payment reminders, this month's sales and expenses, customer due;
+- top sales with profit, top purchases, stock alerts, recent activity, module counts;
+- return amount, udhaar given and collected.
+
+Each card needs "View details". 2–3 shops run live installs, so existing data must not change.
+**Decision**:
+- `GET /reports/overview?date_from&date_to` (`reports/overview.py`) is read-only and needs owner / manager (`REPORTS_ALL`). It reuses `day_report` (period and month-to-date), `top_sellers` and `stock_status`. It adds:
+  - the paid / udhaar split of sale and purchase bills;
+  - payments by person;
+  - people counts (new = `created_at` in the period);
+  - dues from the parties' balance (top 10 each way);
+  - returns, module counts, the last 12 audit entries, and phones in stock for more than 60 days.
+- Profit is `null` without `VIEW_COST`.
+- It is not behind the `reports` module: the same profit is already on the home screen for every plan.
+- UI: `/overview` (`OverviewPage.tsx`), with a period picker and 13 cards. Each card links to its screen; each person row links to `/parties/{id}`. It is reached from the home screen and **More**.
+**Consequences**:
+- No migration, no write, no new setting.
+- Money paid on the bill itself counts in the bill's Paid. Received / Paid out count `payments` rows only.
+
 ## ADR-075 · 2026-11-14 · Accepted · A stock tally sheet for A4, and sharper PDFs
 **Context**: the shop counts stock by hand and needs a PDF / Excel with every field, a header with the shop and its figures, and counts by brand and model. The stock export's PDF put every field on one line, so it did not fit A4. The app's PDF drew the whole page once and shrank it to the phone's canvas limit, so long reports came out blurred.
 **Decision**:

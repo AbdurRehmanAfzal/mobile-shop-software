@@ -4,7 +4,7 @@
  *  reports. Every card that opens something still says "See details ›" (owner: users did not know
  *  the cards could be tapped). */
 
-import { AlertTriangle, ArrowDownLeft, ArrowUpRight, Boxes, ChevronLeft, ChevronRight, HandCoins, Landmark, Palette, PiggyBank, Receipt, ScanLine, Search, ShieldAlert, Smartphone, Tag, TrendingUp, Wallet, Wrench } from 'lucide-react'
+import { AlertTriangle, ArrowDownLeft, ArrowUpRight, Boxes, LayoutDashboard, ChevronLeft, ChevronRight, HandCoins, Landmark, Palette, PiggyBank, Receipt, ScanLine, Search, ShieldAlert, Smartphone, Tag, TrendingUp, Wallet, Wrench } from 'lucide-react'
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
@@ -135,6 +135,13 @@ export default function HomePage() {
           { id: 'inStock', to: '/stock/summary', help: 'counter.glance.inStock', icon: <Smartphone size={16} />, tone: 'bg-stockt text-stockt-fg', label: 'home.inStock', value: dash?.stock_count, plain: true, sub: worth ? `${pick('home.worth')} ${fmt(worth)}` : undefined },
           { id: 'expenses', to: '/expenses', help: 'counter.glance.expenses', icon: <Receipt size={16} />, tone: 'bg-expense text-expense-fg', label: 'home.expenses', value: rep?.expenses },
         ]} />
+        {/* owner 2026-11-14 (ADR-076): every figure on one screen */}
+        {manager ? (
+          <Link to="/overview" data-testid="home-overview" className={`tap flex min-h-12 items-center gap-2 rounded-2xl border border-line bg-surface px-3 font-bold text-ink ${ur ? cls('sm') : 'text-sm'}`}>
+            <LayoutDashboard size={18} className="text-emerald" /> {pick('ov.title')}
+            <ChevronRight size={16} className="ms-auto text-muted rtl:rotate-180" />
+          </Link>
+        ) : null}
         {dash?.sales_7d ? (
           <div className="grid grid-cols-1 gap-2.5 lg:grid-cols-2">
             <div className="card min-w-0" data-testid="home-bars">

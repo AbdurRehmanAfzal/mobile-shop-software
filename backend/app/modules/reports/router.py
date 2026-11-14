@@ -41,6 +41,21 @@ def _check_range(d_from: dt.date, d_to: dt.date) -> None:
         )
 
 
+@router.get("/overview")
+def overview(
+    ctx: Reports, db: DB, date_from: dt.date | None = None, date_to: dt.date | None = None
+):
+    """owner 2026-11-14 (ADR-076): the business overview — every figure of the period on one
+    screen (default: today), with this month's sales / expenses alongside; read-only"""
+    from app.modules.reports.overview import overview as build
+
+    today = shop_today()
+    d_from = date_from or today
+    d_to = date_to or d_from
+    _check_range(d_from, d_to)
+    return _money(build(db, ctx.shop_id, d_from, d_to, ctx.can(Cap.VIEW_COST)))
+
+
 @router.get("/dashboard")
 def dashboard(ctx: Ctx, db: DB):
     return _money(service.dashboard(db, ctx.shop_id, ctx.can(Cap.VIEW_COST)))
