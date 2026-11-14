@@ -127,18 +127,52 @@ export async function printPagePdf(path: string, name: string): Promise<DocFile>
     const pageW = 210
     const margin = 10
     const perPage = Math.floor(((297 - 2 * margin) / pageW) * W) // canvas px per page
+    // owner 2026-11-14 (ADR-075): the whole page drawn once is shrunk to fit the phone's limit, so
+    // a long report came out blurred. The pages are found on that drawing (never through a line),
+    // then each page is drawn again on its own at twice the size, so every page stays sharp.
+    const cuts: [number, number][] = []
     let top = 0
-    let first = true
     while (top < H - 2) {
       const bottom = top + perPage >= H ? H : cutAt(canvas, top + perPage, Math.round(perPage * 0.15))
-      const slice = document.createElement('canvas')
-      slice.width = W
-      slice.height = bottom - top
-      slice.getContext('2d')!.drawImage(canvas, 0, top, W, slice.height, 0, 0, W, slice.height)
-      if (!first) pdf.addPage()
-      pdf.addImage(slice.toDataURL('image/jpeg', 0.92), 'JPEG', 0, margin, pageW, (slice.height / W) * pageW)
-      first = false
+      cuts.push([top, bottom])
       top = bottom
+    }
+    const S = 2
+    let first = true
+    for (const [t, b] of cuts) {
+      let data: string
+      let hMm: number
+      try {
+        const y = t / scale
+        const h = (b - t) / scale
+        const page = `<svg xmlns="http://www.w3.org/2000/svg" width="${Math.round(widthPx * S)}" height="${Math.round(h * S)}" viewBox="0 ${y} ${widthPx} ${h}"><foreignObject x="0" y="0" width="${widthPx}" height="${heightPx}">${xhtml}</foreignObject></svg>`
+        const pi = new Image()
+        await new Promise<void>((ok, fail) => {
+          pi.onload = () => ok()
+          pi.onerror = () => fail(new Error('page'))
+          pi.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(page)}`
+        })
+        const pc = document.createElement('canvas')
+        pc.width = Math.round(widthPx * S)
+        pc.height = Math.round(h * S)
+        const px = pc.getContext('2d')!
+        px.fillStyle = '#fff'
+        px.fillRect(0, 0, pc.width, pc.height)
+        px.drawImage(pi, 0, 0, pc.width, pc.height)
+        data = pc.toDataURL('image/jpeg', 0.92)
+        hMm = (h / widthPx) * pageW
+      } catch {
+        // the page could not be drawn on its own: the shrunk drawing, as before
+        const slice = document.createElement('canvas')
+        slice.width = W
+        slice.height = b - t
+        slice.getContext('2d')!.drawImage(canvas, 0, t, W, slice.height, 0, 0, W, slice.height)
+        data = slice.toDataURL('image/jpeg', 0.92)
+        hMm = (slice.height / W) * pageW
+      }
+      if (!first) pdf.addPage()
+      pdf.addImage(data, 'JPEG', 0, margin, pageW, hMm)
+      first = false
     }
   }
   return { blob: pdf.output('blob'), name: name.endsWith('.pdf') ? name : `${name}.pdf` }

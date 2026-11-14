@@ -1,6 +1,7 @@
 /** "What is my stock worth?" — total, then brand rows that open into their models. */
 
 import DownloadButton from '@/components/DownloadButton'
+import TallySheetCard from '@/features/stock/TallySheetCard'
 import { ChevronDown, List as ListIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -32,6 +33,8 @@ export default function StockSummaryPage() {
           </div>
         }
       />
+      {/* owner 2026-11-14 (ADR-075): print every phone to count the stock by hand */}
+      <TallySheetCard />
       {isLoading || !data ? <Loading /> : (
         <>
           <section className="flex flex-col rounded-3xl bg-stockt px-5 py-4 text-stockt-fg">

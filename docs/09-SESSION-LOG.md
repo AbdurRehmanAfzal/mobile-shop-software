@@ -1559,3 +1559,22 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - pytest `test_login_activity` (new: off until the module is on, salesman sees nothing, the owner ends a login → 401 + refresh refused, re-login works, an old token refreshes, logout ends the login, UTC times), `test_modules` (opt-in), `test_auth`, plus the full suite.
 - tsc.
 - Playwright `login-activity` (new), `modules`, `offline`, `fingerprint`, `admin`, `admin-access`, `core-flow`.
+
+### Same day — PR #59 green; stock tally sheet, sharper PDFs (ADR-075)
+**Owner**: "stock tally karne ke liye PDF aur Excel … header mein shop name, number, date, brand / model wise count, debit credit … saari fields … PDF par saari fields nahi aatin aur A4 par print nahi nikalta … readable".
+**Found**:
+- The stock export's PDF is one wide table, so it does not fit A4.
+- The app's PDF shrank long pages to the canvas limit, so it came out blurred.
+**Done**:
+- `exports/tally.py` with `/exports/stock-tally` (pdf / xlsx / csv):
+  - A4 portrait page: header, figures, By brand / By model, every phone in two lines with Found / Note, items with Counted, signatures;
+  - Excel Summary / Phones / Items, set for A4;
+  - cost only with VIEW_COST.
+- `printPagePdf` draws each A4 page on its own at 2×.
+- TallySheetCard on the stock-worth and stock-count pages.
+- en / ur / roman strings + help, manual ch. 11, ADR-075.
+**Verified**:
+- pytest `test_stock_tally` (new: page, figures, Excel sheets / landscape / columns, salesman without cost, csv), `test_exports`.
+- tsc.
+- Playwright `stock-tally` (new: 24 phones, nothing wider than A4, A4 PDF from the browser = 2 pages, the app's own PDF 2 pages, 1588 px wide), `counter` (PDF download).
+- I looked at the A4 PDF and the app PDF pages.

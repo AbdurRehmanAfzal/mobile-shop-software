@@ -985,6 +985,16 @@ History lines can never be edited or deleted. A mistake is corrected by a new li
 
 ![A phone's history: sold, verified, sale returned, each with date, person and amount](shot:device-history)
 
+### Stock tally sheet (count on paper)
+
+On **Stock → What is my stock worth?** (and on **Stock count**) the **Stock tally sheet** card prints every phone on hand to count by hand.
+
+- **Print (A4)** opens the sheet for the printer (or "Save as PDF"); **Download** gives a **PDF** or an **Excel**.
+- The top: the shop's name, address and number, the date and who printed it; the figures (phones on hand, in the shop, out for repair / approval / loan, faulty, reserved, ID check pending, value at cost for the owner / manager and at asking, items, to get / to give, and cash + bank for the owner); counts **by brand** and **by model**.
+- Then every phone, brand by brand and model by model, two lines each so every field fits on A4: IMEI / IMEI 2 / serial, storage · RAM / colour, condition · grade / PTA · SIM lock, battery / region · SIM, barcode / shelf, status / days, cost / asking, a **Found** box to tick and a **Note** space. The column names repeat on each page; a phone is never cut between pages.
+- Then the items with **In books** and an empty **Counted** column, and signature lines (Counted by, Checked by, Date).
+- The Excel has a **Summary** sheet, a **Phones** sheet (one column per field, a Found column, filters, set to print A4 landscape one page wide) and an **Items** sheet.
+
 ### Stock count with the scanner
 
 Once a month (or whenever you feel something is missing) count the shelf with the scanner. The app tells you what is missing and what should not be there.

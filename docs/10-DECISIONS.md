@@ -362,6 +362,17 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-075 · 2026-11-14 · Accepted · A stock tally sheet for A4, and sharper PDFs
+**Context**: the shop counts stock by hand and needs a PDF / Excel with every field, a header with the shop and its figures, and counts by brand and model. The stock export's PDF put every field on one line, so it did not fit A4. The app's PDF drew the whole page once and shrank it to the phone's canvas limit, so long reports came out blurred.
+**Decision**:
+- `GET /exports/stock-tally?format=pdf|xlsx|csv` (`exports/tally.py`), read-only, over the phones the shop holds (in stock, faulty, in repair, approval, on loan).
+  - **Print page:** A4 portrait. The header has the shop, address, number, NTN, date and who printed it; 10–13 figure boxes; By brand / By model tables. Then every phone grouped brand → model, two lines a phone so every field fits, with a Found box and a Note column. The table header repeats; rows never split. Then the items with Counted, and signature lines.
+  - **Excel:** Summary / Phones / Items sheets. Phones has one column per field, Found, filters and frozen panes, and prints A4 landscape fit to one page wide with the header row repeated.
+  - Cost and cash appear only with `VIEW_COST`.
+- **App PDF** (`printPagePdf`, A4): page breaks are still found on the shrunk drawing (never through a line). Each page is then drawn again on its own at 2× and added to the PDF, so every page is sharp whatever the length. The thermal receipt path is unchanged. If a page cannot be drawn alone, the old shrunk slice is used.
+- UI: a **Stock tally sheet** card (Print (A4), Download / Share) on the stock-worth and stock-count pages.
+**Consequences**: every A4 report the app saves as PDF is now sharp, not only the tally.
+
 ## ADR-074 · 2026-11-14 · Accepted · Login sessions; the owner sees and ends them when the super admin allows
 **Context**: the owner wants to know where the software is logged in, who is active, and with what login time and activity. This is visible to the owner only when the super admin allows it. Asked choices:
 - the owner can see **and** log out a device;
