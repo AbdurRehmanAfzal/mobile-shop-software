@@ -159,6 +159,7 @@ export default function CashAccountsPage() {
       </Sheet>
 
       <RemoveSheet
+        warn="cashAccount"
         open={removing !== null}
         onClose={() => setRemoving(null)}
         name={removing ? label(removing) : ''}

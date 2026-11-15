@@ -1,4 +1,5 @@
 import BillActions from './BillActions'
+import DeleteWarning from '@/components/DeleteWarning'
 import PurchaseReturnSheet from './PurchaseReturnSheet'
 import DownloadButton from '@/components/DownloadButton'
 import Help from '@/components/Help'
@@ -44,7 +45,8 @@ export function PurchaseDetailPage() {
   // owner 2026-11-15 (ADR-081): opened from a phone's page with ?return=<device id>
   const returnFor = new URLSearchParams(window.location.search).get('return')
   const [returning, setReturning] = useState(() => !!returnFor)
-  const [voiding, setVoiding] = useState(false)
+  // ADR-090: opened from a phone's page with ?delete=1, the delete sheet opens by itself
+  const [voiding, setVoiding] = useState(() => new URLSearchParams(window.location.search).get('delete') === '1')
   const [reason, setReason] = useState('')
   const voidM = useDocMutation<{ reason: string }, Purchase>('POST', () => `/api/v1/purchases/${id}/void`)
   // owner 2026-11-09 (ADR-056): the wrong dealer / customer was picked
@@ -81,7 +83,8 @@ export function PurchaseDetailPage() {
       {p.status === 'posted' ? (
         <div className="grid grid-cols-2 gap-2">
           <BiButton text="pret.button" size="md" variant="secondary" onClick={() => setReturning(true)} data-testid="purchase-return" />
-          {canManage ? <BiButton text="common.void" size="md" variant="danger" onClick={() => setVoiding(true)} /> : null}
+          {/* ADR-090: an exchange's trade-in is deleted with its sale, as one */}
+          {canManage ? (p.exchange_id ? <BillActions kind="exchange" id={p.exchange_id} no={p.no} canDelete editTo={null} label="del.deleteExchange" /> : <BiButton text="common.void" size="md" variant="danger" onClick={() => setVoiding(true)} />) : null}
           {canManage ? <div className="col-span-2 flex items-center gap-1"><div className="flex-1"><BiButton text="purchase.paidFix.button" size="md" variant="secondary" full onClick={() => setPaidFix(true)} data-testid="purchase-paid-change" /></div><Help term="purchase.paidFix" size="sm" /></div> : null}
           {canManage ? <div className="col-span-2 flex items-center gap-1"><div className="flex-1"><BiButton text="purchase.fix.partyButton" size="md" variant="secondary" full onClick={() => { setTo(null); setReason(''); move.reset(); setMoving(true) }} data-testid="purchase-party-change" /></div><Help term="purchase.fixParty" size="sm" /></div> : null}
         </div>
@@ -100,6 +103,7 @@ export function PurchaseDetailPage() {
       {p.status === 'posted' ? <PurchaseReturnSheet p={p} open={returning} onClose={() => setReturning(false)} preselect={returnFor ? p.lines.filter((l) => l.device_id === returnFor && !l.returned_at).map((l) => l.id) : undefined} /> : null}
       <Sheet open={voiding} onClose={() => setVoiding(false)} title="common.void">
         <div className="flex flex-col gap-3">
+          <DeleteWarning kind="purchase" />
           <BiInput label="common.reason" value={reason} onChange={(e) => setReason(e.target.value)} minLength={3} autoFocus help={<Help term="void" size="sm" />} />
           <ErrorText error={voidM.error} />
           <BiButton text="common.confirm" variant="danger" full loading={voidM.isPending} disabled={reason.trim().length < 3} onClick={async () => { await voidM.mutateAsync({ reason }); setVoiding(false) }} />
@@ -125,7 +129,7 @@ export function PaymentsPage() {
             <Row title={p.party_name} sub={<span className="flex items-center gap-1.5"><span dir="ltr">{p.no}</span> · <span dir="ltr">{fmtDate(p.date)}</span> · {pick(`pay.${p.method}`)}{p.status === 'voided' ? <Chip text="sale.status.void" tone="muted" /> : null}</span>} right={<MoneyText value={p.direction === 'in' ? p.amount : -Number(p.amount)} />} onClick={() => nav(`/parties/${p.party_id}`)} />
             </div>
             {/* owner 2026-11-15 (ADR-087): delete a payment entered by mistake; Edit opens the person's khata */}
-            {p.status !== 'voided' ? <BillActions kind="payment" id={p.id} no={p.no} canDelete={payRole === 'owner' || payRole === 'manager'} editTo={`/parties/${p.party_id}`} /> : null}
+            {p.status !== 'voided' ? <BillActions kind={p.purpose === 'lending' ? 'lending' : 'payment'} id={p.id} no={p.no} canDelete={payRole === 'owner' || payRole === 'manager'} editTo={`/parties/${p.party_id}`} /> : null}
             </div>
           ))}
         </List>

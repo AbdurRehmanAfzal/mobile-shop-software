@@ -113,6 +113,7 @@ class SaleOut(BaseModel):
     party_id: uuid.UUID | None
     party_name: str | None = None
     payment: PaymentDetailOut | None = None
+    exchange_id: uuid.UUID | None = None  # ADR-090: this sale is the new half of an exchange
     created_by_name: str | None = None
     party_balance_after: Decimal | None = None
     date: dt.date

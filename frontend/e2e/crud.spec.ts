@@ -71,14 +71,14 @@ test('expense: edit amount, then cancel it', async ({ page }) => {
   await page.getByRole('button', { name: 'Save' }).click()
   await expect(page.getByLabel('Amount')).toHaveCount(0)
   await page.getByRole('button', { name: /Tea/ }).click()
-  await page.getByRole('button', { name: 'Edit' }).click()
+  await page.getByTestId('sheet-backdrop').getByRole('button', { name: 'Edit' }).click()
   await page.getByLabel('Amount').fill('450')
   await page.getByRole('button', { name: 'Save' }).click()
   await expect(page.getByLabel('Amount')).toHaveCount(0)
   await expect(page.getByText('450').first()).toBeVisible()
 
   await page.getByRole('button', { name: /Tea/ }).first().click()
-  await page.getByRole('button', { name: 'Cancel this expense' }).click()
+  await page.getByTestId('sheet-backdrop').getByRole('button', { name: 'Cancel this expense' }).click()
   await page.getByLabel('Why?').fill('entered by mistake')
   await page.getByRole('button', { name: 'Cancel this expense' }).last().click()
   // both the edited-away and the cancelled expense show crossed out; nothing is left to tap

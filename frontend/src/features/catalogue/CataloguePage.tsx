@@ -5,6 +5,7 @@ import { Pencil, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { BiButton, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
+import RemoveSheet from '@/components/RemoveSheet'
 import { BtnText, Chip, ErrorText, List, PageHeader, Sheet } from '@/components/ui'
 import { parseStorage, useBrands, useCatalogueEdit, useColours, useModels, useStorages, type CatalogueKind } from '@/lib/queries'
 import QuickAdd from './QuickAdd'
@@ -29,14 +30,10 @@ export default function CataloguePage() {
     : tab === 'storages' ? storages ?? []
     : colours ?? []
 
-  async function remove(r: RowData) {
-    if (!window.confirm(pick({ en: `Delete ${r.name}?`, ur: `${r.name} ختم کریں؟` }))) return
+  const [removing, setRemoving] = useState<RowData | null>(null)
+  function remove(r: RowData) {
     setError(null)
-    try {
-      await edit.remove(tab, r.id)
-    } catch (e) {
-      setError(e)
-    }
+    setRemoving(r)
   }
 
   // one "?" on the first built-in row explains them all (docs/33)
@@ -108,6 +105,8 @@ export default function CataloguePage() {
       <Sheet open={editing !== null} onClose={() => setEditing(null)} title="catalogue.rename">
         {editing ? <RenameForm key={editing.id} kind={tab} row={editing} onDone={() => setEditing(null)} /> : null}
       </Sheet>
+      {/* ADR-090: what deleting does, with an example */}
+      <RemoveSheet open={removing !== null} onClose={() => setRemoving(null)} title="catalogue.delete" warn="catalogue" name={removing?.name ?? ''} onConfirm={async () => { await edit.remove(tab, removing!.id) }} />
     </div>
   )
 }

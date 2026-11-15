@@ -280,6 +280,23 @@ PTA ka page app ke andar nahi khul sakta: PTA is ki ijazat nahi deta, aur is ka 
 
 Jis bill ka mobile aage ja chuka ho woh delete nahi hota; app yeh bata deti hai. Maslan aisi purchase jis ka mobile bik chuka ho, ya aisi sale jis ka mobile wapas aa chuka ho. Is ki jagah **Wapsi** (gahak) ya **Bechne wale ko wapas** istemal karein.
 
+### Har jagah Edit / Delete, aur delete ka asar
+
+Har entry ki row par wohi do chhote button hain: **✎ Edit** aur **🗑 Delete**. Ye sale, purchase, payment, len-den, kharcha, repair, log aur accessories sab par milte hain.
+
+- **Kharche**: Edit kharche ka form kholta hai. Raqam, category ya note badlein aur **Mehfooz karein** dabayein.
+- **Log aur accessories**: Edit record ko us ke form ke saath kholta hai.
+- **Phone**: us ke page par **Delete (us ka purchase bill)** ya **Delete (us ka sale bill)** us bill ka delete kholta hai.
+
+Kuch bhi delete hone se pehle ek laal dabba **Kya hoga** batata hai ke stock, galle, khate aur profit report mein kya badlega, ek **Misaal** ke saath. Kharche ki ek aam misaal:
+
+> Chai Rs. 500 ki jagah 5,000 likha → Rs. 5,000 galle mein wapas; phir Rs. 500 dobara daalein, ya Edit istemal karein.
+
+- Delete maalik aur manager ke liye hai, aur wajah poochta hai.
+- Delete hui entry record mein **Deleted** (ya kati hui) rehti hai, kis ne, kab aur kyun ke saath. Kuch mitaya nahi jata, is liye hisaab hamesha poora rehta hai.
+- **Exchange**: us ke sale ya purchase bill par **Ye exchange delete karein** dono hisse ek saath wapas karta hai. Naya phone stock mein wapas, purana gahak ko wapas, aur diya gaya refund ulta ho jata hai. Akela ek hissa delete nahi hota.
+- **Jab kuch is par tika ho** to app batati hai ke pehle kya wapas karna hai. Misaal: jis sale ka udhaar baad mein ada hua — pehle wo payment delete karein, phir sale.
+
 ### Lock mobile (iCloud / Google FRP): parts ke liye ya jaisa hai waisa bechne ke liye
 
 Dukaanein lock mobile parts (camera, screen, battery …) ke liye ya jaisa hai waisa aage bechne ke liye khareedti hain. Aksar in ka IMEI nazar nahi aata, is liye in ka apna mukhtasar form hai.

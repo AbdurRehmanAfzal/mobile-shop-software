@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/auth'
 import { useState } from 'react'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
+import DeleteWarning from '@/components/DeleteWarning'
 import { ErrorText, fmtDate, Sheet } from '@/components/ui'
 import PaymentForm from '@/features/payments/PaymentForm'
 import { api, post } from '@/lib/api'
@@ -201,6 +202,7 @@ export default function PartyLending({ party }: { party: Party }) {
               <span className="flex flex-col"><span className="font-bold">{pick(cancelling.direction === 'out' ? 'lending.give' : 'lending.take')}</span><span className={`text-muted ${small}`} dir="ltr">{cancelling.no} · {fmtDate(cancelling.date)}</span></span>
               <span className="num text-lg font-bold" dir="ltr">{n(cancelling.amount)}</span>
             </div>
+            <DeleteWarning kind="lending" />
             <BiLabel text="lending.cancelHint" size="sm" tone="text-muted" />
             <BiInput label="common.reason" value={why} onChange={(e) => setWhy(e.target.value)} maxLength={200} help={<Help term="lending.cancel" size="sm" />} />
             <ErrorText error={err} />

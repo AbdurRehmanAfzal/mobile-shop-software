@@ -4,7 +4,10 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiSegmented, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import { BalanceLabel, BtnText, Empty, List, Loading, PageHeader, Row, SearchBox, Sheet } from '@/components/ui'
-import { useParties } from '@/lib/queries'
+import RowActions from '@/components/RowActions'
+import { api } from '@/lib/api'
+import { useAuth } from '@/lib/auth'
+import { useInvalidate, useParties } from '@/lib/queries'
 import PartyForm from './PartyForm'
 
 type Filter = 'all' | 'customer' | 'supplier' | 'shop' | 'balance'
@@ -25,6 +28,8 @@ export default function PartiesPage() {
   const [sp] = useSearchParams()
   const [filter, setFilter] = useState<Filter>(((['customer', 'supplier', 'shop'] as const).find((k) => k === sp.get('kind')) ?? 'all') as Filter)
   const [adding, setAdding] = useState(false)
+  const canDelete = useAuth((s) => s.me?.user.role === 'owner' || s.me?.user.role === 'manager')
+  const inv = useInvalidate()
   const params = { q: q || undefined, kind: filter === 'all' || filter === 'balance' ? undefined : filter, with_balance: filter === 'balance' ? true : undefined }
   const { data, isLoading } = useParties(params)
 
@@ -52,7 +57,11 @@ export default function PartiesPage() {
       ) : (
         <List>
           {data.map((p) => (
-            <Row key={p.id} title={p.name} sub={<span dir="ltr">{p.phone}</span>} right={<BalanceLabel value={p.balance} />} onClick={() => nav(`/parties/${p.id}`)} />
+            <div key={p.id} className="flex items-center">
+              <div className="min-w-0 flex-1"><Row title={p.name} sub={<span dir="ltr">{p.phone}</span>} right={<BalanceLabel value={p.balance} />} onClick={() => nav(`/parties/${p.id}`)} /></div>
+              {/* ADR-090: edit / delete from the row */}
+              <RowActions editTo={`/parties/${p.id}?edit=1`} warn="party" name={p.name} canDelete={canDelete} onDelete={async () => { await api('DELETE', `/api/v1/parties/${p.id}`); await inv('parties', 'party') }} />
+            </div>
           ))}
         </List>
       )}

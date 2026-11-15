@@ -280,6 +280,23 @@ In **Sales list** and **Purchases list**, every bill has two small buttons:
 
 A bill whose phone has moved on cannot be deleted; the app says so. For example, a purchase whose phone was already sold, or a sale whose phone came back. Use **Return** (customer) or **Return to the seller** instead.
 
+### Edit / Delete everywhere, and what a delete does
+
+Every entry has the same two small buttons on its row: **✎ Edit** and **🗑 Delete**. You find them on sales, purchases, payments, len-den, expenses, repairs, people and accessories.
+
+- **Expenses**: Edit opens the expense's form. Change the amount, the category or the note, and tap **Save**.
+- **People and accessories**: Edit opens the record with its form already open.
+- **A phone**: on its page, **Delete (its purchase bill)** or **Delete (its sale bill)** opens that bill's delete.
+
+Before anything is deleted, a red box **What will happen** says what changes in stock, the galla, the khata and the profit report, with an **Example**. A typical one for an expense:
+
+> Tea Rs. 500 typed as 5,000 → Rs. 5,000 back into the galla; then add Rs. 500 again, or use Edit instead.
+
+- Delete is for the owner and the manager, and asks for a reason.
+- A deleted entry stays in the record as **Deleted** (or crossed out), with who, when and why. Nothing is wiped, so the hisaab always adds up.
+- **Exchange**: on its sale or purchase bill, **Delete this exchange** undoes both halves together. The new phone comes back into stock, the old phone goes back to the customer, and a refund paid out is reversed. One half alone cannot be deleted.
+- **When something depends on it**, the app says what to undo first. For example, a sale whose udhaar was later paid: delete that payment first, then the sale.
+
 ### Locked phones (iCloud / Google FRP): for parts or to sell as they are
 
 Shops buy locked phones for their parts (camera, screen, battery …) or to sell them on as they are. Their IMEI often cannot be seen, so they have their own short form.

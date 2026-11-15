@@ -33,7 +33,8 @@ export default function AccessoryDetailPage() {
   const { data: it, isLoading } = useGet<Item>(['item', id], id ? `/api/v1/accessories/${id}` : null)
   const { data: batches } = useGet<Batch[]>(['item-batches', id], id && canCost ? `/api/v1/accessories/${id}/batches` : null)
   const { data: tl } = useGet<TimelineRow[]>(['item-timeline', id], id ? `/api/v1/accessories/${id}/timeline` : null)
-  const [editing, setEditing] = useState(false)
+  // ADR-090: a row's Edit opens the form straight away (?edit=1)
+  const [editing, setEditing] = useState(() => new URLSearchParams(window.location.search).get('edit') === '1')
   const [adjusting, setAdjusting] = useState(false)
   const [labels, setLabels] = useState(false)
   const [removing, setRemoving] = useState(false)
@@ -189,7 +190,7 @@ export default function AccessoryDetailPage() {
           </div>
         ) : null}
       </Sheet>
-      <RemoveSheet open={removing} onClose={() => setRemoving(false)} name={it.name} onConfirm={async () => { await api('DELETE', `/api/v1/accessories/${it.id}`); await inv('accessories'); nav('/accessories') }} />
+      <RemoveSheet open={removing} onClose={() => setRemoving(false)} warn="accessory" name={it.name} onConfirm={async () => { await api('DELETE', `/api/v1/accessories/${it.id}`); await inv('accessories'); nav('/accessories') }} />
     </div>
   )
 }

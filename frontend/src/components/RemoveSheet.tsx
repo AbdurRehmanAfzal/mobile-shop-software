@@ -4,6 +4,7 @@
 import { useState, type ReactNode } from 'react'
 import { BiButton, BiInput, BiLabel, type BiText } from './Bilingual'
 import { ErrorText, Sheet } from './ui'
+import DeleteWarning, { type DelKind } from './DeleteWarning'
 
 export default function RemoveSheet({
   open,
@@ -12,6 +13,7 @@ export default function RemoveSheet({
   name,
   hint = 'crud.deleteHint',
   reason = false,
+  warn,
   onConfirm,
 }: {
   open: boolean
@@ -20,6 +22,8 @@ export default function RemoveSheet({
   name: ReactNode
   hint?: string | BiText
   reason?: boolean
+  /** ADR-090: what the delete does, with an example (shown instead of the hint) */
+  warn?: DelKind
   onConfirm: (reason: string) => Promise<unknown>
 }) {
   const [text, setText] = useState('')
@@ -36,7 +40,7 @@ export default function RemoveSheet({
         <div className="card text-lg font-bold" dir="auto">
           {name}
         </div>
-        <BiLabel text={hint} size="md" tone="text-muted" />
+        {warn ? <DeleteWarning kind={warn} /> : <BiLabel text={hint} size="md" tone="text-muted" />}
         {reason ? <BiInput label="crud.reason" value={text} onChange={(e) => setText(e.target.value)} autoFocus /> : null}
         <ErrorText error={error} />
         <BiButton

@@ -3,8 +3,10 @@
  *  of the shop can resume it. Nothing is sold, and no stock moves, until it is completed. */
 
 import { CirclePause, Play, Trash2 } from 'lucide-react'
+import { useState } from 'react'
 import { BiLabel, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
+import RemoveSheet from '@/components/RemoveSheet'
 import { Empty, Loading, Sheet, fmtDateTime } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useGet, useInvalidate } from '@/lib/queries'
@@ -45,13 +47,14 @@ export function HeldSalesSheet<C>({ open, onClose, onResume }: { open: boolean; 
   const inv = useInvalidate()
   const { data, isLoading } = useHeldSales<C>()
 
-  async function remove(h: HeldSale<C>) {
-    if (!window.confirm(pick('hold.removeAsk'))) return
-    await api('DELETE', `/api/v1/sales/held/${h.id}`)
-    inv('held-sales')
+  // ADR-090: the delete sheet says what happens (nothing was sold), with an example
+  const [removing, setRemoving] = useState<HeldSale<C> | null>(null)
+  function remove(h: HeldSale<C>) {
+    setRemoving(h)
   }
 
   return (
+    <>
     <Sheet open={open} onClose={onClose} title="hold.list">
       {isLoading ? <Loading /> : !data?.length ? <Empty text="hold.none" /> : (
         <div className="flex flex-col gap-2">
@@ -79,5 +82,7 @@ export function HeldSalesSheet<C>({ open, onClose, onResume }: { open: boolean; 
         </div>
       )}
     </Sheet>
+    <RemoveSheet open={removing !== null} onClose={() => setRemoving(null)} warn="held" name={removing ? removing.label || pick('hold.noName') : ''} onConfirm={async () => { await api('DELETE', `/api/v1/sales/held/${removing!.id}`); inv('held-sales') }} />
+    </>
   )
 }

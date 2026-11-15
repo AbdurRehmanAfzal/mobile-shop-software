@@ -9,6 +9,8 @@ import { BiButton, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import { kindLabel } from '@/components/ItemKinds'
 import { BtnText, Chip, Empty, fmtDate, List, Loading, MoneyText, PageHeader, Row, SearchBox, Sheet } from '@/components/ui'
+import RowActions from '@/components/RowActions'
+import { api } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
 import { useScan } from '@/lib/scanner'
@@ -119,13 +121,18 @@ export default function AccessoriesPage() {
       ) : isLoading ? <Loading /> : !data?.length ? <Empty text="acc.none" /> : (
         <List>
           {data.map((a) => (
+            <div key={a.id} className="flex items-center">
+            <div className="min-w-0 flex-1">
             <Row
-              key={a.id}
               title={<span className="flex items-center gap-1.5">{ur && a.name_ur ? a.name_ur : a.name}{a.grade && a.grade !== 'unspecified' ? <span className="rounded-md bg-ground px-1.5 py-0.5 text-[11px] font-bold text-muted">{gradeLabel(pick, a.grade, exists)}</span> : null}</span>}
               sub={<span className="flex flex-wrap items-center gap-1.5"><span dir="ltr">{a.sku}</span> · {kindLabel(pick, a.category)}{a.brand ? ` · ${a.brand}` : ''}{a.color ? ` · ${a.color}` : ''}{a.compatible ? ` · ${a.compatible}` : ''}{a.location ? <span className="rounded-md border border-line px-1 text-[11px]">{a.location}</span> : null} {a.low_stock ? <Chip text={a.qty <= 0 ? 'acc.outOfStock' : 'acc.low'} tone="bad" /> : null}</span>}
               right={<div className="flex flex-col items-end"><span className={`num text-lg ${a.qty < 0 ? 'text-payable' : ''}`} dir="ltr">{a.qty}</span><MoneyText value={a.price} tone="muted" size="sm" /></div>}
               onClick={() => nav(`/accessories/${a.id}`)}
             />
+            </div>
+            {/* ADR-090: edit / delete from the row */}
+            <RowActions editTo={`/accessories/${a.id}?edit=1`} warn="accessory" name={ur && a.name_ur ? a.name_ur : a.name} canDelete={canCost} onDelete={async () => { await api('DELETE', `/api/v1/accessories/${a.id}`); await inv('accessories') }} />
+            </div>
           ))}
         </List>
       )}

@@ -11309,5 +11309,75 @@
     "adminPin": "Naya quick PIN",
     "newPin": "Naya PIN (4–6 hindse)",
     "pinSet": "PIN lag gaya. Dukandar ko batayen:"
+  },
+  "del": {
+    "whatHappens": "Kya hoga",
+    "example": "Misaal",
+    "rowEdit": "Edit",
+    "rowDelete": "Delete",
+    "deleteExchange": "Ye exchange delete karein",
+    "deleted": "Deleted",
+    "sale": {
+      "effect": "Sale cancel ho jayegi aur record mein Deleted ke naam se rahegi. Phone / saman wapas stock mein, liye gaye paise galle se nikal jayenge aur gahak ke khate se udhaar hat jayega. Profit report mein shamil nahi hogi.",
+      "example": "Samsung A15 Rs. 38,000 mein biki, Rs. 30,000 mile → A15 wapas stock mein, galle se Rs. 30,000 nikle, Bilal ke khate se Rs. 8,000 hate."
+    },
+    "purchase": {
+      "effect": "Purchase cancel ho jayegi aur Deleted ke naam se rahegi. Phone / saman stock se nikal jayega, diye gaye paise galle mein wapas aur dealer ka khata pehle jaisa. Agar phone bik gaya ya wapas ho gaya to mumkin nahi.",
+      "example": "iPhone 12 Rs. 90,000 mein liya, Rs. 50,000 diye → iPhone stock se nikla, Rs. 50,000 galle mein wapas, Ali Traders ke khate se Rs. 40,000 hate."
+    },
+    "repair": {
+      "effect": "Repair job cancel aur Deleted ke naam se rahega. Liya gaya advance ulta ho jayega, lab ka khula trip cancel aur dukaan ka phone wapas stock mein.",
+      "example": "Screen job, Rs. 2,000 advance → galle se Rs. 2,000 nikle (wapas karein), job Deleted dikhega."
+    },
+    "payment": {
+      "effect": "Payment cancel aur Deleted ke naam se rahegi. Paise galle se wapas nikal / aa jayenge, bande ka khata pehle jaisa aur jo bill is se ada hue the wo dobara baqi dikhenge.",
+      "example": "Bilal se Rs. 10,000 mile → galla −10,000, Bilal par dobara Rs. 10,000 baqi."
+    },
+    "lending": {
+      "effect": "Len-den cancel aur Deleted ke naam se rahega. Paise galle mein wapas ya galle se nikal jayenge aur bande ka khata pehle jaisa.",
+      "example": "Ghalti se Imran ko Rs. 5,000 diye → Rs. 5,000 galle mein wapas, Imran par is ka kuch baqi nahi."
+    },
+    "expense": {
+      "effect": "Kharcha cancel aur kata hua dikhega. Paise galle / account mein wapas aa jayenge aur profit report mein nahi ginay jayenge.",
+      "example": "Chai Rs. 500 ki jagah 5,000 likha → Rs. 5,000 galle mein wapas; phir Rs. 500 dobara daalein, ya Edit istemal karein."
+    },
+    "exchange": {
+      "effect": "Poora exchange cancel: naye phone ki sale aur purane phone ki purchase dono Deleted. Naya phone wapas stock mein, purana gahak ko wapas, diya gaya refund ulta aur khata pehle jaisa.",
+      "example": "Purana A12 Rs. 20,000 mein le kar naya A15 Rs. 38,000 ka diya → A15 wapas stock mein, A12 stock se nikla, galla aur Bilal ka khata exchange se pehle jaisa."
+    },
+    "party": {
+      "effect": "Agar is bande ka koi bill ya payment nahi to naam hat jayega. Agar hai to sirf list se chhup jayega — purane bill rahenge. Pehle khata zero hona chahiye.",
+      "example": "Gahak ghalti se do dafa bana, koi bill nahi → hat gaya. Purana gahak jis ke bill hain → chhup gaya, bill rahe."
+    },
+    "accessory": {
+      "effect": "Agar ye cheez kabhi khareedi ya bechi nahi gayi to hat jayegi. Warna chhup jayegi aur purane bill rahenge. Pehle stock 0 hona chahiye.",
+      "example": "Cover ka naam ghalat likha, kabhi nahi bika → hat gaya."
+    },
+    "oldStock": {
+      "effect": "Purane stock mein daala gaya phone stock se nikal jayega aur us ki qeemat stock ki value se kam ho jayegi. Sirf jab tak wo stock mein hai aur us par kuch nahi hua.",
+      "example": "Oppo A57 Rs. 25,000 ka do dafa opening stock mein daala → ek hata, stock value −25,000."
+    },
+    "cashAccount": {
+      "effect": "Jis account mein koi entry nahi wo hat jayega. Jis mein entries hain wo chhup jayega; us ki history rahegi.",
+      "example": "Bank account ghalti se bana, kabhi istemal nahi hua → hat gaya."
+    },
+    "expenseCategory": {
+      "effect": "Jis category mein koi kharcha nahi wo hat jayegi. Jo istemal mein hai wo delete nahi hogi — us ka naam badal dein.",
+      "example": "'Chai' do dafa bani, doosri kabhi istemal nahi hui → hat gayi."
+    },
+    "catalogue": {
+      "effect": "Aap ka banaya hua brand, model, storage ya rang sirf tab hatega jab koi phone use na kar raha ho.",
+      "example": "Model 'Galxy A15' likha, kabhi istemal nahi hua → hat gaya."
+    },
+    "held": {
+      "effect": "Roka hua cart phenk diya jayega. Kuch bika nahi tha, is liye stock, galla aur khata nahi badlenge.",
+      "example": "Gahak chala gaya, cart roka hua tha → hat gaya, phone stock mein hi raha."
+    },
+    "labTrip": {
+      "effect": "Lab ka trip cancel: phone dukaan par wapas gina jayega. Koi paisa nahi hilega (lab ne charge nahi kiya tha).",
+      "example": "Ghalti se Ali Lab bheja → trip cancel, job wapas dukaan ke paas."
+    },
+    "deletePurchase": "Delete (us ka purchase bill)",
+    "deleteSale": "Delete (us ka sale bill)"
   }
 }

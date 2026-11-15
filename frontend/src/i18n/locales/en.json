@@ -11309,5 +11309,75 @@
     "adminPin": "New quick PIN",
     "newPin": "New PIN (4–6 digits)",
     "pinSet": "PIN set. Tell the shopkeeper:"
+  },
+  "del": {
+    "whatHappens": "What will happen",
+    "example": "Example",
+    "rowEdit": "Edit",
+    "rowDelete": "Delete",
+    "deleteExchange": "Delete this exchange",
+    "deleted": "Deleted",
+    "sale": {
+      "effect": "The sale is cancelled and kept in the record as Deleted. The phone / items go back into stock, the money taken comes out of the galla and any udhaar comes off the customer's khata. Profit reports no longer count it.",
+      "example": "Samsung A15 sold for Rs. 38,000, Rs. 30,000 paid → the A15 is back in stock, Rs. 30,000 out of the galla, Rs. 8,000 off Bilal's khata."
+    },
+    "purchase": {
+      "effect": "The purchase is cancelled and kept as Deleted. The phone / items leave stock, the money you paid comes back into the galla and the dealer's khata goes back to what it was. Not possible once the phone was sold or returned.",
+      "example": "iPhone 12 bought for Rs. 90,000, Rs. 50,000 paid → the iPhone leaves stock, Rs. 50,000 back into the galla, Rs. 40,000 off Ali Traders' khata."
+    },
+    "repair": {
+      "effect": "The repair job is cancelled and kept as Deleted. An advance taken is reversed, an open lab trip is cancelled and a shop phone goes back to stock.",
+      "example": "Screen job with Rs. 2,000 advance → Rs. 2,000 out of the galla (give it back), the job shows Deleted."
+    },
+    "payment": {
+      "effect": "The payment is cancelled and kept as Deleted. The money goes back out of / into the galla, the person's khata is as it was before, and bills it paid show unpaid again.",
+      "example": "Received Rs. 10,000 from Bilal → galla −10,000, Bilal owes Rs. 10,000 again."
+    },
+    "lending": {
+      "effect": "The len-den is cancelled and kept as Deleted. The money goes back to the galla or out of it, and the person's khata is as it was before.",
+      "example": "Gave Rs. 5,000 to Imran by mistake → Rs. 5,000 back in the galla, Imran owes nothing for it."
+    },
+    "expense": {
+      "effect": "The expense is cancelled and kept crossed out. The money comes back into the galla / account and the profit report no longer counts it.",
+      "example": "Tea Rs. 500 typed as 5,000 → Rs. 5,000 back into the galla; then add Rs. 500 again, or use Edit instead."
+    },
+    "exchange": {
+      "effect": "The whole exchange is cancelled: the new phone's sale and the old phone's purchase are both Deleted. The new phone comes back into stock, the old one goes back to the customer, a refund paid out is reversed and the khata is as before.",
+      "example": "Old A12 taken at Rs. 20,000 for a new A15 at Rs. 38,000 → the A15 is back in stock, the A12 leaves stock, the galla and Bilal's khata are as before the exchange."
+    },
+    "party": {
+      "effect": "If this person has no bills or payments, the name is removed. If they have, they are only hidden from lists — their old bills stay. Their khata must be zero first.",
+      "example": "Customer added twice by mistake, no bills → removed. Old customer with bills → hidden, the bills stay."
+    },
+    "accessory": {
+      "effect": "If this item was never bought or sold, it is removed. Otherwise it is hidden and its old bills stay. Its stock must be 0 first.",
+      "example": "Cover typed with the wrong name, never sold → removed."
+    },
+    "oldStock": {
+      "effect": "The phone added as old stock leaves stock and its cost comes out of the stock value. Only while it is still in stock and nothing was done with it.",
+      "example": "Oppo A57 added twice as opening stock at Rs. 25,000 → one removed, stock value −25,000."
+    },
+    "cashAccount": {
+      "effect": "An account with no entries is removed. One that has entries is hidden; its history stays.",
+      "example": "Bank account added by mistake, never used → removed."
+    },
+    "expenseCategory": {
+      "effect": "A category with no expenses is removed. One that is in use cannot be deleted — rename it instead.",
+      "example": "'Tea' added twice, the second never used → removed."
+    },
+    "catalogue": {
+      "effect": "A brand, model, storage or colour you added is removed, only if no phone uses it.",
+      "example": "Model typed 'Galxy A15', never used → removed."
+    },
+    "held": {
+      "effect": "The held cart is thrown away. Nothing was sold, so stock, galla and khata do not change.",
+      "example": "Cart held for a customer who left → removed, the phone stays in stock."
+    },
+    "labTrip": {
+      "effect": "The lab trip is cancelled: the phone counts as back at the shop. No money moves (the lab had not charged).",
+      "example": "Sent to Ali Lab by mistake → the trip is cancelled, the job is back with the shop."
+    },
+    "deletePurchase": "Delete (its purchase bill)",
+    "deleteSale": "Delete (its sale bill)"
   }
 }

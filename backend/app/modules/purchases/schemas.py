@@ -94,6 +94,9 @@ class PurchaseOut(BaseModel):
     id: uuid.UUID
     no: str
     payment: PaymentDetailOut | None = None
+    exchange_id: uuid.UUID | None = (
+        None  # ADR-090: this purchase is the trade-in half of an exchange
+    )
     created_by_name: str | None = None
     kind: PurchaseKind
     party_id: uuid.UUID

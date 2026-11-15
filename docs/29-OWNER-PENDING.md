@@ -213,6 +213,8 @@ Close the app fully and open it again first (or install the newest APK from the 
 
 **Duplicate brands (2026-11-15, ADR-089)**: nothing to run by hand — the deploy runs `alembic upgrade head`. Before deploying, take the usual database backup. After it: Purchase → brand list shows each brand once (one Apple); Stock → summary shows one Apple whose phone count is the two old rows added (e.g. 98 + 15 = 113) and the same total value; Expenses → categories once each.
 
+**Edit / Delete everywhere (2026-11-15, ADR-090)**: Expenses → each row has ✎ / 🗑; tap 🗑 → the red "What will happen" box with an example → reason → Delete; the row is crossed out and the galla is back. People / Accessories → ✎ opens the form, 🗑 shows the warning. Make an exchange → open its sale bill → "Delete this exchange" → both phones and the galla are as before. A sale with a later payment → Delete → the app says to delete the payment first.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

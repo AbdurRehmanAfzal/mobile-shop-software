@@ -1,4 +1,5 @@
 import BillActions from '@/features/more/BillActions'
+import DeleteWarning from '@/components/DeleteWarning'
 import DownloadButton from '@/components/DownloadButton'
 import { FbrBillStatus } from '@/features/more/FbrCard'
 import { Plus } from 'lucide-react'
@@ -84,7 +85,8 @@ export function SaleDetailPage() {
   const role = useAuth((s) => s.me?.user.role)
   const { data: inv, isLoading } = useSale(id)
   const [returning, setReturning] = useState(false)
-  const [voiding, setVoiding] = useState(false)
+  // ADR-090: opened from a phone's page with ?delete=1, the delete sheet opens by itself
+  const [voiding, setVoiding] = useState(() => new URLSearchParams(window.location.search).get('delete') === '1')
   const [reason, setReason] = useState('')
   const [selected, setSelected] = useState<string[]>([])
   const [settlement, setSettlement] = useState<'refund' | 'credit' | 'income'>('refund')
@@ -152,7 +154,8 @@ export function SaleDetailPage() {
         <BiButton text="sale.printThermal" size="md" onClick={() => openPrintable(`/api/v1/sales/${inv.id}/receipt?format=thermal`)} />
         <BiButton text="sale.printA4" size="md" variant="secondary" onClick={() => openPrintable(`/api/v1/sales/${inv.id}/receipt?format=a4`)} />
         {active && inv.party_id ? <BiButton text="sale.return" size="md" variant="secondary" onClick={() => { setSelected(inv.lines.filter((l) => !l.returned_at).map((l) => l.id)); setReturning(true) }} /> : null}
-        {active && canManage ? <span className="flex items-center gap-1"><BiButton text="common.void" size="md" variant="danger" onClick={() => setVoiding(true)} /><Help term="void" /></span> : null}
+        {/* ADR-090: an exchange's sale is deleted with its trade-in, as one */}
+        {active && canManage ? (inv.exchange_id ? <span className="col-span-2 flex items-center gap-1"><BillActions kind="exchange" id={inv.exchange_id} no={inv.no} canDelete editTo={null} label="del.deleteExchange" /><Help term="void" /></span> : <span className="flex items-center gap-1"><BiButton text="common.void" size="md" variant="danger" onClick={() => setVoiding(true)} /><Help term="void" /></span>) : null}
       </div>
       <DocActions path={`/api/v1/sales/${inv.id}/receipt?format=a4`} name={`invoice-${inv.no}`} title={inv.no} picker={false} />
 
@@ -184,6 +187,7 @@ export function SaleDetailPage() {
       </Sheet>
       <Sheet open={voiding} onClose={() => setVoiding(false)} title="common.void">
         <div className="flex flex-col gap-3">
+          <DeleteWarning kind="sale" />
           <BiInput label="common.reason" help={<Help term="void" size="sm" />} value={reason} onChange={(e) => setReason(e.target.value)} minLength={3} autoFocus />
           <ErrorText error={voidM.error} />
           <BiButton text="common.confirm" variant="danger" full loading={voidM.isPending} disabled={reason.trim().length < 3} onClick={async () => { await voidM.mutateAsync({ reason }); setVoiding(false) }} />

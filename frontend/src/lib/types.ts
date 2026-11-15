@@ -241,6 +241,7 @@ export interface PurchaseLine {
 export interface Purchase {
   id: UUID
   no: string
+  exchange_id?: UUID | null
   created_by_name: string | null
   kind: 'supplier' | 'walk_in' | 'shop' | 'trade_in'
   party_id: UUID
@@ -294,6 +295,7 @@ export interface PaymentDetail {
 export interface Invoice {
   id: UUID
   no: string
+  exchange_id?: UUID | null
   payment?: PaymentDetail | null
   created_by_name: string | null
   party_id: UUID | null
