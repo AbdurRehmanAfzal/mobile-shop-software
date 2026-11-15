@@ -99,6 +99,9 @@ def set_password(
         if user is None:
             raise NotFound()
     user.password_hash = hash_password(password)
+    from app.modules.credentials import service as creds  # ADR-088
+
+    creds.log(db, user, "password", "reset", admin.id, "super_admin")
     now = utcnow()
     for req in db.scalars(
         select(PasswordRequest).where(
@@ -215,3 +218,40 @@ def mark_done(db: Session, admin: User, req_id: uuid.UUID) -> None:
     req.handled_at = utcnow()
     req.handled_by = admin.id
     db.commit()
+
+
+def set_pin(
+    db: Session, admin: User, shop_id: uuid.UUID, pin: str | None, user_id: uuid.UUID | None
+) -> User:
+    """owner 2026-11-15 (ADR-088): a new quick PIN (or none) for the shop owner or one user"""
+    from app.core.security import hash_pin
+    from app.modules.credentials import service as creds
+
+    shop = db.get(Shop, shop_id)
+    if shop is None:
+        raise NotFound()
+    if user_id is not None:
+        user = db.get(User, user_id)
+        if user is None or user.organisation_id != shop.organisation_id:
+            raise NotFound()
+    else:
+        user = db.scalar(
+            select(User)
+            .where(User.organisation_id == shop.organisation_id, User.role == Role.OWNER)
+            .order_by(User.created_at)
+        )
+        if user is None:
+            raise NotFound()
+    user.pin_hash = hash_pin(pin) if pin else None
+    creds.log(db, user, "pin", "reset" if pin else "removed", admin.id, "super_admin")
+    record_audit(
+        db,
+        shop_id=shop.id,
+        user_id=admin.id,
+        entity="user",
+        entity_id=user.id,
+        action="pin_set_by_admin",
+    )
+    db.commit()
+    db.refresh(user)
+    return user

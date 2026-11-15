@@ -488,6 +488,14 @@ The old password stops working at once and the request closes by itself. **Set t
 
 The tick on a request row marks it done without changing anything, for example when the person remembered the password.
 
+### A new quick PIN, and the shop's password / PIN history
+
+In the shop's sheet, under the owner's password, **New quick PIN** sets a 4–6 digit PIN for the owner (or for the staff member picked with **Set password**). Type it, tap **Save**, and tell the person the PIN shown in the green box.
+
+**Password / PIN history** under it lists every password or PIN change in that shop: whose, by whom, when and from which device. Your own resets show to the shop as "by software support", without your name.
+
+> **Important:** You cannot see anyone's password or PIN, and neither can the shop. They are stored only as a one-way lock. If a shopkeeper asks "what was my password?", the answer is always a new one.
+
 ### Looking inside a shop
 
 When an owner says "a sale is missing" or "my khata looks wrong", you can see his shop with your own eyes.

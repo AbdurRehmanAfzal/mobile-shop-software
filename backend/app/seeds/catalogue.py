@@ -6,7 +6,7 @@ Run: `python -m app.seeds.catalogue` or automatically at app startup (see app.ma
 
 from decimal import Decimal
 
-from sqlalchemy import func, select
+from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 
 from app.modules.catalogue.models import Brand, Colour, Model, Storage
@@ -659,7 +659,13 @@ COLOURS: list[tuple[str, str, str, int]] = [
 
 
 def seed_catalogue(db: Session) -> dict[str, int]:
-    """Insert any missing global rows. Safe to run on every startup."""
+    """Insert any missing global rows. Safe to run on every startup.
+
+    The server runs several workers that all start together: on Postgres a transaction lock makes
+    them seed one after another (the later ones then find nothing missing), and the unique global
+    name indexes (ADR-089) refuse a second copy in any case."""
+    if db.get_bind().dialect.name == "postgresql":
+        db.execute(text("SELECT pg_advisory_xact_lock(780012)"))
     added = {"brands": 0, "models": 0, "storages": 0, "colours": 0}
 
     existing_brands = {

@@ -40,7 +40,9 @@
     "forgotSend": "Send request",
     "forgotSent_admin": "Request sent to the software provider. They will contact you on this number.",
     "forgotSent_owner": "Request sent to your shop owner. Ask them for the new password.",
-    "forgotSent_none": "This number is not registered."
+    "forgotSent_none": "This number is not registered.",
+    "byPassword": "Password",
+    "byPin": "PIN"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -7156,6 +7158,16 @@
           "title": "Login security",
           "body": "Staff log in only on phones you allow and only in shop hours; log everyone out at once.",
           "example": "A new phone waits for your Allow."
+        },
+        "password": {
+          "title": "Change password",
+          "body": "Change your own login password. You need the current one; the new one must be at least 6 letters or digits.",
+          "example": "Old: secret123 → new: shop2026 → log in with shop2026 next time."
+        },
+        "credHistory": {
+          "title": "Password / PIN history",
+          "body": "When your password or PIN was changed, by whom and from which device. The owner sees the whole shop's. The values are never shown.",
+          "example": "Password changed by themselves, 15 Nov · Windows · Chrome."
         }
       },
       "pinPassword": {
@@ -8287,6 +8299,18 @@
         "title": "Repair reports",
         "body": "Two A4 reports for the period, as PDF or Excel, to download, share or print. Shop repairs: every job (customer or shop phone, who repaired it, status, bill, paid, udhaar, parts, lab charge, profit / loss), the totals, by status, by technician / lab, the customers who still owe and the parts used. Outside labs: per lab the phones sent, back fixed / not fixed, at the lab now, its charges, paid and khata, and every phone sent with its problem, price and result.",
         "example": "This month → Shop repairs → Download → PDF."
+      }
+    },
+    "cred": {
+      "history": {
+        "title": "Password / PIN history",
+        "body": "Every time a password or PIN is set, changed, removed or reset: whose, by whom and from which phone or computer. The password or PIN itself is never kept, so nobody can see it. The owner sees everyone in the shop; staff see only their own.",
+        "example": "Ali's PIN reset by the owner, 15 Nov, 10:30 · Android · Chrome."
+      },
+      "adminPin": {
+        "title": "New quick PIN",
+        "body": "Set a new 4–6 digit PIN for the shop owner (or the user picked above for the password). Old PINs cannot be read — only replaced. The change is shown in the shop's history as by software support.",
+        "example": "Owner forgot PIN → type 2468 → Save → tell him 2468."
       }
     }
   },
@@ -11252,5 +11276,38 @@
     "reports": "Repair reports",
     "jobsReport": "Shop repairs (every job, profit, udhaar)",
     "labsReport": "Outside labs (phones sent, charges, khata)"
+  },
+  "cred": {
+    "history": "Password / PIN history",
+    "hideHistory": "Hide history",
+    "none": "No password or PIN changes yet",
+    "safe": "Passwords and PINs are kept locked (one-way). Nobody can read them — not the owner, not the super admin. This list only shows when one was set or changed, by whom and from which device.",
+    "kind": {
+      "password": "Password",
+      "pin": "PIN"
+    },
+    "action": {
+      "set": "set",
+      "changed": "changed",
+      "removed": "removed",
+      "reset": "reset"
+    },
+    "by": {
+      "self": "by themselves",
+      "owner": "by the owner",
+      "super_admin": "by software support",
+      "code": "with a code (forgot password)"
+    },
+    "changePassword": "Change password",
+    "changeHint": "Type your current password, then the new one twice.",
+    "current": "Current password",
+    "new": "New password",
+    "confirm": "New password again",
+    "mismatch": "The two new passwords are not the same",
+    "short": "At least 6 letters or digits",
+    "saved": "Password changed. Use the new one next time you log in.",
+    "adminPin": "New quick PIN",
+    "newPin": "New PIN (4–6 digits)",
+    "pinSet": "PIN set. Tell the shopkeeper:"
   }
 }

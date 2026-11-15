@@ -1788,3 +1788,31 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - pytest `test_repair_reports` (4, new: delete with the advance reversed / salesman 403 / 409 again; the own phone back to stock; refused after a lab charge; technicians; both reports PDF / Excel / per-lab; overview repairs) and the existing repair tests (14 in all); full suite.
 - tsc and Help.test.
 - Playwright `repair-choice` (new: a stock phone → Send to repair → Outside lab → Ali, 4,000 → the job at the lab, the phone in repair; a customer repair deleted from its row → cancelled; the repairs Excel; a payment deleted from its row). I looked at the screenshot.
+
+### Same day — password / PIN: change, history, super admin PIN reset, both login ways (ADR-088)
+**Owner**: "super admin say k password r pin dakh sktay hai … owner ko ap ye option be dyna k wo apna password change be kr sktay r pin be but is ki history be matain ho … login pr dono option honay chye k password say open krna ye pin say".
+**Declined (owner agreed, "ok")**: showing a password or PIN to anyone. They stay one-way hashes. The history records who, when, by whom and from which device, never the value.
+**Done**:
+- `credential_changes` table (additive migration `b8d0f2a4c6e9`) and the `credentials` module: `PUT /me/password`, `GET /credentials/history` (owner: whole shop; others: their own).
+- Logged from: own PIN set / change / remove, owner's staff reset, forgot-password code, super admin password / new PIN reset.
+- Super admin: `POST /admin/shops/{id}/owner-pin`, `GET /admin/shops/{id}/credential-history`, both in the shop's sheet.
+- More: Change password (sheet), Password / PIN history page. Login: Password / PIN tabs always; the PIN tab works on a new phone.
+- en / ur / roman strings + help, user manual ch. 1, Super Admin manual ch. 8, ADR-088, docs/29.
+**Verified**:
+- pytest `test_credentials` (3, new: change own password — wrong current 401, short 422, old one stops working; PIN set / changed / removed in order; no secret anywhere in the history; owner resets a staff member, staff sees only their own; super admin PIN + password reset, not named, a shop owner gets 403 on the admin history); full suite.
+- tsc and Help.test.
+- Playwright `credentials` (new: change password with a mismatch first; the history without the values; PIN tab on a fresh browser; old password refused, new one works), plus `login-security` and `fingerprint`. I looked at the screenshots.
+**Next**: the owner's manual tests in docs/29.
+
+### Same day — duplicate brands on a live shop (ADR-089)
+**Owner** (shopkeeper's screenshots): every brand twice in the purchase form (Apple, Apple, Samsung, Samsung …); stock summary Apple 98 phones and Apple 15 phones. "fix karo r oun k data lost na ho".
+**Cause**: the Docker image starts `uvicorn --workers 2`; both workers ran the unlocked startup seed at once on the first start, and nothing in the database forbade a second global "Apple". The same applied to expense categories. Local dev never showed it (one worker).
+**Done**:
+- Migration `c1e3a5b7d9f2`: merge global duplicates onto the row with the most phones / expenses. It moves devices (brand / model / storage / colour), models, model spec sheets (merged when both exist), accessory compatible-model lists and expenses, then removes the empty copy. Partial unique indexes follow.
+- Models declare the same indexes. `seed_catalogue` takes a Postgres advisory lock. Startup survives a unique clash in either seed.
+- ADR-089, progress row, docs/29.
+**Verified**:
+- pytest `test_catalogue_duplicates` (3, new): the race re-created (a second Nokia / 105 / storage / colour, one phone on the original and two on the copy, a spec sheet and an accessory on the copy, the stock summary split 1 + 2). After the merge: one row each, all three phones on it, the summary 3, the spec sheet and the accessory moved, a second global copy refused. The same for a doubled "rent" expense category with the ledger unchanged. Seeding twice adds nothing.
+- `test_migrations`, `test_expenses`; full suite. Dev DB (2,717 phones, no duplicates): the migration ran and changed nothing.
+- Not run on Postgres locally (none installed). The SQL is plain, and psycopg 3 binds the UUIDs.
+**Next**: deploy; the owner checks the shop's brand list and stock summary (docs/29).

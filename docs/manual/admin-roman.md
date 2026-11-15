@@ -488,6 +488,14 @@ Purana password foran chalna band ho jata hai aur request khud band ho jati hai.
 
 Request line par tick usay kuch badle baghair mukammal mark karta hai, maslan jab banday ko password yaad aa gaya.
 
+### Naya jaldi PIN, aur dukaan ki password / PIN history
+
+Dukaan ki sheet mein, owner ke password ke neeche, **Naya quick PIN** se owner (ya **Set password** se chune gaye staff) ka 4–6 hindson ka PIN lagta hai. Likhein, **Save** dabayein, aur hare dabbe wala PIN us bande ko batayein.
+
+Us ke neeche **Password / PIN history** mein us dukaan ki har password ya PIN tabdeeli hai: kis ki, kis ne, kab aur kis device se. Aap ki tabdeeli dukaan ko "software support ne" ke naam se dikhti hai, aap ke naam ke baghair.
+
+> **Zaroori:** Aap kisi ka password ya PIN nahi dekh sakte, na dukaan dekh sakti hai. Yeh sirf ek-tarfa taale ki shakal mein rakhe jate hain. Agar dukandar poochhe "mera password kya tha?", jawab hamesha naya password hai.
+
 ### Dukaan ke andar dekhna
 
 Jab maalik kahe "aik sale gum hai" ya "mera khata ghalat lag raha hai", to aap us ki dukaan apni aankhon se dekh sakte hain.

@@ -362,6 +362,32 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-089 · 2026-11-15 · Accepted · One global row per brand / model / storage / colour / expense category
+**Context**: a live shop saw every brand twice in the purchase form ("Apple, Apple") and the stock summary split the same brand (Apple 98 phones + Apple 15). The cause: production runs `uvicorn --workers 2`, and the startup seed (`seed_catalogue`, `seed_categories`) has no lock and the tables had no unique rule. On the first start both workers saw an empty list and each inserted the whole global catalogue. Phones were then bought against whichever copy the shopkeeper tapped. Expense categories were seeded the same way.
+**Decision**:
+- **Merge, additive migration `c1e3a5b7d9f2`**: for each set of global rows with the same name (brands, storages, colours; models by brand and name; expense categories by key), keep the row with the most phones (or expenses), then a stable order.
+  - Phones, models, a shop's spec sheets (merged if both had one) and accessories' "fits" lists, plus expenses, are moved onto the keeper.
+  - Only then is the empty duplicate removed. FKs are RESTRICT, so a missed reference fails the migration instead of losing data.
+  - No bill, payment, ledger row or device event changes: expense ledger accounts are named by the category key, not its row.
+- **Never again**:
+  - partial unique indexes on `lower(name)` (models: `brand_id, lower(name)`; expense categories: `key`) for global rows only — a shop's own rows are unaffected;
+  - the seed takes a Postgres transaction lock (`pg_advisory_xact_lock`), so workers seed one after another;
+  - startup treats a unique-index clash in the seed as "another worker already did it" instead of crashing.
+**Consequences**: on deploy the migration folds the duplicates. The shop sees one Apple with all its phones (98 + 15 = 113) and its stock value unchanged. Nothing to do in the app.
+
+## ADR-088 · 2026-11-15 · Accepted · Change own password, password / PIN history, super admin PIN reset, both login ways
+**Context**: the owner asked for the super admin to be able to see shop passwords and PINs, for the owner and staff to change their own password and PIN, a history of "which password / PIN was used", and both Password and PIN on the login screen.
+**Decision**:
+- **Values are never viewable.** Passwords and PINs stay one-way hashes. Nobody can read them, the super admin included, and no history keeps them. Showing them would mean storing them reversibly; one leaked database or admin session would then expose every shop's login (people reuse passwords for WhatsApp, bank apps). The owner accepted this: a forgotten one is replaced, never read.
+- **History** (`credential_changes`, additive migration `b8d0f2a4c6e9`): one row per set / changed / removed / reset of a password or PIN. Each row holds whose, `by_kind` (self | owner | super_admin | code), by whom, the IP, the user agent and when.
+  - Written best-effort inside a savepoint (`credentials.service.log`), so a history failure never blocks the change itself.
+  - Hooks: `set_own_pin`, `update_staff` (owner resets), the forgot-password code reset, the super admin's `set_password` / new `set_pin`.
+  - `GET /credentials/history`: the owner sees the whole organisation; anyone else only their own. The super admin is never named to the shop ("software support").
+- **Change own password**: `PUT /me/password {current_password, new_password (min 6)}` → 204, and a More tile with a sheet (current, new, confirm). The PIN is still changed / removed from More → Set quick PIN.
+- **Super admin**: `POST /admin/shops/{id}/owner-pin {pin, user_id?}` sets a new PIN for the owner (or the user picked for the password reset). `GET /admin/shops/{id}/credential-history` shows the shop's history. Both appear in the shop's sheet (`AdminCredentials.tsx`).
+- **Login**: Password / PIN tabs are always shown. The PIN tab no longer needs an earlier login on that phone: it asks for the mobile number when it does not know it.
+**Consequences**: nothing changes for existing logins or data. The history starts empty and fills from now on. Shop owners can now audit who changed whose password.
+
 ## ADR-087 · 2026-11-15 · Accepted · Repairs: own technician or outside lab, delete, reports; Edit / Delete on more rows
 **Context**: the owner asked for several things:
 - Edit / Delete on every row;

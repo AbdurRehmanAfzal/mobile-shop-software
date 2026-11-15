@@ -334,6 +334,31 @@ def set_owner_password(shop_id: uuid.UUID, data: PasswordIn, current: Super, db:
     return PasswordSetOut(user_id=str(u.id), name=u.name, phone=u.phone)
 
 
+class PinIn(BaseModel):
+    pin: str | None = Field(default=None, pattern=r"^\d{4,6}$")
+    user_id: uuid.UUID | None = None
+
+
+@router.post("/shops/{shop_id}/owner-pin", response_model=PasswordSetOut)
+def set_owner_pin(shop_id: uuid.UUID, data: PinIn, current: Super, db: DB):
+    """owner 2026-11-15 (ADR-088): a new quick PIN for the shop owner (or one user)"""
+    u = access.set_pin(db, current.user, shop_id, data.pin, data.user_id)
+    return PasswordSetOut(user_id=str(u.id), name=u.name, phone=u.phone)
+
+
+@router.get("/shops/{shop_id}/credential-history")
+def credential_history(shop_id: uuid.UUID, current: Super, db: DB):
+    """owner 2026-11-15 (ADR-088): when each password / PIN of the shop changed and by whom"""
+    from app.core.errors import NotFound
+    from app.modules.auth.models import Shop
+    from app.modules.credentials import service as creds
+
+    shop = db.get(Shop, shop_id)
+    if shop is None:
+        raise NotFound()
+    return creds.history(db, shop.organisation_id)
+
+
 @router.get("/password-requests", response_model=list[PasswordRequestOut])
 def password_requests(_: Super, db: DB, open_only: bool = True):
     return access.list_requests(db, open_only)

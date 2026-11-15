@@ -19,6 +19,7 @@ from sqlalchemy import (
     String,
     UniqueConstraint,
     Uuid,
+    text,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -27,7 +28,17 @@ from app.db.base import Base, Timestamped, UUIDPk, utcnow
 
 class Brand(UUIDPk, Timestamped, Base):
     __tablename__ = "brands"
-    __table_args__ = (Index("ix_brands_shop_name", "shop_id", "name"),)
+    __table_args__ = (
+        Index("ix_brands_shop_name", "shop_id", "name"),
+        # ADR-089: one global brand per name (two workers once seeded the list twice)
+        Index(
+            "uq_brands_global_name",
+            text("lower(name)"),
+            unique=True,
+            sqlite_where=text("shop_id IS NULL"),
+            postgresql_where=text("shop_id IS NULL"),
+        ),
+    )
 
     shop_id: Mapped[uuid.UUID | None] = mapped_column(
         Uuid, ForeignKey("shops.id", ondelete="CASCADE"), index=True
@@ -42,7 +53,17 @@ class Brand(UUIDPk, Timestamped, Base):
 
 class Model(UUIDPk, Timestamped, Base):
     __tablename__ = "models"
-    __table_args__ = (Index("ix_models_shop_brand_name", "shop_id", "brand_id", "name"),)
+    __table_args__ = (
+        Index("ix_models_shop_brand_name", "shop_id", "brand_id", "name"),
+        Index(
+            "uq_models_global_name",
+            "brand_id",
+            text("lower(name)"),
+            unique=True,
+            sqlite_where=text("shop_id IS NULL"),
+            postgresql_where=text("shop_id IS NULL"),
+        ),
+    )
 
     shop_id: Mapped[uuid.UUID | None] = mapped_column(
         Uuid, ForeignKey("shops.id", ondelete="CASCADE"), index=True
@@ -90,6 +111,15 @@ class ModelSpec(UUIDPk, Base):
 
 class Storage(UUIDPk, Base):
     __tablename__ = "storages"
+    __table_args__ = (
+        Index(
+            "uq_storages_global_name",
+            text("lower(name)"),
+            unique=True,
+            sqlite_where=text("shop_id IS NULL"),
+            postgresql_where=text("shop_id IS NULL"),
+        ),
+    )
 
     shop_id: Mapped[uuid.UUID | None] = mapped_column(
         Uuid, ForeignKey("shops.id", ondelete="CASCADE"), index=True
@@ -107,6 +137,15 @@ class Storage(UUIDPk, Base):
 
 class Colour(UUIDPk, Base):
     __tablename__ = "colours"
+    __table_args__ = (
+        Index(
+            "uq_colours_global_name",
+            text("lower(name)"),
+            unique=True,
+            sqlite_where=text("shop_id IS NULL"),
+            postgresql_where=text("shop_id IS NULL"),
+        ),
+    )
 
     shop_id: Mapped[uuid.UUID | None] = mapped_column(
         Uuid, ForeignKey("shops.id", ondelete="CASCADE"), index=True

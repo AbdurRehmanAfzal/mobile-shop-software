@@ -161,7 +161,13 @@ def set_own_pin(db: Session, user: User, password: str, pin: str | None) -> None
         raise Unauthorized(
             code="bad_credentials", message_en="Wrong password", message_ur="غلط پاس ورڈ"
         )
+    had = bool(user.pin_hash)
     user.pin_hash = hash_pin(pin) if pin else None
+    from app.modules.credentials import service as creds  # ADR-088: the history, never the PIN
+
+    creds.log(
+        db, user, "pin", "removed" if not pin else "changed" if had else "set", user.id, "self"
+    )
     db.commit()
 
 
@@ -300,7 +306,13 @@ def update_staff(
     for key, value in changes.items():
         if key == "password":
             user.password_hash = hash_password(value)
+            from app.modules.credentials import service as creds  # ADR-088
+
+            creds.log(db, user, "password", "reset", owner.id, "owner")
         elif key == "pin":
+            from app.modules.credentials import service as creds  # ADR-088
+
+            creds.log(db, user, "pin", "removed" if not value else "reset", owner.id, "owner")
             user.pin_hash = hash_pin(value) if value else None
         elif key == "shop_ids":
             allowed = _org_shop_ids(db, owner.organisation_id)
@@ -347,6 +359,9 @@ def reset_password(db: Session, phone: str, new_password: str) -> tuple[User, To
         raise NotFound()
     user.password_hash = hash_password(new_password)
     user.last_login_at = utcnow()
+    from app.modules.credentials import service as creds  # ADR-088: reset with an OTP code
+
+    creds.log(db, user, "password", "reset", None, "code")
     shop = _home_shop(db, user)
     if shop is not None:
         record_audit(

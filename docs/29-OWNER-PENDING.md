@@ -209,6 +209,10 @@ Close the app fully and open it again first (or install the newest APK from the 
 
 **Repairs (2026-11-15, ADR-087)**: Repairs → Take a phone for repair → choose Shop's technician / Outside lab (pick a lab, price, back by). From a stock phone: Send to repair. Delete a test repair from its row (advance reversed). Repairs page → Repair reports → This month → Download both (PDF / Excel). Business overview shows the Repairs card.
 
+**Password / PIN (2026-11-15, ADR-088)**: More → Change password (current, new twice) → log out → log in with the new one. More → Password / PIN history shows it (no password visible). Login screen → PIN tab on a phone that never logged in → number + PIN. Super admin → a shop → New quick PIN → Save → that owner logs in with it; Password / PIN history in the same sheet.
+
+**Duplicate brands (2026-11-15, ADR-089)**: nothing to run by hand — the deploy runs `alembic upgrade head`. Before deploying, take the usual database backup. After it: Purchase → brand list shows each brand once (one Apple); Stock → summary shows one Apple whose phone count is the two old rows added (e.g. 98 + 15 = 113) and the same total value; Expenses → categories once each.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

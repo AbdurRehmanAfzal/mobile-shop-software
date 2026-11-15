@@ -20,6 +20,7 @@ from app.modules.balances.router import router as balances_router
 from app.modules.barcodes.router import router as barcodes_router
 from app.modules.bulk.router import router as bulk_router
 from app.modules.catalogue.router import router as catalogue_router
+from app.modules.credentials.router import router as credentials_router
 from app.modules.devices.router import router as devices_router
 from app.modules.exchanges.router import router as exchanges_router
 from app.modules.expenses.router import router as expenses_router
@@ -56,13 +57,22 @@ from app.modules.verification.router import router as verification_router
 async def lifespan(_: FastAPI):
     # Seed the shared catalogue on first run (idempotent). Tests override get_db and skip this.
     if settings.app_env != "test":
+        from sqlalchemy.exc import IntegrityError
+
         from app.db.session import SessionLocal
         from app.modules.expenses.service import seed_categories
         from app.seeds.catalogue import seed_catalogue
 
         with SessionLocal() as db:
-            added = seed_catalogue(db)
-            added["expense_categories"] = seed_categories(db)
+            try:
+                added = seed_catalogue(db)
+            except IntegrityError:  # another worker seeded the same rows first (ADR-089)
+                db.rollback()
+                added = {}
+            try:
+                added["expense_categories"] = seed_categories(db)
+            except IntegrityError:
+                db.rollback()
             if any(added.values()):
                 print(f"Catalogue seeded: {added}")
     from app.modules.notifications import scheduler
@@ -203,6 +213,7 @@ def create_app() -> FastAPI:
     app.include_router(logins_router)
     app.include_router(staffaccess_router)
     app.include_router(security_router)
+    app.include_router(credentials_router)
     if settings.web_dir:
         _mount_web(app, settings.web_dir)
     return app
