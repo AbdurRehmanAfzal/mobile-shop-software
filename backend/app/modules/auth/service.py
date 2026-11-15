@@ -29,8 +29,11 @@ def _tokens(
     # owner 2026-11-14 (ADR-074): a new sign-in starts a login session; the tokens carry its id
     if sid is None and db is not None and method:
         from app.modules.logins import service as logins
+        from app.modules.security import service as security
 
-        sid = logins.start(db, user, method)
+        # owner 2026-11-15 (ADR-080): staff login hours / approved devices, when switched on
+        device = security.guard_login(db, user, method)
+        sid = logins.start(db, user, method, device)
     return TokenPair(
         access_token=create_token(user.id, user.organisation_id, "access", sid),
         refresh_token=create_token(user.id, user.organisation_id, "refresh", sid),
@@ -171,6 +174,9 @@ def refresh(db: Session, refresh_token: str) -> tuple[User, TokenPair]:
     from app.modules.logins import service as logins
 
     sid = payload.get("sid")
+    from app.modules.security import service as security
+
+    security.guard_refresh(db, user)  # staff login hours (ADR-080)
     if sid:
         logins.check(db, sid)  # a login the owner ended cannot be renewed
         logins.touch(db, sid)
@@ -317,6 +323,10 @@ def update_staff(
         after=after,
     )
     db.commit()
+    if changes.get("is_active") is False:  # switched off: their logins end now (ADR-080)
+        from app.modules.security import service as security
+
+        security.end_user_sessions(db, user.id, owner.id)
     return user
 
 

@@ -7135,6 +7135,11 @@
           "title": "WhatsApp entries",
           "body": "Sale, purchase, payment aur len-den group mein ek standard message mein bhejein, aur message se software mein entry karein.",
           "example": "\"*SALE* … IMEI … Price …\" paste karein → sale bhari hui khulti hai."
+        },
+        "security": {
+          "title": "Login security",
+          "body": "Staff sirf aap ki ijazat wale phone par aur dukaan ke auqaat mein login kare; sab ko ek saath logout karein.",
+          "example": "Naya phone aap ki ijazat ka intezar karta hai."
         }
       },
       "pinPassword": {
@@ -8196,6 +8201,28 @@
         "title": "Message se entry",
         "body": "Group ka message paste karein. App ise parh kar IMEI se mobile aur number ya naam se banda dhoondti hai, aur sale ya purchase ka form bhara hua kholti hai (ya payment / len-den ka). Dekh kar mamool ki tarah save karein — pehle kuch save nahi hota. Tasveer se IMEI box ya IMEI screen ki tasveer se barcode parhta hai.",
         "example": "Purchase ka message paste karein → Purchase ka form bhara hua kholein → mobile ka form model, IMEI, haalat aur qeemat ke saath khulta hai; zaroorat ho to bechne wale ki shanakht laga kar save karein."
+      }
+    },
+    "sec": {
+      "page": {
+        "title": "Login security",
+        "body": "Taake sirf password kafi na ho. Sirf meri ijazat wale phone: staff sirf usi phone ya computer par login kare jis ki aap ne ijazat di; naya phone tab tak intezar karega jab tak aap \"Ijazat dein\" na dabayein (yahan ya home screen par) — sahi password wala bhi andar nahi aa sakta. Staff ke auqaat: staff sirf aap ke diye hue waqt mein login kare. \"Ijazat wapas lein\" phone ko foran logout karta hai; \"Saara staff logout\" har login khatam karta hai. Dono aap ke on karne tak band hain, aur aap par kabhi lagu nahi.",
+        "example": "Ahmed ka password kisi ko pata chal gaya. Woh apne phone par koshish karta hai: phone aap ka intezar karta hai, aap \"Mana karein\" dabate hain, woh login nahi kar sakta."
+      },
+      "devices": {
+        "title": "Sirf meri ijazat wale phone",
+        "body": "App har phone / browser par apni khufia key rakhti hai. Yeh on ho to jis phone ki aap ne ijazat nahi di us se staff ka login rukta hai, aur phone \"Aap ki ijazat ka intezar\" mein aata hai. Ek baar ijazat dein to woh phone aage se aam tarah login karega. Browser ka data saaf karne ya dobara install karne se phone phir naya ban jata hai. Aap ka apna login kabhi nahi rukta.",
+        "example": "Bilal counter wale phone par login karta hai: intezar; aap \"Ijazat dein\" dabate hain; phir woh wahan aam tarah login karta hai."
+      },
+      "hours": {
+        "title": "Staff login ke auqaat",
+        "body": "Staff sirf \"Se\" aur \"Tak\" ke beech, dukaan ke waqt ke mutabiq, login kar sakta hai (aadhi raat ke baad tak bhi, jaise 10:00 se 02:00). Pehle se khula login waqt khatam hone ke 30 minute ke andar ruk jata hai. Aap par koi pabandi nahi.",
+        "example": "10:00 se 23:00: raat 23:30 par salesman ghar se login nahi kar sakta."
+      },
+      "logoutAll": {
+        "title": "Saara staff logout",
+        "body": "Har salesman, manager aur technician ka har phone aur browser par login foran khatam. Jab password leak hone ka shak ho, ya \"Sirf meri ijazat wale phone\" on karne ke baad taake har phone dobara ijazat le.",
+        "example": "Salesman naukri chhor de: Staff mein use band karein, phir Saara staff logout."
       }
     }
   },
@@ -11012,5 +11039,35 @@
     "saleNeedsStock": "Sale ke liye stock mein maujood mobile chahiye.",
     "needPerson": "Chunein mobile kis se khareeda.",
     "saved": "Save ho gaya. Agla message paste karein."
+  },
+  "sec": {
+    "title": "Login security",
+    "devices": "Sirf meri ijazat wale phone",
+    "devicesHint": "Staff sirf usi phone ya computer par login kare jis ki aap ne ijazat di. Naya phone aap ka intezar karta hai — sahi password ke saath bhi.",
+    "devicesOn": "On — chori ka password kafi nahi",
+    "hours": "Staff login ke auqaat",
+    "hoursHint": "Staff sirf in auqaat mein login kare (dukaan ka waqt). Aap par koi pabandi nahi.",
+    "from": "Se",
+    "to": "Tak",
+    "saveHours": "Auqaat save karein",
+    "saved": "Save ho gaya",
+    "waiting": "Aap ki ijazat ka intezar",
+    "noneWaiting": "Koi phone intezar mein nahi.",
+    "allowed": "Ijazat wale phone",
+    "noneAllowed": "Abhi koi nahi. Ijazat dene ke baad yahan aayenge.",
+    "refusedList": "Jin phones ko mana kiya",
+    "asked": "Maanga",
+    "lastUsed": "Aakhri istemal",
+    "refused": "Mana kiya",
+    "allow": "Ijazat dein",
+    "no": "Mana karein",
+    "takeBack": "Ijazat wapas lein",
+    "forget": "Hatayein",
+    "logoutAll": "Saara staff logout",
+    "logoutAllHint": "Har phone par staff ka har login abhi khatam; woh dobara login karenge (ijazat on ho to intezar karenge). Aap login rahenge.",
+    "logoutAllBtn": "Abhi saara staff logout karein",
+    "logoutConfirm": "Kya har salesman, manager aur technician ko har phone se abhi logout karein?",
+    "ended": "{{n}} login khatam ho gaye.",
+    "homeAsks": "{{n}} naye phone aap ki ijazat ke muntazir"
   }
 }

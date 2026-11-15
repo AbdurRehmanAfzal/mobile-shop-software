@@ -36,6 +36,8 @@ class Organisation(UUIDPk, Timestamped, Base):
     plan_status_seen: Mapped[str | None] = mapped_column(String(10))
     # owner 2026-10-29: modules switched on for this shop; None = the plan's defaults
     modules: Mapped[list | None] = mapped_column(JSON)
+    # owner 2026-11-15 (ADR-080): device approval / staff login hours; empty = both off
+    login_rules: Mapped[dict | None] = mapped_column(JSON)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     # owner 2026-11-09 (ADR-054): the super admin moved this customer to the bin (is_active False);
     # every row stays, a restore brings it back

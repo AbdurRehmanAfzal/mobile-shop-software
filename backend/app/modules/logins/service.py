@@ -17,7 +17,9 @@ from app.modules.logins.models import LoginSession
 ONLINE_MINUTES = 5
 
 
-def start(db: Session, user: User, method: str) -> uuid.UUID | None:
+def start(
+    db: Session, user: User, method: str, device_id: uuid.UUID | None = None
+) -> uuid.UUID | None:
     ip, ua = client_info()
     try:
         s = LoginSession(
@@ -26,6 +28,7 @@ def start(db: Session, user: User, method: str) -> uuid.UUID | None:
             method=method[:12],
             ip=(ip or None) and ip[:64],
             user_agent=(ua or None) and ua[:300],
+            device_id=device_id,
         )
         db.add(s)
         db.commit()

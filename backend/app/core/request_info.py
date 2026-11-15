@@ -11,3 +11,16 @@ def set_client_info(ip: str | None, user_agent: str | None):
 
 def client_info() -> tuple[str | None, str | None]:
     return _info.get()
+
+
+# owner 2026-11-15 (ADR-080): the app's own random key for this phone / browser (header
+# X-Device-Key), so a login can be allowed only on devices the owner approved
+_device: ContextVar[str | None] = ContextVar("device_key", default=None)
+
+
+def set_device_key(key: str | None):
+    return _device.set(key)
+
+
+def device_key() -> str | None:
+    return _device.get()

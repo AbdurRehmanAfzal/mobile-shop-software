@@ -2241,6 +2241,22 @@ One check-in per day. The owner opens Staff → **Hazri**, picks the period, and
 
 Staff → **Activity** shows, for the chosen period, each person's **Sales (n · Rs)**, **Received (Rs)**, **Purchases (n · Rs)**, **Expenses (Rs)**, **Repairs** and the number of **Actions**, with their **Last login**. Tap a person to see the full log: every bill, payment, purchase, expense, repair, cancellation and settings change, with the time, number and amount. This comes from the record the app keeps of every change, so nothing can be left out.
 
+### Login security: a password alone is not enough
+
+Owner only: More → **Login security**. Both rules are off until you switch them on, and they never apply to you, the owner.
+
+- **Only phones I allow**: a salesman, manager or technician logs in only on a phone or computer you allowed.
+  - A new phone shows "This phone is new. The owner must allow it first", even with the right password.
+  - You see "**1 new phone waiting for your approval**" on the home screen. Tap it, then tap **Allow** or **Say no**. After that, the staff member taps Login again.
+  - An allowed phone logs in normally from then on.
+  - **Take back** logs that phone out at once.
+  - Clearing the browser's data or reinstalling the app makes it a new phone again.
+- **Staff login hours**: set **From** and **To** in shop time; the hours can run past midnight, like 10:00 to 02:00. Outside them, staff cannot log in. A login already open stops within 30 minutes after the time ends.
+- **Log out all staff now** ends every staff login on every phone; you stay logged in. Use it when a password may have leaked, or right after switching on Only phones I allow.
+- When you switch a staff member off in **Staff**, all their logins end at once.
+
+> **Tip:** switch on Only phones I allow, tap Log out all staff now, then allow the counter phones as the staff log in again. A salesman can no longer log in from home on his own phone.
+
 ### Login activity: where the app is logged in
 
 Owner only, and only when your software provider has switched on **Login activity** for your shop: More → **Login activity**. Choose **Today**, **Last 7 days** or **Last 30 days**.

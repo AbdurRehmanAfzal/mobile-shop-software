@@ -2241,6 +2241,22 @@ Din mein ek hazri. Owner Staff → **Hazri** kholta hai, muddat chunta hai, aur 
 
 Staff → **Activity** chuni hui muddat ke liye har bande ki **Bikri (tadaad · Rs)**, **Wasooli (Rs)**, **Khareed (tadaad · Rs)**, **Kharche (Rs)**, **Marammat** aur **Kaam** ki tadaad dikhata hai, un ke **Aakhri login** ke saath. Kisi bande par dabayein to poora log dikhta hai: har bill, payment, khareed, kharcha, repair, cancel aur settings ki tabdeeli, waqt, number aur raqam ke saath. Yeh us record se aata hai jo app har tabdeeli ka rakhti hai, is liye kuch bhi chhoot nahi sakta.
 
+### Login security: sirf password kafi nahi
+
+Sirf owner ke liye: More → **Login security**. Dono usool aap ke on karne tak band hain, aur aap (owner) par kabhi lagu nahi hote.
+
+- **Sirf meri ijazat wale phone**: salesman, manager ya technician sirf usi phone ya computer par login kar sakta hai jis ki aap ne ijazat di.
+  - Naye phone par likha aata hai "Yeh phone naya hai. Pehle owner ijazat de", chahe password sahi ho.
+  - Aap ko home screen par "**1 naya phone aap ki ijazat ka muntazir**" nazar aata hai. Use dabayein, phir **Ijazat dein** ya **Mana karein** dabayein. Is ke baad staff dobara Login dabaye.
+  - Ijazat wala phone aage se aam tarah login karta hai.
+  - **Ijazat wapas lein** us phone ko foran logout karta hai.
+  - Browser ka data saaf karne ya app dobara install karne se phone phir naya ban jata hai.
+- **Staff login ke auqaat**: dukaan ke waqt ke mutabiq **Se** aur **Tak** likhein; waqt aadhi raat ke baad tak bhi ho sakta hai, jaise 10:00 se 02:00. In auqaat ke bahar staff login nahi kar sakta. Pehle se khula login waqt khatam hone ke 30 minute ke andar ruk jata hai.
+- **Abhi saara staff logout karein** har phone par staff ka har login khatam kar deta hai; aap login rehte hain. Yeh tab istemal karein jab password leak hone ka shak ho, ya "Sirf meri ijazat wale phone" on karne ke foran baad.
+- **Staff** mein kisi ko band karein to us ke saare login foran khatam ho jate hain.
+
+> **Mashwara:** "Sirf meri ijazat wale phone" on karein, "Abhi saara staff logout karein" dabayein, phir jab staff dobara login kare to counter ke phones ko ijazat dein. Ab salesman ghar se apne phone par login nahi kar sakega.
+
 ### Login ki sargarmi: app kahan kahan login hai
 
 Sirf owner, aur sirf jab software provider ne aap ki dukaan ke liye **Login ki sargarmi** on ki ho: More → **Login ki sargarmi**. **Aaj**, **Pichle 7 din** ya **Pichle 30 din** chunein.

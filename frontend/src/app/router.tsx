@@ -63,6 +63,7 @@ import AuditStaffPage from '@/features/audit/StaffAuditPage'
 import AuditLendingPage from '@/features/audit/LendingAuditPage'
 import StaffPage from '@/features/more/StaffPage'
 import LoginActivityPage from '@/features/more/LoginActivityPage'
+import LoginSecurityPage from '@/features/more/LoginSecurityPage'
 import CashAccountsPage from '@/features/more/CashAccountsPage'
 import BulkPage from '@/features/more/BulkPage'
 import StockCountPage from '@/features/stock/StockCountPage'
@@ -158,6 +159,7 @@ export const router = createBrowserRouter([
           { path: '/audit/reports', element: <ModuleGate module="reports"><AuditReportCenterPage /></ModuleGate> },
           { path: '/more/staff', element: <StaffPage /> },
           { path: '/more/logins', element: <LoginActivityPage /> },
+          { path: '/more/security', element: <LoginSecurityPage /> },
           { path: '/more/appearance', element: <AppearancePage /> },
           { path: '/more/cash', element: <CashAccountsPage /> },
           { path: '/more/bulk', element: <BulkPage /> },

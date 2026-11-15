@@ -362,6 +362,37 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-080 · 2026-11-15 · Accepted · Login security: approved devices and staff login hours
+**Context**: shopkeepers worry that anyone who learns a password, including a salesman, can log in from anywhere and see sensitive data. They want something free (no SMS). The options considered:
+- device approval;
+- staff login hours;
+- Authenticator 2-step for the owner;
+- fingerprint only;
+- an IP lock, rejected because IPs change in Pakistan;
+- SMS OTP, rejected because it is paid.
+The owner chose the recommended first set.
+**Decision**:
+- **Device key**: every request carries `X-Device-Key`, the app's own random key in localStorage (`lib/deviceKey.ts`). The server stores only its SHA-256 (`trusted_devices`).
+- **Rules** are in `organisations.login_rules` (JSON, empty = off): `device_approval`, `hours_on`, `hours_from` and `hours_to` (HH:MM, may run past midnight). Both rules are off by default. Neither applies to the owner or the super admin.
+- **`security.guard_login`** runs for every new sign-in, inside `auth._tokens(method)`: password, PIN, fingerprint, passkey and reset; not signup or resumed. In order:
+  1. Outside the hours: `403 outside_hours`.
+  2. With device approval on:
+     - no key (an old app): `device_unknown`;
+     - an approved device: the login session gets its `device_id` (new nullable column on `login_sessions`) and the login goes ahead;
+     - a rejected device: `device_rejected`;
+     - otherwise the device is recorded or re-asked as pending: `device_pending`, with a message telling the staff member to ask the owner. The login page shows the server's message.
+- **`guard_refresh`** applies the hours when a login is renewed, so an open login stops within the access-token lifetime (30 min).
+- **Owner screens**:
+  - Routes (`/security`, `MANAGE_STAFF`): rules; devices with approve / reject / revoke; `logout-staff`, which ends every non-owner session.
+  - **Take back** ends that device's sessions at once.
+  - Switching a staff member off ends all their sessions.
+  - UI: More → Login security (`LoginSecurityPage.tsx`) and a home banner "N new phones waiting".
+- Migration d4f6a8c0e2b5 (additive): the `trusted_devices` table plus two nullable columns. Nothing is deleted; statuses change.
+**Consequences**:
+- With device approval on, a cleared browser or a reinstalled app is a new device and needs the owner once more.
+- Logins already open when the rule is switched on continue until they end; the owner can end them all with Log out all staff.
+- Owner 2-step (Authenticator) is left for later.
+
 ## ADR-079 · 2026-11-15 · Accepted · WhatsApp entries: a standard group message, read back into the forms
 **Context**: shops post every sale, purchase, payment and len-den in WhatsApp groups with the staff, and one person types them into the software. Each message is written differently, often with a photo of the IMEI or the box. The owner asked for standard templates that are easy for the writers and for the person entering.
 **Decision**:

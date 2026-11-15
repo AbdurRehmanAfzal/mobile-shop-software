@@ -19,6 +19,7 @@ import { isoDay } from '@/lib/format'
 import type { DayReport } from '@/lib/types'
 import HazriCard from './HazriCard'
 import type { TallyAccess } from '@/features/stock/TallySheetCard'
+import type { SecurityState } from '@/features/more/LoginSecurityPage'
 import { useAiStatus } from '@/lib/ai'
 import { Bot } from 'lucide-react'
 import PeriodPicker, { periodOf, periodQuery, type Period } from './PeriodPicker'
@@ -74,6 +75,8 @@ export default function HomePage() {
   const { data: glance } = useGet<Glance>(['home-glance', glanceQuery], manager && has('reports') ? `/api/v1/shop-audit/overview?${glanceQuery}` : null)
   const { data: tallyAcc } = useGet<TallyAccess>(['tally-access'], me?.user.role === 'owner' ? '/api/v1/staff-access/stock_tally' : null)
   const tallyAsks = (tallyAcc?.requests ?? []).filter((r) => r.status === 'pending').length
+  // owner 2026-11-15 (ADR-080): a staff member's new phone waits for the owner
+  const { data: sec } = useGet<SecurityState>(['security'], me?.user.role === 'owner' ? '/api/v1/security' : null)
 
   function search(e: FormEvent) {
     e.preventDefault()
@@ -138,6 +141,12 @@ export default function HomePage() {
           { id: 'inStock', to: '/stock/summary', help: 'counter.glance.inStock', icon: <Smartphone size={16} />, tone: 'bg-stockt text-stockt-fg', label: 'home.inStock', value: dash?.stock_count, plain: true, sub: worth ? `${pick('home.worth')} ${fmt(worth)}` : undefined },
           { id: 'expenses', to: '/expenses', help: 'counter.glance.expenses', icon: <Receipt size={16} />, tone: 'bg-expense text-expense-fg', label: 'home.expenses', value: rep?.expenses },
         ]} />
+        {sec?.pending ? (
+          <Link to="/more/security" data-testid="home-device-asks" className={`tap flex min-h-12 items-center gap-2 rounded-2xl bg-gold/15 px-3 font-bold text-gold-text ${ur ? cls('sm') : 'text-sm'}`}>
+            <ShieldAlert size={18} /> {pick('sec.homeAsks').replace('{{n}}', String(sec.pending))}
+            <ChevronRight size={16} className="ms-auto rtl:rotate-180" />
+          </Link>
+        ) : null}
         {/* owner 2026-11-14 (ADR-077): staff asked for the stock tally sheet */}
         {tallyAsks ? (
           <Link to="/stock/summary" data-testid="home-tally-asks" className={`tap flex min-h-12 items-center gap-2 rounded-2xl bg-gold/15 px-3 font-bold text-gold-text ${ur ? cls('sm') : 'text-sm'}`}>

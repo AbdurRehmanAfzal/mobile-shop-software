@@ -1654,3 +1654,21 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - I looked at the screenshots.
 - On the way: React may run the useDraft initializer twice, so the seed is now forgotten in the effect, not in the initializer.
 **Next**: the owner's earlier list — login security (device approval, staff hours, Authenticator for the owner), once the owner picks the points.
+
+### Same day — login security: approved devices and staff login hours (ADR-080)
+**Owner**: "login secure nahi lgta … password kis ko pta be chl jaye wo login na kr sakay … salesman be password chora sktay hn … free". I proposed device approval, staff hours, small extras, and Authenticator later; owner: "ok implement".
+**Done**:
+- `modules/security`, with the `trusted_devices` table and `organisations.login_rules` (migration d4f6a8c0e2b5, additive):
+  - `guard_login` in `auth._tokens` for every new sign-in;
+  - `guard_refresh` for the hours;
+  - approve / reject / revoke, which ends the device's logins; logout-staff;
+  - a staff member switched off is logged out.
+- `X-Device-Key` header from `lib/deviceKey.ts` on every request.
+- `LoginSecurityPage` (More → Login security) and the owner's home banner.
+- en / ur / roman strings + help, manual ch. 3, ADR-080, docs/29.
+- Both rules are off by default and never apply to the owner, so live shops are unchanged until the owner switches them on.
+**Verified**:
+- pytest `test_login_security` (5, new: off by default, device approval end-to-end, hours incl. past midnight and refresh, bad rules / manager refused, log out staff / switched-off staff), plus `test_auth`, `test_login_activity`, `test_pin_login`, `test_fingerprint*`, `test_staff*`, migrations; full suite.
+- tsc and vitest.
+- Playwright `login-security` (new: owner switches on; salesman waits; owner Allows from the home banner; the salesman gets in; another browser still waits; Log out all staff ends the salesman's login). I looked at the screenshots.
+**Next / open**: owner 2-step (Authenticator) when wanted.

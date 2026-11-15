@@ -186,6 +186,13 @@ Close the app fully and open it again first (or install the newest APK from the 
 3. Send a hand-written purchase ("khareeda … IMEI … qeemat 30k … jama 10000 cash") and enter it the same way; try **IMEI from photo** with a photo of the box.
 4. A payment and a len-den message → the payment form opens with the amount.
 
+**Login security (2026-11-15, ADR-080)** — try it on a test shop first:
+1. More → **Login security** → switch on **Only phones I allow** → **Log out all staff now**.
+2. Log in as a salesman on a phone: "This phone is new…". As the owner, the home screen shows the phone → **Allow**. The salesman taps Login again and gets in.
+3. Try the same salesman's password in another browser: it waits. **Say no** → it is refused.
+4. **Staff login hours** 10:00–22:00: a salesman cannot log in after 22:00. The owner always can.
+5. If a salesman's phone is lost: **Take back** that phone.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |
