@@ -131,7 +131,7 @@
     "price": "Price",
     "amount": "Amount",
     "reason": "Reason",
-    "void": "Cancel this bill",
+    "void": "Delete this bill",
     "today": "Today",
     "close": "Close",
     "sheetKeep": "Something is filled in here. Tap Close if you really want to leave."
@@ -193,7 +193,8 @@
       "in_repair": "In repair",
       "faulty": "Faulty",
       "returned_to_supplier": "Returned to supplier",
-      "transferred": "Sent to a branch"
+      "transferred": "Sent to a branch",
+      "used_for_parts": "Used for parts"
     },
     "condition": {
       "box_pack": "Box pack",
@@ -270,7 +271,8 @@
       "reclassified": "Type changed",
       "reserved": "Reserved",
       "unreserved": "Reservation released",
-      "pta_checked": "PTA checked"
+      "pta_checked": "PTA checked",
+      "used_for_parts": "Taken apart for parts"
     },
     "acc": {
       "box": "Box",
@@ -366,7 +368,8 @@
       "out": "Out of stock (items)",
       "value": "Value at cost",
       "reserved": "Reserved",
-      "itemsHeld": "+ {{n}} item pieces"
+      "itemsHeld": "+ {{n}} item pieces",
+      "locked": "Locked"
     },
     "fx": {
       "age": "Stock age",
@@ -560,7 +563,7 @@
       "partially_paid": "Partly paid",
       "paid": "Paid",
       "returned": "Returned",
-      "void": "Cancelled"
+      "void": "Deleted"
     },
     "return": "Return items",
     "settlement": "Settlement",
@@ -1677,9 +1680,9 @@
       "example": "500 SAR × 74.20 = Rs. 37,100."
     },
     "void": {
-      "title": "Cancel a bill",
-      "body": "Cancels a bill made by mistake. Nothing is deleted: the app adds an opposite entry, so the history and the hisaab stay correct.",
-      "example": "A sale entered twice: cancel one of them."
+      "title": "Delete a bill",
+      "body": "Deletes a sale or purchase entered by mistake. The app cancels it — the phone goes back to / out of stock, the khata and galla / bank are reversed — and keeps it in the record as Deleted with who, when and why, so the hisaab stays right. Owner / manager only. A bill whose phone has moved on (sold again, returned) cannot be deleted: use Return instead.",
+      "example": "A sale entered twice: tap the bin on one of them, write \"entered twice\", Delete the bill."
     },
     "audit": {
       "title": "Shop audit",
@@ -8261,6 +8264,13 @@
         "body": "PTA's DIRBS website cannot open inside the app (PTA does not allow it, and its \"I'm not a robot\" works only on PTA's site). The app copies the IMEI and opens the PTA page: paste it, tick the box, tap CHECK. Or send the IMEI by SMS to 8484 (the usual SMS charge). Then tap what PTA said: on a phone in stock it is saved on its history and sets its PTA status (Blocked is recorded, nothing else changes); while buying it sets the PTA choice.",
         "example": "PTA says \"Compliant\" → tap Approved. \"Non-compliant\" → Non-PTA."
       }
+    },
+    "locked": {
+      "lock": {
+        "title": "Locked phones (iCloud / Google FRP)",
+        "body": "Shops buy locked phones for their parts (camera, screen, battery …) or to sell them as they are. Add one with \"+ Locked phone\" in the purchase: only the lock, brand, model, storage, colour and cost; the IMEI is optional (often it cannot be seen) and the app gives the phone its own barcode label. It is kept apart in stock (the Locked card), says \"iCloud locked\" on every sticker, list and bill, and can be sold as it is. Use for parts takes it out of the stock and makes its cost a cost in the profit report; The lock was removed makes it a normal phone.",
+        "example": "Bought an iPhone 12 iCloud locked for 30,000: its camera and battery go into a customer's phone → Use for parts."
+      }
     }
   },
   "items": {
@@ -10987,7 +10997,8 @@
     "modules": "Totals by module (all time)",
     "transfers": "Transfers",
     "fullHisaab": "Open the full hisaab for this period",
-    "walkIn": "Walk-in customers"
+    "walkIn": "Walk-in customers",
+    "locked": "iCloud / FRP locked"
   },
   "plist": {
     "button": "Price lists",
@@ -11150,5 +11161,49 @@
       "blocked": "Blocked"
     },
     "blockedWarn": "PTA says this IMEI is blocked. Do not buy it unless you are sure why."
+  },
+  "locked": {
+    "add": "+ Locked phone (iCloud / FRP)",
+    "hint": "For parts or to sell as it is. The IMEI often cannot be seen — leave it empty; the app gives it its own label. No lock check, no PTA.",
+    "which": "Which lock?",
+    "type": {
+      "icloud": "iCloud locked",
+      "google": "Google (FRP) locked",
+      "other": "Locked"
+    },
+    "findModel": "Find the model",
+    "imei": "IMEI (if you can see it)",
+    "imeiHint": "Empty is fine for a locked phone.",
+    "imeiBad": "An IMEI has 15 digits",
+    "pageHint": "Kept apart in stock. Sell it as it is (the bill says it is locked), or take it apart for parts.",
+    "usedForParts": "Used for parts",
+    "usedHint": "Taken apart; its parts are used in the shop. Its cost is in the profit report.",
+    "parts": "Use for parts",
+    "partsHint": "Tick the parts taken out. The phone leaves the stock and what it cost becomes a cost of the shop (in the profit report). This cannot be undone.",
+    "partsNote": "Note (e.g. for repair job R-12)",
+    "partsConfirm": "Take it apart",
+    "part": {
+      "camera": "Camera",
+      "screen": "Screen / LCD",
+      "battery": "Battery",
+      "backGlass": "Back glass",
+      "board": "Board",
+      "speaker": "Speaker",
+      "chargingPort": "Charging port",
+      "housing": "Housing / frame",
+      "faceId": "Face ID / sensors",
+      "other": "Other"
+    },
+    "opened": "The lock was removed",
+    "openedHint": "It becomes a normal phone in stock. If it had no IMEI, put it right with Correct IMEI."
+  },
+  "bill": {
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteSaleHint": "Delete this sale: the phone goes back into stock, the customer's khata and the galla / bank are reversed. Use it for a sale entered by mistake. If the customer brought the phone back, use Return instead.",
+    "deletePurchaseHint": "Delete this purchase: the phone leaves the stock, the seller's khata and the galla / bank are reversed. Use it for a purchase entered by mistake. If you gave the phone back to the seller, use Return to the seller instead.",
+    "reasonPh": "e.g. entered twice / wrong phone",
+    "kept": "It stays in the record as Deleted, with who, when and why — the hisaab stays right.",
+    "deleteConfirm": "Delete the bill"
   }
 }

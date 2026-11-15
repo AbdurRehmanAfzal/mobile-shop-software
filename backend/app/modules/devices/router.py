@@ -59,6 +59,7 @@ def list_devices(
     supplier_id: uuid.UUID | None = None,
     reserved: bool = False,
     location: str | None = Query(default=None, max_length=60),
+    locked: bool | None = None,
 ):
     can_cost = ctx.can(Cap.VIEW_COST)
     rows = service.list_devices(
@@ -89,6 +90,7 @@ def list_devices(
         supplier_id=supplier_id,
         reserved=reserved,
         location=location,
+        locked=locked,
     )
     return [_hide_cost(ctx, r) for r in rows]
 
@@ -300,6 +302,60 @@ def lock_check(device_id: uuid.UUID, data: LockCheckIn, ctx: Transact, db: DB):
     dtypes.record_lock_check(db, ctx.shop_id, ctx.id, d, data.checks, data.note)
     db.commit()
     return service.get_device_out(db, ctx.shop_id, device_id)
+
+
+class PartsIn(BaseModel):
+    parts: list[str] = Field(default_factory=list, max_length=20)
+    note: str | None = Field(default=None, max_length=300)
+
+
+@router.post("/{device_id}/use-for-parts", response_model=DeviceOut)
+def use_for_parts(device_id: uuid.UUID, data: PartsIn, ctx: Transact, db: DB):
+    """owner 2026-11-15 (ADR-085): the phone is taken apart and its camera / screen / battery … are
+    used in the shop. It leaves the stock, and what it cost becomes a cost of the business (in the
+    profit report). Owner / manager only; the history keeps which parts and why."""
+    from app.core.errors import Conflict, Forbidden
+    from app.modules.devices.service import apply_event
+    from app.modules.devices.state import DeviceStatus, EventType
+    from app.modules.ledger import accounts as acc
+    from app.modules.ledger.service import Posting, post
+
+    if not ctx.can(Cap.VIEW_COST):
+        raise Forbidden()
+    d = service.get_device(db, ctx.shop_id, device_id)
+    if d.status not in (DeviceStatus.IN_STOCK, DeviceStatus.FAULTY):
+        raise Conflict(
+            code="not_in_stock",
+            message_en="Only a phone in the shop can be taken apart for parts.",
+            message_ur="صرف دکان میں موجود موبائل پرزوں کے لیے کھولا جا سکتا ہے۔",
+        )
+    parts = [p.strip()[:40] for p in data.parts if p.strip()]
+    cost = d.cost_price or 0
+    group_id = None
+    if cost > 0:
+        posting = Posting(
+            document_type="parts_use",
+            document_id=d.id,
+            memo=f"Used for parts: {d.imei1}",
+        )
+        posting.debit(
+            acc.SysAccount.COGS, cost, device_id=d.id, memo="Phone used for parts"
+        ).credit(acc.SysAccount.INVENTORY, cost, device_id=d.id)
+        group_id = post(db, ctx.shop_id, ctx.id, posting).id
+    apply_event(
+        db,
+        ctx.shop_id,
+        ctx.id,
+        d,
+        EventType.USED_FOR_PARTS,
+        amount=cost,
+        ledger_group_id=group_id,
+        document_type="parts_use",
+        document_id=d.id,
+        data={"parts": parts, "note": data.note},
+    )
+    db.commit()
+    return _hide_cost(ctx, service.get_device_out(db, ctx.shop_id, device_id))
 
 
 class PtaCheckIn(BaseModel):

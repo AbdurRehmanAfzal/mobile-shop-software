@@ -38,6 +38,8 @@ class DeviceStatus(StrEnum):
     FAULTY = "faulty"
     RETURNED_TO_SUPPLIER = "returned_to_supplier"
     TRANSFERRED = "transferred"  # docs/35 §5 item 2: sent to another branch of the same owner
+    # owner 2026-11-15 (ADR-085): taken apart; its camera / screen / battery … used in the shop
+    USED_FOR_PARTS = "used_for_parts"
 
 
 class EventType(StrEnum):
@@ -74,6 +76,8 @@ class EventType(StrEnum):
     UNRESERVED = "unreserved"
     # owner 2026-11-15 (ADR-082): what PTA's DIRBS (website or SMS 8484) said about the IMEI
     PTA_CHECKED = "pta_checked"
+    # owner 2026-11-15 (ADR-085): the unit is taken apart for its parts (its cost becomes a cost)
+    USED_FOR_PARTS = "used_for_parts"
 
 
 # Events that move money and therefore may only be raised by document modules (purchase, sale,
@@ -86,6 +90,7 @@ MONEY_EVENTS = frozenset(
         EventType.RETURNED_TO_SUPPLIER,
         EventType.TRANSFERRED_OUT,
         EventType.TRANSFERRED_IN,
+        EventType.USED_FOR_PARTS,
     }
 )
 
@@ -137,6 +142,8 @@ TRANSITIONS: dict[tuple[DeviceStatus | None, EventType], DeviceStatus] = {
     (S.SOLD, E.TRANSFERRED_IN): S.IN_STOCK,  # was here before, comes back from a branch
     (S.RETURNED_TO_SUPPLIER, E.TRANSFERRED_IN): S.IN_STOCK,
     (S.TRANSFERRED, E.TRANSFERRED_IN): S.IN_STOCK,
+    (S.IN_STOCK, E.USED_FOR_PARTS): S.USED_FOR_PARTS,  # ADR-085
+    (S.FAULTY, E.USED_FOR_PARTS): S.USED_FOR_PARTS,
 }
 
 

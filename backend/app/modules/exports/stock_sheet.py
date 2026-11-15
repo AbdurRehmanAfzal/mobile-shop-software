@@ -69,7 +69,10 @@ def _value(key: str, d: dict, get, ur: bool, cp: str = "CP ID"):
     if v is None or v == "":
         return None
     if key == "condition":
-        return COND.get(v, v)
+        from app.modules.devices.types import lock_text
+
+        base = COND.get(d["condition"], d["condition"])
+        return " · ".join(x for x in (base, lock_text(d.get("lock_type"), ur)) if x)
     if key == "pta":
         return cp if v == "cpid" else PTA.get(v, v) or None
     if key == "status":

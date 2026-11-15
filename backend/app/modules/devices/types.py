@@ -171,6 +171,19 @@ def clean_prefs(raw: dict | None) -> dict | None:
     return out
 
 
+LOCK_TXT = {
+    "icloud": ("iCloud locked", "آئی کلاؤڈ لاک"),
+    "google": ("Google (FRP) locked", "گوگل (FRP) لاک"),
+    "other": ("Locked", "لاک"),
+}
+
+
+def lock_text(lock_type: str | None, ur: bool = False) -> str | None:
+    """ADR-085: how a locked phone is named on every paper (None for a normal phone)"""
+    t = LOCK_TXT.get(lock_type or "")
+    return t[1 if ur else 0] if t else None
+
+
 def cpid_label(shop: Shop | None) -> str:
     """what the shop's printed reports and screens show for a CP ID phone (default "CP ID")"""
     return prefs_for(shop)["cpid_label"]

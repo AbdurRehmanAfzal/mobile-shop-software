@@ -292,6 +292,7 @@ def _alerts(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
         "inspection": u["inspection"],
         "in_repair": u["in_repair"],
         "reserved": u["reserved"],
+        "locked": u.get("locked", 0),
         "old_60d": old,
         "items_low": st["items"]["low"],
         "items_out": st["items"]["out"],

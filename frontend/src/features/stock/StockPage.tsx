@@ -61,9 +61,10 @@ export function DeviceRow({ d, onClick }: { d: Device; onClick?: () => void }) {
         <span className="flex flex-wrap items-center gap-1.5">
           <span dir="ltr">{d.imei1}</span>
           <Chip text={`stock.condition.${d.condition}`} />
-          {hasPta(d) && d.pta_status !== 'pta_approved' ? <Chip text={`stock.pta.${d.pta_status}`} tone="warn" /> : null}
+          {hasPta(d) && d.pta_status !== 'pta_approved' && !(d.lock_type && d.pta_status === 'unknown') ? <Chip text={`stock.pta.${d.pta_status}`} tone="warn" /> : null}
           {d.verification_status !== 'not_required' ? <Chip text={`stock.verification.${d.verification_status}`} tone={vTone} /> : null}
           <FaultChip faults={d.faults} />
+          {d.lock_type ? <Chip text={`locked.type.${d.lock_type}`} tone="bad" /> : null}
         </span>
       }
       right={
@@ -116,6 +117,7 @@ export function DeviceCard({ d, onOpen, onSell, selected, onSelect, fields }: { 
           {d.verification_status !== 'not_required' && (!fields || fields.includes('verification') || d.verification_status === 'flagged') ? <Chip text={`stock.verification.${d.verification_status}`} tone={vTone} /> : null}
           {d.status !== 'in_stock' ? <Chip text={`stock.status.${d.status}`} tone="ink" /> : null}
           <FaultChip faults={d.faults} />
+          {d.lock_type ? <Chip text={`locked.type.${d.lock_type}`} tone="bad" /> : null}
           {d.reserved_party_id ? <span className="rounded-full bg-gold-tint px-2 py-0.5 font-bold text-ink" data-testid="card-reserved-chip">{pick('reserve.chip')} {d.reserved_party_name}</span> : null}
         </div>
         {onSell && (d.status === 'in_stock' || d.status === 'faulty') && d.verification_status !== 'flagged' ? (
@@ -164,10 +166,10 @@ export default function StockPage() {
   const [toCat, setToCat] = useState<'phone' | 'tablet' | 'watch'>('tablet')
   const [retypeRows, setRetypeRows] = useState<{ id: string; imei1: string; problems: string[] }[] | null>(null)
   const [retypeErr, setRetypeErr] = useState<unknown>(null)
-  const statusParam = mode === 'in_repair' || mode === 'faulty' || mode === 'with_customer_for_approval' ? mode : mode ? undefined : filter === 'all' ? undefined : filter
+  const statusParam = mode === 'in_repair' || mode === 'faulty' || mode === 'with_customer_for_approval' ? mode : mode === 'locked' ? 'in_stock' : mode ? undefined : filter === 'all' ? undefined : filter
   // owner 2026-11-12 (ADR-066): a faulty phone is still stock (it can be sold as it is)
-  const withFaulty = statusParam === 'in_stock' && !mode
-  const { data, isLoading } = useDevices({ q: q || undefined, status: statusParam, with_faulty: withFaulty || undefined, model_id: model?.id, ...preset, category: kind || preset.category, condition: fx.condition || preset.condition, pta_status: fx.pta || preset.pta_status, limit: 500, grade: fx.grade || undefined, ram_gb: fx.ram ? Number(fx.ram) : undefined, price_min: fx.min ? Number(fx.min) : undefined, price_max: fx.max ? Number(fx.max) : undefined, lock_unchecked: fx.lock || undefined, sellable: mode === 'sellable' || undefined, inspection: mode === 'inspection' || undefined, reserved: mode === 'reserved' || undefined, location: fx.shelf || undefined, age_min: fx.age ? Number(fx.age) : undefined, cost_min: canCost && fx.costMin ? Number(fx.costMin) : undefined, cost_max: canCost && fx.costMax ? Number(fx.costMax) : undefined, supplier_id: fx.supplier || undefined })
+  const withFaulty = statusParam === 'in_stock' && (!mode || mode === 'locked')
+  const { data, isLoading } = useDevices({ q: q || undefined, status: statusParam, with_faulty: withFaulty || undefined, model_id: model?.id, ...preset, category: kind || preset.category, condition: fx.condition || preset.condition, pta_status: fx.pta || preset.pta_status, limit: 500, grade: fx.grade || undefined, ram_gb: fx.ram ? Number(fx.ram) : undefined, price_min: fx.min ? Number(fx.min) : undefined, price_max: fx.max ? Number(fx.max) : undefined, lock_unchecked: fx.lock || undefined, sellable: mode === 'sellable' || undefined, inspection: mode === 'inspection' || undefined, reserved: mode === 'reserved' || undefined, locked: mode === 'locked' || undefined, location: fx.shelf || undefined, age_min: fx.age ? Number(fx.age) : undefined, cost_min: canCost && fx.costMin ? Number(fx.costMin) : undefined, cost_max: canCost && fx.costMax ? Number(fx.costMax) : undefined, supplier_id: fx.supplier || undefined })
   useScan(async (code) => {
     const r = await lookupCode(code).catch(() => null)
     if (r?.kind === 'device' && r.device) { beep('ok'); nav(`/stock/${r.device.id}`) } else if (r?.kind === 'item' && r.item) { beep('ok'); nav(`/accessories?q=${encodeURIComponent(r.item.sku)}`) } else { beep('error'); setQ(code) }
@@ -200,6 +202,7 @@ export default function StockPage() {
     if (brand) p.set('brand_id', brand)
     if (model) p.set('model_id', model.id)
     if (withFaulty) p.set('with_faulty', 'true')
+    if (mode === 'locked') p.set('locked', 'true')
     for (const [k, v] of Object.entries(preset)) if (v) p.set(k, v)
     if (fx.grade) p.set('grade', fx.grade)
     if (fx.ram) p.set('ram_gb', fx.ram)

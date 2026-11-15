@@ -1,4 +1,5 @@
-import { Check, Headphones, PackagePlus, Pencil, Plus, Printer, ShieldCheck, SlidersHorizontal, Smartphone, Store, Trash2, UserCheck, UserRound, Watch } from 'lucide-react'
+import LockedLineSheet from './LockedLineSheet'
+import { Lock, Check, Headphones, PackagePlus, Pencil, Plus, Printer, ShieldCheck, SlidersHorizontal, Smartphone, Store, Trash2, UserCheck, UserRound, Watch } from 'lucide-react'
 import { faultText } from '@/features/stock/Faults'
 import { useState, type ReactNode } from 'react'
 import { clearDrafts, useDraft } from '@/lib/draft'
@@ -166,8 +167,8 @@ export default function PurchaseWizard() {
                   {d.brand_name} {d.model_name}
                 </div>
                 <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted">
-                  <span dir="ltr">{d.imei1}</span>
-                  <Chip text={`stock.condition.${d.condition}`} />
+                  {d.imei1 ? <span dir="ltr">{d.imei1}</span> : null}
+                  {d.lock_type ? <Chip text={`locked.type.${d.lock_type}`} tone="bad" /> : <Chip text={`stock.condition.${d.condition}`} />}
                   {d.pta_status !== 'pta_approved' ? <Chip text={`stock.pta.${d.pta_status}`} tone="warn" /> : null}
                 </div>
               </button>
@@ -181,6 +182,8 @@ export default function PurchaseWizard() {
             </div>
           ))}
           <div className="flex items-center gap-1"><BiButton text="purchase.addDevice" icon={<Plus size={22} />} variant="secondary" className="flex-1" onClick={() => setEditing(emptyDraft('', kind))} /><Help term="purchase.lines" size="sm" /></div>
+          {/* owner 2026-11-15 (ADR-085): a locked phone (iCloud / FRP), for parts or to sell as it is */}
+          <div className="flex items-center gap-1"><BiButton text="locked.add" icon={<Lock size={20} />} variant="secondary" className="flex-1" onClick={() => setEditing({ ...emptyDraft('', kind), lock_type: 'icloud', condition: 'used', pta_status: 'unknown' })} data-testid="add-locked" /><Help term="locked.lock" size="sm" /></div>
 
           <div className="flex items-center gap-1"><BiButton text="items.buyButton" icon={<Watch size={22} />} variant="secondary" className="flex-1" onClick={() => setPickingItem(true)} /><Help term="purchase.items" size="sm" /></div>
           {misc.length || kind === 'supplier' ? (
@@ -412,7 +415,17 @@ export default function PurchaseWizard() {
       </Sheet>
 
       <Sheet open={editing !== null} onClose={() => setEditing(null)} title={editing && devices.some((x) => x.key === editing.key) ? 'purchase.editDevice' : 'purchase.addDevice'}>
-        {editing ? (
+        {editing && editing.lock_type ? (
+          <LockedLineSheet
+            key={editing.key}
+            initial={editing}
+            again={devices.some((x) => x.key === editing.key)}
+            onSave={(d) => {
+              setDevices((xs) => (xs.some((x) => x.key === d.key) ? xs.map((x) => (x.key === d.key ? d : x)) : [...xs, d]))
+              setEditing(null)
+            }}
+          />
+        ) : editing ? (
           <DeviceLineSheet
             key={editing.key}
             initial={editing}

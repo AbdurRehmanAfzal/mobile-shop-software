@@ -131,7 +131,7 @@
     "price": "Qeemat",
     "amount": "Raqam",
     "reason": "Wajah",
-    "void": "Yeh bill khatam karein",
+    "void": "Yeh bill delete karein",
     "today": "Aaj",
     "close": "Band karein",
     "sheetKeep": "Yahan kuch bhara hua hai. Agar waqai chhorna hai to Band karein dabayein."
@@ -193,7 +193,8 @@
       "in_repair": "Marammat mein",
       "faulty": "Kharab",
       "returned_to_supplier": "Dealer ko wapas",
-      "transferred": "Branch ko bheja"
+      "transferred": "Branch ko bheja",
+      "used_for_parts": "Parts ke liye istemal"
     },
     "condition": {
       "box_pack": "Box pack",
@@ -270,7 +271,8 @@
       "reclassified": "Qism badli",
       "reserved": "Reserve hua",
       "unreserved": "Reserve khatam",
-      "pta_checked": "PTA check hua"
+      "pta_checked": "PTA check hua",
+      "used_for_parts": "Parts ke liye khola"
     },
     "acc": {
       "box": "Dabba",
@@ -366,7 +368,8 @@
       "out": "Khatam (items)",
       "value": "Khareed ke hisaab se maliyat",
       "reserved": "Reserve",
-      "itemsHeld": "+ {{n}} items"
+      "itemsHeld": "+ {{n}} items",
+      "locked": "Lock"
     },
     "fx": {
       "age": "Stock ki umar",
@@ -560,7 +563,7 @@
       "partially_paid": "Kuch mile",
       "paid": "Pure mile",
       "returned": "Wapas",
-      "void": "Khatam"
+      "void": "Deleted"
     },
     "return": "Saamaan wapas",
     "settlement": "Hisaab",
@@ -1677,9 +1680,9 @@
       "example": "500 SAR × 74.20 = Rs. 37,100."
     },
     "void": {
-      "title": "Bill cancel karna",
-      "body": "Ghalti se bana bill khatam karta hai. Kuch mitaya nahi jata: app ulti entry daal deti hai, is liye kahani aur hisaab dono theek rehte hain.",
-      "example": "Ek bikri do dafa chadh gayi: ek cancel kar dein."
+      "title": "Bill delete karna",
+      "body": "Ghalti se daali gayi sale ya purchase delete karta hai. App ise mansookh karti hai — mobile stock mein wapas / bahar, khata aur galla / bank ulat — aur ise record mein \"Deleted\" likh kar rakhti hai, kis ne, kab aur kyun ke saath, taake hisaab theek rahe. Sirf owner / manager. Jis bill ka mobile aage chala gaya ho (dobara bik gaya, wapas hua) woh delete nahi ho sakta: \"Wapsi\" istemal karein.",
+      "example": "Ek sale do baar daali gayi: ek ke saath trash dabayein, \"do baar daali\" likhein, bill delete karein."
     },
     "audit": {
       "title": "Dukaan ka audit",
@@ -8261,6 +8264,13 @@
         "body": "PTA ki DIRBS website app ke andar nahi khul sakti (PTA ijazat nahi deta, aur \"I'm not a robot\" sirf PTA ki site par chalta hai). App IMEI copy kar ke PTA ka page kholti hai: paste karein, khane par tick karein, CHECK dabayein. Ya IMEI ko 8484 par SMS karein (aam SMS ka kharcha). Phir PTA ka jawab dabayein: stock wale mobile par yeh history mein save hota hai aur PTA haalat laga deta hai (Blocked sirf likha jata hai); khareedte waqt form mein PTA chun deta hai.",
         "example": "PTA kahe \"Compliant\" → Approved dabayein. \"Non-compliant\" → Non-PTA."
       }
+    },
+    "locked": {
+      "lock": {
+        "title": "Lock mobile (iCloud / Google FRP)",
+        "body": "Dukaanein lock mobile parts (camera, screen, battery …) ke liye ya jaisa hai waisa bechne ke liye khareedti hain. Purchase mein \"+ Lock mobile\" se daalein: sirf lock, brand, model, storage, rang aur qeemat; IMEI ikhtiyari hai (aksar nazar nahi aata) aur app is ka apna barcode label banati hai. Yeh stock mein alag rehta hai (Lock card), har sticker, list aur bill par \"iCloud lock\" likha aata hai, aur jaisa hai waisa becha ja sakta hai. \"Parts ke liye istemal\" ise stock se nikal kar is ki qeemat munafe ki report mein kharcha bana deta hai; \"Lock khul gaya\" ise aam mobile bana deta hai.",
+        "example": "iPhone 12 iCloud lock 30,000 mein khareeda: is ka camera aur battery gahak ke phone mein lage → Parts ke liye istemal."
+      }
     }
   },
   "items": {
@@ -10987,7 +10997,8 @@
     "modules": "Har hisse ki kul tadaad",
     "transfers": "Branch transfer",
     "fullHisaab": "Is arse ka poora hisaab kholein",
-    "walkIn": "Walk-in gahak"
+    "walkIn": "Walk-in gahak",
+    "locked": "iCloud / FRP lock"
   },
   "plist": {
     "button": "Qeemat list",
@@ -11150,5 +11161,49 @@
       "blocked": "Blocked"
     },
     "blockedWarn": "PTA ke mutabiq yeh IMEI block hai. Wajah pakki maloom na ho to mat khareedein."
+  },
+  "locked": {
+    "add": "+ Lock mobile (iCloud / FRP)",
+    "hint": "Parts ke liye ya jaisa hai waisa bechne ke liye. Aksar IMEI nazar nahi aata — khali chhorein; app is ka apna label banati hai. Lock check aur PTA nahi.",
+    "which": "Kaun sa lock?",
+    "type": {
+      "icloud": "iCloud lock",
+      "google": "Google (FRP) lock",
+      "other": "Lock"
+    },
+    "findModel": "Model talash karein",
+    "imei": "IMEI (agar nazar aaye)",
+    "imeiHint": "Lock mobile ke liye khali bhi theek hai.",
+    "imeiBad": "IMEI ke 15 hindse hote hain",
+    "pageHint": "Stock mein alag rakha gaya. Jaisa hai waisa bechein (bill par lock likha aata hai), ya parts ke liye kholein.",
+    "usedForParts": "Parts ke liye istemal",
+    "usedHint": "Khol diya gaya; is ke parts dukaan mein istemal hue. Is ki qeemat munafe ki report mein hai.",
+    "parts": "Parts ke liye istemal karein",
+    "partsHint": "Nikale gaye parts par nishan lagayein. Mobile stock se nikal jayega aur is ki qeemat dukaan ka kharcha banegi (munafe ki report mein). Yeh wapas nahi ho sakta.",
+    "partsNote": "Note (maslan repair R-12 ke liye)",
+    "partsConfirm": "Khol dein",
+    "part": {
+      "camera": "Camera",
+      "screen": "Screen / LCD",
+      "battery": "Battery",
+      "backGlass": "Back glass",
+      "board": "Board",
+      "speaker": "Speaker",
+      "chargingPort": "Charging port",
+      "housing": "Body / frame",
+      "faceId": "Face ID / sensor",
+      "other": "Doosra"
+    },
+    "opened": "Lock khul gaya",
+    "openedHint": "Yeh stock mein aam mobile ban jayega. IMEI nahi tha to \"IMEI durust karein\" se lagayein."
+  },
+  "bill": {
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteSaleHint": "Yeh sale delete karein: mobile stock mein wapas aayega, gahak ka khata aur galla / bank ulat jayenge. Ghalti se daali gayi sale ke liye hai. Agar gahak mobile wapas laya hai to \"Wapsi\" istemal karein.",
+    "deletePurchaseHint": "Yeh purchase delete karein: mobile stock se nikal jayega, bechne wale ka khata aur galla / bank ulat jayenge. Ghalti se daali gayi purchase ke liye hai. Agar mobile bechne wale ko wapas diya hai to \"Bechne wale ko wapas\" istemal karein.",
+    "reasonPh": "maslan do baar daali / ghalat mobile",
+    "kept": "Yeh record mein \"Deleted\" likha rahega, kis ne, kab aur kyun ke saath — hisaab theek rehta hai.",
+    "deleteConfirm": "Bill delete karein"
   }
 }

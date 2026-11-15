@@ -1,3 +1,4 @@
+import BillActions from '@/features/more/BillActions'
 import DownloadButton from '@/components/DownloadButton'
 import { FbrBillStatus } from '@/features/more/FbrCard'
 import { Plus } from 'lucide-react'
@@ -21,6 +22,7 @@ export function SalesPage() {
   const { pick } = useLang()
   const [status, setStatus] = useState<'all' | 'open' | 'partially_paid' | 'paid'>('all')
   const { data, isLoading } = useSales({ status: status === 'all' ? undefined : status })
+  const listRole = useAuth((s) => s.me?.user.role)
   return (
     <div className="flex flex-col gap-3">
       <PageHeader
@@ -47,8 +49,9 @@ export function SalesPage() {
       ) : (
         <List>
           {data.map((inv) => (
+            <div key={inv.id} className="flex items-center">
+            <div className="min-w-0 flex-1">
             <Row
-              key={inv.id}
               title={inv.party_name ?? pick('sale.cashCustomer')}
               sub={
                 <span className="flex items-center gap-1.5">
@@ -63,6 +66,10 @@ export function SalesPage() {
               }
               onClick={() => nav(`/sales/${inv.id}`)}
             />
+            </div>
+            {/* owner 2026-11-15 (ADR-086): edit / delete a sale entered by mistake from its row */}
+            {inv.status !== 'void' ? <BillActions kind="sale" id={inv.id} no={inv.no} canDelete={listRole === 'owner' || listRole === 'manager'} /> : null}
+            </div>
           ))}
         </List>
       )}

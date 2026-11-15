@@ -25,7 +25,7 @@ from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx, require_cap
 from app.modules.catalogue.models import Brand, Colour, Model, Storage
 from app.modules.devices.models import Device
-from app.modules.devices.types import cpid_label, pta_out
+from app.modules.devices.types import cpid_label, lock_text, pta_out
 from app.modules.expenses.models import Expense, ExpenseCategory
 from app.modules.ledger.service import party_statement
 from app.modules.parties.models import Party
@@ -247,7 +247,10 @@ STOCK_COLS: dict[str, tuple[str, object]] = {
         ),
     ),
     "colour": ("Colour", lambda d: d["colour_name"]),
-    "condition": ("Condition", lambda d: d["condition"]),
+    "condition": (
+        "Condition",
+        lambda d: " · ".join(x for x in (d["condition"], lock_text(d.get("lock_type"))) if x),
+    ),
     "pta": ("PTA", lambda d: d["pta_status"]),
     "sim_time": ("SIM time (months)", lambda d: d["sim_time_months"]),
     "battery": ("Battery %", lambda d: d["battery_health"]),
@@ -353,6 +356,7 @@ def stock(
     sort: str | None = None,
     desc: bool = False,
     copy: Literal["screen", "staff", "customer"] = "screen",
+    locked: bool | None = None,
 ):
     # owner 2026-11-15 (ADR-078): a price list for the staff (every field + asking, no cost / seller)
     # or for customers (what they ask about + price, phones for sale); the PDF fits A4
@@ -382,6 +386,7 @@ def stock(
                 "lock_unchecked": lock_unchecked,
                 "model_id": model_id,
                 "with_faulty": with_faulty,
+                "locked": locked,
             },
             sort,
             desc,

@@ -69,6 +69,8 @@ export interface DeviceLineDraft {
   sim_lock?: '' | 'unlocked' | 'locked'
   sim_lock_carrier?: string
   faults?: string[]
+  /** ADR-085: a locked phone (iCloud / Google FRP), bought for parts or to sell as it is */
+  lock_type?: '' | 'icloud' | 'google' | 'other'
   battery_cycles?: string
   /** owner 2026-11-10 (ADR-060): the shelf it sits on */
   location?: string
@@ -157,6 +159,7 @@ export function draftToApi(d: DeviceLineDraft) {
       sim_lock: sim && d.sim_lock ? d.sim_lock : null,
       sim_lock_carrier: sim && d.sim_lock === 'locked' ? d.sim_lock_carrier?.trim() || null : null,
       faults: d.faults?.length ? d.faults : [],
+      lock_type: d.lock_type || null,
       specs: d.specs && Object.keys(d.specs).length ? d.specs : null,
       lock_checks: d.condition !== 'box_pack' && d.lock_checks && Object.keys(d.lock_checks).length ? d.lock_checks : null,
       lock_checked: d.condition !== 'box_pack' ? !!d.lock_checked : false,

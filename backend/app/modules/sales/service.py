@@ -618,7 +618,11 @@ def _unit_bits(ln: dict, ur: bool, cp: str = "CP ID") -> str:
         for x in (ln.get("storage_name"), f"{ln['ram_gb']}GB RAM" if ln.get("ram_gb") else None)
         if x
     )
-    bits = [b for b in (kind, mem, ln.get("colour_name"), cond, pta) if b]
+    from app.modules.devices.types import lock_text
+
+    # ADR-085: a locked phone sold as it is says so on the bill
+    locked = lock_text(ln.get("lock_type"), ur)
+    bits = [b for b in (kind, mem, ln.get("colour_name"), cond, pta, locked) if b]
     out = f"<br><small>{html.escape(' · '.join(bits))}</small>" if bits else ""
     if ln.get("faults"):
         # owner 2026-11-12 (ADR-066): a phone sold as faulty says so on the bill
@@ -656,6 +660,7 @@ def to_out(db: Session, inv: Invoice, show_cost: bool) -> dict:
                     "grade": d.grade,
                     "serial": d.serial,
                     "faults": d.faults,
+                    "lock_type": d.lock_type,
                 }
         row = {
             **{c.name: getattr(ln, c.name) for c in InvoiceLine.__table__.columns},

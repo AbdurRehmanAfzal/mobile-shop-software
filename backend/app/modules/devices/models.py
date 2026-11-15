@@ -75,6 +75,9 @@ class Device(UUIDPk, ShopScoped, Timestamped, Base):
     # owner 2026-11-12 (ADR-066): what is wrong with a faulty unit (keys from types.FAULTS or the
     # shop's own words); set by "marked_faulty", cleared by "faulty_cleared"
     faults: Mapped[list | None] = mapped_column(JSON)
+    # owner 2026-11-15 (ADR-085): bought locked (iCloud / Google FRP) — for parts or sold as it is;
+    # icloud | google | other, None = a normal phone
+    lock_type: Mapped[str | None] = mapped_column(String(10))
     lock_checks: Mapped[dict | None] = mapped_column(
         JSON
     )  # {activation|frp|account|paired|carrier: cleared|not_cleared|na}

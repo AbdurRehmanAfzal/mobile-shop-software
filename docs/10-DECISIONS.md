@@ -362,6 +362,38 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-086 · 2026-11-15 · Accepted · Edit / Delete on every sale and purchase row
+**Context**: the owner asked how to delete a purchase or a product, and asked for small Edit and Delete buttons on every sale and purchase row, and Delete in the bill's own view, for bills entered by mistake. The ledger is append-only; void (Cancel this bill) already existed, but only on the bill's page.
+**Decision**:
+- `BillActions` sits beside each row of the Sales list and the Purchases list (not on deleted bills):
+  - **Edit** opens the bill, where its fixes live.
+  - **Delete** (owner / manager) asks for a reason and calls the existing `POST /sales|purchases/{id}/void`.
+- The words change, the behaviour does not. "Cancel this bill" becomes **Delete this bill**, and status `void` reads **Deleted**. The help explains that the bill stays in the record with who, when and why, and is reversed in stock, khata and galla.
+- The backend refusal for a bill whose phone has moved on stays as it was; its message is shown in the sheet.
+**Consequences**: no API or data change. A deleted bill is still listed, marked Deleted, without the buttons.
+
+## ADR-085 · 2026-11-15 · Accepted · Locked phones (iCloud / Google FRP): bought for parts or sold as they are
+**Context**: shops buy locked phones (mostly iCloud-locked iPhones) for their parts or to sell them on as they are. Their IMEI often cannot be seen. The owner asked for a separate, short purchase form (brand, model, cost, colour, common iPhone details; the rest optional, payment as usual), a separate place in stock, and reports.
+**Decision**:
+- **Data**: `devices.lock_type` (`icloud` | `google` | `other`; None = a normal phone). Migration `f6b8d0a2c4e7` adds it as a nullable column.
+  - Without an IMEI, the unit is identified by its serial, or by a code the shop makes (`LCK` + 12 hex), stored in `imei1` like a Wi-Fi tablet's serial. It gets its own barcode as usual.
+- **Buying**: no lock check (`require_lock_check` is skipped for a locked unit) and no PTA; everything else goes through the usual purchase and payment, unchanged.
+  - The UI is `LockedLineSheet`, from **+ Locked phone (iCloud / FRP)** in the purchase. It has the lock, brand (Apple first), model, storage, colour, cost and asking price, with IMEI / serial / RAM / shelf under More details.
+- **Stock**:
+  - `stock-status` counts `locked` separately, and they are not counted as available.
+  - `GET /devices?locked=` and the stock export take a `locked` filter.
+  - The stock page has a **Locked** card that filters the list; the overview's stock alerts include them.
+  - Every paper says the lock (`devices.types.lock_text`): the stock CSV / Excel condition column, the A4 stock list, the tally page and Excel, stickers, and bills.
+- **Selling**: a locked unit is sold as it is. It has no "not cleared" lock check, so the ADR-038 rule does not stop it, and the bill names the lock.
+- **Used for parts**: new status `used_for_parts` and event `used_for_parts`, reached from in stock or faulty.
+  - `POST /devices/{id}/use-for-parts {parts, note}` (owner / manager) posts Dr COGS / Cr Inventory at the unit's cost, so the cost reaches the profit report.
+  - The event keeps the parts and the note. It cannot be undone.
+- **Lock removed**: `PATCH /devices/{id} {lock_type: null}` makes it a normal phone; Correct IMEI then sets its IMEI.
+- **On the phone's page**: `LockedPanel` shows the lock and the two actions. The PTA "Unknown" and "Lock not checked" chips are hidden for a locked unit.
+**Consequences**:
+- Existing phones are unchanged.
+- The parts taken out are recorded on the phone's history; they are not added to a spare-parts stock. That can come later if the shop wants a parts inventory.
+
 ## ADR-084 · 2026-11-15 · Accepted · Business overview and shop audit as detailed A4 reports
 **Context**: the owner asked for detailed A4 PDFs of the shop audit and the business overview, for the selected filter, to print, keep in a file, or present.
 - The audit's printable report already existed, but its header was bare (name only) and wide tables did not wrap.
