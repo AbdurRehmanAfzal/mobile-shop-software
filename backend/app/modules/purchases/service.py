@@ -955,3 +955,21 @@ def _exchange_of(db: Session, shop_id: uuid.UUID, purchase_id: uuid.UUID) -> uui
     return db.scalar(
         select(Exchange.id).where(Exchange.shop_id == shop_id, Exchange.purchase_id == purchase_id)
     )
+
+
+def replace_purchase(
+    db: Session, shop_id: uuid.UUID, ctx, purchase_id: uuid.UUID, data: PurchaseCreate, reason: str
+) -> Purchase:
+    """Edit a purchase's lines, costs, dealer or payment (owner 2026-11-16, ADR-090): the old bill
+    is deleted (kept as Deleted, "Edited, replaced by …") and the corrected one posted in the same
+    transaction. Same rules as a delete: not once a phone has moved on or a later payment / an
+    exchange depends on it."""
+    try:
+        old = void_purchase(db, shop_id, ctx, purchase_id, f"Edited: {reason}", commit=False)
+        new = create_purchase(db, shop_id, ctx.id, data, commit=False)
+        old.void_reason = f"Edited, replaced by {new.no}: {reason}"
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+    return new

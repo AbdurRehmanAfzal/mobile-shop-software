@@ -329,7 +329,7 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | ADR-090 part 2: payment / len-den edit (void + re-post in one go); undo a sale / purchase return (migration `e4a6c8d0f2b5`); undo a stock adjustment; undo a galla ↔ bank move — each after the warning with an example (owner 2026-11-16) | ✅ | `payments/service.edit_payment`, `returns/service.void_return`, `accessories/service.undo_adjust`, `PaymentEditSheet.tsx`, `tests/test_delete_safety.py`, `e2e/edit-undo.spec.ts` |
 | ADR-090 part 3: cancel a loan entered by mistake; send a branch transfer back; cancel an installment plan (then its sale can be deleted) — each with the warning (owner 2026-11-16) | ✅ | `loans/service.cancel_loan`, `transfers/service.undo`, `installments/service.cancel_plan`, `tests/test_delete_safety.py` |
 | ADR-090: ✎ / 🗑 on every phone in the stock list (cards, table, grid, list); 🗑 opens the phone and offers the delete that fits it (old stock / its purchase / its sale), or says why not (owner 2026-11-16) | ✅ | `stock/DeviceActions.tsx`, `e2e/delete-everywhere.spec.ts` |
-| ADR-090 still open: a sale / purchase line edit in place | ⏳ | — |
+| ADR-090: Edit a sale / purchase bill (lines, prices, items, discount, payment, person) — the form opens filled, saving replaces the old bill in one go (`/replace`), the old kept as Deleted (owner 2026-11-16) | ✅ | `sales/service.replace_invoice`, `purchases/service.replace_purchase`, `SaleWizard.tsx`, `PurchaseWizard.tsx`, `e2e/edit-undo.spec.ts` |
 | Operations runbook (internal; secrets only as placeholders) | ✅ | `operations-en.md` |
 | Owner review of the wording | ⏳ | `docs/29-OWNER-PENDING.md` D |
 

@@ -148,6 +148,33 @@ export default function SaleWizard() {
   const [holdMsg, setHoldMsg] = useState<{ k: 'held' } | { k: 'sold'; n: number } | null>(null)
   const hold = useDocMutation<Record<string, unknown>, HeldSale>('POST', () => '/api/v1/sales/held')
 
+  // ADR-090: Edit a bill — the form opens filled from it; saving replaces it (the old one kept as Deleted)
+  const [replaceId] = useState(() => params.get('replace'))
+  const [replaceNo, setReplaceNo] = useState('')
+  const [replaceWhy, setReplaceWhy] = useState('')
+  const rep = useDocMutation<Record<string, unknown>, Invoice>('POST', () => `/api/v1/sales/${replaceId}/replace`)
+  useEffect(() => {
+    if (!replaceId) return
+    void (async () => {
+      const inv = await get<Invoice>(`/api/v1/sales/${replaceId}`)
+      setReplaceNo(inv.no)
+      const live = inv.lines.filter((l) => !l.returned_at)
+      const devs = await Promise.all(live.filter((l) => l.device_id).map((l) => get<DeviceDetail>(`/api/v1/devices/${l.device_id}`)))
+      // what went with each phone (given now / later) as on the old bill
+      const accOf = (l: (typeof live)[number]): AccValue => ({ ...Object.fromEntries(l.accessories_given.map((k) => [k, { state: 'now', date: '' }])), ...Object.fromEntries(l.accessories_pending.map((p) => [p.kind, { state: 'later', date: p.promised_at ?? '' }])) })
+      setLines(live.filter((l) => l.device_id).map((l, i) => { const base = newLine(devs[i] as unknown as Device); return { ...base, acc: { ...base.acc, ...accOf(l) }, price: String(Number(l.unit_price)), warranty_days: String(l.warranty_days ?? 0) } }))
+      setMisc(live.filter((l) => !l.device_id).map((l) => ({ key: uid(), description: l.description ?? '', qty: String(l.qty), unit_price: String(Number(l.unit_price)), accessory_id: (l as unknown as { accessory_id?: string | null }).accessory_id ?? undefined })))
+      setDiscount(Number(inv.discount) ? String(Number(inv.discount)) : '')
+      setPaidNow(String(Number(inv.paid)))
+      // part-paid: the rest was udhaar, so the form opens on udhaar with what was paid
+      if (Number(inv.paid) < Number(inv.total)) setPay({ ...newPay(), method: 'udhaar' })
+      if (Number(inv.tax_rate)) { setTaxOn(true); setTaxRate(String(Number(inv.tax_rate))) }
+      if (inv.party_id) setParty(await get<Party>(`/api/v1/parties/${inv.party_id}`))
+      else setWalkIn(true)
+      setStep(1)
+    })().catch(() => undefined)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     const id = params.get('device')
     if (id && !lines.length)
@@ -270,7 +297,7 @@ export default function SaleWizard() {
   }
 
   async function submit(pin: string | null = null) {
-    const res = await m.mutateAsync({
+    const body = {
       party_id: party?.id ?? null,
       approval_pin: pin || undefined,
       due_date: udhaar && !inst.on && dueDate ? dueDate : undefined,
@@ -285,7 +312,8 @@ export default function SaleWizard() {
       override_reason: overrideReason || undefined,
       below_cost_ok: lossLine && lossOk,
       installments: inst.on ? { months: Number(inst.months), monthly: inst.monthly !== '' ? Number(inst.monthly) : null, due_day: Number(inst.dueDay) || 10, first_due: inst.firstDue || null, guarantor_name: inst.gName || null, guarantor_phone: inst.gPhone || null, guarantor_cnic: inst.gCnic || null } : undefined,
-    })
+    }
+    const res = replaceId ? await rep.mutateAsync({ ...body, reason: replaceWhy.trim() }) : await m.mutateAsync(body)
     clearDrafts('sale.')
     if (isQueued(res)) {
       // no internet: the sale waits on the phone (the strip under the header says so)
@@ -307,6 +335,12 @@ export default function SaleWizard() {
       <PageHeader title="counter.sell" help={<Help term="sale.page" />} onBack={back} />
       <div className="lg:hidden"><Stepper steps={['counter.whichPhone', 'counter.howMuch', 'counter.doneTitle']} current={step} onStep={step < 2 ? setStep : undefined} /></div>
 
+      {replaceId ? (
+        <div className="flex flex-col gap-2 rounded-2xl border border-gold/40 bg-gold/15 px-3 py-2.5" data-testid="sale-editing">
+          <span className="text-sm font-bold text-ink">{pick('sedit.editing').replace('{{no}}', replaceNo)}</span>
+          <BiInput label="common.reason" value={replaceWhy} onChange={(e) => setReplaceWhy(e.target.value)} minLength={3} data-testid="sale-edit-reason" />
+        </div>
+      ) : null}
       {holdMsg?.k === 'held' ? <BiAlert text="hold.done" kind="success" /> : null}
       {scanNote ? (
         <div className="flex items-center gap-3 rounded-2xl border border-payable/30 bg-payable-tint/40 px-4 py-3" role="alert" data-testid="scan-note">
@@ -586,8 +620,8 @@ export default function SaleWizard() {
             ) : null}
           </div>
           {notSellableErr ? <Chip text="sale.notSellable" tone="bad" /> : null}
-          <ErrorText error={m.error} />
-          <BiButton text="sale.complete" icon={<Check size={22} />} full loading={m.isPending && !confirming} disabled={!canSave} onClick={() => { if (lines.length) { m.reset(); setConfirming(true) } else void submit() }} />
+          <ErrorText error={m.error ?? rep.error} />
+          <BiButton text="sale.complete" icon={<Check size={22} />} full loading={(m.isPending || rep.isPending) && !confirming} disabled={!canSave || (!!replaceId && replaceWhy.trim().length < 3)} onClick={() => { if (lines.length) { m.reset(); setConfirming(true) } else void submit() }} />
           {(lines.length || misc.length) && has('held_sales') ? <BiButton text="hold.button" icon={<CirclePause size={22} />} full variant="secondary" onClick={() => { setHoldName(party?.name ?? ''); hold.reset(); setHolding(true) }} /> : null}
           {!lines.length && !misc.length && !laptop ? <BiButton text="counter.whichPhone" variant="secondary" full onClick={() => setStep(0)} /> : null}
         </div>
@@ -622,7 +656,7 @@ export default function SaleWizard() {
         total={total}
         paid={paid}
         partyName={party?.name ?? null}
-        error={m.error}
+        error={m.error ?? rep.error}
         onConfirm={async (pin) => { try { await submit(pin) } catch { /* shown in the sheet */ } }}
       />
       <Sheet open={picking} onClose={() => setPicking(false)} title="counter.whichPhone">

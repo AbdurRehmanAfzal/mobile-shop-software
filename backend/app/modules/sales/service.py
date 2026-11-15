@@ -1249,3 +1249,21 @@ def _exchange_of(db: Session, shop_id: uuid.UUID, invoice_id: uuid.UUID) -> uuid
     return db.scalar(
         select(Exchange.id).where(Exchange.shop_id == shop_id, Exchange.invoice_id == invoice_id)
     )
+
+
+def replace_invoice(
+    db: Session, shop_id: uuid.UUID, ctx, invoice_id: uuid.UUID, data: SaleCreate, reason: str
+) -> Invoice:
+    """Edit a sale's lines, prices, customer or payment (owner 2026-11-16, ADR-090): the old bill is
+    deleted (kept as Deleted, "Edited, replaced by …") and the corrected one is posted in the same
+    transaction — the phones, galla and khata never show half of it. Same rules as a delete: not
+    once a phone has moved on or money / a return / an exchange / installments depend on it."""
+    try:
+        old = void_invoice(db, shop_id, ctx, invoice_id, f"Edited: {reason}", commit=False)
+        new = create_sale(db, shop_id, ctx, data, commit=False)
+        old.void_reason = f"Edited, replaced by {new.no}: {reason}"
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+    return new

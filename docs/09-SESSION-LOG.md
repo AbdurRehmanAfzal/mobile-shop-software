@@ -1865,3 +1865,16 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - tsc, Help.test.
 - Playwright `edit-undo`, `delete-everywhere`, `installments`, `transfers` (that one timed out once under 3 workers and passed alone).
 **Next**: still open — sale / purchase line edit in place; Edit / Delete icons on the stock list's styles.
+
+### 2026-11-16 — PR #70 merged; stock list icons; edit a sale / purchase bill (ADR-090 part 4); CI lint
+**Owner**: "PR merge kr di hai, ab next start krainy". A CI run showed ruff RUF059 (unused unpacked names) in `tests/test_delete_safety.py`; the local ruff 0.17.1 does not enable it, so I checked with `--select RUF059 --preview` and fixed it.
+**Done**:
+- `DeviceActions` (✎ / 🗑) in all four stock styles. The phone page handles `?delete=1` and offers the fitting delete or says why not.
+- `POST /sales/{id}/replace`, `POST /purchases/{id}/replace`: void and create in one transaction.
+- **Edit this bill** on both bills. `SaleWizard` / `PurchaseWizard` take `?replace=` and fill the form from the bill; a reason is asked.
+- Strings / help, ADR-090, docs/29, manual.
+**Verified**:
+- pytest `test_delete_safety` (11; new: a sale edited 80,000 → 75,000 — galla −5,000, the old one void "replaced by", a second edit 409; a purchase edited 50,000 → 45,000 — the dealer owes 20,000, the phone in stock). Full suite. `ruff check app tests` and `--select RUF059 --preview` are clean.
+- tsc, Help.test.
+- Playwright `edit-undo` (3: payment / cash; sale edit; purchase edit), `delete-everywhere` (3 with stock icons), `stock-views` (selector updated), `device-styles`, `stock-a4`, `labels`, `add-device`, `counter`, `bill-details`. I looked at the edit screenshots.
+- Tried and dropped: keeping the purchase's original time on an edit. The backend refuses it (the phone's later events), so the new bill is dated now.

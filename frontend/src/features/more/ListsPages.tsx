@@ -84,6 +84,8 @@ export function PurchaseDetailPage() {
       {p.status === 'posted' ? (
         <div className="grid grid-cols-2 gap-2">
           <BiButton text="pret.button" size="md" variant="secondary" onClick={() => setReturning(true)} data-testid="purchase-return" />
+          {/* ADR-090: edit the lines / costs / payment — the form opens filled; saving replaces this bill */}
+          {canManage && !p.exchange_id ? <div className="col-span-2 flex items-center gap-1"><div className="min-w-0 flex-1"><BiButton text="sedit.purchaseButton" size="md" variant="secondary" full onClick={() => nav(`/purchase/new?replace=${p.id}`)} data-testid="purchase-edit-bill" /></div><Help term="sedit.button" size="sm" /></div> : null}
           {/* ADR-090: an exchange's trade-in is deleted with its sale, as one */}
           {canManage ? (p.exchange_id ? <BillActions kind="exchange" id={p.exchange_id} no={p.no} canDelete editTo={null} label="del.deleteExchange" /> : <BiButton text="common.void" size="md" variant="danger" onClick={() => setVoiding(true)} />) : null}
           {canManage ? <div className="col-span-2 flex items-center gap-1"><div className="flex-1"><BiButton text="purchase.paidFix.button" size="md" variant="secondary" full onClick={() => setPaidFix(true)} data-testid="purchase-paid-change" /></div><Help term="purchase.paidFix" size="sm" /></div> : null}

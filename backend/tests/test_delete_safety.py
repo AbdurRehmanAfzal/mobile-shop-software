@@ -11,7 +11,7 @@ def _device(owner, imei):
 
 
 def test_exchange_deleted_as_one(owner, cat):
-    cus, a, b, sale = _sold(owner, cat, paid=80000)
+    cus, _a, b, _sale = _sold(owner, cat, paid=80000)
     cash0, bal0 = _cash(owner), _balance(owner, cus)
     # trade-in 70,000 for B at 60,000: the shop owes 10,000 and pays it out
     r = _exchange(owner, cat, cus, b, price=60000, refund=10000)
@@ -42,7 +42,7 @@ def test_exchange_deleted_as_one(owner, cat):
 
 
 def test_sale_with_later_payment_waits_for_it(owner, cat):
-    cus, a, b, sale = _sold(owner, cat, paid=50000)  # 30,000 udhaar
+    cus, _a, _b, sale = _sold(owner, cat, paid=50000)  # 30,000 udhaar
     pay = owner.post(
         "/api/v1/payments",
         json={"party_id": cus["id"], "direction": "in", "amount": 30000},
@@ -61,7 +61,7 @@ def test_sale_with_later_payment_waits_for_it(owner, cat):
 
 
 def test_payment_and_lending_edited_in_place(owner, cat):
-    cus, a, b, sale = _sold(owner, cat, paid=50000)  # 30,000 udhaar
+    cus, _a, _b, sale = _sold(owner, cat, paid=50000)  # 30,000 udhaar
     cash0 = _cash(owner)
     pay = owner.post(
         "/api/v1/payments", json={"party_id": cus["id"], "direction": "in", "amount": 3000}
@@ -95,7 +95,7 @@ def test_payment_and_lending_edited_in_place(owner, cat):
 def test_sale_return_undone(owner, cat):
     from tests.test_exchange_return_settlement import _return
 
-    cus, a, b, sale = _sold(owner, cat, paid=80000)
+    cus, _a, _b, sale = _sold(owner, cat, paid=80000)
     cash0, bal0 = _cash(owner), _balance(owner, cus)
     r = _return(owner, sale, settlement="refund", refund_amount=30000, kept_amount=0)
     assert r.status_code == 201, r.text
@@ -277,3 +277,59 @@ def test_installment_plan_cancelled_then_sale_deleted(owner, cat):
     assert (
         owner.post(f"/api/v1/installments/{plan['id']}/cancel", json={"reason": "twice"})
     ).status_code == 409
+
+
+def test_sale_edited_by_replacing(owner, cat):
+    cus, a, _b, sale = _sold(owner, cat, paid=80000)
+    cash0 = float(_cash(owner))
+    body = {
+        "party_id": cus["id"],
+        "devices": [{"device_id": a["id"], "price": 75000}],
+        "paid": 75000,
+        "reason": "price was 75,000",
+    }
+    r = owner.post(f"/api/v1/sales/{sale['id']}/replace", json=body)
+    assert r.status_code == 201, r.text
+    new = r.json()
+    assert new["id"] != sale["id"] and new["total"] == "75000.00"
+    old = owner.get(f"/api/v1/sales/{sale['id']}").json()
+    assert old["status"] == "void" and new["no"] in old["void_reason"]
+    assert float(_cash(owner)) == cash0 - 5000
+    assert _balance(owner, cus) == "0.00"
+    assert _device(owner, A)["status"] == "sold"
+    # the replaced one cannot be edited again
+    assert owner.post(f"/api/v1/sales/{sale['id']}/replace", json=body).status_code == 409
+
+
+def test_purchase_edited_by_replacing(owner, cat):
+    from tests.test_purchase_return_cut import _balance as pbal
+    from tests.test_purchase_return_cut import _buy
+
+    sup, pur = _buy(owner, cat)  # 50,000, paid 25,000
+    line = pur["lines"][0]
+    dev = owner.get(f"/api/v1/devices/{line['device_id']}").json()
+    body = {
+        "kind": "supplier",
+        "party_id": sup["id"],
+        "devices": [
+            {
+                "device": {
+                    "imei1": dev["imei1"],
+                    "brand_id": cat["brand"]["id"],
+                    "model_id": cat["model"]["id"],
+                    "condition": "used",
+                },
+                "cost": 45000,
+            }
+        ],
+        "paid": 25000,
+        "reason": "cost was 45,000",
+    }
+    r = owner.post(f"/api/v1/purchases/{pur['id']}/replace", json=body)
+    assert r.status_code == 201, r.text
+    new = r.json()
+    assert new["total"] == "45000.00"
+    assert owner.get(f"/api/v1/purchases/{pur['id']}").json()["status"] == "voided"
+    assert pbal(owner, sup["id"]) == "-20000.00"
+    d2 = owner.get(f"/api/v1/devices/{new['lines'][0]['device_id']}").json()
+    assert d2["status"] == "in_stock" and d2["imei1"] == dev["imei1"]
