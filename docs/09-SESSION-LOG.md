@@ -1712,3 +1712,12 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - pytest `test_cpid_label` (new: the default stays CP ID; with ★ Special every export shows it and none shows CP ID; an empty name goes back to the default), plus `test_stock_tally`, `test_stock_a4`, `test_exports`, `test_labels`; full suite.
 - tsc and Help.test.
 - Playwright `cpid-label` (new: pick ★ in Settings → the phone shows ★ and no CP ID; the tally shows ★). I looked at the home screenshot.
+
+### Same day — home: daily actions and two big report tiles
+**Owner**: "exchange (old with new), sales list … bahar be rakh do … business overview ko highlight karo … shop audit ka button be … 2 baray tabs 50 50".
+**Done**:
+- `jobs.ts` gains Exchange (needs the exchange module) and Sales list, marked `homeOnly`, so the laptop side menu still fits 720 px.
+- On the home screen, under the actions, Business overview (dark) and Shop audit (green; needs the reports module) are two equal big tiles with a hint line. Without reports, the overview takes the full width. The small overview link was removed.
+**Verified**:
+- tsc.
+- Playwright `home-big` (new: Sales list among the actions; both tiles visible, side by side and the same width; each opens its screen), `overview`, `appearance` (all layouts; the side menu fits). I looked at the screenshot.
