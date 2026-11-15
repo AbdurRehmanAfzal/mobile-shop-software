@@ -89,6 +89,8 @@ class DeviceIdentity(BaseModel):
     imei1: str | None = None
     imei2: str | None = None
     serial: str | None = Field(default=None, max_length=60)
+    # owner 2026-11-15 (ADR-085): a locked phone (iCloud / Google FRP) whose IMEI cannot be seen
+    lock_type: Literal["icloud", "google", "other"] | None = None
     brand_id: uuid.UUID
     model_id: uuid.UUID
     storage_id: uuid.UUID | None = None
@@ -178,6 +180,10 @@ class DeviceIdentity(BaseModel):
 
     @model_validator(mode="after")
     def _identity(self):
+        if self.imei1 is None and self.lock_type:
+            # ADR-085: a locked phone without a visible IMEI is known by its serial, or by a code
+            # the shop makes (LCK…); its barcode label finds it like any other phone
+            self.imei1 = self.serial or f"LCK{uuid.uuid4().hex[:12].upper()}"
         if self.imei1 is None:
             if self.category == "phone":
                 raise ValueError("IMEI is required for a phone")
@@ -222,6 +228,8 @@ class DeviceUpdate(BaseModel):
     sim_type: str | None = Field(default=None, max_length=30)  # ADR-055, e.g. physical_esim
     sim_lock: Literal["unlocked", "locked"] | None = None  # ADR-070
     sim_lock_carrier: str | None = Field(default=None, max_length=40)
+    # ADR-085: marked locked later, or opened (then None)
+    lock_type: Literal["icloud", "google", "other"] | None = None
     brand_id: uuid.UUID | None = None
     model_id: uuid.UUID | None = None
     imei2: str | None = None
@@ -303,6 +311,7 @@ class DeviceOut(BaseModel):
     imei2: str | None
     serial: str | None
     category: str = "phone"
+    lock_type: str | None = None
     barcode: str | None = None
     barcode_type: str | None = None
     manufacturer_code: str | None = None

@@ -203,6 +203,10 @@ Close the app fully and open it again first (or install the newest APK from the 
 
 **A4 reports (2026-11-15, ADR-084)**: Business overview → This month → Download → PDF, and print it. Shop audit → Full shop audit report (A4) → Download → PDF / Excel.
 
+**Locked phones (2026-11-15, ADR-085)**: Purchase → + Locked phone → Apple, a model, cost → save. Stock → Locked card shows it; print its sticker (says iCloud locked). Open it → Use for parts → Camera + Battery → it leaves the stock; the profit report shows its cost.
+
+**Delete a bill (2026-11-15, ADR-086)**: Sales list → 🗑 on a test sale → reason → Delete the bill: it shows Deleted and the phone is back in stock. Purchases list → 🗑 on a purchase whose phone was sold: the app refuses and says use a return.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

@@ -2,17 +2,17 @@
  *  watches here, accessories / spare parts / other on the items screen) and status cards that also
  *  filter the list. Counts come from GET /devices/stock-status (nothing is posted by looking). */
 
-import { AlertTriangle, Bookmark, CheckCircle2, Clock, PackageX, Search, UserCheck, Wallet, Wrench } from 'lucide-react'
+import { AlertTriangle, Bookmark, CheckCircle2, Clock, Lock, PackageX, Search, UserCheck, Wallet, Wrench } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import { useGet } from '@/lib/queries'
 
 export type Kind = '' | 'phone' | 'tablet' | 'watch'
-export type Mode = '' | 'sellable' | 'reserved' | 'inspection' | 'in_repair' | 'faulty' | 'with_customer_for_approval'
+export type Mode = '' | 'sellable' | 'reserved' | 'inspection' | 'in_repair' | 'faulty' | 'with_customer_for_approval' | 'locked'
 
 interface StockStatus {
-  units: { on_hand: number; available: number; reserved: number; inspection: number; in_repair: number; faulty: number; approval: number; on_loan: number }
+  units: { on_hand: number; available: number; reserved: number; inspection: number; in_repair: number; faulty: number; approval: number; on_loan: number; locked?: number }
   items: { on_hand: number; low: number; out: number; reserved: number }
   value_cost: string | null
   units_value_cost: string | null
@@ -79,6 +79,7 @@ export function StatusCards({ kind, mode, onMode, canCost }: { kind: Kind; mode:
         {card('inspection', Search, 'stock.card.inspection', u.inspection, 'bg-gold-tint text-ink', mode === 'inspection', () => toggle('inspection'))}
         {card('repair', Wrench, 'stock.card.repair', u.in_repair, 'bg-surface text-ink', mode === 'in_repair', () => toggle('in_repair'))}
         {card('faulty', AlertTriangle, 'stock.card.faulty', u.faulty, 'bg-payable-tint text-payable', mode === 'faulty', () => toggle('faulty'))}
+        {u.locked || mode === 'locked' ? card('locked', Lock, 'stock.card.locked', u.locked ?? 0, 'bg-payable-tint text-payable', mode === 'locked', () => toggle('locked')) : null}
         {!kind ? card('low', Clock, 'stock.card.low', data.items.low, 'bg-khata text-khata-fg', false, () => nav('/accessories?tab=low')) : null}
         {!kind ? card('out', PackageX, 'stock.card.out', data.items.out, 'bg-expense text-expense-fg', false, () => nav('/accessories?out=1')) : null}
         {canCost && data.value_cost != null ? card('value', Wallet, 'stock.card.value', Number(kind ? data.units_value_cost : data.value_cost).toLocaleString('en-US', { maximumFractionDigits: 0 }), 'bg-surface text-ink', false, () => undefined) : null}

@@ -1734,3 +1734,37 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - pytest `test_overview` (+ A4 report and Excel, bad range 422, salesman 403) and the audit report tests (`test_shopaudit_reports`, `test_lending`, `test_repair_labs`, `test_reports_trade`); full suite.
 - tsc and Help.test.
 - Playwright `reports-a4` (new: both reports fit 718 px; the overview's app PDF downloads, with no CSV offered; the audit's Full report downloads Excel). I looked at both pages.
+
+### Same day — PR #66; locked phones (iCloud / Google FRP) (ADR-085); "how to delete" answered
+**Owner**:
+- "icloud lock walay phones ki sale purchase alag se manage … IMEI nahi dakh sktay … parts use … waise be sale … brand, model, cost, color … more detail optional … payment same … plan kar ke develop kar lo".
+- Asked mid-way how to delete a purchase or a product. Answered: there is no hard delete.
+  - A purchase made by mistake → Cancel this bill. Old stock entered by mistake → Cancel opening.
+  - A phone given back → Return to the seller.
+  - An item → set its stock to 0, then Delete (archived if it was ever used).
+  - Catalogue → delete if unused, otherwise rename.
+**Done**:
+- `devices.lock_type` (migration f6b8d0a2c4e7): no-IMEI identity (serial / LCK…), lock check skipped.
+- Stock: the `locked` filter and count; `lock_text` on the stock exports, the A4 sheet, the tally, stickers and bills.
+- The `used_for_parts` status / event, and `POST /use-for-parts` (Dr COGS / Cr Inventory); PATCH `lock_type` to open a phone.
+- UI: `LockedLineSheet`, the purchase button / line chip, the Locked stock card, `LockedPanel` on the phone's page, the overview tile.
+- en / ur / roman strings + help, manual ch. 2, ADR-085, docs/29.
+**Verified**:
+- pytest `test_locked_phones` (5, new: bought without an IMEI with the lock check on, kept apart; a normal used phone still needs the check; the serial is kept; named on the tally / CSV / sticker / bill and sold; used for parts — salesman 403, out of stock, cost in the P&L, 409 the second time; opened later); full suite.
+- tsc and Help.test.
+- Playwright `locked-phones` (new: the purchase form without an IMEI → LCK…; the Locked card; the panel → Use for parts), plus `faulty-on-add` and `stock-a4`. I looked at the screenshots.
+
+### Same day — Edit / Delete on sale and purchase rows (ADR-086)
+**Owner**: "hr purchase row ye sale row k sath ak 2 chotay button … delete r edit … detail view may be delete … galti se sale / purchase dal dyna ous ko delete krnay ka option".
+**Done**:
+- `BillActions` (Edit → the bill; Delete → reason → the existing void) on the Sales and Purchases lists.
+- "Cancel this bill" now reads Delete this bill; the void status reads Deleted.
+- Help, manual ch. 2, ADR-086, docs/29.
+**Verified**:
+- tsc and Help.test.
+- Playwright `bill-delete` (new):
+  - a purchase whose phone was sold → refused, with the backend's message;
+  - a mistaken purchase → deleted, status voided;
+  - sale Edit → the bill;
+  - sale Delete → Deleted, the phone back in stock.
+- I looked at the rows.

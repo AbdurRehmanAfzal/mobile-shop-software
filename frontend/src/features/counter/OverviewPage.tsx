@@ -27,7 +27,7 @@ interface Overview {
   dues: { to_get: M; to_give: M; to_get_count: number; to_give_count: number; to_get_list: Who[]; to_give_list: Who[] }
   month: { from: string; sales: M; expenses: M; profit: M | null }
   top_sold: { name: string; qty: number; amount: M; profit: M | null }[]
-  alerts: { on_hand: number; available: number; faulty: number; inspection: number; in_repair: number; reserved: number; old_60d: number; items_low: number; items_out: number }
+  alerts: { on_hand: number; available: number; faulty: number; inspection: number; in_repair: number; reserved: number; old_60d: number; items_low: number; items_out: number; locked?: number }
   recent: { at: string; who: string | null; entity: string; action: string; ref: string | null }[]
   counts: { sales: number; purchases: number; returns: number; transfers: number; payments: number }
   show_cost: boolean
@@ -146,6 +146,7 @@ export default function OverviewPage() {
                 <Fig k="ov.inRepair" v={o.alerts.in_repair} />
                 <Fig k="ov.old60" v={o.alerts.old_60d} tone={o.alerts.old_60d ? 'text-gold-text' : ''} />
                 <Fig k="ov.reserved" v={o.alerts.reserved} />
+                {o.alerts.locked ? <Fig k="ov.locked" v={o.alerts.locked} tone="text-payable" /> : null}
                 <Fig k="ov.itemsLow" v={o.alerts.items_low} tone={o.alerts.items_low ? 'text-gold-text' : ''} />
                 <Fig k="ov.itemsOut" v={o.alerts.items_out} tone={o.alerts.items_out ? 'text-payable' : ''} />
               </div>

@@ -1002,6 +1002,37 @@ On a phone's page, or while adding a phone (next to **PTA status**), tap **PTA c
 
 The PTA page cannot open inside the app: PTA does not allow it, and its "I'm not a robot" works only on PTA's own site.
 
+### Edit or delete a sale / purchase entered by mistake
+
+In **Sales list** and **Purchases list**, every bill has two small buttons:
+
+- **✎ Edit** opens the bill. From there you can change the customer or dealer, what was paid, or the price, and print it.
+- **🗑 Delete** (owner / manager) asks why, then deletes the bill.
+  - The phone goes back into stock (a sale) or leaves it (a purchase), and the khata and galla / bank are reversed.
+  - The bill stays in the record as **Deleted**, with who deleted it, when and why, so the hisaab always adds up.
+  - The same **Delete this bill** button is on the bill's own page.
+
+A bill whose phone has moved on cannot be deleted; the app says so. For example, a purchase whose phone was already sold, or a sale whose phone came back. Use **Return** (customer) or **Return to the seller** instead.
+
+### Locked phones (iCloud / Google FRP): for parts or to sell as they are
+
+Shops buy locked phones for their parts (camera, screen, battery …) or to sell them on as they are. Their IMEI often cannot be seen, so they have their own short form.
+
+- **Buying**: in the purchase, tap **+ Locked phone (iCloud / FRP)**.
+  - Choose the lock (iCloud / Google FRP / Other), the brand (Apple comes first), the model, the storage and colour if you know them, and the **cost**. The asking price is optional.
+  - **More details**: the IMEI if you can see it (empty is fine), the serial, RAM and shelf.
+  - There is no lock check and no PTA. Payment is as usual: cash, online, cheque or udhaar, and the person as usual.
+  - Without an IMEI, the app knows the phone by its serial or by its own code (LCK…), and gives it its own barcode sticker.
+- **Stock**: the **Locked** card shows them apart; tap it to list only those.
+  - They are not counted under "For sale".
+  - Every list, PDF / Excel, tally sheet, sticker and bill says **iCloud locked**.
+- **Selling as it is**: sell it like any phone. The bill says it is iCloud locked.
+- **Use for parts** (owner / manager), on the phone's page:
+  - Tick the parts taken out (camera, screen, battery …) and add a note, for example "for repair job R-12".
+  - The phone leaves the stock, and what it cost becomes a cost in the profit report.
+  - This cannot be undone.
+- **The lock was removed**: it becomes a normal phone. If it had no IMEI, add it with **Correct IMEI**.
+
 ### Return a bought phone to the seller (faulty / not wanted)
 
 Use this when you bought a phone, then found it faulty or decided not to keep it, and give it back to the person you bought it from. Open the phone's page → **Return to the seller**, or the purchase bill → **Return to the seller**.

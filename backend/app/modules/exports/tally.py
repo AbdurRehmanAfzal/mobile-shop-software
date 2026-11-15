@@ -25,7 +25,7 @@ from app.db.base import ZERO
 from app.db.refs import user_name
 from app.modules.devices import service as devices
 from app.modules.devices.state import DeviceStatus
-from app.modules.devices.types import cpid_label
+from app.modules.devices.types import cpid_label, lock_text
 from app.modules.ledger.service import money
 from app.modules.parties.models import Party
 
@@ -267,7 +267,13 @@ def page(ctx, db, can_cost: bool, ur: bool, blind: bool = False) -> Response:
                 else " ".join(x for x in ("Locked", d.get("sim_lock_carrier")) if x)
             )
             cond1 = " · ".join(
-                x for x in (COND.get(d["condition"], d["condition"]), d.get("grade")) if x
+                x
+                for x in (
+                    COND.get(d["condition"], d["condition"]),
+                    d.get("grade"),
+                    lock_text(d.get("lock_type"), ur),
+                )
+                if x
             )
             pta_txt = cp if d["pta_status"] == "cpid" else PTA.get(d["pta_status"], d["pta_status"])
             cond2 = " · ".join(x for x in (pta_txt, lock) if x)
@@ -553,7 +559,14 @@ def workbook(ctx, db, can_cost: bool, ur: bool, blind: bool = False) -> Response
                 d.get("storage_name"),
                 d.get("ram_gb"),
                 d.get("colour_name"),
-                COND.get(d["condition"], d["condition"]),
+                " · ".join(
+                    x
+                    for x in (
+                        COND.get(d["condition"], d["condition"]),
+                        lock_text(d.get("lock_type")),
+                    )
+                    if x
+                ),
                 d.get("grade"),
                 cp if d["pta_status"] == "cpid" else PTA.get(d["pta_status"], d["pta_status"]),
                 lock,

@@ -1002,6 +1002,37 @@ Mobile ke page par, ya mobile add karte waqt (**PTA haalat** ke saath), **PTA ch
 
 PTA ka page app ke andar nahi khul sakta: PTA is ki ijazat nahi deta, aur is ka "I'm not a robot" sirf PTA ki apni site par chalta hai.
 
+### Ghalti se daali gayi sale / purchase edit ya delete karein
+
+**Sales list** aur **Purchases list** mein har bill ke saath do chhote button hain:
+
+- **✎ Edit** bill kholta hai. Wahan se gahak ya dealer, ada shuda raqam ya qeemat badal sakte hain, aur print kar sakte hain.
+- **🗑 Delete** (owner / manager) wajah pooch kar bill delete karta hai.
+  - Mobile stock mein wapas aata hai (sale) ya stock se nikalta hai (purchase), aur khata aur galla / bank ulat jate hain.
+  - Bill record mein **Deleted** likha rehta hai, kis ne, kab aur kyun delete kiya ke saath, taake hisaab hamesha poora rahe.
+  - Yehi **Yeh bill delete karein** ka button bill ke apne page par bhi hai.
+
+Jis bill ka mobile aage ja chuka ho woh delete nahi hota; app yeh bata deti hai. Maslan aisi purchase jis ka mobile bik chuka ho, ya aisi sale jis ka mobile wapas aa chuka ho. Is ki jagah **Wapsi** (gahak) ya **Bechne wale ko wapas** istemal karein.
+
+### Lock mobile (iCloud / Google FRP): parts ke liye ya jaisa hai waisa bechne ke liye
+
+Dukaanein lock mobile parts (camera, screen, battery …) ke liye ya jaisa hai waisa aage bechne ke liye khareedti hain. Aksar in ka IMEI nazar nahi aata, is liye in ka apna mukhtasar form hai.
+
+- **Khareedari**: purchase mein **+ Lock mobile (iCloud / FRP)** dabayein.
+  - Lock chunein (iCloud / Google FRP / Doosra), brand (Apple pehle aata hai), model, storage aur rang agar maloom hon, aur **khareed qeemat**. Farokht ki qeemat ikhtiyari hai.
+  - **More details** mein: IMEI agar nazar aaye (khali bhi theek hai), serial, RAM aur shelf.
+  - Lock check aur PTA nahi hote. Payment hamesha ki tarah: cash, online, cheque ya udhaar, aur banda bhi hamesha ki tarah.
+  - IMEI na ho to app mobile ko us ke serial ya apne code (LCK…) se pehchanti hai, aur us ka apna barcode sticker banati hai.
+- **Stock**: **Lock** wala card inhein alag dikhata hai; dabayein to sirf yehi mobile aate hain.
+  - Yeh "Bikne ko" mein nahi gine jate.
+  - Har list, PDF / Excel, ginti sheet, sticker aur bill par **iCloud lock** likha aata hai.
+- **Jaisa hai waisa bechna**: aam mobile ki tarah bechein. Bill par iCloud lock likha aata hai.
+- **Parts ke liye istemal** (owner / manager), mobile ke page par:
+  - Nikale gaye parts par nishan lagayein (camera, screen, battery …) aur note likhein, maslan "repair R-12 ke liye".
+  - Mobile stock se nikal jata hai, aur us ki qeemat munafe ki report mein kharcha ban jati hai.
+  - Yeh wapas nahi ho sakta.
+- **Lock khul gaya**: mobile aam mobile ban jata hai. IMEI nahi tha to **IMEI durust karein** se lagayein.
+
 ### Khareeda hua mobile bechne wale ko wapas (kharab / rakhna nahi)
 
 Yeh tab istemal karein jab aap ne mobile khareeda, phir pata chala ke kharab hai ya rakhna nahi, aur usi ko wapas de diya jis se khareeda tha. Mobile ka page kholein → **Bechne wale ko wapas**, ya purchase ka bill → **Bechne wale ko wapas**.

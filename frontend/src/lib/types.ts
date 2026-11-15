@@ -58,7 +58,7 @@ export interface Colour {
 
 export type DeviceCondition = 'box_pack' | 'open_box' | 'used' | 'patched'
 export type PtaStatus = 'pta_approved' | 'non_pta' | 'jv' | 'cpid' | 'unknown'
-export type DeviceStatus = 'in_stock' | 'on_loan' | 'with_customer_for_approval' | 'sold' | 'in_repair' | 'faulty' | 'returned_to_supplier' | 'transferred'
+export type DeviceStatus = 'in_stock' | 'on_loan' | 'with_customer_for_approval' | 'sold' | 'in_repair' | 'faulty' | 'returned_to_supplier' | 'transferred' | 'used_for_parts'
 export type VerificationStatus = 'not_required' | 'pending' | 'clear' | 'flagged'
 
 export interface AccessoryItem {
@@ -97,6 +97,8 @@ export interface Device {
   lock_checked_at?: string | null
   lock_ok?: boolean
   faults?: string[] | null
+  /** ADR-085: bought locked (iCloud / Google FRP) */
+  lock_type?: 'icloud' | 'google' | 'other' | null
   battery_health?: number | null
   region_code?: string | null
   battery_cycles?: number | null

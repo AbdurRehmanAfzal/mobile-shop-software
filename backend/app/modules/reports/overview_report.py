@@ -71,6 +71,7 @@ W = {
     "in_repair": ("In repair", "مرمت میں"),
     "old_60d": ("Older than 60 days", "60 دن سے پرانے"),
     "reserved": ("Reserved", "ریزرو"),
+    "locked": ("iCloud / FRP locked", "آئی کلاؤڈ / FRP لاک"),
     "items_low": ("Items running low", "کم ہوتے آئٹمز"),
     "items_out": ("Items finished", "ختم آئٹمز"),
     "sales_m": ("Sales", "فروخت"),
@@ -183,6 +184,7 @@ def build(db: Session, ctx, d_from: dt.date, d_to: dt.date, show_cost: bool, ur:
                     "in_repair",
                     "old_60d",
                     "reserved",
+                    "locked",
                     "items_low",
                     "items_out",
                 )

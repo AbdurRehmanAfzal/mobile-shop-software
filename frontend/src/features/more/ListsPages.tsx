@@ -1,3 +1,4 @@
+import BillActions from './BillActions'
 import PurchaseReturnSheet from './PurchaseReturnSheet'
 import DownloadButton from '@/components/DownloadButton'
 import Help from '@/components/Help'
@@ -14,13 +15,20 @@ import PaidFixSheet from '@/features/purchase/PaidFix'
 export function PurchasesPage() {
   const nav = useNavigate()
   const { data, isLoading } = usePurchases()
+  const listRole = useAuth((s) => s.me?.user.role)
   return (
     <div className="flex flex-col gap-3">
       <PageHeader title="more.purchases" help={<Help term="more.tile.purchases" />} right={<DownloadButton path="/api/v1/exports/purchases" name="purchases" />} />
       {isLoading ? <Loading /> : !data?.length ? <Empty text="common.nothingFound" /> : (
         <List>
           {data.map((p) => (
-            <Row key={p.id} title={p.party_name} sub={<span className="flex items-center gap-1.5"><span dir="ltr">{p.no}</span> · <span dir="ltr">{fmtDate(p.date)}</span> <Chip text={`purchase.${p.kind === 'walk_in' ? 'walkIn' : p.kind === 'trade_in' ? 'tradeIn' : p.kind}`} />{p.status === 'voided' ? <Chip text="sale.status.void" tone="muted" /> : null}</span>} right={<div className="flex flex-col items-end"><MoneyText value={p.total} tone="ink" />{Number(p.balance_due) > 0 ? <MoneyText value={-Number(p.balance_due)} size="sm" /> : null}</div>} onClick={() => nav(`/purchases/${p.id}`)} />
+            <div key={p.id} className="flex items-center">
+            <div className="min-w-0 flex-1">
+            <Row title={p.party_name} sub={<span className="flex items-center gap-1.5"><span dir="ltr">{p.no}</span> · <span dir="ltr">{fmtDate(p.date)}</span> <Chip text={`purchase.${p.kind === 'walk_in' ? 'walkIn' : p.kind === 'trade_in' ? 'tradeIn' : p.kind}`} />{p.status === 'voided' ? <Chip text="sale.status.void" tone="muted" /> : null}</span>} right={<div className="flex flex-col items-end"><MoneyText value={p.total} tone="ink" />{Number(p.balance_due) > 0 ? <MoneyText value={-Number(p.balance_due)} size="sm" /> : null}</div>} onClick={() => nav(`/purchases/${p.id}`)} />
+            </div>
+            {/* owner 2026-11-15 (ADR-086): edit / delete a purchase entered by mistake from its row */}
+            {p.status !== 'voided' ? <BillActions kind="purchase" id={p.id} no={p.no} canDelete={listRole === 'owner' || listRole === 'manager'} /> : null}
+            </div>
           ))}
         </List>
       )}

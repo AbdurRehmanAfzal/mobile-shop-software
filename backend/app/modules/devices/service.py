@@ -207,6 +207,7 @@ def list_devices(
     supplier_id: uuid.UUID | None = None,
     reserved: bool = False,
     location: str | None = None,
+    locked: bool | None = None,
 ) -> list[dict]:
     stmt = _base_query(shop_id)
     # owner brief 2026-11-10 (ADR-059): the stock screen's status cards and filters. "Sellable" is
@@ -229,6 +230,8 @@ def list_devices(
         )
     if location:
         stmt = stmt.where(Device.location.ilike(f"%{location.strip()}%"))
+    if locked is not None:  # ADR-085: the locked (iCloud / FRP) units, or every other one
+        stmt = stmt.where(Device.lock_type.is_not(None) if locked else Device.lock_type.is_(None))
     if cost_min is not None:
         stmt = stmt.where(Device.cost_price >= cost_min)
     if cost_max is not None:
@@ -397,6 +400,7 @@ def stock_status(db: Session, shop_id: uuid.UUID, *, category: str | None, can_c
         Device.lock_checks,
         Device.cost_price,
         Device.reserved_party_id,
+        Device.lock_type,
     ).where(Device.shop_id == shop_id, Device.status.in_(held))
     if category:
         q = q.where(Device.category == category)
@@ -409,14 +413,17 @@ def stock_status(db: Session, shop_id: uuid.UUID, *, category: str | None, can_c
         "faulty": 0,
         "approval": 0,
         "on_loan": 0,
+        "locked": 0,
     }
     value = Decimal(0)
-    for status, ver, locks, cost, reserved in db.execute(q).all():
+    for status, ver, locks, cost, reserved, lock_type in db.execute(q).all():
         c["on_hand"] += 1
         value += cost or Decimal(0)
         if status == DeviceStatus.IN_STOCK:
             lock_on = any(v == "not_cleared" for v in (locks or {}).values())
-            if reserved:
+            if lock_type:  # ADR-085: a locked phone, sold as it is or kept for parts
+                c["locked"] += 1
+            elif reserved:
                 c["reserved"] += 1
             elif lock_on or ver in (VerificationStatus.PENDING, VerificationStatus.FLAGGED):
                 c["inspection"] += 1
@@ -574,8 +581,10 @@ def new_device(
 
     _validate_catalogue(db, shop_id, data)
     shop = db.get(Shop, shop_id)
-    if require_lock and dtypes.lock_required(
-        shop, getattr(data, "category", "phone"), data.condition
+    if (
+        require_lock
+        and not getattr(data, "lock_type", None)  # ADR-085: bought locked on purpose
+        and dtypes.lock_required(shop, getattr(data, "category", "phone"), data.condition)
     ):
         locks = getattr(data, "lock_checks", None) or {}
         if not getattr(data, "lock_checked", False) and not locks:

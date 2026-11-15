@@ -269,6 +269,10 @@ def _device_parts(d: dict, shop: Shop, ur: bool, word: str | None) -> dict:
         _SIM_SHORT.get(d.get("sim_type") or "", d.get("sim_type")),
     ]
     cond = CONDITION.get(d.get("condition") or "", ("", ""))[1 if ur else 0]
+    from app.modules.devices.types import lock_text
+
+    if lock_text(d.get("lock_type"), ur):  # ADR-085: a locked phone says so on its sticker
+        cond = " · ".join(x for x in (cond, lock_text(d.get("lock_type"), ur)) if x)
     pta = PTA.get(d.get("pta_status") or "", ("", ""))[1 if ur else 0]
     if d.get("pta_status") == "cpid":  # ADR-083: the shop's own name for CP ID
         from app.modules.devices.types import cpid_label

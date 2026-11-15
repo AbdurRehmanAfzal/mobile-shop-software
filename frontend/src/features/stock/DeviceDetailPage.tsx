@@ -1,3 +1,4 @@
+import LockedPanel from './LockedPanel'
 import { PtaCheckButton, PtaCheckSheet } from './PtaCheck'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -171,13 +172,14 @@ export default function DeviceDetailPage() {
         <div className="flex flex-wrap items-center gap-1.5">
           <Chip text={`stock.condition.${d.condition}`} />
           {d.grade ? <Chip text={['a', 'b', 'refurbished', 'copy'].includes(d.grade) ? `devx.grades.${d.grade}` : { en: d.grade, ur: d.grade }} /> : null}
-          {hasPta(d) ? <Chip text={`stock.pta.${d.pta_status}`} tone={d.pta_status === 'pta_approved' ? 'ok' : 'warn'} /> : null}
+          {hasPta(d) && !(d.lock_type && d.pta_status === 'unknown') ? <Chip text={`stock.pta.${d.pta_status}`} tone={d.pta_status === 'pta_approved' ? 'ok' : 'warn'} /> : null}
           {/* owner 2026-11-15 (ADR-082): check the IMEI on PTA's DIRBS, save the answer */}
           {hasPta(d) && /^\d{15}$/.test(d.imei1) ? <PtaCheckButton size="sm" onClick={() => setPtaOpen(true)} /> : null}
-          {d.condition !== 'box_pack' ? <Chip text={lockState(d.lock_checks) === 'ok' ? 'devx.lock.ok' : lockState(d.lock_checks) === 'bad' ? 'devx.lock.bad' : 'devx.lock.none'} tone={lockState(d.lock_checks) === 'ok' ? 'ok' : lockState(d.lock_checks) === 'bad' ? 'bad' : 'warn'} /> : null}
+          {d.condition !== 'box_pack' && !d.lock_type ? <Chip text={lockState(d.lock_checks) === 'ok' ? 'devx.lock.ok' : lockState(d.lock_checks) === 'bad' ? 'devx.lock.bad' : 'devx.lock.none'} tone={lockState(d.lock_checks) === 'ok' ? 'ok' : lockState(d.lock_checks) === 'bad' ? 'bad' : 'warn'} /> : null}
           {d.verification_status !== 'not_required' ? <Chip text={`stock.verification.${d.verification_status}`} tone={vTone} /> : null}
           {d.cycle_no > 1 ? <Chip text={{ en: `Cycle ${d.cycle_no}`, ur: `${d.cycle_no} بار` }} /> : null}
           <FaultChip faults={d.faults} />
+          {d.lock_type ? <Chip text={`locked.type.${d.lock_type}`} tone="bad" /> : null}
           {d.sim_lock ? <Chip text={{ en: [pick(`simlock.${d.sim_lock}`), d.sim_lock_carrier].filter(Boolean).join(' · '), ur: [pick(`simlock.${d.sim_lock}`), d.sim_lock_carrier].filter(Boolean).join(' · ') }} tone={d.sim_lock === 'locked' ? 'warn' : 'ok'} /> : null}
           <Help term="device.badges" size="sm" />
         </div>
@@ -200,6 +202,7 @@ export default function DeviceDetailPage() {
         ) : null}
       </section>
       <DeviceReserve deviceId={d.id} d={d} inStock={inStock} />
+      <LockedPanel d={d} canManage={canSeeCost} onChanged={() => void inv('devices', 'device', 'history', 'stock-status')} />
 
       {inStock || d.status === 'faulty' ? (
         <div className="grid grid-cols-2 gap-2">
