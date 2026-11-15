@@ -64,14 +64,14 @@ def _n(v) -> str:
     return "" if v is None or v == "" else f"{Decimal(v):,.0f}"
 
 
-def _value(key: str, d: dict, get, ur: bool):
+def _value(key: str, d: dict, get, ur: bool, cp: str = "CP ID"):
     v = get(d)
     if v is None or v == "":
         return None
     if key == "condition":
         return COND.get(v, v)
     if key == "pta":
-        return PTA.get(v, v) or None
+        return cp if v == "cpid" else PTA.get(v, v) or None
     if key == "status":
         return STATUS.get(v, (v, v))[1 if ur else 0]
     if key == "battery":
@@ -89,8 +89,10 @@ def page(
     ctx, db, copy: str, keys: list[str], found: list[dict], cols: dict, ur_headers: dict, ur: bool
 ) -> Response:
     from app.modules.auth.models import Shop
+    from app.modules.devices.types import cpid_label
 
     shop = db.get(Shop, ctx.shop_id)
+    cp = cpid_label(shop)
     e = html.escape
     label = lambda k: ur_headers.get(cols[k][0], cols[k][0]) if ur else cols[k][0]
     title = _w(copy, ur)
@@ -155,7 +157,7 @@ def page(
             ids = "<br>".join(e(str(cols[x][1](d))) for x in show_ids if cols[x][1](d))
             bits = []
             for key in detail:
-                v = _value(key, d, cols[key][1], ur)
+                v = _value(key, d, cols[key][1], ur, cp)
                 if v is not None:
                     bits.append(f'<span class="kv"><i>{e(label(key))}</i> {e(str(v))}</span>')
             price = []

@@ -1699,3 +1699,16 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - pytest `test_pta_check` (new) and `test_devices`; full suite.
 - tsc and Help.test.
 - Playwright `pta-check` (new, DIRBS stubbed): the popup opens on DIRBS with the IMEI in the clipboard and the SMS link carrying the IMEI; Non-PTA is saved with its event; in the add sheet Blocked warns and Approved clears it. I looked at the screenshot.
+
+### Same day — CP ID under the shop's own name; profit trend icon (ADR-083)
+**Owner**: "CP ID … band ho gye thay but shopkeeper k pas paray hoay … report may shop setting se khud name set kr sakay … ya icon select kare … r dashboard may profit ka icon update kr do".
+**Done**:
+- `device_prefs.cpid_label` with `cpid_label()` / `pta_out()`, applied in the tally, the stock sheet / price lists, the stock CSV / Excel, stickers and receipts.
+- `lib/cpid.ts` overrides the app's CP ID text.
+- In Settings, a text box plus marks.
+- The home profit card shows TrendingUp, or TrendingDown in red for a loss.
+- en / ur / roman strings + help, manual ch. 2, ADR-083, docs/29.
+**Verified**:
+- pytest `test_cpid_label` (new: the default stays CP ID; with ★ Special every export shows it and none shows CP ID; an empty name goes back to the default), plus `test_stock_tally`, `test_stock_a4`, `test_exports`, `test_labels`; full suite.
+- tsc and Help.test.
+- Playwright `cpid-label` (new: pick ★ in Settings → the phone shows ★ and no CP ID; the tally shows ★). I looked at the home screenshot.

@@ -985,6 +985,12 @@ History lines can never be edited or deleted. A mistake is corrected by a new li
 
 ![A phone's history: sold, verified, sale returned, each with date, person and amount](shot:device-history)
 
+### Your own name for CP ID phones
+
+CP ID phones are no longer allowed in Pakistan, but many shops still hold and trade them. Choose what your reports show for them instead of "CP ID": More → **Shop settings** → **Device settings** → **Name for CP ID phones**. Type a word, for example "Special", or tap a mark such as ★ ◆ ● ▲, then tap **Save**.
+
+It then shows in every report (stock list, price lists, tally sheet, PDF / Excel / CSV), on stickers and receipts, and on the app's screens. Only the name changes; the phones stay CP ID in the record. Tap **CP ID** to go back.
+
 ### PTA check (DIRBS)
 
 On a phone's page, or while adding a phone (next to **PTA status**), tap **PTA check**:

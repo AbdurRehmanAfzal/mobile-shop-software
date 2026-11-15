@@ -270,6 +270,10 @@ def _device_parts(d: dict, shop: Shop, ur: bool, word: str | None) -> dict:
     ]
     cond = CONDITION.get(d.get("condition") or "", ("", ""))[1 if ur else 0]
     pta = PTA.get(d.get("pta_status") or "", ("", ""))[1 if ur else 0]
+    if d.get("pta_status") == "cpid":  # ADR-083: the shop's own name for CP ID
+        from app.modules.devices.types import cpid_label
+
+        pta = cpid_label(shop)
     first = d.get("first_seen_at")
     return {
         "shop": (shop.name_ur if ur and shop.name_ur else shop.name),

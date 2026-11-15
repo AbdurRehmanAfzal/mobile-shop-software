@@ -19,6 +19,7 @@ from app.modules.catalogue.models import Brand, Model
 from app.modules.devices.models import Device, DeviceAccessoryItem
 from app.modules.devices.service import apply_event, get_device
 from app.modules.devices.state import DeviceStatus, EventType, VerificationStatus
+from app.modules.devices.types import cpid_label
 from app.modules.ledger import accounts as acc
 from app.modules.ledger.models import CashAccount
 from app.modules.ledger.service import Posting, at_for, money, post, reverse
@@ -589,7 +590,7 @@ def list_invoices(
     return list(db.scalars(stmt.order_by(Invoice.created_at.desc()).limit(limit)).all())
 
 
-def _unit_bits(ln: dict, ur: bool) -> str:
+def _unit_bits(ln: dict, ur: bool, cp: str = "CP ID") -> str:
     """owner addendum 6: the bill names the unit's type, storage / RAM, colour, condition and PTA"""
     if not ln.get("device_id"):
         return ""
@@ -610,7 +611,7 @@ def _unit_bits(ln: dict, ur: bool) -> str:
         "pta_approved": ("PTA approved", "PTA منظور"),
         "non_pta": ("Non-PTA", "نان PTA"),
         "jv": ("JV", "JV"),
-        "cpid": ("CP ID", "CP ID"),
+        "cpid": (cp, cp),
     }.get(ln.get("pta_status") or "", ("", ""))[1 if ur else 0]
     mem = " + ".join(
         x
@@ -940,7 +941,7 @@ def receipt_html(
     thermal = fmt == "thermal"
     width = "72mm" if thermal else "190mm"
     rows = "".join(
-        f"<tr><td>{e(ln['device_label'] or ln['description'] or '')}{_unit_bits(ln, ur)}<br><small>{e(ln['imei1'] or '')}"
+        f"<tr><td>{e(ln['device_label'] or ln['description'] or '')}{_unit_bits(ln, ur, cpid_label(shop))}<br><small>{e(ln['imei1'] or '')}"
         f"{' · ' + e(', '.join(ln['accessories_given'])) if ln['accessories_given'] else ''}"
         f"{(' · ' + T['warranty'] + ' ' + str(ln['warranty_days']) + ' ' + T['days']) if ln['warranty_days'] else ''}</small></td>"
         f"<td class='n'>{ln['qty']}</td><td class='n'>{ln['unit_price']:,.0f}</td><td class='n'>{ln['line_total']:,.0f}</td></tr>"
