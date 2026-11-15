@@ -10,6 +10,7 @@ import Help from '@/components/Help'
 import { BtnText, Chip, MoneyText, Sheet } from '@/components/ui'
 import type { Device } from '@/lib/types'
 import { simTypeText } from '@/features/purchase/AppleVariant'
+import DeviceActions from './DeviceActions'
 
 export type StockView = 'cards' | 'table' | 'grid' | 'list'
 const VIEWS: { v: StockView; icon: typeof Rows3 }[] = [
@@ -169,6 +170,7 @@ export function StockTable({ rows, fields, by, onSort, onOpen, picked, onPick }:
                   </th>
                 )
               })}
+              {!onPick ? <th className="border-b border-s border-line" /> : null}
             </tr>
           </thead>
           <tbody>
@@ -190,6 +192,7 @@ export function StockTable({ rows, fields, by, onSort, onOpen, picked, onPick }:
                       </td>
                     )
                   })}
+                  {!onPick ? <td className="border-b border-s border-line px-2" onClick={(e) => e.stopPropagation()}><DeviceActions d={d} small /></td> : null}
                 </tr>
               )
             })}
@@ -202,6 +205,7 @@ export function StockTable({ rows, fields, by, onSort, onOpen, picked, onPick }:
                   {i === 0 ? pick('stock.col.total').replace('{{n}}', String(rows.length)) : c.key === 'cost' ? <MoneyText value={total('cost_price')} tone="ink" size="sm" /> : c.key === 'asking' ? <MoneyText value={total('asking_price')} tone="ink" size="sm" /> : null}
                 </td>
               ))}
+              {!onPick ? <td className="border-t border-s border-line" /> : null}
             </tr>
           </tfoot>
         </table>
@@ -238,7 +242,8 @@ export function StockGrid({ rows, fields, onOpen, picked, onPick }: { rows: Devi
         const sel = picked?.includes(d.id)
         const bits = fieldBits(d, fields, pick, ['asking', 'cost', 'status'])
         return (
-          <button key={d.id} type="button" onClick={() => (onPick ? onPick(d) : onOpen(d))} className={`tap card flex min-h-[132px] flex-col gap-1.5 p-3 text-start ${sel ? 'ring-2 ring-emerald' : ''}`}>
+          <div key={d.id} className="relative">
+          <button type="button" onClick={() => (onPick ? onPick(d) : onOpen(d))} className={`tap card flex min-h-[132px] w-full flex-col gap-1.5 p-3 text-start ${sel ? 'ring-2 ring-emerald' : ''}`}>
             <span className="well h-9 w-9 rounded-full bg-emerald-tint text-xs font-extrabold text-emerald-deep">{d.brand_name.slice(0, 2).toUpperCase()}</span>
             <span className="line-clamp-2 text-[14px] font-extrabold leading-tight text-ink">{d.brand_name} {d.model_name}</span>
             {bits.length ? <span className="line-clamp-3 text-xs font-semibold text-muted">{bits.map((x) => x.v).join(' · ')}</span> : null}
@@ -248,6 +253,8 @@ export function StockGrid({ rows, fields, onOpen, picked, onPick }: { rows: Devi
               {fields.includes('status') && d.status !== 'in_stock' ? <Chip text={`stock.status.${d.status}`} tone="ink" /> : null}
             </span>
           </button>
+          {!onPick ? <span className="absolute end-2 top-2"><DeviceActions d={d} small /></span> : null}
+          </div>
         )
       })}
     </div>
@@ -263,7 +270,8 @@ export function StockList({ rows, fields, onOpen, picked, onPick }: { rows: Devi
         const sel = picked?.includes(d.id)
         const bits = fieldBits(d, fields, pick, ['asking', 'cost'])
         return (
-          <button key={d.id} type="button" onClick={() => (onPick ? onPick(d) : onOpen(d))} className={`tap flex w-full items-center gap-3 px-3 py-2.5 text-start ${sel ? 'bg-emerald-tint' : ''}`}>
+          <div key={d.id} className="flex items-center">
+          <button type="button" onClick={() => (onPick ? onPick(d) : onOpen(d))} className={`tap flex min-w-0 flex-1 items-center gap-3 px-3 py-2.5 text-start ${sel ? 'bg-emerald-tint' : ''}`}>
             <span className="min-w-0 flex-1">
               <span className="block truncate text-[15px] font-semibold text-ink">{d.brand_name} {d.model_name}</span>
               {bits.length ? <span className="block truncate text-sm text-muted">{bits.map((x) => x.v).join(' · ')}</span> : null}
@@ -273,6 +281,8 @@ export function StockList({ rows, fields, onOpen, picked, onPick }: { rows: Devi
               {fields.includes('cost') && d.cost_price != null ? <MoneyText value={d.cost_price} tone="muted" size="sm" /> : null}
             </span>
           </button>
+          {!onPick ? <span className="pe-2"><DeviceActions d={d} small /></span> : null}
+          </div>
         )
       })}
     </div>

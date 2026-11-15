@@ -1,6 +1,6 @@
 import LockedPanel from './LockedPanel'
 import { PtaCheckButton, PtaCheckSheet } from './PtaCheck'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiAlert, BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
@@ -104,6 +104,19 @@ export default function DeviceDetailPage() {
   const boughtFor = lastFix ? Number((lastFix.data as { to?: string }).to ?? 0) : buyEv?.amount != null ? Number(buyEv.amount) : null
   const soldSince = !!buyEv && (history ?? []).some((e) => e.seq > buyEv.seq && e.type === 'sold')
   const [style, setStyle] = useState<DeviceStyle>(loadStyle)
+  // ADR-090: the stock list's 🗑 opens this page with ?delete=1 — offer the delete that fits the phone
+  const delAsked = useRef(new URLSearchParams(window.location.search).get('delete') === '1')
+  const [noDelete, setNoDelete] = useState(false)
+  useEffect(() => {
+    if (!delAsked.current || !d || !history) return
+    delAsked.current = false
+    const open = history.find((e) => e.document_type === 'opening_stock')
+    const here = d.status === 'in_stock'
+    if (canSeeCost && here && open && history.every((e) => e.seq <= open.seq || e.type === 'verified')) setSheet('remove')
+    else if (canSeeCost && boughtOn && here && !soldSince) nav(`/purchases/${boughtOn}?delete=1`, { replace: true })
+    else if (canSeeCost && soldOn && d.status === 'sold') nav(`/sales/${soldOn}?delete=1`, { replace: true })
+    else setNoDelete(true)
+  }, [d, history, canSeeCost, boughtOn, soldOn, soldSince, nav])
 
   if (isLoading || !d) return <Loading />
   const vTone = d.verification_status === 'flagged' ? 'bad' : d.verification_status === 'pending' ? 'warn' : 'ok'
@@ -156,6 +169,7 @@ export default function DeviceDetailPage() {
   return (
     <div className="flex flex-col gap-4">
       <PageHeader title={{ en: `${d.brand_name} ${d.model_name}`, ur: `${d.brand_name} ${d.model_name}` }} help={<Help term="stock.detail" />} />
+      {noDelete ? <BiAlert text="del.phoneNoDelete" kind="error" /> : null}
 
       <StyleSwitch value={style} onChange={(v) => { setStyle(v); saveStyle(v) }} />
       {style === 'classic' ? (

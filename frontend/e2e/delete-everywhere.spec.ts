@@ -56,3 +56,27 @@ test('expense and person: edit / delete from the row, with the warning', async (
   await page.getByRole('button', { name: 'Delete' }).last().click()
   await expect(page.getByText('Twice Added')).toHaveCount(0)
 })
+
+test('a phone in the stock list: edit / delete from its card (ADR-090)', async ({ browser, request }) => {
+  const ph = phone()
+  const s = await request.post('/api/v1/auth/signup', { data: { shop_name: 'Stock Del', owner_name: 'Owner', phone: ph, password: 'e2e-secret-1' } })
+  const h = { Authorization: `Bearer ${(await s.json()).tokens.access_token}` }
+  const brand = (await (await request.get('/api/v1/catalogue/brands', { headers: h })).json()).find((b: { name: string }) => b.name === 'Nokia')
+  const model = (await (await request.get(`/api/v1/catalogue/models?brand_id=${brand.id}&q=105`, { headers: h })).json())[0]
+  const r = await request.post('/api/v1/devices/opening-stock', { headers: h, data: { imei1: '490154203237518', brand_id: brand.id, model_id: model.id, condition: 'box_pack', pta_status: 'pta_approved', cost_price: 800, asking_price: 1000 } })
+  expect(r.ok(), await r.text()).toBeTruthy()
+
+  const ctx = await browser.newContext()
+  await ctx.addInitScript(() => { if (!localStorage.getItem('locale')) localStorage.setItem('locale', 'en') })
+  const page = await ctx.newPage()
+  await login(page, ph, 'e2e-secret-1')
+
+  await page.goto('/stock')
+  await page.getByTestId('device-edit').first().click()
+  await expect(page).toHaveURL(/\/stock\/.+\?edit=1/)
+  await page.goto('/stock')
+  await page.getByTestId('device-delete').first().click()
+  // an old-stock entry: the remove sheet opens with what it does
+  await expect(page.getByTestId('delete-warning')).toContainText('leaves stock')
+  await page.screenshot({ path: 'test-results/del-stock.png' })
+})

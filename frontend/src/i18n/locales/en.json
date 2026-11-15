@@ -11412,7 +11412,8 @@
       "effect": "The plan stops: no more due dates or reminders. What is left on the bill stays on the customer's khata as normal udhaar. Installments already collected stay. After this the sale itself can be deleted, if that was the mistake.",
       "example": "Phone sold on 5 installments by mistake, Rs. 45,000 left → the plan stops, Ahmed owes Rs. 45,000 as udhaar."
     },
-    "cancelPlan": "Cancel this plan"
+    "cancelPlan": "Cancel this plan",
+    "phoneNoDelete": "This phone cannot be deleted from here: it has moved on (loaned, in repair, returned, sent to a branch …). Undo that step first — or, if it was sold, delete or return its sale."
   },
   "pedit": {
     "hint": "Change the amount, date or note. The old entry is kept as Deleted (\"Edited, replaced by …\") and a corrected one takes its place; the khata and the bills it paid follow."

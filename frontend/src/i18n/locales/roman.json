@@ -11412,7 +11412,8 @@
       "effect": "Plan ruk jayega: aur koi qist ki tareekh ya yaad-dihani nahi. Bill par jo baqi hai wo gahak ke khate mein aam udhaar rahega. Jo qistein mil chuki wo rahengi. Is ke baad, agar ghalti sale hi thi, to sale bhi delete ho sakti hai.",
       "example": "Ghalti se phone 5 qiston par becha, Rs. 45,000 baqi → plan ruka, Ahmed par Rs. 45,000 udhaar."
     },
-    "cancelPlan": "Ye plan cancel karein"
+    "cancelPlan": "Ye plan cancel karein",
+    "phoneNoDelete": "Ye phone yahan se delete nahi ho sakta: ye aage ja chuka hai (amanat, repair, wapsi, branch …). Pehle wo qadam wapas karein — ya agar bik gaya tha to us ki sale delete ya return karein."
   },
   "pedit": {
     "hint": "Raqam, tareekh ya note badlein. Purani entry Deleted ke naam se rahegi (\"Edited, replaced by …\") aur us ki jagah sahi wali aa jayegi; khata aur jo bill is se ada hue the wo bhi theek ho jayenge."

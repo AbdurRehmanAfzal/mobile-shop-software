@@ -42,7 +42,7 @@ test('stock views: table sorts and totals, grid, list, choice kept', async ({ pa
   await page.screenshot({ path: 'test-results/stock-table.png', fullPage: true })
 
   await page.getByTestId('view-grid').click()
-  await expect(page.getByTestId('stock-grid').locator('button')).toHaveCount(2)
+  await expect(page.getByTestId('stock-grid').locator('button.card')).toHaveCount(2)
   await page.getByTestId('view-list').click()
   await expect(page.getByTestId('stock-list')).toContainText('356938035643809')
 
