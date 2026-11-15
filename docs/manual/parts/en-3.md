@@ -96,6 +96,16 @@ Below that you will find:
 
 > **Tip:** When a customer argues about his balance, open his page, tap **Download** → **PDF** and send him the statement on WhatsApp. Every line has a date and a bill number.
 
+### Business overview and shop audit as A4 reports
+
+Use these to print a report, keep it in a file, or show it in a meeting.
+
+- **Business overview**: pick the period, then **Download** / **Share** at the top → **PDF** or **Excel**, or **Print**.
+  - The A4 report has the shop's header (name, address, number, the period, who printed it and when) and every figure.
+  - It has the **full** lists: everyone who paid or was paid, everyone who owes the shop or whom the shop owes, every model sold and bought, stock now, customers and dealers, totals by module, and recent activity.
+- **Shop audit** (the first audit screen): the **Full shop audit report (A4)** card gives every audit section in detail for the period chosen at the top. Use Download / Share for PDF or Excel, or Print.
+- The pages fit A4 portrait with a margin on every side; long tables continue on the next page with their column names. The Excel has a sheet per section, set to print on A4.
+
 ### WhatsApp entries: one standard message for the group
 
 Many shops post every sale, purchase, payment and len-den in WhatsApp groups with the staff, and one person enters them in the software. **More → WhatsApp entries** makes that easy for both sides.

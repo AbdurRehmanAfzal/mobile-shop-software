@@ -528,7 +528,9 @@ def report_(
                 "titles": report.TITLES,
             }
         )
-    return report.printable(shop.name, p, secs, mode, lang)
+    from app.db.refs import user_name
+
+    return report.printable(shop, p, secs, mode, lang, user_name(db, ctx.id))
 
 
 # ---- owner decision 2026-10-31: daily stock snapshots ---------------------------------------------

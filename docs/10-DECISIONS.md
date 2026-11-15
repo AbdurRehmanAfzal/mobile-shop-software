@@ -362,6 +362,25 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-084 · 2026-11-15 · Accepted · Business overview and shop audit as detailed A4 reports
+**Context**: the owner asked for detailed A4 PDFs of the shop audit and the business overview, for the selected filter, to print, keep in a file, or present.
+- The audit's printable report already existed, but its header was bare (name only) and wide tables did not wrap.
+- Its download on the audit overview covered only two sections.
+- The business overview had no report at all.
+**Decision**:
+- **Shared A4 page**: `exports/a4.py`.
+  - `page()` shows the shop's header (name, address, number, NTN, the period, who printed it and when), figure boxes, then sections: a table with notes and a count.
+  - Type size and padding shrink as columns grow, and text wraps. Table headers repeat, a row never splits, negatives are red, and a footer line ends the page.
+  - `workbook()` produces the Excel: a Summary sheet plus one sheet per section, set to print on A4.
+- **Shop audit**: `report.printable` uses this page, so every audit print gets it. The audit overview gets a **Full shop audit report (A4)** card: every section in `detail` mode for the selected period, as PDF or Excel.
+- **Business overview**:
+  - `GET /reports/overview/export?date_from&date_to&format=pdf|xlsx`. It is `overview(full=True)`, so payments by person, dues and recent activity are not cut to the top 10.
+  - The report has: figures; sales / purchases / returns; this month; received from; paid to; who owes; whom the shop owes; models sold (with profit) and bought; stock now; people; module totals; recent activity.
+  - It needs `REPORTS_ALL`. Profit appears only with `VIEW_COST`.
+  - On the overview screen: Download / Share with the period.
+- `DownloadButton` takes `formats`, so a report without a CSV does not offer one.
+**Consequences**: no data change. Every audit printout looks different (better) from now on.
+
 ## ADR-083 · 2026-11-15 · Accepted · A shop's own name for CP ID phones; a trend icon for profit
 **Context**: CP ID phones are no longer allowed in Pakistan, yet shops still hold and trade them. In their reports, shops want their own word or mark instead of "CP ID". The owner also asked for a better profit icon on the home screen.
 **Decision**:

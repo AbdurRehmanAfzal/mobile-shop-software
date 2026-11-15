@@ -1721,3 +1721,16 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Verified**:
 - tsc.
 - Playwright `home-big` (new: Sales list among the actions; both tiles visible, side by side and the same width; each opens its screen), `overview`, `appearance` (all layouts; the side menu fits). I looked at the screenshot.
+
+### Same day — PR #65; business overview and shop audit as A4 reports (ADR-084)
+**Owner**: "shop audit and shop overview ki pdf report be detail honi chye … A4 … hr chez ki detail … selected filter k sath … print … file … present".
+**Done**:
+- `exports/a4.py`: the A4 page and the Excel.
+- The shop audit's printable moved onto it, and the audit overview has a Full report card.
+- `reports/overview_report.py` with `/reports/overview/export`, using `overview(full=True)`; Download / Share on the overview screen.
+- `DownloadButton.formats`.
+- en / ur / roman strings + help, manual ch. 3, ADR-084, docs/29.
+**Verified**:
+- pytest `test_overview` (+ A4 report and Excel, bad range 422, salesman 403) and the audit report tests (`test_shopaudit_reports`, `test_lending`, `test_repair_labs`, `test_reports_trade`); full suite.
+- tsc and Help.test.
+- Playwright `reports-a4` (new: both reports fit 718 px; the overview's app PDF downloads, with no CSV offered; the audit's Full report downloads Excel). I looked at both pages.

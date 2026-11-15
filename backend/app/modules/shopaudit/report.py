@@ -4,7 +4,6 @@ sheet per section. Every figure is the same service call the screens use, so the
 dashboard cannot disagree."""
 
 import datetime as dt
-import html
 import io
 import uuid
 from decimal import Decimal
@@ -1127,46 +1126,33 @@ def xlsx(shop_name: str, p: Period, sections: list[dict], mode: str) -> Response
 
 
 def printable(
-    shop_name: str, p: Period, sections: list[dict], mode: str, lang: str | None
+    shop, p: Period, sections: list[dict], mode: str, lang: str | None, who: str | None = None
 ) -> Response:
-    e = html.escape
+    """owner 2026-11-15 (ADR-084): the report on A4 with the shop's header and the chosen period"""
+    from app.modules.exports import a4
+
     ur = lang == "ur"
-    parts = []
-    for sec in sections:
-        head = "".join(f"<th>{e(str(h))}</th>" for h in sec["header"])
-        body = (
-            "".join(
-                "<tr>"
-                + "".join(
-                    f'<td class="{"n" if isinstance(v, int | float | Decimal) else ""}" dir="auto">{e(_s(v))}</td>'
-                    for v in r
-                )
-                + "</tr>"
-                for r in sec["rows"]
-            )
-            or '<tr><td colspan="99" class="muted">—</td></tr>'
-        )
-        notes = "".join(f"<li>{e(n_)}</li>" for n_ in sec["notes"])
-        parts.append(
-            f"<section><h2>{e(sec['title'])}</h2><table><thead><tr>{head}</tr></thead><tbody>{body}</tbody></table>{f'<ul class=notes>{notes}</ul>' if notes else ''}</section>"
-        )
-    now = dt.datetime.now().strftime("%d-%m-%Y %I:%M %p")
-    page = f"""<!doctype html><html lang="{"ur" if ur else "en"}" dir="{"rtl" if ur else "ltr"}"><head><meta charset="utf-8"><title>Shop audit · {e(shop_name)}</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Noto+Nastaliq+Urdu&display=swap">
-<style>
-@page {{ size: A4 portrait; margin: 12mm; }}
-body {{ font-family: Manrope, 'Noto Nastaliq Urdu', sans-serif; color: #1B1F24; margin: 0; }}
-h1 {{ font-size: 22px; margin: 0; }} h2 {{ font-size: 15px; margin: 18px 0 6px; page-break-after: avoid; }}
-.meta {{ color: #5E646B; font-size: 12px; margin: 4px 0 14px; }}
-table {{ width: 100%; border-collapse: collapse; font-size: 11px; page-break-inside: auto; }}
-th {{ background: #F6F4EF; text-align: start; }} th, td {{ border: 1px solid #E6E2DA; padding: 5px 7px; }}
-td.n {{ text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }}
-tr:nth-child(even) td {{ background: #FBFAF7; }} tr {{ page-break-inside: avoid; }}
-.notes {{ color: #5E646B; font-size: 10px; margin: 6px 0 0; padding-inline-start: 16px; }} .muted {{ color: #5E646B; }}
-section {{ page-break-inside: avoid; }}
-</style></head><body>
-<h1>{e(shop_name)} · Shop audit report</h1>
-<div class="meta">Period {e(str(p.date_from))} → {e(str(p.date_to))} · balances as of {e(str(p.as_of))} · {e(mode)} · PKR · generated {e(now)} · {len(sections)} sections</div>
-{"".join(parts)}
-</body></html>"""
-    return Response(content=page, media_type="text/html; charset=utf-8")
+    fmt = lambda d: d.strftime("%d-%m-%Y")
+    period = (
+        f"{fmt(p.date_from)} → {fmt(p.date_to)}"
+        + (f" ({p.days} days)" if p.days > 1 else "")
+        + f" · balances as of {fmt(p.as_of)} · {'detail' if mode == 'detail' else 'summary'}"
+    )
+    return a4.page(
+        shop=shop,
+        title="Shop audit report",
+        period=period,
+        who=who,
+        stats=[],
+        sections=[
+            {
+                "title": sec["title"],
+                "header": sec["header"],
+                "rows": sec["rows"],
+                "notes": sec.get("notes") or [],
+                "count": len(sec["rows"]) if mode == "detail" and len(sec["rows"]) > 3 else None,
+            }
+            for sec in sections
+        ],
+        ur=ur,
+    )

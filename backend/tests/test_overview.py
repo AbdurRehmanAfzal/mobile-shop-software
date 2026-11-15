@@ -59,3 +59,45 @@ def test_overview_figures(client, owner, cat):
     )
     s = login(client, "03451112233")
     assert s.get("/api/v1/reports/overview").status_code == 403
+
+
+def test_overview_a4_report(client, owner, cat):
+    """owner 2026-11-15 (ADR-084): the overview as a detailed A4 report / Excel, for the period"""
+    import io
+
+    from openpyxl import load_workbook
+
+    dealer = _party(owner, name="Report Dealer", phone="03007771111")
+    _buy(owner, cat, dealer, cost=10000, paid=4000)
+    page = owner.get("/api/v1/reports/overview/export?format=pdf&lang=en").text
+    assert "size: A4 portrait" in page and "Business overview" in page
+    for want in (
+        "Report Dealer",
+        "Whom the shop owes",
+        "6,000",
+        "Sales and purchases",
+        "Stock now",
+    ):
+        assert want in page, want
+    x = owner.get(
+        "/api/v1/reports/overview/export?format=xlsx&date_from=2026-01-01&date_to=2026-12-31"
+    )
+    assert x.status_code == 200
+    wb = load_workbook(io.BytesIO(x.content))
+    assert wb.sheetnames[0] == "Summary" and "Whom the shop owes" in wb.sheetnames
+    assert (
+        owner.get(
+            "/api/v1/reports/overview/export?date_from=2026-02-01&date_to=2026-01-01"
+        ).status_code
+        == 422
+    )
+    owner.post(
+        "/api/v1/staff",
+        json={
+            "name": "Sales Boy",
+            "phone": "03451117711",
+            "password": "secret123",
+            "role": "salesman",
+        },
+    )
+    assert login(client, "03451117711").get("/api/v1/reports/overview/export").status_code == 403
