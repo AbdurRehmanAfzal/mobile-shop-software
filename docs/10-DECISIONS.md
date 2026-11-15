@@ -362,6 +362,21 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-078 · 2026-11-15 · Accepted · Stock lists on A4, and price lists for staff and customers
+**Context**: the stock page's PDF (card / table / grid / list, with the picked fields) was one wide table. The app's PDF is A4 portrait, so with many fields it ran off the page; no PDF printed properly on A4. The owner also wants to send the stock with the asking price: one list for the staff (every detail) and one for customers.
+**Decision**:
+- `exports/stock_sheet.py` renders `/exports/stock?format=pdf` when the page's fields are given. The layout matches the tally sheet:
+  - A4 portrait;
+  - a header with the shop, the date and who printed it;
+  - figures: phones, brands, models, the total at asking, and the total at cost (only when cost is picked and allowed);
+  - By brand / By model tables;
+  - every phone grouped brand → model, one row each: # | IMEI / IMEI 2 / serial | every other picked field as "label value", wrapping | asking / cost.
+- `copy=staff`: every field and the asking price; no cost, no seller. `copy=customer`: customer fields and the price, in-stock phones only; no IMEI, serial, barcode, cost, seller, days or status. Both keep the page's search, filters and order. They are available as PDF, Excel and CSV (`stock-prices`, `phones-for-sale`) to every role, since neither has a cost.
+- The generic report PDF (`_printable`) is always A4 portrait. More columns get a smaller type and wrap, the header repeats, and rows are not split.
+- The generic Excel prints on A4 (landscape over 6 columns), one page wide, with the header row on every page.
+- UI: a **Price lists** button beside Download on the stock page opens the two copies, each with Print (A4) and Download / Share.
+**Consequences**: no data change. The stock CSV / Excel with the page's fields are unchanged apart from the print setup.
+
 ## ADR-077 · 2026-11-14 · Accepted · Stock tally staff copy, given to staff only with the owner's permission
 **Context**: the owner wants an A4 tally sheet to hand to the staff with no amount on it: no cost, no asking, no lena / dena. A salesman should download it only after the owner accepts their request. Until now any logged-in user could download the full tally sheet.
 **Decision**:

@@ -1611,3 +1611,17 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - pytest `test_staff_access` (new), `test_stock_tally`, `test_overview`, migrations; full suite.
 - tsc.
 - Playwright `tally-staff` (new: salesman asks → owner sees it on home → Allow → salesman has the staff copy only), `stock-tally`, `overview`; I looked at the screenshots.
+
+### 2026-11-15 — PR #61 opened; stock lists on A4, price lists for staff and customers (ADR-078)
+**Owner**: "stock may card, table, grid list may jo pdf hn … selected fields k sath … A4 format … abhi koe be pdf ki format tkh nahi hai jo A4 pr print ho skay … owner salesman ko asking price k sath al stock ki pdf excel, csv share kr skta hai … staff k liye asking price k sath pdf ho A4 size complete be r customer fields k sath be".
+**Found**: the stock PDF and every report PDF were one wide table, landscape over 6 columns, while the app's PDF is A4 portrait. Wide lists ran off the page.
+**Done**:
+- `exports/stock_sheet.py`: the stock page's PDF on A4 (header, figures, by brand / model, one row a phone with every picked field).
+- `copy=staff` and `copy=customer` price lists (PDF / Excel / CSV).
+- Every report PDF is A4 portrait (smaller type and wrapping for many columns); every Excel is set to print on A4.
+- A **Price lists** button on the stock page.
+- en / ur / roman strings + help, manual ch. 2, ADR-078, docs/29.
+**Verified**:
+- pytest `test_stock_a4` (new), `test_exports`, `test_stock_tally`; full suite.
+- tsc.
+- Playwright `stock-a4` (new: 18 phones with every field, the staff and customer copies and the purchases report are no wider than A4; Price lists → the app's PDF downloads); I looked at the screenshots.

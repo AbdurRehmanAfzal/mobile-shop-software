@@ -172,6 +172,16 @@ def _xlsx(name: str, stamp: str, header: list[str], rows: list[list]) -> Respons
     for r in rows:
         ws.append([float(v) if isinstance(v, Decimal) else v for v in r])
     ws.freeze_panes = "A2"
+    # owner 2026-11-15 (ADR-078): prints on A4, one page wide, the header row on every page
+    from openpyxl.worksheet.properties import PageSetupProperties
+
+    ws.page_setup.paperSize = ws.PAPERSIZE_A4
+    ws.page_setup.orientation = "landscape" if len(header) > 6 else "portrait"
+    ws.sheet_properties.pageSetUpPr = PageSetupProperties(fitToPage=True)
+    ws.page_setup.fitToWidth = 1
+    ws.page_setup.fitToHeight = 0
+    ws.print_title_rows = "1:1"
+    ws.print_options.gridLines = True
     for i, col in enumerate(zip(header, *rows, strict=False), start=1):
         width = max(len(str(v)) for v in col) + 2
         ws.column_dimensions[ws.cell(row=1, column=i).column_letter].width = min(max(width, 8), 45)
@@ -200,14 +210,19 @@ def _printable(
         for r in rows
     )
     now = dt.datetime.now().strftime("%d-%m-%Y %I:%M %p")
+    # owner 2026-11-15 (ADR-078): every report fits A4 portrait (the app's PDF is A4 portrait); many
+    # columns get a smaller type and wrap instead of running off the page
+    n = len(header)
+    fs, pad = (12, "6px 8px") if n <= 6 else (10, "4px 5px") if n <= 9 else (8.5, "3px 3px")
     page = f"""<!doctype html><html lang="{"ur" if ur else "en"}" dir="{"rtl" if ur else "ltr"}"><head><meta charset="utf-8"><title>{e(title)}</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Noto+Nastaliq+Urdu&display=swap">
 <style>
-@page {{ size: A4 {"landscape" if len(header) > 6 else "portrait"}; margin: 12mm; }}
+@page {{ size: A4 portrait; margin: 10mm; }}
 body {{ font-family: {"'Noto Nastaliq Urdu', Manrope" if ur else "Manrope, 'Noto Nastaliq Urdu'"}, sans-serif; color: #1B1F24; margin: 0; {"line-height: 1.9;" if ur else ""} }}\n.n, h1 .n {{ font-family: Manrope, sans-serif; }}
 h1 {{ font-size: 20px; margin: 0; }} .meta {{ color: #5E646B; font-size: 12px; margin: 4px 0 12px; }}
-table {{ width: 100%; border-collapse: collapse; font-size: 12px; }}
-th {{ background: #F6F4EF; text-align: start; }} th, td {{ border: 1px solid #E6E2DA; padding: 6px 8px; }}
+table {{ width: 100%; border-collapse: collapse; font-size: {fs}px; }}
+thead {{ display: table-header-group; }} tr {{ break-inside: avoid; }}
+th {{ background: #F6F4EF; text-align: start; }} th, td {{ border: 1px solid #E6E2DA; padding: {pad}; vertical-align: top; overflow-wrap: anywhere; }}
 td.n {{ text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }}
 tr:nth-child(even) td {{ background: #FBFAF7; }}
 </style></head><body>
@@ -271,7 +286,7 @@ def _days_in(at) -> int | None:
     return max(0, (dt.datetime.now(dt.UTC) - at).days)
 
 
-def _stock_view(
+def _stock_found(
     ctx,
     db,
     cols: str,
@@ -281,7 +296,7 @@ def _stock_view(
     filters: dict,
     sort: str | None,
     desc: bool,
-) -> tuple[list[str], list[list]]:
+) -> tuple[list[str], list[dict]]:
     from app.modules.devices import service as devices
 
     keys = [k for k in cols.split(",") if k in STOCK_COLS]
@@ -304,7 +319,7 @@ def _stock_view(
         found = sorted(have, key=get, reverse=desc) + none
     elif sort == "oldest":
         found = list(reversed(found))
-    return [STOCK_COLS[k][0] for k in keys], [[STOCK_COLS[k][1](d) for k in keys] for d in found]
+    return keys, found
 
 
 @router.get("/stock.csv")
@@ -330,9 +345,19 @@ def stock(
     with_faulty: bool = False,
     sort: str | None = None,
     desc: bool = False,
+    copy: Literal["screen", "staff", "customer"] = "screen",
 ):
+    # owner 2026-11-15 (ADR-078): a price list for the staff (every field + asking, no cost / seller)
+    # or for customers (what they ask about + price, phones for sale); the PDF fits A4
+    from app.modules.exports import stock_sheet
+
+    if copy != "screen":
+        keys_ = stock_sheet.STAFF_KEYS if copy == "staff" else stock_sheet.CUSTOMER_KEYS
+        cols = ",".join(keys_)
+        if copy == "customer":
+            status = "in_stock"
     if cols:
-        header, rows = _stock_view(
+        keys, found = _stock_found(
             ctx,
             db,
             cols,
@@ -354,7 +379,14 @@ def stock(
             sort,
             desc,
         )
-        return _file(format, ctx, db, lang, "stock", header, rows)
+        if format == "pdf":
+            return stock_sheet.page(
+                ctx, db, copy, keys, found, STOCK_COLS, UR_HEADERS, lang == "ur"
+            )
+        name = {"screen": "stock", "staff": "stock-prices", "customer": "phones-for-sale"}[copy]
+        header = [STOCK_COLS[k][0] for k in keys]
+        rows = [[STOCK_COLS[k][1](d) for k in keys] for d in found]
+        return _file(format, ctx, db, lang, name, header, rows)
     cost = ctx.can(Cap.VIEW_COST)
     stmt = (
         select(Device, Brand.name, Model.name, Storage.name, Colour.name)
