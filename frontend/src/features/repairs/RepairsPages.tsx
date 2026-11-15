@@ -2,6 +2,10 @@
  *  charge, "it is fixed") → give it back (bill, advance, left to take; the rest goes to khata).
  *  A four-stage bar shows where every job is. */
 
+import BillActions from '@/features/more/BillActions'
+import DownloadButton from '@/components/DownloadButton'
+import PeriodPicker, { periodOf, type Period } from '@/features/counter/PeriodPicker'
+import { post } from '@/lib/api'
 import { CheckCircle2, Clock, FlaskConical, HandCoins, Phone, Plus, Printer, Receipt, SlidersHorizontal, Tag, Trash2, Wrench, XCircle } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -44,7 +48,7 @@ function StageChip({ status, overdue }: { status: string; overdue?: boolean }) {
   const { pick, ur, cls } = useLang()
   const st = stageOf(status)
   const tone = st === 2 ? 'bg-sell text-sell-fg' : st === 3 ? 'bg-ground text-muted border border-line' : overdue ? 'bg-expense text-expense-fg' : 'bg-repair text-repair-fg'
-  return <span className={`rounded-full px-2.5 py-0.5 font-bold ${tone} ${ur ? cls('sm') : 'text-xs'}`}>{status === 'returned_unrepaired' ? pick('counter.cantFix') : pick(`counter.rStage.${STAGES[st]}`)}</span>
+  return <span className={`rounded-full px-2.5 py-0.5 font-bold ${tone} ${ur ? cls('sm') : 'text-xs'}`}>{status === 'cancelled' ? pick('sale.status.void') : status === 'returned_unrepaired' ? pick('counter.cantFix') : pick(`counter.rStage.${STAGES[st]}`)}</span>
 }
 
 export function RepairsPage() {
@@ -54,6 +58,8 @@ export function RepairsPage() {
   const [q, setQ] = useState('')
   const { data, isLoading } = useGet<Job[]>(['repairs', open, q], `/api/v1/repairs?open_only=${open}${q ? `&q=${encodeURIComponent(q)}` : ''}`)
   const ready = (data ?? []).filter((j) => stageOf(j.status) === 2)
+  const listRole = useAuth((x) => x.me?.user.role)
+  const manager = listRole === 'owner' || listRole === 'manager'
   return (
     <div className="flex flex-col gap-3">
       <PageHeader title="repair.title" help={<Help term="repair.page" />} right={<button type="button" aria-label={pick('counter.rTitleNew')} onClick={() => nav('/repairs/new')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 bg-ink text-ground"><Plus size={22} /><BtnText k={'counter.rTitleNew'} /></button>} />
@@ -67,6 +73,7 @@ export function RepairsPage() {
         </button>
         <Help term="rlab.labs" size="sm" />
       </div>
+      {manager ? <RepairReports /> : null}
       {ready.length ? <BiLabel text="counter.readyCall" size="sm" bold tone="text-sell-fg" /> : null}
       <div className="flex items-center gap-1">
         <div className="min-w-0 flex-1"><BiSegmented value={open ? 'open' : 'all'} onChange={(v) => setOpen(v === 'open')} options={[{ value: 'open', text: 'repair.open' }, { value: 'all', text: 'repair.all' }]} /></div>
@@ -76,7 +83,8 @@ export function RepairsPage() {
       {isLoading ? <Loading /> : !data?.length ? <Empty text="repair.none" /> : (
         <div className="card divide-y divide-line p-0">
           {[...ready, ...data.filter((j) => stageOf(j.status) !== 2)].map((j) => (
-            <button key={j.id} type="button" onClick={() => nav(`/repairs/${j.id}`)} className="tap flex w-full items-center gap-3 px-4 py-3 text-start">
+            <div key={j.id} className="flex items-center">
+            <button type="button" onClick={() => nav(`/repairs/${j.id}`)} className="tap flex min-w-0 flex-1 items-center gap-3 px-4 py-3 text-start">
               <span className="flex min-w-0 flex-1 flex-col">
                 <span className="truncate text-[15px] font-extrabold">{j.device_desc}</span>
                 <span className="truncate text-xs text-muted">{j.party_name ?? pick('repair.ownStock')} · <span dir="ltr">{j.no}</span>{j.promised_at ? <> · <span dir="ltr">{fmtDate(j.promised_at)}</span></> : null}{j.at_lab ? <> · <span className={j.at_lab.late ? 'font-bold text-payable' : 'font-bold text-repair-fg'}>{pick('rlab.atLabShort')}: {j.at_lab.lab_name}</span></> : null}</span>
@@ -86,6 +94,9 @@ export function RepairsPage() {
                 <span className="num text-sm" dir="ltr">{n(Number(j.total) > 0 ? j.total : j.estimate)}</span>
               </span>
             </button>
+            {/* owner 2026-11-15 (ADR-087): edit / delete a repair taken in by mistake */}
+            {j.status !== 'delivered' && j.status !== 'cancelled' ? <BillActions kind="repair" id={j.id} no={j.no} canDelete={manager} /> : null}
+            </div>
           ))}
         </div>
       )}
@@ -96,22 +107,75 @@ export function RepairsPage() {
 export function NewRepairPage() {
   const nav = useNavigate()
   const { pick, ur, cls } = useLang()
+  // owner 2026-11-15 (ADR-087): from a phone's page (?device=) the shop's own phone goes to repair
+  const deviceId = new URLSearchParams(window.location.search).get('device')
+  const { data: dev } = useGet<{ id: string; brand_name: string; model_name: string; imei1: string }>(['device', deviceId], deviceId ? `/api/v1/devices/${deviceId}` : null)
   const { data: faults } = useGet<Fault[]>(['faults'], '/api/v1/repairs/fault-codes')
+  const { data: techs } = useGet<{ id: string; name: string; role: string }[]>(['repair-techs'], '/api/v1/repairs/technicians')
   const [party, setParty] = useState<Party | null>(null)
   const [f, setF] = useState({ device_desc: '', imei: '', fault_text: '', estimate: '', advance: '', promised_at: isoDay(1) })
   const [codes, setCodes] = useState<string[]>([])
   const [received, setReceived] = useState<string[]>([])
   const [more, setMore] = useState(false)
+  // who repairs it: the shop's own technician, or an outside lab / technician in the market
+  const [who, setWho] = useState<'' | 'shop' | 'lab'>('')
+  const [tech, setTech] = useState('')
+  const [lab, setLab] = useState<Party | null>(null)
+  const [l, setL] = useState({ problem: '', quote: '', back: isoDay(2) })
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState<unknown>(null)
   const m = useDocMutation<Record<string, unknown>, Job>('POST', () => '/api/v1/repairs')
   const set = (k: keyof typeof f) => (e: { target: { value: string } }) => setF({ ...f, [k]: e.target.value })
   const toggle = (xs: string[], x: string, fn: (v: string[]) => void) => fn(xs.includes(x) ? xs.filter((y) => y !== x) : [...xs, x])
   const chip = (on: boolean) => `tap rounded-full border px-3 py-2 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-sm'}`
   const days = [{ d: isoDay(0), t: 'counter.today' }, { d: isoDay(1), t: 'counter.tomorrow' }, { d: isoDay(3), t: 'counter.in3days' }]
+  const own = !!deviceId
+  const ready = (own ? !!dev : !!party && !!f.device_desc) && (codes.length > 0 || !!f.fault_text) && !!who && (who === 'shop' || !!lab)
+  const card = (k: 'shop' | 'lab', Icon: typeof Wrench, title: string, hint: string) => (
+    <button type="button" aria-pressed={who === k} onClick={() => setWho(k)} className={`tap flex min-h-[96px] flex-col items-start gap-1 rounded-3xl border-2 p-3 text-start ${who === k ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'}`} data-testid={`repair-who-${k}`}>
+      <Icon size={22} />
+      <span className={ur ? cls('md') + ' font-bold' : 'text-[15px] font-extrabold leading-tight'}>{pick(title)}</span>
+      <span className={`opacity-80 ${ur ? cls('sm') : 'text-xs'}`}>{pick(hint)}</span>
+    </button>
+  )
+
+  async function save() {
+    setBusy(true)
+    setErr(null)
+    try {
+      const problem = [...codes.map((c) => faults?.find((x) => x.code === c)?.en ?? c), f.fault_text].filter(Boolean).join(', ')
+      const j = await m.mutateAsync({
+        ...(own ? { device_id: deviceId } : { party_id: party!.id, device_desc: f.device_desc, imei: f.imei || undefined, advance: Number(f.advance || 0) }),
+        fault_codes: codes, fault_text: f.fault_text || undefined, received_accessories: received, estimate: Number(f.estimate || 0), promised_at: f.promised_at || undefined,
+        technician_id: who === 'shop' && tech ? tech : undefined,
+      })
+      if (who === 'lab' && lab) {
+        await post(`/api/v1/repairs/${j.id}/lab`, { lab_party_id: lab.id, problem: l.problem || problem || undefined, quoted_cost: Number(l.quote || 0), expected_back: l.back || undefined })
+      }
+      if (!own) openPrintable(`/api/v1/repairs/${j.id}/job-sheet`)
+      nav(`/repairs/${j.id}`, { replace: true })
+    } catch (e) {
+      setErr(e)
+    } finally {
+      setBusy(false)
+    }
+  }
+
   return (
     <div className="flex flex-col gap-3">
       <PageHeader title="counter.rTitleNew" help={<Help term="repair.new" />} />
-      <PartyPicker value={party} onChange={setParty} kind="customer" label="repair.customer" />
-      <BiInput label="counter.phoneName" help={<Help term="repair.device" size="sm" />} value={f.device_desc} onChange={set('device_desc')} />
+      {own ? (
+        <div className="card flex flex-col" data-testid="repair-own-phone">
+          <BiLabel text="repair.ownStock" size="sm" tone="text-muted" />
+          <span className="text-[15px] font-extrabold">{dev ? `${dev.brand_name} ${dev.model_name}` : '…'}</span>
+          {dev ? <span className="text-xs text-muted" dir="ltr">{dev.imei1}</span> : null}
+        </div>
+      ) : (
+        <>
+          <PartyPicker value={party} onChange={setParty} kind="customer" label="repair.customer" />
+          <BiInput label="counter.phoneName" help={<Help term="repair.device" size="sm" />} value={f.device_desc} onChange={set('device_desc')} />
+        </>
+      )}
       <span className="flex items-center gap-1"><BiLabel text="counter.whatProblem" size="md" bold /><Help term="repair.faults" size="sm" /></span>
       <div className="flex flex-wrap gap-1.5">
         {faults?.map((x) => (
@@ -121,16 +185,43 @@ export function NewRepairPage() {
         ))}
       </div>
       <BiInput label="counter.otherProblem" help={<Help term="repair.faultText" size="sm" />} value={f.fault_text} onChange={set('fault_text')} />
+
+      {/* owner 2026-11-15 (ADR-087): the shop's own technician, or an outside lab / technician */}
+      <span className="flex items-center gap-1"><BiLabel text="rwho.title" size="md" bold /><Help term="rwho.choice" size="sm" /></span>
+      <div className="grid grid-cols-2 gap-2">
+        {card('shop', Wrench, 'rwho.shop', 'rwho.shopHint')}
+        {card('lab', FlaskConical, 'rwho.lab', 'rwho.labHint')}
+      </div>
+      {who === 'shop' ? (
+        <label className="flex flex-col gap-1">
+          <BiLabel text="rwho.tech" size="sm" bold />
+          <select value={tech} onChange={(e) => setTech(e.target.value)} className="min-h-12 rounded-2xl border border-line bg-surface px-3 font-semibold" data-testid="repair-tech">
+            <option value="">{pick('rwho.anyTech')}</option>
+            {techs?.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
+          </select>
+        </label>
+      ) : null}
+      {who === 'lab' ? (
+        <div className="flex flex-col gap-2 rounded-3xl border-2 border-repair/40 p-3" data-testid="repair-lab-box">
+          <PartyPicker value={lab} onChange={setLab} kind="technician" label="rwho.labName" />
+          <BiInput label="rwho.labProblem" value={l.problem} onChange={(e) => setL({ ...l, problem: e.target.value })} placeholder={pick('rwho.labProblemPh')} />
+          <div className="grid grid-cols-2 gap-2">
+            <BiInput label="rwho.labQuote" type="number" inputMode="numeric" min={0} value={l.quote} onChange={(e) => setL({ ...l, quote: e.target.value })} className="num" />
+            <BiInput label="rwho.labBack" type="date" value={l.back} onChange={(e) => setL({ ...l, back: e.target.value })} dir="ltr" />
+          </div>
+        </div>
+      ) : null}
+
       <div className="grid grid-cols-2 gap-2">
         <BiInput label="counter.estimateCost" help={<Help term="repair.estimate" size="sm" />} type="number" inputMode="numeric" min={0} value={f.estimate} onChange={set('estimate')} />
-        <BiInput label="counter.advanceTaken" help={<Help term="repair.advance" size="sm" />} type="number" inputMode="numeric" min={0} value={f.advance} onChange={set('advance')} />
+        {own ? null : <BiInput label="counter.advanceTaken" help={<Help term="repair.advance" size="sm" />} type="number" inputMode="numeric" min={0} value={f.advance} onChange={set('advance')} />}
       </div>
       <span className="flex items-center gap-1"><BiLabel text="counter.whenReady" size="md" bold /><Help term="repair.promised" size="sm" /></span>
       <div className="flex flex-wrap gap-1.5">
         {days.map((x) => <button key={x.d} type="button" aria-pressed={f.promised_at === x.d} onClick={() => setF({ ...f, promised_at: x.d })} className={chip(f.promised_at === x.d)}>{pick(x.t)}</button>)}
         <input type="date" aria-label={pick('counter.whenReady')} value={f.promised_at} min={isoDay(0)} onChange={set('promised_at')} className="h-10 rounded-full border border-line bg-surface px-3 text-sm font-bold" dir="ltr" />
       </div>
-      {more ? (
+      {own ? null : more ? (
         <>
           <ImeiInput label="repair.imei" help={<Help term="imei" size="sm" />} value={f.imei} onChange={(imei) => setF({ ...f, imei })} />
           <span className="flex items-center gap-1"><BiLabel text="repair.received" size="md" tone="text-muted" /><Help term="repair.received" size="sm" /></span>
@@ -141,19 +232,9 @@ export function NewRepairPage() {
       ) : (
         <div><IconChip icon={<SlidersHorizontal size={18} />} text="counter.moreDetails" onClick={() => setMore(true)} /></div>
       )}
-      <ErrorText error={m.error} />
-      <BiButton
-        text="counter.saveAndPrint"
-        icon={<Printer size={22} />}
-        full
-        loading={m.isPending}
-        disabled={!party || !f.device_desc || (!codes.length && !f.fault_text)}
-        onClick={async () => {
-          const j = await m.mutateAsync({ party_id: party!.id, device_desc: f.device_desc, imei: f.imei || undefined, fault_codes: codes, fault_text: f.fault_text || undefined, received_accessories: received, estimate: Number(f.estimate || 0), advance: Number(f.advance || 0), promised_at: f.promised_at || undefined })
-          openPrintable(`/api/v1/repairs/${j.id}/job-sheet`)
-          nav(`/repairs/${j.id}`, { replace: true })
-        }}
-      />
+      <ErrorText error={err ?? m.error} />
+      <BiButton text={own ? 'rwho.send' : 'counter.saveAndPrint'} icon={own ? <Wrench size={22} /> : <Printer size={22} />} full loading={busy} disabled={!ready} onClick={() => void save()} data-testid="repair-save" />
+      {!who ? <BiLabel text="rwho.pick" size="sm" tone="text-muted" /> : null}
     </div>
   )
 }
@@ -199,7 +280,7 @@ export function RepairDetailPage() {
 
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title={{ en: j.device_desc, ur: j.device_desc }} help={<Help term="repair.job" />} right={<StageChip status={j.status} overdue={j.overdue} />} />
+      <PageHeader title={{ en: j.device_desc, ur: j.device_desc }} help={<Help term="repair.job" />} right={<span className="flex items-center gap-1"><StageChip status={j.status} overdue={j.overdue} />{(role === 'owner' || role === 'manager') && j.status !== 'delivered' && j.status !== 'cancelled' ? <BillActions kind="repair" id={j.id} no={j.no} canDelete editTo={null} /> : null}</span>} />
 
       <section className="flex flex-col gap-2 rounded-3xl bg-repair p-4 text-repair-fg">
         <div className="flex items-center gap-3">
@@ -343,5 +424,28 @@ function Row({ label, value, strong, help }: { label: string; value: string; str
       <span className={`flex items-center gap-1 ${ur ? cls('md') : 'text-[15px]'} ${strong ? 'font-bold' : ''}`}>{label}{help ? <Help term={help} size="sm" /> : null}</span>
       <span className={`num ${strong ? 'text-lg' : 'text-base'}`} dir="ltr">{value}</span>
     </div>
+  )
+}
+
+
+/** owner 2026-11-15 (ADR-087): the repairs and the outside-labs reports for a period — A4 PDF /
+ *  Excel, download, share or print */
+function RepairReports() {
+  const { pick } = useLang()
+  const [period, setPeriod] = useState<Period>(() => periodOf('month'))
+  const q = `date_from=${period.from}&date_to=${period.to}`
+  return (
+    <section className="card flex flex-col gap-2" data-testid="repair-reports">
+      <span className="flex items-center gap-1"><Receipt size={18} className="text-repair-fg" /><BiLabel text="rwho.reports" size="md" bold /><Help term="rwho.reports" size="sm" /></span>
+      <PeriodPicker value={period} onChange={setPeriod} size="sm" />
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-ground px-3 py-2">
+        <span className="font-bold">{pick('rwho.jobsReport')}</span>
+        <DownloadButton path={`/api/v1/repairs/report?${q}`} name={`repairs-${period.from}-${period.to}`} formats={['pdf', 'xlsx']} />
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-ground px-3 py-2" data-testid="labs-report">
+        <span className="font-bold">{pick('rwho.labsReport')}</span>
+        <DownloadButton path={`/api/v1/repairs/labs/report?${q}`} name={`repair-labs-${period.from}-${period.to}`} formats={['pdf', 'xlsx']} />
+      </div>
+    </section>
   )
 }

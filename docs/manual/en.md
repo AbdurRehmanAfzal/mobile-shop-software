@@ -1353,6 +1353,24 @@ Open the job from the repairs list. Under the stage bar you have:
 
 Lower down are **Print sticker** (the repair sticker), **Print slip** (the customer's job sheet again), and **Document language**, which chooses whether the printed slip is in English or Urdu.
 
+### Who will repair it: the shop's technician or an outside lab
+
+Every new repair asks **Who will repair it?**. You reach it from **Repairs → Take a phone for repair**, or from a phone in stock: its page → **Send to repair**, which repairs the shop's own phone.
+
+- **Shop's technician**: the phone stays in the shop. Pick the technician, or "Any — decide later".
+- **Outside lab / technician**: pick the lab, write what it should do, the lab's agreed price and when it should come back. The trip goes on the lab's record. When the phone comes back, its charge goes to the lab's khata.
+
+**Delete a repair taken in by mistake** (owner / manager): the 🗑 beside the repair in the list, or on its page. Write why.
+- The advance is reversed, a phone at a lab is called back, and the shop's own phone goes back to stock.
+- The repair stays in the record as **Deleted**.
+- A repair already given back, or one with a lab charge already booked, cannot be deleted. Give it back as "not repaired" instead.
+
+**Repair reports** (owner / manager), on the Repairs page: pick the period, then download / share / print as PDF or Excel.
+- **Shop repairs**: every job (customer's or shop's phone, who repaired it, status, bill, paid, udhaar, parts, lab charge, profit / loss), the totals, by status, by technician / lab, the customers who still owe, and the parts used.
+- **Outside labs**: per lab the phones sent, back fixed / not fixed, at the lab now, its charges, paid and khata, plus every phone sent with its problem, price and result. **Repair labs** and each lab's page have the same download.
+
+Repairs also show in the **Business overview**: taken in, given back, open, at a lab, bills and profit. They also appear in the shop audit.
+
 ### Send the phone to an outside lab
 
 In the market, many shops do not fix everything themselves. A board fault or an iPhone screen often goes to a specialist lab or technician. Mobile Shop keeps a full record of every such trip: which lab has the phone, since when, what they must do, what they charged, and what the shop owes them.

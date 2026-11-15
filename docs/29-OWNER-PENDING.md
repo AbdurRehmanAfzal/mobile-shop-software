@@ -207,6 +207,8 @@ Close the app fully and open it again first (or install the newest APK from the 
 
 **Delete a bill (2026-11-15, ADR-086)**: Sales list → 🗑 on a test sale → reason → Delete the bill: it shows Deleted and the phone is back in stock. Purchases list → 🗑 on a purchase whose phone was sold: the app refuses and says use a return.
 
+**Repairs (2026-11-15, ADR-087)**: Repairs → Take a phone for repair → choose Shop's technician / Outside lab (pick a lab, price, back by). From a stock phone: Send to repair. Delete a test repair from its row (advance reversed). Repairs page → Repair reports → This month → Download both (PDF / Excel). Business overview shows the Repairs card.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

@@ -555,3 +555,79 @@ table {{ width: 100%; border-collapse: collapse; margin-top: 6px; }} td {{ paddi
 </table>
 <div class="foot">{T["terms"]}</div>
 </body></html>"""
+
+
+def cancel_job(db: Session, shop_id: uuid.UUID, ctx, job_id: uuid.UUID, reason: str) -> RepairJob:
+    """owner 2026-11-15 (ADR-087): a repair taken in by mistake is cancelled (deleted from the
+    lists, kept in the record): the advance is reversed, an open lab trip is cancelled, the shop's
+    own phone goes back to stock. Not once delivered, nor once a lab charge was booked (then give it
+    back unrepaired)."""
+    from app.core.errors import Forbidden
+    from app.core.permissions import Cap
+    from app.modules.ledger.service import reverse
+    from app.modules.repairs.models import DispatchStatus, RepairDispatch
+
+    if not ctx.can(Cap.VOID):
+        raise Forbidden()
+    job = get_job(db, shop_id, job_id)
+    if job.status in (RepairStatus.DELIVERED, RepairStatus.CANCELLED):
+        raise Conflict(
+            code="repair_closed",
+            message_en="This repair is already given back or deleted.",
+            message_ur="یہ مرمت پہلے ہی واپس دی جا چکی یا ڈیلیٹ ہو چکی ہے۔",
+        )
+    trips = db.scalars(select(RepairDispatch).where(RepairDispatch.job_id == job.id)).all()
+    if any(t.status == DispatchStatus.BACK and t.final_cost > ZERO for t in trips):
+        raise Conflict(
+            code="lab_charge_booked",
+            message_en="A lab's charge is already booked on this repair. Give it back as not repaired instead.",
+            message_ur='اس مرمت پر لیب کا خرچ لکھا جا چکا ہے۔ اس کی جگہ "ٹھیک نہیں ہوا" کر کے واپس کریں۔',
+        )
+    for t in trips:
+        if t.status == DispatchStatus.AT_LAB:
+            t.status = DispatchStatus.CANCELLED
+            t.back_note = f"Repair deleted: {reason}"
+            t.updated_at = utcnow()
+    if job.advance_group_id:
+        reverse(db, shop_id, ctx.id, job.advance_group_id, f"Repair {job.no} deleted: {reason}")
+    if job.device_id:
+        device = get_device(db, shop_id, job.device_id)
+        if device.status == DeviceStatus.IN_REPAIR:
+            apply_event(
+                db,
+                shop_id,
+                ctx.id,
+                device,
+                EventType.REPAIR_RETURNED,
+                document_type="repair",
+                document_id=job.id,
+                data={"repair_no": job.no, "cancelled": True, "reason": reason},
+            )
+    before = job.status
+    job.status = RepairStatus.CANCELLED
+    _log(db, job, ctx.id, RepairStatus.CANCELLED, reason, from_status=before)
+    record_audit(
+        db,
+        shop_id=shop_id,
+        user_id=ctx.id,
+        entity="repair",
+        entity_id=job.id,
+        action="cancel",
+        before={"status": before, "advance": str(job.advance)},
+        after={"status": "cancelled", "reason": reason},
+    )
+    db.commit()
+    return job
+
+
+def technicians(db: Session, organisation_id: uuid.UUID) -> list[dict]:
+    """who in the shop can repair: technicians first, then the owner / managers"""
+    rows = db.scalars(
+        select(User).where(
+            User.organisation_id == organisation_id,
+            User.is_active.is_(True),
+            User.role.in_(("technician", "owner", "manager")),
+        )
+    ).all()
+    rows = sorted(rows, key=lambda u: (u.role != "technician", u.name or ""))
+    return [{"id": u.id, "name": u.name, "role": u.role} for u in rows]

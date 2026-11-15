@@ -1,3 +1,4 @@
+import datetime as dt
 import uuid
 from typing import Annotated
 
@@ -43,6 +44,51 @@ def _worker(ctx: Annotated[CurrentContext, Depends(get_current_context)]) -> Cur
 
 Creator = Annotated[CurrentContext, Depends(_creator)]
 Worker = Annotated[CurrentContext, Depends(_worker)]
+
+
+@router.get("/technicians")
+def technicians(ctx: Worker, db: DB):
+    """owner 2026-11-15 (ADR-087): the shop's own people who can repair"""
+    return service.technicians(db, ctx.organisation_id)
+
+
+@router.get("/report")
+def repairs_report(
+    ctx: Worker,
+    db: DB,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+    format: Annotated[str, Query(pattern="^(pdf|xlsx)$")] = "pdf",
+    lang: Annotated[str | None, Query(pattern="^(en|ur|roman)$")] = None,
+):
+    """owner 2026-11-15 (ADR-087): the shop's repairs of the period in detail (A4 / Excel)"""
+    from app.core.permissions import Cap as _Cap
+    from app.modules.repairs import report
+
+    if not ctx.can(_Cap.REPORTS_ALL):
+        raise Forbidden()
+    d_from, d_to = report.period(date_from, date_to)
+    return report.jobs_report(db, ctx, d_from, d_to, format, lang == "ur")
+
+
+@router.get("/labs/report")
+def labs_report(
+    ctx: Worker,
+    db: DB,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+    lab_id: uuid.UUID | None = None,
+    format: Annotated[str, Query(pattern="^(pdf|xlsx)$")] = "pdf",
+    lang: Annotated[str | None, Query(pattern="^(en|ur|roman)$")] = None,
+):
+    """owner 2026-11-15 (ADR-087): the outside labs / technicians: phones sent, fixed, money"""
+    from app.core.permissions import Cap as _Cap
+    from app.modules.repairs import report
+
+    if not ctx.can(_Cap.REPORTS_ALL):
+        raise Forbidden()
+    d_from, d_to = report.period(date_from, date_to)
+    return report.labs_report(db, ctx, d_from, d_to, lab_id, format, lang == "ur")
 
 
 @router.get("/labs", response_model=list[LabStats])
@@ -133,6 +179,13 @@ def back_from_lab(job_id: uuid.UUID, dispatch_id: uuid.UUID, data: BackIn, ctx: 
 def cancel_lab(job_id: uuid.UUID, dispatch_id: uuid.UUID, data: CancelIn, ctx: Worker, db: DB):
     d = labs_svc.cancel(db, ctx.shop_id, ctx.id, job_id, dispatch_id, data.reason)
     return labs_svc.trip_out(db, d)
+
+
+@router.post("/{job_id}/cancel", response_model=RepairOut)
+def cancel(job_id: uuid.UUID, data: CancelIn, ctx: Ctx, db: DB):
+    """owner 2026-11-15 (ADR-087): delete a repair taken in by mistake (owner / manager)"""
+    job = service.cancel_job(db, ctx.shop_id, ctx, job_id, data.reason)
+    return service.to_out(db, job)
 
 
 @router.get("/{job_id}/job-sheet", response_class=HTMLResponse)

@@ -129,7 +129,7 @@ export default function DeviceDetailPage() {
     inStock ? { key: 'faulty', label: 'stock.markFaulty', run: () => setFaultOpen(true) } : null,
     d.status === 'faulty' ? { key: 'faultEdit', label: 'faulty.edit', run: () => setFaultOpen(true) } : null,
     d.status === 'faulty' ? { key: 'faultyCleared', label: 'stock.faultyCleared', run: () => void simple('faulty_cleared') } : null,
-    inStock || d.status === 'faulty' ? { key: 'repair', label: 'stock.sendRepair', run: () => void simple('sent_to_repair') } : null,
+    inStock || d.status === 'faulty' ? { key: 'repair', label: 'stock.sendRepair', run: () => nav(`/repairs/new?device=${d.id}`) } : null,
     d.status === 'in_repair' ? { key: 'repairBack', label: 'stock.repairReturned', run: () => void simple('repair_returned') } : null,
     d.status === 'with_customer_for_approval' ? { key: 'approvalBack', label: 'stock.approvalReturned', run: () => void simple('approval_returned') } : null,
     { key: 'sticker', label: 'label.button', run: () => setSheet('label') },
@@ -223,7 +223,7 @@ export default function DeviceDetailPage() {
           {inStock ? <BiButton text="stock.markFaulty" variant="secondary" size="md" onClick={() => setFaultOpen(true)} data-testid="mark-faulty" /> : null}
           {d.status === 'faulty' ? <BiButton text="faulty.edit" variant="secondary" size="md" onClick={() => setFaultOpen(true)} data-testid="edit-faults" /> : null}
           {d.status === 'faulty' ? <BiButton text="stock.faultyCleared" variant="secondary" size="md" onClick={() => simple('faulty_cleared')} /> : null}
-          {inStock || d.status === 'faulty' ? <BiButton text="stock.sendRepair" variant="secondary" size="md" onClick={() => simple('sent_to_repair')} /> : null}
+          {inStock || d.status === 'faulty' ? <BiButton text="stock.sendRepair" variant="secondary" size="md" onClick={() => nav(`/repairs/new?device=${d.id}`)} data-testid="device-send-repair" /> : null}
           {d.status === 'in_repair' ? <BiButton text="stock.repairReturned" variant="secondary" size="md" onClick={() => simple('repair_returned')} /> : null}
           {d.status === 'with_customer_for_approval' ? <BiButton text="stock.approvalReturned" variant="secondary" size="md" onClick={() => simple('approval_returned')} /> : null}
           <BiButton text="label.button" variant="secondary" size="md" onClick={() => setSheet('label')} />

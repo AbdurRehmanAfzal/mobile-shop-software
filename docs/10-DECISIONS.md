@@ -362,6 +362,33 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-087 · 2026-11-15 · Accepted · Repairs: own technician or outside lab, delete, reports; Edit / Delete on more rows
+**Context**: the owner asked for several things:
+- Edit / Delete on every row;
+- every repair (from the Repairs module or a phone's page) to start with a choice: the shop's own technician, or an outside lab (what was sent, the problem, the price, when back, paid, owed);
+- delete for a repair sent by mistake;
+- full reports for both — every job, customer / shop phones, udhaar, profit / loss, parts, debit / credit, per lab — with download / share, also in the business overview and audit.
+
+Already there: repair jobs, lab trips (`repair_dispatches`, ADR-044), lab stats / detail, and the audit's repairs section.
+**Decision**:
+- **New repair** (`NewRepairPage`):
+  - The first choice is **Who will repair it**: the shop's technician (`GET /repairs/technicians`; optional) or an outside lab (party picker of kind technician, what to do, the agreed price, back by). The lab path creates the job and then the existing lab trip.
+  - `?device=` repairs the shop's own phone. A phone's page **Send to repair** now opens this form instead of a bare event.
+- **Delete a repair**:
+  - `POST /repairs/{id}/cancel {reason}` (owner / manager; new status `cancelled`, closed).
+  - It reverses the advance's ledger group, cancels an open lab trip, and brings the shop's own phone back to stock (`repair_returned`).
+  - It is refused once delivered, or once a lab charge was booked.
+- **Reports** (`repairs/report.py`, the shared A4 page; owner / manager): `GET /repairs/report` and `GET /repairs/labs/report?lab_id` (pdf / xlsx; the default is this month).
+  - Shop repairs: figures; every job with its bill, paid, udhaar, parts, lab charge and profit; by status; by technician / lab; who owes; parts used.
+  - Labs: per lab and every trip.
+  - Deleted repairs are left out.
+  - A reports card sits on Repairs (with a period picker); there are downloads on Repair labs and on each lab.
+- **Business overview**: a repairs block (taken in, customer / own, given back, open, at a lab, bills, profit), as a card and a report section.
+- **Edit / Delete** (`BillActions`, generalised): repairs (rows and the job page) and payments (rows; Edit opens the khata), as well as sales and purchases. Expenses already had cancel.
+**Consequences**:
+- No migration; `cancelled` is a new value in a string column.
+- The audit's repairs section counts every job, including deleted ones. The new reports leave deleted ones out.
+
 ## ADR-086 · 2026-11-15 · Accepted · Edit / Delete on every sale and purchase row
 **Context**: the owner asked how to delete a purchase or a product, and asked for small Edit and Delete buttons on every sale and purchase row, and Delete in the bill's own view, for bills entered by mistake. The ledger is append-only; void (Cancel this bill) already existed, but only on the bill's page.
 **Decision**:

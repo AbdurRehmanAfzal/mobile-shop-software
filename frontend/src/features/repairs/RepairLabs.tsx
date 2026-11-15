@@ -2,6 +2,7 @@
  *  the market — one trip at a time, back fixed or not with the lab's charge (to its khata, part paid
  *  on the spot) — and the complete record of every lab. */
 
+import DownloadButton from '@/components/DownloadButton'
 import { AlertTriangle, ArrowRight, CheckCircle2, FlaskConical, Phone, Plus, Undo2, XCircle } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
@@ -156,7 +157,7 @@ export function LabsPage() {
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="rlab.labs" help={<Help term="rlab.labs" />} right={<button type="button" aria-label={pick('rlab.addLab')} onClick={() => setAdding(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl bg-ink px-1.5 py-1 text-ground"><Plus size={22} /></button>} />
+      <PageHeader title="rlab.labs" help={<Help term="rlab.labs" />} right={<div className="flex gap-1.5"><DownloadButton path="/api/v1/repairs/labs/report" name="repair-labs" formats={['pdf', 'xlsx']} /><button type="button" aria-label={pick('rlab.addLab')} onClick={() => setAdding(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl bg-ink px-1.5 py-1 text-ground"><Plus size={22} /></button></div>} />
       <BiLabel text="rlab.labsHint" size="sm" tone="text-muted" />
       {isLoading ? <Loading /> : !data?.length ? <Empty text="rlab.noLabs" /> : (
         <div className="flex flex-col gap-2" data-testid="labs">
@@ -194,7 +195,7 @@ export function LabDetailPage() {
   const owe = Number(l.balance) < 0 ? Math.abs(Number(l.balance)) : 0
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title={{ en: l.name, ur: l.name }} help={<Help term="rlab.labPage" />} />
+      <PageHeader title={{ en: l.name, ur: l.name }} help={<Help term="rlab.labPage" />} right={<DownloadButton path={`/api/v1/repairs/labs/report?lab_id=${id}&date_from=2000-01-01`} name={`lab-${l.name}`} formats={['pdf', 'xlsx']} />} />
       <section className="flex flex-col gap-1 rounded-3xl bg-repair p-4 text-repair-fg">
         <span className="flex items-center gap-1 [&_button]:text-current"><BiLabel text="rlab.owe" size="md" bold tone="text-current" /><Help term="rlab.owe" size="sm" /></span>
         <span className="num text-[30px] leading-tight" dir="ltr" data-testid="lab-owe">{withCur(n(owe))}</span>
