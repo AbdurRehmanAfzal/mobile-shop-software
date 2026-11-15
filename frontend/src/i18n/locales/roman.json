@@ -269,7 +269,8 @@
       "lock_checked": "Lock check",
       "reclassified": "Qism badli",
       "reserved": "Reserve hua",
-      "unreserved": "Reserve khatam"
+      "unreserved": "Reserve khatam",
+      "pta_checked": "PTA check hua"
     },
     "acc": {
       "box": "Dabba",
@@ -7135,6 +7136,11 @@
           "title": "WhatsApp entries",
           "body": "Sale, purchase, payment aur len-den group mein ek standard message mein bhejein, aur message se software mein entry karein.",
           "example": "\"*SALE* … IMEI … Price …\" paste karein → sale bhari hui khulti hai."
+        },
+        "security": {
+          "title": "Login security",
+          "body": "Staff sirf aap ki ijazat wale phone par aur dukaan ke auqaat mein login kare; sab ko ek saath logout karein.",
+          "example": "Naya phone aap ki ijazat ka intezar karta hai."
         }
       },
       "pinPassword": {
@@ -8196,6 +8202,52 @@
         "title": "Message se entry",
         "body": "Group ka message paste karein. App ise parh kar IMEI se mobile aur number ya naam se banda dhoondti hai, aur sale ya purchase ka form bhara hua kholti hai (ya payment / len-den ka). Dekh kar mamool ki tarah save karein — pehle kuch save nahi hota. Tasveer se IMEI box ya IMEI screen ki tasveer se barcode parhta hai.",
         "example": "Purchase ka message paste karein → Purchase ka form bhara hua kholein → mobile ka form model, IMEI, haalat aur qeemat ke saath khulta hai; zaroorat ho to bechne wale ki shanakht laga kar save karein."
+      }
+    },
+    "sec": {
+      "page": {
+        "title": "Login security",
+        "body": "Taake sirf password kafi na ho. Sirf meri ijazat wale phone: staff sirf usi phone ya computer par login kare jis ki aap ne ijazat di; naya phone tab tak intezar karega jab tak aap \"Ijazat dein\" na dabayein (yahan ya home screen par) — sahi password wala bhi andar nahi aa sakta. Staff ke auqaat: staff sirf aap ke diye hue waqt mein login kare. \"Ijazat wapas lein\" phone ko foran logout karta hai; \"Saara staff logout\" har login khatam karta hai. Dono aap ke on karne tak band hain, aur aap par kabhi lagu nahi.",
+        "example": "Ahmed ka password kisi ko pata chal gaya. Woh apne phone par koshish karta hai: phone aap ka intezar karta hai, aap \"Mana karein\" dabate hain, woh login nahi kar sakta."
+      },
+      "devices": {
+        "title": "Sirf meri ijazat wale phone",
+        "body": "App har phone / browser par apni khufia key rakhti hai. Yeh on ho to jis phone ki aap ne ijazat nahi di us se staff ka login rukta hai, aur phone \"Aap ki ijazat ka intezar\" mein aata hai. Ek baar ijazat dein to woh phone aage se aam tarah login karega. Browser ka data saaf karne ya dobara install karne se phone phir naya ban jata hai. Aap ka apna login kabhi nahi rukta.",
+        "example": "Bilal counter wale phone par login karta hai: intezar; aap \"Ijazat dein\" dabate hain; phir woh wahan aam tarah login karta hai."
+      },
+      "hours": {
+        "title": "Staff login ke auqaat",
+        "body": "Staff sirf \"Se\" aur \"Tak\" ke beech, dukaan ke waqt ke mutabiq, login kar sakta hai (aadhi raat ke baad tak bhi, jaise 10:00 se 02:00). Pehle se khula login waqt khatam hone ke 30 minute ke andar ruk jata hai. Aap par koi pabandi nahi.",
+        "example": "10:00 se 23:00: raat 23:30 par salesman ghar se login nahi kar sakta."
+      },
+      "logoutAll": {
+        "title": "Saara staff logout",
+        "body": "Har salesman, manager aur technician ka har phone aur browser par login foran khatam. Jab password leak hone ka shak ho, ya \"Sirf meri ijazat wale phone\" on karne ke baad taake har phone dobara ijazat le.",
+        "example": "Salesman naukri chhor de: Staff mein use band karein, phir Saara staff logout."
+      }
+    },
+    "pret": {
+      "owed": {
+        "title": "Jo abhi dena tha",
+        "body": "Is purchase bill ka woh hissa jo abhi ada nahi hua tha. Mobile wapas karne se pehle yeh khatam hota hai; jo aap de chuke the sirf woh aap ko wapas milta hai.",
+        "example": "Bill 50,000, ada 25,000: abhi 25,000 dena tha. Wapsi: 25,000 khatam aur bechne wala 25,000 wapas dega."
+      },
+      "cut": {
+        "title": "Katauti",
+        "body": "Jab bechne wala mobile sirf kam qeemat par wapas lene ko maane, farq yahan likhein. Yeh dukaan ka nuqsan hai aur munafe ki report mein aata hai.",
+        "example": "50,000 ka khareeda, bechne wala 45,000 mein wapas leta hai: katauti 5,000."
+      },
+      "gotNow": {
+        "title": "Abhi mile",
+        "body": "Jo bechne wala aaj wapas de (cash, ya bank chunein). Kam mile to baqi us ke khate mein aap ka lena rehta hai; baad mein \"Paise mile\" se lein.",
+        "example": "25,000 wapas dene hain, aaj 10,000 diye: 15,000 khate mein."
+      }
+    },
+    "ptachk": {
+      "how": {
+        "title": "PTA check",
+        "body": "PTA ki DIRBS website app ke andar nahi khul sakti (PTA ijazat nahi deta, aur \"I'm not a robot\" sirf PTA ki site par chalta hai). App IMEI copy kar ke PTA ka page kholti hai: paste karein, khane par tick karein, CHECK dabayein. Ya IMEI ko 8484 par SMS karein (aam SMS ka kharcha). Phir PTA ka jawab dabayein: stock wale mobile par yeh history mein save hota hai aur PTA haalat laga deta hai (Blocked sirf likha jata hai); khareedte waqt form mein PTA chun deta hai.",
+        "example": "PTA kahe \"Compliant\" → Approved dabayein. \"Non-compliant\" → Non-PTA."
       }
     }
   },
@@ -11012,5 +11064,75 @@
     "saleNeedsStock": "Sale ke liye stock mein maujood mobile chahiye.",
     "needPerson": "Chunein mobile kis se khareeda.",
     "saved": "Save ho gaya. Agla message paste karein."
+  },
+  "sec": {
+    "title": "Login security",
+    "devices": "Sirf meri ijazat wale phone",
+    "devicesHint": "Staff sirf usi phone ya computer par login kare jis ki aap ne ijazat di. Naya phone aap ka intezar karta hai — sahi password ke saath bhi.",
+    "devicesOn": "On — chori ka password kafi nahi",
+    "hours": "Staff login ke auqaat",
+    "hoursHint": "Staff sirf in auqaat mein login kare (dukaan ka waqt). Aap par koi pabandi nahi.",
+    "from": "Se",
+    "to": "Tak",
+    "saveHours": "Auqaat save karein",
+    "saved": "Save ho gaya",
+    "waiting": "Aap ki ijazat ka intezar",
+    "noneWaiting": "Koi phone intezar mein nahi.",
+    "allowed": "Ijazat wale phone",
+    "noneAllowed": "Abhi koi nahi. Ijazat dene ke baad yahan aayenge.",
+    "refusedList": "Jin phones ko mana kiya",
+    "asked": "Maanga",
+    "lastUsed": "Aakhri istemal",
+    "refused": "Mana kiya",
+    "allow": "Ijazat dein",
+    "no": "Mana karein",
+    "takeBack": "Ijazat wapas lein",
+    "forget": "Hatayein",
+    "logoutAll": "Saara staff logout",
+    "logoutAllHint": "Har phone par staff ka har login abhi khatam; woh dobara login karenge (ijazat on ho to intezar karenge). Aap login rahenge.",
+    "logoutAllBtn": "Abhi saara staff logout karein",
+    "logoutConfirm": "Kya har salesman, manager aur technician ko har phone se abhi logout karein?",
+    "ended": "{{n}} login khatam ho gaye.",
+    "homeAsks": "{{n}} naye phone aap ki ijazat ke muntazir"
+  },
+  "pret": {
+    "button": "Bechne wale ko wapas",
+    "title": "Bechne wale ko wapas karein",
+    "hint": "Mobile usi ko wapas jata hai jis se khareeda tha. Purchase record mein rehti hai; raqam ka hisaab neeche hai.",
+    "why": {
+      "title": "Kyun",
+      "faulty": "Kharab nikla",
+      "notWanted": "Rakhna nahi",
+      "other": "Koi aur wajah"
+    },
+    "note": "Note (ikhtiyari)",
+    "cut": "Katauti — bechne wala kam mein wapas le (ikhtiyari)",
+    "value": "Wapas jane wale ki qeemat",
+    "cutLine": "Katauti (aap ka nuqsan)",
+    "owedBefore": "Is bill par aap ne abhi dena tha",
+    "cancelled": "Is mein se khatam",
+    "stillOwed": "Aap ne abhi bhi dena hai",
+    "back": "Bechne wala aap ko wapas dega",
+    "gotNow": "Abhi mile",
+    "later": "Baqi {{n}} bechne wale ke khate mein — us ne aap ko dene hain.",
+    "zero": "Is bill par bechne wale ke saath hisaab: zero.",
+    "confirm": "Wapas karein"
+  },
+  "ptachk": {
+    "button": "PTA check",
+    "title": "PTA par check karein (DIRBS)",
+    "copy": "Copy",
+    "copied": "Copy ho gaya",
+    "step1": "1. Check karein",
+    "website": "PTA website (IMEI copy)",
+    "sms": "8484 par SMS",
+    "websiteHint": "PTA ke page par: khane ko daba kar rakhein → Paste, \"I'm not a robot\" par tick karein, CHECK dabayein. Phir yahan wapas aayein.",
+    "step2": "2. PTA ne kya kaha?",
+    "r": {
+      "pta_approved": "Approved",
+      "non_pta": "Non-PTA",
+      "blocked": "Blocked"
+    },
+    "blockedWarn": "PTA ke mutabiq yeh IMEI block hai. Wajah pakki maloom na ho to mat khareedein."
   }
 }

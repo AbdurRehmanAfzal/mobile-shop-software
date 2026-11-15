@@ -985,6 +985,32 @@ History lines can never be edited or deleted. A mistake is corrected by a new li
 
 ![A phone's history: sold, verified, sale returned, each with date, person and amount](shot:device-history)
 
+### PTA check (DIRBS)
+
+On a phone's page, or while adding a phone (next to **PTA status**), tap **PTA check**:
+
+1. **PTA website (IMEI copied)** opens PTA's DIRBS page. Long-press the box → Paste, tick "I'm not a robot", tap CHECK. Or **SMS to 8484**: the SMS app opens with the IMEI written in; the usual SMS charge applies.
+2. Come back and tap what PTA said: **Approved**, **Non-PTA** or **Blocked**.
+   - On a phone in stock, the answer is saved on its history (who, when, website or SMS). Approved / Non-PTA also set its PTA status.
+   - While buying, it sets the PTA choice. **Blocked** shows a warning: do not buy unless you are sure why.
+
+The PTA page cannot open inside the app: PTA does not allow it, and its "I'm not a robot" works only on PTA's own site.
+
+### Return a bought phone to the seller (faulty / not wanted)
+
+Use this when you bought a phone, then found it faulty or decided not to keep it, and give it back to the person you bought it from. Open the phone's page → **Return to the seller**, or the purchase bill → **Return to the seller**.
+
+Do not use **Cancel this bill** for this. Cancel is for a bill entered by mistake, a deal that never happened. A return keeps the record: the purchase stays, and the phone's history shows "returned to the seller".
+
+- Choose **Why**: Faulty, Don't want to keep it, or Other, and add a note if you like.
+- The money is worked out for you:
+  - **You still owed on this bill**: the unpaid part. It is cancelled first.
+  - **The seller gives you back**: what you had already paid.
+  - **Received now**: what he hands back today, cash or bank. Anything less stays in his khata as money he owes you.
+- **Cut**: if the seller takes it back only for less, write the difference. It is your loss and shows in the profit report.
+
+Example: a 50,000 phone, 25,000 paid, 25,000 still to give. Return it: the 25,000 you owed is gone, the seller gives you 25,000 back, and the balance is zero. With a 5,000 cut he gives back 20,000.
+
 ### Stock tally sheet (count on paper)
 
 On **Stock → What is my stock worth?** (and on **Stock count**) the **Stock tally sheet** card prints every phone on hand to count by hand.
@@ -2240,6 +2266,22 @@ One check-in per day. The owner opens Staff → **Hazri**, picks the period, and
 ### Activity: what each person did
 
 Staff → **Activity** shows, for the chosen period, each person's **Sales (n · Rs)**, **Received (Rs)**, **Purchases (n · Rs)**, **Expenses (Rs)**, **Repairs** and the number of **Actions**, with their **Last login**. Tap a person to see the full log: every bill, payment, purchase, expense, repair, cancellation and settings change, with the time, number and amount. This comes from the record the app keeps of every change, so nothing can be left out.
+
+### Login security: a password alone is not enough
+
+Owner only: More → **Login security**. Both rules are off until you switch them on, and they never apply to you, the owner.
+
+- **Only phones I allow**: a salesman, manager or technician logs in only on a phone or computer you allowed.
+  - A new phone shows "This phone is new. The owner must allow it first", even with the right password.
+  - You see "**1 new phone waiting for your approval**" on the home screen. Tap it, then tap **Allow** or **Say no**. After that, the staff member taps Login again.
+  - An allowed phone logs in normally from then on.
+  - **Take back** logs that phone out at once.
+  - Clearing the browser's data or reinstalling the app makes it a new phone again.
+- **Staff login hours**: set **From** and **To** in shop time; the hours can run past midnight, like 10:00 to 02:00. Outside them, staff cannot log in. A login already open stops within 30 minutes after the time ends.
+- **Log out all staff now** ends every staff login on every phone; you stay logged in. Use it when a password may have leaked, or right after switching on Only phones I allow.
+- When you switch a staff member off in **Staff**, all their logins end at once.
+
+> **Tip:** switch on Only phones I allow, tap Log out all staff now, then allow the counter phones as the staff log in again. A salesman can no longer log in from home on his own phone.
 
 ### Login activity: where the app is logged in
 

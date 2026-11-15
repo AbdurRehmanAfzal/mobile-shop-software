@@ -4,6 +4,7 @@
  *  Wi-Fi only or Wi-Fi + SIM (IMEI and PTA only with a SIM), storage, battery health, pen/keyboard;
  *  a watch GPS or cellular, case size, battery health, strap: no storage, IMEI 2 or JV. */
 
+import { PtaCheckButton, PtaCheckSheet, type PtaResult } from '@/features/stock/PtaCheck'
 import { useEffect, useState } from 'react'
 import { FaultPicker } from '@/features/stock/Faults'
 import { clearDrafts, useDraft } from '@/lib/draft'
@@ -224,6 +225,9 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
   const cyclesOk = !d.battery_cycles || (Number.isInteger(Number(d.battery_cycles)) && Number(d.battery_cycles) >= 0 && Number(d.battery_cycles) <= 5000)
   const batteryOk = (d.battery_health === '' || (Number(d.battery_health) >= 1 && Number(d.battery_health) <= 100)) && cyclesOk
   const needsSim = showPta && (d.pta_status === 'non_pta' || d.pta_status === 'jv')
+  // owner 2026-11-15 (ADR-082): PTA's DIRBS answer while buying
+  const [ptaOpen, setPtaOpen] = useState(false)
+  const [ptaSaid, setPtaSaid] = useState<PtaResult | null>(null)
   // owner: the price you will sell at may not be lower than what you paid
   const askingLow = !edit && d.asking_price !== '' && d.cost !== '' && Number(d.asking_price) < Number(d.cost)
   const valid = !askingLow && identityOk && (!sim || !d.serial.trim() || serialOk) && d.brand_id && d.model_id && (edit || d.cost !== '') && (d.condition !== 'patched' || d.patch_details) && batteryOk && !inStockBlock && !serialBlock && lockOk
@@ -410,7 +414,9 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
         <BiInput label="devx.cycles" help={<Help term="device.cycles" size="sm" />} type="number" inputMode="numeric" min={0} max={5000} value={d.battery_cycles ?? ''} onChange={(e) => set('battery_cycles', e.target.value)} hint="devx.cyclesHint" error={cyclesOk ? null : 'devx.cyclesBad'} className="num" data-testid="battery-cycles" />
       ) : null}
 
-      {showPta ? <div className="flex items-center gap-1"><BiLabel text="stock.ptaLabel" size="md" tone="text-muted" /><Help term="device.pta" size="sm" /></div> : null}
+      {showPta ? <div className="flex items-center gap-1"><BiLabel text="stock.ptaLabel" size="md" tone="text-muted" /><Help term="device.pta" size="sm" />{/^\d{15}$/.test(d.imei1) ? <span className="ms-auto"><PtaCheckButton size="sm" onClick={() => setPtaOpen(true)} /></span> : null}</div> : null}
+      {ptaSaid === 'blocked' ? <div className="rounded-2xl bg-payable-tint px-3 py-2 text-sm font-bold text-payable" data-testid="pta-blocked-warn">{pick('ptachk.blockedWarn')}</div> : null}
+      <PtaCheckSheet imei={d.imei1} open={ptaOpen} onClose={() => setPtaOpen(false)} onResult={(r: PtaResult) => { setPtaSaid(r); if (r !== 'blocked') set('pta_status', r) }} />
       {showPta ? <BiSegmented<PtaStatus> value={d.pta_status} onChange={(v) => set('pta_status', v)} options={[{ value: 'pta_approved', text: 'stock.pta.pta_approved' }, { value: 'non_pta', text: 'stock.pta.non_pta' }, ...(phone ? [{ value: 'jv' as const, text: 'stock.pta.jv' }, { value: 'cpid' as const, text: 'stock.pta.cpid' }] : [])]} /> : null}
       {showPta ? <SimLockField value={d.sim_lock ?? ''} carrier={d.sim_lock_carrier ?? ''} onChange={(v, c) => setD((x) => ({ ...x, sim_lock: v, sim_lock_carrier: c }))} /> : null}
       {needsSim ? <BiInput label="stock.simTime" help={<Help term="device.simTime" size="sm" />} type="number" inputMode="numeric" min={0} max={60} value={d.sim_time_months} onChange={(e) => set('sim_time_months', e.target.value)} hint="stock.simTimeOptional" /> : null}

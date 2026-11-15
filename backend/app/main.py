@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.core.errors import install_error_handlers
-from app.core.request_info import set_client_info
+from app.core.request_info import set_client_info, set_device_key
 from app.modules.accessories.router import router as accessories_router
 from app.modules.admin.fees_router import router as fees_router
 from app.modules.admin.router import router as admin_router
@@ -44,6 +44,7 @@ from app.modules.reports.router import router as reports_router
 from app.modules.reserve.router import router as reserve_router
 from app.modules.returns.router import router as returns_router
 from app.modules.sales.router import router as sales_router
+from app.modules.security.router import router as security_router
 from app.modules.shopaudit.router import router as shopaudit_router
 from app.modules.staffaccess.router import router as staffaccess_router
 from app.modules.transfers.router import router as transfers_router
@@ -123,6 +124,7 @@ def create_app() -> FastAPI:
         set_client_info(
             request.client.host if request.client else None, request.headers.get("user-agent")
         )
+        set_device_key((request.headers.get("x-device-key") or "")[:128] or None)
         return await call_next(request)
 
     @app.middleware("http")
@@ -200,6 +202,7 @@ def create_app() -> FastAPI:
     app.include_router(reserve_router)
     app.include_router(logins_router)
     app.include_router(staffaccess_router)
+    app.include_router(security_router)
     if settings.web_dir:
         _mount_web(app, settings.web_dir)
     return app

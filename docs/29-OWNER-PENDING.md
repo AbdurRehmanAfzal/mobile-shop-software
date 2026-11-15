@@ -186,6 +186,19 @@ Close the app fully and open it again first (or install the newest APK from the 
 3. Send a hand-written purchase ("khareeda … IMEI … qeemat 30k … jama 10000 cash") and enter it the same way; try **IMEI from photo** with a photo of the box.
 4. A payment and a len-den message → the payment form opens with the amount.
 
+**Login security (2026-11-15, ADR-080)** — try it on a test shop first:
+1. More → **Login security** → switch on **Only phones I allow** → **Log out all staff now**.
+2. Log in as a salesman on a phone: "This phone is new…". As the owner, the home screen shows the phone → **Allow**. The salesman taps Login again and gets in.
+3. Try the same salesman's password in another browser: it waits. **Say no** → it is refused.
+4. **Staff login hours** 10:00–22:00: a salesman cannot log in after 22:00. The owner always can.
+5. If a salesman's phone is lost: **Take back** that phone.
+
+**Return to the seller (2026-11-15, ADR-081)**:
+1. Buy a test phone for 50,000 and pay 25,000. Open the phone → **Return to the seller**: it shows 25,000 cancelled and 25,000 to get back → Return it. The seller's khata reads zero; the phone shows "returned to the seller".
+2. Try it with a cut of 5,000 and receive less than shown: the rest stays in the seller's khata.
+
+**PTA check (2026-11-15, ADR-082)**: open a phone → **PTA check** → PTA website: on the PTA page long-press → Paste, tick, CHECK → back in the app tap what PTA said. On a phone, try **SMS to 8484** too.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

@@ -277,7 +277,16 @@ def purchase_return(
                 )
     amount = sum((ln.net_cost for ln in lines), ZERO)
     refund = money(data.refund_amount)
-    if refund > amount:
+    # owner 2026-11-15 (ADR-081): the seller may take it back for less (a cut, the shop's loss);
+    # what the seller then owes back is the value less the cut, set against what the shop still owed
+    cut = money(data.cut_amount)
+    if cut > amount:
+        raise ValidationFailed(
+            code="cut_exceeds_value",
+            message_en=f"The cut cannot be more than the returned value {amount}",
+            message_ur=f"کٹوتی واپس شدہ مالیت {amount} سے زیادہ نہیں ہو سکتی",
+        )
+    if refund > amount - cut:
         raise ValidationFailed(code="refund_exceeds_return")
     cash = _cash(db, shop_id, data.cash_account_id) if refund > ZERO else None
 
@@ -292,6 +301,7 @@ def purchase_return(
         amount=amount,
         settlement=Settlement.REFUND if refund > ZERO else Settlement.CREDIT,
         refund_amount=refund,
+        kept_amount=cut,
         cash_account_id=cash.id if cash else None,
         reason=data.reason,
         lines=[
@@ -313,8 +323,10 @@ def purchase_return(
     )
     posting.at = posting.at or at_for(doc.date)
     P = acc.party_account(party.id)
-    if amount > ZERO:
-        posting.debit(P, amount)
+    if amount - cut > ZERO:
+        posting.debit(P, amount - cut)
+    if cut > ZERO:  # a cost of trading: reaches the profit report
+        posting.debit(acc.SysAccount.COGS, cut, memo=f"Cut on return {doc.no}")
     for ln in lines:
         if ln.accessory_id:
             a = acc_stock.get_accessory(db, shop_id, ln.accessory_id)
@@ -379,7 +391,7 @@ def purchase_return(
         entity="purchase",
         entity_id=pur.id,
         action="return",
-        after={"return_no": doc.no, "amount": str(amount), "refund": str(refund)},
+        after={"return_no": doc.no, "amount": str(amount), "refund": str(refund), "cut": str(cut)},
     )
     db.commit()
     return doc

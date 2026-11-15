@@ -251,6 +251,32 @@ History ki lines kabhi edit ya delete nahi ho saktin. Ghalti nayi line se theek 
 
 ![Phone ki history: bika, check hua, bikri wapas, har ek tareekh, bande aur raqam ke saath](shot:device-history)
 
+### PTA check (DIRBS)
+
+Mobile ke page par, ya mobile add karte waqt (**PTA haalat** ke saath), **PTA check** dabayein:
+
+1. **PTA website (IMEI copy)** PTA ka DIRBS page kholta hai. Khane ko daba kar rakhein → Paste, "I'm not a robot" par tick karein, CHECK dabayein. Ya **8484 par SMS**: SMS app IMEI likhi hui khulti hai; aam SMS ka kharcha lagta hai.
+2. Wapas aa kar PTA ka jawab dabayein: **Approved**, **Non-PTA** ya **Blocked**.
+   - Stock wale mobile par jawab us ki history mein save hota hai (kis ne, kab, website ya SMS). Approved / Non-PTA us ki PTA haalat bhi laga dete hain.
+   - Khareedte waqt yeh form mein PTA chun deta hai. **Blocked** par khabardar kiya jata hai: wajah pakki maloom na ho to mat khareedein.
+
+PTA ka page app ke andar nahi khul sakta: PTA is ki ijazat nahi deta, aur is ka "I'm not a robot" sirf PTA ki apni site par chalta hai.
+
+### Khareeda hua mobile bechne wale ko wapas (kharab / rakhna nahi)
+
+Yeh tab istemal karein jab aap ne mobile khareeda, phir pata chala ke kharab hai ya rakhna nahi, aur usi ko wapas de diya jis se khareeda tha. Mobile ka page kholein → **Bechne wale ko wapas**, ya purchase ka bill → **Bechne wale ko wapas**.
+
+Is ke liye **Cancel this bill** istemal na karein. Cancel ghalti se bane bill ke liye hai, yaani aisa sauda jo hua hi nahi. Wapsi mein record rehta hai: purchase bhi rehti hai, aur mobile ki history mein "bechne wale ko wapas" bhi aata hai.
+
+- **Kyun** chunein: Kharab nikla, Rakhna nahi, ya Koi aur wajah; chahein to note likhein.
+- Raqam ka hisaab khud hota hai:
+  - **Is bill par aap ne abhi dena tha**: jo ada nahi hua tha. Yeh pehle khatam hota hai.
+  - **Bechne wala aap ko wapas dega**: jo aap de chuke the.
+  - **Abhi mile**: jo woh aaj wapas de, cash ya bank. Kam mile to baqi us ke khate mein aap ka lena rehta hai.
+- **Katauti**: agar bechne wala kam mein wapas le to farq likhein. Yeh aap ka nuqsan hai aur munafe ki report mein aata hai.
+
+Misaal: 50,000 ka mobile, 25,000 diye, 25,000 dene the. Wapas karein: aap ke 25,000 khatam, bechne wala 25,000 wapas dega, aur hisaab zero. 5,000 katauti ho to woh 20,000 wapas dega.
+
 ### Stock ginti sheet (kaghaz par ginti)
 
 **Stock → Mera stock kitne ka hai?** (aur **Stock ginti**) par **Stock ginti sheet** ka card har maujood mobile haath se ginne ke liye chhaapta hai.

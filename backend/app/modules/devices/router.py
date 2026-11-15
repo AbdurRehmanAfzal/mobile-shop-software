@@ -302,6 +302,36 @@ def lock_check(device_id: uuid.UUID, data: LockCheckIn, ctx: Transact, db: DB):
     return service.get_device_out(db, ctx.shop_id, device_id)
 
 
+class PtaCheckIn(BaseModel):
+    result: Literal["pta_approved", "non_pta", "blocked"]
+    via: Literal["dirbs", "sms"] = "dirbs"
+    note: str | None = Field(default=None, max_length=200)
+
+
+@router.post("/{device_id}/pta-check", response_model=DeviceOut)
+def pta_check(device_id: uuid.UUID, data: PtaCheckIn, ctx: Transact, db: DB):
+    """owner 2026-11-15 (ADR-082): the shopkeeper checked the IMEI on PTA's DIRBS (the website or
+    SMS 8484) and says what it answered. Approved / Non-PTA set the phone's PTA status; Blocked is
+    recorded and shown, nothing else changes. Kept on the phone's history (who, when, how)."""
+    from app.modules.devices.service import apply_event
+    from app.modules.devices.state import EventType
+
+    d = service.get_device(db, ctx.shop_id, device_id)
+    before = d.pta_status
+    if data.result in ("pta_approved", "non_pta"):
+        d.pta_status = data.result
+    apply_event(
+        db,
+        ctx.shop_id,
+        ctx.id,
+        d,
+        EventType.PTA_CHECKED,
+        data={"result": data.result, "via": data.via, "before": before, "note": data.note},
+    )
+    db.commit()
+    return _hide_cost(ctx, service.get_device_out(db, ctx.shop_id, device_id))
+
+
 @router.get("/{device_id}", response_model=DeviceDetailOut)
 def get_device(device_id: uuid.UUID, ctx: Ctx, db: DB):
     d = _hide_cost(

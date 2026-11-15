@@ -1,3 +1,4 @@
+import { PtaCheckButton, PtaCheckSheet } from './PtaCheck'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiAlert, BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
@@ -84,6 +85,7 @@ export default function DeviceDetailPage() {
   const [pin, setPin] = useState('')
   const [priceErr, setPriceErr] = useState<ApiError | null>(null)
   const inv = useInvalidate()
+  const [ptaOpen, setPtaOpen] = useState(false)
   const [text, setText] = useState('')
   const [partyId, setPartyId] = useState('')
   const [expected, setExpected] = useState('')
@@ -135,6 +137,7 @@ export default function DeviceDetailPage() {
     { key: 'edit', label: 'crud.editDetails', run: () => setSheet('edit') },
     canSeeCost && boughtOn ? { key: 'changeSeller', label: 'purchase.fix.partyButton', run: () => nav(`/purchases/${boughtOn}?change=1`) } : null,
     canSeeCost && boughtOn ? { key: 'changePaid', label: 'purchase.paidFix.button', run: () => nav(`/purchases/${boughtOn}?paid=1`) } : null,
+    canSeeCost && boughtOn && (inStock || d.status === 'faulty') ? { key: 'returnSeller', label: 'pret.button', run: () => nav(`/purchases/${boughtOn}?return=${d.id}`) } : null,
     canCost ? { key: 'fixCost', label: 'purchase.costFix.button', run: openCost } : null,
     canSeeCost && soldOn && d.status === 'sold' ? { key: 'changeBuyer', label: 'sale.fix.button', run: () => nav(`/sales/${soldOn}?change=1`) } : null,
     canSeeCost ? { key: 'balances', label: 'bal.short', run: () => nav(`/balances?q=${encodeURIComponent(d.imei1)}`) } : null,
@@ -169,6 +172,8 @@ export default function DeviceDetailPage() {
           <Chip text={`stock.condition.${d.condition}`} />
           {d.grade ? <Chip text={['a', 'b', 'refurbished', 'copy'].includes(d.grade) ? `devx.grades.${d.grade}` : { en: d.grade, ur: d.grade }} /> : null}
           {hasPta(d) ? <Chip text={`stock.pta.${d.pta_status}`} tone={d.pta_status === 'pta_approved' ? 'ok' : 'warn'} /> : null}
+          {/* owner 2026-11-15 (ADR-082): check the IMEI on PTA's DIRBS, save the answer */}
+          {hasPta(d) && /^\d{15}$/.test(d.imei1) ? <PtaCheckButton size="sm" onClick={() => setPtaOpen(true)} /> : null}
           {d.condition !== 'box_pack' ? <Chip text={lockState(d.lock_checks) === 'ok' ? 'devx.lock.ok' : lockState(d.lock_checks) === 'bad' ? 'devx.lock.bad' : 'devx.lock.none'} tone={lockState(d.lock_checks) === 'ok' ? 'ok' : lockState(d.lock_checks) === 'bad' ? 'bad' : 'warn'} /> : null}
           {d.verification_status !== 'not_required' ? <Chip text={`stock.verification.${d.verification_status}`} tone={vTone} /> : null}
           {d.cycle_no > 1 ? <Chip text={{ en: `Cycle ${d.cycle_no}`, ur: `${d.cycle_no} بار` }} /> : null}
@@ -224,6 +229,7 @@ export default function DeviceDetailPage() {
           <BiButton text="crud.editDetails" variant="secondary" size="md" onClick={() => setSheet('edit')} />
           {canSeeCost && boughtOn ? <BiButton text="purchase.fix.partyButton" variant="secondary" size="md" onClick={() => nav(`/purchases/${boughtOn}?change=1`)} data-testid="device-change-seller" /> : null}
           {canSeeCost && boughtOn ? <BiButton text="purchase.paidFix.button" variant="secondary" size="md" onClick={() => nav(`/purchases/${boughtOn}?paid=1`)} data-testid="device-change-paid" /> : null}
+          {canSeeCost && boughtOn && (inStock || d.status === 'faulty') ? <BiButton text="pret.button" variant="secondary" size="md" onClick={() => nav(`/purchases/${boughtOn}?return=${d.id}`)} data-testid="device-return-seller" /> : null}
           {canCost ? <BiButton text="purchase.costFix.button" variant="secondary" size="md" onClick={openCost} data-testid="fix-cost" /> : null}
           {canSeeCost && soldOn && d.status === 'sold' ? <BiButton text="sale.fix.button" variant="secondary" size="md" onClick={() => nav(`/sales/${soldOn}?change=1`)} data-testid="device-change-buyer" /> : null}
           {canSeeCost ? <BiButton text="bal.short" variant="secondary" size="md" onClick={() => nav(`/balances?q=${encodeURIComponent(d.imei1)}`)} data-testid="device-balances" /> : null}
@@ -272,6 +278,7 @@ export default function DeviceDetailPage() {
       {style !== 'classic' ? <ErrorText error={ev.error ?? loanM.error} /> : null}
 
       <LabelSheet kind="devices" ids={[d.id]} open={sheet === 'label'} onClose={() => setSheet(null)} />
+      <PtaCheckSheet imei={d.imei1} open={ptaOpen} onClose={() => setPtaOpen(false)} deviceId={d.id} onSaved={() => void inv('devices', 'device', 'history')} />
       <Sheet open={sheet === 'loan'} onClose={() => setSheet(null)} title="stock.loanOut">
         <div className="flex flex-col gap-3">
           <span className="flex items-center gap-1"><BiLabel text="loan.toShop" size="md" tone="text-muted" /><Help term="loan.toShop" size="sm" /></span>

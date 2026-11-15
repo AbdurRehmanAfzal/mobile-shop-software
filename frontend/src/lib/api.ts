@@ -1,5 +1,6 @@
 /** Minimal typed API client: bearer token, X-Shop-Id, one automatic refresh on 401, bilingual errors. */
 
+import { deviceKey } from './deviceKey'
 import { useAuth } from './auth'
 import { useOffline } from './offline'
 
@@ -34,6 +35,7 @@ async function rawRequest<T>(method: Method, path: string, body?: unknown, auth 
   const shopId = opts.shopId ?? state.activeShopId
   if (auth && shopId) headers['X-Shop-Id'] = shopId
   if (opts.idempotencyKey) headers['Idempotency-Key'] = opts.idempotencyKey
+  headers['X-Device-Key'] = deviceKey() // login security (ADR-080)
 
   let res: Response
   try {

@@ -269,7 +269,8 @@
       "lock_checked": "Lock checked",
       "reclassified": "Type changed",
       "reserved": "Reserved",
-      "unreserved": "Reservation released"
+      "unreserved": "Reservation released",
+      "pta_checked": "PTA checked"
     },
     "acc": {
       "box": "Box",
@@ -7135,6 +7136,11 @@
           "title": "WhatsApp entries",
           "body": "Send sales, purchases, payments and len-den to the WhatsApp group in one standard message, and enter them in the software from the message.",
           "example": "Paste \"*SALE* … IMEI … Price …\" → the sale opens filled."
+        },
+        "security": {
+          "title": "Login security",
+          "body": "Staff log in only on phones you allow and only in shop hours; log everyone out at once.",
+          "example": "A new phone waits for your Allow."
         }
       },
       "pinPassword": {
@@ -8196,6 +8202,52 @@
         "title": "Enter from a message",
         "body": "Paste the group's message. The app reads it, finds the phone by its IMEI and the person by their number or name, and opens the sale or purchase form filled in (or the payment / len-den form). Check it and save as usual — nothing is saved before. IMEI from photo reads the barcode on a photo of the box or the IMEI screen.",
         "example": "Paste a purchase message → Open the purchase, filled → the phone sheet opens with the model, IMEI, condition and cost; add the seller's ID if needed and save."
+      }
+    },
+    "sec": {
+      "page": {
+        "title": "Login security",
+        "body": "So that a password alone is not enough. Only phones I allow: a staff member logs in only on a phone or computer you approved; a new one waits until you tap Allow (here or on the home screen) — even someone with the right password cannot get in. Staff login hours: staff log in only between the times you set. Take back logs a phone out at once; Log out all staff ends every staff login. Both are off until you switch them on, and they never apply to you.",
+        "example": "Ahmed's password leaks. Someone tries it on his own phone: it waits for you, you tap Say no, and he cannot log in."
+      },
+      "devices": {
+        "title": "Only phones I allow",
+        "body": "The app keeps its own secret key on each phone / browser. With this on, a staff login from a phone you have not allowed is held, and the phone appears under Waiting for you. Allow it once and that phone logs in normally from then on. Clearing the browser's data or reinstalling makes it a new phone again. Your own logins are never held.",
+        "example": "Bilal logs in on the counter phone: it waits; you tap Allow; from then on he logs in there normally."
+      },
+      "hours": {
+        "title": "Staff login hours",
+        "body": "Staff can log in only between From and To, by the shop's clock (it may run past midnight, like 10:00 to 02:00). A login already open stops at its next renewal, within 30 minutes after the time ends. You are never held.",
+        "example": "From 10:00 to 23:00: at 23:30 the salesman cannot log in from home."
+      },
+      "logoutAll": {
+        "title": "Log out all staff",
+        "body": "Ends every salesman's, manager's and technician's login on every phone and browser, at once. Use it when a password may have leaked, or after switching on Only phones I allow so that every phone must be allowed again.",
+        "example": "A salesman leaves: switch him off in Staff, then Log out all staff."
+      }
+    },
+    "pret": {
+      "owed": {
+        "title": "What you still owed",
+        "body": "The part of this purchase bill you had not paid yet. Returning the phone cancels it first; only what you had already paid comes back to you.",
+        "example": "Bill 50,000, paid 25,000: you still owed 25,000. Returned: the 25,000 is cancelled and the seller gives you 25,000 back."
+      },
+      "cut": {
+        "title": "Cut",
+        "body": "When the seller agrees to take the phone back only for less, write the difference here. It is the shop's loss and shows in the profit report.",
+        "example": "Bought for 50,000, the seller takes it back for 45,000: cut 5,000."
+      },
+      "gotNow": {
+        "title": "Received now",
+        "body": "What the seller hands back today (cash, or pick the bank). Anything less stays in his khata as money he owes you; take it later with Receive payment.",
+        "example": "He owes 25,000 back, gives 10,000 today: 15,000 stays in his khata."
+      }
+    },
+    "ptachk": {
+      "how": {
+        "title": "PTA check",
+        "body": "PTA's DIRBS website cannot open inside the app (PTA does not allow it, and its \"I'm not a robot\" works only on PTA's site). The app copies the IMEI and opens the PTA page: paste it, tick the box, tap CHECK. Or send the IMEI by SMS to 8484 (the usual SMS charge). Then tap what PTA said: on a phone in stock it is saved on its history and sets its PTA status (Blocked is recorded, nothing else changes); while buying it sets the PTA choice.",
+        "example": "PTA says \"Compliant\" → tap Approved. \"Non-compliant\" → Non-PTA."
       }
     }
   },
@@ -11012,5 +11064,75 @@
     "saleNeedsStock": "A sale needs a phone that is in stock.",
     "needPerson": "Pick who the phone was bought from.",
     "saved": "Saved. Paste the next message."
+  },
+  "sec": {
+    "title": "Login security",
+    "devices": "Only phones I allow",
+    "devicesHint": "Staff log in only on a phone or computer you allowed. A new one waits for you — even with the right password.",
+    "devicesOn": "On — a stolen password is not enough",
+    "hours": "Staff login hours",
+    "hoursHint": "Staff log in only between these times (shop time). You are never held.",
+    "from": "From",
+    "to": "To",
+    "saveHours": "Save the hours",
+    "saved": "Saved",
+    "waiting": "Waiting for you",
+    "noneWaiting": "No phone is waiting.",
+    "allowed": "Allowed phones",
+    "noneAllowed": "None yet. They appear here after you allow them.",
+    "refusedList": "Phones you said no to",
+    "asked": "Asked",
+    "lastUsed": "Last used",
+    "refused": "Said no",
+    "allow": "Allow",
+    "no": "Say no",
+    "takeBack": "Take back",
+    "forget": "Remove",
+    "logoutAll": "Log out all staff",
+    "logoutAllHint": "Every staff login on every phone ends now; they log in again (and wait for approval if it is on). You stay logged in.",
+    "logoutAllBtn": "Log out all staff now",
+    "logoutConfirm": "Log out every salesman, manager and technician on every phone now?",
+    "ended": "{{n}} logins ended.",
+    "homeAsks": "{{n}} new phone(s) waiting for your approval"
+  },
+  "pret": {
+    "button": "Return to the seller",
+    "title": "Return to the seller",
+    "hint": "The phone goes back to the person you bought it from. The purchase stays in the record; the money is worked out below.",
+    "why": {
+      "title": "Why",
+      "faulty": "Faulty",
+      "notWanted": "Don't want to keep it",
+      "other": "Other"
+    },
+    "note": "Note (optional)",
+    "cut": "Cut — the seller takes it back for less (optional)",
+    "value": "Price of what goes back",
+    "cutLine": "Cut (your loss)",
+    "owedBefore": "You still owed on this bill",
+    "cancelled": "Of that, cancelled",
+    "stillOwed": "You still owe the seller",
+    "back": "The seller gives you back",
+    "gotNow": "Received now",
+    "later": "The other {{n}} stays in the seller's khata — he owes you.",
+    "zero": "Balance with the seller for this bill: zero.",
+    "confirm": "Return it"
+  },
+  "ptachk": {
+    "button": "PTA check",
+    "title": "Check on PTA (DIRBS)",
+    "copy": "Copy",
+    "copied": "Copied",
+    "step1": "1. Check it",
+    "website": "PTA website (IMEI copied)",
+    "sms": "SMS to 8484",
+    "websiteHint": "On the PTA page: long-press the box → Paste, tick \"I'm not a robot\", tap CHECK. Then come back here.",
+    "step2": "2. What did PTA say?",
+    "r": {
+      "pta_approved": "Approved",
+      "non_pta": "Non-PTA",
+      "blocked": "Blocked"
+    },
+    "blockedWarn": "PTA says this IMEI is blocked. Do not buy it unless you are sure why."
   }
 }

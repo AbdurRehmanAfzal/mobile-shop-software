@@ -102,6 +102,7 @@ const GROUPS: Group[] = [
       { key: 'more.settings', Icon: Settings, to: '/more/settings', roles: ['owner'], tone: T.plain, help: 'more.tile.settings' },
       { key: 'more.staff', Icon: Users, to: '/more/staff', roles: ['owner'], tone: T.plain, help: 'more.tile.staff' },
       // owner 2026-11-14 (ADR-074): only when the super admin has switched on Login activity
+      { key: 'sec.title', Icon: KeyRound, to: '/more/security', roles: ['owner'], tone: T.plain, help: 'more.tile.security' },
       { key: 'logins.title', Icon: ShieldCheck, to: '/more/logins', roles: ['owner'], tone: T.plain, help: 'logins.page' },
       { key: 'more.notifications', Icon: Bell, to: '/more/notifications?tab=settings', roles: ['owner'], tone: T.plain, help: 'more.tile.notifications' },
       { key: 'fees.title', Icon: CreditCard, to: '/more/fees', roles: ['owner'], tone: T.plain, help: 'more.tile.fees' },

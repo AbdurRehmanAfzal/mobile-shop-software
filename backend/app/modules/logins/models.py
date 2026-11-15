@@ -32,3 +32,5 @@ class LoginSession(UUIDPk, Base):
     ended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     ended_by: Mapped[uuid.UUID | None] = mapped_column(Uuid)
     end_reason: Mapped[str | None] = mapped_column(String(20))  # logout | owner
+    # the approved device it was made on (ADR-080); taking the device back ends it
+    device_id: Mapped[uuid.UUID | None] = mapped_column(Uuid)

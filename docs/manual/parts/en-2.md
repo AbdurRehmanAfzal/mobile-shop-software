@@ -251,6 +251,32 @@ History lines can never be edited or deleted. A mistake is corrected by a new li
 
 ![A phone's history: sold, verified, sale returned, each with date, person and amount](shot:device-history)
 
+### PTA check (DIRBS)
+
+On a phone's page, or while adding a phone (next to **PTA status**), tap **PTA check**:
+
+1. **PTA website (IMEI copied)** opens PTA's DIRBS page. Long-press the box → Paste, tick "I'm not a robot", tap CHECK. Or **SMS to 8484**: the SMS app opens with the IMEI written in; the usual SMS charge applies.
+2. Come back and tap what PTA said: **Approved**, **Non-PTA** or **Blocked**.
+   - On a phone in stock, the answer is saved on its history (who, when, website or SMS). Approved / Non-PTA also set its PTA status.
+   - While buying, it sets the PTA choice. **Blocked** shows a warning: do not buy unless you are sure why.
+
+The PTA page cannot open inside the app: PTA does not allow it, and its "I'm not a robot" works only on PTA's own site.
+
+### Return a bought phone to the seller (faulty / not wanted)
+
+Use this when you bought a phone, then found it faulty or decided not to keep it, and give it back to the person you bought it from. Open the phone's page → **Return to the seller**, or the purchase bill → **Return to the seller**.
+
+Do not use **Cancel this bill** for this. Cancel is for a bill entered by mistake, a deal that never happened. A return keeps the record: the purchase stays, and the phone's history shows "returned to the seller".
+
+- Choose **Why**: Faulty, Don't want to keep it, or Other, and add a note if you like.
+- The money is worked out for you:
+  - **You still owed on this bill**: the unpaid part. It is cancelled first.
+  - **The seller gives you back**: what you had already paid.
+  - **Received now**: what he hands back today, cash or bank. Anything less stays in his khata as money he owes you.
+- **Cut**: if the seller takes it back only for less, write the difference. It is your loss and shows in the profit report.
+
+Example: a 50,000 phone, 25,000 paid, 25,000 still to give. Return it: the 25,000 you owed is gone, the seller gives you 25,000 back, and the balance is zero. With a 5,000 cut he gives back 20,000.
+
 ### Stock tally sheet (count on paper)
 
 On **Stock → What is my stock worth?** (and on **Stock count**) the **Stock tally sheet** card prints every phone on hand to count by hand.

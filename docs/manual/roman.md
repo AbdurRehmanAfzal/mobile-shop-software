@@ -985,6 +985,32 @@ History ki lines kabhi edit ya delete nahi ho saktin. Ghalti nayi line se theek 
 
 ![Phone ki history: bika, check hua, bikri wapas, har ek tareekh, bande aur raqam ke saath](shot:device-history)
 
+### PTA check (DIRBS)
+
+Mobile ke page par, ya mobile add karte waqt (**PTA haalat** ke saath), **PTA check** dabayein:
+
+1. **PTA website (IMEI copy)** PTA ka DIRBS page kholta hai. Khane ko daba kar rakhein → Paste, "I'm not a robot" par tick karein, CHECK dabayein. Ya **8484 par SMS**: SMS app IMEI likhi hui khulti hai; aam SMS ka kharcha lagta hai.
+2. Wapas aa kar PTA ka jawab dabayein: **Approved**, **Non-PTA** ya **Blocked**.
+   - Stock wale mobile par jawab us ki history mein save hota hai (kis ne, kab, website ya SMS). Approved / Non-PTA us ki PTA haalat bhi laga dete hain.
+   - Khareedte waqt yeh form mein PTA chun deta hai. **Blocked** par khabardar kiya jata hai: wajah pakki maloom na ho to mat khareedein.
+
+PTA ka page app ke andar nahi khul sakta: PTA is ki ijazat nahi deta, aur is ka "I'm not a robot" sirf PTA ki apni site par chalta hai.
+
+### Khareeda hua mobile bechne wale ko wapas (kharab / rakhna nahi)
+
+Yeh tab istemal karein jab aap ne mobile khareeda, phir pata chala ke kharab hai ya rakhna nahi, aur usi ko wapas de diya jis se khareeda tha. Mobile ka page kholein → **Bechne wale ko wapas**, ya purchase ka bill → **Bechne wale ko wapas**.
+
+Is ke liye **Cancel this bill** istemal na karein. Cancel ghalti se bane bill ke liye hai, yaani aisa sauda jo hua hi nahi. Wapsi mein record rehta hai: purchase bhi rehti hai, aur mobile ki history mein "bechne wale ko wapas" bhi aata hai.
+
+- **Kyun** chunein: Kharab nikla, Rakhna nahi, ya Koi aur wajah; chahein to note likhein.
+- Raqam ka hisaab khud hota hai:
+  - **Is bill par aap ne abhi dena tha**: jo ada nahi hua tha. Yeh pehle khatam hota hai.
+  - **Bechne wala aap ko wapas dega**: jo aap de chuke the.
+  - **Abhi mile**: jo woh aaj wapas de, cash ya bank. Kam mile to baqi us ke khate mein aap ka lena rehta hai.
+- **Katauti**: agar bechne wala kam mein wapas le to farq likhein. Yeh aap ka nuqsan hai aur munafe ki report mein aata hai.
+
+Misaal: 50,000 ka mobile, 25,000 diye, 25,000 dene the. Wapas karein: aap ke 25,000 khatam, bechne wala 25,000 wapas dega, aur hisaab zero. 5,000 katauti ho to woh 20,000 wapas dega.
+
 ### Stock ginti sheet (kaghaz par ginti)
 
 **Stock → Mera stock kitne ka hai?** (aur **Stock ginti**) par **Stock ginti sheet** ka card har maujood mobile haath se ginne ke liye chhaapta hai.
@@ -2240,6 +2266,22 @@ Din mein ek hazri. Owner Staff → **Hazri** kholta hai, muddat chunta hai, aur 
 ### Activity: har bande ne kya kiya
 
 Staff → **Activity** chuni hui muddat ke liye har bande ki **Bikri (tadaad · Rs)**, **Wasooli (Rs)**, **Khareed (tadaad · Rs)**, **Kharche (Rs)**, **Marammat** aur **Kaam** ki tadaad dikhata hai, un ke **Aakhri login** ke saath. Kisi bande par dabayein to poora log dikhta hai: har bill, payment, khareed, kharcha, repair, cancel aur settings ki tabdeeli, waqt, number aur raqam ke saath. Yeh us record se aata hai jo app har tabdeeli ka rakhti hai, is liye kuch bhi chhoot nahi sakta.
+
+### Login security: sirf password kafi nahi
+
+Sirf owner ke liye: More → **Login security**. Dono usool aap ke on karne tak band hain, aur aap (owner) par kabhi lagu nahi hote.
+
+- **Sirf meri ijazat wale phone**: salesman, manager ya technician sirf usi phone ya computer par login kar sakta hai jis ki aap ne ijazat di.
+  - Naye phone par likha aata hai "Yeh phone naya hai. Pehle owner ijazat de", chahe password sahi ho.
+  - Aap ko home screen par "**1 naya phone aap ki ijazat ka muntazir**" nazar aata hai. Use dabayein, phir **Ijazat dein** ya **Mana karein** dabayein. Is ke baad staff dobara Login dabaye.
+  - Ijazat wala phone aage se aam tarah login karta hai.
+  - **Ijazat wapas lein** us phone ko foran logout karta hai.
+  - Browser ka data saaf karne ya app dobara install karne se phone phir naya ban jata hai.
+- **Staff login ke auqaat**: dukaan ke waqt ke mutabiq **Se** aur **Tak** likhein; waqt aadhi raat ke baad tak bhi ho sakta hai, jaise 10:00 se 02:00. In auqaat ke bahar staff login nahi kar sakta. Pehle se khula login waqt khatam hone ke 30 minute ke andar ruk jata hai.
+- **Abhi saara staff logout karein** har phone par staff ka har login khatam kar deta hai; aap login rehte hain. Yeh tab istemal karein jab password leak hone ka shak ho, ya "Sirf meri ijazat wale phone" on karne ke foran baad.
+- **Staff** mein kisi ko band karein to us ke saare login foran khatam ho jate hain.
+
+> **Mashwara:** "Sirf meri ijazat wale phone" on karein, "Abhi saara staff logout karein" dabayein, phir jab staff dobara login kare to counter ke phones ko ijazat dein. Ab salesman ghar se apne phone par login nahi kar sakega.
 
 ### Login ki sargarmi: app kahan kahan login hai
 

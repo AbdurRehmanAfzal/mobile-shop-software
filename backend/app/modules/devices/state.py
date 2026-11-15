@@ -72,6 +72,8 @@ class EventType(StrEnum):
     # ADR-060: held for one customer / the hold ended
     RESERVED = "reserved"
     UNRESERVED = "unreserved"
+    # owner 2026-11-15 (ADR-082): what PTA's DIRBS (website or SMS 8484) said about the IMEI
+    PTA_CHECKED = "pta_checked"
 
 
 # Events that move money and therefore may only be raised by document modules (purchase, sale,
@@ -100,6 +102,7 @@ NEUTRAL_EVENTS = frozenset(
         EventType.CORRECTED,
         EventType.RESERVED,
         EventType.UNRESERVED,
+        EventType.PTA_CHECKED,
     }
 )
 

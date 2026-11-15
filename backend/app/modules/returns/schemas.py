@@ -36,6 +36,10 @@ class PurchaseReturnIn(BaseModel):
     refund_amount: Decimal = Field(
         default=Decimal(0), ge=0, description="cash the supplier hands back now"
     )
+    # owner 2026-11-15 (ADR-081): the seller takes it back for less (a cut) — the shop's loss
+    cut_amount: Decimal = Field(
+        default=Decimal(0), ge=0, description="the seller takes the phone back for this much less"
+    )
     cash_account_id: uuid.UUID | None = None
     reason: str | None = Field(default=None, max_length=300)
     date: dt.date | None = None

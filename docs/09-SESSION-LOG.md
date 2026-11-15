@@ -1654,3 +1654,48 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - I looked at the screenshots.
 - On the way: React may run the useDraft initializer twice, so the seed is now forgotten in the effect, not in the initializer.
 **Next**: the owner's earlier list — login security (device approval, staff hours, Authenticator for the owner), once the owner picks the points.
+
+### Same day — login security: approved devices and staff login hours (ADR-080)
+**Owner**: "login secure nahi lgta … password kis ko pta be chl jaye wo login na kr sakay … salesman be password chora sktay hn … free". I proposed device approval, staff hours, small extras, and Authenticator later; owner: "ok implement".
+**Done**:
+- `modules/security`, with the `trusted_devices` table and `organisations.login_rules` (migration d4f6a8c0e2b5, additive):
+  - `guard_login` in `auth._tokens` for every new sign-in;
+  - `guard_refresh` for the hours;
+  - approve / reject / revoke, which ends the device's logins; logout-staff;
+  - a staff member switched off is logged out.
+- `X-Device-Key` header from `lib/deviceKey.ts` on every request.
+- `LoginSecurityPage` (More → Login security) and the owner's home banner.
+- en / ur / roman strings + help, manual ch. 3, ADR-080, docs/29.
+- Both rules are off by default and never apply to the owner, so live shops are unchanged until the owner switches them on.
+**Verified**:
+- pytest `test_login_security` (5, new: off by default, device approval end-to-end, hours incl. past midnight and refresh, bad rules / manager refused, log out staff / switched-off staff), plus `test_auth`, `test_login_activity`, `test_pin_login`, `test_fingerprint*`, `test_staff*`, migrations; full suite.
+- tsc and vitest.
+- Playwright `login-security` (new: owner switches on; salesman waits; owner Allows from the home banner; the salesman gets in; another browser still waits; Log out all staff ends the salesman's login). I looked at the screenshots.
+**Next / open**: owner 2-step (Authenticator) when wanted.
+
+### Same day — "Cancel this bill" explained; returning a bought phone to the seller (ADR-081)
+**Owner**:
+- "cancel this bill ka kia matlab hai": answered. It is a void of a bill entered by mistake: a reversing entry, the phone back to stock (sale) or out of stock (purchase), a reason, owner / manager only.
+- Then: "purchase kiya, pta chla faulty … wapis kr dytay hn … record may pta ho k liye tha but wapis kr diye … cututi ho skti hai … 50000, 25000 diye, 25000 dena … balance zero".
+**Found**: the purchase return already existed (`/returns/purchase`, Return on the bill), but it had no cut, did not explain the money, and could not be reached from the phone's page.
+**Done**:
+- `cut_amount` on the purchase return: the party is debited with value − cut, and the cut goes to COGS.
+- `PurchaseReturnSheet`: reason chips, cut, the worked statement, received now with cash / bank, the rest in the khata, balance zero.
+- **Return to the seller** on the phone's page.
+- en / ur / roman strings + help, manual ch. 2, ADR-081, docs/29.
+**Verified**:
+- pytest `test_purchase_return_cut` (4, new: the owner's 50k / 25k example ends at zero with cash +25,000; a cut of 5,000 reaches the profit report; nothing received → the seller owes 25,000; the cut cannot exceed the value) and `test_returns`; full suite.
+- tsc and Help.test.
+- Playwright `purchase-return` (new: from the phone's page the sheet shows 25,000 cancelled / 25,000 back / zero → balance 0.00 and the phone returned; then a 40,000 bill with a 5,000 cut and 20,000 received → the seller owes 15,000). I looked at the screenshot.
+
+### Same day — PR #64; PTA check (ADR-082)
+**Owner**: "push" → pushed, PR #64 (login security + return to seller). Then the DIRBS screenshot: "ye part hamaray software may open ho jaye … kia ye possible hai" → "ok".
+**Found**: DIRBS sends `X-Frame-Options: SAMEORIGIN`, and its reCAPTCHA works only on PTA's own domain, so it cannot be embedded. SMS 8484 was already a link on the verify page.
+**Done**:
+- `PtaCheck.tsx`: copy the IMEI and open DIRBS, or SMS 8484; then Approved / Non-PTA / Blocked.
+- `POST /devices/{id}/pta-check` with a `pta_checked` event; on the phone's page and in the add-phone sheet (Blocked warns).
+- en / ur / roman strings + help, manual ch. 2, ADR-082, docs/29.
+**Verified**:
+- pytest `test_pta_check` (new) and `test_devices`; full suite.
+- tsc and Help.test.
+- Playwright `pta-check` (new, DIRBS stubbed): the popup opens on DIRBS with the IMEI in the clipboard and the SMS link carrying the IMEI; Non-PTA is saved with its event; in the add sheet Blocked warns and Approved clears it. I looked at the screenshot.
