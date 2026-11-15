@@ -57,13 +57,22 @@ from app.modules.verification.router import router as verification_router
 async def lifespan(_: FastAPI):
     # Seed the shared catalogue on first run (idempotent). Tests override get_db and skip this.
     if settings.app_env != "test":
+        from sqlalchemy.exc import IntegrityError
+
         from app.db.session import SessionLocal
         from app.modules.expenses.service import seed_categories
         from app.seeds.catalogue import seed_catalogue
 
         with SessionLocal() as db:
-            added = seed_catalogue(db)
-            added["expense_categories"] = seed_categories(db)
+            try:
+                added = seed_catalogue(db)
+            except IntegrityError:  # another worker seeded the same rows first (ADR-089)
+                db.rollback()
+                added = {}
+            try:
+                added["expense_categories"] = seed_categories(db)
+            except IntegrityError:
+                db.rollback()
             if any(added.values()):
                 print(f"Catalogue seeded: {added}")
     from app.modules.notifications import scheduler

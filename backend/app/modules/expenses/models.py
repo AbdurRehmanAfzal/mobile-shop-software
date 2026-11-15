@@ -14,6 +14,7 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
     Uuid,
+    text,
 )
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -22,6 +23,16 @@ from app.db.base import ZERO, Base, ShopScoped, Timestamped, UUIDPk
 
 class ExpenseCategory(UUIDPk, Base):
     __tablename__ = "expense_categories"
+    # ADR-089: one global category per key (two workers once seeded the list twice)
+    __table_args__ = (
+        Index(
+            "uq_expense_categories_global_key",
+            "key",
+            unique=True,
+            sqlite_where=text("shop_id IS NULL"),
+            postgresql_where=text("shop_id IS NULL"),
+        ),
+    )
 
     shop_id: Mapped[uuid.UUID | None] = mapped_column(
         Uuid, ForeignKey("shops.id", ondelete="CASCADE"), index=True

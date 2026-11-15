@@ -362,6 +362,19 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-089 · 2026-11-15 · Accepted · One global row per brand / model / storage / colour / expense category
+**Context**: a live shop saw every brand twice in the purchase form ("Apple, Apple") and the stock summary split the same brand (Apple 98 phones + Apple 15). The cause: production runs `uvicorn --workers 2`, and the startup seed (`seed_catalogue`, `seed_categories`) has no lock and the tables had no unique rule. On the first start both workers saw an empty list and each inserted the whole global catalogue. Phones were then bought against whichever copy the shopkeeper tapped. Expense categories were seeded the same way.
+**Decision**:
+- **Merge, additive migration `c1e3a5b7d9f2`**: for each set of global rows with the same name (brands, storages, colours; models by brand and name; expense categories by key), keep the row with the most phones (or expenses), then a stable order.
+  - Phones, models, a shop's spec sheets (merged if both had one) and accessories' "fits" lists, plus expenses, are moved onto the keeper.
+  - Only then is the empty duplicate removed. FKs are RESTRICT, so a missed reference fails the migration instead of losing data.
+  - No bill, payment, ledger row or device event changes: expense ledger accounts are named by the category key, not its row.
+- **Never again**:
+  - partial unique indexes on `lower(name)` (models: `brand_id, lower(name)`; expense categories: `key`) for global rows only — a shop's own rows are unaffected;
+  - the seed takes a Postgres transaction lock (`pg_advisory_xact_lock`), so workers seed one after another;
+  - startup treats a unique-index clash in the seed as "another worker already did it" instead of crashing.
+**Consequences**: on deploy the migration folds the duplicates. The shop sees one Apple with all its phones (98 + 15 = 113) and its stock value unchanged. Nothing to do in the app.
+
 ## ADR-088 · 2026-11-15 · Accepted · Change own password, password / PIN history, super admin PIN reset, both login ways
 **Context**: the owner asked for the super admin to be able to see shop passwords and PINs, for the owner and staff to change their own password and PIN, a history of "which password / PIN was used", and both Password and PIN on the login screen.
 **Decision**:

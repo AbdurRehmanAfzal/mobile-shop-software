@@ -1803,3 +1803,16 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - tsc and Help.test.
 - Playwright `credentials` (new: change password with a mismatch first; the history without the values; PIN tab on a fresh browser; old password refused, new one works), plus `login-security` and `fingerprint`. I looked at the screenshots.
 **Next**: the owner's manual tests in docs/29.
+
+### Same day — duplicate brands on a live shop (ADR-089)
+**Owner** (shopkeeper's screenshots): every brand twice in the purchase form (Apple, Apple, Samsung, Samsung …); stock summary Apple 98 phones and Apple 15 phones. "fix karo r oun k data lost na ho".
+**Cause**: the Docker image starts `uvicorn --workers 2`; both workers ran the unlocked startup seed at once on the first start, and nothing in the database forbade a second global "Apple". The same applied to expense categories. Local dev never showed it (one worker).
+**Done**:
+- Migration `c1e3a5b7d9f2`: merge global duplicates onto the row with the most phones / expenses. It moves devices (brand / model / storage / colour), models, model spec sheets (merged when both exist), accessory compatible-model lists and expenses, then removes the empty copy. Partial unique indexes follow.
+- Models declare the same indexes. `seed_catalogue` takes a Postgres advisory lock. Startup survives a unique clash in either seed.
+- ADR-089, progress row, docs/29.
+**Verified**:
+- pytest `test_catalogue_duplicates` (3, new): the race re-created (a second Nokia / 105 / storage / colour, one phone on the original and two on the copy, a spec sheet and an accessory on the copy, the stock summary split 1 + 2). After the merge: one row each, all three phones on it, the summary 3, the spec sheet and the accessory moved, a second global copy refused. The same for a doubled "rent" expense category with the ledger unchanged. Seeding twice adds nothing.
+- `test_migrations`, `test_expenses`; full suite. Dev DB (2,717 phones, no duplicates): the migration ran and changed nothing.
+- Not run on Postgres locally (none installed). The SQL is plain, and psycopg 3 binds the UUIDs.
+**Next**: deploy; the owner checks the shop's brand list and stock summary (docs/29).
