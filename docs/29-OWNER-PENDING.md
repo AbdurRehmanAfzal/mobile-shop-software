@@ -193,6 +193,10 @@ Close the app fully and open it again first (or install the newest APK from the 
 4. **Staff login hours** 10:00–22:00: a salesman cannot log in after 22:00. The owner always can.
 5. If a salesman's phone is lost: **Take back** that phone.
 
+**Return to the seller (2026-11-15, ADR-081)**:
+1. Buy a test phone for 50,000 and pay 25,000. Open the phone → **Return to the seller**: it shows 25,000 cancelled and 25,000 to get back → Return it. The seller's khata reads zero; the phone shows "returned to the seller".
+2. Try it with a cut of 5,000 and receive less than shown: the rest stays in the seller's khata.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

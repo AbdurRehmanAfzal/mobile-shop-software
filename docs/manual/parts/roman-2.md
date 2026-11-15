@@ -251,6 +251,21 @@ History ki lines kabhi edit ya delete nahi ho saktin. Ghalti nayi line se theek 
 
 ![Phone ki history: bika, check hua, bikri wapas, har ek tareekh, bande aur raqam ke saath](shot:device-history)
 
+### Khareeda hua mobile bechne wale ko wapas (kharab / rakhna nahi)
+
+Yeh tab istemal karein jab aap ne mobile khareeda, phir pata chala ke kharab hai ya rakhna nahi, aur usi ko wapas de diya jis se khareeda tha. Mobile ka page kholein → **Bechne wale ko wapas**, ya purchase ka bill → **Bechne wale ko wapas**.
+
+Is ke liye **Cancel this bill** istemal na karein. Cancel ghalti se bane bill ke liye hai, yaani aisa sauda jo hua hi nahi. Wapsi mein record rehta hai: purchase bhi rehti hai, aur mobile ki history mein "bechne wale ko wapas" bhi aata hai.
+
+- **Kyun** chunein: Kharab nikla, Rakhna nahi, ya Koi aur wajah; chahein to note likhein.
+- Raqam ka hisaab khud hota hai:
+  - **Is bill par aap ne abhi dena tha**: jo ada nahi hua tha. Yeh pehle khatam hota hai.
+  - **Bechne wala aap ko wapas dega**: jo aap de chuke the.
+  - **Abhi mile**: jo woh aaj wapas de, cash ya bank. Kam mile to baqi us ke khate mein aap ka lena rehta hai.
+- **Katauti**: agar bechne wala kam mein wapas le to farq likhein. Yeh aap ka nuqsan hai aur munafe ki report mein aata hai.
+
+Misaal: 50,000 ka mobile, 25,000 diye, 25,000 dene the. Wapas karein: aap ke 25,000 khatam, bechne wala 25,000 wapas dega, aur hisaab zero. 5,000 katauti ho to woh 20,000 wapas dega.
+
 ### Stock ginti sheet (kaghaz par ginti)
 
 **Stock → Mera stock kitne ka hai?** (aur **Stock ginti**) par **Stock ginti sheet** ka card har maujood mobile haath se ginne ke liye chhaapta hai.

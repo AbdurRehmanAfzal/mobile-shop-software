@@ -135,6 +135,7 @@ export default function DeviceDetailPage() {
     { key: 'edit', label: 'crud.editDetails', run: () => setSheet('edit') },
     canSeeCost && boughtOn ? { key: 'changeSeller', label: 'purchase.fix.partyButton', run: () => nav(`/purchases/${boughtOn}?change=1`) } : null,
     canSeeCost && boughtOn ? { key: 'changePaid', label: 'purchase.paidFix.button', run: () => nav(`/purchases/${boughtOn}?paid=1`) } : null,
+    canSeeCost && boughtOn && (inStock || d.status === 'faulty') ? { key: 'returnSeller', label: 'pret.button', run: () => nav(`/purchases/${boughtOn}?return=${d.id}`) } : null,
     canCost ? { key: 'fixCost', label: 'purchase.costFix.button', run: openCost } : null,
     canSeeCost && soldOn && d.status === 'sold' ? { key: 'changeBuyer', label: 'sale.fix.button', run: () => nav(`/sales/${soldOn}?change=1`) } : null,
     canSeeCost ? { key: 'balances', label: 'bal.short', run: () => nav(`/balances?q=${encodeURIComponent(d.imei1)}`) } : null,
@@ -224,6 +225,7 @@ export default function DeviceDetailPage() {
           <BiButton text="crud.editDetails" variant="secondary" size="md" onClick={() => setSheet('edit')} />
           {canSeeCost && boughtOn ? <BiButton text="purchase.fix.partyButton" variant="secondary" size="md" onClick={() => nav(`/purchases/${boughtOn}?change=1`)} data-testid="device-change-seller" /> : null}
           {canSeeCost && boughtOn ? <BiButton text="purchase.paidFix.button" variant="secondary" size="md" onClick={() => nav(`/purchases/${boughtOn}?paid=1`)} data-testid="device-change-paid" /> : null}
+          {canSeeCost && boughtOn && (inStock || d.status === 'faulty') ? <BiButton text="pret.button" variant="secondary" size="md" onClick={() => nav(`/purchases/${boughtOn}?return=${d.id}`)} data-testid="device-return-seller" /> : null}
           {canCost ? <BiButton text="purchase.costFix.button" variant="secondary" size="md" onClick={openCost} data-testid="fix-cost" /> : null}
           {canSeeCost && soldOn && d.status === 'sold' ? <BiButton text="sale.fix.button" variant="secondary" size="md" onClick={() => nav(`/sales/${soldOn}?change=1`)} data-testid="device-change-buyer" /> : null}
           {canSeeCost ? <BiButton text="bal.short" variant="secondary" size="md" onClick={() => nav(`/balances?q=${encodeURIComponent(d.imei1)}`)} data-testid="device-balances" /> : null}

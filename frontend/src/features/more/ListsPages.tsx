@@ -1,3 +1,4 @@
+import PurchaseReturnSheet from './PurchaseReturnSheet'
 import DownloadButton from '@/components/DownloadButton'
 import Help from '@/components/Help'
 import { useState } from 'react'
@@ -6,7 +7,7 @@ import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import { Chip, Empty, ErrorText, KV, List, Loading, MoneyText, PageHeader, Row, Sheet, fmtDate, fmtDateTime } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { useDocMutation, usePayments, usePurchase, usePurchases, useReturns } from '@/lib/queries'
-import type { Party, Purchase, ReturnDoc } from '@/lib/types'
+import type { Party, Purchase } from '@/lib/types'
 import PartyPicker from '@/components/PartyPicker'
 import PaidFixSheet from '@/features/purchase/PaidFix'
 
@@ -32,12 +33,11 @@ export function PurchaseDetailPage() {
   const nav = useNavigate()
   const role = useAuth((s) => s.me?.user.role)
   const { data: p, isLoading } = usePurchase(id)
-  const [returning, setReturning] = useState(false)
+  // owner 2026-11-15 (ADR-081): opened from a phone's page with ?return=<device id>
+  const returnFor = new URLSearchParams(window.location.search).get('return')
+  const [returning, setReturning] = useState(() => !!returnFor)
   const [voiding, setVoiding] = useState(false)
-  const [selected, setSelected] = useState<string[]>([])
-  const [refund, setRefund] = useState('')
   const [reason, setReason] = useState('')
-  const ret = useDocMutation<Record<string, unknown>, ReturnDoc>('POST', () => '/api/v1/returns/purchase')
   const voidM = useDocMutation<{ reason: string }, Purchase>('POST', () => `/api/v1/purchases/${id}/void`)
   // owner 2026-11-09 (ADR-056): the wrong dealer / customer was picked
   // opened from a phone's page with ?change=1: the change sheet opens by itself
@@ -72,7 +72,7 @@ export function PurchaseDetailPage() {
       </div>
       {p.status === 'posted' ? (
         <div className="grid grid-cols-2 gap-2">
-          <BiButton text="sale.return" size="md" variant="secondary" onClick={() => { setSelected(p.lines.filter((l) => !l.returned_at).map((l) => l.id)); setReturning(true) }} />
+          <BiButton text="pret.button" size="md" variant="secondary" onClick={() => setReturning(true)} data-testid="purchase-return" />
           {canManage ? <BiButton text="common.void" size="md" variant="danger" onClick={() => setVoiding(true)} /> : null}
           {canManage ? <div className="col-span-2 flex items-center gap-1"><div className="flex-1"><BiButton text="purchase.paidFix.button" size="md" variant="secondary" full onClick={() => setPaidFix(true)} data-testid="purchase-paid-change" /></div><Help term="purchase.paidFix" size="sm" /></div> : null}
           {canManage ? <div className="col-span-2 flex items-center gap-1"><div className="flex-1"><BiButton text="purchase.fix.partyButton" size="md" variant="secondary" full onClick={() => { setTo(null); setReason(''); move.reset(); setMoving(true) }} data-testid="purchase-party-change" /></div><Help term="purchase.fixParty" size="sm" /></div> : null}
@@ -89,21 +89,7 @@ export function PurchaseDetailPage() {
           <BiButton text="common.save" full loading={move.isPending} disabled={!to || to.id === p.party_id || reason.trim().length < 2} onClick={async () => { await move.mutateAsync({ party_id: to!.id, reason: reason.trim() }); setMoving(false) }} data-testid="purchase-party-save" />
         </div>
       </Sheet>
-      <Sheet open={returning} onClose={() => setReturning(false)} title="sale.return">
-        <div className="flex flex-col gap-3">
-          {p.lines.filter((l) => !l.returned_at).map((l) => (
-            <label key={l.id} className="card flex items-center gap-3">
-              <input type="checkbox" checked={selected.includes(l.id)} onChange={(e) => setSelected(e.target.checked ? [...selected, l.id] : selected.filter((x) => x !== l.id))} className="h-6 w-6 accent-[#136F56]" />
-              <span className="flex-1 text-sm font-semibold">{l.device_label ?? l.description}</span>
-              <MoneyText value={l.net_cost} tone="ink" size="sm" />
-            </label>
-          ))}
-          <BiInput label="sale.refundAmount" type="number" inputMode="decimal" min={0} value={refund} onChange={(e) => setRefund(e.target.value)} help={<Help term="more.purchaseRefund" size="sm" />} />
-          <BiInput label="common.reason" value={reason} onChange={(e) => setReason(e.target.value)} help={<Help term="more.returnReason" size="sm" />} />
-          <ErrorText error={ret.error} />
-          <BiButton text="common.confirm" full loading={ret.isPending} disabled={!selected.length} onClick={async () => { await ret.mutateAsync({ purchase_id: p.id, line_ids: selected, refund_amount: Number(refund || 0), reason: reason || undefined }); setReturning(false) }} />
-        </div>
-      </Sheet>
+      {p.status === 'posted' ? <PurchaseReturnSheet p={p} open={returning} onClose={() => setReturning(false)} preselect={returnFor ? p.lines.filter((l) => l.device_id === returnFor && !l.returned_at).map((l) => l.id) : undefined} /> : null}
       <Sheet open={voiding} onClose={() => setVoiding(false)} title="common.void">
         <div className="flex flex-col gap-3">
           <BiInput label="common.reason" value={reason} onChange={(e) => setReason(e.target.value)} minLength={3} autoFocus help={<Help term="void" size="sm" />} />

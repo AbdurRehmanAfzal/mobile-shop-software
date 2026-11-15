@@ -362,6 +362,23 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-081 · 2026-11-15 · Accepted · Returning a bought phone to its seller, with the money worked out
+**Context**: a phone bought from someone may turn out faulty, or the shop may not want to keep it, and it goes back. The owner asked:
+- should the bill be cancelled? (No: cancel means the deal never happened.)
+- the record must show it was bought, then returned;
+- the money must settle, sometimes with a cut. Example: a 50,000 phone with 25,000 paid. On return, the 25,000 paid comes back and the 25,000 owed disappears, so the balance is zero.
+`POST /returns/purchase` already returned lines (inventory out, `returned_to_supplier` event, party debited at value, an optional refund). The UI only asked for a refund amount, with no explanation and no cut.
+**Decision**:
+- **Cut**: `PurchaseReturnIn.cut_amount`, saved as `kept_amount`. The seller takes the goods back for less. The party is debited with value − cut; the cut is debited to COGS ("Cut on return"), so it reaches the profit report. The cut cannot exceed the value, and the refund cannot exceed value − cut.
+- **UI**: `PurchaseReturnSheet`, opened from the purchase bill, or from the phone's page as **Return to the seller** (`?return=<device id>` preselects that phone). It has:
+  - the reason as Faulty / Don't want / Other, plus a note;
+  - the cut;
+  - a worked statement: value; still owed on this bill (cancelled first); still owed after; the seller gives back;
+  - **Received now** (cash or bank), with the rest shown as staying in the seller's khata;
+  - "balance zero" when it is all settled.
+- No migration and no change to an existing return; a cut of 0 behaves exactly as before.
+**Consequences**: Cancel this bill stays for bills entered by mistake. Returns keep the purchase and the phone's history.
+
 ## ADR-080 · 2026-11-15 · Accepted · Login security: approved devices and staff login hours
 **Context**: shopkeepers worry that anyone who learns a password, including a salesman, can log in from anywhere and see sensitive data. They want something free (no SMS). The options considered:
 - device approval;

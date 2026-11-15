@@ -1672,3 +1672,18 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - tsc and vitest.
 - Playwright `login-security` (new: owner switches on; salesman waits; owner Allows from the home banner; the salesman gets in; another browser still waits; Log out all staff ends the salesman's login). I looked at the screenshots.
 **Next / open**: owner 2-step (Authenticator) when wanted.
+
+### Same day — "Cancel this bill" explained; returning a bought phone to the seller (ADR-081)
+**Owner**:
+- "cancel this bill ka kia matlab hai": answered. It is a void of a bill entered by mistake: a reversing entry, the phone back to stock (sale) or out of stock (purchase), a reason, owner / manager only.
+- Then: "purchase kiya, pta chla faulty … wapis kr dytay hn … record may pta ho k liye tha but wapis kr diye … cututi ho skti hai … 50000, 25000 diye, 25000 dena … balance zero".
+**Found**: the purchase return already existed (`/returns/purchase`, Return on the bill), but it had no cut, did not explain the money, and could not be reached from the phone's page.
+**Done**:
+- `cut_amount` on the purchase return: the party is debited with value − cut, and the cut goes to COGS.
+- `PurchaseReturnSheet`: reason chips, cut, the worked statement, received now with cash / bank, the rest in the khata, balance zero.
+- **Return to the seller** on the phone's page.
+- en / ur / roman strings + help, manual ch. 2, ADR-081, docs/29.
+**Verified**:
+- pytest `test_purchase_return_cut` (4, new: the owner's 50k / 25k example ends at zero with cash +25,000; a cut of 5,000 reaches the profit report; nothing received → the seller owes 25,000; the cut cannot exceed the value) and `test_returns`; full suite.
+- tsc and Help.test.
+- Playwright `purchase-return` (new: from the phone's page the sheet shows 25,000 cancelled / 25,000 back / zero → balance 0.00 and the phone returned; then a 40,000 bill with a 5,000 cut and 20,000 received → the seller owes 15,000). I looked at the screenshot.

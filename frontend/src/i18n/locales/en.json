@@ -8224,6 +8224,23 @@
         "body": "Ends every salesman's, manager's and technician's login on every phone and browser, at once. Use it when a password may have leaked, or after switching on Only phones I allow so that every phone must be allowed again.",
         "example": "A salesman leaves: switch him off in Staff, then Log out all staff."
       }
+    },
+    "pret": {
+      "owed": {
+        "title": "What you still owed",
+        "body": "The part of this purchase bill you had not paid yet. Returning the phone cancels it first; only what you had already paid comes back to you.",
+        "example": "Bill 50,000, paid 25,000: you still owed 25,000. Returned: the 25,000 is cancelled and the seller gives you 25,000 back."
+      },
+      "cut": {
+        "title": "Cut",
+        "body": "When the seller agrees to take the phone back only for less, write the difference here. It is the shop's loss and shows in the profit report.",
+        "example": "Bought for 50,000, the seller takes it back for 45,000: cut 5,000."
+      },
+      "gotNow": {
+        "title": "Received now",
+        "body": "What the seller hands back today (cash, or pick the bank). Anything less stays in his khata as money he owes you; take it later with Receive payment.",
+        "example": "He owes 25,000 back, gives 10,000 today: 15,000 stays in his khata."
+      }
     }
   },
   "items": {
@@ -11069,5 +11086,28 @@
     "logoutConfirm": "Log out every salesman, manager and technician on every phone now?",
     "ended": "{{n}} logins ended.",
     "homeAsks": "{{n}} new phone(s) waiting for your approval"
+  },
+  "pret": {
+    "button": "Return to the seller",
+    "title": "Return to the seller",
+    "hint": "The phone goes back to the person you bought it from. The purchase stays in the record; the money is worked out below.",
+    "why": {
+      "title": "Why",
+      "faulty": "Faulty",
+      "notWanted": "Don't want to keep it",
+      "other": "Other"
+    },
+    "note": "Note (optional)",
+    "cut": "Cut — the seller takes it back for less (optional)",
+    "value": "Price of what goes back",
+    "cutLine": "Cut (your loss)",
+    "owedBefore": "You still owed on this bill",
+    "cancelled": "Of that, cancelled",
+    "stillOwed": "You still owe the seller",
+    "back": "The seller gives you back",
+    "gotNow": "Received now",
+    "later": "The other {{n}} stays in the seller's khata — he owes you.",
+    "zero": "Balance with the seller for this bill: zero.",
+    "confirm": "Return it"
   }
 }

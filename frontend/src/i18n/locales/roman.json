@@ -8224,6 +8224,23 @@
         "body": "Har salesman, manager aur technician ka har phone aur browser par login foran khatam. Jab password leak hone ka shak ho, ya \"Sirf meri ijazat wale phone\" on karne ke baad taake har phone dobara ijazat le.",
         "example": "Salesman naukri chhor de: Staff mein use band karein, phir Saara staff logout."
       }
+    },
+    "pret": {
+      "owed": {
+        "title": "Jo abhi dena tha",
+        "body": "Is purchase bill ka woh hissa jo abhi ada nahi hua tha. Mobile wapas karne se pehle yeh khatam hota hai; jo aap de chuke the sirf woh aap ko wapas milta hai.",
+        "example": "Bill 50,000, ada 25,000: abhi 25,000 dena tha. Wapsi: 25,000 khatam aur bechne wala 25,000 wapas dega."
+      },
+      "cut": {
+        "title": "Katauti",
+        "body": "Jab bechne wala mobile sirf kam qeemat par wapas lene ko maane, farq yahan likhein. Yeh dukaan ka nuqsan hai aur munafe ki report mein aata hai.",
+        "example": "50,000 ka khareeda, bechne wala 45,000 mein wapas leta hai: katauti 5,000."
+      },
+      "gotNow": {
+        "title": "Abhi mile",
+        "body": "Jo bechne wala aaj wapas de (cash, ya bank chunein). Kam mile to baqi us ke khate mein aap ka lena rehta hai; baad mein \"Paise mile\" se lein.",
+        "example": "25,000 wapas dene hain, aaj 10,000 diye: 15,000 khate mein."
+      }
     }
   },
   "items": {
@@ -11069,5 +11086,28 @@
     "logoutConfirm": "Kya har salesman, manager aur technician ko har phone se abhi logout karein?",
     "ended": "{{n}} login khatam ho gaye.",
     "homeAsks": "{{n}} naye phone aap ki ijazat ke muntazir"
+  },
+  "pret": {
+    "button": "Bechne wale ko wapas",
+    "title": "Bechne wale ko wapas karein",
+    "hint": "Mobile usi ko wapas jata hai jis se khareeda tha. Purchase record mein rehti hai; raqam ka hisaab neeche hai.",
+    "why": {
+      "title": "Kyun",
+      "faulty": "Kharab nikla",
+      "notWanted": "Rakhna nahi",
+      "other": "Koi aur wajah"
+    },
+    "note": "Note (ikhtiyari)",
+    "cut": "Katauti — bechne wala kam mein wapas le (ikhtiyari)",
+    "value": "Wapas jane wale ki qeemat",
+    "cutLine": "Katauti (aap ka nuqsan)",
+    "owedBefore": "Is bill par aap ne abhi dena tha",
+    "cancelled": "Is mein se khatam",
+    "stillOwed": "Aap ne abhi bhi dena hai",
+    "back": "Bechne wala aap ko wapas dega",
+    "gotNow": "Abhi mile",
+    "later": "Baqi {{n}} bechne wale ke khate mein — us ne aap ko dene hain.",
+    "zero": "Is bill par bechne wale ke saath hisaab: zero.",
+    "confirm": "Wapas karein"
   }
 }
