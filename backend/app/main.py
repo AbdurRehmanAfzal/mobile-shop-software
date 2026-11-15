@@ -20,6 +20,7 @@ from app.modules.balances.router import router as balances_router
 from app.modules.barcodes.router import router as barcodes_router
 from app.modules.bulk.router import router as bulk_router
 from app.modules.catalogue.router import router as catalogue_router
+from app.modules.credentials.router import router as credentials_router
 from app.modules.devices.router import router as devices_router
 from app.modules.exchanges.router import router as exchanges_router
 from app.modules.expenses.router import router as expenses_router
@@ -203,6 +204,7 @@ def create_app() -> FastAPI:
     app.include_router(logins_router)
     app.include_router(staffaccess_router)
     app.include_router(security_router)
+    app.include_router(credentials_router)
     if settings.web_dir:
         _mount_web(app, settings.web_dir)
     return app

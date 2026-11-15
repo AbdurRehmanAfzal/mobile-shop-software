@@ -40,7 +40,9 @@
     "forgotSend": "Request bhejein",
     "forgotSent_admin": "Request software provider ko bhej di. Woh isi number par rabta karenge.",
     "forgotSent_owner": "Request aap ki dukaan ke malik ko bhej di. Un se naya password lein.",
-    "forgotSent_none": "Ye number registered nahi."
+    "forgotSent_none": "Ye number registered nahi.",
+    "byPassword": "Password",
+    "byPin": "PIN"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -7156,6 +7158,16 @@
           "title": "Login security",
           "body": "Staff sirf aap ki ijazat wale phone par aur dukaan ke auqaat mein login kare; sab ko ek saath logout karein.",
           "example": "Naya phone aap ki ijazat ka intezar karta hai."
+        },
+        "password": {
+          "title": "Password badlen",
+          "body": "Apna login password badlen. Mojooda password chahiye; naya kam az kam 6 harf ya hindse ka ho.",
+          "example": "Purana: secret123 → naya: shop2026 → agli baar shop2026 se login."
+        },
+        "credHistory": {
+          "title": "Password / PIN history",
+          "body": "Aap ka password ya PIN kab, kis ne aur kis device se badla. Owner poori dukaan ki dekhta hai. Asal password / PIN kabhi nahi dikhta.",
+          "example": "Password khud badla, 15 Nov · Windows · Chrome."
         }
       },
       "pinPassword": {
@@ -8287,6 +8299,18 @@
         "title": "Repair ki reports",
         "body": "Chune gaye arse ki do A4 reports, PDF ya Excel mein, download, share ya print ke liye. Dukaan ki repair: har kaam (gahak ya dukaan ka mobile, kis ne theek kiya, haalat, bill, ada, udhaar, parts, lab ka kharcha, munafa / nuqsan), kul, haalat ke hisaab se, technician / lab ke hisaab se, jin gahakon ne abhi dena hai aur istemal hue parts. Bahar ki labs: har lab ko bheje mobile, theek / theek nahi, abhi lab mein, kharcha, ada aur khata, aur har bheja mobile us ke masle, qeemat aur nateeje ke saath.",
         "example": "Is mahine → Dukaan ki repair → Download → PDF."
+      }
+    },
+    "cred": {
+      "history": {
+        "title": "Password / PIN history",
+        "body": "Jab bhi password ya PIN laga, badla, hataya ya naya diya gaya: kis ka, kis ne aur kis phone ya computer se. Password ya PIN khud kabhi nahi rakha jata, is liye koi dekh nahi sakta. Owner poori dukaan ki dekhta hai; staff sirf apni.",
+        "example": "Ali ka PIN owner ne naya diya, 15 Nov, 10:30 · Android · Chrome."
+      },
+      "adminPin": {
+        "title": "Naya quick PIN",
+        "body": "Shop owner (ya upar password ke liye chuna gaya user) ka naya 4–6 hindson ka PIN lagayen. Purana PIN parha nahi ja sakta — sirf badla ja sakta hai. Dukaan ki history mein 'software support ne' likha aata hai.",
+        "example": "Owner PIN bhool gaya → 2468 likhen → Save → usay 2468 batayen."
       }
     }
   },
@@ -11252,5 +11276,38 @@
     "reports": "Repair ki reports",
     "jobsReport": "Dukaan ki repair (har kaam, munafa, udhaar)",
     "labsReport": "Bahar ki labs (bheje mobile, kharcha, khata)"
+  },
+  "cred": {
+    "history": "Password / PIN history",
+    "hideHistory": "History chhupayen",
+    "none": "Abhi tak koi password ya PIN nahi badla",
+    "safe": "Password aur PIN band (one-way) rakhe jate hain. Inhen koi parh nahi sakta — na owner, na super admin. Is list mein sirf ye hai ke kab laga ya badla, kis ne aur kis device se.",
+    "kind": {
+      "password": "Password",
+      "pin": "PIN"
+    },
+    "action": {
+      "set": "lagaya",
+      "changed": "badla",
+      "removed": "hataya",
+      "reset": "naya diya"
+    },
+    "by": {
+      "self": "khud",
+      "owner": "owner ne",
+      "super_admin": "software support ne",
+      "code": "code se (password bhool gaye)"
+    },
+    "changePassword": "Password badlen",
+    "changeHint": "Pehle mojooda password, phir naya do baar likhen.",
+    "current": "Mojooda password",
+    "new": "Naya password",
+    "confirm": "Naya password dobara",
+    "mismatch": "Dono naye password ek jaise nahi",
+    "short": "Kam az kam 6 harf ya hindse",
+    "saved": "Password badal gaya. Agli baar naye se login karen.",
+    "adminPin": "Naya quick PIN",
+    "newPin": "Naya PIN (4–6 hindse)",
+    "pinSet": "PIN lag gaya. Dukandar ko batayen:"
   }
 }

@@ -147,6 +147,24 @@ Next time this phone opens the **Enter your PIN** screen with your name. Tap the
 
 > **Tip:** The owner's PIN is also used to approve a sale below the asking price on the spot, when the shop's price rule asks for it (see chapter 8).
 
+### Password or PIN — both on the login screen
+
+The login screen always has two tabs, **Password** and **PIN**. Tap **PIN**, type your mobile number (only the first time on a new phone) and your PIN.
+
+### Change your password
+
+1. Tap **More → Change password**.
+2. Type your **Current password**, then the **New password** twice (at least 6 letters or digits).
+3. Tap **Save**. Next time log in with the new one.
+
+To change or remove the PIN, use **More → Set quick PIN** again.
+
+### Password / PIN history
+
+**More → Password / PIN history** lists every time a password or PIN was set, changed, removed or reset: whose, by whom (themselves, the owner, software support, or a forgot-password code), the date and time, and the phone or computer. The owner sees everyone in the shop; staff see only their own.
+
+> **Important:** The password or PIN itself is never kept — only a one-way lock of it. Nobody can read it: not the owner, not software support. A forgotten one is only ever replaced with a new one.
+
 ### Fingerprint login
 
 1. Log in once with your password.

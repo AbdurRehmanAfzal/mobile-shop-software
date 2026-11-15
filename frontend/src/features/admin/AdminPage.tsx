@@ -15,6 +15,7 @@ import { fileObjectUrl } from '@/lib/files'
 import AppLinkCard, { APP_LINK, SITE } from './AppLinkCard'
 import FeeCreditCard from './FeeCreditCard'
 import ShopBinCard from './ShopBinCard'
+import AdminCredentials from './AdminCredentials'
 import { normalisePhone } from '@/lib/format'
 import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
 
@@ -365,6 +366,10 @@ export default function AdminPage() {
                 </a>
               </div>
             ) : null}
+
+            {/* owner 2026-11-15 (ADR-088): a new PIN and the password / PIN history — never the values */}
+            <span className="flex items-center gap-1 mt-1"><BiLabel text="cred.adminPin" size="md" bold /><Help term="cred.adminPin" size="sm" /></span>
+            <AdminCredentials key={sel.id} shopId={sel.id} userId={pwFor?.user_id} />
 
             <span className="flex items-center gap-1 mt-1"><BiLabel text="admin.modulesTitle" size="md" bold /><Help term="admin.modules" size="sm" /></span>
             <ModulePicker catalogue={catalogue} plan={plan.plan} value={mods} onChange={setMods} />

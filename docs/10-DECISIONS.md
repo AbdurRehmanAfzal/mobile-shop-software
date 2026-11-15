@@ -362,6 +362,19 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-088 · 2026-11-15 · Accepted · Change own password, password / PIN history, super admin PIN reset, both login ways
+**Context**: the owner asked for the super admin to be able to see shop passwords and PINs, for the owner and staff to change their own password and PIN, a history of "which password / PIN was used", and both Password and PIN on the login screen.
+**Decision**:
+- **Values are never viewable.** Passwords and PINs stay one-way hashes. Nobody can read them, the super admin included, and no history keeps them. Showing them would mean storing them reversibly; one leaked database or admin session would then expose every shop's login (people reuse passwords for WhatsApp, bank apps). The owner accepted this: a forgotten one is replaced, never read.
+- **History** (`credential_changes`, additive migration `b8d0f2a4c6e9`): one row per set / changed / removed / reset of a password or PIN. Each row holds whose, `by_kind` (self | owner | super_admin | code), by whom, the IP, the user agent and when.
+  - Written best-effort inside a savepoint (`credentials.service.log`), so a history failure never blocks the change itself.
+  - Hooks: `set_own_pin`, `update_staff` (owner resets), the forgot-password code reset, the super admin's `set_password` / new `set_pin`.
+  - `GET /credentials/history`: the owner sees the whole organisation; anyone else only their own. The super admin is never named to the shop ("software support").
+- **Change own password**: `PUT /me/password {current_password, new_password (min 6)}` → 204, and a More tile with a sheet (current, new, confirm). The PIN is still changed / removed from More → Set quick PIN.
+- **Super admin**: `POST /admin/shops/{id}/owner-pin {pin, user_id?}` sets a new PIN for the owner (or the user picked for the password reset). `GET /admin/shops/{id}/credential-history` shows the shop's history. Both appear in the shop's sheet (`AdminCredentials.tsx`).
+- **Login**: Password / PIN tabs are always shown. The PIN tab no longer needs an earlier login on that phone: it asks for the mobile number when it does not know it.
+**Consequences**: nothing changes for existing logins or data. The history starts empty and fills from now on. Shop owners can now audit who changed whose password.
+
 ## ADR-087 · 2026-11-15 · Accepted · Repairs: own technician or outside lab, delete, reports; Edit / Delete on more rows
 **Context**: the owner asked for several things:
 - Edit / Delete on every row;

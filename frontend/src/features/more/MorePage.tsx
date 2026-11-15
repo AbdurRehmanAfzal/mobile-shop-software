@@ -2,7 +2,7 @@
 
 import { ChevronLeft, ChevronRight, Bot,
   ArrowLeftRight, Archive, BarChart3, Bell, BookOpen, CalendarDays, Check, ClipboardList, CreditCard, FileSpreadsheet, FileText, HandCoins, Headphones, KeyRound,
-  Landmark, LayoutDashboard, Lock, MessageCircle, LogOut, Package, PackagePlus, Palette, ShieldCheck, Receipt, RotateCcw, ScanLine, Settings, Smartphone, Store, Tag, Tags, Undo2, Users,
+  History, Landmark, LayoutDashboard, Lock, MessageCircle, LogOut, Package, PackagePlus, Palette, ShieldCheck, Receipt, RotateCcw, ScanLine, Settings, Smartphone, Store, Tag, Tags, Undo2, Users,
   Scale, Wallet, Wrench, type LucideIcon,
 } from 'lucide-react'
 import { useState } from 'react'
@@ -14,6 +14,7 @@ import { moduleFor, useModules } from '@/lib/modules'
 import { api } from '@/lib/api'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import FingerprintCard from './FingerprintCard'
+import ChangePasswordSheet from './ChangePassword'
 import Help from '@/components/Help'
 import { ErrorText, Sheet } from '@/components/ui'
 import { rememberLogin } from '@/features/auth/LoginPage'
@@ -22,7 +23,7 @@ type Icon = LucideIcon
 /** `tone` = the job colour (docs/11 v2) of the icon well */
 /** `help`: a key under `help.` for the "?" beside the tile (docs/33) */
 /** `branches`: shown only to someone who works in more than one branch of the owner */
-interface Item { key: string; Icon: Icon; to?: string; action?: 'pin'; roles?: Role[]; tone?: string; help: string; branches?: boolean }
+interface Item { key: string; Icon: Icon; to?: string; action?: 'pin' | 'password'; roles?: Role[]; tone?: string; help: string; branches?: boolean }
 interface Group { title: string; help: string; items: Item[] }
 
 const MANAGERS: Role[] = ['owner', 'manager']
@@ -107,6 +108,9 @@ const GROUPS: Group[] = [
       { key: 'more.notifications', Icon: Bell, to: '/more/notifications?tab=settings', roles: ['owner'], tone: T.plain, help: 'more.tile.notifications' },
       { key: 'fees.title', Icon: CreditCard, to: '/more/fees', roles: ['owner'], tone: T.plain, help: 'more.tile.fees' },
       { key: 'pin.set', Icon: KeyRound, action: 'pin', tone: T.plain, help: 'more.tile.pin' },
+      // owner 2026-11-15 (ADR-088): change my own password; when each password / PIN changed
+      { key: 'cred.changePassword', Icon: Lock, action: 'password', tone: T.plain, help: 'more.tile.password' },
+      { key: 'cred.history', Icon: History, to: '/more/credentials', tone: T.plain, help: 'more.tile.credHistory' },
     ],
   },
 ]
@@ -120,6 +124,7 @@ export default function MorePage() {
   const locale = i18n.language as Locale
   const role = me?.user.role
   const [pinOpen, setPinOpen] = useState(false)
+  const [pwOpen, setPwOpen] = useState(false)
   const [pw, setPw] = useState('')
   const [pin, setPin] = useState('')
   const [pinErr, setPinErr] = useState<unknown>(null)
@@ -173,7 +178,7 @@ export default function MorePage() {
                 <div key={key + (to ?? '')} className="relative">
                   <button
                     type="button"
-                    onClick={() => (action === 'pin' ? setPinOpen(true) : to && nav(to))}
+                    onClick={() => (action === 'pin' ? setPinOpen(true) : action === 'password' ? setPwOpen(true) : to && nav(to))}
                     className="tap flex min-h-[64px] w-full items-center gap-3 rounded-2xl border border-line bg-surface py-2.5 pe-8 ps-3 text-start shadow-[0_1px_0_rgb(var(--line))] active:translate-y-px active:shadow-none"
                   >
                     <span className={`well h-11 w-11 shrink-0 rounded-xl ${tone ?? T.plain}`}><Icon size={22} strokeWidth={1.9} /></span>
@@ -243,6 +248,7 @@ export default function MorePage() {
           />
         </div>
       </Sheet>
+      <ChangePasswordSheet open={pwOpen} onClose={() => setPwOpen(false)} />
       <FingerprintCard />
     </div>
   )

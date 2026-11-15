@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { ApiError, post } from '@/lib/api'
 import { useAuth, type MeOut } from '@/lib/auth'
 import { isValidPkMobile, normalisePhone, toLatinDigits } from '@/lib/format'
-import { BiAlert, BiButton, BiInput, BiLabel, type BiText } from '@/components/Bilingual'
+import { BiAlert, BiButton, BiInput, BiLabel, BiSegmented, type BiText } from '@/components/Bilingual'
 import { PhoneInput } from '@/components/FieldInputs'
 import { fingerprintLogin, isOnHere } from '@/lib/fingerprint'
 import AuthLayout from './AuthLayout'
@@ -85,18 +85,32 @@ export default function LoginPage() {
 
   function submitPin(e: FormEvent) {
     e.preventDefault()
+    if (!isValidPkMobile(phone)) {
+      setError({ en: 'Enter a valid mobile number (03XXXXXXXXX)', ur: 'درست موبائل نمبر درج کریں (03XXXXXXXXX)' })
+      return
+    }
     go('/api/v1/auth/pin-login', { phone: normalisePhone(phone), pin })
   }
 
-  if (mode === 'pin' && last) {
+  // owner 2026-11-15 (ADR-088): both ways to log in are always offered
+  const tabs = (
+    <BiSegmented<'password' | 'pin'> value={mode} onChange={(m) => { setMode(m); setError(null) }} options={[{ value: 'password', text: 'auth.byPassword' }, { value: 'pin', text: 'auth.byPin' }]} />
+  )
+
+  if (mode === 'pin') {
     return (
       <AuthLayout title="pin.title">
         <form onSubmit={submitPin} className="flex flex-col items-center gap-4">
+          <div className="w-full">{tabs}</div>
           <span className="well h-16 w-16 rounded-full bg-emerald-tint text-emerald-deep"><Lock size={28} /></span>
-          <div className="text-center">
-            <div className="text-lg font-bold">{last.name}</div>
-            <div className="text-sm text-muted" dir="ltr">{last.phone}</div>
-          </div>
+          {last && normalisePhone(phone) === normalisePhone(last.phone) ? (
+            <div className="text-center">
+              <div className="text-lg font-bold">{last.name}</div>
+              <div className="text-sm text-muted" dir="ltr">{last.phone}</div>
+            </div>
+          ) : (
+            <div className="w-full"><PhoneInput label="auth.phone" value={phone} onChange={setPhone} required /></div>
+          )}
           <div className="flex gap-2" dir="ltr">
             {Array.from({ length: 6 }).map((_, i) => (
               <span key={i} className={`h-12 w-10 rounded-xl border-2 ${i < pin.length ? 'border-emerald bg-emerald-tint' : 'border-line bg-surface'} flex items-center justify-center text-2xl`}>{i < pin.length ? '•' : ''}</span>
@@ -104,7 +118,7 @@ export default function LoginPage() {
           </div>
           <input
             aria-label="PIN"
-            autoFocus
+            autoFocus={!!last}
             inputMode="numeric"
             autoComplete="one-time-code"
             value={pin}
@@ -126,9 +140,11 @@ export default function LoginPage() {
           <button type="button" onClick={() => setMode('password')} className="tap py-2">
             <BiLabel text="pin.forgot" size="sm" tone="text-emerald" align="center" />
           </button>
-          <div className="w-full border-t border-line pt-4">
-            <BiButton type="button" text="pin.otherAccount" variant="secondary" size="sm" full onClick={() => { forgetLogin(); setPhone(''); setMode('password') }} />
-          </div>
+          {last ? (
+            <div className="w-full border-t border-line pt-4">
+              <BiButton type="button" text="pin.otherAccount" variant="secondary" size="sm" full onClick={() => { forgetLogin(); setPhone(''); setMode('password') }} />
+            </div>
+          ) : null}
         </form>
       </AuthLayout>
     )
@@ -137,6 +153,7 @@ export default function LoginPage() {
   return (
     <AuthLayout title="auth.login">
       <form onSubmit={submitPassword} className="flex flex-col gap-4">
+        {tabs}
         {fpButton ? (
           <>
             {fpButton}
@@ -154,11 +171,6 @@ export default function LoginPage() {
           <BiLabel text="auth.forgot" size="sm" tone="text-emerald" align="center" />
         </button>
         <ForgotSheet open={forgotOpen} onClose={() => setForgotOpen(false)} phone={phone} setPhone={setPhone} />
-        {last?.hasPin ? (
-          <button type="button" onClick={() => setMode('pin')} className="tap py-1">
-            <BiLabel text="pin.usePin" size="sm" tone="text-emerald" align="center" />
-          </button>
-        ) : null}
       </form>
     </AuthLayout>
   )

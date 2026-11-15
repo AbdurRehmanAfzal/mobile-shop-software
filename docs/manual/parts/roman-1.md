@@ -145,6 +145,24 @@ Agli dafa yeh phone aap ke naam ke saath **Apna PIN likhein** wali screen kholta
 
 > **Mashwara:** Maalik ka PIN mauqe par asking se kam bikri ki ijazat dene mein bhi kaam aata hai, jab dukaan ka qeemat ka qaida yeh maange (chapter 8 dekhein).
 
+### Password ya PIN — login screen par dono
+
+Login screen par hamesha do tab hain, **Password** aur **PIN**. **PIN** dabayein, apna mobile number (naye phone par sirf pehli dafa) aur PIN likhein.
+
+### Apna password badlein
+
+1. **Mazeed → Password badlen** dabayein.
+2. **Mojooda password**, phir **Naya password** do dafa likhein (kam az kam 6 harf ya hindse).
+3. **Mehfooz karein** dabayein. Agli dafa naye se login karein.
+
+PIN badalne ya hatane ke liye dobara **Mazeed → Jaldi PIN banayein** istemal karein.
+
+### Password / PIN history
+
+**Mazeed → Password / PIN history** mein har woh waqt hai jab password ya PIN laga, badla, hataya ya naya diya gaya: kis ka, kis ne (khud, owner, software support, ya password bhoolne wala code), tareekh aur waqt, aur kaun sa phone ya computer. Maalik poori dukaan ki dekhta hai; staff sirf apni.
+
+> **Zaroori:** Password ya PIN khud kabhi nahi rakha jata — sirf us ka ek-tarfa taala. Koi usay parh nahi sakta: na maalik, na software support. Bhoola hua sirf naye se badla ja sakta hai.
+
 ### Fingerprint login
 
 1. Ek dafa password se login karein.
