@@ -65,7 +65,7 @@ interface Misc {
   auto?: boolean
 }
 // what came with the phone goes with it unless the seller changes it
-const newLine = (d: Device): Line => ({
+export const newLine = (d: Device): Line => ({
   device: d,
   price: d.asking_price ? String(Number(d.asking_price)) : '',
   warranty_days: '0',

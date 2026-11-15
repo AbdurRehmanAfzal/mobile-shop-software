@@ -7130,6 +7130,11 @@
           "title": "Karobar ka khulasa",
           "body": "Farokht, khareedari, munafa, aane jaane wali raqam, udhaar, gahak, stock alert aur haaliya kaam ek screen par, har ek ki tafseel ke saath.",
           "example": "Aaj: 4 farokht, 2 khareedari, 25,000 wusool."
+        },
+        "whatsapp": {
+          "title": "WhatsApp entries",
+          "body": "Sale, purchase, payment aur len-den group mein ek standard message mein bhejein, aur message se software mein entry karein.",
+          "example": "\"*SALE* … IMEI … Price …\" paste karein → sale bhari hui khulti hai."
         }
       },
       "pinPassword": {
@@ -8174,6 +8179,23 @@
         "title": "Gahakon ke liye list",
         "body": "Bikne wale mobiles ki A4 list, woh tafseel jo gahak poochta hai aur qeemat. IMEI, serial, barcode, khareed qeemat, bechne wala ya din nahi; repair, amanat ya kharab mobile shamil nahi.",
         "example": "Gahak ko bikne wale iPhone bhejein: iPhone 13 128GB, PTA, battery 88%, 1,25,000."
+      }
+    },
+    "wa": {
+      "page": {
+        "title": "WhatsApp entries",
+        "body": "Staff har sale, purchase, payment aur len-den group mein ek hi tarah ke message mein bhejta hai; software chalane wala yahan se entry karta hai. Message se entry: message paste karein, jo parha gaya woh dekhein, aur bhara hua form kholein. Message likhein: chand khane bharein aur group mein standard message bhejein.",
+        "example": "Ahmed bhejta hai \"*SALE* … IMEI … Price 1,25,000 … Paid 1,00,000 cash\"; yahan paste karne par sale mobile, gahak, qeemat aur udhaar ke saath khul jati hai."
+      },
+      "format": {
+        "title": "Standard message",
+        "body": "Pehli line batati hai kya hai (*SALE*, *PURCHASE*, *PAYMENT RECEIVED*, *PAYMENT PAID*, *LEN DEN*), phir har line mein \"Key: value\". Raqam 1,25,000, 125k ya 1.25 lakh likh sakte hain; Paid ke baad cash / online / cheque likhein. Lines kisi bhi tarteeb mein, Roman Urdu alfaaz bhi chalte hain (Gahak, Qeemat, Baqi, Diya, Liya).",
+        "example": "*PURCHASE*\nMobile: Samsung A05 4/64\nIMEI: 356938035643809\nCondition: Used\nFrom: Bilal Mobiles\nCost: 30000\nPaid: 10000 cash"
+      },
+      "enter": {
+        "title": "Message se entry",
+        "body": "Group ka message paste karein. App ise parh kar IMEI se mobile aur number ya naam se banda dhoondti hai, aur sale ya purchase ka form bhara hua kholti hai (ya payment / len-den ka). Dekh kar mamool ki tarah save karein — pehle kuch save nahi hota. Tasveer se IMEI box ya IMEI screen ki tasveer se barcode parhta hai.",
+        "example": "Purchase ka message paste karein → Purchase ka form bhara hua kholein → mobile ka form model, IMEI, haalat aur qeemat ke saath khulta hai; zaroorat ho to bechne wale ki shanakht laga kar save karein."
       }
     }
   },
@@ -10907,5 +10929,88 @@
     "staffHint": "Har mobile ki saari tafseel — IMEI, storage, RAM, rang, haalat, PTA, battery, barcode, din — aur farokht qeemat. Khareed qeemat aur bechne wala nahi.",
     "customer": "Gahakon ke liye",
     "customerHint": "Bikne wale mobile, woh tafseel jo gahak poochte hain — model, storage, RAM, rang, haalat, PTA, battery — aur qeemat. IMEI aur khareed qeemat nahi."
+  },
+  "wa": {
+    "title": "WhatsApp entries",
+    "tabEnter": "Message se entry",
+    "tabWrite": "Message likhein",
+    "kind": {
+      "sale": "Sale",
+      "purchase": "Purchase",
+      "received": "Wusool",
+      "paid": "Ada kiya",
+      "lending": "Len-den"
+    },
+    "f": {
+      "mobile": "Mobile (model)",
+      "imei": "IMEI",
+      "customer": "Gahak",
+      "from": "Kis se khareeda",
+      "name": "Naam",
+      "phone": "Phone number",
+      "price": "Sale price",
+      "cost": "Khareed qeemat",
+      "asking": "Asking price",
+      "paid": "Abhi ada",
+      "paidHint": "Qeemat se kam = baqi udhaar",
+      "udhaar": "Udhaar",
+      "amount": "Raqam",
+      "method": "Kaise diye",
+      "condition": "Haalat",
+      "pta": "PTA",
+      "battery": "Battery %",
+      "due": "Wapsi ki tareekh",
+      "by": "Bhejne wala",
+      "note": "Note",
+      "gave": "Dukaan ne diya",
+      "took": "Dukaan ne liya"
+    },
+    "method": {
+      "cash": "Cash",
+      "online": "Online / bank",
+      "cheque": "Cheque"
+    },
+    "cond": {
+      "box_pack": "Box pack",
+      "open_box": "Open box",
+      "used": "Used",
+      "patched": "Patched"
+    },
+    "pta": {
+      "pta_approved": "PTA",
+      "non_pta": "Non-PTA",
+      "jv": "JV",
+      "cpid": "CP ID"
+    },
+    "preview": "Message",
+    "send": "WhatsApp par bhejein",
+    "copy": "Copy",
+    "copied": "Copy ho gaya",
+    "copyBlank": "Khali form copy",
+    "blankHint": "Khali forms groups mein pin karein: har koi \":\" ke baad likh kar bhej de.",
+    "pasteTitle": "Group ka message yahan paste karein",
+    "pastePh": "*SALE*\nMobile: iPhone 13 128GB\nIMEI: …\nCustomer: …\nPrice: …\nPaid: … cash",
+    "paste": "Paste",
+    "photoImei": "Tasveer se IMEI",
+    "photoNone": "Tasveer mein IMEI barcode nahi mila. IMEI likhein ya saaf tasveer lein.",
+    "clear": "Saaf karein",
+    "whatEntry": "Message mein kya hai",
+    "noKind": "Chunein yeh kis cheez ki entry hai.",
+    "notRead": "Samajh nahi aaya:",
+    "inStock": "Stock mein",
+    "notInStock": "Stock mein nahi (bik gaya / bahar)",
+    "notFound": "Nahi mila",
+    "alreadyIn": "Pehle se dukaan mein",
+    "newPhone": "Naya mobile",
+    "noImei": "Message mein IMEI nahi — likhein ya tasveer se parhein.",
+    "change": "Badlein",
+    "personNew": "Yeh banda abhi save nahi — chunein ya add karein.",
+    "openSale": "Sale ka form bhara hua kholein",
+    "openPurchase": "Purchase ka form bhara hua kholein",
+    "openPayment": "Payment darj karein",
+    "openLending": "Len-den darj karein",
+    "saleNeedsStock": "Sale ke liye stock mein maujood mobile chahiye.",
+    "needPerson": "Chunein mobile kis se khareeda.",
+    "saved": "Save ho gaya. Agla message paste karein."
   }
 }

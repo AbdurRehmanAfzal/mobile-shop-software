@@ -1585,6 +1585,39 @@ Below that you will find:
 
 > **Tip:** When a customer argues about his balance, open his page, tap **Download** → **PDF** and send him the statement on WhatsApp. Every line has a date and a bill number.
 
+### WhatsApp entries: one standard message for the group
+
+Many shops post every sale, purchase, payment and len-den in WhatsApp groups with the staff, and one person enters them in the software. **More → WhatsApp entries** makes that easy for both sides.
+
+**The standard message.** The first line says what it is: *SALE*, *PURCHASE*, *PAYMENT RECEIVED*, *PAYMENT PAID* or *LEN DEN*. Then write one "Key: value" a line, for example:
+
+```
+*SALE*
+Mobile: iPhone 13 128GB
+IMEI: 356938035643809
+Customer: Ali Khan
+Phone: 0300-1234567
+Price: 1,25,000
+Paid: 100000 cash
+Udhaar: 25000
+By: Ahmed
+```
+
+- A purchase uses Condition, PTA, Battery, From, CNIC, Cost and Asking.
+- A payment uses Name, Phone, Amount and Method.
+- Len-den uses Name, Diya (the shop gave) or Liya (the shop took), and Wapsi (the return date).
+- Amounts can be written 1,25,000, 125k or 1.25 lakh. Write cash / online / cheque after Paid.
+- The lines can be in any order, and Roman Urdu words work too (Gahak, Qeemat, Baqi, Diya, Liya).
+- An IMEI or a mobile number is found anywhere in the message.
+
+**Write a message** (owner / salesman): choose Sale, Purchase, Received, Paid or Len-den. Fill a few boxes; **Scan** reads the IMEI. Then tap **Send on WhatsApp** and choose the group. **Copy blank form** gives the empty form to pin in the group, so anyone can fill it by hand.
+
+**Enter from a message** (whoever keeps the software):
+1. Paste the message. **IMEI from photo** reads the barcode in a photo of the box or the IMEI screen.
+2. The app shows what it read, and any line it did not understand. It finds the phone by its IMEI (in stock / not in stock / new phone) and the person by their number or name; you can change the person or add a new one.
+3. **Open the sale, filled** or **Open the purchase, filled** opens the usual form with the phone, person, price, cost, paid and udhaar already in it. For a purchase, the phone's sheet opens with the IMEI, model, condition and cost. **Enter the payment** / **Enter the len-den** opens the payment form with the amount.
+4. Check the form and save it as usual. Nothing is saved before that, and every usual check still applies.
+
 ### Business overview: everything on one screen
 
 Owner and manager: on the home screen tap **Business overview** (also in **More**). Pick **Today**, **Yesterday**, **Week**, **This month** or your own dates. Every card has **View details**, which opens the screen behind it.

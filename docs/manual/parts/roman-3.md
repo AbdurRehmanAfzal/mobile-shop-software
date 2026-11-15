@@ -96,6 +96,39 @@ Us ke neeche aap ko milega:
 
 > **Mashwara:** Jab koi customer apne baqaye par behes kare, to us ka safha kholein, **Download** → **PDF** dabayein aur statement WhatsApp par bhej dein. Har line par tareekh aur bill number hai.
 
+### WhatsApp entries: group ke liye ek standard message
+
+Bohat si dukaanein har sale, purchase, payment aur len-den staff ke saath WhatsApp group mein bhejti hain, aur ek banda software mein entry karta hai. **More → WhatsApp entries** dono ka kaam aasaan karta hai.
+
+**Standard message.** Pehli line batati hai ke message kis cheez ka hai: *SALE*, *PURCHASE*, *PAYMENT RECEIVED*, *PAYMENT PAID* ya *LEN DEN*. Phir har line mein ek "Key: value" likhein, maslan:
+
+```
+*SALE*
+Mobile: iPhone 13 128GB
+IMEI: 356938035643809
+Customer: Ali Khan
+Phone: 0300-1234567
+Price: 1,25,000
+Paid: 100000 cash
+Udhaar: 25000
+By: Ahmed
+```
+
+- Purchase mein Condition, PTA, Battery, From, CNIC, Cost aur Asking likhein.
+- Payment mein Name, Phone, Amount aur Method.
+- Len-den mein Name, Diya (dukaan ne diya) ya Liya (dukaan ne liya), aur Wapsi (wapsi ki tareekh).
+- Raqam 1,25,000, 125k ya 1.25 lakh likh sakte hain. Paid ke baad cash / online / cheque likhein.
+- Lines kisi bhi tarteeb mein ho sakti hain, aur Roman Urdu alfaaz bhi chalte hain (Gahak, Qeemat, Baqi, Diya, Liya).
+- IMEI ya mobile number message mein kahin bhi ho, mil jata hai.
+
+**Message likhein** (owner / salesman): Sale, Purchase, Wusool, Ada ya Len-den chunein. Chand khane bharein; **Scan** se IMEI parha jata hai. Phir **WhatsApp par bhejein** daba kar group chunein. **Khali form copy** se khali form milta hai jo group mein pin kar dein, taake koi bhi haath se bhar sake.
+
+**Message se entry** (software chalane wala):
+1. Message paste karein. **Tasveer se IMEI** box ya IMEI screen ki tasveer se barcode parhta hai.
+2. App dikhati hai ke kya parha, aur jo line samajh nahi aayi woh bhi. Woh IMEI se mobile dhoondti hai (stock mein / stock mein nahi / naya mobile), aur number ya naam se banda; aap banda badal sakte hain ya naya add kar sakte hain.
+3. **Sale ka form bhara hua kholein** ya **Purchase ka form bhara hua kholein** mamool ka form kholta hai, jis mein mobile, banda, qeemat, khareed qeemat, ada shuda aur udhaar pehle se bhare hote hain. Purchase mein mobile ka form IMEI, model, haalat aur qeemat ke saath khulta hai. **Payment darj karein** / **Len-den darj karein** payment ka form raqam ke saath kholta hai.
+4. Form dekh kar mamool ki tarah save karein. Is se pehle kuch save nahi hota, aur har mamool ki jaanch lagu rehti hai.
+
 ### Karobar ka khulasa: sab kuch ek screen par
 
 Owner aur manager: home screen par **Karobar ka khulasa** dabayein (yeh **More** mein bhi hai). **Aaj**, **Kal**, **Hafta**, **Is mahine** ya apni tareekhein chunein. Har card par **Tafseel dekhein** us ki screen kholta hai.

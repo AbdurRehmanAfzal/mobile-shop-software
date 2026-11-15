@@ -362,6 +362,25 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-079 · 2026-11-15 · Accepted · WhatsApp entries: a standard group message, read back into the forms
+**Context**: shops post every sale, purchase, payment and len-den in WhatsApp groups with the staff, and one person types them into the software. Each message is written differently, often with a photo of the IMEI or the box. The owner asked for standard templates that are easy for the writers and for the person entering.
+**Decision**:
+- **One standard message** (`lib/waMessage.ts`): a title line (`*SALE*`, `*PURCHASE*`, `*PAYMENT RECEIVED*`, `*PAYMENT PAID*`, `*LEN DEN*`), then `Key: value` lines. The keys are English so the format stays the same in every language.
+- **The reader is forgiving:**
+  - Roman Urdu / Urdu keys, any order, and WhatsApp bold;
+  - amounts as 1,25,000, 125k or 1.25 lakh; the method after Paid;
+  - an IMEI found anywhere, only if the check digit is valid; a mobile number found anywhere;
+  - model, storage, RAM, condition and PTA read from the model line;
+  - for a purchase, Price counts as the cost; Udhaar gives Paid;
+  - lines it cannot read are shown, never guessed.
+  It is unit-tested (`waMessage.test.ts`).
+- **`/whatsapp`** (More → WhatsApp entries) has two parts:
+  - *Write a message*: a few boxes and Scan for the IMEI, which build the standard message. *Send on WhatsApp* opens `wa.me/?text=`; *Copy* and *Copy blank form* copy it.
+  - *Enter from a message*: paste the message, or read the IMEI from a photo with `scanPhoto`. The app finds the phone by IMEI and the person by number or name (`/parties/by-phone`, `/parties?q=`), then opens the usual form already filled. The purchase line is matched to the catalogue (brand by name or alias, model by the longest name in the text, storage by name); its sheet opens filled, and the kind comes from the person (dealer → supplier, else walk-in). A payment or len-den opens `PaymentForm` with the person, direction, amount and the len-den flag.
+- **Filling the forms**: `seedDrafts(prefix, values)` (`lib/draft.ts`) hands values to the form's `useDraft` keys once. The forms open at step 2 (`?step=2`), so the step-from-URL logic keeps them there. The value is read in the initializer and forgotten in the effect, because React may run the initializer twice.
+- **Nothing is saved by this screen.** The person checks the usual form and saves it, with every usual check (verification, lock checks, prices, permissions). There is no backend change and no migration.
+**Consequences**: the message format is a convention people can also type by hand. The reader accepts what it can and shows the rest.
+
 ## ADR-078 · 2026-11-15 · Accepted · Stock lists on A4, and price lists for staff and customers
 **Context**: the stock page's PDF (card / table / grid / list, with the picked fields) was one wide table. The app's PDF is A4 portrait, so with many fields it ran off the page; no PDF printed properly on A4. The owner also wants to send the stock with the asking price: one list for the staff (every detail) and one for customers.
 **Decision**:

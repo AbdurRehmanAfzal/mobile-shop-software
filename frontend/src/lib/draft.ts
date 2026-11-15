@@ -30,16 +30,28 @@ function read<T>(key: string): T | undefined {
   }
 }
 
+/** values a screen hands to the next form (owner 2026-11-15, ADR-079: an entry from a WhatsApp
+ *  message opens the sale / purchase form already filled); each is taken once, by the first form
+ *  that asks for that key */
+const seeded = new Map<string, unknown>()
+export function seedDrafts(prefix: string, values: Record<string, unknown>) {
+  clearDrafts(prefix)
+  for (const [k, v] of Object.entries(values)) seeded.set(prefix + k, v)
+}
+
 /** like useState; with `key` null it is plain useState (nothing saved) */
 export function useDraft<T>(key: string | null, initial: T | (() => T)) {
   const [v, setV] = useState<T>(() => {
     if (key === null) return typeof initial === 'function' ? (initial as () => T)() : initial
     for (const p of frozen) if (key.startsWith(p)) frozen.delete(p) // a fresh form starts recording again
+    // read here, forgotten in the effect below (React may run this twice before the first render)
+    if (seeded.has(key)) return seeded.get(key) as T
     const saved = leftBootPage ? undefined : read<T>(key)
     if (saved !== undefined) return saved
     return typeof initial === 'function' ? (initial as () => T)() : initial
   })
   useEffect(() => {
+    if (key !== null) seeded.delete(key)
     if (key === null || isFrozen(key)) return
     try {
       sessionStorage.setItem(PREFIX + key, JSON.stringify({ at: Date.now(), v }))
