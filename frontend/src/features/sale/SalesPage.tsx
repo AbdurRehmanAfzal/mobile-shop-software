@@ -154,6 +154,8 @@ export function SaleDetailPage() {
         <BiButton text="sale.printThermal" size="md" onClick={() => openPrintable(`/api/v1/sales/${inv.id}/receipt?format=thermal`)} />
         <BiButton text="sale.printA4" size="md" variant="secondary" onClick={() => openPrintable(`/api/v1/sales/${inv.id}/receipt?format=a4`)} />
         {active && inv.party_id ? <BiButton text="sale.return" size="md" variant="secondary" onClick={() => { setSelected(inv.lines.filter((l) => !l.returned_at).map((l) => l.id)); setReturning(true) }} /> : null}
+        {/* ADR-090: edit the lines / prices / payment — the form opens filled; saving replaces this bill */}
+        {active && canManage && !inv.exchange_id ? <span className="col-span-2 flex items-center gap-1"><span className="min-w-0 flex-1"><BiButton text="sedit.button" size="md" variant="secondary" full onClick={() => nav(`/sale/new?replace=${inv.id}`)} data-testid="sale-edit-bill" /></span><Help term="sedit.button" size="sm" /></span> : null}
         {/* ADR-090: an exchange's sale is deleted with its trade-in, as one */}
         {active && canManage ? (inv.exchange_id ? <span className="col-span-2 flex items-center gap-1"><BillActions kind="exchange" id={inv.exchange_id} no={inv.no} canDelete editTo={null} label="del.deleteExchange" /><Help term="void" /></span> : <span className="flex items-center gap-1"><BiButton text="common.void" size="md" variant="danger" onClick={() => setVoiding(true)} /><Help term="void" /></span>) : null}
       </div>

@@ -228,6 +228,11 @@ Close the app fully and open it again first (or install the newest APK from the 
 
 Server: the deploy runs migration `e4a6c8d0f2b5` (additive: returns, branch transfers, installment plans).
 
+**Edit a bill, stock icons (2026-11-16)**:
+- **Edit a sale**: open the sale → Edit this bill. The form opens filled; change the price, give a reason, then Complete sale. The old bill shows Deleted and the new one has the right price.
+- **Edit a purchase**: the same, from a purchase bill.
+- **Stock**: every phone has ✎ / 🗑. 🗑 on an old-stock phone opens Remove old stock with the warning.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

@@ -416,10 +416,18 @@ An audit found:
   - The plan stops (status `cancelled`; no due dates, no reminders, out of the active views), and the balance stays as normal udhaar.
   - A cancelled plan no longer blocks deleting its sale (`_later_links`).
 
-**Not yet**:
-- a real edit of a sale / purchase's lines;
-- Edit / Delete icons on the stock list's styles (today they are on the phone's page);
-- cancelling an installment plan, so its sale can be deleted.
+**Part 4 (2026-11-16)**:
+- **Stock list**: ✎ / 🗑 on every phone in all four styles (`DeviceActions`). 🗑 opens the phone with `?delete=1`, and the page offers the delete that fits:
+  - an old-stock entry → Remove old stock;
+  - a bought phone still in stock → its purchase bill's delete;
+  - a sold phone → its sale bill's delete;
+  - anything else → it says why not.
+- **Edit a sale / purchase bill** (lines, prices / costs, items, discount, payment, customer / dealer): `POST /sales/{id}/replace` and `POST /purchases/{id}/replace` (body = the create body + `reason`).
+  - The old bill is voided and the corrected one created in one transaction. The old bill keeps "Edited, replaced by …".
+  - The same refusals as a delete apply.
+  - The bill's **Edit this bill** button opens the sale / purchase form filled from it (`?replace=<id>`): phones with what went with them, items, discount, paid / udhaar, the person. A reason is asked.
+  - The new bill is dated now: a back-dated one would come before the phone's own latest events.
+  - A bill made through an exchange is still deleted as one exchange, not edited.
 
 **Consequences**: no data change and no migration. Two deletes that used to leave the books half-undone now explain what to undo first.
 

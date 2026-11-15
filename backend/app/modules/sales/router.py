@@ -115,3 +115,18 @@ def receipt(
     lang: str | None = Query(default=None, pattern="^(en|ur)$"),
 ):
     return service.receipt_html(db, ctx.shop_id, invoice_id, format, lang)
+
+
+class SaleReplaceIn(SaleCreate):
+    reason: str = Field(min_length=3, max_length=300)
+
+
+@router.post("/{invoice_id}/replace", response_model=SaleOut, status_code=201)
+def replace(invoice_id: uuid.UUID, data: SaleReplaceIn, ctx: Ctx, db: DB):
+    """owner 2026-11-16 (ADR-090): edit a sale — the old bill is replaced by the corrected one"""
+    body = SaleCreate(**data.model_dump(exclude={"reason"}))
+    return service.to_out(
+        db,
+        service.replace_invoice(db, ctx.shop_id, ctx, invoice_id, body, data.reason),
+        ctx.can(Cap.VIEW_COST),
+    )

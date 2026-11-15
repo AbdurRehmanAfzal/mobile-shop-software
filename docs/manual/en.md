@@ -1047,6 +1047,8 @@ Before anything is deleted, a red box **What will happen** says what changes in 
 - Delete is for the owner and the manager, and asks for a reason.
 - A deleted entry stays in the record as **Deleted** (or crossed out), with who, when and why. Nothing is wiped, so the hisaab always adds up.
 - **Exchange**: on its sale or purchase bill, **Delete this exchange** undoes both halves together. The new phone comes back into stock, the old phone goes back to the customer, and a refund paid out is reversed. One half alone cannot be deleted.
+- **Edit a sale or purchase bill**: on the bill, **Edit this bill** opens the form filled from it. Change the phone, price, items, discount or payment, give a reason and save. The old bill is kept as Deleted, and the corrected one is made at once (dated now).
+- **Stock**: every phone in the stock list has ✎ / 🗑. 🗑 offers the delete that fits that phone, or says why it cannot be deleted.
 - **Edit a payment or len-den**: ✎ on its row lets you change the amount, date or note. The old one stays as Deleted and the corrected one takes its place.
 - **Undo**: a **return** (🗑 in Returns), a **stock adjustment** (🗑 on it in the item's history) and a **galla ↔ bank move** (🗑 in Cash & bank) are undone the same way, after the warning.
 - **Cancel**: a **loan** still out (🗑 on it in Loans), a **branch transfer** you sent (🗑 in Transfers: everything comes back) and an **installment plan** (Cancel this plan, on the plan: the balance stays as udhaar, then the sale can be deleted).

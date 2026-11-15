@@ -1,7 +1,7 @@
 import LockedLineSheet from './LockedLineSheet'
 import { Lock, Check, Headphones, PackagePlus, Pencil, Plus, Printer, ShieldCheck, SlidersHorizontal, Smartphone, Store, Trash2, UserCheck, UserRound, Watch } from 'lucide-react'
 import { faultText } from '@/features/stock/Faults'
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { clearDrafts, useDraft } from '@/lib/draft'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
@@ -12,13 +12,13 @@ import PartyPicker from '@/components/PartyPicker'
 import { BtnText, Chip, ErrorText, IconChip, MoneyText, PageHeader, Sheet, Stepper } from '@/components/ui'
 import { uid } from '@/lib/id'
 import { useStepUrl } from '@/lib/steps'
-import { api } from '@/lib/api'
+import { api, get } from '@/lib/api'
 import { openPrintable } from '@/lib/files'
 import LabelSheet from '@/components/LabelSheet'
 import { Tag } from 'lucide-react'
 import { isQueued } from '@/lib/offline'
 import { useColours, useDocMutation, useStorages } from '@/lib/queries'
-import type { Party, Purchase } from '@/lib/types'
+import type { DeviceDetail, Party, Purchase } from '@/lib/types'
 import DeviceLineSheet, { draftToApi, emptyDraft, type DeviceLineDraft } from './DeviceLineSheet'
 import {withCur } from '@/lib/format'
 
@@ -85,8 +85,32 @@ export default function PurchaseWizard() {
   const chip = (on: boolean) => `tap flex min-h-[68px] flex-col items-center justify-center gap-1 rounded-2xl border-2 px-2 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('md') : 'text-[15px]'}`
   const partyKind = kind === 'supplier' ? 'supplier' : kind === 'shop' ? 'shop' : 'customer'
 
+  // ADR-090: Edit a purchase — the form opens filled from it; saving replaces it (the old one kept as Deleted)
+  const [replaceId] = useState(() => params.get('replace'))
+  const [replaceNo, setReplaceNo] = useState('')
+  const [replaceWhy, setReplaceWhy] = useState('')
+  const rep = useDocMutation<Record<string, unknown>, Purchase>('POST', () => `/api/v1/purchases/${replaceId}/replace`)
+  useEffect(() => {
+    if (!replaceId) return
+    void (async () => {
+      const pur = await get<Purchase>(`/api/v1/purchases/${replaceId}`)
+      setReplaceNo(pur.no)
+      setKind(pur.kind)
+      setChosen(true)
+      const live = pur.lines.filter((l) => !l.returned_at)
+      const devs = await Promise.all(live.filter((l) => l.device_id).map((l) => get<DeviceDetail>(`/api/v1/devices/${l.device_id}`)))
+      setDevices(live.filter((l) => l.device_id).map((l, i) => toDraft(devs[i], pur.kind, String(Number(l.unit_cost)))))
+      setMisc(live.filter((l) => !l.device_id).map((l) => ({ key: uid(), description: l.description ?? '', qty: String(l.qty), unit_cost: String(Number(l.unit_cost)), accessory_id: l.accessory_id ?? undefined })))
+      setDiscount(Number(pur.discount) ? String(Number(pur.discount)) : '')
+      setPaidNow(String(Number(pur.paid)))
+      if (Number(pur.paid) < Number(pur.total)) setPay({ ...newPay(), method: 'udhaar' })
+      setParty(await get<Party>(`/api/v1/parties/${pur.party_id}`))
+      setStep(1)
+    })().catch(() => undefined)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   async function submit() {
-    const res = await m.mutateAsync({
+    const body = {
       kind,
       party_id: party!.id,
       devices: devices.map(draftToApi),
@@ -100,7 +124,8 @@ export default function PurchaseWizard() {
       reference: reference || undefined,
       due_date: udhaar && dueDate ? dueDate : undefined,
       purchased_at: earlier && when ? new Date(when).toISOString() : undefined,
-    })
+    }
+    const res = replaceId ? await rep.mutateAsync({ ...body, reason: replaceWhy.trim() }) : await m.mutateAsync(body)
     if (isQueued(res)) {
       // no internet: the purchase waits on the phone (the strip under the header says so)
       clearDrafts('purchase.')
@@ -128,6 +153,12 @@ export default function PurchaseWizard() {
     <div className="flex flex-col gap-3">
       <PageHeader title="counter.addStock" help={<Help term="purchase.page" />} onBack={back} />
       <Stepper steps={steps} current={step} onStep={step < 2 ? setStep : undefined} />
+      {replaceId ? (
+        <div className="flex flex-col gap-2 rounded-2xl border border-gold/40 bg-gold/15 px-3 py-2.5" data-testid="purchase-editing">
+          <span className="text-sm font-bold text-ink">{pick('sedit.editing').replace('{{no}}', replaceNo)}</span>
+          <BiInput label="common.reason" value={replaceWhy} onChange={(e) => setReplaceWhy(e.target.value)} minLength={3} data-testid="purchase-edit-reason" />
+        </div>
+      ) : null}
 
       {step === 0 ? (
         <div className="flex flex-col gap-3">
@@ -273,8 +304,8 @@ export default function PurchaseWizard() {
                   </div>
                 ) : null}
               </div>
-              <ErrorText error={m.error} />
-              <BiButton text="counter.putInStock" icon={<PackagePlus size={22} />} full loading={m.isPending} disabled={(earlier && !when) || total <= 0 || !billPayReady(pay, part, paid)} onClick={() => { setChecked(false); m.reset(); setReviewing(true) }} data-testid="purchase-review-open" />
+              <ErrorText error={m.error ?? rep.error} />
+              <BiButton text="counter.putInStock" icon={<PackagePlus size={22} />} full loading={m.isPending} disabled={(earlier && !when) || total <= 0 || !billPayReady(pay, part, paid) || (!!replaceId && replaceWhy.trim().length < 3)} onClick={() => { setChecked(false); m.reset(); setReviewing(true) }} data-testid="purchase-review-open" />
             </>
           ) : null}
         </div>
@@ -397,8 +428,8 @@ export default function PurchaseWizard() {
             <input type="checkbox" checked={checked} onChange={(e) => setChecked(e.target.checked)} className="h-6 w-6 shrink-0 accent-[rgb(var(--emerald))]" data-testid="review-ok" />
             <BiLabel text="purchase.review.ok" size="md" bold />
           </label>
-          <ErrorText error={m.error} />
-          <BiButton text="counter.putInStock" icon={<PackagePlus size={22} />} full loading={m.isPending} disabled={!checked} onClick={async () => { await submit(); setReviewing(false) }} data-testid="purchase-save" />
+          <ErrorText error={m.error ?? rep.error} />
+          <BiButton text="counter.putInStock" icon={<PackagePlus size={22} />} full loading={m.isPending || rep.isPending} disabled={!checked} onClick={async () => { await submit(); setReviewing(false) }} data-testid="purchase-save" />
         </div>
       </Sheet>
 
@@ -472,3 +503,19 @@ function localNow() {
   d.setMinutes(d.getMinutes() - d.getTimezoneOffset())
   return d.toISOString().slice(0, 16)
 }
+
+/** a bought phone back into the purchase form (ADR-090 edit): every field the form has, from the
+ *  phone's record; its barcode stays with the phone */
+function toDraft(dev: DeviceDetail, kind: Purchase['kind'], cost: string): DeviceLineDraft {
+  const base = emptyDraft(dev.imei1, kind)
+  const src = dev as unknown as Record<string, unknown>
+  const out: Record<string, unknown> = { ...base }
+  for (const k of Object.keys(base)) {
+    if (k === 'key' || k === 'barcode' || k === 'manufacturer_code' || k === 'accessories') continue
+    const v = src[k]
+    if (v === null || v === undefined) continue
+    out[k] = typeof base[k as keyof DeviceLineDraft] === 'string' ? String(v) : v
+  }
+  return { ...(out as unknown as DeviceLineDraft), cost, asking_price: dev.asking_price != null ? String(Number(dev.asking_price)) : '' }
+}
+

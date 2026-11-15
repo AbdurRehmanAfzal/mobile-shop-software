@@ -21,6 +21,7 @@ import { BiButton } from '@/components/Bilingual'
 import { simTypeText } from '@/features/purchase/AppleVariant'
 import { KindTabs, StatusCards, type Kind, type Mode } from './StockCards'
 import { FieldsButton, StockGrid, StockList, StockTable, ViewSwitch, fieldBits, loadFields, loadView, saveFields, saveView, sortRows, FIELDS, type ColSort, type FieldKey, type StockView } from './StockViews'
+import DeviceActions from './DeviceActions'
 
 type Filter = 'in_stock' | 'on_loan' | 'sold' | 'faulty' | 'all'
 
@@ -81,7 +82,7 @@ export function DeviceRow({ d, onClick }: { d: Device; onClick?: () => void }) {
 const daysSince = (iso: string) => Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000))
 
 /** Offer-style card (owner's UI guide: Easypaisa "Buy Package"): title + price, stat columns, pill CTA. */
-export function DeviceCard({ d, onOpen, onSell, selected, onSelect, fields }: { d: Device; onOpen: () => void; onSell?: () => void; selected?: boolean; onSelect?: () => void; fields?: FieldKey[] }) {
+export function DeviceCard({ d, onOpen, onSell, selected, onSelect, fields, actions }: { d: Device; onOpen: () => void; onSell?: () => void; selected?: boolean; onSelect?: () => void; fields?: FieldKey[]; actions?: boolean }) {
   const { pick } = useLang()
   const vTone = d.verification_status === 'flagged' ? 'bad' : d.verification_status === 'pending' ? 'warn' : 'ok'
   // the stock page's chosen fields fill the four boxes (owner 2026-11-09); elsewhere the usual four
@@ -120,6 +121,8 @@ export function DeviceCard({ d, onOpen, onSell, selected, onSelect, fields }: { 
           {d.lock_type ? <Chip text={`locked.type.${d.lock_type}`} tone="bad" /> : null}
           {d.reserved_party_id ? <span className="rounded-full bg-gold-tint px-2 py-0.5 font-bold text-ink" data-testid="card-reserved-chip">{pick('reserve.chip')} {d.reserved_party_name}</span> : null}
         </div>
+        {/* ADR-090: ✎ / 🗑 on the stock page's cards */}
+        {actions ? <DeviceActions d={d} /> : null}
         {onSell && (d.status === 'in_stock' || d.status === 'faulty') && d.verification_status !== 'flagged' ? (
           <button type="button" onClick={onSell} className="tap min-h-11 shrink-0 rounded-full bg-emerald px-6 text-sm font-bold text-white shadow-cta">
             {pick('stock.sell')}
@@ -328,7 +331,7 @@ export default function StockPage() {
       ) : (
         <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:items-start">
           {rows.map((d) => (
-            <DeviceCard key={d.id} d={d} fields={fields} onOpen={() => nav(`/stock/${d.id}`)} onSell={() => nav(`/sale/new?device=${d.id}`)} selected={picked.includes(d.id)} onSelect={picking ? () => setPicked((x) => (x.includes(d.id) ? x.filter((i) => i !== d.id) : [...x, d.id])) : undefined} />
+            <DeviceCard key={d.id} d={d} fields={fields} actions={!picking} onOpen={() => nav(`/stock/${d.id}`)} onSell={() => nav(`/sale/new?device=${d.id}`)} selected={picked.includes(d.id)} onSelect={picking ? () => setPicked((x) => (x.includes(d.id) ? x.filter((i) => i !== d.id) : [...x, d.id])) : undefined} />
           ))}
         </div>
       )}

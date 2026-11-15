@@ -126,3 +126,16 @@ def change_cost(data: CostChangeIn, ctx: Ctx, db: DB):
             db, ctx.shop_id, ctx, data.device_id, data.cost, data.reason.strip(), data.mode
         ),
     )
+
+
+class PurchaseReplaceIn(PurchaseCreate):
+    reason: str = Field(min_length=3, max_length=300)
+
+
+@router.post("/{purchase_id}/replace", response_model=PurchaseOut, status_code=201)
+def replace(purchase_id: uuid.UUID, data: PurchaseReplaceIn, ctx: Ctx, db: DB):
+    """owner 2026-11-16 (ADR-090): edit a purchase — the old bill is replaced by the corrected one"""
+    body = PurchaseCreate(**data.model_dump(exclude={"reason"}))
+    return service.to_out(
+        db, service.replace_purchase(db, ctx.shop_id, ctx, purchase_id, body, data.reason)
+    )

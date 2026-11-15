@@ -8312,6 +8312,13 @@
         "body": "Shop owner (ya upar password ke liye chuna gaya user) ka naya 4–6 hindson ka PIN lagayen. Purana PIN parha nahi ja sakta — sirf badla ja sakta hai. Dukaan ki history mein 'software support ne' likha aata hai.",
         "example": "Owner PIN bhool gaya → 2468 likhen → Save → usay 2468 batayen."
       }
+    },
+    "sedit": {
+      "button": {
+        "title": "Bill edit karna",
+        "body": "Sale ka form is bill se bhar kar khulta hai. Phone, qeemat, saman, discount ya paid badlein, wajah likhein aur save karein: purana bill cancel (Deleted, \"Edited, replaced by …\") aur sahi wala ek saath ban jata hai — stock, galla aur khata saath chalte hain. Agar phone aage chala gaya ya baad mein paisa aaya to mumkin nahi.",
+        "example": "38,000 mein becha magar 36,000 tha → Edit → qeemat 36,000 → wajah → save: naya bill 36,000, galla 2,000 kam."
+      }
     }
   },
   "items": {
@@ -11412,9 +11419,15 @@
       "effect": "Plan ruk jayega: aur koi qist ki tareekh ya yaad-dihani nahi. Bill par jo baqi hai wo gahak ke khate mein aam udhaar rahega. Jo qistein mil chuki wo rahengi. Is ke baad, agar ghalti sale hi thi, to sale bhi delete ho sakti hai.",
       "example": "Ghalti se phone 5 qiston par becha, Rs. 45,000 baqi → plan ruka, Ahmed par Rs. 45,000 udhaar."
     },
-    "cancelPlan": "Ye plan cancel karein"
+    "cancelPlan": "Ye plan cancel karein",
+    "phoneNoDelete": "Ye phone yahan se delete nahi ho sakta: ye aage ja chuka hai (amanat, repair, wapsi, branch …). Pehle wo qadam wapas karein — ya agar bik gaya tha to us ki sale delete ya return karein."
   },
   "pedit": {
     "hint": "Raqam, tareekh ya note badlein. Purani entry Deleted ke naam se rahegi (\"Edited, replaced by …\") aur us ki jagah sahi wali aa jayegi; khata aur jo bill is se ada hue the wo bhi theek ho jayenge."
+  },
+  "sedit": {
+    "button": "Ye bill edit karein (phone, qeemat, payment)",
+    "editing": "Bill {{no}} edit ho raha hai: jo ghalat hai badlein aur save karein. Purana bill Deleted rahega aur ye us ki jagah lega.",
+    "purchaseButton": "Ye bill edit karein (phone, qeemat, payment)"
   }
 }
