@@ -7130,6 +7130,11 @@
           "title": "Business overview",
           "body": "Sales, purchases, profit, money in / out, udhaar, customers, stock alerts and recent activity on one screen, each with View details.",
           "example": "Today: 4 sales, 2 purchases, Rs. 25,000 received."
+        },
+        "whatsapp": {
+          "title": "WhatsApp entries",
+          "body": "Send sales, purchases, payments and len-den to the WhatsApp group in one standard message, and enter them in the software from the message.",
+          "example": "Paste \"*SALE* … IMEI … Price …\" → the sale opens filled."
         }
       },
       "pinPassword": {
@@ -8174,6 +8179,23 @@
         "title": "List for customers",
         "body": "An A4 list of the phones for sale with what a customer asks about and the price. No IMEI, serial, barcode, cost, seller or days in the shop; phones in repair, on loan or faulty are left out.",
         "example": "Send a customer the iPhones for sale: iPhone 13 128GB, PTA, battery 88%, Rs. 1,25,000."
+      }
+    },
+    "wa": {
+      "page": {
+        "title": "WhatsApp entries",
+        "body": "The staff post each sale, purchase, payment and len-den in the WhatsApp group in one standard message; the person who keeps the software enters it from here. Enter from a message: paste it, check what was read, and open the form already filled. Write a message: fill a few boxes and send the standard message to the group.",
+        "example": "Ahmed sends \"*SALE* … IMEI … Price 1,25,000 … Paid 1,00,000 cash\"; it is pasted here and the sale opens with the phone, customer, price and udhaar filled."
+      },
+      "format": {
+        "title": "The standard message",
+        "body": "The first line says what it is (*SALE*, *PURCHASE*, *PAYMENT RECEIVED*, *PAYMENT PAID*, *LEN DEN*), then one \"Key: value\" a line. Amounts can be 1,25,000, 125k or 1.25 lakh; write cash / online / cheque after Paid. Lines can be in any order and Roman Urdu words work too (Gahak, Qeemat, Baqi, Diya, Liya).",
+        "example": "*PURCHASE*\nMobile: Samsung A05 4/64\nIMEI: 356938035643809\nCondition: Used\nFrom: Bilal Mobiles\nCost: 30000\nPaid: 10000 cash"
+      },
+      "enter": {
+        "title": "Enter from a message",
+        "body": "Paste the group's message. The app reads it, finds the phone by its IMEI and the person by their number or name, and opens the sale or purchase form filled in (or the payment / len-den form). Check it and save as usual — nothing is saved before. IMEI from photo reads the barcode on a photo of the box or the IMEI screen.",
+        "example": "Paste a purchase message → Open the purchase, filled → the phone sheet opens with the model, IMEI, condition and cost; add the seller's ID if needed and save."
       }
     }
   },
@@ -10907,5 +10929,88 @@
     "staffHint": "Every phone field — IMEI, storage, RAM, colour, condition, PTA, battery, barcode, days — and the asking price. No cost, no seller.",
     "customer": "For customers",
     "customerHint": "Phones for sale with what customers ask about — model, storage, RAM, colour, condition, PTA, battery — and the price. No IMEI, no cost."
+  },
+  "wa": {
+    "title": "WhatsApp entries",
+    "tabEnter": "Enter from a message",
+    "tabWrite": "Write a message",
+    "kind": {
+      "sale": "Sale",
+      "purchase": "Purchase",
+      "received": "Received",
+      "paid": "Paid",
+      "lending": "Len-den"
+    },
+    "f": {
+      "mobile": "Mobile (model)",
+      "imei": "IMEI",
+      "customer": "Customer",
+      "from": "Bought from",
+      "name": "Name",
+      "phone": "Phone number",
+      "price": "Sale price",
+      "cost": "Cost (bought for)",
+      "asking": "Asking price",
+      "paid": "Paid now",
+      "paidHint": "Less than the price = the rest on udhaar",
+      "udhaar": "On udhaar",
+      "amount": "Amount",
+      "method": "Paid by",
+      "condition": "Condition",
+      "pta": "PTA",
+      "battery": "Battery %",
+      "due": "Return date",
+      "by": "Sent by",
+      "note": "Note",
+      "gave": "Shop gave",
+      "took": "Shop took"
+    },
+    "method": {
+      "cash": "Cash",
+      "online": "Online / bank",
+      "cheque": "Cheque"
+    },
+    "cond": {
+      "box_pack": "Box pack",
+      "open_box": "Open box",
+      "used": "Used",
+      "patched": "Patched"
+    },
+    "pta": {
+      "pta_approved": "PTA",
+      "non_pta": "Non-PTA",
+      "jv": "JV",
+      "cpid": "CP ID"
+    },
+    "preview": "The message",
+    "send": "Send on WhatsApp",
+    "copy": "Copy",
+    "copied": "Copied",
+    "copyBlank": "Copy blank form",
+    "blankHint": "Pin the blank forms in the groups: anyone fills the lines after the \":\" and sends.",
+    "pasteTitle": "Paste the message from the group",
+    "pastePh": "*SALE*\nMobile: iPhone 13 128GB\nIMEI: …\nCustomer: …\nPrice: …\nPaid: … cash",
+    "paste": "Paste",
+    "photoImei": "IMEI from photo",
+    "photoNone": "No IMEI barcode found in the photo. Type the IMEI or take a clearer photo.",
+    "clear": "Clear",
+    "whatEntry": "What the message says",
+    "noKind": "Pick what this entry is.",
+    "notRead": "Not read:",
+    "inStock": "In stock",
+    "notInStock": "Not in stock (sold / out)",
+    "notFound": "Not found",
+    "alreadyIn": "Already in the shop",
+    "newPhone": "New phone",
+    "noImei": "No IMEI in the message — add it, or read it from the photo.",
+    "change": "Change",
+    "personNew": "This person is not saved yet — pick or add them.",
+    "openSale": "Open the sale, filled",
+    "openPurchase": "Open the purchase, filled",
+    "openPayment": "Enter the payment",
+    "openLending": "Enter the len-den",
+    "saleNeedsStock": "A sale needs a phone that is in stock.",
+    "needPerson": "Pick who the phone was bought from.",
+    "saved": "Saved. Paste the next message."
   }
 }

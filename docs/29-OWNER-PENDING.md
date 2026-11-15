@@ -180,6 +180,12 @@ Close the app fully and open it again first (or install the newest APK from the 
 3. For customers → Share on WhatsApp: no IMEI and no cost; only phones for sale.
 4. Download any report (sales, purchases) as PDF and print it on A4.
 
+**WhatsApp entries (2026-11-15, ADR-079)**:
+1. More → **WhatsApp entries** → Write a message → Sale: fill it and **Send on WhatsApp** to a test group. **Copy blank form** and pin it in the group.
+2. Copy that message from WhatsApp → Enter from a message → Paste: the phone shows "In stock" and the customer is found → **Open the sale, filled** → check and save.
+3. Send a hand-written purchase ("khareeda … IMEI … qeemat 30k … jama 10000 cash") and enter it the same way; try **IMEI from photo** with a photo of the box.
+4. A payment and a len-den message → the payment form opens with the amount.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

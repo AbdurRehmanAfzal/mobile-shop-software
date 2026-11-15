@@ -1625,3 +1625,32 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - pytest `test_stock_a4` (new), `test_exports`, `test_stock_tally`; full suite.
 - tsc.
 - Playwright `stock-a4` (new: 18 phones with every field, the staff and customer copies and the purchases report are no wider than A4; Price lists → the app's PDF downloads); I looked at the screenshots.
+
+### Same day — side margins on every app PDF
+**Owner**: "left side r right side may minor be space nahi hai … sub pdf may minor si left right space day do".
+**Found**: the app's PDF drew the page from edge to edge (210 mm); only the browser's print kept the `@page` margin.
+**Done**: `printPagePdf` lays the page out 190 mm wide and places it 10 mm from each side, on every A4 PDF. The thermal receipt is unchanged.
+**Verified**:
+- In the PDF, each page image is at x = 28.35 pt (10 mm) and 538.58 pt (190 mm) wide.
+- Playwright `stock-a4` and `stock-tally`: the layouts fit at 718 px (190 mm); the app PDF downloads.
+- tsc.
+
+### Same day — WhatsApp entries: a standard group message, read back into the forms (ADR-079)
+**Owner**: "staff k sath sale group, purchase group, len-den ka group … software wala entry daalta hai … whatsapp k liye kuch template … standard … message likhnay walo ko be problem na ho … mobile may IMEI ki picture be r kabi box be share kr diye jata hai … analyze karo r best option do r implement karo".
+**Decision**: one standard "Key: value" message with a forgiving reader, plus a screen with two parts. *Write* builds and sends the message. *Enter* pastes it (or reads the IMEI from a photo) and opens the usual form filled. Nothing is saved before that form, so every check stays.
+**Done**:
+- `lib/waMessage.ts`: build / parse, Roman Urdu keys, lakh / k amounts, IMEI with a check digit, phone numbers, model / storage / RAM / condition / PTA.
+- `seedDrafts` in `lib/draft.ts`; `newLine` exported from SaleWizard.
+- `features/whatsapp/WhatsAppPage.tsx` at `/whatsapp`, with a More tile.
+- en / ur / roman strings + help, manual ch. 3, ADR-079, docs/29.
+**Verified**:
+- vitest `waMessage.test.ts` (8, new) and `Help.test`.
+- tsc.
+- Playwright `whatsapp` (new):
+  - a sale message → the phone in stock, the customer found, 15,000 udhaar → the sale opens at step 2 with the phone and 35,000;
+  - a hand-written purchase → a new phone, the dealer found → the phone sheet with the IMEI, Samsung and cost 28,000;
+  - a payment message → the payment form with 5,000, saved, in the payments list;
+  - Write → the standard message with the udhaar.
+- I looked at the screenshots.
+- On the way: React may run the useDraft initializer twice, so the seed is now forgotten in the effect, not in the initializer.
+**Next**: the owner's earlier list — login security (device approval, staff hours, Authenticator for the owner), once the owner picks the points.

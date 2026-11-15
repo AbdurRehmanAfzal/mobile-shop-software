@@ -40,7 +40,7 @@ test('tally sheet on A4', async ({ page, request }) => {
 
   // the print page, as the app and the browser print it: A4 width, all fields, no sideways scroll
   const html = await (await request.get('/api/v1/exports/stock-tally?format=pdf&lang=en', { headers: h })).text()
-  await page.setViewportSize({ width: 794, height: 1123 }) // A4 at 96 dpi
+  await page.setViewportSize({ width: 718, height: 1123 }) // A4 less 10 mm each side (the app's PDF)
   await page.setContent(html, { waitUntil: 'load' })
   const over = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
   expect(over).toBeLessThanOrEqual(2)
