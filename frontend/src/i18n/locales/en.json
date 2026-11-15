@@ -8163,6 +8163,18 @@
         "body": "How many sales, purchases, returns, transfers, payments, customers and dealers the shop has in all. Tap one to open its list.",
         "example": "Sales 1,240 → the sales list."
       }
+    },
+    "plist": {
+      "staff": {
+        "title": "Price list for the staff",
+        "body": "An A4 list of the phones on the stock page with every field and the asking (sale) price, grouped by brand and model, with counts and the total at asking price. It never has the cost or who sold the phone to the shop, so the owner can send it to a salesman.",
+        "example": "Send it on WhatsApp to Ahmed: 42 phones, each with IMEI, storage, condition and its sale price."
+      },
+      "customer": {
+        "title": "List for customers",
+        "body": "An A4 list of the phones for sale with what a customer asks about and the price. No IMEI, serial, barcode, cost, seller or days in the shop; phones in repair, on loan or faulty are left out.",
+        "example": "Send a customer the iPhones for sale: iPhone 13 128GB, PTA, battery 88%, Rs. 1,25,000."
+      }
     }
   },
   "items": {
@@ -10886,5 +10898,14 @@
     "transfers": "Transfers",
     "fullHisaab": "Open the full hisaab for this period",
     "walkIn": "Walk-in customers"
+  },
+  "plist": {
+    "button": "Price lists",
+    "title": "Price lists to share",
+    "intro": "The phones this page shows (its search and filters), on A4. Print, or download / share as PDF, Excel or CSV.",
+    "staff": "For the staff (with sale price)",
+    "staffHint": "Every phone field — IMEI, storage, RAM, colour, condition, PTA, battery, barcode, days — and the asking price. No cost, no seller.",
+    "customer": "For customers",
+    "customerHint": "Phones for sale with what customers ask about — model, storage, RAM, colour, condition, PTA, battery — and the price. No IMEI, no cost."
   }
 }

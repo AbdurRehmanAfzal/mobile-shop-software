@@ -1,4 +1,5 @@
 import DownloadButton from '@/components/DownloadButton'
+import PriceListsButton from './PriceListsButton'
 import { FaultChip } from './Faults'
 import { ArrowUpDown, PackagePlus, ScanLine } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -307,6 +308,7 @@ export default function StockPage() {
       <div className="flex flex-wrap items-center justify-end gap-1.5">
         <FieldsButton value={fields} onChange={(v) => { setFields(v); saveFields(v) }} />
         <DownloadButton path={exportPath} name="stock" />
+        <PriceListsButton path={exportPath} />
       </div>
       {data ? <div className="flex items-center gap-1 text-xs font-semibold text-muted">{t('stock.count', { n: rows.length })}<Help term="stock.card" size="sm" /></div> : null}
 

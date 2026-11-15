@@ -1002,6 +1002,15 @@ History ki lines kabhi edit ya delete nahi ho saktin. Ghalti nayi line se theek 
 - Owner ko home screen par "**1 staff ne stock ginti sheet maangi hai**" nazar aata hai; yeh card kholta hai, har darkhwast ke saath **Ijazat dein** / **Mana karein**.
 - Ijazat ke baad woh staff sirf staff copy (PDF / Excel / CSV) chhaap aur download kar sakta hai, jab tak owner **Ijazat wapas lein** na dabaye.
 
+### A4 par stock ki list aur share ke liye qeemat lists
+
+- **Stock** par **Download / Share** wohi mobile deta hai jo page dikha raha hai (search, filter, fields aur tarteeb). PDF ab **A4** par poora aata hai, chahe jitni fields chuni hon. Upar dukaan, tareekh, figures aur brand / model ki ginti; phir har mobile ek line mein: IMEI / IMEI 2 / serial, baqi chuni hui fields, aur qeemat (khareed qeemat sirf owner / manager ke liye).
+- **Qeemat list** (Download ke saath) inhi mobiles ki do aur lists deta hai:
+  - **Staff ke liye (farokht qeemat ke saath)**: har tafseel aur farokht qeemat; khareed qeemat aur bechne wala kabhi nahi. Owner yeh salesman ko bhej sakta hai.
+  - **Gahakon ke liye**: bikne wale mobile, gahak wali tafseel (model, storage, RAM, rang, haalat, PTA, battery…) aur qeemat; IMEI aur khareed qeemat nahi.
+- Har ek **Print (A4)**, ya PDF, Excel ya CSV mein download / share. Har Excel bhi A4 par ek page chaurai mein print hoti hai, har page par column ke naam ke saath.
+- Baqi har report (farokht, khareedari, khata…) ka PDF bhi ab A4 par aata hai; zyada column hon to likhai chhoti ho kar lipat jati hai.
+
 ### Scanner se stock ki ginti
 
 Mahine mein ek baar (ya jab bhi lage ke kuch ghayab hai) scanner se shelf gin lein. App batati hai ke kya ghayab hai aur kya yahan nahi hona chahiye.

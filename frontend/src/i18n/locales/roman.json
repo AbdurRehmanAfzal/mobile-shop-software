@@ -8163,6 +8163,18 @@
         "body": "Dukaan mein kul kitni farokht, khareedari, wapsi, transfer, payments, gahak aur dealer hain. Dabayein to us ki list.",
         "example": "Farokht 1,240 → farokht ki list."
       }
+    },
+    "plist": {
+      "staff": {
+        "title": "Staff ke liye qeemat list",
+        "body": "Stock page ke mobiles ki A4 list, har tafseel aur farokht qeemat ke saath, brand aur model ke hisaab se, ginti aur farokht qeemat par kul ke saath. Is mein khareed qeemat aur bechne wala kabhi nahi hota, is liye owner ise salesman ko bhej sakta hai.",
+        "example": "WhatsApp par Ahmed ko bhejein: 42 mobile, har ek IMEI, storage, haalat aur farokht qeemat ke saath."
+      },
+      "customer": {
+        "title": "Gahakon ke liye list",
+        "body": "Bikne wale mobiles ki A4 list, woh tafseel jo gahak poochta hai aur qeemat. IMEI, serial, barcode, khareed qeemat, bechne wala ya din nahi; repair, amanat ya kharab mobile shamil nahi.",
+        "example": "Gahak ko bikne wale iPhone bhejein: iPhone 13 128GB, PTA, battery 88%, 1,25,000."
+      }
     }
   },
   "items": {
@@ -10886,5 +10898,14 @@
     "transfers": "Branch transfer",
     "fullHisaab": "Is arse ka poora hisaab kholein",
     "walkIn": "Walk-in gahak"
+  },
+  "plist": {
+    "button": "Qeemat list",
+    "title": "Share ke liye qeemat ki lists",
+    "intro": "Is page par dikhaye gaye mobile (search aur filter ke saath), A4 par. Print karein, ya PDF, Excel ya CSV mein download / share karein.",
+    "staff": "Staff ke liye (farokht qeemat ke saath)",
+    "staffHint": "Har mobile ki saari tafseel — IMEI, storage, RAM, rang, haalat, PTA, battery, barcode, din — aur farokht qeemat. Khareed qeemat aur bechne wala nahi.",
+    "customer": "Gahakon ke liye",
+    "customerHint": "Bikne wale mobile, woh tafseel jo gahak poochte hain — model, storage, RAM, rang, haalat, PTA, battery — aur qeemat. IMEI aur khareed qeemat nahi."
   }
 }

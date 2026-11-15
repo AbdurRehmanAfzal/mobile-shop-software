@@ -268,6 +268,15 @@ On **Stock → What is my stock worth?** (and on **Stock count**) the **Stock ta
 - The owner sees "**1 staff asked for the stock tally sheet**" on the home screen; it opens the card, with each request and **Allow** / **Say no**.
 - Once allowed, that staff member can print and download only the staff copy (PDF / Excel / CSV), until the owner taps **Take back**.
 
+### Stock list on A4 and price lists to share
+
+- On **Stock**, **Download / Share** gives the phones the page shows (its search, filters, fields and order). The PDF now fits **A4**, whatever fields are picked. The top has the shop, the date, the figures and counts by brand and model. Then every phone, brand by brand and model by model, one row each: IMEI / IMEI 2 / serial, every other picked field, and the price (cost only for the owner / manager).
+- **Price lists** (next to Download) gives two more lists of the same phones:
+  - **For the staff (with sale price)**: every phone field with the asking price; never the cost or the seller. The owner can send it to a salesman.
+  - **For customers**: phones for sale with what customers ask about (model, storage, RAM, colour, condition, PTA, battery…) and the price; no IMEI, no cost.
+- Each is **Print (A4)**, or Download / Share as PDF, Excel or CSV. Every Excel is set to print on A4, one page wide, with the header row on every page.
+- Every other report's PDF (sales, purchases, khata…) now prints on A4 portrait too; many columns get a smaller type and wrap.
+
 ### Stock count with the scanner
 
 Once a month (or whenever you feel something is missing) count the shelf with the scanner. The app tells you what is missing and what should not be there.

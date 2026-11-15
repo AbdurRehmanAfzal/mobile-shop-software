@@ -174,6 +174,12 @@ Close the app fully and open it again first (or install the newest APK from the 
 2. Stock → What is my stock worth? → **Staff copy (no prices)** → Print: no price or amount on the paper.
 3. Log in as a salesman → the same page → **Ask the owner for the sheet**. As the owner, the home screen shows the request → **Allow**. The salesman now prints the staff copy only. **Take back** stops it.
 
+**Stock lists on A4 and price lists (2026-11-15, ADR-078)**:
+1. Stock → **Fields**: pick many fields → **Download** → PDF: it fits A4, one row a phone.
+2. Stock → **Price lists** → For the staff → Print (A4): every detail with the sale price, no cost.
+3. For customers → Share on WhatsApp: no IMEI and no cost; only phones for sale.
+4. Download any report (sales, purchases) as PDF and print it on A4.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |
