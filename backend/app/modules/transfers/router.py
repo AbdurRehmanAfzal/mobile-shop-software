@@ -7,8 +7,11 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
+from app.core.errors import Forbidden
 from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx, require_cap
+from app.modules.auth.models import Shop
+from app.modules.sales.schemas import VoidIn
 from app.modules.transfers import service
 from app.modules.transfers.schemas import TransferIn
 
@@ -46,3 +49,12 @@ def get_transfer(transfer_id: uuid.UUID, ctx: Mover, db: DB):
 def create(data: TransferIn, ctx: Mover, db: DB):
     ctx.require(Cap.TRANSACT)
     return _out(service.create(db, ctx.user.id, ctx.shop, data))
+
+
+@router.post("/{transfer_id}/undo")
+def undo(transfer_id: uuid.UUID, data: VoidIn, ctx: Mover, db: DB):
+    """owner 2026-11-16 (ADR-090): send a branch transfer made by mistake back, as it went"""
+    if not ctx.can(Cap.VOID):
+        raise Forbidden()
+    shop = db.get(Shop, ctx.shop_id)
+    return _out(service.undo(db, ctx.id, shop, transfer_id, data.reason))

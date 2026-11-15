@@ -340,6 +340,7 @@ def transfer_out(db: Session, shop_id: uuid.UUID, t: BranchTransfer) -> dict:
         "at": t.at,
         "note": t.note,
         "total_cost": t.total_cost,
+        "undone_by": t.undone_by,
         "lines": [
             {
                 "kind": ln.kind,
@@ -370,3 +371,51 @@ def get(db: Session, shop_id: uuid.UUID, transfer_id: uuid.UUID) -> dict:
     if t is None or shop_id not in (t.shop_id, t.to_shop_id):
         raise NotFound(code="transfer_not_found")
     return transfer_out(db, shop_id, t)
+
+
+def undo(db: Session, user_id: uuid.UUID, shop: Shop, transfer_id: uuid.UUID, reason: str) -> dict:
+    """A branch transfer sent by mistake (owner 2026-11-16, ADR-090): everything comes back the way
+    it went — a transfer from the other branch back to this one, at the same cost — so each shop's
+    own rows keep their history (ADR-046: a row never changes shop). Refused once a phone or item
+    there has been sold or moved on. The original is marked as undone, once."""
+    from app.modules.transfers.schemas import TransferItemIn
+
+    t = db.get(BranchTransfer, transfer_id)
+    if t is None or t.shop_id != shop.id:
+        raise NotFound(code="transfer_not_found")
+    if t.undone_by is not None:
+        raise Conflict(
+            code="already_voided",
+            message_en="This transfer was already sent back",
+            message_ur="یہ منتقلی پہلے ہی واپس ہو چکی ہے",
+        )
+    dst = db.get(Shop, t.to_shop_id)
+    devices = [ln.to_device_id for ln in t.lines if ln.kind == "device" and ln.to_device_id]
+    items = [
+        TransferItemIn(id=ln.to_item_id, qty=ln.qty)
+        for ln in t.lines
+        if ln.kind == "item" and ln.to_item_id
+    ]
+    back = create(
+        db,
+        user_id,
+        dst,
+        TransferIn(
+            to_shop_id=shop.id,
+            devices=devices,
+            items=items,
+            note=f"Undo of {t.no}: {reason}"[:500],
+        ),
+    )
+    t.undone_by = back["id"]
+    record_audit(
+        db,
+        shop_id=shop.id,
+        user_id=user_id,
+        entity="branch_transfer",
+        entity_id=t.id,
+        action="void",
+        after={"no": t.no, "undone_by": back["no"], "reason": reason},
+    )
+    db.commit()
+    return transfer_out(db, shop.id, t)

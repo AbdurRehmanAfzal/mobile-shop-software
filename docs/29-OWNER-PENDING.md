@@ -215,6 +215,19 @@ Close the app fully and open it again first (or install the newest APK from the 
 
 **Edit / Delete everywhere (2026-11-15, ADR-090)**: Expenses → each row has ✎ / 🗑; tap 🗑 → the red "What will happen" box with an example → reason → Delete; the row is crossed out and the galla is back. People / Accessories → ✎ opens the form, 🗑 shows the warning. Make an exchange → open its sale bill → "Delete this exchange" → both phones and the galla are as before. A sale with a later payment → Delete → the app says to delete the payment first.
 
+**Edit / undo, part 2 (2026-11-16, ADR-090)**:
+- **Payments**: tap ✎ on a payment, change 3,000 to 30,000, give a reason and save. The khata and the bill follow, and the old payment shows Deleted.
+- **Returns**: tap 🗑 on a wrong return, read the warning and confirm. The phone is back with the customer (or in stock) and the galla is back.
+- **Accessories**: open an item and find the adjustment in its history. Tap 🗑 to undo it; the count is back.
+- **Cash & bank**: in the moves list, tap 🗑 on a wrong move. The money is back in the first account.
+
+**Edit / undo, part 3 (2026-11-16)**:
+- **Loans**: on a loan that is still out, 🗑 → the warning → Cancel. The phone is back in stock and the loan shows Deleted under Returned.
+- **Transfers**: on a transfer you sent, 🗑 → the warning → everything comes back from the branch.
+- **Installments**: open a plan → "Cancel this plan" → the balance stays as udhaar. After that the sale can be deleted.
+
+Server: the deploy runs migration `e4a6c8d0f2b5` (additive: returns, branch transfers, installment plans).
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

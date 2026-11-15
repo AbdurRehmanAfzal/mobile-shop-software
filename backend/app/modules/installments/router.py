@@ -8,6 +8,7 @@ from app.core.tenancy import DB, Ctx, require_cap
 from app.modules.installments import service
 from app.modules.installments.schemas import CollectIn, PlanDetailOut, PlanRowOut
 from app.modules.notifications.schemas import MessageOut
+from app.modules.sales.schemas import VoidIn
 
 router = APIRouter(prefix="/api/v1/installments", tags=["installments"])
 Transact = Annotated[Ctx, Depends(require_cap(Cap.TRANSACT))]
@@ -36,3 +37,9 @@ def collect(plan_id: uuid.UUID, data: CollectIn, ctx: Transact, db: DB):
 @router.post("/{plan_id}/remind", response_model=MessageOut)
 def remind(plan_id: uuid.UUID, ctx: Transact, db: DB):
     return service.remind(db, ctx.shop, plan_id)
+
+
+@router.post("/{plan_id}/cancel", response_model=PlanDetailOut)
+def cancel(plan_id: uuid.UUID, data: VoidIn, ctx: Ctx, db: DB):
+    """owner 2026-11-16 (ADR-090): cancel a plan made by mistake (the balance stays as udhaar)"""
+    return service.cancel_plan(db, ctx.shop_id, ctx, plan_id, data.reason)

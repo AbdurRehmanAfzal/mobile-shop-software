@@ -1,4 +1,5 @@
 import BillActions from './BillActions'
+import PaymentEditSheet, { type EditablePayment } from './PaymentEditSheet'
 import DeleteWarning from '@/components/DeleteWarning'
 import PurchaseReturnSheet from './PurchaseReturnSheet'
 import DownloadButton from '@/components/DownloadButton'
@@ -118,6 +119,8 @@ export function PaymentsPage() {
   const { pick } = useLang()
   const { data, isLoading } = usePayments()
   const payRole = useAuth((s) => s.me?.user.role)
+  const payManage = payRole === 'owner' || payRole === 'manager'
+  const [editing, setEditing] = useState<EditablePayment | null>(null)
   return (
     <div className="flex flex-col gap-3">
       <PageHeader title="more.payments" help={<Help term="more.tile.payments" />} />
@@ -128,12 +131,13 @@ export function PaymentsPage() {
             <div className="min-w-0 flex-1">
             <Row title={p.party_name} sub={<span className="flex items-center gap-1.5"><span dir="ltr">{p.no}</span> · <span dir="ltr">{fmtDate(p.date)}</span> · {pick(`pay.${p.method}`)}{p.status === 'voided' ? <Chip text="sale.status.void" tone="muted" /> : null}</span>} right={<MoneyText value={p.direction === 'in' ? p.amount : -Number(p.amount)} />} onClick={() => nav(`/parties/${p.party_id}`)} />
             </div>
-            {/* owner 2026-11-15 (ADR-087): delete a payment entered by mistake; Edit opens the person's khata */}
-            {p.status !== 'voided' ? <BillActions kind={p.purpose === 'lending' ? 'lending' : 'payment'} id={p.id} no={p.no} canDelete={payRole === 'owner' || payRole === 'manager'} editTo={`/parties/${p.party_id}`} /> : null}
+            {/* ADR-087 / ADR-090: the owner / manager edit (amount, date, note) or delete it from the row */}
+            {p.status !== 'voided' ? <BillActions kind={p.purpose === 'lending' ? 'lending' : 'payment'} id={p.id} no={p.no} canDelete={payManage} editTo={`/parties/${p.party_id}`} onEdit={payManage ? () => setEditing(p) : undefined} /> : null}
             </div>
           ))}
         </List>
       )}
+      <PaymentEditSheet p={editing} onClose={() => setEditing(null)} />
     </div>
   )
 }
@@ -141,13 +145,21 @@ export function PaymentsPage() {
 export function ReturnsPage() {
   const { pick } = useLang()
   const { data, isLoading } = useReturns()
+  const retRole = useAuth((s) => s.me?.user.role)
+  const retManage = retRole === 'owner' || retRole === 'manager'
   return (
     <div className="flex flex-col gap-3">
       <PageHeader title="more.returns" help={<Help term="more.tile.returns" />} />
       {isLoading ? <Loading /> : !data?.length ? <Empty text="common.nothingFound" /> : (
         <List>
           {data.map((r) => (
-            <Row key={r.id} title={r.party_name} sub={<span className="flex items-center gap-1.5"><span dir="ltr">{r.no}</span> · <span dir="ltr">{r.document_no}</span> · <span dir="ltr">{fmtDate(r.date)}</span> <Chip text={r.kind === 'sale' ? 'nav.sale' : 'dashboard.newPurchase'} /> <Chip text={`sale.${r.settlement}`} tone="muted" /></span>} right={<MoneyText value={r.amount} tone="ink" />} />
+            <div key={r.id} className="flex items-center">
+            <div className="min-w-0 flex-1">
+            <Row title={<span className={r.status === 'voided' ? 'line-through opacity-60' : ''}>{r.party_name}</span>} sub={<span className="flex items-center gap-1.5"><span dir="ltr">{r.no}</span> · <span dir="ltr">{r.document_no}</span> · <span dir="ltr">{fmtDate(r.date)}</span> <Chip text={r.kind === 'sale' ? 'nav.sale' : 'dashboard.newPurchase'} /> <Chip text={`sale.${r.settlement}`} tone="muted" />{r.status === 'voided' ? <Chip text="sale.status.void" tone="muted" /> : null}</span>} right={<MoneyText value={r.amount} tone="ink" />} />
+            </div>
+            {/* ADR-090: a return entered by mistake is undone (the phone, galla and khata as before) */}
+            {r.status !== 'voided' && retManage ? <BillActions kind={r.kind === 'sale' ? 'saleReturn' : 'purchaseReturn'} id={r.id} no={r.no} canDelete editTo={null} /> : null}
+            </div>
           ))}
         </List>
       )}

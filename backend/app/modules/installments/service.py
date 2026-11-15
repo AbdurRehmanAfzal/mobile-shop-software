@@ -126,7 +126,9 @@ def _row(db: Session, plan: InstallmentPlan, inv: Invoice, party: Party, today: 
     overdue = [r for r in sched if r["status"] in ("late", "partial") and r["due_date"] < today]
     nxt = next((r for r in sched if r["status"] in ("partial", "today", "late", "due")), None)
     remaining = money(inv.total - inv.paid - inv.returned_total)
-    if inv.status == InvoiceStatus.VOID:
+    if plan.cancelled_at is not None:  # ADR-090
+        status = "cancelled"
+    elif inv.status == InvoiceStatus.VOID:
         status = "void"
     elif remaining <= ZERO:
         status = "closed"
@@ -216,7 +218,11 @@ def get_plan(db: Session, shop_id: uuid.UUID, plan_id: uuid.UUID) -> dict:
 
 
 def plan_for_invoice(db: Session, invoice_id: uuid.UUID) -> InstallmentPlan | None:
-    return db.scalar(select(InstallmentPlan).where(InstallmentPlan.invoice_id == invoice_id))
+    return db.scalar(
+        select(InstallmentPlan).where(
+            InstallmentPlan.invoice_id == invoice_id, InstallmentPlan.cancelled_at.is_(None)
+        )
+    )
 
 
 # ---- collecting and reminding --------------------------------------------------------------
@@ -352,3 +358,37 @@ def counts(db: Session, shop_id: uuid.UUID) -> dict:
         "installments_overdue": overdue,
         "installments_late_amount": late_amount,
     }
+
+
+def cancel_plan(db: Session, shop_id: uuid.UUID, ctx, plan_id: uuid.UUID, reason: str) -> dict:
+    """An installment plan made by mistake (owner 2026-11-16, ADR-090): the plan stops — no more
+    reminders or due dates — and what is left on the bill stays on the khata as normal udhaar.
+    Installments already collected stay as they are (each can be deleted on its own). With the plan
+    gone, the sale itself can be deleted if that was the mistake."""
+    from app.core.errors import Conflict, Forbidden
+    from app.core.permissions import Cap
+
+    if not ctx.can(Cap.VOID):
+        raise Forbidden()
+    plan = db.get(InstallmentPlan, plan_id)
+    if plan is None or plan.shop_id != shop_id:
+        raise NotFound()
+    if plan.cancelled_at is not None:
+        raise Conflict(
+            code="already_voided",
+            message_en="This plan is already cancelled",
+            message_ur="یہ قسطوں کا منصوبہ پہلے ہی منسوخ ہو چکا ہے",
+        )
+    plan.cancelled_at = utcnow()
+    plan.cancel_reason = reason
+    record_audit(
+        db,
+        shop_id=shop_id,
+        user_id=ctx.id,
+        entity="installment_plan",
+        entity_id=plan.id,
+        action="void",
+        after={"reason": reason},
+    )
+    db.commit()
+    return get_plan(db, shop_id, plan.id)

@@ -712,7 +712,11 @@ def _later_links(
     linked = (
         inv.returned_total > ZERO
         or (inv.khata_adjusted or ZERO) > ZERO
-        or db.scalar(select(InstallmentPlan.id).where(InstallmentPlan.invoice_id == inv.id))
+        or db.scalar(
+            select(InstallmentPlan.id).where(
+                InstallmentPlan.invoice_id == inv.id, InstallmentPlan.cancelled_at.is_(None)
+            )
+        )
         or db.scalar(
             select(Exchange.id).where(
                 Exchange.original_invoice_id == inv.id

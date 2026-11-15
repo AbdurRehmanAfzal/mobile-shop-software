@@ -269,7 +269,12 @@ def to_out(db: Session, p: Payment) -> dict:
 
 
 def void_payment(
-    db: Session, shop_id: uuid.UUID, ctx, payment_id: uuid.UUID, reason: str
+    db: Session,
+    shop_id: uuid.UUID,
+    ctx,
+    payment_id: uuid.UUID,
+    reason: str,
+    commit: bool = True,
 ) -> Payment:
     if not ctx.can(Cap.VOID):
         raise Forbidden()
@@ -301,8 +306,49 @@ def void_payment(
         action="void",
         after={"reason": reason},
     )
-    db.commit()
+    if commit:
+        db.commit()
     return p
+
+
+def edit_payment(db: Session, shop_id: uuid.UUID, ctx, payment_id: uuid.UUID, data) -> Payment:
+    """Correct a payment or len-den (owner 2026-11-15, ADR-090): the old one is cancelled (its bills
+    unpaid again, its ledger reversed) and a corrected one is posted for the same person, way and
+    purpose — in one go, so the khata never shows half of it. The old one stays as Deleted with
+    \"Edited, replaced by …\"; nothing is wiped."""
+    from app.modules.payments.schemas import PaymentCreate
+
+    if not ctx.can(Cap.VOID):
+        raise Forbidden()
+    old = get_payment(db, shop_id, payment_id)
+    if old.status == "voided":
+        raise Conflict(code="already_voided")
+    try:
+        void_payment(db, shop_id, ctx, old.id, f"Edited: {data.reason}", commit=False)
+        new = create_payment(
+            db,
+            shop_id,
+            ctx.id,
+            PaymentCreate(
+                party_id=old.party_id,
+                direction=old.direction,
+                purpose=old.purpose,
+                amount=data.amount,
+                cash_account_id=data.cash_account_id or old.cash_account_id,
+                method=data.method or old.method,
+                reference=old.reference if data.reference is None else data.reference,
+                date=data.date or old.date,
+                notes=old.notes if data.notes is None else data.notes,
+                due_date=old.due_date if data.due_date is None else data.due_date,
+            ),
+            commit=False,
+        )
+        old.void_reason = f"Edited, replaced by {new.no}: {data.reason}"
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+    return new
 
 
 # ---- len-den (docs/32) ----------------------------------------------------------------------------

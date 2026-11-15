@@ -10,13 +10,15 @@ import Help from '@/components/Help'
 import PayPicker, { newPay, payInfo, payReady, type PayState } from '@/components/PayPicker'
 import { Chip, Empty, ErrorText, KV, Loading, PageHeader, SearchBox, Section, Sheet, fmtDate } from '@/components/ui'
 import { api } from '@/lib/api'
+import RowActions from '@/components/RowActions'
+import { useAuth } from '@/lib/auth'
 import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
 
 interface Row {
   id: string; invoice_id: string; invoice_no: string; party_id: string; party_name: string; party_phone: string | null; item: string
   total: string; advance: string; months: number; monthly: string; due_day: number; paid: string; remaining: string
   paid_count: number; overdue_count: number; overdue_amount: string; next_due: string | null; next_amount: string | null; days_late: number
-  status: 'active' | 'closed' | 'void'; guarantor_name: string | null; guarantor_phone: string | null; guarantor_cnic: string | null; notes: string | null; last_reminded_at: string | null; created_at: string
+  status: 'active' | 'closed' | 'void' | 'cancelled'; guarantor_name: string | null; guarantor_phone: string | null; guarantor_cnic: string | null; notes: string | null; last_reminded_at: string | null; created_at: string
 }
 interface Detail extends Row { schedule: { seq: number; due_date: string; amount: string; paid: string; status: 'paid' | 'partial' | 'today' | 'late' | 'due' }[]; payment_no?: string | null }
 type View = 'today' | 'overdue' | 'active' | 'closed'
@@ -88,6 +90,7 @@ export function InstallmentDetailPage() {
   const [pay, setPay] = useState<PayState>(() => newPay())
   const [done, setDone] = useState<string | null>(null)
   const [remindMsg, setRemindMsg] = useState<string | null>(null)
+  const canVoid = useAuth((s) => s.me?.user.role === 'owner' || s.me?.user.role === 'manager')
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   if (isLoading || !p) return <Loading />
   const amt = amount === '' ? String(Number(p.next_amount ?? p.monthly)) : amount
@@ -122,6 +125,8 @@ export function InstallmentDetailPage() {
         </div>
       ) : null}
       {remindMsg ? <BiAlert text={remindMsg} kind="success" /> : null}
+      {/* ADR-090: a plan made by mistake is cancelled; the balance stays as normal udhaar */}
+      {p.status === 'active' && canVoid ? <span className="flex items-center justify-end gap-2"><span className={`font-bold text-payable ${small}`}>{pick('del.cancelPlan')}</span><RowActions warn="installment" reason title="del.cancelPlan" name={p.party_name ?? ''} canDelete onDelete={async (why) => { await api('POST', `/api/v1/installments/${id}/cancel`, { reason: why }); await inv() }} /></span> : null}
       {done ? <BiAlert text={{ en: `${pick('inst.collected')} ${done}`, ur: `${pick('inst.collected')} ${done}`, roman: `${pick('inst.collected')} ${done}` }} kind="success" /> : null}
 
       <Section title="inst.schedule" help="inst.schedule">

@@ -54,3 +54,9 @@ class ReturnDoc(UUIDPk, ShopScoped, Timestamped, Base):
     created_by: Mapped[uuid.UUID | None] = mapped_column(
         Uuid, ForeignKey("users.id", ondelete="SET NULL")
     )
+    # owner 2026-11-15 (ADR-090): a return entered by mistake is undone, kept as Deleted
+    status: Mapped[str] = mapped_column(
+        String(10), nullable=False, default="posted", server_default="posted"
+    )  # posted | voided
+    void_reason: Mapped[str | None] = mapped_column(Text)
+    voided_by: Mapped[uuid.UUID | None] = mapped_column(Uuid)

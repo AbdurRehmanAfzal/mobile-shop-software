@@ -19,6 +19,7 @@ from app.modules.payments.schemas import (
     LendingDueRow,
     PartyLendingOut,
     PaymentCreate,
+    PaymentEdit,
     PaymentOut,
     SettleOut,
     VoidIn,
@@ -105,3 +106,9 @@ def get(payment_id: uuid.UUID, ctx: Ctx, db: DB):
 @router.post("/{payment_id}/void", response_model=PaymentOut)
 def void(payment_id: uuid.UUID, data: VoidIn, ctx: Ctx, db: DB):
     return service.to_out(db, service.void_payment(db, ctx.shop_id, ctx, payment_id, data.reason))
+
+
+@router.put("/{payment_id}", response_model=PaymentOut)
+def edit(payment_id: uuid.UUID, data: PaymentEdit, ctx: Ctx, db: DB):
+    """owner 2026-11-15 (ADR-090): correct a payment / len-den — the old one is replaced"""
+    return service.to_out(db, service.edit_payment(db, ctx.shop_id, ctx, payment_id, data))

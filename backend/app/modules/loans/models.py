@@ -14,6 +14,7 @@ class LoanStatus(StrEnum):
     OUT = "out"
     RETURNED = "returned"
     SOLD = "sold"
+    CANCELLED = "cancelled"  # ADR-090: entered by mistake; the phone came back
 
 
 class Loan(UUIDPk, ShopScoped, Timestamped, Base):

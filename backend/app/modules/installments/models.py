@@ -7,7 +7,7 @@ import datetime as dt
 import uuid
 from decimal import Decimal
 
-from sqlalchemy import Date, ForeignKey, Integer, String, Text, Uuid
+from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, Text, Uuid
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import ZERO, Base, ShopScoped, Timestamped, UUIDPk
@@ -33,6 +33,9 @@ class InstallmentPlan(UUIDPk, ShopScoped, Timestamped, Base):
     guarantor_cnic: Mapped[str | None] = mapped_column(String(20))
     notes: Mapped[str | None] = mapped_column(Text)
     last_reminded_at: Mapped[dt.datetime | None] = mapped_column()
+    # ADR-090: the plan was cancelled (the bill's balance stays as normal udhaar); kept, not removed
+    cancelled_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    cancel_reason: Mapped[str | None] = mapped_column(Text)
     created_by: Mapped[uuid.UUID | None] = mapped_column(
         Uuid, ForeignKey("users.id", ondelete="SET NULL")
     )

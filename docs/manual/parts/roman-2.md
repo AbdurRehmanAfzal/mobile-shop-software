@@ -295,6 +295,9 @@ Kuch bhi delete hone se pehle ek laal dabba **Kya hoga** batata hai ke stock, ga
 - Delete maalik aur manager ke liye hai, aur wajah poochta hai.
 - Delete hui entry record mein **Deleted** (ya kati hui) rehti hai, kis ne, kab aur kyun ke saath. Kuch mitaya nahi jata, is liye hisaab hamesha poora rehta hai.
 - **Exchange**: us ke sale ya purchase bill par **Ye exchange delete karein** dono hisse ek saath wapas karta hai. Naya phone stock mein wapas, purana gahak ko wapas, aur diya gaya refund ulta ho jata hai. Akela ek hissa delete nahi hota.
+- **Payment ya len-den edit**: us ki row par ✎ se raqam, tareekh ya note badlein. Purani Deleted rehti hai aur sahi wali us ki jagah aa jati hai.
+- **Wapas (undo)**: **return** (Returns mein 🗑), **stock adjustment** (cheez ki history mein us par 🗑) aur **galle ↔ bank transfer** (Cash & bank mein 🗑) bhi isi tarah, warning ke baad, wapas hote hain.
+- **Cancel**: bahar gayi **amanat** (Loans mein 🗑), aap ki bheji **branch transfer** (Transfers mein 🗑: sab wapas aata hai) aur **qiston ka plan** (plan par "Ye plan cancel karein": baqi udhaar rehta hai, phir sale delete ho sakti hai).
 - **Jab kuch is par tika ho** to app batati hai ke pehle kya wapas karna hai. Misaal: jis sale ka udhaar baad mein ada hua — pehle wo payment delete karein, phir sale.
 
 ### Lock mobile (iCloud / Google FRP): parts ke liye ya jaisa hai waisa bechne ke liye

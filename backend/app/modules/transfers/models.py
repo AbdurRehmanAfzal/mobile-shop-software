@@ -35,6 +35,8 @@ class BranchTransfer(UUIDPk, ShopScoped, Base):
         Uuid, ForeignKey("users.id", ondelete="SET NULL")
     )
     at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
+    # ADR-090: the transfer that sent everything back (an undo); set once
+    undone_by: Mapped[uuid.UUID | None] = mapped_column(Uuid)
 
     lines: Mapped[list["BranchTransferLine"]] = relationship(
         back_populates="transfer", cascade="all, delete-orphan", order_by="BranchTransferLine.seq"

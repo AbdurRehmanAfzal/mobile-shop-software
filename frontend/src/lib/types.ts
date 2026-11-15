@@ -347,7 +347,7 @@ export interface Loan {
   out_at: string
   expected_back_at: string | null
   overdue: boolean
-  status: 'out' | 'returned' | 'sold'
+  status: 'out' | 'returned' | 'sold' | 'cancelled'
   settled_at: string | null
   invoice_id: UUID | null
   notes: string | null
@@ -355,6 +355,7 @@ export interface Loan {
 
 export interface ReturnDoc {
   id: UUID
+  status?: string | null
   no: string
   kind: 'sale' | 'purchase'
   document_no: string

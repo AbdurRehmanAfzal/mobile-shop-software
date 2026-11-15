@@ -20,6 +20,7 @@ from app.modules.accessories.schemas import (
     MovementOut,
     PendingItemOut,
 )
+from app.modules.sales.schemas import VoidIn
 from app.modules.shopaudit.router import plain
 
 router = APIRouter(prefix="/api/v1/accessories", tags=["accessories"])
@@ -323,3 +324,12 @@ def movements(accessory_id: uuid.UUID, ctx: Cost, db: DB, limit: int = Query(def
 @router.delete("/{accessory_id}")
 def delete(accessory_id: uuid.UUID, ctx: Transact, db: DB):
     return {"result": service.delete(db, ctx.shop_id, ctx, accessory_id)}
+
+
+@router.post("/{accessory_id}/movements/{movement_id}/undo", response_model=AccessoryOut)
+def undo_adjust(accessory_id: uuid.UUID, movement_id: uuid.UUID, data: VoidIn, ctx: Ctx, db: DB):
+    """owner 2026-11-15 (ADR-090): undo a stock adjustment made by mistake"""
+    return service.to_out(
+        service.undo_adjust(db, ctx.shop_id, ctx, accessory_id, movement_id, data.reason),
+        ctx.can(Cap.VIEW_COST),
+    )

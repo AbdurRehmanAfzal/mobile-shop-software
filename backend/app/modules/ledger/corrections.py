@@ -111,8 +111,11 @@ def fix_typed_sale_items(db: Session) -> int:
                 )
                 n += 1
     # customer returns of such lines
-    for doc in db.scalars(
-        select(ReturnDoc).where(ReturnDoc.kind == "sale", ReturnDoc.ledger_group_id.is_not(None))
+    # only the columns it reads: this runs inside an old migration, before later columns exist
+    for doc in db.execute(
+        select(ReturnDoc.shop_id, ReturnDoc.ledger_group_id, ReturnDoc.no, ReturnDoc.lines).where(
+            ReturnDoc.kind == "sale", ReturnDoc.ledger_group_id.is_not(None)
+        )
     ).all():
         ids = [
             uuid.UUID(ln["invoice_line_id"]) for ln in doc.lines or [] if ln.get("invoice_line_id")
@@ -182,7 +185,9 @@ def fix_old_purchases_account(db: Session) -> int:
         else:
             target = acc.OTHER_PURCHASES
             if g.document_type == "purchase_return":
-                doc = db.scalar(select(ReturnDoc).where(ReturnDoc.ledger_group_id == g.id))
+                doc = db.execute(
+                    select(ReturnDoc.lines).where(ReturnDoc.ledger_group_id == g.id)
+                ).first()
                 for ln in (doc.lines if doc else []) or []:
                     pl = (
                         db.get(PurchaseLine, uuid.UUID(ln["purchase_line_id"]))

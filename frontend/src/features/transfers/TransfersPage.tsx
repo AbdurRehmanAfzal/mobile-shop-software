@@ -10,13 +10,15 @@ import StockItemPicker, { type StockItem } from '@/components/StockItemPicker'
 import { Empty, ErrorText, List, Loading, PageHeader, Row, SearchBox, Section, Sheet, fmtDate } from '@/components/ui'
 import { DeviceRow } from '@/features/stock/StockPage'
 import { post } from '@/lib/api'
+import RowActions from '@/components/RowActions'
+import { useAuth } from '@/lib/auth'
 import { withCur } from '@/lib/format'
 import { useDevices, useGet, useInvalidate } from '@/lib/queries'
 import type { Device } from '@/lib/types'
 
 interface Branch { id: string; name: string; city: string | null }
 interface Line { kind: 'device' | 'item'; label: string; qty: number; cost: string; device_id: string | null; item_id: string | null }
-interface Transfer { id: string; no: string; direction: 'out' | 'in'; other_shop: string | null; at: string; note: string | null; total_cost: string; lines: Line[] }
+interface Transfer { id: string; no: string; direction: 'out' | 'in'; other_shop: string | null; at: string; note: string | null; total_cost: string; lines: Line[]; undone_by?: string | null }
 
 const n = (v: string | number | null | undefined) => Number(v ?? 0).toLocaleString('en-US', { maximumFractionDigits: 0 })
 
@@ -25,6 +27,8 @@ export function TransfersPage() {
   const nav = useNavigate()
   const { pick, ur, cls } = useLang()
   const { data } = useGet<Transfer[]>(['transfers'], '/api/v1/transfers')
+  const canVoid = useAuth((s) => s.me?.user.role === 'owner' || s.me?.user.role === 'manager')
+  const inv = useInvalidate()
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   return (
     <div className="flex flex-col gap-3">
@@ -32,8 +36,9 @@ export function TransfersPage() {
       {!data ? <Loading /> : !data.length ? <Empty text="transfer.none" /> : (
         <List>
           {data.map((t) => (
+            <div key={t.id} className="flex items-center">
+            <div className="min-w-0 flex-1">
             <Row
-              key={t.id}
               onClick={() => nav(`/transfers/${t.id}`)}
               icon={t.direction === 'out' ? <ArrowUpRight size={18} /> : <ArrowDownLeft size={18} />}
               iconTone={t.direction === 'out' ? 'bg-stockt text-stockt-fg' : 'bg-emerald-tint text-emerald-deep'}
@@ -41,6 +46,10 @@ export function TransfersPage() {
               sub={<span className={`text-muted ${small}`}><span dir="ltr">{t.no} · {fmtDate(t.at)}</span> · {pick('transfer.lines').replace('{{n}}', String(t.lines.length))}</span>}
               right={<span className="num" dir="ltr">{withCur(n(t.total_cost))}</span>}
             />
+            </div>
+            {/* ADR-090: a transfer sent by mistake comes back, as it went (sender's side) */}
+            {t.direction === 'out' && !t.undone_by && canVoid ? <RowActions warn="branchTransfer" reason title="del.undoBranch" name={`${t.no} · ${t.other_shop ?? ''}`} canDelete onDelete={async (why) => { await post(`/api/v1/transfers/${t.id}/undo`, { reason: why }); await inv() }} /> : null}
+            </div>
           ))}
         </List>
       )}

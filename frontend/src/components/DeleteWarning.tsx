@@ -6,7 +6,7 @@ import { BiLabel, useLang } from './Bilingual'
 
 export type DelKind =
   | 'sale' | 'purchase' | 'repair' | 'payment' | 'lending' | 'expense' | 'exchange'
-  | 'party' | 'accessory' | 'oldStock' | 'cashAccount' | 'expenseCategory' | 'catalogue' | 'held' | 'labTrip'
+  | 'saleReturn' | 'purchaseReturn' | 'stockAdjust' | 'cashTransfer' | 'loan' | 'branchTransfer' | 'installment' | 'party' | 'accessory' | 'oldStock' | 'cashAccount' | 'expenseCategory' | 'catalogue' | 'held' | 'labTrip'
 
 export default function DeleteWarning({ kind }: { kind: DelKind }) {
   const { pick, ur, cls } = useLang()

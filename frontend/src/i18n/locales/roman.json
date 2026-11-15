@@ -9449,7 +9449,8 @@
     "status": {
       "active": "Jari",
       "closed": "Mukammal",
-      "void": "Mansookh"
+      "void": "Mansookh",
+      "cancelled": "Cancelled"
     },
     "st": {
       "paid": "Ada",
@@ -11378,6 +11379,42 @@
       "example": "Ghalti se Ali Lab bheja → trip cancel, job wapas dukaan ke paas."
     },
     "deletePurchase": "Delete (us ka purchase bill)",
-    "deleteSale": "Delete (us ka sale bill)"
+    "deleteSale": "Delete (us ka sale bill)",
+    "saleReturn": {
+      "effect": "Return wapas ho jayega aur Deleted ke naam se rahega. Phone / saman dobara gahak ka (bika hua), wapas diye gaye paise galle mein aa jayenge, aur bill aur khata return se pehle jaise. Agar phone dobara bik gaya ya aage gaya to mumkin nahi.",
+      "example": "Bilal ne ghalti se A15 wapas kiya aur Rs. 30,000 liye → A15 phir us ka, Rs. 30,000 galle mein wapas, bill ada shuda."
+    },
+    "purchaseReturn": {
+      "effect": "Dealer ko return wapas ho jayega aur Deleted ke naam se rahega. Phone / saman phir stock mein, dealer ke wapas diye paise galle se nikal jayenge, aur purchase aur khata pehle jaise. Agar phone dobara khareeda gaya ya aage gaya to mumkin nahi.",
+      "example": "Ghalti se iPhone Ali Traders ko wapas, Rs. 25,000 mile → iPhone phir stock mein, Rs. 25,000 galle se nikle."
+    },
+    "stockAdjust": {
+      "effect": "Adjustment wapas: ginti pehle jaisi, aur stock ka nuqsan (ya zyada stock) hisaab se nikal jayega. Dono lines cheez ki history mein rahengi.",
+      "example": "−3 cover gum likhe, phir mil gaye → +3 wapas, stock value pehle jaisi, koi nuqsan nahi."
+    },
+    "undoAdjust": "Ye adjustment wapas karein",
+    "cashTransfer": {
+      "effect": "Transfer wapas: paise usi account mein wapas jahan se aaye the. Dono lines kati hui rahengi. Ye kabhi aamdani ya kharcha nahi tha, is liye profit nahi badlega.",
+      "example": "Ghalti se Rs. 50,000 galle se Meezan Bank bheje → galla +50,000, bank −50,000."
+    },
+    "undoTransfer": "Ye transfer wapas karein",
+    "loan": {
+      "effect": "Amanat cancel: phone wapas aap ke stock mein aur amanat Cancelled dikhegi. Amanat par koi paisa nahi hila tha, is liye aur kuch nahi badlega.",
+      "example": "A15 ghalti se ghalat dukaan ko diya → A15 phir stock mein."
+    },
+    "cancelLoan": "Ye amanat cancel karein",
+    "branchTransfer": {
+      "effect": "Sab kuch waise hi wapas jaise gaya tha: phone aur saman doosri branch se usi qeemat par wapas, ek ulti transfer se. Agar wahan kuch bik gaya ya aage gaya to mumkin nahi.",
+      "example": "Ghalti se 2 phone aur 4 cable Branch 2 bheje → is dukaan mein wapas, Branch 2 mein un mein se kuch nahi."
+    },
+    "undoBranch": "Ye transfer wapas bhejein",
+    "installment": {
+      "effect": "Plan ruk jayega: aur koi qist ki tareekh ya yaad-dihani nahi. Bill par jo baqi hai wo gahak ke khate mein aam udhaar rahega. Jo qistein mil chuki wo rahengi. Is ke baad, agar ghalti sale hi thi, to sale bhi delete ho sakti hai.",
+      "example": "Ghalti se phone 5 qiston par becha, Rs. 45,000 baqi → plan ruka, Ahmed par Rs. 45,000 udhaar."
+    },
+    "cancelPlan": "Ye plan cancel karein"
+  },
+  "pedit": {
+    "hint": "Raqam, tareekh ya note badlein. Purani entry Deleted ke naam se rahegi (\"Edited, replaced by …\") aur us ki jagah sahi wali aa jayegi; khata aur jo bill is se ada hue the wo bhi theek ho jayenge."
   }
 }

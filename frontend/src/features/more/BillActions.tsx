@@ -15,7 +15,7 @@ import { ErrorText, Sheet } from '@/components/ui'
 import { post } from '@/lib/api'
 import { useInvalidate } from '@/lib/queries'
 
-export type BillKind = 'sale' | 'purchase' | 'repair' | 'payment' | 'lending' | 'expense' | 'exchange'
+export type BillKind = 'sale' | 'purchase' | 'repair' | 'payment' | 'lending' | 'expense' | 'exchange' | 'saleReturn' | 'purchaseReturn'
 const PATHS: Record<BillKind, { del: (id: string) => string; edit: (id: string) => string }> = {
   sale: { del: (id) => `/api/v1/sales/${id}/void`, edit: (id) => `/sales/${id}` },
   purchase: { del: (id) => `/api/v1/purchases/${id}/void`, edit: (id) => `/purchases/${id}` },
@@ -24,6 +24,8 @@ const PATHS: Record<BillKind, { del: (id: string) => string; edit: (id: string) 
   lending: { del: (id) => `/api/v1/payments/${id}/void`, edit: () => '' },
   expense: { del: (id) => `/api/v1/expenses/${id}/void`, edit: () => '' },
   exchange: { del: (id) => `/api/v1/exchanges/${id}/void`, edit: () => '' },
+  saleReturn: { del: (id) => `/api/v1/returns/${id}/void`, edit: () => '' },
+  purchaseReturn: { del: (id) => `/api/v1/returns/${id}/void`, edit: () => '' },
 }
 
 /** `editTo`: where Edit goes (default the bill's page; null hides Edit); `onEdit` opens an edit form
@@ -45,7 +47,7 @@ export default function BillActions({ kind, id, no, canDelete, editTo, onEdit, o
     setErr(null)
     try {
       await post(P.del(id), { reason: reason.trim() })
-      await inv('sales', 'sale', 'purchases', 'purchase', 'devices', 'device', 'parties', 'party', 'invoices', 'dashboard', 'day', 'repairs', 'repair', 'payments', 'stock-status', 'expenses', 'exchanges', 'lending', 'accounts')
+      await inv('sales', 'sale', 'purchases', 'purchase', 'devices', 'device', 'parties', 'party', 'invoices', 'dashboard', 'day', 'repairs', 'repair', 'payments', 'stock-status', 'expenses', 'exchanges', 'lending', 'accounts', 'returns')
       setOpen(false)
       onDone?.()
     } catch (e) {

@@ -4,7 +4,8 @@ import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/B
 import Help from '@/components/Help'
 import RemoveSheet from '@/components/RemoveSheet'
 import { BtnText, ErrorText, fmtDate, List, MoneyText, PageHeader, Row, Sheet } from '@/components/ui'
-import { api } from '@/lib/api'
+import { api, post } from '@/lib/api'
+import RowActions from '@/components/RowActions'
 import { useAuth } from '@/lib/auth'
 import { useCashAccounts, useDocMutation, useGet, useInvalidate } from '@/lib/queries'
 import type { CashAccount } from '@/lib/types'
@@ -73,6 +74,8 @@ export default function CashAccountsPage() {
                   <div className="text-xs text-muted"><span dir="ltr">{fmtDate(t.at)}</span>{t.posted_by_name ? ` · ${t.posted_by_name}` : ''}{t.memo ? ` · ${t.memo}` : ''}</div>
                 </div>
                 <MoneyText value={t.amount} tone="ink" size="sm" />
+                {/* ADR-090: a move made by mistake is undone (both accounts as before), kept crossed out */}
+                {!t.reversed ? <RowActions warn="cashTransfer" reason title="del.undoTransfer" name={`${t.from_name} → ${t.to_name}`} canDelete onDelete={async (why) => { await post(`/api/v1/ledger/groups/${t.id}/reverse`, { reason: why }); await inv() }} /> : null}
               </div>
             ))}
           </div>

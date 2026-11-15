@@ -9449,7 +9449,8 @@
     "status": {
       "active": "Running",
       "closed": "Finished",
-      "void": "Cancelled"
+      "void": "Cancelled",
+      "cancelled": "Cancelled"
     },
     "st": {
       "paid": "Paid",
@@ -11378,6 +11379,42 @@
       "example": "Sent to Ali Lab by mistake → the trip is cancelled, the job is back with the shop."
     },
     "deletePurchase": "Delete (its purchase bill)",
-    "deleteSale": "Delete (its sale bill)"
+    "deleteSale": "Delete (its sale bill)",
+    "saleReturn": {
+      "effect": "The return is undone and kept as Deleted. The phone / items go back to the customer as sold, the money handed back comes back into the galla, and the bill and khata are as before the return. Not possible once the phone was sold again or moved.",
+      "example": "Bilal returned an A15 and got Rs. 30,000 back, by mistake → the A15 is his again, Rs. 30,000 back in the galla, the bill shows paid."
+    },
+    "purchaseReturn": {
+      "effect": "The return to the dealer is undone and kept as Deleted. The phone / items come back into stock, the money the dealer gave back goes out of the galla, and the purchase and khata are as before. Not possible once the phone was bought again or moved.",
+      "example": "iPhone returned to Ali Traders with Rs. 25,000 back, by mistake → the iPhone is in stock again, Rs. 25,000 out of the galla."
+    },
+    "stockAdjust": {
+      "effect": "The adjustment is undone: the count goes back, and the stock loss (or extra stock) is taken out of the books. Both lines stay in the item's history.",
+      "example": "−3 covers marked lost, then found → +3 back, stock value as before, no stock loss."
+    },
+    "undoAdjust": "Undo this adjustment",
+    "cashTransfer": {
+      "effect": "The move is undone: the money goes back to the account it came from. Both lines stay, crossed out. It was never income or expense, so profit does not change.",
+      "example": "Rs. 50,000 moved from the galla to Meezan Bank by mistake → the galla +50,000, the bank −50,000."
+    },
+    "undoTransfer": "Undo this move",
+    "loan": {
+      "effect": "The loan is cancelled: the phone is back in your stock and the loan shows Cancelled. No money moved on a loan, so nothing else changes.",
+      "example": "A15 lent to the wrong shop by mistake → the A15 is in stock again."
+    },
+    "cancelLoan": "Cancel this loan",
+    "branchTransfer": {
+      "effect": "Everything comes back the way it went: the phones and items return from the other branch at the same cost, by a transfer back. Not possible once something there was sold or moved on.",
+      "example": "2 phones and 4 cables sent to Branch 2 by mistake → back in this shop, Branch 2 has none of them."
+    },
+    "undoBranch": "Send this transfer back",
+    "installment": {
+      "effect": "The plan stops: no more due dates or reminders. What is left on the bill stays on the customer's khata as normal udhaar. Installments already collected stay. After this the sale itself can be deleted, if that was the mistake.",
+      "example": "Phone sold on 5 installments by mistake, Rs. 45,000 left → the plan stops, Ahmed owes Rs. 45,000 as udhaar."
+    },
+    "cancelPlan": "Cancel this plan"
+  },
+  "pedit": {
+    "hint": "Change the amount, date or note. The old entry is kept as Deleted (\"Edited, replaced by …\") and a corrected one takes its place; the khata and the bills it paid follow."
   }
 }

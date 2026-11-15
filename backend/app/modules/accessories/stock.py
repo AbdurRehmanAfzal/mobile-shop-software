@@ -409,6 +409,7 @@ def timeline(db: Session, shop_id: uuid.UUID, a: Accessory) -> list[dict]:
     for m in moves:
         row = {
             "kind": "move",
+            "id": str(m.id),
             "at": m.at,
             "reason": m.reason,
             "qty_delta": m.qty_delta,
