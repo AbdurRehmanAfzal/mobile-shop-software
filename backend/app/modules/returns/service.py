@@ -5,7 +5,8 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.clock import today as shop_today
-from app.core.errors import Conflict, NotFound, ValidationFailed
+from app.core.errors import Conflict, Forbidden, NotFound, ValidationFailed
+from app.core.permissions import Cap
 from app.db.base import ZERO, utcnow
 from app.modules.accessories import service as acc_stock
 from app.modules.audit.service import record_audit
@@ -15,7 +16,14 @@ from app.modules.devices.service import apply_event
 from app.modules.devices.state import DeviceStatus, EventType
 from app.modules.ledger import accounts as acc
 from app.modules.ledger.models import CashAccount
-from app.modules.ledger.service import Posting, at_for, default_cash_account, money, post
+from app.modules.ledger.service import (
+    Posting,
+    at_for,
+    default_cash_account,
+    money,
+    post,
+    reverse,
+)
 from app.modules.parties.models import Party
 from app.modules.purchases.models import Purchase, PurchaseLine, PurchaseStatus
 from app.modules.purchases.service import next_number
@@ -432,3 +440,154 @@ __all__ = [
     "sale_return",
     "to_out",
 ]
+
+
+# ---- undo a return (owner 2026-11-15, ADR-090) ---------------------------------------------------
+
+
+def _last_money_event(d: Device):
+    from app.modules.devices.state import MONEY_EVENTS
+
+    evs = [e for e in d.events if e.type in MONEY_EVENTS]
+    return max(evs, key=lambda e: e.seq) if evs else None
+
+
+def void_return(
+    db: Session, shop_id: uuid.UUID, ctx, return_id: uuid.UUID, reason: str
+) -> ReturnDoc:
+    """A return entered by mistake is undone: everything it did is put back — a customer's phone
+    goes back to the customer as sold (the bill as it was), a phone returned to the dealer comes
+    back into stock (the purchase as it was), the money handed back and the khata are reversed.
+    Refused once a phone has moved on since the return (sold again, sent somewhere). The return
+    stays in the list as Deleted, with who, when and why."""
+    if not ctx.can(Cap.VOID):
+        raise Forbidden()
+    doc = get_return(db, shop_id, return_id)
+    if doc.status == "voided":
+        raise Conflict(
+            code="already_voided",
+            message_en="This return is already deleted",
+            message_ur="یہ واپسی پہلے ہی ڈیلیٹ ہو چکی ہے",
+        )
+    sale = doc.kind == ReturnKind.SALE
+    back_type = EventType.SALE_RETURNED if sale else EventType.RETURNED_TO_SUPPLIER
+    devices = []
+    for ln in doc.lines:
+        if ln.get("device_id"):
+            d = db.get(Device, uuid.UUID(ln["device_id"]))
+            last = _last_money_event(d)
+            ok_status = (
+                d.status == DeviceStatus.IN_STOCK
+                if sale
+                else d.status == DeviceStatus.RETURNED_TO_SUPPLIER
+            )
+            if (
+                not ok_status
+                or last is None
+                or last.type != back_type
+                or last.document_id != doc.id
+            ):
+                raise Conflict(
+                    code="device_changed",
+                    message_en=f"Device {d.imei1} has moved since this return; it cannot be undone",
+                    message_ur=f"موبائل {d.imei1} اس واپسی کے بعد آگے جا چکا ہے؛ واپسی ختم نہیں ہو سکتی",
+                )
+            devices.append((d, ln))
+    try:
+        if doc.ledger_group_id:
+            reverse(db, shop_id, ctx.id, doc.ledger_group_id, f"Undo {doc.no}: {reason}")
+        if sale:
+            inv = db.get(Invoice, doc.document_id)
+            ids = {ln["invoice_line_id"] for ln in doc.lines}
+            for il in inv.lines:
+                if str(il.id) in ids:
+                    il.returned_at = None
+                    if il.accessory_id:
+                        a = acc_stock.get_accessory(db, shop_id, il.accessory_id)
+                        acc_stock.move(
+                            db,
+                            shop_id,
+                            ctx.id,
+                            a,
+                            -il.qty,
+                            "void",
+                            document_type="sale_return_void",
+                            document_id=doc.id,
+                            note=doc.no,
+                        )
+            for d, ln in devices:
+                apply_event(
+                    db,
+                    shop_id,
+                    ctx.id,
+                    d,
+                    EventType.SOLD,
+                    party_id=inv.party_id,
+                    amount=money(ln.get("line_total") or 0),
+                    document_type="sale_return_void",
+                    document_id=doc.id,
+                    data={"return_no": doc.no, "undone": True, "reason": reason},
+                )
+            inv.returned_total = money(inv.returned_total - doc.amount)
+            inv.status = status_for(money(inv.total - inv.returned_total), inv.paid)
+            entity, entity_id = "invoice", inv.id
+        else:
+            from app.modules.accessories.models import AccessoryMovement
+
+            pur = db.get(Purchase, doc.document_id)
+            ids = {ln["purchase_line_id"] for ln in doc.lines}
+            for pl in pur.lines:
+                if str(pl.id) in ids:
+                    pl.returned_at = None
+                    if pl.accessory_id:
+                        mv = db.scalar(
+                            select(AccessoryMovement).where(
+                                AccessoryMovement.document_id == doc.id,
+                                AccessoryMovement.accessory_id == pl.accessory_id,
+                            )
+                        )
+                        a = acc_stock.get_accessory(db, shop_id, pl.accessory_id)
+                        acc_stock.move(
+                            db,
+                            shop_id,
+                            ctx.id,
+                            a,
+                            pl.qty,
+                            "void",
+                            mv.unit_cost if mv else None,
+                            document_type="purchase_return_void",
+                            document_id=doc.id,
+                            note=doc.no,
+                        )
+            for d, ln in devices:
+                apply_event(
+                    db,
+                    shop_id,
+                    ctx.id,
+                    d,
+                    EventType.PURCHASED,
+                    party_id=pur.party_id,
+                    amount=money(ln.get("net_cost") or 0),
+                    document_type="purchase_return_void",
+                    document_id=doc.id,
+                    data={"return_no": doc.no, "undone": True, "reason": reason},
+                )
+            pur.returned_total = money(pur.returned_total - doc.amount)
+            entity, entity_id = "purchase", pur.id
+        doc.status = "voided"
+        doc.void_reason = reason
+        doc.voided_by = ctx.id
+        record_audit(
+            db,
+            shop_id=shop_id,
+            user_id=ctx.id,
+            entity=entity,
+            entity_id=entity_id,
+            action="return_void",
+            after={"return_no": doc.no, "reason": reason},
+        )
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+    return doc

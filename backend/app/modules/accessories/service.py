@@ -230,7 +230,7 @@ def adjust(
 ) -> Accessory:
     a = get_accessory(db, shop_id, accessory_id)
     unit_cost = money(data.unit_cost) if data.unit_cost is not None else a.avg_cost
-    move(
+    mv = move(
         db,
         shop_id,
         user_id,
@@ -244,7 +244,7 @@ def adjust(
     if value > ZERO:
         posting = Posting(
             document_type="stock_adjust",
-            document_id=a.id,
+            document_id=mv.id,  # ADR-090: the movement, so this adjustment can be undone exactly
             memo=f"Adjust {a.sku} {data.qty_delta:+d}: {data.note or ''}",
         )
         if data.qty_delta > 0:
@@ -264,6 +264,96 @@ def adjust(
         entity_id=a.id,
         action="adjust",
         after={"qty_delta": data.qty_delta, "note": data.note},
+    )
+    db.commit()
+    return a
+
+
+def undo_adjust(
+    db: Session,
+    shop_id: uuid.UUID,
+    ctx,
+    accessory_id: uuid.UUID,
+    movement_id: uuid.UUID,
+    reason: str,
+) -> Accessory:
+    """Undo a stock adjustment made by mistake (owner 2026-11-15, ADR-090): the opposite movement
+    puts the count back and its posting is reversed (the stock value, other income or stock loss as
+    before). Both stay in the item's history; an adjustment is undone only once."""
+    import datetime as _dt
+
+    from app.core.errors import Conflict, Forbidden, NotFound
+    from app.core.permissions import Cap
+    from app.modules.accessories.models import AccessoryMovement
+    from app.modules.ledger.models import LedgerGroup
+    from app.modules.ledger.service import reverse
+
+    if not ctx.can(Cap.VOID):
+        raise Forbidden()
+    a = get_accessory(db, shop_id, accessory_id)
+    mv = db.get(AccessoryMovement, movement_id)
+    if (
+        mv is None
+        or mv.accessory_id != a.id
+        or mv.reason != "adjust"
+        or mv.document_type == "adjust_undo"
+    ):
+        raise NotFound(code="adjustment_not_found")
+    if db.scalar(
+        select(AccessoryMovement.id).where(
+            AccessoryMovement.document_type == "adjust_undo", AccessoryMovement.document_id == mv.id
+        )
+    ):
+        raise Conflict(
+            code="already_voided",
+            message_en="This adjustment is already undone",
+            message_ur="یہ تبدیلی پہلے ہی واپس ہو چکی ہے",
+        )
+    groups = db.scalars(
+        select(LedgerGroup).where(
+            LedgerGroup.shop_id == shop_id,
+            LedgerGroup.document_type == "stock_adjust",
+            LedgerGroup.document_id == mv.id,
+        )
+    ).all()
+    if not groups:
+        # made before ADR-090: its posting points at the item; it is the one at the same moment
+        mv_at = mv.at if mv.at.tzinfo else mv.at.replace(tzinfo=_dt.UTC)
+        for g in db.scalars(
+            select(LedgerGroup).where(
+                LedgerGroup.shop_id == shop_id,
+                LedgerGroup.document_type == "stock_adjust",
+                LedgerGroup.document_id == a.id,
+                LedgerGroup.reversed_by_group_id.is_(None),
+            )
+        ).all():
+            g_at = g.at if g.at.tzinfo else g.at.replace(tzinfo=_dt.UTC)
+            if abs((g_at - mv_at).total_seconds()) < 10 and f"{mv.qty_delta:+d}" in (g.memo or ""):
+                groups = [g]
+                break
+    move(
+        db,
+        shop_id,
+        ctx.id,
+        a,
+        -mv.qty_delta,
+        "adjust",
+        mv.unit_cost if -mv.qty_delta > 0 else None,
+        document_type="adjust_undo",
+        document_id=mv.id,
+        note=f"Undo: {reason}",
+    )
+    for g in groups:
+        if g.reversed_by_group_id is None:
+            reverse(db, shop_id, ctx.id, g.id, f"Undo adjustment {a.sku}: {reason}")
+    record_audit(
+        db,
+        shop_id=shop_id,
+        user_id=ctx.id,
+        entity="accessory",
+        entity_id=a.id,
+        action="adjust_undo",
+        after={"qty_delta": -mv.qty_delta, "reason": reason},
     )
     db.commit()
     return a

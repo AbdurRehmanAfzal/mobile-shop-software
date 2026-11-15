@@ -8,6 +8,7 @@ from app.core.tenancy import DB, Ctx, require_cap
 from app.modules.loans import service
 from app.modules.loans.models import LoanStatus
 from app.modules.loans.schemas import LoanCreate, LoanOut, LoanReturnIn, LoanSellIn
+from app.modules.sales.schemas import VoidIn
 
 router = APIRouter(prefix="/api/v1/loans", tags=["loans"])
 Transact = Annotated[Ctx, Depends(require_cap(Cap.TRANSACT))]
@@ -47,3 +48,9 @@ def return_loan(loan_id: uuid.UUID, data: LoanReturnIn, ctx: Transact, db: DB):
 @router.post("/{loan_id}/sell", response_model=LoanOut)
 def sell(loan_id: uuid.UUID, data: LoanSellIn, ctx: Transact, db: DB):
     return service.to_out(db, service.sell_loan(db, ctx.shop_id, ctx, loan_id, data))
+
+
+@router.post("/{loan_id}/cancel", response_model=LoanOut)
+def cancel(loan_id: uuid.UUID, data: VoidIn, ctx: Ctx, db: DB):
+    """owner 2026-11-16 (ADR-090): cancel a loan entered by mistake (the phone back in stock)"""
+    return service.to_out(db, service.cancel_loan(db, ctx.shop_id, ctx, loan_id, data.reason))

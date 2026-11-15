@@ -10,6 +10,7 @@ from app.core.tenancy import DB, Ctx, require_cap
 from app.modules.returns import service
 from app.modules.returns.models import ReturnKind
 from app.modules.returns.schemas import PurchaseReturnIn, ReturnOut, SaleReturnIn
+from app.modules.sales.schemas import VoidIn
 
 router = APIRouter(prefix="/api/v1/returns", tags=["returns"])
 Transact = Annotated[Ctx, Depends(require_cap(Cap.TRANSACT))]
@@ -49,3 +50,9 @@ def list_returns(
 @router.get("/{return_id}", response_model=ReturnOut)
 def get(return_id: uuid.UUID, ctx: Ctx, db: DB):
     return service.to_out(db, service.get_return(db, ctx.shop_id, return_id))
+
+
+@router.post("/{return_id}/void", response_model=ReturnOut)
+def void(return_id: uuid.UUID, data: VoidIn, ctx: Ctx, db: DB):
+    """owner 2026-11-15 (ADR-090): undo a return entered by mistake"""
+    return service.to_out(db, service.void_return(db, ctx.shop_id, ctx, return_id, data.reason))

@@ -110,6 +110,50 @@ def return_loan(
     return loan
 
 
+def cancel_loan(db: Session, shop_id: uuid.UUID, ctx, loan_id: uuid.UUID, reason: str) -> Loan:
+    """A loan (amanat) entered by mistake (owner 2026-11-16, ADR-090): the phone is back in stock and
+    the loan shows Cancelled. No money moved on a loan, so nothing else changes. Only while it is
+    still out; a loan settled as a sale is undone by deleting that sale."""
+    from app.core.errors import Forbidden
+    from app.core.permissions import Cap
+
+    if not ctx.can(Cap.VOID):
+        raise Forbidden()
+    loan = get_loan(db, shop_id, loan_id)
+    if loan.status != LoanStatus.OUT:
+        raise Conflict(
+            code="loan_not_open",
+            message_en="Only a loan still out can be cancelled",
+            message_ur="صرف باہر گئی امانت منسوخ ہو سکتی ہے",
+        )
+    device = get_device(db, shop_id, loan.device_id)
+    apply_event(
+        db,
+        shop_id,
+        ctx.id,
+        device,
+        EventType.LOAN_RETURNED,
+        party_id=loan.party_id,
+        document_type="loan",
+        document_id=loan.id,
+        data={"cancelled": True, "reason": reason},
+    )
+    loan.status = LoanStatus.CANCELLED
+    loan.settled_at = utcnow()
+    loan.notes = f"{loan.notes}\nCancelled: {reason}" if loan.notes else f"Cancelled: {reason}"
+    record_audit(
+        db,
+        shop_id=shop_id,
+        user_id=ctx.id,
+        entity="loan",
+        entity_id=loan.id,
+        action="void",
+        after={"reason": reason},
+    )
+    db.commit()
+    return loan
+
+
 def sell_loan(db: Session, shop_id: uuid.UUID, ctx, loan_id: uuid.UUID, data: LoanSellIn) -> Loan:
     """The borrowing shop sold (or kept) the device: convert the loan into a sale to that shop."""
     loan = get_loan(db, shop_id, loan_id)
@@ -153,7 +197,10 @@ def list_loans(
     limit: int,
 ) -> list[Loan]:
     stmt = select(Loan).where(Loan.shop_id == shop_id)
-    if status:
+    if status == LoanStatus.RETURNED:
+        # ADR-090: a cancelled loan (entered by mistake) shows among the returned ones, as Deleted
+        stmt = stmt.where(Loan.status.in_((LoanStatus.RETURNED, LoanStatus.CANCELLED)))
+    elif status:
         stmt = stmt.where(Loan.status == status)
     if party_id:
         stmt = stmt.where(Loan.party_id == party_id)

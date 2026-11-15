@@ -24,7 +24,8 @@ export default function PartyDetailPage() {
   const { data: party, isLoading } = useParty(id)
   const { data: st } = useStatement(id)
   const { data: units } = usePartyUnits(id)
-  const [editing, setEditing] = useState(false)
+  // ADR-090: a row's Edit opens the form straight away (?edit=1)
+  const [editing, setEditing] = useState(() => new URLSearchParams(window.location.search).get('edit') === '1')
   const [paying, setPaying] = useState<'in' | 'out' | null>(null)
   const [removing, setRemoving] = useState(false)
   const nav = useNavigate()
@@ -138,6 +139,7 @@ export default function PartyDetailPage() {
         <PartyForm party={party} onDone={() => setEditing(false)} />
       </Sheet>
       <RemoveSheet
+        warn="party"
         open={removing}
         onClose={() => setRemoving(false)}
         name={party.name}

@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
+import DeleteWarning from '@/components/DeleteWarning'
 import PartyPicker from '@/components/PartyPicker'
 import { Empty, ErrorText, fmtDate, Loading, PageHeader, Section, Sheet } from '@/components/ui'
 import PartyForm from '@/features/parties/PartyForm'
@@ -129,6 +130,7 @@ export function JobLabs({ jobId, open, trips, atLab }: { jobId: string; open: bo
 
       <Sheet open={sheet === 'cancel'} onClose={() => setSheet(null)} title="rlab.cancel">
         <div className="flex flex-col gap-3">
+          <DeleteWarning kind="labTrip" />
           <BiInput label="rlab.reason" help={<Help term="rlab.cancel" size="sm" />} value={reason} onChange={(e) => setReason(e.target.value)} />
           <ErrorText error={cancel.error} />
           <BiButton text="rlab.cancel" full variant="danger" disabled={reason.trim().length < 3} loading={cancel.isPending} onClick={async () => { await cancel.mutateAsync({ reason }); setSheet(null) }} />

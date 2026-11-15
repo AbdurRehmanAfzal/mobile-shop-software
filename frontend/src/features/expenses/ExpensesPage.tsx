@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import RemoveSheet from '@/components/RemoveSheet'
+import BillActions from '@/features/more/BillActions'
+import { useAuth } from '@/lib/auth'
 import { BtnText, Chip, ErrorText, fmtDate, KV, List, Loading, MoneyText, PageHeader, Row, Sheet } from '@/components/ui'
 import { api, post } from '@/lib/api'
 import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
@@ -29,6 +31,17 @@ export default function ExpensesPage() {
   const [current, setCurrent] = useState<Expense | null>(null)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [cancelling, setCancelling] = useState<Expense | null>(null)
+  // ADR-090: the owner / manager edit and delete (the server checks it too)
+  const role = useAuth((s) => s.me?.user.role)
+  const canVoid = role === 'owner' || role === 'manager'
+  function startEdit(x: Expense) {
+    setCatId(x.category_id)
+    setAmount(String(Number(x.amount)))
+    setDesc(x.description ?? '')
+    setEditingId(x.id)
+    setCurrent(null)
+    setAdding(true)
+  }
   const [managing, setManaging] = useState(false)
   const [catEdit, setCatEdit] = useState<Category | null>(null)
   const [catRemove, setCatRemove] = useState<Category | null>(null)
@@ -79,13 +92,18 @@ export default function ExpensesPage() {
       ) : (
         <List>
           {data.map((e) => (
+            <div key={e.id} className="flex items-center">
+            <div className="min-w-0 flex-1">
             <Row
-              key={e.id}
               title={<span className={e.status === 'voided' ? 'line-through opacity-60' : ''}>{(cats?.find((c) => c.key === e.category_key) && catName(cats.find((c) => c.key === e.category_key)!)) || e.category_name}</span>}
               sub={<span><span dir="ltr">{fmtDate(e.date)}</span>{e.description ? ` · ${e.description}` : ''}{e.staff_name ? ` · ${e.staff_name}` : ''}{e.party_name ? ` · ${e.party_name}` : ''}</span>}
               right={<MoneyText value={-Number(e.amount)} />}
               onClick={e.status === 'voided' ? undefined : () => setCurrent(e)}
             />
+            </div>
+            {/* owner 2026-11-15 (ADR-090): edit / delete an expense entered by mistake from its row */}
+            {e.status !== 'voided' && canVoid ? <BillActions kind="expense" id={e.id} no={e.no} canDelete onEdit={() => startEdit(e)} onDone={() => void inv()} /> : null}
+            </div>
           ))}
         </List>
       )}
@@ -135,7 +153,7 @@ export default function ExpensesPage() {
               {current.description ? <KV k="expense.description" help="expense.description" v={current.description} /> : null}
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <button type="button" onClick={() => { setCatId(current.category_id); setAmount(String(Number(current.amount))); setDesc(current.description ?? ''); setEditingId(current.id); setCurrent(null); setAdding(true) }} className="tap flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-line bg-surface text-sm font-bold">
+              <button type="button" onClick={() => startEdit(current)} className="tap flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-line bg-surface text-sm font-bold">
                 <Pencil size={16} /> {pick('common.edit')}
               </button>
               <button type="button" onClick={() => { setCancelling(current); setCurrent(null) }} className="tap flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-line bg-surface text-sm font-bold text-payable">
@@ -150,7 +168,7 @@ export default function ExpensesPage() {
         open={cancelling !== null}
         onClose={() => setCancelling(null)}
         title="crud.cancelExpense"
-        hint="crud.cancelExpenseHint"
+        warn="expense"
         reason
         name={cancelling ? <MoneyText value={cancelling.amount} tone="ink" /> : ''}
         onConfirm={async (reason) => {
@@ -187,6 +205,7 @@ export default function ExpensesPage() {
       </Sheet>
 
       <RemoveSheet
+        warn="expenseCategory"
         open={catRemove !== null}
         onClose={() => setCatRemove(null)}
         name={catRemove ? catName(catRemove) : ''}

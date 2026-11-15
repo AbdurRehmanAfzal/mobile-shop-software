@@ -63,6 +63,8 @@ class ReturnOut(BaseModel):
     kept_amount: Decimal
     cash_account_id: uuid.UUID | None
     reason: str | None
+    status: str = "posted"  # ADR-090: posted | voided
+    void_reason: str | None = None
     lines: list[dict]
     ledger_group_id: uuid.UUID | None
     created_by: uuid.UUID | None

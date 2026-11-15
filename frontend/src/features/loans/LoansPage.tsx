@@ -11,6 +11,9 @@ import PartyPicker from '@/components/PartyPicker'
 import { Chip, ErrorText, List, Loading, PageHeader, SearchBox, Sheet, fmtDate } from '@/components/ui'
 import { DeviceRow } from '@/features/stock/StockPage'
 import { isoDay } from '@/lib/format'
+import RowActions from '@/components/RowActions'
+import { post } from '@/lib/api'
+import { useAuth } from '@/lib/auth'
 import { useDevices, useDocMutation, useInvalidate, useLoans } from '@/lib/queries'
 import type { Device, Loan, Party } from '@/lib/types'
 
@@ -33,6 +36,7 @@ export default function LoansPage() {
   const [paid, setPaid] = useState('')
   const [giving, setGiving] = useState(false)
   const [done, setDone] = useState<string | null>(null)
+  const canVoid = useAuth((s) => s.me?.user.role === 'owner' || s.me?.user.role === 'manager')
   const ret = useDocMutation<{ id: string }, Loan>('POST', (i) => `/api/v1/loans/${i.id}/return`, () => ({}))
   const sell = useDocMutation<{ id: string; price: number; paid: number }, Loan>('POST', (i) => `/api/v1/loans/${i.id}/sell`, (i) => ({ price: i.price, paid: i.paid }))
   const small = ur ? cls('sm') : 'text-xs font-semibold'
@@ -84,7 +88,7 @@ export default function LoansPage() {
                 </span>
                 {l.status === 'out' ? (
                   l.overdue ? <Chip text="loan.overdue" tone="bad" /> : <Chip text={{ en: pick('loan.since').replace('{{n}}', String(daysSince(l.out_at))), ur: pick('loan.since').replace('{{n}}', String(daysSince(l.out_at))), roman: pick('loan.since').replace('{{n}}', String(daysSince(l.out_at))) }} tone="muted" />
-                ) : <Chip text={l.status === 'sold' ? 'loan.sold' : 'loan.returned'} tone={l.status === 'sold' ? 'ink' : 'ok'} />}
+                ) : <Chip text={l.status === 'sold' ? 'loan.sold' : l.status === 'cancelled' ? 'del.deleted' : 'loan.returned'} tone={l.status === 'sold' ? 'ink' : l.status === 'cancelled' ? 'muted' : 'ok'} />}
               </button>
               <div className="flex items-center gap-3 rounded-2xl bg-ground px-3 py-2">
                 <Store size={18} className="shrink-0 text-muted" />
@@ -104,6 +108,8 @@ export default function LoansPage() {
                   <BiButton text="loan.sellToShop" size="sm" icon={<HandCoins size={18} />} onClick={() => { sell.reset(); setSelling(l); setPrice(''); setPaid('') }} />
                 </div>
               ) : null}
+              {/* ADR-090: a loan entered by mistake is cancelled (the phone back in stock) */}
+              {l.status === 'out' && canVoid ? <span className="flex justify-end"><RowActions warn="loan" reason title="del.cancelLoan" name={l.device_label ?? l.party_name ?? ''} canDelete onDelete={async (why) => { await post(`/api/v1/loans/${l.id}/cancel`, { reason: why }); await inv('loans', 'devices', 'dashboard') }} /></span> : null}
               {l.status === 'sold' && l.invoice_id ? <BiButton text="exchange.viewBill" size="sm" variant="ghost" full onClick={() => nav(`/sales/${l.invoice_id}`)} /> : null}
             </article>
           ))}

@@ -196,4 +196,60 @@ def to_out(db: Session, ex: Exchange) -> dict:
         "purchase_no": pur.no if pur else None,
         "invoice_no": inv.no if inv else None,
         "original_invoice_no": orig.no if orig else None,
+        "deleted": bool(inv and inv.status == "void"),
     }
+
+
+def void_exchange(
+    db: Session, shop_id: uuid.UUID, ctx, exchange_id: uuid.UUID, reason: str
+) -> Exchange:
+    """Delete an exchange entered by mistake (owner 2026-11-15, ADR-090): both halves together —
+    the new phone's sale is cancelled (it comes back into stock), the old phone's purchase is
+    cancelled (it leaves stock, back to the customer), the refund paid out is reversed, and the khata
+    is as it was before. Refused when either phone has moved on since, or money was received
+    against the new bill later. Nothing is removed: both bills show as Deleted."""
+    from app.core.errors import Conflict, Forbidden
+    from app.core.permissions import Cap
+    from app.modules.ledger.models import LedgerGroup
+    from app.modules.ledger.service import reverse
+    from app.modules.purchases.service import void_purchase
+    from app.modules.sales.models import Invoice, InvoiceStatus
+    from app.modules.sales.service import void_invoice
+
+    if not ctx.can(Cap.VOID):
+        raise Forbidden()
+    ex = get_exchange(db, shop_id, exchange_id)
+    inv = db.get(Invoice, ex.invoice_id)
+    pur = db.get(Purchase, ex.purchase_id)
+    if inv.status == InvoiceStatus.VOID:
+        raise Conflict(
+            code="already_voided",
+            message_en="This exchange is already deleted",
+            message_ur="یہ تبادلہ پہلے ہی ڈیلیٹ ہو چکا ہے",
+        )
+    try:
+        void_invoice(db, shop_id, ctx, inv.id, reason, commit=False, own_exchange=True)
+        void_purchase(db, shop_id, ctx, pur.id, reason, commit=False, own_exchange=True)
+        for g in db.scalars(
+            select(LedgerGroup).where(
+                LedgerGroup.shop_id == shop_id,
+                LedgerGroup.document_type == "exchange_refund",
+                LedgerGroup.document_id == inv.id,
+                LedgerGroup.reversed_by_group_id.is_(None),
+            )
+        ).all():
+            reverse(db, shop_id, ctx.id, g.id, f"Delete exchange {ex.no}: {reason}")
+        record_audit(
+            db,
+            shop_id=shop_id,
+            user_id=ctx.id,
+            entity="exchange",
+            entity_id=ex.id,
+            action="void",
+            after={"reason": reason, "invoice": inv.no, "purchase": pur.no},
+        )
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+    return ex

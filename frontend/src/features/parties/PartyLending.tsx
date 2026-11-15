@@ -8,11 +8,13 @@ import { useAuth } from '@/lib/auth'
 import { useState } from 'react'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
+import DeleteWarning from '@/components/DeleteWarning'
 import { ErrorText, fmtDate, Sheet } from '@/components/ui'
 import PaymentForm from '@/features/payments/PaymentForm'
 import { api, post } from '@/lib/api'
 import { withCur } from '@/lib/format'
 import { useGet, useInvalidate } from '@/lib/queries'
+import PaymentEditSheet, { type EditablePayment } from '@/features/more/PaymentEditSheet'
 import type { Message, Party } from '@/lib/types'
 
 type M = string
@@ -26,6 +28,7 @@ const n = (v: M | number) => Number(v).toLocaleString('en-US', { maximumFraction
 export default function PartyLending({ party }: { party: Party }) {
   const { pick, ur, cls } = useLang()
   const { data } = useGet<Lending>(['party-lending', party.id], `/api/v1/payments/lending/${party.id}`)
+  const [editing, setEditing] = useState<EditablePayment | null>(null)
   const [giving, setGiving] = useState<'in' | 'out' | null>(null)
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState<unknown>(null)
@@ -182,6 +185,8 @@ export default function PartyLending({ party }: { party: Party }) {
                 ) : null}
               </span>
               <span className={`num font-bold ${e.direction === 'out' ? 'text-payable' : 'text-emerald-deep'}`} dir="ltr">{e.direction === 'out' ? '-' : '+'}{n(e.amount)}</span>
+              {/* ADR-090: correct the amount / date / note in place */}
+              {canCancel && e.status === 'posted' ? <button type="button" onClick={() => setEditing({ ...e, purpose: 'lending' })} className={`tap min-h-9 shrink-0 rounded-xl border border-line px-2 font-bold text-emerald-deep ${small}`} data-testid="lending-edit">{pick('del.rowEdit')}</button> : null}
               {canCancel && e.status === 'posted' ? <button type="button" onClick={() => { setWhy(''); setErr(null); setCancelling(e) }} className={`tap min-h-9 shrink-0 rounded-xl border border-line px-2 font-bold text-payable ${small}`} data-testid="lending-cancel">{pick('lending.cancel')}</button> : null}
             </div>
           ))}
@@ -201,6 +206,7 @@ export default function PartyLending({ party }: { party: Party }) {
               <span className="flex flex-col"><span className="font-bold">{pick(cancelling.direction === 'out' ? 'lending.give' : 'lending.take')}</span><span className={`text-muted ${small}`} dir="ltr">{cancelling.no} · {fmtDate(cancelling.date)}</span></span>
               <span className="num text-lg font-bold" dir="ltr">{n(cancelling.amount)}</span>
             </div>
+            <DeleteWarning kind="lending" />
             <BiLabel text="lending.cancelHint" size="sm" tone="text-muted" />
             <BiInput label="common.reason" value={why} onChange={(e) => setWhy(e.target.value)} maxLength={200} help={<Help term="lending.cancel" size="sm" />} />
             <ErrorText error={err} />
@@ -212,6 +218,7 @@ export default function PartyLending({ party }: { party: Party }) {
       <Sheet open={giving !== null} onClose={() => { setGiving(null); setPrefill(null) }} title={giving === 'in' ? 'lending.take' : 'lending.give'}>
         {giving ? <PaymentForm key={`${giving}-${prefill ?? ''}`} party={party} direction={giving} lending amount={prefill ?? undefined} onDone={() => { setGiving(null); setPrefill(null) }} /> : null}
       </Sheet>
+      <PaymentEditSheet p={editing} onClose={() => setEditing(null)} onDone={() => void inv()} />
     </section>
   )
 }

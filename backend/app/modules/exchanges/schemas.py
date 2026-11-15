@@ -54,4 +54,5 @@ class ExchangeOut(BaseModel):
     trade_in_applied: Decimal = Decimal(0)
     refund: Decimal = Decimal(0)
     notes: str | None
+    deleted: bool = False  # ADR-090: the exchange was deleted (its sale is cancelled)
     created_at: dt.datetime

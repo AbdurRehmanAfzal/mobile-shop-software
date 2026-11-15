@@ -34,6 +34,19 @@ class PaymentCreate(BaseModel):
     )
 
 
+class PaymentEdit(BaseModel):
+    """ADR-090: a corrected payment / len-den replaces the old one; unset fields keep the old value"""
+
+    amount: Decimal = Field(gt=0)
+    date: dt.date | None = None
+    method: PaymentMethod | None = None
+    cash_account_id: uuid.UUID | None = None
+    reference: str | None = Field(default=None, max_length=80)
+    notes: str | None = None
+    due_date: dt.date | None = None
+    reason: str = Field(min_length=3, max_length=300)
+
+
 class AllocationOut(BaseModel):
     document_type: str
     document_id: uuid.UUID

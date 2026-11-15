@@ -362,6 +362,67 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-090 · 2026-11-15 · Accepted · Edit / Delete on every entry, with what a delete does; safe deletes
+**Context**: a shopkeeper entered expenses wrongly and could not find a way to delete them. The owner asked for Edit / Delete on every entry (expenses, len-den, purchases, sales — everything), active buttons, and before a delete a warning with an example of its effect.
+
+An audit found:
+- **Already editable / deletable, but hidden**: expense edit / delete was there, but only after tapping a row.
+- **Detail-only**: people and accessories had Edit / Delete only on their own page.
+- **No effect text**: the sale and purchase detail delete sheets, the catalogue and held-sale `window.confirm`, and the lab-trip cancel did not say what would happen.
+- **No undo at all**: returns, loans, branch transfers, stock adjustments, cash transfers, day close and bulk imports.
+- **Unsafe**: deleting one half of an exchange left the other half and its refund, and a sale or purchase could be voided while a later payment still pointed at it.
+
+**Decision (part 1, this change)**:
+- **`DeleteWarning`**: one component, shown in every delete sheet. It has a red **What will happen** box (stock, galla, khata, reports) and an **Example**, in en / ur / roman, keyed by kind under `del.<kind>.effect / .example`. Kinds: sale, purchase, repair, payment, lending, expense, exchange, party, accessory, oldStock, cashAccount, expenseCategory, catalogue, held, labTrip.
+- **Where it is shown**: `RemoveSheet` takes `warn`; `BillActions` always shows it; the sale / purchase detail void sheets, len-den cancel and lab-trip cancel show it; catalogue and held-sale deletes use `RemoveSheet` instead of `window.confirm`.
+- **Row buttons**:
+  - `BillActions` gains the kinds expense, lending and exchange, `onEdit` (opens an edit form in place) and `label` (a full button on detail screens).
+  - Expense rows get Edit / Delete.
+  - `RowActions` (new) puts Edit (`?edit=1` opens the form) / Delete on people and accessory rows.
+  - A phone's page gets **Delete (its purchase bill)** / **Delete (its sale bill)** (`?delete=1` opens that bill's delete).
+- **Safe deletes (backend)**:
+  - `void_invoice` refuses (`sale_has_later_money`, 409) when money was received against the sale later, or something was returned, exchanged or put on installments on it. The same check (`_later_links`) is now shared with change-customer.
+  - `void_purchase` refuses (`purchase_has_later_money`) when a later payment points at it or it is an exchange's trade-in.
+  - **Delete exchange** (`POST /exchanges/{id}/void`, VOID): both halves are voided in one transaction, the `exchange_refund` group is reversed and an audit row is written. Sale / purchase detail carry `exchange_id`, and the app offers **Delete this exchange** there.
+- Nothing is ever wiped. A delete is a void / reversal kept as Deleted with who, when and why (ledger append-only).
+
+**Part 2 (2026-11-16)**:
+- **Edit a payment / len-den**: `PUT /payments/{id} {amount, date?, notes?, due_date?, reason}` (VOID).
+  - The old one is voided and a corrected one is posted for the same person, direction and purpose, in one transaction.
+  - Bills it paid become unpaid and are allocated again FIFO.
+  - The old one keeps "Edited, replaced by …".
+  - `PaymentEditSheet` opens from the Payments row's Edit (owner / manager) and from a len-den row's Edit.
+- **Undo a return**: `POST /returns/{id}/void` (VOID); additive migration `e4a6c8d0f2b5` adds `returns.status / void_reason / voided_by`, every old return `posted`.
+  - A sale return puts the phone back as sold to that customer (event `sold`, document `sale_return_void`) and the items out of stock. A purchase return puts the phone back in stock (event `purchased`, `purchase_return_void`) and the items back at their return cost.
+  - The ledger group is reversed, `returned_at` is cleared and the bill's `returned_total` / status go back.
+  - It is refused once a phone's last money event is not this return (sold again, bought again, moved on).
+  - The Returns list shows Delete with the warning; undone returns show crossed out with Deleted.
+  - `ledger/corrections.py` now selects only the return columns it reads, so the old migration that calls it still runs on a fresh database.
+- **Undo a stock adjustment**: `POST /accessories/{id}/movements/{mid}/undo` (VOID).
+  - The opposite movement (`adjust_undo`, pointing at the original) is written, and the adjustment's posting is reversed.
+  - New adjustments post with `document_id` = the movement. Older ones are matched by time and memo.
+  - Each adjustment can be undone only once; the item's history row has the button.
+- **Undo a cash move** (galla ↔ bank): the transfers list row's Delete → the existing `POST /ledger/groups/{id}/reverse`; the row shows crossed out.
+
+**Part 3 (2026-11-16)**:
+- Migration `e4a6c8d0f2b5` is still unreleased, so it also carries `branch_transfers.undone_by` and `installment_plans.cancelled_at / cancel_reason`. All additive.
+- **Cancel a loan** (amanat): `POST /loans/{id}/cancel` (VOID). Allowed only while the loan is still out.
+  - The phone gets `loan_returned` with `cancelled`, and the loan status becomes `cancelled`.
+  - It is listed under Returned with a Deleted chip. No money ever moved.
+- **Send a branch transfer back**: `POST /transfers/{id}/undo` (VIEW_COST + VOID, sender's side).
+  - A transfer from the receiving branch back to this one, at the same cost, with the same rules (ADR-046: rows never change shop).
+  - It is refused when something there was sold or moved on. The original is marked `undone_by`, once.
+- **Cancel an installment plan**: `POST /installments/{id}/cancel` (VOID).
+  - The plan stops (status `cancelled`; no due dates, no reminders, out of the active views), and the balance stays as normal udhaar.
+  - A cancelled plan no longer blocks deleting its sale (`_later_links`).
+
+**Not yet**:
+- a real edit of a sale / purchase's lines;
+- Edit / Delete icons on the stock list's styles (today they are on the phone's page);
+- cancelling an installment plan, so its sale can be deleted.
+
+**Consequences**: no data change and no migration. Two deletes that used to leave the books half-undone now explain what to undo first.
+
 ## ADR-089 · 2026-11-15 · Accepted · One global row per brand / model / storage / colour / expense category
 **Context**: a live shop saw every brand twice in the purchase form ("Apple, Apple") and the stock summary split the same brand (Apple 98 phones + Apple 15). The cause: production runs `uvicorn --workers 2`, and the startup seed (`seed_catalogue`, `seed_categories`) has no lock and the tables had no unique rule. On the first start both workers saw an empty list and each inserted the whole global catalogue. Phones were then bought against whichever copy the shopkeeper tapped. Expense categories were seeded the same way.
 **Decision**:

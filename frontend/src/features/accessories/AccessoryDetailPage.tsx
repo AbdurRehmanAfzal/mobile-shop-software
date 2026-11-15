@@ -12,6 +12,7 @@ import Help from '@/components/Help'
 import { kindLabel } from '@/components/ItemKinds'
 import LabelSheet from '@/components/LabelSheet'
 import RemoveSheet from '@/components/RemoveSheet'
+import RowActions from '@/components/RowActions'
 import { BtnText, Chip, Empty, ErrorText, fmtDate, fmtDateTime, KV, Loading, MoneyText, PageHeader, Section, Sheet } from '@/components/ui'
 import { api } from '@/lib/api'
 import { ItemReserve } from '@/features/stock/ReserveCard'
@@ -33,7 +34,8 @@ export default function AccessoryDetailPage() {
   const { data: it, isLoading } = useGet<Item>(['item', id], id ? `/api/v1/accessories/${id}` : null)
   const { data: batches } = useGet<Batch[]>(['item-batches', id], id && canCost ? `/api/v1/accessories/${id}/batches` : null)
   const { data: tl } = useGet<TimelineRow[]>(['item-timeline', id], id ? `/api/v1/accessories/${id}/timeline` : null)
-  const [editing, setEditing] = useState(false)
+  // ADR-090: a row's Edit opens the form straight away (?edit=1)
+  const [editing, setEditing] = useState(() => new URLSearchParams(window.location.search).get('edit') === '1')
   const [adjusting, setAdjusting] = useState(false)
   const [labels, setLabels] = useState(false)
   const [removing, setRemoving] = useState(false)
@@ -142,7 +144,8 @@ export default function AccessoryDetailPage() {
                   <span className="num text-sm" dir="ltr">{r.old != null ? Number(r.old).toLocaleString('en-US') : '—'} → {r.new != null ? Number(r.new).toLocaleString('en-US') : '—'}</span>
                 </div>
               ) : (
-                <button key={i} type="button" disabled={!r.document_id || !(r.document_type === 'purchase' || r.document_type === 'invoice')} onClick={() => nav(r.document_type === 'purchase' ? `/purchases/${r.document_id}` : `/sales/${r.document_id}`)} className="flex w-full items-center gap-3 py-2 text-start first:pt-0 last:pb-0 disabled:cursor-default">
+                <div key={i} className="flex items-center">
+                <button type="button" disabled={!r.document_id || !(r.document_type === 'purchase' || r.document_type === 'invoice')} onClick={() => nav(r.document_type === 'purchase' ? `/purchases/${r.document_id}` : `/sales/${r.document_id}`)} className="flex w-full items-center gap-3 py-2 text-start first:pt-0 last:pb-0 disabled:cursor-default">
                   <span className={`well h-9 w-9 shrink-0 ${r.qty_delta > 0 ? 'bg-emerald-tint text-emerald-deep' : 'bg-payable-tint text-payable'}`}>{r.reason === 'adjust' ? <Wrench size={16} /> : r.qty_delta > 0 ? <ArrowDownLeft size={16} /> : <ArrowUpRight size={16} />}</span>
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-sm font-bold">{pick(`acc.move.${r.reason}`)}{r.party_name ? ` · ${r.party_name}` : ''}{r.doc_no && r.doc_no !== 'Opening stock' ? <span className="num text-muted" dir="ltr"> · {r.doc_no}</span> : null}</div>
@@ -153,6 +156,11 @@ export default function AccessoryDetailPage() {
                     <span className={`num text-muted ${small}`} dir="ltr">= {r.qty_after}{canCost && r.unit_cost ? ` · ${Number(r.unit_cost).toLocaleString('en-US')}` : ''}</span>
                   </div>
                 </button>
+                {/* ADR-090: an adjustment made by mistake is undone (count and books as before), once */}
+                {canCost && r.id && r.reason === 'adjust' && r.document_type !== 'adjust_undo' && !tl?.some((x) => x.kind === 'move' && x.document_type === 'adjust_undo' && x.document_id === r.id) ? (
+                  <RowActions warn="stockAdjust" reason title="del.undoAdjust" name={`${r.qty_delta > 0 ? '+' : ''}${r.qty_delta} · ${fmtDateTime(r.at)}`} canDelete onDelete={async (why) => { await post(`/api/v1/accessories/${it.id}/movements/${r.id}/undo`, { reason: why }); await inv('item', 'item-timeline', 'accessories') }} />
+                ) : null}
+                </div>
               )
             ))}
           </div>
@@ -189,7 +197,7 @@ export default function AccessoryDetailPage() {
           </div>
         ) : null}
       </Sheet>
-      <RemoveSheet open={removing} onClose={() => setRemoving(false)} name={it.name} onConfirm={async () => { await api('DELETE', `/api/v1/accessories/${it.id}`); await inv('accessories'); nav('/accessories') }} />
+      <RemoveSheet open={removing} onClose={() => setRemoving(false)} warn="accessory" name={it.name} onConfirm={async () => { await api('DELETE', `/api/v1/accessories/${it.id}`); await inv('accessories'); nav('/accessories') }} />
     </div>
   )
 }

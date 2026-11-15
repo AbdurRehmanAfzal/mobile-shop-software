@@ -404,17 +404,48 @@ def to_out(db: Session, p: Purchase) -> dict:
         else ZERO,
         "lines": lines,
         "payment": paymode.detail_for(db, p.shop_id, "purchase", p.id),
+        "exchange_id": _exchange_of(db, p.shop_id, p.id),
     }
 
 
 def void_purchase(
-    db: Session, shop_id: uuid.UUID, ctx, purchase_id: uuid.UUID, reason: str
+    db: Session,
+    shop_id: uuid.UUID,
+    ctx,
+    purchase_id: uuid.UUID,
+    reason: str,
+    *,
+    commit: bool = True,
+    own_exchange: bool = False,
 ) -> Purchase:
     if not ctx.can(Cap.VOID):
         raise Forbidden()
     p = get_purchase(db, shop_id, purchase_id)
     if p.status == PurchaseStatus.VOIDED:
         raise Conflict(code="already_voided")
+    # owner 2026-11-15 (ADR-090): a later payment against this bill, or an exchange built on it,
+    # must be undone first — otherwise the khata would be left with money for a bill that is gone
+    from app.modules.exchanges.models import Exchange
+    from app.modules.payments.models import Payment
+
+    later = p.party_id is not None and any(
+        any(str(a.get("document_id")) == str(p.id) for a in (x.allocations or []))
+        for x in db.scalars(
+            select(Payment).where(
+                Payment.shop_id == shop_id,
+                Payment.party_id == p.party_id,
+                Payment.status != "voided",
+            )
+        ).all()
+    )
+    if later or (
+        not own_exchange and db.scalar(select(Exchange.id).where(Exchange.purchase_id == p.id))
+    ):
+        raise Conflict(
+            code="purchase_has_later_money",
+            message_en="A payment was made against this purchase later, or it is part of an exchange. Delete that payment or the exchange's sale first, then delete the purchase.",
+            message_ur="اس خریداری کے بعد اس کی ادائیگی ہو چکی ہے یا یہ کسی تبادلے کا حصہ ہے۔ پہلے وہ ادائیگی یا تبادلے کی فروخت ڈیلیٹ کریں، پھر خریداری ڈیلیٹ کریں۔",
+        )
     # every device must still be exactly as purchased (only verification events allowed since)
     for ln in p.lines:
         if ln.device_id:
@@ -474,7 +505,8 @@ def void_purchase(
         action="void",
         after={"reason": reason},
     )
-    db.commit()
+    if commit:
+        db.commit()
     return p
 
 
@@ -914,3 +946,12 @@ def _purchase_time(value: datetime | None) -> datetime:
             message_ur="خریداری کا وقت آنے والا نہیں ہو سکتا",
         )
     return value
+
+
+def _exchange_of(db: Session, shop_id: uuid.UUID, purchase_id: uuid.UUID) -> uuid.UUID | None:
+    """The exchange this purchase is the trade-in half of (ADR-090: it is deleted as one)."""
+    from app.modules.exchanges.models import Exchange
+
+    return db.scalar(
+        select(Exchange.id).where(Exchange.shop_id == shop_id, Exchange.purchase_id == purchase_id)
+    )

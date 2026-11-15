@@ -685,17 +685,72 @@ def to_out(db: Session, inv: Invoice, show_cost: bool) -> dict:
         "profit": money(inv.total - inv.tax_amount - inv.cost_total) if show_cost else None,
         "lines": lines,
         "payment": paymode.detail_for(db, inv.shop_id, "sale", inv.id),
+        "exchange_id": _exchange_of(db, inv.shop_id, invoice_id=inv.id),
     }
 
 
+def _later_links(
+    db: Session, shop_id: uuid.UUID, inv: Invoice, own_exchange: bool = False
+) -> tuple[bool, bool]:
+    """(money received against this sale later, something returned / exchanged / put on
+    installments / adjusted against it) — either way the bill cannot simply be changed or
+    deleted (owner 2026-11-15, ADR-090)."""
+    from app.modules.exchanges.models import Exchange
+    from app.modules.installments.models import InstallmentPlan
+    from app.modules.payments.models import Payment
+
+    later = inv.party_id is not None and any(
+        any(str(a.get("document_id")) == str(inv.id) for a in (x.allocations or []))
+        for x in db.scalars(
+            select(Payment).where(
+                Payment.shop_id == shop_id,
+                Payment.party_id == inv.party_id,
+                Payment.status != "voided",
+            )
+        ).all()
+    )
+    linked = (
+        inv.returned_total > ZERO
+        or (inv.khata_adjusted or ZERO) > ZERO
+        or db.scalar(
+            select(InstallmentPlan.id).where(
+                InstallmentPlan.invoice_id == inv.id, InstallmentPlan.cancelled_at.is_(None)
+            )
+        )
+        or db.scalar(
+            select(Exchange.id).where(
+                Exchange.original_invoice_id == inv.id
+                if own_exchange
+                else (Exchange.invoice_id == inv.id) | (Exchange.original_invoice_id == inv.id)
+            )
+        )
+    )
+    return bool(later), bool(linked)
+
+
 def void_invoice(
-    db: Session, shop_id: uuid.UUID, ctx, invoice_id: uuid.UUID, reason: str
+    db: Session,
+    shop_id: uuid.UUID,
+    ctx,
+    invoice_id: uuid.UUID,
+    reason: str,
+    *,
+    commit: bool = True,
+    own_exchange: bool = False,
 ) -> Invoice:
+    """`own_exchange`: called by the exchange's own delete, which undoes both halves together."""
     if not ctx.can(Cap.VOID):
         raise Forbidden()
     inv = get_invoice(db, shop_id, invoice_id)
     if inv.status in (InvoiceStatus.VOID, InvoiceStatus.RETURNED):
         raise Conflict(code="already_voided")
+    later, linked = _later_links(db, shop_id, inv, own_exchange)
+    if later or linked:
+        raise Conflict(
+            code="sale_has_later_money",
+            message_en="Money was received against this sale later, or something was returned, exchanged or put on installments on it. Delete or undo that first, then delete the sale.",
+            message_ur="اس فروخت کے بعد اس کی وصولی ہو چکی ہے یا کچھ واپس، تبدیل یا قسطوں پر ہو چکا ہے۔ پہلے وہ ڈیلیٹ یا ختم کریں، پھر فروخت ڈیلیٹ کریں۔",
+        )
     for ln in inv.lines:
         if ln.device_id:
             d = db.get(Device, ln.device_id)
@@ -761,7 +816,8 @@ def void_invoice(
         action="void",
         after={"reason": reason},
     )
-    db.commit()
+    if commit:
+        db.commit()
     return inv
 
 
@@ -783,9 +839,6 @@ def change_customer(
     from the old khata to the new one. Each phone's history says who it was and who it is now.
     Refused once money was received against this bill later, something was returned or exchanged
     on it, it is on installments, or its extra cash went against the old person's udhaar."""
-    from app.modules.exchanges.models import Exchange
-    from app.modules.installments.models import InstallmentPlan
-    from app.modules.payments.models import Payment
 
     if not ctx.can(Cap.VOID):
         raise Forbidden()
@@ -805,26 +858,7 @@ def change_customer(
             message_en="This is already the customer on the bill",
             message_ur="بل پر پہلے ہی یہی گاہک ہے",
         )
-    later = inv.party_id is not None and any(
-        any(str(a.get("document_id")) == str(inv.id) for a in (x.allocations or []))
-        for x in db.scalars(
-            select(Payment).where(
-                Payment.shop_id == shop_id,
-                Payment.party_id == inv.party_id,
-                Payment.status != "voided",
-            )
-        ).all()
-    )
-    linked = (
-        inv.returned_total > ZERO
-        or (inv.khata_adjusted or ZERO) > ZERO
-        or db.scalar(select(InstallmentPlan.id).where(InstallmentPlan.invoice_id == inv.id))
-        or db.scalar(
-            select(Exchange.id).where(
-                (Exchange.invoice_id == inv.id) | (Exchange.original_invoice_id == inv.id)
-            )
-        )
-    )
+    later, linked = _later_links(db, shop_id, inv)
     if later or linked:
         raise Conflict(
             code="sale_has_later_money",
@@ -1206,3 +1240,12 @@ def held_out(db: Session, row: HeldSale) -> dict:
         "created_at": row.created_at,
         "created_by_name": user_name(db, row.created_by),
     }
+
+
+def _exchange_of(db: Session, shop_id: uuid.UUID, invoice_id: uuid.UUID) -> uuid.UUID | None:
+    """The exchange this sale is the new half of (ADR-090: it is deleted as one)."""
+    from app.modules.exchanges.models import Exchange
+
+    return db.scalar(
+        select(Exchange.id).where(Exchange.shop_id == shop_id, Exchange.invoice_id == invoice_id)
+    )

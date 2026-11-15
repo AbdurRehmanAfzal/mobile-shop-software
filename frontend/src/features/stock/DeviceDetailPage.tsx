@@ -67,7 +67,8 @@ export default function DeviceDetailPage() {
   const { data: history } = useDeviceHistory(id)
   const ev = useDeviceEvent()
   const loanM = useDocMutation<{ device_id: string; party_id: string; expected_back_at?: string; notes?: string }, Loan>('POST', () => '/api/v1/loans')
-  const [sheet, setSheet] = useState<null | 'loan' | 'note' | 'price' | 'edit' | 'remove' | 'label' | 'lock' | 'retype' | 'imei' | 'cost'>(null)
+  // ADR-090: ?edit=1 (a row's Edit) opens the details form straight away
+  const [sheet, setSheet] = useState<null | 'loan' | 'note' | 'price' | 'edit' | 'remove' | 'label' | 'lock' | 'retype' | 'imei' | 'cost'>(() => (new URLSearchParams(window.location.search).get('edit') === '1' ? 'edit' : null))
   // owner 2026-11-09 (ADR-056): an IMEI typed wrong
   const [fix, setFix] = useState({ imei1: '', imei2: '', clear2: false, reason: '' })
   const [fixErr, setFixErr] = useState<unknown>(null)
@@ -147,6 +148,9 @@ export default function DeviceDetailPage() {
     canSeeCost ? { key: 'retype', label: 'devx.retype', run: () => { setToCat((d.category ?? 'phone') === 'phone' ? 'tablet' : 'phone'); setPreview(null); setRetypeErr(null); setSheet('retype') } } : null,
     inStock && canSeeCost && multiShop ? { key: 'transfer', label: 'transfer.sendBranch', run: () => nav(`/transfers/new?device=${d.id}`) } : null,
     canRemoveOpening ? { key: 'removeOld', label: 'crud.removeOldStock', run: () => setSheet('remove') } : null,
+    // ADR-090: a phone entered by mistake is deleted with its bill (the bill's delete says what happens)
+    canSeeCost && boughtOn && inStock && !soldSince ? { key: 'deletePurchase', label: 'del.deletePurchase', run: () => nav(`/purchases/${boughtOn}?delete=1`) } : null,
+    canSeeCost && soldOn && d.status === 'sold' ? { key: 'deleteSale', label: 'del.deleteSale', run: () => nav(`/sales/${soldOn}?delete=1`) } : null,
   ] as (Act | null)[]).filter((x): x is Act => !!x)
 
   return (
@@ -241,6 +245,8 @@ export default function DeviceDetailPage() {
           {canSeeCost ? <BiButton text="devx.retype" variant="secondary" size="md" onClick={() => { setToCat((d.category ?? 'phone') === 'phone' ? 'tablet' : 'phone'); setPreview(null); setRetypeErr(null); setSheet('retype') }} /> : null}
           {inStock && canSeeCost && multiShop ? <BiButton text="transfer.sendBranch" variant="secondary" size="md" onClick={() => nav(`/transfers/new?device=${d.id}`)} /> : null}
           {canRemoveOpening ? <BiButton text="crud.removeOldStock" variant="secondary" size="md" onClick={() => setSheet('remove')} /> : null}
+          {canSeeCost && boughtOn && inStock && !soldSince ? <BiButton text="del.deletePurchase" variant="danger" size="md" onClick={() => nav(`/purchases/${boughtOn}?delete=1`)} data-testid="device-delete-purchase" /> : null}
+          {canSeeCost && soldOn && d.status === 'sold' ? <BiButton text="del.deleteSale" variant="danger" size="md" onClick={() => nav(`/sales/${soldOn}?delete=1`)} data-testid="device-delete-sale" /> : null}
         </div>
         <ErrorText error={ev.error ?? loanM.error} />
       </Section>
@@ -439,7 +445,7 @@ export default function DeviceDetailPage() {
         open={sheet === 'remove'}
         onClose={() => setSheet(null)}
         title="crud.removeOldStock"
-        hint="crud.removeOldStockHint"
+        warn="oldStock"
         reason
         name={<span dir="ltr">{d.imei1}</span>}
         onConfirm={async (reason) => {

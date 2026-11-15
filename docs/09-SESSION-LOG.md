@@ -1816,3 +1816,52 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - `test_migrations`, `test_expenses`; full suite. Dev DB (2,717 phones, no duplicates): the migration ran and changed nothing.
 - Not run on Postgres locally (none installed). The SQL is plain, and psycopg 3 binds the UUIDs.
 **Next**: deploy; the owner checks the shop's brand list and stock summary (docs/29).
+
+### Same day — Edit / Delete everywhere with the effect shown first (ADR-090, part 1); PR #69
+**Owner** (a shopkeeper): "koe be software may chez dali tu is may delete r edit ka options lazmi hona chye … expense … delete krna chta hai ous k pas option he nahi … delete sy phlay ak warning message with example … edit ka be ye active buttons".
+**Audit** (whole app, every entry kind): the matrix and gaps are in ADR-090. Expenses had edit / delete hidden behind a row tap; many deletes said nothing about their effect; exchange halves and sales with later payments could be voided unsafely; returns, loans, transfers, adjustments and cash transfers have no undo.
+**Done (part 1)**:
+- `DeleteWarning` (effect + example, 15 kinds, en / ur / roman), used by every delete sheet.
+- Row Edit / Delete on expenses (`BillActions` with `onEdit`), people and accessories (`RowActions`, `?edit=1`).
+- A phone's page: Delete (its purchase / sale bill) → `?delete=1`.
+- Catalogue and held-sale deletes moved from `window.confirm` to the sheet.
+- Backend: the sale / purchase void guards, `POST /exchanges/{id}/void`, `exchange_id` on sale / purchase detail.
+- Manual ch. 2 (all three languages), ADR-090, docs/29.
+**Verified**:
+- pytest `test_delete_safety` (2, new): exchange deleted as one — the galla and khata back, B in stock, both bills void, twice 409; each half alone 409; a sale with a later payment 409 until that payment is deleted. Full suite.
+- tsc, Help.test.
+- Playwright `delete-everywhere` (new: expense Edit form, Delete with the warning and example, crossed out; person Edit `?edit=1`, Delete with the warning). Also `bill-delete`, `catalogue` and `crud` (updated for the sheet), plus `exchange-return`, `hold`, `lending-cancel`, `repair-choice` and `repair-labs`. I looked at the warning screenshot.
+**Next**: ADR-090 parts 2 / 3 (see ADR).
+
+### 2026-11-16 — Edit / undo, part 2 (ADR-090)
+**Owner**: "ok" (go on with part 2); PR #69 was already merged.
+**Done**:
+- Payment / len-den edit: `PUT /payments/{id}` voids the old payment and posts the corrected one in one transaction. `PaymentEditSheet` opens from the Payments row and the len-den row.
+- Undo a sale / purchase return: `POST /returns/{id}/void`, additive migration `e4a6c8d0f2b5`. `corrections.py` selects only the return columns it reads, so the old migration still runs.
+- Undo a stock adjustment: `POST /accessories/{id}/movements/{mid}/undo`. New adjustments are linked to their movement.
+- Undo a galla ↔ bank move from its row (the existing ledger reverse).
+- Warnings with examples for each (saleReturn, purchaseReturn, stockAdjust, cashTransfer), en / ur / roman. ADR-090 updated, docs/29.
+**Verified**:
+- pytest `test_delete_safety` (7):
+  - a payment edited 3,000 → 30,000: the khata 0, the bill paid, the old one voided "replaced by"; a second edit gives 409; len-den keeps its purpose and direction;
+  - sale return undone: sold again, galla and khata as before, the bill paid; the line can be returned again;
+  - purchase return undone; once the phone was bought again, 409 `device_changed`;
+  - an adjustment −3 undone: 10 back, the average cost the same; a second undo gives 409.
+- `test_migrations`, `test_accounting_audit`, `test_accessories`, full suite.
+- tsc, Help.test.
+- Playwright: `edit-undo` (new), `delete-everywhere`, `lending`, `lending-cancel`, `accessories`, `exchange-return`. I looked at the screenshots.
+**Next**: ADR-090 part 3: undo a loan and a branch transfer, sale / purchase line edit, stock list row icons, cancel an installment plan.
+
+### 2026-11-16 — Edit / undo, part 3 (ADR-090)
+**Owner**: "ok" (go on).
+**Done**:
+- Cancel a loan entered by mistake (`POST /loans/{id}/cancel`, status `cancelled`, listed under Returned as Deleted).
+- Send a branch transfer back (`POST /transfers/{id}/undo`: a transfer back from the branch at the same cost; `undone_by`).
+- Cancel an installment plan (`POST /installments/{id}/cancel`): the balance stays as udhaar, and the plan no longer blocks deleting the sale.
+- The unreleased migration `e4a6c8d0f2b5` gained `branch_transfers.undone_by` and `installment_plans.cancelled_at / cancel_reason`.
+- Warnings with examples (loan, branchTransfer, installment) in en / ur / roman. ADR-090, docs/29, manual.
+**Verified**:
+- pytest `test_delete_safety` (10), `test_loans`, `test_branch_transfers`, `test_installments`, `test_migrations`; full suite.
+- tsc, Help.test.
+- Playwright `edit-undo`, `delete-everywhere`, `installments`, `transfers` (that one timed out once under 3 workers and passed alone).
+**Next**: still open — sale / purchase line edit in place; Edit / Delete icons on the stock list's styles.
