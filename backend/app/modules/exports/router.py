@@ -25,6 +25,7 @@ from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx, require_cap
 from app.modules.catalogue.models import Brand, Colour, Model, Storage
 from app.modules.devices.models import Device
+from app.modules.devices.types import cpid_label, pta_out
 from app.modules.expenses.models import Expense, ExpenseCategory
 from app.modules.ledger.service import party_statement
 from app.modules.parties.models import Party
@@ -278,6 +279,12 @@ STOCK_COLS: dict[str, tuple[str, object]] = {
 }
 
 
+def _cpid(db, ctx) -> str:
+    from app.modules.auth.models import Shop
+
+    return cpid_label(db.get(Shop, ctx.shop_id))
+
+
 def _days_in(at) -> int | None:
     if at is None:
         return None
@@ -386,6 +393,10 @@ def stock(
         name = {"screen": "stock", "staff": "stock-prices", "customer": "phones-for-sale"}[copy]
         header = [STOCK_COLS[k][0] for k in keys]
         rows = [[STOCK_COLS[k][1](d) for k in keys] for d in found]
+        if "pta" in keys:  # ADR-083: CP ID as the shop's own name
+            cp, at = _cpid(db, ctx), keys.index("pta")
+            for r in rows:
+                r[at] = pta_out(r[at], cp)
         return _file(format, ctx, db, lang, name, header, rows)
     cost = ctx.can(Cap.VIEW_COST)
     stmt = (
@@ -416,6 +427,7 @@ def stock(
     if cost:
         header.append("Cost")
     rows = []
+    cp = _cpid(db, ctx)
     for d, b, m, s, c in db.execute(stmt).all():
         r = [
             d.imei1,
@@ -425,7 +437,7 @@ def stock(
             s,
             c,
             d.condition,
-            d.pta_status,
+            pta_out(d.pta_status, cp),
             d.sim_time_months,
             d.status,
             d.verification_status,

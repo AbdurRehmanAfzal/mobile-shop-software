@@ -139,9 +139,14 @@ SPEC_KEYS = (
 # ---- preferences ----------------------------------------------------------------------------------
 
 
+CPID_DEFAULT = "CP ID"
+
+
 def prefs_for(shop: Shop | None) -> dict:
-    p = {"grades": list(GRADES), "require_lock_check": False}
+    p = {"grades": list(GRADES), "require_lock_check": False, "cpid_label": CPID_DEFAULT}
     raw = (shop.device_prefs if shop is not None else None) or {}
+    if str(raw.get("cpid_label") or "").strip():
+        p["cpid_label"] = str(raw["cpid_label"]).strip()[:20]
     if isinstance(raw.get("grades"), list) and raw["grades"]:
         p["grades"] = [str(g).strip().lower() for g in raw["grades"] if str(g).strip()][:12]
     if "require_lock_check" in raw:
@@ -159,7 +164,21 @@ def clean_prefs(raw: dict | None) -> dict | None:
         out["grades"] = [str(g).strip().lower() for g in raw["grades"] if str(g).strip()][:12]
     if "require_lock_check" in raw:
         out["require_lock_check"] = bool(raw["require_lock_check"])
+    # owner 2026-11-15 (ADR-083): the shop's own name / mark for CP ID phones in its reports
+    label = str(raw.get("cpid_label") or "").strip()[:20]
+    if label and label != CPID_DEFAULT:
+        out["cpid_label"] = label
     return out
+
+
+def cpid_label(shop: Shop | None) -> str:
+    """what the shop's printed reports and screens show for a CP ID phone (default "CP ID")"""
+    return prefs_for(shop)["cpid_label"]
+
+
+def pta_out(value: str | None, cpid: str) -> str | None:
+    """a PTA status for a report: CP ID as the shop's own name, the rest unchanged"""
+    return cpid if value == "cpid" else value
 
 
 # ---- specs and the model library ---------------------------------------------------------------------

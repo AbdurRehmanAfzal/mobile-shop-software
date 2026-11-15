@@ -1077,7 +1077,9 @@
     "glance": "At a glance",
     "moneySplit": "Where the money sits",
     "todayCash": "Cash in hand today",
-    "todayBank": "Bank / online today:"
+    "todayBank": "Bank / online today:",
+    "ovHint": "Sales, purchases, money, udhaar — all on one screen",
+    "auditHint": "Profit, stock, people — checked figure by figure"
   },
   "pin": {
     "title": "Enter your PIN",
@@ -6665,6 +6667,11 @@
         "title": "Phones: tax paid at import",
         "body": "Mobile phones are in the Ninth Schedule of the Sales Tax Act: the importer or maker pays the sales tax, and no sales tax is added when a shop sells the phone. On, a taxed bill adds tax only to accessories and other items, and the bill says why the phone line has none. Off, every line takes the bill's rate (as before).",
         "example": "A taxed bill: phone Rs. 40,000 + charger Rs. 1,000 at 18% → tax Rs. 180 (on the charger only)."
+      },
+      "cpid": {
+        "title": "Name for CP ID phones",
+        "body": "CP ID phones are no longer allowed in Pakistan, but many shops still hold and trade them. Choose a word or a mark of your own (up to 20 letters, e.g. ★ or \"Special\"); every report, the stock tally, price lists, stickers, receipts and the app's screens show it instead of \"CP ID\". Only the label changes; the phones stay CP ID in the record. Leave it empty for CP ID.",
+        "example": "Pick ★: the tally sheet shows \"★\" where it said CP ID."
       }
     },
     "biz": {
@@ -8483,7 +8490,9 @@
       "hint": "Lock check for used mobiles, grades of used units",
       "requireLock": "Lock check also required for used mobiles",
       "requireLockHint": "Tablets and smart watches always need it",
-      "grades": "Grades of used units (comma separated)"
+      "grades": "Grades of used units (comma separated)",
+      "cpid": "Name for CP ID phones (in reports)",
+      "cpidHint": "Write your own word or tap a mark; it shows instead of \"CP ID\" in reports, stickers, receipts and screens. Empty = CP ID."
     },
     "filters": "Filters",
     "priceMin": "Price from",

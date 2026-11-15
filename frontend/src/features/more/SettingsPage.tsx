@@ -37,7 +37,7 @@ interface ShopFull {
   sale_rules: { below_asking: Rule; asking_change: Rule } | null
   audit_prefs: AuditPrefs | null
   item_prefs: ItemPrefs | null
-  device_prefs: { grades?: string[]; require_lock_check?: boolean } | null
+  device_prefs: { grades?: string[]; require_lock_check?: boolean; cpid_label?: string } | null
 }
 interface ItemPrefs { valuation?: 'avg' | 'fifo'; allow_negative_stock?: boolean; units?: Record<string, number> }
 interface AuditPrefs { age_bands: number[]; high_value: number; low_margin_pct: number; top_share: number; low_units: number; bypass_share: number; bypass_min: number }
@@ -306,21 +306,33 @@ function ItemPrefsCard({ current }: { current: ItemPrefs | null }) {
   )
 }
 
+/** marks a shop may pick to stand for CP ID in its reports (owner 2026-11-15, ADR-083) */
+const CPID_MARKS = ['★', '◆', '●', '▲', '■', '✦', '♦', '✱', 'C', 'S']
+
 /** lock check for used mobiles, grades of used units (owner addendum 6, docs/26 §A) */
-function DevicePrefsCard({ current }: { current: { grades?: string[]; require_lock_check?: boolean } | null }) {
+function DevicePrefsCard({ current }: { current: { grades?: string[]; require_lock_check?: boolean; cpid_label?: string } | null }) {
   const qc = useQueryClient()
   const shopKey = useAuth((s) => s.activeShopId)
-  const [p, setP] = useState({ require_lock_check: false, grades: 'a, b, refurbished, copy' })
+  const { ur, cls } = useLang()
+  const [p, setP] = useState({ require_lock_check: false, grades: 'a, b, refurbished, copy', cpid: '' })
   const [ok, setOk] = useState(false)
-  useEffect(() => { if (current) setP({ require_lock_check: !!current.require_lock_check, grades: (current.grades ?? ['a', 'b', 'refurbished', 'copy']).join(', ') }) }, [current])
+  useEffect(() => { if (current) setP({ require_lock_check: !!current.require_lock_check, grades: (current.grades ?? ['a', 'b', 'refurbished', 'copy']).join(', '), cpid: current.cpid_label ?? '' }) }, [current])
   const m = useMutation({
-    mutationFn: () => patch('/api/v1/shops/current', { device_prefs: { require_lock_check: p.require_lock_check, grades: p.grades.split(',').map((g) => g.trim().toLowerCase()).filter(Boolean) } }),
+    mutationFn: () => patch('/api/v1/shops/current', { device_prefs: { require_lock_check: p.require_lock_check, grades: p.grades.split(',').map((g) => g.trim().toLowerCase()).filter(Boolean), cpid_label: p.cpid.trim() } }),
     onSuccess: () => { setOk(true); void qc.invalidateQueries({ queryKey: [shopKey, 'shop-full'] }); void qc.invalidateQueries({ queryKey: [shopKey, 'device-options'] }) },
   })
   return (
     <Card icon={<Tablet size={22} />} tone="bg-stockt text-stockt-fg" title="devx.prefs.title" hint="devx.prefs.hint" help="settings.devices">
       <Toggle on={p.require_lock_check} onChange={(v) => { setOk(false); setP({ ...p, require_lock_check: v }) }} text="devx.prefs.requireLock" hint="devx.prefs.requireLockHint" help="settings.lockCheck" />
       <BiInput label="devx.prefs.grades" value={p.grades} onChange={(e) => { setOk(false); setP({ ...p, grades: e.target.value }) }} dir="ltr" help={<Help term="settings.grades" size="sm" />} />
+      {/* owner 2026-11-15 (ADR-083): CP ID under the shop's own name or mark, in reports and screens */}
+      <BiInput label="devx.prefs.cpid" value={p.cpid} onChange={(e) => { setOk(false); setP({ ...p, cpid: e.target.value.slice(0, 20) }) }} placeholder="CP ID" maxLength={20} help={<Help term="settings.cpid" size="sm" />} hint="devx.prefs.cpidHint" data-testid="cpid-label" />
+      <div className="flex flex-wrap gap-2" data-testid="cpid-marks">
+        {CPID_MARKS.map((m) => (
+          <button key={m} type="button" aria-pressed={p.cpid === m} onClick={() => { setOk(false); setP({ ...p, cpid: m }) }} className={`tap min-h-11 min-w-11 rounded-xl border-2 px-2 text-lg font-bold ${p.cpid === m ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'}`}>{m}</button>
+        ))}
+        <button type="button" onClick={() => { setOk(false); setP({ ...p, cpid: '' }) }} className={`tap min-h-11 rounded-xl border-2 border-line bg-surface px-3 font-bold text-muted ${ur ? cls('sm') : 'text-sm'}`}>CP ID</button>
+      </div>
       <ErrorText error={m.error} />
       <BiButton text={ok ? 'settings.saved' : 'common.save'} icon={<Check size={20} />} variant="secondary" full loading={m.isPending} onClick={() => m.mutate()} />
     </Card>

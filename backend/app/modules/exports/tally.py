@@ -25,6 +25,7 @@ from app.db.base import ZERO
 from app.db.refs import user_name
 from app.modules.devices import service as devices
 from app.modules.devices.state import DeviceStatus
+from app.modules.devices.types import cpid_label
 from app.modules.ledger.service import money
 from app.modules.parties.models import Party
 
@@ -171,6 +172,7 @@ def page(ctx, db, can_cost: bool, ur: bool, blind: bool = False) -> Response:
     from app.modules.auth.models import Shop
 
     shop = db.get(Shop, ctx.shop_id)
+    cp = cpid_label(shop)
     data = collect(db, ctx.shop_id, can_cost)
     e = html.escape
     st = data["status"]["units"]
@@ -267,7 +269,8 @@ def page(ctx, db, can_cost: bool, ur: bool, blind: bool = False) -> Response:
             cond1 = " · ".join(
                 x for x in (COND.get(d["condition"], d["condition"]), d.get("grade")) if x
             )
-            cond2 = " · ".join(x for x in (PTA.get(d["pta_status"], d["pta_status"]), lock) if x)
+            pta_txt = cp if d["pta_status"] == "cpid" else PTA.get(d["pta_status"], d["pta_status"])
+            cond2 = " · ".join(x for x in (pta_txt, lock) if x)
             bat1 = f"{d['battery_health']}%" if d.get("battery_health") else ""
             if d.get("battery_cycles") is not None:
                 bat1 = " · ".join(x for x in (bat1, f"{d['battery_cycles']} cyc") if x)
@@ -381,6 +384,7 @@ def workbook(ctx, db, can_cost: bool, ur: bool, blind: bool = False) -> Response
     from app.modules.auth.models import Shop
 
     shop = db.get(Shop, ctx.shop_id)
+    cp = cpid_label(shop)
     data = collect(db, ctx.shop_id, can_cost)
     st = data["status"]["units"]
     out = st["in_repair"] + st["approval"] + st["on_loan"]
@@ -551,7 +555,7 @@ def workbook(ctx, db, can_cost: bool, ur: bool, blind: bool = False) -> Response
                 d.get("colour_name"),
                 COND.get(d["condition"], d["condition"]),
                 d.get("grade"),
-                PTA.get(d["pta_status"], d["pta_status"]),
+                cp if d["pta_status"] == "cpid" else PTA.get(d["pta_status"], d["pta_status"]),
                 lock,
                 d.get("battery_health"),
                 d.get("battery_cycles"),

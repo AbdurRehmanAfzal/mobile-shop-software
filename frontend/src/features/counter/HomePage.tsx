@@ -4,7 +4,7 @@
  *  reports. Every card that opens something still says "See details ›" (owner: users did not know
  *  the cards could be tapped). */
 
-import { AlertTriangle, ArrowDownLeft, ArrowUpRight, Boxes, LayoutDashboard, UserCheck, ChevronLeft, ChevronRight, HandCoins, Landmark, Palette, PiggyBank, Receipt, ScanLine, Search, ShieldAlert, Smartphone, Tag, TrendingUp, Wallet, Wrench } from 'lucide-react'
+import { AlertTriangle, ArrowDownLeft, ArrowUpRight, Boxes, ClipboardCheck, LayoutDashboard, UserCheck, ChevronLeft, ChevronRight, HandCoins, Landmark, Palette, Receipt, ScanLine, Search, ShieldAlert, Smartphone, Tag, TrendingDown, TrendingUp, Wallet, Wrench } from 'lucide-react'
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
@@ -124,6 +124,22 @@ export default function HomePage() {
       </div>
       <OtherJobs jobs={small} layout={layout} />
 
+      {/* owner 2026-11-15: Business overview (ADR-076) and Shop audit, two big tiles side by side */}
+      {manager ? (
+        <div className="grid grid-cols-2 gap-2.5" data-testid="home-big-reports">
+          <Link to="/overview" data-testid="home-overview" className={`tap flex min-h-[124px] flex-col justify-between gap-2 rounded-3xl bg-hero p-4 text-hero-text shadow-hero ${has('reports') ? '' : 'col-span-2'}`}>
+            <span className="flex items-center justify-between"><span className="well h-12 w-12 bg-surface text-emerald"><LayoutDashboard size={24} strokeWidth={2} /></span><ChevronRight size={20} className="opacity-80 rtl:rotate-180" /></span>
+            <span className="flex flex-col"><BiLabel text="ov.title" size="lg" bold tone="text-current" /><BiLabel text="home.ovHint" size="sm" tone="text-current opacity-80" /></span>
+          </Link>
+          {has('reports') ? (
+            <Link to={`/audit?${glanceQuery}`} data-testid="home-audit" className="tap flex min-h-[124px] flex-col justify-between gap-2 rounded-3xl bg-emerald p-4 text-white shadow-cta">
+              <span className="flex items-center justify-between"><span className="well h-12 w-12 bg-surface text-emerald"><ClipboardCheck size={24} strokeWidth={2} /></span><ChevronRight size={20} className="opacity-80 rtl:rotate-180" /></span>
+              <span className="flex flex-col"><BiLabel text="audit.title" size="lg" bold tone="text-current" /><BiLabel text="home.auditHint" size="sm" tone="text-current opacity-80" /></span>
+            </Link>
+          ) : null}
+        </div>
+      ) : null}
+
       {/* at a glance: the period's numbers and two charts (owner / manager) */}
       <section className="flex flex-col gap-2.5">
         <SectionTitle text="home.glance" help="counter.glanceAll" to={manager && has('reports') ? `/audit?${glanceQuery}` : hisaab} />
@@ -131,7 +147,7 @@ export default function HomePage() {
         {manager ? <PeriodPicker value={period} onChange={setPeriod} size="sm" /> : null}
         <GlanceSet layout={layout} items={[
           { id: 'sales', to: hisaab, help: 'counter.glance.sales', icon: <Tag size={16} />, tone: 'bg-sell text-sell-fg', label: 'home.sales', value: rep?.sales_total, sub: pick('home.phonesSold').replace('{{n}}', String(rep?.phones_sold ?? 0)) },
-          ...(manager ? [{ id: 'profit', to: `/audit/finance?${glanceQuery}`, help: 'counter.glance.profit', icon: <PiggyBank size={16} />, tone: 'bg-ink text-ground', label: 'home.profit', value: rep?.profit, neg: Number(rep?.profit ?? 0) < 0, sub: glance ? `${pick('audit.vsPrevious')} ${fmt(glance.previous.net_profit)}` : undefined }] : []),
+          ...(manager ? [{ id: 'profit', to: `/audit/finance?${glanceQuery}`, help: 'counter.glance.profit', icon: Number(rep?.profit ?? 0) < 0 ? <TrendingDown size={16} /> : <TrendingUp size={16} />, tone: Number(rep?.profit ?? 0) < 0 ? 'bg-payable-tint text-payable' : 'bg-emerald-tint text-emerald-deep', label: 'home.profit', value: rep?.profit, neg: Number(rep?.profit ?? 0) < 0, sub: glance ? `${pick('audit.vsPrevious')} ${fmt(glance.previous.net_profit)}` : undefined }] : []),
           { id: 'inHand', to: hisaab, help: 'inHand', icon: <Wallet size={16} />, tone: 'bg-emerald-tint text-emerald-deep', label: 'counter.inHand', value: rep?.cash_net, neg: cashNeg, sub: glance ? `${pick('audit.moneyIn')} ${fmt(glance.money.inflows)} · ${pick('audit.moneyOut')} ${fmt(glance.money.outflows)}` : undefined },
           manager
             ? { id: 'cashBank', to: '/more/cash', help: 'counter.glance.cashBank', icon: <Landmark size={16} />, tone: 'bg-khata text-khata-fg', label: 'audit.cashBank', value: dash?.cash_in_hand ?? undefined, neg: Number(dash?.cash_in_hand ?? 0) < 0, sub: pick('audit.now') }
@@ -152,13 +168,6 @@ export default function HomePage() {
           <Link to="/stock/summary" data-testid="home-tally-asks" className={`tap flex min-h-12 items-center gap-2 rounded-2xl bg-gold/15 px-3 font-bold text-gold-text ${ur ? cls('sm') : 'text-sm'}`}>
             <UserCheck size={18} /> {pick('tally.homeAsks').replace('{{n}}', String(tallyAsks))}
             <ChevronRight size={16} className="ms-auto rtl:rotate-180" />
-          </Link>
-        ) : null}
-        {/* owner 2026-11-14 (ADR-076): every figure on one screen */}
-        {manager ? (
-          <Link to="/overview" data-testid="home-overview" className={`tap flex min-h-12 items-center gap-2 rounded-2xl border border-line bg-surface px-3 font-bold text-ink ${ur ? cls('sm') : 'text-sm'}`}>
-            <LayoutDashboard size={18} className="text-emerald" /> {pick('ov.title')}
-            <ChevronRight size={16} className="ms-auto text-muted rtl:rotate-180" />
           </Link>
         ) : null}
         {dash?.sales_7d ? (

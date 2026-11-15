@@ -1,6 +1,7 @@
 /** App frame, "Dukaan counter" (docs/11 v2). Phone: slim header + 5-tab bottom bar.
  *  Laptop (lg+): the same job tiles as a side menu with F-key shortcuts, content beside it. */
 
+import { useCpidLabel } from '@/lib/cpid'
 import { BtnText, Sheet } from '@/components/ui'
 import { Bell, BookOpen, CalendarDays, Check, Home, Languages, LogOut, Menu, MoreHorizontal, Moon, Palette, Settings, Smartphone, Store, Sun, UserRound } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
@@ -113,6 +114,7 @@ export default function Shell() {
   noteRoute(pathname) // during render, so a page opened by a tap never restores an old draft
   const wide = pathname === '/' || WIDE.some((w) => pathname === w || pathname.startsWith(`${w}/`) || pathname.startsWith(`${w}?`))
   const shop = useAuth(activeShop)
+  useCpidLabel(!!shop) // ADR-083: CP ID under the shop's own name
   const nav = useNavigate()
   const { ur, roman, pick, cls, dir } = useLang()
   const locale: Locale = ur ? 'ur' : roman ? 'roman' : 'en'

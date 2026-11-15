@@ -42,7 +42,7 @@ export default function SidePanel() {
   const { ur, pick, cls, dir } = useLang()
   const has = useModules()
   const role = useAuth((s) => s.me?.user.role)
-  const jobs = JOBS.filter((j) => !j.module || has(j.module))
+  const jobs = JOBS.filter((j) => !j.homeOnly && (!j.module || has(j.module)))
   const links = SHOP_LINKS.filter((l) => (!l.roles || (role && l.roles.includes(role))) && (!moduleFor(l.to) || has(moduleFor(l.to)!)))
   const Chevron = dir === 'rtl' ? ChevronLeft : ChevronRight
   const txt = (en: string) => (ur ? cls('sm') : en)
@@ -119,7 +119,7 @@ export default function SidePanel() {
           <NavLink key={j.id} to={j.to} className={({ isActive }) => boldRow(isActive)}>
             <span className={`well h-6 w-6 shrink-0 rounded-lg ${j.tone}`}><j.Icon size={15} strokeWidth={2} /></span>
             <span className={`min-w-0 flex-1 ${txt('text-sm')}`}>{pick(j.label)}</span>
-            {kbd(j.fkey, true)}
+            {j.fkey ? kbd(j.fkey, true) : null}
           </NavLink>
         ))}
         {heading(true)}
@@ -148,7 +148,7 @@ export default function SidePanel() {
         <NavLink key={j.id} to={j.to} className={({ isActive }) => `tap flex min-h-8 items-center gap-2.5 rounded-xl px-2 py-0 font-bold ${j.tone} ${isActive ? 'ring-2 ring-current' : ''}`}>
           <span className={`well h-6 w-6 shrink-0 rounded-lg bg-surface ${j.ink}`}><j.Icon size={15} strokeWidth={2} /></span>
           <span className={`min-w-0 flex-1 ${txt('text-sm')}`}>{pick(j.label)}</span>
-          {kbd(j.fkey)}
+          {j.fkey ? kbd(j.fkey) : null}
         </NavLink>
       ))}
       {heading()}

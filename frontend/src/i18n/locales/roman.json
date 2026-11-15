@@ -1077,7 +1077,9 @@
     "glance": "Ek nazar mein",
     "moneySplit": "Paisa kahan para hai",
     "todayCash": "Aaj galle mein cash",
-    "todayBank": "Aaj bank / online:"
+    "todayBank": "Aaj bank / online:",
+    "ovHint": "Farokht, khareedari, raqam, udhaar — sab ek screen par",
+    "auditHint": "Munafa, stock, log — har adad ki jaanch"
   },
   "pin": {
     "title": "Apna PIN likhein",
@@ -6665,6 +6667,11 @@
         "title": "Mobile: tax import par ada",
         "body": "Mobile phone Sales Tax Act ke Naveen Schedule mein hain: sales tax import karne ya banane wala deta hai, dukaan ke bechne par sales tax nahi lagta. On ho to tax wale bill par tax sirf accessories aur doosri cheezon par lagta hai, aur bill likhta hai ke mobile par kyun nahi. Band ho to har line par bill ki rate lagti hai (pehle ki tarah).",
         "example": "Tax wala bill: mobile Rs. 40,000 + charger Rs. 1,000 par 18% → tax Rs. 180 (sirf charger par)."
+      },
+      "cpid": {
+        "title": "CP ID mobile ka naam",
+        "body": "CP ID mobile Pakistan mein band ho gaye, magar bohat si dukaanon ke paas ab bhi hain aur khareed o farokht hoti hai. Apna lafz ya nishan chunein (20 huroof tak, maslan ★ ya \"Special\"); har report, stock ginti, qeemat list, sticker, raseed aur app ki screens par \"CP ID\" ki jagah yehi dikhega. Sirf naam badalta hai; record mein mobile CP ID hi rehte hain. CP ID ke liye khali chhorein.",
+        "example": "★ chunein: ginti sheet par CP ID ki jagah \"★\" aayega."
       }
     },
     "biz": {
@@ -8483,7 +8490,9 @@
       "hint": "Used mobile ka lock check, grades",
       "requireLock": "Used mobile ke liye bhi lock check lazmi",
       "requireLockHint": "Tablet aur smart watch ke liye hamesha lazmi",
-      "grades": "Used unit ke grades (comma se alag)"
+      "grades": "Used unit ke grades (comma se alag)",
+      "cpid": "CP ID mobile ka naam (report mein)",
+      "cpidHint": "Apna lafz likhein ya nishan chunein; report, sticker, raseed aur screen par \"CP ID\" ki jagah yehi aayega. Khali = CP ID."
     },
     "filters": "Filter",
     "priceMin": "Qeemat se",

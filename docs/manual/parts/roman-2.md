@@ -251,6 +251,12 @@ History ki lines kabhi edit ya delete nahi ho saktin. Ghalti nayi line se theek 
 
 ![Phone ki history: bika, check hua, bikri wapas, har ek tareekh, bande aur raqam ke saath](shot:device-history)
 
+### CP ID mobile ka apna naam
+
+CP ID mobile Pakistan mein band ho gaye, magar bohat si dukaanon ke paas ab bhi hain aur in ki khareed o farokht hoti hai. Chunein ke aap ki report mein "CP ID" ki jagah kya aaye: More → **Dukaan ki settings** → **Device settings** → **CP ID mobile ka naam**. Koi lafz likhein, maslan "Special", ya ★ ◆ ● ▲ jaisa nishan dabayein, phir **Save** dabayein.
+
+Is ke baad yehi naam har report (stock list, qeemat list, ginti sheet, PDF / Excel / CSV), sticker, raseed aur app ki screens par aata hai. Sirf naam badalta hai; record mein mobile CP ID hi rehte hain. Wapas "CP ID" ke liye **CP ID** dabayein.
+
 ### PTA check (DIRBS)
 
 Mobile ke page par, ya mobile add karte waqt (**PTA haalat** ke saath), **PTA check** dabayein:

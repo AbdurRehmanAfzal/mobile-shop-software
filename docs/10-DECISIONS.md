@@ -362,6 +362,17 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-083 · 2026-11-15 · Accepted · A shop's own name for CP ID phones; a trend icon for profit
+**Context**: CP ID phones are no longer allowed in Pakistan, yet shops still hold and trade them. In their reports, shops want their own word or mark instead of "CP ID". The owner also asked for a better profit icon on the home screen.
+**Decision**:
+- **Storage**: `shops.device_prefs.cpid_label` (≤ 20 characters; empty or "CP ID" means the default). `devices.types.cpid_label(shop)` and `pta_out(value, label)` read it.
+- **Where it applies**: the tally sheet (page and Excel), the A4 stock list and price lists (`stock_sheet`), the stock CSV / Excel (the `pta` column; other PTA values stay raw), stickers, and receipt lines.
+- **In the app**: `lib/cpid.ts`, run from the Shell, overrides `stock.pta.cpid` / `wa.pta.cpid` in every language from the shop's setting.
+- **Settings**: under Device settings, a text box plus marks (★ ◆ ● ▲ ■ ✦ ♦ ✱ C S) and a CP ID reset. Sent together with the other device preferences.
+- **Unchanged**: the stored value stays `cpid`. Bulk export / import keep "CP ID" so a backup stays re-importable.
+- **Home profit card**: TrendingUp in green, or TrendingDown in red for a loss, instead of the piggy bank.
+**Consequences**: no migration. A shop that sets nothing sees "CP ID" as before.
+
 ## ADR-082 · 2026-11-15 · Accepted · PTA check: open DIRBS with the IMEI copied, save the answer
 **Context**: the owner asked whether PTA's DIRBS check (an IMEI box and "I'm not a robot") can open inside the software.
 - It cannot: `dirbs.pta.gov.pk` sends `X-Frame-Options: SAMEORIGIN`, so it may not be framed.
