@@ -3197,6 +3197,11 @@
           "body": "Gahakon ki un jobs ki lab fees jo abhi wapas nahi di gayin. Jab job bill ke saath wapas di jayegi to ye repair ke munafe mein shamil hogi.",
           "example": "Vivo Y20 lab se aaya, fees Rs. 2,500, gahak kal aayega → aaj yahan, kal munafe mein."
         }
+      },
+      "fullReport": {
+        "title": "Shop audit ki poori report",
+        "body": "Audit ke har hisse ki tafseel ek A4 report mein — khulasa, ahem baatein, farokht, khareedari, munafa, cash, kharche, tax, gahak, dealer, udhaar, len-den, repair, stock, purana stock, model, bill, jaanch, staff aur security — upar chune gaye arse aur filter ke mutabiq. Upar dukaan, arsa aur kis ne nikali likha hota hai. Print karein, PDF / Excel mein save karein ya WhatsApp par share karein.",
+        "example": "Is mahine chunein → Download → PDF: partner ke saath meeting ke liye report."
       }
     },
     "bulk": {
@@ -9984,7 +9989,9 @@
       "needsLook": "Abhi dekhna hai",
       "faults": "Sab se aam kharabiyan",
       "labWaiting": "Jo job abhi wapas nahi di, un ki lab fees"
-    }
+    },
+    "fullReport": "Shop audit ki poori report (A4)",
+    "fullReportHint": "Upar chune gaye arse ka har hissa tafseel se — print karein, PDF ya Excel mein save karein, ya share karein."
   },
   "label": {
     "title": "Qeemat ka sticker",

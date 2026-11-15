@@ -16,7 +16,8 @@ import { useModule } from '@/lib/modules'
 
 type Fmt = 'pdf' | 'xlsx' | 'csv'
 
-export default function DownloadButton({ path, name }: { path: string; name: string }) {
+/** `formats`: the files this report comes as (default PDF, Excel and CSV) */
+export default function DownloadButton({ path, name, formats = ['pdf', 'xlsx', 'csv'] }: { path: string; name: string; formats?: Fmt[] }) {
   const [mode, setMode] = useState<DocMode | null>(null)
   const { pick } = useLang()
   const s = useDocFile(name)
@@ -50,9 +51,9 @@ export default function DownloadButton({ path, name }: { path: string; name: str
       <Sheet open={mode !== null} onClose={() => setMode(null)} title={mode === 'share' ? 'docShare.shareTitle' : 'counter.downloadTitle'}>
         <div className="flex flex-col gap-2.5">
           <DocLangPicker />
-          <Choice icon={<FileText size={24} />} tone="bg-expense text-expense-fg" title="counter.pdf" hint="counter.pdfHint" busy={s.busy === 'pdf'} disabled={!!s.busy} onClick={() => run('pdf')} />
-          <Choice icon={<FileSpreadsheet size={24} />} tone="bg-sell text-sell-fg" title="counter.excel" hint="counter.excelHint" busy={s.busy === 'xlsx'} disabled={!!s.busy} onClick={() => run('xlsx')} />
-          <Choice icon={<SheetIcon size={24} />} tone="bg-buy text-buy-fg" title="counter.csv" hint="counter.csvHint" busy={s.busy === 'csv'} disabled={!!s.busy} onClick={() => run('csv')} />
+          {formats.includes('pdf') ? <Choice icon={<FileText size={24} />} tone="bg-expense text-expense-fg" title="counter.pdf" hint="counter.pdfHint" busy={s.busy === 'pdf'} disabled={!!s.busy} onClick={() => run('pdf')} /> : null}
+          {formats.includes('xlsx') ? <Choice icon={<FileSpreadsheet size={24} />} tone="bg-sell text-sell-fg" title="counter.excel" hint="counter.excelHint" busy={s.busy === 'xlsx'} disabled={!!s.busy} onClick={() => run('xlsx')} /> : null}
+          {formats.includes('csv') ? <Choice icon={<SheetIcon size={24} />} tone="bg-buy text-buy-fg" title="counter.csv" hint="counter.csvHint" busy={s.busy === 'csv'} disabled={!!s.busy} onClick={() => run('csv')} /> : null}
           {mode === 'download' ? (
             <Choice icon={<Printer size={24} />} tone="bg-khata text-khata-fg" title="common.print" hint="docShare.printHint" busy={false} disabled={!!s.busy} onClick={() => { setMode(null); void openPrintable(url('pdf')) }} />
           ) : null}

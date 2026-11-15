@@ -3197,6 +3197,11 @@
           "body": "Lab charges already booked on customer jobs that are not given back yet. They join the repair profit when the job is given back with its bill.",
           "example": "Vivo Y20 back from the lab, Rs. 2,500 charge, customer comes tomorrow → shown here today, in profit tomorrow."
         }
+      },
+      "fullReport": {
+        "title": "Full shop audit report",
+        "body": "One A4 report of every audit section in detail — summary, insights, sales, purchases, profit, cash, expenses, tax, customers, suppliers, udhaar, len-den, repairs, stock, old stock, products, bills, checks, staff and security — for the period and filter chosen at the top. The header shows the shop, the period and who printed it. Print it, save it as PDF / Excel, or share it on WhatsApp.",
+        "example": "Pick This month → Download → PDF: a report for the meeting with the partner."
       }
     },
     "bulk": {
@@ -9984,7 +9989,9 @@
       "needsLook": "Needs a look now",
       "faults": "Most common problems",
       "labWaiting": "Lab charges on jobs not given back"
-    }
+    },
+    "fullReport": "Full shop audit report (A4)",
+    "fullReportHint": "Every section in detail for the period chosen above — print it, save it as PDF or Excel, or share it."
   },
   "label": {
     "title": "Price sticker",

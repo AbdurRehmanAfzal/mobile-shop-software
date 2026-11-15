@@ -201,6 +201,8 @@ Close the app fully and open it again first (or install the newest APK from the 
 
 **CP ID name (2026-11-15, ADR-083)**: Shop settings → Device settings → Name for CP ID phones → tap ★ → Save. Open a CP ID phone (it shows ★) and print the stock tally sheet (★ instead of CP ID).
 
+**A4 reports (2026-11-15, ADR-084)**: Business overview → This month → Download → PDF, and print it. Shop audit → Full shop audit report (A4) → Download → PDF / Excel.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

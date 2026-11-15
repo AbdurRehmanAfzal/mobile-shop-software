@@ -2,6 +2,8 @@
  *  Balances show opening → closing (and as-of / current), flows show the period's sum; every tile
  *  opens the list behind it. */
 
+import DownloadButton from '@/components/DownloadButton'
+import { FileText } from 'lucide-react'
 import { AlertTriangle, ArrowDownLeft, ArrowUpRight, BookOpen, CheckCircle2, Landmark, Package, Receipt, ShieldCheck, Smartphone, Wallet, XCircle, type LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
@@ -68,6 +70,15 @@ export default function OverviewPage() {
 
   return (
     <AuditLayout right={<SectionDownload sections={['summary', 'insights']} name="overview" />}>
+      {/* owner 2026-11-15 (ADR-084): the complete shop audit report, every section in detail, on A4 */}
+      <section className="card flex flex-wrap items-center gap-3" data-testid="audit-full-report">
+        <span className="well h-11 w-11 shrink-0 bg-emerald-tint text-emerald-deep"><FileText size={22} /></span>
+        <span className="flex min-w-0 flex-1 flex-col">
+          <span className="flex items-center gap-1"><BiLabel text="audit.fullReport" size="md" bold /><Help term="audit.fullReport" size="sm" /></span>
+          <BiLabel text="audit.fullReportHint" size="sm" tone="text-muted" />
+        </span>
+        <DownloadButton path={`/api/v1/shop-audit/report?${query}&mode=detail`} name="shop-audit-report" formats={['pdf', 'xlsx']} />
+      </section>
       {isLoading || !data ? <Pending error={error} retry={refetch} /> : (
         <>
           {/* hero: net sales and real profit for the period */}

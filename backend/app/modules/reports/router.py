@@ -2,7 +2,7 @@ import datetime as dt
 from decimal import Decimal
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 
 from app.core.clock import today as shop_today
 from app.core.errors import ValidationFailed
@@ -39,6 +39,25 @@ def _check_range(d_from: dt.date, d_to: dt.date) -> None:
             message_en="The 'from' date must be on or before the 'to' date",
             message_ur="شروع کی تاریخ آخری تاریخ سے پہلے ہونی چاہیے",
         )
+
+
+@router.get("/overview/export")
+def overview_export(
+    ctx: Reports,
+    db: DB,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+    format: Annotated[str, Query(pattern="^(pdf|xlsx)$")] = "pdf",
+    lang: Annotated[str | None, Query(pattern="^(en|ur|roman)$")] = None,
+):
+    """owner 2026-11-15 (ADR-084): the business overview as a detailed A4 report / Excel"""
+    from app.modules.reports.overview_report import render
+
+    today = shop_today()
+    d_from = date_from or today
+    d_to = date_to or d_from
+    _check_range(d_from, d_to)
+    return render(db, ctx, d_from, d_to, ctx.can(Cap.VIEW_COST), format, lang == "ur")
 
 
 @router.get("/overview")

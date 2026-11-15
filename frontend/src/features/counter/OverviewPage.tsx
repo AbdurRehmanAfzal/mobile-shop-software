@@ -4,6 +4,7 @@
  *  and whom the shop owes, this month, top sold and bought, stock alerts, recent activity and every
  *  module's count — each with "View details" to the screen behind it. Owner / manager only. */
 
+import DownloadButton from '@/components/DownloadButton'
 import { ChevronRight } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
@@ -89,7 +90,8 @@ export default function OverviewPage() {
   const hisaab = `/hisaab?from=${period.from}&to=${period.to}`
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="ov.title" help={<Help term="ov.page" />} />
+      {/* owner 2026-11-15 (ADR-084): the whole overview, in detail, on A4 for the chosen period */}
+      <PageHeader title="ov.title" help={<Help term="ov.page" />} right={<DownloadButton path={`/api/v1/reports/overview/export?${periodQuery(period)}`} name={`business-overview-${period.from}${period.to !== period.from ? `-${period.to}` : ''}`} formats={['pdf', 'xlsx']} />} />
       <PeriodPicker value={period} onChange={setPeriod} size="sm" />
       {isLoading || !o ? <Loading /> : (
         <>

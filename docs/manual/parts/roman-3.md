@@ -96,6 +96,16 @@ Us ke neeche aap ko milega:
 
 > **Mashwara:** Jab koi customer apne baqaye par behes kare, to us ka safha kholein, **Download** → **PDF** dabayein aur statement WhatsApp par bhej dein. Har line par tareekh aur bill number hai.
 
+### Karobar ka khulasa aur shop audit A4 report mein
+
+Yeh report print karne, file mein rakhne ya meeting mein dikhane ke liye hai.
+
+- **Karobar ka khulasa**: arsa chunein, phir upar **Download** / **Share** → **PDF** ya **Excel**, ya **Print**.
+  - A4 report ke upar dukaan ki tafseel hoti hai (naam, pata, number, arsa, kis ne aur kab nikali), phir har adad.
+  - Is mein **poori** lists hoti hain: har woh banda jis se raqam mili ya jise di gayi, jis ne dukaan ko dena hai ya jise dukaan ne dena hai, har bika aur khareeda model, abhi ka stock, gahak aur dealer, har hisse ki kul tadaad, aur haaliya kaam.
+- **Shop audit** (audit ki pehli screen): **Shop audit ki poori report (A4)** ka card upar chune gaye arse ka har hissa tafseel se deta hai. PDF ya Excel ke liye Download / Share, ya Print.
+- Safhe A4 par har taraf khali jagah ke saath aate hain; lambi table agle safhe par column ke naamon ke saath jaari rehti hai. Excel mein har hisse ki alag sheet hoti hai jo A4 par print hoti hai.
+
 ### WhatsApp entries: group ke liye ek standard message
 
 Bohat si dukaanein har sale, purchase, payment aur len-den staff ke saath WhatsApp group mein bhejti hain, aur ek banda software mein entry karta hai. **More → WhatsApp entries** dono ka kaam aasaan karta hai.

@@ -25,7 +25,9 @@ from app.modules.returns.models import ReturnDoc
 from app.modules.sales.models import Invoice, InvoiceStatus
 
 
-def _purchases(db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date) -> dict:
+def _purchases(
+    db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date, n: int | None = 5
+) -> dict:
     from app.modules.catalogue.models import Brand, Model
     from app.modules.devices.models import Device
 
@@ -63,7 +65,7 @@ def _purchases(db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date) 
         "paid": paid,
         "credit": money(max(ZERO, total - paid)),
         "phones": phones,
-        "top": sorted(top.values(), key=lambda r: (-r["qty"], -r["amount"], r["name"]))[:5],
+        "top": sorted(top.values(), key=lambda r: (-r["qty"], -r["amount"], r["name"]))[:n],
     }
 
 
@@ -122,7 +124,9 @@ def _at_bill(db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date) ->
     return out
 
 
-def _payments(db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date) -> dict:
+def _payments(
+    db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date, n: int | None = 10
+) -> dict:
     """money received and paid in the period by person: payments entered on their own plus the money
     paid on the bills themselves (ADR-076); a walk-in sale has no person (party_id None)"""
     rows = db.execute(
@@ -162,7 +166,7 @@ def _payments(db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date) -
         out[direction] = {
             "total": money(sum((r["amount"] for r in people), ZERO)),
             "at_bill": money(at_bill),
-            "people": people[:10],
+            "people": people[:n],
             "people_count": len(people),
         }
     return out
@@ -186,7 +190,7 @@ def _people(db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date) -> 
     return out
 
 
-def _dues(db: Session, shop_id: uuid.UUID) -> dict:
+def _dues(db: Session, shop_id: uuid.UUID, n: int | None = 10) -> dict:
     rows = db.execute(
         select(Party.id, Party.name, Party.phone, Party.balance).where(
             Party.shop_id == shop_id, Party.is_active.is_(True), Party.balance != 0
@@ -198,7 +202,7 @@ def _dues(db: Session, shop_id: uuid.UUID) -> dict:
     def rows_of(xs, sign):
         return [
             {"party_id": r.id, "name": r.name, "phone": r.phone, "amount": money(sign * r.balance)}
-            for r in xs[:10]
+            for r in xs[:n]
         ]
 
     return {
@@ -241,9 +245,9 @@ def _counts(db: Session, shop_id: uuid.UUID) -> dict:
     }
 
 
-def _recent(db: Session, shop_id: uuid.UUID) -> list[dict]:
+def _recent(db: Session, shop_id: uuid.UUID, n: int = 12) -> list[dict]:
     rows = db.scalars(
-        select(AuditLog).where(AuditLog.shop_id == shop_id).order_by(AuditLog.at.desc()).limit(12)
+        select(AuditLog).where(AuditLog.shop_id == shop_id).order_by(AuditLog.at.desc()).limit(n)
     ).all()
     names: dict = {}
     out = []
@@ -295,14 +299,19 @@ def _alerts(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
 
 
 def overview(
-    db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date, show_cost: bool
+    db: Session,
+    shop_id: uuid.UUID,
+    d_from: dt.date,
+    d_to: dt.date,
+    show_cost: bool,
+    full: bool = False,
 ) -> dict:
     today = shop_today()
     month_from = today.replace(day=1)
     day = rep.day_report(db, shop_id, d_from, show_cost, d_to)
     month = rep.day_report(db, shop_id, month_from, show_cost, today)
     split = _sales_split(db, shop_id, d_from, d_to)
-    top = rep.top_sellers(db, shop_id, d_from, d_to, show_cost, limit=5)
+    top = rep.top_sellers(db, shop_id, d_from, d_to, show_cost, limit=50 if full else 5)
     return {
         "date_from": d_from,
         "date_to": d_to,
@@ -314,14 +323,14 @@ def overview(
             "credit": split["credit"],
             "profit": day["profit"],
         },
-        "purchases": _purchases(db, shop_id, d_from, d_to),
+        "purchases": _purchases(db, shop_id, d_from, d_to, None if full else 5),
         "expenses": day["expenses"],
         "udhaar_given": day["udhaar_given"],
         "udhaar_collected": day["udhaar_received"],
         "returns": _returns(db, shop_id, d_from, d_to),
-        "payments": _payments(db, shop_id, d_from, d_to),
+        "payments": _payments(db, shop_id, d_from, d_to, None if full else 10),
         "people": _people(db, shop_id, d_from, d_to),
-        "dues": _dues(db, shop_id),
+        "dues": _dues(db, shop_id, None if full else 10),
         "month": {
             "from": month_from,
             "sales": month["sales_total"],
@@ -330,7 +339,7 @@ def overview(
         },
         "top_sold": top,
         "alerts": _alerts(db, shop_id, show_cost),
-        "recent": _recent(db, shop_id),
+        "recent": _recent(db, shop_id, 60 if full else 12),
         "counts": _counts(db, shop_id),
         "show_cost": show_cost,
     }
