@@ -30,8 +30,8 @@ test('stock lists on A4', async ({ page, request }) => {
   const pr = await request.post('/api/v1/purchases', { headers: h, data: { kind: 'supplier', party_id: dealer, devices: devs } })
   expect(pr.ok(), await pr.text()).toBeTruthy()
 
-  // every field, every copy: nothing wider than A4 (794 px at 96 dpi)
-  await page.setViewportSize({ width: 794, height: 1123 })
+  // every field, every copy: nothing wider than A4 less the side margins (190 mm = 718 px)
+  await page.setViewportSize({ width: 718, height: 1123 }) // A4 less 10 mm each side
   for (const q of [`cols=${ALL}&status=all`, 'copy=staff&status=all', 'copy=customer']) {
     const html = await (await request.get(`/api/v1/exports/stock?format=pdf&lang=en&${q}`, { headers: h })).text()
     await page.setContent(html, { waitUntil: 'load' })

@@ -1625,3 +1625,12 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - pytest `test_stock_a4` (new), `test_exports`, `test_stock_tally`; full suite.
 - tsc.
 - Playwright `stock-a4` (new: 18 phones with every field, the staff and customer copies and the purchases report are no wider than A4; Price lists → the app's PDF downloads); I looked at the screenshots.
+
+### Same day — side margins on every app PDF
+**Owner**: "left side r right side may minor be space nahi hai … sub pdf may minor si left right space day do".
+**Found**: the app's PDF drew the page from edge to edge (210 mm); only the browser's print kept the `@page` margin.
+**Done**: `printPagePdf` lays the page out 190 mm wide and places it 10 mm from each side, on every A4 PDF. The thermal receipt is unchanged.
+**Verified**:
+- In the PDF, each page image is at x = 28.35 pt (10 mm) and 538.58 pt (190 mm) wide.
+- Playwright `stock-a4` and `stock-tally`: the layouts fit at 718 px (190 mm); the app PDF downloads.
+- tsc.

@@ -375,6 +375,7 @@ by sheet remain a later step (docs/18 §1).
 - The generic report PDF (`_printable`) is always A4 portrait. More columns get a smaller type and wrap, the header repeats, and rows are not split.
 - The generic Excel prints on A4 (landscape over 6 columns), one page wide, with the header row on every page.
 - UI: a **Price lists** button beside Download on the stock page opens the two copies, each with Print (A4) and Download / Share.
+- The app's own A4 PDF (`printPagePdf`) lays the page out 190 mm wide and places it 10 mm from the left and right edges (owner 2026-11-15: "left right space"), so nothing touches the paper's edge; nothing is shrunk.
 **Consequences**: no data change. The stock CSV / Excel with the page's fields are unchanged apart from the print setup.
 
 ## ADR-077 · 2026-11-14 · Accepted · Stock tally staff copy, given to staff only with the owner's permission

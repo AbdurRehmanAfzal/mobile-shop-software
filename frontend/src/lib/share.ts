@@ -66,7 +66,10 @@ export async function printPagePdf(path: string, name: string): Promise<DocFile>
   path = withDocLang(path)
   const html = await (await fetchOk(path)).text()
   const thermal = /format=thermal/.test(path)
-  const widthPx = Math.round((thermal ? 80 : 210) * MM)
+  // owner 2026-11-15: an A4 page keeps 10 mm white on the left and right, so the text is laid out
+  // 190 mm wide and placed between those margins (nothing is shrunk)
+  const SIDE = 10
+  const widthPx = Math.round((thermal ? 80 : 210 - 2 * SIDE) * MM)
   // laid out once in a hidden frame, with the fonts, to know how tall it is
   const frame = document.createElement('iframe')
   frame.setAttribute('aria-hidden', 'true')
@@ -124,7 +127,7 @@ export async function printPagePdf(path: string, name: string): Promise<DocFile>
     pdf.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, w, h)
   } else {
     pdf = new jsPDF({ unit: 'mm', format: 'a4' })
-    const pageW = 210
+    const pageW = 210 - 2 * SIDE // the printed width between the side margins
     const margin = 10
     const perPage = Math.floor(((297 - 2 * margin) / pageW) * W) // canvas px per page
     // owner 2026-11-14 (ADR-075): the whole page drawn once is shrunk to fit the phone's limit, so
@@ -171,7 +174,7 @@ export async function printPagePdf(path: string, name: string): Promise<DocFile>
         hMm = (slice.height / W) * pageW
       }
       if (!first) pdf.addPage()
-      pdf.addImage(data, 'JPEG', 0, margin, pageW, hMm)
+      pdf.addImage(data, 'JPEG', SIDE, margin, pageW, hMm)
       first = false
     }
   }
