@@ -362,6 +362,20 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-082 · 2026-11-15 · Accepted · PTA check: open DIRBS with the IMEI copied, save the answer
+**Context**: the owner asked whether PTA's DIRBS check (an IMEI box and "I'm not a robot") can open inside the software.
+- It cannot: `dirbs.pta.gov.pk` sends `X-Frame-Options: SAMEORIGIN`, so it may not be framed.
+- Its reCAPTCHA works only on PTA's own domain. Getting around it is neither possible nor allowed.
+**Decision**:
+- **PTA check** (`features/stock/PtaCheck.tsx`), on a phone's page and next to PTA status in the add-phone sheet:
+  - copies the IMEI and opens DIRBS in a new tab or the system browser;
+  - or opens `sms:8484?body=<IMEI>`;
+  - then asks what PTA said: Approved / Non-PTA / Blocked.
+- **On a phone in stock**, `POST /devices/{id}/pta-check {result, via}` records a new neutral event `pta_checked` (result, via, the status before). Approved / Non-PTA set `pta_status`; Blocked is recorded only. Any role that can transact may call it.
+- **While buying**, the answer sets the sheet's PTA choice. Blocked shows a warning.
+- No migration (`device_events.type` is a string). Tests never call PTA (the e2e stubs the site).
+**Consequences**: the check stays the shopkeeper's own, on PTA's site. The app makes it two taps and keeps the result on the phone's history.
+
 ## ADR-081 · 2026-11-15 · Accepted · Returning a bought phone to its seller, with the money worked out
 **Context**: a phone bought from someone may turn out faulty, or the shop may not want to keep it, and it goes back. The owner asked:
 - should the bill be cancelled? (No: cancel means the deal never happened.)

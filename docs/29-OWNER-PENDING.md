@@ -197,6 +197,8 @@ Close the app fully and open it again first (or install the newest APK from the 
 1. Buy a test phone for 50,000 and pay 25,000. Open the phone → **Return to the seller**: it shows 25,000 cancelled and 25,000 to get back → Return it. The seller's khata reads zero; the phone shows "returned to the seller".
 2. Try it with a cut of 5,000 and receive less than shown: the rest stays in the seller's khata.
 
+**PTA check (2026-11-15, ADR-082)**: open a phone → **PTA check** → PTA website: on the PTA page long-press → Paste, tick, CHECK → back in the app tap what PTA said. On a phone, try **SMS to 8484** too.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

@@ -269,7 +269,8 @@
       "lock_checked": "Lock check",
       "reclassified": "Qism badli",
       "reserved": "Reserve hua",
-      "unreserved": "Reserve khatam"
+      "unreserved": "Reserve khatam",
+      "pta_checked": "PTA check hua"
     },
     "acc": {
       "box": "Dabba",
@@ -8241,6 +8242,13 @@
         "body": "Jo bechne wala aaj wapas de (cash, ya bank chunein). Kam mile to baqi us ke khate mein aap ka lena rehta hai; baad mein \"Paise mile\" se lein.",
         "example": "25,000 wapas dene hain, aaj 10,000 diye: 15,000 khate mein."
       }
+    },
+    "ptachk": {
+      "how": {
+        "title": "PTA check",
+        "body": "PTA ki DIRBS website app ke andar nahi khul sakti (PTA ijazat nahi deta, aur \"I'm not a robot\" sirf PTA ki site par chalta hai). App IMEI copy kar ke PTA ka page kholti hai: paste karein, khane par tick karein, CHECK dabayein. Ya IMEI ko 8484 par SMS karein (aam SMS ka kharcha). Phir PTA ka jawab dabayein: stock wale mobile par yeh history mein save hota hai aur PTA haalat laga deta hai (Blocked sirf likha jata hai); khareedte waqt form mein PTA chun deta hai.",
+        "example": "PTA kahe \"Compliant\" → Approved dabayein. \"Non-compliant\" → Non-PTA."
+      }
     }
   },
   "items": {
@@ -11109,5 +11117,22 @@
     "later": "Baqi {{n}} bechne wale ke khate mein — us ne aap ko dene hain.",
     "zero": "Is bill par bechne wale ke saath hisaab: zero.",
     "confirm": "Wapas karein"
+  },
+  "ptachk": {
+    "button": "PTA check",
+    "title": "PTA par check karein (DIRBS)",
+    "copy": "Copy",
+    "copied": "Copy ho gaya",
+    "step1": "1. Check karein",
+    "website": "PTA website (IMEI copy)",
+    "sms": "8484 par SMS",
+    "websiteHint": "PTA ke page par: khane ko daba kar rakhein → Paste, \"I'm not a robot\" par tick karein, CHECK dabayein. Phir yahan wapas aayein.",
+    "step2": "2. PTA ne kya kaha?",
+    "r": {
+      "pta_approved": "Approved",
+      "non_pta": "Non-PTA",
+      "blocked": "Blocked"
+    },
+    "blockedWarn": "PTA ke mutabiq yeh IMEI block hai. Wajah pakki maloom na ho to mat khareedein."
   }
 }

@@ -1,3 +1,4 @@
+import { PtaCheckButton, PtaCheckSheet } from './PtaCheck'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiAlert, BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
@@ -84,6 +85,7 @@ export default function DeviceDetailPage() {
   const [pin, setPin] = useState('')
   const [priceErr, setPriceErr] = useState<ApiError | null>(null)
   const inv = useInvalidate()
+  const [ptaOpen, setPtaOpen] = useState(false)
   const [text, setText] = useState('')
   const [partyId, setPartyId] = useState('')
   const [expected, setExpected] = useState('')
@@ -170,6 +172,8 @@ export default function DeviceDetailPage() {
           <Chip text={`stock.condition.${d.condition}`} />
           {d.grade ? <Chip text={['a', 'b', 'refurbished', 'copy'].includes(d.grade) ? `devx.grades.${d.grade}` : { en: d.grade, ur: d.grade }} /> : null}
           {hasPta(d) ? <Chip text={`stock.pta.${d.pta_status}`} tone={d.pta_status === 'pta_approved' ? 'ok' : 'warn'} /> : null}
+          {/* owner 2026-11-15 (ADR-082): check the IMEI on PTA's DIRBS, save the answer */}
+          {hasPta(d) && /^\d{15}$/.test(d.imei1) ? <PtaCheckButton size="sm" onClick={() => setPtaOpen(true)} /> : null}
           {d.condition !== 'box_pack' ? <Chip text={lockState(d.lock_checks) === 'ok' ? 'devx.lock.ok' : lockState(d.lock_checks) === 'bad' ? 'devx.lock.bad' : 'devx.lock.none'} tone={lockState(d.lock_checks) === 'ok' ? 'ok' : lockState(d.lock_checks) === 'bad' ? 'bad' : 'warn'} /> : null}
           {d.verification_status !== 'not_required' ? <Chip text={`stock.verification.${d.verification_status}`} tone={vTone} /> : null}
           {d.cycle_no > 1 ? <Chip text={{ en: `Cycle ${d.cycle_no}`, ur: `${d.cycle_no} بار` }} /> : null}
@@ -274,6 +278,7 @@ export default function DeviceDetailPage() {
       {style !== 'classic' ? <ErrorText error={ev.error ?? loanM.error} /> : null}
 
       <LabelSheet kind="devices" ids={[d.id]} open={sheet === 'label'} onClose={() => setSheet(null)} />
+      <PtaCheckSheet imei={d.imei1} open={ptaOpen} onClose={() => setPtaOpen(false)} deviceId={d.id} onSaved={() => void inv('devices', 'device', 'history')} />
       <Sheet open={sheet === 'loan'} onClose={() => setSheet(null)} title="stock.loanOut">
         <div className="flex flex-col gap-3">
           <span className="flex items-center gap-1"><BiLabel text="loan.toShop" size="md" tone="text-muted" /><Help term="loan.toShop" size="sm" /></span>

@@ -251,6 +251,17 @@ History ki lines kabhi edit ya delete nahi ho saktin. Ghalti nayi line se theek 
 
 ![Phone ki history: bika, check hua, bikri wapas, har ek tareekh, bande aur raqam ke saath](shot:device-history)
 
+### PTA check (DIRBS)
+
+Mobile ke page par, ya mobile add karte waqt (**PTA haalat** ke saath), **PTA check** dabayein:
+
+1. **PTA website (IMEI copy)** PTA ka DIRBS page kholta hai. Khane ko daba kar rakhein → Paste, "I'm not a robot" par tick karein, CHECK dabayein. Ya **8484 par SMS**: SMS app IMEI likhi hui khulti hai; aam SMS ka kharcha lagta hai.
+2. Wapas aa kar PTA ka jawab dabayein: **Approved**, **Non-PTA** ya **Blocked**.
+   - Stock wale mobile par jawab us ki history mein save hota hai (kis ne, kab, website ya SMS). Approved / Non-PTA us ki PTA haalat bhi laga dete hain.
+   - Khareedte waqt yeh form mein PTA chun deta hai. **Blocked** par khabardar kiya jata hai: wajah pakki maloom na ho to mat khareedein.
+
+PTA ka page app ke andar nahi khul sakta: PTA is ki ijazat nahi deta, aur is ka "I'm not a robot" sirf PTA ki apni site par chalta hai.
+
 ### Khareeda hua mobile bechne wale ko wapas (kharab / rakhna nahi)
 
 Yeh tab istemal karein jab aap ne mobile khareeda, phir pata chala ke kharab hai ya rakhna nahi, aur usi ko wapas de diya jis se khareeda tha. Mobile ka page kholein → **Bechne wale ko wapas**, ya purchase ka bill → **Bechne wale ko wapas**.

@@ -1687,3 +1687,15 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - pytest `test_purchase_return_cut` (4, new: the owner's 50k / 25k example ends at zero with cash +25,000; a cut of 5,000 reaches the profit report; nothing received → the seller owes 25,000; the cut cannot exceed the value) and `test_returns`; full suite.
 - tsc and Help.test.
 - Playwright `purchase-return` (new: from the phone's page the sheet shows 25,000 cancelled / 25,000 back / zero → balance 0.00 and the phone returned; then a 40,000 bill with a 5,000 cut and 20,000 received → the seller owes 15,000). I looked at the screenshot.
+
+### Same day — PR #64; PTA check (ADR-082)
+**Owner**: "push" → pushed, PR #64 (login security + return to seller). Then the DIRBS screenshot: "ye part hamaray software may open ho jaye … kia ye possible hai" → "ok".
+**Found**: DIRBS sends `X-Frame-Options: SAMEORIGIN`, and its reCAPTCHA works only on PTA's own domain, so it cannot be embedded. SMS 8484 was already a link on the verify page.
+**Done**:
+- `PtaCheck.tsx`: copy the IMEI and open DIRBS, or SMS 8484; then Approved / Non-PTA / Blocked.
+- `POST /devices/{id}/pta-check` with a `pta_checked` event; on the phone's page and in the add-phone sheet (Blocked warns).
+- en / ur / roman strings + help, manual ch. 2, ADR-082, docs/29.
+**Verified**:
+- pytest `test_pta_check` (new) and `test_devices`; full suite.
+- tsc and Help.test.
+- Playwright `pta-check` (new, DIRBS stubbed): the popup opens on DIRBS with the IMEI in the clipboard and the SMS link carrying the IMEI; Non-PTA is saved with its event; in the add sheet Blocked warns and Approved clears it. I looked at the screenshot.

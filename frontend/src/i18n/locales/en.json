@@ -269,7 +269,8 @@
       "lock_checked": "Lock checked",
       "reclassified": "Type changed",
       "reserved": "Reserved",
-      "unreserved": "Reservation released"
+      "unreserved": "Reservation released",
+      "pta_checked": "PTA checked"
     },
     "acc": {
       "box": "Box",
@@ -8241,6 +8242,13 @@
         "body": "What the seller hands back today (cash, or pick the bank). Anything less stays in his khata as money he owes you; take it later with Receive payment.",
         "example": "He owes 25,000 back, gives 10,000 today: 15,000 stays in his khata."
       }
+    },
+    "ptachk": {
+      "how": {
+        "title": "PTA check",
+        "body": "PTA's DIRBS website cannot open inside the app (PTA does not allow it, and its \"I'm not a robot\" works only on PTA's site). The app copies the IMEI and opens the PTA page: paste it, tick the box, tap CHECK. Or send the IMEI by SMS to 8484 (the usual SMS charge). Then tap what PTA said: on a phone in stock it is saved on its history and sets its PTA status (Blocked is recorded, nothing else changes); while buying it sets the PTA choice.",
+        "example": "PTA says \"Compliant\" → tap Approved. \"Non-compliant\" → Non-PTA."
+      }
     }
   },
   "items": {
@@ -11109,5 +11117,22 @@
     "later": "The other {{n}} stays in the seller's khata — he owes you.",
     "zero": "Balance with the seller for this bill: zero.",
     "confirm": "Return it"
+  },
+  "ptachk": {
+    "button": "PTA check",
+    "title": "Check on PTA (DIRBS)",
+    "copy": "Copy",
+    "copied": "Copied",
+    "step1": "1. Check it",
+    "website": "PTA website (IMEI copied)",
+    "sms": "SMS to 8484",
+    "websiteHint": "On the PTA page: long-press the box → Paste, tick \"I'm not a robot\", tap CHECK. Then come back here.",
+    "step2": "2. What did PTA say?",
+    "r": {
+      "pta_approved": "Approved",
+      "non_pta": "Non-PTA",
+      "blocked": "Blocked"
+    },
+    "blockedWarn": "PTA says this IMEI is blocked. Do not buy it unless you are sure why."
   }
 }

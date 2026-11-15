@@ -985,6 +985,17 @@ History lines can never be edited or deleted. A mistake is corrected by a new li
 
 ![A phone's history: sold, verified, sale returned, each with date, person and amount](shot:device-history)
 
+### PTA check (DIRBS)
+
+On a phone's page, or while adding a phone (next to **PTA status**), tap **PTA check**:
+
+1. **PTA website (IMEI copied)** opens PTA's DIRBS page. Long-press the box → Paste, tick "I'm not a robot", tap CHECK. Or **SMS to 8484**: the SMS app opens with the IMEI written in; the usual SMS charge applies.
+2. Come back and tap what PTA said: **Approved**, **Non-PTA** or **Blocked**.
+   - On a phone in stock, the answer is saved on its history (who, when, website or SMS). Approved / Non-PTA also set its PTA status.
+   - While buying, it sets the PTA choice. **Blocked** shows a warning: do not buy unless you are sure why.
+
+The PTA page cannot open inside the app: PTA does not allow it, and its "I'm not a robot" works only on PTA's own site.
+
 ### Return a bought phone to the seller (faulty / not wanted)
 
 Use this when you bought a phone, then found it faulty or decided not to keep it, and give it back to the person you bought it from. Open the phone's page → **Return to the seller**, or the purchase bill → **Return to the seller**.
