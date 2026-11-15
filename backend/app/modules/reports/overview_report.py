@@ -78,6 +78,15 @@ W = {
     "transfers": ("Transfers", "منتقلی"),
     "returns": ("Returns", "واپسی"),
     "days": ("days", "دن"),
+    "repairs": ("Repairs", "مرمت"),
+    "r_came": ("Taken in", "مرمت کو آئے"),
+    "r_customer": ("Customers' phones", "گاہکوں کے موبائل"),
+    "r_own": ("Shop's own phones", "دکان کے موبائل"),
+    "r_delivered": ("Given back", "واپس دیے"),
+    "r_open": ("Open now", "ابھی جاری"),
+    "r_at_lab": ("At a lab now", "ابھی لیب میں"),
+    "r_income": ("Repair bills", "مرمت کے بل"),
+    "r_profit": ("Repair profit", "مرمت کا منافع"),
 }
 
 
@@ -189,6 +198,23 @@ def build(db: Session, ctx, d_from: dt.date, d_to: dt.date, show_cost: bool, ur:
                     "items_out",
                 )
             ],
+        }
+    )
+    rp = o["repairs"]
+    sections.append(
+        {
+            "title": w("repairs"),
+            "header": [w("item"), w("number")],
+            "rows": [
+                [w("r_came"), rp["came"]],
+                [w("r_customer"), rp["customer"]],
+                [w("r_own"), rp["own"]],
+                [w("r_delivered"), rp["delivered"]],
+                [w("r_open"), rp["open"]],
+                [w("r_at_lab"), rp["at_lab"]],
+                [w("r_income"), rp["income"]],
+            ]
+            + ([[w("r_profit"), rp["profit"]]] if show_cost else []),
         }
     )
     pe = o["people"]

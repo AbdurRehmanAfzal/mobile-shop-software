@@ -8188,6 +8188,11 @@
         "title": "Totals by module",
         "body": "How many sales, purchases, returns, transfers, payments, customers and dealers the shop has in all. Tap one to open its list.",
         "example": "Sales 1,240 → the sales list."
+      },
+      "repairs": {
+        "title": "Repairs",
+        "body": "Phones taken in for repair in the period (customers' and the shop's own), those given back, those still open (and at a lab now), the bills of those given back and their profit after parts and lab charges.",
+        "example": "Taken in 12 (10 customers', 2 shop's) · given back 9 · bills 38,000 · profit 14,500."
       }
     },
     "plist": {
@@ -8270,6 +8275,18 @@
         "title": "Locked phones (iCloud / Google FRP)",
         "body": "Shops buy locked phones for their parts (camera, screen, battery …) or to sell them as they are. Add one with \"+ Locked phone\" in the purchase: only the lock, brand, model, storage, colour and cost; the IMEI is optional (often it cannot be seen) and the app gives the phone its own barcode label. It is kept apart in stock (the Locked card), says \"iCloud locked\" on every sticker, list and bill, and can be sold as it is. Use for parts takes it out of the stock and makes its cost a cost in the profit report; The lock was removed makes it a normal phone.",
         "example": "Bought an iPhone 12 iCloud locked for 30,000: its camera and battery go into a customer's phone → Use for parts."
+      }
+    },
+    "rwho": {
+      "choice": {
+        "title": "Who will repair it?",
+        "body": "Shop's technician: the phone stays in the shop and your own technician repairs it (pick who, or decide later). Outside lab / technician: the phone goes to a lab in the market — pick the lab, what it should do, its agreed price and when it should come back; the trip is kept on the lab's record and its charge goes to the lab's khata when the phone comes back.",
+        "example": "Screen change: outside lab → Ali Lab, change screen, 4,000, back Friday."
+      },
+      "reports": {
+        "title": "Repair reports",
+        "body": "Two A4 reports for the period, as PDF or Excel, to download, share or print. Shop repairs: every job (customer or shop phone, who repaired it, status, bill, paid, udhaar, parts, lab charge, profit / loss), the totals, by status, by technician / lab, the customers who still owe and the parts used. Outside labs: per lab the phones sent, back fixed / not fixed, at the lab now, its charges, paid and khata, and every phone sent with its problem, price and result.",
+        "example": "This month → Shop repairs → Download → PDF."
       }
     }
   },
@@ -10998,7 +11015,16 @@
     "transfers": "Transfers",
     "fullHisaab": "Open the full hisaab for this period",
     "walkIn": "Walk-in customers",
-    "locked": "iCloud / FRP locked"
+    "locked": "iCloud / FRP locked",
+    "repairs": "Repairs",
+    "rCame": "Taken in",
+    "rCustomer": "customers'",
+    "rOwn": "shop's",
+    "rDelivered": "Given back",
+    "rOpen": "Open now",
+    "rAtLab": "at a lab",
+    "rIncome": "Repair bills",
+    "rProfit": "Repair profit"
   },
   "plist": {
     "button": "Price lists",
@@ -11204,6 +11230,27 @@
     "deletePurchaseHint": "Delete this purchase: the phone leaves the stock, the seller's khata and the galla / bank are reversed. Use it for a purchase entered by mistake. If you gave the phone back to the seller, use Return to the seller instead.",
     "reasonPh": "e.g. entered twice / wrong phone",
     "kept": "It stays in the record as Deleted, with who, when and why — the hisaab stays right.",
-    "deleteConfirm": "Delete the bill"
+    "deleteConfirm": "Delete the bill",
+    "deleteRepairHint": "Delete this repair taken in by mistake: the advance is reversed, a phone at a lab is called back, the shop's own phone goes back to stock. A repair given back, or with a lab charge already booked, cannot be deleted — give it back as not repaired.",
+    "deletePaymentHint": "Delete this payment entered by mistake: the khata and the galla / bank are reversed; what it paid on bills is undone."
+  },
+  "rwho": {
+    "title": "Who will repair it?",
+    "shop": "Shop's technician",
+    "shopHint": "Repaired here, in the shop's own lab",
+    "lab": "Outside lab / technician",
+    "labHint": "Sent to a lab in the market",
+    "tech": "Technician",
+    "anyTech": "Any — decide later",
+    "labName": "Which lab / technician",
+    "labProblem": "What should the lab do?",
+    "labProblemPh": "e.g. change the screen",
+    "labQuote": "Lab's price (agreed)",
+    "labBack": "Back by",
+    "send": "Send to repair",
+    "pick": "Choose who will repair it to go on.",
+    "reports": "Repair reports",
+    "jobsReport": "Shop repairs (every job, profit, udhaar)",
+    "labsReport": "Outside labs (phones sent, charges, khata)"
   }
 }

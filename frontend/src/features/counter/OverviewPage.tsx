@@ -30,6 +30,7 @@ interface Overview {
   alerts: { on_hand: number; available: number; faulty: number; inspection: number; in_repair: number; reserved: number; old_60d: number; items_low: number; items_out: number; locked?: number }
   recent: { at: string; who: string | null; entity: string; action: string; ref: string | null }[]
   counts: { sales: number; purchases: number; returns: number; transfers: number; payments: number }
+  repairs?: { came: number; customer: number; own: number; delivered: number; open: number; at_lab: number; income: M; profit: M | null }
   show_cost: boolean
 }
 
@@ -129,6 +130,18 @@ export default function OverviewPage() {
                 {o.show_cost ? <Fig k="ov.profitMonth" v={rs(o.month.profit)} tone={Number(o.month.profit ?? 0) < 0 ? 'text-payable' : 'text-emerald-deep'} /> : null}
               </div>
             </Card>
+            {/* owner 2026-11-15 (ADR-087): the period's repairs */}
+            {o.repairs ? (
+              <Card title="ov.repairs" help="ov.repairs" to="/repairs" testid="ov-repairs">
+                <div className="grid grid-cols-2 gap-2">
+                  <Fig k="ov.rCame" v={o.repairs.came} sub={`${o.repairs.customer} ${pick('ov.rCustomer')} · ${o.repairs.own} ${pick('ov.rOwn')}`} />
+                  <Fig k="ov.rDelivered" v={o.repairs.delivered} />
+                  <Fig k="ov.rOpen" v={o.repairs.open} sub={`${o.repairs.at_lab} ${pick('ov.rAtLab')}`} />
+                  <Fig k="ov.rIncome" v={rs(o.repairs.income)} tone="text-emerald-deep" />
+                  {o.show_cost ? <Fig k="ov.rProfit" v={rs(o.repairs.profit)} tone={Number(o.repairs.profit ?? 0) < 0 ? 'text-payable' : 'text-emerald-deep'} /> : null}
+                </div>
+              </Card>
+            ) : null}
             <Card title="ov.customersDealers" help="ov.people" to="/parties" testid="ov-people">
               <div className="grid grid-cols-2 gap-2">
                 <Fig k="ov.customers" v={o.people.customers} sub={`+${o.people.new_customers} ${pick('ov.new')}`} />

@@ -267,6 +267,64 @@ def _recent(db: Session, shop_id: uuid.UUID, n: int = 12) -> list[dict]:
     return out
 
 
+def _repairs(
+    db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date, show_cost: bool
+) -> dict:
+    """owner 2026-11-15 (ADR-087): the period's repairs: taken in, given back, open now, at a lab,
+    the bills of those given back and (owner / manager) their profit after parts and lab charges"""
+    from app.modules.repairs.models import DispatchStatus, RepairDispatch, RepairJob, RepairStatus
+
+    jobs = db.scalars(select(RepairJob).where(RepairJob.shop_id == shop_id)).all()
+    open_set = (
+        RepairStatus.RECEIVED,
+        RepairStatus.DIAGNOSED,
+        RepairStatus.WAITING_PARTS,
+        RepairStatus.IN_PROGRESS,
+        RepairStatus.REPAIRED,
+        RepairStatus.UNCLAIMED,
+    )
+    came = [
+        j
+        for j in jobs
+        if j.status != RepairStatus.CANCELLED and d_from <= local_date(j.created_at) <= d_to
+    ]
+    given = [
+        j
+        for j in jobs
+        if j.status == RepairStatus.DELIVERED
+        and j.delivered_at
+        and d_from <= local_date(j.delivered_at) <= d_to
+    ]
+    at_lab = (
+        db.scalar(
+            select(func.count(RepairDispatch.id)).where(
+                RepairDispatch.shop_id == shop_id, RepairDispatch.status == DispatchStatus.AT_LAB
+            )
+        )
+        or 0
+    )
+    income = money(sum((j.total for j in given), ZERO))
+    cost = money(
+        sum(
+            (
+                sum((p.unit_cost * p.qty for p in j.parts), ZERO) + (j.outside_cost or ZERO)
+                for j in given
+            ),
+            ZERO,
+        )
+    )
+    return {
+        "came": len(came),
+        "customer": sum(1 for j in came if j.party_id),
+        "own": sum(1 for j in came if not j.party_id),
+        "delivered": len(given),
+        "open": sum(1 for j in jobs if j.status in open_set),
+        "at_lab": at_lab,
+        "income": income,
+        "profit": money(income - cost) if show_cost else None,
+    }
+
+
 def _alerts(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
     from app.modules.devices import service as devices
     from app.modules.devices.models import Device
@@ -340,6 +398,7 @@ def overview(
         },
         "top_sold": top,
         "alerts": _alerts(db, shop_id, show_cost),
+        "repairs": _repairs(db, shop_id, d_from, d_to, show_cost),
         "recent": _recent(db, shop_id, 60 if full else 12),
         "counts": _counts(db, shop_id),
         "show_cost": show_cost,

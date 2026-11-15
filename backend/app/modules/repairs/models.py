@@ -31,6 +31,8 @@ class RepairStatus(StrEnum):
     DELIVERED = "delivered"
     RETURNED_UNREPAIRED = "returned_unrepaired"
     UNCLAIMED = "unclaimed"
+    # owner 2026-11-15 (ADR-087): taken in by mistake — cancelled, kept in the record
+    CANCELLED = "cancelled"
 
 
 OPEN_STATUSES = {
@@ -40,7 +42,12 @@ OPEN_STATUSES = {
     RepairStatus.IN_PROGRESS,
     RepairStatus.REPAIRED,
 }
-CLOSED_STATUSES = {RepairStatus.DELIVERED, RepairStatus.RETURNED_UNREPAIRED, RepairStatus.UNCLAIMED}
+CLOSED_STATUSES = {
+    RepairStatus.DELIVERED,
+    RepairStatus.RETURNED_UNREPAIRED,
+    RepairStatus.UNCLAIMED,
+    RepairStatus.CANCELLED,
+}
 
 TRANSITIONS: dict[RepairStatus, set[RepairStatus]] = {
     RepairStatus.RECEIVED: {
@@ -74,6 +81,7 @@ TRANSITIONS: dict[RepairStatus, set[RepairStatus]] = {
     RepairStatus.DELIVERED: set(),
     RepairStatus.RETURNED_UNREPAIRED: set(),
     RepairStatus.UNCLAIMED: {RepairStatus.DELIVERED},
+    RepairStatus.CANCELLED: set(),
 }
 
 

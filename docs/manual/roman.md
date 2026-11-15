@@ -1353,6 +1353,24 @@ Repair ki list se job kholein. Marhalon wali bar ke neeche aap ke paas hain:
 
 Neeche **Sticker print karein** (repair sticker), **Parchi print** (customer ki job sheet dobara), aur **Document ki zubaan** hain, jo chunti hai ke print hui parchi English mein ho ya Urdu mein.
 
+### Kaun theek karega: dukaan ka technician ya bahar ki lab
+
+Har nayi repair mein **Kaun theek karega?** poocha jata hai. Yeh **Repair → Phone repair ke liye lein** se milta hai, ya stock ke mobile se: us ka page → **Repair ke liye bhejein**, jo dukaan ke apne mobile ki repair karta hai.
+
+- **Dukaan ka technician**: mobile dukaan mein rehta hai. Technician chunein, ya "Koi bhi — baad mein".
+- **Bahar ki lab / technician**: lab chunein, likhein kya karna hai, lab ki tay shuda qeemat aur kab wapas aaye. Yeh lab ke record mein jata hai. Mobile wapas aane par kharcha lab ke khate mein jata hai.
+
+**Ghalti se li gayi repair delete karein** (owner / manager): list mein repair ke saath 🗑, ya us ke page par. Wajah likhein.
+- Advance ulat jata hai, lab wala bhejna mansookh hota hai, aur dukaan ka mobile stock mein wapas aata hai.
+- Repair record mein **Deleted** likhi rehti hai.
+- Wapas di gayi repair, ya jis par lab ka kharcha likha ja chuka ho, delete nahi hoti. Us ki jagah "Theek nahi hua" kar ke wapas karein.
+
+**Repair ki reports** (owner / manager), Repair ke page par: arsa chunein, phir PDF ya Excel mein download / share / print karein.
+- **Dukaan ki repair**: har kaam (gahak ya dukaan ka mobile, kis ne theek kiya, haalat, bill, ada, udhaar, parts, lab ka kharcha, munafa / nuqsan), kul, haalat ke hisaab se, technician / lab ke hisaab se, jin gahakon ne abhi dena hai, aur istemal hue parts.
+- **Bahar ki labs**: har lab ko bheje mobile, theek / theek nahi, abhi lab mein, kharcha, ada aur khata, aur har bheja mobile us ke masle, qeemat aur nateeje ke saath. **Repair labs** aur har lab ke page par bhi yehi download hai.
+
+Repair **Karobar ke khulase** mein bhi aati hai: aaye, wapas diye, jaari, lab mein, bill aur munafa. Yeh shop audit mein bhi aati hai.
+
 ### Phone bahar lab ko bhejna
 
 Market mein bohat si dukaanein har cheez khud theek nahi kartin. Board ki kharabi ya iPhone ki screen aksar kisi mahir lab ya technician ke paas jaati hai. Mobile Shop har aise chakkar ka poora record rakhta hai: phone kis lab ke paas hai, kab se, unhein kya karna hai, unhon ne kitna charge kiya, aur dukaan ne unhein kitne dene hain.

@@ -113,13 +113,20 @@ export function PaymentsPage() {
   const nav = useNavigate()
   const { pick } = useLang()
   const { data, isLoading } = usePayments()
+  const payRole = useAuth((s) => s.me?.user.role)
   return (
     <div className="flex flex-col gap-3">
       <PageHeader title="more.payments" help={<Help term="more.tile.payments" />} />
       {isLoading ? <Loading /> : !data?.length ? <Empty text="common.nothingFound" /> : (
         <List>
           {data.map((p) => (
-            <Row key={p.id} title={p.party_name} sub={<span className="flex items-center gap-1.5"><span dir="ltr">{p.no}</span> · <span dir="ltr">{fmtDate(p.date)}</span> · {pick(`pay.${p.method}`)}{p.status === 'voided' ? <Chip text="sale.status.void" tone="muted" /> : null}</span>} right={<MoneyText value={p.direction === 'in' ? p.amount : -Number(p.amount)} />} onClick={() => nav(`/parties/${p.party_id}`)} />
+            <div key={p.id} className="flex items-center">
+            <div className="min-w-0 flex-1">
+            <Row title={p.party_name} sub={<span className="flex items-center gap-1.5"><span dir="ltr">{p.no}</span> · <span dir="ltr">{fmtDate(p.date)}</span> · {pick(`pay.${p.method}`)}{p.status === 'voided' ? <Chip text="sale.status.void" tone="muted" /> : null}</span>} right={<MoneyText value={p.direction === 'in' ? p.amount : -Number(p.amount)} />} onClick={() => nav(`/parties/${p.party_id}`)} />
+            </div>
+            {/* owner 2026-11-15 (ADR-087): delete a payment entered by mistake; Edit opens the person's khata */}
+            {p.status !== 'voided' ? <BillActions kind="payment" id={p.id} no={p.no} canDelete={payRole === 'owner' || payRole === 'manager'} editTo={`/parties/${p.party_id}`} /> : null}
+            </div>
           ))}
         </List>
       )}

@@ -1768,3 +1768,23 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
   - sale Edit → the bill;
   - sale Delete → Deleted, the phone back in stock.
 - I looked at the rows.
+
+### Same day — PR #67; repairs: own technician or outside lab, delete, reports (ADR-087)
+**Owner**: "delete r edit ka option hr jaga … repairing module may two options … apna technician … ya kisi lab … kia problem, kitnay pasay, kb milay ga, kitna diye kitnay dynay … delete r edit … report … kitnay mobile, tkh, progress, udhaar, profit, loss, parts, debit credit, customer wise, shop k, walk-in … other lab reports … share / download … business overview r audit … plan bna kr R&D kr ke develop … push".
+**R&D**: jobs, lab trips (ADR-044), lab stats and the audit repairs section already existed. Missing were the start choice, the own-phone path from the phone's page, delete, the full A4 reports, overview figures, and Edit / Delete on more rows.
+**Done**:
+- Backend:
+  - `GET /repairs/technicians`;
+  - `POST /repairs/{id}/cancel` (status `cancelled`);
+  - `repairs/report.py` with `/repairs/report` and `/repairs/labs/report`;
+  - overview `repairs` + its report section.
+- Frontend:
+  - `NewRepairPage` with the who-repairs choice and `?device=`;
+  - phone page Send to repair → that form;
+  - `BillActions` for repairs (rows + job page) and payments;
+  - Repair reports card; downloads on the labs pages; overview repairs card.
+- Strings + help, manual ch. 14, ADR-087, docs/29.
+**Verified**:
+- pytest `test_repair_reports` (4, new: delete with the advance reversed / salesman 403 / 409 again; the own phone back to stock; refused after a lab charge; technicians; both reports PDF / Excel / per-lab; overview repairs) and the existing repair tests (14 in all); full suite.
+- tsc and Help.test.
+- Playwright `repair-choice` (new: a stock phone → Send to repair → Outside lab → Ali, 4,000 → the job at the lab, the phone in repair; a customer repair deleted from its row → cancelled; the repairs Excel; a payment deleted from its row). I looked at the screenshot.
