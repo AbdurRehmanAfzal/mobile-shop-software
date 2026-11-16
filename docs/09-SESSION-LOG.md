@@ -1915,3 +1915,15 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
   - **`admin.spec` fails** at a full-page screenshot ("waiting for fonts to load"). It fails the same way on the code before this change (checked with a stash), so it is not from this work; left as is.
 - I looked at the pricing section and a converted screenshot.
 **Not done**: the demo video was not re-recorded (the recording step timed out on "Galaxy A55").
+
+### 2026-11-16 — PR #73 merged and live; sticker fix and printer guide; new website prices
+**Owner**: asked what sticker / paper size and which printers to buy (then a PDF); then "setup fee be lyni hai r price ko increase kr do 1000 r addons … jo ap ko lgta hai". Setup fee chosen from a question: 5,000 / 8,000 / 15,000.
+**Done**:
+- Sticker: with every field ticked the last two lines were cut at every size; the barcode now shrinks so all lines print (in PR #73). `docs/guides/printer-sticker-guide-roman.pdf`.
+- Prices: defaults 2,500 / 4,000 / 7,000 a month, setup 5,000 / 8,000 / 15,000, four service add-ons; `llms.txt`, `index.html`, the price note (it said setup was free), docs/37.
+**Verified**:
+- pytest `test_pricing`, `test_public`, `test_admin`.
+- Playwright `landing` (prices updated).
+- I looked at the pricing section.
+- The sticker sizes were rendered and measured on screen, not printed.
+**Open**: which gap to build first (docs/37 §5).

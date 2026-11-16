@@ -19,14 +19,14 @@ def test_public_info_and_shop_request(client, db, monkeypatch):
     info = client.get("/api/v1/public/info").json()
     assert {p["key"]: p["price"] for p in info["plans"]} == {
         "trial": 0,
-        "basic": 1500,
-        "pro": 3000,
-        "chain": 6000,
+        "basic": 2500,
+        "pro": 4000,
+        "chain": 7000,
     }
     assert info["trial_days"] == 14 and "repairs" in info["modules"]
     # a year is 12 months for the price of 10 (owner 2026-11-03)
     assert info["yearly_paid_months"] == 10
-    assert {p["key"]: p["yearly_price"] for p in info["plans"]}["pro"] == 30000
+    assert {p["key"]: p["yearly_price"] for p in info["plans"]}["pro"] == 40000
     assert info["accounts"][0]["label"] == "Easypaisa" and info["whatsapp"] == SUPER
 
     r = client.post(

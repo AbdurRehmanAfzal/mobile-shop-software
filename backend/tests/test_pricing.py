@@ -8,12 +8,12 @@ def test_defaults_then_the_provider_sets_them(client, owner, other_owner, monkey
     info = client.get("/api/v1/public/info").json()
     plans = {p["key"]: p for p in info["plans"]}
     assert (plans["basic"]["price"], plans["pro"]["price"], plans["chain"]["price"]) == (
-        1500,
-        3000,
-        6000,
+        2500,
+        4000,
+        7000,
     )
-    assert plans["pro"]["yearly_price"] == 30000 and plans["pro"]["setup_fee"] == 0
-    assert info["trial_days"] == 14 and info["addons"] == []
+    assert plans["pro"]["yearly_price"] == 40000 and plans["pro"]["setup_fee"] == 8000
+    assert info["trial_days"] == 14 and len(info["addons"]) == 4
 
     body = {
         "prices": {"basic": 2000, "pro": 3500, "chain": 6000},
@@ -33,7 +33,8 @@ def test_defaults_then_the_provider_sets_them(client, owner, other_owner, monkey
     info = client.get("/api/v1/public/info").json()
     plans = {p["key"]: p for p in info["plans"]}
     assert plans["basic"]["price"] == 2000 and plans["pro"]["yearly_price"] == 3500 * 9
-    assert plans["pro"]["setup_fee"] == 5000 and plans["basic"]["setup_fee"] == 0
+    # a plan left out of the change keeps its fee
+    assert plans["pro"]["setup_fee"] == 5000 and plans["basic"]["setup_fee"] == 5000
     assert info["trial_days"] == 7
     assert info["addons"] == [
         {"en": "Extra branch", "ur": "اضافی برانچ", "roman": "", "price": 12000, "per": "year"}
