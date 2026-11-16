@@ -16,6 +16,7 @@ import AppLinkCard, { APP_LINK, SITE } from './AppLinkCard'
 import FeeCreditCard from './FeeCreditCard'
 import ShopBinCard from './ShopBinCard'
 import AdminCredentials from './AdminCredentials'
+import AdminPricing from './AdminPricing'
 import { normalisePhone } from '@/lib/format'
 import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
 
@@ -186,6 +187,7 @@ export default function AdminPage() {
         <div className="flex flex-wrap gap-2">
           <button type="button" onClick={() => { setAccts(savedAccounts ? savedAccounts.map((a) => ({ ...a })) : []); setAcctsOpen(true) }} className={`tap rounded-full border border-line px-3 py-1.5 text-xs font-bold ${ur ? cls('sm') : ''}`}>{pick('admin.accounts')}</button>
           <button type="button" onClick={() => { if (billing) setBill(JSON.parse(JSON.stringify(billing))); setBillOpen(true) }} className={`tap rounded-full px-3 py-1.5 text-xs font-bold ${billing?.placeholders ? 'bg-payable-tint text-payable' : 'border border-line'} ${ur ? cls('sm') : ''}`} data-testid="billing-open">{pick('admin.billing')}</button>
+          <AdminPricing />
         </div>
         {fees?.filter((f) => !decided.includes(f.id)).length ? (
           <div className="divide-y divide-line">

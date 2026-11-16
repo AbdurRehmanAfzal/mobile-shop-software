@@ -2,9 +2,9 @@
  *  Roman Urdu — so a shopkeeper never taps one and gets an empty or missing text. */
 
 import { describe, expect, it } from 'vitest'
-import en from '@/i18n/locales/en.json'
-import roman from '@/i18n/locales/roman.json'
-import ur from '@/i18n/locales/ur.json'
+import en from '@/i18n/help/en.json'
+import roman from '@/i18n/help/roman.json'
+import ur from '@/i18n/help/ur.json'
 
 const sources = import.meta.glob('../**/*.tsx', { query: '?raw', import: 'default', eager: true }) as Record<string, string>
 
@@ -34,7 +34,7 @@ describe('help texts', () => {
       const missing: string[] = []
       for (const [term, file] of terms) {
         for (const part of ['title', 'body', 'example']) {
-          const v = at((locale as Record<string, unknown>).help, `${term}.${part}`)
+          const v = at(locale, `${term}.${part}`)
           if (typeof v !== 'string' || !v.trim()) missing.push(`${term}.${part} (${file})`)
         }
       }

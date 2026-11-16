@@ -9,7 +9,8 @@
 
 import i18next from 'i18next'
 import { CircleHelp } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { loadHelp } from '@/i18n'
 import { useLang } from './Bilingual'
 import { Sheet } from './ui'
 
@@ -38,6 +39,11 @@ export default function Help({ term, size = 'md' }: { term: HelpTerm; size?: 'sm
   const [open, setOpen] = useState(false)
   // the explanation's own language: last picked in a "?" on this device, else the app's
   const [lang, setLang] = useState<HelpLang>(() => savedLang() ?? (appUr ? 'ur' : appRoman ? 'roman' : 'en'))
+  // ADR-092: the explanations come in when a "?" is first opened (kept for offline afterwards)
+  const [, setLoaded] = useState(0)
+  useEffect(() => {
+    if (open) void loadHelp(lang).then(() => setLoaded((n) => n + 1))
+  }, [open, lang])
   const t = i18next.getFixedT(lang)
   const ur = lang === 'ur'
   const text = (part: string) => t(`help.${term}.${part}`)

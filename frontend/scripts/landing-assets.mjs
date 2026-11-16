@@ -2,6 +2,7 @@
 // shop (owner 2026-10-29). Run with the backend on :8000 and the frontend on :5173:
 //   node scripts/landing-assets.mjs
 // Writes public/landing/*.png and public/landing/demo.webm (+ demo.mp4 when ffmpeg can).
+// Then make them light for visitors:  ../backend/.venv/Scripts/python scripts/landing-webp.py
 
 import { chromium } from '@playwright/test'
 import { execFileSync } from 'node:child_process'

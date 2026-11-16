@@ -83,7 +83,7 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Every device event (purchase, sale, loan-out, return, repair in/out, verification) is an immutable row in `device_events`. The device history screen is built from these.
 - UI shows **one language at a time** (owner rule 2026-10-22): Urdu mode = only Urdu (Nastaliq, RTL), English mode = only English. Never stack EN + UR labels. Numbers always Latin digits. Big buttons, step-by-step flows, auto-calculated totals. Printed documents (receipt, declaration) and notifications follow the shop's language too (`shops.default_locale`, overridable per request with `?lang=`).
 - **UI must feel premium and modern.** The v1 look was rejected by ~50 shopkeepers ("not modern, not luxury"). Follow `docs/11-DESIGN-SYSTEM.md` (once approved); no emoji icons, no default-blue buttons, no bare white cards. New screens are built only from the design-system components.
-- All user-visible strings go through i18n (`en.json` / `ur.json`). No hard-coded UI text.
+- All user-visible strings go through i18n (`i18n/locales/en.json` / `ur.json` / `roman.json`). No hard-coded UI text. The "?" explanations live apart in `i18n/help/<lang>.json` (loaded on demand, ADR-092): a new `<Help term>` needs its title / body / example there.
 - Write tests for business logic (ledger, balances, device state machine, tax). Run them before committing.
 - Keep docs current. Stale docs are bugs.
 

@@ -25,12 +25,6 @@ from app.modules.notifications.service import queue
 
 router = APIRouter(prefix="/api/v1/public", tags=["public"])
 
-# PKR per month; the trial is free (owner 2026-10-29). Changed here until a settings screen exists.
-PLAN_PRICES = {"trial": 0, "basic": 1500, "pro": 3000, "chain": 6000}
-TRIAL_DAYS = 14
-# owner 2026-11-03: a year paid at once is 12 months for the price of 10 (2 months free, ~17% off)
-YEARLY_PAID_MONTHS = 10
-
 
 class ShopRequest(UUIDPk, Base):
     """A shopkeeper asking for a shop from the landing page."""
@@ -64,18 +58,24 @@ class RequestIn(BaseModel):
 @router.get("/info")
 def info(db: DB):
     """plans with prices and modules, module names, the accounts to pay into, the contact"""
+    from app.modules.public import pricing
+
+    pr = pricing.get(db)
+    price = lambda k: int(pr["prices"].get(k, 0))
     return {
         "plans": [
             {
                 "key": k,
-                "price": PLAN_PRICES.get(k, 0),
-                "yearly_price": PLAN_PRICES.get(k, 0) * YEARLY_PAID_MONTHS,
+                "price": price(k),
+                "yearly_price": price(k) * pr["yearly_paid_months"],
+                "setup_fee": int(pr["setup_fee"].get(k, 0)),
                 "modules": v,
             }
             for k, v in modules.PLAN_DEFAULTS.items()
         ],
-        "trial_days": TRIAL_DAYS,
-        "yearly_paid_months": YEARLY_PAID_MONTHS,
+        "trial_days": pr["trial_days"],
+        "yearly_paid_months": pr["yearly_paid_months"],
+        "addons": pr["addons"],
         "modules": modules.MODULES,
         "accounts": fees.accounts(db),
         "whatsapp": settings.admin_whatsapp

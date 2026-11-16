@@ -1,79 +1,102 @@
+import { Suspense, lazy, type ComponentType } from 'react'
 import { Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router-dom'
 import LandingPage from '@/features/landing/LandingPage'
 import { useAuth } from '@/lib/auth'
-import Shell from './Shell'
 import LoginPage from '@/features/auth/LoginPage'
 import SignupPage from '@/features/auth/SignupPage'
-import HomePage from '@/features/counter/HomePage'
-import StockSummaryPage from '@/features/counter/StockSummaryPage'
-import DayReportPage from '@/features/counter/DayReportPage'
-import KhataPage from '@/features/counter/KhataPage'
-import BalancesPage from '@/features/counter/BalancesPage'
-import OverviewPage from '@/features/counter/OverviewPage'
-import WhatsAppPage from '@/features/whatsapp/WhatsAppPage'
-import RemindersPage from '@/features/counter/RemindersPage'
 import ModuleGate from '@/components/ModuleGate'
-import FeesPage from '@/features/more/FeesPage'
-import { InstallmentDetailPage, InstallmentsPage } from '@/features/installments/InstallmentsPage'
-import AssistantPage from '@/features/ai/AssistantPage'
-import AdminPage from '@/features/admin/AdminPage'
-import ProviderPage from '@/features/admin/ProviderPage'
-import KeyPage from '@/features/admin/KeyPage'
-import RepairStatusPage from '@/features/repairs/RepairStatus'
-import BillCheckPage from '@/features/sale/BillCheckPage'
-import AppearancePage from '@/features/more/AppearancePage'
-import CataloguePage from '@/features/catalogue/CataloguePage'
-import MorePage from '@/features/more/MorePage'
-import SettingsPage from '@/features/more/SettingsPage'
-import NotificationsPage from '@/features/more/NotificationsPage'
-import { PaymentsPage, PurchaseDetailPage, PurchasesPage, ReturnsPage } from '@/features/more/ListsPages'
-import PartiesPage from '@/features/parties/PartiesPage'
-import PartyDetailPage from '@/features/parties/PartyDetailPage'
-import StockPage from '@/features/stock/StockPage'
-import DeviceDetailPage from '@/features/stock/DeviceDetailPage'
-import VerifyPage from '@/features/stock/VerifyPage'
-import PurchaseWizard from '@/features/purchase/PurchaseWizard'
-import OpeningStockPage from '@/features/purchase/OpeningStockPage'
-import SaleWizard from '@/features/sale/SaleWizard'
-import ReturnWizard from '@/features/sale/ReturnWizard'
-import { SaleDetailPage, SalesPage } from '@/features/sale/SalesPage'
-import InvoicesPage from '@/features/invoices/InvoicesPage'
-import LoansPage from '@/features/loans/LoansPage'
-import { TransferDetailPage, TransferNewPage, TransfersPage } from '@/features/transfers/TransfersPage'
-import ExpensesPage from '@/features/expenses/ExpensesPage'
-import { NewRepairPage, RepairDetailPage, RepairsPage } from '@/features/repairs/RepairsPages'
-import { LabDetailPage, LabsPage } from '@/features/repairs/RepairLabs'
-import AuditRepairsPage from '@/features/audit/RepairsAuditPage'
-import AccessoriesPage from '@/features/accessories/AccessoriesPage'
-import AccessoryDetailPage from '@/features/accessories/AccessoryDetailPage'
-import AccessoryReportsPage from '@/features/accessories/AccessoryReportsPage'
-import ExchangeWizard from '@/features/exchange/ExchangeWizard'
-import ReportsPage from '@/features/reports/ReportsPage'
-import AuditOverviewPage from '@/features/audit/OverviewPage'
-import AuditFinancePage from '@/features/audit/FinancePage'
-import AuditPartiesPage from '@/features/audit/PartiesAuditPage'
-import AuditUdhaarPage from '@/features/audit/UdhaarAuditPage'
-import AuditInventoryPage from '@/features/audit/InventoryAuditPage'
-import AuditProductsPage from '@/features/audit/ProductsPage'
-import AuditInvoicePage from '@/features/audit/InvoiceAuditPage'
-import AuditSecurityPage from '@/features/audit/SecurityPage'
-import AuditReportCenterPage from '@/features/audit/ReportCenterPage'
-import AuditTradePage from '@/features/audit/TradePage'
-import AuditStaffPage from '@/features/audit/StaffAuditPage'
-import AuditLendingPage from '@/features/audit/LendingAuditPage'
-import StaffPage from '@/features/more/StaffPage'
-import LoginActivityPage from '@/features/more/LoginActivityPage'
-import CredentialHistoryPage from '@/features/more/CredentialHistoryPage'
-import LoginSecurityPage from '@/features/more/LoginSecurityPage'
-import CashAccountsPage from '@/features/more/CashAccountsPage'
-import BulkPage from '@/features/more/BulkPage'
-import StockCountPage from '@/features/stock/StockCountPage'
+
+// ADR-092: the app behind the login is one chunk, fetched when it is first needed (and kept by
+// the service worker, so it also opens offline)
+const load = () => import('./pages')
+type Pages = Awaited<ReturnType<typeof load>>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const page = <K extends keyof Pages>(k: K) => lazy(async () => ({ default: (await load())[k] as ComponentType<any> }))
+const Shell = page('Shell')
+const HomePage = page('HomePage')
+const StockSummaryPage = page('StockSummaryPage')
+const DayReportPage = page('DayReportPage')
+const KhataPage = page('KhataPage')
+const BalancesPage = page('BalancesPage')
+const OverviewPage = page('OverviewPage')
+const WhatsAppPage = page('WhatsAppPage')
+const RemindersPage = page('RemindersPage')
+const FeesPage = page('FeesPage')
+const InstallmentDetailPage = page('InstallmentDetailPage')
+const InstallmentsPage = page('InstallmentsPage')
+const AssistantPage = page('AssistantPage')
+const AdminPage = page('AdminPage')
+const ProviderPage = page('ProviderPage')
+const KeyPage = page('KeyPage')
+const RepairStatusPage = page('RepairStatusPage')
+const BillCheckPage = page('BillCheckPage')
+const AppearancePage = page('AppearancePage')
+const CataloguePage = page('CataloguePage')
+const MorePage = page('MorePage')
+const SettingsPage = page('SettingsPage')
+const NotificationsPage = page('NotificationsPage')
+const PaymentsPage = page('PaymentsPage')
+const PurchaseDetailPage = page('PurchaseDetailPage')
+const PurchasesPage = page('PurchasesPage')
+const ReturnsPage = page('ReturnsPage')
+const PartiesPage = page('PartiesPage')
+const PartyDetailPage = page('PartyDetailPage')
+const StockPage = page('StockPage')
+const DeviceDetailPage = page('DeviceDetailPage')
+const VerifyPage = page('VerifyPage')
+const PurchaseWizard = page('PurchaseWizard')
+const OpeningStockPage = page('OpeningStockPage')
+const SaleWizard = page('SaleWizard')
+const ReturnWizard = page('ReturnWizard')
+const SaleDetailPage = page('SaleDetailPage')
+const SalesPage = page('SalesPage')
+const InvoicesPage = page('InvoicesPage')
+const LoansPage = page('LoansPage')
+const TransferDetailPage = page('TransferDetailPage')
+const TransferNewPage = page('TransferNewPage')
+const TransfersPage = page('TransfersPage')
+const ExpensesPage = page('ExpensesPage')
+const NewRepairPage = page('NewRepairPage')
+const RepairDetailPage = page('RepairDetailPage')
+const RepairsPage = page('RepairsPage')
+const LabDetailPage = page('LabDetailPage')
+const LabsPage = page('LabsPage')
+const AuditRepairsPage = page('AuditRepairsPage')
+const AccessoriesPage = page('AccessoriesPage')
+const AccessoryDetailPage = page('AccessoryDetailPage')
+const AccessoryReportsPage = page('AccessoryReportsPage')
+const ExchangeWizard = page('ExchangeWizard')
+const ReportsPage = page('ReportsPage')
+const AuditOverviewPage = page('AuditOverviewPage')
+const AuditFinancePage = page('AuditFinancePage')
+const AuditPartiesPage = page('AuditPartiesPage')
+const AuditUdhaarPage = page('AuditUdhaarPage')
+const AuditInventoryPage = page('AuditInventoryPage')
+const AuditProductsPage = page('AuditProductsPage')
+const AuditInvoicePage = page('AuditInvoicePage')
+const AuditSecurityPage = page('AuditSecurityPage')
+const AuditReportCenterPage = page('AuditReportCenterPage')
+const AuditTradePage = page('AuditTradePage')
+const AuditStaffPage = page('AuditStaffPage')
+const AuditLendingPage = page('AuditLendingPage')
+const StaffPage = page('StaffPage')
+const LoginActivityPage = page('LoginActivityPage')
+const CredentialHistoryPage = page('CredentialHistoryPage')
+const LoginSecurityPage = page('LoginSecurityPage')
+const CashAccountsPage = page('CashAccountsPage')
+const BulkPage = page('BulkPage')
+const StockCountPage = page('StockCountPage')
+
+function Waiting() {
+  return <div className="flex min-h-dvh items-center justify-center"><span className="h-10 w-10 animate-spin rounded-full border-4 border-line border-t-emerald" /></div>
+}
+
 
 function RequireAuth() {
   const token = useAuth((s) => s.accessToken)
   const { pathname } = useLocation()
   // a visitor on the root without a login sees the landing page; deep links still go to login
-  return token ? <Outlet /> : <Navigate to={pathname === '/' ? '/welcome' : '/login'} replace />
+  return token ? <Suspense fallback={<Waiting />}><Outlet /></Suspense> : <Navigate to={pathname === '/' ? '/welcome' : '/login'} replace />
 }
 
 function RedirectIfAuthed() {
@@ -83,9 +106,9 @@ function RedirectIfAuthed() {
 
 export const router = createBrowserRouter([
   { path: '/welcome', element: <LandingPage /> },
-  { path: '/key/:token', element: <KeyPage /> },
-  { path: '/r/:token', element: <RepairStatusPage /> },
-  { path: '/b/:token', element: <BillCheckPage /> },
+  { path: '/key/:token', element: <Suspense fallback={<Waiting />}><KeyPage /></Suspense> },
+  { path: '/r/:token', element: <Suspense fallback={<Waiting />}><RepairStatusPage /></Suspense> },
+  { path: '/b/:token', element: <Suspense fallback={<Waiting />}><BillCheckPage /></Suspense> },
   {
     element: <RedirectIfAuthed />,
     children: [

@@ -32,7 +32,9 @@
 ## Prices (PKR)
 - Basic Rs. 1,500 / month, Pro Rs. 3,000 / month, Chain Rs. 6,000 / month.
 - Yearly: 12 months for the price of 10 (2 months free).
-- 14 days free trial.
+- 14 days free trial. No setup fee, no yearly contract, no fee per user; the Android app is included.
+- Edit / Delete on every entry (kept as Deleted, with what it will do shown first); a sale or purchase bill can be corrected.
+- iCloud / FRP locked phones, repairs by own technician or outside lab, A4 business and audit reports, price lists, PTA DIRBS check.
 
 ## Common questions
 - Is there an Urdu mobile shop software in Pakistan? Yes — Mobile Shop runs fully in Urdu, Roman Urdu or English.

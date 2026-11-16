@@ -240,6 +240,12 @@ Server: the deploy runs migration `e4a6c8d0f2b5` (additive: returns, branch tran
 - **A phone**: everything is in the top card with icons, and a job sits beside each line (Correct IMEI, Mark faulty, PTA Check …). Sell, Loan and Repair are big buttons; the rest is under More actions.
 - **Sticker**: untick Price and the preview drops the price at once. Then Print.
 
+**Website speed, prices, landing (2026-11-16, ADR-092)**:
+- Open the website on a phone: it should load clearly faster, and the screens show the new stock page.
+- Super admin → Website prices: change a price or add a setup fee / add-on → the landing page shows it at once.
+- If you change the prices, tell me: `llms.txt` and the page's search data state them as text.
+- Decisions (see `docs/37-CLOUDPOS-COMPARISON.md` §5): the price numbers and setup fee, which add-ons to sell, which gaps to build first (suggested: easy load, warranty, quotations, commission).
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

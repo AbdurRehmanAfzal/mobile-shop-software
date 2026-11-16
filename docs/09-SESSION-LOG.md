@@ -1898,3 +1898,20 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
   - `alerts-search` and `device-types` timed out under 3 workers and passed alone.
   - `crud` exposed the preview-records-a-print bug, now fixed.
 - Screenshots looked at at phone and laptop size, in English and Urdu.
+
+### 2026-11-16 — PR #72 merged; website speed, prices, landing, competitor study (ADR-092)
+**Owner**: "cloudpos.pk … complete explore … price is trhan honi chye … gaps … landing page update … images kbs may … website loading time bohat lay rhi hai".
+**Done**:
+- Read the competitor's whole page; `docs/37-CLOUDPOS-COMPARISON.md` (their plans / add-ons, ours, features, 13 gaps, decisions).
+- Speed: WebP images (`landing-webp.py`), the app behind the login as one lazy chunk (`app/pages.ts`), "?" texts in `i18n/help/` loaded on demand.
+- Prices: `public/pricing.py` + Super admin → Website prices; the landing pricing section restyled; "in every plan" block; add-ons table.
+- Landing: nine new feature entries; all screenshots retaken; `llms.txt` updated.
+**Verified**:
+- pytest `test_pricing` (new: defaults, a shop owner 403, the provider sets prices / setup fee / add-ons, bad input 422), `test_public`, `test_admin`; full suite.
+- tsc; vitest (53).
+- Build sizes before / after are in ADR-092.
+- Playwright after the split: `core-flow`, `counter`, `repair-labs`, `delete-everywhere`, `fingerprint`, `help`, `landing` pass.
+  - `landing` first failed on a request left in the dev DB by a timed-out run; it passed once that was cleared.
+  - **`admin.spec` fails** at a full-page screenshot ("waiting for fonts to load"). It fails the same way on the code before this change (checked with a stash), so it is not from this work; left as is.
+- I looked at the pricing section and a converted screenshot.
+**Not done**: the demo video was not re-recorded (the recording step timed out on "Galaxy A55").

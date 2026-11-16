@@ -23,6 +23,7 @@ from app.modules.audit.service import record_audit
 from app.modules.auth import service
 from app.modules.auth.models import Organisation, Shop, User, UserShop
 from app.modules.auth.schemas import SignupRequest
+from app.modules.public.pricing import PricingIn
 
 router = APIRouter(prefix="/api/v1/admin", tags=["admin"])
 Lang = Annotated[str | None, Query(pattern="^(en|ur)$")]
@@ -434,6 +435,21 @@ def shop_request_done(req_id: uuid.UUID, current: Super, db: DB):
     req.handled_at = datetime.now(tz=UTC)
     req.handled_by = current.id
     db.commit()
+
+
+@router.get("/pricing")
+def get_pricing(_: Super, db: DB):
+    """owner 2026-11-16 (ADR-092): the prices the landing page shows"""
+    from app.modules.public import pricing
+
+    return pricing.get(db)
+
+
+@router.put("/pricing")
+def set_pricing(data: PricingIn, _: Super, db: DB):
+    from app.modules.public import pricing
+
+    return pricing.set_(db, data)
 
 
 @router.get("/billing")
