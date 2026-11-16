@@ -55,6 +55,7 @@ test('stock lists on A4', async ({ page, request }) => {
   await page.getByRole('button', { name: 'Login' }).click()
   await expect(page.getByPlaceholder("IMEI, phone or person's name")).toBeVisible()
   await page.goto('/stock')
+  await page.getByTestId('stock-reports').click() // ADR-091: downloads and price lists are under Reports
   await page.getByTestId('price-lists').click()
   await expect(page.getByTestId('plist-staff')).toBeVisible()
   await expect(page.getByTestId('plist-customer')).toBeVisible()

@@ -25,6 +25,7 @@ from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx, require_cap
 from app.modules.catalogue.models import Brand, Colour, Model, Storage
 from app.modules.devices.models import Device
+from app.modules.devices.router import multi_filters
 from app.modules.devices.types import cpid_label, lock_text, pta_out
 from app.modules.expenses.models import Expense, ExpenseCategory
 from app.modules.ledger.service import party_statement
@@ -357,6 +358,11 @@ def stock(
     desc: bool = False,
     copy: Literal["screen", "staff", "customer"] = "screen",
     locked: bool | None = None,
+    statuses: str | None = None,
+    brand_ids: str | None = None,
+    conditions: str | None = None,
+    pta_statuses: str | None = None,
+    categories: str | None = None,
 ):
     # owner 2026-11-15 (ADR-078): a price list for the staff (every field + asking, no cost / seller)
     # or for customers (what they ask about + price, phones for sale); the PDF fits A4
@@ -387,6 +393,7 @@ def stock(
                 "model_id": model_id,
                 "with_faulty": with_faulty,
                 "locked": locked,
+                "multi": multi_filters(statuses, brand_ids, conditions, pta_statuses, categories),
             },
             sort,
             desc,

@@ -54,6 +54,7 @@ test('stock views: table sorts and totals, grid, list, choice kept', async ({ pa
   await page.getByRole('button', { name: 'Done' }).click()
   await expect(table.getByRole('button', { name: 'IMEI', exact: true })).toHaveCount(0)
   await expect(table.getByRole('button', { name: 'Asking' })).toBeVisible()
+  await page.getByTestId('stock-reports').click() // ADR-091
   const req = page.waitForRequest((r) => r.url().includes('/api/v1/exports/stock') && r.url().includes('format=xlsx'))
   await page.getByRole('button', { name: 'Download' }).click()
   await page.getByRole('button', { name: /Excel/ }).click()
@@ -61,6 +62,8 @@ test('stock views: table sorts and totals, grid, list, choice kept', async ({ pa
   expect(url).toContain('cols=name,storage,condition')
   expect(url).not.toContain('imei')
   expect(url).toContain('sort=asking')
+  // the download sheet sits on the Reports sheet: close both
+  await page.getByRole('button', { name: 'Close' }).last().click()
   await page.getByRole('button', { name: 'Close' }).click()
   await page.getByTestId('view-list').click()
   await expect(page.getByTestId('stock-list')).not.toContainText('356938035643809')

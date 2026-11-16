@@ -208,8 +208,26 @@ def list_devices(
     reserved: bool = False,
     location: str | None = None,
     locked: bool | None = None,
+    multi: dict[str, list[str]] | None = None,
 ) -> list[dict]:
     stmt = _base_query(shop_id)
+    # owner 2026-11-16 (ADR-091): the stock screen's tick-box filters — several statuses / brands /
+    # conditions / PTA / types at once (each group is OR, groups together are AND)
+    for key, col in (
+        ("statuses", Device.status),
+        ("brand_ids", Device.brand_id),
+        ("conditions", Device.condition),
+        ("pta_statuses", Device.pta_status),
+        ("categories", Device.category),
+    ):
+        vals = [v for v in (multi or {}).get(key, []) if v]
+        if not vals:
+            continue
+        if key == "brand_ids":
+            vals = [uuid.UUID(v) for v in vals]
+        if key == "statuses" and DeviceStatus.IN_STOCK in vals:
+            vals = [*vals, DeviceStatus.FAULTY]  # ADR-066: a faulty unit is still stock
+        stmt = stmt.where(col.in_(vals))
     # owner brief 2026-11-10 (ADR-059): the stock screen's status cards and filters. "Sellable" is
     # the sale's own rule (in stock, ID check not pending / flagged, no lock left on); "inspection"
     # is an in-stock unit that the sale would refuse for one of those reasons.

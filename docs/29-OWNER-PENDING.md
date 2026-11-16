@@ -233,6 +233,13 @@ Server: the deploy runs migration `e4a6c8d0f2b5` (additive: returns, branch tran
 - **Edit a purchase**: the same, from a purchase bill.
 - **Stock**: every phone has ✎ / 🗑. 🗑 on an old-stock phone opens Remove old stock with the warning.
 
+**Stock page and phone page (2026-11-16, ADR-091)**:
+- **Stock**: type in the search, then tap × to clear it.
+- **Filters**: tick Apple and Samsung, and Used, then Show. Chips appear under the bar; × takes one off, and Clear all takes all off.
+- **Reports**: Download / Share / Price lists give the same list as on screen.
+- **A phone**: everything is in the top card with icons, and a job sits beside each line (Correct IMEI, Mark faulty, PTA Check …). Sell, Loan and Repair are big buttons; the rest is under More actions.
+- **Sticker**: untick Price and the preview drops the price at once. Then Print.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

@@ -53,6 +53,7 @@ test('old stock: edit details, then remove the entry', async ({ page }) => {
   await page.getByRole('button', { name: 'Save' }).click()
   await expect(page.getByText('Box pack').first()).toBeVisible()
 
+  await page.getByTestId('device-more-toggle').click() // ADR-091: the less used jobs are under More
   await page.getByRole('button', { name: 'Remove old-stock entry' }).click()
   const confirm = page.getByRole('button', { name: 'Remove old-stock entry' }).last()
   await expect(confirm).toBeDisabled()

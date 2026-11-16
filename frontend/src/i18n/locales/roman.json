@@ -136,7 +136,8 @@
     "void": "Yeh bill delete karein",
     "today": "Aaj",
     "close": "Band karein",
-    "sheetKeep": "Yahan kuch bhara hua hai. Agar waqai chhorna hai to Band karein dabayein."
+    "sheetKeep": "Yahan kuch bhara hua hai. Agar waqai chhorna hai to Band karein dabayein.",
+    "clearSearch": "Search saaf karein"
   },
   "party": {
     "title": "Log aur khata",
@@ -5304,9 +5305,9 @@
         "example": "Oldest pehle woh phone dikhata hai jinhein hafton se kisi ne nahi chheda — qeemat kam karne ka waqt."
       },
       "filters": {
-        "title": "Mazeed filter",
-        "body": "Grade, RAM, qeemat ki had, ya jin devices ka lock check nahi hua, un se list chhoti karen.",
-        "example": "Customer ko Rs. 40,000 se kam mein 8GB RAM phone chahiye → RAM 8, price to 40000."
+        "title": "Filters",
+        "body": "Filters dabayein, jo chahiye tick karein — kai halatein, brand, condition ya PTA ek saath — aur Dikhayein dabayein. Har tick kiya hua search ke neeche aata hai; us ka × daba kar hatayein, ya Sab hatayein.",
+        "example": "Apple aur Samsung, aur Used tick karein → sirf used Apple aur Samsung phone."
       },
       "priceRange": {
         "title": "Qeemat se / tak",
@@ -11429,5 +11430,45 @@
     "button": "Ye bill edit karein (phone, qeemat, payment)",
     "editing": "Bill {{no}} edit ho raha hai: jo ghalat hai badlein aur save karein. Purana bill Deleted rahega aur ye us ki jagah lega.",
     "purchaseButton": "Ye bill edit karein (phone, qeemat, payment)"
+  },
+  "sfx": {
+    "filters": "Filters",
+    "hint": "Jitne chahein tick karein. Jo tick karenge wo search ke neeche × ke saath dikhega taake hata sakein.",
+    "status": "Halat",
+    "brand": "Brand",
+    "more": "Aur filters",
+    "clearAll": "Sab hatayein",
+    "showN": "{{n}} phone dikhayein",
+    "none": "Koi filter nahi — search se milte sab dikh rahe hain.",
+    "remove": "Hatayein",
+    "reports": "Reports",
+    "reportsHint": "List jaise abhi dikh rahi hai (search, filters, tarteeb, fields): PDF ya Excel download, WhatsApp par share, ya staff / gahakon ke liye price list.",
+    "askingTotal": "Asking jama",
+    "costTotal": "Cost jama",
+    "sortBy": "Tarteeb",
+    "mode": {
+      "sellable": "Bechne ke liye tayyar",
+      "reserved": "Reserved",
+      "inspection": "Check chahiye",
+      "in_repair": "Repair mein",
+      "faulty": "Kharab",
+      "with_customer_for_approval": "Gahak ke paas",
+      "locked": "Lock phones"
+    }
+  },
+  "dview": {
+    "sticker": "Sticker",
+    "stickerFields": "Sticker par kya aaye tick karein — preview foran badlega",
+    "stickerMore": "Size aur copies",
+    "imei1": "IMEI",
+    "memory": "Memory",
+    "colour": "Rang",
+    "ptaCheck": "Check",
+    "idCheck": "ID card check",
+    "boughtFrom": "Kis se khareeda",
+    "customer": "Gahak",
+    "since": "Dukaan mein",
+    "days": "{{n}} din",
+    "more": "Aur kaam"
   }
 }

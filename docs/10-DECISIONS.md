@@ -362,6 +362,34 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-091 · 2026-11-16 · Accepted · Stock page and a phone's page made plain for shopkeepers
+**Context**: shopkeepers found the stock screen and a phone's page (classic view) confusing.
+- **Stock screen**: eight rows of controls came before the phones. Filters were hidden, and once on they could not be seen or removed. The search was not at the top, and Reports / Download / Share were buried.
+- **Phone page**: the information was split between a dark card and a "Device" section. About 20 equal action buttons stood apart from the information they act on. IMEI 2, RAM and the customer were not at the top, and there was no sticker preview.
+
+They asked for: tick-box filters; a × on the search and on every active filter; the search on top; reports easy to reach; the price visible in every list; the whole phone at the top with icons; each action beside its information; and a sticker preview whose fields can be ticked.
+
+**Decision**:
+- **Stock screen** (`StockPage`, `StockFilters`), from the top:
+  1. The search, with **×** (`SearchBox` shows × whenever something is typed, on every screen).
+  2. The kind tabs.
+  3. One bar: **Filters (n)**, **Order**, **Reports**.
+  4. The active filters as chips with **×**, plus **Clear all**.
+  5. The status cards.
+  6. The view switch and **Fields**.
+  7. A line with the count, the asking total and the cost total (owner / manager).
+- **Filters sheet**: tick boxes for **Status** (in stock / on loan / in repair / faulty / sold), **Brand** (with counts), **Condition** and **PTA**. Several in a group means "any of them"; groups together narrow the list. **More filters** holds price, grade, RAM, age, supplier, shelf, cost and lock unchecked. The apply button shows how many phones match. **Reports** opens Download / Share / Price lists for exactly the list on screen. The asking price shows in every view.
+- **Backend**: `GET /devices` and `GET /exports/stock` take comma-separated `statuses`, `brand_ids`, `conditions`, `pta_statuses` and `categories` (each an IN filter; "in stock" includes faulty, ADR-066). The single-value params are unchanged. Brand stays a client-side filter on screen so every brand keeps its count in the sheet; it is sent as `brand_ids` to the download. Kept filters use a new key (`stock.filters.v2`), so the old saved shape is ignored.
+- **Phone page, classic view** (`DeviceEasyView`):
+  - **One card at the top**: brand mark, model, specs and status; asking price (→ change) and cost (→ change purchase price); then one line per fact with an icon — IMEI, IMEI 2, serial, barcode, memory / RAM, colour, condition / grade / faults, PTA, SIM lock, lock check, ID check, bought from, customer (walk-in too), shelf, warranty, days in the shop. Each line carries its own job (Correct IMEI, Edit details, Mark faulty, PTA Check, Lock check, ID card check, change seller / buyer).
+  - **Main jobs** as big buttons: Sell, loan, repair, return, and the repair / approval / faulty "back" jobs.
+  - **More actions** (collapsed) holds every other job. It is computed as "everything not already shown on a line", so no job is lost.
+  - The old Actions grid and the duplicated "Device" rows are gone. The other four views (smart, tabs, tiles, compact) are unchanged.
+  - Action test ids are kept (`fix-imei`, `device-change-paid` …).
+- **Sticker preview** (`StickerPreview`): beside the details on a laptop, under them on a phone. Ticking the fields shows the preview at once (`/labels/devices?preview=true`). The preview **records no print**, so it does not write `label_printed` events into the phone's history; a test covers this. **Print** is there, and **Size & copies** opens the usual sticker sheet. The ticks are remembered with the sticker choices.
+
+**Consequences**: no data change. Saved stock filters from before start fresh once. Manual ch. 2 (stock list, a phone's page) is rewritten and its two screenshots are retaken.
+
 ## ADR-090 · 2026-11-15 · Accepted · Edit / Delete on every entry, with what a delete does; safe deletes
 **Context**: a shopkeeper entered expenses wrongly and could not find a way to delete them. The owner asked for Edit / Delete on every entry (expenses, len-den, purchases, sales — everything), active buttons, and before a delete a warning with an example of its effect.
 

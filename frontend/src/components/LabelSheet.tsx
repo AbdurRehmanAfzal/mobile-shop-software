@@ -16,13 +16,16 @@ import { useGet, useInvalidate } from '@/lib/queries'
 export type LabelKind = 'devices' | 'items'
 const SIZES = ['38x25', '40x30', '50x25', '50x30', '58x40', '60x40', '70x40', 'a4', 'custom'] as const
 type Size = (typeof SIZES)[number]
-const FIELDS = ['shop', 'name', 'specs', 'price', 'barcode', 'imei', 'last4', 'condition', 'pta', 'date', 'code'] as const
-type Field = (typeof FIELDS)[number]
+export const LABEL_FIELDS = ['shop', 'name', 'specs', 'price', 'barcode', 'imei', 'last4', 'condition', 'pta', 'date', 'code'] as const
+const FIELDS = LABEL_FIELDS
+export type LabelField = (typeof LABEL_FIELDS)[number]
+type Field = LabelField
 const DEFAULT: Prefs = { size: '50x30', w: '40', h: '20', fields: ['shop', 'name', 'specs', 'price', 'barcode', 'imei', 'condition'], copies: 1 }
-interface Prefs { size: Size; w: string; h: string; fields: Field[]; copies: number }
-const LS = 'mobileshop.labelPrefs'
+export interface Prefs { size: Size; w: string; h: string; fields: Field[]; copies: number }
+export const LABEL_LS = 'mobileshop.labelPrefs'
+const LS = LABEL_LS
 
-function load(shopPrefs: Partial<Prefs> | null | undefined): Prefs {
+export function loadLabelPrefs(shopPrefs: Partial<Prefs> | null | undefined): Prefs {
   let local: Partial<Prefs> | null = null
   try { local = JSON.parse(localStorage.getItem(LS) ?? 'null') } catch { local = null }
   const p = { ...DEFAULT, ...(shopPrefs ?? {}), ...(local ?? {}) }
@@ -40,10 +43,10 @@ export default function LabelSheet({ kind, ids, open, onClose }: { kind: LabelKi
   const role = useAuth((s) => s.me?.user.role)
   const inv = useInvalidate()
   const { data: shop } = useGet<{ label_prefs: Partial<Prefs> | null; label_code_word: string | null }>(['shop-full'], '/api/v1/shops/current')
-  const [p, setP] = useState<Prefs>(() => load(null))
+  const [p, setP] = useState<Prefs>(() => loadLabelPrefs(null))
   const [saved, setSaved] = useState(false)
   const [err, setErr] = useState<unknown>(null)
-  useEffect(() => { if (open) setP(load(shop?.label_prefs)) }, [open, shop?.label_prefs])
+  useEffect(() => { if (open) setP(loadLabelPrefs(shop?.label_prefs)) }, [open, shop?.label_prefs])
   const canCost = role === 'owner' || role === 'manager'
   const fields = FIELDS.filter((f) => (canCost || f !== 'code') && (kind === 'devices' || !['specs', 'last4', 'condition', 'pta'].includes(f)))
   const toggle = (f: Field) => setP({ ...p, fields: p.fields.includes(f) ? p.fields.filter((x) => x !== f) : [...p.fields, f] })

@@ -31,6 +31,7 @@ test('cash purchase made udhaar after the phone was sold', async ({ page, reques
 
   // from the sold phone's page
   await page.goto(`/stock/${dev}`)
+  await page.getByTestId('device-more-toggle').click() // ADR-091: the less used jobs are under More
   await page.getByTestId('device-change-paid').click()
   const sheet = page.getByTestId('paid-fix-sheet')
   await expect(sheet).toBeVisible()

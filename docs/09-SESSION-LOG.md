@@ -1878,3 +1878,23 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - tsc, Help.test.
 - Playwright `edit-undo` (3: payment / cash; sale edit; purchase edit), `delete-everywhere` (3 with stock icons), `stock-views` (selector updated), `device-styles`, `stock-a4`, `labels`, `add-device`, `counter`, `bill-details`. I looked at the edit screenshots.
 - Tried and dropped: keeping the purchase's original time on an edit. The backend refuses it (the phone's later events), so the new bill is dated now.
+
+### 2026-11-16 — Stock page and phone page made plain (ADR-091); PR #71 merged and live
+**Owner** (shopkeepers' comments): "stock page ki UI UX sahi nahi … filters easy … check box … search may cross ka icon … search bar top pr … reports share download … list price visible … classic view may content bohat confuse … actions info k sath … top pr mobiles ki sub detail (second IMEI, customer, RAM) icons … preview sticker … fields tick … modern / luxury".
+**Analysis**: I took screenshots of both screens at phone and laptop size. The stock screen had eight rows of controls before the phones, hidden filters, the search 4th, and reports buried. The phone page had its information in two places and about 20 equal buttons apart from it. Details are in ADR-091.
+**Done**:
+- Stock screen re-ordered as described in ADR-091.
+- `StockFilters` (tick-box sheet with a live count; chips with ×).
+- `SearchBox` × on every screen.
+- Multi-value device / export filters.
+- Asking price in every view.
+- `DeviceEasyView` replaces the classic view.
+- `StickerPreview` with `preview=true` (records no print).
+- Strings / help, manual ch. 2 rewritten (stock list, a phone's page) and its two shots retaken, ADR-091, docs/29.
+**Verified**:
+- pytest `test_stock_filters` (2, new): several conditions / PTA / statuses, faulty counted as in stock, groups narrowing, the export following the ticks; the sticker preview records no print while a real print does. Full suite.
+- tsc, Help.test.
+- Playwright: 19 stock / phone specs. Updated for the new places: filters sheet, More, Reports, the sticker card.
+  - `alerts-search` and `device-types` timed out under 3 workers and passed alone.
+  - `crud` exposed the preview-records-a-print bug, now fixed.
+- Screenshots looked at at phone and laptop size, in English and Urdu.

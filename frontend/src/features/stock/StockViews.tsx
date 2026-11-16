@@ -248,7 +248,7 @@ export function StockGrid({ rows, fields, onOpen, picked, onPick }: { rows: Devi
             <span className="line-clamp-2 text-[14px] font-extrabold leading-tight text-ink">{d.brand_name} {d.model_name}</span>
             {bits.length ? <span className="line-clamp-3 text-xs font-semibold text-muted">{bits.map((x) => x.v).join(' · ')}</span> : null}
             <span className="mt-auto flex flex-wrap items-center justify-between gap-1">
-              {fields.includes('asking') && d.asking_price ? <MoneyText value={d.asking_price} tone="ink" size="sm" /> : <span />}
+              {d.asking_price ? <MoneyText value={d.asking_price} tone="ink" size="sm" /> : <span />}
               {fields.includes('cost') && d.cost_price != null ? <span className="text-[11px] text-muted">{pick('stock.col.cost')} <MoneyText value={d.cost_price} tone="muted" size="sm" /></span> : null}
               {fields.includes('status') && d.status !== 'in_stock' ? <Chip text={`stock.status.${d.status}`} tone="ink" /> : null}
             </span>
@@ -277,7 +277,7 @@ export function StockList({ rows, fields, onOpen, picked, onPick }: { rows: Devi
               {bits.length ? <span className="block truncate text-sm text-muted">{bits.map((x) => x.v).join(' · ')}</span> : null}
             </span>
             <span className="flex shrink-0 flex-col items-end">
-              {fields.includes('asking') && d.asking_price ? <MoneyText value={d.asking_price} tone="ink" /> : null}
+              {d.asking_price ? <MoneyText value={d.asking_price} tone="ink" /> : null}
               {fields.includes('cost') && d.cost_price != null ? <MoneyText value={d.cost_price} tone="muted" size="sm" /> : null}
             </span>
           </button>

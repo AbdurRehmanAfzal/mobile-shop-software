@@ -136,7 +136,8 @@
     "void": "Delete this bill",
     "today": "Today",
     "close": "Close",
-    "sheetKeep": "Something is filled in here. Tap Close if you really want to leave."
+    "sheetKeep": "Something is filled in here. Tap Close if you really want to leave.",
+    "clearSearch": "Clear the search"
   },
   "party": {
     "title": "People & khata",
@@ -5304,9 +5305,9 @@
         "example": "Oldest first shows phones nobody has touched for weeks — time to lower their price."
       },
       "filters": {
-        "title": "More filters",
-        "body": "Narrow the list by grade, RAM, a price range, or devices whose lock check was never done.",
-        "example": "Customer wants an 8GB RAM phone under Rs. 40,000 → RAM 8, price to 40000."
+        "title": "Filters",
+        "body": "Tap Filters, tick what you want — several statuses, brands, conditions or PTA together — and tap Show. Each one you ticked appears under the search; tap its × to take it off, or Clear all.",
+        "example": "Tick Apple and Samsung, and Used → only used Apple and Samsung phones."
       },
       "priceRange": {
         "title": "Price from / to",
@@ -11429,5 +11430,45 @@
     "button": "Edit this bill (phones, prices, payment)",
     "editing": "Editing bill {{no}}: change what is wrong and save. The old bill is kept as Deleted and this one takes its place.",
     "purchaseButton": "Edit this bill (phones, costs, payment)"
+  },
+  "sfx": {
+    "filters": "Filters",
+    "hint": "Tick as many as you like. What you tick shows under the search with × to remove it.",
+    "status": "Status",
+    "brand": "Brand",
+    "more": "More filters",
+    "clearAll": "Clear all",
+    "showN": "Show {{n}} phones",
+    "none": "No filter on — showing everything that matches the search.",
+    "remove": "Remove",
+    "reports": "Reports",
+    "reportsHint": "The list as you see it now (search, filters, order, fields): download as PDF or Excel, share on WhatsApp, or make a price list for staff or customers.",
+    "askingTotal": "Asking total",
+    "costTotal": "Cost total",
+    "sortBy": "Order",
+    "mode": {
+      "sellable": "Ready to sell",
+      "reserved": "Reserved",
+      "inspection": "Needs a check",
+      "in_repair": "In repair",
+      "faulty": "Faulty",
+      "with_customer_for_approval": "With customer",
+      "locked": "Locked phones"
+    }
+  },
+  "dview": {
+    "sticker": "Sticker",
+    "stickerFields": "Tick what goes on the sticker — the preview changes at once",
+    "stickerMore": "Size & copies",
+    "imei1": "IMEI",
+    "memory": "Memory",
+    "colour": "Colour",
+    "ptaCheck": "Check",
+    "idCheck": "ID card check",
+    "boughtFrom": "Bought from",
+    "customer": "Customer",
+    "since": "In the shop",
+    "days": "{{n}} days",
+    "more": "More actions"
   }
 }

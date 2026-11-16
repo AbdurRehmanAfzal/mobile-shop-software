@@ -78,6 +78,8 @@ def device_labels(
     fields: str | None = None,
     copies: int = Query(default=1, ge=1, le=50),
     lang: str | None = Query(default=None, pattern="^(en|ur)$"),
+    # ADR-091: the phone page's live sticker preview — shown, not printed, so nothing is recorded
+    preview: bool = False,
 ):
     page = service.devices_html(
         db,
@@ -94,6 +96,8 @@ def device_labels(
     # owner addendum 4: every print / reprint is on record (who, when, how many)
     from app.modules.barcodes.service import log_print
 
+    if preview:
+        return page
     log_print(
         db,
         ctx.shop_id,
