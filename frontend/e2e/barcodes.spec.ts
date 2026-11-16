@@ -68,6 +68,7 @@ test('barcodes: made on purchase, printed, scanned into a sale, found anywhere, 
 
   // the sale screen: scanning adds the phone with its asking price; the item twice = qty 2
   await page.goto('/sale/new')
+  await expect(page.getByText('Tap the phone you are selling')).toBeVisible() // the screen is up before the scan
   await scan(page, 'BS000001')
   await expect(page.getByText('490154203237518')).toBeVisible()
   await expect(page.getByLabel('Sold for (Rs)')).toHaveValue('1000')
@@ -88,6 +89,7 @@ test('barcodes: made on purchase, printed, scanned into a sale, found anywhere, 
 
   // a sold phone scanned again on the sale screen: its status, with history / return offered
   await page.goto('/sale/new')
+  await expect(page.getByText('Tap the phone you are selling')).toBeVisible()
   await scan(page, 'BS000001')
   await expect(page.getByTestId('scan-note')).toContainText('not in stock')
   await expect(page.getByTestId('scan-note').getByRole('button', { name: 'Return' })).toBeVisible()
@@ -118,6 +120,8 @@ test('barcodes: made on purchase, printed, scanned into a sale, found anywhere, 
 
   // stock count: B scanned, A (sold) unexpected, nothing missing
   await page.goto('/stock/count')
+  await page.waitForLoadState('networkidle')
+  await page.waitForTimeout(500) // the screen is up before the scan
   await scan(page, 'BS000002')
   await scan(page, 'BS000001')
   await scan(page, 'XX-404')
