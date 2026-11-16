@@ -14,7 +14,8 @@ import { ApiError, post } from '@/lib/api'
 import { normalisePhone } from '@/lib/format'
 import { useGet } from '@/lib/queries'
 
-interface Info { plans: { key: string; price: number; yearly_price?: number; modules: string[] }[]; trial_days: number; yearly_paid_months?: number; modules: Record<string, { en: string; ur: string }>; accounts: { label: string; account_name: string; number: string; note: string | null }[]; whatsapp: string | null }
+interface Addon { en: string; ur: string; roman: string; price: number; per: 'month' | 'year' | 'once' }
+interface Info { plans: { key: string; price: number; yearly_price?: number; setup_fee?: number; modules: string[] }[]; trial_days: number; yearly_paid_months?: number; addons?: Addon[]; modules: Record<string, { en: string; ur: string }>; accounts: { label: string; account_name: string; number: string; note: string | null }[]; whatsapp: string | null }
 
 const LANG: Record<Locale, string> = { ur: 'اردو', roman: 'Roman', en: 'English' }
 const BASICS: { key: string; Icon: LucideIcon; shot?: string }[] = [
@@ -27,6 +28,11 @@ const OPTIONAL_SHOT: Record<string, string> = { accessories: 'items', repairs: '
 const OPTIONAL: Record<string, LucideIcon> = { accessories: Headphones, repairs: Wrench, expenses: Wallet, held_sales: PauseCircle, tax: Receipt, exchange: ArrowLeftRight, reports: BarChart3, exports: Download, notifications: BellRing, loans: RotateCcw, installments: HandCoins, attendance: CalendarCheck, ai: Bot }
 /** what came in the last round (owner 2026-10-31): shown first, with its own screenshots */
 const NEW: { key: string; Icon: LucideIcon; shot?: string }[] = [
+  // owner 2026-11-16: edit / delete everywhere, the plain stock page, the phone's page with its sticker,
+  // locked phones, repairs by own technician or lab, A4 reports, login safety, PTA check, price lists
+  { key: 'editdelete', Icon: Undo2, shot: 'expenses' }, { key: 'editbill', Icon: FileText, shot: 'invoice' }, { key: 'stockeasy', Icon: Smartphone, shot: 'stock' },
+  { key: 'phonepage', Icon: Tag, shot: 'sticker' }, { key: 'locked', Icon: Lock }, { key: 'repairwho', Icon: Wrench, shot: 'repairjob' },
+  { key: 'a4reports', Icon: BarChart3, shot: 'reports' }, { key: 'loginsafe', Icon: ShieldCheck }, { key: 'pricelists', Icon: FileSpreadsheet },
   // owner 2026-11-07: the Appearance page with four designs, a QR on every bill
   { key: 'appearance', Icon: Palette, shot: 'appearance' }, { key: 'billqr', Icon: QrCode, shot: 'billcheck' },
   // owner 2026-11-06: FBR-ready bills, the tax invoice, balance sheet, branches, the repair link
@@ -46,6 +52,8 @@ const NEW: { key: string; Icon: LucideIcon; shot?: string }[] = [
 ]
 /** the newest round shown open; the rounds before fold under "earlier" */
 const LATEST = 9
+/** in every plan, no extra charge (owner 2026-11-16) */
+const INCLUDED = ['app', 'users', 'langs', 'offline', 'whatsapp', 'backup', 'updates', 'support', 'contract'] as const
 const EXTRAS: { key: string; Icon: LucideIcon }[] = [{ key: 'offline', Icon: CloudOff }, { key: 'fingerprint', Icon: Fingerprint }, { key: 'cnic', Icon: ShieldCheck }, { key: 'whatsapp', Icon: MessageCircle }]
 const SHOTS = ['home', 'sale', 'bill', 'billcheck', 'stock', 'verify', 'repairjob', 'repairlink', 'lending', 'trade', 'books', 'items', 'tablet', 'audit', 'khata', 'history', 'finance', 'invoice', 'appearance'] as const
 const WEB_SHOTS = ['home', 'bold', 'audit', 'trade', 'books', 'repairs', 'repairlab', 'stock', 'items', 'finance', 'invoice', 'appearance'] as const
@@ -79,6 +87,7 @@ export default function LandingPage() {
   const { data: info } = useGet<Info>(['public-info'], '/api/v1/public/info')
   const wa = (text: string) => `https://wa.me/${(info?.whatsapp ? `92${info.whatsapp.replace(/^0/, '')}` : MAKER.tel.replace('+', ''))}?text=${encodeURIComponent(text)}`
   const fmt = (n: number) => n.toLocaleString('en-US')
+  const paid = (info?.plans ?? []).filter((p) => p.key !== 'trial')
   const [billing, setBilling] = useState<'month' | 'year'>('year')
   const [zoom, setZoom] = useState<string | null>(null)
   // the tab title and description in the visitor's language (SEO, link previews); the app's on leaving
@@ -129,7 +138,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="mx-auto w-full max-w-[260px] md:max-w-[300px]">
-            <Phone src={`/landing/home-${ur ? 'ur' : 'en'}.png`} />
+            <Phone src={`/landing/home-${ur ? 'ur' : 'en'}.webp`} eager />
           </div>
         </div>
       </section>
@@ -239,8 +248,7 @@ export default function LandingPage() {
           </div>
           <div className="flex min-w-0 flex-col items-center gap-3 md:order-1">
             <div className="w-full max-w-[320px] overflow-hidden rounded-[28px] border-[6px] border-ink bg-ink shadow-hero">
-              <video controls playsInline preload="metadata" poster={`/landing/sale-${ur ? 'ur' : 'en'}.png`} className="aspect-[9/19.5] w-full bg-black object-cover">
-                <source src="/landing/demo.mp4" type="video/mp4" />
+              <video controls playsInline preload="none" poster={`/landing/sale-${ur ? 'ur' : 'en'}.webp`} className="aspect-[9/19.5] w-full bg-black object-cover">
                 <source src="/landing/demo.webm" type="video/webm" />
               </video>
             </div>
@@ -287,7 +295,7 @@ export default function LandingPage() {
           <div className="-mx-5 flex snap-x gap-4 overflow-x-auto px-5 pb-2">
             {SHOTS.map((s) => (
               <figure key={s} className="w-[240px] shrink-0 snap-center">
-                <button type="button" className="block w-full" onClick={() => setZoom(`/landing/${s}-${ur ? 'ur' : 'en'}.png`)} aria-label={pick('landing.zoom')}><Phone src={`/landing/${s}-${ur ? 'ur' : 'en'}.png`} small /></button>
+                <button type="button" className="block w-full" onClick={() => setZoom(`/landing/${s}-${ur ? 'ur' : 'en'}.webp`)} aria-label={pick('landing.zoom')}><Phone src={`/landing/${s}-${ur ? 'ur' : 'en'}.webp`} small /></button>
                 <figcaption className={`mt-2 text-center text-muted ${ur ? cls('sm') : 'text-sm font-semibold'}`}>{pick(`landing.shots.${s}`)}</figcaption>
               </figure>
             ))}
@@ -301,7 +309,7 @@ export default function LandingPage() {
           <div className="-mx-5 flex snap-x gap-4 overflow-x-auto px-5 pb-2">
             {WEB_SHOTS.map((s) => (
               <figure key={s} className="w-[min(92vw,620px)] shrink-0 snap-center">
-                <button type="button" className="block w-full" onClick={() => setZoom(`/landing/web-${s}-${ur ? 'ur' : 'en'}.png`)} aria-label={pick('landing.zoom')}><Browser src={`/landing/web-${s}-${ur ? 'ur' : 'en'}.png`} /></button>
+                <button type="button" className="block w-full" onClick={() => setZoom(`/landing/web-${s}-${ur ? 'ur' : 'en'}.webp`)} aria-label={pick('landing.zoom')}><Browser src={`/landing/web-${s}-${ur ? 'ur' : 'en'}.webp`} /></button>
                 <figcaption className={`mt-2 text-center text-muted ${ur ? cls('sm') : 'text-sm font-semibold'}`}>{pick(`landing.shots.${s}`)}</figcaption>
               </figure>
             ))}
@@ -321,29 +329,60 @@ export default function LandingPage() {
             <span className={`rounded-full bg-[#34D399] px-3 py-1 font-extrabold text-[#0E1613] ${ur ? cls('sm') : 'text-xs'}`}>{pick('landing.yearSave').replace('{{n}}', String(12 - (info?.yearly_paid_months ?? 10)))}</span>
           </div>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-            {(info?.plans ?? []).filter((p) => p.key !== 'trial').map((p) => (
-              <div key={p.key} className={`flex flex-col gap-3 rounded-3xl border p-5 ${p.key === 'pro' ? 'border-emerald bg-emerald-tint/40 shadow-hero' : 'border-line bg-surface'}`}>
+            {paid.map((p, i) => {
+              const yearly = p.yearly_price ?? p.price * 10
+              // "Everything in Basic, plus …": only what this plan adds
+              const before = i > 0 ? paid[i - 1] : null
+              const adds = before ? p.modules.filter((m) => !before.modules.includes(m)) : p.modules
+              const li = `flex items-start gap-2 ${ur ? cls('sm') : 'text-sm font-medium'}`
+              return (
+              <div key={p.key} className={`flex flex-col gap-3 rounded-3xl border p-5 ${p.key === 'pro' ? 'border-emerald bg-emerald-tint/40 shadow-hero' : 'border-line bg-surface'}`} data-testid={`plan-${p.key}`}>
                 <div className="flex items-center justify-between">
                   <span className="text-lg font-extrabold capitalize">{p.key}</span>
                   {p.key === 'pro' ? <span className={`rounded-full bg-emerald px-2.5 py-0.5 text-xs font-bold text-white ${ur ? 'ur' : ''}`}>{pick('landing.popular')}</span> : null}
                 </div>
                 {billing === 'year' ? (
                   <div className="flex flex-col gap-0.5" data-testid={`year-${p.key}`}>
-                    <div className="flex items-baseline gap-1" dir="ltr"><span className="num text-[34px]">Rs. {fmt(p.yearly_price ?? p.price * 10)}</span><span className="text-sm text-muted">/ {pick('landing.year')}</span></div>
-                    <span className={`text-muted ${ur ? cls('sm') : 'text-sm font-semibold'}`}><s dir="ltr">Rs. {fmt(p.price * 12)}</s> · {pick('landing.perMonth').replace('{{n}}', fmt(Math.round((p.yearly_price ?? p.price * 10) / 12)))}</span>
+                    <div className="flex items-baseline gap-1" dir="ltr"><span className="num text-[34px]">Rs. {fmt(Math.round(yearly / 12))}</span><span className="text-sm text-muted">/ {pick('admin.month')}</span></div>
+                    <span className={`text-muted ${ur ? cls('sm') : 'text-sm font-semibold'}`}>{pick('landing.billedYearly')} <span dir="ltr">Rs. {fmt(yearly)}</span> <s dir="ltr">Rs. {fmt(p.price * 12)}</s></span>
                   </div>
                 ) : (
                   <div className="flex items-baseline gap-1" dir="ltr"><span className="num text-[34px]">Rs. {fmt(p.price)}</span><span className="text-sm text-muted">/ {pick('admin.month')}</span></div>
                 )}
+                <span className={`self-start rounded-full px-2.5 py-1 font-bold ${p.setup_fee ? 'bg-ground text-ink' : 'bg-[#34D399]/25 text-[#0E1613]'} ${ur ? cls('sm') : 'text-xs'}`} data-testid={`setup-${p.key}`}>
+                  {p.setup_fee ? <>{pick('landing.setupFee')} <span dir="ltr">Rs. {fmt(p.setup_fee)}</span></> : pick('landing.noSetup')}
+                </span>
                 <span className={`text-muted ${ur ? cls('sm') : 'text-sm font-semibold'}`}>{pick(`landing.plan.${p.key}`)}</span>
                 <ul className="flex flex-col gap-1.5">
-                  <li className={`flex items-start gap-2 ${ur ? cls('sm') : 'text-sm font-medium'}`}><Check size={16} className="mt-0.5 shrink-0 text-emerald" /> {pick('landing.allBasics')}</li>
-                  {p.modules.map((m) => <li key={m} className={`flex items-start gap-2 ${ur ? cls('sm') : 'text-sm font-medium'}`}><Check size={16} className="mt-0.5 shrink-0 text-emerald" /> {pick(`modules.${m}`)}</li>)}
+                  <li className={`${li} font-bold`}><Check size={16} className="mt-0.5 shrink-0 text-emerald" /> {before ? pick('landing.everythingIn').replace('{{plan}}', before.key.charAt(0).toUpperCase() + before.key.slice(1)) : pick('landing.allBasics')}</li>
+                  {adds.map((m) => <li key={m} className={li}><Check size={16} className="mt-0.5 shrink-0 text-emerald" /> {pick(`modules.${m}`)}</li>)}
+                  {p.key === 'chain' ? <li className={li}><Check size={16} className="mt-0.5 shrink-0 text-emerald" /> {pick('landing.chainBranches')}</li> : null}
                 </ul>
                 <a href="#start" className={`tap mt-auto flex min-h-12 items-center justify-center rounded-2xl font-bold ${p.key === 'pro' ? 'bg-emerald text-white' : 'border border-line bg-surface text-ink'} ${ur ? cls('md') : ''}`}>{pick('landing.choose')}</a>
               </div>
-            ))}
+              )
+            })}
           </div>
+          {/* owner 2026-11-16: what is in every plan at no extra charge */}
+          <div className="rounded-3xl border border-line bg-surface p-5" data-testid="included">
+            <h3 className={`font-extrabold ${ur ? cls('md') : 'text-base'}`}>{pick('landing.includedTitle')}</h3>
+            <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {INCLUDED.map((k) => <li key={k} className={`flex items-start gap-2 ${ur ? cls('sm') : 'text-sm font-medium'}`}><Check size={16} className="mt-0.5 shrink-0 text-emerald" /> {pick(`landing.included.${k}`)}</li>)}
+            </ul>
+          </div>
+          {info?.addons?.length ? (
+            <div className="rounded-3xl border border-line bg-surface p-5" data-testid="addons">
+              <h3 className={`font-extrabold ${ur ? cls('md') : 'text-base'}`}>{pick('landing.addonsTitle')}</h3>
+              <div className="mt-2 divide-y divide-line">
+                {info.addons.map((a) => (
+                  <div key={a.en} className="flex items-center justify-between gap-3 py-2.5">
+                    <span className={ur ? cls('sm') : 'text-sm font-semibold'}>{ur ? a.ur || a.en : roman ? a.roman || a.en : a.en}</span>
+                    <span className="shrink-0 text-sm font-bold" dir="ltr">Rs. {fmt(a.price)} <span className="font-medium text-muted">/ {pick(`landing.per.${a.per}`)}</span></span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
           <span className={`text-muted ${ur ? cls('sm') : 'text-sm font-medium'}`}>{pick('landing.priceNote')}</span>
         </section>
 
@@ -403,10 +442,10 @@ export default function LandingPage() {
   )
 }
 
-function Phone({ src, small = false }: { src: string; small?: boolean }) {
+function Phone({ src, small = false, eager = false }: { src: string; small?: boolean; eager?: boolean }) {
   return (
     <div className={`overflow-hidden rounded-[30px] border-ink bg-ink shadow-hero ${small ? 'border-4' : 'border-[6px]'}`}>
-      <img src={src} alt="" loading="lazy" className="aspect-[9/19.5] w-full object-cover object-top" />
+      <img src={src} alt="" loading={eager ? 'eager' : 'lazy'} decoding="async" width={540} height={1169} {...(eager ? { fetchPriority: 'high' as const } : {})} className="aspect-[9/19.5] w-full object-cover object-top" />
     </div>
   )
 }
@@ -419,7 +458,7 @@ function Browser({ src }: { src: string }) {
         <span className="h-2.5 w-2.5 rounded-full bg-[#F87171]" /><span className="h-2.5 w-2.5 rounded-full bg-[#FBBF24]" /><span className="h-2.5 w-2.5 rounded-full bg-[#34D399]" />
         <span className="ms-3 h-5 flex-1 rounded-md bg-surface px-2 text-[10px] leading-5 text-muted">mobileshop.oopsolutions.com</span>
       </div>
-      <img src={src} alt="" loading="lazy" className="aspect-[16/10] w-full object-cover object-top" />
+      <img src={src} alt="" loading="lazy" decoding="async" width={1280} height={800} className="aspect-[16/10] w-full object-cover object-top" />
     </div>
   )
 }
@@ -444,7 +483,7 @@ function Feature({ Icon, title, text, tone, shot }: { Icon: LucideIcon; title: s
 function Thumb({ shot, web = false, lang, banner = false, className = '' }: { shot: string; web?: boolean; lang?: 'en' | 'ur'; banner?: boolean; className?: string }) {
   const { pick, ur } = useLang()
   const zoom = useContext(ZoomCtx)
-  const src = `/landing/${web ? 'web-' : ''}${shot}-${lang ?? (ur ? 'ur' : 'en')}.png`
+  const src = `/landing/${web ? 'web-' : ''}${shot}-${lang ?? (ur ? 'ur' : 'en')}.webp`
   const frame = web ? 'rounded-xl border border-white/20 bg-surface' : 'rounded-[16px] border-[3px] border-ink bg-ink'
   const ratio = banner ? 'h-44 sm:h-48' : web ? 'aspect-[16/10]' : 'aspect-[9/16]'
   return (

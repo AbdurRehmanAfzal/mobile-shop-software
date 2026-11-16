@@ -167,6 +167,15 @@ def _page(labels: list[str], w: float, h: float, sheet: bool, ur: bool, title: s
     .imei{{font-size:{2.1 * s:.2f}mm;font-family:'Courier New',monospace;letter-spacing:.08em;text-align:center;white-space:nowrap}}
     .meta{{font-size:{1.9 * s:.2f}mm;color:#222;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
     .ur{{font-family:'Noto Nastaliq Urdu',Arial,sans-serif;direction:rtl}}
+    /* owner 2026-11-16: with every field ticked the last lines were cut off the sticker — the text
+       keeps its size and the barcode gives up height (never below a scannable 3.5 mm at 25 mm) */
+    .lt,.meta{{flex:0 0 auto}}
+    .lm{{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:flex-end}}
+    .lm>*{{flex:0 0 auto}}
+    .lm .bar{{flex:1 1 {7.5 * s:.2f}mm;height:auto;min-height:{3.5 * s:.2f}mm;max-height:{7.5 * s:.2f}mm;position:relative}}
+    .lm .bar svg{{position:absolute;top:0;left:0;width:100%;height:100%}}
+    .lm .bar.qr{{flex-basis:{12 * s:.2f}mm;max-height:{12 * s:.2f}mm;min-height:{7 * s:.2f}mm}}
+    .lm .bar.qr svg{{left:50%;transform:translateX(-50%);width:auto}}
     .label.compact{{padding:0.5mm 0.8mm;justify-content:flex-start;gap:0.3mm}}
     .compact .top{{display:flex;align-items:baseline;justify-content:space-between;gap:1mm;min-width:0}}
     .compact .n1{{font-size:2.3mm;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}}
@@ -242,7 +251,7 @@ def _label(parts: dict, want: set[str], ur: bool, compact: bool = False) -> str:
     ]
     meta = [m for m in meta if m]
     bottom = f'<div class="meta">{e(" · ".join(meta))}</div>' if meta else ""
-    return f'<div class="label"><div>{"".join(top)}</div><div>{"".join(mid)}</div>{bottom}</div>'
+    return f'<div class="label"><div class="lt">{"".join(top)}</div><div class="lm">{"".join(mid)}</div>{bottom}</div>'
 
 
 def _device_parts(d: dict, shop: Shop, ur: bool, word: str | None) -> dict:

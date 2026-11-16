@@ -90,7 +90,7 @@ export default function DeviceEasyView({ d, acts, canSeeCost, onPta, aside, extr
             <Line icon={<Hash size={18} />} label="dview.imei1" value={<span className="num whitespace-nowrap" dir="ltr">{d.imei1}</span>} action={act('fixImei')} testid="dline-imei1" />
             {d.imei2 ? <Line icon={<Hash size={18} />} label="stock.imei2" value={<span className="num whitespace-nowrap" dir="ltr">{d.imei2}</span>} testid="dline-imei2" /> : null}
             {d.serial ? <Line icon={<Hash size={18} />} label="stock.serial" value={<span className="num" dir="ltr">{d.serial}</span>} /> : null}
-            {d.barcode ? <Line icon={<Barcode size={18} />} label="barcode.label" value={<span className="num" dir="ltr">{d.barcode}</span>} /> : null}
+            {d.barcode ? <Line icon={<Barcode size={18} />} label="barcode.label" value={<span className="num" dir="ltr">{d.barcode}</span>} testid="device-barcode" /> : null}
             <Line icon={<HardDrive size={18} />} label="dview.memory" value={[d.storage_name, d.ram_gb ? `${d.ram_gb} GB RAM` : null].filter(Boolean).join(' · ') || '—'} action={act('edit')} testid="dline-memory" />
             {d.colour_name ? <Line icon={<Palette size={18} />} label="dview.colour" value={d.colour_name} /> : null}
             <Line icon={<Sparkles size={18} />} label="stock.conditionShort" value={condition} action={act('faulty') ?? act('faultEdit')} testid="dline-condition" />

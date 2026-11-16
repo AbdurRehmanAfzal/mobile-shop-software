@@ -362,6 +362,35 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-092 · 2026-11-16 · Accepted · Faster landing page; website prices editable; landing updated; competitor comparison
+**Context**: visitors complained that the website loads slowly. The owner asked for a full study of a competitor's mobile-shop page (pricing and gaps), our prices to be shown "like that", and the landing page to be brought up to date.
+
+**What made the page slow** (measured):
+- 100 PNG screenshots, 22 MB, each 200–350 KB.
+- The entry bundle was the whole app (1.28 MB), because every route was imported eagerly.
+- All three languages' texts were imported up front (about 490 KB compressed), two thirds of it the "?" explanations.
+- The server already compresses and caches assets (Caddy: gzip / zstd, immutable).
+
+**Decision**:
+- **Images**: `frontend/scripts/landing-webp.py` (Pillow) turns every `public/landing/*.png` into WebP at the size shown — phone shots 540 px wide, laptop shots 1280 px, quality 78 — and removes the PNG.
+  - Result: 18.6 MB → 3.5 MB; the largest image is about 57 KB.
+  - `og-home.jpg` is kept for link previews.
+  - The hero image loads eagerly with high priority; the rest are lazy with width / height set.
+  - The demo video is `preload="none"`, and the missing `demo.mp4` source is removed.
+  - Two leftover recordings (2.6 MB) are deleted.
+  - Run the script after `landing-assets.mjs`.
+- **Code split**: `app/pages.ts` re-exports every screen behind the login; `router.tsx` loads it with `React.lazy` as **one** chunk under a `Suspense`. The landing, login and sign-up pages stay in the entry. Entry: 1.28 MB → 449 KB (137 KB gzip). The service worker still precaches every chunk, so the app opens offline as before.
+- **Help texts**: moved from `i18n/locales/<lang>.json` to `i18n/help/<lang>.json` (the `help.what / example / language` labels stay). `loadHelp(lang)` imports them when a "?" is first opened. Locale chunks: about 160 KB → about 57 KB gzip each. **New "?" texts now go in `i18n/help/`**; `Help.test` reads those files.
+- **First visit** (compressed JS): about 865 KB → about 308 KB.
+- **Website prices** (`public/pricing.py`, `platform_settings["pricing"]`): monthly price and one-time setup fee per plan, the yearly offer, trial days and add-ons. `GET / PUT /admin/pricing` (super admin), edited in **Super admin → Website prices**. The defaults are the old numbers (1,500 / 3,000 / 6,000, 10 months, 14 days, no setup fee, no add-ons). A shop's own fee is still `organisations.monthly_fee`.
+- **Landing pricing section**: per-month price with "paid for the year"; a setup-fee line; "Everything in <plan>, plus …"; an "In every plan, at no extra charge" block (only claims the code supports); an add-ons table when there are any.
+- **Landing content**: nine new entries lead the "new" list (edit / delete, fix a bill, the plain stock list, the phone page with sticker, locked phones, repairs by technician or lab, A4 reports, safer logins, price lists and PTA check). Every screenshot was retaken from the current UI.
+- **Comparison**: `docs/37-CLOUDPOS-COMPARISON.md` — their plans and add-ons, ours, feature by feature, 13 gaps in a suggested order, and the decisions left to the owner. The price numbers were not changed.
+
+**Consequences**:
+- `llms.txt` and the JSON-LD in `index.html` state prices as text. If the owner changes the prices, those two need the same edit.
+- The demo video was not re-recorded (its step timed out); the existing one stays.
+
 ## ADR-091 · 2026-11-16 · Accepted · Stock page and a phone's page made plain for shopkeepers
 **Context**: shopkeepers found the stock screen and a phone's page (classic view) confusing.
 - **Stock screen**: eight rows of controls came before the phones. Filters were hidden, and once on they could not be seen or removed. The search was not at the top, and Reports / Download / Share were buried.

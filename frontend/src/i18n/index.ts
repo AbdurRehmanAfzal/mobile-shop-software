@@ -45,4 +45,15 @@ export function both(key: string): { en: string; ur: string; roman: string } {
 
 setLocale(i18n.language as Locale)
 
+/** The "?" explanations (i18n/help/<lang>.json) are two thirds of all the text and are read only
+ *  when a "?" is opened, so they load on demand (owner 2026-11-16, ADR-092: a visitor's first page
+ *  was downloading every explanation in three languages). Resolves when that language's are in. */
+const helpLoads: Partial<Record<Locale, Promise<void>>> = {}
+export function loadHelp(lang: Locale): Promise<void> {
+  helpLoads[lang] ??= (lang === 'ur' ? import('./help/ur.json') : lang === 'roman' ? import('./help/roman.json') : import('./help/en.json'))
+    .then((m) => { i18n.addResourceBundle(lang, 'translation', { help: m.default }, true, false) })
+    .catch(() => { delete helpLoads[lang] })
+  return helpLoads[lang]!
+}
+
 export default i18n
