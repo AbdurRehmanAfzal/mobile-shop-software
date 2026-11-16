@@ -869,25 +869,22 @@ Maalik aur manager ke liye qeemat khareed qeemat par hoti hai. Jis staff ko khar
 
 ### Stock list
 
-Ise **Sab phone dekhein** se kholein, ya **Mazeed → Stock list** se.
+**See all phones** ya **Mazeed → Stock list** se kholein. Upar: **Stickers**, **IMEI check** aur **Stock daalein**. Phir upar se neeche:
 
-Upar paanch buttons hain: **Download**, **Share**, **Stickers**, **IMEI check karein** aur **Stock daalein**. Un ke neeche:
+1. **Search** — page par sab se pehle. IMEI, model, brand, ya jis se khareeda / jis ko becha us ka naam / number likhein; camera ke liye **Scan**, ya USB scanner se scan karein. Jab kuch likha ho to box mein **×** se saaf ho jata hai.
+2. **Stock ki qisam**: **Sab stock**, **Mobiles**, **Tablets**, **Smartwatches**. **Accessories**, **Spare parts** aur **Other** items wali screen kholte hain.
+3. **Ek patti, teen button**:
+   - **Filters** (kitne lage hain): **tick box** ki sheet — **Halat** (Stock mein, Amanat, Repair, Kharab, Bik gaya), **Brand** (har brand ki ginti ke saath), **Condition**, **PTA**. Jitne chahein tick karein: Apple *aur* Samsung, Used *aur* Open box. Neeche **Aur filters**: qeemat ki had, grade, RAM, stock ki umar, kis se khareeda, shelf, cost ki had (maalik / manager) aur **Lock check nahi hua**. Bara button batata hai kitne phone milte hain, misaal **7 phone dikhayein**.
+   - **Tarteeb**: Naye pehle, Purane pehle, Qeemat kam, Qeemat zyada.
+   - **Reports**: **Download** (PDF / Excel), **Share** aur staff ya gahakon ke liye **Price lists** — hamesha list bilkul waisi jaisi dikh rahi hai.
+4. **Kya laga hai**: har tick kiya filter patti ke neeche **×** wali kaali chip ban kar dikhta hai. × daba kar hatayein, ya **Sab hatayein**.
+5. **Status cards**: Bechne ke liye tayyar, Reserved, Gahak ke paas, Inspection, Repair, Kharab, kam / khatam items aur cost par maliyat (maalik / manager). Card dabayein to sirf wohi; ye bhi chip ban kar dikhta hai.
+6. **Cards / Table / Grid / List** aur **Fields** (kaunsi tafseel dikhe).
+7. Ek line: **kitne phone**, **asking jama** aur maalik / manager ke liye **cost jama**.
 
-- **Search**: IMEI, model, brand, ya us bande ka naam ya phone number likhein jis se khareeda ya jis ko becha. Camera istemal karne ke liye **Scan** dabayein, ya bas USB scanner se scan kar dein.
-- **Brand ke gol buttons**: **Sab**, phir har brand ka ek gol button us ki ginti ke saath (masalan **Apple · 2**, **Samsung · 2**). Kisi ek par dabayein to sirf woh brand nazar aata hai.
-- **Status ke chips**: **Stock mein**, **Amanat par**, **Bik gaya**, **Kharab** aur **Sab**.
-- **Tarteeb**: **Naye pehle**, **Purane pehle**, **Qeemat: kam**, **Qeemat: zyada**.
-- **Filter**: mazeed choices kholta hai: **Grade** (Used A, Used B, Refurbished, Copy / China), **RAM (GB)**, qeemat ki range (sab se kam aur sab se zyada bechne ki qeemat), aur ek switch **Lock check nahi** jo sirf woh used devices dikhata hai jin ka lock check kabhi nahi hua.
-- **Stock ki qism**: **Saara stock**, **Mobiles**, **Tablets**, **Smartwatches** yeh list chhante hain. **Accessories**, **Spare parts** aur **Deegar** items wali screen usi qism ke saath kholte hain (items tadaad se gine jate hain).
-- **Haalat ke card**: **Bechne ke liye tayyar** (stock mein aur tayyar; neeche **Dukaan mein**, dukaan ka har phone), **Customer ke paas (manzoori)**, **Jaanch mein** (ID check baqi ya mashkook, ya lock baqi), **Repair mein**, **Kharab**, items ke liye **Kam stock** aur **Khatam** (har item ki apni had se), aur maalik o manager ke liye **Khareed ke hisaab se maliyat**. Card par tap karein to sirf wahi phone; dobara tap to sab. Dekhne se kuch nahi badalta.
-- Mazeed **Filter**: haalat, PTA, stock ki umar (30+ / 60+ / 90+ din), **Jis se khareeda** (dealer), aur maalik o manager ke liye khareed ki had.
-- Koi phone khol kar wapas aayein: chuni hui qism, card, haalat, filter aur tarteeb waise hi rehte hain.
-- **Card / Table / Grid / List**: phone kaise dikhein. **Card** neeche bataye gaye bare card hain. **Table** Excel ki tarah hai: har phone ki ek line aur har tafseel ka ek column (memory, rang, haalat, PTA, battery, IMEI, din, khareed jo sirf maalik aur manager dekhte hain, farokht ki qeemat, haalat). Column ke naam ko dabayein to usi se tarteeb ho jati hai, dobara dabayein to ulti tarteeb. Aakhri line khareed aur farokht ka jor dikhati hai; phone par table ko side par khiskayein. **Grid** mein chhote khane hote hain, ek screen par bohat se. **List** mein har phone ki ek chhoti line hoti hai. App aap ka intikhab usi phone ya computer par yaad rakhti hai.
-- **Fields**: jo tafseel dekhni ho us par nishan lagayein (memory, rang, haalat, PTA, battery, region, IMEI, din, khareed, farokht waghera). Yeh charon andaaz mein lagta hai. Saath **Download** aur **Share** hain jo PDF / Excel / CSV inhi columns, aap ke filter aur isi tarteeb se banate hain.
+Har phone har view mein apni **asking qeemat** dikhata hai, aur us par **✎** (tafseel edit) aur **🗑** (us ke liye sahi delete) hain. Phone khol kar wapas aayein: jo chuna tha wo laga rehta hai.
 
-Filters ke neeche app batati hai ke kitne phone milte hain, masalan **7 phone**. Har phone ek card hai jis par us ka naam, rang aur storage, bechne ki qeemat, aur chaar chhote box hote hain: **Memory**, **PTA**, **Haalat** aur **Din** (dukaan mein kitne din se hai). Neeche IMEI, ID check ka badge aur **Bechein** button hota hai.
-
-![Stock list: search, brand ke gol buttons, status ke chips aur filters ke saath](shot:stock-list)
+![Stock list: upar search, Filters / Tarteeb / Reports, × wali chips](shot:stock-list)
 
 ### Stock list mein tablet aur smart watch
 
@@ -915,28 +912,17 @@ Used phone khareedne se pehle check kar lena acha hai ke kya yeh pehle aap ki du
 
 ### Phone ka apna page
 
-Stock list mein kisi bhi phone par dabayein to us ka page khulta hai. Upar wala gehra card dikhata hai:
+Kisi bhi phone ko dabayein to us ka page khulta hai. Phone ki saari baat **upar ek card** mein hai, aur har line ka kaam **us ke bilkul saath**:
 
-- IMEI (ya serial) aur status, masalan **Stock mein**, **Amanat par**, **Bik gaya**, **Marammat mein** ya **Kharab**;
-- **Barcode** (masalan **MS000006**), storage aur rang;
-- haalat ke badge (**Used**, **Box pack**...), PTA (**PTA approved**, **Non-PTA**, **JV**), lock check (**Lock check nahi** ya **Locks clear**) aur ID check (**ID checked**, **ID check baqi**);
-- **Bechne ki qeemat** aur, sirf maalik aur manager ke liye, **Khareed qeemat**.
+- brand ke nishan ke saath model, storage aur rang, aur halat (**Stock mein**, **Bik gaya** …);
+- **Asking qeemat** aur **Asking qeemat badlein**, maalik / manager ke liye **Cost** aur **Khareed qeemat badlein**;
+- har cheez ki apni line, icon ke saath: **IMEI** (→ **IMEI theek karein**), **IMEI 2**, serial, **Barcode**, **Memory** (storage · RAM → **Tafseel edit**), **Rang**, grade aur kharabiyon ke saath **Condition** (→ **Kharab likhein**), **PTA** (→ DIRBS par **Check**), SIM lock, **Lock check** (→ **Lock check**), **ID card check** (→ **ID card check**), **Kis se khareeda** (→ bechne wala badlein), bike phone ka **Gahak** (→ khareedar badlein), shelf, warranty aur **dukaan mein kitne din**.
 
-Card ke neeche do bare buttons hain, **Bechein** aur **Shanakhti card check**, aur phir **Kaam**:
+Card ke neeche bare button mein asal kaam — **Bechein**, aur **Amanat par dein**, **Repair bhejein** (ya bike phone ke liye **Wapsi**) — aur **Aur kaam** baqi sab kholta hai (note, diya hua badlein, bechne wale ko wapas, hisaab, qisam badlein, branch bhejein, delete …).
 
-| Button | Kya karta hai |
-|---|---|
-| **Amanat par dein** | Yeh phone kisi doosri dukaan ko dein (chapter 15). |
-| **Kharab likhein** | Jo kharabi hai chunein (Camera, LCD, Display, Display par dots, Board, RAM, Battery waghera), ya apni kharabi likh kar **+** dabayein (agli baar bhi milegi). Mobile stock ki list mein laal **Faulty: …** ke saath rehta hai aur jaisa hai waisa becha ja sakta hai; bill par **Sold as faulty** aata hai. **Kharabiyan badlein** se list badlein; theek ho jaye to **Faulty cleared**. Jo phone kharab haalat mein aaye use stock daalte waqt hi Faulty likha ja sakta hai: **More details → Yeh kharab haalat mein aaya**, us ki kharabiyan dabayein; yeh stock mein Faulty likha jata hai. |
-| **Marammat ko bhejein** | Apne phone ki repair job kholein (chapter 14). |
-| **Sticker print karein** | Is ka barcode wala price sticker print karein (chapter 12). |
-| **Qeemat badlein** | Nayi bechne ki qeemat lagayein; purani history mein rehti hai. |
-| **Note likhein** | Jo kuch yaad rakhna ho likhein, aap ke naam aur waqt ke saath. |
-| **Tafseel badlein** | Storage, rang aur aisi tafseel theek karein. |
-| **Lock check** | Used device ke iCloud / Google (FRP) / account lock checks darj karein. |
-| **Wapsi** | Bike hue phone par aata hai: wapsi shuru karein (chapter 9). |
+Tafseel ke saath (phone par neeche) **Sticker** hai: tick karein us par kya aaye — dukaan ka naam, model, storage · rang, qeemat, barcode, IMEI, condition, PTA, tareekh, cost code — aur preview foran badalta hai. **Print**, ya poore options ke liye **Size aur copies**.
 
-![Phone ka apna page: IMEI, barcode, badges, bechne ki qeemat aur khareed qeemat, aur kaam ke buttons](shot:device-page)
+![Phone ka page: sab kuch ek card mein, har line ke saath us ka kaam, saath sticker](shot:device-page)
 
 ### Is phone ka paisa
 

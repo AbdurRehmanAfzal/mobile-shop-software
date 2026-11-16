@@ -43,7 +43,11 @@ test('low-stock alert on Home opens the low tab; sold phone and repair found by 
 
   // the sold phone by the buyer's phone number
   await page.goto('/stock')
-  await page.getByRole('button', { name: 'Sold', exact: true }).click()
+  // ADR-091: statuses are tick boxes in the Filters sheet
+  await page.getByTestId('stock-filters').click()
+  await page.getByTestId('fx-status-in_stock').click()
+  await page.getByTestId('fx-status-sold').click()
+  await page.getByTestId('fx-apply').click()
   await page.getByPlaceholder('IMEI, model, brand, name or phone').fill('03219876543')
   await expect(page.getByText(/Nokia 105/).first()).toBeVisible()
   await page.getByPlaceholder('IMEI, model, brand, name or phone').fill('03001112233')

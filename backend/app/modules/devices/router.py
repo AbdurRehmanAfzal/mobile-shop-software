@@ -31,6 +31,18 @@ def _hide_cost(ctx, d: dict) -> dict:
     return d
 
 
+def multi_filters(statuses, brand_ids, conditions, pta_statuses, categories) -> dict:
+    """ADR-091: comma-separated tick-box filters (empty ones are left out)"""
+    split = lambda s: [x.strip() for x in (s or "").split(",") if x.strip()]
+    return {
+        "statuses": split(statuses),
+        "brand_ids": split(brand_ids),
+        "conditions": split(conditions),
+        "pta_statuses": split(pta_statuses),
+        "categories": split(categories),
+    }
+
+
 @router.get("", response_model=list[DeviceOut])
 def list_devices(
     ctx: Ctx,
@@ -60,6 +72,11 @@ def list_devices(
     reserved: bool = False,
     location: str | None = Query(default=None, max_length=60),
     locked: bool | None = None,
+    statuses: str | None = Query(default=None, max_length=300),
+    brand_ids: str | None = Query(default=None, max_length=4000),
+    conditions: str | None = Query(default=None, max_length=200),
+    pta_statuses: str | None = Query(default=None, max_length=200),
+    categories: str | None = Query(default=None, max_length=100),
 ):
     can_cost = ctx.can(Cap.VIEW_COST)
     rows = service.list_devices(
@@ -91,6 +108,7 @@ def list_devices(
         reserved=reserved,
         location=location,
         locked=locked,
+        multi=multi_filters(statuses, brand_ids, conditions, pta_statuses, categories),
     )
     return [_hide_cost(ctx, r) for r in rows]
 

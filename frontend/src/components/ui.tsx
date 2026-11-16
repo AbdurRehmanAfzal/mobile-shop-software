@@ -149,8 +149,14 @@ export function SearchBox({ value, onChange, placeholder, scan }: { value: strin
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={pick(placeholder)}
-        className="min-h-12 w-full rounded-2xl border border-line bg-surface ps-11 pe-4 text-base font-medium text-ink placeholder:text-muted/60 focus:border-emerald focus:outline-none focus:ring-2 focus:ring-emerald/30"
+        className="min-h-12 w-full rounded-2xl border border-line bg-surface ps-11 pe-12 text-base font-medium text-ink placeholder:text-muted/60 focus:border-emerald focus:outline-none focus:ring-2 focus:ring-emerald/30"
       />
+      {/* owner 2026-11-16 (ADR-091): a typed search is cleared with one tap */}
+      {value ? (
+        <button type="button" aria-label={pick('common.clearSearch')} title={pick('common.clearSearch')} onClick={(e) => { e.preventDefault(); onChange('') }} className="tap absolute end-2 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-ground text-muted hover:text-ink" data-testid="search-clear">
+          <X size={16} />
+        </button>
+      ) : null}
     </label>
   )
   if (!scan) return box

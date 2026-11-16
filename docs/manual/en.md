@@ -869,25 +869,22 @@ The value is at cost for the owner and manager. Staff who are not allowed to see
 
 ### The stock list
 
-Open it with **See all phones**, or **More → Stock list**.
+Open it with **See all phones**, or **More → Stock list**. At the top: **Stickers**, **Check IMEI** and **Add stock**. Then, from top to bottom:
 
-At the top are five buttons: **Download**, **Share**, **Stickers**, **Check IMEI** and **Add stock**. Under them:
+1. **Search** — the first thing on the page. Type an IMEI, model, brand, or the name / phone number of the person you bought it from or sold it to; tap **Scan** for the camera, or scan with a USB scanner. While something is typed, a **×** in the box clears it.
+2. **Kind of stock**: **All stock**, **Mobiles**, **Tablets**, **Smartwatches**. **Accessories**, **Spare parts** and **Other** open the items screen.
+3. **One bar with three buttons**:
+   - **Filters** (with how many are on): a sheet of **tick boxes** — **Status** (In stock, On loan, In repair, Faulty, Sold), **Brand** (with each brand's count), **Condition**, **PTA**. Tick as many as you like: Apple *and* Samsung, Used *and* Open box. Below them, **More filters**: price range, grade, RAM, stock age, bought from, shelf, cost range (owner / manager) and **Lock not checked**. The big button shows how many phones match, for example **Show 7 phones**.
+   - **Order**: Newest, Oldest first, Price low, Price high.
+   - **Reports**: **Download** (PDF / Excel), **Share** and **Price lists** for staff or customers — always the list exactly as you see it.
+4. **What is on**: every filter you ticked shows as a dark chip with **×** under the bar. Tap × to take one off, or **Clear all**.
+5. **Status cards**: Available to sell, Reserved, With customer, Inspection, In repair, Damaged / faulty, Low / out of stock (items) and Value at cost (owner / manager). Tap a card for only those; it shows as a chip too.
+6. **Cards / Table / Grid / List** and **Fields** (which details show).
+7. A line with **how many phones**, the **asking total** and, for the owner / manager, the **cost total**.
 
-- **Search**: type an IMEI, model, brand, or the name or phone number of the person you bought it from or sold it to. Tap **Scan** to use the camera, or simply scan with a USB scanner.
-- **Brand circles**: **All**, then one circle per brand with its count (for example **Apple · 2**, **Samsung · 2**). Tap one to see only that brand.
-- **Status chips**: **In stock**, **On loan**, **Sold**, **Faulty** and **All**.
-- **Sort**: **Newest**, **Oldest first**, **Price: low**, **Price: high**.
-- **Filters**: opens more choices: **Grade** (Used A, Used B, Refurbished, Copy / China), **RAM (GB)**, a price range (lowest and highest asking price), and a switch **Lock not checked** that shows only used devices whose lock check was never done.
-- **Kind of stock**: **All stock**, **Mobiles**, **Tablets**, **Smartwatches** filter this list. **Accessories**, **Spare parts** and **Other** open the items screen (items are counted by quantity) with that kind picked.
-- **Status cards**: **Available to sell** (in stock and ready to sell; under it **On hand**, every unit the shop holds), **With customer (approval)**, **Inspection** (ID check pending or flagged, or a lock still on), **In repair**, **Damaged / faulty**, **Low stock** and **Out of stock** for items (by each item's own reorder level), and **Value at cost** for the owner and manager. Tap a card to see only those units; tap it again to show all. Looking never changes anything.
-- More **Filters**: condition, PTA, stock age (30+ / 60+ / 90+ days), **Bought from** (dealer) and, for the owner and manager, a cost range.
-- Open a phone and come back: the kind, card, status, filters and sort you chose are still on.
-- **Cards / Table / Grid / List**: how the phones are shown. **Cards** are the big cards described below. **Table** is like Excel: one row per phone and a column for each detail (memory, colour, condition, PTA, battery, IMEI, days, cost for the owner and manager, asking price, status). Tap a column heading to sort by it, and tap it again to reverse the order. The last row adds up cost and asking price; on a phone, slide the table sideways. **Grid** shows small tiles, many on one screen. **List** gives one short line per phone. The app remembers your choice on that phone or computer.
-- **Fields**: tick which details show (memory, colour, condition, PTA, battery, region, IMEI, days, cost, asking and more). The choice applies to all four views. **Download** and **Share** sit next to it and make the PDF / Excel / CSV with exactly these columns, your filters and the same order.
+Every phone shows its **asking price** in every view, and has **✎** (edit its details) and **🗑** (the delete that fits it). Open a phone and come back: everything you chose is still on.
 
-Under the filters the app shows how many phones match, for example **7 phones**. Each phone is a card with its name, colour and storage, the asking price, and four small boxes: **Memory**, **PTA**, **Condition** and **Days** (how many days it has been in the shop). At the bottom are the IMEI, the ID check badge and a **Sell** button.
-
-![The stock list with search, brand circles, status chips and filters](shot:stock-list)
+![The stock list: search on top, Filters / Order / Reports, chips with ×](shot:stock-list)
 
 ### Tablets and smart watches in the stock list
 
@@ -915,28 +912,17 @@ Before you buy a used phone, it is worth checking whether it has passed through 
 
 ### A phone's own page
 
-Tap any phone in the stock list to open its page. The dark card at the top shows:
+Tap any phone to open its page. Everything about the phone is in **one card at the top**, and the job for each line sits **right beside it**:
 
-- the IMEI (or serial) and the status, for example **In stock**, **On loan**, **Sold**, **In repair** or **Faulty**;
-- **Barcode** (for example **MS000006**), storage and colour;
-- badges for condition (**Used**, **Box pack**...), PTA (**PTA approved**, **Non-PTA**, **JV**), the lock check (**Lock not checked** or **Locks cleared**) and the ID check (**ID checked**, **ID check pending**);
-- **Asking price** and, for the owner and manager only, **Cost**.
+- the model with its brand mark, storage and colour, and the status (**In stock**, **Sold** …);
+- **Asking price** with **Change asking price**, and for the owner / manager **Cost** with **Change purchase price**;
+- one line each, with an icon: **IMEI** (→ **Correct IMEI**), **IMEI 2**, serial, **Barcode**, **Memory** (storage · RAM → **Edit details**), **Colour**, **Condition** with grade and faults (→ **Mark faulty**), **PTA** (→ **Check** on DIRBS), SIM lock, **Lock check** (→ **Lock check**), **ID card check** (→ **ID card check**), **Bought from** (→ change the seller), **Customer** of a sold phone (→ change the buyer), shelf, warranty and **days in the shop**.
 
-Under the card are the two main buttons, **Sell** and **ID card check**, and then **Actions**:
+Under the card are the main jobs as big buttons — **Sell**, and **Give on loan**, **Send to repair** (or **Return** for a sold phone) — and **More actions** opens everything else (note, change what was paid, return to the seller, balances, change type, send to a branch, delete …).
 
-| Button | What it does |
-|---|---|
-| **Give on loan (amanat)** | Give this phone to another shop (chapter 15). |
-| **Mark faulty** | Choose what is wrong (Camera, LCD, Display, Dots on display, Board, RAM, Battery and more), or write your own fault and tap **+** (it is offered next time too). The phone stays in the stock list with a red **Faulty: …** tag and can still be sold as it is; the bill says **Sold as faulty**. **Change faults** edits the list; **Faulty cleared** when it is fixed. A phone that comes in faulty can be marked so while adding it: **More details → It came in faulty**, tap its faults; it goes into stock as Faulty. |
-| **Send to repair** | Open a repair job for your own phone (chapter 14). |
-| **Print sticker** | Print its price sticker with barcode (chapter 12). |
-| **Change asking price** | Set a new asking price; the old one stays in the history. |
-| **Add note** | Write anything you want to remember, with your name and the time. |
-| **Edit details** | Correct storage, colour and similar details. |
-| **Lock check** | Record the iCloud / Google (FRP) / account lock checks for a used device. |
-| **Return** | Shown on a sold phone: start a return (chapter 9). |
+Beside the details (under them on a phone) is the **Sticker**: tick what goes on it — shop name, model, storage · colour, price, barcode, IMEI, condition, PTA, date, cost code — and the preview changes at once. **Print**, or **Size & copies** for the full sticker options.
 
-![A phone's own page: IMEI, barcode, badges, asking price and cost, and the action buttons](shot:device-page)
+![A phone's own page: everything in one card, each line with its job, the sticker beside](shot:device-page)
 
 ### Money on this phone
 

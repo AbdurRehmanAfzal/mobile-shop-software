@@ -39,6 +39,7 @@ test('return a faulty phone to the seller', async ({ page, request }) => {
 
   // from the phone's page
   await page.goto(`/stock/${p1.lines[0].device_id}`)
+  await page.getByTestId('device-more-toggle').click() // ADR-091: the less used jobs are under More
   await page.getByTestId('device-return-seller').click()
   await expect(page.getByTestId('pret-sheet')).toBeVisible()
   await expect(page.getByTestId('pret-cancelled')).toContainText('25,000')

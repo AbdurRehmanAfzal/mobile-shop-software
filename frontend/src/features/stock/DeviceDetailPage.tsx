@@ -1,5 +1,5 @@
 import LockedPanel from './LockedPanel'
-import { PtaCheckButton, PtaCheckSheet } from './PtaCheck'
+import { PtaCheckSheet } from './PtaCheck'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiAlert, BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
@@ -14,15 +14,17 @@ import { useAuth } from '@/lib/auth'
 import { useDevice, useDeviceEvent, useDeviceHistory, useDocMutation, useInvalidate, useParties } from '@/lib/queries'
 import type { DeviceDetail, Loan } from '@/lib/types'
 import DeviceLineSheet, { emptyDraft, type DeviceLineDraft } from '@/features/purchase/DeviceLineSheet'
-import { hasPta, specLine } from './StockPage'
-import { LockChecksEditor, lockState, specRows, type LockChecks } from './DeviceSpecs'
+import { hasPta } from './StockPage'
+import { LockChecksEditor, specRows, type LockChecks } from './DeviceSpecs'
 import type { DeviceCategory } from '@/lib/types'
 import PriceHint from '@/components/PriceHint'
 import UnitMoney from './UnitMoney'
+import DeviceEasyView from './DeviceEasyView'
+import StickerPreview from './StickerPreview'
 import { DeviceReserve } from './ReserveCard'
 import { CompactLayout, SmartLayout, StyleSwitch, TabsLayout, TilesLayout, loadStyle, saveStyle, type Act, type DeviceStyle } from './DeviceLayouts'
 import { isApple } from '@/features/purchase/AppleVariant'
-import { FaultChip, FaultSheet } from './Faults'
+import { FaultSheet } from './Faults'
 
 
 function toDraft(d: DeviceDetail): DeviceLineDraft {
@@ -119,7 +121,6 @@ export default function DeviceDetailPage() {
   }, [d, history, canSeeCost, boughtOn, soldOn, soldSince, nav])
 
   if (isLoading || !d) return <Loading />
-  const vTone = d.verification_status === 'flagged' ? 'bad' : d.verification_status === 'pending' ? 'warn' : 'ok'
   const inStock = d.status === 'in_stock'
   // an old-stock entry typed by mistake can be removed while nothing but verification happened to it
   const opening = history?.find((e) => e.document_type === 'opening_stock')
@@ -140,30 +141,30 @@ export default function DeviceDetailPage() {
     d.verification_status === 'pending' || d.verification_status === 'flagged' || d.condition !== 'box_pack' ? { key: 'verify', label: 'stock.verify', run: () => nav(`/stock/${d.id}/verify`), tone: d.verification_status === 'pending' ? 'gold' : undefined } : null,
     d.status === 'sold' ? { key: 'return', label: 'counter.returnJob', run: () => nav(`/return/new?device=${d.id}`), tone: 'primary' } : null,
     inStock ? { key: 'loan', label: 'stock.loanOut', run: () => setSheet('loan') } : null,
-    inStock ? { key: 'faulty', label: 'stock.markFaulty', run: () => setFaultOpen(true) } : null,
-    d.status === 'faulty' ? { key: 'faultEdit', label: 'faulty.edit', run: () => setFaultOpen(true) } : null,
+    inStock ? { key: 'faulty', label: 'stock.markFaulty', testid: 'mark-faulty', run: () => setFaultOpen(true) } : null,
+    d.status === 'faulty' ? { key: 'faultEdit', label: 'faulty.edit', testid: 'edit-faults', run: () => setFaultOpen(true) } : null,
     d.status === 'faulty' ? { key: 'faultyCleared', label: 'stock.faultyCleared', run: () => void simple('faulty_cleared') } : null,
-    inStock || d.status === 'faulty' ? { key: 'repair', label: 'stock.sendRepair', run: () => nav(`/repairs/new?device=${d.id}`) } : null,
+    inStock || d.status === 'faulty' ? { key: 'repair', label: 'stock.sendRepair', testid: 'device-send-repair', run: () => nav(`/repairs/new?device=${d.id}`) } : null,
     d.status === 'in_repair' ? { key: 'repairBack', label: 'stock.repairReturned', run: () => void simple('repair_returned') } : null,
     d.status === 'with_customer_for_approval' ? { key: 'approvalBack', label: 'stock.approvalReturned', run: () => void simple('approval_returned') } : null,
     { key: 'sticker', label: 'label.button', run: () => setSheet('label') },
     { key: 'price', label: 'stock.changePrice', run: () => { setText(d.asking_price ?? ''); setSheet('price') } },
     { key: 'note', label: 'stock.addNote', run: () => { setText(''); setSheet('note') } },
     { key: 'edit', label: 'crud.editDetails', run: () => setSheet('edit') },
-    canSeeCost && boughtOn ? { key: 'changeSeller', label: 'purchase.fix.partyButton', run: () => nav(`/purchases/${boughtOn}?change=1`) } : null,
-    canSeeCost && boughtOn ? { key: 'changePaid', label: 'purchase.paidFix.button', run: () => nav(`/purchases/${boughtOn}?paid=1`) } : null,
-    canSeeCost && boughtOn && (inStock || d.status === 'faulty') ? { key: 'returnSeller', label: 'pret.button', run: () => nav(`/purchases/${boughtOn}?return=${d.id}`) } : null,
-    canCost ? { key: 'fixCost', label: 'purchase.costFix.button', run: openCost } : null,
-    canSeeCost && soldOn && d.status === 'sold' ? { key: 'changeBuyer', label: 'sale.fix.button', run: () => nav(`/sales/${soldOn}?change=1`) } : null,
-    canSeeCost ? { key: 'balances', label: 'bal.short', run: () => nav(`/balances?q=${encodeURIComponent(d.imei1)}`) } : null,
-    canSeeCost && phoneLike ? { key: 'fixImei', label: 'stock.fixImei.button', run: () => { setFix({ imei1: d.imei1, imei2: d.imei2 ?? '', clear2: false, reason: '' }); setFixErr(null); setSheet('imei') } } : null,
+    canSeeCost && boughtOn ? { key: 'changeSeller', label: 'purchase.fix.partyButton', testid: 'device-change-seller', run: () => nav(`/purchases/${boughtOn}?change=1`) } : null,
+    canSeeCost && boughtOn ? { key: 'changePaid', label: 'purchase.paidFix.button', testid: 'device-change-paid', run: () => nav(`/purchases/${boughtOn}?paid=1`) } : null,
+    canSeeCost && boughtOn && (inStock || d.status === 'faulty') ? { key: 'returnSeller', label: 'pret.button', testid: 'device-return-seller', run: () => nav(`/purchases/${boughtOn}?return=${d.id}`) } : null,
+    canCost ? { key: 'fixCost', label: 'purchase.costFix.button', testid: 'fix-cost', run: openCost } : null,
+    canSeeCost && soldOn && d.status === 'sold' ? { key: 'changeBuyer', label: 'sale.fix.button', testid: 'device-change-buyer', run: () => nav(`/sales/${soldOn}?change=1`) } : null,
+    canSeeCost ? { key: 'balances', label: 'bal.short', testid: 'device-balances', run: () => nav(`/balances?q=${encodeURIComponent(d.imei1)}`) } : null,
+    canSeeCost && phoneLike ? { key: 'fixImei', label: 'stock.fixImei.button', testid: 'fix-imei', run: () => { setFix({ imei1: d.imei1, imei2: d.imei2 ?? '', clear2: false, reason: '' }); setFixErr(null); setSheet('imei') } } : null,
     d.condition !== 'box_pack' ? { key: 'lock', label: 'devx.lock.button', run: () => { setLocks(d.lock_checks ?? {}); setLockNote(''); setSheet('lock') } } : null,
     canSeeCost ? { key: 'retype', label: 'devx.retype', run: () => { setToCat((d.category ?? 'phone') === 'phone' ? 'tablet' : 'phone'); setPreview(null); setRetypeErr(null); setSheet('retype') } } : null,
     inStock && canSeeCost && multiShop ? { key: 'transfer', label: 'transfer.sendBranch', run: () => nav(`/transfers/new?device=${d.id}`) } : null,
     canRemoveOpening ? { key: 'removeOld', label: 'crud.removeOldStock', run: () => setSheet('remove') } : null,
     // ADR-090: a phone entered by mistake is deleted with its bill (the bill's delete says what happens)
-    canSeeCost && boughtOn && inStock && !soldSince ? { key: 'deletePurchase', label: 'del.deletePurchase', run: () => nav(`/purchases/${boughtOn}?delete=1`) } : null,
-    canSeeCost && soldOn && d.status === 'sold' ? { key: 'deleteSale', label: 'del.deleteSale', run: () => nav(`/sales/${soldOn}?delete=1`) } : null,
+    canSeeCost && boughtOn && inStock && !soldSince ? { key: 'deletePurchase', label: 'del.deletePurchase', testid: 'device-delete-purchase', run: () => nav(`/purchases/${boughtOn}?delete=1`) } : null,
+    canSeeCost && soldOn && d.status === 'sold' ? { key: 'deleteSale', label: 'del.deleteSale', testid: 'device-delete-sale', run: () => nav(`/sales/${soldOn}?delete=1`) } : null,
   ] as (Act | null)[]).filter((x): x is Act => !!x)
 
   return (
@@ -174,110 +175,33 @@ export default function DeviceDetailPage() {
       <StyleSwitch value={style} onChange={(v) => { setStyle(v); saveStyle(v) }} />
       {style === 'classic' ? (
         <>
-      <section className="hero flex flex-col gap-2 p-5">
-        <div className="flex items-start justify-between gap-2">
-          <div>
-            <div className="num text-lg" dir="ltr">
-              {d.imei1}
-            </div>
-            {d.barcode ? <div className="num flex items-center gap-1 text-xs text-hero-text/75" dir="ltr" data-testid="device-barcode">{pick('barcode.label')}: {d.barcode}{d.barcode_type && d.barcode_type !== 'code128' ? ` · ${d.barcode_type}` : ''}<Help term="label.barcode" size="sm" /></div> : null}
-            <div className="text-sm text-hero-text/75">
-              {specLine(d, pick)}
-            </div>
-          </div>
-          <span className="flex shrink-0 items-center gap-1"><Chip text={`stock.status.${d.status}`} tone="ink" /><Help term="device.status" size="sm" /></span>
-        </div>
-        <div className="flex flex-wrap items-center gap-1.5">
-          <Chip text={`stock.condition.${d.condition}`} />
-          {d.grade ? <Chip text={['a', 'b', 'refurbished', 'copy'].includes(d.grade) ? `devx.grades.${d.grade}` : { en: d.grade, ur: d.grade }} /> : null}
-          {hasPta(d) && !(d.lock_type && d.pta_status === 'unknown') ? <Chip text={`stock.pta.${d.pta_status}`} tone={d.pta_status === 'pta_approved' ? 'ok' : 'warn'} /> : null}
-          {/* owner 2026-11-15 (ADR-082): check the IMEI on PTA's DIRBS, save the answer */}
-          {hasPta(d) && /^\d{15}$/.test(d.imei1) ? <PtaCheckButton size="sm" onClick={() => setPtaOpen(true)} /> : null}
-          {d.condition !== 'box_pack' && !d.lock_type ? <Chip text={lockState(d.lock_checks) === 'ok' ? 'devx.lock.ok' : lockState(d.lock_checks) === 'bad' ? 'devx.lock.bad' : 'devx.lock.none'} tone={lockState(d.lock_checks) === 'ok' ? 'ok' : lockState(d.lock_checks) === 'bad' ? 'bad' : 'warn'} /> : null}
-          {d.verification_status !== 'not_required' ? <Chip text={`stock.verification.${d.verification_status}`} tone={vTone} /> : null}
-          {d.cycle_no > 1 ? <Chip text={{ en: `Cycle ${d.cycle_no}`, ur: `${d.cycle_no} بار` }} /> : null}
-          <FaultChip faults={d.faults} />
-          {d.lock_type ? <Chip text={`locked.type.${d.lock_type}`} tone="bad" /> : null}
-          {d.sim_lock ? <Chip text={{ en: [pick(`simlock.${d.sim_lock}`), d.sim_lock_carrier].filter(Boolean).join(' · '), ur: [pick(`simlock.${d.sim_lock}`), d.sim_lock_carrier].filter(Boolean).join(' · ') }} tone={d.sim_lock === 'locked' ? 'warn' : 'ok'} /> : null}
-          <Help term="device.badges" size="sm" />
-        </div>
-        <div className="mt-1 grid grid-cols-2 gap-2">
-          <div className="rounded-xl bg-white/10 px-3 py-2">
-            <span className="flex items-center gap-1"><BiLabel text="stock.asking" size="sm" tone="text-hero-text/75" /><Help term="asking" size="sm" /></span>
-            <MoneyText value={d.asking_price} tone="ink" />
-          </div>
-          {canSeeCost ? (
-            <div className="rounded-xl bg-white/10 px-3 py-2">
-              <span className="flex items-center gap-1"><BiLabel text="stock.cost" size="sm" tone="text-hero-text/75" /><Help term="cost" size="sm" /></span>
-              <MoneyText value={d.cost_price} tone="ink" />
-            </div>
-          ) : null}
-        </div>
-        {d.current_party_name ? (
-          <div className="flex items-center gap-1 text-sm text-hero-text/80">
-            <span>{pick('stock.withParty')}: <b>{d.current_party_name}</b></span><Help term="stock.withParty" size="sm" />
-          </div>
-        ) : null}
-      </section>
-      <DeviceReserve deviceId={d.id} d={d} inStock={inStock} />
-      <LockedPanel d={d} canManage={canSeeCost} onChanged={() => void inv('devices', 'device', 'history', 'stock-status')} />
+      {/* owner 2026-11-16 (ADR-091): everything about the phone in one place, each line with its job;
+          the main jobs as big buttons, the rest under "More"; the sticker preview beside */}
+      <DeviceEasyView
+        d={d}
+        acts={acts}
+        canSeeCost={canSeeCost}
+        onPta={hasPta(d) ? () => setPtaOpen(true) : undefined}
+        aside={<StickerPreview deviceId={d.id} onMore={() => setSheet('label')} />}
+        extra={
+          <>
+            <DeviceReserve deviceId={d.id} d={d} inStock={inStock} />
+            <LockedPanel d={d} canManage={canSeeCost} onChanged={() => void inv('devices', 'device', 'history', 'stock-status')} />
+            <ErrorText error={ev.error ?? loanM.error} />
+          </>
+        }
+      />
 
-      {inStock || d.status === 'faulty' ? (
-        <div className="grid grid-cols-2 gap-2">
-          <BiButton text="stock.sell" onClick={() => nav(`/sale/new?device=${d.id}`)} disabled={d.verification_status === 'flagged'} />
-          {d.verification_status === 'pending' || d.verification_status === 'flagged' || d.condition !== 'box_pack' ? (
-            <BiButton text="stock.verify" variant={d.verification_status === 'pending' ? 'gold' : 'secondary'} onClick={() => nav(`/stock/${d.id}/verify`)} />
-          ) : (
-            inStock ? <BiButton text="stock.loanOut" variant="secondary" onClick={() => setSheet('loan')} /> : <BiButton text="faulty.edit" variant="secondary" onClick={() => setFaultOpen(true)} />
-          )}
-        </div>
-      ) : null}
-
-      {d.status === 'sold' ? <BiButton text="counter.returnJob" variant="secondary" full onClick={() => nav(`/return/new?device=${d.id}`)} /> : null}
-
-      <Section title="stock.actions" help="stock.actions">
-        <div className="grid grid-cols-2 gap-2">
-          {inStock ? <BiButton text="stock.loanOut" variant="secondary" size="md" onClick={() => setSheet('loan')} /> : null}
-          {inStock ? <BiButton text="stock.markFaulty" variant="secondary" size="md" onClick={() => setFaultOpen(true)} data-testid="mark-faulty" /> : null}
-          {d.status === 'faulty' ? <BiButton text="faulty.edit" variant="secondary" size="md" onClick={() => setFaultOpen(true)} data-testid="edit-faults" /> : null}
-          {d.status === 'faulty' ? <BiButton text="stock.faultyCleared" variant="secondary" size="md" onClick={() => simple('faulty_cleared')} /> : null}
-          {inStock || d.status === 'faulty' ? <BiButton text="stock.sendRepair" variant="secondary" size="md" onClick={() => nav(`/repairs/new?device=${d.id}`)} data-testid="device-send-repair" /> : null}
-          {d.status === 'in_repair' ? <BiButton text="stock.repairReturned" variant="secondary" size="md" onClick={() => simple('repair_returned')} /> : null}
-          {d.status === 'with_customer_for_approval' ? <BiButton text="stock.approvalReturned" variant="secondary" size="md" onClick={() => simple('approval_returned')} /> : null}
-          <BiButton text="label.button" variant="secondary" size="md" onClick={() => setSheet('label')} />
-          <BiButton text="stock.changePrice" variant="secondary" size="md" onClick={() => { setText(d.asking_price ?? ''); setSheet('price') }} />
-          <BiButton text="stock.addNote" variant="secondary" size="md" onClick={() => { setText(''); setSheet('note') }} />
-          <BiButton text="crud.editDetails" variant="secondary" size="md" onClick={() => setSheet('edit')} />
-          {canSeeCost && boughtOn ? <BiButton text="purchase.fix.partyButton" variant="secondary" size="md" onClick={() => nav(`/purchases/${boughtOn}?change=1`)} data-testid="device-change-seller" /> : null}
-          {canSeeCost && boughtOn ? <BiButton text="purchase.paidFix.button" variant="secondary" size="md" onClick={() => nav(`/purchases/${boughtOn}?paid=1`)} data-testid="device-change-paid" /> : null}
-          {canSeeCost && boughtOn && (inStock || d.status === 'faulty') ? <BiButton text="pret.button" variant="secondary" size="md" onClick={() => nav(`/purchases/${boughtOn}?return=${d.id}`)} data-testid="device-return-seller" /> : null}
-          {canCost ? <BiButton text="purchase.costFix.button" variant="secondary" size="md" onClick={openCost} data-testid="fix-cost" /> : null}
-          {canSeeCost && soldOn && d.status === 'sold' ? <BiButton text="sale.fix.button" variant="secondary" size="md" onClick={() => nav(`/sales/${soldOn}?change=1`)} data-testid="device-change-buyer" /> : null}
-          {canSeeCost ? <BiButton text="bal.short" variant="secondary" size="md" onClick={() => nav(`/balances?q=${encodeURIComponent(d.imei1)}`)} data-testid="device-balances" /> : null}
-          {canSeeCost && ((d.category ?? 'phone') === 'phone' || d.cellular) ? <BiButton text="stock.fixImei.button" variant="secondary" size="md" onClick={() => { setFix({ imei1: d.imei1, imei2: d.imei2 ?? '', clear2: false, reason: '' }); setFixErr(null); setSheet('imei') }} data-testid="fix-imei" /> : null}
-          {d.condition !== 'box_pack' ? <BiButton text="devx.lock.button" variant="secondary" size="md" onClick={() => { setLocks(d.lock_checks ?? {}); setLockNote(''); setSheet('lock') }} /> : null}
-          {canSeeCost ? <BiButton text="devx.retype" variant="secondary" size="md" onClick={() => { setToCat((d.category ?? 'phone') === 'phone' ? 'tablet' : 'phone'); setPreview(null); setRetypeErr(null); setSheet('retype') }} /> : null}
-          {inStock && canSeeCost && multiShop ? <BiButton text="transfer.sendBranch" variant="secondary" size="md" onClick={() => nav(`/transfers/new?device=${d.id}`)} /> : null}
-          {canRemoveOpening ? <BiButton text="crud.removeOldStock" variant="secondary" size="md" onClick={() => setSheet('remove')} /> : null}
-          {canSeeCost && boughtOn && inStock && !soldSince ? <BiButton text="del.deletePurchase" variant="danger" size="md" onClick={() => nav(`/purchases/${boughtOn}?delete=1`)} data-testid="device-delete-purchase" /> : null}
-          {canSeeCost && soldOn && d.status === 'sold' ? <BiButton text="del.deleteSale" variant="danger" size="md" onClick={() => nav(`/sales/${soldOn}?delete=1`)} data-testid="device-delete-sale" /> : null}
-        </div>
-        <ErrorText error={ev.error ?? loanM.error} />
-      </Section>
-
+      {specRows(d.category ?? 'phone', d.specs, pick).length || d.lock_checks || d.patch_details || d.notes ? (
       <Section title="stock.device" help="stock.deviceInfo">
         <div className="card">
-          {d.imei2 ? <KV k="stock.imei2" help="device.imei2" v={<span dir="ltr">{d.imei2}</span>} /> : null}
-          {d.serial ? <KV k="stock.serial" help="device.serial" v={<span dir="ltr">{d.serial}</span>} /> : null}
-          {d.sim_time_months ? <KV k="stock.simTime" help="device.simTime" v={d.sim_time_months} /> : null}
-          {d.warranty_months ? <KV k="stock.warranty" help="device.warrantyMonths" v={`${d.warranty_months} ${pick('stock.months')}${d.warranty_by ? ` · ${pick(`devx.by.${d.warranty_by}`)}` : ''}`} /> : null}
-          {d.ram_gb ? <KV k="devx.ram" help="device.ram" v={<span dir="ltr">{d.ram_gb} GB</span>} /> : null}
           {specRows(d.category ?? 'phone', d.specs, pick).map(([k, v, h]) => <KV key={k} k={k} help={h} v={<span dir="ltr">{v}</span>} />)}
           {d.lock_checks ? <KV k="devx.lock.title" help="device.lock" v={<span className="flex flex-col items-end">{Object.entries(d.lock_checks).map(([k, v]) => <span key={k} className={v === 'not_cleared' ? 'text-payable' : ''}>{pick(`devx.lock.${k}`)}: {pick(`devx.lock.${v}`)}</span>)}</span>} /> : null}
           {d.patch_details ? <KV k="stock.patchDetails" help="device.patch" v={d.patch_details} /> : null}
           {d.notes ? <KV k="common.notes" help="common.notes" v={d.notes} /> : null}
         </div>
       </Section>
+      ) : null}
 
       {d.accessories.length ? (
         <Section title="stock.accessories" help="stock.accessories">

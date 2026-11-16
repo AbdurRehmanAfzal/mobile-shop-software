@@ -86,6 +86,7 @@ test('device types: tablet with specs, used watch needs the lock check, device p
   await page.getByText('Watch Series 9').first().click()
   await expect(page.getByText('Locks cleared')).toBeVisible()
   await expect(page.getByText('45mm')).toBeVisible()
+  await page.getByTestId('device-more-toggle').click() // ADR-091: the less used jobs are under More
   await page.getByRole('button', { name: 'Change type' }).click()
   await page.getByTestId('retype-sheet').getByRole('button', { name: 'Tablet', exact: true }).click()
   await page.getByRole('button', { name: 'Check', exact: true }).click()
