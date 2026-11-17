@@ -101,6 +101,7 @@ export default function BooksTab() {
       ) : (
         !trial ? <Loading /> : (
           <>
+            <span data-testid="trial-hint"><BiLabel text="books.trialHint" size="sm" tone="text-muted" /></span>
             <div className="card flex flex-col p-0" data-testid="trial-rows">
               <div className={`grid grid-cols-[1fr_auto_auto] gap-3 border-b border-line px-4 py-2 font-bold text-muted ${small}`}>
                 <span>{pick('books.account')}</span><span className="w-[5.5rem] text-end">{pick('books.debit')}</span><span className="w-[5.5rem] text-end">{pick('books.credit')}</span>

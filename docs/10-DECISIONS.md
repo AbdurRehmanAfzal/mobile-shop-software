@@ -372,7 +372,7 @@ by sheet remain a later step (docs/18 §1).
   - "To get (lene hain)", "To give (dene hain)", "Still to pay (dene baqi)";
   - "I gave money (de diye)", "I took money (le liye)" — these replace "Gave money (len-den)" / "Took money (len-den)";
   - "Receive (lena)", "Pay (dena)";
-  - "Debit (naam)", "Credit (jama)";
+  - "Debit" / "Credit" (trial balance only) carry no hint: "naam / jama" was tried and shopkeepers found it confusing (owner 2026-11-17), so a line above the trial balance says in plain words what each side holds (`books.trialHint`, all three languages);
   - "Opening balance (purana hisaab)";
   - loans: "Give a phone to another shop (amanat)", "To which shop (kis dukaan ko)", "Expected back (wapsi kab)", "Device came back (wapas aa gaya)".
 - A few labels were also reworded: "Party owes me" → "They owe me", "I owe party" → "I owe them", "To receive" → "To get", and the "(receivable)" / "(payable)" jargon is gone.

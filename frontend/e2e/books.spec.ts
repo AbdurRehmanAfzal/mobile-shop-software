@@ -26,6 +26,9 @@ test('balance sheet and trial balance', async ({ page }) => {
 
   await books.getByRole('button', { name: 'Trial balance' }).click()
   await expect(page.getByTestId('trial-rows')).toContainText('Debit')
+  // no "naam / jama" hint (shopkeepers found it confusing): a plain line says what each side holds
+  await expect(page.getByTestId('trial-rows')).not.toContainText('naam')
+  await expect(page.getByTestId('trial-hint')).toContainText('what the shop has and what it spent')
   await expect(page.getByTestId('books-check')).toContainText('Balanced')
   // an older day works too
   await books.getByLabel('As of').fill('2025-12-31')

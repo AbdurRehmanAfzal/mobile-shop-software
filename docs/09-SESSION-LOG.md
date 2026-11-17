@@ -1952,3 +1952,8 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - Playwright: `units`, `lending`, `lending-cancel`, `exchange-return`, `v2-screens`, `tally-staff`, `balances`, `party-brands`, `counter`, `books`, `reminders`, `bulk`, `audit-parties`, `installments`, `return` — six specs updated for the new wording.
 - I looked at a person's khata in English.
 **Not done**: printed documents and help texts keep their wording. An entry title in the len-den list is cut short on a narrow phone ("I gave money (de…").
+
+### 2026-11-17 — "naam / jama" removed from Debit / Credit
+**Owner** (shopkeeper): asked what "naam" and "jama" mean, then said they are confusing.
+**Done**: the trial balance columns read "Debit" / "Credit" again (their only use); a line above the table says in plain words what each side holds (`books.trialHint`, en / ur / roman); the two hints left `i18n/gloss.ts`; ADR-094, progress row and docs/29 follow.
+**Verified**: tsc; vitest (53); Playwright `books` (asserts no "naam" in the table and the new line).
