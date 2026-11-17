@@ -34,7 +34,7 @@ IMAGE_TAG=$(cat .current-tag) docker compose --env-file .env up -d backend
 | [ ] | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM` | emails | Gmail: `smtp.gmail.com`, `587`, an app password |
 | [ ] | `ANTHROPIC_API_KEY` | the assistant and photo reading (CNIC / box label) | your Claude API key; empty = "not switched on" |
 | [ ] | `AI_DAILY_LIMIT` | calls per shop per day | `200` (default) |
-| [ ] | `RCLONE_REMOTE` | off-server copy of the nightly backup | e.g. an encrypted Google Drive remote |
+| [x] | `RCLONE_REMOTE` | off-server copy of the nightly backup | set to `gdrive-safe:` (2026-11-17) |
 | [ ] | `SIGNUP_OTP` / `OTP_DEV_ECHO` | phone code at signup / test echo | `false` / **always `false` on production** |
 
 ## B. On the server — commands still to run
@@ -302,7 +302,8 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 ## F. Found while writing the operations runbook (2026-11-03)
 Details in `docs/manual/operations-en.md`. None of these is broken today, but each is worth a look:
 - [ ] **Renewal key on the server:** run the renewal keygen on the server. Until then production checks codes with the default public key, so codes signed with the development PC's key would be accepted.
-- [ ] **Off-server backup:** `RCLONE_REMOTE` is not set, so every backup sits on the same VPS. Set it up and practise one restore.
+- [x] **Off-server backup: set up by the owner on the VPS (server date 2026-11-17 18:03 UTC).** rclone remotes `gdrive` (Google Drive) and `gdrive-safe` (crypt over `gdrive:mobileshop-backups`); `RCLONE_REMOTE=gdrive-safe:` in `/opt/mobileshop/.env`; a manual `backup.sh` ended with `offsite copy ok` and `rclone ls gdrive-safe:` listed both dumps and both upload archives. The two crypt passwords are with the owner only. Still to do: [ ] practise one restore from a Drive copy; [x] the Google consent screen said the app was "being tested" — the owner checked his Google account's linked apps: the only app with account access is "rclone" (do not remove it, or the off-server copy stops).
+  - **Found on the VPS (server date 2026-11-17 17:05 UTC): the nightly backup had never run.** root's crontab was empty and `/var/log/mobileshop-backup.log` did not exist; `/opt/mobileshop-backups` held nothing before the owner's manual run that day (`db-20261117-1705.dump`, 661K). The cron line from `deploy/setup-vps.sh` was installed by hand the same day (`30 2 * * *`, the server is on UTC, so 07:30 in Pakistan). Still to do: [ ] check the next morning that a new `db-*.dump` appeared; [ ] the server says "System restart required" — restart it at night, not during shop hours.
   - **Owner 2026-11-20: confirmed it is still not set, and wants it done** — shops are live, and every shop's database must have a copy off the server. Until then: after a manual `sudo /opt/mobileshop/backup.sh`, download the newest `db-*.dump` to a PC. Steps: `docs/12-DEPLOYMENT.md` → Backups (rclone, an encrypted Google Drive remote, `RCLONE_REMOTE=gdrive-safe:` in `/opt/mobileshop/.env`). Needs the owner's Google login on the VPS, about 15 minutes.
 - [ ] **Android signing:** check that the three `ANDROID_KEYSTORE_*` GitHub secrets exist (`gh secret list`). Without them `/app.apk` is test-signed, and a properly signed APK cannot update it later.
 - [ ] **Old Docker images:** `deploy.sh` removes only untagged images. Once a month run `docker image prune -a --filter until=168h` on the server.
