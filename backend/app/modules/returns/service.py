@@ -136,6 +136,7 @@ def sale_return(
         kept_amount=kept,
         cash_account_id=cash.id if cash else None,
         reason=data.reason,
+        reason_code=data.reason_code,
         lines=[
             {
                 "invoice_line_id": str(ln.id),
@@ -226,6 +227,7 @@ def sale_return(
                     "refund": str(refund),
                     "kept": str(kept),
                     "reason": data.reason,
+                    "reason_code": data.reason_code,
                 },
             )
             for a in device.accessories:
@@ -312,6 +314,7 @@ def purchase_return(
         kept_amount=cut,
         cash_account_id=cash.id if cash else None,
         reason=data.reason,
+        reason_code=data.reason_code,
         lines=[
             {
                 "purchase_line_id": str(ln.id),
@@ -389,7 +392,7 @@ def purchase_return(
                 ledger_group_id=group.id,
                 document_type="purchase_return",
                 document_id=doc.id,
-                data={"return_no": doc.no, "reason": data.reason},
+                data={"return_no": doc.no, "reason": data.reason, "reason_code": data.reason_code},
             )
     pur.returned_total = money(pur.returned_total + amount)
     record_audit(

@@ -2983,7 +2983,8 @@
       "sales": "Sales aur khareed",
       "staff": "Staff",
       "lending": "Len-den",
-      "repairs": "Repair"
+      "repairs": "Repair",
+      "returns": "Wapsiyan"
     },
     "preset": {
       "today": "Aaj",
@@ -4877,5 +4878,69 @@
     "profit": "Roz ka nafa / nuqsan",
     "profitSum": "In dinon ka nafa",
     "debt": "Lene aur dene"
+  },
+  "ret": {
+    "fromCustomers": "Customers se wapas",
+    "toSuppliers": "Supplier ko wapas",
+    "t": {
+      "count": "Wapsiyan",
+      "phones": "phone",
+      "amount": "Wapas aane wali maliyat",
+      "refund": "Wapas di gayi raqam",
+      "refundGot": "Supplier se wapas mili raqam",
+      "kept": "Dukaan ne jo katauti rakhi",
+      "cutLost": "Supplier ne jo katauti li",
+      "toKhata": "Khate mein gayi raqam",
+      "undone": "Bikri ka munafa jo wapas gaya",
+      "net": "Munafe par asar",
+      "rate": "{{sold}} bike hue phone mein se {{n}} wapas aaye ({{pct}}%)",
+      "another": "Doosra phone le gaye",
+      "again": "Dobara bik gaye",
+      "warranty": "Warranty ke andar",
+      "voided": "Delete shuda wapsiyan"
+    },
+    "why": "Wapas kyun aaye",
+    "who": "Kis ne wapas liye",
+    "list": "Har wapsi",
+    "none": "In dinon mein koi wapsi nahi",
+    "reason": {
+      "changed_mind": "Irada badal gaya",
+      "fault": "Phone mein kharabi",
+      "not_as_told": "Jaisa bataya waisa nahi (PTA / haalat)",
+      "price": "Sasta mil gaya",
+      "another_phone": "Doosra phone chahiye",
+      "not_selling": "Bika nahi",
+      "other": "Kuch aur",
+      "none": "Nahi bataya"
+    },
+    "d": {
+      "no": "Nahi",
+      "when": "Wapsi ki tareekh",
+      "bill": "Bill",
+      "billDate": "Bill ki tareekh",
+      "days": "{{n}} din baad",
+      "sameDay": "usi din",
+      "customer": "Kaun wapas laya",
+      "supplier": "Kis ko wapas bheja",
+      "by": "Kis ne wapas liya (staff)",
+      "reason": "Wajah",
+      "note": "Note",
+      "soldFor": "Kitne mein becha tha",
+      "boughtFor": "Kitne mein khareeda tha",
+      "cost": "Laagat",
+      "now": "Ab kahan hai",
+      "again": "Dobara kitne mein bika",
+      "againProfit": "Dobara bechne par munafa",
+      "from": "se",
+      "yes": "Haan",
+      "open": "Kholein"
+    },
+    "whyTitle": "Wapas kyun aa raha hai?",
+    "sellAnother": "Isi customer ko doosra phone bechein",
+    "seeAll": "Tamam wapsiyan dekhein",
+    "markFaulty": "Kharabi likhne ke liye phone kholein",
+    "homeLabel": "Wapas aaye phone (is mahine)",
+    "homeToday": "aaj {{n}}",
+    "ovN": "{{n}} wapsiyan · {{p}} phone"
   }
 }

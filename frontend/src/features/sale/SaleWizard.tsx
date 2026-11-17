@@ -175,6 +175,12 @@ export default function SaleWizard() {
     })().catch(() => undefined)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // ADR-097: after a return, "sell another phone to this customer" opens the form on him
+  useEffect(() => {
+    const pid = params.get('party')
+    if (pid) get<Party>(`/api/v1/parties/${pid}`).then((p) => { setParty(p); setWalkIn(false) }).catch(() => undefined)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     const id = params.get('device')
     if (id && !lines.length)

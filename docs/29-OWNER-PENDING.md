@@ -266,6 +266,8 @@ Server: the deploy runs migration `e4a6c8d0f2b5` (additive: returns, branch tran
 
 **Graphs (2026-11-18, ADR-096)**: nothing to run. Open Home and Business overview: under "Graphs" switch 7 days / 30 days; check that today's sales, purchases and profit match the day's hisaab, and that "To get" / "To give" match the khata totals. Log in as a salesman: only sales and to get / to give show.
 
+**Returns report (2026-11-18, ADR-097)**: nothing to run by hand (the deploy runs the migration). To test: sell a phone, then Return it — tap a reason, hand back less than the price. On the done screen try "Sell another phone to this customer". Then open More → Returns list: check the totals, "Effect on profit", and tap the return for its details. Check the "Phones returned" card on Home, the Returns card in Business overview and Returns in Shop audit. As a salesman, cost and profit must not show.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

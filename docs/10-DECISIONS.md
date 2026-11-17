@@ -362,6 +362,27 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-097 · 2026-11-18 · Accepted · Returns report: every phone that came back, with all its details
+**Context**: a shopkeeper asked where the returned phones are: how many came back, their figures, whether a return was a loss or a profit, when, who returned it, for how much, what money was given or taken, and whether the customer took another phone. The owner asked for the count on the dashboard, the business overview and the shop audit, with every detail, and for a check of what a return itself is missing.
+
+**What a return already had**: the bill and its lines, the customer (asked for on a walk-in sale), value, cash handed back and from which account, the shop's cut, the rest to the khata, a free-text reason, the staff member, the phone's `sale_returned` event, undo. The list showed only the name, numbers, date and value.
+
+**What was missing, and the decision**:
+- **Why it came back** was free text only, so it could not be counted. New nullable `returns.reason_code` (migration `b4d6f8a0c2e5`): changed mind, fault, not as told, price, wants another phone, did not sell, other. Chips in the return form; optional; the note stays. The supplier form's existing three choices send a code too. The code is also on the phone's event.
+- **What comes next** had no action. The done screen now offers "Sell another phone to this customer" (the sale form opens on him: `/sale/new?party=`), "Open the phone to write its fault" (when the reason was a fault) and "See all returns".
+- Nothing else is stored. "Took another phone", "sold again", "days after the sale", "inside warranty" and the effect on profit are all derived.
+
+**The report** (`returns/report.py`, read-only):
+- `GET /api/v1/returns/report?date_from&date_to` (every role; default this month) and `GET /api/v1/shop-audit/returns` (the audit's period). Customers' returns and returns to suppliers are kept apart.
+- Per return: number, date, days after the bill, bill, person and phone number, staff member, reason and note, each phone (label, IMEI, sold / bought for, where it is now, sold again: date and price), value, handed back and from which account, cut, what went to the khata, inside warranty, the customer's next bill within 3 days ("took another phone").
+- Totals: returns, phones, value, handed back, cut, to khata, took another, sold again, inside warranty, deleted returns, and "of N phones sold, M came back".
+- **Effect on profit** (only with `VIEW_COST`, like cost): the sale's profit is gone (`line_total − tax − cost`), the cut is what the shop made instead, so effect = cut − profit taken back. For a return to a supplier the cut is the loss.
+- A return undone later (ADR-090) is not counted; the business overview's old return figure counted it and no longer does.
+
+**Where it shows**: More → Returns list (now the report, with its own dates), a "Phones returned (this month)" card on Home (`returns_today` / `returns_month` on the dashboard), a Returns card in Business overview (count, phones, handed back, cut), and a Returns section in Shop Audit.
+
+**Consequences**: "took another phone" is a rule of thumb (a new bill for the same person within 3 days), not a stored link. Existing returns have no reason code and show "Not said".
+
 ## ADR-096 · 2026-11-18 · Accepted · Graphs on the home screen and the business overview
 **Context**: shopkeepers asked for graphs on the dashboard and in Business overview showing sales, purchases, profit / loss, and what is to get (lene) and to give (dene). The home screen had one 7-day sales bar chart and a money donut; the overview had none.
 

@@ -4,7 +4,7 @@
  *  reports. Every card that opens something still says "See details ›" (owner: users did not know
  *  the cards could be tapped). */
 
-import { AlertTriangle, ArrowDownLeft, ArrowUpRight, Boxes, ClipboardCheck, LayoutDashboard, UserCheck, ChevronLeft, ChevronRight, HandCoins, Landmark, Palette, Receipt, ScanLine, Search, ShieldAlert, Smartphone, Tag, TrendingDown, TrendingUp, Wallet, Wrench } from 'lucide-react'
+import { AlertTriangle, ArrowDownLeft, ArrowUpRight, Boxes, ClipboardCheck, LayoutDashboard, UserCheck, ChevronLeft, ChevronRight, HandCoins, Landmark, Palette, Receipt, ScanLine, Search, ShieldAlert, Smartphone, Tag, TrendingDown, TrendingUp, Undo2, Wallet, Wrench } from 'lucide-react'
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
@@ -29,6 +29,8 @@ import { useModules } from '@/lib/modules'
 import { useLayout, type Layout } from '@/lib/theme'
 
 interface Dash {
+  returns_today?: number
+  returns_month?: number
   cash_in_hand?: string | null
   today_cash?: string
   today_bank?: string
@@ -156,6 +158,7 @@ export default function HomePage() {
           { id: 'toGet', to: '/khata?f=get', help: 'counter.glance.toGet', icon: <ArrowDownLeft size={16} />, tone: 'bg-receivable-tint text-receivable', label: 'counter.toGet', value: dash?.receivable, sub: glance ? `${pick('audit.receivedInPeriod')} ${fmt(glance.debt.received_in_period)}` : undefined },
           { id: 'toGive', to: '/khata?f=give', help: 'counter.glance.toGive', icon: <ArrowUpRight size={16} />, tone: 'bg-payable-tint text-payable', label: 'counter.toGive', value: dash?.payable },
           { id: 'inStock', to: '/stock/summary', help: 'counter.glance.inStock', icon: <Smartphone size={16} />, tone: 'bg-stockt text-stockt-fg', label: 'home.inStock', value: dash?.stock_count, plain: true, sub: worth ? `${pick('home.worth')} ${fmt(worth)}` : undefined },
+          { id: 'returns', to: '/returns', help: 'ret.home', icon: <Undo2 size={16} />, tone: 'bg-ret text-ret-fg', label: 'ret.homeLabel', value: dash?.returns_month ?? 0, plain: true, sub: pick('ret.homeToday').replace('{{n}}', String(dash?.returns_today ?? 0)) },
           { id: 'expenses', to: '/expenses', help: 'counter.glance.expenses', icon: <Receipt size={16} />, tone: 'bg-expense text-expense-fg', label: 'home.expenses', value: rep?.expenses },
         ]} />
         {sec?.pending ? (

@@ -272,6 +272,23 @@ def repairs_report(
     return plain(repairs.repairs(db, ctx.shop_id, p, can_cost=ctx.can(Cap.VIEW_COST)))
 
 
+@router.get("/returns")
+def returns(
+    ctx: Reports,
+    db: DB,
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+):
+    """owner 2026-11-18 (ADR-097): phones that came back from customers and went back to
+    suppliers in the period — count, value, handed back, the cut, the effect on profit, why,
+    by whom, and each return with all its details"""
+    from app.modules.returns import report as rep
+
+    p = _p(db, ctx, preset, date_from, date_to)
+    return plain(rep.report(db, ctx.shop_id, p.date_from, p.date_to, ctx.can(Cap.VIEW_COST)))
+
+
 @router.get("/lending")
 def lending_report(
     ctx: Reports,

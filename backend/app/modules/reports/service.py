@@ -310,6 +310,8 @@ def dashboard(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
         "stock_value_asking": money(sum((d.asking_price or ZERO for d in stock), ZERO)),
         # installments (owner 2026-10-29): due today / late, for the home screen
         **__import__("app.modules.installments.service", fromlist=["counts"]).counts(db, shop_id),
+        # phones customers brought back, today and this month (ADR-097)
+        **__import__("app.modules.returns.report", fromlist=["counts"]).counts(db, shop_id, today),
         # len-den return dates (docs/32 §7)
         **__import__("app.modules.payments.lending_due", fromlist=["counts"]).counts(db, shop_id),
         # stock alert (owner 2026-10-29): counted items at or under their reorder level

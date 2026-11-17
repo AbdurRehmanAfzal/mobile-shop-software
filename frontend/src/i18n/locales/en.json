@@ -2983,7 +2983,8 @@
       "sales": "Sales & purchases",
       "staff": "Staff",
       "lending": "Len-den",
-      "repairs": "Repairs"
+      "repairs": "Repairs",
+      "returns": "Returns"
     },
     "preset": {
       "today": "Today",
@@ -4877,5 +4878,69 @@
     "profit": "Profit / loss by day",
     "profitSum": "Profit in these days",
     "debt": "To get and to give"
+  },
+  "ret": {
+    "fromCustomers": "From customers",
+    "toSuppliers": "To suppliers",
+    "t": {
+      "count": "Returns",
+      "phones": "phones",
+      "amount": "Value that came back",
+      "refund": "Handed back",
+      "refundGot": "Got back from the supplier",
+      "kept": "Cut kept by the shop",
+      "cutLost": "Cut taken by the supplier",
+      "toKhata": "Went to the khata",
+      "undone": "Sale profit taken back",
+      "net": "Effect on profit",
+      "rate": "Of {{sold}} phones sold, {{n}} came back ({{pct}}%)",
+      "another": "Took another phone",
+      "again": "Sold again",
+      "warranty": "Inside warranty",
+      "voided": "Deleted returns"
+    },
+    "why": "Why they came back",
+    "who": "Who took them back",
+    "list": "Each return",
+    "none": "No returns in these days",
+    "reason": {
+      "changed_mind": "Changed his mind",
+      "fault": "Fault in the phone",
+      "not_as_told": "Not as told (PTA / condition)",
+      "price": "Found it cheaper",
+      "another_phone": "Wants another phone",
+      "not_selling": "Did not sell",
+      "other": "Other",
+      "none": "Not said"
+    },
+    "d": {
+      "no": "No",
+      "when": "Returned on",
+      "bill": "Bill",
+      "billDate": "Bill date",
+      "days": "{{n}} days after",
+      "sameDay": "the same day",
+      "customer": "Brought back by",
+      "supplier": "Sent back to",
+      "by": "Taken back by (staff)",
+      "reason": "Why",
+      "note": "Note",
+      "soldFor": "Sold for",
+      "boughtFor": "Bought for",
+      "cost": "Cost",
+      "now": "Where it is now",
+      "again": "Sold again for",
+      "againProfit": "Profit on selling again",
+      "from": "from",
+      "yes": "Yes",
+      "open": "Open"
+    },
+    "whyTitle": "Why is it coming back?",
+    "sellAnother": "Sell another phone to this customer",
+    "seeAll": "See all returns",
+    "markFaulty": "Open the phone to write its fault",
+    "homeLabel": "Phones returned (this month)",
+    "homeToday": "today {{n}}",
+    "ovN": "{{n}} returns · {{p}} phones"
   }
 }

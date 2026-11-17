@@ -58,6 +58,7 @@ export { default as AuditReportCenterPage } from '@/features/audit/ReportCenterP
 export { default as AuditTradePage } from '@/features/audit/TradePage'
 export { default as AuditStaffPage } from '@/features/audit/StaffAuditPage'
 export { default as AuditLendingPage } from '@/features/audit/LendingAuditPage'
+export { default as AuditReturnsPage } from '@/features/audit/ReturnsAuditPage'
 export { default as StaffPage } from '@/features/more/StaffPage'
 export { default as LoginActivityPage } from '@/features/more/LoginActivityPage'
 export { default as CredentialHistoryPage } from '@/features/more/CredentialHistoryPage'

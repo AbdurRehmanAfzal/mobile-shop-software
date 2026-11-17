@@ -1981,3 +1981,18 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - tsc; vitest (53).
 - Playwright `trend-charts` passes (figures on Home, 30 days = 30 bars, same graphs on the overview); looked at the screenshot.
 - Colour check: the to get / to give tokens fail colour-blind separation, hence the dashed second line.
+
+### 2026-11-18 — returns report (ADR-097)
+**Owner** (shopkeeper): returned phones show nowhere in detail — how many, their figures, loss or profit, when, who, for how much, money given or taken, whether the customer took another phone; show the count on the dashboard, business overview and shop audit; first check what a return itself is missing.
+**Done**:
+- Audit of the return: only "why" (countable) and the next actions were missing. `returns.reason_code` (migration `b4d6f8a0c2e5`), chips in the return form, three buttons on the done screen, `/sale/new?party=`.
+- `returns/report.py`; `GET /returns/report`, `GET /shop-audit/returns`; `returns_today` / `returns_month` on the dashboard; the overview's return figures now leave out undone returns and carry phones / handed back / cut.
+- `ReturnsReport.tsx` (Returns list and Shop Audit → Returns), Home card, Business overview card.
+- Strings and five help texts in en / ur / roman; manual ch. on returns (PDFs rebuilt); ADR-097, CLAUDE.md, docs/29.
+- `e2e/return.spec.ts`: the Home "Return" link is taken from the fast actions (the new card also has "returned" in its name).
+**Verified**: 
+- pytest: full suite passes; new `test_returns_report` (3): a customer's return with every field, the effect on profit, took another phone, sold again, the dashboard / overview / audit counts, a salesman without cost; an undone return leaves the report; a return to a supplier, reason codes, another shop sees nothing.
+- tsc; vitest (53, including the help-text check).
+- Playwright: new `returns-report` passes (reason chip, done-screen buttons, report tiles, the detail sheet, Home card, overview card, audit section, sale form opening on the customer); `return`, `purchase-return`, `exchange-return`, `overview`, `home-big`, `delete-everywhere`, `edit-undo`, `trend-charts` pass.
+- Looked at the report screenshot in English.
+**Not done**: the returns section is not in the Shop Audit report centre's PDF / Excel downloads; no chart of returns over time.
