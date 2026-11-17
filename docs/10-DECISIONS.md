@@ -362,6 +362,21 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-098 · 2026-11-19 · Accepted · A special price for one shop, a sale for everyone, and a payment recorded with its package
+**Context**: the owner gives some customers a lower fee (a shop gets Pro for 3,000 instead of 5,000). That shop sent 3,000 but its fees page still said 5,000, because a package the shop is not yet on always costs the list price. The owner asked for a way to give one shop a discount for a number of months — the shop still sees 5,000, with a line saying the provider gave it the old price — plus "sale" options, and a way to record a payment himself with the package, modules and months, for customers who just send the money and ask to be activated.
+
+**Decision**:
+- **Special price for one shop**: `organisations.fee_deal` (JSON, migration `c6e8a0b2d4f7`, NULL for every existing shop): `{plan, price, months, months_left, note, set_on}`; `months_left` NULL = no end. `PUT / DELETE /admin/shops/{id}/deal`; audited.
+  - In the quote the special price covers the months it has left; the rest of the order costs the usual price (a year with 6 special months = 6 × 3,000 + 6 × 5,000). The discount for years still applies on top.
+  - Approving a payment uses the months up (`order.apply`); nothing is used up by looking or by a rejected payment.
+  - The shop sees the list price crossed out, its own price, how many months remain and the provider's note; the summary has "Your discount".
+  - When the months are over the package costs the list price again, and the shop's monthly fee is set to it by the payment that used the last month. Removing the special price puts a shop that was paying it back on the list price.
+- **Sale for everyone**: `sale_pct` and `sale_until` in the pricing settings (Website prices). It takes that much off the list price of packages and of modules added to a package. It never applies to a shop's own agreed fee or special price, and the monthly fee stored after a sale order is the list price, so the sale ends when it ends. The landing page is not changed by it.
+- **Payment recorded with its package**: `POST /admin/shops/{id}/payments` takes `order` (package, extra modules, months 1–60 — any number, not only whole years); `POST /admin/shops/{id}/quote` shows what it should cost that shop first. It is logged as received with a receipt and applied at once through the same `order.apply`. A payment without `order` still only adds months.
+- App: `AdminDealCard.tsx` in the shop sheet (both actions), sale fields in Website prices, the banner and crossed-out prices in `PackagePicker.tsx`.
+
+**Consequences**: the rule "a shop's own package costs its own agreed fee" (ADR-095) now has one exception: a package that has or had a special price goes back to the list price when the special months are over. The quote's `monthly` is the fee the shop is on after the order; `per_month` is what the first month of the order costs.
+
 ## ADR-097 · 2026-11-18 · Accepted · Returns report: every phone that came back, with all its details
 **Context**: a shopkeeper asked where the returned phones are: how many came back, their figures, whether a return was a loss or a profit, when, who returned it, for how much, what money was given or taken, and whether the customer took another phone. The owner asked for the count on the dashboard, the business overview and the shop audit, with every detail, and for a check of what a return itself is missing.
 

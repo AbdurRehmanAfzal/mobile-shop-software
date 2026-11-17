@@ -1518,7 +1518,29 @@
       "total": "Order total",
       "short": "Paid less than the order total",
       "moneyOnly": "Months only, package unchanged"
-    }
+    },
+    "deal": {
+      "title": "Special price for this shop",
+      "hint": "The shop sees the list price crossed out and this price beside it, with your note. Only the months you give are at this price.",
+      "price": "Price per month (Rs)",
+      "months": "For how many months (empty = no end)",
+      "note": "Note for the shop (optional)",
+      "save": "Give this price",
+      "remove": "Remove the special price",
+      "left": "{{n}} months left",
+      "noEnd": "no end",
+      "saved": "Saved. The shop now sees this price."
+    },
+    "payOrder": {
+      "title": "Payment received: package, modules and months",
+      "hint": "For a customer who sent the money and asked you to activate. The shop gets the package, the modules and the months at once.",
+      "modules": "Extra modules",
+      "total": "It should be",
+      "apply": "Payment received — activate",
+      "done": "Activated. Receipt"
+    },
+    "salePct": "Sale for everyone (% off · 0 = none)",
+    "saleUntil": "Sale until (empty = until you switch it off)"
   },
   "field": {
     "badMobile": "Enter a 10-digit mobile number starting with 3, e.g. 300 1234567",
@@ -2100,9 +2122,19 @@
         "discount": "Discount ({{n}}%)",
         "once": "One-time services",
         "owed": "Fee still unpaid",
-        "total": "Total to pay"
+        "total": "Total to pay",
+        "saved": "Your discount",
+        "dealPart": "{{n}} months at your special price, the rest at the usual price"
       },
-      "onConfirm": "Your package changes when the provider confirms the payment."
+      "onConfirm": "Your package changes when the provider confirms the payment.",
+      "deal": {
+        "title": "A special price for you",
+        "text": "The software provider has given you {{pkg}} for {{price}} a month instead of {{list}}.",
+        "months": "This price is for {{n}} more months.",
+        "noEnd": "This price has no end date."
+      },
+      "sale": "Sale: {{n}}% off",
+      "saleUntil": "until {{date}}"
     }
   },
   "landing": {

@@ -2532,6 +2532,8 @@ Sirf owner: More → **Software fees**.
 - **Is package mein module shamil karein**: woh module tick karein jo package mein nahi (maslan Repairs); us ki mahana fee saath likhi hai.
 - **Izafi services**: koi service tick karein, jaise purana stock dalwana.
 - **Kitne arse ke liye**: **1 mahina**, ya **1 saal** se **5 saal** tak. Zyada saal pehle ada karna sasta hai: 1 saal par 5%, 2 saal par 10%, aur 5 saal par 25% riayat.
+- **Aap ke liye khaas qeemat**: agar software provider ne aap ki dukaan ko koi package kam qeemat par diya hai to upar sabz khana yeh batata hai. Us package par aam qeemat kati hui aur neeche aap ki qeemat nazar aati hai, aur yeh ke yeh mazeed kitne mahine chale gi. Un mahinon ke baad aam qeemat lagti hai. Neeche wale khane mein **Aap ki riayat** aap ki bachat hai.
+- **Sale**: jab provider sale lagaye to upar ek line riayat ka feesad aur aakhri din dikhati hai; aam qeematein kati hui nazar aati hain.
 - Neeche wala khana **Fi mahina**, **Riayat** aur **Kul adaigi** dikhata hai. Yehi total **Raqam (Rs)** mein pehle se likha hota hai.
 
 **Misaal:** Pro 2 saal ke liye: 5,000 × 24 = 120,000, 10% riayat ke baad Rs. 108,000.

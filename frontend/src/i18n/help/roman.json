@@ -2043,6 +2043,16 @@
       "title": "Website ki qeematein",
       "body": "Plan ki qeematein, setup fee, saal ki offer, trial ke din aur add-ons jo landing page par dikhte hain. Yahan badalne se page foran badalta hai; kisi maujooda dukaan ki fees nahi badalti.",
       "example": "Pro 3,000 / mahina, saal 10 mahinon ka → page par Rs. 2,500 / mahina, saal ka Rs. 30,000."
+    },
+    "deal": {
+      "title": "Is dukaan ke liye khaas qeemat",
+      "body": "Kisi ek dukaan ko package list qeemat se kam mein dein, chand mahinon ke liye ya baghair had ke. Dukaan ko list qeemat kati hui, apni qeemat aur aap ka note nazar aata hai. Mahine poore hone par package dobara list qeemat par aa jata hai.",
+      "example": "Pro Rs. 5,000 ka hai. Aap is dukaan ko Pro 6 mahine ke liye Rs. 3,000 mein dete hain → use 5,000 kata hua aur 3,000 nazar aata hai; satwan mahina 5,000 ka hai."
+    },
+    "payOrder": {
+      "title": "Payment aa gayi: package, modules aur mahine",
+      "body": "Jab customer raqam bhej kar activate karne ko kahe to yahan package, izafi modules aur mahinon ke saath darj karein. Yeh raseed ke saath wasool shuda likhi jati hai aur dukaan ko sab kuch foran mil jata hai.",
+      "example": "Us ne apni khaas qeemat par Pro ke 3 mahinon ke Rs. 9,000 bheje → Pro, 3 mahine, raqam 9,000 chunein → activate karein."
     }
   },
   "provider": {

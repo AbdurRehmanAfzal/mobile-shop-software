@@ -61,6 +61,7 @@ class AdminShopOut(BaseModel):
     modules: list[str]
     modules_custom: bool
     fee_due: Decimal = Decimal(0)  # unpaid fee from packages given on credit (ADR-053)
+    fee_deal: dict | None = None  # this shop's special price (ADR-098)
     deleted_at: datetime | None = None  # in the bin (ADR-054)
     deleted_reason: str | None = None
 
@@ -92,14 +93,30 @@ class PlanIn(BaseModel):
     set_grace: bool = False
 
 
+class AdminOrderIn(BaseModel):
+    plan: Literal["basic", "pro", "chain"]
+    modules: list[str] = Field(default_factory=list, max_length=40)
+    addons: list[int] = Field(default_factory=list, max_length=20)
+    months: int = Field(ge=1, le=60)  # any number of months, not only whole years
+
+
+class FeeDealIn(BaseModel):
+    plan: Literal["basic", "pro", "chain"]
+    price: Decimal = Field(ge=0, le=10_000_000)  # PKR per month for this shop
+    months: int | None = Field(default=None, ge=1, le=120)  # None = no end
+    note: str | None = Field(default=None, max_length=200)  # shown to the shop
+
+
 class ManualPaymentIn(BaseModel):
     amount: Decimal = Field(gt=0)
     method: str = Field(default="cash", min_length=1, max_length=60)
     # 0 = the whole payment only clears unpaid fee (ADR-053)
-    months: int = Field(default=1, ge=0, le=36)
+    months: int = Field(default=1, ge=0, le=60)
     reference: str | None = Field(default=None, max_length=80)
     paid_on: date | None = None
     note: str | None = Field(default=None, max_length=300)
+    # ADR-098: the package, modules and months this payment is for; the shop gets them at once
+    order: AdminOrderIn | None = None
 
 
 class CreditIn(BaseModel):
@@ -289,6 +306,7 @@ def _rows(db, shops: list[Shop]) -> list[AdminShopOut]:
                 modules=info["modules"],
                 modules_custom=info["modules_custom"],
                 fee_due=owed.get(s.organisation_id, Decimal(0)),
+                fee_deal=org.fee_deal,
                 deleted_at=org.deleted_at,
                 deleted_reason=org.deleted_reason,
             )
@@ -495,18 +513,66 @@ def put_billing(data: BillingIn, current: Super, db: DB):
 def record_payment(shop_id: uuid.UUID, data: ManualPaymentIn, current: Super, db: DB):
     """A payment received by hand: logged as verified and the plan extended at once."""
     shop = _shop(db, shop_id)
+    snap = None
+    if data.order is not None:
+        from app.modules.plan import order as orders
+
+        q = orders.quote(db, shop.organisation, any_months=True, **data.order.model_dump())
+        snap = orders.snapshot(q)
     p = fees.record_manual(
         db,
         shop,
         by=current.user,
         amount=data.amount,
         method=data.method,
-        months=data.months,
+        months=data.order.months if data.order else data.months,
+        order=snap,
         reference=data.reference,
         paid_on=data.paid_on,
         note=data.note,
     )
     return next(r for r in fees.listing(db, None) if r["id"] == p.id)
+
+
+@router.post("/shops/{shop_id}/quote")
+def quote_for_shop(shop_id: uuid.UUID, data: AdminOrderIn, _: Super, db: DB):
+    """ADR-098: what a package, modules and months cost this shop (its special price and any
+    sale counted), before the provider records the payment"""
+    from app.modules.plan import order as orders
+    from app.modules.shopaudit.router import plain
+
+    shop = _shop(db, shop_id)
+    return plain(orders.quote(db, shop.organisation, any_months=True, **data.model_dump()))
+
+
+@router.put("/shops/{shop_id}/deal", response_model=AdminShopOut)
+def set_fee_deal(shop_id: uuid.UUID, data: FeeDealIn, current: Super, db: DB):
+    """ADR-098: this shop gets a package at a special monthly price for a number of months"""
+    from app.modules.plan import order as orders
+
+    shop = _shop(db, shop_id)
+    orders.set_deal(
+        db,
+        shop.organisation,
+        by=current.user.id,
+        shop_id=shop.id,
+        plan=data.plan,
+        price=data.price,
+        months=data.months,
+        note=data.note,
+    )
+    db.refresh(shop)
+    return _rows(db, [shop])[0]
+
+
+@router.delete("/shops/{shop_id}/deal", response_model=AdminShopOut)
+def remove_fee_deal(shop_id: uuid.UUID, current: Super, db: DB):
+    from app.modules.plan import order as orders
+
+    shop = _shop(db, shop_id)
+    orders.clear_deal(db, shop.organisation, by=current.user.id, shop_id=shop.id)
+    db.refresh(shop)
+    return _rows(db, [shop])[0]
 
 
 @router.post("/shops/{shop_id}/credit", response_model=AdminShopOut, status_code=201)

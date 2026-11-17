@@ -2532,6 +2532,8 @@ Owner only: More → **Software fees**.
 - **Add a module to this package**: tick a module the package does not have (for example Repairs); its fee per month is shown beside it.
 - **Extra services**: tick a service such as entering your old stock.
 - **For how long**: **1 month**, or **1 year** up to **5 years**. Paying years ahead is cheaper: 1 year 5% off, 2 years 10% off, up to 5 years 25% off.
+- **A special price for you**: if the software provider has given your shop a package for less, a green box at the top says so. That package shows the usual price crossed out with your price under it, and for how many more months it lasts. Months beyond those cost the usual price. **Your discount** in the box below is what you save.
+- **Sale**: when the provider runs a sale, a line at the top shows the per cent off and the last day; the usual prices are crossed out.
 - The box below shows **Per month**, the **Discount** and the **Total to pay**. That total is already filled in **Amount (Rs)**.
 
 **Example:** Pro for 2 years: 5,000 × 24 = 120,000, less 10% = Rs. 108,000.

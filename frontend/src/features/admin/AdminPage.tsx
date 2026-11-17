@@ -13,6 +13,7 @@ import { useAuth, type MeOut } from '@/lib/auth'
 import { api, get } from '@/lib/api'
 import { fileObjectUrl } from '@/lib/files'
 import AppLinkCard, { APP_LINK, SITE } from './AppLinkCard'
+import AdminDealCard from './AdminDealCard'
 import FeeCreditCard from './FeeCreditCard'
 import ShopBinCard from './ShopBinCard'
 import AdminCredentials from './AdminCredentials'
@@ -20,7 +21,7 @@ import AdminPricing from './AdminPricing'
 import { normalisePhone } from '@/lib/format'
 import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
 
-interface AdminShop { id: string; organisation_id: string; name: string; city: string | null; owner_name: string | null; owner_phone: string | null; users: number; branches: number; created_at: string; plan: string; plan_expires_at: string | null; days_left: number | null; monthly_fee: string; fee_note: string | null; plan_status: 'unlimited' | 'ok' | 'due_soon' | 'expired' | 'locked'; modules: string[]; modules_custom: boolean; grace_days?: number | null; fee_due?: string; deleted_at?: string | null; deleted_reason?: string | null }
+interface AdminShop { id: string; organisation_id: string; name: string; city: string | null; owner_name: string | null; owner_phone: string | null; users: number; branches: number; created_at: string; plan: string; plan_expires_at: string | null; days_left: number | null; monthly_fee: string; fee_note: string | null; plan_status: 'unlimited' | 'ok' | 'due_soon' | 'expired' | 'locked'; modules: string[]; modules_custom: boolean; grace_days?: number | null; fee_due?: string; fee_deal?: { plan: string; price: string; months: number | null; months_left: number | null; note: string | null } | null; deleted_at?: string | null; deleted_reason?: string | null }
 interface BillingOut { bank: { bank_name: string; account_title: string; account_number: string; iban: string; branch: string }; support: { phone: string; whatsapp: string }; schedule: { info_days: number; warn_days: number; urgent_days: number; grace_days: number; snooze_hours: number }; note: { en: string; ur: string; roman: string }; qr_path: string | null; placeholders: boolean }
 type DueFilter = 'all' | 'due' | 'locked' | 'unpaid' | 'bin'
 interface Account { label: string; account_name: string; number: string; note: string | null }
@@ -430,6 +431,8 @@ export default function AdminPage() {
             <ErrorText error={recordPay.error} />
             {recordPay.data ? <BiAlert text={{ en: `${pick('admin.receipt')} ${recordPay.data.receipt_no ?? ''}`, ur: `${pick('admin.receipt')} ${recordPay.data.receipt_no ?? ''}`, roman: `${pick('admin.receipt')} ${recordPay.data.receipt_no ?? ''}` }} kind="success" /> : null}
             <BiButton text="admin.recordPayment" icon={<CreditCard size={20} />} variant="secondary" full disabled={!Number(pay.amount)} loading={recordPay.isPending} onClick={async () => { await recordPay.mutateAsync(pay); inv('admin-shops', 'fee-stats'); const rows = await get<AdminShop[]>('/api/v1/admin/shops'); const r = rows.find((x) => x.id === sel.id); if (r) setSel(r) }} data-testid="record-payment" />
+
+            <AdminDealCard key={sel.id} shop={sel} onSaved={(r) => { setSel(r); setPlan({ plan: r.plan, monthly_fee: Number(r.monthly_fee) ? String(Number(r.monthly_fee)) : '', expires_on: r.plan_expires_at ? r.plan_expires_at.slice(0, 10) : '', note: r.fee_note ?? '' }); setMods(r.modules_custom ? r.modules : null) }} />
 
             <FeeCreditCard shop={sel} onSaved={(r) => { setSel(r); setPlan({ ...plan, expires_on: r.plan_expires_at ? r.plan_expires_at.slice(0, 10) : '' }) }} />
 

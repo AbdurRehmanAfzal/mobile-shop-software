@@ -12,7 +12,7 @@ import { MODULE_KEYS } from '@/lib/modules'
 import { useGet, useInvalidate } from '@/lib/queries'
 
 interface Addon { en: string; ur: string; roman: string; price: number | string; per: 'month' | 'year' | 'once' }
-interface Pricing { prices: Record<string, number | string>; setup_fee: Record<string, number | string>; yearly_paid_months: number | string; trial_days: number | string; addons: Addon[]; module_prices?: Record<string, number | string>; discount_per_year?: number | string; max_years?: number | string }
+interface Pricing { prices: Record<string, number | string>; setup_fee: Record<string, number | string>; yearly_paid_months: number | string; trial_days: number | string; addons: Addon[]; module_prices?: Record<string, number | string>; discount_per_year?: number | string; max_years?: number | string; sale_pct?: number | string; sale_until?: string }
 const PLANS = ['basic', 'pro', 'chain'] as const
 
 export default function AdminPricing() {
@@ -39,6 +39,8 @@ export default function AdminPricing() {
         module_prices: Object.fromEntries(MODULE_KEYS.map((k) => [k, num(p.module_prices?.[k] ?? 0)])),
         discount_per_year: num(p.discount_per_year ?? 5),
         max_years: num(p.max_years ?? 5),
+        sale_pct: num(p.sale_pct ?? 0),
+        sale_until: p.sale_until || null,
         addons: p.addons.filter((a) => a.en.trim()).map((a) => ({ ...a, price: num(a.price) })),
       })
       await inv('admin-pricing')
@@ -71,6 +73,10 @@ export default function AdminPricing() {
             <div className="grid grid-cols-2 gap-2">
               <BiInput label="admin.discountYear" type="number" inputMode="numeric" min={0} max={15} value={p.discount_per_year ?? 5} onChange={(e) => setP({ ...p, discount_per_year: e.target.value })} className="num" data-testid="discount-year" />
               <BiInput label="admin.maxYears" type="number" inputMode="numeric" min={1} max={5} value={p.max_years ?? 5} onChange={(e) => setP({ ...p, max_years: e.target.value })} className="num" data-testid="max-years" />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <BiInput label="admin.salePct" type="number" inputMode="numeric" min={0} max={90} value={p.sale_pct ?? 0} onChange={(e) => setP({ ...p, sale_pct: e.target.value })} className="num" data-testid="sale-pct" />
+              <BiInput label="admin.saleUntil" type="date" value={p.sale_until ?? ''} onChange={(e) => setP({ ...p, sale_until: e.target.value })} dir="ltr" data-testid="sale-until" />
             </div>
             <BiLabel text="admin.modulePrices" size="md" bold />
             <div className="grid grid-cols-2 gap-2 rounded-2xl border border-line p-3">

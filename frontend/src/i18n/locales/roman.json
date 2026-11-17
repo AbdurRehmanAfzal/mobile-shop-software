@@ -1518,7 +1518,29 @@
       "total": "Order ka total",
       "short": "Order ke total se kam ada kiya",
       "moneyOnly": "Sirf mahine, package wahi"
-    }
+    },
+    "deal": {
+      "title": "Is dukaan ke liye khaas qeemat",
+      "hint": "Dukaan ko list qeemat kati hui aur yeh qeemat saath nazar aati hai, aap ke note ke saath. Sirf diye gaye mahine is qeemat par hain.",
+      "price": "Mahana qeemat (Rs)",
+      "months": "Kitne mahinon ke liye (khali = koi had nahi)",
+      "note": "Dukaan ke liye note (ikhtiyari)",
+      "save": "Yeh qeemat dein",
+      "remove": "Khaas qeemat hatayein",
+      "left": "{{n}} mahine baqi",
+      "noEnd": "koi had nahi",
+      "saved": "Mehfooz ho gaya. Dukaan ko ab yeh qeemat nazar aati hai."
+    },
+    "payOrder": {
+      "title": "Payment aa gayi: package, modules aur mahine",
+      "hint": "Us customer ke liye jis ne raqam bhej kar activate karne ko kaha. Dukaan ko package, modules aur mahine ek saath mil jate hain.",
+      "modules": "Izafi modules",
+      "total": "Banti raqam",
+      "apply": "Payment aa gayi — activate karein",
+      "done": "Activate ho gaya. Raseed"
+    },
+    "salePct": "Sab ke liye sale (% riayat · 0 = nahi)",
+    "saleUntil": "Sale kab tak (khali = jab tak aap band na karein)"
   },
   "field": {
     "badMobile": "3 se shuru hone wala 10 hindson ka mobile number likhein, maslan 300 1234567",
@@ -2100,9 +2122,19 @@
         "discount": "Riayat ({{n}}%)",
         "once": "Ek baar ki services",
         "owed": "Baqi fee",
-        "total": "Kul adaigi"
+        "total": "Kul adaigi",
+        "saved": "Aap ki riayat",
+        "dealPart": "{{n}} mahine khaas qeemat par, baqi aam qeemat par"
       },
-      "onConfirm": "Payment ki tasdeeq ke baad aap ka package badal jaye ga."
+      "onConfirm": "Payment ki tasdeeq ke baad aap ka package badal jaye ga.",
+      "deal": {
+        "title": "Aap ke liye khaas qeemat",
+        "text": "Software provider ne aap ko {{pkg}} {{list}} ke bajaye {{price}} mahana mein diya hai.",
+        "months": "Yeh qeemat mazeed {{n}} mahinon ke liye hai.",
+        "noEnd": "Is qeemat ki koi aakhri tareekh nahi."
+      },
+      "sale": "Sale: {{n}}% riayat",
+      "saleUntil": "{{date}} tak"
     }
   },
   "landing": {

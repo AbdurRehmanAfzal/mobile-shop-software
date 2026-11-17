@@ -36,6 +36,9 @@ class Organisation(UUIDPk, Timestamped, Base):
     plan_status_seen: Mapped[str | None] = mapped_column(String(10))
     # owner 2026-10-29: modules switched on for this shop; None = the plan's defaults
     modules: Mapped[list | None] = mapped_column(JSON)
+    # owner 2026-11-19 (ADR-098): a package at a special price for this shop —
+    # {plan, price, months, months_left (None = no end), note, set_on}; None = no special price
+    fee_deal: Mapped[dict | None] = mapped_column(JSON)
     # owner 2026-11-15 (ADR-080): device approval / staff login hours; empty = both off
     login_rules: Mapped[dict | None] = mapped_column(JSON)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)

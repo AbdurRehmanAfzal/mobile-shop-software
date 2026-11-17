@@ -268,6 +268,11 @@ Server: the deploy runs migration `e4a6c8d0f2b5` (additive: returns, branch tran
 
 **Returns report (2026-11-18, ADR-097)**: nothing to run by hand (the deploy runs the migration). To test: sell a phone, then Return it — tap a reason, hand back less than the price. On the done screen try "Sell another phone to this customer". Then open More → Returns list: check the totals, "Effect on profit", and tap the return for its details. Check the "Phones returned" card on Home, the Returns card in Business overview and Returns in Shop audit. As a salesman, cost and profit must not show.
 
+**Special price, sale, payment with package (2026-11-19, ADR-098)**: nothing to run by hand (the deploy runs the migration). For the customer who sent Rs. 3,000 for Pro, after the deploy do one of these in Super admin → his shop:
+- **Special price for this shop**: Pro, 3000, the number of months you promised (empty = no end), a note → "Give this price". His fees page then shows 5,000 crossed out and 3,000, and he can send "I have paid" for 3,000 himself.
+- or **Payment received: package, modules and months**: Pro, months 1, amount 3000 → "Payment received — activate". He gets Pro at once with a receipt. (Give the special price first, or the amount it suggests will be 5,000.)
+To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees page shows the list prices crossed out; set it back to 0.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

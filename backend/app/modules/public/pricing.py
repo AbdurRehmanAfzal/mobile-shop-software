@@ -10,6 +10,7 @@ added on top of a package (`module_prices`, per month; 0 = not sold on its own) 
 for paying years ahead (`discount_per_year` per cent for each year, up to `max_years`)."""
 
 import copy
+import datetime as dt
 from decimal import Decimal
 
 from pydantic import BaseModel, Field
@@ -46,6 +47,10 @@ DEFAULTS: dict = {
     },
     "discount_per_year": 5,  # per cent off for each year paid at once: 1 year 5 … 5 years 25
     "max_years": 5,
+    # a sale for everyone (ADR-098): per cent off the list price of packages and modules, until
+    # this day ("" = until switched off); 0 = no sale
+    "sale_pct": 0,
+    "sale_until": "",
     # [{en, ur, roman, price, per: month | year | once}] — services, not features: every plan's
     # features stay as they are
     "addons": [
@@ -97,6 +102,8 @@ class PricingIn(BaseModel):
     module_prices: dict[str, Decimal] = Field(default_factory=dict)
     discount_per_year: int | None = Field(default=None, ge=0, le=15)
     max_years: int | None = Field(default=None, ge=1, le=5)
+    sale_pct: int | None = Field(default=None, ge=0, le=90)
+    sale_until: dt.date | None = None
     addons: list[Addon] = Field(default_factory=list, max_length=20)
 
 
@@ -130,6 +137,9 @@ def set_(db: Session, data: PricingIn) -> dict:
         clean["discount_per_year"] = data.discount_per_year
     if data.max_years is not None:
         clean["max_years"] = data.max_years
+    if data.sale_pct is not None:
+        clean["sale_pct"] = data.sale_pct
+        clean["sale_until"] = data.sale_until.isoformat() if data.sale_until else ""
     clean["addons"] = [
         {
             "en": a.en.strip(),

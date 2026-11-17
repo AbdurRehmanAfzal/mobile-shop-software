@@ -2043,6 +2043,16 @@
       "title": "Website prices",
       "body": "The plan prices, setup fee, yearly offer, trial days and add-ons shown on the landing page. Changing them here changes the page at once; it does not change what any existing shop pays.",
       "example": "Pro 3,000 / month, a year costs 10 months → the page shows Rs. 2,500 / month, paid for the year Rs. 30,000."
+    },
+    "deal": {
+      "title": "Special price for this shop",
+      "body": "Give one shop a package for less than the list price, for a number of months or with no end. The shop still sees the list price, crossed out, with its own price and your note. When the months are used up the package costs the list price again.",
+      "example": "Pro is Rs. 5,000. You give this shop Pro for Rs. 3,000 for 6 months → it sees 5,000 crossed out and 3,000; the 7th month is 5,000."
+    },
+    "payOrder": {
+      "title": "Payment received: package, modules and months",
+      "body": "When a customer sends the money and asks you to activate, record it here with the package, any extra modules and the months. It is logged as received with a receipt and the shop gets everything at once.",
+      "example": "He sent Rs. 9,000 for 3 months of Pro at his special price → choose Pro, 3 months, amount 9,000 → activate."
     }
   },
   "provider": {

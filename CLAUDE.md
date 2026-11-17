@@ -43,6 +43,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Read ADR-097 before touching `backend/app/modules/returns/report.py`, `ReturnsReport.tsx` or the return form's reason chips.
 - Rules: the report is read-only and derived (return documents, bill lines, phones, events) — only `reason_code` is stored; customers' returns and returns to suppliers stay apart; cost and the effect on profit only with `VIEW_COST`; a return undone later is never counted.
 
+## Special price, sale, payment with package (owner 2026-11-19, ADR-098)
+- Read ADR-098 before touching `organisations.fee_deal`, `order.deal_for` / `sale_pct` / `set_deal`, or `AdminDealCard.tsx`.
+- Rules: the special price covers only the months it has left and is used up only by an approved payment; the shop always sees the list price beside its own; a sale never touches an agreed fee or a special price and is never stored as a shop's monthly fee; the provider's own payment goes through the same quote and `order.apply`.
+
 ## Barcodes, labels, scanning (owner addendum 4, 2026-10-31, ADR-036)
 - Spec `docs/22-BARCODES-SPEC.md`; what existed / what was built / assumptions / scanner test `docs/23-BARCODES-PLAN.md` — read it before touching `backend/app/modules/barcodes`, `modules/labels`, `frontend/src/lib/scanner.ts` or `ScanListener.tsx`.
 - Rules: a barcode is assigned inside the purchase / item-creation transaction and never changes; each barcode keeps its type; uniqueness spans phones, items, IMEIs and SKUs; screens take scans with `useScan`, the shell handles the rest; labels stay the ADR-024 print page.
