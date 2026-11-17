@@ -904,8 +904,16 @@ def cancel_opening_stock(
     device = get_device(db, shop_id, device_id)
     events = sorted(device.events, key=lambda e: e.seq)
     entry = next((e for e in events if e.document_type == "opening_stock"), None)
-    later = [e for e in events if entry and e.seq > entry.seq and e.type != EventType.VERIFIED]
-    if entry is None or later or device.status != DeviceStatus.IN_STOCK:
+    # ADR-099: labels, price changes, notes, checks and a fault marked / cleared do not block
+    from app.modules.devices.state import moved_since
+
+    later = moved_since(events, entry.seq) if entry else []
+    if (
+        entry is None
+        or later
+        or device.status not in (DeviceStatus.IN_STOCK, DeviceStatus.FAULTY)
+        or device.reserved_party_id is not None
+    ):
         raise Conflict(
             code="device_changed",
             message_en="Only an old-stock phone that is still in stock and unchanged can be removed",

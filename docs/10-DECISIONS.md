@@ -362,6 +362,16 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-099 · 2026-11-19 · Accepted · A fault mark, a label or a price change does not stop a wrong entry being deleted
+**Context**: a salesman entered an iPhone in the wrong category. The owner tried to delete its purchase and got "Device … has moved since this purchase; use a return instead". The phone had never left the shop: its history only had "Marked faulty" and "Faulty cleared". The check (ADR-090) allowed nothing but a verification after the purchase, so even a printed label or a price change blocked the delete.
+
+**Decision**: one rule, `devices.state.moved_since`, used by the three deletes that had the check — a purchase (`void_purchase`), an old-stock phone (`cancel_opening_stock`) and a sale (`void_invoice`).
+- **Not a move**: every status-neutral event (verification, price change, note, barcode, label, lock check, PTA check, reclassification, correction, reserve / unreserve) and a fault marked or cleared — as long as the event posted no money.
+- **Still a move**: a loan, approval, repair, transfer, sale, return, used for parts, or any event with a ledger posting.
+- A purchase or old-stock phone may be deleted while it is in stock **or marked faulty**, and not while it is reserved for a customer.
+
+**Consequences**: nothing else about deleting changes (later payments, exchanges and installments still block; the entry is kept as Deleted; the ledger is reversed, not edited).
+
 ## ADR-098 · 2026-11-19 · Accepted · A special price for one shop, a sale for everyone, and a payment recorded with its package
 **Context**: the owner gives some customers a lower fee (a shop gets Pro for 3,000 instead of 5,000). That shop sent 3,000 but its fees page still said 5,000, because a package the shop is not yet on always costs the list price. The owner asked for a way to give one shop a discount for a number of months — the shop still sees 5,000, with a line saying the provider gave it the old price — plus "sale" options, and a way to record a payment himself with the package, modules and months, for customers who just send the money and ask to be activated.
 

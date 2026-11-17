@@ -111,6 +111,21 @@ NEUTRAL_EVENTS = frozenset(
     }
 )
 
+# owner 2026-11-19 (ADR-099): things that may happen to a phone without it having "moved" — a
+# wrong entry can still be deleted after them. A fault marked or cleared is one: the phone never
+# left the shop and no money was posted.
+HARMLESS_EVENTS = NEUTRAL_EVENTS | {EventType.MARKED_FAULTY, EventType.FAULTY_CLEARED}
+
+
+def moved_since(events, seq: int) -> list:
+    """the events after `seq` that really changed where the phone or its money is"""
+    return [
+        e
+        for e in events
+        if e.seq > seq and (e.type not in HARMLESS_EVENTS or e.ledger_group_id is not None)
+    ]
+
+
 S = DeviceStatus
 E = EventType
 

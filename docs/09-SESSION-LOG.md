@@ -2006,3 +2006,8 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - Playwright: new `fee-deal` passes (admin gives Pro at 3,000 for 6 months; the shop sees 5,000 crossed out, total 3,000, a year 45,600; admin records 10,500 for Pro + Loans for 3 months and the shop has it); `package-order`, `fees`, `fee-credit`, `plans`, `admin-access` pass. `plans.spec`: the "basic" button locator is exact now (the new card has "Basic" chips).
 - Looked at the shop's fees page with the special price in English.
 **Not done**: the landing page does not show a running sale; the special price is not printed on the renewal receipt.
+
+### 2026-11-19 — a wrongly entered phone could not be deleted (ADR-099)
+**Owner** (screenshots): an iPhone 15 Pro Max entered by a salesman in the wrong category; deleting its purchase says "Device … has moved since this purchase; use a return instead". Its history has only "Marked faulty" and "Faulty cleared".
+**Done**: `devices.state.moved_since` — neutral events and a fault marked / cleared (with no ledger posting) are not a move; used by purchase delete, old-stock removal and sale delete; a purchase / old-stock phone may be deleted while in stock or faulty, not while reserved. ADR-099, docs/29.
+**Verified**: pytest: full suite passes; new `test_delete_after_harmless` (4): a purchase deleted after a fault was marked and cleared (the money back in the galla), deleted while still marked faulty, a loan still blocks, an old-stock phone removed after a fault mark. No app change, so no tsc / e2e run.
