@@ -348,6 +348,8 @@ On **Stock → What is my stock worth?** (and on **Stock count**) the **Stock ta
 - Each is **Print (A4)**, or Download / Share as PDF, Excel or CSV. Every Excel is set to print on A4, one page wide, with the header row on every page.
 - Every other report's PDF (sales, purchases, khata…) now prints on A4 portrait too; many columns get a smaller type and wrap.
 
+> **Who it was bought from:** the owner's tally sheet and the owner's own stock list (tick **Bought from** in Fields) show the seller's name and phone number. The staff tally copy and the staff price list show the name only. The customer price list shows no seller.
+
 ### Stock count with the scanner
 
 Once a month (or whenever you feel something is missing) count the shelf with the scanner. The app tells you what is missing and what should not be there.

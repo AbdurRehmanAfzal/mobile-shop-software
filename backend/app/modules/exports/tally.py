@@ -9,7 +9,9 @@ Summary sheet, a Phones sheet with one column per field and a "Found" column, an
 set to print A4 landscape one page wide. Read-only: nothing is written.
 
 The staff copy (owner 2026-11-14, ADR-077, `blind=True`) is the same sheet with no money at all:
-no cost, no asking, no value, no to get / to give, no cash and no seller — only what to count."""
+no cost, no asking, no value, no to get / to give and no cash — only what to count. Who a phone was
+bought from shows on every copy by name (owner 2026-11-17, ADR-093); the seller's phone number only
+on the owner's / manager's."""
 
 import datetime as dt
 import html
@@ -288,6 +290,17 @@ def page(ctx, db, can_cost: bool, ur: bool, blind: bool = False) -> Response:
                 if can_cost
                 else _n(d["asking_price"])
             )
+            # owner 2026-11-17 (ADR-093): bought from — the name on every copy, the phone only on
+            # the owner's / manager's
+            seller = " · ".join(
+                x
+                for x in (
+                    d.get("source_party_name"),
+                    d.get("source_party_phone") if can_cost and not blind else None,
+                )
+                if x
+            )
+            seller_html = f"<br><span class='mu'>{e(seller)}</span>" if seller else ""
             price_td = f"<td class='n'>{price}</td>" if ask else ""
             trs.append(
                 f"<tr><td class='box'><span></span></td><td class='n'>{k}</td>"
@@ -296,7 +309,7 @@ def page(ctx, db, can_cost: bool, ur: bool, blind: bool = False) -> Response:
                 f"<td>{e(cond1)}<br><span class='mu'>{e(cond2)}</span></td>"
                 f"<td>{e(bat1)}<br><span class='mu'>{e(bat2)}</span></td>"
                 f"<td class='mono'>{e(d.get('barcode') or '')}<br><span class='mu'>{e(d.get('location') or '')}</span></td>"
-                f"<td>{e(stat_)}{(' · ' + e(faults)) if faults else ''}<br><span class='mu'>{_days(d.get('first_seen_at') or d.get('last_event_at')) or 0}d</span></td>"
+                f"<td>{e(stat_)}{(' · ' + e(faults)) if faults else ''}<br><span class='mu'>{_days(d.get('first_seen_at') or d.get('last_event_at')) or 0}d</span>{seller_html}</td>"
                 f"{price_td}<td class='note'></td></tr>"
             )
         blocks.append(
@@ -528,7 +541,8 @@ def workbook(ctx, db, can_cost: bool, ur: bool, blind: bool = False) -> Response
             "Barcode",
             "Shelf",
         ]
-        + (["Bought from"] if ask else [])
+        + ["Bought from"]
+        + (["Seller phone"] if can_cost and ask else [])
         + [
             "Status",
             "Faults",
@@ -577,7 +591,8 @@ def workbook(ctx, db, can_cost: bool, ur: bool, blind: bool = False) -> Response
                 d.get("barcode"),
                 d.get("location"),
             ]
-            + ([d.get("source_party_name")] if ask else [])
+            + [d.get("source_party_name")]
+            + ([d.get("source_party_phone")] if can_cost and ask else [])
             + [
                 STATUS.get(d["status"], (d["status"],))[0],
                 ", ".join(d.get("faults") or []) or None,
@@ -597,7 +612,8 @@ def workbook(ctx, db, can_cost: bool, ur: bool, blind: bool = False) -> Response
             c.alignment = Alignment(vertical="top")
     widths = (
         [7, 5, 12, 20, 17, 17, 14, 9, 6, 10, 9, 7, 8, 14, 7, 6, 7, 10, 12, 9]
-        + ([16] if ask else [])
+        + [16]
+        + ([14] if can_cost and ask else [])
         + [11, 16, 6]
         + ([10] if can_cost else [])
         + ([10] if ask else [])

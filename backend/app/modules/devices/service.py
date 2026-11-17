@@ -383,13 +383,13 @@ def with_source(db: Session, rows: list[dict]) -> list[dict]:
             db.execute(select(Purchase.id, Purchase.party_id).where(Purchase.id.in_(bills))).all()
         )
         latest = {k: (now.get(x, p) if x else p, s, x) for k, (p, s, x) in latest.items()}
-    names = dict(
-        db.execute(
-            select(Party.id, Party.name).where(
-                Party.id.in_({p for p, _s, _x in latest.values() if p})
-            )
-        ).all()
-    )
+    sellers = db.execute(
+        select(Party.id, Party.name, Party.phone).where(
+            Party.id.in_({p for p, _s, _x in latest.values() if p})
+        )
+    ).all()
+    names = {i: n for i, n, _p in sellers}
+    phones = {i: p for i, _n, p in sellers}
     held = {r["reserved_party_id"] for r in rows if r.get("reserved_party_id")}
     if held - set(names):
         names.update(dict(db.execute(select(Party.id, Party.name).where(Party.id.in_(held))).all()))
@@ -397,6 +397,8 @@ def with_source(db: Session, rows: list[dict]) -> list[dict]:
         pid = latest.get(r["id"], (None, 0, None))[0]
         r["source_party_id"] = pid
         r["source_party_name"] = names.get(pid)
+        # owner 2026-11-17 (ADR-093): for the owner's printed lists only (not in DeviceOut)
+        r["source_party_phone"] = phones.get(pid)
         r["reserved_party_name"] = names.get(r.get("reserved_party_id"))
     return rows
 

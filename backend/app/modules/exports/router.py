@@ -405,6 +405,11 @@ def stock(
         name = {"screen": "stock", "staff": "stock-prices", "customer": "phones-for-sale"}[copy]
         header = [STOCK_COLS[k][0] for k in keys]
         rows = [[STOCK_COLS[k][1](d) for k in keys] for d in found]
+        if "source" in keys and copy == "screen" and ctx.can(Cap.VIEW_COST):  # ADR-093
+            at = keys.index("source")
+            for r, d in zip(rows, found, strict=True):
+                if r[at] and d.get("source_party_phone"):
+                    r[at] = f"{r[at]} · {d['source_party_phone']}"
         if "pta" in keys:  # ADR-083: CP ID as the shop's own name
             cp, at = _cpid(db, ctx), keys.index("pta")
             for r in rows:

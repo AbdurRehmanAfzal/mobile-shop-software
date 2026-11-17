@@ -1932,3 +1932,10 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Owner**: "basic 2000 pro 5000 r chain 7500 karo price".
 **Done**: defaults 2,000 / 5,000 / 7,500 a month (yearly 20,000 / 50,000 / 75,000); setup fee and add-ons as set on 2026-11-16; `llms.txt`, `index.html`, docs/37, ADR-092 note, docs/29.
 **Verified**: pytest `test_pricing`, `test_public`; Playwright `landing`.
+
+### 2026-11-17 — seller on the tally sheet and price lists (ADR-093)
+**Owner** (shopkeepers): on the A4 tally (owner / staff) and the A4 stock price lists, the owner's list should show who the phone was bought from with name and phone, the staff's only the name; the PDF layout must not be upset.
+**Done**: `source_party_phone` for printed lists only; tally PDF third line in the status cell, Excel columns; staff price list **Bought from**; owner's own list `name · phone`. ADR-093, docs/29, manual.
+**Verified**:
+- pytest `test_stock_a4` (new test: staff list and staff tally have the name and not the number; customer list has neither; owner's list, CSV and tally have both; a salesman's own list has the name only), `test_stock_tally`, `test_devices`.
+- Rendered the four sheets at A4 with a long seller name: no horizontal overflow; looked at the owner tally and the staff list.

@@ -251,6 +251,12 @@ Server: the deploy runs migration `e4a6c8d0f2b5` (additive: returns, branch tran
 - If you saved anything in Super admin → Website prices before this deploy, that saved value wins: open the screen and set the numbers there.
 - Existing shops keep their own fee. To raise a shop's fee, change it on that shop in Super admin.
 
+**Seller on the tally sheet and price lists (2026-11-17, ADR-093)**:
+- Stock → Tally sheet (owner): under each phone's status, the seller's name and number.
+- Tally sheet (staff copy) and Price lists → Staff: the seller's name only.
+- Price lists → Customers: no seller.
+- Your own stock list: tick **Bought from** in Fields → Download → name and number.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |
