@@ -1927,3 +1927,8 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - I looked at the pricing section.
 - The sticker sizes were rendered and measured on screen, not printed.
 **Open**: which gap to build first (docs/37 §5).
+
+### 2026-11-17 — website prices changed again
+**Owner**: "basic 2000 pro 5000 r chain 7500 karo price".
+**Done**: defaults 2,000 / 5,000 / 7,500 a month (yearly 20,000 / 50,000 / 75,000); setup fee and add-ons as set on 2026-11-16; `llms.txt`, `index.html`, docs/37, ADR-092 note, docs/29.
+**Verified**: pytest `test_pricing`, `test_public`; Playwright `landing`.

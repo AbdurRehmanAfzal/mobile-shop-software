@@ -247,7 +247,7 @@ Server: the deploy runs migration `e4a6c8d0f2b5` (additive: returns, branch tran
 - Decisions (see `docs/37-CLOUDPOS-COMPARISON.md` §5): the price numbers and setup fee, which add-ons to sell, which gaps to build first (suggested: easy load, warranty, quotations, commission).
 
 **New website prices (2026-11-16)**:
-- After the deploy the landing page shows 2,500 / 4,000 / 7,000 a month, setup 5,000 / 8,000 / 15,000 and four add-ons.
+- After the deploy the landing page shows 2,000 / 5,000 / 7,500 a month, setup 5,000 / 8,000 / 15,000 and four add-ons.
 - If you saved anything in Super admin → Website prices before this deploy, that saved value wins: open the screen and set the numbers there.
 - Existing shops keep their own fee. To raise a shop's fee, change it on that shop in Super admin.
 

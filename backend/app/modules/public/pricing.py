@@ -1,7 +1,7 @@
 """The prices on the landing page (owner 2026-11-16, ADR-092): monthly price and one-time setup fee
 per plan, how many months a year paid at once costs, the trial length, and add-ons sold separately.
 The provider edits them in Super admin → Website prices; until then the defaults are the prices that
-the owner chose on 2026-11-16 (2,500 / 4,000 / 7,000 a month, setup 5,000 / 8,000 / 15,000,
+the owner chose on 2026-11-17 (2,000 / 5,000 / 7,500 a month, setup 5,000 / 8,000 / 15,000,
 four service add-ons). These are what a visitor sees — a shop's own
 fee stays `organisations.monthly_fee`, set per shop."""
 
@@ -16,8 +16,8 @@ from app.modules.admin.fees import PlatformSetting
 KEY = "pricing"
 PAID = ("basic", "pro", "chain")
 DEFAULTS: dict = {
-    # owner 2026-11-16: each plan Rs. 1,000 a month more than before, and a one-time setup fee
-    "prices": {"basic": 2500, "pro": 4000, "chain": 7000},  # PKR per month
+    # owner 2026-11-17: 2,000 / 5,000 / 7,500 a month, and a one-time setup fee
+    "prices": {"basic": 2000, "pro": 5000, "chain": 7500},  # PKR per month
     "setup_fee": {"basic": 5000, "pro": 8000, "chain": 15000},  # PKR, one time
     "yearly_paid_months": 10,  # a year paid at once = this many months
     "trial_days": 14,

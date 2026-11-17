@@ -30,7 +30,7 @@
 - Barcodes and stickers with any USB / Bluetooth scanner.
 
 ## Prices (PKR)
-- Basic Rs. 2,500 / month, Pro Rs. 4,000 / month, Chain Rs. 7,000 / month.
+- Basic Rs. 2,000 / month, Pro Rs. 5,000 / month, Chain Rs. 7,500 / month.
 - One-time setup fee (installation and training): Basic Rs. 5,000, Pro Rs. 8,000, Chain Rs. 15,000.
 - Yearly: 12 months for the price of 10 (2 months free).
 - 14 days free trial. No yearly contract, no fee per user; the Android app is included.

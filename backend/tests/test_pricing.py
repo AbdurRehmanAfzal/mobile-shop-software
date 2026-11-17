@@ -8,11 +8,11 @@ def test_defaults_then_the_provider_sets_them(client, owner, other_owner, monkey
     info = client.get("/api/v1/public/info").json()
     plans = {p["key"]: p for p in info["plans"]}
     assert (plans["basic"]["price"], plans["pro"]["price"], plans["chain"]["price"]) == (
-        2500,
-        4000,
-        7000,
+        2000,
+        5000,
+        7500,
     )
-    assert plans["pro"]["yearly_price"] == 40000 and plans["pro"]["setup_fee"] == 8000
+    assert plans["pro"]["yearly_price"] == 50000 and plans["pro"]["setup_fee"] == 8000
     assert info["trial_days"] == 14 and len(info["addons"]) == 4
 
     body = {

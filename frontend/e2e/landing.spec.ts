@@ -16,10 +16,10 @@ test('landing page: modules, prices, request a shop; the super admin opens it fr
   await expect(page).toHaveURL(/\/welcome$/)
   await expect(page.getByRole('heading', { name: 'Run your mobile shop from your phone' })).toBeVisible()
   // the prices (the module guide's examples carry rupee amounts too): yearly first, then monthly
-  await expect(page.locator('#pricing').getByText('Rs. 25,000')).toBeVisible()
+  await expect(page.locator('#pricing').getByText('Rs. 20,000')).toBeVisible()
   await page.getByTestId('billing-month').click()
-  await expect(page.locator('#pricing').getByText('Rs. 2,500')).toBeVisible()
-  await expect(page.locator('#pricing').getByText('Rs. 4,000')).toBeVisible()
+  await expect(page.locator('#pricing').getByText('Rs. 2,000')).toBeVisible()
+  await expect(page.getByTestId('plan-pro').getByText('Rs. 5,000')).toBeVisible()
   await page.getByTestId('billing-year').click()
   // the video beside what it shows, and the module guide opens with both explanations
   await expect(page.getByTestId('landing-video')).toContainText('Repair labs')
@@ -37,9 +37,9 @@ test('landing page: modules, prices, request a shop; the super admin opens it fr
   await expect(page.getByTestId('landing-zoom')).toBeVisible()
   await page.keyboard.press('Escape')
   await expect(page.getByTestId('landing-zoom')).toHaveCount(0)
-  await expect(page.getByTestId('year-pro')).toContainText('Rs. 40,000')
+  await expect(page.getByTestId('year-pro')).toContainText('Rs. 50,000')
   await page.getByTestId('billing-month').click()
-  await expect(page.locator('#pricing').getByText('Rs. 4,000')).toBeVisible()
+  await expect(page.getByTestId('plan-pro').getByText('Rs. 5,000')).toBeVisible()
   await expect(page.getByTestId('landing-sites').getByRole('link', { name: /ifixapplephone\.com/ })).toHaveAttribute('href', 'https://ifixapplephone.com')
   await expect(page.getByTestId('landing-sites').getByRole('link', { name: /oopsolutions\.com/ })).toHaveAttribute('href', 'https://oopsolutions.com')
   // owner 2026-11-06: the FBR band, honest that it is off until the shop's NTN and token are in
