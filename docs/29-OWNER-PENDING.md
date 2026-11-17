@@ -273,6 +273,8 @@ Server: the deploy runs migration `e4a6c8d0f2b5` (additive: returns, branch tran
 - or **Payment received: package, modules and months**: Pro, months 1, amount 3000 → "Payment received — activate". He gets Pro at once with a receipt. (Give the special price first, or the amount it suggests will be 5,000.)
 To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees page shows the list prices crossed out; set it back to 0.
 
+**Deleting a wrongly entered phone (2026-11-19, ADR-099)**: after the deploy, delete purchase PUR-000182 (the iPhone 15 Pro Max entered in the wrong category) again: it now goes through, the Rs. 70,000 comes back into the galla, and the phone can be entered again in the right category.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

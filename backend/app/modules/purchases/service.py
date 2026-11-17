@@ -17,7 +17,13 @@ from app.modules.auth.models import Shop
 from app.modules.catalogue.models import Brand, Model
 from app.modules.devices.models import Device
 from app.modules.devices.service import apply_event, by_imei, new_device, replace_accessories
-from app.modules.devices.state import DeviceCondition, DeviceStatus, EventType, VerificationStatus
+from app.modules.devices.state import (
+    DeviceCondition,
+    DeviceStatus,
+    EventType,
+    VerificationStatus,
+    moved_since,
+)
 from app.modules.expenses.models import DayClose
 from app.modules.ledger import accounts as acc
 from app.modules.ledger.models import CashAccount
@@ -446,7 +452,10 @@ def void_purchase(
             message_en="A payment was made against this purchase later, or it is part of an exchange. Delete that payment or the exchange's sale first, then delete the purchase.",
             message_ur="اس خریداری کے بعد اس کی ادائیگی ہو چکی ہے یا یہ کسی تبادلے کا حصہ ہے۔ پہلے وہ ادائیگی یا تبادلے کی فروخت ڈیلیٹ کریں، پھر خریداری ڈیلیٹ کریں۔",
         )
-    # every device must still be exactly as purchased (only verification events allowed since)
+    # every device must still be in the shop as bought. Owner 2026-11-19 (ADR-099): a label, a
+    # price change, a note, a lock / PTA check, or a fault marked or cleared since then do not
+    # count as "moved" — a phone entered in the wrong category could not be deleted because a
+    # fault had been marked and cleared on it. A loan, repair, sale or reservation still blocks.
     for ln in p.lines:
         if ln.device_id:
             d = db.get(Device, ln.device_id)
@@ -454,8 +463,12 @@ def void_purchase(
             if not later:
                 raise Conflict(code="device_changed")
             purchase_seq = later[0].seq
-            after = [e for e in d.events if e.seq > purchase_seq and e.type != EventType.VERIFIED]
-            if after or d.status not in (DeviceStatus.IN_STOCK,):
+            after = moved_since(d.events, purchase_seq)
+            if (
+                after
+                or d.status not in (DeviceStatus.IN_STOCK, DeviceStatus.FAULTY)
+                or d.reserved_party_id is not None
+            ):
                 raise Conflict(
                     code="device_changed",
                     message_en=f"Device {d.imei1} has moved since this purchase; use a return instead",

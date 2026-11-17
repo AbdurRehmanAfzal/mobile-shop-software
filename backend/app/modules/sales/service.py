@@ -18,7 +18,7 @@ from app.modules.auth.models import Shop
 from app.modules.catalogue.models import Brand, Model
 from app.modules.devices.models import Device, DeviceAccessoryItem
 from app.modules.devices.service import apply_event, get_device
-from app.modules.devices.state import DeviceStatus, EventType, VerificationStatus
+from app.modules.devices.state import DeviceStatus, EventType, VerificationStatus, moved_since
 from app.modules.devices.types import cpid_label
 from app.modules.ledger import accounts as acc
 from app.modules.ledger.models import CashAccount
@@ -758,7 +758,8 @@ def void_invoice(
             if (
                 not sold
                 or d.status != DeviceStatus.SOLD
-                or any(e.seq > sold[0].seq for e in d.events)
+                # ADR-099: a note, a PTA check or a price correction after the sale is not a move
+                or moved_since(d.events, sold[0].seq)
             ):
                 raise Conflict(
                     code="device_changed",
