@@ -1,4 +1,5 @@
 import BillActions from '@/features/more/BillActions'
+import DeleteBlockers from '@/components/DeleteBlockers'
 import DeleteWarning from '@/components/DeleteWarning'
 import DownloadButton from '@/components/DownloadButton'
 import { FbrBillStatus } from '@/features/more/FbrCard'
@@ -189,6 +190,7 @@ export function SaleDetailPage() {
       </Sheet>
       <Sheet open={voiding} onClose={() => setVoiding(false)} title="common.void">
         <div className="flex flex-col gap-3">
+          <DeleteBlockers kind="sale" id={inv.id} open={voiding} onGo={() => setVoiding(false)} />
           <DeleteWarning kind="sale" />
           <BiInput label="common.reason" help={<Help term="void" size="sm" />} value={reason} onChange={(e) => setReason(e.target.value)} minLength={3} autoFocus />
           <ErrorText error={voidM.error} />

@@ -4974,5 +4974,30 @@
     "homeLabel": "Phones returned (this month)",
     "homeToday": "today {{n}}",
     "ovN": "{{n}} returns · {{p}} phones"
+  },
+  "delchk": {
+    "title": "First do this",
+    "intro": "This cannot be deleted yet. Undo what is listed here, then delete.",
+    "open": "Open",
+    "anyway": "Try to delete anyway (the app checks again)",
+    "c": {
+      "in_repair": "{{phone}} is at repair ({{ref}}). Take it back from repair first.",
+      "on_loan": "{{phone}} is with {{who}} on loan (amanat). Take it back first.",
+      "on_approval": "{{phone}} is with {{who}} to look at. Take it back first.",
+      "sold": "{{phone}} was sold on ({{ref}} · {{who}}). Delete or return that sale first.",
+      "returned_to_supplier": "{{phone}} was already sent back to the seller.",
+      "not_in_shop": "{{phone}} is not in the shop any more.",
+      "reserved": "{{phone}} is reserved for {{who}}. Remove the reservation first.",
+      "went_out_and_back": "{{phone}} went out and came back after it was bought (a loan or a repair). This purchase cannot be deleted any more; send the phone back to the seller instead.",
+      "later_payment": "Payment {{ref}} of {{amount}} was made against this bill later. Delete that payment first.",
+      "in_exchange": "This bill is part of exchange {{ref}}. Delete the exchange's sale first.",
+      "has_return": "Something from this bill came back ({{amount}}). Delete that return first.",
+      "khata_adjusted": "Len-den of {{amount}} was adjusted against this bill. Undo that first.",
+      "has_installments": "This bill is on installments. Cancel the installment plan first.",
+      "moved_after_sale": "{{phone}} is no longer with this customer as it was sold.",
+      "moved_after_return": "{{phone}} has moved on since this return.",
+      "repair_given_back": "Repair {{ref}} was already given back to the customer.",
+      "lab_charge_booked": "A lab's charge is booked on repair {{ref}}. Give it back as not repaired instead."
+    }
   }
 }

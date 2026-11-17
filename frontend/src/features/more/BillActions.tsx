@@ -9,6 +9,7 @@ import { Pencil, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import DeleteBlockers from '@/components/DeleteBlockers'
 import DeleteWarning, { type DelKind } from '@/components/DeleteWarning'
 import Help from '@/components/Help'
 import { ErrorText, Sheet } from '@/components/ui'
@@ -72,6 +73,7 @@ export default function BillActions({ kind, id, no, canDelete, editTo, onEdit, o
       ) : null}
       <Sheet open={open} onClose={() => setOpen(false)} title={{ en: `${pick('bill.delete')} · ${no}`, ur: `${pick('bill.delete')} · ${no}` }}>
         <div className="flex flex-col gap-3">
+          <DeleteBlockers kind={kind} id={id} open={open} onGo={() => setOpen(false)} />
           <DeleteWarning kind={kind as DelKind} />
           <BiInput label="common.reason" help={<Help term="void" size="sm" />} value={reason} onChange={(e) => setReason(e.target.value)} minLength={3} maxLength={300} autoFocus placeholder={pick('bill.reasonPh')} />
           <BiLabel text="bill.kept" size="sm" tone="text-muted" />

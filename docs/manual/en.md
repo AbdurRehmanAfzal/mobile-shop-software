@@ -1047,6 +1047,8 @@ Every entry has the same two small buttons on its row: **✎ Edit** and **🗑 D
 - **People and accessories**: Edit opens the record with its form already open.
 - **A phone**: on its page, **Delete (its purchase bill)** or **Delete (its sale bill)** opens that bill's delete.
 
+If something must be undone first, a box **First do this** sits above it and says what, with an **Open** button to that screen. For example: "Nokia 105 · 356938035781518 is with Bilal Mobiles on loan (amanat). Take it back first." It also tells you when the phone is at repair, was sold on or is reserved, and when a payment, a return, an exchange or installments were made against the bill later. Undo that, then delete. A fault marked on the phone, a printed sticker or a changed price does not stop a delete.
+
 Before anything is deleted, a red box **What will happen** says what changes in stock, the galla, the khata and the profit report, with an **Example**. A typical one for an expense:
 
 > Tea Rs. 500 typed as 5,000 → Rs. 5,000 back into the galla; then add Rs. 500 again, or use Edit instead.

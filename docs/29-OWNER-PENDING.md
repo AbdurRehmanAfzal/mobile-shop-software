@@ -275,6 +275,8 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **Deleting a wrongly entered phone (2026-11-19, ADR-099)**: after the deploy, delete purchase PUR-000182 (the iPhone 15 Pro Max entered in the wrong category) again: it now goes through, the Rs. 70,000 comes back into the galla, and the phone can be entered again in the right category.
 
+**"First do this" before a delete (2026-11-19, ADR-100)**: nothing to run. To test: give a phone to another shop on amanat, then try to delete its purchase — the sheet must say the phone is with that shop, with an Open button. Take it back; note that the purchase then says the phone "went out and came back" and must be returned to the seller instead (a loan is a move). A purchase with nothing after it deletes as before.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

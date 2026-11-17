@@ -47,6 +47,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Read ADR-098 before touching `organisations.fee_deal`, `order.deal_for` / `sale_pct` / `set_deal`, or `AdminDealCard.tsx`.
 - Rules: the special price covers only the months it has left and is used up only by an approved payment; the shop always sees the list price beside its own; a sale never touches an agreed fee or a special price and is never stored as a shop's monthly fee; the provider's own payment goes through the same quote and `order.apply`.
 
+## Deleting an entry (owner 2026-11-19, ADR-090 / ADR-099 / ADR-100)
+- Read ADR-099 and ADR-100 before touching a `void_*` / `cancel_*` function, `devices.state.moved_since`, `delcheck/` or `DeleteBlockers.tsx`.
+- Rules: a delete undoes only that entry's own effect and keeps it as Deleted; later separate entries are never cascaded — the delete is refused and `delete-check` says what to undo first; the check is read-only and must agree with the delete's own rule (change both together).
+
 ## Barcodes, labels, scanning (owner addendum 4, 2026-10-31, ADR-036)
 - Spec `docs/22-BARCODES-SPEC.md`; what existed / what was built / assumptions / scanner test `docs/23-BARCODES-PLAN.md` — read it before touching `backend/app/modules/barcodes`, `modules/labels`, `frontend/src/lib/scanner.ts` or `ScanListener.tsx`.
 - Rules: a barcode is assigned inside the purchase / item-creation transaction and never changes; each barcode keeps its type; uniqueness spans phones, items, IMEIs and SKUs; screens take scans with `useScan`, the shell handles the rest; labels stay the ADR-024 print page.
