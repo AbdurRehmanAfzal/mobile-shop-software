@@ -264,6 +264,8 @@ Server: the deploy runs migration `e4a6c8d0f2b5` (additive: returns, branch tran
 2. As a shop owner: More → Software fees. Choose Pro and 5 years: the total must be 5,000 × 60 less 25% = Rs. 225,000. Choose your own package, tick a module, pick 1 year, send "I have paid".
 3. Super admin: the pending payment shows what was chosen and the order total. Approve it; the shop now has that package, the module and the new paid-until date. "Months only, package unchanged" gives the months without changing the package.
 
+**Graphs (2026-11-18, ADR-096)**: nothing to run. Open Home and Business overview: under "Graphs" switch 7 days / 30 days; check that today's sales, purchases and profit match the day's hisaab, and that "To get" / "To give" match the khata totals. Log in as a salesman: only sales and to get / to give show.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

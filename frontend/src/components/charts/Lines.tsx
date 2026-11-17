@@ -6,7 +6,7 @@ import { useId, useState } from 'react'
 import { useLang } from '@/components/Bilingual'
 import { fmtShort } from './Bars'
 
-export interface Series { label: string; color: string; values: number[] }
+export interface Series { label: string; color: string; values: number[]; dash?: boolean }
 
 function smooth(points: [number, number][]): string {
   if (points.length < 2) return points.map(([x, y]) => `M${x},${y}`).join(' ')
@@ -39,7 +39,7 @@ export default function Lines({ labels, series, height = 150, testid, empty }: {
   return (
     <div className="flex flex-col gap-1" data-testid={testid}>
       <div className={`flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-muted ${small}`}>
-        <span className="flex flex-wrap gap-x-3 gap-y-1">{series.map((s) => <span key={s.label} className="inline-flex items-center gap-1.5"><span className="h-2 w-4 rounded-full" style={{ background: s.color }} />{s.label}{active != null ? <span className="num text-ink" dir="ltr"> {s.values[active].toLocaleString('en-US')}</span> : null}</span>)}</span>
+        <span className="flex flex-wrap gap-x-3 gap-y-1">{series.map((s) => <span key={s.label} className="inline-flex items-center gap-1.5"><span className="w-4 border-t-[3px]" style={{ borderColor: s.color, borderStyle: s.dash ? 'dashed' : 'solid' }} />{s.label}{active != null ? <span className="num text-ink" dir="ltr"> {s.values[active].toLocaleString('en-US')}</span> : null}</span>)}</span>
         <span dir="ltr">{active != null ? labels[active] : ''}</span>
       </div>
       <div className="flex flex-row gap-1.5" dir="ltr" style={{ direction: 'ltr' }}>
@@ -56,7 +56,7 @@ export default function Lines({ labels, series, height = 150, testid, empty }: {
           </defs>
           {ticks.map((t, i) => <line key={i} x1={0} x2={w} y1={y(t)} y2={y(t)} stroke="rgb(var(--line))" strokeWidth={t === 0 ? 0.8 : 0.4} strokeDasharray={t === 0 ? undefined : '1.5 1.5'} vectorEffect="non-scaling-stroke" />)}
           {series[0] ? <path d={`${smooth(series[0].values.map((v, i) => [x(i), y(v)] as [number, number]))} L${x(labels.length - 1)},${y(0)} L${x(0)},${y(0)} Z`} fill={`url(#${id}-g)`} /> : null}
-          {series.map((s) => <path key={s.label} d={smooth(s.values.map((v, i) => [x(i), y(v)] as [number, number]))} fill="none" stroke={s.color} strokeWidth={1.6} strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" />)}
+          {series.map((s) => <path key={s.label} d={smooth(s.values.map((v, i) => [x(i), y(v)] as [number, number]))} fill="none" stroke={s.color} strokeWidth={1.6} strokeDasharray={s.dash ? '5 4' : undefined} strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" />)}
           {labels.map((_l, i) => <rect key={i} x={x(i) - (w / labels.length) / 2} y={0} width={w / labels.length} height={height} fill="transparent" onMouseEnter={() => setActive(i)} onClick={() => setActive(i)} />)}
           {active != null ? (
             <g>

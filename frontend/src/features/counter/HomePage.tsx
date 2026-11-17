@@ -15,6 +15,7 @@ import { useAuth } from '@/lib/auth'
 import { useGet } from '@/lib/queries'
 import Bars from '@/components/charts/Bars'
 import Donut from '@/components/charts/Donut'
+import TrendCharts from './TrendCharts'
 import { isoDay } from '@/lib/format'
 import type { DayReport } from '@/lib/types'
 import HazriCard from './HazriCard'
@@ -182,6 +183,8 @@ export default function HomePage() {
             </div>
           </div>
         ) : null}
+        {/* owner 2026-11-18 (ADR-096): sales / purchases, profit / loss, to get / to give by day */}
+        <TrendCharts />
       </section>
 
       <HazriCard />

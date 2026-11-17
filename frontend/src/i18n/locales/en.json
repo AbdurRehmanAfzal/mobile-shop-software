@@ -4868,5 +4868,14 @@
     "since": "In the shop",
     "days": "{{n}} days",
     "more": "More actions"
+  },
+  "trend": {
+    "title": "Graphs",
+    "d7": "7 days",
+    "d30": "30 days",
+    "salesPurchases": "Sales and purchases",
+    "profit": "Profit / loss by day",
+    "profitSum": "Profit in these days",
+    "debt": "To get and to give"
   }
 }

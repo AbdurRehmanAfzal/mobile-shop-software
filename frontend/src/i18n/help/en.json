@@ -6726,5 +6726,22 @@
       "body": "Opens the sale form filled from this bill. Change the phone, the price, the items, the discount or what was paid, give a reason and save: the old bill is cancelled (kept as Deleted, \"Edited, replaced by …\") and the corrected one is made in one go — stock, galla and khata follow. Not possible once a phone has moved on or money was received against the bill later.",
       "example": "Sold for 38,000 but it was 36,000 → Edit → price 36,000 → reason → save: the new bill says 36,000, the galla 2,000 less."
     }
+  },
+  "trend": {
+    "salesPurchases": {
+      "title": "Sales and purchases",
+      "body": "Two lines for the chosen days: what you sold each day (after returns) and what you bought each day. The solid line is sales, the dashed line is purchases. Touch a day to see both figures.",
+      "example": "Monday: sales Rs. 1,20,000 and purchases Rs. 80,000 → you sold more than you bought that day."
+    },
+    "profit": {
+      "title": "Profit / loss by day",
+      "body": "One bar for each day: that day's profit after cost and expenses. A bar above the line is profit; a red bar below it is a loss. Tap a bar to open that day's hisaab.",
+      "example": "Friday's bar is red at −2,000 → that day's expenses were more than its earning."
+    },
+    "debt": {
+      "title": "To get and to give",
+      "body": "How much people owed you (solid line) and how much you owed others (dashed line) at the end of each day.",
+      "example": "To get rose from Rs. 50,000 to Rs. 90,000 in a week → more was sold on udhaar than was collected."
+    }
   }
 }

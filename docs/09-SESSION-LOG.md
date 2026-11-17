@@ -1972,3 +1972,12 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - `plan-reminders` fails on this PC at a 5-second wait in the super admin part ("Record payment"); `GET /admin/shops` takes 8 s on the bloated dev database. Not run against the old code, so not proven to be unrelated.
 - Looked at the fees page and the super admin's pending payment in English.
 **Open**: the website's yearly offer (10 months) differs from the app's 5% for one year; my default module prices (docs/29 §E).
+
+### 2026-11-18 — graphs on the home screen and the business overview (ADR-096)
+**Owner** (shopkeepers): graphs on the dashboard and in Business overview for sales, purchases, profit / loss, lene and dene.
+**Done**: `reports/trends.py` + `GET /reports/trends?days=7|30`; `TrendCharts.tsx` on Home and Business overview; `Lines` takes a dashed series; strings and three help texts in en / ur / roman; manual ch. "At a glance" row (PDFs rebuilt); ADR-096, docs/29.
+**Verified**:
+- pytest `test_trends` (2): today's figures equal the bills, the profit report and the dashboard's to get / to give; a salesman gets no purchases or profit; another shop sees nothing. Full suite passes.
+- tsc; vitest (53).
+- Playwright `trend-charts` passes (figures on Home, 30 days = 30 bars, same graphs on the overview); looked at the screenshot.
+- Colour check: the to get / to give tokens fail colour-blind separation, hence the dashed second line.
