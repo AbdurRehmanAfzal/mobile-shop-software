@@ -303,6 +303,7 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 Details in `docs/manual/operations-en.md`. None of these is broken today, but each is worth a look:
 - [ ] **Renewal key on the server:** run the renewal keygen on the server. Until then production checks codes with the default public key, so codes signed with the development PC's key would be accepted.
 - [ ] **Off-server backup:** `RCLONE_REMOTE` is not set, so every backup sits on the same VPS. Set it up and practise one restore.
+  - **Owner 2026-11-20: confirmed it is still not set, and wants it done** — shops are live, and every shop's database must have a copy off the server. Until then: after a manual `sudo /opt/mobileshop/backup.sh`, download the newest `db-*.dump` to a PC. Steps: `docs/12-DEPLOYMENT.md` → Backups (rclone, an encrypted Google Drive remote, `RCLONE_REMOTE=gdrive-safe:` in `/opt/mobileshop/.env`). Needs the owner's Google login on the VPS, about 15 minutes.
 - [ ] **Android signing:** check that the three `ANDROID_KEYSTORE_*` GitHub secrets exist (`gh secret list`). Without them `/app.apk` is test-signed, and a properly signed APK cannot update it later.
 - [ ] **Old Docker images:** `deploy.sh` removes only untagged images. Once a month run `docker image prune -a --filter until=168h` on the server.
 - [ ] **Server IP in git history:** it was in two comments (removed 2026-11-03), but older commits still have it. If the repo ever goes public, assume the IP is known and keep SSH key-only.
