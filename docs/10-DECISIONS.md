@@ -362,6 +362,26 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-094 · 2026-11-17 · Accepted · English money words carry a small Roman Urdu hint
+**Context**: shopkeepers using the app in English did not understand the money-direction words — "Gave money", "Took money", "I will get", "I have to give", credit / debit — and the loan (amanat) screen. The owner asked for easier words and a small Roman Urdu hint beside the English, so someone who reads English reads that and everyone else reads the hint.
+
+**Decision**:
+- **Only English mode changes.** Urdu and Roman Urdu already use the shopkeeper's own words.
+- 78 short labels in `i18n/locales/en.json` now end with a hint in brackets. Examples:
+  - "I will get (lene hain)", "I have to give (dene hain)";
+  - "To get (lene hain)", "To give (dene hain)", "Still to pay (dene baqi)";
+  - "I gave money (de diye)", "I took money (le liye)" — these replace "Gave money (len-den)" / "Took money (len-den)";
+  - "Receive (lena)", "Pay (dena)";
+  - "Debit (naam)", "Credit (jama)";
+  - "Opening balance (purana hisaab)";
+  - loans: "Give a phone to another shop (amanat)", "To which shop (kis dukaan ko)", "Expected back (wapsi kab)", "Device came back (wapas aa gaya)".
+- A few labels were also reworded: "Party owes me" → "They owe me", "I owe party" → "I owe them", "To receive" → "To get", and the "(receivable)" / "(payable)" jargon is gone.
+- The hint lives in the string itself, so it shows everywhere the label does (buttons, chips, lists, aria labels). `i18n/gloss.ts` lists the hints; `Glossed` (used by `BiLabel`, `BiButton`, `Chip`) draws the bracketed hint a little smaller and lighter.
+- **This is an exception to the one-language rule** (owner 2026-10-22), agreed by the owner: English mode may carry a Roman Urdu hint in brackets on money / loan words. Nothing else is stacked, and Urdu script is never mixed into English mode.
+- Help texts, the landing page and printed documents are unchanged.
+
+**Consequences**: some English labels are longer; buttons wrap where needed. New money-direction labels in English should follow the same pattern and add their hint to `i18n/gloss.ts`.
+
 ## ADR-093 · 2026-11-17 · Accepted · Who a phone was bought from on the tally sheet and price lists
 **Context**: shopkeepers asked whether the A4 tally sheet (owner and staff copies) and the A4 stock / price lists can show who each phone was bought from — name and phone number on the owner's, only the name on the staff's — without upsetting the PDF layout.
 

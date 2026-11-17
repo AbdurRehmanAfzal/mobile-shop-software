@@ -33,7 +33,7 @@ test('cancel a wrong len-den and enter it the other way', async ({ page, request
   await page.getByTestId('lending-cancel-flip').click()
   // the other side opens with the same amount
   await expect(page.getByLabel('Amount')).toHaveValue('5000')
-  await page.getByRole('button', { name: 'Save — money given' }).dispatchEvent('click')
+  await page.getByRole('button', { name: 'Save — I gave (de diye)' }).dispatchEvent('click')
   await expect(page.getByText('Payment saved')).toBeVisible()
   await page.getByRole('button', { name: 'Done' }).dispatchEvent('click')
 
