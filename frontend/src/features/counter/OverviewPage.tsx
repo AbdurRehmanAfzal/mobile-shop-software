@@ -13,6 +13,7 @@ import Help from '@/components/Help'
 import { Loading, PageHeader, fmtDateTime } from '@/components/ui'
 import { withCur } from '@/lib/format'
 import { useGet } from '@/lib/queries'
+import TrendCharts from './TrendCharts'
 import PeriodPicker, { periodOf, periodQuery, type Period } from './PeriodPicker'
 
 type M = string
@@ -93,6 +94,8 @@ export default function OverviewPage() {
     <div className="flex flex-col gap-3">
       {/* owner 2026-11-15 (ADR-084): the whole overview, in detail, on A4 for the chosen period */}
       <PageHeader title="ov.title" help={<Help term="ov.page" />} right={<DownloadButton path={`/api/v1/reports/overview/export?${periodQuery(period)}`} name={`business-overview-${period.from}${period.to !== period.from ? `-${period.to}` : ''}`} formats={['pdf', 'xlsx']} />} />
+      {/* owner 2026-11-18 (ADR-096): the graphs have their own 7 / 30 days, so they sit above the period */}
+      <TrendCharts />
       <PeriodPicker value={period} onChange={setPeriod} size="sm" />
       {isLoading || !o ? <Loading /> : (
         <>

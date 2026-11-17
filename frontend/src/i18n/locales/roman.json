@@ -4868,5 +4868,14 @@
     "since": "Dukaan mein",
     "days": "{{n}} din",
     "more": "Aur kaam"
+  },
+  "trend": {
+    "title": "Graphs",
+    "d7": "7 din",
+    "d30": "30 din",
+    "salesPurchases": "Bikri aur khareed",
+    "profit": "Roz ka nafa / nuqsan",
+    "profitSum": "In dinon ka nafa",
+    "debt": "Lene aur dene"
   }
 }

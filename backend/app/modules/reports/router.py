@@ -80,6 +80,23 @@ def dashboard(ctx: Ctx, db: DB):
     return _money(service.dashboard(db, ctx.shop_id, ctx.can(Cap.VIEW_COST)))
 
 
+@router.get("/trends")
+def trends(ctx: Ctx, db: DB, days: Annotated[int, Query()] = 7):
+    """owner 2026-11-18 (ADR-096): day-by-day sales, purchases, profit / loss and to get / to
+    give for the graphs on the home screen and the business overview; 7 or 30 days"""
+    from app.modules.reports import trends as tr
+
+    if days not in tr.RANGES:
+        raise ValidationFailed(
+            code="bad_range", message_en="Choose 7 or 30 days", message_ur="7 یا 30 دن چنیں"
+        )
+    out = tr.trends(db, ctx.shop_id, days, ctx.can(Cap.VIEW_COST))
+    for r in out["rows"]:
+        r["date"] = r["date"].isoformat()
+    out["date_from"], out["date_to"] = out["date_from"].isoformat(), out["date_to"].isoformat()
+    return _money(out)
+
+
 @router.get("/price-changes")
 def price_changes(
     ctx: Annotated[Ctx, Depends(require_cap(Cap.REPORTS_ALL))],

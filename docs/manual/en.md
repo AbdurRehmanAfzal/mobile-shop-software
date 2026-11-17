@@ -201,6 +201,7 @@ From top to bottom:
 | **Add stock** | You bought a new or used phone (chapter 6). |
 | Other jobs | **Udhaar**, **Stock**, **Repair**, **Return**, **Invoices** and **Expense**. |
 | **At a glance** | Pick **Today**, **Yesterday**, **Week**, **This month** or **From – to**. Cards show **Sales** (and phones sold), **Profit**, **Cash & bank**, **I will get**, **I have to give**, **Phones in stock**, **Expenses** and a **Last 7 days** chart. Tap **See all** for the full hisaab. |
+| **Graphs** | Under the cards, for **7 days** or **30 days**: **Sales and purchases** (solid line = sales, dashed line = purchases), **Profit / loss by day** (a bar above the line is profit, a red bar below it is a loss; tap a bar for that day's hisaab) and **To get and to give** (solid = people owe you, dashed = you owe). Touch a day to see its figures. The same graphs are at the top of **Business overview**. A salesman sees sales and to get / to give only. |
 | **Needs attention** | Things waiting for you, for example "2 phones: ID card check pending" or "1 repair jobs open". Tap a line to go straight there. |
 
 At the bottom is a bar with **Home**, **Stock**, **Udhaar**, **Hisaab** and **More**. It is on every screen, so you can always get back.

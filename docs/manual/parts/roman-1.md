@@ -199,6 +199,7 @@ Upar se neeche tak:
 | **Stock daalein** | Aap ne naya ya purana phone khareeda (chapter 6). |
 | Baqi kaam | **Udhaar**, **Stock**, **Marammat**, **Wapsi**, **Bill** aur **Kharcha**. |
 | **Ek nazar mein** | **Aaj**, **Kal**, **Hafta**, **Is mahine** ya **Tareekh se tak** chunein. Card dikhate hain **Bikri** (aur bike hue phone), **Munafa**, **Cash aur bank**, **Mujhe lene hain**, **Mujhe dene hain**, **Stock mein phone**, **Kharche** aur **Pichle 7 din** ka chart. Poore hisaab ke liye **Sab dekhein** dabayein. |
+| **Graphs** | Cards ke neeche, **7 din** ya **30 din** ke liye: **Bikri aur khareed** (seedhi lakeer = bikri, nuqton wali = khareed), **Roz ka nafa / nuqsan** (lakeer se upar wala bar nafa, neeche wala surkh bar nuqsan; bar dabayein to us din ka hisaab khulta hai) aur **Lene aur dene** (seedhi = logon ne aap ko dena hai, nuqton wali = aap ne dena hai). Kisi din ko chhuein to us ki raqmein nazar aati hain. Yehi graphs **Business overview** ke upar bhi hain. Salesman ko sirf bikri aur lene / dene nazar aate hain. |
 | **Tawajjo chahiye** | Woh cheezen jo aap ka intezar kar rahi hain, misaal ke taur par "2 phone: shanakhti card check baqi" ya "1 marammat job khuli". Line par dabayein aur seedha wahan pohnchein. |
 
 Neeche ek patti hai jis mein **Home**, **Stock**, **Udhaar**, **Hisaab** aur **Mazeed** hain. Yeh har screen par hai, is liye aap hamesha wapas aa sakte hain.

@@ -6726,5 +6726,22 @@
       "body": "Sale ka form is bill se bhar kar khulta hai. Phone, qeemat, saman, discount ya paid badlein, wajah likhein aur save karein: purana bill cancel (Deleted, \"Edited, replaced by …\") aur sahi wala ek saath ban jata hai — stock, galla aur khata saath chalte hain. Agar phone aage chala gaya ya baad mein paisa aaya to mumkin nahi.",
       "example": "38,000 mein becha magar 36,000 tha → Edit → qeemat 36,000 → wajah → save: naya bill 36,000, galla 2,000 kam."
     }
+  },
+  "trend": {
+    "salesPurchases": {
+      "title": "Bikri aur khareed",
+      "body": "Chune hue dinon ki do lakeerein: har din kitna becha (wapsi nikaal kar) aur har din kitna khareeda. Seedhi lakeer bikri hai aur nuqton wali khareed. Kisi din ko chhuein to dono raqmein nazar aati hain.",
+      "example": "Peer: bikri Rs. 1,20,000 aur khareed Rs. 80,000 → us din aap ne khareedne se zyada becha."
+    },
+    "profit": {
+      "title": "Roz ka nafa / nuqsan",
+      "body": "Har din ka ek bar: us din ka nafa, laagat aur kharche nikaal kar. Lakeer se upar wala bar nafa hai; neeche wala surkh bar nuqsan. Bar dabayein to us din ka hisaab khulta hai.",
+      "example": "Jumme ka bar surkh hai, −2,000 → us din kharche kamai se zyada the."
+    },
+    "debt": {
+      "title": "Lene aur dene",
+      "body": "Har din ke aakhir par logon ne aap ko kitna dena tha (seedhi lakeer) aur aap ne doosron ko kitna dena tha (nuqton wali lakeer).",
+      "example": "Lene ek hafte mein Rs. 50,000 se Rs. 90,000 ho gaye → jitna wasool hua us se zyada udhaar par becha gaya."
+    }
   }
 }

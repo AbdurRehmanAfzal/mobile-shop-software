@@ -362,6 +362,21 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-096 · 2026-11-18 · Accepted · Graphs on the home screen and the business overview
+**Context**: shopkeepers asked for graphs on the dashboard and in Business overview showing sales, purchases, profit / loss, and what is to get (lene) and to give (dene). The home screen had one 7-day sales bar chart and a money donut; the overview had none.
+
+**Decision**:
+- **One read-only series**: `GET /api/v1/reports/trends?days=7|30` (`reports/trends.py`), a row per day:
+  - sales = the day's bills less returns (the dashboard's own week figure);
+  - purchases = the day's purchase bills less returns;
+  - profit = the ledger's net profit of the day, through `shopaudit.finance.pnl` (the profit report's rule);
+  - to get / to give = every person's ledger balance at the end of the day, positive ones added as "to get", negative ones as "to give" (`debt_split`'s rule). Today's pair equals the dashboard's.
+- The route is basic (not in `ROUTE_MODULES`), so every package gets the graphs. Purchases and profit are returned only with `VIEW_COST`; a salesman gets sales and the khata totals, which the home screen already shows him.
+- **`TrendCharts.tsx`** on the home screen (under the existing charts) and at the top of Business overview (above its period picker, because the graphs have their own 7 / 30 days): "Sales and purchases" (two lines), "Profit / loss by day" (bars; a loss is a red bar below the line; tap → that day's hisaab), "To get and to give" (two lines). Each has its figures above it.
+- In-house SVG as before (`Lines`, `Bars`); no chart library. `Lines` gained `dash`: the second line of each pair is dashed, because the design tokens for to get / to give are too close for colour-blind readers (checked: ΔE 2.4), so the pair is told apart by more than colour.
+
+**Consequences**: the home screen shows sales twice (the 7-day bars and the line); the bars stay because they open a day's hisaab. Nothing is stored; no migration.
+
 ## ADR-095 · 2026-11-17 · Accepted · The shop chooses its package, modules and years when it pays
 **Context**: "Pay now" opened a page with only the accounts and an amount. The owner wants the shopkeeper to see the packages, the modules he can take and what each costs, and to choose how long to pay for — 1 month, 1 year, 2 years … 5 years — with a discount that grows 5% with every year (5 years = 25%). The super admin sets the fee of every package, every module and his own extra items.
 
