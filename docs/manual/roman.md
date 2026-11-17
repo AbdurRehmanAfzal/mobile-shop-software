@@ -1100,6 +1100,8 @@ Misaal: 50,000 ka mobile, 25,000 diye, 25,000 dene the. Wapas karein: aap ke 25,
 - Har ek **Print (A4)**, ya PDF, Excel ya CSV mein download / share. Har Excel bhi A4 par ek page chaurai mein print hoti hai, har page par column ke naam ke saath.
 - Baqi har report (farokht, khareedari, khata…) ka PDF bhi ab A4 par aata hai; zyada column hon to likhai chhoti ho kar lipat jati hai.
 
+> **Kis se khareeda:** maalik ki tally sheet aur maalik ki apni stock list (Fields mein **Kis se khareeda** tick karein) mein bechne wale ka naam aur number aata hai. Staff ki tally copy aur staff ki price list mein sirf naam. Gahakon ki price list mein bechne wala nahi aata.
+
 ### Scanner se stock ki ginti
 
 Mahine mein ek baar (ya jab bhi lage ke kuch ghayab hai) scanner se shelf gin lein. App batati hai ke kya ghayab hai aur kya yahan nahi hona chahiye.

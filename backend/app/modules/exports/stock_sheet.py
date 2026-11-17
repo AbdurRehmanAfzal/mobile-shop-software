@@ -5,7 +5,8 @@ IMEI 2 / serial), every other picked field wrapped as "label value", and the pri
 
 Three copies, the same layout:
 - `screen`: what the page shows (its filters, fields and order; cost only with VIEW_COST);
-- `staff`: every phone field with the asking price — no cost, no seller — to share with the staff;
+- `staff`: every phone field with the asking price and who it was bought from (the name only) —
+  no cost — to share with the staff;
 - `customer`: what a customer asks about (model, storage, RAM, colour, condition, PTA, battery, …)
   and the price — no IMEI, serial, barcode, cost, seller, days or status; phones for sale only.
 Read-only."""
@@ -25,7 +26,7 @@ from app.modules.exports.tally import COND, PTA, STATUS
 STAFF_KEYS = [
     "name", "storage", "ram", "colour", "condition", "grade", "pta", "simlock", "sim_time",
     "battery", "cycles", "region", "sim", "imei", "imei2", "serial", "barcode", "days", "status",
-    "verification", "asking",
+    "verification", "source", "asking",
 ]  # fmt: skip
 CUSTOMER_KEYS = [
     "name", "storage", "ram", "colour", "condition", "grade", "pta", "simlock", "sim_time",
@@ -64,7 +65,7 @@ def _n(v) -> str:
     return "" if v is None or v == "" else f"{Decimal(v):,.0f}"
 
 
-def _value(key: str, d: dict, get, ur: bool, cp: str = "CP ID"):
+def _value(key: str, d: dict, get, ur: bool, cp: str = "CP ID", phone: bool = False):
     v = get(d)
     if v is None or v == "":
         return None
@@ -85,6 +86,8 @@ def _value(key: str, d: dict, get, ur: bool, cp: str = "CP ID"):
         return f"{v}d"
     if key == "verification":
         return None if v == "not_required" else str(v).replace("_", " ")
+    if key == "source" and phone and d.get("source_party_phone"):
+        return f"{v} · {d['source_party_phone']}"  # ADR-093: the owner's own list
     return v
 
 
@@ -102,6 +105,10 @@ def page(
     show_ids = [k for k in IDS if k in keys]
     detail = [k for k in keys if k not in IDS and k not in PRICE and k != "name"]
     ask, cost = "asking" in keys, "cost" in keys
+    # the seller's phone: only on the owner's / manager's own list, never the staff or customer one
+    from app.core.permissions import Cap
+
+    with_phone = copy == "screen" and ctx.can(Cap.VIEW_COST)
 
     brands: dict[str, dict] = {}
     models: dict[tuple[str, str], dict] = {}
@@ -160,7 +167,7 @@ def page(
             ids = "<br>".join(e(str(cols[x][1](d))) for x in show_ids if cols[x][1](d))
             bits = []
             for key in detail:
-                v = _value(key, d, cols[key][1], ur, cp)
+                v = _value(key, d, cols[key][1], ur, cp, with_phone)
                 if v is not None:
                     bits.append(f'<span class="kv"><i>{e(label(key))}</i> {e(str(v))}</span>')
             price = []

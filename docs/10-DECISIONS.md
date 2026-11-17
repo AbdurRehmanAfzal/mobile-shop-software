@@ -362,6 +362,29 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-093 · 2026-11-17 · Accepted · Who a phone was bought from on the tally sheet and price lists
+**Context**: shopkeepers asked whether the A4 tally sheet (owner and staff copies) and the A4 stock / price lists can show who each phone was bought from — name and phone number on the owner's, only the name on the staff's — without upsetting the PDF layout.
+
+Before this change:
+- the owner's tally had the seller only in Excel;
+- the staff tally and the staff price list had no seller at all (ADR-077 / ADR-078);
+- the owner's own stock list showed the name when the **Bought from** field was ticked.
+
+**Decision**:
+- `list_devices` also returns `source_party_phone`. It is used only by the printed lists and is **not** in `DeviceOut`, so the app's API does not carry it.
+- **Tally sheet (PDF)**: the seller sits as a third small line in the Status / Days cell, so no column is added.
+  - The name shows on every copy.
+  - The phone number shows only when the reader may see costs and the copy is not the staff one.
+  - Excel: **Bought from** on every copy, **Seller phone** only on the owner's.
+- **Price lists**:
+  - the staff list gains **Bought from** (name only);
+  - the customer list is unchanged (no seller);
+  - the owner's / manager's own list (the screen's fields, with **Bought from** ticked) shows `name · phone` in PDF, Excel and CSV;
+  - a salesman's own list shows the name only.
+- This replaces the "no seller on the staff copy" part of ADR-077 / ADR-078: a salesman may know who a phone came from, but not the seller's number, the cost or the money.
+
+**Consequences**: no data change and no migration. Rows with a seller are one line taller on the tally sheet. Rendered with a long seller name: nothing leaves the page.
+
 ## ADR-092 · 2026-11-16 · Accepted · Faster landing page; website prices editable; landing updated; competitor comparison
 **Context**: visitors complained that the website loads slowly. The owner asked for a full study of a competitor's mobile-shop page (pricing and gaps), our prices to be shown "like that", and the landing page to be brought up to date.
 
