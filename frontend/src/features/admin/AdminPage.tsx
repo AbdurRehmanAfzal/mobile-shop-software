@@ -24,7 +24,7 @@ interface AdminShop { id: string; organisation_id: string; name: string; city: s
 interface BillingOut { bank: { bank_name: string; account_title: string; account_number: string; iban: string; branch: string }; support: { phone: string; whatsapp: string }; schedule: { info_days: number; warn_days: number; urgent_days: number; grace_days: number; snooze_hours: number }; note: { en: string; ur: string; roman: string }; qr_path: string | null; placeholders: boolean }
 type DueFilter = 'all' | 'due' | 'locked' | 'unpaid' | 'bin'
 interface Account { label: string; account_name: string; number: string; note: string | null }
-interface FeeRow { id: string; shop_id: string; shop_name: string; plan: string; amount: string; method: string; reference: string | null; proof_path: string | null; months: number; note: string | null; status: string; decision_note: string | null; created_at: string; paid_on?: string | null; receipt_no?: string | null; to_dues?: string; fee_due?: string }
+interface FeeRow { id: string; shop_id: string; shop_name: string; plan: string; amount: string; method: string; reference: string | null; proof_path: string | null; months: number; note: string | null; status: string; decision_note: string | null; created_at: string; paid_on?: string | null; receipt_no?: string | null; to_dues?: string; fee_due?: string; order?: { plan: string; months: number; years: number; discount_pct: number; total: string; extras: string[] } | null }
 interface ShopReq { id: string; name: string; shop_name: string; city: string | null; phone: string; plan: string; note: string | null; created_at: string }
 interface PwReq { id: string; shop_id: string; shop_name: string; user_id: string; name: string; phone: string; role: string; sent_to: string; created_at: string }
 const PLANS = ['trial', 'basic', 'pro', 'chain'] as const
@@ -108,10 +108,10 @@ export default function AdminPage() {
   const [proofUrl, setProofUrl] = useState<string | null>(null)
   const inv = useInvalidate()
   const [decided, setDecided] = useState<string[]>([])
-  const decide = async (f: FeeRow, action: 'approve' | 'reject') => {
+  const decide = async (f: FeeRow, action: 'approve' | 'reject', moneyOnly = false) => {
     const note = action === 'reject' ? window.prompt(pick('admin.rejectWhy')) ?? '' : null
     if (action === 'reject' && !note) return
-    await api('POST', `/api/v1/admin/fee-payments/${f.id}/${action}`, action === 'approve' ? {} : { note })
+    await api('POST', `/api/v1/admin/fee-payments/${f.id}/${action}`, action === 'approve' ? (moneyOnly ? { apply_order: false } : {}) : { note })
     // the row goes at once; the lists refresh behind it (the shop list can take a few seconds)
     setDecided((d) => [...d, f.id])
     inv('fee-pending', 'fee-stats', 'admin-shops', 'prov-overview', 'prov-shops', 'prov-pays')
@@ -201,12 +201,20 @@ export default function AdminPage() {
                   <span className="num text-lg" dir="ltr">{withCur(Number(f.amount).toLocaleString('en-US'))}</span>
                 </div>
                 {f.note ? <span className="text-sm text-muted">{f.note}</span> : null}
+                {f.order ? (
+                  <div className={`flex flex-col gap-0.5 rounded-xl bg-ground px-3 py-2 ${ur ? cls('sm') : 'text-xs font-semibold'}`} data-testid="fee-order">
+                    <span>{pick('admin.order.pkg')}: <b>{pick(`fees.pick.pkg.${f.order.plan}`)}</b>{f.order.extras.map((k) => ` + ${pick(`modules.${k}`)}`).join('')} · {f.order.years ? pick(f.order.years === 1 ? 'fees.pick.year' : 'fees.pick.years').replace('{{n}}', String(f.order.years)) : pick('fees.pick.month1')}{f.order.discount_pct ? ` · ${pick('fees.pick.off').replace('{{n}}', String(f.order.discount_pct))}` : ''}</span>
+                    <span>{pick('admin.order.total')}: <span className="num" dir="ltr">{withCur(Number(f.order.total).toLocaleString('en-US'))}</span></span>
+                    {Number(f.amount) < Number(f.order.total) + Number(f.fee_due ?? 0) ? <span className="text-payable">{pick('admin.order.short')}</span> : null}
+                  </div>
+                ) : null}
                 {Number(f.fee_due ?? 0) > 0 ? <span className={`rounded-xl bg-payable-tint px-3 py-2 font-semibold text-payable ${ur ? cls('sm') : 'text-xs'}`}>{pick('admin.credit.clearsFirst').replace('{{n}}', withCur(Number(f.fee_due).toLocaleString('en-US')))}</span> : null}
                 <div className="flex gap-2">
                   {f.proof_path ? <button type="button" onClick={async () => setProofUrl(await fileObjectUrl(f.proof_path!, f.shop_id))} className="tap flex h-10 items-center gap-1 rounded-xl border border-line px-3 text-xs font-bold"><ImageIcon size={16} /> {pick('admin.proof')}</button> : null}
                   <button type="button" onClick={() => decide(f, 'approve')} className="tap flex h-10 flex-1 items-center justify-center gap-1 rounded-xl bg-emerald text-sm font-bold text-white"><Check size={16} /> {pick('admin.approveMonths').replace('{{n}}', String(f.months))}</button>
                   <button type="button" onClick={() => decide(f, 'reject')} className="tap flex h-10 items-center gap-1 rounded-xl border border-line px-3 text-sm font-bold text-payable"><X size={16} /> {pick('admin.reject')}</button>
                 </div>
+                {f.order ? <button type="button" onClick={() => decide(f, 'approve', true)} className={`tap flex min-h-9 items-center justify-center rounded-xl border border-line px-3 font-bold text-muted ${ur ? cls('sm') : 'text-xs'}`} data-testid="fee-money-only">{pick('admin.order.moneyOnly')}</button> : null}
               </div>
             ))}
           </div>

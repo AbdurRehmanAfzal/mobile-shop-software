@@ -84,7 +84,7 @@ class PlanIn(BaseModel):
     plan: Literal["trial", "basic", "pro", "chain"] | None = None
     expires_on: date | None = None
     clear_expiry: bool = False
-    extend_months: int | None = Field(default=None, ge=1, le=36)
+    extend_months: int | None = Field(default=None, ge=1, le=60)
     monthly_fee: Decimal | None = Field(default=None, ge=0)
     note: str | None = Field(default=None, max_length=200)
     # owner addendum 3: this shop's own grace days (None keeps the provider's default)
@@ -193,6 +193,7 @@ class FeeRowOut(BaseModel):
     receipt_no: str | None = None
     to_dues: Decimal = Decimal(0)
     fee_due: Decimal = Decimal(0)
+    order: dict | None = None
 
 
 class FeeStatsOut(BaseModel):
@@ -202,7 +203,9 @@ class FeeStatsOut(BaseModel):
 
 
 class DecideIn(BaseModel):
-    months: int | None = Field(default=None, ge=0, le=36)
+    months: int | None = Field(default=None, ge=0, le=60)
+    # False = count the money and the months only; leave the shop's package as it is (ADR-095)
+    apply_order: bool = True
     note: str | None = Field(default=None, max_length=200)
 
 
@@ -615,7 +618,7 @@ def fee_stats(_: Super, db: DB):
 
 @router.post("/fee-payments/{payment_id}/approve", response_model=FeeRowOut)
 def approve_fee(payment_id: uuid.UUID, data: DecideIn, current: Super, db: DB):
-    p = fees.approve(db, current.user, payment_id, data.months)
+    p = fees.approve(db, current.user, payment_id, data.months, apply_order=data.apply_order)
     return next(r for r in fees.listing(db, None) if r["id"] == p.id)
 
 

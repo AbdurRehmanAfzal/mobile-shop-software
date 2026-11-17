@@ -2505,10 +2505,22 @@ Sirf owner: More → **Software fees**.
 - **Aap ka plan**, **Mahana fees** aur **Kab tak ada**.
 - **In mein se kisi mein ada karein**: software provider ke accounts (Easypaisa, JazzCash, SadaPay, bank), har ek number ke liye **Copy** button ke saath.
 
+**Apna package chunein** (isi page par):
+
+- Teen package, **Basic**, **Pro** aur **Chain**, har ek ki mahana fee aur modules ki ginti ke saath. Aap wale par **Aap ka package** likha hai. Chunne ke liye dabayein; **Is package mein shamil** batata hai ke is mein kya hai.
+- **Is package mein module shamil karein**: woh module tick karein jo package mein nahi (maslan Repairs); us ki mahana fee saath likhi hai.
+- **Izafi services**: koi service tick karein, jaise purana stock dalwana.
+- **Kitne arse ke liye**: **1 mahina**, ya **1 saal** se **5 saal** tak. Zyada saal pehle ada karna sasta hai: 1 saal par 5%, 2 saal par 10%, aur 5 saal par 25% riayat.
+- Neeche wala khana **Fi mahina**, **Riayat** aur **Kul adaigi** dikhata hai. Yehi total **Raqam (Rs)** mein pehle se likha hota hai.
+
+**Misaal:** Pro 2 saal ke liye: 5,000 × 24 = 120,000, 10% riayat ke baad Rs. 108,000.
+
+Aap ka package, modules aur mahana fee tab badalte hain jab provider aap ki payment ki tasdeeq kar de.
+
 **Ada karne ke liye:**
 
 1. Apne Easypaisa, JazzCash ya bank app se fees bhejein.
-2. Software fees mein **Maine ada kar diya** bharein: **Raqam (Rs)**, **Mahine**, **Kis zariye ada kiya**, **Transaction ID / hawala**, aur **Screenshot lagayein**.
+2. Software fees mein **Maine ada kar diya** bharein: **Raqam (Rs)** (total pehle se likha hai), **Kis zariye ada kiya**, **Transaction ID / hawala**, aur **Screenshot lagayein**.
 3. **Bhejein** dabayein.
 
 **Aap ki adaigiyan** har payment ko **Check ho rahi hai**, **Mil gaya** ya **Qabool nahi hui** (wajah ke saath) dikhata hai. Jab mil jaye, aap ki **Kab tak ada** tareekh aage chali jati hai, aap ko "Shukriya! Aap ka plan renew ho gaya" dikhta hai, aur aap raseed print kar sakte hain.

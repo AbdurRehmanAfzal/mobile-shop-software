@@ -3,7 +3,7 @@
 import datetime as dt
 import uuid
 from decimal import Decimal
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
@@ -12,6 +12,7 @@ from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx, require_cap
 from app.modules.admin import fees, plans
 from app.modules.auth.schemas import PlanOut
+from app.modules.plan import order as orders
 
 router = APIRouter(prefix="/api/v1/fees", tags=["fees"])
 Owner = Annotated[Ctx, Depends(require_cap(Cap.MANAGE_SETTINGS))]
@@ -32,6 +33,7 @@ class FeeOut(BaseModel):
     paid_on: dt.date | None = None
     receipt_no: str | None = None
     to_dues: Decimal = Decimal(0)
+    order: dict | None = None  # the package order it paid for (ADR-095)
 
 
 class DueOut(BaseModel):
@@ -74,14 +76,24 @@ class MyFeesOut(BaseModel):
     dues: DuesOut  # fee still to pay for packages already given (ADR-053); no provider notes
 
 
+class OrderIn(BaseModel):
+    plan: Literal["basic", "pro", "chain"]
+    modules: list[str] = Field(default_factory=list, max_length=40)
+    addons: list[int] = Field(default_factory=list, max_length=20)
+    months: int = Field(ge=1, le=60)
+
+
 class ReportIn(BaseModel):
     amount: Decimal = Field(gt=0)
     method: str = Field(min_length=1, max_length=60)
     reference: str | None = Field(default=None, max_length=80)
     proof_path: str | None = Field(default=None, max_length=500)
-    months: int = Field(default=1, ge=1, le=36)
+    months: int = Field(default=1, ge=1, le=60)
     note: str | None = Field(default=None, max_length=300)
     paid_on: dt.date | None = None
+    # the package / modules / add-ons / duration chosen on the fees page (ADR-095); the months
+    # and the expected total then come from the server's own quote
+    order: OrderIn | None = None
 
 
 @router.get("", response_model=MyFeesOut)
@@ -95,8 +107,24 @@ def my_fees(ctx: Owner, db: DB):
     }
 
 
+@router.get("/catalog")
+def catalog(ctx: Owner, db: DB):
+    """Packages, modules, add-ons and durations with this shop's prices (ADR-095)"""
+    return orders.catalog(db, ctx.shop.organisation)
+
+
+@router.post("/quote")
+def quote(data: OrderIn, ctx: Owner, db: DB):
+    """What the chosen package, modules, add-ons and duration cost — worked out by the server"""
+    return orders.quote(db, ctx.shop.organisation, **data.model_dump())
+
+
 @router.post("", status_code=201, response_model=FeeOut)
 def report_payment(data: ReportIn, ctx: Owner, db: DB):
+    snap = None
+    if data.order is not None:
+        q = orders.quote(db, ctx.shop.organisation, **data.order.model_dump())
+        snap = orders.snapshot(q)
     p = fees.report(
         db,
         ctx.shop,
@@ -105,8 +133,9 @@ def report_payment(data: ReportIn, ctx: Owner, db: DB):
         method=data.method,
         reference=data.reference,
         proof_path=data.proof_path,
-        months=data.months,
+        months=data.order.months if data.order else data.months,
         note=data.note,
         paid_on=data.paid_on,
+        order=snap,
     )
     return fees.out(p)

@@ -1498,7 +1498,7 @@
       "restore": "Bring it back"
     },
     "pricing": "Website prices",
-    "pricingHint": "What visitors see on the landing page. A shop's own fee is set on that shop.",
+    "pricingHint": "What visitors see on the landing page and what a shop sees when it pays. A shop keeps its own agreed fee for the package it is on.",
     "priceMonth": "Per month (Rs)",
     "priceSetup": "Setup, one time (Rs)",
     "yearMonths": "A year costs (months)",
@@ -1509,7 +1509,16 @@
     "addonRoman": "Name (Roman)",
     "addonPrice": "Price (Rs)",
     "addonPer": "Per",
-    "addonAdd": "Add an add-on"
+    "addonAdd": "Add an add-on",
+    "modulePrices": "Module added to a package (Rs / month · 0 = not sold on its own)",
+    "discountYear": "Discount for each year paid ahead (%)",
+    "maxYears": "Longest package (years)",
+    "order": {
+      "pkg": "Chose",
+      "total": "Order total",
+      "short": "Paid less than the order total",
+      "moneyOnly": "Months only, package unchanged"
+    }
   },
   "field": {
     "badMobile": "Enter a 10-digit mobile number starting with 3, e.g. 300 1234567",
@@ -2011,7 +2020,8 @@
     "waText": "Assalam-o-Alaikum, I want to add \"{{module}}\" to my Mobile Shop plan.",
     "installments": "Installments (qist)",
     "attendance": "Staff attendance (hazri)",
-    "ai": "Assistant & photo reading (AI)"
+    "ai": "Assistant & photo reading (AI)",
+    "login_activity": "Login activity"
   },
   "fees": {
     "title": "Software fees",
@@ -2065,6 +2075,34 @@
       "allPaid": "All fees are paid. Thank you!",
       "invoice": "Fee invoice",
       "toDues": "Went to earlier fee:"
+    },
+    "pick": {
+      "title": "Choose your package",
+      "pkg": {
+        "basic": "Basic",
+        "pro": "Pro",
+        "chain": "Chain"
+      },
+      "yours": "Your package",
+      "perMonth": "/ month",
+      "modCount": "{{n}} modules",
+      "included": "In this package",
+      "basics": "Stock, sale, purchase, khata, payments and bills are in every package.",
+      "addModules": "Add a module to this package",
+      "services": "Extra services",
+      "duration": "For how long",
+      "month1": "1 month",
+      "year": "{{n}} year",
+      "years": "{{n}} years",
+      "off": "{{n}}% off",
+      "sum": {
+        "monthly": "Per month",
+        "discount": "Discount ({{n}}%)",
+        "once": "One-time services",
+        "owed": "Fee still unpaid",
+        "total": "Total to pay"
+      },
+      "onConfirm": "Your package changes when the provider confirms the payment."
     }
   },
   "landing": {

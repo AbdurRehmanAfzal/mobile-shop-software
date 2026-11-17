@@ -259,11 +259,18 @@ Server: the deploy runs migration `e4a6c8d0f2b5` (additive: returns, branch tran
 
 **English words with a Roman hint (2026-11-17, ADR-094)**: switch the app to English and open a person's khata, Len-den, Payments, Loans (amanat) and the books. The money words now read like "To get (lene hain)", "I gave money (de diye)". The trial balance (Reports → Balance) has a line saying what Debit and Credit hold. Tell me any other word that still confuses a shopkeeper.
 
+**Package chooser on the fees page (2026-11-17, ADR-095)**: nothing to run by hand (the deploy runs the migration). To test:
+1. Super admin → Website prices: check the package prices, the new **module prices**, **Discount for each year paid ahead (%)** (5) and **Longest package (years)** (5).
+2. As a shop owner: More → Software fees. Choose Pro and 5 years: the total must be 5,000 × 60 less 25% = Rs. 225,000. Choose your own package, tick a module, pick 1 year, send "I have paid".
+3. Super admin: the pending payment shows what was chosen and the order total. Approve it; the shop now has that package, the module and the new paid-until date. "Months only, package unchanged" gives the months without changing the package.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |
 |---|---|---|
 | [ ] | Grace days after plan end: 7 or 15? | 7 |
+| [ ] | Yearly price: the website says "a year costs 10 months" (about 17% off) but the app now gives 5% for 1 year. Make the website follow the 5%-per-year rule, or raise the 1-year discount? | website unchanged; app 5% per year |
+| [ ] | Module prices when added to a package (Repairs 500, Reports 500, WhatsApp 500, Loans 500, Installments 500, AI 1,000, others 300 a month): keep or change? | my defaults; edit in Website prices |
 | [ ] | Freight on a purchase: owed to the supplier (on his bill) or a separate expense? | on the supplier's bill |
 | [ ] | Per-item GST on the invoice? | item rate is stored, the bill uses the shop's tax rate |
 | [ ] | Lock check also for used **mobiles**? | off (tablets / watches always) |

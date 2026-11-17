@@ -35,6 +35,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Spec `docs/19-SUBSCRIPTION-REMINDERS-SPEC.md`; gap analysis, schedule, assumptions and the owner's placeholders `docs/20-SUBSCRIPTION-REMINDERS-PLAN.md`; the owner's setup checklist `docs/21-OWNER-SETUP-CHECKLIST.md` — read it before touching `backend/app/modules/plan`, `admin/plans.py`, `admin/fees.py` or `frontend/src/components/PlanReminders.tsx`.
 - Rules: the server decides the stage and whether the popup shows (server time + clock guard, snooze stored per user); the client only decides where (never on a form page); the popup is the one screen that shows en + ur + roman together; soft-lock never blocks paying, exporting or the backup; nothing is ever deleted.
 
+## Package chooser on the fees page (owner 2026-11-17, ADR-095)
+- Read ADR-095 before touching `backend/app/modules/plan/order.py`, `public/pricing.py`, `fees.approve` or `frontend/src/features/more/PackagePicker.tsx`.
+- Rules: the total is always the server's quote (never the app's); a shop's own package costs its own agreed fee, other packages the list price; the order is a snapshot on the payment and reaches the shop only when the provider approves; a smaller package hides modules, it never deletes data.
+
 ## Barcodes, labels, scanning (owner addendum 4, 2026-10-31, ADR-036)
 - Spec `docs/22-BARCODES-SPEC.md`; what existed / what was built / assumptions / scanner test `docs/23-BARCODES-PLAN.md` — read it before touching `backend/app/modules/barcodes`, `modules/labels`, `frontend/src/lib/scanner.ts` or `ScanListener.tsx`.
 - Rules: a barcode is assigned inside the purchase / item-creation transaction and never changes; each barcode keeps its type; uniqueness spans phones, items, IMEIs and SKUs; screens take scans with `useScan`, the shell handles the rest; labels stay the ADR-024 print page.

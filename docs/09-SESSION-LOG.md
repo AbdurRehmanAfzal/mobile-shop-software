@@ -1957,3 +1957,18 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Owner** (shopkeeper): asked what "naam" and "jama" mean, then said they are confusing.
 **Done**: the trial balance columns read "Debit" / "Credit" again (their only use); a line above the table says in plain words what each side holds (`books.trialHint`, en / ur / roman); the two hints left `i18n/gloss.ts`; ADR-094, progress row and docs/29 follow.
 **Verified**: tsc; vitest (53); Playwright `books` (asserts no "naam" in the table and the new line).
+
+### 2026-11-17 — package, modules and years chosen when paying (ADR-095)
+**Owner**: on "Pay now" the shopkeeper should see the packages and modules with their fees and choose 1 month, 1 year … 5 years, with 5% more discount for every year (5 years = 25%); the super admin sets the fee of every package, module and custom item.
+**Done**:
+- `plan/order.py` (`catalog`, `quote`, `snapshot`, `apply`); `module_prices`, `discount_per_year`, `max_years` in the pricing settings; `fee_payments.package_order` (migration `f2b4d6a8c0e3`); `GET /fees/catalog`, `POST /fees/quote`; `order` on `POST /fees`; `apply_order` on approve.
+- `PackagePicker.tsx` on the fees page; module prices, discount and longest package in Website prices; the order, its total and "Months only, package unchanged" on the super admin's pending payment.
+- Strings and help in en / ur / roman; manual chapter 25 in three languages (PDFs rebuilt); ADR-095, CLAUDE.md, docs/20 §5a, docs/29.
+- `e2e/fees.spec.ts`: the "Delete" locator is exact now (it also matched the "Deleted 0" chip).
+**Verified**: 
+- pytest: full suite passes; new `test_package_order` (4: catalog and discount by years, order applied only on approval, months only, provider sets module prices and discount).
+- tsc; vitest (53, including the help-text check).
+- Playwright: new `package-order` passes (5 years of Pro = Rs. 225,000; Basic + Repairs for a year = Rs. 28,500; approved → the shop has it); `fees`, `fee-credit`, `plans` pass.
+- `plan-reminders` fails on this PC at a 5-second wait in the super admin part ("Record payment"); `GET /admin/shops` takes 8 s on the bloated dev database. Not run against the old code, so not proven to be unrelated.
+- Looked at the fees page and the super admin's pending payment in English.
+**Open**: the website's yearly offer (10 months) differs from the app's 5% for one year; my default module prices (docs/29 §E).

@@ -30,7 +30,7 @@ test('accounts entered by the super admin; the shop reports a payment; approved 
   await page.goto('/admin')
   await page.getByRole('button', { name: 'Payment accounts' }).click()
   // earlier runs may have left accounts: start from an empty list
-  while (await page.getByRole('button', { name: 'Delete' }).count()) await page.getByRole('button', { name: 'Delete' }).first().click()
+  while (await page.getByRole('button', { name: 'Delete', exact: true }).count()) await page.getByRole('button', { name: 'Delete', exact: true }).first().click()
   await page.getByRole('button', { name: 'Add an account' }).click()
   await page.getByLabel('Name (e.g. Easypaisa)').fill('Easypaisa')
   await page.getByLabel('Account holder').fill('Test Holder')

@@ -1498,7 +1498,7 @@
       "restore": "Wapis laayen"
     },
     "pricing": "Website ki qeematein",
-    "pricingHint": "Jo visitor landing page par dekhte hain. Dukaan ki apni fees usi dukaan par lagti hai.",
+    "pricingHint": "Jo website par nazar aata hai aur jo dukaan fee dete waqt dekhti hai. Dukaan jis package par hai us ki apni tay shuda fee barqarar rehti hai.",
     "priceMonth": "Fi mahina (Rs)",
     "priceSetup": "Setup, ek dafa (Rs)",
     "yearMonths": "Saal kitne mahinon ka",
@@ -1509,7 +1509,16 @@
     "addonRoman": "Naam (Roman)",
     "addonPrice": "Qeemat (Rs)",
     "addonPer": "Fi",
-    "addonAdd": "Add-on shamil karein"
+    "addonAdd": "Add-on shamil karein",
+    "modulePrices": "Package mein shamil kiya gaya module (Rs / mahina · 0 = alag nahi bikta)",
+    "discountYear": "Pehle se ada kiye gaye har saal par riayat (%)",
+    "maxYears": "Sab se lamba package (saal)",
+    "order": {
+      "pkg": "Chuna",
+      "total": "Order ka total",
+      "short": "Order ke total se kam ada kiya",
+      "moneyOnly": "Sirf mahine, package wahi"
+    }
   },
   "field": {
     "badMobile": "3 se shuru hone wala 10 hindson ka mobile number likhein, maslan 300 1234567",
@@ -2011,7 +2020,8 @@
     "waText": "Assalam-o-Alaikum, main apne Mobile Shop plan mein \"{{module}}\" shamil karwana chahta hoon.",
     "installments": "Qistein",
     "attendance": "Staff ki hazri",
-    "ai": "Assistant aur tasveer parhna (AI)"
+    "ai": "Assistant aur tasveer parhna (AI)",
+    "login_activity": "Login activity"
   },
   "fees": {
     "title": "Software fees",
@@ -2065,6 +2075,34 @@
       "allPaid": "Saari fee ada ho chuki hai. Shukriya!",
       "invoice": "Fee ka bill",
       "toDues": "Pichli fee mein gaya:"
+    },
+    "pick": {
+      "title": "Apna package chunein",
+      "pkg": {
+        "basic": "Basic",
+        "pro": "Pro",
+        "chain": "Chain"
+      },
+      "yours": "Aap ka package",
+      "perMonth": "/ mahina",
+      "modCount": "{{n}} modules",
+      "included": "Is package mein shamil",
+      "basics": "Stock, sale, khareed, khata, payments aur bill har package mein shamil hain.",
+      "addModules": "Is package mein module shamil karein",
+      "services": "Izafi services",
+      "duration": "Kitne arse ke liye",
+      "month1": "1 mahina",
+      "year": "{{n}} saal",
+      "years": "{{n}} saal",
+      "off": "{{n}}% riayat",
+      "sum": {
+        "monthly": "Fi mahina",
+        "discount": "Riayat ({{n}}%)",
+        "once": "Ek baar ki services",
+        "owed": "Baqi fee",
+        "total": "Kul adaigi"
+      },
+      "onConfirm": "Payment ki tasdeeq ke baad aap ka package badal jaye ga."
     }
   },
   "landing": {
