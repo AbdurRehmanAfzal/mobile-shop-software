@@ -8,10 +8,11 @@ import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import { ErrorText, Sheet } from '@/components/ui'
 import { api } from '@/lib/api'
+import { MODULE_KEYS } from '@/lib/modules'
 import { useGet, useInvalidate } from '@/lib/queries'
 
 interface Addon { en: string; ur: string; roman: string; price: number | string; per: 'month' | 'year' | 'once' }
-interface Pricing { prices: Record<string, number | string>; setup_fee: Record<string, number | string>; yearly_paid_months: number | string; trial_days: number | string; addons: Addon[] }
+interface Pricing { prices: Record<string, number | string>; setup_fee: Record<string, number | string>; yearly_paid_months: number | string; trial_days: number | string; addons: Addon[]; module_prices?: Record<string, number | string>; discount_per_year?: number | string; max_years?: number | string }
 const PLANS = ['basic', 'pro', 'chain'] as const
 
 export default function AdminPricing() {
@@ -35,6 +36,9 @@ export default function AdminPricing() {
         setup_fee: Object.fromEntries(PLANS.map((k) => [k, num(p.setup_fee[k])])),
         yearly_paid_months: num(p.yearly_paid_months),
         trial_days: num(p.trial_days),
+        module_prices: Object.fromEntries(MODULE_KEYS.map((k) => [k, num(p.module_prices?.[k] ?? 0)])),
+        discount_per_year: num(p.discount_per_year ?? 5),
+        max_years: num(p.max_years ?? 5),
         addons: p.addons.filter((a) => a.en.trim()).map((a) => ({ ...a, price: num(a.price) })),
       })
       await inv('admin-pricing')
@@ -63,6 +67,16 @@ export default function AdminPricing() {
             <div className="grid grid-cols-2 gap-2">
               <BiInput label="admin.yearMonths" type="number" inputMode="numeric" min={1} max={12} value={p.yearly_paid_months} onChange={(e) => setP({ ...p, yearly_paid_months: e.target.value })} className="num" />
               <BiInput label="admin.trialDays" type="number" inputMode="numeric" min={0} max={90} value={p.trial_days} onChange={(e) => setP({ ...p, trial_days: e.target.value })} className="num" />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <BiInput label="admin.discountYear" type="number" inputMode="numeric" min={0} max={15} value={p.discount_per_year ?? 5} onChange={(e) => setP({ ...p, discount_per_year: e.target.value })} className="num" data-testid="discount-year" />
+              <BiInput label="admin.maxYears" type="number" inputMode="numeric" min={1} max={5} value={p.max_years ?? 5} onChange={(e) => setP({ ...p, max_years: e.target.value })} className="num" data-testid="max-years" />
+            </div>
+            <BiLabel text="admin.modulePrices" size="md" bold />
+            <div className="grid grid-cols-2 gap-2 rounded-2xl border border-line p-3">
+              {MODULE_KEYS.map((k) => (
+                <BiInput key={k} label={`modules.${k}`} type="number" inputMode="numeric" min={0} value={p.module_prices?.[k] ?? 0} onChange={(e) => setP({ ...p, module_prices: { ...(p.module_prices ?? {}), [k]: e.target.value } })} className="num" data-testid={`module-price-${k}`} />
+              ))}
             </div>
             <BiLabel text="admin.addons" size="md" bold />
             {p.addons.map((a, i) => {

@@ -14,6 +14,7 @@ import { usePlanReminder, type Reminder } from '@/lib/planReminder'
 import { backupNow, waLink } from '@/components/PlanReminders'
 import { useDocMutation, useGet } from '@/lib/queries'
 import { dueTone, type Dues } from '@/features/admin/FeeCreditCard'
+import PackagePicker, { type OrderIn, type Quote } from './PackagePicker'
 
 interface Account { label: string; account_name: string; number: string; note: string | null }
 interface Fee { id: string; amount: string; method: string; reference: string | null; proof_path: string | null; months: number; note: string | null; status: 'pending' | 'approved' | 'rejected'; decision_note: string | null; created_at: string; handled_at: string | null; paid_on: string | null; receipt_no: string | null; to_dues?: string }
@@ -34,6 +35,9 @@ export default function FeesPage() {
   const [method, setMethod] = useState('')
   const [reference, setReference] = useState('')
   const [months, setMonths] = useState('1')
+  // the package, modules, add-ons and duration chosen above, with the server's total (ADR-095)
+  const [order, setOrder] = useState<OrderIn | null>(null)
+  const [quote, setQuote] = useState<Quote | null>(null)
   const [proof, setProof] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
   const [sent, setSent] = useState(false)
@@ -46,7 +50,7 @@ export default function FeesPage() {
   const fee = Number(plan.monthly_fee) || 0
   const owed = Number(data.dues?.left ?? 0)
   // what is still unpaid is cleared first, so the suggested amount includes it (ADR-053)
-  const amt = amount === '' && (fee || owed) ? String(owed + fee * Math.max(1, Number(months) || 1)) : amount
+  const amt = amount !== '' ? amount : quote ? String(owed + Number(quote.total)) : fee || owed ? String(owed + fee * Math.max(1, Number(months) || 1)) : amount
   const chosen = method || data.accounts[0]?.label || ''
 
   async function copy(a: Account) {
@@ -61,7 +65,7 @@ export default function FeesPage() {
 
   async function submit(e: FormEvent) {
     e.preventDefault()
-    await report.mutateAsync({ amount: Number(amt), method: chosen, reference: reference || null, proof_path: proof, months: Number(months) || 1, paid_on: paidOn || null })
+    await report.mutateAsync({ amount: Number(amt), method: chosen, reference: reference || null, proof_path: proof, months: order?.months ?? (Number(months) || 1), paid_on: paidOn || null, order: quote ? order : null })
     setSent(true)
     setAmount('')
     setReference('')
@@ -112,6 +116,8 @@ export default function FeesPage() {
         </Section>
       ) : null}
 
+      <PackagePicker owed={owed} onChange={(o, q) => { setOrder(o); setQuote(q); setAmount('') }} />
+
       <Section title="fees.payInto" help="fees.payInto">
         {rem?.billing?.bank ? (
           <div className="card divide-y divide-line p-0" data-testid="fees-bank">
@@ -147,9 +153,9 @@ export default function FeesPage() {
       <Section title="fees.reportTitle" help="fees.report">
         {sent ? <BiAlert text="fees.sent" kind="success" /> : null}
         <form onSubmit={submit} className="flex flex-col gap-3">
-          <div className="grid grid-cols-2 gap-2">
+          <div className={quote ? 'grid grid-cols-1' : 'grid grid-cols-2 gap-2'}>
             <BiInput label="fees.amount" type="number" inputMode="numeric" min={1} value={amt} onChange={(e) => setAmount(e.target.value)} required className="num" help={<Help term="fees.amount" size="sm" />} />
-            <BiInput label="fees.months" type="number" inputMode="numeric" min={1} max={36} value={months} onChange={(e) => setMonths(e.target.value)} className="num" help={<Help term="fees.months" size="sm" />} />
+            {quote ? null : <BiInput label="fees.months" type="number" inputMode="numeric" min={1} max={60} value={months} onChange={(e) => setMonths(e.target.value)} className="num" help={<Help term="fees.months" size="sm" />} />}
           </div>
           <div>
             <span className="mb-1.5 flex items-center gap-1"><BiLabel text="fees.method" size="md" tone="text-muted" /><Help term="fees.method" size="sm" /></span>

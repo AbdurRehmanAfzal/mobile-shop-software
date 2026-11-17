@@ -71,6 +71,10 @@ class FeePayment(UUIDPk, Base):
     # owner 2026-11-09 (ADR-053): the part of this payment that cleared fee still unpaid from a
     # package extended on credit; the rest bought `months`. Set when approved, never changed.
     to_dues: Mapped[Decimal] = mapped_column(default=Decimal(0), nullable=False)
+    # owner 2026-11-17 (ADR-095): what the shop chose when paying — package, extra modules,
+    # add-ons, months, discount and the total, as worked out by the server then. Applied to the
+    # shop when the payment is approved; never changed afterwards.
+    package_order: Mapped[dict | None] = mapped_column(JSON)
 
 
 class FeeDue(UUIDPk, Base):
@@ -195,8 +199,10 @@ def report(
     months: int,
     note: str | None,
     paid_on: dt.date | None = None,
+    order: dict | None = None,
 ) -> FeePayment:
     row = FeePayment(
+        package_order=order,
         paid_on=paid_on,
         organisation_id=shop.organisation_id,
         shop_id=shop.id,
@@ -282,6 +288,7 @@ def listing(db: Session, status: str | None, limit: int = 200) -> list[dict]:
                 "paid_on": p.paid_on,
                 "receipt_no": p.receipt_no,
                 "to_dues": p.to_dues,
+                "order": p.package_order,
                 # what this shop still owes from packages given on credit (cleared first)
                 "fee_due": owed.get(p.organisation_id, Decimal(0)),
             }
@@ -309,6 +316,7 @@ def approve(
     months: int | None,
     *,
     to_dues: Decimal | None = None,
+    apply_order: bool = True,
 ) -> FeePayment:
     """Marks it received. It first clears fee still unpaid from a package extended on credit
     (ADR-053; `to_dues`, all it can by default), then extends the plan by `months` — the reported
@@ -322,7 +330,13 @@ def approve(
         n = months
     else:
         n = (p.months or 1) if p.amount - part > 0 else 0
-    if n:
+    order = p.package_order if apply_order and n else None
+    if order:
+        # the package, modules and monthly fee the shop chose and paid for (ADR-095)
+        from app.modules.plan import order as orders
+
+        orders.apply(db, org, order, by=admin.id, months=n)
+    elif n:
         plans.set_plan(
             db,
             org,
@@ -358,6 +372,7 @@ def approve(
             "to_dues": str(p.to_dues),
             "receipt_no": p.receipt_no,
             "until": str(org.plan_expires_at),
+            **({"plan": org.plan, "modules": order.get("extras", [])} if order else {}),
         },
     )
     db.commit()
@@ -651,4 +666,5 @@ def out(p: FeePayment) -> dict:
         "paid_on": p.paid_on,
         "receipt_no": p.receipt_no,
         "to_dues": p.to_dues,
+        "order": p.package_order,
     }

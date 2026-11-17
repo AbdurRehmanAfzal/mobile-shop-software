@@ -2505,10 +2505,22 @@ Owner only: More → **Software fees**.
 - **Your plan**, the **Monthly fee** and **Paid until**.
 - **Pay into one of these**: the software provider's accounts (Easypaisa, JazzCash, SadaPay, bank), each with a **Copy** button for the number.
 
+**Choose your package** (on the same page):
+
+- The three packages, **Basic**, **Pro** and **Chain**, each with its fee per month and how many modules it has. Yours is marked **Your package**. Tap one to choose it; **In this package** lists what it includes.
+- **Add a module to this package**: tick a module the package does not have (for example Repairs); its fee per month is shown beside it.
+- **Extra services**: tick a service such as entering your old stock.
+- **For how long**: **1 month**, or **1 year** up to **5 years**. Paying years ahead is cheaper: 1 year 5% off, 2 years 10% off, up to 5 years 25% off.
+- The box below shows **Per month**, the **Discount** and the **Total to pay**. That total is already filled in **Amount (Rs)**.
+
+**Example:** Pro for 2 years: 5,000 × 24 = 120,000, less 10% = Rs. 108,000.
+
+Your package, modules and monthly fee change only after the provider confirms your payment.
+
 **To pay:**
 
 1. Send the fee from your own Easypaisa, JazzCash or bank app.
-2. In Software fees, fill **I have paid**: **Amount (Rs)**, **Months**, **Paid through**, the **Transaction ID / reference**, and **Add a screenshot**.
+2. In Software fees, fill **I have paid**: **Amount (Rs)** (already filled with the total), **Paid through**, the **Transaction ID / reference**, and **Add a screenshot**.
 3. Tap **Send**.
 
 **Your payments** shows each payment as **Being checked**, **Received** or **Not accepted** (with the reason). Once it is received, your **Paid until** date moves forward, you see "Thank you! Your plan is renewed", and you can print the receipt.

@@ -5987,6 +5987,16 @@
       "title": "Fee still to pay",
       "body": "Months of your package that were given before the fee was paid. Each line shows its period, the fee, what you paid and what is left. A payment you send clears this first.",
       "example": "FEE-0003 for 2 months Rs. 3,000, you paid Rs. 1,000 → Part paid, Rs. 2,000 still to pay."
+    },
+    "pick": {
+      "title": "Choose your package",
+      "body": "The packages, what each one includes and its fee per month. You can add a module to a package and choose how long to pay for. The total at the bottom is what to send. Your package changes after the provider confirms the payment.",
+      "example": "Pro for 2 years: 5,000 × 24 = 120,000, less 10% = Rs. 108,000.",
+      "duration": {
+        "title": "For how long",
+        "body": "Pay for one month, or for several years at once. The more years you pay ahead, the bigger the discount; each button shows its own.",
+        "example": "For example: 1 year 5% off, 2 years 10% off, 5 years 25% off."
+      }
     }
   },
   "accounts": {

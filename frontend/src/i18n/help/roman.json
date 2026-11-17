@@ -5987,6 +5987,16 @@
       "title": "Fee jo abhi deni hai",
       "body": "Aap ke package ke woh mahine jo fee ada hone se pehle diye gaye. Har line mein muddat, fee, aap ne kitna diya aur kitna baqi hai. Aap jo payment bhejenge woh pehle yeh poora karegi.",
       "example": "FEE-0003, 2 mahine Rs. 3,000, aap ne Rs. 1,000 diye → Kuch ada hui, Rs. 2,000 abhi dene hain."
+    },
+    "pick": {
+      "title": "Apna package chunein",
+      "body": "Packages, har ek mein kya shamil hai aur us ki mahana fee. Aap package mein module shamil kar sakte hain aur chun sakte hain ke kitne arse ki fee deni hai. Neeche wala total woh raqam hai jo bhejni hai. Payment ki tasdeeq ke baad aap ka package badalta hai.",
+      "example": "Pro 2 saal ke liye: 5,000 × 24 = 120,000, 10% riayat ke baad Rs. 108,000.",
+      "duration": {
+        "title": "Kitne arse ke liye",
+        "body": "Ek mahine ki fee dein, ya ek saath kai saal ki. Jitne zyada saal pehle ada karein ge, riayat utni zyada; har button par apni riayat likhi hai.",
+        "example": "Maslan: 1 saal par 5%, 2 saal par 10%, 5 saal par 25% riayat."
+      }
     }
   },
   "accounts": {

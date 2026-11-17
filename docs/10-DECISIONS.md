@@ -362,6 +362,26 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-095 · 2026-11-17 · Accepted · The shop chooses its package, modules and years when it pays
+**Context**: "Pay now" opened a page with only the accounts and an amount. The owner wants the shopkeeper to see the packages, the modules he can take and what each costs, and to choose how long to pay for — 1 month, 1 year, 2 years … 5 years — with a discount that grows 5% with every year (5 years = 25%). The super admin sets the fee of every package, every module and his own extra items.
+
+**Decision**:
+- **Prices** live in the existing `platform_settings["pricing"]` (Super admin → Website prices): package prices (already there), `module_prices` (PKR per month for a module added on top of a package; 0 = not sold on its own), the add-ons list (already there — these are the provider's own "custom" items), `discount_per_year` (default 5) and `max_years` (default 5).
+- **`plan/order.py`** works out everything on the server: `catalog` (packages, modules, add-ons, durations for this shop) and `quote` (lines, per month, discount, total). The app never sends a total.
+  - A shop's **own package costs its own agreed fee** (`organisations.monthly_fee`); every other package costs the list price. So nobody's fee rises by opening the page.
+  - Modules already in the package are never charged again; a module priced 0 cannot be bought.
+  - The discount is `years × discount_per_year` per cent (capped at 90) on what repeats — package, modules, monthly / yearly add-ons — rounded to whole rupees. One-time add-ons are never discounted. One month has no discount.
+- **The order rides on the payment**: `fee_payments.package_order` (JSON snapshot of the quote; migration `f2b4d6a8c0e3`, additive, NULL for every old payment). `POST /api/v1/fees` takes `order`; the months come from it.
+- **Nothing changes for the shop until the provider approves.** On approval `order.apply` sets the package, the modules (only when the package or the extras differ), the monthly fee (package + extras) and extends the months. The super admin sees the order on the pending payment, is warned when less than the total was paid, and can use "Months only, package unchanged" (`apply_order: false`).
+- A payment that went wholly to unpaid fee (ADR-053) applies no order.
+- Routes: `GET /api/v1/fees/catalog`, `POST /api/v1/fees/quote` (owner only; under `/api/v1/fees`, so they work while soft-locked). Months limits rose from 36 to 60.
+- App: `PackagePicker.tsx` on the fees page (packages, included modules, add a module, extra services, duration, summary); the amount in "I have paid" is the total plus any unpaid fee.
+
+**Consequences**:
+- The landing page still shows the older yearly offer ("a year costs 10 months", about 17% off) while the app gives 5% for one year. The owner must choose one (docs/29 §E).
+- A smaller package hides modules; their data is never deleted.
+- The one-PC install shows the same chooser from its own settings; its renewal still arrives as a code.
+
 ## ADR-094 · 2026-11-17 · Accepted · English money words carry a small Roman Urdu hint
 **Context**: shopkeepers using the app in English did not understand the money-direction words — "Gave money", "Took money", "I will get", "I have to give", credit / debit — and the loan (amanat) screen. The owner asked for easier words and a small Roman Urdu hint beside the English, so someone who reads English reads that and everyone else reads the hint.
 

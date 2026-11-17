@@ -51,6 +51,10 @@ Moving to a more urgent stage shows the popup again even if it was snoozed in a 
 
 Bank name, account title, account number, IBAN, branch (all `PLACEHOLDER…` until changed and hidden from shopkeepers while they are), support phone and WhatsApp (`+92 300 0000000`), optional QR image, optional note per language; wallets under Accounts. On the VPS `.env`: `RENEWAL_PRIVATE_KEY` + `RENEWAL_PUBLIC_KEY` from `python -m app.modules.plan.renewal keygen` (the public key also goes into the Windows build's settings).
 
+## 5a. Package chooser (2026-11-17, ADR-095)
+
+The fees page now starts with "Choose your package": the three packages with this shop's fee, the modules in the chosen package, modules that can be added (priced per month), extra services, and the duration (1 month, 1–5 years; `discount_per_year` per cent off for each year). `plan/order.py` quotes the total; the order is stored on the payment (`fee_payments.package_order`) and applied by `fees.approve`. Assumption 3 above changes: the amount due is the quoted total plus any unpaid fee.
+
 ## 6. Deferred
 
 Popup message templates editable by the provider (the texts live in the i18n files; the per-language *note* is editable), e-mail reminders, automatic WhatsApp reminders to the owner at each stage (the bar and popup are in-app; the existing night report could carry a line).
