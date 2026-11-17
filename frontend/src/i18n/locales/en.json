@@ -4973,7 +4973,52 @@
     "markFaulty": "Open the phone to write its fault",
     "homeLabel": "Phones returned (this month)",
     "homeToday": "today {{n}}",
-    "ovN": "{{n}} returns · {{p}} phones"
+    "ovN": "{{n}} returns · {{p}} phones",
+    "cond": {
+      "title": "How did it come back?",
+      "ok": "Fine — back to stock",
+      "damaged": "Damaged — keep it apart (Faulty)"
+    },
+    "cf": {
+      "title": "Check before saving",
+      "sale": "Sold for",
+      "cost": "It cost",
+      "refund": "Hand back to the customer",
+      "kept": "Shop keeps (cut)",
+      "khata": "Stays in the khata",
+      "stock": "Stock",
+      "stockOk": "+{{n}} back in stock",
+      "stockBad": "+{{n}} to Faulty (not for normal sale)",
+      "cash": "Galla",
+      "confirm": "Confirm return",
+      "cancel": "Cancel"
+    },
+    "fix": {
+      "title": "You are correcting {{no}}",
+      "hint": "The old return is undone and this one saved in its place — both together, or neither.",
+      "why": "Why is it being corrected?"
+    },
+    "after": {
+      "undone": "The return is undone. Enter the right one if it was the wrong kind:",
+      "sale": "Customer's return",
+      "purchase": "Return to the seller"
+    },
+    "u": {
+      "title": "This will be undone",
+      "stockSale": "{{n}} phone(s) go back to the customer as sold",
+      "stockPurchase": "{{n}} phone(s) come back into stock",
+      "cashSale": "comes back into the galla",
+      "cashPurchase": "goes back out of the galla",
+      "khata": "The khata goes back to what it was"
+    },
+    "x": {
+      "condition": "Came back",
+      "replaces": "Corrects",
+      "edit": "Correct this return (amount, phone)",
+      "editReason": "Correct the reason",
+      "saveReason": "Save the reason",
+      "undoHint": "To change a return to the seller, undo it and enter it again."
+    }
   },
   "delchk": {
     "title": "First do this",

@@ -5,7 +5,17 @@ import uuid
 from decimal import Decimal
 from enum import StrEnum
 
-from sqlalchemy import JSON, Date, ForeignKey, Index, String, Text, UniqueConstraint, Uuid
+from sqlalchemy import (
+    JSON,
+    Date,
+    DateTime,
+    ForeignKey,
+    Index,
+    String,
+    Text,
+    UniqueConstraint,
+    Uuid,
+)
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import ZERO, Base, ShopScoped, Timestamped, UUIDPk
@@ -73,3 +83,8 @@ class ReturnDoc(UUIDPk, ShopScoped, Timestamped, Base):
     )  # posted | voided
     void_reason: Mapped[str | None] = mapped_column(Text)
     voided_by: Mapped[uuid.UUID | None] = mapped_column(Uuid)
+    # owner 2026-11-20 (ADR-101): when it was undone; how the item came back (ok | damaged — a
+    # damaged phone goes to Faulty, not to normal stock); and the wrong return this one replaces
+    voided_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    item_condition: Mapped[str | None] = mapped_column(String(12))
+    replaces_id: Mapped[uuid.UUID | None] = mapped_column(Uuid)

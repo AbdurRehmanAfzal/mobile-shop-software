@@ -277,6 +277,12 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **"First do this" before a delete (2026-11-19, ADR-100)**: nothing to run. To test: give a phone to another shop on amanat, then try to delete its purchase — the sheet must say the phone is with that shop, with an Open button. Take it back; note that the purchase then says the phone "went out and came back" and must be returned to the seller instead (a loan is a move). A purchase with nothing after it deletes as before.
 
+**Returns audit (2026-11-20, ADR-101)** — deploy and rollback:
+1. Take the usual database backup first.
+2. Merge and deploy as always; the backend runs `alembic upgrade head` on start. The migration only adds three empty columns to `returns` (no row is changed).
+3. Check on one shop: an old return still opens in Returns list; make a test sale and return it (the summary must appear before saving); undo that return.
+4. Rollback, if ever needed: redeploy the previous version; the three extra columns can stay (the old code ignores them). To remove them: `alembic downgrade c6e8a0b2d4f7`.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

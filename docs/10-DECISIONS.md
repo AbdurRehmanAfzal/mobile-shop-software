@@ -362,6 +362,28 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-101 · 2026-11-20 · Accepted · Return Sale / Return Purchase audit: condition, confirm, correct, undo
+**Context**: the owner sent a ten-phase brief to audit and improve sale returns and purchase returns on a system that live shops already use: correct accounting, a safe undo, editing, the wrong kind of return corrected, an easy form with a confirmation, damaged stock kept apart, twenty test scenarios, and nothing existing disturbed.
+
+**Audit — what the code already did** (each now pinned by a test in `tests/test_returns_audit.py`):
+- **Sale return**: debits `sales` (net) and `tax_payable`, debits `inventory` / credits `cogs` at the line's own cost (a phone is specific-item cost; a counted item re-enters its batches at the sold cost), credits the customer's khata with the value, then cash handed back and the shop's cut (`other_income`) are debited from the khata. The purchase and its cost are never touched.
+- **Purchase return**: credits `inventory` at the line's cost (a counted item leaves FIFO), debits the supplier's khata; cash moves only for what is really handed back; the seller's cut is a cost. Full and partial (by line).
+- **Undo** (ADR-090): reverses the ledger group, puts the phone back (sold again / in stock again), restores the bill; the return stays as Deleted with who and why; a second undo is refused; refused once the phone moved on.
+- **Guards**: a line cannot be returned twice; a line of another bill is refused; every read and write is by `shop_id`; undo needs the owner / manager.
+- **The brief's example**: 65,000 cost, sold 70,000, 68,000 handed back, 2,000 kept. The brief asks for "net profit 7,000". The books show **2,000 after the return**: the sale is reversed, so its 5,000 margin is reversed with it, and the 2,000 kept is income. The phone is back in stock at 65,000, and **when it is sold again for 70,000 the total is 5,000 + 2,000 = 7,000**. Showing 7,000 while the phone sits unsold in stock would count a profit that has not been earned, so this was not changed; the test asserts both figures.
+
+**What was missing, and the decision** (all additive; migration `e2a4c6b8d0f3` adds three nullable columns to `returns`):
+- **Condition**: `item_condition` ok / damaged. A damaged phone returns at its cost and is marked Faulty in the same transaction (no money on that event), so it is not sold as sound stock by mistake; its return can still be undone.
+- **When it was undone**: `voided_at` beside the existing who / why.
+- **Correcting in one step**: `POST /returns/{id}/replace` undoes the wrong return and enters the right one — a customer's return or a return to the seller — in **one database transaction** (both or neither); the new one carries `replaces_id`. A new return may also name a wrong one already undone (`replaces_id`). `PATCH /returns/{id}` corrects the reason / note only. Owner / manager.
+- **Confirm before saving**: the return form shows a summary (phone, IMEI, cost for those who may see it, sold for, handed back, cut, khata, stock change, galla change) with Confirm / Cancel. The undo sheet lists what it puts back.
+- **Wrong kind**: after an undo the report offers "Customer's return" / "Return to the seller".
+- **No double posting**: a return to the seller now takes an `Idempotency-Key` like a customer's return.
+
+**Not changed, on purpose**: no existing return, ledger entry, cost or stock figure is rewritten; existing API fields and routes are unchanged (new fields are optional); nothing is recalculated.
+
+**Limits**: a line is returned whole (5 covers on one line come back together, not 2 of 5); a return to the seller is corrected through the API or by undo and re-entry — the app's one-step correction form is for customers' returns; the damaged flag applies to phones (counted items go back to stock).
+
 ## ADR-100 · 2026-11-19 · Accepted · The delete sheet says what must be undone first
 **Context**: shopkeepers want a wrong purchase, return, sale, payment or expense deleted with one tap and a warning, and — when something must be undone first — to be told what ("the phone is at repair"). The owner asked whether deleting should undo everything by itself, and whether the system already does.
 

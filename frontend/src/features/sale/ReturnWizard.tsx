@@ -10,7 +10,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import PartyPicker from '@/components/PartyPicker'
-import { ErrorText, List, PageHeader, Row, SearchBox, Stepper, fmtDate } from '@/components/ui'
+import { ErrorText, List, PageHeader, Row, SearchBox, Sheet, Stepper, fmtDate } from '@/components/ui'
 import { beep, useScan } from '@/lib/scanner'
 import { lookupCode } from '@/components/ScanListener'
 import { get } from '@/lib/api'
@@ -19,6 +19,8 @@ import type { DeviceEvent, Invoice, Party } from '@/lib/types'
 import { DeviceRow } from '@/features/stock/StockPage'
 
 interface ReturnDoc { id: string; no: string; refund_amount: string; kept_amount: string; amount: string; party_balance_after: string | null }
+/** the wrong return being corrected (ADR-101) */
+interface OldReturn { id: string; no: string; kind: 'sale' | 'purchase'; document_id: string; amount: string; status: string; reason: string | null; reason_code: string | null; item_condition: string | null; lines: { invoice_line_id?: string }[] }
 type GiveFrom = { kind: 'account'; id: string } | { kind: 'khata' }
 const n = (v: string | number | null | undefined) => Math.abs(Number(v ?? 0)).toLocaleString('en-US', { maximumFractionDigits: 0 })
 
@@ -51,11 +53,21 @@ export default function ReturnWizard() {
   // owner 2026-11-18 (ADR-097): why it came back, for the returns report
   const [why, setWhy] = useState<string | null>(null)
   const [done, setDone] = useState<ReturnDoc | null>(null)
+  // owner 2026-11-20 (ADR-101): how it came back; a summary to confirm before saving; and
+  // correcting a wrong return (`?replace=<id>`: undone and re-entered together) or linking the
+  // right one to a wrong one already undone (`?corrects=<id>`)
+  const [cond, setCond] = useState<'ok' | 'damaged'>('ok')
+  const [confirm, setConfirm] = useState(false)
+  const [replaceId] = useState(() => params.get('replace'))
+  const [corrects] = useState(() => params.get('corrects'))
+  const [old, setOld] = useState<OldReturn | null>(null)
+  const [fixWhy, setFixWhy] = useState('')
+  const oldLines = old ? old.lines.map((l) => l.invoice_line_id).filter((x): x is string => !!x) : []
   const { data: sold } = useDevices({ status: 'sold', q: q || undefined, limit: 30 })
   const { data: recent } = useSales({})
   const { data: inv } = useSale(invoiceId)
   const { data: accounts } = useCashAccounts()
-  const m = useDocMutation<Record<string, unknown>, ReturnDoc>('POST', () => '/api/v1/returns/sale', undefined, undefined, { key: () => idem })
+  const m = useDocMutation<Record<string, unknown>, ReturnDoc>('POST', () => (replaceId ? `/api/v1/returns/${replaceId}/replace` : '/api/v1/returns/sale'), undefined, undefined, { key: () => idem })
   const cashId = accounts?.find((a) => a.is_default)?.id ?? accounts?.[0]?.id
 
   async function openDevice(id: string) {
@@ -73,27 +85,40 @@ export default function ReturnWizard() {
 
   useEffect(() => {
     const d = params.get('device')
-    if (d) void openDevice(d)
+    if (replaceId) {
+      // the form opens filled from the wrong return: its bill, its lines, its reason
+      void get<OldReturn>(`/api/v1/returns/${replaceId}`).then((o) => {
+        if (o.kind !== 'sale' || o.status === 'voided') return
+        setOld(o)
+        setInvoiceId(o.document_id)
+        setSelected(o.lines.map((l) => l.invoice_line_id).filter((x): x is string => !!x))
+        setReason(o.reason ?? '')
+        setWhy(o.reason_code)
+        if (o.item_condition === 'damaged') setCond('damaged')
+        setStep(1)
+      }).catch(() => undefined)
+    } else if (d) void openDevice(d)
     else if (params.get('invoice')) setStep(1)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // once the invoice loads, turn a "device:<id>" pick into its line id; default to every open line
   useEffect(() => {
     if (!inv) return
-    const open = inv.lines.filter((l) => !l.returned_at)
+    const open = inv.lines.filter((l) => !l.returned_at || oldLines.includes(l.id))
     setSelected((sel) => {
       const dev = sel.find((s) => s.startsWith('device:'))?.slice(7)
       if (dev) return open.filter((l) => l.device_id === dev).map((l) => l.id)
       return sel.length ? sel : open.map((l) => l.id)
     })
-  }, [inv])
+  }, [inv, old]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!from && cashId) setFrom({ kind: 'account', id: cashId })
   }, [cashId, from])
 
   const value = inv ? inv.lines.filter((l) => selected.includes(l.id)).reduce((s, l) => s + Number(l.line_total), 0) : 0
-  const outstanding = inv ? Math.max(0, Number(inv.total) - Number(inv.returned_total) - Number(inv.paid)) : 0
+  // when a wrong return is being corrected, the bill is read as if that return had not been made
+  const outstanding = inv ? Math.max(0, Number(inv.total) - (Number(inv.returned_total) - (old ? Number(old.amount) : 0)) - Number(inv.paid)) : 0
   const walkIn = !!inv && !inv.party_id
   const creditNum = walkIn ? value : Math.min(value, Math.max(0, credit === null ? value : Number(credit || 0)))
   const deduction = value - creditNum
@@ -104,14 +129,18 @@ export default function ReturnWizard() {
   const cut = deduction + (toKhata || rest === 'khata' ? 0 : left)
   // + the shop still owes the customer, − the customer still owes on this bill
   const after = toKhata || rest === 'khata' ? left : creditNum < outstanding ? -(outstanding - creditNum) : 0
-  const ok = !!inv && selected.length > 0 && (!walkIn || !!who) && !!from
+  const ok = !!inv && selected.length > 0 && (!walkIn || !!who) && !!from && (!replaceId || fixWhy.trim().length >= 2)
+  const picked = inv ? inv.lines.filter((l) => selected.includes(l.id)) : []
+  const phones = picked.filter((l) => l.device_id).length
+  const costKnown = picked.length > 0 && picked.every((l) => l.cost != null)
+  const costSum = picked.reduce((s, l) => s + Number(l.cost ?? 0), 0)
 
   // refund editing resets when the picked lines change
   useEffect(() => { setRefund(null); setCredit(null) }, [value])
 
   async function submit() {
     if (!inv) return
-    const res = await m.mutateAsync({
+    const payload = {
       invoice_id: inv.id,
       line_ids: selected,
       party_id: walkIn ? who?.id : undefined,
@@ -121,7 +150,11 @@ export default function ReturnWizard() {
       cash_account_id: from?.kind === 'account' && give > 0 ? from.id : undefined,
       reason: reason || undefined,
       reason_code: why ?? undefined,
-    })
+      item_condition: phones ? cond : undefined,
+      replaces_id: !replaceId && corrects ? corrects : undefined,
+    }
+    const res = await m.mutateAsync(replaceId ? { reason: fixWhy.trim(), sale: payload } : payload)
+    setConfirm(false)
     setDone(res)
     setIdem(uid())
     setStep(2)
@@ -164,10 +197,17 @@ export default function ReturnWizard() {
 
       {step === 1 && inv ? (
         <div className="flex flex-col gap-3">
+          {old ? (
+            <div className="flex flex-col gap-2 rounded-2xl border border-gold/50 bg-gold/15 p-3" data-testid="return-fix">
+              <span className={`font-bold text-gold-text ${small}`}>{pick('ret.fix.title').replace('{{no}}', old.no)}</span>
+              <BiLabel text="ret.fix.hint" size="sm" tone="text-ink" />
+              <BiInput label="ret.fix.why" value={fixWhy} onChange={(e) => setFixWhy(e.target.value)} maxLength={300} data-testid="return-fix-why" />
+            </div>
+          ) : null}
           <span className="flex items-center gap-1"><BiLabel text="counter.whatBack" size="sm" bold tone="text-muted" /><Help term="sale.returnLines" size="sm" /></span>
           <div className="card flex flex-col gap-1 p-0">
             {inv.lines.map((l) => {
-              const back = !!l.returned_at
+              const back = !!l.returned_at && !oldLines.includes(l.id)
               const on = selected.includes(l.id)
               return (
                 <label key={l.id} className={`flex items-center gap-3 border-b border-line px-4 py-3 last:border-0 ${back ? 'opacity-50' : ''}`}>
@@ -247,8 +287,44 @@ export default function ReturnWizard() {
             ))}
           </div>
           <BiInput label="counter.reasonOpt" help={<Help term="sale.returnReason" size="sm" />} value={reason} onChange={(e) => setReason(e.target.value)} />
-          <ErrorText error={m.error} />
-          <BiButton text="counter.returnBtn" icon={<Undo2 size={22} />} full loading={m.isPending} disabled={!ok} onClick={submit} />
+          {phones ? (
+            <>
+              <BiLabel text="ret.cond.title" size="md" bold />
+              <div className="grid grid-cols-2 gap-2" data-testid="return-cond">
+                <button type="button" aria-pressed={cond === 'ok'} onClick={() => setCond('ok')} className={chip(cond === 'ok')} data-testid="cond-ok"><Check size={22} />{pick('ret.cond.ok')}</button>
+                <button type="button" aria-pressed={cond === 'damaged'} onClick={() => setCond('damaged')} className={chip(cond === 'damaged')} data-testid="cond-damaged"><Wrench size={22} />{pick('ret.cond.damaged')}</button>
+              </div>
+            </>
+          ) : null}
+          <ErrorText error={confirm ? null : m.error} />
+          <BiButton text="counter.returnBtn" icon={<Undo2 size={22} />} full disabled={!ok} onClick={() => { m.reset(); setConfirm(true) }} />
+          {/* ADR-101: one look at what will happen, then Confirm */}
+          <Sheet open={confirm} onClose={() => setConfirm(false)} title="ret.cf.title">
+            <div className="flex flex-col gap-3" data-testid="return-confirm">
+              <div className="card flex flex-col divide-y divide-line py-1">
+                {picked.map((l) => (
+                  <div key={l.id} className="flex items-center justify-between gap-2 py-2">
+                    <span className="flex min-w-0 flex-col"><span className="truncate text-[15px] font-extrabold">{l.device_label ?? l.description}</span>{l.imei1 ? <span className="num text-xs text-muted" dir="ltr">{l.imei1}</span> : null}</span>
+                    <span className="num" dir="ltr">{n(l.line_total)}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="card flex flex-col divide-y divide-line py-1">
+                {costKnown ? <SumLine k={pick('ret.cf.cost')} v={n(costSum)} /> : null}
+                <SumLine k={pick('ret.cf.sale')} v={n(value)} />
+                <SumLine k={pick('ret.cf.refund')} v={n(give)} bold testid="cf-refund" />
+                {cut > 0 ? <SumLine k={pick('ret.cf.kept')} v={n(cut)} testid="cf-kept" /> : null}
+                {after !== 0 ? <SumLine k={pick('ret.cf.khata')} v={`${after > 0 ? '' : '− '}${n(Math.abs(after))}`} /> : null}
+              </div>
+              <div className="card flex flex-col divide-y divide-line py-1">
+                {phones ? <SumLine k={pick('ret.cf.stock')} v={pick(cond === 'damaged' ? 'ret.cf.stockBad' : 'ret.cf.stockOk').replace('{{n}}', String(phones))} testid="cf-stock" plain /> : null}
+                <SumLine k={pick('ret.cf.cash')} v={give > 0 ? `− ${n(give)}` : '0'} testid="cf-cash" />
+              </div>
+              <ErrorText error={m.error} />
+              <BiButton text="ret.cf.confirm" icon={<Check size={22} />} full loading={m.isPending} disabled={!ok} onClick={submit} data-testid="return-confirm-btn" />
+              <BiButton text="ret.cf.cancel" full variant="ghost" onClick={() => setConfirm(false)} />
+            </div>
+          </Sheet>
         </div>
       ) : null}
 
@@ -265,11 +341,20 @@ export default function ReturnWizard() {
           {/* ADR-097: what usually comes next — he takes another phone; a faulty one gets its fault written */}
           {(inv?.party_id ?? who?.id) ? <BiButton text="ret.sellAnother" icon={<Tag size={22} />} full onClick={() => nav(`/sale/new?party=${inv?.party_id ?? who?.id}`)} data-testid="return-sell-another" /> : null}
           {why === 'fault' && returnedDevice ? <BiButton text="ret.markFaulty" icon={<Wrench size={22} />} full variant="secondary" onClick={() => nav(`/stock/${returnedDevice}`)} data-testid="return-mark-faulty" /> : null}
-          <BiButton text="counter.newReturn" icon={<Undo2 size={22} />} full variant="secondary" onClick={() => { setInvoiceId(undefined); setSelected([]); setWho(null); setReason(''); setWhy(null); setRefund(null); setDone(null); setStep(0); m.reset() }} />
+          <BiButton text="counter.newReturn" icon={<Undo2 size={22} />} full variant="secondary" onClick={() => { setInvoiceId(undefined); setSelected([]); setWho(null); setReason(''); setWhy(null); setCond('ok'); setOld(null); setFixWhy(''); setRefund(null); setDone(null); setStep(0); m.reset() }} />
           <BiButton text="ret.seeAll" icon={<ListChecks size={22} />} full variant="ghost" onClick={() => nav('/returns')} data-testid="return-see-all" />
           <BiButton text="nav.home" icon={<Home size={22} />} full variant="ghost" onClick={() => nav('/')} />
         </div>
       ) : null}
+    </div>
+  )
+}
+
+function SumLine({ k, v, bold = false, plain = false, testid }: { k: string; v: string; bold?: boolean; plain?: boolean; testid?: string }) {
+  return (
+    <div className="flex items-center justify-between gap-3 py-2 text-sm">
+      <span className="text-muted">{k}</span>
+      <span className={`${plain ? 'font-bold' : 'num'} ${bold ? 'text-xl' : ''}`} dir={plain ? undefined : 'ltr'} data-testid={testid}>{v}</span>
     </div>
   )
 }

@@ -29,6 +29,16 @@ Wapsi teen chhote qadamon mein hoti hai: **Kya wapas aaya?**, **Kitne wapas dene
 
 Aakhri qadam par **Wapsi ho gayi** aata hai, saath mein wapas di gayi raqam, dukaan ki kaati hui raqam aur wapsi ka number. Us ke neeche: **Phone wapas stock mein aa gaya**. Agli wapsi ke liye **Ek aur wapsi** dabayein, ya Home par chale jayein.
 
+**Kis haalat mein wapas aaya?** **Theek hai — stock mein wapas** ya **Kharab hai — alag rakhein (Faulty)** chunein. Kharab phone apni laagat par aap hi ka rehta hai, magar Faulty mein jata hai taake ghalti se theek phone ke taur par na bike.
+
+**Save karne se pehle dekh lein.** **Wapas lein** dabane par pehle khulasa aata hai: phone aur IMEI, laagat (maalik aur manager), kitne mein becha tha, kitna wapas dena hai, dukaan ki katauti, khate mein kya rahe ga, stock ki tabdeeli ("+1 stock mein wapas") aur galle ki tabdeeli ("− 68,000"). **Wapsi ki tasdeeq karein** dabayein, ya kuch badalne ke liye **Cancel**.
+
+**Wapsi durust karna** (maalik aur manager), wapsiyon ki report mein kisi wapsi ko dabane ke baad:
+
+- **Yeh wapsi durust karein (raqam, phone)**: form bhara hua khulta hai. Badlein, wajah likhein aur tasdeeq karein. Purani wapsi khatam ho kar nayi us ki jagah ek saath save hoti hai; nayi par likha hota hai ke yeh kis ki durusti hai.
+- **Wajah durust karein**: sirf wajah aur note badalta hai.
+- **Delete** (wapsi ke saath wala dabba) use khatam karta hai: sheet batati hai ke kya wapas jaye ga (phone, galla, khata). Is ke baad do button sahi qisam pesh karte hain: **Customer ki wapsi** ya **Bechne wale ko wapsi**. Yeh tab istemal karein jab ghalat qisam ki wapsi darj ho gayi ho.
+
 **Wapas kyun aa raha hai?** **Wapas lein** se pehle wajah dabayein: **Irada badal gaya**, **Phone mein kharabi**, **Jaisa bataya waisa nahi (PTA / haalat)**, **Sasta mil gaya**, **Doosra phone chahiye** ya **Kuch aur**. Yeh lazmi nahi, aur note bhi likh sakte hain.
 
 **Wapsi ke baad** aakhri qadam par yeh bhi milta hai:

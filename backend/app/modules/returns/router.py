@@ -10,7 +10,13 @@ from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx, require_cap
 from app.modules.returns import service
 from app.modules.returns.models import ReturnKind
-from app.modules.returns.schemas import PurchaseReturnIn, ReturnOut, SaleReturnIn
+from app.modules.returns.schemas import (
+    PurchaseReturnIn,
+    ReturnDetailsIn,
+    ReturnOut,
+    ReturnReplaceIn,
+    SaleReturnIn,
+)
 from app.modules.sales.schemas import VoidIn
 
 router = APIRouter(prefix="/api/v1/returns", tags=["returns"])
@@ -30,8 +36,15 @@ def sale_return(data: SaleReturnIn, ctx: Transact, db: DB, idem: IdemKey = None)
 
 
 @router.post("/purchase", response_model=ReturnOut, status_code=201)
-def purchase_return(data: PurchaseReturnIn, ctx: Transact, db: DB):
-    return service.to_out(db, service.purchase_return(db, ctx.shop_id, ctx.id, data))
+def purchase_return(data: PurchaseReturnIn, ctx: Transact, db: DB, idem: IdemKey = None):
+    # ADR-101: like a customer's return, a double tap or a retry never posts it twice
+    return idempotent(
+        db,
+        ctx.shop_id,
+        idem,
+        "returns",
+        lambda: service.to_out(db, service.purchase_return(db, ctx.shop_id, ctx.id, data)),
+    )
 
 
 @router.get("", response_model=list[ReturnOut])
@@ -75,3 +88,21 @@ def get(return_id: uuid.UUID, ctx: Ctx, db: DB):
 def void(return_id: uuid.UUID, data: VoidIn, ctx: Ctx, db: DB):
     """owner 2026-11-15 (ADR-090): undo a return entered by mistake"""
     return service.to_out(db, service.void_return(db, ctx.shop_id, ctx, return_id, data.reason))
+
+
+@router.patch("/{return_id}", response_model=ReturnOut)
+def edit_details(return_id: uuid.UUID, data: ReturnDetailsIn, ctx: Ctx, db: DB):
+    """ADR-101: correct the reason / note of a return (owner or manager); nothing else moves"""
+    return service.to_out(db, service.edit_details(db, ctx.shop_id, ctx, return_id, data))
+
+
+@router.post("/{return_id}/replace", response_model=ReturnOut, status_code=201)
+def replace(return_id: uuid.UUID, data: ReturnReplaceIn, ctx: Ctx, db: DB, idem: IdemKey = None):
+    """ADR-101: undo a wrong return and enter the right one in one step (owner or manager)"""
+    return idempotent(
+        db,
+        ctx.shop_id,
+        idem,
+        "returns",
+        lambda: service.to_out(db, service.replace_return(db, ctx.shop_id, ctx, return_id, data)),
+    )

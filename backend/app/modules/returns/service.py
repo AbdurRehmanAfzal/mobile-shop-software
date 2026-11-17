@@ -44,10 +44,32 @@ def _cash(db: Session, shop_id: uuid.UUID, cash_account_id: uuid.UUID | None) ->
     return cash
 
 
+def _replaces(db: Session, shop_id: uuid.UUID, replaces_id: uuid.UUID | None) -> uuid.UUID | None:
+    """ADR-101: a new return may point at the wrong one it corrects — of this shop, and undone"""
+    if replaces_id is None:
+        return None
+    old = db.get(ReturnDoc, replaces_id)
+    if old is None or old.shop_id != shop_id:
+        raise NotFound(code="return_not_found")
+    if old.status != "voided":
+        raise Conflict(
+            code="replaces_not_undone",
+            message_en="Undo the wrong return first, then enter the right one",
+            message_ur="پہلے غلط واپسی ختم کریں، پھر صحیح درج کریں",
+        )
+    return old.id
+
+
 def sale_return(
-    db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, data: SaleReturnIn
+    db: Session,
+    shop_id: uuid.UUID,
+    user_id: uuid.UUID,
+    data: SaleReturnIn,
+    *,
+    commit: bool = True,
 ) -> ReturnDoc:
     shop = db.get(Shop, shop_id)
+    replaces_id = _replaces(db, shop_id, data.replaces_id)
     inv = db.get(Invoice, data.invoice_id)
     if inv is None or inv.shop_id != shop_id:
         raise NotFound(code="invoice_not_found")
@@ -137,6 +159,8 @@ def sale_return(
         cash_account_id=cash.id if cash else None,
         reason=data.reason,
         reason_code=data.reason_code,
+        item_condition=data.item_condition,
+        replaces_id=replaces_id,
         lines=[
             {
                 "invoice_line_id": str(ln.id),
@@ -236,6 +260,20 @@ def sale_return(
                 if a.pending_from == "shop":
                     a.pending_from = "none"
                     a.promised_to_customer_at = None
+            if data.item_condition == "damaged":
+                # ADR-101: it came back damaged — in the shop at its cost, but marked Faulty so
+                # it is never sold as a sound phone by mistake (no money moves on this event)
+                apply_event(
+                    db,
+                    shop_id,
+                    user_id,
+                    device,
+                    EventType.MARKED_FAULTY,
+                    at=posting.at,
+                    document_type="sale_return",
+                    document_id=doc.id,
+                    data={"return_no": doc.no, "faults": [data.reason] if data.reason else []},
+                )
 
     inv.returned_total = money(already_returned + amount)
     if all(ln.returned_at is not None for ln in inv.lines):
@@ -257,14 +295,23 @@ def sale_return(
             "kept": str(kept),
         },
     )
-    db.commit()
+    if commit:
+        db.commit()
+    else:
+        db.flush()
     return doc
 
 
 def purchase_return(
-    db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, data: PurchaseReturnIn
+    db: Session,
+    shop_id: uuid.UUID,
+    user_id: uuid.UUID,
+    data: PurchaseReturnIn,
+    *,
+    commit: bool = True,
 ) -> ReturnDoc:
     shop = db.get(Shop, shop_id)
+    replaces_id = _replaces(db, shop_id, data.replaces_id)
     pur = db.get(Purchase, data.purchase_id)
     if pur is None or pur.shop_id != shop_id:
         raise NotFound(code="purchase_not_found")
@@ -315,6 +362,7 @@ def purchase_return(
         cash_account_id=cash.id if cash else None,
         reason=data.reason,
         reason_code=data.reason_code,
+        replaces_id=replaces_id,
         lines=[
             {
                 "purchase_line_id": str(ln.id),
@@ -404,7 +452,10 @@ def purchase_return(
         action="return",
         after={"return_no": doc.no, "amount": str(amount), "refund": str(refund), "cut": str(cut)},
     )
-    db.commit()
+    if commit:
+        db.commit()
+    else:
+        db.flush()
     return doc
 
 
@@ -430,6 +481,15 @@ def to_out(db: Session, r: ReturnDoc) -> dict:
         **{c.name: getattr(r, c.name) for c in ReturnDoc.__table__.columns},
         "party_name": party.name if party else None,
         "party_balance_after": party.balance if party else None,
+        # ADR-101: the wrong return this one corrects, and the one that corrected this
+        "replaces_no": db.scalar(select(ReturnDoc.no).where(ReturnDoc.id == r.replaces_id))
+        if r.replaces_id
+        else None,
+        "replaced_by_no": db.scalar(
+            select(ReturnDoc.no).where(
+                ReturnDoc.shop_id == r.shop_id, ReturnDoc.replaces_id == r.id
+            )
+        ),
     }
 
 
@@ -456,7 +516,13 @@ def _last_money_event(d: Device):
 
 
 def void_return(
-    db: Session, shop_id: uuid.UUID, ctx, return_id: uuid.UUID, reason: str
+    db: Session,
+    shop_id: uuid.UUID,
+    ctx,
+    return_id: uuid.UUID,
+    reason: str,
+    *,
+    commit: bool = True,
 ) -> ReturnDoc:
     """A return entered by mistake is undone: everything it did is put back — a customer's phone
     goes back to the customer as sold (the bill as it was), a phone returned to the dealer comes
@@ -479,8 +545,9 @@ def void_return(
         if ln.get("device_id"):
             d = db.get(Device, uuid.UUID(ln["device_id"]))
             last = _last_money_event(d)
+            # ADR-101: a phone that came back damaged sits in Faulty; its return can still be undone
             ok_status = (
-                d.status == DeviceStatus.IN_STOCK
+                d.status in (DeviceStatus.IN_STOCK, DeviceStatus.FAULTY)
                 if sale
                 else d.status == DeviceStatus.RETURNED_TO_SUPPLIER
             )
@@ -580,6 +647,7 @@ def void_return(
         doc.status = "voided"
         doc.void_reason = reason
         doc.voided_by = ctx.id
+        doc.voided_at = utcnow()
         record_audit(
             db,
             shop_id=shop_id,
@@ -589,8 +657,83 @@ def void_return(
             action="return_void",
             after={"return_no": doc.no, "reason": reason},
         )
-        db.commit()
+        if commit:
+            db.commit()
+        else:
+            db.flush()
     except Exception:
         db.rollback()
         raise
     return doc
+
+
+# ---- correct a return (owner 2026-11-20, ADR-101) ------------------------------------------------
+
+
+def edit_details(db: Session, shop_id: uuid.UUID, ctx, return_id: uuid.UUID, data) -> ReturnDoc:
+    """The reason or the note was wrong: corrected in place. No money, stock or khata moves."""
+    if not ctx.can(Cap.VOID):
+        raise Forbidden()
+    doc = get_return(db, shop_id, return_id)
+    if doc.status == "voided":
+        raise Conflict(
+            code="already_voided",
+            message_en="This return is already deleted",
+            message_ur="یہ واپسی پہلے ہی ڈیلیٹ ہو چکی ہے",
+        )
+    before = {"reason": doc.reason, "reason_code": doc.reason_code}
+    sent = data.model_dump(exclude_unset=True)
+    if "reason" in sent:
+        doc.reason = (data.reason or "").strip() or None
+    if "reason_code" in sent:
+        doc.reason_code = data.reason_code
+    record_audit(
+        db,
+        shop_id=shop_id,
+        user_id=ctx.id,
+        entity="return",
+        entity_id=doc.id,
+        action="edit",
+        before=before,
+        after={"reason": doc.reason, "reason_code": doc.reason_code},
+    )
+    db.commit()
+    return doc
+
+
+def replace_return(db: Session, shop_id: uuid.UUID, ctx, return_id: uuid.UUID, data) -> ReturnDoc:
+    """A return with the wrong amount, phone, person or type is corrected in one step: the old
+    one is undone (kept as Deleted, with the reason) and the right one entered, pointing back
+    at it. Both happen or neither: one database transaction. Refused when the old one can no
+    longer be undone (its phone has moved on) or the new one is not valid."""
+    if not ctx.can(Cap.VOID):
+        raise Forbidden()
+    if (data.sale is None) == (data.purchase is None):
+        raise ValidationFailed(
+            code="replace_one_kind",
+            message_en="Give the corrected return: a customer's return or a return to the seller",
+            message_ur="درست واپسی دیں: گاہک کی واپسی یا بیچنے والے کو واپسی",
+        )
+    try:
+        old = void_return(db, shop_id, ctx, return_id, data.reason, commit=False)
+        if data.sale is not None:
+            new = sale_return(
+                db,
+                shop_id,
+                ctx.id,
+                data.sale.model_copy(update={"replaces_id": old.id}),
+                commit=False,
+            )
+        else:
+            new = purchase_return(
+                db,
+                shop_id,
+                ctx.id,
+                data.purchase.model_copy(update={"replaces_id": old.id}),
+                commit=False,
+            )
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+    return new

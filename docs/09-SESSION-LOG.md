@@ -2020,3 +2020,16 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - tsc; vitest (53).
 - Playwright: new `delete-check` passes (the box for a phone on loan, Open goes to Loans, nothing extra on a clean purchase); `delete-everywhere` and `edit-undo` pass.
 - Looked at the delete sheet with the box in English.
+
+### 2026-11-20 — Return Sale / Return Purchase audit (ADR-101)
+**Owner**: a ten-phase brief — audit the returns, correct the accounting, safe undo / edit / wrong-kind correction, an easy form with a confirmation, damaged stock, twenty tests, and no disturbance to the shops already running.
+**Done**:
+- Audit: the accounting, undo, guards and tenant isolation were already right; the brief's "7,000 profit" is reached when the phone is sold again (2,000 right after the return) — kept as is, explained in ADR-101.
+- Added: `returns.item_condition`, `voided_at`, `replaces_id` (migration `e2a4c6b8d0f3`, three nullable columns); damaged → Faulty; `POST /returns/{id}/replace` (one transaction), `PATCH /returns/{id}`; idempotency on purchase returns; the confirm summary, condition chips and correction mode in `ReturnWizard.tsx`; undo summary, fix actions and after-undo buttons in `ReturnsReport.tsx`; strings in en / ur / roman; manual (PDFs rebuilt); ADR-101, CLAUDE.md, docs/29 (deploy + rollback).
+- Three specs gained the confirm step.
+**Verified**: 
+- pytest: full suite passes; new `test_returns_audit` (11 tests covering the brief's 20 scenarios) reads the books — galla, khata, stock at cost, profit report, trial balance: the worked example (2,000 after the return, 7,000 after the resale; stock back at 65,000), no deduction, partial sale return and no second return of a phone, purchase return partial then the rest, wrong purchase return → right sale return and the reverse, a correction that is itself wrong changes nothing, undo once only, damaged → Faulty, salesman refused, another shop refused, a return with none of the new fields, the same idempotency key twice.
+- tsc; vitest (53).
+- Playwright: new `return-fix` passes (summary, damaged → Faulty, amount corrected in one step, undo summary, after-undo buttons); `return`, `exchange-return`, `returns-report`, `purchase-return`, `delete-everywhere`, `delete-check` pass.
+- Looked at the confirm summary in English.
+**Limits**: a line returns whole; the one-step correction form is for customers' returns (returns to the seller: undo and re-enter, or the API).

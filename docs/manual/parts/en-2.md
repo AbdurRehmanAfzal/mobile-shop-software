@@ -29,6 +29,16 @@ The return works in three short steps: **What came back?**, **How much to give b
 
 The last step shows **Return done** with the amount given back, the amount the shop cut, and the return number. Under it: **The phone is back in stock**. Tap **Another return** for the next one, or go Home.
 
+**How did it come back?** Choose **Fine — back to stock** or **Damaged — keep it apart (Faulty)**. A damaged phone is still yours at its cost, but it goes to Faulty so it is not sold as a sound phone by mistake.
+
+**Check before saving.** **Take it back** first shows a summary: the phone and IMEI, what it cost (owner and manager), what it was sold for, what is handed back, the shop's cut, what stays in the khata, the stock change ("+1 back in stock") and the galla change ("− 68,000"). Tap **Confirm return**, or **Cancel** to change something.
+
+**Correcting a return** (owner and manager), in the returns report after tapping a return:
+
+- **Correct this return (amount, phone)**: the form opens filled in. Change it, write why, and confirm. The old return is undone and the new one saved in its place, together; the new one shows which return it corrects.
+- **Correct the reason**: changes only the reason and the note.
+- **Delete** (the bin beside the return) undoes it: the sheet lists what goes back (the phone, the galla, the khata). Afterwards two buttons offer the right kind: **Customer's return** or **Return to the seller**. Use this when the wrong kind of return was entered.
+
 **Why is it coming back?** Before **Take it back**, tap the reason: **Changed his mind**, **Fault in the phone**, **Not as told (PTA / condition)**, **Found it cheaper**, **Wants another phone** or **Other**. It is optional, and you can still type a note.
 
 **After the return** the last step also offers:

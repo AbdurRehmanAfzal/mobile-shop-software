@@ -4973,7 +4973,52 @@
     "markFaulty": "Kharabi likhne ke liye phone kholein",
     "homeLabel": "Wapas aaye phone (is mahine)",
     "homeToday": "aaj {{n}}",
-    "ovN": "{{n}} wapsiyan · {{p}} phone"
+    "ovN": "{{n}} wapsiyan · {{p}} phone",
+    "cond": {
+      "title": "Kis haalat mein wapas aaya?",
+      "ok": "Theek hai — stock mein wapas",
+      "damaged": "Kharab hai — alag rakhein (Faulty)"
+    },
+    "cf": {
+      "title": "Save karne se pehle dekh lein",
+      "sale": "Kitne mein becha tha",
+      "cost": "Laagat",
+      "refund": "Customer ko wapas dein",
+      "kept": "Dukaan rakhe gi (katauti)",
+      "khata": "Khate mein rahe ga",
+      "stock": "Stock",
+      "stockOk": "+{{n}} stock mein wapas",
+      "stockBad": "+{{n}} Faulty mein (aam sale ke liye nahi)",
+      "cash": "Galla",
+      "confirm": "Wapsi ki tasdeeq karein",
+      "cancel": "Cancel"
+    },
+    "fix": {
+      "title": "Aap {{no}} durust kar rahe hain",
+      "hint": "Purani wapsi khatam ho kar yeh us ki jagah save ho gi — dono ek saath, ya koi nahi.",
+      "why": "Yeh kyun durust ki ja rahi hai?"
+    },
+    "after": {
+      "undone": "Wapsi khatam ho gayi. Agar qisam ghalat thi to sahi darj karein:",
+      "sale": "Customer ki wapsi",
+      "purchase": "Bechne wale ko wapsi"
+    },
+    "u": {
+      "title": "Yeh khatam ho jaye ga",
+      "stockSale": "{{n}} phone customer ke paas bike hue ke taur par wapas jayen ge",
+      "stockPurchase": "{{n}} phone stock mein wapas aayen ge",
+      "cashSale": "galle mein wapas aayen ge",
+      "cashPurchase": "galle se wapas niklen ge",
+      "khata": "Khata pehle jaisa ho jaye ga"
+    },
+    "x": {
+      "condition": "Kis haalat mein aaya",
+      "replaces": "Kis ki durusti",
+      "edit": "Yeh wapsi durust karein (raqam, phone)",
+      "editReason": "Wajah durust karein",
+      "saveReason": "Wajah save karein",
+      "undoHint": "Bechne wale ko wapsi badalne ke liye use khatam kar ke dobara darj karein."
+    }
   },
   "delchk": {
     "title": "Pehle yeh karein",
