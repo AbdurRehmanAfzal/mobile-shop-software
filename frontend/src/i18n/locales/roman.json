@@ -3997,6 +3997,7 @@
     "bad": "Barabar nahi — support ko batayein",
     "debit": "Debit",
     "credit": "Credit",
+    "trialHint": "Yeh sheet accountant ke liye hai. Debit: jo dukaan ke paas hai aur jo kharch hua. Credit: jo dukaan ne dena hai, maalik ka hissa aur jo kamaya. Dono total barabar hone chahiye.",
     "account": "Khaata",
     "people": "{{n}} log",
     "hint": "Is din ke aakhir tak ki har entry se hisaab bana hai. Yahan kuch bhi haath se nahi likha jata.",
