@@ -5076,5 +5076,13 @@
       "repair_given_back": "Repair {{ref}} customer ko wapas di ja chuki hai.",
       "lab_charge_booked": "Repair {{ref}} par lab ka kharcha likha ja chuka hai. Is ki jagah \"theek nahi hua\" kar ke wapas karein."
     }
+  },
+  "ledgerRep": {
+    "title": "Account ledger",
+    "hint": "Har bill apni cheezon ke saath aur har payment, debit, credit aur chalte balance ke saath. Sab kuch dekhne ke liye tareekhein khali chhorein.",
+    "from": "Kab se",
+    "to": "Kab tak",
+    "stockTitle": "Item ke hisaab se stock sheet",
+    "stockHint": "Brand, model memory ke saath, ginti, ek ki qeemat aur laagat, har brand ke total ke saath."
   }
 }

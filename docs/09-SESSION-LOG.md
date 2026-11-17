@@ -2047,3 +2047,12 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - tsc; vitest (53).
 - Playwright: `return-fix` and `purchase-return` (updated for the preview) pass; `return`, `exchange-return`, `returns-report`, `delete-everywhere`, `delete-check`, `edit-undo` pass.
 - Looked at the preview sheet in English.
+
+### 2026-11-18 — account ledger and item-wise stock sheet (ADR-103)
+**Owner**: a shopkeeper sent two PDFs from his old software (an account ledger; stock with cost price, item wise) and wants the same reports.
+**Done**: `exports/statements.py` (both reports, pdf / xlsx / csv, en / ur, the shop's header); routes `/exports/parties/{id}/ledger` and `/exports/stock-cost`; a card on the person's page (with dates) and on the stock-worth page; strings in en / ur / roman; manual ch. 16 (PDFs rebuilt); ADR-103, docs/29. The old statement and stock-worth exports are untouched.
+**Verified**: 
+- pytest: full suite passes; new `test_statements` (2): the ledger rebuilt from the shopkeeper's printout (payments and purchases in order, bill numbers, item lines, debit / credit / running balance, totals; the closing balance equals the person's khata; a date range gives an opening balance; a deleted bill and its reversal are left out; Urdu and Excel; another shop gets 404) and the stock sheet (one line per model + memory with quantity and average, brand total, grand total equal to the stock-worth report; a salesman gets asking price).
+- tsc; vitest (53).
+- Playwright: new `statements` passes; `overview`, `home-big` pass. Looked at both printed pages at A4.
+- PR #85 (impact preview) checked live on production: the new preview routes answer.

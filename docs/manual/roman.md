@@ -1831,6 +1831,20 @@ Har raat ek paighaam aata hai jis mein: bike phone aur raqam, haath mein paise, 
 
 > **Mashwara:** Isi screen par aap **Har sale par** ya **Stock daalne par** paighaam bhi mangwa sakte hain, WhatsApp ya email se. Do dukaanein chalane wale owner ke liye achha hai.
 
+### Account ledger aur item ke hisaab se stock sheet
+
+Apne record ya accountant ke liye do print. Dono ek page ki soorat mein khulte hain jise print ya PDF mein save kar sakte hain, aur Excel mein bhi download hote hain.
+
+**Account ledger** (kisi ek bande ka khata, bank statement ki tarah): us bande ka page kholein → **Account ledger**. **Kab se** aur **Kab tak** chunein, ya sab kuch ke liye khali chhorein, phir Download dabayein.
+
+- Shuru mein **Purana balance** hota hai.
+- Phir tareekh ke hisaab se har bill aur har payment: tareekh aur waqt, qisam (Sale, Khareed, Payment, Wapsi…), us ka number, aur bill par kya tha, maslan "Xiaomi 13T Pro 12/256 — 1 @ 65,000 = 65,000".
+- Har line par **Debit**, **Credit** aur chalta hua **Balance**. Minus ke nishan wala balance ka matlab hai ke dukaan ne us bande ko dena hai.
+- Aakhir mein: **Kul debit**, **Kul credit**, **Aakhri balance**, aur alfaaz mein ek line, maslan "Dukaan ne Raheel Naseer ko Rs. 439,000 dene hain".
+- Delete kiya hua bill is mein nahi aata.
+
+**Item ke hisaab se stock sheet**: **Mera stock kitne ka hai?** wala page kholein → **Item ke hisaab se stock sheet** → Download. Har brand ke liye har model apni memory ke saath, **Ginti**, **Ek ki qeemat** (ausat) aur **Laagat**, phir brand ka total aur aakhir mein **Grand total**. Salesman ko yehi sheet farokht ki qeemat par milti hai, laagat ke baghair.
+
 ## 17. Len-den (baghair bill ke diye ya liye paise)
 
 Har market mein log aapas mein baghair kisi sale ya khareed ke paise dete lete hain. Aap ek purane customer ko ghar ki zaroorat ke liye Rs. 25,000 udhaar dete hain. Padosi dukaan aap ko dealer ko dene ke liye ek din ke liye Rs. 50,000 deti hai. Dukaan ki zubaan mein yeh **len-den** hai. Yeh na sale hai na khareed, is liye is se aap ki sale ya udhaar ke figures kharab nahi hone chahiye.
