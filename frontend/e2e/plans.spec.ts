@@ -42,7 +42,7 @@ test('plan, fee and paid-until by the super admin; renewal notice and branches f
   const row = page.getByRole('button', { name: new RegExp(shopName) }).first()
   await expect(row).toContainText('Unlimited')
   await row.click()
-  await page.getByRole('button', { name: 'basic' }).click()
+  await page.getByRole('button', { name: 'basic', exact: true }).click()
   await page.getByLabel('Monthly fee (Rs)').fill('2500')
   await page.getByLabel('Paid until').fill(isoIn(3))
   await page.getByRole('button', { name: 'Save plan' }).click()

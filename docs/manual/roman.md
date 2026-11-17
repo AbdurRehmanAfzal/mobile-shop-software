@@ -782,6 +782,26 @@ Wapsi teen chhote qadamon mein hoti hai: **Kya wapas aaya?**, **Kitne wapas dene
 
 Aakhri qadam par **Wapsi ho gayi** aata hai, saath mein wapas di gayi raqam, dukaan ki kaati hui raqam aur wapsi ka number. Us ke neeche: **Phone wapas stock mein aa gaya**. Agli wapsi ke liye **Ek aur wapsi** dabayein, ya Home par chale jayein.
 
+**Wapas kyun aa raha hai?** **Wapas lein** se pehle wajah dabayein: **Irada badal gaya**, **Phone mein kharabi**, **Jaisa bataya waisa nahi (PTA / haalat)**, **Sasta mil gaya**, **Doosra phone chahiye** ya **Kuch aur**. Yeh lazmi nahi, aur note bhi likh sakte hain.
+
+**Wapsi ke baad** aakhri qadam par yeh bhi milta hai:
+
+- **Isi customer ko doosra phone bechein**: sale ka form usi customer ke saath khulta hai.
+- **Kharabi likhne ke liye phone kholein**: jab wajah kharabi ho.
+- **Tamam wapsiyan dekhein**: wapsiyon ki report khulti hai.
+
+### Wapsiyon ki report
+
+More → **Wapsi ki list** (Home par **Wapas aaye phone** ka card, Business overview mein **Wapsiyan** ka card, aur Shop audit mein **Wapsiyan** bhi yehi kholte hain). Din chunein, phir **Customers se wapas** ya **Supplier ko wapas**.
+
+- **Wapsiyan** aur kitne phone, **Wapas aane wali maliyat**, **Wapas di gayi raqam**, **Dukaan ne jo katauti rakhi**, aur **Khate mein gayi raqam**.
+- **Bikri ka munafa jo wapas gaya** aur **Munafe par asar** (sirf maalik aur manager): cancel hui bikri ka munafa khatam ho jata hai; katauti dukaan ki kamai hai.
+- **Doosra phone le gaye**, **Dobara bik gaye** aur **Warranty ke andar** ki ginti, aur bike hue phone mein se kitne wapas aaye.
+- **Wapas kyun aaye** aur **Kis ne wapas liye**.
+- **Har wapsi**: dabayein to tareekh aur bikri ke kitne din baad, bill, kaun wapas laya aur us ka number, staff mein se kis ne wapas liya, wajah aur note, har phone ka IMEI, kitne mein becha tha, ab kahan hai, dobara bika ya nahi aur kitne mein, wapas di gayi raqam aur kis account se, katauti, aur agar customer doosra phone le gaya to us ka agla bill nazar aata hai.
+
+**Misaal:** Rs. 13,000 mein bika phone (laagat Rs. 10,000) wapas aaya aur Rs. 12,500 wapas diye. Katauti Rs. 500, wapas gaya munafa Rs. 3,000, munafe par asar −Rs. 2,500. Phone dobara bechne ke liye stock mein hai.
+
 ### Screen ke peeche kya hota hai
 
 - Phone ka status wapas **Stock mein** ho jata hai aur woh dobara bik sakta hai. Us ki history mein **Bikri wapas** ki line aa jaati hai, bande, raqam aur wajah ke saath.
@@ -2512,6 +2532,8 @@ Sirf owner: More → **Software fees**.
 - **Is package mein module shamil karein**: woh module tick karein jo package mein nahi (maslan Repairs); us ki mahana fee saath likhi hai.
 - **Izafi services**: koi service tick karein, jaise purana stock dalwana.
 - **Kitne arse ke liye**: **1 mahina**, ya **1 saal** se **5 saal** tak. Zyada saal pehle ada karna sasta hai: 1 saal par 5%, 2 saal par 10%, aur 5 saal par 25% riayat.
+- **Aap ke liye khaas qeemat**: agar software provider ne aap ki dukaan ko koi package kam qeemat par diya hai to upar sabz khana yeh batata hai. Us package par aam qeemat kati hui aur neeche aap ki qeemat nazar aati hai, aur yeh ke yeh mazeed kitne mahine chale gi. Un mahinon ke baad aam qeemat lagti hai. Neeche wale khane mein **Aap ki riayat** aap ki bachat hai.
+- **Sale**: jab provider sale lagaye to upar ek line riayat ka feesad aur aakhri din dikhati hai; aam qeematein kati hui nazar aati hain.
 - Neeche wala khana **Fi mahina**, **Riayat** aur **Kul adaigi** dikhata hai. Yehi total **Raqam (Rs)** mein pehle se likha hota hai.
 
 **Misaal:** Pro 2 saal ke liye: 5,000 × 24 = 120,000, 10% riayat ke baad Rs. 108,000.

@@ -5,11 +5,13 @@ import PurchaseReturnSheet from './PurchaseReturnSheet'
 import DownloadButton from '@/components/DownloadButton'
 import Help from '@/components/Help'
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import PeriodPicker, { periodOf, periodQuery, type Period } from '@/features/counter/PeriodPicker'
+import ReturnsReport from './ReturnsReport'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import { Chip, Empty, ErrorText, KV, List, Loading, MoneyText, PageHeader, Row, Sheet, fmtDate, fmtDateTime } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
-import { useDocMutation, usePayments, usePurchase, usePurchases, useReturns } from '@/lib/queries'
+import { useDocMutation, usePayments, usePurchase, usePurchases } from '@/lib/queries'
 import type { Party, Purchase } from '@/lib/types'
 import PartyPicker from '@/components/PartyPicker'
 import PaidFixSheet from '@/features/purchase/PaidFix'
@@ -145,27 +147,15 @@ export function PaymentsPage() {
 }
 
 export function ReturnsPage() {
-  const { pick } = useLang()
-  const { data, isLoading } = useReturns()
-  const retRole = useAuth((s) => s.me?.user.role)
-  const retManage = retRole === 'owner' || retRole === 'manager'
+  // owner 2026-11-18 (ADR-097): the list is now the returns report — totals, why, who, and every
+  // return with all its details; `?from=&to=` opens it on those days (the overview's card)
+  const [sp] = useSearchParams()
+  const [period, setPeriod] = useState<Period>(() => (sp.get('from') && sp.get('to') ? { from: sp.get('from')!, to: sp.get('to')! } : periodOf('month')))
   return (
     <div className="flex flex-col gap-3">
-      <PageHeader title="more.returns" help={<Help term="more.tile.returns" />} />
-      {isLoading ? <Loading /> : !data?.length ? <Empty text="common.nothingFound" /> : (
-        <List>
-          {data.map((r) => (
-            <div key={r.id} className="flex items-center">
-            <div className="min-w-0 flex-1">
-            <Row title={<span className={r.status === 'voided' ? 'line-through opacity-60' : ''}>{r.party_name}</span>} sub={<span className="flex items-center gap-1.5"><span dir="ltr">{r.no}</span> · <span dir="ltr">{r.document_no}</span> · <span dir="ltr">{fmtDate(r.date)}</span> <Chip text={r.kind === 'sale' ? 'nav.sale' : 'dashboard.newPurchase'} /> <Chip text={`sale.${r.settlement}`} tone="muted" />{r.status === 'voided' ? <Chip text="sale.status.void" tone="muted" /> : null}</span>} right={<MoneyText value={r.amount} tone="ink" />} />
-            </div>
-            {/* ADR-090: a return entered by mistake is undone (the phone, galla and khata as before) */}
-            {r.status !== 'voided' && retManage ? <BillActions kind={r.kind === 'sale' ? 'saleReturn' : 'purchaseReturn'} id={r.id} no={r.no} canDelete editTo={null} /> : null}
-            </div>
-          ))}
-        </List>
-      )}
-      <div className="hidden">{pick('common.none')}</div>
+      <PageHeader title="more.returns" help={<Help term="ret.page" />} />
+      <PeriodPicker value={period} onChange={setPeriod} size="sm" />
+      <ReturnsReport url={`/api/v1/returns/report?${periodQuery(period)}`} qk={['returns-report', period.from, period.to]} />
     </div>
   )
 }

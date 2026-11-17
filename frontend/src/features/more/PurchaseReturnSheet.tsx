@@ -48,7 +48,7 @@ export default function PurchaseReturnSheet({ p, open, onClose, preselect }: { p
 
   async function save() {
     const reason = [pick(`pret.why.${why}`), note.trim()].filter(Boolean).join(' — ')
-    await ret.mutateAsync({ purchase_id: p.id, line_ids: selected, refund_amount: give, cut_amount: cutN, cash_account_id: give > 0 ? accId ?? undefined : undefined, reason })
+    await ret.mutateAsync({ purchase_id: p.id, line_ids: selected, refund_amount: give, cut_amount: cutN, cash_account_id: give > 0 ? accId ?? undefined : undefined, reason, reason_code: why === 'faulty' ? 'fault' : why === 'notWanted' ? 'not_selling' : 'other' })
     onClose()
   }
 

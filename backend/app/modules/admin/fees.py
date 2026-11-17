@@ -444,6 +444,7 @@ def record_manual(
     paid_on: dt.date | None,
     note: str | None,
     to_dues: Decimal | None = None,
+    order: dict | None = None,
 ) -> FeePayment:
     """A payment the provider received by hand (cash, a transfer seen in the bank app) or a
     renewal code: logged as approved and the plan extended in one step. It clears unpaid fee
@@ -458,6 +459,7 @@ def record_manual(
         note=note or None,
         paid_on=paid_on,
         created_by=by.id,
+        package_order=order,
     )
     db.add(row)
     db.flush()

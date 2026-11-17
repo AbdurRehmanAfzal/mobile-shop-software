@@ -269,3 +269,7 @@ Prefix `/api/v1/audit` is taken by the audit log → new prefix **`/api/v1/shop-
 - [x] P10 report center — 2026-10-31
 - [x] P11 validation — 2026-10-31 (timing test deferred)
 - [x] P12 owner decisions (due dates, remittance fee / status, daily stock snapshots) — 2026-10-31
+
+## Addendum 2026-11-18 — Returns section (ADR-097)
+
+`/audit/returns` shows the returns report for the audit's period (`GET /shop-audit/returns`, built by `returns/report.py`): customers' returns and returns to suppliers, totals, why, who, and each return's details. Read-only and derived like every other section. Not yet in the report centre's downloads.

@@ -216,17 +216,31 @@ def _dues(db: Session, shop_id: uuid.UUID, n: int | None = 10) -> dict:
 
 
 def _returns(db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date) -> dict:
+    # owner 2026-11-18 (ADR-097): a return undone later (voided) is not a return; and the card
+    # also says how many phones, how much was handed back and how much was cut
     rows = db.execute(
         select(
-            ReturnDoc.kind, func.count(ReturnDoc.id), func.coalesce(func.sum(ReturnDoc.amount), 0)
+            ReturnDoc.kind,
+            ReturnDoc.amount,
+            ReturnDoc.refund_amount,
+            ReturnDoc.kept_amount,
+            ReturnDoc.lines,
+        ).where(
+            ReturnDoc.shop_id == shop_id,
+            ReturnDoc.date >= d_from,
+            ReturnDoc.date <= d_to,
+            ReturnDoc.status != "voided",
         )
-        .where(ReturnDoc.shop_id == shop_id, ReturnDoc.date >= d_from, ReturnDoc.date <= d_to)
-        .group_by(ReturnDoc.kind)
     ).all()
-    out = {"sale": {"count": 0, "amount": ZERO}, "purchase": {"count": 0, "amount": ZERO}}
-    for kind, n, amount in rows:
-        key = "sale" if kind == "sale" else "purchase"
-        out[key] = {"count": n, "amount": money(amount or 0)}
+    blank = lambda: {"count": 0, "amount": ZERO, "phones": 0, "refund": ZERO, "kept": ZERO}
+    out = {"sale": blank(), "purchase": blank()}
+    for kind, amount, refund, kept, lines in rows:
+        o = out["sale" if kind == "sale" else "purchase"]
+        o["count"] += 1
+        o["amount"] = money(o["amount"] + (amount or 0))
+        o["refund"] = money(o["refund"] + (refund or 0))
+        o["kept"] = money(o["kept"] + (kept or 0))
+        o["phones"] += sum(1 for x in (lines or []) if x.get("device_id"))
     return out
 
 

@@ -22,7 +22,7 @@ interface Overview {
   sales: { total: M; count: number; phones: number; paid: M; credit: M; profit: M | null }
   purchases: { count: number; total: M; paid: M; credit: M; phones: number; top: { name: string; qty: number; amount: M }[] }
   expenses: M; udhaar_given: M; udhaar_collected: M
-  returns: { sale: { count: number; amount: M }; purchase: { count: number; amount: M } }
+  returns: { sale: { count: number; amount: M; phones?: number; refund?: M; kept?: M }; purchase: { count: number; amount: M; phones?: number; refund?: M; kept?: M } }
   payments: { in: { total: M; people: Who[]; people_count: number }; out: { total: M; people: Who[]; people_count: number } }
   people: { customers: number; dealers: number; new_customers: number; new_dealers: number }
   dues: { to_get: M; to_give: M; to_get_count: number; to_give_count: number; to_get_list: Who[]; to_give_list: Who[] }
@@ -124,6 +124,15 @@ export default function OverviewPage() {
                 <Fig k="ov.udhaarCollected" v={rs(o.udhaar_collected)} />
                 <Fig k="ov.expenses" v={rs(o.expenses)} tone="text-payable" />
                 <Fig k="ov.returns" v={rs(Number(o.returns.sale.amount) + Number(o.returns.purchase.amount))} sub={`${o.returns.sale.count + o.returns.purchase.count} ${pick('ov.returnsN')}`} />
+              </div>
+            </Card>
+            {/* owner 2026-11-18 (ADR-097): phones that came back, with what was handed back and cut */}
+            <Card title="audit.nav.returns" help="ret.card" to={`/returns?from=${period.from}&to=${period.to}`} testid="ov-returns">
+              <div className="grid grid-cols-2 gap-2">
+                <Fig k="ret.fromCustomers" v={rs(o.returns.sale.amount)} sub={pick('ret.ovN').replace('{{n}}', String(o.returns.sale.count)).replace('{{p}}', String(o.returns.sale.phones ?? 0))} />
+                <Fig k="ret.toSuppliers" v={rs(o.returns.purchase.amount)} sub={pick('ret.ovN').replace('{{n}}', String(o.returns.purchase.count)).replace('{{p}}', String(o.returns.purchase.phones ?? 0))} />
+                <Fig k="ret.t.refund" v={rs(o.returns.sale.refund ?? 0)} />
+                <Fig k="ret.t.kept" v={rs(o.returns.sale.kept ?? 0)} tone={Number(o.returns.sale.kept ?? 0) ? 'text-emerald-deep' : ''} />
               </div>
             </Card>
             <Card title="ov.month" help="ov.month" to={`/hisaab?from=${o.month.from}&to=${period.to}`} testid="ov-month">

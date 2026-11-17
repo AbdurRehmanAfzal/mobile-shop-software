@@ -22,6 +22,18 @@ class Settlement(StrEnum):
     INCOME = "income"  # shop keeps part of what was paid (restocking / amanat fee)
 
 
+# owner 2026-11-18 (ADR-097): why it came back, for the returns report
+REASONS = (
+    "changed_mind",  # the customer changed his mind
+    "fault",  # the phone has a fault
+    "not_as_told",  # PTA / condition / storage not as told
+    "price",  # found it cheaper
+    "another_phone",  # wants a different phone
+    "not_selling",  # to the supplier: it did not sell
+    "other",
+)
+
+
 class ReturnDoc(UUIDPk, ShopScoped, Timestamped, Base):
     __tablename__ = "returns"
     __table_args__ = (
@@ -47,6 +59,7 @@ class ReturnDoc(UUIDPk, ShopScoped, Timestamped, Base):
         Uuid, ForeignKey("cash_accounts.id", ondelete="RESTRICT")
     )
     reason: Mapped[str | None] = mapped_column(Text)
+    reason_code: Mapped[str | None] = mapped_column(String(20))  # one of REASONS, or not said
     lines: Mapped[list[dict]] = mapped_column(JSON, nullable=False, default=list)
     ledger_group_id: Mapped[uuid.UUID | None] = mapped_column(
         Uuid, ForeignKey("ledger_groups.id", ondelete="SET NULL")

@@ -1981,3 +1981,28 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - tsc; vitest (53).
 - Playwright `trend-charts` passes (figures on Home, 30 days = 30 bars, same graphs on the overview); looked at the screenshot.
 - Colour check: the to get / to give tokens fail colour-blind separation, hence the dashed second line.
+
+### 2026-11-18 — returns report (ADR-097)
+**Owner** (shopkeeper): returned phones show nowhere in detail — how many, their figures, loss or profit, when, who, for how much, money given or taken, whether the customer took another phone; show the count on the dashboard, business overview and shop audit; first check what a return itself is missing.
+**Done**:
+- Audit of the return: only "why" (countable) and the next actions were missing. `returns.reason_code` (migration `b4d6f8a0c2e5`), chips in the return form, three buttons on the done screen, `/sale/new?party=`.
+- `returns/report.py`; `GET /returns/report`, `GET /shop-audit/returns`; `returns_today` / `returns_month` on the dashboard; the overview's return figures now leave out undone returns and carry phones / handed back / cut.
+- `ReturnsReport.tsx` (Returns list and Shop Audit → Returns), Home card, Business overview card.
+- Strings and five help texts in en / ur / roman; manual ch. on returns (PDFs rebuilt); ADR-097, CLAUDE.md, docs/29.
+- `e2e/return.spec.ts`: the Home "Return" link is taken from the fast actions (the new card also has "returned" in its name).
+**Verified**: 
+- pytest: full suite passes; new `test_returns_report` (3): a customer's return with every field, the effect on profit, took another phone, sold again, the dashboard / overview / audit counts, a salesman without cost; an undone return leaves the report; a return to a supplier, reason codes, another shop sees nothing.
+- tsc; vitest (53, including the help-text check).
+- Playwright: new `returns-report` passes (reason chip, done-screen buttons, report tiles, the detail sheet, Home card, overview card, audit section, sale form opening on the customer); `return`, `purchase-return`, `exchange-return`, `overview`, `home-big`, `delete-everywhere`, `edit-undo`, `trend-charts` pass.
+- Looked at the report screenshot in English.
+**Not done**: the returns section is not in the Shop Audit report centre's PDF / Excel downloads; no chart of returns over time.
+
+### 2026-11-19 — special price for one shop, sale, payment with package (ADR-098)
+**Owner**: a customer was promised Pro for 3,000 and sent it, but his fees page says 5,000. Wants a per-shop discount with a number of months (the shop still sees 5,000 and that the provider gave it the old price), sale options, and to record a payment himself with package, modules and months.
+**Done**: `organisations.fee_deal` (migration `c6e8a0b2d4f7`); `order.py` rewritten around `deal_for`, `sale_pct`, `_regular`; `PUT / DELETE /admin/shops/{id}/deal`, `POST /admin/shops/{id}/quote`, `order` on `POST /admin/shops/{id}/payments`; `sale_pct` / `sale_until` in the pricing settings; `AdminDealCard.tsx`, sale fields in Website prices, the banner and crossed-out prices in `PackagePicker.tsx`; strings and two help texts in en / ur / roman; manual ch. 25 (PDFs rebuilt); ADR-098, CLAUDE.md, docs/29.
+**Verified**: 
+- pytest: full suite passes; new `test_fee_deal` (4): special price with months used up by approved payments and back to the list price after; no-end price and removing it; the provider's payment with package / modules / any months; a sale for everyone (not on an agreed fee, ended sale, switched off).
+- tsc; vitest (53, including the help-text check).
+- Playwright: new `fee-deal` passes (admin gives Pro at 3,000 for 6 months; the shop sees 5,000 crossed out, total 3,000, a year 45,600; admin records 10,500 for Pro + Loans for 3 months and the shop has it); `package-order`, `fees`, `fee-credit`, `plans`, `admin-access` pass. `plans.spec`: the "basic" button locator is exact now (the new card has "Basic" chips).
+- Looked at the shop's fees page with the special price in English.
+**Not done**: the landing page does not show a running sale; the special price is not printed on the renewal receipt.

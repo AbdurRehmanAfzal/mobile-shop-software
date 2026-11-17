@@ -1,3 +1,4 @@
+import datetime as dt
 import uuid
 from typing import Annotated
 
@@ -45,6 +46,24 @@ def list_returns(
         service.to_out(db, r)
         for r in service.list_returns(db, ctx.shop_id, kind=kind, party_id=party_id, limit=limit)
     ]
+
+
+@router.get("/report")
+def report(ctx: Ctx, db: DB, date_from: dt.date | None = None, date_to: dt.date | None = None):
+    """owner 2026-11-18 (ADR-097): every return of the period with all its details and the
+    totals — customers' returns and returns to suppliers (default: this month)"""
+    from app.core.clock import today as shop_today
+    from app.core.errors import ValidationFailed
+    from app.modules.returns import report as rep
+    from app.modules.shopaudit.router import plain
+
+    d_to = date_to or shop_today()
+    d_from = date_from or d_to.replace(day=1)
+    if d_from > d_to or (d_to - d_from).days > 3700:
+        raise ValidationFailed(
+            code="bad_period", message_en="Check the dates", message_ur="تاریخیں دیکھیں"
+        )
+    return plain(rep.report(db, ctx.shop_id, d_from, d_to, ctx.can(Cap.VIEW_COST)))
 
 
 @router.get("/{return_id}", response_model=ReturnOut)

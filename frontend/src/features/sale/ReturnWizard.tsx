@@ -2,7 +2,7 @@
  *  A walk-in sale asks who brought it back, so the device history knows. `?device=` or `?invoice=`
  *  starts on step two. Backed by POST /returns/sale (refund + kept may go together). */
 
-import { Banknote, BookOpen, Check, Home, Undo2, Wallet } from 'lucide-react'
+import { Banknote, BookOpen, Check, Home, ListChecks, Tag, Undo2, Wallet, Wrench } from 'lucide-react'
 import { useStepUrl } from '@/lib/steps'
 import { uid } from '@/lib/id'
 import { useEffect, useState } from 'react'
@@ -48,6 +48,8 @@ export default function ReturnWizard() {
   const [idem, setIdem] = useState(uid)
   const [who, setWho] = useState<Party | null>(null)
   const [reason, setReason] = useState('')
+  // owner 2026-11-18 (ADR-097): why it came back, for the returns report
+  const [why, setWhy] = useState<string | null>(null)
   const [done, setDone] = useState<ReturnDoc | null>(null)
   const { data: sold } = useDevices({ status: 'sold', q: q || undefined, limit: 30 })
   const { data: recent } = useSales({})
@@ -118,12 +120,14 @@ export default function ReturnWizard() {
       kept_amount: give > 0 || cut > 0 ? cut : undefined,
       cash_account_id: from?.kind === 'account' && give > 0 ? from.id : undefined,
       reason: reason || undefined,
+      reason_code: why ?? undefined,
     })
     setDone(res)
     setIdem(uid())
     setStep(2)
   }
 
+  const returnedDevice = inv?.lines.find((l) => selected.includes(l.id) && l.device_id)?.device_id ?? null
   const chip = (on: boolean) => `tap flex min-h-[68px] flex-col items-center justify-center gap-1 rounded-2xl border-2 px-2 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('md') : 'text-[15px]'}`
   const small = ur ? cls('sm') : 'text-sm font-semibold'
 
@@ -236,6 +240,12 @@ export default function ReturnWizard() {
               {after !== 0 ? <span className="num text-2xl text-gold-text" dir="ltr">{n(Math.abs(after))}</span> : null}
             </div>
           ) : null}
+          <span className="flex items-center gap-1"><BiLabel text="ret.whyTitle" size="md" bold /><Help term="ret.why" size="sm" /></span>
+          <div className="flex flex-wrap gap-1.5" data-testid="return-why">
+            {(['changed_mind', 'fault', 'not_as_told', 'price', 'another_phone', 'other'] as const).map((k) => (
+              <button key={k} type="button" aria-pressed={why === k} onClick={() => setWhy(why === k ? null : k)} data-testid={`why-${k}`} className={`tap min-h-10 rounded-full border-2 px-3.5 ${ur ? cls('sm') : 'text-sm font-bold'} ${why === k ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'}`}>{pick(`ret.reason.${k}`)}</button>
+            ))}
+          </div>
           <BiInput label="counter.reasonOpt" help={<Help term="sale.returnReason" size="sm" />} value={reason} onChange={(e) => setReason(e.target.value)} />
           <ErrorText error={m.error} />
           <BiButton text="counter.returnBtn" icon={<Undo2 size={22} />} full loading={m.isPending} disabled={!ok} onClick={submit} />
@@ -252,7 +262,11 @@ export default function ReturnWizard() {
             <span className="num text-sm opacity-80" dir="ltr">{done.no}</span>
           </div>
           {inv?.lines.some((l) => selected.includes(l.id) && l.device_id) ? <BiLabel text="counter.backInStock" size="md" align="center" tone="text-muted" /> : null}
-          <BiButton text="counter.newReturn" icon={<Undo2 size={22} />} full variant="secondary" onClick={() => { setInvoiceId(undefined); setSelected([]); setWho(null); setReason(''); setRefund(null); setDone(null); setStep(0); m.reset() }} />
+          {/* ADR-097: what usually comes next — he takes another phone; a faulty one gets its fault written */}
+          {(inv?.party_id ?? who?.id) ? <BiButton text="ret.sellAnother" icon={<Tag size={22} />} full onClick={() => nav(`/sale/new?party=${inv?.party_id ?? who?.id}`)} data-testid="return-sell-another" /> : null}
+          {why === 'fault' && returnedDevice ? <BiButton text="ret.markFaulty" icon={<Wrench size={22} />} full variant="secondary" onClick={() => nav(`/stock/${returnedDevice}`)} data-testid="return-mark-faulty" /> : null}
+          <BiButton text="counter.newReturn" icon={<Undo2 size={22} />} full variant="secondary" onClick={() => { setInvoiceId(undefined); setSelected([]); setWho(null); setReason(''); setWhy(null); setRefund(null); setDone(null); setStep(0); m.reset() }} />
+          <BiButton text="ret.seeAll" icon={<ListChecks size={22} />} full variant="ghost" onClick={() => nav('/returns')} data-testid="return-see-all" />
           <BiButton text="nav.home" icon={<Home size={22} />} full variant="ghost" onClick={() => nav('/')} />
         </div>
       ) : null}

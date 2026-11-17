@@ -1,6 +1,7 @@
 import datetime as dt
 import uuid
 from decimal import Decimal
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -27,6 +28,12 @@ class SaleReturnIn(BaseModel):
     )
     cash_account_id: uuid.UUID | None = None
     reason: str | None = Field(default=None, max_length=300)
+    reason_code: (
+        Literal[
+            "changed_mind", "fault", "not_as_told", "price", "another_phone", "not_selling", "other"
+        ]
+        | None
+    ) = None
     date: dt.date | None = None
 
 
@@ -42,6 +49,12 @@ class PurchaseReturnIn(BaseModel):
     )
     cash_account_id: uuid.UUID | None = None
     reason: str | None = Field(default=None, max_length=300)
+    reason_code: (
+        Literal[
+            "changed_mind", "fault", "not_as_told", "price", "another_phone", "not_selling", "other"
+        ]
+        | None
+    ) = None
     date: dt.date | None = None
 
 
@@ -63,6 +76,7 @@ class ReturnOut(BaseModel):
     kept_amount: Decimal
     cash_account_id: uuid.UUID | None
     reason: str | None
+    reason_code: str | None = None
     status: str = "posted"  # ADR-090: posted | voided
     void_reason: str | None = None
     lines: list[dict]

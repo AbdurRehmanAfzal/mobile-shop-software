@@ -3,22 +3,22 @@
  *  Every figure comes from the server's quote; the package itself changes only when the provider
  *  confirms the payment. */
 
-import { Check } from 'lucide-react'
+import { BadgePercent, Check } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { BiLabel, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
-import { Chip, Section } from '@/components/ui'
+import { Chip, Section, fmtDate } from '@/components/ui'
 import { api } from '@/lib/api'
 import { withCur } from '@/lib/format'
 import { useGet } from '@/lib/queries'
 
-interface Pack { key: string; price: string; modules: string[]; current: boolean }
-interface Mod { key: string; en: string; ur: string; price: string }
+interface Pack { key: string; price: string; list_price?: string; deal?: boolean; deal_months_left?: number | null; modules: string[]; current: boolean }
+interface Mod { key: string; en: string; ur: string; price: string; list_price?: string }
 interface Addon { i: number; en: string; ur: string; roman: string; price: number; per: 'month' | 'year' | 'once' }
 interface Term { months: number; years: number; discount_pct: number }
-interface Catalog { current: { plan: string; modules: string[]; monthly_fee: string }; packages: Pack[]; modules: Mod[]; addons: Addon[]; durations: Term[] }
+interface Catalog { current: { plan: string; modules: string[]; monthly_fee: string }; packages: Pack[]; modules: Mod[]; addons: Addon[]; durations: Term[]; sale?: { pct: number; until: string | null } | null; deal?: { plan: string; price: string; months_left: number | null; note: string | null } | null }
 export interface OrderIn { plan: string; modules: string[]; addons: number[]; months: number }
-export interface Quote { plan: string; months: number; years: number; discount_pct: number; monthly: string; recurring: string; discount: string; once: string; total: string; extras: string[]; modules: string[] }
+export interface Quote { plan: string; months: number; years: number; discount_pct: number; monthly: string; per_month?: string; saved?: string; deal_months?: number; recurring: string; discount: string; once: string; total: string; extras: string[]; modules: string[] }
 
 const rs = (v: string | number) => withCur(Number(v).toLocaleString('en-US'))
 
@@ -31,7 +31,8 @@ export default function PackagePicker({ owed, onChange }: { owed: number; onChan
   const [months, setMonths] = useState(1)
   const [quote, setQuote] = useState<Quote | null>(null)
   const small = ur ? cls('sm') : 'text-xs font-semibold'
-  const chosen = plan ?? cat?.packages.find((p) => p.current)?.key ?? cat?.packages[0]?.key ?? null
+  // a shop with a special price opens on that package (ADR-098)
+  const chosen = plan ?? cat?.deal?.plan ?? cat?.packages.find((p) => p.current)?.key ?? cat?.packages[0]?.key ?? null
   const pack = cat?.packages.find((p) => p.key === chosen)
   const picked = extras.filter((k) => !pack?.modules.includes(k))
   const key = chosen ? `${chosen}|${picked.join(',')}|${addons.join(',')}|${months}` : ''
@@ -64,6 +65,14 @@ export default function PackagePicker({ owed, onChange }: { owed: number; onChan
 
   return (
     <Section title="fees.pick.title" help="fees.pick">
+      {cat.deal ? (() => { const dp = cat.packages.find((p) => p.key === cat.deal!.plan); return (
+        <div className="flex flex-col gap-1 rounded-3xl bg-emerald-tint p-4 text-emerald-deep" data-testid="pick-deal">
+          <span className="flex items-center gap-2"><BadgePercent size={20} /><BiLabel text="fees.pick.deal.title" size="md" bold tone="text-current" /></span>
+          <span className={ur ? cls('sm') : 'text-sm font-semibold'}>{pick('fees.pick.deal.text').replace('{{pkg}}', pick(`fees.pick.pkg.${cat.deal.plan}`)).replace('{{price}}', rs(cat.deal.price)).replace('{{list}}', rs(dp?.list_price ?? 0))} {cat.deal.months_left == null ? pick('fees.pick.deal.noEnd') : pick('fees.pick.deal.months').replace('{{n}}', String(cat.deal.months_left))}</span>
+          {cat.deal.note ? <span className={ur ? cls('sm') : 'text-sm'}>{cat.deal.note}</span> : null}
+        </div>
+      ) })() : null}
+      {cat.sale ? <div className={`rounded-2xl bg-gold/15 px-4 py-2.5 font-bold text-gold-text ${ur ? cls('sm') : 'text-sm'}`} data-testid="pick-sale">{pick('fees.pick.sale').replace('{{n}}', String(cat.sale.pct))}{cat.sale.until ? ` · ${pick('fees.pick.saleUntil').replace('{{date}}', fmtDate(cat.sale.until))}` : ''}</div> : null}
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-3" data-testid="pick-packages">
         {cat.packages.map((p) => {
           const on = p.key === chosen
@@ -74,6 +83,7 @@ export default function PackagePicker({ owed, onChange }: { owed: number; onChan
                 <span className={ur ? cls('lg') : 'text-lg font-extrabold'}>{pick(`fees.pick.pkg.${p.key}`)}</span>
                 {p.current ? <span className={`rounded-full px-2 py-0.5 ${on ? 'bg-ground/20' : 'bg-emerald-tint text-emerald-deep'} ${small}`}>{pick('fees.pick.yours')}</span> : null}
               </span>
+              {p.list_price && Number(p.list_price) > Number(p.price) ? <span className="num text-sm line-through opacity-60" dir="ltr" data-testid={`pick-list-${p.key}`}>{rs(p.list_price)}</span> : null}
               <span className="flex items-baseline gap-1"><span className="num text-2xl font-extrabold" dir="ltr">{rs(p.price)}</span><span className={`opacity-70 ${small}`}>{pick('fees.pick.perMonth')}</span></span>
               <span className={`opacity-70 ${small}`}>{pick('fees.pick.modCount').replace('{{n}}', String(p.modules.length))}</span>
             </button>
@@ -125,9 +135,11 @@ export default function PackagePicker({ owed, onChange }: { owed: number; onChan
 
       {quote ? (
         <div className="card flex flex-col gap-1.5" data-testid="pick-summary">
-          <Line k={pick('fees.pick.sum.monthly')} v={rs(quote.monthly)} />
+          <Line k={pick('fees.pick.sum.monthly')} v={rs(quote.per_month ?? quote.monthly)} />
           <Line k={`${term({ months: quote.months, years: quote.years, discount_pct: 0 })}`} v={rs(quote.recurring)} />
           {Number(quote.discount) ? <Line k={pick('fees.pick.sum.discount').replace('{{n}}', String(quote.discount_pct))} v={`− ${rs(quote.discount)}`} tone="text-emerald-deep" testid="pick-discount" /> : null}
+          {Number(quote.saved ?? 0) ? <Line k={pick('fees.pick.sum.saved')} v={rs(quote.saved ?? 0)} tone="text-emerald-deep" testid="pick-saved" /> : null}
+          {quote.deal_months && quote.deal_months < quote.months ? <span className={`text-muted ${small}`}>{pick('fees.pick.sum.dealPart').replace('{{n}}', String(quote.deal_months))}</span> : null}
           {Number(quote.once) ? <Line k={pick('fees.pick.sum.once')} v={rs(quote.once)} /> : null}
           {owed > 0 ? <Line k={pick('fees.pick.sum.owed')} v={rs(owed)} tone="text-payable" /> : null}
           <div className="mt-1 flex items-center justify-between gap-3 border-t border-line pt-2">

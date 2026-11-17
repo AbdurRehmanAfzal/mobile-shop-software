@@ -1518,7 +1518,29 @@
       "total": "Order total",
       "short": "Paid less than the order total",
       "moneyOnly": "Months only, package unchanged"
-    }
+    },
+    "deal": {
+      "title": "Special price for this shop",
+      "hint": "The shop sees the list price crossed out and this price beside it, with your note. Only the months you give are at this price.",
+      "price": "Price per month (Rs)",
+      "months": "For how many months (empty = no end)",
+      "note": "Note for the shop (optional)",
+      "save": "Give this price",
+      "remove": "Remove the special price",
+      "left": "{{n}} months left",
+      "noEnd": "no end",
+      "saved": "Saved. The shop now sees this price."
+    },
+    "payOrder": {
+      "title": "Payment received: package, modules and months",
+      "hint": "For a customer who sent the money and asked you to activate. The shop gets the package, the modules and the months at once.",
+      "modules": "Extra modules",
+      "total": "It should be",
+      "apply": "Payment received — activate",
+      "done": "Activated. Receipt"
+    },
+    "salePct": "Sale for everyone (% off · 0 = none)",
+    "saleUntil": "Sale until (empty = until you switch it off)"
   },
   "field": {
     "badMobile": "Enter a 10-digit mobile number starting with 3, e.g. 300 1234567",
@@ -2100,9 +2122,19 @@
         "discount": "Discount ({{n}}%)",
         "once": "One-time services",
         "owed": "Fee still unpaid",
-        "total": "Total to pay"
+        "total": "Total to pay",
+        "saved": "Your discount",
+        "dealPart": "{{n}} months at your special price, the rest at the usual price"
       },
-      "onConfirm": "Your package changes when the provider confirms the payment."
+      "onConfirm": "Your package changes when the provider confirms the payment.",
+      "deal": {
+        "title": "A special price for you",
+        "text": "The software provider has given you {{pkg}} for {{price}} a month instead of {{list}}.",
+        "months": "This price is for {{n}} more months.",
+        "noEnd": "This price has no end date."
+      },
+      "sale": "Sale: {{n}}% off",
+      "saleUntil": "until {{date}}"
     }
   },
   "landing": {
@@ -2983,7 +3015,8 @@
       "sales": "Sales & purchases",
       "staff": "Staff",
       "lending": "Len-den",
-      "repairs": "Repairs"
+      "repairs": "Repairs",
+      "returns": "Returns"
     },
     "preset": {
       "today": "Today",
@@ -4877,5 +4910,69 @@
     "profit": "Profit / loss by day",
     "profitSum": "Profit in these days",
     "debt": "To get and to give"
+  },
+  "ret": {
+    "fromCustomers": "From customers",
+    "toSuppliers": "To suppliers",
+    "t": {
+      "count": "Returns",
+      "phones": "phones",
+      "amount": "Value that came back",
+      "refund": "Handed back",
+      "refundGot": "Got back from the supplier",
+      "kept": "Cut kept by the shop",
+      "cutLost": "Cut taken by the supplier",
+      "toKhata": "Went to the khata",
+      "undone": "Sale profit taken back",
+      "net": "Effect on profit",
+      "rate": "Of {{sold}} phones sold, {{n}} came back ({{pct}}%)",
+      "another": "Took another phone",
+      "again": "Sold again",
+      "warranty": "Inside warranty",
+      "voided": "Deleted returns"
+    },
+    "why": "Why they came back",
+    "who": "Who took them back",
+    "list": "Each return",
+    "none": "No returns in these days",
+    "reason": {
+      "changed_mind": "Changed his mind",
+      "fault": "Fault in the phone",
+      "not_as_told": "Not as told (PTA / condition)",
+      "price": "Found it cheaper",
+      "another_phone": "Wants another phone",
+      "not_selling": "Did not sell",
+      "other": "Other",
+      "none": "Not said"
+    },
+    "d": {
+      "no": "No",
+      "when": "Returned on",
+      "bill": "Bill",
+      "billDate": "Bill date",
+      "days": "{{n}} days after",
+      "sameDay": "the same day",
+      "customer": "Brought back by",
+      "supplier": "Sent back to",
+      "by": "Taken back by (staff)",
+      "reason": "Why",
+      "note": "Note",
+      "soldFor": "Sold for",
+      "boughtFor": "Bought for",
+      "cost": "Cost",
+      "now": "Where it is now",
+      "again": "Sold again for",
+      "againProfit": "Profit on selling again",
+      "from": "from",
+      "yes": "Yes",
+      "open": "Open"
+    },
+    "whyTitle": "Why is it coming back?",
+    "sellAnother": "Sell another phone to this customer",
+    "seeAll": "See all returns",
+    "markFaulty": "Open the phone to write its fault",
+    "homeLabel": "Phones returned (this month)",
+    "homeToday": "today {{n}}",
+    "ovN": "{{n}} returns · {{p}} phones"
   }
 }

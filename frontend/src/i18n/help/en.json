@@ -2043,6 +2043,16 @@
       "title": "Website prices",
       "body": "The plan prices, setup fee, yearly offer, trial days and add-ons shown on the landing page. Changing them here changes the page at once; it does not change what any existing shop pays.",
       "example": "Pro 3,000 / month, a year costs 10 months → the page shows Rs. 2,500 / month, paid for the year Rs. 30,000."
+    },
+    "deal": {
+      "title": "Special price for this shop",
+      "body": "Give one shop a package for less than the list price, for a number of months or with no end. The shop still sees the list price, crossed out, with its own price and your note. When the months are used up the package costs the list price again.",
+      "example": "Pro is Rs. 5,000. You give this shop Pro for Rs. 3,000 for 6 months → it sees 5,000 crossed out and 3,000; the 7th month is 5,000."
+    },
+    "payOrder": {
+      "title": "Payment received: package, modules and months",
+      "body": "When a customer sends the money and asks you to activate, record it here with the package, any extra modules and the months. It is logged as received with a receipt and the shop gets everything at once.",
+      "example": "He sent Rs. 9,000 for 3 months of Pro at his special price → choose Pro, 3 months, amount 9,000 → activate."
     }
   },
   "provider": {
@@ -6742,6 +6752,33 @@
       "title": "To get and to give",
       "body": "How much people owed you (solid line) and how much you owed others (dashed line) at the end of each day.",
       "example": "To get rose from Rs. 50,000 to Rs. 90,000 in a week → more was sold on udhaar than was collected."
+    }
+  },
+  "ret": {
+    "page": {
+      "title": "Returns",
+      "body": "Every phone that came back from a customer, and every one sent back to a supplier, in the chosen days: how many, their value, what was handed back, the cut, why, and who took them back. Tap a return to see everything about it.",
+      "example": "This month 4 phones came back worth Rs. 1,60,000; Rs. 1,52,000 was handed back and Rs. 8,000 was cut."
+    },
+    "net": {
+      "title": "Effect on profit",
+      "body": "When a phone comes back, the profit made on that sale is gone. The cut the shop keeps is what it makes instead. Effect = cut kept minus the sale profit taken back. For a return to a supplier, the supplier's cut is the shop's loss.",
+      "example": "Sold for 13,000 (cost 10,000), came back with a 500 cut → profit 3,000 gone, 500 kept → effect −2,500. The phone is back in stock to sell again."
+    },
+    "why": {
+      "title": "Why is it coming back?",
+      "body": "Tap the reason so the returns report can show why phones come back. It is optional; you can also write a note.",
+      "example": "Three of five returns say \"Fault in the phone\" → check phones more carefully before selling."
+    },
+    "home": {
+      "title": "Phones returned",
+      "body": "How many phones customers brought back this month; the small line is today's count. Tap to open the returns report.",
+      "example": "Phones returned 4, today 1."
+    },
+    "card": {
+      "title": "Returns",
+      "body": "Returns in the chosen days: from customers and to suppliers, with what was handed back and the cut. View details opens the returns report.",
+      "example": "From customers: 2 returns, 2 phones, Rs. 80,000; handed back Rs. 78,000; cut Rs. 2,000."
     }
   }
 }

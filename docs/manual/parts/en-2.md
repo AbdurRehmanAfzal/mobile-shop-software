@@ -29,6 +29,26 @@ The return works in three short steps: **What came back?**, **How much to give b
 
 The last step shows **Return done** with the amount given back, the amount the shop cut, and the return number. Under it: **The phone is back in stock**. Tap **Another return** for the next one, or go Home.
 
+**Why is it coming back?** Before **Take it back**, tap the reason: **Changed his mind**, **Fault in the phone**, **Not as told (PTA / condition)**, **Found it cheaper**, **Wants another phone** or **Other**. It is optional, and you can still type a note.
+
+**After the return** the last step also offers:
+
+- **Sell another phone to this customer**: opens the sale form with him already chosen.
+- **Open the phone to write its fault**: shown when the reason was a fault.
+- **See all returns**: opens the returns report.
+
+### Returns report
+
+More → **Returns list** (also the **Phones returned** card on Home, the **Returns** card in Business overview, and **Returns** in Shop audit). Choose the days, then **From customers** or **To suppliers**.
+
+- **Returns** and how many phones, the **Value that came back**, **Handed back**, the **Cut kept by the shop**, and what **Went to the khata**.
+- **Sale profit taken back** and **Effect on profit** (owner and manager only): the profit of the cancelled sale is gone; the cut is what the shop made instead.
+- **Took another phone**, **Sold again** and **Inside warranty** counts, and how many of the phones sold came back.
+- **Why they came back** and **Who took them back**.
+- **Each return**: tap one to see the date and how many days after the sale, the bill, who brought it back with the phone number, which staff member took it back, the reason and note, each phone with its IMEI, what it was sold for, where it is now, whether it was sold again and for how much, the money handed back and from which account, the cut, and the customer's next bill if he took another phone.
+
+**Example:** a phone sold for Rs. 13,000 (cost Rs. 10,000) comes back and Rs. 12,500 is handed back. Cut Rs. 500, sale profit taken back Rs. 3,000, effect on profit −Rs. 2,500. The phone is in stock again to sell.
+
 ### What happens behind the screen
 
 - The phone's status goes back to **In stock** and it can be sold again. Its history gets a **Sale returned** line with the person, amount and reason.

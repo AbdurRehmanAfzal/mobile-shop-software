@@ -362,6 +362,42 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-098 · 2026-11-19 · Accepted · A special price for one shop, a sale for everyone, and a payment recorded with its package
+**Context**: the owner gives some customers a lower fee (a shop gets Pro for 3,000 instead of 5,000). That shop sent 3,000 but its fees page still said 5,000, because a package the shop is not yet on always costs the list price. The owner asked for a way to give one shop a discount for a number of months — the shop still sees 5,000, with a line saying the provider gave it the old price — plus "sale" options, and a way to record a payment himself with the package, modules and months, for customers who just send the money and ask to be activated.
+
+**Decision**:
+- **Special price for one shop**: `organisations.fee_deal` (JSON, migration `c6e8a0b2d4f7`, NULL for every existing shop): `{plan, price, months, months_left, note, set_on}`; `months_left` NULL = no end. `PUT / DELETE /admin/shops/{id}/deal`; audited.
+  - In the quote the special price covers the months it has left; the rest of the order costs the usual price (a year with 6 special months = 6 × 3,000 + 6 × 5,000). The discount for years still applies on top.
+  - Approving a payment uses the months up (`order.apply`); nothing is used up by looking or by a rejected payment.
+  - The shop sees the list price crossed out, its own price, how many months remain and the provider's note; the summary has "Your discount".
+  - When the months are over the package costs the list price again, and the shop's monthly fee is set to it by the payment that used the last month. Removing the special price puts a shop that was paying it back on the list price.
+- **Sale for everyone**: `sale_pct` and `sale_until` in the pricing settings (Website prices). It takes that much off the list price of packages and of modules added to a package. It never applies to a shop's own agreed fee or special price, and the monthly fee stored after a sale order is the list price, so the sale ends when it ends. The landing page is not changed by it.
+- **Payment recorded with its package**: `POST /admin/shops/{id}/payments` takes `order` (package, extra modules, months 1–60 — any number, not only whole years); `POST /admin/shops/{id}/quote` shows what it should cost that shop first. It is logged as received with a receipt and applied at once through the same `order.apply`. A payment without `order` still only adds months.
+- App: `AdminDealCard.tsx` in the shop sheet (both actions), sale fields in Website prices, the banner and crossed-out prices in `PackagePicker.tsx`.
+
+**Consequences**: the rule "a shop's own package costs its own agreed fee" (ADR-095) now has one exception: a package that has or had a special price goes back to the list price when the special months are over. The quote's `monthly` is the fee the shop is on after the order; `per_month` is what the first month of the order costs.
+
+## ADR-097 · 2026-11-18 · Accepted · Returns report: every phone that came back, with all its details
+**Context**: a shopkeeper asked where the returned phones are: how many came back, their figures, whether a return was a loss or a profit, when, who returned it, for how much, what money was given or taken, and whether the customer took another phone. The owner asked for the count on the dashboard, the business overview and the shop audit, with every detail, and for a check of what a return itself is missing.
+
+**What a return already had**: the bill and its lines, the customer (asked for on a walk-in sale), value, cash handed back and from which account, the shop's cut, the rest to the khata, a free-text reason, the staff member, the phone's `sale_returned` event, undo. The list showed only the name, numbers, date and value.
+
+**What was missing, and the decision**:
+- **Why it came back** was free text only, so it could not be counted. New nullable `returns.reason_code` (migration `b4d6f8a0c2e5`): changed mind, fault, not as told, price, wants another phone, did not sell, other. Chips in the return form; optional; the note stays. The supplier form's existing three choices send a code too. The code is also on the phone's event.
+- **What comes next** had no action. The done screen now offers "Sell another phone to this customer" (the sale form opens on him: `/sale/new?party=`), "Open the phone to write its fault" (when the reason was a fault) and "See all returns".
+- Nothing else is stored. "Took another phone", "sold again", "days after the sale", "inside warranty" and the effect on profit are all derived.
+
+**The report** (`returns/report.py`, read-only):
+- `GET /api/v1/returns/report?date_from&date_to` (every role; default this month) and `GET /api/v1/shop-audit/returns` (the audit's period). Customers' returns and returns to suppliers are kept apart.
+- Per return: number, date, days after the bill, bill, person and phone number, staff member, reason and note, each phone (label, IMEI, sold / bought for, where it is now, sold again: date and price), value, handed back and from which account, cut, what went to the khata, inside warranty, the customer's next bill within 3 days ("took another phone").
+- Totals: returns, phones, value, handed back, cut, to khata, took another, sold again, inside warranty, deleted returns, and "of N phones sold, M came back".
+- **Effect on profit** (only with `VIEW_COST`, like cost): the sale's profit is gone (`line_total − tax − cost`), the cut is what the shop made instead, so effect = cut − profit taken back. For a return to a supplier the cut is the loss.
+- A return undone later (ADR-090) is not counted; the business overview's old return figure counted it and no longer does.
+
+**Where it shows**: More → Returns list (now the report, with its own dates), a "Phones returned (this month)" card on Home (`returns_today` / `returns_month` on the dashboard), a Returns card in Business overview (count, phones, handed back, cut), and a Returns section in Shop Audit.
+
+**Consequences**: "took another phone" is a rule of thumb (a new bill for the same person within 3 days), not a stored link. Existing returns have no reason code and show "Not said".
+
 ## ADR-096 · 2026-11-18 · Accepted · Graphs on the home screen and the business overview
 **Context**: shopkeepers asked for graphs on the dashboard and in Business overview showing sales, purchases, profit / loss, and what is to get (lene) and to give (dene). The home screen had one 7-day sales bar chart and a money donut; the overview had none.
 
