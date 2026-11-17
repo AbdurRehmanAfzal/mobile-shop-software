@@ -62,7 +62,7 @@ test('exchange with part paid back, return with the rest in the khata', async ({
   await expect(page.getByTestId('exchange-balance')).toContainText('10,000')
   await page.screenshot({ path: 'test-results/exchange-settle.png', fullPage: true })
   await page.getByRole('button', { name: 'Complete exchange' }).click()
-  await expect(page.getByTestId('exchange-result-balance')).toContainText('To give to customer: 10,000')
+  await expect(page.getByTestId('exchange-result-balance')).toContainText('To give to customer (dene hain): 10,000')
   const aliNow = await (await request.get(`/api/v1/parties/${ali}`, { headers: h })).json()
   expect(aliNow.balance).toBe('-10000.00')
 

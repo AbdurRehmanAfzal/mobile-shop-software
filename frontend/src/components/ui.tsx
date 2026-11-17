@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, Search, X } from 'lucide-react'
 import { useEffect, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
-import { BiLabel, useLang, type BiText } from './Bilingual'
+import { BiLabel, useLang, type BiText, Glossed } from './Bilingual'
 import { formatMoney } from '@/lib/format'
 import { ApiError } from '@/lib/api'
 import { ScanButton } from './ScanButton'
@@ -136,7 +136,7 @@ export function Chip({ text, tone = 'muted' }: { text: string | BiText; tone?: '
     muted: 'bg-ground text-muted border border-line',
     ink: 'bg-ink text-ground',
   }[tone]
-  return <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-bold ${cls}`}>{pick(text)}</span>
+  return <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-bold ${cls}`}><Glossed text={pick(text)} /></span>
 }
 
 /** with `scan`, a Scan button beside it fills the box with the IMEI read from the barcode */

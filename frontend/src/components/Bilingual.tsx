@@ -8,6 +8,14 @@
 import { forwardRef, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { both } from '@/i18n'
+import { splitGloss } from '@/i18n/gloss'
+
+/** An English label with its Roman Urdu hint a little smaller: "To get (lene hain)" (ADR-094) */
+export function Glossed({ text }: { text: string }) {
+  const [main, hint] = splitGloss(text)
+  if (!hint) return <>{text}</>
+  return <>{main} <span className="whitespace-nowrap text-[0.82em] font-medium opacity-70" data-gloss>({hint})</span></>
+}
 
 type Size = 'sm' | 'md' | 'lg' | 'xl'
 
@@ -66,7 +74,7 @@ export function BiLabel({
       dir={dir}
       lang={ur ? 'ur' : 'en'}
     >
-      {pick(text)}
+      <Glossed text={pick(text)} />
     </div>
   )
 }
@@ -110,7 +118,7 @@ export function BiButton({
     >
       {icon ? <span className="shrink-0">{icon}</span> : null}
       <span className={`leading-tight ${cls(size)}`} dir={dir} lang={ur ? 'ur' : 'en'}>
-        {loading ? '…' : pick(text)}
+        {loading ? '…' : <Glossed text={pick(text)} />}
       </span>
     </button>
   )

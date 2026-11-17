@@ -257,6 +257,8 @@ Server: the deploy runs migration `e4a6c8d0f2b5` (additive: returns, branch tran
 - Price lists → Customers: no seller.
 - Your own stock list: tick **Bought from** in Fields → Download → name and number.
 
+**English words with a Roman hint (2026-11-17, ADR-094)**: switch the app to English and open a person's khata, Len-den, Payments, Loans (amanat) and the books. The money words now read like "To get (lene hain)", "I gave money (de diye)", "Debit (naam)". Tell me any other word that still confuses a shopkeeper.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

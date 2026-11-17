@@ -1939,3 +1939,16 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Verified**:
 - pytest `test_stock_a4` (new test: staff list and staff tally have the name and not the number; customer list has neither; owner's list, CSV and tally have both; a salesman's own list has the name only), `test_stock_tally`, `test_devices`.
 - Rendered the four sheets at A4 with a long seller name: no horizontal overflow; looked at the owner tally and the staff list.
+
+### 2026-11-17 — English money words with a Roman Urdu hint (ADR-094)
+**Owner** (shopkeepers): in English, "give money, took money, I will get, I will give", credit / debit and the amanat screen are not understood; use easy words and write a small Roman Urdu beside the English.
+**Done**:
+- About 76 short English labels end with a Roman hint in brackets ("To get (lene hain)", "I gave money (de diye)", "Debit (naam)", loans "To which shop (kis dukaan ko)"); a few were reworded.
+- `i18n/gloss.ts` + `Glossed` draw the hint smaller in `BiLabel`, `BiButton` and `Chip`.
+- Five lower-case fragments used inside sentences ("left to get 2,000") were left without a hint.
+- ADR-094 (an agreed exception to the one-language rule), CLAUDE.md, docs/29.
+**Verified**:
+- tsc; vitest (53).
+- Playwright: `units`, `lending`, `lending-cancel`, `exchange-return`, `v2-screens`, `tally-staff`, `balances`, `party-brands`, `counter`, `books`, `reminders`, `bulk`, `audit-parties`, `installments`, `return` — six specs updated for the new wording.
+- I looked at a person's khata in English.
+**Not done**: printed documents and help texts keep their wording. An entry title in the len-den list is cut short on a narrow phone ("I gave money (de…").

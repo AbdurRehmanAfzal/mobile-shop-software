@@ -64,7 +64,7 @@ test('amanat: give a phone to another shop from the loans page, they keep it, th
   await page.goto('/loans')
   await expect(page.getByText('phones at other shops right now')).toBeVisible()
   await expect(page.getByText('No loans')).toBeVisible()
-  await page.getByRole('button', { name: 'Give a phone on amanat' }).click()
+  await page.getByRole('button', { name: 'Give a phone to another shop (amanat)' }).click()
   await page.getByRole('button', { name: /Nokia/ }).first().click()
   await page.getByPlaceholder('Name, phone or CNIC').fill('Bilal')
   await page.getByRole('button', { name: /Bilal Mobiles/ }).first().click()
@@ -80,7 +80,7 @@ test('amanat: give a phone to another shop from the loans page, they keep it, th
   await page.screenshot({ path: 'test-results/v2-loans.png', fullPage: true })
 
   // they kept it: 1,200 agreed, 200 paid, 1,000 on their khata
-  await card.getByRole('button', { name: 'They kept it (sell)' }).click()
+  await card.getByRole('button', { name: 'They kept it — sell (unhon ne rakh liya)' }).click()
   await page.getByLabel('Agreed price').fill('1200')
   await page.getByLabel('Paid now').fill('200')
   await expect(page.getByText('1,000')).toBeVisible()

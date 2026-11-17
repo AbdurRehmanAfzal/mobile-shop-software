@@ -46,7 +46,7 @@ test('unit-wise money: phone page, both customers, pay for this phone, receipt',
   await expect(page.getByText(inv.no).last()).toBeVisible()
   await expect(page.getByLabel('Amount')).toHaveValue('5000')
   await page.getByLabel('Amount').fill('3000')
-  await page.getByRole('button', { name: 'Receive money', exact: true }).click()
+  await page.getByRole('button', { name: 'Receive money (paise lein)', exact: true }).click()
   await expect(page.getByText(/Payment saved|saved/i).first()).toBeVisible()
   const [pop] = await Promise.all([page.waitForEvent('popup'), page.getByRole('button', { name: 'Print receipt', exact: true }).last().click()])
   await pop.waitForLoadState()
