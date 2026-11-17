@@ -35,6 +35,10 @@ class SaleReturnIn(BaseModel):
         | None
     ) = None
     date: dt.date | None = None
+    # ADR-101: how it came back — a damaged phone goes to Faulty instead of normal stock
+    item_condition: Literal["ok", "damaged"] | None = None
+    # ADR-101: the return entered by mistake (already undone) that this one corrects
+    replaces_id: uuid.UUID | None = None
 
 
 class PurchaseReturnIn(BaseModel):
@@ -56,6 +60,28 @@ class PurchaseReturnIn(BaseModel):
         | None
     ) = None
     date: dt.date | None = None
+    replaces_id: uuid.UUID | None = None  # ADR-101
+
+
+class ReturnDetailsIn(BaseModel):
+    """ADR-101: what may be corrected on a return without touching money or stock"""
+
+    reason: str | None = Field(default=None, max_length=300)
+    reason_code: (
+        Literal[
+            "changed_mind", "fault", "not_as_told", "price", "another_phone", "not_selling", "other"
+        ]
+        | None
+    ) = None
+
+
+class ReturnReplaceIn(BaseModel):
+    """ADR-101: a return corrected in one step — the old one is undone and the right one
+    entered, both or neither. Give `sale` or `purchase`, whichever the right return is."""
+
+    reason: str = Field(min_length=2, max_length=300)
+    sale: SaleReturnIn | None = None
+    purchase: PurchaseReturnIn | None = None
 
 
 class ReturnOut(BaseModel):
@@ -79,6 +105,12 @@ class ReturnOut(BaseModel):
     reason_code: str | None = None
     status: str = "posted"  # ADR-090: posted | voided
     void_reason: str | None = None
+    voided_at: dt.datetime | None = None
+    voided_by: uuid.UUID | None = None
+    item_condition: str | None = None
+    replaces_id: uuid.UUID | None = None
+    replaces_no: str | None = None
+    replaced_by_no: str | None = None
     lines: list[dict]
     ledger_group_id: uuid.UUID | None
     created_by: uuid.UUID | None

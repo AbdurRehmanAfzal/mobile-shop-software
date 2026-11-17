@@ -119,6 +119,8 @@ def report(
     users = _by_id(db, User, {r.created_by for r in live})
     accounts = _by_id(db, CashAccount, {r.cash_account_id for r in live})
     sold_events = _resold(db, shop_id, {d for d in devices})
+    old_ids = {r.replaces_id for r in live if r.replaces_id}
+    replaced = {x.id: x.no for x in _by_id(db, ReturnDoc, old_ids).values()}
 
     # the customer's next bills, to see whether he took another phone
     next_bills: dict[uuid.UUID, list[Invoice]] = defaultdict(list)
@@ -160,6 +162,10 @@ def report(
             "kept": money(r.kept_amount),
             "reason_code": r.reason_code,
             "reason": r.reason,
+            # ADR-101
+            "item_condition": r.item_condition,
+            "replaces_id": r.replaces_id,
+            "replaces_no": replaced.get(r.replaces_id),
         }
 
     def item(x: dict) -> dict:

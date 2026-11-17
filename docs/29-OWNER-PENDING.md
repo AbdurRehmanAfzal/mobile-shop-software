@@ -277,6 +277,12 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **"First do this" before a delete (2026-11-19, ADR-100)**: nothing to run. To test: give a phone to another shop on amanat, then try to delete its purchase — the sheet must say the phone is with that shop, with an Open button. Take it back; note that the purchase then says the phone "went out and came back" and must be returned to the seller instead (a loan is a move). A purchase with nothing after it deletes as before.
 
+**Returns audit (2026-11-20, ADR-101)** — deploy and rollback:
+1. Take the usual database backup first.
+2. Merge and deploy as always; the backend runs `alembic upgrade head` on start. The migration only adds three empty columns to `returns` (no row is changed).
+3. Check on one shop: an old return still opens in Returns list; make a test sale and return it (the summary must appear before saving); undo that return.
+4. Rollback, if ever needed: redeploy the previous version; the three extra columns can stay (the old code ignores them). To remove them: `alembic downgrade c6e8a0b2d4f7`.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |
@@ -297,6 +303,7 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 Details in `docs/manual/operations-en.md`. None of these is broken today, but each is worth a look:
 - [ ] **Renewal key on the server:** run the renewal keygen on the server. Until then production checks codes with the default public key, so codes signed with the development PC's key would be accepted.
 - [ ] **Off-server backup:** `RCLONE_REMOTE` is not set, so every backup sits on the same VPS. Set it up and practise one restore.
+  - **Owner 2026-11-20: confirmed it is still not set, and wants it done** — shops are live, and every shop's database must have a copy off the server. Until then: after a manual `sudo /opt/mobileshop/backup.sh`, download the newest `db-*.dump` to a PC. Steps: `docs/12-DEPLOYMENT.md` → Backups (rclone, an encrypted Google Drive remote, `RCLONE_REMOTE=gdrive-safe:` in `/opt/mobileshop/.env`). Needs the owner's Google login on the VPS, about 15 minutes.
 - [ ] **Android signing:** check that the three `ANDROID_KEYSTORE_*` GitHub secrets exist (`gh secret list`). Without them `/app.apk` is test-signed, and a properly signed APK cannot update it later.
 - [ ] **Old Docker images:** `deploy.sh` removes only untagged images. Once a month run `docker image prune -a --filter until=168h` on the server.
 - [ ] **Server IP in git history:** it was in two comments (removed 2026-11-03), but older commits still have it. If the repo ever goes public, assume the IP is known and keep SSH key-only.

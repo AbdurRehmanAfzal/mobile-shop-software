@@ -64,6 +64,7 @@ test('walk-in return: hand back 900, shop cuts 100', async ({ page, request }) =
   await expect(page.locator('.bg-ret').getByText('100', { exact: true })).toBeVisible()
   await page.screenshot({ path: 'test-results/return-step2.png', fullPage: true })
   await page.getByRole('button', { name: 'Take it back' }).click()
+  await page.getByTestId('return-confirm-btn').click()
   await expect(page.getByText('Return done')).toBeVisible()
   await expect(page.getByText('The phone is back in stock')).toBeVisible()
 

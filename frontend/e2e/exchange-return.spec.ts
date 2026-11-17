@@ -75,6 +75,7 @@ test('exchange with part paid back, return with the rest in the khata', async ({
   await expect(page.getByTestId('return-after')).toContainText('50,000')
   await page.screenshot({ path: 'test-results/return-settle.png', fullPage: true })
   await page.getByRole('button', { name: 'Take it back' }).click()
+  await page.getByTestId('return-confirm-btn').click()
   await expect(page.getByText('2/3')).toHaveCount(0)
   const bilalNow = await (await request.get(`/api/v1/parties/${bilal}`, { headers: h })).json()
   expect(bilalNow.balance).toBe('-50000.00')

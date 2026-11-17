@@ -6,7 +6,7 @@
  *  depends on the entry (a phone sold on, a later payment), the app says what to undo first. */
 
 import { Pencil, Trash2 } from 'lucide-react'
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import DeleteBlockers from '@/components/DeleteBlockers'
@@ -31,7 +31,7 @@ const PATHS: Record<BillKind, { del: (id: string) => string; edit: (id: string) 
 
 /** `editTo`: where Edit goes (default the bill's page; null hides Edit); `onEdit` opens an edit form
  *  in place instead */
-export default function BillActions({ kind, id, no, canDelete, editTo, onEdit, onDone, label }: { kind: BillKind; id: string; no: string; canDelete: boolean; editTo?: string | null; onEdit?: () => void; onDone?: () => void; /** a full-width delete button with this text (detail screens) instead of the row icons */ label?: string }) {
+export default function BillActions({ kind, id, no, canDelete, editTo, onEdit, onDone, label, summary }: { kind: BillKind; id: string; no: string; canDelete: boolean; editTo?: string | null; onEdit?: () => void; onDone?: () => void; /** what exactly will be undone (ADR-101): shown above the warning */ summary?: ReactNode; /** a full-width delete button with this text (detail screens) instead of the row icons */ label?: string }) {
   const { pick } = useLang()
   const nav = useNavigate()
   const inv = useInvalidate()
@@ -74,6 +74,7 @@ export default function BillActions({ kind, id, no, canDelete, editTo, onEdit, o
       <Sheet open={open} onClose={() => setOpen(false)} title={{ en: `${pick('bill.delete')} · ${no}`, ur: `${pick('bill.delete')} · ${no}` }}>
         <div className="flex flex-col gap-3">
           <DeleteBlockers kind={kind} id={id} open={open} onGo={() => setOpen(false)} />
+          {summary}
           <DeleteWarning kind={kind as DelKind} />
           <BiInput label="common.reason" help={<Help term="void" size="sm" />} value={reason} onChange={(e) => setReason(e.target.value)} minLength={3} maxLength={300} autoFocus placeholder={pick('bill.reasonPh')} />
           <BiLabel text="bill.kept" size="sm" tone="text-muted" />

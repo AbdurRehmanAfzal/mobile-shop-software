@@ -44,6 +44,7 @@ test('return with a reason, then the returns report everywhere', async ({ page, 
   await page.getByTestId('why-fault').click()
   await expect(page.getByTestId('why-fault')).toHaveAttribute('aria-pressed', 'true')
   await page.getByRole('button', { name: 'Take it back' }).click()
+  await page.getByTestId('return-confirm-btn').click()
   // what comes next is offered on the done screen
   await expect(page.getByTestId('return-sell-another')).toBeVisible({ timeout: 15_000 })
   await expect(page.getByTestId('return-mark-faulty')).toBeVisible()
