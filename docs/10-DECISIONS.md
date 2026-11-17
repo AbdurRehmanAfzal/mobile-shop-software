@@ -362,6 +362,21 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-103 · 2026-11-18 · Accepted · Account ledger and item-wise stock sheet
+**Context**: a shopkeeper sent two printouts from his old software and asked for the same: an "Account Ledger" of one person (opening balance; each bill with its items — "Vivo X90 Pro 12/512 — 1 @ 90,000 = 90,000" — and each payment; debit, credit, running balance; totals) and a "Stock with Cost Price (Item Wise)" sheet (by brand, each model with quantity, unit price and cost; a total per brand and a grand total).
+
+**What existed**: a person's statement export (date, memo, type, debit, credit, balance — no bill number, no items, no totals, and a deleted bill left a jump in the balance) and a stock-worth export (brand, model, count, value — no memory variant, no unit price, no totals lines).
+
+**Decision** — two new reports beside the old ones, which are untouched (`exports/statements.py`; read-only, no migration):
+- **`GET /exports/parties/{id}/ledger`** (`date_from`, `date_to`; pdf / xlsx / csv; en / ur): opening balance, then every ledger line of the person in date order with the document's number and, on the bill's first line, its items (sale and purchase lines as `model + RAM/memory — qty @ price = total`; a payment's method, reference and note; a return's lines). Debit, credit, running balance; totals, closing balance, and the balance in words.
+  - A deleted bill (its ledger group reversed) and the reversal are both left out; they cancel, so the closing balance is still the person's real balance (asserted against `parties.balance`).
+  - A balance where the shop owes is shown with "−", never in brackets (the house rule).
+- **`GET /exports/stock-cost`**: the phones in hand (the stock screen's own rule, the same set as the stock-worth report) grouped by brand, then by model + memory: quantity, the average of one, the value; a total per brand and a grand total. At cost with `VIEW_COST`, at asking price otherwise ("Stock with Selling Price").
+- Both print with the shop's own header and footer (`profile.header_html / footer_html`, ADR-040).
+- App: an "Account ledger" card with From / To on the person's page; an "Item-wise stock sheet" card on the stock-worth page.
+
+**Limits**: counted items (accessories) are not on the stock sheet — it lists phones, tablets and watches, like the stock-worth report it sits beside; the ledger has no "company / branch" column (one khata belongs to one shop).
+
 ## ADR-102 · 2026-11-18 · Accepted · The impact preview: the server runs the posting and rolls it back
 **Context**: the owner's second brief (IMEI-level inventory and full accounting integration) asks, as mandatory, that no return or undo be posted before the user has seen and confirmed its effect on stock, cash, the khata and the accounts — worked out by the backend with the posting's own logic, never by the app — plus IMEI integrity, statuses, concurrency protection and reconciliation tests. Live shops must not be disturbed.
 

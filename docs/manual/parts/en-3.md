@@ -198,6 +198,20 @@ Every night one message arrives with: phones sold and the amount, money in hand,
 
 > **Tip:** On the same screen you can also ask for a message **On every sale** or **On stock added**, by WhatsApp or email. Good for an owner who runs two shops.
 
+### Account ledger and item-wise stock sheet
+
+Two printouts for your records or your accountant. Both open as a page you can print or save as PDF, and also download as Excel.
+
+**Account ledger** (one person's khata, like a bank statement): open the person's page → **Account ledger**. Choose **From** and **To**, or leave them empty for everything, then tap Download.
+
+- It starts with the **Opening balance**.
+- Then every bill and payment in date order: date and time, type (Sale, Purchase, Payment, Return…), its number, and what was on the bill, for example "Xiaomi 13T Pro 12/256 — 1 @ 65,000 = 65,000".
+- **Debit**, **Credit** and the running **Balance** on every line. A balance with a minus sign means the shop has to pay that person.
+- At the foot: **Total debit**, **Total credit**, the **Closing balance**, and one line in words, for example "The shop has to pay Raheel Naseer Rs. 439,000".
+- A bill you deleted is not listed.
+
+**Item-wise stock sheet**: open the page **What is my stock worth?** → **Item-wise stock sheet** → Download. For each brand it lists every model with its memory, the **Quantity**, the **Unit price** (the average of one) and the **Cost**, then a total for the brand and a **Grand total** at the end. A salesman gets the same sheet at selling price, without cost.
+
 ## 17. Len-den (money given or taken with no bill)
 
 In every market, money moves between people without any sale or purchase. You lend Rs. 25,000 to a regular customer for a family need. A neighbour shop lends you Rs. 50,000 for a day to pay a dealer. In shop language this is **len-den** (give and take). It is not a sale and not a purchase, so it should not spoil your sales or udhaar figures.

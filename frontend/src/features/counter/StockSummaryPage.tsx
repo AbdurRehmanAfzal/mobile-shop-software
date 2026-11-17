@@ -35,6 +35,11 @@ export default function StockSummaryPage() {
       />
       {/* owner 2026-11-14 (ADR-075): print every phone to count the stock by hand */}
       <TallySheetCard />
+      {/* owner 2026-11-18 (ADR-103): the stock in hand item wise — quantity, price of one, cost */}
+      <section className="card flex items-center justify-between gap-3" data-testid="stock-items-card">
+        <span className="flex min-w-0 flex-col"><BiLabel text="ledgerRep.stockTitle" size="md" bold /><BiLabel text="ledgerRep.stockHint" size="sm" tone="text-muted" /></span>
+        <DownloadButton path="/api/v1/exports/stock-cost" name="stock-item-wise" />
+      </section>
       {isLoading || !data ? <Loading /> : (
         <>
           <section className="flex flex-col rounded-3xl bg-stockt px-5 py-4 text-stockt-fg">

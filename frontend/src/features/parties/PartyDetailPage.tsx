@@ -2,7 +2,7 @@ import DownloadButton from '@/components/DownloadButton'
 import { ArrowDown, ArrowUp, Pencil, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { BiLabel, useLang } from '@/components/Bilingual'
+import { BiLabel, useLang, BiInput } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import RemoveSheet from '@/components/RemoveSheet'
 import { BtnText, Chip, Empty, fmtDate, KV, Loading, MoneyText, PageHeader, Section, Sheet } from '@/components/ui'
@@ -103,6 +103,9 @@ export default function PartyDetailPage() {
       <PartyJourney partyId={party.id} />
       <PartyUnits party={party} />
 
+      {/* owner 2026-11-18 (ADR-103): the khata as an account ledger — bills with their items */}
+      <LedgerDownload partyId={party.id} name={party.name} />
+
       <Section
         title="party.statement"
         help="party.statement"
@@ -153,5 +156,24 @@ export default function PartyDetailPage() {
         {paying ? <PaymentForm party={party} direction={paying} onDone={() => setPaying(null)} /> : null}
       </Sheet>
     </div>
+  )
+}
+
+function LedgerDownload({ partyId, name }: { partyId: string; name: string }) {
+  const [from, setFrom] = useState('')
+  const [to, setTo] = useState('')
+  const q = [from ? `date_from=${from}` : '', to ? `date_to=${to}` : ''].filter(Boolean).join('&')
+  return (
+    <section className="card flex flex-col gap-2" data-testid="party-ledger">
+      <div className="flex items-center justify-between gap-2">
+        <BiLabel text="ledgerRep.title" size="md" bold />
+        <DownloadButton path={`/api/v1/exports/parties/${partyId}/ledger${q ? `?${q}` : ''}`} name={`ledger-${name}`} />
+      </div>
+      <BiLabel text="ledgerRep.hint" size="sm" tone="text-muted" />
+      <div className="grid grid-cols-2 gap-2">
+        <BiInput label="ledgerRep.from" type="date" value={from} max={to || undefined} onChange={(e) => setFrom(e.target.value)} dir="ltr" data-testid="ledger-from" />
+        <BiInput label="ledgerRep.to" type="date" value={to} min={from || undefined} onChange={(e) => setTo(e.target.value)} dir="ltr" data-testid="ledger-to" />
+      </div>
+    </section>
   )
 }

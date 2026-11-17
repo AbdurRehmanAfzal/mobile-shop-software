@@ -543,6 +543,45 @@ def statement(
     )
 
 
+@router.get("/parties/{party_id}/ledger")
+def account_ledger(
+    party_id: uuid.UUID,
+    ctx: Ctx,
+    db: DB,
+    format: Fmt = "pdf",
+    lang: Lang = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+):
+    """owner 2026-11-18 (ADR-103): one person's khata as an account ledger — opening balance,
+    every bill with its items and every payment, debit / credit / running balance, totals"""
+    from app.modules.exports import statements
+
+    led = statements.account_ledger(db, ctx.shop_id, party_id, date_from, date_to)
+    ur = lang == "ur"
+    if format == "pdf":
+        page = statements.ledger_html(db, ctx.shop_id, led, ur)
+        return Response(content=page, media_type="text/html; charset=utf-8")
+    head, rows = statements.ledger_flat(led, ur)
+    name = f"ledger-{led['party'].phone or led['party'].name}"
+    return _file(format, ctx, db, None, name, head, rows)
+
+
+@router.get("/stock-cost")
+def stock_cost(ctx: Ctx, db: DB, format: Fmt = "pdf", lang: Lang = None):
+    """owner 2026-11-18 (ADR-103): stock in hand, item wise — brand, model + memory, quantity,
+    unit price and cost, a total per brand and a grand total (asking price without cost rights)"""
+    from app.modules.exports import statements
+
+    s = statements.stock_items(db, ctx.shop_id, ctx.can(Cap.VIEW_COST))
+    ur = lang == "ur"
+    if format == "pdf":
+        page = statements.stock_html(db, ctx.shop_id, s, ur)
+        return Response(content=page, media_type="text/html; charset=utf-8")
+    head, rows = statements.stock_flat(s, ur)
+    return _file(format, ctx, db, None, "stock-item-wise", head, rows)
+
+
 @router.get("/sales.csv")
 @router.get("/sales")
 def sales(

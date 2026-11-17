@@ -5076,5 +5076,13 @@
       "repair_given_back": "Repair {{ref}} was already given back to the customer.",
       "lab_charge_booked": "A lab's charge is booked on repair {{ref}}. Give it back as not repaired instead."
     }
+  },
+  "ledgerRep": {
+    "title": "Account ledger",
+    "hint": "Every bill with its items and every payment, with debit, credit and the running balance. Leave the dates empty for everything.",
+    "from": "From",
+    "to": "To",
+    "stockTitle": "Item-wise stock sheet",
+    "stockHint": "Brand, model with memory, quantity, price of one and cost, with a total for each brand."
   }
 }

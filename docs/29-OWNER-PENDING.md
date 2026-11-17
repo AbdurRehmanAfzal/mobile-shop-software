@@ -285,6 +285,8 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **Impact preview on returns (2026-11-18, ADR-102)**: nothing to run (no migration). To test: return a sold phone — the summary must show what will happen in plain words, and for the owner the stock value and the effect on profit; "Go back / change" must keep the form. Return a phone to its seller from the purchase page: the same summary appears before saving. Delete a return: the sheet shows what goes back.
 
+**Account ledger and item-wise stock sheet (2026-11-18, ADR-103)**: nothing to run. To test: open a supplier's page → "Account ledger" → Download (PDF): each bill must list its phones, with debit, credit and balance, and the totals at the foot; compare the closing balance with his khata. Then the stock-worth page → "Item-wise stock sheet": the grand total must equal the stock worth on that page. Show both to the shopkeeper who asked.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |
