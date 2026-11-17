@@ -1,4 +1,4 @@
-"""Return Sale / Return Purchase audit (owner 2026-11-20, ADR-101): the twenty scenarios of the
+"""Return Sale / Return Purchase audit (owner 2026-11-17, ADR-101): the twenty scenarios of the
 brief, checked on the books themselves — the galla, the khata, stock at cost, the profit report,
 the trial balance — not on the response alone.
 

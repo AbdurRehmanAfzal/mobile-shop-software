@@ -1,4 +1,4 @@
-/** "First do this" in a delete sheet (owner 2026-11-19, ADR-100): before the shopkeeper types a
+/** "First do this" in a delete sheet (owner 2026-11-17, ADR-100): before the shopkeeper types a
  *  reason, the app says what stands in the way — the phone is at repair, on loan or sold on, a
  *  payment was made against the bill later — each with a button to the screen where it is undone.
  *  It only reads; the delete keeps its own checks, so the form below stays as it was. When the

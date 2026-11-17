@@ -1,4 +1,4 @@
-/** Owner 2026-11-18 (ADR-096): graphs on the home screen and the business overview — sales and
+/** Owner 2026-11-17 (ADR-096): graphs on the home screen and the business overview — sales and
  *  purchases, profit / loss by day, to get and to give — for 7 or 30 days. */
 
 import { expect, test } from '@playwright/test'

@@ -362,7 +362,28 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
-## ADR-101 · 2026-11-20 · Accepted · Return Sale / Return Purchase audit: condition, confirm, correct, undo
+## ADR-102 · 2026-11-18 · Accepted · The impact preview: the server runs the posting and rolls it back
+**Context**: the owner's second brief (IMEI-level inventory and full accounting integration) asks, as mandatory, that no return or undo be posted before the user has seen and confirmed its effect on stock, cash, the khata and the accounts — worked out by the backend with the posting's own logic, never by the app — plus IMEI integrity, statuses, concurrency protection and reconciliation tests. Live shops must not be disturbed.
+
+**Audit against the brief** (what the system already is — nothing here was rebuilt):
+- **Per-IMEI inventory**: one `devices` row per unit, never duplicated; a return puts the same row back. Every movement is an immutable `device_events` row (purchase, sale, return, …) carrying the document it came from, numbered per device with a unique constraint.
+- **Double-entry ledger**: every document posts one balanced `ledger_group`; undo posts a reversing group linked both ways (`reverses_group_id` / `reversed_by_group_id`). Balances are derived; `parties.balance` is a cache of the ledger.
+- **Statuses**: in stock, sold, faulty, returned to supplier, on loan, at repair, with a customer for approval, transferred, used for parts — a state machine refuses an invalid move. The brief's "Damaged" and "Under inspection" are both the existing **Faulty** (ADR-101: a damaged return goes there and is cleared after it is checked). A new status was **not** added: it would touch every stock filter, report and transition of a live system for no gain.
+- **Wrong kind**: a customer's return can only be made from a sale bill line, so a never-sold phone cannot be "returned by a customer". A sold phone cannot go back to the seller.
+
+**Decision — what was added** (no migration, no change to how anything is posted):
+- **`returns/preview.py`**: the preview calls the very function that posts (`sale_return`, `purchase_return`, `void_return`, or undo + re-entry for a correction) with `commit=False`, reads what it changed — the new ledger lines (caught on flush), the phones' statuses, the cash accounts, the khata — and **rolls the transaction back**. It cannot disagree with the posting, and it writes nothing (not a return, a ledger line, an event or a return number; tests assert it).
+  - Routes: `POST /returns/sale/preview`, `POST /returns/purchase/preview`, `GET /returns/{id}/void-preview`, `POST /returns/{id}/replace/preview`.
+  - Everyone gets the plain impact (phones in / out, cash by account, the khata before → after, the cut). Cost, stock value, sales taken back, cost put back, the profit effect and the journal lines only with `VIEW_COST`.
+  - A phone that is not in the shop makes the purchase-return preview answer `ok: false` with where it is (sold: the bill and the customer) instead of an impact.
+- **Stale preview**: the preview returns a `token`, a fingerprint of what it looked at (the bill, its lines, the phones' status and last movement, the khata, the amounts). A confirm that carries the token is refused with `preview_stale` when the fingerprint no longer matches; the app shows a fresh preview and asks again. The token is optional, so older clients and the existing API calls work unchanged.
+- **Row locks**: returns and undo lock the bill and its phones (`SELECT … FOR UPDATE` on PostgreSQL; SQLite on the one-PC install has a single writer). Two people returning the same phone at once: the second waits and is refused as "already returned". The unique `(device_id, seq)` on events remains the last line of defence for every other pair of postings.
+- **App**: `ReturnPreview.tsx` (one component, server figures only) in the customer's return, the return to the seller (a new "check" step) and the undo sheet; "Confirm return" / "Go back / change".
+- **Reconciliation tests** (`tests/test_returns_preview.py`): every ledger group balanced; each phone's status equals its last movement; a returned phone is the same row; stock at cost equals the phones in the shop at their bill cost; each khata and the galla equal the sum of their ledger lines; profit after returns, cuts and a supplier's cut; an undone return out of the totals but on record with its reversal linked; undo restores the exact earlier state.
+
+**Not done / limits**: no "Under inspection" status (Faulty is used); the preview is for returns and their undo, not yet for deleting a sale or a purchase (those have the "first do this" check, ADR-100); a sale itself does not take the row lock (it relies on the event constraint).
+
+## ADR-101 · 2026-11-17 · Accepted · Return Sale / Return Purchase audit: condition, confirm, correct, undo
 **Context**: the owner sent a ten-phase brief to audit and improve sale returns and purchase returns on a system that live shops already use: correct accounting, a safe undo, editing, the wrong kind of return corrected, an easy form with a confirmation, damaged stock kept apart, twenty test scenarios, and nothing existing disturbed.
 
 **Audit — what the code already did** (each now pinned by a test in `tests/test_returns_audit.py`):
@@ -384,7 +405,7 @@ by sheet remain a later step (docs/18 §1).
 
 **Limits**: a line is returned whole (5 covers on one line come back together, not 2 of 5); a return to the seller is corrected through the API or by undo and re-entry — the app's one-step correction form is for customers' returns; the damaged flag applies to phones (counted items go back to stock).
 
-## ADR-100 · 2026-11-19 · Accepted · The delete sheet says what must be undone first
+## ADR-100 · 2026-11-17 · Accepted · The delete sheet says what must be undone first
 **Context**: shopkeepers want a wrong purchase, return, sale, payment or expense deleted with one tap and a warning, and — when something must be undone first — to be told what ("the phone is at repair"). The owner asked whether deleting should undo everything by itself, and whether the system already does.
 
 **What already happens** (ADR-090): deleting an entry reverses that entry's own effect — stock, galla and the person's khata — and keeps it as Deleted. Things done later as separate entries (a payment against the bill, a loan, a repair, the phone sold on) are never deleted along with it; the delete is refused. The refusal only showed after Confirm, and for a phone it only said "has moved … use a return instead".
@@ -401,7 +422,7 @@ by sheet remain a later step (docs/18 §1).
 
 **Consequences**: the check repeats the delete's rules in words; when a rule changes, both must follow (tests assert that they agree).
 
-## ADR-099 · 2026-11-19 · Accepted · A fault mark, a label or a price change does not stop a wrong entry being deleted
+## ADR-099 · 2026-11-17 · Accepted · A fault mark, a label or a price change does not stop a wrong entry being deleted
 **Context**: a salesman entered an iPhone in the wrong category. The owner tried to delete its purchase and got "Device … has moved since this purchase; use a return instead". The phone had never left the shop: its history only had "Marked faulty" and "Faulty cleared". The check (ADR-090) allowed nothing but a verification after the purchase, so even a printed label or a price change blocked the delete.
 
 **Decision**: one rule, `devices.state.moved_since`, used by the three deletes that had the check — a purchase (`void_purchase`), an old-stock phone (`cancel_opening_stock`) and a sale (`void_invoice`).
@@ -411,7 +432,7 @@ by sheet remain a later step (docs/18 §1).
 
 **Consequences**: nothing else about deleting changes (later payments, exchanges and installments still block; the entry is kept as Deleted; the ledger is reversed, not edited).
 
-## ADR-098 · 2026-11-19 · Accepted · A special price for one shop, a sale for everyone, and a payment recorded with its package
+## ADR-098 · 2026-11-17 · Accepted · A special price for one shop, a sale for everyone, and a payment recorded with its package
 **Context**: the owner gives some customers a lower fee (a shop gets Pro for 3,000 instead of 5,000). That shop sent 3,000 but its fees page still said 5,000, because a package the shop is not yet on always costs the list price. The owner asked for a way to give one shop a discount for a number of months — the shop still sees 5,000, with a line saying the provider gave it the old price — plus "sale" options, and a way to record a payment himself with the package, modules and months, for customers who just send the money and ask to be activated.
 
 **Decision**:
@@ -426,7 +447,7 @@ by sheet remain a later step (docs/18 §1).
 
 **Consequences**: the rule "a shop's own package costs its own agreed fee" (ADR-095) now has one exception: a package that has or had a special price goes back to the list price when the special months are over. The quote's `monthly` is the fee the shop is on after the order; `per_month` is what the first month of the order costs.
 
-## ADR-097 · 2026-11-18 · Accepted · Returns report: every phone that came back, with all its details
+## ADR-097 · 2026-11-17 · Accepted · Returns report: every phone that came back, with all its details
 **Context**: a shopkeeper asked where the returned phones are: how many came back, their figures, whether a return was a loss or a profit, when, who returned it, for how much, what money was given or taken, and whether the customer took another phone. The owner asked for the count on the dashboard, the business overview and the shop audit, with every detail, and for a check of what a return itself is missing.
 
 **What a return already had**: the bill and its lines, the customer (asked for on a walk-in sale), value, cash handed back and from which account, the shop's cut, the rest to the khata, a free-text reason, the staff member, the phone's `sale_returned` event, undo. The list showed only the name, numbers, date and value.
@@ -447,7 +468,7 @@ by sheet remain a later step (docs/18 §1).
 
 **Consequences**: "took another phone" is a rule of thumb (a new bill for the same person within 3 days), not a stored link. Existing returns have no reason code and show "Not said".
 
-## ADR-096 · 2026-11-18 · Accepted · Graphs on the home screen and the business overview
+## ADR-096 · 2026-11-17 · Accepted · Graphs on the home screen and the business overview
 **Context**: shopkeepers asked for graphs on the dashboard and in Business overview showing sales, purchases, profit / loss, and what is to get (lene) and to give (dene). The home screen had one 7-day sales bar chart and a money donut; the overview had none.
 
 **Decision**:

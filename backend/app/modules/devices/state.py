@@ -111,7 +111,7 @@ NEUTRAL_EVENTS = frozenset(
     }
 )
 
-# owner 2026-11-19 (ADR-099): things that may happen to a phone without it having "moved" — a
+# owner 2026-11-17 (ADR-099): things that may happen to a phone without it having "moved" — a
 # wrong entry can still be deleted after them. A fault marked or cleared is one: the phone never
 # left the shop and no money was posted.
 HARMLESS_EVENTS = NEUTRAL_EVENTS | {EventType.MARKED_FAULTY, EventType.FAULTY_CLEARED}

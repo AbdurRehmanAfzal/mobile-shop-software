@@ -10,6 +10,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import PartyPicker from '@/components/PartyPicker'
+import ReturnPreview, { isStale, usePreview } from '@/components/ReturnPreview'
 import { ErrorText, List, PageHeader, Row, SearchBox, Sheet, Stepper, fmtDate } from '@/components/ui'
 import { beep, useScan } from '@/lib/scanner'
 import { lookupCode } from '@/components/ScanListener'
@@ -50,10 +51,10 @@ export default function ReturnWizard() {
   const [idem, setIdem] = useState(uid)
   const [who, setWho] = useState<Party | null>(null)
   const [reason, setReason] = useState('')
-  // owner 2026-11-18 (ADR-097): why it came back, for the returns report
+  // owner 2026-11-17 (ADR-097): why it came back, for the returns report
   const [why, setWhy] = useState<string | null>(null)
   const [done, setDone] = useState<ReturnDoc | null>(null)
-  // owner 2026-11-20 (ADR-101): how it came back; a summary to confirm before saving; and
+  // owner 2026-11-17 (ADR-101): how it came back; a summary to confirm before saving; and
   // correcting a wrong return (`?replace=<id>`: undone and re-entered together) or linking the
   // right one to a wrong one already undone (`?corrects=<id>`)
   const [cond, setCond] = useState<'ok' | 'damaged'>('ok')
@@ -132,32 +133,48 @@ export default function ReturnWizard() {
   const ok = !!inv && selected.length > 0 && (!walkIn || !!who) && !!from && (!replaceId || fixWhy.trim().length >= 2)
   const picked = inv ? inv.lines.filter((l) => selected.includes(l.id)) : []
   const phones = picked.filter((l) => l.device_id).length
-  const costKnown = picked.length > 0 && picked.every((l) => l.cost != null)
-  const costSum = picked.reduce((s, l) => s + Number(l.cost ?? 0), 0)
 
   // refund editing resets when the picked lines change
   useEffect(() => { setRefund(null); setCredit(null) }, [value])
 
+  // the same payload goes to the preview and to the posting (ADR-102)
+  const payload = inv ? {
+    invoice_id: inv.id,
+    line_ids: selected,
+    party_id: walkIn ? who?.id : undefined,
+    settlement: give > 0 ? 'refund' : cut > 0 ? 'income' : 'credit',
+    refund_amount: give > 0 || cut > 0 ? give : undefined,
+    kept_amount: give > 0 || cut > 0 ? cut : undefined,
+    cash_account_id: from?.kind === 'account' && give > 0 ? from.id : undefined,
+    reason: reason || undefined,
+    reason_code: why ?? undefined,
+    item_condition: phones ? cond : undefined,
+    replaces_id: !replaceId && corrects ? corrects : undefined,
+  } : null
+  // the server works out what this will do — the real posting, run and rolled back
+  const pv = usePreview(
+    confirm && !!payload,
+    'POST',
+    replaceId ? `/api/v1/returns/${replaceId}/replace/preview` : '/api/v1/returns/sale/preview',
+    replaceId ? { reason: fixWhy.trim() || 'preview', sale: payload } : payload,
+    JSON.stringify(payload),
+  )
+  const [changed, setChanged] = useState(false)
+
   async function submit() {
-    if (!inv) return
-    const payload = {
-      invoice_id: inv.id,
-      line_ids: selected,
-      party_id: walkIn ? who?.id : undefined,
-      settlement: give > 0 ? 'refund' : cut > 0 ? 'income' : 'credit',
-      refund_amount: give > 0 || cut > 0 ? give : undefined,
-      kept_amount: give > 0 || cut > 0 ? cut : undefined,
-      cash_account_id: from?.kind === 'account' && give > 0 ? from.id : undefined,
-      reason: reason || undefined,
-      reason_code: why ?? undefined,
-      item_condition: phones ? cond : undefined,
-      replaces_id: !replaceId && corrects ? corrects : undefined,
+    if (!payload) return
+    const token = pv.data?.token
+    try {
+      const res = await m.mutateAsync(replaceId ? { reason: fixWhy.trim(), preview_token: token, sale: payload } : { ...payload, preview_token: token })
+      setConfirm(false)
+      setChanged(false)
+      setDone(res)
+      setIdem(uid())
+      setStep(2)
+    } catch (e) {
+      // something changed since the summary was shown: show the new one and ask again
+      if (isStale(e)) { m.reset(); setIdem(uid()); setChanged(true); pv.again() }
     }
-    const res = await m.mutateAsync(replaceId ? { reason: fixWhy.trim(), sale: payload } : payload)
-    setConfirm(false)
-    setDone(res)
-    setIdem(uid())
-    setStep(2)
   }
 
   const returnedDevice = inv?.lines.find((l) => selected.includes(l.id) && l.device_id)?.device_id ?? null
@@ -297,32 +314,14 @@ export default function ReturnWizard() {
             </>
           ) : null}
           <ErrorText error={confirm ? null : m.error} />
-          <BiButton text="counter.returnBtn" icon={<Undo2 size={22} />} full disabled={!ok} onClick={() => { m.reset(); setConfirm(true) }} />
+          <BiButton text="counter.returnBtn" icon={<Undo2 size={22} />} full disabled={!ok} onClick={() => { m.reset(); setChanged(false); setConfirm(true) }} />
           {/* ADR-101: one look at what will happen, then Confirm */}
           <Sheet open={confirm} onClose={() => setConfirm(false)} title="ret.cf.title">
             <div className="flex flex-col gap-3" data-testid="return-confirm">
-              <div className="card flex flex-col divide-y divide-line py-1">
-                {picked.map((l) => (
-                  <div key={l.id} className="flex items-center justify-between gap-2 py-2">
-                    <span className="flex min-w-0 flex-col"><span className="truncate text-[15px] font-extrabold">{l.device_label ?? l.description}</span>{l.imei1 ? <span className="num text-xs text-muted" dir="ltr">{l.imei1}</span> : null}</span>
-                    <span className="num" dir="ltr">{n(l.line_total)}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="card flex flex-col divide-y divide-line py-1">
-                {costKnown ? <SumLine k={pick('ret.cf.cost')} v={n(costSum)} /> : null}
-                <SumLine k={pick('ret.cf.sale')} v={n(value)} />
-                <SumLine k={pick('ret.cf.refund')} v={n(give)} bold testid="cf-refund" />
-                {cut > 0 ? <SumLine k={pick('ret.cf.kept')} v={n(cut)} testid="cf-kept" /> : null}
-                {after !== 0 ? <SumLine k={pick('ret.cf.khata')} v={`${after > 0 ? '' : '− '}${n(Math.abs(after))}`} /> : null}
-              </div>
-              <div className="card flex flex-col divide-y divide-line py-1">
-                {phones ? <SumLine k={pick('ret.cf.stock')} v={pick(cond === 'damaged' ? 'ret.cf.stockBad' : 'ret.cf.stockOk').replace('{{n}}', String(phones))} testid="cf-stock" plain /> : null}
-                <SumLine k={pick('ret.cf.cash')} v={give > 0 ? `− ${n(give)}` : '0'} testid="cf-cash" />
-              </div>
-              <ErrorText error={m.error} />
-              <BiButton text="ret.cf.confirm" icon={<Check size={22} />} full loading={m.isPending} disabled={!ok} onClick={submit} data-testid="return-confirm-btn" />
-              <BiButton text="ret.cf.cancel" full variant="ghost" onClick={() => setConfirm(false)} />
+              <ReturnPreview pv={pv.data} loading={pv.loading} error={pv.error} changed={changed} />
+              <ErrorText error={isStale(m.error) ? null : m.error} />
+              <BiButton text="ret.cf.confirm" icon={<Check size={22} />} full loading={m.isPending} disabled={!ok || !pv.data || pv.loading} onClick={submit} data-testid="return-confirm-btn" />
+              <BiButton text="ret.pv.back" full variant="ghost" onClick={() => setConfirm(false)} data-testid="return-confirm-back" />
             </div>
           </Sheet>
         </div>
@@ -346,15 +345,6 @@ export default function ReturnWizard() {
           <BiButton text="nav.home" icon={<Home size={22} />} full variant="ghost" onClick={() => nav('/')} />
         </div>
       ) : null}
-    </div>
-  )
-}
-
-function SumLine({ k, v, bold = false, plain = false, testid }: { k: string; v: string; bold?: boolean; plain?: boolean; testid?: string }) {
-  return (
-    <div className="flex items-center justify-between gap-3 py-2 text-sm">
-      <span className="text-muted">{k}</span>
-      <span className={`${plain ? 'font-bold' : 'num'} ${bold ? 'text-xl' : ''}`} dir={plain ? undefined : 'ltr'} data-testid={testid}>{v}</span>
     </div>
   )
 }

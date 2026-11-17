@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import DeleteBlockers from '@/components/DeleteBlockers'
 import DeleteWarning, { type DelKind } from '@/components/DeleteWarning'
+import ReturnPreview, { isStale, usePreview } from '@/components/ReturnPreview'
 import Help from '@/components/Help'
 import { ErrorText, Sheet } from '@/components/ui'
 import { post } from '@/lib/api'
@@ -31,7 +32,7 @@ const PATHS: Record<BillKind, { del: (id: string) => string; edit: (id: string) 
 
 /** `editTo`: where Edit goes (default the bill's page; null hides Edit); `onEdit` opens an edit form
  *  in place instead */
-export default function BillActions({ kind, id, no, canDelete, editTo, onEdit, onDone, label, summary }: { kind: BillKind; id: string; no: string; canDelete: boolean; editTo?: string | null; onEdit?: () => void; onDone?: () => void; /** what exactly will be undone (ADR-101): shown above the warning */ summary?: ReactNode; /** a full-width delete button with this text (detail screens) instead of the row icons */ label?: string }) {
+export default function BillActions({ kind, id, no, canDelete, editTo, onEdit, onDone, label, summary, previewUrl }: { kind: BillKind; id: string; no: string; canDelete: boolean; editTo?: string | null; onEdit?: () => void; onDone?: () => void; /** what exactly will be undone (ADR-101): shown above the warning */ summary?: ReactNode; /** ADR-102: where the server's impact preview of this delete is; its token goes with the delete */ previewUrl?: string; /** a full-width delete button with this text (detail screens) instead of the row icons */ label?: string }) {
   const { pick } = useLang()
   const nav = useNavigate()
   const inv = useInvalidate()
@@ -40,6 +41,8 @@ export default function BillActions({ kind, id, no, canDelete, editTo, onEdit, o
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState<unknown>(null)
   const P = PATHS[kind]
+  const pv = usePreview(open && !!previewUrl, 'GET', previewUrl ?? null, null, id)
+  const [changed, setChanged] = useState(false)
   const editPath = editTo === undefined ? P.edit(id) : editTo
   const btn = 'tap inline-flex h-9 w-9 items-center justify-center rounded-xl border border-line bg-surface'
 
@@ -47,12 +50,14 @@ export default function BillActions({ kind, id, no, canDelete, editTo, onEdit, o
     setBusy(true)
     setErr(null)
     try {
-      await post(P.del(id), { reason: reason.trim() })
+      const token = previewUrl ? pv.data?.token : undefined
+      await post(`${P.del(id)}${token ? `?preview_token=${token}` : ''}`, { reason: reason.trim() })
       await inv('sales', 'sale', 'purchases', 'purchase', 'devices', 'device', 'parties', 'party', 'invoices', 'dashboard', 'day', 'repairs', 'repair', 'payments', 'stock-status', 'expenses', 'exchanges', 'lending', 'accounts', 'returns')
       setOpen(false)
       onDone?.()
     } catch (e) {
-      setErr(e)
+      // ADR-102: something changed since the preview: show the new one and ask again
+      if (isStale(e)) { setChanged(true); pv.again() } else setErr(e)
     } finally {
       setBusy(false)
     }
@@ -75,6 +80,7 @@ export default function BillActions({ kind, id, no, canDelete, editTo, onEdit, o
         <div className="flex flex-col gap-3">
           <DeleteBlockers kind={kind} id={id} open={open} onGo={() => setOpen(false)} />
           {summary}
+          {previewUrl ? <ReturnPreview pv={pv.data} loading={pv.loading} error={pv.error} changed={changed} /> : null}
           <DeleteWarning kind={kind as DelKind} />
           <BiInput label="common.reason" help={<Help term="void" size="sm" />} value={reason} onChange={(e) => setReason(e.target.value)} minLength={3} maxLength={300} autoFocus placeholder={pick('bill.reasonPh')} />
           <BiLabel text="bill.kept" size="sm" tone="text-muted" />

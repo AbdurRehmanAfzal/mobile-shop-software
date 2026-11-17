@@ -94,7 +94,7 @@ export default function OverviewPage() {
     <div className="flex flex-col gap-3">
       {/* owner 2026-11-15 (ADR-084): the whole overview, in detail, on A4 for the chosen period */}
       <PageHeader title="ov.title" help={<Help term="ov.page" />} right={<DownloadButton path={`/api/v1/reports/overview/export?${periodQuery(period)}`} name={`business-overview-${period.from}${period.to !== period.from ? `-${period.to}` : ''}`} formats={['pdf', 'xlsx']} />} />
-      {/* owner 2026-11-18 (ADR-096): the graphs have their own 7 / 30 days, so they sit above the period */}
+      {/* owner 2026-11-17 (ADR-096): the graphs have their own 7 / 30 days, so they sit above the period */}
       <TrendCharts />
       <PeriodPicker value={period} onChange={setPeriod} size="sm" />
       {isLoading || !o ? <Loading /> : (
@@ -126,7 +126,7 @@ export default function OverviewPage() {
                 <Fig k="ov.returns" v={rs(Number(o.returns.sale.amount) + Number(o.returns.purchase.amount))} sub={`${o.returns.sale.count + o.returns.purchase.count} ${pick('ov.returnsN')}`} />
               </div>
             </Card>
-            {/* owner 2026-11-18 (ADR-097): phones that came back, with what was handed back and cut */}
+            {/* owner 2026-11-17 (ADR-097): phones that came back, with what was handed back and cut */}
             <Card title="audit.nav.returns" help="ret.card" to={`/returns?from=${period.from}&to=${period.to}`} testid="ov-returns">
               <div className="grid grid-cols-2 gap-2">
                 <Fig k="ret.fromCustomers" v={rs(o.returns.sale.amount)} sub={pick('ret.ovN').replace('{{n}}', String(o.returns.sale.count)).replace('{{p}}', String(o.returns.sale.phones ?? 0))} />

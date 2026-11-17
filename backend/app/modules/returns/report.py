@@ -1,4 +1,4 @@
-"""The returns report (owner 2026-11-18, ADR-097): every phone that came back from a customer, and
+"""The returns report (owner 2026-11-17, ADR-097): every phone that came back from a customer, and
 every one sent back to a supplier, with all that the shopkeeper asked about — when, who brought it,
 who took it back at the counter, the bill it was on, how many days after, how much it was sold for,
 how much was handed back, the shop's cut, what stayed in the khata, what the return did to profit,

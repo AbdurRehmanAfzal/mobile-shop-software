@@ -1,4 +1,4 @@
-/** Owner 2026-11-18 (ADR-097): a returned phone with its reason; the returns report (totals, why,
+/** Owner 2026-11-17 (ADR-097): a returned phone with its reason; the returns report (totals, why,
  *  who, every detail), the count on Home, the card on Business overview and the Shop Audit tab. */
 
 import { expect, test } from '@playwright/test'

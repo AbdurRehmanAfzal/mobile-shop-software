@@ -1973,7 +1973,7 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - Looked at the fees page and the super admin's pending payment in English.
 **Open**: the website's yearly offer (10 months) differs from the app's 5% for one year; my default module prices (docs/29 §E).
 
-### 2026-11-18 — graphs on the home screen and the business overview (ADR-096)
+### 2026-11-17 — graphs on the home screen and the business overview (ADR-096)
 **Owner** (shopkeepers): graphs on the dashboard and in Business overview for sales, purchases, profit / loss, lene and dene.
 **Done**: `reports/trends.py` + `GET /reports/trends?days=7|30`; `TrendCharts.tsx` on Home and Business overview; `Lines` takes a dashed series; strings and three help texts in en / ur / roman; manual ch. "At a glance" row (PDFs rebuilt); ADR-096, docs/29.
 **Verified**:
@@ -1982,7 +1982,7 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - Playwright `trend-charts` passes (figures on Home, 30 days = 30 bars, same graphs on the overview); looked at the screenshot.
 - Colour check: the to get / to give tokens fail colour-blind separation, hence the dashed second line.
 
-### 2026-11-18 — returns report (ADR-097)
+### 2026-11-17 — returns report (ADR-097)
 **Owner** (shopkeeper): returned phones show nowhere in detail — how many, their figures, loss or profit, when, who, for how much, money given or taken, whether the customer took another phone; show the count on the dashboard, business overview and shop audit; first check what a return itself is missing.
 **Done**:
 - Audit of the return: only "why" (countable) and the next actions were missing. `returns.reason_code` (migration `b4d6f8a0c2e5`), chips in the return form, three buttons on the done screen, `/sale/new?party=`.
@@ -1997,7 +1997,7 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - Looked at the report screenshot in English.
 **Not done**: the returns section is not in the Shop Audit report centre's PDF / Excel downloads; no chart of returns over time.
 
-### 2026-11-19 — special price for one shop, sale, payment with package (ADR-098)
+### 2026-11-17 — special price for one shop, sale, payment with package (ADR-098)
 **Owner**: a customer was promised Pro for 3,000 and sent it, but his fees page says 5,000. Wants a per-shop discount with a number of months (the shop still sees 5,000 and that the provider gave it the old price), sale options, and to record a payment himself with package, modules and months.
 **Done**: `organisations.fee_deal` (migration `c6e8a0b2d4f7`); `order.py` rewritten around `deal_for`, `sale_pct`, `_regular`; `PUT / DELETE /admin/shops/{id}/deal`, `POST /admin/shops/{id}/quote`, `order` on `POST /admin/shops/{id}/payments`; `sale_pct` / `sale_until` in the pricing settings; `AdminDealCard.tsx`, sale fields in Website prices, the banner and crossed-out prices in `PackagePicker.tsx`; strings and two help texts in en / ur / roman; manual ch. 25 (PDFs rebuilt); ADR-098, CLAUDE.md, docs/29.
 **Verified**: 
@@ -2007,12 +2007,12 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - Looked at the shop's fees page with the special price in English.
 **Not done**: the landing page does not show a running sale; the special price is not printed on the renewal receipt.
 
-### 2026-11-19 — a wrongly entered phone could not be deleted (ADR-099)
+### 2026-11-17 — a wrongly entered phone could not be deleted (ADR-099)
 **Owner** (screenshots): an iPhone 15 Pro Max entered by a salesman in the wrong category; deleting its purchase says "Device … has moved since this purchase; use a return instead". Its history has only "Marked faulty" and "Faulty cleared".
 **Done**: `devices.state.moved_since` — neutral events and a fault marked / cleared (with no ledger posting) are not a move; used by purchase delete, old-stock removal and sale delete; a purchase / old-stock phone may be deleted while in stock or faulty, not while reserved. ADR-099, docs/29.
 **Verified**: pytest: full suite passes; new `test_delete_after_harmless` (4): a purchase deleted after a fault was marked and cleared (the money back in the galla), deleted while still marked faulty, a loan still blocks, an old-stock phone removed after a fault mark. No app change, so no tsc / e2e run.
 
-### 2026-11-19 — the delete sheet says what must be undone first (ADR-100)
+### 2026-11-17 — the delete sheet says what must be undone first (ADR-100)
 **Owner**: shopkeepers want wrong entries deleted with one tap and a warning, and to be told what to undo first (e.g. the phone is at repair); asked whether a delete should undo everything and whether the system already does. Reminded that two or three shops are live and must not be affected.
 **Done**: answered (an entry's own effect is undone; later entries are not cascaded); `delcheck/` + `GET /delete-check/{kind}/{id}` (read-only); `DeleteBlockers.tsx` in the three bill delete sheets; sentences for 17 blockers in en / ur / roman; manual ch. on deleting (PDFs rebuilt); ADR-100, CLAUDE.md, docs/29. No migration; the delete functions are untouched.
 **Verified**: 
@@ -2021,7 +2021,7 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - Playwright: new `delete-check` passes (the box for a phone on loan, Open goes to Loans, nothing extra on a clean purchase); `delete-everywhere` and `edit-undo` pass.
 - Looked at the delete sheet with the box in English.
 
-### 2026-11-20 — Return Sale / Return Purchase audit (ADR-101)
+### 2026-11-17 — Return Sale / Return Purchase audit (ADR-101)
 **Owner**: a ten-phase brief — audit the returns, correct the accounting, safe undo / edit / wrong-kind correction, an easy form with a confirmation, damaged stock, twenty tests, and no disturbance to the shops already running.
 **Done**:
 - Audit: the accounting, undo, guards and tenant isolation were already right; the brief's "7,000 profit" is reached when the phone is sold again (2,000 right after the return) — kept as is, explained in ADR-101.
@@ -2033,3 +2033,17 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - Playwright: new `return-fix` passes (summary, damaged → Faulty, amount corrected in one step, undo summary, after-undo buttons); `return`, `exchange-return`, `returns-report`, `purchase-return`, `delete-everywhere`, `delete-check` pass.
 - Looked at the confirm summary in English.
 **Limits**: a line returns whole; the one-step correction form is for customers' returns (returns to the seller: undo and re-enter, or the API).
+
+### 2026-11-18 — impact preview on returns, from the server (ADR-102)
+**Owner**: a second brief — IMEI-level inventory, full accounting integration, a mandatory impact preview before every return and undo (computed by the backend), concurrency protection, reconciliation tests; implement only as an add-on that does not disturb the live shops.
+**Done**:
+- Audit: per-IMEI rows, immutable movements, double-entry with linked reversals and the status machine were already there; "Damaged / Under inspection" map to Faulty; no new status.
+- `returns/preview.py` (the posting run with `commit=False` and rolled back), four preview routes, the optional `preview_token` (`preview_stale`), row locks in the returns service.
+- `ReturnPreview.tsx` in the customer's return, the return to the seller (new check step) and the undo sheet; strings in en / ur / roman; manual (PDFs rebuilt); ADR-102, docs/29.
+- **Dates corrected**: ADR-095 … ADR-101 and their code comments carried dates one to three days ahead of the calendar (I had advanced the date as the work went on); all are 2026-11-17 now.
+**Verified**: 
+- pytest: full suite passes; new `test_returns_preview` (6): the sale preview writes nothing (books, galla, khata, phones, ledger rows, events, the return number) and its cash / profit / stock figures equal what the posting then does; a stale or re-used token is refused; a salesman gets no cost, profit or journal; damaged → Faulty in the preview; the purchase preview (credit only moves no cash; a sold phone answers with where it is); the undo preview and the exact earlier state after the undo; the correction preview; the reconciliation of the books.
+- After the date correction (comments and docs only): the return, fee, delete and trend tests re-run and pass; ruff clean.
+- tsc; vitest (53).
+- Playwright: `return-fix` and `purchase-return` (updated for the preview) pass; `return`, `exchange-return`, `returns-report`, `delete-everywhere`, `delete-check`, `edit-undo` pass.
+- Looked at the preview sheet in English.

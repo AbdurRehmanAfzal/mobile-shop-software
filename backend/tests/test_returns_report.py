@@ -1,4 +1,4 @@
-"""Owner 2026-11-18 (ADR-097): the returns report — every phone that came back with when, who,
+"""Owner 2026-11-17 (ADR-097): the returns report — every phone that came back with when, who,
 how much, what was handed back, the cut, the effect on profit, why, where it is now, whether it was
 sold again and whether the customer took another phone; counts on the dashboard and the overview."""
 

@@ -82,7 +82,7 @@ def dashboard(ctx: Ctx, db: DB):
 
 @router.get("/trends")
 def trends(ctx: Ctx, db: DB, days: Annotated[int, Query()] = 7):
-    """owner 2026-11-18 (ADR-096): day-by-day sales, purchases, profit / loss and to get / to
+    """owner 2026-11-17 (ADR-096): day-by-day sales, purchases, profit / loss and to get / to
     give for the graphs on the home screen and the business overview; 7 or 30 days"""
     from app.modules.reports import trends as tr
 

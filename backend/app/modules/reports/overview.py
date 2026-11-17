@@ -216,7 +216,7 @@ def _dues(db: Session, shop_id: uuid.UUID, n: int | None = 10) -> dict:
 
 
 def _returns(db: Session, shop_id: uuid.UUID, d_from: dt.date, d_to: dt.date) -> dict:
-    # owner 2026-11-18 (ADR-097): a return undone later (voided) is not a return; and the card
+    # owner 2026-11-17 (ADR-097): a return undone later (voided) is not a return; and the card
     # also says how many phones, how much was handed back and how much was cut
     rows = db.execute(
         select(

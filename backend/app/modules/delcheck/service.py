@@ -1,4 +1,4 @@
-"""Before an entry is deleted (owner 2026-11-19, ADR-100): what stands in the way, said plainly,
+"""Before an entry is deleted (owner 2026-11-17, ADR-100): what stands in the way, said plainly,
 each with the screen where it is undone — "this phone is at repair", "a payment was made against
 this bill later", "this phone was sold on". Read-only: it changes nothing and decides nothing. The
 delete itself keeps its own checks; this only tells the shopkeeper beforehand what they will say.

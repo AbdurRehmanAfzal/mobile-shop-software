@@ -8,6 +8,7 @@
 import { useEffect, useState } from 'react'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
+import ReturnPreview, { isStale, usePreview } from '@/components/ReturnPreview'
 import { ErrorText, MoneyText, Sheet } from '@/components/ui'
 import { useCashAccounts, useDocMutation } from '@/lib/queries'
 import type { Purchase } from '@/lib/types'
@@ -27,11 +28,14 @@ export default function PurchaseReturnSheet({ p, open, onClose, preselect }: { p
   const { data: accounts } = useCashAccounts()
   const ret = useDocMutation<Record<string, unknown>, ReturnDoc>('POST', () => '/api/v1/returns/purchase')
   const small = ur ? cls('sm') : 'text-sm'
+  // owner 2026-11-18 (ADR-102): nothing is posted before the impact was seen and confirmed
+  const [checking, setChecking] = useState(false)
+  const [changed, setChanged] = useState(false)
 
   useEffect(() => {
     if (open) {
       setSelected(preselect?.length ? preselect : open_.map((l) => l.id))
-      setCut(''); setRefund(null); setWhy('faulty'); setNote(''); ret.reset()
+      setCut(''); setRefund(null); setWhy('faulty'); setNote(''); ret.reset(); setChecking(false); setChanged(false)
     }
   }, [open]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -46,10 +50,18 @@ export default function PurchaseReturnSheet({ p, open, onClose, preselect }: { p
   const later = back - give
   const accId = account ?? accounts?.find((a) => a.is_default)?.id ?? accounts?.[0]?.id ?? null
 
+  const body = { purchase_id: p.id, line_ids: selected, refund_amount: give, cut_amount: cutN, cash_account_id: give > 0 ? accId ?? undefined : undefined }
+  const pv = usePreview(open && checking, 'POST', '/api/v1/returns/purchase/preview', body, JSON.stringify(body))
+
   async function save() {
     const reason = [pick(`pret.why.${why}`), note.trim()].filter(Boolean).join(' — ')
-    await ret.mutateAsync({ purchase_id: p.id, line_ids: selected, refund_amount: give, cut_amount: cutN, cash_account_id: give > 0 ? accId ?? undefined : undefined, reason, reason_code: why === 'faulty' ? 'fault' : why === 'notWanted' ? 'not_selling' : 'other' })
-    onClose()
+    try {
+      await ret.mutateAsync({ ...body, reason, reason_code: why === 'faulty' ? 'fault' : why === 'notWanted' ? 'not_selling' : 'other', preview_token: pv.data?.token })
+      onClose()
+    } catch (e) {
+      // something changed since the summary: show the new one and ask again
+      if (isStale(e)) { ret.reset(); setChanged(true); pv.again() }
+    }
   }
 
   const line = (k: string, v: number, tone: 'ink' | 'muted' = 'ink', testid?: string, help?: string) => (
@@ -62,6 +74,14 @@ export default function PurchaseReturnSheet({ p, open, onClose, preselect }: { p
 
   return (
     <Sheet open={open} onClose={onClose} title="pret.title">
+      {checking ? (
+        <div className="flex flex-col gap-3" data-testid="pret-check">
+          <ReturnPreview pv={pv.data} loading={pv.loading} error={pv.error} changed={changed} />
+          <ErrorText error={isStale(ret.error) ? null : ret.error} />
+          {pv.data?.ok !== false ? <BiButton text="ret.cf.confirm" full loading={ret.isPending} disabled={!pv.data || pv.loading} onClick={() => void save()} data-testid="pret-confirm-final" /> : null}
+          <BiButton text="ret.pv.back" full variant="ghost" onClick={() => { setChecking(false); setChanged(false); ret.reset() }} data-testid="pret-back" />
+        </div>
+      ) : (
       <div className="flex flex-col gap-3" data-testid="pret-sheet">
         <BiLabel text="pret.hint" size="sm" tone="text-muted" />
         {open_.map((l) => (
@@ -104,9 +124,9 @@ export default function PurchaseReturnSheet({ p, open, onClose, preselect }: { p
         ) : null}
         {later === 0 && stillOwed === 0 && selected.length ? <div className={`rounded-2xl bg-emerald-tint px-3 py-2 font-bold text-emerald-deep ${small}`} data-testid="pret-zero">{pick('pret.zero')}</div> : null}
 
-        <ErrorText error={ret.error} />
-        <BiButton text="pret.confirm" full loading={ret.isPending} disabled={!selected.length} onClick={() => void save()} data-testid="pret-confirm" />
+        <BiButton text="pret.confirm" full disabled={!selected.length} onClick={() => { ret.reset(); setChanged(false); setChecking(true) }} data-testid="pret-confirm" />
       </div>
+      )}
     </Sheet>
   )
 }

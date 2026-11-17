@@ -1,4 +1,4 @@
-/** The returns report (owner 2026-11-18, ADR-097): phones that came back from customers and went
+/** The returns report (owner 2026-11-17, ADR-097): phones that came back from customers and went
  *  back to suppliers — how many, their value, what was handed back, the cut, the effect on profit,
  *  why, who took them back; and each return with everything about it in a sheet. One component for
  *  the Returns list (its own dates) and the Shop Audit (the audit's period). */
@@ -117,7 +117,7 @@ export default function ReturnsReport({ url, qk }: { url: string; qk: unknown[] 
                       onClick={() => setOpen(r)}
                     />
                   </div>
-                  {manage ? <BillActions kind={r.kind === 'sale' ? 'saleReturn' : 'purchaseReturn'} id={r.id} no={r.no} canDelete editTo={null} onDone={() => { setUndone(r.id); void refetch() }} summary={<UndoSummary r={r} />} /> : null}
+                  {manage ? <BillActions kind={r.kind === 'sale' ? 'saleReturn' : 'purchaseReturn'} id={r.id} no={r.no} canDelete editTo={null} onDone={() => { setUndone(r.id); void refetch() }} previewUrl={`/api/v1/returns/${r.id}/void-preview`} /> : null}
                 </div>
               ))}
             </List>
@@ -128,23 +128,6 @@ export default function ReturnsReport({ url, qk }: { url: string; qk: unknown[] 
       <Sheet open={!!open} onClose={() => setOpen(null)} title={open?.no ?? ''}>
         {open ? <Detail r={open} showCost={d.show_cost} manage={manage} onSaved={() => { setOpen(null); void refetch() }} /> : null}
       </Sheet>
-    </div>
-  )
-}
-
-/** what undoing this return puts back, in plain words (ADR-101) */
-function UndoSummary({ r }: { r: ReturnRow }) {
-  const { pick, ur, cls } = useLang()
-  const sale = r.kind === 'sale'
-  const phones = r.items.filter((i) => i.device_id).length
-  const small = ur ? cls('sm') : 'text-sm font-semibold'
-  return (
-    <div className="flex flex-col gap-1 rounded-2xl bg-ground p-3" data-testid="undo-summary">
-      <span className={`text-muted ${ur ? cls('sm') : 'text-xs font-bold'}`}>{pick('ret.u.title')}</span>
-      <span className={small}><span dir="ltr">{r.no}</span> · {pick(sale ? 'ret.fromCustomers' : 'ret.toSuppliers')} · {r.party_name} · <span className="num" dir="ltr">{rs(r.amount)}</span></span>
-      {phones ? <span className={small}>{pick(sale ? 'ret.u.stockSale' : 'ret.u.stockPurchase').replace('{{n}}', String(phones))}</span> : null}
-      {Number(r.refund) ? <span className={small}><span className="num" dir="ltr">{rs(r.refund)}</span> {pick(sale ? 'ret.u.cashSale' : 'ret.u.cashPurchase')}</span> : null}
-      <span className={small}>{pick('ret.u.khata')}</span>
     </div>
   )
 }

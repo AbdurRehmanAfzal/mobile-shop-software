@@ -1,4 +1,4 @@
-/** Owner 2026-11-19 (ADR-098): the super admin gives one shop Pro at 3,000 instead of 5,000 for
+/** Owner 2026-11-17 (ADR-098): the super admin gives one shop Pro at 3,000 instead of 5,000 for
  *  some months; the shop sees 5,000 crossed out and pays 3,000; and the super admin records a
  *  payment together with the package and months. Needs 03990000099 in SUPERUSER_PHONES. */
 

@@ -1,4 +1,4 @@
-/** Graphs for the home screen and the business overview (owner 2026-11-18, ADR-096): sales and
+/** Graphs for the home screen and the business overview (owner 2026-11-17, ADR-096): sales and
  *  purchases, profit / loss by day, and to get / to give — for the last 7 or 30 days. One read of
  *  `/reports/trends`; in-house SVG (`Lines`, `Bars`). The second line of a pair is dashed, so the
  *  two are told apart by more than colour. Purchases and profit only for those who may see cost. */

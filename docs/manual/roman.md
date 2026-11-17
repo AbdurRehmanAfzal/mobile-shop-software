@@ -786,6 +786,8 @@ Aakhri qadam par **Wapsi ho gayi** aata hai, saath mein wapas di gayi raqam, duk
 
 **Save karne se pehle dekh lein.** **Wapas lein** dabane par pehle khulasa aata hai: phone aur IMEI, laagat (maalik aur manager), kitne mein becha tha, kitna wapas dena hai, dukaan ki katauti, khate mein kya rahe ga, stock ki tabdeeli ("+1 stock mein wapas") aur galle ki tabdeeli ("− 68,000"). **Wapsi ki tasdeeq karein** dabayein, ya kuch badalne ke liye **Cancel**.
 
+Yeh khulasa system khud unhi usoolon se nikalta hai jin se wapsi save hoti hai, is liye jo aap parhte hain wohi save hoga. Yeh saada alfaaz mein batata hai ke kya hoga: "1 phone stock mein wapas aayen ge", "Rs. 68,000 Cash se niklen ge", "Rs. 2,000 dukaan rakhe gi", aur kis ka khata badle ga. Maalik aur manager ko stock ki maliyat, wapas hui bikri, wapas aayi laagat aur **Munafe par asar** bhi nazar aata hai. Agar aap ke dekhte hue kuch badal jaye (phone bik gaya, payment aa gayi) to app naya khulasa dikha kar dobara tasdeeq maangti hai. **Bechne wale ko wapsi** aur wapsi ke **Delete** (khatam karne) par bhi save hone se pehle aisa hi khulasa aata hai. Agar aap koi aisa phone bechne wale ko wapas bhejne lagein jo asal mein bik chuka hai to khulasa yeh batata hai aur bill ka number deta hai.
+
 **Wapsi durust karna** (maalik aur manager), wapsiyon ki report mein kisi wapsi ko dabane ke baad:
 
 - **Yeh wapsi durust karein (raqam, phone)**: form bhara hua khulta hai. Badlein, wajah likhein aur tasdeeq karein. Purani wapsi khatam ho kar nayi us ki jagah ek saath save hoti hai; nayi par likha hota hai ke yeh kis ki durusti hai.

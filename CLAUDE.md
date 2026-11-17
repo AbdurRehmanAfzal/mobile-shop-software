@@ -39,21 +39,21 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Read ADR-095 before touching `backend/app/modules/plan/order.py`, `public/pricing.py`, `fees.approve` or `frontend/src/features/more/PackagePicker.tsx`.
 - Rules: the total is always the server's quote (never the app's); a shop's own package costs its own agreed fee, other packages the list price; the order is a snapshot on the payment and reaches the shop only when the provider approves; a smaller package hides modules, it never deletes data.
 
-## Returns report (owner 2026-11-18, ADR-097)
+## Returns report (owner 2026-11-17, ADR-097)
 - Read ADR-097 before touching `backend/app/modules/returns/report.py`, `ReturnsReport.tsx` or the return form's reason chips.
 - Rules: the report is read-only and derived (return documents, bill lines, phones, events) — only `reason_code` is stored; customers' returns and returns to suppliers stay apart; cost and the effect on profit only with `VIEW_COST`; a return undone later is never counted.
 
-## Special price, sale, payment with package (owner 2026-11-19, ADR-098)
+## Special price, sale, payment with package (owner 2026-11-17, ADR-098)
 - Read ADR-098 before touching `organisations.fee_deal`, `order.deal_for` / `sale_pct` / `set_deal`, or `AdminDealCard.tsx`.
 - Rules: the special price covers only the months it has left and is used up only by an approved payment; the shop always sees the list price beside its own; a sale never touches an agreed fee or a special price and is never stored as a shop's monthly fee; the provider's own payment goes through the same quote and `order.apply`.
 
-## Deleting an entry (owner 2026-11-19, ADR-090 / ADR-099 / ADR-100)
+## Deleting an entry (owner 2026-11-17, ADR-090 / ADR-099 / ADR-100)
 - Read ADR-099 and ADR-100 before touching a `void_*` / `cancel_*` function, `devices.state.moved_since`, `delcheck/` or `DeleteBlockers.tsx`.
 - Rules: a delete undoes only that entry's own effect and keeps it as Deleted; later separate entries are never cascaded — the delete is refused and `delete-check` says what to undo first; the check is read-only and must agree with the delete's own rule (change both together).
 
-## Returns: accounting and correction (owner 2026-11-20, ADR-101)
+## Returns: accounting and correction (owner 2026-11-17, ADR-101)
 - Read ADR-101 before touching `returns/service.py`, `ReturnWizard.tsx` or the return accounting.
-- Rules: a returned phone re-enters stock at the cost on its bill line, never at what was handed back; a return reverses the sale's margin and the cut is income (the margin comes back only when the phone is sold again); a damaged return goes to Faulty; correcting a return is undo + re-entry in one transaction (`replace_return`), never an in-place edit of money; `tests/test_returns_audit.py` pins the books — keep it passing.
+- Rules: a returned phone re-enters stock at the cost on its bill line, never at what was handed back; a return reverses the sale's margin and the cut is income (the margin comes back only when the phone is sold again); a damaged return goes to Faulty; correcting a return is undo + re-entry in one transaction (`replace_return`), never an in-place edit of money; `tests/test_returns_audit.py` pins the books — keep it passing. The impact preview (ADR-102, `returns/preview.py`) runs the real posting with `commit=False` and rolls it back — never compute a preview figure in the app or in a second code path.
 
 ## Barcodes, labels, scanning (owner addendum 4, 2026-10-31, ADR-036)
 - Spec `docs/22-BARCODES-SPEC.md`; what existed / what was built / assumptions / scanner test `docs/23-BARCODES-PLAN.md` — read it before touching `backend/app/modules/barcodes`, `modules/labels`, `frontend/src/lib/scanner.ts` or `ScanListener.tsx`.

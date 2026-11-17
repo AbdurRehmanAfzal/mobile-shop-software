@@ -186,7 +186,7 @@ export default function HomePage() {
             </div>
           </div>
         ) : null}
-        {/* owner 2026-11-18 (ADR-096): sales / purchases, profit / loss, to get / to give by day */}
+        {/* owner 2026-11-17 (ADR-096): sales / purchases, profit / loss, to get / to give by day */}
         <TrendCharts />
       </section>
 

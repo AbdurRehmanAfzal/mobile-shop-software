@@ -1,4 +1,4 @@
-"""Owner 2026-11-19 (ADR-100): before an entry is deleted the app says what stands in the way and
+"""Owner 2026-11-17 (ADR-100): before an entry is deleted the app says what stands in the way and
 where to undo it. The check is read-only and always agrees with the delete's own verdict."""
 
 from tests.test_purchases import _dev, _party
