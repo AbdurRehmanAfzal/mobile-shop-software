@@ -70,7 +70,9 @@ def sale_return(
 ) -> ReturnDoc:
     shop = db.get(Shop, shop_id)
     replaces_id = _replaces(db, shop_id, data.replaces_id)
-    inv = db.get(Invoice, data.invoice_id)
+    # ADR-102: the bill and its phones are locked for this posting, so two people cannot return
+    # the same phone at the same moment — the second waits and is then told it is already back
+    inv = db.get(Invoice, data.invoice_id, with_for_update=True)
     if inv is None or inv.shop_id != shop_id:
         raise NotFound(code="invoice_not_found")
     if inv.status in (InvoiceStatus.VOID, InvoiceStatus.RETURNED):
@@ -226,7 +228,7 @@ def sale_return(
                 note=doc.no,
             )
         if ln.device_id:
-            device = db.get(Device, ln.device_id)
+            device = db.get(Device, ln.device_id, with_for_update=True)
             if device.status != DeviceStatus.SOLD or device.current_party_id != inv.party_id:
                 raise Conflict(
                     code="device_changed",
@@ -312,7 +314,7 @@ def purchase_return(
 ) -> ReturnDoc:
     shop = db.get(Shop, shop_id)
     replaces_id = _replaces(db, shop_id, data.replaces_id)
-    pur = db.get(Purchase, data.purchase_id)
+    pur = db.get(Purchase, data.purchase_id, with_for_update=True)  # ADR-102: locked, as above
     if pur is None or pur.shop_id != shop_id:
         raise NotFound(code="purchase_not_found")
     if pur.status != PurchaseStatus.POSTED:
@@ -325,7 +327,7 @@ def purchase_return(
         if ln.returned_at is not None:
             raise Conflict(code="line_already_returned")
         if ln.device_id:
-            device = db.get(Device, ln.device_id)
+            device = db.get(Device, ln.device_id, with_for_update=True)
             if device.status not in (DeviceStatus.IN_STOCK, DeviceStatus.FAULTY):
                 raise Conflict(
                     code="device_changed",
@@ -543,7 +545,7 @@ def void_return(
     devices = []
     for ln in doc.lines:
         if ln.get("device_id"):
-            d = db.get(Device, uuid.UUID(ln["device_id"]))
+            d = db.get(Device, uuid.UUID(ln["device_id"]), with_for_update=True)
             last = _last_money_event(d)
             # ADR-101: a phone that came back damaged sits in Faulty; its return can still be undone
             ok_status = (
@@ -667,7 +669,7 @@ def void_return(
     return doc
 
 
-# ---- correct a return (owner 2026-11-20, ADR-101) ------------------------------------------------
+# ---- correct a return (owner 2026-11-17, ADR-101) ------------------------------------------------
 
 
 def edit_details(db: Session, shop_id: uuid.UUID, ctx, return_id: uuid.UUID, data) -> ReturnDoc:

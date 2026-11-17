@@ -1,4 +1,4 @@
-"""a special fee for one shop (owner 2026-11-19, ADR-098): organisations.fee_deal — the package,
+"""a special fee for one shop (owner 2026-11-17, ADR-098): organisations.fee_deal — the package,
 its agreed monthly price, how many months of it are left (NULL inside = no end) and a note
 
 Every existing shop keeps NULL (no special price; its fee is worked out as before).

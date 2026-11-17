@@ -1,5 +1,5 @@
 """Day-by-day figures for the graphs on the home screen and the business overview (owner
-2026-11-18, ADR-096): sales, purchases, profit / loss, and what people owe the shop / the shop
+2026-11-17, ADR-096): sales, purchases, profit / loss, and what people owe the shop / the shop
 owes — for the last 7 or 30 days. Read-only, derived like the screens beside them:
 
 - sales: bills of the day less what was returned on them (the dashboard's own week figure);

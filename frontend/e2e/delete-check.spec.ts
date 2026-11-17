@@ -1,4 +1,4 @@
-/** Owner 2026-11-19 (ADR-100): the delete sheet says what must be undone first — here a phone that
+/** Owner 2026-11-17 (ADR-100): the delete sheet says what must be undone first — here a phone that
  *  is on loan to another shop — with a button to that screen; a clean entry shows nothing extra. */
 
 import { expect, test } from '@playwright/test'

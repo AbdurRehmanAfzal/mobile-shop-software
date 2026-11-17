@@ -149,7 +149,7 @@ export function PaymentsPage() {
 }
 
 export function ReturnsPage() {
-  // owner 2026-11-18 (ADR-097): the list is now the returns report — totals, why, who, and every
+  // owner 2026-11-17 (ADR-097): the list is now the returns report — totals, why, who, and every
   // return with all its details; `?from=&to=` opens it on those days (the overview's card)
   const [sp] = useSearchParams()
   const [period, setPeriod] = useState<Period>(() => (sp.get('from') && sp.get('to') ? { from: sp.get('from')!, to: sp.get('to')! } : periodOf('month')))

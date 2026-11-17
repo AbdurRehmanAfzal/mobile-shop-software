@@ -1,4 +1,4 @@
-/** Owner 2026-11-20 (ADR-101): a return is confirmed on a summary before it is saved; a damaged
+/** Owner 2026-11-17 (ADR-101): a return is confirmed on a summary before it is saved; a damaged
  *  phone goes to Faulty; a wrong amount is corrected in one step; an undo shows what it puts back
  *  and then offers the right kind of return. */
 
@@ -46,12 +46,24 @@ test('return: confirm summary, damaged to Faulty, correct the amount, undo', asy
   await page.getByRole('button', { name: 'Take it back' }).click()
   const cf = page.getByTestId('return-confirm')
   await expect(cf).toContainText(code)
-  await expect(cf).toContainText('65,000') // what it cost, read from the bill
-  await expect(cf.getByTestId('cf-refund')).toHaveText('68,000')
-  await expect(cf.getByTestId('cf-kept')).toHaveText('2,000')
-  await expect(cf.getByTestId('cf-stock')).toHaveText('+1 to Faulty (not for normal sale)')
-  await expect(cf.getByTestId('cf-cash')).toHaveText('− 68,000')
-  await page.screenshot({ path: 'test-results/return-confirm.png' })
+  // every figure below is the server's: the real posting, run and rolled back (ADR-102)
+  await expect(cf.getByTestId('pv-cost')).toHaveText('Rs. 65,000') // what it cost, read from the bill
+  await expect(cf.getByTestId('pv-stock')).toHaveText('1 phone(s) go to Faulty (not for normal sale)')
+  await expect(cf.getByTestId('pv-cash')).toContainText('Rs. 68,000 goes out of')
+  await expect(cf.getByTestId('pv-kept')).toHaveText('Rs. 2,000 is kept by the shop')
+  // the owner also sees the books: stock value back at cost, the sale taken back, the profit effect
+  await expect(cf.getByTestId('pv-stock-value')).toHaveText('+ Rs. 65,000')
+  await expect(cf.getByTestId('pv-sales')).toHaveText('− Rs. 70,000')
+  await expect(cf.getByTestId('pv-income')).toHaveText('+ Rs. 2,000')
+  await expect(cf.getByTestId('pv-profit')).toContainText('3,000')
+  // nothing was written by looking
+  expect((await (await request.get('/api/v1/returns', { headers: h })).json()).length).toBe(0)
+  // Go back keeps the form; then confirm
+  await cf.getByTestId('return-confirm-back').click()
+  await expect(page.getByTestId('return-confirm')).toHaveCount(0)
+  await page.getByRole('button', { name: 'Take it back' }).click()
+  await expect(page.getByTestId('pv-profit')).toBeVisible()
+  await page.screenshot({ path: 'test-results/return-confirm.png', fullPage: true })
   await cf.getByTestId('return-confirm-btn').click()
   await expect(page.getByTestId('return-see-all')).toBeVisible({ timeout: 15_000 })
   const d1 = await (await request.get(`/api/v1/devices/${dev}`, { headers: h })).json()
@@ -71,7 +83,8 @@ test('return: confirm summary, damaged to Faulty, correct the amount, undo', asy
   await expect(page.getByRole('button', { name: 'Take it back' })).toBeDisabled() // needs the reason
   await page.getByTestId('return-fix-why').fill('typed the wrong amount')
   await page.getByRole('button', { name: 'Take it back' }).click()
-  await expect(page.getByTestId('return-confirm').getByTestId('cf-kept')).toHaveText('1,000')
+  await expect(page.getByTestId('return-confirm').getByTestId('pv-replace-note')).toContainText('RET-000001')
+  await expect(page.getByTestId('return-confirm').getByTestId('pv-kept')).toHaveText('Rs. 1,000 is kept by the shop')
   await page.getByTestId('return-confirm-btn').click()
   await expect(page.getByTestId('return-see-all')).toBeVisible({ timeout: 15_000 })
   const all = await (await request.get('/api/v1/returns', { headers: h })).json()
@@ -83,10 +96,10 @@ test('return: confirm summary, damaged to Faulty, correct the amount, undo', asy
   // undo: the sheet says what it puts back; afterwards the right kind of return is offered
   await page.getByTestId('return-see-all').click()
   await page.getByTestId('returns-report').getByTestId('bill-delete').first().click()
-  const undo = page.getByTestId('undo-summary')
-  await expect(undo).toContainText('RET-000002')
-  await expect(undo).toContainText('1 phone(s) go back to the customer as sold')
-  await expect(undo).toContainText('69,000')
+  const undo = page.getByTestId('return-preview')
+  await expect(undo.getByTestId('pv-undo-note')).toContainText('RET-000002')
+  await expect(undo.getByTestId('pv-stock')).toHaveText('1 phone(s) go back to the customer as sold')
+  await expect(undo.getByTestId('pv-cash')).toContainText('Rs. 69,000 comes into')
   await page.screenshot({ path: 'test-results/return-undo.png' })
   await page.getByPlaceholder(/./).last().fill('entered by mistake')
   await page.getByTestId('bill-delete-confirm').click()

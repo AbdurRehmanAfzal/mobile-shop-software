@@ -786,6 +786,8 @@ The last step shows **Return done** with the amount given back, the amount the s
 
 **Check before saving.** **Take it back** first shows a summary: the phone and IMEI, what it cost (owner and manager), what it was sold for, what is handed back, the shop's cut, what stays in the khata, the stock change ("+1 back in stock") and the galla change ("− 68,000"). Tap **Confirm return**, or **Cancel** to change something.
 
+The summary is worked out by the system itself from the same rules that save the return, so what you read is what will be saved. It says in plain words what will happen: "1 phone(s) come back into stock", "Rs. 68,000 goes out of Cash", "Rs. 2,000 is kept by the shop", and whose khata changes. The owner and manager also see the stock value, the sale taken back, the cost put back and the **Effect on profit**. If something changed while you were looking (the phone was sold, a payment came in), the app shows the new summary and asks you to confirm again. **Return to the seller** and **Delete** (undo) of a return show the same kind of summary before anything is saved. If you try to send a phone back to the seller that is actually sold, the summary says so and names the bill.
+
 **Correcting a return** (owner and manager), in the returns report after tapping a return:
 
 - **Correct this return (amount, phone)**: the form opens filled in. Change it, write why, and confirm. The old return is undone and the new one saved in its place, together; the new one shows which return it corrects.

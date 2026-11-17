@@ -1,4 +1,4 @@
-/** Super admin, one shop (owner 2026-11-19, ADR-098):
+/** Super admin, one shop (owner 2026-11-17, ADR-098):
  *  1. a special price — a package at an agreed monthly fee for a number of months (or no end);
  *     the shop sees the list price crossed out and its own beside it;
  *  2. "payment received" together with the package, extra modules and months it is for — for a

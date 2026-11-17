@@ -1,5 +1,5 @@
 """returns: the returned item's condition, when a return was undone, and the wrong return a new
-one replaces (owner 2026-11-20, ADR-101)
+one replaces (owner 2026-11-17, ADR-101)
 
 Three nullable columns; every existing return keeps NULL in all of them and behaves as before.
 Rollback: `alembic downgrade c6e8a0b2d4f7` drops only these three columns.

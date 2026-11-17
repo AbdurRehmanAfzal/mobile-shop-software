@@ -1,4 +1,4 @@
-"""Owner 2026-11-19 (ADR-098): a special price for one shop (a package at an agreed fee for a
+"""Owner 2026-11-17 (ADR-098): a special price for one shop (a package at an agreed fee for a
 number of months), a sale for everyone, and the provider recording a payment together with the
 package, modules and months it is for."""
 

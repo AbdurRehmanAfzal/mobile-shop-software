@@ -1,4 +1,4 @@
-"""why a phone came back (owner 2026-11-18, ADR-097): returns.reason_code, one of a short list
+"""why a phone came back (owner 2026-11-17, ADR-097): returns.reason_code, one of a short list
 (changed mind, fault, not as told, price, wants another phone, not selling, other)
 
 Every existing return keeps NULL ("not said"); the free-text reason stays as it is.

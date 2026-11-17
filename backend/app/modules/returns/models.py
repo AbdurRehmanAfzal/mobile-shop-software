@@ -32,7 +32,7 @@ class Settlement(StrEnum):
     INCOME = "income"  # shop keeps part of what was paid (restocking / amanat fee)
 
 
-# owner 2026-11-18 (ADR-097): why it came back, for the returns report
+# owner 2026-11-17 (ADR-097): why it came back, for the returns report
 REASONS = (
     "changed_mind",  # the customer changed his mind
     "fault",  # the phone has a fault
@@ -83,7 +83,7 @@ class ReturnDoc(UUIDPk, ShopScoped, Timestamped, Base):
     )  # posted | voided
     void_reason: Mapped[str | None] = mapped_column(Text)
     voided_by: Mapped[uuid.UUID | None] = mapped_column(Uuid)
-    # owner 2026-11-20 (ADR-101): when it was undone; how the item came back (ok | damaged — a
+    # owner 2026-11-17 (ADR-101): when it was undone; how the item came back (ok | damaged — a
     # damaged phone goes to Faulty, not to normal stock); and the wrong return this one replaces
     voided_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
     item_condition: Mapped[str | None] = mapped_column(String(12))

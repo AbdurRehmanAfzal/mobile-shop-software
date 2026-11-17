@@ -452,7 +452,7 @@ def void_purchase(
             message_en="A payment was made against this purchase later, or it is part of an exchange. Delete that payment or the exchange's sale first, then delete the purchase.",
             message_ur="اس خریداری کے بعد اس کی ادائیگی ہو چکی ہے یا یہ کسی تبادلے کا حصہ ہے۔ پہلے وہ ادائیگی یا تبادلے کی فروخت ڈیلیٹ کریں، پھر خریداری ڈیلیٹ کریں۔",
         )
-    # every device must still be in the shop as bought. Owner 2026-11-19 (ADR-099): a label, a
+    # every device must still be in the shop as bought. Owner 2026-11-17 (ADR-099): a label, a
     # price change, a note, a lock / PTA check, or a fault marked or cleared since then do not
     # count as "moved" — a phone entered in the wrong category could not be deleted because a
     # fault had been marked and cleared on it. A loan, repair, sale or reservation still blocks.

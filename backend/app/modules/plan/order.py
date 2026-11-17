@@ -4,7 +4,7 @@ the years. The prices are the provider's (Super admin → Website prices); the t
 out here, never taken from the app. The chosen order rides on the fee payment as a snapshot and is
 applied to the shop only when the provider approves that payment.
 
-Owner 2026-11-19 (ADR-098): two more prices feed the same quote —
+Owner 2026-11-17 (ADR-098): two more prices feed the same quote —
 - a **special price for one shop** (`organisations.fee_deal`: a package at an agreed fee for a
   number of months, or with no end). The shop still sees the list price, crossed out, beside its
   own; months beyond the agreed ones cost the usual price; approving a payment uses the months up.

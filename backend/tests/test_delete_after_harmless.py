@@ -1,4 +1,4 @@
-"""Owner 2026-11-19 (ADR-099): a phone entered by mistake could not be deleted because a fault had
+"""Owner 2026-11-17 (ADR-099): a phone entered by mistake could not be deleted because a fault had
 been marked and cleared on it ("has moved since this purchase"). A fault mark, a price change, a
 label or a check is not a move; a loan, a sale or a reservation still is."""
 

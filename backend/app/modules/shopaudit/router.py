@@ -280,7 +280,7 @@ def returns(
     date_from: dt.date | None = None,
     date_to: dt.date | None = None,
 ):
-    """owner 2026-11-18 (ADR-097): phones that came back from customers and went back to
+    """owner 2026-11-17 (ADR-097): phones that came back from customers and went back to
     suppliers in the period — count, value, handed back, the cut, the effect on profit, why,
     by whom, and each return with all its details"""
     from app.modules.returns import report as rep

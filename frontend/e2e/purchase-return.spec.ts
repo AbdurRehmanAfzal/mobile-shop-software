@@ -47,6 +47,7 @@ test('return a faulty phone to the seller', async ({ page, request }) => {
   await expect(page.getByTestId('pret-zero')).toBeVisible()
   await page.screenshot({ path: 'test-results/pret-sheet.png', fullPage: true })
   await page.getByTestId('pret-confirm').click()
+  await page.getByTestId('pret-confirm-final').click() // ADR-102: after the impact preview
   await expect(page.getByTestId('pret-sheet')).toBeHidden()
   expect(await bal()).toBe('0.00')
   const dev = await (await request.get(`/api/v1/devices/${p1.lines[0].device_id}`, { headers: h })).json()
@@ -61,6 +62,7 @@ test('return a faulty phone to the seller', async ({ page, request }) => {
   await page.getByTestId('pret-got').fill('20000')
   await expect(page.getByTestId('pret-later')).toContainText('15,000')
   await page.getByTestId('pret-confirm').click()
+  await page.getByTestId('pret-confirm-final').click() // ADR-102: after the impact preview
   await expect(page.getByTestId('pret-sheet')).toBeHidden()
   expect(await bal()).toBe('15000.00') // he owes the shop 15,000
 })

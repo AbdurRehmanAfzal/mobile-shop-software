@@ -39,6 +39,9 @@ class SaleReturnIn(BaseModel):
     item_condition: Literal["ok", "damaged"] | None = None
     # ADR-101: the return entered by mistake (already undone) that this one corrects
     replaces_id: uuid.UUID | None = None
+    # ADR-102: the fingerprint the preview handed out; a confirm that carries it is refused
+    # (`preview_stale`) when something changed since the preview
+    preview_token: str | None = Field(default=None, max_length=64)
 
 
 class PurchaseReturnIn(BaseModel):
@@ -61,6 +64,9 @@ class PurchaseReturnIn(BaseModel):
     ) = None
     date: dt.date | None = None
     replaces_id: uuid.UUID | None = None  # ADR-101
+    # ADR-102: the fingerprint the preview handed out; a confirm that carries it is refused
+    # (`preview_stale`) when something changed since the preview
+    preview_token: str | None = Field(default=None, max_length=64)
 
 
 class ReturnDetailsIn(BaseModel):
@@ -80,6 +86,9 @@ class ReturnReplaceIn(BaseModel):
     entered, both or neither. Give `sale` or `purchase`, whichever the right return is."""
 
     reason: str = Field(min_length=2, max_length=300)
+    # ADR-102: the fingerprint the preview handed out; a confirm that carries it is refused
+    # (`preview_stale`) when something changed since the preview
+    preview_token: str | None = Field(default=None, max_length=64)
     sale: SaleReturnIn | None = None
     purchase: PurchaseReturnIn | None = None
 

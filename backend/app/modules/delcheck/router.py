@@ -25,7 +25,7 @@ Kind = Literal[
 
 @router.get("/{kind}/{doc_id}")
 def delete_check(kind: Kind, doc_id: uuid.UUID, ctx: Ctx, db: DB):
-    """owner 2026-11-19 (ADR-100): what must be undone before this entry can be deleted, each
+    """owner 2026-11-17 (ADR-100): what must be undone before this entry can be deleted, each
     with the screen for it. Read-only. If the check itself fails it answers "nothing known" —
     the delete's own checks still stand, so a fault here can never let a wrong delete through
     nor stop a right one."""

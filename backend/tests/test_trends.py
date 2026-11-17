@@ -1,4 +1,4 @@
-"""Owner 2026-11-18 (ADR-096): the graphs on the home screen and the business overview read one
+"""Owner 2026-11-17 (ADR-096): the graphs on the home screen and the business overview read one
 day-by-day series — sales, purchases, profit / loss, to get / to give — for 7 or 30 days. Every
 figure equals the screen it comes from."""
 
