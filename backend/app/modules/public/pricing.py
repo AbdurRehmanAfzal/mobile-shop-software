@@ -1,7 +1,8 @@
 """The prices on the landing page (owner 2026-11-16, ADR-092): monthly price and one-time setup fee
 per plan, how many months a year paid at once costs, the trial length, and add-ons sold separately.
 The provider edits them in Super admin → Website prices; until then the defaults are the prices that
-were on the page before (no setup fee, no add-ons). These are what a visitor sees — a shop's own
+the owner chose on 2026-11-17 (2,000 / 5,000 / 7,500 a month, setup 5,000 / 8,000 / 15,000,
+four service add-ons). These are what a visitor sees — a shop's own
 fee stays `organisations.monthly_fee`, set per shop."""
 
 import copy
@@ -15,11 +16,43 @@ from app.modules.admin.fees import PlatformSetting
 KEY = "pricing"
 PAID = ("basic", "pro", "chain")
 DEFAULTS: dict = {
-    "prices": {"basic": 1500, "pro": 3000, "chain": 6000},  # PKR per month
-    "setup_fee": {"basic": 0, "pro": 0, "chain": 0},  # PKR, one time
+    # owner 2026-11-17: 2,000 / 5,000 / 7,500 a month, and a one-time setup fee
+    "prices": {"basic": 2000, "pro": 5000, "chain": 7500},  # PKR per month
+    "setup_fee": {"basic": 5000, "pro": 8000, "chain": 15000},  # PKR, one time
     "yearly_paid_months": 10,  # a year paid at once = this many months
     "trial_days": 14,
-    "addons": [],  # [{en, ur, roman, price, per: month | year | once}]
+    # [{en, ur, roman, price, per: month | year | once}] — services, not features: every plan's
+    # features stay as they are
+    "addons": [
+        {
+            "en": "We enter your old stock for you (from your register or Excel)",
+            "ur": "آپ کا پرانا اسٹاک ہم ڈال دیں (رجسٹر یا ایکسل سے)",
+            "roman": "Aap ka purana stock hum daal dein (register ya Excel se)",
+            "price": 5000,
+            "per": "once",
+        },
+        {
+            "en": "Visit to your shop: installation and staff training",
+            "ur": "آپ کی دکان پر آ کر انسٹالیشن اور عملے کی ٹریننگ",
+            "roman": "Aap ki dukaan par aa kar installation aur staff ki training",
+            "price": 5000,
+            "per": "once",
+        },
+        {
+            "en": "Offline install on your shop computer (works with no internet)",
+            "ur": "دکان کے کمپیوٹر پر آف لائن انسٹال (انٹرنیٹ کے بغیر چلتا ہے)",
+            "roman": "Dukaan ke computer par offline install (internet ke baghair chalta hai)",
+            "price": 5000,
+            "per": "once",
+        },
+        {
+            "en": "Priority support on a phone call",
+            "ur": "فون کال پر ترجیحی سپورٹ",
+            "roman": "Phone call par tarjeehi support",
+            "price": 1000,
+            "per": "month",
+        },
+    ],
 }
 
 

@@ -387,6 +387,8 @@ by sheet remain a later step (docs/18 §1).
 - **Landing content**: nine new entries lead the "new" list (edit / delete, fix a bill, the plain stock list, the phone page with sticker, locked phones, repairs by technician or lab, A4 reports, safer logins, price lists and PTA check). Every screenshot was retaken from the current UI.
 - **Comparison**: `docs/37-CLOUDPOS-COMPARISON.md` — their plans and add-ons, ours, feature by feature, 13 gaps in a suggested order, and the decisions left to the owner. The price numbers were not changed.
 
+**Update, same day (owner's decision)**: the monthly prices are 2,000 / 5,000 / 7,500 (first set to 2,500 / 4,000 / 7,000 on 2026-11-16, changed by the owner the next day), with a one-time setup fee of 5,000 / 8,000 / 15,000 and four service add-ons (old-stock entry, shop visit, offline install: 5,000 once each; priority phone support: 1,000 a month). These are the new defaults in `public/pricing.py`; `llms.txt`, `index.html` and the price note were updated to match. This changes what a visitor sees, not what an existing shop pays (`organisations.monthly_fee`).
+
 **Consequences**:
 - `llms.txt` and the JSON-LD in `index.html` state prices as text. If the owner changes the prices, those two need the same edit.
 - The demo video was not re-recorded (its step timed out); the existing one stays.

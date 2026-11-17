@@ -29,15 +29,23 @@ their product. ADR-092 records what was changed on our side.
   - dedicated support: Rs. 10,000 / month.
 - IMEI tracking, udhaar and repairs are **not** in their Basic plan.
 
-## 2. Our pricing (as shown on the landing page)
+## 2. Our pricing (as shown on the landing page; owner's decision 2026-11-17)
 
 | | Basic | Pro | Chain |
 |---|---|---|---|
-| Per month | Rs. 1,500 | Rs. 3,000 | Rs. 6,000 |
-| A year paid at once (10 months) | Rs. 15,000 | Rs. 30,000 | Rs. 60,000 |
-| Setup | none | none | none |
-| **First year in all** | **Rs. 15,000** | **Rs. 30,000** | **Rs. 60,000** |
+| Per month | Rs. 2,000 | Rs. 5,000 | Rs. 7,500 |
+| A year paid at once (10 months) | Rs. 20,000 | Rs. 50,000 | Rs. 75,000 |
+| Setup, one time | Rs. 5,000 | Rs. 8,000 | Rs. 15,000 |
+| **First year in all** (yearly + setup) | **Rs. 25,000** | **Rs. 58,000** | **Rs. 90,000** |
 | Their nearest plan, first year | Rs. 35,000 | Rs. 70,000 | Rs. 115,000 |
+
+Before 2026-11-16 the prices were 1,500 / 3,000 / 6,000 a month with no setup fee; on 2026-11-16 they were first set to 2,500 / 4,000 / 7,000.
+
+**Add-ons** (services; every plan's features are unchanged):
+- we enter the shop's old stock: Rs. 5,000 once;
+- a visit to the shop for installation and staff training: Rs. 5,000 once;
+- offline install on the shop's computer: Rs. 5,000 once;
+- priority support on a phone call: Rs. 1,000 / month.
 
 - Our trial is 14 days. Shops can pay month by month, and there is no per-user fee.
 - The Android app, WhatsApp bill sharing and the Excel download are included.
@@ -51,7 +59,7 @@ their product. ADR-092 records what was changed on our side.
   - "Everything in Basic, plus …" lists;
   - an "In every plan, at no extra charge" block;
   - an add-ons table, shown only when add-ons exist.
-- The numbers themselves were **not** changed. That is the owner's decision (section 5).
+- The owner then set the numbers above (2026-11-16); they are the defaults in `public/pricing.py`.
 
 ## 3. Feature by feature
 
@@ -103,7 +111,5 @@ their product. ADR-092 records what was changed on our side.
 
 ## 5. Decisions for the owner
 
-1. **The numbers**: keep 1,500 / 3,000 / 6,000 with no setup fee, or move nearer to the market (their first year is 2.3× ours on Basic and Pro)? Set them in Super admin → Website prices.
-2. **Setup fee**: none today. A setup fee is normal in this market and pays for installation and training.
-3. **Add-ons**: which to sell (extra branch, on-site training, data entry of old stock, SMS)? Add them with prices in the same screen.
-4. **Which gaps to build first**: suggested 1 (easy load), 2 (warranty), 3 (quotations), 4 (commission).
+1. **Prices, setup fee, add-ons**: decided 2026-11-17 (section 2). Change them any time in Super admin → Website prices.
+2. **Which gaps to build first**: still open. Suggested 1 (easy load), 2 (warranty), 3 (quotations), 4 (commission).
