@@ -33,7 +33,8 @@ def test_staff_copy_has_no_money(owner, cat):
     wb = load_workbook(io.BytesIO(owner.get(f"{URL}?format=xlsx&staff=true").content))
     heads = [c.value for c in wb["Phones"][1]]
     assert "IMEI" in heads and "Asking" not in heads and "Cost" not in heads
-    assert "Bought from" not in heads
+    # owner 2026-11-17 (ADR-093): the staff copy names the seller, never their phone number
+    assert "Bought from" in heads and "Seller phone" not in heads
     cells = [c.value for row in wb["Summary"].iter_rows() for c in row]
     assert 5678 not in cells and 5678.0 not in cells
 
