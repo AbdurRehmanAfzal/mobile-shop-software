@@ -4974,5 +4974,30 @@
     "homeLabel": "Wapas aaye phone (is mahine)",
     "homeToday": "aaj {{n}}",
     "ovN": "{{n}} wapsiyan · {{p}} phone"
+  },
+  "delchk": {
+    "title": "Pehle yeh karein",
+    "intro": "Yeh abhi delete nahi ho sakta. Neeche likhi cheezein pehle khatam karein, phir delete karein.",
+    "open": "Kholein",
+    "anyway": "Phir bhi delete ki koshish karein (app dobara check kare gi)",
+    "c": {
+      "in_repair": "{{phone}} repair mein hai ({{ref}}). Pehle repair se wapas lein.",
+      "on_loan": "{{phone}} {{who}} ke paas amanat par hai. Pehle wapas lein.",
+      "on_approval": "{{phone}} {{who}} ke paas dekhne ke liye hai. Pehle wapas lein.",
+      "sold": "{{phone}} aage bik chuka hai ({{ref}} · {{who}}). Pehle woh sale delete ya wapas karein.",
+      "returned_to_supplier": "{{phone}} pehle hi bechne wale ko wapas bheja ja chuka hai.",
+      "not_in_shop": "{{phone}} ab dukaan mein nahi hai.",
+      "reserved": "{{phone}} {{who}} ke liye reserve hai. Pehle reserve khatam karein.",
+      "went_out_and_back": "{{phone}} khareedne ke baad bahar ja kar wapas aaya (amanat ya repair). Yeh khareed ab delete nahi ho sakti; is ki jagah phone bechne wale ko wapas karein.",
+      "later_payment": "Is bill par baad mein payment {{ref}} ({{amount}}) hui. Pehle woh payment delete karein.",
+      "in_exchange": "Yeh bill exchange {{ref}} ka hissa hai. Pehle exchange ki sale delete karein.",
+      "has_return": "Is bill mein se kuch wapas aa chuka hai ({{amount}}). Pehle woh wapsi delete karein.",
+      "khata_adjusted": "Is bill par {{amount}} ka len-den adjust hua tha. Pehle woh khatam karein.",
+      "has_installments": "Yeh bill qiston par hai. Pehle qiston ka plan cancel karein.",
+      "moved_after_sale": "{{phone}} ab is customer ke paas waisa nahi jaisa becha gaya tha.",
+      "moved_after_return": "{{phone}} is wapsi ke baad aage ja chuka hai.",
+      "repair_given_back": "Repair {{ref}} customer ko wapas di ja chuki hai.",
+      "lab_charge_booked": "Repair {{ref}} par lab ka kharcha likha ja chuka hai. Is ki jagah \"theek nahi hua\" kar ke wapas karein."
+    }
   }
 }

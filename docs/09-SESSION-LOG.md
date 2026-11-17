@@ -2011,3 +2011,12 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Owner** (screenshots): an iPhone 15 Pro Max entered by a salesman in the wrong category; deleting its purchase says "Device … has moved since this purchase; use a return instead". Its history has only "Marked faulty" and "Faulty cleared".
 **Done**: `devices.state.moved_since` — neutral events and a fault marked / cleared (with no ledger posting) are not a move; used by purchase delete, old-stock removal and sale delete; a purchase / old-stock phone may be deleted while in stock or faulty, not while reserved. ADR-099, docs/29.
 **Verified**: pytest: full suite passes; new `test_delete_after_harmless` (4): a purchase deleted after a fault was marked and cleared (the money back in the galla), deleted while still marked faulty, a loan still blocks, an old-stock phone removed after a fault mark. No app change, so no tsc / e2e run.
+
+### 2026-11-19 — the delete sheet says what must be undone first (ADR-100)
+**Owner**: shopkeepers want wrong entries deleted with one tap and a warning, and to be told what to undo first (e.g. the phone is at repair); asked whether a delete should undo everything and whether the system already does. Reminded that two or three shops are live and must not be affected.
+**Done**: answered (an entry's own effect is undone; later entries are not cascaded); `delcheck/` + `GET /delete-check/{kind}/{id}` (read-only); `DeleteBlockers.tsx` in the three bill delete sheets; sentences for 17 blockers in en / ur / roman; manual ch. on deleting (PDFs rebuilt); ADR-100, CLAUDE.md, docs/29. No migration; the delete functions are untouched.
+**Verified**: 
+- pytest: full suite passes; new `test_delete_check` (4): a clean purchase (and one with a fault mark) has nothing in the way and deletes; on loan / sold on name the shop, the bill and the screen, and the delete refuses; a later payment blocks until it is deleted; a sale with a return, a return whose phone was sold again; kinds with no rule and another shop's entry answer "nothing known".
+- tsc; vitest (53).
+- Playwright: new `delete-check` passes (the box for a phone on loan, Open goes to Loans, nothing extra on a clean purchase); `delete-everywhere` and `edit-undo` pass.
+- Looked at the delete sheet with the box in English.

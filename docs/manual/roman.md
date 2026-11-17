@@ -1047,6 +1047,8 @@ Har entry ki row par wohi do chhote button hain: **✎ Edit** aur **🗑 Delete*
 - **Log aur accessories**: Edit record ko us ke form ke saath kholta hai.
 - **Phone**: us ke page par **Delete (us ka purchase bill)** ya **Delete (us ka sale bill)** us bill ka delete kholta hai.
 
+Agar pehle kuch khatam karna zaroori ho to upar **Pehle yeh karein** ka khana batata hai ke kya, aur saath us screen ka **Kholein** button hota hai. Maslan: "Nokia 105 · 356938035781518 Bilal Mobiles ke paas amanat par hai. Pehle wapas lein." Yeh yeh bhi batata hai ke phone repair mein hai, aage bik chuka hai ya reserve hai, aur yeh ke bill par baad mein payment, wapsi, exchange ya qistein hui hain. Pehle woh khatam karein, phir delete karein. Phone par kharabi ka nishan, chhapa hua sticker ya badli hui qeemat delete nahi rokti.
+
 Kuch bhi delete hone se pehle ek laal dabba **Kya hoga** batata hai ke stock, galle, khate aur profit report mein kya badlega, ek **Misaal** ke saath. Kharche ki ek aam misaal:
 
 > Chai Rs. 500 ki jagah 5,000 likha → Rs. 5,000 galle mein wapas; phir Rs. 500 dobara daalein, ya Edit istemal karein.

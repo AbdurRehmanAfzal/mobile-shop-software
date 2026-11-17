@@ -21,6 +21,7 @@ from app.modules.barcodes.router import router as barcodes_router
 from app.modules.bulk.router import router as bulk_router
 from app.modules.catalogue.router import router as catalogue_router
 from app.modules.credentials.router import router as credentials_router
+from app.modules.delcheck.router import router as delcheck_router
 from app.modules.devices.router import router as devices_router
 from app.modules.exchanges.router import router as exchanges_router
 from app.modules.expenses.router import router as expenses_router
@@ -187,6 +188,7 @@ def create_app() -> FastAPI:
     app.include_router(payments_router)
     app.include_router(loans_router)
     app.include_router(returns_router)
+    app.include_router(delcheck_router)
     app.include_router(notifications_router)
     app.include_router(expenses_router)
     app.include_router(repairs_router)

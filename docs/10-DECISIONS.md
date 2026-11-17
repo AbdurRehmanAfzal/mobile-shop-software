@@ -362,6 +362,23 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-100 · 2026-11-19 · Accepted · The delete sheet says what must be undone first
+**Context**: shopkeepers want a wrong purchase, return, sale, payment or expense deleted with one tap and a warning, and — when something must be undone first — to be told what ("the phone is at repair"). The owner asked whether deleting should undo everything by itself, and whether the system already does.
+
+**What already happens** (ADR-090): deleting an entry reverses that entry's own effect — stock, galla and the person's khata — and keeps it as Deleted. Things done later as separate entries (a payment against the bill, a loan, a repair, the phone sold on) are never deleted along with it; the delete is refused. The refusal only showed after Confirm, and for a phone it only said "has moved … use a return instead".
+
+**Decision**:
+- **Keep that rule.** An entry's own effect is undone automatically; later, separate entries are not cascaded. One tap must never remove things the shopkeeper did not look at.
+- **Say it beforehand**: `GET /api/v1/delete-check/{kind}/{id}` (`delcheck/service.py`) returns `{ok, blockers: [{code, to, phone, who, ref, amount}]}`. `DeleteBlockers.tsx` shows them at the top of every bill's delete sheet as "First do this", each with an Open button.
+  - Purchase: phone at repair / on loan / with a customer to look at / sold on / reserved / already returned / went out and came back; a later payment; part of an exchange.
+  - Sale: a later payment, a return, len-den adjusted against it, installments, an exchange, the phone no longer as sold.
+  - Return: the phone moved on (sold again shows the bill).
+  - Repair: already given back; a lab charge booked.
+  - Payment, len-den, expense, exchange: no rule here; their own delete speaks.
+- **Read-only and harmless to shops already running**: no migration, nothing stored, and the delete itself is unchanged — the form stays below the box and the delete's own checks decide. If the check fails or the server is older, the app shows nothing extra. A wrong answer from the check can therefore neither let a bad delete through nor stop a good one.
+
+**Consequences**: the check repeats the delete's rules in words; when a rule changes, both must follow (tests assert that they agree).
+
 ## ADR-099 · 2026-11-19 · Accepted · A fault mark, a label or a price change does not stop a wrong entry being deleted
 **Context**: a salesman entered an iPhone in the wrong category. The owner tried to delete its purchase and got "Device … has moved since this purchase; use a return instead". The phone had never left the shop: its history only had "Marked faulty" and "Faulty cleared". The check (ADR-090) allowed nothing but a verification after the purchase, so even a printed label or a price change blocked the delete.
 

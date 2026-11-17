@@ -1,5 +1,6 @@
 import BillActions from './BillActions'
 import PaymentEditSheet, { type EditablePayment } from './PaymentEditSheet'
+import DeleteBlockers from '@/components/DeleteBlockers'
 import DeleteWarning from '@/components/DeleteWarning'
 import PurchaseReturnSheet from './PurchaseReturnSheet'
 import DownloadButton from '@/components/DownloadButton'
@@ -108,6 +109,7 @@ export function PurchaseDetailPage() {
       {p.status === 'posted' ? <PurchaseReturnSheet p={p} open={returning} onClose={() => setReturning(false)} preselect={returnFor ? p.lines.filter((l) => l.device_id === returnFor && !l.returned_at).map((l) => l.id) : undefined} /> : null}
       <Sheet open={voiding} onClose={() => setVoiding(false)} title="common.void">
         <div className="flex flex-col gap-3">
+          <DeleteBlockers kind="purchase" id={p.id} open={voiding} onGo={() => setVoiding(false)} />
           <DeleteWarning kind="purchase" />
           <BiInput label="common.reason" value={reason} onChange={(e) => setReason(e.target.value)} minLength={3} autoFocus help={<Help term="void" size="sm" />} />
           <ErrorText error={voidM.error} />
