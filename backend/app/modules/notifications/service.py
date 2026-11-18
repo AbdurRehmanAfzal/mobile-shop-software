@@ -5,7 +5,7 @@ from urllib.parse import quote
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.core.pk import normalise_phone
+from app.core.pk import normalise_phone, wa_number
 from app.modules.auth.models import Shop, User
 from app.modules.notifications.models import Channel, Message, MessageStatus
 from app.modules.notifications.schemas import NotificationSettings
@@ -23,8 +23,7 @@ def lang_for(shop: Shop, settings: NotificationSettings | None = None) -> str:
 
 
 def wa_link(phone: str, body: str) -> str:
-    digits = normalise_phone(phone)
-    return f"https://wa.me/92{digits[1:]}?text={quote(body)}"
+    return f"https://wa.me/{wa_number(normalise_phone(phone))}?text={quote(body)}"
 
 
 def fmt(n: Decimal | int | str | None) -> str:

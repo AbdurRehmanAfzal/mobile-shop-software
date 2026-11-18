@@ -13,6 +13,7 @@ import { LOCALES, setLocale, type Locale } from '@/i18n'
 import { ApiError, post } from '@/lib/api'
 import { normalisePhone } from '@/lib/format'
 import { useGet } from '@/lib/queries'
+import { waNumber } from '@/lib/phone'
 
 interface Addon { en: string; ur: string; roman: string; price: number; per: 'month' | 'year' | 'once' }
 interface Info { plans: { key: string; price: number; yearly_price?: number; setup_fee?: number; modules: string[] }[]; trial_days: number; yearly_paid_months?: number; addons?: Addon[]; modules: Record<string, { en: string; ur: string }>; accounts: { label: string; account_name: string; number: string; note: string | null }[]; whatsapp: string | null }
@@ -85,7 +86,7 @@ export default function LandingPage() {
   const { pick, ur, roman, cls } = useLang()
   const locale: Locale = ur ? 'ur' : roman ? 'roman' : 'en'
   const { data: info } = useGet<Info>(['public-info'], '/api/v1/public/info')
-  const wa = (text: string) => `https://wa.me/${(info?.whatsapp ? `92${info.whatsapp.replace(/^0/, '')}` : MAKER.tel.replace('+', ''))}?text=${encodeURIComponent(text)}`
+  const wa = (text: string) => `https://wa.me/${(info?.whatsapp ? waNumber(info.whatsapp) : MAKER.tel.replace('+', ''))}?text=${encodeURIComponent(text)}`
   const fmt = (n: number) => n.toLocaleString('en-US')
   const paid = (info?.plans ?? []).filter((p) => p.key !== 'trial')
   const [billing, setBilling] = useState<'month' | 'year'>('year')

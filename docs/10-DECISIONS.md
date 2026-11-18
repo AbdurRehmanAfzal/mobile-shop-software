@@ -362,6 +362,17 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-107 · 2026-11-18 · Accepted · Mobile numbers of any country
+**Context**: shopkeepers complained that only a Pakistani mobile number can be written, while their customers and dealers also come from other countries (the Gulf, the UK, Afghanistan, China …). Every mobile-number box showed a fixed +92 and the server refused anything that was not 03XXXXXXXXX.
+
+**Decision**:
+- **Storage: nothing existing changes.** A Pakistani number is stored as it always was — `03XXXXXXXXX` (logins, uniqueness, every saved row stay valid). A number of another country is stored with its country code — `+971501234567` (E.164; the 0 people write after the code is dropped). No migration; the columns are already wide enough.
+- **One rule on the server** (`core/pk.normalise_phone`): Pakistani forms as before; otherwise `+<code>…` or `00<code>…` with a known country calling code (`DIAL_CODES`, the ITU list) and a sensible length — exact for the ~35 countries shops meet most (`NATIONAL_LEN`), 4–13 digits for the rest. `+92` must still be a Pakistani mobile. A foreign number without its code is refused (it cannot be told from a wrong Pakistani number). Every schema already used this one function, so parties, staff, sign-up, login, the guarantor, notification numbers, OTP, the shop request and the Excel import all accept it.
+- **One input in the app** (`PhoneInput`): the code in front is a picker (a native list: country name and code, Pakistan first, then the countries shops meet most, then all others by name in the app's language via `Intl.DisplayNames`). For another country the box shows its name and how its numbers are written, stops at that country's length, and a whole number pasted with its code picks the country itself. The parent still gets one string (`03…` or `+…`). The table lives in `lib/phone.ts`; a server test reads that file and keeps it equal to the server's.
+- **WhatsApp** links and Cloud-API messages use the number's own country code (`pk.wa_number`, `phone.waNumber`) instead of always putting 92 in front.
+
+**Consequences**: Pakistan stays the default everywhere; a shop that never deals abroad sees only a small arrow beside +92. A CNIC stays Pakistani and optional. Landlines are still not accepted. Country names are not translated for Roman Urdu (English names are shown).
+
 ## ADR-106 · 2026-11-18 · Accepted · Amanat to anyone; sticker ticks for RAM / battery / serial; the IMEI as the sticker's barcode
 **Context**: three requests from a shopkeeper. (1) Amanat (a phone given out on trust) was allowed only to a party of kind "shop", yet customers, dealers and technicians take phones the same way. (2) On a used iPhone the battery health and battery cycles sell the phone, and RAM and the serial number are wanted too — the shop should choose them for the sticker. (3) The sticker's barcode should be the IMEI, because the sticker is scanned where an IMEI is asked (buying a phone back); the shop's own code must stay available, since some units have no IMEI.
 

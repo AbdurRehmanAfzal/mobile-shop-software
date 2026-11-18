@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { ApiError, post } from '@/lib/api'
 import { useAuth, type MeOut } from '@/lib/auth'
-import { isValidPkMobile, normalisePhone } from '@/lib/format'
+import { isValidMobile, normalisePhone } from '@/lib/format'
 import { BiAlert, BiButton, BiInput, BiLabel } from '@/components/Bilingual'
 import { PhoneInput } from '@/components/FieldInputs'
 import AuthLayout from './AuthLayout'
@@ -26,7 +26,7 @@ export default function SignupPage() {
   async function submit(e: FormEvent) {
     e.preventDefault()
     setError(null)
-    if (!isValidPkMobile(form.phone)) {
+    if (!isValidMobile(form.phone)) {
       setError({ en: 'Enter a valid mobile number (03XXXXXXXXX)', ur: 'درست موبائل نمبر درج کریں (03XXXXXXXXX)' })
       return
     }

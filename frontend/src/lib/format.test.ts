@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatMoney, isValidPkMobile, isoDay, normalisePhone, toLakh, toLatinDigits } from './format'
+import { formatMoney, isValidMobile, isoDay, normalisePhone, toLakh, toLatinDigits } from './format'
 
 describe('formatMoney', () => {
   it('uses Latin digits and PKR prefix', () => {
@@ -20,8 +20,8 @@ describe('phone helpers', () => {
     expect(normalisePhone('3001234567')).toBe('03001234567')
   })
   it('validates', () => {
-    expect(isValidPkMobile('03001234567')).toBe(true)
-    expect(isValidPkMobile('12345')).toBe(false)
+    expect(isValidMobile('03001234567')).toBe(true)
+    expect(isValidMobile('12345')).toBe(false)
   })
 })
 

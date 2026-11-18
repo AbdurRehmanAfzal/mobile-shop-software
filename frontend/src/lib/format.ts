@@ -37,18 +37,8 @@ export function toLatinDigits(input: string): string {
   })
 }
 
-/** Normalise a Pakistani mobile number to 03XXXXXXXXX (mirrors backend). */
-export function normalisePhone(raw: string): string {
-  let digits = toLatinDigits(raw).replace(/[\s\-()]/g, '')
-  if (digits.startsWith('+92')) digits = '0' + digits.slice(3)
-  else if (digits.startsWith('92') && digits.length === 12) digits = '0' + digits.slice(2)
-  else if (digits.startsWith('3') && digits.length === 10) digits = '0' + digits
-  return digits
-}
-
-export function isValidPkMobile(raw: string): boolean {
-  return /^03\d{9}$/.test(normalisePhone(raw))
-}
+/** Mobile numbers — Pakistani (03XXXXXXXXX) or another country's (+971…): see `lib/phone.ts` (ADR-107). */
+export { isValidMobile, normalisePhone, waNumber } from './phone'
 
 /** 2,510,000 -> "25.1" (lakh), the way shopkeepers say big amounts. */
 export function toLakh(value: number | string): string {

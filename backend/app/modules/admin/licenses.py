@@ -163,9 +163,11 @@ def message(k: LicenseKey, shop_name: str, site: str) -> str:
 
 def share_links(k: LicenseKey, shop_name: str, phone: str | None, site: str) -> dict:
     text = message(k, shop_name, site)
-    num = (phone or "").lstrip("0")
+    from app.core.pk import wa_number
+
+    num = wa_number(phone or "")
     return {
-        "whatsapp": f"https://wa.me/92{num}?text={quote(text)}"
+        "whatsapp": f"https://wa.me/{num}?text={quote(text)}"
         if num
         else f"https://wa.me/?text={quote(text)}",
         "sms": f"sms:{phone or ''}?body={quote(text)}",

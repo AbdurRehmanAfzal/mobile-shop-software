@@ -19,6 +19,7 @@ import ShopBinCard from './ShopBinCard'
 import AdminCredentials from './AdminCredentials'
 import AdminPricing from './AdminPricing'
 import { normalisePhone } from '@/lib/format'
+import { waNumber } from '@/lib/phone'
 import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
 
 interface AdminShop { id: string; organisation_id: string; name: string; city: string | null; owner_name: string | null; owner_phone: string | null; users: number; branches: number; created_at: string; plan: string; plan_expires_at: string | null; days_left: number | null; monthly_fee: string; fee_note: string | null; plan_status: 'unlimited' | 'ok' | 'due_soon' | 'expired' | 'locked'; modules: string[]; modules_custom: boolean; grace_days?: number | null; fee_due?: string; fee_deal?: { plan: string; price: string; months: number | null; months_left: number | null; note: string | null } | null; deleted_at?: string | null; deleted_reason?: string | null }
@@ -148,7 +149,7 @@ export default function AdminPage() {
   if (!isSuper) return <Navigate to="/" replace />
 
   const share = made
-    ? `https://wa.me/92${(made.shop.owner_phone ?? '').replace(/^0/, '')}?text=${encodeURIComponent(
+    ? `https://wa.me/${waNumber((made.shop.owner_phone ?? ''))}?text=${encodeURIComponent(
         `${made.shop.name}\nMobile Shop app\nLogin: ${made.shop.owner_phone}\nPassword: ${made.password}\n${SITE}\nAndroid app: ${APP_LINK}`,
       )}`
     : ''
@@ -286,7 +287,7 @@ export default function AdminPage() {
                   {r.note ? <span className="text-xs text-muted">{r.note}</span> : null}
                 </span>
                 <button type="button" onClick={() => { setMade(null); setF({ ...EMPTY, shop_name: r.shop_name, city: r.city ?? '', owner_name: r.name, phone: r.phone.replace(/^0/, ''), plan: (r.plan as (typeof PLANS)[number]) || 'trial', password: PASSWORD() }); setFromReq(r.id); create.reset(); setOpen(true) }} className="tap ms-[3.25rem] rounded-full bg-ink px-3 py-1.5 text-xs font-bold text-ground">{pick('admin.newShop')}</button>
-                <a href={`https://wa.me/92${r.phone.replace(/^0/, '')}`} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="tap flex h-9 w-9 items-center justify-center rounded-full bg-emerald text-white"><MessageCircle size={16} /></a>
+                <a href={`https://wa.me/${waNumber(r.phone)}`} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="tap flex h-9 w-9 items-center justify-center rounded-full bg-emerald text-white"><MessageCircle size={16} /></a>
                 <button type="button" aria-label={pick('admin.markDone')} onClick={async () => { await api('POST', `/api/v1/admin/shop-requests/${r.id}/done`); create.reset() }} className="tap flex h-9 w-9 items-center justify-center rounded-full border border-line text-emerald"><Check size={16} /></button>
               </div>
             ))}
@@ -372,7 +373,7 @@ export default function AdminPage() {
               <div className="flex flex-col gap-2 rounded-2xl bg-sell p-3 text-sell-fg">
                 <span className="text-sm font-bold">{pick('admin.pwSet')}</span>
                 <span className="num" dir="ltr">{pwDone.phone} · {pwDone.password}</span>
-                <a href={`https://wa.me/92${pwDone.phone.replace(/^0/, '')}?text=${encodeURIComponent(`${sel.name}\nMobile Shop\nLogin: ${pwDone.phone}\nNew password: ${pwDone.password}\n${SITE}`)}`} target="_blank" rel="noopener noreferrer" className="tap flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald font-bold text-white">
+                <a href={`https://wa.me/${waNumber(pwDone.phone)}?text=${encodeURIComponent(`${sel.name}\nMobile Shop\nLogin: ${pwDone.phone}\nNew password: ${pwDone.password}\n${SITE}`)}`} target="_blank" rel="noopener noreferrer" className="tap flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald font-bold text-white">
                   <MessageCircle size={18} /> {pick('admin.sendWhatsapp')}
                 </a>
               </div>
@@ -447,7 +448,7 @@ export default function AdminPage() {
               <div className="flex flex-col gap-2 rounded-2xl bg-sell p-3 text-sell-fg">
                 <span className="text-sm font-bold">{pick('admin.codeMade')}</span>
                 <span className="num break-all text-xs" dir="ltr" data-testid="renewal-code-out">{codeOut}</span>
-                <a href={`https://wa.me/92${(sel.owner_phone ?? '').replace(/^0/, '')}?text=${encodeURIComponent(`${sel.name}\nMobile Shop renewal code (${codeMonths} month):\n${codeOut}\nMore → Software fees → Renewal code`)}`} target="_blank" rel="noopener noreferrer" className="tap flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald font-bold text-white"><MessageCircle size={18} /> {pick('admin.sendCode')}</a>
+                <a href={`https://wa.me/${waNumber((sel.owner_phone ?? ''))}?text=${encodeURIComponent(`${sel.name}\nMobile Shop renewal code (${codeMonths} month):\n${codeOut}\nMore → Software fees → Renewal code`)}`} target="_blank" rel="noopener noreferrer" className="tap flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald font-bold text-white"><MessageCircle size={18} /> {pick('admin.sendCode')}</a>
               </div>
             ) : null}
 

@@ -293,6 +293,8 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **Amanat to anyone, sticker ticks, IMEI barcode (2026-11-18, ADR-106)**: nothing to run. To test: (1) More → Loans → "Give a phone on amanat" → pick a phone → choose a customer (not a shop) → it must save, and "Device came back" must return it to stock. (2) Open a used iPhone that has battery health and cycles written → the sticker card: tick "Battery health", "Battery cycles", "Serial no." — the preview must show them. (3) Print one sticker with "Barcode made from: IMEI" and scan it into the IMEI box of a new purchase: the IMEI must be typed in. Scan the same sticker on Home: the phone must open. Old stickers (MS…) must still open their phone.
 
+**Mobile numbers of other countries (2026-11-18, ADR-107)**: nothing to run. To test: People → New person → tap **+92** → pick United Arab Emirates → the box shows the country's name and "+971 50 123 4567" → write a real UAE number → Save. Open that person and tap WhatsApp: the chat must open on the +971 number. Add a Pakistani person the usual way: nothing may have changed. Log in with your own number as always.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

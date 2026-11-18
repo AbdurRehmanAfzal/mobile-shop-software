@@ -13,6 +13,7 @@ import { api } from '@/lib/api'
 import RowActions from '@/components/RowActions'
 import { useAuth } from '@/lib/auth'
 import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
+import { waNumber } from '@/lib/phone'
 
 interface Row {
   id: string; invoice_id: string; invoice_no: string; party_id: string; party_name: string; party_phone: string | null; item: string
@@ -149,7 +150,7 @@ export function InstallmentDetailPage() {
         <div className="card flex flex-col gap-2">
           <div className="flex items-center gap-3">
             <span className="flex min-w-0 flex-1 flex-col"><span className="font-bold">{p.party_name}</span><span className="text-xs text-muted" dir="ltr">{p.party_phone}</span></span>
-            {p.party_phone ? <><a href={`tel:${p.party_phone}`} aria-label="call" className="tap flex h-10 w-10 items-center justify-center rounded-full border border-line"><Phone size={16} /></a><a href={`https://wa.me/92${p.party_phone.replace(/^0/, '')}`} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="tap flex h-10 w-10 items-center justify-center rounded-full bg-emerald text-white"><MessageCircle size={16} /></a></> : null}
+            {p.party_phone ? <><a href={`tel:${p.party_phone}`} aria-label="call" className="tap flex h-10 w-10 items-center justify-center rounded-full border border-line"><Phone size={16} /></a><a href={`https://wa.me/${waNumber(p.party_phone)}`} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="tap flex h-10 w-10 items-center justify-center rounded-full bg-emerald text-white"><MessageCircle size={16} /></a></> : null}
           </div>
           {p.guarantor_name ? (
             <div className="flex items-center gap-3 border-t border-line pt-2">

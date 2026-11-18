@@ -119,7 +119,7 @@ Your shop is opened by **OOP Solutions**, the maker of the software. There is no
 3. Type your **Password**.
 4. Tap **Login**.
 
-> **Tip:** Pasting a number such as `0300…` or `+92300…` also works. The app cleans it up for you.
+> **Tip:** Pasting a number such as `0300…` or `+92300…` also works. The app cleans it up for you. A number of another country: tap **+92** and pick the country first.
 
 ### Forgot password
 
@@ -1662,7 +1662,7 @@ Use the search box (**Name, phone or CNIC**) to find anyone quickly. Even a few 
 ### Add a new person
 
 1. Tap **New person**.
-2. Write the **Name** and, if they have one, the **Mobile number** (after +92, without the first 0, for example `3001234567`). The number is optional; without it there are no WhatsApp messages or reminders to that person. It can be added later with **Edit**.
+2. Write the **Name** and, if they have one, the **Mobile number** (after +92, without the first 0, for example `3001234567`). The number is optional; without it there are no WhatsApp messages or reminders to that person. It can be added later with **Edit**. For a number of **another country**, tap the code in front (**+92**) and pick the country — the box then shows that country's name and how its numbers are written (for example United Arab Emirates, +971 50 123 4567); write the number without the code. Pasting a whole number such as `+971501234567` picks the country by itself.
 3. Pick the **Type**: **Customer**, **Dealer**, **Other shop** or **Technician**.
 4. If you want more, tap **More details**: **CNIC** (and the CNIC scan), **City**, **Address**, **Notes** and, for a dealer, the wholesale price. It opens by itself when you edit someone who already has these.
 5. If this person already owed you (or you owed them) in your old register, write it in **Opening balance** and choose **Party owes me** or **I owe party**.

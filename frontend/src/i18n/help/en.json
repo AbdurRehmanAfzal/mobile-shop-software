@@ -1615,8 +1615,8 @@
     },
     "phone": {
       "title": "Mobile number",
-      "body": "The person's mobile number. It finds them quickly and is used for WhatsApp bills and reminders.",
-      "example": "0321 5550002 — type it once; next time just search 0321555."
+      "body": "The person's mobile number. It finds them quickly and is used for WhatsApp bills and reminders. For a number of another country, tap the code in front (+92) and pick the country — then write the number without the code.",
+      "example": "Pakistan: 0321 5550002. A dealer in Dubai: pick United Arab Emirates (+971) and write 50 123 4567."
     },
     "cnic": {
       "title": "CNIC (ID card)",
