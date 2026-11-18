@@ -289,6 +289,8 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **Accounts page and general ledger (2026-11-18, ADR-104)**: nothing to run. To test: More → Accounts — the four figures must match Home; open "Chart of accounts & general ledger", tap Sales: this month's sales bills must be there and "Balance at the end" must equal the Sales line of the trial balance. In Reports → Balance → Trial balance, tap any line: it opens its entries.
 
+**Thank-you popup after paying the fee (2026-11-18, ADR-105)**: nothing to run. To test: approve a fee payment for a test shop; the shop's owner logs in — the thank-you shows once; close the app without tapping OK and log in again — it must not come back. Ask the shopkeeper who reported it to confirm after the update.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

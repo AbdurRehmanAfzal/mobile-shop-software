@@ -2066,3 +2066,13 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - tsc; vitest (53, including the help-text check).
 - Playwright: new `accounts-ledger` passes; `books`, `statements`, `home-big` pass. Looked at the Accounts page and the general ledger in English.
 **Next**: the owner orders phase 2 (docs/38 §3) and decides on manual journal entries.
+
+### 2026-11-18 — the "plan renewed" thank-you on every login (ADR-105)
+**Owner**: a shopkeeper says that after paying the software fee the thank-you popup shows on every login.
+**Cause**: it was cleared only when "OK" reached the server with the shown payment's id; an owner-only route; nothing aged it out.
+**Done**: `plan/reminders.py` (fresh for 3 days only, the newest approved payment is marked, race-safe state row), `plan/router.py` (whoever sees the popup can mark it), `planReminder.ts` (marked when shown; the popup keeps its own copy), `PlanReminders.tsx`; ADR-105, docs/29. No migration.
+**Verified**:
+- pytest: full suite passes. New `test_thank_you_is_shown_once_and_never_for_an_old_payment`: a stale id still marks the newest payment, a salesman gets 403, a second payment gives one new thank-you, a payment older than the window gives none.
+- tsc; vitest (53); ruff clean.
+- Playwright: new `plan-thanks-once` passes (shown at the first login; not after a reload, not after a new login, without tapping OK); `fees` passes.
+**Next**: the owner orders Accounts & Reports phase 2 (docs/38 §3).

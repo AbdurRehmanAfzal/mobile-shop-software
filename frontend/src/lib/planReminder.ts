@@ -51,6 +51,10 @@ interface State {
   popupOpen: boolean
   collapsed: boolean
   thanksOpen: boolean
+  /** the payment whose thank-you this session has already told the server about */
+  thanked: string | null
+  /** the thank-you on the screen (kept while it is open, whatever later refreshes say) */
+  thanks: Reminder['renewed']
   loading: boolean
   lastEvent: 'login' | 'open' | 'idle' | null
   refresh: (event?: 'login' | 'open' | 'idle', pathname?: string) => Promise<void>
@@ -67,6 +71,8 @@ export const usePlanReminder = create<State>()((set, get) => ({
   popupOpen: false,
   collapsed: false,
   thanksOpen: false,
+  thanked: null,
+  thanks: null,
   loading: false,
   lastEvent: null,
   async refresh(event = 'open', pathname = window.location.pathname) {
@@ -78,8 +84,14 @@ export const usePlanReminder = create<State>()((set, get) => ({
       const wasOpen = get().popupOpen
       const open = wasOpen || (data.show_popup && may && data.audience === 'owner')
       // while soft-locked the full-screen notice speaks; the popup opens only from the bar's Details
-      set({ data, popupOpen: open && data.stage !== 'none' && data.stage !== 'locked' && !data.pending_payment, thanksOpen: !!data.renewed && may, lastEvent: event })
+      set({ data, popupOpen: open && data.stage !== 'none' && data.stage !== 'locked' && !data.pending_payment, thanksOpen: get().thanksOpen || (!!data.renewed && may), thanks: data.renewed && may ? data.renewed : get().thanks, lastEvent: event })
       if (open && !wasOpen) void api('POST', '/api/v1/plan/reminder/shown').catch(() => undefined)
+      // owner 2026-11-18 (ADR-105): the thank-you is marked seen the moment it shows, so it never
+      // comes back on the next login — whether the shopkeeper taps OK, prints or just leaves
+      if (data.renewed && may && get().thanked !== data.renewed.payment_id) {
+        set({ thanked: data.renewed.payment_id })
+        void api('POST', '/api/v1/plan/reminder/thanks', { payment_id: data.renewed.payment_id }).catch(() => set({ thanked: null }))
+      }
     } catch {
       /* offline or not logged in: keep what we have */
     } finally {
@@ -105,13 +117,15 @@ export const usePlanReminder = create<State>()((set, get) => ({
   collapse: () => set({ collapsed: true }),
   async thanksSeen() {
     const d = get().data
-    set({ thanksOpen: false })
-    if (d?.renewed) {
-      try { await api('POST', '/api/v1/plan/reminder/thanks', { payment_id: d.renewed.payment_id }) } catch { /* shown again next time */ }
-      set({ data: { ...d, renewed: null } })
+    const shown = get().thanks
+    set({ thanksOpen: false, thanks: null })
+    if (shown) {
+      // already told when it appeared; said again here in case that call did not get through
+      try { await api('POST', '/api/v1/plan/reminder/thanks', { payment_id: shown.payment_id }) } catch { /* the server stops offering it after a few days anyway */ }
+      if (d) set({ data: { ...d, renewed: null } })
     }
   },
-  clear: () => set({ data: null, popupOpen: false, collapsed: false, thanksOpen: false }),
+  clear: () => set({ data: null, popupOpen: false, collapsed: false, thanksOpen: false, thanks: null, thanked: null }),
 }))
 
 /** the Roman line the bar always carries (docs/19 §D) */
