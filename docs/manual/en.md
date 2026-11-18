@@ -440,6 +440,19 @@ Tablets and smart watches are tracked one by one, just like phones, each with it
 
 Without a SIM there is no IMEI, so the **Serial number** (on the box, or in Settings → About on the device) is used for searching and shown like an IMEI.
 
+### Laptops
+
+Laptops are for the shops that also trade them. Ask the software provider to switch **Laptops** on for your shop; until then nothing about laptops is shown.
+
+1. In **Add device**, under **What is it?**, tap **Laptop**.
+2. **Serial number**: the serial number or service tag from the sticker under the laptop (or from the BIOS). A laptop has no IMEI and no PTA. Leave it empty only if it cannot be read; the app then gives the laptop its own code, printed on its sticker.
+3. Tap the **Brand** (Dell, HP, Lenovo, Apple, Asus, Acer, MSI …) and search the **Model** — old, new and gaming models are already in the list (for example `5490` finds **Latitude 5490**). A missing one is added with **+ New model**.
+4. Fill the common details: **Processor** (Core i5), **Generation** (8th Gen), **Drive type** (SSD), **Screen size** (14), the **Graphics card** if it has one, then **Storage**, **RAM**, **Condition**, **Cost price** and **Asking price**. A gaming model ticks **Gaming laptop** by itself.
+5. **More details** is optional: touch screen, x360, backlit keyboard, battery backup, a second drive, Windows or macOS, and so on.
+6. Tap **Add**, then save the purchase as usual.
+
+In **Stock**, the **Laptops** tab lists them with the line shopkeepers use: *Core i5 8th Gen · 8GB · 256GB SSD · 14"*. The same line is printed on the bill and the sticker. A laptop is sold, returned, exchanged or given on amanat exactly like a phone. For a wholesale sale, put several laptops on one bill to the other shop, each at its agreed price; what they do not pay goes on their khata.
+
 ### The lock check for used devices
 
 A used tablet or watch can be locked to the old owner's account. If it is, the next buyer cannot use it. So when you buy a used unit, the **Lock check (used device)** box appears in the form:

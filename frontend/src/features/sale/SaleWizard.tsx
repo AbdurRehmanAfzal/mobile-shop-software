@@ -136,7 +136,7 @@ export default function SaleWizard() {
   const rateShown = taxRate !== '' ? taxRate : String(Number(shopSet?.tax_rate) || 18)
   const [result, setResult] = useState<Invoice | null>(null)
   const [confirming, setConfirming] = useState(false)
-  const [devCat, setDevCat] = useState<'' | 'phone' | 'tablet' | 'watch'>('')
+  const [devCat, setDevCat] = useState<'' | 'phone' | 'tablet' | 'watch' | 'laptop'>('')
   // owner 2026-11-12 (ADR-066): a faulty phone can be sold as it is
   const { data: stock } = useDevices({ status: 'in_stock', with_faulty: true, q: q || undefined, category: devCat || undefined })
   const m = useDocMutation<Record<string, unknown>, Invoice>('POST', () => '/api/v1/sales', undefined, { kind: 'sale', label: (b) => `${pick('counter.sell')} · ${withCur(Number((b as { paid?: number }).paid ?? 0).toLocaleString('en-US'))}` })
@@ -370,7 +370,7 @@ export default function SaleWizard() {
             <Help term="sale.search" size="sm" />
           </div>
           <div className="flex flex-wrap items-center gap-1.5">
-            {(['', 'phone', 'tablet', 'watch'] as const).map((c) => (
+            {(['', 'phone', 'tablet', 'watch', ...(has('laptops') ? (['laptop'] as const) : [])] as const).map((c) => (
               <button key={c || 'all'} type="button" aria-pressed={devCat === c} onClick={() => setDevCat(c)} className={`tap h-10 rounded-full border-2 px-3.5 font-bold ${devCat === c ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-[13px]'}`}>
                 {pick(c ? `devcat.${c}` : 'common.all')}
               </button>

@@ -161,7 +161,7 @@ export default function DeviceDetailPage() {
     canSeeCost ? { key: 'balances', label: 'bal.short', testid: 'device-balances', run: () => nav(`/balances?q=${encodeURIComponent(d.imei1)}`) } : null,
     canSeeCost && phoneLike ? { key: 'fixImei', label: 'stock.fixImei.button', testid: 'fix-imei', run: () => { setFix({ imei1: d.imei1, imei2: d.imei2 ?? '', clear2: false, reason: '' }); setFixErr(null); setSheet('imei') } } : null,
     d.condition !== 'box_pack' ? { key: 'lock', label: 'devx.lock.button', run: () => { setLocks(d.lock_checks ?? {}); setLockNote(''); setSheet('lock') } } : null,
-    canSeeCost ? { key: 'retype', label: 'devx.retype', run: () => { setToCat((d.category ?? 'phone') === 'phone' ? 'tablet' : 'phone'); setPreview(null); setRetypeErr(null); setSheet('retype') } } : null,
+    canSeeCost && d.category !== 'laptop' ? { key: 'retype', label: 'devx.retype', run: () => { setToCat((d.category ?? 'phone') === 'phone' ? 'tablet' : 'phone'); setPreview(null); setRetypeErr(null); setSheet('retype') } } : null,
     inStock && canSeeCost && multiShop ? { key: 'transfer', label: 'transfer.sendBranch', run: () => nav(`/transfers/new?device=${d.id}`) } : null,
     canRemoveOpening ? { key: 'removeOld', label: 'crud.removeOldStock', run: () => setSheet('remove') } : null,
     // ADR-090: a phone entered by mistake is deleted with its bill (the bill's delete says what happens)

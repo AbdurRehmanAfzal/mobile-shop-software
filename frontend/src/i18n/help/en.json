@@ -3219,6 +3219,16 @@
         "title": "Carrier lock",
         "body": "Some phones from the USA or UK work only with one company's SIM (for example AT&T). \"Factory unlocked\" phones take any SIM.",
         "example": "iPhone 12 from the US shows \"SIM not supported\" with a Jazz SIM → carrier lock Still on."
+      },
+      "bios": {
+        "title": "BIOS password",
+        "body": "A password asked when the laptop starts, before Windows. If it is on and the seller cannot remove it, do not buy.",
+        "example": "Press F2 at start: it asks for a password → Not cleared."
+      },
+      "mdm": {
+        "title": "Company lock",
+        "body": "The laptop is managed by a company or school (MDM, Computrace / Absolute) and can be locked from far away. Common on laptops that left a company.",
+        "example": "A MacBook that shows \"Remote Management\" at setup → Not cleared."
       }
     },
     "modelNumber": {
@@ -3431,6 +3441,61 @@
         "title": "Release year",
         "body": "The year the model came out. Older models sell for less.",
         "example": "iPhone 13: 2021."
+      },
+      "cpu": {
+        "title": "Processor",
+        "body": "The laptop's processor family. Tap one, or type another. It prints on the bill and the sticker.",
+        "example": "Core i5 — the sticker on the palm rest, or System → About in Windows."
+      },
+      "cpu_gen": {
+        "title": "Generation",
+        "body": "The processor's generation: the first one or two digits of its number.",
+        "example": "i5-8250U → 8th Gen; i7-1165G7 → 11th Gen."
+      },
+      "gpu": {
+        "title": "Graphics card",
+        "body": "The graphics chip. Write it when it is a separate card — buyers of gaming and design laptops ask for it.",
+        "example": "NVIDIA RTX 3060, GTX 1650, Intel Iris Xe."
+      },
+      "gpu_gb": {
+        "title": "Graphics memory",
+        "body": "How many GB the graphics card has.",
+        "example": "RTX 3060 6GB → write 6."
+      },
+      "storage_type": {
+        "title": "Drive type",
+        "body": "What kind of drive the laptop has. An SSD is much faster than a hard disk (HDD), so buyers ask.",
+        "example": "256GB SSD; 1TB HDD."
+      },
+      "storage2": {
+        "title": "Second drive",
+        "body": "A second drive, if the laptop has two.",
+        "example": "256GB SSD + \"1TB HDD\" here."
+      },
+      "touch": {
+        "title": "Touch screen",
+        "body": "Does the screen work by touch?",
+        "example": "Latitude 7490 touch → Yes."
+      },
+      "convertible": {
+        "title": "Folds into a tablet",
+        "body": "Does the screen fold all the way back (x360 / 2-in-1 / Yoga)?",
+        "example": "HP EliteBook x360 1030 → Yes."
+      },
+      "backlit": {
+        "title": "Backlit keyboard",
+        "body": "Do the keys light up?",
+        "example": "ThinkPad T480 with keyboard light → Yes."
+      },
+      "gaming": {
+        "title": "Gaming laptop",
+        "body": "A laptop made for games (a strong graphics card and cooling). It is ticked by itself for the gaming models built into the list.",
+        "example": "ROG Strix, Legion, Nitro, Omen, Alienware."
+      },
+      "battery_hours": {
+        "title": "Battery backup",
+        "body": "How many hours a used laptop runs on its battery, as you tested it.",
+        "example": "About 3 hours → 3."
       }
     },
     "region": {

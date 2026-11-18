@@ -26,9 +26,11 @@ MODULES: dict[str, dict[str, str]] = {
     "ai": {"en": "Assistant & photo reading (AI)", "ur": "اسسٹنٹ اور تصویر پڑھنا (AI)"},
     # owner 2026-11-14 (ADR-074): never in a plan; only the super admin switches it on for a shop
     "login_activity": {"en": "Login activity (who is logged in where)", "ur": "لاگ اِن کی سرگرمی"},
+    # owner 2026-11-18 (ADR-108): for the shops that also trade laptops and ask for it
+    "laptops": {"en": "Laptops (new and used)", "ur": "لیپ ٹاپ (نئے اور استعمال شدہ)"},
 }
 # switched on by hand only, never by a plan
-OPT_IN = {"login_activity"}
+OPT_IN = {"login_activity", "laptops"}
 
 PLAN_DEFAULTS: dict[str, list[str]] = {
     "trial": [k for k in MODULES if k not in OPT_IN],

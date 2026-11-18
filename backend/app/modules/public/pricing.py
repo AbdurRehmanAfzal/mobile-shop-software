@@ -44,6 +44,7 @@ DEFAULTS: dict = {
         "attendance": 300,
         "ai": 1000,
         "login_activity": 0,
+        "laptops": 0,
     },
     "discount_per_year": 5,  # per cent off for each year paid at once: 1 year 5 … 5 years 25
     "max_years": 5,

@@ -31,7 +31,8 @@ export interface Brand {
   is_global: boolean
   model_count: number
 }
-export type DeviceCategory = 'phone' | 'tablet' | 'watch'
+/** laptop: owner 2026-11-18 (ADR-108), only for a shop with the `laptops` module */
+export type DeviceCategory = 'phone' | 'tablet' | 'watch' | 'laptop'
 export interface Model {
   id: UUID
   brand_id: UUID

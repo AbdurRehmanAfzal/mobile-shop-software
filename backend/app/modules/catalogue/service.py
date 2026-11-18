@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import func, or_, select
+from sqlalchemy import case, func, or_, select
 from sqlalchemy.orm import Session
 
 from app.core.errors import Conflict, Forbidden, NotFound
@@ -36,8 +36,19 @@ def _taken(
 # ---- brands & models -----------------------------------------------------------
 
 
-def list_brands(db: Session, shop_id: uuid.UUID, category: str | None = None) -> list[dict]:
-    """With `category` (tablet / watch) only brands that make such models, plus the shop's own."""
+def list_brands(
+    db: Session, shop_id: uuid.UUID, category: str | None = None, *, laptops: bool = True
+) -> list[dict]:
+    """With `category` (tablet / watch / laptop) only brands that make such models, plus the
+    shop's own. ADR-108: a brand that makes only laptops (Dell, HP …) is not in the phone list,
+    and is in the list of everything only for a shop that has the laptops module."""
+    laptop_only = (
+        select(Model.brand_id)
+        .where(Model.shop_id.is_(None), Model.is_active.is_(True))
+        .group_by(Model.brand_id)
+        .having(func.sum(case((Model.category == "laptop", 0), else_=1)) == 0)
+    )
+    hide_laptop_brands = category == "phone" or (category is None and not laptops)
     count_sq = (
         select(Model.brand_id, func.count(Model.id).label("n"))
         .where(
@@ -57,6 +68,11 @@ def list_brands(db: Session, shop_id: uuid.UUID, category: str | None = None) ->
             *(
                 [or_(count_sq.c.n > 0, Brand.shop_id == shop_id)]
                 if category and category != "phone"
+                else []
+            ),
+            *(
+                [or_(Brand.shop_id == shop_id, Brand.id.not_in(laptop_only))]
+                if hide_laptop_brands
                 else []
             ),
         )
@@ -110,10 +126,14 @@ def list_models(
     q: str | None,
     limit: int,
     category: str | None = None,
+    *,
+    laptops: bool = True,
 ) -> list[dict]:
     stmt = select(Model).where(_visible(Model.shop_id, shop_id), Model.is_active.is_(True))
     if category:
         stmt = stmt.where(Model.category == category)
+    elif not laptops:  # ADR-108: laptop models only for a shop that has the module
+        stmt = stmt.where(Model.category != "laptop")
     if brand_id:
         stmt = stmt.where(Model.brand_id == brand_id)
     if q:

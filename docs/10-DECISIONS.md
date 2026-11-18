@@ -362,6 +362,20 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-108 · 2026-11-18 · Accepted · Laptops as a fourth device type, behind an opt-in module
+**Context**: shopkeepers who also trade laptops (new and used, retail and wholesale) asked for them in the software. The owner asked for research and a plan first (`docs/39-LAPTOPS-PLAN.md`), the laptop on the purchase form like a mobile, shown only to shops that ask, common details first, and every brand and model (gaming too) built in.
+
+**Decision**:
+- **`devices.category = "laptop"`** — the device type of ADR-038 gets a fourth value; no new table, no copied screen, no migration. Purchases, stock, sales, returns, exchange, amanat, repairs, transfers, the ledger and every report work on it as on a phone.
+- **Module `laptops`, opt-in** (like `login_activity`: never in a plan; the provider switches it on per shop). Without it a shop sees nothing new — no type, no tab, no laptop-only brand (Dell, HP …) or laptop model in any list — and adding a laptop is refused with `module_off`. Switched off later, laptops in stock stay and can be sold.
+- **Identity is the serial number / service tag** (in `imei1`, as for every serial-only unit); when the sticker is gone the unit gets the shop's own code `LAP…`. IMEI 2, PTA, SIM time, SIM type / lock and region code are dropped on the server.
+- **Spec sheet**: RAM and storage stay columns (RAM up to 256 GB); processor, generation, graphics, drive type, second drive, screen, touch, x360, backlit, gaming, battery backup are `specs` keys. The app asks the common ones in the main form and the rest under "More details". One line names a laptop everywhere (`types.laptop_line` on the bill and sticker, `laptopLine` in the app).
+- **Catalogue**: 15 laptop brands and 1,143 models (228 gaming, marked so the form ticks "Gaming") seeded at start (`seeds/laptops.py`); storages 2TB / 4TB. A brand that makes only laptops is hidden from the phone list always, and from "all brands" for a shop without the module.
+- **No ID check for a laptop** (the check is built on the IMEI — e-Gadget, PTA); a laptop is never held back from sale for it. Lock checks of a used laptop (BIOS password, activation lock, company lock) follow the shop's own "lock check for used" setting; a lock marked not cleared blocks the sale.
+- **A laptop is never reclassified** to or from another type (`CATEGORIES` stays phone / tablet / watch for that tool and for the model-library CSV).
+
+**Consequences**: shops without the module are unchanged (tested). Open for the owner (docs/39 §4, docs/29): a stored wholesale price per laptop, an ID check for laptops bought from walk-in people, laptops in the Excel import, a price for the module.
+
 ## ADR-107 · 2026-11-18 · Accepted · Mobile numbers of any country
 **Context**: shopkeepers complained that only a Pakistani mobile number can be written, while their customers and dealers also come from other countries (the Gulf, the UK, Afghanistan, China …). Every mobile-number box showed a fixed +92 and the server refused anything that was not 03XXXXXXXXX.
 

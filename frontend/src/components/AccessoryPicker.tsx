@@ -7,19 +7,21 @@ import type { ReactNode } from 'react'
 import { BiLabel, useLang } from './Bilingual'
 import Help from './Help'
 import { isoDay } from '@/lib/format'
+import type { DeviceCategory } from '@/lib/types'
 
 export const ACC_KINDS = ['box', 'charger', 'cable', 'earphones', 'airpods', 'stylus', 'keyboard', 'strap'] as const
 export type AccKind = (typeof ACC_KINDS)[number]
 /** what comes with each kind of device (owner 2026-10-28: a watch has a strap, not earphones) */
-export const ACC_FOR: Record<'phone' | 'tablet' | 'watch', readonly AccKind[]> = {
+export const ACC_FOR: Record<DeviceCategory, readonly AccKind[]> = {
   phone: ['box', 'charger', 'cable', 'earphones', 'airpods'],
   tablet: ['box', 'charger', 'cable', 'stylus', 'keyboard'],
   watch: ['box', 'charger', 'strap'],
+  laptop: ['box', 'charger'],
 }
 export type AccState = { state: 'no' | 'now' | 'later'; date: string }
 export type AccValue = Partial<Record<AccKind, AccState>>
 
-export function AccessoryPicker({ mode, value, onChange, category = 'phone' }: { mode: 'buy' | 'sell'; value: AccValue; onChange: (v: AccValue) => void; category?: 'phone' | 'tablet' | 'watch' }) {
+export function AccessoryPicker({ mode, value, onChange, category = 'phone' }: { mode: 'buy' | 'sell'; value: AccValue; onChange: (v: AccValue) => void; category?: DeviceCategory }) {
   const { pick, ur, cls } = useLang()
   const set = (k: AccKind, s: AccState) => onChange({ ...value, [k]: s })
   const opt = (on: boolean, tone: string) =>

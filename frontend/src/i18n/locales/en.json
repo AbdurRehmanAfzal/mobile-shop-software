@@ -358,7 +358,8 @@
       "watch": "Smartwatches",
       "items": "Accessories",
       "part": "Spare parts",
-      "other": "Other"
+      "other": "Other",
+      "laptop": "Laptops"
     },
     "card": {
       "available": "Available to sell",
@@ -1684,7 +1685,8 @@
     "watch": "Smart watch",
     "imeiIfSim": "IMEI (if it takes a SIM)",
     "serial": "Serial number",
-    "serialHint": "No IMEI? Write the serial number from the box or the back (Settings → About)."
+    "serialHint": "No IMEI? Write the serial number from the box or the back (Settings → About).",
+    "laptop": "Laptop"
   },
   "fp": {
     "loginWith": "Log in with fingerprint",
@@ -1822,7 +1824,18 @@
       "water": "Water resistance",
       "aod": "Always-on display",
       "calling": "Bluetooth calling",
-      "battery_days": "Battery life (days)"
+      "battery_days": "Battery life (days)",
+      "cpu": "Processor",
+      "cpu_gen": "Generation",
+      "gpu": "Graphics card",
+      "gpu_gb": "Graphics memory (GB)",
+      "storage_type": "Drive type",
+      "storage2": "Second drive",
+      "touch": "Touch screen",
+      "convertible": "Folds into a tablet (x360)",
+      "backlit": "Backlit keyboard",
+      "gaming": "Gaming laptop",
+      "battery_hours": "Battery backup (hours)"
     },
     "sensor": {
       "hr": "Heart rate",
@@ -1850,7 +1863,9 @@
       "bad": "Lock still on",
       "none": "Lock not checked",
       "button": "Lock check",
-      "note": "Note"
+      "note": "Note",
+      "bios": "BIOS password",
+      "mdm": "Company lock (MDM / Computrace)"
     },
     "openHistory": "Open its history",
     "retype": "Change type",
@@ -1920,7 +1935,9 @@
     "cyclesHint": "iPhone 15 and newer: Settings → General → About. Leave empty if not shown.",
     "cyclesBad": "Write a number from 0 to 5000",
     "cyclesShort": "{{n}} cycles",
-    "serialBad": "4 to 20 letters or digits"
+    "serialBad": "4 to 20 letters or digits",
+    "laptopSerialHint": "The serial number or service tag (the sticker under the laptop, or the BIOS). Leave it empty only if it cannot be read: the app then gives the laptop its own code.",
+    "otherPh": "other…"
   },
   "remind": {
     "title": "Udhaar reminders",
@@ -2046,7 +2063,8 @@
     "installments": "Installments (qist)",
     "attendance": "Staff attendance (hazri)",
     "ai": "Assistant & photo reading (AI)",
-    "login_activity": "Login activity"
+    "login_activity": "Login activity",
+    "laptops": "Laptops (new and used)"
   },
   "fees": {
     "title": "Software fees",

@@ -73,7 +73,7 @@ def clean_serial(value: str) -> str:
 class DeviceIdentity(BaseModel):
     # phone | tablet | watch. A phone needs its IMEI; a Wi-Fi tablet or a smart watch may have only a
     # serial number, which then also identifies it (stored in imei1, unique per shop).
-    category: Literal["phone", "tablet", "watch"] = "phone"
+    category: Literal["phone", "tablet", "watch", "laptop"] = "phone"
     # tablet / watch only: True = takes a SIM (Wi-Fi + SIM tablet, cellular watch)
     cellular: bool | None = None
     size_mm: int | None = Field(default=None, ge=20, le=60)  # a watch's case
@@ -111,7 +111,7 @@ class DeviceIdentity(BaseModel):
     # owner addendum 6: grade, RAM, who gives the warranty, the spec sheet, the lock checks of a
     # used unit and the tick "lock checked and removed"; the model number feeds the shop's library
     grade: str | None = Field(default=None, max_length=20)
-    ram_gb: int | None = Field(default=None, ge=1, le=64)
+    ram_gb: int | None = Field(default=None, ge=1, le=256)
     warranty_by: Literal["shop", "supplier", "brand"] | None = None
     specs: dict | None = None
     lock_checks: dict[str, str] | None = None
@@ -157,7 +157,22 @@ class DeviceIdentity(BaseModel):
     @model_validator(mode="after")
     def _by_category(self):
         # what each kind of device has (owner 2026-10-28: a watch has no storage, IMEI 2 or JV)
-        if self.category == "phone":
+        if self.category == "laptop":
+            # ADR-108: no SIM side at all — no IMEI 2, PTA, SIM time or SIM lock; known by its
+            # serial number / service tag
+            if self.condition == DeviceCondition.PATCHED:
+                raise ValueError("Patched is only for phones")
+            self.cellular = None
+            self.size_mm = None
+            self.imei1 = None
+            self.imei2 = None
+            self.pta_status = PtaStatus.UNKNOWN
+            self.sim_time_months = None
+            self.sim_type = None
+            self.sim_lock = None
+            self.sim_lock_carrier = None
+            self.region_code = None
+        elif self.category == "phone":
             self.cellular = None
             self.size_mm = None
         else:
@@ -184,6 +199,10 @@ class DeviceIdentity(BaseModel):
             # ADR-085: a locked phone without a visible IMEI is known by its serial, or by a code
             # the shop makes (LCK…); its barcode label finds it like any other phone
             self.imei1 = self.serial or f"LCK{uuid.uuid4().hex[:12].upper()}"
+        if self.imei1 is None and self.category == "laptop":
+            # the serial number / service tag identifies it; a laptop whose sticker is gone gets
+            # the shop's own code (LAP…) and is found by its barcode label
+            self.imei1 = self.serial or f"LAP{uuid.uuid4().hex[:10].upper()}"
         if self.imei1 is None:
             if self.category == "phone":
                 raise ValueError("IMEI is required for a phone")
@@ -246,7 +265,7 @@ class DeviceUpdate(BaseModel):
     photos: list[str] | None = None
     asking_price: Decimal | None = Field(default=None, ge=0)
     grade: str | None = Field(default=None, max_length=20)
-    ram_gb: int | None = Field(default=None, ge=1, le=64)
+    ram_gb: int | None = Field(default=None, ge=1, le=256)
     warranty_by: Literal["shop", "supplier", "brand"] | None = None
     specs: dict | None = None
 

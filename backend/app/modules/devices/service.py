@@ -101,6 +101,11 @@ def apply_event(
             and device.condition == DeviceCondition.BOX_PACK
             else (data or {}).get("verification_status", VerificationStatus.PENDING)
         )
+        if device.category == "laptop":
+            # ADR-108: the ID check is built on the IMEI (e-Gadget, PTA); a laptop has none, and
+            # used laptops come in lots from dealers — so it is never held back from sale. The
+            # seller is still on the purchase bill.
+            device.verification_status = VerificationStatus.NOT_REQUIRED
     elif event_type in (
         EventType.LOANED_OUT,
         EventType.APPROVAL_OUT,
@@ -601,6 +606,16 @@ def new_device(
 
     _validate_catalogue(db, shop_id, data)
     shop = db.get(Shop, shop_id)
+    if getattr(data, "category", "phone") == dtypes.LAPTOP and not dtypes.laptops_on(shop):
+        # ADR-108: laptops only for a shop the provider has switched them on for
+        from app.core.errors import Forbidden
+
+        raise Forbidden(
+            code="module_off",
+            message_en="Laptops are not switched on for this shop. Contact the software provider.",
+            message_ur="اس دکان کے لیے لیپ ٹاپ چالو نہیں۔ سافٹ ویئر فراہم کنندہ سے رابطہ کریں۔",
+            details={"module": "laptops"},
+        )
     if (
         require_lock
         and not getattr(data, "lock_type", None)  # ADR-085: bought locked on purpose
@@ -640,7 +655,11 @@ def new_device(
     )
     device = Device(shop_id=shop_id, **fields)
     if device.lock_checks or getattr(data, "lock_checked", False):
-        device.lock_checks = device.lock_checks or {"activation": "cleared", "frp": "cleared"}
+        device.lock_checks = device.lock_checks or (
+            {"bios": "cleared", "activation": "cleared"}
+            if device.category == dtypes.LAPTOP
+            else {"activation": "cleared", "frp": "cleared"}
+        )
         device.lock_checked_at = utcnow()
         device.lock_checked_by = user_id
     db.add(device)

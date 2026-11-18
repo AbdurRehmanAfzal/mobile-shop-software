@@ -25,7 +25,8 @@ import { get } from '@/lib/api'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { LockChecksEditor, SpecsEditor, type LockChecks, type Specs } from '@/features/stock/DeviceSpecs'
 import type { AccessoryItem, Brand, Colour, DeviceCategory, DeviceCondition, Model, PtaStatus, Storage } from '@/lib/types'
-import { Smartphone, Tablet, Watch } from 'lucide-react'
+import { Laptop, Smartphone, Tablet, Watch } from 'lucide-react'
+import { useModule } from '@/lib/modules'
 import QuickAdd from '@/features/catalogue/QuickAdd'
 import AppleVariant, { isApple } from './AppleVariant'
 
@@ -126,11 +127,12 @@ export function emptyDraft(imei = '', kind: 'supplier' | 'walk_in' | 'shop' | 't
 
 export function draftToApi(d: DeviceLineDraft) {
   const phone = (d.category ?? 'phone') === 'phone'
-  const sim = phone || !!d.cellular
+  const laptop = d.category === 'laptop' // ADR-108: no SIM side; known by its serial number
+  const sim = phone || (!laptop && !!d.cellular)
   return {
     device: {
       category: d.category ?? 'phone',
-      cellular: phone ? null : !!d.cellular,
+      cellular: phone || laptop ? null : !!d.cellular,
       size_mm: d.category === 'watch' && d.size_mm ? Number(d.size_mm) : null,
       battery_health: d.condition !== 'box_pack' && d.battery_health ? Number(d.battery_health) : null,
       imei1: sim ? d.imei1 || null : null,
@@ -216,14 +218,18 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
     }).catch(() => setFromLibrary(false))
   }, [d.model_id]) // eslint-disable-line react-hooks/exhaustive-deps
   const used = d.condition !== 'box_pack'
-  const lockNeeded = !edit && used && (category !== 'phone' || !!dopts?.require_lock_check)
+  // a used tablet / watch always; a used phone or laptop when the shop says so
+  const lockNeeded = !edit && used && (category === 'tablet' || category === 'watch' || !!dopts?.require_lock_check)
   const lockStillOn = Object.values(d.lock_checks ?? {}).some((v) => v === 'not_cleared')
   const lockOk = !lockNeeded || ((!!d.lock_checked || Object.keys(d.lock_checks ?? {}).length > 0) && !lockStillOn)
   const serialOk = /^[A-Za-z0-9-]{4,24}$/.test(d.serial.trim())
   const phone = category === 'phone'
-  const sim = phone || !!d.cellular
-  // a phone, or anything with a SIM, needs its IMEI; a Wi-Fi tablet or a GPS watch its serial number
-  const identityOk = sim ? imeiDigits.length === 15 : serialOk
+  const laptop = category === 'laptop'
+  const laptopsOn = useModule('laptops')
+  const sim = phone || (!laptop && !!d.cellular)
+  // a phone, or anything with a SIM, needs its IMEI; a Wi-Fi tablet or a GPS watch its serial number;
+  // a laptop its serial number too, unless the sticker is gone (the shop's own code is given then)
+  const identityOk = sim ? imeiDigits.length === 15 : laptop ? !d.serial.trim() || serialOk : serialOk
   const showPta = sim
   const cyclesOk = !d.battery_cycles || (Number.isInteger(Number(d.battery_cycles)) && Number(d.battery_cycles) >= 0 && Number(d.battery_cycles) <= 5000)
   const batteryOk = (d.battery_health === '' || (Number(d.battery_health) >= 1 && Number(d.battery_health) <= 100)) && cyclesOk
@@ -240,12 +246,12 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
     <div className="flex flex-col gap-3">
       {edit ? null : <span className="flex items-center gap-1"><BiLabel text="devcat.what" size="md" tone="text-muted" /><Help term="device.category" size="sm" /></span>}
       {edit ? null : (
-        <div className="grid grid-cols-3 gap-2" role="group" aria-label={pick('devcat.what')}>
-          {(['phone', 'tablet', 'watch'] as const).map((c) => {
-            const Icon = c === 'phone' ? Smartphone : c === 'tablet' ? Tablet : Watch
+        <div className={`grid gap-2 ${laptopsOn ? 'grid-cols-4' : 'grid-cols-3'}`} role="group" aria-label={pick('devcat.what')}>
+          {(['phone', 'tablet', 'watch', ...(laptopsOn ? (['laptop'] as const) : [])] as DeviceCategory[]).map((c) => {
+            const Icon = c === 'phone' ? Smartphone : c === 'tablet' ? Tablet : c === 'laptop' ? Laptop : Watch
             const on = category === c
             return (
-              <button key={c} type="button" aria-pressed={on} onClick={() => setD((x) => ({ ...x, category: c, brand_id: '', brand_name: '', model_id: '', model_name: '', cellular: false, size_mm: '', battery_health: '', imei2: '', storage_id: c === 'watch' ? '' : x.storage_id, condition: x.condition === 'patched' && c !== 'phone' ? 'used' : x.condition, pta_status: c === 'phone' ? x.pta_status : 'pta_approved', accessories: [] }))} className={`tap flex min-h-[64px] flex-col items-center justify-center gap-1 rounded-2xl border-2 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'}`}>
+              <button key={c} type="button" aria-pressed={on} data-testid={`devcat-${c}`} onClick={() => setD((x) => ({ ...x, category: c, brand_id: '', brand_name: '', model_id: '', model_name: '', cellular: false, size_mm: '', battery_health: '', imei2: '', storage_id: c === 'watch' ? '' : x.storage_id, condition: x.condition === 'patched' && c !== 'phone' ? 'used' : x.condition, pta_status: c === 'phone' ? x.pta_status : 'pta_approved', accessories: [] }))} className={`tap flex min-h-[64px] flex-col items-center justify-center gap-1 rounded-2xl border-2 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'}`}>
                 <Icon size={22} />
                 <span className="text-[13px] leading-tight">{pick(`devcat.${c}`)}</span>
               </button>
@@ -253,7 +259,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
           })}
         </div>
       )}
-      {phone || edit ? null : (
+      {phone || laptop || edit ? null : (
         <>
           <span className="flex items-center gap-1"><BiLabel text="devx.connection" size="md" tone="text-muted" /><Help term="device.connection" size="sm" /></span>
           <BiSegmented<'no' | 'yes'>
@@ -282,7 +288,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
       {phone ? <ImeiInput label="stock.imei2" help={<Help term="device.imei2" size="sm" />} value={d.imei2} onChange={(v) => set('imei2', v)} exclude={toLatinDigits(d.imei1).replace(/\D/g, '')} /> : null}
       {/* owner 2026-11-13: a phone's serial number too, optional, under the IMEIs; a Wi-Fi tablet /
           GPS watch has only its serial (then required, its identity, not changed on edit) */}
-      <BiInput label={sim ? 'devx.serialOpt' : 'devcat.serial'} help={<Help term="device.serial" size="sm" />} value={d.serial} onChange={(e) => set('serial', e.target.value.toUpperCase())} disabled={edit && !sim} maxLength={24} dir="ltr" className="num" hint={sim ? undefined : 'devcat.serialHint'} error={sim && d.serial.trim() && !serialOk ? 'devx.serialBad' : null} data-testid="device-serial" />
+      <BiInput label={sim ? 'devx.serialOpt' : 'devcat.serial'} help={<Help term="device.serial" size="sm" />} value={d.serial} onChange={(e) => set('serial', e.target.value.toUpperCase())} disabled={edit && !sim} maxLength={24} dir="ltr" className="num" hint={sim ? undefined : laptop ? 'devx.laptopSerialHint' : 'devcat.serialHint'} error={sim && d.serial.trim() && !serialOk ? 'devx.serialBad' : null} data-testid="device-serial" />
       <div className="grid grid-cols-2 gap-2">
         <BiInput label="barcode.manufacturer" help={<Help term="label.manufacturer" size="sm" />} value={d.manufacturer_code ?? ''} onChange={(e) => set('manufacturer_code', e.target.value)} dir="ltr" className="num" maxLength={64} />
         <BiInput label="barcode.custom" help={<Help term="label.ownBarcode" size="sm" />} value={d.barcode ?? ''} onChange={(e) => set('barcode', e.target.value)} dir="ltr" className="num" maxLength={64} disabled={edit} />
@@ -338,6 +344,8 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
           )}
         </div>
       ) : null}
+      {/* ADR-108: a laptop's common details — processor, generation, drive, screen, graphics */}
+      {laptop ? <SpecsEditor category="laptop" part="common" value={d.specs ?? {}} onChange={(v) => set('specs', v)} /> : null}
       {category === 'watch' ? (
         <div>
           <span className="flex items-center gap-1 mb-1.5"><BiLabel text="devx.size" size="md" tone="text-muted" /><Help term="device.watchSize" size="sm" /></span>
@@ -377,7 +385,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
         </div>
         )}
         {/* owner 2026-11-13: RAM beside the storage */}
-        {category !== 'watch' ? <BiInput label="devx.ram" help={<Help term="device.ram" size="sm" />} type="number" inputMode="numeric" min={1} max={64} value={d.ram_gb ?? ''} onChange={(e) => set('ram_gb', e.target.value)} className="num" data-testid="device-ram" /> : null}
+        {category !== 'watch' ? <BiInput label="devx.ram" help={<Help term="device.ram" size="sm" />} type="number" inputMode="numeric" min={1} max={256} value={d.ram_gb ?? ''} onChange={(e) => set('ram_gb', e.target.value)} className="num" data-testid="device-ram" /> : null}
         <div>
           <span className="flex items-center gap-1 mb-1.5"><BiLabel text="stock.colour" size="md" tone="text-muted" /><Help term="device.colour" size="sm" /></span>
           <select value={d.colour_id} onChange={(e) => set('colour_id', e.target.value)} className="min-h-12 w-full rounded-2xl border border-line bg-surface px-3 font-semibold">
@@ -403,7 +411,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
         </div>
       </div>
 
-      {isApple(d.brand_name, d.model_name) ? (
+      {isApple(d.brand_name, d.model_name) && !laptop ? (
         <AppleVariant region={d.region_code ?? ''} sim={d.sim_type ?? ''} showSim={sim} regionOptions={dopts?.region_codes} simOptions={dopts?.sim_types} onRegion={(v) => set('region_code', v)} onSim={(v) => set('sim_type', v)} />
       ) : null}
 
@@ -470,7 +478,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
           <span className="flex items-center gap-1"><BiLabel text="devx.warrantyBy" size="md" tone="text-muted" /><Help term="device.warrantyBy" size="sm" /></span>
           <BiSegmented<'shop' | 'supplier' | 'brand'> value={d.warranty_by || 'shop'} onChange={(v) => set('warranty_by', v)} options={[{ value: 'shop', text: 'devx.by.shop' }, { value: 'supplier', text: 'devx.by.supplier' }, { value: 'brand', text: 'devx.by.brand' }]} />
           <span className="flex items-center gap-1"><BiLabel text="devx.specs" size="md" tone="text-muted" /><Help term="device.specs" size="sm" /></span>
-          <SpecsEditor category={category} value={d.specs ?? {}} onChange={(v) => set('specs', v)} />
+          <SpecsEditor category={category} part={laptop ? 'rest' : undefined} value={d.specs ?? {}} onChange={(v) => set('specs', v)} />
         </div>
       ) : null}
 

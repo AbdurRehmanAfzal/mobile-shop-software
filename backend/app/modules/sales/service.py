@@ -598,6 +598,7 @@ def _unit_bits(ln: dict, ur: bool, cp: str = "CP ID") -> str:
         "phone": ("Mobile", "موبائل"),
         "tablet": ("Tablet", "ٹیبلٹ"),
         "watch": ("Smart watch", "سمارٹ واچ"),
+        "laptop": ("Laptop", "لیپ ٹاپ"),
     }.get(ln.get("category") or "phone", ("", ""))[1 if ur else 0]
     cond = {
         "box_pack": ("Box pack", "باکس پیک"),
@@ -618,8 +619,10 @@ def _unit_bits(ln: dict, ur: bool, cp: str = "CP ID") -> str:
         for x in (ln.get("storage_name"), f"{ln['ram_gb']}GB RAM" if ln.get("ram_gb") else None)
         if x
     )
-    from app.modules.devices.types import lock_text
+    from app.modules.devices.types import laptop_line, lock_text
 
+    if ln.get("category") == "laptop":  # ADR-108: processor · RAM · drive · screen · graphics
+        mem = laptop_line(ln) or mem
     # ADR-085: a locked phone sold as it is says so on the bill
     locked = lock_text(ln.get("lock_type"), ur)
     bits = [b for b in (kind, mem, ln.get("colour_name"), cond, pta, locked) if b]
@@ -654,6 +657,7 @@ def to_out(db: Session, inv: Invoice, show_cost: bool) -> dict:
                     "category": d.category,
                     "storage_name": st.name if st else None,
                     "ram_gb": d.ram_gb,
+                    "specs": d.specs if d.category == "laptop" else None,
                     "colour_name": co.name if co else None,
                     "pta_status": d.pta_status if (d.category == "phone" or d.cellular) else None,
                     "condition": d.condition,

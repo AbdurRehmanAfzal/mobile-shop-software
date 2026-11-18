@@ -20,6 +20,11 @@ from app.modules.devices.state import DeviceCondition, DeviceStatus, EventType
 from app.modules.ledger.service import money
 
 CATEGORIES = ("phone", "tablet", "watch")
+# owner 2026-11-18 (ADR-108): laptops are a fourth type, behind the `laptops` module. Kept out
+# of CATEGORIES on purpose: a unit is never reclassified to or from a laptop, and the model
+# library's CSV import stays as it was.
+LAPTOP = "laptop"
+ALL_CATEGORIES = (*CATEGORIES, LAPTOP)
 GRADES = ("a", "b", "refurbished", "copy")
 # owner 2026-11-09 (ADR-055): an Apple unit's region code (the letters after the part number in
 # Settings → General → About, e.g. MLPF3LL/A → LL/A) and its SIM setup. The shop may add its own.
@@ -94,7 +99,8 @@ def clean_variant(v: str | None) -> str | None:
     return v if v in SIM_TYPES else (v.upper() if len(v) <= 6 and "/" in v else v)
 
 
-LOCK_KEYS = ("activation", "frp", "account", "paired", "carrier")
+# bios / mdm: a used laptop (BIOS or firmware password; company management / Computrace)
+LOCK_KEYS = ("activation", "frp", "account", "paired", "carrier", "bios", "mdm")
 LOCK_VALUES = ("cleared", "not_cleared", "na")
 DEFAULT_PREFS = {"grades": list(GRADES), "require_lock_check": False}
 # the spec keys a unit or a model may carry (anything else is dropped so the JSON stays tidy)
@@ -133,6 +139,20 @@ SPEC_KEYS = (
     "aod",
     "calling",
     "battery_days",
+    # laptop (ADR-108): the processor and its generation, graphics, the drive's kind and a
+    # second drive, touch / 2-in-1 / backlit keys, gaming, battery backup in hours
+    "cpu",
+    "cpu_gen",
+    "gpu",
+    "gpu_gb",
+    "storage_type",
+    "storage2",
+    "touch",
+    "convertible",
+    "backlit",
+    "gaming",
+    "battery_hours",
+    "keyboard",
 )
 
 
@@ -234,7 +254,37 @@ def lock_required(shop: Shop | None, category: str, condition: str) -> bool:
         return False
     if category in ("tablet", "watch"):
         return True
+    # a used phone or laptop: when the shop says so
     return prefs_for(shop)["require_lock_check"]
+
+
+def laptops_on(shop: Shop | None) -> bool:
+    """the shop's organisation has the `laptops` module (ADR-108)"""
+    from app.modules.admin import modules as mods
+
+    org = shop.organisation if shop is not None else None
+    return org is not None and "laptops" in mods.effective(org)
+
+
+def laptop_line(d: dict) -> str:
+    """How a laptop is named after its model, the way shopkeepers say it:
+    "Core i5 8th Gen · 8GB · 256GB SSD · 14\" · RTX 3060 6GB". `d` is a device as a dict."""
+    s = d.get("specs") or {}
+    cpu = " ".join(str(x) for x in (s.get("cpu"), s.get("cpu_gen")) if x)
+    drive = " ".join(str(x) for x in (d.get("storage_name"), s.get("storage_type")) if x)
+    if s.get("storage2"):
+        drive = f"{drive} + {s['storage2']}" if drive else str(s["storage2"])
+    gpu = str(s.get("gpu") or "")
+    if gpu and s.get("gpu_gb"):
+        gpu = f"{gpu} {s['gpu_gb']}GB"
+    bits = [
+        cpu,
+        f"{d['ram_gb']}GB" if d.get("ram_gb") else "",
+        drive,
+        f'{s["display_in"]}"' if s.get("display_in") else "",
+        gpu,
+    ]
+    return " · ".join(b for b in bits if b)
 
 
 def model_specs(db: Session, shop_id: uuid.UUID, model_id: uuid.UUID) -> dict:
@@ -462,6 +512,12 @@ def reclassify_preview(
         d = db.get(Device, did)
         if d is None or d.shop_id != shop_id:
             raise NotFound(code="device_not_found")
+        if d.category == LAPTOP:  # ADR-108: a laptop has no IMEI / PTA side to turn into
+            raise ValidationFailed(
+                code="bad_category",
+                message_en="A laptop cannot be changed into another type",
+                message_ur="لیپ ٹاپ کی قسم تبدیل نہیں ہو سکتی",
+            )
         rows.append(_row(db, d, to_category, model_id))
     return rows
 
@@ -594,10 +650,10 @@ def stock_by_type(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
             "lock_failed": 0,
             "non_pta": 0,
         }
-        for c in CATEGORIES
+        for c in ALL_CATEGORIES
     }
     cutoff = dt.datetime.now(dt.UTC) - dt.timedelta(days=60)
-    slow = {c: 0 for c in CATEGORIES}
+    slow = {c: 0 for c in ALL_CATEGORIES}
     for d in rows:
         g = out[d.category if d.category in out else "phone"]
         g["count"] += 1
@@ -613,10 +669,12 @@ def stock_by_type(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
             g["non_pta"] += 1
         if d.first_seen_at and d.first_seen_at.replace(tzinfo=dt.UTC) < cutoff:
             slow[g["category"]] += 1
-    for c in CATEGORIES:
+    for c in ALL_CATEGORIES:
         out[c]["slow_60d"] = slow[c]
         if not show_cost:
             out[c]["cost"] = None
+    if not out[LAPTOP]["count"]:  # a shop with no laptops sees the three rows it always saw
+        del out[LAPTOP]
     total = {
         "count": sum(g["count"] for g in out.values()),
         "cost": money(sum((g["cost"] or ZERO) for g in out.values())) if show_cost else None,

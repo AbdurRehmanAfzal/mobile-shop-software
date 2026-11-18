@@ -18,7 +18,7 @@ from app.modules.catalogue.schemas import (
     StorageOut,
 )
 
-Category = Literal["phone", "tablet", "watch"]
+Category = Literal["phone", "tablet", "watch", "laptop"]
 
 router = APIRouter(prefix="/api/v1/catalogue", tags=["catalogue"])
 
@@ -28,7 +28,9 @@ Editor = Annotated[Ctx, Depends(require_cap(Cap.CATALOGUE_EDIT))]
 
 @router.get("/brands", response_model=list[BrandOut])
 def brands(ctx: Ctx, db: DB, category: Category | None = None):
-    return service.list_brands(db, ctx.shop_id, category)
+    from app.modules.devices.types import laptops_on
+
+    return service.list_brands(db, ctx.shop_id, category, laptops=laptops_on(ctx.shop))
 
 
 @router.post("/brands", response_model=BrandOut, status_code=201)
@@ -45,7 +47,11 @@ def models(
     limit: int = Query(default=200, le=500),
     category: Category | None = None,
 ):
-    return service.list_models(db, ctx.shop_id, brand_id, q, limit, category)
+    from app.modules.devices.types import laptops_on
+
+    return service.list_models(
+        db, ctx.shop_id, brand_id, q, limit, category, laptops=laptops_on(ctx.shop)
+    )
 
 
 @router.post("/models", response_model=ModelOut, status_code=201)
