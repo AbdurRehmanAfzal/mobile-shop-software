@@ -1615,8 +1615,8 @@
     },
     "phone": {
       "title": "Mobile number",
-      "body": "Bande ka mobile number. Is se woh jaldi mil jata hai aur WhatsApp bill aur reminder isi par jata hai.",
-      "example": "0321 5550002 — ek baar likhein, agli baar sirf 0321555 search karein."
+      "body": "Bande ka mobile number. Is se woh jaldi mil jata hai aur WhatsApp bill aur reminder isi par jata hai. Kisi doosre mulk ke number ke liye aage likhe code (+92) par daba kar mulk chunein — phir number code ke baghair likhein.",
+      "example": "Pakistan: 0321 5550002. Dubai ka dealer: United Arab Emirates (+971) chunein aur 50 123 4567 likhein."
     },
     "cnic": {
       "title": "CNIC (shanakhti card)",

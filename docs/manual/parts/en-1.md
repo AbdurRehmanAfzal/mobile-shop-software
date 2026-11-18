@@ -117,7 +117,7 @@ Your shop is opened by **OOP Solutions**, the maker of the software. There is no
 3. Type your **Password**.
 4. Tap **Login**.
 
-> **Tip:** Pasting a number such as `0300…` or `+92300…` also works. The app cleans it up for you.
+> **Tip:** Pasting a number such as `0300…` or `+92300…` also works. The app cleans it up for you. A number of another country: tap **+92** and pick the country first.
 
 ### Forgot password
 

@@ -11,6 +11,7 @@ import { Loading, Sheet, fmtDate } from '@/components/ui'
 import { LOCALES, setLocale, type Locale } from '@/i18n'
 import { api } from '@/lib/api'
 import { withCur } from '@/lib/format'
+import { waNumber } from '@/lib/phone'
 
 interface View {
   shop: { name: string; name_ur: string | null; phone: string | null; city: string | null; locale: string }
@@ -31,7 +32,7 @@ export function StatusLinkSheet({ open, onClose, token, phone, name, device, no 
   const [copied, setCopied] = useState(false)
   const url = statusUrl(token)
   const text = pick('rstatus.message').replace('{{name}}', name ?? '').replace('{{device}}', device).replace('{{no}}', no).replace('{{link}}', url).trim()
-  const wa = phone ? `https://wa.me/92${phone.replace(/\D/g, '').replace(/^0/, '').replace(/^92/, '')}?text=${encodeURIComponent(text)}` : `https://wa.me/?text=${encodeURIComponent(text)}`
+  const wa = phone ? `https://wa.me/${waNumber(phone)}?text=${encodeURIComponent(text)}` : `https://wa.me/?text=${encodeURIComponent(text)}`
   return (
     <Sheet open={open} onClose={onClose} title="rstatus.send">
       <div className="flex flex-col gap-3" data-testid="status-link-sheet">

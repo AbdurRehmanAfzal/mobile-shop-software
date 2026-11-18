@@ -8,7 +8,7 @@ import { PhoneInput } from '@/components/FieldInputs'
 import { Sheet } from '@/components/ui'
 import { ApiError, post } from '@/lib/api'
 import { useAuth, type MeOut } from '@/lib/auth'
-import { isValidPkMobile, normalisePhone } from '@/lib/format'
+import { isValidMobile, normalisePhone } from '@/lib/format'
 
 type Step = 'phone' | 'code' | 'password'
 interface AuthResponse { tokens: { access_token: string; refresh_token: string }; me: MeOut }
@@ -70,9 +70,9 @@ export default function ForgotSheet({ open, onClose, phone, setPhone }: { open: 
             {requested ? <BiAlert text={`auth.forgotSent_${requested}`} kind={requested === 'none' ? 'info' : 'success'} /> : null}
             {noSender ? <BiAlert text="otp.noSender" kind="info" /> : null}
             {err ? <BiAlert text={err} /> : null}
-            {!noSender ? <BiButton type="button" text="otp.send" icon={<MessageCircle size={20} />} full loading={busy} disabled={!isValidPkMobile(phone)} onClick={sendCode} /> : null}
-            {noSender || requested ? <BiButton type="button" text="auth.forgotSend" icon={<Send size={20} />} variant={noSender ? 'primary' : 'ghost'} full loading={busy} disabled={!isValidPkMobile(phone) || !!requested} onClick={request} /> : (
-              <button type="button" onClick={request} disabled={!isValidPkMobile(phone) || busy} className="tap py-1 disabled:opacity-50"><BiLabel text="otp.orRequest" size="sm" tone="text-muted" align="center" /></button>
+            {!noSender ? <BiButton type="button" text="otp.send" icon={<MessageCircle size={20} />} full loading={busy} disabled={!isValidMobile(phone)} onClick={sendCode} /> : null}
+            {noSender || requested ? <BiButton type="button" text="auth.forgotSend" icon={<Send size={20} />} variant={noSender ? 'primary' : 'ghost'} full loading={busy} disabled={!isValidMobile(phone) || !!requested} onClick={request} /> : (
+              <button type="button" onClick={request} disabled={!isValidMobile(phone) || busy} className="tap py-1 disabled:opacity-50"><BiLabel text="otp.orRequest" size="sm" tone="text-muted" align="center" /></button>
             )}
           </>
         ) : step === 'code' ? (

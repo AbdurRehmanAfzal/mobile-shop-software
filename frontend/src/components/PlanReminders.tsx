@@ -16,6 +16,7 @@ import { useAuth } from '@/lib/auth'
 import { downloadFile, fileUrl, openPrintable } from '@/lib/files'
 import { popupAllowedOn, romanBarLine, usePlanReminder, type Reminder, type SnoozeOption } from '@/lib/planReminder'
 import {withCur } from '@/lib/format'
+import { waNumber } from '@/lib/phone'
 
 const IDLE_MS = 60_000
 const REFRESH_EVERY_MS = 5 * 60_000
@@ -152,7 +153,7 @@ function CopyRow({ label, value, raw = false }: { label: string; value: string; 
 }
 
 export function waLink(d: Reminder): string {
-  const to = d.billing?.support.whatsapp ? d.billing.support.whatsapp.replace(/[^\d]/g, '').replace(/^0/, '92') : MAKER.tel.replace('+', '')
+  const to = d.billing?.support.whatsapp ? waNumber(d.billing.support.whatsapp) : MAKER.tel.replace('+', '')
   const text = i18next.t('plan.pop.waText', { lng: 'en' }).replace('{{shop}}', d.shop_name).replace('{{plan}}', d.plan)
   return `https://wa.me/${to}?text=${encodeURIComponent(text)}`
 }

@@ -1551,7 +1551,10 @@
     "futureDate": "Yeh tareekh abhi aayi nahi",
     "belowCost": "Yeh qeemat khareed qeemat ({{cost}}) se kam hai. Is mein nuqsan hai.",
     "belowCostOk": "Mujhe pata hai, nuqsan par bechein",
-    "belowCostBlocked": "Khareed qeemat se kam par sirf malik ya manager bech sakta hai. Qeemat barhaein."
+    "belowCostBlocked": "Khareed qeemat se kam par sirf malik ya manager bech sakta hai. Qeemat barhaein.",
+    "country": "Mulk",
+    "badMobileIntl": "Yeh number chune gaye mulk ke liye chhota ya lamba hai. Mulk ke code ke baghair likhein.",
+    "mobileEg": "maslan"
   },
   "accx": {
     "titleBuy": "Phone ke saath kya kya aaya?",

@@ -10,6 +10,7 @@ import { Chip, ErrorText, MoneyText, fmtDate } from '@/components/ui'
 import { openPrintable } from '@/lib/files'
 import { withCur } from '@/lib/format'
 import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
+import { waNumber } from '@/lib/phone'
 
 export interface Due { id: string; invoice_no: string; months: number; amount: string; paid: string; left: string; status: 'unpaid' | 'partial' | 'paid'; period_from: string | null; period_to: string | null; due_on: string | null; overdue: boolean; note?: string | null }
 export interface Dues { rows: Due[]; total: string; paid: string; left: string }
@@ -35,7 +36,7 @@ export default function FeeCreditCard<S extends ShopLite>({ shop, onSaved }: { s
     .replace('{{total}}', rs(dues?.total ?? 0))
     .replace('{{paid}}', rs(dues?.paid ?? 0))
     .replace('{{left}}', rs(left))
-  const wa = `https://wa.me/92${(shop.owner_phone ?? '').replace(/^0/, '')}?text=${encodeURIComponent(waText)}`
+  const wa = `https://wa.me/${waNumber((shop.owner_phone ?? ''))}?text=${encodeURIComponent(waText)}`
 
   return (
     <div className="flex flex-col gap-3" data-testid="fee-credit">

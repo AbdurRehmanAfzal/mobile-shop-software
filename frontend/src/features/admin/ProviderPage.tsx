@@ -15,6 +15,7 @@ import { useAuth } from '@/lib/auth'
 import { useGet, useInvalidate } from '@/lib/queries'
 import { SITE } from './AppLinkCard'
 import {withCur } from '@/lib/format'
+import { waNumber } from '@/lib/phone'
 
 type Tab = 'overview' | 'shops' | 'payments' | 'keys'
 interface Overview {
@@ -213,8 +214,8 @@ function ShopSheet({ r, onOpenAdmin }: { r: ShopRow; onOpenAdmin: () => void }) 
   const inv = useInvalidate()
   const { data: pays } = useGet<{ rows: PayRow[] }>(['prov-shop-pays', r.shop_id], `/api/v1/admin/business/payments?q=${encodeURIComponent(r.name)}`)
   const small = ur ? cls('sm') : 'text-xs font-semibold'
-  const wa = (r.phone ?? '').replace(/^0/, '')
-  const remind = `https://wa.me/92${wa}?text=${encodeURIComponent(`${r.name}: Mobile Shop — ${r.plan} plan ${r.days_left != null && r.days_left >= 0 ? `ends in ${r.days_left} days` : 'has ended'}. Fee ${rs(r.monthly_fee)} / month. More → Software fees to pay.`)}`
+  const wa = waNumber(r.phone)
+  const remind = `https://wa.me/${wa}?text=${encodeURIComponent(`${r.name}: Mobile Shop — ${r.plan} plan ${r.days_left != null && r.days_left >= 0 ? `ends in ${r.days_left} days` : 'has ended'}. Fee ${rs(r.monthly_fee)} / month. More → Software fees to pay.`)}`
   return (
     <div className="flex flex-col gap-3" data-testid="prov-shop-sheet">
       <div className="grid grid-cols-2 gap-2">

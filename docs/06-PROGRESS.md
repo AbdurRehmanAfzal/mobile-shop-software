@@ -347,6 +347,7 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | Accounts & Reports phase 2: other income with categories, recurring expenses, consolidated branches, retail vs wholesale, credit limit (docs/38 §3) | ⬜ | waits for the owner's order |
 | The "plan renewed" thank-you shows once, not on every login: marked when shown, newest payment marked, only for a payment approved in the last 3 days (shopkeeper report 2026-11-18, ADR-105) | ✅ | `plan/reminders.py`, `planReminder.ts`, `PlanReminders.tsx`, `tests/test_plan_reminders.py`, `e2e/plan-thanks-once.spec.ts` |
 | Amanat to anyone (customer, dealer, shop, technician); sticker ticks for RAM, battery health, battery cycles, serial; the sticker's barcode is the IMEI or the shop's own code (shopkeeper 2026-11-18, ADR-106) | ✅ | `loans/service.py`, `labels/service.py`, `LabelSheet.tsx`, `StickerPreview.tsx`, `LoansPage.tsx`, `tests/test_labels.py`, `tests/test_loans.py`, `e2e/amanat-anyone-sticker.spec.ts` |
+| Mobile numbers of any country: a country-code picker on every mobile-number box (name, code and format), stored as +code…; Pakistani numbers unchanged; WhatsApp links use the number's own code (shopkeepers 2026-11-18, ADR-107) | ✅ | `core/pk.py`, `lib/phone.ts`, `FieldInputs.tsx`, `tests/test_phone_countries.py`, `lib/phone.test.ts`, `e2e/phone-countries.spec.ts` |
 | Operations runbook (internal; secrets only as placeholders) | ✅ | `operations-en.md` |
 | Owner review of the wording | ⏳ | `docs/29-OWNER-PENDING.md` D |
 

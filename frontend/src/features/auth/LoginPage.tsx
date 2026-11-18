@@ -3,7 +3,7 @@ import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { ApiError, post } from '@/lib/api'
 import { useAuth, type MeOut } from '@/lib/auth'
-import { isValidPkMobile, normalisePhone, toLatinDigits } from '@/lib/format'
+import { isValidMobile, normalisePhone, toLatinDigits } from '@/lib/format'
 import { BiAlert, BiButton, BiInput, BiLabel, BiSegmented, type BiText } from '@/components/Bilingual'
 import { PhoneInput } from '@/components/FieldInputs'
 import { fingerprintLogin, isOnHere } from '@/lib/fingerprint'
@@ -76,7 +76,7 @@ export default function LoginPage() {
 
   function submitPassword(e: FormEvent) {
     e.preventDefault()
-    if (!isValidPkMobile(phone)) {
+    if (!isValidMobile(phone)) {
       setError({ en: 'Enter a valid mobile number (03XXXXXXXXX)', ur: 'درست موبائل نمبر درج کریں (03XXXXXXXXX)' })
       return
     }
@@ -85,7 +85,7 @@ export default function LoginPage() {
 
   function submitPin(e: FormEvent) {
     e.preventDefault()
-    if (!isValidPkMobile(phone)) {
+    if (!isValidMobile(phone)) {
       setError({ en: 'Enter a valid mobile number (03XXXXXXXXX)', ur: 'درست موبائل نمبر درج کریں (03XXXXXXXXX)' })
       return
     }

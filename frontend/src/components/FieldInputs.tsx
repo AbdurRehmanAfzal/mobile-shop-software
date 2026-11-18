@@ -1,11 +1,13 @@
-/** Inputs that cannot take a wrong shape (owner, 2026-10-27): a mobile number with +92 already in
- *  front, a CNIC that stops at 13 digits and adds its own dashes, and an IMEI that stops at 15. */
+/** Inputs that cannot take a wrong shape (owner, 2026-10-27): a mobile number with its country code
+ *  in front (+92 unless another country is picked — ADR-107), a CNIC that stops at 13 digits and adds its own dashes, and an IMEI that stops at 15. */
 
-import { useId, useState } from 'react'
+import { ChevronDown } from 'lucide-react'
+import { useEffect, useId, useMemo, useState } from 'react'
 import { ScanButton } from './ScanButton'
 import { BiInput, BiLabel, useLang, type BiInputProps } from './Bilingual'
 import Help from './Help'
 import { toLatinDigits } from '@/lib/format'
+import { COUNTRIES, FEATURED, compose, countryByIso, countryName, countryOf, isValidMobile, localMobile, nationalOf, parseInternational } from '@/lib/phone'
 
 type Base = Omit<BiInputProps, 'value' | 'onChange' | 'type' | 'inputMode' | 'maxLength'> & {
   value: string
@@ -14,27 +16,34 @@ type Base = Omit<BiInputProps, 'value' | 'onChange' | 'type' | 'inputMode' | 'ma
 
 const digits = (s: string) => toLatinDigits(s).replace(/\D/g, '')
 
-/** "03001234567", "+92 300 1234567", "3001234567" -> "3001234567" (at most 10 digits) */
-export function localMobile(raw: string): string {
-  let d = digits(raw)
-  if (d.startsWith('0092')) d = d.slice(4)
-  else if (d.startsWith('92') && d.length > 10) d = d.slice(2)
-  if (d.startsWith('0')) d = d.slice(1)
-  return d.slice(0, 10)
-}
+export { localMobile }
 
-export const isMobileOk = (v: string) => /^3\d{9}$/.test(localMobile(v))
+/** a complete mobile number: Pakistani, or another country's written with its code */
+export const isMobileOk = (v: string) => isValidMobile(v)
 
-/** Shows +92 fixed in front; the parent gets the number as 03XXXXXXXXX ('' when empty).
+/** The country code in front (tap it to pick another country), the number after it. The parent gets
+ *  a Pakistani number as 03XXXXXXXXX and any other as +<code><number> ('' when empty) — ADR-107.
  *  `help`: the "?" beside the label (docs/33); a mobile-number one by default, `null` for none. */
 export function PhoneInput({ label, value, onChange, error, id, required, help, ...rest }: Base) {
-  const { pick, cls, dir } = useLang()
+  const { pick, cls, dir, ur } = useLang()
   const [touched, setTouched] = useState(false)
-  const local = localMobile(value)
-  const bad = touched && local.length > 0 && !isMobileOk(local)
-  const shown = error ?? (bad ? 'field.badMobile' : null)
+  // the country stays picked while the box is still empty; a value from outside brings its own
+  const [iso, setIso] = useState(() => countryOf(value).iso)
+  const c = countryByIso(iso)
+  useEffect(() => {
+    if (value && countryOf(value).dial !== countryByIso(iso).dial) setIso(countryOf(value).iso)
+  }, [value]) // eslint-disable-line react-hooks/exhaustive-deps
+  const pk = c.iso === 'PK'
+  const local = value ? nationalOf(value) : ''
+  const bad = touched && local.length > 0 && !isValidMobile(compose(c, local))
+  const shown = error ?? (bad ? (pk ? 'field.badMobile' : 'field.badMobileIntl') : null)
   const autoId = useId()
   const inputId = id ?? autoId
+  const locale = ur ? 'ur' : 'en'
+  const options = useMemo(() => {
+    const named = COUNTRIES.map((x) => ({ ...x, name: countryName(x.iso, locale) }))
+    return [...named.slice(0, FEATURED), ...named.slice(FEATURED).sort((a, b) => a.name.localeCompare(b.name, locale))]
+  }, [locale])
   return (
     <div>
       <div className="flex items-center gap-1">
@@ -49,19 +58,34 @@ export function PhoneInput({ label, value, onChange, error, id, required, help, 
           shown ? 'border-payable focus-within:ring-payable/40' : 'border-line focus-within:border-emerald focus-within:ring-emerald/30'
         }`}
       >
-        <span className="num flex items-center border-e border-line bg-ground px-3 text-lg font-bold text-muted">+92</span>
+        <span className="relative flex items-center gap-0.5 border-e border-line bg-ground ps-3 pe-1.5 text-muted">
+          <span className="num text-lg font-bold" data-testid="phone-dial">+{c.dial}</span>
+          <ChevronDown size={14} aria-hidden />
+          <select
+            aria-label={pick('field.country')}
+            value={iso}
+            onChange={(e) => { const next = countryByIso(e.target.value); setIso(next.iso); onChange(compose(next, next.iso === 'PK' ? local : local.slice(0, next.max))) }}
+            className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+            data-testid="phone-country"
+          >
+            {options.map((o) => <option key={o.iso} value={o.iso}>{`${o.name} (+${o.dial})`}</option>)}
+          </select>
+        </span>
         <input
           {...rest}
           id={inputId}
           type="tel"
           inputMode="numeric"
           autoComplete={rest.autoComplete ?? 'tel-national'}
-          placeholder={rest.placeholder ?? '3001234567'}
+          placeholder={pk ? rest.placeholder ?? '3001234567' : c.example ?? ''}
           required={required}
           value={local}
           onChange={(e) => {
-            const d = localMobile(e.target.value)
-            onChange(d ? `0${d}` : '')
+            // a whole number pasted with its code (+971 50 … or 00971…) picks its country itself
+            const typed = toLatinDigits(e.target.value).trim()
+            const whole = typed.startsWith('+') || typed.startsWith('00') ? parseInternational(typed) : null
+            if (whole) { setIso(whole.country.iso); onChange(compose(whole.country, whole.national)); return }
+            onChange(compose(c, e.target.value))
           }}
           onBlur={(e) => {
             setTouched(true)
@@ -73,6 +97,11 @@ export function PhoneInput({ label, value, onChange, error, id, required, help, 
       {shown ? (
         <div className={`mt-1 font-semibold text-payable ${cls('sm')}`} dir={dir}>
           {pick(shown)}
+        </div>
+      ) : !pk ? (
+        // another country: its name and how its numbers are written
+        <div className={`mt-1 font-semibold text-muted ${cls('sm')}`} dir={dir} data-testid="phone-country-hint">
+          {countryName(c.iso, locale)}{c.example ? <> · {pick('field.mobileEg')} <span dir="ltr" className="num">+{c.dial} {c.example}</span></> : null}
         </div>
       ) : null}
     </div>

@@ -59,6 +59,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Audit and phases: `docs/38-ACCOUNTS-REPORTS-AUDIT.md` — read it before adding any accounts or report feature; build only what its matrix marks missing.
 - Rules: one accounting engine (the ledger) — never a second set of balances; a report reads the ledger / documents and is checked in a test against them; no free manual journal entry (docs/38 §4); the general ledger's closing balance must equal the trial balance's line.
 
+## Mobile numbers of any country (shopkeepers 2026-11-18, ADR-107)
+- Read ADR-107 before touching `core/pk.normalise_phone`, `frontend/src/lib/phone.ts` or `PhoneInput`.
+- Rules: a Pakistani number is stored as `03XXXXXXXXX` (never changed), any other as `+<code><number>`; every phone field goes through `normalise_phone` on the server and `PhoneInput` in the app; a WhatsApp link is built with `wa_number` / `waNumber`, never with a literal 92; the country table in `phone.ts` and `pk.py` change together (`tests/test_phone_countries.py`).
+
 ## Amanat to anyone, sticker ticks, IMEI barcode (shopkeeper 2026-11-18, ADR-106)
 - Read ADR-106 before touching `loans.create_loan`, `labels/service.py` (`_fields`, `_device_parts`) or `LabelSheet.tsx`.
 - Rules: amanat goes to any person of the shop (no kind check); the sticker's bars are the IMEI when the phone has a real one (15 digits), the shop's own code otherwise or when asked (`bar=code`) — `devices.barcode` itself never changes; a new sticker field must keep old apps printing what they printed (`fv`).

@@ -2085,3 +2085,12 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - tsc; vitest (53, including the help-text check); ruff clean.
 - Playwright: new `amanat-anyone-sticker` passes; `labels`, `v2-screens` (texts updated) pass. Looked at the phone page's sticker card.
 **Next**: the owner orders Accounts & Reports phase 2 (docs/38 §3).
+
+### 2026-11-18 — mobile numbers of any country (ADR-107)
+**Owner**: shopkeepers can write only a Pakistani number, but customers and dealers come from other countries; a country code and the number's format, with the country's name, on every mobile-number field.
+**Done**: `core/pk.py` (`DIAL_CODES`, `NATIONAL_LEN`, `normalise_phone` for `+code…`, `wa_number`); WhatsApp link builders (`notifications`, `admin/licenses`); `lib/phone.ts` (countries, parse / compose / validate, `waNumber`); `PhoneInput` with the country picker (used by every phone box); the seven hand-built `wa.me/92…` links; strings and help in en / ur / roman; manual (PDFs rebuilt); ADR-107, CLAUDE.md, docs/29. No migration; Pakistani numbers are stored exactly as before.
+**Verified**:
+- pytest: full suite passes. New `test_phone_countries` (13): Pakistani forms unchanged; UAE / Saudi / UK / US / Afghanistan / China / Japan numbers stored with their code; wrong numbers refused (no code, too short, too long, +92 landline, unknown code); the app's table equals the server's; a foreign dealer and customer saved, found by number, never doubled; a staff member with a Saudi number logs in.
+- tsc; vitest (57, new `phone.test.ts`); ruff clean.
+- Playwright: new `phone-countries` passes (pick UAE, the length check, a pasted +44 number picks its country, a Pakistani person as before, the edit form opens on +971); `landing`, `v2-screens`, `login-security`, `party-no-phone`, `tally-staff`, `plan-thanks-once` pass. Looked at the new-person form.
+**Next**: the owner orders Accounts & Reports phase 2 (docs/38 §3).

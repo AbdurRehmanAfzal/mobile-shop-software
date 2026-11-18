@@ -13,7 +13,6 @@ Each template's body must have exactly one {{1}} that takes the whole text we re
 a mapping are sent as plain text (fine for test numbers and inside the 24-hour window)."""
 
 import json
-import re
 import smtplib
 from email.message import EmailMessage
 from email.utils import make_msgid
@@ -36,12 +35,9 @@ def _templates() -> dict[str, dict]:
 
 def to_international(phone: str) -> str:
     """03001234567 -> 923001234567 (Meta wants the number without + or 00)."""
-    digits = re.sub(r"\D", "", phone)
-    if digits.startswith("0092"):
-        digits = digits[2:]
-    if digits.startswith("0"):
-        digits = "92" + digits[1:]
-    return digits
+    from app.core.pk import wa_number
+
+    return wa_number(phone)  # a number of another country keeps its own code (ADR-107)
 
 
 def send_whatsapp(recipient: str, body: str, template_key: str | None = None) -> str:

@@ -117,7 +117,7 @@ Aap ki dukaan **OOP Solutions** kholta hai, jo software banane wala hai. Aap ke 
 3. Apna **Password** likhein.
 4. **Login** dabayein.
 
-> **Mashwara:** `0300…` ya `+92300…` jaisa number paste karna bhi chalta hai. App khud theek kar leti hai.
+> **Mashwara:** `0300…` ya `+92300…` jaisa number paste karna bhi chalta hai. App khud theek kar leti hai. Kisi doosre mulk ka number: pehle **+92** par daba kar mulk chunein.
 
 ### Password bhool gaye
 
