@@ -51,7 +51,7 @@ function TileLabel({ text, help }: { text: string; help: string }) {
 
 export default function ReportsPage() {
   const { pick, ur, cls } = useLang()
-  const [tab, setTab] = useState<Tab>('profit')
+  const [tab, setTab] = useState<Tab>(() => { const t = new URLSearchParams(window.location.search).get('tab'); return (['profit', 'top', 'estimate', 'old', 'prices', 'types', 'books'] as const).includes(t as Tab) ? (t as Tab) : 'profit' })
   const [range, setRange] = useState<Range>('month')
   const [custom, setCustom] = useState({ from: monthStart(), to: isoDay(0) })
   const [from, to] =

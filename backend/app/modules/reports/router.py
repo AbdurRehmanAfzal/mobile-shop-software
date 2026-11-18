@@ -129,6 +129,41 @@ def trial_balance(ctx: Reports, db: DB, as_of: dt.date | None = None):
     return _money(accounts.trial_balance(db, ctx.shop_id, as_of or shop_today()))
 
 
+@router.get("/chart-of-accounts")
+def chart_of_accounts(ctx: Reports, db: DB, as_of: dt.date | None = None):
+    """owner 2026-11-18 (ADR-104): every account the shop has with its balance — the trial
+    balance's own lines; each opens into its general ledger"""
+    from app.modules.reports import general_ledger as gl
+
+    return _money(gl.accounts(db, ctx.shop_id, as_of or shop_today()))
+
+
+@router.get("/general-ledger")
+def general_ledger(
+    ctx: Reports,
+    db: DB,
+    account: Annotated[str, Query(min_length=2, max_length=80)],
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+    offset: Annotated[int, Query(ge=0)] = 0,
+    limit: Annotated[int, Query(ge=1, le=1000)] = 200,
+):
+    """owner 2026-11-18 (ADR-104): every line of one account in the period (default: this month),
+    with the balance before, the running balance and the totals"""
+    from app.modules.reports import general_ledger as gl
+
+    d_to = date_to or shop_today()
+    d_from = date_from or d_to.replace(day=1)
+    _check_range(d_from, d_to)
+    out = gl.ledger(db, ctx.shop_id, account, d_from, d_to, offset=offset, limit=limit)
+    for r in out["rows"]:
+        r["date"] = r["date"].isoformat() if r["date"] else None
+        r["at"] = r["at"].isoformat() if r.get("at") else None
+        r["group_id"] = str(r["group_id"]) if r["group_id"] else None
+    out["date_from"], out["date_to"] = out["date_from"].isoformat(), out["date_to"].isoformat()
+    return _money(out)
+
+
 @router.get("/balance-sheet")
 def balance_sheet(ctx: Reports, db: DB, as_of: dt.date | None = None):
     """what the shop has, what it owes and the owner's share, at the end of `as_of`"""

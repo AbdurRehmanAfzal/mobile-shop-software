@@ -2056,3 +2056,13 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - tsc; vitest (53).
 - Playwright: new `statements` passes; `overview`, `home-big` pass. Looked at both printed pages at A4.
 - PR #85 (impact preview) checked live on production: the new preview routes answer.
+
+### 2026-11-18 — Accounts & Reports brief: audit and phase 1 (ADR-104)
+**Owner**: a long brief for a complete Accounts and Reports module — audit first, an existing-versus-missing matrix, only what is missing, small phases, no disturbance to live shops.
+**Done**: `docs/38-ACCOUNTS-REPORTS-AUDIT.md` (the matrix and the phases); `reports/general_ledger.py` with `GET /reports/chart-of-accounts`, `GET /reports/general-ledger`, `GET /exports/general-ledger`; `GeneralLedgerPage.tsx`, `AccountsPage.tsx`, a More tile, trial-balance lines link to their entries, Reports opens on `?tab=`; strings and two help texts in en / ur / roman; manual (PDFs rebuilt); ADR-104, CLAUDE.md, docs/29.
+**Verified**: 
+- pytest: full suite passes. New `test_general_ledger` walks every account of the chart and checks that its ledger closes on the chart's and the trial balance's figure; the sales account shows a deleted sale and its reversal marked; the galla's ledger equals the cash screen's balance; pages carry the running balance on; a salesman gets 403 and another shop cannot open this shop's money account.
+  - The first full run had one failure, `test_barcodes` with 401 (an expired login token: that run stalled for over an hour on this PC). The test passes alone, and the second full run passed with no failure.
+- tsc; vitest (53, including the help-text check).
+- Playwright: new `accounts-ledger` passes; `books`, `statements`, `home-big` pass. Looked at the Accounts page and the general ledger in English.
+**Next**: the owner orders phase 2 (docs/38 §3) and decides on manual journal entries.

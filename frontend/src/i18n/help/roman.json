@@ -6780,5 +6780,19 @@
       "body": "Chune hue dinon ki wapsiyan: customers se aur supplier ko, wapas di gayi raqam aur katauti ke saath. Tafseel dekhein se wapsiyon ki report khulti hai.",
       "example": "Customers se: 2 wapsiyan, 2 phone, Rs. 80,000; wapas diye Rs. 78,000; katauti Rs. 2,000."
     }
+  },
+  "acct": {
+    "page": {
+      "title": "Accounts",
+      "body": "Aap ke paise ka ek page: haath mein cash, bank aur wallet ke balance, logon ne kitna dena hai aur aap ne kitna dena hai, aur har accounts screen aur report ka button.",
+      "example": "Cash Rs. 2,50,000, bank Rs. 4,50,000, lene Rs. 1,80,000, dene Rs. 1,20,000."
+    }
+  },
+  "gl": {
+    "page": {
+      "title": "General ledger",
+      "body": "Chune hue dinon mein ek account ki har entry: pehle ka balance, har entry apne debit ya credit aur baad ke balance ke saath, aur total. Aakhir ka balance wohi hai jo trial balance dikhata hai. Delete shuda bill do baar aata hai (entry aur use khatam karne wali entry), delete shuda ke nishan ke saath.",
+      "example": "Is mahine sales ka account: 42 entries, credit Rs. 18,50,000 → mahine ki sales."
+    }
   }
 }

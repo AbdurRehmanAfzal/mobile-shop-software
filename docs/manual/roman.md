@@ -2191,6 +2191,9 @@ Formats:
 2. **Is din tak** mein aaj ka din rehne dein ya purana din chunein, masalan saal ke hisaab ke liye 30 June.
 3. **Balance sheet** mein teen khaane hain: **Dukaan ke paas kya hai** (galla, bank aur wallet, **Logon ne aap ko dena hai**, **Stock (khareed ki qeemat par)**), **Dukaan ne kya dena hai** (**Aap ne logon ko dena hai**, **Liya hua tax, abhi jama karana hai**) aur **Maalik ka hissa** (maalik ki daali hui raqam, **Ab tak ka munafa**, minus **Maalik ne nikaale**).
 4. **Trial balance** dabayein to har khaata apne debit ya credit balance ke saath aur dono ka kul dikhega.
+5. Trial balance ki kisi bhi line ko dabayein to us ka **General ledger** khulta hai: chune hue dinon mein us account ki har entry, pehle ka balance, har debit ya credit, us ke baad ka balance aur total. Aakhir ka balance wohi hai jo trial balance dikhata hai. Delete shuda bill do entries ke taur par aata hai jin par **delete shuda** likha hota hai (entry aur use khatam karne wali entry).
+
+**Accounts ka page:** More → **Accounts** aap ka paisa ek jagah dikhata hai — **Haath mein cash**, **Bank aur wallet**, kitna lena hai aur kitna dena hai — aur har accounts screen ka button: cash aur bank accounts, payments, customers aur suppliers ke khate, kharche, din band karna, **Chart of accounts aur general ledger**, balance sheet, nafa aur nuqsan aur tamam reports.
 5. Sabz line **Barabar hai** batati hai ke dukaan ke paas jo hai woh dena hai + maalik ka hissa ke barabar hai.
 
 **Misaal:** paas hai Rs. 9,50,000 = dena hai Rs. 1,50,000 + maalik ka hissa Rs. 8,00,000.
