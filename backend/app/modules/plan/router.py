@@ -59,7 +59,12 @@ def snooze(data: SnoozeIn, ctx: Money, db: DB):
 
 
 @router.post("/reminder/thanks", status_code=204)
-def thanks(data: ThanksIn, ctx: Money, db: DB):
+def thanks(data: ThanksIn, ctx: Ctx, db: DB):
+    # ADR-105: anyone who may be shown the thank-you (settings or cost rights) may mark it seen
+    if not (ctx.can(Cap.MANAGE_SETTINGS) or ctx.can(Cap.VIEW_COST)):
+        from app.core.errors import Forbidden
+
+        raise Forbidden()
     reminders.thanks_seen(db, ctx, data.payment_id)
 
 

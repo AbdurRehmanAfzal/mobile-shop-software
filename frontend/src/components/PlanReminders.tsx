@@ -294,12 +294,11 @@ function LockScreen({ d }: { d: Reminder }) {
 }
 
 function ThanksCard() {
-  const data = usePlanReminder((s) => s.data)
+  const r = usePlanReminder((s) => s.thanks)
   const open = usePlanReminder((s) => s.thanksOpen)
   const seen = usePlanReminder((s) => s.thanksSeen)
   const { ur } = useLang()
-  if (!open || !data?.renewed) return null
-  const r = data.renewed
+  if (!open || !r) return null
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center bg-ink/60 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" data-testid="plan-thanks">
       <div className="flex w-full max-w-md flex-col gap-3 rounded-3xl bg-ground p-5 shadow-hero">

@@ -355,3 +355,55 @@ def test_clock_rolled_back_does_not_stretch_a_plan(db, owner, monkeypatch):
 
     assert reminders.stage_of(org, billing.schedule(db), clockguard.now(db))[0] == "locked"
     clockguard.reset_for_tests()
+
+
+def test_thank_you_is_shown_once_and_never_for_an_old_payment(client, owner, db, monkeypatch):
+    """Owner 2026-11-18 (ADR-105): a shopkeeper got the "plan renewed" thank-you on every login.
+    It is marked seen as soon as the app shows it, whatever id the app sends, and it is never
+    offered for a payment approved more than a few days ago."""
+    import uuid
+
+    from app.modules.admin.fees import FeePayment
+    from app.modules.plan.reminders import THANKS_DAYS
+
+    clockguard.reset_for_tests()
+    admin = _admin(client, monkeypatch)
+    r = admin.post(
+        f"/api/v1/admin/shops/{owner.shop_id}/payments",
+        json={"amount": 2500, "method": "cash", "months": 12},
+    )
+    assert r.status_code == 201, r.text
+    pid = r.json()["id"]
+    rem = owner.get("/api/v1/plan/reminder", params={"event": "login"}).json()
+    assert rem["renewed"]["payment_id"] == pid
+    # the app says "seen" when the card appears — even with a stale id, the newest one is marked
+    assert (
+        owner.post(
+            "/api/v1/plan/reminder/thanks", json={"payment_id": str(uuid.uuid4())}
+        ).status_code
+        == 204
+    )
+    for event in ("login", "open", "login"):
+        assert owner.get("/api/v1/plan/reminder", params={"event": event}).json()["renewed"] is None
+
+    # a staff member with no money rights is never shown it and cannot mark it
+    owner.post(
+        "/api/v1/staff",
+        json={"name": "Sales", "phone": "03451112299", "password": "secret123", "role": "salesman"},
+    )
+    s = login(client, "03451112299")
+    assert s.get("/api/v1/plan/reminder").json().get("renewed") is None
+    assert s.post("/api/v1/plan/reminder/thanks", json={"payment_id": pid}).status_code == 403
+
+    # a second payment brings one new thank-you ...
+    r2 = admin.post(
+        f"/api/v1/admin/shops/{owner.shop_id}/payments",
+        json={"amount": 2500, "method": "cash", "months": 1},
+    )
+    pid2 = r2.json()["id"]
+    assert owner.get("/api/v1/plan/reminder").json()["renewed"]["payment_id"] == pid2
+    # ... but once it is a few days old it is not offered any more, seen or not
+    p = db.get(FeePayment, uuid.UUID(pid2))
+    p.handled_at = p.handled_at - dt.timedelta(days=THANKS_DAYS + 1)
+    db.commit()
+    assert owner.get("/api/v1/plan/reminder", params={"event": "login"}).json()["renewed"] is None

@@ -345,6 +345,7 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | Account ledger of one person (bills with their items, debit / credit / running balance, totals, dates) and item-wise stock sheet with cost (brand, model + memory, quantity, unit price, totals) — PDF / Excel / CSV, en / ur (owner 2026-11-18, ADR-103) | ✅ | `exports/statements.py`, `PartyDetailPage.tsx`, `StockSummaryPage.tsx`, `tests/test_statements.py`, `e2e/statements.spec.ts` |
 | Accounts & Reports brief: audit and existing-versus-missing matrix (`docs/38`); phase 1 — chart of accounts, general ledger (with export), the Accounts page, a trial-balance line opens its entries (owner 2026-11-18, ADR-104) | ✅ | `reports/general_ledger.py`, `GeneralLedgerPage.tsx`, `AccountsPage.tsx`, `tests/test_general_ledger.py`, `e2e/accounts-ledger.spec.ts` |
 | Accounts & Reports phase 2: other income with categories, recurring expenses, consolidated branches, retail vs wholesale, credit limit (docs/38 §3) | ⬜ | waits for the owner's order |
+| The "plan renewed" thank-you shows once, not on every login: marked when shown, newest payment marked, only for a payment approved in the last 3 days (shopkeeper report 2026-11-18, ADR-105) | ✅ | `plan/reminders.py`, `planReminder.ts`, `PlanReminders.tsx`, `tests/test_plan_reminders.py`, `e2e/plan-thanks-once.spec.ts` |
 | Operations runbook (internal; secrets only as placeholders) | ✅ | `operations-en.md` |
 | Owner review of the wording | ⏳ | `docs/29-OWNER-PENDING.md` D |
 

@@ -362,6 +362,18 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-105 · 2026-11-18 · Accepted · The "plan renewed" thank-you shows once
+**Context**: a shopkeeper reported that after paying the fee, the "Thank you! Your plan is renewed" popup came back on every login. The server cleared it only when the app sent "seen" after the OK button, with the id of the payment it had shown. Closing the app, a reload, a failed request, or a manager (the route was owner-only, yet the popup shows to everyone who sees money) left it unmarked, so every later login showed it again — for ever, since nothing aged it out.
+
+**Decision**:
+- **Seen means shown.** The app tells the server as soon as the popup is on screen (`planReminder.refresh`), not when OK is tapped; OK sends it once more. The popup keeps its own copy of the payment, so a later refresh without `renewed` does not close it under the shopkeeper's finger.
+- **The server marks the newest approved payment**, whatever id the app sent (`thanks_seen`): a stale id can no longer leave the newest one unmarked.
+- **A thank-you is only for a fresh payment**: `renewed` is sent only while the payment was approved within `THANKS_DAYS` (3). An old payment never brings the popup back.
+- **Whoever sees the popup can mark it** (`MANAGE_SETTINGS` or `VIEW_COST`), as the popup itself is shown to them.
+- The reminder-state row is created race-safe (two requests at login could both insert it).
+
+**Consequences**: no migration; shops that have the popup stuck today stop seeing it after the first login on the new version (payments older than three days at once, newer ones after one showing). A shopkeeper who pays and does not open the app for more than three days gets no thank-you — the fees page still shows the payment and its receipt.
+
 ## ADR-104 · 2026-11-18 · Accepted · Accounts & Reports: audit first, then only what is missing — phase 1
 **Context**: the owner's brief asks for a complete Accounts and Reports module (19 accounts items, five report families, integrity rules, report UX), reusing what exists, in small phases, without disturbing live shops. It asks for an existing-versus-missing matrix before any code.
 

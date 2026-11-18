@@ -60,9 +60,17 @@ def stage_of(org: Organisation, sched: dict, now: dt.datetime) -> tuple[str, int
 def _state(db: Session, org_id: uuid.UUID, user_id: uuid.UUID) -> PlanReminderState:
     row = db.scalar(select(PlanReminderState).where(PlanReminderState.user_id == user_id))
     if row is None:
-        row = PlanReminderState(organisation_id=org_id, user_id=user_id)
-        db.add(row)
-        db.flush()
+        # two requests of the same login may arrive together (the app asks on login and on
+        # open): the second one finds the row the first one made instead of failing (ADR-105)
+        from sqlalchemy.exc import IntegrityError
+
+        try:
+            with db.begin_nested():
+                row = PlanReminderState(organisation_id=org_id, user_id=user_id)
+                db.add(row)
+                db.flush()
+        except IntegrityError:
+            row = db.scalar(select(PlanReminderState).where(PlanReminderState.user_id == user_id))
     return row
 
 
@@ -119,11 +127,22 @@ def pending_payment(db: Session, org_id: uuid.UUID) -> FeePayment | None:
     )
 
 
+THANKS_DAYS = 3  # a thank-you older than this is never shown
+
+
+def _fresh(handled_at: dt.datetime | None, now: dt.datetime) -> bool:
+    if handled_at is None:
+        return False
+    at = handled_at if handled_at.tzinfo else handled_at.replace(tzinfo=dt.UTC)
+    return now - at <= dt.timedelta(days=THANKS_DAYS)
+
+
 def last_approved(db: Session, org_id: uuid.UUID) -> FeePayment | None:
     return db.scalar(
         select(FeePayment)
         .where(FeePayment.organisation_id == org_id, FeePayment.status == APPROVED)
-        .order_by(FeePayment.handled_at.desc())
+        # newest first; a payment with no time (none today) can never hide a newer one
+        .order_by(FeePayment.handled_at.desc().nulls_last(), FeePayment.created_at.desc())
     )
 
 
@@ -188,8 +207,16 @@ def status(db: Session, ctx, *, event: str = "open") -> dict:
             else:  # urgent / grace / locked: on login, or again after a few hours
                 hours = int(sched.get("snooze_hours", 4))
                 show = event == "login" or last is None or now - last >= dt.timedelta(hours=hours)
+    # owner 2026-11-18 (ADR-105): the thank-you is for a fresh payment only. A shopkeeper saw it
+    # on every login: it stayed until "OK" reached the server. Now it is never offered for a
+    # payment approved more than THANKS_DAYS ago, and the app marks it seen as soon as it shows.
     renewed = None
-    if paid is not None and money_side and st.thanked_payment_id != paid.id:
+    if (
+        paid is not None
+        and money_side
+        and st.thanked_payment_id != paid.id
+        and _fresh(paid.handled_at, now)
+    ):
         renewed = {
             "payment_id": str(paid.id),
             "until": org.plan_expires_at,
@@ -274,8 +301,11 @@ def snooze(db: Session, ctx, option: str) -> dt.datetime:
 
 
 def thanks_seen(db: Session, ctx, payment_id: uuid.UUID) -> None:
+    """The thank-you for this payment has been shown to this user. Whatever id the app sends,
+    the newest approved payment is marked too, so an out-of-date screen cannot bring it back."""
     st = _state(db, ctx.shop.organisation_id, ctx.user.id)
-    st.thanked_payment_id = payment_id
+    paid = last_approved(db, ctx.shop.organisation_id)
+    st.thanked_payment_id = paid.id if paid is not None else payment_id
     db.commit()
 
 
