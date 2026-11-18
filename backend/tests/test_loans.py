@@ -13,9 +13,6 @@ def _shop_b(owner):
 def test_loan_out_and_return(owner, cat):
     d = _stock(owner, cat, imei=IMEI, condition="box_pack")
     b = _shop_b(owner)
-    customer = _party(owner, name="Sara", phone="03002222222", kinds=("customer",))
-    r = owner.post("/api/v1/loans", json={"device_id": d["id"], "party_id": customer["id"]})
-    assert r.status_code == 422 and r.json()["error"]["code"] == "loan_party_must_be_shop"
     r = owner.post(
         "/api/v1/loans",
         json={
@@ -147,3 +144,31 @@ def test_nokia_chain_s1_s2_s3(owner, cat):
         owner.get("/api/v1/ledger/accounts").json()[0]["balance"] == "500.00"
     )  # -1000 +500 -500 +1500
     assert owner.get("/api/v1/devices/imei/" + IMEI).json()["times_bought"] == 1
+
+
+def test_amanat_goes_to_anyone_not_only_a_shop(owner, cat):
+    """Owner 2026-11-18 (ADR-106): a customer, a dealer and a technician take a phone on amanat
+    as another shop does — out, back, or kept (a sale on that person's khata)."""
+    d = _stock(owner, cat, imei=IMEI, condition="box_pack", cost_price=1000, asking_price=1500)
+    people = [
+        _party(owner, name="Sara", phone="03002222222", kinds=("customer",)),
+        _party(owner, name="Dealer Aslam", phone="03003333333", kinds=("supplier",)),
+        _party(owner, name="Ustad Karim", phone="03004444444", kinds=("technician",)),
+    ]
+    for p in people:
+        r = owner.post("/api/v1/loans", json={"device_id": d["id"], "party_id": p["id"]})
+        assert r.status_code == 201, r.text
+        assert r.json()["party_name"] == p["name"]
+        dv = owner.get(f"/api/v1/devices/{d['id']}").json()
+        assert dv["status"] == "on_loan" and dv["current_party_name"] == p["name"]
+        back = owner.post(f"/api/v1/loans/{r.json()['id']}/return", json={})
+        assert back.status_code == 200 and back.json()["status"] == "returned"
+        assert owner.get(f"/api/v1/devices/{d['id']}").json()["status"] == "in_stock"
+    # the customer keeps it: a sale to her, the unpaid part on her khata
+    sara = people[0]
+    loan = owner.post("/api/v1/loans", json={"device_id": d["id"], "party_id": sara["id"]}).json()
+    r = owner.post(f"/api/v1/loans/{loan['id']}/sell", json={"price": 1500, "paid": 500})
+    assert r.status_code == 200, r.text
+    assert r.json()["status"] == "sold" and r.json()["invoice_id"]
+    assert owner.get(f"/api/v1/devices/{d['id']}").json()["status"] == "sold"
+    assert float(owner.get(f"/api/v1/parties/{sara['id']}").json()["balance"]) == 1000

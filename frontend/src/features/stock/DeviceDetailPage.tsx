@@ -11,8 +11,9 @@ import LabelSheet from '@/components/LabelSheet'
 import { ApiError, api, patch, post } from '@/lib/api'
 import { ImeiInput } from '@/components/FieldInputs'
 import { useAuth } from '@/lib/auth'
-import { useDevice, useDeviceEvent, useDeviceHistory, useDocMutation, useInvalidate, useParties } from '@/lib/queries'
-import type { DeviceDetail, Loan } from '@/lib/types'
+import { useDevice, useDeviceEvent, useDeviceHistory, useDocMutation, useInvalidate } from '@/lib/queries'
+import PartyPicker from '@/components/PartyPicker'
+import type { DeviceDetail, Loan, Party } from '@/lib/types'
 import DeviceLineSheet, { emptyDraft, type DeviceLineDraft } from '@/features/purchase/DeviceLineSheet'
 import { hasPta } from './StockPage'
 import { LockChecksEditor, specRows, type LockChecks } from './DeviceSpecs'
@@ -93,7 +94,8 @@ export default function DeviceDetailPage() {
   const [text, setText] = useState('')
   const [partyId, setPartyId] = useState('')
   const [expected, setExpected] = useState('')
-  const { data: shops } = useParties({ kind: 'shop' })
+  // ADR-106: amanat goes to anyone of the shop's people, not only to another shop
+  const [taker, setTaker] = useState<Party | null>(null)
   const canSeeCost = useAuth((s) => s.me?.user.role === 'owner' || s.me?.user.role === 'manager')
   // the purchase this unit came in on (its latest), for "Change dealer / customer" (owner 2026-11-10)
   const boughtOn = [...(history ?? [])].reverse().find((e) => e.type === 'purchased' && e.document_type === 'purchase')?.document_id ?? null
@@ -228,15 +230,7 @@ export default function DeviceDetailPage() {
       <PtaCheckSheet imei={d.imei1} open={ptaOpen} onClose={() => setPtaOpen(false)} deviceId={d.id} onSaved={() => void inv('devices', 'device', 'history')} />
       <Sheet open={sheet === 'loan'} onClose={() => setSheet(null)} title="stock.loanOut">
         <div className="flex flex-col gap-3">
-          <span className="flex items-center gap-1"><BiLabel text="loan.toShop" size="md" tone="text-muted" /><Help term="loan.toShop" size="sm" /></span>
-          <select value={partyId} onChange={(e) => setPartyId(e.target.value)} className="min-h-12 w-full rounded-2xl border border-line bg-surface px-4 font-semibold">
-            <option value="">—</option>
-            {shops?.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
+          <div className="flex items-start gap-1" data-testid="loan-taker"><div className="min-w-0 flex-1"><PartyPicker value={taker} onChange={(p) => { setTaker(p); setPartyId(p?.id ?? '') }} label="loan.toShop" /></div><Help term="loan.toShop" size="sm" /></div>
           <BiInput label="loan.expectedBack" help={<Help term="loan.expectedBack" size="sm" />} type="date" min={isoDay(0)} value={expected} onChange={(e) => setExpected(e.target.value)} />
           <BiInput label="common.notes" help={<Help term="common.notes" size="sm" />} value={text} onChange={(e) => setText(e.target.value)} />
           <ErrorText error={loanM.error} />

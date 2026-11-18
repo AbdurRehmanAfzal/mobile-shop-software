@@ -2076,3 +2076,12 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - tsc; vitest (53); ruff clean.
 - Playwright: new `plan-thanks-once` passes (shown at the first login; not after a reload, not after a new login, without tapping OK); `fees` passes.
 **Next**: the owner orders Accounts & Reports phase 2 (docs/38 §3).
+
+### 2026-11-18 — amanat to anyone, sticker ticks, IMEI barcode (ADR-106)
+**Owner**: a shopkeeper wants amanat for customers, dealers and technicians too; RAM, battery health, battery cycles and S/N as choices on the sticker; the sticker's barcode from the IMEI (both options, as some phones have none).
+**Done**: the shop-only rule removed (`loans/service.py`, `devices/service.py`), both give-on-amanat forms pick any person; `labels/service.py` — fields `ram` / `battery` / `cycles` / `serial`, `bar=imei|code`, `fv=2` so an old app keeps its sticker; `LabelSheet.tsx` (`BarChoice`, saved choices upgraded), `StickerPreview.tsx`; strings and help in en / ur / roman; manual ch. 14–15 (PDFs rebuilt); ADR-106, CLAUDE.md, docs/29. No migration.
+**Verified**:
+- pytest: full suite passes. New `test_amanat_goes_to_anyone_not_only_a_shop` (customer, dealer, technician: out and back; the customer keeps it → sale, the rest on her khata) and `test_ram_battery_cycles_serial_ticks_and_the_imei_barcode` (an old request unchanged; each tick alone; the bars equal the Code 128 of the IMEI by default and of the shop's code when asked; both scan to the same phone; the stored barcode unchanged; the short sticker).
+- tsc; vitest (53, including the help-text check); ruff clean.
+- Playwright: new `amanat-anyone-sticker` passes; `labels`, `v2-screens` (texts updated) pass. Looked at the phone page's sticker card.
+**Next**: the owner orders Accounts & Reports phase 2 (docs/38 §3).

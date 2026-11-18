@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 import { BiButton, BiLabel, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import { ErrorText } from '@/components/ui'
-import { LABEL_FIELDS, LABEL_LS, labelPath, loadLabelPrefs, type LabelField, type Prefs } from '@/components/LabelSheet'
+import { BarChoice, LABEL_FIELDS, LABEL_LS, labelPath, loadLabelPrefs, type LabelField, type Prefs } from '@/components/LabelSheet'
 import { withDocLang } from '@/lib/docLang'
 import { BASE, authHeaders, openPrintable } from '@/lib/files'
 import { useAuth } from '@/lib/auth'
@@ -39,7 +39,9 @@ export default function StickerPreview({ deviceId, onMore }: { deviceId: string;
 
   const fields = LABEL_FIELDS.filter((f) => canCost || f !== 'code')
   const toggle = (f: LabelField) => {
-    const next = { ...p, fields: p.fields.includes(f) ? p.fields.filter((x) => x !== f) : [...p.fields, f] }
+    keep({ ...p, fields: p.fields.includes(f) ? p.fields.filter((x) => x !== f) : [...p.fields, f] })
+  }
+  const keep = (next: Prefs) => {
     setP(next)
     try { localStorage.setItem(LABEL_LS, JSON.stringify(next)) } catch { /* private window */ }
   }
@@ -66,6 +68,7 @@ export default function StickerPreview({ deviceId, onMore }: { deviceId: string;
           )
         })}
       </div>
+      {p.fields.includes('barcode') ? <BarChoice value={p.bar} onChange={(bar) => keep({ ...p, bar })} /> : null}
       <ErrorText error={err} />
       <div className="grid grid-cols-[1fr_auto] gap-2">
         <BiButton text="label.print" icon={<Printer size={18} />} size="md" disabled={!p.fields.length} onClick={() => { setErr(null); openPrintable(labelPath('devices', [deviceId], p)).catch(setErr) }} data-testid="sticker-print" />

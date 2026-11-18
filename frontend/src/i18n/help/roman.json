@@ -3634,8 +3634,8 @@
     },
     "fields": {
       "title": "Is par kya ho",
-      "body": "Sticker par har cheez daalne ya hatane ke liye dabayen: dukaan ka naam, model, storage · rang, qeemat, barcode, IMEI, halat, PTA, tareekh, cost code.",
-      "example": "Chhote 38 × 25 sticker par sirf model, qeemat aur barcode rakhen."
+      "body": "Sticker par har cheez daalne ya hatane ke liye dabayen: dukaan ka naam, model, storage · rang, qeemat, barcode, IMEI, halat, PTA, tareekh, cost code — aur RAM, battery health, battery cycles aur serial number, jo tabhi chhapte hain jab phone par likhe gaye hon.",
+      "example": "Used iPhone ke liye battery health aur battery cycles par nishan lagayen: sticker par \"Battery 87% · 312 cycles\" aaye ga."
     },
     "costCode": {
       "title": "Cost code",
@@ -3654,7 +3654,7 @@
     },
     "barcode": {
       "title": "Barcode",
-      "body": "Is phone ka dukaan ka apna code, khareedte waqt mila aur kabhi nahi badalta. Sticker par chhapta hai; scan karne se yehi phone khulta hai.",
+      "body": "Is phone ka dukaan ka apna code, khareedte waqt mila aur kabhi nahi badalta. Scan karne se yehi phone khulta hai. Sticker par barcode IMEI ka chhapta hai jab phone ka IMEI ho, aur yeh code jab aap chunen ya IMEI na ho — dono ko scan karne se yehi phone milta hai.",
       "example": "Dabbe par sticker \"MS000123\" → counter par scan → yehi iPhone 13 sale ke liye khulta hai."
     },
     "manufacturer": {
@@ -3666,6 +3666,11 @@
       "title": "Apna barcode",
       "body": "Khali chhoren to app sticker ke liye barcode banati hai. Sirf tab likhen jab aap pehle se apne code istemal karte hon. Save hone ke baad kabhi nahi badalta.",
       "example": "Khali → app \"MS000124\" deti hai. Purana code \"HR-77\" → HR-77 likhen."
+    },
+    "bar": {
+      "title": "Barcode kis se bane",
+      "body": "IMEI: barcode phone ke IMEI ka hota hai, is liye sticker wahan bhi scan ho jata hai jahan IMEI manga jaye — phone wapas khareedte waqt, ya kisi doosri dukaan ke software mein. Dukaan ka apna code: barcode us code ka jo app ne phone ko diya. Jis phone ka IMEI nahi usay hamesha dukaan ka code milta hai. Dono ko scan karne se app mein phone mil jata hai.",
+      "example": "IMEI chuna → customer phone wapas laya → purchase ke form mein us ka sticker scan karen, IMEI khud bhar jata hai."
     }
   },
   "price": {
@@ -4016,22 +4021,22 @@
   "loan": {
     "page": {
       "title": "Amanat",
-      "body": "Doosri dukaan ko dikhane ya bechne ke liye diye gaye phone. Phone aap ka hi rehta hai jab tak wapas na aaye ya woh rakh len — phir us dukaan ko sale ban kar un ke khate mein jata hai.",
+      "body": "Kisi ko dikhane ya bechne ke liye diye gaye phone: customer, dealer, doosri dukaan ya karigar. Phone aap ka hi rehta hai jab tak wapas na aaye ya woh rakh len — phir unhein sale ban kar un ke khate mein jata hai.",
       "example": "Peer ko Ali Mobiles ko iPhone 13 diya; unhon ne bech diya, to aap unhein Rs. 1,40,000 mein \"bechte\" hain."
     },
     "outCount": {
       "title": "Abhi bahar phone",
-      "body": "Aap ke kitne phone abhi amanat par doosri dukaanon ke paas hain.",
-      "example": "4 → chaar phone doosri dukaanon par hain."
+      "body": "Aap ke kitne phone abhi amanat par bahar hain, jis ne bhi liye hon.",
+      "example": "4 → chaar phone doosre logon ya dukaanon ke paas hain."
     },
     "overdue": {
       "title": "Der ho gayi",
-      "body": "Amanat ke woh phone jin ki wapsi ki tareekh guzar gayi aur wapas nahi aaye. Us dukaan ko call karen.",
+      "body": "Amanat ke woh phone jin ki wapsi ki tareekh guzar gayi aur wapas nahi aaye. Jis ke paas hai usay call karen.",
       "example": "1 tareekh ko 7 din ke liye diya, 9 tak wapas nahi → overdue."
     },
     "views": {
       "title": "Bahar / Wapas / Unhein becha",
-      "body": "Out: abhi doosri dukaan par. Returned: aap ke stock mein aa gaya. Sold to them: unhon ne rakh liya aur un ke khate mein sale bana.",
+      "body": "Out: abhi usi ke paas jis ne liya. Returned: aap ke stock mein aa gaya. Sold to them: unhon ne rakh liya aur un ke khate mein sale bana.",
       "example": "\"Sold to them\" dabayen — amanat ke woh sab phone jo sale bane."
     },
     "price": {
@@ -4041,12 +4046,12 @@
     },
     "paidNow": {
       "title": "Abhi ada",
-      "body": "Us dukaan ne aaj phone ke liye kitna diya. Baqi un ke khate mein.",
+      "body": "Unhon ne aaj phone ke liye kitna diya. Baqi un ke khate mein.",
       "example": "Qeemat Rs. 1,95,000, unhon ne Rs. 1,50,000 diye → Rs. 45,000 un ke khate mein."
     },
     "onKhata": {
       "title": "Un ke khate mein",
-      "body": "Tay qeemat minus abhi ada: is ke baad woh dukaan aap ko kitna degi.",
+      "body": "Tay qeemat minus abhi ada: is ke baad woh aap ko kitna denge.",
       "example": "Rs. 1,95,000 − Rs. 1,50,000 = Rs. 45,000 unhein dena hai."
     },
     "pickPhone": {
@@ -4055,9 +4060,9 @@
       "example": "\"S23\" likhen → Galaxy S23 256GB dabayen."
     },
     "toShop": {
-      "title": "Kaun si dukaan",
-      "body": "Phone lene wali doosri dukaan. Yeh party ke tor par save hoti hai, taake phone rakh len to bill un ke khate mein jaye.",
-      "example": "Ali Mobiles, Hall Road, 0321 5550002."
+      "title": "Kis ko",
+      "body": "Jo phone le ja raha hai: customer, dealer, doosri dukaan ya karigar. Apne logon mein se chunen ya naya banayen. Phone rakh len to bill un ke khate mein jata hai.",
+      "example": "Ali Mobiles, Hall Road — ya customer Sara, jo ghar dikhana chahti hai."
     },
     "expectedBack": {
       "title": "Kab tak wapas",
@@ -5424,7 +5429,7 @@
       },
       "loans": {
         "title": "Amanat",
-        "body": "Doosri dukaan ko diya gaya phone jis ki raqam abhi nahi aayi. Wapis aane tak aap ka hai; woh dukaan rakh le to usi dukaan ko sale ban jaata hai.",
+        "body": "Kisi ko — customer, dealer, doosri dukaan ya karigar — diya gaya phone jis ki raqam abhi nahi aayi. Wapis aane tak aap ka hai; woh rakh len to unhi ko sale ban jaata hai.",
         "example": "Hall Road ki dukaan ko customer dikhane ke liye iPhone 12 diya → wapis aane ya bill banne tak \"amanat\" mein dikhega."
       },
       "hisaab": {

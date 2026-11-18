@@ -16,26 +16,55 @@ import { useGet, useInvalidate } from '@/lib/queries'
 export type LabelKind = 'devices' | 'items'
 const SIZES = ['38x25', '40x30', '50x25', '50x30', '58x40', '60x40', '70x40', 'a4', 'custom'] as const
 type Size = (typeof SIZES)[number]
-export const LABEL_FIELDS = ['shop', 'name', 'specs', 'price', 'barcode', 'imei', 'last4', 'condition', 'pta', 'date', 'code'] as const
+export const LABEL_FIELDS = ['shop', 'name', 'specs', 'ram', 'battery', 'cycles', 'price', 'barcode', 'imei', 'serial', 'last4', 'condition', 'pta', 'date', 'code'] as const
+/** ticks that only a phone has */
+const DEVICE_ONLY: readonly string[] = ['specs', 'ram', 'battery', 'cycles', 'serial', 'last4', 'condition', 'pta']
+/** until ADR-106 the "Storage · colour" line carried these three; a choice saved before then keeps them */
+const SPEC_EXTRAS = ['ram', 'battery', 'cycles'] as const
+export type LabelBar = 'imei' | 'code'
 const FIELDS = LABEL_FIELDS
 export type LabelField = (typeof LABEL_FIELDS)[number]
 type Field = LabelField
-const DEFAULT: Prefs = { size: '50x30', w: '40', h: '20', fields: ['shop', 'name', 'specs', 'price', 'barcode', 'imei', 'condition'], copies: 1 }
-export interface Prefs { size: Size; w: string; h: string; fields: Field[]; copies: number }
+const DEFAULT: Prefs = { size: '50x30', w: '40', h: '20', fields: ['shop', 'name', 'specs', 'ram', 'battery', 'cycles', 'price', 'barcode', 'imei', 'condition'], copies: 1, bar: 'imei', v: 2 }
+/** `bar`: what the bars carry — the IMEI (when the phone has one) or the shop's own code. `v`: 2 = saved by an app that knows the RAM / battery / cycles / serial ticks */
+export interface Prefs { size: Size; w: string; h: string; fields: Field[]; copies: number; bar: LabelBar; v?: number }
 export const LABEL_LS = 'mobileshop.labelPrefs'
 const LS = LABEL_LS
 
 export function loadLabelPrefs(shopPrefs: Partial<Prefs> | null | undefined): Prefs {
   let local: Partial<Prefs> | null = null
   try { local = JSON.parse(localStorage.getItem(LS) ?? 'null') } catch { local = null }
-  const p = { ...DEFAULT, ...(shopPrefs ?? {}), ...(local ?? {}) }
-  return { ...p, fields: (p.fields ?? DEFAULT.fields).filter((f): f is Field => (FIELDS as readonly string[]).includes(f)) }
+  const p = { ...DEFAULT, ...upgrade(shopPrefs), ...upgrade(local) }
+  return { ...p, bar: p.bar === 'code' ? 'code' : 'imei', fields: (p.fields ?? DEFAULT.fields).filter((f): f is Field => (FIELDS as readonly string[]).includes(f)) }
+}
+
+/** A choice saved before ADR-106 printed RAM, battery health and cycles with "Storage · colour": it keeps them. */
+function upgrade(p: Partial<Prefs> | null | undefined): Partial<Prefs> {
+  if (!p) return {}
+  if (p.v === 2 || !p.fields) return { ...p, v: 2 }
+  return { ...p, v: 2, fields: p.fields.includes('specs') ? [...p.fields, ...SPEC_EXTRAS.filter((f) => !p.fields!.includes(f))] : p.fields }
 }
 
 export function labelPath(kind: LabelKind, ids: string[], p: Prefs): string {
   const q = new URLSearchParams({ ids: ids.join(','), copies: String(p.copies), fields: p.fields.join(',') })
   if (p.size === 'custom') { q.set('w', p.w); q.set('h', p.h) } else q.set('size', p.size)
+  if (kind === 'devices') { q.set('fv', '2'); q.set('bar', p.bar) }
   return `/api/v1/labels/${kind}?${q}`
+}
+
+/** IMEI or the shop's own code in the bars (owner 2026-11-18, ADR-106). */
+export function BarChoice({ value, onChange }: { value: LabelBar; onChange: (v: LabelBar) => void }) {
+  const { pick, ur, cls } = useLang()
+  return (
+    <div className="mt-2.5 flex flex-wrap items-center gap-1.5" data-testid="label-bar">
+      <span className="flex items-center gap-1"><BiLabel text="label.bar" size="sm" bold tone="text-muted" /><Help term="label.bar" size="sm" /></span>
+      {(['imei', 'code'] as const).map((b) => (
+        <button key={b} type="button" role="radio" aria-checked={value === b} onClick={() => onChange(b)} className={`tap h-9 rounded-full border-2 px-3 font-bold ${value === b ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-[13px]'}`} data-testid={`label-bar-${b}`}>
+          {pick(b === 'imei' ? 'label.barImei' : 'label.barCode')}
+        </button>
+      ))}
+    </div>
+  )
 }
 
 export default function LabelSheet({ kind, ids, open, onClose }: { kind: LabelKind; ids: string[]; open: boolean; onClose: () => void }) {
@@ -48,7 +77,7 @@ export default function LabelSheet({ kind, ids, open, onClose }: { kind: LabelKi
   const [err, setErr] = useState<unknown>(null)
   useEffect(() => { if (open) setP(loadLabelPrefs(shop?.label_prefs)) }, [open, shop?.label_prefs])
   const canCost = role === 'owner' || role === 'manager'
-  const fields = FIELDS.filter((f) => (canCost || f !== 'code') && (kind === 'devices' || !['specs', 'last4', 'condition', 'pta'].includes(f)))
+  const fields = FIELDS.filter((f) => (canCost || f !== 'code') && (kind === 'devices' || !DEVICE_ONLY.includes(f)))
   const toggle = (f: Field) => setP({ ...p, fields: p.fields.includes(f) ? p.fields.filter((x) => x !== f) : [...p.fields, f] })
   const chip = (on: boolean) => `tap h-11 rounded-full border-2 px-3.5 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-[13px]'}`
   const path = labelPath(kind, ids, p)
@@ -91,6 +120,7 @@ export default function LabelSheet({ kind, ids, open, onClose }: { kind: LabelKi
               )
             })}
           </div>
+          {kind === 'devices' && p.fields.includes('barcode') ? <BarChoice value={p.bar} onChange={(bar) => { setP({ ...p, bar }); setSaved(false) }} /> : null}
           {p.fields.includes('code') ? <span className="mt-1.5 flex items-center gap-1"><BiLabel text={{ en: `${pick('label.codeHint')} ${shop?.label_code_word ?? 'BLACKHORSE'}`, ur: `${pick('label.codeHint')} ${shop?.label_code_word ?? 'BLACKHORSE'}`, roman: `${pick('label.codeHint')} ${shop?.label_code_word ?? 'BLACKHORSE'}` }} size="sm" tone="text-muted" /><Help term="label.costCode" size="sm" /></span> : null}
         </div>
         <div>

@@ -1196,7 +1196,8 @@ The sticker sheet then asks a few things once:
 1. **Sticker size**: roll sizes such as 38×25, 40×30, 50×25, 50×30, 58×40, 60×40 and 70×40 mm for label printers, **A4 sheet (65 per page)** for an ordinary printer, or **Custom mm** with your own **Width (mm)** and **Height (mm)**. A sticker under 22 mm high prints the phone name, price, a large barcode and the IMEI only, so they fit.
 
 > **58 mm Bluetooth printer (e.g. MPT-II) with a 56–58 mm roll:** the printer prints 48 mm wide (203 dpi, 384 dots), so use **Custom mm**, **Width 48**. Height: 30 for the full sticker, about 18 for a short one. On Android, print through the **RawBT** app: the free version adds its own lines; the paid version does not.
-2. **What goes on it**: tap a line to switch it on or off: **Shop name**, **Model**, storage and colour, **Price**, **Barcode**, **IMEI number**, **IMEI last 4**, **Condition**, **PTA**, **Date** and **Cost code**.
+2. **What goes on it**: tap a line to switch it on or off: **Shop name**, **Model**, storage and colour, **Price**, **Barcode**, **IMEI number**, **IMEI last 4**, **Condition**, **PTA**, **Date** and **Cost code**. A phone also has **RAM**, **Battery health**, **Battery cycles** and **Serial no. (S/N)**: each prints only when it was written on the phone, so for a used iPhone the sticker can say *Battery 87% · 312 cycles*.
+   - **Barcode made from**: **IMEI** (the usual choice) prints the phone's IMEI as the barcode, so the sticker can be scanned wherever an IMEI is asked — for example when you buy the phone back. **Shop's own code** prints the code the app gave the phone (MS000006). A phone without an IMEI always gets the shop's code. Scanning either one finds the phone.
 3. **Copies of each**: how many stickers per phone or item.
 4. Tap **Print**. The page is already exactly the size of one sticker, so a label printer prints one per sticker. You can also download or share it as a PDF.
 
@@ -1556,22 +1557,22 @@ The customer opens the link without logging in and sees the shop's name, the pho
 
 ## 15. Loans to other shops (amanat)
 
-In the market, shops often give phones to each other "on amanat": the other shop shows it to its customer and either sells it or brings it back. The phone stays **yours** until it is sold or comes back. Mobile Shop tracks every such phone so none is forgotten at someone else's counter.
+In the market, shops often give phones to each other "on amanat": the other shop shows it to its customer and either sells it or brings it back. A phone can go on amanat to **anyone** in your people — a customer, a dealer, another shop or a technician. The phone stays **yours** until it is sold or comes back. Mobile Shop tracks every such phone so none is forgotten at someone else's counter.
 
 ### Give a phone on amanat
 
 **Example:** you give an **Apple iPhone 12** to **Star Mobiles (Hall Road)** for three days.
 
-1. Go to **More → Loans (amanat)**. The top card shows how many **phones at other shops right now**.
+1. Go to **More → Loans (amanat)**. The top card shows how many **phones out on amanat right now**.
 2. Tap **Give a phone on amanat**.
 3. **Which phone?**: tap the iPhone 12 in the list, or search or scan it.
-4. **Which shop?**: search **Star**. A new shop can be added right there with **+**.
+4. **To whom?**: search **Star**. Every person of your shop is in the list (customers, dealers, shops, technicians); a new one can be added right there with **+**.
 5. **Back in**: tap **3 days** (or 7, 15, 30 days, or **No date**).
 6. Add **Notes** if you want, and tap **Give on loan**.
 
 The same button, **Give on loan (amanat)**, is on the phone's own page.
 
-The phone now shows **On loan** in the stock list (and is not sold by mistake at your counter), and it appears as a card on the Loans screen with how many days it has been out (**0 days out**), the shop's name, the date given and **back by**, and a **Shop** button to open the shop's page and call them.
+The phone now shows **On loan** in the stock list (and is not sold by mistake at your counter), and it appears as a card on the Loans screen with how many days it has been out (**0 days out**), the shop's name, the date given and **back by**, and a **Their page** button to open that person's page and call them.
 
 ![Loans (amanat): phones at other shops, with Device came back and They kept it (sell)](shot:loans)
 

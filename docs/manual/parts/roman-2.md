@@ -443,7 +443,8 @@ Phir sticker sheet ek dafa chand cheezein poochti hai:
 1. **Sticker ka size**: label printer ke liye roll ke size jaise 38×25, 40×30, 50×25, 50×30, 58×40, 60×40 aur 70×40 mm, aam printer ke liye **A4 sheet (65 fi safha)**, ya apni **Chaurai (mm)** aur **Unchai (mm)** ke saath **Apna size (mm)**. 22 mm se kam ooncha sticker sirf mobile ka naam, qeemat, bara barcode aur IMEI chhaapta hai taake sab poora aaye.
 
 > **58 mm Bluetooth printer (maslan MPT-II) aur 56–58 mm roll:** printer 48 mm chaura chhaapta hai (203 dpi, 384 dots), is liye **Apna size**, **Chaurai 48** rakhein. Unchai: poore sticker ke liye 30, chhote ke liye taqreeban 18. Android par **RawBT** app se print karein: us ka free version apni lines daalta hai, paid version nahi.
-2. **Is par kya ho**: kisi line par daba kar use on ya off karein: **Dukaan ka naam**, **Model**, storage aur rang, **Qeemat**, **Barcode**, **IMEI number**, **IMEI aakhri 4**, **Haalat**, **PTA**, **Tareekh** aur **Laagat code**.
+2. **Is par kya ho**: kisi line par daba kar use on ya off karein: **Dukaan ka naam**, **Model**, storage aur rang, **Qeemat**, **Barcode**, **IMEI number**, **IMEI aakhri 4**, **Haalat**, **PTA**, **Tareekh** aur **Laagat code**. Phone ke liye **RAM**, **Battery health**, **Battery cycles** aur **Serial number (S/N)** bhi hain: har ek tabhi chhapta hai jab phone par likha gaya ho, maslan used iPhone ke sticker par *Battery 87% · 312 cycles*.
+   - **Barcode kis se bane**: **IMEI** (aam intikhab) phone ke IMEI ka barcode chhaapta hai, taa ke sticker wahan bhi scan ho jahan IMEI manga jaye — maslan phone wapas khareedte waqt. **Dukaan ka apna code** woh code chhaapta hai jo app ne phone ko diya (MS000006). Jis phone ka IMEI nahi usay hamesha dukaan ka code milta hai. Dono ko scan karne se phone mil jata hai.
 3. **Har ek ki copies**: har phone ya item ke kitne sticker.
 4. **Print karein** dabayein. Page pehle se bilkul ek sticker ke size ka hota hai, is liye label printer har sticker par ek print karta hai. Aap ise PDF ki shakal mein download ya share bhi kar sakte hain.
 
@@ -803,16 +804,16 @@ Gahak baghair login link kholta hai aur dukaan ka naam, mobile aur job number, h
 
 ## 15. Doosri dukaanon ko amanat
 
-Market mein dukaanein aksar ek doosre ko phone "amanat par" deti hain: doosri dukaan use apne customer ko dikhati hai aur ya to bech deti hai ya wapas le aati hai. Phone bikne ya wapas aane tak **aap ka** rehta hai. Mobile Shop aise har phone ka hisaab rakhta hai taa ke koi bhi kisi aur ke counter par bhool na jaye.
+Market mein dukaanein aksar ek doosre ko phone "amanat par" deti hain: doosri dukaan use apne customer ko dikhati hai aur ya to bech deti hai ya wapas le aati hai. Phone amanat par apne logon mein se **kisi ko bhi** diya ja sakta hai — customer, dealer, doosri dukaan ya karigar. Phone bikne ya wapas aane tak **aap ka** rehta hai. Mobile Shop aise har phone ka hisaab rakhta hai taa ke koi bhi kisi aur ke counter par bhool na jaye.
 
 ### Phone amanat par dena
 
 **Misaal:** aap ek **Apple iPhone 12** teen din ke liye **Star Mobiles (Hall Road)** ko dete hain.
 
-1. **Mazeed → Amanat** par jayein. Upar wala card dikhata hai kitne **phone is waqt doosri dukaanon par** hain.
+1. **Mazeed → Amanat** par jayein. Upar wala card dikhata hai kitne **phone is waqt amanat par bahar** hain.
 2. **Phone amanat par dein** dabayein.
 3. **Kaun sa phone?**: list mein iPhone 12 par dabayein, ya use dhoondein ya scan karein.
-4. **Kis dukaan ko?**: **Star** dhoondein. Nayi dukaan wahin **+** se daali ja sakti hai.
+4. **Kis ko?**: **Star** dhoondein. List mein aap ki dukaan ke sab log hain (customer, dealer, dukaanein, karigar); naya wahin **+** se daala ja sakta hai.
 5. **Wapsi**: **3 din** dabayein (ya 7, 15, 30 din, ya **Tareekh nahi**).
 6. Chahein to **Note** likhein, aur **Amanat par dein** dabayein.
 

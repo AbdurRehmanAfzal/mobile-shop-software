@@ -862,12 +862,6 @@ def raise_event(
         party = db.get(Party, data.party_id)
         if party is None or party.shop_id != shop_id:
             raise NotFound(code="party_not_found")
-        if data.type == EventType.LOANED_OUT and "shop" not in party.kinds:
-            raise ValidationFailed(
-                code="loan_party_must_be_shop",
-                message_en="Loans (amanat) are only to other shops",
-                message_ur="امانت صرف دوسری دکان کو دی جا سکتی ہے",
-            )
     payload = dict(data.data or {})
     if data.note:
         payload["note"] = data.note

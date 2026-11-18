@@ -1,4 +1,5 @@
-/** Amanat (loans): phones given to another shop to show or sell. Owner 2026-10-29: brought onto the
+/** Amanat (loans): phones given to someone to show or sell — a customer, a dealer, another shop
+ *  or a technician (owner 2026-11-18, ADR-106; before: another shop only). Owner 2026-10-29: brought onto the
  *  v2 look (violet = stock): a summary card, one card per phone with the shop and a Call button,
  *  "give on amanat" from here (not only from a device page), confirm sheets, big buttons with icons. */
 
@@ -154,7 +155,7 @@ export default function LoansPage() {
   )
 }
 
-/** Give a phone on amanat: which phone (from stock) → which shop → back in how many days. */
+/** Give a phone on amanat: which phone (from stock) → to whom (anyone of the shop's people) → back in how many days. */
 function GiveSheet({ open, onClose, onDone }: { open: boolean; onClose: () => void; onDone: () => void }) {
   const { pick, ur, cls } = useLang()
   const [dev, setDev] = useState<Device | null>(null)
@@ -179,7 +180,7 @@ function GiveSheet({ open, onClose, onDone }: { open: boolean; onClose: () => vo
         )}
         {dev ? (
           <>
-            <div className="flex items-start gap-1"><div className="min-w-0 flex-1"><PartyPicker value={shop} onChange={setShop} kind="shop" label="loan.whichShop" /></div><Help term="loan.toShop" size="sm" /></div>
+            <div className="flex items-start gap-1"><div className="min-w-0 flex-1"><PartyPicker value={shop} onChange={setShop} label="loan.whichShop" /></div><Help term="loan.toShop" size="sm" /></div>
             <div>
               <span className="mb-1.5 flex items-center gap-1"><BiLabel text="loan.backIn" size="md" bold /><Help term="loan.expectedBack" size="sm" /></span>
               <div className="flex flex-wrap gap-1.5">

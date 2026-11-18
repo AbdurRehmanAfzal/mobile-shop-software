@@ -346,6 +346,7 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | Accounts & Reports brief: audit and existing-versus-missing matrix (`docs/38`); phase 1 — chart of accounts, general ledger (with export), the Accounts page, a trial-balance line opens its entries (owner 2026-11-18, ADR-104) | ✅ | `reports/general_ledger.py`, `GeneralLedgerPage.tsx`, `AccountsPage.tsx`, `tests/test_general_ledger.py`, `e2e/accounts-ledger.spec.ts` |
 | Accounts & Reports phase 2: other income with categories, recurring expenses, consolidated branches, retail vs wholesale, credit limit (docs/38 §3) | ⬜ | waits for the owner's order |
 | The "plan renewed" thank-you shows once, not on every login: marked when shown, newest payment marked, only for a payment approved in the last 3 days (shopkeeper report 2026-11-18, ADR-105) | ✅ | `plan/reminders.py`, `planReminder.ts`, `PlanReminders.tsx`, `tests/test_plan_reminders.py`, `e2e/plan-thanks-once.spec.ts` |
+| Amanat to anyone (customer, dealer, shop, technician); sticker ticks for RAM, battery health, battery cycles, serial; the sticker's barcode is the IMEI or the shop's own code (shopkeeper 2026-11-18, ADR-106) | ✅ | `loans/service.py`, `labels/service.py`, `LabelSheet.tsx`, `StickerPreview.tsx`, `LoansPage.tsx`, `tests/test_labels.py`, `tests/test_loans.py`, `e2e/amanat-anyone-sticker.spec.ts` |
 | Operations runbook (internal; secrets only as placeholders) | ✅ | `operations-en.md` |
 | Owner review of the wording | ⏳ | `docs/29-OWNER-PENDING.md` D |
 
