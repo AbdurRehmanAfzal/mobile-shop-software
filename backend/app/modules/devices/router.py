@@ -53,7 +53,7 @@ def list_devices(
     brand_id: uuid.UUID | None = None,
     q: str | None = Query(default=None, min_length=1, max_length=60),
     limit: int = Query(default=100, le=500),
-    category: Literal["phone", "tablet", "watch"] | None = None,
+    category: Literal["phone", "tablet", "watch", "laptop"] | None = None,
     model_id: uuid.UUID | None = None,
     storage_id: uuid.UUID | None = None,
     colour_id: uuid.UUID | None = None,
@@ -114,7 +114,9 @@ def list_devices(
 
 
 @router.get("/stock-status")
-def stock_status(ctx: Ctx, db: DB, category: Literal["phone", "tablet", "watch"] | None = None):
+def stock_status(
+    ctx: Ctx, db: DB, category: Literal["phone", "tablet", "watch", "laptop"] | None = None
+):
     """the stock screen's cards (ADR-059): units by status, items low / out, value at cost"""
     from app.modules.units.router import _plain
 

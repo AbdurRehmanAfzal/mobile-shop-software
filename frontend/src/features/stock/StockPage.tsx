@@ -34,11 +34,21 @@ function writeKept(k: Kept) {
 }
 
 /** what matters for this kind of device, e.g. "128GB · Black", "45mm · GPS · Battery 91%" */
+/** a laptop as shopkeepers name it: "Core i5 8th Gen · 8GB · 256GB SSD · 14" · RTX 3060 6GB" (ADR-108; the server prints the same line on bills and stickers) */
+export function laptopLine(d: Device): string {
+  const s = d.specs ?? {}
+  const cpu = [s.cpu, s.cpu_gen].filter(Boolean).join(' ')
+  let drive = [d.storage_name, s.storage_type].filter(Boolean).join(' ')
+  if (s.storage2) drive = drive ? `${drive} + ${s.storage2}` : String(s.storage2)
+  const gpu = s.gpu ? `${s.gpu}${s.gpu_gb ? ` ${s.gpu_gb}GB` : ''}` : ''
+  return [cpu, d.ram_gb ? `${d.ram_gb}GB` : '', drive, s.display_in ? `${s.display_in}"` : '', gpu].filter(Boolean).join(' · ')
+}
+
 export function specLine(d: Device, pick: (k: string) => string, withColour = true): string {
   const cat = d.category ?? 'phone'
   return [
-    cat === 'watch' ? (d.size_mm ? `${d.size_mm}mm` : null) : d.storage_name,
-    cat === 'phone' ? null : pick(d.cellular ? 'devx.simShort' : cat === 'tablet' ? 'devx.wifiShort' : 'devx.gpsShort'),
+    cat === 'laptop' ? laptopLine(d) || null : cat === 'watch' ? (d.size_mm ? `${d.size_mm}mm` : null) : d.storage_name,
+    cat === 'phone' || cat === 'laptop' ? null : pick(d.cellular ? 'devx.simShort' : cat === 'tablet' ? 'devx.wifiShort' : 'devx.gpsShort'),
     withColour ? d.colour_name : null,
     d.region_code ?? null,
     simTypeText(d.sim_type, pick),
@@ -88,7 +98,7 @@ export function DeviceCard({ d, onOpen, onSell, selected, onSelect, fields, acti
   const picked: [string, string][] | null = fields ? fieldBits(d, fields, pick, ['asking', 'cost', 'imei', 'status', 'verification']).slice(0, 4).map((x) => [x.f.label, String(x.v)]) : null
   const stats: [string, string][] = picked ?? [
     d.category === 'watch' ? ['devx.sizeShort', d.size_mm ? `${d.size_mm}mm` : '—'] : ['stock.storageShort', d.storage_name ?? '—'],
-    hasPta(d) ? ['stock.ptaShort', pick(`stock.pta.${d.pta_status}`)] : ['devx.simLabel', pick(d.category === 'tablet' ? 'devx.wifiShort' : 'devx.gpsShort')],
+    hasPta(d) ? ['stock.ptaShort', pick(`stock.pta.${d.pta_status}`)] : d.category === 'laptop' ? ['devx.ram', d.ram_gb ? `${d.ram_gb}GB` : '—'] : ['devx.simLabel', pick(d.category === 'tablet' ? 'devx.wifiShort' : 'devx.gpsShort')],
     ['stock.conditionShort', pick(`stock.condition.${d.condition}`)],
     ['stock.daysIn', String(daysSince(d.last_event_at))],
   ]

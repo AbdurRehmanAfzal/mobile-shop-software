@@ -358,7 +358,8 @@
       "watch": "Smartwatches",
       "items": "Accessories",
       "part": "Spare parts",
-      "other": "Deegar"
+      "other": "Deegar",
+      "laptop": "Laptop"
     },
     "card": {
       "available": "Bechne ke liye tayyar",
@@ -1684,7 +1685,8 @@
     "watch": "Smart watch",
     "imeiIfSim": "IMEI (agar SIM lagti ho)",
     "serial": "Serial number",
-    "serialHint": "IMEI nahi? Dabbe ya peechhe se serial number likhein (Settings → About)."
+    "serialHint": "IMEI nahi? Dabbe ya peechhe se serial number likhein (Settings → About).",
+    "laptop": "Laptop"
   },
   "fp": {
     "loginWith": "Fingerprint se login",
@@ -1822,7 +1824,18 @@
       "water": "Water resistance",
       "aod": "Always-on display",
       "calling": "Bluetooth calling",
-      "battery_days": "Battery (din)"
+      "battery_days": "Battery (din)",
+      "cpu": "Processor",
+      "cpu_gen": "Generation",
+      "gpu": "Graphics card",
+      "gpu_gb": "Graphics memory (GB)",
+      "storage_type": "Drive ki qisam",
+      "storage2": "Doosri drive",
+      "touch": "Touch screen",
+      "convertible": "Tablet ki tarah murta hai (x360)",
+      "backlit": "Roshni wala keyboard",
+      "gaming": "Gaming laptop",
+      "battery_hours": "Battery backup (ghante)"
     },
     "sensor": {
       "hr": "Heart rate",
@@ -1850,7 +1863,9 @@
       "bad": "Lock abhi laga hai",
       "none": "Lock check nahi hua",
       "button": "Lock check",
-      "note": "Note"
+      "note": "Note",
+      "bios": "BIOS password",
+      "mdm": "Company lock (MDM / Computrace)"
     },
     "openHistory": "Iski history kholein",
     "retype": "Type badlein",
@@ -1920,7 +1935,9 @@
     "cyclesHint": "iPhone 15 aur naye: Settings → General → About. Na dikhe to khali chhor dein.",
     "cyclesBad": "0 se 5000 tak ka number likhein",
     "cyclesShort": "{{n}} cycles",
-    "serialBad": "4 se 20 huroof ya hindse"
+    "serialBad": "4 se 20 huroof ya hindse",
+    "laptopSerialHint": "Serial number ya service tag (laptop ke neeche sticker, ya BIOS mein). Khali sirf tab chhorein jab parha na ja sake: phir app laptop ko apna code de deti hai.",
+    "otherPh": "aur koi…"
   },
   "remind": {
     "title": "Udhaar ki yaad dahani",
@@ -2046,7 +2063,8 @@
     "installments": "Qistein",
     "attendance": "Staff ki hazri",
     "ai": "Assistant aur tasveer parhna (AI)",
-    "login_activity": "Login activity"
+    "login_activity": "Login activity",
+    "laptops": "Laptop (naye aur used)"
   },
   "fees": {
     "title": "Software fees",

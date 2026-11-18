@@ -3219,6 +3219,16 @@
         "title": "Carrier lock",
         "body": "America ya UK ke kuch phone sirf ek company ki SIM se chalte hain (maslan AT&T). \"Factory unlocked\" phone har SIM lete hain.",
         "example": "America ka iPhone 12 Jazz SIM par \"SIM not supported\" dikhaye → carrier lock Still on."
+      },
+      "bios": {
+        "title": "BIOS password",
+        "body": "Laptop chalte hi, Windows se pehle manga jane wala password. Agar laga ho aur bechne wala na hata sake to na khareedein.",
+        "example": "Shuru mein F2 dabayen: password mange → lock hai."
+      },
+      "mdm": {
+        "title": "Company lock",
+        "body": "Laptop kisi company ya school ke control mein hai (MDM, Computrace / Absolute) aur door se lock ho sakta hai. Companiyon se nikle laptop mein aam hai.",
+        "example": "MacBook setup par \"Remote Management\" dikhaye → lock hai."
       }
     },
     "modelNumber": {
@@ -3431,6 +3441,61 @@
         "title": "Saal",
         "body": "Model kis saal aaya. Purane model kam mein bikte hain.",
         "example": "iPhone 13: 2021."
+      },
+      "cpu": {
+        "title": "Processor",
+        "body": "Laptop ka processor. Ek par dabayen ya doosra likh dein. Bill aur sticker par chhapta hai.",
+        "example": "Core i5 — keyboard ke paas laga sticker, ya Windows mein System → About."
+      },
+      "cpu_gen": {
+        "title": "Generation",
+        "body": "Processor ki generation: us ke number ka pehla ek ya do hindsa.",
+        "example": "i5-8250U → 8th Gen; i7-1165G7 → 11th Gen."
+      },
+      "gpu": {
+        "title": "Graphics card",
+        "body": "Graphics chip. Alag card ho to zaroor likhein — gaming aur design wale customer yehi poochte hain.",
+        "example": "NVIDIA RTX 3060, GTX 1650, Intel Iris Xe."
+      },
+      "gpu_gb": {
+        "title": "Graphics memory",
+        "body": "Graphics card kitne GB ka hai.",
+        "example": "RTX 3060 6GB → 6 likhein."
+      },
+      "storage_type": {
+        "title": "Drive ki qisam",
+        "body": "Laptop mein kis qisam ki drive hai. SSD hard disk (HDD) se bohat tez hoti hai, is liye customer poochte hain.",
+        "example": "256GB SSD; 1TB HDD."
+      },
+      "storage2": {
+        "title": "Doosri drive",
+        "body": "Agar laptop mein do drive hon to doosri.",
+        "example": "256GB SSD + yahan \"1TB HDD\"."
+      },
+      "touch": {
+        "title": "Touch screen",
+        "body": "Kya screen touch se chalti hai?",
+        "example": "Latitude 7490 touch → Haan."
+      },
+      "convertible": {
+        "title": "Tablet ki tarah murta hai",
+        "body": "Kya screen poori peeche mur jati hai (x360 / 2-in-1 / Yoga)?",
+        "example": "HP EliteBook x360 1030 → Haan."
+      },
+      "backlit": {
+        "title": "Roshni wala keyboard",
+        "body": "Kya buttons mein roshni hai?",
+        "example": "ThinkPad T480 keyboard light ke sath → Haan."
+      },
+      "gaming": {
+        "title": "Gaming laptop",
+        "body": "Games ke liye bana laptop (taqatwar graphics card aur cooling). List mein maujood gaming models par khud nishan lag jata hai.",
+        "example": "ROG Strix, Legion, Nitro, Omen, Alienware."
+      },
+      "battery_hours": {
+        "title": "Battery backup",
+        "body": "Used laptop battery par kitne ghante chalta hai, jaisa aap ne check kiya.",
+        "example": "Taqreeban 3 ghante → 3."
       }
     },
     "region": {

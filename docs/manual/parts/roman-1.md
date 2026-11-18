@@ -438,6 +438,19 @@ Tablet aur smart watch bhi phone ki tarah ek ek kar ke track hoti hain, har ek k
 
 SIM ke baghair IMEI nahi hota, is liye **Serial number** (dabbe par, ya device mein Settings → About mein) dhoondne ke liye istemal hota hai aur IMEI ki tarah dikhaya jata hai.
 
+### Laptop
+
+Laptop un dukaanon ke liye hain jo in ka kaam bhi karti hain. Software provider se kahein ke aap ki dukaan ke liye **Laptop** on kar de; tab tak laptop ki koi cheez nazar nahi aati.
+
+1. **Device add karein** mein **Yeh kya hai?** ke neeche **Laptop** dabayein.
+2. **Serial number**: laptop ke neeche lage sticker (ya BIOS) se serial number ya service tag. Laptop ka IMEI aur PTA nahi hota. Khali sirf tab chhorein jab parha na ja sake; phir app laptop ko apna code deti hai jo us ke sticker par chhapta hai.
+3. **Brand** dabayein (Dell, HP, Lenovo, Apple, Asus, Acer, MSI …) aur **Model** dhoondein — purane, naye aur gaming model pehle se list mein hain (maslan `5490` likhne se **Latitude 5490** milta hai). Jo na ho woh **+ Naya model** se daalein.
+4. Aam tafseel bharein: **Processor** (Core i5), **Generation** (8th Gen), **Drive ki qisam** (SSD), **Screen size** (14), **Graphics card** agar ho, phir **Storage**, **RAM**, **Haalat**, **Qeemat-e-khareed** aur **Maangi qeemat**. Gaming model par **Gaming laptop** khud lag jata hai.
+5. **Mazeed tafseel** ikhtiyari hai: touch screen, x360, roshni wala keyboard, battery backup, doosri drive, Windows ya macOS waghera.
+6. **Add** dabayein, phir khareedari aam tareeqe se save karein.
+
+**Stock** mein **Laptop** ka tab inhein usi line ke sath dikhata hai jo dukaandar bolte hain: *Core i5 8th Gen · 8GB · 256GB SSD · 14"*. Yehi line bill aur sticker par chhapti hai. Laptop bilkul phone ki tarah bikta, wapas hota, exchange hota aur amanat par jata hai. Wholesale mein kai laptop ek hi bill par doosri dukaan ko daalein, har ek apni tay qeemat par; jo raqam woh na dein woh un ke khate mein jati hai.
+
 ### Purane device ka lock check
 
 Purana tablet ya ghari pichle maalik ke account se locked ho sakti hai. Agar ho to agla khareedne wala usay istemal nahi kar sakta. Is liye jab aap purana unit khareedte hain to form mein **Lock check (used device)** ka dabba aata hai:

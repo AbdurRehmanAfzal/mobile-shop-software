@@ -39,7 +39,7 @@ class ModelCreate(BaseModel):
     name_ur: str | None = Field(default=None, max_length=150)
     reference_price: Decimal | None = Field(default=None, ge=0)
     is_feature_phone: bool = False
-    category: Literal["phone", "tablet", "watch"] = "phone"
+    category: Literal["phone", "tablet", "watch", "laptop"] = "phone"
 
 
 class StorageOut(BaseModel):

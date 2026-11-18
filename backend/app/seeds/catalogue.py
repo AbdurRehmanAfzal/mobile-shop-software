@@ -614,6 +614,9 @@ STORAGES: list[tuple[str, str, int, int]] = [
     ("256GB", "256 جی بی", 256, 40),
     ("512GB", "512 جی بی", 512, 50),
     ("1TB", "1 ٹی بی", 1024, 60),
+    # laptops (ADR-108)
+    ("2TB", "2 ٹی بی", 2048, 70),
+    ("4TB", "4 ٹی بی", 4096, 80),
 ]
 
 # (name, name_ur, hex, sort)
@@ -671,7 +674,9 @@ def seed_catalogue(db: Session) -> dict[str, int]:
     existing_brands = {
         b.name.lower(): b for b in db.scalars(select(Brand).where(Brand.shop_id.is_(None))).all()
     }
-    for name, name_ur, order in BRANDS:
+    from app.seeds.laptops import LAPTOP_BRANDS, laptop_models
+
+    for name, name_ur, order in [*BRANDS, *LAPTOP_BRANDS]:
         if name.lower() not in existing_brands:
             b = Brand(shop_id=None, name=name, name_ur=name_ur, sort_order=order)
             db.add(b)
@@ -702,6 +707,23 @@ def seed_catalogue(db: Session) -> dict[str, int]:
         if (brand.id, model_name.lower()) in existing_models:
             continue
         db.add(Model(shop_id=None, brand_id=brand.id, name=model_name, category=category))
+        existing_models.add((brand.id, model_name.lower()))
+        added["models"] += 1
+    # ADR-108: laptops, old and new; a gaming model says so in its sheet, so the form ticks it
+    for brand_name, model_name, gaming in laptop_models():
+        brand = existing_brands[brand_name.lower()]
+        if (brand.id, model_name.lower()) in existing_models:
+            continue
+        db.add(
+            Model(
+                shop_id=None,
+                brand_id=brand.id,
+                name=model_name,
+                category="laptop",
+                specs={"gaming": True} if gaming else None,
+            )
+        )
+        existing_models.add((brand.id, model_name.lower()))
         added["models"] += 1
 
     have = {

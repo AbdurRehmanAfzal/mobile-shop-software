@@ -7,8 +7,9 @@ import { useNavigate } from 'react-router-dom'
 import { useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import { useGet } from '@/lib/queries'
+import { useModule } from '@/lib/modules'
 
-export type Kind = '' | 'phone' | 'tablet' | 'watch'
+export type Kind = '' | 'phone' | 'tablet' | 'watch' | 'laptop'
 export type Mode = '' | 'sellable' | 'reserved' | 'inspection' | 'in_repair' | 'faulty' | 'with_customer_for_approval' | 'locked'
 
 interface StockStatus {
@@ -23,6 +24,7 @@ const KINDS: { k: Kind | 'items' | 'part' | 'other'; label: string }[] = [
   { k: 'phone', label: 'stock.kind.phone' },
   { k: 'tablet', label: 'stock.kind.tablet' },
   { k: 'watch', label: 'stock.kind.watch' },
+  { k: 'laptop', label: 'stock.kind.laptop' }, // only with the laptops module (ADR-108)
   { k: 'items', label: 'stock.kind.items' },
   { k: 'part', label: 'stock.kind.part' },
   { k: 'other', label: 'stock.kind.other' },
@@ -31,10 +33,11 @@ const KINDS: { k: Kind | 'items' | 'part' | 'other'; label: string }[] = [
 export function KindTabs({ value, onChange }: { value: Kind; onChange: (k: Kind) => void }) {
   const { pick, ur, cls } = useLang()
   const nav = useNavigate()
+  const laptopsOn = useModule('laptops')
   return (
     <div className="flex items-center gap-1">
       <div className="-mx-1 flex min-w-0 flex-1 gap-1.5 overflow-x-auto px-1 pb-1" data-testid="stock-kinds">
-        {KINDS.map(({ k, label }) => {
+        {KINDS.filter(({ k }) => k !== 'laptop' || laptopsOn).map(({ k, label }) => {
           const on = value === k
           return (
             <button

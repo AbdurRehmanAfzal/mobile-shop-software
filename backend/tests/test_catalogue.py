@@ -1,12 +1,16 @@
 """FR-MST-01, FR-MST-02: global catalogue + shop-specific additions, scoped per shop."""
 
 from app.seeds.catalogue import BRANDS, MODELS, OTHER_DEVICES, seed_catalogue
+from app.seeds.laptops import LAPTOP_BRANDS, laptop_models
 
 
 def test_seed_is_idempotent(db):
     first = seed_catalogue(db)
-    assert first["brands"] == len(BRANDS)
-    assert first["models"] == len(MODELS) + len(OTHER_DEVICES)
+    # ADR-108: the laptop brands and models are seeded with the rest
+    assert first["brands"] == len(BRANDS) + len(LAPTOP_BRANDS)
+    names = {(b.lower(), m.lower()) for b, m, *_ in [*MODELS, *OTHER_DEVICES, *laptop_models()]}
+    assert first["models"] == len(names)
+    assert len(names) == len(MODELS) + len(OTHER_DEVICES) + len(laptop_models())  # none clash
     assert first["storages"] > 0 and first["colours"] > 0
     second = seed_catalogue(db)
     assert second == {"brands": 0, "models": 0, "storages": 0, "colours": 0}

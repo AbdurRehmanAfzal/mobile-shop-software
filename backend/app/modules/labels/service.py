@@ -294,7 +294,11 @@ def _device_parts(d: dict, shop: Shop, ur: bool, word: str | None, bar: str = "c
         _SIM_SHORT.get(d.get("sim_type") or "", d.get("sim_type")),
     ]
     cond = CONDITION.get(d.get("condition") or "", ("", ""))[1 if ur else 0]
-    from app.modules.devices.types import lock_text
+    from app.modules.devices.types import laptop_line, lock_text
+
+    laptop = cat == "laptop"
+    if laptop:  # ADR-108: the line shopkeepers quote — processor · RAM · drive · screen · graphics
+        specs = [laptop_line(d), d.get("colour_name")]
 
     if lock_text(d.get("lock_type"), ur):  # ADR-085: a locked phone says so on its sticker
         cond = " · ".join(x for x in (cond, lock_text(d.get("lock_type"), ur)) if x)
@@ -323,7 +327,8 @@ def _device_parts(d: dict, shop: Shop, ur: bool, word: str | None, bar: str = "c
         "barcode": code_value,
         "imei": d.get("imei1") or d.get("serial") or "",
         "barcode_type": code_type,
-        "ram": f"RAM {d['ram_gb']}GB" if d.get("ram_gb") else "",
+        # a laptop's RAM is already in its specs line
+        "ram": f"RAM {d['ram_gb']}GB" if d.get("ram_gb") and not laptop else "",
         "battery": f"Battery {d['battery_health']}%" if d.get("battery_health") else "",
         "cycles": f"{d['battery_cycles']} cycles" if d.get("battery_cycles") is not None else "",
         "serial": d.get("serial") or "",

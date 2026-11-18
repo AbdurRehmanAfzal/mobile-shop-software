@@ -295,11 +295,16 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **Mobile numbers of other countries (2026-11-18, ADR-107)**: nothing to run. To test: People → New person → tap **+92** → pick United Arab Emirates → the box shows the country's name and "+971 50 123 4567" → write a real UAE number → Save. Open that person and tap WhatsApp: the chat must open on the +971 number. Add a Pakistani person the usual way: nothing may have changed. Log in with your own number as always.
 
+**Laptops (2026-11-18, ADR-108, `docs/39-LAPTOPS-PLAN.md`)**: nothing to run (no migration; the laptop brands and models are added by themselves when the server starts). To switch it on for a shop that asked: Super admin → the shop → Modules → tick "Laptops (new and used)" → Save. To test on that shop: Add stock → From a dealer → Add device → **Laptop** → serial number → Dell → search "5490" → Core i5, 8th Gen, SSD, 14 → RAM 8, storage 256GB → Used → cost and asking price → save. Stock → "Laptops": the line must read "Core i5 8th Gen · 8GB · 256GB SSD · 14\"". Sell it: the bill must carry the same line and the serial number. On a shop without the module nothing may have changed (no Laptop type, no Dell in the brands).
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |
 |---|---|---|
 | [ ] | Grace days after plan end: 7 or 15? | 7 |
+| [ ] | Laptops: a stored wholesale price per laptop that fills itself for a wholesale customer? (today: a normal bill at the typed price) | not built |
+| [ ] | Laptops: ID check (CNIC, photo) when a laptop is bought from a walk-in person? | not required |
+| [ ] | Laptops module: only switched on by you, or a monthly price so shops add it themselves? | by you only (price 0) |
 | [ ] | Accounts & Reports phase 2 (docs/38 §3): which first — other income with categories, recurring expenses, consolidated view over branches, retail vs wholesale report, customer credit limit? | none started |
 | [ ] | Manual journal entries: leave out (my advice), or build a small owner-only "adjustment" document limited to named accounts, with a reason? | left out |
 | [ ] | Yearly price: the website says "a year costs 10 months" (about 17% off) but the app now gives 5% for 1 year. Make the website follow the 5%-per-year rule, or raise the 1-year discount? | website unchanged; app 5% per year |
