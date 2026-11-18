@@ -139,9 +139,6 @@ def test_imei_unique_per_shop_and_lookup(owner, other_owner, cat):
 def test_loan_out_and_return_updates_status_party_and_history(owner, cat):
     d = _stock(owner, cat)
     shop_b = _shop_party(owner)
-    customer = _shop_party(owner, phone="03002222222", kinds=("customer",))
-    r = owner.post("/api/v1/loans", json={"device_id": d["id"], "party_id": customer["id"]})
-    assert r.status_code == 422 and r.json()["error"]["code"] == "loan_party_must_be_shop"
     r = owner.post(
         "/api/v1/loans",
         json={

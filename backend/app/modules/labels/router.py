@@ -80,6 +80,10 @@ def device_labels(
     lang: str | None = Query(default=None, pattern="^(en|ur)$"),
     # ADR-091: the phone page's live sticker preview — shown, not printed, so nothing is recorded
     preview: bool = False,
+    # ADR-106: `fv=2` = the app knows the RAM / battery / cycles / serial ticks; `bar` = what the
+    # bars carry — the IMEI (when the phone has one) or the shop's own code
+    fv: int = Query(default=1, ge=1, le=2),
+    bar: str | None = Query(default=None, pattern="^(imei|code)$"),
 ):
     page = service.devices_html(
         db,
@@ -92,6 +96,8 @@ def device_labels(
         copies=copies,
         lang=lang,
         can_cost=ctx.can(Cap.VIEW_COST),
+        fv=fv,
+        bar=bar,
     )
     # owner addendum 4: every print / reprint is on record (who, when, how many)
     from app.modules.barcodes.service import log_print

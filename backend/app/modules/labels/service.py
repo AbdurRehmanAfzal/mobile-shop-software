@@ -47,7 +47,15 @@ FIELDS = (
     "pta",
     "date",
     "code",
+    # owner 2026-11-18 (ADR-106): each its own tick — a used iPhone is sold by these
+    "ram",
+    "battery",
+    "cycles",
+    "serial",
 )
+# until ADR-106 the "specs" line carried RAM, battery health and cycles; a request from an app
+# that does not know the new ticks (no `fv=2`) keeps printing them with "specs"
+SPEC_EXTRAS = ("ram", "battery", "cycles")
 DEFAULT_FIELDS = ("shop", "name", "specs", "price", "barcode", "imei", "condition")
 DEFAULT_CODE_WORD = "BLACKHORSE"
 # owner 2026-11-12: a short roll (e.g. 46×18 mm on a 58 mm printer) cannot hold every line; below
@@ -130,9 +138,11 @@ def _size(size: str, w: float | None, h: float | None) -> tuple[float, float, bo
     return lw, lh, size == "a4"
 
 
-def _fields(fields: str | None, can_cost: bool) -> set[str]:
+def _fields(fields: str | None, can_cost: bool, fv: int = 1) -> set[str]:
     want = {f.strip() for f in (fields or "").split(",") if f.strip()} or set(DEFAULT_FIELDS)
     want &= set(FIELDS)
+    if fv < 2 and "specs" in want:
+        want |= set(SPEC_EXTRAS)
     if not can_cost:
         want.discard("code")
     return want
@@ -223,6 +233,9 @@ def _label(parts: dict, want: set[str], ur: bool, compact: bool = False) -> str:
         top.append(f'<div class="name">{e(parts["name"])}</div>')
     if "specs" in want and parts.get("specs"):
         top.append(f'<div class="specs">{e(parts["specs"])}</div>')
+    extra = [parts.get(k) for k in SPEC_EXTRAS if k in want and parts.get(k)]
+    if extra:  # RAM · battery health · cycles: a line of their own, so it is not cut off
+        top.append(f'<div class="specs">{e(" · ".join(extra))}</div>')
     mid = []
     row = []
     if "price" in want and parts.get("price"):
@@ -244,6 +257,13 @@ def _label(parts: dict, want: set[str], ur: bool, compact: bool = False) -> str:
         mid.append(f'<div class="imei">{e(parts["barcode"])}</div>')  # the code, readable
     if "last4" in want and parts.get("last4"):
         mid.append(f'<div class="imei">{e(parts["last4"])}</div>')
+    # the serial number, unless the IMEI line above is already that serial (a unit with no IMEI)
+    if (
+        "serial" in want
+        and parts.get("serial")
+        and not ("imei" in want and parts.get("imei") == parts["serial"])
+    ):
+        mid.append(f'<div class="imei sn">S/N {e(parts["serial"])}</div>')
     meta = [
         parts.get("condition") if "condition" in want else None,
         parts.get("pta") if "pta" in want else None,
@@ -254,27 +274,23 @@ def _label(parts: dict, want: set[str], ur: bool, compact: bool = False) -> str:
     return f'<div class="label"><div class="lt">{"".join(top)}</div><div class="lm">{"".join(mid)}</div>{bottom}</div>'
 
 
-def _device_parts(d: dict, shop: Shop, ur: bool, word: str | None) -> dict:
+def is_imei(v: str | None) -> bool:
+    """A real IMEI (15 digits) — `imei1` also holds a serial or a made-up code for a unit without one."""
+    return bool(v) and len(v) == 15 and v.isdigit()
+
+
+def _device_parts(d: dict, shop: Shop, ur: bool, word: str | None, bar: str = "code") -> dict:
     cat = d.get("category") or "phone"
     specs = [
-        f"{d['size_mm']}mm"
-        if cat == "watch" and d.get("size_mm")
-        else " + ".join(
-            x
-            for x in (d.get("storage_name"), f"{d['ram_gb']}GB RAM" if d.get("ram_gb") else None)
-            if x
-        )
-        or None,
+        f"{d['size_mm']}mm" if cat == "watch" and d.get("size_mm") else d.get("storage_name"),
         d.get("colour_name"),
         (
             None
             if cat == "phone"
             else ("SIM" if d.get("cellular") else ("Wi-Fi" if cat == "tablet" else "GPS"))
         ),
-        f"Battery {d['battery_health']}%" if d.get("battery_health") else None,
         # ADR-055: an iPhone's region code and SIM setup, as shopkeepers write them
         d.get("region_code"),
-        f"{d['battery_cycles']} cycles" if d.get("battery_cycles") is not None else None,
         _SIM_SHORT.get(d.get("sim_type") or "", d.get("sim_type")),
     ]
     cond = CONDITION.get(d.get("condition") or "", ("", ""))[1 if ur else 0]
@@ -288,6 +304,15 @@ def _device_parts(d: dict, shop: Shop, ur: bool, word: str | None) -> dict:
 
         pta = cpid_label(shop)
     first = d.get("first_seen_at")
+    # owner 2026-11-18 (ADR-106): the bars are the IMEI when the phone has one, so the sticker
+    # can be scanned straight into an IMEI box (a purchase, another shop's software); the shop's
+    # own code stays for a unit without an IMEI, or when the shop asks for it. The stored barcode
+    # is not changed — both find the phone when scanned.
+    code_value = d.get("barcode") or d.get("imei1") or d.get("serial") or ""
+    code_type = d.get("barcode_type") or "code128"
+    if bar == "imei" and is_imei(d.get("imei1")):
+        code_value = d["imei1"]
+        code_type = "qr" if code_type == "qr" else "code128"
     return {
         "shop": (shop.name_ur if ur and shop.name_ur else shop.name),
         "shop_ur": bool(ur and shop.name_ur),
@@ -295,9 +320,13 @@ def _device_parts(d: dict, shop: Shop, ur: bool, word: str | None) -> dict:
         "specs": " · ".join(x for x in specs if x),
         "price": _money(d.get("asking_price")),
         "code": cost_code(d.get("cost_price"), word),
-        "barcode": d.get("barcode") or d.get("imei1") or d.get("serial") or "",
+        "barcode": code_value,
         "imei": d.get("imei1") or d.get("serial") or "",
-        "barcode_type": d.get("barcode_type") or "code128",
+        "barcode_type": code_type,
+        "ram": f"RAM {d['ram_gb']}GB" if d.get("ram_gb") else "",
+        "battery": f"Battery {d['battery_health']}%" if d.get("battery_health") else "",
+        "cycles": f"{d['battery_cycles']} cycles" if d.get("battery_cycles") is not None else "",
+        "serial": d.get("serial") or "",
         "last4": f"IMEI …{(d.get('imei1') or '')[-4:]}" if d.get("imei1") else "",
         "condition": cond,
         "pta": pta,
@@ -317,11 +346,16 @@ def devices_html(
     copies: int = 1,
     lang: str | None = None,
     can_cost: bool = False,
+    fv: int = 1,
+    bar: str | None = None,
 ) -> str:
     shop = db.get(Shop, shop_id)
     ur = (lang or shop.default_locale) == "ur"
     lw, lh, sheet = _size(size, w, h)
-    want = _fields(fields, can_cost)
+    want = _fields(fields, can_cost, fv)
+    # an app that knows the choice sends it; without one a new app gets the IMEI, an old one
+    # (no `fv`) what it always printed
+    bar = bar or ("imei" if fv >= 2 else "code")
     rows = db.execute(_base_query(shop_id).where(Device.id.in_(ids))).all()
     by_id = {r[0].id: to_out(r) for r in rows}
     labels = []
@@ -330,7 +364,10 @@ def devices_html(
         if d is None:
             continue
         lab = _label(
-            _device_parts(d, shop, ur, shop.label_code_word), want, ur, not sheet and lh < COMPACT_H
+            _device_parts(d, shop, ur, shop.label_code_word, bar),
+            want,
+            ur,
+            not sheet and lh < COMPACT_H,
         )
         labels.extend([lab] * max(1, min(copies, 50)))
     if not labels:

@@ -3634,8 +3634,8 @@
     },
     "fields": {
       "title": "What goes on it",
-      "body": "Tap to add or remove each thing on the sticker: shop name, model, storage · colour, price, barcode, IMEI, condition, PTA, date, cost code.",
-      "example": "For a small 38 × 25 sticker keep only model, price and barcode."
+      "body": "Tap to add or remove each thing on the sticker: shop name, model, storage · colour, price, barcode, IMEI, condition, PTA, date, cost code — and RAM, battery health, battery cycles and the serial number, which print only when they were written on the phone.",
+      "example": "For a used iPhone tick battery health and battery cycles: the sticker says \"Battery 87% · 312 cycles\"."
     },
     "costCode": {
       "title": "Cost code",
@@ -3654,7 +3654,7 @@
     },
     "barcode": {
       "title": "Barcode",
-      "body": "The shop's own code for this phone, given when it was bought and never changed. It is printed on the sticker; scanning it opens this phone.",
+      "body": "The shop's own code for this phone, given when it was bought and never changed. Scanning it opens this phone. A sticker prints the IMEI as its barcode when the phone has one, and this code when you choose it or the phone has no IMEI — scanning either finds the phone.",
       "example": "Sticker \"MS000123\" on the box → scan at the counter → this iPhone 13 opens for sale."
     },
     "manufacturer": {
@@ -3666,6 +3666,11 @@
       "title": "Own barcode",
       "body": "Leave empty and the app makes a barcode for the sticker. Type one only if you already use your own codes. Once saved it never changes.",
       "example": "Empty → the app gives \"MS000124\". Your old system code \"HR-77\" → type HR-77."
+    },
+    "bar": {
+      "title": "Barcode made from",
+      "body": "IMEI: the bars are the phone's IMEI, so the sticker can be scanned anywhere an IMEI is asked — when you buy the phone back, or in another shop's software. Shop's own code: the bars are the code the app gave the phone. A phone with no IMEI always gets the shop's code. Scanning either one finds the phone in the app.",
+      "example": "IMEI chosen → a customer brings the phone back → scan its sticker in the purchase form and the IMEI is filled in."
     }
   },
   "price": {
@@ -4016,37 +4021,37 @@
   "loan": {
     "page": {
       "title": "Amanat (loans)",
-      "body": "Phones given to another shop to show or sell. The phone stays yours until it comes back or they keep it — then it becomes a sale to that shop on their khata.",
+      "body": "Phones given to someone to show or sell: a customer, a dealer, another shop or a technician. The phone stays yours until it comes back or they keep it — then it becomes a sale to them on their khata.",
       "example": "Gave an iPhone 13 to Ali Mobiles on Monday; they sold it, so you \"sell\" it to them for Rs. 1,40,000."
     },
     "outCount": {
       "title": "Phones out now",
-      "body": "How many of your phones are at other shops right now on amanat.",
-      "example": "4 → four phones are sitting at other shops."
+      "body": "How many of your phones are out on amanat right now, with whoever took them.",
+      "example": "4 → four phones are out with other people or shops."
     },
     "overdue": {
       "title": "Overdue",
-      "body": "Amanat phones whose \"back by\" date has passed and that have not come back. Call that shop.",
+      "body": "Amanat phones whose \"back by\" date has passed and that have not come back. Call whoever has it.",
       "example": "Given for 7 days on the 1st, not back on the 9th → overdue."
     },
     "views": {
       "title": "Out / Returned / Sold",
-      "body": "Out: still at the other shop. Returned: came back into your stock. Sold to them: they kept it and it became a sale on their khata.",
+      "body": "Out: still with whoever took it. Returned: came back into your stock. Sold to them: they kept it and it became a sale on their khata.",
       "example": "Tap Sold to them to see every amanat phone that became a sale this month."
     },
     "price": {
       "title": "Agreed price",
-      "body": "The price you agreed with that shop for the phone they kept. It becomes a sale bill to them.",
+      "body": "The price you agreed with them for the phone they kept. It becomes a sale bill to them.",
       "example": "Ali Mobiles kept the Galaxy S23 at Rs. 1,95,000 → bill of Rs. 1,95,000."
     },
     "paidNow": {
       "title": "Paid now",
-      "body": "What that shop paid you today for the phone. The rest goes on their khata.",
+      "body": "What they paid you today for the phone. The rest goes on their khata.",
       "example": "Price Rs. 1,95,000, they paid Rs. 1,50,000 → Rs. 45,000 on their khata."
     },
     "onKhata": {
       "title": "On their khata",
-      "body": "Agreed price minus paid now: what that shop will owe you after this.",
+      "body": "Agreed price minus paid now: what they will owe you after this.",
       "example": "Rs. 1,95,000 − Rs. 1,50,000 = Rs. 45,000 they owe."
     },
     "pickPhone": {
@@ -4055,9 +4060,9 @@
       "example": "Type \"S23\" → tap the Galaxy S23 256GB."
     },
     "toShop": {
-      "title": "Which shop",
-      "body": "The other shop taking the phone. It is saved as a party, so if they keep the phone the bill goes on their khata.",
-      "example": "Ali Mobiles, Hall Road, 0321 5550002."
+      "title": "To whom",
+      "body": "Whoever is taking the phone: a customer, a dealer, another shop or a technician. Pick them from your people or add a new one. If they keep the phone, the bill goes on their khata.",
+      "example": "Ali Mobiles, Hall Road — or the customer Sara, who wants to show it at home."
     },
     "expectedBack": {
       "title": "Back by",
@@ -5424,7 +5429,7 @@
       },
       "loans": {
         "title": "Loans (amanat)",
-        "body": "A phone handed to another shop without money changing hands yet. It stays yours until it comes back, or the other shop keeps it and it becomes a sale to that shop.",
+        "body": "A phone handed to someone — a customer, a dealer, another shop or a technician — without money changing hands yet. It stays yours until it comes back, or they keep it and it becomes a sale to them.",
         "example": "You give an iPhone 12 to a shop on Hall Road to show a customer → it shows \"on loan\" until it comes back or is billed."
       },
       "hisaab": {

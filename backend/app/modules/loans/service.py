@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.clock import today as shop_today
-from app.core.errors import Conflict, NotFound, ValidationFailed
+from app.core.errors import Conflict, NotFound
 from app.db.base import utcnow
 from app.modules.audit.service import record_audit
 from app.modules.catalogue.models import Brand, Model
@@ -23,12 +23,8 @@ def create_loan(db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, data: LoanC
     party = db.get(Party, data.party_id)
     if party is None or party.shop_id != shop_id:
         raise NotFound(code="party_not_found")
-    if "shop" not in party.kinds:
-        raise ValidationFailed(
-            code="loan_party_must_be_shop",
-            message_en="Loans (amanat) are only to other shops",
-            message_ur="امانت صرف دوسری دکان کو دی جا سکتی ہے",
-        )
+    # owner 2026-11-18 (ADR-106): amanat goes to anyone in the shop's people — a customer, a
+    # dealer, another shop or a technician — not only to another shop
     if device.status != DeviceStatus.IN_STOCK:
         raise Conflict(
             code="device_not_in_stock",
@@ -155,7 +151,7 @@ def cancel_loan(db: Session, shop_id: uuid.UUID, ctx, loan_id: uuid.UUID, reason
 
 
 def sell_loan(db: Session, shop_id: uuid.UUID, ctx, loan_id: uuid.UUID, data: LoanSellIn) -> Loan:
-    """The borrowing shop sold (or kept) the device: convert the loan into a sale to that shop."""
+    """Whoever took the device sold (or kept) it: the loan becomes a sale to that person."""
     loan = get_loan(db, shop_id, loan_id)
     if loan.status != LoanStatus.OUT:
         raise Conflict(code="loan_not_open")

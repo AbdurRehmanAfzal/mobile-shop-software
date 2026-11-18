@@ -109,3 +109,58 @@ def test_short_roll_keeps_name_price_barcode_imei(owner, cat):
     # 22 mm and up: the full sticker as before
     full = owner.get(f"/api/v1/labels/devices?ids={a['id']}&w=48&h=30&lang=en").text
     assert 'class="label"' in full and 'compact"' not in full and "Used" in full
+
+
+def test_ram_battery_cycles_serial_ticks_and_the_imei_barcode(owner, cat):
+    """Owner 2026-11-18 (ADR-106): RAM, battery health, battery cycles and the serial number are
+    each a tick of their own; the bars are the IMEI when the phone has one, the shop's own code
+    when it has none or when the shop asks for it."""
+    import re
+
+    from app.modules.barcodes import codes
+
+    a = _stock(
+        owner,
+        cat,
+        imei=IMEI_A,
+        condition="used",
+        cost_price=40000,
+        asking_price=45000,
+        ram_gb=8,
+        battery_health=87,
+        battery_cycles=312,
+        serial="F2LXK9QWERTY",
+    )
+    url = f"/api/v1/labels/devices?ids={a['id']}&size=50x30&lang=en"
+    bars = lambda page: re.search(r'<div class="bar[^"]*">(.*?)</div>', page, re.DOTALL).group(1)
+
+    # an app from before the new ticks: "specs" still brings RAM, battery and cycles; no serial;
+    # the bars are the shop's own code as they always were
+    old = owner.get(f"{url}&fields=name,specs,barcode").text
+    assert "RAM 8GB" in old and "Battery 87%" in old and "312 cycles" in old
+    assert "F2LXK9QWERTY" not in old
+    assert bars(old) == codes.svg("code128", a["barcode"]) and a["barcode"] != IMEI_A
+
+    # the new app: each one only when ticked
+    none = owner.get(f"{url}&fv=2&fields=name,specs,barcode").text
+    assert "RAM 8GB" not in none and "Battery 87%" not in none and "312 cycles" not in none
+    two = owner.get(f"{url}&fv=2&fields=name,battery,cycles,barcode").text
+    assert "Battery 87% · 312 cycles" in two and "RAM 8GB" not in two and "S/N" not in two
+    every = owner.get(f"{url}&fv=2&fields=name,specs,ram,battery,cycles,serial,barcode,imei").text
+    assert "RAM 8GB · Battery 87% · 312 cycles" in every and "S/N F2LXK9QWERTY" in every
+
+    # the bars: the IMEI by default, the shop's code when asked; the text under them follows
+    assert bars(none) == codes.svg("code128", IMEI_A)
+    assert f'<div class="imei">{IMEI_A}</div>' in none
+    own = owner.get(f"{url}&fv=2&bar=code&fields=name,barcode").text
+    assert bars(own) == codes.svg("code128", a["barcode"]) and a["barcode"] in own
+    assert owner.get(f"{url}&bar=nonsense").status_code == 422
+    # scanning either finds the same phone, and the stored barcode did not change
+    for code in (IMEI_A, a["barcode"]):
+        hit = owner.get("/api/v1/barcodes/lookup", params={"code": code}).json()
+        assert hit["device"]["id"] == a["id"], hit
+    assert owner.get(f"/api/v1/devices/{a['id']}").json()["barcode"] == a["barcode"]
+
+    # the short sticker carries the IMEI in its bars too
+    short = owner.get(f"/api/v1/labels/devices?ids={a['id']}&w=46&h=18&fv=2&lang=en").text
+    assert 'class="label compact"' in short and bars(short) == codes.svg("code128", IMEI_A)

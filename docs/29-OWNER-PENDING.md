@@ -291,6 +291,8 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **Thank-you popup after paying the fee (2026-11-18, ADR-105)**: nothing to run. To test: approve a fee payment for a test shop; the shop's owner logs in — the thank-you shows once; close the app without tapping OK and log in again — it must not come back. Ask the shopkeeper who reported it to confirm after the update.
 
+**Amanat to anyone, sticker ticks, IMEI barcode (2026-11-18, ADR-106)**: nothing to run. To test: (1) More → Loans → "Give a phone on amanat" → pick a phone → choose a customer (not a shop) → it must save, and "Device came back" must return it to stock. (2) Open a used iPhone that has battery health and cycles written → the sticker card: tick "Battery health", "Battery cycles", "Serial no." — the preview must show them. (3) Print one sticker with "Barcode made from: IMEI" and scan it into the IMEI box of a new purchase: the IMEI must be typed in. Scan the same sticker on Home: the phone must open. Old stickers (MS…) must still open their phone.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

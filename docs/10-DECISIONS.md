@@ -362,6 +362,17 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-106 · 2026-11-18 · Accepted · Amanat to anyone; sticker ticks for RAM / battery / serial; the IMEI as the sticker's barcode
+**Context**: three requests from a shopkeeper. (1) Amanat (a phone given out on trust) was allowed only to a party of kind "shop", yet customers, dealers and technicians take phones the same way. (2) On a used iPhone the battery health and battery cycles sell the phone, and RAM and the serial number are wanted too — the shop should choose them for the sticker. (3) The sticker's barcode should be the IMEI, because the sticker is scanned where an IMEI is asked (buying a phone back); the shop's own code must stay available, since some units have no IMEI.
+
+**Decision**:
+- **Amanat to anyone.** The "must be a shop" rule is removed from `loans.create_loan` and from the device-event route. Nothing else changes: the loan, its events, return, cancel, and "they kept it" (a sale on that person's khata) work for any person of the shop. Both give-on-amanat forms use the people picker without a kind.
+- **Four sticker ticks**: `ram`, `battery`, `cycles`, `serial`. RAM / battery health / cycles print on a line of their own (they used to ride on the "Storage · colour" line, which is cut off when long); the serial prints as `S/N …`. Each prints only when the phone has the value.
+- **The bars are the IMEI when the phone has one** (`bar=imei`, the app's default), else the shop's own code; `bar=code` asks for the shop's code. `devices.barcode` is not touched — ADR-036's rule (assigned once, never changes) stands; only what the sticker prints is chosen. Both values already find the phone (`barcodes.lookup` matches barcode, IMEI 1, IMEI 2). A real IMEI is 15 digits (`imei1` may hold a serial or a made-up code for a unit without one). The IMEI prints as Code 128, or as QR when the shop's type is QR.
+- **Old apps keep their sticker.** The new behaviour is asked for with `fv=2`; a request without it (an app not yet updated) gets the old "specs" line with RAM / battery / cycles and the shop's code in the bars. A label choice saved before this ADR keeps RAM / battery / cycles ticked when "Storage · colour" was ticked.
+
+**Consequences**: no migration. Stickers already printed with the shop's code keep scanning. After the update a shop's new stickers carry the IMEI in the bars unless it chooses "Shop's own code" (remembered with the other label choices). Counted items (accessories) are unchanged. The short sticker (under 22 mm) takes the IMEI barcode but not the four new lines.
+
 ## ADR-105 · 2026-11-18 · Accepted · The "plan renewed" thank-you shows once
 **Context**: a shopkeeper reported that after paying the fee, the "Thank you! Your plan is renewed" popup came back on every login. The server cleared it only when the app sent "seen" after the OK button, with the id of the payment it had shown. Closing the app, a reload, a failed request, or a manager (the route was owner-only, yet the popup shows to everyone who sees money) left it unmarked, so every later login showed it again — for ever, since nothing aged it out.
 
