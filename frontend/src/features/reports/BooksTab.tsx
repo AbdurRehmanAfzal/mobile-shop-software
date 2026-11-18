@@ -107,11 +107,11 @@ export default function BooksTab() {
                 <span>{pick('books.account')}</span><span className="w-[5.5rem] text-end">{pick('books.debit')}</span><span className="w-[5.5rem] text-end">{pick('books.credit')}</span>
               </div>
               {trial.rows.map((r) => (
-                <div key={r.key} className="grid grid-cols-[1fr_auto_auto] items-center gap-3 border-b border-line px-4 py-2 last:border-0">
+                <Link key={r.key} to={`/reports/ledger?account=${encodeURIComponent(r.key)}`} className="tap grid grid-cols-[1fr_auto_auto] items-center gap-3 border-b border-line px-4 py-2 last:border-0" data-testid="trial-row">
                   <span className={`min-w-0 break-words ${ur ? cls('md') : 'text-[15px]'}`}>{label(r)}</span>
                   <span className="num w-[5.5rem] text-end" dir="ltr">{Number(r.debit) ? n(r.debit) : ''}</span>
                   <span className="num w-[5.5rem] text-end" dir="ltr">{Number(r.credit) ? n(r.credit) : ''}</span>
-                </div>
+                </Link>
               ))}
               <div className="grid grid-cols-[1fr_auto_auto] items-center gap-3 bg-ground/60 px-4 py-2.5 font-bold">
                 <BiLabel text="books.total" size="md" bold />

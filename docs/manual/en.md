@@ -2191,6 +2191,9 @@ The **Balance** tab shows your shop's books the way an accountant reads them. Bo
 2. Under **As of**, keep today or pick an older day, for example 30 June for the yearly books.
 3. **Balance sheet** shows three boxes: **What the shop has** (galla, bank and wallets, **People who owe you**, **Stock at cost**), **What the shop owes** (**You owe people**, **Tax collected, still to pay**) and **Owner's share** (the owner's money put in, **Profit so far**, minus **Owner took**).
 4. Tap **Trial balance** to see every account with its debit or credit balance and the two totals.
+5. Tap any line of the trial balance to open its **General ledger**: every entry of that account for the days you choose, with the balance before, each debit or credit, the balance after it and the totals. The balance at the end is the figure the trial balance shows. A deleted bill appears as two entries marked **deleted** (the entry and the one that cancelled it).
+
+**Accounts page:** More → **Accounts** shows your money in one place — **Cash in hand**, **Bank and wallets**, what you will get and what you have to give — with a button to every accounts screen: cash and bank accounts, payments, customer and supplier accounts, expenses, closing the day, the **Chart of accounts & general ledger**, the balance sheet, profit and loss and all reports.
 5. The green line **Balanced** confirms that what the shop has equals what it owes plus the owner's share.
 
 **Example:** has Rs. 9,50,000 = owes Rs. 1,50,000 + owner's share Rs. 8,00,000.

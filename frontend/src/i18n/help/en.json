@@ -6780,5 +6780,19 @@
       "body": "Returns in the chosen days: from customers and to suppliers, with what was handed back and the cut. View details opens the returns report.",
       "example": "From customers: 2 returns, 2 phones, Rs. 80,000; handed back Rs. 78,000; cut Rs. 2,000."
     }
+  },
+  "acct": {
+    "page": {
+      "title": "Accounts",
+      "body": "One page for your money: cash in hand, bank and wallet balances, what people owe you and what you owe, with a button to every accounts screen and report.",
+      "example": "Cash Rs. 2,50,000, bank Rs. 4,50,000, to get Rs. 1,80,000, to give Rs. 1,20,000."
+    }
+  },
+  "gl": {
+    "page": {
+      "title": "General ledger",
+      "body": "Every entry of one account for the days you choose: the balance before, each entry with its debit or credit and the balance after it, and the totals. The balance at the end is the same figure the trial balance shows. A deleted bill appears twice (the entry and the entry that cancelled it), marked deleted.",
+      "example": "Sales account this month: 42 entries, credit Rs. 18,50,000 → the month's sales."
+    }
   }
 }

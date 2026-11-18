@@ -5084,5 +5084,64 @@
     "to": "To",
     "stockTitle": "Item-wise stock sheet",
     "stockHint": "Brand, model with memory, quantity, price of one and cost, with a total for each brand."
+  },
+  "acct": {
+    "title": "Accounts",
+    "hint": "Your money in one place: what you have, what people owe you and what you owe.",
+    "cash": "Cash in hand",
+    "bank": "Bank and wallets",
+    "t": {
+      "cash": "Cash & bank accounts",
+      "expenses": "Expenses",
+      "close": "Close the day",
+      "customers": "Customer accounts (to get)",
+      "suppliers": "Supplier accounts (to give)",
+      "chart": "Chart of accounts & general ledger",
+      "books": "Balance sheet & trial balance",
+      "pnl": "Profit & loss",
+      "payments": "Payments in and out",
+      "audit": "All reports (Shop audit)"
+    }
+  },
+  "gl": {
+    "title": "General ledger",
+    "chart": "Chart of accounts",
+    "chartHint": "Every account of your shop with its balance. Tap one to see each entry in it.",
+    "change": "Another account",
+    "opening": "Balance before",
+    "closing": "Balance at the end",
+    "debit": "Debit",
+    "credit": "Credit",
+    "deleted": "deleted",
+    "none": "No entries in these days",
+    "more": "Show more",
+    "rows": "{{n}} of {{t}} entries",
+    "tooMany": "Too many entries to show. Choose fewer days.",
+    "people": "People's khatas (everyone)",
+    "kind": {
+      "asset": "What the shop has",
+      "liability": "What the shop owes",
+      "equity": "Owner's share",
+      "income": "Income",
+      "expense": "Costs and expenses",
+      "other": "Other"
+    },
+    "type": {
+      "invoice": "Sale",
+      "purchase": "Purchase",
+      "payment": "Payment",
+      "expense": "Expense",
+      "sale_return": "Return (customer)",
+      "purchase_return": "Return to seller",
+      "lending": "Len-den",
+      "opening_balance": "Opening balance",
+      "opening_stock": "Old stock",
+      "repair": "Repair",
+      "transfer": "Transfer",
+      "invoice_void": "Sale deleted",
+      "purchase_void": "Purchase deleted",
+      "sale_return_void": "Return undone",
+      "purchase_return_void": "Return undone"
+    }
   }
 }

@@ -287,11 +287,15 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **Account ledger and item-wise stock sheet (2026-11-18, ADR-103)**: nothing to run. To test: open a supplier's page → "Account ledger" → Download (PDF): each bill must list its phones, with debit, credit and balance, and the totals at the foot; compare the closing balance with his khata. Then the stock-worth page → "Item-wise stock sheet": the grand total must equal the stock worth on that page. Show both to the shopkeeper who asked.
 
+**Accounts page and general ledger (2026-11-18, ADR-104)**: nothing to run. To test: More → Accounts — the four figures must match Home; open "Chart of accounts & general ledger", tap Sales: this month's sales bills must be there and "Balance at the end" must equal the Sales line of the trial balance. In Reports → Balance → Trial balance, tap any line: it opens its entries.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |
 |---|---|---|
 | [ ] | Grace days after plan end: 7 or 15? | 7 |
+| [ ] | Accounts & Reports phase 2 (docs/38 §3): which first — other income with categories, recurring expenses, consolidated view over branches, retail vs wholesale report, customer credit limit? | none started |
+| [ ] | Manual journal entries: leave out (my advice), or build a small owner-only "adjustment" document limited to named accounts, with a reason? | left out |
 | [ ] | Yearly price: the website says "a year costs 10 months" (about 17% off) but the app now gives 5% for 1 year. Make the website follow the 5%-per-year rule, or raise the 1-year discount? | website unchanged; app 5% per year |
 | [ ] | Module prices when added to a package (Repairs 500, Reports 500, WhatsApp 500, Loans 500, Installments 500, AI 1,000, others 300 a month): keep or change? | my defaults; edit in Website prices |
 | [ ] | Freight on a purchase: owed to the supplier (on his bill) or a separate expense? | on the supplier's bill |

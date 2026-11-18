@@ -567,6 +567,28 @@ def account_ledger(
     return _file(format, ctx, db, None, name, head, rows)
 
 
+@router.get("/general-ledger")
+def general_ledger(
+    ctx: Reports,
+    db: DB,
+    account: str,
+    format: Fmt = "pdf",
+    lang: Lang = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+):
+    """owner 2026-11-18 (ADR-104): one account's general ledger for a period"""
+    from app.modules.reports import general_ledger as gl
+
+    d_to = date_to or shop_today()
+    d_from = date_from or d_to.replace(day=1)
+    g = gl.ledger(db, ctx.shop_id, account, d_from, d_to, offset=0, limit=gl.MAX_ROWS)
+    head, rows = gl.flat(g)
+    name = g["account"].get("name") or account.replace(":", "-").replace("_", " ")
+    title = f"General ledger · {name} · {d_from:%d-%m-%Y} – {d_to:%d-%m-%Y}"
+    return _file(format, ctx, db, lang, "general-ledger", head, rows, title)
+
+
 @router.get("/stock-cost")
 def stock_cost(ctx: Ctx, db: DB, format: Fmt = "pdf", lang: Lang = None):
     """owner 2026-11-18 (ADR-103): stock in hand, item wise — brand, model + memory, quantity,

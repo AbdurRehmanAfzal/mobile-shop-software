@@ -5084,5 +5084,64 @@
     "to": "Kab tak",
     "stockTitle": "Item ke hisaab se stock sheet",
     "stockHint": "Brand, model memory ke saath, ginti, ek ki qeemat aur laagat, har brand ke total ke saath."
+  },
+  "acct": {
+    "title": "Accounts",
+    "hint": "Aap ka paisa ek jagah: kya hai, logon ne kitna dena hai aur aap ne kitna dena hai.",
+    "cash": "Haath mein cash",
+    "bank": "Bank aur wallet",
+    "t": {
+      "cash": "Cash aur bank accounts",
+      "expenses": "Kharche",
+      "close": "Din band karein",
+      "customers": "Customers ke khate (lene hain)",
+      "suppliers": "Suppliers ke khate (dene hain)",
+      "chart": "Chart of accounts aur general ledger",
+      "books": "Balance sheet aur trial balance",
+      "pnl": "Nafa aur nuqsan",
+      "payments": "Aane aur jane wali payments",
+      "audit": "Tamam reports (Shop audit)"
+    }
+  },
+  "gl": {
+    "title": "General ledger",
+    "chart": "Chart of accounts",
+    "chartHint": "Aap ki dukaan ka har account apne balance ke saath. Kisi ek ko dabayein to us ki har entry nazar aaye gi.",
+    "change": "Doosra account",
+    "opening": "Pehle ka balance",
+    "closing": "Aakhir ka balance",
+    "debit": "Debit",
+    "credit": "Credit",
+    "deleted": "delete shuda",
+    "none": "In dinon mein koi entry nahi",
+    "more": "Mazeed dikhayein",
+    "rows": "{{t}} mein se {{n}} entries",
+    "tooMany": "Dikhane ke liye entries bohat zyada hain. Kam din chunein.",
+    "people": "Logon ke khate (sab)",
+    "kind": {
+      "asset": "Dukaan ke paas kya hai",
+      "liability": "Dukaan ne kya dena hai",
+      "equity": "Maalik ka hissa",
+      "income": "Aamdani",
+      "expense": "Laagat aur kharche",
+      "other": "Deegar"
+    },
+    "type": {
+      "invoice": "Sale",
+      "purchase": "Khareed",
+      "payment": "Payment",
+      "expense": "Kharcha",
+      "sale_return": "Wapsi (customer)",
+      "purchase_return": "Bechne wale ko wapsi",
+      "lending": "Len-den",
+      "opening_balance": "Purana hisaab",
+      "opening_stock": "Purana stock",
+      "repair": "Repair",
+      "transfer": "Transfer",
+      "invoice_void": "Sale delete",
+      "purchase_void": "Khareed delete",
+      "sale_return_void": "Wapsi khatam",
+      "purchase_return_void": "Wapsi khatam"
+    }
   }
 }

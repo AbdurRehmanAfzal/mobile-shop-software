@@ -362,6 +362,20 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-104 · 2026-11-18 · Accepted · Accounts & Reports: audit first, then only what is missing — phase 1
+**Context**: the owner's brief asks for a complete Accounts and Reports module (19 accounts items, five report families, integrity rules, report UX), reusing what exists, in small phases, without disturbing live shops. It asks for an existing-versus-missing matrix before any code.
+
+**Decision**:
+- **The audit is `docs/38-ACCOUNTS-REPORTS-AUDIT.md`.** Most of the brief already exists: a double-entry append-only ledger, several money accounts with transfers, expenses with categories and receipts, khatas with allocations and advances, opening balances, day close, the audit trail, profit and loss, balance sheet, trial balance, cash flow, each account's book, ageing, and the Shop Audit's sales / purchases / stock / staff sections. No second accounting module is built.
+- **Phase 1 (this ADR) — three read-only additions, no migration:**
+  - **Chart of accounts** (`GET /reports/chart-of-accounts`): the trial balance's own lines with their balances.
+  - **General ledger** (`GET /reports/general-ledger?account=&date_from=&date_to=`, export `GET /exports/general-ledger`): every line of one account for a period — balance before, debit, credit, running balance, totals, the document's number and the person. Everything ever posted is listed; a deleted entry and its reversal are both shown and marked. `receivable` / `payable` open the one sub-ledger of all khatas. The closing balance equals the chart's and the trial balance's figure for the account (a test walks every account). A request loads at most 5,000 lines and says so if the period has more.
+  - **Accounts page** (`/accounts`): cash in hand, bank and wallets, to get, to give, and links to every accounts screen and report. A trial-balance line now opens its general ledger.
+- **Phase 2 and 3** are listed in docs/38 §3 for the owner to order: other income with categories, recurring expenses, a consolidated view over branches, retail versus wholesale, a credit limit; later bank reconciliation and cost history by model.
+- **Manual journal entries are not built** (docs/38 §4): a free journal would break "every figure traces to a document". An owner-only, reasoned adjustment limited to named accounts is offered as a decision.
+
+**Consequences**: nothing existing changes. The general ledger shows raw ledger lines, so its wording is closer to an accountant's than the rest of the app; it sits behind Reports (owner / manager).
+
 ## ADR-103 · 2026-11-18 · Accepted · Account ledger and item-wise stock sheet
 **Context**: a shopkeeper sent two printouts from his old software and asked for the same: an "Account Ledger" of one person (opening balance; each bill with its items — "Vivo X90 Pro 12/512 — 1 @ 90,000 = 90,000" — and each payment; debit, credit, running balance; totals) and a "Stock with Cost Price (Item Wise)" sheet (by brand, each model with quantity, unit price and cost; a total per brand and a grand total).
 

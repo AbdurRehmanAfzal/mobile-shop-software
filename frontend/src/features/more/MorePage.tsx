@@ -89,6 +89,8 @@ const GROUPS: Group[] = [
     title: 'more.accounts',
     help: 'more.group.accounts',
     items: [
+      // owner 2026-11-18 (ADR-104): the money on one page, with a way into every accounts screen
+      { key: 'acct.title', Icon: Landmark, to: '/accounts', roles: MANAGERS, tone: T.sell, help: 'acct.page' },
       { key: 'more.expenses', Icon: Wallet, to: '/expenses', roles: MANAGERS, tone: T.expense, help: 'more.tile.expenses' },
       { key: 'more.dayClose', Icon: Lock, to: '/expenses', roles: MANAGERS, tone: T.expense, help: 'more.tile.dayClose' },
       { key: 'more.cashAccounts', Icon: Landmark, to: '/more/cash', roles: MANAGERS, tone: T.sell, help: 'more.tile.cash' },

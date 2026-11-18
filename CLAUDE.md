@@ -55,6 +55,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Read ADR-101 before touching `returns/service.py`, `ReturnWizard.tsx` or the return accounting.
 - Rules: a returned phone re-enters stock at the cost on its bill line, never at what was handed back; a return reverses the sale's margin and the cut is income (the margin comes back only when the phone is sold again); a damaged return goes to Faulty; correcting a return is undo + re-entry in one transaction (`replace_return`), never an in-place edit of money; `tests/test_returns_audit.py` pins the books — keep it passing. The impact preview (ADR-102, `returns/preview.py`) runs the real posting with `commit=False` and rolls it back — never compute a preview figure in the app or in a second code path.
 
+## Accounts & Reports (owner 2026-11-18, ADR-104)
+- Audit and phases: `docs/38-ACCOUNTS-REPORTS-AUDIT.md` — read it before adding any accounts or report feature; build only what its matrix marks missing.
+- Rules: one accounting engine (the ledger) — never a second set of balances; a report reads the ledger / documents and is checked in a test against them; no free manual journal entry (docs/38 §4); the general ledger's closing balance must equal the trial balance's line.
+
 ## Barcodes, labels, scanning (owner addendum 4, 2026-10-31, ADR-036)
 - Spec `docs/22-BARCODES-SPEC.md`; what existed / what was built / assumptions / scanner test `docs/23-BARCODES-PLAN.md` — read it before touching `backend/app/modules/barcodes`, `modules/labels`, `frontend/src/lib/scanner.ts` or `ScanListener.tsx`.
 - Rules: a barcode is assigned inside the purchase / item-creation transaction and never changes; each barcode keeps its type; uniqueness spans phones, items, IMEIs and SKUs; screens take scans with `useScan`, the shell handles the rest; labels stay the ADR-024 print page.
