@@ -6613,9 +6613,9 @@
   },
   "dl": {
     "styles": {
-      "title": "Page ka andaaz",
-      "body": "Phone ka page kaisa dikhe, chunein; yeh isi phone ya computer par yaad rehta hai. Purana: pehle wala page. Smart: har kaam apni cheez ke saath (IMEI ke saath Copy / Durust, qeemat ke saath Badlein, customer ke saath Dein / Wusool karein) aur neeche history. Tabs: Phone, Customer aur raqam, History alag alag. Khane: dabane ke liye bare khane. Mukhtasar: ek chhoti list, neeche Bechein ka button. Sab andaaz ek hi kaam karte hain.",
-      "example": "Rush wala counter: Mukhtasar. Naya salesman: Khane."
+      "title": "Phone dekhne ke tareeqe",
+      "body": "Tafseel: phone ki har baat ek table mein, har line ke sath us ka button. 80 mm parchi aur A4 safha: phone ki tafseel jaise chhape gi — lines par nishan lagayein, phir print, download ya share karein.",
+      "example": "Rang badalne ke liye Tafseel; customer ko phone ki parchi dene ke liye 80 mm parchi."
     }
   },
   "logins": {
@@ -6909,6 +6909,18 @@
       "title": "Tareekhein",
       "body": "Yahan chuni gayi tareekhein download mein jati hain, aur un reports mein jo tareekhon se chalti hain (hisaab, shop audit aur us ke hisse). Jo reports dukaan ki maujooda haalat dikhati hain — stock, udhaar khata — woh inhein istemal nahi kartin.",
       "example": "\"Is maah\" chunein → sale ke billon ke download mein is maah ke bill honge."
+    }
+  },
+  "dsheet": {
+    "page": {
+      "title": "Chhapi hui tafseel",
+      "body": "Phone ki tafseel kaghaz par: thermal printer ke liye 80 mm parchi ya A4 safha. Screen par nazar aane wali tasveer asal print ka safha hai, is liye chhapne se pehle dekh lete hain. Isay PDF mein save ya WhatsApp par bhej bhi sakte hain.",
+      "example": "Customer tehreeri tafseel mange → 80 mm parchi → Print."
+    },
+    "fields": {
+      "title": "Is par kya ho",
+      "body": "Line par daba kar usay kaghaz par daalein ya hatayein; namoona foran badal jata hai. Aap ka intikhab yaad rehta hai, parchi aur safhe ke liye alag alag. Qeemat-e-khareed aur \"Jis se khareeda\" sirf owner aur manager ko milte hain.",
+      "example": "Customer ke liye: qeemat, IMEI, memory, condition, warranty. Apni file ke liye: qeemat-e-khareed aur jis se khareeda bhi."
     }
   }
 }

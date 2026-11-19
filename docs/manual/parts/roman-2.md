@@ -242,17 +242,25 @@ Phone daalte ya badalte waqt **Shelf / jagah** (optional) batata hai ke phone ka
 
 Phone ke page par **Dealer / customer badlein** dabayein: us ki khareedari badalne ke liye tayyar khulti hai (upar "IMEI ya bechne wala ghalat likha gaya" dekhein). Items ke liye khareedari item ki movements se ya **More → Purchases** se kholein.
 
-### Page ka andaaz: Purana, Smart, Tabs, Khane, Mukhtasar
+### Phone ka page: Tafseel, 80 mm parchi, A4 safha
 
-Phone ke page ke upar se chun sakte hain ke page kaisa dikhe. Yeh intikhab isi phone ya computer par yaad rehta hai.
+Phone ke page ke upar teen manzar hain. Intikhab usi phone ya computer par yaad rehta hai.
 
-- **Purana**: pehle wala page.
-- **Smart**: har cheez ke saath us ka kaam. IMEI ke saath **Copy** aur **IMEI durust karein**, qeemat ke saath **Bechne ki qeemat badlein**, shelf ke saath **Badlein**, barcode ke saath **Sticker**, ID check ke saath **Tasdeeq**. Upar **Bechein** hai. Jis se khareeda (ya jise becha) woh baqi raqam ke saath dikhta hai, saath **Dein** / **Wusool karein**, **Bill kholein** aur **Badlein**. Neeche history.
-- **Tabs**: yahi page **Phone**, **Customer aur raqam** aur **History** mein.
-- **Khane**: bare khane; dabayein to badalne ka kaam khulta hai (qeemat, IMEI, haalat, shelf, sticker, ID check).
-- **Mukhtasar**: ek chhoti list, aur neeche **Bechein** ka button hamesha maujood.
+**Tafseel** phone ki har baat ka ek table hai. Har line mein icon aur naam, value, usay badalne ka button, aur samjhane wala **?** hai.
 
-Sab andaaz ek hi kaam karte hain; jo kaam kisi cheez ke saath nahi woh **Mazeed kaam** mein hain.
+- Upar **Tamam tafseel badlein** poora form kholta hai, jaisa phone khareedte waqt tha.
+- Har line hamesha maujood hai. Jo line abhi nahi likhi gayi (IMEI 2, rang, shelf, warranty …) us mein **—** aur sath **Likhein** ya **Badlein** hota hai.
+- Kuch lines ka apna kaam hai: IMEI ke sath **IMEI durust karein**, maangi qeemat ke sath **Badlein**, qeemat-e-khareed ke sath **Durust karein**, PTA ke sath **Check**, condition ke sath **Kharab mark karein**.
+- **Is phone ki raqam** (maangi qeemat, qeemat-e-khareed, dena baqi, kitne mein bika, lena baqi, munafa), log (**Jis se khareeda**, **Customer**) aur sath aane wali cheezein (**Accessories**) isi table ki lines hain.
+- Table ke neeche bare kaam (**Bechein**, **Amanat par dein**, **Repair par bhejein**) aur **Mazeed kaam** hain.
+
+**80 mm parchi** aur **A4 safha** phone ki tafseel waise dikhate hain jaise chhape gi — thermal roll par ya poore safhe par.
+
+1. **80 mm parchi** ya **A4 safha** dabayein. Nazar aane wali tasveer asal print ka safha hai.
+2. **Is par kya ho** ke neeche jo lines chahiyen un par nishan lagayein: dukaan ka naam, qeemat, IMEI, IMEI 2, serial number, memory, rang, condition, PTA, battery, warranty, sath kya hai, barcode, tareekh. Owner aur manager **Qeemat-e-khareed** aur **Jis se khareeda** bhi laga sakte hain. Tasveer foran badal jati hai.
+3. **Print**, **PDF download** ya **PDF share** dabayein.
+
+Aap ke nishan yaad rehte hain, parchi aur safhe ke liye alag alag. Bare kaam (Bechein, Tafseel badlein …) namoone ke neeche bhi hain.
 
 ### Poori history
 

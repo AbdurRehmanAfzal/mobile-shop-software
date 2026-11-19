@@ -3,6 +3,7 @@ from decimal import Decimal
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, Query
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 
 from app.core.permissions import Cap
@@ -206,6 +207,18 @@ class ConvertIn(BaseModel):
 
 class LibraryCsvIn(BaseModel):
     csv: str = Field(min_length=1, max_length=2_000_000)
+
+
+@router.get("/sheet-options")
+def sheet_options(ctx: Ctx):
+    """the lines a phone's printed details may carry (ADR-114); cost lines only for owner / manager"""
+    from app.modules.devices import sheet
+
+    cost = ctx.can(Cap.VIEW_COST)
+    return {
+        "fields": [f for f in sheet.FIELDS if cost or f not in sheet.COST_FIELDS],
+        "default_fields": list(sheet.DEFAULT_FIELDS),
+    }
 
 
 @router.get("/options")
@@ -416,6 +429,30 @@ def get_device(device_id: uuid.UUID, ctx: Ctx, db: DB):
     device = service.get_device(db, ctx.shop_id, device_id)
     events = service.history(db, ctx.shop_id, device_id)
     return {**d, "accessories": list(device.accessories), "recent_events": events[-5:]}
+
+
+@router.get("/{device_id}/sheet", response_class=HTMLResponse)
+def device_sheet(
+    device_id: uuid.UUID,
+    ctx: Ctx,
+    db: DB,
+    format: Literal["thermal", "a4"] = "thermal",
+    fields: str | None = None,
+    lang: str | None = Query(default=None, pattern="^(en|ur)$"),
+):
+    """ADR-114: the phone's details as an 80 mm slip or an A4 page, with the lines ticked — the
+    page the phone's screen previews, prints, downloads and shares. Read-only."""
+    from app.modules.devices import sheet
+
+    return sheet.sheet_html(
+        db,
+        ctx.shop_id,
+        device_id,
+        fmt=format,
+        fields=fields,
+        lang=lang,
+        can_cost=ctx.can(Cap.VIEW_COST),
+    )
 
 
 @router.get("/{device_id}/history", response_model=list[EventOut])

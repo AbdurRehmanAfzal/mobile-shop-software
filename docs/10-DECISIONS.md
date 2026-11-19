@@ -362,6 +362,17 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-114 · 2026-11-20 · Accepted · A phone's page: a details table, and its printed details as an 80 mm slip or an A4 page
+**Context**: shopkeepers said that on a phone's page several values (colour, IMEI 2 and others) have no edit beside them; they want one "edit everything" at the top that opens the purchase form; they could not tell the Smart / Tabs / Tiles / Compact styles apart and want them replaced by an 80 mm thermal preview and an A4 preview of the phone's details, with the lines ticked like the sticker, to print, download and share; IMEI 2, the accessories and the money on the phone belong with the other details; they dislike the coloured "Bought from" card and the tinted backgrounds, and asked for a table: icon, name, value, action button, small info button.
+
+**Decision**:
+- **Three views** (`DeviceLayouts.tsx`): Details · 80 mm slip · A4 page. Smart, Tabs, Tiles and Compact are removed; a style saved before opens as Details.
+- **Details is one table** (`DeviceEasyView.tsx`): bands Identity, Details, Money on this phone, People, Accessories; each line = icon + name | value | action + "?". Every line is always shown — an unwritten one says "—" with Add / Edit — so nothing is without a way to change it. A line with a job of its own keeps it (Correct IMEI, Change price, Correct cost, PTA check, Mark faulty, lock check, ID check, Change dealer / customer); every other line's Edit opens the whole form, and so does "Edit all details" at the top. The money tiles and the accessories chips became lines of the table (the money figures are still the server's `/devices/{id}/money`).
+- **The bought / sold cards are calm**: white, a coloured edge, grey inner tiles, a filled pay / receive button.
+- **Printed details** (`devices/sheet.py`, `GET /devices/{id}/sheet?format=thermal|a4&fields=…`, `GET /devices/sheet-options`): the shop's header (`profile.header_html`), the phone's name, price, the lines ticked, the barcode (the IMEI when it has one, ADR-106). Read-only — it writes no event. Cost and "Bought from" only with `VIEW_COST`. The app's preview (`DeviceSheetPreview.tsx`) is this page in a frame, so what is seen is what prints; print, PDF download and share use the existing document actions; the ticks are kept per format on the device.
+
+**Consequences**: one page to maintain instead of five layouts. The printed details are a slip about the phone, not a bill — a sale's bill is still the receipt on the sale. Editing what came with a phone (accessories) is still done at purchase or sale, not from this table.
+
 ## ADR-113 · 2026-11-19 · Accepted · The money buttons look like buttons: `ActionButton`
 **Context**: after ADR-112 the four money buttons on a person's page carried a line of explanation, and shopkeepers said they could no longer tell that they were to be tapped: with two lines of text, a thin border and a white fill they read as notes.
 

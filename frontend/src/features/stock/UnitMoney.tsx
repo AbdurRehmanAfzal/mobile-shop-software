@@ -28,7 +28,8 @@ const n = (v: string | number | null | undefined) => (v == null ? '—' : Number
 
 /** `historyOnly`: the page styles that already show the people and money beside the phone show
  *  only the timeline here (owner 2026-11-10) */
-export default function UnitMoney({ deviceId, historyOnly }: { deviceId: string; historyOnly?: boolean }) {
+/** `noTiles`: the Details table already carries the money lines (ADR-114) */
+export default function UnitMoney({ deviceId, historyOnly, noTiles }: { deviceId: string; historyOnly?: boolean; noTiles?: boolean }) {
   const { pick, ur, cls } = useLang()
   const nav = useNavigate()
   const inv = useInvalidate()
@@ -46,12 +47,13 @@ export default function UnitMoney({ deviceId, historyOnly }: { deviceId: string;
     const hidden = bought && !canCost
     const rem = Number(side.remaining ?? 0)
     return (
-      <div className={`flex flex-col gap-2 rounded-3xl p-4 ${bought ? 'bg-buy text-buy-fg' : 'bg-sell text-sell-fg'}`}>
+      // shopkeepers 2026-11-20: a calm card — white, with a coloured edge that says bought or sold
+      <div className={`flex flex-col gap-2 rounded-3xl border border-line bg-surface p-4 text-ink shadow-[0_8px_24px_-20px_rgba(27,31,36,.5)] ${bought ? 'border-s-4 border-s-payable' : 'border-s-4 border-s-emerald'}`} data-testid={bought ? 'unit-bought' : 'unit-sold'}>
         <div className="flex items-start justify-between gap-2">
           <span className="flex min-w-0 flex-col">
-            <span className="flex items-center gap-1"><BiLabel text={bought ? 'unit.boughtFrom' : 'unit.soldTo'} size="sm" tone="text-current" className="opacity-80" />{bought ? <Help term="stock.unit.bought" size="sm" /> : <Help term="stock.unit.sold" size="sm" />}</span>
+            <span className="flex items-center gap-1"><BiLabel text={bought ? 'unit.boughtFrom' : 'unit.soldTo'} size="sm" tone="text-muted" />{bought ? <Help term="stock.unit.bought" size="sm" /> : <Help term="stock.unit.sold" size="sm" />}</span>
             <button type="button" onClick={() => side.party_id && nav(`/parties/${side.party_id}`)} className="truncate text-start text-lg font-extrabold underline-offset-2 hover:underline">{side.party_name ?? pick('sale.cashCustomer')}</button>
-            <span className={`opacity-80 ${small}`} dir="ltr">{side.no} · {fmtDate(side.date)}{side.shared_bill ? ` · ${pick('unit.sharedBill').replace('{{t}}', n(side.doc_total))}` : ''}{!bought && side.asking_at_sale ? ` · ${pick('confirm.asking')} ${n(side.asking_at_sale)}` : ''}</span>
+            <span className={`text-muted ${small}`} dir="ltr">{side.no} · {fmtDate(side.date)}{side.shared_bill ? ` · ${pick('unit.sharedBill').replace('{{t}}', n(side.doc_total))}` : ''}{!bought && side.asking_at_sale ? ` · ${pick('confirm.asking')} ${n(side.asking_at_sale)}` : ''}</span>
           </span>
           {side.returned_at ? <Chip text="unit.returned" tone="bad" /> : rem > 0 ? <Chip text={bought ? 'unit.weOwe' : 'unit.theyOwe'} tone="warn" /> : <Chip text="unit.settled" tone="ok" />}
         </div>
@@ -62,27 +64,27 @@ export default function UnitMoney({ deviceId, historyOnly }: { deviceId: string;
               bought ? { k: 'unit.paidOut', v: side.paid, help: 'stock.unit.paidOut' } : { k: 'unit.receivedIn', v: side.paid, help: 'stock.unit.receivedIn' },
               bought ? { k: 'unit.stillToPay', v: side.remaining, help: 'stock.unit.stillToPay' } : { k: 'unit.stillToGet', v: side.remaining, help: 'stock.unit.stillToGet' },
             ] as { k: string; v: string | null; help: string }[]).map(({ k, v, help }) => (
-              <div key={k} className="flex flex-col rounded-2xl bg-white/10 px-3 py-2">
-                <span className={`flex items-center gap-1 opacity-80 ${small}`}>{pick(k)}<Help term={help} size="sm" /></span>
+              <div key={k} className="flex flex-col rounded-2xl bg-ground px-3 py-2">
+                <span className={`flex items-center gap-1 text-muted ${small}`}>{pick(k)}<Help term={help} size="sm" /></span>
                 <span className="num text-lg" dir="ltr">{n(v)}</span>
               </div>
             ))}
           </div>
-        ) : <BiLabel text="unit.costHidden" size="sm" tone="text-current" className="opacity-80" />}
+        ) : <BiLabel text="unit.costHidden" size="sm" tone="text-muted" />}
         {!hidden ? (
-          <div className="flex flex-col gap-1 rounded-2xl bg-white/10 px-3 py-2">
+          <div className="flex flex-col gap-1 rounded-2xl bg-ground px-3 py-2">
             <div className="flex items-center justify-between"><span className={`flex items-center gap-1 ${small}`}><span>{pick(bought ? 'unit.upfrontPaid' : 'unit.upfrontReceived')} · <span dir="ltr">{fmtDate(side.date)}</span></span><Help term="stock.unit.upfront" size="sm" /></span><span className="num" dir="ltr">{n(side.upfront)}</span></div>
             {side.payments.map((p) => (
               <div key={p.payment_id} className="flex items-center justify-between gap-2">
                 <span className={`flex min-w-0 items-center gap-1 ${small}`}><span dir="ltr">{p.no}</span> · <span dir="ltr">{fmtDate(p.date)}</span>{p.method !== 'cash' ? <span>· {pick(`pay.m.${p.method}`)}</span> : null}</span>
-                <span className="flex shrink-0 items-center gap-2"><span className="num" dir="ltr">{n(p.amount)}</span><button type="button" aria-label={pick('unit.printReceipt')} onClick={() => openPrintable(`/api/v1/payments/${p.payment_id}/receipt?format=thermal`)} className="tap rounded-full bg-white/15 p-1.5"><Printer size={14} /></button></span>
+                <span className="flex shrink-0 items-center gap-2"><span className="num" dir="ltr">{n(p.amount)}</span><button type="button" aria-label={pick('unit.printReceipt')} onClick={() => openPrintable(`/api/v1/payments/${p.payment_id}/receipt?format=thermal`)} className="tap rounded-full border border-line bg-surface p-1.5"><Printer size={14} /></button></span>
               </div>
             ))}
           </div>
         ) : null}
         {!side.returned_at && rem > 0 && side.party_id ? (
-          <button type="button" onClick={() => setPaying({ side, direction: bought ? 'out' : 'in' })} className={`tap flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-white font-bold text-ink ${ur ? cls('md') : ''}`}>
-            {bought ? <ArrowUp size={18} className="text-payable" /> : <ArrowDown size={18} className="text-emerald-deep" />}
+          <button type="button" onClick={() => setPaying({ side, direction: bought ? 'out' : 'in' })} className={`tap flex min-h-12 items-center justify-center gap-2 rounded-2xl font-extrabold shadow-cta active:translate-y-0.5 ${bought ? 'bg-ink text-ground' : 'bg-emerald text-white'} ${ur ? cls('md') : ''}`}>
+            {bought ? <ArrowUp size={18} /> : <ArrowDown size={18} />}
             {pick(bought ? 'unit.payForThis' : 'unit.receiveForThis')}
           </button>
         ) : null}
@@ -92,8 +94,8 @@ export default function UnitMoney({ deviceId, historyOnly }: { deviceId: string;
 
   return (
     <>
-      {historyOnly ? null : <Section title="unit.title" help="stock.unit.title">
-        <div className="card grid grid-cols-2 gap-2 sm:grid-cols-4" data-testid="unit-tiles">
+      {historyOnly ? null : <Section title={noTiles ? 'unit.dealTitle' : 'unit.title'} help="stock.unit.title">
+        {noTiles ? null : <div className="card grid grid-cols-2 gap-2 sm:grid-cols-4" data-testid="unit-tiles">
           {([
             canCost ? { k: 'unit.cost', v: s.cost, tone: 'text-ink', help: 'cost' } : null,
             canCost ? { k: 'unit.stillToPay', v: s.payable, tone: Number(s.payable) > 0 ? 'text-payable' : 'text-ink', help: 'stock.unit.stillToPay' } : null,
@@ -108,7 +110,7 @@ export default function UnitMoney({ deviceId, historyOnly }: { deviceId: string;
               <span className={`num text-xl ${tone}`} dir="ltr">{v == null ? '—' : n(v)}</span>
             </div>
           ))}
-        </div>
+        </div>}
         {data.purchase ? <SideCard side={data.purchase} role="bought" /> : s.source === 'opening_stock' ? <span className="flex items-center gap-1"><BiLabel text="unit.openingStock" size="sm" tone="text-muted" /><Help term="opening" size="sm" /></span> : s.source === 'branch' ? <span className="flex items-center gap-1"><BiLabel text="unit.fromBranch" size="sm" tone="text-muted" /><Help term="transfer.page" size="sm" /></span> : null}
         {data.sale ? <SideCard side={data.sale} role="sold" /> : null}
       </Section>}
