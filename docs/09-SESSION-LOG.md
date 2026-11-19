@@ -2142,3 +2142,9 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - tsc; vitest (61). Backend untouched: pytest not re-run.
 - Playwright: new `money-buttons` passes (each button's line in English mode, the form repeats it, a len-den entry still saves, Urdu mode shows Urdu lines and no Roman). `lending` (2), `counter` (khata and person page), `old-dealings-bulk`, `responsive` (iPhone SE and small Android, en and ur) pass; `urdu.spec` still fails only on the Latin "CP" of the settings page (older than this change), with no new English word. Looked at the person page.
 **Next**: wording changes the shopkeepers ask for; "Every day" reports (ADR-111); docs/40 §4.
+
+### 2026-11-19 — the money buttons look like buttons (ADR-113)
+**Owner**: PR #95 is merged, but shopkeepers cannot tell the four money buttons are to be tapped; design them so they are responsive and plainly buttons.
+**Done**: `components/ActionButton.tsx` (filled colour, icon well, name and line, round arrow, shadow, press-down, "?" in the corner); used for Money received / Money paid on the person's page and the two len-den buttons; one per row below the laptop width; ADR-113, docs/29. No server change.
+**Verified**: tsc; vitest (61). Playwright: `money-buttons` (now also checks 320, 412 and 1280 px — fits, one per row on a phone, side by side on a laptop, one real button each), `lending` (2), `counter` (person page), `old-dealings-bulk` pass; `urdu.spec` fails only on the older "CP" of the settings page. Looked at the screens at 412 and 320 px. Backend untouched: pytest not re-run.
+**Next**: the shopkeepers' view of the new buttons and wording.

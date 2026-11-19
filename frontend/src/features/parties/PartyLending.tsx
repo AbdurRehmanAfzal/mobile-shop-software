@@ -3,7 +3,8 @@
  *  entries, and — when money already given / taken could pay their open bills — an adjust button.
  *  Return dates (§7): when it is due back, a WhatsApp reminder, and changing the date. */
 
-import { BellRing, CalendarClock, HandCoins } from 'lucide-react'
+import { ArrowDownLeft, ArrowUpRight, BellRing, CalendarClock, HandCoins } from 'lucide-react'
+import ActionButton from '@/components/ActionButton'
 import { useAuth } from '@/lib/auth'
 import { useState } from 'react'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
@@ -146,22 +147,9 @@ export default function PartyLending({ party }: { party: Party }) {
           <span className="flex flex-col"><span className="flex items-center gap-1 text-muted">{pick('lending.fromBills')}<Help term="lending.fromBills" size="sm" /></span><span className="num font-bold" dir="ltr">{n(data.bills)}</span></span>
         </div>
       ) : null}
-      <div className="grid grid-cols-1 gap-2 min-[480px]:grid-cols-2">
-        {/* the "?" sits on top of each button, not inside it (docs/33) */}
-        <div className="relative">
-          <button type="button" onClick={() => setGiving('out')} className="tap flex min-h-[64px] w-full flex-col items-start justify-center gap-1 rounded-2xl border border-line bg-surface py-2.5 pe-10 ps-4 text-start text-ink" data-testid="lending-give">
-            <BiLabel text="lending.give" size="sm" bold tone="text-current" />
-            <Say k="say.lendOut" className="text-muted" />
-          </button>
-          <span className="absolute end-1 top-1/2 -translate-y-1/2"><Help term="lending.give" size="sm" /></span>
-        </div>
-        <div className="relative">
-          <button type="button" onClick={() => setGiving('in')} className="tap flex min-h-[64px] w-full flex-col items-start justify-center gap-1 rounded-2xl border border-line bg-surface py-2.5 pe-10 ps-4 text-start text-ink" data-testid="lending-take">
-            <BiLabel text="lending.take" size="sm" bold tone="text-current" />
-            <Say k="say.lendIn" className="text-muted" />
-          </button>
-          <span className="absolute end-1 top-1/2 -translate-y-1/2"><Help term="lending.take" size="sm" /></span>
-        </div>
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+        <ActionButton tone="out" icon={<ArrowUpRight size={24} strokeWidth={2.4} />} title="lending.give" say="say.lendOut" onClick={() => setGiving('out')} testid="lending-give" help={<Help term="lending.give" size="sm" />} />
+        <ActionButton tone="in" icon={<ArrowDownLeft size={24} strokeWidth={2.4} />} title="lending.take" say="say.lendIn" onClick={() => setGiving('in')} testid="lending-take" help={<Help term="lending.take" size="sm" />} />
       </div>
       {canSettle ? (
         <div className="flex flex-col gap-2 rounded-2xl bg-khata px-4 py-3 text-khata-fg" data-testid="lending-settle">

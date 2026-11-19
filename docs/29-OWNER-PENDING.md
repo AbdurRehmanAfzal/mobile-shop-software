@@ -305,6 +305,8 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **Lines under the money buttons (2026-11-19, ADR-112)**: nothing to run. To test: open a person's page in English — under "Money received" must read "Bill ka udhaar wapas mila: jo paise is ne aap ko dene the, woh yahan likhein"; under "Money paid", "Gave money, no bill" and "Took money, no bill" their own lines. Tap one: the form repeats the line. Switch to Urdu: the lines must be in Urdu. Show it to the shopkeepers who asked and tell me any wording they want changed — each line is one text.
 
+**Money buttons redesigned (2026-11-19, ADR-113)**: nothing to run. To test: open a person's page on a phone — Money received (blue), Money paid (dark), Gave money, no bill (red), Took money, no bill (amber) must each be a filled button with an icon on one side and a round arrow on the other, one under the other; tapping anywhere on one opens its form. Show the shopkeepers who said they could not tell these were buttons.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

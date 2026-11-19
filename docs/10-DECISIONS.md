@@ -362,6 +362,13 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-113 · 2026-11-19 · Accepted · The money buttons look like buttons: `ActionButton`
+**Context**: after ADR-112 the four money buttons on a person's page carried a line of explanation, and shopkeepers said they could no longer tell that they were to be tapped: with two lines of text, a thin border and a white fill they read as notes.
+
+**Decision**: one component, `components/ActionButton.tsx`, for a big action with an explanation — a filled colour, an icon in its own well at the start, the name in bold with its `Say` line, a round arrow at the end, a shadow that lifts it off the page and a press-down on tap; the "?" in the top corner, outside the button. Tones: `get` (emerald, money received), `give` (ink, money paid), `out` (red tint, gave with no bill), `in` (amber tint, took with no bill). One per row on a phone, two per row from the laptop width; checked at 320, 412 and 1280 px.
+
+**Consequences**: an action that needs a line of explanation uses `ActionButton`, not a plain bordered button with more text in it.
+
 ## ADR-112 · 2026-11-19 · Accepted · A line under a confusing button says what it is for — Roman Urdu under English
 **Context**: shopkeepers said the four money buttons on a person's page confuse them: "Money received", "Money paid", "I gave money", "I took money". The first pair is money against bills (udhaar being paid back), the second pair is money with no bill (len-den) — the names did not say so, and most users do not read English natively. The owner asked for one line under each button in the shopkeeper's words, and the same wherever a button or heading can be misread, in Roman Urdu beside the English.
 
