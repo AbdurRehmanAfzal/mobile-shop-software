@@ -5345,7 +5345,37 @@
     "nothingLeft": "Nothing is left: what was already settled covers the total.",
     "saved": "Saved on the khata.",
     "undo": "Delete this entry",
-    "undoHint": "The entry is taken off the khata by a reversing entry and stays in the list as Deleted. Write why."
+    "undoHint": "The entry is taken off the khata by a reversing entry and stays in the list as Deleted. Write why.",
+    "step1": "Who owes",
+    "step2": "Goods or amount",
+    "step3": "What went",
+    "step4": "Paid and left",
+    "q1": "Who still has to pay?",
+    "theyOweD": "This person still has to pay me.",
+    "iOweD": "I still have to pay this person.",
+    "q2They": "What did you give them?",
+    "q2I": "What did you take from them?",
+    "withGoodsD": "Mobiles, laptops, accessories: choose what, how many and the rate. The total is worked out for you.",
+    "onlyAmountD": "You know the amount still left. Write only that.",
+    "q3": "What went?",
+    "q3Amount": "How much is still left?",
+    "another": "Add another item — what is it?",
+    "type": {
+      "accessory": "Accessory",
+      "other": "Something else"
+    },
+    "changeType": "Change",
+    "notListed": "Not in the list? Write the name",
+    "fromList": "Choose from the list",
+    "itemPh": "Apple iPhone 17",
+    "accPh": "Charger 20W",
+    "addItem": "Add to the list",
+    "q4They": "How much did they already pay?",
+    "q4I": "How much did you already pay?",
+    "q4Amount": "Check and save",
+    "settledThey": "Already received from them",
+    "settledI": "Already paid to them",
+    "settledHint": "Leave empty if nothing was paid yet."
   },
   "many": {
     "toggle": "Several pieces of the same (same model, colour and cost)",
@@ -5564,7 +5594,9 @@
     "lendIn": "Is se baghair bill ke paise liye: udhaar liya, ya apna diya hua udhaar wapas mila (aaj ya pehle)",
     "lending": "Yahan woh raqam likhein jo aap ne is bande ko baghair bill ke di, ya is se li.",
     "settle": "Len-den ki raqam ko is ke bills ke sath barabar karein; koi naya paisa nahi hilta.",
-    "old": "Software se pehle ka purana len den yahan likhein: jo abhi lena ya dena baqi hai."
+    "old": "Software se pehle ka purana len den yahan likhein: jo abhi lena ya dena baqi hai.",
+    "oldTheyOwe": "Is ne mujhe paise dene hain (mera lena banta hai).",
+    "oldIOwe": "Main ne is ko paise dene hain (mera dena banta hai)."
   },
   "dsheet": {
     "thermal": "80 mm slip (thermal printer)",

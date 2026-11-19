@@ -362,6 +362,20 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-116 · 2026-11-20 · Accepted · "Add old dealing" asks one question at a time, and picks what went like a purchase
+
+**Context**: the owner (2026-11-20, with a screenshot of the ADR-110 form): shopkeepers find the two rows of choices on one screen hard. His suggestion: a step-by-step flow — first "they owe me / I owe them", then "write what went / only the amount", then, for goods, the purchase's own way of choosing (mobile, tablet, watch, laptop, accessories → brand → model → pieces → rate each, "add another item"), then already paid, still left, date, note, save. "Is ko apnay according better kr lyna."
+
+**Decision**
+1. `OldDealingWizard.tsx` replaces the one-screen sheet with four steps under the usual `Stepper`: **who owes** (two large answers with a line of explanation and, in English, a Roman Urdu `Say` line) → **goods or amount** (the question follows the first answer: "What did you give them?" / "What did you take from them?") → **what went** → **paid and left**. Tapping an answer moves on; Back keeps everything written.
+2. **What went**: the type first — the types this shop trades (`useTrade`: mobile / tablet / watch, laptop with its module, accessory) plus "Something else" always — then, for a device, the brand chips and the model search of the purchase form; "Not in the list? Write the name" turns it into a typed name. An accessory or "something else" is a typed name. Then pieces and rate; "Add to the list" puts the line in the list with its total. Next takes a finished item along, and is refused while an item is half written.
+3. **Nothing changes on the server or in the books** (ADR-110 stands): what is sent is still `items[{description, qty, rate}]` — the description is "Brand Model" — or `amount`; the server's sum is what is saved. No device row, no IMEI, no stock; the wizard does not add brands or models to the catalogue (so no `QuickAdd` here).
+4. The "already paid" field is named by the first answer ("Already received from them" / "Already paid to them") with a hint that it may stay empty.
+
+**Not done**: storage / colour per line (a balance does not need them); a promise date for the old balance (len-den has `due_date`; an old balance has none — would need a column, ask first).
+
+**Consequences**: a change to how the purchase form picks a brand or model should be mirrored here by hand (the pickers are small and were not extracted, to leave `DeviceLineSheet` untouched). `e2e/old-dealings-bulk.spec.ts` walks the four steps, both ways of naming an item, Back, and 320 px.
+
 ## ADR-115 · 2026-11-20 · Accepted · The provider's control room at `/control`; the landing page for accessories and laptop shops, with an address and an HTML head per kind of shop
 
 **Context**: the owner (2026-11-20): (1) "super admin ka ak alg say url hona chye jis may only software ko control kiye jaye" — the provider's screens sat inside a shop's app (`/admin`, reached through More), with the shop's counter, menu and search around them. (2) The landing page still described the product of 2026-11-16: nothing about accessories-only shops (ADR-109), laptops (ADR-108), the reports list (ADR-111), old dealings and several pieces (ADR-110), numbers of any country (ADR-107), the phone's slip / A4 page (ADR-114); "SEO, AEO, GEO ko dakhtay ho info add krna so google pr rank krainy r hm ko orders hn".

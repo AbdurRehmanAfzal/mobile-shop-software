@@ -5345,7 +5345,37 @@
     "nothingLeft": "Kuch baqi nahi: jo pehle ada ho chuka woh kul ke barabar hai.",
     "saved": "Khate mein likh diya gaya.",
     "undo": "Yeh entry delete karein",
-    "undoHint": "Yeh entry ulti entry se khate se hat jati hai aur list mein Deleted ke tor par rehti hai. Wajah likhein."
+    "undoHint": "Yeh entry ulti entry se khate se hat jati hai aur list mein Deleted ke tor par rehti hai. Wajah likhein.",
+    "step1": "Kis ne dena hai",
+    "step2": "Maal ya raqam",
+    "step3": "Kya gaya",
+    "step4": "Mila aur baqi",
+    "q1": "Paise kis ne dene hain?",
+    "theyOweD": "Is shakhs ne abhi mujhe paise dene hain.",
+    "iOweD": "Main ne abhi is shakhs ko paise dene hain.",
+    "q2They": "Aap ne inhein kya diya tha?",
+    "q2I": "Aap ne in se kya liya tha?",
+    "withGoodsD": "Mobile, laptop, accessories: chunein kya, kitne aur kis rate par. Total khud nikalta hai.",
+    "onlyAmountD": "Aap ko baqi raqam maloom hai. Sirf wohi likhein.",
+    "q3": "Kya gaya tha?",
+    "q3Amount": "Abhi kitna baqi hai?",
+    "another": "Ek aur cheez shamil karein — yeh kya hai?",
+    "type": {
+      "accessory": "Accessory",
+      "other": "Kuch aur"
+    },
+    "changeType": "Badlein",
+    "notListed": "List mein nahi? Naam likhein",
+    "fromList": "List se chunein",
+    "itemPh": "Apple iPhone 17",
+    "accPh": "Charger 20W",
+    "addItem": "List mein shamil karein",
+    "q4They": "Inhon ne pehle kitna de diya hai?",
+    "q4I": "Aap ne pehle kitna de diya hai?",
+    "q4Amount": "Dekh kar save karein",
+    "settledThey": "In se pehle mil chuka",
+    "settledI": "Inhein pehle diya ja chuka",
+    "settledHint": "Abhi kuch nahi mila to khali chhor dein."
   },
   "many": {
     "toggle": "Ek jaise kai piece (wohi model, rang aur qeemat)",
@@ -5564,7 +5594,9 @@
     "lendIn": "Is se baghair bill ke paise liye: udhaar liya, ya apna diya hua udhaar wapas mila (aaj ya pehle)",
     "lending": "Yahan woh raqam likhein jo aap ne is bande ko baghair bill ke di, ya is se li.",
     "settle": "Len-den ki raqam ko is ke bills ke sath barabar karein; koi naya paisa nahi hilta.",
-    "old": "Software se pehle ka purana len den yahan likhein: jo abhi lena ya dena baqi hai."
+    "old": "Software se pehle ka purana len den yahan likhein: jo abhi lena ya dena baqi hai.",
+    "oldTheyOwe": "Is ne mujhe paise dene hain (mera lena banta hai).",
+    "oldIOwe": "Main ne is ko paise dene hain (mera dena banta hai)."
   },
   "dsheet": {
     "thermal": "80 mm parchi (thermal printer)",
