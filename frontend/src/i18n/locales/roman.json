@@ -3661,7 +3661,8 @@
     "soldWord": "beche",
     "toGiveShort": "dene hain",
     "toGetShort": "lene hain",
-    "forBills": "In bills ke liye"
+    "forBills": "In bills ke liye",
+    "dealTitle": "Is ki khareed o farokht"
   },
   "confirm": {
     "title": "Bechne se pehle check karein",
@@ -4332,11 +4333,9 @@
   "dl": {
     "title": "Page ka andaaz",
     "styles": {
-      "classic": "Purana",
-      "smart": "Smart",
-      "tabs": "Tabs",
-      "tiles": "Khane",
-      "compact": "Mukhtasar"
+      "classic": "Tafseel",
+      "thermal": "80 mm parchi",
+      "a4": "A4 safha"
     },
     "copy": "Copy",
     "copied": "Copy ho gaya",
@@ -4933,7 +4932,21 @@
     "customer": "Gahak",
     "since": "Dukaan mein",
     "days": "{{n}} din",
-    "more": "Aur kaam"
+    "more": "Aur kaam",
+    "edit": "Badlein",
+    "add": "Likhein",
+    "editAll": "Tamam tafseel badlein",
+    "table": "Is phone ki har baat",
+    "change": "Badlein",
+    "correct": "Durust karein",
+    "accHave": "Sath aaya",
+    "accNo": "Sath nahi",
+    "g": {
+      "identity": "Pehchan",
+      "details": "Tafseel",
+      "money": "Is phone ki raqam",
+      "people": "Log"
+    }
   },
   "trend": {
     "title": "Graphs",
@@ -5427,5 +5440,32 @@
     "lending": "Yahan woh raqam likhein jo aap ne is bande ko baghair bill ke di, ya is se li.",
     "settle": "Len-den ki raqam ko is ke bills ke sath barabar karein; koi naya paisa nahi hilta.",
     "old": "Software se pehle ka purana len den yahan likhein: jo abhi lena ya dena baqi hai."
+  },
+  "dsheet": {
+    "thermal": "80 mm parchi (thermal printer)",
+    "a4": "A4 safha",
+    "hint": "Phone ki tafseel aise chhape gi. Jo cheez is par chahiye us par nishan lagayein, phir print, download ya share karein.",
+    "fields": "Is par kya ho",
+    "pickOne": "Kam az kam ek line par nishan lagayein.",
+    "f": {
+      "shop": "Dukaan ka naam",
+      "status": "Haalat",
+      "price": "Qeemat",
+      "imei": "IMEI",
+      "imei2": "IMEI 2",
+      "serial": "Serial number",
+      "memory": "Memory",
+      "colour": "Rang",
+      "condition": "Condition",
+      "pta": "PTA",
+      "battery": "Battery",
+      "warranty": "Warranty",
+      "accessories": "Sath hai",
+      "seller": "Jis se khareeda",
+      "cost": "Qeemat-e-khareed",
+      "notes": "Note",
+      "barcode": "Barcode",
+      "date": "Tareekh"
+    }
   }
 }

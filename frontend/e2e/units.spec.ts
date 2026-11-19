@@ -34,7 +34,7 @@ test('unit-wise money: phone page, both customers, pay for this phone, receipt',
   // the phone: summary tiles, both sides, the timeline in order
   await page.goto(`/stock/${devId}`)
   await expect(page.getByText('Money on this phone')).toBeVisible()
-  const tiles = page.getByTestId('unit-tiles')
+  const tiles = page.getByTestId('device-table') // ADR-114: the money lines are in the details table
   for (const v of ['35,000', '3,000', '40,000', '5,000']) await expect(tiles).toContainText(v)
   await expect(tiles).toContainText('Margin')
   await expect(page.getByRole('button', { name: 'Customer A' }).first()).toBeVisible()
@@ -56,7 +56,7 @@ test('unit-wise money: phone page, both customers, pay for this phone, receipt',
   expect(html).toContain(inv.no)
   await pop.close()
   await page.getByRole('button', { name: 'Done', exact: true }).click()
-  await expect(page.getByTestId('unit-tiles')).toContainText('2,000')
+  await expect(page.getByTestId('device-table')).toContainText('2,000')
   const timeline = page.locator('.card.p-0').last()
   await expect(timeline).toContainText('Received')
   await expect(timeline).toContainText('left to get 2,000')

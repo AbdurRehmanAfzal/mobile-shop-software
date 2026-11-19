@@ -66,8 +66,8 @@ test('asking price revised at checkout, original kept; salesman needs the owner 
 
   // ---- the phone's history: first asking 40,000 stays, final 45,000, sold 45,000, margin 10,000
   await page.goto(`/stock/${dev1}`)
-  const tiles = page.getByTestId('unit-tiles')
-  await expect(tiles).toContainText('Asking now')
+  const tiles = page.getByTestId('device-table') // ADR-114: the money lines are in the details table
+  await expect(tiles).toContainText('Asking price')
   await expect(tiles).toContainText('45,000')
   await expect(tiles).toContainText('First asking')
   await expect(tiles).toContainText('40,000')

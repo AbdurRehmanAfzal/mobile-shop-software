@@ -242,17 +242,25 @@ When adding or editing a phone, **Shelf / place** (optional) says where it sits,
 
 On a phone's page tap **Change dealer / customer**: its purchase opens with the change ready (see "An IMEI or the seller typed wrong" above). For items, open the purchase from the item's movements or **More → Purchases**.
 
-### Page style: Classic, Smart, Tabs, Tiles, Compact
+### The phone's page: Details, 80 mm slip, A4 page
 
-At the top of a phone's page you can choose how it looks. The choice is remembered on that phone or computer.
+At the top of a phone's page are three views. The choice is remembered on that phone or computer.
 
-- **Classic**: the page as before.
-- **Smart**: every fact has its action beside it. **Copy** and **Correct IMEI** sit beside the IMEI, **Change asking price** beside the price, **Edit** beside the shelf, **Print sticker** beside the barcode and **Verify** beside the ID check. **Sell** is at the top. The person it was bought from (or sold to) shows with what is still owed and **Pay** / **Receive**, **Open bill** and **Change**. The history is below.
-- **Tabs**: the same page split into **Phone**, **Customer & money** and **History**.
-- **Tiles**: big squares; tap one to change it (price, IMEI, condition, shelf, sticker, ID check).
-- **Compact**: one short list, with **Sell** pinned at the bottom.
+**Details** is one table of everything about the phone. Each line has an icon and its name, the value, a button that changes that value, and a **?** that explains it.
 
-Every style does the same things; any action not shown beside a value is under **More actions**.
+- **Edit all details** at the top opens the whole form, as when the phone was bought.
+- Every line is always there. A line that is not written yet (IMEI 2, colour, shelf, warranty …) shows **—** with **Add** or **Edit** beside it.
+- Some lines have their own job: **Correct IMEI** beside the IMEI, **Change** beside the asking price, **Correct** beside the cost, **Check** beside PTA, **Mark faulty** beside the condition.
+- **Money on this phone** (asking price, cost, still to pay, sold for, still to get, margin), the people (**Bought from**, **Customer**) and what came with it (**Accessories**) are lines of the same table.
+- Below the table are the main jobs (**Sell**, **Give on loan**, **Send to repair**) and **More actions**.
+
+**80 mm slip** and **A4 page** show the phone's details as they will print — on a thermal roll or a full page.
+
+1. Tap **80 mm slip** or **A4 page**. The picture is the real print page.
+2. Under **What goes on it**, tick the lines you want: shop name, price, IMEI, IMEI 2, serial number, memory, colour, condition, PTA, battery, warranty, what comes with it, barcode, date. The owner and manager can also tick **Cost** and **Bought from**. The picture changes at once.
+3. Tap **Print**, **Download PDF** or **Share PDF**.
+
+Your ticks are remembered, one set for the slip and one for the page. The main jobs (Sell, Edit details …) are under the preview too.
 
 ### The full history
 

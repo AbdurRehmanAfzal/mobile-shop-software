@@ -6,7 +6,7 @@ import { BiAlert, BiButton, BiInput, BiLabel, useLang } from '@/components/Bilin
 import Help from '@/components/Help'
 import { isoDay, withCur } from '@/lib/format'
 import RemoveSheet from '@/components/RemoveSheet'
-import { Chip, ErrorText, KV, Loading, MoneyText, PageHeader, Section, Sheet } from '@/components/ui'
+import { ErrorText, KV, Loading, MoneyText, PageHeader, Section, Sheet } from '@/components/ui'
 import LabelSheet from '@/components/LabelSheet'
 import { ApiError, api, patch, post } from '@/lib/api'
 import { ImeiInput } from '@/components/FieldInputs'
@@ -23,7 +23,8 @@ import UnitMoney from './UnitMoney'
 import DeviceEasyView from './DeviceEasyView'
 import StickerPreview from './StickerPreview'
 import { DeviceReserve } from './ReserveCard'
-import { CompactLayout, SmartLayout, StyleSwitch, TabsLayout, TilesLayout, loadStyle, saveStyle, type Act, type DeviceStyle } from './DeviceLayouts'
+import { StyleSwitch, loadStyle, saveStyle, type Act, type DeviceStyle } from './DeviceLayouts'
+import DeviceSheetPreview from './DeviceSheetPreview'
 import { isApple } from '@/features/purchase/AppleVariant'
 import { FaultSheet } from './Faults'
 
@@ -205,26 +206,21 @@ export default function DeviceDetailPage() {
       </Section>
       ) : null}
 
-      {d.accessories.length ? (
-        <Section title="stock.accessories" help="stock.accessories">
-          <div className="flex flex-wrap gap-1.5">
-            {d.accessories.map((a) => {
-              const label = a.kind === 'other' && a.label ? a.label : pick(`stock.acc.${a.kind}`)
-              const tone = a.given_at_sale ? 'ink' : a.pending_from === 'vendor' ? 'warn' : a.pending_from === 'shop' ? 'bad' : a.came_with ? 'ok' : 'muted'
-              const hint = a.given_at_sale ? pick('stock.accGiven') : a.pending_from === 'vendor' ? pick('stock.accPendingVendor') : a.pending_from === 'shop' ? pick('stock.accPendingShop') : ''
-              return <Chip key={a.id ?? a.kind} text={{ en: `${label}${hint ? ` · ${hint}` : ''}`, ur: `${label}${hint ? ` · ${hint}` : ''}` }} tone={tone} />
-            })}
-          </div>
-        </Section>
-      ) : null}
-
-      <UnitMoney deviceId={d.id} />
+      {/* ADR-114: what came with it and the money on it are lines of the table above */}
+      <UnitMoney deviceId={d.id} noTiles />
         </>
-      ) : style === 'smart' ? <SmartLayout d={d} acts={acts} canSeeCost={canSeeCost} inStock={inStock} />
-        : style === 'tabs' ? <TabsLayout d={d} acts={acts} canSeeCost={canSeeCost} inStock={inStock} />
-        : style === 'tiles' ? <TilesLayout d={d} acts={acts} canSeeCost={canSeeCost} inStock={inStock} />
-        : <CompactLayout d={d} acts={acts} canSeeCost={canSeeCost} inStock={inStock} />}
-      {style !== 'classic' ? <ErrorText error={ev.error ?? loanM.error} /> : null}
+      ) : (
+        <>
+          {/* ADR-114: the phone's details as they print — 80 mm slip or A4 — with the same jobs below */}
+          <DeviceSheetPreview deviceId={d.id} format={style} name={`${d.brand_name}-${d.model_name}-${d.imei1.slice(-4)}`.replace(/\s+/g, '-')} />
+          <div className="grid grid-cols-2 gap-2" data-testid="device-sheet-actions">
+            {acts.filter((a) => ['sell', 'return', 'edit', 'price', 'sticker', 'loan', 'repair'].includes(a.key)).map((a, i) => (
+              <button key={a.key} type="button" onClick={a.run} className={`tap flex min-h-12 items-center justify-center rounded-2xl px-3 text-sm font-extrabold active:translate-y-0.5 ${i === 0 ? 'col-span-2 bg-emerald text-white shadow-cta' : 'border-2 border-ink/15 bg-surface text-ink'}`} data-testid={`sheet-act-${a.key}`}>{pick(a.label)}</button>
+            ))}
+          </div>
+          <ErrorText error={ev.error ?? loanM.error} />
+        </>
+      )}
 
       <LabelSheet kind="devices" ids={[d.id]} open={sheet === 'label'} onClose={() => setSheet(null)} />
       <PtaCheckSheet imei={d.imei1} open={ptaOpen} onClose={() => setPtaOpen(false)} deviceId={d.id} onSaved={() => void inv('devices', 'device', 'history')} />

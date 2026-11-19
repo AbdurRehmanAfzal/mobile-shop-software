@@ -59,6 +59,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Audit and phases: `docs/38-ACCOUNTS-REPORTS-AUDIT.md` — read it before adding any accounts or report feature; build only what its matrix marks missing.
 - Rules: one accounting engine (the ledger) — never a second set of balances; a report reads the ledger / documents and is checked in a test against them; no free manual journal entry (docs/38 §4); the general ledger's closing balance must equal the trial balance's line.
 
+## A phone's page and its printed details (shopkeepers 2026-11-20, ADR-114)
+- Read ADR-114 before touching `DeviceEasyView.tsx`, `DeviceLayouts.tsx`, `DeviceSheetPreview.tsx` or `devices/sheet.py`.
+- Rules: the page has three views (Details, 80 mm slip, A4 page) — do not add layout styles; a new fact about a phone is a line of the details table with its action and a "?" (always shown, "—" when empty); the printed details are the server's page (`sheet_html`), read-only, cost lines only with `VIEW_COST`, and the app only previews that page.
+
 ## Reports list (owner 2026-11-19, ADR-111)
 - Read ADR-111 before touching `frontend/src/features/reports/catalog.ts`, `ReportsHub.tsx` or `ReportsHome.tsx`.
 - Rules: `/reports` lists every report (it is not behind the `reports` module; the profit tabs live at `/reports?tab=…` and gate themselves); the list never computes or copies a report — an entry points at the screen where the report lives; **a new report or sheet gets an entry in `catalog.ts`** with its `hub.r.<id>.t / .d` strings in three languages and its module / role rule (`catalog.test.ts`).

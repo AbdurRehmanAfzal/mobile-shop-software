@@ -48,9 +48,8 @@ test('change a phone purchase price', async ({ page, request }) => {
   const party = await (await request.get(`/api/v1/parties/${dealer}`, { headers: h })).json()
   expect(party.balance).toBe('-12000.00')
 
-  // the Smart style has it beside the cost
-  await page.getByTestId('dstyle-smart').click()
-  await expect(page.getByTestId('dl-row-cost')).toContainText('12,000')
-  await page.getByTestId('dl-row-cost').getByRole('button', { name: 'Change purchase price' }).click()
+  // the cost's own line in the details table carries the correction (ADR-114)
+  await expect(page.getByTestId('dline-cost')).toContainText('12,000')
+  await page.getByTestId('dline-cost').getByRole('button', { name: 'Correct' }).click()
   await expect(page.getByTestId('cost-sheet')).toContainText('12,000')
 })

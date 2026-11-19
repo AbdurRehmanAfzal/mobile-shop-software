@@ -6613,9 +6613,9 @@
   },
   "dl": {
     "styles": {
-      "title": "Page style",
-      "body": "Choose how a phone's page looks; it is remembered on this phone or computer. Classic is the page as before. Smart puts each action beside its value (Copy / Correct beside the IMEI, Change beside the price, Pay / Receive beside the customer) and keeps the history below. Tabs splits the page into Phone, Customer & money, and History. Tiles shows big squares to tap. Compact is one short list with Sell pinned at the bottom. All styles do the same things.",
-      "example": "A busy counter: Compact. A new salesman: Tiles."
+      "title": "Ways to see the phone",
+      "body": "Details: everything about the phone in one table, each line with its button. 80 mm slip and A4 page: the phone's details as they print — tick the lines, then print, download or share.",
+      "example": "Details to change the colour; 80 mm slip to print the phone's card for the customer."
     }
   },
   "logins": {
@@ -6909,6 +6909,18 @@
       "title": "Dates",
       "body": "The dates picked here go into the downloads, and into the reports that work by dates (hisaab, shop audit and its parts). Reports that show the shop as it is now — stock, udhaar khata — do not use them.",
       "example": "Pick \"This month\" → the Sales bills download holds this month's bills."
+    }
+  },
+  "dsheet": {
+    "page": {
+      "title": "Printed details",
+      "body": "The phone's details on paper: an 80 mm slip for a thermal printer or an A4 page. The picture on the screen is the real print page, so you see it before it prints. It can also be saved as a PDF or sent on WhatsApp.",
+      "example": "A customer asks for the details in writing → 80 mm slip → Print."
+    },
+    "fields": {
+      "title": "What goes on it",
+      "body": "Tap a line to put it on the paper or take it off; the preview changes at once. Your choice is remembered, separately for the slip and for the page. Cost and \"Bought from\" are offered only to the owner and manager.",
+      "example": "For a customer: price, IMEI, memory, condition, warranty. For your own file: add cost and bought from."
     }
   }
 }

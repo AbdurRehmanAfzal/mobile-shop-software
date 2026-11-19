@@ -307,6 +307,8 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **Money buttons redesigned (2026-11-19, ADR-113)**: nothing to run. To test: open a person's page on a phone — Money received (blue), Money paid (dark), Gave money, no bill (red), Took money, no bill (amber) must each be a filled button with an icon on one side and a round arrow on the other, one under the other; tapping anywhere on one opens its form. Show the shopkeepers who said they could not tell these were buttons.
 
+**A phone's page redesigned (2026-11-20, ADR-114)**: nothing to run (no migration). To test: open any phone — three views at the top: Details, 80 mm slip, A4 page. In Details every line must have a button beside it (IMEI 2 and Colour say "—" with Add / Edit when empty); tap "Edit all details": the whole form opens; change the colour and save. The money (asking, cost, still to pay …) and the accessories must be in the same table; the "Bought from" card must be white. Tap "80 mm slip": the preview shows the phone's details; untick Price, tick Cost — the preview changes; Print on the thermal printer, then Download PDF and Share. Do the same on "A4 page". Show the shopkeepers who asked.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

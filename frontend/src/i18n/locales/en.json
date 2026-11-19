@@ -3661,7 +3661,8 @@
     "soldWord": "sold",
     "toGiveShort": "to give",
     "toGetShort": "to get",
-    "forBills": "For these bills"
+    "forBills": "For these bills",
+    "dealTitle": "Its purchase and sale"
   },
   "confirm": {
     "title": "Check before you sell",
@@ -4332,11 +4333,9 @@
   "dl": {
     "title": "Page style",
     "styles": {
-      "classic": "Classic",
-      "smart": "Smart",
-      "tabs": "Tabs",
-      "tiles": "Tiles",
-      "compact": "Compact"
+      "classic": "Details",
+      "thermal": "80 mm slip",
+      "a4": "A4 page"
     },
     "copy": "Copy",
     "copied": "Copied",
@@ -4933,7 +4932,21 @@
     "customer": "Customer",
     "since": "In the shop",
     "days": "{{n}} days",
-    "more": "More actions"
+    "more": "More actions",
+    "edit": "Edit",
+    "add": "Add",
+    "editAll": "Edit all details",
+    "table": "Everything about this phone",
+    "change": "Change",
+    "correct": "Correct",
+    "accHave": "Came with it",
+    "accNo": "Not with it",
+    "g": {
+      "identity": "Identity",
+      "details": "Details",
+      "money": "Money on this phone",
+      "people": "People"
+    }
   },
   "trend": {
     "title": "Graphs",
@@ -5427,5 +5440,32 @@
     "lending": "Yahan woh raqam likhein jo aap ne is bande ko baghair bill ke di, ya is se li.",
     "settle": "Len-den ki raqam ko is ke bills ke sath barabar karein; koi naya paisa nahi hilta.",
     "old": "Software se pehle ka purana len den yahan likhein: jo abhi lena ya dena baqi hai."
+  },
+  "dsheet": {
+    "thermal": "80 mm slip (thermal printer)",
+    "a4": "A4 page",
+    "hint": "This is how the phone's details will print. Tick what goes on it, then print, download or share.",
+    "fields": "What goes on it",
+    "pickOne": "Tick at least one line.",
+    "f": {
+      "shop": "Shop name",
+      "status": "Status",
+      "price": "Price",
+      "imei": "IMEI",
+      "imei2": "IMEI 2",
+      "serial": "Serial no.",
+      "memory": "Memory",
+      "colour": "Colour",
+      "condition": "Condition",
+      "pta": "PTA",
+      "battery": "Battery",
+      "warranty": "Warranty",
+      "accessories": "Comes with",
+      "seller": "Bought from",
+      "cost": "Cost",
+      "notes": "Notes",
+      "barcode": "Barcode",
+      "date": "Date"
+    }
   }
 }
