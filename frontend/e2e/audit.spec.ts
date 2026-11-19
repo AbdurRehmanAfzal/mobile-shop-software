@@ -81,7 +81,7 @@ test('shop audit overview: period, balances, revenue vs cash, as-of, checks, dri
   // the audit is reachable from More and Reports
   await page.goto('/more')
   await expect(page.getByRole('button', { name: 'Shop audit' })).toBeVisible()
-  await page.goto('/reports')
+  await page.goto('/reports?tab=profit')
   await page.getByTestId('to-audit').click()
   await expect(page).toHaveURL(/\/audit/)
 })

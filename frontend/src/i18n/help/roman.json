@@ -6898,5 +6898,17 @@
       "body": "Jab ek model ke kai piece ek hi rang aur qeemat par khareedein to form ek baar bharein aur phir har doosre piece ka sirf IMEI dein. Har piece apni history ke sath alag phone ban kar save hota hai.",
       "example": "Dealer se 5 iPhone 17, har ek 3,00,000 → ek baar bharein, mazeed 4 IMEI scan karein → 5 phone, bill par 15,00,000."
     }
+  },
+  "hub": {
+    "page": {
+      "title": "Reports",
+      "body": "Software ki har report aur sheet yahan darj hai. Jo reports dukaan rozana dekhti hai woh pehle hain; baqi mauzu ke hisaab se. Report kholne ke liye dabayein; jahan download ka button ho woh report PDF, Excel ya CSV mein save ho sakti hai. Aap ko sirf wohi reports nazar aati hain jo aap khol sakte hain.",
+      "example": "Stock tally dhoond rahe hain? \"Rozana\" ke neeche doosra khana hai. Search mein \"udhaar\" likhein to udhaar ki har report aa jaye gi."
+    },
+    "dates": {
+      "title": "Tareekhein",
+      "body": "Yahan chuni gayi tareekhein download mein jati hain, aur un reports mein jo tareekhon se chalti hain (hisaab, shop audit aur us ke hisse). Jo reports dukaan ki maujooda haalat dikhati hain — stock, udhaar khata — woh inhein istemal nahi kartin.",
+      "example": "\"Is maah\" chunein → sale ke billon ke download mein is maah ke bill honge."
+    }
   }
 }

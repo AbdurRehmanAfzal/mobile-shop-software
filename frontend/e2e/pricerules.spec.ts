@@ -87,7 +87,7 @@ test('asking price revised at checkout, original kept; salesman needs the owner 
   expect(money.summary.sold_for).toBe('45000.00')
 
   // ---- the owner's Prices report
-  await page.goto('/reports')
+  await page.goto('/reports?tab=profit')
   await page.getByRole('button', { name: 'Prices', exact: true }).click()
   const rows = page.getByTestId('price-rows')
   await expect(rows).toContainText('Asking changed at sale')
@@ -139,7 +139,7 @@ test('asking price revised at checkout, original kept; salesman needs the owner 
   await page.getByLabel('Password').fill('e2e-secret-1')
   await page.getByRole('button', { name: 'Login' }).click()
   await expect(page.getByPlaceholder("IMEI, phone or person's name")).toBeVisible()
-  await page.goto('/reports')
+  await page.goto('/reports?tab=profit')
   await page.getByRole('button', { name: 'Prices', exact: true }).click()
   const rows2 = page.getByTestId('price-rows')
   await expect(rows2).toContainText('Sold under asking')

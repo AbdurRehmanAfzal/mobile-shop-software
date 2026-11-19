@@ -45,7 +45,7 @@ export { default as AccessoriesPage } from '@/features/accessories/AccessoriesPa
 export { default as AccessoryDetailPage } from '@/features/accessories/AccessoryDetailPage'
 export { default as AccessoryReportsPage } from '@/features/accessories/AccessoryReportsPage'
 export { default as ExchangeWizard } from '@/features/exchange/ExchangeWizard'
-export { default as ReportsPage } from '@/features/reports/ReportsPage'
+export { default as ReportsHome } from '@/features/reports/ReportsHome'
 export { default as AccountsPage } from '@/features/reports/AccountsPage'
 export { default as GeneralLedgerPage } from '@/features/reports/GeneralLedgerPage'
 export { default as AuditOverviewPage } from '@/features/audit/OverviewPage'

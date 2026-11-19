@@ -48,7 +48,8 @@ export default function KhataPage() {
         title="counter.khataTitle"
         help={<Help term="khata" />}
         right={
-          <div className="flex gap-2">
+          // five buttons do not fit one row on a 320 px phone: they wrap (found 2026-11-19)
+          <div className="flex flex-wrap justify-end gap-2">
             {canBalances ? <button type="button" aria-label={pick('bal.title')} onClick={() => nav('/balances')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border border-line bg-surface px-1.5 py-1 text-ink" data-testid="khata-balances">
               <Scale size={20} strokeWidth={1.75} />
               <BtnText k="bal.short" />

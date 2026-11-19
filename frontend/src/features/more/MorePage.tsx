@@ -94,7 +94,7 @@ const GROUPS: Group[] = [
       { key: 'more.expenses', Icon: Wallet, to: '/expenses', roles: MANAGERS, tone: T.expense, help: 'more.tile.expenses' },
       { key: 'more.dayClose', Icon: Lock, to: '/expenses', roles: MANAGERS, tone: T.expense, help: 'more.tile.dayClose' },
       { key: 'more.cashAccounts', Icon: Landmark, to: '/more/cash', roles: MANAGERS, tone: T.sell, help: 'more.tile.cash' },
-      { key: 'more.reports', Icon: FileText, to: '/reports', roles: MANAGERS, tone: T.plain, help: 'more.tile.reports' },
+      { key: 'more.reports', Icon: FileText, to: '/reports', tone: T.plain, help: 'more.tile.reports' },
       { key: 'audit.title', Icon: BarChart3, to: '/audit', roles: MANAGERS, tone: T.plain, help: 'audit' },
     ],
   },

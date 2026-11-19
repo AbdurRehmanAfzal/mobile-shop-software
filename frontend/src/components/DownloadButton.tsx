@@ -16,8 +16,9 @@ import { useModule } from '@/lib/modules'
 
 type Fmt = 'pdf' | 'xlsx' | 'csv'
 
-/** `formats`: the files this report comes as (default PDF, Excel and CSV) */
-export default function DownloadButton({ path, name, formats = ['pdf', 'xlsx', 'csv'] }: { path: string; name: string; formats?: Fmt[] }) {
+/** `formats`: the files this report comes as (default PDF, Excel and CSV). `compact`: two small
+ *  icon buttons, for a row in a long list (the Reports page, ADR-111). */
+export default function DownloadButton({ path, name, formats = ['pdf', 'xlsx', 'csv'], compact = false }: { path: string; name: string; formats?: Fmt[]; compact?: boolean }) {
   const [mode, setMode] = useState<DocMode | null>(null)
   const { pick } = useLang()
   const s = useDocFile(name)
@@ -37,16 +38,16 @@ export default function DownloadButton({ path, name, formats = ['pdf', 'xlsx', '
   }
 
   if (!on) return null
-  const head = 'tap print:hidden flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border border-line bg-surface px-1.5 py-1'
+  const head = compact ? 'tap print:hidden flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-line bg-surface' : 'tap print:hidden flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border border-line bg-surface px-1.5 py-1'
   return (
     <div className="flex shrink-0 gap-1.5">
       <button type="button" aria-label={pick('counter.download')} onClick={() => open('download')} className={head}>
-        <Download size={20} />
-        <BtnText k="counter.download" />
+        <Download size={compact ? 18 : 20} />
+        {compact ? null : <BtnText k="counter.download" />}
       </button>
       <button type="button" aria-label={pick('docShare.share')} onClick={() => open('share')} className={`${head} border-emerald/40 text-emerald-deep`}>
-        <Share2 size={20} />
-        <BtnText k="docShare.share" />
+        <Share2 size={compact ? 18 : 20} />
+        {compact ? null : <BtnText k="docShare.share" />}
       </button>
       <Sheet open={mode !== null} onClose={() => setMode(null)} title={mode === 'share' ? 'docShare.shareTitle' : 'counter.downloadTitle'}>
         <div className="flex flex-col gap-2.5">

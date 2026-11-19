@@ -6898,5 +6898,17 @@
       "body": "When you buy several pieces of one model with the same colour and cost, fill the form once and then give only the IMEI of each other piece. Every piece is saved as its own phone with its own history.",
       "example": "5 iPhone 17 from a dealer at 3,00,000 each → fill once, scan 4 more IMEIs → 5 phones, 15,00,000 on the bill."
     }
+  },
+  "hub": {
+    "page": {
+      "title": "Reports",
+      "body": "Every report and sheet of the software is listed here. The ones a shop looks at every day come first; the rest follow by subject. Tap a report to open it; where there is a download button the report can be saved as PDF, Excel or CSV. You only see the reports you are allowed to open.",
+      "example": "Looking for the stock tally? It is the second tile under \"Every day\". Type \"udhaar\" in the search box to see every udhaar report."
+    },
+    "dates": {
+      "title": "Dates",
+      "body": "The dates picked here go into the downloads, and into the reports that work by dates (hisaab, shop audit and its parts). Reports that show the shop as it is now — stock, udhaar khata — do not use them.",
+      "example": "Pick \"This month\" → the Sales bills download holds this month's bills."
+    }
   }
 }

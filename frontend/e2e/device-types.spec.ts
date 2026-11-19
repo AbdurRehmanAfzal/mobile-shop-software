@@ -105,7 +105,7 @@ test('device types: tablet with specs, used watch needs the lock check, device p
   await page.getByRole('combobox', { name: /RAM/ }).selectOption('8')
   await expect(page.getByText('Galaxy Tab A9+').first()).toBeVisible()
   await expect(page.getByText('Watch Series 9')).toHaveCount(0)
-  await page.goto('/reports')
+  await page.goto('/reports?tab=profit')
   await page.getByRole('button', { name: 'By type' }).click()
   await expect(page.getByTestId('r-types')).toContainText('Tablet')
   await expect(page.getByTestId('r-types')).toContainText('Smart watch')

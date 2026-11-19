@@ -48,7 +48,7 @@ test('document language: English by default, Urdu on request, for the receipt an
   await ur.close()
 
   // a report: the choice is asked again in the Download sheet (English after a fresh start)
-  await page.goto('/reports')
+  await page.goto('/reports?tab=profit')
   await page.getByRole('button', { name: 'Download', exact: true }).first().click()
   const sheetGroup = page.getByRole('group', { name: 'Document language' })
   await expect(sheetGroup.getByRole('button', { name: 'English' })).toHaveAttribute('aria-pressed', 'true')

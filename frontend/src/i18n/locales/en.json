@@ -5218,5 +5218,203 @@
     "count": "{{n}} pieces · {{total}} in all",
     "dup": "This number is already in the list",
     "inStock": "Already in stock"
+  },
+  "hub": {
+    "title": "Reports",
+    "hint": "Every report and sheet of the software, in one place. Tap one to open it.",
+    "search": "Find a report",
+    "dates": "Dates for the reports and downloads",
+    "none": "No report with these words.",
+    "all": "All reports",
+    "g": {
+      "daily": "Every day",
+      "sales": "Sales and profit",
+      "stock": "Stock",
+      "people": "Udhaar and people",
+      "money": "Money and accounts",
+      "staff": "Staff and security"
+    },
+    "r": {
+      "day": {
+        "t": "Day's hisaab",
+        "d": "Sales, purchases, money in and out and cash in hand for the dates picked."
+      },
+      "tally": {
+        "t": "Stock tally",
+        "d": "Check the phones on the shelf against the software, model by model."
+      },
+      "khata": {
+        "t": "Udhaar khata",
+        "d": "Who has to pay you and whom you have to pay, person by person."
+      },
+      "sales": {
+        "t": "Sales bills",
+        "d": "Every sale bill with the customer, the amount and what is still left."
+      },
+      "purchases": {
+        "t": "Purchases",
+        "d": "Every purchase bill with the dealer, the amount and what is still left."
+      },
+      "lending": {
+        "t": "Len-den",
+        "d": "Money given or taken with no bill, and when it is due back."
+      },
+      "cash": {
+        "t": "Cash and bank",
+        "d": "The galla, bank and wallet accounts with every entry."
+      },
+      "expenses": {
+        "t": "Expenses",
+        "d": "Shop expenses by kind for the dates picked."
+      },
+      "returns": {
+        "t": "Returns",
+        "d": "Phones and items that came back, and those sent back to dealers."
+      },
+      "profit": {
+        "t": "Profit and loss",
+        "d": "Sales minus buying price minus expenses: the real profit."
+      },
+      "top": {
+        "t": "Best sellers",
+        "d": "What sold most, with its amount and profit."
+      },
+      "salesAudit": {
+        "t": "Sales and purchases by day",
+        "d": "Totals by day, week and month, and by payment method."
+      },
+      "bills": {
+        "t": "Bills check",
+        "d": "Discounts, bills sold below asking, deleted and changed bills."
+      },
+      "returnsReport": {
+        "t": "Returns report",
+        "d": "How many came back, why, the money handed back and the effect on profit."
+      },
+      "products": {
+        "t": "Products",
+        "d": "Sales and profit by model, brand and type."
+      },
+      "prices": {
+        "t": "Price changes",
+        "d": "Asking prices changed and phones sold below asking, by staff member."
+      },
+      "estimate": {
+        "t": "Estimate",
+        "d": "Expected sales of the next 7 days and which model will run out."
+      },
+      "invoices": {
+        "t": "All bills",
+        "d": "Sales, purchases, returns and payments in one list."
+      },
+      "installments": {
+        "t": "Installments",
+        "d": "Plans, what is due today and what is overdue."
+      },
+      "stock": {
+        "t": "Stock list",
+        "d": "Every phone in the shop with its IMEI, condition and price."
+      },
+      "worth": {
+        "t": "Stock worth",
+        "d": "Stock by brand and model with its value."
+      },
+      "itemSheet": {
+        "t": "Item-wise stock sheet",
+        "d": "Brand, model and memory with quantity, unit cost and totals."
+      },
+      "oldStock": {
+        "t": "Old stock",
+        "d": "Phones lying for 30, 60, 90 days and more."
+      },
+      "byType": {
+        "t": "Stock by type",
+        "d": "Mobiles, tablets, watches and laptops: count, cost and retail value."
+      },
+      "stockAudit": {
+        "t": "Stock audit",
+        "d": "Slow and dead stock, phones without a price, the margin expected."
+      },
+      "count": {
+        "t": "Stock count",
+        "d": "Scan everything on the shelf and see what is missing or extra."
+      },
+      "items": {
+        "t": "Accessories reports",
+        "d": "Low stock, fast and slow items, dead stock."
+      },
+      "transfers": {
+        "t": "Branch transfers",
+        "d": "Stock sent to and received from your other shops."
+      },
+      "balances": {
+        "t": "Open balances",
+        "d": "To get and to give, by phone, customer, dealer and technician."
+      },
+      "ageing": {
+        "t": "Udhaar by age",
+        "d": "How old each udhaar is: 0–30, 31–60, 61–90 days and older."
+      },
+      "people": {
+        "t": "People",
+        "d": "Customers and dealers ranked by business, profit and balance."
+      },
+      "personLedger": {
+        "t": "A person's account ledger",
+        "d": "Open a person: bills with their items, debit, credit and balance, to print or send."
+      },
+      "payments": {
+        "t": "Payments",
+        "d": "Money received and paid, entry by entry."
+      },
+      "reminders": {
+        "t": "Udhaar reminders",
+        "d": "Who is to be reminded on WhatsApp, and what was sent."
+      },
+      "accounts": {
+        "t": "Accounts",
+        "d": "Cash, bank, to get and to give in one place, and every accounts screen."
+      },
+      "finance": {
+        "t": "Money in and out",
+        "d": "Cash flow, expenses by kind and by staff, profit for any dates."
+      },
+      "books": {
+        "t": "Balance sheet and trial balance",
+        "d": "What the shop owns and owes on any day; every account's total."
+      },
+      "ledger": {
+        "t": "General ledger",
+        "d": "Every entry of one account for the dates picked."
+      },
+      "overview": {
+        "t": "Business overview",
+        "d": "Sales, purchases, money, udhaar and stock on one screen."
+      },
+      "audit": {
+        "t": "Shop audit",
+        "d": "The whole shop checked figure by figure; every number opens its bills."
+      },
+      "full": {
+        "t": "Full report (PDF / Excel)",
+        "d": "Choose the sections and download one report for the dates picked."
+      },
+      "staff": {
+        "t": "Staff",
+        "d": "Sales, discounts and deletions by staff member."
+      },
+      "security": {
+        "t": "Security feed",
+        "d": "Deleted bills, price changes and logins from new devices."
+      },
+      "repairs": {
+        "t": "Repairs",
+        "d": "Jobs, income, parts and what the labs charged."
+      },
+      "logins": {
+        "t": "Login activity",
+        "d": "Who is logged in, and on which device."
+      }
+    }
   }
 }

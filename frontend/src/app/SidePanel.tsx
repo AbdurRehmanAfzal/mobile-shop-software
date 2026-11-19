@@ -18,7 +18,7 @@ const SHOP_LINKS: { to: string; key: string; Icon: LucideIcon; roles?: string[] 
   { to: '/parties', key: 'party.title', Icon: Users },
   { to: '/audit', key: 'audit.title', Icon: LineChart, roles: MANAGERS },
   { to: '/hisaab', key: 'counter.dayTitle', Icon: CalendarDays },
-  { to: '/reports', key: 'more.reports', Icon: BarChart3, roles: MANAGERS },
+  { to: '/reports', key: 'more.reports', Icon: BarChart3 },
   { to: '/more/cash', key: 'more.cashAccounts', Icon: Landmark, roles: MANAGERS },
   { to: '/purchases', key: 'nav.purchases', Icon: Package },
   { to: '/more/staff', key: 'more.staff', Icon: UserCog, roles: ['owner'] },

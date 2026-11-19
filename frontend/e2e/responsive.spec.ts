@@ -71,6 +71,8 @@ for (const { name, device } of PHONES) {
         for (const path of PAGES) {
           await page.goto(path)
           await page.waitForLoadState('networkidle')
+          // the khata header's buttons come with the user's role: measure once they are drawn
+          if (path === '/khata') await page.getByTestId('khata-balances').waitFor()
           const px = await overflow(page)
           if (px > 1) wide.push(`${path} +${px}px`)
         }

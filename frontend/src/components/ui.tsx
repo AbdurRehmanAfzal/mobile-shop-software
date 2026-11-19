@@ -27,7 +27,7 @@ export function PageHeader({ title, back = true, right, help, onBack }: { title:
         <BiLabel text={title} size="lg" bold />
         {help}
       </div>
-      {right ? <div className="ms-auto flex shrink-0">{right}</div> : null}
+      {right ? <div className="ms-auto flex max-w-full shrink-0">{right}</div> : null}
     </div>
   )
 }

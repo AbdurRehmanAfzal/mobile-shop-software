@@ -13,7 +13,8 @@ export const ROUTE_MODULE: Record<string, ModuleKey> = {
   '/expenses': 'expenses',
   '/exchange/new': 'exchange',
   '/loans': 'loans',
-  '/reports': 'reports',
+  // ADR-111: /reports itself lists every report (for everyone); its profit tabs gate themselves
+  '/reports/ledger': 'reports',
   '/more/notifications': 'notifications',
   '/khata/reminders': 'notifications',
   '/installments': 'installments',

@@ -496,7 +496,17 @@ Only the two balances change. It is neither a sale nor an expense. The move is l
 
 ## 20. Reports and downloads
 
-Owner and manager: Home → **Profit & reports**, or More → **Reports**.
+**More → Reports** lists every report and sheet of the software on one screen, so you do not have to remember where each one lives.
+
+- **Every day** comes first, as big tiles: **Day's hisaab**, **Stock tally**, **Udhaar khata**, **Sales bills**, **Purchases**, **Len-den**, **Cash and bank**, **Expenses**, **Returns**.
+- Below are the rest by subject: **Sales and profit**, **Stock**, **Udhaar and people**, **Money and accounts**, **Staff and security**.
+- **Find a report**: type a word (for example `udhaar` or `stock`) and only the matching reports stay.
+- **Dates for the reports and downloads**: Today, Yesterday, Week, This month or your own dates. They go into the downloads and into the reports that work by dates.
+- Tap a report to open it. Where a row has the two small buttons, the report can be **downloaded** or **shared** as PDF, Excel or CSV from here.
+
+Each person sees only the reports he may open: a salesman gets the daily lists, the owner and manager also the ones with cost and profit. The reports are also still in their old places (the stock tally on the stock worth page, and so on).
+
+The profit tabs described below open from **Profit and loss** in that list, or from Home → **Profit & reports**. **All reports** at the top takes you back to the list.
 
 ![Profit & reports](shot:reports)
 
