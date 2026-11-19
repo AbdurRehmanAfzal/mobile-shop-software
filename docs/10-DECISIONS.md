@@ -362,6 +362,17 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-112 · 2026-11-19 · Accepted · A line under a confusing button says what it is for — Roman Urdu under English
+**Context**: shopkeepers said the four money buttons on a person's page confuse them: "Money received", "Money paid", "I gave money", "I took money". The first pair is money against bills (udhaar being paid back), the second pair is money with no bill (len-den) — the names did not say so, and most users do not read English natively. The owner asked for one line under each button in the shopkeeper's words, and the same wherever a button or heading can be misread, in Roman Urdu beside the English.
+
+**Decision**:
+- **`Say`** (`components/Say.tsx`): a small line under a button, or under a heading, that says what it is for. The texts are the `say.*` keys. **In English mode the line is Roman Urdu**; in Urdu and Roman Urdu it is in that language. A heading that already carries a hint in the app's language gets its `Say` line only in English mode (`englishOnly`).
+- This widens the one exception to "one language at a time" (ADR-094 allowed a short Roman hint in brackets after an English money word): an English button or heading about money may also carry one Roman Urdu line beneath it. Nothing else changes — Urdu mode stays only Urdu, Roman only Roman.
+- **Applied to**: Money received / Money paid on a person's page (full line) and on the udhaar khata (short line); the two len-den buttons; the len-den heading, "Adjust against bills", and the Old balance heading (English mode); the top of the payment form, which repeats the line of the button that opened it.
+- **The two len-den buttons are renamed** "Gave money, no bill" / "Took money, no bill" (ur: بغیر بل پیسے دیے / لیے; roman: Baghair bill paise diye / liye). Not "lent / borrowed": the same button also records the loan coming back, so the line says both ("udhaar diya, ya is se liya hua udhaar wapas kiya").
+
+**Consequences**: the person page's money buttons are one per row on a narrow phone (two per row from 480 px). A new confusing action gets a `say.*` key in three files (en = Roman Urdu) rather than a longer button name.
+
 ## ADR-111 · 2026-11-19 · Accepted · Reports: one list of every report, the daily ones first
 **Context**: shopkeepers coming from other software expect every report under "Reports". Here the reports had grown with their modules: the stock tally on the stock worth page, the khata on its own tab, the hisaab on another, accessory reports under Accessories, a dozen sections under Shop audit, the profit tabs under Reports. The owner asked for all of them reachable from the Reports module through a clear screen, with the reports wanted every day (stock tally, udhaar, sales, purchases, len-den) apart from the general ones.
 

@@ -7,6 +7,7 @@ import { BellRing, CalendarClock, HandCoins } from 'lucide-react'
 import { useAuth } from '@/lib/auth'
 import { useState } from 'react'
 import { BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
+import Say from '@/components/Say'
 import Help from '@/components/Help'
 import DeleteWarning from '@/components/DeleteWarning'
 import { ErrorText, fmtDate, Sheet } from '@/components/ui'
@@ -137,6 +138,7 @@ export default function PartyLending({ party }: { party: Party }) {
         <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><BiButton text="lending.remind" icon={<BellRing size={18} />} variant="secondary" full loading={busy} onClick={remind} /></div><Help term="lending.remind" size="sm" /></div>
       ) : null}
       <BiLabel text="lending.hint" size="sm" tone="text-muted" />
+      <Say k="say.lending" englishOnly className="text-muted" />
       {data.entries.length || Number(data.bills) !== 0 ? (
         <div className={`grid grid-cols-3 gap-2 rounded-2xl bg-ground px-3 py-2 ${small}`}>
           <span className="flex flex-col"><span className="flex items-center gap-1 text-muted">{pick('lending.lent')}<Help term="lending.lent" size="sm" /></span><span className="num font-bold" dir="ltr">{n(data.lent)}</span></span>
@@ -144,17 +146,19 @@ export default function PartyLending({ party }: { party: Party }) {
           <span className="flex flex-col"><span className="flex items-center gap-1 text-muted">{pick('lending.fromBills')}<Help term="lending.fromBills" size="sm" /></span><span className="num font-bold" dir="ltr">{n(data.bills)}</span></span>
         </div>
       ) : null}
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-1 gap-2 min-[480px]:grid-cols-2">
         {/* the "?" sits on top of each button, not inside it (docs/33) */}
         <div className="relative">
-          <button type="button" onClick={() => setGiving('out')} className="tap flex min-h-12 w-full items-center justify-center rounded-2xl border border-line bg-surface px-7 text-ink" data-testid="lending-give">
-            <BiLabel text="lending.give" size="sm" bold tone="text-current" align="center" />
+          <button type="button" onClick={() => setGiving('out')} className="tap flex min-h-[64px] w-full flex-col items-start justify-center gap-1 rounded-2xl border border-line bg-surface py-2.5 pe-10 ps-4 text-start text-ink" data-testid="lending-give">
+            <BiLabel text="lending.give" size="sm" bold tone="text-current" />
+            <Say k="say.lendOut" className="text-muted" />
           </button>
           <span className="absolute end-1 top-1/2 -translate-y-1/2"><Help term="lending.give" size="sm" /></span>
         </div>
         <div className="relative">
-          <button type="button" onClick={() => setGiving('in')} className="tap flex min-h-12 w-full items-center justify-center rounded-2xl border border-line bg-surface px-7 text-ink" data-testid="lending-take">
-            <BiLabel text="lending.take" size="sm" bold tone="text-current" align="center" />
+          <button type="button" onClick={() => setGiving('in')} className="tap flex min-h-[64px] w-full flex-col items-start justify-center gap-1 rounded-2xl border border-line bg-surface py-2.5 pe-10 ps-4 text-start text-ink" data-testid="lending-take">
+            <BiLabel text="lending.take" size="sm" bold tone="text-current" />
+            <Say k="say.lendIn" className="text-muted" />
           </button>
           <span className="absolute end-1 top-1/2 -translate-y-1/2"><Help term="lending.take" size="sm" /></span>
         </div>
@@ -162,6 +166,7 @@ export default function PartyLending({ party }: { party: Party }) {
       {canSettle ? (
         <div className="flex flex-col gap-2 rounded-2xl bg-khata px-4 py-3 text-khata-fg" data-testid="lending-settle">
           <span className="flex items-center gap-1 [&_button]:text-current"><BiLabel text="lending.settleTitle" size="md" bold tone="text-current" /><Help term="lending.settle" size="sm" /></span>
+          <Say k="say.settle" englishOnly className="opacity-90" />
           {(['in', 'out'] as const).map((d) => Number(data.settle[d].amount) > 0 ? (
             <span key={d} className={small}>{pick(d === 'in' ? 'lending.settleIn' : 'lending.settleOut').replace('{{amount}}', withCur(n(data.settle[d].amount)))}</span>
           ) : null)}

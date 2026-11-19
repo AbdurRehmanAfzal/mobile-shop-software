@@ -3083,12 +3083,12 @@
       "example": "Balance Rs. 18,000, len-den open Rs. 6,000 → from bills Rs. 12,000."
     },
     "give": {
-      "title": "Gave money (len-den)",
+      "title": "Gave money, no bill",
       "body": "Write money the shop gives this person with no bill, like a loan. It goes on his khata; you can add a return date.",
       "example": "Lent Bilal Rs. 10,000 from the galla, to be returned on 1 June."
     },
     "take": {
-      "title": "Took money (len-den)",
+      "title": "Took money, no bill",
       "body": "Write money the shop takes from this person with no bill: a loan he gives you, or his loan coming back.",
       "example": "Madina Mobiles lent you Rs. 50,000 for a week → took money Rs. 50,000."
     },

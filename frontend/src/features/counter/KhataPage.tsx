@@ -2,6 +2,7 @@
  *  people with a balance, and two big buttons for money received / paid. `?f=get|give` preselects. */
 
 import DownloadButton from '@/components/DownloadButton'
+import Say from '@/components/Say'
 import { ArrowDown, ArrowUp, BellRing, Plus, Scale } from 'lucide-react'
 import { useAuth } from '@/lib/auth'
 import { useState } from 'react'
@@ -116,13 +117,13 @@ export default function KhataPage() {
       )}
 
       <div className="sticky bottom-24 grid grid-cols-2 gap-2.5 lg:bottom-4">
-        <button type="button" onClick={() => { setWho(null); setPaying('in') }} className="tap flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-emerald text-white shadow-cta">
-          <ArrowDown size={20} strokeWidth={2.2} />
-          <span className={ur ? cls('md') : 'text-base font-bold'}>{pick('counter.gotMoney')}</span>
+        <button type="button" onClick={() => { setWho(null); setPaying('in') }} className="tap flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-2xl bg-emerald px-2 py-1.5 text-center text-white shadow-cta">
+          <span className="flex items-center gap-2"><ArrowDown size={20} strokeWidth={2.2} /><span className={ur ? cls('md') : 'text-base font-bold'}>{pick('counter.gotMoney')}</span></span>
+          <Say k="say.gotShort" className="opacity-90" />
         </button>
-        <button type="button" onClick={() => { setWho(null); setPaying('out') }} className="tap flex min-h-14 items-center justify-center gap-2 rounded-2xl border border-line bg-surface text-ink">
-          <ArrowUp size={20} strokeWidth={2.2} className="text-payable" />
-          <span className={ur ? cls('md') : 'text-base font-bold'}>{pick('counter.gaveMoney')}</span>
+        <button type="button" onClick={() => { setWho(null); setPaying('out') }} className="tap flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-2xl border border-line bg-surface px-2 py-1.5 text-center text-ink">
+          <span className="flex items-center gap-2"><ArrowUp size={20} strokeWidth={2.2} className="text-payable" /><span className={ur ? cls('md') : 'text-base font-bold'}>{pick('counter.gaveMoney')}</span></span>
+          <Say k="say.gaveShort" className="text-muted" />
         </button>
       </div>
 

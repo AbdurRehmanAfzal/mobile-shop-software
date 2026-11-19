@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import Say from '@/components/Say'
 import { BiAlert, BiButton, BiInput, BiLabel, useLang } from '@/components/Bilingual'
 import { isQueued } from '@/lib/offline'
 import PayPicker, { newPay, payInfo, payReady, remitPkr, type PayState } from '@/components/PayPicker'
@@ -94,6 +95,8 @@ export default function PaymentForm({ party, direction, onDone, allocation, allo
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-3">
+      {/* ADR-112: what this form is for, in the shopkeeper's words */}
+      <Say k={lending ? (direction === 'in' ? 'say.lendIn' : 'say.lendOut') : direction === 'in' ? 'say.got' : 'say.gave'} className="rounded-2xl bg-ground px-3 py-2 text-ink" />
       <div className="card flex items-center justify-between">
         <div>
           <div className="font-semibold">{party.name}</div>

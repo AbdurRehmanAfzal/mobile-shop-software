@@ -3988,8 +3988,8 @@
   "lending": {
     "title": "Len-den",
     "hint": "Is bande ko baghair bill ke di ya is se li gayi raqam. Yeh is ke khate mein rehti hai aur baad ki khareed ya farokht mein adjust ho sakti hai.",
-    "give": "Raqam di (len-den)",
-    "take": "Raqam li (len-den)",
+    "give": "Baghair bill paise diye",
+    "take": "Baghair bill paise liye",
     "open": "Khula len-den",
     "theyOwe": "Inhon ne dene hain (len-den)",
     "weOwe": "Hum ne dene hain (len-den)",
@@ -5416,5 +5416,16 @@
         "d": "Kaun login hai, aur kis phone par."
       }
     }
+  },
+  "say": {
+    "got": "Bill ka udhaar wapas mila: jo paise is ne aap ko dene the, woh yahan likhein",
+    "gave": "Bill ka udhaar wapas kiya: jo paise aap ne is ko dene the, woh yahan likhein",
+    "gotShort": "Udhaar ke paise wapas mile",
+    "gaveShort": "Udhaar ke paise wapas kiye",
+    "lendOut": "Is ko baghair bill ke paise diye: udhaar diya, ya is se liya hua udhaar wapas kiya (aaj ya pehle)",
+    "lendIn": "Is se baghair bill ke paise liye: udhaar liya, ya apna diya hua udhaar wapas mila (aaj ya pehle)",
+    "lending": "Yahan woh raqam likhein jo aap ne is bande ko baghair bill ke di, ya is se li.",
+    "settle": "Len-den ki raqam ko is ke bills ke sath barabar karein; koi naya paisa nahi hilta.",
+    "old": "Software se pehle ka purana len den yahan likhein: jo abhi lena ya dena baqi hai."
   }
 }

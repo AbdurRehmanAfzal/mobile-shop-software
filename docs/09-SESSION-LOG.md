@@ -2134,3 +2134,11 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - Found and fixed: the khata header overflowed a 320 px phone by 52 px (it did before this change too; the layout test only caught it when the buttons were drawn in time) — the buttons wrap, and the test waits for them.
 - Still failing, older than this change: `urdu.spec` reports the Latin "CP" on the settings page (the CP ID label, ADR-083).
 **Next**: the owner says which reports belong in "Every day"; docs/40 §4.
+
+### 2026-11-19 — a line under the money buttons (ADR-112)
+**Owner**: the four money buttons on a person's page confuse shopkeepers (money received / paid, I gave / I took money); each should say underneath what it is for, in their words, and likewise other confusing buttons and headings — Roman Urdu with the English.
+**Done**: `components/Say.tsx`; lines under Money received / Money paid (person page, udhaar khata), the two len-den buttons (renamed "Gave money, no bill" / "Took money, no bill" in three languages; the line says it is also for a loan coming back), the len-den / adjust / old-balance headings in English mode, the top of the payment form; help titles and manual ch. 16 use the new names (PDFs rebuilt); ADR-112, CLAUDE.md (the language rule), docs/29. No server change.
+**Verified**: 
+- tsc; vitest (61). Backend untouched: pytest not re-run.
+- Playwright: new `money-buttons` passes (each button's line in English mode, the form repeats it, a len-den entry still saves, Urdu mode shows Urdu lines and no Roman). `lending` (2), `counter` (khata and person page), `old-dealings-bulk`, `responsive` (iPhone SE and small Android, en and ur) pass; `urdu.spec` still fails only on the Latin "CP" of the settings page (older than this change), with no new English word. Looked at the person page.
+**Next**: wording changes the shopkeepers ask for; "Every day" reports (ADR-111); docs/40 §4.
