@@ -103,7 +103,7 @@ You gave phones to a shop or a customer before you started the software, part wa
 1. Open the person's page (add them first with **New person** if needed).
 2. In **Old balance (purana hisaab)** tap **Add old dealing**.
 3. Choose **They owe me** or **I owe them**.
-4. Either tap **Only the amount** and write what is still left — or stay on **Write what went** and add a line for each kind: **What**, **Pieces**, **Rate each**. Then write in **Already paid / received before** what was settled. The app shows **Total** and **Still left**.
+4. The app now asks one thing at a time. **What did you give them?** — tap **Write what went** (mobiles, laptops, accessories) or **Only the amount** (then just write what is still left). For goods: tap the type (**Mobile**, **Tablet**, **Smart watch**, **Laptop**, **Accessory**, **Something else**), pick the **Brand** and **Model** as on a purchase (or tap **Not in the list? Write the name**), write **Pieces** and **Rate each**, and tap **Add to the list**. Do the same for every other item, then **Next**. On the last step write in **Already received from them** what was paid before; the app shows **Total** and **Still left**. **Back** takes you one step back without losing anything.
 5. Tap **Save**.
 
 **Example:** Shop A took 5 iPhone 17 at 3,00,000 and 10 Samsung A56 at 95,000 (total 24,50,000) and has paid 20,00,000. After saving, Shop A's khata shows 4,50,000 to get, with the list of what went.

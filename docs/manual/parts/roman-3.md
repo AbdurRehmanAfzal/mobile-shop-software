@@ -103,7 +103,7 @@ Aap ne software shuru karne se pehle kisi dukaan ya customer ko phone diye, kuch
 1. Bande ka safha kholein (zaroorat ho to pehle **Naya banda** se bana lein).
 2. **Purana hisaab** mein **Purana len den likhein** dabayein.
 3. **Lene hain** ya **Dene hain** chunein.
-4. Ya to **Sirf raqam** daba kar jo baqi hai woh likhein — ya **Jo gaya woh likhein** par rahein aur har qisam ki ek line daalein: **Kya**, **Piece**, **Fi piece rate**. Phir **Pehle ada / wasool ho chuka** mein jo raqam nimat chuki woh likhein. App **Kul** aur **Baqi** dikhati hai.
+4. App ab ek waqt mein ek cheez poochti hai. **Aap ne inhein kya diya tha?** — **Jo gaya woh likhein** (mobile, laptop, accessories) ya **Sirf raqam** dabayein (phir sirf baqi raqam likhein). Maal ke liye: qisam dabayein (**Mobile**, **Tablet**, **Smart watch**, **Laptop**, **Accessory**, **Kuch aur**), **Brand** aur **Model** khareedari ki tarah chunein (ya **List mein nahi? Naam likhein** dabayein), **Piece** aur **Fi piece rate** likhein aur **List mein shamil karein** dabayein. Har doosri cheez ke liye yehi karein, phir **Aage**. Aakhri step par **In se pehle mil chuka** mein pehle mili raqam likhein; app **Kul** aur **Baqi** dikhati hai. **Wapas** ek step peeche le jata hai, kuch zaya nahi hota.
 5. **Save** dabayein.
 
 **Misaal:** Shop A ne 5 iPhone 17 @ 3,00,000 aur 10 Samsung A56 @ 95,000 liye (kul 24,50,000) aur 20,00,000 de chuki hai. Save ke baad Shop A ke khate mein 4,50,000 lene hain, sath jo gaya us ki list.

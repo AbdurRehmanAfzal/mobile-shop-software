@@ -2178,3 +2178,15 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: the owner's Search Console / Business Profile / links (docs/29); new screenshots for the laptop and accessories-only cards.
 
 **Open questions**: a sub-domain for the control room; more kind-of-shop pages (repair, wholesale, per city).
+
+## 2026-11-20 (4) — "Add old dealing" step by step (ADR-116)
+
+**Asked (owner, with a screenshot)**: the choices on the old-dealing form are hard for shopkeepers; make it step by step — who owes, then what went or only the amount, then the purchase's way of choosing (mobile / tablet / watch / laptop / accessories, brand, model, pieces, rate, add another), then already paid, left, date, note, save.
+
+**Done**: `OldDealingWizard.tsx` (four steps, `Stepper`, large answers with a line each, type → brand → model picker, typed name when not listed, list with totals, Back keeps the entries); `OldBalance.tsx` uses it; texts `old.*` and two `say.*` lines in three languages; manual ch. "old dealings" step 4 in en / ur / roman. No server change. Also pushed ADR-115 as PR #98 (owner said "push").
+
+**Verified**: tsc clean; vitest 66 passed; Playwright `old-dealings-bulk.spec` (rewritten for the steps: both ways of naming an item, a half-written item blocks Next, Back, totals, 320 px, the saved khata row, stock untouched) and `money-buttons.spec` pass. Not run: the full Playwright suite, pytest (no backend change). The manual PDFs were regenerated.
+
+**Next**: the shopkeepers' view of the steps.
+
+**Open questions**: a promised date for an old balance.
