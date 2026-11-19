@@ -239,7 +239,7 @@ App len-den ko bande ke bills wale usi khate mein rakhti hai, taa ke bande ka ha
 **Misaal:** Usman, ek purana customer, Rs. 25,000 mangta hai aur 29 tareekh tak wapas karne ka wada karta hai.
 
 1. Udhaar khate se Usman ka safha kholein (agar naya hai to **Naya banda** se daalein).
-2. Neeche **Len-den** card tak jayein aur **Paise diye (len-den)** dabayein.
+2. Neeche **Len-den** card tak jayein aur **Baghair bill paise diye** dabayein.
 3. **Len-den ki raqam** likhein: `25000`.
 4. Chunein paise kaise gaye: galle se **Cash**, ya bank ya wallet se **Online**.
 5. **Wapsi ki tareekh (optional)** set karein, maslan 29-10-2026.
@@ -253,7 +253,7 @@ Ab Usman ke card par **Inhon ne dene hain (len-den)** Rs. 25,000 aur **29-10-202
 **Misaal:** saath wali Madina Telecom aap ko Rs. 50,000 cash udhaar deti hai.
 
 1. Madina Telecom ka safha kholein.
-2. **Paise liye (len-den)** dabayein.
+2. **Baghair bill paise liye** dabayein.
 3. Raqam `50000`, tareeqa **Cash**, agar tay hui ho to wapsi ki tareekh.
 4. **Save karein — raqam li** dabayein.
 
@@ -272,9 +272,9 @@ Card par **Hum ne dene hain (len-den)** Rs. 50,000 dikhta hai. Paise ab aap ke g
 
 ### Jab banda wapas kare
 
-Len-den ke wapas aane wale paise bhi len-den hain. Bande ka safha kholein aur jitne us ne wapas kiye utni raqam ke saath **Paise liye (len-den)** dabayein. Is ke liye **Paise mile** istemal na karein, kyun ke woh bills ke liye hai.
+Len-den ke wapas aane wale paise bhi len-den hain. Bande ka safha kholein aur jitne us ne wapas kiye utni raqam ke saath **Baghair bill paise liye** dabayein. Is ke liye **Paise mile** istemal na karein, kyun ke woh bills ke liye hai.
 
-Isi tarah, jab aap Madina Telecom ko udhaar liye paise wapas karein, to **Paise diye (len-den)** istemal karein.
+Isi tarah, jab aap Madina Telecom ko udhaar liye paise wapas karein, to **Baghair bill paise diye** istemal karein.
 
 ### Wapsi ki tareekhen aur yaad dahani
 
@@ -292,7 +292,7 @@ Home screen ka **Dhyan dein** bhi "len-den wapas karne mein late log" dikhata ha
 
 Kabhi wahi banda baad mein aap se phone khareedta hai, ya aap ko bechta hai. Pehle se diye paise phir us bill ko ada kar sakte hain.
 
-**Misaal:** Kamran ne aap ke paas Rs. 10,000 len-den ke tor par chhore (aap ne **Paise liye (len-den)** likha). Agle hafte woh Rs. 8,000 ka handsfree, charger aur cover udhaar par khareedta hai. Ab us ke safhe par app ek card **Bills se milayein** dikhati hai: "Un ke diye paison mein se Rs. 8,000 un ke khule sale bills ada kar sakte hain".
+**Misaal:** Kamran ne aap ke paas Rs. 10,000 len-den ke tor par chhore (aap ne **Baghair bill paise liye** likha). Agle hafte woh Rs. 8,000 ka handsfree, charger aur cover udhaar par khareedta hai. Ab us ke safhe par app ek card **Bills se milayein** dikhati hai: "Un ke diye paison mein se Rs. 8,000 un ke khule sale bills ada kar sakte hain".
 
 1. Bande ka safha kholein.
 2. **Bills se milayein** card dhoondein.
@@ -1040,7 +1040,7 @@ Udhaar khate se us ka safha kholein aur us ke saath **Khate ki history** dekhein
 Un mein se ek kholein aur wajah likh kar cancel karein. Baqaya ulti entry se theek ho jata hai, aur cancel wali kati hui nazar aati rehti hai.
 
 **Ek dost ne mujh se paise udhaar liye. Kya main Paise mile / Paise diye istemal karoon?**
-Nahi. Us ke safhe par **Paise diye (len-den)** aur **Paise liye (len-den)** istemal karein (chapter 17). Paise mile aur Paise diye bills ke liye hain.
+Nahi. Us ke safhe par **Baghair bill paise diye** aur **Baghair bill paise liye** istemal karein (chapter 17). Paise mile aur Paise diye bills ke liye hain.
 
 **Haath mein bache minus hai lekin aaj maine achha becha.**
 Shayad aap ne stock khareeda ya wapsi par paise lautaye. **Gaya** ke neeche chips dekhein. Stock par kharch kiye paise ab aap ki shelf par phone hain.

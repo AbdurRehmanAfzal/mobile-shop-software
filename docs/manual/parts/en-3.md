@@ -239,7 +239,7 @@ The app keeps len-den in the same khata as the person's bills, so a person alway
 **Example:** Usman, a regular customer, asks for Rs. 25,000 and promises to return it by the 29th.
 
 1. Open Usman's page from the Udhaar khata (add him with **New person** if he is new).
-2. Scroll to the **Len-den** card and tap **Gave money (len-den)**.
+2. Scroll to the **Len-den** card and tap **Gave money, no bill**.
 3. Write the **Len-den amount**: `25000`.
 4. Pick how the money left: **Cash** from the galla, or **Online** from a bank or wallet.
 5. Set the **Return date (optional)**, for example 29-10-2026.
@@ -253,7 +253,7 @@ Usman's card now shows **They owe us (len-den)** Rs. 25,000 and **Due back 29-10
 **Example:** Madina Telecom next door lends you Rs. 50,000 in cash.
 
 1. Open Madina Telecom's page.
-2. Tap **Took money (len-den)**.
+2. Tap **Took money, no bill**.
 3. Amount `50000`, method **Cash**, return date if agreed.
 4. Tap **Save — money taken**.
 
@@ -272,9 +272,9 @@ The card shows **We owe them (len-den)** Rs. 50,000. The money is now in your ga
 
 ### When the person pays back
 
-Money coming back from a len-den is also len-den. Open the person's page and tap **Took money (len-den)** with the amount he returned. Do not use **Money received** for this, because that is for bills.
+Money coming back from a len-den is also len-den. Open the person's page and tap **Took money, no bill** with the amount he returned. Do not use **Money received** for this, because that is for bills.
 
-Likewise, when you return borrowed money to Madina Telecom, use **Gave money (len-den)**.
+Likewise, when you return borrowed money to Madina Telecom, use **Gave money, no bill**.
 
 ### Return dates and reminders
 
@@ -292,7 +292,7 @@ The Home screen's **Needs attention** also shows "people late returning len-den"
 
 Sometimes the same person later buys a phone from you, or sells you one. The money already given can then pay that bill.
 
-**Example:** Kamran left Rs. 10,000 with you as len-den (you recorded **Took money (len-den)**). Next week he buys a handsfree, charger and cover for Rs. 8,000 on udhaar. On his page the app now shows a card **Adjust against bills**: "Rs. 8,000 of the money they gave can pay their open sale bills".
+**Example:** Kamran left Rs. 10,000 with you as len-den (you recorded **Took money, no bill**). Next week he buys a handsfree, charger and cover for Rs. 8,000 on udhaar. On his page the app now shows a card **Adjust against bills**: "Rs. 8,000 of the money they gave can pay their open sale bills".
 
 1. Open the person's page.
 2. Find the **Adjust against bills** card.
@@ -1040,7 +1040,7 @@ Open his page from the Udhaar khata and go through **Khata history** with him. E
 Open one of them and cancel it with a reason. The balance is corrected by a reversing entry, and the cancelled one stays visible, crossed out.
 
 **A friend borrowed money from me. Do I use Money received / Money paid?**
-No. Use **Gave money (len-den)** and **Took money (len-den)** on his page (chapter 17). Money received and Money paid are for bills.
+No. Use **Gave money, no bill** and **Took money, no bill** on his page (chapter 17). Money received and Money paid are for bills.
 
 **Left in hand is minus but I sold well today.**
 You probably bought stock or gave back money on a return. Look at the chips under **Went out**. The money spent on stock is now phones on your shelf.

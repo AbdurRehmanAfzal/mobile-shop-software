@@ -303,6 +303,8 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **Reports list (2026-11-19, ADR-111)**: nothing to run. To test: More → Reports — "Every day" must show Day's hisaab, Stock tally, Udhaar khata, Sales bills, Purchases, Len-den, Cash and bank, Expenses, Returns; tap Stock tally: the stock worth page opens. Type "udhaar" in "Find a report": only udhaar reports stay. Pick "This month" and download Sales bills: this month's bills. Log in as a salesman: he must see the daily lists and no profit report. Tell me if a report should move into or out of "Every day".
 
+**Lines under the money buttons (2026-11-19, ADR-112)**: nothing to run. To test: open a person's page in English — under "Money received" must read "Bill ka udhaar wapas mila: jo paise is ne aap ko dene the, woh yahan likhein"; under "Money paid", "Gave money, no bill" and "Took money, no bill" their own lines. Tap one: the form repeats the line. Switch to Urdu: the lines must be in Urdu. Show it to the shopkeepers who asked and tell me any wording they want changed — each line is one text.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

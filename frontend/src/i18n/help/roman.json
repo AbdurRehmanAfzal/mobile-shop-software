@@ -3083,12 +3083,12 @@
       "example": "Balance Rs. 18,000, khula len-den Rs. 6,000 → bills se Rs. 12,000."
     },
     "give": {
-      "title": "Paise diye (len-den)",
+      "title": "Baghair bill paise diye",
       "body": "Dukan is shakhs ko baghair bill ke jo paise deti hai, qarz ki tarah, woh likhein. Yeh us ke khate mein jate hain; wapsi ki tareekh bhi likh sakte hain.",
       "example": "Bilal ko galle se Rs. 10,000 diye, 1 June ko wapsi."
     },
     "take": {
-      "title": "Paise liye (len-den)",
+      "title": "Baghair bill paise liye",
       "body": "Dukan is shakhs se baghair bill ke jo paise leti hai woh likhein: woh aap ko qarz de, ya apna qarz lautaye.",
       "example": "Madina Mobiles ne aap ko ek hafte ke liye Rs. 50,000 diye → paise liye Rs. 50,000."
     },

@@ -15,6 +15,7 @@ import PartyUnits, { usePartyUnits } from './PartyUnits'
 import PartyJourney from './PartyJourney'
 import PartyLending from './PartyLending'
 import OldBalance from './OldBalance'
+import Say from '@/components/Say'
 import { Printer } from 'lucide-react'
 import { openPrintable } from '@/lib/files'
 import {withCur } from '@/lib/format'
@@ -74,19 +75,20 @@ export default function PartyDetailPage() {
           <span className="[&_button]:text-current"><Help term="party.kinds" size="sm" /></span>
         </div>
       </section>
-      <div className="grid grid-cols-2 gap-2.5">
+      {/* owner 2026-11-19 (ADR-112): each money button says underneath what it is for */}
+      <div className="grid grid-cols-1 gap-2.5 min-[480px]:grid-cols-2">
         {/* the "?" sits on top of each button, not inside it (docs/33) */}
         <div className="relative">
-          <button type="button" onClick={() => setPaying('in')} className="tap flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-emerald px-7 text-white shadow-cta">
-            <ArrowDown size={20} strokeWidth={2.2} />
-            <BiLabel text="counter.gotMoney" size="md" bold tone="text-current" />
+          <button type="button" onClick={() => setPaying('in')} className="tap flex min-h-[72px] w-full flex-col items-start justify-center gap-1 rounded-2xl bg-emerald py-2.5 pe-10 ps-4 text-start text-white shadow-cta" data-testid="party-got">
+            <span className="flex items-center gap-2"><ArrowDown size={20} strokeWidth={2.2} /><BiLabel text="counter.gotMoney" size="md" bold tone="text-current" /></span>
+            <Say k="say.got" className="opacity-90" />
           </button>
           <span className="absolute end-1 top-1/2 -translate-y-1/2 [&_button]:text-white"><Help term="party.gotMoney" size="sm" /></span>
         </div>
         <div className="relative">
-          <button type="button" onClick={() => setPaying('out')} className="tap flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl border border-line bg-surface px-7 text-ink">
-            <ArrowUp size={20} strokeWidth={2.2} className="text-payable" />
-            <BiLabel text="counter.gaveMoney" size="md" bold tone="text-current" />
+          <button type="button" onClick={() => setPaying('out')} className="tap flex min-h-[72px] w-full flex-col items-start justify-center gap-1 rounded-2xl border border-line bg-surface py-2.5 pe-10 ps-4 text-start text-ink" data-testid="party-gave">
+            <span className="flex items-center gap-2"><ArrowUp size={20} strokeWidth={2.2} className="text-payable" /><BiLabel text="counter.gaveMoney" size="md" bold tone="text-current" /></span>
+            <Say k="say.gave" className="text-muted" />
           </button>
           <span className="absolute end-1 top-1/2 -translate-y-1/2"><Help term="party.gaveMoney" size="sm" /></span>
         </div>

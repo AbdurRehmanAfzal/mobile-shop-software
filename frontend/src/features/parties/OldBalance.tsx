@@ -14,6 +14,7 @@ import { useAuth } from '@/lib/auth'
 import { withCur } from '@/lib/format'
 import { uid } from '@/lib/id'
 import { useGet, useInvalidate } from '@/lib/queries'
+import Say from '@/components/Say'
 import type { Party } from '@/lib/types'
 
 interface Old { group_id: string; at: string; amount: string; party_owes: boolean; memo: string | null; deleted: boolean }
@@ -71,6 +72,7 @@ export default function OldBalance({ party }: { party: Party }) {
         <Help term="old.page" size="sm" />
       </span>
       <BiLabel text="old.hint" size="sm" tone="text-muted" />
+      <Say k="say.old" englishOnly className="text-muted" />
       {done ? <BiAlert text="old.saved" kind="success" /> : null}
       {rows?.length ? (
         <div className="flex flex-col divide-y divide-line rounded-2xl border border-line">

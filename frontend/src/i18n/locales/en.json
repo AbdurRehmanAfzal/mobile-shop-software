@@ -3988,8 +3988,8 @@
   "lending": {
     "title": "Len-den",
     "hint": "Money given to or taken from this person with no bill. It stays in their khata and can be adjusted against a later sale or purchase.",
-    "give": "I gave money (de diye)",
-    "take": "I took money (le liye)",
+    "give": "Gave money, no bill (de diye)",
+    "take": "Took money, no bill (le liye)",
     "open": "Len-den open",
     "theyOwe": "They owe us (lene hain)",
     "weOwe": "We owe them (dene hain)",
@@ -4023,8 +4023,8 @@
     "cancelTitle": "Cancel this len-den",
     "cancelHint": "For an entry made by mistake, e.g. Took money when you Gave it. It is not deleted: it is cancelled (its money comes back off the khata and the cash), and the history keeps it with the reason.",
     "cancelOnly": "Cancel only",
-    "cancelAsGive": "Cancel and enter as I gave money",
-    "cancelAsTake": "Cancel and enter as I took money"
+    "cancelAsGive": "Cancel and enter as Gave money",
+    "cancelAsTake": "Cancel and enter as Took money"
   },
   "rlab": {
     "sticker": "Repair sticker",
@@ -5416,5 +5416,16 @@
         "d": "Who is logged in, and on which device."
       }
     }
+  },
+  "say": {
+    "got": "Bill ka udhaar wapas mila: jo paise is ne aap ko dene the, woh yahan likhein",
+    "gave": "Bill ka udhaar wapas kiya: jo paise aap ne is ko dene the, woh yahan likhein",
+    "gotShort": "Udhaar ke paise wapas mile",
+    "gaveShort": "Udhaar ke paise wapas kiye",
+    "lendOut": "Is ko baghair bill ke paise diye: udhaar diya, ya is se liya hua udhaar wapas kiya (aaj ya pehle)",
+    "lendIn": "Is se baghair bill ke paise liye: udhaar liya, ya apna diya hua udhaar wapas mila (aaj ya pehle)",
+    "lending": "Yahan woh raqam likhein jo aap ne is bande ko baghair bill ke di, ya is se li.",
+    "settle": "Len-den ki raqam ko is ke bills ke sath barabar karein; koi naya paisa nahi hilta.",
+    "old": "Software se pehle ka purana len den yahan likhein: jo abhi lena ya dena baqi hai."
   }
 }
