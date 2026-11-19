@@ -96,6 +96,20 @@ Below that you will find:
 
 > **Tip:** When a customer argues about his balance, open his page, tap **Download** → **PDF** and send him the statement on WhatsApp. Every line has a date and a bill number.
 
+### Old balance: dealings from before the software
+
+You gave phones to a shop or a customer before you started the software, part was paid, and you do not remember the IMEIs. Enter only what is still open; the IMEIs are not needed.
+
+1. Open the person's page (add them first with **New person** if needed).
+2. In **Old balance (purana hisaab)** tap **Add old dealing**.
+3. Choose **They owe me** or **I owe them**.
+4. Either tap **Only the amount** and write what is still left — or stay on **Write what went** and add a line for each kind: **What**, **Pieces**, **Rate each**. Then write in **Already paid / received before** what was settled. The app shows **Total** and **Still left**.
+5. Tap **Save**.
+
+**Example:** Shop A took 5 iPhone 17 at 3,00,000 and 10 Samsung A56 at 95,000 (total 24,50,000) and has paid 20,00,000. After saving, Shop A's khata shows 4,50,000 to get, with the list of what went.
+
+Your stock and your profit do not change: those phones left before the software. When Shop A pays, use **Money received** as always. A wrong entry is removed with **Delete** and a reason; it stays in the list as Deleted. Only the owner and the manager see this card.
+
 ### Business overview and shop audit as A4 reports
 
 Use these to print a report, keep it in a file, or show it in a meeting.

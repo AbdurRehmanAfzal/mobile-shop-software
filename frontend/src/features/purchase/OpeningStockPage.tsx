@@ -10,7 +10,7 @@ import Help from '@/components/Help'
 import { BtnText, Chip, ErrorText, MoneyText, PageHeader, Sheet } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useInvalidate } from '@/lib/queries'
-import DeviceLineSheet, { draftToApi, emptyDraft, type DeviceLineDraft } from './DeviceLineSheet'
+import DeviceLineSheet, { draftToApi, emptyDraft, expandDraft, type DeviceLineDraft } from './DeviceLineSheet'
 
 export default function OpeningStockPage() {
   const nav = useNavigate()
@@ -87,8 +87,9 @@ export default function OpeningStockPage() {
             key={editing.key}
             initial={editing}
             draftKey="opening-line"
+            many
             onSave={(d) => {
-              setDevices((xs) => (xs.some((x) => x.key === d.key) ? xs.map((x) => (x.key === d.key ? d : x)) : [...xs, d]))
+              setDevices((xs) => (xs.some((x) => x.key === d.key) ? xs.map((x) => (x.key === d.key ? d : x)) : [...xs, ...expandDraft(d).filter((n) => !xs.some((x) => (n.imei1 && x.imei1 === n.imei1) || (!n.imei1 && n.serial && x.serial === n.serial)))]))
               setEditing(null)
               setJustAdded(true)
             }}

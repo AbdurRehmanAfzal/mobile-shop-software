@@ -545,6 +545,75 @@ def _acc_dict(a: CashAccount) -> dict:
 # ---- opening balances (migrating from the diary) -----------------------------------
 
 
+def old_dealing(items: list, settled: Decimal, as_of, memo: str | None) -> tuple[Decimal, str]:
+    """(what is still open, the words kept on the khata) for goods that went before the software
+    (ADR-110): the server adds the lines up, never the app."""
+    total = money(sum((money(i.rate) * i.qty for i in items), ZERO))
+    left = money(total - money(settled))
+    if left <= ZERO:
+        raise ValidationFailed(
+            code="old_nothing_left",
+            message_en="Nothing is left to get or give on this old dealing: what was settled covers the total.",
+            message_ur="اس پرانے لین دین میں کچھ باقی نہیں: جو ادا ہو چکا وہ کل کے برابر ہے۔",
+        )
+    lines = " | ".join(
+        f"{i.description.strip()} × {i.qty} @ {money(i.rate):,.0f} = {money(i.rate) * i.qty:,.0f}"
+        for i in items
+    )
+    words = f"Old dealing / پرانا لین دین{f' ({as_of.isoformat()})' if as_of else ''}: {lines}"
+    words += f" | Total {total:,.0f}"
+    if money(settled) > ZERO:
+        words += f" · Settled before {money(settled):,.0f} · Left {left:,.0f}"
+    if memo:
+        words += f" · {memo.strip()}"
+    return left, words
+
+
+def party_old_balances(db: Session, shop_id: uuid.UUID, party_id: uuid.UUID) -> list[dict]:
+    """every balance carried over for this person, newest first; a deleted one is kept and marked"""
+    party = db.get(Party, party_id)
+    if party is None or party.shop_id != shop_id:
+        raise NotFound(code="party_not_found")
+    groups = db.scalars(
+        select(LedgerGroup)
+        .where(
+            LedgerGroup.shop_id == shop_id,
+            LedgerGroup.document_type == "opening_balance",
+            LedgerGroup.document_id == party_id,
+        )
+        .order_by(LedgerGroup.at.desc())
+    ).all()
+    out = []
+    for g in groups:
+        mine = next((e for e in g.entries if e.party_id == party_id), None)
+        if mine is None:
+            continue
+        out.append(
+            {
+                "group_id": g.id,
+                "at": g.at,
+                "amount": money(mine.debit or mine.credit),
+                "party_owes": mine.debit > ZERO,
+                "memo": g.memo,
+                "deleted": g.reversed_by_group_id is not None,
+            }
+        )
+    return out
+
+
+def undo_party_opening_balance(
+    db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, group_id: uuid.UUID, reason: str
+) -> LedgerGroup:
+    """A carried-over balance entered wrongly: taken back by a reversing entry (the wrong one
+    stays on the khata, struck through). Only this kind of entry is undone here."""
+    g = get_group(db, shop_id, group_id)
+    if g.document_type != "opening_balance":
+        raise ValidationFailed(code="not_an_opening_balance")
+    rev = reverse(db, shop_id, user_id, group_id, reason)
+    db.commit()
+    return rev
+
+
 def post_party_opening_balance(
     db: Session,
     shop_id: uuid.UUID,

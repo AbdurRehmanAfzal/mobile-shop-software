@@ -440,6 +440,19 @@ Tablets and smart watches are tracked one by one, just like phones, each with it
 
 Without a SIM there is no IMEI, so the **Serial number** (on the box, or in Settings → About on the device) is used for searching and shown like an IMEI.
 
+### Several pieces of the same phone
+
+When a dealer gives you several pieces of one model with the same colour and cost, enter them together.
+
+1. In **Add device**, fill the first piece as usual: IMEI, brand, model, colour, **Cost price** (of one piece) and the rest.
+2. Switch on **Several pieces of the same**.
+3. In **Next IMEI**, scan or type the IMEI of each other piece and tap **Add** (a scanner adds one with every scan). The list shows the pieces and the total cost, for example *5 pieces · Rs. 15,00,000 in all*.
+4. Tap **Add**. The bill now has one line for every piece; each is its own phone in stock with its own IMEI, barcode and history.
+
+A number that is already in the list or already in your stock is refused. IMEI 2 is not asked here; add it later from the phone's page. The same switch is on **Old stock**.
+
+**Selling several of one model:** on the sale screen switch on **Pick several**, tick the phones and tap **Add n to the bill**. When the bill has several phones of one model, write the price of one in **Price each** and tap **Set for all**.
+
 ### Laptops
 
 Laptops are for the shops that also trade them. Ask the software provider to switch **Laptops** on for your shop; until then nothing about laptops is shown.
@@ -1742,6 +1755,20 @@ Below that you will find:
 - **Edit** to change their name, phone or type, **Delete** to remove a person entered by mistake, and **Download** for their statement as PDF, Excel or CSV.
 
 > **Tip:** When a customer argues about his balance, open his page, tap **Download** → **PDF** and send him the statement on WhatsApp. Every line has a date and a bill number.
+
+### Old balance: dealings from before the software
+
+You gave phones to a shop or a customer before you started the software, part was paid, and you do not remember the IMEIs. Enter only what is still open; the IMEIs are not needed.
+
+1. Open the person's page (add them first with **New person** if needed).
+2. In **Old balance (purana hisaab)** tap **Add old dealing**.
+3. Choose **They owe me** or **I owe them**.
+4. Either tap **Only the amount** and write what is still left — or stay on **Write what went** and add a line for each kind: **What**, **Pieces**, **Rate each**. Then write in **Already paid / received before** what was settled. The app shows **Total** and **Still left**.
+5. Tap **Save**.
+
+**Example:** Shop A took 5 iPhone 17 at 3,00,000 and 10 Samsung A56 at 95,000 (total 24,50,000) and has paid 20,00,000. After saving, Shop A's khata shows 4,50,000 to get, with the list of what went.
+
+Your stock and your profit do not change: those phones left before the software. When Shop A pays, use **Money received** as always. A wrong entry is removed with **Delete** and a reason; it stays in the list as Deleted. Only the owner and the manager see this card.
 
 ### Business overview and shop audit as A4 reports
 

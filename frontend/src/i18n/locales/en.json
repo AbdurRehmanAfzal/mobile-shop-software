@@ -595,7 +595,11 @@
       "hint": "The bill was put on the wrong person. It moves to the right customer's khata with what is left on it; cash does not move; the phone's history keeps both names.",
       "hintWalkIn": "This sale was made to \"Walk-in\". Choose who bought it: the bill shows in their khata as bought and paid, nothing more is owed, cash does not move.",
       "new": "Right customer"
-    }
+    },
+    "multi": "Pick several",
+    "addPicked": "Add {{n}} to the bill",
+    "priceEach": "Price each",
+    "setAll": "Set for all {{n}}"
   },
   "pay": {
     "title": "Payment",
@@ -5183,5 +5187,36 @@
     "inStock": "Items in stock",
     "tapItem": "Add the items you are selling",
     "returned": "Returned this month"
+  },
+  "old": {
+    "title": "Old balance (purana hisaab)",
+    "hint": "Dealings from before you started the software. Only what is still to get or to give goes on the khata; your stock and profit are not touched, so the IMEIs are not needed.",
+    "add": "Add old dealing",
+    "onlyAmount": "Only the amount",
+    "withGoods": "Write what went",
+    "amount": "Amount still left",
+    "goodsTitle": "What went, how many, at what rate",
+    "item": "What (model or item)",
+    "qty": "Pieces",
+    "rate": "Rate each",
+    "addLine": "Add another line",
+    "settled": "Already paid / received before",
+    "total": "Total",
+    "left": "Still left",
+    "asOf": "Date of the dealing (optional)",
+    "nothingLeft": "Nothing is left: what was already settled covers the total.",
+    "saved": "Saved on the khata.",
+    "undo": "Delete this entry",
+    "undoHint": "The entry is taken off the khata by a reversing entry and stays in the list as Deleted. Write why."
+  },
+  "many": {
+    "toggle": "Several pieces of the same (same model, colour and cost)",
+    "hint": "Fill the details once. Then scan or type the number of every other piece; each becomes its own unit in stock.",
+    "hintPhone": "Fill the details once. Then scan or type the IMEI of every other piece; each becomes its own phone in stock. IMEI 2 is not asked here — add it later from the phone's page.",
+    "next": "Next IMEI",
+    "nextSerial": "Next serial number",
+    "count": "{{n}} pieces · {{total}} in all",
+    "dup": "This number is already in the list",
+    "inStock": "Already in stock"
   }
 }

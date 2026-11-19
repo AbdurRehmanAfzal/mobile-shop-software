@@ -3,7 +3,7 @@ import uuid
 from datetime import date, datetime
 from decimal import Decimal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from app.modules.ledger.models import CashAccountKind
 
@@ -124,12 +124,47 @@ class ReverseRequest(BaseModel):
     reason: str = Field(min_length=3, max_length=200)
 
 
+class OldItem(BaseModel):
+    """one line of a dealing from before the software: what went, how many, at what rate"""
+
+    description: str = Field(min_length=1, max_length=120)
+    qty: int = Field(ge=1, le=100000)
+    rate: Decimal = Field(ge=0)
+
+
 class OpeningBalanceRequest(BaseModel):
-    amount: Decimal = Field(gt=0)
+    """A balance carried over from before the software (owner 2026-11-19, ADR-110). Either the
+    amount still open, or the goods that went (`items`) and what was already settled — the
+    server then works out what is left. No stock and no profit are touched: those phones left
+    before the software, so their IMEIs are not needed."""
+
+    amount: Decimal | None = Field(default=None, gt=0)
     party_owes: bool = Field(
         description="True: party owes the shop (lena hai). False: shop owes the party (dena hai)."
     )
     memo: str | None = Field(default=None, max_length=200)
+    items: list[OldItem] = Field(default_factory=list, max_length=60)
+    settled: Decimal = Field(default=Decimal(0), ge=0)  # already paid / received before
+    as_of: date | None = None
+
+    @model_validator(mode="after")
+    def _one_way(self):
+        if self.amount is None and not self.items:
+            raise ValueError("Write the amount, or the goods that went")
+        return self
+
+
+class OldBalanceOut(BaseModel):
+    group_id: uuid.UUID
+    at: datetime
+    amount: Decimal
+    party_owes: bool
+    memo: str | None
+    deleted: bool
+
+
+class UndoOpeningRequest(BaseModel):
+    reason: str = Field(min_length=3, max_length=200)
 
 
 class CashAccountUpdate(BaseModel):
