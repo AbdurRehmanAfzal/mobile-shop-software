@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import { useGet } from '@/lib/queries'
-import { useModule } from '@/lib/modules'
+import { useTrade } from '@/lib/modules'
 
 export type Kind = '' | 'phone' | 'tablet' | 'watch' | 'laptop'
 export type Mode = '' | 'sellable' | 'reserved' | 'inspection' | 'in_repair' | 'faulty' | 'with_customer_for_approval' | 'locked'
@@ -33,11 +33,12 @@ const KINDS: { k: Kind | 'items' | 'part' | 'other'; label: string }[] = [
 export function KindTabs({ value, onChange }: { value: Kind; onChange: (k: Kind) => void }) {
   const { pick, ur, cls } = useLang()
   const nav = useNavigate()
-  const laptopsOn = useModule('laptops')
+  const trade = useTrade() // ADR-108 / ADR-109: only the kinds this shop trades
+  const off = new Set<string>([...(trade.mobiles ? [] : ['phone', 'tablet', 'watch']), ...(trade.laptops ? [] : ['laptop'])])
   return (
     <div className="flex items-center gap-1">
       <div className="-mx-1 flex min-w-0 flex-1 gap-1.5 overflow-x-auto px-1 pb-1" data-testid="stock-kinds">
-        {KINDS.filter(({ k }) => k !== 'laptop' || laptopsOn).map(({ k, label }) => {
+        {KINDS.filter(({ k }) => !off.has(k)).map(({ k, label }) => {
           const on = value === k
           return (
             <button

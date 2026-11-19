@@ -2064,7 +2064,8 @@
     "attendance": "Staff attendance (hazri)",
     "ai": "Assistant & photo reading (AI)",
     "login_activity": "Login activity",
-    "laptops": "Laptops (new and used)"
+    "laptops": "Laptops (new and used)",
+    "no_mobiles": "Without mobiles (accessories / laptops only)"
   },
   "fees": {
     "title": "Software fees",
@@ -5171,5 +5172,16 @@
       "sale_return_void": "Return undone",
       "purchase_return_void": "Return undone"
     }
+  },
+  "goods": {
+    "chooseTitle": "Where is the stock coming from?",
+    "fromDealerHint": "Wholesaler or distributor.",
+    "stepItems": "What, how much?",
+    "none": "Nothing added yet",
+    "search": "Item, serial number or person's name",
+    "addStockHint": "Bought new stock",
+    "inStock": "Items in stock",
+    "tapItem": "Add the items you are selling",
+    "returned": "Returned this month"
   }
 }

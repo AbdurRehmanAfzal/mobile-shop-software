@@ -1,7 +1,7 @@
 /** The shop's jobs, one colour each (docs/11 v2 "Dukaan counter"). Home tiles, the laptop side menu
  *  and the F-key shortcuts all read this list, so a job looks and lands the same everywhere. */
 
-import { ArrowLeftRight, BookOpen, FileText, PackagePlus, Receipt, Smartphone, Tag, Undo2, Wallet, Wrench, type LucideIcon } from 'lucide-react'
+import { ArrowLeftRight, BookOpen, Boxes, FileText, PackagePlus, Receipt, Smartphone, Tag, Undo2, Wallet, Wrench, type LucideIcon } from 'lucide-react'
 
 export interface Job {
   id: 'sell' | 'addStock' | 'khata' | 'stock' | 'repair' | 'expense' | 'return' | 'invoices' | 'exchange' | 'sales'
@@ -18,6 +18,12 @@ export interface Job {
   module?: 'repairs' | 'expenses' | 'exchange'
   /** on the home screen only (the laptop side menu keeps to the F-key jobs, so it fits the screen) */
   homeOnly?: boolean
+}
+
+/** The jobs of this shop: one that keeps no phones or laptops (accessories only, ADR-109) opens
+ *  its items where a mobile shop opens its phones. */
+export function jobsFor(trade: { devices: boolean }): Job[] {
+  return trade.devices ? JOBS : JOBS.filter((j) => j.id !== 'exchange').map((j) => (j.id === 'stock' ? { ...j, to: '/accessories', Icon: Boxes } : j.id === 'addStock' ? { ...j, hint: 'goods.addStockHint' } : j))
 }
 
 export const JOBS: Job[] = [

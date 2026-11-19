@@ -16,6 +16,7 @@ import { api, get } from '@/lib/api'
 import { openPrintable } from '@/lib/files'
 import LabelSheet from '@/components/LabelSheet'
 import { Tag } from 'lucide-react'
+import { useTrade } from '@/lib/modules'
 import { isQueued } from '@/lib/offline'
 import { useColours, useDocMutation, useStorages } from '@/lib/queries'
 import type { DeviceDetail, Party, Purchase } from '@/lib/types'
@@ -147,7 +148,10 @@ export default function PurchaseWizard() {
     setStep(2)
   }
 
-  const steps = ['counter.fromWhom', 'counter.phoneAndCost', 'counter.doneTitle']
+  // ADR-109: a shop without mobiles says "stock", not "phone"; one without phones or laptops
+  // (accessories only) has no device to add and nobody's phone to buy
+  const trade = useTrade()
+  const steps = ['counter.fromWhom', trade.mobiles ? 'counter.phoneAndCost' : 'goods.stepItems', 'counter.doneTitle']
 
   return (
     <div className="flex flex-col gap-3">
@@ -162,23 +166,23 @@ export default function PurchaseWizard() {
 
       {step === 0 ? (
         <div className="flex flex-col gap-3">
-          <span className="flex items-center gap-1"><BiLabel text="purchase.chooseTitle" size="lg" bold /><Help term="purchase.source" size="sm" /></span>
+          <span className="flex items-center gap-1"><BiLabel text={trade.mobiles ? 'purchase.chooseTitle' : 'goods.chooseTitle'} size="lg" bold /><Help term="purchase.source" size="sm" /></span>
           <SourceCard
             help="purchase.fromDealer"
             active={chosen && kind === 'supplier'}
             icon={<Store size={26} />}
             title="purchase.fromDealer"
-            hint="purchase.fromDealerHint"
+            hint={trade.mobiles ? 'purchase.fromDealerHint' : 'goods.fromDealerHint'}
             onClick={() => { if (kind !== 'supplier') setParty(null); setKind('supplier'); setChosen(true) }}
           />
-          <SourceCard
+          {trade.devices ? <SourceCard
             help="purchase.fromCustomer"
             active={chosen && kind === 'walk_in'}
             icon={<UserRound size={26} />}
             title="purchase.fromCustomer"
             hint="purchase.fromCustomerHint"
             onClick={() => { if (kind !== 'walk_in') setParty(null); setKind('walk_in'); setChosen(true) }}
-          />
+          /> : null}
           {chosen ? (
             <>
               <div className="flex items-start gap-1"><div className="min-w-0 flex-1"><PartyPicker value={party} onChange={setParty} kind={partyKind} label={kind === 'supplier' ? 'purchase.selectDealer' : 'purchase.selectSeller'} /></div>{kind === 'supplier' ? <Help term="purchase.dealer" size="sm" /> : <Help term="purchase.seller" size="sm" />}</div>
@@ -190,7 +194,7 @@ export default function PurchaseWizard() {
 
       {step === 1 ? (
         <div className="flex flex-col gap-3">
-          {!devices.length ? <BiLabel text="purchase.noDevices" size="md" tone="text-muted" align="center" className="py-4" /> : null}
+          {trade.devices ? (!devices.length ? <BiLabel text="purchase.noDevices" size="md" tone="text-muted" align="center" className="py-4" /> : null) : !misc.length ? <BiLabel text="goods.none" size="md" tone="text-muted" align="center" className="py-4" /> : null}
           {devices.map((d) => (
             <div key={d.key} className="card flex items-center gap-3">
               <button type="button" className="min-w-0 flex-1 text-start" onClick={() => setEditing(d)}>
@@ -212,9 +216,9 @@ export default function PurchaseWizard() {
               <BtnText k={'purchase.remove'} /></button>
             </div>
           ))}
-          <div className="flex items-center gap-1"><BiButton text="purchase.addDevice" icon={<Plus size={22} />} variant="secondary" className="flex-1" onClick={() => setEditing(emptyDraft('', kind))} /><Help term="purchase.lines" size="sm" /></div>
+          {trade.devices ? <div className="flex items-center gap-1"><BiButton text="purchase.addDevice" icon={<Plus size={22} />} variant="secondary" className="flex-1" onClick={() => setEditing(emptyDraft('', kind))} /><Help term="purchase.lines" size="sm" /></div> : null}
           {/* owner 2026-11-15 (ADR-085): a locked phone (iCloud / FRP), for parts or to sell as it is */}
-          <div className="flex items-center gap-1"><BiButton text="locked.add" icon={<Lock size={20} />} variant="secondary" className="flex-1" onClick={() => setEditing({ ...emptyDraft('', kind), lock_type: 'icloud', condition: 'used', pta_status: 'unknown' })} data-testid="add-locked" /><Help term="locked.lock" size="sm" /></div>
+          {trade.mobiles ? <div className="flex items-center gap-1"><BiButton text="locked.add" icon={<Lock size={20} />} variant="secondary" className="flex-1" onClick={() => setEditing({ ...emptyDraft('', kind), lock_type: 'icloud', condition: 'used', pta_status: 'unknown' })} data-testid="add-locked" /><Help term="locked.lock" size="sm" /></div> : null}
 
           <div className="flex items-center gap-1"><BiButton text="items.buyButton" icon={<Watch size={22} />} variant="secondary" className="flex-1" onClick={() => setPickingItem(true)} /><Help term="purchase.items" size="sm" /></div>
           {misc.length || kind === 'supplier' ? (

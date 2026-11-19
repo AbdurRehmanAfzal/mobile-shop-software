@@ -606,7 +606,19 @@ def new_device(
 
     _validate_catalogue(db, shop_id, data)
     shop = db.get(Shop, shop_id)
-    if getattr(data, "category", "phone") == dtypes.LAPTOP and not dtypes.laptops_on(shop):
+    category = getattr(data, "category", "phone")
+    if category != dtypes.LAPTOP and not dtypes.mobiles_on(shop):
+        # ADR-109: a shop without the mobile side (accessories / laptops only) adds no phone,
+        # tablet or smart watch; what it already has stays and can be sold
+        from app.core.errors import Forbidden
+
+        raise Forbidden(
+            code="module_off",
+            message_en="Mobiles are not switched on for this shop. Contact the software provider.",
+            message_ur="اس دکان کے لیے موبائل چالو نہیں۔ سافٹ ویئر فراہم کنندہ سے رابطہ کریں۔",
+            details={"module": "mobiles"},
+        )
+    if category == dtypes.LAPTOP and not dtypes.laptops_on(shop):
         # ADR-108: laptops only for a shop the provider has switched them on for
         from app.core.errors import Forbidden
 

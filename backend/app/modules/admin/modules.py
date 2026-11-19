@@ -28,9 +28,17 @@ MODULES: dict[str, dict[str, str]] = {
     "login_activity": {"en": "Login activity (who is logged in where)", "ur": "لاگ اِن کی سرگرمی"},
     # owner 2026-11-18 (ADR-108): for the shops that also trade laptops and ask for it
     "laptops": {"en": "Laptops (new and used)", "ur": "لیپ ٹاپ (نئے اور استعمال شدہ)"},
+    # owner 2026-11-19 (ADR-109): a shop that does not trade mobiles at all — accessories only,
+    # laptops only, or both. A switch, not a feature: on = the mobile side (phones, tablets,
+    # smart watches) is hidden and none can be added. Absent for every existing shop, so
+    # their mobile side stays exactly as it is.
+    "no_mobiles": {
+        "en": "Without mobiles (accessories / laptops only)",
+        "ur": "موبائل کے بغیر (صرف ایکسیسریز / لیپ ٹاپ)",
+    },
 }
 # switched on by hand only, never by a plan
-OPT_IN = {"login_activity", "laptops"}
+OPT_IN = {"login_activity", "laptops", "no_mobiles"}
 
 PLAN_DEFAULTS: dict[str, list[str]] = {
     "trial": [k for k in MODULES if k not in OPT_IN],
@@ -88,6 +96,29 @@ def effective(org: Organisation) -> list[str]:
     if org.modules is not None:
         return clean(org.modules) or []
     return list(PLAN_DEFAULTS.get(org.plan, PLAN_DEFAULTS["trial"]))
+
+
+def lines(org: Organisation | None) -> dict[str, bool]:
+    """What the shop trades (ADR-109): mobiles (phones, tablets, smart watches) unless switched
+    off, laptops and accessories when their modules are on."""
+    on = set(effective(org)) if org is not None else set()
+    return {
+        "mobiles": "no_mobiles" not in on,
+        "laptops": "laptops" in on,
+        "accessories": "accessories" in on,
+    }
+
+
+def assert_trades_something(keys: list[str] | None) -> None:
+    """A shop without mobiles must have accessories or laptops, or it could add nothing at all."""
+    if keys and "no_mobiles" in keys and not ({"accessories", "laptops"} & set(keys)):
+        from app.core.errors import ValidationFailed
+
+        raise ValidationFailed(
+            code="no_business_line",
+            message_en="Without mobiles, switch on Accessories or Laptops (or both).",
+            message_ur="موبائل کے بغیر ایکسیسریز یا لیپ ٹاپ (یا دونوں) چالو کریں۔",
+        )
 
 
 def module_for(path: str) -> str | None:

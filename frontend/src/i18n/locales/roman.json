@@ -2064,7 +2064,8 @@
     "attendance": "Staff ki hazri",
     "ai": "Assistant aur tasveer parhna (AI)",
     "login_activity": "Login activity",
-    "laptops": "Laptop (naye aur used)"
+    "laptops": "Laptop (naye aur used)",
+    "no_mobiles": "Mobile ke baghair (sirf accessories / laptop)"
   },
   "fees": {
     "title": "Software fees",
@@ -5171,5 +5172,16 @@
       "sale_return_void": "Wapsi khatam",
       "purchase_return_void": "Wapsi khatam"
     }
+  },
+  "goods": {
+    "chooseTitle": "Maal kahan se aa raha hai?",
+    "fromDealerHint": "Wholesaler ya distributor.",
+    "stepItems": "Kya, kitne ka?",
+    "none": "Abhi kuch add nahi kiya",
+    "search": "Cheez, serial number ya bande ka naam",
+    "addStockHint": "Naya maal khareeda",
+    "inStock": "Stock mein cheezein",
+    "tapItem": "Jo cheezein bech rahe hain woh add karein",
+    "returned": "Is maah wapsi"
   }
 }

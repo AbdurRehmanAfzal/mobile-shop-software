@@ -297,11 +297,15 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **Laptops (2026-11-18, ADR-108, `docs/39-LAPTOPS-PLAN.md`)**: nothing to run (no migration; the laptop brands and models are added by themselves when the server starts). To switch it on for a shop that asked: Super admin → the shop → Modules → tick "Laptops (new and used)" → Save. To test on that shop: Add stock → From a dealer → Add device → **Laptop** → serial number → Dell → search "5490" → Core i5, 8th Gen, SSD, 14 → RAM 8, storage 256GB → Used → cost and asking price → save. Stock → "Laptops": the line must read "Core i5 8th Gen · 8GB · 256GB SSD · 14\"". Sell it: the bill must carry the same line and the serial number. On a shop without the module nothing may have changed (no Laptop type, no Dell in the brands).
 
+**Accessories-only and laptop-only shops (2026-11-19, ADR-109, `docs/40-ACCESSORIES-MODE-AUDIT.md`)**: nothing to run (no migration). To set a shop up: Super admin → the shop → Modules → untick "Follow the plan" → tick what it trades — accessories only: "Accessories" + "Without mobiles (accessories / laptops only)"; laptops only: "Laptops" + "Without mobiles"; both: all three → Save. Add the other modules that shop should have (expenses, reports …) in the same list. To test on a new test shop set up as accessories only: Home must say "Items in stock" and search items; the Stock tab must open the items; Add stock must offer only "From a dealer" and "Add accessory"; Sell must start on the items. Then check one of your mobile shops: nothing may have changed.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |
 |---|---|---|
 | [ ] | Grace days after plan end: 7 or 15? | 7 |
+| [ ] | Accessories mode: which of docs/40 §4 next — "made for" mobile / laptop / tablet / watch with laptop kinds, variants, quantity-tier prices and selling by box, customer prices, transfers with in-transit, consolidated reports? | not built |
+| [ ] | Price of the software for an accessories-only shop (a package of its own on the fees page, or a special price per shop as today)? | special price per shop |
 | [ ] | Laptops: a stored wholesale price per laptop that fills itself for a wholesale customer? (today: a normal bill at the typed price) | not built |
 | [ ] | Laptops: ID check (CNIC, photo) when a laptop is bought from a walk-in person? | not required |
 | [ ] | Laptops module: only switched on by you, or a monthly price so shops add it themselves? | by you only (price 0) |

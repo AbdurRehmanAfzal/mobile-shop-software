@@ -2104,3 +2104,13 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - Playwright: new `laptops` passes (off by default; switched on; a used Latitude bought on the purchase form; the Laptops tab and its line; sold); `device-types`, `labels`, `amanat-anyone-sticker`, `phone-countries` pass. Looked at the form.
 **Not done (owner to decide, docs/39 §4)**: a stored wholesale price per laptop; ID check for walk-in laptop sellers; laptops in the Excel import; a price for the module.
 **Next**: the owner's decisions above; Accounts & Reports phase 2 (docs/38 §3).
+
+### 2026-11-19 — accessories business mode: audit, accessories-only and laptop-only shops (ADR-109, docs/40)
+**Owner**: a long brief (accessories-only, mobile + accessories, wholesale; audit first, reuse, existing Super Admin, live shops untouched). For now: whoever wants accessories with mobiles or alone gets it ticked in Super Admin, the same for laptops; accessories can be for any device.
+**Done**: `docs/40-ACCESSORIES-MODE-AUDIT.md` (the four foundation questions with evidence, the brief against the code, phases). Module tick `no_mobiles` (opt-in), `modules.lines`, `assert_trades_something`; `new_device` refuses a mobile for such a shop; `order.apply` keeps provider-set switches on a package order; app: `useTrade`, `jobsFor`, home (search, glance), bottom bar and side menu, Add stock, Sell, device form types, stock tabs, More tiles; strings in en / ur / roman; ADR-109, CLAUDE.md, docs/29. No migration.
+**Verified**: 
+- pytest: full suite passes. New `test_business_lines` (5): no plan carries the switch; an existing shop adds phones on every plan and with a hand-picked list; an accessories-only shop is refused a phone (old stock and purchase bill), creates an item with no stock, buys 120 and sells 5 with the right profit and khata, still sells a phone it already had, and becomes a mobile shop again; a laptop-only shop; a package order keeps `no_mobiles` and `laptops`.
+- tsc; vitest (57); ruff clean.
+- Playwright: new `accessories-only` passes (home, Stock tab, More, Add stock, Sell, the server's refusal); `items`, `accessories`, `v2-screens`, `device-types`, `laptops`, `home-big`, `overview` pass. Looked at the accessories-only home screen.
+**Not done (docs/40 §4, owner to order)**: accessories "made for" a device type with laptop kinds; variants; quantity-tier prices and selling by box; customer prices; transfers with in-transit; consolidated reports; purchase orders; an accessories dashboard. The manual has no accessories-only chapter yet.
+**Next**: the owner's choice from docs/40 §4.

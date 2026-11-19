@@ -24,8 +24,8 @@ import type { SecurityState } from '@/features/more/LoginSecurityPage'
 import { useAiStatus } from '@/lib/ai'
 import { Bot } from 'lucide-react'
 import PeriodPicker, { periodOf, periodQuery, type Period } from './PeriodPicker'
-import { JOBS, type Job } from './jobs'
-import { useModules } from '@/lib/modules'
+import { jobsFor, type Job } from './jobs'
+import { useModules, useTrade } from '@/lib/modules'
 import { useLayout, type Layout } from '@/lib/theme'
 
 interface Dash {
@@ -68,6 +68,10 @@ export default function HomePage() {
   const worth = dash ? dash.stock_value_cost ?? dash.stock_value_asking : null
   const has = useModules()
   const layout = useLayout()
+  // ADR-109: a shop without phones or laptops (accessories only) searches and counts its items
+  const trade = useTrade()
+  const JOBS = jobsFor(trade)
+  const { data: itemsNow } = useGet<{ items: { on_hand: number } }>(['stock-status-items'], trade.devices ? null : '/api/v1/devices/stock-status')
   const [big, small] = [JOBS.slice(0, 2), JOBS.slice(2).filter((j) => !j.module || has(j.module))]
   const firstName = (me?.user.name ?? '').trim().split(/\s+/)[0]
   const hisaab = `/hisaab?from=${period.from}&to=${period.to}`
@@ -83,7 +87,7 @@ export default function HomePage() {
 
   function search(e: FormEvent) {
     e.preventDefault()
-    nav(`/stock?q=${encodeURIComponent(q.trim())}`)
+    nav(`${trade.devices ? '/stock' : '/accessories'}?q=${encodeURIComponent(q.trim())}`)
   }
 
   return (
@@ -103,9 +107,9 @@ export default function HomePage() {
 
       <form onSubmit={search} className="-mt-1 flex min-h-14 items-center gap-2 rounded-2xl border border-line bg-surface pe-1.5 ps-4 shadow-[0_8px_24px_-18px_rgba(27,31,36,.35)]">
         <Search size={20} strokeWidth={1.75} className="shrink-0 text-muted" />
-        <input value={q} onChange={(e) => setQ(e.target.value)} aria-label={pick('common.search')} placeholder={pick('counter.search')} className={`min-w-0 flex-1 bg-transparent font-medium text-ink placeholder:text-muted/70 focus:outline-none ${ur ? 'ur text-[15px]' : ''}`} />
+        <input value={q} onChange={(e) => setQ(e.target.value)} aria-label={pick('common.search')} placeholder={pick(trade.mobiles ? 'counter.search' : 'goods.search')} className={`min-w-0 flex-1 bg-transparent font-medium text-ink placeholder:text-muted/70 focus:outline-none ${ur ? 'ur text-[15px]' : ''}`} />
         <Help term="counter.search" size="sm" />
-        <ScanButton size="sm" onImei={(imei) => nav(`/stock?q=${imei}`)} />
+        {trade.mobiles ? <ScanButton size="sm" onImei={(imei) => nav(`/stock?q=${imei}`)} /> : null}
         <button type="submit" aria-label={pick('common.search')} className="tap flex min-h-12 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl bg-ink px-1.5 py-1 text-ground">
           <ScanLine size={20} strokeWidth={1.75} />
           <BtnText k="common.search" />
@@ -149,7 +153,7 @@ export default function HomePage() {
         {/* owner 2026-11-13 (ADR-072): a salesman sees today only */}
         {manager ? <PeriodPicker value={period} onChange={setPeriod} size="sm" /> : null}
         <GlanceSet layout={layout} items={[
-          { id: 'sales', to: hisaab, help: 'counter.glance.sales', icon: <Tag size={16} />, tone: 'bg-sell text-sell-fg', label: 'home.sales', value: rep?.sales_total, sub: pick('home.phonesSold').replace('{{n}}', String(rep?.phones_sold ?? 0)) },
+          { id: 'sales', to: hisaab, help: 'counter.glance.sales', icon: <Tag size={16} />, tone: 'bg-sell text-sell-fg', label: 'home.sales', value: rep?.sales_total, sub: trade.devices ? pick('home.phonesSold').replace('{{n}}', String(rep?.phones_sold ?? 0)) : undefined },
           ...(manager ? [{ id: 'profit', to: `/audit/finance?${glanceQuery}`, help: 'counter.glance.profit', icon: Number(rep?.profit ?? 0) < 0 ? <TrendingDown size={16} /> : <TrendingUp size={16} />, tone: Number(rep?.profit ?? 0) < 0 ? 'bg-payable-tint text-payable' : 'bg-emerald-tint text-emerald-deep', label: 'home.profit', value: rep?.profit, neg: Number(rep?.profit ?? 0) < 0, sub: glance ? `${pick('audit.vsPrevious')} ${fmt(glance.previous.net_profit)}` : undefined }] : []),
           { id: 'inHand', to: hisaab, help: 'inHand', icon: <Wallet size={16} />, tone: 'bg-emerald-tint text-emerald-deep', label: 'counter.inHand', value: rep?.cash_net, neg: cashNeg, sub: glance ? `${pick('audit.moneyIn')} ${fmt(glance.money.inflows)} · ${pick('audit.moneyOut')} ${fmt(glance.money.outflows)}` : undefined },
           manager
@@ -157,8 +161,10 @@ export default function HomePage() {
             : { id: 'cashBank', to: hisaab, help: 'counter.glance.todayCashBank', icon: <Landmark size={16} />, tone: 'bg-khata text-khata-fg', label: 'home.todayCash', value: dash?.today_cash, neg: Number(dash?.today_cash ?? 0) < 0, sub: `${pick('home.todayBank')} ${fmt(dash?.today_bank ?? 0)}` },
           { id: 'toGet', to: '/khata?f=get', help: 'counter.glance.toGet', icon: <ArrowDownLeft size={16} />, tone: 'bg-receivable-tint text-receivable', label: 'counter.toGet', value: dash?.receivable, sub: glance ? `${pick('audit.receivedInPeriod')} ${fmt(glance.debt.received_in_period)}` : undefined },
           { id: 'toGive', to: '/khata?f=give', help: 'counter.glance.toGive', icon: <ArrowUpRight size={16} />, tone: 'bg-payable-tint text-payable', label: 'counter.toGive', value: dash?.payable },
-          { id: 'inStock', to: '/stock/summary', help: 'counter.glance.inStock', icon: <Smartphone size={16} />, tone: 'bg-stockt text-stockt-fg', label: 'home.inStock', value: dash?.stock_count, plain: true, sub: worth ? `${pick('home.worth')} ${fmt(worth)}` : undefined },
-          { id: 'returns', to: '/returns', help: 'ret.home', icon: <Undo2 size={16} />, tone: 'bg-ret text-ret-fg', label: 'ret.homeLabel', value: dash?.returns_month ?? 0, plain: true, sub: pick('ret.homeToday').replace('{{n}}', String(dash?.returns_today ?? 0)) },
+          trade.devices
+            ? { id: 'inStock', to: '/stock/summary', help: 'counter.glance.inStock', icon: <Smartphone size={16} />, tone: 'bg-stockt text-stockt-fg', label: 'home.inStock', value: dash?.stock_count, plain: true, sub: worth ? `${pick('home.worth')} ${fmt(worth)}` : undefined }
+            : { id: 'inStock', to: '/accessories', help: 'counter.glance.inStock', icon: <Boxes size={16} />, tone: 'bg-stockt text-stockt-fg', label: 'goods.inStock', value: itemsNow?.items.on_hand, plain: true, sub: worth ? `${pick('home.worth')} ${fmt(worth)}` : undefined },
+          { id: 'returns', to: '/returns', help: 'ret.home', icon: <Undo2 size={16} />, tone: 'bg-ret text-ret-fg', label: trade.devices ? 'ret.homeLabel' : 'goods.returned', value: dash?.returns_month ?? 0, plain: true, sub: pick('ret.homeToday').replace('{{n}}', String(dash?.returns_today ?? 0)) },
           { id: 'expenses', to: '/expenses', help: 'counter.glance.expenses', icon: <Receipt size={16} />, tone: 'bg-expense text-expense-fg', label: 'home.expenses', value: rep?.expenses },
         ]} />
         {sec?.pending ? (

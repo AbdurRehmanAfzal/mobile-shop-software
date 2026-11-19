@@ -59,6 +59,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Audit and phases: `docs/38-ACCOUNTS-REPORTS-AUDIT.md` — read it before adding any accounts or report feature; build only what its matrix marks missing.
 - Rules: one accounting engine (the ledger) — never a second set of balances; a report reads the ledger / documents and is checked in a test against them; no free manual journal entry (docs/38 §4); the general ledger's closing balance must equal the trial balance's line.
 
+## What a shop trades — accessories-only / laptop-only shops (owner 2026-11-19, ADR-109)
+- Audit of the "Accessories Business Mode" brief, what exists, what is left: `docs/40-ACCESSORIES-MODE-AUDIT.md` — read it before adding an accessories, wholesale or branch feature; build only what its matrix marks missing.
+- Rules: what a shop trades is derived from its modules (`admin/modules.lines`, `useTrade` in the app) — mobiles unless `no_mobiles`, plus `laptops`, `accessories`; never add a second business-type setting; `no_mobiles` is opt-in and must stay absent for existing shops; a shop without mobiles adds no phone / tablet / watch (server) but keeps and sells what it has; a package order never removes a provider-set switch (`OPT_IN`).
+
 ## Laptops (shopkeepers 2026-11-18, ADR-108)
 - Research, plan and what is not built: `docs/39-LAPTOPS-PLAN.md` — read it before touching `devices.category` handling for `laptop`, `seeds/laptops.py`, `types.laptop_line` / `laptops_on`, or the laptop part of `DeviceLineSheet.tsx` / `DeviceSpecs.tsx`.
 - Rules: a laptop is a `devices` row with `category = "laptop"` (never a second model); only a shop with the `laptops` module can add one, and a shop without it sees no laptop type, brand or model; identity is the serial number (or the shop's `LAP…` code), never an IMEI; a new laptop detail is a `specs` key, asked as common or under "More details"; the naming line is `laptop_line` on the server and `laptopLine` in the app — change both.

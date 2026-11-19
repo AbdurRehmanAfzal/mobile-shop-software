@@ -21,7 +21,7 @@ import { ApiError, api, get } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 import { openPrintable } from '@/lib/files'
 import { isQueued } from '@/lib/offline'
-import { useModules } from '@/lib/modules'
+import { useModules, useTrade } from '@/lib/modules'
 import { useLaptop } from '@/lib/useMedia'
 import { beep, useScan } from '@/lib/scanner'
 import { lookupCode } from '@/components/ScanListener'
@@ -99,6 +99,7 @@ export default function SaleWizard() {
   const { pick, ur, cls } = useLang()
   const role = useAuth((s) => s.me?.user.role)
   const has = useModules()
+  const trade = useTrade() // ADR-109: no phone picker for a shop that keeps no phones or laptops
   const laptop = useLaptop()
   const [step, setStepRaw] = useDraft('sale.step', 0)
   const { go: setStep, back } = useStepUrl(step, setStepRaw, 2)
@@ -365,12 +366,13 @@ export default function SaleWizard() {
       {step === 0 || (laptop && step !== 2) ? (
         <div className="flex flex-col gap-3">
           {has('held_sales') ? <HeldButton count={held?.length ?? 0} onClick={() => setHeldOpen(true)} /> : null}
+          {trade.devices ? (<>
           <div className="flex items-center gap-1">
             <div className="min-w-0 flex-1"><SearchBox value={q} onChange={setQ} placeholder="stock.searchPlaceholder" scan /></div>
             <Help term="sale.search" size="sm" />
           </div>
           <div className="flex flex-wrap items-center gap-1.5">
-            {(['', 'phone', 'tablet', 'watch', ...(has('laptops') ? (['laptop'] as const) : [])] as const).map((c) => (
+            {(['', ...(trade.mobiles ? (['phone', 'tablet', 'watch'] as const) : []), ...(has('laptops') ? (['laptop'] as const) : [])] as const).map((c) => (
               <button key={c || 'all'} type="button" aria-pressed={devCat === c} onClick={() => setDevCat(c)} className={`tap h-10 rounded-full border-2 px-3.5 font-bold ${devCat === c ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-[13px]'}`}>
                 {pick(c ? `devcat.${c}` : 'common.all')}
               </button>
@@ -385,7 +387,8 @@ export default function SaleWizard() {
           ) : (
             <BiLabel text="counter.noStock" size="md" tone="text-muted" align="center" className="py-6" />
           )}
-          {has('accessories') ? <BiButton text="items.sellButton" icon={<Watch size={22} />} variant="secondary" full onClick={() => setPickingItem(true)} /> : null}
+          </>) : <BiLabel text="goods.tapItem" size="md" tone="text-muted" />}
+          {has('accessories') ? <BiButton text="items.sellButton" icon={<Watch size={22} />} variant={trade.devices ? 'secondary' : 'primary'} full onClick={() => setPickingItem(true)} data-testid="sell-item" /> : null}
           <div className="flex items-center gap-1">
             <IconChip icon={<Headphones size={18} />} text="counter.otherItem" onClick={() => { setMisc([{ key: uid(), description: '', qty: '1', unit_price: '' }]); setStep(1) }} />
             <Help term="sale.items" size="sm" />
@@ -395,7 +398,7 @@ export default function SaleWizard() {
 
       {step === 1 || (laptop && step !== 2) ? (
         <div className="flex flex-col gap-3">
-          {laptop && !lines.length && !misc.length ? <div className="card flex items-center gap-3 border-dashed"><Smartphone size={22} className="shrink-0 text-muted" /><BiLabel text="counter.tapPhone" size="md" tone="text-muted" /></div> : null}
+          {laptop && !lines.length && !misc.length ? <div className="card flex items-center gap-3 border-dashed"><Smartphone size={22} className="shrink-0 text-muted" /><BiLabel text={trade.devices ? 'counter.tapPhone' : 'goods.tapItem'} size="md" tone="text-muted" /></div> : null}
           {lines.map((l) => (
             <div key={l.device.id} className="card flex flex-col gap-2">
               <div className="flex items-center gap-2">

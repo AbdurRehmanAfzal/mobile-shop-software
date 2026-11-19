@@ -299,6 +299,9 @@ def apply(db: Session, org: Organisation, snap: dict, *, by: uuid.UUID, months: 
     """The provider approved the payment: the shop gets the package, the modules and the monthly
     fee it chose, and `months` more. Nothing is deleted when a package gets smaller — the module's
     screens are hidden, its data stays. Months bought at the shop's special price are used up."""
+    # ADR-109: what only the provider switches (laptops, login activity, "without mobiles") is
+    # not part of any package, so a package order never takes it away
+    by_hand = [k for k in mods.effective(org) if k in mods.OPT_IN]
     plans.set_plan(
         db,
         org,
@@ -311,7 +314,11 @@ def apply(db: Session, org: Organisation, snap: dict, *, by: uuid.UUID, months: 
         note=None,
     )
     if snap.get("touch_modules"):
-        org.modules = mods.clean(snap.get("set_modules"))
+        chosen = mods.clean(snap.get("set_modules"))
+        if by_hand:
+            base = chosen if chosen is not None else mods.PLAN_DEFAULTS.get(org.plan, [])
+            chosen = mods.clean([*base, *by_hand])
+        org.modules = chosen
     used = int(snap.get("deal_months") or 0)
     deal = org.fee_deal or None
     if used and deal and deal.get("plan") == snap["plan"] and deal.get("months_left") is not None:

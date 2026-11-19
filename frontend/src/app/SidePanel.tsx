@@ -7,9 +7,9 @@ import { BarChart3, CalendarDays, ChevronLeft, ChevronRight, Home, Landmark, Lay
 import { NavLink } from 'react-router-dom'
 import { useLang } from '@/components/Bilingual'
 import { useAuth } from '@/lib/auth'
-import { moduleFor, useModules } from '@/lib/modules'
+import { moduleFor, useModules, useTrade } from '@/lib/modules'
 import { useLayout } from '@/lib/theme'
-import { JOBS } from '@/features/counter/jobs'
+import { jobsFor } from '@/features/counter/jobs'
 
 /** owner 2026-11-06/07: the side panel's shop pages, two to a row in Classic, so every one fits one
  *  laptop screen; "All options" (the More page) closes the panel */
@@ -42,7 +42,8 @@ export default function SidePanel() {
   const { ur, pick, cls, dir } = useLang()
   const has = useModules()
   const role = useAuth((s) => s.me?.user.role)
-  const jobs = JOBS.filter((j) => !j.homeOnly && (!j.module || has(j.module)))
+  const trade = useTrade()
+  const jobs = jobsFor(trade).filter((j) => !j.homeOnly && (!j.module || has(j.module)))
   const links = SHOP_LINKS.filter((l) => (!l.roles || (role && l.roles.includes(role))) && (!moduleFor(l.to) || has(moduleFor(l.to)!)))
   const Chevron = dir === 'rtl' ? ChevronLeft : ChevronRight
   const txt = (en: string) => (ur ? cls('sm') : en)
