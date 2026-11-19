@@ -85,6 +85,8 @@ export default function ReportsPage() {
           />
         )}
       />
+      {/* ADR-111: back to the list of every report */}
+      <Link to="/reports" className="tap inline-flex min-h-10 w-fit items-center gap-1.5 rounded-full border border-line bg-surface px-3.5 text-sm font-bold print:hidden" data-testid="to-all-reports">{pick('hub.all')}</Link>
       <Link to="/audit" className="card tap flex items-center gap-3 print:hidden" data-testid="to-audit">
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ink text-ground"><BarChart3 size={20} /></span>
         <span className="flex min-w-0 flex-1 flex-col"><BiLabel text="audit.title" size="md" bold /><BiLabel text="audit.hint" size="sm" tone="text-muted" /></span>

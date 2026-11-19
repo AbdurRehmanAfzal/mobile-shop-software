@@ -188,7 +188,7 @@ test('a phone with a pending ID check can be skipped and sold', async ({ page })
 
 test('reports download as PDF, Excel and CSV, print, and share', async ({ page }) => {
   await signup(page)
-  await page.goto('/reports')
+  await page.goto('/reports?tab=profit')
   await page.getByRole('button', { name: 'Download', exact: true }).first().click()
   await expect(page.getByText('Download this report')).toBeVisible()
   const [xlsx] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: /Excel/ }).click()])

@@ -211,7 +211,7 @@ export default function HomePage() {
       {manager && has('reports') ? (
         // the "?" sits on the card's corner, outside the link: a tap on the card always opens reports
         <div className="relative">
-          <Link to="/reports" className="tap relative isolate flex items-center gap-3 overflow-hidden rounded-3xl bg-sell p-4 pe-10 text-sell-fg">
+          <Link to="/reports?tab=profit" className="tap relative isolate flex items-center gap-3 overflow-hidden rounded-3xl bg-sell p-4 pe-10 text-sell-fg">
             <span aria-hidden className="pointer-events-none absolute -end-10 -top-12 -z-10 h-36 w-36 rounded-full bg-white/15 blur-2xl" />
             <span className="well h-11 w-11 shrink-0 rounded-2xl bg-surface text-sell-icon"><TrendingUp size={22} strokeWidth={2} /></span>
             <span className="flex min-w-0 flex-1 flex-col">

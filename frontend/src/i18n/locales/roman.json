@@ -5218,5 +5218,203 @@
     "count": "{{n}} piece · kul {{total}}",
     "dup": "Yeh number pehle se list mein hai",
     "inStock": "Pehle se stock mein"
+  },
+  "hub": {
+    "title": "Reports",
+    "hint": "Software ki har report aur sheet, ek jagah. Kholne ke liye dabayein.",
+    "search": "Report dhoondein",
+    "dates": "Reports aur download ki tareekhein",
+    "none": "In alfaaz se koi report nahi.",
+    "all": "Tamam reports",
+    "g": {
+      "daily": "Rozana",
+      "sales": "Sale aur munafa",
+      "stock": "Stock",
+      "people": "Udhaar aur log",
+      "money": "Raqam aur accounts",
+      "staff": "Staff aur security"
+    },
+    "r": {
+      "day": {
+        "t": "Din ka hisaab",
+        "d": "Chuni hui tareekhon ki sale, khareedari, paisa aaya gaya aur haath mein cash."
+      },
+      "tally": {
+        "t": "Stock tally",
+        "d": "Shelf ke phone model wise software se milayein."
+      },
+      "khata": {
+        "t": "Udhaar khata",
+        "d": "Kis se lena hai aur kis ko dena hai, banda ba banda."
+      },
+      "sales": {
+        "t": "Sale ke bill",
+        "d": "Har bill customer, raqam aur baqi ke sath."
+      },
+      "purchases": {
+        "t": "Khareedari",
+        "d": "Har khareedari ka bill dealer, raqam aur baqi ke sath."
+      },
+      "lending": {
+        "t": "Len den",
+        "d": "Baghair bill ke di ya li gayi raqam, aur wapsi ki tareekh."
+      },
+      "cash": {
+        "t": "Cash aur bank",
+        "d": "Galla, bank aur wallet ke account, har entry ke sath."
+      },
+      "expenses": {
+        "t": "Kharche",
+        "d": "Chuni hui tareekhon ke kharche, qisam war."
+      },
+      "returns": {
+        "t": "Wapsiyan",
+        "d": "Jo phone aur cheezein wapas aayin, aur jo dealer ko wapas gayin."
+      },
+      "profit": {
+        "t": "Nafa nuqsan",
+        "d": "Sale minus qeemat-e-khareed minus kharche: asal munafa."
+      },
+      "top": {
+        "t": "Sab se zyada bikne wale",
+        "d": "Kya sab se zyada bika, raqam aur munafe ke sath."
+      },
+      "salesAudit": {
+        "t": "Roz ba roz sale aur khareedari",
+        "d": "Din, hafte aur mahine ke hisaab se kul, aur payment ke tareeqe se."
+      },
+      "bills": {
+        "t": "Billon ki jaanch",
+        "d": "Discount, maang se kam par bike bill, delete aur badle hue bill."
+      },
+      "returnsReport": {
+        "t": "Wapsi report",
+        "d": "Kitne wapas aaye, kyun, kitni raqam lautayi aur munafe par asar."
+      },
+      "products": {
+        "t": "Products",
+        "d": "Model, brand aur qisam ke hisaab se sale aur munafa."
+      },
+      "prices": {
+        "t": "Qeemat ki tabdeeliyan",
+        "d": "Badli gayi maangi qeematein aur maang se kam par bike phone, staff ke hisaab se."
+      },
+      "estimate": {
+        "t": "Andaza",
+        "d": "Agle 7 din ki mutawaqqa sale aur kaun sa model khatam hone wala hai."
+      },
+      "invoices": {
+        "t": "Tamam bill",
+        "d": "Sale, khareedari, wapsi aur payments ek list mein."
+      },
+      "installments": {
+        "t": "Qistein",
+        "d": "Qiston ke plan, aaj ki qist aur jo der se hain."
+      },
+      "stock": {
+        "t": "Stock list",
+        "d": "Dukaan ka har phone IMEI, haalat aur qeemat ke sath."
+      },
+      "worth": {
+        "t": "Stock ki maliyat",
+        "d": "Brand aur model ke hisaab se stock aur us ki maliyat."
+      },
+      "itemSheet": {
+        "t": "Item wise stock sheet",
+        "d": "Brand, model aur memory, tadaad, fi piece laagat aur kul ke sath."
+      },
+      "oldStock": {
+        "t": "Purana para stock",
+        "d": "Jo phone 30, 60, 90 din ya zyada se pare hain."
+      },
+      "byType": {
+        "t": "Qisam war stock",
+        "d": "Mobile, tablet, watch aur laptop: tadaad, laagat aur sale ki maliyat."
+      },
+      "stockAudit": {
+        "t": "Stock audit",
+        "d": "Sust aur ruka hua stock, baghair qeemat ke phone, mutawaqqa munafa."
+      },
+      "count": {
+        "t": "Stock ginti",
+        "d": "Shelf ki har cheez scan karein aur dekhein kya kam ya zyada hai."
+      },
+      "items": {
+        "t": "Accessories reports",
+        "d": "Kam stock, tez aur sust cheezein, ruka hua stock."
+      },
+      "transfers": {
+        "t": "Branch transfer",
+        "d": "Aap ki doosri dukaanon ko bheja aur un se aaya stock."
+      },
+      "balances": {
+        "t": "Khule baqaya jaat",
+        "d": "Lena aur dena, phone, customer, dealer aur karigar ke hisaab se."
+      },
+      "ageing": {
+        "t": "Udhaar ki umar",
+        "d": "Har udhaar kitna purana hai: 0–30, 31–60, 61–90 din aur zyada."
+      },
+      "people": {
+        "t": "Log",
+        "d": "Customer aur dealer, karobar, munafe aur baqaya ke hisaab se."
+      },
+      "personLedger": {
+        "t": "Bande ka account ledger",
+        "d": "Banda kholein: bill apni cheezon ke sath, debit, credit aur balance — print ya bhejne ke liye."
+      },
+      "payments": {
+        "t": "Payments",
+        "d": "Mili aur di gayi raqam, har entry."
+      },
+      "reminders": {
+        "t": "Udhaar ki yaad dahani",
+        "d": "Kisay WhatsApp par yaad dilana hai, aur kya bheja gaya."
+      },
+      "accounts": {
+        "t": "Accounts",
+        "d": "Cash, bank, lena aur dena ek jagah, aur har accounts screen."
+      },
+      "finance": {
+        "t": "Paisa aaya gaya",
+        "d": "Cash flow, qisam aur staff ke hisaab se kharche, kisi bhi tareekh ka munafa."
+      },
+      "books": {
+        "t": "Balance sheet aur trial balance",
+        "d": "Kisi bhi din dukaan ke paas kya hai aur kya dena hai; har khate ka kul."
+      },
+      "ledger": {
+        "t": "General ledger",
+        "d": "Chuni hui tareekhon mein ek khate ki har entry."
+      },
+      "overview": {
+        "t": "Karobar ka khulasa",
+        "d": "Sale, khareedari, raqam, udhaar aur stock ek screen par."
+      },
+      "audit": {
+        "t": "Shop audit",
+        "d": "Poori dukaan hindsa ba hindsa; har adad apne bill kholta hai."
+      },
+      "full": {
+        "t": "Mukammal report (PDF / Excel)",
+        "d": "Hisse chunein aur chuni hui tareekhon ki ek report download karein."
+      },
+      "staff": {
+        "t": "Staff",
+        "d": "Staff ke har fard ki sale, discount aur delete."
+      },
+      "security": {
+        "t": "Security feed",
+        "d": "Delete hue bill, qeemat ki tabdeeliyan aur naye phone se login."
+      },
+      "repairs": {
+        "t": "Repair",
+        "d": "Kaam, aamdani, parts aur lab ke charges."
+      },
+      "logins": {
+        "t": "Login activity",
+        "d": "Kaun login hai, aur kis phone par."
+      }
+    }
   }
 }

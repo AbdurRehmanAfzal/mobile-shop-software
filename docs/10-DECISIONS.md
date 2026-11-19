@@ -362,6 +362,17 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-111 · 2026-11-19 · Accepted · Reports: one list of every report, the daily ones first
+**Context**: shopkeepers coming from other software expect every report under "Reports". Here the reports had grown with their modules: the stock tally on the stock worth page, the khata on its own tab, the hisaab on another, accessory reports under Accessories, a dozen sections under Shop audit, the profit tabs under Reports. The owner asked for all of them reachable from the Reports module through a clear screen, with the reports wanted every day (stock tally, udhaar, sales, purchases, len-den) apart from the general ones.
+
+**Decision**:
+- **`/reports` is now a list of every report and sheet** (`ReportsHub`, drawn from `features/reports/catalog.ts` — 45 entries). "Every day" first, as tiles (hisaab, stock tally, udhaar khata, sales bills, purchases, len-den, cash and bank, expenses, returns); then by subject (sales and profit, stock, udhaar and people, money and accounts, staff and security). A search box filters by name; one date picker feeds the downloads and the screens that take dates; a row with an export gets compact download / share buttons.
+- **No report was moved, copied or recomputed.** Each entry only says where the report lives, which module and role it needs, and its export if it has one. The old places keep working.
+- **Everyone may open the list; each person sees what he may open** (`reportsFor`): module, owner / manager, owner-only, more-than-one-shop, and "keeps phones or laptops" (ADR-109). So `/reports` is no longer behind the `reports` module — a basic-plan shop gets its daily reports there — while the profit tabs moved to `/reports?tab=…` and gate themselves. Links that meant "profit" now say `?tab=profit`.
+- A unit test keeps the list honest: every entry has its name and line in three languages, opens a route the router has, and the role / module / shop rules give the expected set.
+
+**Consequences**: a new report must be added to the catalogue (the test fails on a name without an entry, not on a missing entry — a reviewer's job). Found while testing and fixed: the khata header's five buttons overflowed a 320 px phone; they wrap now, and the layout test waits for them before measuring. Still open: the Urdu-only test reports the Latin "CP" of "CP ID" on the settings page (older than this change).
+
 ## ADR-110 · 2026-11-19 · Accepted · Old dealings on the khata without IMEIs; several pieces of one model at once
 **Context**: shops and dealers starting the software asked (1) how to enter what they gave to other shops and customers before — so many pieces of each model, part paid, IMEIs forgotten, sometimes money they owe — and (2) to enter several phones of one model together at a purchase, and sell several together. Plan: `docs/41-OLD-DEALINGS-AND-BULK-ENTRY-PLAN.md`.
 

@@ -301,11 +301,14 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **Old dealings and several pieces at once (2026-11-19, ADR-110, `docs/41`)**: nothing to run (no migration). To test: (1) open a shop's page in People → "Old balance" → "Add old dealing" → "They owe me" → lines: Apple iPhone 17 × 5 at 300000, Samsung A56 × 10 at 95000 → "Already paid" 2000000 → Still left must show 450,000 → Save: his khata must show 450,000 to get and Stock must not have changed. Delete the entry with a reason: the khata must go back. (2) Add stock → From a dealer → Add device → fill one phone → switch on "Several pieces of the same" → add two more IMEIs → Add: three lines on the bill; after saving, three phones in stock. (3) Sell → "Pick several" → tick the three → "Add 3 to the bill" → "Price each" → "Set for all 3". Show (1) to the dealers who asked.
 
+**Reports list (2026-11-19, ADR-111)**: nothing to run. To test: More → Reports — "Every day" must show Day's hisaab, Stock tally, Udhaar khata, Sales bills, Purchases, Len-den, Cash and bank, Expenses, Returns; tap Stock tally: the stock worth page opens. Type "udhaar" in "Find a report": only udhaar reports stay. Pick "This month" and download Sales bills: this month's bills. Log in as a salesman: he must see the daily lists and no profit report. Tell me if a report should move into or out of "Every day".
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |
 |---|---|---|
 | [ ] | Grace days after plan end: 7 or 15? | 7 |
+| [ ] | Reports list: which reports belong in "Every day"? (now: hisaab, stock tally, udhaar khata, sales, purchases, len-den, cash and bank, expenses, returns) | as built |
 | [ ] | Accessories mode: which of docs/40 §4 next — "made for" mobile / laptop / tablet / watch with laptop kinds, variants, quantity-tier prices and selling by box, customer prices, transfers with in-transit, consolidated reports? | not built |
 | [ ] | Price of the software for an accessories-only shop (a package of its own on the fees page, or a special price per shop as today)? | special price per shop |
 | [ ] | Laptops: a stored wholesale price per laptop that fills itself for a wholesale customer? (today: a normal bill at the typed price) | not built |

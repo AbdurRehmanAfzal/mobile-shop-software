@@ -2123,3 +2123,14 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - tsc; vitest (57, including the help-text check); ruff clean.
 - Playwright: new `old-dealings-bulk` passes (old dealing 2,450,000 − 2,000,000 = 450,000 on the khata and nothing in stock; three phones bought with one form — three units, three barcodes, the duplicate refused; three ticked on the sale and one price set for all). `device-types`, `laptops`, `items`, `v2-screens`, `accessories-only`, `return` pass; `barcodes` failed once in the batch (a scan on Home did not open the phone while the full backend suite was running on the same PC) and passes alone.
 **Next**: the owner's choice from docs/40 §4 and docs/41 §4.
+
+### 2026-11-19 — Reports: one list of every report (ADR-111)
+**Owner**: people coming from other software expect every report under Reports; here they are spread over the modules and the Shop audit (the stock tally is on the stock worth page). All of them should be reachable from the Reports module through a clear screen, the daily ones (stock tally, udhaar, sales, purchases, len-den) apart from the general ones.
+**Done**: `reports/catalog.ts` (45 reports: where each lives, its module / role rule, its export), `ReportsHub.tsx` (daily tiles, subjects, search, dates, compact download / share), `ReportsHome.tsx` (`/reports` = the list, `/reports?tab=…` = the profit tabs behind the module); More tile and side menu for everyone; "All reports" link on the profit page; `DownloadButton compact`; strings (90 report names and lines) and two help texts in en / ur / roman; manual ch. 20 (PDFs rebuilt); ADR-111, CLAUDE.md, docs/29. No server change.
+**Verified**: 
+- vitest (61): new `catalog.test.ts` — every entry named in three languages, opens a route the router has, the dates reach the hisaab / audit / dated downloads, and the owner, manager, salesman, a basic-plan shop and an accessories-only shop each get the expected reports. tsc.
+- Playwright: new `reports-hub` passes (the nine daily tiles, each subject, a tile opens its screen, the dates reach the hisaab, search, the profit page and back, a salesman sees no profit report). `audit`, `books`, `counter`, `doclang`, `pricerules`, `device-types`, `accounts-ledger`, `home-big`, `overview` pass with `/reports?tab=profit`. `responsive` (10 phone sizes, en and ur) passes after the khata fix; one `counter` test failed once in an 11-minute batch and the whole `counter` file passes when run again (10 of 10).
+- Backend untouched: pytest not re-run.
+- Found and fixed: the khata header overflowed a 320 px phone by 52 px (it did before this change too; the layout test only caught it when the buttons were drawn in time) — the buttons wrap, and the test waits for them.
+- Still failing, older than this change: `urdu.spec` reports the Latin "CP" on the settings page (the CP ID label, ADR-083).
+**Next**: the owner says which reports belong in "Every day"; docs/40 §4.

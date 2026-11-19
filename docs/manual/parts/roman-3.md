@@ -496,7 +496,17 @@ Sirf do baqaye badalte hain. Yeh na sale hai na kharcha. Muntaqili **Muntaqil ki
 
 ## 20. Reports aur downloads
 
-Owner aur manager: Home → **Munafa aur reports**, ya More → **Reports**.
+**More → Reports** software ki har report aur sheet ek screen par dikhata hai, taa ke aap ko yaad na rakhna pare ke kaun si kahan hai.
+
+- **Rozana** wali pehle hain, bare khanon mein: **Din ka hisaab**, **Stock tally**, **Udhaar khata**, **Sale ke bill**, **Khareedari**, **Len den**, **Cash aur bank**, **Kharche**, **Wapsiyan**.
+- Neeche baqi mauzu ke hisaab se: **Sale aur munafa**, **Stock**, **Udhaar aur log**, **Raqam aur accounts**, **Staff aur security**.
+- **Report dhoondein**: koi lafz likhein (maslan `udhaar` ya `stock`) to sirf milti julti reports reh jati hain.
+- **Reports aur download ki tareekhein**: Aaj, Kal, Hafta, Is maah ya apni tareekhein. Yeh download mein aur tareekhon se chalne wali reports mein jati hain.
+- Report kholne ke liye dabayein. Jis line mein do chhote button hon woh report yahin se PDF, Excel ya CSV mein **download** ya **share** ho sakti hai.
+
+Har bande ko sirf wohi reports nazar aati hain jo woh khol sakta hai: salesman ko rozana ki lists, owner aur manager ko laagat aur munafe wali bhi. Reports apni purani jagah par bhi maujood hain (stock tally stock ki maliyat wale page par, waghera).
+
+Neeche bayan kiye gaye munafe ke tab is list mein **Nafa nuqsan** se, ya Home → **Munafa aur reports** se khulte hain. Upar **Tamam reports** wapas list par le jata hai.
 
 ![Munafa aur reports](shot:reports)
 

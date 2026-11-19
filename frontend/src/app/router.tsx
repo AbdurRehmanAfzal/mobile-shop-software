@@ -66,7 +66,7 @@ const AccessoriesPage = page('AccessoriesPage')
 const AccessoryDetailPage = page('AccessoryDetailPage')
 const AccessoryReportsPage = page('AccessoryReportsPage')
 const ExchangeWizard = page('ExchangeWizard')
-const ReportsPage = page('ReportsPage')
+const ReportsHome = page('ReportsHome')
 const AccountsPage = page('AccountsPage')
 const GeneralLedgerPage = page('GeneralLedgerPage')
 const AuditOverviewPage = page('AuditOverviewPage')
@@ -170,7 +170,7 @@ export const router = createBrowserRouter([
           { path: '/accessories/reports', element: <ModuleGate module="accessories"><AccessoryReportsPage /></ModuleGate> },
           { path: '/accessories/:id', element: <ModuleGate module="accessories"><AccessoryDetailPage /></ModuleGate> },
           { path: '/exchange/new', element: <ModuleGate module="exchange"><ExchangeWizard /></ModuleGate> },
-          { path: '/reports', element: <ModuleGate module="reports"><ReportsPage /></ModuleGate> },
+          { path: '/reports', element: <ReportsHome /> },
           { path: '/reports/ledger', element: <ModuleGate module="reports"><GeneralLedgerPage /></ModuleGate> },
           { path: '/accounts', element: <AccountsPage /> },
           { path: '/audit', element: <ModuleGate module="reports"><AuditOverviewPage /></ModuleGate> },

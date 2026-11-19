@@ -15,7 +15,7 @@ test('balance sheet and trial balance', async ({ page }) => {
   await page.getByRole('button', { name: /Create shop account/ }).click()
   await expect(page.getByPlaceholder("IMEI, phone or person's name")).toBeVisible()
 
-  await page.goto('/reports')
+  await page.goto('/reports?tab=profit')
   await page.getByRole('button', { name: 'Balance', exact: true }).first().click()
   const books = page.getByTestId('books')
   await expect(books.getByText('What the shop has')).toBeVisible()
