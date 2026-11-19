@@ -37,6 +37,25 @@ test('money buttons on a person page explain themselves', async ({ page, request
   await expect(lend).toContainText('Yahan woh raqam likhein jo aap ne is bande ko baghair bill ke di')
   await expect(page.getByTestId('old-balance')).toContainText('Software se pehle ka purana len den yahan likhein')
   await page.screenshot({ path: 'test-results/money-buttons.png', fullPage: true })
+  // ADR-113: they read as buttons — filled, with an icon and an arrow — and fit every width
+  for (const [name, w, h] of [['se', 320, 568], ['phone', 412, 900], ['laptop', 1280, 800]] as const) {
+    await page.setViewportSize({ width: w, height: h })
+    await expect(got).toBeVisible()
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth), `${name} fits`).toBeLessThanOrEqual(1)
+    const a = await got.boundingBox()
+    const b = await gave.boundingBox()
+    // one per row on a phone, side by side on a laptop
+    if (w < 1024) expect(b!.y).toBeGreaterThan(a!.y + a!.height - 1)
+    else expect(Math.abs(b!.y - a!.y)).toBeLessThan(2)
+    await got.scrollIntoViewIfNeeded()
+    await page.screenshot({ path: `test-results/money-buttons-${name}.png` })
+    await lend.getByTestId('lending-give').scrollIntoViewIfNeeded()
+    await page.screenshot({ path: `test-results/money-lending-${name}.png` })
+  }
+  await page.setViewportSize({ width: 412, height: 900 })
+  // each is one real button: the name, the line and the arrow are all inside it
+  await expect(got.locator('svg')).toHaveCount(2)
+  await expect(page.getByRole('button', { name: /Money received/ })).toHaveCount(1)
 
   // the form that opens says the same thing; the entry is saved as before
   await got.click()
