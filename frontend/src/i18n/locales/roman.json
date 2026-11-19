@@ -2164,9 +2164,9 @@
     }
   },
   "landing": {
-    "badge": "Sirf Pakistan ki mobile dukaanon ke liye bana",
+    "badge": "Pakistan ki mobile, laptop aur accessories dukaanon ke liye bana",
     "h1": "Apni mobile shop apne phone se chalayein",
-    "sub": "Purane aur naye phone, CNIC verification aur bechne wale ki dastakhat shuda razamandi ke sath, udhaar khata, repair aur repair labs, accessories, FBR ke liye tayyar tax bill, branches, balance sheet aur poora shop audit — Android app, kisi bhi browser par online, aur offline. Urdu, Roman Urdu aur English mein.",
+    "sub": "Purane aur naye phone, CNIC verification aur bechne wale ki dastakhat shuda razamandi ke sath, laptop, accessories, udhaar khata, repair aur repair labs, FBR ke liye tayyar tax bill, branches, 45 reports aur poora shop audit — Android app, kisi bhi browser par online, aur offline. Urdu, Roman Urdu aur English mein.",
     "ctaTrial": "{{n}} din muft shuru karein",
     "waHello": "Assalam-o-Alaikum, mujhe Mobile Shop software ke baare mein jaanna hai.",
     "point1": "Har phone par chalta hai",
@@ -2184,6 +2184,18 @@
       "repair": {
         "t": "Marammat ke counter",
         "d": "Job sheet, parts aur labour, WhatsApp par status, bill ke saath hawalgi — aur ginti se accessories."
+      },
+      "accessories": {
+        "t": "Accessories ki dukaanein",
+        "d": "Jo dukaan sirf cover, charger, handsfree aur glass bechti hai: phone ki koi screen nahi. Darjan ya dabbe se khareedein, ek ek kar ke bechein, kam stock ki ittila, barcode."
+      },
+      "laptops": {
+        "t": "Laptop ki dukaanein",
+        "d": "Naye aur purane laptop serial number se, processor, generation, RAM, SSD aur graphics card ke sath. 15 brands ke 1,143 model pehle se maujood, gaming laptop bhi."
+      },
+      "dealers": {
+        "t": "Dealer aur wholesaler",
+        "d": "Ek model ke das piece ek sath darj karein, sab ki ek qeemat dein, har dukaan ka khata rakhein — aur software se pehle ka purana hisaab IMEI ke baghair laayein."
       }
     },
     "videoTitle": "2 minute mein chalta dekhein",
@@ -2389,6 +2401,30 @@
       "branches": {
         "q": "Meri do dukaanein hain. Kya dono dekh sakta hoon?",
         "a": "Ji haan. Ek login se aap ki saari dukaanein khulti hain; har ek ka apna stock, khata aur reports, aur branch transfer se ek se doosri ko stock bhej sakte hain."
+      },
+      "accessoriesOnly": {
+        "q": "Main sirf accessories bechta hoon, phone nahi. Kya yeh mere liye hai?",
+        "a": "Ji haan. Hum aap ki dukaan ko sirf accessories par kar dete hain: phone, IMEI aur verification ki screens hat jati hain aur items, sale, khareedari, khata, kharche aur reports rehti hain. Baad mein phone rakhne lagein to woh chalu ho jate hain aur kuch zaya nahi hota."
+      },
+      "laptops": {
+        "q": "Kya is mein laptop rakh sakta hoon?",
+        "a": "Ji haan. Laptop ek module hai jo hum aap ki dukaan ke liye chalu karte hain. Laptop apne serial number se rakha jata hai, processor, generation, RAM, SSD aur graphics card ke sath; 15 brands ke 1,143 model maujood hain, gaming bhi. Dukaan phone aur laptop sath bech sakti hai, ya sirf laptop."
+      },
+      "oldBalance": {
+        "q": "Software se pehle ka len-den kaise laaun?",
+        "a": "Kisi shakhs ke khate mein purana balance shamil karein: likhein kya gaya tha (model, piece, rate) aur kitna mil chuka hai. Yeh sirf balance banta hai — IMEI nahi poocha jata aur stock nahi banta. Jo phone abhi shelf par hain woh purane stock se aate hain."
+      },
+      "foreign": {
+        "q": "Mere gahak doosre mulkon ke hain. Kya un ke number save ho sakte hain?",
+        "a": "Ji haan. Mobile ke har khane mein mulk ke code ka intikhab hai, mulk ke naam aur number ke andaaz ke sath. Pakistani number 03XX hi rehta hai; baqi apne code ke sath save hote hain, aur WhatsApp sahi number kholta hai."
+      },
+      "reports": {
+        "q": "Is mein kaun kaun si reports hain?",
+        "a": "45 reports aur sheets ek list mein: stock tally, udhaar, sale, khareedari, len-den, cash aur bank, kharche, wapsi, munafa, qeematon ki list, stock ki maaliyat, khaton ki umar, general ledger, trial balance, balance sheet, shop audit, staff aur repair. Har ek chuni hui tareekhon ke liye print ya download hoti hai."
+      },
+      "many": {
+        "q": "Kya ek model ke das phone ek ek kar ke darj karne honge?",
+        "a": "Nahi. Model ek baar chunein, batayein kitne piece hain, aur har ek ka IMEI likhein ya scan karein. Sale par kai phone chunein aur sab ki ek qeemat dein."
       }
     },
     "footer": "Pakistan mein, Pakistani mobile shops ke liye banaya gaya.",
@@ -2572,6 +2608,54 @@
       "pricelists": {
         "t": "Price list aur PTA check",
         "d": "Ek tap mein stock se staff ya gahakon ke liye price list; IMEI PTA ke DIRBS par check hota hai aur jawab phone par mehfooz."
+      },
+      "accshop": {
+        "t": "Sirf accessories wali dukaanein",
+        "d": "Jo dukaan phone nahi rakhti use phone ki screens ke baghair software milta hai: sirf items, sale, khareedari, khata aur reports. Phone baad mein chalu ho sakte hain; kuch zaya nahi hota."
+      },
+      "laptops": {
+        "t": "Laptop",
+        "d": "Laptop serial number se khareedein aur bechein: processor, generation, RAM, SSD / HDD, graphics card, touch, backlit keyboard. 15 brands ke 1,143 model maujood hain, in mein 228 gaming."
+      },
+      "reportshub": {
+        "t": "Har report ek list mein",
+        "d": "Tamam 45 reports aur sheets ek jagah: roz ki sab se upar — stock tally, udhaar, sale, khareedari, len-den, cash — baqi mauzu ke hisaab se, search ke sath."
+      },
+      "oldbalance": {
+        "t": "Purana len-den, IMEI ke baghair",
+        "d": "Software se pehle kisi dukaan par jo aap ka banta tha — 5 iPhone, 10 Samsung — us ke khate mein balance ban jata hai. IMEI nahi poocha jata aur stock nahi chhera jata."
+      },
+      "many": {
+        "t": "Kai piece ek sath",
+        "d": "Ek model ke paanch piece ek hi entry mein: khareedari par har ek ka IMEI, sale par kai chunein aur sab ki ek qeemat dein. Har ek stock mein apna alag phone rehta hai."
+      },
+      "countries": {
+        "t": "Kisi bhi mulk ka mobile number",
+        "d": "Dubai, Saudi Arabia, UK ya kahin ke bhi gahak aur dealer: mulk ka code chunein aur number us ke apne andaaz mein likhein. WhatsApp sahi number kholta hai."
+      },
+      "phonesheet": {
+        "t": "Phone ki tafseel, slip ya A4 page par",
+        "d": "Phone ki har baat ek table mein, har line ki apni edit. Lines par tick lagayein aur us ki tafseel 80 mm slip ya A4 page par print karein, ya PDF bhejein."
+      },
+      "stickerimei": {
+        "t": "IMEI barcode wala sticker",
+        "d": "Sticker ka barcode phone ka apna IMEI hai, aur jahan IMEI na ho wahan dukaan ka code. RAM, battery health, battery cycle aur serial number par tick laga sakte hain."
+      },
+      "amanat": {
+        "t": "Amanat kisi ko bhi",
+        "d": "Phone amanat par gahak, dealer, doosri dukaan ya technician ko dein. Woh counter se jata hai magar bikne ya wapas aane tak aap ka rehta hai."
+      },
+      "returnsreport": {
+        "t": "Wapsi ki report",
+        "d": "Kya wapas aaya aur kyun: wajah, shakhs aur model ke hisaab se, gahakon ki wapsi aur dealer ko wapsi alag alag — aur wapsiyon ka munafa par asar, malik ke liye."
+      },
+      "ledger": {
+        "t": "General ledger aur trial balance",
+        "d": "Har khata apni entries aur chalte balance ke sath, trial balance, nafa nuqsan aur balance sheet — sab ek hi khaton se, is liye hamesha aapas mein milte hain."
+      },
+      "say": {
+        "t": "Button jo batate hain ke kya karte hain",
+        "d": "Raqam mili, raqam di, baghair bill ke paise diye ya liye: paison ka har button button jaisa dikhta hai aur us ke neeche ek line batati hai ke yeh kis kaam ka hai."
       }
     },
     "float": {
@@ -2841,8 +2925,8 @@
       "oop": "OOP Solutions",
       "ifix": "iFix Apple Phone"
     },
-    "metaTitle": "Mobile Shop Software Pakistan — Android app, online aur offline",
-    "metaDesc": "Pakistan ki mobile shops ke liye software: purane aur naye phone CNIC verification aur bechne wale ki razamandi ke sath, udhaar khata, repair aur repair labs, FBR ke liye tayyar tax bill, branches, balance sheet, shop audit. Android app, online aur offline, Urdu aur English. 14 din muft.",
+    "metaTitle": "Mobile Shop Software Pakistan — Mobile, Laptop, Accessories",
+    "metaDesc": "Pakistan ki mobile, laptop aur accessories dukaanon ke liye software: IMEI stock, purane phone CNIC verification ke sath, udhaar khata, repair, 45 reports, FBR ke liye tayyar bill, branches. Android app, online aur offline, Urdu aur English. 14 din muft.",
     "fbr": {
       "badge": "FBR",
       "title": "FBR ke liye tayyar bill",
@@ -2879,6 +2963,47 @@
       "updates": "Har naya feature, jaise hi aaye",
       "support": "WhatsApp par madad aur har khane par \"?\"",
       "contract": "Saal ka contract nahi — chahein to mahina mahina dein"
+    },
+    "forMore": "Dekhein yeh kaise chalta hai",
+    "topicAll": "Software kya kya karta hai",
+    "topicAlso": "In ke liye bhi bana hai",
+    "topic": {
+      "accessories": {
+        "metaTitle": "Mobile Accessories Shop Software Pakistan — Stock, Sale, Khata",
+        "metaDesc": "Pakistan ki mobile accessories dukaanon ke liye software: darjan ya dabbe se khareedein, ek ek kar ke bechein, barcode, kam stock ki ittila, udhaar khata, munafa aur reports. Phone ki screens nahi. Android app, online aur offline. 14 din muft.",
+        "h1": "Mobile accessories ki dukaan ka software",
+        "sub": "Cover, charger, cable, handsfree, glass aur power bank: darjan ya dabbe se khareedein, ek ek kar ke bechein, jaanein kya khatam ho raha hai aur har item kya kamata hai. Phone ya IMEI ki koi screen raaste mein nahi.",
+        "q": "Accessories ki dukaan ko kya milta hai?",
+        "a": "Mobile Shop sirf accessories wali dukaan ko phone ki screens ke baghair chalata hai. Items darjan, dabbe ya carton se khareede aur ek ek kar ke beche jate hain; software ginti, har khep ki laagat aur har sale ka munafa rakhta hai, aur item khatam hone lage to batata hai.",
+        "p1": "Darjan, dabbe ya carton se khareedein — ek ek kar ke bechein; ek piece ki qeemat khud nikalti hai",
+        "p2": "Har item par barcode, kisi bhi USB ya Bluetooth scanner ya phone ke camera se",
+        "p3": "Kam stock ki list, stock ki ginti, sust aur tez item, har item ka munafa",
+        "p4": "Gahakon aur suppliers ka udhaar khata, kharche, cash aur bank, 45 reports"
+      },
+      "laptops": {
+        "metaTitle": "Laptop Shop Software Pakistan — Naye aur Purane Laptop",
+        "metaDesc": "Pakistan ki laptop dukaanon ke liye software: naye aur purane laptop serial number se, processor, RAM, SSD aur graphics card ke sath, 1,143 model maujood, gaming laptop, accessories, udhaar khata, repair aur reports. 14 din muft.",
+        "h1": "Laptop ki dukaan ka software",
+        "sub": "Naye aur purane laptop serial number se, har unit par processor, generation, RAM, SSD aur graphics card — sath accessories, udhaar khata, repair aur reports. Mobile ke sath, ya sirf laptop.",
+        "q": "Yeh laptop kaise rakhta hai?",
+        "a": "Har laptop apna alag unit hai, serial number se pehchana jata hai. 15 brands ke 1,143 maujood models mein se brand aur model chunein — in mein 228 gaming — aur aam tafseel likhein: processor, generation, RAM, SSD ya HDD, graphics card. Mazeed tafseel jab chahein maujood hai.",
+        "p1": "Har laptop par serial number; jahan serial na parha jaye wahan dukaan ka code",
+        "p2": "Processor, generation, RAM, SSD / HDD, graphics card, touch, backlit keyboard, battery time",
+        "p3": "HP, Dell, Lenovo, Apple, Asus, Acer, MSI aur deegar — business aur gaming model maujood",
+        "p4": "Khareedari, sale, wapsi, amanat, repair, sticker aur poori history, phone ki tarah"
+      },
+      "used": {
+        "metaTitle": "Purane Mobile ki Dukaan ka Software — CNIC, IMEI, PTA",
+        "metaDesc": "Pakistan mein purane mobile ke dealers ke liye software: CNIC scan, PTA aur IMEI check aur bechne wale ke dastakhat shuda iqrar name ke sath khareedein, har phone ki poori history, udhaar khata aur har phone ka munafa. 14 din muft.",
+        "h1": "Purane mobile ke dealers ka software",
+        "sub": "Purana phone mehfooz tareeqe se khareedein: bechne wale ka CNIC, PTA aur IMEI check aur screen par dastakhat shuda iqrar nama. Har phone ki poori kahani mehfooz — kis se aaya, us ke sath kya hua, kis ne liya.",
+        "q": "Yeh purane phone ke dealer ko kaise bachata hai?",
+        "a": "Purana phone sirf bechne wale ke CNIC, us ke IMEI aur PTA status, aur screen par dastakhat shuda iqrar name ke sath khareeda jata hai. Jis phone ki jaanch baqi ho woh becha nahi ja sakta, aur IMEI se us ki history hamesha rehti hai — dukaan hamesha dikha sakti hai ke phone kahan se aaya.",
+        "p1": "Camera se CNIC scan, bechne wale ki tasveer aur dastakhat shuda iqrar nama, Urdu ya English mein print",
+        "p2": "PTA / Non-PTA / JV SIM time ke sath, IMEI check, iCloud aur Google lock ki jaanch",
+        "p3": "IMEI se har phone ki history: khareedari, repair, amanat, sale, wapsi",
+        "p4": "Har phone ka munafa, udhaar khata, battery health aur IMEI barcode wala sticker"
+      }
     }
   },
   "inst": {
@@ -5467,5 +5592,13 @@
       "barcode": "Barcode",
       "date": "Tareekh"
     }
+  },
+  "control": {
+    "title": "Mobile Shop · Control",
+    "shops": "Dukaanein aur plan",
+    "business": "Karobar",
+    "toApp": "Dukaan ki app kholein",
+    "denied": "Sirf software provider ke liye",
+    "deniedHint": "Yeh address software ko chalane ke liye hai. Aap ki dukaan app mein hai."
   }
 }

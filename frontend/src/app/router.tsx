@@ -1,6 +1,7 @@
 import { Suspense, lazy, type ComponentType } from 'react'
 import { Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router-dom'
 import LandingPage from '@/features/landing/LandingPage'
+import { TOPICS, TOPIC_KEYS } from '@/features/landing/topics'
 import { useAuth } from '@/lib/auth'
 import LoginPage from '@/features/auth/LoginPage'
 import SignupPage from '@/features/auth/SignupPage'
@@ -13,6 +14,7 @@ type Pages = Awaited<ReturnType<typeof load>>
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const page = <K extends keyof Pages>(k: K) => lazy(async () => ({ default: (await load())[k] as ComponentType<any> }))
 const Shell = page('Shell')
+const ControlShell = page('ControlShell')
 const HomePage = page('HomePage')
 const StockSummaryPage = page('StockSummaryPage')
 const DayReportPage = page('DayReportPage')
@@ -104,14 +106,32 @@ function RequireAuth() {
 
 function RedirectIfAuthed() {
   const token = useAuth((s) => s.accessToken)
-  return token ? <Navigate to="/" replace /> : <Outlet />
+  if (!token) return <Outlet />
+  // ADR-115: someone sent to the login from the control room goes back there once logged in
+  // (read only: a render may run twice — the control room forgets it once it is open)
+  let next = '/'
+  try { const n = sessionStorage.getItem('mobileshop.next'); if (n && n.startsWith('/control')) next = n } catch { /* private window */ }
+  return <Navigate to={next} replace />
 }
 
 export const router = createBrowserRouter([
   { path: '/welcome', element: <LandingPage /> },
+  // ADR-115: the same page for one kind of shop, at an address a search can land on
+  ...TOPIC_KEYS.map((k) => ({ path: TOPICS[k], element: <LandingPage topic={k} /> })),
   { path: '/key/:token', element: <Suspense fallback={<Waiting />}><KeyPage /></Suspense> },
   { path: '/r/:token', element: <Suspense fallback={<Waiting />}><RepairStatusPage /></Suspense> },
   { path: '/b/:token', element: <Suspense fallback={<Waiting />}><BillCheckPage /></Suspense> },
+  // ADR-115: the provider's control room — its own address and frame, outside the shop app
+  {
+    path: '/control',
+    element: <Suspense fallback={<Waiting />}><ControlShell /></Suspense>,
+    children: [
+      { index: true, element: <AdminPage /> },
+      { path: 'business', element: <ProviderPage /> },
+    ],
+  },
+  { path: '/admin', element: <Navigate to="/control" replace /> },
+  { path: '/admin/business', element: <Navigate to="/control/business" replace /> },
   {
     element: <RedirectIfAuthed />,
     children: [
@@ -137,8 +157,6 @@ export const router = createBrowserRouter([
           { path: '/installments', element: <ModuleGate module="installments"><InstallmentsPage /></ModuleGate> },
           { path: '/assistant', element: <ModuleGate module="ai"><AssistantPage /></ModuleGate> },
           { path: '/installments/:id', element: <ModuleGate module="installments"><InstallmentDetailPage /></ModuleGate> },
-          { path: '/admin', element: <AdminPage /> },
-          { path: '/admin/business', element: <ProviderPage /> },
           { path: '/return/new', element: <ReturnWizard /> },
           { path: '/stock/opening', element: <OpeningStockPage /> },
           { path: '/stock/count', element: <StockCountPage /> },

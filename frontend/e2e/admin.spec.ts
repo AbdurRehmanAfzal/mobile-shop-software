@@ -35,7 +35,7 @@ test('super admin opens a shop for a customer', async ({ page, request }) => {
   await expect(page.getByPlaceholder("IMEI, phone or person's name")).toBeVisible()
   await page.goto('/more')
   await page.getByRole('button', { name: /Super admin/ }).click()
-  await expect(page).toHaveURL(/\/admin$/)
+  await expect(page).toHaveURL(/\/control$/) // ADR-115: the provider's own address
   // the Android app's link, to download or send (owner 2026-10-28)
   await expect(page.getByText(/\/app\.apk$/)).toBeVisible()
   await expect(page.getByRole('link', { name: 'Download' })).toHaveAttribute('href', /\/app\.apk$/)
@@ -50,7 +50,7 @@ test('super admin opens a shop for a customer', async ({ page, request }) => {
   await page.getByLabel('Password for the owner').fill('bilal1234')
   await page.getByRole('button', { name: 'Open a new shop' }).last().click()
   // opening a shop hashes the password and prepares its catalogue: slow on a busy PC
-  await expect(page.getByText('Shop opened')).toBeVisible({ timeout: 20_000 })
+  await expect(page.getByText('Shop opened')).toBeVisible({ timeout: 45_000 })
   await expect(page.getByText(owner).first()).toBeVisible()
   await expect(page.getByRole('link', { name: 'Send on WhatsApp' })).toHaveAttribute('href', /wa\.me\/92/)
   await page.screenshot({ path: 'test-results/admin-created.png', fullPage: true })

@@ -1,11 +1,22 @@
-# Mobile Shop — mobile shop software for Pakistan
+# Mobile Shop — software for mobile, laptop and accessories shops in Pakistan
 
-> Mobile Shop (موبائل شاپ) by OOP Solutions is software for mobile phone shops in Pakistan. It covers new and used phones with CNIC verification and the seller's signed consent, IMEI-wise stock, udhaar khata, repairs with outside repair labs, accessories, installments and a complete shop audit. It runs as an Android app, online on any browser, and offline, in Urdu, Roman Urdu and English.
+> Mobile Shop (موبائل شاپ) by OOP Solutions is software for mobile phone shops in Pakistan. It covers new and used phones with CNIC verification and the seller's signed consent, IMEI-wise stock, laptops by serial number, accessories-only shops, udhaar khata, repairs with outside repair labs, installments, 45 reports and a complete shop audit. It runs as an Android app, online on any browser, and offline, in Urdu, Roman Urdu and English.
 
 - Website: https://mobileshop.oopsolutions.com/welcome
+- For mobile accessories shops: https://mobileshop.oopsolutions.com/accessories-shop-software
+- For laptop shops: https://mobileshop.oopsolutions.com/laptop-shop-software
+- For used-mobile dealers: https://mobileshop.oopsolutions.com/used-mobile-shop-software
 - Android app: https://mobileshop.oopsolutions.com/app.apk
 - Maker: OOP Solutions — https://oopsolutions.com — Abdur Rehman Afzal, +92 316 4001668 (WhatsApp)
 - Related: iFix Apple Phone — https://ifixapplephone.com
+
+## Who it is for
+- Mobile phone shops: new phones by brand and model, PTA / Non-PTA / JV with SIM time, tax bills.
+- Used-mobile dealers: CNIC scan, PTA and IMEI check, the seller's signed declaration, each phone's history by IMEI.
+- Mobile accessories shops: an accessories-only shop has no phone, IMEI or verification screens; items are bought by the dozen, box or carton and sold by the piece.
+- Laptop shops: new and used laptops by serial number with processor, generation, RAM, SSD / HDD and graphics card; 1,143 models of 15 brands built in, 228 of them gaming. With mobiles or laptops alone.
+- Dealers and wholesalers: several pieces of one model in one entry, one price for all on a sale, every shop's khata.
+- Repair counters: job sheets, own technician or outside lab, repair sticker, status link for the customer.
 
 ## What makes it different
 - Android app, online on any device, and offline. An offline sale is sent once the internet is back; a one-PC Windows install runs without internet.
@@ -27,7 +38,15 @@
 - Expenses by category; owner drawings kept apart.
 - Shop audit: profit, cash, udhaar, stock, sales, purchases, staff, repairs, len-den — any period, print and Excel.
 - Staff roles: owner, manager, salesman, technician. A salesman never sees buying prices or profit.
-- Barcodes and stickers with any USB / Bluetooth scanner.
+- Barcodes and stickers with any USB / Bluetooth scanner; the sticker's barcode is the phone's IMEI, with RAM, battery health, battery cycles and serial number as ticks.
+- Laptops (a module switched on per shop): serial number, processor, generation, RAM, storage, graphics card, touch, backlit keys.
+- Reports: 45 reports and sheets in one list — stock tally, udhaar, sales, purchases, len-den, cash and bank, expenses, returns, profit, price lists, stock worth, khata ageing, general ledger, trial balance, balance sheet, shop audit, staff, repairs — each printed or downloaded for the dates chosen.
+- Old dealings: a balance from before the software goes on a person's khata without IMEIs and without stock.
+- Several pieces at once: an IMEI per piece on a purchase; pick several and give one price on a sale.
+- Mobile numbers of any country, with a country-code picker; WhatsApp opens the right number.
+- A phone's page: one table of all its details, printed as an 80 mm slip or an A4 page, or shared as a PDF.
+- Amanat: a phone given to a customer, dealer, another shop or technician, still the shop's until sold or returned.
+- FBR Digital Invoicing ready tax bills (off until the shop's NTN and token are entered); branch transfers.
 
 ## Prices (PKR)
 - Basic Rs. 2,000 / month, Pro Rs. 5,000 / month, Chain Rs. 7,500 / month.
@@ -40,4 +59,8 @@
 ## Common questions
 - Is there an Urdu mobile shop software in Pakistan? Yes — Mobile Shop runs fully in Urdu, Roman Urdu or English.
 - Does it work without internet? Yes — offline sales are kept and sent later; a one-PC Windows install needs no internet.
+- Is there software for a mobile accessories shop that keeps no phones? Yes — the shop is set to accessories only and sees no phone screens; phones can be switched on later.
+- Is there laptop shop software in Pakistan? Yes — Mobile Shop keeps laptops by serial number with their specifications; 1,143 models are built in.
+- Which reports does it have? 45, in one list, from the daily stock tally and udhaar to the general ledger, trial balance and balance sheet.
+- How are dealings from before the software entered? As an old balance on the person's khata — no IMEI, no stock.
 - Can staff use it without seeing profit? Yes — the salesman role sells, adds stock, takes returns and payments, but never sees cost or profit.

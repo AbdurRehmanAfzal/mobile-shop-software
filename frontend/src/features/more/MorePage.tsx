@@ -143,7 +143,7 @@ export default function MorePage() {
   return (
     <div className="flex flex-col gap-5">
       {me?.user.is_superuser ? (
-        <button type="button" onClick={() => nav('/admin')} className="tap flex min-h-[72px] items-center gap-3 rounded-3xl bg-hero px-4 text-start text-hero-text">
+        <button type="button" onClick={() => nav('/control')} className="tap flex min-h-[72px] items-center gap-3 rounded-3xl bg-hero px-4 text-start text-hero-text">
           <span className="well h-12 w-12 shrink-0 bg-white/15"><ShieldCheck size={24} /></span>
           <span className="flex min-w-0 flex-1 flex-col">
             <BiLabel text="admin.title" size="lg" bold tone="text-current" />

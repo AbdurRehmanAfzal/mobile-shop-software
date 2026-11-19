@@ -2157,3 +2157,24 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - tsc; vitest (61, including the help-text check); ruff clean.
 - Playwright: `device-styles` rewritten and passing (three views, an old saved style opens as Details, each table line, "—" with Add, a line's own job, Edit and "Edit all details" open the form and a colour change saves, the calm bought-from card, the slip's ticks change the server page, cost only when ticked, A4 keeps its own ticks, the view is remembered; all three views fit 320 px and 1280 px). `pricerules`, `units`, `purchase-cost` (moved to the table's lines), `device-types`, `amanat-anyone-sticker`, `labels`, `laptops`, `counter` pass; `units` first failed because "Money on this phone" stood twice on the page — the lower section is now "Its purchase and sale". Looked at the table, the slip and the A4 preview at 412 px and the table at 320 px.
 **Next**: the shopkeepers' view of the new page.
+
+## 2026-11-20 (3) — The provider's control room; landing page for accessories and laptop shops, SEO / AEO / GEO (ADR-115)
+
+**Asked (owner)**: the landing page does not show what was built since — accessories shops, laptop shops, reports and more — update it with SEO, AEO and GEO in mind "so google pr rank krainy r hm ko orders hn"; and the super admin should have its own URL that only controls the software.
+
+**Done**
+- `/control`: `ControlShell` (own header, language, logout, tabs Shops and plans / Business, link to the shop app) outside the shop `Shell`; `/admin` and `/admin/business` redirect; a visitor is sent to the login and back; a shop's login sees "Only for the software provider"; the More page's button and the Business button point at `/control`. No server change.
+- Landing page: 12 new cards (`LATEST = 12`), six "who it is for" cards with links, six new questions, new badge / sub-line / title / description; `LandingPage({ topic })` with a question-answer-points block for a kind of shop; routes from `landing/topics.ts` for `/accessories-shop-software`, `/laptop-shop-software`, `/used-mobile-shop-software`; canonical, og and twitter tags follow the open page.
+- `frontend/seo-pages.ts` (Vite build step) writes `dist/<slug>.html` with that page's head, a `WebPage` JSON-LD entry and `<noscript>` text; `deploy/Caddyfile` serves `{path}.html` before the app.
+- `index.html` (description, keywords, featureList, six more FAQPage questions, noscript with links), `llms.txt`, `sitemap.xml` (four addresses), `robots.txt` (topic addresses allowed, `/control` and `/admin` disallowed).
+- Texts in en / ur / roman (`control.*`, `landing.topic.*`, `landing.new.*`, `landing.faq.*`, `landing.for.*`).
+
+**Verified**
+- tsc clean; vitest 66 passed (new `landing/seo.test.ts`: topic texts in three languages and their lengths, sitemap and robots, valid structured data, the build's head per topic, a changed index.html stops the build).
+- `vite build`: the three HTML files are written; `laptop-shop-software.html` has its own title, canonical, og:url, WebPage entry and h1.
+- Playwright: `control-landing.spec` (2 tests) and `landing.spec` pass. `admin.spec` "super admin opens a shop": passes the new `/control` steps; its "Shop opened" wait was raised from 20 s to 45 s (the dialog appeared, late). The test then **fails on this PC at its full-page screenshot** (120 s test limit; the local database holds hundreds of test shops) — the same failure on the previous commit with this work stashed, so it is not from this change, but the test was not seen green here.
+- Not run: the full pytest suite (no backend file changed) and the full Playwright suite; the Caddyfile line was not exercised against a real Caddy here — check the three addresses' page source after the deploy (docs/29).
+
+**Next**: the owner's Search Console / Business Profile / links (docs/29); new screenshots for the laptop and accessories-only cards.
+
+**Open questions**: a sub-domain for the control room; more kind-of-shop pages (repair, wholesale, per city).

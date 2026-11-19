@@ -169,7 +169,7 @@ export default function AdminPage() {
       <BiLabel text="admin.only" size="sm" tone="text-muted" />
       {/* docs/28: the business view — income, channels, time left, usage, keys */}
       <div className="flex items-center gap-1">
-        <button type="button" onClick={() => nav('/admin/business')} className="tap hero flex flex-1 items-center gap-3 px-5 py-4 text-start" data-testid="open-business">
+        <button type="button" onClick={() => nav('/control/business')} className="tap hero flex flex-1 items-center gap-3 px-5 py-4 text-start" data-testid="open-business">
           <span className="well h-11 w-11 shrink-0 bg-white/15"><BarChart3 size={22} /></span>
           <span className="flex-1 text-base font-extrabold">{pick('prov.open')}</span>
           <ChevronRight size={20} className="rtl:rotate-180" />

@@ -2164,9 +2164,9 @@
     }
   },
   "landing": {
-    "badge": "Built only for Pakistan's mobile shops",
+    "badge": "Built for Pakistan's mobile, laptop and accessories shops",
     "h1": "Run your mobile shop from your phone",
-    "sub": "Used and new phones with CNIC verification and the seller's signed consent, udhaar khata, repairs and repair labs, accessories, FBR-ready tax bills, branches, a balance sheet and a full shop audit — as an Android app, online on any browser, and offline. In Urdu, Roman Urdu and English.",
+    "sub": "Used and new phones with CNIC verification and the seller's signed consent, laptops, accessories, udhaar khata, repairs and repair labs, FBR-ready tax bills, branches, 45 reports and a full shop audit — as an Android app, online on any browser, and offline. In Urdu, Roman Urdu and English.",
     "ctaTrial": "Start free for {{n}} days",
     "waHello": "Assalam-o-Alaikum, I want to know about the Mobile Shop software.",
     "point1": "Works on any phone",
@@ -2184,6 +2184,18 @@
       "repair": {
         "t": "Repair counters",
         "d": "Job sheets, parts and labour, status by WhatsApp, delivery with a bill — and accessories by count."
+      },
+      "accessories": {
+        "t": "Accessories shops",
+        "d": "A shop that sells only covers, chargers, handsfree and glass: no phone screens at all. Buy by the dozen or box, sell by the piece, low-stock alerts, barcodes."
+      },
+      "laptops": {
+        "t": "Laptop shops",
+        "d": "New and used laptops by serial number with processor, generation, RAM, SSD and graphics card. 1,143 models of 15 brands built in, gaming laptops too."
+      },
+      "dealers": {
+        "t": "Dealers and wholesalers",
+        "d": "Enter ten pieces of one model at once, give one price for all, keep every shop's khata — and bring in old balances from before the software without IMEIs."
       }
     },
     "videoTitle": "See it work in 2 minutes",
@@ -2389,6 +2401,30 @@
       "branches": {
         "q": "I have two shops. Can I see both?",
         "a": "Yes. One login can open all your shops; each keeps its own stock, khata and reports, and you can send stock from one to the other with a branch transfer."
+      },
+      "accessoriesOnly": {
+        "q": "I sell only accessories, no phones. Is it for me?",
+        "a": "Yes. We switch your shop to accessories only: the phone, IMEI and verification screens go away and you keep items, sales, purchases, khata, expenses and reports. If you start keeping phones later, they are switched on and nothing is lost."
+      },
+      "laptops": {
+        "q": "Can I keep laptops in it?",
+        "a": "Yes. Laptops are a module we switch on for your shop. A laptop is kept by its serial number with processor, generation, RAM, SSD and graphics card; 1,143 models of 15 brands are built in, gaming laptops too. A shop can sell phones and laptops together, or only laptops."
+      },
+      "oldBalance": {
+        "q": "How do I bring in dealings from before the software?",
+        "a": "On a person's khata, add an old balance: write what went (model, pieces, rate) and what was already paid. It becomes a balance only — no IMEI is asked and no stock is made. Phones still on your shelf go in through old stock."
+      },
+      "foreign": {
+        "q": "My customers are from other countries. Can I save their numbers?",
+        "a": "Yes. Every mobile field has a country-code picker with the country's name and number format. A Pakistani number stays 03XX; any other is kept with its code, and WhatsApp opens the right number."
+      },
+      "reports": {
+        "q": "Which reports does it have?",
+        "a": "45 reports and sheets in one list: stock tally, udhaar, sales, purchases, len-den, cash and bank, expenses, returns, profit, price lists, stock worth, khata ageing, general ledger, trial balance, balance sheet, shop audit, staff and repairs. Each prints or downloads for the dates you choose."
+      },
+      "many": {
+        "q": "Do I have to enter ten phones of one model one by one?",
+        "a": "No. Choose the model once, say how many pieces, and write or scan an IMEI for each. On a sale, pick several phones and give one price for all."
       }
     },
     "footer": "Made in Pakistan for Pakistani mobile shops.",
@@ -2572,6 +2608,54 @@
       "pricelists": {
         "t": "Price lists and PTA check",
         "d": "One tap makes a price list for staff or customers from your stock; an IMEI is checked on PTA's DIRBS and the answer saved on the phone."
+      },
+      "accshop": {
+        "t": "Accessories-only shops",
+        "d": "A shop that keeps no phones gets a software without phone screens: only items, sales, purchases, khata and reports. Phones can be switched on later; nothing is lost."
+      },
+      "laptops": {
+        "t": "Laptops",
+        "d": "Buy and sell laptops by serial number: processor, generation, RAM, SSD / HDD, graphics card, touch, backlit keys. 1,143 models of 15 brands are built in, 228 of them gaming."
+      },
+      "reportshub": {
+        "t": "Every report in one list",
+        "d": "All 45 reports and sheets in one place: the daily ones on top — stock tally, udhaar, sales, purchases, len-den, cash — the rest by subject, with a search."
+      },
+      "oldbalance": {
+        "t": "Old dealings, without IMEIs",
+        "d": "What a shop owed you before the software — 5 iPhones, 10 Samsungs — goes on its khata as a balance. No IMEI is asked and stock is not touched."
+      },
+      "many": {
+        "t": "Several pieces at once",
+        "d": "Five pieces of one model in one entry: an IMEI for each on a purchase, pick several on a sale and give one price for all. Each stays its own phone in stock."
+      },
+      "countries": {
+        "t": "Mobile numbers of any country",
+        "d": "Customers and dealers from Dubai, Saudi Arabia, the UK or anywhere: pick the country code and write the number in its own format. WhatsApp opens the right number."
+      },
+      "phonesheet": {
+        "t": "A phone's details as a slip or A4 page",
+        "d": "One table of everything about a phone, each line with its own edit. Tick the lines and print its details on an 80 mm slip or an A4 page, or share it as a PDF."
+      },
+      "stickerimei": {
+        "t": "Sticker with the IMEI barcode",
+        "d": "The sticker's bars are the phone's own IMEI, or the shop's code where there is none. RAM, battery health, battery cycles and the serial number can be ticked on."
+      },
+      "amanat": {
+        "t": "Amanat to anyone",
+        "d": "Give a phone on amanat to a customer, a dealer, another shop or a technician. It leaves the counter but stays yours until it is sold or comes back."
+      },
+      "returnsreport": {
+        "t": "Returns report",
+        "d": "What came back and why: by reason, by person and by model, customers' returns and returns to dealers apart — and what the returns did to profit, for the owner."
+      },
+      "ledger": {
+        "t": "General ledger and trial balance",
+        "d": "Every account with its entries and running balance, the trial balance, profit and loss and the balance sheet — all from the same books, so they always agree."
+      },
+      "say": {
+        "t": "Buttons that say what they do",
+        "d": "Money received, money paid, gave or took money without a bill: every money button looks like a button and carries a line in Roman Urdu saying what it is for."
       }
     },
     "float": {
@@ -2841,8 +2925,8 @@
       "oop": "OOP Solutions",
       "ifix": "iFix Apple Phone"
     },
-    "metaTitle": "Mobile Shop Software Pakistan — Android app, online & offline",
-    "metaDesc": "Mobile shop software for Pakistan: used and new phones with CNIC verification and the seller's signed consent, udhaar khata, repairs and repair labs, FBR-ready tax bills, branches, balance sheet, shop audit. Android app, online and offline, Urdu and English. 14 days free.",
+    "metaTitle": "Mobile Shop Software Pakistan — Phones, Laptops, Accessories",
+    "metaDesc": "Shop software for Pakistan's mobile, laptop and accessories shops: IMEI stock, used phones with CNIC verification, udhaar khata, repairs, 45 reports, FBR-ready bills, branches. Android app, online and offline, in Urdu and English. 14 days free.",
     "fbr": {
       "badge": "FBR",
       "title": "Bills ready for FBR",
@@ -2879,6 +2963,47 @@
       "updates": "Every new feature, as it comes",
       "support": "Help on WhatsApp and a \"?\" on every field",
       "contract": "No yearly contract — pay month by month if you like"
+    },
+    "forMore": "See how it works",
+    "topicAll": "Everything the software does",
+    "topicAlso": "Also made for",
+    "topic": {
+      "accessories": {
+        "metaTitle": "Mobile Accessories Shop Software Pakistan — Stock, Sales, Khata",
+        "metaDesc": "Software for mobile accessories shops in Pakistan: buy by the dozen or box, sell by the piece, barcodes, low-stock alerts, udhaar khata, profit and reports. No phone screens. Android app, online and offline, Urdu and English. 14 days free.",
+        "h1": "Software for mobile accessories shops",
+        "sub": "Covers, chargers, cables, handsfree, glass and power banks: buy by the dozen or box, sell by the piece, know what is finishing and what each item earns. No phone or IMEI screens in the way.",
+        "q": "What does an accessories shop get?",
+        "a": "Mobile Shop runs an accessories-only shop without any phone screens. Items are bought by the dozen, box or carton and sold by the piece; the software keeps the count, the cost of each lot and the profit of every sale, and warns when an item is finishing.",
+        "p1": "Buy by dozen, box or carton — sell by the piece; the price of one piece is worked out for you",
+        "p2": "A barcode on every item, with any USB or Bluetooth scanner or the phone's camera",
+        "p3": "Low-stock list, stock count, slow and fast items, profit per item",
+        "p4": "Udhaar khata for customers and suppliers, expenses, cash and bank, 45 reports"
+      },
+      "laptops": {
+        "metaTitle": "Laptop Shop Software Pakistan — New & Used Laptops by Serial",
+        "metaDesc": "Software for laptop shops in Pakistan: new and used laptops by serial number with processor, RAM, SSD and graphics card, 1,143 built-in models, gaming laptops, accessories, udhaar khata, repairs and reports. Android app, online and offline. 14 days free.",
+        "h1": "Software for laptop shops",
+        "sub": "New and used laptops by serial number, with processor, generation, RAM, SSD and graphics card on every unit — plus accessories, udhaar khata, repairs and reports. With mobiles, or laptops alone.",
+        "q": "How does it keep laptops?",
+        "a": "Every laptop is its own unit, known by its serial number. Pick the brand and model from 1,143 built-in models of 15 brands — 228 of them gaming — and write the common details: processor, generation, RAM, SSD or HDD, graphics card. More details are there when you want them.",
+        "p1": "Serial number on every laptop; a shop code where the serial cannot be read",
+        "p2": "Processor, generation, RAM, SSD / HDD, graphics card, touch, backlit keys, battery time",
+        "p3": "HP, Dell, Lenovo, Apple, Asus, Acer, MSI and more — business and gaming models built in",
+        "p4": "Purchase, sale, return, amanat, repairs, sticker and full history, like a phone"
+      },
+      "used": {
+        "metaTitle": "Used Mobile Shop Software Pakistan — CNIC, IMEI, PTA Check",
+        "metaDesc": "Software for used-mobile dealers in Pakistan: buy from a walk-in with CNIC scan, PTA and IMEI check and the seller's signed declaration, keep each phone's full history, udhaar khata and profit per phone. Android app, online and offline. 14 days free.",
+        "h1": "Software for used-mobile dealers",
+        "sub": "Buy a used phone safely: the seller's CNIC, the PTA and IMEI check and a declaration signed on the screen. Every phone keeps its whole story — who it came from, what was done to it, who bought it.",
+        "q": "How does it protect a used-phone dealer?",
+        "a": "A used phone is bought only with the seller's CNIC, its IMEI and PTA status, and a declaration the seller signs on the screen. A phone whose check is still pending cannot be sold, and its history by IMEI stays forever — so the shop can always show where a phone came from.",
+        "p1": "CNIC scan with the camera, the seller's photo and signed declaration, printed in Urdu or English",
+        "p2": "PTA / Non-PTA / JV with SIM time, IMEI check, iCloud and Google lock checks",
+        "p3": "Each phone's history by IMEI: purchase, repair, amanat, sale, return",
+        "p4": "Profit per phone, udhaar khata, sticker with battery health and the IMEI barcode"
+      }
     }
   },
   "inst": {
@@ -5467,5 +5592,13 @@
       "barcode": "Barcode",
       "date": "Date"
     }
+  },
+  "control": {
+    "title": "Mobile Shop · Control",
+    "shops": "Shops and plans",
+    "business": "Business",
+    "toApp": "Open the shop app",
+    "denied": "Only for the software provider",
+    "deniedHint": "This address runs the software itself. Your shop is in the app."
   }
 }

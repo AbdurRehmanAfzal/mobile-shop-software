@@ -3,8 +3,14 @@
 User-agent: *
 Allow: /
 Allow: /welcome
+Allow: /accessories-shop-software
+Allow: /laptop-shop-software
+Allow: /used-mobile-shop-software
 Allow: /llms.txt
 Disallow: /api/
+# the software provider's own control room: nothing for a search engine
+Disallow: /control
+Disallow: /admin
 
 # AI search / answer engines are welcome to read the public pages
 User-agent: GPTBot
