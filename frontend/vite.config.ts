@@ -4,12 +4,15 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import basicSsl from '@vitejs/plugin-basic-ssl'
 import { fileURLToPath, URL } from 'node:url'
+import seoPages from './seo-pages'
 
 // `npm run dev:phone` (port 5174): https on the Wi-Fi link (self-signed), because a phone browser opens the camera
 // inside the page only on https. Without it Android leaves the page for the camera app and may reload it.
 export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
+    // ADR-115: each shop-kind address of the landing page gets its own HTML head (not inside the APK)
+    mode === 'native' ? null : seoPages(),
     mode === 'phone' ? basicSsl() : null,
     // the Android app (`vite build --mode native`) ships its files inside the APK: no service worker,
     // which could otherwise keep showing an older version after the app is updated

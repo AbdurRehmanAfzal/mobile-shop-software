@@ -32,12 +32,14 @@
 	# Everything else is the single-page app
 	handle {
 		root * /srv
-		try_files {path} /index.html
+		# a landing address with its own HTML head (ADR-115: /laptop-shop-software → laptop-shop-software.html),
+		# else the app
+		try_files {path} {path}.html /index.html
 		file_server
 		# hashed build files never change; index.html and the service worker must always be fresh
 		@assets path /assets/*
 		header @assets Cache-Control "public, max-age=31536000, immutable"
-		@fresh path / /index.html /sw.js /registerSW.js /manifest.webmanifest
+		@fresh path / /index.html /sw.js /registerSW.js /manifest.webmanifest /accessories-shop-software /laptop-shop-software /used-mobile-shop-software
 		header @fresh Cache-Control "no-cache"
 	}
 

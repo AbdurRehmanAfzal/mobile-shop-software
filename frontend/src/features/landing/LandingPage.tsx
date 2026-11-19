@@ -2,7 +2,7 @@
  *  screenshots, a sample video, prices, the accounts to pay into and an "open a shop for me" form
  *  that reaches the product owner. Served at /welcome; a visitor on / without a login lands here. */
 
-import { ArrowLeftRight, Banknote, BarChart3, Building2, Calculator, BellRing, BookOpen, Bot, Boxes, CalendarCheck, Check, ChevronDown, CircleHelp, ClipboardCheck, CloudOff, Code2, FileSignature, Copy, CreditCard, Download, FileSpreadsheet, FileText, Fingerprint, FlaskConical, HandCoins, Headphones, History, IdCard, KeyRound, Languages, LineChart, Link2, Lock, MessageCircle, Monitor, PackagePlus, Palette, PauseCircle, Percent, Phone as PhoneIcon, PlayCircle, QrCode, Receipt, RotateCcw, Scale, ScanBarcode, ScanLine, ShieldCheck, Smartphone, Store, Tablet, Tag, Undo2, UserCog, Users, Wallet, Wrench, X, ZoomIn, type LucideIcon } from 'lucide-react'
+import { ArrowLeftRight, Banknote, BarChart3, Building2, Calculator, BellRing, BookOpen, Bot, Boxes, CalendarCheck, Check, ChevronDown, CircleHelp, ClipboardCheck, CloudOff, Code2, FileSignature, Copy, CreditCard, Download, FileSpreadsheet, FileText, Fingerprint, FlaskConical, Globe, HandCoins, Headphones, History, IdCard, KeyRound, Languages, Laptop, LineChart, Link2, Lock, MessageCircle, Monitor, PackagePlus, Palette, PauseCircle, Percent, Phone as PhoneIcon, PlayCircle, QrCode, Receipt, RotateCcw, Scale, ScanBarcode, ScanLine, ShieldCheck, Smartphone, Store, Tablet, Tag, Undo2, UserCog, Users, Wallet, Wrench, X, ZoomIn, type LucideIcon } from 'lucide-react'
 import { createContext, useContext, useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { BiAlert, BiInput, BiLabel, useLang } from '@/components/Bilingual'
@@ -14,6 +14,7 @@ import { ApiError, post } from '@/lib/api'
 import { normalisePhone } from '@/lib/format'
 import { useGet } from '@/lib/queries'
 import { waNumber } from '@/lib/phone'
+import { SITE, TOPICS, TOPIC_KEYS, type Topic } from './topics'
 
 interface Addon { en: string; ur: string; roman: string; price: number; per: 'month' | 'year' | 'once' }
 interface Info { plans: { key: string; price: number; yearly_price?: number; setup_fee?: number; modules: string[] }[]; trial_days: number; yearly_paid_months?: number; addons?: Addon[]; modules: Record<string, { en: string; ur: string }>; accounts: { label: string; account_name: string; number: string; note: string | null }[]; whatsapp: string | null }
@@ -29,6 +30,12 @@ const OPTIONAL_SHOT: Record<string, string> = { accessories: 'items', repairs: '
 const OPTIONAL: Record<string, LucideIcon> = { accessories: Headphones, repairs: Wrench, expenses: Wallet, held_sales: PauseCircle, tax: Receipt, exchange: ArrowLeftRight, reports: BarChart3, exports: Download, notifications: BellRing, loans: RotateCcw, installments: HandCoins, attendance: CalendarCheck, ai: Bot }
 /** what came in the last round (owner 2026-10-31): shown first, with its own screenshots */
 const NEW: { key: string; Icon: LucideIcon; shot?: string }[] = [
+  // owner 2026-11-20: accessories-only and laptop shops, every report in one list, old dealings,
+  // several pieces at once, numbers of any country, the phone's slip / A4 page, the IMEI sticker
+  { key: 'accshop', Icon: Headphones, shot: 'items' }, { key: 'laptops', Icon: Laptop }, { key: 'reportshub', Icon: BarChart3, shot: 'reports' },
+  { key: 'oldbalance', Icon: BookOpen, shot: 'khata' }, { key: 'many', Icon: Boxes, shot: 'purchases' }, { key: 'countries', Icon: Globe },
+  { key: 'phonesheet', Icon: FileText }, { key: 'stickerimei', Icon: ScanBarcode, shot: 'label' }, { key: 'amanat', Icon: RotateCcw },
+  { key: 'returnsreport', Icon: Undo2 }, { key: 'ledger', Icon: Scale, shot: 'books' }, { key: 'say', Icon: HandCoins, shot: 'payments' },
   // owner 2026-11-16: edit / delete everywhere, the plain stock page, the phone's page with its sticker,
   // locked phones, repairs by own technician or lab, A4 reports, login safety, PTA check, price lists
   { key: 'editdelete', Icon: Undo2, shot: 'expenses' }, { key: 'editbill', Icon: FileText, shot: 'invoice' }, { key: 'stockeasy', Icon: Smartphone, shot: 'stock' },
@@ -52,7 +59,10 @@ const NEW: { key: string; Icon: LucideIcon; shot?: string }[] = [
   { key: 'installments', Icon: HandCoins }, { key: 'hazri', Icon: CalendarCheck }, { key: 'otp', Icon: KeyRound }, { key: 'windows', Icon: Monitor },
 ]
 /** the newest round shown open; the rounds before fold under "earlier" */
-const LATEST = 9
+const LATEST = 12
+/** who it is for; a kind of shop with its own page (topics.ts) links to it */
+const FOR: { key: string; topic?: Topic }[] = [{ key: 'used', topic: 'used' }, { key: 'new' }, { key: 'repair' }, { key: 'accessories', topic: 'accessories' }, { key: 'laptops', topic: 'laptops' }, { key: 'dealers' }]
+const FAQ = ['android', 'offline', 'verify', 'consent', 'accessoriesOnly', 'laptops', 'reports', 'oldBalance', 'many', 'foreign', 'yearly', 'data', 'phone', 'scanner', 'staff', 'fbr', 'branches', 'cancel'] as const
 /** in every plan, no extra charge (owner 2026-11-16) */
 const INCLUDED = ['app', 'users', 'langs', 'offline', 'whatsapp', 'backup', 'updates', 'support', 'contract'] as const
 const EXTRAS: { key: string; Icon: LucideIcon }[] = [{ key: 'offline', Icon: CloudOff }, { key: 'fingerprint', Icon: Fingerprint }, { key: 'cnic', Icon: ShieldCheck }, { key: 'whatsapp', Icon: MessageCircle }]
@@ -82,7 +92,7 @@ const SITES = [
 ] as const
 const VIDEO_STEPS = ['sell', 'bill', 'audit', 'stock', 'khata', 'hisaab', 'labs', 'help'] as const
 
-export default function LandingPage() {
+export default function LandingPage({ topic }: { topic?: Topic }) {
   const { pick, ur, roman, cls } = useLang()
   const locale: Locale = ur ? 'ur' : roman ? 'roman' : 'en'
   const { data: info } = useGet<Info>(['public-info'], '/api/v1/public/info')
@@ -91,15 +101,29 @@ export default function LandingPage() {
   const paid = (info?.plans ?? []).filter((p) => p.key !== 'trial')
   const [billing, setBilling] = useState<'month' | 'year'>('year')
   const [zoom, setZoom] = useState<string | null>(null)
-  // the tab title and description in the visitor's language (SEO, link previews); the app's on leaving
+  // the tab title, description and address of this page in the visitor's language (SEO, link
+  // previews) — a shop-kind page (ADR-115) carries its own; the app's come back on leaving
+  const tk = topic ? `landing.topic.${topic}` : 'landing'
   useEffect(() => {
+    const title = pick(`${tk}.metaTitle`)
+    const about = pick(`${tk}.metaDesc`)
+    const url = `${SITE}${topic ? TOPICS[topic] : '/welcome'}`
     const before = document.title
-    const meta = document.querySelector('meta[name="description"]')
-    const desc = meta?.getAttribute('content') ?? ''
-    document.title = pick('landing.metaTitle')
-    meta?.setAttribute('content', pick('landing.metaDesc'))
-    return () => { document.title = before; meta?.setAttribute('content', desc) }
-  }, [locale]) // eslint-disable-line react-hooks/exhaustive-deps
+    document.title = title
+    const set: [string, string, string][] = [
+      ['meta[name="description"]', 'content', about], ['link[rel="canonical"]', 'href', url], ['meta[property="og:url"]', 'content', url],
+      ['meta[property="og:title"]', 'content', title], ['meta[property="og:description"]', 'content', about],
+      ['meta[name="twitter:title"]', 'content', title], ['meta[name="twitter:description"]', 'content', about],
+    ]
+    const undo = set.map(([sel, attr, value]) => {
+      const el = document.querySelector(sel)
+      const was = el?.getAttribute(attr) ?? null
+      el?.setAttribute(attr, value)
+      return () => { if (was !== null) el?.setAttribute(attr, was) }
+    })
+    return () => { document.title = before; undo.forEach((u) => u()) }
+  }, [locale, topic]) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { window.scrollTo(0, 0) }, [topic])
   const h2 = ur ? `${cls('xl')} font-bold` : 'text-[24px] font-extrabold tracking-[-0.02em] sm:text-[28px]'
   const body = ur ? cls('md') : 'text-[15px] font-medium'
 
@@ -127,8 +151,8 @@ export default function LandingPage() {
         <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 px-5 pb-12 pt-10 md:grid-cols-2 md:items-center md:py-16">
           <div className="flex min-w-0 flex-col gap-4">
             <span className={`w-fit rounded-full bg-white/15 px-3 py-1 text-xs font-bold ${ur ? 'ur text-sm' : ''}`}>{pick('landing.badge')}</span>
-            <h1 className={ur ? 'ur text-[30px] font-bold leading-[1.8] sm:text-[36px]' : 'text-[34px] font-extrabold leading-[1.08] tracking-[-0.03em] sm:text-[40px] md:text-[46px]'}>{pick('landing.h1')}</h1>
-            <p className={`max-w-lg text-white/85 ${ur ? cls('md') : 'text-[17px] font-medium'}`}>{pick('landing.sub')}</p>
+            <h1 className={ur ? 'ur text-[30px] font-bold leading-[1.8] sm:text-[36px]' : 'text-[34px] font-extrabold leading-[1.08] tracking-[-0.03em] sm:text-[40px] md:text-[46px]'}>{pick(topic ? `${tk}.h1` : 'landing.h1')}</h1>
+            <p className={`max-w-lg text-white/85 ${ur ? cls('md') : 'text-[17px] font-medium'}`}>{pick(topic ? `${tk}.sub` : 'landing.sub')}</p>
             <div className="flex flex-wrap gap-2 pt-1">
               <a href="#start" className={`tap flex min-h-14 items-center gap-2 rounded-2xl bg-white px-5 font-extrabold text-[#0E1613] shadow-[0_10px_30px_-10px_rgba(0,0,0,.45)] ${ur ? cls('md') : 'text-[15px]'}`} data-testid="hero-cta"><Check size={20} strokeWidth={2.6} /> {pick('landing.ctaTrial').replace('{{n}}', String(info?.trial_days ?? 14))}</a>
               <a href={wa(pick('landing.waHello'))} target="_blank" rel="noopener noreferrer" className={`tap flex min-h-14 items-center gap-2 rounded-2xl bg-white/15 px-5 font-bold text-white ring-1 ring-inset ring-white/40 ${ur ? cls('md') : 'text-[15px]'}`}><MessageCircle size={20} /> WhatsApp</a>
@@ -143,6 +167,25 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* a shop-kind page (ADR-115): the question a visitor came with, answered first, then the points */}
+      {topic ? (
+        <section className="border-b border-line bg-surface" data-testid="landing-topic">
+          <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 px-5 py-10 md:grid-cols-2 md:items-start">
+            <div className="flex min-w-0 flex-col gap-3">
+              <h2 className={h2}>{pick(`${tk}.q`)}</h2>
+              <p className={`text-muted ${body}`}>{pick(`${tk}.a`)}</p>
+              <div className="flex flex-wrap gap-2 pt-1">
+                <a href="#start" className={`tap flex min-h-12 items-center gap-2 rounded-2xl bg-emerald px-5 font-bold text-white ${ur ? cls('md') : 'text-[15px]'}`}><Check size={18} /> {pick('landing.ctaTrial').replace('{{n}}', String(info?.trial_days ?? 14))}</a>
+                <Link to="/welcome" className={`tap flex min-h-12 items-center gap-2 rounded-2xl border border-line bg-ground px-5 font-bold text-ink ${ur ? cls('md') : 'text-[15px]'}`} data-testid="topic-all">{pick('landing.topicAll')}</Link>
+              </div>
+            </div>
+            <ul className="flex min-w-0 flex-col gap-2.5">
+              {[1, 2, 3, 4].map((i) => <li key={i} className={`card flex items-start gap-3 ${ur ? cls('sm') : 'text-[15px] font-semibold'}`}><Check size={18} className="mt-0.5 shrink-0 text-emerald" />{pick(`${tk}.p${i}`)}</li>)}
+            </ul>
+          </div>
+        </section>
+      ) : null}
 
       {/* what makes it different: Android app, online, offline, consent, verification, three languages */}
       <section id="unique" className="bg-[#0E1613] text-white" data-testid="landing-unique">
@@ -173,13 +216,17 @@ export default function LandingPage() {
 
       <main className="mx-auto flex max-w-5xl flex-col gap-14 px-5 pb-28 pt-6">
         {/* who it is for */}
-        <section className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          {(['used', 'new', 'repair'] as const).map((k) => (
-            <div key={k} className="card flex flex-col gap-1.5">
-              <BiLabel text={`landing.for.${k}.t`} size="md" bold />
-              <span className={`text-muted ${ur ? cls('sm') : 'text-sm font-medium'}`}>{pick(`landing.for.${k}.d`)}</span>
-            </div>
-          ))}
+        <section className="flex flex-col gap-3" data-testid="landing-for">
+          {topic ? <h2 className={h2}>{pick('landing.topicAlso')}</h2> : null}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {FOR.filter((f) => !topic || f.topic !== topic).map(({ key: k, topic: to }) => (
+              <div key={k} className="card flex flex-col gap-1.5">
+                <BiLabel text={`landing.for.${k}.t`} size="md" bold />
+                <span className={`text-muted ${ur ? cls('sm') : 'text-sm font-medium'}`}>{pick(`landing.for.${k}.d`)}</span>
+                {to ? <Link to={TOPICS[to]} className={`mt-auto w-fit pt-1 font-bold text-emerald-deep underline-offset-4 hover:underline ${ur ? cls('sm') : 'text-sm'}`} data-testid={`for-${to}`}>{pick('landing.forMore')} →</Link> : null}
+              </div>
+            ))}
+          </div>
         </section>
 
         {/* new this round */}
@@ -403,10 +450,10 @@ export default function LandingPage() {
         </section>
 
         {/* faq */}
-        <section className="flex flex-col gap-3">
+        <section id="faq" className="flex flex-col gap-3" data-testid="landing-faq">
           <h2 className={h2}>{pick('landing.faqTitle')}</h2>
           <div className="card divide-y divide-line p-0">
-            {(['android', 'offline', 'verify', 'consent', 'yearly', 'data', 'phone', 'scanner', 'staff', 'fbr', 'branches', 'cancel'] as const).map((k) => (
+            {FAQ.map((k) => (
               <details key={k} className="group px-4 py-3">
                 <summary className={`cursor-pointer list-none font-bold ${ur ? cls('md') : 'text-[15px]'}`}>{pick(`landing.faq.${k}.q`)}</summary>
                 <p className={`mt-1.5 text-muted ${ur ? cls('sm') : 'text-sm font-medium'}`}>{pick(`landing.faq.${k}.a`)}</p>
@@ -433,6 +480,10 @@ export default function LandingPage() {
           <nav aria-label={pick('landing.sites')} className="flex flex-wrap gap-x-4 gap-y-1" data-testid="landing-sites">
             <span className="font-bold text-ink">{pick('landing.sites')}:</span>
             {SITES.map((s) => <a key={s.key} href={s.href} target="_blank" rel="noopener" className="font-bold text-emerald-deep underline-offset-4 hover:underline" dir="ltr">{pick(`landing.site.${s.key}`)} · {s.label}</a>)}
+          </nav>
+          <nav aria-label={pick('landing.topicAlso')} className="flex flex-wrap gap-x-4 gap-y-1" data-testid="landing-topics">
+            <Link to="/welcome" className="font-bold text-emerald-deep underline-offset-4 hover:underline">{pick('landing.for.new.t')}</Link>
+            {TOPIC_KEYS.map((k) => <Link key={k} to={TOPICS[k]} className="font-bold text-emerald-deep underline-offset-4 hover:underline">{pick(`landing.for.${k}.t`)}</Link>)}
           </nav>
           <span>{pick('landing.footer')}</span>
         </div>

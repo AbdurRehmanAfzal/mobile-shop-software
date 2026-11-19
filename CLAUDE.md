@@ -59,6 +59,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Audit and phases: `docs/38-ACCOUNTS-REPORTS-AUDIT.md` — read it before adding any accounts or report feature; build only what its matrix marks missing.
 - Rules: one accounting engine (the ledger) — never a second set of balances; a report reads the ledger / documents and is checked in a test against them; no free manual journal entry (docs/38 §4); the general ledger's closing balance must equal the trial balance's line.
 
+## The provider's control room and the landing page's addresses (owner 2026-11-20, ADR-115)
+- Read ADR-115 before touching `ControlShell.tsx`, the `/control` routes, `landing/topics.ts`, `frontend/seo-pages.ts`, `index.html`'s head or the `try_files` line of `deploy/Caddyfile`.
+- Rules: the provider's screens live under `/control` in their own frame, never inside the shop `Shell` (`/admin` only redirects); the server still decides who the provider is on every request. A kind-of-shop landing address is one entry in `topics.ts` with `landing.topic.<key>.*` in three languages, a line in `sitemap.xml` and `robots.txt` (`seo.test.ts`); its HTML head is written by the build from the app's own strings — never hand-copy a head. When a feature ships that a shopkeeper would search for, add it to the landing page (`NEW`, FAQ), `index.html` (`featureList`, `FAQPage`) and `llms.txt` together.
+
 ## A phone's page and its printed details (shopkeepers 2026-11-20, ADR-114)
 - Read ADR-114 before touching `DeviceEasyView.tsx`, `DeviceLayouts.tsx`, `DeviceSheetPreview.tsx` or `devices/sheet.py`.
 - Rules: the page has three views (Details, 80 mm slip, A4 page) — do not add layout styles; a new fact about a phone is a line of the details table with its action and a "?" (always shown, "—" when empty); the printed details are the server's page (`sheet_html`), read-only, cost lines only with `VIEW_COST`, and the app only previews that page.
