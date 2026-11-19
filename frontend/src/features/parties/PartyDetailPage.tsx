@@ -14,6 +14,7 @@ import PaymentForm from '@/features/payments/PaymentForm'
 import PartyUnits, { usePartyUnits } from './PartyUnits'
 import PartyJourney from './PartyJourney'
 import PartyLending from './PartyLending'
+import OldBalance from './OldBalance'
 import { Printer } from 'lucide-react'
 import { openPrintable } from '@/lib/files'
 import {withCur } from '@/lib/format'
@@ -100,6 +101,8 @@ export default function PartyDetailPage() {
       </section>
 
       <PartyLending party={party} />
+      {/* owner 2026-11-19 (ADR-110): dealings from before the software */}
+      <OldBalance party={party} />
       <PartyJourney partyId={party.id} />
       <PartyUnits party={party} />
 

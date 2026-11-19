@@ -138,6 +138,11 @@ export default function SaleWizard() {
   const [result, setResult] = useState<Invoice | null>(null)
   const [confirming, setConfirming] = useState(false)
   const [devCat, setDevCat] = useState<'' | 'phone' | 'tablet' | 'watch' | 'laptop'>('')
+  // owner 2026-11-19 (ADR-110): several phones of one model in one go — tick them in the list, then one price for all
+  const [multi, setMulti] = useState(false)
+  const [picked, setPicked] = useState<string[]>([])
+  const [groupPrice, setGroupPrice] = useState<Record<string, string>>({})
+  const groupOf = (x: Device) => [x.brand_name, x.model_name, x.storage_name].filter(Boolean).join(' ')
   // owner 2026-11-12 (ADR-066): a faulty phone can be sold as it is
   const { data: stock } = useDevices({ status: 'in_stock', with_faulty: true, q: q || undefined, category: devCat || undefined })
   const m = useDocMutation<Record<string, unknown>, Invoice>('POST', () => '/api/v1/sales', undefined, { kind: 'sale', label: (b) => `${pick('counter.sell')} · ${withCur(Number((b as { paid?: number }).paid ?? 0).toLocaleString('en-US'))}` })
@@ -241,6 +246,15 @@ export default function SaleWizard() {
   }, [party?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const setLine = (l: Line, patch: Partial<Line>) => setLines((ls) => ls.map((x) => (x.device.id === l.device.id ? { ...x, ...patch } : x)))
+
+  function pickMany(ds: Device[]) {
+    if (!ds.length) return
+    setLines((ls) => [...ls, ...ds.filter((x) => !ls.some((l) => l.device.id === x.id)).map(newLine)])
+    setPicked([])
+    setMulti(false)
+    setStep(1)
+    for (const x of ds) get<DeviceDetail>(`/api/v1/devices/${x.id}`).then((full) => setLines((ls) => ls.map((l) => (l.device.id === x.id && !Object.keys(l.acc).length ? { ...l, acc: newLine(full).acc } : l)))).catch(() => undefined)
+  }
 
   function pickDevice(d: Device) {
     setLines((ls) => (ls.some((l) => l.device.id === d.id) ? ls : [...ls, newLine(d)]))
@@ -379,14 +393,26 @@ export default function SaleWizard() {
             ))}
             <Help term="sale.devCat" size="sm" />
           </div>
+          <div className="flex items-center gap-1">
+            <button type="button" role="switch" aria-checked={multi} onClick={() => { setMulti(!multi); setPicked([]) }} className={`tap inline-flex h-10 items-center gap-2 rounded-full border-2 px-3.5 font-bold ${multi ? 'border-emerald bg-emerald-tint text-emerald-deep' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-[13px]'}`} data-testid="sale-multi">
+              <span className={`flex h-4 w-4 items-center justify-center rounded border ${multi ? 'border-emerald bg-emerald text-white' : 'border-line'}`}>{multi ? <Check size={11} strokeWidth={3} /> : null}</span>{pick('sale.multi')}
+            </button>
+            <Help term="sale.multiPick" size="sm" />
+          </div>
           <span className="flex items-center gap-1"><BiLabel text="counter.tapPhone" size="sm" tone="text-muted" /><Help term="sale.pickPhone" size="sm" /></span>
           {stock?.length ? (
             <List>
-              {stock.map((d) => <DeviceRow key={d.id} d={d} onClick={() => pickDevice(d)} />)}
+              {stock.map((d) => multi ? (
+                <div key={d.id} className={`flex items-center ${picked.includes(d.id) ? 'bg-emerald-tint/50' : ''}`} data-testid="sale-pick-row">
+                  <span className={`ms-3 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 ${picked.includes(d.id) ? 'border-emerald bg-emerald text-white' : 'border-line bg-surface'}`}>{picked.includes(d.id) ? <Check size={15} strokeWidth={3} /> : null}</span>
+                  <div className="min-w-0 flex-1"><DeviceRow d={d} onClick={() => setPicked((p) => (p.includes(d.id) ? p.filter((x) => x !== d.id) : [...p, d.id]))} /></div>
+                </div>
+              ) : <DeviceRow key={d.id} d={d} onClick={() => pickDevice(d)} />)}
             </List>
           ) : (
             <BiLabel text="counter.noStock" size="md" tone="text-muted" align="center" className="py-6" />
           )}
+          {multi && picked.length ? <BiButton text={{ en: pick('sale.addPicked').replace('{{n}}', String(picked.length)), ur: pick('sale.addPicked').replace('{{n}}', String(picked.length)), roman: pick('sale.addPicked').replace('{{n}}', String(picked.length)) }} icon={<Check size={22} />} full onClick={() => pickMany((stock ?? []).filter((x) => picked.includes(x.id)))} data-testid="sale-add-picked" /> : null}
           </>) : <BiLabel text="goods.tapItem" size="md" tone="text-muted" />}
           {has('accessories') ? <BiButton text="items.sellButton" icon={<Watch size={22} />} variant={trade.devices ? 'secondary' : 'primary'} full onClick={() => setPickingItem(true)} data-testid="sell-item" /> : null}
           <div className="flex items-center gap-1">
@@ -399,6 +425,14 @@ export default function SaleWizard() {
       {step === 1 || (laptop && step !== 2) ? (
         <div className="flex flex-col gap-3">
           {laptop && !lines.length && !misc.length ? <div className="card flex items-center gap-3 border-dashed"><Smartphone size={22} className="shrink-0 text-muted" /><BiLabel text={trade.devices ? 'counter.tapPhone' : 'goods.tapItem'} size="md" tone="text-muted" /></div> : null}
+          {/* several of one model on the bill: one price typed once for all of them */}
+          {Object.entries(lines.reduce<Record<string, number>>((m, l) => ({ ...m, [groupOf(l.device)]: (m[groupOf(l.device)] ?? 0) + 1 }), {})).filter(([, c]) => c >= 2).map(([g, c]) => (
+            <div key={g} className="flex flex-wrap items-end gap-2 rounded-2xl border-2 border-dashed border-emerald/50 bg-emerald-tint/30 p-3" data-testid="sale-group">
+              <span className="flex min-w-0 basis-full items-center gap-1"><span className="truncate text-[15px] font-extrabold">{g} × {c}</span><Help term="sale.priceAll" size="sm" /></span>
+              <div className="min-w-0 flex-1"><BiInput label="sale.priceEach" help={null} type="number" inputMode="numeric" min={0} value={groupPrice[g] ?? ''} onChange={(e) => setGroupPrice({ ...groupPrice, [g]: e.target.value })} className="num" data-testid="sale-group-price" /></div>
+              <BiButton text={{ en: pick('sale.setAll').replace('{{n}}', String(c)), ur: pick('sale.setAll').replace('{{n}}', String(c)), roman: pick('sale.setAll').replace('{{n}}', String(c)) }} size="md" variant="secondary" disabled={!groupPrice[g] || Number(groupPrice[g]) <= 0} onClick={() => setLines(lines.map((x) => (groupOf(x.device) === g ? { ...x, price: String(Number(groupPrice[g])) } : x)))} data-testid="sale-group-set" />
+            </div>
+          ))}
           {lines.map((l) => (
             <div key={l.device.id} className="card flex flex-col gap-2">
               <div className="flex items-center gap-2">

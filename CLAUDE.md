@@ -59,6 +59,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Audit and phases: `docs/38-ACCOUNTS-REPORTS-AUDIT.md` — read it before adding any accounts or report feature; build only what its matrix marks missing.
 - Rules: one accounting engine (the ledger) — never a second set of balances; a report reads the ledger / documents and is checked in a test against them; no free manual journal entry (docs/38 §4); the general ledger's closing balance must equal the trial balance's line.
 
+## Old dealings and several pieces at once (dealers 2026-11-19, ADR-110)
+- Plan: `docs/41-OLD-DEALINGS-AND-BULK-ENTRY-PLAN.md` — read it before touching `ledger.post_party_opening_balance` / `old_dealing`, `OldBalance.tsx`, `expandDraft` in `DeviceLineSheet.tsx` or the sale's "pick several" / "one price for all".
+- Rules: a dealing from before the software is only a balance on the khata (`opening_balance` against the owner's capital) — never a device, stock, sale or profit, so no IMEI is asked; its total is the server's sum; it is undone by a reversing entry with a reason. "Several pieces" is an entry aid in the app only: every piece is still its own `devices` row and its own bill line.
+
 ## What a shop trades — accessories-only / laptop-only shops (owner 2026-11-19, ADR-109)
 - Audit of the "Accessories Business Mode" brief, what exists, what is left: `docs/40-ACCESSORIES-MODE-AUDIT.md` — read it before adding an accessories, wholesale or branch feature; build only what its matrix marks missing.
 - Rules: what a shop trades is derived from its modules (`admin/modules.lines`, `useTrade` in the app) — mobiles unless `no_mobiles`, plus `laptops`, `accessories`; never add a second business-type setting; `no_mobiles` is opt-in and must stay absent for existing shops; a shop without mobiles adds no phone / tablet / watch (server) but keeps and sells what it has; a package order never removes a provider-set switch (`OPT_IN`).

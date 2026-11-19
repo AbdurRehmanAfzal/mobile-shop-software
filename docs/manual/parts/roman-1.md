@@ -438,6 +438,19 @@ Tablet aur smart watch bhi phone ki tarah ek ek kar ke track hoti hain, har ek k
 
 SIM ke baghair IMEI nahi hota, is liye **Serial number** (dabbe par, ya device mein Settings → About mein) dhoondne ke liye istemal hota hai aur IMEI ki tarah dikhaya jata hai.
 
+### Ek jaise kai phone
+
+Jab dealer ek model ke kai piece ek hi rang aur qeemat par de to unhein ek sath daalein.
+
+1. **Device add karein** mein pehla piece aam tareeqe se bharein: IMEI, brand, model, rang, **Qeemat-e-khareed** (ek piece ki) aur baqi.
+2. **Ek jaise kai piece** on karein.
+3. **Agla IMEI** mein har doosre piece ka IMEI scan karein ya likhein aur **Add** dabayein (scanner har scan par ek daal deta hai). List mein piece aur kul qeemat nazar aati hai, maslan *5 piece · kul Rs. 15,00,000*.
+4. **Add** dabayein. Ab bill mein har piece ki alag line hai; har ek apne IMEI, barcode aur history ke sath stock mein alag phone hai.
+
+Jo number pehle se list mein ya aap ke stock mein ho woh qabool nahi hota. Yahan IMEI 2 nahi poocha jata; baad mein phone ke page se daal lein. Yehi switch **Purana stock** mein bhi hai.
+
+**Ek model ke kai phone bechna:** sale ki screen par **Kai chunein** on karein, phone par nishan lagayein aur **n bill mein daalein** dabayein. Jab bill mein ek model ke kai phone hon to **Fi piece qeemat** mein ek ki qeemat likhein aur **Sab par lagayein** dabayein.
+
 ### Laptop
 
 Laptop un dukaanon ke liye hain jo in ka kaam bhi karti hain. Software provider se kahein ke aap ki dukaan ke liye **Laptop** on kar de; tab tak laptop ki koi cheez nazar nahi aati.

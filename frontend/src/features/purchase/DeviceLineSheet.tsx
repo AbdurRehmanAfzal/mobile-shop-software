@@ -22,7 +22,8 @@ import { toLatinDigits } from '@/lib/format'
 import { parseStorage, useBrands, useCatalogueEdit, useColours, useGet, useImeiLookup, useModels, useSerialLookup, useStorages } from '@/lib/queries'
 import { useNavigate } from 'react-router-dom'
 import { get } from '@/lib/api'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { ChevronDown, ChevronUp, X } from 'lucide-react'
+import { withCur } from '@/lib/format'
 import { LockChecksEditor, SpecsEditor, type LockChecks, type Specs } from '@/features/stock/DeviceSpecs'
 import type { AccessoryItem, Brand, Colour, DeviceCategory, DeviceCondition, Model, PtaStatus, Storage } from '@/lib/types'
 import { Laptop, Smartphone, Tablet, Watch } from 'lucide-react'
@@ -78,6 +79,17 @@ export interface DeviceLineDraft {
   specs?: Specs
   lock_checks?: LockChecks
   lock_checked?: boolean
+  /** owner 2026-11-19 (ADR-110): the IMEIs (or serial numbers) of more pieces with the same details */
+  extra_ids?: string[]
+}
+
+/** One line with more pieces → one line per piece: the same model, colour, cost and the rest, each
+ *  with its own IMEI / serial number (IMEI 2 and an own barcode are not copied). */
+export function expandDraft(d: DeviceLineDraft): DeviceLineDraft[] {
+  const extra = d.extra_ids ?? []
+  if (!extra.length) return [d]
+  const bySerial = !d.imei1
+  return [{ ...d, extra_ids: [] }, ...extra.map((id) => ({ ...d, key: uid(), imei1: bySerial ? '' : id, serial: bySerial ? id : '', imei2: '', barcode: '', extra_ids: [] }))]
 }
 
 
@@ -174,7 +186,8 @@ export function draftToApi(d: DeviceLineDraft) {
 
 /** `draftKey`: keep what is typed if the page reloads (camera on Android), see lib/draft */
 /** `again`: a phone already in the list is being changed (the button says Save, not Add) */
-export default function DeviceLineSheet({ initial, onSave, edit = false, again = false, draftKey }: { initial: DeviceLineDraft; onSave: (d: DeviceLineDraft) => void; edit?: boolean; again?: boolean; draftKey?: string }) {
+/** `many`: offer "several pieces of the same" — the caller turns the saved line into one per piece with `expandDraft` */
+export default function DeviceLineSheet({ initial, onSave, edit = false, again = false, draftKey, many = false }: { initial: DeviceLineDraft; onSave: (d: DeviceLineDraft) => void; edit?: boolean; again?: boolean; draftKey?: string; many?: boolean }) {
   const { t } = useTranslation()
   const { pick, ur } = useLang()
   const [d, setD] = useDraft<DeviceLineDraft>(draftKey ? `${draftKey}.${initial.key}` : null, initial)
@@ -200,7 +213,9 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
   // as the maker's barcode, so the label can be found by it later
   useScan((code) => {
     const imei = imeiFrom(code)
-    if (imei) { if (!d.imei1 || d.imei1 === imei) set('imei1', imei); else if (!d.imei2 && imei !== d.imei1) set('imei2', imei); beep('ok'); return }
+    // with "several pieces" on, every scan after the first is the next piece (not IMEI 2)
+    if (imei) { if (!d.imei1 || d.imei1 === imei) set('imei1', imei); else if (manyOn) addPiece(imei); else if (!d.imei2 && imei !== d.imei1) set('imei2', imei); beep('ok'); return }
+    if (manyOn && !sim) { addPiece(code); beep('ok'); return }
     set('manufacturer_code', code); beep('ok')
   })
   const inStockBlock = lookup?.found && lookup.device && !['sold', 'returned_to_supplier', 'transferred'].includes(lookup.device.status)
@@ -245,7 +260,28 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
   const [ptaSaid, setPtaSaid] = useState<PtaResult | null>(null)
   // owner: the price you will sell at may not be lower than what you paid
   const askingLow = !edit && d.asking_price !== '' && d.cost !== '' && Number(d.asking_price) < Number(d.cost)
-  const valid = !askingLow && identityOk && (!sim || !d.serial.trim() || serialOk) && d.brand_id && d.model_id && (edit || d.cost !== '') && (d.condition !== 'patched' || d.patch_details) && batteryOk && !inStockBlock && !serialBlock && lockOk
+  // ADR-110: several pieces of the same phone — one IMEI (or serial number) per piece
+  const canMany = many && !edit && !again
+  const [manyOn, setManyOn] = useState((initial.extra_ids?.length ?? 0) > 0)
+  const [nextId, setNextId] = useState('')
+  const [pieceErr, setPieceErr] = useState<string | null>(null)
+  const [inStock, setInStock] = useState<Record<string, boolean>>({})
+  const pieces = d.extra_ids ?? []
+  const ownId = sim ? imeiDigits : d.serial.trim().toUpperCase()
+  const pieceShape = (v: string) => (sim ? /^\d{15}$/.test(v) : /^[A-Z0-9-]{4,24}$/.test(v))
+  function addPiece(raw: string) {
+    const v = sim ? toLatinDigits(raw).replace(/\D/g, '') : raw.trim().toUpperCase()
+    if (!v) return
+    if (!pieceShape(v)) { setPieceErr(sim ? 'field.badImei' : 'devx.serialBad'); return }
+    if (v === ownId || pieces.includes(v)) { setPieceErr('many.dup'); return }
+    setPieceErr(null)
+    setNextId('')
+    setD((x) => ({ ...x, extra_ids: [...(x.extra_ids ?? []), v] }))
+    // a piece that is already in the shop's stock cannot be bought again
+    if (sim) get<{ found: boolean; device?: { status: string } | null }>(`/api/v1/devices/imei/${v}`).then((r) => { if (r.found && r.device && !['sold', 'returned_to_supplier', 'transferred'].includes(r.device.status)) setInStock((m) => ({ ...m, [v]: true })) }).catch(() => undefined)
+  }
+  const piecesOk = !canMany || !manyOn || (pieces.every((p) => pieceShape(p) && !inStock[p] && p !== ownId) && nextId.trim() === '')
+  const valid = piecesOk && !askingLow && identityOk && (!sim || !d.serial.trim() || serialOk) && d.brand_id && d.model_id && (edit || d.cost !== '') && (d.condition !== 'patched' || d.patch_details) && batteryOk && !inStockBlock && !serialBlock && lockOk
 
 
   return (
@@ -291,10 +327,43 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
           {serialLookup.found && serialLookup.device ? <button type="button" onClick={() => nav(`/stock/${serialLookup.device!.id}`)} className="tap rounded-full border border-line px-3 text-xs font-bold underline">{pick('devx.openHistory')}</button> : null}
         </div>
       ) : null}
-      {phone ? <ImeiInput label="stock.imei2" help={<Help term="device.imei2" size="sm" />} value={d.imei2} onChange={(v) => set('imei2', v)} exclude={toLatinDigits(d.imei1).replace(/\D/g, '')} /> : null}
+      {phone && !(canMany && manyOn) ? <ImeiInput label="stock.imei2" help={<Help term="device.imei2" size="sm" />} value={d.imei2} onChange={(v) => set('imei2', v)} exclude={toLatinDigits(d.imei1).replace(/\D/g, '')} /> : null}
       {/* owner 2026-11-13: a phone's serial number too, optional, under the IMEIs; a Wi-Fi tablet /
           GPS watch has only its serial (then required, its identity, not changed on edit) */}
       <BiInput label={sim ? 'devx.serialOpt' : 'devcat.serial'} help={<Help term="device.serial" size="sm" />} value={d.serial} onChange={(e) => set('serial', e.target.value.toUpperCase())} disabled={edit && !sim} maxLength={24} dir="ltr" className="num" hint={sim ? undefined : laptop ? 'devx.laptopSerialHint' : 'devcat.serialHint'} error={sim && d.serial.trim() && !serialOk ? 'devx.serialBad' : null} data-testid="device-serial" />
+      {canMany ? (
+        <div className={`flex flex-col gap-2 rounded-2xl border-2 p-3 ${manyOn ? 'border-emerald bg-emerald-tint/40' : 'border-dashed border-line'}`} data-testid="many-block">
+          <div className="flex items-start gap-1">
+            <button type="button" role="switch" aria-checked={manyOn} onClick={() => setManyOn(!manyOn)} className="tap flex min-h-12 min-w-0 flex-1 items-center gap-3 text-start" data-testid="many-toggle">
+              <span className="flex-1"><BiLabel text="many.toggle" size="md" bold /></span>
+              <span className={`flex h-7 w-12 shrink-0 items-center rounded-full p-1 ${manyOn ? 'bg-emerald' : 'bg-line'}`}><span className={`h-5 w-5 rounded-full bg-white shadow transition-transform ${manyOn ? 'translate-x-5 rtl:-translate-x-5' : ''}`} /></span>
+            </button>
+            <Help term="many.pieces" size="sm" />
+          </div>
+          {manyOn ? (
+            <>
+              <BiLabel text={phone ? 'many.hintPhone' : 'many.hint'} size="sm" tone="text-muted" />
+              <form className="flex items-end gap-2" onSubmit={(e) => { e.preventDefault(); e.stopPropagation(); addPiece(nextId) }}>
+                <div className="min-w-0 flex-1"><BiInput label={sim ? 'many.next' : 'many.nextSerial'} help={null} value={nextId} onChange={(e) => { setPieceErr(null); setNextId(sim ? toLatinDigits(e.target.value).replace(/\D/g, '').slice(0, 15) : e.target.value.toUpperCase()) }} inputMode={sim ? 'numeric' : undefined} maxLength={sim ? 15 : 24} dir="ltr" className="num" error={pieceErr} data-testid="many-next" /></div>
+                <BiButton type="submit" text="common.add" size="md" variant="secondary" disabled={!nextId.trim()} data-testid="many-add" />
+              </form>
+              {pieces.length ? (
+                <div className="flex flex-col gap-1" data-testid="many-list">
+                  {pieces.map((p, i) => (
+                    <div key={p} className={`flex items-center gap-2 rounded-xl border px-3 py-1.5 ${inStock[p] ? 'border-payable bg-payable-tint/40' : 'border-line bg-surface'}`}>
+                      <span className="num w-6 text-xs text-muted" dir="ltr">{i + 2}</span>
+                      <span className="num min-w-0 flex-1 truncate text-[15px] font-semibold" dir="ltr">{p}</span>
+                      {inStock[p] ? <Chip text="many.inStock" tone="bad" /> : null}
+                      <button type="button" aria-label={pick('purchase.remove')} onClick={() => setD((x) => ({ ...x, extra_ids: (x.extra_ids ?? []).filter((y) => y !== p) }))} className="tap flex h-9 w-9 items-center justify-center rounded-lg text-payable"><X size={16} /></button>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+              <span className="text-sm font-bold" data-testid="many-count">{pick('many.count').replace('{{n}}', String(pieces.length + 1)).replace('{{total}}', withCur((Number(d.cost || 0) * (pieces.length + 1)).toLocaleString('en-US')))}</span>
+            </>
+          ) : null}
+        </div>
+      ) : null}
       <div className="grid grid-cols-2 gap-2">
         <BiInput label="barcode.manufacturer" help={<Help term="label.manufacturer" size="sm" />} value={d.manufacturer_code ?? ''} onChange={(e) => set('manufacturer_code', e.target.value)} dir="ltr" className="num" maxLength={64} />
         <BiInput label="barcode.custom" help={<Help term="label.ownBarcode" size="sm" />} value={d.barcode ?? ''} onChange={(e) => set('barcode', e.target.value)} dir="ltr" className="num" maxLength={64} disabled={edit} />
@@ -509,7 +578,7 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
 
       )}
 
-      <BiButton text={edit || again ? 'common.save' : 'common.add'} full disabled={!valid} onClick={() => { if (draftKey) clearDrafts(draftKey); onSave({ ...d, imei1: sim ? imeiDigits : '' }) }} />
+      <BiButton text={edit || again ? 'common.save' : 'common.add'} full disabled={!valid} onClick={() => { if (draftKey) clearDrafts(draftKey); onSave({ ...d, imei1: sim ? imeiDigits : '', extra_ids: canMany && manyOn ? pieces : [] }) }} />
     </div>
   )
 }

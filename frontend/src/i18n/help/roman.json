@@ -4748,6 +4748,16 @@
       "title": "Wajah",
       "body": "Kyun badla ja raha hai; yeh mobile ki history aur audit mein rehti hai.",
       "example": "Salesman ne ghalti se walk-in chuna."
+    },
+    "multiPick": {
+      "title": "Kai chunein",
+      "body": "Isay on karein to list mein kai phone par nishan laga kar ek sath bill mein daal sakte hain, ek ek kar ke nahi.",
+      "example": "\"iPhone 17\" dhoondein → 5 par nishan → 5 bill mein daalein."
+    },
+    "priceAll": {
+      "title": "Sab ki ek qeemat",
+      "body": "Jab bill mein ek model ke kai phone hon to yahan ek ki qeemat likhein, sab par lag jati hai. Neeche kisi ek phone ki qeemat phir bhi badal sakte hain.",
+      "example": "Ek dukaan ko 5 iPhone 17, har ek 3,10,000 → 310000 likhein → sab 5 par lagayein."
     }
   },
   "exchange": {
@@ -6863,6 +6873,30 @@
       "title": "General ledger",
       "body": "Chune hue dinon mein ek account ki har entry: pehle ka balance, har entry apne debit ya credit aur baad ke balance ke saath, aur total. Aakhir ka balance wohi hai jo trial balance dikhata hai. Delete shuda bill do baar aata hai (entry aur use khatam karne wali entry), delete shuda ke nishan ke saath.",
       "example": "Is mahine sales ka account: 42 entries, credit Rs. 18,50,000 → mahine ki sales."
+    }
+  },
+  "old": {
+    "page": {
+      "title": "Purana hisaab",
+      "body": "Software shuru karne se pehle ke len den ke liye. Likhein ke bande ne aap ko abhi kitna dena hai, ya aap ne usay kitna dena hai. Khate mein sirf wohi raqam jati hai; koi phone stock mein aata ya jata nahi aur munafa nahi gina jata, is liye IMEI ki zaroorat nahi.",
+      "example": "Shop A pichhle mahine phone le gayi aur abhi Rs. 6,50,000 dene hain → \"Lene hain\", 650000."
+    },
+    "goods": {
+      "title": "Jo gaya",
+      "body": "Pehle jo jo qisam gayi woh likhein — model, kitne piece aur ek ka rate. App khud jama kar leti hai. Yeh sirf khate ka record hai; phone stock mein nahi daale jate.",
+      "example": "Apple iPhone 17 × 5 @ 3,00,000; Samsung A56 × 10 @ 95,000; Realme 14 × 5 @ 40,000 → kul 26,50,000."
+    },
+    "settled": {
+      "title": "Pehle ada ho chuka",
+      "body": "Woh raqam jo is maal ke badle software shuru karne se pehle ada ya wasool ho chuki. App usay kul se nikaal deti hai; jo bachta hai woh khate mein jata hai.",
+      "example": "Kul 26,50,000, woh pehle 20,00,000 de chuka → 6,50,000 us ke khate mein baqi."
+    }
+  },
+  "many": {
+    "pieces": {
+      "title": "Ek jaise kai piece",
+      "body": "Jab ek model ke kai piece ek hi rang aur qeemat par khareedein to form ek baar bharein aur phir har doosre piece ka sirf IMEI dein. Har piece apni history ke sath alag phone ban kar save hota hai.",
+      "example": "Dealer se 5 iPhone 17, har ek 3,00,000 → ek baar bharein, mazeed 4 IMEI scan karein → 5 phone, bill par 15,00,000."
     }
   }
 }

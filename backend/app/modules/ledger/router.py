@@ -15,11 +15,13 @@ from app.modules.ledger.schemas import (
     CashBookRow,
     EntryOut,
     GroupOut,
+    OldBalanceOut,
     OpeningBalanceRequest,
     ReverseRequest,
     StatementOut,
     TransferCreate,
     TransferOut,
+    UndoOpeningRequest,
 )
 
 router = APIRouter(prefix="/api/v1/ledger", tags=["ledger"])
@@ -127,10 +129,26 @@ def statement(
 
 @router.post("/parties/{party_id}/opening-balance", response_model=GroupOut, status_code=201)
 def opening_balance(party_id: uuid.UUID, data: OpeningBalanceRequest, ctx: Void, db: DB):
+    amount, memo = data.amount, data.memo
+    if data.items:  # ADR-110: goods that went before the software; the server adds them up
+        amount, memo = service.old_dealing(data.items, data.settled, data.as_of, data.memo)
     g = service.post_party_opening_balance(
-        db, ctx.shop_id, ctx.id, party_id, data.amount, data.party_owes, data.memo
+        db, ctx.shop_id, ctx.id, party_id, amount, data.party_owes, memo
     )
     return _group_out(g)
+
+
+@router.get("/parties/{party_id}/opening-balances", response_model=list[OldBalanceOut])
+def opening_balances(party_id: uuid.UUID, ctx: Ctx, db: DB):
+    """the balances carried over for this person from before the software (ADR-110)"""
+    return service.party_old_balances(db, ctx.shop_id, party_id)
+
+
+@router.post("/opening-balances/{group_id}/undo", response_model=GroupOut)
+def undo_opening_balance(group_id: uuid.UUID, data: UndoOpeningRequest, ctx: Void, db: DB):
+    return _group_out(
+        service.undo_party_opening_balance(db, ctx.shop_id, ctx.id, group_id, data.reason)
+    )
 
 
 @router.get("/groups/{group_id}", response_model=GroupOut)

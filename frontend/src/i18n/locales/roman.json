@@ -595,7 +595,11 @@
       "hint": "Bill ghalat shakhs par chala gaya. Yeh baqi raqam ke saath durust customer ke khate mein jata hai; cash nahi hilta; mobile ki history mein dono naam rehte hain.",
       "hintWalkIn": "Yeh sale walk-in customer ko hui. Chunein kis ne khareeda: bill us ke khate mein khareeda aur ada shuda dikhega, kuch baqi nahi, cash nahi hilta.",
       "new": "Durust customer"
-    }
+    },
+    "multi": "Kai chunein",
+    "addPicked": "{{n}} bill mein daalein",
+    "priceEach": "Fi piece qeemat",
+    "setAll": "Sab {{n}} par lagayein"
   },
   "pay": {
     "title": "Paise",
@@ -5183,5 +5187,36 @@
     "inStock": "Stock mein cheezein",
     "tapItem": "Jo cheezein bech rahe hain woh add karein",
     "returned": "Is maah wapsi"
+  },
+  "old": {
+    "title": "Purana hisaab",
+    "hint": "Software shuru karne se pehle ka len den. Khate mein sirf woh jata hai jo abhi lena ya dena hai; aap ka stock aur munafa nahi chhera jata, is liye IMEI ki zaroorat nahi.",
+    "add": "Purana len den likhein",
+    "onlyAmount": "Sirf raqam",
+    "withGoods": "Jo gaya woh likhein",
+    "amount": "Jo raqam baqi hai",
+    "goodsTitle": "Kya gaya, kitne, kis rate par",
+    "item": "Kya (model ya cheez)",
+    "qty": "Piece",
+    "rate": "Fi piece rate",
+    "addLine": "Ek aur line",
+    "settled": "Pehle ada / wasool ho chuka",
+    "total": "Kul",
+    "left": "Baqi",
+    "asOf": "Len den ki tareekh (ikhtiyari)",
+    "nothingLeft": "Kuch baqi nahi: jo pehle ada ho chuka woh kul ke barabar hai.",
+    "saved": "Khate mein likh diya gaya.",
+    "undo": "Yeh entry delete karein",
+    "undoHint": "Yeh entry ulti entry se khate se hat jati hai aur list mein Deleted ke tor par rehti hai. Wajah likhein."
+  },
+  "many": {
+    "toggle": "Ek jaise kai piece (wohi model, rang aur qeemat)",
+    "hint": "Tafseel ek baar bharein. Phir har doosre piece ka number scan karein ya likhein; har ek stock mein alag unit banta hai.",
+    "hintPhone": "Tafseel ek baar bharein. Phir har doosre piece ka IMEI scan karein ya likhein; har ek stock mein alag phone banta hai. Yahan IMEI 2 nahi poocha jata — baad mein phone ke page se daal lein.",
+    "next": "Agla IMEI",
+    "nextSerial": "Agla serial number",
+    "count": "{{n}} piece · kul {{total}}",
+    "dup": "Yeh number pehle se list mein hai",
+    "inStock": "Pehle se stock mein"
   }
 }

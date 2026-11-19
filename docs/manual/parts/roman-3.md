@@ -96,6 +96,20 @@ Us ke neeche aap ko milega:
 
 > **Mashwara:** Jab koi customer apne baqaye par behes kare, to us ka safha kholein, **Download** → **PDF** dabayein aur statement WhatsApp par bhej dein. Har line par tareekh aur bill number hai.
 
+### Purana hisaab: software se pehle ka len den
+
+Aap ne software shuru karne se pehle kisi dukaan ya customer ko phone diye, kuch raqam mil gayi, aur IMEI yaad nahi. Sirf woh likhein jo abhi baqi hai; IMEI ki zaroorat nahi.
+
+1. Bande ka safha kholein (zaroorat ho to pehle **Naya banda** se bana lein).
+2. **Purana hisaab** mein **Purana len den likhein** dabayein.
+3. **Lene hain** ya **Dene hain** chunein.
+4. Ya to **Sirf raqam** daba kar jo baqi hai woh likhein — ya **Jo gaya woh likhein** par rahein aur har qisam ki ek line daalein: **Kya**, **Piece**, **Fi piece rate**. Phir **Pehle ada / wasool ho chuka** mein jo raqam nimat chuki woh likhein. App **Kul** aur **Baqi** dikhati hai.
+5. **Save** dabayein.
+
+**Misaal:** Shop A ne 5 iPhone 17 @ 3,00,000 aur 10 Samsung A56 @ 95,000 liye (kul 24,50,000) aur 20,00,000 de chuki hai. Save ke baad Shop A ke khate mein 4,50,000 lene hain, sath jo gaya us ki list.
+
+Aap ka stock aur munafa nahi badalta: woh phone software se pehle ja chuke. Jab Shop A raqam de to hamesha ki tarah **Paise mile** istemal karein. Ghalat entry **Delete** aur wajah se hat-ti hai; list mein Deleted ke tor par rehti hai. Yeh card sirf owner aur manager ko nazar aata hai.
+
 ### Karobar ka khulasa aur shop audit A4 report mein
 
 Yeh report print karne, file mein rakhne ya meeting mein dikhane ke liye hai.

@@ -299,6 +299,8 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **Accessories-only and laptop-only shops (2026-11-19, ADR-109, `docs/40-ACCESSORIES-MODE-AUDIT.md`)**: nothing to run (no migration). To set a shop up: Super admin → the shop → Modules → untick "Follow the plan" → tick what it trades — accessories only: "Accessories" + "Without mobiles (accessories / laptops only)"; laptops only: "Laptops" + "Without mobiles"; both: all three → Save. Add the other modules that shop should have (expenses, reports …) in the same list. To test on a new test shop set up as accessories only: Home must say "Items in stock" and search items; the Stock tab must open the items; Add stock must offer only "From a dealer" and "Add accessory"; Sell must start on the items. Then check one of your mobile shops: nothing may have changed.
 
+**Old dealings and several pieces at once (2026-11-19, ADR-110, `docs/41`)**: nothing to run (no migration). To test: (1) open a shop's page in People → "Old balance" → "Add old dealing" → "They owe me" → lines: Apple iPhone 17 × 5 at 300000, Samsung A56 × 10 at 95000 → "Already paid" 2000000 → Still left must show 450,000 → Save: his khata must show 450,000 to get and Stock must not have changed. Delete the entry with a reason: the khata must go back. (2) Add stock → From a dealer → Add device → fill one phone → switch on "Several pieces of the same" → add two more IMEIs → Add: three lines on the bill; after saving, three phones in stock. (3) Sell → "Pick several" → tick the three → "Add 3 to the bill" → "Price each" → "Set for all 3". Show (1) to the dealers who asked.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

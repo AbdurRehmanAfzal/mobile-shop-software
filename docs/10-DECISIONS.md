@@ -362,6 +362,16 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-110 · 2026-11-19 · Accepted · Old dealings on the khata without IMEIs; several pieces of one model at once
+**Context**: shops and dealers starting the software asked (1) how to enter what they gave to other shops and customers before — so many pieces of each model, part paid, IMEIs forgotten, sometimes money they owe — and (2) to enter several phones of one model together at a purchase, and sell several together. Plan: `docs/41-OLD-DEALINGS-AND-BULK-ENTRY-PLAN.md`.
+
+**Decision**:
+- **An old dealing is a balance, not stock.** It is entered on the person's page ("Old balance") as the amount still open, or as lines of what went (what · pieces · rate) with what was already settled; the server adds the lines and posts what is left through the existing `opening_balance` entry (the person's khata against the owner's capital). No device, stock, sale or profit is created — those phones left before the software, so their IMEIs are not needed. The lines are kept as words on the khata entry. The route gained `items`, `settled`, `as_of`; a list (`GET …/opening-balances`) and an undo (`POST /ledger/opening-balances/{group}/undo`, a reversing entry, only for this kind of entry, with a reason). No migration.
+- **Several pieces of the same at a purchase / in old stock**: a switch in the add-device form; details once, then an IMEI (or serial number) per piece; the line expands to one line per piece in the app (`expandDraft`). The server and the device model are unchanged — every piece is its own unit with its own barcode and history, and every IMEI is checked again on save. IMEI 2 and an own barcode are not asked in this mode.
+- **Several of one model on a sale**: "Pick several" (tick and add together) and "one price for all" of a model; each phone stays its own bill line, so cost and profit per phone are unchanged.
+
+**Consequences**: the old-balance card is for owner and manager (the permission the route had). The app shows a running total of an old dealing while typing; the saved figure is the server's. Not built: old dealings with lines from Excel, a printed confirmation, pasting a column of IMEIs, several pieces in the exchange form.
+
 ## ADR-109 · 2026-11-19 · Accepted · What a shop trades: accessories-only and laptop-only shops by one switch
 **Context**: three or four shops asked for the software for accessories alone; the owner's brief ("Accessories Business Mode", audited in `docs/40-ACCESSORIES-MODE-AUDIT.md`) asks for accessories-only, mobile + accessories and wholesale businesses inside the existing software, configured in the existing Super Admin, with live shops untouched. The audit found the foundation in place — two tracking strategies (units and counted items), branches with transfers, one ledger, retail and wholesale prices, modules per shop. The one thing missing for "accessories alone" was a way to say that a shop does not trade mobiles: the mobile side was the always-on basis of the app.
 

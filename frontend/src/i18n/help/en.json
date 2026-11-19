@@ -4748,6 +4748,16 @@
       "title": "Reason",
       "body": "Why it is being changed; it stays in the phone's history and the audit.",
       "example": "Salesman picked walk-in by mistake."
+    },
+    "multiPick": {
+      "title": "Pick several",
+      "body": "Switch it on to tick several phones in the list and add them to the bill together, instead of one at a time.",
+      "example": "Search \"iPhone 17\" → tick 5 → Add 5 to the bill."
+    },
+    "priceAll": {
+      "title": "One price for all",
+      "body": "When the bill has several phones of one model, write the price of one here and it is put on all of them. You can still change any single phone below.",
+      "example": "5 iPhone 17 to a shop at 3,10,000 each → type 310000 → Set for all 5."
     }
   },
   "exchange": {
@@ -6863,6 +6873,30 @@
       "title": "General ledger",
       "body": "Every entry of one account for the days you choose: the balance before, each entry with its debit or credit and the balance after it, and the totals. The balance at the end is the same figure the trial balance shows. A deleted bill appears twice (the entry and the entry that cancelled it), marked deleted.",
       "example": "Sales account this month: 42 entries, credit Rs. 18,50,000 → the month's sales."
+    }
+  },
+  "old": {
+    "page": {
+      "title": "Old balance",
+      "body": "For dealings from before you started the software. Write what the person still owes you, or what you still owe them. Only that balance goes on the khata; no phone enters or leaves your stock and no profit is counted, so you do not need the IMEIs.",
+      "example": "Shop A took phones last month and still owes Rs. 6,50,000 → \"They owe me\", 650000."
+    },
+    "goods": {
+      "title": "What went",
+      "body": "Write each kind that went before — the model, how many pieces and the rate of one. The app adds them up. This is only a record on the khata; the phones are not put into stock.",
+      "example": "Apple iPhone 17 × 5 at 3,00,000; Samsung A56 × 10 at 95,000; Realme 14 × 5 at 40,000 → total 26,50,000."
+    },
+    "settled": {
+      "title": "Already paid before",
+      "body": "The money that was already paid or received against these goods before you started the software. The app takes it off the total; what is left goes on the khata.",
+      "example": "Total 26,50,000, he had already paid 20,00,000 → 6,50,000 is left on his khata."
+    }
+  },
+  "many": {
+    "pieces": {
+      "title": "Several pieces of the same",
+      "body": "When you buy several pieces of one model with the same colour and cost, fill the form once and then give only the IMEI of each other piece. Every piece is saved as its own phone with its own history.",
+      "example": "5 iPhone 17 from a dealer at 3,00,000 each → fill once, scan 4 more IMEIs → 5 phones, 15,00,000 on the bill."
     }
   }
 }

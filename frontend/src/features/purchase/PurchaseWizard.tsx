@@ -20,7 +20,7 @@ import { useTrade } from '@/lib/modules'
 import { isQueued } from '@/lib/offline'
 import { useColours, useDocMutation, useStorages } from '@/lib/queries'
 import type { DeviceDetail, Party, Purchase } from '@/lib/types'
-import DeviceLineSheet, { draftToApi, emptyDraft, type DeviceLineDraft } from './DeviceLineSheet'
+import DeviceLineSheet, { draftToApi, emptyDraft, expandDraft, type DeviceLineDraft } from './DeviceLineSheet'
 import {withCur } from '@/lib/format'
 
 type Kind = 'supplier' | 'walk_in' | 'shop' | 'trade_in'
@@ -466,8 +466,10 @@ export default function PurchaseWizard() {
             initial={editing}
             again={devices.some((x) => x.key === editing.key)}
             draftKey="purchase-line"
+            many
             onSave={(d) => {
-              setDevices((xs) => (xs.some((x) => x.key === d.key) ? xs.map((x) => (x.key === d.key ? d : x)) : [...xs, d]))
+              // ADR-110: a line with several pieces becomes one line per piece (a piece already on this bill is left out)
+              setDevices((xs) => (xs.some((x) => x.key === d.key) ? xs.map((x) => (x.key === d.key ? d : x)) : [...xs, ...expandDraft(d).filter((n) => !xs.some((x) => (n.imei1 && x.imei1 === n.imei1) || (!n.imei1 && n.serial && x.serial === n.serial)))]))
               setEditing(null)
             }}
           />
