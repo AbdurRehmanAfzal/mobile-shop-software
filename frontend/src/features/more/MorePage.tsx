@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { setLocale, type Locale } from '@/i18n'
 import { useAuth, type Role } from '@/lib/auth'
-import { moduleFor, useModules } from '@/lib/modules'
+import { moduleFor, useModules, useTrade } from '@/lib/modules'
 import { api } from '@/lib/api'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import FingerprintCard from './FingerprintCard'
@@ -133,7 +133,10 @@ export default function MorePage() {
   const [pinBusy, setPinBusy] = useState(false)
 
   const has = useModules()
-  const visible = (it: Item) => (!it.roles || (role !== undefined && it.roles.includes(role))) && (!it.to || !moduleFor(it.to) || has(moduleFor(it.to)!)) && (!it.branches || (me?.shops.length ?? 0) > 1)
+  // ADR-109: phone-and-laptop screens are not offered to a shop that keeps neither
+  const trade = useTrade()
+  const UNITS_ONLY = ['more.stock', 'dashboard.imeiSearch', 'more.openingStock', 'more.catalogue']
+  const visible = (it: Item) => (trade.devices || !UNITS_ONLY.includes(it.key)) && (!it.roles || (role !== undefined && it.roles.includes(role))) && (!it.to || !moduleFor(it.to) || has(moduleFor(it.to)!)) && (!it.branches || (me?.shops.length ?? 0) > 1)
   const activeShopId = useAuth((s) => s.activeShopId)
   const setActiveShop = useAuth((s) => s.setActiveShop)
 

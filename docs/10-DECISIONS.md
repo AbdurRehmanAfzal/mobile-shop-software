@@ -362,6 +362,18 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-109 · 2026-11-19 · Accepted · What a shop trades: accessories-only and laptop-only shops by one switch
+**Context**: three or four shops asked for the software for accessories alone; the owner's brief ("Accessories Business Mode", audited in `docs/40-ACCESSORIES-MODE-AUDIT.md`) asks for accessories-only, mobile + accessories and wholesale businesses inside the existing software, configured in the existing Super Admin, with live shops untouched. The audit found the foundation in place — two tracking strategies (units and counted items), branches with transfers, one ledger, retail and wholesale prices, modules per shop. The one thing missing for "accessories alone" was a way to say that a shop does not trade mobiles: the mobile side was the always-on basis of the app.
+
+**Decision**:
+- **One more tick in the existing module list: `no_mobiles`** ("Without mobiles — accessories / laptops only"), opt-in like `laptops` and `login_activity` (never in a plan). No new column, table, settings screen or migration. `admin/modules.lines(org)` derives what the shop trades: mobiles unless `no_mobiles`, laptops and accessories by their modules. It is absent for every existing shop, whatever its plan or hand-picked list, so their mobile side cannot change.
+- **Server**: without mobiles, `new_device` refuses a phone / tablet / watch (`module_off`, module `mobiles`); "without mobiles" needs accessories or laptops (`no_business_line`). Existing phones of such a shop stay and can be sold — nothing is deleted or blocked on reading.
+- **A package order keeps the provider's switches** (`plan/order.apply`): OPT_IN keys in force are carried into the new module list. Before, buying another package reset the list to the package and would have turned an accessories-only shop back into a mobile shop (and dropped laptops / login activity).
+- **App** (`useTrade`): a shop with no phones and no laptops opens its items where a mobile shop opens its phones (Stock tab, Stock job, home search and glance), has no device, locked phone or walk-in purchase on Add stock, starts Sell on the items and is not offered the phone-only tiles; a shop without mobiles sees only the device types it trades and "stock" wording instead of "phone".
+- The rest of the brief is listed with phases in docs/40 §4 (accessories "made for" a device type, variants, quantity tiers and selling by box, customer prices, transfers with in-transit, consolidated reports, purchase orders, an accessories dashboard).
+
+**Consequences**: the name `no_mobiles` reads as a negative among positive modules; it is shown with a clear label and was chosen because a positive `mobiles` key would have had to be added to every existing shop's stored list. A few deeper screens still say "phone" for an accessories-only shop.
+
 ## ADR-108 · 2026-11-18 · Accepted · Laptops as a fourth device type, behind an opt-in module
 **Context**: shopkeepers who also trade laptops (new and used, retail and wholesale) asked for them in the software. The owner asked for research and a plan first (`docs/39-LAPTOPS-PLAN.md`), the laptop on the purchase form like a mobile, shown only to shops that ask, common details first, and every brand and model (gaming too) built in.
 

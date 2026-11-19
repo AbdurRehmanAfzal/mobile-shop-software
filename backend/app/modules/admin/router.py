@@ -423,6 +423,7 @@ def create_shop(data: AdminShopCreate, current: Super, db: DB):
     shop = db.scalar(select(Shop).where(Shop.organisation_id == user.organisation_id))
     org = shop.organisation
     org.plan = data.plan
+    modules.assert_trades_something(data.modules)
     org.modules = modules.clean(data.modules)
     if data.request_id is not None:
         from app.modules.public.router import ShopRequest
@@ -705,6 +706,7 @@ def set_modules(shop_id: uuid.UUID, data: ModulesIn, current: Super, db: DB):
     shop = _shop(db, shop_id)
     org = shop.organisation
     before = modules.effective(org)
+    modules.assert_trades_something(data.modules)
     org.modules = modules.clean(data.modules)
     record_audit(
         db,

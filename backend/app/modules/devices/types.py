@@ -266,6 +266,14 @@ def laptops_on(shop: Shop | None) -> bool:
     return org is not None and "laptops" in mods.effective(org)
 
 
+def mobiles_on(shop: Shop | None) -> bool:
+    """False only for a shop the provider set up without mobiles (ADR-109)"""
+    from app.modules.admin import modules as mods
+
+    org = shop.organisation if shop is not None else None
+    return mods.lines(org)["mobiles"] if org is not None else True
+
+
 def laptop_line(d: dict) -> str:
     """How a laptop is named after its model, the way shopkeepers say it:
     "Core i5 8th Gen · 8GB · 256GB SSD · 14\" · RTX 3060 6GB". `d` is a device as a dict."""

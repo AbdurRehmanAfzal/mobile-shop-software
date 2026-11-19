@@ -3,7 +3,7 @@
 
 import { useCpidLabel } from '@/lib/cpid'
 import { BtnText, Sheet } from '@/components/ui'
-import { Bell, BookOpen, CalendarDays, Check, Home, Languages, LogOut, Menu, MoreHorizontal, Moon, Palette, Settings, Smartphone, Store, Sun, UserRound } from 'lucide-react'
+import { Bell, BookOpen, Boxes, CalendarDays, Check, Home, Languages, LogOut, Menu, MoreHorizontal, Moon, Palette, Settings, Smartphone, Store, Sun, UserRound } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { noteRoute } from '@/lib/draft'
@@ -11,12 +11,12 @@ import { useAuth, activeShop } from '@/lib/auth'
 import { BiLabel, useLang, type BiText } from '@/components/Bilingual'
 import { LOCALES, setLocale, type Locale } from '@/i18n'
 import { useTheme } from '@/lib/theme'
-import { JOBS } from '@/features/counter/jobs'
+import { jobsFor } from '@/features/counter/jobs'
 import SidePanel from './SidePanel'
 
 /** screens that use the whole laptop width (lists, overviews, the side-by-side sale); forms stay at 3xl */
 const WIDE = ['/sale/new', '/stock', '/khata', '/balances', '/hisaab', '/reports', '/audit', '/sales', '/purchases', '/invoices', '/parties', '/expenses', '/installments', '/repairs', '/accessories', '/payments', '/returns', '/admin', '/loans']
-import { useModules } from '@/lib/modules'
+import { useModules, useTrade } from '@/lib/modules'
 import { PlanBar, PlanOverlays } from '@/components/PlanReminders'
 import ScanListener from '@/components/ScanListener'
 import OfflineBar from '@/components/OfflineBar'
@@ -120,7 +120,10 @@ export default function Shell() {
   const locale: Locale = ur ? 'ur' : roman ? 'roman' : 'en'
   const [langOpen, setLangOpen] = useState(false)
   const has = useModules()
-  const jobs = JOBS.filter((j) => !j.module || has(j.module))
+  const trade = useTrade()
+  const jobs = jobsFor(trade).filter((j) => !j.module || has(j.module))
+  // ADR-109: an accessories-only shop's "Stock" is its items
+  const bar = trade.devices ? tabs : tabs.map((x) => (x.key === 'nav.stock' ? { ...x, to: '/accessories', Icon: Boxes } : x))
   const theme = useTheme((s) => s.theme)
   const setTheme = useTheme((s) => s.setTheme)
   const dark = theme === 'dark' || (theme === 'system' && window.matchMedia?.('(prefers-color-scheme: dark)').matches)
@@ -183,7 +186,7 @@ export default function Shell() {
 
       <nav className="print:hidden fixed inset-x-0 bottom-0 z-10 mx-auto max-w-md border-t border-line bg-nav/95 pb-[max(8px,env(safe-area-inset-bottom))] pt-1.5 backdrop-blur lg:hidden">
         <ul className="grid grid-cols-5 gap-1 px-2" dir={dir}>
-          {tabs.map(({ to, key, Icon }) => (
+          {bar.map(({ to, key, Icon }) => (
             <li key={to}>
               <NavLink to={to} end={to === '/'} className={({ isActive }) => `tap flex min-h-14 flex-col items-center justify-center gap-0.5 ${isActive ? 'font-bold text-ink' : 'text-muted'}`}>
                 {({ isActive }) => (

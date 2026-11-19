@@ -26,7 +26,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react'
 import { LockChecksEditor, SpecsEditor, type LockChecks, type Specs } from '@/features/stock/DeviceSpecs'
 import type { AccessoryItem, Brand, Colour, DeviceCategory, DeviceCondition, Model, PtaStatus, Storage } from '@/lib/types'
 import { Laptop, Smartphone, Tablet, Watch } from 'lucide-react'
-import { useModule } from '@/lib/modules'
+import { useTrade } from '@/lib/modules'
 import QuickAdd from '@/features/catalogue/QuickAdd'
 import AppleVariant, { isApple } from './AppleVariant'
 
@@ -225,7 +225,13 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
   const serialOk = /^[A-Za-z0-9-]{4,24}$/.test(d.serial.trim())
   const phone = category === 'phone'
   const laptop = category === 'laptop'
-  const laptopsOn = useModule('laptops')
+  // ADR-108 / ADR-109: the types this shop trades — mobiles unless it was set up without them,
+  // laptops with their module
+  const trade = useTrade()
+  const kinds: DeviceCategory[] = [...(trade.mobiles ? (['phone', 'tablet', 'watch'] as const) : []), ...(trade.laptops ? (['laptop'] as const) : [])]
+  useEffect(() => {
+    if (!edit && kinds.length && !kinds.includes(category)) setD((x) => ({ ...x, category: kinds[0] }))
+  }, [kinds.join()]) // eslint-disable-line react-hooks/exhaustive-deps
   const sim = phone || (!laptop && !!d.cellular)
   // a phone, or anything with a SIM, needs its IMEI; a Wi-Fi tablet or a GPS watch its serial number;
   // a laptop its serial number too, unless the sticker is gone (the shop's own code is given then)
@@ -244,10 +250,10 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
 
   return (
     <div className="flex flex-col gap-3">
-      {edit ? null : <span className="flex items-center gap-1"><BiLabel text="devcat.what" size="md" tone="text-muted" /><Help term="device.category" size="sm" /></span>}
-      {edit ? null : (
-        <div className={`grid gap-2 ${laptopsOn ? 'grid-cols-4' : 'grid-cols-3'}`} role="group" aria-label={pick('devcat.what')}>
-          {(['phone', 'tablet', 'watch', ...(laptopsOn ? (['laptop'] as const) : [])] as DeviceCategory[]).map((c) => {
+      {edit || kinds.length < 2 ? null : <span className="flex items-center gap-1"><BiLabel text="devcat.what" size="md" tone="text-muted" /><Help term="device.category" size="sm" /></span>}
+      {edit || kinds.length < 2 ? null : (
+        <div className={`grid gap-2 ${kinds.length === 4 ? 'grid-cols-4' : 'grid-cols-3'}`} role="group" aria-label={pick('devcat.what')}>
+          {kinds.map((c) => {
             const Icon = c === 'phone' ? Smartphone : c === 'tablet' ? Tablet : c === 'laptop' ? Laptop : Watch
             const on = category === c
             return (

@@ -38,6 +38,20 @@ export function useModule(key: ModuleKey): boolean {
   return useAuth((s) => (s.me?.plan?.modules ?? (MODULE_KEYS as readonly string[])).includes(key) || !!s.me?.user.is_superuser)
 }
 
+/** What the shop trades (owner 2026-11-19, ADR-109). `mobiles` (phones, tablets, smart watches)
+ *  is on for every shop unless the provider set it up "without mobiles"; `devices` = anything
+ *  tracked one by one (a mobile or a laptop). An accessories-only shop has `devices` false: the
+ *  phone side of the app is hidden for it (the server refuses it anyway). */
+export interface Trade { mobiles: boolean; laptops: boolean; accessories: boolean; devices: boolean }
+export function useTrade(): Trade {
+  const list = useAuth((s) => s.me?.plan?.modules)
+  const has = useModules()
+  // read from the shop's own list: "no_mobiles" is a switch, never part of "everything on"
+  const mobiles = !(list ?? []).includes('no_mobiles')
+  const laptops = has('laptops')
+  return { mobiles, laptops, accessories: has('accessories'), devices: mobiles || laptops }
+}
+
 export function useModules(): (key: ModuleKey) => boolean {
   const list = useAuth((s) => s.me?.plan?.modules)
   const superuser = useAuth((s) => !!s.me?.user.is_superuser)
