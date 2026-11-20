@@ -362,6 +362,25 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-122 · 2026-11-21 · Accepted · What a shop trades is three ticks for the provider; what is not in the package is shown locked with a WhatsApp request
+
+**Context**: the owner (2026-11-21): when the super admin gives a shop accessories, that shop should see only the accessories side of purchase — mobiles and laptops hidden — with a line that they are not in its package and that it may contact the software company, with a WhatsApp link for the request. The same for a laptop shop and a mobile shop; any mix must be possible (mobiles only, laptops only, accessories only, mobiles + accessories, laptops + accessories, all three). Existing shops must not be disturbed.
+
+**What existed** (ADR-108, ADR-109): the three lines are already derived from a shop's modules — mobiles unless `no_mobiles`, `laptops`, `accessories` — enforced on the server and followed by the app (`useTrade`). Every mix was already possible. Missing were: a plain way for the provider to choose (he had to know that "Without mobiles" is an inverse switch), any word to the shop about what it does not have, and one hole — a package bought on the fees page put `accessories` back, because it is part of every package.
+
+**Decision**
+1. **Provider**: "What does this shop trade?" — three ticks, Mobiles / Laptops / Accessories, above the module list in the shop sheet and in "Open a new shop" (`TradePicker`). They write the same module keys as before (no second business-type setting — ADR-109's rule); the first change turns "follow the plan" into a hand-picked list; the last ticked line cannot be unticked. The three keys leave the generic module list.
+2. **Shop**: a line that is not ticked stays hidden as before, and now says so (`NotInPackage`): on the stock screen a dashed, locked chip per missing line that opens the note; on the purchase's "what was bought" step the note under the add buttons. The note: "Not in your package: …. To add it, contact the software company." and a WhatsApp button whose message is already written — the shop's name, the owner's number, the lines wanted — to the provider's number (`/public/info`, else the maker's).
+3. **Nothing is switched on from the shop.** The button only writes a message; the provider ticks the line.
+4. **A package order keeps the lines** (`order.apply`): a shop set up without accessories stays without them when it pays for a package (as `laptops` and `no_mobiles` already did). A shop that follows its plan gets the package as it comes.
+5. The purchase's item button is now shown only with the accessories line (the server already refused it).
+
+**For existing shops**: nothing is taken away. An ordinary mobile shop (mobiles + accessories) now sees one dashed "Laptops" chip on the stock screen and one note on the purchase step, because laptops are a line it does not have — this is the wish, and it is the only visible change for them. A shop with all three lines, and the provider's own login, see no note.
+
+**Not done**: a request recorded in the software (it is a WhatsApp message, as the owner asked); prices per line on the fees page; hiding the note for staff who cannot buy a package (anyone may ask).
+
+**Consequences**: a fourth line would be one more tick in `TradePicker`, one more entry in `modules.lines` / `useTrade` and `pkg.line.*`. `tests/test_business_lines.py` walks the mixes and the package order.
+
 ## ADR-121 · 2026-11-21 · Accepted · Buying an accessory as short as buying a phone; every kind of stock in sight on the stock screen
 
 **Context**: the accessories shop (2026-11-21, through the owner): (1) "accessories ko add karna, mean purchase karna, easy nahi hai — form ki entry samajh hi nahi aati kya likhein, kaise start karein, jabke mobile ki bohat easy hai"; (2) "stock add karne ke baad option nahi hai ke accessories ka, laptop ka, watches ka, tablet ka stock kaise dekhein — only mobiles ka hai"; and: every kind should work like mobiles do — sale, purchase, reports, len-den — without disturbing what runs in the shops.

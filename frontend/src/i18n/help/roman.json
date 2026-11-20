@@ -2053,6 +2053,11 @@
       "title": "Payment aa gayi: package, modules aur mahine",
       "body": "Jab customer raqam bhej kar activate karne ko kahe to yahan package, izafi modules aur mahinon ke saath darj karein. Yeh raseed ke saath wasool shuda likhi jati hai aur dukaan ko sab kuch foran mil jata hai.",
       "example": "Us ne apni khaas qeemat par Pro ke 3 mahinon ke Rs. 9,000 bheje → Pro, 3 mahine, raqam 9,000 chunein → activate karein."
+    },
+    "trade": {
+      "title": "Dukaan kya bechti hai",
+      "body": "Teen tick tay karte hain dukaan kya dekhti hai: Mobile (phone, tablet, smart watch), Laptop aur Accessories. Koi bhi milaap ho sakta hai — sirf mobile, sirf accessories, laptop aur accessories, ya teeno. Jis par tick nahi woh us dukaan ke stock mein nahi daala ja sakta aur us ki app mein chhup jata hai; dukaan ko \"Aap ke package mein shamil nahi\" nazar aata hai, sath WhatsApp ka button ke aap se maang sake. Tick hatane se dukaan ke paas pehle se maujood kuch bhi delete nahi hota: woh use rakhti aur bech sakti hai. Fees ke page se khareeda gaya package yeh tick kabhi nahi badalta.",
+      "example": "Accessories ki dukaan: sirf Accessories par tick. Mobile ki dukaan jo laptop bhi bechti hai: Mobile aur Laptop par tick."
     }
   },
   "provider": {

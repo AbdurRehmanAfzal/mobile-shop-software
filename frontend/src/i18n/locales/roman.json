@@ -1557,7 +1557,11 @@
       "done": "Activate ho gaya. Raseed"
     },
     "salePct": "Sab ke liye sale (% riayat · 0 = nahi)",
-    "saleUntil": "Sale kab tak (khali = jab tak aap band na karein)"
+    "saleUntil": "Sale kab tak (khali = jab tak aap band na karein)",
+    "trade": {
+      "title": "Yeh dukaan kya bechti hai?",
+      "hint": "Jo yeh dukaan khareedti aur bechti hai us par tick lagayein. Jis par tick nahi woh us ki app mein chhup jata hai, sath likha aata hai ke package mein shamil nahi. Kam az kam ek tick rehta hai."
+    }
   },
   "field": {
     "badMobile": "3 se shuru hone wala 10 hindson ka mobile number likhein, maslan 300 1234567",
@@ -6140,5 +6144,21 @@
     "kindChange": "Badlein",
     "howto": "Jo khareeda us ke chand huroof likhein — \"anker 20w\", \"a56 glass\", \"mouse\". List mein use dabayein, likhein kitne aur laagat. Bas.",
     "typedHint": "Likhi hui line sirf bill par aati hai. Woh stock mein nahi jati — jo cheezein aap bechte hain un ke liye upar wala button istemal karein."
+  },
+  "pkg": {
+    "title": "Aap ke package mein shamil nahi",
+    "text": "Aap ke package mein yeh shamil nahi. Shamil karwane ke liye software company se rabta karein.",
+    "ask": "WhatsApp par poochein",
+    "line": {
+      "mobiles": "Mobile, tablet aur smart watch",
+      "laptops": "Laptop",
+      "accessories": "Accessories"
+    },
+    "short": {
+      "mobiles": "Mobile",
+      "laptops": "Laptop",
+      "accessories": "Accessories"
+    },
+    "msg": "Assalam o alaikum. Meri dukaan: {{shop}} ({{phone}}). Barah-e-karam mere Mobile Shop software ke package mein yeh shamil kar dein: {{lines}}."
   }
 }

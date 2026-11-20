@@ -34,6 +34,38 @@ const EMPTY = { shop_name: '', city: '', owner_name: '', phone: '', password: ''
 const PASSWORD = () => `ms${Math.floor(1000 + Math.random() * 9000)}${Math.floor(100 + Math.random() * 900)}`
 interface ModuleCatalogue { modules: Record<string, { en: string; ur: string }>; plans: Record<string, string[]> }
 
+/** ADR-122: what the shop trades, as three plain ticks. They write the same module list the
+ *  server already reads (`accessories`, `laptops`, and `no_mobiles` for "no mobiles") — the first
+ *  change turns "follow the plan" into a hand-picked list. One line always stays on. */
+const TRADE = ['mobiles', 'laptops', 'accessories'] as const
+const TRADE_KEYS = ['no_mobiles', 'laptops', 'accessories']
+function TradePicker({ catalogue, plan, value, onChange }: { catalogue: ModuleCatalogue | undefined; plan: string; value: string[] | null; onChange: (v: string[] | null) => void }) {
+  const { pick, ur, cls } = useLang()
+  if (!catalogue) return null
+  const list = value ?? catalogue.plans[plan] ?? []
+  const on = { mobiles: !list.includes('no_mobiles'), laptops: list.includes('laptops'), accessories: list.includes('accessories') }
+  const count = TRADE.filter((l) => on[l]).length
+  const toggle = (l: (typeof TRADE)[number]) => {
+    const key = l === 'mobiles' ? 'no_mobiles' : l
+    const has = list.includes(key)
+    onChange(has ? list.filter((k) => k !== key) : [...list, key])
+  }
+  return (
+    <div className="flex flex-col gap-2 rounded-2xl border-2 border-ink p-3" data-testid="trade-picker">
+      <span className="flex items-center gap-1"><BiLabel text="admin.trade.title" size="md" bold /><Help term="admin.trade" size="sm" /></span>
+      <BiLabel text="admin.trade.hint" size="sm" tone="text-muted" />
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+        {TRADE.map((l) => (
+          <label key={l} className={`flex min-h-12 items-center gap-3 rounded-2xl border-2 px-3 py-2 ${on[l] ? 'border-emerald bg-emerald-tint/50' : 'border-line bg-surface'}`}>
+            <input type="checkbox" checked={on[l]} disabled={on[l] && count === 1} onChange={() => toggle(l)} className="h-6 w-6 accent-[rgb(var(--emerald))]" data-testid={`trade-${l}`} />
+            <span className={`flex-1 font-bold ${ur ? cls('sm') : 'text-sm'}`}>{pick(`pkg.line.${l}`)}</span>
+          </label>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 /** "Follow the plan" (its defaults shown greyed) or a hand-picked list of modules */
 function ModulePicker({ catalogue, plan, value, onChange }: { catalogue: ModuleCatalogue | undefined; plan: string; value: string[] | null; onChange: (v: string[] | null) => void }) {
   const { pick, ur, cls } = useLang()
@@ -50,7 +82,8 @@ function ModulePicker({ catalogue, plan, value, onChange }: { catalogue: ModuleC
         <Help term="admin.followPlan" size="sm" />
       </label>
       <div className="card grid grid-cols-1 divide-y divide-line p-0">
-        {Object.entries(catalogue.modules).map(([k, names]) => (
+        {/* what the shop trades has its own three ticks above (ADR-122) */}
+        {Object.entries(catalogue.modules).filter(([k]) => !TRADE_KEYS.includes(k)).map(([k, names]) => (
           <label key={k} className={`flex items-center gap-3 px-4 py-2.5 ${custom ? '' : 'opacity-60'}`}>
             <input type="checkbox" disabled={!custom} checked={shown.includes(k)} onChange={() => toggle(k)} className="h-5 w-5 accent-[rgb(var(--emerald))]" />
             <span className={`flex-1 ${ur ? cls('sm') : 'text-sm font-semibold'}`}>{ur ? names.ur : names.en}</span>
@@ -384,6 +417,7 @@ export default function AdminPage() {
             <AdminCredentials key={sel.id} shopId={sel.id} userId={pwFor?.user_id} />
 
             <span className="flex items-center gap-1 mt-1"><BiLabel text="admin.modulesTitle" size="md" bold /><Help term="admin.modules" size="sm" /></span>
+            <TradePicker catalogue={catalogue} plan={plan.plan} value={mods} onChange={setMods} />
             <ModulePicker catalogue={catalogue} plan={plan.plan} value={mods} onChange={setMods} />
             <ErrorText error={saveModules.error} />
             <BiButton text="admin.saveModules" variant="secondary" full loading={saveModules.isPending} onClick={async () => { const r = await saveModules.mutateAsync({ modules: mods }); setSel(r) }} />
@@ -494,6 +528,7 @@ export default function AdminPage() {
             <BiSegmented<'ur' | 'en'> value={f.locale} onChange={(locale) => setF({ ...f, locale })} options={[{ value: 'ur', text: { en: 'Urdu', ur: 'اردو', roman: 'Urdu' } }, { value: 'en', text: { en: 'English', ur: 'انگریزی', roman: 'English' } }]} />
             <span className="flex items-center gap-1"><BiLabel text="admin.planTitle" size="md" tone="text-muted" /><Help term="admin.plans" size="sm" /></span>
             <BiSegmented<(typeof PLANS)[number]> value={f.plan} onChange={(plan) => setF({ ...f, plan, modules: null })} options={PLANS.map((p) => ({ value: p, text: { en: p, ur: p, roman: p } }))} />
+            <TradePicker catalogue={catalogue} plan={f.plan} value={f.modules} onChange={(modules) => setF({ ...f, modules })} />
             <ModulePicker catalogue={catalogue} plan={f.plan} value={f.modules} onChange={(modules) => setF({ ...f, modules })} />
             <ErrorText error={create.error} />
             <BiButton
