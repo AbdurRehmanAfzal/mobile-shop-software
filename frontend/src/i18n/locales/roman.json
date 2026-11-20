@@ -386,7 +386,19 @@
     "shelfHint": "Optional, maslan Rack A2, Daraz 3",
     "simTimeOptional": "Optional: maloom na ho to khali chhor dein.",
     "modelOnly": "Model",
-    "modelClear": "Sab dikhayein"
+    "modelClear": "Sab dikhayein",
+    "countBy": {
+      "all": "{{n}} phone, tablet, watch aur laptop",
+      "phone": "{{n}} mobile",
+      "tablet": "{{n}} tablet",
+      "watch": "{{n}} smart watch",
+      "laptop": "{{n}} laptop"
+    },
+    "itemsCard": {
+      "t": "Accessories aur doosri cheezein",
+      "sub": "Stock mein {{n}} piece · {{low}} kam ho rahi hain · {{out}} khatam",
+      "open": "Kholein"
+    }
   },
   "purchase": {
     "title": "Nayi khareedari",
@@ -1680,7 +1692,8 @@
     "tooMany": "Stock se zyada",
     "newKind": "Nayi qism",
     "newKindName": "Yeh kis qism ki cheez hai?",
-    "newKindPh": "maslan Ring light"
+    "newKindPh": "maslan Ring light",
+    "searchBuy": "Jo khareeda woh likhein: naam ya code"
   },
   "devcat": {
     "what": "Yeh kya hai?",
@@ -5695,7 +5708,8 @@
     "count": "{{n}} item banenge",
     "kinds": "Is item ki qismein",
     "none": "Is item ka abhi koi aur rang ya size nahi.",
-    "addKind": "Ek aur rang ya size shamil karein"
+    "addKind": "Ek aur rang ya size shamil karein",
+    "qtyBought": "Khareede"
   },
   "printers": {
     "title": "Printers",
@@ -6115,5 +6129,16 @@
     },
     "note": "Yeh guide software samjhati hai. Yeh tax ka mashwara nahi. Sharah, code aur kis ko digital invoice dena hai, yeh FBR tay karta hai aur badalta rehta hai; aap ka tax adviser aap ke karobar ke liye tasdeeq karta hai.",
     "toSettings": "FBR settings kholein"
+  },
+  "buy": {
+    "s1": "1. Yeh kya hai?",
+    "s2": "2. Kis qisam ki cheez hai?",
+    "s3": "3. Kaun se rang ya size khareede?",
+    "s4": "4. Kitne, aur qeematein",
+    "qty": "Kitne piece",
+    "cost": "Ek piece ki laagat",
+    "kindChange": "Badlein",
+    "howto": "Jo khareeda us ke chand huroof likhein — \"anker 20w\", \"a56 glass\", \"mouse\". List mein use dabayein, likhein kitne aur laagat. Bas.",
+    "typedHint": "Likhi hui line sirf bill par aati hai. Woh stock mein nahi jati — jo cheezein aap bechte hain un ke liye upar wala button istemal karein."
   }
 }

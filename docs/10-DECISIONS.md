@@ -362,6 +362,26 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-121 · 2026-11-21 · Accepted · Buying an accessory as short as buying a phone; every kind of stock in sight on the stock screen
+
+**Context**: the accessories shop (2026-11-21, through the owner): (1) "accessories ko add karna, mean purchase karna, easy nahi hai — form ki entry samajh hi nahi aati kya likhein, kaise start karein, jabke mobile ki bohat easy hai"; (2) "stock add karne ke baad option nahi hai ke accessories ka, laptop ka, watches ka, tablet ka stock kaise dekhein — only mobiles ka hai"; and: every kind should work like mobiles do — sale, purchase, reports, len-den — without disturbing what runs in the shops.
+
+**What was found** (looked at as that shop, on a phone-sized screen):
+- *Purchase.* Step 2 offered two buttons that read alike — "Add accessory / watch" (the stock items) and "+ Charger, cover or other item" (a typed line that never enters stock). The first opened a search with sixteen kind chips and, for a new shop, "Nothing found". A new item then meant a third screen with name, sixteen chips, price, reorder level, the variants box, brand, colour, fits and five quality chips before "Save and add" — and the pieces and cost were asked afterwards, back on the bill. The built-in list (ADR-118) appeared only once a name was typed inside that form.
+- *Stock.* The type chips (All stock, Mobiles, Tablets, Smartwatches, Laptops, Accessories, Spare parts, Other) were one row that scrolled sideways: on a phone "Accessories" was out of sight. "All stock" counted and listed only devices ("0 phones"). The items' screen had no way back to tablets or watches. Nothing said how many of each kind the shop has.
+- *Sale, reports, len-den.* A sale already takes devices of every type and items from one screen (item button, search, scan, the variant chip of ADR-118). The reports list (ADR-111) already carries the item reports beside the phone ones. Len-den and the khata are by person, not by kind of goods. Nothing was changed there.
+
+**Decision**
+1. **The search is the start** (`StockItemPicker`, buy mode): one box, "Type what you bought: name or code", one line of how-to for a shop that has nothing yet, the shop's own items, and under them the lines of the built-in list for the same words. The sixteen kind chips show only when the shop has more than eight items to filter. An item the shop keeps goes onto the bill in one tap, as before.
+2. **A short form in four numbered steps** (`ItemForm`, compact = inside a purchase): 1 What is it? · 2 What kind of thing? (from the built-in list it is one chip with "Change") · 3 Which colours or sizes did you buy? — ticked, each with **Bought** pieces · 4 How many, and the prices — cost of one piece, selling price. Brand, fits, quality and the reorder level moved under "More details". "Save and add" puts every variant that has pieces onto the bill with its quantity and cost; nothing is typed again on the bill.
+3. **Pieces bought are not opening stock.** Inside a purchase the items are made with zero stock and the pieces arrive with the bill (one batch, one posting, the dealer's khata) — `ItemForm` hands them to the purchase as `Bought`, it does not post them.
+4. **The typed line stays** (shops use it), with one line under it: it is only written on the bill and does not go into stock. A shop that trades no devices gets the item button as the primary one.
+5. **Stock screen**: the type chips wrap instead of scrolling, and each carries what is on hand (`stock-status` gained one read-only key, `by_kind`; items show their pieces). The same row sits on the items' screen (`value="items"`), so mobiles, tablets, watches, laptops and accessories are one tap from each other. Under the devices on "All stock" a card says how many accessory pieces are in stock, how many are low or finished, and opens them. The count line names the kind shown ("3 tablets", not "3 phones").
+
+**Not done**: one merged list of devices and items on "All stock" (they are different things — units with an IMEI and counted pieces — with different columns and actions; a card and the chips join them instead); status cards (reserved, in repair …) for items; the same four-step form for "New item" on the items' own screen (that one keeps the full card, with opening stock).
+
+**Nothing existing was removed**: button names, the full item form, the typed line, the old picker in a sale and every route are as they were; `accessories-only`, `items`, `item-params`, `accessories`, `stock-screen`, `laptops`, `old-dealings-bulk` and `labels` specs pass unchanged.
+
 ## ADR-120 · 2026-11-20 · Accepted · The FBR guide: what the shop brings, what it does, what we do — a public page in three languages
 
 **Context**: the owner (2026-11-20): "FBR ke related bhi guide likh do — jo jo client ki taraf se humein chahiye FBR configure karne ke liye aur jo hum karenge, each step, taake layman bhi samajh jaye." Until now this lived in `docs/36` (research, for us) and in the "?" texts of the FBR card; nothing a shopkeeper or his tax adviser could be sent.

@@ -8,7 +8,7 @@ import { ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { BiAlert, BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
-import { KindChooser } from '@/components/ItemKinds'
+import { KindChooser, kindLabel } from '@/components/ItemKinds'
 import PartyPicker from '@/components/PartyPicker'
 import { ErrorText } from '@/components/ui'
 import { get } from '@/lib/api'
@@ -64,7 +64,10 @@ function toBody(f: Form, creating: boolean): Record<string, unknown> {
   }
 }
 
-export default function ItemForm({ item, compact = false, initialName = '', onDone }: { item?: Item; compact?: boolean; initialName?: string; onDone: (it: Item, all?: Item[]) => void }) {
+/** what was bought, said in the purchase's own form (ADR-121): pieces per item made, and the cost of one */
+export interface Bought { qty: Record<string, string>; cost: string }
+
+export default function ItemForm({ item, compact = false, initialName = '', from, onDone }: { item?: Item; compact?: boolean; initialName?: string; from?: LibEntry; onDone: (it: Item, all?: Item[], bought?: Bought) => void }) {
   const { pick } = useLang()
   const exists = (k: string) => i18next.exists(k)
   const creating = !item
@@ -74,8 +77,13 @@ export default function ItemForm({ item, compact = false, initialName = '', onDo
   const create = useDocMutation<Record<string, unknown>, Item>('POST', () => '/api/v1/accessories')
   // ADR-118: a product with variants is made as one item per variant, all or none
   const createMany = useDocMutation<Record<string, unknown>, Item[]>('POST', () => '/api/v1/accessories/with-variants')
-  const [lib, setLib] = useState<LibEntry | null>(null)
-  const [by, setBy] = useState<VariantBy>('color')
+  const [lib, setLib] = useState<LibEntry | null>(from ?? null)
+  const [by, setBy] = useState<VariantBy>(from?.variant_by ?? 'color')
+  // ADR-121, inside a purchase: how many were bought and at what cost, asked here once
+  const [qty, setQty] = useState('')
+  const [cost, setCost] = useState('')
+  const [kindOpen, setKindOpen] = useState(false)
+  useEffect(() => { if (from) fromLibrary(from) }, []) // eslint-disable-line react-hooks/exhaustive-deps
   const [vars, setVars] = useState<Variant[]>([])
   const fromLibrary = (e: LibEntry) => {
     setLib(e); setBy(e.variant_by); setVars([])
@@ -108,16 +116,18 @@ export default function ItemForm({ item, compact = false, initialName = '', onDo
   async function save() {
     const body = toBody(f, creating)
     if (creating && vars.length) {
-      const all = await createMany.mutateAsync({ ...body, opening_qty: 0, variant_by: by, variants: vars.map((v) => ({ label: v.label, opening_qty: Number(v.qty || 0) })) })
-      onDone(all[0], all)
+      // inside a purchase the pieces come in with the bill, not as opening stock
+      const all = await createMany.mutateAsync({ ...body, opening_qty: 0, variant_by: by, variants: vars.map((v) => ({ label: v.label, opening_qty: compact ? 0 : Number(v.qty || 0) })) })
+      onDone(all[0], all, compact ? { qty: Object.fromEntries(all.map((a) => [a.id, vars.find((v) => v.label === a.variant)?.qty ?? ''])), cost } : undefined)
       return
     }
     const res = creating ? await create.mutateAsync(body) : await update.mutateAsync({ id: item!.id, body })
-    onDone(res)
+    onDone(res, undefined, creating && compact ? { qty: { [res.id]: qty }, cost } : undefined)
   }
 
   return (
     <div className="flex flex-col gap-3" data-testid="item-form">
+      {creating && compact ? <BiLabel text="buy.s1" size="md" bold /> : null}
       <BiInput label="acc.name" help={<Help term="items.name" size="sm" />} value={f.name} onChange={set('name')} autoFocus={creating} maxLength={150} placeholder={pick('items.namePh')} />
       {creating ? <LibraryHits q={f.name} skip={lib?.name ?? ''} onPick={fromLibrary} /> : null}
       {similar.length ? (
@@ -128,18 +138,28 @@ export default function ItemForm({ item, compact = false, initialName = '', onDo
           </ul>
         </div>
       ) : null}
-      <span className="flex items-center gap-1"><BiLabel text="acc.category" size="md" tone="text-muted" /><Help term="items.category" size="sm" /></span>
-      <KindChooser value={f.category} onChange={(category) => setF({ ...f, category })} />
+      {creating && compact ? <BiLabel text="buy.s2" size="md" bold /> : <span className="flex items-center gap-1"><BiLabel text="acc.category" size="md" tone="text-muted" /><Help term="items.category" size="sm" /></span>}
+      {/* picked from the built-in list: its kind is known — one chip, changeable */}
+      {creating && compact && lib && !kindOpen ? (
+        <div className="flex flex-wrap items-center gap-2" data-testid="buy-kind">
+          <span className={chip(true)}>{kindLabel(pick, f.category)}</span>
+          <button type="button" onClick={() => setKindOpen(true)} className="tap rounded-xl px-2 py-1 text-sm font-bold text-emerald-deep underline-offset-4 hover:underline">{pick('buy.kindChange')}</button>
+        </div>
+      ) : <KindChooser value={f.category} onChange={(category) => setF({ ...f, category })} />}
+      {creating && compact ? <VariantPicker by={by} onBy={(b) => { setBy(b); setVars([]) }} value={vars} onChange={setVars} suggest={lib && lib.variant_by === by ? lib.variants : []} withQty qtyLabel="var.qtyBought" title="buy.s3" /> : null}
+      {creating && compact ? <BiLabel text="buy.s4" size="md" bold /> : null}
       <div className="grid grid-cols-2 gap-2">
+        {creating && compact && !vars.length ? <BiInput label="buy.qty" help={null} type="number" inputMode="numeric" min={1} value={qty} onChange={(e) => setQty(e.target.value)} className="num" placeholder="1" data-testid="buy-qty" /> : null}
+        {creating && compact ? <BiInput label="buy.cost" help={null} type="number" inputMode="decimal" min={0} value={cost} onChange={(e) => setCost(e.target.value)} className="num" data-testid="buy-cost" /> : null}
         <BiInput label={compact ? 'items.sellPrice' : 'acc.price'} help={<Help term="items.price" size="sm" />} type="number" inputMode="decimal" min={0} value={f.price} onChange={set('price')} className="num" />
-        <BiInput label="acc.reorder" help={<Help term="items.reorder" size="sm" />} type="number" inputMode="numeric" min={0} value={f.reorder_level} onChange={set('reorder_level')} className="num" />
+        {compact && !more ? null : <BiInput label="acc.reorder" help={<Help term="items.reorder" size="sm" />} type="number" inputMode="numeric" min={0} value={f.reorder_level} onChange={set('reorder_level')} className="num" />}
         {creating && !compact && !vars.length ? <BiInput label="acc.openingQty" help={<Help term="items.openingQty" size="sm" />} type="number" inputMode="numeric" min={0} value={f.opening_qty} onChange={set('opening_qty')} className="num" /> : null}
         {creating && !compact ? <BiInput label="acc.openingCost" help={<Help term="items.openingCost" size="sm" />} type="number" inputMode="decimal" min={0} value={f.opening_cost} onChange={set('opening_cost')} className="num" /> : null}
       </div>
 
-      {creating ? <VariantPicker by={by} onBy={(b) => { setBy(b); setVars([]) }} value={vars} onChange={setVars} suggest={lib && lib.variant_by === by ? lib.variants : []} withQty={!compact} /> : null}
+      {creating && !compact ? <VariantPicker by={by} onBy={(b) => { setBy(b); setVars([]) }} value={vars} onChange={setVars} suggest={lib && lib.variant_by === by ? lib.variants : []} withQty /> : null}
 
-      {compact ? (
+      {compact && more ? (
         <div className="flex flex-col gap-2" data-testid="item-quick-card">
           <div className="grid grid-cols-2 gap-2">
             <BiInput label="acc.brand" help={<Help term="items.brand" size="sm" />} value={f.brand} onChange={set('brand')} list="item-brands" maxLength={80} />

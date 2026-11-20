@@ -2,7 +2,7 @@
  *  watches here, accessories / spare parts / other on the items screen) and status cards that also
  *  filter the list. Counts come from GET /devices/stock-status (nothing is posted by looking). */
 
-import { AlertTriangle, Bookmark, CheckCircle2, Clock, Lock, PackageX, Search, UserCheck, Wallet, Wrench } from 'lucide-react'
+import { AlertTriangle, Bookmark, CheckCircle2, Clock, Headphones, Lock, PackageX, Search, UserCheck, Wallet, Wrench } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
@@ -14,6 +14,7 @@ export type Mode = '' | 'sellable' | 'reserved' | 'inspection' | 'in_repair' | '
 
 interface StockStatus {
   units: { on_hand: number; available: number; reserved: number; inspection: number; in_repair: number; faulty: number; approval: number; on_loan: number; locked?: number }
+  by_kind?: Record<string, number>
   items: { on_hand: number; low: number; out: number; reserved: number }
   value_cost: string | null
   units_value_cost: string | null
@@ -30,16 +31,22 @@ const KINDS: { k: Kind | 'items' | 'part' | 'other'; label: string }[] = [
   { k: 'other', label: 'stock.kind.other' },
 ]
 
-export function KindTabs({ value, onChange }: { value: Kind; onChange: (k: Kind) => void }) {
+/** ADR-121: the same row on the phones' screen and on the items' screen (`value="items"`), so every
+ *  kind of stock — mobiles, tablets, watches, laptops, accessories — is one tap from any of them.
+ *  The chips wrap (on a phone the last ones used to be out of sight) and carry what is on hand. */
+export function KindTabs({ value, onChange }: { value: Kind | 'items'; onChange: (k: Kind) => void }) {
   const { pick, ur, cls } = useLang()
   const nav = useNavigate()
   const trade = useTrade() // ADR-108 / ADR-109: only the kinds this shop trades
   const off = new Set<string>([...(trade.mobiles ? [] : ['phone', 'tablet', 'watch']), ...(trade.laptops ? [] : ['laptop'])])
+  const { data } = useGet<StockStatus>(['stock-status', ''], '/api/v1/devices/stock-status')
+  const count = (k: string): number | null => (!data ? null : k === '' ? data.units.on_hand : k === 'items' ? data.items.on_hand : k === 'part' || k === 'other' ? null : (data.by_kind?.[k] ?? 0))
   return (
-    <div className="flex items-center gap-1">
-      <div className="-mx-1 flex min-w-0 flex-1 gap-1.5 overflow-x-auto px-1 pb-1" data-testid="stock-kinds">
+    <div className="flex items-start gap-1">
+      <div className="flex min-w-0 flex-1 flex-wrap gap-1.5 pb-1" data-testid="stock-kinds">
         {KINDS.filter(({ k }) => !off.has(k)).map(({ k, label }) => {
           const on = value === k
+          const c = count(k)
           return (
             <button
               key={k || 'all'}
@@ -50,6 +57,7 @@ export function KindTabs({ value, onChange }: { value: Kind; onChange: (k: Kind)
               data-testid={`kind-${k || 'all'}`}
             >
               {pick(label)}
+              {c != null ? <span className={`num ms-1.5 rounded-full px-1.5 py-0.5 text-[11px] font-extrabold ${on ? 'bg-ground/20 text-ground' : 'bg-ground text-muted'}`} dir="ltr" data-testid={`kind-count-${k || 'all'}`}>{c}</span> : null}
             </button>
           )
         })}
@@ -92,3 +100,26 @@ export function StatusCards({ kind, mode, onMode, canCost }: { kind: Kind; mode:
     </div>
   )
 }
+
+/** ADR-121: under the phones on "All stock" — the accessories and other counted items the shop has,
+ *  how many are low or out, and the way to their list */
+export function ItemsInStock() {
+  const { pick, ur, cls } = useLang()
+  const nav = useNavigate()
+  const trade = useTrade()
+  const { data } = useGet<StockStatus>(['stock-status', ''], '/api/v1/devices/stock-status')
+  if (!data || !trade.accessories) return null
+  const i = data.items
+  const small = ur ? cls('sm') : 'text-xs font-semibold'
+  return (
+    <button type="button" onClick={() => nav('/accessories')} className="tap flex min-h-16 items-center gap-3 rounded-2xl border-2 border-line bg-surface px-4 py-3 text-start" data-testid="stock-items-card">
+      <span className="well h-11 w-11 shrink-0 rounded-2xl bg-khata text-khata-fg"><Headphones size={22} /></span>
+      <span className="flex min-w-0 flex-1 flex-col">
+        <span className={ur ? cls('md') : 'text-[15px] font-extrabold'}>{pick('stock.itemsCard.t')}</span>
+        <span className={`text-muted ${small}`}>{pick('stock.itemsCard.sub').replace('{{n}}', String(i.on_hand)).replace('{{low}}', String(i.low)).replace('{{out}}', String(i.out))}</span>
+      </span>
+      <span className={`shrink-0 rounded-full bg-ink px-3 py-1.5 font-bold text-ground ${small}`}>{pick('stock.itemsCard.open')}</span>
+    </button>
+  )
+}
+

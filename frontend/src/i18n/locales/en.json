@@ -386,7 +386,19 @@
     "shelfHint": "Optional, e.g. Rack A2, Drawer 3",
     "simTimeOptional": "Optional: leave empty if you do not know.",
     "modelOnly": "Model",
-    "modelClear": "Show all"
+    "modelClear": "Show all",
+    "countBy": {
+      "all": "{{n}} phones, tablets, watches and laptops",
+      "phone": "{{n}} phones",
+      "tablet": "{{n}} tablets",
+      "watch": "{{n}} smartwatches",
+      "laptop": "{{n}} laptops"
+    },
+    "itemsCard": {
+      "t": "Accessories and other items",
+      "sub": "{{n}} pieces in stock · {{low}} running low · {{out}} finished",
+      "open": "Open"
+    }
   },
   "purchase": {
     "title": "New purchase",
@@ -1680,7 +1692,8 @@
     "tooMany": "More than in stock",
     "newKind": "New kind",
     "newKindName": "What kind of item?",
-    "newKindPh": "e.g. Ring light"
+    "newKindPh": "e.g. Ring light",
+    "searchBuy": "Type what you bought: name or code"
   },
   "devcat": {
     "what": "What is it?",
@@ -5695,7 +5708,8 @@
     "count": "{{n}} items will be made",
     "kinds": "Kinds of this item",
     "none": "This item has no other colour or size yet.",
-    "addKind": "Add another colour or size"
+    "addKind": "Add another colour or size",
+    "qtyBought": "Bought"
   },
   "printers": {
     "title": "Printers",
@@ -6115,5 +6129,16 @@
     },
     "note": "This guide explains the software. It is not tax advice. Rates, codes and who must issue digital invoices are set by FBR and change; your tax adviser confirms them for your business.",
     "toSettings": "Open FBR settings"
+  },
+  "buy": {
+    "s1": "1. What is it?",
+    "s2": "2. What kind of thing?",
+    "s3": "3. Which colours or sizes did you buy?",
+    "s4": "4. How many, and the prices",
+    "qty": "How many pieces",
+    "cost": "Cost of one piece",
+    "kindChange": "Change",
+    "howto": "Type a few letters of what you bought — \"anker 20w\", \"a56 glass\", \"mouse\". Tap it in the list, write how many and the cost. That is all.",
+    "typedHint": "A typed line is only written on the bill. It does not go into stock — use the button above for things you sell."
   }
 }

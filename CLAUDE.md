@@ -77,6 +77,7 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 
 ## Built-in accessories list and variants (accessories shops 2026-11-20, ADR-118)
 - Read ADR-118 before touching `accessories.variant_group / variant`, `service.create_with_variants` / `add_variants`, `accessories/library.py`, `seeds/accessory_library.py` or `ItemVariants.tsx`.
+- Buying an item (ADR-121): the purchase's item search shows the shop's items and the built-in list together; the compact `ItemForm` is four numbered steps and hands the pieces and cost to the bill (`Bought`) — inside a purchase an item is always made with zero stock, the bill brings the pieces. The stock screen's `KindTabs` (wrapping, with counts from `stock-status.by_kind`) is shared with the items' screen; keep every kind of stock one tap from the others.
 - Rules: a variant is an ordinary `accessories` row with its own stock, cost, SKU and barcode — never a quantity inside another item; variants are made only through `service.create` (one transaction, all or none); the built-in list is data in `seeds/accessory_library.py` searched in memory and is read-only (no table, nothing per shop) — a new line is added there; "… for <model>" lines are made from the catalogue's models, never stored.
 
 ## What a shop trades — accessories-only / laptop-only shops (owner 2026-11-19, ADR-109)
