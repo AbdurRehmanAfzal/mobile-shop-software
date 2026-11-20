@@ -6,6 +6,8 @@
 - For mobile accessories shops: https://mobileshop.oopsolutions.com/accessories-shop-software
 - For laptop shops: https://mobileshop.oopsolutions.com/laptop-shop-software
 - For used-mobile dealers: https://mobileshop.oopsolutions.com/used-mobile-shop-software
+- Printer guide (which printer, sticker sizes, how to connect): https://mobileshop.oopsolutions.com/printer-guide
+- FBR guide (what a shop brings, who does which step): https://mobileshop.oopsolutions.com/fbr-guide
 - Android app: https://mobileshop.oopsolutions.com/app.apk
 - Maker: OOP Solutions — https://oopsolutions.com — Abdur Rehman Afzal, +92 316 4001668 (WhatsApp)
 - Related: iFix Apple Phone — https://ifixapplephone.com
@@ -45,6 +47,12 @@
 - Several pieces at once: an IMEI per piece on a purchase; pick several and give one price on a sale.
 - Mobile numbers of any country, with a country-code picker; WhatsApp opens the right number.
 - A phone's page: one table of all its details, printed as an 80 mm slip or an A4 page, or shared as a PDF.
+- Built-in accessories: 2,480 lines (chargers, cables, power banks, audio, covers, glass, laptop and computer goods, gadgets) by brand, and covers / glass / batteries / laptop parts offered per phone or laptop model; an item is found by a few letters and added.
+- Variants: the colours, lengths or sizes of one item, each with its own stock, barcode and sticker; bought in one short form of four steps.
+- Stock screen: mobiles, tablets, smart watches, laptops and accessories each with what is on hand.
+- Own price code: the shop's own signs for digits, lakh, thousand and hundred, with a prefix and postfix, printed on stickers for cost and asking price (owner and manager only).
+- Printers: sticker, 80 mm receipt and A4 printers set up per device by USB, Wi-Fi / LAN or Bluetooth, with a test page.
+- Packages by line: a shop takes mobiles, laptops, accessories or any mix and sees only that.
 - Amanat: a phone given to a customer, dealer, another shop or technician, still the shop's until sold or returned.
 - FBR Digital Invoicing ready tax bills (off until the shop's NTN and token are entered); branch transfers.
 
@@ -61,6 +69,8 @@
 - Does it work without internet? Yes — offline sales are kept and sent later; a one-PC Windows install needs no internet.
 - Is there software for a mobile accessories shop that keeps no phones? Yes — the shop is set to accessories only and sees no phone screens; phones can be switched on later.
 - Is there laptop shop software in Pakistan? Yes — Mobile Shop keeps laptops by serial number with their specifications; 1,143 models are built in.
+- Are accessories built in? Yes — 2,480, and one item can have colours and sizes that each keep their own count.
+- Which printer is needed? A thermal label printer (60 × 40 mm roll), an 80 mm receipt printer and any A4 printer; see the printer guide.
 - Which reports does it have? 45, in one list, from the daily stock tally and udhaar to the general ledger, trial balance and balance sheet.
 - How are dealings from before the software entered? As an old balance on the person's khata — no IMEI, no stock.
 - Can staff use it without seeing profit? Yes — the salesman role sells, adds stock, takes returns and payments, but never sees cost or profit.

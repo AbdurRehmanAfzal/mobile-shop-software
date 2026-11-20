@@ -2442,6 +2442,18 @@
       "many": {
         "q": "Do I have to enter ten phones of one model one by one?",
         "a": "No. Choose the model once, say how many pieces, and write or scan an IMEI for each. On a sale, pick several phones and give one price for all."
+      },
+      "variants": {
+        "q": "One charger comes in three colours. Do I make three items?",
+        "a": "You tick the three colours once. The software makes one item per colour under the same name, each with its own count, barcode and sticker. Another colour can be added later from the item's page."
+      },
+      "printers": {
+        "q": "Which printer do I need?",
+        "a": "A thermal label printer with a 60 × 40 mm roll for stickers, an 80 mm thermal printer for small bills and any A4 printer for big bills and reports — best with both USB and Wi-Fi. The printer guide in the app explains each with examples, and Shop settings → Printers sets each one up with a test page."
+      },
+      "priceCode": {
+        "q": "Can I print my cost on the sticker in my own code?",
+        "a": "Yes. In Shop settings you choose a letter or sign for every digit, for lakh, thousand and hundred, and something before and after. Rs. 285,000 can print as ##BHEL@@. Only the owner and manager see the pattern."
       }
     },
     "footer": "Made in Pakistan for Pakistani mobile shops.",
@@ -2673,6 +2685,42 @@
       "say": {
         "t": "Buttons that say what they do",
         "d": "Money received, money paid, gave or took money without a bill: every money button looks like a button and carries a line in Roman Urdu saying what it is for."
+      },
+      "acclist": {
+        "t": "2,480 accessories built in",
+        "d": "Chargers, cables, power banks, earbuds, covers, glass, laptop and computer goods, by brand. Type \"anker 20w\" or \"a56 glass\" and add it — no card to fill by hand."
+      },
+      "variants": {
+        "t": "Colours and sizes of one item",
+        "d": "Tick the colours or lengths you keep. Each has its own count, barcode and sticker, so you always know how many black and how many white are left."
+      },
+      "easybuy": {
+        "t": "Buying an accessory in four steps",
+        "d": "One search, then: what it is, what kind, which colours you bought and how many, cost and selling price. It is on the bill; nothing to type twice."
+      },
+      "stockkinds": {
+        "t": "Every kind of stock in sight",
+        "d": "Mobiles, tablets, smart watches, laptops and accessories each on their own chip with what is on hand — one tap from one to the other, on a phone too."
+      },
+      "pricecode": {
+        "t": "Your own secret price code",
+        "d": "Your own letters for the digits, lakh, thousand and hundred, with something before and after. The sticker prints cost and asking price in a code only you read."
+      },
+      "printers": {
+        "t": "Printers set up with a test page",
+        "d": "Sticker, 80 mm receipt and A4 printer by USB, Wi-Fi or Bluetooth: steps for your phone or computer, a test page with a ruler and a barcode, and a printer guide anyone can read."
+      },
+      "fbrguide": {
+        "t": "FBR guide in plain words",
+        "d": "What you bring — NTN, STRN, a token from IRIS — what you do and what we do, step by step, each step marked with who does it."
+      },
+      "lines": {
+        "t": "Pay for what you trade",
+        "d": "Mobiles, laptops, accessories — any one, any two or all three. Your shop shows only what you trade; the rest is one WhatsApp message away."
+      },
+      "oldsteps": {
+        "t": "Old dealings, one question at a time",
+        "d": "Who owes whom, goods or only an amount, what went — picked like a purchase — and what was already paid. Four short questions, no long form."
       }
     },
     "float": {
@@ -2994,8 +3042,8 @@
         "a": "Mobile Shop runs an accessories-only shop without any phone screens. Items are bought by the dozen, box or carton and sold by the piece; the software keeps the count, the cost of each lot and the profit of every sale, and warns when an item is finishing.",
         "p1": "Buy by dozen, box or carton — sell by the piece; the price of one piece is worked out for you",
         "p2": "A barcode on every item, with any USB or Bluetooth scanner or the phone's camera",
-        "p3": "Low-stock list, stock count, slow and fast items, profit per item",
-        "p4": "Udhaar khata for customers and suppliers, expenses, cash and bank, 45 reports"
+        "p3": "2,480 accessories built in: type a few letters and add; colours and sizes each with their own count and barcode",
+        "p4": "Low-stock list, stock count, profit per item, udhaar khata, expenses, cash and bank, 45 reports"
       },
       "laptops": {
         "metaTitle": "Laptop Shop Software Pakistan — New & Used Laptops by Serial",

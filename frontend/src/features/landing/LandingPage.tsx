@@ -2,7 +2,7 @@
  *  screenshots, a sample video, prices, the accounts to pay into and an "open a shop for me" form
  *  that reaches the product owner. Served at /welcome; a visitor on / without a login lands here. */
 
-import { ArrowLeftRight, Banknote, BarChart3, Building2, Calculator, BellRing, BookOpen, Bot, Boxes, CalendarCheck, Check, ChevronDown, CircleHelp, ClipboardCheck, CloudOff, Code2, FileSignature, Copy, CreditCard, Download, FileSpreadsheet, FileText, Fingerprint, FlaskConical, Globe, HandCoins, Headphones, History, IdCard, KeyRound, Languages, Laptop, LineChart, Link2, Lock, MessageCircle, Monitor, PackagePlus, Palette, PauseCircle, Percent, Phone as PhoneIcon, PlayCircle, QrCode, Receipt, RotateCcw, Scale, ScanBarcode, ScanLine, ShieldCheck, Smartphone, Store, Tablet, Tag, Undo2, UserCog, Users, Wallet, Wrench, X, ZoomIn, type LucideIcon } from 'lucide-react'
+import { ArrowLeftRight, Banknote, BarChart3, Building2, Calculator, BellRing, BookOpen, Bot, Boxes, CalendarCheck, Check, ChevronDown, CircleHelp, ClipboardCheck, CloudOff, Code2, FileSignature, Copy, CreditCard, Download, FileSpreadsheet, FileText, Fingerprint, FlaskConical, Globe, HandCoins, Headphones, History, IdCard, KeyRound, Languages, Laptop, LineChart, Link2, Lock, MessageCircle, Monitor, PackagePlus, Palette, PauseCircle, Percent, Phone as PhoneIcon, PlayCircle, Printer, QrCode, Receipt, RotateCcw, Scale, ScanBarcode, ScanLine, ShieldCheck, Smartphone, Store, Tablet, Tag, Undo2, UserCog, Users, Wallet, Wrench, X, ZoomIn, type LucideIcon } from 'lucide-react'
 import { createContext, useContext, useEffect, useState, type FormEvent, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { BiAlert, BiInput, BiLabel, useLang } from '@/components/Bilingual'
@@ -30,6 +30,11 @@ const OPTIONAL_SHOT: Record<string, string> = { accessories: 'items', repairs: '
 const OPTIONAL: Record<string, LucideIcon> = { accessories: Headphones, repairs: Wrench, expenses: Wallet, held_sales: PauseCircle, tax: Receipt, exchange: ArrowLeftRight, reports: BarChart3, exports: Download, notifications: BellRing, loans: RotateCcw, installments: HandCoins, attendance: CalendarCheck, ai: Bot }
 /** what came in the last round (owner 2026-10-31): shown first, with its own screenshots */
 const NEW: { key: string; Icon: LucideIcon; shot?: string }[] = [
+  // owner 2026-11-21: the built-in accessories list and variants, the short purchase, every kind of
+  // stock in sight, the shop's own price code, printers and their guide, the FBR guide, packages by line
+  { key: 'acclist', Icon: Boxes, shot: 'items' }, { key: 'variants', Icon: Palette }, { key: 'easybuy', Icon: PackagePlus, shot: 'purchases' },
+  { key: 'stockkinds', Icon: Smartphone, shot: 'stock' }, { key: 'pricecode', Icon: KeyRound, shot: 'sticker' }, { key: 'printers', Icon: Printer },
+  { key: 'fbrguide', Icon: Receipt, shot: 'bill' }, { key: 'lines', Icon: Store }, { key: 'oldsteps', Icon: BookOpen, shot: 'khata' },
   // owner 2026-11-20: accessories-only and laptop shops, every report in one list, old dealings,
   // several pieces at once, numbers of any country, the phone's slip / A4 page, the IMEI sticker
   { key: 'accshop', Icon: Headphones, shot: 'items' }, { key: 'laptops', Icon: Laptop }, { key: 'reportshub', Icon: BarChart3, shot: 'reports' },
@@ -62,7 +67,7 @@ const NEW: { key: string; Icon: LucideIcon; shot?: string }[] = [
 const LATEST = 12
 /** who it is for; a kind of shop with its own page (topics.ts) links to it */
 const FOR: { key: string; topic?: Topic }[] = [{ key: 'used', topic: 'used' }, { key: 'new' }, { key: 'repair' }, { key: 'accessories', topic: 'accessories' }, { key: 'laptops', topic: 'laptops' }, { key: 'dealers' }]
-const FAQ = ['android', 'offline', 'verify', 'consent', 'accessoriesOnly', 'laptops', 'reports', 'oldBalance', 'many', 'foreign', 'yearly', 'data', 'phone', 'scanner', 'staff', 'fbr', 'branches', 'cancel'] as const
+const FAQ = ['android', 'offline', 'verify', 'consent', 'accessoriesOnly', 'variants', 'laptops', 'reports', 'oldBalance', 'many', 'foreign', 'printers', 'priceCode', 'yearly', 'data', 'phone', 'scanner', 'staff', 'fbr', 'branches', 'cancel'] as const
 /** in every plan, no extra charge (owner 2026-11-16) */
 const INCLUDED = ['app', 'users', 'langs', 'offline', 'whatsapp', 'backup', 'updates', 'support', 'contract'] as const
 const EXTRAS: { key: string; Icon: LucideIcon }[] = [{ key: 'offline', Icon: CloudOff }, { key: 'fingerprint', Icon: Fingerprint }, { key: 'cnic', Icon: ShieldCheck }, { key: 'whatsapp', Icon: MessageCircle }]
