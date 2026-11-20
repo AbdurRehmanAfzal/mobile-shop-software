@@ -5170,6 +5170,21 @@
       "title": "Name for CP ID phones",
       "body": "CP ID phones are no longer allowed in Pakistan, but many shops still hold and trade them. Choose a word or a mark of your own (up to 20 letters, e.g. ★ or \"Special\"); every report, the stock tally, price lists, stickers, receipts and the app's screens show it instead of \"CP ID\". Only the label changes; the phones stay CP ID in the record. Leave it empty for CP ID.",
       "example": "Pick ★: the tally sheet shows \"★\" where it said CP ID."
+    },
+    "priceCode": {
+      "title": "Your own price code",
+      "body": "A secret way of writing a price that you make yourself: a letter or sign for each digit, a sign for lakh, thousand and hundred, and something before and after the code. Tick \"Cost in code\" or \"Asking price in code\" when printing a sticker and the price is printed in it. Only the owner and manager see the pattern; a salesman cannot print a coded price.",
+      "example": "1 = A, 2 = B, 5 = E, 8 = H, lakh = L, prefix ##, postfix @@. Cost Rs. 285,000 → the sticker shows ##BHEL@@."
+    },
+    "priceCodeUnits": {
+      "title": "Signs for lakh, thousand and hundred",
+      "body": "One sign each, used to say how big the price is. Leave one empty and the next smaller sign is used; leave all empty and every digit is written. A sign may be the same as a digit's (many shops use H for 8 and for hundred), but the code is then harder to read back.",
+      "example": "Lakh L, thousand T, hundred H: 45,000 → DET (45 and the thousand sign)."
+    },
+    "priceCodeStyle": {
+      "title": "How the price is written",
+      "body": "Short: the digits without the zeros at the end, then the sign of the price's size — quick to read, but 2,500 and 25,000 look the same. As you say it: lakh, thousand and hundred each with their sign — nothing is lost. Every digit: all digits, zeros too.",
+      "example": "Rs. 285,500 — Short: BHEEL. As you say it: BLHETEH. Every digit: BHEEZZ."
     }
   },
   "biz": {

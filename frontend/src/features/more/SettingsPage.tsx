@@ -11,6 +11,7 @@ import Help from '@/components/Help'
 import { ErrorText, Loading, PageHeader } from '@/components/ui'
 import { get, patch } from '@/lib/api'
 import BarcodeCard from './BarcodeCard'
+import PriceCodeCard, { type PriceCode } from './PriceCodeCard'
 import FbrCard from './FbrCard'
 import BusinessProfileCards from './BusinessProfile'
 import { useAuth } from '@/lib/auth'
@@ -34,6 +35,7 @@ interface ShopFull {
   invoice_prefix: string
   fingerprint_staff: boolean
   label_code_word: string | null
+  price_code: PriceCode | null
   sale_rules: { below_asking: Rule; asking_change: Rule } | null
   audit_prefs: AuditPrefs | null
   item_prefs: ItemPrefs | null
@@ -176,6 +178,7 @@ export default function SettingsPage() {
       <FbrCard Card={Card} Toggle={Toggle} />
       <BarcodeCard Card={Card} />
       <CodeWordCard current={data?.label_code_word ?? null} />
+      <PriceCodeCard Card={Card} current={data?.price_code ?? null} />
       <SaleRulesCard current={data?.sale_rules ?? null} />
       <AuditPrefsCard current={data?.audit_prefs ?? null} />
       <ItemPrefsCard current={data?.item_prefs ?? null} />

@@ -1,11 +1,14 @@
 import uuid
+from decimal import Decimal
+from typing import Annotated
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, Query
 from fastapi.responses import HTMLResponse
+from pydantic import BaseModel, Field
 
 from app.core.errors import ValidationFailed
 from app.core.permissions import Cap
-from app.core.tenancy import DB, Ctx
+from app.core.tenancy import DB, Ctx, require_cap
 from app.modules.labels import service
 from app.modules.labels.service import DEFAULT_FIELDS, FIELDS, SIZES
 
@@ -34,6 +37,27 @@ def options():
         "repair_fields": list(REPAIR_FIELDS),
         "repair_default_fields": list(REPAIR_DEFAULT),
     }
+
+
+class PriceCodePreview(BaseModel):
+    pattern: dict
+    amounts: list[Decimal] = Field(default_factory=list, max_length=12)
+
+
+@router.post("/price-code/preview")
+def price_code_preview(
+    data: PriceCodePreview, ctx: Annotated[Ctx, Depends(require_cap(Cap.MANAGE_SETTINGS))]
+):
+    """ADR-117: the settings page shows prices in the pattern being written — encoded here,
+    by the same code that prints the sticker; nothing is saved"""
+    from app.modules.labels import pricecode
+
+    try:
+        return pricecode.preview(data.pattern, data.amounts)
+    except (ValueError, TypeError) as err:
+        raise ValidationFailed(
+            code="price_code_bad", message_en=str(err), message_ur="کوڈ کا پیٹرن درست نہیں"
+        ) from err
 
 
 @router.get("/repairs", response_class=HTMLResponse)

@@ -362,6 +362,26 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-117 · 2026-11-20 · Accepted · The shop's own price code on stickers: signs for digits, lakh / thousand / hundred, prefix and postfix; for cost and for the asking price
+
+**Context**: shopkeepers (2026-11-20): each shop has its own "price keywords" — 1 = A, 2 = B … 9 = I, 0 = Z, lakh L, thousand T, hundred H, something before and after — and wants to print the cost and the asking price on a sticker in it, with a setting of its own. Their example: 285,000 → `##BHEL@@` (## prefix, 285 = BHE, L because the price is in lakhs, @@ postfix). Until now a sticker had only the "cost code": the cost spelled with a 10-letter word (BLACKHORSE), no units, no affixes, cost only.
+
+**Decision**
+1. **The pattern** is `shops.price_code` (one nullable JSON column, migration `a3c5e7f9b1d2`): `digits` (ten signs for 0-9, one character each, all different), `lakh` / `thousand` / `hundred` (one character or empty, different from each other), `prefix` / `postfix` (up to 8 characters), `style`. `labels/pricecode.py` validates (`clean`) and encodes (`encode`). NULL = the shop keeps its code word; nothing changes for an existing shop.
+2. **Three styles**, because the shopkeepers' own rule loses information:
+   - `short` (the default, their example): the digits without the zeros at the end, then the sign of the price's size — 285,000 → BHE L, 45,000 → DE T, 950 → IE H. Short, but 2,500 and 25,000 read the same; the settings page says so.
+   - `exact`: each part with its sign, as the price is spoken — 285,500 → B L · HE T · E H. Two different prices never share a code (tested).
+   - `digits`: every digit, zeros too.
+   A unit sign left empty falls to the next one down (no lakh sign → 285 thousand); with none, every digit is written.
+3. **A unit may use a digit's sign.** Their example has 8 = H and hundred = H; refusing it would refuse the pattern they already use. It is allowed and the page says "Used for a digit and for a size too: H".
+4. **On the sticker**: the existing tick `code` ("Cost in code") now prints in the pattern when the shop has one, else in the code word as before; a new tick `pcode` ("Asking price in code") prints the asking price the same way, beside or instead of the plain price. Both for phones and for items. An old app never asks for `pcode`, so its stickers do not change (ADR-106's rule).
+5. **Who sees it**: a price in code gives the pattern away to anyone who also knows the price, and the pattern reads the cost off every sticker. So `pcode` and `code` are printed only with `VIEW_COST` (owner, manager), `GET /shops/current` blanks `price_code` for other logins, and the preview route needs `MANAGE_SETTINGS`. (The 10-letter word is still sent to every login as before — not changed here.)
+6. **The app never encodes a price.** The settings card (`PriceCodeCard.tsx`) shows "How your prices will look" from `POST /labels/price-code/preview`, which runs the same `encode` that prints the sticker and saves nothing.
+
+**Not done**: a different pattern for cost and for asking (one pattern, two ticks); decoding a code back into a price in the app; the code on the phone's slip / A4 page (ADR-114) or on bills.
+
+**Consequences**: a new place that prints a coded price must call `labels.service.shop_code` (pattern, else word), never `cost_code` directly. A change to the pattern's fields changes `pricecode.clean`, `PriceCodeCard` and the help texts together.
+
 ## ADR-116 · 2026-11-20 · Accepted · "Add old dealing" asks one question at a time, and picks what went like a purchase
 
 **Context**: the owner (2026-11-20, with a screenshot of the ADR-110 form): shopkeepers find the two rows of choices on one screen hard. His suggestion: a step-by-step flow — first "they owe me / I owe them", then "write what went / only the amount", then, for goods, the purchase's own way of choosing (mobile, tablet, watch, laptop, accessories → brand → model → pieces → rate each, "add another item"), then already paid, still left, date, note, save. "Is ko apnay according better kr lyna."

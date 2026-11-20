@@ -87,6 +87,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Read ADR-107 before touching `core/pk.normalise_phone`, `frontend/src/lib/phone.ts` or `PhoneInput`.
 - Rules: a Pakistani number is stored as `03XXXXXXXXX` (never changed), any other as `+<code><number>`; every phone field goes through `normalise_phone` on the server and `PhoneInput` in the app; a WhatsApp link is built with `wa_number` / `waNumber`, never with a literal 92; the country table in `phone.ts` and `pk.py` change together (`tests/test_phone_countries.py`).
 
+## The shop's own price code (shopkeepers 2026-11-20, ADR-117)
+- Read ADR-117 before touching `labels/pricecode.py`, `labels.service.shop_code`, the `code` / `pcode` sticker ticks or `PriceCodeCard.tsx`.
+- Rules: the pattern lives in `shops.price_code` (NULL = the 10-letter code word, as before); a coded price is printed only with `VIEW_COST` and the pattern is never sent to a login without it; the app never encodes a price — the settings page asks `POST /labels/price-code/preview`; a unit sign may equal a digit's sign (the shopkeepers' own pattern does); print a coded price through `shop_code`, never `cost_code` directly.
+
 ## Amanat to anyone, sticker ticks, IMEI barcode (shopkeeper 2026-11-18, ADR-106)
 - Read ADR-106 before touching `loans.create_loan`, `labels/service.py` (`_fields`, `_device_parts`) or `LabelSheet.tsx`.
 - Rules: amanat goes to any person of the shop (no kind check); the sticker's bars are the IMEI when the phone has a real one (15 digits), the shop's own code otherwise or when asked (`bar=code`) — `devices.barcode` itself never changes; a new sticker field must keep old apps printing what they printed (`fv`).

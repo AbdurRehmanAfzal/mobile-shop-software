@@ -3664,17 +3664,19 @@
       "condition": "Haalat",
       "pta": "PTA",
       "date": "Tareekh",
-      "code": "Laagat code",
+      "code": "Laagat code mein",
       "last4": "IMEI aakhri 4",
       "ram": "RAM",
       "battery": "Battery health",
       "cycles": "Battery cycles",
-      "serial": "Serial number (S/N)"
+      "serial": "Serial number (S/N)",
+      "pcode": "Maangi qeemat code mein"
     },
     "shortNote": "Chhota sticker (22 mm se kam ooncha) sirf mobile ka naam, qeemat, bara barcode aur IMEI chhaapta hai taake sab poora aaye.",
     "bar": "Barcode kis se bane",
     "barImei": "IMEI",
-    "barCode": "Dukaan ka apna code"
+    "barCode": "Dukaan ka apna code",
+    "codeOwn": "Aap ke apne price code mein chhapega (Settings → Aap ka apna price code)."
   },
   "otp": {
     "hint": "Apna mobile number likhein. WhatsApp par code aaye ga; us se aap khud naya password rakh sakein ge.",
@@ -5632,5 +5634,41 @@
     "toApp": "Dukaan ki app kholein",
     "denied": "Sirf software provider ke liye",
     "deniedHint": "Yeh address software ko chalane ke liye hai. Aap ki dukaan app mein hai."
+  },
+  "pcode": {
+    "title": "Aap ka apna price code",
+    "hint": "Hindson, lakh, hazaar aur sau ke liye aap ke apne nishaan — taake sticker par laagat aur maangi qeemat sirf aap parh sakein",
+    "use": "Apna pattern istemal karein",
+    "useOn": "Sticker par qeematein neeche wale pattern mein chhapengi.",
+    "useOff": "Band: sticker upar wala 10 harfi code word istemal karte hain.",
+    "digits": "Har hindse ka nishaan",
+    "reset": "A se I, Z",
+    "signFor": "Nishaan baraye",
+    "units": "Qeemat ke hajam ke nishaan",
+    "lakh": "Lakh",
+    "thousand": "Hazaar",
+    "hundred": "Sau",
+    "prefix": "Code se pehle (prefix)",
+    "postfix": "Code ke baad (postfix)",
+    "style": "Qeemat kaise likhi jaye",
+    "styles": {
+      "short": {
+        "t": "Mukhtasar",
+        "d": "Aakhir ke zero chhor kar hindse, phir hajam: 285,000 yani 285 aur lakh ka nishaan."
+      },
+      "exact": {
+        "t": "Jaise aap bolte hain",
+        "d": "2 lakh 85 hazaar 5 sau: har hissa apne nishaan ke sath. Kuch nahi chhoot-ta."
+      },
+      "digits": {
+        "t": "Har hindsa",
+        "d": "Saare hindse, zero bhi. Lakh / hazaar ke nishaan nahi."
+      }
+    },
+    "preview": "Aap ki qeematein aisi dikhengi",
+    "try": "Apni koi qeemat aazmayein",
+    "bad": "Har hindse ka apna alag nishaan ho (ek harf ya nishaan), aur lakh, hazaar aur sau ke nishaan alag alag hon.",
+    "overlap": "Hindse aur hajam dono ke liye istemal hua:",
+    "saved": "Save ho gaya. Sticker print karte waqt \"Laagat code mein\" ya \"Maangi qeemat code mein\" par tick lagayein."
   }
 }

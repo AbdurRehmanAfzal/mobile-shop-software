@@ -108,6 +108,9 @@ class Shop(UUIDPk, Timestamped, Base):
     # price stickers (owner 2026-10-30): 10 distinct letters that spell the cost; saved sticker choices
     label_code_word: Mapped[str | None] = mapped_column(String(10))
     label_prefs: Mapped[dict | None] = mapped_column(JSON)
+    # shopkeepers 2026-11-20 (ADR-117): the shop's own pattern for a price in code on a sticker
+    # (labels/pricecode.py); NULL = the 10-letter code word above
+    price_code: Mapped[dict | None] = mapped_column(JSON)
     # owner addendum 4: barcode type / prefix / mode for NEW barcodes, and the last number used
     barcode_prefs: Mapped[dict | None] = mapped_column(JSON)
     # owner addendum 5: valuation (avg | fifo), negative stock, unit table, grades

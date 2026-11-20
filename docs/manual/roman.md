@@ -1245,6 +1245,10 @@ Phir sticker sheet ek dafa chand cheezein poochti hai:
 
 Kuch dukaanein sticker par khareed qeemat dekhna pasand karti hain, lekin aise huroof mein jo customer na parh sake. Ise **Dukaan ki settings → Sticker ka laagat code** mein set karein: 10 alag huroof wala ek lafz likhein, masalan **BLACKHORSE**. Hindsa 0 pehla harf hai, 1 doosra, aur isi tarah. Phir Rs. 45,000 khareed wala phone **KHBBB** print hota hai.
 
+**Aap ka apna price code.** Agar aap ka qeemat likhne ka apna tareeqa pehle se hai to use **Dukaan ki settings → Aap ka apna price code** mein banayein: **Apna pattern istemal karein** chalu karein, har hindse ke liye ek harf ya nishaan likhein (1 = A, 2 = B … 0 = Z), **Lakh**, **Hazaar** aur **Sau** ka nishaan, aur chahein to code se **pehle** aur **baad** kuch. Chunein qeemat kaise likhi jaye — **Mukhtasar** (285,000 → BHE aur lakh ka nishaan), **Jaise aap bolte hain** (2 lakh 85 hazaar → B L HE T) ya **Har hindsa**. **Aap ki qeematein aisi dikhengi** likhte waqt aap ka pattern dikhata hai; wahan apni koi qeemat aazma lein. **Save** ke baad sticker print karte waqt **Laagat code mein** ya **Maangi qeemat code mein** par tick lagayein. Pattern sirf malik aur manager dekhte hain; salesman code wali qeemat print nahi kar sakta.
+
+**Misaal:** 1 = A, 2 = B, 5 = E, 8 = H, lakh = L, pehle ##, baad @@. Rs. 285,000 khareed wala phone **##BHEL@@** print hota hai.
+
 > **Zaroori:** Sirf maalik aur manager sticker par laagat code daal sakte hain. Agar salesman ise on kare, to yeh bas chhor diya jata hai.
 
 ### Barcode settings (maalik)

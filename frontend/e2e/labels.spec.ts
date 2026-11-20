@@ -38,7 +38,7 @@ test('stickers: options sheet, print page with barcode, many at once, cost code 
   await page.getByTestId('sticker-more').click() // ADR-091: the sticker sits beside the details
   await expect(page.getByText('Price sticker')).toBeVisible()
   await page.getByRole('button', { name: '60 × 40 mm' }).click()
-  await page.getByRole('button', { name: 'Cost code' }).click()
+  await page.getByRole('button', { name: 'Cost in code' }).click()
   await page.getByRole('button', { name: '2', exact: true }).click()
   await page.screenshot({ path: 'test-results/label-sheet.png', fullPage: true })
   const [pop] = await Promise.all([page.waitForEvent('popup'), page.getByTestId('sheet-backdrop').getByRole('button', { name: 'Print', exact: true }).click()])

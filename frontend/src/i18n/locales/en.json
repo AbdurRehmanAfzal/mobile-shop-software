@@ -3664,17 +3664,19 @@
       "condition": "Condition",
       "pta": "PTA",
       "date": "Date",
-      "code": "Cost code",
+      "code": "Cost in code",
       "last4": "IMEI last 4",
       "ram": "RAM",
       "battery": "Battery health",
       "cycles": "Battery cycles",
-      "serial": "Serial no. (S/N)"
+      "serial": "Serial no. (S/N)",
+      "pcode": "Asking price in code"
     },
     "shortNote": "A short sticker (under 22 mm high) prints the phone name, price, a large barcode and the IMEI only, so they fit.",
     "bar": "Barcode made from",
     "barImei": "IMEI",
-    "barCode": "Shop's own code"
+    "barCode": "Shop's own code",
+    "codeOwn": "Printed in your own price code (Settings → Your own price code)."
   },
   "otp": {
     "hint": "Write your mobile number. A code comes on WhatsApp; with it you set a new password yourself.",
@@ -5632,5 +5634,41 @@
     "toApp": "Open the shop app",
     "denied": "Only for the software provider",
     "deniedHint": "This address runs the software itself. Your shop is in the app."
+  },
+  "pcode": {
+    "title": "Your own price code",
+    "hint": "Your own signs for the digits, lakh, thousand and hundred — so the cost and the asking price on a sticker can be read only by you",
+    "use": "Use my own pattern",
+    "useOn": "Stickers print prices in the pattern below.",
+    "useOff": "Off: stickers use the 10-letter code word above.",
+    "digits": "A sign for each digit",
+    "reset": "A to I, Z",
+    "signFor": "Sign for",
+    "units": "Signs for the size of the price",
+    "lakh": "Lakh",
+    "thousand": "Thousand",
+    "hundred": "Hundred",
+    "prefix": "Before the code (prefix)",
+    "postfix": "After the code (postfix)",
+    "style": "How the price is written",
+    "styles": {
+      "short": {
+        "t": "Short",
+        "d": "The digits without the zeros at the end, then the size: 285,000 is 285 and the lakh sign."
+      },
+      "exact": {
+        "t": "As you say it",
+        "d": "2 lakh 85 thousand 5 hundred: each part with its sign. Nothing is left out."
+      },
+      "digits": {
+        "t": "Every digit",
+        "d": "All the digits, zeros too. No lakh / thousand signs."
+      }
+    },
+    "preview": "How your prices will look",
+    "try": "Try a price of your own",
+    "bad": "Every digit needs its own sign (one letter or sign each), and lakh, thousand and hundred must differ.",
+    "overlap": "Used for a digit and for a size too:",
+    "saved": "Saved. Tick \"Cost in code\" or \"Asking price in code\" when you print a sticker."
   }
 }
