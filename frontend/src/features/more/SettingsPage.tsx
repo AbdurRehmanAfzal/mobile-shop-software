@@ -12,6 +12,7 @@ import { ErrorText, Loading, PageHeader } from '@/components/ui'
 import { get, patch } from '@/lib/api'
 import BarcodeCard from './BarcodeCard'
 import PriceCodeCard, { type PriceCode } from './PriceCodeCard'
+import PrintersCard from './PrintersCard'
 import FbrCard from './FbrCard'
 import BusinessProfileCards from './BusinessProfile'
 import { useAuth } from '@/lib/auth'
@@ -176,6 +177,7 @@ export default function SettingsPage() {
       <BusinessProfileCards Card={Card} Toggle={Toggle} />
       {/* docs/36 §4: FBR Digital Invoicing */}
       <FbrCard Card={Card} Toggle={Toggle} />
+      <PrintersCard Card={Card} />
       <BarcodeCard Card={Card} />
       <CodeWordCard current={data?.label_code_word ?? null} />
       <PriceCodeCard Card={Card} current={data?.price_code ?? null} />

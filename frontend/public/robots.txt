@@ -6,6 +6,7 @@ Allow: /welcome
 Allow: /accessories-shop-software
 Allow: /laptop-shop-software
 Allow: /used-mobile-shop-software
+Allow: /printer-guide
 Allow: /llms.txt
 Disallow: /api/
 # the software provider's own control room: nothing for a search engine

@@ -39,6 +39,22 @@ def options():
     }
 
 
+@router.get("/printer-test", response_class=HTMLResponse)
+def printer_test(
+    ctx: Ctx,
+    kind: str = Query(pattern="^(sticker|receipt|a4)$"),
+    size: str = Query(default="60x40"),
+    w: float | None = None,
+    h: float | None = None,
+    lang: str | None = Query(default=None, pattern="^(en|ur)$"),
+):
+    """ADR-119: a page of exactly that paper size with a frame, a ruler and a barcode — printed
+    once to pick the printer in the print window and see that the size fits; nothing is saved"""
+    from app.modules.labels import printer_test as pt
+
+    return pt.page(kind, size, w, h, lang or ctx.shop.default_locale)
+
+
 class PriceCodePreview(BaseModel):
     pattern: dict
     amounts: list[Decimal] = Field(default_factory=list, max_length=12)

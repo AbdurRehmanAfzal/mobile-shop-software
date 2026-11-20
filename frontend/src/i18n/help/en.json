@@ -5195,6 +5195,11 @@
       "title": "How the price is written",
       "body": "Short: the digits without the zeros at the end, then the sign of the price's size — quick to read, but 2,500 and 25,000 look the same. As you say it: lakh, thousand and hundred each with their sign — nothing is lost. Every digit: all digits, zeros too.",
       "example": "Rs. 285,500 — Short: BHEEL. As you say it: BLHETEH. Every digit: BHEEZZ."
+    },
+    "printers": {
+      "title": "Printers",
+      "body": "The software does not connect to a printer by itself: when you press Print, your phone or computer opens its own print window and you choose the printer there. This card helps you set each printer up once on this device — say how it is connected, follow the steps, and print the test page. The test page has a frame, a ruler and a barcode: if the whole frame is on the paper and your scanner reads the barcode, the printer is ready. What you choose here is remembered on this device only.",
+      "example": "Sticker printer on a laptop: choose \"USB cable\", install the driver, tap Test print, choose the printer and paper 60 × 40 mm, then tap \"Yes, it printed right\"."
     }
   },
   "biz": {

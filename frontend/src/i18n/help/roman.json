@@ -5195,6 +5195,11 @@
       "title": "Qeemat kaise likhi jaye",
       "body": "Mukhtasar: aakhir ke zero chhor kar hindse, phir qeemat ke hajam ka nishaan — jaldi parha jata hai, magar 2,500 aur 25,000 ek jaise dikhte hain. Jaise aap bolte hain: lakh, hazaar aur sau har ek apne nishaan ke sath — kuch nahi chhoot-ta. Har hindsa: saare hindse, zero bhi.",
       "example": "Rs. 285,500 — Mukhtasar: BHEEL. Jaise bolte hain: BLHETEH. Har hindsa: BHEEZZ."
+    },
+    "printers": {
+      "title": "Printers",
+      "body": "Software khud printer se nahi jurta: jab aap Print dabate hain to aap ka phone ya computer apni print window kholta hai aur aap wahan printer chunte hain. Yeh card har printer ko is device par ek baar set karne mein madad deta hai — batayein woh kaise jura hai, steps par chalein, aur test page print karein. Test page par chaukhta, paimana aur barcode hota hai: agar poora chaukhta kaghaz par aaye aur aap ka scanner barcode parh le to printer tayyar hai. Yahan ka intikhab sirf isi device par yaad rehta hai.",
+      "example": "Laptop par sticker printer: \"USB cable\" chunein, driver install karein, Test print dabayein, printer aur paper 60 × 40 mm chunein, phir \"Haan, theek print hua\" dabayein."
     }
   },
   "biz": {

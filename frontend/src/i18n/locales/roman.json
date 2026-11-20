@@ -5696,5 +5696,226 @@
     "kinds": "Is item ki qismein",
     "none": "Is item ka abhi koi aur rang ya size nahi.",
     "addKind": "Ek aur rang ya size shamil karein"
+  },
+  "printers": {
+    "title": "Printers",
+    "hint": "Apna sticker, raseed aur A4 printer ek baar set karein aur har ek ko test karein",
+    "how": "Software aap ke phone ya computer ki apni print window se print karta hai. Printer ko is device se neeche bataye tareeqe se jorein, test page ek baar print karein aur wahan printer chunein. Us ke baad har Print button wohi printer istemal karta hai.",
+    "device": "Yeh device hai",
+    "pc": "Computer / laptop",
+    "phone": "Phone / tablet",
+    "kind": {
+      "sticker": "Sticker printer",
+      "receipt": "Raseed printer (80 mm)",
+      "a4": "A4 printer"
+    },
+    "kindHint": {
+      "sticker": "Qeemat ke sticker aur repair ke sticker",
+      "receipt": "Chhote bill aur phone ki slip",
+      "a4": "Bare bill, reports, price list"
+    },
+    "conn": "Yeh kaise jura hai?",
+    "c": {
+      "usb": "USB cable",
+      "wifi": "Wi-Fi / LAN",
+      "bluetooth": "Bluetooth"
+    },
+    "size": "Aap ke roll par sticker ka size",
+    "steps": {
+      "pc": {
+        "usb": {
+          "1": "Printer ki USB cable computer mein lagayein aur printer on karein.",
+          "2": "Us ka driver install karein (dabbe ki CD se ya company ki website se). Windows mein Settings → Bluetooth & devices → Printers & scanners kholein: printer list mein hona chahiye.",
+          "3": "Neeche Test print dabayein. Print window mein yeh printer, sahi paper size (apne sticker roll ka size, 80 mm, ya A4), Margins: None, Scale: 100 chunein.",
+          "4": "Windows printer yaad rakhta hai; agli baar sirf Print dabayein."
+        },
+        "wifi": {
+          "1": "Printer ko usi Wi-Fi ya router se jorein jis par yeh computer hai (router tak LAN cable, ya printer ki apni Wi-Fi setting).",
+          "2": "Windows mein Settings → Bluetooth & devices → Printers & scanners → Add device kholein aur printer chunein. Windows driver maange to install karein.",
+          "3": "Neeche Test print dabayein. Print window mein yeh printer, sahi paper size (apne sticker roll ka size, 80 mm, ya A4), Margins: None, Scale: 100 chunein.",
+          "4": "Usi Wi-Fi par koi bhi computer isi tarah printer add kar sakta hai."
+        },
+        "bluetooth": {
+          "1": "Printer on karein. Windows mein Settings → Bluetooth & devices → Add device → Bluetooth kholein aur pair karein (PIN aam taur par 0000 ya 1234 hota hai).",
+          "2": "Ab Printers & scanners kholein. Printer wahan bhi list mein hona chahiye. Agar nahi hai to Windows Bluetooth se is par print nahi kar sakta — is ki USB cable istemal karein.",
+          "3": "Neeche Test print dabayein. Print window mein yeh printer, sahi paper size (apne sticker roll ka size, 80 mm, ya A4), Margins: None, Scale: 100 chunein.",
+          "4": "Printer ko computer se chand meter ke andar rakhein."
+        }
+      },
+      "phone": {
+        "usb": {
+          "1": "OTG adapter chahiye: printer ki USB cable adapter mein, adapter phone mein.",
+          "2": "Play Store se \"RawBT print service\" app install karein, kholein, USB aur apna printer chunein, aur paper ki chaurai set karein (58 mm printer ke liye 48 mm, 80 mm printer ke liye 72 mm).",
+          "3": "Android mein Settings → Connected devices → Printing kholein aur RawBT on karein.",
+          "4": "Neeche Test print dabayein aur print window ke upar RawBT chunein."
+        },
+        "wifi": {
+          "1": "Printer aur phone ko ek hi Wi-Fi par rakhein.",
+          "2": "Android mein Settings → Connected devices → Printing kholein aur Default Print Service on karein (ya Play Store se apne printer ki company ki print app install karein).",
+          "3": "Neeche Test print dabayein. Print window ke upar apna printer aur paper size chunein.",
+          "4": "Agar printer list mein kabhi nahi aata to woh Android se print support nahi karta: computer se print karein."
+        },
+        "bluetooth": {
+          "1": "Printer on karein aur phone ki Bluetooth settings mein pair karein (PIN aam taur par 0000 ya 1234 hota hai).",
+          "2": "Play Store se \"RawBT print service\" app install karein, kholein, apna printer chunein aur paper ki chaurai set karein (58 mm printer ke liye 48 mm, 80 mm printer ke liye 72 mm).",
+          "3": "Android mein Settings → Connected devices → Printing kholein aur RawBT on karein.",
+          "4": "Neeche Test print dabayein aur print window ke upar RawBT chunein."
+        }
+      }
+    },
+    "warn": {
+      "pc": {
+        "bluetooth": "Bohat se chhote Bluetooth printer Windows se pair to ho jate hain magar wahan printer nahi bante. Computer par USB cable pakka tareeqa hai."
+      },
+      "phone": {
+        "usb": "Har phone OTG se printer ko bijli nahi deta. Kuch print na ho to Bluetooth ke sath RawBT ya computer istemal karein.",
+        "wifi": "Yeh zyada tar A4 Wi-Fi printers ke liye chalta hai. Thermal sticker aur raseed printer aam taur par Android se Wi-Fi par print nahi karte.",
+        "bluetooth": "Muft RawBT kaghaz par apni ek line daalta hai; paid wala nahi. A4 printer kam hi Bluetooth hota hai — us ke liye Wi-Fi istemal karein."
+      }
+    },
+    "test": "Test print",
+    "asked": "Kya test page theek print hua — poora chaukhta kaghaz par aaya?",
+    "yes": "Haan, theek print hua",
+    "no": "Nahi",
+    "working": "Chal raha hai · test {{date}}",
+    "notTested": "Abhi test nahi hua",
+    "fixTitle": "Yeh aazmayein",
+    "fix": {
+      "1": "Thermal printer se khali kaghaz: roll ulta laga hai. Use palat dein.",
+      "2": "Chaukhta kat gaya ya bohat chhota hai: print window mein apne roll ka paper size, Margins: None, Scale: 100 chunein.",
+      "3": "Print ke darmiyan khali sticker nikalte hain: printer ka Feed button chand second dabaye rakhein taake woh roll dobara naap le.",
+      "4": "Printer print window mein nahi hai: woh is device par abhi install nahi — upar ke steps dobara karein."
+    },
+    "guide": "Printer guide kholein",
+    "guideHint": "Kaunsa printer lein, sticker ke size, aur har ek ko kaise jorein — misalon ke sath",
+    "perDevice": "Yeh intikhab sirf is device par rehte hain: doosra phone ya computer apna printer khud set karta hai."
+  },
+  "pguide": {
+    "title": "Printer guide",
+    "sub": "Kaunsa printer lein, kaunsa kaghaz, aur use kaise jorein — asaan steps mein",
+    "back": "Wapas",
+    "s1": {
+      "t": "Mukhtasar jawab",
+      "p": {
+        "1": "Sticker: thermal label printer, 60 × 40 mm roll ke sath.",
+        "2": "Chhote bill: 80 mm thermal raseed printer.",
+        "3": "Bare bill aur reports: koi bhi A4 printer.",
+        "4": "Woh printer lein jis mein USB cable aur Wi-Fi / LAN dono hon. USB computer ke sath hamesha chalti hai."
+      }
+    },
+    "s2": {
+      "t": "Yahan print kaise hota hai",
+      "p": "Software khud printer se baat nahi karta. Jab aap Print dabate hain to aap ka phone ya computer apni print window kholta hai aur aap wahan printer chunte hain. Is liye wohi printer software ke sath chalta hai jo us phone ya computer mein printer ke taur par install ho.",
+      "ex": "Misaal: aap \"Print sticker\" dabate hain. Ek window khulti hai jis mein printers ki list hai. Aap apna sticker printer chunte hain, paper 60 × 40 mm, aur Print dabate hain. Agli baar computer use pehle se yaad rakhta hai."
+    },
+    "s3": {
+      "t": "Sticker ke size",
+      "p": "Bare sticker par zyada lines aur bara barcode aata hai. Neeche ki ginti tab ki hai jab saari lines tick hon.",
+      "h": {
+        "1": "Size (chaurai × unchai)",
+        "2": "Kya aata hai",
+        "3": "Mashwara"
+      },
+      "r": {
+        "1": {
+          "1": "60 × 40 mm",
+          "2": "Sab kuch, saaf",
+          "3": "Yehi lein"
+        },
+        "2": {
+          "1": "58 × 40 / 70 × 40 mm",
+          "2": "Sab kuch",
+          "3": "Theek"
+        },
+        "3": {
+          "1": "50 × 30 mm",
+          "2": "Sab kuch, tang",
+          "3": "Taqreeban 7 lines ke liye acha"
+        },
+        "4": {
+          "1": "40 × 30 mm",
+          "2": "Naam, qeemat, barcode, IMEI",
+          "3": "Har line ke liye nahi"
+        },
+        "5": {
+          "1": "38 × 25 / 50 × 25 mm",
+          "2": "Naam, qeemat, barcode",
+          "3": "Sirf chhote sticker"
+        }
+      },
+      "n": "Roll: \"direct thermal\" label roll, stickers ke darmiyan gap wala, ek column. Is mein ink nahi lagti. 58 mm Bluetooth printer sirf 48 mm chaura print karta hai: Custom chunein, chaurai 48."
+    },
+    "s4": {
+      "t": "Jorne ke teen tareeqe",
+      "usb": {
+        "t": "USB cable",
+        "p": "Computer ya laptop ke sath sab se pakka tareeqa. Cable lagayein, driver install karein, bas.",
+        "ex": "Misaal: counter par laptop ke sath rakha sticker printer."
+      },
+      "wifi": {
+        "t": "Wi-Fi / LAN",
+        "p": "Printer aap ke router se jur jata hai. Usi Wi-Fi par har computer print kar sakta hai, aur zyada tar A4 Wi-Fi printer phone se bhi seedha print karte hain.",
+        "ex": "Misaal: counter ke laptop aur malik ke phone ke liye ek A4 printer."
+      },
+      "bluetooth": {
+        "t": "Bluetooth",
+        "p": "Chhote portable printers ke liye jo Android phone ke sath chalte hain. Phone mein RawBT app chahiye. Computer par Bluetooth printer aksar nahi chalte — cable istemal karein.",
+        "ex": "Misaal: stall par 58 mm ka pocket printer aur phone."
+      }
+    },
+    "s5": {
+      "t": "Phone ya computer?",
+      "p": {
+        "1": "Computer ya laptop: sticker, raseed aur A4 sab USB cable se achhe print hote hain. Yeh sab se pakka setup hai.",
+        "2": "Android phone ya tablet: A4 Wi-Fi printer chalta hai. Thermal sticker ya raseed printer Bluetooth par RawBT app ke sath chalta hai.",
+        "3": "iPhone / iPad: sirf woh printer jo AirPrint support karte hain (bohat se A4 Wi-Fi printer). Thermal printer aam taur par nahi."
+      }
+    },
+    "s6": {
+      "t": "Software mein set karein",
+      "p": {
+        "1": "More → Dukaan ki settings → Printers kholein.",
+        "2": "Chunein har printer kaise jura hai. Aap ke device ke steps saamne aa jate hain.",
+        "3": "Test print dabayein. Chaukhte, paimane aur barcode wala page print hota hai.",
+        "4": "Agar poora chaukhta kaghaz par hai aur aap ka scanner barcode parh leta hai to \"Haan, theek print hua\" dabayein."
+      }
+    },
+    "s7": {
+      "t": "Agar kuch ghalat ho",
+      "r": {
+        "1": {
+          "1": "Khali kaghaz nikalta hai",
+          "2": "Thermal roll ulta laga hai. Use palat dein."
+        },
+        "2": {
+          "1": "Print kat jata hai ya bohat chhota hai",
+          "2": "Print window mein: apne roll ka paper size, Margins: None, Scale: 100."
+        },
+        "3": {
+          "1": "Print ke darmiyan khali sticker",
+          "2": "Feed button chand second dabaye rakhein taake printer roll dobara naap le."
+        },
+        "4": {
+          "1": "Barcode scan nahi hota",
+          "2": "Bara sticker lein ya kuch lines ka tick hatayein taake barcode bara ho. Printer ka head saaf karein."
+        },
+        "5": {
+          "1": "Printer list mein nahi hai",
+          "2": "Woh is phone ya computer par install nahi. Us ka driver (computer) ya RawBT / print service (Android) install karein."
+        }
+      }
+    },
+    "s8": {
+      "t": "Khareedne se pehle dukandar se poochein",
+      "p": {
+        "1": "Kya is mein USB aur Wi-Fi / LAN dono hain?",
+        "2": "Kya is ka Windows driver milta hai? Dukaan par laptop se ek test print karwa lein.",
+        "3": "Sticker printer: kya yeh 60 × 40 mm gap wala roll leta hai?",
+        "4": "Raseed printer: kya yeh 80 mm ka hai (58 mm nahi) aur auto-cutter hai?",
+        "5": "Agar na chale to wapsi ya tabdeeli ho sakti hai?"
+      }
+    },
+    "note": "Xprinter, Zebra aur Epson jaise brand yeh printer banate hain. Yeh sirf misalein hain; hum ne koi model test nahi kiya. Rolls ka poora carton lene se pehle 5 se 10 sticker print kar ke scan zaroor karein.",
+    "toSettings": "Apne printer set karein"
   }
 }

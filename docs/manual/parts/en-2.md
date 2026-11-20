@@ -437,6 +437,21 @@ Every phone and every item in Mobile Shop gets its own barcode the moment it is 
 - The barcode shows on the phone's page under the IMEI (**Barcode: MS000006**) and on each item's row.
 - A box that already has the maker's barcode can use it too: when buying, scan it into **Maker's barcode (optional)**. You can also type your own code in **Own barcode (optional)**.
 
+### Set up your printers
+
+The software prints through your phone's or computer's own print window, so each printer is set up once on the device that prints.
+
+1. Open **More → Shop settings → Printers**.
+2. For the **Sticker printer**, the **Receipt printer (80 mm)** and the **A4 printer**, tap how it is connected: **USB cable**, **Wi-Fi / LAN** or **Bluetooth**. The steps for your device appear (choose **Computer / laptop** or **Phone / tablet** at the top if it guessed wrong).
+3. Follow the steps, then tap **Test print**. A page with a frame, a ruler and a barcode prints. In the print window choose the printer, the right paper size, **Margins: None**, **Scale: 100**.
+4. If the whole frame is on the paper and your scanner reads the barcode, tap **Yes, it printed right**. The printer now shows **Working**. If not, tap **No** and try what the list says.
+
+**Open the printer guide** on the same card explains which printer to buy, the sticker sizes and each way of connecting, with examples. Anyone can read it, without a login, at `/printer-guide`.
+
+**Example:** a sticker printer beside the laptop: tap **USB cable**, install the driver, choose **60 × 40**, tap **Test print**, pick the printer in the window, then **Yes, it printed right**.
+
+> On an Android phone, a small Bluetooth sticker or receipt printer needs the **RawBT print service** app. An A4 Wi-Fi printer usually prints straight from the phone.
+
 ### Print a price sticker
 
 You can print stickers from several places:
