@@ -541,6 +541,12 @@ Screen par teen tabs hain: **Stock mein**, **Kam stock** aur **Baqi accessories*
 7. Agar mazeed bharna chahte hain to **Mazeed tafseel** dabayein. Yeh sab ikhtiyari hai: **Brand**, **Kis phone par lagta hai** (masalan "iPhone 14/15, Samsung A series"), **Quality** (Original, Company / OEM, A-grade, Copy / China, Used), **Rang**, **Size**, **Capacity (mAh / GB)**, **Connector**, **Watt**, **Wholesale qeemat**, **Kam se kam qeemat** (**200**), **Promo qeemat** us ki tareekhon ke saath, **Warranty (din)**, **Shelf / rack**, **Ziyada se ziyada stock**, **Supplier ke code** aur **Note / tafseel**.
 8. **Save karein** dabayein. Item ko foran apna code aur barcode mil jata hai.
 
+**Jaldi ka tareeqa: pehle se maujood list.** Software mein 2,400 se zyada accessories pehle se maujood hain. Naam likhna shuru karein — "anker 20w", "wireless mouse", "a56 glass", "hp 840 charger" — to **Pehle se maujood list se** ke neeche lines aa jati hain. Ek dabayein: naam, qisam, brand, watt, connector aur kis par lagta hai khud bhar jata hai; jo chahein badal lein. Jis line par **Aap ke stock mein hai** likha ho woh aap ke paas pehle se hai.
+
+**Rang aur size.** **Jo rang ya size aap rakhte hain** ke neeche har rang par tick lagayein (ya **Size ya lambai**, ya **Kuch aur** chunein), ya **Apna shamil karein** mein khud likhein. Har ek ke aage likhein **Abhi shelf par** kitne hain. **Save** par har tick wala apna alag item banta hai, apni ginti, barcode aur sticker ke sath, sab ek hi naam ke neeche — taake hamesha pata ho kitne kaale aur kitne safed bache hain. Baad mein in mein se koi bhi khol kar **Is item ki qismein** ke neeche **Ek aur rang ya size shamil karein** dabayein.
+
+**Misaal:** "anker 65w" likhein, **Anker 65W GaN Charger** dabayein, **Black** (shelf par 5) aur **White** (3) par tick lagayein, sale qeemat 6,500, fi piece laagat 4,000 → do item bante hain: Anker 65W GaN Charger · Black 5 ke sath, aur · White 3 ke sath.
+
 Agar bilkul milta julta item pehle se maujood ho, to app **Milte julte item pehle se maujood** dikhati hai, taa ke aap ek hi item do baar na banayein.
 
 > **Mashwara:** Jab masroof hon to form chhota rakhein. Naam, qeemat aur tadaad kaafi hain; baqi baad mein item ke page par **Badlein** se bhar sakte hain.

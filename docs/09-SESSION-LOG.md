@@ -2210,3 +2210,21 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: the shopkeepers try their own patterns.
 
 **Open questions**: one pattern for both prices or one each; the code on the slip / A4 page.
+
+## 2026-11-20 (6) — Built-in accessories list and variants (ADR-118)
+
+**Asked (owner)**: analyse xcessorieshub.com (an accessories business that wants the software) and say whether the software fits; then, after their answer: for the shop only — many accessories built in so an item is searched, picked and added to stock; variants built in, and addable by the shop; WooCommerce sync and courier / COD later.
+
+**Done**
+- Analysis from the site's home page and public product list (3,114 products, about 40% with variants, WooCommerce, one shop in Lahore, also sells phones / tablets / laptops): fits for counter, stock and accounts; missing were variants, site sync and courier / COD.
+- Backend: `accessories.variant_group / variant` (migration `b4d6f8a0c2e4`), `service.create(commit=)`, `create_with_variants`, `add_variants`, `variants_of`, routes `POST /accessories/with-variants`, `GET` / `POST /accessories/{id}/variants`, `GET /accessories/library`; the item search also matches the variant. `seeds/accessory_library.py` (185 kinds of product, 2,480 lines with brands) and `accessories/library.py` (in-memory search + lines made per catalogue model).
+- App: `ItemVariants.tsx` (`LibraryHits`, `VariantPicker`, `KindsCard`), used by the item form, the item page, the items list and the sale / purchase picker; texts and two help terms in three languages; manual ch. accessories.
+
+**Verified**
+- pytest: `test_accessory_variants` (4): the list finds products and things for a model and writes nothing; one item per variant with own SKU / barcode / stock and the opening stock in the books; search by label; a variant added later copies the card not the stock; a repeated label refused; a sale moves only that variant; all-or-none; old items untouched; another shop and a technician refused. Full suite: **not finished when this was committed** — the first run stopped at the setup of one installments test (the brand list came back as an error while browser tests ran on the same PC); that test passes alone; a second full run was at 28% with no failure when the owner asked for the push. CI runs the suite on the pull request.
+- ruff clean; tsc clean; vitest 66 passed.
+- Playwright: `accessory-library-variants.spec` passes (list fills the card, three variants made with counts, 320 px, the item page's kinds and one added, "In your stock", a cover made for a model, a sale of one colour). `accessories.spec`, `items.spec`, `item-params.spec` and `accessories-only.spec` pass. The full Playwright suite was not run.
+
+**Next**: the shop's own list of missing products and brands; then whichever "later" item they ask for.
+
+**Open questions**: order of WooCommerce sync / courier and COD / variants grid.

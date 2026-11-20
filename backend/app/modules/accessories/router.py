@@ -15,10 +15,12 @@ from app.modules.accessories.schemas import (
     AccessoryCreate,
     AccessoryOut,
     AccessoryUpdate,
+    AccessoryWithVariants,
     AdjustIn,
     BulkPriceIn,
     MovementOut,
     PendingItemOut,
+    VariantsIn,
 )
 from app.modules.sales.schemas import VoidIn
 from app.modules.shopaudit.router import plain
@@ -246,6 +248,27 @@ def report_suppliers(
     return plain(inv.supplier_summary(db, ctx.shop_id, d_from, d_to))
 
 
+@router.get("/library")
+def library(
+    ctx: Ctx,
+    db: DB,
+    q: str = Query(min_length=2, max_length=80),
+    limit: int = Query(default=30, ge=1, le=60),
+):
+    """ADR-118: the built-in list of accessories — kinds of product per brand, and covers, glass,
+    batteries and parts for the models in the catalogue; read-only"""
+    from app.modules.accessories import library as lib
+
+    return lib.search(db, ctx.shop_id, q, limit)
+
+
+@router.post("/with-variants", response_model=list[AccessoryOut], status_code=201)
+def create_with_variants(data: AccessoryWithVariants, ctx: Transact, db: DB):
+    """ADR-118: a product and its variants in one go — one item per variant, all or none"""
+    rows = service.create_with_variants(db, ctx.shop_id, ctx.id, data)
+    return [service.to_out(a, ctx.can(Cap.VIEW_COST), shop=ctx.shop) for a in rows]
+
+
 @router.post("", response_model=AccessoryOut, status_code=201)
 def create(data: AccessoryCreate, ctx: Transact, db: DB):
     return service.to_out(service.create(db, ctx.shop_id, ctx.id, data), ctx.can(Cap.VIEW_COST))
@@ -256,6 +279,23 @@ def get(accessory_id: uuid.UUID, ctx: Ctx, db: DB):
     return service.to_out(
         service.get_accessory(db, ctx.shop_id, accessory_id), ctx.can(Cap.VIEW_COST), db, ctx.shop
     )
+
+
+@router.get("/{accessory_id}/variants", response_model=list[AccessoryOut])
+def variants(accessory_id: uuid.UUID, ctx: Ctx, db: DB):
+    """the other kinds of the same product (the item itself when it has none)"""
+    a = service.get_accessory(db, ctx.shop_id, accessory_id)
+    return [
+        service.to_out(x, ctx.can(Cap.VIEW_COST), shop=ctx.shop)
+        for x in service.variants_of(db, ctx.shop_id, a)
+    ]
+
+
+@router.post("/{accessory_id}/variants", response_model=list[AccessoryOut], status_code=201)
+def add_variants(accessory_id: uuid.UUID, data: VariantsIn, ctx: Transact, db: DB):
+    """more kinds of an item that exists: the product card is copied, the stock is not"""
+    rows = service.add_variants(db, ctx.shop_id, ctx.id, accessory_id, data)
+    return [service.to_out(x, ctx.can(Cap.VIEW_COST), shop=ctx.shop) for x in rows]
 
 
 @router.get("/{accessory_id}/price")

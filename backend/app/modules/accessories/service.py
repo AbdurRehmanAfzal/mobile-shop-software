@@ -36,7 +36,14 @@ def _sku(db: Session, shop_id: uuid.UUID, name: str) -> str:
     return f"{base}-{n:03d}"
 
 
-def create(db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, data: AccessoryCreate) -> Accessory:
+def create(
+    db: Session,
+    shop_id: uuid.UUID,
+    user_id: uuid.UUID,
+    data: AccessoryCreate,
+    *,
+    commit: bool = True,
+) -> Accessory:
     sku = (data.sku or _sku(db, shop_id, data.name)).strip().upper()
     if db.scalar(select(Accessory.id).where(Accessory.shop_id == shop_id, Accessory.sku == sku)):
         raise Conflict(
@@ -101,8 +108,93 @@ def create(db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, data: AccessoryC
         action="create",
         after={"sku": a.sku, "name": a.name},
     )
-    db.commit()
+    if commit:
+        db.commit()
     return a
+
+
+# ---- variants (ADR-118) -----------------------------------------------------
+
+
+def _variant_rows(
+    db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, card: dict, data, group: uuid.UUID
+) -> list[Accessory]:
+    """one ordinary item per variant, each made by `create` (its own SKU, barcode, opening
+    stock and books), tied by the group; nothing is committed here"""
+    out = []
+    for v in data.variants:
+        body = {
+            **card,
+            # a code typed for the product cannot belong to every variant: each gets its own
+            "sku": None,
+            "barcode": None,
+            "opening_qty": v.opening_qty,
+            "opening_cost": v.opening_cost
+            if v.opening_cost is not None
+            else card.get("opening_cost") or 0,
+            "price": v.price if v.price is not None else card.get("price") or 0,
+        }
+        if data.variant_by == "color":
+            body["color"] = v.label[:40]
+        elif data.variant_by == "size":
+            body["size"] = v.label[:40]
+        a = create(db, shop_id, user_id, AccessoryCreate(**body), commit=False)
+        a.variant_group = group
+        a.variant = v.label
+        out.append(a)
+    db.flush()
+    return out
+
+
+def create_with_variants(
+    db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, data
+) -> list[Accessory]:
+    card = data.model_dump(exclude={"variants", "variant_by"})
+    rows = _variant_rows(db, shop_id, user_id, card, data, uuid.uuid4())
+    db.commit()
+    return rows
+
+
+def variants_of(db: Session, shop_id: uuid.UUID, a: Accessory) -> list[Accessory]:
+    """the item and the other kinds of the same product, in the order they were made"""
+    if a.variant_group is None:
+        return [a]
+    return list(
+        db.scalars(
+            select(Accessory)
+            .where(Accessory.shop_id == shop_id, Accessory.variant_group == a.variant_group)
+            .order_by(Accessory.created_at, Accessory.sku)
+        ).all()
+    )
+
+
+def add_variants(
+    db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, accessory_id: uuid.UUID, data
+) -> list[Accessory]:
+    """more kinds of an item that exists: its product card is copied, its stock is not. An item
+    that stood alone becomes the first of the group (its own label is its colour or size)."""
+    a = get_accessory(db, shop_id, accessory_id)
+    have = {(x.variant or "").lower() for x in variants_of(db, shop_id, a)}
+    twice = [v.label for v in data.variants if v.label.lower() in have]
+    if twice:
+        raise Conflict(
+            code="variant_exists",
+            message_en=f"This variant is already there: {twice[0]}",
+            message_ur=f"یہ قسم پہلے سے موجود ہے: {twice[0]}",
+        )
+    if a.variant_group is None:
+        a.variant_group = uuid.uuid4()
+        a.variant = a.variant or (a.color if data.variant_by == "color" else a.size) or None
+    card = {
+        k: getattr(a, k)
+        for k in AccessoryCreate.model_fields
+        if k not in ("sku", "barcode", "barcode_type", "manufacturer_code", "supplier_skus")
+        and hasattr(a, k)
+    }
+    card["opening_cost"] = 0
+    _variant_rows(db, shop_id, user_id, card, data, a.variant_group)
+    db.commit()
+    return variants_of(db, shop_id, a)
 
 
 def update(
@@ -390,6 +482,7 @@ def list_accessories(
                 Accessory.barcode.ilike(like),
                 Accessory.manufacturer_code.ilike(like),
                 Accessory.brand.ilike(like),
+                Accessory.variant.ilike(like),
                 Accessory.compatible.ilike(like),
                 Accessory.id.in_(sup),
             )

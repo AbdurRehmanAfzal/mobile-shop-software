@@ -2625,6 +2625,16 @@
         "body": "Tamam cheezein, ya sirf ek qisam. Har tabdeeli har cheez ki history mein rehti hai.",
         "example": "Qisam \"Glass protector\" → sirf glass ki qeematein badlein gi."
       }
+    },
+    "library": {
+      "title": "Accessories ki pehle se maujood list",
+      "body": "Software mein 2,400 se zyada accessories pehle se maujood hain: charger, cable, power bank, earbuds, cover, glass, laptop aur computer ka saaman aur gadget, brand ke hisaab se. Naam ke chand huroof likhein aur line dabayein: qisam, brand, watt, connector aur kis par lagta hai khud bhar jata hai. Phone ya laptop ke model ke sath \"cover\", \"glass\", \"battery\" ya \"charger\" likhein to usi model ki woh cheez milti hai. Save karne se pehle kuch bhi badal sakte hain. Aap ki cheez list mein na ho to khud likh dein.",
+      "example": "\"anker 20w\" likhein → \"Anker 20W USB-C Charger\" dabayein. \"a56 glass\" likhein → \"Tempered Glass for Samsung Galaxy A56\"."
+    },
+    "variants": {
+      "title": "Rang, size aur doosri qismein",
+      "body": "Ek hi cheez aksar kai rangon, lambaiyon ya size mein aati hai. Jo rakhte hain un par tick lagayein (ya apna shamil karein) to har ek apna alag item banta hai: apni ginti, apna barcode, apna sticker — taake hamesha pata ho kitne kaale aur kitne safed bache hain. Yeh ek hi naam ke neeche ikatthe rehte hain, aur item ke page se baad mein ek aur rang shamil kar sakte hain.",
+      "example": "Anker Nano Charger 65W kaala (5), safed (3) aur surkh (0) → teen item, har ek ka apna stock."
     }
   },
   "repair": {

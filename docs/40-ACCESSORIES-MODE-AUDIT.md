@@ -33,7 +33,7 @@ record: ADR-109. This is the report the brief asks for after phases 1 and 2.
 | 3 | The "Accessory or watch bought" form and every field listed | ✅ | `accessories` product card (ADR-037): name, kind (+ own kinds), prices, reorder, brand, colour, fits, quality, size, capacity, connector, watts, warranty and by whom, pieces per box / carton, fixed or markup pricing, wholesale / minimum / promo price, GST, maximum stock, shelf, notes, supplier codes |
 | 3 | Sections, category-dependent fields | 🟡 | the form folds the extra fields under "More details"; not split by kind |
 | 3 | SKU and barcode per item, supplier codes, preferred supplier | ✅ | `sku`, `barcode` (ADR-036), `accessory_supplier_skus` |
-| 3 | Parent product with variants (colour / connector / model) | ❌ | each variant is its own item today |
+| 3 | Parent product with variants (colour / connector / model) | ➕ | ADR-118 (2026-11-20): variants are items of one group (`variant_group`, `variant`), made together or added later; a built-in list of 2,480 accessories fills the card |
 | 3 | Subcategories | ❌ | one level of kinds (the shop adds its own) |
 | 3 | Creating a product does not add stock; opening stock explicit | ✅ | `opening_qty` is a separate, explicit field (tested: a new item has 0) |
 | 4 | Quantity tracking for accessories, IMEI / serial for devices | ✅ | as above |

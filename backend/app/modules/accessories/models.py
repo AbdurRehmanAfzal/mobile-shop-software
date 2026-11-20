@@ -97,6 +97,11 @@ class Accessory(UUIDPk, ShopScoped, Timestamped, Base):
     )
     image_path: Mapped[str | None] = mapped_column(String(500))
     description: Mapped[str | None] = mapped_column(Text)
+    # accessories shops 2026-11-20 (ADR-118): kinds of one product (colour, length, size). Each
+    # variant is this ordinary row with its own stock, cost, SKU and barcode; the group ties
+    # them together and `variant` is this one's label. NULL = an item on its own.
+    variant_group: Mapped[uuid.UUID | None] = mapped_column(Uuid, index=True)
+    variant: Mapped[str | None] = mapped_column(String(60))
 
 
 class AccessoryMovement(UUIDPk, ShopScoped, Base):

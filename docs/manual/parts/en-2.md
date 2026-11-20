@@ -541,6 +541,12 @@ The screen has three tabs: **In stock**, **Low stock** and **Pending accessories
 7. Tap **More details** if you want to fill in more. All of it is optional: **Brand**, **Fits (phone / model)** (for example "iPhone 14/15, Samsung A series"), **Quality** (Original, Company / OEM, A-grade, Copy / China, Used), **Colour**, **Size**, **Capacity (mAh / GB)**, **Connector**, **Watts**, **Wholesale price**, **Minimum sale price** (**200**), **Promo price** with its dates, **Warranty (days)**, **Shelf / rack**, **Maximum stock**, **Supplier codes** and **Notes / description**.
 8. Tap **Save**. The item gets its own code and barcode straight away.
 
+**Faster: the built-in list.** More than 2,400 accessories are already in the software. Start typing the name — "anker 20w", "wireless mouse", "a56 glass", "hp 840 charger" — and lines appear under **From the built-in list**. Tap one: the name, category, brand, watts, connector and what it fits are filled in for you; change anything you like. A line marked **In your stock** is one you already have.
+
+**Colours and sizes.** Under **Colours or sizes you keep** tick each colour (or choose **Size or length**, or **Something else**), or write your own under **Add your own**. Write how many of each are **On the shelf now**. On **Save** every ticked one becomes its own item, with its own count, barcode and sticker, all under the same name — so you always know how many black and how many white are left. Later, open any of them and tap **Add another colour or size** under **Kinds of this item**.
+
+**Example:** type "anker 65w", tap **Anker 65W GaN Charger**, tick **Black** (5 on the shelf) and **White** (3), sale price 6,500, cost each 4,000 → two items are made: Anker 65W GaN Charger · Black with 5, and · White with 3.
+
 If a very similar item already exists, the app shows **Similar items already in stock**, so you do not make the same item twice.
 
 > **Tip:** Keep the form short when you are busy. Name, price and quantity are enough; you can fill in the rest later with **Edit** on the item's page.

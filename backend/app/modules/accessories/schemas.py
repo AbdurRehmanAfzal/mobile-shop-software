@@ -78,6 +78,42 @@ class AccessoryCreate(AccessoryDetails):
         return clean_category(v)
 
 
+class VariantIn(BaseModel):
+    """one kind of the product: its label, and what is on the shelf now"""
+
+    label: str = Field(min_length=1, max_length=60)
+    opening_qty: int = Field(default=0, ge=0)
+    opening_cost: Decimal | None = Field(default=None, ge=0)
+    price: Decimal | None = Field(default=None, ge=0)
+
+    @field_validator("label")
+    @classmethod
+    def _label(cls, v: str) -> str:
+        v = " ".join(v.split())
+        if not v:
+            raise ValueError("Write the variant")
+        return v
+
+
+class VariantsIn(BaseModel):
+    """what the variants differ by — colour, a size / length, or something else — and the list"""
+
+    variant_by: str = Field(default="color", pattern="^(color|size|other)$")
+    variants: list[VariantIn] = Field(min_length=1, max_length=40)
+
+    @field_validator("variants")
+    @classmethod
+    def _distinct(cls, v: list[VariantIn]) -> list[VariantIn]:
+        seen = {x.label.lower() for x in v}
+        if len(seen) != len(v):
+            raise ValueError("The same variant is written twice")
+        return v
+
+
+class AccessoryWithVariants(AccessoryCreate, VariantsIn):
+    """a product and its variants in one go (ADR-118): one item per variant, all or none"""
+
+
 class AccessoryUpdate(AccessoryDetails):
     name: str | None = Field(default=None, min_length=1, max_length=150)
     name_ur: str | None = None
@@ -136,6 +172,8 @@ class AccessoryOut(BaseModel):
     compatible: str | None = None
     compatible_model_ids: list[uuid.UUID] | None = None
     grade: str = "unspecified"
+    variant_group: uuid.UUID | None = None
+    variant: str | None = None
     color: str | None = None
     size: str | None = None
     capacity: str | None = None

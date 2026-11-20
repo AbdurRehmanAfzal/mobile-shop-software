@@ -19,6 +19,7 @@ import { ItemReserve } from '@/features/stock/ReserveCard'
 import { useAuth } from '@/lib/auth'
 import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
 import ItemForm from './ItemForm'
+import { KindsCard } from './ItemVariants'
 import DeviceLineSheet, { draftToApi, emptyDraft } from '@/features/purchase/DeviceLineSheet'
 import { post } from '@/lib/api'
 import { gradeLabel, unitLabel, type Batch, type Item, type TimelineRow } from './types'
@@ -30,6 +31,7 @@ export default function AccessoryDetailPage() {
   const multiShop = useAuth((s) => (s.me?.shops.length ?? 0) > 1)
   const { pick, ur, cls } = useLang()
   const canCost = useAuth((s) => s.me?.user.role === 'owner' || s.me?.user.role === 'manager')
+  const canAdd = useAuth((s) => !!s.me && s.me.user.role !== 'technician')
   const exists = (k: string) => i18next.exists(k)
   const { data: it, isLoading } = useGet<Item>(['item', id], id ? `/api/v1/accessories/${id}` : null)
   const { data: batches } = useGet<Batch[]>(['item-batches', id], id && canCost ? `/api/v1/accessories/${id}/batches` : null)
@@ -108,6 +110,8 @@ export default function AccessoryDetailPage() {
         {it.supplier_skus?.length ? <KV k="acc.supplierSkus" help="items.supplierSkus" v={<span className="flex flex-col items-end">{it.supplier_skus.map((x, i) => <span key={i} dir="ltr">{x.sku}{x.party_name ? ` · ${x.party_name}` : ''}</span>)}</span>} /> : null}
         {it.description ? <KV k="acc.description" help="common.notes" v={it.description} /> : null}
       </div>
+
+      <KindsCard item={it} canAdd={canAdd} />
 
       {canCost ? (
         <Section title="acc.batches" help="items.batches">

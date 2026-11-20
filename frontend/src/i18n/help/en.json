@@ -2625,6 +2625,16 @@
         "body": "All items, or only one category. Every change is kept in each item's history.",
         "example": "Category \"Glass protector\" → only glass prices change."
       }
+    },
+    "library": {
+      "title": "The built-in list of accessories",
+      "body": "More than 2,400 accessories are already in the software: chargers, cables, power banks, earbuds, covers, glass, laptop and computer goods and gadgets, by brand. Type a few letters of the name and tap a line: the kind, brand, watts, connector and what it fits are filled in for you. Write a phone or laptop model with \"cover\", \"glass\", \"battery\" or \"charger\" and you get that thing for that model. You can change anything before saving. If your item is not in the list, just write it yourself.",
+      "example": "Type \"anker 20w\" → tap \"Anker 20W USB-C Charger\". Type \"a56 glass\" → \"Tempered Glass for Samsung Galaxy A56\"."
+    },
+    "variants": {
+      "title": "Colours, sizes and other kinds",
+      "body": "One product often comes in several colours, lengths or sizes. Tick the ones you keep (or add your own) and each becomes its own item: its own count, its own barcode, its own sticker — so you always know how many black and how many white are left. They stay together under the same name, and you can add another colour later from the item's page.",
+      "example": "Anker Nano Charger 65W in Black (5), White (3) and Red (0) → three items, each with its own stock."
     }
   },
   "repair": {

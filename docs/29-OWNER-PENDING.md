@@ -315,11 +315,14 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **Your own price code (2026-11-20, ADR-117)**: one small migration (`a3c5e7f9b1d2`, a new empty column on `shops`) runs by itself with the deploy; nothing to type. To test: More → Shop settings → **Your own price code** → switch on **Use my own pattern**. Write your own letters for 1–9 and 0, the signs for Lakh / Thousand / Hundred, `##` before and `@@` after. Under **How your prices will look** Rs. 285,000 must read `##BHEL@@` (with A–I, Z and L). Try a price of your own; try the three ways of writing. **Save**. Open any phone → the sticker → tick **Cost in code** and **Asking price in code**: the preview must show both in your code; print one. Log in as a salesman: the two ticks must not be there. Switch the pattern off again and the sticker must go back to the 10-letter word. Shops that never switch it on see no change.
 
+**Built-in accessories list and variants (2026-11-20, ADR-118)**: one small migration (`b4d6f8a0c2e4`, two empty columns on `accessories`) runs by itself with the deploy. To test: Chargers, covers etc. → **New item** → type "anker 65w": lines appear under **From the built-in list**; tap **Anker 65W GaN Charger** — name, category, brand and watts fill themselves. Under **Colours or sizes you keep** tick Black and White, add one of your own, write how many of each are on the shelf, the sale price and cost, **Save**: the list must show one item per colour, each with its own count. Open one: **Kinds of this item** lists them; tap **Add another colour or size**. Type "a56 glass" and "hp 840 charger" in a new item: glass for that phone and a charger for that laptop must be offered. Sell one colour: only its count may drop. **For the accessories shop (xcessorieshub)**: open its shop with Accessories (+ Laptops, and "Without mobiles" only if it really keeps no phones — its website sells phones too); show the owner the built-in list and ask which products or brands he misses — send me that list and I add the lines.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |
 |---|---|---|
 | [ ] | Grace days after plan end: 7 or 15? | 7 |
+| [ ] | Accessories shop (xcessorieshub): which of the "later" items first — WooCommerce stock / order sync, courier and COD, or a variants grid with totals? | None until they ask |
 | [ ] | Price code: the same pattern for cost and asking (built), or a separate pattern for each? Also print the code on the phone's slip / A4 page? | One pattern; stickers only |
 | [ ] | Old balance: a promised return date (like len-den) and reminders for it? Needs a new column | Not built |
 | [ ] | Control room on its own sub-domain (e.g. `control.oopsolutions.com`)? Needs a DNS record and a Traefik rule on the server; `/control` works today | `/control` on the present domain |
