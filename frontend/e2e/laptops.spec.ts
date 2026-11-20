@@ -43,7 +43,8 @@ test('laptops: off by default; switched on, a used laptop is bought, shown in st
   await expect(page.getByTestId('devcat-laptop')).toHaveCount(0)
   await expect(page.getByRole('button', { name: 'Dell', exact: true })).toHaveCount(0)
   await page.goto('/stock')
-  await expect(page.getByTestId('stock-kinds')).not.toContainText('Laptops')
+  await expect(page.getByTestId('kind-laptop')).toHaveCount(0)
+  await expect(page.getByTestId('kind-locked-laptops')).toBeVisible() // ADR-122: not in the package, and it says so
 
   // 2. the provider switches laptops on for this shop
   const sup = await (await request.post('/api/v1/auth/login', { data: { phone: SUPER.phone, password: SUPER.password } })).json()

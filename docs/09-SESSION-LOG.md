@@ -2280,3 +2280,21 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: the accessories shop's word on the new purchase.
 
 **Open questions**: one merged list of devices and items; the four-step form on the items' own "New item" too.
+
+## 2026-11-21 (2) — What a shop trades: three ticks, and "not in your package" (ADR-122)
+
+**Asked (owner)**: when the super admin gives a shop accessories, it should see only that side of purchase — mobiles and laptops hidden, with a line that they are not in its package and a WhatsApp link to ask; the same for laptop and mobile shops; any mix; plan it and build it without disturbing what exists.
+
+**Done**
+- Found the mixes already possible (ADR-109); built what was missing: `TradePicker` (three ticks for the provider, in the shop sheet and in "Open a new shop"), `NotInPackage` (locked chips on the stock screen, a note on the purchase step, a WhatsApp message already written), the item button gated by the accessories line, and `order.apply` keeping a shop without accessories that way.
+- Also pushed ADR-121 as PR #104.
+
+**Verified**
+- pytest: `test_business_lines` (6, one new: a package order keeps mobiles-only and laptops-only shops as they are, and a plan-following shop gets its package). Full suite: still running (no failure so far) when the owner asked for the push; CI runs it on the pull request.
+- ruff clean; tsc clean; vitest 66 passed.
+- Playwright: `package-lines.spec` (new: the provider opens a laptops + accessories shop with the ticks, the last line cannot be unticked; that shop sees a locked Mobiles chip, the note with the shop's name, number and line in the WhatsApp message, the note on the purchase step, Urdu, 320 px; a plain mobile shop sees a locked Laptops chip; the provider's login sees none). Passing with one changed assertion: `laptops` (the chip check). Unchanged and passing: `accessories-only`, `easy-items`, `stock-screen`, `items`, `item-params`. The full Playwright suite was not run.
+- Not verified: the WhatsApp link was checked as a link (number and text), not by sending a message.
+
+**Next**: the owner's word on showing the note to existing mobile shops.
+
+**Open questions**: the note for every shop or only marked ones; prices per line.

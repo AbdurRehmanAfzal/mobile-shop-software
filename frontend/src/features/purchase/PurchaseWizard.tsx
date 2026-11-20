@@ -7,6 +7,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import PayPicker, { PartPay, billPayReady, billPayment, newPay, type PayState } from '@/components/PayPicker'
+import NotInPackage from '@/components/NotInPackage'
 import StockItemPicker from '@/components/StockItemPicker'
 import PartyPicker from '@/components/PartyPicker'
 import { BtnText, Chip, ErrorText, IconChip, MoneyText, PageHeader, Sheet, Stepper } from '@/components/ui'
@@ -220,7 +221,9 @@ export default function PurchaseWizard() {
           {/* owner 2026-11-15 (ADR-085): a locked phone (iCloud / FRP), for parts or to sell as it is */}
           {trade.mobiles ? <div className="flex items-center gap-1"><BiButton text="locked.add" icon={<Lock size={20} />} variant="secondary" className="flex-1" onClick={() => setEditing({ ...emptyDraft('', kind), lock_type: 'icloud', condition: 'used', pta_status: 'unknown' })} data-testid="add-locked" /><Help term="locked.lock" size="sm" /></div> : null}
 
-          <div className="flex items-center gap-1"><BiButton text="items.buyButton" icon={<Watch size={22} />} variant={trade.devices ? 'secondary' : 'primary'} className="flex-1" onClick={() => setPickingItem(true)} /><Help term="purchase.items" size="sm" /></div>
+          {trade.accessories ? <div className="flex items-center gap-1"><BiButton text="items.buyButton" icon={<Watch size={22} />} variant={trade.devices ? 'secondary' : 'primary'} className="flex-1" onClick={() => setPickingItem(true)} /><Help term="purchase.items" size="sm" /></div> : null}
+          {/* ADR-122: what this shop's package does not include, and how to ask for it */}
+          <NotInPackage />
           {misc.length || kind === 'supplier' ? (
             <>
               {misc.map((x) => (

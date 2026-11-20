@@ -1557,7 +1557,11 @@
       "done": "Activated. Receipt"
     },
     "salePct": "Sale for everyone (% off · 0 = none)",
-    "saleUntil": "Sale until (empty = until you switch it off)"
+    "saleUntil": "Sale until (empty = until you switch it off)",
+    "trade": {
+      "title": "What does this shop trade?",
+      "hint": "Tick what this shop buys and sells. What is not ticked is hidden in its app, with a note that it is not in its package. At least one stays ticked."
+    }
   },
   "field": {
     "badMobile": "Enter a 10-digit mobile number starting with 3, e.g. 300 1234567",
@@ -6140,5 +6144,21 @@
     "kindChange": "Change",
     "howto": "Type a few letters of what you bought — \"anker 20w\", \"a56 glass\", \"mouse\". Tap it in the list, write how many and the cost. That is all.",
     "typedHint": "A typed line is only written on the bill. It does not go into stock — use the button above for things you sell."
+  },
+  "pkg": {
+    "title": "Not in your package",
+    "text": "Your package does not include this. To add it, contact the software company.",
+    "ask": "Ask on WhatsApp",
+    "line": {
+      "mobiles": "Mobiles, tablets and smart watches",
+      "laptops": "Laptops",
+      "accessories": "Accessories"
+    },
+    "short": {
+      "mobiles": "Mobiles",
+      "laptops": "Laptops",
+      "accessories": "Accessories"
+    },
+    "msg": "Assalam o alaikum. My shop: {{shop}} ({{phone}}). Please add this to my Mobile Shop software package: {{lines}}."
   }
 }

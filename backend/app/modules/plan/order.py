@@ -302,6 +302,9 @@ def apply(db: Session, org: Organisation, snap: dict, *, by: uuid.UUID, months: 
     # ADR-109: what only the provider switches (laptops, login activity, "without mobiles") is
     # not part of any package, so a package order never takes it away
     by_hand = [k for k in mods.effective(org) if k in mods.OPT_IN]
+    # ADR-122: accessories is in every package, but a shop the provider set up without them
+    # (mobiles only, laptops only) keeps that — what a shop trades is the provider's to give
+    no_items = org.modules is not None and "accessories" not in org.modules
     plans.set_plan(
         db,
         org,
@@ -315,9 +318,11 @@ def apply(db: Session, org: Organisation, snap: dict, *, by: uuid.UUID, months: 
     )
     if snap.get("touch_modules"):
         chosen = mods.clean(snap.get("set_modules"))
-        if by_hand:
+        if by_hand or no_items:
             base = chosen if chosen is not None else mods.PLAN_DEFAULTS.get(org.plan, [])
-            chosen = mods.clean([*base, *by_hand])
+            chosen = mods.clean(
+                [k for k in [*base, *by_hand] if not (no_items and k == "accessories")]
+            )
         org.modules = chosen
     used = int(snap.get("deal_months") or 0)
     deal = org.fee_deal or None

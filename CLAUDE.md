@@ -82,6 +82,7 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 
 ## What a shop trades — accessories-only / laptop-only shops (owner 2026-11-19, ADR-109)
 - Audit of the "Accessories Business Mode" brief, what exists, what is left: `docs/40-ACCESSORIES-MODE-AUDIT.md` — read it before adding an accessories, wholesale or branch feature; build only what its matrix marks missing.
+- ADR-122: the provider chooses the lines with three ticks (`TradePicker` in `AdminPage.tsx`) that write those same module keys; a line a shop does not have is shown locked with a WhatsApp request (`NotInPackage.tsx`) — the shop can ask, only the provider switches; `order.apply` keeps a shop set up without accessories that way.
 - Rules: what a shop trades is derived from its modules (`admin/modules.lines`, `useTrade` in the app) — mobiles unless `no_mobiles`, plus `laptops`, `accessories`; never add a second business-type setting; `no_mobiles` is opt-in and must stay absent for existing shops; a shop without mobiles adds no phone / tablet / watch (server) but keeps and sells what it has; a package order never removes a provider-set switch (`OPT_IN`).
 
 ## Laptops (shopkeepers 2026-11-18, ADR-108)

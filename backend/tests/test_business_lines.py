@@ -191,3 +191,44 @@ def test_a_package_order_keeps_what_the_provider_switched(client, owner, monkeyp
     # a module added on top: the same
     more = pay({"plan": "pro", "modules": ["loans"], "addons": [], "months": 1}, 5500)
     assert {"no_mobiles", "laptops", "loans", "repairs"} <= set(more["modules"])
+
+
+def test_a_package_order_keeps_a_shop_without_accessories(client, owner, monkeypatch):
+    """ADR-122: accessories is in every package, but what a shop trades is the provider's to give.
+    A mobiles-only shop (accessories unticked) and a laptops-only shop stay that way when they
+    pay for a package; a shop that follows its plan gets the package as it comes."""
+    admin = _admin(client, monkeypatch)
+    admin.patch(
+        f"/api/v1/admin/shops/{owner.shop_id}/plan", json={"plan": "basic", "monthly_fee": 2000}
+    )
+
+    def pay(order, amount):
+        owner.post("/api/v1/fees", json={"amount": amount, "method": "Cash", "order": order})
+        pend = admin.get("/api/v1/admin/fee-payments", params={"status": "pending"}).json()
+        ok = admin.post(f"/api/v1/admin/fee-payments/{pend[0]['id']}/approve", json={})
+        assert ok.status_code == 200, ok.text
+        return owner.get("/api/v1/fees").json()["plan"]
+
+    # following the plan: the package as it comes, accessories with it
+    got = pay({"plan": "pro", "modules": [], "addons": [], "months": 1}, 5000)
+    assert "accessories" in got["modules"] and "no_mobiles" not in got["modules"]
+
+    # mobiles only: accessories unticked by the provider; the shop moves to another package
+    _set(admin, owner, ["expenses", "tax"])
+    got = pay({"plan": "basic", "modules": [], "addons": [], "months": 1}, 2000)
+    assert got["plan"] == "basic"
+    assert "accessories" not in got["modules"] and "no_mobiles" not in got["modules"]
+    assert {"expenses", "held_sales", "tax"} <= set(got["modules"])  # the rest of the package
+    assert owner.get("/api/v1/accessories").status_code == 403
+
+    # laptops only, and back to the bigger package with a module on top
+    _set(admin, owner, ["expenses", "laptops", "no_mobiles"])
+    got = pay({"plan": "pro", "modules": ["loans"], "addons": [], "months": 1}, 5500)
+    assert got["plan"] == "pro"
+    assert {"laptops", "no_mobiles", "loans", "repairs"} <= set(got["modules"])
+    assert "accessories" not in got["modules"]
+
+    # the provider ticks accessories again: it is back, and stays through the next order
+    _set(admin, owner, [*got["modules"], "accessories"])
+    got = pay({"plan": "basic", "modules": [], "addons": [], "months": 1}, 2000)
+    assert {"accessories", "laptops", "no_mobiles"} <= set(got["modules"])

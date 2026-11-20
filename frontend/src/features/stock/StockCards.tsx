@@ -3,7 +3,10 @@
  *  filter the list. Counts come from GET /devices/stock-status (nothing is posted by looking). */
 
 import { AlertTriangle, Bookmark, CheckCircle2, Clock, Headphones, Lock, PackageX, Search, UserCheck, Wallet, Wrench } from 'lucide-react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import NotInPackage, { useMissingLines, type Line } from '@/components/NotInPackage'
+import { Sheet } from '@/components/ui'
 import { useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import { useGet } from '@/lib/queries'
@@ -38,7 +41,9 @@ export function KindTabs({ value, onChange }: { value: Kind | 'items'; onChange:
   const { pick, ur, cls } = useLang()
   const nav = useNavigate()
   const trade = useTrade() // ADR-108 / ADR-109: only the kinds this shop trades
-  const off = new Set<string>([...(trade.mobiles ? [] : ['phone', 'tablet', 'watch']), ...(trade.laptops ? [] : ['laptop'])])
+  const off = new Set<string>([...(trade.mobiles ? [] : ['phone', 'tablet', 'watch']), ...(trade.laptops ? [] : ['laptop']), ...(trade.accessories ? [] : ['items', 'part', 'other'])])
+  const missing = useMissingLines() // ADR-122: shown locked, with how to ask for them
+  const [asking, setAsking] = useState<Line | null>(null)
   const { data } = useGet<StockStatus>(['stock-status', ''], '/api/v1/devices/stock-status')
   const count = (k: string): number | null => (!data ? null : k === '' ? data.units.on_hand : k === 'items' ? data.items.on_hand : k === 'part' || k === 'other' ? null : (data.by_kind?.[k] ?? 0))
   return (
@@ -61,8 +66,16 @@ export function KindTabs({ value, onChange }: { value: Kind | 'items'; onChange:
             </button>
           )
         })}
+        {missing.map((l) => (
+          <button key={l} type="button" onClick={() => setAsking(l)} className={`tap inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full border-2 border-dashed border-line bg-ground px-3.5 font-bold text-muted ${ur ? cls('sm') : 'text-[13px]'}`} data-testid={`kind-locked-${l}`}>
+            <Lock size={14} />{pick(`pkg.short.${l}`)}
+          </button>
+        ))}
       </div>
       <Help term="stock.kinds" size="sm" />
+      <Sheet open={asking !== null} onClose={() => setAsking(null)} title="pkg.title">
+        {asking ? <NotInPackage only={[asking]} bare /> : null}
+      </Sheet>
     </div>
   )
 }

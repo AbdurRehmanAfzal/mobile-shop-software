@@ -2053,6 +2053,11 @@
       "title": "Payment received: package, modules and months",
       "body": "When a customer sends the money and asks you to activate, record it here with the package, any extra modules and the months. It is logged as received with a receipt and the shop gets everything at once.",
       "example": "He sent Rs. 9,000 for 3 months of Pro at his special price → choose Pro, 3 months, amount 9,000 → activate."
+    },
+    "trade": {
+      "title": "What a shop trades",
+      "body": "Three ticks decide what the shop sees: Mobiles (phones, tablets, smart watches), Laptops and Accessories. Any mix is allowed — mobiles only, accessories only, laptops with accessories, or all three. What is not ticked cannot be added to stock in that shop and is hidden in its app; the shop sees \"Not in your package\" with a WhatsApp button to ask you for it. Nothing the shop already has is deleted when you untick a line: it keeps and can sell it. A package bought on the fees page never changes these ticks.",
+      "example": "An accessories shop: tick only Accessories. A mobile shop that also sells laptops: tick Mobiles and Laptops."
     }
   },
   "provider": {
