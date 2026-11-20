@@ -362,6 +362,22 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-119 · 2026-11-20 · Accepted · Printers in Shop settings (set up per device, with a test page) and a printer guide open to anyone
+
+**Context**: the owner (2026-11-20): "shop setting mein printer connect ka option bhi daal do — Bluetooth ke sath USB ya Wi-Fi — sticker ke liye, 80 mm ke liye aur A4 wala bhi; aur jo printers ki guide banayi thi us ka button bhi shop setting mein … koi bhi person wo guide dekh sakta hai, easy to read, proper example ke sath taake lay man ko bhi samajh aaye." The guide of 2026-11-16 was a Roman-Urdu PDF in `docs/guides`, not reachable from the app.
+
+**What "connect" can honestly mean here.** The app is a web page (and, on Android, the same page in a shell that prints through Chrome). It cannot pair with a printer or keep a connection to one: every print opens the phone's or computer's own print window and the printer is chosen there. Talking to a printer directly (Web Bluetooth / WebUSB with ESC/POS) would mean a second way of drawing every bill, sticker and report, would not work in most browsers, and was not built.
+
+**Decision**
+1. **Shop settings → Printers** (`PrintersCard.tsx`): three printers — sticker, receipt (80 mm), A4. For each the shop says how it is connected (USB cable / Wi-Fi-LAN / Bluetooth) and gets four numbered steps for *this kind of device* (computer or phone / tablet — guessed, changeable), a warning where that pair is known to be troublesome (a Bluetooth printer on Windows, a thermal printer over Wi-Fi from Android, OTG power), a **Test print**, and "Did it print right?" — Yes marks the printer Working with the date; No lists what to try.
+2. **The test page is the server's** (`labels/printer_test.py`, `GET /labels/printer-test?kind=&size=`): a page of exactly that paper size (the sticker size chosen, an 80 mm slip, A4) with a frame along its edge, a millimetre ruler and a Code 128 barcode. Whole frame on the paper = the size is right; the scanner reads the barcode = stickers will scan. No shop data on it, nothing saved, any login of the shop.
+3. **Kept on the device, not on the shop** (`localStorage`): a printer belongs to the phone or computer it is installed on; the counter laptop and the owner's phone set up their own. Nothing is written to the server, so no migration and no setting another shop could see.
+4. **The printer guide** is a page of the app, `/printer-guide` (`PrinterGuidePage.tsx`), open without a login, in English, Urdu and Roman Urdu: the short answer, how printing works here, sticker sizes, the three ways to connect each with an example, phone or computer, setting it up in the software, what to do when it goes wrong, what to ask the seller. A button on the Printers card opens it; it is in the sitemap. It replaces the PDF as the place this is written.
+
+**Honest limits**: the steps are general (Windows settings names, the RawBT app on Android) — no printer model was tested for this change; the facts come from the 2026-11-16 guide and the one shop's report of an MPT-II over RawBT. "Working" is the shopkeeper's own tick, not something the software can see. iPhone / iPad printing is described (AirPrint) but was not tried.
+
+**Consequences**: a new kind of printed paper (e.g. a 58 mm receipt) is a `kind` in `printer_test.py`, a row in the card and its texts. Printer advice changes in `pguide.*` (three languages), not in a PDF.
+
 ## ADR-118 · 2026-11-20 · Accepted · A built-in list of accessories, and variants of one product (colour, length, size) as items of a group
 
 **Context**: an accessories shop that sells in a shop and online (xcessorieshub.com, Lahore — 3,114 products, about 40% with variants, mobile + laptop + gadget accessories) asked for the software for its shop only (no WooCommerce sync, no courier / COD yet). Their two conditions: "accessories mein bohat cheezein built-in honi chahiyein — sirf search kar ke select kar ke stock mein add ho jayein", and "variants bhi built-in hon; built-in na hon to khud add kar sakein". docs/40 §4 already listed variants as the biggest gap; until now every colour was an unrelated item written by hand.

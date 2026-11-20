@@ -99,6 +99,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Read ADR-106 before touching `loans.create_loan`, `labels/service.py` (`_fields`, `_device_parts`) or `LabelSheet.tsx`.
 - Rules: amanat goes to any person of the shop (no kind check); the sticker's bars are the IMEI when the phone has a real one (15 digits), the shop's own code otherwise or when asked (`bar=code`) — `devices.barcode` itself never changes; a new sticker field must keep old apps printing what they printed (`fv`).
 
+## Printers and the printer guide (owner 2026-11-20, ADR-119)
+- Read ADR-119 before touching `PrintersCard.tsx`, `PrinterGuidePage.tsx`, `labels/printer_test.py` or the `printers.*` / `pguide.*` texts.
+- Rules: the app never talks to a printer — every print goes through the device's own print window, and no screen may say otherwise; printer choices live on the device (`localStorage`), never on the shop; the test page is the server's and carries no shop data; printer advice is written once, in `pguide.*` in three languages (the guide at `/printer-guide` is public), and must not name a model as tested unless it was.
+
 ## Barcodes, labels, scanning (owner addendum 4, 2026-10-31, ADR-036)
 - Spec `docs/22-BARCODES-SPEC.md`; what existed / what was built / assumptions / scanner test `docs/23-BARCODES-PLAN.md` — read it before touching `backend/app/modules/barcodes`, `modules/labels`, `frontend/src/lib/scanner.ts` or `ScanListener.tsx`.
 - Rules: a barcode is assigned inside the purchase / item-creation transaction and never changes; each barcode keeps its type; uniqueness spans phones, items, IMEIs and SKUs; screens take scans with `useScan`, the shell handles the rest; labels stay the ADR-024 print page.

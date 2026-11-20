@@ -5696,5 +5696,226 @@
     "kinds": "Kinds of this item",
     "none": "This item has no other colour or size yet.",
     "addKind": "Add another colour or size"
+  },
+  "printers": {
+    "title": "Printers",
+    "hint": "Set up your sticker, receipt and A4 printer once, and test each",
+    "how": "The software prints through your phone's or computer's own print window. Connect the printer to this device as shown below, print the test page once and choose the printer there. After that every Print button uses it.",
+    "device": "This device is a",
+    "pc": "Computer / laptop",
+    "phone": "Phone / tablet",
+    "kind": {
+      "sticker": "Sticker printer",
+      "receipt": "Receipt printer (80 mm)",
+      "a4": "A4 printer"
+    },
+    "kindHint": {
+      "sticker": "Price stickers and repair stickers",
+      "receipt": "Small bills and a phone's slip",
+      "a4": "Big bills, reports, price lists"
+    },
+    "conn": "How is it connected?",
+    "c": {
+      "usb": "USB cable",
+      "wifi": "Wi-Fi / LAN",
+      "bluetooth": "Bluetooth"
+    },
+    "size": "Sticker size on your roll",
+    "steps": {
+      "pc": {
+        "usb": {
+          "1": "Plug the printer's USB cable into the computer and switch the printer on.",
+          "2": "Install its driver (from the CD in the box or the maker's website). In Windows open Settings → Bluetooth & devices → Printers & scanners: the printer must be in the list.",
+          "3": "Tap Test print below. In the print window choose this printer, the right paper size (your sticker roll's size, 80 mm, or A4), Margins: None, Scale: 100.",
+          "4": "Windows remembers the printer; next time just press Print."
+        },
+        "wifi": {
+          "1": "Join the printer to the same Wi-Fi or router as this computer (a LAN cable to the router, or the printer's own Wi-Fi setup).",
+          "2": "In Windows open Settings → Bluetooth & devices → Printers & scanners → Add device and pick the printer. Install the driver if Windows asks.",
+          "3": "Tap Test print below. In the print window choose this printer, the right paper size (your sticker roll's size, 80 mm, or A4), Margins: None, Scale: 100.",
+          "4": "Any computer on the same Wi-Fi can add the printer the same way."
+        },
+        "bluetooth": {
+          "1": "Switch the printer on. In Windows open Settings → Bluetooth & devices → Add device → Bluetooth and pair it (the PIN is usually 0000 or 1234).",
+          "2": "Now open Printers & scanners. The printer must be listed there too. If it is not, Windows cannot print to it over Bluetooth — use its USB cable instead.",
+          "3": "Tap Test print below. In the print window choose this printer, the right paper size (your sticker roll's size, 80 mm, or A4), Margins: None, Scale: 100.",
+          "4": "Keep the printer within a few metres of the computer."
+        }
+      },
+      "phone": {
+        "usb": {
+          "1": "You need an OTG adapter: the printer's USB cable goes into the adapter, the adapter into the phone.",
+          "2": "Install the app \"RawBT print service\" from the Play Store, open it, choose USB and your printer, and set the paper width (48 mm for a 58 mm printer, 72 mm for an 80 mm printer).",
+          "3": "In Android open Settings → Connected devices → Printing and switch RawBT on.",
+          "4": "Tap Test print below and choose RawBT at the top of the print window."
+        },
+        "wifi": {
+          "1": "Put the printer and the phone on the same Wi-Fi.",
+          "2": "In Android open Settings → Connected devices → Printing and switch on Default Print Service (or install your printer maker's print app from the Play Store).",
+          "3": "Tap Test print below. At the top of the print window choose your printer and the paper size.",
+          "4": "If the printer never appears in the list, it does not support printing from Android: print from a computer."
+        },
+        "bluetooth": {
+          "1": "Switch the printer on and pair it in the phone's Bluetooth settings (the PIN is usually 0000 or 1234).",
+          "2": "Install the app \"RawBT print service\" from the Play Store, open it, choose your printer and set the paper width (48 mm for a 58 mm printer, 72 mm for an 80 mm printer).",
+          "3": "In Android open Settings → Connected devices → Printing and switch RawBT on.",
+          "4": "Tap Test print below and choose RawBT at the top of the print window."
+        }
+      }
+    },
+    "warn": {
+      "pc": {
+        "bluetooth": "Many small Bluetooth printers pair with Windows but do not become a printer there. A USB cable is the sure way on a computer."
+      },
+      "phone": {
+        "usb": "Not every phone powers a printer through OTG. If nothing prints, use Bluetooth with RawBT or a computer.",
+        "wifi": "This works for most A4 Wi-Fi printers. Thermal sticker and receipt printers usually do not print from Android over Wi-Fi.",
+        "bluetooth": "The free RawBT adds a line of its own on the paper; the paid one does not. An A4 printer is rarely Bluetooth — use Wi-Fi for it."
+      }
+    },
+    "test": "Test print",
+    "asked": "Did the test page print right — the whole frame on the paper?",
+    "yes": "Yes, it printed right",
+    "no": "No",
+    "working": "Working · tested {{date}}",
+    "notTested": "Not tested yet",
+    "fixTitle": "Try this",
+    "fix": {
+      "1": "Blank paper on a thermal printer: the roll is in the wrong way round. Turn it over.",
+      "2": "The frame is cut off or tiny: in the print window choose the paper size of your roll, Margins: None, Scale: 100.",
+      "3": "Empty stickers come out between prints: hold the printer's Feed button for a few seconds so it measures the roll again.",
+      "4": "The printer is not in the print window: it is not installed on this device yet — go through the steps above again."
+    },
+    "guide": "Open the printer guide",
+    "guideHint": "Which printer to buy, sticker sizes, and how to connect each one — with examples",
+    "perDevice": "These choices are kept on this device only: another phone or computer sets up its own printer."
+  },
+  "pguide": {
+    "title": "Printer guide",
+    "sub": "Which printer to buy, which paper, and how to connect it — in simple steps",
+    "back": "Back",
+    "s1": {
+      "t": "The short answer",
+      "p": {
+        "1": "Stickers: a thermal label printer with a 60 × 40 mm roll.",
+        "2": "Small bills: an 80 mm thermal receipt printer.",
+        "3": "Big bills and reports: any A4 printer.",
+        "4": "Buy printers that have both a USB cable and Wi-Fi / LAN. USB always works with a computer."
+      }
+    },
+    "s2": {
+      "t": "How printing works here",
+      "p": "The software does not talk to the printer itself. When you press Print, your phone or computer opens its own print window, and you choose the printer there. So a printer works with the software if it is installed on that phone or computer as a printer.",
+      "ex": "Example: you press \"Print sticker\". A window opens with a list of printers. You choose your sticker printer, paper 60 × 40 mm, and press Print. Next time the computer already remembers it."
+    },
+    "s3": {
+      "t": "Sticker sizes",
+      "p": "A bigger sticker holds more lines and a bigger barcode. The count below is with every line ticked.",
+      "h": {
+        "1": "Size (wide × high)",
+        "2": "What fits",
+        "3": "Advice"
+      },
+      "r": {
+        "1": {
+          "1": "60 × 40 mm",
+          "2": "Everything, clear",
+          "3": "Take this one"
+        },
+        "2": {
+          "1": "58 × 40 / 70 × 40 mm",
+          "2": "Everything",
+          "3": "Fine"
+        },
+        "3": {
+          "1": "50 × 30 mm",
+          "2": "Everything, tight",
+          "3": "Good for about 7 lines"
+        },
+        "4": {
+          "1": "40 × 30 mm",
+          "2": "Name, price, barcode, IMEI",
+          "3": "Not for every line"
+        },
+        "5": {
+          "1": "38 × 25 / 50 × 25 mm",
+          "2": "Name, price, barcode",
+          "3": "Small stickers only"
+        }
+      },
+      "n": "Roll: \"direct thermal\" label roll with a gap between stickers, one column. It needs no ink. A 58 mm Bluetooth printer prints only 48 mm wide: choose Custom, width 48."
+    },
+    "s4": {
+      "t": "Three ways to connect",
+      "usb": {
+        "t": "USB cable",
+        "p": "The surest way with a computer or laptop. Plug in, install the driver, done.",
+        "ex": "Example: a sticker printer on the counter beside the laptop."
+      },
+      "wifi": {
+        "t": "Wi-Fi / LAN",
+        "p": "The printer joins your router. Every computer on the same Wi-Fi can print, and most A4 Wi-Fi printers also print straight from a phone.",
+        "ex": "Example: one A4 printer for the counter laptop and the owner's phone."
+      },
+      "bluetooth": {
+        "t": "Bluetooth",
+        "p": "For small portable printers used with an Android phone. It needs the RawBT app on the phone. On a computer, Bluetooth printers often do not work — use the cable.",
+        "ex": "Example: a 58 mm pocket printer and a phone at a stall."
+      }
+    },
+    "s5": {
+      "t": "Phone or computer?",
+      "p": {
+        "1": "Computer or laptop: stickers, receipts and A4 all print well with a USB cable. This is the surest setup.",
+        "2": "Android phone or tablet: an A4 Wi-Fi printer works. A thermal sticker or receipt printer works over Bluetooth with the RawBT app.",
+        "3": "iPhone / iPad: only printers that support AirPrint (many A4 Wi-Fi printers). Thermal printers usually do not."
+      }
+    },
+    "s6": {
+      "t": "Set it up in the software",
+      "p": {
+        "1": "Open More → Shop settings → Printers.",
+        "2": "Choose how each printer is connected. The steps for your device appear.",
+        "3": "Tap Test print. A page with a frame, a ruler and a barcode prints.",
+        "4": "If the whole frame is on the paper and your scanner reads the barcode, tap \"Yes, it printed right\"."
+      }
+    },
+    "s7": {
+      "t": "If something goes wrong",
+      "r": {
+        "1": {
+          "1": "Blank paper comes out",
+          "2": "Thermal roll is upside down. Turn it over."
+        },
+        "2": {
+          "1": "The print is cut off or very small",
+          "2": "In the print window: the paper size of your roll, Margins: None, Scale: 100."
+        },
+        "3": {
+          "1": "Empty stickers between prints",
+          "2": "Hold the Feed button a few seconds so the printer measures the roll again."
+        },
+        "4": {
+          "1": "The barcode does not scan",
+          "2": "Use a bigger sticker or untick some lines, so the barcode gets bigger. Clean the printer head."
+        },
+        "5": {
+          "1": "The printer is not in the list",
+          "2": "It is not installed on this phone or computer. Install its driver (computer) or RawBT / print service (Android)."
+        }
+      }
+    },
+    "s8": {
+      "t": "Ask the seller before you buy",
+      "p": {
+        "1": "Does it have both USB and Wi-Fi / LAN?",
+        "2": "Is there a Windows driver? Ask for one test print from a laptop in the shop.",
+        "3": "Sticker printer: does it take a 60 × 40 mm roll with gaps?",
+        "4": "Receipt printer: is it 80 mm (not 58 mm), with an auto-cutter?",
+        "5": "Can I return or change it if it does not work?"
+      }
+    },
+    "note": "Brands such as Xprinter, Zebra and Epson make these printers. They are examples only; no model has been tested by us. Print 5 to 10 stickers and scan them before you buy a whole carton of rolls.",
+    "toSettings": "Set up my printers"
   }
 }

@@ -1216,6 +1216,21 @@ Mobile Shop mein har phone aur har item ko khareed ke lamhe hi apna barcode mil 
 - Barcode phone ke page par IMEI ke neeche (**Barcode: MS000006**) aur har item ki line par nazar aata hai.
 - Jis dabbe par pehle se company ka barcode ho, woh bhi kaam aa sakta hai: khareedte waqt use **Company ka barcode (ikhtiyari)** mein scan kar dein. Aap **Apna barcode (ikhtiyari)** mein apna code bhi likh sakte hain.
 
+### Apne printer set karna
+
+Software aap ke phone ya computer ki apni print window se print karta hai, is liye har printer us device par ek baar set hota hai jo print karta hai.
+
+1. **More → Dukaan ki settings → Printers** kholein.
+2. **Sticker printer**, **Raseed printer (80 mm)** aur **A4 printer** ke liye dabayein woh kaise jura hai: **USB cable**, **Wi-Fi / LAN** ya **Bluetooth**. Aap ke device ke steps aa jate hain (andaza ghalat ho to upar **Computer / laptop** ya **Phone / tablet** chunein).
+3. Steps par chalein, phir **Test print** dabayein. Chaukhte, paimane aur barcode wala page print hota hai. Print window mein printer, sahi paper size, **Margins: None**, **Scale: 100** chunein.
+4. Agar poora chaukhta kaghaz par hai aur aap ka scanner barcode parh leta hai to **Haan, theek print hua** dabayein. Printer ab **Chal raha hai** dikhata hai. Warna **Nahi** dabayein aur list mein likha aazmayein.
+
+Isi card par **Printer guide kholein** batata hai kaunsa printer lein, sticker ke size aur jorne ka har tareeqa, misalon ke sath. Koi bhi use login ke baghair `/printer-guide` par parh sakta hai.
+
+**Misaal:** laptop ke sath rakha sticker printer: **USB cable** dabayein, driver install karein, **60 × 40** chunein, **Test print** dabayein, window mein printer chunein, phir **Haan, theek print hua**.
+
+> Android phone par chhote Bluetooth sticker ya raseed printer ke liye **RawBT print service** app chahiye. A4 Wi-Fi printer aam taur par phone se seedha print karta hai.
+
 ### Price sticker print karna
 
 Sticker kai jagah se print ho sakte hain:

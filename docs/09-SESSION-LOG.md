@@ -2228,3 +2228,23 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: the shop's own list of missing products and brands; then whichever "later" item they ask for.
 
 **Open questions**: order of WooCommerce sync / courier and COD / variants grid.
+
+## 2026-11-20 (7) — Printers in Shop settings and the printer guide (ADR-119)
+
+**Asked (owner)**: a printer-connect option in Shop settings — Bluetooth, USB or Wi-Fi — for the sticker, the 80 mm and the A4 printer; and a button there to the printers guide made earlier, readable by anyone, easy, with proper examples so a layman understands.
+
+**Done**
+- Said plainly what the app can do: it cannot hold a printer connection; prints go through the device's print window. So the card sets a printer up, it does not pair one.
+- Backend: `labels/printer_test.py` + `GET /labels/printer-test` (sticker of a chosen size, 80 mm slip, A4: frame, ruler, barcode).
+- App: `PrintersCard.tsx` in Shop settings (three printers × three connections × computer / phone: steps, warnings, test print, Working, what to try), kept in `localStorage`; `PrinterGuidePage.tsx` at `/printer-guide`, public, three languages, eight sections with examples; sitemap and robots; help term `settings.printers`; manual "Set up your printers".
+- Also pushed ADR-118 as PR #101 (full backend suite and CI green after the push) and a log correction.
+
+**Verified**
+- pytest: `test_printer_test` and `test_labels` pass. Full suite: at 47% with no failure when the owner asked for the push; CI runs it on the pull request.
+- ruff clean; tsc clean; vitest 66 passed.
+- Playwright: `printers.spec` passes (guide without login in three languages and at 320 px; steps change with device and connection; the test page opens with the sticker's size and the barcode; No → what to try; Yes → Working, kept after a reload; guide ↔ settings).
+- **Not verified: any real printer.** No printer was available; the steps are general and the test page was only seen on screen.
+
+**Next**: the owner's test on real printers (docs/29) and his remarks on the guide's wording.
+
+**Open questions**: direct ESC/POS printing from the app.
