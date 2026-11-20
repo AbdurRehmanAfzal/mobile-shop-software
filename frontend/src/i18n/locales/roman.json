@@ -5670,5 +5670,31 @@
     "bad": "Har hindse ka apna alag nishaan ho (ek harf ya nishaan), aur lakh, hazaar aur sau ke nishaan alag alag hon.",
     "overlap": "Hindse aur hajam dono ke liye istemal hua:",
     "saved": "Save ho gaya. Sticker print karte waqt \"Laagat code mein\" ya \"Maangi qeemat code mein\" par tick lagayein."
+  },
+  "lib": {
+    "title": "Pehle se maujood list se — dabayein to card bhar jayega",
+    "have": "Aap ke stock mein hai"
+  },
+  "var": {
+    "title": "Jo rang ya size aap rakhte hain",
+    "hint": "Jo rakhte hain un par tick lagayein. Har ek apna alag item banta hai, apne stock aur barcode ke sath. Ek hi qisam ho to khali chhor dein.",
+    "by": "Farq kis cheez ka hai",
+    "byKind": {
+      "color": "Rang",
+      "size": "Size ya lambai",
+      "other": "Kuch aur"
+    },
+    "own": "Apna shamil karein",
+    "ownPh": {
+      "color": "Midnight Blue",
+      "size": "1.5m",
+      "other": "Type-C"
+    },
+    "add": "Shamil karein",
+    "qty": "Abhi shelf par",
+    "count": "{{n}} item banenge",
+    "kinds": "Is item ki qismein",
+    "none": "Is item ka abhi koi aur rang ya size nahi.",
+    "addKind": "Ek aur rang ya size shamil karein"
   }
 }

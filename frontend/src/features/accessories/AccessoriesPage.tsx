@@ -124,8 +124,8 @@ export default function AccessoriesPage() {
             <div key={a.id} className="flex items-center">
             <div className="min-w-0 flex-1">
             <Row
-              title={<span className="flex items-center gap-1.5">{ur && a.name_ur ? a.name_ur : a.name}{a.grade && a.grade !== 'unspecified' ? <span className="rounded-md bg-ground px-1.5 py-0.5 text-[11px] font-bold text-muted">{gradeLabel(pick, a.grade, exists)}</span> : null}</span>}
-              sub={<span className="flex flex-wrap items-center gap-1.5"><span dir="ltr">{a.sku}</span> · {kindLabel(pick, a.category)}{a.brand ? ` · ${a.brand}` : ''}{a.color ? ` · ${a.color}` : ''}{a.compatible ? ` · ${a.compatible}` : ''}{a.location ? <span className="rounded-md border border-line px-1 text-[11px]">{a.location}</span> : null} {a.low_stock ? <Chip text={a.qty <= 0 ? 'acc.outOfStock' : 'acc.low'} tone="bad" /> : null}</span>}
+              title={<span className="flex flex-wrap items-center gap-1.5">{ur && a.name_ur ? a.name_ur : a.name}{a.variant ? <span className="rounded-md bg-emerald-tint px-1.5 py-0.5 text-[11px] font-bold text-emerald-deep" data-testid="item-variant">{a.variant}</span> : null}{a.grade && a.grade !== 'unspecified' ? <span className="rounded-md bg-ground px-1.5 py-0.5 text-[11px] font-bold text-muted">{gradeLabel(pick, a.grade, exists)}</span> : null}</span>}
+              sub={<span className="flex flex-wrap items-center gap-1.5"><span dir="ltr">{a.sku}</span> · {kindLabel(pick, a.category)}{a.brand ? ` · ${a.brand}` : ''}{a.color && a.color !== a.variant ? ` · ${a.color}` : ''}{a.compatible ? ` · ${a.compatible}` : ''}{a.location ? <span className="rounded-md border border-line px-1 text-[11px]">{a.location}</span> : null} {a.low_stock ? <Chip text={a.qty <= 0 ? 'acc.outOfStock' : 'acc.low'} tone="bad" /> : null}</span>}
               right={<div className="flex flex-col items-end"><span className={`num text-lg ${a.qty < 0 ? 'text-payable' : ''}`} dir="ltr">{a.qty}</span><MoneyText value={a.price} tone="muted" size="sm" /></div>}
               onClick={() => nav(`/accessories/${a.id}`)}
             />
@@ -138,7 +138,7 @@ export default function AccessoriesPage() {
       )}
 
       <Sheet open={adding} onClose={() => setAdding(false)} title="acc.new">
-        {adding ? <ItemForm onDone={async (it) => { setAdding(false); await inv('accessories', 'item-options'); nav(`/accessories/${it.id}`) }} /> : null}
+        {adding ? <ItemForm onDone={async (it, all) => { setAdding(false); await inv('accessories', 'item-options'); if (all && all.length > 1) setQ(it.name); else nav(`/accessories/${it.id}`) }} /> : null}
       </Sheet>
     </div>
   )

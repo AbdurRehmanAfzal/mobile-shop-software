@@ -18,6 +18,8 @@ export interface Item {
   brand?: string | null
   compatible?: string | null
   grade?: string
+  variant_group?: string | null
+  variant?: string | null
   color?: string | null
   size?: string | null
   capacity?: string | null

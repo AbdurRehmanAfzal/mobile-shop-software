@@ -12,7 +12,7 @@ import ItemForm from '@/features/accessories/ItemForm'
 import { useGet } from '@/lib/queries'
 import { useScan } from '@/lib/scanner'
 
-export interface StockItem { id: string; sku: string; name: string; name_ur: string | null; category: string; qty: number; price: string; avg_cost: string | null; brand?: string | null; color?: string | null; compatible?: string | null; grade?: string; units?: Record<string, number>; pack_units?: Record<string, number> | null; wholesale_price?: string | null; min_price?: string | null; warranty_days?: number; unit?: string }
+export interface StockItem { id: string; sku: string; name: string; name_ur: string | null; category: string; qty: number; price: string; avg_cost: string | null; brand?: string | null; color?: string | null; compatible?: string | null; grade?: string; variant?: string | null; units?: Record<string, number>; pack_units?: Record<string, number> | null; wholesale_price?: string | null; min_price?: string | null; warranty_days?: number; unit?: string }
 
 
 export default function StockItemPicker({ mode, onPick }: { mode: 'sell' | 'buy'; onPick: (item: StockItem) => void }) {
@@ -35,7 +35,8 @@ export default function StockItemPicker({ mode, onPick }: { mode: 'sell' | 'buy'
     // a new item right inside the purchase: the same form, with its duplicate warning and "More details"
     return (
       <div className="flex flex-col gap-3">
-        <ItemForm compact initialName={q.trim()} onDone={(it) => onPick(it as unknown as StockItem)} />
+        {/* ADR-118: a product made with several variants comes back as a list to choose from */}
+        <ItemForm compact initialName={q.trim()} onDone={(it, all) => { if (all && all.length > 1) { setQ(it.name); setCat(''); setAdding(false) } else onPick(it as unknown as StockItem) }} />
         <BiButton text="common.back" variant="ghost" full onClick={() => setAdding(false)} />
       </div>
     )
@@ -64,10 +65,10 @@ export default function StockItemPicker({ mode, onPick }: { mode: 'sell' | 'buy'
               <Row
                 key={i.id}
                 icon={i.category === 'watch' ? <Watch size={20} /> : undefined}
-                title={name(i)}
+                title={<span className="flex flex-wrap items-center gap-1.5">{name(i)}{i.variant ? <span className="rounded-md bg-ground px-1.5 py-0.5 text-[11px] font-bold text-ink" data-testid="item-variant">{i.variant}</span> : null}</span>}
                 sub={
                   <span className="flex flex-wrap items-center gap-1.5">
-                    <span>{kindLabel(pick, i.category)}{i.brand ? ` · ${i.brand}` : ''}{i.color ? ` · ${i.color}` : ''}{i.compatible ? ` · ${i.compatible}` : ''}</span>·
+                    <span>{kindLabel(pick, i.category)}{i.brand ? ` · ${i.brand}` : ''}{i.color && i.color !== i.variant ? ` · ${i.color}` : ''}{i.compatible ? ` · ${i.compatible}` : ''}</span>·
                     <span className={out ? 'font-bold text-payable' : ''}>{out ? pick('items.out') : `${pick('items.inStock')} ${i.qty}`}</span>
                   </span>
                 }

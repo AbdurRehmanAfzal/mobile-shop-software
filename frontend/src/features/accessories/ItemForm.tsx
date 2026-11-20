@@ -14,6 +14,7 @@ import { ErrorText } from '@/components/ui'
 import { get } from '@/lib/api'
 import { useDocMutation, useGet } from '@/lib/queries'
 import type { Party } from '@/lib/types'
+import { LibraryHits, VariantPicker, type LibEntry, type Variant, type VariantBy } from './ItemVariants'
 import { gradeLabel, type Item, type ItemOptions } from './types'
 
 interface Form {
@@ -63,7 +64,7 @@ function toBody(f: Form, creating: boolean): Record<string, unknown> {
   }
 }
 
-export default function ItemForm({ item, compact = false, initialName = '', onDone }: { item?: Item; compact?: boolean; initialName?: string; onDone: (it: Item) => void }) {
+export default function ItemForm({ item, compact = false, initialName = '', onDone }: { item?: Item; compact?: boolean; initialName?: string; onDone: (it: Item, all?: Item[]) => void }) {
   const { pick } = useLang()
   const exists = (k: string) => i18next.exists(k)
   const creating = !item
@@ -71,9 +72,18 @@ export default function ItemForm({ item, compact = false, initialName = '', onDo
   const [more, setMore] = useState(false)
   const { data: opts } = useGet<ItemOptions>(['item-options'], '/api/v1/accessories/options')
   const create = useDocMutation<Record<string, unknown>, Item>('POST', () => '/api/v1/accessories')
+  // ADR-118: a product with variants is made as one item per variant, all or none
+  const createMany = useDocMutation<Record<string, unknown>, Item[]>('POST', () => '/api/v1/accessories/with-variants')
+  const [lib, setLib] = useState<LibEntry | null>(null)
+  const [by, setBy] = useState<VariantBy>('color')
+  const [vars, setVars] = useState<Variant[]>([])
+  const fromLibrary = (e: LibEntry) => {
+    setLib(e); setBy(e.variant_by); setVars([])
+    setF((x) => ({ ...x, name: e.name, category: e.kind, brand: e.brand ?? x.brand, connector: e.details.connector ?? x.connector, wattage: e.details.wattage ?? x.wattage, capacity: e.details.capacity ?? x.capacity, size: e.details.size ?? x.size, compatible: e.details.compatible ?? x.compatible }))
+  }
   const update = useDocMutation<{ id: string; body: Record<string, unknown> }, Item>('PATCH', (i) => `/api/v1/accessories/${i.id}`, (i) => i.body)
   const set = (k: keyof Form) => (e: { target: { value: string } }) => setF((x) => ({ ...x, [k]: e.target.value }))
-  const busy = create.isPending || update.isPending
+  const busy = create.isPending || update.isPending || createMany.isPending
   // the duplicate warning: similar names already in stock (only while making a new item)
   const [similar, setSimilar] = useState<Item[]>([])
   useEffect(() => {
@@ -97,6 +107,11 @@ export default function ItemForm({ item, compact = false, initialName = '', onDo
 
   async function save() {
     const body = toBody(f, creating)
+    if (creating && vars.length) {
+      const all = await createMany.mutateAsync({ ...body, opening_qty: 0, variant_by: by, variants: vars.map((v) => ({ label: v.label, opening_qty: Number(v.qty || 0) })) })
+      onDone(all[0], all)
+      return
+    }
     const res = creating ? await create.mutateAsync(body) : await update.mutateAsync({ id: item!.id, body })
     onDone(res)
   }
@@ -104,6 +119,7 @@ export default function ItemForm({ item, compact = false, initialName = '', onDo
   return (
     <div className="flex flex-col gap-3" data-testid="item-form">
       <BiInput label="acc.name" help={<Help term="items.name" size="sm" />} value={f.name} onChange={set('name')} autoFocus={creating} maxLength={150} placeholder={pick('items.namePh')} />
+      {creating ? <LibraryHits q={f.name} skip={lib?.name ?? ''} onPick={fromLibrary} /> : null}
       {similar.length ? (
         <div className="rounded-2xl border border-payable/40 bg-payable-tint/40 px-3 py-2" data-testid="similar-items">
           <span className="flex items-center gap-1"><BiLabel text="acc.similar" size="sm" bold /><Help term="items.similar" size="sm" /></span>
@@ -117,9 +133,11 @@ export default function ItemForm({ item, compact = false, initialName = '', onDo
       <div className="grid grid-cols-2 gap-2">
         <BiInput label={compact ? 'items.sellPrice' : 'acc.price'} help={<Help term="items.price" size="sm" />} type="number" inputMode="decimal" min={0} value={f.price} onChange={set('price')} className="num" />
         <BiInput label="acc.reorder" help={<Help term="items.reorder" size="sm" />} type="number" inputMode="numeric" min={0} value={f.reorder_level} onChange={set('reorder_level')} className="num" />
-        {creating && !compact ? <BiInput label="acc.openingQty" help={<Help term="items.openingQty" size="sm" />} type="number" inputMode="numeric" min={0} value={f.opening_qty} onChange={set('opening_qty')} className="num" /> : null}
+        {creating && !compact && !vars.length ? <BiInput label="acc.openingQty" help={<Help term="items.openingQty" size="sm" />} type="number" inputMode="numeric" min={0} value={f.opening_qty} onChange={set('opening_qty')} className="num" /> : null}
         {creating && !compact ? <BiInput label="acc.openingCost" help={<Help term="items.openingCost" size="sm" />} type="number" inputMode="decimal" min={0} value={f.opening_cost} onChange={set('opening_cost')} className="num" /> : null}
       </div>
+
+      {creating ? <VariantPicker by={by} onBy={(b) => { setBy(b); setVars([]) }} value={vars} onChange={setVars} suggest={lib && lib.variant_by === by ? lib.variants : []} withQty={!compact} /> : null}
 
       {compact ? (
         <div className="flex flex-col gap-2" data-testid="item-quick-card">
@@ -212,8 +230,8 @@ export default function ItemForm({ item, compact = false, initialName = '', onDo
         </div>
       ) : null}
       {f.min_price && f.price && Number(f.min_price) > Number(f.price) ? <BiAlert text="acc.belowMin" kind="info" /> : null}
-      <ErrorText error={create.error ?? update.error} />
-      <BiButton text={creating && compact ? 'items.saveNew' : 'common.save'} full loading={busy} disabled={f.name.trim().length < 1 || !f.category.trim()} onClick={save} />
+      <ErrorText error={create.error ?? update.error ?? createMany.error} />
+      <BiButton text={creating && compact ? 'items.saveNew' : 'common.save'} full loading={busy} disabled={f.name.trim().length < 1 || !f.category.trim()} onClick={save} data-testid="item-save" />
     </div>
   )
 }

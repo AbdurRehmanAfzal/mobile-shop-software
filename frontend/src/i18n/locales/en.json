@@ -5670,5 +5670,31 @@
     "bad": "Every digit needs its own sign (one letter or sign each), and lakh, thousand and hundred must differ.",
     "overlap": "Used for a digit and for a size too:",
     "saved": "Saved. Tick \"Cost in code\" or \"Asking price in code\" when you print a sticker."
+  },
+  "lib": {
+    "title": "From the built-in list — tap to fill the card",
+    "have": "In your stock"
+  },
+  "var": {
+    "title": "Colours or sizes you keep",
+    "hint": "Tick each one you keep. Every one becomes its own item, with its own stock and barcode. Leave empty if it comes in one kind only.",
+    "by": "They differ by",
+    "byKind": {
+      "color": "Colour",
+      "size": "Size or length",
+      "other": "Something else"
+    },
+    "own": "Add your own",
+    "ownPh": {
+      "color": "Midnight Blue",
+      "size": "1.5m",
+      "other": "Type-C"
+    },
+    "add": "Add",
+    "qty": "On the shelf now",
+    "count": "{{n}} items will be made",
+    "kinds": "Kinds of this item",
+    "none": "This item has no other colour or size yet.",
+    "addKind": "Add another colour or size"
   }
 }

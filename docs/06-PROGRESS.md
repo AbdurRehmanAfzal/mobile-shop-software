@@ -358,6 +358,7 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | The provider's control room at `/control` (own frame, `/admin` redirects, back after login); landing page: 12 new cards, six kinds of shop, six new questions; an address and HTML head per kind of shop (accessories, laptops, used mobiles); `index.html` / `llms.txt` / sitemap (ADR-115) | ✅ | `ControlShell.tsx`, `landing/topics.ts`, `seo-pages.ts`, `e2e/control-landing.spec.ts` |
 | "Add old dealing" as four questions: who owes → goods or amount → what went (type, brand, model, pieces, rate, item after item) → paid and left (ADR-116) | ✅ | `OldDealingWizard.tsx`, `e2e/old-dealings-bulk.spec.ts` |
 | The shop's own price code on stickers: a sign per digit, lakh / thousand / hundred, prefix, postfix, three styles, live preview; ticks "Cost in code" and "Asking price in code"; owner / manager only (ADR-117) | ✅ | `labels/pricecode.py`, `PriceCodeCard.tsx`, `tests/test_price_code.py`, `e2e/price-code.spec.ts` |
+| Built-in list of accessories (2,480 lines + covers / glass / batteries / laptop parts made per model), searched while a new item's name is typed; variants of a product (colour, size / length, other) as items of one group, made together and added later (ADR-118) | ✅ | `accessories/library.py`, `seeds/accessory_library.py`, `ItemVariants.tsx`, `tests/test_accessory_variants.py`, `e2e/accessory-library-variants.spec.ts` |
 | Operations runbook (internal; secrets only as placeholders) | ✅ | `operations-en.md` |
 | Owner review of the wording | ⏳ | `docs/29-OWNER-PENDING.md` D |
 
