@@ -16,7 +16,7 @@ import { useGet, useInvalidate } from '@/lib/queries'
 export type LabelKind = 'devices' | 'items'
 const SIZES = ['38x25', '40x30', '50x25', '50x30', '58x40', '60x40', '70x40', 'a4', 'custom'] as const
 type Size = (typeof SIZES)[number]
-export const LABEL_FIELDS = ['shop', 'name', 'specs', 'ram', 'battery', 'cycles', 'price', 'barcode', 'imei', 'serial', 'last4', 'condition', 'pta', 'date', 'code'] as const
+export const LABEL_FIELDS = ['shop', 'name', 'specs', 'ram', 'battery', 'cycles', 'price', 'barcode', 'imei', 'serial', 'last4', 'condition', 'pta', 'date', 'code', 'pcode'] as const
 /** ticks that only a phone has */
 const DEVICE_ONLY: readonly string[] = ['specs', 'ram', 'battery', 'cycles', 'serial', 'last4', 'condition', 'pta']
 /** until ADR-106 the "Storage · colour" line carried these three; a choice saved before then keeps them */
@@ -71,13 +71,13 @@ export default function LabelSheet({ kind, ids, open, onClose }: { kind: LabelKi
   const { pick, ur, cls } = useLang()
   const role = useAuth((s) => s.me?.user.role)
   const inv = useInvalidate()
-  const { data: shop } = useGet<{ label_prefs: Partial<Prefs> | null; label_code_word: string | null }>(['shop-full'], '/api/v1/shops/current')
+  const { data: shop } = useGet<{ label_prefs: Partial<Prefs> | null; label_code_word: string | null; price_code: object | null }>(['shop-full'], '/api/v1/shops/current')
   const [p, setP] = useState<Prefs>(() => loadLabelPrefs(null))
   const [saved, setSaved] = useState(false)
   const [err, setErr] = useState<unknown>(null)
   useEffect(() => { if (open) setP(loadLabelPrefs(shop?.label_prefs)) }, [open, shop?.label_prefs])
   const canCost = role === 'owner' || role === 'manager'
-  const fields = FIELDS.filter((f) => (canCost || f !== 'code') && (kind === 'devices' || !DEVICE_ONLY.includes(f)))
+  const fields = FIELDS.filter((f) => (canCost || (f !== 'code' && f !== 'pcode')) && (kind === 'devices' || !DEVICE_ONLY.includes(f)))
   const toggle = (f: Field) => setP({ ...p, fields: p.fields.includes(f) ? p.fields.filter((x) => x !== f) : [...p.fields, f] })
   const chip = (on: boolean) => `tap h-11 rounded-full border-2 px-3.5 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-[13px]'}`
   const path = labelPath(kind, ids, p)
@@ -121,7 +121,8 @@ export default function LabelSheet({ kind, ids, open, onClose }: { kind: LabelKi
             })}
           </div>
           {kind === 'devices' && p.fields.includes('barcode') ? <BarChoice value={p.bar} onChange={(bar) => { setP({ ...p, bar }); setSaved(false) }} /> : null}
-          {p.fields.includes('code') ? <span className="mt-1.5 flex items-center gap-1"><BiLabel text={{ en: `${pick('label.codeHint')} ${shop?.label_code_word ?? 'BLACKHORSE'}`, ur: `${pick('label.codeHint')} ${shop?.label_code_word ?? 'BLACKHORSE'}`, roman: `${pick('label.codeHint')} ${shop?.label_code_word ?? 'BLACKHORSE'}` }} size="sm" tone="text-muted" /><Help term="label.costCode" size="sm" /></span> : null}
+          {shop?.price_code && (p.fields.includes('code') || p.fields.includes('pcode')) ? <BiLabel text="label.codeOwn" size="sm" tone="text-muted" className="mt-1.5" /> : null}
+          {!shop?.price_code && (p.fields.includes('code') || p.fields.includes('pcode')) ? <span className="mt-1.5 flex items-center gap-1"><BiLabel text={{ en: `${pick('label.codeHint')} ${shop?.label_code_word ?? 'BLACKHORSE'}`, ur: `${pick('label.codeHint')} ${shop?.label_code_word ?? 'BLACKHORSE'}`, roman: `${pick('label.codeHint')} ${shop?.label_code_word ?? 'BLACKHORSE'}` }} size="sm" tone="text-muted" /><Help term="label.costCode" size="sm" /></span> : null}
         </div>
         <div>
           <span className="mb-1.5 flex items-center gap-1"><BiLabel text="label.copies" size="md" bold /><Help term="label.copies" size="sm" /></span>

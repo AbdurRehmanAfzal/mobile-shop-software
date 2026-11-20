@@ -2190,3 +2190,23 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: the shopkeepers' view of the steps.
 
 **Open questions**: a promised date for an old balance.
+
+## 2026-11-20 (5) — The shop's own price code on stickers (ADR-117)
+
+**Asked (shopkeepers, through the owner)**: a setting where the shop makes its own price keywords — 1 = A … 9 = I, 0 = Z, lakh L, thousand T, hundred H, a prefix and a postfix (285,000 → ##BHEL@@) — to print the cost and the asking price on a sticker.
+
+**Done**
+- Backend: `labels/pricecode.py` (`clean`, `encode`, `preview`; styles short / exact / digits), `shops.price_code` (migration `a3c5e7f9b1d2`, additive, NULL for every shop), `labels.service.shop_code` (pattern, else the code word), new sticker field `pcode` for phones and items, `POST /labels/price-code/preview`, `GET /shops/current` blanks the pattern without `VIEW_COST`.
+- App: `PriceCodeCard.tsx` in Shop settings (switch, ten digit boxes, three unit signs, prefix / postfix, three styles, server-made preview, "try a price"), the "Asking price in code" tick in the sticker sheet and on the phone page, "Cost code" renamed "Cost in code"; texts and three help terms in en / ur / roman; manual ch. stickers.
+- Found while testing: the shopkeepers' own example uses H for 8 and for hundred — a unit sign equal to a digit's is allowed and pointed out, not refused.
+- Also pushed ADR-116 as PR #99; checked the live landing addresses for the owner's Search Console rejection (all four 200, index / follow, right canonical — no cause found on the server).
+
+**Verified**
+- pytest: the full suite passes (exit 0), with the new `test_price_code` (6 tests).
+- ruff clean; tsc clean; vitest 66 passed (help-text check included).
+- Playwright: `price-code.spec` passes (settings card, preview, the three styles, a doubled sign blocks Save, 320 px, saved and reloaded, both ticks on the phone's sticker, plain price off, pattern off → code word).
+- Playwright: `labels.spec` (tick renamed "Cost in code") and `amanat-anyone-sticker.spec` pass; the full Playwright suite was not run.
+
+**Next**: the shopkeepers try their own patterns.
+
+**Open questions**: one pattern for both prices or one each; the code on the slip / A4 page.

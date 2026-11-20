@@ -313,11 +313,14 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **Old dealing, step by step (2026-11-20, ADR-116)**: nothing to run. To test: open a shop's or customer's page → Old balance → **Add old dealing**. It must ask first "Who still has to pay?"; tap "They owe me". Then "What did you give them?" → "Write what went". Tap **Mobile** → a brand → a model, write 5 pieces at 300,000, **Add to the list**. Add a second item with "Not in the list? Write the name". **Next** → write what was already received → check **Still left** → **Save**. The khata must show the amount left with the list of what went; Stock must not change. Try once with "Only the amount" and once with "I owe them". Show the shopkeepers who found the old form hard.
 
+**Your own price code (2026-11-20, ADR-117)**: one small migration (`a3c5e7f9b1d2`, a new empty column on `shops`) runs by itself with the deploy; nothing to type. To test: More → Shop settings → **Your own price code** → switch on **Use my own pattern**. Write your own letters for 1–9 and 0, the signs for Lakh / Thousand / Hundred, `##` before and `@@` after. Under **How your prices will look** Rs. 285,000 must read `##BHEL@@` (with A–I, Z and L). Try a price of your own; try the three ways of writing. **Save**. Open any phone → the sticker → tick **Cost in code** and **Asking price in code**: the preview must show both in your code; print one. Log in as a salesman: the two ticks must not be there. Switch the pattern off again and the sticker must go back to the 10-letter word. Shops that never switch it on see no change.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |
 |---|---|---|
 | [ ] | Grace days after plan end: 7 or 15? | 7 |
+| [ ] | Price code: the same pattern for cost and asking (built), or a separate pattern for each? Also print the code on the phone's slip / A4 page? | One pattern; stickers only |
 | [ ] | Old balance: a promised return date (like len-den) and reminders for it? Needs a new column | Not built |
 | [ ] | Control room on its own sub-domain (e.g. `control.oopsolutions.com`)? Needs a DNS record and a Traefik rule on the server; `/control` works today | `/control` on the present domain |
 | [ ] | More kind-of-shop pages for search (repair shop software, mobile wholesale software, a page per city)? | The three built |

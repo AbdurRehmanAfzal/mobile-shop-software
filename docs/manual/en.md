@@ -1245,6 +1245,10 @@ Tick **Remember these choices** and the shop will use the same size and lines ne
 
 Some shops like to see the buying price on the sticker, but in letters a customer cannot read. Set it in **Shop settings → Sticker cost code**: type a word with 10 different letters, for example **BLACKHORSE**. Digit 0 is the 1st letter, 1 the 2nd, and so on. A phone that cost Rs. 45,000 then prints as **KHBBB**.
 
+**Your own price code.** If you already have your own way of writing prices, make it in **Shop settings → Your own price code**: switch on **Use my own pattern**, write a letter or sign for each digit (1 = A, 2 = B … 0 = Z), a sign for **Lakh**, **Thousand** and **Hundred**, and, if you like, something **before** and **after** the code. Choose how the price is written — **Short** (285,000 → BHE and the lakh sign), **As you say it** (2 lakh 85 thousand → B L HE T) or **Every digit**. **How your prices will look** shows your pattern at work while you type; try a price of your own there. After **Save**, tick **Cost in code** or **Asking price in code** when you print a sticker. Only the owner and the manager see the pattern; a salesman cannot print a price in code.
+
+**Example:** 1 = A, 2 = B, 5 = E, 8 = H, lakh = L, before ##, after @@. A phone that cost Rs. 285,000 prints as **##BHEL@@**.
+
 > **Important:** Only the owner and manager can put the cost code on a sticker. If a salesman switches it on, it is simply left off.
 
 ### Barcode settings (owner)

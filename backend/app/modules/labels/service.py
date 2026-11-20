@@ -47,6 +47,8 @@ FIELDS = (
     "pta",
     "date",
     "code",
+    # shopkeepers 2026-11-20 (ADR-117): the asking price in the shop's code
+    "pcode",
     # owner 2026-11-18 (ADR-106): each its own tick — a used iPhone is sold by these
     "ram",
     "battery",
@@ -99,6 +101,15 @@ def cost_code(amount: Decimal | None, word: str | None) -> str:
     return "".join(w[int(ch)] for ch in str(int(amount)))
 
 
+def shop_code(amount: Decimal | None, shop: Shop) -> str:
+    """a price in the shop's code: its own pattern (ADR-117) when it made one, else the code word"""
+    if shop.price_code:
+        from app.modules.labels.pricecode import encode
+
+        return encode(amount, shop.price_code)
+    return cost_code(amount, shop.label_code_word)
+
+
 def barcode_svg(value: str) -> str:
     """Code 128 as an inline SVG that scales to the label's width."""
     buf = BytesIO()
@@ -144,7 +155,7 @@ def _fields(fields: str | None, can_cost: bool, fv: int = 1) -> set[str]:
     if fv < 2 and "specs" in want:
         want |= set(SPEC_EXTRAS)
     if not can_cost:
-        want.discard("code")
+        want -= {"code", "pcode"}  # a price in code gives the pattern away (ADR-117)
     return want
 
 
@@ -240,6 +251,8 @@ def _label(parts: dict, want: set[str], ur: bool, compact: bool = False) -> str:
     row = []
     if "price" in want and parts.get("price"):
         row.append(f'<div class="price">{e(parts["price"])}</div>')
+    if "pcode" in want and parts.get("pcode"):  # the asking price in code, beside or instead of it
+        row.append(f'<div class="code">{e(parts["pcode"])}</div>')
     if "code" in want and parts.get("code"):
         row.append(f'<div class="code">{e(parts["code"])}</div>')
     if row:
@@ -279,7 +292,7 @@ def is_imei(v: str | None) -> bool:
     return bool(v) and len(v) == 15 and v.isdigit()
 
 
-def _device_parts(d: dict, shop: Shop, ur: bool, word: str | None, bar: str = "code") -> dict:
+def _device_parts(d: dict, shop: Shop, ur: bool, bar: str = "code") -> dict:
     cat = d.get("category") or "phone"
     specs = [
         f"{d['size_mm']}mm" if cat == "watch" and d.get("size_mm") else d.get("storage_name"),
@@ -323,7 +336,8 @@ def _device_parts(d: dict, shop: Shop, ur: bool, word: str | None, bar: str = "c
         "name": f"{d.get('brand_name') or ''} {d.get('model_name') or ''}".strip(),
         "specs": " · ".join(x for x in specs if x),
         "price": _money(d.get("asking_price")),
-        "code": cost_code(d.get("cost_price"), word),
+        "code": shop_code(d.get("cost_price"), shop),
+        "pcode": shop_code(d.get("asking_price"), shop),
         "barcode": code_value,
         "imei": d.get("imei1") or d.get("serial") or "",
         "barcode_type": code_type,
@@ -369,7 +383,7 @@ def devices_html(
         if d is None:
             continue
         lab = _label(
-            _device_parts(d, shop, ur, shop.label_code_word, bar),
+            _device_parts(d, shop, ur, bar),
             want,
             ur,
             not sheet and lh < COMPACT_H,
@@ -412,7 +426,8 @@ def items_html(
             "name": a.name_ur if ur and a.name_ur else a.name,
             "specs": "",
             "price": _money(a.price),
-            "code": cost_code(a.avg_cost, shop.label_code_word),
+            "code": shop_code(a.avg_cost, shop),
+            "pcode": shop_code(a.price, shop),
             "barcode": a.barcode or a.sku,
             "barcode_type": a.barcode_type or "code128",
             "last4": "",

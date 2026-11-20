@@ -37,7 +37,7 @@ export default function StickerPreview({ deviceId, onMore }: { deviceId: string;
     return () => { live = false; clearTimeout(t) }
   }, [path])
 
-  const fields = LABEL_FIELDS.filter((f) => canCost || f !== 'code')
+  const fields = LABEL_FIELDS.filter((f) => canCost || (f !== 'code' && f !== 'pcode'))
   const toggle = (f: LabelField) => {
     keep({ ...p, fields: p.fields.includes(f) ? p.fields.filter((x) => x !== f) : [...p.fields, f] })
   }

@@ -184,7 +184,11 @@ def list_shops(current: Annotated[CurrentUser, Depends(get_current_user)], db: D
 
 @shops.get("/current", response_model=ShopSettingsOut)
 def current_shop(ctx: Ctx):
-    return ctx.shop
+    out = ShopSettingsOut.model_validate(ctx.shop)
+    # ADR-117: the price code's pattern would let a salesman read the cost off a sticker
+    if not ctx.can(Cap.VIEW_COST):
+        out.price_code = None
+    return out
 
 
 @shops.post("", response_model=ShopOut, status_code=201)

@@ -5170,6 +5170,21 @@
       "title": "CP ID mobile ka naam",
       "body": "CP ID mobile Pakistan mein band ho gaye, magar bohat si dukaanon ke paas ab bhi hain aur khareed o farokht hoti hai. Apna lafz ya nishan chunein (20 huroof tak, maslan ★ ya \"Special\"); har report, stock ginti, qeemat list, sticker, raseed aur app ki screens par \"CP ID\" ki jagah yehi dikhega. Sirf naam badalta hai; record mein mobile CP ID hi rehte hain. CP ID ke liye khali chhorein.",
       "example": "★ chunein: ginti sheet par CP ID ki jagah \"★\" aayega."
+    },
+    "priceCode": {
+      "title": "Aap ka apna price code",
+      "body": "Qeemat likhne ka khufia tareeqa jo aap khud banate hain: har hindse ke liye ek harf ya nishaan, lakh, hazaar aur sau ke liye nishaan, aur code se pehle aur baad kuch. Sticker print karte waqt \"Laagat code mein\" ya \"Maangi qeemat code mein\" par tick lagayein to qeemat isi mein chhapti hai. Pattern sirf malik aur manager dekhte hain; salesman code wali qeemat print nahi kar sakta.",
+      "example": "1 = A, 2 = B, 5 = E, 8 = H, lakh = L, prefix ##, postfix @@. Laagat Rs. 285,000 → sticker par ##BHEL@@."
+    },
+    "priceCodeUnits": {
+      "title": "Lakh, hazaar aur sau ke nishaan",
+      "body": "Har ek ka ek nishaan, jo batata hai qeemat kitni bari hai. Koi khali chhorein to us se chhota nishaan istemal hota hai; sab khali chhorein to har hindsa likha jata hai. Nishaan kisi hindse wala bhi ho sakta hai (bohat si dukaanein 8 aur sau dono ke liye H rakhti hain), magar phir code wapas parhna mushkil hota hai.",
+      "example": "Lakh L, hazaar T, sau H: 45,000 → DET (45 aur hazaar ka nishaan)."
+    },
+    "priceCodeStyle": {
+      "title": "Qeemat kaise likhi jaye",
+      "body": "Mukhtasar: aakhir ke zero chhor kar hindse, phir qeemat ke hajam ka nishaan — jaldi parha jata hai, magar 2,500 aur 25,000 ek jaise dikhte hain. Jaise aap bolte hain: lakh, hazaar aur sau har ek apne nishaan ke sath — kuch nahi chhoot-ta. Har hindsa: saare hindse, zero bhi.",
+      "example": "Rs. 285,500 — Mukhtasar: BHEEL. Jaise bolte hain: BLHETEH. Har hindsa: BHEEZZ."
     }
   },
   "biz": {

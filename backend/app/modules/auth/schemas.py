@@ -90,6 +90,8 @@ class ShopSettingsOut(ShopOut):
     fingerprint_staff: bool = False
     label_code_word: str | None = None
     label_prefs: dict | None = None
+    # ADR-117: only for a login that may see cost (the route blanks it for the rest)
+    price_code: dict | None = None
     sale_rules: dict | None = None
     audit_prefs: dict | None = None
     item_prefs: dict | None = None
@@ -217,6 +219,7 @@ class ShopUpdate(BaseModel):
     default_locale: str | None = Field(default=None, pattern="^(en|ur)$")
     label_code_word: str | None = Field(default=None, min_length=10, max_length=10)
     label_prefs: dict | None = None
+    price_code: dict | None = None
     sale_rules: dict | None = None
     audit_prefs: dict | None = None
     item_prefs: dict | None = None
@@ -332,6 +335,13 @@ class ShopUpdate(BaseModel):
         from app.modules.shopaudit.prefs import clean_prefs
 
         return clean_prefs(v)
+
+    @field_validator("price_code")
+    @classmethod
+    def _price_code(cls, v: dict | None) -> dict | None:
+        from app.modules.labels.pricecode import clean
+
+        return clean(v)
 
     @field_validator("label_code_word")
     @classmethod
