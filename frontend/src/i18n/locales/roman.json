@@ -5917,5 +5917,203 @@
     },
     "note": "Xprinter, Zebra aur Epson jaise brand yeh printer banate hain. Yeh sirf misalein hain; hum ne koi model test nahi kiya. Rolls ka poora carton lene se pehle 5 se 10 sticker print kar ke scan zaroor karein.",
     "toSettings": "Apne printer set karein"
+  },
+  "fguide": {
+    "title": "FBR guide",
+    "sub": "Aap se kya chahiye, aap kya karenge aur hum kya karenge — step by step — taake aap ke bill FBR ko jayein",
+    "back": "Wapas",
+    "open": "FBR guide kholein",
+    "openHint": "Aap se kya chahiye aur hum kya karte hain, step by step",
+    "who": {
+      "you": "Aap",
+      "we": "Hum",
+      "both": "Mil kar"
+    },
+    "s1": {
+      "t": "Mukhtasar jawab",
+      "p": {
+        "1": "FBR ke bill sirf un dukaanon ke liye hain jo sales tax mein registered hain. Jo dukaan registered nahi use is ki zaroorat nahi, aur us ke liye kuch nahi badalta.",
+        "2": "Yeh band rehta hai jab tak hum mil kar chalu na karein. Aap humein apne tax number dete hain aur FBR ki IRIS website se ek token lete hain; settings aur test hum karte hain.",
+        "3": "Us ke baad har bill khud FBR ko jata hai aur FBR ka number QR code ke sath print hota hai."
+      }
+    },
+    "s2": {
+      "t": "Bill ke sath kya hota hai",
+      "p": "Jab aap sale save karte hain to software bill FBR ke Digital Invoicing system ko bhejta hai. FBR apna invoice number wapas deta hai. Phir bill par \"FBR Digital Invoicing System\", woh number aur QR code print hota hai. Internet band ho to sale nahi rukti: bill intezar karta hai aur baad mein khud chala jata hai.",
+      "ex": "Misaal: aap Rs. 2,500 ka charger bechte hain. Aap ka bill number INV-0125 hai. Chand second baad FBR ka number bhi bill par aa jata hai, QR ke sath. Gahak use scan kar sakta hai."
+    },
+    "s3": {
+      "t": "Humein aap se kya chahiye",
+      "intro": "Chhe cheezein. Shuru karne se pehle tayyar rakhein.",
+      "r": {
+        "1": {
+          "1": "Aap ka NTN",
+          "2": "National Tax Number, jaisa aap ke FBR certificate par hai. Misaal: 1234567-8."
+        },
+        "2": {
+          "1": "Aap ka STRN",
+          "2": "Sales Tax Registration Number, 13 hindse. Misaal: 3277876123456. STRN nahi to aap sales tax mein registered nahi, aur FBR ke bill abhi aap ke liye nahi."
+        },
+        "3": {
+          "1": "Karobar ka naam, pata aur sooba",
+          "2": "Bilkul waise jaise FBR ke paas likhe hain. Yeh bill par print hote hain aur us ke sath jate hain."
+        },
+        "4": {
+          "1": "Aap kya bechte hain",
+          "2": "Mobile, accessories, laptop, ya sab. Har ek ka tax alag hai, is liye hum har ek alag set karte hain."
+        },
+        "5": {
+          "1": "Aap ke tax adviser ki tasdeeq",
+          "2": "Us se chaar baatein poochein: aaj accessories par sales tax ki sharah; ke aap ki dukaan par mobile phone par izafi tax nahi lagta (Ninth Schedule); jo aap bechte hain un ke HS code; aur kya aap ki repair ke liye soobai tax office bhi zaroori hai."
+        },
+        "6": {
+          "1": "IRIS se ek token",
+          "2": "Ek lamba khufia code jo FBR aap ko Digital Invoicing ke liye deta hai. Pehle test (sandbox) token, baad mein asli (production). Hissa 4 mein tareeqa hai."
+        }
+      },
+      "never": {
+        "t": "Jo hum kabhi nahi maangte",
+        "p": {
+          "1": "Aap ka IRIS password. Kisi ko na dein — humein bhi nahi.",
+          "2": "Token WhatsApp par ya kisi group mein. Aap use khud software mein likhte hain (hissa 5, step 2). Save hone ke baad use koi dobara nahi dekh sakta — na aap, na hum."
+        }
+      }
+    },
+    "s4": {
+      "t": "Token kaise milta hai",
+      "intro": "Yeh aap, ya aap ka tax adviser, FBR ki website par karta hai. Hum aap ki jagah nahi kar sakte, kyun ke yeh aap ka tax account hai.",
+      "p": {
+        "1": "iris.fbr.gov.pk kholein aur apne user name aur password se login karein.",
+        "2": "Digital Invoicing dhoondein aur integration ki darkhwast dein (menu ke naam badalte rehte hain; aap ka tax adviser ya FBR ki helpline sahi screen dikha degi).",
+        "3": "Pehle sandbox token lein. Yeh test ke liye hai: is se bheje gaye bill asli nahi hote.",
+        "4": "Jab hamare test pass ho jayein to isi tarah production token lein. FBR ke mutabiq token paanch saal chalta hai.",
+        "5": "Token copy karein aur mehfooz jagah rakhein, bank ke PIN ki tarah."
+      },
+      "ex": "Misaal: token huroof aur hindson ki ek lambi line hota hai. Aap use poora copy kar ke ek baar paste karte hain."
+    },
+    "s5": {
+      "t": "Hum kya karte hain, step by step",
+      "intro": "Har step par likha hai kaun karega.",
+      "r": {
+        "1": {
+          "1": "both",
+          "2": "Tax number likhna",
+          "3": "More → Dukaan ki settings: NTN aur STRN. NTN ke baghair software FBR chalu nahi karta."
+        },
+        "2": {
+          "1": "you",
+          "2": "Test token likhna",
+          "3": "More → Dukaan ki settings → FBR Digital Invoicing. Sandbox (test) chunein, sandbox token paste karein, Save dabayein."
+        },
+        "3": {
+          "1": "we",
+          "2": "Har sale ki qisam set karna",
+          "3": "Phone, doosre device aur items ke liye hum FBR ki sale type aur HS code likhte hain, jaise aap ke tax adviser ne tasdeeq ki."
+        },
+        "4": {
+          "1": "we",
+          "2": "FBR ke sath test",
+          "3": "Hum \"FBR se test karein (sandbox)\" dabate hain. FBR ek namoona bill check kar ke jawab deta hai. FBR ke paas kuch record nahi hota."
+        },
+        "5": {
+          "1": "both",
+          "2": "Test bill banana",
+          "3": "Hum Sandbox mein ek test phone aur ek test accessory bechte hain aur print hua bill mil kar dekhte hain: FBR ka number aur QR hona chahiye."
+        },
+        "6": {
+          "1": "you",
+          "2": "Asli token likhna",
+          "3": "Production (asal) chunein, production token paste karein, Save dabayein."
+        },
+        "7": {
+          "1": "both",
+          "2": "Chalu karna",
+          "3": "Hum \"Bill FBR ko bhejein\" on karte hain aur pehla asli bill mil kar banate hain."
+        },
+        "8": {
+          "1": "you",
+          "2": "Rozana",
+          "3": "Kuch izafi nahi. Hamesha ki tarah bechein. Kabhi kabhi FBR card dekh lein: Bheje, Baqi, Radd hue."
+        }
+      }
+    },
+    "s6": {
+      "t": "Baad mein aap kya dekhenge",
+      "r": {
+        "1": {
+          "1": "Har bill par",
+          "2": "\"FBR Digital Invoicing System\", FBR ka number aur QR code. Number aane tak likha hota hai \"FBR: waiting to be sent\"."
+        },
+        "2": {
+          "1": "Bill ke page par",
+          "2": "Bheja gaya us ke FBR number ke sath, ya Baqi, ya Radd hua FBR ki wajah aur \"Dobara bhejein\" button ke sath."
+        },
+        "3": {
+          "1": "Dukaan ki settings mein",
+          "2": "Kitne bill gaye, kitne intezar mein hain, kitne FBR ne wapas kiye."
+        },
+        "4": {
+          "1": "Bill do baar nahi jata",
+          "2": "Jo bill FBR qabool kar le woh dobara nahi bheja jata, aap kuch bhi dabayein."
+        }
+      }
+    },
+    "s7": {
+      "t": "Agar kuch ghalat ho",
+      "r": {
+        "1": {
+          "1": "Bill Baqi par rehte hain",
+          "2": "Internet band hai ya FBR jawab nahi de raha. Woh khud chale jate hain; aap \"Baqi bill abhi bhejein\" bhi daba sakte hain."
+        },
+        "2": {
+          "1": "Radd hua: token ya ijazat",
+          "2": "Token ghalat hai, khatam ho gaya hai ya doosre mode ka hai (sandbox / production). IRIS se naya le kar paste karein."
+        },
+        "3": {
+          "1": "Radd hua: koi khana ghalat hai",
+          "2": "Aam taur par NTN, HS code ya sale type. Humein FBR ka paigham batayein; hum setting theek karte hain aur aap \"Dobara bhejein\" dabate hain."
+        },
+        "4": {
+          "1": "Switch on nahi hota",
+          "2": "NTN ya token nahi hai. Pehle Dukaan ki settings mein NTN likhein aur token save karein."
+        },
+        "5": {
+          "1": "Purane bill par QR nahi hai",
+          "2": "Bill kholein aur jab bheja hua dikhe to dobara print karein."
+        }
+      }
+    },
+    "s8": {
+      "t": "Jo yeh abhi nahi karta",
+      "p": {
+        "1": "Yeh ab tak kisi asli FBR account ke sath nahi chalaya gaya. Pehli dukaan hamare sath mil kar set hogi, pehle Sandbox mein.",
+        "2": "Sale ki wapsi abhi FBR ko credit note ke taur par nahi jati. Apne tax adviser ko batayein, aur zaroorat se pehle humein batayein.",
+        "3": "FBR ka doosra system — bare mall aur chain ki dukaanon ka POS integration (FBR ki \"POS ID\") — nahi bana. Yeh guide Digital Invoicing ke baare mein hai.",
+        "4": "Repair ek service hai; us ka tax soobai hai (PRA, SRB, KPRA, BRA), FBR ka nahi. Software repair ke bill wahan nahi bhejta."
+      }
+    },
+    "s9": {
+      "t": "Aam sawal",
+      "r": {
+        "1": {
+          "1": "Kya mujhe is ki zaroorat hai?",
+          "2": "Sirf agar aap sales tax mein registered hain aur FBR ne aap jaise karobar ko digital invoice dene ka kaha hai. Apne tax adviser se poochein. Warna band rehne dein."
+        },
+        "2": {
+          "1": "Kya mobile phone par tax lagta hai?",
+          "2": "Dukaan par aam taur par nahi: tax phone ke import ya banne par ada ho chuka hota hai (Ninth Schedule). Sale phir bhi report hoti hai. Aap ka tax adviser is ki tasdeeq karta hai."
+        },
+        "3": {
+          "1": "Kya mera token mehfooz hai?",
+          "2": "Yeh server par scramble ho kar rakha jata hai aur dobara kabhi dikhaya ya kisi phone ko bheja nahi jata. Lage ke kisi aur ke paas hai to IRIS mein badal dein."
+        },
+        "4": {
+          "1": "Kya is se counter sust hoga?",
+          "2": "Nahi. Pehle sale save hoti hai; bill us ke baad FBR ko jata hai."
+        }
+      }
+    },
+    "note": "Yeh guide software samjhati hai. Yeh tax ka mashwara nahi. Sharah, code aur kis ko digital invoice dena hai, yeh FBR tay karta hai aur badalta rehta hai; aap ka tax adviser aap ke karobar ke liye tasdeeq karta hai.",
+    "toSettings": "FBR settings kholein"
   }
 }

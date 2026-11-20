@@ -140,6 +140,7 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 
 ## FBR Digital Invoicing (owner 2026-11-06, ADR-050)
 - Research and plan `docs/36-FBR-INVOICING-RESEARCH.md`; read ADR-049 / ADR-050 before touching `backend/app/modules/fbr`, the receipt's FBR part or `FbrCard.tsx`.
+- The client-facing guide is `FbrGuidePage.tsx` (`/fbr-guide`, public, ADR-120): what the shop brings and who does which step. When the FBR card's labels, what a shop must bring, or what is still not built (returns as credit notes, POS integration, a real sandbox run) changes, change `fguide.*` in three languages in the same commit; it must never promise what was not run against FBR.
 - Rules: off per shop by default; the token is encrypted and write-only (never in a response, log or the app); a bill is queued in the sale's transaction and sent outside it; claim before posting, never post an accepted bill again; a rejected bill waits for "Send again"; tests never call the real FBR (monkeypatch `fbr.service.post`).
 
 ## Hard rules

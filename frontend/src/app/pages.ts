@@ -15,6 +15,7 @@ export { InstallmentDetailPage, InstallmentsPage } from '@/features/installments
 export { default as AssistantPage } from '@/features/ai/AssistantPage'
 export { default as AdminPage } from '@/features/admin/AdminPage'
 export { default as PrinterGuidePage } from '@/features/more/PrinterGuidePage'
+export { default as FbrGuidePage } from '@/features/more/FbrGuidePage'
 export { default as ControlShell } from '@/features/admin/ControlShell'
 export { default as ProviderPage } from '@/features/admin/ProviderPage'
 export { default as KeyPage } from '@/features/admin/KeyPage'

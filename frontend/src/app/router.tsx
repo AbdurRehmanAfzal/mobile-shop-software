@@ -16,6 +16,7 @@ const page = <K extends keyof Pages>(k: K) => lazy(async () => ({ default: (awai
 const Shell = page('Shell')
 const ControlShell = page('ControlShell')
 const PrinterGuidePage = page('PrinterGuidePage')
+const FbrGuidePage = page('FbrGuidePage')
 const HomePage = page('HomePage')
 const StockSummaryPage = page('StockSummaryPage')
 const DayReportPage = page('DayReportPage')
@@ -119,6 +120,8 @@ export const router = createBrowserRouter([
   { path: '/welcome', element: <LandingPage /> },
   // ADR-119: the printer guide, open to anyone (no shop data on it)
   { path: '/printer-guide', element: <Suspense fallback={<Waiting />}><PrinterGuidePage /></Suspense> },
+  // ADR-120: what a shop brings and what we do to send its bills to FBR; open to anyone
+  { path: '/fbr-guide', element: <Suspense fallback={<Waiting />}><FbrGuidePage /></Suspense> },
   // ADR-115: the same page for one kind of shop, at an address a search can land on
   ...TOPIC_KEYS.map((k) => ({ path: TOPICS[k], element: <LandingPage topic={k} /> })),
   { path: '/key/:token', element: <Suspense fallback={<Waiting />}><KeyPage /></Suspense> },

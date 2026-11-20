@@ -893,6 +893,8 @@ Messages to customers (receipts, reminders) use the shop's language from **Langu
 
 ### FBR Digital Invoicing (for shops registered for sales tax)
 
+> **Read this first:** the **FBR guide** says in plain words what you must bring (NTN, STRN, a token from IRIS, your tax adviser's word), what you do yourself and what we do, step by step. Open it from **Open the FBR guide** on this card, or at `/fbr-guide` — it opens without a login, so you can send the link to your tax adviser.
+
 If FBR asks your business to report its invoices (sales-tax registered, notified by FBR), the app can send every sale bill to FBR by itself and print the FBR number and its QR code on the bill.
 
 1. Make sure your **NTN** and **STRN** are filled in under **Tax registration**.
