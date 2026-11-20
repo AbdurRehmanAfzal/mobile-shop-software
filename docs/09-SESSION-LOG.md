@@ -2240,7 +2240,7 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - Also pushed ADR-118 as PR #101 (full backend suite and CI green after the push) and a log correction.
 
 **Verified**
-- pytest: `test_printer_test` and `test_labels` pass. Full suite: at 47% with no failure when the owner asked for the push; CI runs it on the pull request.
+- pytest: `test_printer_test` and `test_labels` pass. Full suite: passes (exit 0); it finished after the push.
 - ruff clean; tsc clean; vitest 66 passed.
 - Playwright: `printers.spec` passes (guide without login in three languages and at 320 px; steps change with device and connection; the test page opens with the sticker's size and the barcode; No → what to try; Yes → Working, kept after a reload; guide ↔ settings).
 - **Not verified: any real printer.** No printer was available; the steps are general and the test page was only seen on screen.
@@ -2248,3 +2248,15 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: the owner's test on real printers (docs/29) and his remarks on the guide's wording.
 
 **Open questions**: direct ESC/POS printing from the app.
+
+## 2026-11-20 (8) — The FBR guide (ADR-120)
+
+**Asked (owner)**: an FBR guide too — everything we need from the client to configure FBR and everything we do, each step, so that a layman understands.
+
+**Done**: `FbrGuidePage.tsx` at `/fbr-guide` (public, three languages, nine sections; what the shop brings with examples; what is never asked for; eight steps tagged You / We / Together; what is not built yet; not tax advice); a button on the FBR card; sitemap and robots; a pointer in the manual's FBR section. Texts written from `docs/36`, ADR-050 and the card's own labels — no new claim about FBR beyond those. Also pushed ADR-119 as PR #102; its full backend suite passed locally after the push.
+
+**Verified**: tsc clean; vitest 66 passed; Playwright `fbr-guide.spec` (public, sections, examples, who-does-what counts, the app's own button names in each language, 320 px, from the FBR card and back) and `fbr.spec` pass. No backend change, so pytest was not run. **Not verified**: anything against the real FBR or IRIS — the guide says so itself; and no tax adviser has read it.
+
+**Next**: a tax adviser's read of the guide; the first registered shop in Sandbox.
+
+**Open questions**: none new (ADR-050's stand: returns as credit notes, POS integration, a real sandbox run).

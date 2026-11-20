@@ -2586,6 +2586,8 @@ Customers ko paighaam (raseedein, yaad dahani) **Print aur paighaam ki zubaan** 
 
 ### FBR Digital Invoicing (sales tax registered dukaanon ke liye)
 
+> **Pehle yeh parhein:** **FBR guide** asaan lafzon mein batati hai aap ko kya laana hai (NTN, STRN, IRIS se token, tax adviser ki tasdeeq), aap khud kya karte hain aur hum kya karte hain, step by step. Ise isi card par **FBR guide kholein** se kholein, ya `/fbr-guide` par — yeh login ke baghair khulti hai, is liye link apne tax adviser ko bhej sakte hain.
+
 Agar FBR aap ke karobar ko invoice report karne ka kahe (sales tax registered, FBR ne bataya ho) to app har sale ka bill khud FBR ko bhej kar bill par FBR number aur us ka QR code chhaap sakti hai.
 
 1. Yaqeen kar lein ke **Tax registration** mein aap ka **NTN** aur **STRN** likha hai.

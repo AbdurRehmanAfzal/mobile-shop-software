@@ -3,9 +3,10 @@
  *  against FBR's sandbox, and the bills waiting for FBR or turned down by it. Owner only. */
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Check, Landmark, PlugZap, Send } from 'lucide-react'
+import { BookOpen, Check, Landmark, PlugZap, Send } from 'lucide-react'
 import type { JSX, ReactNode } from 'react'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { BiAlert, BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import { ErrorText, fmtDate } from '@/components/ui'
@@ -24,6 +25,7 @@ const KINDS: Kind[] = ['phone', 'device', 'item']
 export default function FbrCard({ Card, Toggle }: { Card: CardT; Toggle: ToggleT }) {
   const { pick, ur, cls } = useLang()
   const qc = useQueryClient()
+  const nav = useNavigate()
   const shopKey = useAuth((s) => s.activeShopId)
   const { data } = useGet<Fbr>(['fbr-settings'], '/api/v1/fbr/settings')
   const { data: subs, refetch } = useGet<{ counts: Record<string, number>; rows: Sub[] }>(['fbr-subs'], '/api/v1/fbr/submissions?limit=30')
@@ -45,6 +47,11 @@ export default function FbrCard({ Card, Toggle }: { Card: CardT; Toggle: ToggleT
 
   return (
     <Card icon={<Landmark size={22} />} tone="bg-khata text-khata-fg" title="fbr.title" hint="fbr.hint" help="fbr.what">
+      {/* ADR-120: what the shop brings and what we do, before anything is typed here */}
+      <button type="button" onClick={() => nav('/fbr-guide')} className="tap flex min-h-14 items-center gap-3 rounded-2xl bg-ink px-4 py-2 text-start text-ground" data-testid="fbr-guide-open">
+        <BookOpen size={22} className="shrink-0" />
+        <span className="flex min-w-0 flex-1 flex-col"><span className={ur ? cls('md') : 'text-[15px] font-extrabold'}>{pick('fguide.open')}</span><span className={`text-ground/80 ${ur ? cls('sm') : 'text-xs font-semibold'}`}>{pick('fguide.openHint')}</span></span>
+      </button>
       {!data.ntn ? <BiAlert text="fbr.needNtn" kind="info" /> : null}
       <Toggle on={f.enabled} onChange={(v) => { setOk(false); setF({ ...f, enabled: v }) }} text="fbr.enabled" hint="fbr.enabledHint" help="fbr.enabled" />
       <span className="flex items-center gap-1"><BiLabel text="fbr.env" size="sm" tone="text-muted" /><Help term="fbr.env" size="sm" /></span>

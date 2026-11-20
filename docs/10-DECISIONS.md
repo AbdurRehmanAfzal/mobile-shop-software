@@ -362,6 +362,21 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-120 · 2026-11-20 · Accepted · The FBR guide: what the shop brings, what it does, what we do — a public page in three languages
+
+**Context**: the owner (2026-11-20): "FBR ke related bhi guide likh do — jo jo client ki taraf se humein chahiye FBR configure karne ke liye aur jo hum karenge, each step, taake layman bhi samajh jaye." Until now this lived in `docs/36` (research, for us) and in the "?" texts of the FBR card; nothing a shopkeeper or his tax adviser could be sent.
+
+**Decision**
+1. A page of the app, `/fbr-guide` (`FbrGuidePage.tsx`), open without a login, in English, Urdu and Roman Urdu, built like the printer guide (ADR-119): nine short sections — the short answer; what happens to a bill; **what we need from you** (NTN, STRN, the registered name / address / province, what the shop sells, the tax adviser's four confirmations, a token from IRIS) with an example for each and a red box of what is never asked for (the IRIS password; the token over WhatsApp); how the shop gets the token; **what we do, step by step** — eight steps, each tagged You / We / Together; what the shop sees afterwards; what to do when a bill waits or is turned down; what is not built yet; common questions.
+2. A button "Open the FBR guide" at the top of the FBR card in Shop settings; the page is in the sitemap.
+3. **Buttons are named as the app shows them in that language** (the Urdu guide says "بل FBR کو بھیجیں", not "Send bills to FBR") — one language at a time holds inside a guide too.
+4. **It says what is not true yet**, because a client will act on it: the integration has never been run against a real FBR account (ADR-050's open items stand); sale returns are not sent as credit notes; POS integration (Tier-1, POS ID) is not built; repairs are provincial. And: it is not tax advice — rates, codes and who must issue digital invoices are the tax adviser's to confirm.
+5. **The token is typed by the shop**, not sent to us — the guide puts that step on "You", in line with the card (write-only, never shown again).
+
+**Not claimed**: the exact IRIS menu path for the token (it changes; the guide sends the reader to his adviser or FBR's helpline), a time to go live, or any fee.
+
+**Consequences**: when the FBR card's labels, the open items of ADR-050 (returns, POS, a real sandbox run) or the list of what a shop must bring change, `fguide.*` changes in three languages in the same commit.
+
 ## ADR-119 · 2026-11-20 · Accepted · Printers in Shop settings (set up per device, with a test page) and a printer guide open to anyone
 
 **Context**: the owner (2026-11-20): "shop setting mein printer connect ka option bhi daal do — Bluetooth ke sath USB ya Wi-Fi — sticker ke liye, 80 mm ke liye aur A4 wala bhi; aur jo printers ki guide banayi thi us ka button bhi shop setting mein … koi bhi person wo guide dekh sakta hai, easy to read, proper example ke sath taake lay man ko bhi samajh aaye." The guide of 2026-11-16 was a Roman-Urdu PDF in `docs/guides`, not reachable from the app.

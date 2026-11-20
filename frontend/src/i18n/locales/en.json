@@ -5917,5 +5917,203 @@
     },
     "note": "Brands such as Xprinter, Zebra and Epson make these printers. They are examples only; no model has been tested by us. Print 5 to 10 stickers and scan them before you buy a whole carton of rolls.",
     "toSettings": "Set up my printers"
+  },
+  "fguide": {
+    "title": "FBR guide",
+    "sub": "What we need from you, what you do, and what we do — step by step — to send your bills to FBR",
+    "back": "Back",
+    "open": "Open the FBR guide",
+    "openHint": "What we need from you and what we do, step by step",
+    "who": {
+      "you": "You",
+      "we": "We",
+      "both": "Together"
+    },
+    "s1": {
+      "t": "The short answer",
+      "p": {
+        "1": "FBR bills are only for shops registered for sales tax. A shop that is not registered does not need this, and nothing changes for it.",
+        "2": "It is off until we switch it on together. You give us your tax numbers and get one token from FBR's IRIS website; we do the settings and the tests.",
+        "3": "After that every bill goes to FBR by itself and prints the FBR number with a QR code."
+      }
+    },
+    "s2": {
+      "t": "What happens to a bill",
+      "p": "When you save a sale, the software sends the bill to FBR's Digital Invoicing system. FBR answers with its own invoice number. The bill then prints \"FBR Digital Invoicing System\", that number and a QR code. If the internet is down the sale is not stopped: the bill waits and goes by itself later.",
+      "ex": "Example: you sell a charger for Rs. 2,500. Your bill number is INV-0125. A few seconds later FBR's number is on the bill too, with the QR. The customer can scan it."
+    },
+    "s3": {
+      "t": "What we need from you",
+      "intro": "Six things. Keep them ready before we start.",
+      "r": {
+        "1": {
+          "1": "Your NTN",
+          "2": "National Tax Number, as on your FBR certificate. Example: 1234567-8."
+        },
+        "2": {
+          "1": "Your STRN",
+          "2": "Sales Tax Registration Number, 13 digits. Example: 3277876123456. No STRN means you are not registered for sales tax, and FBR bills are not for you yet."
+        },
+        "3": {
+          "1": "Business name, address and province",
+          "2": "Exactly as they are written with FBR. They are printed on the bill and sent with it."
+        },
+        "4": {
+          "1": "What you sell",
+          "2": "Mobiles, accessories, laptops, or all of them. Tax is different for each, so we set each one separately."
+        },
+        "5": {
+          "1": "Your tax adviser's word",
+          "2": "Ask him four things: the sales tax rate on accessories today; that mobile phones carry no added tax at your shop (Ninth Schedule); the HS codes for what you sell; and whether your repairs need the provincial tax office too."
+        },
+        "6": {
+          "1": "A token from IRIS",
+          "2": "A long secret code FBR gives you for Digital Invoicing. First a test (sandbox) token, later the real (production) one. Section 4 shows how."
+        }
+      },
+      "never": {
+        "t": "What we never ask for",
+        "p": {
+          "1": "Your IRIS password. Do not give it to anyone — not to us either.",
+          "2": "The token on WhatsApp or in a group. You type it into the software yourself (section 5, step 2). Once saved, nobody can see it again — not you, not us."
+        }
+      }
+    },
+    "s4": {
+      "t": "How you get the token",
+      "intro": "You, or your tax adviser, do this on FBR's website. We cannot do it for you, because it is your tax account.",
+      "p": {
+        "1": "Open iris.fbr.gov.pk and log in with your own user name and password.",
+        "2": "Find Digital Invoicing and ask for integration (the menu names change; your tax adviser or FBR's helpline will show you the exact screen).",
+        "3": "Take the sandbox token first. It is for testing: bills sent with it are not real.",
+        "4": "When our tests pass, take the production token the same way. FBR says a token is valid for five years.",
+        "5": "Copy the token and keep it somewhere safe, like a bank PIN."
+      },
+      "ex": "Example: the token looks like a long line of letters and numbers. You copy it whole and paste it once."
+    },
+    "s5": {
+      "t": "What we do, step by step",
+      "intro": "Each step says who does it.",
+      "r": {
+        "1": {
+          "1": "both",
+          "2": "Write the tax numbers",
+          "3": "More → Shop settings: NTN and STRN. The software will not switch FBR on without the NTN."
+        },
+        "2": {
+          "1": "you",
+          "2": "Type the test token",
+          "3": "More → Shop settings → FBR Digital Invoicing. Choose Sandbox, paste the sandbox token, tap Save."
+        },
+        "3": {
+          "1": "we",
+          "2": "Set the kind of each sale",
+          "3": "For phones, other devices and items we write FBR's sale type and HS code, as your tax adviser confirmed."
+        },
+        "4": {
+          "1": "we",
+          "2": "Test with FBR",
+          "3": "We tap \"Test with FBR (sandbox)\". FBR checks a sample bill and answers. Nothing is recorded at FBR."
+        },
+        "5": {
+          "1": "both",
+          "2": "Make test bills",
+          "3": "We sell a test phone and a test accessory in Sandbox and look at the printed bill together: the FBR number and the QR must be there."
+        },
+        "6": {
+          "1": "you",
+          "2": "Type the real token",
+          "3": "Choose Production, paste the production token, tap Save."
+        },
+        "7": {
+          "1": "both",
+          "2": "Switch it on",
+          "3": "We turn on \"Send bills to FBR\" and make the first real bill together."
+        },
+        "8": {
+          "1": "you",
+          "2": "Every day",
+          "3": "Nothing extra. Sell as always. Look at the FBR card now and then: Sent, Waiting, Turned down."
+        }
+      }
+    },
+    "s6": {
+      "t": "What you will see afterwards",
+      "r": {
+        "1": {
+          "1": "On every bill",
+          "2": "\"FBR Digital Invoicing System\", the FBR number and a QR code. Until the number arrives it says \"FBR: waiting to be sent\"."
+        },
+        "2": {
+          "1": "On a bill's page",
+          "2": "Sent with its FBR number, or Waiting, or Turned down with FBR's reason and a \"Send again\" button."
+        },
+        "3": {
+          "1": "In Shop settings",
+          "2": "How many bills were sent, how many wait, how many FBR turned down."
+        },
+        "4": {
+          "1": "A bill is never sent twice",
+          "2": "Once FBR has accepted a bill it is not sent again, whatever you tap."
+        }
+      }
+    },
+    "s7": {
+      "t": "If something goes wrong",
+      "r": {
+        "1": {
+          "1": "Bills stay on Waiting",
+          "2": "The internet is down or FBR is not answering. They go by themselves; you can also tap \"Send the waiting bills now\"."
+        },
+        "2": {
+          "1": "Turned down: token or permission",
+          "2": "The token is wrong, expired or for the other mode (sandbox / production). Take a new one from IRIS and paste it."
+        },
+        "3": {
+          "1": "Turned down: a field is wrong",
+          "2": "Usually the NTN, the HS code or the sale type. Tell us FBR's message; we correct the setting and you tap \"Send again\"."
+        },
+        "4": {
+          "1": "The switch does not turn on",
+          "2": "The NTN or the token is missing. Write the NTN in Shop settings and save the token first."
+        },
+        "5": {
+          "1": "The QR is missing on an old bill",
+          "2": "Open the bill and print it again once it shows Sent."
+        }
+      }
+    },
+    "s8": {
+      "t": "What it does not do yet",
+      "p": {
+        "1": "It has not been run with a real FBR account so far. The first shop is set up together with us, in Sandbox first.",
+        "2": "Sale returns are not sent to FBR as credit notes yet. Tell your tax adviser, and tell us before you need it.",
+        "3": "FBR's other system — POS integration for big mall and chain shops (a \"POS ID\" from FBR) — is not built. This guide is about Digital Invoicing.",
+        "4": "Repairs are a service; their tax is provincial (PRA, SRB, KPRA, BRA), not FBR's. The software does not send repair bills there."
+      }
+    },
+    "s9": {
+      "t": "Common questions",
+      "r": {
+        "1": {
+          "1": "Do I need this?",
+          "2": "Only if you are registered for sales tax and FBR has told businesses like yours to issue digital invoices. Ask your tax adviser. If not, leave it off."
+        },
+        "2": {
+          "1": "Is tax added on mobile phones?",
+          "2": "At a shop, normally not: the tax was paid when the phone was imported or made (Ninth Schedule). The sale is still reported. Your tax adviser confirms this for you."
+        },
+        "3": {
+          "1": "Is my token safe?",
+          "2": "It is stored scrambled on the server and is never shown again or sent to any phone. Change it in IRIS if you think someone else has it."
+        },
+        "4": {
+          "1": "Will it slow down my counter?",
+          "2": "No. The sale is saved first; the bill goes to FBR after it."
+        }
+      }
+    },
+    "note": "This guide explains the software. It is not tax advice. Rates, codes and who must issue digital invoices are set by FBR and change; your tax adviser confirms them for your business.",
+    "toSettings": "Open FBR settings"
   }
 }
