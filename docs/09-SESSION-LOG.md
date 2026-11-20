@@ -2260,3 +2260,23 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: a tax adviser's read of the guide; the first registered shop in Sandbox.
 
 **Open questions**: none new (ADR-050's stand: returns as credit notes, POS integration, a real sandbox run).
+
+## 2026-11-21 — Accessory purchase made short; every kind of stock in sight (ADR-121)
+
+**Asked (owner, from the accessories shop)**: buying accessories is hard — nobody understands what to write or where to start, while mobiles are easy; after adding stock there is no way to see the stock of accessories, laptops, watches or tablets, only mobiles; look at sale, purchase, reports and len-den too; do not disturb what runs in the shops.
+
+**Done**
+- Looked at the screens as an accessories-only shop and as a mixed shop (screenshots) before changing anything; findings in ADR-121.
+- Purchase: the item search carries the built-in list; kind chips only for a long list; the compact item form is four numbered steps with the kind as one chip, variants with "Bought" pieces, cost and selling price, the rest under More details; `Save and add` puts every variant on the bill with its pieces and cost; a hint under the typed line.
+- Stock: `stock-status.by_kind`; `KindTabs` wraps and shows counts and is on the items' screen too; `ItemsInStock` card under "All stock"; the count line names the kind.
+- Sale, reports, len-den: reviewed, already work for every kind; not changed.
+- Also pushed ADR-120 (FBR guide) as PR #103.
+
+**Verified**
+- pytest: `test_stock_by_kind` (new), `test_stock_screen`, `test_locked_phones`, `test_reserve` pass. Full suite: passes (exit 0).
+- ruff clean; tsc clean; vitest 66 passed.
+- Playwright: `easy-items.spec` (new: built-in line → four steps → two colours on the bill with pieces and cost → a second item with pieces in the form → purchase saved and stock 12 / 6 / 5; chips with counts in view at 320 px; the items card; the same chips on the items' screen and back). Unchanged and passing: `accessories-only`, `items`, `item-params`, `accessory-library-variants`, `stock-screen`, `accessories`, `laptops`, `old-dealings-bulk`, `labels`. The full Playwright suite was not run.
+
+**Next**: the accessories shop's word on the new purchase.
+
+**Open questions**: one merged list of devices and items; the four-step form on the items' own "New item" too.

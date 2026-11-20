@@ -426,9 +426,12 @@ def stock_status(db: Session, shop_id: uuid.UUID, *, category: str | None, can_c
         Device.cost_price,
         Device.reserved_party_id,
         Device.lock_type,
+        Device.category,
     ).where(Device.shop_id == shop_id, Device.status.in_(held))
     if category:
         q = q.where(Device.category == category)
+    # ADR-121: on hand per type, for the stock screen's type chips
+    by_kind: dict[str, int] = {}
     c = {
         "on_hand": 0,
         "available": 0,
@@ -441,8 +444,9 @@ def stock_status(db: Session, shop_id: uuid.UUID, *, category: str | None, can_c
         "locked": 0,
     }
     value = Decimal(0)
-    for status, ver, locks, cost, reserved, lock_type in db.execute(q).all():
+    for status, ver, locks, cost, reserved, lock_type, cat in db.execute(q).all():
         c["on_hand"] += 1
+        by_kind[cat or "phone"] = by_kind.get(cat or "phone", 0) + 1
         value += cost or Decimal(0)
         if status == DeviceStatus.IN_STOCK:
             lock_on = any(v == "not_cleared" for v in (locks or {}).values())
@@ -483,6 +487,7 @@ def stock_status(db: Session, shop_id: uuid.UUID, *, category: str | None, can_c
         item_value += max(qty, 0) * (avg or Decimal(0))
     return {
         "units": c,
+        "by_kind": by_kind,
         "items": items,
         "value_cost": money(value + (item_value if not category else Decimal(0)))
         if can_cost

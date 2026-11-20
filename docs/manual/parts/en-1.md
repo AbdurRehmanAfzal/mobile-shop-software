@@ -485,7 +485,7 @@ For each one tap **Cleared**, **Still on** or **N/A**, then tick **Lock checked 
 Chargers, cables, covers, glass, earphones, power banks and ordinary watches (Casio, Naviforce) are kept **by count**. There is no IMEI, only how many you have.
 
 1. In step 2 of Add stock, tap **Add accessory / watch**.
-2. Search the item by **Name or code** and tap it. Not in the list? Tap **New item (not in the list)**, write the **Name**, choose **What is it?** (Charger, Cable, Watch and so on, or **New kind** for your own, for example *Ring light*), type the **Selling price (each)** and tap **Save and add**.
+2. Type a few letters of what you bought in **Type what you bought: name or code** — "anker 20w", "a56 glass", "mouse". Tap it: an item you already keep goes straight onto the bill; a line under **From the built-in list** opens a short form that is already filled. In that form: **1. What is it?** (the name), **2. What kind of thing?**, **3. Which colours or sizes did you buy?** — tick each one and write how many under **Bought** — and **4. How many, and the prices**: **Cost of one piece** and **Selling price (each)**. Tap **Save and add**: every colour is on the bill with its pieces and cost. Not in any list? Tap **New item (not in the list)** and fill the same four steps yourself. (A line typed with **+ Charger, cover or other item** is only written on the bill; it does not go into stock.)
 3. Choose how the dealer sold it: **Piece**, **Dozen**, **Box** or **Carton**.
 4. Type the **Qty** and the **Unit cost** (the price of one piece, or of one dozen or box if you chose that).
 5. Finish the purchase as usual and tap **Put in stock**.

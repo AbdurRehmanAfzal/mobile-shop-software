@@ -60,7 +60,7 @@ export function LibraryHits({ q, skip, onPick }: { q: string; skip: string; onPi
 }
 
 /** which colours / lengths / sizes of the product the shop keeps, and how many of each are on the shelf */
-export function VariantPicker({ by, onBy, value, onChange, suggest, withQty }: { by: VariantBy; onBy: (b: VariantBy) => void; value: Variant[]; onChange: (v: Variant[]) => void; suggest: string[]; withQty: boolean }) {
+export function VariantPicker({ by, onBy, value, onChange, suggest, withQty, qtyLabel = 'var.qty', title = 'var.title' }: { by: VariantBy; onBy: (b: VariantBy) => void; value: Variant[]; onChange: (v: Variant[]) => void; suggest: string[]; withQty: boolean; qtyLabel?: string; title?: string }) {
   const { pick, ur, cls } = useLang()
   const [own, setOwn] = useState('')
   const has = (l: string) => value.some((v) => v.label.toLowerCase() === l.toLowerCase())
@@ -70,7 +70,7 @@ export function VariantPicker({ by, onBy, value, onChange, suggest, withQty }: {
   const add = () => { const l = own.trim().replace(/\s+/g, ' '); if (l && !has(l)) onChange([...value, { label: l.slice(0, 60), qty: '' }]); setOwn('') }
   return (
     <div className="flex flex-col gap-2 rounded-2xl border-2 border-dashed border-line p-3" data-testid="variants">
-      <span className="flex items-center gap-1"><BiLabel text="var.title" size="md" bold /><Help term="items.variants" size="sm" /></span>
+      <span className="flex items-center gap-1"><BiLabel text={title} size="md" bold /><Help term="items.variants" size="sm" /></span>
       <BiLabel text="var.hint" size="sm" tone="text-muted" />
       <div className="flex flex-wrap gap-1.5" role="group" aria-label={pick('var.by')}>
         {(['color', 'size', 'other'] as const).map((b) => <button key={b} type="button" aria-pressed={by === b} onClick={() => onBy(b)} className={chip(by === b)} data-testid={`var-by-${b}`}>{pick(`var.byKind.${b}`)}</button>)}
@@ -89,7 +89,7 @@ export function VariantPicker({ by, onBy, value, onChange, suggest, withQty }: {
           {value.map((v) => (
             <div key={v.label} className="flex items-center gap-2 px-3 py-1.5">
               <span className={`min-w-0 flex-1 truncate ${ur ? cls('sm') : 'text-sm font-bold'}`} dir="auto">{v.label}</span>
-              <input aria-label={`${pick('var.qty')} · ${v.label}`} type="number" inputMode="numeric" min={0} value={v.qty} onChange={(e) => onChange(value.map((x) => (x.label === v.label ? { ...x, qty: e.target.value } : x)))} placeholder="0" className="num h-11 w-28 rounded-xl border border-line bg-ground px-3 text-end" />
+              <input aria-label={`${pick(qtyLabel)} · ${v.label}`} type="number" inputMode="numeric" min={0} value={v.qty} onChange={(e) => onChange(value.map((x) => (x.label === v.label ? { ...x, qty: e.target.value } : x)))} placeholder="0" className="num h-11 w-28 rounded-xl border border-line bg-ground px-3 text-end" />
               <button type="button" aria-label={pick('crud.delete')} onClick={() => toggle(v.label)} className="tap flex h-10 w-10 items-center justify-center rounded-xl text-payable"><X size={16} /></button>
             </div>
           ))}

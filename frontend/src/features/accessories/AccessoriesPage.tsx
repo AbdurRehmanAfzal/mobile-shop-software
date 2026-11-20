@@ -15,6 +15,7 @@ import { useAuth } from '@/lib/auth'
 import { useDocMutation, useGet, useInvalidate } from '@/lib/queries'
 import { useScan } from '@/lib/scanner'
 import ItemForm from './ItemForm'
+import { KindTabs } from '@/features/stock/StockCards'
 import { gradeLabel, type Item, type ItemOptions } from './types'
 
 // each tab means something different: the "?" beside the tabs explains the open one (docs/33)
@@ -62,6 +63,8 @@ export default function AccessoriesPage() {
   return (
     <div className="flex flex-col gap-3">
       <PageHeader title="acc.title" help={<Help term="items.page" />} right={<button type="button" aria-label={pick('acc.new')} onClick={() => setAdding(true)} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 bg-ink text-ground"><Plus size={22} /><BtnText k={'acc.new'} /></button>} />
+      {/* ADR-121: from the items to the phones, tablets, watches and laptops, and back */}
+      <KindTabs value="items" onChange={(k) => nav(k ? `/stock?category=${k}` : '/stock')} />
       <div className="flex items-center gap-1">
         <div className="min-w-0 flex-1"><BiSegmented value={tab} onChange={setTab} options={TABS} /></div>
         <Help term={TABS.find((x) => x.value === tab)!.help} size="sm" />

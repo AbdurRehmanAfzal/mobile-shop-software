@@ -19,7 +19,7 @@ import { api } from '@/lib/api'
 import { Tag } from 'lucide-react'
 import { BiButton } from '@/components/Bilingual'
 import { simTypeText } from '@/features/purchase/AppleVariant'
-import { KindTabs, StatusCards, type Kind, type Mode } from './StockCards'
+import { ItemsInStock, KindTabs, StatusCards, type Kind, type Mode } from './StockCards'
 import { ActiveChips, DEFAULT_SEL, FilterSheet, FiltersButton, NO_FX, NO_SEL, fxCount, selCount, type Fx, type Sel } from './StockFilters'
 import { FieldsButton, StockGrid, StockList, StockTable, ViewSwitch, fieldBits, loadFields, loadView, saveFields, saveView, sortRows, FIELDS, type ColSort, type FieldKey, type StockView } from './StockViews'
 import DeviceActions from './DeviceActions'
@@ -295,7 +295,7 @@ export default function StockPage() {
       </div>
       {data ? (
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-2xl bg-surface px-3 py-2 text-sm font-semibold text-muted" data-testid="stock-summary-line">
-          <span className="font-extrabold text-ink">{t('stock.count', { n: rows.length })}</span>
+          <span className="font-extrabold text-ink">{t(`stock.countBy.${kind || 'all'}`, { n: rows.length })}</span>
           <span>{pick('sfx.askingTotal')} <MoneyText value={rows.reduce((s, d) => s + Number(d.asking_price ?? 0), 0)} tone="ink" size="sm" /></span>
           {canCost ? <span>{pick('sfx.costTotal')} <MoneyText value={rows.reduce((s, d) => s + Number(d.cost_price ?? 0), 0)} tone="muted" size="sm" /></span> : null}
           <Help term="stock.card" size="sm" />
@@ -329,6 +329,8 @@ export default function StockPage() {
           ))}
         </div>
       )}
+      {/* ADR-121: "All stock" is not only phones — the counted goods are one tap away, with their count */}
+      {!kind && !picking ? <ItemsInStock /> : null}
       {picking ? (
         <div className="sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-10 flex gap-2 lg:bottom-4">
           <BiButton text="label.selectAll" variant="secondary" onClick={() => setPicked(rows.map((d) => d.id))} />

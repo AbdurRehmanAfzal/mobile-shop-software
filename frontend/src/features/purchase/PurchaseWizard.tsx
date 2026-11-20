@@ -220,7 +220,7 @@ export default function PurchaseWizard() {
           {/* owner 2026-11-15 (ADR-085): a locked phone (iCloud / FRP), for parts or to sell as it is */}
           {trade.mobiles ? <div className="flex items-center gap-1"><BiButton text="locked.add" icon={<Lock size={20} />} variant="secondary" className="flex-1" onClick={() => setEditing({ ...emptyDraft('', kind), lock_type: 'icloud', condition: 'used', pta_status: 'unknown' })} data-testid="add-locked" /><Help term="locked.lock" size="sm" /></div> : null}
 
-          <div className="flex items-center gap-1"><BiButton text="items.buyButton" icon={<Watch size={22} />} variant="secondary" className="flex-1" onClick={() => setPickingItem(true)} /><Help term="purchase.items" size="sm" /></div>
+          <div className="flex items-center gap-1"><BiButton text="items.buyButton" icon={<Watch size={22} />} variant={trade.devices ? 'secondary' : 'primary'} className="flex-1" onClick={() => setPickingItem(true)} /><Help term="purchase.items" size="sm" /></div>
           {misc.length || kind === 'supplier' ? (
             <>
               {misc.map((x) => (
@@ -247,7 +247,7 @@ export default function PurchaseWizard() {
                   <BtnText k={'purchase.remove'} /></button>
                 </div>
               ))}
-              {kind === 'supplier' ? <div><IconChip icon={<Headphones size={18} />} text="counter.otherItem" onClick={() => setMisc([...misc, { key: uid(), description: '', qty: '1', unit_cost: '' }])} /></div> : null}
+              {kind === 'supplier' ? <div className="flex flex-col gap-1"><div><IconChip icon={<Headphones size={18} />} text="counter.otherItem" onClick={() => setMisc([...misc, { key: uid(), description: '', qty: '1', unit_cost: '' }])} /></div><BiLabel text="buy.typedHint" size="sm" tone="text-muted" /></div> : null}
             </>
           ) : null}
 
@@ -441,8 +441,8 @@ export default function PurchaseWizard() {
         {pickingItem ? (
           <StockItemPicker
             mode="buy"
-            onPick={(it) => {
-              setMisc((ms) => [...ms, { key: uid(), description: it.name, qty: '1', unit_cost: it.avg_cost && Number(it.avg_cost) ? String(Number(it.avg_cost)) : '', accessory_id: it.id, unit: 'piece', units: it.units && Object.keys(it.units).length ? it.units : { piece: 1, dozen: 12, box: 10, carton: 120, ...(it.pack_units ?? {}) } }])
+            onPick={(it, bought) => {
+              setMisc((ms) => [...ms, { key: uid(), description: it.variant ? `${it.name} · ${it.variant}` : it.name, qty: bought?.qty || '1', unit_cost: bought?.cost || (it.avg_cost && Number(it.avg_cost) ? String(Number(it.avg_cost)) : ''), accessory_id: it.id, unit: 'piece', units: it.units && Object.keys(it.units).length ? it.units : { piece: 1, dozen: 12, box: 10, carton: 120, ...(it.pack_units ?? {}) } }])
               setPickingItem(false)
             }}
           />
