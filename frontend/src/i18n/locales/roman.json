@@ -2442,6 +2442,18 @@
       "many": {
         "q": "Kya ek model ke das phone ek ek kar ke darj karne honge?",
         "a": "Nahi. Model ek baar chunein, batayein kitne piece hain, aur har ek ka IMEI likhein ya scan karein. Sale par kai phone chunein aur sab ki ek qeemat dein."
+      },
+      "variants": {
+        "q": "Ek charger teen rangon mein aata hai. Kya teen item banaun?",
+        "a": "Aap teeno rangon par ek baar tick lagate hain. Software ek hi naam ke neeche har rang ka ek item banata hai, har ek ki apni ginti, barcode aur sticker ke sath. Baad mein item ke page se ek aur rang shamil ho sakta hai."
+      },
+      "printers": {
+        "q": "Mujhe kaunsa printer chahiye?",
+        "a": "Sticker ke liye 60 × 40 mm roll wala thermal label printer, chhote bill ke liye 80 mm thermal printer aur bare bill aur reports ke liye koi bhi A4 printer — behtar hai jis mein USB aur Wi-Fi dono hon. App ki printer guide har ek ko misalon ke sath samjhati hai, aur Dukaan ki settings → Printers har ek ko test page ke sath set karta hai."
+      },
+      "priceCode": {
+        "q": "Kya sticker par laagat apne code mein chhaap sakta hoon?",
+        "a": "Ji haan. Dukaan ki settings mein aap har hindse, lakh, hazaar aur sau ke liye ek harf ya nishaan chunte hain, aur aage peeche jo chahein. Rs. 285,000 ##BHEL@@ chhap sakta hai. Pattern sirf malik aur manager dekhte hain."
       }
     },
     "footer": "Pakistan mein, Pakistani mobile shops ke liye banaya gaya.",
@@ -2673,6 +2685,42 @@
       "say": {
         "t": "Button jo batate hain ke kya karte hain",
         "d": "Raqam mili, raqam di, baghair bill ke paise diye ya liye: paison ka har button button jaisa dikhta hai aur us ke neeche ek line batati hai ke yeh kis kaam ka hai."
+      },
+      "acclist": {
+        "t": "2,480 accessories pehle se maujood",
+        "d": "Charger, cable, power bank, earbuds, cover, glass, laptop aur computer ka saaman, brand ke hisaab se. \"anker 20w\" ya \"a56 glass\" likhein aur shamil karein — hath se card bharne ki zaroorat nahi."
+      },
+      "variants": {
+        "t": "Ek cheez ke rang aur size",
+        "d": "Jo rang ya lambai rakhte hain un par tick lagayein. Har ek ki apni ginti, barcode aur sticker hai, taake hamesha pata ho kitne kaale aur kitne safed bache hain."
+      },
+      "easybuy": {
+        "t": "Accessory ki khareedari chaar steps mein",
+        "d": "Ek search, phir: yeh kya hai, kis qisam ki, kaun se rang khareede aur kitne, laagat aur bechne ki qeemat. Bill par aa gayi; kuch dobara nahi likhna."
+      },
+      "stockkinds": {
+        "t": "Har qisam ka stock saamne",
+        "d": "Mobile, tablet, smart watch, laptop aur accessories har ek apne chip par, jitna maujood hai us ke sath — ek se doosre tak ek tap, phone par bhi."
+      },
+      "pricecode": {
+        "t": "Aap ka apna khufia price code",
+        "d": "Hindson, lakh, hazaar aur sau ke liye aap ke apne huroof, aage peeche jo chahein. Sticker par laagat aur maangi qeemat aise code mein chhapti hai jo sirf aap parhte hain."
+      },
+      "printers": {
+        "t": "Printer test page ke sath set",
+        "d": "Sticker, 80 mm raseed aur A4 printer USB, Wi-Fi ya Bluetooth se: aap ke phone ya computer ke steps, paimane aur barcode wala test page, aur ek printer guide jo koi bhi parh sakta hai."
+      },
+      "fbrguide": {
+        "t": "FBR guide asaan lafzon mein",
+        "d": "Aap kya laate hain — NTN, STRN, IRIS se token — aap kya karte hain aur hum kya karte hain, step by step, har step par likha ke kaun karega."
+      },
+      "lines": {
+        "t": "Jo bechte hain usi ka package",
+        "d": "Mobile, laptop, accessories — koi ek, koi do ya teeno. Aap ki dukaan wohi dikhati hai jo aap bechte hain; baqi ek WhatsApp paigham ki doori par hai."
+      },
+      "oldsteps": {
+        "t": "Purana len-den, ek waqt mein ek sawal",
+        "d": "Kis ne kis ko dena hai, maal ya sirf raqam, kya gaya tha — khareedari ki tarah chun kar — aur pehle kitna mil chuka. Chaar chhote sawal, lamba form nahi."
       }
     },
     "float": {
@@ -2994,8 +3042,8 @@
         "a": "Mobile Shop sirf accessories wali dukaan ko phone ki screens ke baghair chalata hai. Items darjan, dabbe ya carton se khareede aur ek ek kar ke beche jate hain; software ginti, har khep ki laagat aur har sale ka munafa rakhta hai, aur item khatam hone lage to batata hai.",
         "p1": "Darjan, dabbe ya carton se khareedein — ek ek kar ke bechein; ek piece ki qeemat khud nikalti hai",
         "p2": "Har item par barcode, kisi bhi USB ya Bluetooth scanner ya phone ke camera se",
-        "p3": "Kam stock ki list, stock ki ginti, sust aur tez item, har item ka munafa",
-        "p4": "Gahakon aur suppliers ka udhaar khata, kharche, cash aur bank, 45 reports"
+        "p3": "2,480 accessories pehle se maujood: chand huroof likhein aur shamil karein; rang aur size har ek apni ginti aur barcode ke sath",
+        "p4": "Kam stock ki list, stock ki ginti, har item ka munafa, udhaar khata, kharche, cash aur bank, 45 reports"
       },
       "laptops": {
         "metaTitle": "Laptop Shop Software Pakistan — Naye aur Purane Laptop",

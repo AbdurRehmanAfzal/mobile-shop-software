@@ -2290,7 +2290,7 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - Also pushed ADR-121 as PR #104.
 
 **Verified**
-- pytest: `test_business_lines` (6, one new: a package order keeps mobiles-only and laptops-only shops as they are, and a plan-following shop gets its package). Full suite: still running (no failure so far) when the owner asked for the push; CI runs it on the pull request.
+- pytest: `test_business_lines` (6, one new: a package order keeps mobiles-only and laptops-only shops as they are, and a plan-following shop gets its package). Full suite: passes (exit 0); it finished after the push.
 - ruff clean; tsc clean; vitest 66 passed.
 - Playwright: `package-lines.spec` (new: the provider opens a laptops + accessories shop with the ticks, the last line cannot be unticked; that shop sees a locked Mobiles chip, the note with the shop's name, number and line in the WhatsApp message, the note on the purchase step, Urdu, 320 px; a plain mobile shop sees a locked Laptops chip; the provider's login sees none). Passing with one changed assertion: `laptops` (the chip check). Unchanged and passing: `accessories-only`, `easy-items`, `stock-screen`, `items`, `item-params`. The full Playwright suite was not run.
 - Not verified: the WhatsApp link was checked as a link (number and text), not by sending a message.
@@ -2298,3 +2298,25 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: the owner's word on showing the note to existing mobile shops.
 
 **Open questions**: the note for every shop or only marked ones; prices per line.
+
+## 2026-11-21 (3) — Landing page brought up to date; context saved (handoff)
+
+**Asked (owner)**: save everything so far, update the landing page, push.
+
+**Done**
+- Landing page: nine new cards on top of "What came in the last round" (ADR-116 … ADR-122), three new questions (variants, which printer, own price code), the accessories shop page's points; `index.html` (feature list, four more FAQPage questions, links to the two guides in `<noscript>`), `llms.txt` (the two guides, the new modules and questions), sitemap dates.
+- Memory: two notes — the accessories shop client and its "later" items; running the full backend suite alone.
+- The log line of entry (2) corrected: its full backend suite passes (exit 0); it finished after the push.
+
+**Where things stand (for the next session)**
+- Merged per the owner or GitHub: PR #98 – #105 (ADR-115 … ADR-122). This entry's commit goes out as the next pull request.
+- Alembic head: `b4d6f8a0c2e4` (accessory variants), after `a3c5e7f9b1d2` (shop price code). Both additive.
+- Public pages: `/welcome`, `/accessories-shop-software`, `/laptop-shop-software`, `/used-mobile-shop-software`, `/printer-guide`, `/fbr-guide`. Provider: `/control`.
+- Live checks the owner has not asked for yet: `/control`, the page source of the three shop pages (done once from here on 2026-11-20: all 200 with their own title and canonical), the printers card on real printers, the FBR guide read by a tax adviser.
+- Known local-only failure: `admin.spec` "super admin opens a shop" times out at its full-page screenshot on this PC (hundreds of test shops in the local database) — the same on old code.
+
+**Verified**: tsc clean; vitest 66 passed (the SEO checks read the changed `index.html`); Playwright `landing.spec` and the landing test of `control-landing.spec` pass. No backend change in this commit. Not run: the full Playwright suite, a production build.
+
+**Next (owner's side, docs/29)**: Search Console re-request for the four addresses; real-printer test; a tax adviser's read of the FBR guide; the accessories shop's word on the new purchase and its list of missing products; whether the "not in your package" note should show to every shop.
+
+**Open questions**: the decisions listed in docs/29 §E — the newest: the note for every shop or only marked ones; direct ESC/POS printing; a variants grid; WooCommerce sync / courier and COD order; one price-code pattern or two; a promised date for an old balance.
