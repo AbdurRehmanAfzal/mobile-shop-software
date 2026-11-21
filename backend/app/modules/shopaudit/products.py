@@ -15,6 +15,7 @@ from app.core.periods import Period
 from app.db.base import ZERO
 from app.db.refs import user_name
 from app.modules.catalogue.models import Brand, Model
+from app.modules.catalogue.service import name_key
 from app.modules.devices.ageing import intake_map
 from app.modules.devices.models import Device
 from app.modules.ledger.service import money
@@ -68,7 +69,8 @@ def products(
     for ln, date, dev, brand, model in rows:
         if ln.kind == "device" and dev is not None:
             key = (
-                f"model:{dev.model_id}"
+                # ADR-125: one line per model name — a model saved twice is still one model
+                f"model:{dev.brand_id}:{name_key(model)}"
                 if group == "model"
                 else f"brand:{dev.brand_id}"
                 if group == "brand"
@@ -131,16 +133,17 @@ def products(
         b["profit"] = money(b["profit"] + (ln.line_total - ln.cost))
     # what is in stock of the same thing right now (phones only)
     if group == "model":
-        stock = dict(
-            db.execute(
-                select(Device.model_id, func.count(Device.id))
-                .where(Device.shop_id == shop_id, Device.status == "in_stock")
-                .group_by(Device.model_id)
-            ).all()
-        )
+        stock: dict[str, int] = defaultdict(int)
+        for b_id, m_name, n in db.execute(
+            select(Device.brand_id, Model.name, func.count(Device.id))
+            .join(Model, Model.id == Device.model_id)
+            .where(Device.shop_id == shop_id, Device.status == "in_stock")
+            .group_by(Device.brand_id, Model.name)
+        ).all():
+            stock[f"model:{b_id}:{name_key(m_name)}"] += n
         for key, m in meta.items():
             if m["model_id"] is not None:
-                agg[key]["in_stock"] = int(stock.get(m["model_id"], 0))
+                agg[key]["in_stock"] = int(stock.get(key, 0))
     total_units = sum(a["units"] for a in agg.values())
     out_rows = []
     for key, m in meta.items():

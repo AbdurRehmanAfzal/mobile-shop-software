@@ -33,6 +33,41 @@ def _taken(
     return db.scalar(stmt) is not None
 
 
+# ---- one model, one name (ADR-125) ------------------------------------------------
+# A shop ended up with two records of the same model ("iPhone 18 pro max" twice: typed again
+# with another spacing, or saved twice), and every list that counts by model showed it on two
+# lines. A model is what the shopkeeper calls it: the same brand and the same name, whatever the
+# capitals and spaces. Records are never rewritten — lists and filters read through these.
+
+
+def name_key(name: str | None) -> str:
+    """a model's name as people mean it: capitals and extra spaces do not make another model"""
+    return " ".join((name or "").split()).casefold()
+
+
+def tidy_model_names(rows: list[dict]) -> None:
+    """for a sheet that groups by the written name: rows of one model get one spelling (the first
+    seen), so a model saved twice is one block and one line"""
+    first: dict[tuple, str] = {}
+    for d in rows:
+        k = (d.get("brand_name"), name_key(d.get("model_name")))
+        d["model_name"] = first.setdefault(k, " ".join((d.get("model_name") or "").split()))
+
+
+def same_model_ids(db: Session, shop_id: uuid.UUID, model_id: uuid.UUID) -> list[uuid.UUID]:
+    """the model and every other record this shop can see of the same brand and name"""
+    m = db.get(Model, model_id)
+    if m is None:
+        return [model_id]
+    key = name_key(m.name)
+    rows = db.execute(
+        select(Model.id, Model.name).where(
+            _visible(Model.shop_id, shop_id), Model.brand_id == m.brand_id
+        )
+    ).all()
+    return [i for i, n in rows if name_key(n) == key] or [model_id]
+
+
 # ---- brands & models -----------------------------------------------------------
 
 
@@ -142,14 +177,31 @@ def list_models(
             or_(Model.name.ilike(like), Brand.name.ilike(like), Model.name_ur.ilike(like))
         )
     stmt = stmt.order_by(Model.name).limit(limit)
-    return [_model_out(m) for m in db.scalars(stmt).all()]
+    # ADR-125: a model saved twice is offered once (the built-in one, else the older), so new
+    # phones stop being split between the two
+    out: dict[tuple, Model] = {}
+    for m in db.scalars(stmt).all():
+        k = (m.brand_id, name_key(m.name))
+        have = out.get(k)
+        if (
+            have is None
+            or (have.shop_id is not None and m.shop_id is None)
+            or ((have.shop_id is None) == (m.shop_id is None) and m.created_at < have.created_at)
+        ):
+            out[k] = m
+    return [_model_out(m) for m in out.values()]
 
 
 def create_model(db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, data: ModelCreate) -> dict:
     brand = db.get(Brand, data.brand_id)
     if brand is None or (brand.shop_id is not None and brand.shop_id != shop_id):
         raise NotFound(code="brand_not_found")
-    if _taken(db, Model, shop_id, data.name, brand_id=brand.id):
+    # the same name with other capitals or spacing is the same model (ADR-125)
+    key = name_key(data.name)
+    names = db.scalars(
+        select(Model.name).where(_visible(Model.shop_id, shop_id), Model.brand_id == brand.id)
+    ).all()
+    if any(name_key(n) == key for n in names):
         raise Conflict(
             code="model_exists",
             message_en="Model already exists",
@@ -158,7 +210,7 @@ def create_model(db: Session, shop_id: uuid.UUID, user_id: uuid.UUID, data: Mode
     model = Model(
         shop_id=shop_id,
         brand_id=brand.id,
-        name=data.name.strip(),
+        name=" ".join(data.name.split()),
         name_ur=data.name_ur,
         reference_price=data.reference_price,
         is_feature_phone=data.is_feature_phone,

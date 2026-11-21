@@ -329,6 +329,8 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **Purchase: kind cards, line discount, profit per line (2026-11-21, ADR-124)**: nothing to run (no migration). To test: Add stock → the dealer → **Add accessory / watch**. Under the search there are now cards under **Or choose a kind**; tap **Charger** — only chargers show, yours first and the built-in ones under them; **All kinds** takes the filter off; **More kinds** shows the rest. Put an item on the bill with a quantity and a cost: under the line you must see **This line comes to** and "Sells at … · earns … a piece". Tap **+ Discount on this line**, write an amount: the line's total and the earning per piece change, and so does the bill's total. Save, open the item: its cost must be the discounted one. Freight is where it always was: **Discount, bill no.** → Freight / loading.
 
+**One model on one line (2026-11-21, ADR-125)**: nothing to run (no migration; no record is changed). To test in the shop that complained: open **Stock summary** — "iPhone 18 pro max" must be one line with 6 phones and their value together; tap it — all six phones must open. In **Add stock → Add device → Apple**, the model must be offered once. If you still see a model on two lines anywhere, send me a screenshot of that screen: every list I found now counts by name, but I could only test with made-up data, not that shop's.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

@@ -2359,3 +2359,21 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: phase C (the four-step form for "New item" on the items' screen, the item page reorganised), unless the owner orders another.
 
 **Open questions**: the order of phases C – F.
+
+## 2026-11-21 (6) — One model, one name (ADR-125)
+
+**Asked (owner, from a mobile shop, with a screenshot)**: check and push; then: "iPhone 18 pro max" shows 5 pieces on one line and 1 on another — a model's pieces should be one line, 6.
+
+**Done**
+- Checked: the full backend suite for ADR-124 passed; committed and pushed it into the open PR #107 (title and body updated).
+- Found the screen (the stock summary, grouped by `model_id`) and the cause (two records of one model in that shop).
+- `name_key`, `same_model_ids`, `tidy_model_names` in the catalogue service; the stock summary, the audit's products by model, the tally and stock sheets group by brand + name; `devices?model_id=` opens every record of the model; the model list offers one per name; a model that differs only in capitals or spacing is refused.
+
+**Verified**
+- pytest: `test_same_model_one_line` (2: summary one line with the count and value, opened from either record, offered once, refused a third time, nothing rewritten; the audit's products one line with units and in-stock), with `test_catalogue`, `test_catalogue_duplicates`, `test_shopaudit_products`, `test_stock_screen`, `test_stock_tally`, `test_devices` (32 passed). Full suite: at 67% with no failure when the owner asked for the push; CI runs it on the pull request.
+- ruff clean. No frontend change.
+- **Not verified on the shop's own data**: how its two records came to be is a guess between two causes; the test makes the duplicate by hand.
+
+**Next**: phase C of docs/42 (the short "New item" form on the items' screen, the item page reorganised).
+
+**Open questions**: merging duplicate model records as a provider action — wanted or not.

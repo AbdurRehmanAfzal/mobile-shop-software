@@ -97,6 +97,14 @@ COND = {"box_pack": "Box pack", "open_box": "Open box", "used": "Used", "patched
 PTA = {"pta_approved": "PTA", "non_pta": "Non-PTA", "jv": "JV", "cpid": "CP ID", "unknown": ""}
 
 
+def _one_name(phones: list[dict]) -> list[dict]:
+    """ADR-125: a model saved twice is one block of the tally"""
+    from app.modules.catalogue.service import tidy_model_names
+
+    tidy_model_names(phones)
+    return phones
+
+
 def _w(k: str, ur: bool) -> str:
     return W[k][1 if ur else 0]
 
@@ -116,7 +124,7 @@ def collect(db, shop_id, can_cost: bool) -> dict:
     rows = devices.list_devices(
         db, shop_id, status=None, condition=None, pta_status=None, brand_id=None, q=None, limit=5000
     )
-    phones = [d for d in rows if d["status"] in HELD]
+    phones = _one_name([d for d in rows if d["status"] in HELD])
     phones.sort(key=lambda d: (d["brand_name"] or "", d["model_name"] or "", d["imei1"] or ""))
     st = devices.stock_status(db, shop_id, category=None, can_cost=can_cost)
     items = db.scalars(
