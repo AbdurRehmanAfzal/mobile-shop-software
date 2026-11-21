@@ -47,3 +47,15 @@ class VerificationOut(VerificationIn):
 
 class OverrideIn(BaseModel):
     reason: str = Field(min_length=5, max_length=500)
+
+
+class SkipPendingIn(BaseModel):
+    """ADR-128: skip the pending ID checks of the phones in stock — all of them, or the ones named."""
+
+    reason: str = Field(min_length=5, max_length=500)
+    device_ids: list[uuid.UUID] | None = Field(default=None, max_length=2000)
+
+
+class SkipPendingOut(BaseModel):
+    skipped: int
+    flagged_left: int

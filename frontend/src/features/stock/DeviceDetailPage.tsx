@@ -142,6 +142,7 @@ export default function DeviceDetailPage() {
   const acts = ([
     (inStock || d.status === 'faulty') && d.verification_status !== 'flagged' ? { key: 'sell', label: 'stock.sell', run: () => nav(`/sale/new?device=${d.id}`), tone: 'primary' } : null,
     d.verification_status === 'pending' || d.verification_status === 'flagged' || d.condition !== 'box_pack' ? { key: 'verify', label: 'stock.verify', run: () => nav(`/stock/${d.id}/verify`), tone: d.verification_status === 'pending' ? 'gold' : undefined } : null,
+    d.verification_status === 'pending' ? { key: 'skipId', label: 'purchase.skipKnown', testid: 'device-skip-id', run: () => void api('POST', `/api/v1/devices/${d.id}/verification/override`, { reason: pick('purchase.skipReason') }).then(() => { void inv('devices', 'device', 'history', 'dashboard') }) } : null,
     d.status === 'sold' ? { key: 'return', label: 'counter.returnJob', run: () => nav(`/return/new?device=${d.id}`), tone: 'primary' } : null,
     inStock ? { key: 'loan', label: 'stock.loanOut', run: () => setSheet('loan') } : null,
     inStock ? { key: 'faulty', label: 'stock.markFaulty', testid: 'mark-faulty', run: () => setFaultOpen(true) } : null,

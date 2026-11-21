@@ -2,7 +2,7 @@
  *  go. Owner 2026-10-29: brought onto the v2 look — four clear steps, the old and new phones as
  *  cards, a settlement card that says in words who pays whom, a done screen like the sale's. */
 
-import { ArrowLeftRight, Check, FileText, Pencil, Plus, Printer, Receipt, Smartphone } from 'lucide-react'
+import { ArrowLeftRight, Check, FileText, Pencil, Plus, Printer, Receipt, ShieldAlert, ShieldCheck, Smartphone, UserCheck } from 'lucide-react'
 import { useStepUrl } from '@/lib/steps'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -13,7 +13,9 @@ import Help from '@/components/Help'
 import PartyPicker from '@/components/PartyPicker'
 import { ErrorText, KV, List, PageHeader, SearchBox, Sheet, Stepper } from '@/components/ui'
 import { openPrintable } from '@/lib/files'
-import { useDevices, useDocMutation, useInvalidate } from '@/lib/queries'
+import { useDevice, useDevices, useDocMutation, useInvalidate } from '@/lib/queries'
+import { api, get } from '@/lib/api'
+import { useAuth } from '@/lib/auth'
 import type { Device, Party } from '@/lib/types'
 import { DeviceRow } from '@/features/stock/StockPage'
 import DeviceLineSheet, { draftToApi, emptyDraft, type DeviceLineDraft } from '@/features/purchase/DeviceLineSheet'
@@ -47,6 +49,17 @@ export default function ExchangeWizard() {
   const { data: stock } = useDevices({ status: 'in_stock', q: q || undefined })
   const m = useDocMutation<Record<string, unknown>, ExchangeOut>('POST', () => '/api/v1/exchanges', undefined, undefined, { key: () => idem })
   const small = ur ? cls('sm') : 'text-xs font-semibold'
+  // ADR-128: the ID check never stops an exchange without a way on. The phone going out: check it
+  // or skip it here (a stolen flag still needs the owner and a reason, as in a sale). The phone
+  // coming in: skip its check now, or leave it for later, as in a purchase.
+  const isOwner = useAuth((s) => s.me?.user.role) === 'owner'
+  const { data: live } = useDevice(newDev?.id)
+  const check = (live ?? newDev)?.verification_status
+  const [skipNew, setSkipNew] = useState(false)
+  const [why, setWhy] = useState('')
+  const [skipOld, setSkipOld] = useState(false)
+  const checkOk = check === 'flagged' ? isOwner && why.trim().length >= 5 : check !== 'pending' || skipNew
+  const chip = (on: boolean) => `tap flex min-h-[68px] flex-col items-center justify-center gap-1 rounded-2xl border-2 px-2 text-center font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('md') : 'text-[15px]'}`
 
   const tradeIn = Number(old?.cost || 0)
   const total = Number(price || 0)
@@ -57,7 +70,7 @@ export default function ExchangeWizard() {
   const moneyMoves = paidNow > 0 || refundNow > 0
   const newBalance = previous + diff - paidNow + refundNow
   const owesWord = (b: number) => (b > 0 ? 'exchange.toGet' : b < 0 ? 'exchange.toGive' : 'exchange.settled')
-  const reset = () => { setStep(0); setParty(null); setOld(null); setNewDev(null); setPrice(''); setPaid(''); setGiveBack(null); setPay(newPay()); setIdem(uid()); setResult(null); m.reset() }
+  const reset = () => { setStep(0); setParty(null); setOld(null); setNewDev(null); setPrice(''); setPaid(''); setGiveBack(null); setPay(newPay()); setIdem(uid()); setResult(null); setSkipNew(false); setWhy(''); setSkipOld(false); m.reset() }
 
   const oldCard = old ? (
     <div className="card flex items-center gap-3">
@@ -138,15 +151,44 @@ export default function ExchangeWizard() {
             <span className="flex items-center gap-1"><BiLabel text={owesWord(newBalance)} size="md" tone="text-gold-text" bold /><span className="[&_button]:text-gold-text"><Help term="exchange.newBalance" size="sm" /></span></span>
             {newBalance !== 0 ? <span className="num text-2xl text-gold-text" dir="ltr">{n(Math.abs(newBalance))}</span> : null}
           </div>
+          <div className="flex flex-col gap-2 rounded-3xl border border-line bg-surface p-3" data-testid="exchange-old-check">
+            <span className="flex items-center gap-1"><BiLabel text="exchange.oldCheck" size="sm" bold /><Help term="idcheck" size="sm" /></span>
+            <div className="grid grid-cols-2 gap-2">
+              <button type="button" aria-pressed={!skipOld} onClick={() => setSkipOld(false)} className={chip(!skipOld)}><ShieldCheck size={22} />{pick('exchange.oldCheckLater')}</button>
+              <button type="button" aria-pressed={skipOld} onClick={() => setSkipOld(true)} className={chip(skipOld)}><UserCheck size={22} />{pick('counter.skipCheck')}</button>
+            </div>
+          </div>
+          {check === 'flagged' ? (
+            <div className="flex flex-col gap-2 rounded-3xl bg-expense p-3 text-expense-fg" data-testid="exchange-flagged">
+              <div className="flex items-center gap-2"><ShieldAlert size={22} /><BiLabel text="counter.flaggedSale" size="md" bold tone="text-current" /><span className="[&_button]:text-current"><Help term="sale.flagged" size="sm" /></span></div>
+              {isOwner ? <BiInput label="sale.override" help={<Help term="sale.override" size="sm" />} value={why} onChange={(e) => setWhy(e.target.value)} /> : null}
+            </div>
+          ) : check === 'pending' ? (
+            <div className="flex flex-col gap-2 rounded-3xl bg-khata p-3 text-khata-fg" data-testid="exchange-pending">
+              <div className="flex items-center gap-2"><ShieldAlert size={22} /><BiLabel text="exchange.pendingNew" size="md" bold tone="text-current" /><span className="[&_button]:text-current"><Help term="sale.pendingCheck" size="sm" /></span></div>
+              <div className="grid grid-cols-2 gap-2">
+                {/* in another window: the exchange being filled stays as it is, and the phone's state is read again on return */}
+                <button type="button" onClick={() => window.open(`/stock/${newDev!.id}/verify`, '_blank')} className={chip(false)}><ShieldCheck size={22} />{pick('counter.checkNow')}</button>
+                <button type="button" aria-pressed={skipNew} onClick={() => setSkipNew(!skipNew)} className={chip(skipNew)} data-testid="exchange-skip"><UserCheck size={22} />{pick('exchange.skipAndGive')}</button>
+              </div>
+            </div>
+          ) : null}
           <ErrorText error={m.error} />
           <BiButton
             text="exchange.confirm"
             icon={<Check size={22} />}
             full
             loading={m.isPending}
-            disabled={paidNow > Math.max(0, diff) || (moneyMoves && !payReady(pay))}
+            disabled={!checkOk || paidNow > Math.max(0, diff) || (moneyMoves && !payReady(pay))}
             onClick={async () => {
-              const res = await m.mutateAsync({ party_id: party!.id, trade_in: [draftToApi(old!)], devices: [{ device_id: newDev!.id, price: total }], paid: paidNow, refund: refundNow, payment: moneyMoves ? payInfo(pay) : undefined })
+              const res = await m.mutateAsync({ party_id: party!.id, trade_in: [draftToApi(old!)], devices: [{ device_id: newDev!.id, price: total }], paid: paidNow, refund: refundNow, payment: moneyMoves ? payInfo(pay) : undefined, override_reason: check === 'flagged' ? why.trim() : check === 'pending' && skipNew ? pick('purchase.skipReason') : undefined })
+              // the phone that came in: its check is skipped after the exchange is saved, and never undoes it
+              if (skipOld && old?.imei1) {
+                try {
+                  const hit = await get<{ device: { id: string; verification_status: string } | null }>(`/api/v1/devices/imei/${encodeURIComponent(old.imei1)}`)
+                  if (hit.device?.verification_status === 'pending') await api('POST', `/api/v1/devices/${hit.device.id}/verification/override`, { reason: pick('purchase.skipReason') })
+                } catch { /* it stays pending and shows under "Needs attention" */ }
+              }
               setResult(res)
               setStep(4)
               inv('devices', 'parties', 'dashboard', 'sales', 'purchases')

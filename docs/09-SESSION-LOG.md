@@ -2400,10 +2400,30 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Done**: `KIND_DETAILS` — a new item's form asks the kind's own details above and shows each field once; `BothPicker` — colours and sizes ticked separately, every pair a variant; `VariantIn.color / size` on the server; docs/42 phase D marked (sub-categories left).
 
 **Verified**
-- pytest: `test_accessory_variants` (5, one new: four items of two colours × two lengths, each with its colour and length, found by either). Full suite: past 81% with no failure when the owner asked for the push; CI runs it on the pull request.
+- pytest: `test_accessory_variants` (5, one new: four items of two colours × two lengths, each with its colour and length, found by either). Full suite: passes (exit 0); it finished after the push.
 - ruff clean; tsc clean; vitest 66 passed; the manual rebuilt in three languages (colour and size together, what the form asks about a kind)
 - Playwright: `item-kind-fields` (new: the kind's details change with the kind, no field twice with More details open, colour and size → four items, a size of the shop's own, counts kept, 320 px, the saved fields), `accessories-only`, `items`, `item-params`, `accessory-library-variants`, `easy-items`, `accessories` pass. The full Playwright suite was not run.
 
 **Next**: phase E (sell by box / carton, accessory for accessory) unless the owner orders otherwise; open from earlier phases: an item's picture, sub-categories, the supplier's balance in the picker.
 
 **Open questions**: sub-categories — wanted, and which list; phase E or F next.
+
+## 2026-11-21 (9) — The ID card check can be skipped everywhere (ADR-128)
+
+**Asked (owner, urgent)**: a shopkeeper's exchange stopped at "This device cannot be sold until verification is complete"; put "skip, I know the person" and the check button in purchase, sale and exchange and wherever the ID check is; from the dashboard's pending line, skip the phones one by one or all at once. Pushed before this: ADR-126 and ADR-127 as PR #109 (the full backend suite then finished: exit 0).
+
+**Done**
+- Exchange: the pending check of the phone going out is shown before the tap (Check now / Skip and exchange), the old phone's check can be skipped in the same step.
+- `/stock/id-pending`: the dashboard's line opens the list; Skip per phone and Skip all; a flagged phone is listed, never skipped there.
+- The check's page: one-tap skip for a pending phone for anyone who sells; the phone's page: Skip beside ID card check.
+- Server: `POST /verification/skip-pending`, `GET /devices?id_pending=true`, `skip_check`; the sale's skip no longer commits on its own (an exchange that failed after a skip kept its trade-in).
+- `e2e/pta-check.spec.ts` looked for a button the phone page lost in ADR-114; pointed at the line's button.
+
+**Verified**
+- pytest: `test_skip_pending_checks` (2 new: one / all / flagged left / other shop / salesman / dashboard count; the exchange refused, skipped, and rolled back whole when it fails after the skip), with `test_verification`, `test_sales`, both exchange files, `test_locked_phones`, `test_device_types`, `test_reports_owner`: 59 passed. Full suite: passes (exit 0).
+- ruff clean; tsc clean; vitest 66 passed.
+- Playwright: `skip-id-check` (new: the exchange, the list one and all, the check's page, the phone's page, a flagged phone, 320 px), `exchange-return`, `verify-done`, `verify-thumb`, `device-styles`, `home-big`, `sale-customer`, `pta-check` pass. The full Playwright suite was not run.
+
+**Next**: accessories phase E unless the owner orders otherwise.
+
+**Open questions**: skipping is open to anyone who can sell (as before) — should "Skip all" be the owner's / manager's only?

@@ -1,4 +1,4 @@
-import { Camera, Check, CheckCircle2, ExternalLink, Pencil, Printer, ShieldAlert, ShieldCheck, Smartphone, Tag } from 'lucide-react'
+import { Camera, Check, CheckCircle2, ExternalLink, Pencil, Printer, ShieldAlert, ShieldCheck, Smartphone, Tag, UserCheck } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
@@ -129,6 +129,14 @@ export default function VerifyPage() {
         </div>
         <span className="flex items-center gap-1"><Chip text={`stock.verification.${device.verification_status}`} tone={device.verification_status === 'flagged' ? 'bad' : device.verification_status === 'clear' ? 'ok' : 'warn'} /><Help term="device.verification" size="sm" /></span>
       </div>
+
+      {/* ADR-128: "I know this person" — one tap, written in the phone's history with the name */}
+      {device.verification_status === 'pending' ? (
+        <div className="flex flex-col gap-2 rounded-3xl bg-khata p-3 text-khata-fg">
+          <BiLabel text="verify.skipHint" size="sm" tone="text-current" />
+          <BiButton text="purchase.skipKnown" icon={<UserCheck size={20} />} variant="secondary" full loading={override.isPending} data-testid="verify-skip" onClick={async () => { const v = await override.mutateAsync({ reason: pick('purchase.skipReason') }); setDone(v); window.scrollTo({ top: 0 }) }} />
+        </div>
+      ) : null}
 
       <Section title="verify.seller" help="stock.verify.seller">
         <PartyPicker value={party} onChange={setParty} kind="customer" label="verify.seller" />

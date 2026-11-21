@@ -543,7 +543,8 @@
     "signed": "Signed by the seller",
     "signAgain": "Sign again",
     "thumb": "Thumb (optional)",
-    "thumbHint": "Optional. The seller presses an inked thumb on paper (or in the box on the printed declaration); take a photo. It is kept with this check and printed on the declaration."
+    "thumbHint": "Optional. The seller presses an inked thumb on paper (or in the box on the printed declaration); take a photo. It is kept with this check and printed on the declaration.",
+    "skipHint": "Know the person you bought it from? You can skip this check."
   },
   "sale": {
     "title": "New sale",
@@ -1012,7 +1013,11 @@
     "settled": "Settled: nobody owes",
     "shopPaysNow": "Shop pays now (Rs)",
     "shopPaysHint": "Less than this: the rest stays in the customer's khata as owed to them.",
-    "firstBill": "First bill"
+    "firstBill": "First bill",
+    "oldCheck": "ID card check of the old phone",
+    "oldCheckLater": "Check later",
+    "pendingNew": "The new phone's ID card check is pending",
+    "skipAndGive": "Skip and exchange (I know this person)"
   },
   "report": {
     "title": "Reports",
@@ -5140,7 +5145,8 @@
       "details": "Details",
       "money": "Money on this phone",
       "people": "People"
-    }
+    },
+    "skip": "Skip"
   },
   "trend": {
     "title": "Graphs",
@@ -6227,5 +6233,17 @@
       "accessories": "Accessories"
     },
     "msg": "Assalam o alaikum. My shop: {{shop}} ({{phone}}). Please add this to my Mobile Shop software package: {{lines}}."
+  },
+  "idp": {
+    "title": "ID card checks pending",
+    "intro": "These phones are in stock without a finished ID card check. Check each one, or skip the ones you bought from people you know.",
+    "skipAll": "Skip all {{n}}, I know these people",
+    "skipAllAsk": "Skip the ID card check of {{n}} phones?",
+    "skipAllNote": "After this they can be sold. Each skip is written in the phone's history with your name. A phone marked as suspected stolen is not skipped.",
+    "skipAllYes": "Yes, skip {{n}}",
+    "check": "ID card check",
+    "none": "No ID card check is pending.",
+    "done": "ID card check skipped for {{n}} phones.",
+    "flaggedNote": "Suspected stolen. Only the owner can clear it, with a reason."
   }
 }

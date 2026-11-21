@@ -51,6 +51,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Read ADR-099 and ADR-100 before touching a `void_*` / `cancel_*` function, `devices.state.moved_since`, `delcheck/` or `DeleteBlockers.tsx`.
 - Rules: a delete undoes only that entry's own effect and keeps it as Deleted; later separate entries are never cascaded — the delete is refused and `delete-check` says what to undo first; the check is read-only and must agree with the delete's own rule (change both together).
 
+## Skipping the ID card check (shopkeepers 2026-11-21, ADR-128)
+- Read ADR-128 before touching `verification.service.override / skip_check / skip_pending`, the sale's `override_reason`, `PendingChecksPage.tsx` or the check boxes of `ExchangeWizard.tsx`.
+- Rules: a screen that sells a device shows a pending check before the tap, with "Check now" and the skip, and sends `override_reason` — never let the server's refusal be the first the user hears of it; a skip is a bypass in the phone's history and the audit, never a completed check; a flagged phone is never skipped in bulk and needs the owner / manager with a reason; inside another transaction use `skip_check` (no commit), never `override`.
+
 ## Returns: accounting and correction (owner 2026-11-17, ADR-101)
 - Read ADR-101 before touching `returns/service.py`, `ReturnWizard.tsx` or the return accounting.
 - Rules: a returned phone re-enters stock at the cost on its bill line, never at what was handed back; a return reverses the sale's margin and the cut is income (the margin comes back only when the phone is sold again); a damaged return goes to Faulty; correcting a return is undo + re-entry in one transaction (`replace_return`), never an in-place edit of money; `tests/test_returns_audit.py` pins the books — keep it passing. The impact preview (ADR-102, `returns/preview.py`) runs the real posting with `commit=False` and rolls it back — never compute a preview figure in the app or in a second code path.

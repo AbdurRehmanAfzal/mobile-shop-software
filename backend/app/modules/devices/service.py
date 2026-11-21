@@ -207,6 +207,7 @@ def list_devices(
     sellable: bool = False,
     with_faulty: bool = False,
     inspection: bool = False,
+    id_pending: bool = False,
     cost_min: Decimal | None = None,
     cost_max: Decimal | None = None,
     supplier_id: uuid.UUID | None = None,
@@ -247,6 +248,13 @@ def list_devices(
         )
     if inspection:
         stmt = stmt.where(Device.reserved_party_id.is_(None))
+    if id_pending:  # ADR-128: the dashboard's own count — in stock, ID check pending or flagged
+        stmt = stmt.where(
+            Device.status == DeviceStatus.IN_STOCK,
+            Device.verification_status.in_(
+                (VerificationStatus.PENDING, VerificationStatus.FLAGGED)
+            ),
+        )
     if reserved:
         stmt = stmt.where(
             Device.status == DeviceStatus.IN_STOCK, Device.reserved_party_id.is_not(None)

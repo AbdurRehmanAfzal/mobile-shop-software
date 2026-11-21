@@ -362,6 +362,21 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-128 · 2026-11-21 · Accepted · The ID card check can be skipped wherever it stops the counter
+
+**Context**: a shopkeeper doing an exchange got "This device cannot be sold until verification is complete" after tapping **Complete exchange**, with no way on. The skip ("I know this person") existed in the purchase and in the sale, and the server's exchange already took `override_reason` — but the exchange screen never offered it, the check's own page showed the skip to the owner / manager only (behind a typed reason), and the dashboard's "28 phones: ID card check pending" opened the whole stock list with no way to clear them.
+
+**Decision**
+1. **Exchange** (`ExchangeWizard`): when the phone going out has its check pending, the settle step shows it before the tap — **Check now** (opens the check in another window, so the exchange being filled is kept; the phone's state is read again) or **Skip and exchange (I know this person)**; **Complete exchange** stays grey until one is chosen. A phone marked as suspected stolen: the owner, with a reason, as in a sale. The old phone coming in: **Check later** or **Skip, I know this person**, as in a purchase.
+2. **One list** (`/stock/id-pending`, `PendingChecksPage`): the dashboard's line opens the phones in stock whose check is pending or flagged. Each has **ID card check** and **Skip**; **Skip all N** asks once and skips every pending one.
+3. **Everywhere the check is shown**: the check's own page has the one-tap skip for a pending phone, for anyone who can sell; the phone's page has **Skip** beside **ID card check** on its line (a line of the details table may carry a second job).
+4. **Server**: `POST /api/v1/verification/skip-pending` (`reason`, optional `device_ids`) — all or none, one history line and one audit row per phone, shop-scoped; `GET /devices?id_pending=true` is the dashboard's own count as a list. The skip itself is `verification.service.skip_check` (no commit, no permission rule — the caller owns both).
+5. **A fault closed on the way**: the sale used to skip through `override`, which commits. In an exchange that meant a skip followed by a failure further on (a refund too large) left the trade-in purchase saved without its sale. The sale now skips inside its own transaction; `test_skip_pending_checks.py` pins it.
+
+**Not changed**: a skip is still a bypass, never a completed check — the Shop Audit counts it against the person who did it and its thresholds still flag a person who skips a lot; skipping 28 at once is 28 bypasses under one name. A flagged phone is never skipped in bulk and still needs the owner / manager with a reason. Who may skip is unchanged (anyone who can sell, as since the owner's "skip when you know the person").
+
+**Consequences**: no migration. A new place that sells a device must offer the skip before the tap and send `override_reason`; never call `override` inside another transaction.
+
 ## ADR-127 · 2026-11-21 · Accepted · Items, phase D: a kind asks its own details; colour and size together
 
 **Context**: phase D of docs/42 §5 — the product card asked every kind of thing the same optional fields under "More details" (a charger's watts sat beside a cover's phone model), and a variant could differ by one thing only (colour **or** size): a cable in two colours and two lengths had to be typed as labels.

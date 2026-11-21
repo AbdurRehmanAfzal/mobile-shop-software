@@ -6957,5 +6957,12 @@
       "body": "Line par daba kar usay kaghaz par daalein ya hatayein; namoona foran badal jata hai. Aap ka intikhab yaad rehta hai, parchi aur safhe ke liye alag alag. Qeemat-e-khareed aur \"Jis se khareeda\" sirf owner aur manager ko milte hain.",
       "example": "Customer ke liye: qeemat, IMEI, memory, condition, warranty. Apni file ke liye: qeemat-e-khareed aur jis se khareeda bhi."
     }
+  },
+  "idp": {
+    "page": {
+      "title": "Shanakhti card check baqi",
+      "body": "Stock ka har wo phone jis ke bechne wale ka shanakhti card check mukammal nahi. Check karne ke liye Shanakhti card check dabayein, ya bande ko jaante hain to Chhorein. \"Sab chhorein\" list ke sab phone ek sath chhor deta hai. Chhorna phone ki history mein aap ke naam ke sath likha jata hai; ye mukammal check nahi gina jata.",
+      "example": "28 phone jaanne wale dealers se khareede → Sab 28 chhorein → ab beche ja sakte hain."
+    }
   }
 }

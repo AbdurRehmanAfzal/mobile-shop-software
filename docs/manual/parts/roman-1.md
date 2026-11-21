@@ -200,7 +200,7 @@ Upar se neeche tak:
 | Baqi kaam | **Udhaar**, **Stock**, **Marammat**, **Wapsi**, **Bill** aur **Kharcha**. |
 | **Ek nazar mein** | **Aaj**, **Kal**, **Hafta**, **Is mahine** ya **Tareekh se tak** chunein. Card dikhate hain **Bikri** (aur bike hue phone), **Munafa**, **Cash aur bank**, **Mujhe lene hain**, **Mujhe dene hain**, **Stock mein phone**, **Kharche** aur **Pichle 7 din** ka chart. Poore hisaab ke liye **Sab dekhein** dabayein. |
 | **Graphs** | Cards ke neeche, **7 din** ya **30 din** ke liye: **Bikri aur khareed** (seedhi lakeer = bikri, nuqton wali = khareed), **Roz ka nafa / nuqsan** (lakeer se upar wala bar nafa, neeche wala surkh bar nuqsan; bar dabayein to us din ka hisaab khulta hai) aur **Lene aur dene** (seedhi = logon ne aap ko dena hai, nuqton wali = aap ne dena hai). Kisi din ko chhuein to us ki raqmein nazar aati hain. Yehi graphs **Business overview** ke upar bhi hain. Salesman ko sirf bikri aur lene / dene nazar aate hain. |
-| **Tawajjo chahiye** | Woh cheezen jo aap ka intezar kar rahi hain, misaal ke taur par "2 phone: shanakhti card check baqi" ya "1 marammat job khuli". Line par dabayein aur seedha wahan pohnchein. |
+| **Dhyan dein** | Woh cheezen jo aap ka intezar kar rahi hain, misaal ke taur par "2 phone: shanakhti card check baqi" ya "1 marammat job khuli". Line par dabayein aur seedha wahan pohnchein. |
 
 Neeche ek patti hai jis mein **Home**, **Stock**, **Udhaar**, **Hisaab** aur **Mazeed** hain. Yeh har screen par hai, is liye aap hamesha wapas aa sakte hain.
 
@@ -601,6 +601,10 @@ Jis phone ka check nahi hua woh ghalti se bika nahi ja sakta. Bikri par app keht
 
 - **Abhi check karein**: Tasdeeq ki screen kholta hai.
 - **Chhor kar bechein (main jaanta hoon)**: jis ko bechne ki ijazat hai woh yeh kar sakta hai. Aap ka naam phone ki history mein save hota hai aur maalik audit mein dekhta hai.
+
+**Exchange** mein bhi yehi hai: aakhri marhale par app kehti hai *"Naye phone ka shanakhti card check baqi hai"* aur sath **Abhi check karein** aur **Chhor kar exchange karein (main jaanta hoon)**. Gahak ke purane phone ke liye us ke upar **Baad mein check karein** ya **Chhorein, main isay jaanta hoon** chunein.
+
+**Sab baqi check ek jagah.** Home par **Dhyan dein** ke neeche **phone: shanakhti card check baqi** dabayein. Har aisa phone list mein hai, sath **Shanakhti card check** aur **Chhorein, main isay jaanta hoon**. **Sab chhorein** ek bar pooch kar list ke sab phone chhor deta hai. Jis phone par chori ka shak hai wo yahan se nahi chhora jata. Baqi check wale phone ke apne page par bhi **Shanakhti card check** ke sath **Chhorein** hai. Har bar chhorna aap ke naam ke sath mehfooz hota hai.
 
 **Chori? Na bechein** wala phone sirf **maalik** likhi hui wajah ke saath bech sakta hai. Jis tablet ya ghari par lock **Abhi laga hai** ho woh lock clear hone tak bilkul nahi bik sakti.
 

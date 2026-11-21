@@ -49,6 +49,7 @@ const PartyDetailPage = page('PartyDetailPage')
 const StockPage = page('StockPage')
 const DeviceDetailPage = page('DeviceDetailPage')
 const VerifyPage = page('VerifyPage')
+const PendingChecksPage = page('PendingChecksPage')
 const PurchaseWizard = page('PurchaseWizard')
 const OpeningStockPage = page('OpeningStockPage')
 const SaleWizard = page('SaleWizard')
@@ -167,6 +168,7 @@ export const router = createBrowserRouter([
           { path: '/return/new', element: <ReturnWizard /> },
           { path: '/stock/opening', element: <OpeningStockPage /> },
           { path: '/stock/count', element: <StockCountPage /> },
+          { path: '/stock/id-pending', element: <PendingChecksPage /> },
           { path: '/stock/:id', element: <DeviceDetailPage /> },
           { path: '/stock/:id/verify', element: <VerifyPage /> },
           { path: '/purchase/new', element: <PurchaseWizard /> },
