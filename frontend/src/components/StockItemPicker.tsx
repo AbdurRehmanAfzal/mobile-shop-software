@@ -9,6 +9,7 @@ import Help from './Help'
 import { Empty, List, Loading, MoneyText, Row, SearchBox } from './ui'
 import { kindLabel, useItemKinds } from './ItemKinds'
 import ItemForm, { type Bought } from '@/features/accessories/ItemForm'
+import KindCards from './KindCards'
 import { LibraryHits, type LibEntry } from '@/features/accessories/ItemVariants'
 import { useGet } from '@/lib/queries'
 import { useScan } from '@/lib/scanner'
@@ -56,15 +57,22 @@ export default function StockItemPicker({ mode, onPick }: { mode: 'sell' | 'buy'
     <div className="flex flex-col gap-3">
       <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><SearchBox value={q} onChange={setQ} placeholder={mode === 'buy' ? 'items.searchBuy' : 'items.search'} /></div><Help term="stock.itemSearch" size="sm" /></div>
       {mode === 'buy' && !q.trim() && !data?.length ? <BiLabel text="buy.howto" size="sm" tone="text-muted" /> : null}
-      {/* the kinds are a filter for a long list; a shop that is starting does not need sixteen chips first */}
-      <div className={`flex flex-wrap items-center gap-1.5 ${mode === 'buy' && !cat && (data?.length ?? 0) <= 8 ? 'hidden' : ''}`}>
+      {/* ADR-124, buying: the kinds are cards under the search (a second way in); a tapped kind is one chip that can be taken off */}
+      {mode === 'buy' && cat ? (
+        <div className="flex flex-wrap items-center gap-2" data-testid="buy-kind-on">
+          <span className={chip(true)}>{kindLabel(pick, cat)}</span>
+          <button type="button" onClick={() => setCat('')} className={`tap rounded-xl px-2 py-1 font-bold text-emerald-deep underline-offset-4 hover:underline ${ur ? cls('sm') : 'text-sm'}`} data-testid="buy-kind-clear">{pick('buy.allKinds')}</button>
+        </div>
+      ) : null}
+      {mode === 'buy' && !cat && !q.trim() ? <KindCards onPick={(k) => setCat(k)} /> : null}
+      <div className={`flex flex-wrap items-center gap-1.5 ${mode === 'buy' ? 'hidden' : ''}`}>
         <Help term="stock.itemKinds" size="sm" />
         <button type="button" aria-pressed={!cat} onClick={() => setCat('')} className={chip(!cat)}>{pick('common.all')}</button>
         {kinds.map((c) => (
           <button key={c} type="button" aria-pressed={cat === c} onClick={() => setCat(c)} className={chip(cat === c)}>{kindLabel(pick, c)}</button>
         ))}
       </div>
-      {mode === 'buy' ? <LibraryHits q={q} skip="" onPick={(e) => { setFrom(e); setAdding(true) }} /> : null}
+      {mode === 'buy' ? <LibraryHits q={q} skip="" kind={cat} onPick={(e) => { setFrom(e); setAdding(true) }} /> : null}
       {mode === 'buy' ? <BiButton text="items.new" icon={<Plus size={20} />} variant="secondary" full onClick={() => { setFrom(undefined); setAdding(true) }} /> : null}
       {isLoading ? (
         <Loading />

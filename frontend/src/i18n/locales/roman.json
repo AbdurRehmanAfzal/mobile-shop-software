@@ -397,7 +397,8 @@
     "itemsCard": {
       "t": "Accessories aur doosri cheezein",
       "sub": "Stock mein {{n}} piece · {{low}} kam ho rahi hain · {{out}} khatam",
-      "open": "Kholein"
+      "open": "Kholein",
+      "all": "Saare {{n}} item dekhein"
     }
   },
   "purchase": {
@@ -5391,7 +5392,11 @@
     "addStockHint": "Naya maal khareeda",
     "inStock": "Stock mein cheezein",
     "tapItem": "Jo cheezein bech rahe hain woh add karein",
-    "returned": "Is maah wapsi"
+    "returned": "Is maah wapsi",
+    "dealerTitle": "Kis dealer se khareeda?",
+    "stepDealer": "Kaunsa dealer?",
+    "stockTitle": "Stock",
+    "sellWhat": "Aap kya bech rahe hain?"
   },
   "old": {
     "title": "Purana hisaab",
@@ -6191,7 +6196,16 @@
     "cost": "Ek piece ki laagat",
     "kindChange": "Badlein",
     "howto": "Jo khareeda us ke chand huroof likhein — \"anker 20w\", \"a56 glass\", \"mouse\". List mein use dabayein, likhein kitne aur laagat. Bas.",
-    "typedHint": "Likhi hui line sirf bill par aati hai. Woh stock mein nahi jati — jo cheezein aap bechte hain un ke liye upar wala button istemal karein."
+    "typedHint": "Likhi hui line sirf bill par aati hai. Woh stock mein nahi jati — jo cheezein aap bechte hain un ke liye upar wala button istemal karein.",
+    "kinds": "Ya qisam chunein",
+    "allKinds": "Saari qismein",
+    "moreKinds": "Mazeed qismein",
+    "lineTotal": "Yeh line banti hai",
+    "sellsAt": "{{p}} mein bikta hai · fi piece {{g}} munafa",
+    "lossAt": "{{p}} mein bikta hai · fi piece {{g}} nuqsan",
+    "addDiscount": "+ Is line par riayat",
+    "lineDiscount": "Is line par riayat (raqam)",
+    "lineDiscountBig": "Line ki raqam se zyada"
   },
   "pkg": {
     "title": "Aap ke package mein shamil nahi",

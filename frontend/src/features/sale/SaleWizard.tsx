@@ -354,7 +354,7 @@ export default function SaleWizard() {
   return (
     <div className="flex flex-col gap-3">
       <PageHeader title="counter.sell" help={<Help term="sale.page" />} onBack={back} />
-      <div className="lg:hidden"><Stepper steps={['counter.whichPhone', 'counter.howMuch', 'counter.doneTitle']} current={step} onStep={step < 2 ? setStep : undefined} /></div>
+      <div className="lg:hidden"><Stepper steps={[trade.mobiles ? 'counter.whichPhone' : 'goods.sellWhat', 'counter.howMuch', 'counter.doneTitle']} current={step} onStep={step < 2 ? setStep : undefined} /></div>
 
       {replaceId ? (
         <div className="flex flex-col gap-2 rounded-2xl border border-gold/40 bg-gold/15 px-3 py-2.5" data-testid="sale-editing">

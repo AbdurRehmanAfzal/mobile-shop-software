@@ -362,6 +362,38 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-124 · 2026-11-21 · Accepted · Purchase, phase B: kind cards beside the search, a discount on one line, and what each line comes to and earns
+
+**Context**: the owner (2026-11-21), after the Easy Mode audit (docs/42): "go ahead, phases start kar do — lekin search bhi rakho aur category ka card bhi." Phase B of docs/42 §5 was the rest of the purchase: selling price and expected profit on a line, a discount per line, freight.
+
+**Found first**: freight / loading already exists — `purchases.extra_costs`, spread over the lines into the stock cost, on the screen under "Discount, bill no." (owner addendum 5). docs/42 had marked it missing; corrected there.
+
+**Decision**
+1. **Kind cards** (`KindCards.tsx`) under the purchase's item search: the usual twelve kinds as cards, the rest under "More kinds" — the shop's own kinds and the kinds of the built-in list (`GET /accessories/library/kinds`). A tap shows that kind only: the shop's items of that kind and the built-in lines of that kind (`library?kind=`, no typing needed), with the kind as one chip and "All kinds" to take it off. The search stays first and works with or without a card. The sixteen filter chips are no longer shown while buying (the cards do that job); the sale's picker is unchanged.
+2. **A discount on one line** (`MiscLineIn.discount`, an amount): it comes off that line first; the bill's own discount is then spread over what is left of each line; the two together are the purchase's `discount`, so the total, the dealer's khata, each item's cost and the books are worked out by the same code as before. A line discount above the line's total is refused (`line_discount_too_big`). A purchase without one posts exactly the figures it did (tested). No migration — `discount_share` on the line already held a line's part of the discount.
+3. **Under each item line on the bill** (`LineFoot`): "This line comes to", "Sells at … · earns … a piece" (or "loses", in red) from the item's selling price and the line's cost per piece after its discount, and "+ Discount on this line" folded until tapped. The selling price itself is changed on the item, not on the bill.
+
+**Not done**: a discount on a phone's line (a phone's cost is typed as what was paid); the supplier's balance inside the picker; focus that moves from field to field; editing the selling price from the bill.
+
+**Consequences**: when a purchase is opened for correction its line discounts come back as part of the bill's discount (same total); the line split is on the saved bill's lines.
+
+## ADR-123 · 2026-11-21 · Accepted · An accessories shop's stock is its items; accessories inside "All stock"; no "where from" question; the Easy Mode audit
+
+**Context**: the owner sent a full specification for an "Accessories Shop Purchase, Inventory & Sales Module" with the instruction to improve the **existing** module from the shopkeeper's side — find where he struggles, reorganise into an Easy Mode, remove nothing, build no parallel module, purchase first — and two complaints from the accessories shop: (1) "accessories stock mein nazar nahi aa rahi — search karte hue pata chala ke accessories to options mein hai; as an accessories shop hamara stock to yehi hai"; (2) "purchase par *From a dealer* aur *Buy a customer's phone* kyun nazar aa raha hai, hum to accessories par deal karte hain — *Add device* kyun aa raha hai".
+
+**Found** (looked at as an accessories-only shop): the bottom tab opened the items (ADR-109), but `/stock` from anywhere else opened the phones' screen — IMEI search, "All stock 0", an empty list — with Accessories as one chip. In a shop with mobiles too, "All stock" listed only devices and its search did not find an item. The purchase's first step asked "Where is the stock coming from?" with a single card. "Buy a customer's phone" and "Add device" appear only while Mobiles is ticked for the shop — the complaining shop still has it ticked. The sale's first step said "Which phone?".
+
+**Decision**
+1. **`StockGate`** on the `/stock` route: a shop that trades no phones or laptops is sent to its items, with the query kept. Its items' screen is titled "Stock" and has no "All stock" chip.
+2. **"All stock" includes the accessories** (`ItemsInStock`): above the phones, a block with the pieces in stock, low and finished, the first three items with their counts — or, when something is typed in the search box, the items that match (up to eight) — and the way to the whole list. Typing a phone's IMEI shows no empty box about items.
+3. **Purchase**: without devices the source cards are not shown; the dealer is asked at once ("Which dealer did you buy from?"), the step is named "Which dealer?".
+4. **Sale**: the first step is "What are you selling?" for a shop without mobiles.
+5. **The audit** asked for by the brief is `docs/42-ACCESSORIES-EASY-MODE-AUDIT.md`: the complaints as seen, where a shopkeeper struggled screen by screen, the specification section by section against what exists, what this round built (ADR-118, 121, 122, 123) and the phases left for the owner to order.
+
+**Not done here**: what docs/42 §5 lists (line discount, freight in stock cost, fields by kind, a permission per action, a category-cards step, the four-step form outside a purchase). Unticking Mobiles for the complaining shop is the provider's action.
+
+**Nothing removed**: for a shop with phones the `/stock` screen, its chips, filters and cards are as they were, plus the accessories block; the item screens, the purchase's cards for a shop with devices and every route stay.
+
 ## ADR-122 · 2026-11-21 · Accepted · What a shop trades is three ticks for the provider; what is not in the package is shown locked with a WhatsApp request
 
 **Context**: the owner (2026-11-21): when the super admin gives a shop accessories, that shop should see only the accessories side of purchase — mobiles and laptops hidden — with a line that they are not in its package and that it may contact the software company, with a WhatsApp link for the request. The same for a laptop shop and a mobile shop; any mix must be possible (mobiles only, laptops only, accessories only, mobiles + accessories, laptops + accessories, all three). Existing shops must not be disturbed.

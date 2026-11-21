@@ -3,8 +3,8 @@
  *  filter the list. Counts come from GET /devices/stock-status (nothing is posted by looking). */
 
 import { AlertTriangle, Bookmark, CheckCircle2, Clock, Headphones, Lock, PackageX, Search, UserCheck, Wallet, Wrench } from 'lucide-react'
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, type ReactNode } from 'react'
+import { Navigate, useNavigate } from 'react-router-dom'
 import NotInPackage, { useMissingLines, type Line } from '@/components/NotInPackage'
 import { Sheet } from '@/components/ui'
 import { useLang } from '@/components/Bilingual'
@@ -49,7 +49,8 @@ export function KindTabs({ value, onChange }: { value: Kind | 'items'; onChange:
   return (
     <div className="flex items-start gap-1">
       <div className="flex min-w-0 flex-1 flex-wrap gap-1.5 pb-1" data-testid="stock-kinds">
-        {KINDS.filter(({ k }) => !off.has(k)).map(({ k, label }) => {
+        {/* a shop with no phones or laptops has no "all": its items are its stock (ADR-123) */}
+        {KINDS.filter(({ k }) => !off.has(k) && (trade.devices || k !== '')).map(({ k, label }) => {
           const on = value === k
           const c = count(k)
           return (
@@ -114,25 +115,53 @@ export function StatusCards({ kind, mode, onMode, canCost }: { kind: Kind; mode:
   )
 }
 
-/** ADR-121: under the phones on "All stock" — the accessories and other counted items the shop has,
- *  how many are low or out, and the way to their list */
-export function ItemsInStock() {
+/** ADR-123: a shop that trades no phones or laptops has one stock — its items. "Stock" opens
+ *  them, wherever the link came from (the tab already did; the Home chip and old links did not). */
+export function StockGate({ children }: { children: ReactNode }) {
+  const trade = useTrade()
+  if (!trade.devices && trade.accessories) return <Navigate to={`/accessories${window.location.search}`} replace />
+  return <>{children}</>
+}
+
+interface ItemRow { id: string; name: string; name_ur: string | null; variant?: string | null; qty: number; price: string }
+
+/** ADR-121 / ADR-123: on "All stock" the accessories are part of the list — the first few items
+ *  with their count (the ones the search finds, when something is typed), how many pieces there
+ *  are in all, and the way to the whole list. Above the phones, so they are seen without scrolling. */
+export function ItemsInStock({ q = '' }: { q?: string }) {
   const { pick, ur, cls } = useLang()
   const nav = useNavigate()
   const trade = useTrade()
-  const { data } = useGet<StockStatus>(['stock-status', ''], '/api/v1/devices/stock-status')
-  if (!data || !trade.accessories) return null
+  const on = trade.accessories
+  const { data } = useGet<StockStatus>(['stock-status', ''], on ? '/api/v1/devices/stock-status' : null)
+  const text = q.trim()
+  const { data: items } = useGet<ItemRow[]>(['stock-items-peek', text], on ? `/api/v1/accessories${text ? `?q=${encodeURIComponent(text)}` : ''}` : null)
+  if (!on || !data) return null
   const i = data.items
+  const rows = (items ?? []).slice(0, text ? 8 : 3)
+  if (text && !rows.length) return null // searching for a phone: no empty box about items
   const small = ur ? cls('sm') : 'text-xs font-semibold'
+  const to = `/accessories${text ? `?q=${encodeURIComponent(text)}` : ''}`
   return (
-    <button type="button" onClick={() => nav('/accessories')} className="tap flex min-h-16 items-center gap-3 rounded-2xl border-2 border-line bg-surface px-4 py-3 text-start" data-testid="stock-items-card">
-      <span className="well h-11 w-11 shrink-0 rounded-2xl bg-khata text-khata-fg"><Headphones size={22} /></span>
-      <span className="flex min-w-0 flex-1 flex-col">
-        <span className={ur ? cls('md') : 'text-[15px] font-extrabold'}>{pick('stock.itemsCard.t')}</span>
-        <span className={`text-muted ${small}`}>{pick('stock.itemsCard.sub').replace('{{n}}', String(i.on_hand)).replace('{{low}}', String(i.low)).replace('{{out}}', String(i.out))}</span>
-      </span>
-      <span className={`shrink-0 rounded-full bg-ink px-3 py-1.5 font-bold text-ground ${small}`}>{pick('stock.itemsCard.open')}</span>
-    </button>
+    <section className="flex flex-col rounded-2xl border-2 border-line bg-surface" data-testid="stock-items">
+      <button type="button" onClick={() => nav(to)} className="tap flex min-h-16 items-center gap-3 px-4 py-3 text-start" data-testid="stock-items-card">
+        <span className="well h-11 w-11 shrink-0 rounded-2xl bg-khata text-khata-fg"><Headphones size={22} /></span>
+        <span className="flex min-w-0 flex-1 flex-col">
+          <span className={ur ? cls('md') : 'text-[15px] font-extrabold'}>{pick('stock.itemsCard.t')}</span>
+          <span className={`text-muted ${small}`}>{pick('stock.itemsCard.sub').replace('{{n}}', String(i.on_hand)).replace('{{low}}', String(i.low)).replace('{{out}}', String(i.out))}</span>
+        </span>
+        <span className={`shrink-0 rounded-full bg-ink px-3 py-1.5 font-bold text-ground ${small}`}>{pick('stock.itemsCard.open')}</span>
+      </button>
+      {rows.map((r) => (
+        <button key={r.id} type="button" onClick={() => nav(`/accessories/${r.id}`)} className="tap flex min-h-12 items-center gap-3 border-t border-line px-4 py-2 text-start" data-testid="stock-item-row">
+          <span className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">
+            <span className={`truncate ${ur ? cls('sm') : 'text-sm font-bold'}`} dir="auto">{ur && r.name_ur ? r.name_ur : r.name}</span>
+            {r.variant ? <span className="rounded-md bg-emerald-tint px-1.5 py-0.5 text-[11px] font-bold text-emerald-deep">{r.variant}</span> : null}
+          </span>
+          <span className={`num shrink-0 text-base ${r.qty <= 0 ? 'text-payable' : ''}`} dir="ltr">{r.qty}</span>
+        </button>
+      ))}
+      {(items?.length ?? 0) > rows.length ? <button type="button" onClick={() => nav(to)} className={`tap min-h-11 border-t border-line px-4 py-2 text-start font-bold text-emerald-deep ${small}`} data-testid="stock-items-all">{pick('stock.itemsCard.all').replace('{{n}}', String(items!.length))}</button> : null}
+    </section>
   )
 }
-

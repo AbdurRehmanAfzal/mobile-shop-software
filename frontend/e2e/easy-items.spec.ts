@@ -41,7 +41,9 @@ test('buying an accessory in four short steps; every kind of stock in sight', as
   const sheet = page.getByTestId('sheet-backdrop')
   // a shop that is starting sees one line of how, not sixteen chips
   await expect(sheet.getByText('Type a few letters of what you bought')).toBeVisible()
-  await expect(sheet.getByRole('button', { name: 'Glass protector' })).toBeHidden()
+  // ADR-124: the kinds are cards under the search — the usual twelve, the rest under "More kinds"
+  await expect(sheet.getByTestId('kind-cards').getByRole('button')).toHaveCount(13)
+  await expect(sheet.getByTestId('kind-card-charger')).toBeVisible()
   await sheet.getByPlaceholder('Type what you bought: name or code').fill('anker 20w')
   await sheet.getByTestId('lib-hits').getByRole('button', { name: /^Anker 20W USB-C Charger/ }).click()
   // the short form, already filled: its name and kind are known
@@ -66,9 +68,20 @@ test('buying an accessory in four short steps; every kind of stock in sight', as
   await expect(page.getByText('Anker 20W USB-C Charger · Black')).toBeVisible()
   await expect(page.getByLabel('Qty').first()).toHaveValue('12')
   await expect(page.getByLabel('Unit cost').first()).toHaveValue('1400')
+  // ADR-124: under each line — what it comes to, what a piece sells for and earns, and a discount on that line
+  const foot = page.getByTestId('line-foot').first()
+  await expect(foot.getByTestId('line-total')).toContainText('16,800')
+  await expect(foot.getByTestId('line-profit')).toContainText('Sells at Rs. 2,200 · earns Rs. 800 a piece')
+  await foot.getByTestId('line-discount-open').click()
+  await foot.getByTestId('line-discount').fill('1200')
+  await expect(foot.getByTestId('line-total')).toContainText('15,600')
+  await expect(foot.getByTestId('line-profit')).toContainText('earns Rs. 900 a piece')
   // one more, of one kind only: pieces and cost in the same form
   await page.getByRole('button', { name: 'Add accessory / watch' }).click()
-  await sheet.getByPlaceholder('Type what you bought: name or code').fill('wireless mouse')
+  // this time by its kind: a card, then the line — no typing
+  await sheet.getByTestId('kind-cards').getByTestId('kind-card-Mouse').click()
+  await expect(sheet.getByTestId('buy-kind-on')).toContainText('Mouse')
+  await expect(sheet.getByTestId('kind-cards')).toHaveCount(0)
   await sheet.getByTestId('lib-hits').getByRole('button', { name: /^Wireless Mouse/ }).first().click()
   await form.getByTestId('buy-qty').fill('5')
   await form.getByLabel('Cost of one piece').fill('900')
@@ -82,6 +95,11 @@ test('buying an accessory in four short steps; every kind of stock in sight', as
   const items = await (await request.get('/api/v1/accessories', { headers: h })).json()
   const stock = Object.fromEntries(items.map((x: { name: string; variant: string | null; qty: number }) => [`${x.name}${x.variant ? ` ${x.variant}` : ''}`, x.qty]))
   expect(stock).toEqual({ 'Anker 20W USB-C Charger White': 12, 'Anker 20W USB-C Charger Black': 6, 'Wireless Mouse': 5 })
+  // the line's discount reached the bill and the cost of that colour: 16,800 − 1,200 + 8,400 + 4,500 = 28,500
+  const bills = await (await request.get('/api/v1/purchases', { headers: h })).json()
+  const bill = (Array.isArray(bills) ? bills : bills.items).find((b: { total: string }) => Number(b.total) === 28500)
+  expect(bill, JSON.stringify((Array.isArray(bills) ? bills : bills.items).map((b: { no: string; subtotal: string; discount: string; total: string }) => [b.no, b.subtotal, b.discount, b.total]))).toBeTruthy()
+  expect(Number(items.find((x: { variant: string | null }) => x.variant === 'White').avg_cost)).toBe(1300)
 
   // 2. the stock screen: every kind in sight with its count, on a phone too
   await page.goto('/stock')
@@ -97,6 +115,15 @@ test('buying an accessory in four short steps; every kind of stock in sight', as
   await expect(page.getByTestId('stock-summary-line')).toContainText('1 phones, tablets, watches and laptops')
   const card = page.getByTestId('stock-items-card')
   await expect(card).toContainText('23 pieces in stock')
+  // ADR-123: the accessories are in "All stock" itself, above the phones, and its search finds them
+  const inList = page.getByTestId('stock-items')
+  await expect(inList.getByTestId('stock-item-row')).toHaveCount(3)
+  await page.getByPlaceholder('IMEI, model, brand, name').fill('mouse')
+  await expect(inList.getByTestId('stock-item-row')).toHaveCount(1)
+  await expect(inList).toContainText('Wireless Mouse')
+  await page.getByPlaceholder('IMEI, model, brand, name').fill('zzqx')
+  await expect(page.getByTestId('stock-items')).toHaveCount(0)
+  await page.getByPlaceholder('IMEI, model, brand, name').fill('')
   await page.screenshot({ path: 'test-results/easy-stock.png', fullPage: true })
   await kinds.getByTestId('kind-tablet').click()
   await expect(page.getByTestId('stock-summary-line')).toContainText('0 tablets')

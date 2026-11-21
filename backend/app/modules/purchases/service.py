@@ -81,7 +81,20 @@ def create_purchase(
         money(m.unit_cost * m.qty) for m in data.misc
     ]
     subtotal = sum(line_amounts, ZERO)
-    discount = money(data.discount)
+    # ADR-124: a discount on one line comes off that line first; the bill's own discount is then
+    # spread over what is left of every line. Together they are the purchase's discount, so the
+    # total, the dealer's khata and the books are worked out exactly as before.
+    line_off = [ZERO] * len(data.devices) + [money(m.discount) for m in data.misc]
+    for gross, off in zip(line_amounts, line_off, strict=True):
+        if off > gross:
+            raise ValidationFailed(
+                code="line_discount_too_big",
+                message_en="A line's discount is more than the line's total",
+                message_ur="ایک سطر کی رعایت اس سطر کی رقم سے زیادہ ہے",
+            )
+    after_line = [money(g - o) for g, o in zip(line_amounts, line_off, strict=True)]
+    bill_off = money(data.discount)
+    discount = money(bill_off + sum(line_off, ZERO))
     if discount > subtotal:
         raise ValidationFailed(
             code="discount_too_big",
@@ -141,9 +154,12 @@ def create_purchase(
     db.flush()
     paymode.save(db, shop_id, "purchase", purchase.id, data.payment, paid)
 
-    shares = _allocate_discount(discount, line_amounts)
+    shares = [
+        money(off + part)
+        for off, part in zip(line_off, _allocate_discount(bill_off, after_line), strict=True)
+    ]
     # freight / loading is spread over the lines the same way and lands in the item cost
-    extras = _allocate_discount(extra, line_amounts) if extra > ZERO else [ZERO] * len(line_amounts)
+    extras = _allocate_discount(extra, after_line) if extra > ZERO else [ZERO] * len(line_amounts)
     posting = Posting(
         document_type="purchase",
         document_id=purchase.id,

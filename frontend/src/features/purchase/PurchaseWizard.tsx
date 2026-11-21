@@ -32,12 +32,41 @@ interface Misc {
   unit_cost: string
   /** an accessory / watch from the shop's counted stock: its count goes up */
   accessory_id?: string
+  /** ADR-124: what one piece sells for (shown beside its cost), and a discount on this line */
+  price?: string
+  discount?: string
   /** owner addendum 5: bought by the dozen / box; `units` = pieces per unit for this item */
   unit?: string
   units?: Record<string, number>
 }
 const UNITS = ['piece', 'dozen', 'box', 'carton']
 const per = (x: Misc) => (x.units ?? { piece: 1 })[x.unit ?? 'piece'] ?? 1
+
+/** ADR-124: under an item's line on the bill — what the line comes to, what one piece will sell
+ *  for and earn, and (folded) a discount the dealer gave on this line alone */
+function LineFoot({ x, onDiscount }: { x: Misc; onDiscount: (v: string) => void }) {
+  const { pick, ur, cls } = useLang()
+  const [open, setOpen] = useState(Number(x.discount || 0) > 0)
+  const gross = Number(x.qty || 0) * Number(x.unit_cost || 0)
+  const off = Math.min(Number(x.discount || 0), gross)
+  const pieces = Number(x.qty || 0) * per(x)
+  const each = pieces > 0 ? (gross - off) / pieces : 0
+  const price = Number(x.price || 0)
+  const gain = price - each
+  const n = (v: number) => withCur(v.toLocaleString('en-US', { maximumFractionDigits: 2 }))
+  const small = ur ? cls('sm') : 'text-xs font-semibold'
+  return (
+    <div className="col-span-full flex flex-col gap-1.5 border-t border-line pt-2" data-testid="line-foot">
+      {gross > 0 ? <span className="flex items-center justify-between gap-2"><span className={`text-muted ${small}`}>{pick('buy.lineTotal')}</span><span className="num text-base font-extrabold" dir="ltr" data-testid="line-total">{n(gross - off)}</span></span> : null}
+      {price > 0 && each > 0 ? <span className={`${gain < 0 ? 'text-payable' : 'text-emerald-deep'} ${small}`} data-testid="line-profit">{pick(gain < 0 ? 'buy.lossAt' : 'buy.sellsAt').replace('{{p}}', n(price)).replace('{{g}}', n(Math.abs(gain)))}</span> : null}
+      {open ? (
+        <BiInput label="buy.lineDiscount" help={null} type="number" inputMode="numeric" min={0} value={x.discount ?? ''} onChange={(e) => onDiscount(e.target.value)} className="num" error={Number(x.discount || 0) > gross ? 'buy.lineDiscountBig' : null} data-testid="line-discount" />
+      ) : (
+        <button type="button" onClick={() => setOpen(true)} className={`tap w-fit rounded-xl py-1 font-bold text-emerald-deep underline-offset-4 hover:underline ${small}`} data-testid="line-discount-open">{pick('buy.addDiscount')}</button>
+      )}
+    </div>
+  )
+}
 
 export default function PurchaseWizard() {
   const nav = useNavigate()
@@ -81,7 +110,9 @@ export default function PurchaseWizard() {
   const m = useDocMutation<Record<string, unknown>, Purchase>('POST', () => '/api/v1/purchases', undefined, { kind: 'purchase', label: (b) => `${pick('counter.addStock')} · ${withCur(Number((b as { paid?: number }).paid ?? 0).toLocaleString('en-US'))}` })
 
   const subtotal = devices.reduce((s, d) => s + Number(d.cost || 0), 0) + misc.reduce((s, x) => s + Number(x.qty || 0) * Number(x.unit_cost || 0), 0)
-  const total = Math.max(0, subtotal - Number(discount || 0)) + Number(extraCosts || 0)
+  // ADR-124: discounts given on single lines come off with the bill's own discount (the server works the total out the same way)
+  const lineOff = misc.reduce((s, x) => s + Number(x.discount || 0), 0)
+  const total = Math.max(0, subtotal - lineOff - Number(discount || 0)) + Number(extraCosts || 0)
   const udhaar = pay.method === 'udhaar'
   const paid = udhaar ? Math.min(Number(paidNow || 0), total) : total
   const chip = (on: boolean) => `tap flex min-h-[68px] flex-col items-center justify-center gap-1 rounded-2xl border-2 px-2 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('md') : 'text-[15px]'}`
@@ -116,7 +147,7 @@ export default function PurchaseWizard() {
       kind,
       party_id: party!.id,
       devices: devices.map(draftToApi),
-      misc: misc.filter((x) => x.description).map((x) => ({ description: x.description, qty: Number(x.qty || 1), unit_cost: Number(x.unit_cost || 0), accessory_id: x.accessory_id, unit: x.unit ?? 'piece' })),
+      misc: misc.filter((x) => x.description).map((x) => ({ description: x.description, qty: Number(x.qty || 1), unit_cost: Number(x.unit_cost || 0), accessory_id: x.accessory_id, unit: x.unit ?? 'piece', ...(Number(x.discount || 0) > 0 ? { discount: Number(x.discount) } : {}) })),
       discount: Number(discount || 0),
       supplier_invoice_no: kind === 'supplier' && supplierBill ? supplierBill : undefined,
       extra_costs: Number(extraCosts || 0),
@@ -152,7 +183,10 @@ export default function PurchaseWizard() {
   // ADR-109: a shop without mobiles says "stock", not "phone"; one without phones or laptops
   // (accessories only) has no device to add and nobody's phone to buy
   const trade = useTrade()
-  const steps = ['counter.fromWhom', trade.mobiles ? 'counter.phoneAndCost' : 'goods.stepItems', 'counter.doneTitle']
+  const steps = [trade.devices ? 'counter.fromWhom' : 'goods.stepDealer', trade.mobiles ? 'counter.phoneAndCost' : 'goods.stepItems', 'counter.doneTitle']
+  // ADR-123: an accessories shop buys from dealers only — one choice is no question, so the
+  // dealer is asked straight away
+  useEffect(() => { if (!trade.devices && (!chosen || kind !== 'supplier')) { setKind('supplier'); setChosen(true) } }, [trade.devices]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="flex flex-col gap-3">
@@ -167,15 +201,15 @@ export default function PurchaseWizard() {
 
       {step === 0 ? (
         <div className="flex flex-col gap-3">
-          <span className="flex items-center gap-1"><BiLabel text={trade.mobiles ? 'purchase.chooseTitle' : 'goods.chooseTitle'} size="lg" bold /><Help term="purchase.source" size="sm" /></span>
-          <SourceCard
+          {trade.devices ? <span className="flex items-center gap-1"><BiLabel text={trade.mobiles ? 'purchase.chooseTitle' : 'goods.chooseTitle'} size="lg" bold /><Help term="purchase.source" size="sm" /></span> : <BiLabel text="goods.dealerTitle" size="lg" bold />}
+          {trade.devices ? <SourceCard
             help="purchase.fromDealer"
             active={chosen && kind === 'supplier'}
             icon={<Store size={26} />}
             title="purchase.fromDealer"
             hint={trade.mobiles ? 'purchase.fromDealerHint' : 'goods.fromDealerHint'}
             onClick={() => { if (kind !== 'supplier') setParty(null); setKind('supplier'); setChosen(true) }}
-          />
+          /> : null}
           {trade.devices ? <SourceCard
             help="purchase.fromCustomer"
             active={chosen && kind === 'walk_in'}
@@ -248,6 +282,7 @@ export default function PurchaseWizard() {
                   <button type="button" aria-label={pick('purchase.remove')} onClick={() => setMisc(misc.filter((y) => y.key !== x.key))} className="tap mb-2 inline-flex h-9 shrink-0 items-center gap-1 rounded-xl px-2 text-payable">
                     <Trash2 size={16} />
                   <BtnText k={'purchase.remove'} /></button>
+                  {x.accessory_id ? <LineFoot x={x} onDiscount={(v) => setMisc(misc.map((y) => (y.key === x.key ? { ...y, discount: v } : y)))} /> : null}
                 </div>
               ))}
               {kind === 'supplier' ? <div className="flex flex-col gap-1"><div><IconChip icon={<Headphones size={18} />} text="counter.otherItem" onClick={() => setMisc([...misc, { key: uid(), description: '', qty: '1', unit_cost: '' }])} /></div><BiLabel text="buy.typedHint" size="sm" tone="text-muted" /></div> : null}
@@ -445,7 +480,7 @@ export default function PurchaseWizard() {
           <StockItemPicker
             mode="buy"
             onPick={(it, bought) => {
-              setMisc((ms) => [...ms, { key: uid(), description: it.variant ? `${it.name} · ${it.variant}` : it.name, qty: bought?.qty || '1', unit_cost: bought?.cost || (it.avg_cost && Number(it.avg_cost) ? String(Number(it.avg_cost)) : ''), accessory_id: it.id, unit: 'piece', units: it.units && Object.keys(it.units).length ? it.units : { piece: 1, dozen: 12, box: 10, carton: 120, ...(it.pack_units ?? {}) } }])
+              setMisc((ms) => [...ms, { key: uid(), description: it.variant ? `${it.name} · ${it.variant}` : it.name, qty: bought?.qty || '1', unit_cost: bought?.cost || (it.avg_cost && Number(it.avg_cost) ? String(Number(it.avg_cost)) : ''), accessory_id: it.id, unit: 'piece', price: it.price, units: it.units && Object.keys(it.units).length ? it.units : { piece: 1, dozen: 12, box: 10, carton: 120, ...(it.pack_units ?? {}) } }])
               setPickingItem(false)
             }}
           />

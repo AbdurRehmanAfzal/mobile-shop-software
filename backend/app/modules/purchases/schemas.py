@@ -32,6 +32,8 @@ class MiscLineIn(BaseModel):
     )
     # owner addendum 5: bought in dozens / boxes; stock is always kept in pieces
     unit: str = Field(default="piece", max_length=12)
+    # ADR-124: a discount the dealer gave on this line alone (an amount off the line's total)
+    discount: Decimal = Field(default=Decimal(0), ge=0)
     batch_ref: str | None = Field(default=None, max_length=40)
     print_labels: int = Field(default=0, ge=0, le=500)
 

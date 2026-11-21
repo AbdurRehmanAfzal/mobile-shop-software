@@ -27,18 +27,19 @@ const USUAL: Record<VariantBy, string[]> = {
 }
 
 /** lines of the built-in list for what is being typed; none while the name is the one just picked */
-export function LibraryHits({ q, skip, onPick }: { q: string; skip: string; onPick: (e: LibEntry) => void }) {
+export function LibraryHits({ q, skip, kind = '', onPick }: { q: string; skip: string; kind?: string; onPick: (e: LibEntry) => void }) {
   const { pick, ur, cls } = useLang()
   const [hits, setHits] = useState<LibEntry[]>([])
   const text = q.trim()
   useEffect(() => {
-    if (text.length < 2 || text === skip) { setHits([]); return }
+    // a kind card was tapped (ADR-124): that kind's lines, typed words or not
+    if ((text.length < 2 && !kind) || (text === skip && !!text)) { setHits([]); return }
     let live = true
     const t = setTimeout(() => {
-      get<LibEntry[]>(`/api/v1/accessories/library?q=${encodeURIComponent(text)}&limit=12`).then((r) => { if (live) setHits(r) }).catch(() => { if (live) setHits([]) })
+      get<LibEntry[]>(`/api/v1/accessories/library?q=${encodeURIComponent(text)}&limit=${kind ? 30 : 12}${kind ? `&kind=${encodeURIComponent(kind)}` : ''}`).then((r) => { if (live) setHits(r) }).catch(() => { if (live) setHits([]) })
     }, 250)
     return () => { live = false; clearTimeout(t) }
-  }, [text, skip])
+  }, [text, skip, kind])
   if (!hits.length) return null
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   return (
