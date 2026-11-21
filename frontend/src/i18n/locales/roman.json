@@ -100,7 +100,11 @@
     "lookNavy": "Navy",
     "lookColorful": "Rangeen",
     "lookModern": "Modern",
-    "shops": "Meri dukaanein"
+    "shops": "Meri dukaanein",
+    "lookMaterial": "Material",
+    "lookMac": "Mac",
+    "lookLime": "Lime",
+    "lookFintech": "Fintech"
   },
   "common": {
     "save": "Mehfooz karein",

@@ -281,7 +281,7 @@ WhatsApp paighaam **dukaan ki zabaan** mein jate hain, jo maalik **Dukaan ki set
 |---|---|
 | **Roshan ya gehra** | **Light**, **Dark** ya **Phone ke mutabiq** (phone ki apni setting ke saath chalta hai). Profile menu mein **Dark** / **Light** yahi kaam ek tap mein karta hai. |
 | **Dashboard aur side panel ka design** | **Classic** (rangeen qataarein aur cards, pehle jaisa), **Tiles** (baray rangeen khane), **Saada** (saaf fehrist, baghair khanon ke) ya **Bold** (gehra side panel aur baray hindse). Laptop par yeh side panel bhi badalta hai. |
-| **Rangon ka set** | Poori app ke rang: **Modern**, **Professional**, **Navy** ya **Rangeen**. |
+| **Rangon ka set** | Poori app ke rang: **Modern**, **Professional**, **Navy**, **Rangeen**, **Material**, **Mac**, **Lime** ya **Fintech**. |
 | **Bunyadi rang** | Buttons aur numayan cheezon ka rang: **Pehle wala**, **Sabz**, **Neela**, **Jamni**, **Surkh**, **Narinji** ya **Feroza**. |
 | **Likhai ka size** | **Aam**, **Bara** ya **Bohat bara**. Kamzor nazar walon ke liye acha hai. |
 | **Konay** | Buttons aur cards kitne gol hon: **Pehle wale**, **Gol**, **Halke gol** ya **Seedhe**. |
@@ -2589,7 +2589,7 @@ Customers ko paighaam (raseedein, yaad dahani) **Print aur paighaam ki zubaan** 
 
 - **Zubaan**: kisi bhi screen ke upar zubaan ka button dabayein aur **اردو**, **Roman Urdu** ya **English** chunein. App ek waqt mein ek zubaan dikhati hai; Urdu daayen se baayen padhi jati hai. Hindse hamesha 0–9 hote hain.
 - **Dark / Light**: upar **Dark** (ya **Light**) dabayein. More → **Theme** mein **Phone ke mutabiq** bhi hai.
-- **Andaaz**: More → **Andaaz** chaar style deta hai: **Modern**, **Professional**, **Navy** aur **Rangeen**.
+- **Andaaz**: More → **Andaaz** aath style deta hai: **Modern**, **Professional**, **Navy**, **Rangeen**, **Material**, **Mac**, **Lime** aur **Fintech**.
 - Har screen par chhote **?** button hain. Kisi ek ko dabayein to misaal ke saath mukhtasar wazahat milti hai; har wazahat ka apna English / Urdu / Roman switch hai.
 
 ### FBR Digital Invoicing (sales tax registered dukaanon ke liye)

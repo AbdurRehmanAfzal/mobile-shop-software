@@ -100,7 +100,11 @@
     "lookNavy": "نیوی",
     "lookColorful": "رنگین",
     "lookModern": "ماڈرن",
-    "shops": "میری دکانیں"
+    "shops": "میری دکانیں",
+    "lookMaterial": "میٹیریل",
+    "lookMac": "میک",
+    "lookLime": "لائم",
+    "lookFintech": "فن ٹیک"
   },
   "common": {
     "save": "محفوظ کریں",

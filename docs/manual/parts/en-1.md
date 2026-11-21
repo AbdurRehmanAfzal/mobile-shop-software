@@ -279,7 +279,7 @@ Open **Appearance** from the **Profile** menu, from **More**, or from the button
 |---|---|
 | **Light or dark** | **Light**, **Dark**, or **System** (follows the phone's own setting). The **Dark** / **Light** item in the Profile menu does the same in one tap. |
 | **Design of the dashboard and side panel** | **Classic** (coloured rows and cards, as before), **Tiles** (big coloured tiles), **Simple** (a clean list, no boxes) or **Bold** (dark side panel and big numbers). On a laptop it also changes the side panel. |
-| **Colours** | The colour set of the whole app: **Modern**, **Professional**, **Navy** or **Colorful**. |
+| **Colours** | The colour set of the whole app: **Modern**, **Professional**, **Navy**, **Colorful**, **Material**, **Mac**, **Lime** or **Fintech**. |
 | **Main colour** | The colour of buttons and highlights: **Default**, **Green**, **Blue**, **Purple**, **Red**, **Orange** or **Teal**. |
 | **Text size** | **Normal**, **Large** or **Extra large**. Good for older eyes. |
 | **Corners** | How round buttons and cards are: **Default**, **Round**, **Soft** or **Sharp**. |

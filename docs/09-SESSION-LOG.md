@@ -2427,3 +2427,15 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: accessories phase E unless the owner orders otherwise.
 
 **Open questions**: skipping is open to anyone who can sell (as before) — should "Skip all" be the owner's / manager's only?
+
+## 2026-11-21 (10) — Four more colour sets (ADR-129)
+
+**Asked (owner)**: push of ADR-128 (went out as PR #110; the full backend suite had passed, exit 0); then: can the Google, Mac, inDrive and Payoneer themes of `dxb-estate-concierge/sample` be added to Appearance?
+
+**Done**: read the four sample pages for their colours, corners and fonts; four colour sets generated into `index.css` (light, dark, same as phone); `PALETTES` with a fallback to Modern; the four swatches on the Appearance page; names in three languages; manual.
+
+**Verified**: tsc clean; vitest 68 passed (2 new); Playwright `look-sets` (new: each set picked, kept after reload, own colours in light and dark, contrast of body text, quiet text, the button label, tint text and the hero; 320 px; reset) and `counter` "looks" pass; the eight home screenshots and the Appearance page were looked at. No backend change. The full Playwright suite was not run.
+
+**Not done**: the samples' layouts (a console with a side bar) were not copied — only the colours; Lime's bright colour is not used for text or for the main button (it cannot be read on white).
+
+**Open questions**: the names (Material / Mac / Lime / Fintech instead of the companies' names).

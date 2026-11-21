@@ -100,7 +100,11 @@
     "lookNavy": "Navy",
     "lookColorful": "Colorful",
     "lookModern": "Modern",
-    "shops": "My shops"
+    "shops": "My shops",
+    "lookMaterial": "Material",
+    "lookMac": "Mac",
+    "lookLime": "Lime",
+    "lookFintech": "Fintech"
   },
   "common": {
     "save": "Save",
