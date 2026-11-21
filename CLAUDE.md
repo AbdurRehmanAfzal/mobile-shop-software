@@ -87,6 +87,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - ADR-122: the provider chooses the lines with three ticks (`TradePicker` in `AdminPage.tsx`) that write those same module keys; a line a shop does not have is shown locked with a WhatsApp request (`NotInPackage.tsx`) — the shop can ask, only the provider switches; `order.apply` keeps a shop set up without accessories that way.
 - Rules: what a shop trades is derived from its modules (`admin/modules.lines`, `useTrade` in the app) — mobiles unless `no_mobiles`, plus `laptops`, `accessories`; never add a second business-type setting; `no_mobiles` is opt-in and must stay absent for existing shops; a shop without mobiles adds no phone / tablet / watch (server) but keeps and sells what it has; a package order never removes a provider-set switch (`OPT_IN`).
 
+## One model, one name (a mobile shop 2026-11-21, ADR-125)
+- Read ADR-125 before adding a list, count or filter by phone model.
+- Rules: a model is its brand and its name whatever the capitals and spaces (`catalogue.service.name_key`); a shop may hold two records of one model, so count and group by brand + `name_key`, filter with `same_model_ids`, and never by the bare `model_id`; the model picker offers one record per name; no record is merged or rewritten.
+
 ## Laptops (shopkeepers 2026-11-18, ADR-108)
 - Research, plan and what is not built: `docs/39-LAPTOPS-PLAN.md` — read it before touching `devices.category` handling for `laptop`, `seeds/laptops.py`, `types.laptop_line` / `laptops_on`, or the laptop part of `DeviceLineSheet.tsx` / `DeviceSpecs.tsx`.
 - Rules: a laptop is a `devices` row with `category = "laptop"` (never a second model); only a shop with the `laptops` module can add one, and a shop without it sees no laptop type, brand or model; identity is the serial number (or the shop's `LAP…` code), never an IMEI; a new laptop detail is a `specs` key, asked as common or under "More details"; the naming line is `laptop_line` on the server and `laptopLine` in the app — change both.

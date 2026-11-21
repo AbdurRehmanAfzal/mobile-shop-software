@@ -362,6 +362,22 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-125 · 2026-11-21 · Accepted · One model, one name: a model saved twice is counted, listed and offered as one
+
+**Context**: a mobile shop (through the owner, with a screenshot of the stock summary): "iPhone 18 pro max" was on two lines — 5 phones and 1 phone — "ek brand model ka total piece ek bar hi aana chahiye, 6 piece". The summary grouped by `model_id`, and that shop has two records of the model.
+
+**How two records can exist**: a shop's own model was checked only against the exact name (`lower(name) == lower(typed)`), so the same name with another spacing passed; and nothing in the database stops two shop-owned models of one name (the unique index of ADR-089 covers the built-in list only), so a save sent twice makes two. Which of these happened in that shop cannot be seen from here.
+
+**Decision** — a model is its brand and its name, whatever the capitals and the spaces (`catalogue.service.name_key`); records are not rewritten, everything that reads them reads through the name:
+1. **Counted on one line**: the stock summary (`reports.stock_summary`) and the Shop Audit's products by model (sold units and "in stock") group by brand + name key; the tally sheet and the stock sheet, which group by the written name, give rows of one model one spelling first (`tidy_model_names`).
+2. **Opened as one list**: `GET /devices?model_id=` returns the phones of every record of that model (`same_model_ids`), so the summary's line opens all six.
+3. **Offered once**: the model list for a brand shows one record per name — the built-in one if there is one, else the older — so new phones stop being split.
+4. **Not made again**: creating a model whose name differs only in capitals or spacing is refused (`model_exists`); a new name is saved with tidy spacing.
+
+**Not done**: merging the two records in the database (re-pointing the phones and removing one). It would rewrite rows of live shops for no visible gain once every list reads by name; it can be done later as an explicit provider action if wanted. A database-level unique rule for shop-owned models is not added because existing duplicates would make that migration fail.
+
+**Consequences**: a new list that counts or filters by model must use `name_key` / `same_model_ids`, never the bare `model_id`. No migration.
+
 ## ADR-124 · 2026-11-21 · Accepted · Purchase, phase B: kind cards beside the search, a discount on one line, and what each line comes to and earns
 
 **Context**: the owner (2026-11-21), after the Easy Mode audit (docs/42): "go ahead, phases start kar do — lekin search bhi rakho aur category ka card bhi." Phase B of docs/42 §5 was the rest of the purchase: selling price and expected profit on a line, a discount per line, freight.

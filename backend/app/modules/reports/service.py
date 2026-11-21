@@ -387,6 +387,8 @@ def stock_summary(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
         .join(Model, Model.id == Device.model_id)
         .where(Device.shop_id == shop_id, Device.status.in_(held))
     ).all()
+    from app.modules.catalogue.service import name_key
+
     brands: dict[uuid.UUID, dict] = {}
     for d, brand_name, model_name in rows:
         value = (d.cost_price if show_cost else d.asking_price) or ZERO
@@ -394,8 +396,10 @@ def stock_summary(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
             d.brand_id,
             {"brand_id": d.brand_id, "name": brand_name, "count": 0, "value": ZERO, "models": {}},
         )
+        # ADR-125: one line per model name — a model saved twice is still one model
         m = b["models"].setdefault(
-            d.model_id, {"model_id": d.model_id, "name": model_name, "count": 0, "value": ZERO}
+            name_key(model_name),
+            {"model_id": d.model_id, "name": model_name, "count": 0, "value": ZERO},
         )
         for x in (b, m):
             x["count"] += 1

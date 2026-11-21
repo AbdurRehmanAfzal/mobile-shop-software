@@ -110,6 +110,9 @@ def page(
 
     with_phone = copy == "screen" and ctx.can(Cap.VIEW_COST)
 
+    from app.modules.catalogue.service import tidy_model_names
+
+    tidy_model_names(found)  # ADR-125: one model, one line
     brands: dict[str, dict] = {}
     models: dict[tuple[str, str], dict] = {}
     for d in found:

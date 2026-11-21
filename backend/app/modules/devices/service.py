@@ -287,7 +287,10 @@ def list_devices(
         stmt = stmt.where(Device.category == category)
     # owner addendum 6: the fuller filter set
     if model_id:
-        stmt = stmt.where(Device.model_id == model_id)
+        # ADR-125: a model the shop has under two records is still one model
+        from app.modules.catalogue.service import same_model_ids
+
+        stmt = stmt.where(Device.model_id.in_(same_model_ids(db, shop_id, model_id)))
     if storage_id:
         stmt = stmt.where(Device.storage_id == storage_id)
     if colour_id:
