@@ -252,14 +252,25 @@ def report_suppliers(
 def library(
     ctx: Ctx,
     db: DB,
-    q: str = Query(min_length=2, max_length=80),
+    q: str = Query(default="", max_length=80),
     limit: int = Query(default=30, ge=1, le=60),
+    kind: str | None = Query(default=None, max_length=20),
 ):
     """ADR-118: the built-in list of accessories — kinds of product per brand, and covers, glass,
     batteries and parts for the models in the catalogue; read-only"""
     from app.modules.accessories import library as lib
 
-    return lib.search(db, ctx.shop_id, q, limit)
+    if len(q.strip()) < 2 and not kind:
+        return []
+    return lib.search(db, ctx.shop_id, q if len(q.strip()) >= 2 else "", limit, kind)
+
+
+@router.get("/library/kinds")
+def library_kinds(ctx: Ctx):
+    """ADR-124: the kinds of thing in the built-in list — the cards beside the purchase's search"""
+    from app.modules.accessories import library as lib
+
+    return lib.kinds()
 
 
 @router.post("/with-variants", response_model=list[AccessoryOut], status_code=201)

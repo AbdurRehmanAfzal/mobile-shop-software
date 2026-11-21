@@ -76,14 +76,33 @@ def _from_models(db: Session, shop_id: uuid.UUID, words: list[str], limit: int) 
     return out[:limit]
 
 
-def search(db: Session, shop_id: uuid.UUID, q: str, limit: int = 30) -> list[dict]:
+def kinds() -> list[dict]:
+    """the kinds of thing in the built-in list, in the order they are written, with how many lines
+    each has — the cards a purchase offers beside the search (ADR-124)"""
+    out: dict[str, int] = {}
+    for _name, e in _static():
+        out[e["kind"]] = out.get(e["kind"], 0) + 1
+    return [{"kind": k, "lines": n} for k, n in out.items()]
+
+
+def search(
+    db: Session, shop_id: uuid.UUID, q: str, limit: int = 30, kind: str | None = None
+) -> list[dict]:
     words = _tokens(q)
-    if not words:
+    if not words and not kind:
         return []
-    found = _from_models(db, shop_id, words, max(6, limit // 2))
-    hits = [(name, e) for name, e in _static() if all(w in name for w in words)]
+    # a kind card was tapped: that kind's lines (narrowed by the words, when there are any)
+    found = _from_models(db, shop_id, words, max(6, limit // 2)) if words else []
+    if kind:
+        found = [e for e in found if e["kind"] == kind]
+    hits = [
+        (name, e)
+        for name, e in _static()
+        if all(w in name for w in words) and (not kind or e["kind"] == kind)
+    ]
     # the plain kind of product first, then the shorter names (closer to what was typed)
-    hits.sort(key=lambda h: (h[1]["brand"] is not None, not h[0].startswith(words[0]), len(h[0])))
+    first = words[0] if words else ""
+    hits.sort(key=lambda h: (h[1]["brand"] is not None, not h[0].startswith(first), len(h[0])))
     found += [dict(e) for _, e in hits[: max(0, limit - len(found))]]
     if not found:
         return []

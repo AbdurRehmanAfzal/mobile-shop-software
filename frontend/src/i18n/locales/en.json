@@ -6196,7 +6196,16 @@
     "cost": "Cost of one piece",
     "kindChange": "Change",
     "howto": "Type a few letters of what you bought — \"anker 20w\", \"a56 glass\", \"mouse\". Tap it in the list, write how many and the cost. That is all.",
-    "typedHint": "A typed line is only written on the bill. It does not go into stock — use the button above for things you sell."
+    "typedHint": "A typed line is only written on the bill. It does not go into stock — use the button above for things you sell.",
+    "kinds": "Or choose a kind",
+    "allKinds": "All kinds",
+    "moreKinds": "More kinds",
+    "lineTotal": "This line comes to",
+    "sellsAt": "Sells at {{p}} · earns {{g}} a piece",
+    "lossAt": "Sells at {{p}} · loses {{g}} a piece",
+    "addDiscount": "+ Discount on this line",
+    "lineDiscount": "Discount on this line (amount)",
+    "lineDiscountBig": "More than the line's total"
   },
   "pkg": {
     "title": "Not in your package",

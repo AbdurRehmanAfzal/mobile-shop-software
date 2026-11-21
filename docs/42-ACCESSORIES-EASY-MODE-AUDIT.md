@@ -54,15 +54,15 @@ Not re-verified line by line in this round where marked †: taken from docs/24,
 | 5.1 | Supplier: search by name / phone, create inside the wizard | ✅ | `PartyPicker` |
 | 5.1 | Supplier balance and past purchases shown while picking | 🟡 | on the person's page, one tap away; not inside the picker |
 | 5.1 | Supplier bill number, notes | ✅ | under "Discount, bill no." † |
-| 5.2 | A category step with cards before the product | ❌ by choice | the search comes first (a name finds the item in any kind); kind chips filter a long list. A cards step would add a tap to every line — owner to decide (§5) |
+| 5.2 | Category cards before the product | ➕ | ADR-124 (owner 2026-11-21: "search bhi rakho aur category ka card bhi"): the kinds are cards under the search — a second way in, not a forced step |
 | 5.3 | Existing product: search, scan, one tap onto the bill, quantity and cost | ✅ | |
 | 5.3 | New product inside the purchase, SKU and barcode made by the system | ➕ | ADR-121 |
-| 5.3 | Per line: quantity, cost, selling price, expected profit | 🟡 | quantity and cost on the line; selling price on the item; expected profit not shown on the line |
-| 5.3 | Line discount | ❌ | a discount on the whole bill only † |
+| 5.3 | Per line: quantity, cost, selling price, expected profit | ➕ | ADR-124: under each item line — what the line comes to, what a piece sells for and earns (the selling price itself is changed on the item) |
+| 5.3 | Line discount | ➕ | ADR-124: an amount off one line, folded under "+ Discount on this line" |
 | 5.4 | Many products, several kinds, one bill; edit / remove a line | ✅ | |
 | 5.5 | Summary; paid now, part, or on credit | ✅ | † |
 | 5.5 | Several payment methods on one purchase | 🟡 | not checked in this round |
-| 5.5 | Freight / other expenses, in the stock cost or as an expense | ❌ | entered as an expense apart; no landed cost |
+| 5.5 | Freight / other expenses, in the stock cost or as an expense | ✅ | **corrected 2026-11-21**: it exists — "Freight / loading" under "Discount, bill no.", spread over the lines into the stock cost (`extra_costs`, owner addendum 5). The first version of this table said ❌; that was wrong |
 | 5.5 | Tax on a purchase | ❌ | a stated limit of the product (no purchase tax) |
 | 5.6 | Review before saving; atomic posting | ✅ | the review sheet with its tick; one transaction |
 | 5.6 | Save as draft | ✅ | the wizard keeps what was typed until saved or cleared |
@@ -95,10 +95,9 @@ books or in stock handling changed.
 
 ## 5. What is left — for the owner to order
 
-1. **Phase B — the rest of the purchase**: selling price and expected profit on each line;
-   a discount per line; freight / loading on a purchase (as stock cost or as an expense — this
-   touches valuation, so it needs a decision and its own tests); the supplier's balance inside the
-   picker; focus that moves field to field.
+1. **Phase B — the rest of the purchase**: ➕ done 2026-11-21 (ADR-124): what a line comes to, what
+   a piece sells for and earns, a discount per line; freight already existed. Still open: the
+   supplier's balance inside the picker; focus that moves field to field.
 2. **Phase C — items outside a purchase**: the four-step form for "New item" on the items' screen;
    the item page reorganised (what matters first, the rest folded); a picture for an item.
 3. **Phase D — the product master**: fields by kind (a cover asks the model, a charger the watts),
@@ -106,8 +105,7 @@ books or in stock handling changed.
 4. **Phase E — selling**: sell by box / carton with the unit on the bill; accessory-for-accessory
    exchange in one screen; quantity-tier prices.
 5. **Phase F — rights**: a permission per action.
-6. **A category-cards step** before the product (spec §5.2): not built on purpose (§3). If the
-   shopkeepers ask for it, it can be the first thing in the search sheet rather than a step.
+6. **Category cards** (spec §5.2): ➕ done 2026-11-21 (ADR-124), under the search.
 
 Each phase is additive and off for a shop until it is used; none needs a destructive migration.
 

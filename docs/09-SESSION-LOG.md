@@ -2339,3 +2339,23 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: the owner unticks Mobiles for that shop; he picks the next phase from docs/42 §5.
 
 **Open questions**: the phase order; a category-cards step or search first.
+
+## 2026-11-21 (5) — Purchase phase B: kind cards, line discount, profit per line (ADR-124)
+
+**Asked (owner)**: push; go ahead with the phases; keep the search and add the category cards too.
+
+**Done**
+- Pushed ADR-123 as PR #107.
+- `KindCards` under the purchase's item search (twelve cards, "More kinds", a tapped kind as a chip); `library?kind=` and `library/kinds` on the server.
+- A discount on one purchase line (`MiscLineIn.discount`): off that line, then the bill's discount over the rest; `LineFoot` under each item line (line total, sells at / earns a piece, the folded discount).
+- docs/42 corrected: freight already existed; phase B and the cards marked done.
+
+**Verified**
+- pytest: `test_purchase_line_discount` (3: line then bill discount with the item costs, books and khata; limits; a purchase without a line discount unchanged; library kinds), `test_purchases`, `test_accessories`, `test_accessory_variants` pass. Full suite: passes (exit 0), run alone.
+- ruff clean; tsc clean; vitest 66 passed.
+- Playwright: `easy-items` (extended: thirteen card buttons, a card instead of typing, line total, earning per piece, a line discount that reaches the bill's total 28,500 and the item's cost 1,300), `items`, `item-params`, `accessories-only`, `accessory-library-variants` pass. The full Playwright suite was not run.
+- A mistake of mine on the way: the test first expected 28,700; the software's 28,500 was right.
+
+**Next**: phase C (the four-step form for "New item" on the items' screen, the item page reorganised), unless the owner orders another.
+
+**Open questions**: the order of phases C – F.
