@@ -33,8 +33,8 @@ Looked at as an accessories-only shop on a phone-sized screen (screenshots taken
 | Stock | §1 | ➕ ADR-121 / ADR-123 |
 | Purchase → from whom | §1 | ➕ ADR-123 |
 | Sale → first step | "Which phone?"; two buttons that read alike (item / typed line) | ➕ wording; the two buttons are 🟡 (the typed line is used by shops — kept) |
-| Items → New item (outside a purchase) | The full card on one screen | 🟡 library and variants are there; the four-step form is only inside a purchase |
-| Item page | Long: card, kinds, batches, timeline | 🟡 not reorganised |
+| Items → New item (outside a purchase) | The full card on one screen | ➕ ADR-126: the same four numbered steps |
+| Item page | Long: card, kinds, batches, timeline | ➕ ADR-126: lots and history start short; the details card is as it was |
 | Home (accessories shop) | Fine: "Items in stock", Sell, Add stock | ✅ |
 
 ## 3. The specification, section by section
@@ -98,8 +98,9 @@ books or in stock handling changed.
 1. **Phase B — the rest of the purchase**: ➕ done 2026-11-21 (ADR-124): what a line comes to, what
    a piece sells for and earns, a discount per line; freight already existed. Still open: the
    supplier's balance inside the picker; focus that moves field to field.
-2. **Phase C — items outside a purchase**: the four-step form for "New item" on the items' screen;
-   the item page reorganised (what matters first, the rest folded); a picture for an item.
+2. **Phase C — items outside a purchase**: ➕ done 2026-11-21 (ADR-126): the four-step form for
+   "New item" on the items' screen; the item page shows the variant in its header and starts the
+   lots and history short. Still open: a picture for an item.
 3. **Phase D — the product master**: fields by kind (a cover asks the model, a charger the watts),
    two attributes as a grid (colour × length), sub-categories.
 4. **Phase E — selling**: sell by box / carton with the unit on the bill; accessory-for-accessory

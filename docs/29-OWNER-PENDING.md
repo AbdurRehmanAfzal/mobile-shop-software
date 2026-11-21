@@ -331,6 +331,8 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **One model on one line (2026-11-21, ADR-125)**: nothing to run (no migration; no record is changed). To test in the shop that complained: open **Stock summary** — "iPhone 18 pro max" must be one line with 6 phones and their value together; tap it — all six phones must open. In **Add stock → Add device → Apple**, the model must be offered once. If you still see a model on two lines anywhere, send me a screenshot of that screen: every list I found now counts by name, but I could only test with made-up data, not that shop's.
 
+**New item in four steps everywhere; shorter item page (2026-11-21, ADR-126)**: nothing to run (no migration). To test: Chargers, covers etc. (or Stock, in an accessories shop) → **New item**: the form must show the four numbered steps — 1 What is it?, 2 What kind of thing?, 3 Which colours or sizes do you keep?, 4 How many you have, and the prices — with Reorder, Brand, Fits and Quality under **More details**. Add an item with two colours and a count for each; open one: its colour is in the coloured header; an item with many purchases shows five lots and eight history lines with **Show all**.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

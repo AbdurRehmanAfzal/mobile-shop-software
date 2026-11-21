@@ -41,6 +41,9 @@ export default function AccessoryDetailPage() {
   const [adjusting, setAdjusting] = useState(false)
   const [labels, setLabels] = useState(false)
   const [removing, setRemoving] = useState(false)
+  // ADR-126: the lots and the history start short; one tap shows them whole
+  const [allLots, setAllLots] = useState(false)
+  const [allTl, setAllTl] = useState(false)
   const [making, setMaking] = useState(false)
   const [delta, setDelta] = useState('')
   const [cost, setCost] = useState('')
@@ -80,6 +83,7 @@ export default function AccessoryDetailPage() {
           <span dir="ltr">{it.sku}</span>
           {it.barcode && it.barcode !== it.sku ? <span dir="ltr">{it.barcode}</span> : null}
           <span>{kindLabel(pick, it.category)}</span>
+          {it.variant ? <span className="rounded-md bg-white/30 px-1.5 font-bold" data-testid="item-hero-variant">{it.variant}</span> : null}
           {it.brand ? <span>{it.brand}</span> : null}
           {it.grade && it.grade !== 'unspecified' ? <span>{gradeLabel(pick, it.grade, exists)}</span> : null}
           {it.low_stock ? <Chip text={it.qty <= 0 ? 'acc.outOfStock' : 'acc.low'} tone="bad" /> : null}
@@ -117,7 +121,7 @@ export default function AccessoryDetailPage() {
         <Section title="acc.batches" help="items.batches">
           {!batches?.length ? <Empty text="acc.none" /> : (
             <div className="card flex flex-col divide-y divide-line" data-testid="item-batches">
-              {batches.map((b) => (
+              {(allLots ? batches : batches.slice(0, 5)).map((b) => (
                 <div key={b.id} className="flex items-center gap-3 py-2 first:pt-0 last:pb-0">
                   <div className="min-w-0 flex-1">
                     <div className="text-sm font-bold">{b.party_name ?? b.batch_ref ?? pick(`acc.${b.source === 'opening' ? 'openingQty' : b.source === 'purchase' ? 'cost' : 'adjust'}`)}</div>
@@ -129,6 +133,7 @@ export default function AccessoryDetailPage() {
                   </div>
                 </div>
               ))}
+              {batches.length > 5 && !allLots ? <button type="button" onClick={() => setAllLots(true)} className="tap min-h-11 py-2 text-start text-sm font-bold text-emerald-deep" data-testid="item-lots-all">{pick('acc.showAll').replace('{{n}}', String(batches.length))}</button> : null}
             </div>
           )}
         </Section>
@@ -137,7 +142,7 @@ export default function AccessoryDetailPage() {
       <Section title="acc.timeline" help="items.timeline">
         {!tl?.length ? <Empty text="acc.none" /> : (
           <div className="card flex flex-col divide-y divide-line" data-testid="item-timeline">
-            {tl.map((r, i) => (
+            {(allTl ? tl : tl.slice(0, 8)).map((r, i) => (
               r.kind === 'price' ? (
                 <div key={i} className="flex items-center gap-3 py-2 first:pt-0 last:pb-0">
                   <span className="well h-9 w-9 shrink-0 bg-ground text-muted"><Tag size={16} /></span>
@@ -167,6 +172,7 @@ export default function AccessoryDetailPage() {
                 </div>
               )
             ))}
+            {tl.length > 8 && !allTl ? <button type="button" onClick={() => setAllTl(true)} className="tap min-h-11 py-2 text-start text-sm font-bold text-emerald-deep" data-testid="item-tl-all">{pick('acc.showAll').replace('{{n}}', String(tl.length))}</button> : null}
           </div>
         )}
       </Section>

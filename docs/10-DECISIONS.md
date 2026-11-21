@@ -362,6 +362,18 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-126 · 2026-11-21 · Accepted · Items, phase C: the four numbered steps for "New item" everywhere; the item page starts short
+
+**Context**: phase C of docs/42 §5 — the short form existed only inside a purchase (ADR-121); "New item" on the items' own screen still showed the whole product card, and an item's page listed every lot and every movement at once.
+
+**Decision**
+1. **One form, two places** (`ItemForm`, creating): the same four numbered steps — what it is, what kind (one chip when it came from the built-in list), which colours or sizes, how many and the prices — on the items' screen as inside a purchase. Outside a purchase step 3 reads "Which colours or sizes do you keep?" and the pieces are what is on the shelf now (opening stock, with its cost, posted as before); inside a purchase they are what was bought and come in with the bill. The reorder level joins brand, fits and quality under "More details". Editing an item still shows its full card.
+2. **The item's page**: the variant is in the header beside the kind; the lots show the first five and the history the first eight, each with "Show all N".
+
+**Not done**: a picture for an item (the column exists; an upload needs the file store and a size rule — to be ordered); folding the details card.
+
+**Nothing removed**: every field of the card is still there, under "More details"; the full lists are one tap away.
+
 ## ADR-125 · 2026-11-21 · Accepted · One model, one name: a model saved twice is counted, listed and offered as one
 
 **Context**: a mobile shop (through the owner, with a screenshot of the stock summary): "iPhone 18 pro max" was on two lines — 5 phones and 1 phone — "ek brand model ka total piece ek bar hi aana chahiye, 6 piece". The summary grouped by `model_id`, and that shop has two records of the model.

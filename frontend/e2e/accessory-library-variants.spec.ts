@@ -29,6 +29,10 @@ test('built-in accessories list fills the card; variants become items with their
   await hits.getByRole('button', { name: /^Anker 65W GaN Charger/ }).click()
   await expect(form.getByLabel('Name')).toHaveValue('Anker 65W GaN Charger')
   await expect(hits).toHaveCount(0) // picked: the list steps back
+  // ADR-126: the same four numbered steps as inside a purchase; here the pieces are what is on the shelf
+  for (const t of ['1. What is it?', '2. What kind of thing?', '3. Which colours or sizes do you keep?', '4. How many you have, and the prices']) await expect(form).toContainText(t)
+  await expect(form.getByTestId('buy-kind')).toContainText('Charger')
+  await expect(form.getByLabel('Reorder at')).toHaveCount(0) // under "More details"
   // its usual colours are offered; two are kept, and one of the shop's own
   const variants = form.getByTestId('variants')
   await variants.getByRole('checkbox', { name: 'Black' }).click()
@@ -57,6 +61,7 @@ test('built-in accessories list fills the card; variants become items with their
   // an item's page: the other kinds, and one more colour added there
   const black = items.find((x: { variant: string }) => x.variant === 'Black')
   await page.goto(`/accessories/${black.id}`)
+  await expect(page.getByTestId('item-hero-variant')).toHaveText('Black')
   const kinds = page.getByTestId('item-kinds')
   await expect(kinds.getByTestId('item-kind')).toHaveCount(3)
   await kinds.getByTestId('item-kind-add').click()

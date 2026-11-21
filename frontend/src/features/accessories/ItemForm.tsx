@@ -127,7 +127,7 @@ export default function ItemForm({ item, compact = false, initialName = '', from
 
   return (
     <div className="flex flex-col gap-3" data-testid="item-form">
-      {creating && compact ? <BiLabel text="buy.s1" size="md" bold /> : null}
+      {creating ? <BiLabel text="buy.s1" size="md" bold /> : null}
       <BiInput label="acc.name" help={<Help term="items.name" size="sm" />} value={f.name} onChange={set('name')} autoFocus={creating} maxLength={150} placeholder={pick('items.namePh')} />
       {creating ? <LibraryHits q={f.name} skip={lib?.name ?? ''} onPick={fromLibrary} /> : null}
       {similar.length ? (
@@ -138,26 +138,26 @@ export default function ItemForm({ item, compact = false, initialName = '', from
           </ul>
         </div>
       ) : null}
-      {creating && compact ? <BiLabel text="buy.s2" size="md" bold /> : <span className="flex items-center gap-1"><BiLabel text="acc.category" size="md" tone="text-muted" /><Help term="items.category" size="sm" /></span>}
+      {creating ? <BiLabel text="buy.s2" size="md" bold /> : <span className="flex items-center gap-1"><BiLabel text="acc.category" size="md" tone="text-muted" /><Help term="items.category" size="sm" /></span>}
       {/* picked from the built-in list: its kind is known — one chip, changeable */}
-      {creating && compact && lib && !kindOpen ? (
+      {creating && lib && !kindOpen ? (
         <div className="flex flex-wrap items-center gap-2" data-testid="buy-kind">
           <span className={chip(true)}>{kindLabel(pick, f.category)}</span>
           <button type="button" onClick={() => setKindOpen(true)} className="tap rounded-xl px-2 py-1 text-sm font-bold text-emerald-deep underline-offset-4 hover:underline">{pick('buy.kindChange')}</button>
         </div>
       ) : <KindChooser value={f.category} onChange={(category) => setF({ ...f, category })} />}
-      {creating && compact ? <VariantPicker by={by} onBy={(b) => { setBy(b); setVars([]) }} value={vars} onChange={setVars} suggest={lib && lib.variant_by === by ? lib.variants : []} withQty qtyLabel="var.qtyBought" title="buy.s3" /> : null}
-      {creating && compact ? <BiLabel text="buy.s4" size="md" bold /> : null}
+      {/* ADR-126: the same steps outside a purchase — there the pieces are what is on the shelf now (opening stock) */}
+      {creating ? <VariantPicker by={by} onBy={(b) => { setBy(b); setVars([]) }} value={vars} onChange={setVars} suggest={lib && lib.variant_by === by ? lib.variants : []} withQty qtyLabel={compact ? 'var.qtyBought' : 'var.qty'} title={compact ? 'buy.s3' : 'buy.s3keep'} /> : null}
+      {creating ? <BiLabel text={compact ? 'buy.s4' : 'buy.s4keep'} size="md" bold /> : null}
       <div className="grid grid-cols-2 gap-2">
         {creating && compact && !vars.length ? <BiInput label="buy.qty" help={null} type="number" inputMode="numeric" min={1} value={qty} onChange={(e) => setQty(e.target.value)} className="num" placeholder="1" data-testid="buy-qty" /> : null}
         {creating && compact ? <BiInput label="buy.cost" help={null} type="number" inputMode="decimal" min={0} value={cost} onChange={(e) => setCost(e.target.value)} className="num" data-testid="buy-cost" /> : null}
         <BiInput label={compact ? 'items.sellPrice' : 'acc.price'} help={<Help term="items.price" size="sm" />} type="number" inputMode="decimal" min={0} value={f.price} onChange={set('price')} className="num" />
-        {compact && !more ? null : <BiInput label="acc.reorder" help={<Help term="items.reorder" size="sm" />} type="number" inputMode="numeric" min={0} value={f.reorder_level} onChange={set('reorder_level')} className="num" />}
+        {creating && !more ? null : <BiInput label="acc.reorder" help={<Help term="items.reorder" size="sm" />} type="number" inputMode="numeric" min={0} value={f.reorder_level} onChange={set('reorder_level')} className="num" />}
         {creating && !compact && !vars.length ? <BiInput label="acc.openingQty" help={<Help term="items.openingQty" size="sm" />} type="number" inputMode="numeric" min={0} value={f.opening_qty} onChange={set('opening_qty')} className="num" /> : null}
         {creating && !compact ? <BiInput label="acc.openingCost" help={<Help term="items.openingCost" size="sm" />} type="number" inputMode="decimal" min={0} value={f.opening_cost} onChange={set('opening_cost')} className="num" /> : null}
       </div>
 
-      {creating && !compact ? <VariantPicker by={by} onBy={(b) => { setBy(b); setVars([]) }} value={vars} onChange={setVars} suggest={lib && lib.variant_by === by ? lib.variants : []} withQty /> : null}
 
       {compact && more ? (
         <div className="flex flex-col gap-2" data-testid="item-quick-card">

@@ -983,7 +983,8 @@
       "void": "Sale cancel",
       "repair": "Repair mein laga"
     },
-    "tierFor": "Is customer ki qeemat"
+    "tierFor": "Is customer ki qeemat",
+    "showAll": "Saare {{n}} dikhayein"
   },
   "exchange": {
     "title": "Exchange",
@@ -6205,7 +6206,9 @@
     "lossAt": "{{p}} mein bikta hai · fi piece {{g}} nuqsan",
     "addDiscount": "+ Is line par riayat",
     "lineDiscount": "Is line par riayat (raqam)",
-    "lineDiscountBig": "Line ki raqam se zyada"
+    "lineDiscountBig": "Line ki raqam se zyada",
+    "s3keep": "3. Kaun se rang ya size rakhte hain?",
+    "s4keep": "4. Kitne maujood hain, aur qeematein"
   },
   "pkg": {
     "title": "Aap ke package mein shamil nahi",
