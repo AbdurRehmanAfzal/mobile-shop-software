@@ -368,6 +368,7 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | Purchase phase B: kind cards beside the search; a discount on one line (off that line, then the bill's discount over the rest); each line shows what it comes to and what a piece earns (ADR-124); docs/42 corrected — freight already existed | ✅ | `KindCards.tsx`, `PurchaseWizard.tsx` (`LineFoot`), `purchases/service.py`, `tests/test_purchase_line_discount.py` |
 | One model, one name: a model saved twice is one line in the stock summary, the audit, the tally and stock sheets, one list when opened, one choice when adding a phone, and cannot be made again with other spacing (ADR-125) | ✅ | `catalogue/service.py` (`name_key`, `same_model_ids`), `reports/service.py`, `tests/test_same_model_one_line.py` |
 | Items phase C: the four numbered steps for "New item" on the items' screen too (pieces = what is on the shelf); the item page shows its variant in the header and starts the lots and history short (ADR-126) | ✅ | `ItemForm.tsx`, `AccessoryDetailPage.tsx`, `e2e/accessory-library-variants.spec.ts` |
+| Items phase D: a new item is asked the details of its kind in the form (a charger its watts and plug, a cover its phone); variants of colour and size together, a pair per item (ADR-127) | ✅ | `ItemForm.tsx` (`KIND_DETAILS`), `ItemVariants.tsx` (`BothPicker`), `e2e/item-kind-fields.spec.ts` |
 | Operations runbook (internal; secrets only as placeholders) | ✅ | `operations-en.md` |
 | Owner review of the wording | ⏳ | `docs/29-OWNER-PENDING.md` D |
 

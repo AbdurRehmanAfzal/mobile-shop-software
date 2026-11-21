@@ -560,6 +560,10 @@ Screen par teen tabs hain: **Stock mein**, **Kam stock** aur **Baqi accessories*
 
 **Rang aur size.** **Jo rang ya size aap rakhte hain** ke neeche har rang par tick lagayein (ya **Size ya lambai**, ya **Kuch aur** chunein), ya **Apna shamil karein** mein khud likhein. Har ek ke aage likhein **Abhi shelf par** kitne hain. **Save** par har tick wala apna alag item banta hai, apni ginti, barcode aur sticker ke sath, sab ek hi naam ke neeche — taake hamesha pata ho kitne kaale aur kitne safed bache hain. Baad mein in mein se koi bhi khol kar **Is item ki qismein** ke neeche **Ek aur rang ya size shamil karein** dabayein.
 
+**Rang aur size ek sath.** Do rangon aur do lambaiyon ki cable: **Rang aur size** chunein, rangon par tick lagayein, phir size ya lambai par. Har jora ek item banta hai — "Black · 1m", "Black · 2m" … — apni ginti ke sath. Kisi rang ya size ka tick hatayein to us ke jore hat jate hain.
+
+**Qisam ke hisab se sawal.** Qisam chunte hi form wahin us ki ek do zaroori baatein poochta hai: charger ka **Watt** aur **Connector**, cover ya glass ka **Kis phone ke liye**. Baqi qismon mein ye **Mazeed tafseel** ke neeche rehti hain.
+
 **Misaal:** "anker 65w" likhein, **Anker 65W GaN Charger** dabayein, **Black** (shelf par 5) aur **White** (3) par tick lagayein, sale qeemat 6,500, fi piece laagat 4,000 → do item bante hain: Anker 65W GaN Charger · Black 5 ke sath, aur · White 3 ke sath.
 
 Agar bilkul milta julta item pehle se maujood ho, to app **Milte julte item pehle se maujood** dikhati hai, taa ke aap ek hi item do baar na banayein.

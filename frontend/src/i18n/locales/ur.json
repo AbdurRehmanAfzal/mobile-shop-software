@@ -5753,13 +5753,15 @@
     "byKind": {
       "color": "رنگ",
       "size": "سائز یا لمبائی",
-      "other": "کچھ اور"
+      "other": "کچھ اور",
+      "both": "رنگ اور سائز"
     },
     "own": "اپنا شامل کریں",
     "ownPh": {
       "color": "Midnight Blue",
       "size": "1.5m",
-      "other": "Type-C"
+      "other": "Type-C",
+      "both": "Midnight Blue"
     },
     "add": "شامل کریں",
     "qty": "ابھی شیلف پر",

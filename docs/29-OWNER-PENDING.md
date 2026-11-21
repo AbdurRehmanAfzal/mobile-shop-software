@@ -333,6 +333,8 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **New item in four steps everywhere; shorter item page (2026-11-21, ADR-126)**: nothing to run (no migration). To test: Chargers, covers etc. (or Stock, in an accessories shop) → **New item**: the form must show the four numbered steps — 1 What is it?, 2 What kind of thing?, 3 Which colours or sizes do you keep?, 4 How many you have, and the prices — with Reorder, Brand, Fits and Quality under **More details**. Add an item with two colours and a count for each; open one: its colour is in the coloured header; an item with many purchases shows five lots and eight history lines with **Show all**.
 
+**Details by kind; colour and size together (2026-11-21, ADR-127)**: nothing to run (no migration). To test: **New item** → choose **Charger**: Watts and Connector are asked right there; choose **Cover**: "Fits (phone / model)" is asked instead; **Other**: nothing extra. Then a cable in two colours and two lengths: under the colours / sizes box tap **Colour and size**, tick Black and White, tick 1m and 2m — "4 items will be made", each with its own count; Save: four items, each with its colour and its length.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

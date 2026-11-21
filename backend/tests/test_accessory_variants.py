@@ -224,3 +224,52 @@ def test_another_shop_and_a_login_without_the_right(owner, other_owner, client):
         ).status_code
         == 403
     )
+
+
+def test_variant_of_colour_and_size_together(owner):
+    """ADR-127: a cable in two colours and two lengths is four items, each with its colour and
+    its length in their own fields"""
+    r = owner.post(
+        "/api/v1/accessories/with-variants",
+        json={
+            "name": "Braided Cable",
+            "category": "cable",
+            "connector": "Type-C",
+            "price": 500,
+            "variant_by": "other",
+            "variants": [
+                {
+                    "label": "Black · 1m",
+                    "color": "Black",
+                    "size": "1m",
+                    "opening_qty": 4,
+                    "opening_cost": 200,
+                },
+                {"label": "Black · 2m", "color": "Black", "size": "2m"},
+                {"label": "White · 1m", "color": "White", "size": "1m"},
+                {
+                    "label": "White · 2m",
+                    "color": "White",
+                    "size": "2m",
+                    "opening_qty": 1,
+                    "opening_cost": 250,
+                },
+            ],
+        },
+    )
+    assert r.status_code == 201, r.text
+    rows = r.json()
+    assert [(x["variant"], x["color"], x["size"], x["qty"]) for x in rows] == [
+        ("Black · 1m", "Black", "1m", 4),
+        ("Black · 2m", "Black", "2m", 0),
+        ("White · 1m", "White", "1m", 0),
+        ("White · 2m", "White", "2m", 1),
+    ]
+    assert len({x["variant_group"] for x in rows}) == 1 and all(
+        x["connector"] == "Type-C" for x in rows
+    )
+    # found by colour, by length, by both
+    assert len(owner.get("/api/v1/accessories?q=White").json()) == 2
+    assert [x["variant"] for x in owner.get("/api/v1/accessories?q=White · 2m").json()] == [
+        "White · 2m"
+    ]

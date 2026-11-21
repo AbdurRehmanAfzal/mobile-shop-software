@@ -2392,3 +2392,18 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: phase D (fields by kind, colour × length as a grid, sub-categories) or E (sell by box, accessory exchange) — the owner's choice; an item's picture is still open.
 
 **Open questions**: which phase next; merging duplicate model records as a provider action.
+
+## 2026-11-21 (8) — Items phase D: details by kind, colour and size together (ADR-127)
+
+**Asked (owner)**: "ok" to going on with phase D.
+
+**Done**: `KIND_DETAILS` — a new item's form asks the kind's own details above and shows each field once; `BothPicker` — colours and sizes ticked separately, every pair a variant; `VariantIn.color / size` on the server; docs/42 phase D marked (sub-categories left).
+
+**Verified**
+- pytest: `test_accessory_variants` (5, one new: four items of two colours × two lengths, each with its colour and length, found by either). Full suite: past 81% with no failure when the owner asked for the push; CI runs it on the pull request.
+- ruff clean; tsc clean; vitest 66 passed; the manual rebuilt in three languages (colour and size together, what the form asks about a kind)
+- Playwright: `item-kind-fields` (new: the kind's details change with the kind, no field twice with More details open, colour and size → four items, a size of the shop's own, counts kept, 320 px, the saved fields), `accessories-only`, `items`, `item-params`, `accessory-library-variants`, `easy-items`, `accessories` pass. The full Playwright suite was not run.
+
+**Next**: phase E (sell by box / carton, accessory for accessory) unless the owner orders otherwise; open from earlier phases: an item's picture, sub-categories, the supplier's balance in the picker.
+
+**Open questions**: sub-categories — wanted, and which list; phase E or F next.

@@ -5753,13 +5753,15 @@
     "byKind": {
       "color": "Rang",
       "size": "Size ya lambai",
-      "other": "Kuch aur"
+      "other": "Kuch aur",
+      "both": "Rang aur size"
     },
     "own": "Apna shamil karein",
     "ownPh": {
       "color": "Midnight Blue",
       "size": "1.5m",
-      "other": "Type-C"
+      "other": "Type-C",
+      "both": "Midnight Blue"
     },
     "add": "Shamil karein",
     "qty": "Abhi shelf par",
