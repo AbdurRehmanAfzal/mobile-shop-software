@@ -1,6 +1,7 @@
 import { Suspense, lazy, type ComponentType } from 'react'
 import { Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router-dom'
 import LandingPage from '@/features/landing/LandingPage'
+import { StockGate } from '@/features/stock/StockCards'
 import { TOPICS, TOPIC_KEYS } from '@/features/landing/topics'
 import { useAuth } from '@/lib/auth'
 import LoginPage from '@/features/auth/LoginPage'
@@ -152,7 +153,7 @@ export const router = createBrowserRouter([
         element: <Shell />,
         children: [
           { path: '/', element: <HomePage /> },
-          { path: '/stock', element: <StockPage /> },
+          { path: '/stock', element: <StockGate><StockPage /></StockGate> },
           { path: '/stock/summary', element: <StockSummaryPage /> },
           { path: '/hisaab', element: <DayReportPage /> },
           { path: '/khata', element: <KhataPage /> },

@@ -43,9 +43,11 @@ test('accessories-only shop: no phone side; buy a carton of cables, sell pieces'
 
   // add stock: only from a dealer, only items
   await page.goto('/purchase/new')
-  await expect(page.getByText('Where is the stock coming from?')).toBeVisible()
+  await expect(page.getByText('Which dealer did you buy from?')).toBeVisible() // ADR-123: no "where from" question for one choice
   await expect(page.getByText("Buy a customer's phone")).toHaveCount(0)
-  await page.getByRole('button', { name: /From a dealer/ }).click()
+  // ADR-123: one choice is no question — the dealer is asked straight away
+  await expect(page.getByRole('button', { name: /From a dealer/ })).toHaveCount(0)
+  await expect(page.getByText('Which dealer did you buy from?')).toBeVisible()
   await page.getByPlaceholder('Name, phone or CNIC').fill('Cable Dealer')
   await page.getByText('Cable Dealer').first().click()
   await page.getByRole('button', { name: 'Next' }).click()
@@ -85,4 +87,12 @@ test('accessories-only shop: no phone side; buy a carton of cables, sell pieces'
   const ms = await (await request.get(`/api/v1/catalogue/models?brand_id=${b.id}`, { headers: h })).json()
   const no = await request.post('/api/v1/devices/opening-stock', { headers: h, data: { imei1: '490154203237518', brand_id: b.id, model_id: ms[0].id, condition: 'box_pack', pta_status: 'pta_approved', cost_price: 1000, asking_price: 1500 } })
   expect(no.status()).toBe(403)
+
+  // ADR-123: "Stock" is this shop's items from any link — never the empty phone screen
+  await page.goto('/stock')
+  await expect(page).toHaveURL(/\/accessories$/)
+  await expect(page.getByTestId('kind-all')).toHaveCount(0)
+  await expect(page.getByTestId('kind-items')).toHaveAttribute('aria-pressed', 'true')
+  await page.goto('/sale/new')
+  await expect(page.getByText('What are you selling?').first()).toBeVisible()
 })

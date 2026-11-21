@@ -397,7 +397,8 @@
     "itemsCard": {
       "t": "Accessories aur doosri cheezein",
       "sub": "Stock mein {{n}} piece · {{low}} kam ho rahi hain · {{out}} khatam",
-      "open": "Kholein"
+      "open": "Kholein",
+      "all": "Saare {{n}} item dekhein"
     }
   },
   "purchase": {
@@ -5391,7 +5392,11 @@
     "addStockHint": "Naya maal khareeda",
     "inStock": "Stock mein cheezein",
     "tapItem": "Jo cheezein bech rahe hain woh add karein",
-    "returned": "Is maah wapsi"
+    "returned": "Is maah wapsi",
+    "dealerTitle": "Kis dealer se khareeda?",
+    "stepDealer": "Kaunsa dealer?",
+    "stockTitle": "Stock",
+    "sellWhat": "Aap kya bech rahe hain?"
   },
   "old": {
     "title": "Purana hisaab",

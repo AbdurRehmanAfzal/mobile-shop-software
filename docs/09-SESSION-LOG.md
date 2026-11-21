@@ -2320,3 +2320,22 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next (owner's side, docs/29)**: Search Console re-request for the four addresses; real-printer test; a tax adviser's read of the FBR guide; the accessories shop's word on the new purchase and its list of missing products; whether the "not in your package" note should show to every shop.
 
 **Open questions**: the decisions listed in docs/29 §E — the newest: the note for every shop or only marked ones; direct ESC/POS printing; a variants grid; WooCommerce sync / courier and COD order; one price-code pattern or two; a promised date for an old balance.
+
+## 2026-11-21 (4) — Accessories shop: stock and purchase complaints; the Easy Mode audit (ADR-123)
+
+**Asked (owner)**: a full specification for an accessories purchase / inventory / sales module, with the instruction to improve the existing module from the shopkeeper's side (purchase first, nothing removed, no parallel module) — and two complaints: accessories are not seen in Stock (found under the options), and the purchase shows "From a dealer", "Buy a customer's phone" and "Add device" to a shop that deals only in accessories. "Go ahead."
+
+**Done**
+- Looked at every screen as an accessories-only shop (screenshots) before changing code.
+- `StockGate` (`/stock` → the items for a shop without devices, titled "Stock", no "All stock" chip); `ItemsInStock` as a block above the phones on "All stock" with the first items and the search's matches; the purchase asks the dealer at once without the source cards; the sale's first step reads "What are you selling?".
+- `docs/42-ACCESSORIES-EASY-MODE-AUDIT.md`: the complaints, the struggles screen by screen, the specification against what exists, what was built, the phases left.
+- Told the owner the part that is a setting: the complaining shop still has Mobiles ticked.
+
+**Verified**
+- tsc clean; vitest 66 passed.
+- Playwright: `accessories-only` (updated: no source card, the dealer question, `/stock` → items, no "All stock" chip, the sale's wording), `easy-items` (extended: the accessories block with three rows, the search finds an item, a search with no item shows no block), `package-lines`, `stock-screen`, `laptops`, `items` pass. In the first run `easy-items` failed once on the browser not starting within 180 s (the PC was loaded: the run took 20 minutes) and passed when run again. The full Playwright suite was not run.
+- No backend change, so pytest was not run.
+
+**Next**: the owner unticks Mobiles for that shop; he picks the next phase from docs/42 §5.
+
+**Open questions**: the phase order; a category-cards step or search first.

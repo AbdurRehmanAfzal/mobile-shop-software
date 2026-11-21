@@ -293,6 +293,8 @@ export default function StockPage() {
         <div className="min-w-0 flex-1"><ViewSwitch value={view} onChange={(v) => { setView(v); saveView(v) }} /></div>
         <FieldsButton value={fields} onChange={(v) => { setFields(v); saveFields(v) }} />
       </div>
+      {/* ADR-121 / ADR-123: "All stock" is not only phones — the accessories are in it, and the search finds them */}
+      {!kind && !picking ? <ItemsInStock q={q} /> : null}
       {data ? (
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-2xl bg-surface px-3 py-2 text-sm font-semibold text-muted" data-testid="stock-summary-line">
           <span className="font-extrabold text-ink">{t(`stock.countBy.${kind || 'all'}`, { n: rows.length })}</span>
@@ -329,8 +331,6 @@ export default function StockPage() {
           ))}
         </div>
       )}
-      {/* ADR-121: "All stock" is not only phones — the counted goods are one tap away, with their count */}
-      {!kind && !picking ? <ItemsInStock /> : null}
       {picking ? (
         <div className="sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-10 flex gap-2 lg:bottom-4">
           <BiButton text="label.selectAll" variant="secondary" onClick={() => setPicked(rows.map((d) => d.id))} />

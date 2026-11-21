@@ -362,6 +362,23 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-123 · 2026-11-21 · Accepted · An accessories shop's stock is its items; accessories inside "All stock"; no "where from" question; the Easy Mode audit
+
+**Context**: the owner sent a full specification for an "Accessories Shop Purchase, Inventory & Sales Module" with the instruction to improve the **existing** module from the shopkeeper's side — find where he struggles, reorganise into an Easy Mode, remove nothing, build no parallel module, purchase first — and two complaints from the accessories shop: (1) "accessories stock mein nazar nahi aa rahi — search karte hue pata chala ke accessories to options mein hai; as an accessories shop hamara stock to yehi hai"; (2) "purchase par *From a dealer* aur *Buy a customer's phone* kyun nazar aa raha hai, hum to accessories par deal karte hain — *Add device* kyun aa raha hai".
+
+**Found** (looked at as an accessories-only shop): the bottom tab opened the items (ADR-109), but `/stock` from anywhere else opened the phones' screen — IMEI search, "All stock 0", an empty list — with Accessories as one chip. In a shop with mobiles too, "All stock" listed only devices and its search did not find an item. The purchase's first step asked "Where is the stock coming from?" with a single card. "Buy a customer's phone" and "Add device" appear only while Mobiles is ticked for the shop — the complaining shop still has it ticked. The sale's first step said "Which phone?".
+
+**Decision**
+1. **`StockGate`** on the `/stock` route: a shop that trades no phones or laptops is sent to its items, with the query kept. Its items' screen is titled "Stock" and has no "All stock" chip.
+2. **"All stock" includes the accessories** (`ItemsInStock`): above the phones, a block with the pieces in stock, low and finished, the first three items with their counts — or, when something is typed in the search box, the items that match (up to eight) — and the way to the whole list. Typing a phone's IMEI shows no empty box about items.
+3. **Purchase**: without devices the source cards are not shown; the dealer is asked at once ("Which dealer did you buy from?"), the step is named "Which dealer?".
+4. **Sale**: the first step is "What are you selling?" for a shop without mobiles.
+5. **The audit** asked for by the brief is `docs/42-ACCESSORIES-EASY-MODE-AUDIT.md`: the complaints as seen, where a shopkeeper struggled screen by screen, the specification section by section against what exists, what this round built (ADR-118, 121, 122, 123) and the phases left for the owner to order.
+
+**Not done here**: what docs/42 §5 lists (line discount, freight in stock cost, fields by kind, a permission per action, a category-cards step, the four-step form outside a purchase). Unticking Mobiles for the complaining shop is the provider's action.
+
+**Nothing removed**: for a shop with phones the `/stock` screen, its chips, filters and cards are as they were, plus the accessories block; the item screens, the purchase's cards for a shop with devices and every route stay.
+
 ## ADR-122 · 2026-11-21 · Accepted · What a shop trades is three ticks for the provider; what is not in the package is shown locked with a WhatsApp request
 
 **Context**: the owner (2026-11-21): when the super admin gives a shop accessories, that shop should see only the accessories side of purchase — mobiles and laptops hidden — with a line that they are not in its package and that it may contact the software company, with a WhatsApp link for the request. The same for a laptop shop and a mobile shop; any mix must be possible (mobiles only, laptops only, accessories only, mobiles + accessories, laptops + accessories, all three). Existing shops must not be disturbed.

@@ -152,7 +152,10 @@ export default function PurchaseWizard() {
   // ADR-109: a shop without mobiles says "stock", not "phone"; one without phones or laptops
   // (accessories only) has no device to add and nobody's phone to buy
   const trade = useTrade()
-  const steps = ['counter.fromWhom', trade.mobiles ? 'counter.phoneAndCost' : 'goods.stepItems', 'counter.doneTitle']
+  const steps = [trade.devices ? 'counter.fromWhom' : 'goods.stepDealer', trade.mobiles ? 'counter.phoneAndCost' : 'goods.stepItems', 'counter.doneTitle']
+  // ADR-123: an accessories shop buys from dealers only — one choice is no question, so the
+  // dealer is asked straight away
+  useEffect(() => { if (!trade.devices && (!chosen || kind !== 'supplier')) { setKind('supplier'); setChosen(true) } }, [trade.devices]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="flex flex-col gap-3">
@@ -167,15 +170,15 @@ export default function PurchaseWizard() {
 
       {step === 0 ? (
         <div className="flex flex-col gap-3">
-          <span className="flex items-center gap-1"><BiLabel text={trade.mobiles ? 'purchase.chooseTitle' : 'goods.chooseTitle'} size="lg" bold /><Help term="purchase.source" size="sm" /></span>
-          <SourceCard
+          {trade.devices ? <span className="flex items-center gap-1"><BiLabel text={trade.mobiles ? 'purchase.chooseTitle' : 'goods.chooseTitle'} size="lg" bold /><Help term="purchase.source" size="sm" /></span> : <BiLabel text="goods.dealerTitle" size="lg" bold />}
+          {trade.devices ? <SourceCard
             help="purchase.fromDealer"
             active={chosen && kind === 'supplier'}
             icon={<Store size={26} />}
             title="purchase.fromDealer"
             hint={trade.mobiles ? 'purchase.fromDealerHint' : 'goods.fromDealerHint'}
             onClick={() => { if (kind !== 'supplier') setParty(null); setKind('supplier'); setChosen(true) }}
-          />
+          /> : null}
           {trade.devices ? <SourceCard
             help="purchase.fromCustomer"
             active={chosen && kind === 'walk_in'}
