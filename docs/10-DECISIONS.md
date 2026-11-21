@@ -362,6 +362,18 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-129 · 2026-11-21 · Accepted · Four more colour sets: Material, Mac, Lime, Fintech
+
+**Context**: the owner showed four sample screens from another project (a Google Material 3 style, a macOS style, a ride-app style in black and lime, a payments-dashboard style in slate and orange) and asked whether they can be added to Appearance. Appearance already has colour sets (`data-palette`: Modern, Professional, Navy, Colorful) made of the design tokens of `index.css`.
+
+**Decision**
+1. Four more sets — `material`, `mac`, `lime`, `fintech` — each a block of the same tokens for light, dark and "same as phone", with its own corners and font (Mac uses the device's own font). Only colours, corners and font were taken from the samples; no layout, no component, no logo.
+2. **The names are descriptive, not brand names**: the app does not say Google, Apple, inDrive or Payoneer anywhere. They are other companies' trade marks and the software is sold to shops; "Material", "Mac", "Lime" and "Fintech" say what the look is.
+3. **Lime** is the one that could not be copied as it is: lime on white cannot be read, and the app's main colour is used both as a button's background (white label) and as text on white. So lime is a background only — the hero's figures on black, the Sell tile, the highlight button — and links and buttons use a deep green.
+4. A set a build does not know (an older app reading a newer choice, a hand-edited value) falls back to Modern (`PALETTES` in `lib/theme.ts`).
+
+**Consequences**: no server change; the choice stays on the device as before. A new set is one entry of the table that generated these blocks plus its name in three languages; `theme.test.ts` checks every set has its three blocks and its names, `e2e/look-sets.spec.ts` checks each one's text contrast in light and dark.
+
 ## ADR-128 · 2026-11-21 · Accepted · The ID card check can be skipped wherever it stops the counter
 
 **Context**: a shopkeeper doing an exchange got "This device cannot be sold until verification is complete" after tapping **Complete exchange**, with no way on. The skip ("I know this person") existed in the purchase and in the sale, and the server's exchange already took `override_reason` — but the exchange screen never offered it, the check's own page showed the skip to the owner / manager only (behind a typed reason), and the dashboard's "28 phones: ID card check pending" opened the whole stock list with no way to clear them.

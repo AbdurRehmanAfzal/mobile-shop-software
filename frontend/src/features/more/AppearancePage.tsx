@@ -20,6 +20,10 @@ const PALETTES: { v: Palette; text: string; sw: string[] }[] = [
   { v: 'pro', text: 'more.lookPro', sw: ['#111827', '#0F766E', '#F5F6F8'] },
   { v: 'navy', text: 'more.lookNavy', sw: ['#102040', '#15803D', '#B08942'] },
   { v: 'colorful', text: 'more.lookColorful', sw: ['#1B1F24', '#1E6B45', '#C8A14F'] },
+  { v: 'material', text: 'more.lookMaterial', sw: ['#041E49', '#1A73E8', '#F0F4F9'] },
+  { v: 'mac', text: 'more.lookMac', sw: ['#1D1D1F', '#0071E3', '#F5F5F7'] },
+  { v: 'lime', text: 'more.lookLime', sw: ['#111315', '#C1F11D', '#F6F8FA'] },
+  { v: 'fintech', text: 'more.lookFintech', sw: ['#1E2430', '#EB4200', '#F7F8FA'] },
 ]
 const TEXTS: { v: TextSize; px: string }[] = [{ v: 'normal', px: '15px' }, { v: 'large', px: '18px' }, { v: 'xl', px: '21px' }]
 const CORNER_SET: { v: Corners; r: string }[] = [{ v: 'auto', r: '12px' }, { v: 'round', r: '20px' }, { v: 'soft', r: '10px' }, { v: 'square', r: '3px' }]

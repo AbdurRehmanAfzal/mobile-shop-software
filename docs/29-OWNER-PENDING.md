@@ -337,6 +337,8 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **Skipping the ID card check (2026-11-21, ADR-128)**: nothing to run (no migration). To test: (1) **Exchange** with a used phone from stock whose check is pending: on the last step the box "The new phone's ID card check is pending" must show **Check now** and **Skip and exchange**; **Complete exchange** is grey until you choose; above it choose **Skip, I know this person** for the old phone. (2) Home → **N phones: ID card check pending** → the list: **Skip** on one phone, then **Skip all**, confirm; the line on Home goes away (a phone marked as suspected stolen stays). (3) A pending phone's page: **Skip** beside **ID card check**. (4) Shop Audit → the ID checks: every skip is listed with who did it.
 
+**Four more colour sets (2026-11-21, ADR-129)**: nothing to run. To test: More → Appearance → **Colours**: **Material**, **Mac**, **Lime**, **Fintech** — tap each, look at Home and a sale, then **Dark**. They are named for the look, not for the companies (trade marks); say so if you want other names.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

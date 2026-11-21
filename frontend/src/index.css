@@ -454,6 +454,521 @@
     --r-card: 16px;
   }
 
+  /* ADR-129 (owner 2026-11-21): four more colour sets, made from the owner's sample screens.
+     Generated from one table (scratchpad themes129.py); each follows the Modern set's shape. */
+  /* Material: Google's Material 3 look — soft blue-grey ground, one blue, tinted bar, round shapes */
+  :root[data-palette='material']:not([data-theme='dark']) {
+    --ground: 248 250 253;
+    --surface: 255 255 255;
+    --line: 225 227 225;
+    --ink: 31 31 31;
+    --muted: 68 71 70;
+    --emerald: 26 115 232;
+    --emerald-deep: 11 87 208;
+    --emerald-tint: 232 240 254;
+    --hero: 4 30 73;
+    --hero-text: 255 255 255;
+    --receivable: 180 83 9;
+    --receivable-tint: 254 243 199;
+    --payable: 179 38 30;
+    --payable-tint: 249 222 220;
+    --gold: 168 199 250;
+    --gold-text: 180 83 9;
+    --nav: 240 244 249;
+    --t-sell: 26 115 232;
+    --t-sell-fg: 255 255 255;
+    --t-sell-icon: 26 115 232;
+    --t-buy: 4 30 73;
+    --t-buy-fg: 255 255 255;
+    --t-buy-icon: 4 30 73;
+    --t-khata: 240 244 249;
+    --t-khata-fg: 31 31 31;
+    --t-khata-icon: 26 115 232;
+    --t-stock: 240 244 249;
+    --t-stock-fg: 31 31 31;
+    --t-stock-icon: 26 115 232;
+    --t-repair: 240 244 249;
+    --t-repair-fg: 31 31 31;
+    --t-repair-icon: 26 115 232;
+    --t-expense: 240 244 249;
+    --t-expense-fg: 31 31 31;
+    --t-expense-icon: 26 115 232;
+    --t-return: 240 244 249;
+    --t-return-fg: 31 31 31;
+    --t-return-icon: 26 115 232;
+  }
+  :root[data-palette='material'][data-theme='dark'] {
+    --ground: 17 19 24;
+    --surface: 25 28 34;
+    --line: 68 71 79;
+    --ink: 227 226 230;
+    --muted: 168 171 180;
+    --emerald: 66 133 244;
+    --emerald-deep: 168 199 250;
+    --emerald-tint: 12 40 84;
+    --hero: 34 38 47;
+    --hero-text: 255 255 255;
+    --receivable: 251 191 36;
+    --receivable-tint: 66 48 14;
+    --payable: 248 113 113;
+    --payable-tint: 72 26 26;
+    --gold: 168 199 250;
+    --gold-text: 251 191 36;
+    --nav: 25 28 34;
+    --t-sell: 26 115 232;
+    --t-sell-fg: 255 255 255;
+    --t-sell-icon: 168 199 250;
+    --t-buy: 45 49 57;
+    --t-buy-fg: 255 255 255;
+    --t-buy-icon: 226 232 240;
+    --t-khata: 34 38 47;
+    --t-khata-fg: 227 226 230;
+    --t-khata-icon: 168 199 250;
+    --t-stock: 34 38 47;
+    --t-stock-fg: 227 226 230;
+    --t-stock-icon: 168 199 250;
+    --t-repair: 34 38 47;
+    --t-repair-fg: 227 226 230;
+    --t-repair-icon: 168 199 250;
+    --t-expense: 34 38 47;
+    --t-expense-fg: 227 226 230;
+    --t-expense-icon: 168 199 250;
+    --t-return: 34 38 47;
+    --t-return-fg: 227 226 230;
+    --t-return-icon: 168 199 250;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root[data-palette='material'][data-theme='system'] {
+      --ground: 17 19 24;
+      --surface: 25 28 34;
+      --line: 68 71 79;
+      --ink: 227 226 230;
+      --muted: 168 171 180;
+      --emerald: 66 133 244;
+      --emerald-deep: 168 199 250;
+      --emerald-tint: 12 40 84;
+      --hero: 34 38 47;
+      --hero-text: 255 255 255;
+      --receivable: 251 191 36;
+      --receivable-tint: 66 48 14;
+      --payable: 248 113 113;
+      --payable-tint: 72 26 26;
+      --gold: 168 199 250;
+      --gold-text: 251 191 36;
+      --nav: 25 28 34;
+      --t-sell: 26 115 232;
+      --t-sell-fg: 255 255 255;
+      --t-sell-icon: 168 199 250;
+      --t-buy: 45 49 57;
+      --t-buy-fg: 255 255 255;
+      --t-buy-icon: 226 232 240;
+      --t-khata: 34 38 47;
+      --t-khata-fg: 227 226 230;
+      --t-khata-icon: 168 199 250;
+      --t-stock: 34 38 47;
+      --t-stock-fg: 227 226 230;
+      --t-stock-icon: 168 199 250;
+      --t-repair: 34 38 47;
+      --t-repair-fg: 227 226 230;
+      --t-repair-icon: 168 199 250;
+      --t-expense: 34 38 47;
+      --t-expense-fg: 227 226 230;
+      --t-expense-icon: 168 199 250;
+      --t-return: 34 38 47;
+      --t-return-fg: 227 226 230;
+      --t-return-icon: 168 199 250;
+    }
+  }
+  :root[data-palette='material'] {
+    --font-sans: Inter;
+    --r-btn: 18px;
+    --r-card: 22px;
+  }
+  /* Mac: Apple's desktop look — light grey ground, white panels, system blue, the device's own font */
+  :root[data-palette='mac']:not([data-theme='dark']) {
+    --ground: 245 245 247;
+    --surface: 255 255 255;
+    --line: 229 229 234;
+    --ink: 29 29 31;
+    --muted: 110 110 115;
+    --emerald: 0 113 227;
+    --emerald-deep: 0 64 133;
+    --emerald-tint: 229 241 255;
+    --hero: 29 29 31;
+    --hero-text: 255 255 255;
+    --receivable: 178 80 0;
+    --receivable-tint: 255 241 214;
+    --payable: 215 0 21;
+    --payable-tint: 255 228 226;
+    --gold: 100 170 255;
+    --gold-text: 178 80 0;
+    --nav: 255 255 255;
+    --t-sell: 0 113 227;
+    --t-sell-fg: 255 255 255;
+    --t-sell-icon: 0 113 227;
+    --t-buy: 29 29 31;
+    --t-buy-fg: 255 255 255;
+    --t-buy-icon: 29 29 31;
+    --t-khata: 242 242 247;
+    --t-khata-fg: 29 29 31;
+    --t-khata-icon: 0 113 227;
+    --t-stock: 242 242 247;
+    --t-stock-fg: 29 29 31;
+    --t-stock-icon: 0 113 227;
+    --t-repair: 242 242 247;
+    --t-repair-fg: 29 29 31;
+    --t-repair-icon: 0 113 227;
+    --t-expense: 242 242 247;
+    --t-expense-fg: 29 29 31;
+    --t-expense-icon: 0 113 227;
+    --t-return: 242 242 247;
+    --t-return-fg: 29 29 31;
+    --t-return-icon: 0 113 227;
+  }
+  :root[data-palette='mac'][data-theme='dark'] {
+    --ground: 18 18 20;
+    --surface: 28 28 30;
+    --line: 58 58 60;
+    --ink: 245 245 247;
+    --muted: 152 152 157;
+    --emerald: 10 132 255;
+    --emerald-deep: 153 204 255;
+    --emerald-tint: 10 40 77;
+    --hero: 44 44 46;
+    --hero-text: 255 255 255;
+    --receivable: 255 204 80;
+    --receivable-tint: 66 48 14;
+    --payable: 255 105 97;
+    --payable-tint: 74 22 20;
+    --gold: 100 170 255;
+    --gold-text: 255 204 80;
+    --nav: 28 28 30;
+    --t-sell: 10 132 255;
+    --t-sell-fg: 255 255 255;
+    --t-sell-icon: 153 204 255;
+    --t-buy: 58 58 60;
+    --t-buy-fg: 255 255 255;
+    --t-buy-icon: 229 229 234;
+    --t-khata: 36 36 38;
+    --t-khata-fg: 245 245 247;
+    --t-khata-icon: 153 204 255;
+    --t-stock: 36 36 38;
+    --t-stock-fg: 245 245 247;
+    --t-stock-icon: 153 204 255;
+    --t-repair: 36 36 38;
+    --t-repair-fg: 245 245 247;
+    --t-repair-icon: 153 204 255;
+    --t-expense: 36 36 38;
+    --t-expense-fg: 245 245 247;
+    --t-expense-icon: 153 204 255;
+    --t-return: 36 36 38;
+    --t-return-fg: 245 245 247;
+    --t-return-icon: 153 204 255;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root[data-palette='mac'][data-theme='system'] {
+      --ground: 18 18 20;
+      --surface: 28 28 30;
+      --line: 58 58 60;
+      --ink: 245 245 247;
+      --muted: 152 152 157;
+      --emerald: 10 132 255;
+      --emerald-deep: 153 204 255;
+      --emerald-tint: 10 40 77;
+      --hero: 44 44 46;
+      --hero-text: 255 255 255;
+      --receivable: 255 204 80;
+      --receivable-tint: 66 48 14;
+      --payable: 255 105 97;
+      --payable-tint: 74 22 20;
+      --gold: 100 170 255;
+      --gold-text: 255 204 80;
+      --nav: 28 28 30;
+      --t-sell: 10 132 255;
+      --t-sell-fg: 255 255 255;
+      --t-sell-icon: 153 204 255;
+      --t-buy: 58 58 60;
+      --t-buy-fg: 255 255 255;
+      --t-buy-icon: 229 229 234;
+      --t-khata: 36 36 38;
+      --t-khata-fg: 245 245 247;
+      --t-khata-icon: 153 204 255;
+      --t-stock: 36 36 38;
+      --t-stock-fg: 245 245 247;
+      --t-stock-icon: 153 204 255;
+      --t-repair: 36 36 38;
+      --t-repair-fg: 245 245 247;
+      --t-repair-icon: 153 204 255;
+      --t-expense: 36 36 38;
+      --t-expense-fg: 245 245 247;
+      --t-expense-icon: 153 204 255;
+      --t-return: 36 36 38;
+      --t-return-fg: 245 245 247;
+      --t-return-icon: 153 204 255;
+    }
+  }
+  :root[data-palette='mac'] {
+    --font-sans: system-ui;
+    --r-btn: 10px;
+    --r-card: 14px;
+  }
+  /* Lime: the ride-app look — near-black and bright lime. Lime is a background only (hero figures, the sell tile, the highlight button): on white it cannot be read, so links and buttons use a deep green */
+  :root[data-palette='lime']:not([data-theme='dark']) {
+    --ground: 246 248 250;
+    --surface: 255 255 255;
+    --line: 226 232 240;
+    --ink: 17 19 21;
+    --muted: 100 116 139;
+    --emerald: 77 124 15;
+    --emerald-deep: 54 83 20;
+    --emerald-tint: 244 251 224;
+    --hero: 17 19 21;
+    --hero-text: 193 241 29;
+    --receivable: 180 83 9;
+    --receivable-tint: 254 243 199;
+    --payable: 220 38 38;
+    --payable-tint: 254 226 226;
+    --gold: 193 241 29;
+    --gold-text: 180 83 9;
+    --nav: 255 255 255;
+    --t-sell: 193 241 29;
+    --t-sell-fg: 17 19 21;
+    --t-sell-icon: 77 124 15;
+    --t-buy: 17 19 21;
+    --t-buy-fg: 255 255 255;
+    --t-buy-icon: 17 19 21;
+    --t-khata: 241 245 249;
+    --t-khata-fg: 17 19 21;
+    --t-khata-icon: 77 124 15;
+    --t-stock: 241 245 249;
+    --t-stock-fg: 17 19 21;
+    --t-stock-icon: 77 124 15;
+    --t-repair: 241 245 249;
+    --t-repair-fg: 17 19 21;
+    --t-repair-icon: 77 124 15;
+    --t-expense: 241 245 249;
+    --t-expense-fg: 17 19 21;
+    --t-expense-icon: 77 124 15;
+    --t-return: 241 245 249;
+    --t-return-fg: 17 19 21;
+    --t-return-icon: 77 124 15;
+  }
+  :root[data-palette='lime'][data-theme='dark'] {
+    --ground: 17 19 21;
+    --surface: 24 27 32;
+    --line: 42 47 58;
+    --ink: 241 245 249;
+    --muted: 148 163 184;
+    --emerald: 90 145 20;
+    --emerald-deep: 217 249 157;
+    --emerald-tint: 30 41 12;
+    --hero: 35 39 48;
+    --hero-text: 193 241 29;
+    --receivable: 251 191 36;
+    --receivable-tint: 66 48 14;
+    --payable: 248 113 113;
+    --payable-tint: 72 26 26;
+    --gold: 193 241 29;
+    --gold-text: 251 191 36;
+    --nav: 24 27 32;
+    --t-sell: 193 241 29;
+    --t-sell-fg: 17 19 21;
+    --t-sell-icon: 193 241 29;
+    --t-buy: 42 47 58;
+    --t-buy-fg: 255 255 255;
+    --t-buy-icon: 226 232 240;
+    --t-khata: 30 34 41;
+    --t-khata-fg: 241 245 249;
+    --t-khata-icon: 193 241 29;
+    --t-stock: 30 34 41;
+    --t-stock-fg: 241 245 249;
+    --t-stock-icon: 193 241 29;
+    --t-repair: 30 34 41;
+    --t-repair-fg: 241 245 249;
+    --t-repair-icon: 193 241 29;
+    --t-expense: 30 34 41;
+    --t-expense-fg: 241 245 249;
+    --t-expense-icon: 193 241 29;
+    --t-return: 30 34 41;
+    --t-return-fg: 241 245 249;
+    --t-return-icon: 193 241 29;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root[data-palette='lime'][data-theme='system'] {
+      --ground: 17 19 21;
+      --surface: 24 27 32;
+      --line: 42 47 58;
+      --ink: 241 245 249;
+      --muted: 148 163 184;
+      --emerald: 90 145 20;
+      --emerald-deep: 217 249 157;
+      --emerald-tint: 30 41 12;
+      --hero: 35 39 48;
+      --hero-text: 193 241 29;
+      --receivable: 251 191 36;
+      --receivable-tint: 66 48 14;
+      --payable: 248 113 113;
+      --payable-tint: 72 26 26;
+      --gold: 193 241 29;
+      --gold-text: 251 191 36;
+      --nav: 24 27 32;
+      --t-sell: 193 241 29;
+      --t-sell-fg: 17 19 21;
+      --t-sell-icon: 193 241 29;
+      --t-buy: 42 47 58;
+      --t-buy-fg: 255 255 255;
+      --t-buy-icon: 226 232 240;
+      --t-khata: 30 34 41;
+      --t-khata-fg: 241 245 249;
+      --t-khata-icon: 193 241 29;
+      --t-stock: 30 34 41;
+      --t-stock-fg: 241 245 249;
+      --t-stock-icon: 193 241 29;
+      --t-repair: 30 34 41;
+      --t-repair-fg: 241 245 249;
+      --t-repair-icon: 193 241 29;
+      --t-expense: 30 34 41;
+      --t-expense-fg: 241 245 249;
+      --t-expense-icon: 193 241 29;
+      --t-return: 30 34 41;
+      --t-return-fg: 241 245 249;
+      --t-return-icon: 193 241 29;
+    }
+  }
+  :root[data-palette='lime'] {
+    --font-sans: Inter;
+    --r-btn: 14px;
+    --r-card: 20px;
+  }
+  /* Fintech: the payments-dashboard look — cool grey ground, slate text, one strong orange */
+  :root[data-palette='fintech']:not([data-theme='dark']) {
+    --ground: 247 248 250;
+    --surface: 255 255 255;
+    --line: 228 231 236;
+    --ink: 30 36 48;
+    --muted: 102 112 133;
+    --emerald: 235 66 0;
+    --emerald-deep: 170 46 0;
+    --emerald-tint: 255 241 235;
+    --hero: 30 36 48;
+    --hero-text: 255 255 255;
+    --receivable: 181 71 8;
+    --receivable-tint: 254 240 199;
+    --payable: 217 45 32;
+    --payable-tint: 254 228 226;
+    --gold: 255 138 92;
+    --gold-text: 181 71 8;
+    --nav: 255 255 255;
+    --t-sell: 235 66 0;
+    --t-sell-fg: 255 255 255;
+    --t-sell-icon: 235 66 0;
+    --t-buy: 37 44 58;
+    --t-buy-fg: 255 255 255;
+    --t-buy-icon: 37 44 58;
+    --t-khata: 242 244 247;
+    --t-khata-fg: 30 36 48;
+    --t-khata-icon: 235 66 0;
+    --t-stock: 242 244 247;
+    --t-stock-fg: 30 36 48;
+    --t-stock-icon: 235 66 0;
+    --t-repair: 242 244 247;
+    --t-repair-fg: 30 36 48;
+    --t-repair-icon: 235 66 0;
+    --t-expense: 242 244 247;
+    --t-expense-fg: 30 36 48;
+    --t-expense-icon: 235 66 0;
+    --t-return: 242 244 247;
+    --t-return-fg: 30 36 48;
+    --t-return-icon: 235 66 0;
+  }
+  :root[data-palette='fintech'][data-theme='dark'] {
+    --ground: 15 19 26;
+    --surface: 22 27 36;
+    --line: 37 44 58;
+    --ink: 242 244 247;
+    --muted: 148 163 184;
+    --emerald: 255 92 26;
+    --emerald-deep: 255 196 170;
+    --emerald-tint: 64 26 10;
+    --hero: 30 36 48;
+    --hero-text: 255 255 255;
+    --receivable: 251 191 36;
+    --receivable-tint: 66 48 14;
+    --payable: 248 113 113;
+    --payable-tint: 72 26 26;
+    --gold: 255 138 92;
+    --gold-text: 251 191 36;
+    --nav: 22 27 36;
+    --t-sell: 235 66 0;
+    --t-sell-fg: 255 255 255;
+    --t-sell-icon: 255 196 170;
+    --t-buy: 37 44 58;
+    --t-buy-fg: 255 255 255;
+    --t-buy-icon: 226 232 240;
+    --t-khata: 30 36 48;
+    --t-khata-fg: 242 244 247;
+    --t-khata-icon: 255 196 170;
+    --t-stock: 30 36 48;
+    --t-stock-fg: 242 244 247;
+    --t-stock-icon: 255 196 170;
+    --t-repair: 30 36 48;
+    --t-repair-fg: 242 244 247;
+    --t-repair-icon: 255 196 170;
+    --t-expense: 30 36 48;
+    --t-expense-fg: 242 244 247;
+    --t-expense-icon: 255 196 170;
+    --t-return: 30 36 48;
+    --t-return-fg: 242 244 247;
+    --t-return-icon: 255 196 170;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root[data-palette='fintech'][data-theme='system'] {
+      --ground: 15 19 26;
+      --surface: 22 27 36;
+      --line: 37 44 58;
+      --ink: 242 244 247;
+      --muted: 148 163 184;
+      --emerald: 255 92 26;
+      --emerald-deep: 255 196 170;
+      --emerald-tint: 64 26 10;
+      --hero: 30 36 48;
+      --hero-text: 255 255 255;
+      --receivable: 251 191 36;
+      --receivable-tint: 66 48 14;
+      --payable: 248 113 113;
+      --payable-tint: 72 26 26;
+      --gold: 255 138 92;
+      --gold-text: 251 191 36;
+      --nav: 22 27 36;
+      --t-sell: 235 66 0;
+      --t-sell-fg: 255 255 255;
+      --t-sell-icon: 255 196 170;
+      --t-buy: 37 44 58;
+      --t-buy-fg: 255 255 255;
+      --t-buy-icon: 226 232 240;
+      --t-khata: 30 36 48;
+      --t-khata-fg: 242 244 247;
+      --t-khata-icon: 255 196 170;
+      --t-stock: 30 36 48;
+      --t-stock-fg: 242 244 247;
+      --t-stock-icon: 255 196 170;
+      --t-repair: 30 36 48;
+      --t-repair-fg: 242 244 247;
+      --t-repair-icon: 255 196 170;
+      --t-expense: 30 36 48;
+      --t-expense-fg: 242 244 247;
+      --t-expense-icon: 255 196 170;
+      --t-return: 30 36 48;
+      --t-return-fg: 242 244 247;
+      --t-return-icon: 255 196 170;
+    }
+  }
+  :root[data-palette='fintech'] {
+    --font-sans: Inter;
+    --r-btn: 10px;
+    --r-card: 16px;
+  }
+
   html {
     -webkit-text-size-adjust: 100%;
   }
@@ -499,6 +1014,12 @@
   /* Stripe-like lift: a hairline plus a very soft shadow */
   :root[data-palette='modern'] .card {
     box-shadow: 0 1px 2px rgba(10, 37, 64, 0.06), 0 4px 12px -6px rgba(10, 37, 64, 0.08);
+  }
+  :root[data-palette='material'] .card,
+  :root[data-palette='mac'] .card,
+  :root[data-palette='lime'] .card,
+  :root[data-palette='fintech'] .card {
+    box-shadow: 0 1px 2px rgba(17, 19, 21, 0.05), 0 4px 12px -6px rgba(17, 19, 21, 0.08);
   }
   .hero {
     @apply rounded-3xl bg-hero text-hero-text shadow-hero;

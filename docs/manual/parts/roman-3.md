@@ -888,7 +888,7 @@ Customers ko paighaam (raseedein, yaad dahani) **Print aur paighaam ki zubaan** 
 
 - **Zubaan**: kisi bhi screen ke upar zubaan ka button dabayein aur **اردو**, **Roman Urdu** ya **English** chunein. App ek waqt mein ek zubaan dikhati hai; Urdu daayen se baayen padhi jati hai. Hindse hamesha 0–9 hote hain.
 - **Dark / Light**: upar **Dark** (ya **Light**) dabayein. More → **Theme** mein **Phone ke mutabiq** bhi hai.
-- **Andaaz**: More → **Andaaz** chaar style deta hai: **Modern**, **Professional**, **Navy** aur **Rangeen**.
+- **Andaaz**: More → **Andaaz** aath style deta hai: **Modern**, **Professional**, **Navy**, **Rangeen**, **Material**, **Mac**, **Lime** aur **Fintech**.
 - Har screen par chhote **?** button hain. Kisi ek ko dabayein to misaal ke saath mukhtasar wazahat milti hai; har wazahat ka apna English / Urdu / Roman switch hai.
 
 ### FBR Digital Invoicing (sales tax registered dukaanon ke liye)

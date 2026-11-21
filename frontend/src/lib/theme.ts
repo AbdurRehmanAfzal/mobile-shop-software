@@ -2,8 +2,10 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 export type Theme = 'light' | 'dark' | 'system'
-/** the colours: Modern (Stripe x Google, default), Professional, Navy, or the earlier Colorful tiles */
-export type Palette = 'modern' | 'pro' | 'navy' | 'colorful'
+/** the colours: Modern (Stripe x Google, default), Professional, Navy, the earlier Colorful tiles,
+ *  and (ADR-129) Material, Mac, Lime and Fintech. A set unknown to this build falls back to Modern. */
+export const PALETTES = ['modern', 'pro', 'navy', 'colorful', 'material', 'mac', 'lime', 'fintech'] as const
+export type Palette = (typeof PALETTES)[number]
 /** owner 2026-11-07: how the dashboard and the laptop side panel are laid out */
 export type Layout = 'classic' | 'tiles' | 'simple' | 'bold'
 /** the main button / highlight colour; 'auto' keeps the colours' own */
@@ -44,7 +46,7 @@ export function apply(look: Partial<Look>) {
   const l = { ...DEFAULT_LOOK, ...look }
   const root = document.documentElement
   root.dataset.theme = l.theme
-  root.dataset.palette = l.palette
+  root.dataset.palette = PALETTES.includes(l.palette) ? l.palette : DEFAULT_LOOK.palette
   root.dataset.layout = l.layout
   const dark = isDark(l.theme)
   const set = (k: string, v: string | null) => (v ? root.style.setProperty(k, v) : root.style.removeProperty(k))

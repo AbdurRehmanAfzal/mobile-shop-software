@@ -888,7 +888,7 @@ Messages to customers (receipts, reminders) use the shop's language from **Langu
 
 - **Language**: tap the language button at the top of any screen and pick **اردو**, **Roman Urdu** or **English**. The app shows one language at a time; Urdu reads right to left. Numbers are always 0–9.
 - **Dark / Light**: tap **Dark** (or **Light**) at the top. More → **Appearance** also has **System**.
-- **Look**: More → **Look** gives four styles: **Modern**, **Professional**, **Navy** and **Colorful**.
+- **Look**: More → **Look** gives eight styles: **Modern**, **Professional**, **Navy**, **Colorful**, **Material**, **Mac**, **Lime** and **Fintech**.
 - Every screen has small **?** buttons. Tap one for a short explanation with an example; each explanation has its own English / Urdu / Roman switch.
 
 ### FBR Digital Invoicing (for shops registered for sales tax)
