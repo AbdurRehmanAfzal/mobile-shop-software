@@ -13,7 +13,12 @@ from app.modules.auth.models import Shop
 from app.modules.catalogue.models import Brand, Model
 from app.modules.devices.models import Device
 from app.modules.devices.service import apply_event, get_device
-from app.modules.devices.state import DeviceCondition, EventType, VerificationStatus
+from app.modules.devices.state import (
+    DeviceCondition,
+    DeviceStatus,
+    EventType,
+    VerificationStatus,
+)
 from app.modules.files.service import belongs, resolve
 from app.modules.parties.models import Party
 from app.modules.verification.models import Verification
@@ -149,6 +154,38 @@ def override(
         not ctx.can(Cap.TRANSACT) or device.verification_status == VerificationStatus.FLAGGED
     ):
         raise Forbidden()
+    v = skip_check(db, shop_id, ctx, device, reason)
+    db.commit()
+    return v
+
+
+def skip_pending(
+    db: Session, shop_id: uuid.UUID, ctx, reason: str, device_ids: list[uuid.UUID] | None = None
+) -> dict:
+    """ADR-128: skip the pending ID check of every phone in stock (or of the ones named) in one go —
+    "I know these people". The same skip as `override`, one history line per phone, all or none.
+    A phone flagged as possibly stolen is never part of it: that one is cleared alone, with a reason."""
+    if not ctx.can(Cap.TRANSACT) and not ctx.can(Cap.VERIFY_OVERRIDE):
+        raise Forbidden()
+    stmt = select(Device).where(
+        Device.shop_id == shop_id,
+        Device.status == DeviceStatus.IN_STOCK,
+        Device.verification_status.in_((VerificationStatus.PENDING, VerificationStatus.FLAGGED)),
+    )
+    if device_ids is not None:
+        stmt = stmt.where(Device.id.in_(device_ids))
+    devices = db.scalars(stmt.order_by(Device.created_at)).all()
+    skipped = 0
+    for device in devices:
+        if device.verification_status == VerificationStatus.PENDING:
+            skip_check(db, shop_id, ctx, device, reason)
+            skipped += 1
+    db.commit()
+    return {"skipped": skipped, "flagged_left": len(devices) - skipped}
+
+
+def skip_check(db: Session, shop_id: uuid.UUID, ctx, device: Device, reason: str) -> Verification:
+    """The skip itself, without a commit and without the permission rule: the caller owns both."""
     v = latest(db, shop_id, device)
     if v is None:
         v = Verification(shop_id=shop_id, device_id=device.id, cycle_no=device.cycle_no)
@@ -180,7 +217,6 @@ def override(
         action="override",
         after={"reason": reason, "previous": v.result},
     )
-    db.commit()
     return v
 
 

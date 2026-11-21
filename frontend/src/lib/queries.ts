@@ -112,7 +112,7 @@ export const useUpdateParty = () => {
 }
 
 // ---- devices ---------------------------------------------------------------------------------
-export const useDevices = (params: { status?: string; q?: string; brand_id?: string; condition?: string; pta_status?: string; category?: string; limit?: number; grade?: string; ram_gb?: number; price_min?: number; price_max?: number; lock_unchecked?: boolean; model_id?: string; sellable?: boolean; inspection?: boolean; cost_min?: number; cost_max?: number; age_min?: number; supplier_id?: string; reserved?: boolean; location?: string; with_faulty?: boolean; locked?: boolean; statuses?: string; brand_ids?: string; conditions?: string; pta_statuses?: string } = {}) => {
+export const useDevices = (params: { status?: string; q?: string; brand_id?: string; condition?: string; pta_status?: string; category?: string; limit?: number; grade?: string; ram_gb?: number; price_min?: number; price_max?: number; lock_unchecked?: boolean; model_id?: string; sellable?: boolean; inspection?: boolean; id_pending?: boolean; cost_min?: number; cost_max?: number; age_min?: number; supplier_id?: string; reserved?: boolean; location?: string; with_faulty?: boolean; locked?: boolean; statuses?: string; brand_ids?: string; conditions?: string; pta_statuses?: string } = {}) => {
   const k = useShopKey()
   return useQuery({ queryKey: [k, 'devices', params], queryFn: () => get<Device[]>(`/api/v1/devices${qs(params)}`) })
 }

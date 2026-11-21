@@ -543,7 +543,8 @@
     "signed": "Bechne wale ne dastakhat kar diye",
     "signAgain": "Dobara dastakhat",
     "thumb": "Angootha (agar chahein)",
-    "thumbHint": "Ikhtiyari. Bechne wala siyahi laga angootha kaghaz par (ya chhape hue declaration ke khane mein) lagaye; us ki photo lein. Yeh isi tasdeeq ke saath rehti hai aur declaration par chhapti hai."
+    "thumbHint": "Ikhtiyari. Bechne wala siyahi laga angootha kaghaz par (ya chhape hue declaration ke khane mein) lagaye; us ki photo lein. Yeh isi tasdeeq ke saath rehti hai aur declaration par chhapti hai.",
+    "skipHint": "Jis se khareeda usay jaante hain? Ye check chhor sakte hain."
   },
   "sale": {
     "title": "Nayi bikri",
@@ -1012,7 +1013,11 @@
     "settled": "Hisaab barabar: kisi par kuch nahi",
     "shopPaysNow": "Dukaan abhi de (Rs)",
     "shopPaysHint": "Is se kam: baqi customer ke khate mein un ka haq rahe ga.",
-    "firstBill": "Pehla bill"
+    "firstBill": "Pehla bill",
+    "oldCheck": "Purane phone ka shanakhti card check",
+    "oldCheckLater": "Baad mein check karein",
+    "pendingNew": "Naye phone ka shanakhti card check baqi hai",
+    "skipAndGive": "Chhor kar exchange karein (main jaanta hoon)"
   },
   "report": {
     "title": "Report",
@@ -5140,7 +5145,8 @@
       "details": "Tafseel",
       "money": "Is phone ki raqam",
       "people": "Log"
-    }
+    },
+    "skip": "Chhorein"
   },
   "trend": {
     "title": "Graphs",
@@ -6227,5 +6233,17 @@
       "accessories": "Accessories"
     },
     "msg": "Assalam o alaikum. Meri dukaan: {{shop}} ({{phone}}). Barah-e-karam mere Mobile Shop software ke package mein yeh shamil kar dein: {{lines}}."
+  },
+  "idp": {
+    "title": "Shanakhti card check baqi",
+    "intro": "Ye phone stock mein hain magar in ka shanakhti card check mukammal nahi. Har ek ka check karein, ya jin logon ko aap jaante hain un ka chhor dein.",
+    "skipAll": "Sab {{n}} chhorein, main in logon ko jaanta hoon",
+    "skipAllAsk": "{{n}} phone ka shanakhti card check chhor dein?",
+    "skipAllNote": "Is ke baad ye bik sakte hain. Har phone ki history mein aap ke naam ke sath likha jayega ke check chhora gaya. Jis phone par chori ka shak hai wo nahi chhora jata.",
+    "skipAllYes": "Haan, {{n}} chhorein",
+    "check": "Shanakhti card check",
+    "none": "Koi shanakhti card check baqi nahi.",
+    "done": "{{n}} phone ka shanakhti card check chhor diya gaya.",
+    "flaggedNote": "Chori ka shak hai. Sirf maalik wajah likh kar saaf kar sakta hai."
   }
 }

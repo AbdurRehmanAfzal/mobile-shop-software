@@ -9,10 +9,23 @@ from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx, require_cap
 from app.modules.devices.service import get_device
 from app.modules.verification import service
-from app.modules.verification.schemas import OverrideIn, VerificationIn, VerificationOut
+from app.modules.verification.schemas import (
+    OverrideIn,
+    SkipPendingIn,
+    SkipPendingOut,
+    VerificationIn,
+    VerificationOut,
+)
 
 router = APIRouter(prefix="/api/v1/devices/{device_id}/verification", tags=["verification"])
 Transact = Annotated[Ctx, Depends(require_cap(Cap.TRANSACT))]
+shop_router = APIRouter(prefix="/api/v1/verification", tags=["verification"])
+
+
+@shop_router.post("/skip-pending", response_model=SkipPendingOut)
+def skip_pending(data: SkipPendingIn, ctx: Ctx, db: DB):
+    """ADR-128: "I know these people" — every pending ID check of the stock, or the ones named."""
+    return service.skip_pending(db, ctx.shop_id, ctx, data.reason, data.device_ids)
 
 
 @router.get("", response_model=VerificationOut)

@@ -335,6 +335,8 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **Details by kind; colour and size together (2026-11-21, ADR-127)**: nothing to run (no migration). To test: **New item** → choose **Charger**: Watts and Connector are asked right there; choose **Cover**: "Fits (phone / model)" is asked instead; **Other**: nothing extra. Then a cable in two colours and two lengths: under the colours / sizes box tap **Colour and size**, tick Black and White, tick 1m and 2m — "4 items will be made", each with its own count; Save: four items, each with its colour and its length.
 
+**Skipping the ID card check (2026-11-21, ADR-128)**: nothing to run (no migration). To test: (1) **Exchange** with a used phone from stock whose check is pending: on the last step the box "The new phone's ID card check is pending" must show **Check now** and **Skip and exchange**; **Complete exchange** is grey until you choose; above it choose **Skip, I know this person** for the old phone. (2) Home → **N phones: ID card check pending** → the list: **Skip** on one phone, then **Skip all**, confirm; the line on Home goes away (a phone marked as suspected stolen stays). (3) A pending phone's page: **Skip** beside **ID card check**. (4) Shop Audit → the ID checks: every skip is listed with who did it.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

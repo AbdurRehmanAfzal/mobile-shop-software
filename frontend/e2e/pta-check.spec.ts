@@ -36,7 +36,7 @@ test('PTA check on a phone and while buying', async ({ page, context, request })
 
   // a phone in stock: open DIRBS with the IMEI copied, then say Non-PTA
   await page.goto(`/stock/${devId}`)
-  await page.getByTestId('pta-check').click()
+  await page.getByTestId('line-pta').click()
   await expect(page.getByTestId('pta-sheet')).toContainText(code)
   const [popup] = await Promise.all([page.waitForEvent('popup'), page.getByTestId('pta-open').click()])
   await expect(popup).toHaveURL(/dirbs\.pta\.gov\.pk/)

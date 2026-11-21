@@ -66,6 +66,7 @@ def list_devices(
     lock_unchecked: bool = False,
     sellable: bool = False,
     inspection: bool = False,
+    id_pending: bool = False,
     with_faulty: bool = False,
     cost_min: Decimal | None = None,
     cost_max: Decimal | None = None,
@@ -102,6 +103,7 @@ def list_devices(
         sellable=sellable,
         with_faulty=with_faulty,
         inspection=inspection,
+        id_pending=id_pending,
         # a cost range is a cost: owner / manager only (ignored for staff)
         cost_min=cost_min if can_cost else None,
         cost_max=cost_max if can_cost else None,

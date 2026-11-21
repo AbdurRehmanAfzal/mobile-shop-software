@@ -34,7 +34,7 @@ function Band({ text }: { text: string }) {
 }
 
 /** one line of the table: icon + name | value | action + "?" */
-function Line({ icon, label, value, action, help, testid, strong }: { icon: ReactNode; label: string | BiText; value: ReactNode; action?: Act | null; help?: string; testid?: string; strong?: boolean }) {
+function Line({ icon, label, value, action, action2, help, testid, strong }: { icon: ReactNode; label: string | BiText; value: ReactNode; action?: Act | null; action2?: Act | null; help?: string; testid?: string; strong?: boolean }) {
   const { pick, ur, cls } = useLang()
   const empty = value == null || value === '' || value === false
   return (
@@ -46,11 +46,14 @@ function Line({ icon, label, value, action, help, testid, strong }: { icon: Reac
         <span role="cell" className={`min-w-0 break-words ${empty ? 'text-muted' : 'text-ink'} ${strong ? 'text-[17px] font-extrabold' : 'text-[15px] font-bold'}`}>{empty ? '—' : value}</span>
       </span>
       <span role="cell" className="flex shrink-0 items-center gap-1">
-        {action ? (
-          <button type="button" onClick={action.run} className="tap inline-flex min-h-9 items-center gap-1 rounded-full border border-ink/15 bg-surface px-3 text-[12.5px] font-bold text-ink shadow-[0_1px_0_rgba(27,31,36,.06)] hover:bg-ground" data-testid={action.testid ?? `line-${action.key}`}>
-            {pick(action.label)}
-          </button>
-        ) : null}
+        {/* ADR-128: a line may carry a second job (the ID check: do it, or skip it) — stacked on a phone */}
+        <span className="flex flex-col items-end gap-1 sm:flex-row sm:items-center">
+          {[action, action2].map((a) => a ? (
+            <button key={a.key} type="button" onClick={a.run} className="tap inline-flex min-h-9 items-center gap-1 rounded-full border border-ink/15 bg-surface px-3 text-[12.5px] font-bold text-ink shadow-[0_1px_0_rgba(27,31,36,.06)] hover:bg-ground" data-testid={a.testid ?? `line-${a.key}`}>
+              {pick(a.label)}
+            </button>
+          ) : null)}
+        </span>
         {help ? <Help term={help} size="sm" /> : <span className="w-6" />}
       </span>
     </div>
@@ -67,7 +70,7 @@ export default function DeviceEasyView({ d, acts, canSeeCost, onPta, aside, extr
   const showId = d.verification_status !== 'not_required' || !!act('verify')
   const showBuyer = d.status === 'sold' || (!!d.current_party_name && d.status !== 'in_stock')
   // a job shown beside its line is not repeated in "More"; anything not shown there is
-  const used = new Set(['price', 'fixCost', 'fixImei', 'edit', 'sticker', act('faulty') ? 'faulty' : 'faultEdit', ...(showLock ? ['lock'] : []), ...(showId ? ['verify'] : []), ...(d.source_party_name ? ['changeSeller'] : []), ...(showBuyer ? ['changeBuyer'] : [])])
+  const used = new Set(['price', 'fixCost', 'fixImei', 'edit', 'sticker', act('faulty') ? 'faulty' : 'faultEdit', ...(showLock ? ['lock'] : []), ...(showId ? ['verify', 'skipId'] : []), ...(d.source_party_name ? ['changeSeller'] : []), ...(showBuyer ? ['changeBuyer'] : [])])
   const more = acts.filter((a) => !used.has(a.key) && !MAIN.includes(a.key))
   const lock = lockState(d.lock_checks)
   const days = Math.max(0, Math.floor((Date.now() - new Date(d.first_seen_at).getTime()) / 86_400_000))
@@ -134,7 +137,7 @@ export default function DeviceEasyView({ d, acts, canSeeCost, onPta, aside, extr
             {hasPta(d) && d.sim_time_months ? <Line icon={<Cpu size={17} />} label="stock.simTime" value={String(d.sim_time_months)} action={editAs()} help="device.simTime" /> : null}
             {hasPta(d) ? <Line icon={<Lock size={17} />} label="simlock.label" value={d.sim_lock ? <span className={d.sim_lock === 'locked' ? 'text-gold-text' : 'text-emerald-deep'}>{[pick(`simlock.${d.sim_lock}`), d.sim_lock_carrier].filter(Boolean).join(' · ')}</span> : null} action={editAs()} help="device.simLock" testid="dline-simlock" /> : null}
             {showLock ? <Line icon={<Lock size={17} />} label="devx.lock.title" value={<span className={lock === 'bad' ? 'text-payable' : lock === 'ok' ? 'text-emerald-deep' : 'text-gold-text'}>{pick(lock === 'ok' ? 'devx.lock.ok' : lock === 'bad' ? 'devx.lock.bad' : 'devx.lock.none')}</span>} action={act('lock')} help="device.lock" testid="dline-lock" /> : null}
-            {showId ? <Line icon={<BadgeCheck size={17} />} label="dview.idCheck" value={pick(`stock.verification.${d.verification_status}`)} action={act('verify')} help="purchase.idCheck" testid="dline-id" /> : null}
+            {showId ? <Line icon={<BadgeCheck size={17} />} label="dview.idCheck" value={pick(`stock.verification.${d.verification_status}`)} action={act('verify')} action2={act('skipId') ? { ...act('skipId')!, label: 'dview.skip' } : null} help="purchase.idCheck" testid="dline-id" /> : null}
             <Line icon={<Wrench size={17} />} label="stock.warranty" value={d.warranty_months ? `${d.warranty_months} ${pick('stock.months')}${d.warranty_by ? ` · ${pick(`devx.by.${d.warranty_by}`)}` : ''}` : null} action={editAs()} help="device.warrantyMonths" testid="dline-warranty" />
             <Line icon={<MapPin size={17} />} label="stock.shelf" value={d.location} action={editAs()} help="stock.shelf" testid="dline-shelf" />
             <Line icon={<CalendarClock size={17} />} label="dview.since" value={pick('dview.days').replace('{{n}}', String(days))} />

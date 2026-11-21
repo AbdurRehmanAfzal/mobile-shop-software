@@ -6957,5 +6957,12 @@
       "body": "Tap a line to put it on the paper or take it off; the preview changes at once. Your choice is remembered, separately for the slip and for the page. Cost and \"Bought from\" are offered only to the owner and manager.",
       "example": "For a customer: price, IMEI, memory, condition, warranty. For your own file: add cost and bought from."
     }
+  },
+  "idp": {
+    "page": {
+      "title": "ID card checks pending",
+      "body": "Every phone in stock whose seller's ID card check is not finished. Tap ID card check to do it, or Skip if you know the person. \"Skip all\" skips every one in the list at once. A skip is written in the phone's history with your name; it is not counted as a check done.",
+      "example": "28 phones bought from dealers you know → Skip all 28 → they can be sold."
+    }
   }
 }

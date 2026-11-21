@@ -52,6 +52,7 @@ from app.modules.staffaccess.router import router as staffaccess_router
 from app.modules.transfers.router import router as transfers_router
 from app.modules.units.router import router as units_router
 from app.modules.verification.router import router as verification_router
+from app.modules.verification.router import shop_router as verification_shop_router
 
 
 @asynccontextmanager
@@ -182,6 +183,7 @@ def create_app() -> FastAPI:
     app.include_router(ledger_router)
     app.include_router(devices_router)
     app.include_router(verification_router)
+    app.include_router(verification_shop_router)
     app.include_router(files_router)
     app.include_router(purchases_router)
     app.include_router(sales_router)

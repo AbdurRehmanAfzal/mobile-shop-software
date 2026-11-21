@@ -30,8 +30,7 @@ from app.modules.purchases.service import _allocate_discount, next_number
 from app.modules.sales import approval
 from app.modules.sales.models import HeldSale, Invoice, InvoiceLine, InvoiceStatus
 from app.modules.sales.schemas import HeldSaleIn, SaleCreate
-from app.modules.verification.service import NotSellable, assert_sellable
-from app.modules.verification.service import override as verification_override
+from app.modules.verification.service import NotSellable, assert_sellable, skip_check
 
 
 def compute_tax(base: Decimal, rate: Decimal, inclusive: bool) -> tuple[Decimal, Decimal]:
@@ -123,8 +122,9 @@ def create_sale(
             # a phone flagged as stolen still needs the owner/manager
             flagged = device.verification_status == VerificationStatus.FLAGGED
             if data.override_reason and (ctx.can(Cap.VERIFY_OVERRIDE) or not flagged):
-                verification_override(db, shop_id, ctx, device.id, data.override_reason)
-                db.refresh(device)
+                # ADR-128: inside the bill's own transaction — a bill (or an exchange) that fails
+                # further on leaves no skip and no half-saved trade-in behind
+                skip_check(db, shop_id, ctx, device, data.override_reason)
             else:
                 raise
         # owner: no selling below the buying price, unless the owner/manager confirms the loss

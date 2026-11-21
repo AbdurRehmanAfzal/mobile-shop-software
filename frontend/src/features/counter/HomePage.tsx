@@ -227,7 +227,7 @@ export default function HomePage() {
       {dash && (dash.pending_verification > 0 || dash.repairs_open > 0 || (dash.low_stock_items ?? 0) > 0 || (dash.installments_due_today ?? 0) > 0 || (dash.installments_overdue ?? 0) > 0 || (dash.lending_late ?? 0) > 0 || (dash.lending_we_owe_due ?? 0) > 0) ? (
         <section className="flex flex-col gap-2">
           <SectionTitle text="counter.attention" help="counter.attention" />
-          {dash.pending_verification > 0 ? <Attention to="/stock" help="counter.att.pendingCheck" icon={<ShieldAlert size={18} />} n={dash.pending_verification} text="counter.pendingCheck" /> : null}
+          {dash.pending_verification > 0 ? <Attention to="/stock/id-pending" help="counter.att.pendingCheck" icon={<ShieldAlert size={18} />} n={dash.pending_verification} text="counter.pendingCheck" /> : null}
           {dash.repairs_open > 0 && has('repairs') ? <Attention to="/repairs" help="counter.att.openRepairs" icon={<Wrench size={18} />} n={dash.repairs_open} text="counter.openRepairs" /> : null}
           {(dash.installments_overdue ?? 0) > 0 && has('installments') ? <Attention to="/installments?view=overdue" help="counter.att.instOverdue" icon={<HandCoins size={18} />} n={dash.installments_overdue!} text="counter.instOverdue" /> : null}
           {(dash.installments_due_today ?? 0) > 0 && has('installments') ? <Attention to="/installments?view=today" help="counter.att.instToday" icon={<HandCoins size={18} />} n={dash.installments_due_today!} text="counter.instToday" /> : null}

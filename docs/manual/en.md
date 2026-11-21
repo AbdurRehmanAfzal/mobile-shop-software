@@ -604,6 +604,10 @@ A phone whose check is not done cannot be sold by mistake. At the sale the app s
 - **Check now**: opens the Verification screen.
 - **Skip and sell (I know this person)**: anyone allowed to sell can do this. Your name is saved in the phone's history and the owner sees it in the audit.
 
+In an **exchange** it is the same: on the last step the app says *"The new phone's ID card check is pending"* with **Check now** and **Skip and exchange (I know this person)**. For the customer's old phone, choose **Check later** or **Skip, I know this person** just above it.
+
+**All the pending checks in one place.** On Home, under **Needs attention**, tap **phones: ID card check pending**. Every such phone is listed with **ID card check** and **Skip, I know this person**. **Skip all** skips every one in the list after asking once. A phone marked as suspected stolen is never skipped from here. A pending phone's own page also has **Skip** beside **ID card check**. Every skip is saved with your name.
+
 A phone marked **Stolen? Do not sell** can be sold only by the **owner**, with a written reason. A tablet or watch with a lock **Still on** cannot be sold at all until the lock is cleared.
 
 ## 8. Selling
