@@ -33,8 +33,8 @@ Looked at as an accessories-only shop on a phone-sized screen (screenshots taken
 | Stock | §1 | ➕ ADR-121 / ADR-123 |
 | Purchase → from whom | §1 | ➕ ADR-123 |
 | Sale → first step | "Which phone?"; two buttons that read alike (item / typed line) | ➕ wording; the two buttons are 🟡 (the typed line is used by shops — kept) |
-| Items → New item (outside a purchase) | The full card on one screen | 🟡 library and variants are there; the four-step form is only inside a purchase |
-| Item page | Long: card, kinds, batches, timeline | 🟡 not reorganised |
+| Items → New item (outside a purchase) | The full card on one screen | ➕ ADR-126: the same four numbered steps |
+| Item page | Long: card, kinds, batches, timeline | ➕ ADR-126: lots and history start short; the details card is as it was |
 | Home (accessories shop) | Fine: "Items in stock", Sell, Add stock | ✅ |
 
 ## 3. The specification, section by section
@@ -47,8 +47,8 @@ Not re-verified line by line in this round where marked †: taken from docs/24,
 | 4 | Product: name, SKU auto, barcode auto / typed, kind, brand, fits, description, active | ✅ | product card (ADR-037) † |
 | 4 | Product image | 🟡 | `image_path` exists; no upload in the item form † |
 | 4 | Colour, size, quality, warranty, wholesale / minimum / promo price | ✅ | under "More details" † |
-| 4 | Custom attributes; attributes shown by category | ❌ | the same optional fields for every kind |
-| 4 | Variants, each its own SKU, barcode and stock | ➕ | ADR-118; one attribute at a time (colour **or** size) — colour × length is a typed label |
+| 4 | Custom attributes; attributes shown by category | 🟡 | ADR-127: a new item is asked its kind's own details (watts and plug, the phone it fits …); attributes the shop defines itself are ❌ |
+| 4 | Variants, each its own SKU, barcode and stock | ➕ | ADR-118; colour and size together since ADR-127 |
 | 4 | Categories: create, edit | ✅ | sixteen kinds + the shop's own word |
 | 4 | Sub-categories; activate / deactivate a category | ❌ | one level |
 | 5.1 | Supplier: search by name / phone, create inside the wizard | ✅ | `PartyPicker` |
@@ -98,10 +98,11 @@ books or in stock handling changed.
 1. **Phase B — the rest of the purchase**: ➕ done 2026-11-21 (ADR-124): what a line comes to, what
    a piece sells for and earns, a discount per line; freight already existed. Still open: the
    supplier's balance inside the picker; focus that moves field to field.
-2. **Phase C — items outside a purchase**: the four-step form for "New item" on the items' screen;
-   the item page reorganised (what matters first, the rest folded); a picture for an item.
-3. **Phase D — the product master**: fields by kind (a cover asks the model, a charger the watts),
-   two attributes as a grid (colour × length), sub-categories.
+2. **Phase C — items outside a purchase**: ➕ done 2026-11-21 (ADR-126): the four-step form for
+   "New item" on the items' screen; the item page shows the variant in its header and starts the
+   lots and history short. Still open: a picture for an item.
+3. **Phase D — the product master**: ➕ done 2026-11-21 (ADR-127): details by kind in the new-item
+   form; colour and size together, a pair per item. Still open: sub-categories.
 4. **Phase E — selling**: sell by box / carton with the unit on the bill; accessory-for-accessory
    exchange in one screen; quantity-tier prices.
 5. **Phase F — rights**: a permission per action.

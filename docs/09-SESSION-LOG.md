@@ -2370,10 +2370,40 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 - `name_key`, `same_model_ids`, `tidy_model_names` in the catalogue service; the stock summary, the audit's products by model, the tally and stock sheets group by brand + name; `devices?model_id=` opens every record of the model; the model list offers one per name; a model that differs only in capitals or spacing is refused.
 
 **Verified**
-- pytest: `test_same_model_one_line` (2: summary one line with the count and value, opened from either record, offered once, refused a third time, nothing rewritten; the audit's products one line with units and in-stock), with `test_catalogue`, `test_catalogue_duplicates`, `test_shopaudit_products`, `test_stock_screen`, `test_stock_tally`, `test_devices` (32 passed). Full suite: at 67% with no failure when the owner asked for the push; CI runs it on the pull request.
+- pytest: `test_same_model_one_line` (2: summary one line with the count and value, opened from either record, offered once, refused a third time, nothing rewritten; the audit's products one line with units and in-stock), with `test_catalogue`, `test_catalogue_duplicates`, `test_shopaudit_products`, `test_stock_screen`, `test_stock_tally`, `test_devices` (32 passed). Full suite: passes (exit 0); it finished after the push.
 - ruff clean. No frontend change.
 - **Not verified on the shop's own data**: how its two records came to be is a guess between two causes; the test makes the duplicate by hand.
 
 **Next**: phase C of docs/42 (the short "New item" form on the items' screen, the item page reorganised).
 
 **Open questions**: merging duplicate model records as a provider action — wanted or not.
+
+## 2026-11-21 (7) — Items phase C: four steps everywhere, a shorter item page (ADR-126)
+
+**Asked (owner)**: push (ADR-125 went out as PR #108); the phases continue.
+
+**Done**
+- PR #107 was merged by the owner with ADR-123 and ADR-124 in it; ADR-125 pushed as PR #108; its full backend suite then passed locally (exit 0).
+- `ItemForm`: the four numbered steps for every new item, not only inside a purchase; outside a purchase the pieces are opening stock. `AccessoryDetailPage`: the variant in the header; lots and history start short with "Show all".
+- docs/42: phase C marked.
+
+**Verified**: tsc clean; vitest 66 passed; Playwright `accessory-library-variants` (extended: the four steps on the items' screen, the kind chip, Reorder under More details, the variant in the header), `item-params`, `accessories`, `items`, `easy-items` pass. No backend change, so pytest was not run for this commit. The full Playwright suite was not run.
+
+**Next**: phase D (fields by kind, colour × length as a grid, sub-categories) or E (sell by box, accessory exchange) — the owner's choice; an item's picture is still open.
+
+**Open questions**: which phase next; merging duplicate model records as a provider action.
+
+## 2026-11-21 (8) — Items phase D: details by kind, colour and size together (ADR-127)
+
+**Asked (owner)**: "ok" to going on with phase D.
+
+**Done**: `KIND_DETAILS` — a new item's form asks the kind's own details above and shows each field once; `BothPicker` — colours and sizes ticked separately, every pair a variant; `VariantIn.color / size` on the server; docs/42 phase D marked (sub-categories left).
+
+**Verified**
+- pytest: `test_accessory_variants` (5, one new: four items of two colours × two lengths, each with its colour and length, found by either). Full suite: past 81% with no failure when the owner asked for the push; CI runs it on the pull request.
+- ruff clean; tsc clean; vitest 66 passed; the manual rebuilt in three languages (colour and size together, what the form asks about a kind)
+- Playwright: `item-kind-fields` (new: the kind's details change with the kind, no field twice with More details open, colour and size → four items, a size of the shop's own, counts kept, 320 px, the saved fields), `accessories-only`, `items`, `item-params`, `accessory-library-variants`, `easy-items`, `accessories` pass. The full Playwright suite was not run.
+
+**Next**: phase E (sell by box / carton, accessory for accessory) unless the owner orders otherwise; open from earlier phases: an item's picture, sub-categories, the supplier's balance in the picker.
+
+**Open questions**: sub-categories — wanted, and which list; phase E or F next.

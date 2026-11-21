@@ -560,6 +560,10 @@ The screen has three tabs: **In stock**, **Low stock** and **Pending accessories
 
 **Colours and sizes.** Under **Colours or sizes you keep** tick each colour (or choose **Size or length**, or **Something else**), or write your own under **Add your own**. Write how many of each are **On the shelf now**. On **Save** every ticked one becomes its own item, with its own count, barcode and sticker, all under the same name — so you always know how many black and how many white are left. Later, open any of them and tap **Add another colour or size** under **Kinds of this item**.
 
+**Colour and size together.** A cable in two colours and two lengths: choose **Colour and size**, tick the colours, then tick the sizes or lengths. Every pair becomes an item — "Black · 1m", "Black · 2m" … — with its own count. Untick a colour or a size to take its pairs off.
+
+**What the form asks about a kind.** When you choose the kind, the form asks the one or two things that matter for it right there: a charger its **Watts** and **Connector**, a cover or a glass **Fits (phone / model)**. For other kinds these stay under **More details**.
+
 **Example:** type "anker 65w", tap **Anker 65W GaN Charger**, tick **Black** (5 on the shelf) and **White** (3), sale price 6,500, cost each 4,000 → two items are made: Anker 65W GaN Charger · Black with 5, and · White with 3.
 
 If a very similar item already exists, the app shows **Similar items already in stock**, so you do not make the same item twice.

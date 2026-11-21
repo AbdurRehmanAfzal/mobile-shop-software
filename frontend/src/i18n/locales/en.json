@@ -983,7 +983,8 @@
       "void": "Sale cancelled",
       "repair": "Used in repair"
     },
-    "tierFor": "Price for this customer"
+    "tierFor": "Price for this customer",
+    "showAll": "Show all {{n}}"
   },
   "exchange": {
     "title": "Exchange / upgrade",
@@ -5752,13 +5753,15 @@
     "byKind": {
       "color": "Colour",
       "size": "Size or length",
-      "other": "Something else"
+      "other": "Something else",
+      "both": "Colour and size"
     },
     "own": "Add your own",
     "ownPh": {
       "color": "Midnight Blue",
       "size": "1.5m",
-      "other": "Type-C"
+      "other": "Type-C",
+      "both": "Midnight Blue"
     },
     "add": "Add",
     "qty": "On the shelf now",
@@ -6205,7 +6208,9 @@
     "lossAt": "Sells at {{p}} · loses {{g}} a piece",
     "addDiscount": "+ Discount on this line",
     "lineDiscount": "Discount on this line (amount)",
-    "lineDiscountBig": "More than the line's total"
+    "lineDiscountBig": "More than the line's total",
+    "s3keep": "3. Which colours or sizes do you keep?",
+    "s4keep": "4. How many you have, and the prices"
   },
   "pkg": {
     "title": "Not in your package",

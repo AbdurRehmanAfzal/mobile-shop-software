@@ -138,6 +138,10 @@ def _variant_rows(
             body["color"] = v.label[:40]
         elif data.variant_by == "size":
             body["size"] = v.label[:40]
+        if v.color:
+            body["color"] = v.color
+        if v.size:
+            body["size"] = v.size
         a = create(db, shop_id, user_id, AccessoryCreate(**body), commit=False)
         a.variant_group = group
         a.variant = v.label

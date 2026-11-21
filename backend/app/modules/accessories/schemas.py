@@ -85,6 +85,9 @@ class VariantIn(BaseModel):
     opening_qty: int = Field(default=0, ge=0)
     opening_cost: Decimal | None = Field(default=None, ge=0)
     price: Decimal | None = Field(default=None, ge=0)
+    # ADR-127: a variant of two things at once (Black, 2m) says both, so each lands in its field
+    color: str | None = Field(default=None, max_length=40)
+    size: str | None = Field(default=None, max_length=40)
 
     @field_validator("label")
     @classmethod

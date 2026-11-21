@@ -14,7 +14,7 @@ import { ErrorText } from '@/components/ui'
 import { get } from '@/lib/api'
 import { useDocMutation, useGet } from '@/lib/queries'
 import type { Party } from '@/lib/types'
-import { LibraryHits, VariantPicker, type LibEntry, type Variant, type VariantBy } from './ItemVariants'
+import { LibraryHits, VariantPicker, variantBody, type LibEntry, type Variant, type VariantBy } from './ItemVariants'
 import { gradeLabel, type Item, type ItemOptions } from './types'
 
 interface Form {
@@ -45,6 +45,16 @@ function fromItem(it?: Item): Form {
 }
 
 const num = (v: string) => (v.trim() === '' ? null : Number(v))
+
+/** ADR-127: the one or two details a shopkeeper is asked about each kind of thing — a charger's
+ *  watts and plug, a cover's phone — shown in the new-item form itself; for every other kind, and
+ *  when editing, they stay under "More details" */
+type Detail = 'compatible' | 'wattage' | 'connector' | 'capacity' | 'size'
+const KIND_DETAILS: Record<string, Detail[]> = {
+  charger: ['wattage', 'connector'], car_charger: ['wattage', 'connector'], cable: ['connector'], cover: ['compatible'], glass: ['compatible'],
+  earphones: ['connector'], power_bank: ['capacity', 'wattage'], battery: ['compatible', 'capacity'], memory: ['capacity'], part: ['compatible'],
+  sim_tray: ['compatible'], watch: ['size'], Mouse: ['connector'], Keyboard: ['connector'], Hub: ['connector'], Adapter: ['connector'],
+}
 
 function toBody(f: Form, creating: boolean): Record<string, unknown> {
   const pack: Record<string, number> = {}
@@ -83,6 +93,7 @@ export default function ItemForm({ item, compact = false, initialName = '', from
   const [qty, setQty] = useState('')
   const [cost, setCost] = useState('')
   const [kindOpen, setKindOpen] = useState(false)
+  const up: Detail[] = creating ? (KIND_DETAILS[f.category] ?? []) : []
   useEffect(() => { if (from) fromLibrary(from) }, []) // eslint-disable-line react-hooks/exhaustive-deps
   const [vars, setVars] = useState<Variant[]>([])
   const fromLibrary = (e: LibEntry) => {
@@ -117,7 +128,7 @@ export default function ItemForm({ item, compact = false, initialName = '', from
     const body = toBody(f, creating)
     if (creating && vars.length) {
       // inside a purchase the pieces come in with the bill, not as opening stock
-      const all = await createMany.mutateAsync({ ...body, opening_qty: 0, variant_by: by, variants: vars.map((v) => ({ label: v.label, opening_qty: compact ? 0 : Number(v.qty || 0) })) })
+      const all = await createMany.mutateAsync({ ...body, opening_qty: 0, ...variantBody(by, vars, (v) => (compact ? 0 : Number(v.qty || 0))) })
       onDone(all[0], all, compact ? { qty: Object.fromEntries(all.map((a) => [a.id, vars.find((v) => v.label === a.variant)?.qty ?? ''])), cost } : undefined)
       return
     }
@@ -127,7 +138,7 @@ export default function ItemForm({ item, compact = false, initialName = '', from
 
   return (
     <div className="flex flex-col gap-3" data-testid="item-form">
-      {creating && compact ? <BiLabel text="buy.s1" size="md" bold /> : null}
+      {creating ? <BiLabel text="buy.s1" size="md" bold /> : null}
       <BiInput label="acc.name" help={<Help term="items.name" size="sm" />} value={f.name} onChange={set('name')} autoFocus={creating} maxLength={150} placeholder={pick('items.namePh')} />
       {creating ? <LibraryHits q={f.name} skip={lib?.name ?? ''} onPick={fromLibrary} /> : null}
       {similar.length ? (
@@ -138,26 +149,35 @@ export default function ItemForm({ item, compact = false, initialName = '', from
           </ul>
         </div>
       ) : null}
-      {creating && compact ? <BiLabel text="buy.s2" size="md" bold /> : <span className="flex items-center gap-1"><BiLabel text="acc.category" size="md" tone="text-muted" /><Help term="items.category" size="sm" /></span>}
+      {creating ? <BiLabel text="buy.s2" size="md" bold /> : <span className="flex items-center gap-1"><BiLabel text="acc.category" size="md" tone="text-muted" /><Help term="items.category" size="sm" /></span>}
       {/* picked from the built-in list: its kind is known — one chip, changeable */}
-      {creating && compact && lib && !kindOpen ? (
+      {creating && lib && !kindOpen ? (
         <div className="flex flex-wrap items-center gap-2" data-testid="buy-kind">
           <span className={chip(true)}>{kindLabel(pick, f.category)}</span>
           <button type="button" onClick={() => setKindOpen(true)} className="tap rounded-xl px-2 py-1 text-sm font-bold text-emerald-deep underline-offset-4 hover:underline">{pick('buy.kindChange')}</button>
         </div>
       ) : <KindChooser value={f.category} onChange={(category) => setF({ ...f, category })} />}
-      {creating && compact ? <VariantPicker by={by} onBy={(b) => { setBy(b); setVars([]) }} value={vars} onChange={setVars} suggest={lib && lib.variant_by === by ? lib.variants : []} withQty qtyLabel="var.qtyBought" title="buy.s3" /> : null}
-      {creating && compact ? <BiLabel text="buy.s4" size="md" bold /> : null}
+      {up.length ? (
+        <div className="grid grid-cols-2 gap-2" data-testid="kind-details">
+          {up.includes('compatible') ? <div className="col-span-2"><BiInput label="acc.compatible" help={<Help term="items.compatible" size="sm" />} value={f.compatible} onChange={set('compatible')} placeholder={pick('acc.compatiblePh')} maxLength={200} /></div> : null}
+          {up.includes('wattage') ? <BiInput label="acc.wattage" help={<Help term="items.wattage" size="sm" />} value={f.wattage} onChange={set('wattage')} maxLength={20} dir="ltr" placeholder="25W" /> : null}
+          {up.includes('connector') ? <BiInput label="acc.connector" help={<Help term="items.connector" size="sm" />} value={f.connector} onChange={set('connector')} maxLength={40} dir="ltr" placeholder="Type-C" /> : null}
+          {up.includes('capacity') ? <BiInput label="acc.capacity" help={<Help term="items.capacity" size="sm" />} value={f.capacity} onChange={set('capacity')} maxLength={40} dir="ltr" /> : null}
+          {up.includes('size') ? <BiInput label="acc.size" help={<Help term="items.size" size="sm" />} value={f.size} onChange={set('size')} maxLength={40} /> : null}
+        </div>
+      ) : null}
+      {/* ADR-126: the same steps outside a purchase — there the pieces are what is on the shelf now (opening stock) */}
+      {creating ? <VariantPicker by={by} onBy={(b) => { setBy(b); setVars([]) }} value={vars} onChange={setVars} suggest={lib && lib.variant_by === by ? lib.variants : []} withQty qtyLabel={compact ? 'var.qtyBought' : 'var.qty'} title={compact ? 'buy.s3' : 'buy.s3keep'} /> : null}
+      {creating ? <BiLabel text={compact ? 'buy.s4' : 'buy.s4keep'} size="md" bold /> : null}
       <div className="grid grid-cols-2 gap-2">
         {creating && compact && !vars.length ? <BiInput label="buy.qty" help={null} type="number" inputMode="numeric" min={1} value={qty} onChange={(e) => setQty(e.target.value)} className="num" placeholder="1" data-testid="buy-qty" /> : null}
         {creating && compact ? <BiInput label="buy.cost" help={null} type="number" inputMode="decimal" min={0} value={cost} onChange={(e) => setCost(e.target.value)} className="num" data-testid="buy-cost" /> : null}
         <BiInput label={compact ? 'items.sellPrice' : 'acc.price'} help={<Help term="items.price" size="sm" />} type="number" inputMode="decimal" min={0} value={f.price} onChange={set('price')} className="num" />
-        {compact && !more ? null : <BiInput label="acc.reorder" help={<Help term="items.reorder" size="sm" />} type="number" inputMode="numeric" min={0} value={f.reorder_level} onChange={set('reorder_level')} className="num" />}
+        {creating && !more ? null : <BiInput label="acc.reorder" help={<Help term="items.reorder" size="sm" />} type="number" inputMode="numeric" min={0} value={f.reorder_level} onChange={set('reorder_level')} className="num" />}
         {creating && !compact && !vars.length ? <BiInput label="acc.openingQty" help={<Help term="items.openingQty" size="sm" />} type="number" inputMode="numeric" min={0} value={f.opening_qty} onChange={set('opening_qty')} className="num" /> : null}
         {creating && !compact ? <BiInput label="acc.openingCost" help={<Help term="items.openingCost" size="sm" />} type="number" inputMode="decimal" min={0} value={f.opening_cost} onChange={set('opening_cost')} className="num" /> : null}
       </div>
 
-      {creating && !compact ? <VariantPicker by={by} onBy={(b) => { setBy(b); setVars([]) }} value={vars} onChange={setVars} suggest={lib && lib.variant_by === by ? lib.variants : []} withQty /> : null}
 
       {compact && more ? (
         <div className="flex flex-col gap-2" data-testid="item-quick-card">
@@ -166,7 +186,7 @@ export default function ItemForm({ item, compact = false, initialName = '', from
             <datalist id="item-brands">{(opts?.brands ?? []).map((b) => <option key={b} value={b} />)}</datalist>
             <BiInput label="acc.color" help={<Help term="items.color" size="sm" />} value={f.color} onChange={set('color')} maxLength={40} />
           </div>
-          <BiInput label="acc.compatible" help={<Help term="items.compatible" size="sm" />} value={f.compatible} onChange={set('compatible')} placeholder={pick('acc.compatiblePh')} maxLength={200} />
+          {up.includes('compatible') ? null : <BiInput label="acc.compatible" help={<Help term="items.compatible" size="sm" />} value={f.compatible} onChange={set('compatible')} placeholder={pick('acc.compatiblePh')} maxLength={200} />}
           <span className="flex items-center gap-1"><BiLabel text="acc.grade" size="md" tone="text-muted" /><Help term="items.grade" size="sm" /></span>
           <div className="flex flex-wrap gap-1.5">
             {grades.map((g) => <button key={g} type="button" aria-pressed={f.grade === g} onClick={() => setF({ ...f, grade: g })} className={chip(f.grade === g)}>{gradeLabel(pick, g, exists)}</button>)}
@@ -187,7 +207,7 @@ export default function ItemForm({ item, compact = false, initialName = '', from
                 <datalist id="item-brands">{(opts?.brands ?? []).map((b) => <option key={b} value={b} />)}</datalist>
                 <BiInput label="acc.color" help={<Help term="items.color" size="sm" />} value={f.color} onChange={set('color')} maxLength={40} />
               </div>
-              <BiInput label="acc.compatible" help={<Help term="items.compatible" size="sm" />} value={f.compatible} onChange={set('compatible')} placeholder={pick('acc.compatiblePh')} maxLength={200} />
+              {up.includes('compatible') ? null : <BiInput label="acc.compatible" help={<Help term="items.compatible" size="sm" />} value={f.compatible} onChange={set('compatible')} placeholder={pick('acc.compatiblePh')} maxLength={200} />}
               <span className="flex items-center gap-1"><BiLabel text="acc.grade" size="md" tone="text-muted" /><Help term="items.grade" size="sm" /></span>
               <div className="flex flex-wrap gap-1.5">
                 {grades.map((g) => <button key={g} type="button" aria-pressed={f.grade === g} onClick={() => setF({ ...f, grade: g })} className={chip(f.grade === g)}>{gradeLabel(pick, g, exists)}</button>)}
@@ -195,10 +215,10 @@ export default function ItemForm({ item, compact = false, initialName = '', from
             </>
           ) : null}
           <div className="grid grid-cols-2 gap-2">
-            <BiInput label="acc.size" help={<Help term="items.size" size="sm" />} value={f.size} onChange={set('size')} maxLength={40} />
-            <BiInput label="acc.capacity" help={<Help term="items.capacity" size="sm" />} value={f.capacity} onChange={set('capacity')} maxLength={40} dir="ltr" />
-            <BiInput label="acc.connector" help={<Help term="items.connector" size="sm" />} value={f.connector} onChange={set('connector')} maxLength={40} dir="ltr" placeholder="Type-C" />
-            <BiInput label="acc.wattage" help={<Help term="items.wattage" size="sm" />} value={f.wattage} onChange={set('wattage')} maxLength={20} dir="ltr" placeholder="25W" />
+            {up.includes('size') ? null : <BiInput label="acc.size" help={<Help term="items.size" size="sm" />} value={f.size} onChange={set('size')} maxLength={40} />}
+            {up.includes('capacity') ? null : <BiInput label="acc.capacity" help={<Help term="items.capacity" size="sm" />} value={f.capacity} onChange={set('capacity')} maxLength={40} dir="ltr" />}
+            {up.includes('connector') ? null : <BiInput label="acc.connector" help={<Help term="items.connector" size="sm" />} value={f.connector} onChange={set('connector')} maxLength={40} dir="ltr" placeholder="Type-C" />}
+            {up.includes('wattage') ? null : <BiInput label="acc.wattage" help={<Help term="items.wattage" size="sm" />} value={f.wattage} onChange={set('wattage')} maxLength={20} dir="ltr" placeholder="25W" />}
           </div>
 
           <div className="grid grid-cols-2 gap-2">

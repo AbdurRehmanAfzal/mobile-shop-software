@@ -362,6 +362,30 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-127 · 2026-11-21 · Accepted · Items, phase D: a kind asks its own details; colour and size together
+
+**Context**: phase D of docs/42 §5 — the product card asked every kind of thing the same optional fields under "More details" (a charger's watts sat beside a cover's phone model), and a variant could differ by one thing only (colour **or** size): a cable in two colours and two lengths had to be typed as labels.
+
+**Decision**
+1. **Details by kind** (`KIND_DETAILS` in `ItemForm.tsx`): a new item is asked, in the form itself, the one or two details that matter for its kind — charger: watts and connector; cable, earphones, mouse, keyboard, hub, adapter: connector; cover, glass, part, SIM tray: the phone it fits; power bank: capacity and watts; battery: fits and capacity; memory: capacity; watch: size. Each field is on the screen once: shown above when the kind asks for it, under "More details" otherwise. No new column and no new setting — these are the card's existing fields, moved. When editing an item the card is as it was.
+2. **Colour and size together** (`BothPicker`, the fourth choice of "what the variants differ by"): tick the colours, tick the sizes or lengths (or write your own of either), and every pair is a variant — "Black · 2m" — with its own count; a pair is dropped by unticking its colour or its size. The server's `VariantIn` gained optional `color` and `size`, so each lands in its own field while the label carries both; the app sends this as `variant_by: other`.
+
+**Not done**: sub-categories (a second level under the kind) — it needs a column and an agreed list, and the built-in list's finer kinds (Mouse, Keyboard, Hub …) already do part of that job; attributes the shop defines itself; fields by kind when editing.
+
+**Consequences**: a new kind with its own details is one line in `KIND_DETAILS`. No migration.
+
+## ADR-126 · 2026-11-21 · Accepted · Items, phase C: the four numbered steps for "New item" everywhere; the item page starts short
+
+**Context**: phase C of docs/42 §5 — the short form existed only inside a purchase (ADR-121); "New item" on the items' own screen still showed the whole product card, and an item's page listed every lot and every movement at once.
+
+**Decision**
+1. **One form, two places** (`ItemForm`, creating): the same four numbered steps — what it is, what kind (one chip when it came from the built-in list), which colours or sizes, how many and the prices — on the items' screen as inside a purchase. Outside a purchase step 3 reads "Which colours or sizes do you keep?" and the pieces are what is on the shelf now (opening stock, with its cost, posted as before); inside a purchase they are what was bought and come in with the bill. The reorder level joins brand, fits and quality under "More details". Editing an item still shows its full card.
+2. **The item's page**: the variant is in the header beside the kind; the lots show the first five and the history the first eight, each with "Show all N".
+
+**Not done**: a picture for an item (the column exists; an upload needs the file store and a size rule — to be ordered); folding the details card.
+
+**Nothing removed**: every field of the card is still there, under "More details"; the full lists are one tap away.
+
 ## ADR-125 · 2026-11-21 · Accepted · One model, one name: a model saved twice is counted, listed and offered as one
 
 **Context**: a mobile shop (through the owner, with a screenshot of the stock summary): "iPhone 18 pro max" was on two lines — 5 phones and 1 phone — "ek brand model ka total piece ek bar hi aana chahiye, 6 piece". The summary grouped by `model_id`, and that shop has two records of the model.

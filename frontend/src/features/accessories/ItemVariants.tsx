@@ -17,13 +17,17 @@ import { get, post } from '@/lib/api'
 import { useGet, useInvalidate } from '@/lib/queries'
 import type { Item } from './types'
 
-export type VariantBy = 'color' | 'size' | 'other'
+/** 'both' (ADR-127) is the app's: colour and size at once — sent to the server as 'other' with each variant's colour and size */
+export type VariantBy = 'color' | 'size' | 'other' | 'both'
 export interface LibEntry { name: string; brand: string | null; kind: string; made_for: string; details: Record<string, string>; variant_by: VariantBy; variants: string[]; have: number; model_id?: string }
-export interface Variant { label: string; qty: string }
+export interface Variant { label: string; qty: string; color?: string; size?: string }
+/** what the server is told for a list of variants */
+export const variantBody = (by: VariantBy, vars: Variant[], qty: (v: Variant) => number) => ({ variant_by: by === 'both' ? 'other' : by, variants: vars.map((v) => ({ label: v.label, opening_qty: qty(v), ...(v.color ? { color: v.color } : {}), ...(v.size ? { size: v.size } : {}) })) })
 const USUAL: Record<VariantBy, string[]> = {
   color: ['Black', 'White', 'Blue', 'Red', 'Green', 'Pink', 'Grey', 'Gold', 'Silver', 'Clear'],
   size: ['Small', 'Medium', 'Large', '1m', '2m', '3m'],
   other: [],
+  both: [],
 }
 
 /** lines of the built-in list for what is being typed; none while the name is the one just picked */
@@ -74,14 +78,15 @@ export function VariantPicker({ by, onBy, value, onChange, suggest, withQty, qty
       <span className="flex items-center gap-1"><BiLabel text={title} size="md" bold /><Help term="items.variants" size="sm" /></span>
       <BiLabel text="var.hint" size="sm" tone="text-muted" />
       <div className="flex flex-wrap gap-1.5" role="group" aria-label={pick('var.by')}>
-        {(['color', 'size', 'other'] as const).map((b) => <button key={b} type="button" aria-pressed={by === b} onClick={() => onBy(b)} className={chip(by === b)} data-testid={`var-by-${b}`}>{pick(`var.byKind.${b}`)}</button>)}
+        {(['color', 'size', 'both', 'other'] as const).map((b) => <button key={b} type="button" aria-pressed={by === b} onClick={() => onBy(b)} className={chip(by === b)} data-testid={`var-by-${b}`}>{pick(`var.byKind.${b}`)}</button>)}
       </div>
-      {options.length ? (
+      {by === 'both' ? <BothPicker value={value} onChange={onChange} /> : null}
+      {by !== 'both' && options.length ? (
         <div className="flex flex-wrap gap-1.5" data-testid="var-options">
           {options.map((l) => <button key={l} type="button" role="checkbox" aria-checked={has(l)} onClick={() => toggle(l)} className={chip(has(l))}>{has(l) ? <Check size={14} /> : null}{l}</button>)}
         </div>
       ) : null}
-      <div className="flex items-end gap-2">
+      <div className={`flex items-end gap-2 ${by === 'both' ? 'hidden' : ''}`}>
         <div className="min-w-0 flex-1"><BiInput label="var.own" help={null} value={own} onChange={(e) => setOwn(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); add() } }} maxLength={60} placeholder={pick(`var.ownPh.${by}`)} data-testid="var-own" /></div>
         <button type="button" onClick={add} disabled={!own.trim()} aria-label={pick('var.add')} className="tap mb-0.5 flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-ink text-ground disabled:opacity-40" data-testid="var-add"><Plus size={20} /></button>
       </div>
@@ -97,6 +102,44 @@ export function VariantPicker({ by, onBy, value, onChange, suggest, withQty, qty
         </div>
       ) : null}
       {value.length ? <span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`} data-testid="var-count">{pick('var.count').replace('{{n}}', String(value.length))}</span> : null}
+    </div>
+  )
+}
+
+/** ADR-127: colour and size together — tick the colours, tick the sizes, and every pair is a
+ *  variant ("Black · 2m") with its own count; a pair the shop does not keep is taken off its row */
+function BothPicker({ value, onChange }: { value: Variant[]; onChange: (v: Variant[]) => void }) {
+  const { pick, ur, cls } = useLang()
+  const [cs, setCs] = useState<string[]>(() => [...new Set(value.map((v) => v.color).filter((x): x is string => !!x))])
+  const [ss, setSs] = useState<string[]>(() => [...new Set(value.map((v) => v.size).filter((x): x is string => !!x))])
+  const [ownC, setOwnC] = useState('')
+  const [ownS, setOwnS] = useState('')
+  const chip = (on: boolean) => `tap inline-flex h-10 shrink-0 items-center gap-1 rounded-full border-2 px-3.5 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink'} ${ur ? cls('sm') : 'text-[13px]'}`
+  const pairs = (c: string[], s: string[]) => {
+    const next = c.flatMap((x) => s.map((y) => { const label = `${x} · ${y}`.slice(0, 60); return { label, color: x.slice(0, 40), size: y.slice(0, 40), qty: value.find((v) => v.label === label)?.qty ?? '' } }))
+    onChange(next)
+  }
+  const flip = (list: string[], set: (v: string[]) => void, x: string, which: 'c' | 's') => {
+    const next = list.includes(x) ? list.filter((y) => y !== x) : [...list, x]
+    set(next)
+    pairs(which === 'c' ? next : cs, which === 's' ? next : ss)
+  }
+  const group = (title: string, usual: string[], list: string[], set: (v: string[]) => void, own: string, setOwn: (v: string) => void, which: 'c' | 's') => (
+    <div className="flex flex-col gap-1.5" data-testid={`var-both-${which}`}>
+      <span className={`text-muted ${ur ? cls('sm') : 'text-xs font-bold'}`}>{pick(title)}</span>
+      <div className="flex flex-wrap gap-1.5">
+        {[...new Set([...usual, ...list])].map((x) => <button key={x} type="button" role="checkbox" aria-checked={list.includes(x)} onClick={() => flip(list, set, x, which)} className={chip(list.includes(x))}>{list.includes(x) ? <Check size={14} /> : null}{x}</button>)}
+        <span className="flex items-center gap-1">
+          <input aria-label={`${pick('var.own')} · ${pick(title)}`} value={own} onChange={(e) => setOwn(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && own.trim()) { e.preventDefault(); flip(list, set, own.trim().replace(/\s+/g, ' '), which); setOwn('') } }} maxLength={40} placeholder={pick('var.own')} className="h-10 w-32 rounded-full border-2 border-dashed border-line bg-surface px-3 text-[13px] font-semibold" />
+          <button type="button" disabled={!own.trim()} aria-label={`${pick('var.add')} · ${pick(title)}`} onClick={() => { flip(list, set, own.trim().replace(/\s+/g, ' '), which); setOwn('') }} className="tap flex h-10 w-10 items-center justify-center rounded-full bg-ink text-ground disabled:opacity-40"><Plus size={16} /></button>
+        </span>
+      </div>
+    </div>
+  )
+  return (
+    <div className="flex flex-col gap-2" data-testid="var-both">
+      {group('var.byKind.color', USUAL.color, cs, setCs, ownC, setOwnC, 'c')}
+      {group('var.byKind.size', USUAL.size, ss, setSs, ownS, setOwnS, 's')}
     </div>
   )
 }
@@ -118,7 +161,7 @@ export function KindsCard({ item, canAdd }: { item: Item; canAdd: boolean }) {
   async function save() {
     setBusy(true); setErr(null)
     try {
-      await post(`/api/v1/accessories/${item.id}/variants`, { variant_by: by, variants: vars.map((v) => ({ label: v.label, opening_qty: Number(v.qty || 0) })) })
+      await post(`/api/v1/accessories/${item.id}/variants`, variantBody(by, vars, (v) => Number(v.qty || 0)))
       setVars([]); setOpen(false)
       await refetch(); await inv('accessories', 'accessory', 'stock-items')
     } catch (e) { setErr(e) } finally { setBusy(false) }
