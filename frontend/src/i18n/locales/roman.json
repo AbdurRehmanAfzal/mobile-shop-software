@@ -6265,6 +6265,31 @@
     "accPieces": "accessories ke {{n}} piece",
     "tapItemKind": "Qisam dabayein, us ke item nazar aayenge",
     "none": "Is qisam ka koi maal stock mein nahi",
-    "seeList": "List dekhein"
+    "seeList": "List dekhein",
+    "avgPiece": "Ek adad ki ausat",
+    "topKind": "Sab se bara hissa",
+    "topBrand": "Sab se bara brand",
+    "health": "Accessories",
+    "healthy": "Koi item kam nahi",
+    "lowN": "{{n}} kam ho rahe hain",
+    "active": "Stock mein mojood",
+    "emptyKinds": "Abhi stock mein kuch nahi",
+    "shareOfStock": "Saare stock mein hissa",
+    "top": "Sab se zyada: {{name}} ({{n}})",
+    "capital": "Paisa kis brand mein laga hai",
+    "others": "{{n}} doosre brand",
+    "sort": {
+      "value": "Zyada maliyat",
+      "units": "Zyada adad",
+      "avg": "Sab se mehnga"
+    },
+    "search": "Brand ya model talash karein",
+    "avg": "ek adad {{v}} ka",
+    "ofBrand": "{{name}} ka {{p}}%",
+    "addStock": "Stock daalein",
+    "sheets": "Ginne aur download ki sheets",
+    "noMatch": "Koi brand ya model nahi mila",
+    "sortBy": "Brand ki tarteeb",
+    "shareOfKind": "Is qisam mein hissa"
   }
 }

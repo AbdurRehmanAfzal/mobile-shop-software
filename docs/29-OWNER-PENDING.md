@@ -347,14 +347,9 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **The Counter frame (2026-11-23, ADR-132, branch `ui/00-foundation` — not on the server)**: on a laptop, More → Appearance → Design → **Counter**: the panel on the left runs the whole height with the shop's name on top, the jobs as tiles (F2 … F10), the shop's pages and your name at the foot; try the other colour sets and Dark with it, and Urdu (the panel moves to the right). The other four designs must look as before; on a phone nothing changes.
 
-**The staging site (2026-11-23, ADR-132)** — `https://staging-mobileshop.oopsolutions.com`, its own empty database; the shops' stack is not touched. DNS record: done (2026-11-23). **Once, on the server as root**, after the pull request with `deploy/staging/` is merged into `staging`:
+**The staging site (2026-11-23, ADR-132)** — done: `https://staging-mobileshop.oopsolutions.com` runs with its own database (setup script run, first deploy green, production untouched). A test shop is made at `/signup` (there is no button for it on the login page). Still optional: `nano /opt/mobileshop-staging/.env` → `SUPERUSER_PHONES=<your number>` for the control room on staging, `PUBLIC_SIGNUP=false` once your test shops exist; then Actions → Staging → Run workflow. To remove staging completely: `cd /opt/mobileshop-staging && docker compose --env-file .env down -v`.
 
-```
-curl -fsSL https://raw.githubusercontent.com/AbdurRehmanAfzal/mobile-shop-software/staging/deploy/staging/setup-vps.sh -o /root/setup-staging.sh
-bash /root/setup-staging.sh
-```
-
-It must end with "Staging is prepared. The shops' stack was not touched." Then on GitHub: Actions → **Staging** → Run workflow (branch `staging`); when it is green, open the address, **Create a shop** and test there. Optional: `nano /opt/mobileshop-staging/.env` → `SUPERUSER_PHONES=<your number>` to open the control room on staging, `PUBLIC_SIGNUP=false` once your test shops exist; then run the Staging workflow again. Staging sends no WhatsApp, no e-mail and runs no timed jobs. To remove it completely: `cd /opt/mobileshop-staging && docker compose --env-file .env down -v`.
+**The redrawn stock summary (2026-11-23, ADR-132, `ui/01-stock-summary`)** — on staging after its pull request is merged. To test: add a few phones of two brands, a tablet and two accessories; tap **Stock**: the dark heading shows the total, what one piece comes to, the biggest kind with its percentage and how many accessories run low; kinds with stock are big cards (biggest brand, part of all the stock), kinds with nothing are small under "Nothing in stock yet". Open **Mobiles**: the bar "Where the money sits", search a model's name, try "Most pieces" and "Dearest", open a brand and tap a model — it must open the stock list with that model. Open a kind with nothing: **Add stock** must open the purchase form. As a salesman every figure must be at the selling price. On a phone and in Urdu too.
 
 ## E. Decisions waiting for you
 

@@ -447,8 +447,12 @@ export interface StockSummary {
   basis: 'cost' | 'asking'
   count: number
   value: Money
-  brands: (StockGroup & { brand_id: UUID; models: (StockGroup & { model_id: UUID })[] })[]
+  brands: (StockGroup & { brand_id: UUID; avg?: Money; share?: number; models: (StockGroup & { model_id: UUID; avg?: Money; share?: number })[] })[]
+  /** ADR-132: what a piece comes to, all the stock together (devices and accessories) and its biggest kind */
+  avg?: Money
+  total?: Money
+  top_kind?: string | null
   /** ADR-131: per type of device, and the accessories by their kind (an older server sends neither) */
-  kinds?: { key: string; count: number; value: Money; brands: number; models: number }[]
-  items?: { items: number; pieces: number; value: Money; low: number; out: number; kinds: { key: string; items: number; pieces: number; value: Money }[] }
+  kinds?: { key: string; count: number; value: Money; brands: number; models: number; avg?: Money; share?: number; top_brand?: { name: string; count: number; share: number } | null }[]
+  items?: { items: number; pieces: number; value: Money; low: number; out: number; share?: number; kinds: { key: string; items: number; pieces: number; value: Money; share?: number }[] }
 }
