@@ -139,11 +139,16 @@ Jo kuch aap ka hai woh sab **Stock** mein hai. Yahan se aap dekh sakte hain ke a
 
 ### Mera stock kitne ka hai?
 
-Neeche wali bar mein **Stock** dabayein. Pehli screen hai **Mera stock kitne ka hai?** Kisi brand ko khol kar model dabayein: stock ki list mein sirf wahi model aata hai (iPhone 17 dabane par iPhone 17 Pro Max nahi aata); **Sab dikhayein** se hat jata hai.
+Neeche wali bar mein **Stock** dabayein. Pehli screen hai **Mera stock kitne ka hai?** Yeh teen qadmon mein chalti hai: stock ki qisam, phir us ke brand aur model, phir khud maal.
 
-- Sab se upar: aap ke paas kitne phone hain aur un ki kul qeemat (bari raqam ho to lakh mein dikhayi jaati hai).
-- Neeche: har brand ki ek line, kitne phone aur un ki qeemat ke saath. Kisi brand par dabayein to us ke models nazar aate hain.
-- **Sab phone dekhein** poori stock list kholta hai. **Download** yahi figures file ki shakal mein deta hai.
+- Sab se upar: is screen par maujood saare stock ki maaliyat (bari raqam ho to lakh mein).
+- Us ke neeche, stock ki har us qisam ka ek card jo aap ki dukaan rakhti hai: **Mobiles**, **Tablets**, **Smartwatches**, **Laptop**, **Accessories**. Har card batata hai kitne piece hain, un ki maaliyat kya hai, aur kitne brand aur model hain (accessories mein: kitne item, kitne kam ho rahe hain aur kitne khatam).
+- Card dabayein. Sirf wohi qisam nazar aati hai: us ki maaliyat, phir har brand ki ek line, kitne piece aur un ki maaliyat. Brand par dabayein to us ke model nazar aate hain.
+- Model dabayein: stock ki list mein sirf wahi model aata hai (iPhone 17 dabane par iPhone 17 Pro Max nahi aata); **Sab dikhayein** se hat jata hai.
+- **Accessories** ka card unhein un ki qisam ke hisaab se kholta hai (charger, cover …); qisam daba kar us ke item dekhein.
+- **Wapas** se cards par aa jate hain. **List dekhein** usi qisam ki stock list kholta hai; pehli screen par **Sab phone dekhein** poori list kholta hai aur **Download** yahi figures file ki shakal mein deta hai.
+
+Maalik aur manager ko maaliyat khareed qeemat par, baqi staff ko bechne ki qeemat par dikhti hai.
 
 Maalik aur manager ke liye qeemat khareed qeemat par hoti hai. Jis staff ko khareed qeemat dekhne ki ijazat nahi, unhein yeh bechne ki qeemat par nazar aati hai.
 

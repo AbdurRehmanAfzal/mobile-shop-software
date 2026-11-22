@@ -362,6 +362,16 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-131 · 2026-11-22 · Accepted · The stock summary opens with a card per kind of stock
+
+**Context**: tapping Stock opened "What is my stock worth?" — one total and every brand together, with tablets, watches and laptops counted as "phones" and no accessories at all. The owner: show the kinds first, each with its figures (pieces, worth, brands, models), then that kind's brands and models as now, then the stock list.
+
+**Decision**: three steps on the same address. `/stock/summary` shows a card for each kind the shop trades (mobiles / tablets / watches unless `no_mobiles`, laptops and accessories with their modules — `useTrade`, ADR-109); `?kind=<kind>` shows that kind only: its worth, its brands, their models, and a model opens `/stock?model_id=…&category=<kind>`. The accessories card opens them by their kind and a kind opens `/accessories?category=…`. A shop with one kind has no cards: it sees that kind at once, as before. The tally sheet and the item-wise sheet stay on the first screen.
+
+**Figures**: all from `reports.stock_summary`, extended and not replaced — `kinds` (per type: count, value, brands, models; a model counted by brand + `name_key`, ADR-125) and `items` (items with pieces, pieces, value, low, finished, and the same by kind); `?category=` keeps `brands` / `count` / `value` to one type. Without the parameter the old keys say what they said (the download and the assistant's tool read them). Devices are valued as before (cost with `VIEW_COST`, asking otherwise); accessories the same way — pieces × average cost, or × sale price for a login without cost. The heading on the first screen is the sum of the cards shown, so it now includes accessories for a shop that keeps them; the Home tile's "Worth" is unchanged.
+
+**Not changed**: no migration, nothing stored; the stock list, its filters and the items' screen; the download of the summary (devices by brand and model).
+
 ## ADR-130 · 2026-11-22 · Accepted · The stock screen shows the accessories with their details
 
 **Context**: since ADR-123 "All stock" carried a box of accessories above the phones, but only three names with a count, and "See all" left the screen. The owner: a shopkeeper who taps Stock must see the accessories there, with their details.

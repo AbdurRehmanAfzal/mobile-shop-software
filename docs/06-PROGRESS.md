@@ -372,6 +372,7 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | The ID card check can be skipped wherever it stops the counter: in an exchange (both phones), on the check's page and the phone's page, and from the dashboard as a list — one by one or all at once; the sale's skip is inside its transaction (ADR-128) | ✅ | `verification/service.py` (`skip_pending`, `skip_check`), `PendingChecksPage.tsx`, `ExchangeWizard.tsx`, `tests/test_skip_pending_checks.py`, `e2e/skip-id-check.spec.ts` |
 | Appearance: four more colour sets — Material, Mac, Lime, Fintech — light, dark and same-as-phone (ADR-129) | ✅ | `index.css`, `lib/theme.ts` (`PALETTES`), `AppearancePage.tsx`, `e2e/look-sets.spec.ts` |
 | Stock screen: the accessories listed with their details (code, kind, brand, fits, pieces, price, low / finished), first ten and the rest in place (ADR-130) | ✅ | `StockCards.tsx` (`ItemsInStock`), `e2e/stock-items-detail.spec.ts` |
+| Stock summary: a card per kind of stock (mobiles, tablets, watches, laptops, accessories) with pieces, worth, brands and models; a card opens its brands → models → the list (ADR-131) | ✅ | `StockSummaryPage.tsx`, `reports.stock_summary` (`kinds`, `items`, `category`), `tests/test_stock_summary_kinds.py`, `e2e/stock-kind-cards.spec.ts` |
 | Operations runbook (internal; secrets only as placeholders) | ✅ | `operations-en.md` |
 | Owner review of the wording | ⏳ | `docs/29-OWNER-PENDING.md` D |
 

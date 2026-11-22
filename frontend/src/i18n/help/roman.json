@@ -4452,18 +4452,18 @@
     },
     "stockPage": {
       "title": "Stock ki maaliyat",
-      "body": "Dukaan mein kitne phone hain aur un ki maaliyat kya hai, pehle brand war aur phir model war.",
-      "example": "Samsung ke 8 phone Rs. 3,20,000 ke, Infinix ke 5 phone Rs. 1,90,000 ke → kul 13 phone, Rs. 5,10,000."
+      "body": "Dukaan mein kya hai aur us ki maaliyat kya hai. Pehle stock ki har qisam ka ek card — mobile, tablet, smart watch, laptop, accessories — us ki tadaad, maaliyat aur brand aur model ki ginti ke sath. Card dabayein to brand, brand dabayein to model, model dabayein to woh phone nazar aate hain.",
+      "example": "Mobiles: 13 phone, Rs. 5,10,000, 2 brand · 6 model. Use dabayein → Samsung ke 8 phone, Infinix ke 5 phone → Samsung dabayein → A15 (4 phone) → A15 daba kar 4 phone dekhein."
     },
     "stockValue": {
       "title": "Dukaan mein stock",
-      "body": "Is waqt stock mein maujood phone, tablet aur ghariyon ki kul maaliyat. Maalik aur manager ko khareed qeemat par, baqi staff ko bechne ki qeemat par dikhti hai. Ginti wala saman (charger, cover) shamil nahi.",
+      "body": "Yahan dikhaye gaye stock ki maaliyat: pehli screen par sab card mila kar (accessories bhi, agar dukaan rakhti hai), card ke andar sirf wohi qisam. Maalik aur manager ko khareed qeemat par, baqi staff ko bechne ki qeemat par dikhti hai.",
       "example": "10 phone Rs. 4,00,000 mein khareede, bechne ki qeemat Rs. 4,50,000 → maalik ko Rs. 4,00,000 dikhe ga, salesman ko Rs. 4,50,000."
     },
     "stockBrands": {
-      "title": "Brand war",
-      "body": "Har brand ke kitne phone aur un ki maaliyat, sab se bara pehle. Brand dabayen to us ke model khulte hain; model dabayen to woh phone dikhte hain.",
-      "example": "Samsung dabayen → A15 (4 phone), A35 (2), S23 (2); A15 daba kar 4 phone dekhein."
+      "title": "Qisam, brand aur model war",
+      "body": "Stock ki har qisam ka ek card hai; use dabayein. Phir har brand ki tadaad aur maaliyat, sab se bara pehle. Brand dabayein to us ke model khulte hain; model dabayein to woh maal stock list mein dikhta hai. Accessories apni qisam ke hisaab se khulti hain (charger, cover …).",
+      "example": "Mobiles dabayein → Samsung dabayein → A15 (4 phone), A35 (2), S23 (2); A15 daba kar 4 phone dekhein."
     }
   },
   "sale": {

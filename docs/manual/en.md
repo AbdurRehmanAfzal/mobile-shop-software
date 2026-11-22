@@ -922,11 +922,16 @@ Everything you own sits in **Stock**. From here you can see what your stock is w
 
 ### What is my stock worth?
 
-Tap **Stock** on the bottom bar. The first screen is **What is my stock worth?** Open a brand and tap a model: the stock list shows that model only (iPhone 17 does not bring iPhone 17 Pro Max); **Show all** removes it.
+Tap **Stock** on the bottom bar. The first screen is **What is my stock worth?** It goes in three steps: the kind of stock, then its brands and models, then the pieces themselves.
 
-- At the top: how many phones you have and their total value (shown in lakh when it is large).
-- Below: one row per brand, with how many phones and their value. Tap a brand to see its models.
-- **See all phones** opens the full stock list. **Download** gives you the same figures as a file.
+- At the top: the worth of everything on this screen together (shown in lakh when it is large).
+- Below it, a card for each kind of stock your shop keeps: **Mobiles**, **Tablets**, **Smartwatches**, **Laptops**, **Accessories**. Each card says how many pieces, what they are worth, and how many brands and models (for accessories: how many items, how many are running low and how many are finished).
+- Tap a card. You see that kind only: its worth, then one row per brand with how many pieces and their value. Tap a brand to see its models.
+- Tap a model: the stock list shows that model only (iPhone 17 does not bring iPhone 17 Pro Max); **Show all** removes it.
+- The **Accessories** card opens them by their kind (chargers, covers …); tap a kind to see its items.
+- **Back** returns to the cards. **See the list** opens the stock list of that kind; on the first screen **See all phones** opens the full list and **Download** gives the figures as a file.
+
+The owner and manager see the worth at buying price, other staff at selling price.
 
 The value is at cost for the owner and manager. Staff who are not allowed to see buying prices see it at the asking price instead.
 

@@ -6250,5 +6250,16 @@
     "none": "Koi shanakhti card check baqi nahi.",
     "done": "{{n}} phone ka shanakhti card check chhor diya gaya.",
     "flaggedNote": "Chori ka shak hai. Sirf maalik wajah likh kar saaf kar sakta hai."
+  },
+  "ssum": {
+    "pick": "Stock ki qisam dabayein, us ke brand aur model nazar aayenge",
+    "brandsModels": "{{b}} brand · {{m}} model",
+    "pieces": "{{n}} piece",
+    "itemsLine": "{{n}} item · {{low}} kam ho rahe hain · {{out}} khatam",
+    "itemsN": "{{n}} item",
+    "accPieces": "accessories ke {{n}} piece",
+    "tapItemKind": "Qisam dabayein, us ke item nazar aayenge",
+    "none": "Is qisam ka koi maal stock mein nahi",
+    "seeList": "List dekhein"
   }
 }

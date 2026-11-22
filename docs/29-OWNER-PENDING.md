@@ -341,6 +341,8 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **Accessories with details on the stock screen (2026-11-22, ADR-130)**: nothing to run. To test: tap **Stock** (All stock): above the phones the box "Accessories and other items" lists each item with its code, kind, brand, pieces and price; a finished item says **Out of stock**, a low one **Low stock**; with more than ten items tap **Show all N items**; type an item's name in the search; tap a row to open the item.
 
+**Stock by kind (2026-11-22, ADR-131)**: nothing to run. To test: tap **Stock**: the first screen shows a card for Mobiles, Tablets, Smartwatches (Laptops / Accessories if the shop has them) with pieces, worth, brands and models; the top figure is all the cards together. Tap **Mobiles** → only the phones' brands; tap a brand → its models; tap a model → the stock list with that model. **Back** → the cards. Tap **Accessories** → chargers, covers … with pieces and worth; tap one → its items. Check the worth of each card against what you expect, as the owner (buying price) and as a salesman (selling price).
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |
