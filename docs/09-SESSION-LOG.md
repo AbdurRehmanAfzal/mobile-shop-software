@@ -2487,3 +2487,15 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: `ui/00-foundation` from `staging`.
 
 **Open questions**: where `staging` is tested; pages to the shops together or one by one. `staging` is still local (not pushed).
+
+## 2026-11-23 (2) — UI redesign: the foundation (`ui/00-foundation`)
+
+**Asked (owner)**: "ok" to the plan.
+
+**Done**: branch `ui/00-foundation` from `staging`. The frame of the mock-ups as a fifth design, **Counter** (`Layout` `counter`): `SidePanel` draws a full-height panel (shop's mark and name, Dashboard, job tiles with F-keys, the shop's pages, the logged-in user), `Shell` puts the panel beside the header for it; the other designs, the default (Classic) and the phone are unchanged. Fonts: Plus Jakarta Sans (`font-display`) and JetBrains Mono (`font-mono`) added to the existing Google Fonts link. `components/kit.tsx`: `StatCard`, `StatRow`, `SplitView`, `Pills`, `TabStrip`, `Drawer`, `SlipFrame`. Strings in three languages (`look.designs.counter.*`, `nav.counterSection`). No colour set added — "Lime" already is the mock-ups' colours. The plan's font rule corrected (the app loads its fonts from Google Fonts; nothing is bundled).
+
+**Verified**: tsc clean; vitest 72 passed (4 new in `kit.test.tsx`); Playwright `counter-frame` (new: the panel at 1280 × 720, links and F-keys, Urdu on the right, a phone unchanged) and `appearance` (the four older designs, laptop and phone) — 3 passed; screenshots looked at in English and Urdu. Not run: the full Playwright suite and the backend suite (no server code changed). The kit's parts are tested alone — no page uses them yet.
+
+**Next**: the manual's Appearance lines for Counter, pull request `ui/00-foundation` → `staging`, then `ui/01-stock-summary`.
+
+**Open questions**: where `staging` is tested; pages to the shops together or one by one; whether Counter becomes the default design. Nothing is pushed.

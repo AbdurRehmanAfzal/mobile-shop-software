@@ -15,7 +15,8 @@
     "dashboard": "Dashboard",
     "shopSection": "Dukaan",
     "allOptions": "Saare options",
-    "purchases": "Khareedari"
+    "purchases": "Khareedari",
+    "counterSection": "Roz ka counter"
   },
   "auth": {
     "login": "Login",
@@ -4429,6 +4430,10 @@
       "bold": {
         "name": "Bold",
         "hint": "Gehra panel, baray hindse"
+      },
+      "counter": {
+        "name": "Counter",
+        "hint": "Poore panel par dukan ka naam, kaam tiles mein apne button ke sath"
       }
     },
     "palette": "Rangon ka set",

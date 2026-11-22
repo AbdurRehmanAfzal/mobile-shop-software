@@ -345,6 +345,8 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **UI redesign (2026-11-22, ADR-132)**: nothing to run yet. Two decisions wait in `docs/43-UI-REDESIGN-PLAN.md` §6: where `staging` is tested (a second address on the server with its own empty database, or only on your computer), and whether the new pages reach the shops together or one by one. (Decided 2026-11-23: the colours stay each shop's choice; the sale screen's two mock-ups were added.)
 
+**The Counter frame (2026-11-23, ADR-132, branch `ui/00-foundation` — not on the server)**: on a laptop, More → Appearance → Design → **Counter**: the panel on the left runs the whole height with the shop's name on top, the jobs as tiles (F2 … F10), the shop's pages and your name at the foot; try the other colour sets and Dark with it, and Urdu (the panel moves to the right). The other four designs must look as before; on a phone nothing changes.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

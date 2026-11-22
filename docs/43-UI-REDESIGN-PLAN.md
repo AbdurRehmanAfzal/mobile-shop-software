@@ -5,7 +5,7 @@ own branch; read each page's structure and build what is new in it; keep everyth
 disturb the shops that run the software. A `staging` branch from `main`: every branch is merged into
 `staging` first, tested there, and only then `staging` goes to `main`." Decision: ADR-132.
 
-Status: **plan only — no screen has been changed yet.** The next task is branch `ui/00-foundation` (§5).
+Status: **`ui/00-foundation` is built on its branch (not merged, not pushed): the Counter frame as a fifth design under Appearance, the two fonts, `components/kit.tsx`. No page's content has changed.** Next: the manual's Appearance lines, the pull request into `staging`, then `ui/01-stock-summary`.
 
 ## 1. The source
 
@@ -49,8 +49,8 @@ of its hidden panels — a mock-up hides its second and third tabs, drawers and 
    sideways scroll at 320 px; the bottom bar stays.
 6. **`data-testid`s and labels stay** wherever the thing still exists, so the 145 Playwright tests keep
    guarding the behaviour. A test is changed only when the screen's steps really changed, in the same branch.
-7. **No new dependency.** Charts stay in-house SVG; icons stay `lucide-react`; fonts are bundled with the
-   app (it must open offline), never loaded from a CDN.
+7. **No new dependency.** Charts stay in-house SVG; icons stay `lucide-react`; a font is added to the one
+   Google Fonts link in `index.html`, where Inter, Manrope and Noto Nastaliq Urdu already come from.
 8. **The other ADR rules hold**: the app never talks to a printer (previews are the server's page, ADR-119,
    ADR-114); totals are the server's; cost only with `VIEW_COST`; a delete is the server's `delete-check`.
 
@@ -126,11 +126,32 @@ screenshots beside the mock-up; (8) `tsc`, vitest, the Playwright tests of the p
 changed; (9) pull request into `staging` with the table and the screenshots; (10) docs (progress, session
 log, manual when the steps a shopkeeper follows changed).
 
+### What the foundation holds (`ui/00-foundation`)
+
+- **The frame is a design, not a replacement**: `Layout` gained `counter` (More → Appearance → Design →
+  **Counter**). On a laptop the panel runs from top to bottom: the shop's mark and name, Dashboard, the
+  jobs as tiles with their F-keys (the first in the job's colour, the second dark), the shop's pages, who
+  is logged in; the header keeps only its buttons. Classic, Tiles, Simple and Bold are untouched and
+  **Classic is still what a shop sees until it chooses** — making Counter the default is the owner's call.
+  A phone is the same in every design. In Urdu the shop's pages are two to a row so no name is cut.
+- **Colours**: none added — the "Lime" set of ADR-129 already is the mock-ups' lime on near-black; the
+  frame draws with the tokens, so it takes whichever set the shop chose.
+- **Fonts**: Plus Jakarta Sans as `font-display` (headings, big figures; follows the shop's chosen font
+  when it chose one) and JetBrains Mono as `font-mono` (IMEI, bill numbers, keys).
+- **`components/kit.tsx`**: `StatCard` / `StatRow` (the figure cards), `SplitView` (list + inspector; on
+  a phone the details take the list's place), `Pills` (also `segmented`), `TabStrip`, `Drawer` (from the
+  side on a laptop, the usual sheet on a phone), `SlipFrame` (holds the server's printed page at paper
+  width). Pages are built from these from `ui/01` on.
+- Tests: `kit.test.tsx`, `e2e/counter-frame.spec.ts`.
+
 ## 6. Open — for the owner
 
 1. **Where is `staging` tested?** Today there is one server (the shops') and it deploys `main`. Either a
    second address on the same server with its own empty database (recommended — a real phone can open it),
    or only on the owner's computer.
+3. **Counter as the default design?** Today a shop that never chose sees Classic; the new frame shows only
+   after it is picked under Appearance. Recommended: make it the default when the fifteen screens go to
+   `main`, not before.
 2. **When does a page reach the shops?** Page by page would leave them with half the screens new and half
    old for weeks. Recommended: the foundation and the fifteen screens collect on `staging` and go to `main`
    together (or in two or three groups the owner names).
