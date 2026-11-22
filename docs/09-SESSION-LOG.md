@@ -2475,3 +2475,15 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: `ui/00-foundation` from `staging` (tokens, fonts, the new frame, the shared parts), then `ui/01-stock-summary`.
 
 **Open questions**: plan §6 — where `staging` is tested; pages to the shops together or one by one; the new colours against a shop's chosen set; the sale screen has no mock-up. `staging` is not pushed yet (push only on the owner's word).
+
+## 2026-11-23 — UI redesign: the colour decision and the sale's two mock-ups
+
+**Asked (owner)**: the shop sets its own colours from those that exist and may tell us; the Appearance options stay as they are. Two files were added to the folder — `chaudhary_mobiles_complete_multi_category_pos_f2.html` and `chaudhary_mobiles_upgraded_pos_sell_screen_f2.html` — the sale screens: read both and keep the context.
+
+**Done**: both rendered and read (laptop and phone width, hidden panels, scripts) and entered in `docs/43-UI-REDESIGN-PLAN.md` as mock-ups 14 and 15 with what is new (held bills, warranty per line, split and cheque, trade-in inside the bill, kind tabs and quick filters over stock cards, the bill's estimated profit) and what is not built; the sale is branch `ui/02-sale`, the later branches renumbered; the colour decision recorded in the plan, ADR-132, CLAUDE.md and the owner's pending list.
+
+**Verified**: nothing to test — docs only.
+
+**Next**: `ui/00-foundation` from `staging`.
+
+**Open questions**: where `staging` is tested; pages to the shops together or one by one. `staging` is still local (not pushed).

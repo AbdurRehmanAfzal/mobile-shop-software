@@ -370,7 +370,7 @@ by sheet remain a later step (docs/18 §1).
 
 **Kept**: one language at a time (the mock-ups' mixed English / Roman Urdu labels become `gloss` hints or a `<Say>` line), tokens instead of colours so the colour sets and dark mode keep working, phone first, no new dependency, the app never talks to a printer, cost only with `VIEW_COST`.
 
-**Not decided** (owner): where `staging` is tested (a second address on the server or only locally), whether pages reach the shops one by one or together, whether the new colours replace a shop's chosen set, and the design of the sale screen (no mock-up). The mock-ups are not committed: their sample data is a live shop's people and numbers.
+**Decided 2026-11-23** (owner): the colours stay the shop's choice — everything under Appearance stays as it is, a shop keeps its set, and the mock-ups' colours are one more set, not a replacement; the sale screen got its two mock-ups (plan §4, 14 and 15; `ui/02-sale`). **Not decided**: where `staging` is tested (a second address on the server or only locally) and whether pages reach the shops one by one or together. The mock-ups are not committed: their sample data is a live shop's people and numbers.
 
 ## ADR-131 · 2026-11-22 · Accepted · The stock summary opens with a card per kind of stock
 

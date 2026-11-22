@@ -9,7 +9,7 @@ Status: **plan only — no screen has been changed yet.** The next task is branc
 
 ## 1. The source
 
-Thirteen stand-alone HTML mock-ups in `C:\Users\HP\Documents\projects\mobile shop\new mobile shop ui\`
+Fifteen stand-alone HTML mock-ups (thirteen on 2026-11-22, the two sale screens on 2026-11-23) in `C:\Users\HP\Documents\projects\mobile shop\new mobile shop ui\`
 (outside the repository — they carry a live shop's people and mobile numbers as sample data, so they are
 **not** committed; ask the owner for the folder if it is missing). Each is one file: Tailwind from a CDN,
 Lucide icons, its own sample data and its own click handlers. They are pictures of a screen that can be
@@ -64,6 +64,8 @@ column here is what to check, not the verdict.
 |---|---|---|---|---|---|
 | 11 | `…upgraded_pos_stock_ui (4)` — Smart POS & Inventory (3 screens) | `Shell`, `SidePanel`; `/stock/summary`; `/` | the new frame; stock summary: dark hero with avg. unit cost / top category / stock health, active kinds as big cards with share bar, empty kinds as small "+ Add" cards, the three sheets as cards; brand drill-down with sort (value / units / avg.) and share of capital; Home with period tabs | avg. unit cost, top category, share of capital per brand, sort of brands; "+ Add" on an empty kind | "Counter #1 Online"; the switch between two shops' sample data; attendance "check in" |
 | 13 | `luxury_stock_cards_preview` | the kind cards of `/stock/summary` | the cards' finish in dark ("glass") and light | — (style reference) | "Copy CSS" |
+| 14 | `…complete_multi_category_pos_f2` — Complete POS Sell Screen (the later and fuller of the two; dark shown first) | `/sale/new` (`SaleWizard`), with `ExchangeWizard`'s trade-in | one screen instead of steps: the stock as cards on the left (kind tabs All / Mobiles / Tablets / Smartwatches / Laptops / Accessories with counts, quick filters box pack / PTA / ID pending / hide faulty, search with "/" and the scanner), the bill on the right (walk-in or khata customer, lines with the deal price typed in place, pieces for an item, warranty per line, trade-in added in the bill, discount and tax ticks, cash / online / udhaar / split, net payable, hold, complete and receipt) | **held bills** (park a bill and take it up again); warranty chosen per line; split payment on the same screen; the estimated profit of the bill (only with `VIEW_COST`); a card marks "ID pending" and "faulty" before it is tapped (ADR-128: with "Check now" and the skip) | "Simulate scan" and its beep; a walk-in's free-typed name where the app asks for a person |
+| 15 | `…upgraded_pos_sell_screen_f2` — New Sale POS (the earlier draft, light) | the same | as 14, with a row of brand pills, "amount paid now" with "full paid", cheque as a way to pay, "+ Add charger / cover" on the bill | brand pills; cheque (with 01) | — |
 | 01 | `…add_stock_new_purchase_f3` | `/purchase/new` (`PurchaseWizard`, `DeviceLineSheet`, `ItemForm`), `/stock/opening` | one screen instead of steps: source and dealer with the khata's state, the device builder with pills (kind, brand, model, storage, colour, PTA, condition, what came with it), the bill "cart" and payment on the right, stickers after saving | region / SIM variant (LL/A, ZA/A; physical + eSIM); "locked phone" as its own tab (iCloud / FRP / MDM); shelf / rack; "Later" for an accessory owed with the phone; cheque as a way to pay; live margin | "Auto-gen test IMEI" |
 | 10 | `…upgraded_pos_stock_ui (3)` — Purchases & Bill Inspector | `/purchases`, `/purchases/:id` | figure cards (total, paid, still to pay), bills as cards showing their phones and IMEIs, the chosen bill beside the list with pay / edit / change party / delete | search by model or IMEI across bills; quick filters by source | — |
 | 06 | `…person_khata_account_ledger` | `/parties/:id` (`PartyDetailPage`, `PartyLending`, `OldBalance`), `/khata` | header with Call / WhatsApp hisaab / Edit; two big buttons "money came" / "money given"; four figure cards; tabs ledger / phones bought & sold / len-den & old balance; the entry as a drawer with preset amounts | switch between people in a strip; profit from this person (cost only) | "Delete person" as shown (the app's delete-check decides) |
@@ -77,8 +79,7 @@ column here is what to check, not the verdict.
 | 07 | `…shop_settings_control_center…` | `/more/settings` (+ `BusinessProfile`, `PrintersCard`, `PriceCodeCard`, `FbrCard`, security) | five tabs (shop and branding, receipts and currency, printers and barcode, tax and FBR, security and audit rules), a search box over all settings, the 80 mm bill and the sticker previewed live beside the form | search across settings; live preview while typing | "Upload logo" as simulated; the price code shown on a sticker to anyone (ADR-117: only with `VIEW_COST`); a single "Save all changes" if a card saves by itself today |
 
 **Screens with no mock-up** (they get the new frame and tokens from the foundation, and are redone in the
-same patterns after the thirteen — or from further mock-ups if the owner sends them): the sale (`/sale/new`,
-the most used screen), the stock list and a phone's page, invoices, returns and the return form, exchange,
+same patterns after the fifteen — or from further mock-ups if the owner sends them): the stock list and a phone's page, invoices, returns and the return form, exchange,
 accessories, people (list), reports and accounts, the Shop Audit pages, staff, bulk import, appearance,
 fees, transfers, installments, the assistant, login / signup, the landing page, the provider's control room.
 
@@ -102,19 +103,20 @@ main ──► staging ──► ui/00-foundation ──PR──► staging ─�
 |---|---|---|---|
 | 0 | `ui/00-foundation` | all | the mock-ups' colours as the tokens of a colour set, the three fonts bundled, the new laptop frame (panel with F-key tiles, top bar), and the shared parts every page needs: figure card, two-pane list + inspector, pills / segmented choice, drawer, tab strip, slip preview frame. No page's content changes. |
 | 1 | `ui/01-stock-summary` | 11, 13 | stock summary and the brand drill-down |
-| 2 | `ui/02-add-stock` | 01 | new purchase / add stock |
-| 3 | `ui/03-purchases` | 10 | purchases list and bill inspector |
-| 4 | `ui/04-person-khata` | 06 | a person's khata |
-| 5 | `ui/05-cash-bank` | 03 | cash and bank |
-| 6 | `ui/06-day-hisaab` | 04 | the day's hisaab |
-| 7 | `ui/07-expenses-closing` | 05 | expenses and closing the day |
-| 8 | `ui/08-overview` | 02 | business overview |
-| 9 | `ui/09-repairs-hub` | 09 | repair intake and the jobs board |
-| 10 | `ui/10-repair-detail` | 08 | a repair job |
-| 11 | `ui/11-loans` | 12 | amanat |
-| 12 | `ui/12-settings` | 07 | shop settings |
-| 13 | `ui/13-home` | 11 (third screen) | Home |
-| 14+ | `ui/NN-…` | — | the screens with no mock-up, one per branch |
+| 2 | `ui/02-sale` | 14, 15 | the sale on one screen: stock cards, the bill, held bills (where 14 and 15 differ, 14 is followed and what only 15 has — brand pills, paid now, cheque — is added) |
+| 3 | `ui/03-add-stock` | 01 | new purchase / add stock |
+| 4 | `ui/04-purchases` | 10 | purchases list and bill inspector |
+| 5 | `ui/05-person-khata` | 06 | a person's khata |
+| 6 | `ui/06-cash-bank` | 03 | cash and bank |
+| 7 | `ui/07-day-hisaab` | 04 | the day's hisaab |
+| 8 | `ui/08-expenses-closing` | 05 | expenses and closing the day |
+| 9 | `ui/09-overview` | 02 | business overview |
+| 10 | `ui/10-repairs-hub` | 09 | repair intake and the jobs board |
+| 11 | `ui/11-repair-detail` | 08 | a repair job |
+| 12 | `ui/12-loans` | 12 | amanat |
+| 13 | `ui/13-settings` | 07 | shop settings |
+| 14 | `ui/14-home` | 11 (third screen) | Home |
+| 15+ | `ui/NN-…` | — | the screens with no mock-up, one per branch |
 
 **Each branch, in this order**: (1) read the mock-up file whole, with its hidden panels and its script;
 (2) read the page's code and tests; (3) write the table exists / new / not built; (4) build the layout from
@@ -130,9 +132,13 @@ log, manual when the steps a shopkeeper follows changed).
    second address on the same server with its own empty database (recommended — a real phone can open it),
    or only on the owner's computer.
 2. **When does a page reach the shops?** Page by page would leave them with half the screens new and half
-   old for weeks. Recommended: the foundation and the thirteen pages collect on `staging` and go to `main`
+   old for weeks. Recommended: the foundation and the fifteen screens collect on `staging` and go to `main`
    together (or in two or three groups the owner names).
-3. **The colours for shops that already chose a set**: the new look as the default for everyone, or the
-   default for new shops only while a shop that picked its colours keeps them (recommended: the layout is
-   new for all, the colours stay each shop's choice, the mock-ups' colours become the default set).
-4. **The sale screen** has no mock-up — to be sent, or to be drawn from the same patterns.
+
+Decided (owner, 2026-11-23):
+
+- **Colours stay the shop's choice.** Everything under More → Appearance stays as it is (colour sets,
+  light / dark, accent, text size, corners, font, layout); a shop keeps the set it chose and may tell us
+  which it wants. The redesign changes the layout and the parts; the mock-ups' lime and obsidian are
+  offered as a colour set, they do not replace anyone's.
+- **The sale screen**: mock-ups 14 and 15 were added to the folder (§4).

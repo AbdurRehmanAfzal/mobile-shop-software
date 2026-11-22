@@ -343,7 +343,7 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **Stock by kind (2026-11-22, ADR-131)**: nothing to run. To test: tap **Stock**: the first screen shows a card for Mobiles, Tablets, Smartwatches (Laptops / Accessories if the shop has them) with pieces, worth, brands and models; the top figure is all the cards together. Tap **Mobiles** → only the phones' brands; tap a brand → its models; tap a model → the stock list with that model. **Back** → the cards. Tap **Accessories** → chargers, covers … with pieces and worth; tap one → its items. Check the worth of each card against what you expect, as the owner (buying price) and as a salesman (selling price).
 
-**UI redesign (2026-11-22, ADR-132)**: nothing to run yet. Four decisions wait in `docs/43-UI-REDESIGN-PLAN.md` §6: where `staging` is tested (a second address on the server with its own empty database, or only on your computer), whether the new pages reach the shops together or one by one, whether the new colours replace a shop's chosen colour set, and the design of the sale screen (no mock-up was in the folder).
+**UI redesign (2026-11-22, ADR-132)**: nothing to run yet. Two decisions wait in `docs/43-UI-REDESIGN-PLAN.md` §6: where `staging` is tested (a second address on the server with its own empty database, or only on your computer), and whether the new pages reach the shops together or one by one. (Decided 2026-11-23: the colours stay each shop's choice; the sale screen's two mock-ups were added.)
 
 ## E. Decisions waiting for you
 
