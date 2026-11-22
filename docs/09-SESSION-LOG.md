@@ -2499,3 +2499,15 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: the manual's Appearance lines for Counter, pull request `ui/00-foundation` → `staging`, then `ui/01-stock-summary`.
 
 **Open questions**: where `staging` is tested; pages to the shops together or one by one; whether Counter becomes the default design. Nothing is pushed.
+
+## 2026-11-23 (3) — UI redesign: the three open decisions answered
+
+**Asked (owner)**: "ok" to all three recommendations — Counter the default only when the screens go to `main`; `staging` tested on a second address of the server with its own empty database; the pages reach the shops together.
+
+**Done**: recorded in `docs/43` §6, ADR-132 and the owner's pending list; the manual's Appearance table names the Counter design in three languages (PDFs rebuilt).
+
+**Verified**: docs only.
+
+**Next**: on the owner's "push": `staging` and `ui/00-foundation` to GitHub and the pull request into `staging`. Then the staging stack (compose project, database, Caddy host, workflow from `staging`) and `ui/01-stock-summary`.
+
+**Open questions**: the DNS name for the staging address (owner).

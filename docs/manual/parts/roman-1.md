@@ -278,7 +278,7 @@ WhatsApp paighaam **dukaan ki zabaan** mein jate hain, jo maalik **Dukaan ki set
 | Hissa | Kya karta hai |
 |---|---|
 | **Roshan ya gehra** | **Light**, **Dark** ya **Phone ke mutabiq** (phone ki apni setting ke saath chalta hai). Profile menu mein **Dark** / **Light** yahi kaam ek tap mein karta hai. |
-| **Dashboard aur side panel ka design** | **Classic** (rangeen qataarein aur cards, pehle jaisa), **Tiles** (baray rangeen khane), **Saada** (saaf fehrist, baghair khanon ke) ya **Bold** (gehra side panel aur baray hindse). Laptop par yeh side panel bhi badalta hai. |
+| **Dashboard aur side panel ka design** | **Classic** (rangeen qataarein aur cards, pehle jaisa), **Tiles** (baray rangeen khane), **Saada** (saaf fehrist, baghair khanon ke) **Bold** (gehra side panel aur baray hindse) ya **Counter** (laptop par side panel upar se neeche tak: dukaan ka naam, kaam khanon mein apne button F2 … F10 ke sath, dukaan ke safhe aur login wale ka naam). Laptop par yeh side panel bhi badalta hai. |
 | **Rangon ka set** | Poori app ke rang: **Modern**, **Professional**, **Navy**, **Rangeen**, **Material**, **Mac**, **Lime** ya **Fintech**. |
 | **Bunyadi rang** | Buttons aur numayan cheezon ka rang: **Pehle wala**, **Sabz**, **Neela**, **Jamni**, **Surkh**, **Narinji** ya **Feroza**. |
 | **Likhai ka size** | **Aam**, **Bara** ya **Bohat bara**. Kamzor nazar walon ke liye acha hai. |

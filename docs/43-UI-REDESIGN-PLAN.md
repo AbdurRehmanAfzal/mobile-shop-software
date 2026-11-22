@@ -5,7 +5,7 @@ own branch; read each page's structure and build what is new in it; keep everyth
 disturb the shops that run the software. A `staging` branch from `main`: every branch is merged into
 `staging` first, tested there, and only then `staging` goes to `main`." Decision: ADR-132.
 
-Status: **`ui/00-foundation` is built on its branch (not merged, not pushed): the Counter frame as a fifth design under Appearance, the two fonts, `components/kit.tsx`. No page's content has changed.** Next: the manual's Appearance lines, the pull request into `staging`, then `ui/01-stock-summary`.
+Status: **`ui/00-foundation` is built on its branch (not merged, not pushed): the Counter frame as a fifth design under Appearance, the two fonts, `components/kit.tsx`. No page's content has changed.** Next: the pull request into `staging`, the staging stack (§6), then `ui/01-stock-summary`.
 
 ## 1. The source
 
@@ -144,17 +144,19 @@ log, manual when the steps a shopkeeper follows changed).
   width). Pages are built from these from `ui/01` on.
 - Tests: `kit.test.tsx`, `e2e/counter-frame.spec.ts`.
 
-## 6. Open — for the owner
+## 6. Decided by the owner
 
-1. **Where is `staging` tested?** Today there is one server (the shops') and it deploys `main`. Either a
-   second address on the same server with its own empty database (recommended — a real phone can open it),
-   or only on the owner's computer.
-3. **Counter as the default design?** Today a shop that never chose sees Classic; the new frame shows only
-   after it is picked under Appearance. Recommended: make it the default when the fifteen screens go to
-   `main`, not before.
-2. **When does a page reach the shops?** Page by page would leave them with half the screens new and half
-   old for weeks. Recommended: the foundation and the fifteen screens collect on `staging` and go to `main`
-   together (or in two or three groups the owner names).
+Nothing is open. Decided 2026-11-23 (second answer):
+
+- **`staging` is tested on a second address of the server with its own empty database** — never the
+  shops' database. To build: a second stack on the VPS (its own compose project, database volume, env
+  file and Caddy host) deployed from the `staging` branch by its own workflow; the shops' stack, its
+  database and `deploy.yml` are not touched. Owner's side: a DNS name for it (e.g. `staging.…`) and the
+  server commands, to be listed in `docs/29-OWNER-PENDING.md` when the stack is written.
+- **The pages reach the shops together**: the foundation and the fifteen screens collect on `staging`
+  and go to `main` in one release (or two or three groups the owner names), not page by page.
+- **Counter becomes the default design when that release goes to `main`**, not before; until then it is
+  chosen under Appearance. A shop that already chose a design keeps it.
 
 Decided (owner, 2026-11-23):
 
