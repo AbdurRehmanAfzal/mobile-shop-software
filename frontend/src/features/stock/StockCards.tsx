@@ -10,6 +10,8 @@ import { Sheet } from '@/components/ui'
 import { useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import { useGet } from '@/lib/queries'
+import { kindLabel } from '@/components/ItemKinds'
+import { withCur } from '@/lib/format'
 import { useTrade } from '@/lib/modules'
 
 export type Kind = '' | 'phone' | 'tablet' | 'watch' | 'laptop'
@@ -123,22 +125,25 @@ export function StockGate({ children }: { children: ReactNode }) {
   return <>{children}</>
 }
 
-interface ItemRow { id: string; name: string; name_ur: string | null; variant?: string | null; qty: number; price: string }
+interface ItemRow { id: string; name: string; name_ur: string | null; variant?: string | null; qty: number; price: string; sku?: string; category?: string; brand?: string | null; color?: string | null; compatible?: string | null; location?: string | null; low_stock?: boolean }
+const FIRST_ITEMS = 10
 
-/** ADR-121 / ADR-123: on "All stock" the accessories are part of the list — the first few items
- *  with their count (the ones the search finds, when something is typed), how many pieces there
- *  are in all, and the way to the whole list. Above the phones, so they are seen without scrolling. */
+/** ADR-121 / ADR-123 / ADR-130: on "All stock" the accessories are part of the list, with their
+ *  details — kind, brand, code, what it fits, pieces, price, running low / finished — as on the
+ *  items' own screen. The first ten (or what the search finds), and the rest opens in place.
+ *  Above the phones, so they are seen without scrolling. Read-only: a row opens the item. */
 export function ItemsInStock({ q = '' }: { q?: string }) {
   const { pick, ur, cls } = useLang()
   const nav = useNavigate()
   const trade = useTrade()
   const on = trade.accessories
+  const [all, setAll] = useState(false)
   const { data } = useGet<StockStatus>(['stock-status', ''], on ? '/api/v1/devices/stock-status' : null)
   const text = q.trim()
   const { data: items } = useGet<ItemRow[]>(['stock-items-peek', text], on ? `/api/v1/accessories${text ? `?q=${encodeURIComponent(text)}` : ''}` : null)
   if (!on || !data) return null
   const i = data.items
-  const rows = (items ?? []).slice(0, text ? 8 : 3)
+  const rows = all ? (items ?? []) : (items ?? []).slice(0, FIRST_ITEMS)
   if (text && !rows.length) return null // searching for a phone: no empty box about items
   const small = ur ? cls('sm') : 'text-xs font-semibold'
   const to = `/accessories${text ? `?q=${encodeURIComponent(text)}` : ''}`
@@ -152,16 +157,31 @@ export function ItemsInStock({ q = '' }: { q?: string }) {
         </span>
         <span className={`shrink-0 rounded-full bg-ink px-3 py-1.5 font-bold text-ground ${small}`}>{pick('stock.itemsCard.open')}</span>
       </button>
-      {rows.map((r) => (
-        <button key={r.id} type="button" onClick={() => nav(`/accessories/${r.id}`)} className="tap flex min-h-12 items-center gap-3 border-t border-line px-4 py-2 text-start" data-testid="stock-item-row">
-          <span className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">
-            <span className={`truncate ${ur ? cls('sm') : 'text-sm font-bold'}`} dir="auto">{ur && r.name_ur ? r.name_ur : r.name}</span>
-            {r.variant ? <span className="rounded-md bg-emerald-tint px-1.5 py-0.5 text-[11px] font-bold text-emerald-deep">{r.variant}</span> : null}
-          </span>
-          <span className={`num shrink-0 text-base ${r.qty <= 0 ? 'text-payable' : ''}`} dir="ltr">{r.qty}</span>
-        </button>
-      ))}
-      {(items?.length ?? 0) > rows.length ? <button type="button" onClick={() => nav(to)} className={`tap min-h-11 border-t border-line px-4 py-2 text-start font-bold text-emerald-deep ${small}`} data-testid="stock-items-all">{pick('stock.itemsCard.all').replace('{{n}}', String(items!.length))}</button> : null}
+      {rows.map((r) => {
+        const facts = [r.category ? kindLabel(pick, r.category) : null, r.brand, r.color && r.color !== r.variant ? r.color : null, r.compatible].filter(Boolean)
+        return (
+          <button key={r.id} type="button" onClick={() => nav(`/accessories/${r.id}`)} className="tap flex min-h-14 items-center gap-3 border-t border-line px-4 py-2 text-start" data-testid="stock-item-row">
+            <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+              <span className="flex min-w-0 flex-wrap items-center gap-1.5">
+                <span className={`min-w-0 break-words ${ur ? cls('sm') : 'text-sm font-bold'}`} dir="auto">{ur && r.name_ur ? r.name_ur : r.name}</span>
+                {r.variant ? <span className="rounded-md bg-emerald-tint px-1.5 py-0.5 text-[11px] font-bold text-emerald-deep">{r.variant}</span> : null}
+                {r.low_stock || r.qty <= 0 ? <span className="rounded-md bg-payable-tint px-1.5 py-0.5 text-[11px] font-bold text-payable" data-testid="stock-item-flag">{pick(r.qty <= 0 ? 'acc.outOfStock' : 'acc.low')}</span> : null}
+              </span>
+              <span className={`flex min-w-0 flex-wrap items-center gap-x-1.5 text-muted ${small}`} data-testid="stock-item-facts">
+                {r.sku ? <span dir="ltr">{r.sku}</span> : null}
+                {facts.map((f) => <span key={String(f)} className="min-w-0 break-words">· {f}</span>)}
+                {r.location ? <span className="rounded-md border border-line px-1 text-[11px]">{r.location}</span> : null}
+              </span>
+            </span>
+            <span className="flex shrink-0 flex-col items-end">
+              <span className={`num text-lg leading-tight ${r.qty <= 0 ? 'text-payable' : ''}`} dir="ltr" data-testid="stock-item-qty">{r.qty}</span>
+              <span className={`num text-muted ${small}`} dir="ltr" data-testid="stock-item-price">{withCur(Number(r.price).toLocaleString('en-US', { maximumFractionDigits: 0 }))}</span>
+            </span>
+          </button>
+        )
+      })}
+      {(items?.length ?? 0) > rows.length ? <button type="button" onClick={() => setAll(true)} className={`tap min-h-11 border-t border-line px-4 py-2 text-start font-bold text-emerald-deep ${small}`} data-testid="stock-items-all">{pick('stock.itemsCard.all').replace('{{n}}', String(items!.length))}</button> : null}
+      {all && (items?.length ?? 0) > FIRST_ITEMS ? <button type="button" onClick={() => setAll(false)} className={`tap min-h-11 border-t border-line px-4 py-2 text-start font-bold text-emerald-deep ${small}`} data-testid="stock-items-less">{pick('stock.itemsCard.less')}</button> : null}
     </section>
   )
 }

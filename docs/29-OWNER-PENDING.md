@@ -339,6 +339,8 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **Four more colour sets (2026-11-21, ADR-129)**: nothing to run. To test: More → Appearance → **Colours**: **Material**, **Mac**, **Lime**, **Fintech** — tap each, look at Home and a sale, then **Dark**. They are named for the look, not for the companies (trade marks); say so if you want other names.
 
+**Accessories with details on the stock screen (2026-11-22, ADR-130)**: nothing to run. To test: tap **Stock** (All stock): above the phones the box "Accessories and other items" lists each item with its code, kind, brand, pieces and price; a finished item says **Out of stock**, a low one **Low stock**; with more than ten items tap **Show all N items**; type an item's name in the search; tap a row to open the item.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

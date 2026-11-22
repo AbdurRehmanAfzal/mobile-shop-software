@@ -402,7 +402,8 @@
       "t": "Accessories and other items",
       "sub": "{{n}} pieces in stock · {{low}} running low · {{out}} finished",
       "open": "Open",
-      "all": "See all {{n}} items"
+      "all": "Show all {{n}} items",
+      "less": "Show fewer"
     }
   },
   "purchase": {
