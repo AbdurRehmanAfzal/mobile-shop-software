@@ -6,6 +6,7 @@
 @layer base {
   :root {
     --font-sans: Manrope;
+    --font-display: 'Plus Jakarta Sans';
     --r-btn: 18px;
     --r-card: 24px;
     --ink: 27 31 36;

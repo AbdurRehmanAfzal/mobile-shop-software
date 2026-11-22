@@ -13,7 +13,7 @@ const THEMES: { v: Theme; text: string; Icon: LucideIcon }[] = [
   { v: 'dark', text: 'more.themeDark', Icon: Moon },
   { v: 'system', text: 'more.themeSystem', Icon: Monitor },
 ]
-const LAYOUTS: Layout[] = ['classic', 'tiles', 'simple', 'bold']
+const LAYOUTS: Layout[] = ['classic', 'tiles', 'simple', 'bold', 'counter']
 /** a few colours of each set, for the swatch strip (the real values live in index.css) */
 const PALETTES: { v: Palette; text: string; sw: string[] }[] = [
   { v: 'modern', text: 'more.lookModern', sw: ['#0A2540', '#635BFF', '#F6F9FC'] },
@@ -157,6 +157,7 @@ function DesignPreview({ layout }: { layout: Layout }) {
   const panel = (() => {
     if (layout === 'tiles') return <div className="grid w-9 shrink-0 grid-cols-2 content-start gap-0.5">{['bg-sell', 'bg-buy', 'bg-khata', 'bg-stockt', 'bg-repair', 'bg-ret'].map((c) => <span key={c} className={`h-3 rounded-[3px] ${c}`} />)}</div>
     if (layout === 'simple') return <div className="flex w-9 shrink-0 flex-col gap-1 pt-0.5">{[0, 1, 2, 3, 4, 5].map((i) => <span key={i} className={`h-1.5 rounded-full ${i === 0 ? 'bg-emerald' : 'bg-line'}`} />)}</div>
+    if (layout === 'counter') return <div className="-my-1.5 -ms-1.5 grid w-10 shrink-0 grid-cols-2 content-start gap-0.5 border-e border-line bg-surface p-1"><span className="col-span-2 mb-0.5 h-1.5 w-5 rounded-full bg-ink" />{['bg-sell', 'bg-ink', 'bg-line', 'bg-line', 'bg-line', 'bg-line'].map((c, i) => <span key={i} className={`h-3 rounded-[3px] ${c}`} />)}</div>
     if (layout === 'bold') return <div className="flex w-9 shrink-0 flex-col gap-1 rounded-md bg-hero p-1">{[0, 1, 2, 3, 4].map((i) => <span key={i} className={`h-1.5 rounded-full ${i === 0 ? 'bg-white/70' : 'bg-white/25'}`} />)}</div>
     return <div className="flex w-9 shrink-0 flex-col gap-0.5">{['bg-sell', 'bg-buy', 'bg-khata', 'bg-stockt', 'bg-repair'].map((c) => <span key={c} className={`h-2 rounded-[3px] ${c}`} />)}</div>
   })()

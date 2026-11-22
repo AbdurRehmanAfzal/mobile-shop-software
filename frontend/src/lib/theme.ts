@@ -6,8 +6,9 @@ export type Theme = 'light' | 'dark' | 'system'
  *  and (ADR-129) Material, Mac, Lime and Fintech. A set unknown to this build falls back to Modern. */
 export const PALETTES = ['modern', 'pro', 'navy', 'colorful', 'material', 'mac', 'lime', 'fintech'] as const
 export type Palette = (typeof PALETTES)[number]
-/** owner 2026-11-07: how the dashboard and the laptop side panel are laid out */
-export type Layout = 'classic' | 'tiles' | 'simple' | 'bold'
+/** owner 2026-11-07: how the dashboard and the laptop side panel are laid out; 'counter' (ADR-132)
+ *  is the frame of the owner's new screens: a full-height panel with the shop's name and F-key tiles */
+export type Layout = 'classic' | 'tiles' | 'simple' | 'bold' | 'counter'
 /** the main button / highlight colour; 'auto' keeps the colours' own */
 export type Accent = 'auto' | 'emerald' | 'blue' | 'violet' | 'rose' | 'orange' | 'teal'
 export type TextSize = 'normal' | 'large' | 'xl'
@@ -58,6 +59,8 @@ export function apply(look: Partial<Look>) {
   set('--r-btn', c?.[0] ?? null)
   set('--r-card', c?.[1] ?? null)
   set('--font-sans', l.font !== 'auto' ? FONTS[l.font] ?? null : null)
+  // a chosen font is used for headings and figures too
+  set('--font-display', l.font !== 'auto' ? FONTS[l.font] ?? null : null)
   root.style.fontSize = TEXT[l.text] ?? ''
   const meta = document.querySelector('meta[name="theme-color"]')
   if (meta) meta.setAttribute('content', dark ? '#0B100E' : '#0E1613')

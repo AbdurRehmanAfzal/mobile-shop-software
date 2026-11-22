@@ -8,6 +8,9 @@ export default {
       fontFamily: {
         sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
         urdu: ['"Noto Nastaliq Urdu"', 'serif'],
+        // ADR-132: headings and big figures; IMEIs, bill numbers and small figures
+        display: ['var(--font-display)', 'var(--font-sans)', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
       colors: {
         ink: rgb('--ink'),

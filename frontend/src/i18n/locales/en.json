@@ -15,7 +15,8 @@
     "dashboard": "Dashboard",
     "shopSection": "Shop",
     "allOptions": "All options",
-    "purchases": "Purchases"
+    "purchases": "Purchases",
+    "counterSection": "Daily counter"
   },
   "auth": {
     "login": "Login",
@@ -4429,6 +4430,10 @@
       "bold": {
         "name": "Bold",
         "hint": "Dark panel, big numbers"
+      },
+      "counter": {
+        "name": "Counter",
+        "hint": "The shop's name on a full panel, the jobs as tiles with their keys"
       }
     },
     "palette": "Colours",
