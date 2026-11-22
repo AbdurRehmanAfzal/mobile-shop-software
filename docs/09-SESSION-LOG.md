@@ -2463,3 +2463,15 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: accessories phase E unless the owner orders otherwise.
 
 **Open questions**: the first screen's total now includes accessories (the Home tile's "Worth" does not) — say if the two should match.
+
+## 2026-11-22 (3) — UI redesign: the mock-ups read, the plan, the `staging` branch (ADR-132)
+
+**Asked (owner)**: a zip of the frontend to have the UI redrawn; then: the folder `new mobile shop ui` holds the new screens — read it file by file, plan the redesign with a branch per page, a `staging` branch from `main` that every branch is merged into and tested on before `main`; keep everything that exists, add what the new UI brings, do not disturb the running shops.
+
+**Done**: the zip (tracked files of `frontend/`, no secrets) was made outside the repository. The thirteen mock-ups were rendered (laptop and phone width) and read with their hidden tabs, drawers and scripts; mapped to the app's pages; `docs/43-UI-REDESIGN-PLAN.md` written (the shared look, the rules, per screen: layout change / new / not built, the branch order, four open questions); ADR-132; CLAUDE.md section and branch rule. `staging` created locally from `origin/main` (PR #113 merged) with `develop`'s one docs commit merged in; `ci.yml` also runs on pushes to `staging`.
+
+**Verified**: nothing to test — no code of the app changed. The "new?" column of the plan is a first reading; each branch confirms it against the page's code.
+
+**Next**: `ui/00-foundation` from `staging` (tokens, fonts, the new frame, the shared parts), then `ui/01-stock-summary`.
+
+**Open questions**: plan §6 — where `staging` is tested; pages to the shops together or one by one; the new colours against a shop's chosen set; the sale screen has no mock-up. `staging` is not pushed yet (push only on the owner's word).

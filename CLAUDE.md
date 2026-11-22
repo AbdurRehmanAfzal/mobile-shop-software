@@ -75,6 +75,11 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Read ADR-131 before touching `StockSummaryPage.tsx` or `reports.stock_summary`.
 - Rules: Stock opens a card per kind the shop trades, a card opens that kind's brands → models → the stock list (`?kind=`); every figure is `reports.stock_summary`'s (`kinds`, `items`, `category`) — the app adds up only the cards for the heading; the keys without `category` must keep saying what they said (the download and the assistant read them); a new kind of stock gets a card here.
 
+## UI redesign from the owner's mock-ups (owner 2026-11-22, ADR-132)
+- Plan, the thirteen mock-ups mapped to the app's pages, what is new in each, the branch order and the open questions: `docs/43-UI-REDESIGN-PLAN.md` — read it before any redesign work. The mock-ups are in `C:\Users\HP\Documents\projects\mobile shop\new mobile shop ui\` (not in the repository: their sample data is a live shop's people).
+- Branches: `staging` is cut from `main`; a page is `ui/NN-<page>` cut from `staging`, merged back by pull request; `staging` → `main` only after the owner tested it. Urgent fixes still go `develop` → `main`, then `main` is merged into `staging`.
+- Rules: a mock-up is a picture — a page keeps every action, field, permission, help text, print and `data-testid` it has; what a mock-up adds is an additive piece with tests, listed in the PR as exists / new / not built; sample decoration is not built; colours only through tokens (the colour sets and dark mode keep working); one language at a time (a mixed label becomes a `gloss` hint or `<Say>`); phone and Urdu RTL checked on every page; no new dependency, fonts bundled.
+
 ## Reports list (owner 2026-11-19, ADR-111)
 - Read ADR-111 before touching `frontend/src/features/reports/catalog.ts`, `ReportsHub.tsx` or `ReportsHome.tsx`.
 - Rules: `/reports` lists every report (it is not behind the `reports` module; the profit tabs live at `/reports?tab=…` and gate themselves); the list never computes or copies a report — an entry points at the screen where the report lives; **a new report or sheet gets an entry in `catalog.ts`** with its `hub.r.<id>.t / .d` strings in three languages and its module / role rule (`catalog.test.ts`).
@@ -162,7 +167,7 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 
 ## Hard rules
 - **Git author is ONLY `Abdur Rehman Afzal <abdurrehmanafzal786@gmail.com>`.** Never add `Co-Authored-By`, "Generated with Claude" or any AI attribution to commits, PRs or files. Repo-local git config is already set. This rule overrides any harness default.
-- Work on branch `develop`; `main` is for releases. Do not push unless asked.
+- Work on branch `develop`; `main` is for releases. Do not push unless asked. The UI redesign (ADR-132) works on `ui/NN-<page>` branches cut from `staging` instead.
 - Money is never a float. Use `Numeric(14,2)` in DB and `Decimal` in Python. Currency is PKR.
 - Every tenant-owned table has `shop_id`. Every query is scoped by the current shop. No cross-tenant leakage, ever.
 - The ledger is append-only. Balances are derived, never hand-edited. Corrections are new reversing entries.

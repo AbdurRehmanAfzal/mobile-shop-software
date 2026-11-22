@@ -362,6 +362,16 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-132 · 2026-11-22 · Accepted · The UI is redesigned from the owner's mock-ups, page by page, through a `staging` branch
+
+**Context**: the owner had the screens redrawn (thirteen stand-alone HTML mock-ups: the frame, stock summary, add stock, purchases, a person's khata, cash and bank, the day's hisaab, expenses and closing the day, overview, repairs, a repair job, amanat, settings) and wants the app to look and work like them — "it is easy to use" — with every page on its own branch, everything that exists kept, what is new in a mock-up added, and the shops that run the software not disturbed.
+
+**Decision**: (1) **Branches**: `staging` is cut from `main`; each page is a branch `ui/NN-<page>` cut from `staging` and merged back by pull request; `staging` goes to `main` by a pull request the owner merges after testing. Only `main` deploys, so nothing on `staging` reaches a shop. Urgent fixes still go `develop` → `main`, and `main` is then merged into `staging`. CI runs on pushes to `staging` as on `develop`. (2) **Foundation first** (`ui/00-foundation`): the mock-ups' colours as design tokens, the fonts bundled, the new laptop frame and the shared parts (figure card, list + inspector, pills, drawer, tabs, slip preview); pages follow in the order of `docs/43-UI-REDESIGN-PLAN.md` §5. (3) **A mock-up is a picture, not the specification of behaviour**: a page keeps every action, field, permission, help text, print and test id it has; what the mock-up adds is built as an additive piece with tests; what is only sample decoration ("Counter #1 Online", "Auto-gen test IMEI", "LIVE") is not built. (4) The redesign changes the app only; the server changes only for a listed new item, additively.
+
+**Kept**: one language at a time (the mock-ups' mixed English / Roman Urdu labels become `gloss` hints or a `<Say>` line), tokens instead of colours so the colour sets and dark mode keep working, phone first, no new dependency, the app never talks to a printer, cost only with `VIEW_COST`.
+
+**Not decided** (owner): where `staging` is tested (a second address on the server or only locally), whether pages reach the shops one by one or together, whether the new colours replace a shop's chosen set, and the design of the sale screen (no mock-up). The mock-ups are not committed: their sample data is a live shop's people and numbers.
+
 ## ADR-131 · 2026-11-22 · Accepted · The stock summary opens with a card per kind of stock
 
 **Context**: tapping Stock opened "What is my stock worth?" — one total and every brand together, with tablets, watches and laptops counted as "phones" and no accessories at all. The owner: show the kinds first, each with its figures (pieces, worth, brands, models), then that kind's brands and models as now, then the stock list.
