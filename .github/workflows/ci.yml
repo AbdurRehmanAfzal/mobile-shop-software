@@ -1,4 +1,4 @@
-# Checks every push to develop and staging and every pull request. Also used by deploy.yml before a release.
+# Checks every push to develop and every pull request. Also used by deploy.yml and staging.yml before a release.
 #   backend:  ruff + pytest (SQLite), then Alembic migrations on a real PostgreSQL
 #   frontend: typecheck + vitest + production build
 #   stack:    the production Docker images run together (PostgreSQL, backend, Caddy) + a smoke test
@@ -6,7 +6,7 @@ name: CI
 
 on:
   push:
-    branches: [develop, staging]
+    branches: [develop]
   pull_request:
   workflow_call:
 

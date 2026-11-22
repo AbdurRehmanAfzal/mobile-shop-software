@@ -149,10 +149,12 @@ log, manual when the steps a shopkeeper follows changed).
 Nothing is open. Decided 2026-11-23 (second answer):
 
 - **`staging` is tested on a second address of the server with its own empty database** — never the
-  shops' database. To build: a second stack on the VPS (its own compose project, database volume, env
-  file and Caddy host) deployed from the `staging` branch by its own workflow; the shops' stack, its
-  database and `deploy.yml` are not touched. Owner's side: a DNS name for it (e.g. `staging.…`) and the
-  server commands, to be listed in `docs/29-OWNER-PENDING.md` when the stack is written.
+  shops' database: `https://staging-mobileshop.oopsolutions.com` (DNS set 2026-11-23). Built:
+  `deploy/staging/` (compose project `mobileshop-staging` in `/opt/mobileshop-staging`, its own database
+  and upload volumes, its own Traefik routers, `noindex`; WhatsApp, e-mail, the assistant and the
+  scheduler off) and `.github/workflows/staging.yml` (every push to `staging`: CI, images tagged with
+  the commit and `staging` — never `latest` — then that stack's `deploy.sh`). The shops' stack, its
+  database and `deploy.yml` are not touched. Owner's one-time server command: `docs/29-OWNER-PENDING.md`.
 - **The pages reach the shops together**: the foundation and the fifteen screens collect on `staging`
   and go to `main` in one release (or two or three groups the owner names), not page by page.
 - **Counter becomes the default design when that release goes to `main`**, not before; until then it is

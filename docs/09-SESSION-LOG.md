@@ -2511,3 +2511,15 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: on the owner's "push": `staging` and `ui/00-foundation` to GitHub and the pull request into `staging`. Then the staging stack (compose project, database, Caddy host, workflow from `staging`) and `ui/01-stock-summary`.
 
 **Open questions**: the DNS name for the staging address (owner).
+
+## 2026-11-23 (4) — The staging site's stack
+
+**Asked (owner)**: "push", and how to set the DNS; then: the record is added.
+
+**Done**: `staging` and `ui/00-foundation` pushed; PR #114 (`ui/00-foundation` → `staging`). DNS steps given (Hostinger, A record `staging-mobileshop` → the server); checked: it resolves. Branch `ops/staging-stack` (cut from `ui/00-foundation`, so merge #114 first): `deploy/staging/docker-compose.yml` (project `mobileshop-staging`, own database / uploads / network / routers, `noindex`, WhatsApp / e-mail / assistant / scheduler off, signup open), `deploy/staging/deploy.sh` (that stack only, rollback), `deploy/staging/setup-vps.sh` (folder, fresh passwords, the deploy user's sudo line), `.github/workflows/staging.yml`; `ci.yml` no longer runs twice on `staging` (the staging workflow calls it).
+
+**Verified**: `bash -n` on both scripts; the DNS answer. **Not verified**: the compose file and the workflow have not run anywhere — the first run on the server is the test. The production files are unchanged (`deploy/docker-compose.yml`, `deploy/deploy.sh`, `deploy.yml`).
+
+**Next**: on the owner's "push": the branch and its pull request into `staging`; the owner merges #114 and that one, runs the setup command (docs/29) and the Staging workflow; then `ui/01-stock-summary`.
+
+**Open questions**: if `VPS_*` are environment secrets of "production" and not repository secrets, the staging deploy job cannot read them — it would fail at "Prepare SSH" and the secrets must be added at repository level.
