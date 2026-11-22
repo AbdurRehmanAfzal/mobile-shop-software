@@ -375,6 +375,7 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | Stock summary: a card per kind of stock (mobiles, tablets, watches, laptops, accessories) with pieces, worth, brands and models; a card opens its brands → models → the list (ADR-131) | ✅ | `StockSummaryPage.tsx`, `reports.stock_summary` (`kinds`, `items`, `category`), `tests/test_stock_summary_kinds.py`, `e2e/stock-kind-cards.spec.ts` |
 | UI redesign from the owner's fifteen mock-ups (the sale's two added 2026-11-23): plan, page map, branch order (`staging`, `ui/NN-<page>`), rules (ADR-132) — **plan only, no screen changed; next: `ui/00-foundation`** | ⏳ | `docs/43-UI-REDESIGN-PLAN.md` |
 | UI redesign `ui/00-foundation`: the Counter frame as a fifth design (full-height panel, F-key tiles, the user), display and mono fonts, the shared parts `kit.tsx` — on its branch, to be merged into `staging` | ⏳ | `SidePanel.tsx`, `Shell.tsx`, `kit.tsx`, `kit.test.tsx`, `e2e/counter-frame.spec.ts` |
+| Staging site for the redesign: its own stack and database on the VPS, deployed from `staging` (ADR-132) — written; the owner's one-time server command pending | ⏳ | `deploy/staging/`, `.github/workflows/staging.yml`, docs/29 |
 | Operations runbook (internal; secrets only as placeholders) | ✅ | `operations-en.md` |
 | Owner review of the wording | ⏳ | `docs/29-OWNER-PENDING.md` D |
 

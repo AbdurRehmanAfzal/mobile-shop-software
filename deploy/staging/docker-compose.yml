@@ -1,0 +1,91 @@
+# The STAGING stack (ADR-132): the `staging` branch on its own address, with its OWN database, for
+# testing before a release reaches the shops. It lives in /opt/mobileshop-staging and shares nothing
+# with the shops' stack in /opt/mobileshop — another compose project, other volumes, another network,
+# other Traefik routers. HTTPS and routing come from the same Traefik (network n8n_default).
+#
+# Deliberately off here: WhatsApp, e-mail, the assistant, the scheduler — a test must never send a
+# message to a real person. Search engines are told not to list this address.
+name: mobileshop-staging
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: mobileshop_staging
+      POSTGRES_USER: mobileshop_staging
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks: [internal]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mobileshop_staging -d mobileshop_staging"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    image: ${IMAGE_PREFIX:-ghcr.io/abdurrehmanafzal/mobile-shop}-backend:${IMAGE_TAG:-staging}
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      APP_ENV: prod
+      DATABASE_URL: postgresql+psycopg://mobileshop_staging:${POSTGRES_PASSWORD}@db:5432/mobileshop_staging
+      SECRET_KEY: ${SECRET_KEY:?set SECRET_KEY in .env}
+      CORS_ORIGINS: '["https://${APP_DOMAIN}", "https://localhost", "capacitor://localhost"]'
+      UPLOAD_DIR: /data/uploads
+      WEB_WORKERS: 1
+      # a tester makes their own shop on the empty database
+      PUBLIC_SIGNUP: ${PUBLIC_SIGNUP:-true}
+      SUPERUSER_PHONES: ${SUPERUSER_PHONES:-}
+      WEBAUTHN_RP_ID: ${APP_DOMAIN}
+      WEBAUTHN_ORIGINS: https://${APP_DOMAIN}
+      PUBLIC_URL: https://${APP_DOMAIN}
+      # nothing leaves staging: no WhatsApp, no e-mail, no assistant, no timed jobs
+      SCHEDULER_ENABLED: "false"
+      WHATSAPP_TOKEN: ""
+      WHATSAPP_PHONE_ID: ""
+      SMTP_HOST: ""
+      ANTHROPIC_API_KEY: ""
+      SIGNUP_OTP: "false"
+    volumes:
+      - uploads:/data/uploads
+    networks:
+      internal:
+        # the web image's Caddy looks for this name; it resolves inside this stack's own network only
+        aliases: [mobileshop-backend]
+
+  web:
+    image: ${IMAGE_PREFIX:-ghcr.io/abdurrehmanafzal/mobile-shop}-web:${IMAGE_TAG:-staging}
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks: [internal, traefik]
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=n8n_default
+      - traefik.http.routers.mobileshop-staging.rule=Host(`${APP_DOMAIN:?set APP_DOMAIN in .env}`)
+      - traefik.http.routers.mobileshop-staging.entrypoints=websecure
+      - traefik.http.routers.mobileshop-staging.tls=true
+      - traefik.http.routers.mobileshop-staging.tls.certresolver=mytlschallenge
+      - traefik.http.routers.mobileshop-staging.middlewares=mobileshop-staging-noindex
+      - traefik.http.services.mobileshop-staging.loadbalancer.server.port=80
+      - traefik.http.middlewares.mobileshop-staging-noindex.headers.customresponseheaders.X-Robots-Tag=noindex, nofollow
+      # plain HTTP -> HTTPS
+      - traefik.http.routers.mobileshop-staging-http.rule=Host(`${APP_DOMAIN}`)
+      - traefik.http.routers.mobileshop-staging-http.entrypoints=web
+      - traefik.http.routers.mobileshop-staging-http.middlewares=mobileshop-staging-https
+      - traefik.http.middlewares.mobileshop-staging-https.redirectscheme.scheme=https
+      - traefik.http.middlewares.mobileshop-staging-https.redirectscheme.permanent=true
+
+volumes:
+  pgdata:
+  uploads:
+
+networks:
+  internal:
+  traefik:
+    external: true
+    name: n8n_default
