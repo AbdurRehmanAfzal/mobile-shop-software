@@ -2458,7 +2458,7 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 
 **Done**: `reports.stock_summary` gained `kinds`, `items` and `category` (the old keys unchanged); `StockSummaryPage` shows the cards, `?kind=` one kind's brands and models, accessories by their kind; help texts of the page in three languages; manual.
 
-**Verified**: ruff clean; tsc clean; vitest 68 passed; pytest `test_stock_summary_kinds` (new: cards add up to the total, one kind's brands, accessories at cost, a salesman at selling price, another shop sees nothing) with the older summary tests; the full backend suite was still running when the owner said "push" (at 14%, no failure) — the result is in the next entry. Playwright `stock-kind-cards` (new), `counter`, `faulty-and-models` (both now tap the kind first), `statements`, `stock-tally`, `tally-staff`, `reports-hub`, `accessories-only` pass (16 tests); the three screenshots were looked at. The full Playwright suite was not run.
+**Verified**: ruff clean; tsc clean; vitest 68 passed; pytest `test_stock_summary_kinds` (new: cards add up to the total, one kind's brands, accessories at cost, a salesman at selling price, another shop sees nothing) with the older summary tests; the full backend suite passed (exit 0; it was at 14% when the owner said "push" and finished after). Playwright `stock-kind-cards` (new), `counter`, `faulty-and-models` (both now tap the kind first), `statements`, `stock-tally`, `tally-staff`, `reports-hub`, `accessories-only` pass (16 tests); the three screenshots were looked at. The full Playwright suite was not run.
 
 **Next**: accessories phase E unless the owner orders otherwise.
 
