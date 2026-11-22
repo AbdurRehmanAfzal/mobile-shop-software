@@ -362,6 +362,14 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-130 · 2026-11-22 · Accepted · The stock screen shows the accessories with their details
+
+**Context**: since ADR-123 "All stock" carried a box of accessories above the phones, but only three names with a count, and "See all" left the screen. The owner: a shopkeeper who taps Stock must see the accessories there, with their details.
+
+**Decision**: the box (`ItemsInStock`) lists each item as the items' own screen does — name and variant, code, kind, brand, colour, what it fits, shelf, pieces, sale price, and "Low stock" / "Out of stock" on the row. The first ten are shown (or everything the search finds); "Show all N items" opens the rest in place and "Show fewer" folds it back. A row opens the item; "Open" still goes to the items' screen, where adding, editing, filters and reports live.
+
+**Not changed**: it is the same list the items' screen reads (`GET /accessories`) — no new endpoint, no second count; the box is read-only; the cost is not shown here (the sale price only), so it needs no `VIEW_COST` rule; a shop without the accessories line still sees no box; the phones' list, filters and totals are untouched.
+
 ## ADR-129 · 2026-11-21 · Accepted · Four more colour sets: Material, Mac, Lime, Fintech
 
 **Context**: the owner showed four sample screens from another project (a Google Material 3 style, a macOS style, a ride-app style in black and lime, a payments-dashboard style in slate and orange) and asked whether they can be added to Appearance. Appearance already has colour sets (`data-palette`: Modern, Professional, Navy, Colorful) made of the design tokens of `index.css`.

@@ -2439,3 +2439,15 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Not done**: the samples' layouts (a console with a side bar) were not copied — only the colours; Lime's bright colour is not used for text or for the main button (it cannot be read on white).
 
 **Open questions**: the names (Material / Mac / Lime / Fintech instead of the companies' names).
+
+## 2026-11-22 — Accessories with their details on the stock screen (ADR-130)
+
+**Asked (owner)**: push of the colour sets (PR #111); then: when a shopkeeper taps Stock, the accessories must be seen there too, with their details.
+
+**Done**: `ItemsInStock` on "All stock" lists the items with code, kind, brand, colour, fits, shelf, pieces, price and the low / finished mark; ten first, the rest in place.
+
+**Verified**: tsc clean; vitest 68 passed; Playwright `stock-items-detail` (new: ten rows of twelve, an item's details, finished and low marks, show all / fewer, the phone still listed, search, a row opens the item, 320 px), `easy-items` (extended; it failed once at an earlier, unrelated step and passed on both reruns), `accessories-only`, `statements` pass; the screenshot was looked at. No backend change. The full Playwright suite was not run.
+
+**Next**: accessories phase E unless the owner orders otherwise.
+
+**Open questions**: none new.

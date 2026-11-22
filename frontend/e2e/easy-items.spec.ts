@@ -117,7 +117,11 @@ test('buying an accessory in four short steps; every kind of stock in sight', as
   await expect(card).toContainText('23 pieces in stock')
   // ADR-123: the accessories are in "All stock" itself, above the phones, and its search finds them
   const inList = page.getByTestId('stock-items')
+  // ADR-130: each item with its details — code, kind, brand, pieces and price
   await expect(inList.getByTestId('stock-item-row')).toHaveCount(3)
+  await expect(inList.getByTestId('stock-item-row').first()).toContainText('ANKER20W-001')
+  await expect(inList.getByTestId('stock-item-row').first()).toContainText('Charger')
+  await expect(inList.getByTestId('stock-item-row').first().getByTestId('stock-item-price')).toHaveText('Rs. 2,200')
   await page.getByPlaceholder('IMEI, model, brand, name').fill('mouse')
   await expect(inList.getByTestId('stock-item-row')).toHaveCount(1)
   await expect(inList).toContainText('Wireless Mouse')

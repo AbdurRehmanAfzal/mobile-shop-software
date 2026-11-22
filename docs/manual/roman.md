@@ -932,6 +932,8 @@ Maalik aur manager ke liye qeemat khareed qeemat par hoti hai. Jis staff ko khar
 
 ### Stock list
 
+**Stock list mein accessories.** **Sara stock** par, phones ke upar, accessories ka khana aap ke items un ke code, qisam, brand, tadaad aur farokht ki qeemat ke sath dikhata hai; khatam hone wale item par khatam aur kam wale par kam stock likha aata hai. Pehle das dikhte hain — baqi ke liye **Sab … item dikhayein** dabayein. Kisi item ko kholne ke liye us par dabayein, ya items ki apni screen ke liye **Kholein**.
+
 **See all phones** ya **Mazeed → Stock list** se kholein. Upar: **Stickers**, **IMEI check** aur **Stock daalein**. Phir upar se neeche:
 
 1. **Search** — page par sab se pehle. IMEI, model, brand, ya jis se khareeda / jis ko becha us ka naam / number likhein; camera ke liye **Scan**, ya USB scanner se scan karein. Jab kuch likha ho to box mein **×** se saaf ho jata hai.

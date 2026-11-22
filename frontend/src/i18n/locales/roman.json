@@ -402,7 +402,8 @@
       "t": "Accessories aur doosri cheezein",
       "sub": "Stock mein {{n}} piece · {{low}} kam ho rahi hain · {{out}} khatam",
       "open": "Kholein",
-      "all": "Saare {{n}} item dekhein"
+      "all": "Sab {{n}} item dikhayein",
+      "less": "Kam dikhayein"
     }
   },
   "purchase": {

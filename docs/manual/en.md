@@ -932,6 +932,8 @@ The value is at cost for the owner and manager. Staff who are not allowed to see
 
 ### The stock list
 
+**Accessories on the stock list.** On **All stock**, above the phones, the box **Accessories and other items** lists your items with their code, kind, brand, pieces and sale price; a finished item says **Out of stock** and a low one **Low stock**. The first ten are shown — tap **Show all … items** for the rest. Tap an item to open it, or **Open** for the items' own screen.
+
 Open it with **See all phones**, or **More → Stock list**. At the top: **Stickers**, **Check IMEI** and **Add stock**. Then, from top to bottom:
 
 1. **Search** — the first thing on the page. Type an IMEI, model, brand, or the name / phone number of the person you bought it from or sold it to; tap **Scan** for the camera, or scan with a USB scanner. While something is typed, a **×** in the box clears it.
