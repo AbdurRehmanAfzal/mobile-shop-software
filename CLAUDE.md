@@ -71,6 +71,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Read ADR-114 before touching `DeviceEasyView.tsx`, `DeviceLayouts.tsx`, `DeviceSheetPreview.tsx` or `devices/sheet.py`.
 - Rules: the page has three views (Details, 80 mm slip, A4 page) — do not add layout styles; a new fact about a phone is a line of the details table with its action and a "?" (always shown, "—" when empty); the printed details are the server's page (`sheet_html`), read-only, cost lines only with `VIEW_COST`, and the app only previews that page.
 
+## The stock summary by kind (owner 2026-11-22, ADR-131)
+- Read ADR-131 before touching `StockSummaryPage.tsx` or `reports.stock_summary`.
+- Rules: Stock opens a card per kind the shop trades, a card opens that kind's brands → models → the stock list (`?kind=`); every figure is `reports.stock_summary`'s (`kinds`, `items`, `category`) — the app adds up only the cards for the heading; the keys without `category` must keep saying what they said (the download and the assistant read them); a new kind of stock gets a card here.
+
 ## Reports list (owner 2026-11-19, ADR-111)
 - Read ADR-111 before touching `frontend/src/features/reports/catalog.ts`, `ReportsHub.tsx` or `ReportsHome.tsx`.
 - Rules: `/reports` lists every report (it is not behind the `reports` module; the profit tabs live at `/reports?tab=…` and gate themselves); the list never computes or copies a report — an entry points at the screen where the report lives; **a new report or sheet gets an entry in `catalog.ts`** with its `hub.r.<id>.t / .d` strings in three languages and its module / role rule (`catalog.test.ts`).

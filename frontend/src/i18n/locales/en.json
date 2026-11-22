@@ -6250,5 +6250,16 @@
     "none": "No ID card check is pending.",
     "done": "ID card check skipped for {{n}} phones.",
     "flaggedNote": "Suspected stolen. Only the owner can clear it, with a reason."
+  },
+  "ssum": {
+    "pick": "Tap a kind of stock to see its brands and models",
+    "brandsModels": "{{b}} brands · {{m}} models",
+    "pieces": "{{n}} pieces",
+    "itemsLine": "{{n}} items · {{low}} running low · {{out}} finished",
+    "itemsN": "{{n}} items",
+    "accPieces": "{{n}} pieces of accessories",
+    "tapItemKind": "Tap a kind to see its items",
+    "none": "Nothing of this kind in stock",
+    "seeList": "See the list"
   }
 }

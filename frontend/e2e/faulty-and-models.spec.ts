@@ -32,6 +32,7 @@ test('model filter, faults, faulty phone in stock and sold', async ({ page, requ
 
   // 1. summary → Zeta 17 shows the one Zeta 17, not the two Pro Max
   await page.goto('/stock/summary')
+  await page.getByTestId('kind-card-phone').click() // ADR-131: the kind first
   await page.getByRole('button', { name: /Zeta/ }).first().click()
   await page.getByRole('link', { name: /^Zeta 17\b(?! Pro)/ }).click()
   await expect(page.getByTestId('model-filter')).toContainText('Zeta 17')

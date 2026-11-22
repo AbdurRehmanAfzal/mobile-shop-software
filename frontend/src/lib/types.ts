@@ -448,4 +448,7 @@ export interface StockSummary {
   count: number
   value: Money
   brands: (StockGroup & { brand_id: UUID; models: (StockGroup & { model_id: UUID })[] })[]
+  /** ADR-131: per type of device, and the accessories by their kind (an older server sends neither) */
+  kinds?: { key: string; count: number; value: Money; brands: number; models: number }[]
+  items?: { items: number; pieces: number; value: Money; low: number; out: number; kinds: { key: string; items: number; pieces: number; value: Money }[] }
 }

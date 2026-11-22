@@ -189,9 +189,10 @@ def stock_by_type(ctx: Ctx, db: DB):
 
 
 @router.get("/stock-summary")
-def stock_summary(ctx: Ctx, db: DB):
-    """Stock worth by brand and model (cost for owner/manager, asking price for others)."""
-    return _money(service.stock_summary(db, ctx.shop_id, ctx.can(Cap.VIEW_COST)))
+def stock_summary(ctx: Ctx, db: DB, category: str | None = None):
+    """Stock worth by brand and model (cost for owner/manager, asking price for others).
+    ADR-131: `category` keeps the brands to one type of device; `kinds` / `items` feed the cards."""
+    return _money(service.stock_summary(db, ctx.shop_id, ctx.can(Cap.VIEW_COST), category=category))
 
 
 @router.get("/day")

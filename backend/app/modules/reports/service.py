@@ -365,8 +365,14 @@ def stock_ageing(db: Session, shop_id: uuid.UUID, show_cost: bool) -> list[dict]
     ]
 
 
-def stock_summary(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
+def stock_summary(
+    db: Session, shop_id: uuid.UUID, show_cost: bool, category: str | None = None
+) -> dict:
     """Phones the shop holds, grouped by brand, then model: count and value.
+
+    ADR-131: `kinds` says the same per type of device (pieces, value, how many brands and models)
+    and `items` the accessories by their kind, for the cards the summary opens with; `category`
+    keeps the brand list (and `count` / `value`) to one type. Without it nothing changes.
 
     Value is at cost for owner/manager and at asking price for everyone else (`basis` says which).
     Owner 2026-11-13: "held" is the stock screen's own rule (in stock, faulty, in repair, with a
@@ -390,8 +396,24 @@ def stock_summary(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
     from app.modules.catalogue.service import name_key
 
     brands: dict[uuid.UUID, dict] = {}
+    kinds = {
+        k: {"key": k, "count": 0, "value": ZERO, "_b": set(), "_m": set()}
+        for k in ("phone", "tablet", "watch", "laptop")
+    }
+    shown = 0
     for d, brand_name, model_name in rows:
         value = (d.cost_price if show_cost else d.asking_price) or ZERO
+        kind = kinds.setdefault(
+            d.category or "phone",
+            {"key": d.category or "phone", "count": 0, "value": ZERO, "_b": set(), "_m": set()},
+        )
+        kind["count"] += 1
+        kind["value"] = money(kind["value"] + value)
+        kind["_b"].add(d.brand_id)
+        kind["_m"].add((d.brand_id, name_key(model_name)))
+        if category and (d.category or "phone") != category:
+            continue
+        shown += 1
         b = brands.setdefault(
             d.brand_id,
             {"brand_id": d.brand_id, "name": brand_name, "count": 0, "value": ZERO, "models": {}},
@@ -410,10 +432,53 @@ def stock_summary(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
         out.append({**b, "models": sorted(b["models"].values(), key=by_value)})
     return {
         "basis": "cost" if show_cost else "asking",
-        "count": len(rows),
+        "count": shown,
         "value": money(sum((b["value"] for b in out), ZERO)),
         "brands": out,
+        "kinds": [
+            {
+                "key": k["key"],
+                "count": k["count"],
+                "value": k["value"],
+                "brands": len(k["_b"]),
+                "models": len(k["_m"]),
+            }
+            for k in kinds.values()
+        ],
+        "items": _items_summary(db, shop_id, show_cost),
     }
+
+
+def _items_summary(db: Session, shop_id: uuid.UUID, show_cost: bool) -> dict:
+    """The accessories on the shelf by their kind: items, pieces and what they are worth — at the
+    average cost for a login that may see cost, at the sale price for the others (as the phones).
+    Low / finished follow the stock screen's own rule (`devices.stock_status`)."""
+    from app.modules.accessories.models import Accessory
+
+    out = {"items": 0, "pieces": 0, "value": ZERO, "low": 0, "out": 0}
+    by: dict[str, dict] = {}
+    for cat, qty, reorder, avg, price in db.execute(
+        select(
+            Accessory.category,
+            Accessory.qty,
+            Accessory.reorder_level,
+            Accessory.avg_cost,
+            Accessory.price,
+        ).where(Accessory.shop_id == shop_id, Accessory.is_active.is_(True))
+    ).all():
+        if qty <= 0:
+            out["out"] += 1
+            continue
+        if qty <= (reorder or 0):
+            out["low"] += 1
+        value = money(qty * ((avg if show_cost else price) or ZERO))
+        g = by.setdefault(cat, {"key": cat, "items": 0, "pieces": 0, "value": ZERO})
+        for x in (out, g):
+            x["items"] += 1
+            x["pieces"] += qty
+            x["value"] = money(x["value"] + value)
+    out["kinds"] = sorted(by.values(), key=lambda g: (-g["value"], -g["pieces"], g["key"]))
+    return out
 
 
 _IN = {

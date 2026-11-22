@@ -42,7 +42,9 @@ test('stock worth, day hisaab and khata', async ({ page }) => {
 
   await page.getByRole('link', { name: 'Stock' }).first().click()
   await expect(page).toHaveURL(/\/stock\/summary$/)
-  await expect(page.getByText('Rs. 2,000')).toBeVisible()
+  await expect(page.getByTestId('stock-hero-value')).toHaveText('Rs. 2,000')
+  // ADR-131: a card per kind of stock first, then its brands
+  await page.getByTestId('kind-card-phone').click()
   await page.getByRole('button', { name: /Nokia/ }).click()
   await expect(page.getByRole('link', { name: /105/ })).toBeVisible()
   await page.screenshot({ path: 'test-results/counter-stock.png', fullPage: true })

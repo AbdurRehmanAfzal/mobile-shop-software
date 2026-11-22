@@ -4452,18 +4452,18 @@
     },
     "stockPage": {
       "title": "Stock worth",
-      "body": "How many phones are in the shop and what they are worth, by brand and then by model.",
-      "example": "Samsung 8 phones worth Rs. 3,20,000, Infinix 5 phones worth Rs. 1,90,000 → total 13 phones, Rs. 5,10,000."
+      "body": "What is in the shop and what it is worth. First a card for each kind of stock — mobiles, tablets, smartwatches, laptops, accessories — with its pieces, its worth and how many brands and models. Tap a card for its brands, a brand for its models, a model for those pieces.",
+      "example": "Mobiles: 13 phones, Rs. 5,10,000, 2 brands · 6 models. Tap it → Samsung 8 phones, Infinix 5 phones → tap Samsung → A15 (4 phones) → tap A15 to see the 4 phones."
     },
     "stockValue": {
       "title": "Stock in shop",
-      "body": "Total value of the phones, tablets and watches in stock now. The owner and manager see it at buying price, other staff at selling price. Counted items (chargers, covers) are not included.",
+      "body": "The worth of the stock shown here: on the first screen every card together (accessories too, when your shop keeps them), inside a card that kind only. The owner and manager see it at buying price, other staff at selling price.",
       "example": "10 phones bought for Rs. 4,00,000 with asking prices of Rs. 4,50,000 → the owner sees Rs. 4,00,000, a salesman sees Rs. 4,50,000."
     },
     "stockBrands": {
-      "title": "By brand",
-      "body": "Each brand with how many phones and their value, the biggest first. Tap a brand to see its models; tap a model to see those phones.",
-      "example": "Tap Samsung → A15 (4 phones), A35 (2), S23 (2); tap A15 to see the 4 phones."
+      "title": "By kind, brand and model",
+      "body": "Each kind of stock has a card; tap it. Then each brand with how many pieces and their value, the biggest first. Tap a brand to see its models; tap a model to see those pieces in the stock list. Accessories open by their kind (chargers, covers …).",
+      "example": "Tap Mobiles → tap Samsung → A15 (4 phones), A35 (2), S23 (2); tap A15 to see the 4 phones."
     }
   },
   "sale": {
