@@ -5,7 +5,7 @@ own branch; read each page's structure and build what is new in it; keep everyth
 disturb the shops that run the software. A `staging` branch from `main`: every branch is merged into
 `staging` first, tested there, and only then `staging` goes to `main`." Decision: ADR-132.
 
-Status: **`ui/00-foundation` is merged into `staging` and the staging site runs (`https://staging-mobileshop.oopsolutions.com`). `ui/01-stock-summary` is built on its branch (pull request into `staging` on the owner's "push").** Next: `ui/02-sale`.
+Status: **`ui/00-foundation` and `ui/01-stock-summary` are on `staging` and the staging site (`https://staging-mobileshop.oopsolutions.com`). `ui/02-sale` is in work on its branch: part A (the stock as cards, quick ticks) is committed; part B (the bill side) is next.**
 
 ## 1. The source
 
@@ -153,6 +153,30 @@ log, manual when the steps a shopkeeper follows changed).
 | Not built | "Counter #1 Online"; the switch between two shops' sample data; "Stock health: Healthy" as a judgement (the card says what is known: how many items run low); print / share buttons drawn on the item-wise card beyond the download and share it has |
 
 Server: `reports.stock_summary` gained `avg`, `total`, `top_kind`, per kind `avg` / `share` / `top_brand`, per brand and model `avg` / `share`, per accessories kind `share` — percentages as plain numbers, added keys only (ADR-131's rule: the page shows the server's figures; it orders and searches, nothing more).
+
+### `ui/02-sale` — what was found (mock-ups 14, 15) and what is built so far
+
+Reading `SaleWizard.tsx` corrected the first table: most of what the mock-ups show **already exists** —
+on a laptop the stock and the bill side by side, held bills (`HeldSales.tsx`), warranty per line, the
+scanner, discount, tax, several pieces of one model at once. And the app does much the mock-ups do not
+show, all of which stays: installments, money from abroad, cash given and the change, the old udhaar
+taken from the change, editing a bill, the ID-check skip and the stolen flag, selling below cost with
+the owner's yes, the asking price revised at the counter, price hints, what goes with the phone
+(now / later). So the sale is restyled in place, not rebuilt.
+
+| | |
+|---|---|
+| Exists, kept | everything above; every `data-testid`; the kind buttons; "Pick several"; the search with Scan |
+| New, part A (built) | the stock as **cards** (`SaleStockCard`: name and details, marks, IMEI, asking price, cost only when the server sent it), a card on the bill is marked, **quick ticks** that hide cards (only box pack, only PTA approved, ID check pending, without faulty), a line saying how many are shown; in the Counter design a wide page uses the screen's width |
+| New, part B (not built yet) | the bill side as in the mock-up: compact lines with the deal price typed in place, the total and Complete sale staying in view, the bill's estimated profit for a login with `VIEW_COST`, the customer on top (walk-in / khata) |
+| Not built | "Simulate scan" and its beep; brand pills (mock-up 15 only — a brand's name as a second button on the screen collides with picking a phone by its name; the search does it); counts on the kind buttons (the stock screen's count includes pieces that cannot be sold, so it would not match the list) |
+
+**Five Playwright tests fail on `staging` without any sale change** (found 2026-11-23 by running them with
+the change stashed): `forms-keep` (Print sticker on a phone's page), `offline` ("Sold" on the stock
+list), `plan-reminders` (the receipt's number), `pricehint` ("Change asking price" on a phone's page),
+`urdu` (USB / LAN / CP on the settings page). They are stale against earlier work (the phone's page of
+ADR-114, the printers card of ADR-119) — Playwright is not part of CI. To be repaired in a branch of
+their own before the release to `main`.
 
 ## 6. Decided by the owner
 

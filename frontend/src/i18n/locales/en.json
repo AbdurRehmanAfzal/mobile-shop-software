@@ -619,7 +619,16 @@
     "multi": "Pick several",
     "addPicked": "Add {{n}} to the bill",
     "priceEach": "Price each",
-    "setAll": "Set for all {{n}}"
+    "setAll": "Set for all {{n}}",
+    "costLine": "Cost {{v}}",
+    "shown": "{{n}} to sell · tap a card to put it on the bill",
+    "noneMatch": "Nothing matches these ticks",
+    "f": {
+      "boxPack": "Only box pack",
+      "pta": "Only PTA approved",
+      "idPending": "ID check still pending",
+      "noFaulty": "Without faulty"
+    }
   },
   "pay": {
     "title": "Payment",

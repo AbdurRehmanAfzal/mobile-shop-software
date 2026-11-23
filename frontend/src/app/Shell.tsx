@@ -184,7 +184,7 @@ export default function Shell() {
       <div className={`flex flex-1 gap-6 ${counter ? 'lg:px-6' : 'lg:px-5'}`}>
         {counter ? null : <SidePanel />}
 
-        <main className={`min-w-0 flex-1 px-5 pb-28 pt-1 max-[379px]:px-4 lg:px-0 lg:pb-10 ${wide ? 'lg:max-w-5xl' : 'lg:max-w-3xl'}`}>
+        <main className={`min-w-0 flex-1 px-5 pb-28 pt-1 max-[379px]:px-4 lg:px-0 lg:pb-10 ${wide ? (counter ? 'lg:max-w-[1400px]' : 'lg:max-w-5xl') : 'lg:max-w-3xl'}`}>
           <Outlet />
         </main>
       </div>
