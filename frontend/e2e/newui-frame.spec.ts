@@ -44,9 +44,10 @@ test('the new product at /new: its frame, its keys, Urdu, and the live software 
   await jobs.getByRole('link', { name: /Stock/ }).click()
   await expect(page).toHaveURL(/\/new\/stock\/summary$/)
   await expect(panel).toBeVisible()
-  await expect(page.getByTestId('newui-open-old')).toHaveAttribute('href', '/stock/summary')
+  await expect(page.getByTestId('nsum')).toBeVisible() // drawn: the stock summary
   await page.keyboard.press('F4')
   await expect(page).toHaveURL(/\/new\/khata$/)
+  await expect(page.getByTestId('newui-open-old')).toHaveAttribute('href', '/khata') // not drawn yet
   await page.getByTestId('newui-tiles').getByRole('link', { name: 'Purchases' }).click()
   await expect(page).toHaveURL(/\/new\/purchases$/)
 

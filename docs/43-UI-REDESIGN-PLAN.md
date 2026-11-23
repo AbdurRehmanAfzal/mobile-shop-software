@@ -5,7 +5,7 @@ own branch; read each page's structure and build what is new in it; keep everyth
 disturb the shops that run the software. A `staging` branch from `main`: every branch is merged into
 `staging` first, tested there, and only then `staging` goes to `main`." Decision: ADR-132.
 
-Status: **ADR-134 under way. The live software is exactly what `main` has. The new product stands at `/new` with the mock-ups' frame, and its first screen is drawn: **the stock summary** (`/new/stock/summary`) from mock-up 11 screen 1 and the kind icons of mock-up 13. Everything else under `/new` says it is not drawn yet and opens the live address. Next: the brand and model drill-down (mock-up 11 screen 2), then the sale (14, 15).**
+Status: **ADR-134 under way. The live software is exactly what `main` has. The new product at `/new` has its frame and two screens drawn: the stock summary and the brand / model drill-down (file 11, screens 1 and 2). Everything else under `/new` says it is not drawn yet and opens the live address. Next: the sale (files 14 and 15).**
 
 ## 1. The source
 
@@ -223,6 +223,8 @@ discount and what it earns (`LineFoot`, ADR-124), the review before saving, the 
 |---|---|---|
 | The frame | `11-frame-stock-summary-and-dashboard` panel + header | class for class; the prototype's screen-switcher tabs and "Counter #1 Online" are sample decoration and are not built |
 | `/new/stock/summary` | the same file, screen 1, with mock-up 13's kind icons | hero (worth, avg. unit cost, top category with its biggest brand, stock health), active kind cards with their share bar, empty kinds with "+ Add", the three export cards. Dropped as sample: the two-shop dataset toggle. Kept from the live software because they are rules, not drawing: the tally sheet's permission (owner copy / staff copy / ask the owner, with the owner answering requests) and `basis` — a salesman sees selling prices and no cost |
+
+| `/new/stock/summary?kind=` | file 11, screen 2 | breadcrumb heading (kind, worth, counts), search, the three orders, the "capital concentration" bar (the biggest three brands and the rest, as the file colours them) with its caption, brands that open into model cards with each model's part of the brand; a model opens its pieces in the stock list. Server: `stock_summary` gained `top3_share` and `others_share` (added keys) so the caption is the server's figure. Designed here (no drawing): accessories have no brands, so their kinds are shown in the same cards. Not built: the file's "✓ audited" mark per brand |
 
 ### A feature the files do not draw (owner, 2026-11-23)
 

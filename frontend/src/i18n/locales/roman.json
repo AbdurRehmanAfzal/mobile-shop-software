@@ -6339,5 +6339,21 @@
     "detailed": "Tafseeli",
     "downloadExcel": "Excel download",
     "needOwner": "Yeh copy malik ki ijazat se milti hai"
+  },
+  "ndrill": {
+    "backToStock": "Stock par wapas",
+    "search": "Brand ya model talash karein (maslan iPhone 17)…",
+    "sortValue": "Zyada maliyat",
+    "sortUnits": "Zyada adad",
+    "sortAvg": "Ausat qeemat",
+    "capital": "Paisa kis brand mein laga hai",
+    "topHold": "Sab se bare {{n}} brand mein {{kind}} ka {{p}}% paisa laga hai",
+    "others": "{{n}} doosre brand ({{p}}%)",
+    "capitalShare": "Paise mein hissa",
+    "shareShort": "{{p}}% hissa",
+    "avg": "Ausat {{v}}",
+    "ofBrand": "{{name}} ka {{p}}%",
+    "noMatch": "\"{{q}}\" se koi brand ya model nahi mila",
+    "tryAnother": "Koi aur brand ya model likh kar dekhein"
   }
 }

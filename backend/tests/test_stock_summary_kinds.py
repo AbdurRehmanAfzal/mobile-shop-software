@@ -131,6 +131,7 @@ def test_averages_shares_and_the_top_of_each(client, owner, cat):
     # one kind: a brand's part of that kind, a model's part of its brand
     p = owner.get(URL, params={"category": "phone"}).json()
     assert p["avg"] == "1500.00"
+    assert (p["top3_share"], p["others_share"]) == (100.0, 0.0)  # one brand holds it all
     b = p["brands"][0]
     assert (b["avg"], b["share"]) == ("1500.00", 100.0)
     assert (b["models"][0]["avg"], b["models"][0]["share"]) == ("1500.00", 100.0)

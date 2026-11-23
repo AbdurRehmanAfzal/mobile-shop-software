@@ -452,6 +452,9 @@ export interface StockSummary {
   avg?: Money
   total?: Money
   top_kind?: string | null
+  /** ADR-134: the three biggest brands' part of the list and the rest's */
+  top3_share?: number
+  others_share?: number
   /** ADR-131: per type of device, and the accessories by their kind (an older server sends neither) */
   kinds?: { key: string; count: number; value: Money; brands: number; models: number; avg?: Money; share?: number; top_brand?: { name: string; count: number; share: number } | null }[]
   items?: { items: number; pieces: number; value: Money; low: number; out: number; share?: number; kinds: { key: string; items: number; pieces: number; value: Money; share?: number }[] }
