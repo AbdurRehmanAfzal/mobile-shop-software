@@ -6339,5 +6339,21 @@
     "detailed": "Detailed",
     "downloadExcel": "Download Excel",
     "needOwner": "The owner allows this copy"
+  },
+  "ndrill": {
+    "backToStock": "Back to Stock",
+    "search": "Search brand or model (e.g. iPhone 17)…",
+    "sortValue": "Highest value",
+    "sortUnits": "Most units",
+    "sortAvg": "Avg price",
+    "capital": "Capital concentration by brand",
+    "topHold": "Top {{n}} brands hold {{p}}% of the {{kind}} investment",
+    "others": "{{n}} other brands ({{p}}%)",
+    "capitalShare": "Capital share",
+    "shareShort": "{{p}}% share",
+    "avg": "Avg {{v}}",
+    "ofBrand": "{{p}}% of {{name}}",
+    "noMatch": "No brand or model matched \"{{q}}\"",
+    "tryAnother": "Try another brand or model name"
   }
 }

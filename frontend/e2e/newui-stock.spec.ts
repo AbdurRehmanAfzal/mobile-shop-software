@@ -66,10 +66,10 @@ test('new product: the stock summary as the mock-up draws it', async ({ page, re
   await page.screenshot({ path: 'test-results/newui-stock-dark.png', fullPage: true })
   await page.getByTestId('newui-theme').click()
 
-  // a card opens that kind; the drill-down is drawn next, so it says so for now
+  // a card opens that kind, brand by brand (newui-drill.spec.ts tests that screen)
   await phones.click()
   await expect(page).toHaveURL(/\/new\/stock\/summary\?kind=phone$/)
-  await expect(page.getByTestId('newui-open-old')).toHaveAttribute('href', '/stock/summary?kind=phone')
+  await expect(page.getByTestId('ndrill')).toBeVisible()
 
   // a salesman sees the selling price, never the cost
   const sm = `034${Math.floor(10_000_000 + Math.random() * 89_999_999)}`

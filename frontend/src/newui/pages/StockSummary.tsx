@@ -1,5 +1,5 @@
 /** "What is my stock worth?" in the new product (ADR-134), drawn from the owner's mock-up
- *  `…pos_stock_ui (4).html` screen 1 and the kind icons of `luxury_stock_cards_preview.html`:
+ *  `11-frame-stock-summary-and-dashboard.html` screen 1 and the kind icons of `13-stock-cards-preview.html`:
  *  the obsidian hero with its lime glow and three facts, the kinds that hold stock as big cards
  *  with their share bar, the empty kinds as a compact row with "+ Add", and the three export cards.
  *
@@ -25,7 +25,7 @@ import {
   IconKindItems, IconKindLaptop, IconKindPhone, IconKindTablet, IconKindWatch, IconList,
   IconPrinter, IconShare,
 } from '../icons'
-import { Soon } from '../Shell'
+import NewStockDrill from './StockDrill'
 
 const n = (v: string | number) => Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 })
 const pct = (v: number | undefined) => (v ?? 0).toLocaleString('en-US', { maximumFractionDigits: 1 })
@@ -56,8 +56,9 @@ export default function NewStockSummary() {
   const { data } = useGet<StockSummary>(['stock-summary', ''], '/api/v1/reports/stock-summary')
   const { data: acc } = useGet<TallyAccess>(['tally-access'], '/api/v1/staff-access/stock_tally')
 
-  // screen 2 (the brand drill-down) is drawn next; until then a kind opens the one that works
-  if (sp.get('kind')) return <Soon />
+  // screen 2: one kind, brand by brand
+  const asked = sp.get('kind')
+  if (asked && ['phone', 'tablet', 'watch', 'laptop', 'items'].includes(asked)) return <NewStockDrill kind={asked as CardKind} />
   if (!data) return <div className="py-20 flex justify-center"><span className="h-8 w-8 animate-spin rounded-full border-2 border-slate-300 border-t-obsidian-900 dark:border-slate-700 dark:border-t-[#B4F000]" /></div>
 
   const kinds: CardKind[] = [...(trade.mobiles ? (['phone', 'tablet', 'watch'] as const) : []), ...(trade.laptops ? (['laptop'] as const) : []), ...(trade.accessories ? (['items'] as const) : [])]

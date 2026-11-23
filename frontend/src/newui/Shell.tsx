@@ -3,7 +3,7 @@
  *  of nine, and the "Quick IMEI Focus" hint at its foot; above the page a sticky bar with the IMEI
  *  search and Scan, the language, light / dark, messages and who is logged in.
  *
- *  Every class here is the mock-up file's own (`new mobile shop ui/…pos_stock_ui (4).html`), with
+ *  Every class here is the mock-up file's own (`new mobile shop ui/11-frame-stock-summary-and-dashboard.html`), with
  *  one change: `left`/`right` are written as `start`/`end` so Urdu (RTL) puts the panel on the
  *  right — in English the pixels are the same. This product lives under `/new` and shares nothing
  *  with the software the shops run; that one is untouched. */

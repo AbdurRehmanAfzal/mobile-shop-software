@@ -487,6 +487,9 @@ def stock_summary(
         "count": shown,
         "value": shown_value,
         "avg": _avg(shown_value, shown),
+        # ADR-134: the brand bar's caption — the three biggest brands' part and the rest's
+        "top3_share": _share(money(sum((b["value"] for b in out[:3]), ZERO)), shown_value),
+        "others_share": _share(money(sum((b["value"] for b in out[3:]), ZERO)), shown_value),
         "total": total,
         "top_kind": best[1] if best[0] > 0 else None,
         "brands": out,
