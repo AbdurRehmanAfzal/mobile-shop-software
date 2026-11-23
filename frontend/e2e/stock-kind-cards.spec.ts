@@ -106,7 +106,10 @@ test('stock: a card per kind, then brands, models and the list', async ({ page, 
   await expect(page.getByText('Fast Charger').first()).toBeVisible()
   await expect(page.getByText('Back Cover')).toHaveCount(0)
 
-  // ADR-132, the redrawn summary: what a piece comes to, the biggest part and each card's part of the money
+  // ADR-132 / ADR-133, the new design's summary: what a piece comes to, the biggest part and each card's part of the money
+  await expect(page.getByTestId('hero-avg')).toHaveCount(0) // the page the shops know has none of it
+  await page.goto('/more/appearance')
+  await page.getByTestId('look-layout-counter').click() // ADR-133: the mock-ups' version is the "New design"
   await page.goto('/stock/summary')
   await expect(page.getByTestId('hero-avg')).toContainText('Rs. 20,000') // 60,000 over three devices
   await expect(page.getByTestId('hero-top')).toContainText('Tablets')

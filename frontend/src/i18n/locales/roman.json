@@ -4443,8 +4443,8 @@
         "hint": "Gehra panel, baray hindse"
       },
       "counter": {
-        "name": "Counter",
-        "hint": "Poore panel par dukan ka naam, kaam tiles mein apne button ke sath"
+        "name": "Naya design",
+        "hint": "Nayi screens — aazma kar batayein kaun sa aasan hai"
       }
     },
     "palette": "Rangon ka set",
@@ -6237,7 +6237,8 @@
     "lineDiscount": "Is line par riayat (raqam)",
     "lineDiscountBig": "Line ki raqam se zyada",
     "s3keep": "3. Kaun se rang ya size rakhte hain?",
-    "s4keep": "4. Kitne maujood hain, aur qeematein"
+    "s4keep": "4. Kitne maujood hain, aur qeematein",
+    "pickFirst": "Pehle chunein ke maal kis se aaya — bill sath hi khul jayega"
   },
   "pkg": {
     "title": "Aap ke package mein shamil nahi",

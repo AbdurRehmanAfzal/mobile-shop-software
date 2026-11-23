@@ -5,7 +5,7 @@ own branch; read each page's structure and build what is new in it; keep everyth
 disturb the shops that run the software. A `staging` branch from `main`: every branch is merged into
 `staging` first, tested there, and only then `staging` goes to `main`." Decision: ADR-132.
 
-Status: **`ui/00-foundation` and `ui/01-stock-summary` are on `staging` and the staging site (`https://staging-mobileshop.oopsolutions.com`). `ui/02-sale` is built on its branch (stock cards and quick ticks; on the bill side each line's cost and margin, the buyer first and the total staying in view on a laptop) — pull request into `staging`.** Next: `ui/03-add-stock`.
+Status: **Two versions side by side (ADR-133): every redesigned page keeps its old version and shows the mock-ups' version only in the "New design" (Appearance). On `staging`: foundation, stock summary, sale. On `ui/03-add-stock` (to be pushed): the split into two versions for all three pages, and the new purchase — two panes on a laptop with the device's form on the screen and pills. Next: `ui/04-purchases`.**
 
 ## 1. The source
 
@@ -181,6 +181,20 @@ list), `plan-reminders` (the receipt's number), `pricehint` ("Change asking pric
 ADR-114, the printers card of ADR-119) — Playwright is not part of CI. To be repaired in a branch of
 their own before the release to `main`.
 
+### `ui/03-add-stock` — what was found (mock-up 01) and what is built so far
+
+Already in the app, so not "new": the locked phone (iCloud / FRP) as its own button (`LockedLineSheet`,
+ADR-085), Apple's region variant (`AppleVariant`), the dealer's khata state beside the picker, a line's
+discount and what it earns (`LineFoot`, ADR-124), the review before saving, the stickers after it.
+
+| | |
+|---|---|
+| Exists, kept | the three steps on a phone, the source cards, the person picker, every add button, the bill's lines, discount, "when bought", the payment, the review sheet, the done step with stickers and the ID check, every `data-testid` |
+| New, part A (built) | on a laptop "from whom" and the bill side by side — the bill opens once the seller is chosen, the total and **Put in stock** stay in view; the page uses the wide layout |
+| New, part B (built, new design only) | on a laptop the device's form opens **on the screen** under "from whom", beside the bill — no sheet over the page — for a new line, a locked phone and an edit; **memory and colour are pills** (a second tap takes the choice back). Brand, model, condition, PTA and SIM lock were buttons already. On a phone the form stays a sheet (there is no room beside the bill), with the pills |
+| Checked: already there | shelf / place, warranty months, "Later" for what came with the phone, cheque in the payment picker — all in the existing form, so in both versions |
+| Not built | "Auto-gen test IMEI" |
+
 ## 6. Decided by the owner
 
 Nothing is open. Decided 2026-11-23 (second answer):
@@ -194,8 +208,7 @@ Nothing is open. Decided 2026-11-23 (second answer):
   database and `deploy.yml` are not touched. Owner's one-time server command: `docs/29-OWNER-PENDING.md`.
 - **The pages reach the shops together**: the foundation and the fifteen screens collect on `staging`
   and go to `main` in one release (or two or three groups the owner names), not page by page.
-- **Counter becomes the default design when that release goes to `main`**, not before; until then it is
-  chosen under Appearance. A shop that already chose a design keeps it.
+- ~~Counter becomes the default design with the release~~ — replaced 2026-11-23 (ADR-133): **both versions are given to the shopkeepers**; the old screens stay the default and exactly as they are, the mock-ups' version is the "New design" under Appearance; their feedback decides what happens next. The new version is built according to the mock-ups (so add stock becomes one screen with pills there).
 
 Decided (owner, 2026-11-23):
 

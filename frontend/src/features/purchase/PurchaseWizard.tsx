@@ -1,8 +1,10 @@
 import LockedLineSheet from './LockedLineSheet'
-import { Lock, Check, Headphones, PackagePlus, Pencil, Plus, Printer, ShieldCheck, SlidersHorizontal, Smartphone, Store, Trash2, UserCheck, UserRound, Watch } from 'lucide-react'
+import { X, Lock, Check, Headphones, PackagePlus, Pencil, Plus, Printer, ShieldCheck, SlidersHorizontal, Smartphone, Store, Trash2, UserCheck, UserRound, Watch } from 'lucide-react'
 import { faultText } from '@/features/stock/Faults'
 import { useEffect, useState, type ReactNode } from 'react'
 import { clearDrafts, useDraft } from '@/lib/draft'
+import { useLaptop } from '@/lib/useMedia'
+import { useNewUi } from '@/lib/theme'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
@@ -183,15 +185,46 @@ export default function PurchaseWizard() {
   // ADR-109: a shop without mobiles says "stock", not "phone"; one without phones or laptops
   // (accessories only) has no device to add and nobody's phone to buy
   const trade = useTrade()
+  // ADR-132 (docs/43 mock-up 01): on a laptop "from whom" and the bill are side by side — the bill
+  // opens once the seller is chosen; a phone keeps its steps
+  const big = useLaptop()
+  const newUi = useNewUi() // ADR-133: off = the purchase as the shops know it, steps on every screen
+  const laptop = big && newUi
   const steps = [trade.devices ? 'counter.fromWhom' : 'goods.stepDealer', trade.mobiles ? 'counter.phoneAndCost' : 'goods.stepItems', 'counter.doneTitle']
   // ADR-123: an accessories shop buys from dealers only — one choice is no question, so the
   // dealer is asked straight away
   useEffect(() => { if (!trade.devices && (!chosen || kind !== 'supplier')) { setKind('supplier'); setChosen(true) } }, [trade.devices]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // the device's form: in a sheet, or (new design on a laptop, ADR-133) on the screen beside the bill
+  const editor = editing && editing.lock_type ? (
+          <LockedLineSheet
+            key={editing.key}
+            initial={editing}
+            again={devices.some((x) => x.key === editing.key)}
+            onSave={(d) => {
+              setDevices((xs) => (xs.some((x) => x.key === d.key) ? xs.map((x) => (x.key === d.key ? d : x)) : [...xs, d]))
+              setEditing(null)
+            }}
+          />
+        ) : editing ? (
+          <DeviceLineSheet
+            key={editing.key}
+            initial={editing}
+            again={devices.some((x) => x.key === editing.key)}
+            draftKey="purchase-line"
+            many
+            onSave={(d) => {
+              // ADR-110: a line with several pieces becomes one line per piece (a piece already on this bill is left out)
+              setDevices((xs) => (xs.some((x) => x.key === d.key) ? xs.map((x) => (x.key === d.key ? d : x)) : [...xs, ...expandDraft(d).filter((n) => !xs.some((x) => (n.imei1 && x.imei1 === n.imei1) || (!n.imei1 && n.serial && x.serial === n.serial)))]))
+              setEditing(null)
+            }}
+          />
+        ) : null
+
   return (
     <div className="flex flex-col gap-3">
       <PageHeader title="counter.addStock" help={<Help term="purchase.page" />} onBack={back} />
-      <Stepper steps={steps} current={step} onStep={step < 2 ? setStep : undefined} />
+      <div className={step < 2 && newUi ? 'lg:hidden' : ''}><Stepper steps={steps} current={step} onStep={step < 2 ? setStep : undefined} /></div>
       {replaceId ? (
         <div className="flex flex-col gap-2 rounded-2xl border border-gold/40 bg-gold/15 px-3 py-2.5" data-testid="purchase-editing">
           <span className="text-sm font-bold text-ink">{pick('sedit.editing').replace('{{no}}', replaceNo)}</span>
@@ -199,8 +232,9 @@ export default function PurchaseWizard() {
         </div>
       ) : null}
 
-      {step === 0 ? (
-        <div className="flex flex-col gap-3">
+      <div className={laptop && step !== 2 ? 'grid grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] items-start gap-6' : 'contents'} data-testid="buy-panes">
+      {step === 0 || (laptop && step === 1) ? (
+        <div className={`flex flex-col gap-3 ${newUi && !editing ? 'lg:sticky lg:top-24' : ''}`} data-testid="buy-from">
           {trade.devices ? <span className="flex items-center gap-1"><BiLabel text={trade.mobiles ? 'purchase.chooseTitle' : 'goods.chooseTitle'} size="lg" bold /><Help term="purchase.source" size="sm" /></span> : <BiLabel text="goods.dealerTitle" size="lg" bold />}
           {trade.devices ? <SourceCard
             help="purchase.fromDealer"
@@ -221,14 +255,24 @@ export default function PurchaseWizard() {
           {chosen ? (
             <>
               <div className="flex items-start gap-1"><div className="min-w-0 flex-1"><PartyPicker value={party} onChange={setParty} kind={partyKind} label={kind === 'supplier' ? 'purchase.selectDealer' : 'purchase.selectSeller'} /></div>{kind === 'supplier' ? <Help term="purchase.dealer" size="sm" /> : <Help term="purchase.seller" size="sm" />}</div>
-              <BiButton text="common.next" full disabled={!party} onClick={() => { setStep(1); if (!devices.length && (startImei || scanned)) setEditing({ ...emptyDraft(startImei, kind), manufacturer_code: startImei ? '' : scanned }) }} />
+              {step === 0 && !(laptop && party && !startImei && !scanned) ? <BiButton text="common.next" full disabled={!party} onClick={() => { setStep(1); if (!devices.length && (startImei || scanned)) setEditing({ ...emptyDraft(startImei, kind), manufacturer_code: startImei ? '' : scanned }) }} /> : null}
             </>
+          ) : null}
+          {laptop && editing ? (
+            <section className="card flex flex-col gap-3 border-2 border-ink" data-testid="buy-builder">
+              <div className="flex items-center justify-between gap-2">
+                <BiLabel text={devices.some((x) => x.key === editing.key) ? 'purchase.editDevice' : 'purchase.addDevice'} size="lg" bold />
+                <button type="button" onClick={() => setEditing(null)} className="tap flex min-h-11 items-center gap-1 rounded-xl border border-line bg-surface px-3 text-sm font-bold" data-testid="buy-builder-close"><X size={16} /><BtnText k={'common.close'} /></button>
+              </div>
+              {editor}
+            </section>
           ) : null}
         </div>
       ) : null}
 
-      {step === 1 ? (
-        <div className="flex flex-col gap-3">
+      {laptop && step === 0 && !party ? <div className="card flex items-center gap-3 border-dashed" data-testid="buy-wait"><Store size={22} className="shrink-0 text-muted" /><BiLabel text="buy.pickFirst" size="md" tone="text-muted" /></div> : null}
+      {step === 1 || (laptop && step === 0 && !!party) ? (
+        <div className="flex flex-col gap-3" data-testid="buy-bill">
           {trade.devices ? (!devices.length ? <BiLabel text="purchase.noDevices" size="md" tone="text-muted" align="center" className="py-4" /> : null) : !misc.length ? <BiLabel text="goods.none" size="md" tone="text-muted" align="center" className="py-4" /> : null}
           {devices.map((d) => (
             <div key={d.key} className="card flex items-center gap-3">
@@ -334,6 +378,7 @@ export default function PurchaseWizard() {
                 <div><IconChip icon={<SlidersHorizontal size={18} />} text="counter.moreBuyOptions" onClick={() => setMore(true)} /></div>
               )}
 
+              <div className={newUi ? 'flex flex-col gap-3 lg:sticky lg:bottom-3 lg:z-[5] lg:rounded-3xl lg:border lg:border-line lg:bg-ground/95 lg:p-2.5 lg:shadow-hero lg:backdrop-blur' : 'contents'} data-testid="buy-foot">
               <div className="hero flex flex-col gap-1 px-5 py-4">
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1"><BiLabel text="common.total" size="md" tone="text-hero-text" bold /><Help term="purchase.total" size="sm" /></span>
@@ -348,10 +393,12 @@ export default function PurchaseWizard() {
               </div>
               <ErrorText error={m.error ?? rep.error} />
               <BiButton text="counter.putInStock" icon={<PackagePlus size={22} />} full loading={m.isPending} disabled={(earlier && !when) || total <= 0 || !billPayReady(pay, part, paid) || (!!replaceId && replaceWhy.trim().length < 3)} onClick={() => { setChecked(false); m.reset(); setReviewing(true) }} data-testid="purchase-review-open" />
+              </div>
             </>
           ) : null}
         </div>
       ) : null}
+      </div>
 
       {step === 2 && result ? (
         <div className="flex flex-col gap-3">
@@ -487,31 +534,8 @@ export default function PurchaseWizard() {
         ) : null}
       </Sheet>
 
-      <Sheet open={editing !== null} onClose={() => setEditing(null)} title={editing && devices.some((x) => x.key === editing.key) ? 'purchase.editDevice' : 'purchase.addDevice'}>
-        {editing && editing.lock_type ? (
-          <LockedLineSheet
-            key={editing.key}
-            initial={editing}
-            again={devices.some((x) => x.key === editing.key)}
-            onSave={(d) => {
-              setDevices((xs) => (xs.some((x) => x.key === d.key) ? xs.map((x) => (x.key === d.key ? d : x)) : [...xs, d]))
-              setEditing(null)
-            }}
-          />
-        ) : editing ? (
-          <DeviceLineSheet
-            key={editing.key}
-            initial={editing}
-            again={devices.some((x) => x.key === editing.key)}
-            draftKey="purchase-line"
-            many
-            onSave={(d) => {
-              // ADR-110: a line with several pieces becomes one line per piece (a piece already on this bill is left out)
-              setDevices((xs) => (xs.some((x) => x.key === d.key) ? xs.map((x) => (x.key === d.key ? d : x)) : [...xs, ...expandDraft(d).filter((n) => !xs.some((x) => (n.imei1 && x.imei1 === n.imei1) || (!n.imei1 && n.serial && x.serial === n.serial)))]))
-              setEditing(null)
-            }}
-          />
-        ) : null}
+      <Sheet open={editing !== null && !laptop} onClose={() => setEditing(null)} title={editing && devices.some((x) => x.key === editing.key) ? 'purchase.editDevice' : 'purchase.addDevice'}>
+        {laptop ? null : editor}
       </Sheet>
     </div>
   )

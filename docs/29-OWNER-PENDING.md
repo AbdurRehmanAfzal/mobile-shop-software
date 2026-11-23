@@ -353,6 +353,10 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **The redrawn sale (2026-11-23, ADR-132, `ui/02-sale`)** — on staging after its pull request is merged. To test: **Sell** — the stock is cards (name, marks, IMEI, asking price, and the cost for the owner); tick "Only box pack" and "Without faulty" and see cards hide; tap a card: it goes on the bill and its card is marked; the line says "Cost … · this one earns …" (type a price under the cost: "loses"); on a laptop the buyer's box is on top and the total with **Complete sale** stays in view while you scroll. Complete a cash sale, an udhaar sale and a held sale as before. Then: start a bill as the owner, log out, log in as a salesman on the same tab — the bill must be gone and no cost anywhere. On a phone the steps are as before.
 
+**Two versions for the shopkeepers (2026-11-23, ADR-133)** — on staging after the pull request is merged. More → Appearance → Design: **New design** shows the mock-ups' screens (the frame, the stock summary, the sale with cards, add stock with two panes on a laptop); **Classic** (or Tiles / Simple / Bold) shows every screen exactly as before. To test: pick Classic and check Stock, Sell and Add stock look as they always did; pick New design and check the same three. The choice is kept on the device, so two phones can show the two versions side by side. Nothing is the default but Classic.
+
+**Add stock in the new design (2026-11-23, ADR-133, `ui/03-add-stock`)** — on staging after its pull request is merged. Pick **New design**, on a laptop tap **Add stock**: choose "From a dealer" and the dealer — the bill opens on the right; **Add device** opens the phone's form on the same screen under the dealer (no pop-up); memory and colour are buttons to tap; **Add** puts the line on the bill; the total and **Put in stock** stay in view; Edit on a line opens the same form again. Finish the purchase and check the stickers and the stock as always. Then pick **Classic** and do the same purchase: it must be the three steps and the pop-up form exactly as before.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

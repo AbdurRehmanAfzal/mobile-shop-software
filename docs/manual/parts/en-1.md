@@ -278,7 +278,7 @@ Open **Appearance** from the **Profile** menu, from **More**, or from the button
 | Part | What it does |
 |---|---|
 | **Light or dark** | **Light**, **Dark**, or **System** (follows the phone's own setting). The **Dark** / **Light** item in the Profile menu does the same in one tap. |
-| **Design of the dashboard and side panel** | **Classic** (coloured rows and cards, as before), **Tiles** (big coloured tiles), **Simple** (a clean list, no boxes) **Bold** (dark side panel and big numbers) or **Counter** (on a laptop the side panel runs from top to bottom: the shop's name, the jobs as tiles with their keys F2 … F10, the shop's pages and who is logged in). On a laptop it also changes the side panel. |
+| **Design of the dashboard and side panel** | **Classic** (coloured rows and cards, as before), **Tiles** (big coloured tiles), **Simple** (a clean list, no boxes) **Bold** (dark side panel and big numbers) or **New design** (the new screens to try; on a laptop the side panel runs from top to bottom: the shop's name, the jobs as tiles with their keys F2 … F10, the shop's pages and who is logged in). On a laptop it also changes the side panel. |
 | **Colours** | The colour set of the whole app: **Modern**, **Professional**, **Navy**, **Colorful**, **Material**, **Mac**, **Lime** or **Fintech**. |
 | **Main colour** | The colour of buttons and highlights: **Default**, **Green**, **Blue**, **Purple**, **Red**, **Orange** or **Teal**. |
 | **Text size** | **Normal**, **Large** or **Extra large**. Good for older eyes. |

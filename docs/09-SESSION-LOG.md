@@ -2554,8 +2554,44 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 
 **Done**: on each phone's line of the bill, its cost and what it earns or loses (only when the server sent the cost); on a laptop the buyer's box is first and the total with Complete sale and Hold stays in view. Found while testing: a half-filled form outlives a logout in the same tab, so an owner's draft sale (with the phones' cost) came back for the salesman who logged in next — `auth.logout` now forgets every draft (`lib/draft.forgetAllDrafts`), pinned in `e2e/sale-cards.spec.ts`. Docs: the table in docs/43, CLAUDE.md, the owner's test steps.
 
-**Verified**: tsc; vitest 72; `sale-cards` (extended: margin, loss, buyer first, the total in view, logout → salesman sees no bill and no cost); the 45 Playwright tests that go through the sale or the logout (without the five stale ones): 44 had passed with no failure when this was written, the last was still running — its result is in the pull request. **Not done**: Urdu and dark screenshots of the sale; the manual's sale section; the bill's total estimated profit (docs/43 says why).
+**Verified**: tsc; vitest 72; `sale-cards` (extended: margin, loss, buyer first, the total in view, logout → salesman sees no bill and no cost); the 45 Playwright tests that go through the sale or the logout (without the five stale ones): all 45 passed (the last finished just after the commit). **Not done**: Urdu and dark screenshots of the sale; the manual's sale section; the bill's total estimated profit (docs/43 says why).
 
 **Next**: `ui/03-add-stock`; the five stale tests before the release.
 
 **Open questions**: none new.
+
+## 2026-11-23 (8) — Add stock, part A (`ui/03-add-stock`)
+
+**Asked (owner)**: "push" (PR #117, merged by him); "ok start".
+
+**Done**: branch `ui/03-add-stock` from `staging`. Read the purchase form: the locked phone, Apple's variant, the dealer's khata state and a line's margin already exist (docs/43 corrected). Part A: on a laptop the "from whom" block and the bill are side by side (the bill appears once the seller is chosen; "Next" stays for a start from a scan), the total and Put in stock stay in view, `/purchase/new` uses the wide layout; a phone keeps its steps. One new string in three languages.
+
+**Verified**: tsc; new `buy-panes` (phone steps, laptop panes, no sideways scroll) passes; the 36 Playwright tests that go through the purchase form: 35 passed, `counter` "profit, best sellers…" failed once in the 30-minute run (the sale's stock card was not found) and, run alone, fails only on a cold first page load (5 s) and passes on the retry — flaky under load on this machine, not pinned down further. Laptop screenshot looked at.
+
+**Next**: the owner's choice for the device's details (pills in the step-by-step sheet — recommended — or one screen); then the pull request into `staging`.
+
+**Open questions**: that choice.
+
+## 2026-11-23 (9) — Two versions side by side (ADR-133)
+
+**Asked (owner)**: we make two versions — the one that runs now and the one according to the mock-ups — give both to the shopkeepers and go on by their feedback; build according to the mock-ups now; save this.
+
+**Done**: `useNewUi()` (the "New design" choice, `layout === 'counter'`). The stock summary is again the ADR-131 page (`StockSummaryClassic`, restored from before `ui/01`) unless the new design is on (`StockSummaryNew`); the sale shows its rows as before and the cards, ticks, line margin, buyer-first and sticky total only in the new design; the purchase keeps its steps on every screen and is two panes only in the new design. The design's name is now "New design" in three languages (manual too). ADR-133, CLAUDE.md, docs/43, the owner's test steps; a memory note for later sessions.
+
+**Verified**: tsc; Playwright `stock-kind-cards`, `sale-cards`, `buy-panes` (each now checks the old version first, then picks the new design), `counter-frame`, `appearance`, `devcat` — passed (one cold-start retry); vitest 72; the manual rebuilt in three languages. **Not done**: the full sale / purchase sets were not rerun after the split (the old code paths are the restored ones).
+
+**Next**: the purchase as one screen with pills in the new design (mock-up 01); then the pull request into `staging`.
+
+**Open questions**: none.
+
+## 2026-11-23 (10) — Add stock in the new design: the device's form on the screen, pills
+
+**Asked (owner)**: build according to the mock-ups (ADR-133).
+
+**Done**: in the new design on a laptop the device's form (`DeviceLineSheet`, `LockedLineSheet`) is shown on the screen under "from whom", beside the bill, instead of in a sheet — for a new line, a locked phone and an edit; memory and colour are pills in the new design (`PickPills`). The form itself and its rules are the same code in both versions. The old version: the form's host was moved into one `editor` value, nothing else.
+
+**Verified**: tsc (run to its real exit code — an earlier check printed `head`'s); `buy-panes` extended (the form on the screen and not in a sheet, pills, a line lands on the bill, edit and close) passes; laptop screenshot looked at; the old version's `fix-after-purchase`, `purchase-cost`, `purchase-paid`, `purchase-return`, `devcat` and `counter` "profit…" pass — two of them only on the retry, each time stuck on the first page load after login (5 s) on this machine, never in the purchase. **Not done**: the full Playwright suite; Urdu and dark screenshots; the manual's add-stock section for the new design.
+
+**Next**: on "push" the pull request into `staging`; then `ui/04-purchases`.
+
+**Open questions**: none.

@@ -362,6 +362,14 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-133 · 2026-11-23 · Accepted · Two versions of the screens side by side: the one the shops use and the one from the mock-ups
+
+**Context**: the first redesign branches (stock summary, sale, add stock part A) changed the pages in place. The owner: "we make two versions — the one that runs now too, and the one built according to the mock-ups; we give both to the shopkeepers, and whichever they find easier decides how we go on. Build according to the mock-ups now." This also answers the open question of ADR-132's add-stock branch: the new version follows the mock-up (one screen, pills), because the step-by-step form stays available as the other version.
+
+**Decision**: (1) **One switch**: the "New design" choice under More → Appearance (`layout === 'counter'`, `useNewUi()` in `lib/theme.ts`) shows the mock-ups' version of every redesigned page; Classic, Tiles, Simple and Bold show every page exactly as it was before the redesign. It is kept on the device like the other looks, so a shop can put the two side by side on two phones. (2) **A redesigned page is built beside the old one**, never over it: `StockSummaryPage` chooses between `StockSummaryClassic` (the ADR-131 page, restored) and `StockSummaryNew`; the sale shows rows or cards, and its ticks, line margin, buyer-first and sticky total only in the new design; the purchase is steps, or two panes in the new design. (3) **The new version follows the mock-up closely**; what the app does and the mock-up does not show must still be reachable in it. (4) **The default stays Classic**; nothing becomes the default before the shopkeepers' feedback (this replaces "Counter becomes the default with the release" of 2026-11-23). (5) Shared fixes are not versioned: the server's added figures, and logging out forgetting half-filled forms, apply to both.
+
+**Tests**: the existing Playwright tests run in the default design and guard the old version; a test of the new version first picks `look-layout-counter`.
+
 ## ADR-132 · 2026-11-22 · Accepted · The UI is redesigned from the owner's mock-ups, page by page, through a `staging` branch
 
 **Context**: the owner had the screens redrawn (thirteen stand-alone HTML mock-ups: the frame, stock summary, add stock, purchases, a person's khata, cash and bank, the day's hisaab, expenses and closing the day, overview, repairs, a repair job, amanat, settings) and wants the app to look and work like them — "it is easy to use" — with every page on its own branch, everything that exists kept, what is new in a mock-up added, and the shops that run the software not disturbed.

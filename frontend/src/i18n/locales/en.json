@@ -4443,8 +4443,8 @@
         "hint": "Dark panel, big numbers"
       },
       "counter": {
-        "name": "Counter",
-        "hint": "The shop's name on a full panel, the jobs as tiles with their keys"
+        "name": "New design",
+        "hint": "The new screens — try them and tell us which is easier"
       }
     },
     "palette": "Colours",
@@ -6237,7 +6237,8 @@
     "lineDiscount": "Discount on this line (amount)",
     "lineDiscountBig": "More than the line's total",
     "s3keep": "3. Which colours or sizes do you keep?",
-    "s4keep": "4. How many you have, and the prices"
+    "s4keep": "4. How many you have, and the prices",
+    "pickFirst": "Choose who it is from — the bill opens beside it"
   },
   "pkg": {
     "title": "Not in your package",
