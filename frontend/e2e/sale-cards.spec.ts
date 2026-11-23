@@ -52,13 +52,31 @@ test('sale: stock cards, quick ticks, cost only for those who may see it', async
   await expect(page.getByLabel('Sold for')).toHaveValue('7000')
   await expect(cards.filter({ hasText: '356938035643809' })).toHaveAttribute('aria-pressed', 'true')
   await expect(cards.filter({ hasText: '490154203237518' })).toHaveAttribute('aria-pressed', 'false')
+  // the line says what this piece cost and earns; a price under the cost says what it loses
+  await expect(page.getByTestId('line-margin')).toHaveText('Cost Rs. 6,000 · this one earns Rs. 1,000')
+  await page.getByLabel('Sold for').fill('5500')
+  await expect(page.getByTestId('line-margin')).toHaveText('Cost Rs. 6,000 · this one loses Rs. 500')
+  await page.getByLabel('Sold for').fill('7000')
+  // the buyer is asked first on a laptop, and the total with its buttons stays in view
+  const box = await page.getByTestId('customer-box').boundingBox()
+  const price = await page.getByLabel('Sold for').boundingBox()
+  expect(box!.y).toBeLessThan(price!.y)
+  await expect(page.getByTestId('sale-foot')).toBeInViewport()
+  await expect(page.getByTestId('sale-foot')).toContainText('Rs. 7,000')
   await page.screenshot({ path: 'test-results/sale-cards-laptop.png', fullPage: true })
 
-  // a salesman: the same cards, no cost on them
-  await page.evaluate(() => { localStorage.clear(); localStorage.setItem('locale', 'en') })
+  // the owner leaves a half-filled bill and logs out; a salesman logs in on the same tab: the bill
+  // is gone (it held the phone's cost), the cards are the same and carry no cost
   await page.setViewportSize({ width: 412, height: 900 })
+  await page.getByRole('button', { name: 'Profile' }).click()
+  await page.getByTestId('profile-logout').click()
+  await expect(page).toHaveURL(/\/(login|welcome)/)
   await login(sm, 'e2e-secret-2')
   await page.goto('/sale/new')
   await expect(cards).toHaveCount(2)
   await expect(page.getByTestId('sale-card-cost')).toHaveCount(0)
+  await expect(page.getByLabel('Sold for')).toHaveCount(0)
+  await cards.filter({ hasText: '490154203237518' }).click()
+  await expect(page.getByLabel('Sold for')).toHaveValue('5000')
+  await expect(page.getByTestId('line-margin')).toHaveCount(0)
 })

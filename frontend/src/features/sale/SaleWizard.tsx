@@ -487,6 +487,14 @@ export default function SaleWizard() {
                 </div>
               ) : null}
               <BiInput label="counter.soldFor" help={<Help term="sale.soldFor" size="sm" />} type="number" inputMode="numeric" min={0} value={l.price} onChange={(e) => setLines(lines.map((x) => (x.device.id === l.device.id ? { ...x, price: e.target.value } : x)))} className="num text-2xl" />
+              {l.device.cost_price != null && Number(l.price) > 0 ? (() => {
+                const gain = r2(Number(l.price) - Number(l.device.cost_price))
+                return (
+                  <span className={`font-semibold ${gain < 0 ? 'text-payable' : 'text-emerald-deep'} ${ur ? cls('sm') : 'text-xs'}`} data-testid="line-margin">
+                    {pick(gain < 0 ? 'sale.lineLoses' : 'sale.lineEarns').replace('{{c}}', withCur(Number(l.device.cost_price).toLocaleString('en-US'))).replace('{{m}}', withCur(Math.abs(gain).toLocaleString('en-US')))}
+                  </span>
+                )
+              })() : null}
               <PriceHint modelId={l.device.model_id} storageId={l.device.storage_id} condition={l.device.condition} excludeDeviceId={l.device.id} onUse={(p) => setLine(l, { price: String(p) })} />
               {belowCost(l) ? (
                 <div className="flex flex-col gap-2 rounded-2xl bg-expense p-3 text-expense-fg">
@@ -594,7 +602,7 @@ export default function SaleWizard() {
           ) : null}
 
           {!udhaar && !(owes && remitPkr(pay) > 0) ? (
-            <div className={`flex flex-col gap-2 rounded-3xl border-2 p-3 ${party || walkIn ? 'border-line' : 'border-gold'}`} data-testid="customer-box">
+            <div className={`flex flex-col gap-2 rounded-3xl border-2 p-3 lg:-order-1 ${party || walkIn ? 'border-line' : 'border-gold'}`} data-testid="customer-box">
               {!walkIn ? <PartyPicker value={party} onChange={(p) => { setParty(p); if (p) setWalkIn(false); else setToKhata(false) }} kind="customer" label="sale.whoBuys" /> : null}
               {!party ? (
                 <div className="flex items-center gap-1">
@@ -668,6 +676,7 @@ export default function SaleWizard() {
             </div>
           ) : null}
 
+          <div className="flex flex-col gap-3 lg:sticky lg:bottom-3 lg:z-[5] lg:rounded-3xl lg:border lg:border-line lg:bg-ground/95 lg:p-2.5 lg:shadow-hero lg:backdrop-blur" data-testid="sale-foot">
           <div className="hero flex flex-col gap-1 px-5 py-4">
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-1"><BiLabel text="common.total" size="md" tone="text-hero-text" bold /><span className="[&_button]:text-hero-text"><Help term="sale.total" size="sm" /></span></span>
@@ -689,6 +698,7 @@ export default function SaleWizard() {
           <ErrorText error={m.error ?? rep.error} />
           <BiButton text="sale.complete" icon={<Check size={22} />} full loading={(m.isPending || rep.isPending) && !confirming} disabled={!canSave || (!!replaceId && replaceWhy.trim().length < 3)} onClick={() => { if (lines.length) { m.reset(); setConfirming(true) } else void submit() }} />
           {(lines.length || misc.length) && has('held_sales') ? <BiButton text="hold.button" icon={<CirclePause size={22} />} full variant="secondary" onClick={() => { setHoldName(party?.name ?? ''); hold.reset(); setHolding(true) }} /> : null}
+          </div>
           {!lines.length && !misc.length && !laptop ? <BiButton text="counter.whichPhone" variant="secondary" full onClick={() => setStep(0)} /> : null}
         </div>
       ) : null}

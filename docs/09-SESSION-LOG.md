@@ -2547,3 +2547,15 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: part B — the bill side; then the manual's sale section and the pull request into `staging`.
 
 **Open questions**: none new.
+
+## 2026-11-23 (7) — The sale, part B, and drafts forgotten on logout (`ui/02-sale`)
+
+**Asked (owner)**: "start the next work"; then "push".
+
+**Done**: on each phone's line of the bill, its cost and what it earns or loses (only when the server sent the cost); on a laptop the buyer's box is first and the total with Complete sale and Hold stays in view. Found while testing: a half-filled form outlives a logout in the same tab, so an owner's draft sale (with the phones' cost) came back for the salesman who logged in next — `auth.logout` now forgets every draft (`lib/draft.forgetAllDrafts`), pinned in `e2e/sale-cards.spec.ts`. Docs: the table in docs/43, CLAUDE.md, the owner's test steps.
+
+**Verified**: tsc; vitest 72; `sale-cards` (extended: margin, loss, buyer first, the total in view, logout → salesman sees no bill and no cost); the 45 Playwright tests that go through the sale or the logout (without the five stale ones): 44 had passed with no failure when this was written, the last was still running — its result is in the pull request. **Not done**: Urdu and dark screenshots of the sale; the manual's sale section; the bill's total estimated profit (docs/43 says why).
+
+**Next**: `ui/03-add-stock`; the five stale tests before the release.
+
+**Open questions**: none new.

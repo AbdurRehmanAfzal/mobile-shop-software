@@ -628,7 +628,9 @@
       "pta": "Only PTA approved",
       "idPending": "ID check still pending",
       "noFaulty": "Without faulty"
-    }
+    },
+    "lineEarns": "Cost {{c}} · this one earns {{m}}",
+    "lineLoses": "Cost {{c}} · this one loses {{m}}"
   },
   "pay": {
     "title": "Payment",

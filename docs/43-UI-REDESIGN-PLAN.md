@@ -5,7 +5,7 @@ own branch; read each page's structure and build what is new in it; keep everyth
 disturb the shops that run the software. A `staging` branch from `main`: every branch is merged into
 `staging` first, tested there, and only then `staging` goes to `main`." Decision: ADR-132.
 
-Status: **`ui/00-foundation` and `ui/01-stock-summary` are on `staging` and the staging site (`https://staging-mobileshop.oopsolutions.com`). `ui/02-sale` is in work on its branch: part A (the stock as cards, quick ticks) is committed; part B (the bill side) is next.**
+Status: **`ui/00-foundation` and `ui/01-stock-summary` are on `staging` and the staging site (`https://staging-mobileshop.oopsolutions.com`). `ui/02-sale` is built on its branch (stock cards and quick ticks; on the bill side each line's cost and margin, the buyer first and the total staying in view on a laptop) — pull request into `staging`.** Next: `ui/03-add-stock`.
 
 ## 1. The source
 
@@ -168,8 +168,11 @@ the owner's yes, the asking price revised at the counter, price hints, what goes
 |---|---|
 | Exists, kept | everything above; every `data-testid`; the kind buttons; "Pick several"; the search with Scan |
 | New, part A (built) | the stock as **cards** (`SaleStockCard`: name and details, marks, IMEI, asking price, cost only when the server sent it), a card on the bill is marked, **quick ticks** that hide cards (only box pack, only PTA approved, ID check pending, without faulty), a line saying how many are shown; in the Counter design a wide page uses the screen's width |
-| New, part B (not built yet) | the bill side as in the mock-up: compact lines with the deal price typed in place, the total and Complete sale staying in view, the bill's estimated profit for a login with `VIEW_COST`, the customer on top (walk-in / khata) |
-| Not built | "Simulate scan" and its beep; brand pills (mock-up 15 only — a brand's name as a second button on the screen collides with picking a phone by its name; the search does it); counts on the kind buttons (the stock screen's count includes pieces that cannot be sold, so it would not match the list) |
+| New, part B (built) | on each phone's line "Cost … · this one earns / loses …" when the server sent the cost; on a laptop the buyer is asked first and the total with Complete sale and Hold stays in view while the bill scrolls |
+| Left as it is | the lines keep their full height: warranty and what goes with the phone stay open on every line (owner 2026-10-27: hidden behind "more options" nobody found them) |
+| Not built | the whole bill's "estimated profit" (the app does not hold an accessory's cost, so the figure would be part of the truth — the line's own margin is shown instead; a true figure needs a server preview like the return's, ADR-102); "Simulate scan" and its beep; brand pills (mock-up 15 only — a brand's name as a second button on the screen collides with picking a phone by its name; the search does it); counts on the kind buttons (the stock screen's count includes pieces that cannot be sold, so it would not match the list) |
+
+**Found and closed**: a half-filled form is kept in the tab for 30 minutes (`lib/draft`), and logging out did not clear it — an owner's draft sale holds the phones' cost, and a salesman logging in on the same tab got the bill back (the below-cost warning could already show it). `auth.logout` now forgets every draft (`forgetAllDrafts`); `e2e/sale-cards.spec.ts` pins it.
 
 **Five Playwright tests fail on `staging` without any sale change** (found 2026-11-23 by running them with
 the change stashed): `forms-keep` (Print sticker on a phone's page), `offline` ("Sold" on the stock

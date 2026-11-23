@@ -351,6 +351,8 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **The redrawn stock summary (2026-11-23, ADR-132, `ui/01-stock-summary`)** — on staging after its pull request is merged. To test: add a few phones of two brands, a tablet and two accessories; tap **Stock**: the dark heading shows the total, what one piece comes to, the biggest kind with its percentage and how many accessories run low; kinds with stock are big cards (biggest brand, part of all the stock), kinds with nothing are small under "Nothing in stock yet". Open **Mobiles**: the bar "Where the money sits", search a model's name, try "Most pieces" and "Dearest", open a brand and tap a model — it must open the stock list with that model. Open a kind with nothing: **Add stock** must open the purchase form. As a salesman every figure must be at the selling price. On a phone and in Urdu too.
 
+**The redrawn sale (2026-11-23, ADR-132, `ui/02-sale`)** — on staging after its pull request is merged. To test: **Sell** — the stock is cards (name, marks, IMEI, asking price, and the cost for the owner); tick "Only box pack" and "Without faulty" and see cards hide; tap a card: it goes on the bill and its card is marked; the line says "Cost … · this one earns …" (type a price under the cost: "loses"); on a laptop the buyer's box is on top and the total with **Complete sale** stays in view while you scroll. Complete a cash sale, an udhaar sale and a held sale as before. Then: start a bill as the owner, log out, log in as a salesman on the same tab — the bill must be gone and no cost anywhere. On a phone the steps are as before.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |

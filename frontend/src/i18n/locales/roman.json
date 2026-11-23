@@ -628,7 +628,9 @@
       "pta": "Sirf PTA approved",
       "idPending": "ID card ki jaanch baqi",
       "noFaulty": "Kharab ke baghair"
-    }
+    },
+    "lineEarns": "Khareed {{c}} · is par munafa {{m}}",
+    "lineLoses": "Khareed {{c}} · is par nuqsan {{m}}"
   },
   "pay": {
     "title": "Paise",
