@@ -2607,3 +2607,15 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: undo the `if (newUi)` branches in `SaleWizard`, `PurchaseWizard`, `DeviceLineSheet` and `StockSummaryPage` so the live pages are untouched, and start the new product in its own files (own shell + theme first, then the screens of §5) — once the owner has answered what the new product does with features no mock-up draws.
 
 **Open questions**: what the new product does with everything the app has that no mock-up draws (installments, remittance, FBR, exchange, transfers, old dealings, bulk import, the shop audit, the provider's control room). My recommendation: build it in the mock-ups' own visual language in the nearest place, and list each one in the pull request.
+
+## 2026-11-23 (12) — ADR-134 carried out: the live software restored, the new product's frame at `/new`
+
+**Asked (owner)**: the plan change of the previous entry.
+
+**Done**: branch `ui/04-new-product` from `staging`. **Live software back to `main` exactly**: `Shell`, `SidePanel`, `AppearancePage`, `theme.ts`, `StockSummaryPage`, `SaleWizard`, `PurchaseWizard`, `DeviceLineSheet` restored (`git diff origin/main` on them is empty); `StockSummaryClassic.tsx` deleted; the fifth "New design" look and its string removed. **New product**: a `/new` route tree inside the login with `src/newui/Shell.tsx` — the mock-up's frame class for class — and `src/newui/icons.tsx` with the files' own SVG paths; `tailwind.config.js` gained the files' `limebrand` / `obsidian` scales and a `darkMode` selector on the app's own `data-theme` (the live software uses no `dark:` class, so nothing of it changes). Everything else under `/new` answers "Not in the new design yet" with a link to the same address in the live software. The pieces worth keeping moved to `src/newui/` (`kit.tsx`, `SaleStockCard.tsx`, `pages/StockSummary.tsx`, the first pass to be rebuilt).
+
+**Verified**: tsc; vitest 72; new `newui-frame` (panel 252px and full height, the eight keys, nine tiles, the bar, a not-drawn screen linking to the live one, F4, dark, Urdu on the right, a phone's menu) passes; `stock-kind-cards` restored to `main`'s version; frame screenshots in light and dark compared with the mock-up. Two faults found and fixed while testing: Tailwind sorts `ltr:` after `lg:`, so the panel stayed hidden on a laptop (now `ltr:max-lg:`), and the search used an i18n key that does not exist. **Not done**: the full Playwright suite; the three tests of the undone work (`counter-frame`, `sale-cards`, `buy-panes`) are deleted and come back as the new product's screens are drawn.
+
+**Next**: `/new/stock/summary` pixel for pixel from mock-ups 11 and 13.
+
+**Open questions**: what the new product does with everything the app has that no mock-up draws (installments, remittance, FBR, exchange, transfers, old dealings, bulk import, the shop audit, the control room). My recommendation: draw them in the files' own visual language in the nearest place, and list each in its pull request.

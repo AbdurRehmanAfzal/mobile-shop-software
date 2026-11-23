@@ -5,7 +5,7 @@ own branch; read each page's structure and build what is new in it; keep everyth
 disturb the shops that run the software. A `staging` branch from `main`: every branch is merged into
 `staging` first, tested there, and only then `staging` goes to `main`." Decision: ADR-132.
 
-Status: **Plan changed 2026-11-23 (ADR-134): two products, not a page-by-page redesign. The live software is frozen as a design and keeps all new work; the new UI is a separate product built pixel to pixel from the mock-up files, in its own files. On `staging`: the foundation, and the first pass of the stock summary, sale and purchase — those still carry `if (newUi)` branches inside the old pages and are to be undone and rebuilt as the new product's own screens. Next: that restructure, then the screens in the order of §5.**
+Status: **ADR-134 carried out. The live software is back to exactly what `main` has — every redesign change inside its pages is undone. The new product stands at its own address `/new` with the mock-ups' frame built pixel for pixel (panel, counter tiles with their keys, the nine shop tiles, the bar, light and dark, Urdu, phone). Its screens are drawn one at a time; until a screen is drawn, `/new/<anything>` says so and opens the same address in the live software. Next: `/new/stock/summary` pixel for pixel from mock-ups 11 and 13.**
 
 ## 1. The source
 
@@ -211,6 +211,19 @@ discount and what it earns (`LineFoot`, ADR-124), the review before saving, the 
 | New, part B (built, new design only) | on a laptop the device's form opens **on the screen** under "from whom", beside the bill — no sheet over the page — for a new line, a locked phone and an edit; **memory and colour are pills** (a second tap takes the choice back). Brand, model, condition, PTA and SIM lock were buttons already. On a phone the form stays a sheet (there is no room beside the bill), with the pills |
 | Checked: already there | shelf / place, warranty months, "Later" for what came with the phone, cheque in the payment picker — all in the existing form, so in both versions |
 | Not built | "Auto-gen test IMEI" |
+
+### The new product as built (ADR-134)
+
+| | |
+|---|---|
+| Address | `/new` — its own route tree inside the login. The live software keeps every address it has. |
+| Frame | `src/newui/Shell.tsx`, class for class from `…pos_stock_ui (4).html`: the 252px panel (mark, shop name, status dot, Dashboard pill, **Daily Counter** 2-up tiles with F2…F10 — Sell lime `#B4F000`, Add stock obsidian — **Accounts & Audit** 3-up tiles, "Quick IMEI Focus" with the `/` key) and the sticky bar (IMEI search with Scan, language, light / dark, messages, the user's initials). |
+| Icons | `src/newui/icons.tsx` — the mock-ups' own SVG paths, copied, not the nearest library icon. |
+| Look | `tailwind.config.js` gained the files' own `limebrand` and `obsidian` scales, and `darkMode` now follows the app's `data-theme` (the live software uses no `dark:` class at all, so nothing of it changes). |
+| Kept correct, not drawn | `left`/`right` are written `start`/`end` so Urdu puts the panel on the right; in English the pixels are the mock-up's. The panel slides in behind a menu button on a phone, as the file does. |
+| Not drawn yet | every screen. `/new/<anything>` shows "Not in the new design yet" with a button to the same address in the live software, so nothing is a dead end. |
+| Undone | the redesign changes that had been made inside the live pages (`SaleWizard`, `PurchaseWizard`, `DeviceLineSheet`, `StockSummaryPage`, `Shell`, `SidePanel`, `AppearancePage`, `theme.ts`) — all back to `main`. The "New design" fifth look is gone; the new product is an address, not a look. |
+| Carried over | the parts worth keeping are now the new product's own: `newui/kit.tsx`, `newui/SaleStockCard.tsx`, `newui/pages/StockSummary.tsx` (the first pass, to be rebuilt pixel for pixel). The server's added figures, the shared font links and `forgetAllDrafts` on logout stay — they are not a design. |
 
 ## 6. Decided by the owner
 

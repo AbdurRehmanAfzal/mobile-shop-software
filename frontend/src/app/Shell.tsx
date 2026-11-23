@@ -10,7 +10,7 @@ import { noteRoute } from '@/lib/draft'
 import { useAuth, activeShop } from '@/lib/auth'
 import { BiLabel, useLang, type BiText } from '@/components/Bilingual'
 import { LOCALES, setLocale, type Locale } from '@/i18n'
-import { useLayout, useTheme } from '@/lib/theme'
+import { useTheme } from '@/lib/theme'
 import { jobsFor } from '@/features/counter/jobs'
 import SidePanel from './SidePanel'
 
@@ -112,8 +112,7 @@ function ProfileMenu() {
 export default function Shell() {
   const { pathname } = useLocation()
   noteRoute(pathname) // during render, so a page opened by a tap never restores an old draft
-  const wideNew = useLayout() === 'counter' && pathname.startsWith('/purchase/new') // ADR-133: the new purchase is two panes
-  const wide = pathname === '/' || wideNew || WIDE.some((w) => pathname === w || pathname.startsWith(`${w}/`) || pathname.startsWith(`${w}?`))
+  const wide = pathname === '/' || WIDE.some((w) => pathname === w || pathname.startsWith(`${w}/`) || pathname.startsWith(`${w}?`))
   const shop = useAuth(activeShop)
   useCpidLabel(!!shop) // ADR-083: CP ID under the shop's own name
   const nav = useNavigate()
@@ -129,9 +128,6 @@ export default function Shell() {
   const setTheme = useTheme((s) => s.setTheme)
   const dark = theme === 'dark' || (theme === 'system' && window.matchMedia?.('(prefers-color-scheme: dark)').matches)
   const shopName = ur ? shop?.name_ur || shop?.name || 'موبائل شاپ' : shop?.name || 'Mobile Shop'
-  // ADR-132: the Counter frame — on a laptop the panel runs from top to bottom and carries the
-  // shop's name, the header keeps only its buttons; on a phone nothing differs
-  const counter = useLayout() === 'counter'
 
   // counter shortcuts on a laptop keyboard (F5 is left alone: it reloads the page)
   useEffect(() => {
@@ -146,14 +142,12 @@ export default function Shell() {
   }, [nav, jobs])
 
   return (
-    <div className={`mx-auto flex min-h-dvh max-w-md flex-col bg-ground ${counter ? 'lg:max-w-none lg:flex-row' : 'lg:max-w-[1360px]'}`}>
-      {counter ? <SidePanel /> : null}
-      <div className={counter ? 'flex min-w-0 flex-1 flex-col' : 'contents'}>
+    <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-ground lg:max-w-[1360px]">
       {/* narrow phones (iPhone SE): the shop's name on its own line, the buttons spread under it */}
       <div className="sticky top-0 z-10">
       <PlanBar />
       <header className="print:hidden flex flex-wrap items-center gap-x-2 gap-y-2 bg-ground/90 px-5 pb-2 pt-[max(14px,env(safe-area-inset-top))] backdrop-blur max-[379px]:px-4">
-        <NavLink to="/" className={`min-w-0 flex-1 line-clamp-2 max-[379px]:basis-full ${counter ? 'lg:invisible' : ''} ${ur ? 'ur text-lg font-bold leading-snug' : 'text-lg font-extrabold leading-tight tracking-[-0.01em]'}`} dir={dir}>
+        <NavLink to="/" className={`min-w-0 flex-1 line-clamp-2 max-[379px]:basis-full ${ur ? 'ur text-lg font-bold leading-snug' : 'text-lg font-extrabold leading-tight tracking-[-0.01em]'}`} dir={dir}>
           {shopName}
         </NavLink>
         <div className="flex shrink-0 gap-1.5 max-[379px]:grid max-[379px]:w-full max-[379px]:grid-cols-4">
@@ -182,13 +176,12 @@ export default function Shell() {
       <PlanOverlays />
       <ScanListener />
       <OfflineBar />
-      <div className={`flex flex-1 gap-6 ${counter ? 'lg:px-6' : 'lg:px-5'}`}>
-        {counter ? null : <SidePanel />}
+      <div className="flex flex-1 gap-6 lg:px-5">
+        <SidePanel />
 
-        <main className={`min-w-0 flex-1 px-5 pb-28 pt-1 max-[379px]:px-4 lg:px-0 lg:pb-10 ${wide ? (counter ? 'lg:max-w-[1400px]' : 'lg:max-w-5xl') : 'lg:max-w-3xl'}`}>
+        <main className={`min-w-0 flex-1 px-5 pb-28 pt-1 max-[379px]:px-4 lg:px-0 lg:pb-10 ${wide ? 'lg:max-w-5xl' : 'lg:max-w-3xl'}`}>
           <Outlet />
         </main>
-      </div>
       </div>
 
       <nav className="print:hidden fixed inset-x-0 bottom-0 z-10 mx-auto max-w-md border-t border-line bg-nav/95 pb-[max(8px,env(safe-area-inset-bottom))] pt-1.5 backdrop-blur lg:hidden">
