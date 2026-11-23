@@ -96,3 +96,56 @@ def test_another_shop_sees_none_of_it(client, owner, cat):
     s = other.get(URL).json()
     assert s["count"] == 0 and all(k["count"] == 0 for k in s["kinds"])
     assert s["items"]["items"] == 0 and s["items"]["kinds"] == []
+
+
+def test_averages_shares_and_the_top_of_each(client, owner, cat):
+    """ADR-132: the redesigned summary shows what a piece comes to and each line's part of the
+    money — worked out on the server, added beside the keys that were there."""
+    _stock(owner, cat, imei=A, cost_price=1000, asking_price=1500)
+    _stock(owner, cat, imei=B, cost_price=2000, asking_price=2500)
+    assert _buy(owner, _party(owner), _tablet(owner)).status_code == 201  # cost 50,000
+    _acc(owner, opening_qty=10, opening_cost=450)  # 4,500
+    _acc(owner, name="Back cover", category="cover", price=300, opening_qty=5, opening_cost=100)
+
+    s = owner.get(URL).json()
+    assert s["total"] == "58000.00"  # 3,000 + 50,000 + 5,000
+    assert s["top_kind"] == "tablet"
+    assert s["avg"] == "17666.67"  # 53,000 over three devices
+    kinds = {k["key"]: k for k in s["kinds"]}
+    assert (kinds["phone"]["avg"], kinds["phone"]["share"]) == ("1500.00", 5.2)
+    assert (kinds["tablet"]["avg"], kinds["tablet"]["share"]) == ("50000.00", 86.2)
+    assert (kinds["watch"]["avg"], kinds["watch"]["share"], kinds["watch"]["top_brand"]) == (
+        "0.00",
+        0.0,
+        None,
+    )
+    assert kinds["tablet"]["top_brand"] == {"name": "Samsung", "count": 1, "share": 100.0}
+    assert s["items"]["share"] == 8.6
+    assert [(g["key"], g["share"]) for g in s["items"]["kinds"]] == [
+        ("charger", 90.0),
+        ("cover", 10.0),
+    ]
+    shares = sum(k["share"] for k in s["kinds"]) + s["items"]["share"]
+    assert abs(shares - 100) <= 0.2
+
+    # one kind: a brand's part of that kind, a model's part of its brand
+    p = owner.get(URL, params={"category": "phone"}).json()
+    assert p["avg"] == "1500.00"
+    b = p["brands"][0]
+    assert (b["avg"], b["share"]) == ("1500.00", 100.0)
+    assert (b["models"][0]["avg"], b["models"][0]["share"]) == ("1500.00", 100.0)
+
+    # nothing in stock: no division by nothing
+    r = client.post(
+        "/api/v1/auth/signup",
+        json={
+            "shop_name": "Empty",
+            "owner_name": "Empty Owner",
+            "phone": "03459998866",
+            "password": "secret123",
+        },
+    )
+    assert r.status_code in (200, 201), r.text
+    e = login(client, "03459998866", "secret123").get(URL).json()
+    assert (e["total"], e["avg"], e["top_kind"]) == ("0.00", "0.00", None)
+    assert all(k["share"] == 0 and k["top_brand"] is None for k in e["kinds"])

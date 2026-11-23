@@ -73,7 +73,7 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 
 ## The stock summary by kind (owner 2026-11-22, ADR-131)
 - Read ADR-131 before touching `StockSummaryPage.tsx` or `reports.stock_summary`.
-- Rules: Stock opens a card per kind the shop trades, a card opens that kind's brands → models → the stock list (`?kind=`); every figure is `reports.stock_summary`'s (`kinds`, `items`, `category`) — the app adds up only the cards for the heading; the keys without `category` must keep saying what they said (the download and the assistant read them); a new kind of stock gets a card here.
+- Rules: Stock opens a card per kind the shop trades, a card opens that kind's brands → models → the stock list (`?kind=`); every figure is `reports.stock_summary`'s (`kinds`, `items`, `category`; since ADR-132 also the averages and percentages: `avg`, `share`, `top_brand`, `top_kind`, `total`) — the app adds up only the cards for the heading and may order and search the rows, never work out an average or a percentage; the keys without `category` must keep saying what they said (the download and the assistant read them); a new kind of stock gets a card here.
 
 ## UI redesign from the owner's mock-ups (owner 2026-11-22, ADR-132)
 - Plan, the fifteen mock-ups mapped to the app's pages, what is new in each, the branch order and the open questions: `docs/43-UI-REDESIGN-PLAN.md` — read it before any redesign work. The mock-ups are in `C:\Users\HP\Documents\projects\mobile shop\new mobile shop ui\` (not in the repository: their sample data is a live shop's people).

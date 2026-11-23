@@ -365,6 +365,17 @@ def stock_ageing(db: Session, shop_id: uuid.UUID, show_cost: bool) -> list[dict]
     ]
 
 
+def _avg(value: Decimal, count: int) -> Decimal:
+    """What one piece comes to (0 when there is none)."""
+    return money(value / count) if count else ZERO
+
+
+def _share(part: Decimal, whole: Decimal) -> float:
+    """`part` as a percentage of `whole`, one decimal (0 when there is nothing to share). A
+    percentage, not money: a plain number in the answer."""
+    return float((part * 100 / whole).quantize(Decimal("0.1"))) if whole else 0.0
+
+
 def stock_summary(
     db: Session, shop_id: uuid.UUID, show_cost: bool, category: str | None = None
 ) -> dict:
@@ -373,6 +384,11 @@ def stock_summary(
     ADR-131: `kinds` says the same per type of device (pieces, value, how many brands and models)
     and `items` the accessories by their kind, for the cards the summary opens with; `category`
     keeps the brand list (and `count` / `value`) to one type. Without it nothing changes.
+
+    ADR-132 (the redesigned summary): what a piece comes to (`avg`) and each line's part of the
+    money (`share`, a percentage) are worked out here too — a kind's of all the stock (`total`:
+    every device and the accessories), a brand's of the list shown, a model's of its brand — with
+    each kind's `top_brand` and the stock's `top_kind`. Added keys only.
 
     Value is at cost for owner/manager and at asking price for everyone else (`basis` says which).
     Owner 2026-11-13: "held" is the stock screen's own rule (in stock, faulty, in repair, with a
@@ -397,7 +413,7 @@ def stock_summary(
 
     brands: dict[uuid.UUID, dict] = {}
     kinds = {
-        k: {"key": k, "count": 0, "value": ZERO, "_b": set(), "_m": set()}
+        k: {"key": k, "count": 0, "value": ZERO, "_b": set(), "_m": set(), "_bv": {}}
         for k in ("phone", "tablet", "watch", "laptop")
     }
     shown = 0
@@ -405,12 +421,22 @@ def stock_summary(
         value = (d.cost_price if show_cost else d.asking_price) or ZERO
         kind = kinds.setdefault(
             d.category or "phone",
-            {"key": d.category or "phone", "count": 0, "value": ZERO, "_b": set(), "_m": set()},
+            {
+                "key": d.category or "phone",
+                "count": 0,
+                "value": ZERO,
+                "_b": set(),
+                "_m": set(),
+                "_bv": {},
+            },
         )
         kind["count"] += 1
         kind["value"] = money(kind["value"] + value)
         kind["_b"].add(d.brand_id)
         kind["_m"].add((d.brand_id, name_key(model_name)))
+        kb = kind["_bv"].setdefault(d.brand_id, {"name": brand_name, "count": 0, "value": ZERO})
+        kb["count"] += 1
+        kb["value"] = money(kb["value"] + value)
         if category and (d.category or "phone") != category:
             continue
         shown += 1
@@ -427,13 +453,42 @@ def stock_summary(
             x["count"] += 1
             x["value"] = money(x["value"] + value)
     by_value = lambda x: (-x["value"], -x["count"], x["name"])
+    shown_value = money(sum((b["value"] for b in brands.values()), ZERO))
     out = []
     for b in sorted(brands.values(), key=by_value):
-        out.append({**b, "models": sorted(b["models"].values(), key=by_value)})
+        models = [
+            {**m, "avg": _avg(m["value"], m["count"]), "share": _share(m["value"], b["value"])}
+            for m in sorted(b["models"].values(), key=by_value)
+        ]
+        out.append(
+            {
+                **b,
+                "models": models,
+                "avg": _avg(b["value"], b["count"]),
+                "share": _share(b["value"], shown_value),
+            }
+        )
+    items = _items_summary(db, shop_id, show_cost)
+    total = money(sum((k["value"] for k in kinds.values()), ZERO) + items["value"])
+    items["share"] = _share(items["value"], total)
+    for g in items["kinds"]:
+        g["share"] = _share(g["value"], items["value"])
+
+    def top_brand(k: dict) -> dict | None:
+        if not k["_bv"]:
+            return None
+        b = min(k["_bv"].values(), key=by_value)
+        return {"name": b["name"], "count": b["count"], "share": _share(b["value"], k["value"])}
+
+    ranked = [(k["value"], k["key"]) for k in kinds.values()] + [(items["value"], "items")]
+    best = max(ranked, key=lambda x: x[0])
     return {
         "basis": "cost" if show_cost else "asking",
         "count": shown,
-        "value": money(sum((b["value"] for b in out), ZERO)),
+        "value": shown_value,
+        "avg": _avg(shown_value, shown),
+        "total": total,
+        "top_kind": best[1] if best[0] > 0 else None,
         "brands": out,
         "kinds": [
             {
@@ -442,10 +497,13 @@ def stock_summary(
                 "value": k["value"],
                 "brands": len(k["_b"]),
                 "models": len(k["_m"]),
+                "avg": _avg(k["value"], k["count"]),
+                "share": _share(k["value"], total),
+                "top_brand": top_brand(k),
             }
             for k in kinds.values()
         ],
-        "items": _items_summary(db, shop_id, show_cost),
+        "items": items,
     }
 
 

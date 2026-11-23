@@ -6265,6 +6265,31 @@
     "accPieces": "{{n}} pieces of accessories",
     "tapItemKind": "Tap a kind to see its items",
     "none": "Nothing of this kind in stock",
-    "seeList": "See the list"
+    "seeList": "See the list",
+    "avgPiece": "Average of one piece",
+    "topKind": "Biggest part",
+    "topBrand": "Biggest brand",
+    "health": "Accessories",
+    "healthy": "Nothing running low",
+    "lowN": "{{n}} running low",
+    "active": "In stock",
+    "emptyKinds": "Nothing in stock yet",
+    "shareOfStock": "Part of all the stock",
+    "top": "Most: {{name}} ({{n}})",
+    "capital": "Where the money sits, brand by brand",
+    "others": "{{n}} other brands",
+    "sort": {
+      "value": "Highest value",
+      "units": "Most pieces",
+      "avg": "Dearest"
+    },
+    "search": "Search a brand or model",
+    "avg": "one comes to {{v}}",
+    "ofBrand": "{{p}}% of {{name}}",
+    "addStock": "Add stock",
+    "sheets": "Sheets to count and download",
+    "noMatch": "No brand or model matches",
+    "sortBy": "Order of the brands",
+    "shareOfKind": "Part of this kind"
   }
 }

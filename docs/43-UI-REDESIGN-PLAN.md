@@ -5,7 +5,7 @@ own branch; read each page's structure and build what is new in it; keep everyth
 disturb the shops that run the software. A `staging` branch from `main`: every branch is merged into
 `staging` first, tested there, and only then `staging` goes to `main`." Decision: ADR-132.
 
-Status: **`ui/00-foundation` is built on its branch (not merged, not pushed): the Counter frame as a fifth design under Appearance, the two fonts, `components/kit.tsx`. No page's content has changed.** Next: the pull request into `staging`, the staging stack (§6), then `ui/01-stock-summary`.
+Status: **`ui/00-foundation` is merged into `staging` and the staging site runs (`https://staging-mobileshop.oopsolutions.com`). `ui/01-stock-summary` is built on its branch (pull request into `staging` on the owner's "push").** Next: `ui/02-sale`.
 
 ## 1. The source
 
@@ -143,6 +143,16 @@ log, manual when the steps a shopkeeper follows changed).
   side on a laptop, the usual sheet on a phone), `SlipFrame` (holds the server's printed page at paper
   width). Pages are built from these from `ui/01` on.
 - Tests: `kit.test.tsx`, `e2e/counter-frame.spec.ts`.
+
+### `ui/01-stock-summary` — what was found and built (mock-ups 11, 13)
+
+| | |
+|---|---|
+| Exists, kept | the cards per kind and `?kind=`, brands → models → the stock list, accessories by their kind, the download, "See all phones", both sheets (tally with the staff copy, item-wise), the "?" texts, every `data-testid`, cost only with `VIEW_COST` (a salesman's figures are at asking price) |
+| New | in the heading: what one piece comes to, the biggest kind with its part, accessories running low; a kind's card: its biggest brand and its part of all the stock; kinds with nothing shown small under "Nothing in stock yet"; in a kind: "where the money sits" bar (three biggest brands + the rest), search by brand or model, order by value / pieces / dearest, each brand's and model's average and part; an empty kind offers **Add stock** |
+| Not built | "Counter #1 Online"; the switch between two shops' sample data; "Stock health: Healthy" as a judgement (the card says what is known: how many items run low); print / share buttons drawn on the item-wise card beyond the download and share it has |
+
+Server: `reports.stock_summary` gained `avg`, `total`, `top_kind`, per kind `avg` / `share` / `top_brand`, per brand and model `avg` / `share`, per accessories kind `share` — percentages as plain numbers, added keys only (ADR-131's rule: the page shows the server's figures; it orders and searches, nothing more).
 
 ## 6. Decided by the owner
 

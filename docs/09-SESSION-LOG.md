@@ -2523,3 +2523,15 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: on the owner's "push": the branch and its pull request into `staging`; the owner merges #114 and that one, runs the setup command (docs/29) and the Staging workflow; then `ui/01-stock-summary`.
 
 **Open questions**: if `VPS_*` are environment secrets of "production" and not repository secrets, the staging deploy job cannot read them — it would fail at "Prepare SSH" and the secrets must be added at repository level.
+
+## 2026-11-23 (5) — Staging runs; the stock summary redrawn (`ui/01-stock-summary`)
+
+**Asked (owner)**: "push" of the staging stack (PR #115, merged by him); he ran the setup script on the server; asked how to make a shop on staging; "I checked the new Counter".
+
+**Done**: the Staging workflow's first run was green — staging answers `/health` with its own database, `X-Robots-Tag: noindex`, production still 200. Told him the signup address (`/signup`; my earlier "Create a shop button" was wrong — the login page has none). Branch `ui/01-stock-summary` from `staging`: `reports.stock_summary` gained averages, percentages, each kind's biggest brand, the biggest kind and the total (added keys); `StockSummaryPage` redrawn from mock-ups 11 and 13 with the kit's `Pills` — dark heading with facts, big cards for kinds that hold stock and small ones for empty kinds, a kind's "where the money sits" bar, search, three orders, brand cards opening into model cards, Add stock on an empty kind. Strings in three languages. The table exists / new / not built is in docs/43.
+
+**Verified**: ruff clean; pytest `test_stock_summary_kinds` (3, one new: averages, shares adding to 100, top brand / kind, an empty shop) with `test_reports_simple`, `test_same_model_one_line`, `test_catalogue_duplicates`, `test_statements` and the stock tests of `test_exports`; tsc clean; vitest 72; Playwright `stock-kind-cards` (extended), `counter`, `faulty-and-models`, `stock-tally`, `accessories-only` — all passed; phone and laptop screenshots looked at in English. **Not done**: Urdu and dark screenshots of the new page were not looked at; the full backend and Playwright suites were not run (CI runs the backend suite on the pull request); the manual's stock-summary section still describes the earlier look.
+
+**Next**: on "push": the branch and its pull request into `staging`; the manual section; then `ui/02-sale`.
+
+**Open questions**: none new.
