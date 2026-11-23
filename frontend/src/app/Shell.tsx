@@ -15,7 +15,7 @@ import { jobsFor } from '@/features/counter/jobs'
 import SidePanel from './SidePanel'
 
 /** screens that use the whole laptop width (lists, overviews, the side-by-side sale); forms stay at 3xl */
-const WIDE = ['/sale/new', '/purchase/new', '/stock', '/khata', '/balances', '/hisaab', '/reports', '/audit', '/sales', '/purchases', '/invoices', '/parties', '/expenses', '/installments', '/repairs', '/accessories', '/payments', '/returns', '/admin', '/loans']
+const WIDE = ['/sale/new', '/stock', '/khata', '/balances', '/hisaab', '/reports', '/audit', '/sales', '/purchases', '/invoices', '/parties', '/expenses', '/installments', '/repairs', '/accessories', '/payments', '/returns', '/admin', '/loans']
 import { useModules, useTrade } from '@/lib/modules'
 import { PlanBar, PlanOverlays } from '@/components/PlanReminders'
 import ScanListener from '@/components/ScanListener'
@@ -112,7 +112,8 @@ function ProfileMenu() {
 export default function Shell() {
   const { pathname } = useLocation()
   noteRoute(pathname) // during render, so a page opened by a tap never restores an old draft
-  const wide = pathname === '/' || WIDE.some((w) => pathname === w || pathname.startsWith(`${w}/`) || pathname.startsWith(`${w}?`))
+  const wideNew = useLayout() === 'counter' && pathname.startsWith('/purchase/new') // ADR-133: the new purchase is two panes
+  const wide = pathname === '/' || wideNew || WIDE.some((w) => pathname === w || pathname.startsWith(`${w}/`) || pathname.startsWith(`${w}?`))
   const shop = useAuth(activeShop)
   useCpidLabel(!!shop) // ADR-083: CP ID under the shop's own name
   const nav = useNavigate()

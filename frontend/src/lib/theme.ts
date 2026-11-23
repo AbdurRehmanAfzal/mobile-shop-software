@@ -104,3 +104,7 @@ if (typeof window !== 'undefined') window.matchMedia?.('(prefers-color-scheme: d
 
 /** the current layout, for the dashboard and the side panel */
 export const useLayout = () => useTheme((s) => s.layout)
+/** Owner 2026-11-23 (ADR-133): two versions of the screens live side by side — the one the shops
+ *  use, and the one drawn from the owner's mock-ups. The second is what the "New design" choice
+ *  (`counter`) shows; every other design keeps every page exactly as it was. */
+export const useNewUi = () => useTheme((s) => s.layout) === 'counter'

@@ -1,4 +1,4 @@
-/** ADR-132 (docs/43 mock-up 01): on a laptop the purchase shows "from whom" and the bill side by
+/** ADR-132 / ADR-133 (docs/43 mock-up 01): in the new design, on a laptop the purchase shows "from whom" and the bill side by
  *  side — the bill opens once the seller is chosen and the total stays in view; a phone keeps its
  *  steps. */
 
@@ -26,9 +26,16 @@ test('purchase: from whom beside the bill on a laptop, steps on a phone', async 
   await expect(page.getByTestId('buy-bill')).toBeVisible()
   await expect(page.getByTestId('buy-from')).toHaveCount(0)
 
-  // a laptop: both, side by side; the bill waits for the seller
+  // a laptop in the design the shops know: still one step at a time
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.evaluate(() => sessionStorage.clear())
+  await page.goto('/purchase/new')
+  await expect(page.getByTestId('buy-wait')).toHaveCount(0)
+  await expect(page.getByTestId('buy-bill')).toHaveCount(0)
+
+  // a laptop in the new design: both, side by side; the bill waits for the seller
+  await page.goto('/more/appearance')
+  await page.getByTestId('look-layout-counter').click() // ADR-133: the mock-ups' version is the "New design"
   await page.goto('/purchase/new')
   await expect(page.getByTestId('buy-wait')).toBeVisible()
   await expect(page.getByTestId('buy-bill')).toHaveCount(0)

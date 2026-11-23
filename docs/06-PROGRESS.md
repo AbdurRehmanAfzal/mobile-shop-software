@@ -380,6 +380,7 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | UI redesign `ui/02-sale`: the sale's stock as cards with quick ticks; a line's cost and margin; the buyer first and the total in view on a laptop; logging out forgets half-filled forms — merged into `staging` (PR #117) | ✅ | `SaleStockCard.tsx`, `SaleWizard.tsx`, `lib/draft.ts`, `lib/auth.ts`, `e2e/sale-cards.spec.ts` |
 | Five stale Playwright tests (`forms-keep`, `offline`, `plan-reminders`, `pricehint`, `urdu`) fail on `staging` without any change — repair before the release (docs/43) | ⏳ | |
 | UI redesign `ui/03-add-stock` part A: on a laptop "from whom" beside the bill, the total in view (the device sheet's pills wait for the owner's choice) | ⏳ | `PurchaseWizard.tsx`, `e2e/buy-panes.spec.ts` |
+| Two UI versions side by side (ADR-133): the old pages restored as they were, the mock-ups' version only in the "New design" (`useNewUi`) — stock summary, sale, purchase | ⏳ | `StockSummaryPage.tsx` (+ `Classic`, `New`), `SaleWizard.tsx`, `PurchaseWizard.tsx`, `lib/theme.ts` |
 | Operations runbook (internal; secrets only as placeholders) | ✅ | `operations-en.md` |
 | Owner review of the wording | ⏳ | `docs/29-OWNER-PENDING.md` D |
 

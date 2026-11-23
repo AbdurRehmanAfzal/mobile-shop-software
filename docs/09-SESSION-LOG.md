@@ -2571,3 +2571,15 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: the owner's choice for the device's details (pills in the step-by-step sheet — recommended — or one screen); then the pull request into `staging`.
 
 **Open questions**: that choice.
+
+## 2026-11-23 (9) — Two versions side by side (ADR-133)
+
+**Asked (owner)**: we make two versions — the one that runs now and the one according to the mock-ups — give both to the shopkeepers and go on by their feedback; build according to the mock-ups now; save this.
+
+**Done**: `useNewUi()` (the "New design" choice, `layout === 'counter'`). The stock summary is again the ADR-131 page (`StockSummaryClassic`, restored from before `ui/01`) unless the new design is on (`StockSummaryNew`); the sale shows its rows as before and the cards, ticks, line margin, buyer-first and sticky total only in the new design; the purchase keeps its steps on every screen and is two panes only in the new design. The design's name is now "New design" in three languages (manual too). ADR-133, CLAUDE.md, docs/43, the owner's test steps; a memory note for later sessions.
+
+**Verified**: tsc; Playwright `stock-kind-cards`, `sale-cards`, `buy-panes` (each now checks the old version first, then picks the new design), `counter-frame`, `appearance`, `devcat` — passed (one cold-start retry); vitest 72; the manual rebuilt in three languages. **Not done**: the full sale / purchase sets were not rerun after the split (the old code paths are the restored ones).
+
+**Next**: the purchase as one screen with pills in the new design (mock-up 01); then the pull request into `staging`.
+
+**Open questions**: none.

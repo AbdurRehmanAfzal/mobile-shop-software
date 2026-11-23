@@ -26,6 +26,13 @@ test('sale: stock cards, quick ticks, cost only for those who may see it', async
     await expect(page.getByPlaceholder("IMEI, phone or person's name")).toBeVisible({ timeout: 20_000 })
   }
   await login(ph, 'e2e-secret-1')
+  // the sale the shops know: rows, no ticks, no cost line
+  await page.goto('/sale/new')
+  await expect(page.getByTestId('sale-card')).toHaveCount(0)
+  await expect(page.getByTestId('sale-ticks')).toHaveCount(0)
+  await expect(page.getByText('490154203237518')).toBeVisible()
+  await page.goto('/more/appearance')
+  await page.getByTestId('look-layout-counter').click() // ADR-133: the mock-ups' version is the "New design"
   await page.goto('/sale/new')
   const cards = page.getByTestId('sale-card')
   await expect(cards).toHaveCount(2)

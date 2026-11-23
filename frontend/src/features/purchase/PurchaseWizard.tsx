@@ -4,6 +4,7 @@ import { faultText } from '@/features/stock/Faults'
 import { useEffect, useState, type ReactNode } from 'react'
 import { clearDrafts, useDraft } from '@/lib/draft'
 import { useLaptop } from '@/lib/useMedia'
+import { useNewUi } from '@/lib/theme'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { BiButton, BiInput, BiLabel, BiSegmented, useLang } from '@/components/Bilingual'
 import Help from '@/components/Help'
@@ -186,7 +187,9 @@ export default function PurchaseWizard() {
   const trade = useTrade()
   // ADR-132 (docs/43 mock-up 01): on a laptop "from whom" and the bill are side by side — the bill
   // opens once the seller is chosen; a phone keeps its steps
-  const laptop = useLaptop()
+  const big = useLaptop()
+  const newUi = useNewUi() // ADR-133: off = the purchase as the shops know it, steps on every screen
+  const laptop = big && newUi
   const steps = [trade.devices ? 'counter.fromWhom' : 'goods.stepDealer', trade.mobiles ? 'counter.phoneAndCost' : 'goods.stepItems', 'counter.doneTitle']
   // ADR-123: an accessories shop buys from dealers only — one choice is no question, so the
   // dealer is asked straight away
@@ -195,7 +198,7 @@ export default function PurchaseWizard() {
   return (
     <div className="flex flex-col gap-3">
       <PageHeader title="counter.addStock" help={<Help term="purchase.page" />} onBack={back} />
-      <div className={step < 2 ? 'lg:hidden' : ''}><Stepper steps={steps} current={step} onStep={step < 2 ? setStep : undefined} /></div>
+      <div className={step < 2 && newUi ? 'lg:hidden' : ''}><Stepper steps={steps} current={step} onStep={step < 2 ? setStep : undefined} /></div>
       {replaceId ? (
         <div className="flex flex-col gap-2 rounded-2xl border border-gold/40 bg-gold/15 px-3 py-2.5" data-testid="purchase-editing">
           <span className="text-sm font-bold text-ink">{pick('sedit.editing').replace('{{no}}', replaceNo)}</span>
@@ -205,7 +208,7 @@ export default function PurchaseWizard() {
 
       <div className={laptop && step !== 2 ? 'grid grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] items-start gap-6' : 'contents'} data-testid="buy-panes">
       {step === 0 || (laptop && step === 1) ? (
-        <div className="flex flex-col gap-3 lg:sticky lg:top-24" data-testid="buy-from">
+        <div className={`flex flex-col gap-3 ${newUi ? 'lg:sticky lg:top-24' : ''}`} data-testid="buy-from">
           {trade.devices ? <span className="flex items-center gap-1"><BiLabel text={trade.mobiles ? 'purchase.chooseTitle' : 'goods.chooseTitle'} size="lg" bold /><Help term="purchase.source" size="sm" /></span> : <BiLabel text="goods.dealerTitle" size="lg" bold />}
           {trade.devices ? <SourceCard
             help="purchase.fromDealer"
@@ -340,7 +343,7 @@ export default function PurchaseWizard() {
                 <div><IconChip icon={<SlidersHorizontal size={18} />} text="counter.moreBuyOptions" onClick={() => setMore(true)} /></div>
               )}
 
-              <div className="flex flex-col gap-3 lg:sticky lg:bottom-3 lg:z-[5] lg:rounded-3xl lg:border lg:border-line lg:bg-ground/95 lg:p-2.5 lg:shadow-hero lg:backdrop-blur" data-testid="buy-foot">
+              <div className={newUi ? 'flex flex-col gap-3 lg:sticky lg:bottom-3 lg:z-[5] lg:rounded-3xl lg:border lg:border-line lg:bg-ground/95 lg:p-2.5 lg:shadow-hero lg:backdrop-blur' : 'contents'} data-testid="buy-foot">
               <div className="hero flex flex-col gap-1 px-5 py-4">
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1"><BiLabel text="common.total" size="md" tone="text-hero-text" bold /><Help term="purchase.total" size="sm" /></span>

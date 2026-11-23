@@ -23,6 +23,7 @@ import { openPrintable } from '@/lib/files'
 import { isQueued } from '@/lib/offline'
 import { useModules, useTrade } from '@/lib/modules'
 import { useLaptop } from '@/lib/useMedia'
+import { useNewUi } from '@/lib/theme'
 import { beep, useScan } from '@/lib/scanner'
 import { lookupCode } from '@/components/ScanListener'
 import { useDevices, useDocMutation, useGet } from '@/lib/queries'
@@ -102,6 +103,7 @@ export default function SaleWizard() {
   const has = useModules()
   const trade = useTrade() // ADR-109: no phone picker for a shop that keeps no phones or laptops
   const laptop = useLaptop()
+  const newUi = useNewUi() // ADR-133: the mock-ups' version; off = the sale as the shops know it
   const [step, setStepRaw] = useDraft('sale.step', 0)
   const { go: setStep, back } = useStepUrl(step, setStepRaw, 2)
   const [lines, setLines] = useDraft<Line[]>('sale.lines', [])
@@ -379,7 +381,7 @@ export default function SaleWizard() {
       ) : null}
       {holdMsg?.k === 'sold' ? <BiAlert text={soldText(pick, holdMsg.n)} kind="info" /> : null}
 
-      <div className={laptop && step !== 2 ? 'grid grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] items-start gap-6' : 'contents'}>
+      <div className={laptop && step !== 2 ? `grid ${newUi ? 'grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]' : 'grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]'} items-start gap-6` : 'contents'}>
       {step === 0 || (laptop && step !== 2) ? (
         <div className="flex flex-col gap-3">
           {has('held_sales') ? <HeldButton count={held?.length ?? 0} onClick={() => setHeldOpen(true)} /> : null}
@@ -403,7 +405,16 @@ export default function SaleWizard() {
             <Help term="sale.multiPick" size="sm" />
           </div>
           <span className="flex items-center gap-1"><BiLabel text="counter.tapPhone" size="sm" tone="text-muted" /><Help term="sale.pickPhone" size="sm" /></span>
-          {stock?.length ? (
+          {stock?.length && !newUi ? (
+            <List>
+              {stock.map((d) => multi ? (
+                <div key={d.id} className={`flex items-center ${picked.includes(d.id) ? 'bg-emerald-tint/50' : ''}`} data-testid="sale-pick-row">
+                  <span className={`ms-3 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 ${picked.includes(d.id) ? 'border-emerald bg-emerald text-white' : 'border-line bg-surface'}`}>{picked.includes(d.id) ? <Check size={15} strokeWidth={3} /> : null}</span>
+                  <div className="min-w-0 flex-1"><DeviceRow d={d} onClick={() => setPicked((p) => (p.includes(d.id) ? p.filter((x) => x !== d.id) : [...p, d.id]))} /></div>
+                </div>
+              ) : <DeviceRow key={d.id} d={d} onClick={() => pickDevice(d)} />)}
+            </List>
+          ) : stock?.length ? (
             <>
               <div className="flex flex-wrap items-center gap-1.5" data-testid="sale-ticks">
                 {STOCK_FILTERS.map((f) => {
@@ -487,7 +498,7 @@ export default function SaleWizard() {
                 </div>
               ) : null}
               <BiInput label="counter.soldFor" help={<Help term="sale.soldFor" size="sm" />} type="number" inputMode="numeric" min={0} value={l.price} onChange={(e) => setLines(lines.map((x) => (x.device.id === l.device.id ? { ...x, price: e.target.value } : x)))} className="num text-2xl" />
-              {l.device.cost_price != null && Number(l.price) > 0 ? (() => {
+              {newUi && l.device.cost_price != null && Number(l.price) > 0 ? (() => {
                 const gain = r2(Number(l.price) - Number(l.device.cost_price))
                 return (
                   <span className={`font-semibold ${gain < 0 ? 'text-payable' : 'text-emerald-deep'} ${ur ? cls('sm') : 'text-xs'}`} data-testid="line-margin">
@@ -602,7 +613,7 @@ export default function SaleWizard() {
           ) : null}
 
           {!udhaar && !(owes && remitPkr(pay) > 0) ? (
-            <div className={`flex flex-col gap-2 rounded-3xl border-2 p-3 lg:-order-1 ${party || walkIn ? 'border-line' : 'border-gold'}`} data-testid="customer-box">
+            <div className={`flex flex-col gap-2 rounded-3xl border-2 p-3 ${newUi ? 'lg:-order-1' : ''} ${party || walkIn ? 'border-line' : 'border-gold'}`} data-testid="customer-box">
               {!walkIn ? <PartyPicker value={party} onChange={(p) => { setParty(p); if (p) setWalkIn(false); else setToKhata(false) }} kind="customer" label="sale.whoBuys" /> : null}
               {!party ? (
                 <div className="flex items-center gap-1">
@@ -676,7 +687,7 @@ export default function SaleWizard() {
             </div>
           ) : null}
 
-          <div className="flex flex-col gap-3 lg:sticky lg:bottom-3 lg:z-[5] lg:rounded-3xl lg:border lg:border-line lg:bg-ground/95 lg:p-2.5 lg:shadow-hero lg:backdrop-blur" data-testid="sale-foot">
+          <div className={newUi ? 'flex flex-col gap-3 lg:sticky lg:bottom-3 lg:z-[5] lg:rounded-3xl lg:border lg:border-line lg:bg-ground/95 lg:p-2.5 lg:shadow-hero lg:backdrop-blur' : 'contents'} data-testid="sale-foot">
           <div className="hero flex flex-col gap-1 px-5 py-4">
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-1"><BiLabel text="common.total" size="md" tone="text-hero-text" bold /><span className="[&_button]:text-hero-text"><Help term="sale.total" size="sm" /></span></span>

@@ -5,7 +5,7 @@ own branch; read each page's structure and build what is new in it; keep everyth
 disturb the shops that run the software. A `staging` branch from `main`: every branch is merged into
 `staging` first, tested there, and only then `staging` goes to `main`." Decision: ADR-132.
 
-Status: **`ui/00-foundation`, `ui/01-stock-summary` and `ui/02-sale` are on `staging` and the staging site. `ui/03-add-stock` is in work on its branch: part A (two panes on a laptop) is committed; how the device's details are asked (pills inside the step-by-step sheet, or one screen) waits for the owner.**
+Status: **Two versions side by side (ADR-133): every redesigned page keeps its old version and shows the mock-ups' version only in the "New design" (Appearance). On `staging`: foundation, stock summary, sale. On `ui/03-add-stock`: the split into two versions for all three pages, and the purchase's two panes. Next on that branch: the purchase as one screen with pills, as mock-up 01 draws it (new version only).**
 
 ## 1. The source
 
@@ -191,7 +191,7 @@ discount and what it earns (`LineFoot`, ADR-124), the review before saving, the 
 |---|---|
 | Exists, kept | the three steps on a phone, the source cards, the person picker, every add button, the bill's lines, discount, "when bought", the payment, the review sheet, the done step with stickers and the ID check, every `data-testid` |
 | New, part A (built) | on a laptop "from whom" and the bill side by side — the bill opens once the seller is chosen, the total and **Put in stock** stay in view; the page uses the wide layout |
-| Open (owner) | the device's details: the mock-up asks them on one screen with pills; the app asks them step by step in a sheet (`DeviceLineSheet`, 611 lines, 17 test files go through it). Recommended: keep the steps and turn the sheet's dropdowns into pills |
+| Decided 2026-11-23 (ADR-133) | the new version asks the device's details on one screen with pills, as the mock-up draws; the step-by-step sheet stays as the old version — to build |
 | To check when that is decided | shelf / rack (the device has `location`), cheque as a way to pay (the sale's `PayPicker` has it), "Later" for what came with the phone |
 | Not built | "Auto-gen test IMEI" |
 
@@ -208,8 +208,7 @@ Nothing is open. Decided 2026-11-23 (second answer):
   database and `deploy.yml` are not touched. Owner's one-time server command: `docs/29-OWNER-PENDING.md`.
 - **The pages reach the shops together**: the foundation and the fifteen screens collect on `staging`
   and go to `main` in one release (or two or three groups the owner names), not page by page.
-- **Counter becomes the default design when that release goes to `main`**, not before; until then it is
-  chosen under Appearance. A shop that already chose a design keeps it.
+- ~~Counter becomes the default design with the release~~ — replaced 2026-11-23 (ADR-133): **both versions are given to the shopkeepers**; the old screens stay the default and exactly as they are, the mock-ups' version is the "New design" under Appearance; their feedback decides what happens next. The new version is built according to the mock-ups (so add stock becomes one screen with pills there).
 
 Decided (owner, 2026-11-23):
 
