@@ -6,6 +6,7 @@ import { TOPICS, TOPIC_KEYS } from '@/features/landing/topics'
 import { useAuth } from '@/lib/auth'
 import NewShell, { Soon as NewSoon } from '@/newui/Shell'
 import NewStockSummary from '@/newui/pages/StockSummary'
+import NewSale from '@/newui/pages/Sale'
 import LoginPage from '@/features/auth/LoginPage'
 import SignupPage from '@/features/auth/SignupPage'
 import ModuleGate from '@/components/ModuleGate'
@@ -154,6 +155,8 @@ export const router = createBrowserRouter([
   {
     element: <RequireAuth />,
     children: [
+      // the counter (files 14 / 15) is full-screen with its own bar and rail
+      { path: '/new/sale/new', element: <NewSale /> },
       {
         path: '/new',
         element: <Suspense fallback={<Waiting />}><NewShell /></Suspense>,

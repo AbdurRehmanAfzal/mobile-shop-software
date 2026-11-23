@@ -377,7 +377,7 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | UI redesign `ui/00-foundation`: the Counter frame as a fifth design (full-height panel, F-key tiles, the user), display and mono fonts, the shared parts `kit.tsx` — merged into `staging` (PR #114) | ✅ | `SidePanel.tsx`, `Shell.tsx`, `kit.tsx`, `kit.test.tsx`, `e2e/counter-frame.spec.ts` |
 | Staging site for the redesign: its own stack and database on the VPS, deployed from `staging` (ADR-132) — running since 2026-11-23 at `staging-mobileshop.oopsolutions.com` | ✅ | `deploy/staging/`, `.github/workflows/staging.yml` |
 | Five stale Playwright tests (`forms-keep`, `offline`, `plan-reminders`, `pricehint`, `urdu`) fail on `staging` without any change — repair before the release (docs/43) | ⏳ | |
-| New product at `/new` (ADR-134): the mock-ups' frame, the stock summary and the brand / model drill-down drawn from file 11 screens 1-2 + file 13's icons; the rest says "not drawn yet" and opens the live address | ⏳ | `src/newui/`, `e2e/newui-frame.spec.ts`, `e2e/newui-stock.spec.ts` |
+| New product at `/new` (ADR-134): the mock-ups' frame, the stock summary and drill-down (file 11 + 13) and the counter (files 14 + 15) drawn; the rest says "not drawn yet" and opens the live address | ⏳ | `src/newui/`, `e2e/newui-frame.spec.ts`, `e2e/newui-stock.spec.ts` |
 | Operations runbook (internal; secrets only as placeholders) | ✅ | `operations-en.md` |
 | Owner review of the wording | ⏳ | `docs/29-OWNER-PENDING.md` D |
 
