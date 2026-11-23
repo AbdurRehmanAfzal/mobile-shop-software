@@ -619,7 +619,18 @@
     "multi": "Kai chunein",
     "addPicked": "{{n}} bill mein daalein",
     "priceEach": "Fi piece qeemat",
-    "setAll": "Sab {{n}} par lagayein"
+    "setAll": "Sab {{n}} par lagayein",
+    "costLine": "Khareed {{v}}",
+    "shown": "Bechne ke liye {{n}} · card dabayein to bill par aa jayega",
+    "noneMatch": "In nishanon se kuch nahi mila",
+    "f": {
+      "boxPack": "Sirf box pack",
+      "pta": "Sirf PTA approved",
+      "idPending": "ID card ki jaanch baqi",
+      "noFaulty": "Kharab ke baghair"
+    },
+    "lineEarns": "Khareed {{c}} · is par munafa {{m}}",
+    "lineLoses": "Khareed {{c}} · is par nuqsan {{m}}"
   },
   "pay": {
     "title": "Paise",

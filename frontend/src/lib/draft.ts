@@ -71,3 +71,14 @@ export function clearDrafts(prefix: string) {
     /* ignore */
   }
 }
+
+/** Logging out forgets every half-filled form of this tab (ADR-132): a draft holds what the server
+ *  sent the person who was filling it — an owner's draft sale carries the phones' cost, and the
+ *  next login on the same tab may be a salesman. Unlike `clearDrafts` it freezes nothing. */
+export function forgetAllDrafts() {
+  try {
+    for (const k of Object.keys(sessionStorage)) if (k.startsWith(PREFIX)) sessionStorage.removeItem(k)
+  } catch {
+    /* ignore */
+  }
+}

@@ -35,6 +35,7 @@ import SaleConfirm from './SaleConfirm'
 import { Tag as TagIcon } from 'lucide-react'
 import PriceHint from '@/components/PriceHint'
 import { HeldButton, HeldSalesSheet, useHeldSales, type HeldSale } from './HeldSales'
+import SaleStockCard, { STOCK_FILTERS, passes, type StockFilter } from './SaleStockCard'
 import {withCur } from '@/lib/format'
 
 interface Line {
@@ -142,6 +143,8 @@ export default function SaleWizard() {
   const [multi, setMulti] = useState(false)
   const [picked, setPicked] = useState<string[]>([])
   const [groupPrice, setGroupPrice] = useState<Record<string, string>>({})
+  // ADR-132: quick ticks over the list (they only hide cards)
+  const [ticks, setTicks] = useState<StockFilter[]>([])
   const groupOf = (x: Device) => [x.brand_name, x.model_name, x.storage_name].filter(Boolean).join(' ')
   // owner 2026-11-12 (ADR-066): a faulty phone can be sold as it is
   const { data: stock } = useDevices({ status: 'in_stock', with_faulty: true, q: q || undefined, category: devCat || undefined })
@@ -376,7 +379,7 @@ export default function SaleWizard() {
       ) : null}
       {holdMsg?.k === 'sold' ? <BiAlert text={soldText(pick, holdMsg.n)} kind="info" /> : null}
 
-      <div className={laptop && step !== 2 ? 'grid grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] items-start gap-6' : 'contents'}>
+      <div className={laptop && step !== 2 ? 'grid grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] items-start gap-6' : 'contents'}>
       {step === 0 || (laptop && step !== 2) ? (
         <div className="flex flex-col gap-3">
           {has('held_sales') ? <HeldButton count={held?.length ?? 0} onClick={() => setHeldOpen(true)} /> : null}
@@ -401,14 +404,34 @@ export default function SaleWizard() {
           </div>
           <span className="flex items-center gap-1"><BiLabel text="counter.tapPhone" size="sm" tone="text-muted" /><Help term="sale.pickPhone" size="sm" /></span>
           {stock?.length ? (
-            <List>
-              {stock.map((d) => multi ? (
-                <div key={d.id} className={`flex items-center ${picked.includes(d.id) ? 'bg-emerald-tint/50' : ''}`} data-testid="sale-pick-row">
-                  <span className={`ms-3 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 ${picked.includes(d.id) ? 'border-emerald bg-emerald text-white' : 'border-line bg-surface'}`}>{picked.includes(d.id) ? <Check size={15} strokeWidth={3} /> : null}</span>
-                  <div className="min-w-0 flex-1"><DeviceRow d={d} onClick={() => setPicked((p) => (p.includes(d.id) ? p.filter((x) => x !== d.id) : [...p, d.id]))} /></div>
-                </div>
-              ) : <DeviceRow key={d.id} d={d} onClick={() => pickDevice(d)} />)}
-            </List>
+            <>
+              <div className="flex flex-wrap items-center gap-1.5" data-testid="sale-ticks">
+                {STOCK_FILTERS.map((f) => {
+                  const on = ticks.includes(f)
+                  return (
+                    <button key={f} type="button" role="checkbox" aria-checked={on} onClick={() => setTicks(on ? ticks.filter((x) => x !== f) : [...ticks, f])} className={`tap inline-flex h-9 items-center gap-1.5 rounded-full border px-3 font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-muted'} ${ur ? cls('sm') : 'text-xs'}`} data-testid={`sale-tick-${f}`}>
+                      {on ? <Check size={13} strokeWidth={3} /> : null}{pick(`sale.f.${f}`)}
+                    </button>
+                  )
+                })}
+              </div>
+              {(() => {
+                const shown = stock.filter((d) => passes(d, ticks))
+                if (!shown.length) return <BiLabel text="sale.noneMatch" size="md" tone="text-muted" align="center" className="py-6" />
+                return (
+                  <>
+                    <span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`} data-testid="sale-shown">{pick('sale.shown').replace('{{n}}', String(shown.length))}</span>
+                    <div className="grid gap-2.5 xl:grid-cols-2" data-testid="sale-cards">
+                      {shown.map((d) => multi ? (
+                        <div key={d.id} data-testid="sale-pick-row">
+                          <SaleStockCard d={d} picked={picked.includes(d.id)} onClick={() => setPicked((p) => (p.includes(d.id) ? p.filter((x) => x !== d.id) : [...p, d.id]))} />
+                        </div>
+                      ) : <SaleStockCard key={d.id} d={d} picked={lines.some((l) => l.device.id === d.id)} onClick={() => pickDevice(d)} />)}
+                    </div>
+                  </>
+                )
+              })()}
+            </>
           ) : (
             <BiLabel text="counter.noStock" size="md" tone="text-muted" align="center" className="py-6" />
           )}
@@ -464,6 +487,14 @@ export default function SaleWizard() {
                 </div>
               ) : null}
               <BiInput label="counter.soldFor" help={<Help term="sale.soldFor" size="sm" />} type="number" inputMode="numeric" min={0} value={l.price} onChange={(e) => setLines(lines.map((x) => (x.device.id === l.device.id ? { ...x, price: e.target.value } : x)))} className="num text-2xl" />
+              {l.device.cost_price != null && Number(l.price) > 0 ? (() => {
+                const gain = r2(Number(l.price) - Number(l.device.cost_price))
+                return (
+                  <span className={`font-semibold ${gain < 0 ? 'text-payable' : 'text-emerald-deep'} ${ur ? cls('sm') : 'text-xs'}`} data-testid="line-margin">
+                    {pick(gain < 0 ? 'sale.lineLoses' : 'sale.lineEarns').replace('{{c}}', withCur(Number(l.device.cost_price).toLocaleString('en-US'))).replace('{{m}}', withCur(Math.abs(gain).toLocaleString('en-US')))}
+                  </span>
+                )
+              })() : null}
               <PriceHint modelId={l.device.model_id} storageId={l.device.storage_id} condition={l.device.condition} excludeDeviceId={l.device.id} onUse={(p) => setLine(l, { price: String(p) })} />
               {belowCost(l) ? (
                 <div className="flex flex-col gap-2 rounded-2xl bg-expense p-3 text-expense-fg">
@@ -571,7 +602,7 @@ export default function SaleWizard() {
           ) : null}
 
           {!udhaar && !(owes && remitPkr(pay) > 0) ? (
-            <div className={`flex flex-col gap-2 rounded-3xl border-2 p-3 ${party || walkIn ? 'border-line' : 'border-gold'}`} data-testid="customer-box">
+            <div className={`flex flex-col gap-2 rounded-3xl border-2 p-3 lg:-order-1 ${party || walkIn ? 'border-line' : 'border-gold'}`} data-testid="customer-box">
               {!walkIn ? <PartyPicker value={party} onChange={(p) => { setParty(p); if (p) setWalkIn(false); else setToKhata(false) }} kind="customer" label="sale.whoBuys" /> : null}
               {!party ? (
                 <div className="flex items-center gap-1">
@@ -645,6 +676,7 @@ export default function SaleWizard() {
             </div>
           ) : null}
 
+          <div className="flex flex-col gap-3 lg:sticky lg:bottom-3 lg:z-[5] lg:rounded-3xl lg:border lg:border-line lg:bg-ground/95 lg:p-2.5 lg:shadow-hero lg:backdrop-blur" data-testid="sale-foot">
           <div className="hero flex flex-col gap-1 px-5 py-4">
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-1"><BiLabel text="common.total" size="md" tone="text-hero-text" bold /><span className="[&_button]:text-hero-text"><Help term="sale.total" size="sm" /></span></span>
@@ -666,6 +698,7 @@ export default function SaleWizard() {
           <ErrorText error={m.error ?? rep.error} />
           <BiButton text="sale.complete" icon={<Check size={22} />} full loading={(m.isPending || rep.isPending) && !confirming} disabled={!canSave || (!!replaceId && replaceWhy.trim().length < 3)} onClick={() => { if (lines.length) { m.reset(); setConfirming(true) } else void submit() }} />
           {(lines.length || misc.length) && has('held_sales') ? <BiButton text="hold.button" icon={<CirclePause size={22} />} full variant="secondary" onClick={() => { setHoldName(party?.name ?? ''); hold.reset(); setHolding(true) }} /> : null}
+          </div>
           {!lines.length && !misc.length && !laptop ? <BiButton text="counter.whichPhone" variant="secondary" full onClick={() => setStep(0)} /> : null}
         </div>
       ) : null}

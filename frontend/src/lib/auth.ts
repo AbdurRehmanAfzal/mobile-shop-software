@@ -1,4 +1,5 @@
 import { setCurrency } from './format'
+import { forgetAllDrafts } from './draft'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
@@ -80,6 +81,7 @@ export const useAuth = create<AuthState>()(
       setMe: (me) => set({ me }),
       setActiveShop: (shopId) => set({ activeShopId: shopId }),
       logout: () => {
+        forgetAllDrafts()
         // owner 2026-11-14 (ADR-074): this phone's / browser's login session ends on the server too
         const t = get().accessToken
         if (t) void fetch(`${import.meta.env.VITE_API_URL?.replace(/\/$/, '') ?? ''}/api/v1/auth/logout`, { method: 'POST', headers: { Authorization: `Bearer ${t}` } }).catch(() => undefined)

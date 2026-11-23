@@ -2535,3 +2535,27 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: on "push": the branch and its pull request into `staging`; the manual section; then `ui/02-sale`.
 
 **Open questions**: none new.
+
+## 2026-11-23 (6) — The sale, part A: stock cards (`ui/02-sale`)
+
+**Asked (owner)**: "push" of the stock summary (PR #116, merged by him — deployed to staging, green); "start the next work".
+
+**Done**: branch `ui/02-sale` from `staging`. Read `SaleWizard.tsx`: the mock-ups' held bills, per-line warranty, side-by-side layout, scan, discount and tax already exist, and the screen does far more than the mock-ups show — so it is restyled in place (docs/43 has the table). Part A: `SaleStockCard` replaces the rows of the sale's stock list (cost only when the server sent it), a card on the bill is marked, quick ticks hide cards, a count line; the Counter design lets a wide page use the screen. Strings in three languages.
+
+**Verified**: tsc; vitest 72; every Playwright file that goes through the sale (29 files, 47 tests): 41 passed, 1 failed because of the card (name and details must be one text — fixed, passes), 5 failed that also fail with the change stashed (stale tests, listed in docs/43 and the progress file); new `sale-cards` (cards, ticks, the bill, a salesman sees no cost, 320 px) passes; `counter-frame`, `salesman-cash`, `saletax`, `sale-customer`, `devcat` pass after the last change; laptop screenshot looked at. **Not done**: Urdu and dark looked at; part B.
+
+**Next**: part B — the bill side; then the manual's sale section and the pull request into `staging`.
+
+**Open questions**: none new.
+
+## 2026-11-23 (7) — The sale, part B, and drafts forgotten on logout (`ui/02-sale`)
+
+**Asked (owner)**: "start the next work"; then "push".
+
+**Done**: on each phone's line of the bill, its cost and what it earns or loses (only when the server sent the cost); on a laptop the buyer's box is first and the total with Complete sale and Hold stays in view. Found while testing: a half-filled form outlives a logout in the same tab, so an owner's draft sale (with the phones' cost) came back for the salesman who logged in next — `auth.logout` now forgets every draft (`lib/draft.forgetAllDrafts`), pinned in `e2e/sale-cards.spec.ts`. Docs: the table in docs/43, CLAUDE.md, the owner's test steps.
+
+**Verified**: tsc; vitest 72; `sale-cards` (extended: margin, loss, buyer first, the total in view, logout → salesman sees no bill and no cost); the 45 Playwright tests that go through the sale or the logout (without the five stale ones): 44 had passed with no failure when this was written, the last was still running — its result is in the pull request. **Not done**: Urdu and dark screenshots of the sale; the manual's sale section; the bill's total estimated profit (docs/43 says why).
+
+**Next**: `ui/03-add-stock`; the five stale tests before the release.
+
+**Open questions**: none new.
