@@ -2595,3 +2595,15 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: on "push" the pull request into `staging`; then `ui/04-purchases`.
 
 **Open questions**: none.
+
+## 2026-11-23 (11) — Plan changed: two products, the new one pixel to pixel (ADR-134)
+
+**Asked (owner)**: "the plan has changed. The old version stays exactly as it is. The new UI is to be designed pixel to pixel as it is in the files. It is as if we are building a new, complete management shop software for mobiles, laptops, accessories, tablets and watches. The mobile shop stays as it is — if any new update or any new module has to be built, it is built in that one. Note this down."
+
+**Done**: ADR-134; CLAUDE.md rewritten for it (ADR-133's "two versions in one file" marked superseded); `docs/43` status and a new rules block at the head of §3; the progress row; the memory note for later sessions. Nothing was built or changed in the app this turn.
+
+**Verified**: docs only.
+
+**Next**: undo the `if (newUi)` branches in `SaleWizard`, `PurchaseWizard`, `DeviceLineSheet` and `StockSummaryPage` so the live pages are untouched, and start the new product in its own files (own shell + theme first, then the screens of §5) — once the owner has answered what the new product does with features no mock-up draws.
+
+**Open questions**: what the new product does with everything the app has that no mock-up draws (installments, remittance, FBR, exchange, transfers, old dealings, bulk import, the shop audit, the provider's control room). My recommendation: build it in the mock-ups' own visual language in the nearest place, and list each one in the pull request.

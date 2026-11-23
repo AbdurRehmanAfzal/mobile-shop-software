@@ -381,6 +381,7 @@ Plan, research, assumptions `docs/34-REPAIR-LABS-PLAN.md`, ADR-044.
 | Five stale Playwright tests (`forms-keep`, `offline`, `plan-reminders`, `pricehint`, `urdu`) fail on `staging` without any change — repair before the release (docs/43) | ⏳ | |
 | UI redesign `ui/03-add-stock` (new design only): on a laptop "from whom" and the device's form beside the bill, the total in view; memory and colour as pills | ⏳ | `PurchaseWizard.tsx`, `e2e/buy-panes.spec.ts` |
 | Two UI versions side by side (ADR-133): the old pages restored as they were, the mock-ups' version only in the "New design" (`useNewUi`) — stock summary, sale, purchase | ⏳ | `StockSummaryPage.tsx` (+ `Classic`, `New`), `SaleWizard.tsx`, `PurchaseWizard.tsx`, `lib/theme.ts` |
+| Plan changed (ADR-134): two products — the live software frozen as a design and keeping all new work, the new UI a separate product built pixel to pixel in its own files; the `if (newUi)` branches to be undone | ⏳ | `docs/43-UI-REDESIGN-PLAN.md`, ADR-134 |
 | Operations runbook (internal; secrets only as placeholders) | ✅ | `operations-en.md` |
 | Owner review of the wording | ⏳ | `docs/29-OWNER-PENDING.md` D |
 

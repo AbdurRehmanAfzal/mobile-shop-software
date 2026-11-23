@@ -5,7 +5,7 @@ own branch; read each page's structure and build what is new in it; keep everyth
 disturb the shops that run the software. A `staging` branch from `main`: every branch is merged into
 `staging` first, tested there, and only then `staging` goes to `main`." Decision: ADR-132.
 
-Status: **Two versions side by side (ADR-133): every redesigned page keeps its old version and shows the mock-ups' version only in the "New design" (Appearance). On `staging`: foundation, stock summary, sale. On `ui/03-add-stock` (to be pushed): the split into two versions for all three pages, and the new purchase — two panes on a laptop with the device's form on the screen and pills. Next: `ui/04-purchases`.**
+Status: **Plan changed 2026-11-23 (ADR-134): two products, not a page-by-page redesign. The live software is frozen as a design and keeps all new work; the new UI is a separate product built pixel to pixel from the mock-up files, in its own files. On `staging`: the foundation, and the first pass of the stock summary, sale and purchase — those still carry `if (newUi)` branches inside the old pages and are to be undone and rebuilt as the new product's own screens. Next: that restructure, then the screens in the order of §5.**
 
 ## 1. The source
 
@@ -30,6 +30,23 @@ of its hidden panels — a mock-up hides its second and third tabs, drawers and 
 | Entry pattern | pills / chips to choose instead of dropdowns, preset amounts (+100, +500 …), a live preview of the 80 mm slip or sticker beside the form | step-by-step wizards, pickers |
 
 ## 3. Rules for this work
+
+**Changed 2026-11-23 (ADR-134).** Rules 1-8 below were written for a page-by-page redesign of one
+product. They still describe the **live software**, which is now frozen as a design. For the **new
+product** these rules replace them:
+
+- **The mock-up file is the specification.** Pixel to pixel: layout, spacing, type, colours, the dark
+  theme and the hidden tabs, drawers and pop-ups inside the same file. Render it and compare side by
+  side before calling a screen done.
+- **Its own look.** The mock-ups' colours and fonts are the product's look; the shop's Appearance
+  colour sets do not repaint it (rule 3 below is withdrawn for the new product).
+- **Its own files.** Own shell, own pages, own theme scope. An `if (newUi)` branch inside a live page
+  is a change to the live product and is not allowed.
+- **Urdu, RTL and the phone still hold** (rules 4 and 5), because the mock-ups themselves reflow and
+  carry an Urdu switch — pixel-perfect means the English laptop screen it draws, not English-only.
+- **No new dependency** (rule 7) and the standing product rules (rule 8) still hold.
+
+### The original rules (they now describe the live software)
 
 1. **Nothing a shop has today is removed.** Every action, field, permission (`VIEW_COST`, roles, modules,
    `useTrade`), "?" help, print and download a page has now is on the new page. A mock-up that leaves
