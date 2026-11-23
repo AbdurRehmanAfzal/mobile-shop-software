@@ -1,5 +1,5 @@
 import LockedLineSheet from './LockedLineSheet'
-import { Lock, Check, Headphones, PackagePlus, Pencil, Plus, Printer, ShieldCheck, SlidersHorizontal, Smartphone, Store, Trash2, UserCheck, UserRound, Watch } from 'lucide-react'
+import { X, Lock, Check, Headphones, PackagePlus, Pencil, Plus, Printer, ShieldCheck, SlidersHorizontal, Smartphone, Store, Trash2, UserCheck, UserRound, Watch } from 'lucide-react'
 import { faultText } from '@/features/stock/Faults'
 import { useEffect, useState, type ReactNode } from 'react'
 import { clearDrafts, useDraft } from '@/lib/draft'
@@ -195,6 +195,32 @@ export default function PurchaseWizard() {
   // dealer is asked straight away
   useEffect(() => { if (!trade.devices && (!chosen || kind !== 'supplier')) { setKind('supplier'); setChosen(true) } }, [trade.devices]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // the device's form: in a sheet, or (new design on a laptop, ADR-133) on the screen beside the bill
+  const editor = editing && editing.lock_type ? (
+          <LockedLineSheet
+            key={editing.key}
+            initial={editing}
+            again={devices.some((x) => x.key === editing.key)}
+            onSave={(d) => {
+              setDevices((xs) => (xs.some((x) => x.key === d.key) ? xs.map((x) => (x.key === d.key ? d : x)) : [...xs, d]))
+              setEditing(null)
+            }}
+          />
+        ) : editing ? (
+          <DeviceLineSheet
+            key={editing.key}
+            initial={editing}
+            again={devices.some((x) => x.key === editing.key)}
+            draftKey="purchase-line"
+            many
+            onSave={(d) => {
+              // ADR-110: a line with several pieces becomes one line per piece (a piece already on this bill is left out)
+              setDevices((xs) => (xs.some((x) => x.key === d.key) ? xs.map((x) => (x.key === d.key ? d : x)) : [...xs, ...expandDraft(d).filter((n) => !xs.some((x) => (n.imei1 && x.imei1 === n.imei1) || (!n.imei1 && n.serial && x.serial === n.serial)))]))
+              setEditing(null)
+            }}
+          />
+        ) : null
+
   return (
     <div className="flex flex-col gap-3">
       <PageHeader title="counter.addStock" help={<Help term="purchase.page" />} onBack={back} />
@@ -206,9 +232,9 @@ export default function PurchaseWizard() {
         </div>
       ) : null}
 
-      <div className={laptop && step !== 2 ? 'grid grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] items-start gap-6' : 'contents'} data-testid="buy-panes">
+      <div className={laptop && step !== 2 ? 'grid grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] items-start gap-6' : 'contents'} data-testid="buy-panes">
       {step === 0 || (laptop && step === 1) ? (
-        <div className={`flex flex-col gap-3 ${newUi ? 'lg:sticky lg:top-24' : ''}`} data-testid="buy-from">
+        <div className={`flex flex-col gap-3 ${newUi && !editing ? 'lg:sticky lg:top-24' : ''}`} data-testid="buy-from">
           {trade.devices ? <span className="flex items-center gap-1"><BiLabel text={trade.mobiles ? 'purchase.chooseTitle' : 'goods.chooseTitle'} size="lg" bold /><Help term="purchase.source" size="sm" /></span> : <BiLabel text="goods.dealerTitle" size="lg" bold />}
           {trade.devices ? <SourceCard
             help="purchase.fromDealer"
@@ -231,6 +257,15 @@ export default function PurchaseWizard() {
               <div className="flex items-start gap-1"><div className="min-w-0 flex-1"><PartyPicker value={party} onChange={setParty} kind={partyKind} label={kind === 'supplier' ? 'purchase.selectDealer' : 'purchase.selectSeller'} /></div>{kind === 'supplier' ? <Help term="purchase.dealer" size="sm" /> : <Help term="purchase.seller" size="sm" />}</div>
               {step === 0 && !(laptop && party && !startImei && !scanned) ? <BiButton text="common.next" full disabled={!party} onClick={() => { setStep(1); if (!devices.length && (startImei || scanned)) setEditing({ ...emptyDraft(startImei, kind), manufacturer_code: startImei ? '' : scanned }) }} /> : null}
             </>
+          ) : null}
+          {laptop && editing ? (
+            <section className="card flex flex-col gap-3 border-2 border-ink" data-testid="buy-builder">
+              <div className="flex items-center justify-between gap-2">
+                <BiLabel text={devices.some((x) => x.key === editing.key) ? 'purchase.editDevice' : 'purchase.addDevice'} size="lg" bold />
+                <button type="button" onClick={() => setEditing(null)} className="tap flex min-h-11 items-center gap-1 rounded-xl border border-line bg-surface px-3 text-sm font-bold" data-testid="buy-builder-close"><X size={16} /><BtnText k={'common.close'} /></button>
+              </div>
+              {editor}
+            </section>
           ) : null}
         </div>
       ) : null}
@@ -499,31 +534,8 @@ export default function PurchaseWizard() {
         ) : null}
       </Sheet>
 
-      <Sheet open={editing !== null} onClose={() => setEditing(null)} title={editing && devices.some((x) => x.key === editing.key) ? 'purchase.editDevice' : 'purchase.addDevice'}>
-        {editing && editing.lock_type ? (
-          <LockedLineSheet
-            key={editing.key}
-            initial={editing}
-            again={devices.some((x) => x.key === editing.key)}
-            onSave={(d) => {
-              setDevices((xs) => (xs.some((x) => x.key === d.key) ? xs.map((x) => (x.key === d.key ? d : x)) : [...xs, d]))
-              setEditing(null)
-            }}
-          />
-        ) : editing ? (
-          <DeviceLineSheet
-            key={editing.key}
-            initial={editing}
-            again={devices.some((x) => x.key === editing.key)}
-            draftKey="purchase-line"
-            many
-            onSave={(d) => {
-              // ADR-110: a line with several pieces becomes one line per piece (a piece already on this bill is left out)
-              setDevices((xs) => (xs.some((x) => x.key === d.key) ? xs.map((x) => (x.key === d.key ? d : x)) : [...xs, ...expandDraft(d).filter((n) => !xs.some((x) => (n.imei1 && x.imei1 === n.imei1) || (!n.imei1 && n.serial && x.serial === n.serial)))]))
-              setEditing(null)
-            }}
-          />
-        ) : null}
+      <Sheet open={editing !== null && !laptop} onClose={() => setEditing(null)} title={editing && devices.some((x) => x.key === editing.key) ? 'purchase.editDevice' : 'purchase.addDevice'}>
+        {laptop ? null : editor}
       </Sheet>
     </div>
   )

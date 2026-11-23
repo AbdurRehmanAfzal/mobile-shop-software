@@ -2583,3 +2583,15 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: the purchase as one screen with pills in the new design (mock-up 01); then the pull request into `staging`.
 
 **Open questions**: none.
+
+## 2026-11-23 (10) — Add stock in the new design: the device's form on the screen, pills
+
+**Asked (owner)**: build according to the mock-ups (ADR-133).
+
+**Done**: in the new design on a laptop the device's form (`DeviceLineSheet`, `LockedLineSheet`) is shown on the screen under "from whom", beside the bill, instead of in a sheet — for a new line, a locked phone and an edit; memory and colour are pills in the new design (`PickPills`). The form itself and its rules are the same code in both versions. The old version: the form's host was moved into one `editor` value, nothing else.
+
+**Verified**: tsc (run to its real exit code — an earlier check printed `head`'s); `buy-panes` extended (the form on the screen and not in a sheet, pills, a line lands on the bill, edit and close) passes; laptop screenshot looked at; the old version's `fix-after-purchase`, `purchase-cost`, `purchase-paid`, `purchase-return`, `devcat` and `counter` "profit…" pass — two of them only on the retry, each time stuck on the first page load after login (5 s) on this machine, never in the purchase. **Not done**: the full Playwright suite; Urdu and dark screenshots; the manual's add-stock section for the new design.
+
+**Next**: on "push" the pull request into `staging`; then `ui/04-purchases`.
+
+**Open questions**: none.

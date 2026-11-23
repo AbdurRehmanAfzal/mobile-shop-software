@@ -5,7 +5,7 @@ own branch; read each page's structure and build what is new in it; keep everyth
 disturb the shops that run the software. A `staging` branch from `main`: every branch is merged into
 `staging` first, tested there, and only then `staging` goes to `main`." Decision: ADR-132.
 
-Status: **Two versions side by side (ADR-133): every redesigned page keeps its old version and shows the mock-ups' version only in the "New design" (Appearance). On `staging`: foundation, stock summary, sale. On `ui/03-add-stock`: the split into two versions for all three pages, and the purchase's two panes. Next on that branch: the purchase as one screen with pills, as mock-up 01 draws it (new version only).**
+Status: **Two versions side by side (ADR-133): every redesigned page keeps its old version and shows the mock-ups' version only in the "New design" (Appearance). On `staging`: foundation, stock summary, sale. On `ui/03-add-stock` (to be pushed): the split into two versions for all three pages, and the new purchase — two panes on a laptop with the device's form on the screen and pills. Next: `ui/04-purchases`.**
 
 ## 1. The source
 
@@ -191,8 +191,8 @@ discount and what it earns (`LineFoot`, ADR-124), the review before saving, the 
 |---|---|
 | Exists, kept | the three steps on a phone, the source cards, the person picker, every add button, the bill's lines, discount, "when bought", the payment, the review sheet, the done step with stickers and the ID check, every `data-testid` |
 | New, part A (built) | on a laptop "from whom" and the bill side by side — the bill opens once the seller is chosen, the total and **Put in stock** stay in view; the page uses the wide layout |
-| Decided 2026-11-23 (ADR-133) | the new version asks the device's details on one screen with pills, as the mock-up draws; the step-by-step sheet stays as the old version — to build |
-| To check when that is decided | shelf / rack (the device has `location`), cheque as a way to pay (the sale's `PayPicker` has it), "Later" for what came with the phone |
+| New, part B (built, new design only) | on a laptop the device's form opens **on the screen** under "from whom", beside the bill — no sheet over the page — for a new line, a locked phone and an edit; **memory and colour are pills** (a second tap takes the choice back). Brand, model, condition, PTA and SIM lock were buttons already. On a phone the form stays a sheet (there is no room beside the bill), with the pills |
+| Checked: already there | shelf / place, warranty months, "Later" for what came with the phone, cheque in the payment picker — all in the existing form, so in both versions |
 | Not built | "Auto-gen test IMEI" |
 
 ## 6. Decided by the owner

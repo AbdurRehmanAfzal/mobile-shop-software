@@ -355,6 +355,8 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **Two versions for the shopkeepers (2026-11-23, ADR-133)** — on staging after the pull request is merged. More → Appearance → Design: **New design** shows the mock-ups' screens (the frame, the stock summary, the sale with cards, add stock with two panes on a laptop); **Classic** (or Tiles / Simple / Bold) shows every screen exactly as before. To test: pick Classic and check Stock, Sell and Add stock look as they always did; pick New design and check the same three. The choice is kept on the device, so two phones can show the two versions side by side. Nothing is the default but Classic.
 
+**Add stock in the new design (2026-11-23, ADR-133, `ui/03-add-stock`)** — on staging after its pull request is merged. Pick **New design**, on a laptop tap **Add stock**: choose "From a dealer" and the dealer — the bill opens on the right; **Add device** opens the phone's form on the same screen under the dealer (no pop-up); memory and colour are buttons to tap; **Add** puts the line on the bill; the total and **Put in stock** stay in view; Edit on a line opens the same form again. Finish the purchase and check the stickers and the stock as always. Then pick **Classic** and do the same purchase: it must be the three steps and the pop-up form exactly as before.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |
