@@ -2554,8 +2554,20 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 
 **Done**: on each phone's line of the bill, its cost and what it earns or loses (only when the server sent the cost); on a laptop the buyer's box is first and the total with Complete sale and Hold stays in view. Found while testing: a half-filled form outlives a logout in the same tab, so an owner's draft sale (with the phones' cost) came back for the salesman who logged in next — `auth.logout` now forgets every draft (`lib/draft.forgetAllDrafts`), pinned in `e2e/sale-cards.spec.ts`. Docs: the table in docs/43, CLAUDE.md, the owner's test steps.
 
-**Verified**: tsc; vitest 72; `sale-cards` (extended: margin, loss, buyer first, the total in view, logout → salesman sees no bill and no cost); the 45 Playwright tests that go through the sale or the logout (without the five stale ones): 44 had passed with no failure when this was written, the last was still running — its result is in the pull request. **Not done**: Urdu and dark screenshots of the sale; the manual's sale section; the bill's total estimated profit (docs/43 says why).
+**Verified**: tsc; vitest 72; `sale-cards` (extended: margin, loss, buyer first, the total in view, logout → salesman sees no bill and no cost); the 45 Playwright tests that go through the sale or the logout (without the five stale ones): all 45 passed (the last finished just after the commit). **Not done**: Urdu and dark screenshots of the sale; the manual's sale section; the bill's total estimated profit (docs/43 says why).
 
 **Next**: `ui/03-add-stock`; the five stale tests before the release.
 
 **Open questions**: none new.
+
+## 2026-11-23 (8) — Add stock, part A (`ui/03-add-stock`)
+
+**Asked (owner)**: "push" (PR #117, merged by him); "ok start".
+
+**Done**: branch `ui/03-add-stock` from `staging`. Read the purchase form: the locked phone, Apple's variant, the dealer's khata state and a line's margin already exist (docs/43 corrected). Part A: on a laptop the "from whom" block and the bill are side by side (the bill appears once the seller is chosen; "Next" stays for a start from a scan), the total and Put in stock stay in view, `/purchase/new` uses the wide layout; a phone keeps its steps. One new string in three languages.
+
+**Verified**: tsc; new `buy-panes` (phone steps, laptop panes, no sideways scroll) passes; the 36 Playwright tests that go through the purchase form: 35 passed, `counter` "profit, best sellers…" failed once in the 30-minute run (the sale's stock card was not found) and, run alone, fails only on a cold first page load (5 s) and passes on the retry — flaky under load on this machine, not pinned down further. Laptop screenshot looked at.
+
+**Next**: the owner's choice for the device's details (pills in the step-by-step sheet — recommended — or one screen); then the pull request into `staging`.
+
+**Open questions**: that choice.

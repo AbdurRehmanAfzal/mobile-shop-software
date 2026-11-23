@@ -5,7 +5,7 @@ own branch; read each page's structure and build what is new in it; keep everyth
 disturb the shops that run the software. A `staging` branch from `main`: every branch is merged into
 `staging` first, tested there, and only then `staging` goes to `main`." Decision: ADR-132.
 
-Status: **`ui/00-foundation` and `ui/01-stock-summary` are on `staging` and the staging site (`https://staging-mobileshop.oopsolutions.com`). `ui/02-sale` is built on its branch (stock cards and quick ticks; on the bill side each line's cost and margin, the buyer first and the total staying in view on a laptop) — pull request into `staging`.** Next: `ui/03-add-stock`.
+Status: **`ui/00-foundation`, `ui/01-stock-summary` and `ui/02-sale` are on `staging` and the staging site. `ui/03-add-stock` is in work on its branch: part A (two panes on a laptop) is committed; how the device's details are asked (pills inside the step-by-step sheet, or one screen) waits for the owner.**
 
 ## 1. The source
 
@@ -180,6 +180,20 @@ list), `plan-reminders` (the receipt's number), `pricehint` ("Change asking pric
 `urdu` (USB / LAN / CP on the settings page). They are stale against earlier work (the phone's page of
 ADR-114, the printers card of ADR-119) — Playwright is not part of CI. To be repaired in a branch of
 their own before the release to `main`.
+
+### `ui/03-add-stock` — what was found (mock-up 01) and what is built so far
+
+Already in the app, so not "new": the locked phone (iCloud / FRP) as its own button (`LockedLineSheet`,
+ADR-085), Apple's region variant (`AppleVariant`), the dealer's khata state beside the picker, a line's
+discount and what it earns (`LineFoot`, ADR-124), the review before saving, the stickers after it.
+
+| | |
+|---|---|
+| Exists, kept | the three steps on a phone, the source cards, the person picker, every add button, the bill's lines, discount, "when bought", the payment, the review sheet, the done step with stickers and the ID check, every `data-testid` |
+| New, part A (built) | on a laptop "from whom" and the bill side by side — the bill opens once the seller is chosen, the total and **Put in stock** stay in view; the page uses the wide layout |
+| Open (owner) | the device's details: the mock-up asks them on one screen with pills; the app asks them step by step in a sheet (`DeviceLineSheet`, 611 lines, 17 test files go through it). Recommended: keep the steps and turn the sheet's dropdowns into pills |
+| To check when that is decided | shelf / rack (the device has `location`), cheque as a way to pay (the sale's `PayPicker` has it), "Later" for what came with the phone |
+| Not built | "Auto-gen test IMEI" |
 
 ## 6. Decided by the owner
 
