@@ -105,49 +105,4 @@ test('stock: a card per kind, then brands, models and the list', async ({ page, 
   await expect(page).toHaveURL(/\/accessories\?category=charger$/)
   await expect(page.getByText('Fast Charger').first()).toBeVisible()
   await expect(page.getByText('Back Cover')).toHaveCount(0)
-
-  // ADR-132 / ADR-133, the new design's summary: what a piece comes to, the biggest part and each card's part of the money
-  await expect(page.getByTestId('hero-avg')).toHaveCount(0) // the page the shops know has none of it
-  await page.goto('/more/appearance')
-  await page.getByTestId('look-layout-counter').click() // ADR-133: the mock-ups' version is the "New design"
-  await page.goto('/stock/summary')
-  await expect(page.getByTestId('hero-avg')).toContainText('Rs. 20,000') // 60,000 over three devices
-  await expect(page.getByTestId('hero-top')).toContainText('Tablets')
-  await expect(page.getByTestId('hero-top')).toContainText('77.3%')
-  await expect(page.getByTestId('hero-health')).toContainText('1 running low')
-  await expect(page.getByTestId('kind-card-tablet')).toContainText('Most: Tabco (1)')
-  await expect(page.getByTestId('kind-card-phone')).toContainText('15.5%')
-  // a kind: its average, biggest brand, the brands searched and put in another order
-  await request.post('/api/v1/devices/opening-stock', { headers: h, data: { imei1: '352099001761499', brand_id: tabBrand.id, model_id: (await (await request.post('/api/v1/catalogue/models', { headers: h, data: { brand_id: tabBrand.id, name: 'Phone Zed', category: 'phone' } })).json()).id, condition: 'box_pack', pta_status: 'pta_approved', cost_price: 30000, asking_price: 32000 } })
-  await page.goto('/stock/summary?kind=phone')
-  await expect(page.getByTestId('stock-hero-value')).toHaveText('Rs. 40,000')
-  await expect(page.getByTestId('hero-avg')).toContainText('Rs. 13,333')
-  await expect(page.getByTestId('hero-top')).toContainText('Tabco')
-  await expect(page.getByTestId('hero-top')).toContainText('75%')
-  await expect(page.getByTestId('brand-parts')).toContainText('Nokia')
-  const list = page.getByTestId('summary-brands')
-  await expect(list.getByRole('button').first()).toContainText('Tabco') // highest value first
-  await page.getByTestId('sort-units').click()
-  await expect(list.getByRole('button').first()).toContainText('Nokia') // two pieces against one
-  await page.getByTestId('sort-avg').click()
-  await expect(list.getByRole('button').first()).toContainText('Tabco')
-  await page.getByPlaceholder('Search a brand or model').fill('zed')
-  await expect(list.getByRole('button')).toHaveCount(1)
-  await expect(list.getByRole('link', { name: /Phone Zed/ })).toBeVisible() // a searched brand is open
-  await expect(list.getByRole('link', { name: /Phone Zed/ })).toContainText('100% of Tabco')
-  await page.getByPlaceholder('Search a brand or model').fill('nothing-like-this')
-  await expect(page.getByText('No brand or model matches')).toBeVisible()
-  // a laptop; then a kind with nothing offers the way to add some
-  await page.getByPlaceholder('Search a brand or model').fill('')
-  await page.setViewportSize({ width: 1440, height: 900 })
-  await page.goto('/stock/summary')
-  await expect(page.getByTestId('kind-cards')).toBeVisible()
-  expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(1)
-  await page.screenshot({ path: 'test-results/stock-summary-laptop.png', fullPage: true })
-  await page.getByTestId('kind-card-phone').click()
-  await page.getByTestId('summary-brands').getByRole('button').first().click()
-  await page.screenshot({ path: 'test-results/stock-kind-laptop.png', fullPage: true })
-  await page.goto('/stock/summary?kind=watch')
-  await page.getByTestId('summary-add').click()
-  await expect(page).toHaveURL(/\/purchase\/new/)
 })

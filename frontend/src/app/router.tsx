@@ -4,6 +4,8 @@ import LandingPage from '@/features/landing/LandingPage'
 import { StockGate } from '@/features/stock/StockCards'
 import { TOPICS, TOPIC_KEYS } from '@/features/landing/topics'
 import { useAuth } from '@/lib/auth'
+import NewShell, { Soon as NewSoon } from '@/newui/Shell'
+import NewStockSummary from '@/newui/pages/StockSummary'
 import LoginPage from '@/features/auth/LoginPage'
 import SignupPage from '@/features/auth/SignupPage'
 import ModuleGate from '@/components/ModuleGate'
@@ -145,6 +147,22 @@ export const router = createBrowserRouter([
     children: [
       { path: '/login', element: <LoginPage /> },
       { path: '/signup', element: <SignupPage /> },
+    ],
+  },
+  // ADR-134: the new product — its own frame, its own screens, its own look. The software the
+  // shops run is untouched and stays at the addresses it has always had.
+  {
+    element: <RequireAuth />,
+    children: [
+      {
+        path: '/new',
+        element: <Suspense fallback={<Waiting />}><NewShell /></Suspense>,
+        children: [
+          { index: true, element: <NewSoon /> },
+          { path: 'stock/summary', element: <NewStockSummary /> },
+          { path: '*', element: <NewSoon /> },
+        ],
+      },
     ],
   },
   {

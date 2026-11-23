@@ -2,6 +2,9 @@
 const rgb = (v) => `rgb(var(${v}) / <alpha-value>)`
 
 export default {
+  // ADR-134: the new product under /new is the only place that uses `dark:` classes; the
+  // software the shops run has none, so this changes nothing for it
+  darkMode: ['selector', ':root[data-theme="dark"]'],
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
@@ -13,6 +16,9 @@ export default {
         mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
       },
       colors: {
+        // ADR-134: the new product's own palette, taken from the mock-up files
+        limebrand: { DEFAULT: '#B4F000', hover: '#A3DC00', dark: '#65A30D' },
+        obsidian: { 950: '#07090D', 900: '#0C1017', 850: '#121822', 800: '#1A2230' },
         ink: rgb('--ink'),
         ground: rgb('--ground'),
         surface: rgb('--surface'),

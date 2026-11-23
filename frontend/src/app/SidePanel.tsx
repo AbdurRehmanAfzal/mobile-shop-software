@@ -1,14 +1,12 @@
 /** The laptop side panel (lg+), in the design the user chose on the Appearance page (owner
  *  2026-11-07): Classic (coloured job rows, two-up shop tiles), Tiles (a launcher grid), Simple (a
  *  plain list with a bar on the open page) and Bold (a dark panel). Every design shows the same
- *  pages in the same order and fits one 1280×720 screen. Counter (ADR-132) is the frame of the
- *  owner's new screens: a panel of its own from top to bottom with the shop's name, the jobs as
- *  tiles with their keys, the shop's pages and who is logged in. */
+ *  pages in the same order and fits one 1280×720 screen. */
 
 import { BarChart3, CalendarDays, ChevronLeft, ChevronRight, Home, Landmark, LayoutGrid, LineChart, Package, Settings, UserCog, Users, type LucideIcon } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 import { useLang } from '@/components/Bilingual'
-import { activeShop, useAuth } from '@/lib/auth'
+import { useAuth } from '@/lib/auth'
 import { moduleFor, useModules, useTrade } from '@/lib/modules'
 import { useLayout } from '@/lib/theme'
 import { jobsFor } from '@/features/counter/jobs'
@@ -54,65 +52,6 @@ export default function SidePanel() {
   const well = (active: boolean, Icon: LucideIcon, onDark = false) => <span className={`well h-6 w-6 shrink-0 rounded-lg ${active ? 'bg-white/15 text-current' : onDark ? 'bg-white/10 text-white' : 'bg-ground text-ink'}`}><Icon size={15} strokeWidth={2} /></span>
 
   const aside = 'print:hidden sticky top-[76px] hidden max-h-[calc(100dvh-88px)] w-[252px] shrink-0 flex-col overflow-y-auto lg:flex'
-
-  const shop = useAuth(activeShop)
-  const user = useAuth((s) => s.me?.user)
-
-  if (layout === 'counter') {
-    const shopName = ur ? shop?.name_ur || shop?.name || '' : shop?.name || ''
-    const mark = (s: string) => s.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase()).join('') || '?'
-    const userName = user?.name || user?.phone || ''
-    // the first job is the counter's main one (lime on the mock-ups), the second the dark one
-    const jobTile = (i: number, active: boolean, tone: string) =>
-      `tap relative flex ${ur ? 'min-h-[52px]' : 'min-h-[62px]'} min-w-0 flex-col items-start justify-between gap-1 rounded-2xl border p-2 font-bold transition-colors ${i === 0 ? `border-transparent ${tone}` : i === 1 ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink hover:border-ink/40'} ${active ? 'ring-2 ring-ink ring-offset-1 ring-offset-surface' : ''}`
-    // Urdu names are longer and Nastaliq is tall: two to a row with the name beside the icon, never cut
-    const shopTile = (active: boolean) => (ur ? `${tileCls(active)} min-h-10 !flex-row !justify-start gap-1.5 overflow-hidden !px-1.5` : `${tileCls(active)} min-h-[58px] gap-0.5`)
-    return (
-      <aside className="print:hidden sticky top-0 hidden h-dvh w-[252px] shrink-0 flex-col border-e border-line bg-surface lg:flex" aria-label={pick('nav.home')} data-testid="side-panel" data-layout="counter">
-        <NavLink to="/" end className="flex min-h-[68px] items-center gap-2.5 border-b border-line px-3.5" data-testid="side-brand">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-hero font-display text-sm font-extrabold text-hero-text" dir="ltr">{mark(shop?.name || '')}</span>
-          <span className={`line-clamp-2 min-w-0 flex-1 ${ur ? 'ur text-base font-bold leading-snug' : 'font-display text-[15px] font-extrabold leading-tight tracking-[-0.01em]'}`} dir={dir}>{shopName}</span>
-        </NavLink>
-        <div className="flex min-h-0 flex-1 flex-col gap-1.5 overflow-y-auto p-3">
-          <NavLink to="/" end className={({ isActive }) => sideRow(isActive)} data-testid="side-home">
-            {({ isActive }) => <>{well(isActive, Home)}<span className={`min-w-0 flex-1 ${txt('text-sm')}`}>{pick('nav.dashboard')}</span><Chevron size={16} className="shrink-0 opacity-60" /></>}
-          </NavLink>
-          <span className={`mt-1 px-1 leading-tight text-muted ${ur ? cls('sm') : 'text-[11px] font-bold uppercase tracking-wider'}`}>{pick('nav.counterSection')}</span>
-          <nav className="grid grid-cols-2 gap-1.5" data-testid="side-jobs">
-            {jobs.map((j, i) => (
-              <NavLink key={j.id} to={j.to} className={({ isActive }) => jobTile(i, isActive, j.tone)}>
-                <j.Icon size={18} strokeWidth={2} className="shrink-0" />
-                <span className={`line-clamp-1 w-full text-start ${txt('text-[13px] leading-tight')}`}>{pick(j.label)}</span>
-                {j.fkey ? <span className="absolute end-2 top-2 font-mono text-[10px] font-bold opacity-60"><bdi dir="ltr">{j.fkey}</bdi></span> : null}
-              </NavLink>
-            ))}
-          </nav>
-          {heading()}
-          <nav className={`grid gap-1 ${ur ? 'grid-cols-2' : 'grid-cols-3'}`} data-testid="side-shop">
-            {links.map(({ to, key, Icon }) => (
-              <NavLink key={to} to={to} className={({ isActive }) => shopTile(isActive)}>
-                <Icon size={17} strokeWidth={1.9} className="shrink-0" />
-                <span className={`${ur ? `min-w-0 flex-1 whitespace-nowrap text-start ${cls('sm')}` : 'line-clamp-2 w-full text-[11px] leading-tight'}`}>{pick(key)}</span>
-              </NavLink>
-            ))}
-            <NavLink to="/more" end className={({ isActive }) => shopTile(isActive)}>
-              <LayoutGrid size={17} strokeWidth={1.9} className="shrink-0" />
-              <span className={`${ur ? `min-w-0 flex-1 whitespace-nowrap text-start ${cls('sm')}` : 'line-clamp-2 w-full text-[11px] leading-tight'}`}>{pick('nav.allOptions')}</span>
-            </NavLink>
-          </nav>
-        </div>
-        {user ? (
-          <div className="flex items-center gap-2.5 border-t border-line px-3.5 py-2.5" data-testid="side-user">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-tint text-[12px] font-extrabold text-emerald-deep" dir="ltr">{mark(userName)}</span>
-            <span className="flex min-w-0 flex-1 flex-col">
-              <span className="truncate text-[13px] font-bold">{userName}</span>
-              <span className={`truncate text-muted ${ur ? cls('sm') : 'text-[11px] font-semibold'}`}>{pick(`staff.roles.${user.role}`)}</span>
-            </span>
-          </div>
-        ) : null}
-      </aside>
-    )
-  }
 
   if (layout === 'tiles') {
     return (

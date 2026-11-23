@@ -2595,3 +2595,39 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: on "push" the pull request into `staging`; then `ui/04-purchases`.
 
 **Open questions**: none.
+
+## 2026-11-23 (11) — Plan changed: two products, the new one pixel to pixel (ADR-134)
+
+**Asked (owner)**: "the plan has changed. The old version stays exactly as it is. The new UI is to be designed pixel to pixel as it is in the files. It is as if we are building a new, complete management shop software for mobiles, laptops, accessories, tablets and watches. The mobile shop stays as it is — if any new update or any new module has to be built, it is built in that one. Note this down."
+
+**Done**: ADR-134; CLAUDE.md rewritten for it (ADR-133's "two versions in one file" marked superseded); `docs/43` status and a new rules block at the head of §3; the progress row; the memory note for later sessions. Nothing was built or changed in the app this turn.
+
+**Verified**: docs only.
+
+**Next**: undo the `if (newUi)` branches in `SaleWizard`, `PurchaseWizard`, `DeviceLineSheet` and `StockSummaryPage` so the live pages are untouched, and start the new product in its own files (own shell + theme first, then the screens of §5) — once the owner has answered what the new product does with features no mock-up draws.
+
+**Open questions**: what the new product does with everything the app has that no mock-up draws (installments, remittance, FBR, exchange, transfers, old dealings, bulk import, the shop audit, the provider's control room). My recommendation: build it in the mock-ups' own visual language in the nearest place, and list each one in the pull request.
+
+## 2026-11-23 (12) — ADR-134 carried out: the live software restored, the new product's frame at `/new`
+
+**Asked (owner)**: the plan change of the previous entry.
+
+**Done**: branch `ui/04-new-product` from `staging`. **Live software back to `main` exactly**: `Shell`, `SidePanel`, `AppearancePage`, `theme.ts`, `StockSummaryPage`, `SaleWizard`, `PurchaseWizard`, `DeviceLineSheet` restored (`git diff origin/main` on them is empty); `StockSummaryClassic.tsx` deleted; the fifth "New design" look and its string removed. **New product**: a `/new` route tree inside the login with `src/newui/Shell.tsx` — the mock-up's frame class for class — and `src/newui/icons.tsx` with the files' own SVG paths; `tailwind.config.js` gained the files' `limebrand` / `obsidian` scales and a `darkMode` selector on the app's own `data-theme` (the live software uses no `dark:` class, so nothing of it changes). Everything else under `/new` answers "Not in the new design yet" with a link to the same address in the live software. The pieces worth keeping moved to `src/newui/` (`kit.tsx`, `SaleStockCard.tsx`, `pages/StockSummary.tsx`, the first pass to be rebuilt).
+
+**Verified**: tsc; vitest 72; new `newui-frame` (panel 252px and full height, the eight keys, nine tiles, the bar, a not-drawn screen linking to the live one, F4, dark, Urdu on the right, a phone's menu) passes; `stock-kind-cards` restored to `main`'s version; frame screenshots in light and dark compared with the mock-up. Two faults found and fixed while testing: Tailwind sorts `ltr:` after `lg:`, so the panel stayed hidden on a laptop (now `ltr:max-lg:`), and the search used an i18n key that does not exist. **Not done**: the full Playwright suite; the three tests of the undone work (`counter-frame`, `sale-cards`, `buy-panes`) are deleted and come back as the new product's screens are drawn.
+
+**Next**: `/new/stock/summary` pixel for pixel from mock-ups 11 and 13.
+
+**Open questions**: none. The owner answered the same day: build those screens here from what this software does, taking ideas from the old one, with the mock-ups' design structure (docs/43).
+
+## 2026-11-23 (13) — The new product's first screen: the stock summary
+
+**Asked (owner)**: for a feature the files do not draw, "build those files for this software yourself, take some ideas from the old software, but the design structure stays the mock-up's" — recorded in docs/43 and CLAUDE.md.
+
+**Done**: `/new/stock/summary` drawn from mock-up `…pos_stock_ui (4)` screen 1, with the kind icons taken path for path from `luxury_stock_cards_preview.html`: the obsidian hero with its lime glow (worth, lakh badge, phones / brands / models / accessory pieces, and the three boxes — average unit cost, top category with that kind's biggest brand, stock health), the kinds that hold stock as big cards (icon well, name, units badge, brands · models, worth, "Most: …", share bar), the empty kinds as a compact row with "+ Add" to the purchase, and the three export cards (owner copy, staff copy, item-wise). The two-shop dataset toggle is sample decoration and was not built. Kept because they are rules and not drawing: the tally sheet's permission flow (owner / staff copy, asking the owner, the owner answering requests) and `basis` — a salesman sees selling prices and never a cost. Strings in three languages under `nsum`.
+
+**Verified**: tsc; vitest 72; new `newui-stock` passes — the hero's figures against the server (worth 14,700 = 10,000 phones + 4,700 accessories, average 5,000, top category Mobiles 68% with Nokia, 1 item running low), the two kind cards and their shares, the two empty kinds, the three sheets, no sideways scroll at 1440, a card opening its kind, and a **salesman**: everything at the selling price (20,600) and no owner-copy print — he must ask first. Screenshots in light and dark compared with the mock-up.
+
+**Next**: the brand and model drill-down (mock-up 11 screen 2), which is what a kind card opens; until it is drawn, `?kind=` says so and opens the live page.
+
+**Open questions**: none.

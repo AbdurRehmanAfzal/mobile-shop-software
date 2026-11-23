@@ -4,7 +4,6 @@
  *  Wi-Fi only or Wi-Fi + SIM (IMEI and PTA only with a SIM), storage, battery health, pen/keyboard;
  *  a watch GPS or cellular, case size, battery health, strap: no storage, IMEI 2 or JV. */
 
-import { useNewUi } from '@/lib/theme'
 import { PtaCheckButton, PtaCheckSheet, type PtaResult } from '@/features/stock/PtaCheck'
 import { useEffect, useState } from 'react'
 import { FaultPicker } from '@/features/stock/Faults'
@@ -188,22 +187,9 @@ export function draftToApi(d: DeviceLineDraft) {
 /** `draftKey`: keep what is typed if the page reloads (camera on Android), see lib/draft */
 /** `again`: a phone already in the list is being changed (the button says Save, not Add) */
 /** `many`: offer "several pieces of the same" — the caller turns the saved line into one per piece with `expandDraft` */
-/** ADR-133, the new design: one of a few, as pills in place of a dropdown; a second tap takes the choice back */
-function PickPills({ value, options, onChange, testid }: { value: string; options: { id: string; name: string }[]; onChange: (id: string) => void; testid: string }) {
-  return (
-    <div role="radiogroup" className="flex flex-wrap gap-1.5" data-testid={testid}>
-      {options.map((o) => {
-        const on = o.id === value
-        return <button key={o.id} type="button" role="radio" aria-checked={on} onClick={() => onChange(on ? '' : o.id)} className={`tap min-h-10 rounded-full border px-3 text-[13px] font-bold ${on ? 'border-ink bg-ink text-ground' : 'border-line bg-surface text-ink hover:border-ink/40'}`} dir="auto">{o.name}</button>
-      })}
-    </div>
-  )
-}
-
 export default function DeviceLineSheet({ initial, onSave, edit = false, again = false, draftKey, many = false }: { initial: DeviceLineDraft; onSave: (d: DeviceLineDraft) => void; edit?: boolean; again?: boolean; draftKey?: string; many?: boolean }) {
   const { t } = useTranslation()
   const { pick, ur } = useLang()
-  const newUi = useNewUi()
   const [d, setD] = useDraft<DeviceLineDraft>(draftKey ? `${draftKey}.${initial.key}` : null, initial)
   const [modelQ, setModelQ] = useState('')
   const [more, setMore] = useState(false)
@@ -448,11 +434,10 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
           </div>
         </div>
       ) : null}
-      <div className={`grid gap-2 ${category === 'watch' || newUi ? 'grid-cols-1' : 'grid-cols-2'}`}>
+      <div className={`grid gap-2 ${category === 'watch' ? 'grid-cols-1' : 'grid-cols-2'}`}>
         {category === 'watch' ? null : (
         <div>
           <span className="flex items-center gap-1 mb-1.5"><BiLabel text="stock.storage" size="md" tone="text-muted" /><Help term="device.storage" size="sm" /></span>
-          {newUi ? <PickPills value={d.storage_id} options={(storages ?? []).map((s) => ({ id: s.id, name: s.name }))} onChange={(v) => set('storage_id', v)} testid="storage-pills" /> : (
           <select value={d.storage_id} onChange={(e) => set('storage_id', e.target.value)} className="min-h-12 w-full rounded-2xl border border-line bg-surface px-3 font-semibold">
             <option value="">—</option>
             {storages?.map((s) => (
@@ -461,7 +446,6 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
               </option>
             ))}
           </select>
-          )}
           <div className="mt-1.5">
             <QuickAdd
               label="catalogue.newStorage"
@@ -479,7 +463,6 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
         {category !== 'watch' ? <BiInput label="devx.ram" help={<Help term="device.ram" size="sm" />} type="number" inputMode="numeric" min={1} max={256} value={d.ram_gb ?? ''} onChange={(e) => set('ram_gb', e.target.value)} className="num" data-testid="device-ram" /> : null}
         <div>
           <span className="flex items-center gap-1 mb-1.5"><BiLabel text="stock.colour" size="md" tone="text-muted" /><Help term="device.colour" size="sm" /></span>
-          {newUi ? <PickPills value={d.colour_id} options={(colours ?? []).map((c) => ({ id: c.id, name: ur && c.name_ur ? c.name_ur : c.name }))} onChange={(v) => set('colour_id', v)} testid="colour-pills" /> : (
           <select value={d.colour_id} onChange={(e) => set('colour_id', e.target.value)} className="min-h-12 w-full rounded-2xl border border-line bg-surface px-3 font-semibold">
             <option value="">—</option>
             {colours?.map((c) => (
@@ -488,7 +471,6 @@ export default function DeviceLineSheet({ initial, onSave, edit = false, again =
               </option>
             ))}
           </select>
-          )}
           <div className="mt-1.5">
             <QuickAdd
               label="catalogue.newColour"

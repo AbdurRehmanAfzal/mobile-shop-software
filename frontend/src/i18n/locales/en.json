@@ -16,7 +16,10 @@
     "shopSection": "Shop",
     "allOptions": "All options",
     "purchases": "Purchases",
-    "counterSection": "Daily counter"
+    "counterSection": "Daily counter",
+    "accountsSection": "Accounts & Audit",
+    "shortcuts": "Shortcuts",
+    "quickImei": "Quick IMEI Focus"
   },
   "auth": {
     "login": "Login",
@@ -142,7 +145,9 @@
     "today": "Today",
     "close": "Close",
     "sheetKeep": "Something is filled in here. Tap Close if you really want to leave.",
-    "clearSearch": "Clear the search"
+    "clearSearch": "Clear the search",
+    "scan": "Scan",
+    "download": "Download"
   },
   "party": {
     "title": "People & khata",
@@ -4441,10 +4446,6 @@
       "bold": {
         "name": "Bold",
         "hint": "Dark panel, big numbers"
-      },
-      "counter": {
-        "name": "New design",
-        "hint": "The new screens — try them and tell us which is easier"
       }
     },
     "palette": "Colours",
@@ -6303,5 +6304,40 @@
     "noMatch": "No brand or model matches",
     "sortBy": "Order of the brands",
     "shareOfKind": "Part of this kind"
+  },
+  "newui": {
+    "soonTitle": "Not in the new design yet",
+    "soon": "This screen has not been drawn in the new design yet. Open it in the software you use now — nothing is lost.",
+    "openOld": "Open it in the current software"
+  },
+  "nsum": {
+    "basisHint": "Worked out at the price the shop actually paid",
+    "tapCategory": "Tap any kind of stock to see its brands, models and unit prices",
+    "brandsN": "{{n}} brands",
+    "modelsN": "{{n}} models",
+    "accPiecesN": "{{n}} pieces of accessories",
+    "itemsN": "{{n}} items",
+    "outN": "{{n}} finished",
+    "avgUnit": "Avg. unit cost",
+    "perUnit": "Per active unit",
+    "topCategory": "Top category",
+    "shareWord": "share",
+    "health": "Stock health",
+    "healthy": "Healthy",
+    "watch": "Watch it",
+    "lowN": "{{n}} items running low",
+    "activeKinds": "Active stock categories",
+    "clickCard": "Click a card to drill down",
+    "topN": "Most: {{name}} ({{n}})",
+    "shareOfStock": "Share of total shop stock",
+    "emptyKinds": "Empty categories (0 stock)",
+    "quickAdd": "Quick-add enabled",
+    "add": "+ Add",
+    "sheets": "Stock tally & export sheets",
+    "ownerCopy": "Owner copy",
+    "noPrices": "No prices",
+    "detailed": "Detailed",
+    "downloadExcel": "Download Excel",
+    "needOwner": "The owner allows this copy"
   }
 }

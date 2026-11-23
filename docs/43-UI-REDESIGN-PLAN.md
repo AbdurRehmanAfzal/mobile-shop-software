@@ -5,7 +5,7 @@ own branch; read each page's structure and build what is new in it; keep everyth
 disturb the shops that run the software. A `staging` branch from `main`: every branch is merged into
 `staging` first, tested there, and only then `staging` goes to `main`." Decision: ADR-132.
 
-Status: **Two versions side by side (ADR-133): every redesigned page keeps its old version and shows the mock-ups' version only in the "New design" (Appearance). On `staging`: foundation, stock summary, sale. On `ui/03-add-stock` (to be pushed): the split into two versions for all three pages, and the new purchase — two panes on a laptop with the device's form on the screen and pills. Next: `ui/04-purchases`.**
+Status: **ADR-134 under way. The live software is exactly what `main` has. The new product stands at `/new` with the mock-ups' frame, and its first screen is drawn: **the stock summary** (`/new/stock/summary`) from mock-up 11 screen 1 and the kind icons of mock-up 13. Everything else under `/new` says it is not drawn yet and opens the live address. Next: the brand and model drill-down (mock-up 11 screen 2), then the sale (14, 15).**
 
 ## 1. The source
 
@@ -30,6 +30,23 @@ of its hidden panels — a mock-up hides its second and third tabs, drawers and 
 | Entry pattern | pills / chips to choose instead of dropdowns, preset amounts (+100, +500 …), a live preview of the 80 mm slip or sticker beside the form | step-by-step wizards, pickers |
 
 ## 3. Rules for this work
+
+**Changed 2026-11-23 (ADR-134).** Rules 1-8 below were written for a page-by-page redesign of one
+product. They still describe the **live software**, which is now frozen as a design. For the **new
+product** these rules replace them:
+
+- **The mock-up file is the specification.** Pixel to pixel: layout, spacing, type, colours, the dark
+  theme and the hidden tabs, drawers and pop-ups inside the same file. Render it and compare side by
+  side before calling a screen done.
+- **Its own look.** The mock-ups' colours and fonts are the product's look; the shop's Appearance
+  colour sets do not repaint it (rule 3 below is withdrawn for the new product).
+- **Its own files.** Own shell, own pages, own theme scope. An `if (newUi)` branch inside a live page
+  is a change to the live product and is not allowed.
+- **Urdu, RTL and the phone still hold** (rules 4 and 5), because the mock-ups themselves reflow and
+  carry an Urdu switch — pixel-perfect means the English laptop screen it draws, not English-only.
+- **No new dependency** (rule 7) and the standing product rules (rule 8) still hold.
+
+### The original rules (they now describe the live software)
 
 1. **Nothing a shop has today is removed.** Every action, field, permission (`VIEW_COST`, roles, modules,
    `useTrade`), "?" help, print and download a page has now is on the new page. A mock-up that leaves
@@ -194,6 +211,39 @@ discount and what it earns (`LineFoot`, ADR-124), the review before saving, the 
 | New, part B (built, new design only) | on a laptop the device's form opens **on the screen** under "from whom", beside the bill — no sheet over the page — for a new line, a locked phone and an edit; **memory and colour are pills** (a second tap takes the choice back). Brand, model, condition, PTA and SIM lock were buttons already. On a phone the form stays a sheet (there is no room beside the bill), with the pills |
 | Checked: already there | shelf / place, warranty months, "Later" for what came with the phone, cheque in the payment picker — all in the existing form, so in both versions |
 | Not built | "Auto-gen test IMEI" |
+
+### Screens drawn so far
+
+| Screen | From | Notes |
+|---|---|---|
+| The frame | `…pos_stock_ui (4)` panel + header | class for class; the prototype's screen-switcher tabs and "Counter #1 Online" are sample decoration and are not built |
+| `/new/stock/summary` | the same file, screen 1, with mock-up 13's kind icons | hero (worth, avg. unit cost, top category with its biggest brand, stock health), active kind cards with their share bar, empty kinds with "+ Add", the three export cards. Dropped as sample: the two-shop dataset toggle. Kept from the live software because they are rules, not drawing: the tally sheet's permission (owner copy / staff copy / ask the owner, with the owner answering requests) and `basis` — a salesman sees selling prices and no cost |
+
+### A feature the files do not draw (owner, 2026-11-23)
+
+Asked what the new product does with everything the software has that no mock-up draws — instalments
+(qist), remittance, FBR, exchange, branch transfers, old dealings, bulk import, the shop audit, the
+control room. The owner: **"build those files for this software yourself; take some ideas from the old
+software too, but the design structure stays the mock-up's."**
+
+So: the screen is designed here, from what the live software already does, and drawn in the files' own
+visual language — the same frame, the same cards, type, spacing, lime and obsidian, the same dark
+theme. It is not a copy of the live screen with new colours, and it is not invented from nothing: the
+live screen says what the shop needs, the files say how it looks. Each such screen is listed in its
+pull request as designed-here, so the owner can send a drawing for it later if he wants one.
+
+### The new product as built (ADR-134)
+
+| | |
+|---|---|
+| Address | `/new` — its own route tree inside the login. The live software keeps every address it has. |
+| Frame | `src/newui/Shell.tsx`, class for class from `…pos_stock_ui (4).html`: the 252px panel (mark, shop name, status dot, Dashboard pill, **Daily Counter** 2-up tiles with F2…F10 — Sell lime `#B4F000`, Add stock obsidian — **Accounts & Audit** 3-up tiles, "Quick IMEI Focus" with the `/` key) and the sticky bar (IMEI search with Scan, language, light / dark, messages, the user's initials). |
+| Icons | `src/newui/icons.tsx` — the mock-ups' own SVG paths, copied, not the nearest library icon. |
+| Look | `tailwind.config.js` gained the files' own `limebrand` and `obsidian` scales, and `darkMode` now follows the app's `data-theme` (the live software uses no `dark:` class at all, so nothing of it changes). |
+| Kept correct, not drawn | `left`/`right` are written `start`/`end` so Urdu puts the panel on the right; in English the pixels are the mock-up's. The panel slides in behind a menu button on a phone, as the file does. |
+| Not drawn yet | every screen. `/new/<anything>` shows "Not in the new design yet" with a button to the same address in the live software, so nothing is a dead end. |
+| Undone | the redesign changes that had been made inside the live pages (`SaleWizard`, `PurchaseWizard`, `DeviceLineSheet`, `StockSummaryPage`, `Shell`, `SidePanel`, `AppearancePage`, `theme.ts`) — all back to `main`. The "New design" fifth look is gone; the new product is an address, not a look. |
+| Carried over | the parts worth keeping are now the new product's own: `newui/kit.tsx`, `newui/SaleStockCard.tsx`, `newui/pages/StockSummary.tsx` (the first pass, to be rebuilt pixel for pixel). The server's added figures, the shared font links and `forgetAllDrafts` on logout stay — they are not a design. |
 
 ## 6. Decided by the owner
 

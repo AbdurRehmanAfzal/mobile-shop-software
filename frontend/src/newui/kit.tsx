@@ -6,9 +6,9 @@
 import { X, type LucideIcon } from 'lucide-react'
 import { useEffect, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import { BiLabel, useLang, type BiText } from './Bilingual'
-import { BtnText, Sheet } from './ui'
-import Help from './Help'
+import { BiLabel, useLang, type BiText } from '@/components/Bilingual'
+import { BtnText, Sheet } from '@/components/ui'
+import Help from '@/components/Help'
 import { useLaptop } from '@/lib/useMedia'
 
 type Text = string | BiText

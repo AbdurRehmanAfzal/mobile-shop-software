@@ -16,7 +16,10 @@
     "shopSection": "Dukaan",
     "allOptions": "Saare options",
     "purchases": "Khareedari",
-    "counterSection": "Roz ka counter"
+    "counterSection": "Roz ka counter",
+    "accountsSection": "Hisaab aur audit",
+    "shortcuts": "Shortcuts",
+    "quickImei": "Foran IMEI"
   },
   "auth": {
     "login": "Login",
@@ -142,7 +145,9 @@
     "today": "Aaj",
     "close": "Band karein",
     "sheetKeep": "Yahan kuch bhara hua hai. Agar waqai chhorna hai to Band karein dabayein.",
-    "clearSearch": "Search saaf karein"
+    "clearSearch": "Search saaf karein",
+    "scan": "Scan",
+    "download": "Download"
   },
   "party": {
     "title": "Log aur khata",
@@ -4441,10 +4446,6 @@
       "bold": {
         "name": "Bold",
         "hint": "Gehra panel, baray hindse"
-      },
-      "counter": {
-        "name": "Naya design",
-        "hint": "Nayi screens — aazma kar batayein kaun sa aasan hai"
       }
     },
     "palette": "Rangon ka set",
@@ -6303,5 +6304,40 @@
     "noMatch": "Koi brand ya model nahi mila",
     "sortBy": "Brand ki tarteeb",
     "shareOfKind": "Is qisam mein hissa"
+  },
+  "newui": {
+    "soonTitle": "Naye design mein abhi nahi",
+    "soon": "Yeh screen naye design mein abhi nahi bani. Jo software aap abhi istemal karte hain us mein khol lein — kuch zaya nahi hota.",
+    "openOld": "Mojooda software mein kholein"
+  },
+  "nsum": {
+    "basisHint": "Usi qeemat par jo dukan ne waqai di",
+    "tapCategory": "Kisi bhi qisam ka stock dabayein to us ke brand, model aur fi adad qeemat nazar aayegi",
+    "brandsN": "{{n}} brand",
+    "modelsN": "{{n}} model",
+    "accPiecesN": "Accessories ke {{n}} adad",
+    "itemsN": "{{n}} item",
+    "outN": "{{n}} khatam",
+    "avgUnit": "Ek adad ki ausat khareed",
+    "perUnit": "Fi mojood adad",
+    "topCategory": "Sab se bari qisam",
+    "shareWord": "hissa",
+    "health": "Stock ki haalat",
+    "healthy": "Theek hai",
+    "watch": "Khayal rakhein",
+    "lowN": "{{n}} item kam ho rahe hain",
+    "activeKinds": "Jin ka stock mojood hai",
+    "clickCard": "Card dabayein to tafseel khulegi",
+    "topN": "Sab se zyada: {{name}} ({{n}})",
+    "shareOfStock": "Saare stock mein hissa",
+    "emptyKinds": "Khali qismein (stock sifar)",
+    "quickAdd": "Foran daal sakte hain",
+    "add": "+ Daalein",
+    "sheets": "Stock ginne aur download ki sheets",
+    "ownerCopy": "Malik ki copy",
+    "noPrices": "Qeemat ke baghair",
+    "detailed": "Tafseeli",
+    "downloadExcel": "Excel download",
+    "needOwner": "Yeh copy malik ki ijazat se milti hai"
   }
 }
