@@ -2631,3 +2631,15 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: the brand and model drill-down (mock-up 11 screen 2), which is what a kind card opens; until it is drawn, `?kind=` says so and opens the live page.
 
 **Open questions**: none.
+
+## 2026-11-23 (14) — The design files renamed
+
+**Asked (owner)**: some files have the same name with different screens inside — open them and rename them so building the modules is easier.
+
+**Done**: all fifteen renamed to `NN-<what it is>.html` in the folder `new mobile shop ui`, keeping the numbers `docs/43` already used, so an older reference still reads right (mock-up 11 is `11-frame-stock-summary-and-dashboard.html`). The five that shared the name `chaudhary_mobiles_upgraded_pos_stock_ui*` turned out to be the frame + stock summary (11), purchases (10), the repairs hub (09), a repair job (08) and amanat (12). `00-INDEX.txt` written in the folder saying what each file holds. `docs/43` and the comments of `newui/Shell.tsx` and `newui/pages/StockSummary.tsx` now name the new files; this log keeps the old names where they were true at the time.
+
+**Verified**: tsc; the folder listing; the plan's tables read right.
+
+**Next**: the brand and model drill-down from `11-frame-stock-summary-and-dashboard.html` screen 2.
+
+**Open questions**: none.

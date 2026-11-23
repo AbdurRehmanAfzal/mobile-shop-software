@@ -1,5 +1,5 @@
 /** "What is my stock worth?" in the new product (ADR-134), drawn from the owner's mock-up
- *  `…pos_stock_ui (4).html` screen 1 and the kind icons of `luxury_stock_cards_preview.html`:
+ *  `11-frame-stock-summary-and-dashboard.html` screen 1 and the kind icons of `13-stock-cards-preview.html`:
  *  the obsidian hero with its lime glow and three facts, the kinds that hold stock as big cards
  *  with their share bar, the empty kinds as a compact row with "+ Add", and the three export cards.
  *
