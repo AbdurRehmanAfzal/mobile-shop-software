@@ -1,329 +1,324 @@
-/** "What is my stock worth?" — owner 2026-11-22 (ADR-131): a card per kind of stock (mobiles,
- *  tablets, watches, laptops, accessories) with its pieces, worth, brands and models; a card opens
- *  that kind — brand rows that open into their models, a model opens those pieces in the stock
- *  list. Redrawn from the owner's new screens (ADR-132, docs/43 mock-ups 11 and 13): a dark heading
- *  with what a piece comes to, the kinds that hold stock as big cards with their part of the money,
- *  the empty ones small; a kind shows where the money sits brand by brand, and its brands can be
- *  searched and put in another order.
- *  Every figure is the server's (`GET /reports/stock-summary`), the averages and percentages too;
- *  nothing is worked out here except the heading's total of the cards, the order of the rows and
- *  the search. */
+/** "What is my stock worth?" in the new product (ADR-134), drawn from the owner's mock-up
+ *  `…pos_stock_ui (4).html` screen 1 and the kind icons of `luxury_stock_cards_preview.html`:
+ *  the obsidian hero with its lime glow and three facts, the kinds that hold stock as big cards
+ *  with their share bar, the empty kinds as a compact row with "+ Add", and the three export cards.
+ *
+ *  Every figure is the server's (`GET /reports/stock-summary`) — the averages and the percentages
+ *  too (ADR-131). Cost is shown only when the server sent it; `basis` says which price it used.
+ *  The tally sheet's permission (owner copy, staff copy, asking the owner) is the live software's
+ *  own rule, kept here and only drawn in these cards' language. */
 
-import DownloadButton from '@/components/DownloadButton'
-import TallySheetCard from '@/features/stock/TallySheetCard'
-import { ChevronDown, ChevronLeft, ChevronRight, Headphones, Laptop, List as ListIcon, PackagePlus, Smartphone, Tablet, Watch } from 'lucide-react'
-import { useMemo, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { BiLabel, useLang } from '@/components/Bilingual'
-import Help from '@/components/Help'
-import { kindLabel } from '@/components/ItemKinds'
-import { Pills } from '../kit'
-import { BtnText, Empty, Loading, PageHeader, SearchBox } from '@/components/ui'
+import { useLang } from '@/components/Bilingual'
+import { post } from '@/lib/api'
+import { withDocLang } from '@/lib/docLang'
+import { downloadFile, openPrintable } from '@/lib/files'
 import { toLakh, withCur } from '@/lib/format'
 import { useTrade } from '@/lib/modules'
-import { useGet } from '@/lib/queries'
+import { useGet, useInvalidate } from '@/lib/queries'
 import type { StockSummary } from '@/lib/types'
+import type { TallyAccess } from '@/features/stock/TallySheetCard'
+import {
+  IconBack, IconChevronRight, IconClipboardCheck, IconDocChart, IconDownload, IconEyeOff,
+  IconKindItems, IconKindLaptop, IconKindPhone, IconKindTablet, IconKindWatch, IconList,
+  IconPrinter, IconShare,
+} from '../icons'
+import { Soon } from '../Shell'
 
 const n = (v: string | number) => Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 })
+const pct = (v: number | undefined) => (v ?? 0).toLocaleString('en-US', { maximumFractionDigits: 1 })
 
 type DeviceKind = 'phone' | 'tablet' | 'watch' | 'laptop'
 type CardKind = DeviceKind | 'items'
-type Sort = 'value' | 'units' | 'avg'
-const ICON: Record<CardKind, typeof Smartphone> = { phone: Smartphone, tablet: Tablet, watch: Watch, laptop: Laptop, items: Headphones }
-/** the parts of the brand bar: the three biggest, then the rest together */
-const PART = ['bg-ink', 'bg-emerald', 'bg-receivable', 'bg-muted']
-
-/** a thin bar filled to a percentage (the server's) */
-function ShareBar({ pct, tone = 'bg-ink' }: { pct: number; tone?: string }) {
-  return <span className="block h-1.5 w-full overflow-hidden rounded-full bg-line"><span className={`block h-full rounded-full ${tone}`} style={{ width: `${Math.min(100, Math.max(pct ? 2 : 0, pct))}%` }} /></span>
+const ICON: Record<CardKind, (p: { className?: string }) => JSX.Element> = {
+  phone: IconKindPhone, tablet: IconKindTablet, watch: IconKindWatch, laptop: IconKindLaptop, items: IconKindItems,
 }
 
-export default function StockSummaryNew() {
+const TALLY = '/api/v1/exports/stock-tally'
+const CARD = 'smart-card rounded-2xl bg-white dark:bg-obsidian-900 border border-slate-200/90 dark:border-slate-800 p-4 flex flex-col justify-between gap-4'
+const BADGE = 'text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded'
+const WELL = 'w-8 h-8 rounded-xl flex items-center justify-center'
+const FOOT = 'flex items-center gap-2 pt-2 border-t border-slate-100 dark:border-slate-800'
+const DARKBTN = 'flex-1 py-2 px-3 rounded-xl bg-obsidian-900 dark:bg-[#B4F000] text-white dark:text-obsidian-950 font-bold text-xs hover:opacity-90 transition-opacity cursor-pointer flex items-center justify-center gap-1.5'
+const PALEBTN = 'flex-1 py-2 px-3 rounded-xl bg-slate-100 dark:bg-obsidian-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold text-xs transition-colors cursor-pointer flex items-center justify-center gap-1.5'
+const SIDEBTN = 'p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-obsidian-800 cursor-pointer'
+
+export default function NewStockSummary() {
   const { pick, ur, cls } = useLang()
   const { t } = useTranslation()
   const trade = useTrade()
+  const nav = useNavigate()
+  const inv = useInvalidate()
   const [sp] = useSearchParams()
-  // only the kinds this shop trades (ADR-109); a shop with one kind has no cards to choose from
-  const cards: CardKind[] = [...(trade.mobiles ? (['phone', 'tablet', 'watch'] as const) : []), ...(trade.laptops ? (['laptop'] as const) : []), ...(trade.accessories ? (['items'] as const) : [])]
-  const asked = sp.get('kind') as CardKind | null
-  const kind: CardKind | null = asked && cards.includes(asked) ? asked : cards.length === 1 ? cards[0] : null
-  const device = kind && kind !== 'items' ? kind : null
-  const { data, isLoading } = useGet<StockSummary>(['stock-summary', device ?? ''], `/api/v1/reports/stock-summary${device ? `?category=${device}` : ''}`)
-  const [open, setOpen] = useState<string | null>(null)
-  const [sort, setSort] = useState<Sort>('value')
-  const [q, setQ] = useState('')
-  const small = ur ? cls('sm') : 'text-xs font-semibold'
-  const cap = ur ? cls('sm') : 'text-[11px] font-bold uppercase tracking-wider'
-  const basis = data ? `(${pick(data.basis === 'cost' ? 'counter.worthCost' : 'counter.worthAsking')})` : ''
-  const of = (k: DeviceKind) => data?.kinds?.find((x) => x.key === k) ?? { key: k, count: 0, value: '0', brands: 0, models: 0 }
-  const items = data?.items
-  const Next = ur ? ChevronLeft : ChevronRight
-  const units = (k: DeviceKind, c: number) => t(`stock.countBy.${k}`, { n: c })
-  const pct = (v: number | undefined) => `${(v ?? 0).toLocaleString('en-US', { maximumFractionDigits: 1 })}%`
+  const [busy, setBusy] = useState<string | null>(null)
+  const { data } = useGet<StockSummary>(['stock-summary', ''], '/api/v1/reports/stock-summary')
+  const { data: acc } = useGet<TallyAccess>(['tally-access'], '/api/v1/staff-access/stock_tally')
 
-  // the brands as asked: searched by brand or model, in the order chosen (the server sends highest value first)
-  const brands = useMemo(() => {
-    const word = q.trim().toLowerCase()
-    const hit = (data?.brands ?? []).flatMap((b) => {
-      if (!word || b.name.toLowerCase().includes(word)) return [b]
-      const models = b.models.filter((m) => m.name.toLowerCase().includes(word))
-      return models.length ? [{ ...b, models }] : []
-    })
-    const key = (x: { count: number; avg?: string | number }) => (sort === 'units' ? x.count : Number(x.avg ?? 0))
-    return sort === 'value' ? hit : [...hit].sort((a, b) => key(b) - key(a)).map((b) => ({ ...b, models: [...b.models].sort((a, c) => key(c) - key(a)) }))
-  }, [data, q, sort])
+  // screen 2 (the brand drill-down) is drawn next; until then a kind opens the one that works
+  if (sp.get('kind')) return <Soon />
+  if (!data) return <div className="py-20 flex justify-center"><span className="h-8 w-8 animate-spin rounded-full border-2 border-slate-300 border-t-obsidian-900 dark:border-slate-700 dark:border-t-[#B4F000]" /></div>
 
-  /** a small box inside the dark heading */
-  const fact = (label: string, value: React.ReactNode, note?: React.ReactNode, testid?: string) => (
-    <span className="flex min-w-0 flex-col gap-0.5 rounded-2xl border border-white/10 bg-white/[0.06] px-3.5 py-2.5" data-testid={testid}>
-      <span className={`opacity-70 ${cap}`}>{label}</span>
-      <span className={`min-w-0 break-words leading-tight ${ur ? cls('md') : 'font-display text-lg font-extrabold'}`}>{value}</span>
-      {note ? <span className={`opacity-70 ${small}`}>{note}</span> : null}
-    </span>
-  )
-
-  const hero = (label: string, value: string | number, sub: React.ReactNode, facts: React.ReactNode) => (
-    <section className="flex flex-col gap-4 rounded-3xl bg-hero p-5 text-hero-text shadow-hero lg:flex-row lg:items-center lg:justify-between lg:p-6" data-testid="stock-hero">
-      <div className="flex min-w-0 flex-col gap-1">
-        <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-          <BiLabel text={{ en: `${label} ${basis}`, ur: `${label} ${basis}` }} size="sm" bold tone="text-current" />
-          <span className="[&_button]:text-current"><Help term="counter.stockValue" size="sm" /></span>
-          {Number(value) >= 100_000 ? <span className={`rounded-full bg-white/15 px-2 py-0.5 ${small}`}><span className="num" dir="ltr">{toLakh(value)}</span> {pick('counter.lakh')}</span> : null}
-        </span>
-        <span className="num font-display text-[34px] font-extrabold leading-tight tracking-[-0.02em] lg:text-[42px]" dir="ltr" data-testid="stock-hero-value">{withCur(n(value))}</span>
-        <span className={ur ? cls('sm') : 'text-sm font-semibold opacity-90'}>{sub}</span>
-      </div>
-      {facts ? <div className="grid shrink-0 grid-cols-2 gap-2 lg:flex lg:max-w-[58%] lg:[&>span]:min-w-[150px]" data-testid="stock-hero-facts">{facts}</div> : null}
-    </section>
-  )
-
-  const allValue = cards.reduce((s, k) => s + Number(k === 'items' ? items?.value ?? 0 : of(k).value), 0)
-  const topKind = data?.top_kind && cards.includes(data.top_kind as CardKind) ? (data.top_kind as CardKind) : null
+  const kinds: CardKind[] = [...(trade.mobiles ? (['phone', 'tablet', 'watch'] as const) : []), ...(trade.laptops ? (['laptop'] as const) : []), ...(trade.accessories ? (['items'] as const) : [])]
+  const of = (k: DeviceKind) => data.kinds?.find((x) => x.key === k) ?? { key: k, count: 0, value: '0', brands: 0, models: 0 }
+  const items = data.items
+  const has = (k: CardKind) => (k === 'items' ? (items?.pieces ?? 0) > 0 : of(k as DeviceKind).count > 0)
+  const live = kinds.filter(has)
+  const bare = kinds.filter((k) => !has(k))
+  const models = data.brands.reduce((s, b) => s + b.models.length, 0)
+  const total = data.total ?? data.value
+  const topKind = data.top_kind && kinds.includes(data.top_kind as CardKind) ? (data.top_kind as CardKind) : null
   const topShare = topKind ? (topKind === 'items' ? items?.share : of(topKind as DeviceKind).share) : undefined
-  const held = cards.filter((k) => (k === 'items' ? items?.pieces ?? 0 : of(k).count) > 0)
-  const bare = cards.filter((k) => !held.includes(k))
+  const topBrand = topKind && topKind !== 'items' ? of(topKind as DeviceKind).top_brand : null
+  const low = items?.low ?? 0
+  const units = (k: CardKind, c: number) => (k === 'items' ? t('ssum.pieces', { n: c }).replace('{{n}}', String(c)) : t(`stock.countBy.${k}`, { n: c }))
+  const small = ur ? cls('sm') : 'text-xs'
 
-  const kindCard = (k: CardKind, big: boolean) => {
-    const Icon = ICON[k]
-    const d = k === 'items' ? null : of(k)
-    const count = d ? d.count : items?.pieces ?? 0
-    const value = d ? d.value : items?.value ?? 0
-    const share = d ? d.share : items?.share
-    const countText = d ? units(k as DeviceKind, count) : pick('ssum.pieces').replace('{{n}}', String(count))
-    const facts = d ? pick('ssum.brandsModels').replace('{{b}}', String(d.brands)).replace('{{m}}', String(d.models)) : pick('ssum.itemsLine').replace('{{n}}', String(items?.items ?? 0)).replace('{{low}}', String(items?.low ?? 0)).replace('{{out}}', String(items?.out ?? 0))
-    if (!big) {
-      return (
-        <Link key={k} to={`/stock/summary?kind=${k}`} className="tap flex min-w-0 items-center gap-2.5 rounded-2xl border border-line bg-surface p-3 text-start text-muted transition-colors hover:border-ink/40 hover:text-ink" data-testid={`kind-card-${k}`}>
-          <span className="well h-9 w-9 shrink-0 rounded-xl bg-ground"><Icon size={17} strokeWidth={1.75} /></span>
-          <span className="flex min-w-0 flex-1 flex-col">
-            <span className={`min-w-0 break-words text-ink ${ur ? cls('md') : 'text-sm font-extrabold'}`}>{pick(`stock.kind.${k}`)}</span>
-            <span className={`min-w-0 break-words ${small}`}><span data-testid={`kind-card-count-${k}`}>{countText}</span> · <span className="num" dir="ltr" data-testid={`kind-card-value-${k}`}>{withCur(n(value))}</span></span>
-            <span className="sr-only" data-testid={`kind-card-facts-${k}`}>{facts}</span>
-          </span>
-          <Next size={16} className="shrink-0" />
-        </Link>
-      )
-    }
-    return (
-      <Link key={k} to={`/stock/summary?kind=${k}`} className="tap card flex min-w-0 flex-col gap-3 border-2 border-line p-4 text-start transition-colors hover:border-ink lg:p-5" data-testid={`kind-card-${k}`}>
-        <span className="flex items-start gap-3">
-          <span className="well h-12 w-12 shrink-0 rounded-2xl bg-hero text-hero-text"><Icon size={22} strokeWidth={1.75} /></span>
-          <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-              <span className={`min-w-0 break-words ${ur ? cls('lg') : 'font-display text-xl font-extrabold tracking-[-0.01em]'}`}>{pick(`stock.kind.${k}`)}</span>
-              <span className={`rounded-full bg-ground px-2 py-0.5 ${ur ? cls('sm') : 'text-xs font-bold'}`} data-testid={`kind-card-count-${k}`}>{countText}</span>
-            </span>
-            <span className={`min-w-0 break-words text-muted ${small}`} data-testid={`kind-card-facts-${k}`}>{facts}</span>
-          </span>
-          <span className="well h-9 w-9 shrink-0 rounded-full bg-ground text-ink"><Next size={18} /></span>
-        </span>
-        <span className="flex flex-wrap items-end justify-between gap-x-3 gap-y-1">
-          <span className="num font-display text-[28px] font-extrabold leading-none tracking-[-0.02em]" dir="ltr" data-testid={`kind-card-value-${k}`}>{withCur(n(value))}</span>
-          {d?.top_brand ? <span className={`text-emerald-deep ${small}`} dir="auto">{t('ssum.top', { name: d.top_brand.name, n: d.top_brand.count })}</span> : null}
-        </span>
-        {share != null && cards.length > 1 ? (
-          <span className="flex flex-col gap-1.5">
-            <span className={`flex items-center justify-between text-muted ${small}`}><span>{pick('ssum.shareOfStock')}</span><span className="num text-ink" dir="ltr">{pct(share)}</span></span>
-            <ShareBar pct={share} />
-          </span>
-        ) : null}
-      </Link>
-    )
+  async function ask(path: string, key: string) {
+    setBusy(key)
+    try { await post(path, {}); await inv('tally-access') } finally { setBusy(null) }
   }
+  const full = !!acc?.allowed && acc.status === null // owner / manager
+  const print = (staff: boolean) => openPrintable(withDocLang(`${TALLY}${staff ? '?staff=true&' : '?'}format=pdf`))
+  const grab = (staff: boolean) => downloadFile(withDocLang(`${TALLY}${staff ? '?staff=true&' : '?'}format=xlsx`), staff ? 'stock-tally-staff.xlsx' : 'stock-tally.xlsx')
 
   return (
-    <div className="flex flex-col gap-4">
-      <PageHeader
-        title={kind && cards.length > 1 ? `stock.kind.${kind}` : 'counter.stockTitle'}
-        back={kind !== null && cards.length > 1 ? true : undefined}
-        help={<Help term="counter.stockPage" />}
-        right={
-          <div className="flex gap-2">
-            {!kind || cards.length === 1 ? <DownloadButton path="/api/v1/exports/stock-summary" name="stock-worth" /> : null}
-            <Link to={kind === 'items' ? '/accessories' : device ? `/stock?category=${device}` : '/stock'} aria-label={pick('counter.seeList')} className="tap flex min-h-14 min-w-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-1.5 py-1 border border-line bg-surface" data-testid="summary-list">
-              <ListIcon size={20} strokeWidth={1.75} />
-              <BtnText k={kind ? 'ssum.seeList' : 'counter.seeList'} /></Link>
+    <section className="space-y-6" data-testid="nsum">
+      {/* Top breadcrumb */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <button type="button" onClick={() => nav('/new')} className="px-3 py-1.5 rounded-xl bg-white dark:bg-obsidian-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-obsidian-800 flex items-center gap-1.5 cursor-pointer shrink-0">
+            <IconBack className="w-3.5 h-3.5 rtl:rotate-180" />
+            <span>{pick('common.back')}</span>
+          </button>
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className={ur ? `ur font-bold ${cls('lg')}` : 'font-display font-bold text-lg sm:text-xl tracking-tight'}>{pick('counter.stockTitle')}</h1>
+              <span className="w-4 h-4 rounded-full border border-emerald-500/50 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold inline-flex items-center justify-center" title={pick('nsum.basisHint')}>?</span>
+            </div>
+            <p className={`text-slate-500 dark:text-slate-400 ${small}`}>{pick('nsum.tapCategory')}</p>
           </div>
-        }
-      />
-      {isLoading || !data ? <Loading /> : !kind ? (
-        <>
-          {hero(
-            pick('counter.stockWorth'),
-            allValue,
-            <><span className="num">{data.count}</span> {pick('counter.phones')}{trade.accessories && items ? <> · {pick('ssum.accPieces').replace('{{n}}', String(items.pieces))}</> : null}</>,
-            data.count || items?.items ? (
-              <>
-                {data.count ? fact(pick('ssum.avgPiece'), <span className="num" dir="ltr">{withCur(n(data.avg ?? 0))}</span>, <><span className="num">{data.count}</span> {pick('counter.phones')}</>, 'hero-avg') : null}
-                {topKind ? fact(pick('ssum.topKind'), pick(`stock.kind.${topKind}`), <span className="num" dir="ltr">{pct(topShare)}</span>, 'hero-top') : null}
-                {trade.accessories && items?.items ? fact(pick('ssum.health'), items.low ? t('ssum.lowN', { n: items.low }) : pick('ssum.healthy'), pick('ssum.itemsN').replace('{{n}}', String(items.items)), 'hero-health') : null}
-              </>
-            ) : null,
-          )}
-          <span className="flex items-center gap-1"><BiLabel text="ssum.pick" size="sm" tone="text-muted" /><Help term="counter.stockBrands" size="sm" /></span>
-          <div className="flex flex-col gap-3" data-testid="kind-cards">
-            {held.length ? <div className="grid gap-3 lg:grid-cols-2">{held.map((k) => kindCard(k, true))}</div> : null}
-            {bare.length ? (
-              <>
-                {held.length ? <span className={`text-muted ${cap}`}>{pick('ssum.emptyKinds')}</span> : null}
-                <div className="grid grid-cols-1 gap-2 min-[420px]:grid-cols-2 lg:grid-cols-4">{bare.map((k) => kindCard(k, false))}</div>
-              </>
-            ) : null}
+        </div>
+        <div className="flex items-center gap-2 flex-wrap">
+          <Link to="/new/stock" className="px-3.5 py-2 rounded-xl bg-white dark:bg-obsidian-900 border border-slate-200 dark:border-slate-800 hover:border-slate-400 text-xs font-semibold flex items-center gap-1.5 cursor-pointer" data-testid="nsum-list">
+            <IconList className="w-3.5 h-3.5" />
+            <span>{pick('counter.seeList')}</span>
+          </Link>
+        </div>
+      </div>
+
+      {/* Hero valuation banner */}
+      <div className="rounded-2xl bg-obsidian-900 dark:bg-obsidian-900 border border-slate-800 text-white p-5 sm:p-7 relative overflow-hidden shadow-lg" data-testid="nsum-hero">
+        <div className="absolute -end-16 -top-16 w-64 h-64 rounded-full bg-[#B4F000]/10 blur-3xl pointer-events-none" />
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div>
+            <div className="flex items-center gap-2 text-xs font-medium text-slate-400">
+              <span>{pick('counter.stockWorth')} ({pick(data.basis === 'cost' ? 'counter.worthCost' : 'counter.worthAsking')})</span>
+              {Number(total) >= 100_000 ? <span className="px-2 py-0.5 rounded-full bg-[#B4F000]/15 text-[#B4F000] border border-[#B4F000]/30 font-bold text-[11px]"><span className="num" dir="ltr">{toLakh(total)}</span> {pick('counter.lakh')}</span> : null}
+            </div>
+            <div className="num font-display font-extrabold text-3xl sm:text-4xl lg:text-[42px] tracking-tight text-white mt-1.5" dir="ltr" data-testid="nsum-worth">{withCur(n(total))}</div>
+            <div className={`mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-slate-300 ${ur ? cls('sm') : 'text-xs sm:text-sm'}`} data-testid="nsum-sub">
+              <span className="font-semibold text-white">{units('phone', data.count)}</span>
+              <span className="text-slate-600">•</span>
+              <span>{t('nsum.brandsN', { n: data.brands.length })}</span>
+              <span className="text-slate-600">•</span>
+              <span>{t('nsum.modelsN', { n: models })}</span>
+              {trade.accessories && items ? (<><span className="text-slate-600">•</span><span>{t('nsum.accPiecesN', { n: items.pieces })}</span></>) : null}
+            </div>
           </div>
-        </>
-      ) : kind === 'items' ? (
-        <>
-          {hero(pick('stock.kind.items'), items?.value ?? 0, <>{pick('ssum.pieces').replace('{{n}}', String(items?.pieces ?? 0))} · {pick('ssum.itemsLine').replace('{{n}}', String(items?.items ?? 0)).replace('{{low}}', String(items?.low ?? 0)).replace('{{out}}', String(items?.out ?? 0))}</>, null)}
-          {!items?.kinds.length ? <NoStock text="ssum.none" /> : (
-            <>
-              <BiLabel text="ssum.tapItemKind" size="sm" tone="text-muted" />
-              <div className="grid gap-2 lg:grid-cols-2" data-testid="item-kinds">
-                {items.kinds.map((g) => (
-                  <Link key={g.key} to={`/accessories?category=${encodeURIComponent(g.key)}`} className="tap card flex w-full flex-col gap-2 p-3.5 text-start transition-colors hover:border-ink" data-testid="item-kind-row">
-                    <span className="flex items-center gap-3">
-                      <span className="well h-11 w-11 shrink-0 rounded-2xl bg-ground text-ink"><Headphones size={18} /></span>
-                      <span className="flex min-w-0 flex-1 flex-col">
-                        <span className={`min-w-0 break-words ${ur ? cls('md') : 'text-base font-extrabold'}`} dir="auto">{kindLabel(pick, g.key)}</span>
-                        <span className={`text-muted ${small}`}>{pick('ssum.pieces').replace('{{n}}', String(g.pieces))} · {pick('ssum.itemsN').replace('{{n}}', String(g.items))}</span>
-                      </span>
-                      <span className="num font-display text-lg font-extrabold" dir="ltr">{n(g.value)}</span>
-                      <Next size={18} className="shrink-0 text-muted" />
-                    </span>
-                    {g.share != null ? <ShareBar pct={g.share} tone="bg-emerald" /> : null}
-                  </Link>
-                ))}
-              </div>
-            </>
-          )}
-        </>
-      ) : (
-        <>
-          {hero(
-            pick(cards.length > 1 ? `stock.kind.${kind}` : 'counter.stockWorth'),
-            data.value,
-            <>{units(kind as DeviceKind, data.count)}{cards.length > 1 ? <> · {pick('ssum.brandsModels').replace('{{b}}', String(of(kind as DeviceKind).brands)).replace('{{m}}', String(of(kind as DeviceKind).models))}</> : null}</>,
-            data.count ? (
-              <>
-                {fact(pick('ssum.avgPiece'), <span className="num" dir="ltr">{withCur(n(data.avg ?? 0))}</span>, undefined, 'hero-avg')}
-                {data.brands[0] ? fact(pick('ssum.topBrand'), <span dir="auto">{data.brands[0].name}</span>, <span className="num" dir="ltr">{pct(data.brands[0].share)}</span>, 'hero-top') : null}
-              </>
-            ) : null,
-          )}
-          {!data.brands.length ? <NoStock text={cards.length > 1 ? 'ssum.none' : 'counter.noStock'} /> : (
-            <>
-              {data.brands.length > 1 && data.brands[0].share != null ? (
-                <section className="card flex flex-col gap-2.5" data-testid="brand-parts">
-                  <span className={ur ? cls('md') : 'text-sm font-extrabold'}>{pick('ssum.capital')}</span>
-                  <span className="flex h-2.5 w-full gap-0.5 overflow-hidden rounded-full">
-                    {data.brands.slice(0, 3).map((b, i) => <span key={b.brand_id} className={`h-full ${PART[i]}`} style={{ width: `${b.share ?? 0}%` }} />)}
-                    {data.brands.length > 3 ? <span className={`h-full flex-1 ${PART[3]}`} /> : null}
-                  </span>
-                  <span className={`flex flex-wrap gap-x-4 gap-y-1 text-muted ${small}`}>
-                    {data.brands.slice(0, 3).map((b, i) => <span key={b.brand_id} className="flex items-center gap-1.5"><span className={`h-2.5 w-2.5 rounded-sm ${PART[i]}`} /><span dir="auto">{b.name}</span> <span className="num text-ink" dir="ltr">{pct(b.share)}</span></span>)}
-                    {data.brands.length > 3 ? <span className="flex items-center gap-1.5"><span className={`h-2.5 w-2.5 rounded-sm ${PART[3]}`} />{t('ssum.others', { n: data.brands.length - 3 })}</span> : null}
-                  </span>
-                </section>
-              ) : null}
-              <div className="flex flex-col gap-2 lg:flex-row lg:items-center">
-                <div className="min-w-0 flex-1"><SearchBox value={q} onChange={setQ} placeholder="ssum.search" /></div>
-                <Pills segmented label="ssum.sortBy" value={sort} onChange={setSort} testid="brand-sort" options={[{ value: 'value', label: 'ssum.sort.value', testid: 'sort-value' }, { value: 'units', label: 'ssum.sort.units', testid: 'sort-units' }, { value: 'avg', label: 'ssum.sort.avg', testid: 'sort-avg' }]} />
-              </div>
-              <span className="flex items-center gap-1"><BiLabel text="counter.tapBrand" size="sm" tone="text-muted" /><Help term="counter.stockBrands" size="sm" /></span>
-              {!brands.length ? <Empty text="ssum.noMatch" /> : (
-                <div className="flex flex-col gap-2" data-testid="summary-brands">
-                  {brands.map((b) => {
-                    const isOpen = open === b.brand_id || (!!q.trim() && brands.length <= 3)
-                    return (
-                      <div key={b.brand_id} className={`card overflow-hidden p-0 ${isOpen ? 'border-ink' : ''}`}>
-                        <button type="button" aria-expanded={isOpen} onClick={() => setOpen(open === b.brand_id ? null : b.brand_id)} className="tap flex w-full flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3 text-start">
-                          <span className="well h-11 w-11 shrink-0 rounded-2xl bg-ground text-sm font-extrabold text-ink" dir="ltr">{b.name.slice(0, 2).toUpperCase()}</span>
-                          <span className="flex min-w-0 flex-1 flex-col">
-                            <span className={`truncate ${ur ? 'text-base font-extrabold' : 'font-display text-base font-extrabold'}`} dir="auto">{b.name}</span>
-                            <span className={`text-muted ${small}`}>{units(kind as DeviceKind, b.count)}{b.avg != null ? <> · {t('ssum.avg', { v: withCur(n(b.avg)) })}</> : null}</span>
-                          </span>
-                          {b.share != null ? (
-                            <span className="hidden w-[30%] flex-col gap-1 lg:flex">
-                              <span className={`flex justify-between text-muted ${small}`}><span>{pick('ssum.shareOfKind')}</span><span className="num text-ink" dir="ltr">{pct(b.share)}</span></span>
-                              <ShareBar pct={b.share} />
-                            </span>
-                          ) : null}
-                          <span className="num font-display text-lg font-extrabold" dir="ltr">{n(b.value)}</span>
-                          <span className="well h-8 w-8 shrink-0 rounded-full bg-ground text-muted"><ChevronDown size={18} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} /></span>
-                        </button>
-                        {isOpen ? (
-                          <div className="grid gap-2 border-t border-line bg-ground/60 p-3 lg:grid-cols-2">
-                            {b.models.map((m) => (
-                              <Link key={m.model_id} to={`/stock?model_id=${m.model_id}&model=${encodeURIComponent(m.name)}&category=${kind}`} className="tap flex flex-col gap-1.5 rounded-2xl border border-line bg-surface px-3.5 py-2.5 transition-colors hover:border-ink">
-                                <span className="flex items-start gap-3">
-                                  <span className="flex min-w-0 flex-1 flex-col">
-                                    <span className="min-w-0 break-words text-sm font-bold" dir="auto">{m.name}</span>
-                                    <span className={`text-muted ${small}`}>{units(kind as DeviceKind, m.count)}{m.avg != null ? <> · {t('ssum.avg', { v: withCur(n(m.avg)) })}</> : null}</span>
-                                  </span>
-                                  <span className="flex shrink-0 flex-col items-end">
-                                    <span className="num text-[15px] font-extrabold" dir="ltr">{n(m.value)}</span>
-                                    {m.share != null ? <span className={`text-muted ${small}`}>{t('ssum.ofBrand', { p: (m.share ?? 0).toLocaleString('en-US', { maximumFractionDigits: 1 }), name: b.name })}</span> : null}
-                                  </span>
-                                </span>
-                                {m.share != null ? <ShareBar pct={m.share} tone="bg-emerald" /> : null}
-                              </Link>
-                            ))}
-                          </div>
-                        ) : null}
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 lg:min-w-[410px]">
+            <div className="p-3.5 rounded-xl bg-white/5 border border-white/10" data-testid="nsum-avg">
+              <div className="text-[11px] text-slate-400">{pick('nsum.avgUnit')}</div>
+              <div className="num font-display font-bold text-base sm:text-lg text-white mt-0.5" dir="ltr">{withCur(n(data.avg ?? 0))}</div>
+              <div className="text-[10px] text-emerald-400 mt-0.5">{pick('nsum.perUnit')}</div>
+            </div>
+            <div className="p-3.5 rounded-xl bg-white/5 border border-white/10" data-testid="nsum-top">
+              <div className="text-[11px] text-slate-400">{pick('nsum.topCategory')}</div>
+              <div className="font-display font-bold text-base sm:text-lg text-[#B4F000] mt-0.5">{topKind ? `${pick(`stock.kind.${topKind}`)} (${pct(topShare)}%)` : '—'}</div>
+              <div className="text-[10px] text-slate-300 mt-0.5">{topBrand ? `${topBrand.name}: ${pct(topBrand.share)}% ${pick('nsum.shareWord')}` : '—'}</div>
+            </div>
+            <div className="col-span-2 sm:col-span-1 p-3.5 rounded-xl bg-white/5 border border-white/10" data-testid="nsum-health">
+              <div className="text-[11px] text-slate-400">{pick('nsum.health')}</div>
+              <div className={`font-display font-bold text-base sm:text-lg mt-0.5 ${low ? 'text-amber-400' : 'text-emerald-400'}`}>{pick(low ? 'nsum.watch' : 'nsum.healthy')}</div>
+              <div className="text-[10px] text-slate-300 mt-0.5">{t('nsum.lowN', { n: low })}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Active stock categories */}
+      {live.length ? (
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className={`font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 ${small}`}>{pick('nsum.activeKinds')}</h2>
+            <span className={`text-slate-500 ${small}`}>{pick('nsum.clickCard')}</span>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4" data-testid="nsum-cards">
+            {live.map((k) => {
+              const d = k === 'items' ? null : of(k as DeviceKind)
+              const count = d ? d.count : items?.pieces ?? 0
+              const value = d ? d.value : items?.value ?? 0
+              const share = d ? d.share : items?.share
+              const Icon = ICON[k]
+              return (
+                <Link key={k} to={`/new/stock/summary?kind=${k}`} className="smart-card rounded-2xl bg-white dark:bg-obsidian-900 border-2 border-obsidian-900/90 dark:border-[#B4F000]/70 p-5 sm:p-6 cursor-pointer shadow-sm group block" data-testid={`nsum-card-${k}`}>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-center gap-3.5 min-w-0">
+                      <div className="w-12 h-12 shrink-0 rounded-2xl bg-obsidian-900 dark:bg-[#B4F000] text-[#B4F000] dark:text-obsidian-950 flex items-center justify-center shadow-xs"><Icon className="w-6 h-6" /></div>
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className={ur ? `font-extrabold ${cls('md')}` : 'font-display font-extrabold text-lg'}>{pick(`stock.kind.${k}`)}</h3>
+                          <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 dark:bg-obsidian-800 text-slate-800 dark:text-slate-200">{units(k, count)}</span>
+                          {k === 'items' && low ? <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800">{t('nsum.lowN', { n: low })}</span> : null}
+                        </div>
+                        <p className={`text-slate-500 dark:text-slate-400 mt-0.5 ${small}`}>
+                          {d ? `${t('nsum.brandsN', { n: d.brands })} · ${t('nsum.modelsN', { n: d.models })}` : `${t('nsum.itemsN', { n: items?.items ?? 0 })} · ${t('nsum.outN', { n: items?.out ?? 0 })}`}
+                        </p>
                       </div>
-                    )
-                  })}
-                </div>
-              )}
-            </>
-          )}
-        </>
-      )}
-      {!kind || cards.length === 1 ? (
-        <>
-          <span className={`mt-1 text-muted ${cap}`}>{pick('ssum.sheets')}</span>
-          {/* owner 2026-11-14 (ADR-075): print every phone to count the stock by hand */}
-          <TallySheetCard />
-          {/* owner 2026-11-18 (ADR-103): the stock in hand item wise — quantity, price of one, cost */}
-          <section className="card flex items-center justify-between gap-3" data-testid="stock-items-card">
-            <span className="flex min-w-0 flex-col"><BiLabel text="ledgerRep.stockTitle" size="md" bold /><BiLabel text="ledgerRep.stockHint" size="sm" tone="text-muted" /></span>
-            <DownloadButton path="/api/v1/exports/stock-cost" name="stock-item-wise" />
-          </section>
-        </>
+                    </div>
+                    <div className="w-9 h-9 shrink-0 rounded-full bg-slate-100 dark:bg-obsidian-800 group-hover:bg-obsidian-900 group-hover:text-white dark:group-hover:bg-[#B4F000] dark:group-hover:text-obsidian-950 flex items-center justify-center transition-colors">
+                      <IconChevronRight className="w-4 h-4 rtl:rotate-180" strokeWidth={2.4} />
+                    </div>
+                  </div>
+                  <div className="mt-5 flex flex-wrap items-baseline justify-between gap-2">
+                    <div className="num font-display font-extrabold text-2xl sm:text-3xl tracking-tight" dir="ltr">{withCur(n(value))}</div>
+                    {d?.top_brand ? <span className="text-xs font-semibold text-emerald-700 dark:text-[#B4F000]" dir="auto">{t('nsum.topN', { name: d.top_brand.name, n: d.top_brand.count })}</span> : null}
+                  </div>
+                  <div className="mt-4">
+                    <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mb-1">
+                      <span>{pick('nsum.shareOfStock')}</span>
+                      <span className="num font-bold text-slate-800 dark:text-slate-200" dir="ltr">{pct(share)}%</span>
+                    </div>
+                    <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-obsidian-800 overflow-hidden">
+                      <div className="h-full bg-obsidian-900 dark:bg-[#B4F000] rounded-full bar-fill" style={{ width: `${Math.min(100, share ?? 0)}%` }} />
+                    </div>
+                  </div>
+                </Link>
+              )
+            })}
+          </div>
+        </div>
       ) : null}
-    </div>
-  )
-}
 
-/** nothing of this kind: say so, and offer the way to put some in */
-function NoStock({ text }: { text: string }) {
-  const { pick, ur, cls } = useLang()
-  return (
-    <div className="flex flex-col items-center gap-3">
-      <Empty text={text} />
-      <Link to="/purchase/new" className={`tap flex min-h-12 items-center gap-2 rounded-2xl bg-ink px-5 font-bold text-ground ${ur ? cls('md') : 'text-sm'}`} data-testid="summary-add">
-        <PackagePlus size={18} /> {pick('ssum.addStock')}
-      </Link>
-    </div>
+      {/* Empty categories */}
+      {bare.length ? (
+        <div>
+          <div className="flex items-center justify-between mb-2.5">
+            <h2 className={`font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 ${small}`}>{pick('nsum.emptyKinds')}</h2>
+            <span className="text-[11px] text-slate-400">{pick('nsum.quickAdd')}</span>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3" data-testid="nsum-empty">
+            {bare.map((k) => (
+              <Link key={k} to="/new/purchase/new" className="rounded-xl bg-white/70 dark:bg-obsidian-900/60 border border-slate-200/80 dark:border-slate-800/80 hover:border-slate-400 dark:hover:border-slate-600 p-3 flex items-center justify-between cursor-pointer transition-all group" data-testid={`nsum-empty-${k}`}>
+                <div className="min-w-0">
+                  <div className={`font-semibold text-slate-700 dark:text-slate-300 ${small}`}>{pick(`stock.kind.${k}`)}</div>
+                  <div className="text-[11px] text-slate-400 mt-0.5">{units(k, 0)} · <span className="num" dir="ltr">{withCur(n(0))}</span></div>
+                </div>
+                <span className="px-2 py-1 rounded-lg bg-slate-100 dark:bg-obsidian-800 text-[10px] font-bold text-slate-600 dark:text-slate-300 group-hover:bg-[#B4F000] group-hover:text-slate-950 transition-colors shrink-0">
+                  {pick('nsum.add')}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {/* Stock tally & export sheets */}
+      <div className="pt-2">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <h2 className={`font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 ${small}`}>{pick('nsum.sheets')}</h2>
+            <span className="px-2 py-0.5 rounded-md bg-slate-200/70 dark:bg-slate-800 text-[10px] font-semibold text-slate-600 dark:text-slate-300" dir="ltr">A4 / PDF / Excel</span>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4" data-testid="nsum-sheets">
+          {/* Owner copy */}
+          <div className={CARD}>
+            <div>
+              <div className="flex items-center justify-between">
+                <span className={`${WELL} bg-slate-100 dark:bg-obsidian-800 text-slate-700 dark:text-slate-200`}><IconClipboardCheck className="w-4 h-4" /></span>
+                <span className={`${BADGE} bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300`}>{pick('nsum.ownerCopy')}</span>
+              </div>
+              <h3 className={`font-bold mt-3 ${ur ? cls('md') : 'text-sm'}`}>{pick('tally.title')}</h3>
+              <p className={`text-slate-500 dark:text-slate-400 mt-1 leading-relaxed ${small}`}>{pick('tally.hint')}</p>
+            </div>
+            <div className={FOOT}>
+              {full ? (
+                <>
+                  <button type="button" onClick={() => print(false)} className={DARKBTN} data-testid="nsum-print-owner"><IconPrinter className="w-3.5 h-3.5" />{pick('tally.print')}</button>
+                  <button type="button" onClick={() => grab(false)} aria-label={pick('common.download')} className={SIDEBTN}><IconDownload className="w-4 h-4" /></button>
+                </>
+              ) : acc?.status === 'pending' ? (
+                <span className={`flex-1 py-2 px-3 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 font-bold text-center ${small}`} data-testid="nsum-waiting">{pick('tally.waiting')}</span>
+              ) : (
+                <button type="button" disabled={busy === 'ask'} onClick={() => ask('/api/v1/staff-access/stock_tally/request', 'ask')} className={PALEBTN} data-testid="nsum-ask">{pick('tally.ask')}</button>
+              )}
+            </div>
+          </div>
+
+          {/* Staff copy */}
+          <div className={CARD}>
+            <div>
+              <div className="flex items-center justify-between">
+                <span className={`${WELL} bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400`}><IconEyeOff className="w-4 h-4" /></span>
+                <span className={`${BADGE} bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300`}>{pick('nsum.noPrices')}</span>
+              </div>
+              <h3 className={`font-bold mt-3 ${ur ? cls('md') : 'text-sm'}`}>{pick('tally.staffCopy')}</h3>
+              <p className={`text-slate-500 dark:text-slate-400 mt-1 leading-relaxed ${small}`}>{pick('tally.staffCopyHint')}</p>
+            </div>
+            <div className={FOOT}>
+              {acc?.allowed ? (
+                <>
+                  <button type="button" onClick={() => print(true)} className={PALEBTN} data-testid="nsum-print-staff"><IconPrinter className="w-3.5 h-3.5" />{pick('tally.print')}</button>
+                  <button type="button" onClick={() => grab(true)} aria-label={pick('common.download')} className={SIDEBTN}><IconDownload className="w-4 h-4" /></button>
+                </>
+              ) : (
+                <span className={`flex-1 py-2 px-3 text-slate-400 text-center ${small}`}>{pick('nsum.needOwner')}</span>
+              )}
+            </div>
+          </div>
+
+          {/* Item-wise */}
+          <div className={CARD}>
+            <div>
+              <div className="flex items-center justify-between">
+                <span className={`${WELL} bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400`}><IconDocChart className="w-4 h-4" /></span>
+                <span className={`${BADGE} bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300`}>{pick('nsum.detailed')}</span>
+              </div>
+              <h3 className={`font-bold mt-3 ${ur ? cls('md') : 'text-sm'}`}>{pick('ledgerRep.stockTitle')}</h3>
+              <p className={`text-slate-500 dark:text-slate-400 mt-1 leading-relaxed ${small}`}>{pick('ledgerRep.stockHint')}</p>
+            </div>
+            <div className={FOOT}>
+              <button type="button" onClick={() => downloadFile(withDocLang('/api/v1/exports/stock-cost?format=xlsx'), 'stock-item-wise.xlsx')} className={PALEBTN} data-testid="nsum-item-wise"><IconDownload className="w-3.5 h-3.5" />{pick('nsum.downloadExcel')}</button>
+              <button type="button" onClick={() => downloadFile(withDocLang('/api/v1/exports/stock-cost?format=pdf'), 'stock-item-wise.pdf')} aria-label={pick('common.download')} className={SIDEBTN}><IconShare className="w-4 h-4" /></button>
+            </div>
+          </div>
+        </div>
+
+        {/* who asked for the staff copy — the live software's rule, drawn in these cards' language */}
+        {full && acc?.requests?.length ? (
+          <div className="mt-4 rounded-2xl bg-white dark:bg-obsidian-900 border border-slate-200/90 dark:border-slate-800 p-4" data-testid="nsum-requests">
+            <h3 className={`font-bold ${ur ? cls('md') : 'text-sm'}`}>{pick('tally.requests')}</h3>
+            <div className="mt-2 space-y-2">
+              {acc.requests.map((r) => (
+                <div key={r.id} className="flex flex-wrap items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 px-3 py-2">
+                  <span className={`min-w-0 flex-1 truncate font-semibold ${small}`}>{r.name ?? '—'}</span>
+                  {r.status === 'pending' ? (
+                    <>
+                      <button type="button" disabled={busy === `a${r.id}`} onClick={() => ask(`/api/v1/staff-access/requests/${r.id}/approve`, `a${r.id}`)} className="px-3 py-1.5 rounded-lg bg-obsidian-900 dark:bg-[#B4F000] text-white dark:text-obsidian-950 text-xs font-bold">{pick('tally.approve')}</button>
+                      <button type="button" disabled={busy === `r${r.id}`} onClick={() => ask(`/api/v1/staff-access/requests/${r.id}/reject`, `r${r.id}`)} className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-obsidian-800 text-xs font-bold">{pick('tally.reject')}</button>
+                    </>
+                  ) : (
+                    <button type="button" disabled={busy === `v${r.id}`} onClick={() => ask(`/api/v1/staff-access/requests/${r.id}/revoke`, `v${r.id}`)} className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-obsidian-800 text-xs font-bold">{pick('tally.revoke')}</button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </section>
   )
 }

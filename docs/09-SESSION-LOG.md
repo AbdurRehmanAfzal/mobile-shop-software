@@ -2618,4 +2618,16 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 
 **Next**: `/new/stock/summary` pixel for pixel from mock-ups 11 and 13.
 
-**Open questions**: what the new product does with everything the app has that no mock-up draws (installments, remittance, FBR, exchange, transfers, old dealings, bulk import, the shop audit, the control room). My recommendation: draw them in the files' own visual language in the nearest place, and list each in its pull request.
+**Open questions**: none. The owner answered the same day: build those screens here from what this software does, taking ideas from the old one, with the mock-ups' design structure (docs/43).
+
+## 2026-11-23 (13) — The new product's first screen: the stock summary
+
+**Asked (owner)**: for a feature the files do not draw, "build those files for this software yourself, take some ideas from the old software, but the design structure stays the mock-up's" — recorded in docs/43 and CLAUDE.md.
+
+**Done**: `/new/stock/summary` drawn from mock-up `…pos_stock_ui (4)` screen 1, with the kind icons taken path for path from `luxury_stock_cards_preview.html`: the obsidian hero with its lime glow (worth, lakh badge, phones / brands / models / accessory pieces, and the three boxes — average unit cost, top category with that kind's biggest brand, stock health), the kinds that hold stock as big cards (icon well, name, units badge, brands · models, worth, "Most: …", share bar), the empty kinds as a compact row with "+ Add" to the purchase, and the three export cards (owner copy, staff copy, item-wise). The two-shop dataset toggle is sample decoration and was not built. Kept because they are rules and not drawing: the tally sheet's permission flow (owner / staff copy, asking the owner, the owner answering requests) and `basis` — a salesman sees selling prices and never a cost. Strings in three languages under `nsum`.
+
+**Verified**: tsc; vitest 72; new `newui-stock` passes — the hero's figures against the server (worth 14,700 = 10,000 phones + 4,700 accessories, average 5,000, top category Mobiles 68% with Nokia, 1 item running low), the two kind cards and their shares, the two empty kinds, the three sheets, no sideways scroll at 1440, a card opening its kind, and a **salesman**: everything at the selling price (20,600) and no owner-copy print — he must ask first. Screenshots in light and dark compared with the mock-up.
+
+**Next**: the brand and model drill-down (mock-up 11 screen 2), which is what a kind card opens; until it is drawn, `?kind=` says so and opens the live page.
+
+**Open questions**: none.

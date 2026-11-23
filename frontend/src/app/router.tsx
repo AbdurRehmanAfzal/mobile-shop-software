@@ -5,6 +5,7 @@ import { StockGate } from '@/features/stock/StockCards'
 import { TOPICS, TOPIC_KEYS } from '@/features/landing/topics'
 import { useAuth } from '@/lib/auth'
 import NewShell, { Soon as NewSoon } from '@/newui/Shell'
+import NewStockSummary from '@/newui/pages/StockSummary'
 import LoginPage from '@/features/auth/LoginPage'
 import SignupPage from '@/features/auth/SignupPage'
 import ModuleGate from '@/components/ModuleGate'
@@ -158,6 +159,7 @@ export const router = createBrowserRouter([
         element: <Suspense fallback={<Waiting />}><NewShell /></Suspense>,
         children: [
           { index: true, element: <NewSoon /> },
+          { path: 'stock/summary', element: <NewStockSummary /> },
           { path: '*', element: <NewSoon /> },
         ],
       },

@@ -5,7 +5,7 @@ own branch; read each page's structure and build what is new in it; keep everyth
 disturb the shops that run the software. A `staging` branch from `main`: every branch is merged into
 `staging` first, tested there, and only then `staging` goes to `main`." Decision: ADR-132.
 
-Status: **ADR-134 carried out. The live software is back to exactly what `main` has — every redesign change inside its pages is undone. The new product stands at its own address `/new` with the mock-ups' frame built pixel for pixel (panel, counter tiles with their keys, the nine shop tiles, the bar, light and dark, Urdu, phone). Its screens are drawn one at a time; until a screen is drawn, `/new/<anything>` says so and opens the same address in the live software. Next: `/new/stock/summary` pixel for pixel from mock-ups 11 and 13.**
+Status: **ADR-134 under way. The live software is exactly what `main` has. The new product stands at `/new` with the mock-ups' frame, and its first screen is drawn: **the stock summary** (`/new/stock/summary`) from mock-up 11 screen 1 and the kind icons of mock-up 13. Everything else under `/new` says it is not drawn yet and opens the live address. Next: the brand and model drill-down (mock-up 11 screen 2), then the sale (14, 15).**
 
 ## 1. The source
 
@@ -211,6 +211,26 @@ discount and what it earns (`LineFoot`, ADR-124), the review before saving, the 
 | New, part B (built, new design only) | on a laptop the device's form opens **on the screen** under "from whom", beside the bill — no sheet over the page — for a new line, a locked phone and an edit; **memory and colour are pills** (a second tap takes the choice back). Brand, model, condition, PTA and SIM lock were buttons already. On a phone the form stays a sheet (there is no room beside the bill), with the pills |
 | Checked: already there | shelf / place, warranty months, "Later" for what came with the phone, cheque in the payment picker — all in the existing form, so in both versions |
 | Not built | "Auto-gen test IMEI" |
+
+### Screens drawn so far
+
+| Screen | From | Notes |
+|---|---|---|
+| The frame | `…pos_stock_ui (4)` panel + header | class for class; the prototype's screen-switcher tabs and "Counter #1 Online" are sample decoration and are not built |
+| `/new/stock/summary` | the same file, screen 1, with mock-up 13's kind icons | hero (worth, avg. unit cost, top category with its biggest brand, stock health), active kind cards with their share bar, empty kinds with "+ Add", the three export cards. Dropped as sample: the two-shop dataset toggle. Kept from the live software because they are rules, not drawing: the tally sheet's permission (owner copy / staff copy / ask the owner, with the owner answering requests) and `basis` — a salesman sees selling prices and no cost |
+
+### A feature the files do not draw (owner, 2026-11-23)
+
+Asked what the new product does with everything the software has that no mock-up draws — instalments
+(qist), remittance, FBR, exchange, branch transfers, old dealings, bulk import, the shop audit, the
+control room. The owner: **"build those files for this software yourself; take some ideas from the old
+software too, but the design structure stays the mock-up's."**
+
+So: the screen is designed here, from what the live software already does, and drawn in the files' own
+visual language — the same frame, the same cards, type, spacing, lime and obsidian, the same dark
+theme. It is not a copy of the live screen with new colours, and it is not invented from nothing: the
+live screen says what the shop needs, the files say how it looks. Each such screen is listed in its
+pull request as designed-here, so the owner can send a drawing for it later if he wants one.
 
 ### The new product as built (ADR-134)
 
