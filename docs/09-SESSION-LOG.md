@@ -1,13 +1,13 @@
 
 
-## 2026-11-23 (15) — The new product's drill-down (file 11, screen 2)
+## 2026-11-23 (16) — The new product's counter (files 14 + 15)
 
-**Asked (owner)**: "ok start" — the next screen.
+**Asked (owner)**: "ok start" — the sale screen.
 
-**Done**: `src/newui/pages/StockDrill.tsx`, opened by a kind card (`/new/stock/summary?kind=`): the breadcrumb heading with the kind's worth and counts, the search, the three orders (value, units, average), the capital-concentration bar in the file's colours with its caption, brands as cards that open into model cards (count, average, part of the brand); a model opens the stock list filtered to it (still the live list). Accessories, which have no brands, show their kinds in the same cards (designed here). Server: `reports.stock_summary` gained `top3_share` and `others_share` so the caption is not worked out in the app (ADR-131's rule); `test_stock_summary_kinds` pins them. Strings in three languages (`ndrill`).
+**Done**: `src/newui/pages/Sale.tsx` at `/new/sale/new`, a full-screen route beside the new shell, drawn from `14-sale-pos-full.html` with file 15's brand pills, cheque and "paid now". It posts what the live sale posts (`POST /api/v1/sales`, the same body: devices with warranty and what came with them, items with their customer price, discount, tax at the shop's rate via the live `billTax`, paid, payment info, override reason, below-cost consent, PIN) and keeps the live rules in a confirm step drawn in the file's modal: the ID-check skip (ADR-128), the owner-only reason for a flagged phone, below-cost consent for owner / manager, the owner's PIN; udhaar switches to a khata customer and is refused without one. Held bills use the live endpoint with a `v: 'newui'` cart (a bill held in the live sale opens there). Scanner through `useScan` + `lookupCode`. Tailwind gained file 14's `limebrand-400/500/600` and `obsidian-700`; the files' scrollbars and pop-in animation are scoped to `[data-newui]` in `index.css`. Strings in three languages (`npos`). Differences from the drawing are listed in docs/43 (split = one way of payment plus khata, trade-in opens the live exchange, walk-in name into notes, Expense F8, the shop's tax rate).
 
-**Verified**: ruff; pytest `test_stock_summary_kinds`; tsc; vitest; Playwright `newui-drill` (new: worth 20,000, 4 phones · 2 brands · 3 models, Nokia 60% / Samsung 40% and the caption, the three orders, a brand's models with 83.3% of Nokia, search with and without a match, a model opening the list, accessories by kind, back, Urdu without sideways scroll), `newui-stock` and `newui-frame` (updated: Stock is drawn now; the not-drawn check moved to Udhaar). Screenshot compared with the file. The local backend had to be restarted to serve the new keys.
+**Verified**: tsc; vitest 72; Playwright `newui-sale` (new — cards and tab counts, a cash sale of a phone and two chargers with the margin and estimated profit, the hide switch, warranty, confirm and receipt, the phone sold on the server; udhaar refusing a walk-in, the khata box 7,000, the party's balance 7,000 on the server; hold, held count, resume; a salesman with no cost, margin, profit or switch; no sideways scroll on a phone) and `newui-frame`. Screenshot compared with file 14. `git diff origin/main` on the live app, features and components: only `router.tsx`. **Not done**: the ID-pending path in a browser (the server's rule is covered by its own tests); Urdu and dark screenshots of the counter; the full Playwright suite.
 
-**Next**: the sale, files 14 and 15.
+**Next**: add stock / new purchase (file 01).
 
 **Open questions**: none.

@@ -17,8 +17,8 @@ export default {
       },
       colors: {
         // ADR-134: the new product's own palette, taken from the mock-up files
-        limebrand: { DEFAULT: '#B4F000', hover: '#A3DC00', dark: '#65A30D' },
-        obsidian: { 950: '#07090D', 900: '#0C1017', 850: '#121822', 800: '#1A2230' },
+        limebrand: { DEFAULT: '#B4F000', hover: '#A3DC00', dark: '#65A30D', 400: '#A3E635', 500: '#84CC16', 600: '#65A30D' },
+        obsidian: { 950: '#07090D', 900: '#0C1017', 850: '#121822', 800: '#1A2230', 700: '#232C3F' },
         ink: rgb('--ink'),
         ground: rgb('--ground'),
         surface: rgb('--surface'),

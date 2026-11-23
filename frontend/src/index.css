@@ -1046,3 +1046,16 @@ select option:checked {
   background-color: rgb(var(--ink));
   color: rgb(var(--ground));
 }
+
+/* ADR-134: the new product's counter (files 14 / 15) — only inside [data-newui] */
+[data-newui] .pos-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
+[data-newui] .pos-scroll::-webkit-scrollbar-track { background: transparent; }
+[data-newui] .pos-scroll::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.25); border-radius: 9999px; }
+[data-newui] .pos-scroll::-webkit-scrollbar-thumb:hover { background: rgba(163, 230, 53, 0.5); }
+[data-newui] .no-scrollbar::-webkit-scrollbar { display: none; }
+[data-newui] .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+[data-newui] input[type='number']::-webkit-inner-spin-button,
+[data-newui] input[type='number']::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+[data-newui] input[type='number'] { -moz-appearance: textfield; }
+@keyframes newuiPopIn { 0% { opacity: 0; transform: scale(0.97) translateY(5px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+[data-newui] .animate-pop { animation: newuiPopIn 0.16s cubic-bezier(0.16, 1, 0.3, 1) forwards; }

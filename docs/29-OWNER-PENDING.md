@@ -361,6 +361,8 @@ To test the sale: Website prices → "Sale for everyone" 20 → a shop's fees pa
 
 **The software the shops use is untouched** — its addresses, its look and its Appearance choices are exactly what they were. The "New design" that had appeared in Appearance is gone; the new product is its own address instead.
 
+**The counter in the new product (2026-11-23, ADR-134)** — on staging after its pull request is merged. Open `/new/sale/new` (or F2 from `/new`). On a laptop: the stock as cards on the left — tap **Mobiles / Accessories**, try **Box pack only** and **Hide faulty**; tap a phone and a charger twice — they land on the bill on the right; change the deal price and the warranty; press the **eye** switch on top — cost and profit disappear (for when the customer is looking). Sell for cash → **Complete sale & receipt** → check the bill → the receipt with Print. Then a phone on **Udhaar**: it asks for a khata customer — search one or "+ New"; the yellow box shows the khata before and after. **Hold bill**, then **Held bills** on top → Resume. As a salesman: no cost, no profit, no eye switch. A phone whose ID check is pending shows "ID pending" on its card, and the check step offers Check now / Skip.
+
 ## E. Decisions waiting for you
 
 | Done | Question | Now |
