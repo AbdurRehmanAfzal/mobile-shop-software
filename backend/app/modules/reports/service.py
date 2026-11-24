@@ -660,10 +660,12 @@ def day_report(
         for line in sorted(inv.lines, key=lambda x: x.line_no):
             name = line.description
             returned = line.returned_at is not None
+            imei1 = None
             if line.device_id:
                 phones += 0 if returned else 1
                 dev = db.get(Device, line.device_id)
                 if dev:
+                    imei1 = dev.imei1
                     name = " ".join(
                         filter(
                             None,
@@ -683,6 +685,17 @@ def day_report(
                     "sold_by": sellers.setdefault(inv.created_by, user_name(db, inv.created_by)),
                     # came back later: stays in the list (crossed out), not counted as sold
                     "returned": returned,
+                    # ADR-134 (additive): the bill's own split and when it was made, so a list can
+                    # say "part udhaar (paid 70,000 · udhaar 50,000)" without adding anything up
+                    "paid_now": paid_now,
+                    "owed": owed,
+                    "at": inv.created_at,
+                    "imei1": imei1,
+                    # the line's cost and profit, as on the sale's own page — owner / manager only
+                    "cost": money(line.cost) if show_cost else None,
+                    "profit": money(line.line_total - line.tax_share - line.cost)
+                    if show_cost
+                    else None,
                 }
             )
     udhaar_received = money(
@@ -729,6 +742,8 @@ def day_report(
     money_in = money(sum((f["cash_in"] for f in flows), ZERO))
     money_out = money(sum((f["cash_out"] for f in flows), ZERO))
     came_in, went_out = _cash_by_reason(db, shop_id, day, day_to)
+    sales_total = money(sum((i.total - i.returned_total for i in invoices), ZERO))
+    profit = profit_and_loss(db, shop_id, day, day_to)["net_profit"] if show_cost else None
     return {
         "date": day,
         "date_from": day,
@@ -744,12 +759,14 @@ def day_report(
         "sales_count": len(invoices),
         "phones_sold": phones,
         # net of anything that came back, so a returned phone is not counted as sold
-        "sales_total": money(sum((i.total - i.returned_total for i in invoices), ZERO)),
+        "sales_total": sales_total,
         "received": received,
         "udhaar_given": udhaar_given,
         "udhaar_received": udhaar_received,
         "expenses": expenses,
-        "profit": profit_and_loss(db, shop_id, day, day_to)["net_profit"] if show_cost else None,
+        "profit": profit,
+        # ADR-134 (additive): net profit as a share of the sales, one decimal (owner / manager)
+        "margin": _share(profit, sales_total) if profit is not None else None,
         "items": items,
     }
 

@@ -47,3 +47,15 @@
 **Next**: the day's hisaab (file 04).
 
 **Open questions**: none (the manual entry follows docs/38 §4; if the owner wants a free "cash in" the owner-only adjustment document in §4 is the decision).
+
+## 2026-11-24 — The day's hisaab in the new product (file 04)
+
+**Asked (owner)**: "ok start" — the next screen.
+
+**Done**: `src/newui/pages/Hisaab.tsx` at `/new/hisaab`, full screen, drawn from `04-day-hisaab.html`: period pills with a from – to bar, the profit eye, WhatsApp day summary, the A4 hisaab (server PDF), the lime banner, the dark "left in hand" card with formula / came in / went out / note, six figures (two filter the list), what was sold with tabs, search, split badges, time, a bill's drawer and footer sums. The rail of files 03 and 04 is now one component (`newui/FileRail.tsx`, lime passed in); `Cash.tsx` uses it. **Server (additive)**: `reports.day_report` items gain `paid_now`, `owed`, `at`, `imei1`, `cost` / `profit` (VIEW_COST only) and the report gains `margin`; types gain them as optional. `newui-frame` now uses `/new/reports` for a screen not drawn yet. Strings in three languages (`nday`). `data-file="04"` shades.
+
+**Verified**: pytest `test_reports_simple`, `test_reports_owner`, `test_salesman_cash` (salesman: no profit, margin or line cost), `test_lending`, `test_returns`; tsc; vitest 72; Playwright `newui-hisaab` (new — three sales (part, cash, full udhaar) and 1,000 udhaar back: total 35,000, profit and margin as the server's, stock bought 21,000, the split badges, the tabs and the two filtering figures, an IMEI search, a bill's drawer with IMEI / cost / 5,000 to receive, the eye, yesterday empty, Urdu RTL) and the other eight new-product tests. Screenshots compared with file 04 (English and Urdu). Live screens unchanged (only `router.tsx`; `types.ts` gains optional fields). **Not done**: the A4 print and WhatsApp in a browser; dark screenshot; the full pytest / Playwright suites.
+
+**Next**: expenses & day closing (file 05).
+
+**Open questions**: none.

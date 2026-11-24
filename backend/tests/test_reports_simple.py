@@ -86,6 +86,13 @@ def test_day_report(db, owner, cat):
         ("part", "1500.00", "Ali"),
         ("cash", "1200.00", None),
     ]
+    # ADR-134: each bill's own split and time, and the margin (800 / 2700 = 29.6%)
+    assert [(i["paid_now"], i["owed"]) for i in d["items"]] == [("1000.00", "500.00"), ("1200.00", "0.00")]
+    assert all(i["at"] for i in d["items"]) and d["margin"] == 29.6
+    assert [(i["imei1"], i["cost"], i["profit"]) for i in d["items"]] == [
+        (A, "1000.00", "500.00"),
+        (B, "800.00", "400.00"),
+    ]
     # another day is empty
     empty = owner.get("/api/v1/reports/day", params={"date": "2020-01-01"}).json()
     assert empty["sales_count"] == 0 and empty["items"] == [] and empty["sales_total"] == "0.00"
