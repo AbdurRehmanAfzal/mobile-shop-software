@@ -45,13 +45,15 @@ test('the new product at /new: its frame, its keys, Urdu, and the live software 
   await expect(page).toHaveURL(/\/new\/stock\/summary$/)
   await expect(panel).toBeVisible()
   await expect(page.getByTestId('nsum')).toBeVisible() // drawn: the stock summary
-  await page.keyboard.press('F4')
-  await expect(page).toHaveURL(/\/new\/khata$/)
-  await expect(page.getByTestId('newui-open-old')).toHaveAttribute('href', '/khata') // not drawn yet
   await page.getByTestId('newui-tiles').getByRole('link', { name: 'Purchases' }).click()
   await expect(page).toHaveURL(/\/new\/purchases$/)
   await expect(page.getByTestId('nlist')).toBeVisible() // drawn (file 10): full screen with its own rail
-  await page.goto('/new/khata')
+  await page.goto('/new/stock/summary')
+  await page.keyboard.press('F4')
+  await expect(page).toHaveURL(/\/new\/(khata|parties)/)
+  await expect(page.getByTestId('nkh').or(page.getByTestId('nkh-wait'))).toBeVisible() // drawn (file 06)
+  await page.goto('/new/hisaab')
+  await expect(page.getByTestId('newui-open-old')).toHaveAttribute('href', '/hisaab') // not drawn yet
 
   // dark, as the mock-up draws it
   await page.getByTestId('newui-theme').click()
