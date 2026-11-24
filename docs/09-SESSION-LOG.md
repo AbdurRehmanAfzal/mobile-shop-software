@@ -59,3 +59,15 @@
 **Next**: expenses & day closing (file 05).
 
 **Open questions**: none.
+
+## 2026-11-24 — Expenses & day closing in the new product (file 05)
+
+**Asked (owner)**: "ok start" — the next screen.
+
+**Done**: `src/newui/pages/Expenses.tsx` at `/new/expenses` (F8), full screen, drawn from `05-expenses-and-day-closing.html`: four cards, the Quick expense tab (category pills with the file's icons, galla / bank, presets, note; the same form edits), the Close the day tab (waterfall, counted cash, match expected, short / extra, slip, lock; a closed day shows counted and difference), the list with dates, search, spend bar, category chips, edit / delete and the shown total; a delete window with a reason. `FileRail` now lights a counter tile (Expense) as well as a shop tile. Fixed the lime tints of files 04 / 05 (a Tailwind opacity on a CSS variable gave no colour; now the file's own hex). Live APIs only (owner / manager). Strings in three languages (`nexp`). `data-file="05"` shades.
+
+**Verified**: tsc; vitest 72; Playwright `newui-expenses` (new — 12,000 cash in from a sale, tea 600 by presets with a note (server: one expense of 600, expected 11,400), edit to 700 (server: one live expense of 700), delete with a reason (server: none live, expected 12,000), close the day with 11,500 → "short 500", Match expected → "Matches", lock → Day closed and the server's close counted 12,000, Urdu RTL) and the other nine new-product tests. Screenshots compared with file 05 (English and Urdu). Live files: only `router.tsx`. **Not done**: a bank-paid expense in a browser; dark screenshot; the full Playwright suite.
+
+**Next**: the business overview (file 02).
+
+**Open questions**: a printable closing slip (Z-report) from the server — the live software has none; say if it is wanted.

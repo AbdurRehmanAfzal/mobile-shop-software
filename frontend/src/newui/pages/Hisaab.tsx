@@ -252,7 +252,7 @@ export default function NewHisaab() {
                     <div className="text-[10px] text-slate-400 mt-0.5 truncate">{pick('nday.expenseSub')}</div>
                   </div>
                   {data.profit != null ? (
-                    <button type="button" onClick={() => setShowProfit(!showProfit)} className="p-3 rounded-2xl bg-[#0F172A] text-white border border-slate-800 text-start shadow-xs cursor-pointer hover:border-[var(--nl)]/60 transition-colors" data-testid="nday-profit-card">
+                    <button type="button" onClick={() => setShowProfit(!showProfit)} className="p-3 rounded-2xl bg-[#0F172A] text-white border border-slate-800 text-start shadow-xs cursor-pointer hover:border-[#8CE01D]/60 transition-colors" data-testid="nday-profit-card">
                       <div className="flex items-center justify-between"><span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">{pick('counter.profit')}</span><Shield className="w-3 h-3 text-[var(--nl)]" /></div>
                       <div className={`font-display font-extrabold text-base sm:text-lg tabular-nums mt-1 ${num(data.profit) < 0 ? 'text-rose-400' : 'text-[var(--nl)]'}`} dir="ltr">{profitShown ? signed(data.profit) : `${withCur('')}•••••`}</div>
                       <div className="text-[10px] text-slate-400 mt-0.5 truncate" data-testid="nday-margin">{profitShown && data.margin != null ? t('nday.margin', { n: data.margin }) : pick('nday.tapToShow')}</div>
@@ -271,7 +271,7 @@ export default function NewHisaab() {
               <section className="w-full lg:w-[54%] lg:h-full bg-white dark:bg-obsidian-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xs flex flex-col overflow-hidden min-h-[420px]" data-testid="nday-sold">
                 <div className="p-3.5 sm:p-4 border-b border-slate-100 dark:border-slate-800 space-y-2.5 shrink-0">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div className="flex items-center gap-2"><h2 className="font-display font-extrabold text-sm sm:text-base">{pick('counter.whatSold')}</h2><span className="px-2 py-0.5 rounded-full font-mono text-[10px] font-extrabold bg-[var(--nl)]/25 text-slate-900 dark:text-[var(--nl)]">{t('nday.phonesN', { n: data.phones_sold })}</span></div>
+                    <div className="flex items-center gap-2"><h2 className="font-display font-extrabold text-sm sm:text-base">{pick('counter.whatSold')}</h2><span className="px-2 py-0.5 rounded-full font-mono text-[10px] font-extrabold bg-[#8CE01D]/25 text-slate-900 dark:text-[var(--nl)]">{t('nday.phonesN', { n: data.phones_sold })}</span></div>
                     <div className="flex items-center gap-1 bg-slate-100 dark:bg-obsidian-850 p-1 rounded-xl overflow-x-auto">
                       {tab('all', 'nday.all', items.length)}
                       {tab('cash', 'nday.cash', items.filter(paidAll).length)}
@@ -289,7 +289,7 @@ export default function NewHisaab() {
                   {!shown.length ? (
                     <div className="p-10 text-center space-y-1.5"><div className="text-xs font-extrabold text-slate-600 dark:text-slate-300">{pick(items.length ? 'nday.noMatch' : 'counter.nothingSold')}</div>{items.length ? <div className="text-[11px] text-slate-400">{t('nday.noMatchHint', { n: items.length })}</div> : null}</div>
                   ) : shown.map(({ it: x, idx }) => (
-                    <button key={idx} type="button" onClick={() => setSel(sel === idx ? null : idx)} data-testid="nday-row" className={`w-full px-4 py-2.5 flex items-center justify-between gap-3 cursor-pointer transition-colors text-start ${sel === idx ? 'bg-[var(--nl)]/15 dark:bg-[var(--nl)]/10 border-s-4 border-s-slate-900 dark:border-s-[var(--nl)]' : 'hover:bg-slate-50 dark:hover:bg-obsidian-850/50'} ${x.returned ? 'opacity-60' : ''}`}>
+                    <button key={idx} type="button" onClick={() => setSel(sel === idx ? null : idx)} data-testid="nday-row" className={`w-full px-4 py-2.5 flex items-center justify-between gap-3 cursor-pointer transition-colors text-start ${sel === idx ? 'bg-[#8CE01D]/15 dark:bg-[#8CE01D]/10 border-s-4 border-s-slate-900 dark:border-s-[var(--nl)]' : 'hover:bg-slate-50 dark:hover:bg-obsidian-850/50'} ${x.returned ? 'opacity-60' : ''}`}>
                       <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-1.5"><span className={`font-display font-extrabold text-xs sm:text-sm text-slate-900 dark:text-white truncate ${x.returned ? 'line-through' : ''}`} dir="auto">{x.qty > 1 ? `${x.qty} × ` : ''}{x.name}</span><span className="font-mono text-[10px] text-slate-400" dir="ltr">{x.invoice_no}</span></div>
                         <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5"><span className="font-semibold text-slate-700 dark:text-slate-300" dir="auto">{x.party_name ?? pick('counter.walkIn')}</span>{x.sold_by ? ` • ${x.sold_by}` : ''}{x.at ? <> • <span className="font-mono text-[10px]" dir="ltr">{period.from === period.to ? time(x.at) : `${fmtDate(x.at)} ${time(x.at)}`}</span></> : null}</div>
