@@ -200,7 +200,7 @@ set PYTHONUTF8=1
 .venv\Scripts\alembic upgrade head
 .venv\Scripts\uvicorn app.main:app --reload --port 8000
 ```
-Frontend: `cd frontend && npm install && npm run dev` (port 5173). Phone on same Wi-Fi: `npm run dev:lan`, open `http://<PC-IP>:5173` (allow Windows Firewall for Node).
+Frontend: `cd frontend && npm install && npm run dev` (port 5173; the `/api` proxy goes to `localhost:8000`, or to `API_TARGET` when set — e.g. when another app holds localhost:8000, point it at the LAN address of this backend). Phone on same Wi-Fi: `npm run dev:lan`, open `http://<PC-IP>:5173` (allow Windows Firewall for Node).
 Always set `PYTHONUTF8=1` on Windows before running Python; Urdu/emoji output otherwise crashes on cp1252.
 Legacy v1: see `docs/08-LEGACY-AUDIT.md` → "How to run".
 

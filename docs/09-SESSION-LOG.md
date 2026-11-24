@@ -71,3 +71,15 @@
 **Next**: the business overview (file 02).
 
 **Open questions**: a printable closing slip (Z-report) from the server — the live software has none; say if it is wanted.
+
+## 2026-11-24 — The business overview in the new product (file 02)
+
+**Asked (owner)**: "ok start" — the next screen.
+
+**Done**: `src/newui/pages/Overview.tsx` at `/new/overview`, full screen with its own 220px sidebar, drawn from `02-business-overview.html`: period pills with a from – to bar, 7 / 30 days, the profit eye, four cards, two in-house SVG graphs with hover boxes, four tabs (pulse, udhaar & reminders, top models & alerts, activity & totals) and the full-hisaab window. Server only: `/reports/overview` (owner / manager) and `/reports/trends`. Strings in three languages (`nov`). `data-file="02"` shades. **Tooling**: `vite.config.ts`'s proxy reads `API_TARGET` (default `localhost:8000`, unchanged) — another project's backend now listens on 127.0.0.1:8000 on this machine, so the tests ran with `API_TARGET=http://192.168.100.9:8000`; noted in CLAUDE.md "Running".
+
+**Verified**: tsc; vitest 72; Playwright `newui-overview` (new — sales 14,000 with 4,000 profit, to get 10,000, to give 15,000, stock 1, the graphs, money in / out names, the eye, both udhaar lists and the filter, top sold, alerts, totals, the full-hisaab window, yesterday empty, Settle → the person's khata, Urdu RTL) and the other ten new-product tests. Screenshots compared with file 02 (English and Urdu). Live files: only `router.tsx` (+ the dev proxy line). **Not done**: the PDF and WhatsApp in a browser; dark screenshot; the full Playwright suite.
+
+**Next**: the repairs hub (file 09).
+
+**Open questions**: none.
