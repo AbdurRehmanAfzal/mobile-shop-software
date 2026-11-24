@@ -18,7 +18,8 @@ export default {
       colors: {
         // ADR-134: the new product's own palette, taken from the mock-up files
         limebrand: { DEFAULT: '#B4F000', hover: '#A3DC00', dark: '#65A30D', 400: '#A3E635', 500: '#84CC16', 600: '#65A30D' },
-        obsidian: { 950: '#07090D', 900: '#0C1017', 850: '#121822', 800: '#1A2230', 700: '#232C3F' },
+        // each mock-up file has its own shades: [data-file] sets them (index.css); file 11's are the default
+        obsidian: { 950: rgb('--obs-950'), 900: rgb('--obs-900'), 850: rgb('--obs-850'), 800: rgb('--obs-800'), 700: rgb('--obs-700') },
         ink: rgb('--ink'),
         ground: rgb('--ground'),
         surface: rgb('--surface'),

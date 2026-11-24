@@ -7,6 +7,7 @@ import { useAuth } from '@/lib/auth'
 import NewShell, { Soon as NewSoon } from '@/newui/Shell'
 import NewStockSummary from '@/newui/pages/StockSummary'
 import NewSale from '@/newui/pages/Sale'
+import NewPurchase from '@/newui/pages/Purchase'
 import LoginPage from '@/features/auth/LoginPage'
 import SignupPage from '@/features/auth/SignupPage'
 import ModuleGate from '@/components/ModuleGate'
@@ -157,6 +158,7 @@ export const router = createBrowserRouter([
     children: [
       // the counter (files 14 / 15) is full-screen with its own bar and rail
       { path: '/new/sale/new', element: <NewSale /> },
+      { path: '/new/purchase/new', element: <NewPurchase /> },
       {
         path: '/new',
         element: <Suspense fallback={<Waiting />}><NewShell /></Suspense>,

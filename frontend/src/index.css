@@ -1059,3 +1059,9 @@ select option:checked {
 [data-newui] input[type='number'] { -moz-appearance: textfield; }
 @keyframes newuiPopIn { 0% { opacity: 0; transform: scale(0.97) translateY(5px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
 [data-newui] .animate-pop { animation: newuiPopIn 0.16s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+/* ADR-134: each mock-up file's own obsidian shades (RGB triplets). File 11 (the frame, the stock)
+   is the default; a screen drawn from another file says which with data-file. */
+:root { --obs-950: 7 9 13; --obs-900: 12 16 23; --obs-850: 18 24 34; --obs-800: 26 34 48; --obs-700: 35 44 63; }
+[data-file='14'] { --obs-950: 7 9 14; --obs-900: 12 16 24; --obs-850: 15 19 29; --obs-800: 22 28 42; --obs-700: 35 44 63; }
+[data-file='01'] { --obs-950: 5 7 12; --obs-900: 11 17 32; --obs-850: 18 24 38; --obs-800: 30 41 59; --obs-700: 51 65 85; }
