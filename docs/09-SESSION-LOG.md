@@ -35,3 +35,15 @@
 **Next**: cash & bank (file 03).
 
 **Open questions**: none.
+
+## 2026-11-24 — Cash & bank in the new product (file 03)
+
+**Asked (owner)**: "ok start" — the next screen.
+
+**Done**: `src/newui/pages/Cash.tsx` at `/new/more/cash`, full screen with its own rail and bar, drawn from `03-cash-and-bank.html`: four cards, the accounts list, the below-zero card with the opening balance, Move money / Edit / Add account as inline cards, the chosen account's book with filters, search and footer totals, and an undo window for a move. Live APIs only: `/ledger/accounts` (+ POST / PATCH / DELETE, owner), the account's book, `/ledger/transfers`, `/ledger/groups/{id}/reverse` with a reason, `/reports/cash-flow` (this month, moves left out), `/expenses` (+ categories). No free cash entry (docs/38 §4): "Manual cash in / out" saves money out as an expense from the chosen account and sends money in to the khata / counter. `data-file="03"` shades. Strings in three languages (`ncash`).
+
+**Verified**: tsc; vitest 72; Playwright `newui-cash` (new — a galla 9,000 below zero after a cash purchase, "Fill" 9,000 and save → 0 on the server, a new Easypaisa with 5,000, a move of 2,000 (galla 2,000 on the server), the Transfers filter, undo with a reason (Easypaisa 5,000 on the server), money in pointing to the khata / counter, an expense of 500 from Easypaisa (4,500 on the server), Urdu RTL) and the other seven new-product tests. Screenshots compared with file 03 (English and Urdu). Live files: only `router.tsx`. **Not done**: Print book and Export CSV in a browser download; dark screenshot; the full Playwright suite.
+
+**Next**: the day's hisaab (file 04).
+
+**Open questions**: none (the manual entry follows docs/38 §4; if the owner wants a free "cash in" the owner-only adjustment document in §4 is the decision).

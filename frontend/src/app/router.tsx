@@ -10,6 +10,7 @@ import NewSale from '@/newui/pages/Sale'
 import NewPurchase from '@/newui/pages/Purchase'
 import NewPurchases from '@/newui/pages/Purchases'
 import NewKhata from '@/newui/pages/Khata'
+import NewCash from '@/newui/pages/Cash'
 import LoginPage from '@/features/auth/LoginPage'
 import SignupPage from '@/features/auth/SignupPage'
 import ModuleGate from '@/components/ModuleGate'
@@ -167,6 +168,8 @@ export const router = createBrowserRouter([
       { path: '/new/khata', element: <NewKhata /> },
       { path: '/new/parties', element: <NewKhata /> },
       { path: '/new/parties/:id', element: <NewKhata /> },
+      // cash & bank (file 03), full screen with its own rail
+      { path: '/new/more/cash', element: <NewCash /> },
       {
         path: '/new',
         element: <Suspense fallback={<Waiting />}><NewShell /></Suspense>,
