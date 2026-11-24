@@ -50,6 +50,8 @@ test('the new product at /new: its frame, its keys, Urdu, and the live software 
   await expect(page.getByTestId('newui-open-old')).toHaveAttribute('href', '/khata') // not drawn yet
   await page.getByTestId('newui-tiles').getByRole('link', { name: 'Purchases' }).click()
   await expect(page).toHaveURL(/\/new\/purchases$/)
+  await expect(page.getByTestId('nlist')).toBeVisible() // drawn (file 10): full screen with its own rail
+  await page.goto('/new/khata')
 
   // dark, as the mock-up draws it
   await page.getByTestId('newui-theme').click()
