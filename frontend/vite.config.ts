@@ -71,9 +71,10 @@ export default defineConfig(({ mode }) => ({
   },
   server: {
     port: 5173,
+    // API_TARGET: another backend address for local runs (e.g. when another app holds localhost:8000)
     proxy: {
-      '/api': { target: 'http://localhost:8000', changeOrigin: true },
-      '/health': { target: 'http://localhost:8000', changeOrigin: true },
+      '/api': { target: process.env.API_TARGET || 'http://localhost:8000', changeOrigin: true },
+      '/health': { target: process.env.API_TARGET || 'http://localhost:8000', changeOrigin: true },
     },
   },
   test: {
