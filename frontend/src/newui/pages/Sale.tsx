@@ -349,7 +349,7 @@ export default function NewSale() {
   )
 
   return (
-    <div className="font-display bg-slate-100 text-slate-900 dark:bg-obsidian-950 dark:text-slate-100 antialiased lg:h-screen lg:overflow-hidden flex flex-col min-h-dvh" data-testid="npos" data-newui="1">
+    <div className="font-display bg-slate-100 text-slate-900 dark:bg-obsidian-950 dark:text-slate-100 antialiased lg:h-screen lg:overflow-hidden flex flex-col min-h-dvh" data-testid="npos" data-newui="1" data-file="14">
       {/* ===== TOP BAR ===== */}
       <header className="h-14 shrink-0 bg-white dark:bg-obsidian-900 border-b border-slate-200 dark:border-obsidian-700/80 px-3 sm:px-5 flex items-center justify-between gap-2.5 z-30">
         <div className="flex items-center gap-2.5 min-w-0">
