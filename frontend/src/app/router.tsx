@@ -9,6 +9,7 @@ import NewStockSummary from '@/newui/pages/StockSummary'
 import NewSale from '@/newui/pages/Sale'
 import NewPurchase from '@/newui/pages/Purchase'
 import NewPurchases from '@/newui/pages/Purchases'
+import NewKhata from '@/newui/pages/Khata'
 import LoginPage from '@/features/auth/LoginPage'
 import SignupPage from '@/features/auth/SignupPage'
 import ModuleGate from '@/components/ModuleGate'
@@ -162,6 +163,10 @@ export const router = createBrowserRouter([
       { path: '/new/purchase/new', element: <NewPurchase /> },
       // the purchases list and its bill (file 10), full-screen with its own rail
       { path: '/new/purchases', element: <NewPurchases /> },
+      // a person's khata (file 06), full screen with its own sidebar; F4 opens it
+      { path: '/new/khata', element: <NewKhata /> },
+      { path: '/new/parties', element: <NewKhata /> },
+      { path: '/new/parties/:id', element: <NewKhata /> },
       {
         path: '/new',
         element: <Suspense fallback={<Waiting />}><NewShell /></Suspense>,
