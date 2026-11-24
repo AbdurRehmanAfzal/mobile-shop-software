@@ -43,6 +43,9 @@ def test_salesman_sees_today_only(client, owner, cat):
     r = s.get(f"/api/v1/reports/day?date={yesterday}").json()
     assert r["date_from"] == dash["date"] and r["date_to"] == dash["date"]
     week = s.get(f"/api/v1/reports/day?date_from={yesterday}").json()
+    # ADR-134: no profit, no margin and no line cost for a salesman
+    assert week["profit"] is None and week["margin"] is None
+    assert all(i["cost"] is None and i["profit"] is None for i in week["items"])
     assert week["date_from"] == week["date_to"]
     # the owner still picks any day
     assert owner.get(f"/api/v1/reports/day?date={yesterday}").json()["date_from"] == yesterday

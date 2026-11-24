@@ -11,6 +11,7 @@ import NewPurchase from '@/newui/pages/Purchase'
 import NewPurchases from '@/newui/pages/Purchases'
 import NewKhata from '@/newui/pages/Khata'
 import NewCash from '@/newui/pages/Cash'
+import NewHisaab from '@/newui/pages/Hisaab'
 import LoginPage from '@/features/auth/LoginPage'
 import SignupPage from '@/features/auth/SignupPage'
 import ModuleGate from '@/components/ModuleGate'
@@ -170,6 +171,8 @@ export const router = createBrowserRouter([
       { path: '/new/parties/:id', element: <NewKhata /> },
       // cash & bank (file 03), full screen with its own rail
       { path: '/new/more/cash', element: <NewCash /> },
+      // the day's hisaab (file 04), full screen with its own rail
+      { path: '/new/hisaab', element: <NewHisaab /> },
       {
         path: '/new',
         element: <Suspense fallback={<Waiting />}><NewShell /></Suspense>,

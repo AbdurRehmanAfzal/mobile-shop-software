@@ -418,6 +418,13 @@ export interface DayItem {
   how: PaidHow
   sold_by: string | null
   returned: boolean
+  /** ADR-134 (newer servers): the bill's own split, when it was made, the IMEI, and cost / profit (VIEW_COST) */
+  paid_now?: Money
+  owed?: Money
+  at?: string
+  imei1?: string | null
+  cost?: Money | null
+  profit?: Money | null
 }
 export interface DayReport {
   date: string
@@ -436,6 +443,8 @@ export interface DayReport {
   returns_kept: Money
   expenses: Money
   profit: Money | null
+  /** ADR-134 (newer servers): net profit as a share of the sales, one decimal */
+  margin?: number | null
   items: DayItem[]
 }
 export interface StockGroup {
