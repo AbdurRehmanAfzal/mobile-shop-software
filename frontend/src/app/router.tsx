@@ -14,6 +14,7 @@ import NewCash from '@/newui/pages/Cash'
 import NewHisaab from '@/newui/pages/Hisaab'
 import NewExpenses from '@/newui/pages/Expenses'
 import NewOverview from '@/newui/pages/Overview'
+import NewRepairs from '@/newui/pages/Repairs'
 import LoginPage from '@/features/auth/LoginPage'
 import SignupPage from '@/features/auth/SignupPage'
 import ModuleGate from '@/components/ModuleGate'
@@ -179,6 +180,8 @@ export const router = createBrowserRouter([
       { path: '/new/expenses', element: <NewExpenses /> },
       // the business overview (file 02), full screen with its own sidebar
       { path: '/new/overview', element: <NewOverview /> },
+      // repairs & lab hub (file 09), full screen with its own bar; F7 opens it
+      { path: '/new/repairs', element: <NewRepairs /> },
       {
         path: '/new',
         element: <Suspense fallback={<Waiting />}><NewShell /></Suspense>,

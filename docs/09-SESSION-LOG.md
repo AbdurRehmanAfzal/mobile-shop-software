@@ -83,3 +83,15 @@
 **Next**: the repairs hub (file 09).
 
 **Open questions**: none.
+
+## 2026-11-24 — Repairs & lab hub in the new product (file 09)
+
+**Asked (owner)**: "push / continue" — PR #128 opened; the next screen.
+
+**Done**: `src/newui/pages/Repairs.tsx` at `/new/repairs` (F7), full screen with its own bar, drawn from `09-repairs-and-lab-hub.html`: the intake (customer from the khata or a quick walk-in, model / IMEI with the scanner, the server's fault codes, received items, shop technician or outside lab with price / instruction / back-by and a new-lab form, likely cost, advance, ready-by) with the live 80 mm slip and Save & print; the jobs board (four cards, filters, search, a card per open job with WhatsApp / Back from lab / Mark ready / Deliver & settle) and the labs' khata; WhatsApp, back-from-lab and deliver windows. Live APIs only (`/repairs`, `/repairs/{id}/lab`, `/lab/{trip}/back`, `/status`, `/deliver`, `/repairs/technicians`, `/repairs/labs`, `/repairs/fault-codes`, the job sheet). Strings in three languages (`nrep`). `data-file="09"` shades.
+
+**Verified**: tsc; vitest 72; Playwright `newui-repairs` (new — a khata customer's phone for the shop with estimate 8,500 and advance 2,000 (server: estimate, advance, SIM received), a walk-in's phone to Hassan LCD Lab at 3,000 (server: the lab trip's quote), the Outside-lab filter, back from the lab fixed (server: no open trip), mark ready, deliver with 8,500 charges and 6,500 paid (server: delivered, balance 0), Urdu RTL) and the other eleven new-product tests (run with `API_TARGET` — another project holds localhost:8000). Screenshots compared with file 09 (English and Urdu). Live files: only `router.tsx`. **Not done**: a not-fixed lab return and a salesman's view in a browser; dark screenshot; the full Playwright suite.
+
+**Next**: a repair job's detail (file 08).
+
+**Open questions**: none.
