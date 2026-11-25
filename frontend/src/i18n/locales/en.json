@@ -7649,5 +7649,34 @@
     "willImport": "{{n}} rows will be saved",
     "all": "All",
     "previewHere": "The check shows here, row by row"
+  },
+  "nfbr": {
+    "subtitle": "Sale bills sent to FBR: which went, which wait, which FBR turned down",
+    "off": "Off",
+    "guide": "FBR guide",
+    "readyOn": "On — new sale bills are sent to FBR",
+    "readyOff": "Ready, but switched off",
+    "notReady": "Not set up yet",
+    "s": {
+      "ntn": "NTN saved",
+      "token": "Security token saved",
+      "on": "Sending switched on",
+      "live": "Production (live)",
+      "sandbox": "Sandbox (test) — not live yet"
+    },
+    "changeSetup": "Change the setup",
+    "sentSub": "Accepted by FBR, with their number",
+    "waitingSub": "Nothing waiting",
+    "rejectedSub": "Fix what FBR said, then send again",
+    "all": "All",
+    "search": "Bill no, FBR no or error",
+    "none": "No bills sent to FBR yet",
+    "noneHint": "When FBR is set up and switched on, every new sale bill shows here with its FBR number.",
+    "fbrNo": "FBR no.",
+    "copied": "FBR number copied",
+    "attempts": "{{n}} tries",
+    "sentNow": "Sent to FBR",
+    "stillWaiting": "Not accepted yet — see the message",
+    "tried": "{{n}} bills tried"
   }
 }
