@@ -325,3 +325,17 @@
 **Next**: the owner picks — the audit's next section, or file 20's one-row actions.
 
 **Open questions**: should an expense also be allowed "on the khata" of a technician / supplier (now only from a cash account)?
+
+## 2026-11-25 — The stock screen (file 23) in the new product
+
+**Asked (owner)**: "push" (PR #146), three more mock-ups to add (22 the audit, 23 the stock screen and its final, 24 the bills — named and listed), then "ok start" (23, as advised).
+
+**Done** (branch `ui/31-new-stock`, cut from `ui/30-item-complete`):
+- Backend, read-only and additive — `app/modules/stockhub/` (`GET /api/v1/stock-hub/overview`, `/models`, `/parties`, `/ledger`): a card per kind and a row per brand (in shop / sold / avg cost / cost / asking / bought / sold value), what the shop owes everyone (the khata balances), per model (brand + `name_key`) or per item, per dealer / customer the stock was bought from (still here, sold, returned, pieces, cost, billed, balance), and the stock ledger from the device events that move a unit and the items' movements (voucher, party, qty, unit cost, price and profit when sold, stock at cost after, with period / kind / move / brand / party filters and the period's totals). Cost, profit and balances only with VIEW_COST.
+- `src/newui/pages/StockHub.tsx` at `/new/stock` (see docs/43). Strings `nst`.
+
+**Verified**: pytest `test_stock_hub` (new: the kinds, brands and payable on a purchase of three with one sold, one returned to the seller and an item with two pieces sold; the cost equals the books' stock; per model and per item; the dealer's still-here / sold / returned / billed / balance; the ledger's moves, the sale's price and profit, the totals, and the stock at cost after the last movement equal to the books' stock; filters by kind and move; a salesman sees no cost, profit or balance), tsc, Playwright `newui-stock-hub` (new: summary figures match the server, a brand's models, units with the tiles, the column chooser removing and restoring cost, a status filter as a chip and cleared, a unit opening its page, a dealer opening their khata, the ledger matching the server and filtered by move, Urdu RTL) — pass. **Not done**: a big shop's speed (the ledger reads all events; limited to 500 rows on screen), dark screenshot, the full suites.
+
+**Next**: file 24 (bills, F10), then file 22 (the audit).
+
+**Open questions**: none.
