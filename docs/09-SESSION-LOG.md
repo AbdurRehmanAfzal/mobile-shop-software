@@ -255,3 +255,15 @@
 **Next**: the shop audit's sections one by one — the owner picks.
 
 **Open questions**: none.
+
+## 2026-11-25 — Shop audit → Finance in the new product
+
+**Asked (owner)**: "push" (PR #142 opened), then "ok start audit finance".
+
+**Done**: `src/newui/pages/AuditFinance.tsx` at `/new/audit/finance` (the `reports` module), in the audit's frame — Finance is now a drawn section there (the frame links it with the same period). Four tabs in the address: profit & loss (hero, paired bars of net sales and profit, the statement with the period before beside each line), cash & bank (opening → in → out → closing, reasons as bars, each account, channels, money from abroad linking to the new remittance screen), expenses (total, by day, by category with the period before, the largest, by whom / which account) and tax (four figures and each bill). The section's PDF / Excel. Every figure is the live audit's (`/shop-audit/pnl|cash|international|expenses|tax`); the live screen's percentage changes are shown as the period before's figures. Strings in three languages (`nfin`). `newui-audit.spec.ts` now expects twelve sections still opening the live screens and checks one of them (Sales).
+
+**Verified**: tsc; Playwright `newui-audit-finance` (new — a purchase, a cash sale and an expense: from the frame Finance opens with the period; the hero, net sales and buying price match `/shop-audit/pnl`; money in / out / closing match `/shop-audit/cash`; the expense total and the largest expense match `/shop-audit/expenses`; tax 0 of 1 bills; a reload keeps the tab and the period; Urdu RTL) and `newui-audit` — both pass alone and together (1.4 min). A first combined run hung for 22 minutes and closed its browser; run again, alone and together, both passed — the hang was this machine's, not the code's. Live files: only `router.tsx`. **Not done**: as-of in a browser; a shop with tax on; dark screenshot; the full Playwright suite.
+
+**Next**: the audit's next section — the owner picks (sales, returns, people, udhaar, len-den, repairs, stock, products, bills, staff, security, reports).
+
+**Open questions**: none.

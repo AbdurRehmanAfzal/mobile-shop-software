@@ -7697,5 +7697,9 @@
       "ur": "Note (Urdu)",
       "roman": "Note (Roman)"
     }
+  },
+  "nfin": {
+    "now": "This period",
+    "byCategory": "By category"
   }
 }

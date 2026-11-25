@@ -7697,5 +7697,9 @@
       "ur": "Note (Urdu)",
       "roman": "Note (Roman)"
     }
+  },
+  "nfin": {
+    "now": "Ye arsa",
+    "byCategory": "Qisam ke hisaab se"
   }
 }
