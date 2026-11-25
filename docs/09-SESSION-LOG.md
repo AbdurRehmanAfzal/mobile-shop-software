@@ -351,3 +351,15 @@
 **Next**: review the agents' work, run their browser tests, open their pull requests.
 
 **Open questions**: none.
+
+## 2026-11-25 — The shop audit from file 22 (built by an agent, reviewed here)
+
+**Asked (owner)**: "haan" — run several agents at once (A: files 24 + 25, B: file 22, C: file 26), each in its own worktree outside the repository (`../wt/bills`, `../wt/audit`, `../wt/control`; the tool's own worktrees failed on Windows over the drive letter's case).
+
+**Done** (branch `ui/33-new-audit`, agent commit `e4067e4`, staging merged in): the audit's frame and overview brought to file 22 and every section drawn (see docs/43); new read-only `/shop-audit/sales/units` and `/shop-audit/purchases/units` (`shopaudit/units.py`, `tests/test_shopaudit_units.py` — model totals equal `/shop-audit/products`; cost only with VIEW_COST); shared pieces `newui/auditKit.tsx`; `[data-file='22']` palette; strings `nau`.
+
+**Verified**: by the agent — tsc, vitest 72, ruff, pytest `test_shopaudit_units`, `test_shopaudit_products`, `test_shopaudit_reports`; by the coordinator — Playwright `newui-audit`, `newui-audit-finance`, `newui-audit-sections` against the branch's own backend (port 8001, a copy of the local database) — 3 pass; the overview and sales screenshots compared with the drawing. **Not done**: each remaining tab side by side with the drawing, phone width, a manager login, dark.
+
+**Next**: the bills (24 + 25) and control room (26) branches.
+
+**Open questions**: none.
