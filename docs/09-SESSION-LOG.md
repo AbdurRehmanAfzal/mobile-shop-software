@@ -95,3 +95,15 @@
 **Next**: a repair job's detail (file 08).
 
 **Open questions**: none.
+
+## 2026-11-25 — A repair job's page in the new product (file 08)
+
+**Asked (owner)**: "ok" — the next screen.
+
+**Done**: `src/newui/pages/RepairJob.tsx` at `/new/repairs/:id`, full screen with the file's own bar, drawn from `08-repair-job-detail.html`: switch job, the job's card (Call, WhatsApp status link, lab strip with Back from lab, Delete), the four tappable steps, the bill with an editable work charge and Deliver / Collect, the history, the 80 mm slip in English or Urdu (`i18n.getFixedT`) with sticker / slip / download / share. It reuses the WhatsApp, back-from-lab and deliver windows of `Repairs.tsx` (now exported); the board's job numbers open this page. Live APIs only. Strings in three languages (`njob`). `data-file="08"` shades.
+
+**Verified**: tsc; vitest 72; Playwright `newui-repair-job` (new — two jobs; step 2 → in_progress on the server, work charge 5,000 (server labour), step 3 → ready, given back with 3,000 left prefilled (server: delivered, balance 0), the history, the Urdu slip, switch to the other job and delete it with a reason (server: cancelled), Urdu RTL) and the other twelve new-product tests. The first run of the new test failed mid-way because this machine's network changed during it ("No internet connection" in the deliver window); the retry and the full run passed. The tests now run with `API_TARGET=http://127.0.0.1:8000` (the other project no longer holds that address). Screenshots compared with file 08. Live files: only `router.tsx`. **Not done**: the sticker and the PDF in a browser; dark screenshot; the full Playwright suite.
+
+**Next**: loans / amanat (file 12).
+
+**Open questions**: none.
