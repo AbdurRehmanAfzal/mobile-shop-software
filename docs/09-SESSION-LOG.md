@@ -361,5 +361,12 @@
 **Verified**: by the agent — tsc, vitest 72, ruff, pytest `test_shopaudit_units`, `test_shopaudit_products`, `test_shopaudit_reports`; by the coordinator — Playwright `newui-audit`, `newui-audit-finance`, `newui-audit-sections` against the branch's own backend (port 8001, a copy of the local database) — 3 pass; the overview and sales screenshots compared with the drawing. **Not done**: each remaining tab side by side with the drawing, phone width, a manager login, dark.
 
 **Next**: the bills (24 + 25) and control room (26) branches.
+## 2026-11-26 — Every bill (file 24) and the sales screen (file 25), built by an agent, reviewed here
+
+**Done** (branch `ui/32-new-bills`, agent commit `5854b01`, coordinator fix, staging merged in): `/new/invoices` (F10) and `/new/sales` (see docs/43); read-only `billshub/` with `tests/test_bills_hub.py` (figures against the live `/invoices` to-get / to-give and the khata, profit against `/shop-audit/sales`, lines adding up to their bills, the deal / kind / brand filters, a salesman sees no cost); `invoices.service.list_documents` gains an optional `per_kind` (default unchanged); shared `newui/billsKit.tsx`; palettes 24 / 25; strings `nbill`, `nsales`. Coordinator fix: the delete hand-off window now closes before it leaves for the bill's own page (it was still open after Back).
+
+**Verified**: by the agent — tsc, vitest 72, ruff, pytest `test_bills_hub`, `test_invoices`, `test_stock_hub`; by the coordinator — Playwright `newui-invoices` and `newui-sales` against the branch's own backend (port 8002, a copy of the local database) — pass; the Urdu bills screen compared with the drawing. **Not done**: every view side by side with the drawings, phone width in a browser, the prints in Urdu, dark.
+
+**Next**: the control room (file 26).
 
 **Open questions**: none.
