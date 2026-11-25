@@ -107,3 +107,15 @@
 **Next**: loans / amanat (file 12).
 
 **Open questions**: none.
+
+## 2026-11-25 — Loans / amanat in the new product (file 12)
+
+**Asked (owner)**: "ok start" — the next screen.
+
+**Done**: `src/newui/pages/Loans.tsx` at `/new/loans` (behind the `loans` module), full screen with the file's own sidebar and bar, drawn from `12-loans-amanat.html`: four cards (out now with the cost total for the owner / manager, returned, sold to them, the earliest due / longest out), Out / Returned / Sold tabs with a search, a card per phone with its holder and days out, and the chosen phone (cost / asking / target profit, the holder with khata, Call, WhatsApp reminder, came back, kept as a sale with Cash / Online / Khata, cancel with a reason, Open bill, the phone's events, the on-screen slip proof); the "+ Give phone on amanat" drawer. Live APIs only (`/loans`, `/loans/{id}/return|sell|cancel`, `/devices`, `/parties`). Strings in three languages (`nloan`). `data-file="12"` shades.
+
+**Verified**: tsc; Playwright `newui-loans` (new — two loans made on the server, the cards say 2 phones / 18,000; give the third in the drawer with 7 days (server: out with a back date); it came back (server: in stock); kept the second at 15,000 on khata (server: sold with a bill, the person's balance 15,000); cancel the third with a reason (server: in stock); Urdu RTL). Screenshots compared with file 12 (English and Urdu). Live files: only `router.tsx`. **Not done**: the WhatsApp reminder and Online payment in a browser; a salesman's view; dark screenshot; the full Playwright suite.
+
+**Next**: settings (file 07).
+
+**Open questions**: none.
