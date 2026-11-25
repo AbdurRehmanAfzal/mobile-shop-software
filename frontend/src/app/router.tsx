@@ -30,6 +30,8 @@ import NewAuditFinance from '@/newui/pages/AuditFinance'
 import NewItemDetail from '@/newui/pages/ItemDetail'
 import NewStockItem from '@/newui/pages/StockItem'
 import NewStockHub from '@/newui/pages/StockHub'
+import NewInvoices from '@/newui/pages/Invoices'
+import NewSales from '@/newui/pages/Sales'
 import NewControl from '@/newui/pages/Control'
 import LoginPage from '@/features/auth/LoginPage'
 import SignupPage from '@/features/auth/SignupPage'
@@ -229,6 +231,9 @@ export const router = createBrowserRouter([
       // one stock item's page (an accessory; file 17 / 20's Accessories view)
       // the stock screen (file 23), its own top bar
       { path: '/new/stock', element: <NewStockHub /> },
+      // every bill in one list (file 24, F10) and the sales screen (file 25), each with its own top bar
+      { path: '/new/invoices', element: <NewInvoices /> },
+      { path: '/new/sales', element: <NewSales /> },
       { path: '/new/stock-item/:id', element: <ModuleGate module="accessories"><NewStockItem /></ModuleGate> },
       {
         path: '/new',
