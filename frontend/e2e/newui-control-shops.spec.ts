@@ -17,7 +17,7 @@ test('new product: shops & plans — open a shop, fee and time, what it trades, 
   const accountsBefore = await get('/admin/payment-accounts')
   const owner = `039${Math.floor(10_000_000 + Math.random() * 89_999_999)}`
   const shopName = `Managed Naya ${owner.slice(-4)}`
-  const find = async () => (await get(`/admin/shops?q=${encodeURIComponent(shopName)}`))[0]
+  const find = async () => (await get(`/admin/shops?q=${encodeURIComponent(shopName)}`)).find((s: { name: string }) => s.name === shopName) // the branch "<name> Two" matches the search too
   const panel = page.getByTestId('nctl-m-panel')
 
   await page.goto('/login')
@@ -51,7 +51,7 @@ test('new product: shops & plans — open a shop, fee and time, what it trades, 
   await expect(panel).toContainText(shopName)
   await page.getByTestId('nctl-drawer-close').click()
   await page.getByTestId('nctl-m-q').fill(shopName)
-  await expect(page.getByTestId('nctl-m-shop')).toHaveCount(1)
+  await expect(page.getByTestId('nctl-m-shop')).toHaveCount(1, { timeout: 30_000 }) // the list of every shop is fetched again after the create
   await page.getByTestId('nctl-p-pro').click()
   await expect(page.getByTestId('nctl-m-shop')).toHaveCount(0) // a trial shop is not in the pro filter
   await page.getByTestId('nctl-p-trial').click()
@@ -157,7 +157,7 @@ test('new product: shops & plans — open a shop, fee and time, what it trades, 
   // the fee-unpaid filter shows the shop given the package on credit
   await page.getByTestId('nctl-f-unpaid').click()
   await page.getByTestId('nctl-p-all').click()
-  await expect(page.getByTestId('nctl-m-shop').filter({ hasText: shopName })).toHaveCount(1)
+  await expect(page.getByTestId('nctl-m-shop').filter({ has: page.getByText(shopName, { exact: true }) })).toHaveCount(1)
 
   // Urdu: one language, right to left; and a phone's width
   await page.getByTestId('nctl-lang').click()
