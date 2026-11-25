@@ -309,3 +309,19 @@
 **Next**: the owner picks — the audit's next section, or file 20's one-row actions on the item page.
 
 **Open questions**: file 21 has no sidebar — the person's page now follows it (the other new screens keep theirs).
+
+## 2026-11-25 — The item's work completed: expenses on a unit, QC matrix, a stock item's page
+
+**Asked (owner)**: "145 merge kr di hai" (staging deployed, run green), then "abhi item ka sara kam complete kr lo phlay".
+
+**Done** (branch `ui/30-item-complete`, from `staging`):
+- Backend, additive: `devices/expenses.py` — `POST /devices/{id}/expenses` (amount, kind, note, cash account; owner / manager) posts stock up on the unit and the cash account down (the posting a repair of an own phone already makes), raises the unit's `cost_price` and writes event `cost_added` (new, a money event — never through the generic events endpoint); `POST /devices/{id}/expenses/{group}/undo` reverses it with a reason while the unit is the shop's; `unit_costs` lists expenses and repair costs from the ledger. `/devices/{id}/money` gains `costs`, `summary.added`, `summary.net_cost`, `summary.true_margin` (`margin` keeps its meaning); the item ledger adds the costs as lines and its totals carry base / added / net cost; the A4 sheet's four boxes are base, added, true net cost, profit (as file 20).
+- **Fix found on the way** (`returns/service.py`): a unit returned to its seller credited stock only with its bill line, so what had been added to it (a repair until now, an expense from now on) stayed in stock after the unit had gone. The added part now leaves stock as a cost of goods sold ("added cost written off") — `test_unit_expenses` pins it.
+- Item page: the cost card as the file draws it (base / added / true net, the expenses with Delete, paid / still owed, expected or made profit from the server), + Add expense, the QC matrix from the unit's faults.
+- `src/newui/pages/StockItem.tsx` at `/new/stock-item/:id` (see docs/43); the new counter also takes `?item=`; purchases and transfers open the new item page. Strings `nitem.ex`, `nitem.qc`, `nsi`, `stock.events.cost_added`.
+
+**Verified**: pytest `test_unit_expenses` (new: cost, stock and cash move together and the books balance; the profit at sale is after the expense; a sold unit takes no expense; undo with a reason, twice refused; a return to the seller leaves no stock of the unit and books the added cost; never through the generic events; a salesman 403 and sees no costs) and the related files (devices, device types, ledger, purchases, repairs, repair labs, returns, returns audit, returns preview, statements, units, item ledger, party khata — 87 pass); tsc; vitest 72; Playwright `newui-item` (expense added and deleted, the QC matrix marks and clears a fault), `newui-stock-item` (new), `newui-sale`, `newui-purchases`, `newui-transfers` — pass. **Not done**: a laptop / watch / tablet's QC in a browser; dark screenshots; the full suites.
+
+**Next**: the owner picks — the audit's next section, or file 20's one-row actions.
+
+**Open questions**: should an expense also be allowed "on the khata" of a technician / supplier (now only from a cash account)?

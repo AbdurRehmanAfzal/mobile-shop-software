@@ -285,7 +285,8 @@
       "reserved": "Reserved",
       "unreserved": "Reservation released",
       "pta_checked": "PTA checked",
-      "used_for_parts": "Taken apart for parts"
+      "used_for_parts": "Taken apart for parts",
+      "cost_added": "Expense added"
     },
     "acc": {
       "box": "Box",
@@ -7817,7 +7818,7 @@
     "timeline": "Activity timeline",
     "tl": {
       "all": "All",
-      "money": "Money",
+      "money": "Money & expenses",
       "checks": "Checks"
     },
     "noEvents": "Nothing here yet.",
@@ -7875,7 +7876,8 @@
         "return_purchase": "Returned to the seller",
         "transferred_in": "Came from a branch",
         "transferred_out": "Sent to a branch",
-        "cost_corrected": "Purchase price corrected"
+        "cost_corrected": "Purchase price corrected",
+        "added_cost": "Spent on the unit"
       },
       "m": {
         "cash": "Cash",
@@ -7890,6 +7892,44 @@
       },
       "paidNow": "Paid at purchase",
       "gotNow": "Received at sale"
+    },
+    "base": "Base buying cost",
+    "added": "Added expenses",
+    "netCost": "True net cost",
+    "afterExpenses": "After every expense on the unit",
+    "ex": {
+      "add": "Add expense",
+      "title": "Add an expense on this unit",
+      "sub": "Money spent on it after buying — it adds to its cost",
+      "amount": "Amount",
+      "what": "What for",
+      "from": "Paid from",
+      "defaultCash": "Cash (counter)",
+      "rule": "The amount leaves the account you pick and is added to this unit's cost, so its profit at sale is right. It can be deleted with a reason while the unit is in the shop.",
+      "saved": "Expense added to the unit's cost",
+      "undone": "Expense deleted",
+      "undoTitle": "Delete this expense",
+      "undoSub": "The money goes back to its account and the cost comes down — kept as Deleted",
+      "k": {
+        "parts": "Parts",
+        "screen_guard": "Screen guard",
+        "cleaning": "Cleaning / service",
+        "transport": "Courier / transport",
+        "software": "Software / unlock",
+        "other": "Other"
+      },
+      "src": {
+        "repair_cost": "Repair (outside technician)",
+        "repair_lab": "Repair lab charge"
+      }
+    },
+    "qc": {
+      "hint": "Tap a check to mark or clear a fault",
+      "readOnly": "Faults of this unit",
+      "cleared": "Fault cleared",
+      "marked": "Fault marked",
+      "issue": "Issue",
+      "pass": "Pass"
     }
   },
   "nkf": {
@@ -8044,5 +8084,28 @@
     },
     "reset": "Reset",
     "reversedOf": "Deleted"
+  },
+  "nsi": {
+    "adjustSub": "Pieces found, lost or damaged — with a reason",
+    "adjusted": "Stock adjusted",
+    "after": "After",
+    "amount": "Amount",
+    "batches": "Purchase batches & suppliers",
+    "brand": "Brand",
+    "classic": "Open the classic item page",
+    "days": "{{n}} days",
+    "details": "Details",
+    "for": "For",
+    "inStock": "{{n}} in stock",
+    "inStockTile": "Pieces in stock",
+    "kind": "Kind",
+    "ledger": "Item ledger",
+    "ledgerSub": "Every piece in and out, with the pieces left after it",
+    "mfr": "Maker code",
+    "pieces": "Pieces",
+    "sku": "SKU",
+    "undoSub": "The count and the books go back to before it — kept as Deleted",
+    "undone": "Adjustment undone",
+    "unit": "Sold by"
   }
 }

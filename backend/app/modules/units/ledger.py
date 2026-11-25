@@ -38,7 +38,9 @@ def _kept_share(r: dict) -> Decimal:
     return money(kept * line / amount)
 
 
-def item_ledger(timeline: list[dict], summary: dict, device) -> dict:
+def item_ledger(
+    timeline: list[dict], summary: dict, device, costs: list[dict] | None = None
+) -> dict:
     rows: list[dict] = []
     net = out_t = in_t = paid = received = ZERO
 
@@ -86,10 +88,29 @@ def item_ledger(timeline: list[dict], summary: dict, device) -> dict:
         )
         add({"at": at, "date": at.date()}, "opening", out=money(summary["cost"]))
 
+    # the costs added after the purchase (expenses, repairs) take their place in time
+    extra = [
+        {
+            "kind": "added_cost",
+            "at": c["at"],
+            "date": c["at"].date(),
+            "amount": c["amount"],
+            "source": c["source"],
+            "note": c.get("note"),
+        }
+        for c in (costs or [])
+        if not c["undone"]
+    ]
+    timeline = sorted(
+        [*timeline, *extra],
+        key=lambda r: r["at"] if r["at"].tzinfo else r["at"].replace(tzinfo=UTC),
+    )
     for r in timeline:
         k = r["kind"]
         if k == "purchase" and r.get("amount") is not None:
             add(r, k, out=money(r["amount"]))
+        elif k == "added_cost":
+            add(r, k, out=money(r["amount"]), note=r.get("note"))
         elif k == "sale" and r.get("amount") is not None:
             add(r, k, inn=money(r["amount"]))
         elif k in ("payment_out", "payment_in") and r.get("amount") is not None:
@@ -113,7 +134,11 @@ def item_ledger(timeline: list[dict], summary: dict, device) -> dict:
             add(r, "cost_corrected", note=f"{data.get('from', '')} → {data.get('to', '')}")
 
     sold = summary.get("status") == "sold" and summary.get("margin") is not None
-    asking, cost = summary.get("asking_price"), summary.get("cost")
+    asking = summary.get("asking_price")
+    # the unit's whole cost: the purchase price and what was added to it since
+    net_cost = (
+        summary.get("net_cost") if summary.get("net_cost") is not None else summary.get("cost")
+    )
     return {
         "rows": rows,
         "out": money(out_t),
@@ -121,12 +146,20 @@ def item_ledger(timeline: list[dict], summary: dict, device) -> dict:
         "net": money(net),
         "paid": money(paid),
         "received": money(received),
-        "cost": cost,
+        "cost": summary.get("cost"),
+        "added": summary.get("added"),
+        "net_cost": net_cost,
         "sold_for": summary.get("sold_for"),
         # a sold unit's real profit is its margin; one still here shows what the asking price would make
-        "profit": summary.get("margin") if sold else None,
-        "expected": money(Decimal(asking) - Decimal(cost))
-        if not sold and asking is not None and cost is not None
+        "profit": (
+            summary["true_margin"]
+            if summary.get("true_margin") is not None
+            else summary.get("margin")
+        )
+        if sold
+        else None,
+        "expected": money(Decimal(asking) - Decimal(net_cost))
+        if not sold and asking is not None and net_cost is not None
         else None,
     }
 
@@ -141,6 +174,8 @@ T = {
     "sold": ("Sold for", "بکا"),
     "asking": ("Asking price", "مانگی گئی قیمت"),
     "net": ("Net on this unit", "اس سیٹ پر خالص"),
+    "added": ("Added since (expenses, repairs)", "بعد میں خرچ (اخراجات، مرمت)"),
+    "netCost": ("True net cost", "اصل کل لاگت"),
     "profit": ("Profit", "منافع"),
     "expected": ("Expected profit", "متوقع منافع"),
     "table": ("Every entry on this unit", "اس سیٹ کی ہر لائن"),
@@ -186,6 +221,7 @@ T = {
     "k.return_purchase": ("Returned to the seller", "بیچنے والے کو واپس"),
     "k.transferred_in": ("Came from a branch", "برانچ سے آیا"),
     "k.transferred_out": ("Sent to a branch", "برانچ کو بھیجا"),
+    "k.added_cost": ("Spent on the unit", "سیٹ پر خرچ"),
     "k.cost_corrected": ("Purchase price corrected", "خرید قیمت درست کی"),
 }
 CSV_HEAD = ["date", "voucher", "what", "party", "method", "out", "in", "cash", "net_after"]
@@ -208,7 +244,7 @@ def sheet_html(
     i = 1 if ur else 0
     e = html.escape
     m = device_money(db, shop_id, device_id, can_cost=True)
-    led, dev, s = m["ledger"], m["device"], m["summary"]
+    led, dev = m["ledger"], m["device"]
     rs = lambda v: "—" if v is None else e(profile.money(shop, v))
     signed = lambda v: (
         "—"
@@ -283,8 +319,8 @@ small {{ color: #555; }}
 </div>
 <div class="boxes">
 {box("cost", rs(led["cost"]))}
-{box("sold" if sold else "asking", rs(led["sold_for"] if sold else s.get("asking_price")))}
-{box("net", signed(led["net"]), "dark")}
+{box("added", rs(led["added"]))}
+{box("netCost", rs(led["net_cost"]), "dark")}
 {box("profit" if sold else "expected", signed(led["profit"] if sold else led["expected"]))}
 </div>
 <h2>{e(T["table"][i])}</h2>

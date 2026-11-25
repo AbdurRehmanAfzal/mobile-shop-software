@@ -90,6 +90,30 @@ test('new product: an item’s page — figures, asking, note, purchase price, s
   await expect.poll(async () => Number((await get(`/devices/${id}/money`)).summary.cost)).toBe(31000)
   await expect(page.getByTestId('nitem-c-cost')).toContainText('31,000')
 
+  // an expense on the unit (mock-up 20): added to its cost, then deleted with a reason
+  await page.getByTestId('nitem-add-expense').click()
+  await page.getByTestId('nitem-expense-amount').fill('1500')
+  await page.getByTestId('nitem-expense-screen_guard').click()
+  await page.getByTestId('nitem-expense-note').fill('Glass protector')
+  await page.getByTestId('nitem-expense-save').click()
+  await expect(page.getByTestId('nitem-c-added')).toContainText('1,500')
+  await expect(page.getByTestId('nitem-c-net')).toContainText('32,500')
+  await expect.poll(async () => (await get(`/devices/${id}/money`)).summary.net_cost).toBe('32500.00')
+  await expect(page.getByTestId('nitem-lg-row')).toHaveCount((await get(`/devices/${id}/money`)).ledger.rows.length)
+  await page.getByTestId('nitem-cost-undo').click()
+  await page.getByTestId('nitem-expense-undo-why').fill('typed on the wrong phone')
+  await page.getByTestId('nitem-expense-undo-yes').click()
+  await expect(page.getByTestId('nitem-c-net')).toContainText('31,000')
+  await expect.poll(async () => (await get(`/devices/${id}/money`)).summary.added).toBe('0.00')
+
+  // the QC matrix marks and clears a fault through the live faulty events
+  await page.getByTestId('nitem-qc-display').click()
+  await expect(page.getByTestId('nitem-status')).toContainText('Faulty')
+  await expect(page.getByTestId('nitem-qc-display')).toContainText('Issue')
+  await page.getByTestId('nitem-qc-display').click()
+  await expect(page.getByTestId('nitem-status')).toContainText('In stock')
+  expect((await get(`/devices/${id}`)).faults ?? []).toEqual([])
+
   // the pitch is copied, the sticker is the server's
   await page.getByTestId('nitem-pitch').click()
   await expect(page.getByTestId('nitem-toast')).toContainText('copied')

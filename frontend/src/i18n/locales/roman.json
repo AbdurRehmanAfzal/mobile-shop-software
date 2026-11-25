@@ -285,7 +285,8 @@
       "reserved": "Reserve hua",
       "unreserved": "Reserve khatam",
       "pta_checked": "PTA check hua",
-      "used_for_parts": "Parts ke liye khola"
+      "used_for_parts": "Parts ke liye khola",
+      "cost_added": "Kharcha shamil"
     },
     "acc": {
       "box": "Dabba",
@@ -7817,7 +7818,7 @@
     "timeline": "Sargarmi",
     "tl": {
       "all": "Sab",
-      "money": "Raqam",
+      "money": "Raqam aur kharch",
       "checks": "Check"
     },
     "noEvents": "Abhi kuch nahi.",
@@ -7875,7 +7876,8 @@
         "return_purchase": "Bechne wale ko wapis",
         "transferred_in": "Branch se aaya",
         "transferred_out": "Branch ko bheja",
-        "cost_corrected": "Khareed qeemat durust ki"
+        "cost_corrected": "Khareed qeemat durust ki",
+        "added_cost": "Set par kharch"
       },
       "m": {
         "cash": "Naqd",
@@ -7890,6 +7892,44 @@
       },
       "paidNow": "Khareedte waqt diye",
       "gotNow": "Bechte waqt mile"
+    },
+    "base": "Asal khareed qeemat",
+    "added": "Baad ke kharche",
+    "netCost": "Asal kul laagat",
+    "afterExpenses": "Set par har kharche ke baad",
+    "ex": {
+      "add": "Kharcha dalein",
+      "title": "Is set par kharcha dalein",
+      "sub": "Khareedne ke baad is par laga paisa — yeh is ki laagat mein judta hai",
+      "amount": "Raqam",
+      "what": "Kis cheez par",
+      "from": "Kahan se diye",
+      "defaultCash": "Naqd (counter)",
+      "rule": "Raqam chune gaye khate se nikalti hai aur is set ki laagat mein judti hai, taake bechne par munafa durust ho. Set dukaan mein ho to wajah ke saath hazf ho sakta hai.",
+      "saved": "Kharcha set ki laagat mein jud gaya",
+      "undone": "Kharcha hazf ho gaya",
+      "undoTitle": "Yeh kharcha hazf karein",
+      "undoSub": "Raqam apne khate mein wapis aur laagat kam — hazf shuda ke tor par mehfooz",
+      "k": {
+        "parts": "Purze",
+        "screen_guard": "Screen protector",
+        "cleaning": "Safai / service",
+        "transport": "Courier / kiraya",
+        "software": "Software / unlock",
+        "other": "Deegar"
+      },
+      "src": {
+        "repair_cost": "Repair (bahar ka mistri)",
+        "repair_lab": "Repair lab ka charge"
+      }
+    },
+    "qc": {
+      "hint": "Kharabi lagane ya hatane ke liye check dabayein",
+      "readOnly": "Is set ki kharabiyan",
+      "cleared": "Kharabi hat gayi",
+      "marked": "Kharabi lag gayi",
+      "issue": "Kharabi",
+      "pass": "Theek"
     }
   },
   "nkf": {
@@ -8044,5 +8084,28 @@
     },
     "reset": "Dobara",
     "reversedOf": "Hazf shuda"
+  },
+  "nsi": {
+    "adjustSub": "Mile, gum ya kharab tukre — wajah ke saath",
+    "adjusted": "Stock durust ho gaya",
+    "after": "Baad mein",
+    "amount": "Raqam",
+    "batches": "Khareedari ki khepein aur supplier",
+    "brand": "Brand",
+    "classic": "Purana item safha kholein",
+    "days": "{{n}} din",
+    "details": "Tafseel",
+    "for": "Barae",
+    "inStock": "{{n}} stock mein",
+    "inStockTile": "Stock mein tukre",
+    "kind": "Qism",
+    "ledger": "Item ka ledger",
+    "ledgerSub": "Har aane aur jane wala tukra, us ke baad bache tukron ke saath",
+    "mfr": "Company code",
+    "pieces": "Tukre",
+    "sku": "SKU",
+    "undoSub": "Ginti aur hisaab pehle jaisa — hazf shuda ke tor par mehfooz",
+    "undone": "Durusti mansookh",
+    "unit": "Farokht ki ikai"
   }
 }

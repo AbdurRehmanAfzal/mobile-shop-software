@@ -37,7 +37,7 @@ import { activeShop, useAuth } from '@/lib/auth'
 import { isoDay, withCur } from '@/lib/format'
 import { useModules, useTrade } from '@/lib/modules'
 import { LOCALES, setLocale } from '@/i18n'
-import { useDevice, useDeviceEvent, useDeviceHistory, useGet, useInvalidate, useParties } from '@/lib/queries'
+import { useCashAccounts, useDevice, useDeviceEvent, useDeviceHistory, useGet, useInvalidate, useParties } from '@/lib/queries'
 import { useTheme } from '@/lib/theme'
 import type { DeviceCategory, DeviceDetail, DeviceEvent, Party } from '@/lib/types'
 import { PtaCheckSheet } from '@/features/stock/PtaCheck'
@@ -52,8 +52,9 @@ import type { UnitMoneyData } from '@/features/stock/UnitMoney'
 import type { PriceHintData } from '@/components/PriceHint'
 
 interface LedgerRow { upfront?: string | null; kind: string; at: string | null; date: string | null; no: string | null; doc_no: string | null; party_name: string | null; method: string | null; note: string | null; out: string | null; in: string | null; cash: string | null; net_after: string }
-interface Ledger { rows: LedgerRow[]; out: string; in: string; net: string; paid: string; received: string; cost: string | null; sold_for: string | null; profit: string | null; expected: string | null }
-type Money = UnitMoneyData & { ledger?: Ledger | null }
+interface Ledger { rows: LedgerRow[]; out: string; in: string; net: string; paid: string; received: string; cost: string | null; added?: string | null; net_cost?: string | null; sold_for: string | null; profit: string | null; expected: string | null }
+interface UnitCost { group_id: string; at: string; source: 'unit_expense' | 'repair_cost' | 'repair_lab'; document_id: string | null; kind: string | null; note: string | null; amount: string; undone: boolean }
+type Money = Omit<UnitMoneyData, 'summary'> & { ledger?: Ledger | null; costs?: UnitCost[]; summary: UnitMoneyData['summary'] & { added?: string | null; net_cost?: string | null } }
 const num = (v: string | number | null | undefined) => Number(v ?? 0)
 const rs = (v: string | number | null | undefined) => withCur(Math.round(Math.abs(num(v))).toLocaleString('en-US'))
 const utc = (iso: string) => new Date(/[zZ]|[+-]\d\d:?\d\d$/.test(iso) || iso.length <= 10 ? iso : `${iso}Z`)
@@ -63,7 +64,7 @@ const IN_TYPES = ['purchased', 'transferred_in', 'sale_returned']
 const CHECK_TYPES = ['verified', 'lock_checked', 'pta_checked', 'marked_faulty', 'faulty_cleared', 'reclassified', 'corrected']
 
 type Act = { key: string; label: string; run: () => void; testid?: string }
-type Drawer = null | 'note' | 'price' | 'loan' | 'cost' | 'imei' | 'retype' | 'lock'
+type Drawer = null | 'note' | 'price' | 'loan' | 'cost' | 'imei' | 'retype' | 'lock' | 'expense'
 
 export default function NewItemDetail() {
   const { id } = useParams()
@@ -93,6 +94,7 @@ export default function NewItemDetail() {
   const [reserve, setReserve] = useState(false)
   const [remove, setRemove] = useState(false)
   const [ledgerOpen, setLedgerOpen] = useState(false)
+  const [undoCost, setUndoCost] = useState<UnitCost | null>(null)
   const [toast, setToast] = useState('')
   const [err, setErr] = useState('')
   useEffect(() => { if (!toast) return; const x = setTimeout(() => setToast(''), 2600); return () => clearTimeout(x) }, [toast])
@@ -282,7 +284,8 @@ export default function NewItemDetail() {
           </Card>
 
           <Card title="nitem.condition" testid="nitem-condition">
-            {d.faults?.length ? <div className="flex flex-wrap gap-1.5 mb-2.5">{d.faults.map((f) => <span key={f} className="px-2 py-1 rounded-lg bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900 text-[11px] font-bold text-rose-700">{faultName(f, pick)}</span>)}</div> : <p className="text-xs text-slate-500 mb-2.5 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />{pick('nitem.noFaults')}</p>}
+            <QcMatrix d={d} canMark={inStock || d.status === 'faulty'} onToast={setToast} />
+            {d.faults?.some((f) => !qcKeys(cat).includes(f)) ? <div className="flex flex-wrap gap-1.5 mb-2.5">{d.faults.filter((f) => !qcKeys(cat).includes(f)).map((f) => <span key={f} className="px-2 py-1 rounded-lg bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900 text-[11px] font-bold text-rose-700">{faultName(f, pick)}</span>)}</div> : null}
             {d.patch_details ? <p className="text-[11px] text-slate-600 dark:text-slate-300 mb-2.5"><strong>{pick('stock.patchDetails')}:</strong> <span dir="auto">{d.patch_details}</span></p> : null}
             <div className="flex flex-wrap gap-2">
               {act('faulty') ? <button type="button" onClick={act('faulty')!.run} className={small} data-testid="nitem-faulty">{pick('stock.markFaulty')}</button> : null}
@@ -313,7 +316,7 @@ export default function NewItemDetail() {
         </div>
 
         <div className="space-y-5">
-          <CostCard d={d} money={money} canSeeCost={canSeeCost} costOk={costOk} onPrice={() => setDrawer('price')} onCost={act('fixCost')?.run} />
+          <CostCard d={d} money={money} canSeeCost={canSeeCost} costOk={costOk} onPrice={() => setDrawer('price')} onCost={act('fixCost')?.run} onExpense={canSeeCost && OWNED.includes(d.status) ? () => setDrawer('expense') : undefined} onUndo={canSeeCost && OWNED.includes(d.status) ? (g) => setUndoCost(g) : undefined} />
           <MarketCard d={d} days={days} counting={inStock || d.status === 'faulty'} />
           <KhataCard money={money} costOk={costOk} canSeeCost={canSeeCost} />
           {money?.ledger ? <LedgerCard led={money.ledger} costOk={costOk} onOpen={() => setLedgerOpen(true)} /> : null}
@@ -336,6 +339,8 @@ export default function NewItemDetail() {
       {drawer === 'cost' && boughtFor != null ? <CostDrawer d={d} boughtFor={boughtFor} onClose={() => setDrawer(null)} onDone={() => { setDrawer(null); setToast(pick('nitem.costSaved')) }} /> : null}
       {drawer === 'imei' ? <ImeiDrawer d={d} onClose={() => setDrawer(null)} onDone={() => { setDrawer(null); setToast(pick('nitem.imeiSaved')) }} /> : null}
       {drawer === 'retype' ? <RetypeDrawer d={d} onClose={() => setDrawer(null)} onDone={() => { setDrawer(null); setToast(pick('nitem.typeSaved')) }} /> : null}
+      {drawer === 'expense' ? <ExpenseDrawer d={d} onClose={() => setDrawer(null)} onDone={() => { setDrawer(null); setToast(pick('nitem.ex.saved')) }} /> : null}
+      {undoCost ? <UndoCostWindow deviceId={d.id} cost={undoCost} onClose={() => setUndoCost(null)} onDone={() => { setUndoCost(null); setToast(pick('nitem.ex.undone')) }} /> : null}
       {drawer === 'lock' ? <LockDrawer d={d} onClose={() => setDrawer(null)} onDone={() => { setDrawer(null); setToast(pick('devx.lock.ok')) }} /> : null}
       {ledgerOpen && money?.ledger ? <LedgerWindow id={d.id} title={title} shopName={shop?.name ?? ''} led={money.ledger} onClose={() => setLedgerOpen(false)} onToast={setToast} /> : null}
       <LabelSheet kind="devices" ids={[d.id]} open={label} onClose={() => setLabel(false)} />
@@ -359,7 +364,7 @@ function Tile({ a, icon: Icon, sub }: { a: Act; icon: typeof Tag; sub: string })
   const { pick } = useLang()
   return <button type="button" onClick={a.run} className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-obsidian-850/60 hover:border-slate-400 text-start cursor-pointer" data-testid={`nitem-tile-${a.key}`}><span className="flex items-center gap-1.5 text-xs font-bold"><Icon className="w-3.5 h-3.5 text-blue-600" />{pick(a.label)}</span><span className="block text-[10px] text-slate-500 mt-0.5">{pick(sub)}</span></button>
 }
-function Card({ title, children, dot, chip, side, icon, action, testid }: { title: string; children: ReactNode; dot?: boolean; chip?: string; side?: string; icon?: ReactNode; action?: ReactNode; testid?: string }) {
+export function Card({ title, children, dot, chip, side, icon, action, testid }: { title: string; children: ReactNode; dot?: boolean; chip?: string; side?: string; icon?: ReactNode; action?: ReactNode; testid?: string }) {
   const { pick } = useLang()
   return (
     <section className="p-5 rounded-3xl bg-white dark:bg-obsidian-900 border border-slate-200/90 dark:border-slate-800 shadow-2xs" data-testid={testid}>
@@ -368,36 +373,150 @@ function Card({ title, children, dot, chip, side, icon, action, testid }: { titl
     </section>
   )
 }
-function Field({ k, v, onCopy }: { k: string; v: string; onCopy?: (v: string) => void }) {
+export function Field({ k, v, onCopy }: { k: string; v: string; onCopy?: (v: string) => void }) {
   const { pick } = useLang()
   return <div className="p-3 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2"><div className="min-w-0"><div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{pick(k)}</div><div className="font-mono text-sm mt-0.5 truncate" dir="ltr">{v}</div></div>{onCopy ? <button type="button" onClick={() => onCopy(v)} className="px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-bold flex items-center gap-1 cursor-pointer"><Copy className="w-3 h-3" />{pick('nitem.copy')}</button> : null}</div>
 }
-function Spec({ k, v }: { k: string; v: string }) {
+export function Spec({ k, v }: { k: string; v: string }) {
   const { pick } = useLang()
   return <div className="p-3 rounded-xl border border-slate-200 dark:border-slate-800"><div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{pick(k)}</div><div className="text-sm font-bold mt-0.5" dir="auto">{v}</div></div>
 }
 
-/** cost & margin: the server's figures for this unit (`/devices/{id}/money`); cost only for owner / manager */
-function CostCard({ d, money, canSeeCost, costOk, onPrice, onCost }: { d: DeviceDetail; money?: UnitMoneyData; canSeeCost: boolean; costOk: boolean; onPrice: () => void; onCost?: () => void }) {
+/** cost & margin (mock-ups 17 / 20): the buying price, what was added to the unit since (expenses, repairs)
+ *  and the true net cost, each the server's (`/devices/{id}/money`); the expected / made profit is the
+ *  server's item ledger's. Cost only for owner / manager. */
+function CostCard({ d, money, canSeeCost, costOk, onPrice, onCost, onExpense, onUndo }: { d: DeviceDetail; money?: Money; canSeeCost: boolean; costOk: boolean; onPrice: () => void; onCost?: () => void; onExpense?: () => void; onUndo?: (c: UnitCost) => void }) {
   const { pick } = useLang()
   const s = money?.summary
+  const led = money?.ledger
   const hide = (v: string | number | null | undefined) => (costOk ? rs(v) : '••••••')
   const sold = d.status === 'sold' && s?.sold_for != null
-  const profit = sold ? num(s?.margin) : num(d.asking_price) - num(d.cost_price)
+  const profitV = sold ? led?.profit ?? s?.margin ?? null : led?.expected ?? null
+  const profit = num(profitV)
+  const costs = (money?.costs ?? []).filter((c) => !c.undone)
   return (
-    <Card title="nitem.cost" dot testid="nitem-cost" action={onCost ? <button type="button" onClick={onCost} className="px-3 py-1.5 rounded-lg bg-obsidian-900 dark:bg-[#A3E635] text-white dark:text-obsidian-950 text-[11px] font-extrabold cursor-pointer" data-testid="nitem-fixcost">{pick('purchase.costFix.button')}</button> : undefined}>
+    <Card title="nitem.cost" dot testid="nitem-cost" action={onExpense ? <button type="button" onClick={onExpense} className="px-3 py-1.5 rounded-lg bg-obsidian-900 dark:bg-[#A3E635] text-white dark:text-obsidian-950 text-[11px] font-extrabold cursor-pointer" data-testid="nitem-add-expense">+ {pick('nitem.ex.add')}</button> : undefined}>
       {canSeeCost ? (
-        <div className="grid grid-cols-3 gap-2.5 mb-3">
-          <div className="p-3 rounded-xl border border-slate-200 dark:border-slate-800"><div className="text-[11px] text-slate-500">{pick('nitem.buying')}</div><div className="font-display font-extrabold text-base mt-1" dir="ltr" data-testid="nitem-c-cost">{hide(s?.cost ?? d.cost_price)}</div></div>
-          <div className="p-3 rounded-xl border border-slate-200 dark:border-slate-800"><div className="text-[11px] text-slate-500">{pick('nitem.paidOut')}</div><div className="font-display font-extrabold text-base mt-1 text-emerald-700 dark:text-emerald-400" dir="ltr" data-testid="nitem-c-paid">{hide(s?.paid_out)}</div></div>
-          <div className="p-3 rounded-xl bg-obsidian-900 text-white dark:bg-obsidian-800"><div className="text-[11px] text-slate-300">{pick('nitem.stillOwed')}</div><div className="font-display font-extrabold text-base mt-1 text-[#A3E635]" dir="ltr" data-testid="nitem-c-owed">{hide(s?.payable)}</div></div>
-        </div>
+        <>
+          <div className="grid grid-cols-3 gap-2.5">
+            <div className="p-3 rounded-xl border border-slate-200 dark:border-slate-800"><div className="flex items-center justify-between gap-1 text-[11px] text-slate-500">{pick('nitem.base')}{onCost ? <button type="button" onClick={onCost} className="underline cursor-pointer" data-testid="nitem-fixcost">{pick('nitem.edit')}</button> : null}</div><div className="font-display font-extrabold text-base mt-1" dir="ltr" data-testid="nitem-c-cost">{hide(s?.cost ?? d.cost_price)}</div></div>
+            <div className="p-3 rounded-xl border border-slate-200 dark:border-slate-800"><div className="text-[11px] text-slate-500">{pick('nitem.added')}</div><div className="font-display font-extrabold text-base mt-1 text-amber-600" dir="ltr" data-testid="nitem-c-added">+{hide(s?.added ?? 0)}</div></div>
+            <div className="p-3 rounded-xl bg-obsidian-900 text-white dark:bg-obsidian-800"><div className="text-[11px] text-slate-300">{pick('nitem.netCost')}</div><div className="font-display font-extrabold text-base mt-1 text-[#A3E635]" dir="ltr" data-testid="nitem-c-net">{hide(s?.net_cost ?? d.cost_price)}</div></div>
+          </div>
+          {costs.length ? (
+            <div className="mt-2.5 rounded-xl border border-slate-200 dark:border-slate-800 divide-y divide-slate-100 dark:divide-slate-800" data-testid="nitem-costs">
+              {costs.map((c) => (
+                <div key={c.group_id} className="px-3 py-2 flex items-center justify-between gap-2 text-xs" data-testid="nitem-cost-row">
+                  <div className="min-w-0"><div className="font-bold">{c.source === 'unit_expense' ? pick(`nitem.ex.k.${c.kind ?? 'other'}`) : pick(`nitem.ex.src.${c.source}`)}</div><div className="text-[10px] text-slate-400 truncate" dir="auto">{fmtDate(c.at)}{c.note ? ` · ${c.note}` : ''}</div></div>
+                  <div className="flex items-center gap-2 shrink-0"><span className="font-mono font-bold text-amber-700 dark:text-amber-400" dir="ltr">+{hide(c.amount)}</span>{onUndo && c.source === 'unit_expense' ? <button type="button" onClick={() => onUndo(c)} aria-label={pick('crud.delete')} className="p-1 rounded-md text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 cursor-pointer" data-testid="nitem-cost-undo"><Trash2 className="w-3.5 h-3.5" /></button> : null}</div>
+                </div>
+              ))}
+            </div>
+          ) : null}
+          <div className="mt-2.5 mb-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-500"><span>{pick('nitem.paidOut')}: <strong className="text-emerald-700 dark:text-emerald-400" dir="ltr" data-testid="nitem-c-paid">{hide(s?.paid_out)}</strong></span><span>{pick('nitem.stillOwed')}: <strong className="text-slate-800 dark:text-slate-200" dir="ltr" data-testid="nitem-c-owed">{hide(s?.payable)}</strong></span></div>
+        </>
       ) : null}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
         <button type="button" onClick={onPrice} className="p-4 rounded-xl text-start bg-[#A3E635]/15 border border-[#A3E635]/70 cursor-pointer" data-testid="nitem-asking"><div className="flex items-center justify-between text-[11px] font-bold text-slate-700 dark:text-slate-300">{pick(sold ? 'nitem.soldFor' : 'nitem.asking')}<span className="underline">{pick('nitem.edit')}</span></div><div className="font-display font-extrabold text-2xl mt-1" dir="ltr">{rs(sold ? s?.sold_for : d.asking_price)}</div>{s?.original_asking && s.original_asking !== s.asking_price && !sold ? <div className="text-[10px] text-slate-500 mt-0.5">{pick('nitem.firstAsking')}: <span dir="ltr">{rs(s.original_asking)}</span></div> : null}</button>
-        {canSeeCost ? <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800" data-testid="nitem-profit"><div className="text-[11px] font-bold text-slate-500">{pick(sold ? 'nitem.profitMade' : 'nitem.profitExpected')}</div><div className={`font-display font-extrabold text-2xl mt-1 ${profit < 0 ? 'text-rose-600' : 'text-emerald-600 dark:text-[#A3E635]'}`} dir="ltr">{costOk ? `${profit < 0 ? '−' : '+'}${rs(profit)}` : '••••••'}</div>{sold ? <div className="text-[10px] text-slate-500 mt-0.5">{pick('nitem.received')}: <span dir="ltr">{rs(s?.received)}</span>{num(s?.receivable) ? <> · {pick('nitem.toGet')}: <span dir="ltr">{rs(s?.receivable)}</span></> : null}</div> : null}</div> : null}
+        {canSeeCost ? <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800" data-testid="nitem-profit"><div className="text-[11px] font-bold text-slate-500">{pick(sold ? 'nitem.profitMade' : 'nitem.profitExpected')}</div><div className={`font-display font-extrabold text-2xl mt-1 ${profit < 0 ? 'text-rose-600' : 'text-emerald-600 dark:text-[#A3E635]'}`} dir="ltr">{profitV == null ? '—' : costOk ? `${profit < 0 ? '−' : '+'}${rs(profit)}` : '••••••'}</div>{sold ? <div className="text-[10px] text-slate-500 mt-0.5">{pick('nitem.received')}: <span dir="ltr">{rs(s?.received)}</span>{num(s?.receivable) ? <> · {pick('nitem.toGet')}: <span dir="ltr">{rs(s?.receivable)}</span></> : null}</div> : <div className="text-[10px] text-slate-500 mt-0.5">{pick('nitem.afterExpenses')}</div>}</div> : null}
       </div>
     </Card>
+  )
+}
+
+/** the sticker ticks only a phone has (as the live sticker window, `LabelSheet`) */
+const DEVICE_ONLY: readonly string[] = ['specs', 'ram', 'battery', 'cycles', 'serial', 'last4', 'condition', 'pta']
+const OWNED = ['in_stock', 'faulty', 'in_repair', 'on_loan', 'with_customer_for_approval']
+const EXPENSE_KINDS = ['parts', 'screen_guard', 'cleaning', 'transport', 'software', 'other'] as const
+
+/** "+ Add expense": money spent on this unit, paid from a cash account, added to its cost (the server posts it) */
+function ExpenseDrawer({ d, onClose, onDone }: { d: DeviceDetail; onClose: () => void; onDone: () => void }) {
+  const { pick, ur } = useLang()
+  const inv = useInvalidate()
+  const { data: accounts } = useCashAccounts()
+  const [amount, setAmount] = useState('')
+  const [kind, setKind] = useState<(typeof EXPENSE_KINDS)[number]>('parts')
+  const [note, setNote] = useState('')
+  const [account, setAccount] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState('')
+  async function save() {
+    setBusy(true); setErr('')
+    try { await api('POST', `/api/v1/devices/${d.id}/expenses`, { amount: Number(amount), kind, note: note.trim() || undefined, cash_account_id: account || undefined }); await inv('device', 'devices', 'history', 'unit-money', 'accounts', 'dashboard', 'day'); onDone() } catch (e) { setErr(errText(e, ur)) } finally { setBusy(false) }
+  }
+  return (
+    <Shell title="nitem.ex.title" sub="nitem.ex.sub" onClose={onClose} testid="nitem-expense-drawer" foot={<button type="button" disabled={busy || !(Number(amount) > 0)} onClick={() => void save()} className={go} data-testid="nitem-expense-save">{pick('common.save')}</button>}>
+      <div><label className={lbl}>{pick('nitem.ex.amount')}</label><input type="number" min={1} inputMode="numeric" value={amount} onChange={(e) => setAmount(e.target.value)} autoFocus className={`${inp} font-mono font-extrabold text-lg`} dir="ltr" data-testid="nitem-expense-amount" /></div>
+      <div><label className={lbl}>{pick('nitem.ex.what')}</label><div className="flex flex-wrap gap-1.5">{EXPENSE_KINDS.map((k) => <button key={k} type="button" onClick={() => setKind(k)} aria-pressed={kind === k} className={`px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer ${kind === k ? 'bg-obsidian-900 dark:bg-[#A3E635] text-white dark:text-obsidian-950' : 'bg-slate-100 dark:bg-obsidian-850'}`} data-testid={`nitem-expense-${k}`}>{pick(`nitem.ex.k.${k}`)}</button>)}</div></div>
+      <div><label className={lbl}>{pick('nitem.ex.from')}</label><select value={account} onChange={(e) => setAccount(e.target.value)} className={inp} data-testid="nitem-expense-account"><option value="">{pick('nitem.ex.defaultCash')}</option>{(accounts ?? []).filter((a) => a.kind !== 'cheque' && a.kind !== 'remittance').map((a) => <option key={a.id} value={a.id}>{ur ? a.name_ur || a.name : a.name}</option>)}</select></div>
+      <div><label className={lbl}>{pick('common.notes')}</label><input value={note} onChange={(e) => setNote(e.target.value)} maxLength={200} className={inp} dir="auto" data-testid="nitem-expense-note" /></div>
+      <p className="text-[11px] text-slate-500">{pick('nitem.ex.rule')}</p>
+      <Err e={err} />
+    </Shell>
+  )
+}
+
+function UndoCostWindow({ deviceId, cost, onClose, onDone }: { deviceId: string; cost: UnitCost; onClose: () => void; onDone: () => void }) {
+  const { pick, ur } = useLang()
+  const inv = useInvalidate()
+  const [why, setWhy] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState('')
+  return (
+    <Shell title="nitem.ex.undoTitle" sub="nitem.ex.undoSub" onClose={onClose} testid="nitem-expense-undo" foot={<button type="button" disabled={busy || why.trim().length < 3} onClick={async () => { setBusy(true); setErr(''); try { await api('POST', `/api/v1/devices/${deviceId}/expenses/${cost.group_id}/undo`, { reason: why.trim() }); await inv('device', 'devices', 'history', 'unit-money', 'accounts'); onDone() } catch (e) { setErr(errText(e, ur)) } finally { setBusy(false) } }} className="w-full py-3 rounded-xl bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white font-display font-extrabold text-sm cursor-pointer" data-testid="nitem-expense-undo-yes">{pick('crud.delete')}</button>}>
+      <div className="p-3 rounded-xl bg-slate-50 dark:bg-obsidian-850 flex items-center justify-between text-xs"><span>{pick(`nitem.ex.k.${cost.kind ?? 'other'}`)}</span><strong className="font-mono" dir="ltr">{rs(cost.amount)}</strong></div>
+      <div><label className={lbl}>{pick('common.reason')}</label><input value={why} onChange={(e) => setWhy(e.target.value)} maxLength={200} className={inp} dir="auto" data-testid="nitem-expense-undo-why" /></div>
+      <Err e={err} />
+    </Shell>
+  )
+}
+
+/** QC matrix (mock-ups 17 / 20) drawn from the unit's own faults: a check passes while that fault is
+ *  not marked; tapping it marks / clears the fault through the live "faulty" events (the unit becomes
+ *  faulty with its first fault and back in stock when the last is cleared). */
+const QC: Record<string, string[]> = {
+  phone: ['display', 'touch', 'camera', 'face_id', 'fingerprint', 'battery', 'charging', 'speaker', 'mic', 'network', 'wifi', 'buttons', 'body', 'water'],
+  tablet: ['display', 'touch', 'camera', 'battery', 'charging', 'speaker', 'mic', 'wifi', 'buttons', 'body'],
+  watch: ['display', 'touch', 'battery', 'charging', 'buttons', 'body', 'water'],
+  laptop: ['display', 'battery', 'charging', 'speaker', 'wifi', 'ram', 'storage', 'board', 'buttons', 'body'],
+}
+const qcKeys = (cat: string) => QC[cat] ?? QC.phone
+function QcMatrix({ d, canMark, onToast }: { d: DeviceDetail; canMark: boolean; onToast: (m: string) => void }) {
+  const { pick, ur } = useLang()
+  const ev = useDeviceEvent()
+  const inv = useInvalidate()
+  const [err, setErr] = useState('')
+  const keys = qcKeys(d.category ?? 'phone')
+  const faults = d.faults ?? []
+  const passing = keys.filter((k) => !faults.includes(k)).length
+  async function flip(k: string) {
+    if (!canMark || ev.isPending) return
+    setErr('')
+    const next = faults.includes(k) ? faults.filter((f) => f !== k) : [...faults, k]
+    try {
+      if (next.length) await ev.mutateAsync({ id: d.id, type: 'marked_faulty', data: { faults: next } })
+      else await ev.mutateAsync({ id: d.id, type: 'faulty_cleared' })
+      await inv('stock-status', 'device-options')
+      onToast(pick(faults.includes(k) ? 'nitem.qc.cleared' : 'nitem.qc.marked'))
+    } catch (e) { setErr(errText(e, ur)) }
+  }
+  return (
+    <div className="mb-3" data-testid="nitem-qc">
+      <div className="flex items-center justify-between mb-2"><span className="text-[11px] text-slate-500">{pick(canMark ? 'nitem.qc.hint' : 'nitem.qc.readOnly')}</span><span className={`font-display font-extrabold text-sm ${passing === keys.length ? 'text-emerald-600' : 'text-amber-600'}`} data-testid="nitem-qc-score">{passing} / {keys.length}</span></div>
+      <div className="h-1.5 rounded-full bg-slate-100 dark:bg-obsidian-850 overflow-hidden mb-3"><div className={`h-full rounded-full ${passing === keys.length ? 'bg-emerald-500' : 'bg-amber-500'}`} style={{ width: `${(passing / keys.length) * 100}%` }} /></div>
+      <div className="grid grid-cols-2 gap-2">
+        {keys.map((k) => {
+          const bad = faults.includes(k)
+          return (
+            <button key={k} type="button" disabled={!canMark || ev.isPending} onClick={() => void flip(k)} className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 text-start text-xs disabled:cursor-default cursor-pointer hover:border-slate-400" data-testid={`nitem-qc-${k}`}>
+              <span className="truncate">{faultName(k, pick)}</span>
+              <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-extrabold ${bad ? 'bg-rose-100 dark:bg-rose-950/60 text-rose-700' : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700'}`}>{pick(bad ? 'nitem.qc.issue' : 'nitem.qc.pass')}</span>
+            </button>
+          )
+        })}
+      </div>
+      <Err e={err} />
+    </div>
   )
 }
 
@@ -577,31 +696,31 @@ function LedgerWindow({ id, title, shopName, led, onClose, onToast }: { id: stri
 
 /** the 50×30 sticker as the server draws it (the live sticker preview's request, `preview=1` so no print is
  *  recorded), its ticks remembered on this device like the live sticker window; size and copies there */
-function Sticker({ deviceId, canSeeCost, onMore }: { deviceId: string; canSeeCost: boolean; onMore: () => void }) {
+export function Sticker({ deviceId, canSeeCost, onMore, kind = 'devices' }: { deviceId: string; canSeeCost: boolean; onMore: () => void; kind?: 'devices' | 'items' }) {
   const { pick, ur } = useLang()
   const { data: shopFull } = useGet<{ label_prefs: Partial<Prefs> | null }>(['shop-full'], '/api/v1/shops/current')
   const [p, setP] = useState<Prefs>(() => loadLabelPrefs(null))
   useEffect(() => { setP(loadLabelPrefs(shopFull?.label_prefs)) }, [shopFull?.label_prefs])
   const [html, setHtml] = useState<string | null>(null)
   const [err, setErr] = useState('')
-  const path = labelPath('devices', [deviceId], { ...p, copies: 1 })
+  const path = labelPath(kind, [deviceId], { ...p, copies: 1 })
   useEffect(() => {
     let live = true
     const x = setTimeout(() => { fetch(`${BASE}${withDocLang(`${path}&preview=1`)}`, { headers: authHeaders() }).then((r) => r.text()).then((h) => { if (live) setHtml(h) }).catch(() => undefined) }, 250)
     return () => { live = false; clearTimeout(x) }
   }, [path])
   const keep = (next: Prefs) => { setP(next); try { localStorage.setItem(LABEL_LS, JSON.stringify(next)) } catch { /* private window */ } }
-  const fields = LABEL_FIELDS.filter((f) => canSeeCost || (f !== 'code' && f !== 'pcode'))
+  const fields = LABEL_FIELDS.filter((f) => (canSeeCost || (f !== 'code' && f !== 'pcode')) && (kind === 'devices' || !DEVICE_ONLY.includes(f)))
   const toggle = (f: LabelField) => keep({ ...p, fields: p.fields.includes(f) ? p.fields.filter((y) => y !== f) : [...p.fields, f] })
   return (
     <>
       <div className="rounded-xl bg-slate-50 dark:bg-obsidian-850/70 border border-dashed border-slate-300 dark:border-slate-700 p-3 flex items-center justify-center min-h-[150px]">{html ? <iframe title={pick('nitem.sticker')} srcDoc={html} className="h-[160px] w-full border-0 rounded-lg bg-white" sandbox="" data-testid="nitem-sticker-frame" /> : <span className="text-xs text-slate-400">…</span>}</div>
       <div className="text-[11px] font-bold text-slate-500 mt-3 mb-2">{pick('dview.stickerFields')}</div>
       <div className="flex flex-wrap gap-1.5" data-testid="nitem-sticker-fields">{fields.map((f) => { const on = p.fields.includes(f); return <button key={f} type="button" role="checkbox" aria-checked={on} onClick={() => toggle(f)} className={`px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 cursor-pointer border ${on ? 'bg-obsidian-900 dark:bg-[#A3E635] text-white dark:text-obsidian-950 border-obsidian-900 dark:border-[#A3E635]' : 'bg-white dark:bg-obsidian-850 text-slate-500 border-slate-200 dark:border-slate-700'}`} data-testid={`nitem-sf-${f}`}>{on ? <Check className="w-3 h-3 stroke-[3]" /> : <span className="text-slate-400">+</span>}{pick(`label.f.${f}`)}</button> })}</div>
-      {p.fields.includes('barcode') ? <div className="mt-2.5 flex flex-wrap items-center gap-1.5"><span className="text-[11px] font-bold text-slate-500">{pick('label.bar')}</span>{(['imei', 'code'] as const).map((b) => <button key={b} type="button" role="radio" aria-checked={p.bar === b} onClick={() => keep({ ...p, bar: b })} className={`px-2.5 py-1 rounded-lg text-[11px] font-bold cursor-pointer ${p.bar === b ? 'bg-slate-200 dark:bg-obsidian-800' : 'text-slate-500'}`}>{pick(b === 'imei' ? 'label.barImei' : 'label.barCode')}</button>)}</div> : null}
+      {kind === 'devices' && p.fields.includes('barcode') ? <div className="mt-2.5 flex flex-wrap items-center gap-1.5"><span className="text-[11px] font-bold text-slate-500">{pick('label.bar')}</span>{(['imei', 'code'] as const).map((b) => <button key={b} type="button" role="radio" aria-checked={p.bar === b} onClick={() => keep({ ...p, bar: b })} className={`px-2.5 py-1 rounded-lg text-[11px] font-bold cursor-pointer ${p.bar === b ? 'bg-slate-200 dark:bg-obsidian-800' : 'text-slate-500'}`}>{pick(b === 'imei' ? 'label.barImei' : 'label.barCode')}</button>)}</div> : null}
       <Err e={err} />
       <div className="mt-3 grid grid-cols-[1fr_auto] gap-2">
-        <button type="button" disabled={!p.fields.length} onClick={() => { setErr(''); openPrintable(labelPath('devices', [deviceId], p)).catch((e) => setErr(errText(e, ur))) }} className="py-3 rounded-xl bg-obsidian-900 dark:bg-[#A3E635] text-white dark:text-obsidian-950 font-display font-extrabold text-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50" data-testid="nitem-print"><Printer className="w-4 h-4" />{pick('nitem.printSticker')}</button>
+        <button type="button" disabled={!p.fields.length} onClick={() => { setErr(''); openPrintable(labelPath(kind, [deviceId], p)).catch((e) => setErr(errText(e, ur))) }} className="py-3 rounded-xl bg-obsidian-900 dark:bg-[#A3E635] text-white dark:text-obsidian-950 font-display font-extrabold text-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50" data-testid="nitem-print"><Printer className="w-4 h-4" />{pick('nitem.printSticker')}</button>
         <button type="button" onClick={onMore} aria-label={pick('dview.stickerMore')} title={pick('dview.stickerMore')} className="px-3 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center cursor-pointer" data-testid="nitem-sticker-more"><SlidersHorizontal className="w-4 h-4" /></button>
       </div>
     </>
@@ -625,7 +744,7 @@ function Warranty({ d }: { d: DeviceDetail }) {
 
 /* ---------------------------------------------------------------- drawers */
 
-function Shell({ title, sub, onClose, children, foot, testid }: { title: string; sub?: string; onClose: () => void; children: ReactNode; foot: ReactNode; testid: string }) {
+export function Shell({ title, sub, onClose, children, foot, testid }: { title: string; sub?: string; onClose: () => void; children: ReactNode; foot: ReactNode; testid: string }) {
   const { pick } = useLang()
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/50" data-testid={testid}>
@@ -637,10 +756,10 @@ function Shell({ title, sub, onClose, children, foot, testid }: { title: string;
     </div>
   )
 }
-const inp = 'w-full px-3 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-obsidian-850 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-obsidian-900 dark:focus:border-[#A3E635]'
-const lbl = 'block text-[11px] font-extrabold uppercase tracking-wider text-slate-500 mb-1.5'
-const go = 'w-full py-3 rounded-xl bg-[#A3E635] hover:bg-[#84CC16] disabled:opacity-50 text-slate-950 font-display font-extrabold text-sm flex items-center justify-center gap-2 cursor-pointer'
-const Err = ({ e }: { e: string }) => (e ? <p className="text-[11px] font-bold text-rose-600" role="alert">{e}</p> : null)
+export const inp = 'w-full px-3 py-2.5 rounded-xl text-sm bg-slate-50 dark:bg-obsidian-850 border border-slate-200 dark:border-slate-700 focus:outline-none focus:border-obsidian-900 dark:focus:border-[#A3E635]'
+export const lbl = 'block text-[11px] font-extrabold uppercase tracking-wider text-slate-500 mb-1.5'
+export const go = 'w-full py-3 rounded-xl bg-[#A3E635] hover:bg-[#84CC16] disabled:opacity-50 text-slate-950 font-display font-extrabold text-sm flex items-center justify-center gap-2 cursor-pointer'
+export const Err = ({ e }: { e: string }) => (e ? <p className="text-[11px] font-bold text-rose-600" role="alert">{e}</p> : null)
 
 function NoteDrawer({ id, onClose, onDone }: { id: string; onClose: () => void; onDone: () => void }) {
   const { pick, ur } = useLang()

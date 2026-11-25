@@ -220,9 +220,12 @@ export default function NewSale() {
   const asked = useRef(false)
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get('device')
+    const item = new URLSearchParams(window.location.search).get('item')
     if (asked.current) return
     asked.current = true
     if (id) get<Device>(`/api/v1/devices/${id}`).then((d) => { if (d.status === 'in_stock' || d.status === 'faulty') void addDevice(d) }).catch(() => undefined)
+    // an item's page (`/new/stock-item/:id`) opens the counter with one piece of it on the bill
+    if (item) get<Item>(`/api/v1/accessories/${item}`).then((it) => { if (it.qty > 0 || negativeOk) void addItem(it) }).catch(() => undefined)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
   const setLine = (l: Line, patch: Partial<DevLine> | Partial<ItemLine>) => setLines((ls) => ls.map((x) => (x === l ? ({ ...x, ...patch } as Line) : x)))
 

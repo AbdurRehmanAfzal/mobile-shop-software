@@ -346,13 +346,27 @@ def device_money(db: Session, shop_id: uuid.UUID, device_id: uuid.UUID, *, can_c
 
     # file 20 (owner 2026-11-25): the unit's own ledger — what went out on it, what came in, the net;
     # it is all cost, so only for those who may see cost
+    # mock-ups 17 / 20: what was added to the unit's cost after its purchase (expenses, repairs)
+    from app.modules.devices.expenses import unit_costs
     from app.modules.units.ledger import item_ledger
 
-    ledger = item_ledger(timeline, summary, d) if can_cost else None
+    costs = unit_costs(db, shop_id, device_id) if can_cost else []
+    added = money(sum((c["amount"] for c in costs if not c["undone"]), ZERO))
+    summary["added"] = added if can_cost else None
+    summary["net_cost"] = money(d.cost_price) if can_cost and d.cost_price is not None else None
+    # the margin after what was added to the unit (the books' profit on it); `margin` keeps meaning
+    # the sale less the purchase price, as the phone's page has always shown it
+    summary["true_margin"] = (
+        money(sold_for - Decimal(d.cost_price))
+        if can_cost and sold_for is not None and d.cost_price is not None and d.status == "sold"
+        else None
+    )
+    ledger = item_ledger(timeline, summary, d, costs) if can_cost else None
 
     return {
         "device": get_device_out(db, shop_id, device_id),
         "ledger": ledger,
+        "costs": costs,
         "purchase": purchase,
         "sale": sale,
         "purchases": purchases,

@@ -403,7 +403,7 @@ export default function NewPurchases() {
                               <div className="flex items-center gap-2 mt-1.5">
                                 {l.imei1 ? <button type="button" onClick={() => copy(l.imei1!)} className="inline-flex items-center gap-1 font-mono text-[11px] px-2 py-0.5 rounded-md bg-white dark:bg-obsidian-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-400 cursor-pointer" dir="ltr"><span>{l.imei1}</span><Copy className="w-3 h-3 opacity-60" /></button> : null}
                                 {l.device_id ? <button type="button" onClick={() => nav(`/new/item/${l.device_id}`)} className="text-[11px] font-semibold text-emerald-700 dark:text-[#A3E635] hover:underline cursor-pointer">{pick('nlist.viewStock')}</button>
-                                  : l.accessory_id ? <button type="button" onClick={() => nav(`/accessories/${l.accessory_id}`)} className="text-[11px] font-semibold text-emerald-700 dark:text-[#A3E635] hover:underline cursor-pointer">{pick('nlist.viewStock')}</button> : null}
+                                  : l.accessory_id ? <button type="button" onClick={() => nav(`/new/stock-item/${l.accessory_id}`)} className="text-[11px] font-semibold text-emerald-700 dark:text-[#A3E635] hover:underline cursor-pointer">{pick('nlist.viewStock')}</button> : null}
                               </div>
                             </div>
                             <div className="text-end shrink-0">
