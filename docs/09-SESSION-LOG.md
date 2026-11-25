@@ -370,3 +370,15 @@
 **Next**: the control room (file 26).
 
 **Open questions**: none.
+
+## 2026-11-26 — Staging's build passed the service worker's 2 MB (the new product split off)
+
+**Asked (owner)**: #150 merged, the frontend build failed — `assets/index-*.js is 2.11 MB, and won't be precached` (vite-plugin-pwa stops the build above 2 MiB).
+
+**Done** (branch `ui/36-split-bundle`, from staging): the new product's 37 screens and its frame were imported straight into the router, so all of them sat in the first file every visitor downloads. They are now one file of their own, `src/app/newPages.ts`, fetched when a `/new` screen (or `/control/new`) is first opened — the same way the shop app's screens are (`pages.ts`, ADR-092); the new frame waits for its screen inside its own `<Suspense>`, so moving between screens keeps the frame. Sizes: the first file 482 kB (was 2.11 MB), `pages` 916 kB, `newPages` 1.31 MB. Also `e2e/newui-stock-hub.spec.ts` asked for "this month" in UTC; after 19:00 UTC that is still the day before, so it now uses the local date (it failed with or without the split).
+
+**Verified**: tsc, `npm run build` (precache 43 entries), vitest 72, Playwright `newui-home`, `newui-item`, `newui-stock-hub` — pass.
+
+**Next**: #151 (the control room) gets staging merged in. When `newPages` nears 2 MB, split it per area (audit, bills, counter) the same way.
+
+**Open questions**: none.

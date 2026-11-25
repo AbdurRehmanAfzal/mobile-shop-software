@@ -92,7 +92,10 @@ test('new product: the stock screen — summary, models, units with filters and 
 
   // the stock ledger, this month: three phones and the item in, one phone out
   await page.getByTestId('nst-tab-ledger').click()
-  const led = await get(`/stock-hub/ledger?date_from=${new Date().toISOString().slice(0, 8)}01&date_to=${new Date().toISOString().slice(0, 10)}`)
+  // the shop's own date (the screen's "this month"), not UTC's: after 19:00 UTC they differ
+  const d = new Date()
+  const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  const led = await get(`/stock-hub/ledger?date_from=${today.slice(0, 8)}01&date_to=${today}`)
   await expect(page.getByTestId('nst-l-row')).toHaveCount(led.rows.length)
   await expect(page.getByTestId('nst-l-out')).toContainText(String(led.out_units))
   await expect(page.getByTestId('nst-l-profit')).toContainText(fmt(led.profit))
