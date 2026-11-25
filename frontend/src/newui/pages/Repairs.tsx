@@ -41,11 +41,11 @@ import { useTheme } from '@/lib/theme'
 import type { Party } from '@/lib/types'
 
 type M = string
-interface Fault { code: string; en: string; ur: string }
+export interface Fault { code: string; en: string; ur: string }
 interface Tech { id: string; name: string; role: string }
 interface Lab { party_id: string; name: string; phone: string | null; balance: M; at_lab: number }
-interface Trip { id: string; lab_party_id: string; lab_name: string | null; quoted_cost: M; expected_back: string | null; late: boolean }
-interface Job {
+export interface Trip { id: string; lab_party_id: string; lab_name: string | null; quoted_cost: M; expected_back: string | null; late: boolean }
+export interface Job {
   id: string; no: string; party_id: string | null; party_name: string | null; party_phone: string | null; device_desc: string; imei: string | null
   fault_codes: string[]; fault_text: string | null; received_accessories: string[]; estimate: M; advance: M; promised_at: string | null; overdue: boolean
   technician_name: string | null; status: string; total: M; paid: M; balance_due: M; at_lab: Trip | null; created_at: string
@@ -445,7 +445,7 @@ function Board({ jobs, labs, faults, costShown, canCost, onToast }: { jobs: Job[
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <button type="button" onClick={() => nav(`/repairs/${j.id}`)} className="font-mono font-extrabold text-xs px-2 py-0.5 rounded-md bg-obsidian-900 dark:bg-obsidian-800 text-[#A3E635] cursor-pointer" dir="ltr">{j.no}</button>
+                      <button type="button" onClick={() => nav(`/new/repairs/${j.id}`)} className="font-mono font-extrabold text-xs px-2 py-0.5 rounded-md bg-obsidian-900 dark:bg-obsidian-800 text-[#A3E635] cursor-pointer" dir="ltr">{j.no}</button>
                       <span className="font-display font-bold text-sm text-slate-900 dark:text-white" dir="auto">{j.device_desc}</span>
                       {ready ? <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">{pick('nrep.sReady')}</span>
                         : inLab(j) ? <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">{pick(j.at_lab?.late ? 'nrep.sLabLate' : 'nrep.sLab')}</span>
@@ -516,7 +516,7 @@ function Win({ children, testid }: { children: ReactNode; testid: string }) {
   return <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4" data-testid={testid}><div className="bg-white dark:bg-obsidian-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-5 shadow-2xl space-y-4">{children}</div></div>
 }
 
-function WaWindow({ job, shopName, onClose }: { job: Job; shopName: string; onClose: () => void }) {
+export function WaWindow({ job, shopName, onClose }: { job: Job; shopName: string; onClose: () => void }) {
   const { pick } = useLang()
   const { t } = useTranslation()
   const billed = num(job.total) > 0
@@ -531,7 +531,7 @@ function WaWindow({ job, shopName, onClose }: { job: Job; shopName: string; onCl
 }
 
 /** Back from the lab (ADR-044): fixed or not, what the lab charged (booked now), what was paid to it now. */
-function BackWindow({ job, canCost, onClose, onDone }: { job: Job; canCost: boolean; onClose: () => void; onDone: (m: string) => void }) {
+export function BackWindow({ job, canCost, onClose, onDone }: { job: Job; canCost: boolean; onClose: () => void; onDone: (m: string) => void }) {
   const { pick, ur } = useLang()
   const { t } = useTranslation()
   const inv = useInvalidate()
@@ -558,7 +558,7 @@ function BackWindow({ job, canCost, onClose, onDone }: { job: Job; canCost: bool
 }
 
 /** Deliver & settle (the live delivery): the bill (labour, prefilled with the estimate when nothing was billed yet) and what is paid now. */
-function DeliverWindow({ job, onClose, onDone }: { job: Job; onClose: () => void; onDone: (m: string) => void }) {
+export function DeliverWindow({ job, onClose, onDone }: { job: Job; onClose: () => void; onDone: (m: string) => void }) {
   const { pick, ur } = useLang()
   const { t } = useTranslation()
   const inv = useInvalidate()

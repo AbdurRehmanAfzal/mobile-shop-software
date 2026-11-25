@@ -15,6 +15,7 @@ import NewHisaab from '@/newui/pages/Hisaab'
 import NewExpenses from '@/newui/pages/Expenses'
 import NewOverview from '@/newui/pages/Overview'
 import NewRepairs from '@/newui/pages/Repairs'
+import NewRepairJob from '@/newui/pages/RepairJob'
 import LoginPage from '@/features/auth/LoginPage'
 import SignupPage from '@/features/auth/SignupPage'
 import ModuleGate from '@/components/ModuleGate'
@@ -182,6 +183,8 @@ export const router = createBrowserRouter([
       { path: '/new/overview', element: <NewOverview /> },
       // repairs & lab hub (file 09), full screen with its own bar; F7 opens it
       { path: '/new/repairs', element: <NewRepairs /> },
+      // a repair job's page (file 08)
+      { path: '/new/repairs/:id', element: <NewRepairJob /> },
       {
         path: '/new',
         element: <Suspense fallback={<Waiting />}><NewShell /></Suspense>,
