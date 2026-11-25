@@ -19,6 +19,7 @@ import NewRepairs from '@/newui/pages/Repairs'
 import NewRepairJob from '@/newui/pages/RepairJob'
 import NewLoans from '@/newui/pages/Loans'
 import NewSettings from '@/newui/pages/Settings'
+import NewQist from '@/newui/pages/Qist'
 import LoginPage from '@/features/auth/LoginPage'
 import SignupPage from '@/features/auth/SignupPage'
 import ModuleGate from '@/components/ModuleGate'
@@ -192,6 +193,9 @@ export const router = createBrowserRouter([
       { path: '/new/loans', element: <ModuleGate module="loans"><NewLoans /></ModuleGate> },
       // shop settings (file 07), full screen with the shared rail; owner only
       { path: '/new/more/settings', element: <NewSettings /> },
+      // qist / installments (no file draws it; drawn like file 12), full screen with the shared rail
+      { path: '/new/installments', element: <ModuleGate module="installments"><NewQist /></ModuleGate> },
+      { path: '/new/installments/:id', element: <ModuleGate module="installments"><NewQist /></ModuleGate> },
       {
         path: '/new',
         element: <Suspense fallback={<Waiting />}><NewShell /></Suspense>,

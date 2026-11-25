@@ -5,7 +5,7 @@ own branch; read each page's structure and build what is new in it; keep everyth
 disturb the shops that run the software. A `staging` branch from `main`: every branch is merged into
 `staging` first, tested there, and only then `staging` goes to `main`." Decision: ADR-132.
 
-Status: **ADR-134 under way. The live software is exactly what `main` has (only `router.tsx` gains the `/new` addresses). The new product at `/new` has its frame and four screens: the stock summary, the brand / model drill-down (file 11), the counter (files 14 + 15) **add stock** (`/new/purchase/new`, file 01) the **purchases list with its bill** (`/new/purchases`, file 10) **a person's khata** (`/new/khata`, `/new/parties/:id`, file 06) **cash & bank** (`/new/more/cash`, file 03) **the day's hisaab** (`/new/hisaab`, file 04) **expenses & day closing** (`/new/expenses`, file 05) **the business overview** (`/new/overview`, file 02) **repairs & lab hub** (`/new/repairs`, file 09) **a repair job's page** (`/new/repairs/:id`, file 08) **loans / amanat** (`/new/loans`, file 12) **shop settings** (`/new/more/settings`, file 07) and **home** (`/new`, file 11's third screen). Everything else under `/new` says it is not drawn yet and opens the live address. Next: the features no file draws (qist, remittance, FBR, exchange, transfers, bulk, the audit, the control room), in the files' style.**
+Status: **ADR-134 under way. The live software is exactly what `main` has (only `router.tsx` gains the `/new` addresses). The new product at `/new` has its frame and four screens: the stock summary, the brand / model drill-down (file 11), the counter (files 14 + 15) **add stock** (`/new/purchase/new`, file 01) the **purchases list with its bill** (`/new/purchases`, file 10) **a person's khata** (`/new/khata`, `/new/parties/:id`, file 06) **cash & bank** (`/new/more/cash`, file 03) **the day's hisaab** (`/new/hisaab`, file 04) **expenses & day closing** (`/new/expenses`, file 05) **the business overview** (`/new/overview`, file 02) **repairs & lab hub** (`/new/repairs`, file 09) **a repair job's page** (`/new/repairs/:id`, file 08) **loans / amanat** (`/new/loans`, file 12) **shop settings** (`/new/more/settings`, file 07) **home** (`/new`, file 11's third screen) and, designed here, **qist** (`/new/installments`). Everything else under `/new` says it is not drawn yet and opens the live address. Next: the other features no file draws (remittance, FBR, exchange, transfers, bulk, the audit, the control room), in the files' style — the owner picks the order.**
 
 ## 1. The source
 
@@ -264,6 +264,12 @@ visual language — the same frame, the same cards, type, spacing, lime and obsi
 theme. It is not a copy of the live screen with new colours, and it is not invented from nothing: the
 live screen says what the shop needs, the files say how it looks. Each such screen is listed in its
 pull request as designed-here, so the owner can send a drawing for it later if he wants one.
+
+Designed here so far:
+
+| Address | Drawn like | What it carries |
+|---|---|---|
+| `/new/installments`, `/new/installments/:id` (qist) | file 12 (amanat): the shared rail, the bar, four cards, tabs + search + a card per item on the left, the chosen one on the right | the four live views (due today, late, running, finished) as cards and tabs with counts of plans, search (name, phone, bill, guarantor), a card per plan with the paid / late / due strip, the next amount or days late, what is left; the plan: total / paid / left, the plan line and its strip, last reminded, **Take installment** (amount = the next one; cash, online with the bank, cheque, from abroad — the live payment details), **Remind on WhatsApp** (sent, or the link to send by hand), the schedule, the customer and the guarantor with Call / WhatsApp, Open the bill, **Cancel this plan** with a reason (owner / manager). A plan is made with a sale, so "+ New qist sale" opens the counter. Every figure is the server's; the cards count plans, never add money. Strings `nq`. |
 
 ### The new product as built (ADR-134)
 

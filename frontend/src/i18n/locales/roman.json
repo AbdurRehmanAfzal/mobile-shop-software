@@ -7493,5 +7493,33 @@
     "inStockShort": "Stock mein",
     "lena": "Lena hai",
     "dena": "Dena hai"
+  },
+  "nq": {
+    "badge": "Mahana qist par phone",
+    "subtitle": "Kaun kab kitna dega — qist lein, WhatsApp par yaad dilayein, schedule dekhein",
+    "newSale": "Nayi qist sale",
+    "plans": "{{n}} plan",
+    "todaySub": "Aaj lene wali qistein",
+    "noneLate": "Koi late nahi",
+    "activeSub": "Jaari plan",
+    "closedSub": "Poori raqam ada",
+    "noneHint": "Qist ka plan sale ke saath banta hai: bechte waqt \"Qist\" chunein.",
+    "pick": "Baayein taraf se plan chunein",
+    "lastReminded": "Aakhri yaad dihani",
+    "thisMonth": "Ye qist",
+    "m": {
+      "cash": "Naqd",
+      "online": "Online",
+      "cheque": "Cheque",
+      "remittance": "Bahar se"
+    },
+    "bank": "Bank ya wallet",
+    "chequeNo": "Cheque number",
+    "tid": "Transaction ID (ikhtiyari)",
+    "currency": "Currency",
+    "service": "Service",
+    "foreign": "Bheji gayi raqam",
+    "rate": "Rate",
+    "sender": "Kis ne bheja"
   }
 }
