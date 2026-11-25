@@ -7605,5 +7605,30 @@
     "deleteTitle": "Exchange khatam karein",
     "deleteEffect": "Dono hisse ek saath wapas hote hain: naya phone stock mein wapas, purana stock se bahar, aur bill ki raqam ulat jati hai. Record mein \"khatam\" ke taur par rehta hai.",
     "otherBrand": "Sab brand…"
+  },
+  "ntr": {
+    "subtitle": "Aap ki branchon ke darmiyan phone aur item — laagat par, kabhi sale nahi",
+    "managersOnly": "Branch transfer sirf maalik aur manager ke liye hain.",
+    "send": "Branch ko bhejein",
+    "kOut": "Bheje",
+    "kIn": "Aaye",
+    "kUndone": "Wapas bheje",
+    "count": "{{n}} transfer",
+    "tab": {
+      "all": "Sab",
+      "out": "Bheje",
+      "in": "Aaye"
+    },
+    "search": "Branch, number, phone ya item",
+    "undone": "Wapas bheja",
+    "pick": "Baayein taraf se transfer chunein",
+    "undoneNote": "Wapas bheja — sab kuch waise hi laut aaya.",
+    "whatWent": "Kya gaya",
+    "undoEffect": "Is ki har cheez waise hi is dukan mein wapas aati hai; branch mein se nikal jati hai. Record mein rehta hai.",
+    "undoneToast": "Wapas bhej diya",
+    "sendHint": "Pehle branch chunein, phir bhejne wale phone aur item.",
+    "what": "Kya bhejna hai",
+    "nothingYet": "Abhi kuch nahi chuna — neeche talash karein aur shamil karne ke liye dabayein.",
+    "itemSearch": "Item talash karein (naam ya SKU)"
   }
 }

@@ -179,3 +179,15 @@
 **Next**: the next undrawn feature the owner picks (FBR, transfers, bulk, the audit, the control room).
 
 **Open questions**: none.
+
+## 2026-11-25 — Branch transfers in the new product (designed here, no file draws them)
+
+**Asked (owner)**: "push" (PR #136 opened), then "ok start transfers".
+
+**Done**: `src/newui/pages/Transfers.tsx` at `/new/transfers`, `/new/transfers/:id` and `/new/transfers/new` (`?device=` puts that phone on the list, as the live screen does), owner / manager as the server; drawn like files 10 / 12: three cards (sent / received / sent back), tabs and search, a card per transfer, the chosen transfer with the cost it moved at, the note and what moved (each line opens the phone or the item), Send this transfer back with a reason; the send drawer with the branch, phones and items with a count, a note and the cost preview. Live APIs only (`/transfers/branches`, `/transfers`, `/transfers/{id}/undo`). Strings in three languages (`ntr`).
+
+**Verified**: tsc; Playwright `newui-transfers` (new — a second branch made through `/shops`; opened with `?device=` the phone is on the list and the only branch chosen; a charger × 2 added; cost 41,800; sent (server: the phone transferred here and in stock at Mall Road, the branch's list says it came in); the transfer's lines; sent back with a reason (server: the phone in stock here again); search; Urdu RTL). The test now waits for the login to finish before setting the shop (the first run raced it). Live files: only `router.tsx`. **Not done**: a shop with three branches (the branch pills); a salesman's view; dark screenshot; the full Playwright suite.
+
+**Next**: the next undrawn feature the owner picks (FBR, bulk, the audit, the control room).
+
+**Open questions**: none.
