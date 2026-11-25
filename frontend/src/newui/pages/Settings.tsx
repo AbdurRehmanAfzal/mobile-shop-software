@@ -16,7 +16,7 @@
  *  five currency signs, e-mail and website, three socials, IBAN, the price-code pattern). */
 
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, BookOpen, Check, ImagePlus, Landmark, Moon, Printer, QrCode, Receipt, Search, ShieldCheck, Store, Sun, Trash2, X } from 'lucide-react'
 import i18n from 'i18next'
@@ -154,7 +154,9 @@ export default function NewSettings() {
   const [f, setF] = useState<Form | null>(null)
   const [b, setB] = useState<{ type: string; prefix: string; value_mode: 'sequence' | 'imei'; start_number: string } | null>(null)
   const [fb, setFb] = useState<{ enabled: boolean; env: 'sandbox' | 'production'; token: string; kinds: Fbr['kinds'] } | null>(null)
-  const [tab, setTab] = useState<Tab>(1)
+  const [params] = useSearchParams()
+  // `?tab=4` opens a tab directly (the FBR screen links to its setup)
+  const [tab, setTab] = useState<Tab>(() => { const n = Number(params.get('tab')); return (n >= 1 && n <= 5 ? n : 1) as Tab })
   const [printers, setPrinters] = useState<Printers>(loadPrinters)
   const keepPrinters = (next: Printers) => { setPrinters(next); try { localStorage.setItem(PKEY, JSON.stringify(next)) } catch { /* private window */ } }
   const [q, setQ] = useState('')

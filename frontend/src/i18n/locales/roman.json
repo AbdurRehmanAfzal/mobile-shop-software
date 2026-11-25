@@ -7649,5 +7649,34 @@
     "willImport": "{{n}} lines mehfooz hongi",
     "all": "Sab",
     "previewHere": "Janch yahan har line ke saath dikhegi"
+  },
+  "nfbr": {
+    "subtitle": "FBR ko bheje gaye sale ke bill: kaun gaye, kaun intezar mein, kaun FBR ne radd kiye",
+    "off": "Band",
+    "guide": "FBR rehnuma",
+    "readyOn": "Chaalu — naye sale bill FBR ko jaate hain",
+    "readyOff": "Tayyar, magar band",
+    "notReady": "Abhi set nahi",
+    "s": {
+      "ntn": "NTN mehfooz",
+      "token": "Security token mehfooz",
+      "on": "Bhejna chaalu",
+      "live": "Production (live)",
+      "sandbox": "Sandbox (test) — abhi live nahi"
+    },
+    "changeSetup": "Setting badlein",
+    "sentSub": "FBR ne qubool kiye, un ke number ke saath",
+    "waitingSub": "Kuch intezar mein nahi",
+    "rejectedSub": "FBR ki baat theek karein, phir dobara bhejein",
+    "all": "Sab",
+    "search": "Bill no, FBR no ya ghalti",
+    "none": "Abhi koi bill FBR ko nahi gaya",
+    "noneHint": "Jab FBR set aur chaalu ho, har naya sale bill yahan apne FBR number ke saath dikhta hai.",
+    "fbrNo": "FBR no.",
+    "copied": "FBR number copy ho gaya",
+    "attempts": "{{n}} koshishein",
+    "sentNow": "FBR ko bhej diya",
+    "stillWaiting": "Abhi qubool nahi hua — paigham dekhein",
+    "tried": "{{n}} bill bhejne ki koshish"
   }
 }

@@ -203,3 +203,15 @@
 **Next**: the next undrawn feature the owner picks (FBR, the audit, the control room).
 
 **Open questions**: none.
+
+## 2026-11-25 — FBR digital invoicing in the new product (designed here, no file draws it)
+
+**Asked (owner)**: "push" (PR #138 opened), then "ok start fbr".
+
+**Done**: `src/newui/pages/Fbr.tsx` at `/new/fbr`, drawn like cash & bank (file 03): the bar with where bills go and the FBR guide, the owner's setup checklist (NTN, token saved — never shown —, on, production or sandbox) with Change the setup and Test with FBR, sent / waiting / turned down with Send now, the bills with filters and search, the FBR number to copy or FBR's message, Send again. The FBR settings themselves stay in Shop settings tab 4 — the new Settings page now opens a tab from `?tab=`. Live APIs only (`/fbr/settings`, `/fbr/test`, `/fbr/submissions`, `/fbr/submissions/{id}/send`, `/fbr/send-pending`). Strings in three languages (`nfbr`).
+
+**Verified**: tsc; Playwright `newui-fbr` (new — a new shop: Off, not set up, Test disabled, no bills; NTN and a fake token saved and switched on in sandbox through the API (the token never comes back): Sandbox, "On", the checklist, the NTN, Test enabled; Change the setup opens settings tab 4 with FBR ticked; Urdu RTL; switched off at the end) and `newui-settings`. No test calls the real FBR: no sale is made with FBR on and neither Test nor Send again is pressed — so the bill rows (sent / waiting / turned down) are not exercised by a test. Live files: only `router.tsx`. **Not done**: bill rows in a browser (needs a shop sending to FBR's sandbox); a salesman's view; dark screenshot; the full Playwright suite.
+
+**Next**: the next undrawn feature the owner picks (the shop audit, the control room).
+
+**Open questions**: none.
