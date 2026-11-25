@@ -167,3 +167,15 @@
 **Next**: the next undrawn feature the owner picks (FBR, exchange, transfers, bulk, the audit, the control room).
 
 **Open questions**: none.
+
+## 2026-11-25 — Exchange in the new product (designed here, no file draws it)
+
+**Asked (owner)**: "push" (PR #135 opened), then "ok start exchange".
+
+**Done**: `src/newui/pages/Exchange.tsx` at `/new/exchange/new` and `/new/exchange` (behind the `exchange` module), drawn like the counter (file 14) and add stock (file 01): four numbered panels side by side — the customer (search or a new one), the old phone coming in (the live purchase line: IMEI with the in-stock check, brand, model, storage, colour, condition, PTA, battery, trade-in value, resale price, lock checked), the new phone from stock at its price, and the settlement in words with paid now / paid back (cash, online, cheque), the khata after and both ID checks as the live wizard does them (ADR-128) — then the done card with the receipts and the bill; a Recent tab with the live exchanges and delete with a reason. The counter's (file 14) trade-in button now opens this instead of the live wizard. Live APIs only. Strings in three languages (`nex`).
+
+**Verified**: tsc; Playwright `newui-exchange` (new — Ali; the new phone's IMEI typed as the old one is refused; the old Nokia worth 20,000 (resale 26,000); the new phone at 50,000; "Customer pays" 30,000, 20,000 now, 10,000 on the khata; saved (server: one exchange, trade-in 20,000, balance 10,000, old phone in stock, new one sold); Recent lists it; delete with a reason (server: deleted, the new phone back in stock); Urdu RTL). Live files: only `router.tsx`. **Not done**: the shop-pays-back case and a flagged / pending phone in a browser; a salesman's view; dark screenshot; the full Playwright suite.
+
+**Next**: the next undrawn feature the owner picks (FBR, transfers, bulk, the audit, the control room).
+
+**Open questions**: none.

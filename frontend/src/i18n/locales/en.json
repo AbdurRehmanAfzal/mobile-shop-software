@@ -7577,5 +7577,33 @@
     "moveHint": "The money has arrived: move it from Remittance to the account it came into.",
     "moveNote": "Remittance arrived",
     "moved": "{{n}} moved"
+  },
+  "nex": {
+    "subtitle": "The customer's old phone comes in, a new one goes out, the difference is settled in one go",
+    "tab": {
+      "new": "New exchange",
+      "recent": "Recent exchanges"
+    },
+    "all": "All",
+    "name": "Name",
+    "newCustomer": "New",
+    "imei15": "An IMEI has 15 digits",
+    "alreadyIn": "This IMEI is already in your stock",
+    "brand": "Brand",
+    "model": "Model",
+    "modelSearch": "Search a model",
+    "storage": "Storage",
+    "colour": "Colour",
+    "battery": "Battery %",
+    "resale": "Sell it for",
+    "lockChecked": "Lock (iCloud / Google) checked — it is off",
+    "stockSearch": "Search your stock (model or IMEI)",
+    "idPending": "ID pending",
+    "flagged": "Flagged",
+    "count": "{{n}} exchanges",
+    "none": "No exchanges yet",
+    "deleteTitle": "Delete exchange",
+    "deleteEffect": "Both halves are undone together: the new phone comes back to stock, the old one leaves it, and the money on the bill is reversed. It stays in the record as Deleted.",
+    "otherBrand": "All brands…"
   }
 }
