@@ -28,6 +28,7 @@ import NewFbr from '@/newui/pages/Fbr'
 import NewAudit from '@/newui/pages/Audit'
 import NewAuditFinance from '@/newui/pages/AuditFinance'
 import NewItemDetail from '@/newui/pages/ItemDetail'
+import NewStockItem from '@/newui/pages/StockItem'
 import NewControl from '@/newui/pages/Control'
 import LoginPage from '@/features/auth/LoginPage'
 import SignupPage from '@/features/auth/SignupPage'
@@ -224,6 +225,8 @@ export const router = createBrowserRouter([
       { path: '/new/audit/finance', element: <ModuleGate module="reports"><NewAuditFinance /></ModuleGate> },
       // one item's page (file 17), its own top bar
       { path: '/new/item/:id', element: <NewItemDetail /> },
+      // one stock item's page (an accessory; file 17 / 20's Accessories view)
+      { path: '/new/stock-item/:id', element: <ModuleGate module="accessories"><NewStockItem /></ModuleGate> },
       {
         path: '/new',
         element: <Suspense fallback={<Waiting />}><NewShell /></Suspense>,

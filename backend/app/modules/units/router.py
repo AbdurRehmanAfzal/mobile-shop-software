@@ -4,6 +4,7 @@ from decimal import Decimal
 
 from fastapi import APIRouter, Query
 from fastapi.responses import HTMLResponse, Response
+from pydantic import BaseModel, Field
 
 from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx
@@ -31,6 +32,49 @@ def _plain(v):
 def device_money(device_id: uuid.UUID, ctx: Ctx, db: DB):
     """One phone's money story: purchase side, sale side, payments, margin, timeline."""
     return _plain(service.device_money(db, ctx.shop_id, device_id, can_cost=ctx.can(Cap.VIEW_COST)))
+
+
+class ExpenseIn(BaseModel):
+    amount: Decimal = Field(gt=0)
+    kind: str = Field(max_length=20)
+    note: str | None = Field(default=None, max_length=200)
+    cash_account_id: uuid.UUID | None = None
+
+
+class UndoIn(BaseModel):
+    reason: str = Field(min_length=3, max_length=200)
+
+
+@router.post("/devices/{device_id}/expenses", status_code=201)
+def add_unit_expense(device_id: uuid.UUID, data: ExpenseIn, ctx: Ctx, db: DB):
+    """Mock-ups 17 / 20: money spent on the unit after its purchase, added to its cost (owner /
+    manager — it is cost)."""
+    from app.modules.devices import expenses
+
+    ctx.require(Cap.VIEW_COST)
+    ctx.require(Cap.TRANSACT)
+    return _plain(
+        expenses.add_expense(
+            db,
+            ctx.shop_id,
+            ctx.id,
+            device_id,
+            amount=data.amount,
+            kind=data.kind,
+            note=(data.note or "").strip() or None,
+            cash_account_id=data.cash_account_id,
+        )
+    )
+
+
+@router.post("/devices/{device_id}/expenses/{group_id}/undo")
+def undo_unit_expense(device_id: uuid.UUID, group_id: uuid.UUID, data: UndoIn, ctx: Ctx, db: DB):
+    """an expense undone by a reversing entry with a reason, while the unit is still the shop's"""
+    from app.modules.devices import expenses
+
+    ctx.require(Cap.VIEW_COST)
+    ctx.require(Cap.TRANSACT)
+    return _plain(expenses.undo_expense(db, ctx.shop_id, ctx.id, device_id, group_id, data.reason))
 
 
 @router.get("/devices/{device_id}/ledger-sheet")
