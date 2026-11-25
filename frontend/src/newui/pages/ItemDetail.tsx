@@ -24,7 +24,7 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
-  AlertTriangle, ArrowLeft, ArrowRightLeft, Banknote, Bookmark, Box, CheckCircle2, ChevronDown, ChevronUp, Check, Clock, Copy, CreditCard, Eye, EyeOff, Fingerprint, Headphones,
+  AlertTriangle, ArrowLeft, ArrowRightLeft, Banknote, BookOpen, Bookmark, Download, Box, CheckCircle2, ChevronDown, ChevronUp, Check, Clock, Copy, CreditCard, Eye, EyeOff, Fingerprint, Headphones,
   Languages, Laptop, Lock, MessageCircle, Moon, NotebookPen, Pencil, Printer, RotateCcw, ScanLine, Search, ShieldCheck, SlidersHorizontal, ShieldAlert, Smartphone, Sun, Tablet, Tag,
   Trash2, Undo2, User, Watch, Wrench, X, Zap,
 } from 'lucide-react'
@@ -47,10 +47,13 @@ import { ReserveSheet } from '@/features/stock/ReserveCard'
 import LockedPanel from '@/features/stock/LockedPanel'
 import { LABEL_FIELDS, LABEL_LS, labelPath, loadLabelPrefs, type LabelField, type Prefs } from '@/components/LabelSheet'
 import { withDocLang } from '@/lib/docLang'
-import { BASE, authHeaders, openPrintable } from '@/lib/files'
+import { BASE, authHeaders, downloadFile, openPrintable } from '@/lib/files'
 import type { UnitMoneyData } from '@/features/stock/UnitMoney'
 import type { PriceHintData } from '@/components/PriceHint'
 
+interface LedgerRow { upfront?: string | null; kind: string; at: string | null; date: string | null; no: string | null; doc_no: string | null; party_name: string | null; method: string | null; note: string | null; out: string | null; in: string | null; cash: string | null; net_after: string }
+interface Ledger { rows: LedgerRow[]; out: string; in: string; net: string; paid: string; received: string; cost: string | null; sold_for: string | null; profit: string | null; expected: string | null }
+type Money = UnitMoneyData & { ledger?: Ledger | null }
 const num = (v: string | number | null | undefined) => Number(v ?? 0)
 const rs = (v: string | number | null | undefined) => withCur(Math.round(Math.abs(num(v))).toLocaleString('en-US'))
 const utc = (iso: string) => new Date(/[zZ]|[+-]\d\d:?\d\d$/.test(iso) || iso.length <= 10 ? iso : `${iso}Z`)
@@ -79,7 +82,7 @@ export default function NewItemDetail() {
   const dark = theme === 'dark' || (theme === 'system' && !!window.matchMedia?.('(prefers-color-scheme: dark)').matches)
   const { data: d, isLoading, error } = useDevice(id)
   const { data: history } = useDeviceHistory(id)
-  const { data: money } = useGet<UnitMoneyData>(['unit-money', id ?? ''], id ? `/api/v1/devices/${id}/money` : null)
+  const { data: money } = useGet<Money>(['unit-money', id ?? ''], id ? `/api/v1/devices/${id}/money` : null)
   const ev = useDeviceEvent()
   const [drawer, setDrawer] = useState<Drawer>(null)
   const [more, setMore] = useState(false)
@@ -89,6 +92,7 @@ export default function NewItemDetail() {
   const [faults, setFaults] = useState(false)
   const [reserve, setReserve] = useState(false)
   const [remove, setRemove] = useState(false)
+  const [ledgerOpen, setLedgerOpen] = useState(false)
   const [toast, setToast] = useState('')
   const [err, setErr] = useState('')
   useEffect(() => { if (!toast) return; const x = setTimeout(() => setToast(''), 2600); return () => clearTimeout(x) }, [toast])
@@ -233,6 +237,7 @@ export default function NewItemDetail() {
           {act('repair') ? <button type="button" onClick={act('repair')!.run} className={btn} data-testid="nitem-repair"><Wrench className="w-4 h-4 text-slate-500" />{pick('stock.sendRepair')}</button> : null}
           <button type="button" onClick={() => setMore(!more)} aria-expanded={more} className="px-3.5 py-2.5 rounded-xl bg-obsidian-900 dark:bg-obsidian-800 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer" data-testid="nitem-more"><Zap className="w-4 h-4 text-amber-400" />{pick('nitem.more')}<span className="px-1.5 rounded-full bg-[#A3E635] text-slate-950 text-[10px] font-extrabold" dir="ltr">{moreActs.length}</span>{more ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}</button>
           <button type="button" onClick={pitch} className="px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer" data-testid="nitem-pitch"><MessageCircle className="w-4 h-4" />{pick('nitem.pitch')}</button>
+          {canSeeCost ? <button type="button" onClick={() => setLedgerOpen(true)} className="px-3.5 py-2.5 rounded-xl bg-obsidian-950 dark:bg-slate-100 text-white dark:text-obsidian-950 text-xs font-bold flex items-center gap-1.5 cursor-pointer" data-testid="nitem-ledger-open"><BookOpen className="w-4 h-4 text-amber-400 dark:text-amber-600" />{pick('nitem.lg.button')}</button> : null}
           {more ? (
             <div className="absolute end-0 top-full mt-2 z-40 w-72 max-h-[60vh] overflow-y-auto rounded-2xl bg-white dark:bg-obsidian-900 border border-slate-200 dark:border-slate-700 shadow-2xl p-2" data-testid="nitem-more-list">
               {moreActs.map((a) => <button key={a.key} type="button" onClick={() => { setMore(false); a.run() }} className={`w-full px-3 py-2 rounded-xl text-start text-xs font-semibold cursor-pointer hover:bg-slate-100 dark:hover:bg-obsidian-850 ${a.key.startsWith('delete') || a.key === 'removeOld' ? 'text-rose-600' : ''}`} data-testid={`nitem-act-${a.key}`}>{pick(a.label)}</button>)}
@@ -311,6 +316,7 @@ export default function NewItemDetail() {
           <CostCard d={d} money={money} canSeeCost={canSeeCost} costOk={costOk} onPrice={() => setDrawer('price')} onCost={act('fixCost')?.run} />
           <MarketCard d={d} days={days} counting={inStock || d.status === 'faulty'} />
           <KhataCard money={money} costOk={costOk} canSeeCost={canSeeCost} />
+          {money?.ledger ? <LedgerCard led={money.ledger} costOk={costOk} onOpen={() => setLedgerOpen(true)} /> : null}
           <Timeline hist={hist} costOk={costOk} />
         </div>
 
@@ -331,6 +337,7 @@ export default function NewItemDetail() {
       {drawer === 'imei' ? <ImeiDrawer d={d} onClose={() => setDrawer(null)} onDone={() => { setDrawer(null); setToast(pick('nitem.imeiSaved')) }} /> : null}
       {drawer === 'retype' ? <RetypeDrawer d={d} onClose={() => setDrawer(null)} onDone={() => { setDrawer(null); setToast(pick('nitem.typeSaved')) }} /> : null}
       {drawer === 'lock' ? <LockDrawer d={d} onClose={() => setDrawer(null)} onDone={() => { setDrawer(null); setToast(pick('devx.lock.ok')) }} /> : null}
+      {ledgerOpen && money?.ledger ? <LedgerWindow id={d.id} title={title} shopName={shop?.name ?? ''} led={money.ledger} onClose={() => setLedgerOpen(false)} onToast={setToast} /> : null}
       <LabelSheet kind="devices" ids={[d.id]} open={label} onClose={() => setLabel(false)} />
       <PtaCheckSheet imei={d.imei1} open={pta} onClose={() => setPta(false)} deviceId={d.id} onSaved={() => void inv('devices', 'device', 'history')} />
       <FaultSheet open={faults} onClose={() => setFaults(false)} deviceId={d.id} current={d.faults} />
@@ -489,6 +496,82 @@ function Timeline({ hist, costOk }: { hist: DeviceEvent[]; costOk: boolean }) {
         )) : <p className="text-[11px] text-slate-400">{pick('nitem.noEvents')}</p>}
       </div>
     </Card>
+  )
+}
+
+/** mock-up 20: the unit's own ledger — every line is the server's (`/devices/{id}/money` → `ledger`) */
+function LedgerCard({ led, costOk, onOpen }: { led: Ledger; costOk: boolean; onOpen: () => void }) {
+  const { pick } = useLang()
+  const hide = (v: string | null) => (costOk ? (v == null ? '—' : rs(v)) : '••••')
+  const signed = (v: string) => (costOk ? `${num(v) < 0 ? '−' : '+'}${rs(v)}` : '••••')
+  return (
+    <Card title="nitem.lg.title" testid="nitem-ledger" action={<button type="button" onClick={onOpen} className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 dark:bg-obsidian-800 flex items-center gap-1 cursor-pointer" data-testid="nitem-ledger-a4"><Printer className="w-3 h-3" />{pick('nitem.lg.a4')}</button>}>
+      <p className="-mt-3 mb-3 text-[11px] text-slate-500">{pick('nitem.lg.sub')}</p>
+      <div className="grid grid-cols-3 gap-2 mb-3">
+        <div className="p-2.5 rounded-xl text-center bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900"><div className="text-[10px] font-bold uppercase text-rose-700">{pick('nitem.lg.out')}</div><div className="font-display font-extrabold text-sm text-rose-700 dark:text-rose-300 mt-0.5" dir="ltr" data-testid="nitem-lg-out">{hide(led.out)}</div></div>
+        <div className="p-2.5 rounded-xl text-center bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900"><div className="text-[10px] font-bold uppercase text-emerald-700">{pick('nitem.lg.in')}</div><div className="font-display font-extrabold text-sm text-emerald-700 dark:text-emerald-300 mt-0.5" dir="ltr" data-testid="nitem-lg-in">{hide(led.in)}</div></div>
+        <div className="p-2.5 rounded-xl text-center bg-slate-50 dark:bg-obsidian-850 border border-slate-200 dark:border-slate-800"><div className="text-[10px] font-bold uppercase text-slate-500">{pick('nitem.lg.net')}</div><div className="font-display font-extrabold text-sm mt-0.5" dir="ltr" data-testid="nitem-lg-net">{signed(led.net)}</div></div>
+      </div>
+      <LedgerTable rows={led.rows} costOk={costOk} />
+    </Card>
+  )
+}
+function LedgerTable({ rows, costOk }: { rows: LedgerRow[]; costOk: boolean }) {
+  const { pick } = useLang()
+  const cell = (v: string | null) => (v == null ? '—' : costOk ? rs(v) : '••••')
+  return (
+    <div className="rounded-xl border border-slate-200 dark:border-slate-800 overflow-x-auto">
+      <table className="w-full text-xs" data-testid="nitem-lg-rows">
+        <thead><tr className="bg-slate-50 dark:bg-obsidian-850 text-[10px] uppercase tracking-wider text-slate-500"><th className="py-2 px-2.5 text-start">{pick('nitem.lg.date')}</th><th className="py-2 px-2.5 text-start">{pick('nitem.lg.what')}</th><th className="py-2 px-2.5 text-end">{pick('nitem.lg.outCol')}</th><th className="py-2 px-2.5 text-end">{pick('nitem.lg.inCol')}</th><th className="py-2 px-2.5 text-end">{pick('nitem.lg.netCol')}</th></tr></thead>
+        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+          {rows.length ? rows.map((r, i) => (
+            <tr key={i} data-testid="nitem-lg-row">
+              <td className="py-2 px-2.5 whitespace-nowrap"><div className="font-semibold" dir="ltr">{r.date ? fmtDate(r.date) : ''}</div><div className="font-mono text-[10px] text-slate-400" dir="ltr">{r.no || r.doc_no || ''}</div></td>
+              <td className="py-2 px-2.5"><div className="font-semibold">{pick(`nitem.lg.k.${r.kind}`)}</div><div className="text-[10px] text-slate-400" dir="auto">{[r.party_name, r.method ? pick(`nitem.lg.m.${r.method}`) !== `nitem.lg.m.${r.method}` ? pick(`nitem.lg.m.${r.method}`) : r.method : null, r.note, r.cash != null ? (costOk ? rs(r.cash) : '••••') : null, num(r.upfront) > 0 ? `${pick(r.kind === 'purchase' ? 'nitem.lg.paidNow' : 'nitem.lg.gotNow')}: ${costOk ? rs(r.upfront) : '••••'}` : null].filter(Boolean).join(' · ')}</div></td>
+              <td className="py-2 px-2.5 text-end font-mono font-semibold text-rose-600 whitespace-nowrap" dir="ltr">{cell(r.out)}</td>
+              <td className="py-2 px-2.5 text-end font-mono font-semibold text-emerald-600 whitespace-nowrap" dir="ltr">{cell(r.in)}</td>
+              <td className={`py-2 px-2.5 text-end font-mono font-bold whitespace-nowrap ${num(r.net_after) >= 0 ? 'text-emerald-600 dark:text-[#A3E635]' : ''}`} dir="ltr">{costOk ? `${num(r.net_after) < 0 ? '−' : '+'}${rs(r.net_after)}` : '••••'}</td>
+            </tr>
+          )) : <tr><td colSpan={5} className="py-3 px-2.5 text-slate-400">{pick('nitem.noEvents')}</td></tr>}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+/** the item ledger sheet: the server's A4 page as its own preview, printed, downloaded (CSV) or summed up for WhatsApp */
+function LedgerWindow({ id, title, shopName, led, onClose, onToast }: { id: string; title: string; shopName: string; led: Ledger; onClose: () => void; onToast: (m: string) => void }) {
+  const { pick, ur } = useLang()
+  const { t } = useTranslation()
+  const [html, setHtml] = useState<string | null>(null)
+  const [err, setErr] = useState('')
+  const path = `/api/v1/devices/${id}/ledger-sheet`
+  useEffect(() => {
+    let live = true
+    fetch(`${BASE}${withDocLang(path)}`, { headers: authHeaders() }).then((r) => r.text()).then((h) => { if (live) setHtml(h) }).catch((e) => setErr(String(e)))
+    return () => { live = false }
+  }, [path])
+  const share = () => {
+    const text = t('nitem.lg.shareText', { shop: shopName, item: title, out: rs(led.out), in: rs(led.in), net: `${num(led.net) < 0 ? '−' : '+'}${rs(led.net)}` })
+    void navigator.clipboard?.writeText(text).catch(() => undefined)
+    onToast(pick('nitem.lg.shared'))
+  }
+  return (
+    <div className="fixed inset-0 z-50 flex items-start justify-center p-2 sm:p-5 bg-black/75 overflow-y-auto" data-testid="nitem-ledger-window">
+      <div className="w-full max-w-4xl rounded-2xl bg-white dark:bg-obsidian-900 border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden">
+        <div className="px-4 sm:px-5 py-3 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-obsidian-850 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2.5"><BookOpen className="w-5 h-5 text-amber-500" /><div><h3 className="font-display font-extrabold text-sm">{pick('nitem.lg.windowTitle')}</h3><p className="text-[11px] text-slate-500">{pick('nitem.lg.windowSub')}</p></div></div>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <button type="button" onClick={() => { setErr(''); downloadFile(withDocLang(`${path}?format=csv`), 'item-ledger.csv').catch((e) => setErr(errText(e, ur))) }} className="px-3 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-obsidian-800 border border-slate-200 dark:border-slate-700 flex items-center gap-1 cursor-pointer" data-testid="nitem-lg-csv"><Download className="w-3.5 h-3.5" />{pick('nitem.lg.csv')}</button>
+            <button type="button" onClick={share} className="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1 cursor-pointer" data-testid="nitem-lg-share"><MessageCircle className="w-3.5 h-3.5" />{pick('nitem.lg.share')}</button>
+            <button type="button" onClick={() => { setErr(''); openPrintable(path).catch((e) => setErr(errText(e, ur))) }} className="px-3.5 py-1.5 rounded-lg text-xs font-extrabold bg-[#A3E635] hover:bg-[#84CC16] text-obsidian-950 flex items-center gap-1 cursor-pointer" data-testid="nitem-lg-print"><Printer className="w-3.5 h-3.5" />{pick('nitem.lg.print')}</button>
+            <button type="button" onClick={onClose} aria-label={pick('common.close')} className="p-1.5 rounded-lg text-slate-400 cursor-pointer" data-testid="nitem-lg-close"><X className="w-4 h-4" /></button>
+          </div>
+        </div>
+        <Err e={err} />
+        <div className="bg-slate-100 dark:bg-obsidian-950 p-3 sm:p-5">{html ? <iframe title={pick('nitem.lg.windowTitle')} srcDoc={html} sandbox="" className="w-full h-[75vh] rounded-lg bg-white border-0 shadow" data-testid="nitem-lg-frame" /> : <div className="h-40 flex items-center justify-center text-xs text-slate-400">…</div>}</div>
+      </div>
+    </div>
   )
 }
 

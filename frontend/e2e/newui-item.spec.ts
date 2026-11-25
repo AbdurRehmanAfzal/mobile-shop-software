@@ -50,7 +50,21 @@ test('new product: an item’s page — figures, asking, note, purchase price, s
   await expect(page.getByTestId('nitem-side-purchase')).toContainText('Hall Road Traders')
   // the same model sold here once
   await expect(page.getByTestId('nitem-range')).toContainText('37,000')
+  // the unit's own ledger (mock-up 20): the server's out / in / net and its lines
+  await expect(page.getByTestId('nitem-lg-out')).toContainText(fmt(money.ledger.out))
+  await expect(page.getByTestId('nitem-lg-net')).toContainText(fmt(money.ledger.net))
+  await expect(page.getByTestId('nitem-lg-row')).toHaveCount(money.ledger.rows.length)
   await page.screenshot({ path: 'test-results/newui-item.png', fullPage: true })
+  await page.getByTestId('nitem-ledger-open').click()
+  await expect(page.getByTestId('nitem-lg-frame')).toBeVisible()
+  await expect(page.frameLocator('[data-testid="nitem-lg-frame"]').locator('body')).toContainText(pur.no)
+  await page.screenshot({ path: 'test-results/newui-item-ledger.png' })
+  const csv = page.waitForEvent('download')
+  await page.getByTestId('nitem-lg-csv').click()
+  expect((await csv).suggestedFilename()).toContain('.csv')
+  await page.getByTestId('nitem-lg-share').click()
+  await expect(page.getByTestId('nitem-toast')).toContainText('Summary copied')
+  await page.getByTestId('nitem-lg-close').click()
 
   // asking price
   await page.getByTestId('nitem-asking').click()

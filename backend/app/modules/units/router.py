@@ -3,7 +3,7 @@ import uuid
 from decimal import Decimal
 
 from fastapi import APIRouter, Query
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, Response
 
 from app.core.permissions import Cap
 from app.core.tenancy import DB, Ctx
@@ -31,6 +31,27 @@ def _plain(v):
 def device_money(device_id: uuid.UUID, ctx: Ctx, db: DB):
     """One phone's money story: purchase side, sale side, payments, margin, timeline."""
     return _plain(service.device_money(db, ctx.shop_id, device_id, can_cost=ctx.can(Cap.VIEW_COST)))
+
+
+@router.get("/devices/{device_id}/ledger-sheet")
+def device_ledger_sheet(
+    device_id: uuid.UUID,
+    ctx: Ctx,
+    db: DB,
+    format: str = Query(default="html", pattern="^(html|csv)$"),
+    lang: str | None = Query(default=None, pattern="^(en|ur)$"),
+):
+    """Mock-up 20: the unit's own ledger as an A4 sheet (or CSV) — owner / manager only, it is cost."""
+    from app.modules.units import ledger
+
+    ctx.require(Cap.VIEW_COST)
+    if format == "csv":
+        return Response(
+            content=ledger.sheet_csv(db, ctx.shop_id, device_id),
+            media_type="text/csv; charset=utf-8",
+            headers={"Content-Disposition": 'attachment; filename="item-ledger.csv"'},
+        )
+    return HTMLResponse(ledger.sheet_html(db, ctx.shop_id, device_id, lang))
 
 
 @router.get("/parties/{party_id}/units")

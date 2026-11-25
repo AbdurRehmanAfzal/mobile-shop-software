@@ -7828,6 +7828,52 @@
     "imeiSaved": "IMEI durust ho gaya",
     "typeSaved": "Qism badal gayi",
     "reserved": "Reserve ho gaya",
-    "retypeOk": "Tabdeeli mein koi rukawat nahi"
+    "retypeOk": "Tabdeeli mein koi rukawat nahi",
+    "lg": {
+      "button": "Item ledger sheet",
+      "title": "Item ka mukammal ledger",
+      "sub": "Is set par gaya aur aaya har rupiya, har line ke baad khalis ke saath",
+      "a4": "A4 sheet / print",
+      "out": "Kul gaya",
+      "in": "Kul aaya",
+      "net": "Khalis",
+      "date": "Tareekh",
+      "what": "Kya hua",
+      "outCol": "Gaya (−)",
+      "inCol": "Aaya (+)",
+      "netCol": "Khalis",
+      "windowTitle": "Item ledger sheet",
+      "windowSub": "Is set ki khareed, farokht, adaigiyan aur wapsi — jaise print hogi",
+      "csv": "CSV download",
+      "share": "Khulasa bhejein",
+      "print": "A4 sheet print karein",
+      "shared": "Khulasa copy ho gaya — WhatsApp mein lagayein",
+      "shareText": "*{{shop}}*\n{{item}}\nGaya: {{out}}\nAaya: {{in}}\nKhalis: {{net}}",
+      "k": {
+        "opening": "Purane stock mein darj",
+        "purchase": "Khareeda",
+        "sale": "Becha",
+        "payment_out": "Bechne wale ko diye",
+        "payment_in": "Gahak se mile",
+        "return_sale": "Gahak ne wapis kiya",
+        "return_purchase": "Bechne wale ko wapis",
+        "transferred_in": "Branch se aaya",
+        "transferred_out": "Branch ko bheja",
+        "cost_corrected": "Khareed qeemat durust ki"
+      },
+      "m": {
+        "cash": "Naqd",
+        "bank": "Bank",
+        "easypaisa": "Easypaisa",
+        "jazzcash": "JazzCash",
+        "cheque": "Cheque",
+        "card": "Card",
+        "online": "Online",
+        "other": "Deegar",
+        "remittance": "Bahar se"
+      },
+      "paidNow": "Khareedte waqt diye",
+      "gotNow": "Bechte waqt mile"
+    }
   }
 }

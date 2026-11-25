@@ -7828,6 +7828,52 @@
     "imeiSaved": "IMEI corrected",
     "typeSaved": "Type changed",
     "reserved": "Reserved",
-    "retypeOk": "Nothing stops the change"
+    "retypeOk": "Nothing stops the change",
+    "lg": {
+      "button": "Item ledger sheet",
+      "title": "Complete item ledger",
+      "sub": "Every rupee out on this unit and every rupee in, with the net after each line",
+      "a4": "A4 sheet / Print",
+      "out": "Total out",
+      "in": "Total in",
+      "net": "Net position",
+      "date": "Date",
+      "what": "What happened",
+      "outCol": "Out (−)",
+      "inCol": "In (+)",
+      "netCol": "Net",
+      "windowTitle": "Item ledger sheet",
+      "windowSub": "Purchase, sale, payments and returns of this unit — as it prints",
+      "csv": "Download CSV",
+      "share": "Share summary",
+      "print": "Print A4 sheet",
+      "shared": "Summary copied — paste it in WhatsApp",
+      "shareText": "*{{shop}}*\n{{item}}\nOut: {{out}}\nIn: {{in}}\nNet: {{net}}",
+      "k": {
+        "opening": "Entered as old stock",
+        "purchase": "Bought",
+        "sale": "Sold",
+        "payment_out": "Paid to seller",
+        "payment_in": "Received from customer",
+        "return_sale": "Customer returned it",
+        "return_purchase": "Returned to the seller",
+        "transferred_in": "Came from a branch",
+        "transferred_out": "Sent to a branch",
+        "cost_corrected": "Purchase price corrected"
+      },
+      "m": {
+        "cash": "Cash",
+        "bank": "Bank",
+        "easypaisa": "Easypaisa",
+        "jazzcash": "JazzCash",
+        "cheque": "Cheque",
+        "card": "Card",
+        "online": "Online",
+        "other": "Other",
+        "remittance": "From abroad"
+      },
+      "paidNow": "Paid at purchase",
+      "gotNow": "Received at sale"
+    }
   }
 }

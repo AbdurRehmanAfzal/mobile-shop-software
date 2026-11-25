@@ -279,3 +279,19 @@
 **Next**: the owner picks — the audit's next section, or file 16's six-tab audit design.
 
 **Open questions**: none.
+
+## 2026-11-25 — The item ledger sheet (file 20) and the new mock-ups 20 / 21
+
+**Asked (owner)**: "push kr do . r m nay r be html ui page add kiye hn ous ko analyze karo r rename karo r item k be ak detail page hai with ledger sheet be be add kr do".
+
+**Done**:
+- Pushed `ui/28-new-item-detail`, PR #144 (it also shows #143's commits until #143 is merged).
+- Mock-ups renamed (outside the repository) and listed in `00-INDEX.txt` and docs/43: `20-item-detail-with-ledger-sheet` (17 plus the item's own ledger), `21-party-khata-full-ledger` (a person's khata, full version: stock with them, channels, profit, ledger with fix / edit, stock tracker, brand breakdown, method log, A4 ledger report) and `21b-…-statement-print` (the same, a minute older, its print a "Khata Statement").
+- Backend (additive, read-only): `units/ledger.py` — `item_ledger` derived from `device_money`'s timeline (out: purchase, old stock, branch in, a customer return less what was kept; in: sale, return to the seller, branch out; payments as cash beside, never the net), returned as `ledger` on `/devices/{id}/money` for VIEW_COST only (else `null`); return rows gain `line_amount` and `status` (a voided return is not counted); `GET /devices/{id}/ledger-sheet` A4 HTML (shop header / footer, en / ur) and `?format=csv`, VIEW_COST only.
+- The item page: "Item ledger sheet" in the header, the "Complete item ledger" card, and the window with the server's sheet as preview, Print, CSV and a summary to share. Strings `nitem.lg`.
+
+**Verified**: pytest `test_item_ledger` (new: the Vivo scenario's lines and net equal its margin, payments do not move the net, an unsold unit's expected profit, a customer return with a 2,000 cut, the sheet in en / ur, the CSV, a salesman gets no ledger and 403 on the sheet and CSV), `test_units`, `test_returns_audit` — pass; tsc; Playwright `newui-item` with the ledger (out / net / lines match `/money`, the sheet's preview has the bill, CSV downloads, summary copied) — passes. **Not done**: a branch-moved or old-stock unit in a browser; the full suites.
+
+**Next**: the owner picks — file 21 (the person's khata, full version) in the new product, or the audit's next section.
+
+**Open questions**: file 20 puts the extra actions in one row of chips where 17 had three groups — the page keeps 17's groups (tell me if 20's row is wanted).

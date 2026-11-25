@@ -157,6 +157,16 @@ def _returns_for(db: Session, shop_id: uuid.UUID, device_id: uuid.UUID, doc_ids:
                     "kept": r.kept_amount,
                     "party_name": party.name if party else None,
                     "reason": r.reason,
+                    # this unit's own line on the return, and whether the return still stands
+                    "line_amount": next(
+                        (
+                            money(ln.get("line_total") or ln.get("net_cost") or 0)
+                            for ln in r.lines or []
+                            if str(ln.get("device_id")) == str(device_id)
+                        ),
+                        ZERO,
+                    ),
+                    "status": r.status,
                 }
             )
     return out
@@ -334,8 +344,15 @@ def device_money(db: Session, shop_id: uuid.UUID, device_id: uuid.UUID, *, can_c
             if r["kind"] == "event" and r.get("event") == "purchased":
                 r["amount"] = None
 
+    # file 20 (owner 2026-11-25): the unit's own ledger — what went out on it, what came in, the net;
+    # it is all cost, so only for those who may see cost
+    from app.modules.units.ledger import item_ledger
+
+    ledger = item_ledger(timeline, summary, d) if can_cost else None
+
     return {
         "device": get_device_out(db, shop_id, device_id),
+        "ledger": ledger,
         "purchase": purchase,
         "sale": sale,
         "purchases": purchases,
