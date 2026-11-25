@@ -14,7 +14,7 @@
 
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link, Navigate, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { BarChart3, Copy, CreditCard, ExternalLink, KeyRound, Languages, Link2, LogOut, MessageCircle, Moon, RefreshCw, Search, Send, ShieldCheck, Store, Sun, X, XCircle } from 'lucide-react'
+import { BarChart3, Copy, Settings2, CreditCard, ExternalLink, KeyRound, Languages, Link2, LogOut, MessageCircle, Moon, RefreshCw, Search, Send, ShieldCheck, Store, Sun, X, XCircle } from 'lucide-react'
 import { useLang } from '@/components/Bilingual'
 import { fmtDate, fmtDateTime } from '@/components/ui'
 import { ApiError, api } from '@/lib/api'
@@ -26,8 +26,9 @@ import { useGet, useInvalidate } from '@/lib/queries'
 import { useTheme } from '@/lib/theme'
 import { NEXT_KEY } from '@/features/admin/ControlShell'
 import { SITE } from '@/features/admin/AppLinkCard'
+import { ManageTab } from './ControlShops'
 
-type Tab = 'overview' | 'shops' | 'payments' | 'keys'
+type Tab = 'overview' | 'shops' | 'payments' | 'keys' | 'manage'
 interface Overview {
   counts: Record<string, number>
   paying_shops: number; mrr: string; arpu: string; collected_total: string; collected_month: string; collected_prev_month: string
@@ -64,7 +65,7 @@ export default function NewControl() {
   const theme = useTheme((s) => s.theme)
   const setTheme = useTheme((s) => s.setTheme)
   const dark = theme === 'dark' || (theme === 'system' && !!window.matchMedia?.('(prefers-color-scheme: dark)').matches)
-  const tab = (['overview', 'shops', 'payments', 'keys'].includes(params.get('tab') ?? '') ? params.get('tab') : 'overview') as Tab
+  const tab = (['overview', 'shops', 'payments', 'keys', 'manage'].includes(params.get('tab') ?? '') ? params.get('tab') : 'overview') as Tab
   const setTab = (t: Tab) => setParams((p) => { p.set('tab', t); return p }, { replace: true })
   useEffect(() => { if (token) { leaving = false; try { sessionStorage.removeItem(NEXT_KEY) } catch { /* private window */ } } }, [token])
   if (!token) {
@@ -72,7 +73,7 @@ export default function NewControl() {
     return <Navigate to="/login" replace />
   }
   const isSuper = !!me?.user.is_superuser
-  const TABS: [Tab, string, typeof Store][] = [['overview', 'prov.tab.overview', BarChart3], ['shops', 'prov.tab.shops', Store], ['payments', 'prov.tab.payments', CreditCard], ['keys', 'prov.tab.keys', KeyRound]]
+  const TABS: [Tab, string, typeof Store][] = [['overview', 'prov.tab.overview', BarChart3], ['shops', 'prov.tab.shops', Store], ['payments', 'prov.tab.payments', CreditCard], ['keys', 'prov.tab.keys', KeyRound], ['manage', 'nctl.manage', Settings2]]
 
   return (
     <div className="font-sans bg-[#F4F6F9] text-slate-900 dark:bg-obsidian-950 dark:text-slate-100 antialiased min-h-dvh flex flex-col" data-testid="nctl" data-newui="1" data-file="02">
@@ -81,7 +82,7 @@ export default function NewControl() {
           <span className="w-9 h-9 rounded-xl bg-[#B4F000] text-slate-950 flex items-center justify-center"><ShieldCheck className="w-5 h-5" /></span>
           <div><div className={ur ? `ur font-extrabold ${cls('md')}` : 'font-display font-extrabold text-base tracking-tight'}>{pick('control.title')}</div><div className="text-[11px] text-slate-400">{me?.user.name || me?.user.phone}</div></div>
         </div>
-        {isSuper ? <nav className="flex flex-wrap items-center gap-1" data-testid="nctl-tabs">{TABS.map(([k, label, I]) => <button key={k} type="button" onClick={() => setTab(k)} aria-pressed={tab === k} data-testid={`nctl-tab-${k}`} className={`px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer ${tab === k ? 'font-extrabold bg-[#B4F000] text-slate-950' : 'font-bold text-slate-300 hover:bg-white/10'}`}><I className="w-3.5 h-3.5" />{pick(label)}</button>)}<Link to="/control" className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-300 hover:bg-white/10 flex items-center gap-1.5" data-testid="nctl-manage"><ExternalLink className="w-3.5 h-3.5" />{pick('nctl.manageShops')}</Link></nav> : null}
+        {isSuper ? <nav className="flex flex-wrap items-center gap-1" data-testid="nctl-tabs">{TABS.map(([k, label, I]) => <button key={k} type="button" onClick={() => setTab(k)} aria-pressed={tab === k} data-testid={`nctl-tab-${k}`} className={`px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer ${tab === k ? 'font-extrabold bg-[#B4F000] text-slate-950' : 'font-bold text-slate-300 hover:bg-white/10'}`}><I className="w-3.5 h-3.5" />{pick(label)}</button>)}<Link to="/control" className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-400 hover:bg-white/10 flex items-center gap-1.5" data-testid="nctl-current" title={pick('nctl.currentHint')}><ExternalLink className="w-3.5 h-3.5" />{pick('nctl.current')}</Link></nav> : null}
         <div className="flex items-center gap-2">
           <Link to="/new" className="px-2.5 py-1.5 rounded-xl border border-slate-700 text-xs font-bold text-slate-300 hover:bg-white/10" data-testid="nctl-to-app">{pick('control.toApp')}</Link>
           <button type="button" onClick={() => { const i = LOCALES.indexOf(ur ? 'ur' : 'en'); setLocale(LOCALES[(i + 1) % LOCALES.length]) }} className="px-2.5 py-1.5 rounded-xl border border-slate-700 text-xs font-bold flex items-center gap-1 cursor-pointer" data-testid="nctl-lang"><Languages className="w-3.5 h-3.5 text-[#B4F000]" /><span>{ur ? 'English' : 'اردو'}</span></button>
@@ -97,7 +98,7 @@ export default function NewControl() {
             <p className="text-xs text-slate-500">{pick('control.deniedHint')}</p>
             <Link to="/new" className="inline-flex px-4 py-2 rounded-xl bg-obsidian-900 text-white text-xs font-bold">{pick('control.toApp')}</Link>
           </div>
-        ) : tab === 'overview' ? <OverviewTab go={setTab} /> : tab === 'shops' ? <ShopsTab /> : tab === 'payments' ? <PaymentsTab /> : <KeysTab />}
+        ) : tab === 'overview' ? <OverviewTab go={setTab} /> : tab === 'shops' ? <ShopsTab /> : tab === 'payments' ? <PaymentsTab /> : tab === 'manage' ? <ManageTab /> : <KeysTab />}
       </main>
     </div>
   )
@@ -219,7 +220,7 @@ function ShopPanel({ r }: { r: ShopRow }) {
       <div><div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 mb-1">{pick('prov.deployment')}</div><div className="grid grid-cols-2 gap-1 bg-slate-100 dark:bg-obsidian-850 p-1 rounded-xl">{(['cloud', 'local'] as const).map((v) => <button key={v} type="button" onClick={async () => { setErr(''); try { await api('PATCH', `/api/v1/admin/shops/${r.shop_id}/deployment`, { deployment: v }); await inv('prov-shops', 'prov-overview') } catch (e) { setErr(errText(e, ur)) } }} aria-pressed={r.deployment === v} className={`py-1.5 rounded-lg text-xs cursor-pointer ${r.deployment === v ? 'font-extrabold bg-obsidian-900 dark:bg-[#B4F000] text-white dark:text-obsidian-950' : 'font-bold text-slate-600'}`} data-testid={`nctl-dep-${v}`}>{pick(`prov.${v}`)}</button>)}</div></div>
       <div className="grid grid-cols-2 gap-2">
         {wa ? <a href={remind} target="_blank" rel="noopener noreferrer" className="py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold flex items-center justify-center gap-1.5"><MessageCircle className="w-3.5 h-3.5" />{pick('prov.remind')}</a> : <span />}
-        <button type="button" onClick={() => nav(`/control?shop=${r.shop_id}`)} className="py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer" data-testid="nctl-open-admin"><Store className="w-3.5 h-3.5" />{pick('prov.openAdmin')}</button>
+        <button type="button" onClick={() => nav(`/control/new?tab=manage&shop=${r.shop_id}`)} className="py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer" data-testid="nctl-open-admin"><Store className="w-3.5 h-3.5" />{pick('prov.openAdmin')}</button>
       </div>
       {err ? <p className="text-[11px] font-bold text-rose-600" role="alert">{err}</p> : null}
       <div><div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 mb-1.5">{pick('prov.tab.payments')}</div>{!mine.length ? <p className="text-xs text-slate-400">{pick('prov.none')}</p> : <div className="rounded-xl border border-slate-200 dark:border-slate-800 divide-y divide-slate-100 dark:divide-slate-800">{mine.map((p) => <PayLine key={p.id} p={p} />)}</div>}</div>

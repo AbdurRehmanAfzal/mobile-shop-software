@@ -243,3 +243,15 @@
 **Next**: the owner picks — the control room's shop management, or the audit's next section.
 
 **Open questions**: `control-landing.spec.ts` — look at it with the other stale tests.
+
+## 2026-11-25 — The control room in the new product: managing shops (designed here)
+
+**Asked (owner)**: "push" (PR #141 opened), then "ok start control room shops".
+
+**Done**: `src/newui/pages/ControlShops.tsx`, the "Manage shops" tab of `/control/new` (replacing the bar's link to the current screen, which stays as a small "Current screen" link): the inbox (fees to approve / reject with a reason box / money only, requests for a shop, requests for a password), the provider's settings (billing and payment accounts drawn here; prices and the app link are the live cards), the shops with filters and counts, + Open a new shop, and the shop's panel in sections (plan and fee, modules with the trade ticks, record a payment, owner password with the PIN card, renewal code, branch, and the live special-price / fees-owed / delete cards — used as they are so no action is lost). The business view's Open goes to this tab with the shop. Live APIs only. Strings (`nctl`) in three languages. Small improvement found while testing: a fee saved in the panel now fills an empty payment amount.
+
+**Verified**: tsc; Playwright `newui-control-shops` (new — open a shop with the owner's login (server: that login works), find it, basic at 2,500 and +3 months (server), accessories on (server modules), a payment recorded with a receipt, the owner's new password (server: logs in with it), a renewal code, a branch (server: 2 branches), a payment account added (server) and put back; Urdu RTL) and `newui-control`. Live files: only `router.tsx`. **Not done**: approving / rejecting a real pending fee in a browser (the local database's pending fee was left alone); the bin restore; dark screenshot; the full Playwright suite.
+
+**Next**: the shop audit's sections one by one — the owner picks.
+
+**Open questions**: none.
