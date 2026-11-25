@@ -8277,5 +8277,80 @@
         "transfer_out": "Branch ko gaya"
       }
     }
+  },
+  "nctl2": {
+    "superAdmin": "SUPER ADMIN",
+    "owner": "Product ke malik:",
+    "tab": {
+      "shops": "Dukaanein aur plan",
+      "overview": "Karobar ka khulasa",
+      "payments": "Fees ka khata",
+      "keys": "License keys"
+    },
+    "newShop": "Nayi dukan",
+    "a4": "Fees ka khata (A4)",
+    "a4Title": "A4 fees aur license ka khata",
+    "a4Kicker": "Software fees aur dukanon ke license ka goshwara",
+    "generated": "Banaya gaya",
+    "activeShops": "Dukaanein",
+    "printPdf": "A4 / PDF print karein",
+    "printA4": "A4 khata print karein",
+    "printStatement": "Goshwara print karein",
+    "editPrices": "Website ki qeematein badlein",
+    "payingShops": "Fees dene wali dukaanein:",
+    "col": {
+      "receipt": "Raseed",
+      "shop": "Dukan",
+      "date": "Tareekh",
+      "channel": "Kis zariye",
+      "months": "Mahine",
+      "ref": "Hawala",
+      "status": "Halat",
+      "amount": "Raqam"
+    },
+    "paySearch": "Dukan, hawala ya raseed talash karein",
+    "toCheck": "Check karne wali fees",
+    "keysTitle": "License renewal keys aur 7 din ke magic link",
+    "keyFor": "Kis ke liye:",
+    "copyMagic": "Magic link copy karein",
+    "linkUntil": "Link chalega",
+    "appTitle": "Android app (nayi APK)",
+    "shareLink": "Link bhejein",
+    "shopSearch": "Dukan ka naam, malik, phone ya shehar talash karein",
+    "customerShops": "Gahak dukaanein",
+    "deletedShops": "Khatam ki gayi dukaanein",
+    "plan": {
+      "trial": "Trial",
+      "basic": "Basic",
+      "pro": "Pro",
+      "chain": "Chain"
+    },
+    "dt": {
+      "modules": "Karobar aur modules",
+      "billing": "Plan, khaas qeemat aur fees",
+      "security": "Password, PIN aur branchein",
+      "ledger": "Adaigi aur rasai ka khata"
+    },
+    "remind": "WhatsApp par yaad dehani",
+    "remindText": "Assalam-o-Alaikum {{owner}}!\n{{shop}} — aap ka Mobile Shop {{plan}} plan: {{left}}.\nFees {{fee}} mahana. Adaigi: More → Software fees.",
+    "followHint": "Modules ek ek kar ke chunne ke liye nishan hataein",
+    "customHint": "Haath se chune gaye — koi bhi module chunein",
+    "recordTitle": "Adaigi darj karein",
+    "recordBtn": "Raqam mil gayi — chalu karein aur barhayein",
+    "withPackage": "Package, modules aur mahinon ke saath (dukan ne kaha)",
+    "remove": "Hataein",
+    "payBy": "Kab tak deni hai",
+    "pwTitle": "Malik ka password aur PIN naya karein",
+    "newPassword": "Naya password (bhool jane par)",
+    "neverShown": "Password ya PIN kabhi nazar nahi aata — sirf naya rakh kar dukandar ko bataya ja sakta hai.",
+    "pwWa": "{{shop}}\nMobile Shop\nLogin: {{phone}}\nNaya password: {{pw}}\n{{site}}",
+    "newWa": "{{shop}}\nMobile Shop app\nLogin: {{phone}}\nPassword: {{pw}}\n{{site}}\nAndroid app: {{app}}",
+    "shopLedger": "Is dukan ki fees ki adaigiyan",
+    "noPayments": "Abhi koi adaigi nahi",
+    "accessHistory": "Password, PIN aur rasai ki tabdeeliyon ki tareekh",
+    "onboard": "Nayi dukan kholein",
+    "createShop": "Dukan banayein aur chalu karein",
+    "package": "Package",
+    "pwOnce": "Yeh sirf abhi yahan dikhta hai taake malik ko bheja ja sake — dobara kabhi nahi dikhega."
   }
 }
