@@ -25,6 +25,7 @@ import NewExchange from '@/newui/pages/Exchange'
 import NewTransfers from '@/newui/pages/Transfers'
 import NewBulk from '@/newui/pages/Bulk'
 import NewFbr from '@/newui/pages/Fbr'
+import NewAudit from '@/newui/pages/Audit'
 import LoginPage from '@/features/auth/LoginPage'
 import SignupPage from '@/features/auth/SignupPage'
 import ModuleGate from '@/components/ModuleGate'
@@ -213,6 +214,8 @@ export const router = createBrowserRouter([
       { path: '/new/more/bulk', element: <NewBulk /> },
       // FBR digital invoicing (no file draws it; drawn like file 03): the bills sent, waiting, turned down
       { path: '/new/fbr', element: <NewFbr /> },
+      // the shop audit (no file draws it; drawn like file 02): its frame and the overview; the other sections open the live screens
+      { path: '/new/audit', element: <ModuleGate module="reports"><NewAudit /></ModuleGate> },
       {
         path: '/new',
         element: <Suspense fallback={<Waiting />}><NewShell /></Suspense>,

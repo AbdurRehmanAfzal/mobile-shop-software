@@ -215,3 +215,17 @@
 **Next**: the next undrawn feature the owner picks (the shop audit, the control room).
 
 **Open questions**: none.
+
+## 2026-11-25 — Shop audit in the new product: its frame and the overview (designed here)
+
+**Asked (owner)**: "push" (PR #139 opened), then "ok start audit".
+
+**Scope chosen**: the live audit is fourteen screens (~2,100 lines). This step builds the audit's own frame in the new product and its first screen, the overview; the other thirteen sections are listed in the frame and open the live screen for the same period until each is drawn (one at a time, on the owner's word).
+
+**Done**: `src/newui/pages/Audit.tsx` at `/new/audit` (the `reports` module, owner / manager), drawn like the business overview (file 02): `AuditFrame` — the bar with the range and days, the nine presets, from–to and as-of in the address, the side list of sections — and the overview: the full report (PDF / Excel), net sales and real profit with the previous period's figure, needs attention, the period's flows, the balances as start → end → now (or as-of), money by kind as bars, the books' own checks, coverage. Every figure is the live audit's (`/shop-audit/period`, `/overview`, `/reconcile`, `/report`). The previous period is shown as its own figure — the live screen's percentage is not worked out in the app. Strings in three languages (`naudit`; the rest are the live audit's own).
+
+**Verified**: tsc; Playwright `newui-audit` (new — a purchase and a part-udhaar sale; the overview's net sales, bills, profit, purchases, to get, to give and stock match `/shop-audit/overview`; the checks show; Yesterday is in the address and shows 0 bills; From–to shows the dates; Finance opens the live `/audit/finance?preset=this_month`; Urdu RTL). Live files: only `router.tsx`. **Not done**: the as-of view in a browser; the PDF / Excel in a browser; dark screenshot; the full Playwright suite.
+
+**Next**: the audit's sections one by one (finance first?) and the control room — the owner picks.
+
+**Open questions**: which audit section next, or the control room first?
