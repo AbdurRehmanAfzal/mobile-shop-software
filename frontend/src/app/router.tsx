@@ -21,6 +21,7 @@ import NewLoans from '@/newui/pages/Loans'
 import NewSettings from '@/newui/pages/Settings'
 import NewQist from '@/newui/pages/Qist'
 import NewRemittance from '@/newui/pages/Remittance'
+import NewExchange from '@/newui/pages/Exchange'
 import LoginPage from '@/features/auth/LoginPage'
 import SignupPage from '@/features/auth/SignupPage'
 import ModuleGate from '@/components/ModuleGate'
@@ -199,6 +200,9 @@ export const router = createBrowserRouter([
       { path: '/new/installments/:id', element: <ModuleGate module="installments"><NewQist /></ModuleGate> },
       // money from abroad (no file draws it; drawn like files 03 / 12), owner / manager
       { path: '/new/remittance', element: <NewRemittance /> },
+      // exchange, phone for phone (no file draws it; drawn like files 14 / 01)
+      { path: '/new/exchange/new', element: <ModuleGate module="exchange"><NewExchange /></ModuleGate> },
+      { path: '/new/exchange', element: <ModuleGate module="exchange"><NewExchange /></ModuleGate> },
       {
         path: '/new',
         element: <Suspense fallback={<Waiting />}><NewShell /></Suspense>,

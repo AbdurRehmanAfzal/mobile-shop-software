@@ -7577,5 +7577,33 @@
     "moveHint": "Raqam aa gayi: ise remittance se us account mein daalein jis mein aayi.",
     "moveNote": "Remittance aa gayi",
     "moved": "{{n}} muntaqil"
+  },
+  "nex": {
+    "subtitle": "Customer ka purana phone aata hai, naya jata hai, farq ek hi baar mein nipat-ta hai",
+    "tab": {
+      "new": "Naya exchange",
+      "recent": "Pichhle exchange"
+    },
+    "all": "Saara",
+    "name": "Naam",
+    "newCustomer": "Naya",
+    "imei15": "IMEI ke 15 hindse hote hain",
+    "alreadyIn": "Ye IMEI pehle se aap ke stock mein hai",
+    "brand": "Brand",
+    "model": "Model",
+    "modelSearch": "Model talash karein",
+    "storage": "Storage",
+    "colour": "Rang",
+    "battery": "Battery %",
+    "resale": "Aage kitne ka bechein",
+    "lockChecked": "Lock (iCloud / Google) check kiya — band hai",
+    "stockSearch": "Stock mein talash karein (model ya IMEI)",
+    "idPending": "ID baqi",
+    "flagged": "Mashkook",
+    "count": "{{n}} exchange",
+    "none": "Abhi koi exchange nahi",
+    "deleteTitle": "Exchange khatam karein",
+    "deleteEffect": "Dono hisse ek saath wapas hote hain: naya phone stock mein wapas, purana stock se bahar, aur bill ki raqam ulat jati hai. Record mein \"khatam\" ke taur par rehta hai.",
+    "otherBrand": "Sab brand…"
   }
 }

@@ -14,7 +14,7 @@
  *
  *  Known differences from the drawing (the server keeps one way of payment per bill): "Split"
  *  is the part paid now (cash or online) with the rest on the khata, not cash and online together;
- *  the trade-in row opens the live exchange, which checks the incoming phone; the rail's Expense is
+ *  the trade-in row opens the new product's exchange (`/new/exchange/new`), which checks the incoming phone; the rail's Expense is
  *  F8 as everywhere in the app (the file prints F10). */
 
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -678,7 +678,7 @@ export default function NewSale() {
                   {tradeOpen ? (
                     <div className="p-3 pt-2 border-t border-slate-200 dark:border-obsidian-800 space-y-2">
                       <p className="text-[11px] text-slate-500 dark:text-slate-400">{pick('npos.tradeHint')}</p>
-                      <button type="button" onClick={() => nav('/exchange/new')} className="px-3 py-1.5 rounded-lg bg-sky-500 text-slate-950 text-xs font-extrabold cursor-pointer" data-testid="npos-trade-open">{pick('npos.tradeOpen')}</button>
+                      <button type="button" onClick={() => nav('/new/exchange/new')} className="px-3 py-1.5 rounded-lg bg-sky-500 text-slate-950 text-xs font-extrabold cursor-pointer" data-testid="npos-trade-open">{pick('npos.tradeOpen')}</button>
                     </div>
                   ) : null}
                 </div>
