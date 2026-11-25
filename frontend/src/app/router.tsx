@@ -6,6 +6,7 @@ import { TOPICS, TOPIC_KEYS } from '@/features/landing/topics'
 import { useAuth } from '@/lib/auth'
 import NewShell, { Soon as NewSoon } from '@/newui/Shell'
 import NewStockSummary from '@/newui/pages/StockSummary'
+import NewHome from '@/newui/pages/Home'
 import NewSale from '@/newui/pages/Sale'
 import NewPurchase from '@/newui/pages/Purchase'
 import NewPurchases from '@/newui/pages/Purchases'
@@ -195,7 +196,8 @@ export const router = createBrowserRouter([
         path: '/new',
         element: <Suspense fallback={<Waiting />}><NewShell /></Suspense>,
         children: [
-          { index: true, element: <NewSoon /> },
+          // home (file 11, third screen) inside the new frame
+          { index: true, element: <NewHome /> },
           { path: 'stock/summary', element: <NewStockSummary /> },
           { path: '*', element: <NewSoon /> },
         ],

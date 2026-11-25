@@ -131,3 +131,15 @@
 **Next**: the dashboard / home (file 11, screen 3).
 
 **Open questions**: none.
+
+## 2026-11-25 — Home in the new product (file 11, third screen)
+
+**Asked (owner)**: "push" (PR #132 opened), then "ok start" — the next screen.
+
+**Done**: `src/newui/pages/Home.tsx` is now the index of `/new` inside the new frame (it said "not drawn yet"), drawn from the third screen of `11-frame-stock-summary-and-dashboard.html`: greeting, the four periods, Business overview and Shop audit tiles, the eight coloured cards, needs attention, Hazri check in / out, the last 7 days' bars with the best day and where the money sits. Every figure is the live home's (`/reports/day`, `/reports/dashboard`, `/shop-audit/overview`, `/attendance/today`); a salesman sees today only, no profit, today's cash. The 7-day total and the money split as percentages are not shown (the app never works out a total or a share). Strings in three languages (`nhome`). `newui-frame.spec.ts` now expects home on `/new` (the "not drawn yet" check stays on `/new/reports`).
+
+**Verified**: tsc; Playwright `newui-home` (new — a purchase with 5,000 paid, a part-udhaar sale of 15,000, an open repair: sales, phones sold 1, profit, to get, to give, stock, cash & bank match `/reports/day` and `/reports/dashboard`; "1 repairs open" opens `/new/repairs`; 7 bars; yesterday shows nothing; this month the sale again; the stock card opens the summary; Urdu RTL) and `newui-frame`. Screenshots compared with file 11 (English and Urdu). Live files: only `router.tsx`. **Not done**: a salesman's view in a browser; Hazri check in / out in a browser (the shop's attendance module); dark screenshot; the full Playwright suite.
+
+**Next**: the features no file draws, in the files' style (qist, remittance, FBR, exchange, transfers, bulk import, the audit, the control room) — the owner picks the order.
+
+**Open questions**: which undrawn feature first?

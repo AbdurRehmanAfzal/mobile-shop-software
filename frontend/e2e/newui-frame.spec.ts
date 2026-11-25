@@ -39,8 +39,7 @@ test('the new product at /new: its frame, its keys, Urdu, and the live software 
   expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(1)
   await page.screenshot({ path: 'test-results/newui-frame.png' })
 
-  // a screen that is not drawn yet says so and opens the one that works
-  await expect(page.getByTestId('newui-soon')).toBeVisible()
+  await expect(page.getByTestId('nhome')).toBeVisible() // drawn: home (file 11, third screen)
   await jobs.getByRole('link', { name: /Stock/ }).click()
   await expect(page).toHaveURL(/\/new\/stock\/summary$/)
   await expect(panel).toBeVisible()
