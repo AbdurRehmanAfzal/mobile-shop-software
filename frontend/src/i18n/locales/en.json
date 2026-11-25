@@ -8351,6 +8351,7 @@
     "onboard": "Open a new shop",
     "createShop": "Create and activate the shop",
     "package": "Package",
-    "pwOnce": "Shown once, here, to send to the owner — it is never shown again."
+    "pwOnce": "Shown once, here, to send to the owner — it is never shown again.",
+    "openWindow": "Open this shop's window"
   }
 }

@@ -590,12 +590,13 @@ export function NewShopModal({ init, onClose, onMade }: { init: NewInit; onClose
       let out = shop
       if (f.fee !== '' && Number(f.fee) >= 0) out = await api<AdminShop>('PATCH', `/api/v1/admin/shops/${shop.id}/plan`, { monthly_fee: Number(f.fee) })
       await inv('admin-shops', 'shop-requests', 'prov-shops', 'prov-overview')
+      // the made view stays until the provider closes it or opens the shop's window: the password is shown only here
       setMade({ shop: out, password: f.password })
-      onMade(out)
     } catch (e) { setErr(errText(e, ur)) } finally { setBusy(false) }
   }
+  const close = () => { onClose(); if (made) onMade(made.shop) }
   return (
-    <Modal title={pick(made ? 'admin.created' : 'nctl2.onboard')} icon={<Plus className="w-4 h-4" />} onClose={onClose} testid="nctl-new-drawer"
+    <Modal title={pick(made ? 'admin.created' : 'nctl2.onboard')} icon={<Plus className="w-4 h-4" />} onClose={close} testid="nctl-new-drawer"
       footer={made ? undefined : <><button type="button" onClick={onClose} className="px-4 py-2 rounded-xl text-xs font-bold bg-slate-200 dark:bg-obsidian-800 cursor-pointer">{pick('common.cancel')}</button><button type="button" disabled={busy || !ok} onClick={() => void create()} className={`px-4 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 cursor-pointer disabled:opacity-40 ${LIME}`} data-testid="nctl-n-save"><Check className="w-3.5 h-3.5" />{pick('nctl2.createShop')}</button></>}>
       {made ? (
         <div className="space-y-3" data-testid="nctl-made">
@@ -603,6 +604,7 @@ export function NewShopModal({ init, onClose, onMade }: { init: NewInit; onClose
           <div className="font-extrabold">{pick('admin.giveDetails')}</div>
           <div className="p-3 rounded-xl bg-slate-50 dark:bg-obsidian-850 font-mono text-sm space-y-1" dir="ltr"><div>{made.shop.owner_phone}</div><div data-testid="nctl-made-pw">{made.password}</div></div>
           <a href={share} target="_blank" rel="noopener noreferrer" className="w-full py-2.5 rounded-xl bg-emerald-600 text-white font-extrabold flex items-center justify-center gap-1.5"><MessageCircle className="w-4 h-4" />{pick('admin.sendWhatsapp')}</a>
+          <button type="button" onClick={close} className={`${BTN_DARK} w-full`} data-testid="nctl-made-open"><Store className="w-3.5 h-3.5" />{pick('nctl2.openWindow')}</button>
           <button type="button" onClick={() => { setMade(null); setF({ ...blank, password: PASSWORD() }) }} className={`${BTN_LIGHT} w-full`}><Plus className="w-3.5 h-3.5" />{pick('admin.another')}</button>
         </div>
       ) : <>
