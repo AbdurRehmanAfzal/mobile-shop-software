@@ -7521,5 +7521,61 @@
     "foreign": "Bheji gayi raqam",
     "rate": "Rate",
     "sender": "Kis ne bheja"
+  },
+  "nrem": {
+    "title": "Bairoon-e-mulk se raqam (remittance)",
+    "subtitle": "Sale aur khate ke liye bahar se bheji gayi raqam — raste mein, mil gayi, bank mein muntaqil",
+    "p": {
+      "today": "Aaj",
+      "week": "Hafta",
+      "month": "Ye mahina",
+      "year": "Ye saal"
+    },
+    "receive": "Bahar se raqam aayi",
+    "managersOnly": "Bairoon-e-mulk ki raqam sirf maalik aur manager ke liye hai.",
+    "waiting": "Remittance mein intezar",
+    "waitingSub": "Raste mein — abhi galle ya bank mein nahi",
+    "moveToBank": "Bank mein daalein",
+    "kIn": "Bahar se mili",
+    "count": "{{n}} adaigiyan",
+    "kFees": "Fees",
+    "kFeesSub": "Service ne li",
+    "kNet": "Safi mili",
+    "kNetSub": "Mili raqam minus fees",
+    "kOut": "Bahar bheji",
+    "allCur": "Sab currencies",
+    "dir": {
+      "all": "Sab",
+      "in": "Mili",
+      "out": "Bheji"
+    },
+    "search": "Naam, bhejne wala, bill no, MTCN ya mulk",
+    "none": "Is arse mein bahar se koi raqam nahi",
+    "noneHint": "Jab sale, khareedari ya khate ki adaigi \"bahar se\" ho to yahan dikhti hai.",
+    "noDetail": "Tafseel nahi likhi",
+    "pkrOnly": "Sirf rupay",
+    "fee": "Fees",
+    "net": "Safi",
+    "st": {
+      "pending": "Raste mein",
+      "received": "Mil gayi",
+      "settled": "Nipat gayi",
+      "unknown": "—"
+    },
+    "note": "Fees aur haalat wahi hain jo counter par likhi gayin; safi = darj rupay − fees.",
+    "receiveHint": "Bande ke khate mein, jaise raqam aayi — bahar se bheji gayi tafseel ke saath.",
+    "forWhom": "Kis ke liye (kis ka khata)",
+    "howMuch": "Kitni bheji",
+    "comesTo": "Bante hain (rupay)",
+    "comesToHint": "Bheji raqam × rate. Agar asal mein kuch aur aaya ho to wo likhein.",
+    "from": "Kis ne bheji",
+    "mtcn": "MTCN / hawala",
+    "feePh": "Fees (rupay, ikhtiyari)",
+    "lands": "Ye remittance account mein rahegi jab tak aap ise bank mein na daalein.",
+    "save": "Mehfooz karein",
+    "received": "{{who}} ke liye {{n}} mil gaye",
+    "moveHint": "Raqam aa gayi: ise remittance se us account mein daalein jis mein aayi.",
+    "moveNote": "Remittance aa gayi",
+    "moved": "{{n}} muntaqil"
   }
 }

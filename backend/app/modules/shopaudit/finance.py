@@ -361,7 +361,8 @@ def international(db: Session, shop_id: uuid.UUID, p: Period) -> dict:
         )
     ).all():
         rows.append(_remit_row(db, d, "purchase", pur.id, pur.no, pur.date, pur.party_id, "out"))
-    # stand-alone payments marked remittance (no foreign amount typed: PKR only)
+    # stand-alone payments marked remittance: the detail typed with it when there is one
+    # (currency, rate, sender…), otherwise PKR only
     for pay in db.scalars(
         select(Payment).where(
             Payment.shop_id == shop_id,
@@ -371,6 +372,20 @@ def international(db: Session, shop_id: uuid.UUID, p: Period) -> dict:
             Payment.status != "voided",
         )
     ).all():
+        d = db.scalar(
+            select(PaymentDetail).where(
+                PaymentDetail.shop_id == shop_id,
+                PaymentDetail.document_type == "payment",
+                PaymentDetail.document_id == pay.id,
+            )
+        )
+        if d is not None:
+            row = _remit_row(db, d, "payment", pay.id, pay.no, pay.date, pay.party_id, pay.direction)
+            row["pkr_amount"] = pay.amount
+            row["net"] = money(pay.amount - (d.fee or ZERO))
+            row["reference"] = row["reference"] or pay.reference
+            rows.append(row)
+            continue
         rows.append(
             {
                 "date": pay.date,

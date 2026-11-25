@@ -7521,5 +7521,61 @@
     "foreign": "Amount sent",
     "rate": "Rate",
     "sender": "Who sent it"
+  },
+  "nrem": {
+    "title": "Money from abroad (remittance)",
+    "subtitle": "Payments sent from abroad for sales and khata — on its way, received, moved to the bank",
+    "p": {
+      "today": "Today",
+      "week": "Week",
+      "month": "This month",
+      "year": "This year"
+    },
+    "receive": "Money received from abroad",
+    "managersOnly": "Money from abroad is for the owner and the manager.",
+    "waiting": "Waiting in Remittance",
+    "waitingSub": "On its way — not in the drawer or the bank yet",
+    "moveToBank": "Move to bank",
+    "kIn": "Received from abroad",
+    "count": "{{n}} payments",
+    "kFees": "Fees",
+    "kFeesSub": "Taken by the service",
+    "kNet": "Net received",
+    "kNetSub": "Received minus fees",
+    "kOut": "Paid abroad",
+    "allCur": "All currencies",
+    "dir": {
+      "all": "All",
+      "in": "Received",
+      "out": "Paid"
+    },
+    "search": "Name, sender, bill no, MTCN or country",
+    "none": "No money from abroad in this period",
+    "noneHint": "It shows here when a sale, a purchase or a khata payment is paid \"from abroad\".",
+    "noDetail": "No details typed",
+    "pkrOnly": "Rupees only",
+    "fee": "Fee",
+    "net": "Net",
+    "st": {
+      "pending": "On its way",
+      "received": "Received",
+      "settled": "Settled",
+      "unknown": "—"
+    },
+    "note": "Fee and status are what was typed at the counter; net = rupees booked − fee.",
+    "receiveHint": "On the person's khata, like money received — with what was sent from abroad.",
+    "forWhom": "For whom (whose khata)",
+    "howMuch": "How much was sent",
+    "comesTo": "Comes to (Rs)",
+    "comesToHint": "Amount sent × rate. Type what actually arrived if it is different.",
+    "from": "Who sent it",
+    "mtcn": "MTCN / reference",
+    "feePh": "Fee (Rs, optional)",
+    "lands": "It lands in the Remittance account until you move it to the bank.",
+    "save": "Save",
+    "received": "{{n}} received for {{who}}",
+    "moveHint": "The money has arrived: move it from Remittance to the account it came into.",
+    "moveNote": "Remittance arrived",
+    "moved": "{{n}} moved"
   }
 }
