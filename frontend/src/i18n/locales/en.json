@@ -7682,5 +7682,10 @@
   "naudit": {
     "managersOnly": "The shop audit is for the owner and the manager.",
     "liveScreen": "Opens the current screen for the same period"
+  },
+  "nctl": {
+    "manageShops": "Manage shops (current screen)",
+    "shopSearch": "Search a shop, city or phone",
+    "keySearch": "Search a key or shop"
   }
 }

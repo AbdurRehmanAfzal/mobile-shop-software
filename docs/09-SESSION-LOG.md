@@ -229,3 +229,17 @@
 **Next**: the audit's sections one by one (finance first?) and the control room — the owner picks.
 
 **Open questions**: which audit section next, or the control room first?
+
+## 2026-11-25 — The provider's control room in the new product: the business view (designed here)
+
+**Asked (owner)**: "push" (PR #140 opened), then "ok start control room".
+
+**Scope chosen**: the live control room is the shop management (`AdminPage` with seven cards, ~1,100 lines) and the business view (`ProviderPage`, ~450 lines). This step builds the new control room's frame and the business view; managing a shop stays the live `/control` for now (linked from the bar). Address: `/control/new` — under `/control` as ADR-115 asks, never inside a shop's frame and not under `/new`.
+
+**Done**: `src/newui/pages/Control.tsx` at `/control/new`: its own dark bar (tabs, the shop app, language, dark, logout; the login sends a provider back here through the live `NEXT_KEY`; a shop's login sees "not for you"), and four tabs in the address (`?tab=`): overview, shops (filters, a card per shop, the panel with deployment switch, reminder, payments and keys), payments (filters, approved total, CSV), keys (make, send, copy, link, renew, new link, cancel with a reason — a reason box instead of the live screen's browser prompt). Live APIs only. Strings in three languages (`nctl`).
+
+**Verified**: tsc; Playwright `newui-control` (new — not logged in → login → back to `/control/new`; no shop counter; monthly income = `/admin/business/overview`; a new shop found by search, its deployment switched to one-PC and back (server); a 3-month key made from its panel and cancelled with a reason (server: revoked, 3 months); the approved total = `/admin/business/payments`; Urdu RTL; a shop's login is denied). Found while testing: the live `e2e/control-landing.spec.ts` fails on clean `staging` code too — logged out, `/control/business` does not go to the login in that test (it did not change here; one more for the stale-tests list). Live files: only `router.tsx`. **Not done**: WhatsApp / SMS sending of a key in a browser; dark screenshot; the full Playwright suite.
+
+**Next**: the owner picks — the control room's shop management, or the audit's next section.
+
+**Open questions**: `control-landing.spec.ts` — look at it with the other stale tests.
