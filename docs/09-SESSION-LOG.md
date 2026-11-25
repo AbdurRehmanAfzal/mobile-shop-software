@@ -155,3 +155,15 @@
 **Next**: the next undrawn feature the owner picks (remittance, FBR, exchange, transfers, bulk, the audit, the control room).
 
 **Open questions**: none.
+
+## 2026-11-25 — Money from abroad in the new product (designed here, no file draws it)
+
+**Asked (owner)**: "push" (PR #134 opened), then "ok start remittance".
+
+**Done**: `src/newui/pages/Remittance.tsx` at `/new/remittance` (owner / manager, as the report), drawn like files 03 / 12: the shared rail, the bar with Today / Week / This month / This year, the Remittance account's balance with Move to bank, received / fees / net / paid abroad, currency chips, all / received / paid with search, a row per remittance that opens its bill or khata, and Money received from abroad on a person's khata (the live payment with the remittance details). Everything is the live software's: the shop audit's international report, `/ledger/accounts`, `/ledger/transfers`, `/payments`. Server (additive, `shopaudit/finance.py`): a stand-alone khata payment made "from abroad" now shows the currency, amount sent, rate, sender, service, fee and status typed with it (before: rupees only); a remittance payment with no details still shows rupees only. Strings in three languages (`nrem`).
+
+**Verified**: pytest `test_shopaudit_finance.py` (with the new `test_standalone_remittance_keeps_its_detail`) and `test_shopaudit_decisions.py` — 7 passed; tsc; Playwright `newui-remittance` (new — a sale paid 500 SAR × 74.2 shows as 37,100 received and waiting; Sara's 200 AED × 76.5 = 15,300 with fee 300, on its way (server: AED, 200, Imran Bhai, pending); received 52,400, fees 300; currency and MTCN filters; move 37,100 to Meezan Bank (server: bank 37,100, waiting 15,300); Urdu RTL). Screenshots in English and Urdu. Live files: only `router.tsx` and the report's additive lines. **Not done**: a purchase paid abroad in a browser; a salesman's view; dark screenshot; the full pytest and Playwright suites.
+
+**Next**: the next undrawn feature the owner picks (FBR, exchange, transfers, bulk, the audit, the control room).
+
+**Open questions**: none.

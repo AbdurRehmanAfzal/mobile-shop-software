@@ -230,3 +230,45 @@ def test_expenses_and_tax_views(owner, cat, db, client):
     ali = login(client, "03211234567")
     for path in ("pnl", "cash", "international", "expenses", "tax"):
         assert ali.get(f"/api/v1/shop-audit/{path}").status_code == 403
+
+
+def test_standalone_remittance_keeps_its_detail(owner):
+    """money from abroad taken on the khata (no bill): the report shows what was typed with it —
+    currency, amount sent, rate, sender, service, fee — not only the rupees (new product, ADR-134)"""
+    cus = _customer(owner)
+    r = owner.post(
+        "/api/v1/payments",
+        json={
+            "party_id": cus["id"],
+            "direction": "in",
+            "amount": 74200,
+            "payment": {
+                "method": "remittance",
+                "currency": "SAR",
+                "country": "Saudi Arabia",
+                "foreign_amount": 1000,
+                "rate": 74.2,
+                "sender_name": "Bilal Raza",
+                "service": "Western Union",
+                "reference": "MTCN 123",
+                "fee": 200,
+            },
+        },
+    )
+    assert r.status_code == 201, r.text
+    # a plain remittance with no detail still shows in rupees only
+    r2 = owner.post(
+        "/api/v1/payments",
+        json={"party_id": cus["id"], "direction": "in", "amount": 5000, "method": "remittance"},
+    )
+    assert r2.status_code == 201, r2.text
+    i = owner.get("/api/v1/shop-audit/international", params=_month()).json()
+    rows = {row["pkr_amount"]: row for row in i["rows"]}
+    rich = rows["74200.00"]
+    assert rich["document_type"] == "payment" and rich["direction"] == "in"
+    assert rich["currency"] == "SAR" and rich["foreign_amount"] == "1000.00" and rich["rate"] == "74.20"
+    assert rich["sender_name"] == "Bilal Raza" and rich["service"] == "Western Union"
+    assert rich["fee"] == "200.00" and rich["net"] == "74000.00"
+    plain_row = rows["5000.00"]
+    assert plain_row["currency"] is None and plain_row["net"] == "5000.00"
+    assert i["total_pkr_in"] == "79200.00" and i["total_fees"] == "200.00"

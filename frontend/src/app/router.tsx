@@ -20,6 +20,7 @@ import NewRepairJob from '@/newui/pages/RepairJob'
 import NewLoans from '@/newui/pages/Loans'
 import NewSettings from '@/newui/pages/Settings'
 import NewQist from '@/newui/pages/Qist'
+import NewRemittance from '@/newui/pages/Remittance'
 import LoginPage from '@/features/auth/LoginPage'
 import SignupPage from '@/features/auth/SignupPage'
 import ModuleGate from '@/components/ModuleGate'
@@ -196,6 +197,8 @@ export const router = createBrowserRouter([
       // qist / installments (no file draws it; drawn like file 12), full screen with the shared rail
       { path: '/new/installments', element: <ModuleGate module="installments"><NewQist /></ModuleGate> },
       { path: '/new/installments/:id', element: <ModuleGate module="installments"><NewQist /></ModuleGate> },
+      // money from abroad (no file draws it; drawn like files 03 / 12), owner / manager
+      { path: '/new/remittance', element: <NewRemittance /> },
       {
         path: '/new',
         element: <Suspense fallback={<Waiting />}><NewShell /></Suspense>,
