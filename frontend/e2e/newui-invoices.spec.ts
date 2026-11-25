@@ -106,6 +106,7 @@ test('new product: every bill — figures, filters, views, a bill, settle, corre
   await page.getByTestId('nbill-del-go').click()
   await expect(page).toHaveURL(new RegExp(`/sales/${s1.id}\\?delete=1`))
   await page.goBack()
+  await expect(page.getByTestId('nbill-del')).toBeHidden()
 
   // Urdu: one language, right to left
   await page.getByTestId('nbill-lang').click()

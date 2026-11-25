@@ -174,7 +174,7 @@ export function DeleteGo({ bill, onClose }: { bill: FixBill; onClose: () => void
     <Modal title={t('nbill.delTitle', { no: bill.no })} sub={pick('nbill.delSub')} onClose={onClose} testid="nbill-del">
       <div className="p-4 flex justify-end gap-2 text-xs">
         <button type="button" onClick={onClose} className="px-4 py-2 rounded-xl font-bold bg-slate-200 dark:bg-obsidian-800 cursor-pointer">{pick('common.cancel')}</button>
-        <button type="button" onClick={() => nav(to)} className="px-4 py-2 rounded-xl font-extrabold bg-rose-600 text-white flex items-center gap-1.5 cursor-pointer" data-testid="nbill-del-go"><Trash2 className="w-3.5 h-3.5" />{pick('nbill.delGo')}</button>
+        <button type="button" onClick={() => { onClose(); nav(to) }} className="px-4 py-2 rounded-xl font-extrabold bg-rose-600 text-white flex items-center gap-1.5 cursor-pointer" data-testid="nbill-del-go"><Trash2 className="w-3.5 h-3.5" />{pick('nbill.delGo')}</button>
       </div>
     </Modal>
   )
