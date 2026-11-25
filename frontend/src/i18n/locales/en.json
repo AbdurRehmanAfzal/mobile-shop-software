@@ -7678,5 +7678,9 @@
     "sentNow": "Sent to FBR",
     "stillWaiting": "Not accepted yet — see the message",
     "tried": "{{n}} bills tried"
+  },
+  "naudit": {
+    "managersOnly": "The shop audit is for the owner and the manager.",
+    "liveScreen": "Opens the current screen for the same period"
   }
 }

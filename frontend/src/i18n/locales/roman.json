@@ -7678,5 +7678,9 @@
     "sentNow": "FBR ko bhej diya",
     "stillWaiting": "Abhi qubool nahi hua — paigham dekhein",
     "tried": "{{n}} bill bhejne ki koshish"
+  },
+  "naudit": {
+    "managersOnly": "Dukan ka audit sirf maalik aur manager ke liye hai.",
+    "liveScreen": "Isi arse ke liye maujooda screen kholta hai"
   }
 }
