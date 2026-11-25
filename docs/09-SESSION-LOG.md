@@ -191,3 +191,15 @@
 **Next**: the next undrawn feature the owner picks (FBR, bulk, the audit, the control room).
 
 **Open questions**: none.
+
+## 2026-11-25 — Bulk Excel in the new product (designed here, no file draws it)
+
+**Asked (owner)**: "push" (PR #137 opened), then "ok start bulk".
+
+**Done**: `src/newui/pages/Bulk.tsx` at `/new/more/bulk` (owner / manager, as the server), drawn like the stock summary (file 11) and add stock (file 01): five big cards for what to bring in, the three steps with a drop zone (drag a file or tap) and the live options, export in the same layout, the past imports, and the check as a table whose counts filter it, the note column first, a row's every value in a drawer, then Import and what was made. Live APIs only (`/bulk/template`, `/bulk/preview`, `/bulk/import`, `/bulk/export`, `/bulk/imports`). Strings in three languages (`nbulk`).
+
+**Verified**: tsc; Playwright `newui-bulk` (new — the people template downloads; a CSV with 2 good rows, a known sample and a bad one: 2 ok / 1 error / 1 skipped, "Say who owes", Import disabled, nothing saved; the error count filters to one row and the drawer shows it; skip errors → import → 2 people with their old balances on the server; stock with a new brand and a supplier row → 2 phones and 1 purchase bill on the server; export downloads; Urdu RTL). Live files: only `router.tsx`. **Not done**: drag and drop in a real browser (the test sets the file); items / sales / expenses sheets in a browser; dark screenshot; the full Playwright suite.
+
+**Next**: the next undrawn feature the owner picks (FBR, the audit, the control room).
+
+**Open questions**: none.

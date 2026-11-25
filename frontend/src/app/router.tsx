@@ -23,6 +23,7 @@ import NewQist from '@/newui/pages/Qist'
 import NewRemittance from '@/newui/pages/Remittance'
 import NewExchange from '@/newui/pages/Exchange'
 import NewTransfers from '@/newui/pages/Transfers'
+import NewBulk from '@/newui/pages/Bulk'
 import LoginPage from '@/features/auth/LoginPage'
 import SignupPage from '@/features/auth/SignupPage'
 import ModuleGate from '@/components/ModuleGate'
@@ -207,6 +208,8 @@ export const router = createBrowserRouter([
       // branch transfers (no file draws them; drawn like files 10 / 12), owner / manager
       { path: '/new/transfers', element: <NewTransfers /> },
       { path: '/new/transfers/:id', element: <NewTransfers /> },
+      // bulk Excel import / export (no file draws it; drawn like files 11 / 01), owner / manager
+      { path: '/new/more/bulk', element: <NewBulk /> },
       {
         path: '/new',
         element: <Suspense fallback={<Waiting />}><NewShell /></Suspense>,

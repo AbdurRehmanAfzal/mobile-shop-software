@@ -7630,5 +7630,24 @@
     "what": "Kya bhejna hai",
     "nothingYet": "Abhi kuch nahi chuna — neeche talash karein aur shamil karne ke liye dabayein.",
     "itemSearch": "Item talash karein (naam ya SKU)"
+  },
+  "nbulk": {
+    "subtitle": "Poora register Excel se laayein — kuch mehfooz hone se pehle har line janchi jati hai",
+    "managersOnly": "Bulk Excel sirf maalik aur manager ke liye hai.",
+    "k": {
+      "stock": "Phone: shuru ka stock ya dealer se khareede",
+      "people": "Customer, dealer aur dukanein purane hisaab ke saath",
+      "items": "Charger, cover aur doosre item ginti ke saath",
+      "sales": "Stock mein maujood phones ki purani sale",
+      "expenses": "Kiraya, bill aur doosre kharche"
+    },
+    "pickKind": "Chunein ke kya laana ya nikaalna hai.",
+    "drop": "Excel file yahan chhorein",
+    "dropHint": "ya chunne ke liye dabayein — .xlsx ya .csv",
+    "note": "Note",
+    "rowsN": "{{n}} lines",
+    "willImport": "{{n}} lines mehfooz hongi",
+    "all": "Sab",
+    "previewHere": "Janch yahan har line ke saath dikhegi"
   }
 }

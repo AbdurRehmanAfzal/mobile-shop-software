@@ -7630,5 +7630,24 @@
     "what": "What to send",
     "nothingYet": "Nothing picked yet — search below and tap to add.",
     "itemSearch": "Search an item (name or SKU)"
+  },
+  "nbulk": {
+    "subtitle": "Bring a whole register in from Excel — checked row by row before anything is saved",
+    "managersOnly": "Bulk Excel is for the owner and the manager.",
+    "k": {
+      "stock": "Phones: opening stock or bought from a dealer",
+      "people": "Customers, dealers and shops with old balances",
+      "items": "Chargers, covers and other items with counts",
+      "sales": "Past sales of phones already in stock",
+      "expenses": "Rent, bills and other expenses"
+    },
+    "pickKind": "Choose what to bring in or take out.",
+    "drop": "Drop the Excel file here",
+    "dropHint": "or tap to choose — .xlsx or .csv",
+    "note": "Note",
+    "rowsN": "{{n}} rows",
+    "willImport": "{{n}} rows will be saved",
+    "all": "All",
+    "previewHere": "The check shows here, row by row"
   }
 }
