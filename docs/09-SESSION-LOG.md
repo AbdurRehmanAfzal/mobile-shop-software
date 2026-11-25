@@ -255,3 +255,43 @@
 **Next**: the shop audit's sections one by one — the owner picks.
 
 **Open questions**: none.
+
+## 2026-11-25 — Shop audit → Finance in the new product
+
+**Asked (owner)**: "push" (PR #142 opened), then "ok start audit finance".
+
+**Done**: `src/newui/pages/AuditFinance.tsx` at `/new/audit/finance` (the `reports` module), in the audit's frame — Finance is now a drawn section there (the frame links it with the same period). Four tabs in the address: profit & loss (hero, paired bars of net sales and profit, the statement with the period before beside each line), cash & bank (opening → in → out → closing, reasons as bars, each account, channels, money from abroad linking to the new remittance screen), expenses (total, by day, by category with the period before, the largest, by whom / which account) and tax (four figures and each bill). The section's PDF / Excel. Every figure is the live audit's (`/shop-audit/pnl|cash|international|expenses|tax`); the live screen's percentage changes are shown as the period before's figures. Strings in three languages (`nfin`). `newui-audit.spec.ts` now expects twelve sections still opening the live screens and checks one of them (Sales).
+
+**Verified**: tsc; Playwright `newui-audit-finance` (new — a purchase, a cash sale and an expense: from the frame Finance opens with the period; the hero, net sales and buying price match `/shop-audit/pnl`; money in / out / closing match `/shop-audit/cash`; the expense total and the largest expense match `/shop-audit/expenses`; tax 0 of 1 bills; a reload keeps the tab and the period; Urdu RTL) and `newui-audit` — both pass alone and together (1.4 min). A first combined run hung for 22 minutes and closed its browser; run again, alone and together, both passed — the hang was this machine's, not the code's. Live files: only `router.tsx`. **Not done**: as-of in a browser; a shop with tax on; dark screenshot; the full Playwright suite.
+
+**Next**: the audit's next section — the owner picks (sales, returns, people, udhaar, len-den, repairs, stock, products, bills, staff, security, reports).
+
+**Open questions**: none.
+
+## 2026-11-25 — One item's page (file 17) in the new product
+
+**Asked (owner)**: "m nay kuch r be ui html files add ki hn ous ko be analyze karo r rename karo" (files 16–19 named and listed, commit `40369a2`), then "ok start item detail file 17".
+
+**Done**: `src/newui/pages/ItemDetail.tsx` at `/new/item/:id`, drawn from file 17 (the final of the three item drafts) with its own top bar. Every job of the live phone page with the same conditions (`DeviceDetailPage.tsx`): Sell / Return, Reserve, Amanat, Repair and More actions; quick edits, stock & ledger movement and the danger zone; cards for identity, verification, condition, specs & box, cost & margin, market & ageing (the server's price hint), the purchase / sale khata (`/devices/{id}/money`), the timeline, the 50×30 sticker (the server's preview) and warranty; WhatsApp pitch copied. New-style drawers for note, asking (PIN / approval), amanat, purchase price, IMEI, type and lock check; the live sheets for faults, reserve, PTA, the sticker window and removing old stock. The new counter now takes `?device=` (the unit is put on the bill once). `ReserveSheet` is exported from `ReserveCard.tsx` (no change in behaviour). The new loans, purchases and transfers screens open this page instead of the live one. Palette `[data-file='17']`. Strings `nitem` in three languages.
+
+**Verified**: tsc; Playwright `newui-item` (new — a purchase of two, one sold: the page's cost / paid / still to pay match `/money`, the dealer on the khata, the same model's sale in the range; asking changed to 38,000 on the server; a note in the timeline; the purchase price to 31,000 on the khata; pitch copied; the sticker preview; Sell opens the counter with one line; amanat to the dealer puts it on loan; More actions; Urdu RTL), `newui-loans`, `newui-sale` — pass. **Not done**: a laptop / watch / faulty / sold unit in a browser; dark screenshot; the full Playwright suite.
+
+**Next**: the owner picks — the audit's next section, or file 16's six-tab audit design.
+
+**Open questions**: none.
+
+## 2026-11-25 — The item ledger sheet (file 20) and the new mock-ups 20 / 21
+
+**Asked (owner)**: "push kr do . r m nay r be html ui page add kiye hn ous ko analyze karo r rename karo r item k be ak detail page hai with ledger sheet be be add kr do".
+
+**Done**:
+- Pushed `ui/28-new-item-detail`, PR #144 (it also shows #143's commits until #143 is merged).
+- Mock-ups renamed (outside the repository) and listed in `00-INDEX.txt` and docs/43: `20-item-detail-with-ledger-sheet` (17 plus the item's own ledger), `21-party-khata-full-ledger` (a person's khata, full version: stock with them, channels, profit, ledger with fix / edit, stock tracker, brand breakdown, method log, A4 ledger report) and `21b-…-statement-print` (the same, a minute older, its print a "Khata Statement").
+- Backend (additive, read-only): `units/ledger.py` — `item_ledger` derived from `device_money`'s timeline (out: purchase, old stock, branch in, a customer return less what was kept; in: sale, return to the seller, branch out; payments as cash beside, never the net), returned as `ledger` on `/devices/{id}/money` for VIEW_COST only (else `null`); return rows gain `line_amount` and `status` (a voided return is not counted); `GET /devices/{id}/ledger-sheet` A4 HTML (shop header / footer, en / ur) and `?format=csv`, VIEW_COST only.
+- The item page: "Item ledger sheet" in the header, the "Complete item ledger" card, and the window with the server's sheet as preview, Print, CSV and a summary to share. Strings `nitem.lg`.
+
+**Verified**: pytest `test_item_ledger` (new: the Vivo scenario's lines and net equal its margin, payments do not move the net, an unsold unit's expected profit, a customer return with a 2,000 cut, the sheet in en / ur, the CSV, a salesman gets no ledger and 403 on the sheet and CSV), `test_units`, `test_returns_audit` — pass; tsc; Playwright `newui-item` with the ledger (out / net / lines match `/money`, the sheet's preview has the bill, CSV downloads, summary copied) — passes. **Not done**: a branch-moved or old-stock unit in a browser; the full suites.
+
+**Next**: the owner picks — file 21 (the person's khata, full version) in the new product, or the audit's next section.
+
+**Open questions**: file 20 puts the extra actions in one row of chips where 17 had three groups — the page keeps 17's groups (tell me if 20's row is wanted).

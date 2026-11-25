@@ -31,7 +31,7 @@ type M = string
 /** the audit's sections, in the live audit's order; `drawn` ones live in the new product */
 export const SECTIONS: { key: string; live: string; drawn?: string; owner?: boolean }[] = [
   { key: 'overview', live: '/audit', drawn: '/new/audit' },
-  { key: 'finance', live: '/audit/finance' }, { key: 'sales', live: '/audit/sales' }, { key: 'returns', live: '/audit/returns' },
+  { key: 'finance', live: '/audit/finance', drawn: '/new/audit/finance' }, { key: 'sales', live: '/audit/sales' }, { key: 'returns', live: '/audit/returns' },
   { key: 'people', live: '/audit/people' }, { key: 'udhaar', live: '/audit/udhaar' }, { key: 'lending', live: '/audit/lending' },
   { key: 'repairs', live: '/audit/repairs' }, { key: 'stock', live: '/audit/stock' }, { key: 'products', live: '/audit/products' },
   { key: 'bills', live: '/audit/bills' }, { key: 'staff', live: '/audit/staff' }, { key: 'security', live: '/audit/security', owner: true },

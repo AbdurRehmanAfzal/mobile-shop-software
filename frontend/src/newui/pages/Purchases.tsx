@@ -402,7 +402,7 @@ export default function NewPurchases() {
                               {l.returned_at ? <div className="text-[11px] text-amber-600 dark:text-amber-400 mt-0.5">{pick('nlist.returnedLine')}</div> : !l.device_id ? <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5" dir="ltr">× {l.qty}</div> : null}
                               <div className="flex items-center gap-2 mt-1.5">
                                 {l.imei1 ? <button type="button" onClick={() => copy(l.imei1!)} className="inline-flex items-center gap-1 font-mono text-[11px] px-2 py-0.5 rounded-md bg-white dark:bg-obsidian-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-400 cursor-pointer" dir="ltr"><span>{l.imei1}</span><Copy className="w-3 h-3 opacity-60" /></button> : null}
-                                {l.device_id ? <button type="button" onClick={() => nav(`/stock/${l.device_id}`)} className="text-[11px] font-semibold text-emerald-700 dark:text-[#A3E635] hover:underline cursor-pointer">{pick('nlist.viewStock')}</button>
+                                {l.device_id ? <button type="button" onClick={() => nav(`/new/item/${l.device_id}`)} className="text-[11px] font-semibold text-emerald-700 dark:text-[#A3E635] hover:underline cursor-pointer">{pick('nlist.viewStock')}</button>
                                   : l.accessory_id ? <button type="button" onClick={() => nav(`/accessories/${l.accessory_id}`)} className="text-[11px] font-semibold text-emerald-700 dark:text-[#A3E635] hover:underline cursor-pointer">{pick('nlist.viewStock')}</button> : null}
                               </div>
                             </div>

@@ -41,7 +41,7 @@ test('new product: shop audit — the frame with the period and the sections, th
   await page.goto('/new/audit')
   await expect(page.getByTestId('naudit')).toBeVisible()
   await expect(page.getByTestId('naudit-p-this_month')).toHaveAttribute('aria-pressed', 'true')
-  await expect(page.getByTestId('naudit-sections').getByRole('button')).toHaveCount(13) // the other sections, security included for the owner
+  await expect(page.getByTestId('naudit-sections').getByRole('button')).toHaveCount(12) // the sections not drawn yet, security included for the owner
   await expect(page.getByTestId('naudit-sales')).toContainText(fmt(ov.sales.net_sales))
   await expect(page.getByTestId('naudit-sales')).toContainText('1 bills')
   await expect(page.getByTestId('naudit-profit')).toContainText(fmt(ov.profit.net_profit))
@@ -61,8 +61,8 @@ test('new product: shop audit — the frame with the period and the sections, th
   await page.getByTestId('naudit-p-this_month').click()
 
   // a section not drawn yet opens the live screen for the same period
-  await page.getByTestId('naudit-live-finance').click()
-  await expect(page).toHaveURL(/\/audit\/finance\?preset=this_month/)
+  await page.getByTestId('naudit-live-sales').click()
+  await expect(page).toHaveURL(/\/audit\/sales\?preset=this_month/)
   await page.goBack()
   await expect(page.getByTestId('naudit')).toBeVisible()
 
