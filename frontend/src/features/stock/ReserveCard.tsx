@@ -15,7 +15,7 @@ import type { Party } from '@/lib/types'
 
 interface Held { reserved_party_id?: string | null; reserved_party_name?: string | null; reserved_until?: string | null; reserved_note?: string | null }
 
-function ReserveSheet({ open, onClose, withQty, max, onSave }: { open: boolean; onClose: () => void; withQty?: boolean; max?: number; onSave: (b: { party_id: string; until: string | null; note: string | null; qty?: number }) => Promise<void> }) {
+export function ReserveSheet({ open, onClose, withQty, max, onSave }: { open: boolean; onClose: () => void; withQty?: boolean; max?: number; onSave: (b: { party_id: string; until: string | null; note: string | null; qty?: number }) => Promise<void> }) {
   const [who, setWho] = useState<Party | null>(null)
   const [until, setUntil] = useState('')
   const [note, setNote] = useState('')

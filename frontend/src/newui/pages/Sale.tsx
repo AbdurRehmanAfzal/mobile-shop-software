@@ -216,6 +216,14 @@ export default function NewSale() {
     try { price = (await get<{ price: string }>(`/api/v1/accessories/${it.id}/price${party ? `?party_id=${party.id}` : ''}`)).price } catch { /* the item's own */ }
     setLines((ls) => [...ls, { k: 'item', it, qty: 1, price: String(Number(price) || ''), max: it.qty }])
   }
+  // an item's page (`/new/item/:id`) opens the counter with that unit already on the bill
+  const asked = useRef(false)
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get('device')
+    if (asked.current) return
+    asked.current = true
+    if (id) get<Device>(`/api/v1/devices/${id}`).then((d) => { if (d.status === 'in_stock' || d.status === 'faulty') void addDevice(d) }).catch(() => undefined)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
   const setLine = (l: Line, patch: Partial<DevLine> | Partial<ItemLine>) => setLines((ls) => ls.map((x) => (x === l ? ({ ...x, ...patch } as Line) : x)))
 
   /* a scanner puts a phone or an item on the bill */

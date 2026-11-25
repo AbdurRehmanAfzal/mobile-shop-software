@@ -267,3 +267,15 @@
 **Next**: the audit's next section — the owner picks (sales, returns, people, udhaar, len-den, repairs, stock, products, bills, staff, security, reports).
 
 **Open questions**: none.
+
+## 2026-11-25 — One item's page (file 17) in the new product
+
+**Asked (owner)**: "m nay kuch r be ui html files add ki hn ous ko be analyze karo r rename karo" (files 16–19 named and listed, commit `40369a2`), then "ok start item detail file 17".
+
+**Done**: `src/newui/pages/ItemDetail.tsx` at `/new/item/:id`, drawn from file 17 (the final of the three item drafts) with its own top bar. Every job of the live phone page with the same conditions (`DeviceDetailPage.tsx`): Sell / Return, Reserve, Amanat, Repair and More actions; quick edits, stock & ledger movement and the danger zone; cards for identity, verification, condition, specs & box, cost & margin, market & ageing (the server's price hint), the purchase / sale khata (`/devices/{id}/money`), the timeline, the 50×30 sticker (the server's preview) and warranty; WhatsApp pitch copied. New-style drawers for note, asking (PIN / approval), amanat, purchase price, IMEI, type and lock check; the live sheets for faults, reserve, PTA, the sticker window and removing old stock. The new counter now takes `?device=` (the unit is put on the bill once). `ReserveSheet` is exported from `ReserveCard.tsx` (no change in behaviour). The new loans, purchases and transfers screens open this page instead of the live one. Palette `[data-file='17']`. Strings `nitem` in three languages.
+
+**Verified**: tsc; Playwright `newui-item` (new — a purchase of two, one sold: the page's cost / paid / still to pay match `/money`, the dealer on the khata, the same model's sale in the range; asking changed to 38,000 on the server; a note in the timeline; the purchase price to 31,000 on the khata; pitch copied; the sticker preview; Sell opens the counter with one line; amanat to the dealer puts it on loan; More actions; Urdu RTL), `newui-loans`, `newui-sale` — pass. **Not done**: a laptop / watch / faulty / sold unit in a browser; dark screenshot; the full Playwright suite.
+
+**Next**: the owner picks — the audit's next section, or file 16's six-tab audit design.
+
+**Open questions**: none.

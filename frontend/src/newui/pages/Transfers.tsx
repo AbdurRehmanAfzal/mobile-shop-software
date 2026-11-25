@@ -145,7 +145,7 @@ function Detail({ x, onToast }: { x: Transfer; onToast: (m: string) => void }) {
       <div className="space-y-2" data-testid="ntr-lines">
         <div className="text-[11px] font-display font-extrabold uppercase tracking-wider text-slate-400">{pick('ntr.whatWent')}</div>
         {x.lines.map((l, i) => (
-          <button key={i} type="button" onClick={() => (l.device_id ? nav(`/stock/${l.device_id}`) : l.item_id ? nav(`/accessories/${l.item_id}`) : undefined)} className="w-full flex items-center justify-between gap-2 p-2.5 rounded-xl bg-slate-50/80 dark:bg-obsidian-850/60 border border-slate-200/60 dark:border-slate-800 text-xs text-start cursor-pointer">
+          <button key={i} type="button" onClick={() => (l.device_id ? nav(`/new/item/${l.device_id}`) : l.item_id ? nav(`/accessories/${l.item_id}`) : undefined)} className="w-full flex items-center justify-between gap-2 p-2.5 rounded-xl bg-slate-50/80 dark:bg-obsidian-850/60 border border-slate-200/60 dark:border-slate-800 text-xs text-start cursor-pointer">
             <span className="flex items-center gap-2 min-w-0"><span className="w-7 h-7 shrink-0 rounded-lg bg-white dark:bg-obsidian-900 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500">{l.kind === 'device' ? <Smartphone className="w-3.5 h-3.5" /> : <Boxes className="w-3.5 h-3.5" />}</span><span className="min-w-0"><span className="block font-bold truncate" dir="auto">{l.label}</span>{l.kind === 'item' ? <span className="block text-[10px] text-slate-500">{pick('transfer.pieces').replace('{{n}}', String(l.qty))}</span> : null}</span></span>
             <span className="font-mono font-bold shrink-0" dir="ltr">{rs(l.cost)}</span>
           </button>
