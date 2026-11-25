@@ -75,7 +75,7 @@ test('new product: an item’s page — figures, asking, note, purchase price, s
   await expect(page.getByTestId('nitem-asking')).toContainText('38,000')
 
   // a note, into the timeline
-  await page.getByTestId('nitem-tile-note').click()
+  await page.getByTestId('nitem-act-note').click()
   await page.getByTestId('nitem-note-text').fill('Customer Ali asked for it')
   await page.getByTestId('nitem-note-save').click()
   await expect(page.getByTestId('nitem-timeline')).toContainText('Customer Ali asked for it')
@@ -133,10 +133,10 @@ test('new product: an item’s page — figures, asking, note, purchase price, s
   await expect(page.getByTestId('nitem-status')).toContainText('On loan')
   expect((await get(`/devices/${id}`)).status).toBe('on_loan')
 
-  // every other job is under More actions
-  await page.getByTestId('nitem-more').click()
+  // every other job is one row of chips (file 20), the delete at its end
+  await expect(page.getByTestId('nitem-actions')).toBeVisible()
   await expect(page.getByTestId('nitem-act-edit')).toBeVisible()
-  await page.getByTestId('nitem-more').click()
+  await expect(page.getByTestId('nitem-act-balances')).toBeVisible()
 
   // Urdu: one language, right to left
   await page.getByTestId('nitem-lang').click()

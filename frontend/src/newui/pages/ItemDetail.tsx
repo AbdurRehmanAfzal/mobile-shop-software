@@ -24,9 +24,9 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
-  AlertTriangle, ArrowLeft, ArrowRightLeft, Banknote, BookOpen, Bookmark, Download, Box, CheckCircle2, ChevronDown, ChevronUp, Check, Clock, Copy, CreditCard, Eye, EyeOff, Fingerprint, Headphones,
+  AlertTriangle, ArrowLeft, ArrowRightLeft, Banknote, BookOpen, Bookmark, Download, Box, CheckCircle2, Check, Clock, Copy, CreditCard, Eye, EyeOff, Fingerprint, Headphones,
   Languages, Laptop, Lock, MessageCircle, Moon, NotebookPen, Pencil, Printer, RotateCcw, ScanLine, Search, ShieldCheck, SlidersHorizontal, ShieldAlert, Smartphone, Sun, Tablet, Tag,
-  Trash2, Undo2, User, Watch, Wrench, X, Zap,
+  Trash2, Undo2, User, Watch, Wrench, X,
 } from 'lucide-react'
 import { useLang } from '@/components/Bilingual'
 import { fmtDate } from '@/components/ui'
@@ -86,7 +86,6 @@ export default function NewItemDetail() {
   const { data: money } = useGet<Money>(['unit-money', id ?? ''], id ? `/api/v1/devices/${id}/money` : null)
   const ev = useDeviceEvent()
   const [drawer, setDrawer] = useState<Drawer>(null)
-  const [more, setMore] = useState(false)
   const [showCost, setShowCost] = useState(true)
   const [label, setLabel] = useState(false)
   const [pta, setPta] = useState(false)
@@ -192,9 +191,10 @@ export default function NewItemDetail() {
   ]
   const statusTone = inStock ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800' : d.status === 'sold' ? 'bg-obsidian-900 text-white border-obsidian-900 dark:bg-[#A3E635] dark:text-obsidian-950' : d.status === 'faulty' ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800'
   const mark = d.brand_name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase()).join('') || '?'
-  const quick = ['note', 'retype', 'changePaid', 'price', 'edit'].map(act).filter((a): a is Act => !!a).slice(0, 3)
-  const ledger = ['balances', 'transfer', 'returnSeller', 'changeSeller'].map(act).filter((a): a is Act => !!a).slice(0, 3)
   const danger = ['deletePurchase', 'deleteSale', 'removeOld'].map(act).filter((a): a is Act => !!a)
+  // file 20's row: the usual corrections first, as the file orders them, then every other job
+  const ROW_FIRST = ['note', 'retype', 'changePaid', 'balances', 'transfer', 'returnSeller']
+  const rowActs = [...ROW_FIRST.map(act).filter((a): a is Act => !!a), ...moreActs.filter((a) => !ROW_FIRST.includes(a.key) && !danger.includes(a))]
 
   return (
     <div className="font-sans bg-[#F4F6F9] text-slate-900 dark:bg-obsidian-950 dark:text-slate-100 antialiased min-h-dvh" data-testid="nitem" data-newui="1" data-file="17">
@@ -233,26 +233,20 @@ export default function NewItemDetail() {
         <div className="flex flex-wrap items-center gap-2 relative">
           {act('sell') ? <button type="button" onClick={act('sell')!.run} className="px-4 py-2.5 rounded-xl bg-[#A3E635] hover:bg-[#84CC16] text-slate-950 font-display font-extrabold text-sm flex items-center gap-1.5 cursor-pointer" data-testid="nitem-sell"><Banknote className="w-4 h-4" />{pick('stock.sell')}</button> : null}
           {act('return') ? <button type="button" onClick={act('return')!.run} className="px-4 py-2.5 rounded-xl bg-[#A3E635] hover:bg-[#84CC16] text-slate-950 font-display font-extrabold text-sm flex items-center gap-1.5 cursor-pointer" data-testid="nitem-return"><Undo2 className="w-4 h-4" />{pick('counter.returnJob')}</button> : null}
-          {d.reserved_party_id ? <button type="button" onClick={async () => { setErr(''); try { await api('POST', `/api/v1/devices/${d.id}/release`, {}); await inv('device', 'devices', 'history', 'stock-status', 'unit-money') } catch (e) { setErr(errText(e, ur)) } }} className={btn} data-testid="nitem-release"><Bookmark className="w-4 h-4 text-amber-500" />{pick('reserve.release')}</button>
-            : inStock ? <button type="button" onClick={() => setReserve(true)} className={btn} data-testid="nitem-reserve"><Bookmark className="w-4 h-4 text-rose-500" />{pick('reserve.title')}</button> : null}
           {act('loan') ? <button type="button" onClick={act('loan')!.run} className={btn} data-testid="nitem-loan"><ArrowRightLeft className="w-4 h-4 text-amber-500" />{pick('stock.loanOut')}</button> : null}
           {act('repair') ? <button type="button" onClick={act('repair')!.run} className={btn} data-testid="nitem-repair"><Wrench className="w-4 h-4 text-slate-500" />{pick('stock.sendRepair')}</button> : null}
-          <button type="button" onClick={() => setMore(!more)} aria-expanded={more} className="px-3.5 py-2.5 rounded-xl bg-obsidian-900 dark:bg-obsidian-800 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer" data-testid="nitem-more"><Zap className="w-4 h-4 text-amber-400" />{pick('nitem.more')}<span className="px-1.5 rounded-full bg-[#A3E635] text-slate-950 text-[10px] font-extrabold" dir="ltr">{moreActs.length}</span>{more ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}</button>
+          {d.reserved_party_id ? <button type="button" onClick={async () => { setErr(''); try { await api('POST', `/api/v1/devices/${d.id}/release`, {}); await inv('device', 'devices', 'history', 'stock-status', 'unit-money') } catch (e) { setErr(errText(e, ur)) } }} className={btn} data-testid="nitem-release"><Bookmark className="w-4 h-4 text-amber-500" />{pick('reserve.release')}</button>
+            : inStock ? <button type="button" onClick={() => setReserve(true)} className={btn} data-testid="nitem-reserve"><Bookmark className="w-4 h-4 text-rose-500" />{pick('reserve.title')}</button> : null}
           <button type="button" onClick={pitch} className="px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer" data-testid="nitem-pitch"><MessageCircle className="w-4 h-4" />{pick('nitem.pitch')}</button>
           {canSeeCost ? <button type="button" onClick={() => setLedgerOpen(true)} className="px-3.5 py-2.5 rounded-xl bg-obsidian-950 dark:bg-slate-100 text-white dark:text-obsidian-950 text-xs font-bold flex items-center gap-1.5 cursor-pointer" data-testid="nitem-ledger-open"><BookOpen className="w-4 h-4 text-amber-400 dark:text-amber-600" />{pick('nitem.lg.button')}</button> : null}
-          {more ? (
-            <div className="absolute end-0 top-full mt-2 z-40 w-72 max-h-[60vh] overflow-y-auto rounded-2xl bg-white dark:bg-obsidian-900 border border-slate-200 dark:border-slate-700 shadow-2xl p-2" data-testid="nitem-more-list">
-              {moreActs.map((a) => <button key={a.key} type="button" onClick={() => { setMore(false); a.run() }} className={`w-full px-3 py-2 rounded-xl text-start text-xs font-semibold cursor-pointer hover:bg-slate-100 dark:hover:bg-obsidian-850 ${a.key.startsWith('delete') || a.key === 'removeOld' ? 'text-rose-600' : ''}`} data-testid={`nitem-act-${a.key}`}>{pick(a.label)}</button>)}
-            </div>
-          ) : null}
         </div>
       </section>
 
-      {/* quick edits, stock & ledger movement, danger zone */}
-      <section className="px-4 sm:px-6 py-3 grid grid-cols-1 lg:grid-cols-[1fr_1fr_auto] gap-3 border-b border-slate-200/90 dark:border-slate-800">
-        <Row title="nitem.quick">{quick.map((a) => <Tile key={a.key} a={a} icon={a.key === 'note' ? NotebookPen : a.key === 'retype' ? Tag : a.key === 'changePaid' ? CreditCard : Pencil} sub={`nitem.sub.${a.key}`} />)}</Row>
-        {ledger.length ? <Row title="nitem.ledger">{ledger.map((a) => <Tile key={a.key} a={a} icon={a.key === 'balances' ? Banknote : a.key === 'transfer' ? ArrowRightLeft : a.key === 'returnSeller' ? RotateCcw : User} sub={`nitem.sub.${a.key}`} />)}</Row> : null}
-        {danger.length ? <div className="p-3 rounded-2xl bg-rose-50/70 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900" data-testid="nitem-danger"><div className="text-[10px] font-extrabold uppercase tracking-wider text-rose-600 mb-2">{pick('nitem.danger')}</div><div className="flex flex-wrap gap-2">{danger.map((a) => <button key={a.key} type="button" onClick={a.run} className="px-3 py-2 rounded-xl border border-rose-300 dark:border-rose-800 bg-white dark:bg-obsidian-900 text-start cursor-pointer" data-testid={`nitem-danger-${a.key}`}><span className="flex items-center gap-1.5 text-xs font-extrabold text-rose-600"><Trash2 className="w-3.5 h-3.5" />{pick(a.label)}</span></button>)}</div></div> : null}
+      {/* file 20: every other job as one row of chips, the delete at its end */}
+      <section className="px-4 sm:px-6 py-2.5 flex flex-wrap items-center gap-1.5 border-b border-slate-200/90 dark:border-slate-800 bg-white/60 dark:bg-obsidian-900/60" data-testid="nitem-actions">
+        <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 me-1">{pick('nitem.more')}:</span>
+        {rowActs.map((a) => { const Icon = ACT_ICON[a.key] ?? Pencil; const warn = a.key === 'returnSeller'; return <button key={a.key} type="button" onClick={a.run} className={`px-2.5 py-1.5 rounded-lg border text-[11px] font-bold flex items-center gap-1 cursor-pointer ${warn ? 'bg-amber-50 dark:bg-amber-950/30 border-amber-300 dark:border-amber-800 text-amber-800 dark:text-amber-300' : 'bg-white dark:bg-obsidian-850 border-slate-200 dark:border-slate-700 hover:border-slate-400'}`} data-testid={`nitem-act-${a.key}`}><Icon className="w-3.5 h-3.5" />{pick(a.label)}</button> })}
+        {danger.length ? <span className="ms-auto flex flex-wrap gap-1.5" data-testid="nitem-danger">{danger.map((a) => <button key={a.key} type="button" onClick={a.run} className="px-2.5 py-1.5 rounded-lg border border-rose-300 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/30 text-[11px] font-extrabold text-rose-600 flex items-center gap-1 cursor-pointer" data-testid={`nitem-danger-${a.key}`}><Trash2 className="w-3.5 h-3.5" />{pick(a.label)}</button>)}</span> : null}
       </section>
       {err ? <p className="px-6 pt-3 text-xs font-bold text-rose-600" role="alert">{err}</p> : null}
 
@@ -356,14 +350,14 @@ export default function NewItemDetail() {
 const btn = 'px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-obsidian-850 hover:border-slate-400 text-xs font-bold flex items-center gap-1.5 cursor-pointer'
 const small = 'px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-obsidian-900 text-[11px] font-bold cursor-pointer'
 
-function Row({ title, children }: { title: string; children: ReactNode }) {
-  const { pick } = useLang()
-  return <div className="p-3 rounded-2xl bg-white dark:bg-obsidian-900 border border-slate-200/90 dark:border-slate-800"><div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 mb-2">{pick(title)}</div><div className="grid grid-cols-1 sm:grid-cols-3 gap-2">{children}</div></div>
+/** file 20's chips: an icon per job */
+const ACT_ICON: Record<string, typeof Tag> = {
+  note: NotebookPen, retype: Tag, changePaid: CreditCard, balances: Banknote, transfer: ArrowRightLeft, returnSeller: RotateCcw,
+  verify: ScanLine, skipId: ShieldCheck, faulty: AlertTriangle, faultEdit: AlertTriangle, faultyCleared: ShieldCheck, repairBack: Wrench,
+  approvalBack: RotateCcw, sticker: Printer, price: Tag, edit: Pencil, changeSeller: User, fixCost: CreditCard, changeBuyer: User,
+  fixImei: Fingerprint, lock: Lock,
 }
-function Tile({ a, icon: Icon, sub }: { a: Act; icon: typeof Tag; sub: string }) {
-  const { pick } = useLang()
-  return <button type="button" onClick={a.run} className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-obsidian-850/60 hover:border-slate-400 text-start cursor-pointer" data-testid={`nitem-tile-${a.key}`}><span className="flex items-center gap-1.5 text-xs font-bold"><Icon className="w-3.5 h-3.5 text-blue-600" />{pick(a.label)}</span><span className="block text-[10px] text-slate-500 mt-0.5">{pick(sub)}</span></button>
-}
+
 export function Card({ title, children, dot, chip, side, icon, action, testid }: { title: string; children: ReactNode; dot?: boolean; chip?: string; side?: string; icon?: ReactNode; action?: ReactNode; testid?: string }) {
   const { pick } = useLang()
   return (
