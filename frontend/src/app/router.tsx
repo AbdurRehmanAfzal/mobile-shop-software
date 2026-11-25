@@ -17,6 +17,7 @@ import NewOverview from '@/newui/pages/Overview'
 import NewRepairs from '@/newui/pages/Repairs'
 import NewRepairJob from '@/newui/pages/RepairJob'
 import NewLoans from '@/newui/pages/Loans'
+import NewSettings from '@/newui/pages/Settings'
 import LoginPage from '@/features/auth/LoginPage'
 import SignupPage from '@/features/auth/SignupPage'
 import ModuleGate from '@/components/ModuleGate'
@@ -188,6 +189,8 @@ export const router = createBrowserRouter([
       { path: '/new/repairs/:id', element: <NewRepairJob /> },
       // amanat / loans (file 12), full screen with its own sidebar
       { path: '/new/loans', element: <ModuleGate module="loans"><NewLoans /></ModuleGate> },
+      // shop settings (file 07), full screen with the shared rail; owner only
+      { path: '/new/more/settings', element: <NewSettings /> },
       {
         path: '/new',
         element: <Suspense fallback={<Waiting />}><NewShell /></Suspense>,

@@ -119,3 +119,15 @@
 **Next**: settings (file 07).
 
 **Open questions**: none.
+
+## 2026-11-25 — Shop settings in the new product (file 07)
+
+**Asked (owner)**: "push" (PR #131 opened), then "ok start" — the next screen.
+
+**Done**: `src/newui/pages/Settings.tsx` at `/new/more/settings`, full screen with the shared rail, drawn from `07-shop-settings.html`: the bar (Back, search over every setting, dark, language, Save all changes with a count), five tabs carrying every field of the live settings page (shop & branding with the logo, receipts & currency, printers & barcode with the code word / own pattern, tax & FBR, security & audit rules), and on the right the 80 mm bill in the shop's print language and the price sticker as the form stands. One save sends only the changed fields to `PATCH /shops/current`, `PATCH /barcodes/settings` and `PUT /fbr/settings`; the price pattern's examples are the server's preview; printers stay on the device in the live card's storage. Owner only. Strings in three languages (`nset`). `data-file="07"` shades.
+
+**Verified**: tsc; Playwright `newui-settings` (new — the bill follows address, tagline, PKR, bank, invoice prefix and NTN; the sticker follows the code word (QWERTYUIOP: 45000 → TYQQQ), the CP ID mark and the sticker size; an out-of-order age band blocks the save; one save → the server has address, tagline, owner, PKR, bank tick and name, CMB, the code word, tax 18 %, the PIN rule, ★, barcode prefix AB and the phone HS code, and the unchanged audit bands were not sent; the own pattern with the server's example saved; search across tabs; Urdu RTL). Screenshots compared with file 07 (tabs 1, 3, 5 and Urdu). Live files: only `router.tsx`. **Not done**: the logo upload and an FBR test in a browser; a manager's view (it says the page is the owner's); dark screenshot; the full Playwright suite.
+
+**Next**: the dashboard / home (file 11, screen 3).
+
+**Open questions**: none.
