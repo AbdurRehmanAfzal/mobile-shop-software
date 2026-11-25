@@ -7682,5 +7682,10 @@
   "naudit": {
     "managersOnly": "Dukan ka audit sirf maalik aur manager ke liye hai.",
     "liveScreen": "Isi arse ke liye maujooda screen kholta hai"
+  },
+  "nctl": {
+    "manageShops": "Dukanon ka intezam (maujooda screen)",
+    "shopSearch": "Dukan, shehar ya phone talash karein",
+    "keySearch": "Key ya dukan talash karein"
   }
 }

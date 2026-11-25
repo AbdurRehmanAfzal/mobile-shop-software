@@ -26,6 +26,7 @@ import NewTransfers from '@/newui/pages/Transfers'
 import NewBulk from '@/newui/pages/Bulk'
 import NewFbr from '@/newui/pages/Fbr'
 import NewAudit from '@/newui/pages/Audit'
+import NewControl from '@/newui/pages/Control'
 import LoginPage from '@/features/auth/LoginPage'
 import SignupPage from '@/features/auth/SignupPage'
 import ModuleGate from '@/components/ModuleGate'
@@ -151,6 +152,8 @@ export const router = createBrowserRouter([
   { path: '/key/:token', element: <Suspense fallback={<Waiting />}><KeyPage /></Suspense> },
   { path: '/r/:token', element: <Suspense fallback={<Waiting />}><RepairStatusPage /></Suspense> },
   { path: '/b/:token', element: <Suspense fallback={<Waiting />}><BillCheckPage /></Suspense> },
+  // ADR-134 / ADR-115: the new product's control room, under /control in its own frame (the business view)
+  { path: '/control/new', element: <NewControl /> },
   // ADR-115: the provider's control room — its own address and frame, outside the shop app
   {
     path: '/control',
