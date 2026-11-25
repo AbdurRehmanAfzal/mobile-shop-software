@@ -339,3 +339,15 @@
 **Next**: file 24 (bills, F10), then file 22 (the audit).
 
 **Open questions**: none.
+
+## 2026-11-25 — The item page's jobs as file 20's one row
+
+**Asked (owner)**: "147 may nay phlay he merge kr di thi", then "item page par file 20 wali ek row bana do" (the open question of the item page: 17's three groups or 20's one row — 20's).
+
+**Done** (branch `ui/35-item-actions-row`): `ItemDetail.tsx` — the header as file 20 (Sell / Return, Amanat, Repair, Reserve / Release, WhatsApp pitch, Item ledger sheet); the More actions list and the three groups (quick edits, stock & ledger movement, danger zone) replaced by one row of chips (`nitem-actions`, each `nitem-act-<key>`: note, type, paid, get / give, branch, return to the seller first as the file orders them, then every other job) with the delete at its end (`nitem-danger-*`). Every job of the live phone page is still reachable. `newui-item.spec.ts` updated.
+
+**Verified**: tsc; Playwright `newui-item` — passes. Three agents are building files 24 + 25, 22 and 26 in their own worktrees (`../wt/bills`, `../wt/audit`, `../wt/control`; branches `ui/32-new-bills`, `ui/33-new-audit`, `ui/34-new-control`).
+
+**Next**: review the agents' work, run their browser tests, open their pull requests.
+
+**Open questions**: none.
