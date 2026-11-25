@@ -8277,5 +8277,154 @@
         "transfer_out": "To a branch"
       }
     }
+  },
+  "nau": {
+    "executive": "Executive shop audit",
+    "back": "Back",
+    "booksOk": "Books reconciled",
+    "booksStatus": "Books audit status",
+    "booksMatched": "Matched",
+    "checksPassed": "checks passed",
+    "profitShown": "Profit visible",
+    "profitHidden": "Profit hidden",
+    "a4": "Full audit report (A4)",
+    "printA4": "Print A4 / save PDF",
+    "include": "Include sections",
+    "marketKhata": "Market khata",
+    "lene": "To get (lene hain)",
+    "dene": "To give (dene hain)",
+    "tapToOpen": "Tap one to open it",
+    "nothingNeedsLook": "Nothing needs a look",
+    "open": "Open",
+    "openBill": "Open bill",
+    "firstOf": "Showing",
+    "tab": {
+      "overview": "Overview & health",
+      "finance": "Finance & P&L",
+      "sales": "Sales & purchases",
+      "bills": "Bills & vouchers",
+      "udhaar": "Udhaar & len-den",
+      "stock": "Stock & ageing",
+      "products": "Products & people",
+      "returns": "Returns & repairs",
+      "staff": "Staff & security",
+      "ledger": "Master ledger",
+      "reports": "Reports centre"
+    },
+    "sa": {
+      "sales": "Sales analytics (becha hua maal)",
+      "purchases": "Purchases analytics (khareeda hua maal)",
+      "salesHint": "Model-wise sales, highest-profit phones, buyer khata and IMEI trail",
+      "purchasesHint": "Model-wise buying cost, cheapest / dearest deals, supplier khata and where each phone is",
+      "billed": "Total billed sales",
+      "onCredit": "Sold on credit (udhaar)",
+      "bought": "Total stock bought",
+      "boughtOnKhata": "Bought on khata (dene baqi)",
+      "allBrands": "All brands",
+      "searchSales": "Search model, IMEI, supplier or buyer…",
+      "searchPurchases": "Search model, IMEI, supplier or bill…",
+      "view": {
+        "sales": {
+          "models": "Brand & model-wise sales",
+          "bills": "All sale bills"
+        },
+        "purchases": {
+          "models": "Brand & model-wise purchases",
+          "bills": "All purchase bills"
+        }
+      },
+      "unitsSold": "sold",
+      "unitsBought": "bought",
+      "soldN": "sold",
+      "inShop": "in the shop",
+      "totalSales": "Total sales",
+      "totalCost": "Total cost",
+      "modelProfit": "Model profit",
+      "inspectAll": "See all",
+      "highestProfit": "Highest-profit phone sold",
+      "lowestCost": "Lowest buying cost phone",
+      "cheapestDeal": "Cheapest buy (sab se sasti khareed)",
+      "dearestDeal": "Dearest buy (sab se mehngi khareed)",
+      "from": "Bought from",
+      "to": "Sold to",
+      "invested": "Money put in",
+      "profitSoFar": "Profit made so far",
+      "dateBill": "Date & bill",
+      "imeiSpecs": "IMEI & details",
+      "supplier": "Supplier (kis se liya)",
+      "buyer": "Buyer (kis ko diya)",
+      "debit": "Billed",
+      "credit": "Bill paid",
+      "khataStatus": "Khata status",
+      "cost": "Cost",
+      "billState": "Bill paid?",
+      "nowBuyer": "Now / buyer",
+      "now": {
+        "sold": "Sold",
+        "in_stock": "In the shop",
+        "other": "Out of stock"
+      },
+      "allBills": "All bills",
+      "invoice": "Bill",
+      "purchaseBill": "Purchase bill",
+      "customer": "Person",
+      "byWhom": "By",
+      "settlement": "Paid?",
+      "amount": "Amount"
+    },
+    "ud": {
+      "receive": "+ Receive",
+      "pay": "Pay"
+    },
+    "stk": {
+      "title": "Live stock & ageing audit",
+      "hint": "Filter by condition, PTA or age to find slow-moving stock",
+      "allConditions": "All conditions",
+      "allPta": "All PTA",
+      "allAges": "All ages",
+      "search": "Search IMEI / model / supplier…",
+      "device": "Phone & IMEI",
+      "condPta": "Condition / PTA",
+      "age": "Age",
+      "asking": "Asking",
+      "notSet": "Not set",
+      "verify": "Verify ID",
+      "setRate": "Set rate",
+      "ready": "Ready",
+      "exposure": "Stock by supplier (supplier exposure)",
+      "toSecurity": "Every skip in the security log"
+    },
+    "stf": {
+      "clean": "No flag",
+      "log": "Security & fraud log (never edited)"
+    },
+    "bil": {
+      "title": "Bills & vouchers audit",
+      "hint": "Tap a kind to see its bills",
+      "voidedDocs": "cancelled documents",
+      "doc": "Document"
+    },
+    "pro": {
+      "title": "Product velocity & stock-out alerts",
+      "toSales": "Model-wise sales with every IMEI →",
+      "outOfStock": "Out of stock — buy again",
+      "sold": "Sold",
+      "reorder": "Add stock"
+    },
+    "led": {
+      "title": "Complete shop master ledger",
+      "account": "Account",
+      "type": "Type",
+      "allTypes": "All types",
+      "search": "Search bill, person, details…",
+      "ref": "Ref & date",
+      "details": "Details",
+      "balance": "Balance",
+      "note": "One account at a time, for the period above: the balance before, every entry and the balance after it. Pick another account above."
+    },
+    "rep": {
+      "title": "Complete shop audit & individual sheets",
+      "noExports": "Downloads are not in this shop's package."
+    }
   }
 }

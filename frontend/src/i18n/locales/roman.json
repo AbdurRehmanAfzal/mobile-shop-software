@@ -8277,5 +8277,154 @@
         "transfer_out": "Branch ko gaya"
       }
     }
+  },
+  "nau": {
+    "executive": "Executive shop audit",
+    "back": "Wapas",
+    "booksOk": "Khaate milan shuda",
+    "booksStatus": "Khaaton ki jaanch",
+    "booksMatched": "Milan durust",
+    "checksPassed": "jaanchen durust",
+    "profitShown": "Munafa nazar aa raha hai",
+    "profitHidden": "Munafa chhupa hai",
+    "a4": "Mukammal audit report (A4)",
+    "printA4": "A4 print / PDF",
+    "include": "Hisse shamil karein",
+    "marketKhata": "Bazaar ka khata",
+    "lene": "Lene hain",
+    "dene": "Dene hain",
+    "tapToOpen": "Kholne ke liye dabayein",
+    "nothingNeedsLook": "Kuch bhi dekhne wala nahin",
+    "open": "Kholein",
+    "openBill": "Bill kholein",
+    "firstOf": "Dikhaye gaye",
+    "tab": {
+      "overview": "Khulasa aur sehat",
+      "finance": "Maaliyat aur nafa nuqsan",
+      "sales": "Farokht aur khareedari",
+      "bills": "Bill aur voucher",
+      "udhaar": "Udhaar aur len-den",
+      "stock": "Stock aur purana maal",
+      "products": "Maal aur log",
+      "returns": "Wapsi aur marammat",
+      "staff": "Amla aur hifazat",
+      "ledger": "Master ledger",
+      "reports": "Reports"
+    },
+    "sa": {
+      "sales": "Farokht (becha hua maal)",
+      "purchases": "Khareedari (khareeda hua maal)",
+      "salesHint": "Model wise farokht, sab se zyada munafa wale phone, khareedar ka khata aur IMEI",
+      "purchasesHint": "Model wise khareed, sasta / mehenga sauda, supplier ka khata aur har phone kahan hai",
+      "billed": "Kul bill shuda farokht",
+      "onCredit": "Udhaar par becha",
+      "bought": "Kul khareeda gaya maal",
+      "boughtOnKhata": "Khate par khareeda (dene baqi)",
+      "allBrands": "Sab brand",
+      "searchSales": "Model, IMEI, supplier ya khareedar talash karein…",
+      "searchPurchases": "Model, IMEI, supplier ya bill talash karein…",
+      "view": {
+        "sales": {
+          "models": "Brand aur model wise farokht",
+          "bills": "Farokht ke sab bill"
+        },
+        "purchases": {
+          "models": "Brand aur model wise khareedari",
+          "bills": "Khareedari ke sab bill"
+        }
+      },
+      "unitsSold": "bike",
+      "unitsBought": "khareede",
+      "soldN": "bik gaye",
+      "inShop": "dukaan mein",
+      "totalSales": "Kul farokht",
+      "totalCost": "Kul laagat",
+      "modelProfit": "Model ka munafa",
+      "inspectAll": "Sab dekhein",
+      "highestProfit": "Sab se zyada munafa wala phone",
+      "lowestCost": "Sab se kam laagat wala phone",
+      "cheapestDeal": "Sab se sasti khareed",
+      "dearestDeal": "Sab se mehngi khareed",
+      "from": "Kis se liya",
+      "to": "Kis ko diya",
+      "invested": "Lagaya gaya paisa",
+      "profitSoFar": "Ab tak ka munafa",
+      "dateBill": "Tareekh aur bill",
+      "imeiSpecs": "IMEI aur tafseel",
+      "supplier": "Supplier (kis se liya)",
+      "buyer": "Khareedar (kis ko diya)",
+      "debit": "Bill",
+      "credit": "Bill mein ada",
+      "khataStatus": "Khate ki halat",
+      "cost": "Laagat",
+      "billState": "Bill ada?",
+      "nowBuyer": "Ab / khareedar",
+      "now": {
+        "sold": "Bik gaya",
+        "in_stock": "Dukaan mein",
+        "other": "Stock se bahar"
+      },
+      "allBills": "Sab bill",
+      "invoice": "Bill",
+      "purchaseBill": "Khareedari ka bill",
+      "customer": "Shakhs",
+      "byWhom": "Kis ne",
+      "settlement": "Adayigi",
+      "amount": "Raqam"
+    },
+    "ud": {
+      "receive": "+ Wasool karein",
+      "pay": "Ada karein"
+    },
+    "stk": {
+      "title": "Stock aur us ki umar",
+      "hint": "Halat, PTA ya umar se chhantein aur sust maal dhoondein",
+      "allConditions": "Sab halatein",
+      "allPta": "Sab PTA",
+      "allAges": "Har umar",
+      "search": "IMEI / model / supplier talash karein…",
+      "device": "Phone aur IMEI",
+      "condPta": "Halat / PTA",
+      "age": "Umar",
+      "asking": "Maangi qeemat",
+      "notSet": "Nahin lagi",
+      "verify": "Shanakht check karein",
+      "setRate": "Rate lagayein",
+      "ready": "Tayyar",
+      "exposure": "Supplier wise stock",
+      "toSecurity": "Hifazati record mein har chhoot"
+    },
+    "stf": {
+      "clean": "Koi nishan nahin",
+      "log": "Hifazat aur dhoke ka record (kabhi nahin badalta)"
+    },
+    "bil": {
+      "title": "Bill aur voucher ki jaanch",
+      "hint": "Kisi qism ko daba kar us ke bill dekhein",
+      "voidedDocs": "mansookh kaghazaat",
+      "doc": "Kaghaz"
+    },
+    "pro": {
+      "title": "Kya kitna bika aur kya khatam hua",
+      "toSales": "Har IMEI ke saath model wise farokht →",
+      "outOfStock": "Stock khatam — dobara khareedein",
+      "sold": "Bike",
+      "reorder": "Maal daalein"
+    },
+    "led": {
+      "title": "Dukaan ka mukammal ledger",
+      "account": "Khata",
+      "type": "Qism",
+      "allTypes": "Sab qismein",
+      "search": "Bill, shakhs, tafseel talash karein…",
+      "ref": "Hawala aur tareekh",
+      "details": "Tafseel",
+      "balance": "Baqaya",
+      "note": "Upar ke arse ke liye aik waqt mein aik khata: pehle ka baqaya, har indiraj aur us ke baad ka baqaya. Doosra khata upar chunein."
+    },
+    "rep": {
+      "title": "Mukammal shop audit aur alag alag sheetein",
+      "noExports": "Download is dukaan ke package mein nahin."
+    }
   }
 }

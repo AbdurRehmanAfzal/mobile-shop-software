@@ -27,6 +27,15 @@ import NewBulk from '@/newui/pages/Bulk'
 import NewFbr from '@/newui/pages/Fbr'
 import NewAudit from '@/newui/pages/Audit'
 import NewAuditFinance from '@/newui/pages/AuditFinance'
+import NewAuditSales from '@/newui/pages/AuditSales'
+import NewAuditBills from '@/newui/pages/AuditBills'
+import NewAuditUdhaar from '@/newui/pages/AuditUdhaar'
+import NewAuditStock from '@/newui/pages/AuditStock'
+import NewAuditProducts from '@/newui/pages/AuditProducts'
+import NewAuditReturns from '@/newui/pages/AuditReturns'
+import NewAuditStaff from '@/newui/pages/AuditStaff'
+import NewAuditLedger from '@/newui/pages/AuditLedger'
+import NewAuditReports from '@/newui/pages/AuditReports'
 import NewItemDetail from '@/newui/pages/ItemDetail'
 import NewStockItem from '@/newui/pages/StockItem'
 import NewStockHub from '@/newui/pages/StockHub'
@@ -221,9 +230,18 @@ export const router = createBrowserRouter([
       { path: '/new/more/bulk', element: <NewBulk /> },
       // FBR digital invoicing (no file draws it; drawn like file 03): the bills sent, waiting, turned down
       { path: '/new/fbr', element: <NewFbr /> },
-      // the shop audit (no file draws it; drawn like file 02): its frame and the overview; the other sections open the live screens
+      // the shop audit, drawn from file 22: its frame, the overview and every tab of the drawing
       { path: '/new/audit', element: <ModuleGate module="reports"><NewAudit /></ModuleGate> },
       { path: '/new/audit/finance', element: <ModuleGate module="reports"><NewAuditFinance /></ModuleGate> },
+      { path: '/new/audit/sales', element: <ModuleGate module="reports"><NewAuditSales /></ModuleGate> },
+      { path: '/new/audit/bills', element: <ModuleGate module="reports"><NewAuditBills /></ModuleGate> },
+      { path: '/new/audit/udhaar', element: <ModuleGate module="reports"><NewAuditUdhaar /></ModuleGate> },
+      { path: '/new/audit/stock', element: <ModuleGate module="reports"><NewAuditStock /></ModuleGate> },
+      { path: '/new/audit/products', element: <ModuleGate module="reports"><NewAuditProducts /></ModuleGate> },
+      { path: '/new/audit/returns', element: <ModuleGate module="reports"><NewAuditReturns /></ModuleGate> },
+      { path: '/new/audit/staff', element: <ModuleGate module="reports"><NewAuditStaff /></ModuleGate> },
+      { path: '/new/audit/ledger', element: <ModuleGate module="reports"><NewAuditLedger /></ModuleGate> },
+      { path: '/new/audit/reports', element: <ModuleGate module="reports"><NewAuditReports /></ModuleGate> },
       // one item's page (file 17), its own top bar
       { path: '/new/item/:id', element: <NewItemDetail /> },
       // one stock item's page (an accessory; file 17 / 20's Accessories view)
