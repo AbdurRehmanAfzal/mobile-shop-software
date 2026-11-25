@@ -50,8 +50,8 @@ export default function NewAuditFinance() {
   return (
     <AuditFrame section="finance" testid="nfin">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="inline-flex p-1 rounded-xl bg-white dark:bg-obsidian-900 border border-slate-200 dark:border-slate-800" role="tablist">{TABS.map((t) => <button key={t} type="button" onClick={() => setTab(t)} aria-pressed={tab === t} data-testid={`nfin-tab-${t}`} className={`px-3.5 py-1.5 rounded-lg text-xs cursor-pointer ${tab === t ? 'font-extrabold bg-obsidian-900 dark:bg-[#B4F000] text-white dark:text-obsidian-950' : 'font-semibold text-slate-600 dark:text-slate-300'}`}>{pick(`audit.fin.${t}`)}</button>)}</div>
-        <div className="flex gap-2"><button type="button" onClick={() => void openPrintable(report('pdf'))} className="px-3 py-1.5 rounded-xl bg-obsidian-900 dark:bg-[#B4F000] text-white dark:text-obsidian-950 text-xs font-extrabold flex items-center gap-1.5 cursor-pointer" data-testid="nfin-pdf"><FileText className="w-3.5 h-3.5" />PDF</button><button type="button" disabled={busy} onClick={async () => { setBusy(true); try { await downloadFile(report('xlsx'), `finance-${tab}.xlsx`) } finally { setBusy(false) } }} className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold flex items-center gap-1.5 cursor-pointer disabled:opacity-50"><FileSpreadsheet className="w-3.5 h-3.5" />{pick('counter.excel')}</button></div>
+        <div className="inline-flex p-1 rounded-xl bg-white dark:bg-obsidian-900 border border-slate-200 dark:border-slate-800" role="tablist">{TABS.map((t) => <button key={t} type="button" onClick={() => setTab(t)} aria-pressed={tab === t} data-testid={`nfin-tab-${t}`} className={`px-3.5 py-1.5 rounded-lg text-xs cursor-pointer ${tab === t ? 'font-extrabold bg-obsidian-900 dark:bg-[#A3E635] text-white dark:text-obsidian-950' : 'font-semibold text-slate-600 dark:text-slate-300'}`}>{pick(`audit.fin.${t}`)}</button>)}</div>
+        <div className="flex gap-2"><button type="button" onClick={() => void openPrintable(report('pdf'))} className="px-3 py-1.5 rounded-xl bg-obsidian-900 dark:bg-[#A3E635] text-white dark:text-obsidian-950 text-xs font-extrabold flex items-center gap-1.5 cursor-pointer" data-testid="nfin-pdf"><FileText className="w-3.5 h-3.5" />PDF</button><button type="button" disabled={busy} onClick={async () => { setBusy(true); try { await downloadFile(report('xlsx'), `finance-${tab}.xlsx`) } finally { setBusy(false) } }} className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-bold flex items-center gap-1.5 cursor-pointer disabled:opacity-50"><FileSpreadsheet className="w-3.5 h-3.5" />{pick('counter.excel')}</button></div>
       </div>
       {!manager ? null : tab === 'pnl' ? <PnlTab query={query} /> : tab === 'cash' ? <CashTab query={query} asOf={!!period.asOf} /> : tab === 'expenses' ? <ExpensesTab query={query} /> : <TaxTab query={query} />}
     </AuditFrame>
@@ -74,7 +74,7 @@ function PnlTab({ query }: { query: string }) {
   return (
     <div className="space-y-4" data-testid="nfin-pnl">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <section className={`rounded-2xl p-5 flex flex-col justify-between ${pos ? 'bg-[#B4F000] text-slate-950' : 'bg-rose-50 dark:bg-rose-950/30 text-rose-800 dark:text-rose-200 border border-rose-200'}`} data-testid="nfin-hero">
+        <section className={`rounded-2xl p-5 flex flex-col justify-between ${pos ? 'bg-[#A3E635] text-slate-950' : 'bg-rose-50 dark:bg-rose-950/30 text-rose-800 dark:text-rose-200 border border-rose-200'}`} data-testid="nfin-hero">
           <div className="text-[11px] font-extrabold uppercase tracking-wider opacity-80">{pick(pos ? 'counter.netProfit' : 'counter.netLoss')}</div>
           <div className="font-display font-extrabold text-4xl tracking-tight my-2" dir="ltr">{withCur(s(p.current.net_profit))}</div>
           <div className="text-xs font-semibold opacity-80">{pick('audit.vsPrevious')} <span dir="ltr">{withCur(s(p.previous.net_profit))}</span> · {pick(`audit.gran.${p.granularity}`)}</div>
@@ -82,9 +82,9 @@ function PnlTab({ query }: { query: string }) {
         <section className={`lg:col-span-2 p-5 ${card}`} data-testid="nfin-series">
           <div className="font-display font-extrabold text-sm mb-3">{pick('audit.chart.revenueVsProfit')}</div>
           {!p.series.length ? <p className="text-xs text-slate-400">{pick('audit.noData')}</p> : (
-            <div className="flex items-end gap-1.5 h-36" dir="ltr">{p.series.map((x) => <div key={x.bucket} className="flex-1 h-full flex flex-col justify-end items-center gap-1" title={`${x.bucket} · ${pick('audit.netSales')} ${n(x.net_sales)} · ${pick('counter.netProfit')} ${s(x.net_profit)}`}><div className="w-full flex items-end gap-0.5 h-full"><span className="flex-1 rounded-t bg-slate-200 dark:bg-slate-700" style={{ height: h(x.net_sales) }} /><span className={`flex-1 rounded-t ${Number(x.net_profit) < 0 ? 'bg-rose-500' : 'bg-obsidian-900 dark:bg-[#B4F000]'}`} style={{ height: h(x.net_profit) }} /></div><span className="text-[9px] text-slate-400">{bucketLabel(x.bucket, p.granularity)}</span></div>)}</div>
+            <div className="flex items-end gap-1.5 h-36" dir="ltr">{p.series.map((x) => <div key={x.bucket} className="flex-1 h-full flex flex-col justify-end items-center gap-1" title={`${x.bucket} · ${pick('audit.netSales')} ${n(x.net_sales)} · ${pick('counter.netProfit')} ${s(x.net_profit)}`}><div className="w-full flex items-end gap-0.5 h-full"><span className="flex-1 rounded-t bg-slate-200 dark:bg-slate-700" style={{ height: h(x.net_sales) }} /><span className={`flex-1 rounded-t ${Number(x.net_profit) < 0 ? 'bg-rose-500' : 'bg-obsidian-900 dark:bg-[#A3E635]'}`} style={{ height: h(x.net_profit) }} /></div><span className="text-[9px] text-slate-400">{bucketLabel(x.bucket, p.granularity)}</span></div>)}</div>
           )}
-          <div className="flex gap-4 mt-2 text-[10px] text-slate-500"><span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-slate-200 dark:bg-slate-700" />{pick('audit.netSales')}</span><span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-obsidian-900 dark:bg-[#B4F000]" />{pick('counter.netProfit')}</span></div>
+          <div className="flex gap-4 mt-2 text-[10px] text-slate-500"><span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-slate-200 dark:bg-slate-700" />{pick('audit.netSales')}</span><span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-obsidian-900 dark:bg-[#A3E635]" />{pick('counter.netProfit')}</span></div>
         </section>
       </div>
       <section className={`${card} divide-y divide-slate-100 dark:divide-slate-800`} data-testid="nfin-statement">
@@ -111,7 +111,7 @@ function Row({ k, v, prev, strong, minus, plus, muted, lime }: { k: string; v: M
   const { pick } = useLang()
   const sign = minus ? '− ' : plus ? '+ ' : ''
   return (
-    <div className={`px-4 py-2.5 grid grid-cols-12 items-center ${strong ? 'bg-slate-50 dark:bg-obsidian-850/60' : ''} ${lime ? 'bg-[#B4F000]/20' : ''}`} data-testid="nfin-row">
+    <div className={`px-4 py-2.5 grid grid-cols-12 items-center ${strong ? 'bg-slate-50 dark:bg-obsidian-850/60' : ''} ${lime ? 'bg-[#A3E635]/20' : ''}`} data-testid="nfin-row">
       <span className={`col-span-6 text-sm ${strong ? 'font-extrabold' : muted || minus ? 'text-slate-500' : 'font-semibold'}`}>{pick(k)}</span>
       <span className={`col-span-3 text-end font-mono ${strong ? 'text-base font-extrabold' : 'text-sm'} ${minus || muted ? 'text-slate-500' : ''}`} dir="ltr">{sign}{minus || plus ? n(v) : s(v)}</span>
       <span className="col-span-3 text-end font-mono text-xs text-slate-400" dir="ltr">{minus || plus ? n(prev) : s(prev)}</span>
@@ -230,7 +230,7 @@ function Fig({ Icon, label, v, sub, tone, testid }: { Icon: typeof Receipt; labe
   return (
     <div className={`p-4 rounded-2xl border ${box}`} data-testid={testid}>
       <div className="flex items-center gap-2"><Icon className="w-4 h-4 opacity-60" /><span className="text-[10px] font-extrabold uppercase tracking-wider opacity-70">{pick(label)}</span></div>
-      <div className={`font-display font-extrabold text-xl mt-1 ${tone === 'dark' ? 'text-[#B4F000]' : ''}`} dir="ltr">{v}</div>
+      <div className={`font-display font-extrabold text-xl mt-1 ${tone === 'dark' ? 'text-[#A3E635]' : ''}`} dir="ltr">{v}</div>
       {sub ? <div className="text-[11px] opacity-70 mt-0.5">{sub}</div> : null}
     </div>
   )

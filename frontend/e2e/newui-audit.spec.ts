@@ -1,6 +1,6 @@
-/** ADR-134 / ADR-032: the shop audit in the new product — no file draws it, so it is drawn like file
- *  02. The overview's figures are the live audit's (`/shop-audit/overview`, `/reconcile`); the period
- *  lives in the address; the sections not drawn yet open the live screen for the same period. */
+/** ADR-134 / ADR-032: the shop audit in the new product, drawn from mock-up 22. The overview's
+ *  figures are the live audit's (`/shop-audit/overview`, `/reconcile`); the period lives in the
+ *  address; every tab of the drawing opens its drawn page for the same period. */
 
 import { expect, test } from '@playwright/test'
 
@@ -41,7 +41,9 @@ test('new product: shop audit — the frame with the period and the sections, th
   await page.goto('/new/audit')
   await expect(page.getByTestId('naudit')).toBeVisible()
   await expect(page.getByTestId('naudit-p-this_month')).toHaveAttribute('aria-pressed', 'true')
-  await expect(page.getByTestId('naudit-sections').getByRole('button')).toHaveCount(12) // the sections not drawn yet, security included for the owner
+  await expect(page.getByTestId('naudit-sections').getByRole('link')).toHaveCount(10) // the drawing's eleven tabs, all drawn, the overview lit
+  await expect(page.getByTestId('naudit-sections').getByRole('button')).toHaveCount(0)
+  await expect(page.getByTestId('naudit-books')).toBeVisible()
   await expect(page.getByTestId('naudit-sales')).toContainText(fmt(ov.sales.net_sales))
   await expect(page.getByTestId('naudit-sales')).toContainText('1 bills')
   await expect(page.getByTestId('naudit-profit')).toContainText(fmt(ov.profit.net_profit))
@@ -60,11 +62,15 @@ test('new product: shop audit — the frame with the period and the sections, th
   await expect(page.getByTestId('naudit-from')).toBeVisible()
   await page.getByTestId('naudit-p-this_month').click()
 
-  // a section not drawn yet opens the live screen for the same period
-  await page.getByTestId('naudit-live-sales').click()
-  await expect(page).toHaveURL(/\/audit\/sales\?preset=this_month/)
+  // a tab opens its drawn page for the same period; the A4 report asks the server
+  await page.getByTestId('naudit-tab-sales').click()
+  await expect(page).toHaveURL(/\/new\/audit\/sales\?preset=this_month/)
   await page.goBack()
   await expect(page.getByTestId('naudit')).toBeVisible()
+  await page.getByTestId('naudit-a4').click()
+  await expect(page.getByTestId('naudit-rep')).toBeVisible()
+  await page.keyboard.press('Escape')
+  await page.goto('/new/audit?preset=this_month')
 
   // Urdu: one language, right to left
   await page.getByTestId('naudit-lang').click()
