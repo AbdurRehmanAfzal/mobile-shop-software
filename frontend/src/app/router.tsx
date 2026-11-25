@@ -22,6 +22,7 @@ import NewSettings from '@/newui/pages/Settings'
 import NewQist from '@/newui/pages/Qist'
 import NewRemittance from '@/newui/pages/Remittance'
 import NewExchange from '@/newui/pages/Exchange'
+import NewTransfers from '@/newui/pages/Transfers'
 import LoginPage from '@/features/auth/LoginPage'
 import SignupPage from '@/features/auth/SignupPage'
 import ModuleGate from '@/components/ModuleGate'
@@ -203,6 +204,9 @@ export const router = createBrowserRouter([
       // exchange, phone for phone (no file draws it; drawn like files 14 / 01)
       { path: '/new/exchange/new', element: <ModuleGate module="exchange"><NewExchange /></ModuleGate> },
       { path: '/new/exchange', element: <ModuleGate module="exchange"><NewExchange /></ModuleGate> },
+      // branch transfers (no file draws them; drawn like files 10 / 12), owner / manager
+      { path: '/new/transfers', element: <NewTransfers /> },
+      { path: '/new/transfers/:id', element: <NewTransfers /> },
       {
         path: '/new',
         element: <Suspense fallback={<Waiting />}><NewShell /></Suspense>,

@@ -7605,5 +7605,30 @@
     "deleteTitle": "Delete exchange",
     "deleteEffect": "Both halves are undone together: the new phone comes back to stock, the old one leaves it, and the money on the bill is reversed. It stays in the record as Deleted.",
     "otherBrand": "All brands…"
+  },
+  "ntr": {
+    "subtitle": "Phones and items moved between your branches — at their cost, never as a sale",
+    "managersOnly": "Branch transfers are for the owner and the manager.",
+    "send": "Send to a branch",
+    "kOut": "Sent",
+    "kIn": "Received",
+    "kUndone": "Sent back",
+    "count": "{{n}} transfers",
+    "tab": {
+      "all": "All",
+      "out": "Sent",
+      "in": "Received"
+    },
+    "search": "Branch, number, phone or item",
+    "undone": "Sent back",
+    "pick": "Choose a transfer on the left",
+    "undoneNote": "Sent back — everything returned as it went.",
+    "whatWent": "What moved",
+    "undoEffect": "Everything on it comes back to this shop as it went; the branch sees it leave. It stays in the record.",
+    "undoneToast": "Sent back",
+    "sendHint": "Pick the branch, then the phones and items to move.",
+    "what": "What to send",
+    "nothingYet": "Nothing picked yet — search below and tap to add.",
+    "itemSearch": "Search an item (name or SKU)"
   }
 }
