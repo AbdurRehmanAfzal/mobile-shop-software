@@ -1,4 +1,5 @@
-/** ADR-134: a person's khata in the new product, drawn from `06-person-khata.html`. The balance and
+/** ADR-134: a person's khata in the new product, first drawn from `06-person-khata.html`, now from its full
+ *  version `21-party-khata-full-ledger.html` (newui-party-khata.spec.ts tests what 21 adds). The balance and
  *  the ledger are the server's statement; "paisa aya / diya" are payments (against bills, or len-den
  *  with no bill), an old balance is the opening balance (ADR-110); undo keeps the entry as Deleted;
  *  the switcher moves between people; a dealer's phones come from the journey. */
@@ -14,7 +15,7 @@ function imei(base: string): string {
   return base + String((10 - (sum % 10)) % 10)
 }
 
-test('new product: a person\'s khata — old balance, money in and out, len-den, wallet, undo, switching people, as file 06 draws it', async ({ page, request }) => {
+test('new product: a person\'s khata — old balance, money in and out, len-den, wallet, undo, switching people, as file 21 draws it', async ({ page, request }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.addInitScript(() => { if (!localStorage.getItem('locale')) localStorage.setItem('locale', 'en') })
   const ph = `039${Math.floor(10_000_000 + Math.random() * 89_999_999)}`
@@ -42,13 +43,12 @@ test('new product: a person\'s khata — old balance, money in and out, len-den,
   await expect(page.getByTestId('nkh-name')).toHaveText('Hall Road Traders')
   await expect(page.getByTestId('nkh-bal')).toContainText('20,000')
   await expect(page.getByTestId('nkh-status')).toContainText('give')
-  await expect(page.getByTestId('nkh-bought')).toContainText('1 phones')
-  await page.getByTestId('nkh-tab-phones').click()
-  await expect(page.getByTestId('nkh-phones')).toContainText(I1)
+  await expect(page.getByTestId('nkh-stock-in_shop')).toContainText('1')
+  await page.getByTestId('nkh-tab-items').click()
+  await expect(page.getByTestId('nkh-items')).toContainText(I1)
 
   // an empty khata, then an old balance
   await page.goto(`/new/parties/${asif.id}`)
-  await expect(page.getByTestId('nkh-side')).toBeVisible()
   await expect(page.getByTestId('nkh-empty')).toBeVisible()
   await expect(page.getByTestId('nkh-status')).toContainText('Settled')
   await page.getByTestId('nkh-old').click()

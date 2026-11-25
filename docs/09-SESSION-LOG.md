@@ -295,3 +295,17 @@
 **Next**: the owner picks — file 21 (the person's khata, full version) in the new product, or the audit's next section.
 
 **Open questions**: file 20 puts the extra actions in one row of chips where 17 had three groups — the page keeps 17's groups (tell me if 20's row is wanted).
+
+## 2026-11-25 — A person's khata, full version (file 21) in the new product
+
+**Asked (owner)**: "push" (the ledger sheet on PR #144), then "FILE 21 pr kam start karo party khata ka mukammal naya design".
+
+**Done** (branch `ui/29-new-party-khata`, cut from `ui/28-new-item-detail`):
+- Backend, read-only and additive — `units/khata.py`: `GET /parties/{id}/khata` (the phones bought from them and where each is now — in the shop with its days, sold with its price and profit as the shop audit's journey counts it, returned — and those sold to them; the piles and the dearest still in the shop; brand & model by brand + `name_key`; money by channel = posted payments by method + the money paid at the counter on their bills, from the ledger's cash lines by account kind; the old balance; the promised date of open len-den from `lending_due`), cost / profit / money paid out only with VIEW_COST; `GET /parties/{id}/khata-report` — the A4 statement (period, sections channels / models / units / ledger, profit only when asked and allowed, en / ur; a deleted entry and its reversal are not printed).
+- `src/newui/pages/Khata.tsx`: the person's page redrawn from file 21 (no sidebar; top bar with the people switcher, eye, full report; the person's dates and promise with Change; four buttons, the entry as a window with a date; four cards; five tabs with search and kind filter; Fix / Edit per ledger line opening the live correction; stock tracker with sell / return to dealer; models; method log with receipts; len-den & old balance; the report window with the server's page as preview, presets, from / to, sections, PDF / CSV / print / WhatsApp). The file 06 layout is replaced; every action it had stays. Strings `nkf` (+ `nkh.openClassic`, more `nkh.doc.*` names).
+
+**Verified**: pytest `test_party_khata` (new: units, piles, profit equal to the journey's sourced profit, models, channels with the counter cash and a bank payment, old balance, promise; the report in en / ur, with a period and one section; a salesman sees no cost, profit, paid-out money, old balance or dearest, and the report prints no cost or profit), `test_item_ledger`, `test_units` — pass; tsc; vitest 72; Playwright `newui-party-khata` (new: the cards match `/khata`, the stock filter, models, the method log, Fix / Edit deletes a bank payment with a reason and the balance moves back, the promised date changes, the report's preview, a section off, a preset, CSV, Urdu RTL), `newui-khata` (updated for the new tabs, no sidebar) and `newui-frame` — pass. **Not done**: dark screenshot; a customer-only person in a browser; the full suites.
+
+**Next**: the owner picks — the audit's next section, or file 20's one-row actions on the item page.
+
+**Open questions**: file 21 has no sidebar — the person's page now follows it (the other new screens keep theirs).
