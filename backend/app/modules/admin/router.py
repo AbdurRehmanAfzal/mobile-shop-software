@@ -415,6 +415,13 @@ def list_shops(_: Super, db: DB, q: str | None = None, deleted: bool = False):
     return _rows(db, list(db.scalars(stmt).all()))
 
 
+@router.get("/shops/{shop_id}", response_model=AdminShopOut)
+def one_shop(shop_id: uuid.UUID, _: Super, db: DB):
+    """one customer shop, the same row as the list (also when it is in the bin): the control
+    room opens a shop by its address without depending on the whole list"""
+    return _rows(db, [_shop(db, shop_id)])[0]
+
+
 @router.post("/shops", response_model=AdminShopOut, status_code=201)
 def create_shop(data: AdminShopCreate, current: Super, db: DB):
     """Open a shop for a customer: their shop name and their own owner login (phone + password),

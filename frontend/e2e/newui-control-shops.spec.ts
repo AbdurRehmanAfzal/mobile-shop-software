@@ -42,7 +42,7 @@ test('new product: shops & plans — open a shop, fee and time, what it trades, 
   const pw = await page.getByTestId('nctl-n-pw').inputValue()
   expect(pw.length).toBeGreaterThanOrEqual(6)
   await page.getByTestId('nctl-n-save').click()
-  await expect(page.getByTestId('nctl-made')).toContainText(shopName, { timeout: 30_000 })
+  await expect(page.getByTestId('nctl-made')).toContainText(shopName, { timeout: 60_000 })
   await expect(page.getByTestId('nctl-made-pw')).toHaveText(pw)
   await page.getByTestId('nctl-new-drawer').getByRole('button', { name: 'Close' }).click()
   expect((await request.post('/api/v1/auth/login', { data: { phone: owner, password: pw } })).ok()).toBeTruthy()

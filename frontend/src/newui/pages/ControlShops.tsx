@@ -9,7 +9,7 @@
  *
  *  Everything is the live control room's: `/admin/shops`, `/admin/fee-stats`, `/admin/shop-requests`,
  *  `/admin/password-requests`, `/admin/modules`, `/admin/billing`, `/admin/payment-accounts`,
- *  `/admin/pricing`, `/admin/shops/{id}/plan|modules|payments|quote|deal|credit|fee-dues|fee-invoice|
+ *  `/admin/pricing`, `/admin/shops/{id}` (one shop by its id), `/admin/shops/{id}/plan|modules|payments|quote|deal|credit|fee-dues|fee-invoice|
  *  owner-password|owner-pin|credential-history|branches|delete|restore|enter|deployment`,
  *  `/admin/business/shops|payments`. A password or PIN is never shown — only set anew. */
 
@@ -78,7 +78,10 @@ export function ShopsTab({ shopId, openShop, openSettings, go }: { shopId: strin
   const hit = (s: AdminShop) => !needle || `${s.name} ${s.owner_name ?? ''} ${s.owner_phone ?? ''} ${s.city ?? ''}`.toLowerCase().includes(needle)
   const list = (filter === 'bin' ? binned ?? [] : (shops ?? []).filter((s) => filter === 'all' || (filter === 'unpaid' ? owes(s) : filter === 'due' ? isDue(s) : s.plan_status === 'locked'))).filter((s) => hit(s) && (!plan || s.plan === plan))
   const counts: Record<Filter, number> = { all: shops?.length ?? 0, due: (shops ?? []).filter(isDue).length, locked: (shops ?? []).filter((s) => s.plan_status === 'locked').length, unpaid: (shops ?? []).filter(owes).length, bin: binned?.length ?? 0 }
-  const cur = shopId ? [...(shops ?? []), ...(binned ?? [])].find((s) => s.id === shopId) ?? null : null
+  // the chosen shop is loaded by its id (a new shop, or an address with ?shop=, opens even before the
+  // list has it); the same prefix as the list, so every save refreshes both
+  const { data: one } = useGet<AdminShop>(['admin-shops', 'one', shopId ?? ''], shopId ? `/api/v1/admin/shops/${shopId}` : null)
+  const cur = shopId ? (one?.id === shopId ? one : null) ?? [...(shops ?? []), ...(binned ?? [])].find((s) => s.id === shopId) ?? null : null
   const restore = async (s: AdminShop) => { setErr(''); try { await api('POST', `/api/v1/admin/shops/${s.id}/restore`, {}); await inv('admin-shops', 'prov-overview', 'prov-shops') } catch (e) { setErr(errText(e, ur)) } }
 
   return (
@@ -377,7 +380,7 @@ function PayCard({ s, setS }: { s: AdminShop; setS: (s: AdminShop) => void }) {
         const r = await api<{ receipt_no?: string | null }>('POST', `/api/v1/admin/shops/${s.id}/payments`, body)
         setReceipt(r.receipt_no ?? '')
         setF((x) => ({ ...x, amount: '', reference: '' }))
-        const rows = await get<AdminShop[]>('/api/v1/admin/shops'); const n = rows.find((x) => x.id === s.id); if (n) setS(n)
+        setS(await get<AdminShop>(`/api/v1/admin/shops/${s.id}`))
       })} className={`w-full py-2.5 rounded-xl font-extrabold flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-40 ${LIME}`} data-testid="nctl-record"><CheckCircle2 className="w-4 h-4" />{pick(f.pkg ? 'admin.payOrder.apply' : 'nctl2.recordBtn')}</button>
     </section>
   )
@@ -474,7 +477,7 @@ function SecurityPane({ s, setS, pwFor, clearPwFor }: { s: AdminShop; setS: (s: 
           <Title icon={<Building2 className="w-4 h-4 text-emerald-600" />}>{pick('admin.addBranch')}</Title>
           <p className="text-[11px] text-slate-500">{pick('admin.branchHint')}</p>
           <div className="grid grid-cols-2 gap-2"><input value={branch.name} onChange={(e) => setBranch({ ...branch, name: e.target.value })} placeholder={pick('auth.shopName')} className={`${INPUT} font-bold`} dir="auto" data-testid="nctl-branch-name" /><input value={branch.city} onChange={(e) => setBranch({ ...branch, city: e.target.value })} placeholder={pick('auth.city')} className={INPUT} dir="auto" /></div>
-          <button type="button" disabled={busy || branch.name.trim().length < 2} onClick={() => void run(async () => { await api<AdminShop>('POST', `/api/v1/admin/shops/${s.id}/branches`, { name: branch.name, city: branch.city || null }); setBranch({ name: '', city: '' }); const rows = await get<AdminShop[]>('/api/v1/admin/shops'); const n = rows.find((x) => x.id === s.id); if (n) setS(n) })} className={`w-full py-2 rounded-xl font-extrabold flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-40 ${LIME}`} data-testid="nctl-branch-save"><GitBranch className="w-3.5 h-3.5" />{pick('admin.addBranch')}</button>
+          <button type="button" disabled={busy || branch.name.trim().length < 2} onClick={() => void run(async () => { await api<AdminShop>('POST', `/api/v1/admin/shops/${s.id}/branches`, { name: branch.name, city: branch.city || null }); setBranch({ name: '', city: '' }); setS(await get<AdminShop>(`/api/v1/admin/shops/${s.id}`)) })} className={`w-full py-2 rounded-xl font-extrabold flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-40 ${LIME}`} data-testid="nctl-branch-save"><GitBranch className="w-3.5 h-3.5" />{pick('admin.addBranch')}</button>
           {s.branches > 1 ? <div className="text-[11px] font-bold text-slate-500" data-testid="nctl-branches">{s.branches} {pick('admin.branches')}</div> : null}
         </section>
       </div>
