@@ -7684,8 +7684,18 @@
     "liveScreen": "Opens the current screen for the same period"
   },
   "nctl": {
-    "manageShops": "Manage shops (current screen)",
     "shopSearch": "Search a shop, city or phone",
-    "keySearch": "Search a key or shop"
+    "keySearch": "Search a key or shop",
+    "manage": "Manage shops",
+    "current": "Current screen",
+    "currentHint": "The control room as it was, for anything not here yet",
+    "settings": "Your settings",
+    "more": "Special price, fees owed, delete",
+    "newPw": "New",
+    "note": {
+      "en": "Note (English)",
+      "ur": "Note (Urdu)",
+      "roman": "Note (Roman)"
+    }
   }
 }

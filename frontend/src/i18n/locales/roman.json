@@ -7684,8 +7684,18 @@
     "liveScreen": "Isi arse ke liye maujooda screen kholta hai"
   },
   "nctl": {
-    "manageShops": "Dukanon ka intezam (maujooda screen)",
     "shopSearch": "Dukan, shehar ya phone talash karein",
-    "keySearch": "Key ya dukan talash karein"
+    "keySearch": "Key ya dukan talash karein",
+    "manage": "Dukanon ka intezam",
+    "current": "Maujooda screen",
+    "currentHint": "Control room jaisa tha, jo yahan abhi nahi us ke liye",
+    "settings": "Aap ki settings",
+    "more": "Khaas qeemat, baqi fees, khatam karna",
+    "newPw": "Naya",
+    "note": {
+      "en": "Note (English)",
+      "ur": "Note (Urdu)",
+      "roman": "Note (Roman)"
+    }
   }
 }
