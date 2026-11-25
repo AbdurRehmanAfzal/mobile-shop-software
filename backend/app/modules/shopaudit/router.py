@@ -443,6 +443,40 @@ def purchases_(
     )
 
 
+@router.get("/sales/units")
+def sales_units(
+    ctx: Reports,
+    db: DB,
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+):
+    """owner 2026-11-25 (mock-up 22): phones sold in the period by model, each with its bill,
+    buyer, supplier, cost and profit, and the server's highest-profit / lowest-cost picks"""
+    from app.modules.shopaudit import units
+
+    p = _p(db, ctx, preset, date_from, date_to)
+    return plain(units.sold(db, ctx.shop_id, p, can_cost=ctx.can(Cap.VIEW_COST)))
+
+
+@router.get("/purchases/units")
+def purchases_units(
+    ctx: Reports,
+    db: DB,
+    preset: Preset = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+):
+    """owner 2026-11-25 (mock-up 22): phones bought in the period by model — supplier, cost, the
+    bill's paid / owed, where each is now and the profit if sold since. VIEW_COST only."""
+    from app.modules.shopaudit import units
+
+    if not ctx.can(Cap.VIEW_COST):
+        raise Forbidden()
+    p = _p(db, ctx, preset, date_from, date_to)
+    return plain(units.bought(db, ctx.shop_id, p))
+
+
 @router.get("/staff")
 def staff_(
     ctx: Reports,
