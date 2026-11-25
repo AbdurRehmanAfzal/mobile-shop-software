@@ -143,3 +143,15 @@
 **Next**: the features no file draws, in the files' style (qist, remittance, FBR, exchange, transfers, bulk import, the audit, the control room) — the owner picks the order.
 
 **Open questions**: which undrawn feature first?
+
+## 2026-11-25 — Qist in the new product (designed here, no file draws it)
+
+**Asked (owner)**: "push" (PR #133 opened), then "ok start qist".
+
+**Done**: `src/newui/pages/Qist.tsx` at `/new/installments` and `/new/installments/:id` (behind the `installments` module; home's qist lines already pointed there), drawn like file 12 (amanat) since no mock-up draws qist: the shared rail, the bar with "+ New qist sale" (opens the counter — a plan is made with a sale), four cards = the live views (due today, late, running, finished) with counts of plans, tabs and search, a card per plan with its paid / late / due strip, and the chosen plan: total / paid / left, the plan line, last reminded, Take installment with cash / online (bank) / cheque / from abroad, Remind on WhatsApp, the schedule, customer and guarantor, Open the bill, Cancel this plan with a reason. Live APIs only (`/installments`, `/collect`, `/remind`, `/cancel`). Strings in three languages (`nq`). Found and fixed while testing: the search query shared the list's cache key, so the list stopped refreshing — the search has its own key.
+
+**Verified**: tsc; Playwright `newui-qist` (new — two plans made with sales; the running card says 2 plans; Ahmed's plan line, guarantor and schedule; take 9,000 in cash (server: 1 paid, 36,000 left); Sara 2,000 online needs a bank, then Meezan Bank (server: 38,000 left, the schedule says Rs. 2,000 received); remind (server: last reminded set); cancel with a reason (server: cancelled, running 1 plan); search by guarantor; Urdu RTL). Live files: only `router.tsx`. **Not done**: a late plan in a browser; a salesman's view (no cancel); dark screenshot; the full Playwright suite.
+
+**Next**: the next undrawn feature the owner picks (remittance, FBR, exchange, transfers, bulk, the audit, the control room).
+
+**Open questions**: none.

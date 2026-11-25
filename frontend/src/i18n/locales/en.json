@@ -7493,5 +7493,33 @@
     "inStockShort": "In stock",
     "lena": "Lena hai",
     "dena": "Dena hai"
+  },
+  "nq": {
+    "badge": "Phones on monthly payments",
+    "subtitle": "Who pays what and when — take an installment, remind on WhatsApp, see the schedule",
+    "newSale": "New qist sale",
+    "plans": "{{n}} plans",
+    "todaySub": "Installments to take today",
+    "noneLate": "Nobody is late",
+    "activeSub": "Plans still running",
+    "closedSub": "Paid in full",
+    "noneHint": "A qist plan is made with a sale: choose \"Qist\" when you sell.",
+    "pick": "Choose a plan on the left",
+    "lastReminded": "Last reminded",
+    "thisMonth": "This installment",
+    "m": {
+      "cash": "Cash",
+      "online": "Online",
+      "cheque": "Cheque",
+      "remittance": "From abroad"
+    },
+    "bank": "Bank or wallet",
+    "chequeNo": "Cheque no.",
+    "tid": "Transaction ID (optional)",
+    "currency": "Currency",
+    "service": "Service",
+    "foreign": "Amount sent",
+    "rate": "Rate",
+    "sender": "Who sent it"
   }
 }
