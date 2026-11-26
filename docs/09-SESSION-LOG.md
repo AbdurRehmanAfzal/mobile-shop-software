@@ -2543,3 +2543,17 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: the owner's next request; release `develop` → `main` when the owner says.
 
 **Open questions**: none.
+
+## 2026-11-26 — Stock enhanced from file 23 (ADR-141)
+
+**Asked (owner)**: #160 merged; explore `23-stock-inventory-command-center.html`, look at the current stock and enhance it accordingly.
+
+**Gap check**: see ADR-141 — the live stock already had the kinds, status tiles, filter chips, Fields, views, sort, search and the summary drill-down; missing were the dealer-wise stock, the stock ledger, the asking worth and supplier payable, and navigation between the stock screens.
+
+**Done** (branch `develop`, level with `main` after #160): `stockhub/router.py` and `tests/test_stock_hub.py` from `staging`, the router registered; `features/stock/StockHub.tsx` — `StockTabs` (on `/stock`, `/stock/summary` and the two new screens), `StockOverviewStrip` on the summary, `StockPeoplePage` (`/stock/people`), `StockLedgerPage` (`/stock/ledger`); two entries in the reports list; strings `sth.*`, `hub.r.stockPeople / stockLedger` in three languages.
+
+**Verified**: pytest `test_stock_hub`; tsc; eslint; vitest (the reports-list test with the two entries); Playwright `stock-hub` (new: the tabs, the two summary figures against the server, the dealer's card with brands / billed / balance and the customer filter, the person's page on Phones, the ledger's figures and rows against the server, filters by movement and dealer, the reports list, Urdu RTL at phone width, a salesman with no cost / profit / balance) and the existing stock specs. See the session's last message for the exact results. **Not done**: the full suites; speed on a big shop (the ledger reads every event; 500 rows shown).
+
+**Next**: the owner's next request; release `develop` → `main` when the owner says.
+
+**Open questions**: none.

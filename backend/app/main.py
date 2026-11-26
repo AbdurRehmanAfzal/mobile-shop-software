@@ -50,6 +50,7 @@ from app.modules.sales.router import router as sales_router
 from app.modules.security.router import router as security_router
 from app.modules.shopaudit.router import router as shopaudit_router
 from app.modules.staffaccess.router import router as staffaccess_router
+from app.modules.stockhub.router import router as stockhub_router
 from app.modules.transfers.router import router as transfers_router
 from app.modules.units.router import router as units_router
 from app.modules.verification.router import router as verification_router
@@ -201,6 +202,7 @@ def create_app() -> FastAPI:
     app.include_router(exports_router)
     app.include_router(invoices_router)
     app.include_router(billshub_router)
+    app.include_router(stockhub_router)
     app.include_router(installments_router)
     app.include_router(units_router)
     app.include_router(shopaudit_router)

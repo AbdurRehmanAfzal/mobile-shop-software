@@ -5672,6 +5672,14 @@
       "trade": {
         "t": "Sale aur purchase",
         "d": "Aik muddat ki sale aur kharidari qism, brand, model, bande aur bill ke hisaab se, munafa aur baqi raqam ke saath."
+      },
+      "stockPeople": {
+        "t": "Dealer aur customer war stock",
+        "d": "Stock kis se aaya: brand aur model, kitne abhi maujood hain ya bik gaye, aur un ka khata."
+      },
+      "stockLedger": {
+        "t": "Stock ledger",
+        "d": "Aik muddat mein har cheez ka aana jana, khareed, farokht, munafa aur us ke baad ka stock."
       }
     }
   },
@@ -6842,5 +6850,71 @@
     "noCosts": "Khareedne ke baad is par kuch kharch nahi hua.",
     "qcTitle": "Fori jaanch (QC)",
     "pitch": "WhatsApp peshkash"
+  },
+  "sth": {
+    "tab": {
+      "summary": "Khulasa",
+      "units": "Tamam cheezein",
+      "parties": "Dealer aur customer war",
+      "ledger": "Stock ledger"
+    },
+    "askingWorth": "Mangi qeemat par maliyat",
+    "payable": "Suppliers ko dene baqi",
+    "payableSub": "Jin ka dukaan par udhaar hai un ke khate se",
+    "inShop": "Dukaan mein",
+    "stockCost": "Stock ki laagat",
+    "empty": "Abhi kuch nahi.",
+    "pieces": "{{n}} tukre",
+    "partiesSub": "Kaun se brand aur model kis se aaye, kitne abhi dukaan mein hain, aur kitna baqi hai",
+    "brands": "Brand",
+    "modelsN": "{{n}} model",
+    "dene": "Dene baqi",
+    "lene": "Lene baqi",
+    "clear": "Saaf",
+    "unitsN": "{{n}} set",
+    "soldOut": "Bike",
+    "billed": "Kul bill",
+    "partyStock": "Party ka mukammal stock",
+    "unitsWord": "set",
+    "l": {
+      "in": "Stock aaya (khareeda)",
+      "out": "Stock gaya (bika)",
+      "returns": "Dealer ko wapis",
+      "returnsN": "{{n}} wapsiyan",
+      "profit": "Farokht par munafa",
+      "profitSub": "Is muddat ki farokht par",
+      "printTitle": "Print aur export",
+      "printSub": "Stock ki maliyat ki sheet",
+      "pdf": "A4 sheet",
+      "period": "Muddat",
+      "allMoves": "Tamam harkatein",
+      "allBrands": "Tamam brand",
+      "allParties": "Tamam dealer / gahak",
+      "title": "Mukammal stock ledger ({{n}})",
+      "sub": "Har aane jane wala tukra, us ki laagat, bikne par qeemat aur munafa, aur us ke baad laagat par stock",
+      "date": "Voucher aur tareekh",
+      "type": "Qism",
+      "item": "Cheez",
+      "party": "Dealer / gahak",
+      "qty": "Aaya / gaya",
+      "unitCost": "Fi laagat",
+      "price": "Bika",
+      "profitCol": "Munafa",
+      "worth": "Baad mein laagat par stock",
+      "none": "Is muddat mein koi harkat nahi.",
+      "k": {
+        "in": "Khareed aaya",
+        "out": "Farokht gaya",
+        "return": "Wapsi",
+        "transfer": "Branch muntaqili",
+        "adjust": "Durusti",
+        "parts": "Purzon mein",
+        "return_in": "Gahak ki wapsi",
+        "return_out": "Dealer ko wapis",
+        "transfer_in": "Branch se aaya",
+        "transfer_out": "Branch ko gaya"
+      }
+    },
+    "partial": "{{t}} mein se {{n}} entries dikh rahi hain — muddat ya filter kam karein"
   }
 }

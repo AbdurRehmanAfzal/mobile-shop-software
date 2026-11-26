@@ -362,6 +362,19 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-141 · 2026-11-26 · Accepted · Stock: four screens one tap apart, stock by dealer, the stock ledger (from the new product's file 23)
+
+- **Context:** the owner asked for the stock module to be enhanced to what the new product's stock screen (mock-up 23, `/new/stock` on `staging`) does. Compared with it, the live stock already had: the kinds with their counts, the status tiles, the tick-box filters as removable chips, the column chooser (Fields), three views, sort, search and scan (`/stock`), and the summary by kind → brand → model (`/stock/summary`, ADR-131 / ADR-132). Missing: the stock by dealer / customer, the stock ledger, the worth at asking and what is owed to suppliers, and a way from one stock screen to the next.
+- **Decision** (`features/stock/StockHub.tsx`, the live design system):
+  - **`StockTabs`** on every stock screen: Summary · All items · By dealer & customer · Stock ledger;
+  - on the summary, beside the worth at cost: the **worth at asking** and **still to pay suppliers** (which opens the dealer-wise screen);
+  - **`/stock/people`** — each dealer or customer the stock came from: their kinds, brands and models, how many are still here and sold, the stock's cost, what was billed, their khata balance; opens their page on the Phones tab;
+  - **`/stock/ledger`** — every piece in and out in a period (bought, sold, returned either way, branch moves, adjusted, used for parts) with its voucher, person, unit cost, the price and profit when sold, and the stock at cost after each line; figures for the period; filters by kind, movement, brand and dealer; a row opens its bill or the unit.
+  The server is the new product's, from `staging`: `stockhub/` (`GET /stock-hub/overview`, `/models`, `/parties`, `/ledger`, read-only; the service was already here as a helper, the router is now registered), `tests/test_stock_hub.py`.
+- **Rules:** every figure is the server's and a filter asks the server; cost, profit, billed and balances only for owner / manager (the server sends none of it to a salesman). ADR-131's rule for the summary stands — its own figures stay `reports.stock_summary`'s; the two new ones are the stock hub's and are shown apart.
+- **Not built** (already there in another form, or decoration): the mock-up's own units screen (the live `/stock` list does it), category shares and totals over the shown rows, a reorder button per phone, a branch picker.
+- **Consequences:** both screens are in the list of every report (`hub.r.stockPeople`, `stockLedger`). Strings `sth.*`. `e2e/stock-hub.spec.ts`.
+
 ## ADR-140 · 2026-11-26 · Accepted · A phone's page: expenses on the unit, its own ledger sheet, quick check (from the new product's file 20)
 
 - **Context:** the owner asked for the item detail to be upgraded to what the new product's file 20 (item detail with ledger sheet, `/new/item/:id` on `staging`) does. The page keeps its look and ADR-114's rules (three views, a new fact is a line of the details table with its action and "?").

@@ -4,6 +4,7 @@
 export { default as Shell } from '@/app/Shell'
 export { default as HomePage } from '@/features/counter/HomePage'
 export { default as StockSummaryPage } from '@/features/counter/StockSummaryPage'
+export { StockLedgerPage, StockPeoplePage } from '@/features/stock/StockHub'
 export { default as DayReportPage } from '@/features/counter/DayReportPage'
 export { default as KhataPage } from '@/features/counter/KhataPage'
 export { default as BalancesPage } from '@/features/counter/BalancesPage'

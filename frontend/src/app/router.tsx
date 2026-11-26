@@ -20,6 +20,8 @@ const PrinterGuidePage = page('PrinterGuidePage')
 const FbrGuidePage = page('FbrGuidePage')
 const HomePage = page('HomePage')
 const StockSummaryPage = page('StockSummaryPage')
+const StockPeoplePage = page('StockPeoplePage')
+const StockLedgerPage = page('StockLedgerPage')
 const DayReportPage = page('DayReportPage')
 const KhataPage = page('KhataPage')
 const BalancesPage = page('BalancesPage')
@@ -157,6 +159,9 @@ export const router = createBrowserRouter([
           { path: '/', element: <HomePage /> },
           { path: '/stock', element: <StockGate><StockPage /></StockGate> },
           { path: '/stock/summary', element: <StockSummaryPage /> },
+          // ADR-141: who the stock came from, and every piece in and out
+          { path: '/stock/people', element: <StockPeoplePage /> },
+          { path: '/stock/ledger', element: <StockLedgerPage /> },
           { path: '/hisaab', element: <DayReportPage /> },
           { path: '/khata', element: <KhataPage /> },
           { path: '/balances', element: <BalancesPage /> },

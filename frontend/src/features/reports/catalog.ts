@@ -56,6 +56,8 @@ export const REPORTS: Report[] = [
   { id: 'installments', group: 'sales', to: at('/installments'), module: 'installments' },
   // ---- stock ----
   { id: 'stock', group: 'stock', to: at('/stock'), units: true, download: { path: () => '/api/v1/exports/stock', name: 'stock' } },
+  { id: 'stockPeople', group: 'stock', to: at('/stock/people') },
+  { id: 'stockLedger', group: 'stock', to: at('/stock/ledger') },
   { id: 'worth', group: 'stock', to: at('/stock/summary'), download: { path: () => '/api/v1/exports/stock-summary', name: 'stock-worth' } },
   { id: 'itemSheet', group: 'stock', to: at('/stock/summary'), units: true, download: { path: () => '/api/v1/exports/stock-cost', name: 'stock-item-wise' } },
   { id: 'oldStock', group: 'stock', to: at('/reports?tab=old'), module: 'reports', managers: true, units: true, download: { path: () => '/api/v1/exports/stock-ageing', name: 'old-stock' } },
