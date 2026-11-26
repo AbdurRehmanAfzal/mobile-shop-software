@@ -3,7 +3,7 @@
  *  plain list with a bar on the open page) and Bold (a dark panel). Every design shows the same
  *  pages in the same order and fits one 1280×720 screen. */
 
-import { BarChart3, CalendarDays, ChevronLeft, ChevronRight, Home, Landmark, LayoutGrid, LineChart, Package, Settings, UserCog, Users, type LucideIcon } from 'lucide-react'
+import { ArrowLeftRight, BarChart3, CalendarDays, ChevronLeft, ChevronRight, Home, Landmark, LayoutGrid, LineChart, Package, Settings, UserCog, Users, type LucideIcon } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 import { useLang } from '@/components/Bilingual'
 import { useAuth } from '@/lib/auth'
@@ -21,6 +21,8 @@ const SHOP_LINKS: { to: string; key: string; Icon: LucideIcon; roles?: string[] 
   { to: '/reports', key: 'more.reports', Icon: BarChart3 },
   { to: '/more/cash', key: 'more.cashAccounts', Icon: Landmark, roles: MANAGERS },
   { to: '/purchases', key: 'nav.purchases', Icon: Package },
+  // owner 2026-11-26 (ADR-139): sales and purchases of a period in one page
+  { to: '/sale-purchase', key: 'nav.trade', Icon: ArrowLeftRight },
   { to: '/more/staff', key: 'more.staff', Icon: UserCog, roles: ['owner'] },
   { to: '/more/settings', key: 'more.settings', Icon: Settings, roles: ['owner'] },
 ]
@@ -46,10 +48,12 @@ export default function SidePanel() {
   const jobs = jobsFor(trade).filter((j) => !j.homeOnly && (!j.module || has(j.module)))
   const links = SHOP_LINKS.filter((l) => (!l.roles || (role && l.roles.includes(role))) && (!moduleFor(l.to) || has(moduleFor(l.to)!)))
   const Chevron = dir === 'rtl' ? ChevronLeft : ChevronRight
+  // ADR-139: with a ninth shop link the tiles are a little lower, so the panel still fits 1280×720
+  const dense = links.length > 8
   const txt = (en: string) => (ur ? cls('sm') : en)
   const kbd = (k: string, onDark = false) => <kbd className={`rounded-md border px-1.5 font-sans text-[11px] font-bold ${onDark ? 'border-white/25 text-white/70' : 'border-line bg-surface text-muted'}`} dir="ltr">{k}</kbd>
   const heading = (onDark = false) => <span className={`mt-1 px-1 leading-tight ${onDark ? 'text-white/60' : 'text-muted'} ${ur ? cls('sm') : 'text-[11px] font-bold uppercase tracking-wider'}`}>{pick('nav.shopSection')}</span>
-  const well = (active: boolean, Icon: LucideIcon, onDark = false) => <span className={`well h-6 w-6 shrink-0 rounded-lg ${active ? 'bg-white/15 text-current' : onDark ? 'bg-white/10 text-white' : 'bg-ground text-ink'}`}><Icon size={15} strokeWidth={2} /></span>
+  const well = (active: boolean, Icon: LucideIcon, onDark = false) => <span className={`well ${dense ? "h-5 w-5" : "h-6 w-6"} shrink-0 rounded-lg ${active ? 'bg-white/15 text-current' : onDark ? 'bg-white/10 text-white' : 'bg-ground text-ink'}`}><Icon size={15} strokeWidth={2} /></span>
 
   const aside = 'print:hidden sticky top-[76px] hidden max-h-[calc(100dvh-88px)] w-[252px] shrink-0 flex-col overflow-y-auto lg:flex'
 
@@ -71,11 +75,11 @@ export default function SidePanel() {
         {heading()}
         <nav className="grid grid-cols-3 gap-1" data-testid="side-shop">
           {links.map(({ to, key, Icon }) => (
-            <NavLink key={to} to={to} className={({ isActive }) => `${tileCls(isActive)} min-h-[54px]`}>
+            <NavLink key={to} to={to} className={({ isActive }) => `${tileCls(isActive)} ${dense ? 'min-h-[42px]' : 'min-h-[54px]'}`}>
               {({ isActive }) => <>{well(isActive, Icon)}<span className={`line-clamp-2 w-full leading-tight ${ur ? cls('sm') : 'text-[11px]'}`}>{pick(key)}</span></>}
             </NavLink>
           ))}
-          <NavLink to="/more" end className={({ isActive }) => `${tileCls(isActive)} min-h-[54px]`}>
+          <NavLink to="/more" end className={({ isActive }) => `${tileCls(isActive)} ${dense ? 'min-h-[42px]' : 'min-h-[54px]'}`}>
             {({ isActive }) => <>{well(isActive, LayoutGrid)}<span className={`line-clamp-1 w-full ${ur ? cls('sm') : 'text-[11px]'}`}>{pick('nav.allOptions')}</span></>}
           </NavLink>
         </nav>
@@ -85,7 +89,7 @@ export default function SidePanel() {
 
   if (layout === 'simple') {
     return (
-      <aside className={`${aside} gap-0.5 p-1.5`} aria-label={pick('nav.home')} data-testid="side-panel" data-layout="simple">
+      <aside className={`${aside} gap-0.5 p-1.5 ${dense ? '[&_a]:!min-h-[28px]' : ''}`} aria-label={pick('nav.home')} data-testid="side-panel" data-layout="simple">
         <NavLink to="/" end className={({ isActive }) => listRow(isActive)} data-testid="side-home">
           <Home size={17} strokeWidth={2} className="shrink-0" /><span className={`min-w-0 flex-1 ${txt('text-sm')}`}>{pick('nav.dashboard')}</span>
         </NavLink>
@@ -118,7 +122,7 @@ export default function SidePanel() {
         </NavLink>
         {jobs.map((j) => (
           <NavLink key={j.id} to={j.to} className={({ isActive }) => boldRow(isActive)}>
-            <span className={`well h-6 w-6 shrink-0 rounded-lg ${j.tone}`}><j.Icon size={15} strokeWidth={2} /></span>
+            <span className={`well ${dense ? "h-5 w-5" : "h-6 w-6"} shrink-0 rounded-lg ${j.tone}`}><j.Icon size={15} strokeWidth={2} /></span>
             <span className={`min-w-0 flex-1 ${txt('text-sm')}`}>{pick(j.label)}</span>
             {j.fkey ? kbd(j.fkey, true) : null}
           </NavLink>
@@ -126,7 +130,7 @@ export default function SidePanel() {
         {heading(true)}
         <nav className="grid grid-cols-2 gap-1" data-testid="side-shop">
           {links.map(({ to, key, Icon }) => (
-            <NavLink key={to} to={to} className={({ isActive }) => `tap flex min-h-[44px] min-w-0 flex-col items-center justify-center rounded-xl px-1 text-center font-bold transition-colors ${isActive ? 'bg-white/20 text-white ring-1 ring-white/40' : 'bg-white/[0.07] text-white/85 hover:bg-white/15'}`}>
+            <NavLink key={to} to={to} className={({ isActive }) => `tap flex ${dense ? 'min-h-[36px]' : 'min-h-[44px]'} min-w-0 flex-col items-center justify-center rounded-xl px-1 text-center font-bold transition-colors ${isActive ? 'bg-white/20 text-white ring-1 ring-white/40' : 'bg-white/[0.07] text-white/85 hover:bg-white/15'}`}>
               <Icon size={16} strokeWidth={2} className="shrink-0" />
               <span className={`line-clamp-1 w-full ${ur ? cls('sm') : 'text-xs'}`}>{pick(key)}</span>
             </NavLink>
@@ -141,13 +145,13 @@ export default function SidePanel() {
 
   // Classic
   return (
-    <aside className={`${aside} gap-1 p-1.5`} aria-label={pick('nav.home')} data-testid="side-panel" data-layout="classic">
+    <aside className={`${aside} ${dense ? 'gap-0.5' : 'gap-1'} p-1.5`} aria-label={pick('nav.home')} data-testid="side-panel" data-layout="classic">
       <NavLink to="/" end className={({ isActive }) => sideRow(isActive)} data-testid="side-home">
         {({ isActive }) => <>{well(isActive, Home)}<span className={`min-w-0 flex-1 ${txt('text-sm')}`}>{pick('nav.dashboard')}</span><Chevron size={16} className="shrink-0 opacity-60" /></>}
       </NavLink>
       {jobs.map((j) => (
         <NavLink key={j.id} to={j.to} className={({ isActive }) => `tap flex min-h-8 items-center gap-2.5 rounded-xl px-2 py-0 font-bold ${j.tone} ${isActive ? 'ring-2 ring-current' : ''}`}>
-          <span className={`well h-6 w-6 shrink-0 rounded-lg bg-surface ${j.ink}`}><j.Icon size={15} strokeWidth={2} /></span>
+          <span className={`well ${dense ? "h-5 w-5" : "h-6 w-6"} shrink-0 rounded-lg bg-surface ${j.ink}`}><j.Icon size={15} strokeWidth={2} /></span>
           <span className={`min-w-0 flex-1 ${txt('text-sm')}`}>{pick(j.label)}</span>
           {j.fkey ? kbd(j.fkey) : null}
         </NavLink>
@@ -155,7 +159,7 @@ export default function SidePanel() {
       {heading()}
       <nav className="grid grid-cols-2 gap-1" data-testid="side-shop">
         {links.map(({ to, key, Icon }) => (
-          <NavLink key={to} to={to} className={({ isActive }) => `${tileCls(isActive)} min-h-[46px]`}>
+          <NavLink key={to} to={to} className={({ isActive }) => `${tileCls(isActive)} ${dense ? 'min-h-[38px]' : 'min-h-[46px]'}`}>
             {({ isActive }) => <>{well(isActive, Icon)}<span className={`line-clamp-1 w-full ${ur ? cls('sm') : 'text-xs'}`}>{pick(key)}</span></>}
           </NavLink>
         ))}

@@ -362,6 +362,17 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-139 · 2026-11-26 · Accepted · Sale & purchase: one page in the side panel (from the new product's file 25)
+
+- **Context:** the owner asked for the new product's sales & purchases screen (mock-up 25) in the live software, as its own entry in the side panel.
+- **Decision:** a new page `/sale-purchase` (`features/trade/SalePurchasePage.tsx`), in the live design system, reached from the side panel's shop links, the More page (Records) and the list of every report (`hub.r.trade`). It has two sides:
+  - **Sales** — six figures (total sales, cost of goods sold, received, udhaar, gross profit, loss on sales; received / udhaar / loss set the filter), five views: kinds & brands, models sold with each line's profit or loss, customers & dealers with their bills, the sale bills (several can be settled at once — one payment per bill), the full sales ledger;
+  - **Purchases** (owner / manager) — five figures (total, paid, still to pay, the average buying cost of a unit, where the stock is now), the same five views with, on every line, where the unit is now (in shop / sold, to whom and on which bill / part sold for an item).
+  Both have a search with Scan, the period, filters by kind of stock, deal, brand and payment mode, the cost eye, New sale / New purchase, and the ledger report (A4 in English or Urdu, Excel, CSV). Correct and delete reuse the invoices page's sheets, so they hand over to the live screens.
+  The server is what ADR-137 already brought: `GET /bills-hub/sales`, `/bills-hub/purchases` and their `/sheet` (read-only). No server change.
+- **Rules kept:** every figure is the server's and a filter asks the server; a bill is never edited in place or deleted from a list; the purchases side and all cost / profit only for owner / manager (the server refuses `/bills-hub/purchases` to a salesman, and the page shows no purchases side). Not built: "duplicate", "+ Add <brand>", bulk delete.
+- **Consequences:** the side panel has nine shop links (it still fits a 1280×720 laptop in every design). `/sales` and `/purchases` (the plain lists) stay. Strings `stp.*` (`stp.s` / `stp.p` are the new product's `nsales` / `npsc`). `e2e/sale-purchase.spec.ts`.
+
 ## ADR-138 · 2026-11-26 · Accepted · A person's page: profile, actions, then one section at a time
 
 - **Context:** a shopkeeper's complaint after ADR-136: the page of a person is confusing — the actions have to be searched for, the information is scattered (some at the top, some at the end), the person's details and the figures are not in one place. The page had grown into one long column of ten cards.

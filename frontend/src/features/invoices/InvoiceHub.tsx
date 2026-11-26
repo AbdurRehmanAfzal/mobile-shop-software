@@ -30,6 +30,8 @@ export interface BillRow {
   ref_id: string | null; ref_no: string | null; created_by_name: string | null; mode: string | null; changes: Change[]; edited: boolean; replaced_by_no: string | null
   profit: M | null; stage: string | null; money_in: M; money_out: M
 }
+/** what settle / correct / delete need to know about a bill (the sale & purchase page passes its own rows) */
+export type BillRef = Pick<BillRow, 'kind' | 'id' | 'no' | 'party_id' | 'due'>
 export interface Group { party_id: string | null; name: string | null; name_ur: string | null; phone: string | null; role: 'customer' | 'dealer'; bills: number; kinds: string[]; billed: M; paid: M; to_get: M; to_pay: M; ids: string[] }
 export interface HubData { rows: BillRow[]; total_rows: number; figures: { sales: M; sales_count: number; purchases: M | null; purchases_count: number | null; to_get: M; to_pay: M | null; profit: M | null; count: number; edited: number }; parties: Group[] }
 
@@ -252,7 +254,7 @@ export function BillSheet({ r, costOk, canCost, act, onClose }: { r: BillRow | n
 }
 
 /** settle a bill: the live payment form, already put against this bill */
-export function SettleSheet({ r, onClose }: { r: BillRow | null; onClose: () => void }) {
+export function SettleSheet({ r, onClose }: { r: BillRef | null; onClose: () => void }) {
   const inv = useInvalidate()
   const { data: party } = useParty(r?.party_id ?? undefined)
   if (!r) return null
@@ -273,7 +275,7 @@ export function SettleSheet({ r, onClose }: { r: BillRow | null; onClose: () => 
 }
 
 /** what can be corrected on a bill: each choice opens the live correction for it */
-export function FixSheet({ r, onClose }: { r: BillRow | null; onClose: () => void }) {
+export function FixSheet({ r, onClose }: { r: BillRef | null; onClose: () => void }) {
   const { pick, ur, cls } = useLang()
   const nav = useNavigate()
   if (!r) return null
@@ -298,7 +300,7 @@ export function FixSheet({ r, onClose }: { r: BillRow | null; onClose: () => voi
 }
 
 /** delete is the bill's own page: it checks what must be undone first and asks for a reason */
-export function DeleteSheet({ r, onClose }: { r: BillRow | null; onClose: () => void }) {
+export function DeleteSheet({ r, onClose }: { r: BillRef | null; onClose: () => void }) {
   const { pick } = useLang()
   const nav = useNavigate()
   if (!r) return null
@@ -337,7 +339,7 @@ export function CreateSheet({ open, canCost, onClose }: { open: boolean; canCost
 }
 
 /** the bills ledger report: the server's A4 page of the filtered bills, or the same as Excel / CSV */
-export function ReportSheet({ open, sheet, canCost, onClose }: { open: boolean; sheet: string; canCost: boolean; onClose: () => void }) {
+export function ReportSheet({ open, sheet, canCost, onClose, title = 'ihub.a4Title', sub = 'ihub.a4Sub', name = 'bills' }: { open: boolean; sheet: string; canCost: boolean; onClose: () => void; title?: string; sub?: string; name?: string }) {
   const { pick, ur, cls } = useLang()
   const [hideProfit, setHideProfit] = useState(false)
   const [lang, setLang] = useState<'en' | 'ur'>(ur ? 'ur' : 'en')
@@ -347,15 +349,15 @@ export function ReportSheet({ open, sheet, canCost, onClose }: { open: boolean; 
   const tiny = ur ? cls('sm') : 'text-xs font-semibold'
   const seg = (on: boolean) => `tap min-h-10 flex-1 rounded-xl px-3 font-bold ${on ? 'bg-ink text-ground' : 'border border-line bg-surface text-ink'} ${tiny}`
   return (
-    <Sheet open={open} onClose={onClose} title="ihub.a4Title">
+    <Sheet open={open} onClose={onClose} title={title}>
       <div className="flex flex-col gap-3" data-testid="ihub-report-sheet">
-        <BiLabel text="ihub.a4Sub" size="sm" tone="text-muted" />
+        <BiLabel text={sub} size="sm" tone="text-muted" />
         <div className="flex gap-1.5"><button type="button" aria-pressed={lang === 'en'} onClick={() => setLang('en')} className={seg(lang === 'en')}>English</button><button type="button" aria-pressed={lang === 'ur'} onClick={() => setLang('ur')} className={seg(lang === 'ur')}>اردو</button></div>
         {canCost ? <label className={`flex min-h-10 cursor-pointer items-center gap-2 text-ink ${tiny}`}><input type="checkbox" checked={hideProfit} onChange={(e) => setHideProfit(e.target.checked)} className="h-4 w-4" data-testid="ihub-rep-hide" />{pick('ihub.hideProfit')}</label> : null}
         <BiButton text="ihub.openPrint" full icon={<Printer size={18} />} onClick={() => run(openPrintable(url('pdf')))} data-testid="ihub-rep-print" />
         <div className="grid grid-cols-2 gap-2">
-          <BiButton text={{ en: 'Excel (.xlsx)', ur: 'Excel (.xlsx)' }} variant="secondary" full icon={<FileSpreadsheet size={18} />} onClick={() => run(downloadFile(url('xlsx'), 'bills.xlsx'))} data-testid="ihub-rep-xlsx" />
-          <BiButton text={{ en: 'CSV', ur: 'CSV' }} variant="secondary" full icon={<FileSpreadsheet size={18} />} onClick={() => run(downloadFile(url('csv'), 'bills.csv'))} data-testid="ihub-rep-csv" />
+          <BiButton text={{ en: 'Excel (.xlsx)', ur: 'Excel (.xlsx)' }} variant="secondary" full icon={<FileSpreadsheet size={18} />} onClick={() => run(downloadFile(url('xlsx'), `${name}.xlsx`))} data-testid="ihub-rep-xlsx" />
+          <BiButton text={{ en: 'CSV', ur: 'CSV' }} variant="secondary" full icon={<FileSpreadsheet size={18} />} onClick={() => run(downloadFile(url('csv'), `${name}.csv`))} data-testid="ihub-rep-csv" />
         </div>
         {err ? <span className="text-sm font-bold text-payable" role="alert">{err}</span> : null}
       </div>

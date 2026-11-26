@@ -15,7 +15,8 @@
     "dashboard": "Dashboard",
     "shopSection": "Shop",
     "allOptions": "All options",
-    "purchases": "Purchases"
+    "purchases": "Purchases",
+    "trade": "Sale & purchase"
   },
   "auth": {
     "login": "Login",
@@ -5666,6 +5667,10 @@
       "logins": {
         "t": "Login activity",
         "d": "Who is logged in, and on which device."
+      },
+      "trade": {
+        "t": "Sale & purchase",
+        "d": "Sales and purchases of a period by kind, brand, model, person and bill, with profit and what is still left."
       }
     }
   },
@@ -6567,6 +6572,184 @@
     "items": "Accessories",
     "profitShort": "Profit",
     "reportShort": "Report",
-    "newShort": "New bill"
+    "newShort": "New bill",
+    "apply": "Record payment",
+    "role": {
+      "customer": "Customer",
+      "dealer": "Dealer"
+    }
+  },
+  "stp": {
+    "title": "Sale & purchase",
+    "hint": "What the shop sold and what it bought in a period: by kind, brand, model, person and bill, with what is still to get or to pay.",
+    "newSale": "New sale",
+    "newPurchase": "New purchase",
+    "s": {
+      "sub": "Sales & purchases command center",
+      "salesScreen": "Sales screen",
+      "purchasesScreen": "Purchases screen",
+      "newSale": "New sale invoice",
+      "ledgerBtn": "Sales ledger report (A4)",
+      "costVisible": "Profit & cost visible",
+      "costHidden": "Profit & cost hidden",
+      "search": "Search bill no, IMEI / serial, customer…",
+      "cat": {
+        "all": "All stock"
+      },
+      "deal": {
+        "all": "All sales",
+        "udhaar": "Udhaar sales",
+        "paid": "Paid sales",
+        "loss": "Loss deals"
+      },
+      "brandAll": "All brands ({{n}})",
+      "modeAll": "All channels",
+      "tab": {
+        "overview": "Sales analytics & brands",
+        "models": "Models sold (profit / loss)",
+        "parties": "Customers & dealers",
+        "invoices": "Sale invoices",
+        "ledger": "Full sales ledger"
+      },
+      "k": {
+        "sales": "Total sales",
+        "salesSub": "{{u}} units · {{b}} bills",
+        "cost": "Cost of goods sold",
+        "costSub": "Buying price of sold stock",
+        "received": "Received",
+        "receivedSub": "Cash / bank / online received",
+        "udhaar": "Udhaar sales",
+        "udhaarSub": "Still to get from buyers",
+        "gain": "Gross profit earned",
+        "net": "Net profit / loss: {{v}}",
+        "loss": "Loss on sales",
+        "lossSub": "Sold below buying cost"
+      },
+      "units": "{{n}} units",
+      "debit": "Udhaar",
+      "credit": "Received",
+      "brandTitle": "Brand-wise sales, cost, udhaar & profit / loss",
+      "brandSub": "Tap a brand to see its models",
+      "addSale": "Add sale",
+      "reset": "Reset filters",
+      "modelsBtn": "Models",
+      "models": "{{n}} models",
+      "none": "Nothing sold for these filters.",
+      "noModels": "No models for these filters.",
+      "col": {
+        "brand": "Brand",
+        "units": "Units",
+        "cost": "Total cost",
+        "sales": "Total sales",
+        "received": "Received",
+        "udhaar": "Udhaar",
+        "pl": "Net profit / loss",
+        "quick": "Quick",
+        "bill": "Bill & date",
+        "kindBrand": "Kind / brand",
+        "code": "IMEI / serial",
+        "modelCode": "Model & IMEI",
+        "buyer": "Customer / buyer",
+        "bought": "Bought from",
+        "sale": "Sale",
+        "actions": "Actions"
+      },
+      "m": {
+        "cost": "Cost",
+        "sale": "Sale value",
+        "udhaar": "Udhaar",
+        "pl": "Profit / loss"
+      },
+      "p": {
+        "bills": "{{b}} bills · {{u}} units",
+        "total": "Total sales",
+        "settled": "Received",
+        "udhaar": "Still to get",
+        "profit": "Net profit",
+        "newBill": "New bill for {{n}}"
+      },
+      "newFor": "New bill for this customer",
+      "selectAll": "Select all",
+      "invTitle": "Sale invoices ({{n}})",
+      "selected": "{{n}} selected",
+      "settleSel": "Settle udhaar of the selected",
+      "settleSelTitle": "Settle {{n}} bills",
+      "settleSelSub": "One cash payment is recorded against each bill, in each customer's khata",
+      "settleSelDone": "{{n}} bills settled",
+      "noBulkDelete": "Delete each bill on its own — each delete is checked first.",
+      "createNew": "Create new sale",
+      "ledTitle": "Complete sales ledger ({{n}} lines)",
+      "ledSub": "Every sold line with its cost, sale, received, udhaar and profit",
+      "ledPrint": "Print the A4 ledger report",
+      "a4Title": "Sales ledger report (A4)",
+      "a4Sub": "Every sold line of the filters with cost, received, udhaar and profit, on the server's print page"
+    },
+    "p": {
+      "locked": "The purchases screen shows buying costs, so it is for the owner and the manager.",
+      "newBill": "New purchase bill",
+      "ledgerBtn": "Purchases ledger report (A4)",
+      "costVisible": "Cost visible",
+      "costHidden": "Cost hidden",
+      "search": "Search bill no, IMEI / serial, dealer…",
+      "deal": {
+        "all": "All purchases",
+        "udhaar": "Still to pay (dene baqi)",
+        "paid": "Paid purchases"
+      },
+      "tab": {
+        "overview": "Purchase analytics & brands",
+        "models": "Models bought (cost / stock)",
+        "parties": "Dealers & sellers",
+        "invoices": "Purchase bills",
+        "ledger": "Full purchase ledger"
+      },
+      "k": {
+        "total": "Total purchases",
+        "paid": "Paid purchases",
+        "paidSub": "Paid by cash / bank / online",
+        "due": "Still to pay (dene baqi)",
+        "dueSub": "Left in the dealers' khata",
+        "avg": "Avg. buying cost of a unit",
+        "avgSub": "Across {{n}} units",
+        "stock": "Where the stock is now",
+        "inShop": "{{n}} in shop",
+        "soldOut": "{{n}} already sold"
+      },
+      "toPay": "To pay",
+      "soldN": "{{n}} sold",
+      "brandTitle": "Brand-wise purchases, paid, still to pay & stock",
+      "addBill": "Add purchase",
+      "none": "Nothing bought for these filters.",
+      "col": {
+        "avg": "Avg. unit cost",
+        "amount": "Bought for",
+        "paid": "Paid",
+        "due": "Still to pay",
+        "stock": "Stock now",
+        "seller": "Dealer / seller",
+        "unit": "Unit cost",
+        "where": "Where now"
+      },
+      "where": {
+        "in_shop": "In shop",
+        "sold": "Sold",
+        "part": "Part sold",
+        "partN": "{{h}} here · {{s}} sold",
+        "other": "Gone"
+      },
+      "p": {
+        "total": "Total bought"
+      },
+      "pay": "Pay",
+      "billsTitle": "Purchase bills ({{n}})",
+      "paySel": "Pay what is left on the selected",
+      "paySelTitle": "Pay {{n}} bills",
+      "paySelSub": "One cash payment is recorded against each bill, in each dealer's khata",
+      "paySelDone": "{{n}} bills paid",
+      "ledTitle": "Complete purchase ledger ({{n}} lines)",
+      "ledSub": "Every bought line with its cost, paid, still to pay and where it is now",
+      "a4Title": "Purchases ledger report (A4)",
+      "a4Sub": "Every bought line of the filters with cost, paid, still to pay and where it is now, on the server's print page"
+    }
   }
 }

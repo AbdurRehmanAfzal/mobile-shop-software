@@ -15,7 +15,8 @@
     "dashboard": "Dashboard",
     "shopSection": "Dukaan",
     "allOptions": "Saare options",
-    "purchases": "Khareedari"
+    "purchases": "Khareedari",
+    "trade": "Sale & purchase"
   },
   "auth": {
     "login": "Login",
@@ -5666,6 +5667,10 @@
       "logins": {
         "t": "Login activity",
         "d": "Kaun login hai, aur kis phone par."
+      },
+      "trade": {
+        "t": "Sale aur purchase",
+        "d": "Aik muddat ki sale aur kharidari qism, brand, model, bande aur bill ke hisaab se, munafa aur baqi raqam ke saath."
       }
     }
   },
@@ -6567,6 +6572,184 @@
     "items": "Accessories",
     "profitShort": "Munafa",
     "reportShort": "Report",
-    "newShort": "Naya bill"
+    "newShort": "Naya bill",
+    "apply": "Adaigi darj karein",
+    "role": {
+      "customer": "Gahak",
+      "dealer": "Dealer"
+    }
+  },
+  "stp": {
+    "title": "Sale aur purchase",
+    "hint": "Aik muddat mein dukaan ne kya becha aur kya khareeda: qism, brand, model, bande aur bill ke hisaab se, aur kitna lena ya dena baqi hai.",
+    "newSale": "Nayi sale",
+    "newPurchase": "Nayi kharidari",
+    "s": {
+      "sub": "Sales aur khareedari center",
+      "salesScreen": "Sales screen",
+      "purchasesScreen": "Khareedari screen",
+      "newSale": "Nayi sale ka bill",
+      "ledgerBtn": "Sales ledger report (A4)",
+      "costVisible": "Munafa aur laagat nazar aa rahi hai",
+      "costHidden": "Munafa aur laagat chhupi hai",
+      "search": "Bill no, IMEI / serial, gahak talash karein…",
+      "cat": {
+        "all": "Saara stock"
+      },
+      "deal": {
+        "all": "Sab sales",
+        "udhaar": "Udhaar sales",
+        "paid": "Ada shuda sales",
+        "loss": "Nuqsan ke saude"
+      },
+      "brandAll": "Sab brand ({{n}})",
+      "modeAll": "Sab tareeqe",
+      "tab": {
+        "overview": "Sales ka jaiza aur brand",
+        "models": "Bikay model (munafa / nuqsan)",
+        "parties": "Gahak aur dealer",
+        "invoices": "Sale ke bill",
+        "ledger": "Sales ka mukammal ledger"
+      },
+      "k": {
+        "sales": "Kul sales",
+        "salesSub": "{{u}} nag · {{b}} bill",
+        "cost": "Bikay maal ki laagat",
+        "costSub": "Bikay stock ki khareed qeemat",
+        "received": "Wasool",
+        "receivedSub": "Naqad / bank / online wasool",
+        "udhaar": "Udhaar sales",
+        "udhaarSub": "Khareedaron se lene baqi",
+        "gain": "Kamaya gaya munafa",
+        "net": "Khalis munafa / nuqsan: {{v}}",
+        "loss": "Sales par nuqsan",
+        "lossSub": "Khareed se kam par becha"
+      },
+      "units": "{{n}} nag",
+      "debit": "Udhaar",
+      "credit": "Wasool",
+      "brandTitle": "Brand-wise sales, laagat, udhaar aur munafa / nuqsan",
+      "brandSub": "Model dekhne ke liye brand par tap karein",
+      "addSale": "Sale karein",
+      "reset": "Filter hatayein",
+      "modelsBtn": "Model",
+      "models": "{{n}} model",
+      "none": "In filters mein kuch nahi bika.",
+      "noModels": "In filters mein koi model nahi.",
+      "col": {
+        "brand": "Brand",
+        "units": "Nag",
+        "cost": "Kul laagat",
+        "sales": "Kul sales",
+        "received": "Wasool",
+        "udhaar": "Udhaar",
+        "pl": "Khalis munafa / nuqsan",
+        "quick": "Fori",
+        "bill": "Bill aur tareekh",
+        "kindBrand": "Qism / brand",
+        "code": "IMEI / serial",
+        "modelCode": "Model aur IMEI",
+        "buyer": "Gahak / khareedar",
+        "bought": "Jis se khareeda",
+        "sale": "Sale",
+        "actions": "Kaam"
+      },
+      "m": {
+        "cost": "Laagat",
+        "sale": "Sale ki raqam",
+        "udhaar": "Udhaar",
+        "pl": "Munafa / nuqsan"
+      },
+      "p": {
+        "bills": "{{b}} bill · {{u}} nag",
+        "total": "Kul sales",
+        "settled": "Wasool",
+        "udhaar": "Lene baqi",
+        "profit": "Khalis munafa",
+        "newBill": "{{n}} ka naya bill"
+      },
+      "newFor": "Is gahak ka naya bill",
+      "selectAll": "Sab chunein",
+      "invTitle": "Sale ke bill ({{n}})",
+      "selected": "{{n}} chune",
+      "settleSel": "Chune billon ka udhaar wasool karein",
+      "settleSelTitle": "{{n}} bill barabar karein",
+      "settleSelSub": "Har bill par ek naqad adaigi, har gahak ke khate mein",
+      "settleSelDone": "{{n}} bill barabar ho gaye",
+      "noBulkDelete": "Har bill alag delete karein — har delete pehle jaancha jata hai.",
+      "createNew": "Nayi sale",
+      "ledTitle": "Sales ka mukammal ledger ({{n}} lines)",
+      "ledSub": "Har biki line: laagat, sale, wasool, udhaar aur munafa",
+      "ledPrint": "A4 ledger report print karein",
+      "a4Title": "Sales ledger report (A4)",
+      "a4Sub": "Chuni gayi sales ki har line laagat, wasool, udhaar aur munafa ke saath, print safhe par"
+    },
+    "p": {
+      "locked": "Kharidari screen par khareed qeematein hain, is liye yeh maalik aur manager ke liye hai.",
+      "newBill": "Naya kharidari bill",
+      "ledgerBtn": "Kharidari ledger report (A4)",
+      "costVisible": "Qeemat nazar aa rahi hai",
+      "costHidden": "Qeemat chhupi hai",
+      "search": "Bill no, IMEI / serial, dealer talash karein…",
+      "deal": {
+        "all": "Tamam kharidari",
+        "udhaar": "Dena baqi",
+        "paid": "Ada shuda kharidari"
+      },
+      "tab": {
+        "overview": "Kharidari ka jaiza aur brands",
+        "models": "Khareede gaye models (qeemat / stock)",
+        "parties": "Dealers aur bechne wale",
+        "invoices": "Kharidari bills",
+        "ledger": "Mukammal kharidari ledger"
+      },
+      "k": {
+        "total": "Kul kharidari",
+        "paid": "Ada shuda kharidari",
+        "paidSub": "Cash / bank / online se ada",
+        "due": "Dena baqi",
+        "dueSub": "Dealers ke khatay mein baqi",
+        "avg": "Aik piece ki ausat khareed",
+        "avgSub": "{{n}} pieces par",
+        "stock": "Stock ab kahan hai",
+        "inShop": "{{n}} dukaan mein",
+        "soldOut": "{{n}} bik chuke"
+      },
+      "toPay": "Dena",
+      "soldN": "{{n}} bike",
+      "brandTitle": "Brand war kharidari, ada, baqi aur stock",
+      "addBill": "Kharidari darj karein",
+      "none": "In filters par koi kharidari nahi.",
+      "col": {
+        "avg": "Ausat fi piece",
+        "amount": "Khareed raqam",
+        "paid": "Ada",
+        "due": "Dena baqi",
+        "stock": "Ab stock",
+        "seller": "Dealer / bechne wala",
+        "unit": "Fi piece qeemat",
+        "where": "Ab kahan"
+      },
+      "where": {
+        "in_shop": "Dukaan mein",
+        "sold": "Bik gaya",
+        "part": "Kuch bik gaya",
+        "partN": "{{h}} yahan · {{s}} bike",
+        "other": "Nikal gaya"
+      },
+      "p": {
+        "total": "Kul kharidari"
+      },
+      "pay": "Ada karein",
+      "billsTitle": "Kharidari bills ({{n}})",
+      "paySel": "Chune hue bills ka baqi ada karein",
+      "paySelTitle": "{{n}} bills ada karein",
+      "paySelSub": "Har bill par aik cash adaigi, har dealer ke khatay mein darj hogi",
+      "paySelDone": "{{n}} bills ada ho gaye",
+      "ledTitle": "Mukammal kharidari ledger ({{n}} lines)",
+      "ledSub": "Har khareedi cheez: qeemat, ada, baqi aur ab kahan hai",
+      "a4Title": "Kharidari ledger report (A4)",
+      "a4Sub": "Filters ki har khareedi cheez qeemat, ada, baqi aur maujooda jagah ke saath, server ke print page par"
+    }
   }
 }

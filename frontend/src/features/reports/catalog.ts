@@ -52,6 +52,7 @@ export const REPORTS: Report[] = [
   { id: 'prices', group: 'sales', to: at('/reports?tab=prices'), module: 'reports', managers: true, units: true },
   { id: 'estimate', group: 'sales', to: at('/reports?tab=estimate'), module: 'reports', managers: true, units: true, download: { path: () => '/api/v1/exports/forecast', name: 'estimate' } },
   { id: 'invoices', group: 'sales', to: at('/invoices') },
+  { id: 'trade', group: 'sales', to: at('/sale-purchase') },
   { id: 'installments', group: 'sales', to: at('/installments'), module: 'installments' },
   // ---- stock ----
   { id: 'stock', group: 'stock', to: at('/stock'), units: true, download: { path: () => '/api/v1/exports/stock', name: 'stock' } },
