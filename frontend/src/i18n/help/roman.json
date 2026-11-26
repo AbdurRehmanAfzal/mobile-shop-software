@@ -5691,6 +5691,11 @@
         "title": "Password / PIN history",
         "body": "Aap ka password ya PIN kab, kis ne aur kis device se badla. Owner poori dukaan ki dekhta hai. Asal password / PIN kabhi nahi dikhta.",
         "example": "Password khud badla, 15 Nov · Windows · Chrome."
+      },
+      "trade": {
+        "title": "Sale aur purchase",
+        "body": "Aik page jahan aik muddat mein dukaan ki sale aur kharidari dikhti hai: qism, brand, model, bande aur bill ke hisaab se, sale ka munafa aur khareeda hua maal ab kahan hai. Bill par tap karein to khul jayega; kai bills aik saath ada ya wasool karein.",
+        "example": "Is mahine → Purchases → Dealers: har dealer ko kitna dena baqi hai."
       }
     },
     "pinPassword": {

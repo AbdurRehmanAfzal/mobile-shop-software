@@ -5691,6 +5691,11 @@
         "title": "Password / PIN history",
         "body": "When your password or PIN was changed, by whom and from which device. The owner sees the whole shop's. The values are never shown.",
         "example": "Password changed by themselves, 15 Nov · Windows · Chrome."
+      },
+      "trade": {
+        "title": "Sale & purchase",
+        "body": "One page for what the shop sold and what it bought in a period: by kind of stock, brand, model, person and bill, with profit on sales and where bought stock is now. Tap a bill to open it; settle or pay several at once.",
+        "example": "This month → Purchases → Dealers: see what is still to pay each dealer."
       }
     },
     "pinPassword": {

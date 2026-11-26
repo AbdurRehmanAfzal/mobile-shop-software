@@ -2517,3 +2517,15 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: show the shopkeeper who complained; the owner's next request.
 
 **Open questions**: should the page open on Ledger instead of Summary for a person with dealings? (Summary now.)
+
+## 2026-11-26 — Sale & purchase page in the side panel (ADR-139)
+
+**Asked (owner)**: #158 merged; explore `25-sales-purchases-command-center.html`, add a "sale & purchase" entry to the panel and implement that module in it.
+
+**Done** (branch `develop`, level with `main` after #158): `features/trade/SalePurchasePage.tsx` at `/sale-purchase` — the sales side and the purchases side of file 25 in the live look (see ADR-139); the side panel's ninth shop link, a tile on the More page (with its "?"), an entry in the reports list (`catalog.ts`, `hub.r.trade`); the invoices page's settle / correct / delete / report sheets take any bill (`BillRef`) so both pages share them; strings `stp.*`, `nav.trade` in three languages. No server change (the endpoints came with ADR-137).
+
+**Verified**: tsc; eslint; vitest (the reports-list test with the new entry); Playwright `sale-purchase` (new: the panel link, the six sales figures and five purchase figures against the server, cost hidden, loss deals, a brand's models, people, two sale bills settled at once and a purchase bill paid, where a bought phone is now with its buyer and bill, the correction choices, the report sheet, the reports list, Urdu RTL at phone width, a salesman with no purchases side and no cost) and the existing panel / More / reports specs. **Not done**: the full suites.
+
+**Next**: the owner's next request; release `develop` → `main` when the owner says.
+
+**Open questions**: none.

@@ -57,6 +57,7 @@ const ReturnWizard = page('ReturnWizard')
 const SaleDetailPage = page('SaleDetailPage')
 const SalesPage = page('SalesPage')
 const InvoicesPage = page('InvoicesPage')
+const SalePurchasePage = page('SalePurchasePage')
 const LoansPage = page('LoansPage')
 const TransferDetailPage = page('TransferDetailPage')
 const TransferNewPage = page('TransferNewPage')
@@ -179,6 +180,8 @@ export const router = createBrowserRouter([
           { path: '/sale/new', element: <SaleWizard /> },
           { path: '/sales/:id', element: <SaleDetailPage /> },
           { path: '/invoices', element: <InvoicesPage /> },
+          // ADR-139: what was sold and what was bought in a period, in one page
+          { path: '/sale-purchase', element: <SalePurchasePage /> },
           { path: '/payments', element: <PaymentsPage /> },
           { path: '/loans', element: <ModuleGate module="loans"><LoansPage /></ModuleGate> },
           { path: '/transfers', element: <TransfersPage /> },
