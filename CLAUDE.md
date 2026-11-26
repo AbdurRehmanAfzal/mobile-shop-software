@@ -76,6 +76,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Read ADR-131 before touching `StockSummaryPage.tsx` or `reports.stock_summary`.
 - Rules: Stock opens a card per kind the shop trades, a card opens that kind's brands → models → the stock list (`?kind=`); every figure is `reports.stock_summary`'s (`kinds`, `items`, `category`) — the app adds up only the cards for the heading; the keys without `category` must keep saying what they said (the download and the assistant read them); a new kind of stock gets a card here.
 
+## Stock: tabs, stock by dealer, the stock ledger (owner 2026-11-26, ADR-141)
+- Read ADR-141 before touching `features/stock/StockHub.tsx` or `backend/app/modules/stockhub`.
+- Rules: `StockTabs` sits on every stock screen — a new stock screen gets a tab; `/stock/people` and `/stock/ledger` show only the server's figures (`/stock-hub/parties`, `/ledger`, `/overview`) and a filter asks the server; cost, profit, billed and balances only for owner / manager; the summary's own figures stay `reports.stock_summary`'s (ADR-131), the stock hub's two are shown apart; `stockhub/` is shared with the new product on `staging`.
+
 ## The new UI product — PAUSED (owner 2026-11-26)
 - The new product (`/new`, built from the owner's mock-ups, ADR-132 / ADR-134) exists only on the `staging` branch and waits; the live software here on `develop` gains its functionality on the old screens first (the old look stays).
 - Where it stands, the server pieces that exist only on `staging`, how to take one into `develop` and how to restart: `docs/43-UI-REDESIGN-PLAN.md` §0 **on the `staging` branch** (`git show origin/staging:docs/43-UI-REDESIGN-PLAN.md`).

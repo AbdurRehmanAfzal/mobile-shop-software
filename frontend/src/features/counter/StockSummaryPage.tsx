@@ -18,6 +18,7 @@ import { toLakh, withCur } from '@/lib/format'
 import { useTrade } from '@/lib/modules'
 import { useGet } from '@/lib/queries'
 import type { StockSummary } from '@/lib/types'
+import { StockOverviewStrip, StockTabs } from '@/features/stock/StockHub'
 
 const n = (v: string | number) => Number(v).toLocaleString('en-US', { maximumFractionDigits: 0 })
 
@@ -70,6 +71,8 @@ export default function StockSummaryPage() {
           </div>
         }
       />
+      {/* ADR-141: the stock screens, one tap apart */}
+      {!kind || cards.length === 1 ? <StockTabs /> : null}
       {isLoading || !data ? <Loading /> : !kind ? (
         <>
           {hero(
@@ -77,6 +80,8 @@ export default function StockSummaryPage() {
             cards.reduce((s, k) => s + Number(k === 'items' ? items?.value ?? 0 : of(k).value), 0),
             <><span className="num">{data.count}</span> {pick('counter.phones')}{trade.accessories && items ? <> · {pick('ssum.accPieces').replace('{{n}}', String(items.pieces))}</> : null}</>,
           )}
+          {/* ADR-141: the same stock at asking price, and what is still owed to suppliers */}
+          <StockOverviewStrip />
           <span className="flex items-center gap-1"><BiLabel text="ssum.pick" size="sm" tone="text-muted" /><Help term="counter.stockBrands" size="sm" /></span>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-3" data-testid="kind-cards">
             {cards.map((k) => {

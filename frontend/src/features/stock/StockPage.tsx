@@ -23,6 +23,7 @@ import { ItemsInStock, KindTabs, StatusCards, type Kind, type Mode } from './Sto
 import { ActiveChips, DEFAULT_SEL, FilterSheet, FiltersButton, NO_FX, NO_SEL, fxCount, selCount, type Fx, type Sel } from './StockFilters'
 import { FieldsButton, StockGrid, StockList, StockTable, ViewSwitch, fieldBits, loadFields, loadView, saveFields, saveView, sortRows, FIELDS, type ColSort, type FieldKey, type StockView } from './StockViews'
 import DeviceActions from './DeviceActions'
+import { StockTabs } from './StockHub'
 
 interface Kept { sel: Sel; sort: Sort; kind: Kind; mode: Mode; fx: Fx }
 const KEEP = 'stock.filters.v2' // ADR-091: tick-box filters
@@ -253,6 +254,8 @@ export default function StockPage() {
           </div>
         }
       />
+      {/* ADR-141: the stock screens, one tap apart */}
+      <StockTabs />
       {/* ADR-091: the search on top, with × to clear */}
       <div className="flex items-center gap-1"><div className="min-w-0 flex-1"><SearchBox value={q} onChange={setQ} placeholder="stock.searchPlaceholder" scan /></div><Help term="stock.search" size="sm" /></div>
       {model ? (

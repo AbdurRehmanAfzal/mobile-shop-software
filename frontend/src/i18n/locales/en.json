@@ -5672,6 +5672,14 @@
       "trade": {
         "t": "Sale & purchase",
         "d": "Sales and purchases of a period by kind, brand, model, person and bill, with profit and what is still left."
+      },
+      "stockPeople": {
+        "t": "Stock by dealer & customer",
+        "d": "Who the stock came from: brands and models, how many are still here or sold, and their khata."
+      },
+      "stockLedger": {
+        "t": "Stock ledger",
+        "d": "Every piece in and out in a period, with cost, price, profit and the stock at cost after it."
       }
     }
   },
@@ -6842,5 +6850,71 @@
     "noCosts": "Nothing spent on it after buying.",
     "qcTitle": "Quick check (QC)",
     "pitch": "WhatsApp offer"
+  },
+  "sth": {
+    "tab": {
+      "summary": "Summary",
+      "units": "All items",
+      "parties": "By dealer & customer",
+      "ledger": "Stock ledger"
+    },
+    "askingWorth": "Asking worth",
+    "payable": "Still to pay suppliers",
+    "payableSub": "From the khata of everyone the shop owes",
+    "inShop": "In shop",
+    "stockCost": "Stock cost",
+    "empty": "Nothing here yet.",
+    "pieces": "{{n}} pieces",
+    "partiesSub": "Which brands and models came from whom, how many are still here, and what is still owed",
+    "brands": "Brands",
+    "modelsN": "{{n}} models",
+    "dene": "Still to give",
+    "lene": "Still to get",
+    "clear": "Settled",
+    "unitsN": "{{n}} units",
+    "soldOut": "Sold",
+    "billed": "Total billed",
+    "partyStock": "Full party stock",
+    "unitsWord": "units",
+    "l": {
+      "in": "Stock in (purchased)",
+      "out": "Stock out (sold)",
+      "returns": "Returned to dealers",
+      "returnsN": "{{n}} returns",
+      "profit": "Profit on sales",
+      "profitSub": "On the sales in this period",
+      "printTitle": "Printable & exportable",
+      "printSub": "Stock valuation sheet",
+      "pdf": "A4 sheet",
+      "period": "Period",
+      "allMoves": "All movements",
+      "allBrands": "All brands",
+      "allParties": "All dealers / customers",
+      "title": "Complete stock movement ledger ({{n}})",
+      "sub": "Every piece in and out with its cost, its price and profit when sold, and the stock at cost after it",
+      "date": "Voucher & date",
+      "type": "Type",
+      "item": "Item",
+      "party": "Dealer / customer",
+      "qty": "In / out",
+      "unitCost": "Unit cost",
+      "price": "Sold for",
+      "profitCol": "Profit",
+      "worth": "Stock at cost after",
+      "none": "No movement in this period.",
+      "k": {
+        "in": "Purchase in",
+        "out": "Sale out",
+        "return": "Return",
+        "transfer": "Branch move",
+        "adjust": "Adjusted",
+        "parts": "Used for parts",
+        "return_in": "Customer return",
+        "return_out": "Returned to dealer",
+        "transfer_in": "From a branch",
+        "transfer_out": "To a branch"
+      }
+    },
+    "partial": "Showing {{n}} of {{t}} movements — narrow the period or the filters"
   }
 }
