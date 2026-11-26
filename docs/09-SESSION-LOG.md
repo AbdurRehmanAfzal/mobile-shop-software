@@ -2583,3 +2583,15 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: the owner's next request; release `develop` → `main` when the owner says.
 
 **Open questions**: none.
+
+## 2026-11-26 — One report look, columns / hidden cost on every report, PDF rows kept whole (ADR-144)
+
+**Asked (owner, from shopkeepers' complaints)**: every report and sheet in the khata report's format, with optional fields, filters and a way to hide cost and profit; every report shareable, downloadable, printable; fix the PDF rows cut in half at a page end; push and merge.
+
+**Done** (branch `develop`): `exports/frame.py` (the one look, `PRINT_SAFE`), `exports/options.py` (`rcols` / `rhide` / `rnocost` for every `_file` and `a4.page` report), `_printable` and `a4.page` on the frame, `PRINT_SAFE` in the khata report, the unit ledger and the A4 bill; `DownloadButton` with "Hide cost and profit" and "Choose the columns", Print in both sheets; `printPagePdf` ends pages under a row. Strings `rep.*`.
+
+**Verified**: pytest — `test_report_options` (new) with the export, A4, bills-hub, thermal-ink, khata, item-ledger, shop-audit, repairs and reports tests; tsc; vitest; Playwright `report-options` (new), `reports-a4`, `reports-hub`, `invoices-hub`. The generated PDF's two pages were looked at: each ends and starts on a whole row. See the session's last message for the exact results. **Not done**: the full suites; see ADR-144 "Not done".
+
+**Next**: the owner's next request. Candidates from ADR-144: filters per report, the fixed-layout pages' columns, a download on the screens without one.
+
+**Open questions**: none.

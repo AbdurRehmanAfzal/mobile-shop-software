@@ -7,7 +7,6 @@ Cost/profit columns only for roles with VIEW_COST."""
 
 import csv
 import datetime as dt
-import html
 import io
 import uuid
 from collections.abc import Iterable
@@ -137,11 +136,19 @@ def _file(
     rows: Iterable[list],
     title: str | None = None,
 ) -> Response:
+    from app.modules.exports import options
+
     rows = [["" if v is None else v for v in r] for r in rows]
     stamp = shop_today().isoformat()
     ur = lang == "ur"
     if ur:
         header = [UR_HEADERS.get(h, h) for h in header]
+    # ADR-144: the columns the reader left out, cost and profit when asked
+    o = options.get()
+    if o and o.cols:
+        return options.fields([header])
+    header, rows = options.cut(list(header), rows)
+    if ur:
         base = name.split("-")[0] if name.startswith("statement") else name
         title = UR_TITLES.get(base, title or name)
     if fmt == "xlsx":
@@ -202,36 +209,18 @@ def _printable(
     from app.modules.auth.models import Shop
 
     shop = db.get(Shop, ctx.shop_id)
-    e = html.escape
-    num = lambda v: isinstance(v, (int, float, Decimal))
-    head = "".join(f"<th>{e(str(h))}</th>" for h in header)
-    body = "".join(
-        "<tr>"
-        + "".join(f'<td class="{"n" if num(v) else ""}" dir="auto">{e(str(v))}</td>' for v in r)
-        + "</tr>"
-        for r in rows
+    from app.modules.exports import a4, frame
+
+    # ADR-144: the one report look; many columns get a smaller type and wrap (A4 portrait, ADR-078)
+    page = frame.shell(
+        shop,
+        title=title,
+        period=None,
+        who=None,
+        ur=ur,
+        body=a4._table(header, rows),
+        rows=len(rows),
     )
-    now = dt.datetime.now().strftime("%d-%m-%Y %I:%M %p")
-    # owner 2026-11-15 (ADR-078): every report fits A4 portrait (the app's PDF is A4 portrait); many
-    # columns get a smaller type and wrap instead of running off the page
-    n = len(header)
-    fs, pad = (12, "6px 8px") if n <= 6 else (10, "4px 5px") if n <= 9 else (8.5, "3px 3px")
-    page = f"""<!doctype html><html lang="{"ur" if ur else "en"}" dir="{"rtl" if ur else "ltr"}"><head><meta charset="utf-8"><title>{e(title)}</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Noto+Nastaliq+Urdu&display=swap">
-<style>
-@page {{ size: A4 portrait; margin: 10mm; }}
-body {{ font-family: {"'Noto Nastaliq Urdu', Manrope" if ur else "Manrope, 'Noto Nastaliq Urdu'"}, sans-serif; color: #1B1F24; margin: 0; {"line-height: 1.9;" if ur else ""} }}\n.n, h1 .n {{ font-family: Manrope, sans-serif; }}
-h1 {{ font-size: 20px; margin: 0; }} .meta {{ color: #5E646B; font-size: 12px; margin: 4px 0 12px; }}
-table {{ width: 100%; border-collapse: collapse; font-size: {fs}px; }}
-thead {{ display: table-header-group; }} tr {{ break-inside: avoid; }}
-th {{ background: #F6F4EF; text-align: start; }} th, td {{ border: 1px solid #E6E2DA; padding: {pad}; vertical-align: top; overflow-wrap: anywhere; }}
-td.n {{ text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }}
-tr:nth-child(even) td {{ background: #FBFAF7; }}
-</style></head><body>
-<h1>{e(shop.name if shop else "")} · {e(title)}</h1>
-<div class="meta">{e(now)} · {len(rows)} rows</div>
-<table><thead><tr>{head}</tr></thead><tbody>{body}</tbody></table>
-</body></html>"""
     return Response(content=page, media_type="text/html; charset=utf-8")
 
 

@@ -90,7 +90,7 @@ def test_every_report_downloads_as_csv_excel_and_pdf(owner, cat):
         assert wb.active.max_row >= 1, name
         h = owner.get(f"/api/v1/exports/{name}", params={"format": "pdf"})
         assert h.status_code == 200 and h.headers["content-type"].startswith("text/html"), name
-        assert "<table>" in h.text and "Test Mobile" in h.text, name
+        assert "<table" in h.text and "Test Mobile" in h.text, name
     # numbers stay numbers in Excel
     x = owner.get("/api/v1/exports/profit-loss", params={"format": "xlsx"})
     ws = load_workbook(io.BytesIO(x.content)).active
