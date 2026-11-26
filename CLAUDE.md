@@ -103,6 +103,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Read ADR-139 before touching `features/trade/SalePurchasePage.tsx` or the `stp.*` texts.
 - Rules: every figure is the server's (`GET /bills-hub/sales`, `/bills-hub/purchases`) and a filter asks the server; the purchases side and every cost / profit figure only for owner / manager; settle / correct / delete / report are the invoices page's sheets (`InvoiceHub.tsx`) — never a second copy, never an edit in place.
 
+## Report pages: one look, the reader's choices, whole rows (shopkeepers 2026-11-26, ADR-144)
+- Read ADR-144 before touching `exports/frame.py`, `exports/options.py`, `exports.router._printable`, `exports/a4.py`, `DownloadButton.tsx` or `lib/share.printPagePdf`.
+- Rules: a new report is made with `_file` or `a4.page` (it then has the look, `rcols` / `rhide` / `rnocost`, PDF / Excel / CSV) and offered with `DownloadButton`; a page with its own style ends its `<style>` with `frame.PRINT_SAFE`; the choices only remove columns the login was given — the report's own VIEW_COST rule stays; the server leaves columns out, the app never edits a report.
+
 ## Reports list (owner 2026-11-19, ADR-111)
 - Read ADR-111 before touching `frontend/src/features/reports/catalog.ts`, `ReportsHub.tsx` or `ReportsHome.tsx`.
 - Rules: `/reports` lists every report (it is not behind the `reports` module; the profit tabs live at `/reports?tab=…` and gate themselves); the list never computes or copies a report — an entry points at the screen where the report lives; **a new report or sheet gets an entry in `catalog.ts`** with its `hub.r.<id>.t / .d` strings in three languages and its module / role rule (`catalog.test.ts`).

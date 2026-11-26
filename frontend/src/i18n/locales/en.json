@@ -7028,5 +7028,10 @@
     },
     "masterLedger": "Master ledger",
     "accounts": "Accounts & trial balance"
+  },
+  "rep": {
+    "hideCost": "Hide cost and profit",
+    "columns": "Choose the columns",
+    "noColumns": "This report has fixed columns."
   }
 }

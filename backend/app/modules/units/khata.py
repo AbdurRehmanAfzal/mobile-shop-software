@@ -369,6 +369,7 @@ def report_html(
 
     from app.modules.auth import profile
     from app.modules.auth.models import Shop
+    from app.modules.exports import frame
     from app.modules.ledger.service import party_statement
 
     shop = db.get(Shop, shop_id)
@@ -486,6 +487,7 @@ td.n, th.n {{ text-align: {other}; white-space: nowrap; }} .o {{ color: #b42318;
 .l {{ direction: ltr; unicode-bidi: isolate; display: inline-block; }}
 small {{ color: #555; }}
 .foot {{ display: flex; justify-content: space-between; margin-top: 18px; font-size: 11px; color: #444; }}
+{frame.PRINT_SAFE}
 </style></head><body>
 {profile.header_html(shop, ur)}
 <div class="top"><div><b>{e(T["title"][i])}</b><br><small>{e(T["period"][i])}:</small> {period}</div><div class="r">{e(T["made"][i])}: {ltr(shop_today().isoformat())}</div></div>

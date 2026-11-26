@@ -77,6 +77,7 @@ export async function printPagePdf(path: string, name: string): Promise<DocFile>
   document.body.appendChild(frame)
   let heightPx: number
   let xhtml: string
+  let stops: number[] = []
   try {
     const win = frame.contentWindow!
     const doc = frame.contentDocument!
@@ -93,6 +94,7 @@ export async function printPagePdf(path: string, name: string): Promise<DocFile>
     doc.documentElement.style.background = '#fff'
     doc.body.style.paddingBottom = '16px'
     heightPx = Math.ceil(Math.max(doc.documentElement.scrollHeight, doc.body.getBoundingClientRect().bottom + 16))
+    stops = thermal ? [] : pageStops(doc)
     xhtml = new XMLSerializer().serializeToString(doc.documentElement)
   } finally {
     frame.remove()
@@ -136,7 +138,7 @@ export async function printPagePdf(path: string, name: string): Promise<DocFile>
     const cuts: [number, number][] = []
     let top = 0
     while (top < H - 2) {
-      const bottom = top + perPage >= H ? H : cutAt(canvas, top + perPage, Math.round(perPage * 0.15))
+      const bottom = top + perPage >= H ? H : stopAt(stops, scale, top, perPage) ?? cutAt(canvas, top + perPage, Math.round(perPage * 0.15))
       cuts.push([top, bottom])
       top = bottom
     }
@@ -179,6 +181,34 @@ export async function printPagePdf(path: string, name: string): Promise<DocFile>
     }
   }
   return { blob: pdf.output('blob'), name: name.endsWith('.pdf') ? name : `${name}.pdf` }
+}
+
+/** Where a page may end (ADR-144): under a table row, a card or a block of the page, and above a
+ *  heading — read from the laid-out page itself. Looking for a blank line of pixels (below) never
+ *  finds one inside a table, whose side lines run through every row, so rows came out cut in half. */
+function pageStops(doc: Document): number[] {
+  const out = new Set<number>()
+  doc.querySelectorAll('tr, .card, .st, .box, .label, body > *, section > *').forEach((el) => {
+    // a row inside a cell that spans rows would cut its neighbours: only rows of whole-row cells
+    if (el.tagName === 'TR' && el.querySelector('[rowspan]')) return
+    out.add(Math.round(el.getBoundingClientRect().bottom))
+  })
+  doc.querySelectorAll('h2, h3').forEach((el) => {
+    out.delete(Math.round(el.getBoundingClientRect().bottom)) // never right under a heading
+    out.add(Math.round(el.getBoundingClientRect().top))
+  })
+  return [...out].sort((a, b) => a - b)
+}
+
+/** the lowest allowed stop on this page (canvas px), if one lies in its lower 70% */
+function stopAt(stops: number[], scale: number, top: number, perPage: number): number | null {
+  let best: number | null = null
+  for (const y of stops) {
+    const c = Math.round(y * scale)
+    if (c > top + perPage) break
+    if (c > top + perPage * 0.3) best = c
+  }
+  return best
 }
 
 /** a blank row at or above `y` (up to `look` px higher), so a page never cuts through a line */

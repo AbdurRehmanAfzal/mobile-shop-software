@@ -3,27 +3,49 @@
  *  URL without `format` (it may already carry a query string). The PDF is made from the server's
  *  print page on the phone, which keeps Urdu correct. */
 
-import { Download, FileSpreadsheet, FileText, Printer, Share2, Sheet as SheetIcon } from 'lucide-react'
-import { useState, type ReactNode } from 'react'
+import { Columns3, Download, EyeOff, FileSpreadsheet, FileText, Printer, Share2, Sheet as SheetIcon } from 'lucide-react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { BiLabel, useLang } from './Bilingual'
 import DocLangPicker from './DocLangPicker'
 import { DocStatus, useDocFile, type DocMode } from './DocShare'
 import { BtnText, Sheet } from './ui'
-import { downloadFile, openPrintable } from '@/lib/files'
+import { BASE, authHeaders, downloadFile, openPrintable } from '@/lib/files'
+import { useAuth } from '@/lib/auth'
 import { withDocLang } from '@/lib/docLang'
 import { fetchFile, printPagePdf } from '@/lib/share'
 import { useModule } from '@/lib/modules'
 
 type Fmt = 'pdf' | 'xlsx' | 'csv'
+interface Field { i: number; label: string; cost: boolean }
 
 /** `formats`: the files this report comes as (default PDF, Excel and CSV). `compact`: two small
  *  icon buttons, for a row in a long list (the Reports page, ADR-111). */
 export default function DownloadButton({ path, name, formats = ['pdf', 'xlsx', 'csv'], compact = false }: { path: string; name: string; formats?: Fmt[]; compact?: boolean }) {
   const [mode, setMode] = useState<DocMode | null>(null)
-  const { pick } = useLang()
+  const { pick, ur, cls } = useLang()
   const s = useDocFile(name)
   const on = useModule('exports')
-  const url = (fmt: string) => withDocLang(`${path}${path.includes('?') ? '&' : '?'}format=${fmt}`)
+  // ADR-144: what the reader leaves out of this report — columns, cost and profit. The server
+  // does the leaving out (`rhide`, `rnocost`); the app only sends the choice.
+  const role = useAuth((x) => x.me?.user.role)
+  const canCost = role === 'owner' || role === 'manager'
+  const [noCost, setNoCost] = useState(false)
+  const [hidden, setHidden] = useState<number[]>([])
+  const [fields, setFields] = useState<Field[] | null>(null)
+  const [pickCols, setPickCols] = useState(false)
+  const opts = `${noCost ? '&rnocost=1' : ''}${hidden.length ? `&rhide=${hidden.join(',')}` : ''}`
+  const url = (fmt: string) => withDocLang(`${path}${path.includes('?') ? '&' : '?'}format=${fmt}${opts}`)
+  const colsUrl = withDocLang(`${path}${path.includes('?') ? '&' : '?'}format=${formats.includes('csv') ? 'csv' : formats[0]}&rcols=1`)
+  useEffect(() => { setFields(null); setHidden([]); setPickCols(false) }, [path])
+  useEffect(() => {
+    if (!pickCols) return
+    let live = true
+    fetch(`${BASE}${colsUrl}`, { headers: authHeaders() })
+      .then((r) => (r.ok && (r.headers.get('content-type') ?? '').includes('json') ? r.json() : { fields: [] }))
+      .then((j: { fields?: Field[] }) => { if (live) setFields(j.fields ?? []) })
+      .catch(() => { if (live) setFields([]) })
+    return () => { live = false }
+  }, [pickCols, colsUrl])
 
   function run(fmt: Fmt) {
     const make = () => (fmt === 'pdf' ? printPagePdf(url('pdf'), name) : fetchFile(url(fmt), `${name}.${fmt}`))
@@ -52,10 +74,37 @@ export default function DownloadButton({ path, name, formats = ['pdf', 'xlsx', '
       <Sheet open={mode !== null} onClose={() => setMode(null)} title={mode === 'share' ? 'docShare.shareTitle' : 'counter.downloadTitle'}>
         <div className="flex flex-col gap-2.5">
           <DocLangPicker />
+          <div className="flex flex-col gap-1.5 rounded-2xl border border-line bg-surface px-3 py-2" data-testid="rep-options">
+            {canCost ? (
+              <label className={`flex min-h-10 cursor-pointer items-center gap-2 text-ink ${ur ? cls('sm') : 'text-sm font-semibold'}`}>
+                <input type="checkbox" checked={noCost} onChange={(e) => setNoCost(e.target.checked)} className="h-4 w-4" data-testid="rep-nocost" />
+                <EyeOff size={16} className="shrink-0 text-muted" />{pick('rep.hideCost')}
+              </label>
+            ) : null}
+            <button type="button" aria-expanded={pickCols} onClick={() => setPickCols((v) => !v)} className={`tap flex min-h-10 items-center gap-2 text-start text-ink ${ur ? cls('sm') : 'text-sm font-semibold'}`} data-testid="rep-cols">
+              <Columns3 size={16} className="shrink-0 text-muted" />
+              <span className="flex-1">{pick('rep.columns')}</span>
+              {hidden.length ? <span className="num rounded-full bg-ground px-2 text-xs font-bold text-muted">−{hidden.length}</span> : null}
+            </button>
+            {pickCols ? (
+              fields === null ? <span className="text-sm text-muted">…</span>
+                : fields.length === 0 ? <span className={`text-muted ${ur ? cls('sm') : 'text-xs font-semibold'}`} data-testid="rep-cols-none">{pick('rep.noColumns')}</span>
+                  : (
+                    <div className="grid grid-cols-2 gap-x-3" data-testid="rep-cols-list">
+                      {fields.filter((f) => !(noCost && f.cost)).map((f) => (
+                        <label key={f.i} className="flex min-h-9 cursor-pointer items-center gap-1.5 text-ink">
+                          <input type="checkbox" checked={!hidden.includes(f.i)} onChange={(e) => setHidden(e.target.checked ? hidden.filter((x) => x !== f.i) : [...hidden, f.i])} className="h-4 w-4 shrink-0" />
+                          <span className="min-w-0 truncate text-[13px] font-semibold" dir="auto">{f.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  )
+            ) : null}
+          </div>
           {formats.includes('pdf') ? <Choice icon={<FileText size={24} />} tone="bg-expense text-expense-fg" title="counter.pdf" hint="counter.pdfHint" busy={s.busy === 'pdf'} disabled={!!s.busy} onClick={() => run('pdf')} /> : null}
           {formats.includes('xlsx') ? <Choice icon={<FileSpreadsheet size={24} />} tone="bg-sell text-sell-fg" title="counter.excel" hint="counter.excelHint" busy={s.busy === 'xlsx'} disabled={!!s.busy} onClick={() => run('xlsx')} /> : null}
           {formats.includes('csv') ? <Choice icon={<SheetIcon size={24} />} tone="bg-buy text-buy-fg" title="counter.csv" hint="counter.csvHint" busy={s.busy === 'csv'} disabled={!!s.busy} onClick={() => run('csv')} /> : null}
-          {mode === 'download' ? (
+          {formats.includes('pdf') ? (
             <Choice icon={<Printer size={24} />} tone="bg-khata text-khata-fg" title="common.print" hint="docShare.printHint" busy={false} disabled={!!s.busy} onClick={() => { setMode(null); void openPrintable(url('pdf')) }} />
           ) : null}
           <DocStatus s={s} />

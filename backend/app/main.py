@@ -167,6 +167,10 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    # ADR-144: a report's chosen columns / hidden cost, for every report page and file
+    from app.modules.exports.options import ReportOptionsMiddleware
+
+    app.add_middleware(ReportOptionsMiddleware)
     install_error_handlers(app)
 
     @app.get("/health", tags=["system"])

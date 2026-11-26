@@ -246,6 +246,7 @@ def _name(dev: dict) -> str:
 def sheet_html(
     db: Session, shop_id: uuid.UUID, device_id: uuid.UUID, lang: str | None = None
 ) -> str:
+    from app.modules.exports import frame
     from app.modules.units.service import device_money
 
     shop = db.get(Shop, shop_id)
@@ -320,6 +321,7 @@ td.n, th.n {{ text-align: {other}; white-space: nowrap; }} .o {{ color: #b42318;
 .l {{ direction: ltr; unicode-bidi: isolate; display: inline-block; }}
 small {{ color: #555; }}
 .foot {{ display: flex; justify-content: space-between; margin-top: 18px; font-size: 11px; color: #444; }}
+{frame.PRINT_SAFE}
 </style></head><body>
 {profile.header_html(shop, ur)}
 <div class="top"><div><b>{e(T["title"][i])}</b></div><div class="r">{e(T["made"][i])}: {ltr(shop_today().isoformat())}<br>{ltr(dev.get("barcode") or "")}</div></div>

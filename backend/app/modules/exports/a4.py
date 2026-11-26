@@ -10,6 +10,8 @@ from decimal import Decimal
 
 from fastapi.responses import Response
 
+from app.modules.exports import frame, options
+
 NUM = (int, float, Decimal)
 
 
@@ -61,17 +63,12 @@ def page(
 ) -> Response:
     """sections: [{"title", "header": [...], "rows": [[...]], "notes": [...] (optional)}]"""
     e = html.escape
-    addr = " · ".join(
-        x
-        for x in (
-            getattr(shop, "address", None),
-            getattr(shop, "city", None),
-            getattr(shop, "phone", None),
-            f"NTN {shop.ntn}" if getattr(shop, "ntn", None) else None,
-        )
-        if x
-    )
-    now = dt.datetime.now().strftime("%d-%m-%Y %I:%M %p")
+    # ADR-144: the columns the reader left out, cost and profit when asked
+    every = options.labels([sec["header"] for sec in sections])
+    o = options.get()
+    if o and o.cols:
+        return options.fields([sec["header"] for sec in sections])
+    stats = options.stats(stats)
     stat_html = "".join(
         f'<div class="st"><span>{e(k)}</span><b class="n{" neg" if isinstance(v, NUM) and v < 0 else ""}">{e(_s(v))}</b></div>'
         for k, v in stats
@@ -79,52 +76,21 @@ def page(
     parts = []
     for sec in sections:
         notes = "".join(f"<li>{e(str(x))}</li>" for x in sec.get("notes") or [])
+        header, rows = options.cut(list(sec["header"]), sec["rows"], every)
         count = sec.get("count")
         parts.append(
             f"<section><h2>{e(sec['title'])}{f' <span>· {count}</span>' if count is not None else ''}</h2>"
-            f"{_table(sec['header'], sec['rows'])}"
+            f"{_table(header, rows)}"
             f"{f'<ul class=notes>{notes}</ul>' if notes else ''}</section>"
         )
-    css = """
-@page { size: A4 portrait; margin: 10mm; }
-* { box-sizing: border-box; }
-body { font-family: Manrope, 'Noto Nastaliq Urdu', Arial, sans-serif; color: #111; margin: 0; font-size: 10.5px; }
-body.ur { font-family: 'Noto Nastaliq Urdu', Manrope, Arial, sans-serif; line-height: 1.8; }
-.n { font-family: Manrope, Arial, sans-serif; font-variant-numeric: tabular-nums; }
-.top { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; border-bottom: 2px solid #111; padding-bottom: 6px; }
-.top h1 { font-size: 18px; margin: 0; } .top .sub { color: #444; font-size: 10.5px; margin-top: 2px; }
-.top .right { text-align: end; font-size: 10.5px; } .top .right b { font-size: 14px; display: block; }
-.period { margin: 6px 0 0; font-size: 11.5px; font-weight: 700; }
-.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin: 8px 0 4px; }
-.st { border: 1px solid #999; border-radius: 4px; padding: 4px 6px; display: flex; flex-direction: column; break-inside: avoid; }
-.st span { font-size: 9px; color: #333; } .st b { font-size: 13px; }
-h2 { font-size: 13px; margin: 12px 0 4px; break-after: avoid; } h2 span { color: #555; font-weight: 600; }
-table { width: 100%; border-collapse: collapse; }
-thead { display: table-header-group; } tr { break-inside: avoid; }
-th, td { border: 1px solid #aaa; padding: 3px 5px; vertical-align: top; text-align: start; overflow-wrap: anywhere; line-height: 1.3; }
-th { background: #eee; font-size: 0.92em; }
-td.n { text-align: end; white-space: nowrap; }
-.neg { color: #B42318; }
-tbody tr:nth-child(even) td { background: #FAFAF8; }
-.notes { color: #555; font-size: 9.5px; margin: 4px 0 0; padding-inline-start: 16px; } .muted { color: #666; }
-.foot { margin-top: 14px; color: #666; font-size: 9px; border-top: 1px solid #ccc; padding-top: 4px; }
-"""
-    shop_name = (
-        getattr(shop, "name_ur", None)
-        if ur and getattr(shop, "name_ur", None)
-        else getattr(shop, "name", "")
+    out = frame.shell(
+        shop,
+        title=title,
+        period=period,
+        who=who,
+        ur=ur,
+        body=(f'<div class="stats">{stat_html}</div>' if stats else "") + "".join(parts),
     )
-    out = f"""<!doctype html><html lang="{"ur" if ur else "en"}" dir="{"rtl" if ur else "ltr"}"><head><meta charset="utf-8">
-<title>{e(title)} · {e(shop_name or "")}</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Noto+Nastaliq+Urdu&display=swap">
-<style>{css}</style></head><body class="{"ur" if ur else ""}">
-<div class="top"><div><h1>{e(shop_name or "")}</h1><div class="sub">{e(addr)}</div></div>
-<div class="right"><b>{e(title)}</b>{e(now)}{(" · " + e(who)) if who else ""}</div></div>
-<div class="period">{e(period)}</div>
-{f'<div class="stats">{stat_html}</div>' if stats else ""}
-{"".join(parts)}
-<div class="foot">{e(shop_name or "")} · {e(title)} · {e(period)} · PKR</div>
-</body></html>"""
     return Response(content=out, media_type="text/html; charset=utf-8")
 
 
@@ -148,6 +114,24 @@ def workbook(
         ws.page_setup.fitToWidth = 1
         ws.page_setup.fitToHeight = 0
 
+    every = options.labels([sec["header"] for sec in sections])
+    o = options.get()
+    if o and o.cols:
+        return options.fields([sec["header"] for sec in sections])
+    stats = options.stats(stats)
+    sections = [
+        {
+            **sec,
+            **dict(
+                zip(
+                    ("header", "rows"),
+                    options.cut(list(sec["header"]), sec["rows"], every),
+                    strict=True,
+                )
+            ),
+        }
+        for sec in sections
+    ]
     wb = Workbook()
     s = wb.active
     s.title = "Summary"

@@ -7028,5 +7028,10 @@
     },
     "masterLedger": "Master ledger",
     "accounts": "Accounts aur trial balance"
+  },
+  "rep": {
+    "hideCost": "Lagat aur munafa chhupayen",
+    "columns": "Columns chunein",
+    "noColumns": "Is report ke columns tay hain."
   }
 }
