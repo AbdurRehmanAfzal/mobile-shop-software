@@ -9,7 +9,7 @@
  *  Every figure is the server's: `/bills-hub/sales` (read-only, `billshub/service.py`) gives the kept
  *  lines of the sale bills with their cost, profit or loss, what was received and is still udhaar, and
  *  the same per kind, brand, model, person and bill; the sheet and the A4 report are
- *  `/bills-hub/sales/sheet`. The Purchases screen is `/new/purchases` (file 10).
+ *  `/bills-hub/sales/sheet`. The Purchases screen is `/new/purchases-screen` (the same file).
  *
  *  Differences from the drawing: "Duplicate" is "a new bill for this customer" (a phone is sold once);
  *  there is no bulk delete (ADR-099: each delete is checked on its own on the bill's page); settling
@@ -66,7 +66,7 @@ export default function NewSales() {
   const [toast, setToast] = useState<string | null>(null)
   useEffect(() => { if (!toast) return; const h = setTimeout(() => setToast(null), 2800); return () => clearTimeout(h) }, [toast])
   useEffect(() => {
-    const go: Record<string, string> = { F2: '/new/sale/new', F3: '/new/purchases', F4: '/new/khata', F10: '/new/invoices' }
+    const go: Record<string, string> = { F2: '/new/sale/new', F3: '/new/purchases-screen', F4: '/new/khata', F10: '/new/invoices' }
     const onKey = (e: KeyboardEvent) => { if (go[e.key]) { e.preventDefault(); nav(go[e.key]) } }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -109,7 +109,7 @@ export default function NewSales() {
             </Link>
             <div className="inline-flex p-1 rounded-xl bg-slate-100 dark:bg-obsidian-850 border border-slate-200 dark:border-slate-700">
               <span className="px-3.5 py-1.5 rounded-lg text-xs font-display font-extrabold flex items-center gap-1.5 bg-[#A3E635] text-obsidian-950 shadow-xs" aria-current="page"><ShoppingBag className="w-3.5 h-3.5" />{pick('nsales.salesScreen')} <span dir="ltr">(F2)</span></span>
-              {canCost ? <button type="button" onClick={() => nav('/new/purchases')} className="px-3.5 py-1.5 rounded-lg text-xs font-display font-extrabold flex items-center gap-1.5 text-slate-600 dark:text-slate-300 cursor-pointer" data-testid="nsales-purchases"><Boxes className="w-3.5 h-3.5" />{pick('nsales.purchasesScreen')} <span dir="ltr">(F3)</span></button> : null}
+              {canCost ? <button type="button" onClick={() => nav('/new/purchases-screen')} className="px-3.5 py-1.5 rounded-lg text-xs font-display font-extrabold flex items-center gap-1.5 text-slate-600 dark:text-slate-300 cursor-pointer" data-testid="nsales-purchases"><Boxes className="w-3.5 h-3.5" />{pick('nsales.purchasesScreen')} <span dir="ltr">(F3)</span></button> : null}
             </div>
             <button type="button" onClick={() => nav('/new/sale/new')} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-display font-extrabold bg-[#A3E635] hover:bg-[#84CC16] text-obsidian-950 cursor-pointer" data-testid="nsales-new"><Plus className="w-3.5 h-3.5" />{pick('nsales.newSale')}</button>
             <button type="button" onClick={() => setA4(true)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-display font-extrabold bg-obsidian-950 dark:bg-obsidian-800 text-white border border-slate-700 hover:border-[#A3E635] cursor-pointer" data-testid="nsales-a4"><BookOpen className="w-3.5 h-3.5 text-amber-400" />{pick('nsales.ledgerBtn')}</button>

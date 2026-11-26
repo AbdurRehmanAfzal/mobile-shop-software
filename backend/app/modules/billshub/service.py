@@ -14,7 +14,13 @@ Read-only and derived:
   model, person and bill, with units, the sale, the cost, the profit or loss of each line, and what
   was received and is still udhaar. A bill's udhaar (total − returned − paid) is shared over its kept
   lines by their money (the last line takes the rounding), so the lines of a bill add up to the bill.
-  Cost, profit, loss and where a phone was bought from only with VIEW_COST."""
+  Cost, profit, loss and where a phone was bought from only with VIEW_COST.
+- `purchases` (the Purchases screen of mock-up 25) is the same for the purchase bills: every kept
+  line with what it cost on the bill (`net_cost` + its share of freight, so the lines add up to the
+  bill), what was paid and is still to pay the seller (shared like the sales' udhaar), and where the
+  stock is now — a unit still the shop's (in stock, on amanat, with a customer to try, in repair,
+  faulty) or sold (and to whom), the pieces of an item still in its purchase's batch. Purchase
+  figures are cost, so the whole screen is for VIEW_COST."""
 
 import datetime as dt
 import uuid
@@ -26,10 +32,11 @@ from sqlalchemy.orm import Session
 
 from app.core.permissions import Cap
 from app.db.base import ZERO
-from app.modules.accessories.models import Accessory
+from app.modules.accessories.models import Accessory, AccessoryBatch
 from app.modules.catalogue.models import Brand, Model
 from app.modules.catalogue.service import name_key
 from app.modules.devices.models import Device
+from app.modules.devices.state import DeviceStatus
 from app.modules.invoices.service import list_documents
 from app.modules.ledger.models import CashAccount, LedgerGroup
 from app.modules.ledger.service import money
@@ -39,7 +46,7 @@ from app.modules.purchases.models import Purchase, PurchaseStatus
 from app.modules.repairs.models import RepairJob
 from app.modules.returns.models import ReturnDoc
 from app.modules.sales.models import Invoice, InvoiceStatus
-from app.modules.stockhub.service import _bought
+from app.modules.stockhub.service import _bought, _sold
 
 TYPES = ("sale", "purchase", "return", "repair")
 STATES = ("due", "paid", "in_repair", "returned", "void")
@@ -658,5 +665,272 @@ def sales(
         "parties": sorted(party_rows, key=lambda r: r["sale"], reverse=True),
         "bills": [bill_rows[i.id] for i in invs if i.id in shown],
         "lines": [clean(ln) for ln in lines],
+        "brand_options": [{"key": k_, "name": n} for k_, n in brand_options],
+    }
+
+
+# -------------------------------------------------------------------------------------- purchases
+
+# a unit bought that is still the shop's, wherever it is right now
+STILL_OURS = {
+    DeviceStatus.IN_STOCK,
+    DeviceStatus.ON_LOAN,
+    DeviceStatus.WITH_CUSTOMER_FOR_APPROVAL,
+    DeviceStatus.IN_REPAIR,
+    DeviceStatus.FAULTY,
+}
+P_DEALS = ("udhaar", "paid")
+
+
+def purchases(
+    db: Session,
+    shop_id: uuid.UUID,
+    ctx,
+    *,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+    q: str | None = None,
+    kind: str | None = None,
+    brand: str | None = None,
+    mode: str | None = None,
+    deal: str | None = None,
+) -> dict:
+    docs = list_documents(
+        db,
+        shop_id,
+        ctx,
+        kind="purchase",
+        q=q,
+        date_from=date_from,
+        date_to=date_to,
+        limit=MANY,
+        per_kind=MANY,
+    )
+    ids = [r["id"] for r in docs if r["kind"] == "purchase" and r["state"] != "void"]
+    purs: list[Purchase] = []
+    for i in range(0, len(ids), 500):
+        purs += db.scalars(select(Purchase).where(Purchase.id.in_(ids[i : i + 500]))).all()
+    purs.sort(key=lambda x: (x.date, x.created_at), reverse=True)
+    cat = _Cat(db, shop_id)
+    modes = _modes(db, shop_id, purs, "purchase")
+    changes = _changes(db, shop_id, [x.id for x in purs])
+    sold = _sold(db, shop_id)
+    # the pieces of each item still in the batch its purchase opened
+    left_of: dict = defaultdict(int)
+    pids = [x.id for x in purs]
+    for i in range(0, len(pids), 500):
+        for b in db.scalars(
+            select(AccessoryBatch).where(
+                AccessoryBatch.shop_id == shop_id,
+                AccessoryBatch.document_type == "purchase",
+                AccessoryBatch.document_id.in_(pids[i : i + 500]),
+            )
+        ).all():
+            left_of[(b.document_id, b.accessory_id)] += b.qty_left
+    people: dict = {}
+
+    def person(pid):
+        if pid and pid not in people:
+            people[pid] = db.get(Party, pid)
+        return people.get(pid) if pid else None
+
+    all_lines: list[dict] = []
+    bill_rows: dict = {}
+    for pur in purs:
+        kept = [ln for ln in sorted(pur.lines, key=lambda x: x.line_no) if ln.returned_at is None]
+        amounts = [money(ln.net_cost + ln.extra_cost_share) for ln in kept]
+        kept_total = money(sum(amounts, ZERO))
+        due = max(ZERO, money(pur.total - pur.returned_total - pur.paid))
+        p = person(pur.party_id)
+        left = due
+        for n, (ln, amount) in enumerate(zip(kept, amounts, strict=True)):
+            info = cat.line(ln.device_id, ln.accessory_id, ln.description, ln.qty)
+            d = cat.device(ln.device_id) if ln.device_id else None
+            it = cat.item(ln.accessory_id) if ln.accessory_id else None
+            sold_to = sold_no = None
+            if d is not None:
+                b = cat.brands.get(d.brand_id)
+                m = cat.models.get(d.model_id)
+                brand_name = b.name if b else None
+                model_name = m.name if m else ""
+                model_key = f"{d.brand_id}:{name_key(model_name)}"
+                here = ln.qty if d.status in STILL_OURS else 0
+                gone = ln.qty if d.status == DeviceStatus.SOLD else 0
+                state = "in_shop" if here else "sold" if gone else "other"
+                if gone and (s_ := sold.get(d.id)):
+                    buyer = person(s_[1].party_id)
+                    sold_to, sold_no = (buyer.name if buyer else None), s_[1].no
+            elif it is not None:
+                brand_name = it.brand
+                model_name = it.name
+                model_key = f"item:{it.id}"
+                pool = left_of[(pur.id, it.id)]
+                here = min(ln.qty, pool)
+                left_of[(pur.id, it.id)] = pool - here
+                gone = ln.qty - here
+                state = "in_shop" if here == ln.qty else "sold" if here == 0 else "part"
+            else:
+                brand_name = None
+                model_name = ln.description or ""
+                model_key = f"text:{(ln.description or '').strip().lower()}"
+                here = gone = 0
+                state = "other"
+            if n == len(kept) - 1:
+                line_due = left
+            else:
+                line_due = money(due * amount / kept_total) if kept_total > ZERO else ZERO
+                line_due = min(line_due, left)
+            left = money(left - line_due)
+            all_lines.append(
+                {
+                    "purchase_id": pur.id,
+                    "no": pur.no,
+                    "date": pur.date,
+                    "party_id": pur.party_id,
+                    "party_name": p.name if p else None,
+                    "party_phone": p.phone if p else None,
+                    "role": _role(p),
+                    "kind": info["kind"],
+                    "brand": brand_name,
+                    "brand_key": (brand_name or "").strip().lower(),
+                    "model": model_name,
+                    "model_key": model_key,
+                    "code": info.get("code"),
+                    "device_id": ln.device_id,
+                    "accessory_id": ln.accessory_id,
+                    "qty": ln.qty,
+                    "amount": amount,
+                    "unit_cost": money(amount / ln.qty) if ln.qty else amount,
+                    "paid": money(amount - line_due),
+                    "due": line_due,
+                    "in_shop": here,
+                    "sold": gone,
+                    "state": state,
+                    "sold_to": sold_to,
+                    "sold_no": sold_no,
+                    "mode": modes.get(pur.id),
+                }
+            )
+        bill_rows[pur.id] = {
+            "id": pur.id,
+            "no": pur.no,
+            "date": pur.date,
+            "party_id": pur.party_id,
+            "party_name": p.name if p else None,
+            "party_phone": p.phone if p else None,
+            "role": _role(p),
+            "supplier_no": pur.supplier_invoice_no or pur.reference,
+            "total": money(pur.total),
+            "paid": money(pur.paid),
+            "returned": money(pur.returned_total),
+            "due": due,
+            "status": pur.status,
+            "mode": modes.get(pur.id),
+            "edited": bool(changes.get(pur.id)),
+            "changes": changes.get(pur.id, []),
+        }
+
+    brand_options = sorted(
+        {(ln["brand_key"], ln["brand"]) for ln in all_lines if ln["brand"]}, key=lambda x: x[0]
+    )
+
+    def keep(ln: dict) -> bool:
+        if kind and ln["kind"] != kind:
+            return False
+        if brand and ln["brand_key"] != brand.strip().lower():
+            return False
+        if mode and ln["mode"] != mode:
+            return False
+        bill_due = bill_rows[ln["purchase_id"]]["due"]
+        if deal == "udhaar" and bill_due <= ZERO:
+            return False
+        return not (deal == "paid" and bill_due > ZERO)
+
+    lines = [ln for ln in all_lines if keep(ln)]
+
+    def blank() -> dict:
+        return {
+            "units": 0,
+            "bills": set(),
+            "amount": ZERO,
+            "paid": ZERO,
+            "due": ZERO,
+            "in_shop": 0,
+            "sold": 0,
+        }
+
+    def add(a: dict, ln: dict) -> None:
+        a["units"] += ln["qty"]
+        a["bills"].add(ln["purchase_id"])
+        for k_ in ("amount", "paid", "due"):
+            a[k_] = money(a[k_] + ln[k_])
+        a["in_shop"] += ln["in_shop"]
+        a["sold"] += ln["sold"]
+
+    def shape(a: dict) -> dict:
+        out = {k_: v for k_, v in a.items() if k_ != "bills"}
+        out["bills"] = len(a["bills"])
+        # the average buying cost of one unit (the drawing's "Avg. unit buying cost")
+        out["avg"] = money(a["amount"] / a["units"]) if a["units"] else ZERO
+        return out
+
+    total = blank()
+    kinds_: dict = {k_: blank() for k_ in KINDS}
+    brands: dict = {}
+    models: dict = {}
+    parties: dict = {}
+    for ln in lines:
+        add(total, ln)
+        add(kinds_.setdefault(ln["kind"], blank()), ln)
+        b = brands.setdefault(ln["brand_key"], {**blank(), "brand": ln["brand"], "models": set()})
+        add(b, ln)
+        b["models"].add(ln["model_key"])
+        m = models.setdefault(
+            ln["model_key"],
+            {
+                **blank(),
+                "kind": ln["kind"],
+                "brand": ln["brand"],
+                "model": ln["model"],
+                "lines": [],
+            },
+        )
+        add(m, ln)
+        m["lines"].append(ln)
+        pp = parties.setdefault(
+            ln["party_id"],
+            {
+                **blank(),
+                "party_id": ln["party_id"],
+                "name": ln["party_name"],
+                "phone": ln["party_phone"],
+                "role": ln["role"],
+                "ids": [],
+            },
+        )
+        add(pp, ln)
+        if ln["purchase_id"] not in pp["ids"]:
+            pp["ids"].append(ln["purchase_id"])
+
+    brand_rows = []
+    for key, b in brands.items():
+        row = shape({k_: v for k_, v in b.items() if k_ != "models"})
+        row.update(key=key, models=len(b["models"]))
+        brand_rows.append(row)
+    model_rows = []
+    for key, m in models.items():
+        row = shape({k_: v for k_, v in m.items() if k_ != "lines"})
+        row.update(key=key, lines=m["lines"])
+        model_rows.append(row)
+    party_rows = [shape(p) for p in parties.values()]
+    shown = {ln["purchase_id"] for ln in lines}
+    return {
+        "figures": shape(total),
+        "kinds": [{"key": k_, **shape(a)} for k_, a in kinds_.items()],
+        "brands": sorted(brand_rows, key=lambda r: r["amount"], reverse=True),
+        "models": sorted(model_rows, key=lambda r: r["amount"], reverse=True),
+        "parties": sorted(party_rows, key=lambda r: r["amount"], reverse=True),
+        "bills": [bill_rows[x.id] for x in purs if x.id in shown],
+        "lines": lines,
         "brand_options": [{"key": k_, "name": n} for k_, n in brand_options],
     }
