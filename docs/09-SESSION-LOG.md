@@ -391,3 +391,17 @@
 **Next**: the owner merges the three branches (audit, bills, control); the coordinator resolves the merge conflicts between them (router, strings, docs).
 
 **Open questions**: should the shops list page through the server once there are thousands of shops?
+
+## 2026-11-26 — The purchases screen (file 25's F3) in the new product
+
+**Asked (owner)**: #151 merged (the three agent branches are all on staging; their worktrees and backends removed), then "file 25 ki purchases screen start karo".
+
+**Done** (branch `ui/37-new-purchases-screen`, from staging):
+- Backend, read-only and additive — `billshub/service.purchases`, `GET /api/v1/bills-hub/purchases` and `/purchases/sheet` (owner / manager): every kept line of the purchase bills of the period with what it cost on the bill (`net_cost` + freight share), what was paid and is still to pay the seller, where the stock is now (in shop / sold with the buyer and bill / part sold for an item's batch / gone), per kind, brand, model, seller and bill, with the average buying cost of a unit.
+- `src/newui/pages/PurchasesScreen.tsx` at `/new/purchases-screen` (see docs/43); the sales screen's Purchases switch and F3 open it. Strings `npsc`.
+
+**Verified**: pytest `test_bills_hub_purchases` (new: figures, the lines adding up to each bill and their still-to-pay to the bill's, the total still to pay equal to the seller's khata, the sold phone's buyer and bill, an item's batch part sold, kinds and the seller; the kind / deal / search / brand filters; CSV and A4; a salesman gets 403) and `test_bills_hub`; tsc; vitest; Playwright `newui-purchases-screen` (new: from the sales screen's switch, the five figures against the server, the cost eye, the ledger with the buyer and bill, still to pay only, a brand's models, the dealers, two bills paid at once, Urdu RTL, phone width) — pass; the screen compared with the rendered drawing (the kind cards now show paid like the drawing). **Not done**: dark screenshot, the full suites.
+
+**Next**: the audit's returns tab in file 22's look, or what the owner orders.
+
+**Open questions**: should the control room's shops list page through the server (still open).

@@ -57,6 +57,7 @@ const NewStockItem = newPage('NewStockItem')
 const NewStockHub = newPage('NewStockHub')
 const NewInvoices = newPage('NewInvoices')
 const NewSales = newPage('NewSales')
+const NewPurchasesScreen = newPage('NewPurchasesScreen')
 const NewControl = newPage('NewControl')
 const Shell = page('Shell')
 const ControlShell = page('ControlShell')
@@ -258,6 +259,8 @@ export const router = createBrowserRouter([
       // every bill in one list (file 24, F10) and the sales screen (file 25), each with its own top bar
       { path: '/new/invoices', element: <NewInvoices /> },
       { path: '/new/sales', element: <NewSales /> },
+      // the purchases screen of file 25 (F3 there); owner / manager (it is all cost)
+      { path: '/new/purchases-screen', element: <NewPurchasesScreen /> },
       { path: '/new/stock-item/:id', element: <ModuleGate module="accessories"><NewStockItem /></ModuleGate> },
       {
         path: '/new',

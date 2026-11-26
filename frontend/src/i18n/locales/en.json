@@ -8794,5 +8794,72 @@
     "package": "Package",
     "pwOnce": "Shown once, here, to send to the owner — it is never shown again.",
     "openWindow": "Open this shop's window"
+  },
+  "npsc": {
+    "locked": "The purchases screen shows buying costs, so it is for the owner and the manager.",
+    "newBill": "New purchase bill",
+    "ledgerBtn": "Purchases ledger report (A4)",
+    "costVisible": "Cost visible",
+    "costHidden": "Cost hidden",
+    "search": "Search bill no, IMEI / serial, dealer…",
+    "deal": {
+      "all": "All purchases",
+      "udhaar": "Still to pay (dene baqi)",
+      "paid": "Paid purchases"
+    },
+    "tab": {
+      "overview": "Purchase analytics & brands",
+      "models": "Models bought (cost / stock)",
+      "parties": "Dealers & sellers",
+      "invoices": "Purchase bills",
+      "ledger": "Full purchase ledger"
+    },
+    "k": {
+      "total": "Total purchases",
+      "paid": "Paid purchases",
+      "paidSub": "Paid by cash / bank / online",
+      "due": "Still to pay (dene baqi)",
+      "dueSub": "Left in the dealers' khata",
+      "avg": "Avg. buying cost of a unit",
+      "avgSub": "Across {{n}} units",
+      "stock": "Where the stock is now",
+      "inShop": "{{n}} in shop",
+      "soldOut": "{{n}} already sold"
+    },
+    "toPay": "To pay",
+    "soldN": "{{n}} sold",
+    "brandTitle": "Brand-wise purchases, paid, still to pay & stock",
+    "addBill": "Add purchase",
+    "none": "Nothing bought for these filters.",
+    "col": {
+      "avg": "Avg. unit cost",
+      "amount": "Bought for",
+      "paid": "Paid",
+      "due": "Still to pay",
+      "stock": "Stock now",
+      "seller": "Dealer / seller",
+      "unit": "Unit cost",
+      "where": "Where now"
+    },
+    "where": {
+      "in_shop": "In shop",
+      "sold": "Sold",
+      "part": "Part sold",
+      "partN": "{{h}} here · {{s}} sold",
+      "other": "Gone"
+    },
+    "p": {
+      "total": "Total bought"
+    },
+    "pay": "Pay",
+    "billsTitle": "Purchase bills ({{n}})",
+    "paySel": "Pay what is left on the selected",
+    "paySelTitle": "Pay {{n}} bills",
+    "paySelSub": "One cash payment is recorded against each bill, in each dealer's khata",
+    "paySelDone": "{{n}} bills paid",
+    "ledTitle": "Complete purchase ledger ({{n}} lines)",
+    "ledSub": "Every bought line with its cost, paid, still to pay and where it is now",
+    "a4Title": "Purchases ledger report (A4)",
+    "a4Sub": "Every bought line of the filters with cost, paid, still to pay and where it is now, on the server's print page"
   }
 }

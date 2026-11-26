@@ -8794,5 +8794,72 @@
     "package": "Package",
     "pwOnce": "Yeh sirf abhi yahan dikhta hai taake malik ko bheja ja sake — dobara kabhi nahi dikhega.",
     "openWindow": "Is dukan ki tafseel kholein"
+  },
+  "npsc": {
+    "locked": "Kharidari screen par khareed qeematein hain, is liye yeh maalik aur manager ke liye hai.",
+    "newBill": "Naya kharidari bill",
+    "ledgerBtn": "Kharidari ledger report (A4)",
+    "costVisible": "Qeemat nazar aa rahi hai",
+    "costHidden": "Qeemat chhupi hai",
+    "search": "Bill no, IMEI / serial, dealer talash karein…",
+    "deal": {
+      "all": "Tamam kharidari",
+      "udhaar": "Dena baqi",
+      "paid": "Ada shuda kharidari"
+    },
+    "tab": {
+      "overview": "Kharidari ka jaiza aur brands",
+      "models": "Khareede gaye models (qeemat / stock)",
+      "parties": "Dealers aur bechne wale",
+      "invoices": "Kharidari bills",
+      "ledger": "Mukammal kharidari ledger"
+    },
+    "k": {
+      "total": "Kul kharidari",
+      "paid": "Ada shuda kharidari",
+      "paidSub": "Cash / bank / online se ada",
+      "due": "Dena baqi",
+      "dueSub": "Dealers ke khatay mein baqi",
+      "avg": "Aik piece ki ausat khareed",
+      "avgSub": "{{n}} pieces par",
+      "stock": "Stock ab kahan hai",
+      "inShop": "{{n}} dukaan mein",
+      "soldOut": "{{n}} bik chuke"
+    },
+    "toPay": "Dena",
+    "soldN": "{{n}} bike",
+    "brandTitle": "Brand war kharidari, ada, baqi aur stock",
+    "addBill": "Kharidari darj karein",
+    "none": "In filters par koi kharidari nahi.",
+    "col": {
+      "avg": "Ausat fi piece",
+      "amount": "Khareed raqam",
+      "paid": "Ada",
+      "due": "Dena baqi",
+      "stock": "Ab stock",
+      "seller": "Dealer / bechne wala",
+      "unit": "Fi piece qeemat",
+      "where": "Ab kahan"
+    },
+    "where": {
+      "in_shop": "Dukaan mein",
+      "sold": "Bik gaya",
+      "part": "Kuch bik gaya",
+      "partN": "{{h}} yahan · {{s}} bike",
+      "other": "Nikal gaya"
+    },
+    "p": {
+      "total": "Kul kharidari"
+    },
+    "pay": "Ada karein",
+    "billsTitle": "Kharidari bills ({{n}})",
+    "paySel": "Chune hue bills ka baqi ada karein",
+    "paySelTitle": "{{n}} bills ada karein",
+    "paySelSub": "Har bill par aik cash adaigi, har dealer ke khatay mein darj hogi",
+    "paySelDone": "{{n}} bills ada ho gaye",
+    "ledTitle": "Mukammal kharidari ledger ({{n}} lines)",
+    "ledSub": "Har khareedi cheez: qeemat, ada, baqi aur ab kahan hai",
+    "a4Title": "Kharidari ledger report (A4)",
+    "a4Sub": "Filters ki har khareedi cheez qeemat, ada, baqi aur maujooda jagah ke saath, server ke print page par"
   }
 }

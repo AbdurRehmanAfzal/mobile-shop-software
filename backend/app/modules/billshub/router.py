@@ -15,6 +15,8 @@ from app.modules.units.router import _plain
 
 router = APIRouter(prefix="/api/v1/bills-hub", tags=["bills-hub"])
 Transact = Annotated[Ctx, Depends(require_cap(Cap.TRANSACT))]
+Cost = Annotated[Ctx, Depends(require_cap(Cap.VIEW_COST))]
+PDeal = Literal["udhaar", "paid"]
 Type = Literal["sale", "purchase", "return", "repair"]
 State = Literal["due", "paid", "in_repair", "returned", "void"]
 Kind = Literal["phone", "tablet", "watch", "laptop", "items"]
@@ -99,6 +101,37 @@ def sales(
     )
 
 
+@router.get("/purchases")
+def purchases(
+    ctx: Cost,
+    db: DB,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+    q: Q = None,
+    kind: Kind | None = None,
+    brand: Annotated[str | None, Query(max_length=80)] = None,
+    mode: Mode | None = None,
+    deal: PDeal | None = None,
+):
+    """the purchases of the period per kind, brand, model, seller and bill, with what was paid,
+    what is still to pay and where the stock is now (owner / manager: it is all cost)"""
+    _dates(date_from, date_to)
+    return _plain(
+        service.purchases(
+            db,
+            ctx.shop_id,
+            ctx,
+            date_from=date_from,
+            date_to=date_to,
+            q=q,
+            kind=kind,
+            brand=brand,
+            mode=mode,
+            deal=deal,
+        )
+    )
+
+
 UR = {
     "Bill": "بل",
     "Date": "تاریخ",
@@ -124,6 +157,12 @@ UR = {
     "Udhaar": "ادھار",
     "Bought from": "جس سے خریدا",
     "Total of the list": "فہرست کا کل",
+    "Unit cost": "فی پیس قیمت",
+    "Amount": "رقم",
+    "To pay": "دینا باقی",
+    "Where now": "اب کہاں",
+    "Sold to": "جسے بیچا",
+    "Seller": "بیچنے والا",
 }
 
 
@@ -246,3 +285,58 @@ def sales_sheet(
         + [""]
     )
     return _file(format, ctx, db, lang, "sales", _h(head, lang), rows, title="Sales ledger")
+
+
+WHERE = {
+    "in_shop": ("In shop", "دکان میں"),
+    "sold": ("Sold", "بک گیا"),
+    "part": ("Part sold", "کچھ بک گیا"),
+    "other": ("Gone", "نکل گیا"),
+}
+
+
+@router.get("/purchases/sheet")
+def purchases_sheet(
+    ctx: Cost,
+    db: DB,
+    format: Fmt = "csv",
+    lang: Lang = None,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+    q: Q = None,
+    kind: Kind | None = None,
+    brand: Annotated[str | None, Query(max_length=80)] = None,
+    mode: Mode | None = None,
+    deal: PDeal | None = None,
+):
+    """every bought line as Excel / CSV or the A4 purchases ledger report (format=pdf)"""
+    _dates(date_from, date_to)
+    data = service.purchases(
+        db,
+        ctx.shop_id,
+        ctx,
+        date_from=date_from,
+        date_to=date_to,
+        q=q,
+        kind=kind,
+        brand=brand,
+        mode=mode,
+        deal=deal,
+    )
+    ur = lang == "ur"
+    head = ["Bill", "Date", "Kind", "Brand", "Model", "IMEI / serial", "Seller", "Qty"]
+    head += ["Unit cost", "Amount", "Paid", "To pay", "Where now", "Sold to", "Paid by"]
+    rows = []
+    for ln in data["lines"]:
+        where = WHERE[ln["state"]][1 if ur else 0]
+        rows.append(
+            [ln["no"], ln["date"], ln["kind"], ln["brand"] or "", ln["model"], ln["code"] or ""]
+            + [ln["party_name"] or "", ln["qty"], ln["unit_cost"], ln["amount"], ln["paid"]]
+            + [ln["due"], where, ln["sold_to"] or "", ln["mode"] or ""]
+        )
+    f = data["figures"]
+    rows.append(
+        ["Total of the list", "", "", "", "", "", "", f["units"], f["avg"], f["amount"]]
+        + [f["paid"], f["due"], "", "", ""]
+    )
+    return _file(format, ctx, db, lang, "purchases", _h(head, lang), rows, title="Purchases ledger")
