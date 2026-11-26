@@ -80,6 +80,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Where it stands, the server pieces that exist only on `staging`, how to take one into `develop` and how to restart: `docs/43-UI-REDESIGN-PLAN.md` §0 **on the `staging` branch** (`git show origin/staging:docs/43-UI-REDESIGN-PLAN.md`).
 - Rules: never merge `staging` into `develop` / `main` (it would ship `/new` to the shops); take only the server piece a feature needs (`git checkout origin/staging -- <files>` with its test); release `develop` → `main`, then merge `main` into `staging`.
 
+## A person's page: the full khata (owner 2026-11-26, ADR-136)
+- Read ADR-136 before touching `PartyDetailPage.tsx`, `PartyKhataFull.tsx`, `units/khata.py` or the `pkh.*` texts.
+- Rules: one page for every kind of person (dealer, customer, other shop, repair lab); every figure is the server's (`GET /parties/{id}/khata`, the statement, `khata-report`) — the app only searches and filters; Fix / Edit on a line opens the live correction for that kind and never edits a line in place; cost, paid-out and profit only for owner / manager; `units/khata.py` is shared with the new product on `staging` — change it in one place and carry it over.
+
 ## Reports list (owner 2026-11-19, ADR-111)
 - Read ADR-111 before touching `frontend/src/features/reports/catalog.ts`, `ReportsHub.tsx` or `ReportsHome.tsx`.
 - Rules: `/reports` lists every report (it is not behind the `reports` module; the profit tabs live at `/reports?tab=…` and gate themselves); the list never computes or copies a report — an entry points at the screen where the report lives; **a new report or sheet gets an entry in `catalog.ts`** with its `hub.r.<id>.t / .d` strings in three languages and its module / role rule (`catalog.test.ts`).

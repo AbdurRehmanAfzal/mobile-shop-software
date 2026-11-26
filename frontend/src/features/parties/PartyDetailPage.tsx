@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { BiLabel, useLang, BiInput } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import RemoveSheet from '@/components/RemoveSheet'
-import { BtnText, Chip, Empty, fmtDate, KV, Loading, MoneyText, PageHeader, Section, Sheet } from '@/components/ui'
+import { BtnText, Chip, KV, Loading, PageHeader, Sheet } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 import { useInvalidate, useParty, useStatement } from '@/lib/queries'
@@ -16,8 +16,7 @@ import PartyJourney from './PartyJourney'
 import PartyLending from './PartyLending'
 import OldBalance from './OldBalance'
 import ActionButton from '@/components/ActionButton'
-import { Printer } from 'lucide-react'
-import { openPrintable } from '@/lib/files'
+import { KhataBook, KhataButtons, KhataCards, OpenPeople, PartyFacts, usePartyKhata } from './PartyKhataFull'
 import {withCur } from '@/lib/format'
 
 export default function PartyDetailPage() {
@@ -30,12 +29,16 @@ export default function PartyDetailPage() {
   const [editing, setEditing] = useState(() => new URLSearchParams(window.location.search).get('edit') === '1')
   const [paying, setPaying] = useState<'in' | 'out' | null>(null)
   const [removing, setRemoving] = useState(false)
+  // owner 2026-11-26 (ADR-136): the full khata — their phones, channels, profit, the book in tabs
+  const { data: kh } = usePartyKhata(id)
+  const [showProfit, setShowProfit] = useState(true)
   const nav = useNavigate()
   const inv = useInvalidate()
   const canDelete = useAuth((s) => s.me?.user.role === 'owner' || s.me?.user.role === 'manager')
 
   if (isLoading || !party) return <Loading />
   const bal = Number(party.balance)
+  const canCost = canDelete
 
   return (
     <div className="flex flex-col gap-4">
@@ -81,6 +84,10 @@ export default function PartyDetailPage() {
         <ActionButton tone="get" icon={<ArrowDown size={24} strokeWidth={2.4} />} title="counter.gotMoney" say="say.got" onClick={() => setPaying('in')} testid="party-got" help={<Help term="party.gotMoney" size="sm" />} />
         <ActionButton tone="give" icon={<ArrowUp size={24} strokeWidth={2.4} />} title="counter.gaveMoney" say="say.gave" onClick={() => setPaying('out')} testid="party-gave" help={<Help term="party.gaveMoney" size="sm" />} />
       </div>
+      {/* owner 2026-11-26 (ADR-136): WhatsApp khata, the full ledger report, the account's dates */}
+      <KhataButtons party={party} kh={kh} canCost={canCost} />
+      <PartyFacts party={party} rows={st?.rows ?? []} kh={kh} />
+      {kh ? <KhataCards kh={kh} canCost={canCost} showProfit={showProfit} setShowProfit={setShowProfit} /> : null}
 
       <section className="card">
         <KV k="party.phone" help="common.phone" v={<span dir="ltr">{party.phone}</span>} />
@@ -99,38 +106,17 @@ export default function PartyDetailPage() {
       {/* owner 2026-11-18 (ADR-103): the khata as an account ledger — bills with their items */}
       <LedgerDownload partyId={party.id} name={party.name} />
 
-      <Section
-        title="party.statement"
-        help="party.statement"
-        right={
-          <DownloadButton path={`/api/v1/exports/parties/${party.id}/statement`} name={`khata-${party.name}`} />
-        }
-      >
-        {!st?.rows.length ? (
-          <Empty text="common.nothingFound" />
-        ) : (
-          <div className="card divide-y divide-line p-0">
-            {[...st.rows].reverse().map((r) => (
-              <div key={r.entry_id} className={`flex items-center gap-3 px-3 py-2.5 ${r.reversed ? 'opacity-50 line-through' : ''}`}>
-                <div className="min-w-0 flex-1">
-                  <div className="truncate text-sm font-semibold text-ink">{r.memo || r.document_type}</div>
-                  <div className="text-xs text-muted" dir="ltr">
-                    {fmtDate(r.at)}
-                  </div>
-                </div>
-                {(r.document_type === 'payment' || r.document_type === 'lending') && r.document_id ? <button type="button" aria-label={pick('unit.printReceipt')} onClick={() => openPrintable(`/api/v1/payments/${r.document_id}/receipt?format=thermal`)} className="tap rounded-full border border-line p-2 text-ink"><Printer size={14} /></button> : null}
-                <div className="text-end">
-                  {Number(r.debit) > 0 ? <MoneyText value={r.debit} tone="ink" size="sm" /> : <MoneyText value={-Number(r.credit)} size="sm" />}
-                  <div className="text-xs text-muted" dir="ltr">
-                    = {Number(r.balance).toLocaleString('en-US')}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </Section>
-
+      {/* owner 2026-11-26 (ADR-136): the statement as a book in four tabs — every line with its kind,
+          time, running balance and Fix / Edit; their phones with sell / return; brand & model; channels */}
+      <KhataBook
+        party={party}
+        rows={st?.rows ?? []}
+        kh={kh}
+        canCost={canCost}
+        showProfit={showProfit}
+        right={<span className="flex items-center gap-1"><Help term="party.statement" size="sm" /><DownloadButton path={`/api/v1/exports/parties/${party.id}/statement`} name={`khata-${party.name}`} /></span>}
+      />
+      <OpenPeople current={party.id} />
       <Sheet open={editing} onClose={() => setEditing(false)} title="party.edit">
         <PartyForm party={party} onDone={() => setEditing(false)} />
       </Sheet>
