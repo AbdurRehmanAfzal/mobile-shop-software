@@ -30,7 +30,7 @@ test('dealer phones by brand and model, pay a whole model', async ({ page, reque
   await page.getByRole('button', { name: 'Login' }).click()
   await expect(page.getByPlaceholder("IMEI, phone or person's name")).toBeVisible()
 
-  await page.goto(`/parties/${dealer}`)
+  await page.goto(`/parties/${dealer}?tab=phones`)
   await expect(page.getByTestId('units-total')).toContainText('50,000')
   const b = page.getByTestId('units-brand-Orbit')
   await expect(b).toContainText('3 bought')

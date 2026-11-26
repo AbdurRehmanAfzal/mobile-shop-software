@@ -24,7 +24,7 @@ test('len-den: give, take, adjust against a bill, audit screen', async ({ page }
   const cus = await post('/parties', { name: 'Usman', phone: '03215550003', kinds: ['customer'] })
 
   // he gives the shop 8,000 with no bill
-  await page.goto(`/parties/${cus.id}`)
+  await page.goto(`/parties/${cus.id}?tab=lenden`)
   const card = page.getByTestId('party-lending')
   await expect(card).toContainText('No len-den open')
   await card.getByTestId('lending-take').click()
@@ -93,7 +93,7 @@ test('len-den return date: late badge, WhatsApp reminder, home alert, audit list
   const day = (n: number) => new Date(Date.now() + 5 * 3600_000 - n * 86400_000).toISOString().slice(0, 10)
 
   // lent 25,000, to come back two days ago
-  await page.goto(`/parties/${tariq.id}`)
+  await page.goto(`/parties/${tariq.id}?tab=lenden`)
   const card = page.getByTestId('party-lending')
   await card.getByTestId('lending-give').click()
   await page.getByLabel('Amount').fill('25000')
@@ -116,7 +116,7 @@ test('len-den return date: late badge, WhatsApp reminder, home alert, audit list
   // the audit list, and moving the date clears "late"
   await page.goto('/audit/lending?preset=today')
   await expect(page.getByTestId('lend-due')).toContainText('Late')
-  await page.goto(`/parties/${tariq.id}`)
+  await page.goto(`/parties/${tariq.id}?tab=lenden`)
   await page.getByTestId('lending-date').click()
   await page.getByLabel('Return date (optional)').fill(day(-10))
   await page.getByRole('button', { name: 'Save date' }).click()

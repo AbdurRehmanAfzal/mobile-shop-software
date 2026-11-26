@@ -33,7 +33,7 @@ test('old dealing on the khata; three phones bought in one go; three sold at one
   await expect(page.getByTestId('home-overview')).toBeVisible({ timeout: 20_000 })
 
   // 1. the old dealing: 5 iPhone 17 and 10 Samsung went before; 2,000,000 was paid; the rest is owed
-  await page.goto(`/parties/${shopA}`)
+  await page.goto(`/parties/${shopA}?tab=lenden`)
   const card = page.getByTestId('old-balance')
   await card.getByTestId('old-add').click()
   const sheet = page.getByTestId('old-sheet')

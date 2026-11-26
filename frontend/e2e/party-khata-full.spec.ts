@@ -47,7 +47,11 @@ test('person page: the full khata of a dealer', async ({ page, request }) => {
   await page.goto(`/parties/${dealer.id}`)
   // what the page always had is still there
   await expect(page.getByTestId('party-got')).toBeVisible()
-  await expect(page.getByTestId('party-ledger')).toBeVisible()
+  // ADR-138: the profile, every action in one block, then the sections as tabs (Summary first)
+  await expect(page.getByTestId('pkh-bio')).toBeVisible()
+  await expect(page.getByTestId('party-actions')).toBeVisible()
+  await expect(page.getByTestId('party-tab-summary')).toHaveAttribute('aria-selected', 'true')
+  await expect(page.getByTestId('party-journey')).toBeVisible()
   // the dates of the account and the promise
   await expect(page.getByTestId('pkh-created')).toBeVisible()
   await expect(page.getByTestId('pkh-first')).toBeVisible()
@@ -64,6 +68,9 @@ test('person page: the full khata of a dealer', async ({ page, request }) => {
 
   // the ledger: every line, kind filter, search by amount, running balance
   const st = await get(`/ledger/parties/${dealer.id}/statement`)
+  await page.getByTestId('party-tab-ledger').click()
+  await expect(page).toHaveURL(/tab=ledger/)
+  await expect(page.getByTestId('party-ledger')).toBeVisible()
   await expect(page.getByTestId('pkh-row')).toHaveCount(st.rows.length)
   await page.getByTestId('pkh-type').selectOption('purchase')
   await expect(page.getByTestId('pkh-row')).toHaveCount(1)
@@ -91,7 +98,7 @@ test('person page: the full khata of a dealer', async ({ page, request }) => {
   await page.getByPlaceholder('Search bill no, IMEI, model, bank, note…').fill('')
 
   // the tracker: three phones, only the unsold, sell now opens the sale with the phone
-  await page.getByTestId('pkh-tab-items').click()
+  await page.getByTestId('party-tab-phones').click()
   await expect(page.getByTestId('pkh-item')).toHaveCount(3)
   await page.getByTestId('pkh-type').selectOption('unsold')
   await expect(page.getByTestId('pkh-item')).toHaveCount(2)
@@ -102,9 +109,8 @@ test('person page: the full khata of a dealer', async ({ page, request }) => {
   await page.getByTestId('pkh-type').selectOption('all')
 
   // brand & model, the payment method log
-  await page.getByTestId('pkh-tab-models').click()
   await expect(page.getByTestId('pkh-model')).toHaveCount(kh.models.length)
-  await page.getByTestId('pkh-tab-methods').click()
+  await page.getByTestId('party-tab-payments').click()
   await expect(page.getByTestId('pkh-method').first()).toBeVisible()
   await expect(page.getByTestId('pkh-pay').first()).toBeVisible()
 
@@ -124,6 +130,12 @@ test('person page: the full khata of a dealer', async ({ page, request }) => {
   expect((pays.items ?? pays).some((p: { date: string; amount: string }) => p.date === '2026-11-01' && Number(p.amount) === 1000)).toBeTruthy()
   await page.getByRole('button', { name: 'Done', exact: true }).click()
 
+  // an action that lives in another section opens that section
+  await page.getByTestId('party-act-old').click()
+  await expect(page.getByTestId('old-balance')).toBeVisible()
+  await page.getByTestId('party-act-lenden').click()
+  await expect(page.getByTestId('party-lending')).toBeVisible()
+
   // WhatsApp khata: the balance in a message that can be edited
   await expect(page.getByTestId('pkh-wa')).toContainText('WhatsApp khata')
   await page.getByTestId('pkh-wa').click()
@@ -141,14 +153,14 @@ test('person page: the full khata of a dealer', async ({ page, request }) => {
 
   // a sold-to customer's page shows the phone sold to them
   await page.goto(`/parties/${cust.id}`)
-  await page.getByTestId('pkh-tab-items').click()
+  await page.getByTestId('party-tab-phones').click()
   await expect(page.getByTestId('pkh-item')).toHaveCount(1)
 
   // Urdu: one language, right to left, nothing wider than a phone
   await page.evaluate(() => localStorage.setItem('locale', 'ur'))
   await page.goto(`/parties/${dealer.id}`)
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
-  await expect(page.getByTestId('pkh-book')).toBeVisible()
+  await expect(page.getByTestId('party-tabs')).toBeVisible()
   await page.setViewportSize({ width: 360, height: 800 })
   await page.screenshot({ path: 'test-results/party-khata-full-ur.png', fullPage: true })
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBeTruthy()

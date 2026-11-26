@@ -82,6 +82,7 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 
 ## A person's page: the full khata (owner 2026-11-26, ADR-136)
 - Read ADR-136 before touching `PartyDetailPage.tsx`, `PartyKhataFull.tsx`, `units/khata.py` or the `pkh.*` texts.
+- Layout (ADR-138, a shopkeeper's complaint): balance → one profile card (bio + dates) → one actions block → five tabs (Summary, Ledger, Phones, Len-den & old balance, Payments; `?tab=`). A new card goes into the tab it belongs to and a new action into the actions block — never one more block down the page.
 - Rules: one page for every kind of person (dealer, customer, other shop, repair lab); every figure is the server's (`GET /parties/{id}/khata`, the statement, `khata-report`) — the app only searches and filters; Fix / Edit on a line opens the live correction for that kind and never edits a line in place; cost, paid-out and profit only for owner / manager; `units/khata.py` is shared with the new product on `staging` — change it in one place and carry it over.
 
 ## The invoices page: the bills centre (owner 2026-11-26, ADR-137)

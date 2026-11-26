@@ -54,7 +54,7 @@ test('account ledger and item-wise stock sheet', async ({ page, request }) => {
   await page.getByLabel('Password').fill('e2e-secret-1')
   await page.getByRole('button', { name: 'Login' }).click()
   await expect(page.getByTestId('home-overview')).toBeVisible({ timeout: 20_000 })
-  await page.goto(`/parties/${dealer}`)
+  await page.goto(`/parties/${dealer}?tab=ledger`)
   const card = page.getByTestId('party-ledger')
   await expect(card).toContainText('Account ledger')
   await expect(card.getByTestId('ledger-from')).toBeVisible()

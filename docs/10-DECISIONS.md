@@ -362,6 +362,16 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-138 · 2026-11-26 · Accepted · A person's page: profile, actions, then one section at a time
+
+- **Context:** a shopkeeper's complaint after ADR-136: the page of a person is confusing — the actions have to be searched for, the information is scattered (some at the top, some at the end), the person's details and the figures are not in one place. The page had grown into one long column of ten cards.
+- **Decision:** the same content, in a fixed order that fits one screen, nothing removed:
+  1. the **balance** (with the phones / other split and the kinds), as before;
+  2. the **profile** — one card with everything about the person: phone with Copy, WhatsApp, CNIC, city, address, note, and the account's dates (opened, first and last dealing, the promised date with Change). The separate details card is gone;
+  3. **"What do you want to do?"** — every action in one block: money received, money paid, then WhatsApp khata, full ledger report, money without a bill, old balance (the last two open the Len-den section at their card);
+  4. **five sections as tabs** (`?tab=` in the address, sticky while scrolling): **Summary** (every figure in one place: their phones in shop / sold / returned, money by channel, profit, the whole journey), **Ledger** (the complete ledger with search, kind filter and Fix / Edit, and the account-ledger download), **Phones** (by brand and model with pay / receive, the stock & sales tracker, brand & model), **Len-den & old balance**, **Payments** (by channel, each with its receipt).
+- **Consequences:** a new card about a person goes into the section it belongs to, never under the tabs as one more block; a new action goes into the actions block. A link that needs a section says so (`/parties/{id}?tab=lenden`). `KhataBook` takes `only` to show one pane. Tests that looked for a section on load now open its tab.
+
 ## ADR-137 · 2026-11-26 · Accepted · The invoices page is the shop's bills centre (from the new product's file 24)
 
 - **Context:** the owner asked for the existing invoices module to do what the new product's bills screen (mock-up 24, `/new/invoices` on `staging`) does. The live screens keep their look and gain the functionality (the new product is paused, docs/43 §0 on `staging`).

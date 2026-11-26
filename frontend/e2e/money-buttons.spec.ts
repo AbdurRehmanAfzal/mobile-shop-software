@@ -22,7 +22,7 @@ test('money buttons on a person page explain themselves', async ({ page, request
   await page.getByRole('button', { name: 'Login' }).click()
   await expect(page.getByTestId('home-overview')).toBeVisible({ timeout: 20_000 })
 
-  await page.goto(`/parties/${person}`)
+  await page.goto(`/parties/${person}?tab=lenden`)
   const got = page.getByTestId('party-got')
   const gave = page.getByTestId('party-gave')
   await expect(got).toContainText('Money received')
@@ -70,7 +70,7 @@ test('money buttons on a person page explain themselves', async ({ page, request
 
   // Urdu mode: the same lines in Urdu, no Roman
   await page.evaluate(() => localStorage.setItem('locale', 'ur'))
-  await page.goto(`/parties/${person}`)
+  await page.goto(`/parties/${person}?tab=lenden`)
   await expect(page.getByTestId('party-got')).toContainText('بل کا ادھار واپس ملا')
   await expect(page.getByTestId('party-lending').getByTestId('lending-take')).toContainText('بغیر بل پیسے لیے')
   await expect(page.getByTestId('party-lending')).not.toContainText('Yahan woh raqam')

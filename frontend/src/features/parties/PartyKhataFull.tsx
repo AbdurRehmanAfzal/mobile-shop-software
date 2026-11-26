@@ -67,7 +67,8 @@ export function useWaText(party: Party, kh: KhataFile | undefined): string {
 
 /* ------------------------------------------------------------------ the dates of the account */
 
-/** phone with Copy, account opened, first and last dealing, the promised date with Change */
+/** The person in one card: who they are (phone with Copy, WhatsApp, CNIC, city, address) and the
+ *  account's dates (opened, first and last dealing, the promised date with Change). */
 export function PartyFacts({ party, rows, kh }: { party: Party; rows: StatementRow[]; kh: KhataFile | undefined }) {
   const { pick, ur, cls } = useLang()
   const [copied, setCopied] = useState(false)
@@ -77,24 +78,35 @@ export function PartyFacts({ party, rows, kh }: { party: Party; rows: StatementR
   const first = live[0]?.at
   const last = live[live.length - 1]?.at
   const small = ur ? cls('sm') : 'text-xs font-semibold'
-  const fact = (label: string, value: ReactNode, testid: string) => (
+  const fact = (label: string, value: ReactNode, testid: string, ltr = true) => (
     <span className="flex flex-col rounded-xl bg-ground px-3 py-1.5" data-testid={testid}>
       <span className={`text-muted ${small}`}>{pick(label)}</span>
-      <span className="text-sm font-bold text-ink" dir="ltr">{value}</span>
+      <span className="text-sm font-bold text-ink" dir={ltr ? 'ltr' : 'auto'}>{value}</span>
     </span>
   )
+  const initials = party.name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase()).join('') || '?'
   return (
-    <section className="card flex flex-col gap-2" data-testid="pkh-facts">
-      {party.phone ? (
-        <div className="flex flex-wrap items-center gap-2">
-          <Phone size={16} className="text-muted" />
-          <span className="num text-base" dir="ltr">{party.phone}</span>
-          <button type="button" onClick={() => { void navigator.clipboard?.writeText(party.phone ?? '').catch(() => undefined); setCopied(true) }} className="tap inline-flex min-h-9 items-center gap-1 rounded-xl border border-line bg-surface px-2.5 font-bold text-ink" data-testid="pkh-copy">
-            <Copy size={14} /><span className={small}>{pick(copied ? 'pkh.copied' : 'pkh.copy')}</span>
-          </button>
-        </div>
-      ) : null}
-      <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+    <section className="card flex flex-col gap-3" data-testid="pkh-facts">
+      <div className="flex flex-wrap items-center gap-3">
+        <span className="well h-12 w-12 shrink-0 rounded-2xl bg-ink text-base font-extrabold text-ground" dir="ltr">{initials}</span>
+        <span className="flex min-w-0 flex-1 flex-col gap-1">
+          <BiLabel text="pkh.t.profile" size="sm" tone="text-muted" bold />
+          {party.phone ? (
+            <span className="flex flex-wrap items-center gap-2">
+              <Phone size={15} className="text-muted" />
+              <span className="num text-base" dir="ltr">{party.phone}</span>
+              <button type="button" onClick={() => { void navigator.clipboard?.writeText(party.phone ?? '').catch(() => undefined); setCopied(true) }} className="tap inline-flex min-h-9 items-center gap-1 rounded-xl border border-line bg-surface px-2.5 font-bold text-ink" data-testid="pkh-copy">
+                <Copy size={14} /><span className={small}>{pick(copied ? 'pkh.copied' : 'pkh.copy')}</span>
+              </button>
+            </span>
+          ) : null}
+        </span>
+      </div>
+      <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4" data-testid="pkh-bio">
+        {party.whatsapp ? fact('party.whatsapp', party.whatsapp, 'pkh-whatsapp') : null}
+        {party.cnic ? fact('party.cnic', party.cnic, 'pkh-cnic') : null}
+        {party.city ? fact('party.city', party.city, 'pkh-city', false) : null}
+        {party.address ? fact('party.address', party.address, 'pkh-address', false) : null}
         {fact('pkh.created', fmtDate(kh?.created_at ?? party.created_at), 'pkh-created')}
         {first ? fact('pkh.firstDeal', fmtDate(first), 'pkh-first') : null}
         {last ? fact('pkh.lastDeal', fmtDate(last), 'pkh-last') : null}
@@ -108,6 +120,7 @@ export function PartyFacts({ party, rows, kh }: { party: Party; rows: StatementR
           </span>
         ) : null}
       </div>
+      {party.notes ? <span className={`text-muted ${small}`} dir="auto">{party.notes}</span> : null}
       {kh?.promise ? <PromiseSheet open={promising} promise={kh.promise} onClose={() => setPromising(false)} /> : null}
     </section>
   )
@@ -219,17 +232,18 @@ export function KhataCards({ kh, canCost, showProfit, setShowProfit }: { kh: Kha
 
 const TYPES = ['all', 'unsold', 'sold', 'returned', 'purchase', 'sale', 'payment_in', 'payment_out', 'return', 'mistake'] as const
 type TypeFilter = (typeof TYPES)[number]
-type Tab = 'ledger' | 'items' | 'models' | 'methods'
+export type Tab = 'ledger' | 'items' | 'models' | 'methods'
 const BADGE: Record<string, 'ok' | 'warn' | 'bad' | 'muted' | 'ink'> = { purchase: 'ink', sale: 'ok', payment_in: 'ok', payment_out: 'warn', return: 'warn', mistake: 'bad', other: 'muted' }
 const STATE: Record<string, 'ok' | 'warn' | 'bad' | 'muted' | 'ink'> = { in_shop: 'warn', sold: 'ok', sold_to: 'ok', returned: 'bad', other: 'muted' }
 /** the kind of a statement line; money paid or received at the counter on a bill counts as money */
 const rowType = (r: StatementRow): string => (r.reversed || r.document_type === 'correction' || r.document_type.startsWith('reversal:') || r.document_type.endsWith('_void') || r.document_type.endsWith('_change') ? 'mistake' : r.document_type === 'invoice' ? (Number(r.credit) > 0 ? 'payment_in' : 'sale') : r.document_type === 'purchase' ? (Number(r.debit) > 0 ? 'payment_out' : 'purchase') : r.document_type === 'payment' || r.document_type === 'lending' ? (Number(r.credit) > 0 ? 'payment_in' : 'payment_out') : r.document_type.includes('return') ? 'return' : 'other')
 
-export function KhataBook({ party, rows, kh, canCost, showProfit, right }: { party: Party; rows: StatementRow[]; kh: KhataFile | undefined; canCost: boolean; showProfit: boolean; right?: ReactNode }) {
+export function KhataBook({ party, rows, kh, canCost, showProfit, right, only }: { party: Party; rows: StatementRow[]; kh: KhataFile | undefined; canCost: boolean; showProfit: boolean; right?: ReactNode; only?: Tab }) {
   const { pick, ur, cls } = useLang()
   const { t } = useTranslation()
   const nav = useNavigate()
-  const [tab, setTab] = useState<Tab>('ledger')
+  const [own, setTab] = useState<Tab>('ledger')
+  const tab = only ?? own
   const [q, setQ] = useState('')
   const [type, setType] = useState<TypeFilter>('all')
   const [fixing, setFixing] = useState<StatementRow | null>(null)
@@ -247,24 +261,24 @@ export function KhataBook({ party, rows, kh, canCost, showProfit, right }: { par
   const tabs: [Tab, string, number | null][] = [['ledger', 'pkh.tabLedger', rows.length], ['items', 'pkh.tabItems', units.length], ['models', 'pkh.tabModels', null], ['methods', 'pkh.tabMethods', null]]
 
   return (
-    <section className="flex flex-col gap-2" data-testid="pkh-book">
+    <section className="flex flex-col gap-2" data-testid={only ? `pkh-book-${only}` : 'pkh-book'}>
       <div className="flex items-center justify-between gap-2">
-        <BiLabel text="party.statement" size="sm" tone="text-muted" bold />
+        <BiLabel text={only ? tabs.find((x) => x[0] === only)![1] : 'party.statement'} size="sm" tone="text-muted" bold />
         {right}
       </div>
-      <div className="flex gap-1.5 overflow-x-auto pb-1" role="tablist">
+      {only ? null : <div className="flex gap-1.5 overflow-x-auto pb-1" role="tablist">
         {tabs.map(([k, label, count]) => (
           <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={`tap inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-2xl px-3.5 font-bold ${tab === k ? 'bg-ink text-ground' : 'border border-line bg-surface text-ink'}`} data-testid={`pkh-tab-${k}`}>
             <span className={ur ? cls('sm') : 'text-sm'}>{pick(label)}</span>
             {count != null ? <span className="num text-xs opacity-80" dir="ltr">{count}</span> : null}
           </button>
         ))}
-      </div>
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto]">
+      </div>}
+      <div className={`grid grid-cols-1 gap-2 ${tab === 'ledger' || tab === 'items' ? 'sm:grid-cols-[1fr_auto]' : ''}`}>
         <SearchBox value={q} onChange={setQ} placeholder="pkh.searchPh" />
-        <select value={type} onChange={(e) => setType(e.target.value as TypeFilter)} aria-label={pick('pkh.type.all')} className={`tap min-h-12 rounded-2xl border border-line bg-surface px-3 font-bold text-ink ${ur ? 'ur' : 'text-sm'}`} data-testid="pkh-type">
-          {TYPES.map((x) => <option key={x} value={x}>{pick(`pkh.type.${x}`)}</option>)}
-        </select>
+        {tab === 'ledger' || tab === 'items' ? <select value={type} onChange={(e) => setType(e.target.value as TypeFilter)} aria-label={pick('pkh.type.all')} className={`tap min-h-12 rounded-2xl border border-line bg-surface px-3 font-bold text-ink ${ur ? 'ur' : 'text-sm'}`} data-testid="pkh-type">
+          {TYPES.filter((x) => (tab === 'ledger' ? !['unsold', 'sold', 'returned'].includes(x) : ['all', 'unsold', 'sold', 'returned'].includes(x))).map((x) => <option key={x} value={x}>{pick(`pkh.type.${x}`)}</option>)}
+        </select> : null}
       </div>
 
       {tab === 'ledger' ? (
@@ -609,23 +623,23 @@ export function OpenPeople({ current }: { current: string }) {
 /* ------------------------------------------------------------------ WhatsApp khata + full report */
 
 /** the two buttons under "money received / paid": WhatsApp khata and the full ledger report */
-export function KhataButtons({ party, kh, canCost }: { party: Party; kh: KhataFile | undefined; canCost: boolean }) {
+export function KhataButtons({ party, kh, canCost, children }: { party: Party; kh: KhataFile | undefined; canCost: boolean; children?: ReactNode }) {
   const { pick, ur, cls } = useLang()
   const waText = useWaText(party, kh)
   const [wa, setWa] = useState(false)
   const [report, setReport] = useState(false)
-  const name = ur ? cls('md') : 'text-[15px]'
-  const say = ur ? cls('sm') : 'text-xs font-semibold'
+  const name = ur ? cls('sm') : 'text-sm'
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2" data-testid="pkh-buttons">
-      <button type="button" onClick={() => setWa(true)} className="tap flex min-h-16 items-center gap-3 rounded-3xl border-2 border-emerald/40 bg-emerald-tint px-4 text-start text-ink" data-testid="pkh-wa">
-        <span className="well h-11 w-11 shrink-0 rounded-2xl bg-emerald text-white"><MessageCircle size={20} /></span>
+    <div className="grid grid-cols-2 gap-2 lg:grid-cols-4" data-testid="pkh-buttons">
+      <button type="button" onClick={() => setWa(true)} className="tap flex min-h-16 items-center gap-2.5 rounded-2xl border border-line bg-surface px-3 text-start text-ink" data-testid="pkh-wa">
+        <span className="well h-10 w-10 shrink-0 rounded-xl bg-emerald text-white"><MessageCircle size={18} /></span>
         <span className={`font-extrabold ${name}`}>{pick('pkh.waKhata')}</span>
       </button>
-      <button type="button" onClick={() => setReport(true)} className="tap flex min-h-16 items-center gap-3 rounded-3xl border border-line bg-surface px-4 text-start text-ink" data-testid="pkh-report-open">
-        <span className="well h-11 w-11 shrink-0 rounded-2xl bg-ink text-ground"><FileText size={20} /></span>
-        <span className="flex min-w-0 flex-col"><span className={`font-extrabold ${name}`}>{pick('pkh.e.report')}</span><span className={`text-muted ${say}`}>{pick('pkh.e.reportSay')}</span></span>
+      <button type="button" onClick={() => setReport(true)} className="tap flex min-h-16 items-center gap-2.5 rounded-2xl border border-line bg-surface px-3 text-start text-ink" data-testid="pkh-report-open">
+        <span className="well h-10 w-10 shrink-0 rounded-xl bg-ink text-ground"><FileText size={18} /></span>
+        <span className={`min-w-0 font-extrabold ${name}`}>{pick('pkh.e.report')}</span>
       </button>
+      {children}
       <WaSheet open={wa} party={party} text={waText} onClose={() => setWa(false)} />
       {report ? <ReportWindow party={party} canCost={canCost} waText={waText} onClose={() => setReport(false)} /> : null}
     </div>

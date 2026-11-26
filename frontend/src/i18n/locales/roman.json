@@ -6433,6 +6433,17 @@
       "wrongPerson": "Raqam ya banda ghalat hai? Yahan wajah ke saath delete karein aur dobara darj karein — delete shuda entry record mein rahegi.",
       "report": "Mukammal khata report",
       "reportSay": "A4 page: har entry, phone aur adaigi ka tareeqa"
+    },
+    "t": {
+      "summary": "Khulasa",
+      "ledger": "Khata",
+      "phones": "Mobile",
+      "lenden": "Len-den aur purana hisaab",
+      "payments": "Adaigiyan",
+      "profile": "Taaruf",
+      "actions": "Aap kya karna chahte hain?",
+      "actLenden": "Baghair bill ke raqam",
+      "actOld": "Purana hisaab"
     }
   },
   "ihub": {
