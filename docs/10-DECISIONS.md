@@ -362,6 +362,20 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-136 · 2026-11-26 · Accepted · A person's page carries the full khata (from the new product's file 21)
+
+- **Context:** the shops asked for what the new product's party khata (mock-up 21, built at `/new/parties/:id` on `staging`) can do, in the software they run. The new product is paused (docs/43 §0 on `staging`); the live screens keep their look and gain the functionality.
+- **Decision:** `PartyDetailPage` (a dealer, customer, other shop or repair lab — one page for every kind) keeps everything it had and gains, in the live design system (`features/parties/PartyKhataFull.tsx`):
+  - the account's dates — opened, first and last dealing, the promised date of an open len-den with **Change** (`PATCH /payments/{id}/due-date` for each open entry) — and the phone with Copy;
+  - **WhatsApp khata** (the server's balance and money either way in an editable message, `waNumber`) and the **full ledger report**: the server's A4 page (`GET /parties/{id}/khata-report`) previewed with presets, from / to, the sections ticked and profit hidden or shown; print, PDF / CSV (the live statement export), share, copy;
+  - three cards: their phones **in the shop / sold / returned** with the dearest still here, the **money by channel**, the **profit from them** with hide (owner / manager);
+  - the statement as a **book in four tabs** with a search and a kind filter: the complete ledger (kind, date and time, amount, running balance to get / to give, **Fix / Edit** on every line), the **stock & sales tracker** (each phone with its cost, sale and profit; sell now, return to dealer), **brand & model**, the **payment method log** (each channel, each payment with its receipt);
+  - an entry can carry the **date** it really happened (`PaymentForm`, the API already took `date`).
+  The server piece is the new product's, taken unchanged from `staging`: `units/khata.py`, `GET /parties/{id}/khata` and `/khata-report` (read-only; cost, paid-out and profit only with VIEW_COST), `tests/test_party_khata.py`.
+- **Fix / Edit never edits a line in place** (ADR-090 / ADR-099): it opens the live correction for that kind — a sale: open, change the customer, delete; a purchase: open, change the dealer, what was paid, delete; a payment or len-den: print, delete with a reason (wrong amount or person = delete and enter again); an old balance: delete with a reason; a repair / return: its own screen. The mock-up's free "correct date / amount / move to another party" form is not built for that reason.
+- **Not built:** the "A+ trusted partner" badge (sample decoration, no rule behind it); time of day on an entry (the server stamps it). What money was paid at the counter on a bill is counted as money (not goods) in the kind filter.
+- **Consequences:** a new fact about a person's account is a line of `khata.party_khata` shown here — the app only searches and filters, it adds up nothing. Strings `pkh.*` (three languages, the same words as the new product's `nkf`). `e2e/party-khata-full.spec.ts`.
+
 ## ADR-135 · 2026-11-26 · Accepted · An 80 mm slip prints in full black
 
 - **Context:** a shop (Phonecity) sent a photo of its 80 mm sale receipt: the bold lines printed, the light ones (the address, the phone's details line, the cashier, the amount in words) came out faint or not at all. Those lines are `<small>` in grey (`#555`), and a thermal head prints by heat — grey and thin strokes are dropped.

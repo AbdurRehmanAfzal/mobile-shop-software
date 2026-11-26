@@ -33,6 +33,43 @@ def device_money(device_id: uuid.UUID, ctx: Ctx, db: DB):
     return _plain(service.device_money(db, ctx.shop_id, device_id, can_cost=ctx.can(Cap.VIEW_COST)))
 
 
+@router.get("/parties/{party_id}/khata")
+def party_khata(party_id: uuid.UUID, ctx: Ctx, db: DB):
+    """Mock-up 21: a person's khata beside its statement — their phones and where each is now, by
+    brand and model, money by channel, the old balance, the next promised date. Read-only."""
+    from app.modules.units import khata
+
+    return _plain(khata.party_khata(db, ctx.shop_id, party_id, can_cost=ctx.can(Cap.VIEW_COST)))
+
+
+@router.get("/parties/{party_id}/khata-report", response_class=HTMLResponse)
+def party_khata_report(
+    party_id: uuid.UUID,
+    ctx: Ctx,
+    db: DB,
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+    sections: str | None = None,
+    profit: bool = False,
+    lang: str | None = Query(default=None, pattern="^(en|ur)$"),
+):
+    """Mock-up 21: the full ledger report as an A4 page — the period, the sections ticked; cost and
+    profit only for those who may see cost."""
+    from app.modules.units import khata
+
+    return khata.report_html(
+        db,
+        ctx.shop_id,
+        party_id,
+        date_from=date_from,
+        date_to=date_to,
+        sections=sections,
+        profit=profit,
+        lang=lang,
+        can_cost=ctx.can(Cap.VIEW_COST),
+    )
+
+
 @router.get("/parties/{party_id}/units")
 def party_units(party_id: uuid.UUID, ctx: Ctx, db: DB):
     """Every phone bought from / sold to this person, with what is still owed either way."""

@@ -2475,3 +2475,17 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: the owner's next request for the live software.
 
 **Open questions**: none.
+
+## 2026-11-26 — A person's page gains the full khata of file 21 (ADR-136)
+
+**Asked (owner)**: explore `21-party-khata-full-ledger.html` completely; in the existing software, on People & Khata, opening a dealer / customer / other shop / repair lab must have everything that file has — check the gaps, the ledgers as in the file, every functionality and action; the UI in the live software's own look.
+
+**Gap check** (file 21 against the live page): the page had the balance, money received / paid, the details, len-den, old balance, the journey, the phones by brand and model with pay / receive, the ledger download and a plain statement list. Missing: the account's dates and promised date, phone copy, WhatsApp khata, their stock in shop / sold / returned, money by channel, profit with hide, the ledger's search / kind filter / time / running balance / Fix on a line, the stock & sales tracker with sell / return, the brand & model table, the payment method log, the full A4 report builder, a date on an entry.
+
+**Done** (branch `develop`): the server piece taken from `staging` unchanged (`units/khata.py`, the two routes in `units/router.py`, `tests/test_party_khata.py`); `features/parties/PartyKhataFull.tsx` (facts, buttons, cards, the book in four tabs, Fix sheet, promise sheet, WhatsApp sheet, report window, the people with an open balance) wired into `PartyDetailPage.tsx` — everything the page had stays; `PaymentForm` gains an optional date; strings `pkh.*` in three languages. See ADR-136 for what is deliberately not built.
+
+**Verified**: pytest `test_party_khata` (3); tsc; eslint on the changed files; Playwright `party-khata-full` (new: the old pieces still there, dates and promise, the three cards against the server, profit hidden, the ledger's count / kind filter / search, Fix on a purchase and a payment deleted with a reason, the tracker's filters and profit, brand & model, the method log, the promise changed, a backdated payment, WhatsApp text, the A4 report, a customer's page, Urdu RTL at phone width). **Not done**: the full suites; a manager / salesman login in the browser.
+
+**Next**: the owner's next request for the live software; release `develop` → `main` when the owner says.
+
+**Open questions**: none.

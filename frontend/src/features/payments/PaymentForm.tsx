@@ -10,7 +10,7 @@ import { openPrintable } from '@/lib/files'
 import { useDocMutation } from '@/lib/queries'
 import { uid } from '@/lib/id'
 import type { Party, Payment } from '@/lib/types'
-import {withCur } from '@/lib/format'
+import { isoDay, withCur } from '@/lib/format'
 
 /** owner 2026-10-30: a payment for one specific bill (one phone) — allocated to it, up to what is left */
 export interface Allocation { document_type: 'invoice' | 'purchase'; document_id: string; document_no: string; remaining: number }
@@ -36,6 +36,8 @@ export default function PaymentForm({ party, direction, onDone, allocation, allo
   const [pay, setPay] = useState<PayState>(() => newPay())
   const [notes, setNotes] = useState('')
   const [due, setDue] = useState('')
+  // owner 2026-11-26 (ADR-136): an entry made late can carry the day it really happened
+  const [day, setDay] = useState('')
   const [result, setResult] = useState<Payment | null>(null)
   const [queued, setQueued] = useState(false)
   const m = useDocMutation<Record<string, unknown>, Payment>('POST', () => '/api/v1/payments', undefined, { kind: 'payment', label: (b) => `${pick(lending ? (direction === 'in' ? 'lending.take' : 'lending.give') : direction === 'in' ? 'pay.in' : 'pay.out')} · ${party.name} · ${withCur(Number((b as { amount?: number }).amount ?? 0).toLocaleString('en-US'))}` }, { key: () => idem })
@@ -49,7 +51,7 @@ export default function PaymentForm({ party, direction, onDone, allocation, allo
       alloc = []
       for (const a of many) { if (left <= 0) break; const x = Math.min(left, a.remaining); if (x > 0) alloc.push({ document_type: a.document_type, document_id: a.document_id, amount: Math.round(x * 100) / 100 }); left -= x }
     }
-    const res = await m.mutateAsync({ party_id: party.id, direction, amount: Number(amount), payment: payInfo(pay), notes: notes || undefined, allocations: alloc ?? (noAllocation ? [] : undefined), purpose: lending ? 'lending' : undefined, due_date: lending && due ? due : undefined })
+    const res = await m.mutateAsync({ party_id: party.id, direction, amount: Number(amount), payment: payInfo(pay), notes: notes || undefined, allocations: alloc ?? (noAllocation ? [] : undefined), purpose: lending ? 'lending' : undefined, due_date: lending && due ? due : undefined, date: day || undefined })
     if (isQueued(res)) {
       setQueued(true)
       return
@@ -123,6 +125,7 @@ export default function PaymentForm({ party, direction, onDone, allocation, allo
       <span className="flex items-center gap-1"><BiLabel text="pay.method" size="md" tone="text-muted" /><Help term="common.method" size="sm" /></span>
       <PayPicker value={pay} onChange={(p) => { setPay(p); if (p.method === 'remittance' && remitPkr(p) > 0) setAmount(String(remitPkr(p))) }} udhaar={false} remittance={direction === 'in'} />
       {lending ? <BiInput label="lending.dueDate" help={<Help term="payment.lendDue" size="sm" />} type="date" value={due} onChange={(e) => setDue(e.target.value)} dir="ltr" /> : null}
+      <BiInput label="pkh.e.date" hint="pkh.e.dateHint" type="date" value={day} max={isoDay(0)} onChange={(e) => setDay(e.target.value)} dir="ltr" data-testid="pay-date" />
       <BiInput label="common.notes" help={<Help term="common.notes" size="sm" />} value={notes} onChange={(e) => setNotes(e.target.value)} />
       <ErrorText error={m.error} />
       <BiButton type="submit" text={lending ? (direction === 'in' ? 'lending.saveTake' : 'lending.saveGive') : direction === 'in' ? 'party.receive' : 'party.pay'} full loading={m.isPending} disabled={!payReady(pay)} variant={direction === 'in' ? 'primary' : 'secondary'} />
