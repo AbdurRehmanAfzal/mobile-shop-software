@@ -3976,6 +3976,16 @@
         "title": "At the time",
         "body": "Money paid on the day the bill was made. Below it, each later payment with its own receipt.",
         "example": "Paid at the time Rs. 30,000 · then RV-0012 Rs. 20,000."
+      },
+      "added": {
+        "title": "Spent on this phone",
+        "body": "Money you spent on this phone after buying it — a part, a screen guard, a courier. It is added to the phone's cost, so the profit when you sell it is right.",
+        "example": "Bought for Rs. 30,000, glass protector Rs. 1,500 → cost is now Rs. 31,500."
+      },
+      "baseCost": {
+        "title": "Bought for",
+        "body": "What the phone cost on its purchase bill, before anything was spent on it afterwards.",
+        "example": "Bought for Rs. 30,000; with Rs. 1,500 spent on it the cost is Rs. 31,500."
       }
     },
     "verify": {

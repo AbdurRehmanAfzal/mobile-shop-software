@@ -78,6 +78,9 @@ class EventType(StrEnum):
     PTA_CHECKED = "pta_checked"
     # owner 2026-11-15 (ADR-085): the unit is taken apart for its parts (its cost becomes a cost)
     USED_FOR_PARTS = "used_for_parts"
+    # owner 2026-11-25: money spent on the unit after its purchase (a part, a screen guard ...)
+    # added to its cost through `devices/expenses.py` — never through the generic events endpoint
+    COST_ADDED = "cost_added"
 
 
 # Events that move money and therefore may only be raised by document modules (purchase, sale,
@@ -91,6 +94,7 @@ MONEY_EVENTS = frozenset(
         EventType.TRANSFERRED_OUT,
         EventType.TRANSFERRED_IN,
         EventType.USED_FOR_PARTS,
+        EventType.COST_ADDED,
     }
 )
 
@@ -108,6 +112,7 @@ NEUTRAL_EVENTS = frozenset(
         EventType.RESERVED,
         EventType.UNRESERVED,
         EventType.PTA_CHECKED,
+        EventType.COST_ADDED,
     }
 )
 

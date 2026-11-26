@@ -362,6 +362,20 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-140 · 2026-11-26 · Accepted · A phone's page: expenses on the unit, its own ledger sheet, quick check (from the new product's file 20)
+
+- **Context:** the owner asked for the item detail to be upgraded to what the new product's file 20 (item detail with ledger sheet, `/new/item/:id` on `staging`) does. The page keeps its look and ADR-114's rules (three views, a new fact is a line of the details table with its action and "?").
+- **Decision:** the page gains:
+  - **money spent on the unit after buying it** — a line of the details table ("Spent on this phone", with Add) and a card (bought for / added / true cost, each expense with its date and note). The server posts it: `unit_expense` — Dr stock (this unit), Cr the cash account picked; the unit's `cost_price` goes up; an immutable `cost_added` event. An expense typed by mistake is **deleted with a reason** (a reversing entry) while the unit is still the shop's. Costs a repair added (outside technician, lab) are listed with it, read-only;
+  - **the unit's own ledger** — every rupee out on it and in, with the net after each line (bought, paid to seller, spent on it, sold, received, returns, transfers, price corrected), its totals, and the **ledger sheet**: the server's A4 page in English / Urdu, CSV, and a short summary to paste in WhatsApp;
+  - **quick check (QC)** — the unit's faults as pass / issue per kind of device; a tap marks or clears a fault through the live `marked_faulty` / `faulty_cleared` events (no new state);
+  - in "More": **Item ledger sheet** and a **WhatsApp offer** (the phone's name, details, warranty and asking price as a message);
+  - the **margin** line of a sold unit counts what was spent on it (`true_margin`).
+  The server piece is the new product's, from `staging`: `devices/expenses.py`, `units/ledger.py`, `device_money` (+ `ledger`, `costs`, `summary.added / net_cost / true_margin`), `POST /devices/{id}/expenses`, `/expenses/{group}/undo`, `GET /devices/{id}/ledger-sheet`, `EventType.COST_ADDED`, with `tests/test_item_ledger.py`, `test_unit_expenses.py`.
+- **A change to live posting:** a purchase return of a unit that has added cost now also writes that added cost off (Cr stock, Dr cost of goods) so stock is left at zero for that unit — without it the expense would stay in inventory for a phone the shop no longer has. A unit with no expense returns exactly as before.
+- **Rules:** expenses, the ledger and the sheet are cost — owner / manager only (the server refuses the others; `ledger` and `costs` are not sent to them). An expense is never edited: delete with a reason and enter it again. No expense on a unit that is sold, returned or transferred. The app adds up nothing.
+- **Consequences:** `cost_price` is the true cost (purchase + what was spent); the purchase bill's own figure stays on the bill line. Strings `dled.*`, `stock.events.cost_added`, help `stock.unit.added` / `baseCost`. `e2e/device-ledger.spec.ts`.
+
 ## ADR-139 · 2026-11-26 · Accepted · Sale & purchase: one page in the side panel (from the new product's file 25)
 
 - **Context:** the owner asked for the new product's sales & purchases screen (mock-up 25) in the live software, as its own entry in the side panel.
