@@ -547,6 +547,10 @@ def payment_receipt_html(
     h1{{font-size:15px;margin:0 0 2px}}h2{{font-size:13px;margin:0 0 6px;font-weight:600}}.no{{font-family:monospace;font-size:12px}}.amt{{font-size:26px;font-weight:800;margin:8px 0;text-align:center;direction:ltr}}
     .row{{display:flex;justify-content:space-between;font-size:12px;padding:2px 0}}table{{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}}td,th{{padding:3px 0;border-bottom:1px dashed #999;vertical-align:top}}th{{text-align:start}}.n{{text-align:end;direction:ltr;white-space:nowrap}}.void{{color:#b00;font-weight:800;text-align:center}}.foot{{margin-top:8px;text-align:center;font-size:11px}}
     @page{{size:{"80mm auto" if fmt == "thermal" else "A5"};margin:0}}"""
+    if fmt == "thermal":
+        from app.modules.auth import profile as _profile
+
+        css += _profile.THERMAL_INK
     body = f"""<h1>{shop_name}</h1>{f"<div class='row'><span>{e(shop.phone or '')}</span><span>{e(shop.city or '')}</span></div>" if shop.phone or shop.city else ""}
     <h2>{T["in"] if p.direction == "in" else T["out"]} <span class='no'>{e(p.no)}</span></h2>
     {"<div class='void'>" + T["void"] + "</div>" if p.status != "posted" else ""}

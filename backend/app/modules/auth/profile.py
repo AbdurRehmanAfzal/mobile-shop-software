@@ -158,6 +158,20 @@ def logo_data_uri(shop: Shop) -> str | None:
     return f"data:{mime};base64,{base64.b64encode(data).decode()}"
 
 
+# A shop's receipt, 2026-11-26: on an 80 mm thermal roll the bold lines printed and the light ones
+# (grey small text: the address, a phone's details, the cashier, the amount in words) came out faint
+# or not at all — a thermal head prints by heat, so grey and thin strokes are dropped. Every 80 mm
+# slip ends its <style> with this: all text and lines pure black, nothing thinner than semi-bold,
+# the small lines a little larger. The A4 pages are unchanged.
+THERMAL_INK = (
+    "html,body,body *{color:#000 !important}"
+    "body{font-weight:600;-webkit-print-color-adjust:exact;print-color-adjust:exact}"
+    "small{font-size:10px;font-weight:600}"
+    "b,strong,th,h1,h2,.tot td{font-weight:800}"
+    "td,th,.foot,hr{border-color:#000 !important}"
+)
+
+
 def header_html(shop: Shop, ur: bool, thermal: bool = False) -> str:
     """logo, name, tagline, address, phones, email, NTN / STRN / FBR POS ID — what the shop chose"""
     e = html.escape

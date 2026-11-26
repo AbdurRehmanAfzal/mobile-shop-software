@@ -241,6 +241,7 @@ th {{ width: {"36%" if thermal else "30%"}; font-weight: 400; color: #444; }} td
 .bar.qr {{ height: 24mm; width: 24mm; }}
 .code {{ display: block; text-align: center; font-family: 'Courier New', monospace; letter-spacing: .08em; font-size: {"10px" if thermal else "12px"}; margin-top: 2px; }}
 small {{ color: #555; }}
+{profile.THERMAL_INK if thermal else ""}
 </style></head><body>
 {head}
 <div class="kind">{e(T["title"][i])}</div>

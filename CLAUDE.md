@@ -75,6 +75,11 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Read ADR-131 before touching `StockSummaryPage.tsx` or `reports.stock_summary`.
 - Rules: Stock opens a card per kind the shop trades, a card opens that kind's brands → models → the stock list (`?kind=`); every figure is `reports.stock_summary`'s (`kinds`, `items`, `category`) — the app adds up only the cards for the heading; the keys without `category` must keep saying what they said (the download and the assistant read them); a new kind of stock gets a card here.
 
+## The new UI product — PAUSED (owner 2026-11-26)
+- The new product (`/new`, built from the owner's mock-ups, ADR-132 / ADR-134) exists only on the `staging` branch and waits; the live software here on `develop` gains its functionality on the old screens first (the old look stays).
+- Where it stands, the server pieces that exist only on `staging`, how to take one into `develop` and how to restart: `docs/43-UI-REDESIGN-PLAN.md` §0 **on the `staging` branch** (`git show origin/staging:docs/43-UI-REDESIGN-PLAN.md`).
+- Rules: never merge `staging` into `develop` / `main` (it would ship `/new` to the shops); take only the server piece a feature needs (`git checkout origin/staging -- <files>` with its test); release `develop` → `main`, then merge `main` into `staging`.
+
 ## Reports list (owner 2026-11-19, ADR-111)
 - Read ADR-111 before touching `frontend/src/features/reports/catalog.ts`, `ReportsHub.tsx` or `ReportsHome.tsx`.
 - Rules: `/reports` lists every report (it is not behind the `reports` module; the profit tabs live at `/reports?tab=…` and gate themselves); the list never computes or copies a report — an entry points at the screen where the report lives; **a new report or sheet gets an entry in `catalog.ts`** with its `hub.r.<id>.t / .d` strings in three languages and its module / role rule (`catalog.test.ts`).
@@ -119,6 +124,7 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 ## Printers and the printer guide (owner 2026-11-20, ADR-119)
 - Read ADR-119 before touching `PrintersCard.tsx`, `PrinterGuidePage.tsx`, `labels/printer_test.py` or the `printers.*` / `pguide.*` texts.
 - Rules: the app never talks to a printer — every print goes through the device's own print window, and no screen may say otherwise; printer choices live on the device (`localStorage`), never on the shop; the test page is the server's and carries no shop data; printer advice is written once, in `pguide.*` in three languages (the guide at `/printer-guide` is public), and must not name a model as tested unless it was.
+- An 80 mm slip (ADR-135): a thermal head drops grey and thin text, so every 80 mm print page ends its `<style>` with `profile.THERMAL_INK` (all black, semi-bold at least); A4 pages keep their look (`tests/test_thermal_ink.py`).
 
 ## Barcodes, labels, scanning (owner addendum 4, 2026-10-31, ADR-036)
 - Spec `docs/22-BARCODES-SPEC.md`; what existed / what was built / assumptions / scanner test `docs/23-BARCODES-PLAN.md` — read it before touching `backend/app/modules/barcodes`, `modules/labels`, `frontend/src/lib/scanner.ts` or `ScanListener.tsx`.

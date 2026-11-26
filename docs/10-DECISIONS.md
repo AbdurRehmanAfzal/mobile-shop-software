@@ -362,6 +362,12 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-135 · 2026-11-26 · Accepted · An 80 mm slip prints in full black
+
+- **Context:** a shop (Phonecity) sent a photo of its 80 mm sale receipt: the bold lines printed, the light ones (the address, the phone's details line, the cashier, the amount in words) came out faint or not at all. Those lines are `<small>` in grey (`#555`), and a thermal head prints by heat — grey and thin strokes are dropped.
+- **Decision:** one rule, `profile.THERMAL_INK`, ends the `<style>` of every 80 mm slip the server prints — the sale receipt, a phone's 80 mm details slip, the repair job sheet and a payment receipt: every text and line pure black (`!important`, so it wins over any grey), body text semi-bold (600), the small lines 10 px semi-bold, headings and totals 800. The A4 pages keep their look (grey stays readable on a laser / inkjet). The app still never talks to the printer (ADR-119).
+- **Consequences:** a new 80 mm slip must add `THERMAL_INK` last in its style (`tests/test_thermal_ink.py`). Nothing about the content of the slips changed; a shop sees darker, slightly heavier text on the roll.
+
 ## ADR-131 · 2026-11-22 · Accepted · The stock summary opens with a card per kind of stock
 
 **Context**: tapping Stock opened "What is my stock worth?" — one total and every brand together, with tablets, watches and laptops counted as "phones" and no accessories at all. The owner: show the kinds first, each with its figures (pieces, worth, brands, models), then that kind's brands and models as now, then the stock list.
