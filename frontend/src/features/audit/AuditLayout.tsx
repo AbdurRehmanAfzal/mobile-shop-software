@@ -1,7 +1,7 @@
 /** Frame of every Shop Audit screen: title, the section chips and the global period bar.
  *  Sections are added here as they land (docs/17 phases). */
 
-import { CalendarRange } from 'lucide-react'
+import { BookOpen, CalendarRange, Scale } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { BiLabel, useLang } from '@/components/Bilingual'
@@ -51,6 +51,13 @@ export default function AuditLayout({ children, right }: { children: ReactNode; 
               {pick(s.key)}
             </Link>
           ))}
+        </div>
+      ) : null}
+      {/* ADR-143: the books behind the audit, one tap away */}
+      {role === 'owner' || role === 'manager' ? (
+        <div className="flex flex-wrap gap-1.5" data-testid="audit-books">
+          <Link to="/reports/ledger" className={`${chip(false)} inline-flex items-center gap-1.5`}><BookOpen size={15} />{pick('autr.masterLedger')}</Link>
+          <Link to="/accounts" className={`${chip(false)} inline-flex items-center gap-1.5`}><Scale size={15} />{pick('autr.accounts')}</Link>
         </div>
       ) : null}
       <section className="card flex flex-col gap-2" data-testid="audit-period">

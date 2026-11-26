@@ -6979,5 +6979,54 @@
       "correction": "Correction",
       "exchange": "Exchange"
     }
+  },
+  "autr": {
+    "salesHint": "Model-wise sales, highest-profit phones, buyer khata and IMEI trail",
+    "purchasesHint": "Model-wise buying cost, cheapest / dearest deals, supplier khata and where each phone is",
+    "searchSales": "Search model, IMEI, supplier or buyer…",
+    "searchPurchases": "Search model, IMEI, supplier or bill…",
+    "view": {
+      "sales": {
+        "models": "Brand & model-wise sales",
+        "bills": "All sale bills"
+      },
+      "purchases": {
+        "models": "Brand & model-wise purchases",
+        "bills": "All purchase bills"
+      }
+    },
+    "unitsSold": "sold",
+    "unitsBought": "bought",
+    "soldN": "sold",
+    "inShop": "in the shop",
+    "totalSales": "Total sales",
+    "totalCost": "Total cost",
+    "modelProfit": "Model profit",
+    "inspectAll": "See all",
+    "highestProfit": "Highest-profit phone sold",
+    "lowestCost": "Lowest buying cost phone",
+    "cheapestDeal": "Cheapest buy",
+    "dearestDeal": "Dearest buy",
+    "from": "Bought from",
+    "to": "Sold to",
+    "invested": "Money put in",
+    "profitSoFar": "Profit made so far",
+    "dateBill": "Date & bill",
+    "imeiSpecs": "IMEI & details",
+    "supplier": "Supplier",
+    "buyer": "Buyer",
+    "debit": "Billed",
+    "credit": "Bill paid",
+    "khataStatus": "Khata status",
+    "cost": "Cost",
+    "billState": "Bill paid?",
+    "nowBuyer": "Now / buyer",
+    "now": {
+      "sold": "Sold",
+      "in_stock": "In the shop",
+      "other": "Out of stock"
+    },
+    "masterLedger": "Master ledger",
+    "accounts": "Accounts & trial balance"
   }
 }

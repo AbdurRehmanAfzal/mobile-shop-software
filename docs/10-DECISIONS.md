@@ -362,6 +362,18 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-143 · 2026-11-26 · Accepted · Shop Audit: sales & purchases by brand & model with every phone's trail (from the new product's file 22)
+
+- **Context:** the owner asked for the audit module to be upgraded to what the new product's file 22 (the executive shop audit, `/new/audit` on `staging`) does. Compared with it, the live audit already had every section (overview, finance, sales & purchases, returns, people, udhaar, len-den, repairs, stock, products, bills, staff, security, the reports centre), the period presets with as-of, and each section's PDF / Excel. What file 22 adds is on the Sales & purchases tab: the phones themselves, by model, each with its trail.
+- **Decision:**
+  - **Sales & purchases gains a second view, "by brand & model"** (`?view=models`, `features/audit/TradeUnits.tsx`): each model with the server's totals (units, sales, cost, profit; for purchases: bought, sold, in the shop, money put in, profit so far) and picks (the highest-profit and the lowest-cost phone sold; the cheapest and the dearest buy), and every phone — a sold one: its bill, who it was bought from and at what cost, the buyer, the price, what the bill has been paid, the profit, the khata status; a bought one: its bill, supplier, cost, whether the bill is paid, where it is now (and to whom it went) and the profit if sold. A search (model, IMEI, supplier, buyer, bill). IMEIs open the phone, names the person, bill numbers the bill. The bills view is unchanged and stays the default.
+  - **The books one tap from the audit** (owner / manager): Master ledger (`/reports/ledger`) and Accounts & trial balance (`/accounts`), on every audit screen.
+  - The finance tab's remittance list shows the detail typed with a stand-alone remittance payment (currency, rate, sender) instead of PKR only.
+  The server is the new product's, from `staging`: `shopaudit/units.py`, `GET /shop-audit/sales/units`, `/shop-audit/purchases/units` (read-only; the purchases one and every cost / profit figure need VIEW_COST), the remittance detail in `shopaudit/finance.py`, `tests/test_shopaudit_units.py`.
+- **Rules kept (docs/17):** read-only, every figure the server's and traceable to its bill or phone; model totals equal the products audit's; returned lines are left out as there.
+- **Not built:** the mock-up's profit eye across the whole audit (a salesman never receives cost; an owner hides nothing from himself on his own screen), its branch picker and the WhatsApp summary.
+- **Consequences:** strings `autr.*`. `e2e/audit-trade-units.spec.ts`; the existing audit specs unchanged.
+
 ## ADR-142 · 2026-11-26 · Accepted · Cash & bank: figures, accounts as cards, the book on the page (from the new product's file 03)
 
 - **Context:** the owner asked for Cash & bank to be upgraded to what the new product's file 03 (the treasury hub, `/new/more/cash` on `staging`) does. The live page had the accounts as a plain list, the below-zero hint, moving money with its list and undo, add / edit / delete, and the book as a bare list inside a sheet.

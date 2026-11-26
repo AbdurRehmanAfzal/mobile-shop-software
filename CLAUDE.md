@@ -25,6 +25,7 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Requirements: `docs/16-SHOP-AUDIT-SPEC.md` (authoritative, verbatim owner brief).
 - Living plan, gap analysis, phase checklist and the **exact next task**: `docs/17-SHOP-AUDIT-PLAN.md` — read it before touching `backend/app/modules/shopaudit` or `frontend/src/features/audit`.
 - Status rows live in `docs/06-PROGRESS.md` (section "Phase 5 — Shop Audit"); per-session results in `docs/09-SESSION-LOG.md`.
+- Sales & purchases by brand & model (ADR-143, `features/audit/TradeUnits.tsx`, `shopaudit/units.py`): the second view of `/audit/sales` (`?view=models`) shows only the server's model totals, picks and each phone's trail; the purchases side and every cost / profit need VIEW_COST; model totals must keep equalling the products audit's.
 - Rules for this work: read-only derivation from the ledger / documents / device events, additive migrations only, every figure traceable and drill-down-able, limitations shown (no due dates, no purchase tax, no remittance fees), owner-only security feed, no chart dependency (in-house SVG).
 
 ## Bulk Excel import / export (owner 2026-10-31, ADR-034)
