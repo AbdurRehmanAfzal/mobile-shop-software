@@ -197,6 +197,8 @@ export interface CashAccount {
   name: string
   name_ur: string | null
   is_default: boolean
+  /** the account / wallet number, when the shop wrote one */
+  account_no?: string | null
   opening_balance?: Money
   balance: Money
 }

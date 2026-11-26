@@ -2557,3 +2557,15 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: the owner's next request; release `develop` → `main` when the owner says.
 
 **Open questions**: none.
+
+## 2026-11-26 — Cash & bank upgraded from file 03 (ADR-142)
+
+**Asked (owner)**: #161 merged; explore `03-cash-and-bank.html` and update / upgrade bank & cash accordingly.
+
+**Done** (branch `develop`, level with `main` after #161): `CashAccountsPage.tsx` rewritten around the same live APIs — four figures, the accounts as cards, the chosen account's book on the page with search and filters, money out by hand as an expense from the account, CSV / print, the opening balance filled to zero for a below-zero account; everything it had stays (move, moves list with undo, add / edit / delete). `CashAccount.account_no` in the types. Strings `cashx.*` in three languages. No server change.
+
+**Verified**: tsc; eslint; vitest; Playwright `cash-bank` (new: the figures against the server's balances, the accounts, the cash book's rows and filters and search, the bank card opening the bank's book, an expense paid from the bank lowering its balance, the CSV download, a below-zero wallet's opening filled to zero, Urdu RTL at phone width, a salesman with no book) and the existing `transfer`, `edit-undo`, `responsive`. See the session's last message for the exact results. **Not done**: the full suites.
+
+**Next**: the owner's next request; release `develop` → `main` when the owner says.
+
+**Open questions**: none.

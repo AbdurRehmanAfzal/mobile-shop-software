@@ -76,6 +76,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Read ADR-131 before touching `StockSummaryPage.tsx` or `reports.stock_summary`.
 - Rules: Stock opens a card per kind the shop trades, a card opens that kind's brands → models → the stock list (`?kind=`); every figure is `reports.stock_summary`'s (`kinds`, `items`, `category`) — the app adds up only the cards for the heading; the keys without `category` must keep saying what they said (the download and the assistant read them); a new kind of stock gets a card here.
 
+## Cash & bank (owner 2026-11-26, ADR-142)
+- Read ADR-142 before touching `features/more/CashAccountsPage.tsx` or the `cashx.*` texts.
+- Rules: balances and book rows are the server's (`/ledger/accounts`, `/ledger/accounts/{id}/book`, `/reports/cash-flow`); there is no free cash entry — money out by hand is an expense paid from the account, money in is recorded where its bill or person is (docs/38 §4); the book, cash flow and CSV only for owner / manager; a move between accounts stays `/ledger/transfers` with undo by reversal.
+
 ## Stock: tabs, stock by dealer, the stock ledger (owner 2026-11-26, ADR-141)
 - Read ADR-141 before touching `features/stock/StockHub.tsx` or `backend/app/modules/stockhub`.
 - Rules: `StockTabs` sits on every stock screen — a new stock screen gets a tab; `/stock/people` and `/stock/ledger` show only the server's figures (`/stock-hub/parties`, `/ledger`, `/overview`) and a filter asks the server; cost, profit, billed and balances only for owner / manager; the summary's own figures stay `reports.stock_summary`'s (ADR-131), the stock hub's two are shown apart; `stockhub/` is shared with the new product on `staging`.
