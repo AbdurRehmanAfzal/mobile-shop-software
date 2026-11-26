@@ -59,6 +59,7 @@ def list_documents(
     date_to: dt.date | None = None,
     state: str | None = None,
     limit: int = 100,
+    per_kind: int = PER_KIND,
 ) -> list[dict]:
     q = (q or "").strip()
     digits = _digits(q)
@@ -140,7 +141,7 @@ def list_documents(
             db.scalars(
                 dated(stmt, Invoice.date)
                 .order_by(Invoice.date.desc(), Invoice.created_at.desc())
-                .limit(PER_KIND)
+                .limit(per_kind)
             )
         )
         sale_hits = [i.id for i in found]
@@ -184,7 +185,7 @@ def list_documents(
             db.scalars(
                 dated(stmt, Purchase.date)
                 .order_by(Purchase.date.desc(), Purchase.created_at.desc())
-                .limit(PER_KIND)
+                .limit(per_kind)
             )
         )
         purchase_hits = [p.id for p in found]
@@ -227,7 +228,7 @@ def list_documents(
         for r in db.scalars(
             dated(stmt, ReturnDoc.date)
             .order_by(ReturnDoc.date.desc(), ReturnDoc.created_at.desc())
-            .limit(PER_KIND)
+            .limit(per_kind)
         ):
             devices = [
                 uuid.UUID(str(ln["device_id"])) for ln in (r.lines or []) if ln.get("device_id")
@@ -257,7 +258,7 @@ def list_documents(
                 conds.append(RepairJob.imei.like(f"%{digits}%"))
             stmt = stmt.where(or_(*conds))
         # repair jobs have no bill date column; the day the phone came in is used
-        found = db.scalars(stmt.order_by(RepairJob.created_at.desc()).limit(PER_KIND))
+        found = db.scalars(stmt.order_by(RepairJob.created_at.desc()).limit(per_kind))
         for job in found:
             day = local_date(job.created_at)
             if (date_from and day < date_from) or (date_to and day > date_to):

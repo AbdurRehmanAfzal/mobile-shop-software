@@ -4,33 +4,6 @@ import LandingPage from '@/features/landing/LandingPage'
 import { StockGate } from '@/features/stock/StockCards'
 import { TOPICS, TOPIC_KEYS } from '@/features/landing/topics'
 import { useAuth } from '@/lib/auth'
-import NewShell, { Soon as NewSoon } from '@/newui/Shell'
-import NewStockSummary from '@/newui/pages/StockSummary'
-import NewHome from '@/newui/pages/Home'
-import NewSale from '@/newui/pages/Sale'
-import NewPurchase from '@/newui/pages/Purchase'
-import NewPurchases from '@/newui/pages/Purchases'
-import NewKhata from '@/newui/pages/Khata'
-import NewCash from '@/newui/pages/Cash'
-import NewHisaab from '@/newui/pages/Hisaab'
-import NewExpenses from '@/newui/pages/Expenses'
-import NewOverview from '@/newui/pages/Overview'
-import NewRepairs from '@/newui/pages/Repairs'
-import NewRepairJob from '@/newui/pages/RepairJob'
-import NewLoans from '@/newui/pages/Loans'
-import NewSettings from '@/newui/pages/Settings'
-import NewQist from '@/newui/pages/Qist'
-import NewRemittance from '@/newui/pages/Remittance'
-import NewExchange from '@/newui/pages/Exchange'
-import NewTransfers from '@/newui/pages/Transfers'
-import NewBulk from '@/newui/pages/Bulk'
-import NewFbr from '@/newui/pages/Fbr'
-import NewAudit from '@/newui/pages/Audit'
-import NewAuditFinance from '@/newui/pages/AuditFinance'
-import NewItemDetail from '@/newui/pages/ItemDetail'
-import NewStockItem from '@/newui/pages/StockItem'
-import NewStockHub from '@/newui/pages/StockHub'
-import NewControl from '@/newui/pages/Control'
 import LoginPage from '@/features/auth/LoginPage'
 import SignupPage from '@/features/auth/SignupPage'
 import ModuleGate from '@/components/ModuleGate'
@@ -41,6 +14,50 @@ const load = () => import('./pages')
 type Pages = Awaited<ReturnType<typeof load>>
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const page = <K extends keyof Pages>(k: K) => lazy(async () => ({ default: (await load())[k] as ComponentType<any> }))
+// ADR-134: the new product's screens are their own file too, fetched when /new is first opened
+const loadNew = () => import('./newPages')
+type NewPages = Awaited<ReturnType<typeof loadNew>>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const newPage = <K extends keyof NewPages>(k: K) => lazy(async () => ({ default: (await loadNew())[k] as ComponentType<any> }))
+const NewShell = newPage('NewShell')
+const NewSoon = newPage('NewSoon')
+const NewStockSummary = newPage('NewStockSummary')
+const NewHome = newPage('NewHome')
+const NewSale = newPage('NewSale')
+const NewPurchase = newPage('NewPurchase')
+const NewPurchases = newPage('NewPurchases')
+const NewKhata = newPage('NewKhata')
+const NewCash = newPage('NewCash')
+const NewHisaab = newPage('NewHisaab')
+const NewExpenses = newPage('NewExpenses')
+const NewOverview = newPage('NewOverview')
+const NewRepairs = newPage('NewRepairs')
+const NewRepairJob = newPage('NewRepairJob')
+const NewLoans = newPage('NewLoans')
+const NewSettings = newPage('NewSettings')
+const NewQist = newPage('NewQist')
+const NewRemittance = newPage('NewRemittance')
+const NewExchange = newPage('NewExchange')
+const NewTransfers = newPage('NewTransfers')
+const NewBulk = newPage('NewBulk')
+const NewFbr = newPage('NewFbr')
+const NewAudit = newPage('NewAudit')
+const NewAuditFinance = newPage('NewAuditFinance')
+const NewAuditSales = newPage('NewAuditSales')
+const NewAuditBills = newPage('NewAuditBills')
+const NewAuditUdhaar = newPage('NewAuditUdhaar')
+const NewAuditStock = newPage('NewAuditStock')
+const NewAuditProducts = newPage('NewAuditProducts')
+const NewAuditReturns = newPage('NewAuditReturns')
+const NewAuditStaff = newPage('NewAuditStaff')
+const NewAuditLedger = newPage('NewAuditLedger')
+const NewAuditReports = newPage('NewAuditReports')
+const NewItemDetail = newPage('NewItemDetail')
+const NewStockItem = newPage('NewStockItem')
+const NewStockHub = newPage('NewStockHub')
+const NewInvoices = newPage('NewInvoices')
+const NewSales = newPage('NewSales')
+const NewControl = newPage('NewControl')
 const Shell = page('Shell')
 const ControlShell = page('ControlShell')
 const PrinterGuidePage = page('PrinterGuidePage')
@@ -157,7 +174,7 @@ export const router = createBrowserRouter([
   { path: '/r/:token', element: <Suspense fallback={<Waiting />}><RepairStatusPage /></Suspense> },
   { path: '/b/:token', element: <Suspense fallback={<Waiting />}><BillCheckPage /></Suspense> },
   // ADR-134 / ADR-115: the new product's control room, under /control in its own frame (the business view)
-  { path: '/control/new', element: <NewControl /> },
+  { path: '/control/new', element: <Suspense fallback={<Waiting />}><NewControl /></Suspense> },
   // ADR-115: the provider's control room — its own address and frame, outside the shop app
   {
     path: '/control',
@@ -221,14 +238,26 @@ export const router = createBrowserRouter([
       { path: '/new/more/bulk', element: <NewBulk /> },
       // FBR digital invoicing (no file draws it; drawn like file 03): the bills sent, waiting, turned down
       { path: '/new/fbr', element: <NewFbr /> },
-      // the shop audit (no file draws it; drawn like file 02): its frame and the overview; the other sections open the live screens
+      // the shop audit, drawn from file 22: its frame, the overview and every tab of the drawing
       { path: '/new/audit', element: <ModuleGate module="reports"><NewAudit /></ModuleGate> },
       { path: '/new/audit/finance', element: <ModuleGate module="reports"><NewAuditFinance /></ModuleGate> },
+      { path: '/new/audit/sales', element: <ModuleGate module="reports"><NewAuditSales /></ModuleGate> },
+      { path: '/new/audit/bills', element: <ModuleGate module="reports"><NewAuditBills /></ModuleGate> },
+      { path: '/new/audit/udhaar', element: <ModuleGate module="reports"><NewAuditUdhaar /></ModuleGate> },
+      { path: '/new/audit/stock', element: <ModuleGate module="reports"><NewAuditStock /></ModuleGate> },
+      { path: '/new/audit/products', element: <ModuleGate module="reports"><NewAuditProducts /></ModuleGate> },
+      { path: '/new/audit/returns', element: <ModuleGate module="reports"><NewAuditReturns /></ModuleGate> },
+      { path: '/new/audit/staff', element: <ModuleGate module="reports"><NewAuditStaff /></ModuleGate> },
+      { path: '/new/audit/ledger', element: <ModuleGate module="reports"><NewAuditLedger /></ModuleGate> },
+      { path: '/new/audit/reports', element: <ModuleGate module="reports"><NewAuditReports /></ModuleGate> },
       // one item's page (file 17), its own top bar
       { path: '/new/item/:id', element: <NewItemDetail /> },
       // one stock item's page (an accessory; file 17 / 20's Accessories view)
       // the stock screen (file 23), its own top bar
       { path: '/new/stock', element: <NewStockHub /> },
+      // every bill in one list (file 24, F10) and the sales screen (file 25), each with its own top bar
+      { path: '/new/invoices', element: <NewInvoices /> },
+      { path: '/new/sales', element: <NewSales /> },
       { path: '/new/stock-item/:id', element: <ModuleGate module="accessories"><NewStockItem /></ModuleGate> },
       {
         path: '/new',

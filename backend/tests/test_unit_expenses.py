@@ -111,3 +111,30 @@ def test_who_may_add(owner, client, cat):
     assert _expense(ali, dev, 100).status_code == 403
     m = ali.get(f"/api/v1/devices/{dev}/money").json()
     assert m["costs"] == [] and m["summary"]["added"] is None and m["summary"]["net_cost"] is None
+
+
+def test_cost_added_in_the_evening_stays_after_its_purchase():
+    """a bill is stamped 00:01 UTC of the shop's date; a cost added at 19:30 UTC the day
+    before (00:30 the same day in Pakistan) must still come after the purchase"""
+    import datetime as dt
+    from types import SimpleNamespace
+
+    from app.modules.units.ledger import item_ledger
+
+    utc = dt.UTC
+    bill = {
+        "kind": "purchase",
+        "at": dt.datetime(2026, 11, 26, 0, 1, tzinfo=utc),
+        "date": dt.date(2026, 11, 26),
+        "amount": Decimal(30000),
+        "upfront": Decimal(0),
+    }
+    cost = {
+        "at": dt.datetime(2026, 11, 25, 19, 30, tzinfo=utc),
+        "amount": Decimal(1500),
+        "source": "unit_expense",
+        "note": None,
+        "undone": False,
+    }
+    led = item_ledger([bill], {"source": "purchase"}, SimpleNamespace(), [cost])
+    assert [r["kind"] for r in led["rows"]] == ["purchase", "added_cost"]

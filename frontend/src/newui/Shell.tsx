@@ -8,7 +8,7 @@
  *  right — in English the pixels are the same. This product lives under `/new` and shares nothing
  *  with the software the shops run; that one is untouched. */
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { activeShop, useAuth } from '@/lib/auth'
 import { useLang } from '@/components/Bilingual'
@@ -254,7 +254,7 @@ export default function NewShell() {
         <div className="flex min-w-0 flex-1 flex-col">
           <Bar onMenu={() => setOpen(true)} />
           <main className="min-w-0 flex-1 px-4 sm:px-6 py-4">
-            <div className="max-w-7xl mx-auto"><Outlet /></div>
+            <div className="max-w-7xl mx-auto"><Suspense fallback={null}><Outlet /></Suspense></div>
           </main>
         </div>
       </div>

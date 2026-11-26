@@ -101,9 +101,19 @@ def item_ledger(
         for c in (costs or [])
         if not c["undone"]
     ]
+
+    def _at(r: dict) -> dt.datetime:
+        return r["at"] if r["at"].tzinfo else r["at"].replace(tzinfo=UTC)
+
+    # a bill row is stamped at 00:01 UTC of the shop's own date, so in the shop's evening
+    # (after 19:00 UTC in Pakistan) a cost added the same day has an earlier UTC stamp than
+    # its purchase; nothing is spent on a unit before it was bought, so such a cost is placed
+    # right after the purchase (the sort is stable and the costs come after the timeline)
+    bought = [_at(r) for r in timeline if r["kind"] in ("purchase", "opening")]
+    first = min(bought) if bought else None
     timeline = sorted(
         [*timeline, *extra],
-        key=lambda r: r["at"] if r["at"].tzinfo else r["at"].replace(tzinfo=UTC),
+        key=lambda r: max(_at(r), first) if first and r["kind"] == "added_cost" else _at(r),
     )
     for r in timeline:
         k = r["kind"]
