@@ -1,5 +1,6 @@
-/** ADR-134 / ADR-115: the provider's control room in the new product, at /control/new — no file draws
- *  it, so it is drawn like files 02 / 10. Its figures and actions are the live provider console's.
+/** ADR-134 / ADR-115: the provider's control room in the new product, at /control/new, drawn from
+ *  file 26 (shops & plans, business overview, subscription ledger, license keys, the SaaS ledger A4).
+ *  Its figures and actions are the live provider console's.
  *  Needs 03990000099 in SUPERUSER_PHONES (as the live control-room tests). */
 
 import { expect, test } from '@playwright/test'
@@ -28,29 +29,40 @@ test('new product: control room — back after login, overview, a shop and its d
   await expect(page).toHaveURL(/\/control\/new$/, { timeout: 30_000 })
   await expect(page.getByTestId('nctl')).toBeVisible()
   await expect(page.getByPlaceholder("IMEI, phone or person's name")).toHaveCount(0) // no shop counter here
+  await expect(page.getByTestId('nctl-super')).toBeVisible()
+  await expect(page.getByTestId('nctl-manage')).toBeVisible() // shops & plans opens first, as file 26
+  await expect(page.getByTestId('nctl-app')).toContainText('/app.apk')
 
   // overview: the console's own figures
+  await page.getByTestId('nctl-tab-overview').click()
+  await expect(page).toHaveURL(/tab=overview/)
   const ov = await get('/admin/business/overview')
   await expect(page.getByTestId('nctl-mrr')).toContainText(Math.round(Number(ov.mrr)).toLocaleString('en-US'))
   await expect(page.getByTestId('nctl-monthly')).toBeVisible()
   await page.screenshot({ path: 'test-results/newui-control.png', fullPage: true })
 
-  // shops: find the new shop, switch its deployment
+  // shops: find the new shop, open its window, switch where it runs (its ledger tab)
   await page.getByTestId('nctl-tab-shops').click()
   await expect(page).toHaveURL(/tab=shops/)
-  await page.getByTestId('nctl-shop-q').fill(shopName)
-  await expect(page.getByTestId('nctl-shop')).toHaveCount(1)
-  await expect(page.getByTestId('nctl-shop-panel')).toContainText(shopName)
+  await page.getByTestId('nctl-m-q').fill(shopName)
+  await expect(page.getByTestId('nctl-m-shop')).toHaveCount(1)
+  await page.getByTestId('nctl-m-shop').click()
+  await expect(page).toHaveURL(/shop=/)
+  await expect(page.getByTestId('nctl-m-panel')).toContainText(shopName)
+  await page.getByTestId('nctl-dt-ledger').click()
   await page.getByTestId('nctl-dep-local').click()
   await expect.poll(async () => (await get(`/admin/business/shops?q=${encodeURIComponent(shopName)}`))[0].deployment).toBe('local')
   await page.getByTestId('nctl-dep-cloud').click()
   await expect.poll(async () => (await get(`/admin/business/shops?q=${encodeURIComponent(shopName)}`))[0].deployment).toBe('cloud')
 
-  // a key for that shop from its panel, then cancelled with a reason
+  // a key for that shop from its window (password, PIN & branches), then cancelled with a reason
+  await page.getByTestId('nctl-dt-security').click()
   await page.getByTestId('nctl-shop-make').click()
   await page.getByTestId('nctl-months-3').click()
   await page.getByTestId('nctl-make-save').click()
-  await expect(page.getByTestId('nctl-shop-panel').getByTestId('nctl-key-status').first()).toHaveText('Not used')
+  await expect(page.getByTestId('nctl-m-panel').getByTestId('nctl-key-status').first()).toHaveText('Not used')
+  await page.getByTestId('nctl-drawer-close').click()
+  await expect(page.getByTestId('nctl-drawer')).toHaveCount(0)
   await page.getByTestId('nctl-tab-keys').click()
   const keyCard = page.getByTestId('nctl-key').filter({ hasText: shopName }).first()
   await expect(keyCard).toBeVisible()
@@ -67,6 +79,13 @@ test('new product: control room — back after login, overview, a shop and its d
   await page.getByTestId('nctl-tab-payments').click()
   const pays = await get('/admin/business/payments')
   await expect(page.getByTestId('nctl-approved')).toContainText(Math.round(Number(pays.approved_total)).toLocaleString('en-US'))
+
+  // the SaaS ledger as an A4 sheet: every row and the console's own total
+  await page.getByTestId('nctl-a4-open').click()
+  await expect(page.getByTestId('nctl-a4-total')).toContainText(Math.round(Number(pays.approved_total)).toLocaleString('en-US'))
+  await expect(page.getByTestId('nctl-a4-row')).toHaveCount(pays.rows.length)
+  await page.getByTestId('nctl-a4').getByRole('button', { name: 'Close' }).click()
+  await expect(page.getByTestId('nctl-a4')).toHaveCount(0)
 
   // Urdu: one language, right to left
   await page.getByTestId('nctl-lang').click()

@@ -382,3 +382,12 @@
 **Next**: #151 (the control room) gets staging merged in. When `newPages` nears 2 MB, split it per area (audit, bills, counter) the same way.
 
 **Open questions**: none.
+## 2026-11-26 — The control room from file 26 (built by an agent, reviewed here)
+
+**Done** (branch `ui/34-new-control`, agent commits `3203744`, `bc7e30c`, `7891595`; coordinator test fixes; staging merged in): `/control/new` redrawn to file 26 (see docs/43); new read-only `GET /admin/shops/{id}` (`tests/test_admin_one_shop.py`); `newui/pages/ControlKeys.tsx`, `controlParts.tsx`; `[data-file='26']` palette; strings `nctl2`. Review rounds: the new-shop window's made view was replaced by the shop's window the moment the shop was made (fixed: it stays until closed); the shop's window looked the shop up in the list of every shop (fixed: it loads the shop by its id).
+
+**Verified**: by the agent — tsc, vitest 72, ruff, pytest `test_admin_one_shop`, `test_admin`; by the coordinator — Playwright `newui-control` and `newui-control-shops` against the branch's own backend (port 8003) on a fresh database — both pass. On a copy of the local database (≈3,770 shops left by earlier test runs) creating a shop takes over 30 s and the list of every shop is slow to come back, so the spec waits longer there and finds a shop by its exact name (its branch "<name> Two" matches the search too). **Not done**: a paged shops list with the search on the server (fine for the real number of shops; say if wanted), the drawer tabs side by side with the drawing, dark.
+
+**Next**: the owner merges the three branches (audit, bills, control); the coordinator resolves the merge conflicts between them (router, strings, docs).
+
+**Open questions**: should the shops list page through the server once there are thousands of shops?
