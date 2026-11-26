@@ -3976,6 +3976,16 @@
         "title": "Usi waqt",
         "body": "Bill bante din di gayi raqam. Neeche baad ki har payment apni raseed ke sath.",
         "example": "Usi waqt Rs. 30,000 · phir RV-0012, Rs. 20,000."
+      },
+      "added": {
+        "title": "Is phone par kharch",
+        "body": "Phone khareedne ke baad is par jo raqam lagi — purza, glass protector, courier. Yeh phone ki lagat mein jur jati hai taake bechte waqt munafa sahi nikle.",
+        "example": "Khareed Rs. 30,000, glass protector Rs. 1,500 → ab lagat Rs. 31,500."
+      },
+      "baseCost": {
+        "title": "Kitne mein khareeda",
+        "body": "Purchase bill par phone ki qeemat, baad ke kharch se pehle.",
+        "example": "Khareed Rs. 30,000; Rs. 1,500 kharch ke saath lagat Rs. 31,500."
       }
     },
     "verify": {

@@ -69,6 +69,7 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 
 ## A phone's page and its printed details (shopkeepers 2026-11-20, ADR-114)
 - Read ADR-114 before touching `DeviceEasyView.tsx`, `DeviceLayouts.tsx`, `DeviceSheetPreview.tsx` or `devices/sheet.py`.
+- Expenses, the unit's ledger and QC (ADR-140, `DeviceLedger.tsx`, `devices/expenses.py`, `units/ledger.py`): money spent on a unit is posted by the server (Dr stock, Cr cash; raises `cost_price`; `cost_added` event) and deleted only with a reason while the unit is the shop's; the ledger and its A4 sheet are the server's and for owner / manager only; QC marks faults through the live faulty events; a purchase return writes off the unit's added cost.
 - Rules: the page has three views (Details, 80 mm slip, A4 page) — do not add layout styles; a new fact about a phone is a line of the details table with its action and a "?" (always shown, "—" when empty); the printed details are the server's page (`sheet_html`), read-only, cost lines only with `VIEW_COST`, and the app only previews that page.
 
 ## The stock summary by kind (owner 2026-11-22, ADR-131)

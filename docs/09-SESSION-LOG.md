@@ -2529,3 +2529,17 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: the owner's next request; release `develop` → `main` when the owner says.
 
 **Open questions**: none.
+
+## 2026-11-26 — A phone's page upgraded from file 20 (ADR-140)
+
+**Asked (owner)**: #159 merged; explore `20-item-detail-with-ledger-sheet.html` and update / upgrade the item detail.
+
+**Gap check** (file 20 against the live phone page): the page had the details table with every job, the money lines, the people, the timeline, sticker and A4 / 80 mm sheet. Missing: expenses on the unit (true cost), the unit's own ledger with a running net and its A4 sheet, the QC pass / issue list, a WhatsApp offer.
+
+**Done** (branch `develop`, level with `main` after #159): the server piece from `staging` (`devices/expenses.py`, `units/ledger.py`, the changes to `units/service.py`, `units/router.py`, `devices/state.py`, `returns/service.py` applied as a 3-way patch — `develop` has its own later changes in two of them; the two test files); `features/stock/DeviceLedger.tsx` (expense sheet, costs card, ledger card, ledger sheet window, QC card); two lines in the details table and the margin after expenses (`DeviceEasyView.tsx`); three jobs and the cards on the page (`DeviceDetailPage.tsx`); strings `dled.*` and two help terms in three languages.
+
+**Verified**: pytest `test_item_ledger`, `test_unit_expenses`, `test_party_khata`, `test_thermal_ink` and the accounting-related files (returns, units, purchases, ledger, devices, repairs, transfers, hubs); tsc; eslint; Playwright `device-ledger` (new). See the session's last message for the exact results. **Not done**: the full suites.
+
+**Next**: the owner's next request; release `develop` → `main` when the owner says.
+
+**Open questions**: none.

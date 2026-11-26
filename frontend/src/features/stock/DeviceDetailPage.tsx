@@ -10,16 +10,17 @@ import { ErrorText, KV, Loading, MoneyText, PageHeader, Section, Sheet } from '@
 import LabelSheet from '@/components/LabelSheet'
 import { ApiError, api, patch, post } from '@/lib/api'
 import { ImeiInput } from '@/components/FieldInputs'
-import { useAuth } from '@/lib/auth'
+import { activeShop, useAuth } from '@/lib/auth'
 import { useDevice, useDeviceEvent, useDeviceHistory, useDocMutation, useInvalidate } from '@/lib/queries'
 import PartyPicker from '@/components/PartyPicker'
 import type { DeviceDetail, Loan, Party } from '@/lib/types'
 import DeviceLineSheet, { emptyDraft, type DeviceLineDraft } from '@/features/purchase/DeviceLineSheet'
-import { hasPta } from './StockPage'
+import { hasPta, specLine } from './StockPage'
 import { LockChecksEditor, specRows, type LockChecks } from './DeviceSpecs'
 import type { DeviceCategory } from '@/lib/types'
 import PriceHint from '@/components/PriceHint'
 import UnitMoney from './UnitMoney'
+import { ExpenseSheet, ItemLedgerCard, LedgerSheetWindow, OWNED, QcCard, UnitCostsCard, useUnitMoney } from './DeviceLedger'
 import DeviceEasyView from './DeviceEasyView'
 import StickerPreview from './StickerPreview'
 import { DeviceReserve } from './ReserveCard'
@@ -76,6 +77,11 @@ export default function DeviceDetailPage() {
   // owner 2026-11-09 (ADR-056): an IMEI typed wrong
   const [fix, setFix] = useState({ imei1: '', imei2: '', clear2: false, reason: '' })
   const [fixErr, setFixErr] = useState<unknown>(null)
+  // ADR-140: expenses on the unit and its ledger sheet
+  const [expOpen, setExpOpen] = useState(false)
+  const [ledgerOpen, setLedgerOpen] = useState(false)
+  const { data: unitMoney } = useUnitMoney(id ?? '')
+  const shopName = useAuth((st) => activeShop(st)?.name ?? '')
   // owner 2026-11-12 (ADR-066): what is wrong with it
   const [faultOpen, setFaultOpen] = useState(false)
   // owner 2026-11-10 (ADR-063): a purchase price typed wrong
@@ -139,6 +145,11 @@ export default function DeviceDetailPage() {
   const canCost = canSeeCost && !!boughtOn && boughtFor != null && !soldSince && ['in_stock', 'faulty', 'in_repair', 'with_customer_for_approval', 'on_loan'].includes(d.status)
   const openCost = () => { setNewCost({ cost: String(boughtFor ?? ''), reason: '', mode: '' }); setCostErr(null); setSheet('cost') }
   const costDiff = newCost.cost !== '' && boughtFor != null ? Number(newCost.cost) - boughtFor : 0
+  const pitch = () => {
+    const text = [`*${shopName}*`, `*${d.brand_name} ${d.model_name}*`, specLine(d, pick), d.warranty_months ? `${pick('stock.warranty')}: ${d.warranty_months} ${pick('stock.months')}` : '', d.asking_price ? `*${pick('stock.asking')}: ${withCur(Number(d.asking_price).toLocaleString('en-US'))}*` : ''].filter(Boolean).join('\n')
+    void navigator.clipboard?.writeText(text).catch(() => undefined)
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener')
+  }
   const acts = ([
     (inStock || d.status === 'faulty') && d.verification_status !== 'flagged' ? { key: 'sell', label: 'stock.sell', run: () => nav(`/sale/new?device=${d.id}`), tone: 'primary' } : null,
     d.verification_status === 'pending' || d.verification_status === 'flagged' || d.condition !== 'box_pack' ? { key: 'verify', label: 'stock.verify', run: () => nav(`/stock/${d.id}/verify`), tone: d.verification_status === 'pending' ? 'gold' : undefined } : null,
@@ -159,6 +170,10 @@ export default function DeviceDetailPage() {
     canSeeCost && boughtOn ? { key: 'changePaid', label: 'purchase.paidFix.button', testid: 'device-change-paid', run: () => nav(`/purchases/${boughtOn}?paid=1`) } : null,
     canSeeCost && boughtOn && (inStock || d.status === 'faulty') ? { key: 'returnSeller', label: 'pret.button', testid: 'device-return-seller', run: () => nav(`/purchases/${boughtOn}?return=${d.id}`) } : null,
     canCost ? { key: 'fixCost', label: 'purchase.costFix.button', testid: 'fix-cost', run: openCost } : null,
+    // ADR-140: money spent on the unit after buying it, its own ledger sheet, a message to offer it
+    canSeeCost && OWNED.includes(d.status) ? { key: 'expense', label: 'dled.ex.add', testid: 'device-add-expense', run: () => setExpOpen(true) } : null,
+    canSeeCost ? { key: 'ledgerSheet', label: 'dled.lg.button', testid: 'device-ledger-sheet', run: () => setLedgerOpen(true) } : null,
+    inStock ? { key: 'pitch', label: 'dled.pitch', testid: 'device-pitch', run: pitch } : null,
     canSeeCost && soldOn && d.status === 'sold' ? { key: 'changeBuyer', label: 'sale.fix.button', testid: 'device-change-buyer', run: () => nav(`/sales/${soldOn}?change=1`) } : null,
     canSeeCost ? { key: 'balances', label: 'bal.short', testid: 'device-balances', run: () => nav(`/balances?q=${encodeURIComponent(d.imei1)}`) } : null,
     canSeeCost && phoneLike ? { key: 'fixImei', label: 'stock.fixImei.button', testid: 'fix-imei', run: () => { setFix({ imei1: d.imei1, imei2: d.imei2 ?? '', clear2: false, reason: '' }); setFixErr(null); setSheet('imei') } } : null,
@@ -208,7 +223,13 @@ export default function DeviceDetailPage() {
       ) : null}
 
       {/* ADR-114: what came with it and the money on it are lines of the table above */}
+      {/* ADR-140: what was spent on it, its own ledger, a quick check of its faults */}
+      {canSeeCost ? <UnitCostsCard d={d} money={unitMoney} canAdd={canSeeCost} onAdd={() => setExpOpen(true)} /> : null}
+      {canSeeCost && unitMoney?.ledger ? <ItemLedgerCard led={unitMoney.ledger} onSheet={() => setLedgerOpen(true)} /> : null}
+      {OWNED.includes(d.status) || (d.faults ?? []).length ? <QcCard d={d} canMark={inStock || d.status === 'faulty'} /> : null}
       <UnitMoney deviceId={d.id} noTiles />
+      <ExpenseSheet open={expOpen} d={d} onClose={() => setExpOpen(false)} />
+      {ledgerOpen && unitMoney?.ledger ? <LedgerSheetWindow id={d.id} title={`${d.brand_name} ${d.model_name}`} led={unitMoney.ledger} onClose={() => setLedgerOpen(false)} /> : null}
         </>
       ) : (
         <>

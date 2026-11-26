@@ -8,7 +8,7 @@
 
 import {
   BadgeCheck, Barcode, Battery, BatteryCharging, Box, CalendarClock, ChevronRight, CircleDollarSign, Cpu, HandCoins, HardDrive, Hash, Lock, MapPin, MemoryStick, Palette, Pencil, ShieldCheck,
-  Sparkles, Store, Tag, TrendingUp, UserRound, Wallet, Wrench,
+  Sparkles, Store, Tag, TrendingUp, UserRound, Wallet, Wrench, ReceiptText,
 } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { BiLabel, useLang, type BiText } from '@/components/Bilingual'
@@ -21,7 +21,7 @@ import type { Act } from './DeviceLayouts'
 import { lockState } from './DeviceSpecs'
 import { FaultChip } from './Faults'
 import { hasPta, specLine } from './StockPage'
-import type { UnitMoneyData } from './UnitMoney'
+import type { Money } from './DeviceLedger'
 
 /** the main jobs, as big buttons */
 const MAIN = ['sell', 'return', 'loan', 'repair', 'repairBack', 'approvalBack', 'faultyCleared']
@@ -63,14 +63,14 @@ function Line({ icon, label, value, action, action2, help, testid, strong }: { i
 export default function DeviceEasyView({ d, acts, canSeeCost, onPta, aside, extra }: { d: DeviceDetail; acts: Act[]; canSeeCost: boolean; onPta?: () => void; aside?: ReactNode; extra?: ReactNode }) {
   const { pick } = useLang()
   const [moreOpen, setMoreOpen] = useState(false)
-  const { data: m } = useGet<UnitMoneyData>(['unit-money', d.id], `/api/v1/devices/${d.id}/money`)
+  const { data: m } = useGet<Money>(['unit-money', d.id], `/api/v1/devices/${d.id}/money`)
   const act = (k: string) => acts.find((a) => a.key === k) ?? null
   const main = MAIN.map(act).filter((a): a is Act => !!a)
   const showLock = d.condition !== 'box_pack' && !d.lock_type
   const showId = d.verification_status !== 'not_required' || !!act('verify')
   const showBuyer = d.status === 'sold' || (!!d.current_party_name && d.status !== 'in_stock')
   // a job shown beside its line is not repeated in "More"; anything not shown there is
-  const used = new Set(['price', 'fixCost', 'fixImei', 'edit', 'sticker', act('faulty') ? 'faulty' : 'faultEdit', ...(showLock ? ['lock'] : []), ...(showId ? ['verify', 'skipId'] : []), ...(d.source_party_name ? ['changeSeller'] : []), ...(showBuyer ? ['changeBuyer'] : [])])
+  const used = new Set(['price', 'fixCost', 'expense', 'fixImei', 'edit', 'sticker', act('faulty') ? 'faulty' : 'faultEdit', ...(showLock ? ['lock'] : []), ...(showId ? ['verify', 'skipId'] : []), ...(d.source_party_name ? ['changeSeller'] : []), ...(showBuyer ? ['changeBuyer'] : [])])
   const more = acts.filter((a) => !used.has(a.key) && !MAIN.includes(a.key))
   const lock = lockState(d.lock_checks)
   const days = Math.max(0, Math.floor((Date.now() - new Date(d.first_seen_at).getTime()) / 86_400_000))
@@ -145,11 +145,13 @@ export default function DeviceEasyView({ d, acts, canSeeCost, onPta, aside, extr
             <Band text="dview.g.money" />
             <Line icon={<Tag size={17} />} label="stock.asking" value={money(d.asking_price)} action={act('price') ? { ...act('price')!, label: 'dview.change', testid: 'line-price' } : null} help="asking" testid="dline-asking" strong />
             {s && s.original_asking != null && s.original_asking !== s.asking_price ? <Line icon={<Tag size={17} />} label="unit.askingFirst" value={<span className="text-muted">{money(s.original_asking)}</span>} help="stock.unit.askingFirst" testid="dline-asking-first" /> : null}
+            {canSeeCost && s && Number(s.added ?? 0) > 0 ? <Line icon={<Wallet size={17} />} label="dled.base" value={<span className="text-muted">{money(s.cost)}</span>} help="stock.unit.baseCost" testid="dline-base" /> : null}
+            {canSeeCost && s && (act('expense') || Number(s.added ?? 0) > 0) ? <Line icon={<ReceiptText size={17} />} label="dled.added" value={Number(s.added ?? 0) > 0 ? <span className="text-receivable">{money(s.added)}</span> : null} action={act('expense') ? { ...act('expense')!, label: 'dview.add', testid: 'line-expense' } : null} help="stock.unit.added" testid="dline-added" /> : null}
             {canSeeCost ? <Line icon={<Wallet size={17} />} label="stock.cost" value={money(d.cost_price)} action={act('fixCost') ? { ...act('fixCost')!, label: 'dview.correct' } : null} help="cost" testid="dline-cost" strong /> : null}
             {canSeeCost && s ? <Line icon={<HandCoins size={17} />} label="unit.stillToPay" value={s.payable == null ? null : <span className={Number(s.payable) > 0 ? 'text-payable' : ''}>{money(s.payable)}</span>} help="stock.unit.stillToPay" testid="dline-payable" /> : null}
             {s ? <Line icon={<CircleDollarSign size={17} />} label="unit.soldFor" value={money(s.sold_for)} help="stock.unit.soldFor" testid="dline-sold" /> : null}
             {s ? <Line icon={<HandCoins size={17} />} label="unit.stillToGet" value={s.sold_for == null ? null : <span className={Number(s.receivable) > 0 ? 'text-receivable' : ''}>{money(s.receivable)}</span>} help="stock.unit.stillToGet" testid="dline-receivable" /> : null}
-            {canSeeCost && s && s.margin != null ? <Line icon={<TrendingUp size={17} />} label="unit.margin" value={<span className={Number(s.margin) >= 0 ? 'text-emerald-deep' : 'text-payable'}>{money(s.margin)}</span>} help="stock.unit.margin" testid="dline-margin" /> : null}
+            {canSeeCost && s && (s.true_margin ?? s.margin) != null ? <Line icon={<TrendingUp size={17} />} label="unit.margin" value={<span className={Number(s.true_margin ?? s.margin) >= 0 ? 'text-emerald-deep' : 'text-payable'}>{money(s.true_margin ?? s.margin)}</span>} help="stock.unit.margin" testid="dline-margin" /> : null}
 
             <Band text="dview.g.people" />
             <Line icon={<Store size={17} />} label="dview.boughtFrom" value={d.source_party_name} action={act('changeSeller') ? { ...act('changeSeller')!, label: 'dview.change' } : null} help="stock.unit.bought" testid="dline-seller" />

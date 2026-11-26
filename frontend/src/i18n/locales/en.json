@@ -280,7 +280,8 @@
       "reserved": "Reserved",
       "unreserved": "Reservation released",
       "pta_checked": "PTA checked",
-      "used_for_parts": "Taken apart for parts"
+      "used_for_parts": "Taken apart for parts",
+      "cost_added": "Expense added"
     },
     "acc": {
       "box": "Box",
@@ -6751,5 +6752,95 @@
       "a4Title": "Purchases ledger report (A4)",
       "a4Sub": "Every bought line of the filters with cost, paid, still to pay and where it is now, on the server's print page"
     }
+  },
+  "dled": {
+    "lg": {
+      "button": "Item ledger sheet",
+      "title": "Complete item ledger",
+      "sub": "Every rupee out on this unit and every rupee in, with the net after each line",
+      "a4": "A4 sheet / Print",
+      "out": "Total out",
+      "in": "Total in",
+      "net": "Net position",
+      "date": "Date",
+      "what": "What happened",
+      "outCol": "Out (−)",
+      "inCol": "In (+)",
+      "netCol": "Net",
+      "windowTitle": "Item ledger sheet",
+      "windowSub": "Purchase, sale, payments and returns of this unit — as it prints",
+      "csv": "Download CSV",
+      "share": "Share summary",
+      "print": "Print A4 sheet",
+      "shared": "Summary copied — paste it in WhatsApp",
+      "shareText": "*{{shop}}*\n{{item}}\nOut: {{out}}\nIn: {{in}}\nNet: {{net}}",
+      "k": {
+        "opening": "Entered as old stock",
+        "purchase": "Bought",
+        "sale": "Sold",
+        "payment_out": "Paid to seller",
+        "payment_in": "Received from customer",
+        "return_sale": "Customer returned it",
+        "return_purchase": "Returned to the seller",
+        "transferred_in": "Came from a branch",
+        "transferred_out": "Sent to a branch",
+        "cost_corrected": "Purchase price corrected",
+        "added_cost": "Spent on the unit"
+      },
+      "m": {
+        "cash": "Cash",
+        "bank": "Bank",
+        "easypaisa": "Easypaisa",
+        "jazzcash": "JazzCash",
+        "cheque": "Cheque",
+        "card": "Card",
+        "online": "Online",
+        "other": "Other",
+        "remittance": "From abroad"
+      },
+      "paidNow": "Paid at purchase",
+      "gotNow": "Received at sale"
+    },
+    "ex": {
+      "add": "Add expense",
+      "title": "Add an expense on this unit",
+      "sub": "Money spent on it after buying — it adds to its cost",
+      "amount": "Amount",
+      "what": "What for",
+      "from": "Paid from",
+      "defaultCash": "Cash (counter)",
+      "rule": "The amount leaves the account you pick and is added to this unit's cost, so its profit at sale is right. It can be deleted with a reason while the unit is in the shop.",
+      "saved": "Expense added to the unit's cost",
+      "undone": "Expense deleted",
+      "undoTitle": "Delete this expense",
+      "undoSub": "The money goes back to its account and the cost comes down — kept as Deleted",
+      "k": {
+        "parts": "Parts",
+        "screen_guard": "Screen guard",
+        "cleaning": "Cleaning / service",
+        "transport": "Courier / transport",
+        "software": "Software / unlock",
+        "other": "Other"
+      },
+      "src": {
+        "repair_cost": "Repair (outside technician)",
+        "repair_lab": "Repair lab charge"
+      }
+    },
+    "qc": {
+      "hint": "Tap a check to mark or clear a fault",
+      "readOnly": "Faults of this unit",
+      "cleared": "Fault cleared",
+      "marked": "Fault marked",
+      "issue": "Issue",
+      "pass": "Pass"
+    },
+    "base": "Base buying cost",
+    "added": "Added expenses",
+    "netCost": "True net cost",
+    "costTitle": "Cost of this unit",
+    "noCosts": "Nothing spent on it after buying.",
+    "qcTitle": "Quick check (QC)",
+    "pitch": "WhatsApp offer"
   }
 }

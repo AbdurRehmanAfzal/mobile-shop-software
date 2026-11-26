@@ -421,6 +421,19 @@ def purchase_return(
                 device_id=ln.device_id,
                 memo=ln.description,
             )
+        if ln.device_id:
+            # owner 2026-11-25: what was spent on the unit after its purchase (a repair, a part —
+            # `devices/expenses.py`) is not refunded by the seller: it leaves stock as a cost, so
+            # nothing of the unit stays in stock once it is gone (ADR-048)
+            unit = db.get(Device, ln.device_id)
+            added = money((unit.cost_price or ZERO) - ln.net_cost) if unit else ZERO
+            if added > ZERO:
+                posting.credit(
+                    acc.SysAccount.INVENTORY,
+                    added,
+                    device_id=ln.device_id,
+                    memo=f"{ln.description} added cost",
+                ).debit(acc.SysAccount.COGS, added, memo=f"{ln.description} added cost written off")
         ln.returned_at = utcnow()
     if refund > ZERO:
         posting.debit(acc.cash_account(cash.id), refund, memo=f"Refund {doc.no}").credit(P, refund)

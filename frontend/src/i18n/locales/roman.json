@@ -280,7 +280,8 @@
       "reserved": "Reserve hua",
       "unreserved": "Reserve khatam",
       "pta_checked": "PTA check hua",
-      "used_for_parts": "Parts ke liye khola"
+      "used_for_parts": "Parts ke liye khola",
+      "cost_added": "Kharcha shamil"
     },
     "acc": {
       "box": "Dabba",
@@ -6751,5 +6752,95 @@
       "a4Title": "Kharidari ledger report (A4)",
       "a4Sub": "Filters ki har khareedi cheez qeemat, ada, baqi aur maujooda jagah ke saath, server ke print page par"
     }
+  },
+  "dled": {
+    "lg": {
+      "button": "Item ledger sheet",
+      "title": "Item ka mukammal ledger",
+      "sub": "Is set par gaya aur aaya har rupiya, har line ke baad khalis ke saath",
+      "a4": "A4 sheet / print",
+      "out": "Kul gaya",
+      "in": "Kul aaya",
+      "net": "Khalis",
+      "date": "Tareekh",
+      "what": "Kya hua",
+      "outCol": "Gaya (−)",
+      "inCol": "Aaya (+)",
+      "netCol": "Khalis",
+      "windowTitle": "Item ledger sheet",
+      "windowSub": "Is set ki khareed, farokht, adaigiyan aur wapsi — jaise print hogi",
+      "csv": "CSV download",
+      "share": "Khulasa bhejein",
+      "print": "A4 sheet print karein",
+      "shared": "Khulasa copy ho gaya — WhatsApp mein lagayein",
+      "shareText": "*{{shop}}*\n{{item}}\nGaya: {{out}}\nAaya: {{in}}\nKhalis: {{net}}",
+      "k": {
+        "opening": "Purane stock mein darj",
+        "purchase": "Khareeda",
+        "sale": "Becha",
+        "payment_out": "Bechne wale ko diye",
+        "payment_in": "Gahak se mile",
+        "return_sale": "Gahak ne wapis kiya",
+        "return_purchase": "Bechne wale ko wapis",
+        "transferred_in": "Branch se aaya",
+        "transferred_out": "Branch ko bheja",
+        "cost_corrected": "Khareed qeemat durust ki",
+        "added_cost": "Set par kharch"
+      },
+      "m": {
+        "cash": "Naqd",
+        "bank": "Bank",
+        "easypaisa": "Easypaisa",
+        "jazzcash": "JazzCash",
+        "cheque": "Cheque",
+        "card": "Card",
+        "online": "Online",
+        "other": "Deegar",
+        "remittance": "Bahar se"
+      },
+      "paidNow": "Khareedte waqt diye",
+      "gotNow": "Bechte waqt mile"
+    },
+    "ex": {
+      "add": "Kharcha dalein",
+      "title": "Is set par kharcha dalein",
+      "sub": "Khareedne ke baad is par laga paisa — yeh is ki laagat mein judta hai",
+      "amount": "Raqam",
+      "what": "Kis cheez par",
+      "from": "Kahan se diye",
+      "defaultCash": "Naqd (counter)",
+      "rule": "Raqam chune gaye khate se nikalti hai aur is set ki laagat mein judti hai, taake bechne par munafa durust ho. Set dukaan mein ho to wajah ke saath hazf ho sakta hai.",
+      "saved": "Kharcha set ki laagat mein jud gaya",
+      "undone": "Kharcha hazf ho gaya",
+      "undoTitle": "Yeh kharcha hazf karein",
+      "undoSub": "Raqam apne khate mein wapis aur laagat kam — hazf shuda ke tor par mehfooz",
+      "k": {
+        "parts": "Purze",
+        "screen_guard": "Screen protector",
+        "cleaning": "Safai / service",
+        "transport": "Courier / kiraya",
+        "software": "Software / unlock",
+        "other": "Deegar"
+      },
+      "src": {
+        "repair_cost": "Repair (bahar ka mistri)",
+        "repair_lab": "Repair lab ka charge"
+      }
+    },
+    "qc": {
+      "hint": "Kharabi lagane ya hatane ke liye check dabayein",
+      "readOnly": "Is set ki kharabiyan",
+      "cleared": "Kharabi hat gayi",
+      "marked": "Kharabi lag gayi",
+      "issue": "Kharabi",
+      "pass": "Theek"
+    },
+    "base": "Asal khareed qeemat",
+    "added": "Baad ke kharche",
+    "netCost": "Asal kul laagat",
+    "costTitle": "Is unit ki lagat",
+    "noCosts": "Khareedne ke baad is par kuch kharch nahi hua.",
+    "qcTitle": "Fori jaanch (QC)",
+    "pitch": "WhatsApp peshkash"
   }
 }
