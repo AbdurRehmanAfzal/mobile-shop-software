@@ -362,6 +362,19 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-137 · 2026-11-26 · Accepted · The invoices page is the shop's bills centre (from the new product's file 24)
+
+- **Context:** the owner asked for the existing invoices module to do what the new product's bills screen (mock-up 24, `/new/invoices` on `staging`) does. The live screens keep their look and gain the functionality (the new product is paused, docs/43 §0 on `staging`).
+- **Decision:** `/invoices` keeps what it had (search with Scan, the period, type and money chips, a tap on a bill opening its own page) and gains, in the live design system (`features/invoices/InvoiceHub.tsx`):
+  - header buttons — **New bill** (a chooser of the live forms: sale, purchase, return, repair, exchange), the **bills ledger report** (the server's A4 page in English or Urdu, or Excel / CSV, profit hidden or shown) and the **profit eye**;
+  - filters by **kind of stock** (mobile, laptop, watch, tablet, accessories) and **payment mode** (cash, bank, online, cheque, from abroad, udhaar), and Reset;
+  - **five figures** — total sales, total purchases, still to get, still to pay (both set the filter when tapped), net sales profit;
+  - **five views** — all bills, dealer-wise and customer-wise (each person's bills with billed / paid / left and their khata), **edited bills** (what was corrected and why), the **full ledger** (money in / out, what is left, profit);
+  - on every bill: **View** (lines with IMEI, print in English or Urdu on 80 mm or A4, WhatsApp, open the bill, correct, return items, the repair stage, the phone's page, delete, history), **Settle** (the live `PaymentForm` already put against that bill), WhatsApp, correct, delete.
+  The page now reads `GET /bills-hub/bills` (and `/bills/sheet`), the new product's server piece taken unchanged from `staging`: `billshub/`, `stockhub/service.py` (its helper; the stock-hub routes are not registered), `invoices.service.list_documents(per_kind=)`, `tests/test_bills_hub*.py`. `/bills-hub/sales` and `/purchases` come with it for the screens that will use them.
+- **Rules kept:** a bill is never edited in place and never deleted from a list (ADR-090 / ADR-099): "correct" lists the live corrections (edit the whole bill = replace, change customer / dealer, what was paid, a phone's price, return items), "delete" goes to the bill's own page, which checks and asks for a reason. The mock-up's in-place edit form, "duplicate" and bulk delete are not built. Cost, purchases, still-to-pay and profit only for owner / manager (the server sends none of it to a salesman).
+- **Consequences:** every figure on the page is the server's; the page filters by asking the server. Strings `ihub.*` (the same words as the new product's `nbill`). `e2e/invoices-hub.spec.ts`; the old `invoices.spec.ts` still passes.
+
 ## ADR-136 · 2026-11-26 · Accepted · A person's page carries the full khata (from the new product's file 21)
 
 - **Context:** the shops asked for what the new product's party khata (mock-up 21, built at `/new/parties/:id` on `staging`) can do, in the software they run. The new product is paused (docs/43 §0 on `staging`); the live screens keep their look and gain the functionality.
