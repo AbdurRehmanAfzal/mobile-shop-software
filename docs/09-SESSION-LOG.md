@@ -405,3 +405,15 @@
 **Next**: the audit's returns tab in file 22's look, or what the owner orders.
 
 **Open questions**: should the control room's shops list page through the server (still open).
+
+## 2026-11-26 — The new product paused; context saved
+
+**Asked (owner)**: #153 merged; "save the context — the new software restarts from here, save what is built and what is pending. It stops now because the shops running the old software want those things: the old software keeps its UI and gains the new UI's functionality. I think that goes on develop?"
+
+**Done**: docs/43 §0 "PAUSED" — why, where it stands (every mock-up 01–26 built, all on `staging` only), the server pieces that exist only on staging (table with files and tests), how the old software takes them (develop level with main first; never merge staging into develop / main; take a piece with `git checkout origin/staging -- <files>`; release develop → main, then main into staging), the pending list and how to restart. docs/06 row marked paused. Local `staging` at `67854f6` (#153).
+
+**Verified**: branches — `develop` 147 commits behind `main` and none ahead; `staging` 110 ahead of `main`; the backend files that differ main → staging listed in §0.
+
+**Next**: the owner names the first feature of the new product the shops want in the live software; it is built on `develop` (brought level with `main`) on the old screens.
+
+**Open questions**: which features first; the control room's paged shops list (new product, still open).
