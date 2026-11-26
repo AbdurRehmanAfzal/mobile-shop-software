@@ -540,7 +540,7 @@ def job_sheet_html(db: Session, shop_id: uuid.UUID, job_id: uuid.UUID, lang: str
     return f"""<!doctype html><html lang="{lang}" dir="{"rtl" if ur else "ltr"}"><head><meta charset="utf-8"><title>{e(job.no)}</title>{font_link}
 <style>@page {{ size: 80mm auto; margin: 4mm; }} body {{ width: 72mm; margin: 0 auto; font-family: {"'Noto Nastaliq Urdu', serif" if ur else "Arial, sans-serif"}; font-size: 11px; color: #111; {"line-height: 1.9;" if ur else ""} }}
 h1 {{ font-size: 15px; margin: 0; text-align: center; }} .c {{ text-align: center; }} .ltr {{ direction: ltr; unicode-bidi: isolate; }}
-table {{ width: 100%; border-collapse: collapse; margin-top: 6px; }} td {{ padding: 3px 2px; vertical-align: top; border-bottom: 1px dotted #ccc; }} .foot {{ margin-top: 8px; border-top: 1px dashed #999; padding-top: 6px; font-size: 10px; }}</style></head><body>
+table {{ width: 100%; border-collapse: collapse; margin-top: 6px; }} td {{ padding: 3px 2px; vertical-align: top; border-bottom: 1px dotted #ccc; }} .foot {{ margin-top: 8px; border-top: 1px dashed #999; padding-top: 6px; font-size: 10px; }}{profile.THERMAL_INK}</style></head><body>
 {profile.header_html(shop, ur, True)}
 <div class="c"><b>{T["title"]}</b> · <span class="ltr">{e(job.no)}</span> · <span class="ltr">{job.created_at.strftime("%d-%m-%Y")}</span></div>
 <table>

@@ -2458,8 +2458,20 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 
 **Done**: `reports.stock_summary` gained `kinds`, `items` and `category` (the old keys unchanged); `StockSummaryPage` shows the cards, `?kind=` one kind's brands and models, accessories by their kind; help texts of the page in three languages; manual.
 
-**Verified**: ruff clean; tsc clean; vitest 68 passed; pytest `test_stock_summary_kinds` (new: cards add up to the total, one kind's brands, accessories at cost, a salesman at selling price, another shop sees nothing) with the older summary tests; the full backend suite was still running when the owner said "push" (at 14%, no failure) — the result is in the next entry. Playwright `stock-kind-cards` (new), `counter`, `faulty-and-models` (both now tap the kind first), `statements`, `stock-tally`, `tally-staff`, `reports-hub`, `accessories-only` pass (16 tests); the three screenshots were looked at. The full Playwright suite was not run.
+**Verified**: ruff clean; tsc clean; vitest 68 passed; pytest `test_stock_summary_kinds` (new: cards add up to the total, one kind's brands, accessories at cost, a salesman at selling price, another shop sees nothing) with the older summary tests; the full backend suite passed (exit 0; it was at 14% when the owner said "push" and finished after). Playwright `stock-kind-cards` (new), `counter`, `faulty-and-models` (both now tap the kind first), `statements`, `stock-tally`, `tally-staff`, `reports-hub`, `accessories-only` pass (16 tests); the three screenshots were looked at. The full Playwright suite was not run.
 
 **Next**: accessories phase E unless the owner orders otherwise.
 
 **Open questions**: the first screen's total now includes accessories (the Home tile's "Worth" does not) — say if the two should match.
+
+## 2026-11-26 — 80 mm receipts: the light lines did not print (ADR-135)
+
+**Asked (owner)**: after pausing the new product (docs/43 §0 on `staging`, PR #154) — a shopkeeper's photo of an 80 mm receipt: "the lines in bold print, the light ones don't; fix it so the whole invoice prints readable."
+
+**Done** (branch `develop`, first brought level with `main` — it was 147 behind; one local docs commit kept): `profile.THERMAL_INK` (all text and lines pure black, semi-bold body, 10 px semi-bold small lines) added last to the style of every 80 mm slip — sale receipt (`sales/service.receipt_html`), a phone's 80 mm details slip (`devices/sheet.py`), the repair job sheet (`repairs/service.py`), a payment receipt (`units/service.py`). A4 unchanged.
+
+**Verified**: pytest `test_thermal_ink` (new: the thermal receipt in English and Urdu and the 80 mm phone slip carry the rule after `small`; the A4 receipt and A4 slip do not) and the print-related tests; a demo receipt rendered before / after — every line black and heavier. **Not done**: a print on a real thermal printer (the shopkeeper should print one bill and send a photo).
+
+**Next**: the owner's next request for the live software.
+
+**Open questions**: none.

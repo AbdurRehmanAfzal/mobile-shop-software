@@ -1180,6 +1180,7 @@ table {{ width: 100%; border-collapse: collapse; margin-top: 6px; }} td, th {{ p
 th {{ border-bottom: 1px solid #111; text-align: {"right" if ur else "left"}; font-size: 10px; }}
 tr.tot td {{ border-top: 1px solid #111; font-weight: bold; }}
 small {{ color: #555; direction: ltr; unicode-bidi: isolate; }} .fbr {{ margin-top: 8px; }} .qr {{ width: 1in; height: 1in; margin: 4px auto; }} .bq {{ margin-top: 8px; }} .bq .qr {{ width: 0.9in; height: 0.9in; }} .foot {{ margin-top: 10px; border-top: 1px dashed #999; padding-top: 6px; }}
+{profile.THERMAL_INK if thermal else ""}
 </style></head><body>
 {profile.header_html(shop, ur, thermal)}
 <table><tr><td><b>{e(inv.no)}</b></td><td class="n">{when}</td></tr><tr><td colspan="2">{party_html}</td></tr>{cashier_html}</table>
