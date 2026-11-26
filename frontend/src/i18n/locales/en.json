@@ -6916,5 +6916,68 @@
       }
     },
     "partial": "Showing {{n}} of {{t}} movements — narrow the period or the filters"
+  },
+  "cashx": {
+    "exportCsv": "Export CSV",
+    "printBook": "Print book",
+    "noAccess": "Only the owner or manager sees the cash and bank books.",
+    "kpiAll": "Total money",
+    "kpiAllSub": "Cash + bank / wallets together",
+    "kpiCash": "Cash in hand (galla)",
+    "deficit": "Below zero",
+    "clickCash": "Tap to open the cash book",
+    "kpiBank": "Bank / online",
+    "nAccounts": "{{n}} accounts",
+    "kpiFlow": "This month's cash flow",
+    "flowSub": "In: {{inn}} • Out: {{out}}",
+    "accounts": "Accounts & wallets",
+    "kind": {
+      "cash": "Cash",
+      "bank": "Bank",
+      "easypaisa": "Easypaisa",
+      "jazzcash": "JazzCash",
+      "cheque": "Cheque",
+      "remittance": "From abroad"
+    },
+    "counterGalla": "Counter galla",
+    "fill": "Fill {{n}} (makes it zero)",
+    "bookOf": "{{name}} book",
+    "bookSub": "Opening balance: {{open}} • {{n}} entries",
+    "manual": "Manual cash in / out",
+    "current": "Current balance",
+    "search": "Search a bill no., person or note...",
+    "f": {
+      "all": "All",
+      "in": "Money in (+)",
+      "out": "Money out (−)",
+      "transfer": "Transfers"
+    },
+    "noRows": "No entries in this book yet",
+    "noMatch": "No matching entries",
+    "showing": "Showing {{n}} of {{total}} entries",
+    "in": "In",
+    "out": "Out",
+    "colDate": "Date",
+    "colWhat": "What",
+    "colType": "Type",
+    "colBalance": "Balance",
+    "manualIn": "Record in {{name}}",
+    "inHelp": "Money comes in with a bill or from a person — record it there and it lands in this book.",
+    "outHelp": "Money out is recorded as an expense paid from this account (the owner taking money is \"Owner drawing\").",
+    "pickCat": "What for?",
+    "paidOut": "{{n}} paid out of {{name}}",
+    "doc": {
+      "invoice": "Sale",
+      "purchase": "Purchase",
+      "payment": "Payment",
+      "lending": "Len-den",
+      "expense": "Expense",
+      "transfer": "Move",
+      "opening_balance": "Opening",
+      "return": "Return",
+      "repair": "Repair",
+      "correction": "Correction",
+      "exchange": "Exchange"
+    }
   }
 }

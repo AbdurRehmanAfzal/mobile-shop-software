@@ -362,6 +362,20 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-142 · 2026-11-26 · Accepted · Cash & bank: figures, accounts as cards, the book on the page (from the new product's file 03)
+
+- **Context:** the owner asked for Cash & bank to be upgraded to what the new product's file 03 (the treasury hub, `/new/more/cash` on `staging`) does. The live page had the accounts as a plain list, the below-zero hint, moving money with its list and undo, add / edit / delete, and the book as a bare list inside a sheet.
+- **Decision** (`features/more/CashAccountsPage.tsx`, the live design system; no server change):
+  - **four figures**: all the money, cash in hand, bank / online (each opens that book), this month's cash flow (in and out, moves between accounts left out — `GET /reports/cash-flow`);
+  - **the accounts as cards** (kind, the counter's galla, account number, balance); tapping one chooses it;
+  - **the chosen account's book on the page**: its name, opening balance and number of entries, the current balance; a search (note, kind, date, amount) and All / Money in / Money out / Transfers; each line with its kind, the amount and the balance after it, opening its bill;
+  - **money in / out by hand**: money out is recorded as an **expense paid from this account** (its category); money in opens People & khata or the sale — there is no free cash entry (docs/38 §4);
+  - **Export CSV** (the server's book rows written to a file) and **Print book** (the device's print window);
+  - in Edit account, for an account below zero, **one tap fills the opening balance that brings it to zero**.
+  Moving money, the list of moves with undo, add / edit / delete are unchanged.
+- **Rules:** balances and book rows are the server's; the page adds the account balances together only for the three cards (as the new product does). The book, the cash flow, CSV and the manual entry are for owner / manager (the book API refuses others); a salesman sees the accounts only.
+- **Consequences:** `CashAccount` gains `account_no` in the app's types (the API already sent it). Strings `cashx.*` (the new product's `ncash`). `e2e/cash-bank.spec.ts`; `transfer.spec.ts` and `edit-undo.spec.ts` unchanged.
+
 ## ADR-141 · 2026-11-26 · Accepted · Stock: four screens one tap apart, stock by dealer, the stock ledger (from the new product's file 23)
 
 - **Context:** the owner asked for the stock module to be enhanced to what the new product's stock screen (mock-up 23, `/new/stock` on `staging`) does. Compared with it, the live stock already had: the kinds with their counts, the status tiles, the tick-box filters as removable chips, the column chooser (Fields), three views, sort, search and scan (`/stock`), and the summary by kind → brand → model (`/stock/summary`, ADR-131 / ADR-132). Missing: the stock by dealer / customer, the stock ledger, the worth at asking and what is owed to suppliers, and a way from one stock screen to the next.

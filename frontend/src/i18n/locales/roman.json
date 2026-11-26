@@ -6916,5 +6916,68 @@
       }
     },
     "partial": "{{t}} mein se {{n}} entries dikh rahi hain — muddat ya filter kam karein"
+  },
+  "cashx": {
+    "exportCsv": "CSV download",
+    "printBook": "Hisaab print karen",
+    "noAccess": "Naqd aur bank ka hisaab sirf malik ya manager dekh sakte hain.",
+    "kpiAll": "Kul raqam",
+    "kpiAllSub": "Naqd + bank / wallet mila kar",
+    "kpiCash": "Haath mein naqd (galla)",
+    "deficit": "Sifr se kam",
+    "clickCash": "Naqd ka hisaab kholen",
+    "kpiBank": "Bank / online",
+    "nAccounts": "{{n}} account",
+    "kpiFlow": "Is mahine ki aamad o kharch",
+    "flowSub": "Aya: {{inn}} • Gaya: {{out}}",
+    "accounts": "Account aur wallet",
+    "kind": {
+      "cash": "Naqd",
+      "bank": "Bank",
+      "easypaisa": "Easypaisa",
+      "jazzcash": "JazzCash",
+      "cheque": "Cheque",
+      "remittance": "Bahar se"
+    },
+    "counterGalla": "Counter ka galla",
+    "fill": "{{n}} likhein (sifr ho jayega)",
+    "bookOf": "{{name}} ka hisaab",
+    "bookSub": "Shuru ka balance: {{open}} • {{n}} entries",
+    "manual": "Raqam aayi / gayi",
+    "current": "Abhi ka balance",
+    "search": "Bill number, shakhs ya note dhoondein...",
+    "f": {
+      "all": "Sab",
+      "in": "Aya (+)",
+      "out": "Gaya (−)",
+      "transfer": "Muntaqili"
+    },
+    "noRows": "Is hisaab mein abhi koi entry nahi",
+    "noMatch": "Aisi koi entry nahi",
+    "showing": "{{total}} mein se {{n}} entries",
+    "in": "Aya",
+    "out": "Gaya",
+    "colDate": "Tareekh",
+    "colWhat": "Tafseel",
+    "colType": "Qism",
+    "colBalance": "Balance",
+    "manualIn": "{{name}} mein darj karen",
+    "inHelp": "Raqam bill ke saath ya kisi shakhs se aati hai — wahin darj karen, yahan khud aa jayegi.",
+    "outHelp": "Gayi raqam is account se kharch ke taur par darj hoti hai (malik ka nikalna \"Malik ne nikale\").",
+    "pickCat": "Kis liye?",
+    "paidOut": "{{name}} se {{n}} gaye",
+    "doc": {
+      "invoice": "Sale",
+      "purchase": "Kharidari",
+      "payment": "Payment",
+      "lending": "Len-den",
+      "expense": "Kharch",
+      "transfer": "Muntaqili",
+      "opening_balance": "Shuru ka",
+      "return": "Wapsi",
+      "repair": "Murammat",
+      "correction": "Durusti",
+      "exchange": "Exchange"
+    }
   }
 }
