@@ -18,6 +18,7 @@ from app.modules.auth.router import shops as shops_router
 from app.modules.auth.router import staff as staff_router
 from app.modules.balances.router import router as balances_router
 from app.modules.barcodes.router import router as barcodes_router
+from app.modules.billshub.router import router as billshub_router
 from app.modules.bulk.router import router as bulk_router
 from app.modules.catalogue.router import router as catalogue_router
 from app.modules.credentials.router import router as credentials_router
@@ -199,6 +200,7 @@ def create_app() -> FastAPI:
     app.include_router(reports_router)
     app.include_router(exports_router)
     app.include_router(invoices_router)
+    app.include_router(billshub_router)
     app.include_router(installments_router)
     app.include_router(units_router)
     app.include_router(shopaudit_router)

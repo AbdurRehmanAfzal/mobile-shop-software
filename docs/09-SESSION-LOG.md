@@ -2489,3 +2489,17 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: the owner's next request for the live software; release `develop` → `main` when the owner says.
 
 **Open questions**: none.
+
+## 2026-11-26 — The invoices page becomes the bills centre of file 24 (ADR-137)
+
+**Asked (owner)**: #156 merged; explore `24-invoices-bills-command-center.html` and update the existing invoice module accordingly.
+
+**Gap check** (file 24 against the live page): the page had the search, period, type and money chips, two totals (to get / to give) and a list opening each bill. Missing: create a bill, the ledger report (A4 / Excel / CSV), the profit eye, filters by kind of stock and payment mode, sales / purchases / profit figures, dealer-wise and customer-wise views, edited bills, the full ledger, and on a bill: quick view with print (language, 80 mm / A4), WhatsApp, settle, correct, return, delete, history.
+
+**Done** (branch `develop`, level with `main` after #156): the server piece from `staging` unchanged (`billshub/`, `stockhub/service.py` as its helper, `invoices/service.py` `per_kind`, the router registered in `main.py`, `tests/test_bills_hub.py`, `test_bills_hub_purchases.py`); `features/invoices/InvoiceHub.tsx` (bill card, groups, ledger table, bill sheet, settle / fix / delete / create / report sheets) and `InvoicesPage.tsx` rewritten around `/bills-hub/bills`, keeping its strings, help terms and the tap that opens a bill; strings `ihub.*` in three languages.
+
+**Verified**: pytest `test_bills_hub`, `test_bills_hub_purchases`, `test_invoices`; tsc; eslint; vitest; Playwright `invoices-hub` (new: the five figures against the server, profit hidden, the to-get card as a filter, kind of stock and payment mode, dealer-wise / customer-wise / edited / ledger, the quick view with an Urdu 80 mm print, a part settled from the bill, the correction choices, delete going to the bill's page, create, the report sheet, a tap still opening the bill, Urdu RTL at phone width) and the existing `invoices`, `paymode`, `responsive`, `audit`, `audit-products`. **Not done**: the full suites; a salesman login in the browser.
+
+**Next**: the owner's next request; release `develop` → `main` when the owner says.
+
+**Open questions**: none.

@@ -84,6 +84,10 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 - Read ADR-136 before touching `PartyDetailPage.tsx`, `PartyKhataFull.tsx`, `units/khata.py` or the `pkh.*` texts.
 - Rules: one page for every kind of person (dealer, customer, other shop, repair lab); every figure is the server's (`GET /parties/{id}/khata`, the statement, `khata-report`) — the app only searches and filters; Fix / Edit on a line opens the live correction for that kind and never edits a line in place; cost, paid-out and profit only for owner / manager; `units/khata.py` is shared with the new product on `staging` — change it in one place and carry it over.
 
+## The invoices page: the bills centre (owner 2026-11-26, ADR-137)
+- Read ADR-137 before touching `InvoicesPage.tsx`, `InvoiceHub.tsx` or `backend/app/modules/billshub`.
+- Rules: every figure is the server's (`GET /bills-hub/bills`) and a filter asks the server — the page adds up nothing; a tap on a bill opens its own page, View is the quick look; correct / delete only hand over to the live screens (never an edit in place, never a delete from a list); settle is the live `PaymentForm` against that bill; cost, purchases, to-pay and profit only for owner / manager; `billshub/` is shared with the new product on `staging` — change it in one place and carry it over.
+
 ## Reports list (owner 2026-11-19, ADR-111)
 - Read ADR-111 before touching `frontend/src/features/reports/catalog.ts`, `ReportsHub.tsx` or `ReportsHome.tsx`.
 - Rules: `/reports` lists every report (it is not behind the `reports` module; the profit tabs live at `/reports?tab=…` and gate themselves); the list never computes or copies a report — an entry points at the screen where the report lives; **a new report or sheet gets an entry in `catalog.ts`** with its `hub.r.<id>.t / .d` strings in three languages and its module / role rule (`catalog.test.ts`).
