@@ -13,6 +13,7 @@ import { withCur } from '@/lib/format'
 import { useGet } from '@/lib/queries'
 import AuditLayout from './AuditLayout'
 import SectionDownload from './SectionDownload'
+import TradeUnits, { ViewHint } from './TradeUnits'
 import { useAuditPeriod } from './period'
 
 type M = string
@@ -63,6 +64,8 @@ export default function TradePage() {
   const status = STATUSES.find((s) => s === sp.get('status')) ?? null
   const user = sp.get('user') ?? ''
   const q = sp.get('q') ?? ''
+  // ADR-143: the bills (as before) or every phone by brand & model
+  const view = sp.get('view') === 'models' ? 'models' : 'bills'
   const set = (k: string, v: string | null) => { const o = new URLSearchParams(sp); if (v) o.set(k, v); else o.delete(k); setSp(o, { replace: true }) }
   const filters = `${status ? `&status=${status}` : ''}${user ? `&user_id=${user}` : ''}${q ? `&q=${encodeURIComponent(q)}` : ''}`
   const s = useGet<Sales>(['audit-sales', query, filters], tab === 'sales' ? `/api/v1/shop-audit/sales?${query}${filters}` : null)
@@ -113,7 +116,14 @@ export default function TradePage() {
         </div>
       ) : null}
 
-      {tab === 'sales' ? (!s.data ? <Pending error={s.error} retry={s.refetch} /> : (() => {
+      <div className="flex gap-1.5" role="tablist" data-testid="trade-views">
+        {(['bills', 'models'] as const).map((v) => (
+          <button key={v} type="button" role="tab" aria-selected={view === v} onClick={() => set('view', v === 'bills' ? null : v)} className={chip(view === v)} data-testid={`trade-view-${v}`}>{pick(`autr.view.${tab}.${v}`)}</button>
+        ))}
+      </div>
+      {view === 'models' ? <><ViewHint tab={tab} /><TradeUnits tab={tab} query={query} /></> : null}
+
+      {view === 'bills' && tab === 'sales' ? (!s.data ? <Pending error={s.error} retry={s.refetch} /> : (() => {
         const d = s.data, t = d.totals
         return (
           <>
@@ -168,7 +178,7 @@ export default function TradePage() {
         )
       })()) : null}
 
-      {tab === 'purchases' ? (!p.data ? <Pending error={p.error} retry={p.refetch} /> : (() => {
+      {view === 'bills' && tab === 'purchases' ? (!p.data ? <Pending error={p.error} retry={p.refetch} /> : (() => {
         const d = p.data, t = d.totals
         return (
           <>

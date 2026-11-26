@@ -2569,3 +2569,17 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: the owner's next request; release `develop` → `main` when the owner says.
 
 **Open questions**: none.
+
+## 2026-11-26 — Shop Audit upgraded from file 22 (ADR-143)
+
+**Asked (owner)**: explore `22-shop-audit-executive-suite.html` and update / upgrade the audit module. (Before it: #161's image push failed on a GitHub registry outage; #162's deploy passed and carried it — confirmed live by the new routes answering 401 on production.)
+
+**Gap check**: the live audit already had every section, the period bar and each section's report (see ADR-143). Missing from file 22: the phones by model with their trail on the Sales & purchases tab, and the books one tap away.
+
+**Done** (branch `develop`, level with `main` after #162): `shopaudit/units.py`, its two routes and the remittance detail in `finance.py` from `staging` (3-way patch, clean), `tests/test_shopaudit_units.py`; `features/audit/TradeUnits.tsx` and the view switch in `TradePage.tsx` (`?view=models`); the Master ledger / Accounts links in `AuditLayout.tsx`; strings `autr.*` in three languages.
+
+**Verified**: pytest — the ten `test_shopaudit_*` files (24 tests); tsc; eslint; vitest; Playwright `audit-trade-units` (new: the bills view and the books links, sales by model with the server's profit and pick and each phone's bill / supplier / buyer, the search, an IMEI opening its phone, purchases by model with cheapest / dearest and where each phone is, Urdu RTL at phone width) and the existing audit specs. See the session's last message for the exact results. **Not done**: the full suites.
+
+**Next**: the owner's next request; release `develop` → `main` when the owner says.
+
+**Open questions**: none.

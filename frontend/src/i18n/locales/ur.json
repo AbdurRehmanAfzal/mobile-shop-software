@@ -6979,5 +6979,54 @@
       "correction": "درستی",
       "exchange": "ایکسچینج"
     }
+  },
+  "autr": {
+    "salesHint": "ماڈل وار فروخت، سب سے زیادہ منافع والے فون، خریدار کا کھاتہ اور IMEI",
+    "purchasesHint": "ماڈل وار خرید، سستا / مہنگا سودا، سپلائر کا کھاتہ اور ہر فون کہاں ہے",
+    "searchSales": "ماڈل، IMEI، سپلائر یا خریدار تلاش کریں…",
+    "searchPurchases": "ماڈل، IMEI، سپلائر یا بل تلاش کریں…",
+    "view": {
+      "sales": {
+        "models": "برانڈ اور ماڈل وار فروخت",
+        "bills": "فروخت کے سب بل"
+      },
+      "purchases": {
+        "models": "برانڈ اور ماڈل وار خریداری",
+        "bills": "خریداری کے سب بل"
+      }
+    },
+    "unitsSold": "بکے",
+    "unitsBought": "خریدے",
+    "soldN": "بک گئے",
+    "inShop": "دکان میں",
+    "totalSales": "کل فروخت",
+    "totalCost": "کل لاگت",
+    "modelProfit": "ماڈل کا منافع",
+    "inspectAll": "سب دیکھیں",
+    "highestProfit": "سب سے زیادہ منافع والا فون",
+    "lowestCost": "سب سے کم لاگت والا فون",
+    "cheapestDeal": "سب سے سستی خرید",
+    "dearestDeal": "سب سے مہنگی خرید",
+    "from": "کس سے لیا",
+    "to": "کس کو دیا",
+    "invested": "لگایا گیا پیسہ",
+    "profitSoFar": "اب تک کا منافع",
+    "dateBill": "تاریخ اور بل",
+    "imeiSpecs": "IMEI اور تفصیل",
+    "supplier": "سپلائر (کس سے لیا)",
+    "buyer": "خریدار (کس کو دیا)",
+    "debit": "بل",
+    "credit": "بل میں ادا",
+    "khataStatus": "کھاتے کی حالت",
+    "cost": "لاگت",
+    "billState": "بل ادا؟",
+    "nowBuyer": "اب / خریدار",
+    "now": {
+      "sold": "بک گیا",
+      "in_stock": "دکان میں",
+      "other": "اسٹاک سے باہر"
+    },
+    "masterLedger": "ماسٹر لیجر",
+    "accounts": "اکاؤنٹس اور ٹرائل بیلنس"
   }
 }

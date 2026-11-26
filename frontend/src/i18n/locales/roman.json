@@ -6979,5 +6979,54 @@
       "correction": "Durusti",
       "exchange": "Exchange"
     }
+  },
+  "autr": {
+    "salesHint": "Model wise farokht, sab se zyada munafa wale phone, khareedar ka khata aur IMEI",
+    "purchasesHint": "Model wise khareed, sasta / mehenga sauda, supplier ka khata aur har phone kahan hai",
+    "searchSales": "Model, IMEI, supplier ya khareedar talash karein…",
+    "searchPurchases": "Model, IMEI, supplier ya bill talash karein…",
+    "view": {
+      "sales": {
+        "models": "Brand aur model wise farokht",
+        "bills": "Farokht ke sab bill"
+      },
+      "purchases": {
+        "models": "Brand aur model wise khareedari",
+        "bills": "Khareedari ke sab bill"
+      }
+    },
+    "unitsSold": "bike",
+    "unitsBought": "khareede",
+    "soldN": "bik gaye",
+    "inShop": "dukaan mein",
+    "totalSales": "Kul farokht",
+    "totalCost": "Kul laagat",
+    "modelProfit": "Model ka munafa",
+    "inspectAll": "Sab dekhein",
+    "highestProfit": "Sab se zyada munafa wala phone",
+    "lowestCost": "Sab se kam laagat wala phone",
+    "cheapestDeal": "Sab se sasti khareed",
+    "dearestDeal": "Sab se mehngi khareed",
+    "from": "Kis se liya",
+    "to": "Kis ko diya",
+    "invested": "Lagaya gaya paisa",
+    "profitSoFar": "Ab tak ka munafa",
+    "dateBill": "Tareekh aur bill",
+    "imeiSpecs": "IMEI aur tafseel",
+    "supplier": "Supplier (kis se liya)",
+    "buyer": "Khareedar (kis ko diya)",
+    "debit": "Bill",
+    "credit": "Bill mein ada",
+    "khataStatus": "Khate ki halat",
+    "cost": "Laagat",
+    "billState": "Bill ada?",
+    "nowBuyer": "Ab / khareedar",
+    "now": {
+      "sold": "Bik gaya",
+      "in_stock": "Dukaan mein",
+      "other": "Stock se bahar"
+    },
+    "masterLedger": "Master ledger",
+    "accounts": "Accounts aur trial balance"
   }
 }
