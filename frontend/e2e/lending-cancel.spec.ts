@@ -24,7 +24,7 @@ test('cancel a wrong len-den and enter it the other way', async ({ page, request
   await page.getByRole('button', { name: 'Login' }).click()
   await expect(page.getByPlaceholder("IMEI, phone or person's name")).toBeVisible()
 
-  await page.goto(`/parties/${ali}`)
+  await page.goto(`/parties/${ali}?tab=lenden`)
   await page.getByTestId('lending-cancel').first().click()
   const sheet = page.getByTestId('lending-cancel-sheet')
   await expect(sheet).toContainText('5,000')

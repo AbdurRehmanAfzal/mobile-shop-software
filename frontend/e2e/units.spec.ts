@@ -63,7 +63,7 @@ test('unit-wise money: phone page, both customers, pay for this phone, receipt',
   await expect(timeline).toContainText('left to pay 3,000')
 
   // Customer A: we owe 3,000, one phone bought from them, pending
-  await page.goto(`/parties/${a.id}`)
+  await page.goto(`/parties/${a.id}?tab=phones`)
   await expect(page.getByText('I have to give')).toBeVisible()
   await expect(page.getByTestId('party-split')).toContainText('We owe (phones)')
   await expect(page.getByTestId('party-split')).toContainText('3,000')
@@ -74,7 +74,7 @@ test('unit-wise money: phone page, both customers, pay for this phone, receipt',
   await page.screenshot({ path: 'test-results/unit-party-a.png', fullPage: true })
 
   // Customer B: they owe 2,000 on the Vivo
-  await page.goto(`/parties/${b.id}`)
+  await page.goto(`/parties/${b.id}?tab=phones`)
   await expect(page.getByText('I will get')).toBeVisible()
   await expect(page.getByTestId('party-split')).toContainText('They owe (phones)')
   await expect(page.getByTestId('party-split')).toContainText('2,000')

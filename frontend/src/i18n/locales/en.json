@@ -6433,6 +6433,17 @@
       "wrongPerson": "Wrong amount or wrong person? Delete it here with a reason and enter it again — the deleted one stays in the record.",
       "report": "Full ledger report",
       "reportSay": "A4 page: every entry, phone and channel"
+    },
+    "t": {
+      "summary": "Summary",
+      "ledger": "Ledger",
+      "phones": "Phones",
+      "lenden": "Len-den & old balance",
+      "payments": "Payments",
+      "profile": "Profile",
+      "actions": "What do you want to do?",
+      "actLenden": "Money without a bill",
+      "actOld": "Old balance"
     }
   },
   "ihub": {

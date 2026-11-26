@@ -1,11 +1,11 @@
 import DownloadButton from '@/components/DownloadButton'
-import { ArrowDown, ArrowUp, Pencil, Trash2 } from 'lucide-react'
+import { ArrowDown, ArrowUp, BookOpen, HandCoins, History, LayoutDashboard, Pencil, Smartphone, Trash2, Wallet, type LucideIcon } from 'lucide-react'
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { BiLabel, useLang, BiInput } from '@/components/Bilingual'
 import Help from '@/components/Help'
 import RemoveSheet from '@/components/RemoveSheet'
-import { BtnText, Chip, KV, Loading, PageHeader, Sheet } from '@/components/ui'
+import { BtnText, Chip, Loading, PageHeader, Sheet } from '@/components/ui'
 import { api } from '@/lib/api'
 import { useAuth } from '@/lib/auth'
 import { useInvalidate, useParty, useStatement } from '@/lib/queries'
@@ -19,9 +19,16 @@ import ActionButton from '@/components/ActionButton'
 import { KhataBook, KhataButtons, KhataCards, OpenPeople, PartyFacts, usePartyKhata } from './PartyKhataFull'
 import {withCur } from '@/lib/format'
 
+/** the page's sections (shopkeepers 2026-11-26, ADR-138): one thing at a time instead of one long page */
+type Tab = 'summary' | 'ledger' | 'phones' | 'lenden' | 'payments'
+const TABS: [Tab, string, LucideIcon][] = [['summary', 'pkh.t.summary', LayoutDashboard], ['ledger', 'pkh.t.ledger', BookOpen], ['phones', 'pkh.t.phones', Smartphone], ['lenden', 'pkh.t.lenden', HandCoins], ['payments', 'pkh.t.payments', Wallet]]
+
 export default function PartyDetailPage() {
   const { id } = useParams()
-  const { pick } = useLang()
+  const { pick, ur, cls } = useLang()
+  const [sp, setSp] = useSearchParams()
+  const tab = (TABS.find((x) => x[0] === sp.get('tab'))?.[0] ?? 'summary') as Tab
+  const setTab = (k: Tab) => { const n = new URLSearchParams(sp); if (k === 'summary') n.delete('tab'); else n.set('tab', k); n.delete('edit'); setSp(n, { replace: true }) }
   const { data: party, isLoading } = useParty(id)
   const { data: st } = useStatement(id)
   const { data: units } = usePartyUnits(id)
@@ -39,6 +46,8 @@ export default function PartyDetailPage() {
   if (isLoading || !party) return <Loading />
   const bal = Number(party.balance)
   const canCost = canDelete
+  // an action that lives in another section: open that section and bring its card into view
+  const jump = (k: Tab, testid: string) => { setTab(k); setTimeout(() => document.querySelector(`[data-testid="${testid}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60) }
 
   return (
     <div className="flex flex-col gap-4">
@@ -78,44 +87,78 @@ export default function PartyDetailPage() {
           <span className="[&_button]:text-current"><Help term="party.kinds" size="sm" /></span>
         </div>
       </section>
-      {/* owner 2026-11-19 (ADR-112): each money button says underneath what it is for */}
-      {/* ADR-113: big filled buttons with an icon, the line and an arrow — one per row on a phone */}
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-        <ActionButton tone="get" icon={<ArrowDown size={24} strokeWidth={2.4} />} title="counter.gotMoney" say="say.got" onClick={() => setPaying('in')} testid="party-got" help={<Help term="party.gotMoney" size="sm" />} />
-        <ActionButton tone="give" icon={<ArrowUp size={24} strokeWidth={2.4} />} title="counter.gaveMoney" say="say.gave" onClick={() => setPaying('out')} testid="party-gave" help={<Help term="party.gaveMoney" size="sm" />} />
-      </div>
-      {/* owner 2026-11-26 (ADR-136): WhatsApp khata, the full ledger report, the account's dates */}
-      <KhataButtons party={party} kh={kh} canCost={canCost} />
+      {/* shopkeepers 2026-11-26 (ADR-138): the person in one card — who they are and the account's dates */}
       <PartyFacts party={party} rows={st?.rows ?? []} kh={kh} />
-      {kh ? <KhataCards kh={kh} canCost={canCost} showProfit={showProfit} setShowProfit={setShowProfit} /> : null}
 
-      <section className="card">
-        <KV k="party.phone" help="common.phone" v={<span dir="ltr">{party.phone}</span>} />
-        {party.whatsapp ? <KV k="party.whatsapp" help="party.whatsapp" v={<span dir="ltr">{party.whatsapp}</span>} /> : null}
-        {party.cnic ? <KV k="party.cnic" help="common.cnic" v={<span dir="ltr">{party.cnic}</span>} /> : null}
-        {party.city ? <KV k="party.city" help="party.city" v={party.city} /> : null}
-        {party.address ? <KV k="party.address" help="common.address" v={party.address} /> : null}
+      {/* every action in one block: the two money buttons, then the rest */}
+      <section className="flex flex-col gap-2" data-testid="party-actions">
+        <BiLabel text="pkh.t.actions" size="sm" tone="text-muted" bold />
+        {/* owner 2026-11-19 (ADR-112): each money button says underneath what it is for */}
+        {/* ADR-113: big filled buttons with an icon, the line and an arrow — one per row on a phone */}
+        <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+          <ActionButton tone="get" icon={<ArrowDown size={24} strokeWidth={2.4} />} title="counter.gotMoney" say="say.got" onClick={() => setPaying('in')} testid="party-got" help={<Help term="party.gotMoney" size="sm" />} />
+          <ActionButton tone="give" icon={<ArrowUp size={24} strokeWidth={2.4} />} title="counter.gaveMoney" say="say.gave" onClick={() => setPaying('out')} testid="party-gave" help={<Help term="party.gaveMoney" size="sm" />} />
+        </div>
+        <KhataButtons party={party} kh={kh} canCost={canCost}>
+          <button type="button" onClick={() => jump('lenden', 'party-lending')} className="tap flex min-h-16 items-center gap-2.5 rounded-2xl border border-line bg-surface px-3 text-start text-ink" data-testid="party-act-lenden">
+            <span className="well h-10 w-10 shrink-0 rounded-xl bg-receivable-tint text-receivable"><HandCoins size={18} /></span>
+            <span className={`min-w-0 font-extrabold ${ur ? cls('sm') : 'text-sm'}`}>{pick('pkh.t.actLenden')}</span>
+          </button>
+          <button type="button" onClick={() => jump('lenden', 'old-balance')} className="tap flex min-h-16 items-center gap-2.5 rounded-2xl border border-line bg-surface px-3 text-start text-ink" data-testid="party-act-old">
+            <span className="well h-10 w-10 shrink-0 rounded-xl bg-khata text-khata-fg"><History size={18} /></span>
+            <span className={`min-w-0 font-extrabold ${ur ? cls('sm') : 'text-sm'}`}>{pick('pkh.t.actOld')}</span>
+          </button>
+        </KhataButtons>
       </section>
 
-      <PartyLending party={party} />
-      {/* owner 2026-11-19 (ADR-110): dealings from before the software */}
-      <OldBalance party={party} />
-      <PartyJourney partyId={party.id} />
-      <PartyUnits party={party} />
+      {/* the rest of the page, one section at a time */}
+      <div className="sticky top-0 z-10 -mx-1 flex gap-1.5 overflow-x-auto bg-ground px-1 py-1.5" role="tablist" data-testid="party-tabs">
+        {TABS.map(([k, label, Icon]) => {
+          const count = k === 'ledger' ? st?.rows.length : k === 'phones' ? units?.rows.length : undefined
+          return (
+            <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={`tap inline-flex min-h-12 shrink-0 items-center gap-1.5 rounded-2xl px-3.5 font-bold ${tab === k ? 'bg-ink text-ground' : 'border border-line bg-surface text-ink'}`} data-testid={`party-tab-${k}`}>
+              <Icon size={16} /><span className={ur ? cls('sm') : 'text-sm'}>{pick(label)}</span>
+              {count ? <span className="num text-xs opacity-80" dir="ltr">{count}</span> : null}
+            </button>
+          )
+        })}
+      </div>
 
-      {/* owner 2026-11-18 (ADR-103): the khata as an account ledger — bills with their items */}
-      <LedgerDownload partyId={party.id} name={party.name} />
-
-      {/* owner 2026-11-26 (ADR-136): the statement as a book in four tabs — every line with its kind,
-          time, running balance and Fix / Edit; their phones with sell / return; brand & model; channels */}
-      <KhataBook
-        party={party}
-        rows={st?.rows ?? []}
-        kh={kh}
-        canCost={canCost}
-        showProfit={showProfit}
-        right={<span className="flex items-center gap-1"><Help term="party.statement" size="sm" /><DownloadButton path={`/api/v1/exports/parties/${party.id}/statement`} name={`khata-${party.name}`} /></span>}
-      />
+      {tab === 'summary' ? (
+        <>
+          {/* every figure about this person in one place: their phones, the money, the profit, the journey */}
+          {kh ? <KhataCards kh={kh} canCost={canCost} showProfit={showProfit} setShowProfit={setShowProfit} /> : <Loading />}
+          <PartyJourney partyId={party.id} />
+        </>
+      ) : tab === 'ledger' ? (
+        <>
+          <KhataBook
+            only="ledger"
+            party={party}
+            rows={st?.rows ?? []}
+            kh={kh}
+            canCost={canCost}
+            showProfit={showProfit}
+            right={<span className="flex items-center gap-1"><Help term="party.statement" size="sm" /><DownloadButton path={`/api/v1/exports/parties/${party.id}/statement`} name={`khata-${party.name}`} /></span>}
+          />
+          {/* owner 2026-11-18 (ADR-103): the khata as an account ledger — bills with their items */}
+          <LedgerDownload partyId={party.id} name={party.name} />
+        </>
+      ) : tab === 'phones' ? (
+        <>
+          <PartyUnits party={party} />
+          <KhataBook only="items" party={party} rows={st?.rows ?? []} kh={kh} canCost={canCost} showProfit={showProfit} />
+          <KhataBook only="models" party={party} rows={st?.rows ?? []} kh={kh} canCost={canCost} showProfit={showProfit} />
+        </>
+      ) : tab === 'lenden' ? (
+        <>
+          <PartyLending party={party} />
+          {/* owner 2026-11-19 (ADR-110): dealings from before the software */}
+          <OldBalance party={party} />
+        </>
+      ) : (
+        <KhataBook only="methods" party={party} rows={st?.rows ?? []} kh={kh} canCost={canCost} showProfit={showProfit} />
+      )}
       <OpenPeople current={party.id} />
       <Sheet open={editing} onClose={() => setEditing(false)} title="party.edit">
         <PartyForm party={party} onDone={() => setEditing(false)} />

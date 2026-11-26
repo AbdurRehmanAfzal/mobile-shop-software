@@ -2503,3 +2503,17 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: the owner's next request; release `develop` → `main` when the owner says.
 
 **Open questions**: none.
+
+## 2026-11-26 — A person's page reorganised after a shopkeeper's complaint (ADR-138)
+
+**Asked (owner)**: #157 merged. A shopkeeper says a person's page is confusing: hard to use, actions have to be found, information scattered (some on top, some at the end), the full bio and the complete stats are not in one place — analyse and fix.
+
+**Analysis**: nothing was missing; the order was the problem. After ADR-136 the page was one column of ten cards (balance, two buttons, two more buttons, dates, three cards, details, len-den, old balance, journey, phones, ledger download, the book with its own tabs, people). Details sat in two cards, figures in three places, actions in four.
+
+**Done** (branch `develop`): balance → one **profile** card (bio + dates) → one **actions** block (six actions) → **five tabs** (Summary, Ledger, Phones, Len-den & old balance, Payments; `?tab=`). `PartyKhataFull.tsx`: `PartyFacts` is the profile card, `KhataButtons` takes the extra actions, `KhataBook` takes `only`. Strings `pkh.t.*` in three languages. Seven e2e specs open the tab they need.
+
+**Verified**: tsc, eslint; Playwright `party-khata-full` (profile, actions, Summary first, each tab, an action opening its section) and every spec that uses the page: `units`, `party-brands`, `statements`, `lending`, `lending-cancel`, `money-buttons`, `old-dealings-bulk`, `audit-parties`, `history`, `crud`, `phone-countries`. The screen checked in a screenshot. **Not done**: the full suites; the shopkeeper's own word on it.
+
+**Next**: show the shopkeeper who complained; the owner's next request.
+
+**Open questions**: should the page open on Ledger instead of Summary for a person with dealings? (Summary now.)

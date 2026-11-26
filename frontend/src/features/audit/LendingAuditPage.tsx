@@ -102,7 +102,7 @@ export default function LendingAuditPage() {
               <BiLabel text="audit.lend.dueHint" size="sm" tone="text-muted" />
               <div className="card divide-y divide-line p-0" data-testid="lend-due">
                 {d.due.map((r) => (
-                  <Link key={r.party_id} to={`/parties/${r.party_id}`} className="tap flex items-center gap-3 px-4 py-2.5">
+                  <Link key={r.party_id} to={`/parties/${r.party_id}?tab=lenden`} className="tap flex items-center gap-3 px-4 py-2.5">
                     <span className={`shrink-0 rounded-full px-2.5 py-1 ${small} ${r.status === 'late' ? 'bg-payable-tint text-payable' : r.status === 'later' ? 'bg-ground text-muted' : 'bg-receivable-tint text-receivable'}`}>{pick(`audit.lend.st.${r.status}`)}</span>
                     <span className="flex min-w-0 flex-1 flex-col">
                       <span className="truncate font-bold">{r.name ?? '—'}</span>
@@ -121,7 +121,7 @@ export default function LendingAuditPage() {
               {d.people.map((r) => {
                 const o = Number(r.open)
                 return (
-                  <Link key={r.party_id} to={`/parties/${r.party_id}`} className="tap flex items-center gap-3 px-4 py-2.5">
+                  <Link key={r.party_id} to={`/parties/${r.party_id}?tab=lenden`} className="tap flex items-center gap-3 px-4 py-2.5">
                     <span className="flex min-w-0 flex-1 flex-col">
                       <span className="truncate font-bold">{r.name ?? '—'}</span>
                       <span className={`text-muted ${small}`}>{pick('lending.lent')} <span className="num" dir="ltr">{n(r.lent)}</span> · {pick('lending.borrowed')} <span className="num" dir="ltr">{n(r.borrowed)}</span> · {pick('audit.lend.khata')} <span className="num" dir="ltr">{n(r.khata)}</span>{r.last_date ? <> · <span dir="ltr">{fmtDate(r.last_date)}</span></> : null}</span>
@@ -140,7 +140,7 @@ export default function LendingAuditPage() {
           {!d.entries.length ? <Empty text="audit.noData" /> : (
             <div className="card divide-y divide-line p-0" data-testid="lend-entries">
               {d.entries.map((e) => (
-                <Link key={e.id} to={`/parties/${e.party_id}`} className="tap flex items-center gap-3 px-4 py-2.5">
+                <Link key={e.id} to={`/parties/${e.party_id}?tab=lenden`} className="tap flex items-center gap-3 px-4 py-2.5">
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="truncate font-semibold">{e.party_name ?? '—'} · {pick(e.direction === 'out' ? 'lending.lent' : 'lending.borrowed')}</span>
                     <span className={`text-muted ${small}`}><span dir="ltr">{e.no} · {fmtDate(e.date)}</span>{e.by ? ` · ${e.by}` : ''}{e.notes ? ` · ${e.notes}` : ''}</span>
