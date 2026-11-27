@@ -74,3 +74,38 @@ def test_report_pages_share_the_look_and_keep_rows_whole(owner, cat):
     party = owner.post("/api/v1/parties", json={"name": "Aslam", "kinds": ["customer"]}).json()
     khata = owner.get(f"/api/v1/parties/{party['id']}/khata-report").text
     assert frame.PRINT_SAFE in khata
+
+
+def test_totals_period_and_words_for_the_accountant(owner, cat):
+    """ADR-145: a printed report says its dates, adds up its money columns and prints words"""
+    from decimal import Decimal
+
+    from app.modules.exports import a4
+
+    head = ["Invoice", "Date", "Total", "Paid", "Qty", "Days in stock", "Status"]
+    rows = [
+        ["INV-1", "2026-11-01", Decimal(100), Decimal(40), 2, 9, "partially_paid"],
+        ["INV-2", "2026-11-02", Decimal("50.50"), Decimal("50.50"), 1, 3, "paid"],
+    ]
+    tot = a4.totals(head, rows)
+    assert tot == [None, None, Decimal("150.50"), Decimal("90.50"), Decimal(3), None, None]
+    assert a4.totals(head, rows[:1]) is None  # one row needs no total
+    # a running balance beside debit / credit is never added up
+    led = a4.totals(
+        ["Date", "Debit", "Credit", "Balance"],
+        [["a", Decimal(5), Decimal(0), Decimal(5)], ["b", Decimal(0), Decimal(2), Decimal(3)]],
+    )
+    assert led == [None, Decimal(5), Decimal(2), None]
+    table = a4._table(head, rows, "Total")
+    assert 'class="tot"' in table and "150.50" in table and "Partially paid" in table
+    assert "partially_paid" not in table
+
+    _stock(owner, cat)
+    page = owner.get(
+        "/api/v1/exports/sales?format=pdf&lang=en&date_from=2026-11-01&date_to=2026-11-30"
+    ).text
+    assert "01-11-2026 → 30-11-2026" in page
+    assert "counter(page)" in page  # page numbers when printed
+    # the files stay plain data: no total row in the CSV
+    csv_rows = _rows(owner.get("/api/v1/exports/parties?format=csv&lang=en").text)
+    assert all(r and r[0] != "Total" for r in csv_rows)

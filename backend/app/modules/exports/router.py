@@ -209,17 +209,43 @@ def _printable(
     from app.modules.auth.models import Shop
 
     shop = db.get(Shop, ctx.shop_id)
-    from app.modules.exports import a4, frame
+    import html
+    import re
 
+    from app.modules.exports import a4, frame, options
+
+    e = html.escape
+    # ADR-145, for the accountant: the dates asked for, the totals as figure cards and as the
+    # table's last row. Only figures of the report itself are added up.
+    o = options.get()
+    period = None
+    if o and (o.d_from or o.d_to):
+        day = lambda x: (
+            "-".join(reversed(x.split("-"))) if re.fullmatch(r"\d{4}-\d\d-\d\d", x) else "…"
+        )
+        period = f"{day(o.d_from)} → {day(o.d_to)}"
+    tot = a4.totals(header, rows)
+    cards = ""
+    if tot:
+        picked = [(header[i], v) for i, v in enumerate(tot) if v][:4]
+        cards = (
+            '<div class="stats">'
+            + "".join(
+                f'<div class="st"><span>{e(str(k))}</span><b class="n{" neg" if v < 0 else ""}">{e(a4._s(v))}</b></div>'
+                for k, v in picked
+            )
+            + "</div>"
+        )
     # ADR-144: the one report look; many columns get a smaller type and wrap (A4 portrait, ADR-078)
     page = frame.shell(
         shop,
         title=title,
-        period=None,
+        period=period,
         who=None,
         ur=ur,
-        body=a4._table(header, rows),
+        body=a4._table(header, rows, "کل" if ur else "Total"),
         rows=len(rows),
+        stats=cards,
     )
     return Response(content=page, media_type="text/html; charset=utf-8")
 

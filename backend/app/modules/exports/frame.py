@@ -31,7 +31,7 @@ def css(ur: bool) -> str:
         else "Manrope, 'Noto Nastaliq Urdu', Arial, sans-serif"
     )
     return f"""
-@page {{ size: A4 portrait; margin: 10mm; }}
+@page {{ size: A4 portrait; margin: 10mm 10mm 13mm; @bottom-center {{ content: counter(page) " / " counter(pages); font-family: Arial, sans-serif; font-size: 9px; color: #555; }} }}
 * {{ box-sizing: border-box; }}
 body {{ font-family: {font}; color: #111; background: #fff; margin: 0; font-size: 11px; {"line-height: 1.8;" if ur else ""} }}
 .n, .l {{ font-family: Manrope, Arial, sans-serif; font-variant-numeric: tabular-nums; }}
@@ -45,11 +45,13 @@ body {{ font-family: {font}; color: #111; background: #fff; margin: 0; font-size
 .st span {{ font-size: 9.5px; color: #555; }} .st b {{ font-size: 14px; font-weight: 800; }}
 h2 {{ font-size: 12.5px; letter-spacing: .04em; text-transform: uppercase; margin: 14px 0 5px; color: #333; }} h2 span {{ color: #666; font-weight: 600; }}
 table {{ width: 100%; border-collapse: collapse; }}
-th, td {{ border: 1px solid #ccc; padding: 4px 6px; vertical-align: top; text-align: {side}; overflow-wrap: anywhere; line-height: 1.35; }}
+th, td {{ border: 1px solid #ccc; padding: 4px 6px; vertical-align: top; text-align: {side}; overflow-wrap: break-word; line-height: 1.35; }}
+td.k {{ white-space: nowrap; }}
 th {{ background: #f1f1f1; font-size: 0.92em; font-weight: 800; }}
 td.n {{ text-align: {other}; white-space: nowrap; }}
 .neg {{ color: #B42318; }}
 tbody tr:nth-child(even) td {{ background: #FAFAF8; }}
+tbody tr.tot td {{ background: #f1f1f1; font-weight: 800; border-top: 2px solid #111; }}
 .notes {{ color: #555; font-size: 9.5px; margin: 4px 0 0; padding-inline-start: 16px; }} .muted {{ color: #666; }}
 .sign {{ display: flex; justify-content: space-between; gap: 12px; margin-top: 18px; font-size: 10.5px; color: #444; }}
 {PRINT_SAFE}
@@ -76,6 +78,7 @@ def shell(
     ur: bool,
     body: str,
     rows: int | None = None,
+    stats: str = "",
 ) -> str:
     e = html.escape
     i = 1 if ur else 0
@@ -92,6 +95,7 @@ def shell(
 <style>{css(ur)}</style></head><body class="{"ur" if ur else ""}">
 {shop_head(shop, ur)}
 <div class="top"><div><b class="t">{e(title)}</b>{f'<div class="period">{e(period)}</div>' if period else ""}</div><div class="r">{made}</div></div>
+{stats}
 {body}
 <div class="sign"><div>{e(name)} · {e(title)} · PKR</div><div>{e(WORDS["sign"][i])}: ____________________</div></div>
 </body></html>"""

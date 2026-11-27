@@ -2595,3 +2595,17 @@ Shop, specs, code word and the condition line are left out. The sticker sheet sh
 **Next**: the owner's next request. Candidates from ADR-144: filters per report, the fixed-layout pages' columns, a download on the screens without one.
 
 **Open questions**: none.
+
+## 2026-11-27 — Live clock, the side panel's order, reports for the accountant (ADR-145)
+
+**Before it**: #163 was merged by the owner with the audit work only; the reports work (ADR-144) went as #164, CI green, merged on the owner's go-ahead.
+
+**Asked (owner)**: a live clock; the panel's quick actions first (sell, purchase, People & khata, Sale & purchase, return, stock); reports more advanced and easier to read for accounts / FBR / CA.
+
+**Done** (branch `develop`): `LiveClock.tsx` in the header; the side panel's quick rows in that order with the two pages moved up; report pages with the period, a totals row, total cards, code words as words, one-line bill numbers and dates, page numbers in print.
+
+**Verified**: pytest — the report tests with the new totals / period test; tsc; vitest; Playwright `counter-ux`, `appearance` (laptop), `sale-purchase`, `report-options`, `reports-a4`. See the session's last message for the exact results. **Not done**: the full suites.
+
+**Next**: the owner's next request. Candidates: item-wise (line by line) sales and purchase reports and a tax-wise report for the CA.
+
+**Open questions**: which extra columns or reports the accountant / CA actually asks for.

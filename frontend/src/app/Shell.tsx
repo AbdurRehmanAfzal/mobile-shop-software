@@ -12,6 +12,7 @@ import { BiLabel, useLang, type BiText } from '@/components/Bilingual'
 import { LOCALES, setLocale, type Locale } from '@/i18n'
 import { useTheme } from '@/lib/theme'
 import { jobsFor } from '@/features/counter/jobs'
+import LiveClock from '@/components/LiveClock'
 import SidePanel from './SidePanel'
 
 /** screens that use the whole laptop width (lists, overviews, the side-by-side sale); forms stay at 3xl */
@@ -147,9 +148,12 @@ export default function Shell() {
       <div className="sticky top-0 z-10">
       <PlanBar />
       <header className="print:hidden flex flex-wrap items-center gap-x-2 gap-y-2 bg-ground/90 px-5 pb-2 pt-[max(14px,env(safe-area-inset-top))] backdrop-blur max-[379px]:px-4">
-        <NavLink to="/" className={`min-w-0 flex-1 line-clamp-2 max-[379px]:basis-full ${ur ? 'ur text-lg font-bold leading-snug' : 'text-lg font-extrabold leading-tight tracking-[-0.01em]'}`} dir={dir}>
-          {shopName}
-        </NavLink>
+        <div className="flex min-w-0 flex-1 flex-col max-[379px]:basis-full">
+          <NavLink to="/" className={`min-w-0 line-clamp-2 ${ur ? 'ur text-lg font-bold leading-snug' : 'text-lg font-extrabold leading-tight tracking-[-0.01em]'}`} dir={dir}>
+            {shopName}
+          </NavLink>
+          <LiveClock />
+        </div>
         <div className="flex shrink-0 gap-1.5 max-[379px]:grid max-[379px]:w-full max-[379px]:grid-cols-4">
           <button type="button" aria-label={pick('more.language')} onClick={() => setLangOpen(true)} className="tap flex min-h-14 min-w-[52px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl border border-line bg-surface px-1.5 py-1 text-ink">
             <Languages size={20} strokeWidth={1.75} />

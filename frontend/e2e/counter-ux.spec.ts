@@ -32,8 +32,16 @@ test('profile menu, walk-in, short person form, extra cash to old udhaar, side p
 
   // the side panel: dashboard and the shop pages as rows
   const side = page.getByTestId('side-shop')
-  for (const t of ['People & khata', 'Shop audit', "Day's hisaab", 'Reports', 'Cash & bank', 'Purchases', 'Staff', 'Settings', 'All options']) await expect(side.getByRole('link', { name: t })).toBeVisible()
+  for (const t of ['Shop audit', "Day's hisaab", 'Reports', 'Cash & bank', 'Purchases', 'Staff', 'Settings', 'All options']) await expect(side.getByRole('link', { name: t })).toBeVisible()
   await expect(page.getByTestId('side-home')).toContainText('Dashboard')
+  // ADR-145: the day's work first, in the owner's order; People & khata and Sale & purchase are quick rows now
+  const quick = await page.getByTestId('side-panel').getByRole('link').allInnerTexts()
+  const at = (t: string) => quick.findIndex((x) => x.includes(t))
+  const order = ['Sell', 'People & khata', 'Sale & purchase', 'Return', 'Stock'].map(at)
+  expect(order.every((x) => x > 0), JSON.stringify(quick)).toBeTruthy()
+  expect([...order].sort((a, b) => a - b)).toEqual(order)
+  expect(at('Sale & purchase')).toBeLessThan(at('Shop audit'))
+  await expect(page.getByTestId('live-clock')).toContainText(/\d{2}:\d{2}:\d{2}/)
   await side.getByRole('link', { name: 'Settings' }).click()
   await expect(page).toHaveURL(/\/more\/settings$/)
 

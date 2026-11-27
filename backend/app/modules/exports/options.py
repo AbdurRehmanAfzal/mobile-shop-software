@@ -29,6 +29,9 @@ class Opts:
     cols: bool = False
     hide: frozenset[int] = frozenset()
     nocost: bool = False
+    # the dates the report was asked for, for its title bar
+    d_from: str = ""
+    d_to: str = ""
 
 
 _OPTS: ContextVar[Opts | None] = ContextVar("report_opts", default=None)
@@ -47,14 +50,25 @@ class ReportOptionsMiddleware:
 
     async def __call__(self, scope, receive, send):
         qs = scope.get("query_string", b"") if scope["type"] == "http" else b""
-        if not (b"rcols=" in qs or b"rhide=" in qs or b"rnocost=" in qs):
+        if not any(
+            k in qs for k in (b"rcols=", b"rhide=", b"rnocost=", b"date_from=", b"date_to=")
+        ):
             return await self.app(scope, receive, send)
         q = parse_qs(qs.decode("latin-1"))
         on = lambda k: (q.get(k) or [""])[0].lower() in ("1", "true", "yes")
         hide = frozenset(
             int(x) for v in q.get("rhide", []) for x in v.split(",") if x.strip().isdigit()
         )
-        token = _OPTS.set(Opts(cols=on("rcols"), hide=hide, nocost=on("rnocost")))
+        day = lambda k: (q.get(k) or [""])[0][:10]
+        token = _OPTS.set(
+            Opts(
+                cols=on("rcols"),
+                hide=hide,
+                nocost=on("rnocost"),
+                d_from=day("date_from"),
+                d_to=day("date_to"),
+            )
+        )
         try:
             await self.app(scope, receive, send)
         finally:

@@ -6,6 +6,7 @@ and signed. The same page prints from the browser and becomes the app's PDF."""
 
 import datetime as dt
 import html
+import re
 from decimal import Decimal
 
 from fastapi.responses import Response
@@ -13,6 +14,38 @@ from fastapi.responses import Response
 from app.modules.exports import frame, options
 
 NUM = (int, float, Decimal)
+# ADR-145: a stored code word ("partially_paid") is printed as words ("Partially paid")
+_CODE = re.compile(r"[a-z]+(?:_[a-z]+)+")
+# columns that are never added up: rates, ages, and a running balance beside debit / credit
+_NO_SUM = re.compile(
+    r"%|rate|days|months|cycles|\bram\b|year|\bage\b|sim time|battery|each", re.IGNORECASE
+)
+_COUNT = re.compile(
+    r"qty|pieces|phones|units|sold|bought|returned|in stock|count|تعداد", re.IGNORECASE
+)
+_RUNNING = re.compile(r"balance|بقایا", re.IGNORECASE)
+
+
+def totals(header: list, rows: list[list]) -> list | None:
+    """the sum under each money / quantity column of a table of two or more rows (ADR-145), or
+    None when it has no such column. Only figures already in the report are added."""
+    if len(rows) < 2:
+        return None
+    ledger = any(re.search(r"debit|credit|ڈیبٹ|کریڈٹ", str(h), re.IGNORECASE) for h in header)
+    out: list = [None] * len(header)
+    for i, h in enumerate(header):
+        h = str(h)
+        if _NO_SUM.search(h) or (ledger and _RUNNING.search(h)):
+            continue
+        vals = [
+            r[i]
+            for r in rows
+            if i < len(r) and isinstance(r[i], NUM) and not isinstance(r[i], bool)
+        ]
+        if not vals or (all(isinstance(v, int) for v in vals) and not _COUNT.search(h)):
+            continue
+        out[i] = sum((Decimal(str(v)) for v in vals), Decimal(0))
+    return out if any(v is not None for v in out) else None
 
 
 def _s(v) -> str:
@@ -28,10 +61,18 @@ def _s(v) -> str:
         return v.strftime("%d-%m-%Y %I:%M %p")
     if isinstance(v, dt.date):
         return v.strftime("%d-%m-%Y")
+    if isinstance(v, str) and _CODE.fullmatch(v):
+        return v.replace("_", " ").capitalize()
     return str(v)
 
 
-def _table(header: list, rows: list[list]) -> str:
+def _short(v) -> str:
+    """a bill number, a date, an IMEI: kept on one line (a name or a note may wrap)"""
+    t = _s(v)
+    return "k" if 0 < len(t) <= 18 and " " not in t else ""
+
+
+def _table(header: list, rows: list[list], total_word: str | None = None) -> str:
     e = html.escape
     n = max(1, len(header))
     fs, pad = (10.5, "4px 6px") if n <= 5 else (9.5, "3px 5px") if n <= 8 else (8.5, "2px 3px")
@@ -40,7 +81,7 @@ def _table(header: list, rows: list[list]) -> str:
         "".join(
             "<tr>"
             + "".join(
-                f'<td class="{"n neg" if isinstance(v, NUM) and v < 0 else "n" if isinstance(v, NUM) else ""}" dir="auto">{e(_s(v))}</td>'
+                f'<td class="{"n neg" if isinstance(v, NUM) and v < 0 else "n" if isinstance(v, NUM) else _short(v)}" dir="auto">{e(_s(v))}</td>'
                 for v in r
             )
             + "</tr>"
@@ -48,6 +89,19 @@ def _table(header: list, rows: list[list]) -> str:
         )
         or f'<tr><td colspan="{n}" class="muted">—</td></tr>'
     )
+    tot = totals(header, rows) if total_word else None
+    if tot:
+        first = next((i for i, v in enumerate(tot) if v is None), None)
+        body += (
+            '<tr class="tot">'
+            + "".join(
+                f'<td class="n">{e(_s(v))}</td>'
+                if v is not None
+                else f"<td>{e(total_word) if i == first else ''}</td>"
+                for i, v in enumerate(tot)
+            )
+            + "</tr>"
+        )
     return f'<table style="font-size:{fs}px" data-pad="{pad}"><thead><tr>{head}</tr></thead><tbody>{body}</tbody></table>'
 
 
@@ -80,7 +134,7 @@ def page(
         count = sec.get("count")
         parts.append(
             f"<section><h2>{e(sec['title'])}{f' <span>· {count}</span>' if count is not None else ''}</h2>"
-            f"{_table(header, rows)}"
+            f"{_table(header, rows, 'کل' if ur else 'Total')}"
             f"{f'<ul class=notes>{notes}</ul>' if notes else ''}</section>"
         )
     out = frame.shell(

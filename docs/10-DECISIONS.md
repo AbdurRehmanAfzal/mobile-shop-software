@@ -362,6 +362,17 @@ by sheet remain a later step (docs/18 §1).
     - confirm sale types and HS codes with the tax adviser.
   - Tests use a stand-in for FBR; the real FBR is never called from tests.
 
+## ADR-145 · 2026-11-27 · Accepted · A live clock, the day's work first in the side panel, reports for the accountant
+
+- **Context:** the owner asked for a live clock in the software, for the side panel's quick actions to come first in this order — sell, purchase, People & khata, Sale & purchase, return, stock — and for reports to be more detailed and easier to read, because the accounts department, FBR and the CA read them closely.
+- **Decision:**
+  - **Clock** (`components/LiveClock.tsx`): the running time and the day and date under the shop's name in the header, on every screen and size. It is the device's clock; bills and reports keep the server's time. Latin digits in every language.
+  - **Side panel** (`app/SidePanel.tsx`): the quick rows are in the owner's order, then the other jobs (udhaar khata, repairs, invoices, expenses). People & khata and Sale & purchase became quick rows; they left the shop tiles below. The rows are a little lower so all four designs still fit 1280×720. The home screen's tiles and the F-keys are unchanged.
+  - **Reports** (every `_file` page, and the `a4.page` tables): the dates asked for in the title bar; the money and quantity columns added up as the table's last row and, for a single-table report, as figure cards (zero ones left out); a stored code word printed as words ("Partially paid"); a bill number, date or IMEI kept on one line and a heading never broken inside a word; "page / pages" at the foot when printed.
+- **Rules:** a total is the sum of figures already in that report and is made by the server (`a4.totals`); rates, ages and a running balance beside debit / credit are never added up. Excel and CSV stay plain data (no total row), so the accountant's own sums are not doubled.
+- **Not done:** no report gained new columns or a line-by-line (item-wise) version; the fixed-layout pages (ADR-144) are as they were; the page number is not in the app's own PDF, only when printed.
+- **Consequences:** `tests/test_report_options.py` (totals, period, words), `e2e/counter-ux.spec.ts` (the order, the clock), `appearance.spec.ts` unchanged and passing.
+
 ## ADR-144 · 2026-11-26 · Accepted · One report look, the reader's choices on every report, a PDF of whole rows
 
 - **Context:** shopkeepers complained that reports and ledgers are not well formatted or detailed, have no optional fields, cannot hide cost and profit, and that in the PDF some rows come out cut in half at the page end. The owner named the person's khata report (ADR-136) as the format they like and asked for it across the software, with every report shareable, downloadable and printable.
