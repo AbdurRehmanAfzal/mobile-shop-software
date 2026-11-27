@@ -105,6 +105,7 @@ Owner / product decision-maker: **Abdur Rehman Afzal**.
 
 ## Report pages: one look, the reader's choices, whole rows (shopkeepers 2026-11-26, ADR-144)
 - Read ADR-144 before touching `exports/frame.py`, `exports/options.py`, `exports.router._printable`, `exports/a4.py`, `DownloadButton.tsx` or `lib/share.printPagePdf`.
+- Totals and the clock (ADR-145): a report's totals are the server's sum of its own columns (`a4.totals`) on the printed page only — Excel / CSV stay plain data; never total a rate, an age or a running balance. The side panel's quick rows keep the owner's order (`FIRST` in `SidePanel.tsx`) and must fit 1280×720 in all four designs (`appearance.spec.ts`). `LiveClock` is the device's clock, never a bill's time.
 - Rules: a new report is made with `_file` or `a4.page` (it then has the look, `rcols` / `rhide` / `rnocost`, PDF / Excel / CSV) and offered with `DownloadButton`; a page with its own style ends its `<style>` with `frame.PRINT_SAFE`; the choices only remove columns the login was given — the report's own VIEW_COST rule stays; the server leaves columns out, the app never edits a report.
 
 ## Reports list (owner 2026-11-19, ADR-111)

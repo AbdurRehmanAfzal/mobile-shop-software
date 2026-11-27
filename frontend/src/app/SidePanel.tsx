@@ -15,16 +15,23 @@ import { jobsFor } from '@/features/counter/jobs'
  *  laptop screen; "All options" (the More page) closes the panel */
 const MANAGERS = ['owner', 'manager']
 const SHOP_LINKS: { to: string; key: string; Icon: LucideIcon; roles?: string[] }[] = [
-  { to: '/parties', key: 'party.title', Icon: Users },
   { to: '/audit', key: 'audit.title', Icon: LineChart, roles: MANAGERS },
   { to: '/hisaab', key: 'counter.dayTitle', Icon: CalendarDays },
   { to: '/reports', key: 'more.reports', Icon: BarChart3 },
   { to: '/more/cash', key: 'more.cashAccounts', Icon: Landmark, roles: MANAGERS },
   { to: '/purchases', key: 'nav.purchases', Icon: Package },
-  // owner 2026-11-26 (ADR-139): sales and purchases of a period in one page
-  { to: '/sale-purchase', key: 'nav.trade', Icon: ArrowLeftRight },
   { to: '/more/staff', key: 'more.staff', Icon: UserCog, roles: ['owner'] },
   { to: '/more/settings', key: 'more.settings', Icon: Settings, roles: ['owner'] },
+]
+
+/** owner 2026-11-26 (ADR-145): the work done all day comes first, in this order — sell, purchase,
+ *  People & khata, Sale & purchase, return, stock — then the other jobs. The two pages join the
+ *  jobs as rows of the same kind (they were shop tiles below). */
+interface Quick { id: string; to: string; label: string; Icon: LucideIcon; tone: string; ink: string; fkey: string }
+const FIRST = ['sell', 'addStock', 'people', 'trade', 'return', 'stock']
+const PAGES: Quick[] = [
+  { id: 'people', to: '/parties', label: 'party.title', Icon: Users, tone: 'bg-khata text-khata-fg', ink: 'text-khata-icon', fkey: '' },
+  { id: 'trade', to: '/sale-purchase', label: 'nav.trade', Icon: ArrowLeftRight, tone: 'bg-sell text-sell-fg', ink: 'text-sell-icon', fkey: '' },
 ]
 
 /** a side-panel row: a bordered button with an icon well and a chevron, so it reads as tappable */
@@ -45,11 +52,12 @@ export default function SidePanel() {
   const has = useModules()
   const role = useAuth((s) => s.me?.user.role)
   const trade = useTrade()
-  const jobs = jobsFor(trade).filter((j) => !j.homeOnly && (!j.module || has(j.module)))
+  const every: Quick[] = [...jobsFor(trade).filter((j) => !j.homeOnly && (!j.module || has(j.module))), ...PAGES.filter((p) => !moduleFor(p.to) || has(moduleFor(p.to)!))]
+  const jobs = [...FIRST.flatMap((id) => every.filter((x) => x.id === id)), ...every.filter((x) => !FIRST.includes(x.id))]
   const links = SHOP_LINKS.filter((l) => (!l.roles || (role && l.roles.includes(role))) && (!moduleFor(l.to) || has(moduleFor(l.to)!)))
   const Chevron = dir === 'rtl' ? ChevronLeft : ChevronRight
-  // ADR-139: with a ninth shop link the tiles are a little lower, so the panel still fits 1280×720
-  const dense = links.length > 8
+  // ADR-145: with ten quick rows everything is a little lower, so the panel still fits 1280×720
+  const dense = jobs.length > 8 || links.length > 8
   const txt = (en: string) => (ur ? cls('sm') : en)
   const kbd = (k: string, onDark = false) => <kbd className={`rounded-md border px-1.5 font-sans text-[11px] font-bold ${onDark ? 'border-white/25 text-white/70' : 'border-line bg-surface text-muted'}`} dir="ltr">{k}</kbd>
   const heading = (onDark = false) => <span className={`mt-1 px-1 leading-tight ${onDark ? 'text-white/60' : 'text-muted'} ${ur ? cls('sm') : 'text-[11px] font-bold uppercase tracking-wider'}`}>{pick('nav.shopSection')}</span>
@@ -65,7 +73,7 @@ export default function SidePanel() {
         </NavLink>
         <nav className="grid grid-cols-2 gap-1.5">
           {jobs.map((j) => (
-            <NavLink key={j.id} to={j.to} className={({ isActive }) => `tap relative flex min-h-[60px] min-w-0 flex-col items-start justify-between gap-1 rounded-2xl p-2 font-bold ${j.tone} ${isActive ? 'ring-2 ring-current' : ''}`}>
+            <NavLink key={j.id} to={j.to} className={({ isActive }) => `tap relative flex ${dense ? 'min-h-[50px]' : 'min-h-[60px]'} min-w-0 flex-col items-start justify-between gap-1 rounded-2xl p-2 font-bold ${j.tone} ${isActive ? 'ring-2 ring-current' : ''}`}>
               <span className={`well h-7 w-7 shrink-0 rounded-lg bg-surface ${j.ink}`}><j.Icon size={16} strokeWidth={2} /></span>
               <span className={`line-clamp-1 w-full text-start ${txt('text-[13px] leading-tight')}`}>{pick(j.label)}</span>
               <span className="absolute end-1.5 top-1.5 text-[10px] font-bold opacity-60" dir="ltr">{j.fkey}</span>
@@ -121,7 +129,7 @@ export default function SidePanel() {
           {({ isActive }) => <>{well(isActive, Home, true)}<span className={`min-w-0 flex-1 ${txt('text-sm')}`}>{pick('nav.dashboard')}</span></>}
         </NavLink>
         {jobs.map((j) => (
-          <NavLink key={j.id} to={j.to} className={({ isActive }) => boldRow(isActive)}>
+          <NavLink key={j.id} to={j.to} className={({ isActive }) => `${boldRow(isActive)} ${dense ? '!min-h-[29px]' : ''}`}>
             <span className={`well ${dense ? "h-5 w-5" : "h-6 w-6"} shrink-0 rounded-lg ${j.tone}`}><j.Icon size={15} strokeWidth={2} /></span>
             <span className={`min-w-0 flex-1 ${txt('text-sm')}`}>{pick(j.label)}</span>
             {j.fkey ? kbd(j.fkey, true) : null}
@@ -150,7 +158,7 @@ export default function SidePanel() {
         {({ isActive }) => <>{well(isActive, Home)}<span className={`min-w-0 flex-1 ${txt('text-sm')}`}>{pick('nav.dashboard')}</span><Chevron size={16} className="shrink-0 opacity-60" /></>}
       </NavLink>
       {jobs.map((j) => (
-        <NavLink key={j.id} to={j.to} className={({ isActive }) => `tap flex min-h-8 items-center gap-2.5 rounded-xl px-2 py-0 font-bold ${j.tone} ${isActive ? 'ring-2 ring-current' : ''}`}>
+        <NavLink key={j.id} to={j.to} className={({ isActive }) => `tap flex ${dense ? 'min-h-7' : 'min-h-8'} items-center gap-2.5 rounded-xl px-2 py-0 font-bold ${j.tone} ${isActive ? 'ring-2 ring-current' : ''}`}>
           <span className={`well ${dense ? "h-5 w-5" : "h-6 w-6"} shrink-0 rounded-lg bg-surface ${j.ink}`}><j.Icon size={15} strokeWidth={2} /></span>
           <span className={`min-w-0 flex-1 ${txt('text-sm')}`}>{pick(j.label)}</span>
           {j.fkey ? kbd(j.fkey) : null}
